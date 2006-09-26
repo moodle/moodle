@@ -126,12 +126,12 @@ function output_new_settings_by_page(&$node) {
         $return = '';
         if (count($newsettings) > 0) {
             $return .= print_heading(get_string('upgradesettings','admin').' - '.$node->visiblename, '', 2, 'main', true);
+            $return .= '<fieldset class="adminsettings">' . "\n";
             foreach ($newsettings as $newsetting) {
-                $return .= '<fieldset class="adminsettings">' . "\n";
                 $return .= '<div class="clearer"><!-- --></div>' . "\n";
                 $return .= $newsetting->output_html();
-                $return .= '</fieldset>';
             }
+            $return .= '</fieldset>';
         }
         return $return;
     }
