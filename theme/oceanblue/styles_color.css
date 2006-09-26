@@ -197,24 +197,13 @@ table.formtable tbody th {
  ***/
 
 .homelink a:link,
-.homelink a:visited,
-.homelink a:hover {
+.homelink a:visited {
   background-color: #FFFFFF;
   color: #000066;
-  text-decoration: none;
-}
-.homelink a:link,
-.homelink a:visited {
   border-top: 1px solid #cecece;
   border-bottom: 2px solid #4a4a4a;
   border-left: 1px solid #cecece;
   border-right: 2px solid #4a4a4a;
-}
-.homelink a:hover {
-  border-bottom: 1px solid #cecece;
-  border-top: 2px solid #4a4a4a;
-  border-right: 1px solid #cecece;
-  border-left: 2px solid #4a4a4a;
 }
 
 
