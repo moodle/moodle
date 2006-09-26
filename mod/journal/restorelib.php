@@ -132,7 +132,7 @@
             $entry->text = backup_todb($entry_info['#']['TEXT']['0']['#']);
             $entry->format = backup_todb($entry_info['#']['FORMAT']['0']['#']);
             $entry->rating = backup_todb($entry_info['#']['RATING']['0']['#']);
-            if (isset(backup_todb($entry_info['#']['COMMENT']['0']['#']))) {
+            if (isset($entry_info['#']['COMMENT']['0']['#'])) {
                 $entry->entrycomment = backup_todb($entry_info['#']['COMMENT']['0']['#']);
             } else {
                 $entry->entrycomment = backup_todb($entry_info['#']['ENTRYCOMMENT']['0']['#']);
