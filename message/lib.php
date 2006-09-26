@@ -665,7 +665,7 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
     global $CFG;
 
     $fullname = sql_fullname();
-    $LIKE     = sql_like();
+    $LIKE     = sql_ilike();
 
     if (!empty($exceptions)) {
         $except = ' AND u.id NOT IN ('. $exceptions .') ';
@@ -720,15 +720,13 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
     /// If no userid sent then assume current user
     if ($userid == 0) $userid = $USER->id; 
 
-    /// Some differences in syntax for PostgreSQL
+    /// Some differences in SQL syntax
+    $LIKE = sql_ilike();
+    $NOTLIKE = 'NOT ' . $LIKE;
     if ($CFG->dbtype == "postgres7") {
-        $LIKE = "ILIKE";   // case-insensitive
-        $NOTLIKE = "NOT ILIKE";   // case-insensitive
         $REGEXP = "~*";
         $NOTREGEXP = "!~*";
     } else {
-        $LIKE = "LIKE";
-        $NOTLIKE = "NOT LIKE";
         $REGEXP = "REGEXP";
         $NOTREGEXP = "NOT REGEXP";
     }
