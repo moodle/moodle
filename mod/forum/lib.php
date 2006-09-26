@@ -1727,19 +1727,18 @@ function forum_get_course_forum($courseid, $type) {
 
 function forum_make_mail_post(&$post, $user, $touser, $course,
                               $ownpost=false, $reply=false, $link=false, $rate=false, $footer="") {
-// Given the data about a posting, builds up the HTML to display it and
-// returns the HTML in a string.  This is designed for sending via HTML email.
+    
+    // Given the data about a posting, builds up the HTML to display it and
+    // returns the HTML in a string.  This is designed for sending via HTML email.
 
     global $CFG;
 
     static $formattedtext;        // Cached version of formatted text for a post
     static $formattedtextid;      // The ID number of the post
 
-
-    if (!$forum = get_record('forum', 'id', $post->discussion)) {
-        mtrace('Could not get the forum for the discussion the post belongs to');
-    }
-    if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
+    $post->forum = get_field('forum_discussions', 'forum', 'id', $post->discussion);
+    
+    if (!$cm = get_coursemodule_from_instance('forum', $post->forum)) {
         mtrace('Course Module ID was incorrect');
     }
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -1765,7 +1764,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     }
     $output .= '<div class="subject">'.format_string($post->subject).'</div>';
 
-    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $modcontext));
+    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $modcontext, $touser->id));
     $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
     $by->date = userdate($post->modified, '', $touser->timezone);
     $output .= '<div class="author">'.get_string('bynameondate', 'forum', $by).'</div>';
@@ -1783,7 +1782,6 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 
     if ($post->attachment) {
         $post->course = $course->id;
-        $post->forum = get_field('forum_discussions', 'forum', 'id', $post->discussion);
         $output .= '<div class="attachments">';
         $output .= forum_print_attachments($post, 'html');
         $output .= "</div>";
@@ -1791,9 +1789,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 
     $output .= $formattedtext;
 
-
 /// Commands
-
     $commands = array();
 
     if ($post->parent) {
@@ -1815,9 +1811,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     $output .= implode(' | ', $commands);
     $output .= '</div>';
 
-
 /// Context link to post if required
-
     if ($link) {
         $output .= '<div class="link">';
         $output .= '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#'.$post->id.'">'.
@@ -1829,7 +1823,6 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
         $output .= '<div class="footer">'.$footer.'</div>';
     }
     $output .= '</td></tr></table>'."\n\n";
-
 
     return $output;
 }
