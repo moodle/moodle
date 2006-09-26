@@ -37,6 +37,7 @@ $string['invalidfieldname'] = '\"$a\" is not a valid field name';
 $string['invalidfiletype'] = '\"$a\" is not a valid file type';
 $string['invalidmd5'] = 'Invalid md5';
 $string['invalidxmlfile'] = '\"$a\" is not a valid XML file';
+$string['invalidrole'] = 'Invalid role';
 $string['missingfield'] = 'Field \"$a\" is missing';
 $string['missingrequiredfield'] = 'Some required field is missing';
 $string['modulerequirementsnotmet'] = 'Module \"$a->modulename\" ($a->moduleversion) could not be installed.  It requires a newer version of Moodle (currently you are using $a->currentmoodle, you need $a->requiremoodle).';

@@ -59,10 +59,12 @@
         $timeoptions[strtotime('-1 year',$now)] = get_string('lastyear');
     }
 
-    $useroptions = array(0 => $course->students,
-                         1 => $course->teachers,
-                         );
-
+    $useroptions = array();
+    if ($roles = get_roles_on_exact_context(get_context_instance(CONTEXT_COURSE,$course->id))) {
+        foreach ($roles as $role) {
+            $useroptions[$role->id] = $role->name;
+        }
+    }
     $actionoptions = array('' => $strallactions,
                            'view' => $strview,
                            'post' => $strpost,
@@ -81,7 +83,7 @@
     choose_from_menu($timeoptions,'timefrom',0);
     echo "</td><td>".
         get_string('showonly').'&nbsp;';
-    choose_from_menu($useroptions,'teachers',0,'');
+    choose_from_menu($useroptions,'roleid',0,'');
     echo "</td><td>\n".
         get_string('showactions'),'&nbsp;';
     choose_from_menu($actionoptions,'action',0,'');

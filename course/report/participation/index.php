@@ -1,6 +1,7 @@
 <?php  // $Id$
 
     require_once('../../../config.php');
+    require_once($CFG->libdir.'/statslib.php');
 
     define('DEFAULT_PAGE_SIZE', 20);
     define('SHOW_ALL_PAGE_SIZE', 5000);
@@ -8,7 +9,7 @@
     $id         = required_param('id', PARAM_INT); // course id.
     $moduleid   = optional_param('moduleid', 0, PARAM_INT); // module id.
     $oldmod     = optional_param('oldmod', 0, PARAM_INT);
-    $teachers   = optional_param('teachers', 0, PARAM_BOOL); // show teachers? off = students.
+    $roleid     = optional_param('roleid',0,PARAM_INT); // which role to show
     $instanceid = optional_param('instanceid', 0, PARAM_INT); // instance we're looking at.
     $timefrom   = optional_param('timefrom', 0, PARAM_INT); // how far back to look...
     $action     = optional_param('action', '', PARAM_ALPHA);
@@ -26,6 +27,10 @@
 
     if (!$course = get_record('course','id',$id)) {
         print_error('invalidcourse');
+    }
+
+    if ($roleid != 0 && !$role = get_record('role','id',$roleid)) {
+        print_error('invalidrole');
     }
 
     require_login($course->id);
@@ -102,10 +107,12 @@
         $timeoptions[strtotime('-1 year',$now)] = get_string('lastyear');
     }
 
-    $useroptions = array(0 => $course->students,
-                         1 => $course->teachers,
-                         );
-
+    $useroptions = array();
+    if ($roles = get_roles_on_exact_context(get_context_instance(CONTEXT_COURSE,$course->id))) {
+        foreach ($roles as $r) {
+            $useroptions[$r->id] = $r->name;
+        }
+    }
     $actionoptions = array('' => $strallactions,
                            'view' => $strview,
                            'post' => $strpost,
@@ -126,7 +133,7 @@
     choose_from_menu($timeoptions,'timefrom',$timefrom);
     echo "</td><td>".
         get_string('showonly').'&nbsp;';
-    choose_from_menu($useroptions,'teachers',$teachers,'');
+    choose_from_menu($useroptions,'roleid',$roleid,'');
     echo "</td><td>\n".
         get_string('showactions'),'&nbsp;';
     choose_from_menu($actionoptions,'action',$action,'');
@@ -143,8 +150,8 @@
         exit;
     }
     
-    $baseurl =  $CFG->wwwroot.'/course/report/participation/index.php?id='.$course->id.'&amp;teachers='
-        .$teachers.'&amp;instanceid='.$instanceid.'&amp;timefrom='.$timefrom.'&amp;moduleid='
+    $baseurl =  $CFG->wwwroot.'/course/report/participation/index.php?id='.$course->id.'&amp;roleid='
+        .$roleid.'&amp;instanceid='.$instanceid.'&amp;timefrom='.$timefrom.'&amp;moduleid='
         .$moduleid.'&action='.$action.'&amp;perpage='.$perpage;
 
 
@@ -184,19 +191,20 @@
         '<input type="hidden" name="oldmod" value="'.$moduleid.'" />'."\n".
         '<input type="hidden" name="timefrom" value="'.$timefrom.'" />'."\n".
         '<input type="hidden" name="action" value="'.$action.'" />'."\n".
+        '<input type="hidden" name="roleid" value="'.$roleid.'" />'."\n".
         '<input type="hidden" name="moduleid" value="'.$moduleid.'" />'."\n".
         '<table align="center"><tr><td>';
     choose_from_menu($instanceoptions,'instanceid',$instanceid);
     echo '<input type="submit" value="'.get_string('go').'" /></td></tr></table>'."\n".
         "</form>\n";
         
-    if (!empty($instanceid)) {
+    if (!empty($instanceid) && !empty($roleid)) {
         if (!$cm = get_coursemodule_from_instance($module->name,$instanceid,$course->id)) {
             print_error('cmunknown');
         }
 
         require_once($CFG->dirroot.'/lib/tablelib.php');
-        $table = new flexible_table('course-participation-'.$course->id.'-'.$cm->id.'-'.$teachers);
+        $table = new flexible_table('course-participation-'.$course->id.'-'.$cm->id.'-'.$roleid);
         $table->course = $course;
 
         $table->define_columns(array('fullname','count',''));
@@ -219,12 +227,11 @@
                                             ));
         $table->setup();
         
-      
 
-        $sql = 'SELECT DISTINCT e.userid, u.firstname,u.lastname,u.idnumber,count(l.action) as count FROM '
-            . $CFG->prefix.'user_'.((!empty($teachers)) ? 'teachers' : 'students').' e '
-            .' JOIN '.$CFG->prefix.'user u ON u.id = e.userid LEFT JOIN '.$CFG->prefix.'log l ON e.userid = l.userid '
-            .' AND e.course = l.course AND l.time > '.$timefrom.' AND l.course = '.$course->id.' AND l.module = \''.$module->name.'\' '
+        $primary_roles = stats_get_primary_role_subselect();
+        $sql = 'SELECT DISTINCT prs.userid, u.firstname,u.lastname,u.idnumber,count(l.action) as count FROM ('.$primary_roles.') prs'
+            .' JOIN '.$CFG->prefix.'user u ON u.id = prs.userid LEFT JOIN '.$CFG->prefix.'log l ON prs.userid = l.userid '
+            .' AND prs.courseid = l.course AND l.time > '.$timefrom.' AND l.course = '.$course->id.' AND l.module = \''.$module->name.'\' '
             .' AND l.cmid = '.$cm->id;
         switch ($action) {
             case 'view':
@@ -239,20 +246,21 @@
 
         }
         
-        $sql .= ' WHERE e.course = '.$course->id; 
+        $sql .= ' WHERE prs.courseid = '.$course->id.' AND prs.primary_roleid = '.$roleid.' AND prs.contextlevel = '.CONTEXT_COURSE.' AND prs.courseid = '.$course->id;
         
         if ($table->get_sql_where()) {
             $sql .= ' AND '.$table->get_sql_where(); //initial bar 
         }
 
-        $sql .= ' GROUP BY e.userid,u.firstname,u.lastname,u.idnumber,l.userid';
+        $sql .= ' GROUP BY prs.userid,u.firstname,u.lastname,u.idnumber,l.userid';
 
         if ($table->get_sql_sort()) {
             $sql .= ' ORDER BY '.$table->get_sql_sort();
         }
 
-        $countsql = 'SELECT COUNT(DISTINCT(e.userid)) FROM '.$CFG->prefix.'user_'.((!empty($teachers)) ? 'teachers' : 'students').' e '
-            .' JOIN '.$CFG->prefix.'user u ON u.id = e.userid WHERE e.course = '.$course->id;
+        $countsql = 'SELECT COUNT(DISTINCT(prs.userid)) FROM ('.$primary_roles.') prs '
+            .' JOIN '.$CFG->prefix.'user u ON u.id = prs.userid WHERE prs.courseid = '.$course->id 
+            .' AND prs.primary_roleid = '.$roleid.' AND prs.contextlevel = '.CONTEXT_COURSE;
         
         $totalcount = count_records_sql($countsql);
 
@@ -279,7 +287,7 @@
         $data = array();
         
         $a->count = $totalcount;
-        $a->items = $totalcount == 1 ? ((!empty($teachers)) ? $course->teacher : $course->student) : ((!empty($teachers)) ? $course->teachers : $course->students);
+        $a->items = $role->name;
         
         if ($matchcount != $totalcount) {
             $a->items .= ' ('.get_string('matched').' '.$matchcount.')';
@@ -332,7 +340,7 @@ function checknos() {
         foreach ($users as $u) {
             $data = array('<a href="'.$CFG->wwwroot.'/user/view.php?id='.$u->userid.'&course='.$course->id.'">'.fullname($u,true).'</a>',
                           ((!empty($u->count)) ? get_string('yes').' ('.$u->count.') ' : get_string('no')),
-                          '<input type="checkbox" name="'.((!empty($teachers)) ? 'teacher' : 'user').$u->userid.'" value="'.$u->count.'" />',
+                          '<input type="checkbox" name="user'.$u->userid.'" value="'.$u->count.'" />',
                           );
             $table->add_data($data);
         }
