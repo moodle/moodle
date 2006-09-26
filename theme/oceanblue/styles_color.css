@@ -110,12 +110,15 @@ table.formtable tbody th {
   background-color:#DDDDDD;
 }
 
-.generalbox {
+.generalbox .generalboxcontent {
   border-color:#9999FF;
+  background-color:#FFFFFF; 
 }
+
 .informationbox {
   border-color:#9999FF;
 }
+
 .feedbackbox {
   border-color: #888888; 
 }
@@ -219,14 +222,6 @@ table.formtable tbody th {
  *** Admin
  ***/
 
-.admin .generalboxcontent {
-  background-color:#FFFFFF; 
-}
-
-.admin .generalbox {
-  border-color:#BBBBBB; 
-}
-
 .admin .informationbox {
   border-color:#BBBBBB; 
   background-color:#FFFFFF; 
@@ -248,10 +243,6 @@ body#admin-blocks table#incompatible .r1 {
 
 body#admin-blocks table#incompatible td.c0 {
   color: #ff0000;
-}
-
-body#admin-lang .generalbox {
-  background-color: #FFFFFF;
 }
 
 table.flexible  .r0 {
@@ -713,14 +704,6 @@ table.message_search_results td {
 #mod-forum-index .unread {
 }
 
-#mod-forum-view .generalboxcontent {
-  background-color:#FFFFFF; 
-}
-
-#mod-forum-post .generalboxcontent {
-  background-color:#FFFFFF; 
-}
-
 /***
  *** Modules: Glossary
  ***/
@@ -757,10 +740,6 @@ table.message_search_results td {
 .glossarycomment .left {
   background-color: #F0F0F0;
 
-}
-
-#mod-glossary-report .generalbox .teacher {
-  background-color: #F0F0F0;
 }
 
 .categoryheader {
