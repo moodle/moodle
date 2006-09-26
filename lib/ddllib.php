@@ -577,4 +577,76 @@ function change_field_default($table, $field, $continue=true, $feedback=true) {
     return execute_sql_arr($sqlarr, $continue, $feedback);
 }
 
+/**
+ * This function will create the index in the table passed as arguments
+ * Before creating the index, the function will check it doesn't exists
+ *
+ * @uses $CFG, $db
+ * @param XMLDBTable table object (just the name is mandatory)
+ * @param XMLDBIndex index object (full specs are required)
+ * @param boolean continue to specify if must continue on error (true) or stop (false)
+ * @param boolean feedback to specify to show status info (true) or not (false)
+ * @return boolean true on success, false on error
+ */
+function add_index($table, $index, $continue=true, $feedback=true) {
+
+    global $CFG, $db;
+
+    $status = true;
+
+    if (strtolower(get_class($table)) != 'xmldbtable') {
+        return false;
+    }
+    if (strtolower(get_class($index)) != 'xmldbindex') {
+        return false;
+    }
+
+/// Check there isn't any index with the same fields
+    if ($indexexists = find_index_name($table, $index)) {
+        return true; //Index exists, nothing to do
+    }
+
+    if(!$sqlarr = $table->getAddIndexSQL($CFG->dbtype, $CFG->prefix, $index, false)) {
+        return true; //Empty array = nothing to do = no error
+    }
+
+    return execute_sql_arr($sqlarr, $continue, $feedback);
+}
+
+/**
+ * This function will drop the index in the table passed as arguments
+ * Before dropping the index, the function will check it exists
+ *
+ * @uses $CFG, $db
+ * @param XMLDBTable table object (just the name is mandatory)
+ * @param XMLDBIndex index object (full specs are required)
+ * @param boolean continue to specify if must continue on error (true) or stop (false)
+ * @param boolean feedback to specify to show status info (true) or not (false)
+ * @return boolean true on success, false on error
+ */
+function drop_index($table, $index, $continue=true, $feedback=true) {
+
+    global $CFG, $db;
+
+    $status = true;
+
+    if (strtolower(get_class($table)) != 'xmldbtable') {
+        return false;
+    }
+    if (strtolower(get_class($index)) != 'xmldbindex') {
+        return false;
+    }
+
+/// Check there is one index with the same fields
+    if (!$indexexists = find_index_name($table, $index)) {
+        return true; //Index doesn't exist, nothing to do
+    }
+
+    if(!$sqlarr = $table->getDropIndexSQL($CFG->dbtype, $CFG->prefix, $index, false)) {
+        return true; //Empty array = nothing to do = no error
+    }
+
+    return execute_sql_arr($sqlarr, $continue, $feedback);
+}
+
 ?>
