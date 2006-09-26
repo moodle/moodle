@@ -1,10 +1,6 @@
 <?php  // $Id$
 
 require_once("$CFG->dirroot/enrol/enrol.class.php");
-require_once("$CFG->dirroot/course/lib.php");
-require_once("$CFG->dirroot/lib/blocklib.php");
-require_once("$CFG->dirroot/lib/pagelib.php");
-
 
 class enrolment_plugin_ldap {
 
@@ -12,138 +8,134 @@ class enrolment_plugin_ldap {
     
     var $enrol_localcoursefield = 'idnumber';
 
-/// Overide the base get_student_courses() function
-function get_student_courses(&$user) {
-    global $CFG;
-    return $this->get_user_courses($user, 'student');
-}
-
-/// Overide the base get_teacher_courses() function
-function get_teacher_courses(&$user) {
-    global $CFG;
-    return $this->get_user_courses($user, 'teacher');
-}
-
-/// Overide the base get_student_courses() function
-function get_user_courses(&$user, $type) {
+/**
+ * This function syncs a user's enrolments with those on the LDAP server.
+ */
+function setup_enrolments(&$user) {
     global $CFG;
 
-    if(!isset($type) || !($type =='student' || $type =='teacher' )){
-        error("Bad call to get_user_courses()!");
-    }
-    
+    //error_log('[ENROL_LDAP] setup_enrolments called');
 
     // Connect to the external database
     $ldap_connection = $this->enrol_ldap_connect();
     if (!$ldap_connection) {
         @ldap_close($ldap_connection);
-        notify("LDAP-module cannot connect to server: $CFG->ldap_host_url");
+        notify("[ENROL_LDAP] LDAP-module cannot connect to server: {$CFG->enrol_ldap_host_url}");
         return false;
     }
     
     // we are connected OK, continue...
 
-    /// Find a record in the external database that matches the local course field and local user field
-    /// to the respective remote fields
-    $enrolments = $this->find_ext_enrolments( $ldap_connection, 
-                                    $user->idnumber , 
-                                    $type);
-    
-    foreach ($enrolments as $enrol){
-    
-        $course_ext_id = $enrol[$CFG->enrol_ldap_course_idnumber][0];
-        if(empty($course_ext_id)){
-            error_log("The course external id is invalid!\n");
-            continue; // next; skip this one!
-        }
-        
-        // create the course  ir required
-        $course_obj = get_record( 'course',
-                                  $this->enrol_localcoursefield,
-                                  $course_ext_id );
+    // Get all the possible roles
+    $roles = get_records('role');
 
-        if (empty($course_obj)){ // course doesn't exist
-            if($CFG->enrol_ldap_autocreate){ // autocreate
-                error_log("CREATE User $user->username enrolled to a nonexistant course $course_ext_id \n");
-                $newcourseid = $this->create_course($enrol);
-                $course_obj = get_record( 'course',
-                                  $this->enrol_localcoursefield,
-                                   $newcourseid);
-            } else {
-                error_log("User $user->username enrolled to a nonexistant course $course_ext_id \n");
-            }
-        } else { // the course object exists before we call...
-            if ($course_obj->visible==0 && $user->{$type}[$course_obj->id] == 'ldap') {
-                // non-visible courses don't show up in the enrolled 
-                // array, so we should skip them -- 
-                unset($user->{$type}[$course_obj->id]);
-                continue;
-            }
-        }
-        
-        /// Add it to new list
-        $newenrolments[$course_obj->id] = 'ldap';
+    // Make sure the config settings have been upgraded.
+    $this->check_legacy_config();
 
-        // deal with enrolment in the moodle db
-        if (!empty($course_obj)) { // does course exist now?     
-            if(isset($user->{$type}[$course_obj->id]) && $user->{$type}[$course_obj->id] == 'ldap'){
-                unset($user->{$type}[$course_obj->id]); // remove from old list
-            } else {
-                $CFG->debug=10;
-                if ($type === 'student') { // enrol
-                   error_log("Enrolling student $user->id ($user->username) in course $course_obj->id ($course_obj->shortname) ");
-                   if (!  enrol_student($user->id, $course_obj->id, 0, 0, 'ldap')){
-                        error_log("Failed to enrol student $user->id ($user->username) into course $course_obj->id ($course_obj->shortname)");
-                   }
-                } else if ($type === 'teacher') {
-                      error_log("Enrolling teacher $user->id ($user->username) in course $course_obj->id ($course_obj->shortname)");
-                    add_teacher($user->id, $course_obj->id, 1, '', 0, 0,'ldap');
+    // Get the entire list of role assignments that currently exist for this user.
+    $roleassignments = get_records('role_assignments', 'userid', $user->id);
+    if (!$roleassignments) {
+        $roleassignments = array();
+    }
+    
+    // Get the ones that came from LDAP
+    $ldap_assignments = array_filter($roleassignments, create_function('$x', 'return $x->enrol == \'ldap\';'));
+
+    //error_log('[ENROL_LDAP] ' . count($roleassignments) . ' roles currently associated with this user');
+
+    // Get enrolments for each type of role from LDAP.
+    foreach($roles as $role) {
+        $enrolments = $this->find_ext_enrolments(
+            $ldap_connection, 
+            $user->idnumber , 
+            $role);
+
+        //error_log('[ENROL_LDAP] LDAP reports ' . count($enrolments) . ' enrolments of type ' . $role->shortname . '.');
+
+        foreach ($enrolments as $enrol){
+    
+            $course_ext_id = $enrol[$CFG->enrol_ldap_course_idnumber][0];
+            if(empty($course_ext_id)){
+                error_log("[ENROL_LDAP] The course external id is invalid!\n");
+                continue; // next; skip this one!
+            }
+            
+            // create the course  ir required
+            $course_obj = get_record( 'course',
+                                      $this->enrol_localcoursefield,
+                                      $course_ext_id );
+
+            if (empty($course_obj)){ // course doesn't exist
+                if($CFG->enrol_ldap_autocreate){ // autocreate
+                    error_log("[ENROL_LDAP] CREATE User $user->username enrolled to a nonexistant course $course_ext_id \n");
+                    $newcourseid = $this->create_course($enrol);
+                    $course_obj = get_record( 'course',
+                                      $this->enrol_localcoursefield,
+                                       $newcourseid);
+                } else {
+                    error_log("[ENROL_LDAP] User $user->username enrolled to a nonexistant course $course_ext_id \n");
                 }
-                $CFG->debug=0;
+            } else { // the course object exists before we call...
+                if ($course_obj->visible==0 && $user->{$type}[$course_obj->id] == 'ldap') {
+                    // non-visible courses don't show up in the enrolled 
+                    // array, so we should skip them -- 
+                    continue;
+                }
+            }
+            
+            // deal with enrolment in the moodle db
+            if (!empty($course_obj)) { // does course exist now?     
+        
+                $context = get_context_instance(CONTEXT_COURSE, $course_obj->id);
+                //$courseroles = get_user_roles($context, $user->id);
+            
+                if (!get_record('role_assignments', 'roleid', $role->id, 'userid', $user->id, 'contextid', $context->id)) {
+                    //error_log("[ENROL_LDAP] Assigning role '{$role->name}' to {$user->id} ({$user->username}) in course {$course_obj->id} ({$course_obj->shortname})");
+                    if (!role_assign($role->id, $user->id, 0, $context->id, 0, 0, 0, 'ldap')){
+                        error_log("[ENROL_LDAP] Failed to assign role '{$role->name}' to $user->id ($user->username) into course $course_obj->id ($course_obj->shortname)");
+                    } 
+                } else {
+                    //error_log("[ENROL_LDAP] Role '{$role->name}' already assigned to {$user->id} ({$user->username}) in course {$course_obj->id} ({$course_obj->shortname})");
+                }
+
+                // Remove the role from the list we created earlier.  This
+                // way we can find those roles that are no longer required.
+                foreach($ldap_assignments as $key => $roleassignment) {
+                    if ($roleassignment->roleid == $role->id
+                     && $roleassignment->contextid == $context->id) {
+                        unset($ldap_assignments[$key]);
+                        break;
+                    }
+                }
             }
         }
     }
 
-    // ok, if there's any thing still left in the $user->student or $user->teacher
-    // array, those are old enrolments that we want to remove (or are they?)
-    if(!empty($user->{$type})){
-        foreach ($user->{$type} as $courseid => $value){
-            if($value === 'ldap'){ // this was a legacy 
-                if ($type === 'student') { // enrol
-                    unenrol_student($user->id, $courseid);
-                } else if ($type === 'teacher') {
-                    remove_teacher($user->id, $courseid);
-                }
-                unset($user->{$type}[$course_obj->id]);
-            } else {
-                // This one is from a non-database
-                // enrolment. Add it to the newenrolments
-                // array, so we don't loose it.
-                $newenrolments[$courseid] = $value;
-            }
-
+    // ok, if there's any thing still left in the $roleassignments array we
+    // made at the start, we want to remove any of the ldap ones.
+    foreach ($ldap_assignments as $ra) {
+        if($ra->enrol === 'ldap') {
+            error_log("Unassigning role_assignment with id '{$ra->id}' from user {$user->id} ({$user->username})");
+            role_unassign($ra->id, $user->id, 0, $ra->contextid);
         }
     }
-
-    /// Overwrite the old array with the new one
-    $user->{$type} = $newenrolments;
 
     @ldap_close($ldap_connection);
+
+    //error_log('[ENROL_LDAP] finished with setup_enrolments');
+    
     return true;
 }
 
 /// sync enrolments with ldap, create courses if required.
-function sync_enrolments($type, $enrol) {
+function sync_enrolments($type, $enrol = false) {
     global $CFG;
 
-    if(!isset($type) || !($type =='student' || $type =='teacher' )){
-        error("Bad call to get_all_courses()!");
-    }
-    $table = array( 'teacher' => 'user_teachers',
-                    'student' => 'user_students');
-    
-    if(!isset($enrol)){
-        $enrol=false;
+    // Get the role. If it doesn't exist, that is bad.
+    $role = get_record('role', 'shortname', $type);
+    if (!$role) {
+        notify("No such role: $type");
+        return false;
     }
 
     // Connect to the external database
@@ -158,7 +150,7 @@ function sync_enrolments($type, $enrol) {
     $this->enrol_ldap_bind($ldap_connection);
 
     //get all contexts and look for first matching user
-    $ldap_contexts = explode(";",$CFG->{'enrol_ldap_'.$type.'_contexts'});
+    $ldap_contexts = explode(";",$CFG->{'enrol_ldap_contexts_role'.$role->id});
 
     // get all the fields we will want for the potential course creation
     // as they are light. don't get membership -- potentially a lot of data. 
@@ -173,7 +165,7 @@ function sync_enrolments($type, $enrol) {
         array_push($ldap_fields_wanted, $CFG->enrol_ldap_course_summary);
     }
     if($enrol){
-        array_push($ldap_fields_wanted, $CFG->{'enrol_ldap_'.$type.'_memberattribute'});
+        array_push($ldap_fields_wanted, $CFG->{'enrol_ldap_memberattribute_role'.$role->id});
     }
 
     // define the search pattern
@@ -189,24 +181,26 @@ function sync_enrolments($type, $enrol) {
 
     foreach ($ldap_contexts as $context) {
 
-        $context == trim($context);
+        $context = trim($context);
         if ($CFG->enrol_ldap_search_sub){
             //use ldap_search to find first user from subtree
-            $ldap_result = ldap_search($ldap_connection, 
+            $ldap_result = @ldap_search($ldap_connection, 
                                         $context, 
                                         $ldap_search_pattern,
                                         $ldap_fields_wanted);
 
         } else {
             //search only in this context
-            $ldap_result = ldap_list($ldap_connection, 
+            $ldap_result = @ldap_list($ldap_connection, 
                                         $context, 
                                         $ldap_search_pattern,
                                         $ldap_fields_wanted,0,0);
         }
  
         // check and push results
-        $records = ldap_get_entries($ldap_connection,$ldap_result);        
+        $records = $ldap_result
+            ? ldap_get_entries($ldap_connection,$ldap_result)
+            : array('count' => 0);
 
         // ldap libraries return an odd array, really. fix it:
         $flat_records=array();
@@ -241,22 +235,31 @@ function sync_enrolments($type, $enrol) {
 
                 // enrol&unenrol if required
                 if($enrol && is_object($course_obj)){
+
+                    // Get a context object.
+                    $context = get_context_instance(CONTEXT_COURSE, $course_obj->id);
+
                     // pull the ldap membership into a nice array
                     // this is an odd array -- mix of hash and array -- 
                     $ldapmembers=array();
-                    if(!empty($course{ strtolower($CFG->{'enrol_ldap_'.$type.'_memberattribute'} ) })){ // may have no membership!
 
-                        $ldapmembers = $course{ strtolower($CFG->{'enrol_ldap_'.$type.'_memberattribute'} ) }; 
-                        unset($ldapmembers{'count'}); // remove oddity ;)
+                    if(array_key_exists('enrol_ldap_memberattribute_role'.$role->id, $CFG)
+                     && !empty($CFG->{'enrol_ldap_memberattribute_role'.$role->id})
+                     && !empty($course[strtolower($CFG->{'enrol_ldap_memberattribute_role'.$role->id} ) ])){ // may have no membership!
+
+                        $ldapmembers = $course[strtolower($CFG->{'enrol_ldap_memberattribute_role'.$role->id} )]; 
+                        unset($ldapmembers['count']); // remove oddity ;)
                     }
                     
                     // prune old ldap enrolments
                     // hopefully they'll fit in the max buffer size for the RDBMS
-                    $sql = ' SELECT enr.userid AS user, 1
-                             FROM ' . $CFG->prefix . $table{$type} . ' enr ' .
-                           ' JOIN ' . $CFG->prefix . 'user  usr ON usr.id=enr.userid ' .
-                           " WHERE course=$course_obj->id 
-                                  AND enrol='ldap' ";
+                    $sql = '
+                        SELECT enr.userid AS user, 1
+                        FROM '.$CFG->prefix.'role_assignments enr
+                        JOIN '.$CFG->prefix.'user usr ON usr.id=enr.userid
+                        WHERE enr.roleid = '.$role->id.'
+                         AND enr.contextid = '.$context->id.'
+                         AND enr.enrol = \'ldap\' ';
                     if (!empty($ldapmembers)) {
                         $sql .= 'AND usr.idnumber NOT IN (\''. join('\',\'', $ldapmembers).'\')';
                     } else {
@@ -265,19 +268,12 @@ function sync_enrolments($type, $enrol) {
                     $todelete = get_records_sql($sql);
                     if(!empty($todelete)){
                         foreach ($todelete as $member) {
-                            $member = $member->{'user'};
-                            if($type==='student'){
-                                if (unenrol_student($member, $course_obj->id)){
-                                    print "Unenrolled $type $member into course $course_obj->id ($course_obj->shortname)\n";
-                                } else {
-                                    print "Failed to unenrol $type $member into course $course_obj->id ($course_obj->shortname)\n";
-                                }
+                            $member = $member->user;
+
+                            if (role_unassign($role->id, $member, 0, $context->id)) {
+                                print "Unassigned $type from $member for course $course_obj->id ($course_obj->shortname)\n";
                             } else {
-                                if (remove_teacher($member, $course_obj->id)){
-                                    print "Unenrolled $type $member into course $course_obj->id ($course_obj->shortname)\n";
-                                } else {
-                                    print "Failed to unenrol $type $member into course $course_obj->id ($course_obj->shortname)\n";
-                                }
+                                print "Failed to unassign $type from $member for course $course_obj->id ($course_obj->shortname)\n";
                             }
                         }
                     }
@@ -289,30 +285,21 @@ function sync_enrolments($type, $enrol) {
                                 ." WHERE idnumber='$ldapmember'";
                         $member = get_record_sql($sql); 
 //                        print "sql: $sql \nidnumber = $ldapmember \n" . var_dump($member); 
-                        $member = $member->id;
-                        if(empty($member)){
+                        if(empty($member) || empty($member->id)){
                             print "Could not find user $ldapmember, skipping\n";
                             continue;
                         }
-                        if (!get_record($table{$type}, 'course', $course_obj->id, 
+                        $member = $member->id;
+                        if (!get_record('role_assignments', 'roleid', $role->id, 
+                                        'contextid', $context->id, 
                                         'userid', $member, 'enrol', 'ldap')){
-                            if($type === 'student'){
-                                if (enrol_student($member, $course_obj->id, 0, 0, 'ldap')){
-                                    print "Enrolled $type $member ($ldapmember) into course $course_obj->id ($course_obj->shortname)\n";
-                                } else {
-                                    print "Failed to enrol $type $member ($ldapmember) into course $course_obj->id ($course_obj->shortname)\n";
-                                }
-                            } else { // teacher
-                                if (add_teacher($member, $course_obj->id, 1,'',0,0,'ldap')){
-                                    print "Enrolled $type $member ($ldapmember) into course $course_obj->id ($course_obj->shortname)\n";
-                                } else {
-                                    print "Failed to enrol $type $member ($ldapmember) into course $course_obj->id ($course_obj->shortname)\n";
-                                }
+                            if (role_assign($role->id, $member, 0, $context->id, 0, 0, 0, 'ldap')){
+                                print "Assigned role $type to $member ($ldapmember) for course $course_obj->id ($course_obj->shortname)\n";
+                            } else {
+                                print "Failed to assign role $type to $member ($ldapmember) for course $course_obj->id ($course_obj->shortname)\n";
                             }
-                        }                        
+                        }
                     }
-                        
-                     
                 }
             }
         }
@@ -334,11 +321,16 @@ function get_access_icons($course) {
 /// Overrise the base config_form() function
 function config_form($frm) {
     global $CFG;
+
+    $this->check_legacy_config();
+    
     include("$CFG->dirroot/enrol/ldap/config.html");
 }
 
 /// Override the base process_config() function
 function process_config($config) {
+
+    $this->check_legacy_config();
 
     if (!isset ($config->enrol_ldap_host_url)) {
         $config->enrol_ldap_host_url = '';
@@ -360,24 +352,6 @@ function process_config($config) {
     }
     set_config('enrol_ldap_bind_pw', $config->enrol_ldap_bind_pw);    
     
-    if (!isset ($config->enrol_ldap_student_contexts)) {
-         $config->enrol_ldap_student_contexts = '';
-    }
-    set_config('enrol_ldap_student_contexts', $config->enrol_ldap_student_contexts);    
-    
-    if (!isset ($config->enrol_ldap_student_memberattribute)) {
-         $config->enrol_ldap_student_memberattribute = '';
-    }
-    set_config('enrol_ldap_student_memberattribute', $config->enrol_ldap_student_memberattribute);    
-    if (!isset ($config->enrol_ldap_teacher_contexts)) {
-         $config->enrol_ldap_teacher_contexts = '';
-    }
-    set_config('enrol_ldap_teacher_contexts', $config->enrol_ldap_teacher_contexts);   
-    
-    if (!isset ($config->enrol_ldap_teacher_memberattribute)) {
-         $config->enrol_ldap_teacher_memberattribute = '';
-    }
-    set_config('enrol_ldap_teacher_memberattribute', $config->enrol_ldap_teacher_memberattribute);    
     if (!isset ($config->enrol_ldap_objectclass)) {
         $config->enrol_ldap_objectclass = '';
     }
@@ -431,10 +405,23 @@ function process_config($config) {
     if (!isset ($config->enrol_ldap_autocreate)) {
         $config->enrol_ldap_autocreate = '0';
     }
-    set_config('enrol_ldap_autocreate', $config->enrol_ldap_autocreate);                 
+    set_config('enrol_ldap_autocreate', $config->enrol_ldap_autocreate);
+
+    $roles = get_records('role');
+    foreach ($roles as $role) {
+        if (!isset($config->{'enrol_ldap_contexts_role'.$role->id})) {
+            $config->{'enrol_ldap_contexts_role'.$role->id} = '';
+        }
+        
+        if (!isset($config->{'enrol_ldap_memberattribute_role'.$role->id})) {
+            $config->{'enrol_ldap_memberattribute_role'.$role->id} = '';
+        }
+        
+        set_config('enrol_ldap_contexts_role'.$role->id, $config->{'enrol_ldap_contexts_role'.$role->id});
+        set_config('enrol_ldap_memberattribute_role'.$role->id, $config->{'enrol_ldap_memberattribute_role'.$role->id});
+    }
 
     return true;
-
 }
 
 function enrol_ldap_connect(){
@@ -489,8 +476,8 @@ function enrol_ldap_bind($ldap_connection){
     return true;
 }
 
-function find_ext_enrolments ($ldap_connection, $memberuid, $type){
-/// type is teacher or student
+function find_ext_enrolments ($ldap_connection, $memberuid, $role){
+/// role is a record from the mdl_role table
 /// return multidimentional array array with of courses (at least dn and idnumber)
 /// 
 
@@ -505,7 +492,7 @@ function find_ext_enrolments ($ldap_connection, $memberuid, $type){
     $this->enrol_ldap_bind($ldap_connection);
 
     //get all contexts and look for first matching user
-    $ldap_contexts = explode(";",$CFG->{'enrol_ldap_'.$type.'_contexts'});
+    $ldap_contexts = explode(";",$CFG->{'enrol_ldap_contexts_role'.$role->id});
 
     // get all the fields we will want for the potential course creation
     // as they are light. don't get membership -- potentially a lot of data. 
@@ -521,7 +508,7 @@ function find_ext_enrolments ($ldap_connection, $memberuid, $type){
     }
 
     // define the search pattern
-    $ldap_search_pattern = "(".$CFG->{'enrol_ldap_'.$type.'_memberattribute'}."=".$memberuid.")";
+    $ldap_search_pattern = "(".$CFG->{'enrol_ldap_memberattribute_role'.$role->id}."=".$memberuid.")";
     if (!empty($CFG->enrol_ldap_objectclass)){ 
         $ldap_search_pattern='(&(objectclass='.$CFG->enrol_ldap_objectclass.')'.$ldap_search_pattern.')';
     }
@@ -600,9 +587,10 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
         return false;
     }
 
-    if(!empty($CFG->enrol_ldap_course_summary)){ // optional
-        $course->summary   = $course_ext[$CFG->enrol_ldap_course_summary][0];
-    }
+    $course->summary = empty($CFG->enrol_ldap_course_summary) || empty($course_ext[$CFG->enrol_ldap_course_summary][0])
+        ? ''
+        : $course_ext[$CFG->enrol_ldap_course_summary][0];
+    
     if(!empty($CFG->enrol_ldap_category)){ // optional ... but ensure it is set!
         $course->category   = $CFG->enrol_ldap_category;
     } 
@@ -642,6 +630,50 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
     }
     
     return $newcourseid;
+}
+
+/**
+ * This function checks for the presence of old 'legacy' config settings.  If
+ * they exist, it corrects them.
+ *
+ * @uses $CFG
+ */
+function check_legacy_config () {
+    global $CFG;
+
+    if (isset($CFG->enrol_ldap_student_contexts)) {
+        if ($student_role = get_record('role', 'shortname', 'student')) {
+            set_config('enrol_ldap_contexts_role'.$student_role->id, $CFG->enrol_ldap_student_contexts);
+        }
+
+        unset_config($CFG->enrol_ldap_student_contexts);
+    }
+
+    if (isset($CFG->enrol_ldap_student_memberattribute)) {
+        if (isset($student_role)
+         or $student_role = get_record('role', 'shortname', 'student')) {
+            set_config('enrol_ldap_memberattribute_role'.$student_role->id, $CFG->enrol_ldap_student_memberattribute);
+        }
+
+        unset_config($CFG->enrol_ldap_student_memberattribute);
+    }
+
+    if (isset($CFG->enrol_ldap_teacher_contexts)) {
+        if ($teacher_role = get_record('role', 'shortname', 'teacher')) {
+            set_config('enrol_ldap_contexts_role'.$teacher_role->id, $CFG->enrol_ldap_student_contexts);
+        }
+
+        unset_config($CFG->enrol_ldap_teacher_contexts);
+    }
+    
+    if (isset($CFG->enrol_ldap_teacher_memberattribute)) {
+        if (isset($teacher_role)
+         or $teacher_role = get_record('role', 'shortname', 'teacher')) {
+            set_config('enrol_ldap_memberattribute_role'.$teacher_role->id, $CFG->enrol_ldap_teacher_memberattribute);
+        }
+
+        unset_config($CFG->enrol_ldap_teacher_memberattribute);
+    }
 }
 
 } // end of class

@@ -18,9 +18,14 @@
 
     // update enrolments -- these handlers should autocreate courses if required
     $enrol = new enrolment_plugin_ldap();
-    $enrol->enrol_ldap_connect();    
-    $enrol->sync_enrolments('student', true);
-    $enrol->sync_enrolments('teacher', true);
+    $enrol->enrol_ldap_connect();
+
+    $enrol->check_legacy_config();
+
+    $roles = get_records('role');
+    foreach ($roles as $role) {
+        $enrol->sync_enrolments($role->shortname, true);
+    }
     
     // sync metacourses
     if (function_exists('sync_metacourses')) {
