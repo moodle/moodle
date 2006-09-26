@@ -284,6 +284,7 @@ moodleform::registerElementType('text', "$CFG->libdir/form/text.php", 'moodlefor
 moodleform::registerElementType('textarea', "$CFG->libdir/form/textarea.php", 'moodleform_textarea');
 moodleform::registerElementType('date_selector', "$CFG->libdir/form/dateselector.php", 'moodleform_date_selector');
 moodleform::registerElementType('htmleditor', "$CFG->libdir/form/htmleditor.php", 'moodleform_htmleditor');
+moodleform::registerElementType('static', "$CFG->libdir/form/static.php", 'moodleform_static');
 
 
 ?>
