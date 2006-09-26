@@ -874,6 +874,7 @@ function get_field_select($table, $return, $select) {
  * @return mixed the specified value, or false if an error occured.
  */
 function get_field_sql($sql) {
+    global $CFG;
 
     $rs = get_recordset_sql($sql);
 
