@@ -145,7 +145,7 @@ class XMLDBoci8po extends XMLDBgenerator {
 
         $trigger_name = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'trg');
 
-        $trigger = "CREATE OR REPLACE TRIGGER " . $trigger_name;
+        $trigger = "CREATE TRIGGER " . $trigger_name;
         $trigger.= "\n    BEFORE INSERT";
         $trigger.= "\nON " . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
         $trigger.= "\n    FOR EACH ROW";
