@@ -45,7 +45,7 @@ a:hover {
 a.autolink:link,
 a.autolink:visited {
   color:#000000;
-  background: #DDDDDD;
+  background-color: #DDDDDD;
 }
 
 a.autolink.glossary:hover {
@@ -79,7 +79,7 @@ div.header {
 }
 
 table.formtable tbody th {
-  background: none;
+  background-color: none;
 }
 
 .highlight {
@@ -159,12 +159,12 @@ table.formtable tbody th {
 }
 
 .unread {
-  background: #FFD991;
+  background-color: #FFD991;
 } 
 
 .censoredtext {
   color:#000000;
-  background:#000000;
+  background-color:#000000;
 }
 
 
@@ -220,7 +220,7 @@ table.formtable tbody th {
  ***/
 
 .admin .generalboxcontent {
-  background-color:#EEEEEE; 
+  background-color:#FFFFFF; 
 }
 
 .admin .generalbox {
@@ -250,6 +250,10 @@ body#admin-blocks table#incompatible td.c0 {
   color: #ff0000;
 }
 
+body#admin-lang .generalbox {
+  background-color: #FFFFFF;
+}
+
 table.flexible  .r0 {
   background-color: #f0f0f0;
 }
@@ -257,6 +261,7 @@ table.flexible  .r0 {
 table.flexible .r1 {
   background-color: #fafafa;
 }
+
 
 /***
  *** Blocks
@@ -307,7 +312,7 @@ table.flexible .r1 {
  ***/
 
 .blogpost.blogdraft .content {
-  background-color:#EEEEEE;
+  background-color:#FFFFFF;
 }
 
 .block_blog_tags .official {
@@ -344,7 +349,7 @@ table.minicalendar {
 #calendar .maincalendar .eventlist .event .topic,
 #calendar .maincalendar .eventlist .event .picture,
 #calendar .maincalendar .eventlist .event .side {
-  background-color:#EEEEEE;
+  background-color:#FFFFFF;
 }
 
 #calendar .maincalendar table.calendarmonth ul.events-underway {
@@ -425,7 +430,7 @@ table.minicalendar {
 #calendar .maincalendar .filters table,
 #calendar .sidecalendar .filters table,
 .block_calendar_month .filters table {
-  background-color: #EEEEEE;
+  background-color: #FFFFFF;
 }
 
 
@@ -449,11 +454,11 @@ table.minicalendar {
 }
 
 #course-view .section .content {
-  background: #FFFFFF;
+  background-color: #FFFFFF;
 }
 
 #course-view .section .side {
-  background: #EEEEEE;
+  background-color: #FFFFFF;
 }
 
 #course-view .section .left {
@@ -463,7 +468,7 @@ table.minicalendar {
 }
 
 #course-view .current .side{
-  background: #FFD991;
+  background-color: #FFD991;
 }
 
 #course-view .topics {
@@ -481,7 +486,7 @@ table.minicalendar {
 .categoryboxcontent,
 .courseboxcontent {
   border-color:#9999FF;
-  background: #FFFFFF;
+  background-color: #FFFFFF;
 }
 body#course-user .section {
   border-color:#AAAAAA;
@@ -533,7 +538,7 @@ body#grade-index .grades .r1 {
 
 .loginbox .content {
   border-color:#9999FF;
-  background: #FFFFFF;
+  background-color: #FFFFFF;
 }
 
 
@@ -565,7 +570,7 @@ table.message_search_results td {
  ***/
 
 .logtable .r1 {
-  background-color:#EEEEEE;
+  background-color:#FFFFFF;
 }
 
 
@@ -615,7 +620,7 @@ table.message_search_results td {
 }
 .tabs .r0,
 .tabs .r1 {
-  background: #AAAAFF;
+  background-color: #AAAAFF;
 }
 
 /***
@@ -623,17 +628,20 @@ table.message_search_results td {
  ***/
 
 .userpicture {
-  background: #EEEEEE;
+  background-color: #FFFFFF;
 }
 
 .userinfobox {
   border-color: #DDDDDD;
-  background-color: #F7F7F7;
+  background-color: #FFFFFF;
 }
 .groupinfobox {
   border-color: #DDDDDD;
 }
 
+#user-edit .formtable {
+  background-color: #FFFFFF;
+}
 
 /***
  *** Modules: Chat
@@ -661,11 +669,11 @@ table.message_search_results td {
 }
 
 .forumpost .content {
-  background: #FFFFFF;
+  background-color: #FFFFFF;
 }
 
 .forumpost .left {
-  background:#EEEEEE; 
+  background-color:#EEEEEE; 
 }
 
 .forumpost .topic {
@@ -673,11 +681,11 @@ table.message_search_results td {
 }
 
 .forumpost .starter {
-  background:#EEEEEE; 
+  background-color:#EEEEEE; 
 }
 
 .forumheaderlist .discussion .starter {
-  background:#EEEEEE; 
+  background-color:#EEEEEE; 
 }
 
 .forumheaderlist td {
@@ -689,10 +697,10 @@ table.message_search_results td {
 }
 
 .forumthread .unread {
-  background: #FFD991;
+  background-color: #FFD991;
 }
 #mod-forum-discuss .forumpost {
-  background: none;
+  background-color: none;
 }
 
 #mod-forum-discuss .forumpost.unread .content {
@@ -705,6 +713,13 @@ table.message_search_results td {
 #mod-forum-index .unread {
 }
 
+#mod-forum-view .generalboxcontent {
+  background-color:#FFFFFF; 
+}
+
+#mod-forum-post .generalboxcontent {
+  background-color:#FFFFFF; 
+}
 
 /***
  *** Modules: Glossary
@@ -745,7 +760,7 @@ table.message_search_results td {
 }
 
 #mod-glossary-report .generalbox .teacher {
-  background: #F0F0F0;
+  background-color: #F0F0F0;
 }
 
 .categoryheader {
@@ -782,7 +797,7 @@ body#mod-quiz-report table#attempts td {
   border-color: #dddddd;
 }
 body#mod-quiz-report table#attempts .r1 {
-  background-color: #eeeeee;
+  background-color: #FFFFFF;
 }
 
 
@@ -831,7 +846,7 @@ body#mod-quiz-report table#attempts .r1 {
  ***/
 
 #mod-survey-view .r0 {
-  background-color: #EEEEEE;
+  background-color: #FFFFFF;
 }
 #mod-survey-view .r1 {
   background-color: #DDDDDD;
