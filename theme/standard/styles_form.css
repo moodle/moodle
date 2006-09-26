@@ -24,6 +24,11 @@ form.mform fieldset legend {
 form.mform label {
     margin: 0 0 0 5px;
 }
+form.mform div.qfrow {
+    clear: both;
+    width: 100%;
+    min-height: 1.5em;
+}
 form.mform label.qflabel {
     display: block;
     float: left;
@@ -32,31 +37,27 @@ form.mform label.qflabel {
     margin: 5px 0 0 0;
     text-align: right;
 }
-
-form.mform input, form.mform select {
-    width: auto;
-}
-form.mform textarea {
- }
-form.mform br {
-    clear: left;
-}
-
 form.mform div.qfelement {
-    display: inline;
+    /* display: inline; */
+    display: block;
     float: left;
     margin: 5px 0 0 10px;
     padding: 0;
 }
-
+form.mform input, form.mform select {
+    width: auto;
+}
+form.mform textarea {
+}
+form.mform br {
+    clear: left;
+}
 form.mform div.htmleditor {
     margin: 0 auto 10px auto;
     width : 600px;
     clear:both;
     float:none;
 }
-
-
 form.mform span.error, form.mform span.required {
     color: red;
 }
@@ -64,7 +65,4 @@ form.mform div.error {
     border: 1px solid red;
     padding: 5px;
     color: inherit;
-}
-form.mform div.qfrow {
-    clear:both;
 }
