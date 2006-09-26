@@ -962,6 +962,15 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
 
     $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
 
+    // Oracle DIRTY HACK - 
+    if ($CFG->dbtype == 'oci8po') {
+        $dataobject = new StdClass;
+        $dataobject->{$newfield} = $newvalue;
+        oracle_dirty_hack($table, $dataobject); // Convert object to the correct "empty" values for Oracle DB
+        $newvalue = $dataobject->{$newfield};
+    }
+    /// End DIRTY HACK
+
     return $db->Execute('UPDATE '. $CFG->prefix . $table .' SET '. $newfield  .' = \''. $newvalue .'\' '. $select);
 }
 
