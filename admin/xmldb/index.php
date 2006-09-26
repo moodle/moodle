@@ -102,7 +102,7 @@
                     /// Save the original one to add it from ours. Global too! :-(
                         global $standard_javascript;
                         $standard_javascript = $CFG->javascript;  // Save original javascript file
-                        $CFG->javascript = $CFG->dirroot.'/admin/xmldb/javascript.php';  //Use our custom javascript code
+                        $CFG->javascript = $CFG->dirroot.'/'.$CFG->admin.'/xmldb/javascript.php';  //Use our custom javascript code
                     /// Go with standard admin header
                         admin_externalpage_print_header($adminroot);
                         print_heading($xmldb_action->getTitle());

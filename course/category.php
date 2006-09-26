@@ -107,7 +107,7 @@
     }
 
 /// Print link to roles
-    print('<a href="'.$CFG->wwwroot.'/admin/roles/assign.php?contextid='.$context->id.'">'.get_string('roles').'</a>');
+    print('<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">'.get_string('roles').'</a>');
 
 /// Print the category selector
 

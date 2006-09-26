@@ -249,7 +249,7 @@
                         redirect($CFG->wwwroot."/course/importstudents.php?id=$newcourseid");
 
                 } else if (has_capability('moodle/role:assign', $context)) { // Redirect users with assign capability to assign users to different roles
-                    redirect($CFG->wwwroot."/admin/roles/assign.php?contextid=$context->id");
+                    redirect($CFG->wwwroot."/$CFG->admin/roles/assign.php?contextid=$context->id");
 
                 } else {          // Add current teacher and send to course
 

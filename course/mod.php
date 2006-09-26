@@ -638,7 +638,7 @@
     if (!empty($cm->id)) {
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         $currenttab = 'update';
-        include_once($CFG->dirroot.'/admin/roles/tabs.php');
+        include_once($CFG->dirroot.'/'.$CFG->admin.'/roles/tabs.php');
     }
 
     unset($SESSION->modform); // Clear any old ones that may be hanging around.

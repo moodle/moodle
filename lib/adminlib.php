@@ -2333,7 +2333,7 @@ function admin_externalpage_setup($section, $adminroot) {
     if ($site = get_site()) {
         require_login();
     } else {
-        redirect($CFG->wwwroot . '/admin/index.php');
+        redirect($CFG->wwwroot . '/'.$CFG->admin.'/index.php');
         die;
     }
 
@@ -2412,12 +2412,12 @@ function admin_get_root() {
         // start the admin tree!
         $ADMIN = new admin_category('root','Administration');
         // we process this file first to get categories up and running
-        include($CFG->dirroot . '/admin/settings/top.php');
+        include($CFG->dirroot . '/'.$CFG->admin.'/settings/top.php');
 
         // now we process all other files in admin/settings to build the
         // admin tree
-        foreach (glob($CFG->dirroot . '/admin/settings/*.php') as $file) {
-            if ($file != $CFG->dirroot . '/admin/settings/top.php') {
+        foreach (glob($CFG->dirroot . '/'.$CFG->admin.'/settings/*.php') as $file) {
+            if ($file != $CFG->dirroot . '/'.$CFG->admin.'/settings/top.php') {
                 include_once($file);
             }
         }

@@ -50,7 +50,7 @@
         }
     } else { // no roles yet
         if (has_capability('moodle/user:assign', $context)) {
-            redirect($CFG->wwwroot.'/admin/roles/assign.php?contextid='.$context->id);  
+            redirect($CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id);  
         } else {
             error ('no participants found for this course');  
         }
@@ -435,7 +435,7 @@ function checkchecked(form) {
         $a->items = $currentrole->name;
         echo '<h2>'.get_string('counteditems', '', $a);
         if (user_can_assign($context, $roleid)) {
-            echo ' <a href="'.$CFG->wwwroot.'/admin/roles/assign.php?roleid='.$roleid.'&amp;contextid='.$context->id.'">';
+            echo ' <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?roleid='.$roleid.'&amp;contextid='.$context->id.'">';
             echo '<img src="'.$CFG->pixpath.'/i/edit.gif" height="16" width="16" alt="" /></a>';
         }
         echo '</h2>';

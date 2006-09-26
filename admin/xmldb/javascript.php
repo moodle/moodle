@@ -39,15 +39,15 @@
     $postaction = optional_param('postaction', '', PARAM_ALPHAEXT);
 /// If the js exists, load it
     if ($action) {
-        $file    = $CFG->dirroot . '/admin/xmldb/actions/' . $action . '/' . $action . '.js';
-        $wwwfile = $CFG->wwwroot . '/admin/xmldb/actions/' . $action . '/' . $action . '.js';
+        $file    = $CFG->dirroot . '/'.$CFG->admin.'/xmldb/actions/' . $action . '/' . $action . '.js';
+        $wwwfile = $CFG->wwwroot . '/'.$CFG->admin.'/xmldb/actions/' . $action . '/' . $action . '.js';
         if (file_exists($file) && is_readable($file)) {
             echo '<script language="JavaScript" type="text/javascript" src="' . $wwwfile . '"></script>' . "\n";
         } else {
         /// Try to load the postaction javascript if exists
             if ($postaction) {
-                $file    = $CFG->dirroot . '/admin/xmldb/actions/' . $postaction . '/' . $postaction . '.js';
-                $wwwfile = $CFG->wwwroot . '/admin/xmldb/actions/' . $postaction . '/' . $postaction . '.js';
+                $file    = $CFG->dirroot . '/'.$CFG->admin.'/xmldb/actions/' . $postaction . '/' . $postaction . '.js';
+                $wwwfile = $CFG->wwwroot . '/'.$CFG->admin.'/xmldb/actions/' . $postaction . '/' . $postaction . '.js';
                 if (file_exists($file) && is_readable($file)) {
                     echo '<script language="JavaScript" type="text/javascript" src="' . $wwwfile . '"></script>' . "\n";
                 }

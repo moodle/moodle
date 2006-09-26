@@ -5,7 +5,7 @@
 
 $ADMIN->add('courses', new admin_externalpage('coursemgmt', get_string('coursemgmt', 'admin'), $CFG->wwwroot . '/course/index.php?categoryedit=on'));
 
-$ADMIN->add('courses', new admin_externalpage('enrolment', get_string('enrolments'), $CFG->wwwroot . '/admin/enrol.php'));
+$ADMIN->add('courses', new admin_externalpage('enrolment', get_string('enrolments'), $CFG->wwwroot . '/'.$CFG->admin.'/enrol.php'));
 
 // "courserequests" settingpage
 $temp = new admin_settingpage('courserequest', get_string('courserequest'));

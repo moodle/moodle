@@ -11,8 +11,7 @@ if (!$site = get_site()) {
 $str = get_strings(array('enrolments', 'users', 'administration', 'settings'));
 
 print_header("$site->shortname: $str->enrolments", "$site->fullname",
-              "<a href=\"../../admin/index.php\">$str->administration</a> -> 
-               <a href=\"../../admin/users.php\">$str->users</a> -> 
+              "<a href=\"../../$CFG->admin/index.php\">$str->administration</a> -> 
                $str->enrolments -> IMS import");
 
 require_once('enrol.php');

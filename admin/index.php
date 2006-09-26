@@ -524,7 +524,7 @@
 
     if (optional_param('dbmigrate')) {               // ??? Is this actually used?
         print_simple_box_start('center','60%');
-        require_once($CFG->dirroot.'/admin/utfdbmigrate.php');
+        require_once($CFG->dirroot.'/'.$CFG->admin.'/utfdbmigrate.php');
         db_migrate2utf8();
         print_simple_box_end();
     }

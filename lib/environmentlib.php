@@ -279,7 +279,7 @@ function load_environment_xml() {
     $file = $CFG->dataroot.'/environment/environment.xml';
     if (!is_file($file) || !is_readable($file) || !$contents = file_get_contents($file)) {
     /// Fallback to fixed $CFG->admin/environment.xml
-        $file = $CFG->dirroot.'/admin/environment.xml';
+        $file = $CFG->dirroot.'/'.$CFG->admin.'/environment.xml';
         if (!is_file($file) || !is_readable($file) || !$contents = file_get_contents($file)) {
             return false;
         }
