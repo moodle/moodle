@@ -59,6 +59,10 @@
 
     add_to_log($course->id, 'scorm', 'pre-view', 'view.php?id='.$cm->id, "$scorm->id");
 
+    if ((has_capability('mod/scorm:skipview', get_context_instance(CONTEXT_MODULE,$cm->id))) && scorm_simple_play($scorm,$USER)) {
+        exit;
+    }
+
     //
     // Print the page header
     //

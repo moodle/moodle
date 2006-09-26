@@ -425,8 +425,12 @@ function scorm_grade_user($scorm, $userid, $time=false) {
     }
 }
 
-function scorm_count_launchable($scormid,$organization) {
-    return count_records_select('scorm_scoes',"scorm=$scormid AND organization='$organization' AND launch<>''");
+function scorm_count_launchable($scormid,$organization='') {
+    $strorganization = '';
+    if (!empty($organization)) {
+        $strorganization = " AND organization='$organization'";
+    }
+    return count_records_select('scorm_scoes',"scorm=$scormid$strorganization AND launch<>''");
 }
 
 function scorm_get_last_attempt($scormid, $userid) {
@@ -563,6 +567,24 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
               </form>
           </div>
 <?php
+}
+
+function scorm_simple_play($scorm,$user) {
+    $result = false;
+    $scoes = get_records_select('scorm_scoes','scorm='.$scorm->id.' AND launch<>""');
+    if (count($scoes) == 1) {
+        if ($scorm->skipview >= 1) {
+            $sco = current($scoes);
+            if (scorm_get_tracks($sco->id,$user->id) === false) {
+                header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id);
+                $result = true;
+            } else if ($scorm->skipview == 2) {
+                header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id);
+                $result = true;
+            }
+        }
+    }
+    return $result;
 }
 
 function scorm_parse($scorm) {
