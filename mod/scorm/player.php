@@ -92,6 +92,8 @@
             } else {
                 $mode = 'normal';
             }
+        } else {
+            $mode = 'normal';
         }
     }
 
