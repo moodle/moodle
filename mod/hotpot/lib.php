@@ -2150,6 +2150,13 @@ function hotpot_string_id($str) {
 	}
 	return $id;
 }
+function hotpot_get_view_actions() {
+    return array('view','view all','report');
+}
+
+function hotpot_get_post_actions() {
+    return array('attempt','review','submit');
+}
 
 if (!function_exists('file_get_contents')) {
 	// add this function for php version<4.3
