@@ -402,7 +402,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         }
         if ($ld && !empty($log->info)) {
             // ugly hack to make sure fullname is shown correctly
-            if (($ld->mtable == 'user') and ($ld->field == 'CONCAT(firstname," ",lastname)')) {
+            if (($ld->mtable == 'user') and ($ld->field == sql_concat('firstname', "' '" , 'lastname'))) {
                 $log->info = fullname(get_record($ld->mtable, 'id', $log->info), true);
             } else {
                 $log->info = get_field($ld->mtable, $ld->field, 'id', $log->info);
@@ -445,7 +445,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
 
 function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
                         $modid, $modaction, $groupid) {
-    
+
     $text = get_string('course')."\t".get_string('time')."\t".get_string('ip_address')."\t".
             get_string('fullname')."\t".get_string('action')."\t".get_string('info');
     
@@ -490,7 +490,7 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
         }
         if ($ld && !empty($log->info)) {
             // ugly hack to make sure fullname is shown correctly
-            if (($ld->mtable == 'user') and ($ld->field == 'CONCAT(firstname," ",lastname)')) {
+            if (($ld->mtable == 'user') and ($ld->field ==  sql_concat('firstname', "' '" , 'lastname'))) {
                 $log->info = fullname(get_record($ld->mtable, 'id', $log->info), true);
             } else {
                 $log->info = get_field($ld->mtable, $ld->field, 'id', $log->info);
@@ -582,7 +582,7 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
         }
         if ($ld && !empty($log->info)) {
             // ugly hack to make sure fullname is shown correctly
-            if (($ld->mtable == 'user') and ($ld->field == 'CONCAT(firstname," ",lastname)')) {
+            if (($ld->mtable == 'user') and ($ld->field == sql_concat('firstname', "' '" , 'lastname'))) {
                 $log->info = fullname(get_record($ld->mtable, 'id', $log->info), true);
             } else {
                 $log->info = get_field($ld->mtable, $ld->field, 'id', $log->info);
@@ -686,7 +686,7 @@ function print_log_ooo($course, $user, $date, $order='l.time DESC', $modname,
         }
         if ($ld && !empty($log->info)) {
             // ugly hack to make sure fullname is shown correctly
-            if (($ld->mtable == 'user') and ($ld->field == 'CONCAT(firstname," ",lastname)')) {
+            if (($ld->mtable == 'user') and ($ld->field == sql_concat('firstname', "' '" , 'lastname'))) {
                 $log->info = fullname(get_record($ld->mtable, 'id', $log->info), true);
             } else {
                 $log->info = get_field($ld->mtable, $ld->field, 'id', $log->info);
