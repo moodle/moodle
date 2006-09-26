@@ -243,7 +243,7 @@ class quiz_report extends quiz_default_report {
         $contextlists = get_related_contexts_string(get_context_instance(CONTEXT_COURSE, $course->id));
 
         // Construct the SQL
-        $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, '.
+        $select = 'SELECT '.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, '.
             'qa.uniqueid as attemptuniqueid, qa.id AS attempt, u.id AS userid, u.firstname, u.lastname, u.picture, '.
             'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
         if ($course->id != SITEID) { // this is too complicated, so just do it for each of the four cases.
@@ -279,12 +279,12 @@ class quiz_report extends quiz_default_report {
                     $where = ' WHERE qa.quiz = '.$quiz->id.' AND qa.preview = 0';
                 } // noattempts = 2 means we want all students, with or without attempts
             }
-            $countsql = 'SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
+            $countsql = 'SELECT COUNT(DISTINCT('.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
         } else {
             if (empty($noattempts)) {
                 $from   = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid ';
                 $where = ' WHERE qa.quiz = '.$quiz->id.' AND qa.preview = 0';
-                $countsql = 'SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
+                $countsql = 'SELECT COUNT(DISTINCT('.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
             }
         }
         if (!$download) {
