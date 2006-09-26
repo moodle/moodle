@@ -1207,6 +1207,10 @@ function sql_paging_limit($page, $recordsperpage) {
 /**
  * Returns the proper SQL to do LIKE in a case-insensitive way
  *
+ * Note the LIKE are case sensitive for Oracle. Oracle 10g is required to use 
+ * the caseinsensitive search using regexp_like() or NLS_COMP=LINGUISTIC :-(
+ * See http://docs.moodle.org/en/XMLDB_Problems#Case-insensitive_searches
+ * 
  * @uses $CFG
  * @return string
  */
@@ -1214,10 +1218,10 @@ function sql_ilike() {
     global $CFG;
 
     switch ($CFG->dbtype) {
-        case 'mysql':
-             return 'LIKE';
-        default:
+        case 'postgres7':
              return 'ILIKE';
+        default:
+             return 'LIKE';
     }
 }
 
