@@ -32,8 +32,13 @@ In detail, the libraries added here are:
 - PEAR HTML_Quickform_Renderer_Tableless:
     - Current version: 0.3.4
     - by Mark Wiesemann
-    - License: PHP
+    - License: PHP (Permission given to Moodle to redistribute under GPL)
     - http://pear.php.net/package/HTML_QuickForm_Renderer_Tableless
+- PEAR HTML_QuickForm_DHTMLRulesTableless:
+    - Current version: 0.1.2
+    - by Alexey Borzov, Adam Daniel, Bertrand Mansion, Justin Patrin, Mark Wiesemann
+    - License: PHP (Permission given to Moodle to redistribute under GPL)
+    - http://pear.php.net/package/HTML_QuickForm_DHTMLRulesTableless
 - PEAR HTML_Common:
     - Current version: 1.2.2
     - by Adam Daniel, Bertrand Mansion, Klaus Guenther, Alexey Borzov,
