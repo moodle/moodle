@@ -221,7 +221,7 @@ class test extends XMLDBAction {
             $test = new stdClass;
             $field = new XMLDBField('intro');
             $field->setAttributes(XMLDB_TYPE_TEXT, 'big', null, XMLDB_NOTNULL, null, null, null, null);
-            
+
             $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
             $test->status = change_field_precision($table, $field, false, false);
             if (!$test->status) {
@@ -236,7 +236,7 @@ class test extends XMLDBAction {
             $test = new stdClass;
             $field = new XMLDBField('secondname');
             $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, null);
-            
+
             $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
             $test->status = change_field_precision($table, $field, false, false);
             if (!$test->status) {
@@ -251,7 +251,7 @@ class test extends XMLDBAction {
             $test = new stdClass;
             $field = new XMLDBField('grade');
             $field->setAttributes(XMLDB_TYPE_NUMBER, '10,2', null, null, null, null, null, null);
-            
+
             $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
             $test->status = change_field_precision($table, $field, false, false);
             if (!$test->status) {
@@ -266,7 +266,7 @@ class test extends XMLDBAction {
             $test = new stdClass;
             $field = new XMLDBField('grade');
             $field->setAttributes(XMLDB_TYPE_NUMBER, '10,2', XMLDB_UNSIGNED, null, null, null, null, null);
-            
+
             $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
             $test->status = change_field_unsigned($table, $field, false, false);
             if (!$test->status) {
@@ -281,7 +281,7 @@ class test extends XMLDBAction {
             $test = new stdClass;
             $field = new XMLDBField('grade');
             $field->setAttributes(XMLDB_TYPE_NUMBER, '10,2', null, null, null, null, null, null);
-            
+
             $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
             $test->status = change_field_unsigned($table, $field, false, false);
             if (!$test->status) {
@@ -296,7 +296,7 @@ class test extends XMLDBAction {
             $test = new stdClass;
             $field = new XMLDBField('name');
             $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, 'Moodle');
-            
+
             $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
             $test->status = change_field_notnull($table, $field, false, false);
             if (!$test->status) {
@@ -311,7 +311,7 @@ class test extends XMLDBAction {
             $test = new stdClass;
             $field = new XMLDBField('name');
             $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, 'Moodle');
-            
+
             $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
             $test->status = change_field_notnull($table, $field, false, false);
             if (!$test->status) {
@@ -326,7 +326,7 @@ class test extends XMLDBAction {
             $test = new stdClass;
             $field = new XMLDBField('name');
             $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, null);
-            
+
             $test->sql = $table->getModifyDefaultSQL($CFG->dbtype, $CFG->prefix, $field, true);
             $test->status = change_field_default($table, $field, false, false);
             if (!$test->status) {
@@ -341,7 +341,7 @@ class test extends XMLDBAction {
             $test = new stdClass;
             $field = new XMLDBField('name');
             $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, 'Moodle');
-            
+
             $test->sql = $table->getModifyDefaultSQL($CFG->dbtype, $CFG->prefix, $field, true);
             $test->status = change_field_default($table, $field, false, false);
             if (!$test->status) {
@@ -356,7 +356,7 @@ class test extends XMLDBAction {
             $test = new stdClass;
             $field = new XMLDBField('secondname');
             $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, 'Moodle2');
-            
+
             $test->sql = $table->getModifyDefaultSQL($CFG->dbtype, $CFG->prefix, $field, true);
             $test->status = change_field_default($table, $field, false, false);
             if (!$test->status) {
@@ -372,7 +372,7 @@ class test extends XMLDBAction {
             $test = new stdClass;
             $field = new XMLDBField('secondname');
             $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, null);
-            
+
             $test->sql = $table->getModifyDefaultSQL($CFG->dbtype, $CFG->prefix, $field, true);
             $test->status = change_field_default($table, $field, false, false);
             if (!$test->status) {
@@ -380,6 +380,71 @@ class test extends XMLDBAction {
             }
             $tests['drop field default of NOT NULL field'] = $test;
         }
+
+    /// 19th test. Adding one unique index to the table
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $index = new XMLDBIndex('secondname');
+            $index->setAttributes(XMLDB_INDEX_UNIQUE, array('name', 'secondname', 'grade'));
+
+            $test->sql = $table->getAddIndexSQL($CFG->dbtype, $CFG->prefix, $index, true);
+            $test->status = add_index($table, $index, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['add unique index'] = $test;
+        }
+
+    /// 20 test. Adding one not unique index to the table
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $index = new XMLDBIndex('secondname');
+            $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('course', 'name'));
+
+            $test->sql = $table->getAddIndexSQL($CFG->dbtype, $CFG->prefix, $index, true);
+            $test->status = add_index($table, $index, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['add not unique index'] = $test;
+        }
+
+    /// 21 test. Re-add the same index than previous test. Check find_index_name() works.
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $index = new XMLDBIndex('secondname');
+            $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('name', 'course'));
+
+            if ($indexfound = find_index_name($table, $index)) {
+                $test->status = true;
+                $test->sql = array();
+            } else {
+                $test->status = true;
+                $test->error = 'Index not found!';
+                $test->sql = array();
+            }
+
+            $tests['check find_index_name()'] = $test;
+        }
+
+    /// 22 test. Dropping one index from the table
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $index = new XMLDBIndex('name');
+            $index->setAttributes(XMLDB_INDEX_UNIQUE, array('name', 'grade', 'secondname'));
+
+            $test->sql = $table->getDropIndexSQL($CFG->dbtype, $CFG->prefix, $index, true);
+            $test->status = drop_index($table, $index, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['drop index'] = $test;
+        }
+
 
     /// TODO: Check here values of the inserted records to see that everything ha the correct value
 
