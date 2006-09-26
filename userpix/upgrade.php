@@ -7,7 +7,7 @@
 
     require_login();
 
-    require_capability('moodle/site:config', get_context_instance(CONTEXT_SITE, SITEID));
+    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
     
     if (!$users = get_records("user", "picture", "1", "lastaccess DESC", "id,firstname,lastname")) {
         error("no users!");
