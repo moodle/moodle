@@ -190,7 +190,7 @@ function scorm_parse_scorm($pkgdir,$scormid) {
         $xmlstring = file_get_contents($manifestfile);
         $objXML = new xml2Array();
         $manifests = $objXML->parse($xmlstring);
-        //   print_r($manifests); 
+        //print_r($manifests); 
         $scoes = new stdClass();
         $scoes->version = '';
         $scoes = scorm_get_manifest($manifests,$scoes);
@@ -200,7 +200,8 @@ function scorm_parse_scorm($pkgdir,$scormid) {
             foreach ($scoes->elements as $manifest => $organizations) {
                 foreach ($organizations as $organization => $items) {
                     foreach ($items as $identifier => $item) {
-                        $newitem = new stdClass();
+                        // This new db mngt will support all SCORM future extensions
+                        /*$newitem = new stdClass(); 
                         $newitem->scorm = $scormid;
                         $newitem->manifest = $manifest;
                         $newitem->organization = $organization;
@@ -228,8 +229,19 @@ function scorm_parse_scorm($pkgdir,$scormid) {
                                 $data->value = $item->$optionaldata;
                                 $dataid = insert_record('scorm_scoes_data');
                             }
-                        }
+                        } */
 
+                        $item->scorm = $scormid;
+                        $item->manifest = $manifest;
+                        $item->organization = $organization;
+                        if ($olditemid = scorm_array_search('identifier',$item->identifier,$olditems)) {
+                            $item->id = $olditemid;
+                            $id = update_record('scorm_scoes',$item);
+                            unset($olditems[$olditemid]);
+                        } else {
+                            $id = insert_record('scorm_scoes',$item);
+                        }
+                
                         if (($launch == 0) && ((empty($scoes->defaultorg)) || ($scoes->defaultorg == $identifier))) {
                             $launch = $id;
                         }
@@ -239,7 +251,7 @@ function scorm_parse_scorm($pkgdir,$scormid) {
             if (!empty($olditems)) {
                 foreach($olditems as $olditem) {
                    delete_records('scorm_scoes','id',$olditem->id);
-                   delete_records('scorm_scoes_data','scoid',$olditem->id);
+                   //delete_records('scorm_scoes_data','scoid',$olditem->id);
                    delete_records('scorm_scoes_track','scoid',$olditem->id);
                 }
             }
