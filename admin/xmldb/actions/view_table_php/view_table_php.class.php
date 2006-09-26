@@ -128,7 +128,13 @@ class view_table_php extends XMLDBAction {
                          $optionspacer . 'change_field_enum (not imp!)',
                          $optionspacer . 'change_field_default',
                          'Keys',
-                         'Indexes');
+                         $optionspacer . 'add_key',
+                         $optionspacer . 'drop_key',
+                         $optionspacer . 'rename_key',
+                         'Indexes',
+                         $optionspacer . 'add_index',
+                         $optionspacer . 'drop_index',
+                         $optionspacer . 'rename_index');
         foreach ($commands as $command) {
             $popcommands[str_replace($optionspacer, '', $command)] = str_replace('_', ' ', $command);
         }
@@ -221,6 +227,48 @@ class view_table_php extends XMLDBAction {
                         $o.= s($this->change_field_default_php($structure, $tableparam, $fieldkeyindexparam));
                     } else {
                         $o.= $this->str['mustselectonefield'];
+                    }
+                    break;
+                case 'add_key':
+                    if ($fieldkeyindexinitial == 'k') { //Only if we have got one key
+                        $o.= s($this->add_key_php($structure, $tableparam, $fieldkeyindexparam));
+                    } else {
+                        $o.= $this->str['mustselectonekey'];
+                    }
+                    break;
+                case 'drop_key':
+                    if ($fieldkeyindexinitial == 'k') { //Only if we have got one key
+                        $o.= s($this->drop_key_php($structure, $tableparam, $fieldkeyindexparam));
+                    } else {
+                        $o.= $this->str['mustselectonekey'];
+                    }
+                    break;
+                case 'rename_key':
+                    if ($fieldkeyindexinitial == 'k') { //Only if we have got one key
+                        $o.= s($this->rename_key_php($structure, $tableparam, $fieldkeyindexparam));
+                    } else {
+                        $o.= $this->str['mustselectonekey'];
+                    }
+                    break;
+                case 'add_index':
+                    if ($fieldkeyindexinitial == 'i') { //Only if we have got one index
+                        $o.= s($this->add_index_php($structure, $tableparam, $fieldkeyindexparam));
+                    } else {
+                        $o.= $this->str['mustselectoneindex'];
+                    }
+                    break;
+                case 'drop_index':
+                    if ($fieldkeyindexinitial == 'i') { //Only if we have got one index
+                        $o.= s($this->drop_index_php($structure, $tableparam, $fieldkeyindexparam));
+                    } else {
+                        $o.= $this->str['mustselectoneindex'];
+                    }
+                    break;
+                case 'rename_index':
+                    if ($fieldkeyindexinitial == 'i') { //Only if we have got one index
+                        $o.= s($this->rename_index_php($structure, $tableparam, $fieldkeyindexparam));
+                    } else {
+                        $o.= $this->str['mustselectoneindex'];
                     }
                     break;
             }
@@ -333,7 +381,7 @@ class view_table_php extends XMLDBAction {
      * @param XMLDBStructure structure object containing all the info
      * @param string table table name
      * @param string field field name to be renamed
-     * @return string PHP code to be used to drop the field
+     * @return string PHP code to be used to rename the field
      */
     function rename_field_php($structure, $table, $field) {
 
@@ -550,6 +598,270 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch change of default for field ' . $field->getName() . XMLDB_LINEFEED;
         $result .= '        $status = $status && change_field_default($table, $field);' . XMLDB_LINEFEED;
+
+    /// Add standard PHP footer
+        $result .= XMLDB_PHP_FOOTER;
+
+        return $result;
+    }
+
+    /**
+     * This function will generate all the PHP code needed to
+     * create one key using XMLDB objects and functions
+     *
+     * @param XMLDBStructure structure object containing all the info
+     * @param string table table name
+     * @param string key key name to be created
+     * @return string PHP code to be used to create the key
+     */
+    function add_key_php($structure, $table, $key) {
+
+        $result = '';
+    /// Validate if we can do it
+        if (!$table = $structure->getTable($table)) {
+            return false;
+        }
+        if (!$key = $table->getKey($key)) {
+            return false;
+        }
+        if ($table->getAllErrors()) {
+            return false;
+        }
+
+    /// Add the standard PHP header
+        $result .= XMLDB_PHP_HEADER;
+
+    /// Add contents
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Define key ' . $key->getName() . ' ('. $key->getXMLDBKeyName($key->getType()) . ') to be added to ' . $table->getName() . XMLDB_LINEFEED;
+        $result .= '        $table = new XMLDBTable(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $key = new XMLDBKey(' . "'" . $key->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $key->setAttributes(' . $key->getPHP(true) . ');' . XMLDB_LINEFEED;
+
+    /// Launch the proper DDL
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Launch add key ' . $key->getName() . XMLDB_LINEFEED;
+        $result .= '        $status = $status && add_key($table, $key);' . XMLDB_LINEFEED;
+
+    /// Add standard PHP footer
+        $result .= XMLDB_PHP_FOOTER;
+
+        return $result;
+    }
+
+    /**
+     * This function will generate all the PHP code needed to
+     * drop one key using XMLDB objects and functions
+     *
+     * @param XMLDBStructure structure object containing all the info
+     * @param string table table name
+     * @param string key key name to be dropped
+     * @return string PHP code to be used to drop the key
+     */
+    function drop_key_php($structure, $table, $key) {
+
+        $result = '';
+    /// Validate if we can do it
+        if (!$table = $structure->getTable($table)) {
+            return false;
+        }
+        if (!$key = $table->getKey($key)) {
+            return false;
+        }
+        if ($table->getAllErrors()) {
+            return false;
+        }
+
+    /// Add the standard PHP header
+        $result .= XMLDB_PHP_HEADER;
+
+    /// Add contents
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Define key ' . $key->getName() . ' ('. $key->getXMLDBKeyName($key->getType()) . ') to be dropped form ' . $table->getName() . XMLDB_LINEFEED;
+        $result .= '        $table = new XMLDBTable(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $key = new XMLDBKey(' . "'" . $key->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $key->setAttributes(' . $key->getPHP(true) . ');' . XMLDB_LINEFEED;
+
+    /// Launch the proper DDL
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Launch drop key ' . $key->getName() . XMLDB_LINEFEED;
+        $result .= '        $status = $status && drop_key($table, $key);' . XMLDB_LINEFEED;
+
+    /// Add standard PHP footer
+        $result .= XMLDB_PHP_FOOTER;
+
+        return $result;
+    }
+
+    /**
+     * This function will generate all the PHP code needed to
+     * rename one key using XMLDB objects and functions
+     *
+     * @param XMLDBStructure structure object containing all the info
+     * @param string table table name
+     * @param string key key name to be renamed
+     * @return string PHP code to be used to rename the key
+     */
+    function rename_key_php($structure, $table, $key) {
+
+        $result = '';
+    /// Validate if we can do it
+        if (!$table = $structure->getTable($table)) {
+            return false;
+        }
+        if (!$key = $table->getKey($key)) {
+            return false;
+        }
+        if ($table->getAllErrors()) {
+            return false;
+        }
+
+    /// Add the standard PHP header
+        $result .= XMLDB_PHP_HEADER;
+
+    /// Add contents
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Define key ' . $key->getName() . ' ('. $key->getXMLDBKeyName($key->getType()) . ') to be renamed to NEWNAMEGOESHERE' . XMLDB_LINEFEED;
+        $result .= '        $table = new XMLDBTable(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $key = new XMLDBKey(' . "'" . $key->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $key->setAttributes(' . $key->getPHP(true) . ');' . XMLDB_LINEFEED;
+
+    /// Launch the proper DDL
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Launch rename key ' . $key->getName() . XMLDB_LINEFEED;
+        $result .= '        $status = $status && rename_key($table, $key, ' . "'" . 'NEWNAMEGOESHERE' . "'" . ');' . XMLDB_LINEFEED;
+
+    /// Add standard PHP footer
+        $result .= XMLDB_PHP_FOOTER;
+
+        return $result;
+    }
+
+    /**
+     * This function will generate all the PHP code needed to
+     * create one index using XMLDB objects and functions
+     *
+     * @param XMLDBStructure structure object containing all the info
+     * @param string table table name
+     * @param string index index name to be created
+     * @return string PHP code to be used to create the index
+     */
+    function add_index_php($structure, $table, $index) {
+
+        $result = '';
+    /// Validate if we can do it
+        if (!$table = $structure->getTable($table)) {
+            return false;
+        }
+        if (!$index = $table->getIndex($index)) {
+            return false;
+        }
+        if ($table->getAllErrors()) {
+            return false;
+        }
+
+    /// Add the standard PHP header
+        $result .= XMLDB_PHP_HEADER;
+
+    /// Add contents
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Define index ' . $index->getName() . ' ('. ($index->getUnique() ? 'unique' : 'not unique') . ') to be added to ' . $table->getName() . XMLDB_LINEFEED;
+        $result .= '        $table = new XMLDBTable(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $index = new XMLDBIndex(' . "'" . $index->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $key->setAttributes(' . $index->getPHP(true) . ');' . XMLDB_LINEFEED;
+
+    /// Launch the proper DDL
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Launch add index ' . $index->getName() . XMLDB_LINEFEED;
+        $result .= '        $status = $status && add_index($table, $index);' . XMLDB_LINEFEED;
+
+    /// Add standard PHP footer
+        $result .= XMLDB_PHP_FOOTER;
+
+        return $result;
+    }
+
+    /**
+     * This function will generate all the PHP code needed to
+     * drop one index using XMLDB objects and functions
+     *
+     * @param XMLDBStructure structure object containing all the info
+     * @param string table table name
+     * @param string index index name to be dropped
+     * @return string PHP code to be used to drop the index
+     */
+    function drop_index_php($structure, $table, $index) {
+
+        $result = '';
+    /// Validate if we can do it
+        if (!$table = $structure->getTable($table)) {
+            return false;
+        }
+        if (!$index = $table->getIndex($index)) {
+            return false;
+        }
+        if ($table->getAllErrors()) {
+            return false;
+        }
+
+    /// Add the standard PHP header
+        $result .= XMLDB_PHP_HEADER;
+
+    /// Add contents
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Define index ' . $index->getName() . ' ('. ($index->getUnique() ? 'unique' : 'not unique') . ') to be dropped form ' . $table->getName() . XMLDB_LINEFEED;
+        $result .= '        $table = new XMLDBTable(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $index = new XMLDBIndex(' . "'" . $index->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $index->setAttributes(' . $index->getPHP(true) . ');' . XMLDB_LINEFEED;
+
+    /// Launch the proper DDL
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Launch drop index ' . $index->getName() . XMLDB_LINEFEED;
+        $result .= '        $status = $status && drop_index($table, $index);' . XMLDB_LINEFEED;
+
+    /// Add standard PHP footer
+        $result .= XMLDB_PHP_FOOTER;
+
+        return $result;
+    }
+
+    /**
+     * This function will generate all the PHP code needed to
+     * rename one index using XMLDB objects and functions
+     *
+     * @param XMLDBStructure structure object containing all the info
+     * @param string table table name
+     * @param string index index name to be renamed
+     * @return string PHP code to be used to rename the index
+     */
+    function rename_index_php($structure, $table, $index) {
+
+        $result = '';
+    /// Validate if we can do it
+        if (!$table = $structure->getTable($table)) {
+            return false;
+        }
+        if (!$index = $table->getIndex($index)) {
+            return false;
+        }
+        if ($table->getAllErrors()) {
+            return false;
+        }
+
+    /// Add the standard PHP header
+        $result .= XMLDB_PHP_HEADER;
+
+    /// Add contents
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Define index ' . $index->getName() . ' ('. ($index->getUnique() ? 'unique' : 'not unique') . ') to be renamed to NEWNAMEGOESHERE' . XMLDB_LINEFEED;
+        $result .= '        $table = new XMLDBTable(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $index = new XMLDBIndex(' . "'" . $index->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $index->setAttributes(' . $index->getPHP(true) . ');' . XMLDB_LINEFEED;
+
+    /// Launch the proper DDL
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Launch rename index ' . $index->getName() . XMLDB_LINEFEED;
+        $result .= '        $status = $status && rename_index($table, $index, ' . "'" . 'NEWNAMEGOESHERE' . "'" . ');' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
