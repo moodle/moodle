@@ -766,6 +766,12 @@ function recordset_to_menu($rs) {
             $menu[$rs->fields[$key0]] = $rs->fields[$key1];
             $rs->MoveNext();
         }
+        /// Really DIRTY HACK for Oracle, but it's the only way to make it work
+        /// until we got all those NOT NULL DEFAULT '' out from Moodle
+        if ($CFG->dbtype == 'oci8po') {
+            array_walk($menu, 'onespace2empty');
+        }
+        /// End of DIRTY HACK
         return $menu;
     } else {
         return false;
@@ -872,6 +878,13 @@ function get_field_sql($sql) {
     $rs = get_recordset_sql($sql);
 
     if ($rs && $rs->RecordCount() == 1) {
+        /// DIRTY HACK to retrieve all the ' ' (1 space) fields converted back
+        /// to '' (empty string) for Oracle. It's the only way to work with
+        /// all those NOT NULL DEFAULT '' fields until we definetively delete them
+        if ($CFG->dbtype == 'oci8po') {
+            return onespace2empty(reset($rs->fields));
+        }
+        /// End of DIRTY HACK
         return reset($rs->fields);
     } else {
         return false;
@@ -912,6 +925,13 @@ function get_fieldset_sql($sql) {
             array_push($results, $rs->fields[$key0]);
             $rs->MoveNext();
         }
+        /// DIRTY HACK to retrieve all the ' ' (1 space) fields converted back
+        /// to '' (empty string) for Oracle. It's the only way to work with
+        /// all those NOT NULL DEFAULT '' fields until we definetively delete them
+        if ($CFG->dbtype == 'oci8po') {
+            array_walk($results, 'onespace2empty');
+        }
+        /// End of DIRTY HACK
         return $results;
     } else {
         return false;
