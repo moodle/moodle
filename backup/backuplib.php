@@ -627,7 +627,8 @@
         $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
         
         foreach ($roles as $role) {
-            fwrite ($bf,start_tag('ROLE',2,true));
+            fwrite ($bf,start_tag('ROLE',2,true));                    
+            fwrite ($bf,full_tag('ID', 3, false, $role->id));
             fwrite ($bf,full_tag('NAME',3,false,$role->name));
             fwrite ($bf,full_tag('SHORTNAME',3,false,$role->shortname));
             // find and write all default capabilities
@@ -639,7 +640,11 @@
                     fwrite ($bf,full_tag('NAME', 5, false, $capability));
                     fwrite ($bf,full_tag('PERMISSION', 5, false, $value));
                     // use this to pull out the other info (timemodified and modifierid)
-                    $cap = get_record('role_capabilities', 'capability', $capability, 'contextid', $sitecontext->id);
+                    $cap = get_record_sql("SELECT * 
+                                           FROM {$CFG->prefix}role_capabilities
+                                           WHERE capability = '$capability'
+                                                 AND contextid = $sitecontext->id
+                                                 AND roleid = $role->id");
                     fwrite ($bf, full_tag("TIMEMODIFIED", 5, false, $cap->timemodified));
                     fwrite ($bf, full_tag("MODIFIERID", 5, false, $cap->modifierid));
                     fwrite ($bf,end_tag('CAPABILITY',4,true));  
@@ -2141,7 +2146,7 @@
      * @return array of role objects
      */ 
     function backup_fetch_roles($preferences) {
-    
+
         $contexts = array();
         $roles = array();
         
@@ -2182,6 +2187,7 @@
         if ($roles = get_roles_with_override_on_context($context)) {
             foreach ($roles as $role) {
                 fwrite ($bf, start_tag("ROLE", $startlevel+1, true));
+                fwrite ($bf, full_tag("ID", $startlevel+2, false, $role->id));
                 fwrite ($bf, full_tag("NAME", $startlevel+2, false, $role->name));
                 fwrite ($bf, full_tag("SHORTNAME", $startlevel+2, false, $role->shortname));
                 fwrite ($bf, start_tag("CAPABILITIES", $startlevel+2, true));    
@@ -2206,9 +2212,11 @@
     function write_role_assignments_xml($bf, $context, $startlevel) {
      /// write role_assign code here
         fwrite ($bf, start_tag("ROLES_ASSIGNMENTS", $startlevel, true));
+        
         if ($roles = get_roles_with_assignment_on_context($context)) {
-            foreach ($roles as $role) {
+            foreach ($roles as $role) {          
                 fwrite ($bf, start_tag("ROLE", $startlevel+1, true));
+                fwrite ($bf, full_tag("ID", $startlevel+2, false, $role->id));
                 fwrite ($bf, full_tag("NAME", $startlevel+2, false, $role->name));
                 fwrite ($bf, full_tag("SHORTNAME", $startlevel+2, false, $role->shortname)); 
                 fwrite ($bf, start_tag("ASSIGNMENTS", $startlevel+2, true));
