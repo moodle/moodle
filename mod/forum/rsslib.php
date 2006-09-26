@@ -68,6 +68,19 @@
         return $status;
     }
 
+
+    // Given a forum object, deletes the RSS file
+    function forum_rss_delete_file($forum) {
+        global $CFG;
+        $rssfile = rss_file_name('forum', $forum);
+        if (file_exists($rssfile)) {
+            return unlink($rssfile);
+        } else {
+            return true;
+        }
+    }
+
+
     function forum_rss_newstuff($forum, $time) {
     // If there is new stuff in the forum since $time then this returns
     // true.  Otherwise it returns false.

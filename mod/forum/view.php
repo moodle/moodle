@@ -61,7 +61,7 @@
 
 
     require_course_login($course, true, $cm);
-
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 
 /// Print header.
@@ -70,10 +70,7 @@
                  "$navigation ".format_string($forum->name), "", "", true, $buttontext, navmenu($course, $cm));
 
 
-
-/// Check whether the user should be able to view this forum.
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    
+/// Some capability checks.
     if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
         notice(get_string("activityiscurrentlyhidden"));
     }
@@ -101,7 +98,25 @@
 
 
 
-/// Print settings and things in a table across the top
+/// Print settings and things across the top
+
+    // If it's a simple single discussion forum, we need to print the display
+    // mode control.
+    if ($forum->type == 'single') {
+        if (! $discussion = get_record("forum_discussions", "forum", $forum->id)) {
+            if ($discussions = get_records("forum_discussions", "forum", $forum->id, "timemodified ASC")) {
+                $discussion = array_pop($discussions);
+            }
+        }
+        if ($discussion) {
+            if ($mode) {
+                set_user_preference("forum_displaymode", $mode);
+            }
+            $displaymode = get_user_preferences("forum_displaymode", $CFG->forum_displaymode);
+            forum_print_mode_form($forum->id, $displaymode, $forum->type);
+        }
+    }
+
     echo '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top">';
 
     /// 2 ways to do this, 1. we can changed the setup_and_print_groups functions

@@ -6,12 +6,13 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $d      = required_param('d', PARAM_INT);         // Discussion ID
-    $parent = optional_param('parent', 0, PARAM_INT); // If set, then display this post and all children.
-    $mode   = optional_param('mode', 0, PARAM_INT);   // If set, changes the layout of the thread
-    $move   = optional_param('move', 0, PARAM_INT);   // If set, moves this discussion to another forum
-    $mark   = optional_param('mark', 0, PARAM_INT);   // Used for tracking read posts if user initiated.
-    $postid = optional_param('postid', 0, PARAM_INT); // Used for tracking read posts if user initiated.
+    $d      = required_param('d', PARAM_INT);                // Discussion ID
+    $parent = optional_param('parent', 0, PARAM_INT);        // If set, then display this post and all children.
+    $mode   = optional_param('mode', 0, PARAM_INT);          // If set, changes the layout of the thread
+    $move   = optional_param('move', 0, PARAM_INT);          // If set, moves this discussion to another forum
+    $fromforum = optional_param('fromforum', 0, PARAM_INT);  // Needs to be set when we want to move a discussion.
+    $mark   = optional_param('mark', 0, PARAM_INT);          // Used for tracking read posts if user initiated.
+    $postid = optional_param('postid', 0, PARAM_INT);        // Used for tracking read posts if user initiated.
 
     if (!$discussion = get_record("forum_discussions", "id", $d)) {
         error("Discussion ID was incorrect or no longer exists");
@@ -47,6 +48,14 @@
 
 
     if (!empty($move)) {
+        
+        if (!$sourceforum = get_record('forum', 'id', $fromforum)) {
+            error('Cannot find which forum this discussion is being moved from');
+        }
+        if ($sourceforum->type == 'single') {
+            error('Cannot move discussion from a simple single discussion forum');
+        }
+        
         require_capability('mod/forum:movediscussions', $modcontext);
 
         if ($forum = get_record("forum", "id", $move)) {
@@ -62,13 +71,14 @@
                 add_to_log($course->id, "forum", "move discussion", "discuss.php?d=$discussion->id", "$discussion->id");
             }
             $discussionmoved = true;
+            
             require_once('rsslib.php');
             require_once($CFG->libdir.'/rsslib.php');
 
             // Delete the RSS files for the 2 forums because we want to force
             // the regeneration of the feeds since the discussions have been
             // moved.
-            if (!forum_rss_delete_file($forum) || !forum_rss_delete_file($fromforum)) {
+            if (!forum_rss_delete_file($forum) || !forum_rss_delete_file($sourceforum)) {
                 notify('Could not purge the cached RSS feeds for the source and/or'.
                        'destination forum(s) - check your file permissionsforums');
             }
@@ -205,7 +215,7 @@
                 }
                 $section = $courseforum->section;
                 if ($courseforum->id != $forum->id) {
-                    $url = "discuss.php?d=$discussion->id&amp;move=$courseforum->id";
+                    $url = "discuss.php?d=$discussion->id&amp;fromforum=$discussion->forum&amp;move=$courseforum->id";
                     $forummenu[$url] = format_string($courseforum->name,true);
                 }
             }

@@ -2397,11 +2397,23 @@ function forum_print_rating_menu($postid, $userid, $scale) {
     choose_from_menu($scale, $postid, $rating->rating, "$strrate...");
 }
 
-function forum_print_mode_form($discussion, $mode) {
+/**
+ * Print the drop down that allows the user to select how they want to have
+ * the discussion displayed.
+ * @param $id - forum id if $forumtype is 'single',
+ *              discussion id for any other forum type
+ * @param $mode - forum layout mode
+ * @param $forumtype - optional
+ */
+function forum_print_mode_form($id, $mode, $forumtype='') {
     GLOBAL $FORUM_LAYOUT_MODES;
 
     echo "<div align=\"center\">";
-    popup_form("discuss.php?d=$discussion&amp;mode=", $FORUM_LAYOUT_MODES, "mode", $mode, "");
+    if ($forumtype == 'single') {
+        popup_form("view.php?f=$id&amp;mode=", $FORUM_LAYOUT_MODES, "mode", $mode, "");
+    } else {
+        popup_form("discuss.php?d=$id&amp;mode=", $FORUM_LAYOUT_MODES, "mode", $mode, "");
+    }
     echo "</div>\n";
 }
 
