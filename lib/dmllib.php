@@ -758,6 +758,8 @@ function get_records_sql($sql, $limitfrom='', $limitnum='') {
  * @return mixed an associative array, or false if an error occured or the RecordSet was empty.
  */
 function recordset_to_menu($rs) {
+    global $CFG;
+
     if ($rs && $rs->RecordCount() > 0) {
         $keys = array_keys($rs->fields);
         $key0=$keys[0];
