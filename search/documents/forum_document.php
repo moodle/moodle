@@ -109,8 +109,7 @@
       }
     }
 
-    if ($CFG->dbtype == 'postgres7') {
-        return get_recordset_sql("SELECT p.id, p.subject, p.discussion, p.message,
+    return get_recordset_sql("SELECT p.id, p.subject, p.discussion, p.message,
                                   p.deleted, d.groupid, u.firstname, u.lastname
                               FROM {$CFG->prefix}forum_discussions d
                               JOIN {$CFG->prefix}forum_posts p ON p.discussion = d.id
@@ -119,18 +118,6 @@
                                AND p.parent = 0
                                    $timelimit
                           ORDER BY d.timemodified DESC");
-    } else {
-        return get_recordset_sql("SELECT p.id, p.subject, p.discussion, p.message, p.deleted,
-                                  d.groupid, u.firstname, u.lastname
-                              FROM ({$CFG->prefix}forum_posts p,
-                                   {$CFG->prefix}user u,
-                                   {$CFG->prefix}forum_discussions d)
-                             WHERE d.forum = '$forum'
-                               AND p.discussion = d.id
-                               AND p.parent = 0
-                               AND p.userid = u.id $timelimit
-                          ORDER BY d.timemodified DESC");
-    } //else
   } //forum_get_discussions_fast
 
   //reworked faster version from /mod/forum/lib.php
