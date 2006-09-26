@@ -1311,8 +1311,8 @@ function sql_order_by_text($fieldname, $numchars=32) {
 
 /**
  * Returns SQL to be used as a subselect to find the primary role of users.  
- * Penny (the author) is very keen for this to be implemented as a view in 
- * future versions.
+ * Geoff Cant <geoff@catalyst.net.nz> (the author) is very keen for this to
+ * be implemented as a view in future versions. 
  *
  * eg if this function returns a string called $primaryroles, then you could:
  * $sql = 'SELECT COUNT(DISTINCT prs.userid) FROM ('.$primary_roles.') prs 
