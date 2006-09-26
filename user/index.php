@@ -425,13 +425,8 @@ function checkchecked(form) {
         $table->initialbars($totalcount > $perpage);
         $table->pagesize($perpage, $matchcount);
     
-        if ($table->get_page_start() !== '' && $table->get_page_size() !== '') {
-            $limit = ' '.sql_paging_limit($table->get_page_start(), $table->get_page_size());
-        } else {
-            $limit = '';
-        }    
-
-        $students = get_records_sql($select.$from.$where.$wheresearch.$sort.$limit);
+        $students = get_records_sql($select.$from.$where.$wheresearch.$sort,
+                                    $table->get_page_start(),  $table->get_page_size());
         if (!$currentrole = get_record('role','id',$roleid)) {
             error('That role does not exist');
         }
