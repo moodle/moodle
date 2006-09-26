@@ -26,7 +26,7 @@
             if (empty($to)) {
                 error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
             } else {
-                if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COUESE, $to))) {
+                if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $to))) {
                     error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
                 }
             }
