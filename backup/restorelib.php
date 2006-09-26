@@ -3436,25 +3436,28 @@
                             case "SHORTNAME":
                                 $this->info->tempshortname = $this->getContents();
                                 break;
+                            case "ID": // this is the old id
+                                $this->info->tempid = $this->getContents();
+                                break;
                         }
                     }
                     if ($this->level == 6) {
                         switch ($tagName) {
                             case "NAME":
-                                $this->info->roles[$this->info->tempshortname]->name = $this->info->tempname;
-                                $this->info->roles[$this->info->tempshortname]->shortname = $this->info->tempshortname;
+                                $this->info->roles[$this->info->tempid]->name = $this->info->tempname;
+                                $this->info->roles[$this->info->tempid]->shortname = $this->info->tempshortname;
                                 
                                 $this->info->tempcapname = $this->getContents();
-                                $this->info->roles[$this->info->tempshortname]->capabilities[$this->info->tempcapname]->name = $this->getContents();
+                                $this->info->roles[$this->info->tempid]->capabilities[$this->info->tempcapname]->name = $this->getContents();
                                 break;
                             case "PERMISSION":
-                                $this->info->roles[$this->info->tempshortname]->capabilities[$this->info->tempcapname]->permission = $this->getContents();
+                                $this->info->roles[$this->info->tempid]->capabilities[$this->info->tempcapname]->permission = $this->getContents();
                                 break;
                             case "TIMEMODIFIED":
-                                $this->info->roles[$this->info->tempshortname]->capabilities[$this->info->tempcapname]->timemodified = $this->getContents();
+                                $this->info->roles[$this->info->tempid]->capabilities[$this->info->tempcapname]->timemodified = $this->getContents();
                                 break;
                             case "MODIFIERID":
-                                $this->info->roles[$this->info->tempshortname]->capabilities[$this->info->tempcapname]->modifierid = $this->getContents();
+                                $this->info->roles[$this->info->tempid]->capabilities[$this->info->tempcapname]->modifierid = $this->getContents();
                                 break;
                         }
                     }
@@ -3630,38 +3633,42 @@
                             case "SHORTNAME":
                                 $this->info->tempshortname = $this->getContents();
                             break;
+                            case "ID":
+                                $this->info->tempid = $this->getContents();
+                            break;
                         }      
                     }
                     
                     if ($this->level == 8) {
                         switch ($tagName) {
                             case "USERID":
-                                $this->info->roleassignments[$this->info->tempshortname]->name = $this->info->tempname;
-                                $this->info->roleassignments[$this->info->tempshortname]->shortname = $this->info->tempshortname;
+                                $this->info->roleassignments[$this->info->tempid]->name = $this->info->tempname;
+                                $this->info->roleassignments[$this->info->tempid]->shortname = $this->info->tempshortname;
                                 $this->info->tempuser = $this->getContents();
-                                $this->info->roleassignments[$this->info->tempshortname]->assignments[$this->info->tempuser]->userid = $this->getContents();
+                                $this->info->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->userid = $this->getContents();
                             break;
                             case "HIDDEN":
-                                $this->info->roleassignments[$this->info->tempshortname]->assignments[$this->info->tempuser]->hidden = $this->getContents();
+                                $this->info->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->hidden = $this->getContents();
                             break;
                             case "TIMESTART":
-                                $this->info->roleassignments[$this->info->tempshortname]->assignments[$this->info->tempuser]->timestart = $this->getContents();
+                                $this->info->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->timestart = $this->getContents();
                             break;
                             case "TIMEEND":
-                                $this->info->roleassignments[$this->info->tempshortname]->assignments[$this->info->tempuser]->timeend = $this->getContents();
+                                $this->info->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->timeend = $this->getContents();
                             break;
                             case "TIMEMODIFIED":
-                                $this->info->roleassignments[$this->info->tempshortname]->assignments[$this->info->tempuser]->timemodified = $this->getContents();
+                                $this->info->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->timemodified = $this->getContents();
                             break;
                             case "MODIFIERID":
-                                $this->info->roleassignments[$this->info->tempshortname]->assignments[$this->info->tempuser]->modifierid = $this->getContents();
+                                $this->info->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->modifierid = $this->getContents();
                             break;
                             case "ENROL":
-                                $this->info->roleassignments[$this->info->tempshortname]->assignments[$this->info->tempuser]->enrol = $this->getContents();
+                                $this->info->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->enrol = $this->getContents();
                             break;
                             case "SORTORDER":
-                                $this->info->roleassignments[$this->info->tempshortname]->assignments[$this->info->tempuser]->sortorder = $this->getContents();
+                                $this->info->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->sortorder = $this->getContents();
                             break;
+                        
                         }
                     }
                 } /// ends role_assignments
@@ -3674,6 +3681,9 @@
                             break;
                             case "SHORTNAME":
                                 $this->info->tempshortname = $this->getContents();
+                            break;                            
+                            case "ID":
+                                $this->info->tempid = $this->getContents();
                             break;
                         }      
                     }
@@ -3681,19 +3691,19 @@
                     if ($this->level == 8) {
                         switch ($tagName) {
                             case "NAME":
-                                $this->info->roleoverrides[$this->info->tempshortname]->name = $this->info->tempname;
-                                $this->info->roleoverrides[$this->info->tempshortname]->shortname = $this->info->tempshortname;
+                                $this->info->roleoverrides[$this->info->tempid]->name = $this->info->tempname;
+                                $this->info->roleoverrides[$this->info->tempid]->shortname = $this->info->tempshortname;
                                 $this->info->tempname = $this->getContents(); // change to name of capability
-                                $this->info->roleoverrides[$this->info->tempshortname]->overrides[$this->info->tempname]->name = $this->getContents();
+                                $this->info->roleoverrides[$this->info->tempid]->overrides[$this->info->tempname]->name = $this->getContents();
                             break;
                             case "PERMISSION":
-                                $this->info->roleoverrides[$this->info->tempshortname]->overrides[$this->info->tempname]->permission = $this->getContents();
+                                $this->info->roleoverrides[$this->info->tempid]->overrides[$this->info->tempname]->permission = $this->getContents();
                             break;
                             case "TIMEMODIFIED":
-                                $this->info->roleoverrides[$this->info->tempshortname]->overrides[$this->info->tempname]->timemodified = $this->getContents();
+                                $this->info->roleoverrides[$this->info->tempid]->overrides[$this->info->tempname]->timemodified = $this->getContents();
                             break;
                             case "MODIFIERID":
-                                $this->info->roleoverrides[$this->info->tempshortname]->overrides[$this->info->tempname]->modifierid = $this->getContents();
+                                $this->info->roleoverrides[$this->info->tempid]->overrides[$this->info->tempname]->modifierid = $this->getContents();
                             break;
                         }
                     }
@@ -3852,10 +3862,104 @@
                         case "GROUPMODE":
                             $this->info->tempmod->groupmode = $this->getContents();
                             break;
+                        default:
+                        break;
                     }
                 }
-            }
+                
+                if ($this->tree[7] == "ROLES_ASSIGNMENTS") {
+                    
+                    if ($this->level == 9) {
+                        switch ($tagName) {
+                            case "NAME":
+                                $this->info->tempname = $this->getContents();
+                            break;
+                            case "SHORTNAME":
+                                $this->info->tempshortname = $this->getContents();
+                            break;
+                            case "ID":
+                                $this->info->tempid = $this->getContents(); // temp roleid
+                            break;
+                        }      
 
+                    }
+                    if ($this->level == 11) {
+                        switch ($tagName) {
+                            case "USERID":
+                                $this->info->tempsection->mods[$this->info->tempmod->id]->roleassignments[$this->info->tempid]->name = $this->info->tempname;
+                                
+                                $this->info->tempsection->mods[$this->info->tempmod->id]->roleassignments[$this->info->tempid]->shortname = $this->info->tempshortname;
+                                
+                                $this->info->tempuser = $this->getContents();
+                                
+                                $this->info->tempsection->mods[$this->info->tempmod->id]->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->userid = $this->getContents();
+                                    print_object($this->info);
+                            break;
+                            case "HIDDEN":
+                                $this->info->tempsection->mods[$this->info->tempmod->id]->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->hidden = $this->getContents();
+                            break;
+                            case "TIMESTART":
+                                $this->info->tempsection->mods[$this->info->tempmod->id]->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->timestart = $this->getContents();
+                            break;
+                            case "TIMEEND":
+                                $this->info->tempsection->mods[$this->info->tempmod->id]->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->timeend = $this->getContents();
+                            break;
+                            case "TIMEMODIFIED":
+                                $this->info->tempsection->mods[$this->info->tempmod->id]->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->timemodified = $this->getContents();
+                            break;
+                            case "MODIFIERID":
+                                $this->info->tempsection->mods[$this->info->tempmod->id]->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->modifierid = $this->getContents();
+                            break;
+                            case "ENROL":
+                                $this->info->tempsection->mods[$this->info->tempmod->id]->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->enrol = $this->getContents();
+                            break;
+                            case "SORTORDER":
+                                $this->info->tempsection->mods[$this->info->tempmod->id]->roleassignments[$this->info->tempid]->assignments[$this->info->tempuser]->sortorder = $this->getContents();
+                            break;
+                        
+                        }
+                    }
+                } /// ends role_assignments
+                
+                if ($this->tree[7] == "ROLES_OVERRIDES") {
+                    if ($this->level == 9) {
+                        switch ($tagName) {
+                            case "NAME":
+                                $this->info->tempname = $this->getContents();
+                            break;
+                            case "SHORTNAME":
+                                $this->info->tempshortname = $this->getContents();
+                            break;                            
+                            case "ID":
+                                $this->info->tempid = $this->getContents(); // temp roleid
+                            break;
+                        }      
+                    }
+                    
+                    if ($this->level == 11) {
+                        switch ($tagName) {
+                            case "NAME":
+                            
+                                $this->info->tempsection->mods[$this->info->tempmod->id]->roleoverrides[$this->info->tempid]->name = $this->info->tempname;
+                                $this->info->tempsection->mods[$this->info->tempmod->id]->roleoverrides[$this->info->tempid]->shortname = $this->info->tempshortname;
+                                $this->info->tempname = $this->getContents(); // change to name of capability
+                                $this->info->tempsection->mods[$this->info->tempmod->id]->roleoverrides[$this->info->tempid]->overrides[$this->info->tempname]->name = $this->getContents();
+                            break;
+                            case "PERMISSION":
+                                $this->info->tempsection->mods[$this->info->tempmod->id]->roleoverrides[$this->info->tempid]->overrides[$this->info->tempname]->permission = $this->getContents();
+                            break;
+                            case "TIMEMODIFIED":
+                                $this->info->tempsection->mods[$this->info->tempmod->id]->roleoverrides[$this->info->tempid]->overrides[$this->info->tempname]->timemodified = $this->getContents();
+                            break;
+                            case "MODIFIERID":
+                                $this->info->tempsection->mods[$this->info->tempmod->id]->roleoverrides[$this->info->tempid]->overrides[$this->info->tempname]->modifierid = $this->getContents();
+                            break;
+                        }
+                    }
+                } /// ends role_overrides    
+           
+            }
+            
             //Stop parsing if todo = SECTIONS and tagName = SECTIONS (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "SECTIONS") {
@@ -5656,13 +5760,16 @@
        It isn't now, just overwriting
     */
     function restore_create_roles($restore, $xmlfile) {
-        /*
-        $info = restore_read_xml_roles($restore, $xmlfile);
         
+        $info = restore_read_xml_roles($restore, $xmlfile);
+
         $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
-        foreach ($info->roles as $rolename=>$roledata) {
-            $newroleid = create_role($roledata->name.'XYZ',$roledata->shortname.'XYZ','');
+        foreach ($info->roles as $oldroleid=>$roledata) {       
+            $random = rand(1,10000);
+            $newroleid = create_role($roledata->name.$random,$roledata->shortname.$random,'');
+            $status = backup_putid($restore->backup_unique_code,"role",$oldroleid,
+                                     $newroleid); // adding a new id
             foreach ($roledata->capabilities as $capability) {
                 
                 $roleinfo = new object();
@@ -5673,14 +5780,52 @@
                 
                 insert_record('role_capabilities', $roleinfo);
             }
-        }*/
+        }
     }
     
     function restore_assign_roles($restore, $xmlfile) {
         // data pulls from course, mod, user, and blocks
-        $course = restore_read_xml_course_header($xmlfile);
         
+        /*******************************************************
+         * Restoring assignments from course level assignments *
+         *******************************************************/
+        $course = restore_read_xml_course_header($xmlfile);
+        $courseassignments = $course->roleassignments;
+
+        foreach ($courseassignments as $oldroleid => $courseassignment) {
+            
+            $role = backup_getid($restore->backup_unique_code,"role",$oldroleid);
+            foreach ($courseassignment->assignments as $assignment) {
+                
+                $olduser = backup_getid($restore->backup_unique_code,"user",$assignment->userid);
+                $assignment->userid = $olduser->new_id; // new userid here
+                $oldmodifier = backup_getid($restore->backup_unique_code,"user",$assignment->modifierid);
+                $assignment->modifierid = 1;//$oldmodifier->new_id; // new modifier id here
+                $assignment->roleid = $role->new_id; // restored new role id
+                // new course id
+                $oldcourse = backup_getid($restore->backup_unique_code,"course",$course->course_id);
+                $newcourse = get_context_instance(CONTEXT_COURSE, $oldcourse->new_id);
+                $assignment->contextid = $newcourse->id;// new context id                
+
+                insert_record('role_assignments', $assignment);   
+            }
+        }  
+        /*******************************************************
+         * Restoring assignments from module level assignments *
+         *******************************************************/     
+         $sections = restore_read_xml_sections($xmlfile);
+         $secs = $sections->sections;
+         print_object($secs);
+         //print_object($sections);
+        /*******************************************************
+         * Restoring assignments from blocks level assignments *
+         *******************************************************/ 
+         
+        /*******************************************************
+         * Restoring assignments from userid level assignments *
+         *******************************************************/
     }
+    
     function restore_override_roles($restore, $xmlfile) {
         // data pulls from course, mod, user, and blocks  
     }
