@@ -39,7 +39,7 @@
     $documents = array();
 
     $resources = get_recordset_sql('SELECT *
-                              FROM `resource`
+                              FROM {$CFG->prefix}resource
                               WHERE alltext NOT LIKE ""
                               AND alltext NOT LIKE " "
                               AND alltext NOT LIKE "&nbsp;"
@@ -61,7 +61,7 @@
   //returns a single resource search document based on a resource_entry id
   function resource_single_document($id) {
     $resources = get_recordset_sql('SELECT *
-                              FROM `resource`
+                              FROM {$CFG->prefix}resource
                               WHERE alltext NOT LIKE ""
                               AND alltext NOT LIKE " "
                               AND alltext NOT LIKE "&nbsp;"
