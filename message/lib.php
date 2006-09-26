@@ -664,19 +664,8 @@ function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords=
 function message_search_users($courseid, $searchtext, $sort='', $exceptions='') {
     global $CFG;
 
-    switch ($CFG->dbtype) {
-        case 'mysql':
-             $fullname = ' CONCAT(u.firstname," ",u.lastname) ';
-             $LIKE = 'LIKE';
-             break;
-        case 'postgres7':
-             $fullname = " u.firstname||' '||u.lastname ";
-             $LIKE = 'ILIKE';
-             break;
-        default:
-             $fullname = ' u.firstname||" "||u.lastname ';
-             $LIKE = 'ILIKE';
-    }
+    $fullname = sql_fullname();
+    $LIKE     = sql_like();
 
     if (!empty($exceptions)) {
         $except = ' AND u.id NOT IN ('. $exceptions .') ';
