@@ -13,7 +13,7 @@
     $mform->addElement('text','fullname', get_string("fullname"),'maxlength="254" size="50"');
     $mform->addElement('text','shortname', get_string("shortname"),'maxlength="15" size="10"');
     $mform->addElement('text','idnumber', get_string("idnumbercourse"),'maxlength="100"  size="10"');
-    $mform->addElement('htmleditor','summary', get_string("summary"), 'width="500" height="200" rows="10", cols="40"');
+    $mform->addElement('htmleditor','summary', get_string("summary"), array('rows'=>'10', 'cols'=>'65'));
 
     $courseformats = get_list_of_plugins("course/format");
     $formcourseformats = array();

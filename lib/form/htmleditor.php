@@ -12,11 +12,25 @@ class moodleform_htmleditor extends moodleform_textarea{
     var $_type;
     var $_elementTemplateType='default';
     var $_canUseHtmlEditor;
-    var $_options=array('course'=>0);
-    function moodleform_htmleditor($elementName=null, $elementLabel=null, $attributes=null){
+    var $_options=array('canUseHtmlEditor'=>'detect','rows'=>10, 'cols'=>65, 'width'=>0,'height'=>0, 'course'=>0);
+    function moodleform_htmleditor($elementName=null, $elementLabel=null, $options=array(), $attributes=null){
         parent::moodleform_textarea($elementName, $elementLabel, $attributes);
-        $this->_canUseHtmlEditor=can_use_html_editor();
-        if ($this->_canUseHtmlEditor){
+        // set the options, do not bother setting bogus ones
+        if (is_array($options)) {
+            foreach ($options as $name => $value) {
+                if (isset($this->_options[$name])) {
+                    if (is_array($value) && is_array($this->_options[$name])) {
+                        $this->_options[$name] = @array_merge($this->_options[$name], $value);
+                    } else {
+                        $this->_options[$name] = $value;
+                    }
+                }
+            }
+        }
+        if ($this->_options['canUseHtmlEditor']=='detect'){
+            $this->_options['canUseHtmlEditor']=can_use_html_editor();
+        }
+        if ($this->_options['canUseHtmlEditor']){
             $this->_type='htmleditor';
             //$this->_elementTemplateType='wide';
         }else{
@@ -27,7 +41,7 @@ class moodleform_htmleditor extends moodleform_textarea{
         return $this->_elementTemplateType;
     }
     function toHtml(){
-        if ($this->_canUseHtmlEditor){
+        if ($this->_options['canUseHtmlEditor'] && !$this->_flagFrozen){
             ob_start();
             use_html_editor($this->getName());
             $script=ob_get_clean();
@@ -38,11 +52,11 @@ class moodleform_htmleditor extends moodleform_textarea{
             return $this->getFrozenHtml();
         } else {
             return $this->_getTabs() .
-                    print_textarea($this->_canUseHtmlEditor, 
-                                    $this->getAttribute('rows'),
-                                    $this->getAttribute('cols'),
-                                    $this->getAttribute('width'),
-                                    $this->getAttribute('height'),
+                    print_textarea($this->_options['canUseHtmlEditor'], 
+                                    $this->_options['rows'],
+                                    $this->_options['cols'],
+                                    $this->_options['width'],
+                                    $this->_options['height'],
                                     $this->getName(),
                                     preg_replace("/(\r\n|\n|\r)/", '&#010;',$this->getValue()),
                                     $this->_options['course'],
