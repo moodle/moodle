@@ -1,4 +1,16 @@
-This files are part of the PEAR package (http://pear.php.net).
+PEAR Libraries
+====================================================================
+
+
+This directory (lib/pear) contains unmodified copies of some 
+libraries from the standard PEAR distribution (http://pear.php.net).
+
+We include these in Moodle solely for the convenience of sites that 
+may not have PEAR installed.
+
+If this directory is DELETED from Moodle then Moodle will search 
+the standard PHP directories and use the PEAR libraries there instead.
+
 
 In detail, the libraries added here are:
 
@@ -10,8 +22,23 @@ In detail, the libraries added here are:
 - PEAR OLE classes:
     - Current version: 0.5
     - by Xavier Noguer
-    - License: PHP
+    - License: PHP (Permission given to Moodle to redistribute under GPL)
     - http://pear.php.net/package/OLE
+- PEAR HTML_Quickform:
+    - Current version: 3.2.6
+    - by Bertrand Mansion, Adam Daniel, Alexey Borzov
+    - License: PHP
+    - http://pear.php.net/package/HTML_Quickform
+- PEAR HTML_Quickform_Renderer_Tableless:
+    - Current version: 0.3.4
+    - by Mark Wiesemann
+    - License: PHP
+    - http://pear.php.net/package/HTML_QuickForm_Renderer_Tableless
+- PEAR HTML_Common:
+    - Current version: 1.2.2
+    - by Adam Daniel, Bertrand Mansion, Klaus Guenther, Alexey Borzov,
+    - License: PHP 
+    - http://pear.php.net/package/HTML
 - PEAR main class:
     - Current version: 1.4.5
     - by Stig Bakken, Thomas V.V.Cox, Pierre-Alain Joye, 
@@ -19,8 +46,14 @@ In detail, the libraries added here are:
     - License: PHP
     - http://pear.php.net/package/PEAR
 
+
+
+----------------------------------------------------------------
+A NOTE TO DEVELOPERS
+================================================================
+
 We must not use these classes directly ever. Instead we must build 
-some wrapper classes to isolate Moodle code from internal PEAR
+and use wrapper classes to isolate Moodle code from internal PEAR
 implementations, allowing us to migrate if needed to other 
 libraries in the future. For an example of wrapped classes, 
 see the excel.class.lib file, that includes code to build 
@@ -29,7 +62,8 @@ the old calls used before Moodle 1.6 to maintain compatibility.
 
 Please, don't forget it! Always use wrapper classes/functions!
 
-Ciao, Eloy Lafuente, 2005-12-17 :-)
+Ciao, 
+Eloy Lafuente, 2005-12-17 :-)
 
 
 
@@ -37,14 +71,19 @@ Ciao, Eloy Lafuente, 2005-12-17 :-)
 A NOTE ON THE PHP LICENSE AND MOODLE
 ================================================================
 
+Everything in Moodle in pure GPL.  This pear directory is the only
+part of the distribution that is not.
+
 There is some question about how PHP-licensed software can be 
 included within a GPL-licensed distribution like Moodle, specifically
-the clause that says no derivative of the software can include the 
-name PHP.  We don't intend to rename Moodle to anything of the 
-sort, obviously, but to help people downstream who could possibly 
-want to do so, we have sought special permission from the authors
-of these classes to allow us an exemption on this point so that 
-we don't need to change our nice clean GPL license.
+the clause that annoyingly says no derivative of the software can 
+include the name PHP.  
+
+We don't intend to rename Moodle to anything of the sort, obviously, 
+but to help people downstream who could possibly want to do so, 
+we have sought special permission from the authors of these classes 
+to allow us an exemption on this point so that we don't need to 
+change our nice clean GPL license.
 
 Xavier Noguer has given Moodle explicit permission to distribute 
 his OLE PEAR class in the Moodle distribution, and allows any
@@ -52,8 +91,12 @@ body using this class ONLY as part of the Moodle distribution
 exemption from clauses of the PHP license that could cause
 conflict with the main GNU Public License that Moodle uses.
 
-We are still waiting to hear back from Stig, Thomas or Pierre-Alain,
-but we assume for now that it will likewise be OK.
+We are still waiting to hear back from the others but we assume 
+for now that it will likewise be OK.
+
+If you are at all worried about this situation you can simply delete 
+this directory from Moodle and it will use your installed PEAR 
+libraries instead.
 
 Cheers,
 Martin Dougiamas, 2 April 2006
