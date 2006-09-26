@@ -104,6 +104,9 @@ class XMLDBgenerator {
 
     var $alter_column_skip_notnull = false; //The generator will skip the null/notnull clause on alter columns
 
+    var $drop_index_sql = 'DROP INDEX INDEXNAME'; //SQL sentence to drop one index
+                                  //TABLENAME, INDEXNAME are dinamically replaced
+
     var $prefix;         // Prefix to be used for all the DB objects
 
     var $reserved_words; // List of reserved words (in order to quote them properly)
@@ -602,6 +605,34 @@ class XMLDBgenerator {
         } else {
             return $this->getCreateDefaultSQL($xmldb_table, $xmldb_field); //Create/modify
         }
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBIndex, return the SQL statements needded to add the index to the table
+     */
+    function getAddIndexSQL($xmldb_table, $xmldb_index) {
+
+    /// Just use the CreateIndexSQL function
+        return $this->getCreateIndexSQL($xmldb_table, $xmldb_index);
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBIndex, return the SQL statements needded to drop the index from the table
+     */
+    function getDropIndexSQL($xmldb_table, $xmldb_index) {
+
+        $results = array();
+
+    /// Get the real index name
+        $dbindexname = find_index_name($xmldb_table, $xmldb_index);
+
+    /// Replace TABLENAME and INDEXNAME as needed
+        $dropsql = str_replace('TABLENAME', $this->getEncQuoted($this->prefix . $xmldb_table->getName()), $this->drop_index_sql);
+        $dropsql = str_replace('INDEXNAME', $dbindexname, $dropsql);
+
+        $results[] = $dropsql;
+
+        return $results;
     }
 
 

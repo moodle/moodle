@@ -60,6 +60,9 @@ class XMLDBmysql extends XMLDBGenerator {
 
     var $alter_column_sql = 'ALTER TABLE TABLENAME MODIFY COLUMN COLUMNSPECS'; //The SQL template to alter columns
 
+    var $drop_index_sql = 'DROP INDEX INDEXNAME ON TABLENAME'; //SQL sentence to drop one index
+                                                               //TABLENAME, INDEXNAME are dinamically replaced
+
     /**
      * Creates one new XMLDBmysql
      */

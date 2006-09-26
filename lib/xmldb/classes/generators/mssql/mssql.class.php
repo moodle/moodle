@@ -60,6 +60,9 @@ class XMLDBmssql extends XMLDBgenerator {
     var $concat_character = '+'; //Characters to be used as concatenation operator. If not defined
                                   //MySQL CONCAT function will be use
 
+    var $drop_index_sql = 'DROP INDEX TABLENAME.INDEXNAME'; //SQL sentence to drop one index
+                                                               //TABLENAME, INDEXNAME are dinamically replaced
+
     /**
      * Creates one new XMLDBmssql
      */
