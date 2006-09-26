@@ -942,9 +942,11 @@ function moodle_install_roles() {
      * Sort using id ASC, first one is primary admin.
      */
     if (in_array($CFG->prefix.'user_admins', $dbtables)) {
-        if ($useradmins = get_records_sql('SELECT * from '.$CFG->prefix.'user_admins ORDER BY ID ASC')) {
-            foreach ($useradmins as $admin) {
+        if ($rs = get_recordset_sql('SELECT * from '.$CFG->prefix.'user_admins ORDER BY ID ASC')) {
+            while (! $rs->EOF) {
+                $admin = $rs->FetchObj();
                 role_assign($adminrole, $admin->userid, 0, $systemcontext->id);
+                $rs->MoveNext();
             }
         }
     } else {
@@ -956,9 +958,11 @@ function moodle_install_roles() {
      * Upgrade course creators.
      */
     if (in_array($CFG->prefix.'user_coursecreators', $dbtables)) {
-        if ($usercoursecreators = get_records('user_coursecreators')) {
-            foreach ($usercoursecreators as $coursecreator) {
+        if ($rs = get_recordset('user_coursecreators')) {
+            while (! $rs->EOF) {
+                $coursecreator = $rs->FetchObj();
                 role_assign($coursecreatorrole, $coursecreator->userid, 0, $systemcontext->id);
+                $rs->MoveNext();
             }
         }
     }
@@ -968,14 +972,17 @@ function moodle_install_roles() {
      * Upgrade editting teachers and non-editting teachers.
      */
     if (in_array($CFG->prefix.'user_teachers', $dbtables)) {
-        if ($userteachers = get_records('user_teachers')) {
-            foreach ($userteachers as $teacher) {
+        if ($rs = get_recordset('user_teachers')) {
+            while (! $rs->EOF) {
+                $teacher = $rs->FetchObj();
+
                 // populate the user_lastaccess table
                 $access = new object();
                 $access->timeaccess = $teacher->timeaccess;
                 $access->userid = $teacher->userid;
                 $access->courseid = $teacher->course;
                 insert_record('user_lastaccess', $access);
+
                 // assign the default student role
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $teacher->course); // needs cache
                 if ($teacher->editall) { // editting teacher
@@ -983,6 +990,8 @@ function moodle_install_roles() {
                 } else {
                     role_assign($noneditteacherrole, $teacher->userid, 0, $coursecontext->id);
                 }
+
+                $rs->MoveNext();
             }
         }
     }
@@ -992,17 +1001,22 @@ function moodle_install_roles() {
      * Upgrade students.
      */
     if (in_array($CFG->prefix.'user_students', $dbtables)) {
-        if ($userstudents = get_records('user_students')) {
-            foreach ($userstudents as $student) {
+        if ($rs = get_recordset('user_students')) {
+            while (! $rs->EOF) {
+                $student = $rs->FetchObj();
+
                 // populate the user_lastaccess table
-                unset($access);
+                $access = new object;
                 $access->timeaccess = $student->timeaccess;
                 $access->userid = $student->userid;
                 $access->courseid = $student->course;
                 insert_record('user_lastaccess', $access);
+
                 // assign the default student role
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $student->course);
                 role_assign($studentrole, $student->userid, 0, $coursecontext->id);
+
+                $rs->MoveNext();
             }
         }
     }
