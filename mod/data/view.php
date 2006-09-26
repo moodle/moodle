@@ -389,8 +389,7 @@
 
 /// Get the actual records
 
-    $limit = sql_paging_limit($page * $nowperpage, $nowperpage);
-    $records = get_records_sql($sqlselect.$limit);
+    $records = get_records_sql($sqlselect, $page * $nowperpage, $nowperpage);
 
     if (empty($records)) {     // Nothing to show!
         if ($record) {         // Something was requested so try to show that at least (bug 5132)

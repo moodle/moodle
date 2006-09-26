@@ -52,14 +52,14 @@
                 /// Clean up the timer table
                     $timeid = get_field_sql("SELECT id FROM {$CFG->prefix}lesson_timer 
                                              WHERE userid = $userid AND lessonid = $lesson->id 
-                                             ORDER BY starttime ".sql_paging_limit($try, 1));
+                                             ORDER BY starttime", $try, 1);
                 
                     delete_records('lesson_timer', 'id', $timeid);
             
                 /// Remove the grade from the grades and high_scores tables
                     $gradeid = get_field_sql("SELECT id FROM {$CFG->prefix}lesson_grades 
                                               WHERE userid = $userid AND lessonid = $lesson->id 
-                                              ORDER BY completed ".sql_paging_limit($try, 1));
+                                              ORDER BY completed", $try, 1);
                 
                     delete_records('lesson_grades', 'id', $gradeid);
                     delete_records('lesson_high_scores', 'gradeid', $gradeid, 'lessonid', $lesson->id, 'userid', $userid);
