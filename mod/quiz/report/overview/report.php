@@ -94,7 +94,6 @@ class quiz_report extends quiz_default_report {
         if ($download) {
             $filename = clean_filename("$course->shortname ".format_string($quiz->name,true));
             $sort = '';
-            $limit = '';
         }
 
         // Define table columns
@@ -339,12 +338,6 @@ class quiz_report extends quiz_default_report {
                 $pagesize = 10;
             }
             $table->pagesize($pagesize, $total);
-
-            if($table->get_page_start() !== '' && $table->get_page_size() !== '') {
-                $limit = ' '.sql_paging_limit($table->get_page_start(), $table->get_page_size());
-            } else {
-                $limit = '';
-            }
         }
 
         // If there is feedback, include it in the query.
@@ -357,7 +350,8 @@ class quiz_report extends quiz_default_report {
 
         // Fetch the attempts
         if (!empty($from)) { // if we're in the site course and displaying no attempts, it makes no sense to do the query.
-            $attempts = get_records_sql($select.$from.$where.$sort.$limit);
+            $attempts = get_records_sql($select.$from.$where.$sort,
+                                        $table->get_page_start(), $table->get_page_size());
         } else {
             $attempts = array();
         }

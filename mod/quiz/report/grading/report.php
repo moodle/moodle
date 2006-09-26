@@ -240,14 +240,8 @@ class quiz_report extends quiz_default_report {
         $total  = count_records_sql('SELECT COUNT(DISTINCT('.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where);
         $table->pagesize(10, $total);
 
-        // this is for getting the correct records for a given page
-        if($table->get_page_start() !== '' && $table->get_page_size() !== '') {
-            $limit = ' '.sql_paging_limit($table->get_page_start(), $table->get_page_size());
-        } else {
-            $limit = '';
-        }
         // get the attempts and process them
-        if ($attempts = get_records_sql($select.$from.$where.$sort.$limit)) {
+        if ($attempts = get_records_sql($select.$from.$where.$sort,$table->get_page_start(), $table->get_page_size())) {
             foreach($attempts as $attempt) {
 
                 $picture = print_user_picture($attempt->userid, $quiz->course, $attempt->picture, false, true);
