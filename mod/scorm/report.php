@@ -4,7 +4,7 @@
 
     require_once("../../config.php");
     require_once('locallib.php');
-    
+
     $id = optional_param('id', '', PARAM_INT);    // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);     // SCORM ID
     $b = optional_param('b', '', PARAM_INT);     // SCO ID
@@ -85,6 +85,7 @@
             print_header("$course->shortname: ".format_string($scorm->name), "$course->fullname",
                      "$navigation <a href=\"index.php?id=$course->id\">$strscorms</a>
                       -> <a href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>
+                      -> <a href=\"report.php?id=$cm->id\">$strreport</a>
                       -> <a href=\"report.php?a=$a&user=$user&attempt=$attempt\">$strattempt $attempt - ".fullname($userdata)."</a> -> $sco->title",
                      "", "", true);
         }
@@ -118,6 +119,11 @@
                 $table->wrap[] = 'nowrap';
                 $table->size[] = '*';
 
+                $table->head[]= get_string('score','scorm');
+                $table->align[] = 'center';
+                $table->wrap[] = 'nowrap';
+                $table->size[] = '*';
+
                 foreach($scousers as $scouser){
                     $userdata = scorm_get_user_data($scouser->userid);
                     $attempt = scorm_get_last_attempt($scorm->id,$scouser->userid);    
@@ -131,6 +137,8 @@
                         $timetracks = get_record_select("scorm_scoes_track", $select,'min(timemodified) as started, max(timemodified) as last');      
                         $row[] = userdate($timetracks->started, get_string('strftimedaydatetime'));
                         $row[] = userdate($timetracks->last, get_string('strftimedaydatetime'));
+ 
+                        $row[] = scorm_grade_user_attempt($scorm, $scouser->userid, $a);
                         $table->data[] = $row;
                     }
                 }
@@ -141,7 +149,6 @@
                 if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' ORDER BY id")) {
                     if (!empty($userdata)) {
                         print_simple_box_start('center');
-                        print_heading(format_string($sco->title));
                         echo '<div align="center">'."\n";
                         print_user_picture($user, $course->id, $userdata->picture, false, false);
                         echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user&course=$course->id\">".
@@ -180,6 +187,7 @@
                                     $trackdata->total_time = '&nbsp;';
                                     $detailslink = '&nbsp;';
                                 }
+                                $strstatus = get_string($trackdata->status,'scorm');
                                 $row[] = '<img src="'.$scormpixdir.'/'.$trackdata->status.'.gif" alt="'.$strstatus.'" title="'.
                                          $strstatus.'">&nbsp;'.format_string($sco->title);
                                 $row[] = get_string($trackdata->status,'scorm');
@@ -300,6 +308,7 @@
             }
             if ($existinteraction) {
                 echo '<h3>'.get_string('interactions','scorm').'</h3>';
+                echo '<h3>'.get_string('interactions','scorm').'</h3>';
                 print_table($table);
             }
             
@@ -375,8 +384,8 @@
             error('Missing script parameter');
         }
     }
-    
-    
+
+
     if (empty($noheader)) {
         print_footer($course);
     }

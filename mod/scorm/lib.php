@@ -23,6 +23,7 @@ function scorm_add_instance($scorm) {
         //sanitize submitted values a bit
         $scorm->width = clean_param($scorm->width, PARAM_INT);
         $scorm->height = clean_param($scorm->height, PARAM_INT);
+        $scorm->grademethod = ($scorm->whatgrade * 10) + $scorm->grademethod;
 
         $id = insert_record('scorm', $scorm);
 
@@ -63,6 +64,8 @@ function scorm_update_instance($scorm) {
     $scorm->width = str_replace('%','',$scorm->width);
     $scorm->height = str_replace('%','',$scorm->height);
 
+    $scorm->grademethod = ($scorm->whatgrade * 10) + $scorm->grademethod;
+
     // Check if scorm manifest needs to be reparsed
     if ($scorm->parse == 1) {
         require_once('locallib.php');
@@ -74,6 +77,7 @@ function scorm_update_instance($scorm) {
            (basename($scorm->reference) != 'imsmanifest.xml') && ($scorm->reference[0] != '#')) {
             rename($scorm->dir.$scorm->datadir,$scorm->dir.'/'.$scorm->id);
         }
+
 /*          delete_records('scorm_sequencing_controlmode','scormid',$scorm->id);
             delete_records('scorm_sequencing_rolluprules','scormid',$scorm->id);
             delete_records('scorm_sequencing_rolluprule','scormid',$scorm->id);
@@ -122,6 +126,7 @@ function scorm_delete_instance($id) {
     if (! delete_records('scorm', 'id', $scorm->id)) {
         $result = false;
     }
+
     /*if (! delete_records('scorm_sequencing_controlmode', 'scormid', $scorm->id)) {
         $result = false;
     }
@@ -160,84 +165,11 @@ function scorm_delete_instance($id) {
 function scorm_user_outline($course, $user, $mod, $scorm) { 
 
     $return = NULL;
-    $scores->values = 0;
-    $scores->sum = 0;
-    $scores->max = 0;
-    $scores->lastmodify = 0;
-    $scores->count = 0;
-    if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' ORDER BY id")) {
-        require_once('locallib.php');
-        foreach ($scoes as $sco) {
-            if ($sco->launch!='') {
-                $scores->count++;
-                if ($userdata = scorm_get_tracks($sco->id, $user->id)) {
-                    if (!isset($scores->{$userdata->status})) {
-                        $scores->{$userdata->status} = 1;
-                    } else {    
-                        $scores->{$userdata->status}++;
-                    }
-                    if (!empty($userdata->score_raw)) {
-                        $scores->values++;
-                        $scores->sum += $userdata->score_raw;
-                        $scores->max = ($userdata->score_raw > $scores->max)?$userdata->score_raw:$scores->max;
-                    }
-                    if (isset($userdata->timemodified) && ($userdata->timemodified > $scores->lastmodify)) {
-                        $scores->lastmodify = $userdata->timemodified;
-                    }
-                }
-            }
-        }
-        switch ($scorm->grademethod) {
-            case GRADEHIGHEST:
-                if ($scores->values > 0) {
-                    $return->info = get_string('score','scorm').':&nbsp;'.$scores->max;
-                    $return->time = $scores->lastmodify;
-                }
-            break;
-            case GRADEAVERAGE:
-                if ($scores->values > 0) {
-                    $return->info = get_string('score','scorm').':&nbsp;'.$scores->sum/$scores->values;
-                    $return->time = $scores->lastmodify;
-                }
-            break;
-            case GRADESUM:
-                if ($scores->values > 0) {
-                    $return->info = get_string('score','scorm').':&nbsp;'.$scores->sum;
-                    $return->time = $scores->lastmodify;
-                }
-            break;
-            case GRADESCOES:
-                $return->info = '';
-                $scores->notattempted = $scores->count;
-                if (isset($scores->completed)) {
-                    $return->info .= get_string('completed','scorm').':&nbsp;'.$scores->completed.'<br />';
-                    $scores->notattempted -= $scores->completed;
-                }
-                if (isset($scores->passed)) {
-                    $return->info .= get_string('passed','scorm').':&nbsp;'.$scores->passed.'<br />';
-                    $scores->notattempted -= $scores->passed;
-                }
-                if (isset($scores->failed)) {
-                    $return->info .= get_string('failed','scorm').':&nbsp;'.$scores->failed.'<br />';
-                    $scores->notattempted -= $scores->failed;
-                }
-                if (isset($scores->incomplete)) {
-                    $return->info .= get_string('incomplete','scorm').':&nbsp;'.$scores->incomplete.'<br />';
-                    $scores->notattempted -= $scores->incomplete;
-                }
-                if (isset($scores->browsed)) {
-                    $return->info .= get_string('browsed','scorm').':&nbsp;'.$scores->browsed.'<br />';
-                    $scores->notattempted -= $scores->browsed;
-                }
-                $return->time = $scores->lastmodify;
-                if ($return->info == '') {
-                    $return = NULL;
-                } else {
-                    $return->info .= get_string('notattempted','scorm').':&nbsp;'.$scores->notattempted.'<br />';
-                }
-            break;
-        }
-    }
+
+    require_once('locallib.php');
+
+    $return = scorm_grade_user($scorm, $user->id, true);
+
     return $return;
 }
 
@@ -418,11 +350,8 @@ function scorm_grades($scormid) {
     if (!$scorm = get_record('scorm', 'id', $scormid)) {
         return NULL;
     }
-    if (!$scoes = get_records('scorm_scoes','scorm',$scormid)) {
-        return NULL;
-    }
 
-    if ($scorm->grademethod == GRADESCOES) {
+    if (($scorm->grademethod % 10) == 0) { // GRADESCOES
         if (!$return->maxgrade = count_records_select('scorm_scoes',"scorm='$scormid' AND launch<>''")) {
             return NULL;
         }
@@ -434,7 +363,7 @@ function scorm_grades($scormid) {
     if ($scousers=get_records_select('scorm_scoes_track', "scormid='$scormid' GROUP BY userid", "", "userid,null")) {
         require_once('locallib.php');
         foreach ($scousers as $scouser) {
-            $return->grades[$scouser->userid] = scorm_grade_user($scoes, $scouser->userid, $scorm->grademethod);
+            $return->grades[$scouser->userid] = scorm_grade_user($scorm, $scouser->userid);
         }
     }
     return $return;

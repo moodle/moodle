@@ -75,6 +75,7 @@
     $attempt = scorm_get_last_attempt($scorm->id, $USER->id);
     if (($newattempt=='on') && (($attempt < $scorm->maxattempt) || ($scorm->maxattempt == 0))) {
         $attempt++;
+        $mode = 'normal';
     }
     $attemptstr = '&amp;attempt=' . $attempt;
 
