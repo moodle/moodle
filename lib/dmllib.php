@@ -1248,9 +1248,9 @@ function sql_fullname($firstname='firstname', $lastname='lastname') {
  */
 function sql_concat() {
     global $db;
- 
+
     $args = func_get_args();
-    return call_user_func_array(array('Concat', $db), $args);
+    return call_user_func_array(array($db, 'Concat'), $args);
 }
 
 /**
@@ -1275,7 +1275,7 @@ function sql_concat_join($separator="' '", $elements=array()) {
     for ($n=count($elem)-1; $n > 0 ; $n--) {
         array_splice($elem, $n, 0, $separator);
     }
-    return call_user_func_array(array('Concat', $db), $elem);
+    return call_user_func_array(array($db, 'Concat'), $elem);
 }
 
 /**
