@@ -594,18 +594,8 @@ function hotpot_get_records_groupby($function, $fieldnames, $table, $select, $gr
     // $function is an SQL aggregate function (MAX or MIN)
 
     global $CFG;
-
-    switch (strtolower($CFG->dbtype)) {
-        case 'mysql':
-            $fields = "$groupby, $function(CONCAT(".join(",'_',", $fieldnames).")) AS joinedvalues";
-            break;
-        case 'postgres7':
-            $fields = "$groupby, $function(".join("||'_'||", $fieldnames).") AS joinedvalues";
-            break;
-        default:
-            $fields = "";
-            break;
-    }
+    $fields = sql_concat_join("'_'", $fieldnames);
+    $fields = "$groupby, $function($fields) AS joinedvalues";
 
     if ($fields) {
         $records = get_records_sql("SELECT $fields FROM $table WHERE $select GROUP BY $groupby");

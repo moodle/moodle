@@ -1089,17 +1089,31 @@ function hotpot_get_grades($hotpot, $user_ids='') {
             break;
         case HOTPOT_GRADEMETHOD_FIRST:
             if ($CFG->dbtype=='postgres7') {
-                $grade = "MIN(timestart||'_'||(CASE WHEN (score IS NULL) THEN '' ELSE TRIM(ROUND(score * $weighting, $precision)) END)) AS grade";
+                $grade = "(CASE WHEN (score IS NULL) 
+                                THEN '' 
+                                ELSE TRIM(ROUND(score * $weighting, $precision)) 
+                           END)";
             } else {
-                $grade = "MIN(CONCAT(timestart, '_', IF(score IS NULL, '', ROUND(score * $weighting, $precision)))) AS grade";
+                $grade = "IF(score IS NULL, 
+                             '', 
+                             ROUND(score * $weighting, $precision))";
             }
+            $grade = sql_concat('timestart', "'_'", $grade);
+            $grade = "MIN($grade) AS grade";
             break;
         case HOTPOT_GRADEMETHOD_LAST:
             if ($CFG->dbtype=='postgres7') {
-                $grade = "MAX(timestart||'_'||(CASE WHEN (score IS NULL) THEN '' ELSE TRIM(ROUND(score * $weighting, $precision)) END)) AS grade";
+                $grade = "(CASE WHEN (score IS NULL) 
+                                THEN '' 
+                                ELSE TRIM(ROUND(score * $weighting, $precision)) 
+                           END)";
             } else {
-                $grade = "MAX(CONCAT(timestart, '_', IF(score IS NULL, '', ROUND(score * $weighting, $precision)))) AS grade";
+                $grade = "IF(score IS NULL, 
+                             '', 
+                             ROUND(score * $weighting, $precision))";
             }
+            $grade = sql_concat('timestart', "'_'", $grade);
+            $grade = "MAX($grade) AS grade";
             break;
     }
 

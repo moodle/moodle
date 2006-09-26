@@ -203,14 +203,8 @@
         $questions = false;
         $regradehotpots = array();
 
-        switch (strtolower($CFG->dbtype)) {
-            case 'mysql' : 
-                $field = "CONCAT(hotpot, '_', name)";
-                break;
-            case 'postgres7' :
-                $field = "hotpot||'_'||name";
-                break;
-        }
+        $field = sql_concat('hotpot', "'_'", 'name');
+        
         if ($field) {
             $questions = get_records_sql("
                 SELECT $field, COUNT(*), hotpot, name

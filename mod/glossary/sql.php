@@ -92,9 +92,9 @@
         break;
         case 'mysql':
             if ( $sqlsortkey == 'FIRSTNAME' ) {
-                $usernamefield = "CONCAT(CONCAT(u.firstname,' '), u.lastname)";
+                $usernamefield = sql_fullname('u.firstname' , 'u.lastname');
             } else {
-                $usernamefield = "CONCAT(CONCAT(u.lastname,' '), u.firstname)";
+                $usernamefield = sql_fullname('u.lastname' , 'u.firsttname');
             }
             $where = "AND left(ucase($usernamefield)," .  $textlib->strlen($hook, current_charset()) . ") = '$hook'";
         break;
