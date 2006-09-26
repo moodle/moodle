@@ -217,6 +217,10 @@ function scorm_upgrade($oldversion) {
         execute_sql("ALTER TABLE {$CFG->prefix}scorm_scoes_track ADD INDEX element(element(255));",false);
     }
 
+    if ($oldversion < 2006102600) {
+        table_column("scorm", "", "skipview", "TINYINT", "1", "UNSIGNED", "1", "NOT NULL", "launch"); 
+    }
+
     return true;
 }
 ?>

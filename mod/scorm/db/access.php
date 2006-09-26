@@ -47,6 +47,20 @@ $mod_scorm_capabilities = array(
         )
     ),
 
+    'mod/scorm:skipview' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_PREVENT,
+            'editingteacher' => CAP_PREVENT,
+            'coursecreator' => CAP_PREVENT,
+            'admin' => CAP_PREVENT
+        )
+    ),
+
     'mod/scorm:savetrack' => array(
 
         'captype' => 'write',
