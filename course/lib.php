@@ -263,8 +263,6 @@ function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limit
     // It is assumed that $date is the GMT time of midnight for that day,
     // and so the next 86400 seconds worth of logs are printed.
 
-    global $db;
-
     /// Setup for group handling.
     
     /// If the group mode is separate, and this user does not have editing privileges,
