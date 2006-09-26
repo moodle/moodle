@@ -87,7 +87,7 @@ table.formtable tbody th {
 }
 
 .highlight2 {
-  color:#AA0000; /* highlight missing terms in forum search */
+  color:#AA0000;/* highlight missing terms in forum search */
 }
 
 /* Alternate rows even */
@@ -112,7 +112,7 @@ table.formtable tbody th {
 
 .generalbox .generalboxcontent {
   border-color:#9999FF;
-  background-color:#FFFFFF; 
+  background-color:#FFFFFF;
 }
 
 .informationbox {
@@ -120,7 +120,7 @@ table.formtable tbody th {
 }
 
 .feedbackbox {
-  border-color: #888888; 
+  border-color: #888888;
 }
 .feedbackby {
   background-color:#BBBBBB;
@@ -223,8 +223,8 @@ table.formtable tbody th {
  ***/
 
 .admin .informationbox {
-  border-color:#BBBBBB; 
-  background-color:#FFFFFF; 
+  border-color:#BBBBBB;
+  background-color:#FFFFFF;
 }
 
 body#admin-index .c0 {
@@ -253,6 +253,19 @@ table.flexible .r1 {
   background-color: #fafafa;
 }
 
+body#admin-lang .generalbox {
+  border-color:#9999FF;
+  background-color:#FFFFFF;
+}
+
+fieldset.adminsettings {
+    background-color: #FFFFFF;
+    border-color: #9999FF;
+}
+
+fieldset.adminsettings .form-shortname {
+    color: #0000FF;
+}
 
 /***
  *** Blocks
@@ -664,7 +677,7 @@ table.message_search_results td {
 }
 
 .forumpost .left {
-  background-color:#EEEEEE; 
+  background-color:#EEEEEE;
 }
 
 .forumpost .topic {
@@ -672,11 +685,11 @@ table.message_search_results td {
 }
 
 .forumpost .starter {
-  background-color:#EEEEEE; 
+  background-color:#EEEEEE;
 }
 
 .forumheaderlist .discussion .starter {
-  background-color:#EEEEEE; 
+  background-color:#EEEEEE;
 }
 
 .forumheaderlist td {
@@ -695,7 +708,7 @@ table.message_search_results td {
 }
 
 #mod-forum-discuss .forumpost.unread .content {
-  border-color: #FFD991; 
+  border-color: #FFD991;
 } 
 
 #mod-forum-discuss .forumthread .unread {
