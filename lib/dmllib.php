@@ -1231,18 +1231,22 @@ function sql_ilike() {
  * @return string
  */
 function sql_fullname($firstname='firstname', $lastname='lastname') {
-    global $CFG;
+    return sql_concat($firstname, "' '", $lastname);
+}
 
-    switch ($CFG->dbtype) {
-        case 'mysql':
-             return ' CONCAT('. $firstname .'," ",'. $lastname .') ';
-        case 'postgres7':
-             return " ". $firstname ."||' '||". $lastname ." ";
-        case 'mssql':
-             return " ". $firstname ."+' '+". $lastname ." ";
-        default:
-             return ' '. $firstname .'||" "||'. $lastname .' ';
-    }
+/**
+ * Returns the proper SQL to do CONCAT between the elements passed
+ * Can take many parameters - just a passthrough to $db->Concat()
+ *
+ * @uses $db
+ * @param string $element
+ * @return string
+ */
+function sql_concat() {
+    global $db;
+ 
+    $args = func_get_args();
+    return call_user_func_array(array('Concat', $db), $args);
 }
 
 /**
