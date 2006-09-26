@@ -1317,20 +1317,21 @@ class admin_setting_configtext extends admin_setting {
 
     // $data is a string
     function write_setting($data) {
-        if (is_string($this->paramtype)) {
-            if (!$this->validate($data)) {
-                return get_string('validateerror', 'admin') . $this->visiblename . '<br />';
-            }
-        } else {
-            if ($data != clean_param($data, $this->paramtype)) {
-                return get_string('validateerror', 'admin') . $this->visiblename . '<br />';
-            }
+        if (!$this->validate($data)) {
+            return get_string('validateerror', 'admin') . $this->visiblename . '<br />';
         }
         return (set_config($this->name,$data) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
     }
 
     function validate($data) {
-        return preg_match($this->paramtype, $data);
+        if (is_string($this->paramtype)) {
+            return preg_match($this->paramtype, $data);
+        } else if ($this->paramtype === PARAM_RAW) {
+            return true;
+        } else {
+            $cleaned = clean_param($data, $this->paramtype);
+            return ("$data" == "$cleaned"); // implicit conversion to string is needed to do exact comparison
+        }
     }
 
     function output_html() {
@@ -1339,8 +1340,8 @@ class admin_setting_configtext extends admin_setting {
         } else {
             $current = $this->get_setting();
         }
-        return format_admin_setting($this->name, $this->visiblename, 
-                '<input type="text" class="form-text" id="id_s_'.$this->name.'" name="s_'.$this->name.'" value="'.$current.'" />', 
+        return format_admin_setting($this->name, $this->visiblename,
+                '<input type="text" class="form-text" id="id_s_'.$this->name.'" name="s_'.$this->name.'" value="'.$current.'" />',
                 $this->description);
     }
 
@@ -1371,7 +1372,7 @@ class admin_setting_configcheckbox extends admin_setting {
         } else {
             $current = $this->get_setting();
         }
-        return format_admin_setting($this->name, $this->visiblename, 
+        return format_admin_setting($this->name, $this->visiblename,
                 '<input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'" name="s_'. $this->name .'" value="1" ' . ($current == true ? 'checked="checked"' : '') . ' />',
                 $this->description);
     }
@@ -1670,12 +1671,8 @@ class admin_setting_sitesettext extends admin_setting_configtext {
     }
 
     function write_setting($data) {
-        if (is_string($this->paramtype)) {
-            if (!$this->validate($data)) {
-                return get_string('validateerror', 'admin') . $this->visiblename . '<br />';
-            }
-        } else {
-            $data = clean_param($data, $this->paramtype);
+        if (!$this->validate($data)) {
+            return get_string('validateerror', 'admin') . $this->visiblename . '<br />';
         }
 
         $record = new stdClass();
@@ -1683,10 +1680,6 @@ class admin_setting_sitesettext extends admin_setting_configtext {
         $record->{$this->name} = $data;
         $record->timemodified = time();
         return (update_record('course', $record) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
-    }
-
-    function validate($data) {
-        return preg_match($this->paramtype, $data);
     }
 
 }

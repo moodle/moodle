@@ -37,7 +37,7 @@ $temp->add(new admin_setting_sitesetselect('newsitems', get_string('newsitemsnum
            '8' => '8',
            '9' => '9',
            '10' => '10')));
-$temp->add(new admin_setting_configtext('coursesperpage', get_string('coursesperpage', 'admin'), get_string('configcoursesperpage', 'admin'), '20', PARAM_INT));
+$temp->add(new admin_setting_configtext('coursesperpage', get_string('coursesperpage', 'admin'), get_string('configcoursesperpage', 'admin'), 20, PARAM_INT));
 $ADMIN->add('appearance', $temp);
 
 // calendar
