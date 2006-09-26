@@ -56,17 +56,12 @@ if ($data = data_submitted()) {
 // to modify them
 admin_externalpage_print_header($adminroot);
 
-
 echo '<form action="upgradesettings.php" method="post" name="mainform">';
-echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
-print_simple_box_start('','100%','',5,'generalbox','');
-print_heading(get_string('upgradesettings','admin'));
-echo '<table class="generaltable" width="100%" border="0" align="center" cellpadding="5" cellspacing="1">' . "\n";
-echo '<tr><td colspan="2">' . get_string('upgradesettingsintro','admin') . '</td></tr>';
+echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
+
 echo $newsettingshtml;
-echo '</table>';
-echo '<center><input type="submit" value="Save Changes" /></center>';
-print_simple_box_end();
+
+echo '<div class="form-buttons"><input class="form-submit" type="submit" value="' . get_string('savechanges','admin') . '" /></div>';
 echo '</form>';
 
 admin_externalpage_print_footer($adminroot);
@@ -130,9 +125,12 @@ function output_new_settings_by_page(&$node) {
         }
         $return = '';
         if (count($newsettings) > 0) {
-            $return = '<tr><td colspan="2"><strong>' . $node->visiblename . '</strong></td></tr>';
+            $return .= print_heading(get_string('upgradesettings','admin').' - '.$node->visiblename, '', 2, 'main', true);
             foreach ($newsettings as $newsetting) {
+                $return .= '<fieldset class="adminsettings">' . "\n";
+                $return .= '<div class="clearer"><!-- --></div>' . "\n";
                 $return .= $newsetting->output_html();
+                $return .= '</fieldset>';
             }
         }
         return $return;
