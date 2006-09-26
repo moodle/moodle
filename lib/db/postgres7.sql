@@ -276,7 +276,7 @@ CREATE TABLE prefix_log_display (
    module varchar(20) NOT NULL default '',
    action varchar(40) NOT NULL default '',
    mtable varchar(30) NOT NULL default '',
-   field varchar(50) NOT NULL default ''
+   field varchar(200) NOT NULL default ''
 );
 CREATE INDEX prefix_log_display_moduleaction ON prefix_log_display (module,action);
 

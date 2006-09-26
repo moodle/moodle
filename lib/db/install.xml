@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20060924" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20060926" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -404,7 +404,7 @@
         <FIELD NAME="module" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="action"/>
         <FIELD NAME="action" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="module" NEXT="mtable"/>
         <FIELD NAME="mtable" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="action" NEXT="field"/>
-        <FIELD NAME="field" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="mtable"/>
+        <FIELD NAME="field" TYPE="char" LENGTH="200" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="mtable"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for log_display"/>

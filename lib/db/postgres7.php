@@ -1954,6 +1954,9 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2006092601) {
+            table_column('log_display', 'field', 'field', 'varchar', '200', '', '', 'not null', '');
+    }
 
     return $result;
 }

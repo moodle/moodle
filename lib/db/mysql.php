@@ -2329,6 +2329,9 @@ function main_upgrade($oldversion=0) {
         execute_sql("CREATE UNIQUE INDEX {$CFG->prefix}role_sor_uix ON {$CFG->prefix}role (sortorder);", false);
     }
 
+    if ($oldversion < 2006092601) {
+        table_column('log_display', 'field', 'field', 'varchar', '200', '', '', 'not null', '');
+    }
 
     return $result;
 }
