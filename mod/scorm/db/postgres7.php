@@ -240,6 +240,10 @@ function scorm_upgrade($oldversion) {
        modify_database('', 'ALTER TABLE prefix_scorm_scoes_track ADD CONSTRAINT prefix_scorm_scoes_track_userid_key UNIQUE (userid, scormid, scoid, attempt, element)');
     }
 
+    if ($oldversion < 2006102600) {
+        table_column("scorm", "", "skipview", "integer", "", "", "1", "NOT NULL"); 
+    }
+
     return true;
 }
 ?>
