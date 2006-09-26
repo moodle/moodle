@@ -87,7 +87,11 @@ function scorm_update_instance($scorm) {
             delete_records('scorm_sequencing_rulecondition','scormid',$scorm->id);
 */
         $scorm->launch = scorm_parse($scorm);
+    } else {
+        $oldscorm = get_record('scorm','id',$scorm->id);
+        $scorm->reference = $oldscorm->reference; // This fix a problem with Firefox when the teacher choose Cancel on overwrite question
     }
+    
     return update_record('scorm', $scorm);
 }
 
