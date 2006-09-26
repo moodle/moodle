@@ -47,7 +47,7 @@ class XMLDBIndex extends XMLDBObject {
      * @param array fields an array of fieldnames to build the index over
      */
     function setAttributes($type, $fields) {
-        $this->type = !empty($type) ? true : false;
+        $this->unique = !empty($type) ? true : false;
         $this->fields = $fields;
     }
 
