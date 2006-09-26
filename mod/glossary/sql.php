@@ -147,24 +147,17 @@
 
         $where = '';
         $fullpivot = 0;
-        if ($CFG->dbtype == "postgres7") {
-            $LIKE = "ILIKE";   // case-insensitive
-        } else {
-            $LIKE = "LIKE";
-        }
+        $LIKE = sql_ilike();
+        $NOTLIKE = 'NOT ' . $LIKE;
 
         switch ( $mode ) {
         case 'search': 
 
             /// Some differences in syntax for PostgreSQL
             if ($CFG->dbtype == "postgres7") {
-                $LIKE = "ILIKE";   // case-insensitive
-                $NOTLIKE = "NOT ILIKE";   // case-insensitive
                 $REGEXP = "~*";
                 $NOTREGEXP = "!~*";
             } else {
-                $LIKE = "LIKE";
-                $NOTLIKE = "NOT LIKE";
                 $REGEXP = "REGEXP";
                 $NOTREGEXP = "NOT REGEXP";
             }

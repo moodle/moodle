@@ -755,6 +755,7 @@ function forum_user_complete($course, $user, $mod, $forum) {
 
 function forum_print_overview($courses,&$htmlarray) {
     global $USER, $CFG;
+    $LIKE = sql_ilike();
 
     if (empty($courses) || !is_array($courses) || count($courses) == 0) {
         return array();
@@ -774,7 +775,7 @@ function forum_print_overview($courses,&$htmlarray) {
     }
     $sql = substr($sql,0,-3); // take off the last OR
 
-    $sql .= ") AND l.module = 'forum' AND action LIKE 'add post%' "
+    $sql .= ") AND l.module = 'forum' AND action $LIKE 'add post%' "
         ." AND userid != ".$USER->id." GROUP BY cmid,l.course,instance";
     
     if (!$new = get_records_sql($sql)) {
@@ -856,6 +857,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
 /// messages posted in the course since that date
 
     global $CFG;
+    $LIKE = sql_ilike();
 
     $heading = false;
     $content = false;
@@ -863,7 +865,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
     if (!$logs = get_records_select('log', 'time > \''.$timestart.'\' AND '.
                                            'course = \''.$course->id.'\' AND '.
                                            'module = \'forum\' AND '.
-                                           'action LIKE \'add %\' ', 'time ASC')){
+                                           'action $LIKE \'add %\' ', 'time ASC')){
         return false;
     }
 
@@ -1264,15 +1266,13 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
     $selectdiscussion .= ")";
 
 
-    // Some differences in syntax for PostgreSQL.
+    // Some differences SQL
+    $LIKE = sql_ilike();
+    $NOTLIKE = 'NOT ' . $LIKE;
     if ($CFG->dbtype == 'postgres7') {
-        $LIKE = 'ILIKE';           // Case-insensitive
-        $NOTLIKE = 'NOT ILIKE';    // Case-insensitive
         $REGEXP = '~*';
         $NOTREGEXP = '!~*';
-    } else {                       // Note the LIKE are casesensitive for Oracle. Oracle 10g is required to use 
-        $LIKE = 'LIKE';            // the caseinsensitive search using regexp_like() or NLS_COMP=LINGUISTIC :-(
-        $NOTLIKE = 'NOT LIKE';     // See http://docs.moodle.org/en/XMLDB_Problems#Case-insensitive_searches
+    } else {
         $REGEXP = 'REGEXP';
         $NOTREGEXP = 'NOT REGEXP';
     }

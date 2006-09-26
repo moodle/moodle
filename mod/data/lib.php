@@ -1223,13 +1223,14 @@ function data_get_post_actions() {
 function data_fieldname_exists($name, $dataid, $fieldid=0) {
     global $CFG;
 
+    $LIKE = sql_ilike();
     if ($fieldid) { 
         return record_exists_sql("SELECT * from {$CFG->prefix}data_fields AS df 
-                                  WHERE df.name LIKE '$name' AND df.dataid = $dataid
+                                  WHERE df.name $LIKE '$name' AND df.dataid = $dataid
                                     AND ((df.id < $fieldid) OR (df.id > $fieldid))");
     } else {
         return record_exists_sql("SELECT * from {$CFG->prefix}data_fields AS df 
-                                  WHERE df.name LIKE '$name' AND df.dataid = $dataid");
+                                  WHERE df.name $LIKE '$name' AND df.dataid = $dataid");
     }
 }
 
