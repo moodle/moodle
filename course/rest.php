@@ -114,6 +114,10 @@ switch($_SERVER['REQUEST_METHOD']) {
                             $beforemod = NULL;
                         }
 
+                        if (debugging('',DEBUG_DEVELOPER)) {
+                            error_log(serialize($beforemod));
+                        }
+
                         moveto_module($mod, $section, $beforemod);
                         break;
                 }
