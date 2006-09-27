@@ -4,6 +4,7 @@
     require_once('../../../config.php');
     require_once('../../lib.php');
     require_once('lib.php');
+    require_once($CFG->libdir.'/adminlib.php');
 
     $id          = required_param('id', PARAM_INT);// Course ID
     $group       = optional_param('group', -1, PARAM_INT); // Group to display
@@ -26,9 +27,8 @@
     }
     
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    if (!has_capability('moodle/site:viewreports', $context)) {
-        error('You need do not have the required permission to view this report');
-    }
+
+    require_capability('moodle/site:viewreports', $context);
 
     add_to_log($course->id, "course", "report log", "report/log/index.php?id=$course->id", $course->id); 
 
@@ -54,15 +54,15 @@
         
         switch ($logformat) {
             case 'showashtml':
-                if ($course->category) {
+                if ($course->id == SITEID) {
+                    $adminroot = admin_get_root();
+                    admin_externalpage_setup('reportlog', $adminroot);
+                    admin_externalpage_print_header($adminroot);
+
+                } else {
                     print_header($course->shortname .': '. $strlogs, $course->fullname, 
                                  "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
                                   <a href=\"$CFG->wwwroot/course/report.php?id=$course->id\">$strreports</a> ->
-                                  <a href=\"index.php?id=$course->id\">$strlogs</a> -> $userinfo, $dateinfo", '');
-                } else {
-                    print_header($course->shortname .': '. $strlogs, $course->fullname, 
-                                 "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> ->
-                                  <a href=\"$CFG->wwwroot/$CFG->admin/report.php\">$strreports</a> ->
                                   <a href=\"index.php?id=$course->id\">$strlogs</a> -> $userinfo, $dateinfo", '');
                 }
 
@@ -100,15 +100,14 @@
 
 
     } else {
-        if ($course->category) {
+        if ($course->id == SITEID) {
+                    $adminroot = admin_get_root();
+                    admin_externalpage_setup('reportlog', $adminroot);
+                    admin_externalpage_print_header($adminroot);
+        } else {
             print_header($course->shortname .': '. $strlogs, $course->fullname, 
                      "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> 
                       <a href=\"$CFG->wwwroot/course/report.php?id=$course->id\">$strreports</a> ->
-                      $strlogs", '');
-        } else {
-            print_header($course->shortname .': '. $strlogs, $course->fullname, 
-                     "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> 
-                      <a href=\"$CFG->wwwroot/$CFG->admin/report.php\">$strreports</a> ->
                       $strlogs", '');
         }
 
@@ -125,7 +124,11 @@
 
     }
 
-    print_footer($course);
+    if ($course->id == SITEID) {
+        admin_externalpage_print_footer($adminroot);
+    } else {
+        print_footer($course);
+    }
 
     exit;
 ?>
