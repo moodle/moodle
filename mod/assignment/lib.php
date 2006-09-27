@@ -802,13 +802,11 @@ class assignment_base {
         $assignment = $this->assignment;
         $cm         = $this->cm;
     
-        if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-            $currentgroup = setup_and_print_groups($course, $groupmode, 'submissions.php?id='.$this->cm->id);
-        } else {
-            $currentgroup = false;
-        }
 
     /// Get all teachers and students
+
+        $currentgroup = get_current_group($course->id);
+
         if ($currentgroup) {
             $users = get_group_users($currentgroup);
         } else {
@@ -822,7 +820,7 @@ class assignment_base {
                'WHERE u.id IN ('.implode(',', array_keys($users)).') ';
                
         require_once($CFG->libdir.'/tablelib.php');
-        if($sort = flexible_table::get_sql_sort('mod-assignment-submissions')) {
+        if ($sort = flexible_table::get_sql_sort('mod-assignment-submissions')) {
             $sort = 'ORDER BY '.$sort.' ';
         }
 
