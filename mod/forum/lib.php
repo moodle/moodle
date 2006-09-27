@@ -865,7 +865,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
     if (!$logs = get_records_select('log', 'time > \''.$timestart.'\' AND '.
                                            'course = \''.$course->id.'\' AND '.
                                            'module = \'forum\' AND '.
-                                           'action $LIKE \'add %\' ', 'time ASC')){
+                                           'action '.$LIKE.' \'add %\' ', 'time ASC')){
         return false;
     }
 
