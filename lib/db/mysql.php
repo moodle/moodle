@@ -2225,23 +2225,24 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2006091901) {
-        $roles = get_records('role');
-        $first = array_shift($roles);
-        if (!empty($first->shortname)) {
-            // shortnames already exist
-        } else {
-            table_column('role', '', 'shortname', 'varchar', '100', '', '', 'not null', 'name');
-            $legacy_names = array('admin', 'coursecreator', 'editingteacher', 'teacher', 'student', 'guest');
-            foreach ($legacy_names as $name) {
-                if ($roles = get_roles_with_capability('moodle/legacy:'.$name, CAP_ALLOW)) {
-                    $i = '';
-                    foreach ($roles as $role) {
-                        if (empty($role->shortname)) {
-                            $updated = new object();
-                            $updated->id = $role->id;
-                            $updated->shortname = $name.$i;
-                            update_record('role', $updated);
-                            $i++;
+        if ($roles = get_records('role')) {
+            $first = array_shift($roles);
+            if (!empty($first->shortname)) {
+                // shortnames already exist
+            } else {
+                table_column('role', '', 'shortname', 'varchar', '100', '', '', 'not null', 'name');
+                $legacy_names = array('admin', 'coursecreator', 'editingteacher', 'teacher', 'student', 'guest');
+                foreach ($legacy_names as $name) {
+                    if ($roles = get_roles_with_capability('moodle/legacy:'.$name, CAP_ALLOW)) {
+                        $i = '';
+                        foreach ($roles as $role) {
+                            if (empty($role->shortname)) {
+                                $updated = new object();
+                                $updated->id = $role->id;
+                                $updated->shortname = $name.$i;
+                                update_record('role', $updated);
+                                $i++;
+                            }
                         }
                     }
                 }
