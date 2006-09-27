@@ -694,7 +694,9 @@ function load_user_capability($capability='', $context ='', $userid='') {
     $usercap = array(); // for other user's capabilities
     foreach ($capabilities as $capability) {
 
-        $context = get_context_instance_by_id($capability->id);
+        if (!$context = get_context_instance_by_id($capability->id)) {
+            continue; // incorrect stale context
+        }
 
         if (!empty($otheruserid)) { // we are pulling out other user's capabilities, do not write to session
 
@@ -1222,7 +1224,7 @@ function get_context_instance($contextlevel=NULL, $instance=SITEID) {
 
 /// check allowed context levels
     if (!in_array($contextlevel, $allowed_contexts)) {
-        // fatal error, code must be fixed - probably typo or switched parameters 
+        // fatal error, code must be fixed - probably typo or switched parameters
         error('Error: get_context_instance() called with incorrect context level "'.s($contextlevel).'"');
     }
 
