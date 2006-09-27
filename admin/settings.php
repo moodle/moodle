@@ -105,7 +105,7 @@ if (!empty($SITE->fullname)) {
 
 }
 
-echo '<form action="settings.php" method="post" name="mainform">';
+echo '<form action="settings.php" method="post" name="mainform" id="adminsettings">';
 echo '<input type="hidden" name="section" value="' . $PAGE->section . '" />';
 echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
 echo '<input type="hidden" name="return" value="' . $return . '" />';

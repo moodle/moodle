@@ -228,7 +228,7 @@ body#admin-index .copyright {
   font-size: 0.8em;
 }
 
-fieldset.adminsettings .form-shortname {
+#adminsettings .form-shortname {
     font-size: 75%;
 }
 

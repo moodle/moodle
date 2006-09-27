@@ -308,13 +308,13 @@ table.flexible .r1 {
   background-color: green;
 }
 
-fieldset.adminsettings {
+#adminsettings {
     background-color: #EEE;
     border-color: #BBB;
     color: #000;
 }
 
-fieldset.adminsettings .form-shortname {
+#adminsettings .form-shortname {
     color: #888;
 }
 

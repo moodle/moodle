@@ -451,63 +451,63 @@ body#admin-roles-manage table.generalbox {
   text-align:center;
 }
 
-fieldset.adminsettings {
+#adminsettings fieldset {
     margin-top: 1em;
     padding: 1em 0.5em;
 }
 
-fieldset.adminsettings legend {
+#adminsettings legend {
     display: none;
 }
 
-fieldset.adminsettings .form-group {
+#adminsettings .form-group {
     float: left;
 }
 
-fieldset.adminsettings .form-item {
+#adminsettings .form-item {
     margin: 0;
 }
 
-fieldset.adminsettings label {
+#adminsettings label {
     display: block;
     float: left;
     width: 150px;
     text-align: right;
 }
 
-fieldset.adminsettings .form-shortname {
+#adminsettings .form-shortname {
     display: block;
 }
 
-fieldset.adminsettings select,
-fieldset.adminsettings input {
+#adminsettings select,
+#adminsettings input {
     float: left;
     margin: 0 0 0 10px;
 }
 
-fieldset.adminsettings textarea {
+#adminsettings textarea {
     float: left;
     margin: 0 0 0 10px;
     width: 65%;
 }
 
-fieldset.adminsettings .form-group select,
-fieldset.adminsettings .form-group input {
+#adminsettings .form-group select,
+#adminsettings .form-group input {
     display: inline;
     float: none;
 }
 
-/* fieldset.adminsettings .admin-configtime .form-select {
+/* #adminsettings .admin-configtime .form-select {
     display: inline;
     float: none;
 }
 
-fieldset.adminsettings div.admin-frontpage div.form-group select.form-select {
+#adminsettings div.admin-frontpage div.form-group select.form-select {
     display: inline;
     float: none;
 } */
 
-fieldset.adminsettings .description {
+#adminsettings .description {
     clear: both;
     margin: 0 1em 0 160px;
     padding: 0.3em 0 1.5em 0;

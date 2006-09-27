@@ -56,11 +56,13 @@ if ($data = data_submitted()) {
 // to modify them
 admin_externalpage_print_header($adminroot);
 
-echo '<form action="upgradesettings.php" method="post" name="mainform">';
+print_simple_box(get_string('upgradesettingsintro','admin'),'','100%','',5,'generalbox','');
+
+echo '<form action="upgradesettings.php" method="post" name="mainform" id="adminsettings">';
 echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
-
+echo '<fieldset>';
+echo '<div class="clearer"><!-- --></div>';
 echo $newsettingshtml;
-
 echo '<div class="form-buttons"><input class="form-submit" type="submit" value="' . get_string('savechanges','admin') . '" /></div>';
 echo '</form>';
 

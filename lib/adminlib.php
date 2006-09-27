@@ -1233,10 +1233,10 @@ class admin_settingpage extends part_of_admin_tree {
     // outputs this page as html in a table (suitable for inclusion in an admin pagetype)
     // returns a string of the html
     function output_html() {
-        $return = '<fieldset class="adminsettings">' . "\n";
+        $return = '<fieldset>' . "\n";
         $return .= '<div class="clearer"><!-- --></div>' . "\n";
         foreach($this->settings as $setting) {
-          $return .= $setting->output_html();
+            $return .= $setting->output_html();
         }
         $return .= '</fieldset>';
         return $return;
