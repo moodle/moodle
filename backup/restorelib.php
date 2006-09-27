@@ -800,9 +800,11 @@
                     //Add this instance
                     $instance->blockid = $blocks[$instance->name]->id;
                     
-                    if(!insert_record('block_instance', $instance)) {
+                    if($newid = insert_record('block_instance', $instance)) {
+                        backup_putid ($restore->backup_unique_code,"block_instance",$instance->id,$newid);
+                    } else {
                         $status = false;
-                        break;
+                        break;                      
                     }
                     
                     //Get an object for the block and tell it it's been restored so it can update dates
@@ -1611,7 +1613,7 @@
                 }
             }
         }
-
+        
         return $status;
     }
 
@@ -3744,6 +3746,8 @@
                 }
                 if ($this->level == 5) {
                     switch ($tagName) {
+                        case 'ID':
+                            $this->info->tempinstance->id = $this->getContents();
                         case 'NAME':
                             $this->info->tempinstance->name = $this->getContents();
                             break;
@@ -3769,8 +3773,7 @@
                             break;
                     }
                 } 
-                //echo "<br/>this tree 5 is".$this->tree[5];
-//print_object($this);
+
                 if ($this->tree[5] == "ROLES_ASSIGNMENTS") {
                     if ($this->level == 7) {
                         switch ($tagName) {
@@ -3787,7 +3790,7 @@
                     }
                     
                     if ($this->level == 9) {
-                        echo "<br/>tagname is $tagName";
+
                         switch ($tagName) {
                             case "USERID":
                                 $this->info->tempinstance->roleassignments[$this->info->tempid]->name = $this->info->tempname;
@@ -4222,6 +4225,7 @@
         
         //This is the endTag handler we use where we are reading the users zone (todo="USERS")
         function endElementUsers($parser, $tagName) {
+            global $CFG;  
             //Check if we are into USERS zone
             if ($this->tree[3] == "USERS") {
                 //if (trim($this->content))                                                                     //Debug
@@ -4233,10 +4237,18 @@
                         case "USER":
                             //Increment counter
                             $this->counter++;
-                            //Save to db
+                            //Save to db, only save if record not already exist    
+                            // if there already is an new_id for this entry, just use that new_id?
+                            $newuser = backup_getid($this->preferences->backup_unique_code,"user",$this->info->tempuser->id);
+                            if (isset($newuser->new_id)) {
+                                $newid = $newuser->new_id;
+                            } else {
+                                $newid = null;  
+                            }
+                            
                             backup_putid($this->preferences->backup_unique_code,"user",$this->info->tempuser->id,
-                                          null,$this->info->tempuser);
-
+                                            $newid,$this->info->tempuser);
+                            
                             //Do some output   
                             if ($this->counter % 10 == 0) {
                                 if (!defined('RESTORE_SILENTLY')) {
@@ -4388,9 +4400,11 @@
                         case "TIMEMODIFIED": 
                             $this->info->tempuser->timemodified = $this->getContents();
                             break;
+                        default:
+                            break;
                     }
                 }
-                if ($this->level == 6) {
+                if ($this->level == 6 && $this->tree[5]!="ROLE_ASSIGNMENTS" && $this->tree[5]!="ROLE_OVERRIDES") {
                     switch ($tagName) {
                         case "ROLE":
                             //We've finalized a role, get it
@@ -4404,7 +4418,7 @@
                             break;
                     }
                 }
-                if ($this->level == 7) {
+                if ($this->level == 7 && $this->tree[5]!="ROLE_ASSIGNMENTS" && $this->tree[5]!="ROLE_OVERRIDES") {
                     switch ($tagName) {
                         case "TYPE":
                             $this->info->temprole->type = $this->getContents();
@@ -4448,9 +4462,135 @@
                         case "VALUE":
                             $this->info->tempuserpreference->value = $this->getContents();
                             break;
+                        default:
+                            break;
                     }
                 }
-            }
+                
+                
+                
+                
+                if ($this->tree[5] == "ROLES_ASSIGNMENTS") {
+
+                    if ($this->level == 7) {
+                        switch ($tagName) {
+                            case "NAME":
+                                $this->info->tempname = $this->getContents();
+                            break;
+                            case "SHORTNAME":
+                                $this->info->tempshortname = $this->getContents();
+                            break;
+                            case "ID":
+                                $this->info->tempid = $this->getContents(); // temp roleid
+                            break;
+                        }
+                    }
+                    
+                    if ($this->level == 9) {
+
+                        switch ($tagName) {
+                            case "USERID":
+                                $this->info->tempuser->roleassignments[$this->info->tempid]->name = $this->info->tempname;
+                                
+                                $this->info->tempuser->roleassignments[$this->info->tempid]->shortname = $this->info->tempshortname;
+                                
+                                $this->info->tempuserid = $this->getContents();
+                                
+                                $this->info->tempuser->roleassignments[$this->info->tempid]->assignments[$this->info->tempuserid]->userid = $this->getContents();
+                            break;
+                            case "HIDDEN":
+                                $this->info->tempuser->roleassignments[$this->info->tempid]->assignments[$this->info->tempuserid]->hidden = $this->getContents();
+                            break;
+                            case "TIMESTART":
+                                $this->info->tempuser->roleassignments[$this->info->tempid]->assignments[$this->info->tempuserid]->timestart = $this->getContents();
+                            break;
+                            case "TIMEEND":
+                                $this->info->tempuser->roleassignments[$this->info->tempid]->assignments[$this->info->tempuserid]->timeend = $this->getContents();
+                            break;
+                            case "TIMEMODIFIED":
+                                $this->info->tempuser->roleassignments[$this->info->tempid]->assignments[$this->info->tempuserid]->timemodified = $this->getContents();
+                            break;
+                            case "MODIFIERID":
+                                $this->info->tempuser->roleassignments[$this->info->tempid]->assignments[$this->info->tempuserid]->modifierid = $this->getContents();
+                            break;
+                            case "ENROL":
+                                $this->info->tempuser->roleassignments[$this->info->tempid]->assignments[$this->info->tempuserid]->enrol = $this->getContents();
+                            break;
+                            case "SORTORDER":
+                                $this->info->tempuser->roleassignments[$this->info->tempid]->assignments[$this->info->tempuserid]->sortorder = $this->getContents();
+                            break;
+                        
+                        }
+                    }
+                } /// ends role_assignments
+                
+                if ($this->tree[5] == "ROLES_OVERRIDES") {
+                    if ($this->level == 7) {
+                        switch ($tagName) {
+                            case "NAME":
+                                $this->info->tempname = $this->getContents();
+                            break;
+                            case "SHORTNAME":
+                                $this->info->tempshortname = $this->getContents();
+                            break;                            
+                            case "ID":
+                                $this->info->tempid = $this->getContents(); // temp roleid
+                            break;
+                        }      
+                    }
+                    
+                    if ($this->level == 9) {
+                        switch ($tagName) {
+                            case "NAME":
+                            
+                                $this->info->tempuser->roleoverrides[$this->info->tempid]->name = $this->info->tempname;
+                                $this->info->tempuser->roleoverrides[$this->info->tempid]->shortname = $this->info->tempshortname;
+                                $this->info->tempname = $this->getContents(); // change to name of capability
+                                $this->info->tempuser->roleoverrides[$this->info->tempid]->overrides[$this->info->tempname]->name = $this->getContents();
+                            break;
+                            case "PERMISSION":
+                                $this->info->tempuser->roleoverrides[$this->info->tempid]->overrides[$this->info->tempname]->permission = $this->getContents();
+                            break;
+                            case "TIMEMODIFIED":
+                                $this->info->tempuser->roleoverrides[$this->info->tempid]->overrides[$this->info->tempname]->timemodified = $this->getContents();
+                            break;
+                            case "MODIFIERID":
+                                $this->info->tempuser->roleoverrides[$this->info->tempid]->overrides[$this->info->tempname]->modifierid = $this->getContents();
+                            break;
+                        }
+                    }
+                } /// ends role_overrides                                                          
+                
+               
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+            } // closes if this->tree[3]=="users"
 
             //Stop parsing if todo = USERS and tagName = USERS (en of the tag, of course)
             //Speed up a lot (avoid parse all)
@@ -4458,7 +4598,7 @@
                 $this->finished = true;
                 $this->counter = 0;
             }
-
+            
             //Clear things
             $this->tree[$this->level] = "";
             $this->level--;
@@ -5401,6 +5541,7 @@
                     return false;
                 }
             }
+            
             //Now print info about the work done
             if ($status) {
                 $recs = get_records_sql("select old_id, new_id from {$CFG->prefix}backup_ids
@@ -5885,8 +6026,9 @@
         $courseassignments = $course->roleassignments;
 
         foreach ($courseassignments as $oldroleid => $courseassignment) {
-            restore_write_roleassignments($restore, $courseassignment->assignments, "course", CONTEXT_COURSE, $course->course_id, $oldroleid);
+            //restore_write_roleassignments($restore, $courseassignment->assignments, "course", CONTEXT_COURSE, $course->course_id, $oldroleid);
         }  
+        
         /*******************************************************
          * Restoring assignments from module level assignments *
          *******************************************************/     
@@ -5904,15 +6046,38 @@
                 }
             }
         }
-         //print_object($sections);
+        
         /*******************************************************
          * Restoring assignments from blocks level assignments *
          *******************************************************/ 
         $blocks = restore_read_xml_blocks($xmlfile);
-        print_object($blocks);  
+        if (isset($blocks->instances)) {
+            foreach ($blocks->instances as $instance) {
+                if (isset($instance->roleassignments)) {
+                    foreach ($instance->roleassignments as $oldroleid=>$blockassignment) {
+                      
+                        restore_write_roleassignments($restore, $blockassignment->assignments, "block_instance", CONTEXT_BLOCK, $instance->id, $oldroleid);                  
+                      
+                    }      
+                }    
+            }          
+        }
         /*******************************************************
          * Restoring assignments from userid level assignments *
-         *******************************************************/
+         *******************************************************/     
+
+        $info = restore_read_xml_users($restore, $xmlfile);
+        if (!empty($info->users)) {
+            //For each user, take its info from backup_ids
+            foreach ($info->users as $userid) {
+                $rec = backup_getid($restore->backup_unique_code,"user",$userid);   
+                if (isset($rec->info->roleassignments)) {
+                    foreach ($rec->info->roleassignments as $oldroleid=>$userassignment) {
+                       restore_write_roleassignments($restore, $userassignment->assignments, "user", CONTEXT_USER, $userid, $oldroleid);  
+                    }
+                }
+            }
+        }
     }
     
     function restore_override_roles($restore, $xmlfile) {
@@ -5925,11 +6090,10 @@
     
     // auxillary function to write role assignments read from xml to db
     function restore_write_roleassignments($restore, $assignments, $table, $contextlevel, $oldid, $oldroleid) {
-        
+        echo "context level is $contextlevel";
         $role = backup_getid($restore->backup_unique_code, "role", $oldroleid);
         
         foreach ($assignments as $assignment) {
-                
             $olduser = backup_getid($restore->backup_unique_code,"user",$assignment->userid);
             $assignment->userid = $olduser->new_id; // new userid here
             $oldmodifier = backup_getid($restore->backup_unique_code,"user",$assignment->modifierid);
@@ -5938,15 +6102,8 @@
             // new course id
             $oldinstance = backup_getid($restore->backup_unique_code,$table,$oldid);
             $newcontext = get_context_instance($contextlevel, $oldinstance->new_id);
-            $assignment->contextid = $newcontext->id;// new context id                
-
+            $assignment->contextid = $newcontext->id;// new context id                 
             insert_record('role_assignments', $assignment);   
         }  
-  
-    }
-    
-    
-    
-    
-    
+    }  
 ?>

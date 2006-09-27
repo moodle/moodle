@@ -957,6 +957,7 @@
                 //Iterate over every block
                 foreach ($instances as $position) {
                     foreach ($position as $instance) {
+                      
                         //If we somehow have a block with an invalid id, skip it
                         if(empty($blocks[$instance->blockid]->name)) {
                             continue;
@@ -964,6 +965,7 @@
                         //Begin Block
                         
                         fwrite ($bf,start_tag('BLOCK',3,true));
+                        fwrite ($bf,full_tag('ID', 4, false,$instance->id));
                         fwrite ($bf,full_tag('NAME',4,false,$blocks[$instance->blockid]->name));
                         fwrite ($bf,full_tag('PAGEID',4,false,$instance->pageid));
                         fwrite ($bf,full_tag('PAGETYPE',4,false,$instance->pagetype));
@@ -2147,6 +2149,7 @@
      */ 
     function backup_fetch_roles($preferences) {
 
+        global $CFG;
         $contexts = array();
         $roles = array();
         
@@ -2168,6 +2171,34 @@
                 }
             }
         }
+        
+        // add all roles assigned at user context
+        if ($preferences->backup_users) {
+            if ($users = get_records_sql("SELECT u.old_id, u.table_name,u.info
+                                            FROM {$CFG->prefix}backup_ids u
+                                            WHERE u.backup_code = '$preferences->backup_unique_code' AND
+                                            u.table_name = 'user'")) {                   
+                foreach ($users as $user) {
+                    $context = get_context_instance(CONTEXT_USER, $user->old_id);
+                    $contexts[$context->id] = $context; 
+                }                
+            }
+          
+        }
+
+        // add all roles assigned at block context
+        if ($courseblocks = get_records_sql("SELECT * 
+                                             FROM {$CFG->prefix}block_instance
+                                             WHERE pagetype = '".PAGE_COURSE_VIEW."'
+                                                   AND pageid = {$preferences->backup_course}")) {
+        
+            foreach ($courseblocks as $courseblock) {
+               
+                $context = get_context_instance(CONTEXT_COURSE, $courseblock->id);
+                 echo "<br/>adding $context->id";
+                 $contexts[$context->id] = $context;     
+            }                                         
+        }     
         
         // foreach context, call get_roles_on_exact_context insert into array
         foreach ($contexts as $context) {

@@ -153,7 +153,7 @@
                 $submission->submissioncomment = backup_todb($sub_info['#']['COMMENT']['0']['#']);
             } else {
                 $submission->submissioncomment = backup_todb($sub_info['#']['SUBMISSIONCOMMENT']['0']['#']);
-            }
+            }  
             $submission->format = backup_todb($sub_info['#']['FORMAT']['0']['#']);
             $submission->teacher = backup_todb($sub_info['#']['TEACHER']['0']['#']);
             $submission->timemarked = backup_todb($sub_info['#']['TIMEMARKED']['0']['#']);
