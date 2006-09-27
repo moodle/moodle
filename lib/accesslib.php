@@ -1208,14 +1208,22 @@ function validate_context($contextlevel, $instanceid) {
 function get_context_instance($contextlevel=NULL, $instance=SITEID) {
 
     global $context_cache, $context_cache_id, $CONTEXT;
+    static $allowed_contexts = array(CONTEXT_SYSTEM, CONTEXT_PERSONAL, CONTEXT_USER, CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_GROUP, CONTEXT_MODULE, CONTEXT_BLOCK);
 
 /// If no level is supplied then return the current global context if there is one
     if (empty($contextlevel)) {
         if (empty($CONTEXT)) {
-            debugging("Error: get_context_instance() called without a context");
+            //fatal error, code must be fixed
+            error("Error: get_context_instance() called without a context");
         } else {
             return $CONTEXT;
         }
+    }
+
+/// check allowed context levels
+    if (!in_array($contextlevel, $allowed_contexts)) {
+        // fatal error, code must be fixed - probably typo or switched parameters 
+        error('Error: get_context_instance() called with incorrect context level "'.s($contextlevel).'"');
     }
 
 /// Check the cache
