@@ -6,10 +6,17 @@
     require_once("$CFG->libdir/blocklib.php");
     require_once("$CFG->dirroot/enrol/enrol.class.php");
 
-    $id       = optional_param('id', 0, PARAM_INT); // course id
-    $category = optional_param('category', 0, PARAM_INT); // possible default category
+    include_once $CFG->libdir.'/formslib.php';
 
     require_login();
+
+    $mform =& new moodleform('edit_course', 'post', 'edit2.php');
+
+    $mform->acceptGet('id', 'category');
+
+    $id       = $mform->optional_param('id', 0, PARAM_INT); // course id
+    $category = $mform->optional_param('category', 0, PARAM_INT); // possible default category
+
    
     $disable_meta = false;
     $focus = "";
@@ -160,13 +167,13 @@
     include("edit_form.php");
     $mform->setDefaults((array)$default);
     
-    //setconstant overrides data coming from the form as well as default
+/*    //setconstant overrides data coming from the form as well as default
     //we use this to pass data into the form which we've already processed.
     $mform->setConstants(array('id'=>$id,
                             'category'=>$category));
 
 
-
+*/
 
 /// If data submitted, then process and store.
 
