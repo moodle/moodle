@@ -387,6 +387,11 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     echo "<th class=\"c5 header\">".get_string('info')."</th>\n";
     echo "</tr>\n";
 
+    if (empty($logs['logs'])) {
+        echo "</table>\n";
+        return;
+    }
+
     $row = 1;
     foreach ($logs['logs'] as $log) {
 
@@ -479,6 +484,10 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
     echo get_string('savedat').userdate(time(), $strftimedatetime)."\n";
     echo $text;
 
+    if (empty($logs['logs'])) {
+        return true;
+    }
+
     foreach ($logs['logs'] as $log) {
         if (isset($ldcache[$log->module][$log->action])) {
             $ld = $ldcache[$log->module][$log->action];
@@ -563,6 +572,11 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
             $worksheet[$wsnumber]->write(FIRSTUSEDEXCELROW-1,$col,$item,'');
             $col++;
         }
+    }
+
+    if (empty($logs['logs'])) {
+        $workbook->close();
+        return true;
     }
 
     $formatDate =& $workbook->add_format();
