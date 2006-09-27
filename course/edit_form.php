@@ -1,7 +1,5 @@
 <?php
-    include_once $CFG->libdir.'/formslib.php';
 
-    $mform =& new moodleform('edit_course', 'post', 'edit2.php');
     $mform->addElement('header','general', get_string("general"));
     if (has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $default->category))) { 
         $displaylist = array();
@@ -190,11 +188,11 @@
     $languages[''] = get_string("forceno");
     $languages += get_list_of_languages();
     $mform->addElement('select', 'lang', get_string("forcelanguage"), $languages);
-    if(!has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $default->category))) { 
-        $mform->addElement('hidden', 'category', $default->category);
-    }
-    $mform->addElement('hidden', 'id', $default->id);
 
+    if(!has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $default->category))) { 
+        $mform->addElement('hidden', 'category', null);
+    }
+    $mform->addElement('hidden', 'id', null);
    
     if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID)) && ((!empty($course->requested) && $CFG->restrictmodulesfor == 'requested') || $CFG->restrictmodulesfor == 'all')) {         
         unset($options);
@@ -213,7 +211,7 @@
     }else {
         $mform->addElement('hidden', 'restrictmodules', $default->restrictmodules);
     }
-    $mform->addHelpButtons(array('category'=>array("coursecategory", get_string("category")),
+    $mform->setHelpButtons(array('category'=>array("coursecategory", get_string("category")),
                              'fullname'=>array("coursefullname", get_string("fullname")),
                              'shortname'=>array("courseshortname", get_string("shortname")),
                              'idnumber'=>array("courseidnumber", get_string("idnumbercourse")),
