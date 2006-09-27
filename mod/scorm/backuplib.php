@@ -62,6 +62,7 @@
         fwrite ($bf,full_tag("MAXGRADE",4,false,$scorm->maxgrade));
         fwrite ($bf,full_tag("GRADEMETHOD",4,false,$scorm->grademethod));
         fwrite ($bf,full_tag("LAUNCH",4,false,$scorm->launch));
+        fwrite ($bf,full_tag("SKIPVIEW",4,false,$scorm->skipview));
         fwrite ($bf,full_tag("SUMMARY",4,false,$scorm->summary));
         fwrite ($bf,full_tag("HIDEBROWSE",4,false,$scorm->hidebrowse));
         fwrite ($bf,full_tag("HIDETOC",4,false,$scorm->hidetoc));

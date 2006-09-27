@@ -62,6 +62,11 @@
                 $scorm->datadir = backup_todb($info['MOD']['#']['ID']['0']['#']);
             }
             $oldlaunch = backup_todb($info['MOD']['#']['LAUNCH']['0']['#']);
+            if ($restore->backup_version < 2006102600) {
+                $scorm->skipview = 1;
+            } else {
+                $scorm->skipview = backup_todb($info['MOD']['#']['SKIPVIEW']['0']['#']);
+            }
             $scorm->summary = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
             $scorm->hidebrowse = backup_todb($info['MOD']['#']['HIDEBROWSE']['0']['#']);
             $scorm->hidetoc = backup_todb($info['MOD']['#']['HIDETOC']['0']['#']);
