@@ -2649,9 +2649,10 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
                     continue;
                 }
             }
-            $caps = role_context_capabilities($possiblerole->id, $context, $capability); // resolved list
-            if ($caps[$capability] > 0) { // resolved capability > 0
-                $validroleids[] = $possiblerole->id;
+            if ($caps = role_context_capabilities($possiblerole->id, $context, $capability)) { // resolved list
+                if (isset($caps[$capability]) && $caps[$capability] > 0) { // resolved capability > 0
+                    $validroleids[] = $possiblerole->id;
+                }
             }
         }
         if (empty($validroleids)) {
