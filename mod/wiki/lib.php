@@ -12,11 +12,13 @@ $WIKI_TYPES = array ('teacher' =>   get_string('defaultcourseteacher'),
 define("EWIKI_ESCAPE_AT", 0);       # For the algebraic filter
 
 // How long locks stay around without being confirmed (seconds)
-define("WIKI_LOCK_PERSISTENCE",60);
+define("WIKI_LOCK_PERSISTENCE",120);
 
 // How often to confirm that you still want a lock
-define("WIKI_LOCK_RECONFIRM",30);
+define("WIKI_LOCK_RECONFIRM",60);
 
+// Session variable used to store wiki locks
+define('SESSION_WIKI_LOCKS','wikilocks');
 
 /*** Moodle 1.7 compatibility functions *****
  *
@@ -1559,6 +1561,84 @@ function wiki_get_view_actions() {
 
 function wiki_get_post_actions() {
     return array('hack');
+}
+
+
+/**
+ * Obtains an editing lock on a wiki page.
+ * @param int $wikiid ID of wiki object.
+ * @param string $pagename Name of page.
+ * @return array Two-element array with a boolean true (if lock has been obtained)
+ *   or false (if lock was held by somebody else). If lock was held by someone else,
+ *   the values of the wiki_locks entry are held in the second element.
+ */
+function wiki_obtain_lock($wikiid,$pagename) {
+	global $USER;
+		
+	// Check for lock
+    $alreadyownlock=false;
+    if($lock=get_record('wiki_locks','pagename',$pagename,'wikiid', $wikiid)) {
+        // Consider the page locked if the lock has been confirmed within WIKI_LOCK_PERSISTENCE seconds
+        if($lock->lockedby==$USER->id) {
+            // Cool, it's our lock, do nothing except remember it in session
+            $lockid=$lock->id;
+            $alreadyownlock=true;
+        } else if(time()-$lock->lockedseen < WIKI_LOCK_PERSISTENCE) {
+        	    return array(false,$lock);
+        } else {
+            // Not locked any more. Get rid of the old lock record.
+            if(!delete_records('wiki_locks','pagename',$pagename,'wikiid', $wikiid)) {
+                error('Unable to delete lock record');
+            }
+        } 
+    }
+    
+    // Add lock
+    if(!$alreadyownlock) { 
+		// Lock page
+		$newlock=new stdClass;
+		$newlock->lockedby=$USER->id;
+		$newlock->lockedsince=time();
+		$newlock->lockedseen=$newlock->lockedsince;
+		$newlock->wikiid=$wikiid;
+		$newlock->pagename=$pagename;
+		if(!$lockid=insert_record('wiki_locks',$newlock)) {
+		    error('Unable to insert lock record');
+		}
+    }
+    
+    // Store lock information in session so we can clear it later
+    if(!array_key_exists(SESSION_WIKI_LOCKS,$_SESSION)) {
+    		$_SESSION[SESSION_WIKI_LOCKS]=array();
+    }
+	$_SESSION[SESSION_WIKI_LOCKS][$wikiid.'_'.$pagename]=$lockid;
+	return array(true,null);
+}
+
+/**
+ * If the user has an editing lock, releases it. Has no effect otherwise.
+ * Note that it doesn't matter if this isn't called (as happens if their
+ * browser crashes or something) since locks time out anyway. This is just
+ * to avoid confusion of the 'what? it says I'm editing that page but I'm
+ * not, I just saved it!' variety.
+ * @param int $wikiid ID of wiki object.
+ * @param string $pagename Name of page.
+ */
+function wiki_release_lock($wikiid,$pagename) {	
+    if(!array_key_exists(SESSION_WIKI_LOCKS,$_SESSION)) {
+    		// No locks at all in session
+    		return;
+    }
+    
+    $key=$wikiid.'_'.$pagename;
+    
+    if(array_key_exists($key,$_SESSION[SESSION_WIKI_LOCKS])) {
+    		$lockid=$_SESSION[SESSION_WIKI_LOCKS][$key];
+	    unset($_SESSION[SESSION_WIKI_LOCKS][$key]);
+        if(!delete_records('wiki_locks','id',$lockid)) {
+            error("Unable to delete lock record.");
+        }
+    }    
 }
 
 

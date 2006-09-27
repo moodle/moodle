@@ -27,20 +27,12 @@
         $actions = explode('/', $page,2);
         if(count($actions)==2) {
             $pagename=$actions[1];
+        } else {
+        	    $pagename=$actions[0];
         }
     } else {
         $actions=array('');
         $pagename='';
-    }
-    
-    // If true, we are 'really' on an editing page, not just on edit/something
-    $reallyedit=$actions[0]=='edit' && !$editsave && !$canceledit;
-    if(!$reallyedit && isset($_SESSION['lockid'])) {
-        if(!delete_records('wiki_locks','id',$_SESSION['lockid'])) {
-            unset($_SESSION['lockid']);
-            error("Unable to delete lock record. ".$_SESSION['lockid']);
-        }
-        unset($_SESSION['lockid']);
     }
     
     if ($id) {
@@ -71,8 +63,24 @@
     }
 
     require_course_login($course, true, $cm);
-
-
+    
+    // If true, we are 'really' on an editing page, not just on edit/something
+    $reallyedit=$actions[0]=='edit' && !$canceledit && !$editsave;
+    
+	// Remove lock when we go to another wiki page (such as the cancel page)
+    if(!$reallyedit) {
+    		wiki_release_lock($wiki->id,$pagename);
+    }
+    
+    // We must have the edit lock in order to be permitted to save    
+    if(!empty($_POST['content'])) {
+    	    list($ok,$lock)=wiki_obtain_lock($wiki->id,$pagename);
+    	    if(!$ok) {
+    	    		$strsavenolock=get_string('savenolock','wiki');
+    	    	    error($strsavenolock,$CFG->wwwroot.'/mod/wiki/view.php?id='.$cm->id.'&page=view/'.urlencode($pagename));
+    	    }
+    }
+    
     /// Add the course module 'groupmode' to the wiki object, for easy access.
     $wiki->groupmode = $cm->groupmode;
 
@@ -398,33 +406,26 @@
     } else if($actions[0]=='edit' && $reallyedit) {
         // Check the page isn't locked before printing out standard wiki content. (Locking
         // is implemented as a wrapper over the existing wiki.)
-        $goahead=true;
-        $alreadyownlock=false;
-        if($lock=get_record('wiki_locks','pagename',$pagename,'wikiid', $wiki->id)) {
-            // Consider the page locked if the lock has been confirmed within WIKI_LOCK_PERSISTENCE seconds
-            if($lock->lockedby==$USER->id) {
-                // Cool, it's our lock, do nothing
-                $alreadyownlock=true;
-                $lockid=$lock->id;
-            } else if(time()-$lock->lockedseen < WIKI_LOCK_PERSISTENCE) {
-                $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-                $canoverridelock = has_capability('mod/wiki:overridelock', $modcontext);
+        list($gotlock,$lock)=wiki_obtain_lock($wiki->id,$pagename);
+        if(!$gotlock) {
+            $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+            $canoverridelock = has_capability('mod/wiki:overridelock', $modcontext);
+            
+            $a=new stdClass;
+            $a->since=userdate($lock->lockedsince);
+            $a->seen=userdate($lock->lockedseen);
+            $user=get_record('user','id',$lock->lockedby);
+            $a->name=fullname($user, 
+              has_capability('moodle/site:viewfullnames', $modcontext));
                 
-                $a=new stdClass;
-                $a->since=userdate($lock->lockedsince);
-                $a->seen=userdate($lock->lockedseen);
-                $user=get_record('user','id',$lock->lockedby);
-                $a->name=fullname($user, 
-                  has_capability('moodle/site:viewfullnames', $modcontext));
-                
-                print_string('pagelocked','wiki',$a);
-                
-                if($canoverridelock) {
-                    $pageesc=htmlspecialchars($page);
-                    $stroverrideinfo=get_string('overrideinfo','wiki');
-                    $stroverridebutton=get_string('overridebutton','wiki');
-                    $sesskey=sesskey();
-                    print "
+            print_string('pagelocked','wiki',$a);
+            
+            if($canoverridelock) {
+                $pageesc=htmlspecialchars($page);
+                $stroverrideinfo=get_string('overrideinfo','wiki');
+                $stroverridebutton=get_string('overridebutton','wiki');
+                $sesskey=sesskey();
+                print "
 <form id='overridelock' method='post' action='overridelock.php'>
   <input type='hidden' name='sesskey' value='$sesskey' />
   <input type='hidden' name='id' value='$id' />
@@ -433,33 +434,12 @@
   <input type='submit' value='$stroverridebutton' />
 </form>
 ";
-                }
-                $goahead=false;
-            } else {
-                // Not locked any more. Get rid of the lock record.
-                if(!delete_records('wiki_locks','pagename',$pagename,'wikiid', $wiki->id)) {
-                    error('Unable to delete lock record');
-                }
-            } 
-        } 
-        if($goahead) {
-            if(!$alreadyownlock) {
-                // Lock page
-                $newlock=new stdClass;
-                $newlock->lockedby=$USER->id;
-                $newlock->lockedsince=time();
-                $newlock->lockedseen=$newlock->lockedsince;
-                $newlock->wikiid=$wiki->id;
-                $newlock->pagename=$pagename;
-                if(!$lockid=insert_record('wiki_locks',$newlock)) {
-                    error('Unable to insert lock record');
-                }
             }
-            $_SESSION['lockid']=$lockid;
-
-            // Require AJAX library            
+        } else {
+        		// OK, the page is now locked to us. Put in the AJAX for keeping the lock
             print_require_js(array('yui_yahoo','yui_connection'));
             $strlockcancelled=get_string('lockcancelled','wiki');
+            $strnojslockwarning=get_string('nojslockwarning','wiki');
             $intervalms=WIKI_LOCK_RECONFIRM*1000;
             print "
 <script type='text/javascript'>
@@ -480,6 +460,9 @@ intervalID=setInterval(function() {
         {success:handleResponse,failure:handleFailure},'lockid=$lockid');    
     },$intervalms);
 </script>
+<noscript><p>
+$strnojslockwarning
+</p></noscript>
 ";
             
             // Print editor etc
