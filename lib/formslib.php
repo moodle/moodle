@@ -247,8 +247,9 @@ class moodleform_renderer extends HTML_QuickForm_Renderer_Tableless{
     function moodleform_renderer(){
         // switch next two lines for ol li containers for form items.
         //        $this->_elementTemplates=array('default'=>"\n\t\t<li class=\"qfrow\"><label class=\"qflabel\">{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"qfelement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></li>");
-        $this->_elementTemplates=array('default'=>"\n\t\t<div class=\"qfrow\"><label class=\"qflabel\">{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"qfelement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></div>",
-        'fieldset'=>"\n\t\t<div class=\"qfrow\"><label class=\"qflabel\">{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><fieldset class=\"qfelement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</fieldset></div>");
+        $this->_elementTemplates=array('default'=>"\n\t\t<div class=\"qfrow\"><label class=\"qflabel\">{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"qfelement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></div>"); /*,
+        will cause problems with client side validation so will leave for now
+        'fieldset'=>"\n\t\t<div class=\"qfrow\"><label class=\"qflabel\">{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><fieldset class=\"qfelement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</fieldset></div>");*/
 
         parent::HTML_QuickForm_Renderer_Tableless();
     }
@@ -259,7 +260,7 @@ class moodleform_renderer extends HTML_QuickForm_Renderer_Tableless{
     }
     function startGroup(&$group, $required, $error){
         if (method_exists($group, 'getElementTemplateType')){
-            $html = $this->_elementTemplates[$element->getElementTemplateType()];
+            $html = $this->_elementTemplates[$group->getElementTemplateType()];
         }else{
             $html = $this->_elementTemplates['default'];
            
