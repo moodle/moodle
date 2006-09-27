@@ -268,7 +268,7 @@ if ($um->preprocess_files() && confirm_sesskey()) {
                             //Record not added - user is already registered
                             //In this case, output userid from previous registration
                             //This can be used to obtain a list of userids for existing users
-                            notify("$user->id ".get_string('usernotaddedregistered', 'error', $username));
+                            notify("$olduser->id ".get_string('usernotaddedregistered', 'error', $username));
                             $userserrors++;
                             continue;
                         }
