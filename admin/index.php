@@ -147,9 +147,6 @@
         if ($status) {
             // Install the roles system.
             moodle_install_roles();
-            if (!update_capabilities()) {
-                error('Had trouble installing the core capabilities for the Roles System');
-            }
             set_config('statsrolesupgraded',time());
 
             // Write default settings unconditionally (i.e. even if a setting is already set, overwrite it)
@@ -247,11 +244,9 @@
                     if (empty($CFG->rolesactive)) {
                         // Upgrade to the roles system.
                         moodle_install_roles();
-                    }
-                    if (!update_capabilities()) {
-                        error('Had trouble upgrading the core capabilities for the Roles System');
-                    } else {
                         set_config('rolesactive', 1);
+                    } else if (!update_capabilities()) {
+                        error('Had trouble upgrading the core capabilities for the Roles System');
                     }
                     require_once($CFG->libdir.'/statslib.php');
                     if (!stats_upgrade_for_roles_wrapper()) {

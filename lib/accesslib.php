@@ -932,6 +932,10 @@ function moodle_install_roles() {
     $studentrole = create_role(get_string('defaultcoursestudent'), 'student', get_string('defaultcoursestudentdescription'), 'moodle/legacy:student');
     $guestrole = create_role(get_string('guest'), 'guest', get_string('guestdescription'), 'moodle/legacy:guest');
 
+    // now is the correct moment to install capabilitites - after creation of legacy roles, but before assigning of roles
+    if (!update_capabilities()) {
+        error('Had trouble upgrading the core capabilities for the Roles System');
+    }
 
     // Look inside user_admin, user_creator, user_teachers, user_students and
     // assign above new roles. If a user has both teacher and student role,
