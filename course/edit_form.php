@@ -200,7 +200,7 @@
         $options[1] = get_string("yes");
         $mform->addElement('header', '', get_string("restrictmodules"));
         $mform->addElement('select', 'restrictmodules', get_string("restrictmodules"), $options,
-                array('onChange'=>"document.getElementById('allowedmods').disabled=".
+                array('onChange'=>"document.getElementById('id_allowedmods').disabled=".
                             "((this.selectedIndex==0)?true:false);"));
         $mods = array(0=>get_string('allownone'));
         $mods += get_records_menu("modules", '','','','id, name');
@@ -292,5 +292,4 @@
 
     $renderer =& $mform->defaultRenderer();
     $renderer->addStopFieldsetElements('submit');
-
 ?>
