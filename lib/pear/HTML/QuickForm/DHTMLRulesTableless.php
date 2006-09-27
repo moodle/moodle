@@ -38,7 +38,7 @@ require_once 'HTML/QuickForm.php';
  * @author     Justin Patrin <papercrane@gmail.com>
  * @author     Mark Wiesemann <wiesemann@php.net>
  * @license    http://www.php.net/license/3_01.txt  PHP License 3.01
- * @version    Release: 0.1.2
+ * @version    Release: 0.1.3
  * @link       http://pear.php.net/package/HTML_QuickForm_DHTMLRulesTableless
  */
 class HTML_QuickForm_DHTMLRulesTableless extends HTML_QuickForm {

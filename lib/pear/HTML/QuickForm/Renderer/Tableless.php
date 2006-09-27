@@ -39,7 +39,7 @@ require_once 'HTML/QuickForm/Renderer/Default.php';
  * @author     Bertrand Mansion <bmansion@mamasam.com>
  * @author     Mark Wiesemann <wiesemann@php.net>
  * @license    http://www.php.net/license/3_01.txt  PHP License 3.01
- * @version    Release: 0.3.3
+ * @version    Release: 0.3.4
  * @link       http://pear.php.net/package/HTML_QuickForm_Renderer_Tableless
  */
 class HTML_QuickForm_Renderer_Tableless extends HTML_QuickForm_Renderer_Default
@@ -58,7 +58,7 @@ class HTML_QuickForm_Renderer_Tableless extends HTML_QuickForm_Renderer_Default
     * @access   private
     */
     var $_elementTemplate = 
-        "\n\t\t<div class=\"qfrow\"><label class=\"qflabel\"><!-- BEGIN required --><span class=\"required\">*</span><!-- END required -->{label}</label>{help}<div class=\"qfelement<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></div><br />";
+        "\n\t\t<div class=\"qfrow\"><label class=\"qflabel\"><!-- BEGIN required --><span class=\"required\">*</span><!-- END required -->{label}</label><div class=\"qfelement<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></div><br />";
 
    /**
     * Form template string
@@ -96,7 +96,7 @@ class HTML_QuickForm_Renderer_Tableless extends HTML_QuickForm_Renderer_Default
     * @access   private
     */
     var $_requiredNoteTemplate = 
-        "\n\t\t{requiredNote}";
+        "\n\t\t<div class=\"qfreqnote\">{requiredNote}</div>";
 
    /**
     * How many fieldsets are open
@@ -186,10 +186,13 @@ class HTML_QuickForm_Renderer_Tableless extends HTML_QuickForm_Renderer_Default
             } else {
                 $id = $element->getName();
             }
-            $html = str_replace('<label', '<label for="' . $id . '"', $html);
-            $element_html = str_replace('name="' . $id . '"',
-                                        'id="' . $id . '" name="' . $id . '"',
-                                        $element_html);
+            if (!empty($id)) {
+                $html = str_replace('<label', '<label for="' . $id . '"', $html);
+                $element_html = preg_replace('#name="' . $id . '#',
+                                             'id="' . $id . '" name="' . $id . '',
+                                             $element_html,
+                                             1);
+            }
             $this->_html .= str_replace('{element}', $element_html, $html);
         } elseif (!empty($this->_groupElementTemplate)) {
             $html = str_replace('{label}', $element->getLabel(), $this->_groupElementTemplate);
@@ -231,7 +234,12 @@ class HTML_QuickForm_Renderer_Tableless extends HTML_QuickForm_Renderer_Default
     {
         // add a required note, if one is needed
         if (!empty($form->_required) && !$form->_freezeAll) {
-            $this->_html .= str_replace('{requiredNote}', $form->getRequiredNote(), $this->_requiredNoteTemplate);
+            $requiredNote = $form->getRequiredNote();
+            // replace default required note by DOM/XHTML optimized note
+            if ($requiredNote == '<span style="font-size:80%; color:#ff0000;">*</span><span style="font-size:80%;"> denotes required field</span>') {
+                $requiredNote = '<span class="required">*</span> denotes required field';
+            }
+            $this->_html .= str_replace('{requiredNote}', $requiredNote, $this->_requiredNoteTemplate);
         }
         // close the open fieldset
         if ($this->_fieldsetsOpen > 0) {
