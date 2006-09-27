@@ -221,6 +221,11 @@ function scorm_upgrade($oldversion) {
         table_column("scorm", "", "skipview", "TINYINT", "1", "UNSIGNED", "1", "NOT NULL", "launch"); 
     }
 
+    if ($oldversion < 2006102702) {   /// A month in advance!
+        execute_sql("DELETE FROM {$CFG->prefix}log_display WHERE module = 'scorm' AND action = 'review' AND mtable = 'resource' AND field = 'name';", false);  // MDL-6516
+        execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('scorm', 'review', 'scorm', 'name');", false);
+    }
+
     return true;
 }
 ?>

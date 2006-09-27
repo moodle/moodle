@@ -97,7 +97,7 @@ function scorm_upgrade($oldversion) {
         }
 
         modify_database('',"DROP TABLE prefix_scorm_sco_users");
-        modify_database('',"INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('resource', 'review', 'resource', 'name')");
+        modify_database('',"INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('resource', 'review', 'resource', 'name')");   // Wrong line!   See MDL-6516
     }
 
     if ($oldversion < 2005040200) {
@@ -242,6 +242,11 @@ function scorm_upgrade($oldversion) {
 
     if ($oldversion < 2006102600) {
         table_column("scorm", "", "skipview", "integer", "", "", "1", "NOT NULL"); 
+    }
+
+    if ($oldversion < 2006102702) {   // This is a month in advance!!!!!
+        execute_sql("DELETE FROM {$CFG->prefix}log_display WHERE module = 'resource' AND action = 'review' AND mtable = 'resource' AND field = 'name';", false);      // See MDL-6516
+        execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('scorm', 'review', 'scorm', 'name');", false);
     }
 
     return true;
