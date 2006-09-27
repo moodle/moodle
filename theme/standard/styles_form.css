@@ -21,38 +21,64 @@ form.mform fieldset.hidden {
 form.mform fieldset legend {
     font-weight: bold;
 }
-form.mform label {
-    margin: 0 0 0 5px;
-}
-form.mform div.qfrow {
+
+form.mform div.fitem {
     clear: both;
     width: 100%;
     min-height: 1.5em;
 }
-form.mform label.qflabel {
+/* uncomment this and edit formslib.php for
+ol li containers for form items.
+
+form.mform fieldset li.qfrow {
+    list-style: none;
+    padding: 5px;
+    margin: 0;
+    clear: both;
+    width: 100%;
+    min-height: 1.5em;
+}
+form.mform fieldset ol {
+  margin: 0;
+  padding: 0;
+}*/
+form.mform label {
     display: block;
     float: left;
     width: 30%;
     padding: 0;
-    margin: 5px 0 0 0;
+    margin: 0 0 0 0;
     text-align: right;
 }
-form.mform div.qfelement {
+div.fitem div.fgroup label {
+    display:inline;
+    float: none;
+    width: auto;
+}
+
+form.mform div.felement {
     /* display: inline; */
     display: block;
     float: left;
     margin: 5px 0 0 10px;
     padding: 0;
+    text-align:left;
 }
+
+form.mform div.fdescription {
+    clear: both;
+    min-height: 1.5em;
+}
+
 form.mform input, form.mform select {
     width: auto;
 }
-form.mform textarea {
+form.mform ftextarea {
 }
 form.mform br {
     clear: left;
 }
-form.mform div.htmleditor {
+form.mform div.fhtmleditor {
     margin: 0 auto 10px auto;
     width : 600px;
     clear:both;
