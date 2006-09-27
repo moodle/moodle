@@ -1182,6 +1182,9 @@ function validate_context($contextlevel, $instanceid) {
             return (boolean)count_records('user', 'id', $instanceid);
 
         case CONTEXT_COURSECAT:
+            if ($instanceid == 0) {
+                return true; // site course category
+            }
             return (boolean)count_records('course_categories', 'id', $instanceid);
 
         case CONTEXT_COURSE:
