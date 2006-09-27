@@ -2129,7 +2129,8 @@ class admin_setting_special_backupdays extends admin_setting {
         $name = 'backup_sche_weekdays';
         $visiblename = get_string('schedule');
         $description = get_string('backupschedulehelp');
-        parent::admin_setting($name, $visiblename, $description, array());
+        $default = array('u' => 0, 'm' => 0, 't' => 0, 'w' => 0, 'r' => 0, 'f' => 0, 's' => 0);
+        parent::admin_setting($name, $visiblename, $description, $default);
     }
 
     function get_setting() {
