@@ -240,7 +240,7 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
                 $sql= "SELECT pagename AS id, version, flags" .
                     (EWIKI_DBQUERY_BUFFER && ($field!="pagename") ? ", $field" : "") .
                     " FROM " . $CFG->prefix.EWIKI_DB_TABLE_NAME .
-                    " WHERE $field ILIKE '%".$content."%'  and wiki=".$wiki_entry->id .
+                    " WHERE $field ILIKE '%".anydb_escape_string($content)."%'  and wiki=".$wiki_entry->id .
                     " GROUP BY id, pagename, version, flags ".  
                     (EWIKI_DBQUERY_BUFFER && ($field!="pagename") ? ", $field" : "") ;
                 break;
