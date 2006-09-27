@@ -168,6 +168,7 @@
         <?php
             if ($wikihasentries) {
                 echo format_string($form->pagename,true);
+                echo '<input type="hidden" name="pagename" value="'.$form->pagename.'" alt="'.get_string('wikiname', 'wiki').'" />';
             }
             else {
         ?>
