@@ -110,7 +110,7 @@ class moodleform extends HTML_QuickForm_DHTMLRulesTableless{
      * 
      * @access   public
     */
-    function addHelpButtons($buttons, $suppresscheck=false){
+    function setHelpButtons($buttons, $suppresscheck=false){
         
         foreach ($this->_elements as $no => $element){
             if (array_key_exists($element->getName(), $buttons)){
@@ -131,33 +131,70 @@ class moodleform extends HTML_QuickForm_DHTMLRulesTableless{
             print_error('nonexistentformelements', 'form', '', join(', ', array_keys($buttons)));
         }
     }
-    /**
-     * Applies a data filter for the given field(s)
-     * We can use any PARAM_ 
-     *
-     * @param    mixed     $element       Form element name or array of such names
-     * @param    mixed     $filter        Callback, either function name or array(&$object, 'method') or PARAM_ integer
-     * @since    2.0
-     * @access   public
-     */
-    function applyFilter($element, $filter){
-        if (is_numeric($filter)){
-            $filter=create_function('$value', "clean_param(\$value, $filter);");
+    function acceptGet(){
+        $names=func_get_args();
+        foreach ($names as $name){
+            //if no form data is submitted then the page has just beeen loaded
+            //so we get the page param value from $_GET
+            if (!$this->_flagSubmitted && isset($_GET[$name])){
+                $this->_submitValues[$name]=$_GET[$name];
+            }
         }
-        parent::applyFilter($element, $filter);
     }
+    function required_param($element, $paramtype){
+        $value = $this->getSubmitValue($element);
+        if (null !== $value) {
+            if (false === strpos($element, '[')) {
+                return $this->_submitValues[$element] = $this->_clean_param($value, $paramtype);
+            } else {
+                $idx  = "['" . str_replace(array(']', '['), array('', "']['"), $element) . "']";
+                eval("return \$this->_submitValues{$idx} = \$this->_clean_param(\$value, \$paramtype);");
+            }
+        }else{
+            //could print name of param but better not to for security?
+            print_error('missingrequiredfield', 'error');
+        }
+    }
+    function optional_param($element, $default, $paramtype){
+        $value = $this->getSubmitValue($element);
+        if (null === $value) {
+            return $default;
+        }
+        if (false === strpos($element, '[')) {
+            return $this->_submitValues[$element] = $this->_clean_param($value, $paramtype);
+        } else {
+            $idx  = "['" . str_replace(array(']', '['), array('', "']['"), $element) . "']";
+            eval("return \$this->_submitValues{$idx} = \$this->_clean_param(\$value, \$paramtype);");
+        }
+    }
+    function clean_param($elementList, $paramtype){
+        $value = $this->getSubmitValue($element);
+        if (false === strpos($element, '[')) {
+            return $this->_submitValues[$element] = $this->_clean_param($value, $paramtype);
+        } else {
+            $idx  = "['" . str_replace(array(']', '['), array('', "']['"), $element) . "']";
+            eval("return \$this->_submitValues{$idx} = \$this->_clean_param(\$value, \$paramtype);");
+        }
+    }
+    function _clean_param($value, $paramtype){
+        //clean_param function in moodlelib expects vars with slashes
+        $value=$this->_recursiveFilter('addslashes', $value);
+        $value=clean_param($value, $paramtype);
+        return $this->_recursiveFilter('stripslashes', $value);
+    }   
+
     function exportValue($element, $addslashes=true){
         $unfiltered=parent::exportValue($element);
         if ($addslashes){
-            return HTML_QuickForm::_recursiveFilter('addslashes',$unfiltered);
+            return $this->_recursiveFilter('addslashes',$unfiltered);
         } else {
             return $unfiltered;
         }
     }
-    function exportValues($elementList, $addslashes=true){
+    function exportValues($elementList= null, $addslashes=true){
         $unfiltered=parent::exportValues($elementList);
         if ($addslashes){
-            return HTML_QuickForm::_recursiveFilter('addslashes',$unfiltered);
+            return $this->_recursiveFilter('addslashes',$unfiltered);
         } else {
             return $unfiltered;
         }
@@ -181,10 +218,37 @@ class moodleform_renderer extends HTML_QuickForm_Renderer_Tableless{
     * @access   private
     */
     var $_elementTemplates;
+
+//   uncomment this and edit formslib.php below for
+//   ol li containers for form items.
+
+//    /**
+//    * Template used when opening a hidden fieldset
+//    * (i.e. a fieldset that is opened when there is no header element)
+//    * @var      string
+//    * @access   private
+//    */
+//    var $_openHiddenFieldsetTemplate = "\n\t<fieldset class=\"hidden\">\n\t\t<ol>";
+//   /**
+//    * Header Template string
+//    * @var      string
+//    * @access   private
+//    */
+//    var $_headerTemplate = 
+//        "\n\t\t<legend>{header}</legend>\n\t\t<ol>";
+//   /**
+//    * Template used when closing a fieldset
+//    * @var      string
+//    * @access   private
+//    */
+//    var $_closeFieldsetTemplate = "\n\t\t</ol>\n\t</fieldset>";
+
     var $_htmleditors=array();
     function moodleform_renderer(){
+        // switch next two lines for ol li containers for form items.
+        //        $this->_elementTemplates=array('default'=>"\n\t\t<li class=\"qfrow\"><label class=\"qflabel\">{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"qfelement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></li>");
         $this->_elementTemplates=array('default'=>"\n\t\t<div class=\"qfrow\"><label class=\"qflabel\">{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"qfelement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></div>",
-        'wide'=>"\n\t\t<div class=\"qfrow\"><label class=\"qflabel\">{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><br /><div class=\"qfelementwide<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</span></div>");
+        'fieldset'=>"\n\t\t<div class=\"qfrow\"><label class=\"qflabel\">{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><fieldset class=\"qfelement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</fieldset></div>");
 
         parent::HTML_QuickForm_Renderer_Tableless();
     }
@@ -242,10 +306,10 @@ class moodleform_renderer extends HTML_QuickForm_Renderer_Tableless{
     
 }
 
-class moodleform_filter{
+/*class moodleform_filter{
     var $paramtype;
     var $default;
-    function moodleform_filter($paramtype, $default){
+    function moodleform_filter($paramtype, $default=NULL){
         $this->paramtype=$paramtype;
         $this->default=$default;
     }
@@ -264,13 +328,8 @@ class moodleform_filter{
         }
         return $this->clean_param($value);
     }
-    function clean_param($value){
-        //clean param expects vars with slashes
-        $value=HTML_QuickForm::_recursiveFilter('addslashes', $value);
-        $value=clean_param($value, $this->paramtype);
-        return HTML_QuickForm::_recursiveFilter('stripslashes', $value);
-    }
-}    
+
+}    */
 
 $GLOBALS['_HTML_QuickForm_default_renderer']=& new moodleform_renderer();
 
@@ -285,6 +344,7 @@ moodleform::registerElementType('textarea', "$CFG->libdir/form/textarea.php", 'm
 moodleform::registerElementType('date_selector', "$CFG->libdir/form/dateselector.php", 'moodleform_date_selector');
 moodleform::registerElementType('htmleditor', "$CFG->libdir/form/htmleditor.php", 'moodleform_htmleditor');
 moodleform::registerElementType('static', "$CFG->libdir/form/static.php", 'moodleform_static');
+moodleform::registerElementType('hidden', "$CFG->libdir/form/hidden.php", 'moodleform_hidden');
 
 
 ?>
