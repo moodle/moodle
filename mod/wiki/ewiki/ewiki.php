@@ -1845,7 +1845,7 @@ function ewiki_format (
          #-- walk through wiki source lines
          $line_max = count($lines);
          foreach ($lines as $s["line_i"]=>$line) {
-#echo "line={$s[line_i]}:$line\n";
+//echo "<pre>line={$s[line_i]}:".htmlspecialchars($line).":".htmlspecialchars($line[0])."</pre>";
 
             #-- empty lines separate paragraphs
             if (!strlen($line)) {
@@ -2230,10 +2230,21 @@ function ewiki_render_wiki_links(&$o) {
 */
 function ewiki_merge_links(&$ewiki_links) {
    global $ewiki_plugins;
-   if ($ewiki_links !== true) {
+#### BEGIN MOODLE CHANGES   
+     global $ewiki_link_case;
+     $ewiki_link_case=array();
+#### END MOODLE CHANGES
+     if ($ewiki_links !== true) {
       foreach ($ewiki_plugins["page"] as $page=>$uu) {
          $ewiki_links[$page] = 1;
       }
+#### BEGIN MOODLE CHANGES   
+     foreach($ewiki_links as $page => $uu) {
+       if($uu) {
+         $ewiki_link_case[strtolower($page)]=$page;  
+       }        
+     }
+#### END MOODLE CHANGES
       $ewiki_links = ewiki_array($ewiki_links);
    }
 }
@@ -2341,8 +2352,12 @@ function ewiki_link_regex_callback($uu, $force_noimg=0) {
    #-- ordinary internal WikiLinks
    elseif (($ewiki_links === true) || @$ewiki_links[$href_i]) {
       $type = array("wikipage");
-      $str = '<a href="' . ewiki_script("", $href) . s($href2)
+#### BEGIN MOODLE CHANGES   
+      global $ewiki_link_case;
+      $href_realcase=array_key_exists($href_i,$ewiki_link_case) ? $ewiki_link_case[$href_i] : $href;  
+      $str = '<a href="' . ewiki_script("", $href_realcase) . s($href2)
            . '">' . $title . '</a>';
+#### END MOODLE CHANGES
    }
    #-- guess for mail@addresses, convert to URI if
    elseif (strpos($href, "@") && !strpos($href, ":")) {
