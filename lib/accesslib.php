@@ -561,7 +561,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
     } else {
         $searchcontexts1 = '';
     }
-    
+
     if ($capability) {
         $capsearch = " AND rc.capability = '$capability' ";
     } else {
@@ -1122,13 +1122,27 @@ function islegacy($capabilityname) {
  * Create a new context record for use by all roles-related stuff
  * @param $level
  * @param $instanceid
+ *
+ * @return object newly created context (or existing one with a debug warning)
  */
 function create_context($contextlevel, $instanceid) {
-    if (!get_record('context','contextlevel',$contextlevel,'instanceid',$instanceid)) {
-        $context = new object;
+    if (!$context = get_record('context','contextlevel',$contextlevel,'instanceid',$instanceid)) {
+        if (!validate_context($contextlevel, $instanceid)) {
+            debugging('Error: Invalid context creation request for level "'.s($contextlevel).'", instance "'.s($instanceid).'".');
+            return NULL;
+        }
+        $context = new object();
         $context->contextlevel = $contextlevel;
         $context->instanceid = $instanceid;
-        return insert_record('context',$context);
+        if ($id = insert_record('context',$context)) {
+            return get_record('context','id',$id);
+        } else {
+            debugging('Error: could not insert new context level "'.s($contextlevel).'", instance "'.s($instanceid).'".');
+            return NULL;
+        }
+    } else {
+        debugging('Warning: Context id "'.s($context->id).'" not created, because it already exists.');
+        return $context;
     }
 }
 
@@ -1136,6 +1150,8 @@ function create_context($contextlevel, $instanceid) {
  * Create a new context record for use by all roles-related stuff
  * @param $level
  * @param $instanceid
+ *
+ * @return true if properly deleted
  */
 function delete_context($contextlevel, $instanceid) {
     if ($context = get_context_instance($contextlevel, $instanceid)) {
@@ -1146,6 +1162,42 @@ function delete_context($contextlevel, $instanceid) {
     return true;
 }
 
+/**
+ * Validate that object with instanceid really exists in given context level.
+ *
+ * return if instanceid object exists
+ */
+function validate_context($contextlevel, $instanceid) {
+    switch ($contextlevel) {
+
+        case CONTEXT_SYSTEM:
+            return ($instanceid == SITEID);
+
+        case CONTEXT_PERSONAL:
+            return (boolean)count_records('user', 'id', $instanceid);
+
+        case CONTEXT_USER:
+            return (boolean)count_records('user', 'id', $instanceid);
+
+        case CONTEXT_COURSECAT:
+            return (boolean)count_records('course_categories', 'id', $instanceid);
+
+        case CONTEXT_COURSE:
+            return (boolean)count_records('course', 'id', $instanceid);
+
+        case CONTEXT_GROUP:
+            return (boolean)count_records('groups', 'id', $instanceid);
+
+        case CONTEXT_MODULE:
+            return (boolean)count_records('course_modules', 'id', $instanceid);
+
+        case CONTEXT_BLOCK:
+            return (boolean)count_records('block_instance', 'id', $instanceid);
+
+        default:
+            return false;
+    }
+}
 
 /**
  * Get the context instance as an object. This function will create the
@@ -2636,7 +2688,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 /// Sorting out roles with this capability set
     if ($possibleroles = get_roles_with_capability($capability, CAP_ALLOW, $context)) {
         if (!$doanything) {
-            if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID)) {  
+            if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID)) {
                 return false;    // Something is seriously wrong
             }
             $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext);
