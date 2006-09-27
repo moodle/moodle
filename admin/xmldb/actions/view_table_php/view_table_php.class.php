@@ -768,7 +768,7 @@ class view_table_php extends XMLDBAction {
         $result .= '    /// Define index ' . $index->getName() . ' ('. ($index->getUnique() ? 'unique' : 'not unique') . ') to be added to ' . $table->getName() . XMLDB_LINEFEED;
         $result .= '        $table = new XMLDBTable(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
         $result .= '        $index = new XMLDBIndex(' . "'" . $index->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $key->setAttributes(' . $index->getPHP(true) . ');' . XMLDB_LINEFEED;
+        $result .= '        $index->setAttributes(' . $index->getPHP(true) . ');' . XMLDB_LINEFEED;
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
