@@ -67,7 +67,7 @@ function rss_client_upgrade($oldversion) {
             }
             
             foreach ($blockinstances as $bi) {
-                $context = get_context_instance(CONTEXT_MODULE, $bi->id);
+                $context = get_context_instance(CONTEXT_BLOCK, $bi->id);
                 
                 if ($bi->pagetype == 'course-view' && $bi->pageid == SITEID) {
                     
