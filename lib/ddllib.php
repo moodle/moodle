@@ -489,7 +489,7 @@ function drop_field($table, $field, $continue=true, $feedback=true) {
 }
 
 /**
- * This function will change the precision of the field in the table passed as arguments
+ * This function will change the type of the field in the table passed as arguments
  *
  * @uses $CFG, $db
  * @param XMLDBTable table object (just the name is mandatory)
@@ -498,7 +498,7 @@ function drop_field($table, $field, $continue=true, $feedback=true) {
  * @param boolean feedback to specify to show status info (true) or not (false)
  * @return boolean true on success, false on error
  */
-function change_field_precision($table, $field, $continue=true, $feedback=true) {
+function change_field_type($table, $field, $continue=true, $feedback=true) {
 
     global $CFG, $db;
 
@@ -519,6 +519,22 @@ function change_field_precision($table, $field, $continue=true, $feedback=true) 
 }
 
 /**
+ * This function will change the precision of the field in the table passed as arguments
+ *
+ * @uses $CFG, $db
+ * @param XMLDBTable table object (just the name is mandatory)
+ * @param XMLDBField field object (full specs are required)
+ * @param boolean continue to specify if must continue on error (true) or stop (false)
+ * @param boolean feedback to specify to show status info (true) or not (false)
+ * @return boolean true on success, false on error
+ */
+function change_field_precision($table, $field, $continue=true, $feedback=true) {
+
+/// Just a wrapper over change_field_type. Does exactly the same processing
+    return change_field_type($table, $field, $continue, $feedback);
+}
+
+/**
  * This function will change the unsigned/signed of the field in the table passed as arguments
  *
  * @uses $CFG, $db
@@ -530,8 +546,8 @@ function change_field_precision($table, $field, $continue=true, $feedback=true) 
  */
 function change_field_unsigned($table, $field, $continue=true, $feedback=true) {
 
-/// Just a wrapper over change_field_precision. Does exactly the same processing
-    return change_field_precision($table, $field, $continue, $feedback);
+/// Just a wrapper over change_field_type. Does exactly the same processing
+    return change_field_type($table, $field, $continue, $feedback);
 }
 
 /**
@@ -546,8 +562,8 @@ function change_field_unsigned($table, $field, $continue=true, $feedback=true) {
  */
 function change_field_notnull($table, $field, $continue=true, $feedback=true) {
 
-/// Just a wrapper over change_field_precision. Does exactly the same processing
-    return change_field_precision($table, $field, $continue, $feedback);
+/// Just a wrapper over change_field_type. Does exactly the same processing
+    return change_field_type($table, $field, $continue, $feedback);
 }
 
 /**
