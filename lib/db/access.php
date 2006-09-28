@@ -553,6 +553,22 @@ $moodle_capabilities = array(
         )
     ),
 
+    'moodle/course:bulkmessaging' => array(
+
+        'riskbitmask' => RISK_SPAM,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+
     'moodle/course:viewhiddenuserfields' => array(
 
         'riskbitmask' => RISK_PERSONAL,
