@@ -50,11 +50,13 @@
             print_header($course->shortname, $course->fullname,
                  "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
                   <a href=\"../forum/index.php?id=$course->id\">$strforums</a> ->
-                  <a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>", '', '', true, "", navmenu($course, $cm));
+                  <a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>",
+                  '', '', true, "", navmenu($course, $cm));
         } else {
             print_header($course->shortname, $course->fullname,
                  "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> ->
-                  <a href=\"view.php?f=$forum->id\">".format_string($forum->name)."</a>", '', '', true, "", navmenu($course, $cm));
+                  <a href=\"view.php?f=$forum->id\">".format_string($forum->name)."</a>",
+                  '', '', true, "", navmenu($course, $cm));
         }
         notice_yesno(get_string('noguestpost', 'forum').'<br /><br />'.get_string('liketologin'),
                      $wwwroot, $_SERVER['HTTP_REFERER']);
@@ -143,9 +145,6 @@
 
                 if (forum_update_post($post,$message)) {
 
-                    add_to_log($course->id, "forum", "update post",
-                            "discuss.php?d=$post->discussion&amp;parent=$post->id", "$post->id", $cm->id);
-
                     $timemessage = 2;
                     if (!empty($message)) { // if we're printing stuff about the file upload
                         $timemessage = 4;
@@ -155,7 +154,18 @@
                     if ($subscribemessage = forum_post_subscription($post)) {
                         $timemessage = 4;
                     }
-                    redirect(forum_go_back_to("discuss.php?d=$post->discussion#$post->id"), $message.$subscribemessage, $timemessage);
+                    if ($forum->type == 'single') {
+                        // Single discussion forums are an exception. We show
+                        // the forum itself since it only has one discussion
+                        // thread.
+                        $discussionurl = "view.php?f=$forum->id";
+                    } else {
+                        $discussionurl = "discuss.php?d=$post->discussion#$post->id";
+                    }
+                    add_to_log($course->id, "forum", "update post",
+                            "$discussionurl&amp;parent=$post->id", "$post->id", $cm->id);
+                    
+                    redirect(forum_go_back_to("$discussionurl#$post->id"), $message.$subscribemessage, $timemessage);
 
                 } else {
                     error(get_string("couldnotupdate", "forum"), $errordestination);
@@ -166,9 +176,6 @@
         } else if ($post->discussion) { // Adding a new post to an existing discussion
             $message = '';
             if ($post->id = forum_add_new_post($post,$message)) {
-
-                add_to_log($course->id, "forum", "add post",
-                          "discuss.php?d=$post->discussion&amp;parent=$post->id", "$post->id", $cm->id);
 
                 $timemessage = 2;
                 if (!empty($message)) { // if we're printing stuff about the file upload
@@ -185,7 +192,18 @@
                     $timemessage = 4;
                 }
 
-                redirect(forum_go_back_to("discuss.php?d=$post->discussion#$post->id"), $message.$subscribemessage, $timemessage);
+                if ($forum->type == 'single') {
+                    // Single discussion forums are an exception. We show
+                    // the forum itself since it only has one discussion
+                    // thread.
+                    $discussionurl = "view.php?f=$forum->id";
+                } else {
+                    $discussionurl = "discuss.php?d=$post->discussion";
+                }
+                add_to_log($course->id, "forum", "add post",
+                          "$discussionurl&amp;parent=$post->id", "$post->id", $cm->id);
+
+                redirect(forum_go_back_to("$discussionurl#$post->id"), $message.$subscribemessage, $timemessage);
 
             } else {
                 error(get_string("couldnotadd", "forum"), $errordestination);
@@ -469,7 +487,7 @@
 
             } else {
                 if (! $post->parent) {  // post is a discussion topic as well, so delete discussion
-                    if ($forum->type == "single") {
+                    if ($forum->type == 'single') {
                         notice("Sorry, but you are not allowed to delete that discussion!",
                                 forum_go_back_to("discuss.php?d=$post->discussion"));
                     }
@@ -482,12 +500,20 @@
                              get_string("deleteddiscussion", "forum"), 1);
 
                 } else if (forum_delete_post($post, has_capability('mod/forum:deleteanypost', $modcontext))) {
-
-                    add_to_log($discussion->course, "forum", "delete post",
-                               "discuss.php?d=$post->discussion", "$post->id", $cm->id);
+                    
+                    if ($forum->type == 'single') {
+                        // Single discussion forums are an exception. We show
+                        // the forum itself since it only has one discussion
+                        // thread.
+                        $discussionurl = "view.php?f=$forum->id";
+                    } else {
+                        $discussionurl = "discuss.php?d=$post->discussion";
+                    }
+                    
+                    add_to_log($discussion->course, "forum", "delete post", $discussionurl, "$post->id", $cm->id);
 
                     $feedback = $replycount ? get_string('deletedposts', 'forum') : get_string('deletedpost', 'forum');
-                    redirect(forum_go_back_to("discuss.php?d=$post->discussion"), $feedback, 1);
+                    redirect(forum_go_back_to($discussionurl), $feedback, 1);
                 } else {
                     error("An error occurred while deleting record $post->id");
                 }
@@ -660,7 +686,7 @@
     $strforums = get_string("modulenameplural", "forum");
 
 
-    $navmiddle = "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> <a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
+    $navmiddle = "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> <a href=\"view.php?f=$forum->id\">".format_string($forum->name,true).'</a> ';
 
     if (empty($discussion->name)) {
         if (empty($discussion)) {
@@ -668,15 +694,26 @@
         }
         $discussion->name = $forum->name;
     }
-
+    if ($forum->type == 'single') {
+        // There is only one discussion thread for this forum type. We should
+        // not show the discussion name (same as forum name in this case) in
+        // the breadcrumbs.
+        $strdiscussionname = '';
+        $navtail = '';
+    } else {
+        // Show the discussion name in the breadcrumbs.
+        $strdiscussionname = format_string($discussion->name).':';
+    }
     if ($course->category) {
-        print_header("$course->shortname: ".format_string($discussion->name).": ".format_string($toppost->subject), "$course->fullname",
-                 "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
-                  $navmiddle -> $navtail", $formstart, "", true, "", navmenu($course, $cm));
+        print_header("$course->shortname: $strdiscussionname ".
+                      format_string($toppost->subject), "$course->fullname",
+                     "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
+                      $navmiddle $navtail", $formstart, "", true, "", navmenu($course, $cm));
 
     } else {
-        print_header("$course->shortname: ".format_string($discussion->name).": ".format_string($toppost->subject), "$course->fullname",
-                 "$navmiddle -> $navtail", "$formstart", "", true, "", navmenu($course, $cm));
+        print_header("$course->shortname: $strdiscussionname ".
+                      format_string($toppost->subject), "$course->fullname",
+                     "$navmiddle $navtail", "$formstart", "", true, "", navmenu($course, $cm));
 
     }
 

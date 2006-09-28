@@ -136,21 +136,30 @@
         }
     }
 
-    if (empty($navtail)) {
-        $navtail = "<a href=\"discuss.php?d=$discussion->id\">".format_string($discussion->name,true)."</a> -> ".format_string($post->subject);
-    }
 
-    $navmiddle = "<a href=\"../forum/index.php?id=$course->id\">".get_string("forums", "forum")."</a> -> <a href=\"../forum/view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
+    if (empty($navtail)) {
+        $navtail = "-> <a href=\"discuss.php?d=$discussion->id\">".
+                    format_string($discussion->name,true)."</a> -> ".
+                    format_string($post->subject);
+    }
+    if ($forum->type == 'single') {
+        $navforum = '';
+    } else {
+        $navforum = "<a href=\"../forum/view.php?f=$forum->id\">".
+                     format_string($forum->name,true)."</a> ";
+    }
+    $navmiddle = "<a href=\"../forum/index.php?id=$course->id\">".
+                  get_string("forums", "forum").'</a> -> '.$navforum;
 
     $searchform = forum_search_form($course);
 
     if ($course->category) {
         print_header("$course->shortname: ".format_string($discussion->name), "$course->fullname",
-                 "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
-                  $navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
+                     "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
+                      $navmiddle $navtail", "", "", true, $searchform, navmenu($course, $cm));
     } else {
         print_header("$course->shortname: ".format_string($discussion->name), "$course->fullname",
-                 "$navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
+                     "$navmiddle $navtail", "", "", true, $searchform, navmenu($course, $cm));
     }
 
 
@@ -199,9 +208,13 @@
 
     echo "</td><td width=\"33%\">";
     forum_print_mode_form($discussion->id, $displaymode);
-
     echo "</td><td width=\"33%\">";
-    if (has_capability('mod/forum:movediscussions', $modcontext)) { // Popup menu to move discussions to other forums
+
+    if ($forum->type != 'single'
+                && has_capability('mod/forum:movediscussions', $modcontext)) {
+        
+        // Popup menu to move discussions to other forums. The discussion in a
+        // single discussion forum can't be moved.
         if ($forums = get_all_instances_in_course("forum", $course)) {
             if ($course->format == 'weeks') {
                 $strsection = get_string("week");
