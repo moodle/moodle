@@ -1,19 +1,20 @@
 <?php // $Id$
+
     require_once("../../config.php");
     require_once("lib.php");
-    require_login();
-    // fetch and clean the required $_GET parameters
-    // (script stops here if any parameters are missing)
-    unset($params);
-    $params->action = required_param('action');
-    $params->course = required_param('course');
-    $params->reference = required_param('reference');
+
+    $params = new stdClass();
+    $params->action = required_param('action', PARAM_ALPHA);
+    $params->course = required_param('course', PARAM_INT);
+    $params->reference = required_param('reference', PARAM_PATH);
+
     require_login($params->course);
+
     if (!has_capability('mod/hotpot:viewreport',get_context_instance(CONTEXT_COURSE, $params->course))) {
         error("You are not allowed to view this page!");
     }
     if (has_capability('mod/hotpot:viewreport', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-        $params->location = optional_param('location', HOTPOT_LOCATION_COURSEFILES);
+        $params->location = optional_param('location', HOTPOT_LOCATION_COURSEFILES, PARAM_INT);
     } else {
         $params->location = HOTPOT_LOCATION_COURSEFILES;
     }
@@ -49,7 +50,9 @@
                 print htmlspecialchars($hp->source);
                 break;
             case 'showxmltree':
-                print_r($hp->xml);
+				if (isset($hp->xml)) {
+					print_r($hp->xml);
+				}
                 break;
             case 'showhtmlsource':
                 print htmlspecialchars($hp->html);
