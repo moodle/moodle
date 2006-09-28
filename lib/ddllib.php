@@ -312,7 +312,10 @@ function find_index_name($xmldb_table, $xmldb_index) {
     $indcolumns = $xmldb_index->getFields();
 
 /// Get list of indexes in table
-    $indexes = array_change_key_case($db->MetaIndexes($CFG->prefix . $xmldb_table->getName(), CASE_LOWER));
+    $indexes = null;
+    if ($indexes = $db->MetaIndexes($CFG->prefix . $xmldb_table->getName())) {
+        $indexes = array_change_key_case($indexes, CASE_LOWER);
+    }
 
 /// Iterate over them looking for columns coincidence
     if ($indexes) {
@@ -729,9 +732,11 @@ function drop_index($table, $index, $continue=true, $feedback=true) {
         return true; //Index doesn't exist, nothing to do
     }
 
+
     if(!$sqlarr = $table->getDropIndexSQL($CFG->dbtype, $CFG->prefix, $index, false)) {
         return true; //Empty array = nothing to do = no error
     }
+
 
     return execute_sql_arr($sqlarr, $continue, $feedback);
 }
