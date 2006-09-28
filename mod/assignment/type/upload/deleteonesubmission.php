@@ -4,11 +4,11 @@
 
     $id      = optional_param('id');            // Course module ID
     $a       = optional_param('a');             // Assignment ID
-
-    $sesskey = required_param('sesskey', PARAM_ALPHANUM);
-    if (!confirm_sesskey()) {
-         error('Bad Session Key');
-    }
+    $userid  = required_param('userid');
+    $file    = optional_param('file', '', PARAM_PATH);
+    $name    = optional_param('name', '', PARAM_FILE);
+    $offset  = optional_param('offset');
+    $view    = optional_param('view');          //teacher or student view
  
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -33,12 +33,15 @@
             error("Course Module ID was incorrect");
         }
     }
+
     require_login($course->id, false, $cm);
-   
+
 /// Load up the required assignment code
+
     require($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
     $assignmentclass = 'assignment_'.$assignment->assignmenttype;
     $assignmentinstance = new $assignmentclass($cm->id, $assignment, $cm, $course);
-      
-    $assignmentinstance->deleteonesubmission()   // delete file 
+
+    $assignmentinstance->deleteonesubmission()   // delete file
+
 ?>
