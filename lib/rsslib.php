@@ -375,7 +375,7 @@ function rss_display_feeds($courseid, $userid, $rssid='', $context) {
     require_once($CFG->libdir.'/tablelib.php');
 
     $select = '';
-    $managesharedfeeds = has_capability('block/rss_client:managesharedfeeds', $context);
+    $managesharedfeeds = has_capability('block/rss_client:manageanyfeeds', $context);
     $manageownfeeds = has_capability('block/rss_client:manageownfeeds', $context);
     
     if ($rssid != '') {
