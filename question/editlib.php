@@ -106,7 +106,7 @@ function question_category_menu($courseid, $published=false) {
         $publish = "OR publish = '1'";
     }
 
-    if (!has_capability('moodle/course:managequestions', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (!has_capability('moodle/question:manage', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         $categories = get_records_select("question_categories", "course = '$courseid' $publish", 'parent, sortorder, name ASC');
     } else {
         $categories = get_records_select("question_categories", '', 'parent, sortorder, name ASC');

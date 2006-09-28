@@ -13,7 +13,7 @@
 
     // Check user admin
     require_login();
-    require_capability('moodle/course:managequestions', get_context_instance(CONTEXT_SYSTEM, SITEID));
+    require_capability('moodle/question:manage', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     if (!$site = get_site()) {
         error('Site isn\'t defined!');

@@ -629,22 +629,6 @@ $moodle_capabilities = array(
         )
     ),
 
-    'moodle/course:managequestions' => array(
-
-        'riskbitmask' => RISK_XSS,
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
-            'guest' => CAP_PREVENT,
-            'student' => CAP_PREVENT,
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
-        )
-    ),
-
     'moodle/course:manageactivities' => array(
 
         'riskbitmask' => RISK_XSS,

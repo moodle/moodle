@@ -117,7 +117,7 @@ class block_admin extends block_list {
         }
         
     /// Manage questions
-        if (has_capability('moodle/course:managequestions', $context)) {
+        if (has_capability('moodle/question:manage', $context)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/question/edit.php?courseid='.$this->instance->pageid.'&amp;clean=true">'.get_string('questions', 'quiz').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/questions.gif" alt="" />';
         }
