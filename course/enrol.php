@@ -78,7 +78,7 @@
             ($course->enrollable == 2 && $course->enrolstartdate > 0 && $course->enrolstartdate > time()) ||
             ($course->enrollable == 2 && $course->enrolenddate > 0 && $course->enrolenddate <= time())
             ) {
-        print_header_simple();
+        print_header($course->shortname, $course->fullname, $course->shortname );
         notice(get_string('notenrollable'), "$CFG->wwwroot/index.php");
     }
 
