@@ -610,7 +610,8 @@ function add_key($table, $key, $continue=true, $feedback=true) {
 
 /// Check there isn't any index with the same fields
 /// if it exists we don't create the key
-    $index = new XMLDBIndex('anyname', XMLDB_INDEX_UNIQUE, $key->getFields());
+    $index = new XMLDBIndex('anyname');
+    $index->setAttributes(XMLDB_INDEX_UNIQUE, $key->getFields());
     if ($indexexists = find_index_name($table, $index)) {
     /// TODO print some notify here (id debuglevel is DEVELOPER)
         return true; //Index exists, nothing to do
@@ -628,7 +629,7 @@ function add_key($table, $key, $continue=true, $feedback=true) {
  *
  * @uses $CFG, $db
  * @param XMLDBTable table object (just the name is mandatory)
- * @param XMLDBIndex key object (full specs are required)
+ * @param XMLDBKey key object (full specs are required)
  * @param boolean continue to specify if must continue on error (true) or stop (false)
  * @param boolean feedback to specify to show status info (true) or not (false)
  * @return boolean true on success, false on error
@@ -652,7 +653,8 @@ function drop_key($table, $key, $continue=true, $feedback=true) {
 
 /// Check there is one index with the same fields
 /// if it exists we'll drop the key
-    $index = new XMLDBIndex('anyname', XMLDB_INDEX_UNIQUE, $key->getFields());
+    $index = new XMLDBIndex('anyname');
+    $index->setAttributes(XMLDB_INDEX_UNIQUE, $key->getFields());
     if (!$indexexists = find_index_name($table, $index)) {
     /// TODO print some notify here (id debuglevel is DEVELOPER)
         return true; //Index exists, nothing to do
