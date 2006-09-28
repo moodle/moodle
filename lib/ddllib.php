@@ -285,6 +285,7 @@ function find_key_name($xmldb_table, $xmldb_key) {
             case XMLDB_KEY_UNIQUE:
                 $suffix = 'uk';
                 break;
+            case XMLDB_KEY_FOREIGN_UNIQUE:
             case XMLDB_KEY_FOREIGN:
                 $suffix = 'fk';
                 break;
@@ -578,6 +579,90 @@ function change_field_default($table, $field, $continue=true, $feedback=true) {
 }
 
 /**
+ * This function will create the key in the table passed as arguments
+ *
+ * @uses $CFG, $db
+ * @param XMLDBTable table object (just the name is mandatory)
+ * @param XMLDBKey index object (full specs are required)
+ * @param boolean continue to specify if must continue on error (true) or stop (false)
+ * @param boolean feedback to specify to show status info (true) or not (false)
+ * @return boolean true on success, false on error
+ */
+function add_key($table, $key, $continue=true, $feedback=true) {
+
+    global $CFG, $db;
+
+    $status = true;
+
+    if (strtolower(get_class($table)) != 'xmldbtable') {
+        return false;
+    }
+    if (strtolower(get_class($key)) != 'xmldbkey') {
+        return false;
+    }
+    if ($key->getType() == XMLDB_KEY_PRIMARY) { // Prevent PRIMARY to be added (only in create table, being serious  :-P)
+    /// TODO print some notify here (id debuglevel is DEVELOPER)
+        return true;
+    }
+
+/// Check there isn't any index with the same fields
+/// if it exists we don't create the key
+    $index = new XMLDBIndex('anyname', XMLDB_INDEX_UNIQUE, $key->getFields());
+    if ($indexexists = find_index_name($table, $index)) {
+    /// TODO print some notify here (id debuglevel is DEVELOPER)
+        return true; //Index exists, nothing to do
+    }
+
+    if(!$sqlarr = $table->getAddKeySQL($CFG->dbtype, $CFG->prefix, $key, false)) {
+        return true; //Empty array = nothing to do = no error
+    }
+
+    return execute_sql_arr($sqlarr, $continue, $feedback);
+}
+
+/**
+ * This function will drop the key in the table passed as arguments
+ *
+ * @uses $CFG, $db
+ * @param XMLDBTable table object (just the name is mandatory)
+ * @param XMLDBIndex key object (full specs are required)
+ * @param boolean continue to specify if must continue on error (true) or stop (false)
+ * @param boolean feedback to specify to show status info (true) or not (false)
+ * @return boolean true on success, false on error
+ */
+function drop_key($table, $key, $continue=true, $feedback=true) {
+
+    global $CFG, $db;
+
+    $status = true;
+
+    if (strtolower(get_class($table)) != 'xmldbtable') {
+        return false;
+    }
+    if (strtolower(get_class($key)) != 'xmldbkey') {
+        return false;
+    }
+    if ($key->getType() == XMLDB_KEY_PRIMARY) { // Prevent PRIMARY to be dropped (only in drop table, being serious  :-P)
+    /// TODO print some notify here (id debuglevel is DEVELOPER)
+        return true;
+    }
+
+/// Check there is one index with the same fields
+/// if it exists we'll drop the key
+    $index = new XMLDBIndex('anyname', XMLDB_INDEX_UNIQUE, $key->getFields());
+    if (!$indexexists = find_index_name($table, $index)) {
+    /// TODO print some notify here (id debuglevel is DEVELOPER)
+        return true; //Index exists, nothing to do
+    }
+
+    if(!$sqlarr = $table->getDropKeySQL($CFG->dbtype, $CFG->prefix, $key, false)) {
+        return true; //Empty array = nothing to do = no error
+    }
+
+    return execute_sql_arr($sqlarr, $continue, $feedback);
+}
+
+/**
  * This function will create the index in the table passed as arguments
  * Before creating the index, the function will check it doesn't exists
  *
@@ -603,6 +688,7 @@ function add_index($table, $index, $continue=true, $feedback=true) {
 
 /// Check there isn't any index with the same fields
     if ($indexexists = find_index_name($table, $index)) {
+    /// TODO print some notify here (id debuglevel is DEVELOPER)
         return true; //Index exists, nothing to do
     }
 
@@ -639,6 +725,7 @@ function drop_index($table, $index, $continue=true, $feedback=true) {
 
 /// Check there is one index with the same fields
     if (!$indexexists = find_index_name($table, $index)) {
+    /// TODO print some notify here (id debuglevel is DEVELOPER)
         return true; //Index doesn't exist, nothing to do
     }
 
