@@ -303,6 +303,14 @@ class XMLDBoci8po extends XMLDBgenerator {
             $this->alter_column_skip_default = false;
         /// Dissable the type section because we have done it with the temp field
             $this->alter_column_skip_type = true;
+        /// If new field is nullable, nullability hasn't changed
+            if (!$xmldb_field->getNotnull()) {
+                $notnullchanged = false;
+            }
+        /// If new field hasn't default, default hasn't changed
+            if ($xmldb_field->getDefault() === null) {
+                $defaultchanged = false;
+            }
         }
 
     /// If type and precision and decimals hasn't changed, prevent the type clause
