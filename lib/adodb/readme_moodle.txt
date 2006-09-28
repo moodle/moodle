@@ -1,11 +1,12 @@
 Description of ADODB v4.92a library import into Moodle
 
 Removed:
- * contrib
- * cute_icons_for_site
- * docs
- * pear
- * tests
+ * contrib/
+ * cute_icons_for_site/
+ * docs/
+ * pear/
+ * tests/
+ * server.php
 
 Added:
  * index.html - prevent directory browsing on misconfigured servers
