@@ -552,7 +552,7 @@
         }
         choose_from_menu ($displaylist, "formaction", "", get_string("withselectedusers"), "if(checksubmit(this.form))this.form.submit();", "");
         helpbutton("participantswithselectedusers", get_string("withselectedusers"));
-        echo '<input type="text" name="id" value="'.$course->id.'" />';
+        echo '<input type="hidden" name="id" value="'.$course->id.'" />';
         echo '<input type="submit" value="' . get_string('ok') . '" />';
         echo '</div></form>';
     }
