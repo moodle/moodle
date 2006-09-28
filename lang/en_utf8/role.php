@@ -10,6 +10,7 @@ $string['capability'] = 'Capability';
 $string['capabilities'] = 'Capabilities';
 $string['currentrole'] = 'Current role';
 $string['currentcontext'] = 'Current context';
+$string['defaultrole'] = 'Default role';
 $string['defineroles'] = 'Define roles';
 $string['deleterolesure'] = '<p>Are you sure, that you want to delete role \"$a->name ($a->shortname)\"?</p><p>Currently this role is assigned to $a->count users.</p>';
 $string['editrole'] = 'Edit role';
