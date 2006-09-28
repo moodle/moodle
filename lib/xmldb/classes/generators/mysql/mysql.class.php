@@ -41,14 +41,14 @@ class XMLDBmysql extends XMLDBGenerator {
 
     var $primary_key_name = ''; //To force primary key names to one string (null=no force)
 
-    var $drop_primary_key = 'ALTER TABLE TABLENAME DROP KEYTYPE KEYNAME'; // Template to drop PKs
-                // with automatic replace for TABLENAME, KEYTYPE and KEYNAME
+    var $drop_primary_key = 'ALTER TABLE TABLENAME DROP PRIMARY KEY'; // Template to drop PKs
+                // with automatic replace for TABLENAME and KEYNAME
 
-    var $drop_unique_key = 'ALTER TABLE TABLENAME DROP KEYTYPE KEYNAME'; // Template to drop UKs
-                // with automatic replace for TABLENAME, KEYTYPE and KEYNAME
+    var $drop_unique_key = 'ALTER TABLE TABLENAME DROP KEY KEYNAME'; // Template to drop UKs
+                // with automatic replace for TABLENAME and KEYNAME
 
-    var $drop_foreign_key = 'ALTER TABLE TABLENAME DROP KEYTYPE KEYNAME'; // Template to drop FKs
-                // with automatic replace for TABLENAME, KEYTYPE and KEYNAME
+    var $drop_foreign_key = 'ALTER TABLE TABLENAME DROP FOREIGN KEY KEYNAME'; // Template to drop FKs
+                // with automatic replace for TABLENAME and KEYNAME
 
     var $sequence_extra_code = false; //Does the generator need to add extra code to generate the sequence fields
     var $sequence_name = 'auto_increment'; //Particular name for inline sequences in this generator

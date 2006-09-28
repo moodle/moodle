@@ -66,13 +66,13 @@ class XMLDBgenerator {
     var $foreign_keys = false; // Does the generator build foreign keys
 
     var $drop_primary_key = 'ALTER TABLE TABLENAME DROP CONSTRAINT KEYNAME'; // Template to drop PKs
-                               // with automatic replace for TABLENAME, KEYTYPE and KEYNAME
+                               // with automatic replace for TABLENAME and KEYNAME
 
     var $drop_unique_key = 'ALTER TABLE TABLENAME DROP CONSTRAINT KEYNAME'; // Template to drop UKs
-                               // with automatic replace for TABLENAME, KEYTYPE and KEYNAME
+                               // with automatic replace for TABLENAME and KEYNAME
 
     var $drop_foreign_key = 'ALTER TABLE TABLENAME DROP CONSTRAINT KEYNAME'; // Template to drop FKs
-                               // with automatic replace for TABLENAME, KEYTYPE and KEYNAME
+                               // with automatic replace for TABLENAME and KEYNAME
 
     var $sequence_extra_code = true; //Does the generator need to add extra code to generate the sequence fields
     var $sequence_name = 'auto_increment'; //Particular name for inline sequences in this generator
@@ -656,14 +656,12 @@ class XMLDBgenerator {
             case XMLDB_KEY_PRIMARY:
                 if ($this->primary_keys) {
                     $template = $this->drop_primary_key;
-                    $keytype = 'PRIMARY';
                     $dropkey = true;
                 }
                 break;
             case XMLDB_KEY_UNIQUE:
                 if ($this->unique_keys) {
                     $template = $this->drop_unique_key;
-                    $keytype = 'UNIQUE';
                     $dropkey = true;
                 }
                 break;
@@ -671,7 +669,6 @@ class XMLDBgenerator {
             case XMLDB_KEY_FOREIGN:
                 if ($this->foreign_keys) {
                     $template = $this->drop_foreign_key;
-                    $keytype = 'FOREIGN KEY';
                     $dropkey = true;
                 }
                 break;
@@ -680,7 +677,6 @@ class XMLDBgenerator {
         if ($dropkey) {
         /// Replace TABLENAME, CONSTRAINTTYPE and KEYNAME as needed
             $dropsql = str_replace('TABLENAME', $this->getEncQuoted($this->prefix . $xmldb_table->getName()), $template);
-            $dropsql = str_replace('KEYTYPE', $keytype, $dropsql);
             $dropsql = str_replace('KEYNAME', $dbkeyname, $dropsql);
 
             $results[] = $dropsql;
