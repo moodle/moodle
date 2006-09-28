@@ -17,7 +17,7 @@ class moodleform_group extends HTML_QuickForm_group{
      * @var string
      */
     var $_helpbutton='';
-    var $_elementTemplateType='default';
+    var $_elementTemplateType='fieldset';
     //would cause problems with client side validation so will leave for now
     //var $_elementTemplateType='fieldset';
     /**
