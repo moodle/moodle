@@ -211,7 +211,7 @@ function auth_sync_users ($do_updates=0) {
         $updatekeys = array();
         foreach ($all_keys as $key) {
             if (preg_match('/^field_updatelocal_(.+)$/',$key, $match)) {
-                if ($pcfg->{$match[0]}) { // if it has a true value
+                if ($pcfg->{$key} === 'onlogin') {
                     array_push($updatekeys, $match[1]); // the actual key name
                 }
             }
