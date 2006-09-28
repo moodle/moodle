@@ -429,7 +429,6 @@ function capability_search($capability, $context, $capabilities) {
     }
 
     if (isset($capabilities[$context->id][$capability])) {
-        debugging("Found $capability in context $context->id at level $context->contextlevel: ".$capabilities[$context->id][$capability], DEBUG_DEVELOPER);
         return ($capabilities[$context->id][$capability]);
     }
 
