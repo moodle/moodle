@@ -473,7 +473,7 @@ class test extends XMLDBAction {
             $tests['add unique key'] = $test;
         }
 
-    /// 30th test. Adding one foreign key to the table
+    /// 30th test. Adding one foreign+unique key to the table
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -493,7 +493,7 @@ class test extends XMLDBAction {
         /// Get SQL code and execute it
             $test = new stdClass;
             $key = new XMLDBKey('course');
-            $key->setAttributes(XMLDB_KEY_FOREIGN_UNIQUE, array('course'), 'course', array('id'));
+            $key->setAttributes(XMLDB_KEY_FOREIGN_UNIQUE, array('course'), 'anothertest', array('id'));
 
             $test->sql = $table->getDropKeySQL($CFG->dbtype, $CFG->prefix, $key, true);
             $test->status = drop_key($table, $key, false, false);
@@ -503,6 +503,35 @@ class test extends XMLDBAction {
             $tests['drop foreign+unique key'] = $test;
         }
 
+    /// 32th test. Adding one foreign key to the table
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $key = new XMLDBKey('course');
+            $key->setAttributes(XMLDB_KEY_FOREIGN, array('course'), 'anothertest', array('id'));
+
+            $test->sql = $table->getAddKeySQL($CFG->dbtype, $CFG->prefix, $key, true);
+            $test->status = add_key($table, $key, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['add foreign key'] = $test;
+        }
+
+    /// 33th test. Drop one foreign key
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $key = new XMLDBKey('course');
+            $key->setAttributes(XMLDB_KEY_FOREIGN, array('course'), 'anothertest', array('id'));
+
+            $test->sql = $table->getDropKeySQL($CFG->dbtype, $CFG->prefix, $key, true);
+            $test->status = drop_key($table, $key, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['drop foreign key'] = $test;
+        }
     /// TODO: Check here values of the inserted records to see that everything ha the correct value
 
 
