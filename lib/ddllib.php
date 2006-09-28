@@ -608,15 +608,6 @@ function add_key($table, $key, $continue=true, $feedback=true) {
         return true;
     }
 
-/// Check there isn't any index with the same fields
-/// if it exists we don't create the key
-    $index = new XMLDBIndex('anyname');
-    $index->setAttributes(XMLDB_INDEX_UNIQUE, $key->getFields());
-    if ($indexexists = find_index_name($table, $index)) {
-    /// TODO print some notify here (id debuglevel is DEVELOPER)
-        return true; //Index exists, nothing to do
-    }
-
     if(!$sqlarr = $table->getAddKeySQL($CFG->dbtype, $CFG->prefix, $key, false)) {
         return true; //Empty array = nothing to do = no error
     }
@@ -649,15 +640,6 @@ function drop_key($table, $key, $continue=true, $feedback=true) {
     if ($key->getType() == XMLDB_KEY_PRIMARY) { // Prevent PRIMARY to be dropped (only in drop table, being serious  :-P)
     /// TODO print some notify here (id debuglevel is DEVELOPER)
         return true;
-    }
-
-/// Check there is one index with the same fields
-/// if it exists we'll drop the key
-    $index = new XMLDBIndex('anyname');
-    $index->setAttributes(XMLDB_INDEX_UNIQUE, $key->getFields());
-    if (!$indexexists = find_index_name($table, $index)) {
-    /// TODO print some notify here (id debuglevel is DEVELOPER)
-        return true; //Index exists, nothing to do
     }
 
     if(!$sqlarr = $table->getDropKeySQL($CFG->dbtype, $CFG->prefix, $key, false)) {
@@ -738,7 +720,6 @@ function drop_index($table, $index, $continue=true, $feedback=true) {
     if(!$sqlarr = $table->getDropIndexSQL($CFG->dbtype, $CFG->prefix, $index, false)) {
         return true; //Empty array = nothing to do = no error
     }
-
 
     return execute_sql_arr($sqlarr, $continue, $feedback);
 }
