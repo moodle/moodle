@@ -41,7 +41,13 @@ function get_student_courses(&$user) {
                         if (isset($user->student[$course->id])) {   /// We have it already
                             unset($user->student[$course->id]);       /// Remove from old list
                         } else {
-                            enrol_student($user->id, $course->id, 0, 0, 'database');   /// Enrol the student
+                            if ($course->enrolperiod) {
+                                $timestart = time();
+                                $timeend = time() + $course->enrolperiod;
+                            } else {
+                                $timestart = $timeend = 0;
+                            }
+                            enrol_student($user->id, $course->id, $timestart, $timeend, 'database');
                         }
                     }
                 }
