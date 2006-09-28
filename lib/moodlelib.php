@@ -5608,9 +5608,9 @@ function shorten_text($text, $ideal=30) {
                        if ($char == '.' or $char == ' ') {
                            $truncate = $i+1;
                            break 2;
-                       } else if (ord($char) >= 0xE0) {
-                           $truncate = $i;
-                           break 2;
+                       } else if (ord($char) >= 0xE0) {  // Chinese/Japanese/Korean text
+                           $truncate = $i;               // can be truncated at any UTF-8
+                           break 2;                      // character boundary.
                        }
                    }
                    $count++;
