@@ -41,7 +41,22 @@ $temp->add(new admin_setting_configtext('coursesperpage', get_string('coursesper
 $ADMIN->add('appearance', $temp);
 
 // calendar
-$ADMIN->add('appearance', new admin_externalpage('calendar', get_string('calendarsettings', 'admin'), $CFG->wwwroot.'/'.$CFG->admin.'/calendar.php'));
+$temp = new admin_settingpage('calendar', get_string('calendarsettings','admin'));
+$temp->add(new admin_setting_special_adminseesall());
+$temp->add(new admin_setting_configselect('calendar_startwday', get_string('configstartwday', 'admin'), get_string('helpstartofweek', 'admin'), 0, 
+array(
+        0 => get_string('sunday', 'calendar'),
+        1 => get_string('monday', 'calendar'),
+        2 => get_string('tuesday', 'calendar'),
+        3 => get_string('wednesday', 'calendar'),
+        4 => get_string('thursday', 'calendar'),
+        5 => get_string('friday', 'calendar'),
+        6 => get_string('saturday', 'calendar')
+    )));
+$temp->add(new admin_setting_special_calendar_weekend());
+$temp->add(new admin_setting_configtext('calendar_lookahead',get_string('configlookahead','admin'),get_string('helpupcominglookahead', 'admin'),21,PARAM_INT));
+$temp->add(new admin_setting_configtext('calendar_maxevents',get_string('configmaxevents','admin'),get_string('helpupcomingmaxevents', 'admin'),10,PARAM_INT));
+$ADMIN->add('appearance', $temp);
 
 // "filtersettings" settingpage
 $temp = new admin_settingpage('filtersettings', get_string('filtersettings', 'admin'));

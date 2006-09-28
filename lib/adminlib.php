@@ -2264,6 +2264,12 @@ class admin_setting_special_calendar_weekend extends admin_setting {
             $currentsetting = $this->get_setting();
         }
 
+        foreach(array('u','m','t','w','r','f','s') as $element) {
+            if (!isset($currentsetting[$element])) {
+                $currentsetting[$element] = 0;
+            }
+        }
+
         $return = '<table><tr><td><div align="center">&nbsp;&nbsp;' . get_string('sunday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .
         get_string('monday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . get_string('tuesday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .
         get_string('wednesday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . get_string('thursday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .

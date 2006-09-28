@@ -164,7 +164,11 @@ $string['cleanup'] = 'Cleanup';
 $string['longtimenosee'] = 'Unsubscribe users from courses after';
 $string['deleteunconfirmed'] = 'Delete unconfirmed users after';
 $string['loglifetime'] = 'Keep logs for';
-
+$string['adminseesall'] = 'Admins See All';
+$string['configstartwday'] = 'Start of Week';
+$string['calendar_weekend'] = 'Weekend Days';
+$string['configlookahead'] = 'Days to Lookahead';
+$string['configmaxevents'] = 'Events to Lookahead';
 // end {added with admin cleanup}
 
 $string['adminseesallevents'] = 'Administrators see all events';
