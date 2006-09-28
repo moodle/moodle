@@ -1378,7 +1378,9 @@ function forum_mark_old_posts_as_mailed($endtime) {
     }
     return execute_sql("UPDATE {$CFG->prefix}forum_posts
                            SET mailed = '1'
-                         WHERE id NOT IN (".implode(',',$delayed_ids).") AND (created < '$endtime' OR mailnow = 1) AND mailed ='0'");
+                         WHERE id NOT IN (".implode(',',$delayed_ids).")
+                           AND (created < '$endtime' OR mailnow = 1)
+                           AND mailed ='0'", false);
 }
 
 function forum_get_user_posts($forumid, $userid) {
