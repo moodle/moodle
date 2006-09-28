@@ -31,8 +31,7 @@ if ($currenttab != 'update') {
 
             $course = get_record('course', 'id', $context->instanceid);
             print_header($streditcoursesettings, "$course->fullname",
-                    "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>
-                    -> <a href=\"$CFG->wwwroot/course/edit.php?id=$course->id\">$streditcoursesettings</a> -> $straction");
+                    "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $straction");
             break;
 
         case CONTEXT_GROUP:
