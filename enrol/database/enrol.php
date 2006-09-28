@@ -210,14 +210,15 @@ function sync_enrolments($type='student') {
             $sql = "SELECT u.id AS userid, e.id AS enrolmentid" .
                 " FROM {$CFG->prefix}user u " . 
                 "      LEFT OUTER JOIN {$CFG->prefix}user_students e ON (u.id = e.userid AND e.course='{$course->id}')" .
-                " WHERE u.{$CFG->enrol_localuserfield} = '$member'";
+                " WHERE u.{$CFG->enrol_localuserfield} = '$member'" .
+                " AND (u.deleted IS NULL OR u.deleted=0)";
 
             $ers = $db->Execute($sql);
             if (!$ers) {
                 trigger_error($db->ErrorMsg() .' STATEMENT: '. $sql);
                 return false;
             }
-            if ( $ers->RecordCount() != 1 ) { // if this returns empty, it means we don't have the student record.
+            if ( $ers->RecordCount() == 0 ) { // if this returns empty, it means we don't have the student record.
                                               // should not happen -- but skip it anyway 
                 trigger_error('weird! no user record entry?');
                 continue;
