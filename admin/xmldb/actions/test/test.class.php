@@ -214,7 +214,73 @@ class test extends XMLDBAction {
             }
             $tests['drop field again'] = $test;
         }
-    /// 8th test. Change the precision of one text field
+
+    /// 8th test. Change the type of one column from integer to varchar
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('course');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, '0');
+
+            $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_type($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['change field type (int2char)'] = $test;
+        }
+
+    /// 9th test. Change the type of one column from varchar to integer
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('course');
+            $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+
+            $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_type($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['change field type (char2int)'] = $test;
+        }
+
+    /// 10th test. Change the type of one column from number to varchar
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('grade');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'test');
+
+            $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_type($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['change field type (number2char)'] = $test;
+        }
+
+    /// 11th test. Change the type of one column from varchar to number
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('grade');
+            $field->setAttributes(XMLDB_TYPE_NUMBER, '10,2', XMLDB_UNSIGNED, null, null, null, null, null);
+
+            $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_type($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['change field type (char2number)'] = $test;
+        }
+
+    /// 12th test. Change the type of one column from text to binary
+
+    /// 13th test. Change the type of one column from binary to text
+
+
+    /// 14th test. Change the precision of one text field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -229,7 +295,7 @@ class test extends XMLDBAction {
             $tests['change field precision (text)'] = $test;
         }
 
-    /// 9th test. Change the precision of one char field
+    /// 15th test. Change the precision of one char field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -244,7 +310,7 @@ class test extends XMLDBAction {
             $tests['change field precision (char)'] = $test;
         }
 
-    /// 10th test. Change the precision of one numeric field
+    /// 16th test. Change the precision of one numeric field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -258,20 +324,6 @@ class test extends XMLDBAction {
             }
             $tests['change field precision (number)'] = $test;
         }
-
-    /// 11th test. Change the type of one column from varchar to integer
-
-    /// 12th test. Change the type of one column from insteger to varchar
-
-    /// 13th test. Change the type of one column from varchar to number
-
-    /// 14th test. Change the type of one column from number to varchar
-
-    /// 15th test. Change the type of one column from text to binary
-
-    /// 16th test. Change the type of one column from binary to text
-
-
 
     /// 17th test. Change the sign of one numeric field to unsigned
         if ($test->status) {
