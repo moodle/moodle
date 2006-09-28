@@ -45,10 +45,6 @@ class XMLDBmssql extends XMLDBgenerator {
     var $unique_keys = false; // Does the generator build unique keys
     var $foreign_keys = false; // Does the generator build foreign keys
 
-    var $primary_index = false;// Does the generator need to build one index for primary keys
-    var $unique_index = true;  // Does the generator need to build one index for unique keys
-    var $foreign_index = true; // Does the generator need to build one index for foreign keys
-
     var $sequence_extra_code = false; //Does the generator need to add extra code to generate the sequence fields
     var $sequence_name = 'IDENTITY(1,1)'; //Particular name for inline sequences in this generator
     var $sequence_only = false; //To avoid to output the rest of the field specs, leaving only the name and the sequence_name variable

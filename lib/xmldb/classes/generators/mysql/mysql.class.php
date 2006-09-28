@@ -44,9 +44,14 @@ class XMLDBmysql extends XMLDBGenerator {
     var $unique_keys = false; // Does the generator build unique key
     var $foreign_keys = false; // Does the generator build foreign keys
 
-    var $primary_index = false;// Does the generator need to build one index for primary keys
-    var $unique_index = true;  // Does the generator need to build one index for unique keys
-    var $foreign_index = true;  // Does the generator need to build one index for foreign keys
+    var $drop_primary_key = 'ALTER TABLE TABLENAME DROP KEYTYPE KEYNAME'; // Template to drop PKs
+                // with automatic replace for TABLENAME, KEYTYPE and KEYNAME
+
+    var $drop_unique_key = 'ALTER TABLE TABLENAME DROP KEYTYPE KEYNAME'; // Template to drop UKs
+                // with automatic replace for TABLENAME, KEYTYPE and KEYNAME
+
+    var $drop_foreign_key = 'ALTER TABLE TABLENAME DROP KEYTYPE KEYNAME'; // Template to drop FKs
+                // with automatic replace for TABLENAME, KEYTYPE and KEYNAME
 
     var $sequence_extra_code = false; //Does the generator need to add extra code to generate the sequence fields
     var $sequence_name = 'auto_increment'; //Particular name for inline sequences in this generator
