@@ -305,14 +305,15 @@ function sync_enrolments($role = null) {
                  LEFT OUTER JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
                   AND ra.roleid = {$role->id}
                   AND ra.contextid = {$context->id}
-                 WHERE u.{$CFG->enrol_localuserfield} = ".$db->quote($member);
+                 WHERE u.{$CFG->enrol_localuserfield} = ".$db->quote($member) . 
+                 " AND (u.deleted IS NULL OR u.deleted=0) ";
 
             $ers = $db->Execute($sql);
             if (!$ers) {
                 trigger_error($db->ErrorMsg() .' STATEMENT: '. $sql);
                 return false;
             }
-            if ( $ers->RecordCount() != 1 ) { // if this returns empty, it means we don't have the student record.
+            if ( $ers->RecordCount() == 0 ) { // if this returns empty, it means we don't have the student record.
                                               // should not happen -- but skip it anyway 
                 trigger_error('weird! no user record entry?');
                 continue;
