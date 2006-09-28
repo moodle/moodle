@@ -37,9 +37,6 @@ class XMLDBpostgres7 extends XMLDBgenerator {
     var $unsigned_allowed = false;    // To define in the generator must handle unsigned information
     var $default_for_char = '';      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
 
-    var $unique_keys = false; // Does the generator build unique keys
-    var $foreign_keys = false; // Does the generator build foreign keys
-
     var $sequence_extra_code = false; //Does the generator need to add extra code to generate the sequence fields
     var $sequence_name = 'BIGSERIAL'; //Particular name for inline sequences in this generator
     var $sequence_only = true; //To avoid to output the rest of the field specs, leaving only the name and the sequence_name variable
