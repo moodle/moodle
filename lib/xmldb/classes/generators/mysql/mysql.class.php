@@ -41,9 +41,6 @@ class XMLDBmysql extends XMLDBGenerator {
 
     var $primary_key_name = ''; //To force primary key names to one string (null=no force)
 
-    var $unique_keys = false; // Does the generator build unique key
-    var $foreign_keys = false; // Does the generator build foreign keys
-
     var $drop_primary_key = 'ALTER TABLE TABLENAME DROP KEYTYPE KEYNAME'; // Template to drop PKs
                 // with automatic replace for TABLENAME, KEYTYPE and KEYNAME
 
