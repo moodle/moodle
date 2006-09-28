@@ -156,27 +156,6 @@
     }
 
 
-/// If there are multiple Roles in the course, then show a drop down menu for switching
-
-    $rolenames = array();
-
-    if ($roles = get_roles_used_in_context($context)) {
-
-        foreach ($roles as $role) {
-            $rolenames[$role->id] = $role->name;
-        }
-
-        if (!empty($roleid)) {
-            echo '<form name="rolesform" action="index.php" method="get">';
-            echo '<div align="center">';
-            echo '<input type="hidden" name="contextid" value="'.$context->id.'">'.get_string('currentrole', 'role').': ';
-            choose_from_menu($rolenames, 'roleid', $roleid, '', $script='rolesform.submit()');
-            echo '</div></form>';
-        }
-    }
-
-
-
 /// Print settings and things in a table across the top
 
     echo '<table class="controls" cellspacing="0"><tr>';
@@ -277,43 +256,12 @@
         }
     }
 
-
-    $exceptions = array(); // This will be an array of userids that are shown as teachers and thus
-                           // do not have to be shown as users as well. Only relevant on site course.
-
-    if ($isteacher) {
-        echo '
-<script Language="JavaScript">
-<!--
-function checksubmit(form) {
-    var destination = form.formaction.options[form.formaction.selectedIndex].value;
-    if (destination == "" || !checkchecked(form)) {
-        form.formaction.selectedIndex = 0;
-        return false;
-    } else {
-        return true;
-    }
-}
-
-function checkchecked(form) {
-    var inputs = document.getElementsByTagName(\'INPUT\');
-    var checked = false;
-    inputs = filterByParent(inputs, function() {return form;});
-    for(var i = 0; i < inputs.length; ++i) {
-        if(inputs[i].type == \'checkbox\' && inputs[i].checked) {
-            checked = true;
+    
+    if ($roles = get_roles_used_in_context($context)) {
+        foreach ($roles as $role) {
+            $rolenames[$role->id] = strip_tags(format_string($role->name));   // Used in menus etc later on
         }
     }
-    return checked;
-}
-//-->
-</script>
-';
-        echo '<form action="action_redir.php" method="post" name="studentsform" onSubmit="return checksubmit(this);">';
-        echo '<input type="hidden" name="returnto" value="'.$_SERVER['REQUEST_URI'].'" />';
-        echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-    }
-
 
 
 /// Define a table showing a list of users in the current role.
@@ -401,13 +349,6 @@ function checkchecked(form) {
             $where .= ' AND gm.groupid = '.$currentgroup;
         }
     
-        if ($course->id == SITEID) {
-            $guest = get_guest();
-            $exceptions[] = $guest->id;
-
-            $where .= ' AND u.id NOT IN ('.implode(',', $exceptions).')';
-        }
-
         $totalcount = count_records_sql('SELECT COUNT(distinct u.id) '.$from.$where); // 1 person can have multiple assignments
     
         if ($table->get_sql_where()) {
@@ -427,18 +368,63 @@ function checkchecked(form) {
     
         $students = get_records_sql($select.$from.$where.$wheresearch.$sort,
                                     $table->get_page_start(),  $table->get_page_size());
+
+    /// If there are multiple Roles in the course, then show a drop down menu for switching
+    
+        if ($rolenames) {
+            echo '<div class="rolesform">';
+            echo get_string('currentrole', 'role').': ';
+            $rolenames = array(0 => get_string('all')) + $rolenames;
+            popup_form('index.php?contextid='.$contextid.'&amp;roleid=', $rolenames, 'rolesform', $roleid, '');
+            echo '</div>';
+        }
+
+
         if (!$currentrole = get_record('role','id',$roleid)) {
             error('That role does not exist');
         }
-
         $a->number = $totalcount;
         $a->role = $currentrole->name;
-        echo '<h2>'.get_string('xuserswiththerole', 'role', $a);
+        $heading = get_string('xuserswiththerole', 'role', $a);
         if (user_can_assign($context, $roleid)) {
-            echo ' <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?roleid='.$roleid.'&amp;contextid='.$context->id.'">';
-            echo '<img src="'.$CFG->pixpath.'/i/edit.gif" height="16" width="16" alt="" /></a>';
+            $heading .= ' <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?roleid='.$roleid.'&amp;contextid='.$context->id.'">';
+            $heading .= '<img src="'.$CFG->pixpath.'/i/edit.gif" height="16" width="16" alt="" /></a>';
         }
-        echo '</h2>';
+        print_heading($heading, 'center', 3);
+
+
+        if ($isteacher) {
+            echo '
+<script Language="JavaScript">
+<!--
+function checksubmit(form) {
+    var destination = form.formaction.options[form.formaction.selectedIndex].value;
+    if (destination == "" || !checkchecked(form)) {
+        form.formaction.selectedIndex = 0;
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function checkchecked(form) {
+    var inputs = document.getElementsByTagName(\'INPUT\');
+    var checked = false;
+    inputs = filterByParent(inputs, function() {return form;});
+    for(var i = 0; i < inputs.length; ++i) {
+        if(inputs[i].type == \'checkbox\' && inputs[i].checked) {
+            checked = true;
+        }
+    }
+    return checked;
+}
+//-->
+</script>
+';
+            echo '<form action="action_redir.php" method="post" name="studentsform" onSubmit="return checksubmit(this);">';
+            echo '<input type="hidden" name="returnto" value="'.$_SERVER['REQUEST_URI'].'" />';
+            echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+        }
     
         if ($CFG->longtimenosee > 0 && $CFG->longtimenosee < 1000 && $totalcount > 0) {
             echo '<p id="longtimenosee">('.get_string('unusedaccounts', '', $CFG->longtimenosee).')</p>';

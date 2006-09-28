@@ -1551,6 +1551,9 @@ body#course-participation #showall {
   text-align:center;
   margin: 10px 0px;
 }
+body#user-index .rolesform {
+  text-align:center;
+}
 
 /***
  *** Modules: Assignment

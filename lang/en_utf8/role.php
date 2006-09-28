@@ -37,6 +37,7 @@ $string['roletooverride'] = 'Role to override';
 $string['roles'] = 'Roles';
 $string['selectrole'] = 'Select a role';
 $string['viewrole'] = 'View role details';
+$string['xuserswiththerole'] = 'Users with the role \"$a->role\": $a->number';
 
 $string['site:doanything'] = 'Allowed to do everything';
 $string['legacy:guest'] = 'LEGACY ROLE: Guest';
