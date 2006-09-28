@@ -247,13 +247,14 @@ body#admin-lang .generalbox {
   background-color:#FFFFFF;
 }
 
-fieldset.adminsettings {
+#adminsettings {
     background-color: #FFFFFF;
     border-color: #9999FF;
+    color: #000066;
 }
 
-fieldset.adminsettings .form-shortname {
-    color: #0000FF;
+#adminsettings .form-shortname {
+    color: #888888;
 }
 
 /***
