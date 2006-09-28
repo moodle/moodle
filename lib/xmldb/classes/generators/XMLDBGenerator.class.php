@@ -223,7 +223,6 @@ class XMLDBgenerator {
                 if (!$this->getKeySQL($xmldb_table, $xmldb_key) || $xmldb_key->getType() == XMLDB_KEY_FOREIGN) {
                 /// Create the interim index   
                     $index = new XMLDBIndex('anyname');
-                    $index->setUnique(true);
                     $index->setFields($xmldb_key->getFields());
                 ///Only process all this if the index doesn't exist in DB
                     if (!find_index_name($xmldb_table, $index)) {
@@ -615,7 +614,7 @@ class XMLDBgenerator {
         if (!$keyclause || $xmldb_key->getType() == XMLDB_KEY_FOREIGN) {
         /// Only if they don't exist
             if ($xmldb_key->getType() == XMLDB_KEY_FOREIGN) {  ///Calculate type of index based on type ok key
-                $indextype = XMLDB_NOT_UNIQUE;
+                $indextype = XMLDB_INDEX_NOTUNIQUE;
             } else {
                 $indextype = XMLDB_INDEX_UNIQUE;
             }
