@@ -2194,9 +2194,8 @@
         
             foreach ($courseblocks as $courseblock) {
                
-                $context = get_context_instance(CONTEXT_COURSE, $courseblock->id);
-                 echo "<br/>adding $context->id";
-                 $contexts[$context->id] = $context;     
+                $context = get_context_instance(CONTEXT_BLOCK, $courseblock->id);
+                $contexts[$context->id] = $context;     
             }                                         
         }     
         
