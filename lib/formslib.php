@@ -258,9 +258,8 @@ class moodleform_renderer extends HTML_QuickForm_Renderer_Tableless{
     function moodleform_renderer(){
         // switch next two lines for ol li containers for form items.
         //        $this->_elementTemplates=array('default'=>"\n\t\t<li class=\"fitem\"><label>{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"qfelement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></li>");
-        $this->_elementTemplates=array('default'=>"\n\t\t<div class=\"fitem\"><label>{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"felement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></div>"); /*,
-        will cause problems with client side validation so will leave for now
-        'fieldset'=>"\n\t\t<div class=\"qfrow\"><label class=\"qflabel\">{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><fieldset class=\"qfelement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</fieldset></div>");*/
+        $this->_elementTemplates=array('default'=>"\n\t\t<div class=\"fitem\"><label>{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"felement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></div>",
+        'fieldset'=>"\n\t\t<div class=\"fitem\"><label>{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><fieldset class=\"felement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</fieldset></div>");
 
         parent::HTML_QuickForm_Renderer_Tableless();
     }
@@ -311,7 +310,7 @@ class moodleform_renderer extends HTML_QuickForm_Renderer_Tableless{
             
         }
         $this->_templates[$element->getName()]=$html;
-        $element->updateAttributes(array('id'=>'id_'.$element->getName()));
+        $element->updateAttributes(array('id'=>'id_'.$element->getAttribute('id')));
         parent::renderElement($element, $required, $error);
     }
 

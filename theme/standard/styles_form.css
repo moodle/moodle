@@ -15,8 +15,11 @@ form.mform fieldset {
     margin: 0;
     width:100%;
 }
-form.mform fieldset.hidden {
+form.mform fieldset.hidden, form.mform fieldset.felement {
     border: 0;
+}
+form.mform fieldset.felement {
+    width: auto;
 }
 form.mform fieldset legend {
     font-weight: bold;
@@ -50,13 +53,13 @@ form.mform label {
     margin: 0 0 0 0;
     text-align: right;
 }
-div.fitem div.fgroup label {
+div.fitem fieldset.fgroup label {
     display:inline;
     float: none;
     width: auto;
 }
 
-form.mform div.felement {
+form.mform div.felement,  form.mform fieldset.felement{
     /* display: inline; */
     display: block;
     float: left;
