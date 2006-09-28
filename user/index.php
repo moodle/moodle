@@ -158,23 +158,21 @@
 
 /// If there are multiple Roles in the course, then show a drop down menu for switching
 
-    if ($roles = get_roles_used_in_context($context)) {
+    $rolenames = array();
 
-        $rolenames = array();
+    if ($roles = get_roles_used_in_context($context)) {
 
         foreach ($roles as $role) {
             $rolenames[$role->id] = $role->name;
         }
 
-        if (empty($roleid)) {
-            $roleid = array_shift(array_keys($rolenames)); // get first element
+        if (!empty($roleid)) {
+            echo '<form name="rolesform" action="index.php" method="get">';
+            echo '<div align="center">';
+            echo '<input type="hidden" name="contextid" value="'.$context->id.'">'.get_string('currentrole', 'role').': ';
+            choose_from_menu($rolenames, 'roleid', $roleid, '', $script='rolesform.submit()');
+            echo '</div></form>';
         }
-
-        echo '<form name="rolesform" action="index.php" method="get">';
-        echo '<div align="center">';
-        echo '<input type="hidden" name="contextid" value="'.$context->id.'">'.get_string('currentrole', 'role').': ';
-        choose_from_menu ($rolenames, 'roleid', $roleid, '', $script='rolesform.submit()');
-        echo '</div></form>';
     }
 
 
@@ -316,59 +314,57 @@ function checkchecked(form) {
         echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     }
 
-    $guest = get_guest();
-    $exceptions[] = $guest->id;
+
 
 /// Define a table showing a list of users in the current role.
-
-    $tablecolumns = array('picture', 'fullname');
-    $tableheaders = array('', get_string('fullname'));
-    if (!isset($hiddenfields['city'])) {
-        $tablecolumns[] = 'city';
-        $tableheaders[] = get_string('city');
-    }
-    if (!isset($hiddenfields['country'])) {
-        $tablecolumns[] = 'country';
-        $tableheaders[] = get_string('country');
-    }
-    if (!isset($hiddenfields['lastaccess'])) {
-        $tablecolumns[] = 'lastaccess';
-        $tableheaders[] = get_string('lastaccess');
-    }
-
-    if ($course->enrolperiod) {
-       $tablecolumns[] = 'timeend';
-       $tableheaders[] = get_string('enrolmentend');
-    }
-
-    if ($isteacher) {
-       $tablecolumns[] = '';
-       $tableheaders[] = get_string('select');
-    }
-
-    $table = new flexible_table('user-index-students-'.$course->id);
-
-    $table->define_columns($tablecolumns);
-    $table->define_headers($tableheaders);
-    $table->define_baseurl($baseurl);
-
-    $table->sortable(true, 'lastaccess', SORT_DESC);
-
-    $table->set_attribute('cellspacing', '0');
-    $table->set_attribute('id', 'students');
-    $table->set_attribute('class', 'generaltable generalbox');
-
-    $table->set_control_variables(array(
-        TABLE_VAR_SORT    => 'ssort',
-        TABLE_VAR_HIDE    => 'shide',
-        TABLE_VAR_SHOW    => 'sshow',
-        TABLE_VAR_IFIRST  => 'sifirst',
-        TABLE_VAR_ILAST   => 'silast',
-        TABLE_VAR_PAGE    => 'spage'
-    ));
-    $table->setup();
-    
     if ($roleid) {
+        $tablecolumns = array('picture', 'fullname');
+        $tableheaders = array('', get_string('fullname'));
+        if (!isset($hiddenfields['city'])) {
+            $tablecolumns[] = 'city';
+            $tableheaders[] = get_string('city');
+        }
+        if (!isset($hiddenfields['country'])) {
+            $tablecolumns[] = 'country';
+            $tableheaders[] = get_string('country');
+        }
+        if (!isset($hiddenfields['lastaccess'])) {
+            $tablecolumns[] = 'lastaccess';
+            $tableheaders[] = get_string('lastaccess');
+        }
+    
+        if ($course->enrolperiod) {
+           $tablecolumns[] = 'timeend';
+           $tableheaders[] = get_string('enrolmentend');
+        }
+    
+        if ($isteacher) {
+           $tablecolumns[] = '';
+           $tableheaders[] = get_string('select');
+        }
+    
+        $table = new flexible_table('user-index-students-'.$course->id);
+    
+        $table->define_columns($tablecolumns);
+        $table->define_headers($tableheaders);
+        $table->define_baseurl($baseurl);
+    
+        $table->sortable(true, 'lastaccess', SORT_DESC);
+    
+        $table->set_attribute('cellspacing', '0');
+        $table->set_attribute('id', 'students');
+        $table->set_attribute('class', 'generaltable generalbox');
+    
+        $table->set_control_variables(array(
+            TABLE_VAR_SORT    => 'ssort',
+            TABLE_VAR_HIDE    => 'shide',
+            TABLE_VAR_SHOW    => 'sshow',
+            TABLE_VAR_IFIRST  => 'sifirst',
+            TABLE_VAR_ILAST   => 'silast',
+            TABLE_VAR_PAGE    => 'spage'
+        ));
+        $table->setup();
+        
       
         // we are looking for all users with this role assigned in this context or higher
         if ($usercontexts = get_parent_contexts($context)) {
@@ -386,7 +382,8 @@ function checkchecked(form) {
         $where  = "WHERE (r.contextid = $context->id OR r.contextid in $listofcontexts) 
                     AND u.deleted = 0 
                     AND r.roleid = $roleid 
-                    AND (ul.courseid = $course->id OR ul.courseid IS NULL)";   
+                    AND (ul.courseid = $course->id OR ul.courseid IS NULL)
+                    AND u.username <> 'guest' ";   
         $where .= get_lastaccess_sql($accesssince);
         
         $wheresearch = '';
@@ -405,6 +402,9 @@ function checkchecked(form) {
         }
     
         if ($course->id == SITEID) {
+            $guest = get_guest();
+            $exceptions[] = $guest->id;
+
             $where .= ' AND u.id NOT IN ('.implode(',', $exceptions).')';
         }
 
@@ -431,9 +431,9 @@ function checkchecked(form) {
             error('That role does not exist');
         }
 
-        $a->count = $totalcount;
-        $a->items = $currentrole->name;
-        echo '<h2>'.get_string('counteditems', '', $a);
+        $a->number = $totalcount;
+        $a->role = $currentrole->name;
+        echo '<h2>'.get_string('xuserswiththerole', 'role', $a);
         if (user_can_assign($context, $roleid)) {
             echo ' <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?roleid='.$roleid.'&amp;contextid='.$context->id.'">';
             echo '<img src="'.$CFG->pixpath.'/i/edit.gif" height="16" width="16" alt="" /></a>';
@@ -584,7 +584,35 @@ function checkchecked(form) {
         else if ($matchcount > 0 && $perpage < $matchcount) {
             echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.SHOW_ALL_PAGE_SIZE.'">'.get_string('showall', '', $matchcount).'</a></div>';
         }
-    } // end of if ($roleid);
+
+    } else {
+/// If no role is selected, then print an overview of the roles in this course
+
+        $table->tablealign = 'center';
+        $table->cellpadding = 5;
+        $table->cellspacing = 0;
+        $table->width = '20%';
+        $table->head = array(get_string('roles', 'role'), get_string('users'));
+        $table->wrap = array('nowrap', 'nowrap');
+        $table->align = array('right', 'center');
+
+        $baseurl = $CFG->wwwroot.'/user/index.php?contextid='.$context->id;
+
+        foreach ($rolenames as $roleid => $rolename) {
+            $countusers = 0;
+            if ($contextusers = count_role_users($roleid, $context)) {
+                $countusers = count($contextusers);
+            }
+            if ($countusers) {
+                $table->data[] = array('<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$rolename.'</a>', $countusers);
+            } else {
+                $table->data[] = array($rolename, $countusers);
+            }
+        }
+
+        print_table($table);
+
+    }
     
     print_footer($course);
 
