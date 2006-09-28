@@ -65,9 +65,14 @@ class XMLDBgenerator {
     var $unique_keys = true;  // Does the generator build unique keys
     var $foreign_keys = true; // Does the generator build foreign keys
 
-    var $primary_index = true;// Does the generator need to build one index for primary keys
-    var $unique_index = true;  // Does the generator need to build one index for unique keys
-    var $foreign_index = true; // Does the generator need to build one index for foreign keys
+    var $drop_primary_key = 'ALTER TABLE TABLENAME DROP CONSTRAINT KEYNAME'; // Template to drop PKs
+                               // with automatic replace for TABLENAME, KEYTYPE and KEYNAME
+
+    var $drop_unique_key = 'ALTER TABLE TABLENAME DROP CONSTRAINT KEYNAME'; // Template to drop UKs
+                               // with automatic replace for TABLENAME, KEYTYPE and KEYNAME
+
+    var $drop_foreign_key = 'ALTER TABLE TABLENAME DROP CONSTRAINT KEYNAME'; // Template to drop FKs
+                               // with automatic replace for TABLENAME, KEYTYPE and KEYNAME
 
     var $sequence_extra_code = true; //Does the generator need to add extra code to generate the sequence fields
     var $sequence_name = 'auto_increment'; //Particular name for inline sequences in this generator
@@ -202,62 +207,42 @@ class XMLDBgenerator {
         $indexcombs = array(); //To store all the key combinations used
         if ($xmldb_indexes = $xmldb_table->getIndexes()) {
             foreach ($xmldb_indexes as $xmldb_index) {
-                $fieldsarr = $xmldb_index->getFields();
-                sort ($fieldsarr);
-                $currentcomb = strtolower(implode('-', $fieldsarr));
-                if ($indextext = $this->getCreateIndexSQL($xmldb_table, $xmldb_index)) {
-                /// Only create the index if the combination hasn't been used before
-                    if (!in_array($currentcomb, $indexcombs)) {
-                    /// Add the INDEX to the array
+            ///Only process all this if the index doesn't exist in DB
+                if (!find_index_name($xmldb_table, $xmldb_index)) {
+                    if ($indextext = $this->getCreateIndexSQL($xmldb_table, $xmldb_index)) {
                         $results = array_merge($results, $indextext);
                     }
                 }
-            /// Add the index to the array of used combinations
-                $indexcombs[] = $currentcomb;
             }
         }
 
     /// Also, add the indexes needed from keys, based on configuration (each one, one statement)
         if ($xmldb_keys = $xmldb_table->getKeys()) {
             foreach ($xmldb_keys as $xmldb_key) {
-                $index = null;
-                switch ($xmldb_key->getType()) {
-                    case XMLDB_KEY_PRIMARY:
-                        if ($this->primary_index) {
-                            $index = new XMLDBIndex('temp_index');
+            /// Create the interim index   
+                $index = new XMLDBIndex('anyname');
+                $index->setUnique(true);
+                $index->setFields($xmldb_key->getFields());
+            ///Only process all this if the index doesn't exist in DB
+                if (!find_index_name($xmldb_table, $index)) {
+                    $createindex = false; //By default
+                    switch ($xmldb_key->getType()) {
+                        case XMLDB_KEY_UNIQUE:
+                        case XMLDB_KEY_FOREIGN_UNIQUE:
                             $index->setUnique(true);
-                            $index->setFields($xmldb_key->getFields());
-                        }
-                        break;
-                    case XMLDB_KEY_UNIQUE:
-                    case XMLDB_KEY_FOREIGN_UNIQUE:
-                        if ($this->unique_index) {
-                            $index = new XMLDBIndex('temp_index');
-                            $index->setUnique(true);
-                            $index->setFields($xmldb_key->getFields());
-                        }
-                        break;
-                    case XMLDB_KEY_FOREIGN:
-                        if ($this->foreign_index) {
-                            $index = new XMLDBIndex('temp_index');
+                            $createindex = true;
+                            break;
+                        case XMLDB_KEY_FOREIGN:
                             $index->setUnique(false);
-                            $index->setFields($xmldb_key->getFields());
-                        }
-                        break;
-                }
-                if ($index) {
-                    if ($indextext = $this->getCreateIndexSQL($xmldb_table, $index)) {
-                        $fieldsarr = $index->getFields();
-                        sort ($fieldsarr);
-                        $currentcomb = strtolower(implode('-', $fieldsarr));
-                    /// Only create the index if the combination hasn't been used before
-                        if (!in_array($currentcomb, $indexcombs)) {
-                        /// Add the INDEX to the array
-                            $results = array_merge($results, $indextext);
+                            $createindex = true;
+                            break;
+                    }
+                    if ($createindex) {
+                        if ($indextext = $this->getCreateIndexSQL($xmldb_table, $index)) {
+                            /// Add the INDEX to the array
+                                $results = array_merge($results, $indextext);
                         }
                     }
-                /// Add the index to the array of used combinations
-                    $indexcombs[] = $currentcomb;
                 }
             }
         }
@@ -605,6 +590,115 @@ class XMLDBgenerator {
         } else {
             return $this->getCreateDefaultSQL($xmldb_table, $xmldb_field); //Create/modify
         }
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBKey, return the SQL statements needded to add the key to the table
+     * note that undelying indexes will be added as parametrised by $xxxx_keys and $xxxx_index parameters
+     */
+    function getAddKeySQL($xmldb_table, $xmldb_key) {
+
+        $results = array();
+
+    /// Just use the CreateKeySQL function
+        if ($keyclause = $this->getKeySQL($xmldb_table, $xmldb_key)) {
+            $key = 'ALTER TABLE ' . $this->getEncQuoted($this->prefix . $xmldb_table->getName()) .
+               ' ADD CONSTRAINT ' . $keyclause;
+            $results[] = $key;
+        }
+    /// If the key is XMLDB_KEY_FOREIGN_UNIQUE, create it as UNIQUE too
+        if ($xmldb_key->getType() == XMLDB_KEY_FOREIGN_UNIQUE && $this->unique_keys) {
+        ///Duplicate the key
+            $xmldb_key->setType(XMLDB_KEY_UNIQUE);
+            $results = array_merge($results, $this->getAddKeySQL($xmldb_table, $xmldb_key));
+        }
+
+    /// Now the undelying indexes if they don't exist
+        if ($xmldb_key->getType() == XMLDB_KEY_FOREIGN) {  ///Calculate type of index based on type ok key
+            $indextype = XMLDB_NOT_UNIQUE;
+        } else {
+            $indextype = XMLDB_INDEX_UNIQUE;
+        }
+        $xmldb_index = new XMLDBIndex('anyname');
+        $xmldb_index->setAttributes($indextype, $xmldb_key->getFields());
+        if (!$indexname = find_index_name($xmldb_table, $xmldb_index)) {
+            $results = array_merge($results, $this->getAddIndexSQL($xmldb_table, $xmldb_index));
+        } else {
+            print_object('Found ' . $indexname );
+        }
+        
+
+        
+    /// Return results
+        return $results;
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBIndex, return the SQL statements needded to drop the index from the table
+     */
+    function getDropKeySQL($xmldb_table, $xmldb_key) {
+
+        $results = array();
+
+    /// Get the key name (note that this doesn't introspect DB, so could cause some problems sometimes!)
+    /// TODO: We'll need to overwrite the whole getDropKeySQL() method inside each DB to do the proper queries
+    /// against the dictionary or require ADOdb to support it or change the find_key_name() method to
+    /// perform DB introspection directly. But, for now, as we aren't going to enable referential integrity
+    /// it won't be a problem at all
+        $dbkeyname = find_key_name($xmldb_table, $xmldb_key);
+
+    /// Only if such type of key generation is enabled
+        $dropkey = false;
+        switch ($xmldb_key->getType()) {
+            case XMLDB_KEY_PRIMARY:
+                if ($this->primary_keys) {
+                    $template = $this->drop_primary_key;
+                    $keytype = 'PRIMARY';
+                    $dropkey = true;
+                }
+                break;
+            case XMLDB_KEY_UNIQUE:
+                if ($this->unique_keys) {
+                    $template = $this->drop_unique_key;
+                    $keytype = 'UNIQUE';
+                    $dropkey = true;
+                }
+                break;
+            case XMLDB_KEY_FOREIGN_UNIQUE:
+            case XMLDB_KEY_FOREIGN:
+                if ($this->foreign_keys) {
+                    $template = $this->drop_foreign_key;
+                    $keytype = 'FOREIGN KEY';
+                    $dropkey = true;
+                }
+                break;
+        }
+    /// If we have decided to drop the key, let's do it
+        if ($dropkey) {
+        /// Replace TABLENAME, CONSTRAINTTYPE and KEYNAME as needed
+            $dropsql = str_replace('TABLENAME', $this->getEncQuoted($this->prefix . $xmldb_table->getName()), $template);
+            $dropsql = str_replace('KEYTYPE', $keytype, $dropsql);
+            $dropsql = str_replace('KEYNAME', $dbkeyname, $dropsql);
+
+            $results[] = $dropsql;
+        }
+
+    /// If the key is XMLDB_KEY_FOREIGN_UNIQUE, drop the UNIQUE too
+        if ($xmldb_key->getType() == XMLDB_KEY_FOREIGN_UNIQUE && $this->unique_keys) {
+        ///Duplicate the key
+            $xmldb_key->setType(XMLDB_KEY_UNIQUE);
+            $results = array_merge($results, $this->getDropKeySQL($xmldb_table, $xmldb_key));
+        }
+
+    /// Now the undelying indexes if they exist
+        $xmldb_index = new XMLDBIndex('anyname');
+        $xmldb_index->setAttributes(XMLDB_INDEX_UNIQUE, $xmldb_key->getFields());
+        if ($indexname = find_index_name($xmldb_table, $xmldb_index)) {
+            $results = array_merge($results, $this->getDropIndexSQL($xmldb_table, $xmldb_index));
+        }
+        
+    /// Return results
+        return $results;
     }
 
     /**
