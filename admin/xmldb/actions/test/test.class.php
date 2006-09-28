@@ -137,7 +137,6 @@ class test extends XMLDBAction {
             $table->addFieldInfo('intro', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null);
             $table->addFieldInfo('grade', XMLDB_TYPE_NUMBER, '20,10', null, null, null, null, null, '');
             $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
-            $table->addKeyInfo('course', XMLDB_KEY_FOREIGN, array('course'), 'course', array('id'));
         /// Get SQL code and execute it
             $test = new stdClass;
             $test->sql = $table->getCreateTableSQL($CFG->dbtype, $CFG->prefix, true);
@@ -260,7 +259,21 @@ class test extends XMLDBAction {
             $tests['change field precision (number)'] = $test;
         }
 
-    /// 11th test. Change the sign of one numeric field to unsigned
+    /// 11th test. Change the type of one column from varchar to integer
+
+    /// 12th test. Change the type of one column from insteger to varchar
+
+    /// 13th test. Change the type of one column from varchar to number
+
+    /// 14th test. Change the type of one column from number to varchar
+
+    /// 15th test. Change the type of one column from text to binary
+
+    /// 16th test. Change the type of one column from binary to text
+
+
+
+    /// 17th test. Change the sign of one numeric field to unsigned
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -275,7 +288,7 @@ class test extends XMLDBAction {
             $tests['change field sign (unsigned)'] = $test;
         }
 
-    /// 12th test. Change the sign of one numeric field to signed
+    /// 18th test. Change the sign of one numeric field to signed
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -290,7 +303,7 @@ class test extends XMLDBAction {
             $tests['change field sign (signed)'] = $test;
         }
 
-    /// 13th test. Change the nullability of one char field to not null
+    /// 19th test. Change the nullability of one char field to not null
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -305,7 +318,7 @@ class test extends XMLDBAction {
             $tests['change field nullability (not null)'] = $test;
         }
 
-    /// 14th test. Change the nullability of one char field to null
+    /// 20th test. Change the nullability of one char field to null
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -320,7 +333,7 @@ class test extends XMLDBAction {
             $tests['change field nullability (null)'] = $test;
         }
 
-    /// 15th test. Dropping the default of one field
+    /// 21th test. Dropping the default of one field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -335,7 +348,7 @@ class test extends XMLDBAction {
             $tests['drop field default of NULL field'] = $test;
         }
 
-    /// 16th test. Creating the default for one field
+    /// 22th test. Creating the default for one field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -350,7 +363,7 @@ class test extends XMLDBAction {
             $tests['add field default of NULL field'] = $test;
         }
 
-    /// 17th test. Creating the default for one field
+    /// 23th test. Creating the default for one field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -366,7 +379,7 @@ class test extends XMLDBAction {
         }
 
 
-    /// 18th test. Dropping the default of one NOT NULL field
+    /// 24th test. Dropping the default of one NOT NULL field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -381,7 +394,7 @@ class test extends XMLDBAction {
             $tests['drop field default of NOT NULL field'] = $test;
         }
 
-    /// 19th test. Adding one unique index to the table
+    /// 25th test. Adding one unique index to the table
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -396,7 +409,7 @@ class test extends XMLDBAction {
             $tests['add unique index'] = $test;
         }
 
-    /// 20 test. Adding one not unique index to the table
+    /// 26th test. Adding one not unique index to the table
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -411,7 +424,7 @@ class test extends XMLDBAction {
             $tests['add not unique index'] = $test;
         }
 
-    /// 21 test. Re-add the same index than previous test. Check find_index_name() works.
+    /// 27th test. Re-add the same index than previous test. Check find_index_name() works.
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -430,7 +443,7 @@ class test extends XMLDBAction {
             $tests['check find_index_name()'] = $test;
         }
 
-    /// 22 test. Dropping one index from the table
+    /// 28th test. Dropping one index from the table
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -445,6 +458,50 @@ class test extends XMLDBAction {
             $tests['drop index'] = $test;
         }
 
+    /// 29th test. Adding one unique key to the table
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $key = new XMLDBKey('id-course-grade');
+            $key->setAttributes(XMLDB_KEY_UNIQUE, array('id', 'course', 'grade'));
+
+            $test->sql = $table->getAddKeySQL($CFG->dbtype, $CFG->prefix, $key, true);
+            $test->status = add_key($table, $key, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['add unique key'] = $test;
+        }
+
+    /// 30th test. Adding one foreign key to the table
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $key = new XMLDBKey('course');
+            $key->setAttributes(XMLDB_KEY_FOREIGN_UNIQUE, array('course'), 'anothertest', array('id'));
+
+            $test->sql = $table->getAddKeySQL($CFG->dbtype, $CFG->prefix, $key, true);
+            $test->status = add_key($table, $key, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['add foreign+unique key'] = $test;
+        }
+
+    /// 31th test. Drop one key
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $key = new XMLDBKey('course');
+            $key->setAttributes(XMLDB_KEY_FOREIGN_UNIQUE, array('course'), 'course', array('id'));
+
+            $test->sql = $table->getDropKeySQL($CFG->dbtype, $CFG->prefix, $key, true);
+            $test->status = drop_key($table, $key, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['drop foreign+unique key'] = $test;
+        }
 
     /// TODO: Check here values of the inserted records to see that everything ha the correct value
 
