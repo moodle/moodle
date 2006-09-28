@@ -490,7 +490,6 @@ function capability_search($capability, $context, $capabilities) {
             error ('This is an unknown context!');
         return false;
     }
-    debugging("Found $capability recursively from context $context->id at level $context->contextlevel: $permission", DEBUG_DEVELOPER);
 
     return $permission;
 }
