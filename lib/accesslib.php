@@ -2756,7 +2756,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
  * @param bool parent if true, get list of users assigned in higher context too
  * @return array()
  */
-function get_role_users($roleid, $context, $parent=false) {
+function get_role_users($roleid, $context, $parent=false, $fields='u.*') {
     global $CFG;
 
     if ($parent) {
@@ -2769,7 +2769,7 @@ function get_role_users($roleid, $context, $parent=false) {
         $parentcontexts = '';
     }
 
-    $SQL = "select u.*
+    $SQL = "select $fields
             from {$CFG->prefix}role_assignments r,
                  {$CFG->prefix}user u
             where (r.contextid = $context->id $parentcontexts)
@@ -2777,6 +2777,34 @@ function get_role_users($roleid, $context, $parent=false) {
             and u.id = r.userid"; // join now so that we can just use fullname() later
 
     return get_records_sql($SQL);
+}
+
+/**
+ * Counts all the users assigned this role in this context or higher
+ * @param int roleid
+ * @param int contextid
+ * @param bool parent if true, get list of users assigned in higher context too
+ * @return array()
+ */
+function count_role_users($roleid, $context, $parent=false) {
+    global $CFG;
+
+    if ($parent) {
+        if ($contexts = get_parent_contexts($context)) {
+            $parentcontexts = 'r.contextid IN ('.implode(',', $contexts).')';
+        } else {
+            $parentcontexts = '';
+        }
+    } else {
+        $parentcontexts = '';
+    }
+
+    $SQL = "SELECT count(*)
+            FROM {$CFG->prefix}role_assignments r
+            WHERE (r.contextid = $context->id $parentcontexts)
+            AND r.roleid = $roleid";
+
+    return count_records_sql($SQL);
 }
 
 /**
