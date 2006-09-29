@@ -595,7 +595,7 @@ $string['gdneed'] = 'GD must be installed to see this graph';
 $string['gdnot'] = 'GD is not installed';
 $string['gettheselogs'] = 'Get these logs';
 $string['go'] = 'Go';
-$string['gpl'] = 'Copyright (C) 1999-2006  Martin Dougiamas  (http://moodle.com)
+$string['gpl'] = 'Copyright (C) 1999 onwards  Martin Dougiamas  (http://moodle.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -604,10 +604,10 @@ the Free Software Foundation; either version 2 of the License, or
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details:
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-http://www.gnu.org/copyleft/gpl.html';
+See the Moodle License information page for full details:
+http://docs.moodle.org/en/License';
 $string['grade'] = 'Grade';
 $string['grades'] = 'Grades';
 $string['group'] = 'Group';
