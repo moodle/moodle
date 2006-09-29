@@ -160,9 +160,9 @@
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="image" method="NO_CONV" type="varchar" length="255" />
-        <FIELD name="commentarytext" method="PHP_FUNCTION" type="text" length="0">
+        <FIELD name="generalfeedback" method="PHP_FUNCTION" type="text" length="0">
           <PHP_FUNCTION>
-            migrate2utf8_question_commentarytext(RECORDID)
+            migrate2utf8_question_generalfeedback(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
         <FIELD name="stamp" method="NO_CONV" type="varchar" length="255" />
