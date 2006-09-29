@@ -914,37 +914,45 @@ function moodle_install_roles() {
 
     global $CFG, $db;
 
-    // Create a system wide context for assignemnt.
+/// Create a system wide context for assignemnt.
     $systemcontext = $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
 
-    // Create default/legacy roles and capabilities.
-    // (1 legacy capability per legacy role at system level).
-    $adminrole = create_role(get_string('administrator'), 'admin', get_string('administratordescription'), 'moodle/legacy:admin');
+/// Create default/legacy roles and capabilities.
+/// (1 legacy capability per legacy role at system level).
+
+    $adminrole = create_role(get_string('administrator'), 'admin', 
+                             get_string('administratordescription'), 'moodle/legacy:admin');
+    $coursecreatorrole  = create_role(get_string('coursecreators'), 'coursecreator', 
+                                      get_string('coursecreatorsdescription'), 'moodle/legacy:coursecreator');
+    $editteacherrole    = create_role(get_string('defaultcourseteacher'), 'editingteacher', 
+                                      get_string('defaultcourseteacherdescription'), 'moodle/legacy:editingteacher');
+    $noneditteacherrole = create_role(get_string('noneditingteacher'), 'teacher', 
+                                      get_string('noneditingteacherdescription'), 'moodle/legacy:teacher');
+    $studentrole        = create_role(get_string('defaultcoursestudent'), 'student', 
+                                      get_string('defaultcoursestudentdescription'), 'moodle/legacy:student');
+    $guestrole          = create_role(get_string('guest'), 'guest', 
+                                      get_string('guestdescription'), 'moodle/legacy:guest');
+
+/// Now is the correct moment to install capabilitites - after creation of legacy roles, but before assigning of roles
+
     if (!assign_capability('moodle/site:doanything', CAP_ALLOW, $adminrole, $systemcontext->id)) {
         error('Could not assign moodle/site:doanything to the admin role');
     }
-    $coursecreatorrole = create_role(get_string('coursecreators'), 'coursecreator', get_string('coursecreatorsdescription'), 'moodle/legacy:coursecreator');
-    $editteacherrole = create_role(get_string('defaultcourseteacher'), 'editingteacher', get_string('defaultcourseteacherdescription'), 'moodle/legacy:editingteacher');
-    $noneditteacherrole = create_role(get_string('noneditingteacher'), 'teacher', get_string('noneditingteacherdescription'), 'moodle/legacy:teacher');
-    $studentrole = create_role(get_string('defaultcoursestudent'), 'student', get_string('defaultcoursestudentdescription'), 'moodle/legacy:student');
-    $guestrole = create_role(get_string('guest'), 'guest', get_string('guestdescription'), 'moodle/legacy:guest');
-
-    // now is the correct moment to install capabilitites - after creation of legacy roles, but before assigning of roles
     if (!update_capabilities()) {
         error('Had trouble upgrading the core capabilities for the Roles System');
     }
 
-    // Look inside user_admin, user_creator, user_teachers, user_students and
-    // assign above new roles. If a user has both teacher and student role,
-    // only teacher role is assigned. The assignment should be system level.
+/// Look inside user_admin, user_creator, user_teachers, user_students and
+/// assign above new roles. If a user has both teacher and student role,
+/// only teacher role is assigned. The assignment should be system level.
+
     $dbtables = $db->MetaTables('TABLES');
 
 
-    /**
-     * Upgrade the admins.
-     * Sort using id ASC, first one is primary admin.
-     */
+/// Upgrade the admins.
+/// Sort using id ASC, first one is primary admin.
+
     if (in_array($CFG->prefix.'user_admins', $dbtables)) {
         if ($rs = get_recordset_sql('SELECT * from '.$CFG->prefix.'user_admins ORDER BY ID ASC')) {
             while (! $rs->EOF) {
@@ -958,9 +966,7 @@ function moodle_install_roles() {
     }
 
 
-    /**
-     * Upgrade course creators.
-     */
+/// Upgrade course creators.
     if (in_array($CFG->prefix.'user_coursecreators', $dbtables)) {
         if ($rs = get_recordset('user_coursecreators')) {
             while (! $rs->EOF) {
@@ -972,9 +978,7 @@ function moodle_install_roles() {
     }
 
 
-    /**
-     * Upgrade editting teachers and non-editting teachers.
-     */
+/// Upgrade editting teachers and non-editting teachers.
     if (in_array($CFG->prefix.'user_teachers', $dbtables)) {
         if ($rs = get_recordset('user_teachers')) {
             while (! $rs->EOF) {
@@ -1001,9 +1005,7 @@ function moodle_install_roles() {
     }
 
 
-    /**
-     * Upgrade students.
-     */
+/// Upgrade students.
     if (in_array($CFG->prefix.'user_students', $dbtables)) {
         if ($rs = get_recordset('user_students')) {
             while (! $rs->EOF) {
@@ -1026,16 +1028,13 @@ function moodle_install_roles() {
     }
 
 
-    /**
-     * Upgrade guest (only 1 entry).
-     */
+/// Upgrade guest (only 1 entry).
     if ($guestuser = get_record('user', 'username', 'guest')) {
         role_assign($guestrole, $guestuser->id, 0, $systemcontext->id);
     }
 
-    /**
-     * Insert the correct records for legacy roles
-     */
+
+/// Insert the correct records for legacy roles
     allow_assign($adminrole, $adminrole);
     allow_assign($adminrole, $coursecreatorrole);
     allow_assign($adminrole, $noneditteacherrole);
@@ -1052,7 +1051,7 @@ function moodle_install_roles() {
     allow_assign($editteacherrole, $studentrole);
     allow_assign($editteacherrole, $guestrole);
 
-    /// overrides
+/// Set up default permissions for overrides
     allow_override($adminrole, $adminrole);
     allow_override($adminrole, $coursecreatorrole);
     allow_override($adminrole, $noneditteacherrole);
@@ -1061,7 +1060,10 @@ function moodle_install_roles() {
     allow_override($adminrole, $guestrole);
 
 
-    // Should we delete the tables after we are done? Not yet.
+/// Delete the old user tables when we are done
+
+    /// XXX TODO
+
 }
 
 /**
