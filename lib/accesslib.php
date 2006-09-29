@@ -960,7 +960,7 @@ function moodle_install_roles() {
         }
     }
 
-    print_progress(0, $totalcount, 5, 1, 'Processing '.$totalcount.'role assignments');
+    print_progress(0, $totalcount, 5, 1, 'Processing role assignments');
 
 /// Upgrade the admins.
 /// Sort using id ASC, first one is primary admin.
@@ -971,7 +971,7 @@ function moodle_install_roles() {
                 $admin = $rs->FetchObj();
                 role_assign($adminrole, $admin->userid, 0, $systemcontext->id);
                 $progresscount++;
-                print_progress($progresscount, $totalcount, 5, 1, 'Processing '.$totalcount.'role assignments');
+                print_progress($progresscount, $totalcount, 5, 1, 'Processing role assignments');
                 $rs->MoveNext();
             }
         }
@@ -987,7 +987,7 @@ function moodle_install_roles() {
                 $coursecreator = $rs->FetchObj();
                 role_assign($coursecreatorrole, $coursecreator->userid, 0, $systemcontext->id);
                 $progresscount++;
-                print_progress($progresscount, $totalcount, 5, 1, 'Processing '.$totalcount.'role assignments');
+                print_progress($progresscount, $totalcount, 5, 1, 'Processing role assignments');
                 $rs->MoveNext();
             }
         }
@@ -1015,7 +1015,7 @@ function moodle_install_roles() {
                     role_assign($noneditteacherrole, $teacher->userid, 0, $coursecontext->id);
                 }
                 $progresscount++;
-                print_progress($progresscount, $totalcount, 5, 1, 'Processing '.$totalcount.'role assignments');
+                print_progress($progresscount, $totalcount, 5, 1, 'Processing role assignments');
 
                 $rs->MoveNext();
             }
@@ -1040,7 +1040,7 @@ function moodle_install_roles() {
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $student->course);
                 role_assign($studentrole, $student->userid, 0, $coursecontext->id);
                 $progresscount++;
-                print_progress($progresscount, $totalcount, 5, 1, 'Processing '.$totalcount.'role assignments');
+                print_progress($progresscount, $totalcount, 5, 1, 'Processing role assignments');
 
                 $rs->MoveNext();
             }
@@ -1052,7 +1052,7 @@ function moodle_install_roles() {
     if ($guestuser = get_record('user', 'username', 'guest')) {
         role_assign($guestrole, $guestuser->id, 0, $systemcontext->id);
     }
-    print_progress($totalcount, $totalcount, 5, 1, 'Processing '.$totalcount.'role assignments');
+    print_progress($totalcount, $totalcount, 5, 1, 'Processing role assignments');
 
 
 /// Insert the correct records for legacy roles

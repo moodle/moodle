@@ -459,8 +459,8 @@ function print_progress($done, $total, $updatetime=5, $sleeptime=1, $donetext=''
         }
 
         echo '<script>';
-        echo 'document.getElementById("text").innerHTML = "'.addslashes($donetext).' '.$done.' done.'.$projectedtext.'";'."\n";
-        echo 'document.getElementById("slider").style.width = \''.$width.'px\';'."\n";
+        echo 'document.getElementById("text'.$total.'").innerHTML = "'.addslashes($donetext).' ('.$done.'/'.$total.') '.$projectedtext.'";'."\n";
+        echo 'document.getElementById("slider'.$total.'").style.width = \''.$width.'px\';'."\n";
         echo '</script>';
 
         $lasttime = $now;
