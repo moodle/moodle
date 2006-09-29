@@ -6,6 +6,7 @@ $string['modulenameplural'] = 'SCORMs/AICCs';
 #------------------------------------------------------------
 
 $string['asset'] = 'Asset';
+$string['assetlaunched'] = 'Asset - Viewed';
 $string['autocontinue'] = 'Auto-Continue';
 $string['browse'] = 'Preview';
 $string['browsed'] = 'Browsed';
@@ -51,7 +52,7 @@ $string['stagesize'] = 'Stage size';
 $string['width'] = 'Width';
 $string['height'] = 'Height';
 $string['trackingloose'] = 'WARNING: The tracking data of this package will be lost!';
-$string['confirmloosetracks'] = 'WARNING: The package seems to be changed/modified.\nIf the package structure is changed,\nsome users tracks may be lost during update process.';
+$string['confirmloosetracks'] = 'WARNING: The package seems to be changed or modified. If the package structure is changed, some users tracks may be lost during update process.';
 $string['iframe'] = 'Current window';
 $string['iframedisplay'] = 'Open package in the current window';
 $string['popup'] = 'New window';
@@ -104,9 +105,17 @@ $string['highestattempt'] = 'Highest attempt';
 $string['lastattempt'] = 'Last attempt';
 $string['firstattempt'] = 'First attempt';
 $string['whatgrade'] = 'Attempts grading';
+$string['started'] = 'Started on';
+$string['last'] = 'Last accessed on';
+$string['title'] = 'Title';
+$string['skipview'] = 'Student skip content structure page';
+$string['hidereview'] = 'Hide review button';
+$string['hideexit'] = 'Hide exit link';
+$string['suspended'] = 'Suspended';
 
 
 // Validation
+$string['badpackage'] ='There are some problems with the given package. Check it and try again.';
 $string['attr_error'] = 'Bad value for attribute ($a->attr) in tag $a->tag.';
 $string['badmanifest'] ='Some manifest errors: see errors log';
 $string['datadir'] = 'Filesystem Error: Can\'t create course data directory';
