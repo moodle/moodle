@@ -120,7 +120,7 @@ class view_table_php extends XMLDBAction {
                          $optionspacer . 'add_field',
                          $optionspacer . 'drop_field',
                          $optionspacer . 'rename_field (not imp!)',
-                         $optionspacer . 'change_field_type (not imp!)',
+                         $optionspacer . 'change_field_type',
                          $optionspacer . 'change_field_precision',
                          $optionspacer . 'change_field_unsigned',
                          $optionspacer . 'change_field_notnull',
@@ -197,6 +197,13 @@ class view_table_php extends XMLDBAction {
                 case 'rename_field':
                     if ($fieldkeyindexinitial == 'f') { //Only if we have got one field
                         $o.= s($this->rename_field_php($structure, $tableparam, $fieldkeyindexparam));
+                    } else {
+                        $o.= $this->str['mustselectonefield'];
+                    }
+                    break;
+                case 'change_field_type':
+                    if ($fieldkeyindexinitial == 'f') { //Only if we have got one field
+                        $o.= s($this->change_field_type_php($structure, $tableparam, $fieldkeyindexparam));
                     } else {
                         $o.= $this->str['mustselectonefield'];
                     }
@@ -410,6 +417,59 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch rename field ' . $field->getName() . XMLDB_LINEFEED;
         $result .= '        $status = $status && rename_field($table, $field, ' . "'" . 'NEWNAMEGOESHERE' . "'" . ');' . XMLDB_LINEFEED;
+
+    /// Add standard PHP footer
+        $result .= XMLDB_PHP_FOOTER;
+
+        return $result;
+    }
+
+    /**
+     * This function will generate all the PHP code needed to
+     * change the type of one field using XMLDB objects and functions.
+     * Currently these conversions are supported:
+     *     integer to char
+     *     char to integer
+     *     number to char
+     *     char to number
+     *     float to char
+     *     char to float
+     *
+     * @param XMLDBStructure structure object containing all the info
+     * @param string table table name
+     * @param string field field name to change precision
+     */
+    function change_field_type_php($structure, $table, $field) {
+
+        $result = '';
+    /// Validate if we can do it
+        if (!$table = $structure->getTable($table)) {
+            return false;
+        }
+        if (!$field = $table->getField($field)) {
+            return false;
+        }
+        if ($table->getAllErrors()) {
+            return false;
+        }
+
+    /// Calculate the type tip text
+        $type = $field->getXMLDBTypeName($field->getType());
+
+    /// Add the standard PHP header
+        $result .= XMLDB_PHP_HEADER;
+
+    /// Add contents
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Changing type of field ' . $field->getName() . ' on table ' . $table->getName() . ' to ' . $type . XMLDB_LINEFEED;
+        $result .= '        $table = new XMLDBTable(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $field = new XMLDBField(' . "'" . $field->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $field->setAttributes(' . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
+
+    /// Launch the proper DDL
+        $result .= XMLDB_LINEFEED;
+        $result .= '    /// Launch change of type for field ' . $field->getName() . XMLDB_LINEFEED;
+        $result .= '        $status = $status && change_field_type($table, $field);' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
