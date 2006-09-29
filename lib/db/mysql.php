@@ -2005,6 +2005,7 @@ function main_upgrade($oldversion=0) {
         execute_sql("CREATE TABLE {$CFG->prefix}role (
                               `id` int(10) unsigned NOT NULL auto_increment,
                               `name` varchar(255) NOT NULL default '',
+                              `shortname` varchar(100) NOT NULL default '',
                               `description` text NOT NULL default '',
                               `sortorder` int(10) unsigned NOT NULL default '0',
                               PRIMARY KEY  (`id`)
