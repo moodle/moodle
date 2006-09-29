@@ -87,8 +87,11 @@
         print_string('importlangreminder','admin');
         print_simple_box_end();
         db_migrate2utf8();
-        print_heading('db unicode migration has been completed!');
-        unlink($filename);    //no longer in maintenance mode
+        print_heading('db unicode migration has been completed!');     
+        if (!get_config('', 'migrate_maintmode')) { // already in maint mode
+            unlink($filename);    //no longer in maintenance mode
+        }
+        unset_config('migrate_maintmode');
         @require_logout();
         print_continue($CFG->wwwroot.'/'.$CFG->admin.'/langimport.php');
     }
@@ -116,12 +119,16 @@
             //put the site in maintenance mode
             check_dir_exists($CFG->dataroot.'/'.SITEID, true);
 
-            if (touch($filename)) {
-                $file = fopen($filename, 'w');
-                fwrite($file, get_string('maintinprogress','admin'));
-                fclose($file);
+            if (file_exists($filename)) {
+                set_config('migrate_maintmode', 1); // already in maintenance mode
             } else {
-                notify (get_string('maintfileopenerror','admin'));
+                if (touch($filename)) {
+                    $file = fopen($filename, 'w');
+                    fwrite($file, get_string('maintinprogress','admin'));
+                    fclose($file);
+                } else {
+                    notify (get_string('maintfileopenerror','admin'));
+                }
             }
             //print second confirmation box
             echo '<form name="migratefrom" action="utfdbmigrate.php" method="POST">';
