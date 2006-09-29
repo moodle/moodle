@@ -1075,7 +1075,7 @@ $moodle_capabilities = array(
 
     'moodle/user:viewusergrades' => array(
         'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
+        'contextlevel' => CONTEXT_USER,
         'legacy' => array(
             'guest' => CAP_PREVENT,
             'student' => CAP_ALLOW,
