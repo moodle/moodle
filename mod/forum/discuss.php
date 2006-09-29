@@ -116,7 +116,7 @@
         }
     } else {
         $parent = $discussion->firstpost;
-        $navtail = format_string($discussion->name);
+        $navtail = '-> '.format_string($discussion->name);
     }
     
     if (!forum_user_can_view_post($parent, $course, $cm, $forum, $discussion)) {
