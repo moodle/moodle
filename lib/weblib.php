@@ -2214,7 +2214,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
 
     ob_start();
-    include ($CFG->themedir.current_theme().'/header.html');
+    include($CFG->header);
     $output = ob_get_contents();
     ob_end_clean();
 
@@ -2341,7 +2341,7 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
 /// Include the actual footer file
 
     ob_start();
-    include ($CFG->themedir.current_theme().'/footer.html');
+    include($CFG->footer);
     $output = ob_get_contents();
     ob_end_clean();
 
