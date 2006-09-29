@@ -740,7 +740,7 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
             <tr>
                 <td class="td_left"><p><?php print_string('dbtype', 'install') ?></p></td>
                 <td class="td_right">
-                <?php choose_from_menu (array("mysql" => "mysql", "postgres7" => "postgres7"), 'dbtype', $INSTALL['dbtype'], '') ?>
+                <?php choose_from_menu (array("mysql" => "mysql", "postgres7" => "postgres7", 'mssql' => 'mssql'), 'dbtype', $INSTALL['dbtype'], '') ?>
                 </td>
             </tr>
             <tr>
