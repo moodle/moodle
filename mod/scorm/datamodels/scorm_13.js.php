@@ -53,7 +53,7 @@ function SCORMapi1_3() {
     // The SCORM 1.3 data model
     var datamodel =  {
         'cmi._children':{'defaultvalue':cmi_children, 'mod':'r'},
-        'cmi.version':{'defaultvalue':'1.0', 'mod':'r'},
+        'cmi._version':{'defaultvalue':'1.0', 'mod':'r'},
         'cmi.comments_from_learner._children':{'defaultvalue':comments_children, 'mod':'r'},
         'cmi.comments_from_learner._count':{'mod':'r', 'defaultvalue':'0'},
         'cmi.comments_from_learner.n.comment':{'format':CMIString4000, 'mod':'rw'},
