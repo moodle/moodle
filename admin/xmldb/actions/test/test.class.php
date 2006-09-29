@@ -260,7 +260,37 @@ class test extends XMLDBAction {
             $tests['change field type (number2char)'] = $test;
         }
 
-    /// 11th test. Change the type of one column from varchar to number
+    /// 11th test. Change the type of one column from varchar to float
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('grade');
+            $field->setAttributes(XMLDB_TYPE_FLOAT, '20,10', XMLDB_UNSIGNED, null, null, null, null, null);
+
+            $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_type($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['change field type (char2float)'] = $test;
+        }
+
+    /// 12th test. Change the type of one column from float to char
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('grade');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'test');
+
+            $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_type($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['change field type (float2char)'] = $test;
+        }
+
+    /// 13th test. Change the type of one column from char to number
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -274,10 +304,6 @@ class test extends XMLDBAction {
             }
             $tests['change field type (char2number)'] = $test;
         }
-
-    /// 12th test. Change the type of one column from text to binary
-
-    /// 13th test. Change the type of one column from binary to text
 
 
     /// 14th test. Change the precision of one text field
