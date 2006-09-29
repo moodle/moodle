@@ -174,9 +174,80 @@ class XMLDBmssql extends XMLDBgenerator {
      * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to alter the field in the table
      */
     function getAlterFieldSQL($xmldb_table, $xmldb_field) {
+
+        global $db;
+
+        $results = array(); /// To store all the needed SQL commands
+
+    /// Get the quoted name of the table and field
+        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $fieldname = $this->getEncQuoted($xmldb_field->getName());
+
+    /// Take a look to field metadata
+        $meta = array_change_key_case($db->MetaColumns($tablename));
+        $metac = $meta[$fieldname];
+        $oldtype = strtolower($metac->type);
+        $oldmetatype = column_type($xmldb_table->getName(), $fieldname);
+        $oldlength = $metac->max_length;
+        $olddecimals = empty($metac->scale) ? null : $metac->scale;
+        $oldnotnull = empty($metac->not_null) ? false : $metac->not_null;
+        $olddefault = empty($metac->has_default) ? null : strtok($metac->default_value, ':');
+
+        $typechanged = true;  //By default, assume that the column type has changed
+
+    /// Detect if we are changing the type of the column
+        if (($xmldb_field->getType() == XMLDB_TYPE_INTEGER && substr($oldmetatype, 0, 1) == 'I') ||
+            ($xmldb_field->getType() == XMLDB_TYPE_NUMBER  && $oldmetatype == 'N') ||
+            ($xmldb_field->getType() == XMLDB_TYPE_FLOAT   && $oldmetatype == 'F') ||
+            ($xmldb_field->getType() == XMLDB_TYPE_CHAR    && substr($oldmetatype, 0, 1) == 'C') ||
+            ($xmldb_field->getType() == XMLDB_TYPE_TEXT    && substr($oldmetatype, 0, 1) == 'X') ||
+            ($xmldb_field->getType() == XMLDB_TYPE_BINARY  && $oldmetatype == 'B')) {
+            $typechanged = false;
+        }
+
+    /// If type has changed drop the default if exists
+        if ($typechanged) {
+            $results = $this->getDropDefaultSQL($xmldb_table, $xmldb_field);
+        }
+
     /// Just prevent default clauses in this type of sentences for mssql and launch the parent one
         $this->alter_column_skip_default = true;
-        return parent::getAlterFieldSQL($xmldb_table, $xmldb_field);
+        $results = array_merge($results, parent::getAlterFieldSQL($xmldb_table, $xmldb_field)); // Call parent
+
+    /// Finally, process the default clause to add it back if necessary
+        if ($typechanged) {
+            $results = array_merge($results, $this->getCreateDefaultSQL($xmldb_table, $xmldb_field));
+        }
+
+    /// Return results
+        return $results;
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to modify the default of the field in the table
+     */
+    function getModifyDefaultSQL($xmldb_table, $xmldb_field) {
+    /// MSSQL is a bit special with default constraints because it implements them as external constraints so
+    /// normal ALTER TABLE ALTER COLUMN don't work to change defaults. Because this, we have this method overloaded here
+
+        $results = array();
+
+    /// Get the quoted name of the table and field
+        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $fieldname = $this->getEncQuoted($xmldb_field->getName());
+
+    /// Decide if we are going to create/modify or to drop the default
+        if ($xmldb_field->getDefault() === null) {
+            $results = $this->getDropDefaultSQL($xmldb_table, $xmldb_field); //Drop but, under some circumptances, re-enable
+            if ($this->getDefaultClause($xmldb_field)) { //If getDefaultClause() it must have one default, create it
+                $results = array_merge($results, $this->getCreateDefaultSQL($xmldb_table, $xmldb_field)); //Create/modify
+            }
+        } else {
+            $results = $this->getDropDefaultSQL($xmldb_table, $xmldb_field); //Drop (only if exists)
+            $results = array_merge($results, $this->getCreateDefaultSQL($xmldb_table, $xmldb_field)); //Create/modify
+        }
+
+        return $results;
     }
 
     /**
@@ -184,9 +255,21 @@ class XMLDBmssql extends XMLDBgenerator {
      * (usually invoked from getModifyDefaultSQL()
      */
     function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
-    /// This method does exactly the same than getDropDefaultSQL(), first trying to
-    /// drop the default if it exists and then, regenerating it, so we simply wrap over it
-        return $this->getDropDefaultSQL($xmldb_table, $xmldb_field);
+    /// MSSQL is a bit special and it requires the corresponding DEFAULT CONSTRAINT to be dropped
+
+        $results = array();
+
+    /// Get the quoted name of the table and field
+        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $fieldname = $this->getEncQuoted($xmldb_field->getName());
+
+    /// Now, check if, with the current field attributes, we have to build one default
+        if ($default_clause = $this->getDefaultClause($xmldb_field)) {
+        /// We need to build the default (Moodle) default, so do it
+            $results[] = 'ALTER TABLE ' . $tablename . ' ADD' . $default_clause . ' FOR ' . $fieldname;
+        }
+
+        return $results;
     }
 
     /**
@@ -205,13 +288,8 @@ class XMLDBmssql extends XMLDBgenerator {
     /// Look for the default contraint and, if found, drop it
         if ($defaultname = $this->getDefaultConstraintName($xmldb_table, $xmldb_field)) {
             $results[] = 'ALTER TABLE ' . $tablename . ' DROP CONSTRAINT ' . $defaultname;
-        }
+        } 
 
-    /// Now, check if, with the current field attributes, we have to build one default
-        if ($default_clause = $this->getDefaultClause($xmldb_field)) {
-        /// We need to build the default (Moodle) default, so do it
-            $results[] = 'ALTER TABLE ' . $tablename . ' ADD' . $default_clause . ' FOR ' . $fieldname;
-        }
         return $results;
     }
 

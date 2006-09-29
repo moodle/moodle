@@ -588,10 +588,12 @@ class XMLDBgenerator {
 
     /// Decide if we are going to create/modify or to drop the default
         if ($xmldb_field->getDefault() === null) {
-            return $this->getDropDefaultSQL($xmldb_table, $xmldb_field); //Drop
+            $results = $this->getDropDefaultSQL($xmldb_table, $xmldb_field); //Drop
         } else {
-            return $this->getCreateDefaultSQL($xmldb_table, $xmldb_field); //Create/modify
+            $results = $this->getCreateDefaultSQL($xmldb_table, $xmldb_field); //Create/modify
         }
+
+        return $results;
     }
 
     /**
