@@ -52,6 +52,13 @@
         $sco = current($scoes);
     }
 
+    if ($sco->scormtype == 'asset') {
+       $attempt = scorm_get_last_attempt($scorm->id,$USER->id);
+       $element = $scorm->version == 'scorm_13'?'cmi.completion_status':'cmi.core.lesson_status';
+       $value = 'completed';
+       $result = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $element, $value);
+    }
+    
     //
     // Forge SCO URL
     //
@@ -72,7 +79,7 @@
         if (!empty($sco->parameters)) {
             $sco->parameters = '&'. $sco->parameters;
         }
-        $launcher = $sco->launch.$connector.'aicc_sid='.sesskey().'&aicc_url='.$CFG->wwwroot.'/mod/scorm/type/aicc/aicc.php'.$sco->parameters;
+        $launcher = $sco->launch.$connector.'aicc_sid='.sesskey().'&aicc_url='.$CFG->wwwroot.'/mod/scorm/aicc.php'.$sco->parameters;
     } else {
         $launcher = $sco->launch.$connector.$sco->parameters;
     }
