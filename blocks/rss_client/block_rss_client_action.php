@@ -55,11 +55,17 @@ if (!defined('MAGPIE_OUTPUT_ENCODING')) {
     define('MAGPIE_OUTPUT_ENCODING', current_charset());  // see bug 3107
 }
 
+
 if (!empty($id)) {
     // we get the complete $course object here because print_header assumes this is 
     // a complete object (needed for proper course theme settings)
-    $course = get_record('course', 'id', $id);
+    if ($course = get_record('course', 'id', $id)) {
+        $context = get_context_instance(CONTEXT_COURSE, $id);
+    }
+} else {
+    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 }
+
 
 $straddedit = get_string('feedsaddedit', 'block_rss_client');
 
@@ -82,11 +88,6 @@ if ( !isset($act) ) {
 if ( isset($rssid) ) {
     $rss_record = get_record('block_rss_client', 'id', $rssid);
 }
-
-
-$block = get_record('block', 'name', 'rss_client');
-$blockinstance = get_record('block_instance', 'blockid', $block->id, 'pagetype', 'course-view', 'pageid', $id);
-$context = get_context_instance(CONTEXT_BLOCK, $blockinstance->id);
 
 
 if (isset($rss_record)) {
