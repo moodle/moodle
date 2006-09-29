@@ -436,10 +436,10 @@ function print_progress($done, $total, $updatetime=5, $sleeptime=1, $donetext=''
         $starttime = $lasttime = time();
         $lasttime = $starttime - $updatetime;
         echo '<table width="500" cellpadding="0" cellspacing="0" align="center"><tr><td width="500">';
-        echo '<div id="bar" style="border-style:solid;border-width:1px;width:500px;height:50px;">';
-        echo '<div id="slider" style="border-style:solid;border-width:1px;height:48px;width:10px;background-color:green;"></div>';
+        echo '<div id="bar'.$total.'" style="border-style:solid;border-width:1px;width:500px;height:50px;">';
+        echo '<div id="slider'.$total.'" style="border-style:solid;border-width:1px;height:48px;width:10px;background-color:green;"></div>';
         echo '</div>';
-        echo '<div id="text" align="center" style="width:500px;"></div>';
+        echo '<div id="text'.$total.'" align="center" style="width:500px;"></div>';
         echo '</td></tr></table>';
         echo '</div>';
     }
