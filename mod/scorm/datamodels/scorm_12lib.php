@@ -264,7 +264,11 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                 if (isset($usertracks[$sco->identifier])) {
                     $usertrack = $usertracks[$sco->identifier];
                     $strstatus = get_string($usertrack->status,'scorm');
-                    $result->toc .= '<img src="'.$scormpixdir.'/'.$usertrack->status.'.gif" alt="'.$strstatus.'" title="'.$strstatus.'" />';
+                    if ($sco->scormtype == 'sco') {
+                        $statusicon = '<img src="'.$scormpixdir.'/'.$usertrack->status.'.gif" alt="'.$strstatus.'" title="'.$strstatus.'" />';
+                    } else {
+                        $statusicon = '<img src="'.$scormpixdir.'/assetc.gif" alt="'.get_string('assetlauched','scorm').'" title="'.get_string('assetlaunched','scorm').'" />';
+                    }
                     
                     if (($usertrack->status == 'notattempted') || ($usertrack->status == 'incomplete') || ($usertrack->status == 'browsed')) {
                         $incomplete = true;
@@ -275,15 +279,19 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                     if ($usertrack->score_raw != '') {
                         $score = '('.get_string('score','scorm').':&nbsp;'.$usertrack->score_raw.')';
                     }
+                    $strsuspended = get_string('suspended','scorm');
+                    if (isset($usertrack->{'cmi.core.exit'}) && ($usertrack->{'cmi.core.exit'} == 'suspend')) {
+                        $statusicon = '<img src="'.$scormpixdir.'/suspend.gif" alt="'.$strstatus.' - '.$strsuspended.'" title="'.$strstatus.' - '.$strsuspended.'" />';
+                    }
                 } else {
                     if ($play && empty($scoid)) {
                         $scoid = $sco->id;
                     }
                     if ($sco->scormtype == 'sco') {
-                        $result->toc .= '<img src="'.$scormpixdir.'/notattempted.gif" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
+                        $statusicon= '<img src="'.$scormpixdir.'/notattempted.gif" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
                         $incomplete = true;
                     } else {
-                        $result->toc .= '<img src="'.$scormpixdir.'/asset.gif" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
+                        $statusicon .= '<img src="'.$scormpixdir.'/asset.gif" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
                     }
                 }
                 if ($sco->id == $scoid) {
@@ -304,7 +312,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         $result->prerequisites = true;
                     }
                     $url = $CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;currentorg='.$currentorg.$modestr.'&amp;scoid='.$sco->id;
-                    $result->toc .= '&nbsp;'.$startbold.'<a href="'.$url.'">'.format_string($sco->title).'</a>'.$score.$endbold."</li>\n";
+                    $result->toc .= $statusicon.'&nbsp;'.$startbold.'<a href="'.$url.'">'.format_string($sco->title).'</a>'.$score.$endbold."</li>\n";
                     $tocmenus[$sco->id] = scorm_repeater('&minus;',$level) . '&gt;' . format_string($sco->title);
                 } else {
                     if ($sco->id == $scoid) {
