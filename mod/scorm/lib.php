@@ -11,7 +11,7 @@
 */
 function scorm_add_instance($scorm) {
     if(empty($scorm->datadir)) { //check to make sure scorm object is valid BEFORE entering it in the database.
-        error(get_string('nomanifest', 'scorm'));
+        error(get_string('badpackage', 'scorm'));
     } else {
         global $CFG;
         $scorm->timemodified = time();
