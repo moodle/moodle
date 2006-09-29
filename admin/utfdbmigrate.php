@@ -977,7 +977,7 @@ function get_main_teacher_lang($courseid) {
         if (!empty($CFG->rolesactive)) {
             
             $context = get_context_instance(CONTEXT_COURSE, $courseid);
-            $teachers = get_users_by_capability($context, 'moodle/legacy:editingteacher', 'u.id, u.lang', ' ORDER BY ra.id ASC ', 0, 1); // only need first one
+            $teachers = get_users_by_capability($context, 'moodle/legacy:editingteacher', 'u.id, u.lang', 'ra.id ASC', 0, 1); // only need first one
             if (is_array($teachers)) {
                 $teacher = reset($teachers);
                 $mainteachercache[$courseid] = $teacher->lang;
