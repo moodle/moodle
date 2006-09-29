@@ -265,7 +265,7 @@ class test extends XMLDBAction {
         /// Get SQL code and execute it
             $test = new stdClass;
             $field = new XMLDBField('grade');
-            $field->setAttributes(XMLDB_TYPE_NUMBER, '10,2', XMLDB_UNSIGNED, null, null, null, null, null);
+            $field->setAttributes(XMLDB_TYPE_NUMBER, '20,10', XMLDB_UNSIGNED, null, null, null, null, null);
 
             $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
             $test->status = change_field_type($table, $field, false, false);
