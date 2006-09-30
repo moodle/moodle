@@ -112,6 +112,9 @@ class XMLDBgenerator {
     var $drop_index_sql = 'DROP INDEX INDEXNAME'; //SQL sentence to drop one index
                                   //TABLENAME, INDEXNAME are dinamically replaced
 
+    var $rename_index_sql = 'ALTER INDEX OLDINDEXNAME RENAME TO NEWINDEXNAME'; //SQL sentence to rename one index
+                                  //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dinamically replaced
+
     var $prefix;         // Prefix to be used for all the DB objects
 
     var $reserved_words; // List of reserved words (in order to quote them properly)
@@ -763,6 +766,29 @@ class XMLDBgenerator {
         return $results;
     }
 
+    /**
+     * Given one XMLDBTable and one XMLDBIndex, return the SQL statements needded to rename the index in the table
+     */
+
+    function getRenameIndexSQL($xmldb_table, $xmldb_index) {
+
+        $results = array();
+
+    /// Get the real index name
+        $dbindexname = find_index_name($xmldb_table, $xmldb_index);
+
+    /// Replace TABLENAME and INDEXNAME as needed
+        $renamesql = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->rename_index_sql);
+        $renamesql = str_replace('OLDINDEXNAME', $dbindexname, $renamesql);
+        $renamesql = str_replace('NEWINDEXNAME', $xmldb_index->getName(), $renamesql);
+
+    /// Some DB doesn't support index renaming (MySQL) so this can be empty
+        if ($renamesql) {
+            $results[] = $renamesql;
+        }
+
+        return $results;
+    }
 
     /**
      * Given three strings (table name, list of fields (comma separated) and suffix), create the proper object name

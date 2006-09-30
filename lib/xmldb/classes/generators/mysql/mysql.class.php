@@ -65,6 +65,9 @@ class XMLDBmysql extends XMLDBGenerator {
     var $drop_index_sql = 'ALTER TABLE TABLENAME DROP INDEX INDEXNAME'; //SQL sentence to drop one index
                                                                //TABLENAME, INDEXNAME are dinamically replaced
 
+    var $rename_index_sql = null; //SQL sentence to rename one index (MySQL doesn't support this!)
+                                      //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dinamically replaced
+
     /**
      * Creates one new XMLDBmysql
      */

@@ -645,7 +645,7 @@ class test extends XMLDBAction {
             $tests['delete enumlist from one field'] = $test;
         }
 
-    /// 36th test. Creating the default for one field
+    /// 36th test. Creating the enum for one field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -658,6 +658,23 @@ class test extends XMLDBAction {
                 $test->error = $db->ErrorMsg();
             }
             $tests['add enumlist to one field'] = $test;
+        }
+
+    /// 37th test. Renaming one index
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $index = new XMLDBIndex('newnamefortheindex');
+            $index->setAttributes(XMLDB_INDEX_UNIQUE, array('name', 'course'));
+
+            $test->sql = $table->getRenameIndexSQL($CFG->dbtype, $CFG->prefix, $index, true);
+            $db->debug = true;
+            $test->status = rename_index($table, $index, 'newnamefortheindex', false, false);
+            $db->debug = false;
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['rename index'] = $test;
         }
 
 
