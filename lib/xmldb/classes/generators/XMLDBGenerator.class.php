@@ -137,24 +137,39 @@ class XMLDBgenerator {
     }
 
     /**
+     * Given one XMLDBTable, returns it's correct name, depending of all the parametrization
+     *
+     * @param XMLDBTable table whose name we want
+     * @param boolean to specify if the name must be quoted (if reserved word, only!)
+     * @return string the correct name of the table
+     */
+    function getTableName($xmldb_table, $quoted = true) {
+
+        $prefixtouse = $this->prefix;
+    /// Determinate if this table must have prefix or no
+        if (in_array($xmldb_table->getName(), $this->getTablesWithoutPrefix())) {
+            $prefixtouse = '';
+        }
+    /// Get the name
+        $tablename = $this->prefix . $xmldb_table->getName();
+    /// Apply quotes conditionally
+        if ($quoted) {
+            $tablename = $this->getEncQuoted($tablename);
+        }
+
+        return $tablename;
+    }
+
+    /**
      * Given one correct XMLDBTable, returns the SQL statements
      * to create it (inside one array)
      */
     function getCreateTableSQL($xmldb_table) {
 
-        $tempprefix = '';
-    /// If the table needs to be created without prefix
-        if (in_array($xmldb_table->getName(), $this->getTablesWithoutPrefix())) {
-        /// Save current prefix to be restore later
-            $tempprefix = $this->prefix;
-        /// Empty prefix
-            $this->prefix = '';
-        }
-
         $results = array();  //Array where all the sentences will be stored
 
     /// Table header
-        $table = 'CREATE TABLE ' . $this->getEncQuoted($this->prefix . $xmldb_table->getName()) . ' (';
+        $table = 'CREATE TABLE ' . $this->getTableName($xmldb_table) . ' (';
 
         if (!$xmldb_fields = $xmldb_table->getFields()) {
             return false;
@@ -262,11 +277,6 @@ class XMLDBgenerator {
             }
         }
 
-    /// Re-set the original prefix if it has changed
-        if ($tempprefix) {
-            $this->prefix = $tempprefix;
-        }
-
         return $results;
     }
 
@@ -285,7 +295,7 @@ class XMLDBgenerator {
 
         $index = 'CREATE' . $unique . ' INDEX ';
         $index .= $this->getNameForObject($xmldb_table->getName(), implode(', ', $xmldb_index->getFields()), $suffix);
-        $index .= ' ON ' . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $index .= ' ON ' . $this->getTableName($xmldb_table);
         $index .= ' (' . implode(', ', $this->getEncQuoted($xmldb_index->getFields())) . ')';
 
         return array($index);
@@ -446,8 +456,13 @@ class XMLDBgenerator {
 
         $results = array();  //Array where all the sentences will be stored
 
-        $rename = str_replace('OLDNAME', $this->getEncQuoted($this->prefix . $xmldb_table->getName()), $this->rename_table_sql);
-        $rename = str_replace('NEWNAME', $this->getEncQuoted($this->prefix . $newname), $rename_table_sql);
+        $newt = new XMLDBTable($newname); //Temporal table for name calculations
+
+        $oldtablename = $this->getTableName($xmldb_table);
+        $newtablename = $this->getTableName($newt);
+
+        $rename = str_replace('OLDNAME', $this->getTableName($xmldb_table), $this->rename_table_sql);
+        $rename = str_replace('NEWNAME', $this->getTableName($newt), $rename);
 
         $results[] = $rename;
 
@@ -466,18 +481,9 @@ class XMLDBgenerator {
      */
     function getDropTableSQL($xmldb_table) {
 
-        $tempprefix = '';
-    /// If the table needs to be created without prefix
-        if (in_array($xmldb_table->getName(), $this->getTablesWithoutPrefix())) {
-        /// Save current prefix to be restore later
-            $tempprefix = $this->prefix;
-        /// Empty prefix
-            $this->prefix = '';
-        }
-
         $results = array();  //Array where all the sentences will be stored
 
-        $drop = str_replace('TABLENAME', $this->getEncQuoted($this->prefix . $xmldb_table->getName()), $this->drop_table_sql);
+        $drop = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->drop_table_sql);
 
         $results[] = $drop;
 
@@ -485,11 +491,6 @@ class XMLDBgenerator {
         if ($this->drop_table_extra_code) {
             $extra_sentences = $this->getDropTableExtraSQL($xmldb_table);
             $results = array_merge($results, $extra_sentences);
-        }
-
-    /// Re-set the original prefix if it has changed
-        if ($tempprefix) {
-            $this->prefix = $tempprefix;
         }
 
         return $results;
@@ -503,7 +504,7 @@ class XMLDBgenerator {
         $results = array();
 
     /// Get the quoted name of the table and field
-        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $tablename = $this->getTableName($xmldb_table);
 
     /// Build the standard alter table add
         $altertable = 'ALTER TABLE ' . $tablename . ' ADD ' . 
@@ -535,7 +536,7 @@ class XMLDBgenerator {
         $results = array();
 
     /// Get the quoted name of the table and field
-        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $tablename = $this->getTableName($xmldb_table);
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
     /// Build the standard alter table drop
@@ -555,7 +556,7 @@ class XMLDBgenerator {
         $this->specify_nulls = true;
 
     /// Get the quoted name of the table and field
-        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $tablename = $this->getTableName($xmldb_table);
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
     /// Build de alter sentence using the alter_column_sql template
@@ -583,7 +584,7 @@ class XMLDBgenerator {
         $results = array();
 
     /// Get the quoted name of the table and field
-        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $tablename = $this->getTableName($xmldb_table);
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
     /// Decide if we are going to create/modify or to drop the default
@@ -606,7 +607,7 @@ class XMLDBgenerator {
 
     /// Just use the CreateKeySQL function
         if ($keyclause = $this->getKeySQL($xmldb_table, $xmldb_key)) {
-            $key = 'ALTER TABLE ' . $this->getEncQuoted($this->prefix . $xmldb_table->getName()) .
+            $key = 'ALTER TABLE ' . $this->getTableName($xmldb_table) .
                ' ADD CONSTRAINT ' . $keyclause;
             $results[] = $key;
         }
@@ -678,7 +679,7 @@ class XMLDBgenerator {
     /// If we have decided to drop the key, let's do it
         if ($dropkey) {
         /// Replace TABLENAME, CONSTRAINTTYPE and KEYNAME as needed
-            $dropsql = str_replace('TABLENAME', $this->getEncQuoted($this->prefix . $xmldb_table->getName()), $template);
+            $dropsql = str_replace('TABLENAME', $this->getTableName($xmldb_table), $template);
             $dropsql = str_replace('KEYNAME', $dbkeyname, $dropsql);
 
             $results[] = $dropsql;
@@ -726,7 +727,7 @@ class XMLDBgenerator {
         $dbindexname = find_index_name($xmldb_table, $xmldb_index);
 
     /// Replace TABLENAME and INDEXNAME as needed
-        $dropsql = str_replace('TABLENAME', $this->getEncQuoted($this->prefix . $xmldb_table->getName()), $this->drop_index_sql);
+        $dropsql = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->drop_index_sql);
         $dropsql = str_replace('INDEXNAME', $dbindexname, $dropsql);
 
         $results[] = $dropsql;
