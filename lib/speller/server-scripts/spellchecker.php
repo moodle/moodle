@@ -23,7 +23,7 @@ $aspell_opts = '-a -H --lang='. $lang .' --encoding=utf-8';
 if (!empty($CFG->aspellextradicts)) {   // eg /usr/bin/.aspell.en.pws
     $aspell_opts .= ' --add-extra-dicts='.$CFG->aspellextradicts;
 }
-$tempfiledir = './';
+$tempfiledir = $CFG->dataroot; // Use dataroot since it must be writable
 $input_separator = 'A';
 
 function check_language($cmd) {
