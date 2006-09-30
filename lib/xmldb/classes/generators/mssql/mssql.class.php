@@ -56,8 +56,11 @@ class XMLDBmssql extends XMLDBgenerator {
     var $drop_index_sql = 'DROP INDEX TABLENAME.INDEXNAME'; //SQL sentence to drop one index
                                                                //TABLENAME, INDEXNAME are dinamically replaced
 
-    var $rename_index_sql = "sp_rename 'OLDINDEXNAME', 'NEWINDEXNAME', 'INDEX'"; //SQL sentence to rename one index
+    var $rename_index_sql = "sp_rename 'TABLENAME.OLDINDEXNAME', 'NEWINDEXNAME', 'INDEX'"; //SQL sentence to rename one index
                                       //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dinamically replaced
+
+    var $rename_key_sql = null; //SQL sentence to rename one key
+                                          //TABLENAME, OLDKEYNAME, NEWKEYNAME are dinamically replaced
 
     /**
      * Creates one new XMLDBmssql

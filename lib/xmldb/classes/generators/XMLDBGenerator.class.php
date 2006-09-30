@@ -115,6 +115,9 @@ class XMLDBgenerator {
     var $rename_index_sql = 'ALTER INDEX OLDINDEXNAME RENAME TO NEWINDEXNAME'; //SQL sentence to rename one index
                                   //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dinamically replaced
 
+    var $rename_key_sql = 'ALTER TABLE TABLENAME CONSTRAINT OLDKEYNAME RENAME TO NEWKEYNAME'; //SQL sentence to rename one key
+                                  //TABLENAME, OLDKEYNAME, NEWKEYNAME are dinamically replaced
+
     var $prefix;         // Prefix to be used for all the DB objects
 
     var $reserved_words; // List of reserved words (in order to quote them properly)
@@ -739,6 +742,43 @@ class XMLDBgenerator {
     }
 
     /**
+     * Given one XMLDBTable and one XMLDBKey, return the SQL statements needded to rename the key in the table
+     * Experimental! Shouldn't be used at all!
+     */
+
+    function getRenameKeySQL($xmldb_table, $xmldb_key) {
+
+        $results = array();
+
+    /// Get the real key name
+        $dbkeyname = find_key_name($xmldb_table, $xmldb_key);
+
+    /// Check we are really generating this type of keys
+        if (($xmldb_key->getType() == XMLDB_KEY_PRIMARY && !$this->primary_keys) ||
+            ($xmldb_key->getType() == XMLDB_KEY_UNIQUE && !$this->unique_keys) ||
+            ($xmldb_key->getType() == XMLDB_KEY_FOREIGN && !$this->foreign_keys) ||
+            ($xmldb_key->getType() == XMLDB_KEY_FOREIGN_UNIQUE && !$this->unique_keys && !$this->foreign_keys)) {
+        /// We aren't generating this type of keys, delegate to child indexes
+            $xmldb_index = new XMLDBIndex($xmldb_key->getName());
+            $xmldb_index->setFields($xmldb_key->getFields());
+            return $this->getRenameIndexSQL($xmldb_table, $xmldb_index);
+        }
+
+    /// Arrived here so we are working with keys, lets rename them
+    /// Replace TABLENAME and KEYNAME as needed
+        $renamesql = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->rename_key_sql);
+        $renamesql = str_replace('OLDKEYNAME', $dbkeyname, $renamesql);
+        $renamesql = str_replace('NEWKEYNAME', $xmldb_key->getName(), $renamesql);
+
+    /// Some DB doesn't support key renaming so this can be empty
+        if ($renamesql) {
+            $results[] = $renamesql;
+        }
+
+        return $results;
+    }
+
+    /**
      * Given one XMLDBTable and one XMLDBIndex, return the SQL statements needded to add the index to the table
      */
     function getAddIndexSQL($xmldb_table, $xmldb_index) {
@@ -768,6 +808,7 @@ class XMLDBgenerator {
 
     /**
      * Given one XMLDBTable and one XMLDBIndex, return the SQL statements needded to rename the index in the table
+     * Experimental! Shouldn't be used at all!
      */
 
     function getRenameIndexSQL($xmldb_table, $xmldb_index) {

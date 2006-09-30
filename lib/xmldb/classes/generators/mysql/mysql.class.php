@@ -68,6 +68,9 @@ class XMLDBmysql extends XMLDBGenerator {
     var $rename_index_sql = null; //SQL sentence to rename one index (MySQL doesn't support this!)
                                       //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dinamically replaced
 
+    var $rename_key_sql = null; //SQL sentence to rename one key (MySQL doesn't support this!)
+                                      //TABLENAME, OLDKEYNAME, NEWKEYNAME are dinamically replaced
+
     /**
      * Creates one new XMLDBmysql
      */

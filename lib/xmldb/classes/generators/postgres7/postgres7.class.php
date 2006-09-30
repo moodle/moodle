@@ -43,6 +43,9 @@ class XMLDBpostgres7 extends XMLDBgenerator {
 
     var $enum_inline_code = false; //Does the generator need to add inline code in the column definition
 
+    var $rename_key_sql = null; //SQL sentence to rename one key (PostgreSQL doesn't support this!)
+                                          //TABLENAME, OLDKEYNAME, NEWKEYNAME are dinamically replaced
+
     /**
      * Creates one new XMLDBpostgres7
      */
