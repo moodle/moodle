@@ -74,9 +74,13 @@ class test extends XMLDBAction {
 
     /// Silenty drop any previous test tables
         $table = new XMLDBTable('testtable');
-        $status = drop_table($table, true, false);
+        if (table_exists($table)) {
+            $status = drop_table($table, true, false);
+        }
         $table = new XMLDBTable ('anothertest');
-        $status = drop_table($table, true, false);
+        if (table_exists($table)) {
+            $status = drop_table($table, true, false);
+        }
 
     /// 1st test. Complete table creation.
         $table = new XMLDBTable('testtable');
