@@ -723,6 +723,35 @@ function change_field_notnull($table, $field, $continue=true, $feedback=true) {
 }
 
 /**
+ * This function will change the enum status of the field in the table passed as arguments
+ *
+ * @uses $CFG, $db
+ * @param XMLDBTable table object (just the name is mandatory)
+ * @param XMLDBField field object (full specs are required)
+ * @param boolean continue to specify if must continue on error (true) or stop (false)
+ * @param boolean feedback to specify to show status info (true) or not (false)
+ * @return boolean true on success, false on error
+ */
+function change_field_enum($table, $field, $continue=true, $feedback=true) {
+
+    global $CFG, $db;
+
+    $status = true;
+
+    if (strtolower(get_class($table)) != 'xmldbtable') {
+        return false;
+    }
+    if (strtolower(get_class($field)) != 'xmldbfield') {
+        return false;
+    }
+
+    if(!$sqlarr = $table->getModifyEnumSQL($CFG->dbtype, $CFG->prefix, $field, false)) {
+        return true; //Empty array = nothing to do = no error
+    }
+
+    return execute_sql_arr($sqlarr, $continue, $feedback);
+}
+/**
  * This function will change the default of the field in the table passed as arguments
  * One null value in the default field means delete the default
  *
