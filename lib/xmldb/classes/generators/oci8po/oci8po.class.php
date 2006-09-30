@@ -49,14 +49,16 @@ class XMLDBoci8po extends XMLDBgenerator {
     var $sequence_extra_code = true; //Does the generator need to add extra code to generate the sequence fields
     var $sequence_name = ''; //Particular name for inline sequences in this generator
 
-    var $drop_table_extra_code = true; //Does the generatos need to add code after table drop
+    var $drop_table_extra_code = true; //Does the generator need to add code after table drop
+
+    var $rename_table_extra_code = true; //Does the generator need to add code after table rename
 
     var $enum_inline_code = false; //Does the generator need to add inline code in the column definition
 
     var $alter_column_sql = 'ALTER TABLE TABLENAME MODIFY (COLUMNSPECS)'; //The SQL template to alter columns
 
     /**
-     * Creates one new XMLDBpostgres7
+     * Creates one new XMLDBoci8po
      */
     function XMLDBoci8po() {
         parent::XMLDBgenerator();
@@ -129,6 +131,8 @@ class XMLDBoci8po extends XMLDBgenerator {
      */
     function getCreateSequenceSQL ($xmldb_table, $xmldb_field) {
 
+        $results = array();
+
         $sequence_name = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'seq');
 
         $sequence = "CREATE SEQUENCE " . $sequence_name;
@@ -136,7 +140,20 @@ class XMLDBoci8po extends XMLDBgenerator {
         $sequence.= "\n    INCREMENT BY 1";
         $sequence.= "\n    NOMAXVALUE";
 
+        $results[] = $sequence;
+
+        $results = array_merge($results, $this->getCreateTriggerSQL ($xmldb_table, $xmldb_field));
+
+        return $results;
+    }
+
+    /**
+     * Returns the code needed to create one trigger for the xmldb_table and xmldb_field passed
+     */
+    function getCreateTriggerSQL ($xmldb_table, $xmldb_field) {
+
         $trigger_name = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'trg');
+        $sequence_name = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'seq');
 
         $trigger = "CREATE TRIGGER " . $trigger_name;
         $trigger.= "\n    BEFORE INSERT";
@@ -147,7 +164,8 @@ class XMLDBoci8po extends XMLDBgenerator {
         $trigger.= "\n        SELECT " . $sequence_name . '.nextval INTO :new.' . $this->getEncQuoted($xmldb_field->getName()) . " FROM dual;";
         $trigger.= "\n    END IF;";
         $trigger.= "\nEND;";
-        return array($sequence, $trigger);
+
+        return array($trigger);
     }
 
     /**
@@ -189,6 +207,35 @@ class XMLDBoci8po extends XMLDBgenerator {
     function getDropTableExtraSQL ($xmldb_table) {
         $xmldb_field = new XMLDBField('id'); // Fields having sequences should be exclusively, id.
         return $this->getDropSequenceSQL($xmldb_table, $xmldb_field, false);
+    }
+
+    /**
+     * Returns the code (array of statements) needed to execute extra statements on table rename
+     */
+    function getRenameTableExtraSQL ($xmldb_table, $newname) {
+
+        $results = array();
+
+        $xmldb_field = new XMLDBField('id'); // Fields having sequences should be exclusively, id.
+
+        $oldseqname = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'seq');
+        $newseqname = $this->getNameForObject($newname, $xmldb_field->getName(), 'seq');
+
+    /// Rename de sequence
+        $results[] = 'RENAME ' . $oldseqname . ' TO ' . $newseqname;
+
+        $oldtriggername = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'trg');
+        $newtriggername = $this->getNameForObject($newname, $xmldb_field->getName(), 'trg');
+
+    /// Drop old trigger
+        $results[] = "DROP TRIGGER " . $oldtriggername;
+
+        $new_xmldb_table = new XMLDBTable($newname); /// Temp table for trigger code generation
+
+    /// Create new trigger
+        $results = array_merge($results, $this->getCreateTriggerSQL($new_xmldb_table, $xmldb_field));
+
+        return $results;
     }
 
     /**

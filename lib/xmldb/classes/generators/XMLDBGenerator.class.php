@@ -95,12 +95,12 @@ class XMLDBgenerator {
     var $rename_table_sql = 'ALTER TABLE OLDNAME RENAME TO NEWNAME'; //SQL sentence to rename one table, both
                                   //OLDNAME and NEWNAME are dinamically replaced
 
-    var $rename_table_extra_code = false; //Does the generatos need to add code after table rename
+    var $rename_table_extra_code = false; //Does the generator need to add code after table rename
 
     var $drop_table_sql = 'DROP TABLE TABLENAME'; //SQL sentence to drop one table
                                   //TABLENAME is dinamically replaced
 
-    var $drop_table_extra_code = false; //Does the generatos need to add code after table drop
+    var $drop_table_extra_code = false; //Does the generator need to add code after table drop
 
     var $alter_column_sql = 'ALTER TABLE TABLENAME ALTER COLUMN COLUMNSPECS'; //The SQL template to alter columns
 
