@@ -560,7 +560,7 @@ class XMLDBgenerator {
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
     /// Build de alter sentence using the alter_column_sql template
-        $alter = str_replace('TABLENAME', $this->getEncQuoted($this->prefix . $xmldb_table->getName()), $this->alter_column_sql);
+        $alter = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->alter_column_sql);
         $alter = str_replace('COLUMNSPECS', $this->getFieldSQL($xmldb_field, $this->alter_column_skip_type,
                                                                              $this->alter_column_skip_default,
                                                                              $this->alter_column_skip_notnull), $alter);
