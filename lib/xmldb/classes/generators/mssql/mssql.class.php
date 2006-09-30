@@ -147,7 +147,7 @@ class XMLDBmssql extends XMLDBgenerator {
         $results = array();
 
     /// Get the quoted name of the table and field
-        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $tablename = $this->getTableName($xmldb_table);
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
         $checkconsname = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'ck');
@@ -180,7 +180,7 @@ class XMLDBmssql extends XMLDBgenerator {
         $results = array(); /// To store all the needed SQL commands
 
     /// Get the quoted name of the table and field
-        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $tablename = $this->getTableName($xmldb_table);
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
     /// Take a look to field metadata
@@ -233,7 +233,7 @@ class XMLDBmssql extends XMLDBgenerator {
         $results = array();
 
     /// Get the quoted name of the table and field
-        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $tablename = $this->getTableName($xmldb_table);
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
     /// Decide if we are going to create/modify or to drop the default
@@ -260,7 +260,7 @@ class XMLDBmssql extends XMLDBgenerator {
         $results = array();
 
     /// Get the quoted name of the table and field
-        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $tablename = $this->getTableName($xmldb_table);
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
     /// Now, check if, with the current field attributes, we have to build one default
@@ -282,7 +282,7 @@ class XMLDBmssql extends XMLDBgenerator {
         $results = array();
 
     /// Get the quoted name of the table and field
-        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $tablename = $this->getTableName($xmldb_table);
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
     /// Look for the default contraint and, if found, drop it
@@ -303,7 +303,7 @@ class XMLDBmssql extends XMLDBgenerator {
         global $db;
 
     /// Get the quoted name of the table and field
-        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $tablename = $this->getTableName($xmldb_table);
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
     /// Look for any default constraint in this field and drop it

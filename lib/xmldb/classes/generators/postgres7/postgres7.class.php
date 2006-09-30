@@ -124,7 +124,7 @@ class XMLDBpostgres7 extends XMLDBgenerator {
      */
     function getCommentSQL ($xmldb_table) {
 
-        $comment = "COMMENT ON TABLE " . $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $comment = "COMMENT ON TABLE " . $this->getTableName($xmldb_table);
         $comment.= " IS '" . substr($xmldb_table->getComment(), 0, 250) . "'";
 
         return array($comment);
@@ -146,7 +146,7 @@ class XMLDBpostgres7 extends XMLDBgenerator {
         $results = array(); /// To store all the needed SQL commands
 
     /// Get the quoted name of the table and field
-        $tablename = $this->getEncQuoted($this->prefix . $xmldb_table->getName());
+        $tablename = $this->getTableName($xmldb_table);
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
     /// Take a look to field metadata
