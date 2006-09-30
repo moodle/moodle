@@ -577,7 +577,28 @@ class XMLDBgenerator {
 
     /// Add the after clause if necesary
         if ($this->add_after_clause && $xmldb_field->getPrevious()) {
-            $altertable .= ' after ' . $this->getEncQuoted($xmldb_field->getPrevious());
+            $alter .= ' after ' . $this->getEncQuoted($xmldb_field->getPrevious());
+        }
+
+        return $results;
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to modify the enum of the field in the table
+     */
+    function getModifyEnumSQL($xmldb_table, $xmldb_field) {
+
+        $results = array();
+
+    /// Get the quoted name of the table and field
+        $tablename = $this->getTableName($xmldb_table);
+        $fieldname = $this->getEncQuoted($xmldb_field->getName());
+
+    /// Decide if we are going to create or to drop the enum (based exclusively in the values passed!)
+        if (!$xmldb_field->getEnum()) {
+            $results = $this->getDropEnumSQL($xmldb_table, $xmldb_field); //Drop
+        } else {
+            $results = $this->getCreateEnumSQL($xmldb_table, $xmldb_field); //Create/modify
         }
 
         return $results;
@@ -972,6 +993,22 @@ class XMLDBgenerator {
     }
 
     /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its enum 
+     * (usually invoked from getModifyEnumSQL()
+     */
+    function getDropEnumSQL($xmldb_table, $xmldb_field) {
+        return array('Code to drop one enum goes to getDropEnumSQL()');
+    }
+
+    /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to add its enum 
+     * (usually invoked from getModifyEnumSQL()
+     */
+    function getCreateEnumSQL($xmldb_table, $xmldb_field) {
+        return array('Code to create one enum goes to getCreateEnumSQL()');
+    }
+
+    /**
      * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its default 
      * (usually invoked from getModifyDefaultSQL()
      */
@@ -984,7 +1021,7 @@ class XMLDBgenerator {
      * (usually invoked from getModifyDefaultSQL()
      */
     function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
-        return array('Code to create one default goes to getCreate()');
+        return array('Code to create one default goes to getCreateDefaultSQL()');
     }
 
     /**

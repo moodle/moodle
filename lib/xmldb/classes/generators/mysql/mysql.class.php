@@ -161,6 +161,24 @@ class XMLDBmysql extends XMLDBGenerator {
     }
 
     /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its enum 
+     * (usually invoked from getModifyEnumSQL()
+     */
+    function getCreateEnumSQL($xmldb_table, $xmldb_field) {
+    /// For MySQL, just alter the field
+        return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
+    }
+
+    /**     
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its enum 
+     * (usually invoked from getModifyEnumSQL()
+     */
+    function getDropEnumSQL($xmldb_table, $xmldb_field) {
+    /// For MySQL, just alter the field
+        return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
+    }
+
+    /**
      * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its default 
      * (usually invoked from getModifyDefaultSQL()
      */

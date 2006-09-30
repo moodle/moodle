@@ -892,6 +892,24 @@ class XMLDBTable extends XMLDBObject {
     }
 
     /**
+     * This function will return the SQL code needed to modify the enum of one field in the table for the specified DB and
+     * prefix. Just one simple wrapper over generators.
+     */
+    function getModifyEnumSQL ($dbtype, $prefix, $xmldb_field, $statement_end=true) {
+
+        $results = array();
+
+        $classname = 'XMLDB' . $dbtype;
+        $generator = new $classname();
+        $generator->setPrefix($prefix);
+        $results = $generator->getModifyEnumSQL($this, $xmldb_field);
+        if ($statement_end) {
+            $results = $generator->getEndedStatements($results);
+        }
+        return $results;
+    }
+
+    /**
      * This function will return the SQL code needed to modify the default of one field in the table for the specified DB and
      * prefix. Just one simple wrapper over generators.
      */

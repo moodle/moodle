@@ -251,6 +251,26 @@ class XMLDBmssql extends XMLDBgenerator {
     }
 
     /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its enum 
+     * (usually invoked from getModifyEnumSQL()
+     */
+    function getCreateEnumSQL($xmldb_table, $xmldb_field) {
+    /// All we have to do is to create the check constraint
+        return array('ALTER TABLE ' . $this->getTableName($xmldb_table) .
+                     ' ADD ' . $this->getEnumExtraSQL($xmldb_table, $xmldb_field));
+    }
+
+    /**     
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its enum 
+     * (usually invoked from getModifyEnumSQL()
+     */
+    function getDropEnumSQL($xmldb_table, $xmldb_field) {
+    /// All we have to do is to drop the check constraint
+        return array('ALTER TABLE ' . $this->getTableName($xmldb_table) .
+                     ' DROP CONSTRAINT ' . $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'ck'));
+    }
+
+    /**
      * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to create its default 
      * (usually invoked from getModifyDefaultSQL()
      */
