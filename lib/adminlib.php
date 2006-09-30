@@ -1415,7 +1415,8 @@ class admin_setting_configselect extends admin_setting {
         }
         $return = '<select class="form-select" id="id_s_'.$this->name.'" name="s_' . $this->name .'">';
         foreach ($this->choices as $key => $value) {
-            $return .= '<option value="'.$key.'"'.($key==$current ? ' selected="selected"' : '').'>'.$value.'</option>';
+            // the string cast is needed because key may be integer - 0 is equal to most strings!
+            $return .= '<option value="'.$key.'"'.((string)$key==$current ? ' selected="selected"' : '').'>'.$value.'</option>';
         }
         $return .= '</select>';
 
