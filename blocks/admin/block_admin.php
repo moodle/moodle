@@ -8,7 +8,7 @@ class block_admin extends block_list {
 
     function get_content() {
 
-        global $CFG, $USER;
+        global $CFG, $USER, $SITE;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -25,10 +25,17 @@ class block_admin extends block_list {
             return $this->content = '';
         }
 
+        if (!empty($this->instance->pageid)) {
+            $context = get_context_instance(CONTEXT_COURSE, $this->instance->pageid);
+        }
 
-        $course = get_record('course', 'id', $this->instance->pageid);
+        if (empty($context)) {
+            $context = get_context_instance(CONTEXT_SYSTEM);
+        }
 
-        $context = get_context_instance(CONTEXT_COURSE, $this->instance->pageid);
+        if (!$course = get_record('course', 'id', $this->instance->pageid)) {
+            $course = $SITE;
+        }
 
         if (!has_capability('moodle/course:view', $context)) {  // Just return 
             return $this->content;
