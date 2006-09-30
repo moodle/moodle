@@ -62,6 +62,7 @@
             $mod->coursemodule = $cm->id;
         }
 
+        require_login($course->id); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         require_capability('moodle/course:update', $context);
         
@@ -241,6 +242,7 @@
             }
         }
 
+        require_login($section->course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $section->course);
         require_capability('moodle/course:update', $context);
 
@@ -270,6 +272,7 @@
             error("This course module doesn't exist");
         }
 
+        require_login($cm->course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $cm->course);
         require_capability('moodle/course:update', $context);
 
@@ -296,6 +299,7 @@
             error("This course module doesn't exist");
         }
 
+        require_login($cm->course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $cm->course);
         require_capability('moodle/course:update', $context);
 
@@ -316,6 +320,7 @@
             error("This course module doesn't exist");
         }
 
+        require_login($cm->course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $cm->course);
         require_capability('moodle/course:update', $context);
 
@@ -347,6 +352,7 @@
             error("This course module doesn't exist");
         }
 
+        require_login($cm->course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $cm->course);
         require_capability('moodle/course:update', $context);
 
@@ -367,6 +373,7 @@
             error("This course module doesn't exist");
         }
 
+        require_login($cm->course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $cm->course);
         require_capability('moodle/course:update', $context);
 
@@ -408,6 +415,7 @@
             error("This course doesn't exist");
         }
 
+        require_login($cm->course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $cm->course);
         require_capability('moodle/course:update', $context);
         
@@ -464,6 +472,7 @@
             error("This course doesn't exist");
         }
 
+        require_login($course->id); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         require_capability('moodle/course:update', $context);
 
@@ -521,6 +530,7 @@
             error("This course doesn't exist");
         }
 
+        require_login($course->id); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         require_capability('moodle/course:update', $context);
         
@@ -583,6 +593,8 @@
             error("This module has been disabled for this particular course");
         }
 
+        require_login($course->id); // needed to setup proper $COURSE
+
         $form->section    = $section;         // The section number itself
         $form->course     = $course->id;
         $form->module     = $module->id;
@@ -619,6 +631,7 @@
         error("No action was specfied");
     }
 
+    require_login($course->id); // needed to setup proper $COURSE
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     require_capability('moodle/course:update', $context);
 
