@@ -277,6 +277,53 @@ function table_exists($table) {
 }
 
 /**
+ * Given one XMLDBField, check if it exists in DB (true/false)
+ *
+ * @uses, $db
+ * @param XMLDBTable the table
+ * @param XMLDBField the field to be searched for
+ * @return boolean true/false
+ */
+function field_exists($table, $field) {
+
+    global $CFG, $db;
+
+    $exists = true;
+
+/// Do this function silenty (to avoid output in install/upgrade process)
+    $olddbdebug = $db->debug;
+    $db->debug = false;
+
+/// Check the table exists
+    if (!table_exists($table)) {
+        $db->debug = $olddbdebug; //Re-set original $db->debug
+        return false;
+    }
+
+/// Load the needed generator
+    $classname = 'XMLDB' . $CFG->dbtype;
+    $generator = new $classname();
+    $generator->setPrefix($CFG->prefix);
+/// Calculate the name of the table
+    $tablename = $generator->getTableName($table, false);
+
+/// Get list of fields in table
+    $fields = null;
+    if ($fields = $db->MetaColumns($tablename)) {
+        $fields = array_change_key_case($fields, CASE_LOWER);
+    }
+
+    if (!array_key_exists($field->getName(),  $fields)) {
+        $exists = false;
+    }
+
+/// Re-set original debug 
+    $db->debug = $olddbdebug;
+
+    return $exists;
+}
+
+/**
  * Given one XMLDBIndex, check if it exists in DB (true/false)
  *
  * @uses, $db
