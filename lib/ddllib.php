@@ -851,6 +851,50 @@ function drop_key($table, $key, $continue=true, $feedback=true) {
 }
 
 /**
+ * This function will rename the key in the table passed as arguments
+ * Experimental. Shouldn't be used at all in normal installation/upgrade!
+ *
+ * @uses $CFG, $db
+ * @param XMLDBTable table object (just the name is mandatory)
+ * @param XMLDBKey key object (full specs are required)
+ * @param string new name of the key
+ * @param boolean continue to specify if must continue on error (true) or stop (false)
+ * @param boolean feedback to specify to show status info (true) or not (false)
+ * @return boolean true on success, false on error
+ */
+function rename_key($table, $key, $newname, $continue=true, $feedback=true) {
+
+    global $CFG, $db;
+
+    debugging('rename_key() is one experimental feature. You must not use it in production!', DEBUG_DEVELOPER);
+
+    $status = true;
+
+    if (strtolower(get_class($table)) != 'xmldbtable') {
+        return false;
+    }
+    if (strtolower(get_class($key)) != 'xmldbkey') {
+        return false;
+    }
+
+/// Check newname isn't empty
+    if (!$newname) {
+        debugging('New name for key ' . $key->getName() . ' is empty! Skipping its renaming', DEBUG_DEVELOPER);
+        return true; //Key doesn't exist, nothing to do
+    }
+
+/// Assign the new name to the index
+    $key->setName($newname);
+
+    if(!$sqlarr = $table->getRenameKeySQL($CFG->dbtype, $CFG->prefix, $key, false)) {
+        debugging('Some DBs do not support key renaming (MySQL, PostgreSQL, MsSQL). Skipping its renaming', DEBUG_DEVELOPER);
+        return true; //Empty array = nothing to do = no error
+    }
+
+    return execute_sql_arr($sqlarr, $continue, $feedback);
+}
+
+/**
  * This function will create the index in the table passed as arguments
  * Before creating the index, the function will check it doesn't exists
  *
@@ -927,6 +971,7 @@ function drop_index($table, $index, $continue=true, $feedback=true) {
 /**
  * This function will rename the index in the table passed as arguments
  * Before renaming the index, the function will check it exists
+ * Experimental. Shouldn't be used at all!
  *
  * @uses $CFG, $db
  * @param XMLDBTable table object (just the name is mandatory)
@@ -939,6 +984,8 @@ function drop_index($table, $index, $continue=true, $feedback=true) {
 function rename_index($table, $index, $newname, $continue=true, $feedback=true) {
 
     global $CFG, $db;
+
+    debugging('rename_index() is one experimental feature. You must not use it in production!', DEBUG_DEVELOPER);
 
     $status = true;
 
