@@ -240,6 +240,42 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
 }
 
 /**
+ * Given one XMLDBTable, check if it exists in DB (true/false)
+ *
+ * @param XMLDBTable table to be searched for
+ * @return boolean true/false
+ */
+function table_exists($xmldb_table) {
+
+    global $CFG, $db;
+
+    $exists = true;
+
+/// Do this function silenty (to avoid output in install/upgrade process)
+    $olddbdebug = $db->debug;
+    $db->debug = false;
+
+/// Load the needed generator
+    $classname = 'XMLDB' . $CFG->dbtype;
+    $generator = new $classname();
+    $generator->setPrefix($CFG->prefix);
+/// Calculate the name of the table
+    $tablename = $generator->getTableName($xmldb_table, false);
+
+/// Search such tablename in DB
+    $metatables = $db->MetaTables();
+    $metatables = array_flip($metatables);
+    $metatables = array_change_key_case($metatables, CASE_LOWER);
+    if (!array_key_exists($tablename,  $metatables)) {
+        $exists = false;
+    }
+
+/// Re-set original debug 
+    $db->debug = $olddbdebug;
+
+    return $exists;
+}
+/**
  * This function IS NOT IMPLEMENTED. ONCE WE'LL BE USING RELATIONAL
  * INTEGRITY IT WILL BECOME MORE USEFUL. FOR NOW, JUST CALCULATE "OFFICIAL"
  * KEY NAMES WITHOUT ACCESSING TO DB AT ALL.
@@ -319,10 +355,7 @@ function find_index_name($xmldb_table, $xmldb_index) {
     $tablename = $CFG->prefix . $xmldb_table->getName();
 
 /// Check the table exists
-    $metatables = $db->MetaTables();
-    $metatables = array_flip($metatables);
-    $metatables = array_change_key_case($metatables, CASE_LOWER);
-    if (!array_key_exists($tablename,  $metatables)) {
+    if (!table_exists($xmldb_table)) {
         $db->debug = $olddbdebug; //Re-set original $db->debug
         return false;
     }
