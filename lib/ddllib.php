@@ -705,7 +705,7 @@ function add_key($table, $key, $continue=true, $feedback=true) {
         return false;
     }
     if ($key->getType() == XMLDB_KEY_PRIMARY) { // Prevent PRIMARY to be added (only in create table, being serious  :-P)
-    /// TODO print some notify here (id debuglevel is DEVELOPER)
+        debugging('Primary Keys can be added at table creation time only', DEBUG_DEVELOPER);
         return true;
     }
 
@@ -739,7 +739,7 @@ function drop_key($table, $key, $continue=true, $feedback=true) {
         return false;
     }
     if ($key->getType() == XMLDB_KEY_PRIMARY) { // Prevent PRIMARY to be dropped (only in drop table, being serious  :-P)
-    /// TODO print some notify here (id debuglevel is DEVELOPER)
+        debugging('Primary Keys can be deleted at table drop time only', DEBUG_DEVELOPER);
         return true;
     }
 
@@ -774,9 +774,9 @@ function add_index($table, $index, $continue=true, $feedback=true) {
         return false;
     }
 
-/// Check there isn't any index with the same fields
-    if ($indexexists = find_index_name($table, $index)) {
-    /// TODO print some notify here (id debuglevel is DEVELOPER)
+/// Check index doesn't exist
+    if (index_exists($table, $index)) {
+        debugging('Index ' . $index->getName() . ' exists. Skipping its creation', DEBUG_DEVELOPER);
         return true; //Index exists, nothing to do
     }
 
@@ -811,9 +811,9 @@ function drop_index($table, $index, $continue=true, $feedback=true) {
         return false;
     }
 
-/// Check there is one index with the same fields
-    if (!$indexexists = find_index_name($table, $index)) {
-    /// TODO print some notify here (id debuglevel is DEVELOPER)
+/// Check index exists
+    if (!index_exists($table, $index)) {
+        debugging('Index ' . $index->getName() . ' do not exists. Skipping its deletion', DEBUG_DEVELOPER);
         return true; //Index doesn't exist, nothing to do
     }
 
