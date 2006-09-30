@@ -1,11 +1,17 @@
-<?php   
-    //This is a very rough importer for powerpoint slides
-    //Export a powerpoint presentation with powerpoint as html pages
-    //Do it with office 2002 (I think?) and no special settings
-    //Then zip the directory with all of the html pages 
-    //and the zip file is what you want to upload
-    
-    // supports book and lesson
+<?php // $Id$
+/**
+ * This is a very rough importer for powerpoint slides
+ * Export a powerpoint presentation with powerpoint as html pages
+ * Do it with office 2002 (I think?) and no special settings
+ * Then zip the directory with all of the html pages 
+ * and the zip file is what you want to upload
+ * 
+ * The script supports book and lesson.
+ *
+ * @version $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package lesson
+ **/
 
     require_once("../../config.php");
     require_once("locallib.php");

@@ -1,7 +1,11 @@
 <?php // $Id$
-
-/****************** update page ************************************/
-    
+/**
+ * Action for processing the form in editpage action and saves the page
+ *
+ * @version $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package lesson
+ **/
     confirm_sesskey();
     
     $redirect = optional_param('redirect', '', PARAM_ALPHA);

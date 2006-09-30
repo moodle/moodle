@@ -1,6 +1,13 @@
-<!-- define a new instance of lesson -->
-<!-- It is used from /course/mod.php.  The whole instance is available as $form. -->
-<?php
+<?php  // $Id$
+/**
+ * Define a new instance of lesson or edit an instance.
+ * It is used from /course/mod.php.  The whole instance is available as $form.
+ * 
+ * @version $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package lesson
+ **/
+
 require("$CFG->dirroot/mod/lesson/locallib.php");  // for parameter array
 if ($form->mode == "add") {
     if ($defaults = get_record("lesson_default", "course", $form->course)) {

@@ -1,23 +1,25 @@
-<?PHP  // $Id: lesson.php, v 1.0 25 Jan 2004
-
-/*************************************************
-    ACTIONS handled are:
-
-    addbranchtable
-    addendofbranch
-    addcluster
-    addendofcluster
-    addpage
-    confirmdelete
-    continue
-    delete
-    editpage
-    insertpage
-    move
-    moveit
-    updatepage
-
-************************************************/
+<?php  // $Id: lesson.php, v 1.0 25 Jan 2004
+/**
+ * Handles lesson actions
+ * 
+ * ACTIONS handled are:
+ *    addbranchtable
+ *    addendofbranch
+ *    addcluster
+ *    addendofcluster
+ *    addpage
+ *    confirmdelete
+ *    continue
+ *    delete
+ *    editpage
+ *    insertpage
+ *    move
+ *    moveit
+ *    updatepage
+ * @version $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package lesson
+ **/
 
     require("../../config.php");
     require("locallib.php");

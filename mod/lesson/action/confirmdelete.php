@@ -1,7 +1,11 @@
 <?php // $Id$
-
-/******************* confirm delete ************************************/
-
+/**
+ * Action for confirming the deletion of a page
+ *
+ * @version $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package lesson
+ **/
     confirm_sesskey();
 
     $pageid = required_param('pageid', PARAM_INT);

@@ -1,7 +1,11 @@
 <?php // $Id$
-
-/************** add end of branch ************************************/
-
+/**
+ * Action for adding an end of branch page
+ *
+ * @version $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package lesson
+ **/
     confirm_sesskey();
 
     // first get the preceeding page

@@ -1,5 +1,11 @@
-<?PHP // $Id$
-      // Import quiz questions into the given category
+<?php // $Id$
+/**
+ * Imports lesson pages
+ *
+ * @version $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package lesson
+ **/
 
     require_once("../../config.php");
     require_once("lib.php");

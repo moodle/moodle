@@ -1,6 +1,11 @@
-<?PHP // $Id$
-
-/// This page lists all the instances of lesson in a particular course
+<?php // $Id$
+/**
+ * This page lists all the instances of lesson in a particular course
+ *
+ * @version $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package lesson
+ **/
 
     require_once("../../config.php");
     require_once("locallib.php");

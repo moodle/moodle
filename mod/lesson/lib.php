@@ -1,14 +1,13 @@
-<?PHP  // $Id$ 
-        // modified by mnielsen
-        /// Update:  The lib.php now contains only the functions that are
-        /// used outside of the lesson module.  All functions (I hope) that are only local
-        /// are now in locallib.php.
-
-/// Library of functions and constants for module lesson
+<?php  // $Id$
+/**
+ * Standard library of functions and constants for lesson
+ *
+ * @version $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package lesson
+ **/
 
 define("LESSON_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
-
-/// (replace lesson with the name of your module and delete this line)
 
 /*******************************************************************/
 function lesson_add_instance($lesson) {

@@ -1,7 +1,11 @@
 <?php // $Id$
-
-/************** add end of cluster ************************************/
-
+/**
+ * Action for adding an end of cluster page
+ *
+ * @version $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package lesson
+ **/
     confirm_sesskey();
 
     // first get the preceeding page

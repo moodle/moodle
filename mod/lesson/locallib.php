@@ -1,7 +1,12 @@
 <?php // $Id$
-/// mnielsen
-/// locallib.php is the new lib file for lesson module.
-/// including locallib.php is the same as including the old lib.php
+/**
+ * Local library file for Lesson.  These are non-standard functions that are used
+ * only by Lesson.
+ *
+ * @version $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package lesson
+ **/
 
 /**
 * Next page -> any page not seen before

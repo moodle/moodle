@@ -1,7 +1,11 @@
 <?php // $Id$
-
-/****************** continue ************************************/
-
+/**
+ * Action for processing page answers by users
+ *
+ * @version $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package lesson
+ **/
     confirm_sesskey();
 
     // left menu code

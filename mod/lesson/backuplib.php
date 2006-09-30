@@ -1,8 +1,11 @@
-<?PHP //$Id$
-
-    //This php script contains all the stuff to backup/restore
-    //lesson mods
-
+<?php //$Id$
+/**
+ * Lesson's backup routine
+ *
+ * @version $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package lesson
+ **/
     //This is the "graphical" structure of the lesson mod: 
     //
     //          lesson_default                  lesson ----------------------------|--------------------------|--------------------------|
