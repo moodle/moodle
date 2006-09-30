@@ -245,7 +245,7 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
  * @param XMLDBTable table to be searched for
  * @return boolean true/false
  */
-function table_exists($xmldb_table) {
+function table_exists($table) {
 
     global $CFG, $db;
 
@@ -260,7 +260,7 @@ function table_exists($xmldb_table) {
     $generator = new $classname();
     $generator->setPrefix($CFG->prefix);
 /// Calculate the name of the table
-    $tablename = $generator->getTableName($xmldb_table, false);
+    $tablename = $generator->getTableName($table, false);
 
 /// Search such tablename in DB
     $metatables = $db->MetaTables();
@@ -284,7 +284,7 @@ function table_exists($xmldb_table) {
  * @param XMLDBIndex the index to be searched for
  * @return boolean true/false
  */
-function index_exists($xmldb_table, $xmldb_index) {
+function index_exists($table, $index) {
 
     global $CFG, $db;
 
@@ -295,7 +295,7 @@ function index_exists($xmldb_table, $xmldb_index) {
     $db->debug = false;
 
 /// Wrap over find_index_name to see if the index exists
-    if (!$find_index_name($xmldb_table, $xmldb_index)) {
+    if (!$find_index_name($table, $index)) {
         $exists = false;
     }
 
@@ -317,7 +317,7 @@ function index_exists($xmldb_table, $xmldb_index) {
  * @param XMLDBKey the key to be searched
  * @return string key name of false
  */
-function find_key_name($xmldb_table, $xmldb_key) {
+function find_key_name($table, $xmldb_key) {
 
     global $CFG, $db;
 
@@ -357,7 +357,7 @@ function find_key_name($xmldb_table, $xmldb_key) {
                 break;
         }
     /// And simply, return the oficial name
-        return $generator->getNameForObject($xmldb_table->getName(), implode(', ', $xmldb_key->getFields()), $suffix);
+        return $generator->getNameForObject($table->getName(), implode(', ', $xmldb_key->getFields()), $suffix);
     }
 }
 
@@ -370,7 +370,7 @@ function find_key_name($xmldb_table, $xmldb_key) {
  * @param XMLDBIndex the index to be searched
  * @return string index name of false
  */
-function find_index_name($xmldb_table, $xmldb_index) {
+function find_index_name($table, $index) {
 
     global $CFG, $db;
 
@@ -379,10 +379,10 @@ function find_index_name($xmldb_table, $xmldb_index) {
     $db->debug = false;
 
 /// Extract index columns
-    $indcolumns = $xmldb_index->getFields();
+    $indcolumns = $index->getFields();
 
 /// Check the table exists
-    if (!table_exists($xmldb_table)) {
+    if (!table_exists($table)) {
         $db->debug = $olddbdebug; //Re-set original $db->debug
         return false;
     }
@@ -392,7 +392,7 @@ function find_index_name($xmldb_table, $xmldb_index) {
     $generator = new $classname();
     $generator->setPrefix($CFG->prefix);
 /// Calculate the name of the table
-    $tablename = $generator->getTableName($xmldb_table, false);
+    $tablename = $generator->getTableName($table, false);
 
 /// Get list of indexes in table
     $indexes = null;
