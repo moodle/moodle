@@ -614,6 +614,55 @@ class test extends XMLDBAction {
             }
             $tests['drop foreign key'] = $test;
         }
+
+    /// 34th test. Adding one complex enum field
+        if ($test->status) {
+        /// Create a new field with complex specs (enums are good candidates)
+            $field = new XMLDBField('type');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $test->sql = $table->getAddFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = add_field($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['add field with enum'] = $test;
+        }
+
+    /// 35th test. Dropping the enum of one field
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('type');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'general', 'course');
+
+            $test->sql = $table->getModifyEnumSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_enum($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['delete enumlist from one field'] = $test;
+        }
+
+    /// 36th test. Creating the default for one field
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('type');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
+
+            $test->sql = $table->getModifyEnumSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_enum($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['add enumlist to one field'] = $test;
+        }
+
+
+
+
     /// TODO: Check here values of the inserted records to see that everything ha the correct value
 
 
