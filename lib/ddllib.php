@@ -320,6 +320,7 @@ function find_index_name($xmldb_table, $xmldb_index) {
 
 /// Check the table exists
     $metatables = $db->MetaTables();
+    $metatables = array_flip($metatables);
     $metatables = array_change_key_case($metatables, CASE_LOWER);
     if (!array_key_exists($tablename,  $metatables)) {
         $db->debug = $olddbdebug; //Re-set original $db->debug
