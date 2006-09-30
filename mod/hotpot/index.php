@@ -246,7 +246,7 @@
 		// restrict results to this user only
 		$select .= " AND a.userid='$USER->id'";
 	}
-	$usejoin = 1;
+	$usejoin = 0;
 	if (isadmin() && $usejoin) {
 		// join attempts table and details table
 		$tables .= ",{$CFG->prefix}hotpot_details AS d";
@@ -256,6 +256,7 @@
 		// this may take about twice as long as getting the gradecounts separately :-(
 		// so this operation could be done after getting the $totals from the attempts table
 	}
+	print "SELECT $fields FROM $tables WHERE $select GROUP BY a.hotpot";
 	$totals = get_records_sql("SELECT $fields FROM $tables WHERE $select GROUP BY a.hotpot");
 
 	if (isadmin() && empty($usejoin)) {
