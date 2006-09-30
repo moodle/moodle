@@ -917,8 +917,55 @@ function drop_index($table, $index, $continue=true, $feedback=true) {
         return true; //Index doesn't exist, nothing to do
     }
 
-
     if(!$sqlarr = $table->getDropIndexSQL($CFG->dbtype, $CFG->prefix, $index, false)) {
+        return true; //Empty array = nothing to do = no error
+    }
+
+    return execute_sql_arr($sqlarr, $continue, $feedback);
+}
+
+/**
+ * This function will rename the index in the table passed as arguments
+ * Before renaming the index, the function will check it exists
+ *
+ * @uses $CFG, $db
+ * @param XMLDBTable table object (just the name is mandatory)
+ * @param XMLDBIndex index object (full specs are required)
+ * @param string new name of the index
+ * @param boolean continue to specify if must continue on error (true) or stop (false)
+ * @param boolean feedback to specify to show status info (true) or not (false)
+ * @return boolean true on success, false on error
+ */
+function rename_index($table, $index, $newname, $continue=true, $feedback=true) {
+
+    global $CFG, $db;
+
+    $status = true;
+
+    if (strtolower(get_class($table)) != 'xmldbtable') {
+        return false;
+    }
+    if (strtolower(get_class($index)) != 'xmldbindex') {
+        return false;
+    }
+
+/// Check index exists
+    if (!index_exists($table, $index)) {
+        debugging('Index ' . $index->getName() . ' do not exist. Skipping its renaming', DEBUG_DEVELOPER);
+        return true; //Index doesn't exist, nothing to do
+    }
+
+/// Check newname isn't empty
+    if (!$newname) {
+        debugging('New name for index ' . $index->getName() . ' is empty! Skipping its renaming', DEBUG_DEVELOPER);
+        return true; //Index doesn't exist, nothing to do
+    }
+
+/// Assign the new name to the index
+    $index->setName($newname);
+
+    if(!$sqlarr = $table->getRenameIndexSQL($CFG->dbtype, $CFG->prefix, $index, false)) {
+        debugging('Some DBs do not support index renaming (MySQL). Skipping its renaming', DEBUG_DEVELOPER);
         return true; //Empty array = nothing to do = no error
     }
 
