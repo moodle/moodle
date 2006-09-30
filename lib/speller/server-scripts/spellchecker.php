@@ -20,7 +20,7 @@ if(!($lang = check_language($aspell_prog))) {
 }
 
 $aspell_opts = '-a -H --lang='. $lang .' --encoding=utf-8';
-$tempfiledir = './';
+$tempfiledir = $CFG->dataroot; // Use dataroot since it must be writable
 $input_separator = 'A';
 
 function check_language($cmd) {
