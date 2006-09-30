@@ -179,7 +179,7 @@
                 lesson_set_message(get_string('lessonnotready', 'lesson', $course->teacher)); // a nice message to the student
             } else {
                 if (!count_records('lesson_pages', 'lessonid', $lesson->id)) {
-                    redirect("$CFG->wwwroot/mod/lesson/lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=0"); // no pages - redirect to add pages
+                    redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id"); // no pages - redirect to add pages
                 } else {
                     lesson_set_message(get_string('lessonpagelinkingbroken', 'lesson'));  // ok, bad mojo
                 }
@@ -412,8 +412,6 @@
                 error('Navigation: No answers on EOB');
             }
         }
-        
-        
         
         // check to see if the user can see the left menu
         if (!has_capability('mod/lesson:manage', $context)) {
