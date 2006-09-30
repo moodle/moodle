@@ -921,17 +921,17 @@ function moodle_install_roles() {
 /// Create default/legacy roles and capabilities.
 /// (1 legacy capability per legacy role at system level).
 
-    $adminrole = create_role(get_string('administrator'), 'admin', 
+    $adminrole = create_role(get_string('administrator'), 'admin',
                              get_string('administratordescription'), 'moodle/legacy:admin');
-    $coursecreatorrole  = create_role(get_string('coursecreators'), 'coursecreator', 
+    $coursecreatorrole  = create_role(get_string('coursecreators'), 'coursecreator',
                                       get_string('coursecreatorsdescription'), 'moodle/legacy:coursecreator');
-    $editteacherrole    = create_role(get_string('defaultcourseteacher'), 'editingteacher', 
+    $editteacherrole    = create_role(get_string('defaultcourseteacher'), 'editingteacher',
                                       get_string('defaultcourseteacherdescription'), 'moodle/legacy:editingteacher');
-    $noneditteacherrole = create_role(get_string('noneditingteacher'), 'teacher', 
+    $noneditteacherrole = create_role(get_string('noneditingteacher'), 'teacher',
                                       get_string('noneditingteacherdescription'), 'moodle/legacy:teacher');
-    $studentrole        = create_role(get_string('defaultcoursestudent'), 'student', 
+    $studentrole        = create_role(get_string('defaultcoursestudent'), 'student',
                                       get_string('defaultcoursestudentdescription'), 'moodle/legacy:student');
-    $guestrole          = create_role(get_string('guest'), 'guest', 
+    $guestrole          = create_role(get_string('guest'), 'guest',
                                       get_string('guestdescription'), 'moodle/legacy:guest');
 
 /// Now is the correct moment to install capabilitites - after creation of legacy roles, but before assigning of roles
@@ -2117,8 +2117,8 @@ function fetch_context_capabilities($context) {
     if (!$records = get_records_sql($SQL.' '.$sort)) {
         $records = array();
     }
-    $contextindependentcaps = fetch_context_independent_capabilities();
-    $records = array_merge($records, $contextindependentcaps);
+
+/// the rest of code is a bit hacky, think twice before modifying it :-(
 
     // special sorting of core system capabiltites and enrollments
     if ($context->contextlevel == CONTEXT_SYSTEM) {
@@ -2134,8 +2134,11 @@ function fetch_context_capabilities($context) {
         if (count($first)) {
            $records = $first + $records; // merge the two arrays keeping the keys
         }
+    } else {
+        $contextindependentcaps = fetch_context_independent_capabilities();
+        $records = array_merge($contextindependentcaps, $records);
     }
-    // end of special sorting
+
     return $records;
 
 }
@@ -2148,6 +2151,7 @@ function fetch_context_capabilities($context) {
  */
 function fetch_context_independent_capabilities() {
 
+    //only CONTEXT_SYSTEM capabilitites here or it will break the hack in fetch_context_capabilities()
     $contextindependentcaps = array(
         'moodle/site:accessallgroups'
         );
