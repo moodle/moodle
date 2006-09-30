@@ -275,6 +275,36 @@ function table_exists($xmldb_table) {
 
     return $exists;
 }
+
+/**
+ * Given one XMLDBIndex, check if it exists in DB (true/false)
+ *
+ * @uses, $db
+ * @param XMLDBTable the table
+ * @param XMLDBIndex the index to be searched for
+ * @return boolean true/false
+ */
+function index_exists($xmldb_table, $xmldb_index) {
+
+    global $CFG, $db;
+
+    $exists = true;
+
+/// Do this function silenty (to avoid output in install/upgrade process)
+    $olddbdebug = $db->debug;
+    $db->debug = false;
+
+/// Wrap over find_index_name to see if the index exists
+    if (!$find_index_name($xmldb_table, $xmldb_index)) {
+        $exists = false;
+    }
+
+/// Re-set original debug 
+    $db->debug = $olddbdebug;
+
+    return $exists;
+}
+
 /**
  * This function IS NOT IMPLEMENTED. ONCE WE'LL BE USING RELATIONAL
  * INTEGRITY IT WILL BECOME MORE USEFUL. FOR NOW, JUST CALCULATE "OFFICIAL"
@@ -351,18 +381,22 @@ function find_index_name($xmldb_table, $xmldb_index) {
 /// Extract index columns
     $indcolumns = $xmldb_index->getFields();
 
-/// Calculate table name
-    $tablename = $CFG->prefix . $xmldb_table->getName();
-
 /// Check the table exists
     if (!table_exists($xmldb_table)) {
         $db->debug = $olddbdebug; //Re-set original $db->debug
         return false;
     }
 
+/// Load the needed generator
+    $classname = 'XMLDB' . $CFG->dbtype;
+    $generator = new $classname();
+    $generator->setPrefix($CFG->prefix);
+/// Calculate the name of the table
+    $tablename = $generator->getTableName($xmldb_table, false);
+
 /// Get list of indexes in table
     $indexes = null;
-    if ($indexes = $db->MetaIndexes($CFG->prefix . $xmldb_table->getName())) {
+    if ($indexes = $db->MetaIndexes($tablename)) {
         $indexes = array_change_key_case($indexes, CASE_LOWER);
     }
 
