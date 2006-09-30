@@ -595,6 +595,12 @@ function add_field($table, $field, $continue=true, $feedback=true) {
         return false;
     }
 
+/// Check the field doesn't exist
+    if (field_exists($table, $field)) {
+        debugging('Field ' . $field->getName() . ' exists. Skipping its creation', DEBUG_DEVELOPER);
+        return true;
+    }
+
     if(!$sqlarr = $table->getAddFieldSQL($CFG->dbtype, $CFG->prefix, $field, false)) {
         return true; //Empty array = nothing to do = no error
     }
@@ -623,6 +629,12 @@ function drop_field($table, $field, $continue=true, $feedback=true) {
     }
     if (strtolower(get_class($field)) != 'xmldbfield') {
         return false;
+    }
+
+/// Check the field exists
+    if (!field_exists($table, $field)) {
+        debugging('Field ' . $field->getName() . ' do not exist. Skipping its deletion', DEBUG_DEVELOPER);
+        return true;
     }
 
     if(!$sqlarr = $table->getDropFieldSQL($CFG->dbtype, $CFG->prefix, $field, false)) {
