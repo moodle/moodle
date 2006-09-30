@@ -478,6 +478,12 @@ function create_table($table, $continue=true, $feedback=true) {
         return false;
     }
 
+/// Check table doesn't exist
+    if (table_exists($table)) {
+        debugging('Table ' . $table->getName() . ' exists. Skipping its creation', DEBUG_DEVELOPER);
+        return true; //Table exists, nothing to do
+    }
+
     if(!$sqlarr = $table->getCreateTableSQL($CFG->dbtype, $CFG->prefix, false)) {
         return true; //Empty array = nothing to do = no error
     }
@@ -504,6 +510,12 @@ function drop_table($table, $continue=true, $feedback=true) {
 
     if (strtolower(get_class($table)) != 'xmldbtable') {
         return false;
+    }
+
+/// Check table exists
+    if (!table_exists($table)) {
+        debugging('Table ' . $table->getName() . ' don not exist. Skipping its deletion', DEBUG_DEVELOPER);
+        return true; //Table don't exist, nothing to do
     }
 
     if(!$sqlarr = $table->getDropTableSQL($CFG->dbtype, $CFG->prefix, false)) {
@@ -813,7 +825,7 @@ function drop_index($table, $index, $continue=true, $feedback=true) {
 
 /// Check index exists
     if (!index_exists($table, $index)) {
-        debugging('Index ' . $index->getName() . ' do not exists. Skipping its deletion', DEBUG_DEVELOPER);
+        debugging('Index ' . $index->getName() . ' do not exist. Skipping its deletion', DEBUG_DEVELOPER);
         return true; //Index doesn't exist, nothing to do
     }
 
