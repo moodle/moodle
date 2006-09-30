@@ -229,7 +229,7 @@ class XMLDBgenerator {
         if ($xmldb_indexes = $xmldb_table->getIndexes()) {
             foreach ($xmldb_indexes as $xmldb_index) {
             ///Only process all this if the index doesn't exist in DB
-                if (!find_index_name($xmldb_table, $xmldb_index)) {
+                if (!index_exists($xmldb_table, $xmldb_index)) {
                     if ($indextext = $this->getCreateIndexSQL($xmldb_table, $xmldb_index)) {
                         $results = array_merge($results, $indextext);
                     }
@@ -247,7 +247,7 @@ class XMLDBgenerator {
                     $index = new XMLDBIndex('anyname');
                     $index->setFields($xmldb_key->getFields());
                 ///Only process all this if the index doesn't exist in DB
-                    if (!find_index_name($xmldb_table, $index)) {
+                    if (!index_exists($xmldb_table, $index)) {
                         $createindex = false; //By default
                         switch ($xmldb_key->getType()) {
                             case XMLDB_KEY_UNIQUE:
@@ -630,7 +630,7 @@ class XMLDBgenerator {
             }
             $xmldb_index = new XMLDBIndex('anyname');
             $xmldb_index->setAttributes($indextype, $xmldb_key->getFields());
-            if (!$indexname = find_index_name($xmldb_table, $xmldb_index)) {
+            if (!index_exists($xmldb_table, $xmldb_index)) {
                 $results = array_merge($results, $this->getAddIndexSQL($xmldb_table, $xmldb_index));
             }
         }
@@ -698,7 +698,7 @@ class XMLDBgenerator {
         /// Only if they exist
             $xmldb_index = new XMLDBIndex('anyname');
             $xmldb_index->setAttributes(XMLDB_INDEX_UNIQUE, $xmldb_key->getFields());
-            if ($indexname = find_index_name($xmldb_table, $xmldb_index)) {
+            if (index_exists($xmldb_table, $xmldb_index)) {
                 $results = array_merge($results, $this->getDropIndexSQL($xmldb_table, $xmldb_index));
             }
         }
