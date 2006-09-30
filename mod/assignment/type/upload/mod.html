@@ -1,22 +1,19 @@
 <?php
+    if (empty($form->var1)) {
+        $form->var1 = 3; // max number of uploaded files
+    }
+    if (empty($form->var2)) {
+        $form->var2 = 0; // enable notes
+    }
     if (empty($form->resubmit)) {
-        $form->resubmit = 0;  //upload&rev: =1
+        $form->resubmit = 1; // allow deleting
     }
     if (empty($form->maxbytes)) {
         $form->maxbytes = $CFG->assignment_maxbytes;
     }
     if (empty($form->emailteachers)) {
-        $form->emailteachers = '';
+        $form->emailteachers = 0;
     }
-    //allow multiple files (from new upload type)
-    if (empty($form->var1)) {
-        $form->var1 = 0; 
-    }
-    //email to students (from upload&review)
-    if (empty($form->var2)) {
-        $form->var2 = '';
-    }
-
 ?>
 
 <table align="center" cellpadding="5" cellspacing="0">
@@ -30,24 +27,39 @@
     ?>
   </td>
 </tr>
+
 <tr>
-    <td align="right"><b><?php print_string("allowmultiple", "assignment") ?>:</b></td>
+    <td align="right"><b><?php print_string("allowdeleting", "assignment") ?>:</b></td>
     <td>
     <?php
-        $options[0] = get_string("no"); $options[1] = get_string("yes");
-        choose_from_menu($options, "var1", $form->var1, "");
+        $options = array(0=>get_string("no"), 1=>get_string("yes"));
+        choose_from_menu($options, "resubmit", $form->resubmit, "");
+        helpbutton("allowdeleting", get_string("allowdeleting", "assignment"), "assignment");
     ?>
     </td>
 </tr>
 
 <tr>
-    <td align="right"><b><?php print_string("allowresubmit", "assignment") ?>:</b></td>
+    <td align="right"><b><?php print_string("allowmaxfiles", "assignment") ?>:</b></td>
     <td>
-    <?php 
-        $options[0] = get_string("no"); $options[1] = get_string("yes");
-        choose_from_menu($options, "resubmit", $form->resubmit, ""); //that's how it's un U&R
-    //    choose_from_menu($options, "var2", $form->var2, "");
-        helpbutton("resubmit", get_string("allowresubmit", "assignment"), "assignment");
+    <?php
+        $options = array();
+        for($i = 1; $i <= 20; $i++) {
+            $options[$i] = $i;
+        }
+        choose_from_menu($options, "var1", $form->var1, "");
+        helpbutton("allowmaxfiles", get_string("allowmaxfiles", "assignment"), "assignment");
+    ?>
+    </td>
+</tr>
+
+<tr>
+    <td align="right"><b><?php print_string("allownotes", "assignment") ?>:</b></td>
+    <td>
+    <?php
+        $options = array(0=>get_string("no"), 1=>get_string("yes"));
+        choose_from_menu($options, "var2", $form->var2, "");
+        helpbutton("allownotes", get_string("allownotes", "assignment"), "assignment");
     ?>
     </td>
 </tr>
@@ -55,23 +67,12 @@
 <tr>
     <td align="right"><b><?php print_string("emailteachers", "assignment") ?>:</b></td>
     <td>
-    <?php 
-        $options[0] = get_string("no"); $options[1] = get_string("yes");
+    <?php
+        $options = array(0=>get_string("no"), 1=>get_string("yes"));
         choose_from_menu($options, "emailteachers", $form->emailteachers, "");
         helpbutton("emailteachers", get_string("emailteachers", "assignment"), "assignment");
     ?>
     </td>
-</tr>
-<tr>
-        <td align="right"><b><?php print_string("emailstudents", "assignment") ?>:</b></td>
-        <td>
-        <?php
-                $options[0] = get_string("no"); $options[1] = get_string("yes");
-                choose_from_menu($options, "var2", $form->var2, "");
-        //        choose_from_menu($options, "emailstudents", $form->emailstudents, "");
-                helpbutton("emailstudents", get_string("emailstudents", "assignment"), "assignment");
-        ?>
-        </td>
 </tr>
 
 </table>

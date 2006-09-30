@@ -32,6 +32,7 @@ class assignment_base {
     var $currentgroup;
     var $usehtmleditor;
     var $defaultformat;
+    var $context;
 
     /**
      * Constructor for the base assignment class
@@ -56,6 +57,8 @@ class assignment_base {
             } else if (! $this->cm = get_coursemodule_from_id('assignment', $cmid)) {
                 error('Course Module ID was incorrect');
             }
+
+            $this->context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
 
             if ($course) {
                 $this->course = $course;
@@ -922,6 +925,12 @@ class assignment_base {
         }
         echo '</div>';
         echo '</form>';
+
+        $customfeedback = $this->custom_feedbackform($submission, true);
+        if (!empty($customfeedback)) {
+            echo $customfeedback; 
+        }
+
         echo '</td></tr>';
         
         ///End of teacher info row, Start of student info row
@@ -1607,6 +1616,21 @@ class assignment_base {
         return assignment_display_lateness($timesubmitted, $this->assignment->timedue);
     }
 
+    /**
+     * Empty method stub for all delete actions.
+     */
+    function delete() {
+        //nothing by default
+        redirect('view.php?id='.$this->cm->id);
+    }
+
+    /**
+     * Empty custom feedback grading form.
+     */
+    function custom_feedbackform($submission, $return=false) {
+        //nothing by default
+        return '';
+    }
 
 } ////// End of the assignment_base class
 
@@ -2390,7 +2414,7 @@ function assignment_print_overview($courses, &$htmlarray) {
             // count how many people can submit
             $submissions = 0; // init
             $students = get_users_by_capability($context, 'mod/assignment:submit');
-            foreach ($student as $student) {
+            foreach ($students as $student) {
                 if (get_record('assignment_submissions', 'assignment', $assignment->id, 'userid', $student->id)) {
                     $submissions++;  
                 }

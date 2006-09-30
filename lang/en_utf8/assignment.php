@@ -2,6 +2,9 @@
       // assignment.php - created with Moodle 1.2 + (2004032100)
 
 
+$string['allowdeleting'] = 'Allow deleting';
+$string['allowmaxfiles'] = 'Maximum number of uploaded files';
+$string['allownotes'] = 'Allow notes';
 $string['allowresubmit'] = 'Allow resubmitting';
 $string['assignment:view'] = 'View assignment';
 $string['assignment:grade'] = 'Grade assignment';
@@ -19,20 +22,14 @@ You can see it appended to your <a href=\"$a->url\">assignment submission</a>.';
 $string['assignmentname'] = 'Assignment name';
 $string['assignmenttype'] = 'Assignment type';
 $string['availabledate'] = 'Available from';
-$string['allowmultiple'] = 'Allow multiple files';
-$string['attachfile'] = 'Attach file';
-$string['attachfiletoassignment'] = 'Attach file(s) to assignment';
-$string['backtoassignment'] = 'Back to Assignment';
-$string['backtofeedback'] = 'Back to Feedback';
-$string['choosereviewfile'] = 'Choose a file to upload as an assignment review:';
 $string['comment'] = 'Comment';
 $string['commentinline'] = 'Comment inline';
 $string['configitemstocount'] = 'Nature of items to be counted for student submissions in online assignments.';
 $string['configmaxbytes'] = 'Default maximum assignment size for all assignments on the site (subject to course limits and other local settings)';
-$string['deletecheckfile'] = 'Are you absolutely sure you want to delete this file?';
-$string['deleteednotification'] = 'File has been deleted.';
-$string['deletefail'] = 'The following file has not been deleted:';
+$string['confirmdeletefile'] = 'Are you absolutely sure you want to delete this file?<br /><strong>$a</strong>';
+$string['deletefilefailed'] = 'Deleting of file failed.';
 $string['description'] = 'Description';
+$string['draft'] = 'Draft';
 $string['duedate'] = 'Due date';
 $string['duedateno'] = 'No due date';
 $string['early'] = '$a early';
@@ -66,23 +63,29 @@ $string['helponline'] = '<p>This assignment type asks users to edit a text, usin
    editing tools.  Teachers can grade them online, and even add inline comments or changes.</p>
    <p>(If you are familiar with older versions of Moodle, this Assignment
    type does the same thing as the old Journal module used to do.)</p>';
-$string['helpupload'] = '<p>This type of assignment allows each participant to upload one or several files, of any type.</p> 
-   <p>These might be a Word processor documents, images, a zipped web site, or anything you ask them to submit.</p>
-   <p>This type also allows you to upload multiple response files of any type.</p>'; 
+$string['helpupload'] = '<p>This type of assignment allows each participant to upload one or more files in any format. 
+   These might be a Word processor documents, images, a zipped web site, or anything you ask them to submit.</p>
+   <p>This type also allows you to upload multiple response files. Response files can be also uploaded before submission which
+   can be used to give each participant different file to work with.</p>
+   <p>Participants may also enter notes describing the submitted files, progress status or any other text information.</p>
+   <p>Submission of this type of assignment must be manually finalized by the participant. You can review the current status
+   at any time, unfinished assignments are marked af Draft. You can revert any ungraded assignment back to draft status.</p>';
 $string['helpuploadsingle'] = '<p>This type of assignment allows each participant to upload a 
    single file, of any type.</p> <p>This might be a Word processor document, an image, 
    a zipped web site, or anything you ask them to submit.</p>';
 $string['late'] = '$a late';
-$string['markingsubmitnotification'] = 'File has been submitted for marking successfully.';
 $string['maximumgrade'] = 'Maximum grade';
 $string['maximumsize'] = 'Maximum size';
 $string['modulename'] = 'Assignment';
 $string['modulenameplural'] = 'Assignments';
-$string['namedeletefile'] = 'You about to delete this file:';
 $string['newsubmissions'] = 'Assignments submitted';
 $string['noassignments'] = 'There are no assignments yet';
 $string['noattempts'] = 'No attempts have been made on this assignment';
-$string['nofilesforsubmit'] = 'No file was found for submitting - are you sure you uploaded any?';
+$string['nofilesyet'] = 'No files submitted yet';
+$string['nofiles'] = 'No files were submitted';
+$string['notes'] = 'Notes';
+$string['notesempty'] = 'No entry';
+$string['notesupdateerror'] = 'Error when updating notes';
 $string['notgradedyet'] = 'Not graded yet';
 $string['notsubmittedyet'] = 'Not submitted yet';
 $string['onceassignmentsent'] = 'Once the assignment is sent for marking, you will no longer be able to delete or attach file(s).';
@@ -90,31 +93,25 @@ $string['overwritewarning'] = 'Warning: uploading again will REPLACE your curren
 $string['pagesize'] = 'Submissions shown per page';
 $string['preventlate'] = 'Prevent late submissions';
 $string['quickgrade'] = 'Allow quick grading';
-$string['removelink'] = 'Remove';
-$string['responsefile'] = 'Response File:';
-$string['responsesfromteacher'] = 'Responses Uploaded by the Teacher';
+$string['responsefiles'] = 'Response files';
 $string['saveallfeedback'] = 'Save all my feedback';
 $string['sendformarking'] = 'Send for marking';
-$string['step1'] = 'Step 1: ';
-$string['step2'] = 'Step 2: ';
-$string['submissionstatusblank'] = 'Blank';
-$string['submissionstatusdraft'] = 'Draft';
-$string['submissionstatusmarked'] = 'Marked';
-$string['submissionstatusreturned'] = 'Returned';
-$string['submissionstatus'] = 'Submission status:';
-$string['submissionstatussubmitted'] = 'Submitted';
 $string['submission'] = 'Submission';
+$string['submissiondraft'] = 'Submission draft';
 $string['submissionfeedback'] = 'Submission feedback';
 $string['submissions'] = 'Submissions';
 $string['submissionsaved'] = 'Your changes have been saved';
 $string['submissionsnotgraded'] = '$a submissions not graded';
 $string['submitassignment'] = 'Submit your assignment using this form';
-$string['submitformarking'] = 'Submit assignment for marking';
+$string['submitedformarking'] = 'Assignment was already submitted for marking and can not be updated';
+$string['submitformarking'] = 'Final submission for assignment marking';
 $string['submitted'] = 'Submitted';
+$string['submittedfiles'] = 'Submitted files';
 $string['typeoffline'] = 'Offline activity';
 $string['typeonline'] = 'Online text';
 $string['typeupload'] = 'Advanced uploading of files';
 $string['typeuploadsingle'] = 'Upload a single file';
+$string['unfinalize'] = 'Revert to draft';
 $string['uploadbadname'] = 'This filename contained strange characters and couldn\'t be uploaded';
 $string['uploadedfiles'] = 'uploaded files';
 $string['uploaderror'] = 'An error happened while saving the file on the server';
@@ -123,7 +120,6 @@ $string['uploadfiletoobig'] = 'Sorry, but that file is too big (limit is $a byte
 $string['uploadnofilefound'] = 'No file was found - are you sure you selected one to upload?';
 $string['uploadnotregistered'] = '\'$a\' was uploaded OK but submission did not register!';
 $string['uploadsuccess'] = 'Uploaded \'$a\' successfully';
-$string['uploadsuccessresponse'] = 'Response file uploaded successfully.';
 $string['viewfeedback'] = 'View assignment grades and feedback';
 $string['viewsubmissions'] = 'View $a submitted assignments';
 $string['yoursubmission'] = 'Your submission';
