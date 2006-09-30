@@ -468,22 +468,18 @@ if ($form->mode == "add") {
     <td align="right"><b><?php  print_string("dependencyon", "lesson"); ?>:</b></td>
     <td align="left">
         <?php
-        $options = array();
-        $options[0] = get_string("none");
-        if (empty($form->instance)) {
-            $select = "course = $course->id";
-        } else {
-            $select = "course = $course->id AND id != $form->instance";
-        }
-        if ($lessons = get_records_select('lesson', $select, 'name ASC')) {
-            foreach($lessons as $lesson) {
-                $options[$lesson->id] = $lesson->name;
+            $options = array();
+            if ($lessons = get_all_instances_in_course('lesson', $course)) {
+                foreach($lessons as $lesson) {
+                    if ($form->instance != $lesson->id) {
+                        $options[$lesson->id] = format_string($lesson->name, true);
+                    }
+                }
             }
-        }
         
-        choose_from_menu($options, "dependency", $form->dependency, "");
+            choose_from_menu($options, 'dependency', $form->dependency, get_string('none'));
+            helpbutton("dependency", get_string("dependency", "lesson"), "lesson");
         ?>
-        <?php helpbutton("dependency", get_string("dependency", "lesson"), "lesson"); ?>
     </td>
 </tr>
 
