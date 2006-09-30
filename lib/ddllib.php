@@ -295,7 +295,7 @@ function index_exists($table, $index) {
     $db->debug = false;
 
 /// Wrap over find_index_name to see if the index exists
-    if (!$find_index_name($table, $index)) {
+    if (!find_index_name($table, $index)) {
         $exists = false;
     }
 
