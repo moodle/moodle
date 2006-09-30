@@ -151,7 +151,7 @@ class XMLDBgenerator {
             $prefixtouse = '';
         }
     /// Get the name
-        $tablename = $this->prefix . $xmldb_table->getName();
+        $tablename = $prefixtouse . $xmldb_table->getName();
     /// Apply quotes conditionally
         if ($quoted) {
             $tablename = $this->getEncQuoted($tablename);
@@ -174,6 +174,13 @@ class XMLDBgenerator {
         if (!$xmldb_fields = $xmldb_table->getFields()) {
             return false;
         }
+
+    /// Prevent tables without prefix to be duplicated (part of MDL-6614)
+        if (in_array($xmldb_table->getName(), $this->getTablesWithoutPrefix()) &&
+            table_exists($xmldb_table)) {
+            return false;
+        }
+
     /// Add the fields, separated by commas
         foreach ($xmldb_fields as $xmldb_field) {
             $table .= "\n    " . $this->getFieldSQL($xmldb_field);
