@@ -308,8 +308,23 @@ function find_index_name($xmldb_table, $xmldb_index) {
 
     global $CFG, $db;
 
+/// Do this function silenty (to avoid output in install/upgrade process)
+    $olddbdebug = $db->debug;
+    $db->debug = false;
+
 /// Extract index columns
     $indcolumns = $xmldb_index->getFields();
+
+/// Calculate table name
+    $tablename = $CFG->prefix . $xmldb_table->getName();
+
+/// Check the table exists
+    $metatables = $db->MetaTables();
+    $metatables = array_change_key_case($metatables, CASE_LOWER);
+    if (!array_key_exists($tablename,  $metatables)) {
+        $db->debug = $olddbdebug; //Re-set original $db->debug
+        return false;
+    }
 
 /// Get list of indexes in table
     $indexes = null;
@@ -329,11 +344,13 @@ function find_index_name($xmldb_table, $xmldb_index) {
             $diferences = array_merge(array_diff($columns, $indcolumns), array_diff($indcolumns, $columns));
         /// If no diferences, we have find the index
             if (empty($diferences)) {
+                $db->debug = $olddbdebug; //Re-set original $db->debug
                 return $indexname;
             }
         }
     }
 /// Arriving here, index not found
+    $db->debug = $olddbdebug; //Re-set original $db->debug
     return false;
 }
 
