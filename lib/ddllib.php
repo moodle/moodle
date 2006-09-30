@@ -923,10 +923,7 @@ function rename_key($table, $key, $newname, $continue=true, $feedback=true) {
         return true; //Key doesn't exist, nothing to do
     }
 
-/// Assign the new name to the index
-    $key->setName($newname);
-
-    if(!$sqlarr = $table->getRenameKeySQL($CFG->dbtype, $CFG->prefix, $key, false)) {
+    if(!$sqlarr = $table->getRenameKeySQL($CFG->dbtype, $CFG->prefix, $key, $newname, false)) {
         debugging('Some DBs do not support key renaming (MySQL, PostgreSQL, MsSQL). Rename skipped', DEBUG_DEVELOPER);
         return true; //Empty array = nothing to do = no error
     }
@@ -1048,10 +1045,7 @@ function rename_index($table, $index, $newname, $continue=true, $feedback=true) 
         return true; //Index doesn't exist, nothing to do
     }
 
-/// Assign the new name to the index
-    $index->setName($newname);
-
-    if(!$sqlarr = $table->getRenameIndexSQL($CFG->dbtype, $CFG->prefix, $index, false)) {
+    if(!$sqlarr = $table->getRenameIndexSQL($CFG->dbtype, $CFG->prefix, $index, $newname, false)) {
         debugging('Some DBs do not support index renaming (MySQL). Rename skipped', DEBUG_DEVELOPER);
         return true; //Empty array = nothing to do = no error
     }

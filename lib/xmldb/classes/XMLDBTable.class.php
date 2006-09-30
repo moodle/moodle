@@ -967,14 +967,14 @@ class XMLDBTable extends XMLDBObject {
      * This function will return the SQL code needed to rename one key from the table for the specified DB and
      * prefix. Just one simple wrapper over generators.
      */
-    function getRenameKeySQL ($dbtype, $prefix, $xmldb_key, $statement_end=true) {
+    function getRenameKeySQL ($dbtype, $prefix, $xmldb_key, $newname, $statement_end=true) {
 
         $results = array();
 
         $classname = 'XMLDB' . $dbtype;
         $generator = new $classname();
         $generator->setPrefix($prefix);
-        $results = $generator->getRenameKeySQL($this, $xmldb_key);
+        $results = $generator->getRenameKeySQL($this, $xmldb_key, $newname);
         if ($statement_end) {
             $results = $generator->getEndedStatements($results);
         }
@@ -1022,14 +1022,14 @@ class XMLDBTable extends XMLDBObject {
      * prefix. Just one simple wrapper over generators.
      * Experimental. Shouldn't be used at all!
      */
-    function getRenameIndexSQL ($dbtype, $prefix, $xmldb_index, $statement_end=true) {
+    function getRenameIndexSQL ($dbtype, $prefix, $xmldb_index, $newname, $statement_end=true) {
 
         $results = array();
 
         $classname = 'XMLDB' . $dbtype;
         $generator = new $classname();
         $generator->setPrefix($prefix);
-        $results = $generator->getRenameIndexSQL($this, $xmldb_index);
+        $results = $generator->getRenameIndexSQL($this, $xmldb_index, $newname);
         if ($statement_end) {
             $results = $generator->getEndedStatements($results);
         }

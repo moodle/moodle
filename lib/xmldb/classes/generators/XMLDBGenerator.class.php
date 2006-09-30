@@ -479,7 +479,7 @@ class XMLDBgenerator {
 
     /// TODO, call to getRenameTableExtraSQL() if $rename_table_extra_code is enabled. It will add sequence regeneration code.
         if ($this->rename_table_extra_code) {
-            $extra_sentences = $this->getRenameTableExtraSQL();
+            $extra_sentences = $this->getRenameTableExtraSQL($xmldb_table, $newname);
             $results = array_merge($results, $extra_sentences);
         }
 
@@ -744,7 +744,7 @@ class XMLDBgenerator {
      * Experimental! Shouldn't be used at all!
      */
 
-    function getRenameKeySQL($xmldb_table, $xmldb_key) {
+    function getRenameKeySQL($xmldb_table, $xmldb_key, $newname) {
 
         $results = array();
 
@@ -759,14 +759,14 @@ class XMLDBgenerator {
         /// We aren't generating this type of keys, delegate to child indexes
             $xmldb_index = new XMLDBIndex($xmldb_key->getName());
             $xmldb_index->setFields($xmldb_key->getFields());
-            return $this->getRenameIndexSQL($xmldb_table, $xmldb_index);
+            return $this->getRenameIndexSQL($xmldb_table, $xmldb_index, $newname);
         }
 
     /// Arrived here so we are working with keys, lets rename them
     /// Replace TABLENAME and KEYNAME as needed
         $renamesql = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->rename_key_sql);
         $renamesql = str_replace('OLDKEYNAME', $dbkeyname, $renamesql);
-        $renamesql = str_replace('NEWKEYNAME', $xmldb_key->getName(), $renamesql);
+        $renamesql = str_replace('NEWKEYNAME', $newname, $renamesql);
 
     /// Some DB doesn't support key renaming so this can be empty
         if ($renamesql) {
@@ -809,7 +809,7 @@ class XMLDBgenerator {
      * Experimental! Shouldn't be used at all!
      */
 
-    function getRenameIndexSQL($xmldb_table, $xmldb_index) {
+    function getRenameIndexSQL($xmldb_table, $xmldb_index, $newname) {
 
         $results = array();
 
@@ -819,7 +819,7 @@ class XMLDBgenerator {
     /// Replace TABLENAME and INDEXNAME as needed
         $renamesql = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->rename_index_sql);
         $renamesql = str_replace('OLDINDEXNAME', $dbindexname, $renamesql);
-        $renamesql = str_replace('NEWINDEXNAME', $xmldb_index->getName(), $renamesql);
+        $renamesql = str_replace('NEWINDEXNAME', $newname, $renamesql);
 
     /// Some DB doesn't support index renaming (MySQL) so this can be empty
         if ($renamesql) {
