@@ -527,7 +527,7 @@ function create_table($table, $continue=true, $feedback=true) {
 
 /// Check table doesn't exist
     if (table_exists($table)) {
-        debugging('Table ' . $table->getName() . ' exists. Skipping its creation', DEBUG_DEVELOPER);
+        debugging('Table ' . $table->getName() . ' exists. Create skipped', DEBUG_DEVELOPER);
         return true; //Table exists, nothing to do
     }
 
@@ -561,11 +561,51 @@ function drop_table($table, $continue=true, $feedback=true) {
 
 /// Check table exists
     if (!table_exists($table)) {
-        debugging('Table ' . $table->getName() . ' don not exist. Skipping its deletion', DEBUG_DEVELOPER);
+        debugging('Table ' . $table->getName() . ' do not exist. Delete skipped', DEBUG_DEVELOPER);
         return true; //Table don't exist, nothing to do
     }
 
     if(!$sqlarr = $table->getDropTableSQL($CFG->dbtype, $CFG->prefix, false)) {
+        return true; //Empty array = nothing to do = no error
+    }
+
+    return execute_sql_arr($sqlarr, $continue, $feedback);
+}
+
+/**
+ * This function will rename the table passed as argument
+ * Before renaming the index, the function will check it exists
+ *
+ * @uses $CFG, $db
+ * @param XMLDBTable table object (just the name is mandatory)
+ * @param string new name of the index
+ * @param boolean continue to specify if must continue on error (true) or stop (false)
+ * @param boolean feedback to specify to show status info (true) or not (false)
+ * @return boolean true on success, false on error
+ */
+function rename_table($table, $newname, $continue=true, $feedback=true) {
+
+    global $CFG, $db;
+
+    $status = true;
+
+    if (strtolower(get_class($table)) != 'xmldbtable') {
+        return false;
+    }
+
+/// Check table exists
+    if (!table_exists($table)) {
+        debugging('Table ' . $table->getName() . ' do not exist. Rename skipped', DEBUG_DEVELOPER);
+        return true; //Table doesn't exist, nothing to do
+    }
+
+/// Check newname isn't empty
+    if (!$newname) {
+        debugging('New name for table ' . $index->getName() . ' is empty! Rename skipped', DEBUG_DEVELOPER);
+        return true; //Table doesn't exist, nothing to do
+    }
+
+    if(!$sqlarr = $table->getRenameTableSQL($CFG->dbtype, $CFG->prefix, $newname, false)) {
         return true; //Empty array = nothing to do = no error
     }
 
@@ -597,7 +637,7 @@ function add_field($table, $field, $continue=true, $feedback=true) {
 
 /// Check the field doesn't exist
     if (field_exists($table, $field)) {
-        debugging('Field ' . $field->getName() . ' exists. Skipping its creation', DEBUG_DEVELOPER);
+        debugging('Field ' . $field->getName() . ' exists. Create skipped', DEBUG_DEVELOPER);
         return true;
     }
 
@@ -633,7 +673,7 @@ function drop_field($table, $field, $continue=true, $feedback=true) {
 
 /// Check the field exists
     if (!field_exists($table, $field)) {
-        debugging('Field ' . $field->getName() . ' do not exist. Skipping its deletion', DEBUG_DEVELOPER);
+        debugging('Field ' . $field->getName() . ' do not exist. Delete skipped', DEBUG_DEVELOPER);
         return true;
     }
 
@@ -805,7 +845,7 @@ function add_key($table, $key, $continue=true, $feedback=true) {
         return false;
     }
     if ($key->getType() == XMLDB_KEY_PRIMARY) { // Prevent PRIMARY to be added (only in create table, being serious  :-P)
-        debugging('Primary Keys can be added at table creation time only', DEBUG_DEVELOPER);
+        debugging('Primary Keys can be added at table create time only', DEBUG_DEVELOPER);
         return true;
     }
 
@@ -879,7 +919,7 @@ function rename_key($table, $key, $newname, $continue=true, $feedback=true) {
 
 /// Check newname isn't empty
     if (!$newname) {
-        debugging('New name for key ' . $key->getName() . ' is empty! Skipping its renaming', DEBUG_DEVELOPER);
+        debugging('New name for key ' . $key->getName() . ' is empty! Rename skipped', DEBUG_DEVELOPER);
         return true; //Key doesn't exist, nothing to do
     }
 
@@ -887,7 +927,7 @@ function rename_key($table, $key, $newname, $continue=true, $feedback=true) {
     $key->setName($newname);
 
     if(!$sqlarr = $table->getRenameKeySQL($CFG->dbtype, $CFG->prefix, $key, false)) {
-        debugging('Some DBs do not support key renaming (MySQL, PostgreSQL, MsSQL). Skipping its renaming', DEBUG_DEVELOPER);
+        debugging('Some DBs do not support key renaming (MySQL, PostgreSQL, MsSQL). Rename skipped', DEBUG_DEVELOPER);
         return true; //Empty array = nothing to do = no error
     }
 
@@ -920,7 +960,7 @@ function add_index($table, $index, $continue=true, $feedback=true) {
 
 /// Check index doesn't exist
     if (index_exists($table, $index)) {
-        debugging('Index ' . $index->getName() . ' exists. Skipping its creation', DEBUG_DEVELOPER);
+        debugging('Index ' . $index->getName() . ' exists. Create skipped', DEBUG_DEVELOPER);
         return true; //Index exists, nothing to do
     }
 
@@ -957,7 +997,7 @@ function drop_index($table, $index, $continue=true, $feedback=true) {
 
 /// Check index exists
     if (!index_exists($table, $index)) {
-        debugging('Index ' . $index->getName() . ' do not exist. Skipping its deletion', DEBUG_DEVELOPER);
+        debugging('Index ' . $index->getName() . ' do not exist. Delete skipped', DEBUG_DEVELOPER);
         return true; //Index doesn't exist, nothing to do
     }
 
@@ -998,13 +1038,13 @@ function rename_index($table, $index, $newname, $continue=true, $feedback=true) 
 
 /// Check index exists
     if (!index_exists($table, $index)) {
-        debugging('Index ' . $index->getName() . ' do not exist. Skipping its renaming', DEBUG_DEVELOPER);
+        debugging('Index ' . $index->getName() . ' do not exist. Rename skipped', DEBUG_DEVELOPER);
         return true; //Index doesn't exist, nothing to do
     }
 
 /// Check newname isn't empty
     if (!$newname) {
-        debugging('New name for index ' . $index->getName() . ' is empty! Skipping its renaming', DEBUG_DEVELOPER);
+        debugging('New name for index ' . $index->getName() . ' is empty! Rename skipped', DEBUG_DEVELOPER);
         return true; //Index doesn't exist, nothing to do
     }
 
@@ -1012,7 +1052,7 @@ function rename_index($table, $index, $newname, $continue=true, $feedback=true) 
     $index->setName($newname);
 
     if(!$sqlarr = $table->getRenameIndexSQL($CFG->dbtype, $CFG->prefix, $index, false)) {
-        debugging('Some DBs do not support index renaming (MySQL). Skipping its renaming', DEBUG_DEVELOPER);
+        debugging('Some DBs do not support index renaming (MySQL). Rename skipped', DEBUG_DEVELOPER);
         return true; //Empty array = nothing to do = no error
     }
 

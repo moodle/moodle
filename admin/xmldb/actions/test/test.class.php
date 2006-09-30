@@ -690,6 +690,36 @@ class test extends XMLDBAction {
             $tests['rename key (experimental. DO NOT USE IT)'] = $test;
         }
 
+    /// 39th test. Renaming one field
+        if ($test->status && 1==2) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $field = new XMLDBField('type');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
+            
+            $test->sql = $table->getRenameFieldSQL($CFG->dbtype, $CFG->prefix, $field, 'newnameforthefield', true);
+            $test->status = rename_field($table, $field, 'newnameforthefield', false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['rename field'] = $test;
+        }
+
+    /// 40th test. Renaming one table
+        if ($test->status) {
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            
+            $test->sql = $table->getRenameTableSQL($CFG->dbtype, $CFG->prefix, 'newnameforthetable', true);
+            $db->debug = true;
+            $test->status = rename_table($table, 'newnameforthetable', false, false);
+            $db->debug = false;
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['rename table'] = $test;
+        }
+
 
 
     /// TODO: Check here values of the inserted records to see that everything ha the correct value

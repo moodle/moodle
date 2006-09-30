@@ -91,6 +91,7 @@ class XMLDBgenerator {
 
     var $concat_character = '||'; //Characters to be used as concatenation operator. If not defined
                                   //MySQL CONCAT function will be used
+
     var $rename_table_sql = 'ALTER TABLE OLDNAME RENAME TO NEWNAME'; //SQL sentence to rename one table, both
                                   //OLDNAME and NEWNAME are dinamically replaced
 
@@ -470,9 +471,6 @@ class XMLDBgenerator {
         $results = array();  //Array where all the sentences will be stored
 
         $newt = new XMLDBTable($newname); //Temporal table for name calculations
-
-        $oldtablename = $this->getTableName($xmldb_table);
-        $newtablename = $this->getTableName($newt);
 
         $rename = str_replace('OLDNAME', $this->getTableName($xmldb_table), $this->rename_table_sql);
         $rename = str_replace('NEWNAME', $this->getTableName($newt), $rename);
