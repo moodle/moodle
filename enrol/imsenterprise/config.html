@@ -115,7 +115,7 @@ $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 $assignableroles = get_assignable_roles($sitecontext);
 $assignableroles = array('0' => get_string('ignore')) + $assignableroles;
 
-foreach(enrolment_plugin_imsenterprise::$imsroles as $imsrolenum=>$imsrolename){
+foreach($this->imsroles as $imsrolenum=>$imsrolename){
 ?>
 <tr valign="top">
     <td align="right">&quot;<?php echo $imsrolename ?>&quot;&nbsp;(<?php echo $imsrolenum ?>):</td>
@@ -125,7 +125,7 @@ foreach(enrolment_plugin_imsenterprise::$imsroles as $imsrolenum=>$imsrolename){
         $configref = "enrol_imse_imsrolemap" . $imsrolenum;
         
         choose_from_menu($assignableroles, 'enrol_imse_imsrolemap'.$imsrolenum, 
-           strlen($frm->$configref) ? $frm->$configref : enrolment_plugin_imsenterprise::determine_default_rolemapping($imsrolenum), '');
+           strlen($frm->$configref) ? $frm->$configref : $this->determine_default_rolemapping($imsrolenum), '');
     ?>
     </td>
     <td>

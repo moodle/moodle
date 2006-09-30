@@ -48,7 +48,7 @@ class enrolment_plugin_imsenterprise {
     var $log;    
 
 // The "roles" hard-coded in the IMS specification are:
-public static $imsroles = array(
+var $imsroles = array(
 '01'=>'Learner',
 '02'=>'Instructor',
 '03'=>'Content Developer',
@@ -67,7 +67,7 @@ public static $imsroles = array(
 * decide which role assignments to recommend by default.
 * For example, IMS role '01' is 'Learner', so may map to 'student' in Moodle.
 */
-public static function determine_default_rolemapping($imscode) {
+function determine_default_rolemapping($imscode) {
     switch($imscode) {
         case '01':
         case '04':
@@ -192,7 +192,7 @@ function process_config($config) {
 
 
 
-    foreach(enrolment_plugin_imsenterprise::$imsroles as $imsrolenum=>$imsrolename){
+    foreach($this->imsroles as $imsrolenum=>$imsrolename){
         $configref = 'enrol_imse_imsrolemap' . $imsrolenum;
         if (!isset($config->$configref)) {
             echo "<p>Resetting config->$configref</p>";
@@ -872,7 +872,7 @@ function decode_timeframe($string){ // Pass me the INNER CONTENTS of a <timefram
 */
 function load_role_mappings() {
     $this->rolemappings = array();
-    foreach(enrolment_plugin_imsenterprise::$imsroles as $imsrolenum=>$imsrolename) {
+    foreach($this->imsroles as $imsrolenum=>$imsrolename) {
         $this->rolemappings[$imsrolenum] = $this->rolemappings[$imsrolename]
             = get_field('config', 'value', 'name', 'enrol_imse_imsrolemap' . $imsrolenum);
     }
