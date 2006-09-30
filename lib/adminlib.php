@@ -432,6 +432,10 @@ function print_progress($done, $total, $updatetime=5, $sleeptime=1, $donetext=''
     static $starttime;
     static $lasttime;
 
+    if ($total < 2) {   // No need to show anything
+        return;
+    }
+
     if (empty($starttime)) {
         $starttime = $lasttime = time();
         $lasttime = $starttime - $updatetime;
