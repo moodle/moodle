@@ -241,7 +241,7 @@
         // restrict results to this user only
         $select .= " AND a.userid='$USER->id'";
     }
-    $usejoin = 1;
+    $usejoin = 0;
     if (has_capability('mod/hotpot:grade', get_context_instance(CONTEXT_SYSTEM, SITEID)) && $usejoin) {
         // join attempts table and details table
         $tables .= ",{$CFG->prefix}hotpot_details AS d";
