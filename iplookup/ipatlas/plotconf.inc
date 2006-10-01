@@ -42,7 +42,7 @@ $defaultdot = 0;
 $blockbadagents = 1;
 
 # log entries? comment the line to disable.
-$logging = "yes";
+#$logging = "yes";
 
 # path to the cookie
 $cookiepath = "/";
