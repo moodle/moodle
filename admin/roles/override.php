@@ -171,6 +171,8 @@
         $localoverrides = get_records_select('role_capabilities', "roleid = $roleid AND contextid = $context->id",
                                              '', 'capability, permission, id');
 
+        $lang = str_replace('_utf8', '', current_language());
+
         // Get the capabilities overrideable in this context
         if ($capabilities = fetch_context_capabilities($context)) {
             print_simple_box_start('center');
