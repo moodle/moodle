@@ -15,13 +15,14 @@
     $searchtext     = optional_param('searchtext', '', PARAM_RAW); // search string
     $previoussearch = optional_param('previoussearch', 0, PARAM_BOOL);
     $hidden         = optional_param('hidden', 0, PARAM_BOOL); // whether this assignment is hidden
-    $previoussearch = ($searchtext != '') or ($previoussearch) ? 1:0;
     $timestart      = optional_param('timestart', 0, PARAM_INT);
     $timeend        = optional_param('timened', 0, PARAM_INT);
     $userid         = optional_param('userid', 0, PARAM_INT); // needed for user tabs
     $courseid       = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
 
     $errors = array();
+
+    $previoussearch = ($searchtext != '') or ($previoussearch) ? 1:0;
 
     $baseurl = 'assign.php?contextid='.$contextid;
     if (!empty($userid)) {
@@ -74,6 +75,7 @@
     $strsearch = get_string('search');
     $strshowall = get_string('showall');
     $strparticipants = get_string('participants');
+    $strsearchresults = get_string('searchresults');
 
 
 
@@ -131,7 +133,9 @@
             $timemodified = time();
 
             foreach ($frm->addselect as $adduser) {
-                $adduser = clean_param($adduser, PARAM_INT);
+                if (!$adduser = clean_param($adduser, PARAM_INT)) {
+                    continue;
+                }
                 $allow = true;
                 if ($inmeta) {
                     if (has_capability('moodle/course:managemetacourse', $context, $adduser)) {
@@ -175,44 +179,34 @@
         }
     }
 
+    if ($roleid) {        /// prints a form to swap roles
 
-/// Get all existing participants in this course.
+    /// Get all existing participants in this context.
 
-    $existinguserarray = array();
-
-    if (!$contextusers = get_role_users($roleid, $context)) {
-        $contextusers = array();
-    }
-
-    foreach ($contextusers as $contextuser) {
-        $existinguserarray[] = $contextuser->id;
-    }
-
-    $existinguserlist = implode(',', $existinguserarray);
-    unset($existinguserarray);
-
-    $usercount = get_users(false, '', true, $existinguserlist);
-
-/// Get search results excluding any users already in this course
-    if (($searchtext != '') and $previoussearch) {
-        $searchusers = get_users(true, $searchtext, true, $existinguserlist, 'firstname ASC, lastname ASC',
-                                      '', '', 0, MAX_USERS_PER_PAGE, 'id, firstname, lastname, email');
-    }
-
-/// If no search results then get potential students for this course excluding users already in course
-    if (empty($searchusers)) {
-        $users = array();
-        if ($usercount <= MAX_USERS_PER_PAGE) {
-            if (!$users = get_users(true, '', true, $existinguserlist, 'firstname ASC, lastname ASC', '', '',
-                               0, MAX_USERS_PER_PAGE, 'id, firstname, lastname, email')) {
-                $users = array();
-            }
+        if (!$contextusers = get_role_users($roleid, $context, false, 'u.id, u.firstname, u.lastname, u.email')) {
+            $contextusers = array();
         }
 
-    }
+        $select  = "username <> 'guest' AND deleted = 0 AND confirmed = 1";
+    
+        $usercount = count_records_select('user', $select) - count($contextusers);
 
-    if ($roleid) {
-    /// prints a form to swap roles
+        $searchtext = trim($searchtext);
+
+        if ($searchtext !== '') {   // Search for a subset of remaining users
+            $LIKE      = sql_ilike();
+            $FULLNAME  = sql_fullname();
+
+            $select  .= " AND ($FULLNAME $LIKE '%$searchtext%' OR email $LIKE '%$searchtext%') ";
+        }
+
+        $availableusers = get_recordset_sql('SELECT id, firstname, lastname, email 
+                                               FROM '.$CFG->prefix.'user 
+                                              WHERE '.$select.'
+                                            ORDER BY lastname ASC, firstname ASC');
+
+        /// In the .html file below we loop through these results and exclude any in $contextusers
+    
         echo '<form name="rolesform" action="assign.php" method="post">';
         echo '<div align="center">'.$strcurrentcontext.': '.print_context_name($context).'<br/>';
         if ($userid) {
@@ -254,10 +248,7 @@
         $table->align = array('right', 'center');
 
         foreach ($assignableroles as $roleid => $rolename) {
-            $countusers = 0;
-            if ($contextusers = get_role_users($roleid, $context)) {
-                $countusers = count($contextusers);
-            }
+            $countusers = count_role_users($roleid, $context);
             $table->data[] = array('<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$rolename.'</a>', $countusers);
         }
 

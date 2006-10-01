@@ -19,9 +19,9 @@
     <tr>
       <td valign="top">
           <select name="removeselect[]" size="20" id="removeselect" multiple
-                  onFocus="document.studentform.add.disabled=true;
-                           document.studentform.remove.disabled=false;
-                           document.studentform.addselect.selectedIndex=-1;" />
+                  onFocus="document.assignform.add.disabled=true;
+                           document.assignform.remove.disabled=false;
+                           document.assignform.addselect.selectedIndex=-1;" />
           <?php
               foreach ($contextusers as $contextuser) {
                   $fullname = fullname($contextuser, true);
@@ -39,30 +39,35 @@
       </td>
       <td valign="top">
           <select name="addselect[]" size="20" id="addselect" multiple
-                  onFocus="document.studentform.add.disabled=false;
-                           document.studentform.remove.disabled=true;
-                           document.studentform.removeselect.selectedIndex=-1;">
+                  onFocus="document.assignform.add.disabled=false;
+                           document.assignform.remove.disabled=true;
+                           document.assignform.removeselect.selectedIndex=-1;">
           <?php
 
-              if (!empty($searchusers)) {
-                  echo "<optgroup label=\"$strsearchresults (" . count($searchusers) . ")\">\n";
-                  foreach ($searchusers as $user) {
-                      $fullname = fullname($user, true);
-                      echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
+              if (!empty($searchtext)) {
+                  echo "<optgroup label=\"$strsearchresults (" . $availableusers->_numOfRows . ")\">\n";
+                  while (! $availableusers->EOF) {
+                      $user = $availableusers->FetchObj();
+                      if (!isset($contextusers[$user->id])) {
+                          $fullname = fullname($user, true);
+                          echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
+                      }
+                      $availableusers->MoveNext();
                   }
                   echo "</optgroup>\n";
-              }
-        else {
+
+              } else {
                   if ($usercount > MAX_USERS_PER_PAGE) {
                       echo '<optgroup label="'.get_string('toomanytoshow').'"><option></option></optgroup>'."\n"
                           .'<optgroup label="'.get_string('trysearching').'"><option></option></optgroup>'."\n";
-                  }
-                  else {
-                      if ($usercount > 0) {    //fix for bug#4455
-                          foreach ($users as $user) {
+                  } else {
+                      while (! $availableusers->EOF) {
+                          $user = $availableusers->FetchObj();
+                          if (!isset($contextusers[$user->id])) {
                               $fullname = fullname($user, true);
                               echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
                           }
+                          $availableusers->MoveNext();
                       }
                   }
               }
@@ -70,14 +75,14 @@
          </select>
          <br />
          <input type="text" name="searchtext" size="30" value="<?php p($searchtext, true) ?>"
-                  onFocus ="document.studentform.add.disabled=true;
-                            document.studentform.remove.disabled=true;
-                            document.studentform.removeselect.selectedIndex=-1;
-                            document.studentform.addselect.selectedIndex=-1;"
+                  onFocus ="document.assignform.add.disabled=true;
+                            document.assignform.remove.disabled=true;
+                            document.assignform.removeselect.selectedIndex=-1;
+                            document.assignform.addselect.selectedIndex=-1;"
                   onkeydown = "var keyCode = event.which ? event.which : event.keyCode;
                                if (keyCode == 13) {
-                                    document.studentform.previoussearch.value=1;
-                                    document.studentform.submit();
+                                    document.assignform.previoussearch.value=1;
+                                    document.assignform.submit();
                                } " />
          <input name="search" id="search" type="submit" value="<?php p($strsearch) ?>" />
          <?php
