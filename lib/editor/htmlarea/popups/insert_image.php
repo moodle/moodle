@@ -264,12 +264,11 @@ form { margin-bottom: 0px; margin-top: 0px; }
       <td width="55%" valign="top"><?php
       if(has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id))) {
           print_string("filebrowser","editor");
+          echo "<br />";
+          echo "<iframe id=\"ibrowser\" name=\"ibrowser\" src=\"{$CFG->wwwroot}/lib/editor/htmlarea/coursefiles.php?usecheckboxes=1&id={$course->id}\" style=\"width: 100%; height: 200px;\"></iframe>";
       } else {
-          print "";
-      }?><br />
-      <?php has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id))?
-      "<iframe id=\"ibrowser\" name=\"ibrowser\" src=\"".$CFG->wwwroot."/lib/editor/htmlarea/coursefiles.php?usecheckboxes=1&id=".$course->id."\" style=\"width: 100%; height: 200px;\"></iframe>":
-      "";?>
+          print "<br />";
+      }?>
       </td>
       <td width="45%" valign="top"><?php print_string("preview","editor");?>:<br />
       <iframe id="ipreview" name="ipreview" src="about:blank" style="width: 100%; height: 200px;"></iframe>
