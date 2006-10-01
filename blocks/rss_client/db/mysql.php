@@ -18,10 +18,10 @@ function rss_client_upgrade($oldversion) {
 
 
     if ($oldversion < 2006091100) {
-        
+
         // We need a new field to store whether an RSS feed is shared or private.
         table_column('block_rss_client', '', 'shared', 'integer');
-        
+
         // Admin feeds used to be displayed to everybody (shared feeds).
         $admins = get_admins();
         if (!empty($admins)) {
@@ -42,7 +42,12 @@ function rss_client_upgrade($oldversion) {
                 }
             }
         }
-        
+    }
+
+/// see MDL-6707 for more info about problem that was here
+
+    if ($oldversion < 2006100101) {
+
         // Upgrade block to use the Roles System.
         $block = get_record('block', 'name', 'rss_client');
         
@@ -65,7 +70,7 @@ function rss_client_upgrade($oldversion) {
             }
             
             foreach ($blockinstances as $bi) {
-                $context = get_context_instance(CONTEXT_MODULE, $bi->id);
+                $context = get_context_instance(CONTEXT_BLOCK, $bi->id);
                 
                 if ($bi->pagetype == 'course-view' && $bi->pageid == SITEID) {
                     

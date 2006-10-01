@@ -19,7 +19,7 @@
 
     function init() {
         $this->title = get_string('feedstitle', 'block_rss_client');
-        $this->version = 2006091100;
+        $this->version = 2006100101;
     }
 
     function preferred_width() {
