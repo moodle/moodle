@@ -68,6 +68,10 @@ $string['enterafilename'] = 'Please enter a file name';
 $string['copytoclipboard'] = 'Copy to Clipboard';
 $string['copiedtoclipboard'] = 'The contents of this page have been copied to the clipboard';
 
+// lib.php (calendar events)
+$string['hotpotcloses'] = 'Hot Potatoes quiz closes';
+$string['hotpotopens'] = 'Hot Potatoes quiz opens';
+
 // lib.php (status)
 $string['noactivity'] = 'No activity';
 $string['inprogress'] = 'In progress';
