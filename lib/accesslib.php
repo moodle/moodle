@@ -543,6 +543,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
 
     if ($context) { // if context is specified
         $usercontexts = get_parent_contexts($context);
+        $usercontexts[] = $context->id;  // Add the current context as well
     } else { // else, we load everything
         if ($userroles = get_records('role_assignments','userid',$userid)) {
             foreach ($userroles as $userrole) {
