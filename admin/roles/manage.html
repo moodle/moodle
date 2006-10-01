@@ -96,23 +96,23 @@ foreach ($capabilities as $capability) {
     $riskinfo = '';
     $rowclasses = '';
     if (RISK_MANAGETRUST & (int)$capability->riskbitmask) {
-        $riskinfo .= '<a title="'.get_string('riskmanagetrust', 'admin').'" href="'.$CFG->docroot.'/'.current_language().'/Risks">T</a>';
+        $riskinfo .= '<a title="'.get_string('riskmanagetrust', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/Risks">T</a>';
         $rowclasses .= ' riskmanagetrust';
     }
     if (RISK_CONFIG & (int)$capability->riskbitmask) {
-        $riskinfo .= '<a title="'.get_string('riskconfig', 'admin').'" href="'.$CFG->docroot.'/'.current_language().'/Risks">C</a>';
+        $riskinfo .= '<a title="'.get_string('riskconfig', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/Risks">C</a>';
         $rowclasses .= ' riskconfig';
     }
     if (RISK_XSS & (int)$capability->riskbitmask) {
-        $riskinfo .= '<a title="'.get_string('riskxss', 'admin').'" href="'.$CFG->docroot.'/'.current_language().'/Risks">X</a>';
+        $riskinfo .= '<a title="'.get_string('riskxss', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/Risks">X</a>';
         $rowclasses .= ' riskxss';
     }
     if (RISK_PERSONAL & (int)$capability->riskbitmask) {
-        $riskinfo .= '<a title="'.get_string('riskpersonal', 'admin').'" href="'.$CFG->docroot.'/'.current_language().'/Risks">P</a>';
+        $riskinfo .= '<a title="'.get_string('riskpersonal', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/Risks">P</a>';
         $rowclasses .= ' riskpersonal';
     }
     if (RISK_SPAM & (int)$capability->riskbitmask) {
-        $riskinfo .= '<a title="'.get_string('riskspam', 'admin').'" href="'.$CFG->docroot.'/'.current_language().'/Risks">S</a>';
+        $riskinfo .= '<a title="'.get_string('riskspam', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/Risks">S</a>';
         $rowclasses .= ' riskspam';
     }
 

@@ -303,6 +303,8 @@
         }
         echo '</div>';
 
+        $lang = str_replace('_utf8', '', current_language());
+
         print_simple_box_start('center');
         include_once('manage.html');
         print_simple_box_end();
