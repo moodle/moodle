@@ -132,7 +132,7 @@
         $db->debug = true;
 
     /// Both old .sql files and new install.xml are supported
-    /// But we priorize install.xml (XMLDB) if present
+    /// But we prioritise install.xml (XMLDB) if present
         $status = false;
         if (file_exists("$CFG->libdir/db/install.xml")) {
             $status = install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
