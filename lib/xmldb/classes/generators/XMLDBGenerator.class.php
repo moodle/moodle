@@ -185,7 +185,7 @@ class XMLDBgenerator {
     /// Prevent tables without prefix to be duplicated (part of MDL-6614)
         if (in_array($xmldb_table->getName(), $this->getTablesWithoutPrefix()) &&
             table_exists($xmldb_table)) {
-            return false;
+            return $results; // false here would break the install, empty array is better ;-)
         }
 
     /// Add the fields, separated by commas
