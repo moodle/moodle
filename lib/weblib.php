@@ -3062,6 +3062,7 @@ function print_user($user, $course, $messageselect=false, $return=false) {
     static $isteacher;
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
+
     if (empty($string)) {     // Cache all the strings for the rest of the page
 
         $string->email       = get_string('email');
@@ -3090,7 +3091,7 @@ function print_user($user, $course, $messageselect=false, $return=false) {
     }
 
 /// Get the hidden field list
-    if (has_capability('moodle/course:viewhiddenuserfields', get_context_instance(CONTEXT_COURSE, $course->id))) {
+    if (has_capability('moodle/course:viewhiddenuserfields', $context)) {
         $hiddenfields = array();
     } else {
         $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
@@ -3107,7 +3108,8 @@ function print_user($user, $course, $messageselect=false, $return=false) {
     if (!empty($user->role) and ($user->role <> $course->teacher)) {
         $output .= $string->role .': '. $user->role .'<br />';
     }
-    if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category and !isguest()) or has_capability('moodle/course:viewhiddenuserfields', get_context_instance(CONTEXT_COURSE, $course->id))) {
+    if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category and !isguest()) or
+has_capability('moodle/course:viewhiddenuserfields', $context)) {
         $output .= $string->email .': <a href="mailto:'. $user->email .'">'. $user->email .'</a><br />';
     }
     if (($user->city or $user->country) and (!isset($hiddenfields['city']) or !isset($hiddenfields['country']))) {
@@ -3138,28 +3140,20 @@ function print_user($user, $course, $messageselect=false, $return=false) {
         $output .= '<a href="'.$CFG->wwwroot.'/blog/index.php?userid='.$user->id.'">'.get_string('blogs','blog').'</a><br />';
     }
 
-    if (has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $course->id))) {
+    if (has_capability('moodle/site:viewreports', $context)) {
         $timemidnight = usergetmidnight(time());
         $output .= '<a href="'. $CFG->wwwroot .'/course/user.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->activity .'</a><br />';
-        if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID, $user->id)) or ($isadmin and !isadmin($user->id))) {  // Includes admins
-            if ($course->category and isteacheredit($course->id) and isstudent($course->id, $user->id)) {  // Includes admins
-                $output .= '<a href="'. $CFG->wwwroot .'/course/unenrol.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->unenrol .'</a><br />';
-            }
-            if ($USER->id != $user->id) {
-                $output .= '<a href="'. $CFG->wwwroot .'/course/loginas.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->loginas .'</a><br />';
-            }
-        }
+    }
+    if (has_capability('moodle/role:assign', $context, NULL)) {  // Includes admins
+        $output .= '<a href="'. $CFG->wwwroot .'/course/unenrol.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->unenrol .'</a><br />';
+    }
+    if ($USER->id != $user->id && has_capability('moodle/user:loginas', $context))  {
+        $output .= '<a href="'. $CFG->wwwroot .'/course/loginas.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->loginas .'</a><br />';
     }
     $output .= '<a href="'. $CFG->wwwroot .'/user/view.php?id='. $user->id .'&amp;course='. $course->id .'">'. $string->fullprofile .'...</a>';
 
-    if (!empty($messageselect) && $isteacher) {
-        $output .= '<br /><input type="checkbox" name="';
-        if (isteacher($course->id, $user->id)) {
-            $output .= 'teacher';
-        } else {
-            $output .= 'user';
-        }
-        $output .= $user->id.'" /> ';
+    if (!empty($messageselect)) {
+        $output .= '<br /><input type="checkbox" name="user'.$user->id.'" /> ';
     }
 
     $output .= '</td></tr></table>';

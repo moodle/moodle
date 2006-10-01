@@ -282,7 +282,7 @@
         $tableheaders[] = get_string('select');
     }
 
-    $table = new flexible_table('user-index-students-'.$course->id);
+    $table = new flexible_table('user-index-participants-'.$course->id);
 
     $table->define_columns($tablecolumns);
     $table->define_headers($tableheaders);
@@ -291,7 +291,7 @@
     $table->sortable(true, 'lastaccess', SORT_DESC);
 
     $table->set_attribute('cellspacing', '0');
-    $table->set_attribute('id', 'students');
+    $table->set_attribute('id', 'participants');
     $table->set_attribute('class', 'generaltable generalbox');
 
     $table->set_control_variables(array(
@@ -361,7 +361,7 @@
     $table->initialbars($totalcount > $perpage);
     $table->pagesize($perpage, $matchcount);
 
-    $students = get_records_sql($select.$from.$where.$wheresearch.$sort,
+    $userlist = get_records_sql($select.$from.$where.$wheresearch.$sort,
             $table->get_page_start(),  $table->get_page_size());
 
     /// If there are multiple Roles in the course, then show a drop down menu for switching
@@ -420,7 +420,7 @@
         //-->
         </script>
             ';
-        echo '<form action="action_redir.php" method="post" name="studentsform" onSubmit="return checksubmit(this);">';
+        echo '<form action="action_redir.php" method="post" name="participantsform" onSubmit="return checksubmit(this);">';
         echo '<input type="hidden" name="returnto" value="'.$_SERVER['REQUEST_URI'].'" />';
         echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     }
@@ -431,8 +431,7 @@
 
     if ($fullmode) {    // Print simple listing
         if ($totalcount < 1) {
-            print_heading(get_string("nostudentsfound", "", $course->students));
-
+            print_heading(get_string('nothingtodisplay'));
         } else {
             if ($totalcount > $perpage) {
 
@@ -479,8 +478,8 @@
             }
 
             if ($matchcount > 0) {
-                foreach ($students as $student) {
-                    print_user($student, $course, true);
+                foreach ($userlist as $user) {
+                    print_user($user, $course, $bulkoperations);
                 }
 
             } else {
@@ -491,31 +490,31 @@
     } else {
         $countrysort = (strpos($sort, 'country') !== false);
         $timeformat = get_string('strftimedate');
-        if (!empty($students))  {
-            foreach ($students as $student) {
-                if ($student->lastaccess) {
-                    $lastaccess = format_time(time() - $student->lastaccess, $datestring);
+        if (!empty($userlist))  {
+            foreach ($userlist as $user) {
+                if ($user->lastaccess) {
+                    $lastaccess = format_time(time() - $user->lastaccess, $datestring);
                 } else {
                     $lastaccess = $strnever;
                 }
 
-                if (empty($student->country)) {
+                if (empty($user->country)) {
                     $country = '';
 
                 } else {
                     if($countrysort) {
-                        $country = '('.$student->country.') '.$countries[$student->country];
+                        $country = '('.$user->country.') '.$countries[$user->country];
                     }
                     else {
-                        $country = $countries[$student->country];
+                        $country = $countries[$user->country];
                     }
                 }
 
                 $data = array (
-                        print_user_picture($student->id, $course->id, $student->picture, false, true),
-                        '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$student->id.'&amp;course='.$course->id.'">'.fullname($student).'</a></strong>');
+                        print_user_picture($user->id, $course->id, $user->picture, false, true),
+                        '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></strong>');
                 if (!isset($hiddenfields['city'])) {
-                    $data[] = $student->city;
+                    $data[] = $user->city;
                 }
                 if (!isset($hiddenfields['country'])) {
                     $data[] = $country;
@@ -524,14 +523,14 @@
                     $data[] = $lastaccess;
                 }
                 if ($course->enrolperiod) {
-                    if ($student->timeend) {
-                        $data[] = userdate($student->timeend, $timeformat);
+                    if ($user->timeend) {
+                        $data[] = userdate($user->timeend, $timeformat);
                     } else {
                         $data[] = get_string('unlimited');
                     }
                 }
                 if ($bulkoperations) {
-                    $data[] = '<input type="checkbox" name="user'.$student->id.'" />';
+                    $data[] = '<input type="checkbox" name="user'.$user->id.'" />';
                 }
                 $table->add_data($data);
 
