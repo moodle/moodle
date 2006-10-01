@@ -21,11 +21,21 @@
         error("No such course id");
     }
 
+/// Make sure the current user is allowed to see this user
+
+    if (empty($USER->id)) {
+       $currentuser = false;
+    } else {
+       $currentuser = ($user->id == $USER->id);
+    }
+
     if (!empty($CFG->forcelogin) || $course->id != SITEID) {
         require_login($course->id);
     }
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
+    $usercontext   = get_context_instance(CONTEXT_USER, $user->id);       // User context
+
 
     if (!empty($CFG->forceloginforprofiles)) {
         require_login();
@@ -34,7 +44,9 @@
         }
     }
 
-    add_to_log($course->id, "user", "view", "view.php?id=$user->id&course=$course->id", "$user->id");
+    if (!$currentuser && !has_capability('moodle/course:view', $coursecontext, $user->id, false)) {
+        print_error('usernotavailable');
+    }
 
     if ($course->id != SITEID) {
         if ($lastaccess = get_record('user_lastaccess', 'userid', $user->id, 'courseid', $course->id)) {
@@ -42,15 +54,9 @@
         }
     }
 
-    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $coursecontext));
-    $personalprofile = get_string("personalprofile");
+    $personalprofile = get_string('personalprofile');
     $participants = get_string("participants");
 
-    if (empty($USER->id)) {
-       $currentuser = false;
-    } else {
-       $currentuser = ($user->id == $USER->id);
-    }
 
     if (groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $coursecontext)) {   // Groups must be kept separate
         require_login();
@@ -87,6 +93,10 @@
     }
 
 
+/// We've established they can see the user's name at least, so what about the rest?
+
+    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $coursecontext));
+
     if ($course->category) {
         print_header("$personalprofile: $fullname", "$personalprofile: $fullname",
                      "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
@@ -109,6 +119,11 @@
     if ($user->deleted) {
         print_heading(get_string('userdeleted'));
     }
+
+/// OK, security out the way, now we are showing the user
+
+    add_to_log($course->id, "user", "view", "view.php?id=$user->id&course=$course->id", "$user->id");
+
 
 /// Get the hidden field list
     if (has_capability('moodle/user:viewhiddendetails', $coursecontext)) {
@@ -176,7 +191,7 @@
 
         $emailswitch = '';
 
-        if (has_capability('moodle/course:useremail', get_context_instance(CONTEXT_COURSE, $course->id)) or $currentuser) {   /// Can use the enable/disable email stuff
+        if (has_capability('moodle/course:useremail', $coursecontext) or $currentuser) {   /// Can use the enable/disable email stuff
             if (!empty($enable)) {     /// Recieved a parameter to enable the email address
                 set_field('user', 'emailstop', 0, 'id', $user->id);
                 $user->emailstop = 0;
@@ -187,7 +202,7 @@
             }
         }
 
-        if (has_capability('moodle/course:useremail', get_context_instance(CONTEXT_COURSE, $course->id))) {   /// Can use the enable/disable email stuff
+        if (has_capability('moodle/course:useremail', $coursecontext)) {   /// Can use the enable/disable email stuff
             if ($user->emailstop) {
                 $switchparam = 'enable';
                 $switchtitle = get_string('emaildisable');
@@ -331,16 +346,14 @@
         }
     }
 
-    if ($USER->id != $user->id  &&
-        has_capability('moodle/user:loginas', get_context_instance(CONTEXT_USER, $user->id)) &&
-        !has_capability('moodle/site:doanything', $coursecontext) )  {
-          
+    if ($USER->id != $user->id  && has_capability('moodle/user:loginas', $coursecontext))  {
         echo '<td nowrap="nowrap"><form action="'.$CFG->wwwroot.'/course/loginas.php" method="get">';
         echo '<input type="hidden" name="id" value="'.$course->id.'" />';
         echo '<input type="hidden" name="user" value="'.$user->id.'" />';
         echo '<input type="submit" value="'.get_string('loginas').'" />';
         echo '</form></td>';
     }
+
     if (!empty($CFG->messaging) and !isguest()) {
         if (!empty($USER->id) and ($USER->id == $user->id)) {
             if ($countmessages = count_records('message', 'useridto', $user->id)) {
