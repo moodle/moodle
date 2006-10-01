@@ -607,6 +607,18 @@ function get_recordset_sql($sql, $limitfrom=null, $limitnum=null) {
         return false;
     }
 
+/// Temporary hack as part of phasing out all access to obsolete user tables  XXX
+    if (!empty($CFG->rolesactive)) {
+        if (strpos($sql, $CFG->prefix.'user_students') || 
+            strpos($sql, $CFG->prefix.'user_teachers') ||
+            strpos($sql, $CFG->prefix.'user_coursecreators') ||
+            strpos($sql, $CFG->prefix.'user_admins')) {
+            if (debugging()) { var_dump(debug_backtrace()); }
+            error('This SQL relies on obsolete tables!  Your code must be fixed by a developer.');
+        }
+    }
+
+
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
     if ($limitfrom || $limitnum) {
@@ -1051,6 +1063,14 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
         return false;
     }
 
+/// Temporary hack as part of phasing out all access to obsolete user tables  XXX
+    if (!empty($CFG->rolesactive)) {
+        if (in_array($table, array('user_students', 'user_teachers', 'user_coursecreators', 'user_admins'))) {
+            if (debugging()) { var_dump(debug_backtrace()); }
+            error('This SQL relies on obsolete tables ('.$table.')!  Your code must be fixed by a developer.');
+        }
+    }
+
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
 /// In Moodle we always use auto-numbering fields for the primary key
@@ -1166,6 +1186,14 @@ function update_record($table, $dataobject) {
 
     if (! isset($dataobject->id) ) {
         return false;
+    }
+
+/// Temporary hack as part of phasing out all access to obsolete user tables  XXX
+    if (!empty($CFG->rolesactive)) {
+        if (in_array($table, array('user_students', 'user_teachers', 'user_coursecreators', 'user_admins'))) {
+            if (debugging()) { var_dump(debug_backtrace()); }
+            error('This SQL relies on obsolete tables ('.$table.')!  Your code must be fixed by a developer.');
+        }
     }
 
 /// Begin DIRTY HACK
