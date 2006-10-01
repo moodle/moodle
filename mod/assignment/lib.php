@@ -2196,20 +2196,23 @@ function assignment_count_real_submissions($assignment, $groupid=0) {
     } else {
         $cm = get_coursemodule_from_instance('assignment', $assignment->id);
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        
+
         // this is all the users with this capability set, in this context or higher
-        $users = get_users_by_capability($context, 'mod/assignment:submit');
-        foreach ($users as $user) {
-            $array[] = $user->id;
+        if ($users = get_users_by_capability($context, 'mod/assignment:submit')) {
+            foreach ($users as $user) {
+                $array[] = $user->id;
+            }
+
+            $userlists = '('.implode(',',$array).')';
+
+            return count_records_sql("SELECT COUNT(*)
+                                      FROM {$CFG->prefix}assignment_submissions
+                                     WHERE assignment = '$assignment->id' 
+                                       AND timemodified > 0
+                                       AND userid IN $userlists ");
+        } else {
+            return 0; // no users enroled in course
         }
-        
-        $userlists = '('.implode(',',$array).')';
-                                   
-        return count_records_sql("SELECT COUNT(*)
-                                  FROM {$CFG->prefix}assignment_submissions
-                                 WHERE assignment = '$assignment->id' 
-                                   AND timemodified > 0
-                                   AND userid IN $userlists ");
     }
 }
 
