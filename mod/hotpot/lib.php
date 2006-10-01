@@ -189,22 +189,78 @@ define("HOTPOT_DISPLAYNEXT_INDEX",  "2");
 //  $hp->sesskey      : unique string required for Moodle's session management
 
 function hotpot_add_instance(&$hp) {
-    if (hotpot_set_form_values($hp)) {
-        $result = insert_record("hotpot", $hp);
-    } else {
-        $result=  false;
-    }
-    return $result;
+	if (hotpot_set_form_values($hp)) {
+		if ($result = insert_record('hotpot', $hp)) {
+            hotpot_update_events($hp);
+        }
+	} else {
+		$result=  false;
+	}
+	return $result;
 }
 
 function hotpot_update_instance(&$hp) {
-    if (hotpot_set_form_values($hp)) {
-        $hp->id = $hp->instance;
-        $result = update_record("hotpot", $hp);
+	if (hotpot_set_form_values($hp)) {
+		$hp->id = $hp->instance;
+		if ($result = update_record('hotpot', $hp)) {
+            hotpot_update_events($hp);
+        }
+	} else {
+		$result=  false;
+	}
+	return $result;
+}
+function hotpot_update_events($hotpot) {
+
+    // remove any previous calendar events for this hotpot
+    delete_records('event', 'modulename', 'hotpot', 'instance', $hotpot->id);
+
+    $event = new stdClass();
+    $event->description = $hotpot->summary;
+    $event->courseid    = $hotpot->course;
+    $event->groupid     = 0;
+    $event->userid      = 0;
+    $event->modulename  = 'hotpot';
+    $event->instance    = $hotpot->id;
+    $event->timestart   = $hotpot->timeopen;
+    if ($cm = get_coursemodule_from_id('hotpot', $hotpot->id)) {
+        $event->visible = hotpot_is_visible($cm);
     } else {
-        $result=  false;
+        $event->visible = 1;
     }
-    return $result;
+
+    if ($hotpot->timeclose && $hotpot->timeopen) {
+        // we have both a start and an end date
+        $event->eventtype   = 'open';
+        $event->timeduration = ($hotpot->timeclose - $hotpot->timeopen);
+
+        if ($event->timeduration > HOTPOT_MAX_EVENT_LENGTH) {  /// Long durations create two events
+    
+            $event->name          = $hotpot->name.' ('.get_string('hotpotopens', 'hotpot').')';
+            $event->timeduration  = 0;
+            add_event($event);
+    
+            $event->timestart    = $hotpot->timeclose;
+            $event->eventtype    = 'close';
+            $event->name         = $hotpot->name.' ('.get_string('hotpotcloses', 'hotpot').')';
+            unset($event->id);
+            add_event($event);
+        } else { // single event with duration
+            $event->name        = $hotpot->name;
+            add_event($event);
+        }
+    } elseif ($hotpot->timeopen) { // only an open date
+        $event->name          = $hotpot->name.' ('.get_string('hotpotopens', 'hotpot').')';
+        $event->eventtype   = 'open';
+        $event->timeduration = 0;
+        add_event($event);
+    } elseif ($hotpot->timeclose) { // only a closing date
+        $event->name         = $hotpot->name.' ('.get_string('hotpotcloses', 'hotpot').')';
+        $event->timestart    = $hotpot->timeclose;
+        $event->eventtype    = 'close';
+        $event->timeduration = 0;
+        add_event($event);
+    }
 }
 
 function hotpot_set_form_values(&$hp) {
