@@ -11,6 +11,15 @@ $temp->add(new admin_setting_configselect('forcetimezone', get_string('forcetime
 $options = get_list_of_countries();
 $options[0] = get_string('choose') .'...';
 $temp->add(new admin_setting_configselect('country', get_string('country', 'admin'), get_string('configcountry', 'admin'), 0, $options));
+
+$iplookups = array();
+if ($plugins = get_list_of_plugins('iplookup')) {
+    foreach ($plugins as $plugin) {
+        $iplookups[$plugin] = $plugin;
+    }
+}
+$temp->add(new admin_setting_configselect('iplookup', get_string('iplookup', 'admin'), get_string('configiplookup', 'admin'), 'hostip', $iplookups));
+
 $ADMIN->add('location', $temp);
 
 
