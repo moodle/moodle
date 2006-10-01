@@ -41,6 +41,8 @@ class XMLDBpostgres7 extends XMLDBgenerator {
     var $sequence_name = 'BIGSERIAL'; //Particular name for inline sequences in this generator
     var $sequence_only = true; //To avoid to output the rest of the field specs, leaving only the name and the sequence_name variable
 
+    var $rename_table_extra_code = true; //Does the generator need to add code after table rename
+
     var $enum_inline_code = false; //Does the generator need to add inline code in the column definition
 
     var $rename_key_sql = null; //SQL sentence to rename one key (PostgreSQL doesn't support this!)
@@ -131,6 +133,26 @@ class XMLDBpostgres7 extends XMLDBgenerator {
         $comment.= " IS '" . substr($xmldb_table->getComment(), 0, 250) . "'";
 
         return array($comment);
+    }
+
+    /**
+     * Returns the code (array of statements) needed to execute extra statements on table rename
+     */
+    function getRenameTableExtraSQL ($xmldb_table, $newname) {
+
+        $results = array();
+
+        $newt = new XMLDBTable($newname);
+
+        $xmldb_field = new XMLDBField('id'); // Fields having sequences should be exclusively, id.
+
+        $oldseqname = $this->getTableName($xmldb_table) . '_' . $xmldb_field->getName() . '_seq';
+        $newseqname = $this->getTableName($newt) . '_' . $xmldb_field->getName() . '_seq';
+
+    /// Rename de sequence
+        $results[] = 'ALTER TABLE ' . $oldseqname . ' RENAME TO ' . $newseqname;
+
+        return $results;
     }
 
     /**
