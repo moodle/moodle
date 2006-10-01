@@ -256,7 +256,6 @@
 		// this may take about twice as long as getting the gradecounts separately :-(
 		// so this operation could be done after getting the $totals from the attempts table
 	}
-	print "SELECT $fields FROM $tables WHERE $select GROUP BY a.hotpot";
 	$totals = get_records_sql("SELECT $fields FROM $tables WHERE $select GROUP BY a.hotpot");
 
 	if (isadmin() && empty($usejoin)) {
