@@ -6,8 +6,6 @@
 
     $id = required_param('id',PARAM_INT);    // Week ID
 
-    require_login();
-
     if (! $section = get_record("course_sections", "id", $id)) {
         error("Course section is incorrect");
     }
@@ -15,6 +13,8 @@
     if (! $course = get_record("course", "id", $section->course)) {
         error("Could not find the course!");
     }
+
+    require_login($course->id);
 
     require_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id));
 
