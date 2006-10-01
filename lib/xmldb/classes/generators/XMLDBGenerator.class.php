@@ -428,19 +428,18 @@ class XMLDBgenerator {
     }
 
     /**
-     * Give one XMLDBField, returns the correct "default clause" for the current configuration
+     * Give one XMLDBField, returns the correct "default value" for the current configuration
      */
-    function getDefaultClause ($xmldb_field) {
+    function getDefaultValue ($xmldb_field) {
 
-        $default = '';
+        $default = null;
 
         if ($xmldb_field->getDefault() != NULL) {
-            $default = ' DEFAULT ';
             if ($xmldb_field->getType() == XMLDB_TYPE_CHAR ||
                 $xmldb_field->getType() == XMLDB_TYPE_TEXT) {
-                    $default .= "'" . addslashes($xmldb_field->getDefault()) . "'";
+                    $default = "'" . addslashes($xmldb_field->getDefault()) . "'";
             } else {
-                $default .= $xmldb_field->getDefault();
+                $default = $xmldb_field->getDefault();
             }
         } else {
         /// We force default '' for not null char columns without proper default
@@ -448,18 +447,32 @@ class XMLDBgenerator {
             if ($this->default_for_char !== NULL &&
                 $xmldb_field->getType() == XMLDB_TYPE_CHAR &&
                 $xmldb_field->getNotNull()) {
-                $default = ' DEFAULT ' . "'" . $this->default_for_char . "'";
+                $default = "'" . $this->default_for_char . "'";
             } else {
             /// If the DB requires to explicity define some clause to drop one default, do it here
             /// never applying defaults to TEXT and BINARY fields
                 if ($this->drop_default_clause_required &&
                     $xmldb_field->getType() != XMLDB_TYPE_TEXT &&
                     $xmldb_field->getType() != XMLDB_TYPE_BINARY && !$xmldb_field->getNotNull()) {
-                    $default = ' DEFAULT ' . $this->drop_default_clause;
+                    $default = $this->drop_default_clause;
                 }
             }
         }
         return $default;
+    }
+
+    /**
+     * Given one XMLDBField, returns the correct "default clause" for the current configuration
+     */
+    function getDefaultClause ($xmldb_field) {
+
+        $defaultvalue = $this->getDefaultValue ($xmldb_field);
+
+        if ($defaultvalue !== null) {
+            return ' DEFAULT ' . $defaultvalue;
+        } else {
+            return null;
+        }
     }
 
     /**
