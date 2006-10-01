@@ -16,7 +16,7 @@
         error("Could not find the course!");
     }
 
-    require_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $id));
+    require_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id));
 
 /// If data submitted, then process and store.
 
