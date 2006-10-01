@@ -195,6 +195,24 @@ class XMLDBmysql extends XMLDBGenerator {
     }
 
     /**
+     * Given one correct XMLDBField and the new name, returns the SQL statements
+     * to rename it (inside one array)
+     * MySQL is pretty diferent from the standard to justify this oveloading
+     */
+    function getRenameFieldSQL($xmldb_table, $xmldb_field, $newname) {
+
+        $results = array();  //Array where all the sentences will be stored
+
+    /// Change the name of the field to perform the change
+        $xmldb_field->setName($xmldb_field->getName() . ' ' . $newname);
+
+        $results[] = 'ALTER TABLE ' . $this->getTableName($xmldb_table) . ' CHANGE ' .
+                     $this->getFieldSQL($xmldb_field);
+
+        return $results;
+    }
+
+    /**
      * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop its default 
      * (usually invoked from getModifyDefaultSQL()
      */
