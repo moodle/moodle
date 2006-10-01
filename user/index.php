@@ -36,6 +36,9 @@
             error("Context ID is incorrect");
         }
     }
+    // not needed anymore
+    unset($contextid);
+    unset($courseid);
 
     require_login($course->id);
 
@@ -46,16 +49,16 @@
         }
     } else { // no roles yet
         if (has_capability('moodle/user:assign', $context)) {
-            redirect($CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id);  
+            redirect($CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id);
         } else {
-            error ('no participants found for this course');  
+            error ('no participants found for this course');
         }
     }
 
     if (!has_capability('moodle/course:viewparticipants', $context)
             && !has_capability('moodle/site:viewparticipants', $context)) {
         print_error('nopermissions');
-    }    
+    }
 
     if (!$course->category) {
         if (!has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
@@ -157,16 +160,16 @@
         echo '<td class="left">';
         print_string('mycourses');
         echo ': ';
-    
+
         $courselist = array();
         foreach ($mycourses as $mycourse) {
             $courselist[$mycourse->id] = $mycourse->shortname;
         }
-        popup_form($CFG->wwwroot.'/user/index.php?contextid='.$context->id.'&amp;roleid='.$roleid.'&amp;sifirst=&amp;silast=&amp;id=',
+        popup_form($CFG->wwwroot.'/user/index.php?roleid='.$roleid.'&amp;sifirst=&amp;silast=&amp;id=',
                    $courselist, 'courseform',$course->id);
         echo '</td>';
     }
-        
+
     if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id)))) {
         if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
             echo '<td class="left">';
@@ -181,10 +184,10 @@
     $lastaccess0exists = record_exists('user_lastaccess','courseid',$course->id,'timeaccess',0);
     $now = usergetmidnight(time());
     $timeaccess = array();
-    
+
     // makes sense for this to go first.
     $timeoptions[0] = get_string('selectperiod');
-    
+
     // days
     for ($i = 1; $i < 7; $i++) {
         if (strtotime('-'.$i.' days',$now) >= $minlastaccess) {
@@ -197,7 +200,7 @@
             $timeoptions[strtotime('-'.$i.' weeks',$now)] = get_string('numweeks','moodle',$i);
         }
     }
-    // months 
+    // months
     for ($i = 2; $i < 12; $i++) {
         if (strtotime('-'.$i.' months',$now) >= $minlastaccess) {
             $timeoptions[strtotime('-'.$i.' months',$now)] = get_string('nummonths','moodle',$i);
@@ -207,11 +210,11 @@
     if (strtotime('-1 year',$now) >= $minlastaccess) {
         $timeoptions[strtotime('-1 year',$now)] = get_string('lastyear');
     }
-    
+
     if (!empty($lastaccess0exists)) {
         $timeoptions[-1] = get_string('never');
-    } 
-    
+    }
+
     if (count($timeoptions) > 1) {
         echo '<td class="left">';
         echo get_string('usersnoaccesssince').': ';
@@ -219,7 +222,7 @@
         echo popup_form($baseurl.'&amp;accesssince=',$timeoptions,'timeoptions',$accesssince,'','','',true);
         echo '</td>';
     }
- 
+
 
     echo '<td class="right">';
     echo get_string('userlist').': ';
@@ -229,8 +232,8 @@
     echo '</td></tr></table>';
 
     if ($currentgroup and (!$isseparategroups or has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id)))) {    /// Display info about the group
-        if ($group = get_record('groups', 'id', $currentgroup)) {              
-            if (!empty($group->description) or (!empty($group->picture) and empty($group->hidepicture))) { 
+        if ($group = get_record('groups', 'id', $currentgroup)) {
+            if (!empty($group->description) or (!empty($group->picture) and empty($group->hidepicture))) {
                 echo '<table class="groupinfobox"><tr><td class="left side picture">';
                 print_group_picture($group, $course->id, true, false, false);
                 echo '</td><td class="content">';
@@ -247,7 +250,7 @@
         }
     }
 
-    
+
     if ($roles = get_roles_used_in_context($context)) {
         foreach ($roles as $role) {
             $rolenames[$role->id] = strip_tags(format_string($role->name));   // Used in menus etc later on
@@ -310,23 +313,23 @@
         $listofcontexts = '('.implode(',', $usercontexts).')';
     } else {
         $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-        $listofcontexts = '('.$sitecontext->id.')'; // must be site  
+        $listofcontexts = '('.$sitecontext->id.')'; // must be site
     }
     if ($roleid) {
         $selectrole = " AND r.roleid = $roleid ";
     } else {
         $selectrole = " ";
     }
-    $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.city, u.country, 
+    $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.city, u.country,
         u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, ul.timeaccess AS lastaccess '; // s.lastaccess
     //$select .= $course->enrolperiod?', s.timeend ':'';
     $from   = "FROM {$CFG->prefix}user u INNER JOIN
     {$CFG->prefix}role_assignments r on u.id=r.userid LEFT OUTER JOIN
     {$CFG->prefix}user_lastaccess ul on r.userid=ul.userid ";
-    $where  = "WHERE (r.contextid = $context->id OR r.contextid in $listofcontexts) 
+    $where  = "WHERE (r.contextid = $context->id OR r.contextid in $listofcontexts)
         AND u.deleted = 0 $selectrole
         AND (ul.courseid = $course->id OR ul.courseid IS NULL)
-        AND u.username <> 'guest' ";   
+        AND u.username <> 'guest' ";
         $where .= get_lastaccess_sql($accesssince);
 
     $wheresearch = '';
@@ -370,7 +373,7 @@
         echo '<div class="rolesform">';
         echo get_string('currentrole', 'role').': ';
         $rolenames = array(0 => get_string('all')) + $rolenames;
-        popup_form('index.php?contextid='.$context->id.'&amp;sifirst=&amp;silast=&amp;roleid=', $rolenames, 
+        popup_form('index.php?contextid='.$context->id.'&amp;sifirst=&amp;silast=&amp;roleid=', $rolenames,
                    'rolesform', $roleid, '');
         echo '</div>';
     }
