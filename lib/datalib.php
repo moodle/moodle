@@ -202,7 +202,7 @@ function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sor
         debugging('Call to get_users with $get = true no $recordsperpage limit. ' .
                 'On large installations, this will probably cause an out of memory error. ' .
                 'Please think again and change your code so that it does not try to ' .
-                'load so much data into memory.', E_USER_WARNING);
+                'load so much data into memory.', DEBUG_DEVELOPER);
     }
 
     $LIKE      = sql_ilike();
