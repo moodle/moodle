@@ -130,7 +130,8 @@
 
     } elseif ( $action == "add" ) {
         if ( $confirm ) {
-            $dupcategory = get_record("glossary_categories",lower(name),strtolower($name),"glossaryid",$glossary->id);
+            $ILIKE = sql_ilike();
+            $dupcategory = get_records_sql("SELECT * FROM {$CFG->prefix}glossary_categories WHERE name $ILIKE '$name'");
             if ( $dupcategory ) {
                 echo "<p align=\"center\">" . get_string("add"). " " . get_string("category","glossary") . "<font size=\"3\">";
 
@@ -138,8 +139,6 @@
                 echo "<center>" . get_string("duplicatedcategory","glossary") ."</center>";
                 echo "</center>";
                 print_simple_box_end();
-
-                print_footer($course);
 
                 redirect("editcategories.php?id=$cm->id&amp;action=add&&amp;name=$name");
 
