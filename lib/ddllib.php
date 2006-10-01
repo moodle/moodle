@@ -823,6 +823,50 @@ function change_field_default($table, $field, $continue=true, $feedback=true) {
 }
 
 /**
+ * This function will rename the field in the table passed as arguments
+ * Before renaming the field, the function will check it exists
+ *
+ * @uses $CFG, $db
+ * @param XMLDBTable table object (just the name is mandatory)
+ * @param XMLDBField index object (full specs are required)
+ * @param string new name of the field
+ * @param boolean continue to specify if must continue on error (true) or stop (false)
+ * @param boolean feedback to specify to show status info (true) or not (false)
+ * @return boolean true on success, false on error
+ */
+function rename_field($table, $field, $newname, $continue=true, $feedback=true) {
+
+    global $CFG, $db;
+
+    $status = true;
+
+    if (strtolower(get_class($table)) != 'xmldbtable') {
+        return false;
+    }
+    if (strtolower(get_class($field)) != 'xmldbfield') {
+        return false;
+    }
+
+/// Check field exists
+    if (!field_exists($table, $field)) {
+        debugging('Field ' . $field->getName() . ' do not exist. Rename skipped', DEBUG_DEVELOPER);
+        return true; //Field doesn't exist, nothing to do
+    }
+
+/// Check newname isn't empty
+    if (!$newname) {
+        debugging('New name for field ' . $field->getName() . ' is empty! Rename skipped', DEBUG_DEVELOPER);
+        return true; //Field doesn't exist, nothing to do
+    }
+
+    if(!$sqlarr = $table->getRenameFieldSQL($CFG->dbtype, $CFG->prefix, $field, $newname, false)) {
+        return true; //Empty array = nothing to do = no error
+    }
+
+    return execute_sql_arr($sqlarr, $continue, $feedback);
+}
+
+/**
  * This function will create the key in the table passed as arguments
  *
  * @uses $CFG, $db
