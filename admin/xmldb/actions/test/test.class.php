@@ -695,7 +695,7 @@ class test extends XMLDBAction {
         }
 
     /// 39th test. Renaming one field
-        if ($test->status && 1==2) {
+        if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
             $field = new XMLDBField('type');
