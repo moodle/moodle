@@ -56,6 +56,9 @@ class XMLDBmssql extends XMLDBgenerator {
     var $rename_table_sql = "sp_rename 'OLDNAME', 'NEWNAME'"; //SQL sentence to rename one table, both
                                   //OLDNAME and NEWNAME are dinamically replaced
 
+    var $rename_column_sql = "sp_rename 'TABLENAME.OLDFIELDNAME', 'NEWFIELDNAME', 'COLUMN'";
+                                      ///TABLENAME, OLDFIELDNAME and NEWFIELDNAME are dianmically replaced
+
     var $drop_index_sql = 'DROP INDEX TABLENAME.INDEXNAME'; //SQL sentence to drop one index
                                                                //TABLENAME, INDEXNAME are dinamically replaced
 
