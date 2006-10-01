@@ -179,7 +179,7 @@ class XMLDBgenerator {
         $table = 'CREATE TABLE ' . $this->getTableName($xmldb_table) . ' (';
 
         if (!$xmldb_fields = $xmldb_table->getFields()) {
-            return false;
+            return $results;
         }
 
     /// Prevent tables without prefix to be duplicated (part of MDL-6614)
@@ -576,13 +576,13 @@ class XMLDBgenerator {
                                                                              $this->alter_column_skip_default,
                                                                              $this->alter_column_skip_notnull), $alter);
 
-    /// Build the standard alter table modify
-        $results[] = $alter;
-
     /// Add the after clause if necesary
         if ($this->add_after_clause && $xmldb_field->getPrevious()) {
             $alter .= ' after ' . $this->getEncQuoted($xmldb_field->getPrevious());
         }
+
+    /// Build the standard alter table modify
+        $results[] = $alter;
 
         return $results;
     }
