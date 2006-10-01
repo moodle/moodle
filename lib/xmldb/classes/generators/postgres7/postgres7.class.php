@@ -156,6 +156,46 @@ class XMLDBpostgres7 extends XMLDBgenerator {
     }
 
     /**
+     * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to add the field to the table
+     * PostgreSQL is pretty standard but with one severe restriction under 7.4 that forces us to overload
+     * this function: Default clause is not allowed when adding fields.
+     * 
+     * This function can be safely removed once min req. for PG will be 8.0
+     */
+    function getAddFieldSQL($xmldb_table, $xmldb_field) {
+    
+        $results = array();
+
+        $tablename = $this->getTableName($xmldb_table);
+        $fieldname = $this->getEncQuoted($xmldb_field->getName());
+
+        $defaultvalue = null;
+
+    /// Prevent default clause and launch parent getAddField()
+        $this->alter_column_skip_default = true;
+        $this->alter_column_skip_notnull = true;
+        $results = parent::getAddFieldSQL($xmldb_table, $xmldb_field);
+
+    /// Add default
+        if ($defaultclause = $this->getDefaultClause($xmldb_field)) {
+            $defaultvalue = $this->getDefaultValue($xmldb_field);
+            $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' SET' . $defaultclause; /// Add default clause
+        }
+
+    /// Update default value (if exists) to all the records
+        if ($defaultvalue !== null) {
+            $results[] = 'UPDATE ' . $tablename . ' SET ' . $fieldname . '=' . $defaultvalue;
+        }
+
+    /// Add not null
+        if ($xmldb_field->getNotnull()) {
+            $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' SET NOT NULL'; /// Add not null
+        }
+
+        return $results;
+    }
+
+    /**
      * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to alter the field in the table
      * PostgreSQL has some severe limits:
      *     - Any change of type or precision requires a new temporary column to be created, values to
