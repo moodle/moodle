@@ -2795,12 +2795,17 @@ function get_role_users($roleid, $context, $parent=false, $fields='u.*', $sort='
         $parentcontexts = '';
     }
 
+    if ($roleid) {
+        $roleselect = "AND r.roleid = $roleid";
+    } else {
+        $roleselect = '';
+    }
+
     $SQL = "SELECT $fields
             FROM {$CFG->prefix}role_assignments r,
                  {$CFG->prefix}user u
             WHERE (r.contextid = $context->id $parentcontexts)
-            AND r.roleid = $roleid
-            AND u.id = r.userid
+            AND u.id = r.userid $roleselect
             ORDER BY $sort
             ";                  // join now so that we can just use fullname() later
 
