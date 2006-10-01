@@ -110,6 +110,11 @@ class XMLDBgenerator {
 
     var $alter_column_skip_notnull = false; //The generator will skip the null/notnull clause on alter columns
 
+    var $rename_column_sql = 'ALTER TABLE TABLENAME RENAME COLUMN OLDFIELDNAME TO NEWFIELDNAME';
+                                  ///TABLENAME, OLDFIELDNAME and NEWFIELDNAME are dianmically replaced
+
+    var $rename_column_extra_code = false; //Does the generator need to add code after column rename
+
     var $drop_index_sql = 'DROP INDEX INDEXNAME'; //SQL sentence to drop one index
                                   //TABLENAME, INDEXNAME are dinamically replaced
 
@@ -643,6 +648,29 @@ class XMLDBgenerator {
     }
 
     /**
+     * Given one correct XMLDBField and the new name, returns the SQL statements
+     * to rename it (inside one array)
+     */
+    function getRenameFieldSQL($xmldb_table, $xmldb_field, $newname) {
+
+        $results = array();  //Array where all the sentences will be stored
+
+        $rename = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->rename_column_sql);
+        $rename = str_replace('OLDFIELDNAME', $xmldb_field->getName(), $rename);
+        $rename = str_replace('NEWFIELDNAME', $newname, $rename);
+
+        $results[] = $rename;
+
+    /// Call to getRenameFieldExtraSQL() if $rename_column_extra_code is enabled (will add some required sentences)
+        if ($this->rename_column_extra_code) {
+            $extra_sentences = $this->getRenameFieldExtraSQL($xmldb_table, $xmldb_field, $newname);
+            $results = array_merge($results, $extra_sentences);
+        }
+
+        return $results;
+    }
+
+    /**
      * Given one XMLDBTable and one XMLDBKey, return the SQL statements needded to add the key to the table
      * note that undelying indexes will be added as parametrised by $xxxx_keys and $xxxx_index parameters
      */
@@ -1039,6 +1067,13 @@ class XMLDBgenerator {
      */
     function getEnumExtraSQL ($xmldb_table, $xmldb_field) {
         return 'Code for extra enum SQL goes to getEnumExtraSQL(). Can be disabled with enum_extra_code=false';
+    }
+
+    /**
+     * Returns the code (array of statements) needed to execute extra statements on field rename
+     */
+    function getRenameFieldExtraSQL ($xmldb_table, $xmldb_field) {
+        return array('Code for field rename goes to getRenameFieldExtraSQL(). Can be disabled with rename_column_extra_code=false;');
     }
 
     /**
