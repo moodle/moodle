@@ -355,6 +355,35 @@ $moodle_capabilities = array(
         )
     ),
 
+    'moodle/user:viewusergrades' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+    
+    'moodle/user:loginas' => array(
+
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS | RISK_CONFIG,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_PREVENT,
+            'editingteacher' => CAP_PREVENT,
+            'coursecreator' => CAP_PREVENT,
+            'admin' => CAP_ALLOW
+        )
+    ),
+
     'moodle/role:assign' => array(
 
         'captype' => 'write',
@@ -1067,19 +1096,6 @@ $moodle_capabilities = array(
             'guest' => CAP_PREVENT,
             'student' => CAP_PREVENT,
             'teacher' => CAP_PREVENT,
-            'editingteacher' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
-        )
-    ),
-
-    'moodle/user:viewusergrades' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_USER,
-        'legacy' => array(
-            'guest' => CAP_PREVENT,
-            'student' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'coursecreator' => CAP_ALLOW,
             'admin' => CAP_ALLOW
