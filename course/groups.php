@@ -30,7 +30,7 @@
 
     $courseid      = required_param('id', PARAM_INT);           // Course id
     $selectedgroup = optional_param('group', NULL, PARAM_INT);  // Current group id
-    $roleid        = optional_param('roleid', 0, PARAM_INT);  // Current group id
+    $roleid        = optional_param('roleid', 0, PARAM_INT);    // Current role id
 
     if (! $course = get_record('course', 'id', $courseid) ) {
         error("That's an invalid course id");

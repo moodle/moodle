@@ -1,8 +1,8 @@
 <script type="text/javascript">
 <!-- Begin
 <?php 
+    $roleoptions = array(0 => get_string('all'));
     $roles = get_all_roles();
-    $roleoptions = array();
     foreach ($roles as $rolex) {
         $roleoptions[$rolex->id] = $rolex->name;
     }
@@ -80,6 +80,11 @@ function groupWindow(selectgroup) {
 // end hiding script -->
 </script>
 
+        <form name="rolesform1" action="groups.php" method="get">
+        <input type="hidden" name="id" value="<?php echo $courseid ?>">
+        <div align="center"><?php echo get_string('currentrole', 'role') ?>: 
+            <?php choose_from_menu ($roleoptions, 'roleid', $roleid, '', $script='rolesform1.submit()') ?>
+        </div></form>
 
   <table cellspacing="0" cellpadding="10" align="center" class="generaltable generalbox">
     <tr>
@@ -123,11 +128,6 @@ function groupWindow(selectgroup) {
                    onclick="return userWindow(document.form1['nonmembers[]']);" />
           </p>
         </form>
-        <form name="rolesform1" action="groups.php" method="get">
-        <input type="hidden" name="id" value="<?php echo $courseid ?>">
-        <div align="center"><?php echo get_string('selectrole', 'role') ?>: 
-            <?php choose_from_menu ($roleoptions, 'roleid', $roleid, 'choose', $script='rolesform1.submit()') ?>
-        </div></form>
       </td>
       <td class="generalboxcontent"><p>
         <form name="form2" id="form2" method="post" action="groups.php">
