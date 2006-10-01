@@ -171,25 +171,36 @@ class XMLDBpostgres7 extends XMLDBgenerator {
 
         $defaultvalue = null;
 
+    /// Save old flags
+        $old_skip_default = $this->alter_column_skip_default;
+        $old_skip_notnull = $this->alter_column_skip_notnull;
+
     /// Prevent default clause and launch parent getAddField()
         $this->alter_column_skip_default = true;
         $this->alter_column_skip_notnull = true;
         $results = parent::getAddFieldSQL($xmldb_table, $xmldb_field);
 
-    /// Add default
-        if ($defaultclause = $this->getDefaultClause($xmldb_field)) {
-            $defaultvalue = $this->getDefaultValue($xmldb_field);
-            $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' SET' . $defaultclause; /// Add default clause
+    /// Re-set old flags
+        $this->alter_column_skip_default = $old_skip_default;
+        $this->alter_column_skip_notnull = $old_skip_notnull;
+
+    /// Add default (only if not skip_default)
+        if (!$this->alter_column_skip_default) {
+            if ($defaultclause = $this->getDefaultClause($xmldb_field)) {
+                $defaultvalue = $this->getDefaultValue($xmldb_field);
+                $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' SET' . $defaultclause; /// Add default clause
+            }
+        /// Update default value (if exists) to all the records
+            if ($defaultvalue !== null) {
+                $results[] = 'UPDATE ' . $tablename . ' SET ' . $fieldname . '=' . $defaultvalue;
+            }
         }
 
-    /// Update default value (if exists) to all the records
-        if ($defaultvalue !== null) {
-            $results[] = 'UPDATE ' . $tablename . ' SET ' . $fieldname . '=' . $defaultvalue;
-        }
-
-    /// Add not null
-        if ($xmldb_field->getNotnull()) {
-            $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' SET NOT NULL'; /// Add not null
+    /// Add not null (only if no skip_notnull)
+        if (!$this->alter_column_skip_notnull) {
+            if ($xmldb_field->getNotnull()) {
+                $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' SET NOT NULL'; /// Add not null
+            }
         }
 
         return $results;
