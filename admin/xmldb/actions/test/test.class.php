@@ -668,10 +668,10 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $index = new XMLDBIndex('newnamefortheindex');
+            $index = new XMLDBIndex('anyname');
             $index->setAttributes(XMLDB_INDEX_UNIQUE, array('name', 'course'));
 
-            $test->sql = $table->getRenameIndexSQL($CFG->dbtype, $CFG->prefix, $index, true);
+            $test->sql = $table->getRenameIndexSQL($CFG->dbtype, $CFG->prefix, $index, 'newnamefortheindex', true);
             $test->status = rename_index($table, $index, 'newnamefortheindex', false, false);
             if (!$test->status) {
                 $test->error = $db->ErrorMsg();
@@ -683,10 +683,10 @@ class test extends XMLDBAction {
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
-            $key = new XMLDBKey('newnameforthekey');
+            $key = new XMLDBKey('anyname');
             $key->setAttributes(XMLDB_KEY_UNIQUE, array('id', 'course', 'grade'));
 
-            $test->sql = $table->getRenameKeySQL($CFG->dbtype, $CFG->prefix, $key, true);
+            $test->sql = $table->getRenameKeySQL($CFG->dbtype, $CFG->prefix, $key, 'newnameforthekey', true);
             $test->status = rename_key($table, $key, 'newnameforthekey', false, false);
             if (!$test->status) {
                 $test->error = $db->ErrorMsg();
