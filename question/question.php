@@ -261,11 +261,6 @@
     $gradeoptions = $creategrades->gradeoptions;
     $gradeoptionsfull = $creategrades->gradeoptionsfull;
 
-    if (!$categories = question_category_menu($course->id, false)) {
-        error("No categories!");
-    }
-
-
     make_upload_directory("$course->id");    // Just in case
     $coursefiles = get_directory_list("$CFG->dataroot/$course->id", $CFG->moddata);
     foreach ($coursefiles as $filename) {
@@ -274,8 +269,7 @@
         }
     }
 
-    // Print the question editing form
-
+    // Initialise defaults if necessary.
     if (empty($question->id)) {
         $question->id = "";
     }
@@ -295,7 +289,7 @@
         $question->defaultgrade = 1;
     }
 
-    // Set up some Richtext editing if necessary
+    // Set up some richtext editing if necessary
     if ($usehtmleditor = can_use_richtext_editor()) {
         $defaultformat = FORMAT_HTML;
     } else {
@@ -306,6 +300,7 @@
         $err = $question->errors;
     }
 
+    // Print the question editing form
     echo '<br />';
     print_simple_box_start('center');
     require_once('type/'.$qtype.'/editquestion.php');
