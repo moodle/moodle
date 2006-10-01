@@ -84,6 +84,7 @@ $string['noattempts'] = 'No attempts have been made on this assignment';
 $string['nofilesyet'] = 'No files submitted yet';
 $string['nofiles'] = 'No files were submitted';
 $string['notes'] = 'Notes';
+$string['notavailableyet'] = 'Sorry, this assignment is not yet available.<br />Assignment instructions will be displayed here on the date given bellow.';
 $string['notesempty'] = 'No entry';
 $string['notesupdateerror'] = 'Error when updating notes';
 $string['notgradedyet'] = 'Not graded yet';

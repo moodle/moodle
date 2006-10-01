@@ -21,7 +21,17 @@ class assignment_upload extends assignment_base {
         add_to_log($this->course->id, 'assignment', 'view', "view.php?id={$this->cm->id}", $this->assignment->id, $this->cm->id);
 
         $this->view_header();
-        $this->view_intro();
+
+        if ($this->assignment->timeavailable > time()
+          and !has_capability('mod/assignment:grade', $this->context)) {
+            //not open yet === no instructions
+            print_simple_box_start('center', '', '', '', 'generalbox', 'intro');
+            print_string('notavailableyet', 'assignment');
+            print_simple_box_end();
+        } else {
+            $this->view_intro();
+        }
+
         $this->view_dates();
 
         if (has_capability('mod/assignment:submit', $this->context)) {
