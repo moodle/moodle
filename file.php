@@ -84,7 +84,8 @@
         and (strtolower($args[2]) == 'assignment')) {
 
         $lifetime = 0;  // do not cache assignments, students may reupload them
-        if ((!has_capability('mod/assignment:grade', get_context_instance(CONTEXT_COURSE, $course->id))) && (count($args) != 6 || $args[4] != $USER->id)) {
+        if (!has_capability('mod/assignment:grade', get_context_instance(CONTEXT_COURSE, $course->id))
+          and $args[4] != $USER->id) {
            error('Access not allowed');
         }
     }
