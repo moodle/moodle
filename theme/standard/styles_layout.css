@@ -1615,15 +1615,13 @@ body#user-index #showall {
   margin: 10px 0px;
 }
 
-body#user-index table#teachers,
-body#user-index table#students {
+body#user-index table#participants {
   margin: auto;
   width: 80%;
 }
-body#user-index table#teachers td,
-body#user-index table#teachers th,
-body#user-index table#students td,
-body#user-index table#students th {
+
+body#user-index table#participants td,
+body#user-index table#participants th {
   vertical-align: middle;
   text-align: left;
   padding: 4px;
