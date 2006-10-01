@@ -184,7 +184,7 @@
         foreach ($groups as $group) {
             $countusers = 0;
             $listmembers[$group->id] = array();
-            if ($groupusers = get_group_users($group->id)) {
+            if ($groupusers = get_group_users($group->id, 'u.lastname ASC, u.firstname ASC')) {
                 foreach ($groupusers as $key=>$groupuser) {
                     if (!array_key_exists($groupuser->id, $nonmembers)) {
                         // group member with another role
@@ -197,14 +197,11 @@
                         $countusers++;
                     }
                 }
-                natcasesort($listmembers[$group->id]);
             }
             $listgroups[$group->id] = $group->name." ($countusers)";
         }
         natcasesort($listgroups);
     }
-
-    natcasesort($nonmembers);
 
     if (empty($selectedgroup)) {    // Choose the first group by default
         if ($selectedgroup = array_shift($temparr = array_keys($listgroups))) {
