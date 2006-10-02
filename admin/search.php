@@ -100,6 +100,7 @@ function search_settings(&$node, $query) {
 
 function search_settings_html(&$node, $query) {
 
+    global $CFG;
     if (is_a($node, 'admin_category')) {
         $entries = array_keys($node->children);
         $return = '';
@@ -120,7 +121,7 @@ function search_settings_html(&$node, $query) {
         }
         $return = '';
         if (count($foundsettings) > 0) {
-            $return .= print_heading(get_string('searchresults','admin').' - '.$node->visiblename, '', 2, 'main', true);
+            $return .= print_heading(get_string('searchresults','admin').' - '. '<a href="' . $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=' . $node->name . '">' . $node->visiblename . '</a>', '', 2, 'main', true);
             $return .= '<fieldset class="adminsettings">' . "\n";
             foreach ($foundsettings as $foundsetting) {
                 $return .= '<div class="clearer"><!-- --></div>' . "\n";
