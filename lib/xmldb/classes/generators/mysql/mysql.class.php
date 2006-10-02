@@ -244,6 +244,18 @@ class XMLDBmysql extends XMLDBGenerator {
     }
 
     /**
+     * Given one XMLDBTable returns one array with all the check constrainsts 
+     * in the table (fetched from DB)
+     * Each element contains the name of the constraint and its description
+     * If no check constraints are found, returns an empty array
+     * MySQL doesn't have check constraints in this implementation
+     */
+    function getCheckConstraintsFromDB($xmldb_table) {
+
+        return array();
+    }
+
+    /**
      * Returns an array of reserved words (lowercase) for this DB
      */
     function getReservedWords() {
