@@ -4213,9 +4213,10 @@ or
  * @param string $module The module where the key identifier is stored. If none is specified then moodle.php is used.
  * @param mixed $a An object, string or number that can be used
  * within translation strings
+ * @param array $extralocations An array of strings with other locations to look for string files
  * @return string The localized string.
  */
-function get_string($identifier, $module='', $a=NULL) {
+function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
 
     global $CFG;
 
@@ -4262,14 +4263,21 @@ function get_string($identifier, $module='', $a=NULL) {
 
 /// Define the two or three major locations of language strings for this module
 
+    $locations = array();
+
+    if (!empty($extralocations)) {   // Calling code has a good idea where to look
+        $locations += $extralocations;
+    }
+
     if (isset($CFG->running_installer)) {
         $module = 'installer';
         $filetocheck = 'installer.php';
-        $locations = array( $CFG->dirroot.'/install/lang/', $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
+        $locations += array( $CFG->dirroot.'/install/lang/', $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
         $defaultlang = 'en_utf8';
     } else {
-        $locations = array( $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
+        $locations += array( $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
     }
+
 
     if ($module != 'moodle' && $module != 'langconfig') {
         if (strpos($module, 'block_') === 0) {  // It's a block lang file
