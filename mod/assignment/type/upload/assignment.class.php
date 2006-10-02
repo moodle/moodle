@@ -504,7 +504,7 @@ class assignment_upload extends assignment_base {
 
         if (data_submitted() and $this->can_manage_responsefiles()) {
             $dir = $this->file_area_name($userid).'/responses';
-            check_dir_exists($CFG->dataroot.'/'.$dir,true);
+            check_dir_exists($CFG->dataroot.'/'.$dir, true, true);
 
             require_once($CFG->dirroot.'/lib/uploadlib.php');
             $um = new upload_manager('newfile',false,true,$this->course,false,0,true);
@@ -541,7 +541,7 @@ class assignment_upload extends assignment_base {
         }
 
         $dir = $this->file_area_name($USER->id);
-        check_dir_exists($CFG->dataroot.'/'.$dir.'/responses',true); // better to create now so that student submissions do not block it later
+        check_dir_exists($CFG->dataroot.'/'.$dir, true, true); // better to create now so that student submissions do not block it later
 
         require_once($CFG->dirroot.'/lib/uploadlib.php');
         $um = new upload_manager('newfile',false,true,$this->course,false,$this->assignment->maxbytes,true);
