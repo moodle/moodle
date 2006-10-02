@@ -3058,8 +3058,6 @@ function print_user($user, $course, $messageselect=false, $return=false) {
     static $string;
     static $datestring;
     static $countries;
-    static $isadmin;
-    static $isteacher;
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
@@ -3086,8 +3084,6 @@ function print_user($user, $course, $messageselect=false, $return=false) {
         $datestring->secs    = get_string('secs');
 
         $countries = get_list_of_countries();
-        $isteacher = isteacher($course->id);
-        $isadmin   = isadmin();
     }
 
 /// Get the hidden field list
@@ -3571,7 +3567,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
 
         if ($usehtmleditor) {
             // not sure if this capability is appropriate
-            if (!empty($courseid) and has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $courseid))) {
+            if (!empty($courseid) and has_capability('moodle/course:trustcontent', get_context_instance(CONTEXT_COURSE, $courseid))) {
                 $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
                 $CFG->wwwroot .'/lib/editor/htmlarea/htmlarea.php?id='. $courseid .'"></script>'."\n" : '';
             } else {
@@ -3804,7 +3800,6 @@ function update_mymoodle_icon() {
 function update_module_button($moduleid, $courseid, $string) {
     global $CFG, $USER;
 
-
     if (has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_MODULE, $moduleid))) {
         $string = get_string('updatethis', '', $string);
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/mod.php\">".
@@ -4027,7 +4022,8 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     if (!$modinfo = unserialize((string)$course->modinfo)) {
         return '';
     }
-    $isteacher = isteacher($course->id);
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+
     $section = -1;
     $selected = '';
     $url = '';
@@ -4042,8 +4038,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     $sections = get_records('course_sections','course',$course->id,'section','section,visible,summary');
 
     if (!empty($THEME->makenavmenulist)) {   /// A hack to produce an XHTML navmenu list for use in themes
-        $THEME->navmenulist = navmenulist($course, $sections, $modinfo,
-                                          $isteacher, $strsection, $strjumpto, $width, $cm);
+        $THEME->navmenulist = navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $width, $cm);
     }
 
     foreach ($modinfo as $mod) {
@@ -4058,7 +4053,8 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
         if ($mod->section > 0 and $section <> $mod->section) {
             $thissection = $sections[$mod->section];
 
-            if ($thissection->visible or !$course->hiddensections or has_capability('moodle/course:viewhiddensections', get_context_instance(CONTEXT_COURSE, $course->id))) {
+            if ($thissection->visible or !$course->hiddensections or 
+                has_capability('moodle/course:viewhiddensections', $context)) {
                 $thissection->summary = strip_tags(format_string($thissection->summary,true));
                 if ($course->format == 'weeks' or empty($thissection->summary)) {
                     $menu[] = '-------------- '. $strsection ." ". $mod->section .' --------------';
@@ -4105,24 +4101,27 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     //Accessibility: added Alt text, replaced &gt; &lt; with 'silent' character and 'accesshide' text.
     check_theme_arrows();
     
-    if ($selectmod and has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $course->id))) {
+    if ($selectmod and has_capability('moodle/site:viewreports', $context)) {
         $logstext = get_string('alllogs');
-        $logslink = "<a title=\"$logstext\" target=\"$CFG->framename\" href=".
-                    "\"$CFG->wwwroot/course/report/log/index.php?chooselog=1&amp;user=0&amp;date=0&amp;id=$course->id&amp;modid=$selectmod->cm\">".
-                    "<img class=\"icon log\" src=\"$CFG->pixpath/i/log.gif\" alt=\"$logstext\" /></a>";
+        $logslink = '<a title="'.$logstext.'" target="'.$CFG->framename.'" href="'.
+                    $CFG->wwwroot.'/course/report/log/index.php?chooselog=1&amp;user=0&amp;date=0&amp;id='.
+                       $course->id.'&amp;modid='.$selectmod->cm.'">'.
+                    '<img class="icon log" src="'.$CFG->pixpath.'/i/log.gif" alt="'.$logstext.'" /></a>';
 
     }
     if ($backmod) {
         $backtext= get_string('activityprev', 'access');
-        $backmod = "<form action=\"$CFG->wwwroot/mod/$backmod->mod/view.php\" target=\"$CFG->framename\">".
-                   "<input type=\"hidden\" name=\"id\" value=\"$backmod->cm\" />".
-                   "<button type=\"submit\" title=\"$backtext\">$THEME->larrow<span class=\"accesshide\">$backtext</span></button></form>";
+        $backmod = '<form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" target="'.$CFG->framename.'">'.
+                   '<input type="hidden" name="id" value="'.$backmod->cm.'" />'.
+                   '<button type="submit" title="'.$backtext.'">'.$THEME->larrow.
+                   '<span class="accesshide">'.$backtext.'</span></button></form>';
     }
     if ($nextmod) {
         $nexttext= get_string('activitynext', 'access');
-        $nextmod = "<form action=\"$CFG->wwwroot/mod/$nextmod->mod/view.php\" target=\"$CFG->framename\">".
-                   "<input type=\"hidden\" name=\"id\" value=\"$nextmod->cm\" />".
-                   "<button type=\"submit\" title=\"$nexttext\">$THEME->rarrow<span class=\"accesshide\">$nexttext</span></button></form>";
+        $nextmod = '<form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php" target="'.$CFG->framename.'">'.
+                   '<input type="hidden" name="id" value="'.$nextmod->cm.'" />'.
+                   '<button type="submit" title="'.$nexttext.'">'.$THEME->rarrow.
+                   '<span class="accesshide">'.$nexttext.'</span></button></form>';
     }
 
     return "<table><tr>\n<td>".$logslink .'</td><td>'. $backmod .'</td><td>' .
@@ -4143,7 +4142,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
  * @return string
  * @todo Finish documenting this function
  */
-function navmenulist($course, $sections, $modinfo, $isteacher, $strsection, $strjumpto, $width=50, $cmid=0) {
+function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $width=50, $cmid=0) {
 
     global $CFG;
 
@@ -4158,6 +4157,8 @@ function navmenulist($course, $sections, $modinfo, $isteacher, $strsection, $str
     $flag = false;
     $menu = array();
 
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+
     $menu[] = '<ul class="navmenulist"><li class="jumpto section"><span>'.$strjumpto.'</span><ul>';
     foreach ($modinfo as $mod) {
         if ($mod->mod == 'label') {
@@ -4171,7 +4172,8 @@ function navmenulist($course, $sections, $modinfo, $isteacher, $strsection, $str
         if ($mod->section >= 0 and $section <> $mod->section) {
             $thissection = $sections[$mod->section];
 
-            if ($thissection->visible or !$course->hiddensections or has_capability('moodle/course:viewhiddensections', get_context_instance(CONTEXT_COURSE, $course->id))) {
+            if ($thissection->visible or !$course->hiddensections or 
+                      has_capability('moodle/course:viewhiddensections', $coursecontext)) {
                 $thissection->summary = strip_tags(format_string($thissection->summary,true));
                 if (!empty($doneheading)) {
                     $menu[] = '</ul></li>';
