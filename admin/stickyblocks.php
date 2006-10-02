@@ -31,14 +31,16 @@
     $strtitle = get_string('stickyblocks','admin');
     $strheading = get_string('adminhelpstickyblocks');
     
-    print_header($strtitle,$strtitle,'<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/index.php">'.
-                 get_string('administration').'</a> -> '.$strtitle);
-
-    echo '<table border="0" cellpadding="3" cellspacing="0" width="100%" id="layout-table">';
-    echo '<tr valign="top">';
     
 
     if (!empty($pt)) {
+
+        print_header($strtitle,$strtitle,'<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/index.php">'.
+                     get_string('administration').'</a> -> '.$strtitle);
+    
+        echo '<table border="0" cellpadding="3" cellspacing="0" width="100%" id="layout-table">';
+        echo '<tr valign="top">';
+
         require_once($CFG->dirroot.$pagetypes[$pt]['lib']);
         
         define('ADMIN_STICKYBLOCKS',$pt);
@@ -51,13 +53,17 @@
         echo '<td valign="top" style="width: '.$blocks_preferred_width.'px;" id="left-column">';
         
         blocks_print_group($PAGE, $blocks, BLOCK_POS_LEFT);
+        echo '</td>';
+        echo '<td valign="top" id="middle-column">';
+
     } else {
-        echo '<td valign="top" id="left-column">';
+        require_once($CFG->libdir.'/adminlib.php');
+        $adminroot = admin_get_root();
+        admin_externalpage_setup('stickyblocks', $adminroot);
+        admin_externalpage_print_header($adminroot);
     }
-    echo '</td>';
 
 
-    echo '<td valign="top" id="middle-column">';
     print_simple_box_start('center');
     print_heading($strheading);
     echo '<form method="post" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/stickyblocks.php">'
@@ -66,19 +72,17 @@
     echo '</p></form>';
     echo get_string('stickyblocksduplicatenotice','admin');
     print_simple_box_end();
-    echo '</td>';
 
 
     if (!empty($pt)) {
+        echo '</td>';
         echo '<td valign="top" style="width: '.$blocks_preferred_width.'px;" id="left-column">';
         blocks_print_group($PAGE, $blocks, BLOCK_POS_RIGHT);
+        echo '</td>';
+        echo '</tr></table>';
+        print_footer();
+    } else {
+        admin_externalpage_print_footer($adminroot);
     }
-    echo '<td valign="top" id="left-column">';
-    echo '</td>';
-  
-    echo '</tr></table>';
-
-    print_footer();
-    
 
 ?>
