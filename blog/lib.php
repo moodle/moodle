@@ -249,7 +249,7 @@
 
         if (!empty($USER->id)) {
             $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-            $canmanage = has_capability('moodle/blog:manageentries', $context->id);
+            $canmanage = has_capability('moodle/blog:manageentries', $context);
             
             if (($template['userid'] == $USER->id) or $canmanage) {
                     echo '<a href="'.$CFG->wwwroot.'/blog/edit.php?editid='.$blogEntry->id.'&amp;sesskey='.sesskey().'">'.$stredit.'</a>';
