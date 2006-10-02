@@ -581,33 +581,33 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
         break;
 
     case STATS_REPORT_READS:
-        $param->fields = $db->Concat('timeend','roleid').' AS UNIQUE, timeend, roleid, stat1 as line1';
+        $param->fields = $db->Concat('timeend','roleid').' AS uniqueid, timeend, roleid, stat1 as line1';
         $param->fieldscomplete = true; // set this to true to avoid anything adding stuff to the list and breaking complex queries.
         $param->aggregategroupby = 'roleid';
         $param->stattype = 'activity';
         $param->crosstab = true;
         $param->extras = 'GROUP BY timeend,roleid,stat1';
         if ($courseid == SITEID) {
-            $param->fields = $db->Concat('timeend','roleid').' AS UNIQUE, timeend, roleid, sum(stat1) as line1';
+            $param->fields = $db->Concat('timeend','roleid').' AS uniqueid, timeend, roleid, sum(stat1) as line1';
             $param->extras = 'GROUP BY timeend,roleid';
         }
         break;
 
     case STATS_REPORT_WRITES: 
-        $param->fields = $db->Concat('timeend','roleid').' AS UNIQUE, timeend, roleid, stat2 as line1';
+        $param->fields = $db->Concat('timeend','roleid').' AS uniqueid, timeend, roleid, stat2 as line1';
         $param->fieldscomplete = true; // set this to true to avoid anything adding stuff to the list and breaking complex queries.
         $param->aggregategroupby = 'roleid';
         $param->stattype = 'activity';
         $param->crosstab = true;
         $param->extras = 'GROUP BY timeend,roleid,stat2';
         if ($courseid == SITEID) {
-            $param->fields = $db->Concat('timeend','roleid').' AS UNIQUE, timeend, roleid, sum(stat2) as line1';
+            $param->fields = $db->Concat('timeend','roleid').' AS uniqueid, timeend, roleid, sum(stat2) as line1';
             $param->extras = 'GROUP BY timeend,roleid';
         }
         break;
 
     case STATS_REPORT_ACTIVITY:
-        $param->fields = $db->Concat('timeend','roleid').' AS UNIQUE, timeend, roleid, sum(stat1+stat2) as line1';
+        $param->fields = $db->Concat('timeend','roleid').' AS uniqueid, timeend, roleid, sum(stat1+stat2) as line1';
         $param->fieldscomplete = true; // set this to true to avoid anything adding stuff to the list and breaking complex queries.
         $param->aggregategroupby = 'roleid';
         $param->stattype = 'activity';
