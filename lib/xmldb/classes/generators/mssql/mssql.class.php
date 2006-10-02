@@ -212,9 +212,6 @@ class XMLDBmssql extends XMLDBgenerator {
             }
         }
 
-
-        print_object($this->getCheckConstraintsFromDB($xmldb_table));
-
         return $results;
     }
 
