@@ -2081,7 +2081,9 @@ function fetch_context_capabilities($context) {
         break;
 
         case CONTEXT_USER:
-            $SQL = "select * from {$CFG->prefix}capabilities where contextlevel = ".CONTEXT_USER;
+            $SQL = "SELECT * 
+                    FROM {$CFG->prefix}capabilities 
+                    WHERE contextlevel = ".CONTEXT_USER;
         break;
 
         case CONTEXT_COURSECAT: // all

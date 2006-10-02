@@ -413,6 +413,45 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
     }
 ?>
 </table>
+
+<hr/>
+<?php
+
+print_heading(get_string('rolemappings'));
+$xml_file  = $CFG->dataroot."/temp/backup/".$backup_unique_code."/moodle.xml";
+
+
+$roles = restore_read_xml_roles($xml_file);
+
+$siteroles = get_records('role');
+$siterolesarray = array();
+foreach ($siteroles as $siterole) {
+    $siterolesarray[$siterole->id] = $siterole->shortname;  
+}
+
+
+echo ('<table width="100%" class="restore-form-instances">');
+echo ('<tr><td align="right"><b>'.get_string('sourcerole').'</b></td><td align="left"><b>'.get_string('targetrole').'</b></td></tr>');
+
+foreach ($roles->roles as $roleid=>$role) {
+    echo ('<tr><td align="right">');
+    echo $role->shortname;
+    echo ('</td><td align="left">');
+    
+    // see if any short name match
+    $matchrole = 0;
+    foreach ($siteroles as $siterole) {
+        if ($siterole->shortname == $role->shortname) {
+            $matchrole = $siterole->id;
+            break;  
+        }  
+    }
+    
+    choose_from_menu ($siterolesarray, "roles_".$roleid, $matchrole, 'new role', '', '0');
+    echo ('</td></tr>'); 
+}
+echo ('</table>');
+?>
 <br />
 <center>
 <input type="hidden" name="id"     value="<?php  p($id) ?>" />

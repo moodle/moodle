@@ -307,9 +307,9 @@
         return $info;
     }
 
-    function restore_read_xml_roles ($restore,$xml_file) {
+    function restore_read_xml_roles ($xml_file) {
         //We call the main read_xml function, with todo = ROLES
-        $info = restore_read_xml ($xml_file,"ROLES",$restore);
+        $info = restore_read_xml ($xml_file,"ROLES",false);
 
         return $info;  
     }
@@ -4418,6 +4418,8 @@
                             break;
                     }
                 }
+                
+                
                 if ($this->level == 7 && $this->tree[5]!="ROLE_ASSIGNMENTS" && $this->tree[5]!="ROLE_OVERRIDES") {
                     switch ($tagName) {
                         case "TYPE":
@@ -4464,12 +4466,10 @@
                             break;
                         default:
                             break;
+                    
                     }
                 }
-                
-                
-                
-                
+                                           
                 if ($this->tree[5] == "ROLES_ASSIGNMENTS") {
 
                     if ($this->level == 7) {
@@ -4560,36 +4560,7 @@
                         }
                     }
                 } /// ends role_overrides                                                          
-                
-               
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
+                           
             } // closes if this->tree[3]=="users"
 
             //Stop parsing if todo = USERS and tagName = USERS (en of the tag, of course)
@@ -6009,8 +5980,10 @@
      * It isn't now, just overwriting
      */
     function restore_create_roles($restore, $xmlfile) {
-        
-        $info = restore_read_xml_roles($restore, $xmlfile);
+        if (!defined('RESTORE_SILENTLY')) {
+            echo "<li>".get_string("creatingrolesdefinitions").'</li>';
+        }
+        $info = restore_read_xml_roles($xmlfile);
 
         $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
@@ -6018,48 +5991,59 @@
         // but we could use more intelligent detection, and role mapping
         // get role mapping info from $restore
 
+        $rolemappings = $restore->rolesmapping; // an array
+
         foreach ($info->roles as $oldroleid=>$roledata) {
             
-            // code to make new role name/short name if same role name or shortname exists
-            $fullname = $roledata->name;
-            $shortname = $roledata->shortname;
-            $currentfullname = "";
-            $currentshortname = "";
-            $counter = 0;
+            /// first we check if the roles are in the mappings
+            // if so, we just do a mapping i.e. update oldids table
+            if (isset($rolemappings[$oldroleid]) && $rolemappings[$oldroleid]) {
+                $status = backup_putid($restore->backup_unique_code,"role",$oldroleid,
+                                     $rolemappings[$oldroleid]); // adding a new id     
+              
+            } else {
+            
+                // code to make new role name/short name if same role name or shortname exists
+                $fullname = $roledata->name;
+                $shortname = $roledata->shortname;
+                $currentfullname = "";
+                $currentshortname = "";
+                $counter = 0;
                       
-            do {
-                if ($counter) {
-                    $suffixfull = " ".get_string("copyasnoun")." ".$counter;
-                    $suffixshort = "_".$counter;
-                } else {
-                    $suffixfull = "";
-                    $suffixshort = "";
-                }
-                $currentfullname = $fullname.$suffixfull;
-                // Limit the size of shortname - database column accepts <= 15 chars
-                $currentshortname = substr($shortname, 0, 15 - strlen($suffixshort)).$suffixshort;
-                $coursefull  = get_record("role","name",addslashes($currentfullname));
-                $courseshort = get_record("role","shortname",addslashes($currentshortname));
-                $counter++;
-            } while ($coursefull || $courseshort);
+                do {
+                    if ($counter) {
+                        $suffixfull = " ".get_string("copyasnoun")." ".$counter;
+                        $suffixshort = "_".$counter;
+                    } else {
+                        $suffixfull = "";
+                        $suffixshort = "";
+                    }
+                    $currentfullname = $fullname.$suffixfull;
+                    // Limit the size of shortname - database column accepts <= 15 chars
+                    $currentshortname = substr($shortname, 0, 15 - strlen($suffixshort)).$suffixshort;
+                    $coursefull  = get_record("role","name",addslashes($currentfullname));
+                    $courseshort = get_record("role","shortname",addslashes($currentshortname));
+                    $counter++;
+                } while ($coursefull || $courseshort);
 
-            $roledata->name = $currentfullname;
-            $roledata->shortname= $currentshortname;           
+                $roledata->name = $currentfullname;
+                $roledata->shortname= $currentshortname;           
             
-            // done finding a unique name
+                // done finding a unique name
             
-            $newroleid = create_role($roledata->name,$roledata->shortname,'');
-            $status = backup_putid($restore->backup_unique_code,"role",$oldroleid,
+                $newroleid = create_role($roledata->name,$roledata->shortname,'');
+                $status = backup_putid($restore->backup_unique_code,"role",$oldroleid,
                                      $newroleid); // adding a new id
-            foreach ($roledata->capabilities as $capability) {
+                foreach ($roledata->capabilities as $capability) {
                 
-                $roleinfo = new object();
-                $roleinfo = (object)$capability;
-                $roleinfo->contextid = $sitecontext->id;
-                $roleinfo->capability = $capability->name;
-                $roleinfo->roleid = $newroleid;
+                    $roleinfo = new object();
+                    $roleinfo = (object)$capability;
+                    $roleinfo->contextid = $sitecontext->id;
+                    $roleinfo->capability = $capability->name;
+                    $roleinfo->roleid = $newroleid;
                 
-                insert_record('role_capabilities', $roleinfo);
+                    insert_record('role_capabilities', $roleinfo);
+                }
             }
         }
     }
@@ -6073,27 +6057,40 @@
         // data pulls from course, mod, user, and blocks
         
         /*******************************************************
-         * Restoring assignments from course level assignments *
+         * Restoring from course level assignments *
          *******************************************************/
+        if (!defined('RESTORE_SILENTLY')) {
+            echo "<li>".get_string("creatingcourseroles").'</li>';
+        }
         $course = restore_read_xml_course_header($xmlfile);
         $courseassignments = $course->roleassignments;
 
         foreach ($courseassignments as $oldroleid => $courseassignment) {          
             restore_write_roleassignments($restore, $courseassignment->assignments, "course", CONTEXT_COURSE, $course->course_id, $oldroleid);
         }
-         
+
         /*****************************************************
-         * Restoring assignments from course level overrides *
-         *****************************************************/       
+         * Restoring from course level overrides *
+         *****************************************************/     
         $courseoverrides = $course->roleoverrides;
+        $rolemappings = $restore->rolesmapping;
         foreach ($courseoverrides as $oldroleid => $courseoverride) {
-            restore_write_roleoverrides($restore, $courseoverride->overrides, "course", CONTEXT_COURSE, $course->course_id, $oldroleid);
+            
+            // if not importing into exiting course, or creating new role, we are ok
+            // local course overrides to be respected (i.e. restored course overrides ignored)
+            if ($restore->restoreto != 1 || empty($rolemappings[$oldroleid])) {
+                restore_write_roleoverrides($restore, $courseoverride->overrides, "course", CONTEXT_COURSE, $course->course_id, $oldroleid);
+            }
         }
-        
+      
         /*******************************************************
          * Restoring role assignments/overrdies                *
          * from module level assignments                       *
          *******************************************************/     
+        
+        if (!defined('RESTORE_SILENTLY')) {
+            echo "<li>".get_string("creatingmodroles").'</li>';
+        }
         $sections = restore_read_xml_sections($xmlfile);
         $secs = $sections->sections;
          
@@ -6118,18 +6115,24 @@
          * Restoring assignments from blocks level       *
          * role assignments/overrides                    *
          *************************************************/ 
-        $blocks = restore_read_xml_blocks($xmlfile);
-        if (isset($blocks->instances)) {
-            foreach ($blocks->instances as $instance) {
-                if (isset($instance->roleassignments)) {
-                    foreach ($instance->roleassignments as $oldroleid=>$blockassignment) {
-                        restore_write_roleassignments($restore, $blockassignment->assignments, "block_instance", CONTEXT_BLOCK, $instance->id, $oldroleid);
+
+        if ($restore->restoreto != 1) { // skip altogether if restoring to exisitng course by adding
+            if (!defined('RESTORE_SILENTLY')) {
+                echo "<li>".get_string("creatingblocksroles").'</li>';
+            }
+            $blocks = restore_read_xml_blocks($xmlfile);
+            if (isset($blocks->instances)) {
+                foreach ($blocks->instances as $instance) {
+                    if (isset($instance->roleassignments)) {
+                        foreach ($instance->roleassignments as $oldroleid=>$blockassignment) {
+                            restore_write_roleassignments($restore, $blockassignment->assignments, "block_instance", CONTEXT_BLOCK, $instance->id, $oldroleid);
                       
+                        }
                     }
-                }
-                if (isset($instance->roleoverrides)) {
-                    foreach ($instance->roleoverrides as $oldroleid=>$blockoverride) {
-                        restore_write_roleoverrides($restore, $blockoverride->overrides, "block_instance", CONTEXT_BLOCK, $instance->id, $oldroleid);
+                    if (isset($instance->roleoverrides)) {
+                        foreach ($instance->roleoverrides as $oldroleid=>$blockoverride) {
+                            restore_write_roleoverrides($restore, $blockoverride->overrides, "block_instance", CONTEXT_BLOCK, $instance->id, $oldroleid);
+                        }
                     }
                 }
             }
@@ -6138,7 +6141,9 @@
          * Restoring assignments from userid level      *
          * role assignments/overrides                   *
          ************************************************/     
-
+        if (!defined('RESTORE_SILENTLY')) {
+            echo "<li>".get_string("creatinguserroles").'</li>';
+        }
         $info = restore_read_xml_users($restore, $xmlfile);
         if (!empty($info->users)) {
             //For each user, take its info from backup_ids
@@ -6173,11 +6178,20 @@
             $oldmodifier = backup_getid($restore->backup_unique_code,"user",$assignment->modifierid);
             $assignment->modifierid = $oldmodifier->new_id?$oldmodifier->new_id:0; // new modifier id here
             $assignment->roleid = $role->new_id; // restored new role id
-            $oldinstance = backup_getid($restore->backup_unique_code,$table,$oldid);
+
+            // hack to make the correct contextid for course level imports
+            if ($contextlevel == CONTEXT_COURSE) {
+                $oldinstance->new_id = $restore->course_id;
+            } else {
+                $oldinstance = backup_getid($restore->backup_unique_code,$table,$oldid);
+            }
+
             $newcontext = get_context_instance($contextlevel, $oldinstance->new_id);
             $assignment->contextid = $newcontext->id; // new context id
-                         
-            insert_record('role_assignments', $assignment);   
+            // might already have same assignment           
+            
+            role_assign($assignment->roleid, $assignment->userid, 0, $assignment->contextid, $assignment->timestart, $assignment->timeend, $assignment->hidden, $assignment->enrol);
+            
         }  
     }
     
@@ -6195,10 +6209,20 @@
             $oldmodifier = backup_getid($restore->backup_unique_code,"user",$override->modifierid);
             $override->modifierid = $oldmodifier->new_id?$oldmodifier->new_id:0; // new modifier id here
             $override->roleid = $role->new_id; // restored new role id
-            $oldinstance = backup_getid($restore->backup_unique_code,$table,$oldid);
+            
+            // hack to make the correct contextid for course level imports
+            if ($contextlevel == CONTEXT_COURSE) {
+                $oldinstance->new_id = $restore->course_id;
+            } else {
+                $oldinstance = backup_getid($restore->backup_unique_code,$table,$oldid);
+            }
+            
             $newcontext = get_context_instance($contextlevel, $oldinstance->new_id);
             $override->contextid = $newcontext->id; // new context id                 
-            insert_record('role_capabilities', $override);   
+            // might already have same override
+            if (!get_record('role_capabilities', 'capability', $override->capability, 'roleid', $override->roleid, 'contextid', $override->contextid)) {
+                insert_record('role_capabilities', $override);
+            }
         }  
     }  
 ?>

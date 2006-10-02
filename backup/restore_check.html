@@ -119,7 +119,19 @@
         //add new vars to restore object 
         $restore->course_startdateoffset = $coursestartdatedateoffset;
         $restore->course_shortname = $currentcourseshortname;
-
+        
+        // create role mappings, not sure all should be here
+        if ($data2 = data_submitted()) {
+            foreach ($data2 as $tempname=>$tempdata) {
+                if (strstr($tempname, 'roles_')) {
+                    $temprole = explode('_', $tempname);
+                    $oldroleid = $temprole[1];
+                    $newroleid = $tempdata;
+                    $restore->rolesmapping[$oldroleid] = $newroleid;
+                }                     
+            }       
+        }        
+                
     } else {
         //We have the object, so check if we have a new course_id
         //passed as parammeter
@@ -127,7 +139,7 @@
         if ($course_id) {
             $restore->course_id=$course_id;
         }
-    }
+    } 
     //We have the object with data, put it in the session
     $SESSION->restore = $restore;
 
