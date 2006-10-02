@@ -152,6 +152,25 @@ class XMLDBpostgres7 extends XMLDBgenerator {
     /// Rename de sequence
         $results[] = 'ALTER TABLE ' . $oldseqname . ' RENAME TO ' . $newseqname;
 
+    /// Rename all the check constraints in the table
+        $oldtablename = $this->getTableName($xmldb_table);
+        $newtablename = $this->getTableName($newt);
+
+        $oldconstraintprefix = $this->getNameForObject($xmldb_table->getName(), '');
+        $newconstraintprefix = $this->getNameForObject($newt->getName(), '', '');
+
+        if ($constraints = $this->getCheckConstraintsFromDB($xmldb_table)) {
+            foreach ($constraints as $constraint) {
+            /// Drop the old constraint
+                $results[] = 'ALTER TABLE ' . $newtablename . ' DROP CONSTRAINT ' . $constraint->name;
+            /// Calculate the new constraint name
+                $newconstraintname = str_replace($oldconstraintprefix, $newconstraintprefix, $constraint->name);
+            /// Add the new constraint
+                $results[] = 'ALTER TABLE ' . $newtablename . ' ADD CONSTRAINT ' . $newconstraintname .
+                             ' CHECK (' . $constraint->description . ')';
+             }
+         }
+
         return $results;
     }
 
@@ -373,6 +392,32 @@ class XMLDBpostgres7 extends XMLDBgenerator {
     /// Just a wrapper over the getAlterFieldSQL() function for PostgreSQL that
     /// is capable of handling defaults
         return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
+    }
+
+    /**
+     * Given one XMLDBTable returns one array with all the check constrainsts 
+     * in the table (fetched from DB)
+     * Each element contains the name of the constraint and its description
+     * If no check constraints are found, returns an empty array
+     */
+    function getCheckConstraintsFromDB($xmldb_table) {
+
+        $results = array();
+
+        $tablename = $this->getTableName($xmldb_table);
+
+        if ($constraints = get_records_sql("SELECT co.conname AS name, co.consrc AS description
+                                              FROM pg_constraint co,
+                                                   pg_class cl
+                                             WHERE co.conrelid = cl.oid
+                                               AND co.contype = 'c'
+                                               AND cl.relname = '{$tablename}'")) {
+            foreach ($constraints as $constraint) {
+                $results[$constraint->name] = $constraint;
+            }
+        }
+
+        return $results;
     }
 
     /**
