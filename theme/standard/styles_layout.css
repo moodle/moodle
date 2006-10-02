@@ -278,94 +278,94 @@ div.hide {
  ***/
 
 form.mform {
-    margin: 0;
-    padding: 0;
-    width: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
 }
 form.mform fieldset {
-    border: 1px solid black;
-    padding: 10px 0;
-    margin: 0;
-    width:100%;
+  border: 1px solid black;
+  padding: 10px 0;
+  margin: 0;
+  width:100%;
 }
 form.mform fieldset.hidden, form.mform fieldset.felement {
-    border: 0;
+  border: 0;
 }
 form.mform fieldset.felement {
-    width: auto;
+  width: auto;
 }
 form.mform fieldset legend {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 form.mform div.fitem {
-    clear: both;
-    width: 100%;
-    min-height: 1.5em;
+  clear: both;
+  width: 100%;
+  min-height: 1.5em;
 }
 /* uncomment this and edit formslib.php for
 ol li containers for form items.
 
 form.mform fieldset li.qfrow {
-    list-style: none;
-    padding: 5px;
-    margin: 0;
-    clear: both;
-    width: 100%;
-    min-height: 1.5em;
+  list-style: none;
+  padding: 5px;
+  margin: 0;
+  clear: both;
+  width: 100%;
+  min-height: 1.5em;
 }
 form.mform fieldset ol {
   margin: 0;
   padding: 0;
 }*/
 form.mform label {
-    display: block;
-    float: left;
-    width: 30%;
-    padding: 0;
-    margin: 0 0 0 0;
-    text-align: right;
+  display: block;
+  float: left;
+  width: 30%;
+  padding: 0;
+  margin: 0 0 0 0;
+  text-align: right;
 }
 div.fitem fieldset.fgroup label, div.fradio label,  div.fcheckbox label{
-    display:inline;
-    float: none;
-    width: auto;
+  display:inline;
+  float: none;
+  width: auto;
 }
 
 form.mform div.felement,  form.mform fieldset.felement{
-    display: block;
-    float: left;
-    margin: 5px 0 0 10px;
-    padding: 0;
-    text-align:left;
+  display: block;
+  float: left;
+  margin: 5px 0 0 10px;
+  padding: 0;
+  text-align:left;
 }
 
 form.mform div.fdescription {
-    clear: both;
-    min-height: 1.5em;
+  clear: both;
+  min-height: 1.5em;
 }
 
 form.mform input, form.mform select {
-    width: auto;
+  width: auto;
 }
 form.mform ftextarea {
 }
 form.mform br {
-    clear: left;
+  clear: left;
 }
 form.mform div.fhtmleditor {
-    margin: 0 auto 10px auto;
-    width : 600px;
-    clear:both;
-    float:none;
+  margin: 0 auto 10px auto;
+  width : 600px;
+  clear:both;
+  float:none;
 }
 form.mform span.error, form.mform span.required {
-    color: red;
+  color: red;
 }
 form.mform div.error,form.mform fieldset.error {
-    border: 1px solid red;
-    padding: 5px;
-    color: inherit;
+  border: 1px solid red;
+  padding: 5px;
+  color: inherit;
 }
  
  
@@ -550,73 +550,73 @@ body#admin-roles-manage table.generalbox {
 }
 
 #adminsettings fieldset {
-    margin-top: 1em;
-    padding: 1em 0.5em;
+  margin-top: 1em;
+  padding: 1em 0.5em;
 }
 
 #adminsettings legend {
-    display: none;
+  display: none;
 }
 
 #adminsettings .form-group {
-    float: left;
+  float: left;
 }
 
 #adminsettings .form-item {
-    margin: 0;
+  margin: 0;
 }
 
 #adminsettings label {
-    display: block;
-    float: left;
-    width: 150px;
-    text-align: right;
+  display: block;
+  float: left;
+  width: 150px;
+  text-align: right;
 }
 
 #adminsettings .form-shortname {
-    display: block;
+  display: block;
 }
 
 #adminsettings select,
 #adminsettings input {
-    float: left;
-    margin: 0 0 0 10px;
+  float: left;
+  margin: 0 0 0 10px;
 }
 
 #adminsettings textarea {
-    float: left;
-    margin: 0 0 0 10px;
-    width: 65%;
+  float: left;
+  margin: 0 0 0 10px;
+  width: 65%;
 }
 
 #adminsettings .form-group select,
 #adminsettings .form-group input {
-    display: inline;
-    float: none;
+  display: inline;
+  float: none;
 }
 
 /* #adminsettings .admin-configtime .form-select {
-    display: inline;
-    float: none;
+  display: inline;
+  float: none;
 }
 
 #adminsettings div.admin-frontpage div.form-group select.form-select {
-    display: inline;
-    float: none;
+  display: inline;
+  float: none;
 } */
 
 #adminsettings .description {
-    clear: both;
-    margin: 0 1em 0 160px;
-    padding: 0.3em 0 1.5em 0;
+  clear: both;
+  margin: 0 1em 0 160px;
+  padding: 0.3em 0 1.5em 0;
 }
 
 .form-buttons {
-    margin: 10px 0 0 160px;
+  margin: 10px 0 0 160px;
 }
 
 .form-text {
-    width: 20em;
+  width: 20em;
 }
 .form-textarea { }
 .form-select { }
@@ -628,6 +628,10 @@ body#admin-roles-manage table.generalbox {
 .admin-frontpagedesc .htmlarea {
   margin: 0 auto 10px auto;
   width : 600px;
+}
+
+.adminsearchform {
+  padding-top:10px;
 }
 
 
@@ -1047,7 +1051,7 @@ span.current {
 }
 
 #calendar .indent {
-    padding-left: 20px;
+  padding-left: 20px;
 }
 
 /***
@@ -1538,7 +1542,7 @@ body#message-messages {
   display:block;
   padding:0px 1px 0px 0px;
 }
-          
+  
 .tabrow td.selected {
   border-width: 0px;
 }
@@ -1552,7 +1556,7 @@ body#message-messages {
   margin-bottom:5px;
   border-width: 1px;
   border-style: solid;
-  border-collapse: separate;    
+  border-collapse: separate;  
 }
 
 .userinfobox .left {
@@ -1578,7 +1582,7 @@ body#message-messages {
 
 .userinfobox .username {
   padding-bottom: 20px;
-}    
+}  
 
 
 table.userinfobox {
@@ -1833,7 +1837,7 @@ body#mod-forum-search .introcontent {
 
 #mod-glossary-comments .glossarypost,
 #mod-glossary-comment .glossarypost {
-      margin-top: 15px;
+  margin-top: 15px;
 }
 
 .entryboxheader {
@@ -1990,7 +1994,7 @@ body#mod-forum-search .introcontent {
 
 
 #mod-quiz-attempt #page {
-    text-align: center;
+  text-align: center;
 }
 
 body#mod-quiz-report table#attempts,
