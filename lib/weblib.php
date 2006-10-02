@@ -3566,8 +3566,8 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         }
 
         if ($usehtmleditor) {
-            // not sure if this capability is appropriate
-            if (!empty($courseid) and has_capability('moodle/course:trustcontent', get_context_instance(CONTEXT_COURSE, $courseid))) {
+            if (!empty($courseid) and has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $courseid))) {
+                // needed for course file area browsing in image insert plugin 
                 $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
                 $CFG->wwwroot .'/lib/editor/htmlarea/htmlarea.php?id='. $courseid .'"></script>'."\n" : '';
             } else {
