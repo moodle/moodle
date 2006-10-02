@@ -5,7 +5,7 @@
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-$query = trim(required_param('query', PARAM_NOTAGS));  // Search string
+$query = trim(stripslashes_safe(required_param('query', PARAM_NOTAGS)));  // Search string
 
 $adminroot = admin_get_root();
 admin_externalpage_setup('search', $adminroot); // now hidden page
