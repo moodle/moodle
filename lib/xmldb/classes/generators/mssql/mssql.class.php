@@ -56,6 +56,8 @@ class XMLDBmssql extends XMLDBgenerator {
     var $rename_table_sql = "sp_rename 'OLDNAME', 'NEWNAME'"; //SQL sentence to rename one table, both
                                   //OLDNAME and NEWNAME are dinamically replaced
 
+    var $rename_table_extra_code = true; //Does the generator need to add code after table rename
+
     var $rename_column_sql = "sp_rename 'TABLENAME.OLDFIELDNAME', 'NEWFIELDNAME', 'COLUMN'";
                                       ///TABLENAME, OLDFIELDNAME and NEWFIELDNAME are dianmically replaced
 
@@ -178,6 +180,40 @@ class XMLDBmssql extends XMLDBgenerator {
         }
     /// Build the standard alter table drop
         $results[] = 'ALTER TABLE ' . $tablename . ' DROP COLUMN ' . $fieldname;
+
+        return $results;
+    }
+
+    /**
+     * Returns the code (array of statements) needed to execute extra statements on table rename
+     */
+    function getRenameTableExtraSQL ($xmldb_table, $newname) {
+
+        $results = array();
+
+        $newt = new XMLDBTable($newname); //Temporal table for name calculations
+
+        $oldtablename = $this->getTableName($xmldb_table);
+        $newtablename = $this->getTableName($newt);
+
+    /// Rename all the check constraints in the table
+        $oldconstraintprefix = $this->getNameForObject($xmldb_table->getName(), '');
+        $newconstraintprefix = $this->getNameForObject($newt->getName(), '', '');
+
+        if ($constraints = $this->getCheckConstraintsFromDB($xmldb_table)) {
+            foreach ($constraints as $constraint) {
+            /// Drop the old constraint
+                $results[] = 'ALTER TABLE ' . $newtablename . ' DROP CONSTRAINT ' . $constraint->name;
+            /// Calculate the new constraint name
+                $newconstraintname = str_replace($oldconstraintprefix, $newconstraintprefix, $constraint->name);
+            /// Add the new constraint
+                $results[] = 'ALTER TABLE ' . $newtablename . ' ADD CONSTRAINT ' . $newconstraintname .
+                             ' CHECK ' . $constraint->description;
+            }
+        }
+
+
+        print_object($this->getCheckConstraintsFromDB($xmldb_table));
 
         return $results;
     }
@@ -332,8 +368,6 @@ class XMLDBmssql extends XMLDBgenerator {
      */
     function getDefaultConstraintName($xmldb_table, $xmldb_field) {
 
-        global $db;
-
     /// Get the quoted name of the table and field
         $tablename = $this->getTableName($xmldb_table);
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
@@ -347,6 +381,34 @@ class XMLDBmssql extends XMLDBgenerator {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Given one XMLDBTable returns one array with all the check constrainsts 
+     * in the table (fetched from DB)
+     * Each element contains the name of the constraint and its description
+     * If no check constraints are found, returns an empty array
+     */
+    function getCheckConstraintsFromDB($xmldb_table) {
+
+        $results = array();
+
+        $tablename = $this->getTableName($xmldb_table);
+
+        if ($constraints = get_records_sql("SELECT o.name, c.text AS description
+                                            FROM sysobjects o,
+                                                 sysobjects p,
+                                                 syscomments c
+                                           WHERE p.id = o.parent_obj
+                                             AND o.id = c.id
+                                             AND o.xtype = 'C'
+                                             AND p.name = '{$tablename}'")) {
+            foreach ($constraints as $constraint) {
+                $results[$constraint->name] = $constraint;
+            }
+        }
+
+        return $results;
     }
 
     /**
