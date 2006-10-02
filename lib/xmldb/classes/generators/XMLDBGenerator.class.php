@@ -655,6 +655,17 @@ class XMLDBgenerator {
 
         $results = array();  //Array where all the sentences will be stored
 
+    /// Although this is checked in ddllib - rename_field() - double check
+    /// that we aren't trying to rename one "id" field. Although it could be
+    /// implemented (if adding the necessary code to rename sequences, defaults,
+    /// triggers... and so on under each getRenameFieldExtraSQL() function, it's
+    /// better to forbide it, mainly because this field is the default PK and
+    /// in the future, a lot of FKs can be pointing here. So, this field, more
+    /// or less, must be considered inmutable!
+        if ($xmldb_field->getName() == 'id') {
+            return array();
+        }
+
         $rename = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->rename_column_sql);
         $rename = str_replace('OLDFIELDNAME', $xmldb_field->getName(), $rename);
         $rename = str_replace('NEWFIELDNAME', $newname, $rename);
