@@ -3,6 +3,7 @@
 
 
 // begin {added with admin cleanup}
+$string['autologinguests'] = 'Auto-login guests';
 $string['search'] = 'Search';
 $string['searchresults'] = 'Search Results';
 $string['noresults'] = 'No results found.';
