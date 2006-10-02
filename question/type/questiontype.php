@@ -523,13 +523,15 @@ class default_questiontype {
         $cm = get_coursemodule_from_instance('quiz', $cmoptions->id);
         if (!empty($cm->id)) {
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        } else if (!empty($cm->course)) {
+            $context = get_context_instance(CONTEXT_COURSE, $cm->course);
         } else {
-            $context = false;
+            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
         }
         
         // For editing teachers print a link to an editing popup window
         $editlink = '';
-        if ($context && has_capability('mod/quiz:manage', $context)) {
+        if ($context && has_capability('moodle/question:manage', $context)) {
             $stredit = get_string('edit');
             $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" border="0" alt="'.$stredit.'" />';
             $editlink = link_to_popup_window('/question/question.php?id='.$question->id, $stredit, $linktext, 450, 550, $stredit, '', true);
