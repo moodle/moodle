@@ -230,10 +230,29 @@ class XMLDBoci8po extends XMLDBgenerator {
     /// Drop old trigger
         $results[] = "DROP TRIGGER " . $oldtriggername;
 
-        $new_xmldb_table = new XMLDBTable($newname); /// Temp table for trigger code generation
+        $newt = new XMLDBTable($newname); /// Temp table for trigger code generation
 
     /// Create new trigger
-        $results = array_merge($results, $this->getCreateTriggerSQL($new_xmldb_table, $xmldb_field));
+        $results = array_merge($results, $this->getCreateTriggerSQL($newt, $xmldb_field));
+
+    /// Rename all the check constraints in the table
+        $oldtablename = $this->getTableName($xmldb_table);
+        $newtablename = $this->getTableName($newt);
+
+        $oldconstraintprefix = $this->getNameForObject($xmldb_table->getName(), '');
+        $newconstraintprefix = $this->getNameForObject($newt->getName(), '', '');
+
+        if ($constraints = $this->getCheckConstraintsFromDB($xmldb_table)) {
+            foreach ($constraints as $constraint) {
+            /// Drop the old constraint
+                $results[] = 'ALTER TABLE ' . $newtablename . ' DROP CONSTRAINT ' . $constraint->name;
+            /// Calculate the new constraint name
+                $newconstraintname = str_replace($oldconstraintprefix, $newconstraintprefix, $constraint->name);
+            /// Add the new constraint
+                $results[] = 'ALTER TABLE ' . $newtablename . ' ADD CONSTRAINT ' . $newconstraintname .
+                             ' CHECK (' . $constraint->description . ')';
+            }
+        }
 
         return $results;
     }
@@ -433,6 +452,31 @@ class XMLDBoci8po extends XMLDBgenerator {
     /// is capable of handling defaults
         return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
     }   
+
+    /**
+     * Given one XMLDBTable returns one array with all the check constrainsts 
+     * in the table (fetched from DB)
+     * Each element contains the name of the constraint and its description
+     * If no check constraints are found, returns an empty array
+     */
+    function getCheckConstraintsFromDB($xmldb_table) {
+
+        $results = array();
+
+        $tablename = strtoupper($this->getTableName($xmldb_table));
+
+        if ($constraints = get_records_sql("SELECT lower(c.constraint_name) AS name, c.search_condition AS description
+                                              FROM user_constraints c
+                                             WHERE c.table_name = '{$tablename}'
+                                               AND c.constraint_type = 'C'
+                                               AND c.constraint_name not like 'SYS%'")) {
+            foreach ($constraints as $constraint) {
+                $results[$constraint->name] = $constraint;
+            }
+        }
+
+        return $results;
+    }
 
     /**
      * Returns an array of reserved words (lowercase) for this DB
