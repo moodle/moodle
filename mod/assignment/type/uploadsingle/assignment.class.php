@@ -64,7 +64,8 @@ class assignment_uploadsingle extends assignment_base {
         if ($submission = $this->get_submission()) {
             if ($submission->timemarked) {
                 $this->view_feedback();
-            } else if ($filecount) {
+            }
+            if ($filecount) {
                 print_simple_box($this->print_user_files($USER->id, true), 'center');
             }
         }
