@@ -495,7 +495,7 @@ class XMLDBgenerator {
 
         $results[] = $rename;
 
-    /// TODO, call to getRenameTableExtraSQL() if $rename_table_extra_code is enabled. It will add sequence regeneration code.
+    /// Call to getRenameTableExtraSQL() if $rename_table_extra_code is enabled. It will add sequence regeneration code.
         if ($this->rename_table_extra_code) {
             $extra_sentences = $this->getRenameTableExtraSQL($xmldb_table, $newname);
             $results = array_merge($results, $extra_sentences);
@@ -874,7 +874,7 @@ class XMLDBgenerator {
      * Given three strings (table name, list of fields (comma separated) and suffix), create the proper object name
      * quoting it if necessary
      */
-    function getNameForObject($tablename, $fields, $suffix) {
+    function getNameForObject($tablename, $fields, $suffix='') {
 
         $name = '';
 
@@ -905,7 +905,10 @@ class XMLDBgenerator {
         $name = substr(trim($name), 0, $this->names_max_length - 1 - strlen($suffix)); //Max names_max_length
 
     /// Add the suffix
-        $namewithsuffix = $name . '_' . $suffix;
+        $namewithsuffix = $name;
+        if ($suffix) {
+            $namewithsuffix = $namewithsuffix . '_' . $suffix;
+        }
 
     /// If the calculated name is in the cache, let's modify if
         if (in_array($namewithsuffix, $used_names)) {
@@ -917,11 +920,17 @@ class XMLDBgenerator {
             } else {
                 $newname = substr($name, 0, strlen($name)-1) . $counter;
             }
-            $newnamewithsuffix = $newname . '_' . $suffix;
+            $newnamewithsuffix = $newname;
+            if ($suffix) {
+                $newnamewithsuffix = $newnamewithsuffix . '_' . $suffix;
+            }
         /// Now iterate until not used name is found, incrementing the counter
             while (in_array($newnamewithsuffix, $used_names)) {
                 $newname = substr($name, 0, strlen($newname)-1) . $counter;
-                $newnamewithsuffix = $newname . '_' . $suffix;
+                $newnamewithsuffix = $newname;
+                if ($suffix) {
+                    $newnamewithsuffix = $newnamewithsuffix . '_' . $suffix;
+                }
                 $counter++;
             }
             $namewithsuffix = $newnamewithsuffix;
