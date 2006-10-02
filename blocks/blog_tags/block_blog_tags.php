@@ -75,7 +75,7 @@ class block_blog_tags extends block_base {
         $sql .= "FROM {$CFG->prefix}tags as t, {$CFG->prefix}blog_tag_instance as bt, {$CFG->prefix}post as p ";
         $sql .= 'WHERE t.id = bt.tagid ';
         $sql .= 'AND p.id = bt.entryid ';
-        $sql .= 'AND (p.publishstate = "site" or p.publishstate="public") ';
+        $sql .= 'AND (p.publishstate = \'site\' or p.publishstate=\'public\') ';
         $sql .= "AND bt.timemodified > {$timewithin} ";
         $sql .= 'GROUP BY bt.tagid ';
         $sql .= 'ORDER BY ct DESC, t.text ASC ';
