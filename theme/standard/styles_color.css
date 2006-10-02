@@ -318,6 +318,10 @@ table.flexible .r1 {
     color: #888;
 }
 
+.block_admin_tree.sideblock .link.current {
+  background-color:#EEEEEE;
+}
+
 /***
  *** Blocks
  ***/

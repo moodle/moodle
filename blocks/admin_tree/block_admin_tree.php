@@ -46,23 +46,26 @@ class block_admin_tree extends block_base {
         $this->tempcontent .= "</span>\n";
     }
 
-    function create_item($visiblename,$link,$icon) {
+    function create_item($visiblename,$link,$icon,$class) {
         global $CFG;
         for ($i = 0; $i < $this->currentdepth; $i++) {
             $this->tempcontent .= "&nbsp;&nbsp;&nbsp;";
         }
-        $this->tempcontent .= '<a href="' . $link . '"><img src="' . $icon . '" border="0" alt="[item]" /> ' . $visiblename . '</a><br />' . "\n";
+        $this->tempcontent .= '<a class="'.$class.'" href="'.$link.'"><img src="'.$icon.'" border="0" alt="[item]" />'.
+                               $visiblename.'</a><br />'."\n";
     }
 
     function build_tree (&$content) {
         global $CFG;
         if (is_a($content, 'admin_settingpage')) {
             if ($content->check_access() and !$content->is_hidden()) {
-                $this->create_item($content->visiblename,$CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=' . $content->name,$CFG->wwwroot .'/blocks/admin_tree/item.gif');
+                $class = ($content->name == $this->section) ? 'link current' : 'link';
+                $this->create_item($content->visiblename,$CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=' . $content->name,$CFG->wwwroot .'/blocks/admin_tree/item.gif', $class);
             }
         } else if (is_a($content, 'admin_externalpage')) {
             if ($content->check_access() and !$content->is_hidden()) {
-                $this->create_item($content->visiblename, $content->url, $CFG->wwwroot . '/blocks/admin_tree/item.gif');
+                $class = ($content->name == $this->section) ? 'link current' : 'link';
+                $this->create_item($content->visiblename, $content->url, $CFG->wwwroot . '/blocks/admin_tree/item.gif', $class);
             }
         } else if (is_a($content, 'admin_category')) {
             if ($content->check_access() and !$content->is_hidden()) {
@@ -93,7 +96,7 @@ class block_admin_tree extends block_base {
 
         global $CFG, $ADMIN;
 
-           require_once($CFG->libdir.'/adminlib.php');
+        require_once($CFG->libdir.'/adminlib.php');
         $adminroot = admin_get_root();
 
         if ($this->content !== NULL) {
