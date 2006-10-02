@@ -80,5 +80,5 @@ $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Vietnamese';
 $string['user'] = 'Người dùng';
 $string['wwwroot'] = 'Địa chỉ web';
-$string['wwwrooterror'] = ' Địa chỉ web không xuất hiện hợp lệ - Các file cài đặt Moodle không xuất hiện ở đó.';
+$string['wwwrooterror'] = ' Địa chỉ web không hợp lệ - Các file cài đặt Moodle không xuất hiện ở đó.';
 ?>

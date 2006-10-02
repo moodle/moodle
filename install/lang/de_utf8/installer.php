@@ -15,9 +15,9 @@ $string['admindirsettinghead'] = 'Admin-Verzeichnis festlegen ...';
 $string['admindirsettingsub'] = 'Einige wenige Webhosting-Anbieter benutzen /admin als spezielles Verzeichnis für den Zugang zum Administrationstool oder andere Dinge. Leider kommt es dadurch zu Konflikten mit dem Standard für das Administrationsverzeichnis von Moodle. Sie können dies ändern, indem Sie das admin-Verzeichnis in der Moodle-Installation umbenennen. Den gewählten Namen dieses Verzeichnisses müssen Sie hier eingeben.
 Zum Beispiel: <br /> <br /><b>moodleadmin</b><br /> 
 Dies ändert die Links für das Admin-Verzeichnis in Moodle.';
-$string['bypassed'] = 'Uberbrückt';
-$string['cannotcreatelangdir'] = 'Das Verzeichnis lang kann nicht angelegt werden.';
-$string['cannotcreatetempdir'] = 'Das Verzeichnis temp kann nicht angelegt werden.';
+$string['bypassed'] = 'Überbrückt';
+$string['cannotcreatelangdir'] = 'lang-Verzeichnis kann nicht angelegt werden.';
+$string['cannotcreatetempdir'] = 'Temporäres Verzeichnis kann nicht angelegt werden.';
 $string['cannotdownloadcomponents'] = 'Komponenten können nicht heruntergeladen werden.';
 $string['cannotdownloadzipfile'] = 'ZIP-Datei kann nicht heruntergeladen werden.';
 $string['cannotfindcomponent'] = 'Komponente wurde nicht gefunden.';
@@ -96,7 +96,7 @@ $string['globalsquotes'] = 'Unsichere Einstellung von Globals';
 $string['globalsquoteserror'] = 'Prüfen Sie die PHP-Einstellungen: deaktivieren Sie register_globals und/oder aktivieren Sie magic_quotes_gpc';
 $string['help'] = 'Hilfe';
 $string['iconvrecommended'] = 'Die Installation der ICONV Bibliothek wird zur Leistungsverbesserung dringend empfohlen. Dies ist besonders wichtig wenn Sie Sprachen mit anderen als lateinischen Zeichensätzen verwenden.';
-$string['info'] = 'Information';
+$string['info'] = 'Information/en';
 $string['installation'] = 'Installation';
 $string['invalidmd5'] = 'md5 ungültig';
 $string['langdownloaderror'] = 'Leider konnte die Sprache \"$a\" nicht installiert werden. Die Installation wird auf Englisch fortgesetzt. ';
@@ -136,7 +136,7 @@ $string['phpversionhelp'] = '<p>Moodle erwartet PHP mindestens in der Version 4.
 $string['previous'] = 'Frühere';
 $string['remotedownloadnotallowed'] = 'Der Download von Komponenten auf Ihren Server ist nicht erlaubt (allow_url_fopen ist deaktiviert). <br /><br /> Die Datei <a href=\"$a->url\">$a->url</a> muss manuell heruntergeladen werden. Kopieren Sie die Datei nach \"$a->dest\" auf dem Server und entpacken Sie sie dort.';
 $string['report'] = 'Bericht';
-$string['restricted'] = 'eingeschränkt';
+$string['restricted'] = 'Eingeschränkt';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Die Nutzung von Moodle im Safe Mode kann zu Schwierigkeiten führen.';
 $string['sessionautostart'] = 'Session Auto Start';
