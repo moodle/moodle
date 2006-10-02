@@ -37,6 +37,7 @@ $string['roletoassign'] = 'Role to assign';
 $string['roletooverride'] = 'Role to override';
 $string['roles'] = 'Roles';
 $string['selectrole'] = 'Select a role';
+$string['showallroles'] = 'Show all roles';
 $string['viewrole'] = 'View role details';
 $string['xuserswiththerole'] = 'Users with the role \"$a->role\": $a->number';
 
