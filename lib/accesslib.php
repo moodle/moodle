@@ -306,6 +306,10 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
         }
     }
 
+    if (!is_object($context)) {
+        debugging('Incorrect context parameter "'.$context.'" for has_capability(), object expected! This should be fixed in code.');
+    }
+
     if ($doanything) {
 
         // Check site
