@@ -3,6 +3,9 @@
 
 
 // begin {added with admin cleanup}
+$string['search'] = 'Search';
+$string['searchresults'] = 'Search Results';
+$string['noresults'] = 'No results found.';
 $string['accounts'] = 'Accounts';
 $string['appearance'] = 'Appearance';
 $string['server'] = 'Server';
