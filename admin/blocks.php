@@ -6,6 +6,8 @@
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/blocklib.php');
     require_once($CFG->libdir.'/tablelib.php');
+    require_once($CFG->libdir.'/ddllib.php');
+
     $adminroot = admin_get_root();
     admin_externalpage_setup('manageblocks', $adminroot);
 
@@ -99,12 +101,19 @@
             }
 
             // Then the tables themselves
-
             if ($tables = $db->Metatables()) {
                 $prefix = $CFG->prefix.$block->name;
+                $prefix2 = $CFG->prefix.'block_'.$block->name;
                 foreach ($tables as $table) {
-                    if (strpos($table, $prefix) === 0) {
-                        if (!execute_sql("DROP TABLE $table", false)) {
+                    if (strpos($table, $prefix) === 0 || strpos($table, $prefix2) === 0) {
+                    /// If the match has been due to the 1st condition, debug to developers
+                        if (strpos($table, $prefix) === 0) {
+                            debugging('This block has some wrongly named tables. See Moodle Docs coding guidelines (and MDL-6786)', DEBUG_DEVELOPER);
+                        }
+                    /// Strip prefix from $table
+                        $table = preg_replace("/^{$CFG->prefix}/", '', $table);
+                        $xmldb_table = new XMLDBTable($table);
+                        if (!drop_table($xmldb_table, true, false)) {
                             notify("ERROR: while trying to drop table $table");
                         }
                     }
