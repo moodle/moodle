@@ -53,6 +53,8 @@ class XMLDBoci8po extends XMLDBgenerator {
 
     var $rename_table_extra_code = true; //Does the generator need to add code after table rename
 
+    var $rename_column_extra_code = true; //Does the generator need to add code after field rename
+
     var $enum_inline_code = false; //Does the generator need to add inline code in the column definition
 
     var $alter_column_sql = 'ALTER TABLE TABLENAME MODIFY (COLUMNSPECS)'; //The SQL template to alter columns
@@ -199,6 +201,26 @@ class XMLDBoci8po extends XMLDBgenerator {
         $comment.= " IS '" . substr($xmldb_table->getComment(), 0, 250) . "'";
 
         return array($comment);
+    }
+
+    /**
+     * Returns the code (array of statements) needed to execute extra statements on field rename
+     */
+    function getRenameFieldExtraSQL ($xmldb_table, $xmldb_field, $newname) {
+
+        $results = array();
+
+    /// If the field is enum, drop and re-create the check constraint
+        if ($xmldb_field->getEnum()) {
+        /// Drop the current enum
+            $results = array_merge($results, $this->getDropEnumSQL($xmldb_table, $xmldb_field));
+        /// Change field name
+            $xmldb_field->setName($newname);
+        /// Recreate the enum
+            $results = array_merge($results, $this->getCreateEnumSQL($xmldb_table, $xmldb_field));
+        }
+
+        return $results;
     }
 
     /**
