@@ -542,10 +542,10 @@ body#admin-roles-manage table.generalbox {
   text-align:center;
 }
 
-#admin-roles-manage .inherit,
-#admin-roles-manage .allow,
-#admin-roles-manage .prevent,
-#admin-roles-manage .prohibit {
+.rolecap .inherit,
+.rolecap .allow,
+.rolecap .prevent,
+.rolecap .prohibit {
   text-align:center;
 }
 
