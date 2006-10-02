@@ -847,6 +847,12 @@ function rename_field($table, $field, $newname, $continue=true, $feedback=true) 
         return false;
     }
 
+/// Check field isn't id. Renaming over that field is not allowed
+    if ($field->getName() == 'id')) {
+        debugging('Field ' . $field->getName() . ' cannot be renamed. Rename skipped', DEBUG_DEVELOPER);
+        return true; //Field is "id", nothing to do
+    }
+
 /// Check field exists
     if (!field_exists($table, $field)) {
         debugging('Field ' . $field->getName() . ' do not exist. Rename skipped', DEBUG_DEVELOPER);
