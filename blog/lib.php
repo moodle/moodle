@@ -289,14 +289,14 @@
 
     /**
      * User can edit a blog entry if this is their own blog post and they have
-     * the capability moodle/blog:writeentry, or if they have the capability
+     * the capability moodle/blog:create, or if they have the capability
      * moodle/blog:manageentries.
      */
     function blog_user_can_edit_post($blogEntry, $context) {
         
         global $CFG, $USER;
         
-        return ((has_capability('moodle/blog:writeentries', $context) &&
+        return ((has_capability('moodle/blog:create', $context) &&
                     $blogEntry->userid == $USER->id) ||
                     has_capability('moodle/blog:manageentries', $context));
     }
