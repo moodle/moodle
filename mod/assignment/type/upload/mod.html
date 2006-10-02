@@ -5,6 +5,9 @@
     if (empty($form->var2)) {
         $form->var2 = 0; // enable notes
     }
+    if (empty($form->var3)) {
+        $form->var3 = 0; // force intro hiding before available date
+    }
     if (empty($form->resubmit)) {
         $form->resubmit = 1; // allow deleting
     }
@@ -60,6 +63,17 @@
         $options = array(0=>get_string("no"), 1=>get_string("yes"));
         choose_from_menu($options, "var2", $form->var2, "");
         helpbutton("allownotes", get_string("allownotes", "assignment"), "assignment");
+    ?>
+    </td>
+</tr>
+
+<tr>
+    <td align="right"><b><?php print_string("hideintro", "assignment") ?>:</b></td>
+    <td>
+    <?php
+        $options = array(0=>get_string("no"), 1=>get_string("yes"));
+        choose_from_menu($options, "var3", $form->var3, "");
+        helpbutton("hideintro", get_string("hideintro", "assignment"), "assignment");
     ?>
     </td>
 </tr>
