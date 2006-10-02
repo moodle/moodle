@@ -2124,7 +2124,7 @@ function fetch_context_capabilities($context) {
 /// the rest of code is a bit hacky, think twice before modifying it :-(
 
     // special sorting of core system capabiltites and enrollments
-    if ($context->contextlevel == CONTEXT_SYSTEM) {
+    if (in_array($context->contextlevel, array(CONTEXT_SYSTEM, CONTEXT_COURSECAT, CONTEXT_COURSE))) {
         $first = array();
         foreach ($records as $key=>$record) {
             if (preg_match('|^moodle/|', $record->name) and $record->contextlevel == CONTEXT_SYSTEM) {
