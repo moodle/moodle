@@ -308,7 +308,7 @@ table.flexible .r1 {
   background-color: green;
 }
 
-#adminsettings {
+#adminsettings fieldset {
     background-color: #EEE;
     border-color: #BBB;
     color: #000;
