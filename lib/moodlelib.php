@@ -4266,7 +4266,13 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
     $locations = array();
 
     if (!empty($extralocations)) {   // Calling code has a good idea where to look
-        $locations += $extralocations;
+        if (is_array($extralocations)) {
+            $locations += $extralocations;
+        } else if (is_string($extralocations)) {
+            $locations[] = $extralocations;
+        } else {
+            debugging('Bad lang path provided');
+        }
     }
 
     if (isset($CFG->running_installer)) {
