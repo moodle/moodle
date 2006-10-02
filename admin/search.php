@@ -5,10 +5,13 @@
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
+$query = required_param('query', PARAM_ALPHAEXT);
+
 $adminroot = admin_get_root();
 admin_externalpage_setup('search', $adminroot); // now hidden page
 
-$query = required_param('query', PARAM_ALPHAEXT);
+$CFG->adminsearchquery = $query;  // So we can reference it in search boxes later in this invocation
+
 
 $resultshtml = search_settings_html(admin_get_root(), $query);
 

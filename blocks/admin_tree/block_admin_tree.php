@@ -179,12 +179,18 @@ class block_admin_tree extends block_base {
             $this->content->text .= $this->expandjavascript;
 
             $this->content->text .= '</script>' . "\n";
-            $this->content->footer = '';
         } else {
             $this->content = new stdClass;
             $this->content->text = '';
-            $this->content->footer = '';
         }
+
+        $searchcontent = isset($CFG->adminsearchquery) ? $CFG->adminsearchquery : '';
+
+        $this->content->footer = '<div class="adminsearchform">'.
+                                 '<form action="'.$CFG->wwwroot.'/admin/search.php" method="get">'.
+                                 '<input type="text" name="query" size="8" value="'.$searchcontent.'" />'.
+                                 '<input type="submit" value="'.get_string('search').'" />'.
+                                 '</form></div>';
         return $this->content;
 
     }
