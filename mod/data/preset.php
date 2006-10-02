@@ -11,10 +11,12 @@ require_once($CFG->libdir.'/uploadlib.php');
 require_once($CFG->libdir.'/xmlize.php');
 
 
-$id      = optional_param('id', 0, PARAM_INT);    // course module id
-$d       = optional_param('d', 0, PARAM_INT);     // database activity id 
-$action  = optional_param('action', 'base', PARAM_RAW); // current action
-$file    = optional_param('file', false, PARAM_PATH); // path of file to upload
+$id         = optional_param('id', 0, PARAM_INT);    // course module id
+$d          = optional_param('d', 0, PARAM_INT);     // database activity id 
+$action     = optional_param('action', 'base', PARAM_RAW); // current action
+$userid     = optional_param('userid', 0, PARAM_INT);   // owner of the preset
+$shortname  = optional_param('shortname', '', PARAM_FILE); // directory the preset is in
+$file       = optional_param('file', '', PARAM_FILE); // uploaded file
 
 if ($id) {
     if (! $cm = get_record('course_modules', 'id', $id)) {
@@ -40,56 +42,16 @@ if ($id) {
     error('Parameter missing');
 }
 
+if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
+    error('Could not find context');
+}
+
 require_login($course->id);
 
-require_capability('mod/data:managetemplates', get_context_instance(CONTEXT_MODULE, $cm->id));
+require_capability('mod/data:managetemplates', $context);
 
-/* get the list of standard presets found in /mod/data/preset */
-$presets = array();
-
-
-if ($presetdir = opendir($CFG->dirroot.'/mod/data/preset')) {
-
-    while ($userdir = readdir($presetdir)) {
-
-        $fulluserdir = '/mod/data/preset/'.$userdir;
-
-        if ($userdir == '.' || $userdir == '..') {
-            continue;
-        }
-
-        /* Global Standard Presets */
-        if (is_directory_a_preset($CFG->dirroot.$fulluserdir)) {
-            $preset = new StdClass;
-            $preset->path = $fulluserdir;
-            $preset->name = $userdir;
-            if (file_exists($fulluserdir.'/screenshot.jpg')) {
-                $preset->screenshot = $CFG->wwwroot.'/mod/data/preset/'.$userdir.'/screenshot.jpg';
-            }
-            $presets[] = $preset;
-            unset($preset);
-        }
-
-        /* User made presets stored in user folders */
-        else if (get_record('user', 'id', $userdir)) {
-            $userdirh = opendir($CFG->dirroot.$fulluserdir);
-            while ($userpresetdir = readdir($userdirh)) {
-                $fulluserpresetdir = $fulluserdir.'/'.$userpresetdir;
-                if ($userpresetdir != '.' && $userpresetdir != '..' && is_directory_a_preset($CFG->dirroot.$fulluserpresetdir)) {
-                    $preset = new StdClass;
-                    $preset->path = $fulluserpresetdir;
-                    $preset->name = $userpresetdir;
-                    $preset->user = $userdir;
-                    if (file_exists($fulluserpresetdir.'/screenshot.jpg')) {
-                        $preset->screenshot = $CFG->wwwroot.'/mod/data/preset/'.$userdir.'/'.$userpresetdir.'/screenshot.jpg';
-                    }
-                    $presets[] = $preset;
-                    unset($preset);
-                }
-            }
-        }
-    }
-    closedir($presetdir);
+if ($userid && ($userid != $USER->id) && !has_capability('mod/data:viewalluserpresets', $context)) {
+    error('You are not allowed to access presets from other users');
 }
 
 /* Need sesskey security check here for import instruction */
@@ -97,330 +59,333 @@ $sesskey = sesskey();
 
 /********************************************************************/
 /* Output */
-data_presets_print_header($course, $cm, $data);
+data_print_header($course, $cm, $data, 'presets');
 
-echo "<center>";
+echo '<center>';
 switch ($action) {
-    /* Main selection menu - default mode also. */
- default:
- case 'base':
-     $strimport = get_string('import');
-     $strfromfile = get_string('fromfile', 'data');
-     $strchooseorupload = get_string('chooseorupload', 'data');
-     $strok = get_string('ok');
-     $strusestandard = get_string('usestandard', 'data');
-     $strchoose = get_string('choose');
-     $strexport = get_string('export', 'data');
-     $strexportaszip = get_string('exportaszip', 'data');
-     $strsaveaspreset = get_string('saveaspreset', 'data');
-     $strdelete = get_string('delete');
 
-     echo "<table cellpadding=7>";
-     echo "<tr><td><h3>$strimport</h3></td>";
-     echo "<td><form name='form' method='POST' action='?d=$data->id&action=importzip&sesskey=$sesskey' enctype='multipart/form-data'>";
-     helpbutton('importfromfile', '', 'data');
-     echo " $strfromfile:</td><td><input name=\"file\" size=\"20\" value=\"\" alt=\"file\" type=\"text\"><input name=\"coursefiles\" title=\"Choose or upload a file\" value=\"$strchooseorupload\" onclick=\"return openpopup('/files/index.php?id=2&choose=form.file', 'coursefiles', 'menubar=0,location=0,scrollbars,resizable,width=750,height=500', 0);\" type=\"button\">";
-     echo "<input type=\"submit\" value=\"$strok\"/>";
-     echo "</form></td></tr>";
+        /***************** Deleting *****************/
+    case 'confirmdelete' :
+        if (!confirm_sesskey()) {
+            error("Sesskey Invalid");
+        }
+        $path = data_preset_path($course, $userid, $shortname);
 
-     echo "<tr valign=top><td></td><td>";
-     helpbutton('usepreset', '', 'data');
-     echo " $strusestandard: </td><td>";
-     echo "<table width=100%>";
-     foreach ($presets as $id => $preset) {
-     echo "<tr><form action='' method='POST'>";
-     echo "<input type='hidden' name='file' value=\"$preset->path\">";
-     echo "<input type='hidden' name='action' value='importpreset'>";
-     echo "<input type='hidden' name='d' value='$data->id'>";
-     echo "<input type='hidden' name='sesskey' value='$sesskey'>";
-     echo "<td>";
-     if ($preset->screenshot) {
-         echo "<img src='$preset->screenshot' alt='$preset->screenshot' />";
-     }
-     echo "</td><td>$preset->name";
-     if ($preset->user) {
-         $user = get_record('user', 'id', $preset->user);
-         echo " by $user->firstname $user->lastname";
-     }
-     echo "</td><td><input type='submit' value='$strchoose'></td></form>";
-     echo "<td>";
-     if ($preset->user == $USER->id || has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-         echo "<form action='' method='POST'>";
-         echo "<input type='hidden' name='d' value='$data->id' />";
-         echo "<input type='hidden' name='action' value='confirmdelete' />";
-         echo "<input type='hidden' name='sesskey' value='$sesskey' />";
-         echo "<input type='hidden' name='deleteid' value='$id' />";
-         echo "<input type='hidden' name='deletename' value=\"$preset->name\" />";
-         echo "<input type='submit' value='$strdelete' /></form>";
-     }
-     echo "</td></tr>";
-     }
-     echo "</table></td></tr>";
+        $strwarning = get_string('deletewarning', 'data').'<br />'.
+                      data_preset_name($shortname, $path);
 
-     echo "<tr><td valign=top><h3>$strexport</h3></td>";
-     echo "<td><form action='' method='POST'>";
-     helpbutton('exportzip', '', 'data');
-     echo " <input type='hidden' name='action' value='export' />";
-     echo "<input type='hidden' name='d' value='$data->id' />";
-     echo "<input type='submit' value='$strexportaszip' />";
-     echo "</form>";
+        $options = new object;
+        $options->shortname = $shortname;
+        $options->userid = $userid;
+        $options->action = 'delete';
+        $options->d = $data->id;
+        $options->sesskey = sesskey();
 
-     echo "<form action='' method='POST'>";
-     helpbutton('savepreset', '', 'data');     
-     echo " <input type='hidden' name='action' value='save1' />";
-     echo "<input type='hidden' name='d' value='$data->id' />";
-     echo "<input type='hidden' name='sesskey' value='$sesskey' />";
-     echo "<input type='submit' value='$strsaveaspreset' />";
-     echo "</form>";
+        $optionsno = new object;
+        $optionsno->d = $data->id;
+        notice_yesno($strwarning, 'preset.php', 'preset.php', $options, $optionsno, 'post', 'get');
+        print_footer($course);
+        exit;
+        break;
 
-     echo "</table>";
-     break;
+    case 'delete' :
+        if (!confirm_sesskey()) {
+            error('Sesskey Invalid');
+        }
+
+        $presetpath = data_preset_path($course, $userid, $shortname);
+
+        if (!clean_preset($presetpath)) {
+            error("Error deleting a preset!");
+        }
+        @rmdir($presetpath);
+
+        $strdeleted = get_string('deleted', 'data');
+        notify("$shortname $strdeleted");
+
+        break;
 
 
+        /***************** Importing *****************/
+    case 'importpreset' :
+        if (!confirm_sesskey()) {
+            error("Sesskey Invalid");
+        }
 
-     /***************** Deleting *****************/
- case 'confirmdelete' :
-     if (!confirm_sesskey()) {
-     error("Sesskey Invalid");
-     }
+        $pimporter = new PresetImporter($course, $cm, $data, $userid, $shortname);
+        $pimporter->import_options();
 
-     $deletename = required_param('deletename', PARAM_RAW);
-     $deleteid = required_param('deleteid', PARAM_INT);
+        print_footer($course);
+        exit;
+        break;
 
-     $strwarning = get_string('deletewarning', 'data');
-     $strdelete = get_string('delete');
-     notify($strwarning);
-     echo "<form action='' method='POST'>";
-     echo "<input type='hidden' name='d' value='$data->id' />";
-     echo "<input type='hidden' name='action' value='delete' />";
-     echo "<input type='hidden' name='sesskey' value='$sesskey' />";
-     echo "<input type='hidden' name='deleteid' value='$deleteid' />";
-     echo "<input type='hidden' name='deletename' value=\"$deletename\" />";
-     echo "<input type='submit' value='$strdelete' /></form>";
-     break;
+        /* Imports a zip file. */
+    case 'importzip' :
+        if (!confirm_sesskey()) {
+            error("Sesskey Invalid");
+        }
 
- case 'delete' :
-     if (!confirm_sesskey()) {
-     error('Sesskey Invalid');
-     }
+        if (!make_upload_directory('temp/data/'.$USER->id)) {
+            error("Can't Create Directory");
+        }
 
-     $deletename = required_param('deletename', PARAM_RAW);
-     $deleteid = required_param('deleteid', PARAM_INT);
+        $presetfile = $CFG->dataroot.'/temp/data/'.$USER->id;
+        clean_preset($presetfile);
 
-     if (!empty($presets[$deleteid])) {
-     if ($presets[$deleteid]->name == $deletename) {
-         if (!clean_preset($CFG->dirroot.$presets[$deleteid]->path)) error("Error deleting");
-     }
-     rmdir($CFG->dirroot.$presets[$deleteid]->path);
-     }
-     else {
-     error('Invalid delete');
-     }
+        if (!unzip_file($CFG->dataroot."/$course->id/$file", $presetfile, false)) {
+            error("Can't unzip file");
+        }
 
-     $strdelete = get_string('deleted', 'data');
-     notify("$deletename $strdeleted");
+        $pimporter = new PresetImporter($course, $cm, $data, -$USER->id, $shortname);
+        $pimporter->import_options();
 
-     break;
+        print_footer($course);
+        exit;
+        break;
+
+    case 'finishimport':
+        if (!confirm_sesskey()) {
+            error('Sesskey Invalid');
+        }
+
+        $pimporter = new PresetImporter($course, $cm, $data, $userid, $shortname);
+        $pimporter->import();
+
+        $strimportsuccess = get_string('importsuccess', 'data');
+        $straddentries = get_string('addentries', 'data');
+        $strtodatabase = get_string('todatabase', 'data');
+        if (!get_records('data_records', 'dataid', $data->id)) {
+            notify("$strimportsuccess <a href='edit.php?d=$data->id'>$straddentries</a> $strtodatabase", 'notifysuccess');
+        } else {
+            notify("$strimportsuccess", 'notifysuccess');
+        }
+        break;
+
+        /* Exports as a zip file ready for download. */
+    case 'export':
+        $file = data_presets_export($course, $cm, $data);
+        echo get_string('exportedtozip', 'data')."<br>";
+        $perminantfile = $CFG->dataroot."/$course->id/moddata/data/$data->id/preset.zip";
+        @unlink($perminantfile);
+        /* is this created elsewhere? sometimes its not present... */
+        make_upload_directory("$course->id/moddata/data/$data->id");
+
+        /* now just move the zip into this folder to allow a nice download */
+        if (!rename($file, $perminantfile)) error("Can't move zip");
+        echo "<a href='$CFG->wwwroot/file.php/$course->id/moddata/data/$data->id/preset.zip'>".get_string('download', 'data')."</a>";
+        break;
 
 
 
-     /***************** Importing *****************/
- case 'importpreset' :
-     if (!confirm_sesskey()) {
-     error("Sesskey Invalid");
-     }
+        /***************** Exporting *****************/
+    case 'save1':
+        if (!confirm_sesskey()) {
+            error("Sesskey Invalid");
+        }
 
-     $pimporter = new PresetImporter($course, $cm, $data, $CFG->dirroot.$file);
-     $pimporter->import_options();
-     break;
+        $strcontinue = get_string('continue');
+        $strwarning = get_string('presetinfo', 'data');
 
-     /* Imports a zip file. */
- case 'importzip' :
-     if (!confirm_sesskey()) {
-     error("Sesskey Invalid");
-     }
+        echo "<div align=center>";
+        echo "<p>$strwarning</p>";
+        echo "<form action='preset.php' method='POST'>";
+        echo "Name: <input type='textbox' name='name' value=\"$data->name\" />";
+        echo "<input type='hidden' name='action' value='save2' />";
+        echo "<input type='hidden' name='d' value='$data->id' />";
+        echo "<input type='hidden' name='sesskey' value='$sesskey' />";
+        echo "<input type='submit' value='$strcontinue' /></form></div>";
+        print_footer($course);
+        exit;
+        break;
 
-     if (!make_upload_directory('temp/data/'.$USER->id)) {
-     error("Can't Create Directory");
-     }
+    case 'save2':
+        if (!confirm_sesskey()) {
+            error("Sesskey Invalid");
+        }
 
-     $presetfile = $CFG->dataroot."/temp/data/".$USER->id;
-     clean_preset($presetfile);
+        $strcontinue = get_string('continue');
+        $stroverwrite = get_string('overwrite');
 
-     if (!unzip_file($CFG->dataroot."/$course->id/$file", 
-             $presetfile, false)) 
-     error("Can't unzip file");
+        $name = optional_param('name', $data->name, PARAM_FILE);
 
-     $pimporter = new PresetImporter($course, $cm, $data, $presetfile);
-     $pimporter->import_options();
-     break;
+        if (is_directory_a_preset("$CFG->dataroot/data/preset/$USER->id/$name")) {
+            notify("Preset already exists: Pick another name or overwrite");
 
- case 'finishimport':
-     if (!confirm_sesskey()) {
-     error('Sesskey Invalid');
-     }
+            echo "<div align=center>";
+            echo "<form action='preset.php' method='POST'>";
+            echo "New name: <input type='textbox' name='name' value=\"$name\" />";
+            echo "<input type='hidden' name='action' value='save2' />";
+            echo "<input type='hidden' name='d' value='$data->id' />";
+            echo "<input type='hidden' name='sesskey' value='$sesskey' />";
+            echo "<input type='submit' value='$strcontinue' /></form>";
 
-     $pimporter = new PresetImporter($course, $cm, $data, $file);
-     $pimporter->import();
+            echo "<form action='preset.php' method='POST'>";
+            echo "<input type='hidden' name='name' value=\"$name\" />";
+            echo "<input type='hidden' name='action' value='save3' />";
+            echo "<input type='hidden' name='d' value='$data->id' />";
+            echo "<input type='hidden' name='sesskey' value='$sesskey' />";
+            echo "<input type='submit' value='$stroverwrite' /></form>";
+            echo "</div>";
+            print_footer($course);
+            exit;
+            break;
+        }
 
-     $strimportsuccess = get_string('importsuccess', 'data');
-     $straddentries = get_string('addentries', 'data');
-     $strtodatabase = get_string('todatabase', 'data');
-     if (!get_records('data_records', 'dataid', $data->id)) {
-     notify("$strimportsuccess <a href='edit.php?d=$data->id'>$straddentries</a> $strtodatabase", 'notifysuccess');
-     }
-     else {
-     notify("$strimportsuccess", 'notifysuccess');
-     }
-     break;
+    case 'save3':
+        if (!confirm_sesskey()) {
+            error("Sesskey Invalid");
+        }
 
-     /* Exports as a zip file ready for download. */
- case 'export':
-     $file = data_presets_export($course, $cm, $data);
-     echo get_string('exportedtozip', 'data')."<br>";
-     $perminantfile = $CFG->dataroot."/$course->id/moddata/data/$data->id/preset.zip";
-     @unlink($perminantfile);
-     /* is this created elsewhere? sometimes its not present... */
-     make_upload_directory("$course->id/moddata/data/$data->id");
+        $name = optional_param('name', $data->name, PARAM_FILE);
+        $presetdirectory = "/data/preset/$USER->id/$name";
 
-     /* now just move the zip into this folder to allow a nice download */
-     if (!rename($file, $perminantfile)) error("Can't move zip");
-     echo "<a href='$CFG->wwwroot/file.php/$course->id/moddata/data/$data->id/preset.zip'>".get_string('download', 'data')."</a>";
-     break;
+        make_upload_directory($presetdirectory);
+        clean_preset($CFG->dataroot.$presetdirectory);
 
-
-
-     /***************** Exporting *****************/
- case 'save1':
-     if (!confirm_sesskey()) {
-     error("Sesskey Invalid");
-     }
-
-     $strcontinue = get_string('continue');
-     $strwarning = get_string('presetwarning', 'data');
-
-     echo "<div align=center>";
-     echo "<p>$strwarning</p>";
-     echo "<form action='' method='POST'>";
-     echo "Name: <input type='textbox' name='name' value=\"$data->name\" />";
-     echo "<input type='hidden' name='action' value='save2' />";
-     echo "<input type='hidden' name='d' value='$data->id' />";
-     echo "<input type='hidden' name='sesskey' value='$sesskey' />";
-     echo "<input type='submit' value='$strcontinue' /></form></div>";
-     break;
-
- case 'save2':
-     if (!confirm_sesskey()) {
-     error("Sesskey Invalid");
-     }
-
-     $strcontinue = get_string('continue');
-     $stroverwrite = get_string('overwrite');
-
-     $name = optional_param('name', $data->name, PARAM_FILE);
-
-     if (is_directory_a_preset("$CFG->dirroot/mod/data/preset/$USER->id/$name")) {
-     notify("Preset already exists: Pick another name or overwrite");
-
-     echo "<div align=center>";
-     echo "<form action='' method='POST'>";
-     echo "New name: <input type='textbox' name='name' value=\"$name\" />";
-     echo "<input type='hidden' name='action' value='save2' />";
-     echo "<input type='hidden' name='d' value='$data->id' />";
-     echo "<input type='hidden' name='sesskey' value='$sesskey' />";
-     echo "<input type='submit' value='$strcontinue' /></form>";
-
-     echo "<form action='' method='POST'>";
-     echo "<input type='hidden' name='name' value=\"$name\" />";
-     echo "<input type='hidden' name='action' value='save3' />";
-     echo "<input type='hidden' name='d' value='$data->id' />";
-     echo "<input type='hidden' name='sesskey' value='$sesskey' />";
-     echo "<input type='submit' value='$stroverwrite' /></form>";
-     echo "</div>";
-     break;
-     }
-
- case 'save3':
-     if (!confirm_sesskey()) {
-     error("Sesskey Invalid");
-     }
-
-     $name = optional_param('name', $data->name, PARAM_FILE);
-     $presetdirectory = "$CFG->dirroot/mod/data/preset/$USER->id/$name";
-
-     if (!is_dir($presetdirectory)) {
-     @mkdir("$CFG->dirroot/mod/data/preset/$USER->id");
-     mkdir($presetdirectory);
-     }
-     else {
-     clean_preset($presetdirectory);
-     }
-
-     $file = data_presets_export($course, $cm, $data);
-     if (!unzip_file($file, $presetdirectory, false)) error("Can't unzip to the preset directory");
-     notify(get_string('savesuccess', 'data'), 'notifysuccess');
-     break;
-
+        $file = data_presets_export($course, $cm, $data);
+        if (!unzip_file($file, $CFG->dataroot.$presetdirectory, false)) {
+            error("Can't unzip to the preset directory");
+        }
+        notify(get_string('savesuccess', 'data'), 'notifysuccess');
+        break;
 }
-echo "</center>";
+
+$presets = data_get_available_presets($context);
+
+$strimport = get_string('import');
+$strfromfile = get_string('fromfile', 'data');
+$strchooseorupload = get_string('chooseorupload', 'data');
+$strok = get_string('ok');
+$strusestandard = get_string('usestandard', 'data');
+$strchoose = get_string('choose');
+$strexport = get_string('export', 'data');
+$strexportaszip = get_string('exportaszip', 'data');
+$strsaveaspreset = get_string('saveaspreset', 'data');
+$strdelete = get_string('delete');
+
+echo '<table class="presetcontrols">';
+echo '<tr><td valign="top">';
+echo '<h3>'.$strexport.'</h3>';
+echo '</td><td colspan="2">';
+
+echo '<table>';
+echo '<tr><td>';
+$options = new object;
+$options->action = 'export';
+$options->d = $data->id;
+$options->sesskey = sesskey();
+helpbutton('exportzip', '', 'data');
+echo '</td><td>';
+print_single_button('preset.php', $options, $strexportaszip, 'post');
+
+echo '</td></tr><tr><td>';
+$options = new object;
+$options->action = 'save1';
+$options->d = $data->id;
+$options->sesskey = sesskey();
+helpbutton('savepreset', '', 'data');     
+echo '</td><td>';
+print_single_button('preset.php', $options, $strsaveaspreset, 'post');
+echo '</td></tr></table>';
+
+echo '</td></tr>';
+
+echo '<tr><td valign="top">';
+echo '<h3>'.$strimport.'</h3>';
+echo '</td><td>';
+helpbutton('importfromfile', '', 'data');
+echo $strfromfile.':';
+echo '</td><td>';
+echo '<form name="uploadpreset" method="post" action="preset.php" enctype="multipart/form-data">';
+echo '<input type="hidden" name="d" value="'.$data->id.'" />';
+echo '<input type="hidden" name="action" value="importzip" />';
+echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+echo '<input name="file" size="20" value="" alt="file" type="text"><input name="coursefiles" title="Choose or upload a file" value="'.$strchooseorupload.'" onclick="return openpopup('."'/files/index.php?id=2&choose=uploadpreset.file', 'coursefiles', 'menubar=0,location=0,scrollbars,resizable,width=750,height=500', 0".');" type="button">';
+echo '<input type="submit" value="'.$strok.'" />';
+echo '</form>';
+echo '</td></tr>';
+
+echo '<tr><td>';
+echo '</td><td valign="top">';
+helpbutton('usepreset', '', 'data');
+echo $strusestandard.':';
+echo '</td><td>';
+
+echo '<table class="presets">';
+foreach ($presets as $id => $preset) {
+    echo '<tr>';
+    echo '<td>';
+    if (!empty($preset->screenshot)) {
+        echo '<img width="150" class="presetscreenshot" src="'.$preset->screenshot.'" />';
+    }
+    echo '</td><td>'.$preset->name;
+    if (!empty($preset->userid)) {
+        $user = get_record('user', 'id', $preset->userid);
+        echo ' ('.fullname($user, has_capability('moodle/site:viewfullnames', $context)).')';
+    }
+    echo '</td><td>';
+    $options = new object;
+    $options->shortname = $preset->shortname;
+    $options->userid = $preset->userid;
+    $options->action = 'importpreset';
+    $options->d = $data->id;
+    $options->sesskey = sesskey();
+    print_single_button('preset.php', $options, $strchoose, 'post');
+    echo '</td><td>';
+    if ($preset->userid > 0 && 
+          ($preset->userid == $USER->id || has_capability('mod/data:manageuserpresets', $context))) {
+        $options = new object;
+        $options->shortname = $preset->shortname;
+        $options->userid = $preset->userid;
+        $options->action = 'confirmdelete';
+        $options->d = $data->id;
+        $options->sesskey = sesskey();
+        print_single_button('preset.php', $options, $strdelete, 'post');
+    }
+    echo '</td></tr>';
+}
+echo '</table>';
+
+echo '</td></tr>';
+echo '</table>';
+
 print_footer($course);
+
+
+
 
 
 function is_directory_a_preset($directory) {
     $directory = rtrim($directory, '/\\') . '/';    
     if (file_exists($directory.'singletemplate.html') &&
-    file_exists($directory.'listtemplate.html') &&
-    file_exists($directory.'listtemplateheader.html') &&
-    file_exists($directory.'listtemplatefooter.html') &&
-    file_exists($directory.'addtemplate.html') &&
-    file_exists($directory.'rsstemplate.html') &&
-    file_exists($directory.'rsstitletemplate.html') &&
-    file_exists($directory.'csstemplate.css') && 
-    file_exists($directory.'jstemplate.js') && 
-    file_exists($directory.'preset.xml')) return true;
+            file_exists($directory.'listtemplate.html') &&
+            file_exists($directory.'listtemplateheader.html') &&
+            file_exists($directory.'listtemplatefooter.html') &&
+            file_exists($directory.'addtemplate.html') &&
+            file_exists($directory.'rsstemplate.html') &&
+            file_exists($directory.'rsstitletemplate.html') &&
+            file_exists($directory.'csstemplate.css') && 
+            file_exists($directory.'jstemplate.js') && 
+            file_exists($directory.'preset.xml')) return true;
     else return false;
 }
 
-function data_presets_print_header($course, $cm, $data, $showtabs=true) {
-
-    global $CFG, $displaynoticegood, $displaynoticebad;
-
-    $strdata = get_string('modulenameplural','data');
-
-    print_header_simple($data->name, '', "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name", 
-            '', '', true, '', navmenu($course, $cm));
-
-    print_heading(format_string($data->name));
-
-    /// Print the tabs
-
-    if ($showtabs) {
-        $currenttab = 'presets';
-        include_once('tabs.php');
-    }
-
-    /// Print any notices
-
-    if (!empty($displaynoticegood)) {
-        notify($displaynoticegood, 'notifysuccess');    // good (usually green)
-    } else if (!empty($displaynoticebad)) {
-        notify($displaynoticebad);                     // bad (usuually red)
-    }
-}
 
 
 function clean_preset($folder) {
-    if (unlink($folder.'/singletemplate.html') &&
-    unlink($folder.'/listtemplate.html') &&
-    unlink($folder.'/listtemplateheader.html') &&
-    unlink($folder.'/listtemplatefooter.html') &&
-    unlink($folder.'/addtemplate.html') &&
-    unlink($folder.'/rsstemplate.html') &&
-    unlink($folder.'/rsstitletemplate.html') &&
-    unlink($folder.'/csstemplate.css') &&
-    unlink($folder.'/jstemplate.js') &&
-    unlink($folder.'/preset.xml')) return true;
-    else return false;
+    if (@unlink($folder.'/singletemplate.html') &&
+        @unlink($folder.'/listtemplate.html') &&
+        @unlink($folder.'/listtemplateheader.html') &&
+        @unlink($folder.'/listtemplatefooter.html') &&
+        @unlink($folder.'/addtemplate.html') &&
+        @unlink($folder.'/rsstemplate.html') &&
+        @unlink($folder.'/rsstitletemplate.html') &&
+        @unlink($folder.'/csstemplate.css') &&
+        @unlink($folder.'/jstemplate.js') &&
+        @unlink($folder.'/preset.xml')) {
+        return true;
+    }
+    return false;
 }
 
 
@@ -464,28 +429,28 @@ function data_presets_export($course, $cm, $data) {
     $presetxml = "<preset>\n\n";
 
     /* Database settings first. Name not included? */
-    $settingssaved = array('intro', 'comments', 'ratings', 'participants',
-               'requiredentries', 'requiredentriestoview', 'maxentries',
-               'rssarticles', 'approval', 'scale', 'assessed', 'assessedpublic',
-               'defaultsort', 'defaultsortdir', 'editany');
+    $settingssaved = array('intro', 'comments', 
+            'requiredentries', 'requiredentriestoview', 'maxentries',
+            'rssarticles', 'approval', 'scale', 'assessed',
+            'defaultsort', 'defaultsortdir', 'editany');
 
     $presetxml .= "<settings>\n";
     foreach ($settingssaved as $setting) {
-    $presetxml .= "<$setting>{$data->$setting}</$setting>\n";
+        $presetxml .= "<$setting>{$data->$setting}</$setting>\n";
     }
     $presetxml .= "</settings>\n\n";
 
     /* Now for the fields. Grabs all settings that are non-empty */
     if (!empty($fields)) {
-    foreach ($fields as $field) {
-        $presetxml .= "<field>\n";
-        foreach ($field as $key => $value) {
-        if ($value != '' && $key != 'id' && $key != 'dataid') {
-            $presetxml .= "<$key>$value</$key>\n";
+        foreach ($fields as $field) {
+            $presetxml .= "<field>\n";
+            foreach ($field as $key => $value) {
+                if ($value != '' && $key != 'id' && $key != 'dataid') {
+                    $presetxml .= "<$key>$value</$key>\n";
+                }
+            }
+            $presetxml .= "</field>\n\n";
         }
-        }
-        $presetxml .= "</field>\n\n";
-    }
     }
 
     $presetxml .= "</preset>";
@@ -498,16 +463,16 @@ function data_presets_export($course, $cm, $data) {
     }
 
     $filelist = array(
-                      "singletemplate.html",
-                      "listtemplate.html",
-                      "listtemplateheader.html",
-                      "listtemplatefooter.html",
-                      "addtemplate.html",
-                      "rsstemplate.html",
-                      "rsstitletemplate.html",
-                      "csstemplate.css",
-              "jstemplate.js",
-                      "preset.xml");
+            'singletemplate.html',
+            'listtemplate.html',
+            'listtemplateheader.html',
+            'listtemplatefooter.html',
+            'addtemplate.html',
+            'rsstemplate.html',
+            'rsstitletemplate.html',
+            'csstemplate.css',
+            'jstemplate.js',
+            'preset.xml');
 
     foreach ($filelist as $key => $file) {
         $filelist[$key] = $tempfolder.'/'.$filelist[$key];
@@ -523,15 +488,15 @@ function data_presets_export($course, $cm, $data) {
 
 
 class PresetImporter {   
-    function PresetImporter($course, $cm, $data, $folder) {
+    function PresetImporter($course, $cm, $data, $userid, $shortname) {
         global $CFG;
         $this->course = $course;
         $this->cm = $cm;
         $this->data = $data;
-        $this->folder = $folder;
-        $this->postfolder = $folder;
+        $this->userid = $userid;
+        $this->shortname = $shortname;
+        $this->folder = data_preset_path($course, $userid, $shortname);
     }
-
 
     function get_settings() {
         global $CFG;
@@ -601,11 +566,12 @@ class PresetImporter {
 
         list($settings, $newfields,  $currentfields) = $this->get_settings();
 
-        echo "<div align='center'><form action='' method='POST'>";
-        echo "<input type='hidden' name='sesskey' value='$sesskey' />";
-        echo "<input type='hidden' name='d' value='{$this->data->id}' />";
-        echo "<input type='hidden' name='action' value='finishimport' />";
-        echo "<input type='hidden' name='file' value=\"$this->postfolder\" />";
+        echo '<div align="center"><form action="preset.php" method="POST">';
+        echo '<input type="hidden" name="action" value="finishimport" />';
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+        echo '<input type="hidden" name="d" value="'.$this->data->id.'" />';
+        echo '<input type="hidden" name="userid" value="'.$this->userid.'" />';
+        echo '<input type="hidden" name="shortname" value="'.$this->shortname.'" />';
 
         if ($currentfields != array() && $newfields != array()) {
             echo "<h3>$strfieldmappings ";
@@ -623,9 +589,9 @@ class PresetImporter {
                             $selected=true;
                         }
                         else {
-                echo "<option value='$cid'>$currentfield->name</option>";
-            }
-            }
+                            echo "<option value='$cid'>$currentfield->name</option>";
+                        }
+                    }
                 }
 
                 if ($selected)
@@ -659,7 +625,6 @@ class PresetImporter {
 
                 if (array_key_exists($cid, $preservedfields)) error("Not an injective map");
                 else $preservedfields[$cid] = true;
-
             }
 
             foreach ($newfields as $nid => $newfield) {
@@ -706,16 +671,33 @@ class PresetImporter {
                     }
                     delete_records('data_content', 'fieldid', $id);
                     delete_records('data_fields', 'id', $id);
-
                 }
             }
         }
 
         data_update_instance(addslashes_object($settings));
-      
+
         if (strstr($this->folder, "/temp/")) clean_preset($this->folder); /* Removes the temporary files */
         return true;
     }
+}
+
+function data_preset_path($course, $userid, $shortname) {
+    global $USER, $CFG;
+
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+
+    $userid = (int)$userid;
+
+    if ($userid > 0 && ($userid == $USER->id || has_capability('mod/data:viewalluserpresets', $context))) {
+        return $CFG->dataroot.'/data/preset/'.$userid.'/'.$shortname;
+    } else if ($userid == 0) {
+        return $CFG->dirroot.'/mod/data/preset/'.$shortname;
+    } else if ($userid < 0) {
+        return $CFG->dataroot.'/temp/data/'.-$userid.'/'.$shortname;
+    }
+
+    return 'Does it disturb you that this code will never run?';
 }
 
 ?>

@@ -95,7 +95,8 @@
     $strdata = get_string('modulenameplural','data');
 
     print_header_simple($data->name, '', "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name",
-                        '', '', true, '', navmenu($course, $cm), '', '');
+                        '', '', true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')), 
+                        navmenu($course, $cm), '', '');
 
     print_heading(format_string($data->name));
 

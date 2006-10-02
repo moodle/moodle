@@ -181,7 +181,7 @@
 
                 } else {
 
-                    data_fields_print_header($course,$cm,$data, false);
+                    data_print_header($course,$cm,$data, false);
 
                     // Print confirmation message.
                     $field = data_get_field_from_id($fid, $data);
@@ -232,14 +232,14 @@
 
     if (($mode == 'new') && (!empty($newtype)) && confirm_sesskey()) {          ///  Adding a new field
         $CFG->pagepath='mod/data/field/'.$newtype;
-        data_fields_print_header($course,$cm,$data);
+        data_print_header($course,$cm,$data,'fields');
 
         $field = data_get_field_new($newtype, $data);
         $field->display_edit_field();
 
     } else if ($mode == 'display' && confirm_sesskey()) { /// Display/edit existing field
         $CFG->pagepath='mod/data/field/'.$newtype;
-        data_fields_print_header($course,$cm,$data);
+        data_print_header($course,$cm,$data,'fields');
 
         $field = data_get_field_from_id($fid, $data);
         $field->display_edit_field();
@@ -247,7 +247,7 @@
     } else {                                              /// Display the main listing of all fields
 
         $CFG->pagepath='mod/data/field/'.$newtype;
-        data_fields_print_header($course,$cm,$data);
+        data_print_header($course,$cm,$data,'fields');
       
         
         if (!record_exists('data_fields','dataid',$data->id)) {

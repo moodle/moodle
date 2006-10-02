@@ -198,7 +198,7 @@ $string['fieldmappings'] = 'Field Mappings';
 $string['mappingwarning'] = 'All old fields not mapped to a new field will be lost and all data in that field will be removed.';
 $string['blank'] = 'Blank';
 
-$string['presetwarning'] = 'Saving as a preset publishes this template across the entire site. All users will be able to use it in their databases.';
+$string['presetinfo'] = 'Saving as a preset will publish this template. Other users may be able to use it in their databases.';
 $string['deletewarning'] = 'Are you sure you want to delete this preset?';
 $string['importsuccess'] = 'The preset has been successfully applied.';
 $string['addentries'] = 'Add entries';

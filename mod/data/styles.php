@@ -13,3 +13,7 @@
 .mod-data-field .fielddescription {
   width:300px;
 }
+
+.presetcontrols form {
+  display: inline;
+}

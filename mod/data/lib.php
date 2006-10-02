@@ -1260,34 +1260,6 @@ function data_get_cm($data) {
 }
 
 
-function data_fields_print_header($course,$cm,$data,$showtabs=true) {
-
-    global $CFG, $displaynoticegood, $displaynoticebad;
-
-    $strdata = get_string('modulenameplural','data');
-
-    print_header_simple($data->name, '', "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name", 
-            '', '', true, '', navmenu($course, $cm));
-
-    print_heading(format_string($data->name));
-
-    /// Print the tabs
-
-    if ($showtabs) {
-        $currenttab = 'fields';
-        include_once('tabs.php');
-    }
-
-    /// Print any notices
-
-    if (!empty($displaynoticegood)) {
-        notify($displaynoticegood, 'notifysuccess');    // good (usually green)
-    } else if (!empty($displaynoticebad)) {
-        notify($displaynoticebad);                     // bad (usuually red)
-    }
-}
-
-
 /**
  * Converts a database (module instance) to use the Roles System
  * @param $data         - a data object with the same attributes as a record
@@ -1429,5 +1401,111 @@ function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array
     return true;
 }
 
+/* 
+ * Returns the best name to show for a preset
+ */
+function data_preset_name($shortname, $path) {
+
+    /// We are looking inside the preset itself as a first choice, but also in normal data directory
+    $string = get_string('presetname'.$shortname, 'data', NULL, $path.'/lang/');
+
+    if (substr($string, 0, 1) == '[') {
+        return $shortname;
+    } else {
+        return $string;
+    }
+}
+
+/* 
+ * Returns an array of all the available presets
+ */
+function data_get_available_presets($context) {
+    global $CFG, $USER;
+
+    $presets = array();
+    
+    if ($dirs = get_list_of_plugins('mod/data/preset')) {
+        foreach ($dirs as $dir) {
+            $fulldir = $CFG->dirroot.'/mod/data/preset/'.$dir;
+
+            if (is_directory_a_preset($fulldir)) {
+                $preset = new object;
+                $preset->path = $fulldir;
+                $preset->userid = 0;
+                $preset->shortname = $dir;
+                $preset->name = data_preset_name($dir, $fulldir);
+                if (file_exists($fulldir.'/screenshot.jpg')) {
+                    $preset->screenshot = $CFG->wwwroot.'/mod/data/preset/'.$dir.'/screenshot.jpg';
+                } else if (file_exists($fulldir.'/screenshot.png')) {
+                    $preset->screenshot = $CFG->wwwroot.'/mod/data/preset/'.$dir.'/screenshot.png';
+                } else if (file_exists($fulldir.'/screenshot.gif')) {
+                    $preset->screenshot = $CFG->wwwroot.'/mod/data/preset/'.$dir.'/screenshot.gif';
+                }
+                $presets[] = $preset;
+            }
+        }
+    }
+
+    if ($userids = get_list_of_plugins('data/preset', '', $CFG->dataroot)) {
+        foreach ($userids as $userid) {
+            $fulldir = $CFG->dataroot.'/data/preset/'.$userid;
+
+            if ($userid == 0 || $USER->id == $userid || has_capability('mod/data:viewalluserpresets', $context)) {
+
+                if ($dirs = get_list_of_plugins('data/preset/'.$userid, '', $CFG->dataroot)) {
+                    foreach ($dirs as $dir) {
+                        $fulldir = $CFG->dataroot.'/data/preset/'.$userid.'/'.$dir;
+
+                        if (is_directory_a_preset($fulldir)) {
+                            $preset = new object;
+                            $preset->path = $fulldir;
+                            $preset->userid = $userid;
+                            $preset->shortname = $dir;
+                            $preset->name = data_preset_name($dir, $fulldir);
+                            if (file_exists($fulldir.'/screenshot.jpg')) {
+                                $preset->screenshot = $CFG->wwwroot.'/mod/data/preset/'.$dir.'/screenshot.jpg';
+                            } else if (file_exists($fulldir.'/screenshot.png')) {
+                                $preset->screenshot = $CFG->wwwroot.'/mod/data/preset/'.$dir.'/screenshot.png';
+                            } else if (file_exists($fulldir.'/screenshot.gif')) {
+                                $preset->screenshot = $CFG->wwwroot.'/mod/data/preset/'.$dir.'/screenshot.gif';
+                            }
+                            $presets[] = $preset;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return $presets;
+}
+
+
+function data_print_header($course, $cm, $data, $currenttab='') {
+
+    global $CFG, $displaynoticegood, $displaynoticebad;
+
+    $strdata = get_string('modulenameplural','data');
+
+    print_header_simple($data->name, '', "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name", 
+            '', '', true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')), 
+            navmenu($course, $cm));
+
+    print_heading(format_string($data->name));
+
+    /// Print the tabs
+
+    if ($currenttab) {
+        include_once('tabs.php');
+    }
+
+    /// Print any notices
+
+    if (!empty($displaynoticegood)) {
+        notify($displaynoticegood, 'notifysuccess');    // good (usually green)
+    } else if (!empty($displaynoticebad)) {
+        notify($displaynoticebad);                     // bad (usuually red)
+    }
+}
 
 ?>
