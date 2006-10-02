@@ -187,7 +187,7 @@ class block_admin_tree extends block_base {
 
             $this->content->footer = '<div class="adminsearchform">'.
                                      '<form action="'.$CFG->wwwroot.'/admin/search.php" method="get">'.
-                                     '<input type="text" name="query" size="8" value="'.$searchcontent.'" />'.
+                                     '<input type="text" name="query" size="8" value="'.s($searchcontent).'" />'.
                                      '<input type="submit" value="'.get_string('search').'" />'.
                                      '</form></div>';
         } else {
