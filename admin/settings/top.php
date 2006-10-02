@@ -10,6 +10,9 @@ $ADMIN->add('root', new admin_externalpage('adminnotifications', get_string('not
  // hidden upgrade script
 $ADMIN->add('root', new admin_externalpage('upgradesettings', get_string('upgradesettings', 'admin'), "$CFG->wwwroot/$CFG->admin/upgradesettings.php", 'moodle/site:config', true));
 
+// hidden search script
+$ADMIN->add('root', new admin_externalpage('search', get_string('search', 'admin'), "$CFG->wwwroot/$CFG->admin/search.php", 'moodle/site:config', true));
+
 $ADMIN->add('root', new admin_category('users', get_string('users','admin')));
 $ADMIN->add('root', new admin_category('courses', get_string('courses','admin')));
 $ADMIN->add('root', new admin_category('location', get_string('location','admin')));
