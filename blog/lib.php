@@ -304,7 +304,7 @@
 
     /**
      * Checks to see if a user can view the blogs of another user.
-     * He can do so, if he has the moodle/blog:readentry capability. In the
+     * He can do so, if he has the moodle/blog:view capability. In the
      * case of spg group course, the user also needs to be in the same group.
      */
     function blog_user_can_view_user_post($targetuserid, $blogEntry=null) {
@@ -314,7 +314,7 @@
         
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
         
-        if (!has_capability('moodle/blog:readentry', $context)) {
+        if (!has_capability('moodle/blog:view', $context)) {
             return false;
         }
         
