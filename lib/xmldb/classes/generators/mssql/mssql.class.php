@@ -58,6 +58,8 @@ class XMLDBmssql extends XMLDBgenerator {
 
     var $rename_table_extra_code = true; //Does the generator need to add code after table rename
 
+    var $rename_column_extra_code = true; //Does the generator need to add code after field rename
+
     var $rename_column_sql = "sp_rename 'TABLENAME.OLDFIELDNAME', 'NEWFIELDNAME', 'COLUMN'";
                                       ///TABLENAME, OLDFIELDNAME and NEWFIELDNAME are dianmically replaced
 
@@ -180,6 +182,58 @@ class XMLDBmssql extends XMLDBgenerator {
         }
     /// Build the standard alter table drop
         $results[] = 'ALTER TABLE ' . $tablename . ' DROP COLUMN ' . $fieldname;
+
+        return $results;
+    }
+
+    /**
+     * Given one correct XMLDBField and the new name, returns the SQL statements
+     * to rename it (inside one array)
+     * MSSQL is special, so we overload the function here. It needs to
+     * drop the constraints BEFORE renaming the field
+     */
+    function getRenameFieldSQL($xmldb_table, $xmldb_field, $newname) {
+
+        $results = array();  //Array where all the sentences will be stored
+
+    /// Although this is checked in ddllib - rename_field() - double check
+    /// that we aren't trying to rename one "id" field. Although it could be
+    /// implemented (if adding the necessary code to rename sequences, defaults,
+    /// triggers... and so on under each getRenameFieldExtraSQL() function, it's
+    /// better to forbide it, mainly because this field is the default PK and
+    /// in the future, a lot of FKs can be pointing here. So, this field, more
+    /// or less, must be considered inmutable!
+        if ($xmldb_field->getName() == 'id') {
+            return array();
+        }
+
+    /// Drop the check constraint if exists
+        if ($xmldb_field->getEnum()) {
+            $results = array_merge($results, $this->getDropEnumSQL($xmldb_table, $xmldb_field));
+        }
+
+    /// Call to standard (parent) getRenameFieldSQL() function
+        $results = array_merge($results, parent::getRenameFieldSQL($xmldb_table, $xmldb_field, $newname));
+
+        return $results;
+    }
+
+    /**
+     * Returns the code (array of statements) needed to execute extra statements on field rename
+     */
+    function getRenameFieldExtraSQL ($xmldb_table, $xmldb_field, $newname) {
+
+        $results = array();
+
+    /// If the field is enum, drop and re-create the check constraint
+        if ($xmldb_field->getEnum()) {
+        /// Drop the current enum (not needed, it has been dropped before for msqql (in getRenameFieldSQL)
+            //$results = array_merge($results, $this->getDropEnumSQL($xmldb_table, $xmldb_field));
+        /// Change field name
+            $xmldb_field->setName($newname);
+        /// Recreate the enum
+            $results = array_merge($results, $this->getCreateEnumSQL($xmldb_table, $xmldb_field));
+        }
 
         return $results;
     }
