@@ -53,7 +53,7 @@ admin_externalpage_print_header($adminroot);
 
 echo '<form action="search.php" method="post" name="mainform" id="adminsettings">';
 echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
-echo '<input type="hidden" name="query" value="' . $query . '" />';
+echo '<input type="hidden" name="query" value="' . s($query) . '" />';
 echo '<fieldset>';
 echo '<div class="clearer"><!-- --></div>';
 if ($resultshtml != '') {
