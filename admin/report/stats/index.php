@@ -49,7 +49,7 @@
         redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=stats", get_string('mustenablestats', 'admin'));
     }
 
-    require_capability('moodle/site:viewreport', get_context_instance(CONTEXT_COURSE, $course->id));
+    require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $course->id));
 
     add_to_log($course->id, "course", "report stats", "report/stats/index.php?course=$course->id", $course->id);
 
