@@ -248,13 +248,24 @@ body#admin-lang .generalbox {
 }
 
 #adminsettings {
-    background-color: #FFFFFF;
-    border-color: #9999FF;
-    color: #000066;
+  background-color: #FFFFFF;
+  border-color: #9999FF;
+  color: #000066;
+}
+
+#adminsettings fieldset {
+  background-color: #FFFFFF;
+  border-color: #9999FF;
+  color: #000066;
 }
 
 #adminsettings .form-shortname {
-    color: #888888;
+  color: #888888;
+}
+
+.block_admin_tree.sideblock .link.current {
+  background-color:#000066;
+  color: #FFFFFF;
 }
 
 /***
