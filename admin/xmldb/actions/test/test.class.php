@@ -655,7 +655,6 @@ class test extends XMLDBAction {
             $test = new stdClass;
             $field = new XMLDBField('type');
             $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
-
             $test->sql = $table->getModifyEnumSQL($CFG->dbtype, $CFG->prefix, $field, true);
             $test->status = change_field_enum($table, $field, false, false);
             if (!$test->status) {
@@ -695,7 +694,7 @@ class test extends XMLDBAction {
         }
 
     /// 39th test. Renaming one field
-        if ($test->status && 1==2) {
+        if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
             $field = new XMLDBField('type');
