@@ -43,6 +43,8 @@ class XMLDBpostgres7 extends XMLDBgenerator {
 
     var $rename_table_extra_code = true; //Does the generator need to add code after table rename
 
+    var $rename_column_extra_code = true; //Does the generator need to add code after column rename
+
     var $enum_inline_code = false; //Does the generator need to add inline code in the column definition
 
     var $rename_key_sql = null; //SQL sentence to rename one key (PostgreSQL doesn't support this!)
@@ -167,7 +169,7 @@ class XMLDBpostgres7 extends XMLDBgenerator {
                 $newconstraintname = str_replace($oldconstraintprefix, $newconstraintprefix, $constraint->name);
             /// Add the new constraint
                 $results[] = 'ALTER TABLE ' . $newtablename . ' ADD CONSTRAINT ' . $newconstraintname .
-                             ' CHECK (' . $constraint->description . ')';
+                             ' CHECK ' . $constraint->description;
              }
          }
 
@@ -351,6 +353,26 @@ class XMLDBpostgres7 extends XMLDBgenerator {
         }
 
     /// Return the results 
+        return $results;
+    }
+
+    /**
+     * Returns the code (array of statements) needed to execute extra statements on field rename
+     */
+    function getRenameFieldExtraSQL ($xmldb_table, $xmldb_field, $newname) {
+
+        $results = array();
+
+    /// If the field is enum, drop and re-create the check constraint
+        if ($xmldb_field->getEnum()) {
+        /// Drop the current enum
+            $results = array_merge($results, $this->getDropEnumSQL($xmldb_table, $xmldb_field));
+        /// Change field name
+            $xmldb_field->setName($newname);
+        /// Recreate the enum
+            $results = array_merge($results, $this->getCreateEnumSQL($xmldb_table, $xmldb_field));
+        }
+
         return $results;
     }
 
