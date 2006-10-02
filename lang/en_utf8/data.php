@@ -39,6 +39,7 @@ $string['data:managecomments'] = 'Manage comments';
 $string['data:managetemplates'] = 'Manage templates';
 $string['data:viewrating'] = 'View ratings';
 $string['data:viewentry'] = 'View entries';
+$string['data:viewalluserpresets'] = 'View presets from all users';
 $string['date'] = 'Date';
 $string['dateentered'] = 'Date entered';
 $string['defaultfielddelimiter'] = '(default is the comma character)';
