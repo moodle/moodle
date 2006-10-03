@@ -234,6 +234,13 @@ class enrolment_plugin_authorize
         }
 
         // Credit card captured, ENROL student now...
+        if (!empty($CFG->enrol_mailstudents)) {
+            $a = new stdClass;
+            $a->courses = $course->fullname;
+            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id";
+            $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$USER->id";
+            $course->welcomemessage = get_string('welcometocoursesemail', 'enrol_authorize', $a);
+        }
         if (enrol_into_course($course, $USER, 'manual')) {
             $teacher = get_teacher($course->id);
             if (!empty($CFG->enrol_mailteachers)) {
@@ -342,6 +349,13 @@ class enrolment_plugin_authorize
         }
 
         // ENROL student now ...
+        if (!empty($CFG->enrol_mailstudents)) {
+            $a = new stdClass;
+            $a->courses = $course->fullname;
+            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id";
+            $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$USER->id";
+            $course->welcomemessage = get_string('welcometocoursesemail', 'enrol_authorize', $a);
+        }
         if (enrol_into_course($course, $USER, 'manual')) {
             $teacher = get_teacher($course->id);
             if (!empty($CFG->enrol_mailteachers)) {
@@ -643,7 +657,6 @@ class enrolment_plugin_authorize
                 }
                 $user = get_record('user', 'id', $order->userid);
                 if (role_assign($role->id, $user->id, 0, $context->id, $timestart, $timeend, 0, 'manual')) {
-                /// enrol_student($order->userid, $order->courseid, $timestart, $timeend, 'manual');
                     $this->log .= "User($user->id) has been enrolled to course($course->id).\n";
                     if (!empty($CFG->enrol_mailstudents)) {
                         $sendem[] = $order->id;

@@ -171,11 +171,7 @@ function authorize_print_order_details($orderno)
     $table->size = array('30%', '70%');
     $table->align = array('right', 'left');
 
-    $sql = "SELECT e.*, c.shortname FROM {$CFG->prefix}enrol_authorize e " .
-           "INNER JOIN {$CFG->prefix}course c ON c.id = e.courseid " .
-           "WHERE e.id = '$orderno'";
-
-    $order = get_record_sql($sql);
+    $order = get_record('enrol_authorize', 'id', $orderno);
     if (!$order) {
         notice("Order $orderno not found.", "index.php");
         return;
@@ -204,7 +200,7 @@ function authorize_print_order_details($orderno)
     $table->data[] = array("<b>$authstrs->amount:</b>", "$order->currency $order->amount");
     if (empty($cmdcapture) and empty($cmdrefund) and empty($cmdvoid) and empty($cmddelete)) {
         $color = authorize_get_status_color($status->status);
-        $table->data[] = array("<b>$strs->course:</b>", $order->shortname);
+        $table->data[] = array("<b>$strs->course:</b>", $course->shortname);
         $table->data[] = array("<b>$strs->status:</b>", "<font style='color:$color'>" . $authstrs->{$status->status} . "</font>");
         if ($order->paymentmethod == AN_METHOD_CC) {
             $table->data[] = array("<b>$authstrs->nameoncard:</b>", $order->ccname);
@@ -242,12 +238,19 @@ function authorize_print_order_details($orderno)
             else {
                 if (empty($CFG->an_test)) {
                     $user = get_record('user', 'id', $order->userid);
+                    if (!empty($CFG->enrol_mailstudents)) {
+                        $a = new stdClass;
+                        $a->courses = $course->fullname;
+                        $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
+                        $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$user->id";
+                        $course->welcomemessage = get_string('welcometocoursesemail', 'enrol_authorize', $a);
+                    }
                     if (enrol_into_course($course, $user, 'manual')) {
                         redirect("index.php?order=$orderno");
                     }
                     else {
                         $table->data[] = array("<b><font color=red>$strs->error:</font></b>",
-                        "Error while trying to enrol ".fullname($user)." in '$order->shortname'");
+                        "Error while trying to enrol ".fullname($user)." in '$course->shortname'");
                     }
                 }
                 else {
@@ -305,7 +308,6 @@ function authorize_print_order_details($orderno)
                         else {
                             if (!empty($unenrol)) {
                                 role_unassign(0, $order->userid, 0, $coursecontext->id);
-                                //unenrol_student($order->userid, $order->courseid);
                             }
                             redirect("index.php?order=$orderno");
                         }
@@ -395,7 +397,6 @@ function authorize_print_order_details($orderno)
                         if (empty($CFG->an_test)) {
                             if (!empty($unenrol)) {
                                 role_unassign(0, $order->userid, 0, $coursecontext->id);
-                                //unenrol_student($order->userid, $order->courseid);
                             }
                             redirect("index.php?order=$orderno");
                         }
@@ -430,7 +431,6 @@ function authorize_print_order_details($orderno)
         else {
             if (!empty($unenrol)) {
                 role_unassign(0, $order->userid, 0, $coursecontext->id);
-                //unenrol_student($order->userid, $order->courseid);
             }
             delete_records('enrol_authorize', 'id', $orderno);
             redirect("index.php");
