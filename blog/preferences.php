@@ -5,43 +5,30 @@
     require_once($CFG->dirroot.'/blog/lib.php');
 
     require_login();
-    global $USER;
 
     if (empty($CFG->bloglevel)) {
         error('Blogging is disabled!');
     }
 
-    // detemine where the user is coming from in case we need to send them back there
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
-    if (!$referrer = optional_param('referrer','', PARAM_URL)) {
-        if (isset($_SERVER['HTTP_REFERER'])) {
-            $referrer = $_SERVER['HTTP_REFERER'];
-        } else {
-            $referrer = $CFG->wwwroot;
-        }
-    }
-
-    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-
-    // Ensure that the logged in user has the capability to post blog entries.
-    if (!has_capability('moodle/blog:writepost', $context)) {
-        error(get_string('nopost', 'blog'), $referrer);
-    }
-    $userid = $USER->id;
+    // Ensure that the logged in user has the capability to view blog entries for now,
+    // because there is only $pagesize which affects the viewing ;-)
+    require_capability('moodle/blog:view', $sitecontext);
 
 /// If data submitted, then process and store.
 
-    if ($post = data_submitted()) {
+    if (data_submitted()) {
 
         $pagesize = optional_param('pagesize', 10, PARAM_INT);
         if ($pagesize < 1 ) {
             error ('invalid page size');
         }
         set_user_preference('blogpagesize', $pagesize);
-        redirect($referrer, get_string('changessaved'), 1);
-        exit;
+         // the best guess is IMHO to redirect to blog page, so that user reviews the changed preferences - skodak
+        redirect($CFG->wwwroot.'/blog/index.php');
     }
-    
+
     $site = get_site();
     $pageMeta = '' . "\n";
 
