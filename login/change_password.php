@@ -103,12 +103,6 @@
         $frm->username = $USER->username;
     }
 
-    if (!empty($frm->username)) {
-        $focus = 'form.password';
-    } else {
-        $focus = 'form.username';
-    }
-
     $strchangepassword = get_string('changepassword');
 
     $fullname = fullname($USER, true);
@@ -120,7 +114,7 @@
     }
     $navstr .= "<a href=\"$CFG->wwwroot/user/index.php?id=$course->id\">".get_string('participants')."</a> -> <a href=\"$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id\">$fullname</a> -> $strchangepassword";
 
-    print_header($strchangepassword, $strchangepassword, $navstr, $focus);
+    print_header($strchangepassword, $strchangepassword, $navstr);
 
     print_simple_box_start('center');
     include('change_password_form.html');
