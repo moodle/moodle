@@ -297,7 +297,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                 $extra->transid = $transid;
                 $extra->settletime = authorize_getsettletime(time());
                 unset($extra->sum); // this is not used in refunds table.
-                if (! insert_record('enrol_authorize_refunds', $extra)) {
+                if (! $extra->id = insert_record('enrol_authorize_refunds', $extra)) {
                     enrolment_plugin_authorize::email_to_admin("Error while trying to insert data " .
                     "into table enrol_authorize_refunds. Please add manually this record:", $extra);
                 }
