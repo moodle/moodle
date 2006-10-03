@@ -170,9 +170,10 @@ class page_blog extends page_base {
             } else {
                 $editingString = get_string('turneditingon');
             }
-            $editformstring = '<form target="'. $CFG->framename .'" method="get" action="'. $CFG->wwwroot .'/blog/set_session_vars.php">'.
-                '<input type="hidden" name="referrer" value="'. me() .'" />'.
-                '<input type="hidden" name="var" value="showediting" />'.
+            $url = $this->url_get_full(); 
+            $editval = empty($SESSION->blog_editing_enabled) ? 1 : 0;
+            $editformstring = '<form target="'. $CFG->framename .'" method="get" action="'.$url.'/blog/index.php">'.
+                '<input type="hidden" name="edit" value="'.$editval.'" />'.
                 '<input type="submit" value="'. $editingString .'" /></form>';
         }
 

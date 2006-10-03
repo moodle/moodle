@@ -15,21 +15,33 @@ require_once('../config.php');
 require_once($CFG->dirroot .'/blog/lib.php');
 require_once($CFG->libdir .'/blocklib.php');
 
-$id = optional_param('id', 0, PARAM_INT);
-$limit = optional_param('limit', 0, PARAM_INT);
-$start = optional_param('formstart', 0, PARAM_INT);
-$userid = optional_param('userid',0,PARAM_INT);
-$courseid = optional_param('courseid',SITEID,PARAM_INT);
-$tag = optional_param('tag', '', PARAM_NOTAGS);
-$tagid = optional_param('tagid', 0, PARAM_INT);
-$postid = optional_param('postid',0,PARAM_INT);
-$filtertype = optional_param('filtertype', '', PARAM_ALPHA);
+$id           = optional_param('id', 0, PARAM_INT);
+$limit        = optional_param('limit', 0, PARAM_INT);
+$start        = optional_param('formstart', 0, PARAM_INT);
+$userid       = optional_param('userid',0,PARAM_INT);
+$courseid     = optional_param('courseid',SITEID,PARAM_INT);
+$tag          = optional_param('tag', '', PARAM_NOTAGS);
+$tagid        = optional_param('tagid', 0, PARAM_INT);
+$postid       = optional_param('postid',0,PARAM_INT);
+$filtertype   = optional_param('filtertype', '', PARAM_ALPHA);
 $filterselect = optional_param('filterselect', 0, PARAM_INT);
+$edit         = optional_param('edit', -1, PARAM_BOOL);
 
 if (empty($CFG->bloglevel)) {
     error('Blogging is disabled!');
 }
 
+
+// Blogs are only global for now.
+// 'post' table will have to be changed to use contextid instead of courseid,
+// modileid, etc. because they are obsolete now.
+$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+
+
+// change block edit staus if not guest and logged in
+if (isloggedin() and !isguest() and $edit != -1) {
+    $SESSION->blog_editing_enabled = $edit;
+}
 
 /// overwrite filter code here
 
