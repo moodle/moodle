@@ -535,7 +535,7 @@ class embedded_cloze_qtype extends default_questiontype {
             $wrappedquestionid = $sequence[$seqnum-1];
             // now we can find the question
             if (!$wrappedquestion = get_record('question', 'id', $wrappedquestionid)) {
-                error("Can't find the subquestion $wrappedquestionid that is used as part $seqnum in cloze question $state->question");
+                notify("Can't find the subquestion $wrappedquestionid that is used as part $seqnum in cloze question $state->question");
             }
             // For multichoice question we need to recode the answer
             if ($answer and $wrappedquestion->qtype == 'multichoice') {
