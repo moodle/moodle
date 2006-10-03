@@ -29,6 +29,9 @@
     if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
         error('Course Module ID was incorrect');
     }
+
+    require_course_login($course, false, $cm);
+
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
     $canviewdiscussion = has_capability('mod/forum:viewdiscussion', $modcontext);
     
@@ -38,12 +41,6 @@
             && ($discussion->timeend == 0 || $discussion->timeend > time())))) {
             error('Discussion ID was incorrect or no longer exists', "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
         }
-
-    } else {
-        if (! $cm = get_coursemodule_from_instance("forum", $discussion->forum, $course->id)) {
-            error("Course Module ID was incorrect");
-        }
-        require_course_login($course, false, $cm);
     }
 
 
