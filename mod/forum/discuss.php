@@ -40,6 +40,7 @@
             && ($discussion->timeend == 0 || $discussion->timeend > time())))) {
             error('Discussion ID was incorrect or no longer exists', "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
         }
+        require_login($course->id);
 
     } else {
         if (! $cm = get_coursemodule_from_instance("forum", $discussion->forum, $course->id)) {
