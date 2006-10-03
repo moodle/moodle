@@ -238,7 +238,7 @@ function stats_cron_weekly () {
     
     $weeks = 0;
     mtrace("starting at $timestart");
-    while ($sunday >= $nextsunday) {
+    while ($sunday > $nextsunday && $timestart < $nextsunday) {
 
         $timesql = " (timeend > $timestart AND timeend < $nextsunday) ";
         begin_sql();
@@ -347,7 +347,7 @@ function stats_cron_monthly () {
     
     $months = 0;
     mtrace("starting from $timestart");
-    while ($monthend >= $nextmonthend) {
+    while ($monthend > $nextmonthend && $timestart < $nextmonthend) {
 
         $timesql = " (timeend > $timestart AND timeend < $nextmonthend) ";
         begin_sql();
