@@ -47,10 +47,13 @@ class question_essay_qtype extends default_questiontype {
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
         global $CFG;
+        static $htmleditorused = false;
 
         $answers       = &$question->options->answers;
         $readonly      = empty($options->readonly) ? '' : 'disabled="disabled"';
-        $usehtmleditor = can_use_html_editor();
+        
+        // Only use the rich text editor for the first essay question on a page.
+        $usehtmleditor = can_use_html_editor() && !$htmleditorused;
         
         $formatoptions          = new stdClass;
         $formatoptions->noclean = true;
@@ -97,6 +100,7 @@ class question_essay_qtype extends default_questiontype {
 
         if ($usehtmleditor) {
             use_html_editor($inputname);
+            $htmleditorused = true;
         }
     }
 
