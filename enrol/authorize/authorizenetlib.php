@@ -89,7 +89,7 @@ function authorize_expired(&$order)
  * @param string &$message Information about error message if this function returns false.
  * @param object &$extra Extra data that used for refunding and credit card information.
  * @param int $action Which action will be performed. See AN_ACTION_*
- * @param string $cctype Credit card type, used internally to configure automatically types.
+ * @param string $cctype Used internally to configure credit types automatically.
  * @return bool true Transaction was successful, false otherwise. Use $message for reason.
  * @author Ethem Evlice <ethem a.t evlice d.o.t com>
  * @uses $CFG
@@ -231,20 +231,8 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
 
         case AN_ACTION_VOID:
         {
-            if ($order->status == AN_STATUS_AUTH) {
-                if (authorize_expired($order)) {
-                    $message = "Authorized transaction must be voided within 30 days. EXPIRED!";
-                    return false;
-                }
-            }
-            elseif ($order->status == AN_STATUS_AUTHCAPTURE or $order->status == AN_STATUS_CREDIT) {
-                if (authorize_settled($order)) {
-                    $message = "Settled transaction cannot be voided. Check Cut-Off time!";
-                    return false;
-                }
-            }
-            else {
-                $message = "Order status must be authorized/pending capture or captured-refunded/pending settlement!";
+            if (authorize_expired($order) || authorize_settled($order)) {
+                $message = "The transaction cannot be voided due to the fact that it is expired or settled.";
                 return false;
             }
             $poststring .= '&x_type=VOID&x_trans_id=' . urlencode($order->transid);
