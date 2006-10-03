@@ -240,3 +240,6 @@ if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
 print '<!-- Begin page content -->' . "\n";
 print '<td width="*">';
 ?>
+<table width="100%">
+<tr>
+<td height="100%" valign="top">
