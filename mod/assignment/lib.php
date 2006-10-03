@@ -2410,7 +2410,7 @@ function assignment_print_overview($courses, &$htmlarray) {
         } else {
             $str .= '<div class="info">'.$strduedateno.'</div>';
         }
-        $context = get_context_instance(CONTEXT_MODULE, $assignment->cm->id);
+        $context = get_context_instance(CONTEXT_MODULE, $assignment->coursemodule);
         if (has_capability('mod/assignment:grade', $context)) {
             
             // count how many people can submit
