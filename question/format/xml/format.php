@@ -57,18 +57,12 @@ class qformat_xml extends qformat_default {
      * @return int internal code number
      */
     function trans_single( $name ) {
-      $name = trim($name);
-
-      if ($name=="true") {
-          $id = 1;
-      }
-      elseif ($name=="false") {
-        $id = 0;
-      }
-      else {
-          $id = 0; // or maybe warning required
-      }
-      return $id;
+        $name = trim($name);
+        if ($name == "false" || !$name) {
+            return 0;
+        } else {
+            return 1;
+        }
     }
 
     /**
@@ -169,7 +163,7 @@ class qformat_xml extends qformat_default {
         } else {
             $shuffleanswers = 'false';
         }
-        $qo->$shuffleanswers = $this->trans_single($shuffleanswers);
+        $qo->shuffleanswers = $this->trans_single($shuffleanswers);
         $qo->correctfeedback = $this->import_optional_text('correctfeedback', $question);
         $qo->partiallycorrectfeedback = $this->import_optional_text('partiallycorrectfeedback', $question);
         $qo->incorrectfeedback = $this->import_optional_text('incorrectfeedback', $question);
