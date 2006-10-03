@@ -130,7 +130,18 @@
                     $restore->rolesmapping[$oldroleid] = $newroleid;
                 }                     
             }       
-        }        
+        }
+        
+        // default role mapping for moodle < 1.7
+        if ($defaultteacheredit = optional_param('defaultteacheredit', 0, PARAM_INT)) {
+            $restore->rolesmapping['defaultteacheredit'] = $defaultteacheredit; 
+        }
+        if ($defaultteacher = optional_param('defaultteacher', 0, PARAM_INT)) {
+            $restore->rolesmapping['defaultteacher'] = $defaultteacher; 
+        }
+        if ($defaultstudent = optional_param('defaultstudent', 0, PARAM_INT)) {
+            $restore->rolesmapping['defaultstudent'] = $defaultstudent; 
+        }
                 
     } else {
         //We have the object, so check if we have a new course_id

@@ -2613,14 +2613,14 @@ function allow_assign($sroleid, $troleid) {
  * @param object $context
  * @return array
  */
-function get_assignable_roles ($context) {
+function get_assignable_roles ($context, $field="name") {
 
     $options = array();
 
     if ($roles = get_all_roles()) {
         foreach ($roles as $role) {
             if (user_can_assign($context, $role->id)) {
-                $options[$role->id] = strip_tags(format_string($role->name, true));
+                $options[$role->id] = strip_tags(format_string($role->{$field}, true));
             }
         }
     }

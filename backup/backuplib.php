@@ -51,38 +51,7 @@
                 //Iterate over users putting their roles
                 foreach ($backupable_users as $backupable_user) {
                     $backupable_user->info = "";
-                    /*
-                    // writing all the applicable role assignments
-                    if ($userroles = get_records_sql("SELECT DISTINCT r.* 
-                                                  FROM {$CFG->prefix}role_assignments ra,
-                                                       {$CFG->prefix}role r
-                                                  WHERE ra.userid = $backupable_user->id
-                                                        AND r.id = ra.roleid
-                                                        AND ra.contextid = $context->id")) {
-                                                                    
-                        foreach ($userroles as $userrole) {
-                            $backupable_user->info .= $userrole->shortname.",";  
-                        }
-                    }
-                    */
-                    /*
-                    if (record_exists("user_admins","userid",$backupable_user->id)) {
-                        $backupable_user->info .= "admin";
-                    }
-                    //Is Course Creator in tables (not is_coursecreator()) !!
-                    if (record_exists("user_coursecreators","userid",$backupable_user->id)) {
-                        $backupable_user->info .= "coursecreator";
-                    }
-                    //Is Teacher in tables (not is_teacher()) !!
-                    if (record_exists("user_teachers","course",$course,"userid",$backupable_user->id)) {
-                        $backupable_user->info .= "teacher";
-                    }
-                    //Is Student in tables (not is_student()) !!
-                    if (record_exists("user_students","course",$course,"userid",$backupable_user->id)) {
-                        $backupable_user->info .= "student";
-                    }
-                    */
-                    
+                                     
                     //Is needed user (exists in needed_users) 
                     if (isset($needed_users[$backupable_user->id])) {
                         $backupable_user->info .= "needed";
@@ -191,37 +160,11 @@
     function backup_get_enrolled_users ($courseid) {
 
         global $CFG;
-
-        $result = false;
               
         // get all users with moodle/course:view capability, this will include people
         // assigned at cat level, or site level
         // but it should be ok if they have no direct assignment at course, mod, block level
         return get_users_by_capability(get_context_instance(CONTEXT_COURSE, $courseid), 'moodle/course:view');
-        /*
-        //Get teachers
-        $teachers = get_records_sql("SELECT DISTINCT userid,userid
-                     FROM {$CFG->prefix}user_teachers
-                     WHERE course = '$courseid'");
-        //Get students
-        $students = get_records_sql("SELECT DISTINCT userid,userid
-                     FROM {$CFG->prefix}user_students
-                     WHERE course = '$courseid'");
-        //Add teachers
-        if ($teachers) {
-            foreach ($teachers as $teacher) {
-                $result[$teacher->userid]->id = $teacher->userid;
-            }
-        }
-        //Add students
-        if ($students) {
-            foreach ($students as $student) {
-                $result[$student->userid]->id = $student->userid;
-            }
-        }
-
-        return $result; 
-        */
     }
 
     //Returns all users (every record in users table)

@@ -1508,19 +1508,15 @@
                     
                     if ($is_admin) {
                         //If the record (user_admins) doesn't exists
-                        if (!record_exists("user_admins","userid",$newid)) {
-                            //Only put status in backup_ids
-                            $currinfo = $currinfo."admin,";
-                            $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
-                        }
+                        //Only put status in backup_ids
+                        $currinfo = $currinfo."admin,";
+                        $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
                     } 
                     if ($is_coursecreator) {
                         //If the record (user_coursecreators) doesn't exists
-                        if (!record_exists("user_coursecreators","userid",$newid)) {
-                            //Only put status in backup_ids
-                            $currinfo = $currinfo."coursecreator,";
-                            $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
-                        }
+                        //Only put status in backup_ids
+                        $currinfo = $currinfo."coursecreator,";
+                        $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
                     } 
                     if ($is_needed) {
                         //Only put status in backup_ids
@@ -1529,57 +1525,81 @@
                     }
                     if ($is_teacher) {
                         //If the record (teacher) doesn't exists
-                        if (!record_exists("user_teachers","userid",$newid,"course", $restore->course_id)) {
-                            //Put status in backup_ids 
-                            $currinfo = $currinfo."teacher,";
-                            $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
-                            //Set course and user
-                            $user->roles['teacher']->course = $restore->course_id;
-                            $user->roles['teacher']->userid = $newid;
+                        //Put status in backup_ids 
+                        $currinfo = $currinfo."teacher,";
+                        $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
+                        //Set course and user
+                        $user->roles['teacher']->course = $restore->course_id;
+                        $user->roles['teacher']->userid = $newid;
 
-                            //Need to analyse the enrol field
-                            //    - if it isn't set, set it to $CFG->enrol
-                            //    - if we are in a different server (by wwwroot), set it to $CFG->enrol
-                            //    - if we are in the same server (by wwwroot), maintain it unmodified.
-                            if (empty($user->roles['teacher']->enrol)) {
-                                $user->roles['teacher']->enrol = $CFG->enrol;
-                            } else if ($restore->original_wwwroot != $CFG->wwwroot) {
-                                $user->roles['teacher']->enrol = $CFG->enrol;
-                            } else {
-                                //Nothing to do. Leave it unmodified
-                            }    
+                        //Need to analyse the enrol field
+                        //    - if it isn't set, set it to $CFG->enrol
+                        //    - if we are in a different server (by wwwroot), set it to $CFG->enrol
+                        //    - if we are in the same server (by wwwroot), maintain it unmodified.
+                        if (empty($user->roles['teacher']->enrol)) {
+                            $user->roles['teacher']->enrol = $CFG->enrol;
+                        } else if ($restore->original_wwwroot != $CFG->wwwroot) {
+                            $user->roles['teacher']->enrol = $CFG->enrol;
+                        } else {
+                            //Nothing to do. Leave it unmodified
+                        }    
 
-                            //Insert data in user_teachers
-                            //The structure is exactly as we need
-                            $status = insert_record("user_teachers",$user->roles['teacher']);
-                        }
+                        $rolesmapping = $restore->rolesmapping;
+                        $context = get_context_instance(CONTEXT_COURSE, $restore->course_id);
+                        if ($user->roles['teacher']->editall) {
+                            role_assign($rolesmapping['defaultteacheredit'],
+                                        $newid, 
+                                        0, 
+                                        $context->id, 
+                                        $user->roles['teacher']->timestart, 
+                                        $user->roles['teacher']->timeend, 
+                                        0, 
+                                        $user->roles['teacher']->enrol);
+                            // editting teacher  
+                        } else {
+                            // non editting teacher
+                            role_assign($rolesmapping['defaultteacher'],
+                                        $newid, 
+                                        0, 
+                                        $context->id, 
+                                        $user->roles['teacher']->timestart, 
+                                        $user->roles['teacher']->timeend, 
+                                        0, 
+                                        $user->roles['teacher']->enrol);
+                        }         
                     } 
                     if ($is_student) {
-                        //If the record (student) doesn't exists
-                        if (!record_exists("user_students","userid",$newid,"course", $restore->course_id)) {
-                            //Put status in backup_ids
-                            $currinfo = $currinfo."student,";
-                            $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
-                            //Set course and user
-                            $user->roles['student']->course = $restore->course_id;
-                            $user->roles['student']->userid = $newid;
 
-                            //Need to analyse the enrol field
-                            //    - if it isn't set, set it to $CFG->enrol
-                            //    - if we are in a different server (by wwwroot), set it to $CFG->enrol
-                            //    - if we are in the same server (by wwwroot), maintain it unmodified.
-                            if (empty($user->roles['student']->enrol)) {
-                                $user->roles['student']->enrol = $CFG->enrol;
-                            } else if ($restore->original_wwwroot != $CFG->wwwroot) {
-                                $user->roles['student']->enrol = $CFG->enrol;
-                            } else {
-                                //Nothing to do. Leave it unmodified
-                            }    
+                        //Put status in backup_ids
+                        $currinfo = $currinfo."student,";
+                        $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
+                        //Set course and user
+                        $user->roles['student']->course = $restore->course_id;
+                        $user->roles['student']->userid = $newid;
 
-                            //Insert data in user_students
-                            //The structure is exactly as we need
-                            $status = insert_record("user_students",$user->roles['student']);
-                        }
+                        //Need to analyse the enrol field
+                        //    - if it isn't set, set it to $CFG->enrol
+                        //    - if we are in a different server (by wwwroot), set it to $CFG->enrol
+                        //    - if we are in the same server (by wwwroot), maintain it unmodified.
+                        if (empty($user->roles['student']->enrol)) {
+                            $user->roles['student']->enrol = $CFG->enrol;
+                        } else if ($restore->original_wwwroot != $CFG->wwwroot) {
+                            $user->roles['student']->enrol = $CFG->enrol;
+                        } else {
+                            //Nothing to do. Leave it unmodified
+                        }    
+                        $rolesmapping = $restore->rolesmapping;
+                        $context = get_context_instance(CONTEXT_COURSE, $restore->course_id);
+                            
+                        role_assign($rolesmapping['defaultstudent'],
+                                    $newid, 
+                                    0, 
+                                    $context->id, 
+                                    $user->roles['student']->timestart, 
+                                    $user->roles['student']->timeend, 
+                                    0, 
+                                    $user->roles['student']->enrol);
+
                     }
                     if (!$is_course_user) {
                         //If the record (user) doesn't exists
@@ -4418,8 +4438,7 @@
                             break;
                     }
                 }
-                
-                
+                              
                 if ($this->level == 7 && $this->tree[5]!="ROLE_ASSIGNMENTS" && $this->tree[5]!="ROLE_OVERRIDES") {
                     switch ($tagName) {
                         case "TYPE":
@@ -5992,57 +6011,58 @@
         // get role mapping info from $restore
 
         $rolemappings = $restore->rolesmapping; // an array
-
-        foreach ($info->roles as $oldroleid=>$roledata) {
+        if ($info->roles) {
+            foreach ($info->roles as $oldroleid=>$roledata) {
             
             /// first we check if the roles are in the mappings
             // if so, we just do a mapping i.e. update oldids table
-            if (isset($rolemappings[$oldroleid]) && $rolemappings[$oldroleid]) {
-                $status = backup_putid($restore->backup_unique_code,"role",$oldroleid,
+                if (isset($rolemappings[$oldroleid]) && $rolemappings[$oldroleid]) {
+                    $status = backup_putid($restore->backup_unique_code,"role",$oldroleid,
                                      $rolemappings[$oldroleid]); // adding a new id     
               
-            } else {
+                } else {
             
-                // code to make new role name/short name if same role name or shortname exists
-                $fullname = $roledata->name;
-                $shortname = $roledata->shortname;
-                $currentfullname = "";
-                $currentshortname = "";
-                $counter = 0;
+                    // code to make new role name/short name if same role name or shortname exists
+                    $fullname = $roledata->name;
+                    $shortname = $roledata->shortname;
+                    $currentfullname = "";
+                    $currentshortname = "";
+                    $counter = 0;
                       
-                do {
-                    if ($counter) {
-                        $suffixfull = " ".get_string("copyasnoun")." ".$counter;
-                        $suffixshort = "_".$counter;
-                    } else {
-                        $suffixfull = "";
-                        $suffixshort = "";
-                    }
-                    $currentfullname = $fullname.$suffixfull;
-                    // Limit the size of shortname - database column accepts <= 15 chars
-                    $currentshortname = substr($shortname, 0, 15 - strlen($suffixshort)).$suffixshort;
-                    $coursefull  = get_record("role","name",addslashes($currentfullname));
-                    $courseshort = get_record("role","shortname",addslashes($currentshortname));
-                    $counter++;
-                } while ($coursefull || $courseshort);
+                    do {
+                        if ($counter) {
+                            $suffixfull = " ".get_string("copyasnoun")." ".$counter;
+                            $suffixshort = "_".$counter;
+                        } else {
+                            $suffixfull = "";
+                            $suffixshort = "";
+                        }
+                        $currentfullname = $fullname.$suffixfull;
+                        // Limit the size of shortname - database column accepts <= 15 chars
+                        $currentshortname = substr($shortname, 0, 15 - strlen($suffixshort)).$suffixshort;
+                        $coursefull  = get_record("role","name",addslashes($currentfullname));
+                        $courseshort = get_record("role","shortname",addslashes($currentshortname));
+                        $counter++;
+                    } while ($coursefull || $courseshort);
 
-                $roledata->name = $currentfullname;
-                $roledata->shortname= $currentshortname;           
+                    $roledata->name = $currentfullname;
+                    $roledata->shortname= $currentshortname;           
             
-                // done finding a unique name
+                    // done finding a unique name
             
-                $newroleid = create_role($roledata->name,$roledata->shortname,'');
-                $status = backup_putid($restore->backup_unique_code,"role",$oldroleid,
+                    $newroleid = create_role($roledata->name,$roledata->shortname,'');
+                    $status = backup_putid($restore->backup_unique_code,"role",$oldroleid,
                                      $newroleid); // adding a new id
-                foreach ($roledata->capabilities as $capability) {
+                    foreach ($roledata->capabilities as $capability) {
                 
-                    $roleinfo = new object();
-                    $roleinfo = (object)$capability;
-                    $roleinfo->contextid = $sitecontext->id;
-                    $roleinfo->capability = $capability->name;
-                    $roleinfo->roleid = $newroleid;
+                        $roleinfo = new object();
+                        $roleinfo = (object)$capability;
+                        $roleinfo->contextid = $sitecontext->id;
+                        $roleinfo->capability = $capability->name;
+                        $roleinfo->roleid = $newroleid;
                 
-                    insert_record('role_capabilities', $roleinfo);
+                        insert_record('role_capabilities', $roleinfo);
+                    }
                 }
             }
         }
@@ -6063,23 +6083,28 @@
             echo "<li>".get_string("creatingcourseroles").'</li>';
         }
         $course = restore_read_xml_course_header($xmlfile);
-        $courseassignments = $course->roleassignments;
+        
+        if (!empty($course->roleassignments)) {
+            $courseassignments = $course->roleassignments;
 
-        foreach ($courseassignments as $oldroleid => $courseassignment) {          
-            restore_write_roleassignments($restore, $courseassignment->assignments, "course", CONTEXT_COURSE, $course->course_id, $oldroleid);
+            foreach ($courseassignments as $oldroleid => $courseassignment) {          
+                restore_write_roleassignments($restore, $courseassignment->assignments, "course", CONTEXT_COURSE, $course->course_id, $oldroleid);
+            }
         }
-
         /*****************************************************
          * Restoring from course level overrides *
          *****************************************************/     
-        $courseoverrides = $course->roleoverrides;
-        $rolemappings = $restore->rolesmapping;
-        foreach ($courseoverrides as $oldroleid => $courseoverride) {
+        
+        if (!empty($course->$course->roleoverrides)) {
+            $courseoverrides = $course->roleoverrides;
+            $rolemappings = $restore->rolesmapping;
+            foreach ($courseoverrides as $oldroleid => $courseoverride) {
             
-            // if not importing into exiting course, or creating new role, we are ok
-            // local course overrides to be respected (i.e. restored course overrides ignored)
-            if ($restore->restoreto != 1 || empty($rolemappings[$oldroleid])) {
-                restore_write_roleoverrides($restore, $courseoverride->overrides, "course", CONTEXT_COURSE, $course->course_id, $oldroleid);
+                // if not importing into exiting course, or creating new role, we are ok
+                // local course overrides to be respected (i.e. restored course overrides ignored)
+                if ($restore->restoreto != 1 || empty($rolemappings[$oldroleid])) {
+                    restore_write_roleoverrides($restore, $courseoverride->overrides, "course", CONTEXT_COURSE, $course->course_id, $oldroleid);
+                }
             }
         }
       
