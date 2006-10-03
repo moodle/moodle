@@ -167,7 +167,7 @@
                 // um will take care of error reporting.
                 displaydir($wdir);
             } else {
-                $upload_max_filesize = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes);
+                $upload_max_filesize = get_max_upload_file_size($CFG->maxbytes);
                 $filesize = display_size($upload_max_filesize);
 
                 $struploadafile = get_string("uploadafile");
