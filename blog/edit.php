@@ -7,6 +7,10 @@ require_login();
 $courseid = optional_param('courseid', SITEID, PARAM_INT);
 $act = optional_param('act','',PARAM_ALPHA);
 
+if (empty($CFG->bloglevel)) {
+    error('Blogging is disabled!');
+}
+
 // detemine where the user is coming from in case we need to send them back there
 if (!$referrer = optional_param('referrer','', PARAM_URL)) {
     if (isset($_SERVER['HTTP_REFERER'])) {

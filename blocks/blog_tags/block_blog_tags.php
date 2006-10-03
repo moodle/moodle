@@ -43,6 +43,11 @@ class block_blog_tags extends block_base {
 
         global $CFG, $SITE, $COURSE;
 
+        if (empty($CFG->bloglevel)) {
+            $this->content->text = '';
+            return $this->content;
+        }
+
         if (empty($this->config->timewithin)) {
             $this->config->timewithin = BLOGDEFAULTTIMEWITHIN;
         }

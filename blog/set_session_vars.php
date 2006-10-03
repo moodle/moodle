@@ -3,6 +3,10 @@
 
     require_once('../config.php');
 
+    if (empty($CFG->bloglevel)) {
+        error('Blogging is disabled!');
+    }
+
     $referrer = required_param('referrer', PARAM_URL);
 
     if (isset($SESSION->blog_editing_enabled)) {

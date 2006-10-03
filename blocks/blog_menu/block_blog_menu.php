@@ -17,7 +17,7 @@ class block_blog_menu extends block_base {
             $course = SITEID;
         }
 
-        if ($CFG->bloglevel < BLOG_USER_LEVEL) {
+        if (empty($CFG->bloglevel)) {
             $this->content->text = '';
             return $this->content;
         }

@@ -6,6 +6,10 @@ require_login();
 //form process
 $mode = optional_param('mode','',PARAM_ALPHA);
 
+if (empty($CFG->bloglevel)) {
+    error('Blogging is disabled!');
+}
+
 $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
 

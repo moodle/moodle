@@ -26,6 +26,9 @@ $postid = optional_param('postid',0,PARAM_INT);
 $filtertype = optional_param('filtertype', '', PARAM_ALPHA);
 $filterselect = optional_param('filterselect', 0, PARAM_INT);
 
+if (empty($CFG->bloglevel)) {
+    error('Blogging is disabled!');
+}
 
 
 /// overwrite filter code here
