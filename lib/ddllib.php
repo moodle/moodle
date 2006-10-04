@@ -251,6 +251,11 @@ function table_exists($table) {
 
     $exists = true;
 
+/// Retrieve the table object in case just a name was supplied
+    if (is_string($table)) { 
+        $table = new XMLDBTable($table);
+    }
+
 /// Do this function silenty (to avoid output in install/upgrade process)
     $olddbdebug = $db->debug;
     $db->debug = false;
@@ -289,6 +294,16 @@ function field_exists($table, $field) {
     global $CFG, $db;
 
     $exists = true;
+
+/// Retrieve the table object in case just a name was supplied
+    if (is_string($table)) {
+        $table = new XMLDBTable($table);
+    }
+
+/// Retrieve the field object in case just a name was supplied
+    if (is_string($field)) {
+        $field = new XMLDBField($field);
+    }
 
 /// Do this function silenty (to avoid output in install/upgrade process)
     $olddbdebug = $db->debug;
@@ -336,6 +351,16 @@ function index_exists($table, $index) {
     global $CFG, $db;
 
     $exists = true;
+
+/// Retrieve the table object in case just a name was supplied
+    if (is_string($table)) {
+        $table = new XMLDBTable($table);
+    }
+
+/// Retrieve the index object in case just a name was supplied
+    if (is_string($index)) {
+        $index = new XMLDBIndex($index);
+    }
 
 /// Do this function silenty (to avoid output in install/upgrade process)
     $olddbdebug = $db->debug;
@@ -555,6 +580,11 @@ function drop_table($table, $continue=true, $feedback=true) {
 
     $status = true;
 
+/// Retrieve the table object in case just a name was supplied
+    if (is_string($table)) { 
+        $table = new XMLDBTable($table);
+    }
+
     if (strtolower(get_class($table)) != 'xmldbtable') {
         return false;
     }
@@ -588,6 +618,11 @@ function rename_table($table, $newname, $continue=true, $feedback=true) {
     global $CFG, $db;
 
     $status = true;
+
+/// Retrieve the table object in case just a name was supplied
+    if (is_string($table)) { 
+        $table = new XMLDBTable($table);
+    }
 
     if (strtolower(get_class($table)) != 'xmldbtable') {
         return false;
@@ -628,6 +663,11 @@ function add_field($table, $field, $continue=true, $feedback=true) {
 
     $status = true;
 
+/// Retrieve the table object in case just a name was supplied
+    if (is_string($table)) { 
+        $table = new XMLDBTable($table);
+    }
+
     if (strtolower(get_class($table)) != 'xmldbtable') {
         return false;
     }
@@ -664,6 +704,11 @@ function drop_field($table, $field, $continue=true, $feedback=true) {
 
     $status = true;
 
+/// Retrieve the table object in case just a name was supplied
+    if (is_string($table)) { 
+        $table = new XMLDBTable($table);
+    }
+
     if (strtolower(get_class($table)) != 'xmldbtable') {
         return false;
     }
@@ -699,6 +744,12 @@ function change_field_type($table, $field, $continue=true, $feedback=true) {
     global $CFG, $db;
 
     $status = true;
+
+/// Retrieve the table object in case just a name was supplied
+
+    if (is_string($table)) {
+        $table = new XMLDBTable($table);
+    }
 
     if (strtolower(get_class($table)) != 'xmldbtable') {
         return false;
@@ -778,6 +829,11 @@ function change_field_enum($table, $field, $continue=true, $feedback=true) {
 
     $status = true;
 
+/// Retrieve the table object in case just a name was supplied
+    if (is_string($table)) { 
+        $table = new XMLDBTable($table);
+    }
+
     if (strtolower(get_class($table)) != 'xmldbtable') {
         return false;
     }
@@ -808,6 +864,11 @@ function change_field_default($table, $field, $continue=true, $feedback=true) {
 
     $status = true;
 
+/// Retrieve the table object in case just a name was supplied
+    if (is_string($table)) { 
+        $table = new XMLDBTable($table);
+    }
+
     if (strtolower(get_class($table)) != 'xmldbtable') {
         return false;
     }
@@ -837,6 +898,17 @@ function change_field_default($table, $field, $continue=true, $feedback=true) {
 function rename_field($table, $field, $newname, $continue=true, $feedback=true) {
 
     global $CFG, $db;
+
+/// Retrieve the table object in case just a name was supplied
+    if (is_string($table)) { 
+        $table = new XMLDBTable($table);
+    }
+
+/// Retrieve the field object in case just a name was supplied
+    if (is_string($field)) {
+        $field = new XMLDBField($field);
+    }
+
 
     $status = true;
 
@@ -888,6 +960,11 @@ function add_key($table, $key, $continue=true, $feedback=true) {
 
     $status = true;
 
+/// Retrieve the table object in case just a name was supplied
+    if (is_string($table)) { 
+        $table = new XMLDBTable($table);
+    }
+
     if (strtolower(get_class($table)) != 'xmldbtable') {
         return false;
     }
@@ -921,6 +998,11 @@ function drop_key($table, $key, $continue=true, $feedback=true) {
     global $CFG, $db;
 
     $status = true;
+
+/// Retrieve the table object in case just a name was supplied
+    if (is_string($table)) { 
+        $table = new XMLDBTable($table);
+    }
 
     if (strtolower(get_class($table)) != 'xmldbtable') {
         return false;
@@ -960,6 +1042,11 @@ function rename_key($table, $key, $newname, $continue=true, $feedback=true) {
 
     $status = true;
 
+/// Retrieve the table object in case just a name was supplied
+    if (is_string($table)) { 
+        $table = new XMLDBTable($table);
+    }
+
     if (strtolower(get_class($table)) != 'xmldbtable') {
         return false;
     }
@@ -998,6 +1085,11 @@ function add_index($table, $index, $continue=true, $feedback=true) {
 
     $status = true;
 
+/// Retrieve the table object in case just a name was supplied
+    if (is_string($table)) { 
+        $table = new XMLDBTable($table);
+    }
+
     if (strtolower(get_class($table)) != 'xmldbtable') {
         return false;
     }
@@ -1034,6 +1126,17 @@ function drop_index($table, $index, $continue=true, $feedback=true) {
     global $CFG, $db;
 
     $status = true;
+
+/// Retrieve the table object in case just a name was supplied
+    if (is_string($table)) { 
+        $table = new XMLDBTable($table);
+    }
+
+/// Retrieve the index object in case just a name was supplied
+    if (is_string($index)) {
+        $index = new XMLDBIndex($index);
+    }
+
 
     if (strtolower(get_class($table)) != 'xmldbtable') {
         return false;
@@ -1075,6 +1178,16 @@ function rename_index($table, $index, $newname, $continue=true, $feedback=true) 
     debugging('rename_index() is one experimental feature. You must not use it in production!', DEBUG_DEVELOPER);
 
     $status = true;
+
+/// Retrieve the table object in case just a name was supplied
+    if (is_string($table)) { 
+        $table = new XMLDBTable($table);
+    }
+/// Retrieve the index object in case just a name was supplied
+    if (is_string($index)) {
+        $index = new XMLDBIndex($index);
+    }
+
 
     if (strtolower(get_class($table)) != 'xmldbtable') {
         return false;
