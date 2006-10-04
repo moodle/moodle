@@ -43,7 +43,7 @@
 
 /// Editing functions
 
-    if (has_capablity('moodle/course:visibility', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (has_capability('moodle/course:visibility', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
 
     /// Hide or show a course
 
