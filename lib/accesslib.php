@@ -1189,7 +1189,7 @@ function delete_context($contextlevel, $instanceid) {
     if ($context = get_context_instance($contextlevel, $instanceid)) {
         return delete_records('context', 'id', $context->id) &&
                delete_records('role_assignments', 'contextid', $context->id) &&
-               delete_records('role_role_capabilities', 'contextid', $context->id);
+               delete_records('role_capabilities', 'contextid', $context->id);
     }
     return true;
 }
@@ -1600,7 +1600,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         if (!empty($USER->id) && $USER->id == $userid) {
             load_user_capability();
         }
-
+        
     /// Ask all the modules if anything needs to be done for this user
         if ($mods = get_list_of_plugins('mod')) {
             foreach ($mods as $mod) {
