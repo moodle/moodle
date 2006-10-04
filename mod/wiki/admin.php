@@ -169,7 +169,11 @@
                   $confirm.="&confirm[$cnfid]=".urlencode(join(" ",$cnfver));
                 }
                 if(count($err)==0) {
-                  notice_yesno(get_string("strippagecheck", "wiki")."<br />".join(", ", $form->pagestostrip),
+                  $pagestostrip=array();
+                  foreach($form->pagestostrip as $pagetostrip) {
+                    $pagestostrip[]=htmlspecialchars(urldecode($pagetostrip));
+                  }
+                  notice_yesno(get_string("strippagecheck", "wiki")."<br />".join(", ", $pagestostrip),
                       $link.$confirm, $link);
                   print_footer($course);
                   exit;
