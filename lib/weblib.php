@@ -1365,7 +1365,8 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             break;
     }
 
-    if (!empty($CFG->cachetext) and $CFG->currenttextiscacheable) {
+    if (empty($options->nocache) and !empty($CFG->cachetext) and $CFG->currenttextiscacheable) {
+        $newcacheitem = new object();
         $newcacheitem->md5key = $md5key;
         $newcacheitem->formattedtext = addslashes($text);
         $newcacheitem->timemodified = time();
