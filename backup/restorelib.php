@@ -4843,7 +4843,7 @@
     }
 
     function restore_execute(&$restore,$info,$course_header,&$errorstr) {
-        global $CFG;
+        global $CFG, $USER;
         $status = true;
         //Checks for the required files/functions to restore every module
         //and include them
