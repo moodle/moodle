@@ -1184,6 +1184,10 @@ body#course-view .unread {
   margin-left: 3em;
 } 
 
+body#course-view.editing .sideblock .header {
+  cursor: move;
+}
+
 body#course-enrol .generalbox {
   margin-top: 20px;
 }
