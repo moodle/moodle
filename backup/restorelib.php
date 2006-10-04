@@ -800,8 +800,10 @@
                     //Add this instance
                     $instance->blockid = $blocks[$instance->name]->id;
                     
-                    if($newid = insert_record('block_instance', $instance)) {
-                        backup_putid ($restore->backup_unique_code,"block_instance",$instance->id,$newid);
+                    if ($newid = insert_record('block_instance', $instance)) {
+                        if (!empty($instance->id)) { // this will only be set if we come from 1.7 and above backups
+                            backup_putid ($restore->backup_unique_code,"block_instance",$instance->id,$newid);
+                        }
                     } else {
                         $status = false;
                         break;                      
@@ -907,7 +909,7 @@
                                     $restore->mods[$mod->type]->granular = true;
                                 }
                                 
-                                if (!$restore->mods[$mod->type]->granular  // we don't care about per instance
+                                if (empty($restore->mods[$mod->type]->granular)  // we don't care about per instance
                                     || (array_key_exists($mod->instance,$restore->mods[$mod->type]->instances) 
                                         && !empty($restore->mods[$mod->type]->instances[$mod->instance]->restore))) {
                                     
@@ -929,6 +931,7 @@
                                         //      final step of the restore. We don't know it yet.
                                         //print_object($course_module);                    //Debug
                                         //Save it to db
+
                                         $newidmod = insert_record("course_modules",$course_module); 
                                         if ($newidmod) {
                                             //save old and new module id
@@ -1564,6 +1567,7 @@
                                         $user->roles['teacher']->timeend, 
                                         0, 
                                         $user->roles['teacher']->enrol);
+                            
                             // editting teacher  
                         } else {
                             // non editting teacher
@@ -2540,12 +2544,11 @@
                 }
                 //Iterate over each module
                 foreach ($info as $mod) {
-                    if (!(isset($restore->mods[$mod->modtype]->granular) && $restore->mods[$mod->modtype]->granular)  // We don't care about per instance, i.e. restore all instances.
+                    if (empty($restore->mods[$mod->modtype]->granular)  // We don't care about per instance, i.e. restore all instances.
                         || (array_key_exists($mod->id,$restore->mods[$mod->modtype]->instances) 
                             && !empty($restore->mods[$mod->modtype]->instances[$mod->id]->restore))) {
                         $modrestore = $mod->modtype."_restore_mods";
-                        if (function_exists($modrestore)) {
-                            //print_object ($mod);                                                //Debug
+                        if (function_exists($modrestore)) {                                               //Debug
                             $status = $status and $modrestore($mod,$restore); //bit operator & not reliable here!
                         } else {
                             //Something was wrong. Function should exist.
@@ -3992,7 +3995,7 @@
                     }
                 }
                 
-                if ($this->tree[7] == "ROLES_ASSIGNMENTS") {
+                if (isset($this->tree[7]) && $this->tree[7] == "ROLES_ASSIGNMENTS") {
                     
                     if ($this->level == 9) {
                         switch ($tagName) {
@@ -4045,7 +4048,7 @@
                     }
                 } /// ends role_assignments
                 
-                if ($this->tree[7] == "ROLES_OVERRIDES") {
+                if (isset($this->tree[7]) && $this->tree[7] == "ROLES_OVERRIDES") {
                     if ($this->level == 9) {
                         switch ($tagName) {
                             case "NAME":
@@ -6104,7 +6107,7 @@
          * Restoring from course level overrides *
          *****************************************************/     
         
-        if (!empty($course->$course->roleoverrides)) {
+        if (!empty($course->roleoverrides)) {
             $courseoverrides = $course->roleoverrides;
             $rolemappings = $restore->rolesmapping;
             foreach ($courseoverrides as $oldroleid => $courseoverride) {
