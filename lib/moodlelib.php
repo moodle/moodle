@@ -2696,7 +2696,11 @@ function remove_course_contents($courseid, $showfeedback=true) {
     notify_local_delete_course($courseid, $showfeedback);
 
 /// Delete course blocks
-    if ($blocks = get_records('block_instance', 'pagetype', PAGE_COURSE_VIEW, 'pageid', $course->id)) {
+
+    if ($blocks = get_records_sql("SELECT * 
+                                   FROM {$CFG->prefix}block_instance
+                                   WHERE pagetype = '".PAGE_COURSE_VIEW."'
+                                   AND pageid = $course->id")) {
         if (delete_records('block_instance', 'pagetype', PAGE_COURSE_VIEW, 'pageid', $course->id)) {
             if ($showfeedback) {
                 notify($strdeleted .' block_instance');
@@ -2781,10 +2785,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
     question_delete_course($course, $showfeedback);
 
 /// Delete all roles and overiddes in the course context (but keep the course context)
-    if ($context = get_context_instance(CONTEXT_COURSE, $course->id)) {
-        delete_records('role_assignments', 'contextid', $context->id);
-        delete_records('role_capabilities', 'contextid', $context->id);
-    }
+    delete_context(CONTEXT_COURSE, $course->id);
 
     return $result;
 }
