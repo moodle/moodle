@@ -297,7 +297,7 @@
 
         foreach ($courses as $acourse) {
           
-              $context = get_context_instance(CONTEXT_COURSE, $acourse->id);
+            $context = get_context_instance(CONTEXT_COURSE, $acourse->id);
           
             $count++;
             $up = ($count > 1 || !$atfirstpage);
@@ -342,13 +342,6 @@
                                  '&amp;wdir=/backupdata">'.
                                  '<img src="'.$CFG->pixpath.'/t/restore.gif" height="11" width="11" border="0" alt="" /></a> ';
                     }
-
-                    echo '<a title="'.$strbackup.'" href="../backup/backup.php?id='.$acourse->id.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/backup.gif" height="11" width="11" border="0" alt="'.$strbackup.'" /></a> ';
-
-                    echo '<a title="'.$strrestore.'" href="../files/index.php?id='.$acourse->id.
-                         '&amp;wdir=/backupdata">'.
-                         '<img src="'.$CFG->pixpath.'/t/restore.gif" height="11" width="11" border="0" alt="'.$strrestore.'" /></a> ';
 
                     if ($up) {
                         echo '<a title="'.$strmoveup.'" href="category.php?id='.$category->id.'&amp;page='.$page.
