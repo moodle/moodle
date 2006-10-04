@@ -48,11 +48,10 @@
         if ($data) {
             //Now get completed xmlized object   
             $info = $data->info;
-            //First, we check to "course_id" folder exists and create is as necessary in CFG->dataroot
-            $dest_dir = $CFG->dataroot."/".$restore->course_id;
+            //First, check the course_id backup folder exists in CFG->dataroot
+            $dest_dir = $CFG->dataroot."/".$restore->course_id."/backupdata";
             check_dir_exists($dest_dir,true);
-            $file = $dest_dir."/restorelog.html";
-            $restorelog_file = fopen($file,"a");
+            $restorelog_file = fopen("$dest_dir/restorelog.html","a");
             //traverse_xmlize($info);                                                                     //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
@@ -352,11 +351,10 @@
 
         //Get the submissions array 
         $submissions = $info['MOD']['#']['SUBMISSIONS']['0']['#']['SUBMISSION'];
-        //First, we check to "course_id" folder exists and create is as necessary in CFG->dataroot
-        $dest_dir = $CFG->dataroot."/".$restore->course_id;
+        //First, we check the course_id backup folder exists in CFG->dataroot
+        $dest_dir = $CFG->dataroot."/".$restore->course_id."/backupdata";
         check_dir_exists($dest_dir,true);
-        $file = $dest_dir."/restorelog.html";
-        $restorelog_file = fopen($file,"a");
+        $restorelog_file = fopen("$dest_dir/restorelog.html","a");            
         //Iterate over submissions
         for($i = 0; $i < sizeof($submissions); $i++) {
             $sub_info = $submissions[$i];

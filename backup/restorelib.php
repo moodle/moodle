@@ -2201,12 +2201,10 @@
         //Get admin->id for later use
         $admin = get_admin();
         $adminid = $admin->id;
-
-        $dest_dir = $CFG->dataroot."/".$restore->course_id;
+        //First, we check the course_id backup data folder exists
+        $dest_dir = $CFG->dataroot."/".$restore->course_id."/backupdata";
         check_dir_exists($dest_dir,true);
-        $file = $dest_dir."/restorelog.html";
-        $restorelog_file = fopen($file,"a");
-
+        $restorelog_file = fopen("$dest_dir/restorelog.html","a");
         //Now, if we have anything in events, we have to restore that
         //events
         if ($events) {
@@ -5441,7 +5439,7 @@
             }
 
             if ($status = restore_open_html($restore,$course_header)){
-                echo "<li>Creating the Restorelog.html in the course Files folder</li>";
+                echo "<li>Creating the Restorelog.html in the course backup folder</li>";
             }
 
         } else {
@@ -5942,16 +5940,27 @@
         $status = true;
 
         //Open file for writing    
-        //First, we check the "course_id" folder exists and create it as necessary in CFG->dataroot
-        $dest_dir = $CFG->dataroot."/".$restore->course_id;
+        //First, we check the course_id backup data folder exists and create it as necessary in CFG->dataroot
+        if (!$dest_dir = make_upload_directory("$restore->course_id/backupdata")) {   // Backup folder
+            error("Could not create backupdata folder.  The site administrator needs to fix the file permissions");
+        }
         $status = check_dir_exists($dest_dir,true);
-        $file = $dest_dir."/restorelog.html";
-        $restorelog_file = fopen($file,"a");
+        $restorelog_file = fopen("$dest_dir/restorelog.html","a"); 
+        //Add the stylesheet
+        $stylesheetshtml = '';      
+        foreach ($CFG->stylesheets as $stylesheet) {
+            $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />'."\n";
+        }
+        ///Accessibility: added the 'lang' attribute to $direction, used in theme <html> tag.
+        $language = str_replace('_utf8','',$CFG->lang);
+        $languagehtml = '';
+        $languagehtml .= ' lang="'.$language.'" xml:lang="'.$language.'"';
         //Write the header in the new logging file
         fwrite ($restorelog_file,"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"");
         fwrite ($restorelog_file," \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">  ");
-        fwrite ($restorelog_file,"<html dir=\"ltr\" lang=\"en\" xml:lang=\"en\">");
-        fwrite ($restorelog_file,"<head><link rel=\"stylesheet\" type=\"text/css\" href=\"http://at4737.vledev.open.ac.uk/moodle/theme/standard/styles.php\" />");
+        fwrite ($restorelog_file,"<html dir=\"ltr\".$languagehtml.");
+        fwrite ($restorelog_file,"<head>");
+        fwrite ($restorelog_file,$stylesheetshtml);        
         fwrite ($restorelog_file,"<title>".$course_header->course_shortname." Restored </title>");
         fwrite ($restorelog_file,"</head><body><br><h1>The following changes were made during the Restoration of this Course.</h1><br><br>");
         fwrite ($restorelog_file,"The Course ShortName is now - ".$course_header->course_shortname." The FullName is now - ".$course_header->course_fullname."<br><br>");
@@ -5976,11 +5985,10 @@
         $status = true;
 
         //Open file for writing    
-        //First, check that "course_id" folder exists
-        $dest_dir = $CFG->dataroot."/".$restore->course_id;
+        //First, check that course_id/backupdata folder exists in CFG->dataroot
+        $dest_dir = $CFG->dataroot."/".$restore->course_id."/backupdata";
         $status = check_dir_exists($dest_dir,true);
-        $file = $dest_dir."/restorelog.html";
-        $restorelog_file = fopen($file,"a");
+        $restorelog_file = fopen("$dest_dir/restorelog.html","a");
         //Write the footer to close the logging file
         fwrite ($restorelog_file,"<br>This file was written to directly by each modules restore process.");
         fwrite ($restorelog_file,"<br><br>Log complete.</body></html>");

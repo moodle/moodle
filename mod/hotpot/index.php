@@ -252,8 +252,8 @@
         // so this operation could be done after getting the $totals from the attempts table
     }
     $totals = get_records_sql("SELECT $fields FROM $tables WHERE $select GROUP BY a.hotpot");
-
-    if (ihas_capability('mod/hotpot:grade', get_context_instance(CONTEXT_SYSTEM, SITEID)) && empty($usejoin)) {
+//remove i here ihas_capability
+    if (has_capability('mod/hotpot:grade', get_context_instance(CONTEXT_SYSTEM, SITEID)) && empty($usejoin)) {
         foreach ($hotpots as $hotpot) {
             $totals[$hotpot->id]->detailcount = 0;
             if ($ids = get_records('hotpot_attempts', 'hotpot', $hotpot->id)) {

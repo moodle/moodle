@@ -110,8 +110,8 @@ function hotpot_restore_mods($mod, $restore) {
         // if necessary, adjust HotPot date/time fields and write to restorelog
         if (!empty($restore->course_startdateoffset)) {
 
-            // check course_directory exists
-            $course_dir = "$CFG->dataroot/$restore->course_id";
+            // check course backup data directory exists
+            $course_dir = $CFG->dataroot."/".$restore->course_id."/backupdata";
             check_dir_exists($course_dir, true);
 
             // open $restorelog and start output for this HotPot
