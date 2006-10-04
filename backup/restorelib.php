@@ -898,7 +898,16 @@
                         foreach ($sect->mods as $keym => $mod) {
                             //Check if we've to restore this module (and instance) 
                             if ($restore->mods[$mod->type]->restore) {
-                                if (!is_array($restore->mods[$mod->type]->instances)  // we don't care about per instance
+                                
+                                if (is_array($restore->mods[$mod->type]->instances)) {
+                                    // This defines whether we want to restore specific
+                                    // instances of the modules (granular restore), or
+                                    // whether we don't care and just want to restore
+                                    // all module instances (non-granular).
+                                    $restore->mods[$mod->type]->granular = true;
+                                }
+                                
+                                if (!$restore->mods[$mod->type]->granular  // we don't care about per instance
                                     || (array_key_exists($mod->instance,$restore->mods[$mod->type]->instances) 
                                         && !empty($restore->mods[$mod->type]->instances[$mod->instance]->restore))) {
                                     
@@ -2531,7 +2540,7 @@
                 }
                 //Iterate over each module
                 foreach ($info as $mod) {
-                    if (!is_array($restore->mods[$mod->modtype]->instances)  // we don't care about per instance
+                    if (!(isset($restore->mods[$mod->modtype]->granular) && $restore->mods[$mod->modtype]->granular)  // We don't care about per instance, i.e. restore all instances.
                         || (array_key_exists($mod->id,$restore->mods[$mod->modtype]->instances) 
                             && !empty($restore->mods[$mod->modtype]->instances[$mod->id]->restore))) {
                         $modrestore = $mod->modtype."_restore_mods";
