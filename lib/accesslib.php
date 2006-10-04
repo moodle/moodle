@@ -2994,4 +2994,16 @@ function get_users_from_role_on_context($role, $context) {
                                   AND roleid = $role->id");
 }
 
+/* 
+ * Simple function returning a boolean true if roles exist, otherwise false
+ */
+function user_has_role_assignment($userid, $roleid, $contextid=0) {
+
+    if ($contextid) {
+        return record_exists('role_assignments', 'userid', $userid, 'roleid', $roleid, 'contextid', $contextid);
+    } else {
+        return record_exists('role_assignments', 'userid', $userid, 'roleid', $roleid);
+    }
+}
+
 ?>
