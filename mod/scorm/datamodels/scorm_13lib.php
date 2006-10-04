@@ -464,7 +464,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         $score = '('.get_string('score','scorm').':&nbsp;'.$usertrack->score_raw.')';
                     }
                     $strsuspended = get_string('suspended','scorm');
-                    if ($usertrack->{'cmi.core.exit'} == 'suspend') {
+                    if (isset($usertrack->{'cmi.core.exit'}) && ($usertrack->{'cmi.core.exit'} == 'suspend')) {
                         $statusicon = '<img src="'.$scormpixdir.'/suspend.gif" alt="'.$strstatus.' - '.$strsuspended.'" title="'.$strstatus.' - '.$strsuspended.'" />';
                     }
                 } else {
@@ -499,7 +499,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                 // Modified by Pham Minh Duc
                 //    if (scorm_isChoice($scorm->id,$sco->id) == 1) {
                         $url = $CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;currentorg='.$currentorg.$modestr.'&amp;scoid='.$sco->id;
-                        $result->toc .= $statusicon.'&nbsp;'.$startbold.'<a href="'.$url.'">'.format_string($sco->title).'</a>'.$score.$endbold.$suspendedsco."</li>\n";
+                        $result->toc .= $statusicon.'&nbsp;'.$startbold.'<a href="'.$url.'">'.format_string($sco->title).'</a>'.$score.$endbold."</li>\n";
                         $tocmenus[$sco->id] = scorm_repeater('&minus;',$level) . '&gt;' . format_string($sco->title);
                 //    } else {
                 //       $result->toc .= '&nbsp;'.$startbold.format_string($sco->title).$score.$endbold."</li>\n";
