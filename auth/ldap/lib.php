@@ -555,39 +555,38 @@ function auth_sync_users ($bulk_insert_records = 1000, $do_updates=1) {
         if (!empty($users)) {
             print "User entries to update: ". count($users). "\n";
             
-            
+            $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
-            begin_sql();
-            $xcount=0; $maxxcount=100;
-            foreach ($users as $user) { 
-                echo "updating user $user->username \n";
-                auth_ldap_update_user_record($user->username, $updatekeys);
-                // update course creators
-                if ( !empty($CFG->ldap_creators) && !empty($CFG->ldap_memberattribute) ) {
-                    if (auth_iscreator($user->username)) {
-                        if (! record_exists("user_coursecreators", "userid", $user->id)) {
-                            $creator = insert_record("user_coursecreators",$user->id);
-                            if (! $creator) {
-                                error("Cannot add user to course creators.");
+            if ($creatorroles = get_roles_with_capability('moodle/legacy:coursecreator', CAP_ALLOW)) {
+
+                $creatorrole = array_shift($creatorroles);      // We can only use one, let's use the first one
+
+                begin_sql();
+                $xcount=0; $maxxcount=100;
+                foreach ($users as $user) { 
+                    echo "updating user $user->username \n";
+                    auth_ldap_update_user_record($user->username, $updatekeys);
+
+                    // update course creators
+                    if (!empty($CFG->ldap_creators) && !empty($CFG->ldap_memberattribute) ) {
+                        if (auth_iscreator($user->username)) {   // Following calls will not create duplicates
+                            role_assign($creatorrole->id, $user->id, 0, $sitecontext->id, 0, 0, 0, 'ldap');
+                            $xcount++;
+                        } else {
+                            role_unassign($creatorrole->id, $user->id, 0, $sitecontext->id);
+                            $xcount++;
                         }
-                      }
-                    } else {
-                         if ( record_exists("user_coursecreators", "userid", $user->id)) {
-                              $creator = delete_records("user_coursecreators", "userid", $user->id);
-                              if (! $creator) {
-                                  error("Cannot remove user from course creators.");
-                              }
-                         }
+                    }
+
+                    if ($xcount++ > $maxxcount) {
+                        commit_sql();
+                        begin_sql(); 
+                        $xcount=0;
                     }
                 }
-                if ($xcount++ > $maxxcount) {
-                  commit_sql();
-                  begin_sql(); 
-                  $xcount=0;
-                }
+                commit_sql();
+                unset($users); // free mem
             }
-            commit_sql();
-            $users = 0; // free mem
         }
     } // end do updates
     
@@ -605,6 +604,11 @@ function auth_sync_users ($bulk_insert_records = 1000, $do_updates=1) {
     
     if(!empty($add_users)){
         print "User entries to add: ". count($add_users). "\n";
+
+        if ($creatorroles = get_roles_with_capability('moodle/legacy:coursecreator', CAP_ALLOW)) {
+            $creatorrole = array_shift($roles);      // We can only use one, let's use the first one
+        }
+
         begin_sql();
         foreach($add_users as $user){
             $user = auth_get_userinfo_asobj($user->idnumber);
@@ -636,27 +640,18 @@ function auth_sync_users ($bulk_insert_records = 1000, $do_updates=1) {
                 set_user_preference('auth_forcepasswordchange', 1, $userobj->id);
             }
             
-            // update course creators
-            if ( !empty($CFG->ldap_creators) && !empty($CFG->ldap_memberattribute) ) {
+            if (isset($creatorrole->id) &&  !empty($CFG->ldap_creators) && !empty($CFG->ldap_memberattribute) ) {
                 if (auth_iscreator($user->username)) {
-                    if (! record_exists("user_coursecreators", "userid", $user->id)) {
-                        $creator = insert_record("user_coursecreators",$user->id);
-                        if (! $creator) {
-                            error("Cannot add user to course creators.");
+                    if (user_has_role_assignment($user->id, $creatorrole->id, $sitecontext->id)) {
+                        role_unassign($creatorrole->id, $user->id, 0, $sitecontext->id);
+                    } else {
+                        role_assign($creatorrole->id, $user->id, 0, $sitecontext->id, 0, 0, 0, 'ldap');
                     }
-                  }
-                } else {
-                     if ( record_exists("user_coursecreators", "userid", $user->id)) {
-                          $creator = delete_records("user_coursecreators", "userid", $user->id);
-                          if (! $creator) {
-                              error("Cannot remove user from course creators.");
-                          }
-                     }
                 }
             }
         }
         commit_sql();
-        $add_users = 0; // free mem
+        unset($add_users); // free mem
     }
     return true;
 }
