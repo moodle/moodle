@@ -346,7 +346,7 @@ function quiz_set_grade($newgrade, &$quiz) {
         // Nothing to do.
         return true;
     }
-    
+
     // Use a transaction, so that on those databases that support it, this is safer.
     begin_sql();
     
@@ -362,14 +362,18 @@ function quiz_set_grade($newgrade, &$quiz) {
 
         // Update the quiz_grades table.
         $timemodified = time();
-        $success = $success && set_field('quiz_grades', 'grade',
-                '$factor * grade, timemodified = $timemodified',
-                'quiz', $quiz->id);
-        
+        $success = $success && execute_sql("
+                UPDATE {$CFG->prefix}quiz_grades
+                SET grade = $factor * grade, timemodified = $timemodified
+                WHERE quiz = $quiz->id
+        ", false);
+
         // Update the quiz_grades table.
-        $success = $success && execute_sql('quiz_feedback', 'mingrade', 
-                '$factor * mingrade, maxgrade = $factor * maxgrade',
-                'quizid', $quiz->id);
+        $success = $success && execute_sql("
+                UPDATE {$CFG->prefix}quiz_feedback
+                SET mingrade = $factor * mingrade, maxgrade = $factor * maxgrade
+                WHERE quizid = $quiz->id
+        ", false);
     }
     
     if ($success) {
