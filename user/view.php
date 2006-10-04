@@ -33,7 +33,11 @@
         require_login($course->id);
     }
 
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
+    if ($course->id == SITEID) {
+        $coursecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);   // SYSTEM context
+    } else {
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
+    }
     $usercontext   = get_context_instance(CONTEXT_USER, $user->id);       // User context
 
 
@@ -44,7 +48,8 @@
         }
     }
 
-    if (!$currentuser && !has_capability('moodle/course:view', $coursecontext, $user->id, false)) {
+    if (!$currentuser && $course->id != SITEID && 
+        !has_capability('moodle/course:view', $coursecontext, $user->id, false)) {
         print_error('usernotavailable');
     }
 
