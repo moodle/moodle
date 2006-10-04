@@ -37,8 +37,8 @@ function SCORMapi1_3() {
     CMIResult = '^correct$|^wrong$|^unanticipated$|^neutral$|^([0-9]{0,3})?(\\.[0-9]{1,2})?$';
     NAVEvent = '^previous$|^continue$';
     // Children lists
-    cmi_children = 'version, comments_from_learner, comments_from_lms, completion_status, credit, entry, exit, interactions, launch_data, learner_id, learner_name, learner_preference, location, max_time_allowed, mode, objectives, progress_measure, scaled_passing_score, score, session_time, success_status, suspend_data, time_limit_action, total_time';
-    comments_children = 'comment, location, date_time';
+    cmi_children = '_version, comments_from_learner, comments_from_lms, completion_status, credit, entry, exit, interactions, launch_data, learner_id, learner_name, learner_preference, location, max_time_allowed, mode, objectives, progress_measure, scaled_passing_score, score, session_time, success_status, suspend_data, time_limit_action, total_time';
+    comments_children = 'comment, timestamp, location';
     score_children = 'scaled, raw, min, max';
     objectives_children = 'id, score, success_status, completion_status, description';
     student_data_children = 'mastery_score, max_time_allowed, time_limit_action';
@@ -58,7 +58,7 @@ function SCORMapi1_3() {
         'cmi.comments_from_learner._count':{'mod':'r', 'defaultvalue':'0'},
         'cmi.comments_from_learner.n.comment':{'format':CMIString4000, 'mod':'rw'},
         'cmi.comments_from_learner.n.location':{'format':CMIString250, 'mod':'rw'},
-        'cmi.comments_from_learner.n.date_time':{'format':CMITime, 'mod':'rw'},
+        'cmi.comments_from_learner.n.timestamp':{'format':CMITime, 'mod':'rw'},
         'cmi.comments_from_lms._children':{'defaultvalue':comments_children, 'mod':'r'},
         'cmi.comments_from_lms._count':{'mod':'r', 'defaultvalue':'0'},
         'cmi.comments_from_lms.n.comment':{'format':CMIString4000, 'mod':'r'},
@@ -186,7 +186,7 @@ function SCORMapi1_3() {
         if (param == "") {
             if ((!Initialized) && (!Terminated)) {
                 <?php 
-                    if (($CFG->debug > 7) && (isadmin())) {
+                    if (debugging('',DEBUG_DEVELOPER)) {
                         echo 'alert("Initialized SCORM 1.3");';
                     }
                 ?>
@@ -194,7 +194,7 @@ function SCORMapi1_3() {
                 errorCode = "0";
                 return "true";
             } else {
-                if (Initializated) {
+                if (Initialized) {
                     errorCode = "103";
                 } else {
                     errorCode = "104";
@@ -203,6 +203,11 @@ function SCORMapi1_3() {
         } else {
             errorCode = "201";
         }
+        <?php 
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'alert("Initialize: "+GetErrorString(errorCode));';
+            }
+        ?>
         return "false";
     }
     
@@ -211,7 +216,7 @@ function SCORMapi1_3() {
         if (param == "") {
             if ((Initialized) && (!Terminated)) {
                 <?php 
-                    if (($CFG->debug > 7) && (isadmin())) {
+                    if (debugging('',DEBUG_DEVELOPER)) {
                         echo 'alert("Terminated SCORM 1.3");';
                     }
                 ?>
@@ -240,6 +245,11 @@ function SCORMapi1_3() {
         } else {
             errorCode = "201";
         }
+        <?php 
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'alert("Terminate: "+GetErrorString(errorCode));';
+            }
+        ?>
         return "false";
     }
     
@@ -262,13 +272,13 @@ function SCORMapi1_3() {
                         if (subelement == element) {
                             errorCode = "0";
                             <?php 
-                                if (($CFG->debug > 7) && (isadmin())) {
+                                if (debugging('',DEBUG_DEVELOPER)) {
                                     echo 'alert(element+": "+eval(element));';
                                 }
                             ?>
                             return eval(element);
                         } else {
-                            errorCode = "0"; // Need to check if it is the right errorCode
+                            errorCode = "301";
                         }
                     } else {
                         //errorCode = eval('datamodel["'+elementmodel+'"].readerror');
@@ -307,6 +317,11 @@ function SCORMapi1_3() {
                 errorCode = "122";
             }
         }
+        <?php 
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'alert("GetValue("+element+") -> "+GetErrorString(errorCode));';
+            }
+        ?>
         return "";
     }
     
@@ -377,7 +392,7 @@ function SCORMapi1_3() {
                                             eval(element+'="'+value+'";');
                                             errorCode = "0";
                                             <?php 
-                                                if (($CFG->debug > 7) && (isadmin())) {
+                                                if (debugging('',DEBUG_DEVELOPER)) {
                                                     echo 'alert(element+":= "+value);';
                                                 }
                                             ?>
@@ -392,7 +407,7 @@ function SCORMapi1_3() {
                                     eval(element+'="'+value+'";');
                                     errorCode = "0";
                                     <?php 
-                                        if (($CFG->debug > 7) && (isadmin())) {
+                                        if (debugging('',DEBUG_DEVELOPER)) {
                                             echo 'alert(element+":= "+value);';
                                         }
                                     ?>
@@ -420,6 +435,11 @@ function SCORMapi1_3() {
                 errorCode = "132";
             }
         }
+        <?php 
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'alert("SetValue("+element+","+value+") -> "+GetErrorString(errorCode));';
+            }
+        ?>
         return "false";
     }
     
@@ -429,7 +449,7 @@ function SCORMapi1_3() {
             if ((Initialized) && (!Terminated)) {
                 result = StoreData(cmi,false);
                 <?php 
-                    if (($CFG->debug > 7) && (isadmin())) {
+                    if (debugging('',DEBUG_DEVELOPER)) {
                         echo 'alert("Data Commited");';
                     }
                 ?>
@@ -444,6 +464,11 @@ function SCORMapi1_3() {
         } else {
             errorCode = "201";
         }
+        <?php 
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'alert("Commit: "+GetErrorString(errorCode));';
+            }
+        ?>
         return "false";
     }
     
@@ -453,34 +478,88 @@ function SCORMapi1_3() {
     
     function GetErrorString (param) {
         if (param != "") {
-            var errorString = new Array();
-            errorString["0"] = "No error";
-            errorString["101"] = "General exception";
-            errorString["102"] = "General Inizialization Failure";
-            errorString["103"] = "Already Initialized";
-            errorString["104"] = "Content Instance Terminated";
-            errorString["111"] = "General Termination Failure";
-            errorString["112"] = "Termination Before Inizialization";
-            errorString["113"] = "Termination After Termination";
-            errorString["122"] = "Retrieve Data Before Initialization";
-            errorString["123"] = "Retrieve Data After Termination";
-            errorString["132"] = "Store Data Before Inizialization";
-            errorString["133"] = "Store Data After Termination";
-            errorString["142"] = "Commit Before Inizialization";
-            errorString["143"] = "Commit After Termination";
-            errorString["201"] = "General Argument Error";
-            errorString["301"] = "General Get Failure";
-            errorString["351"] = "General Set Failure";
-            errorString["391"] = "General Commit Failure";
-            errorString["401"] = "Undefinited Data Model";
-            errorString["402"] = "Unimplemented Data Model Element";
-            errorString["403"] = "Data Model Element Value Not Initialized";
-            errorString["404"] = "Data Model Element Is Read Only";
-            errorString["405"] = "Data Model Element Is Write Only";
-            errorString["406"] = "Data Model Element Type Mismatch";
-            errorString["407"] = "Data Model Element Value Out Of Range";
-            errorString["408"] = "Data Model Dependency Not Established";
-            return errorString[param];
+            var errorString = "";
+            switch(param) {
+                case "0":
+                    errorString = "No error";
+                break;
+                case "101":
+                    errorString = "General exception";
+                break;
+                case "102":
+                    errorString = "General Inizialization Failure";
+                break;
+                case "103":
+                    errorString = "Already Initialized";
+                break;
+                case "104":
+                    errorString = "Content Instance Terminated";
+                break;
+                case "111":
+                    errorString = "General Termination Failure";
+                break;
+                case "112":
+                    errorString = "Termination Before Inizialization";
+                break;
+                case "113":
+                    errorString = "Termination After Termination";
+                break;
+                case "122":
+                    errorString = "Retrieve Data Before Initialization";
+                break;
+                case "123":
+                    errorString = "Retrieve Data After Termination";
+                break;
+                case "132":
+                    errorString = "Store Data Before Inizialization";
+                break;
+                case "133":
+                    errorString = "Store Data After Termination";
+                break;
+                case "142":
+                    errorString = "Commit Before Inizialization";
+                break;
+                case "143":
+                    errorString = "Commit After Termination";
+                break;
+                case "201":
+                    errorString = "General Argument Error";
+                break;
+                case "301":
+                    errorString = "General Get Failure";
+                break;
+                case "351":
+                    errorString = "General Set Failure";
+                break;
+                case "391":
+                    errorString = "General Commit Failure";
+                break;
+                case "401":
+                    errorString = "Undefinited Data Model";
+                break;
+                case "402":
+                    errorString = "Unimplemented Data Model Element";
+                break;
+                case "403":
+                    errorString = "Data Model Element Value Not Initialized";
+                break;
+                case "404":
+                    errorString = "Data Model Element Is Read Only";
+                break;
+                case "405":
+                    errorString = "Data Model Element Is Write Only";
+                break;
+                case "406":
+                    errorString = "Data Model Element Type Mismatch";
+                break;
+                case "407":
+                    errorString = "Data Model Element Value Out Of Range";
+                break;
+                case "408":
+                    errorString = "Data Model Dependency Not Established";
+                break;
+            }
+            return errorString;
         } else {
            return "";
         }
@@ -494,6 +573,11 @@ function SCORMapi1_3() {
     }
 
     function AddTime (first, second) {
+        <?php 
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'alert("AddTime: "+first+" + "+second);';
+            }
+        ?>
         var timestring = 'P';
         var matchexpr = /^P((\d+)Y)?((\d+)M)?((\d+)D)?(T((\d+)H)?((\d+)M)?((\d+(\.\d{1,2})?)S)?)?$/;
         var firstarray = first.match(matchexpr);
@@ -537,6 +621,11 @@ function SCORMapi1_3() {
     }
 
     function TotalTime() {
+        <?php 
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'alert("TotalTime");';
+            }
+        ?>
         total_time = AddTime(cmi.total_time, cmi.session_time);
         return '&'+underscore('cmi.total_time')+'='+escape(total_time);
     }
@@ -568,6 +657,11 @@ function SCORMapi1_3() {
     }
 
     function StoreData(data,storetotaltime) {
+        <?php 
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'alert("StoreData");';
+            }
+        ?>
         if (storetotaltime) {
             if (cmi.mode == 'normal') {
                 if (cmi.credit == 'credit') {
@@ -610,6 +704,7 @@ function SCORMapi1_3() {
     this.GetLastError = GetLastError;
     this.GetErrorString = GetErrorString;
     this.GetDiagnostic = GetDiagnostic;
+    this.version = '1.0';
 }
 
 var API_1484_11 = new SCORMapi1_3();
