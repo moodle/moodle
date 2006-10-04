@@ -106,6 +106,11 @@
                      "<a href=\"index.php\">$strcategories</a> -> $category->name", "", "", true, $navbaritem);
     }
 
+/// Print button to turn editing off
+    if ($adminediting) {
+        echo '<div class="categoryediting button" align="right">'.update_category_button($category->id).'</div>';
+    }
+
 /// Print link to roles
     echo '<div class="rolelink" align="right"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.
          $context->id.'">'.get_string('assignroles','role').'</a></div>';
