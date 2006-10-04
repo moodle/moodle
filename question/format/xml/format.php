@@ -57,18 +57,12 @@ class qformat_xml extends qformat_default {
      * @RETURN int internal code number
      */
     function trans_single( $name ) {
-      $name = trim($name);
-
-      if ($name=="true") {
-          $id = 1;
-      }
-      elseif ($name=="false") {
-        $id = 0;
-      }
-      else {
-          $id = 0; // or maybe warning required
-      }
-      return $id;
+        $name = trim($name);
+        if ($name == "false" || !$name) {
+            return 0;
+        } else {
+            return 1;
+        }
     }
 
     /*
@@ -143,6 +137,12 @@ class qformat_xml extends qformat_default {
         $qo->qtype = MULTICHOICE;
         $single = $question['#']['single'][0]['#'];
         $qo->single = $this->trans_single( $single );
+        if (array_key_exists('shuffleanswers', $question['#'])) {
+            $shuffleanswers = $question['#']['shuffleanswers'][0]['#'];
+        } else {
+            $shuffleanswers = 'false';
+        }
+        $qo->shuffleanswers = $this->trans_single($shuffleanswers);
 
         // run through the answers
         $answers = $question['#']['answer'];  
