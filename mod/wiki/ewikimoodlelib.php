@@ -167,7 +167,7 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
          $sql= "SELECT pagename AS id, count(*) as versioncount".
             " FROM ". $CFG->prefix.EWIKI_DB_TABLE_NAME .
             " WHERE wiki = ".$wiki_entry->id.
-            " GROUP BY id";
+            " GROUP BY pagename";
 
          #print "$sql";
          $result=get_records_sql($sql);
