@@ -1,19 +1,9 @@
 <?PHP  //$Id$
+// THIS FILE IS DEPRECATED!  PLEASE DO NOT MAKE CHANGES TO IT!
 //
-// This file keeps track of upgrades to Moodle.
+// IT IS USED ONLY FOR UPGRADES FROM BEFORE MOODLE 1.7, ALL 
+// LATER CHANGES SHOULD USE upgrade.php IN THIS DIRECTORY.
 //
-// Sometimes, changes between versions involve
-// alterations to database structures and other
-// major things that may break installations.
-//
-// The upgrade function in this file will attempt
-// to perform all the necessary actions to upgrade
-// your older installtion to the current version.
-//
-// If there's something it cannot do itself, it
-// will tell you what you need to do.
-//
-// Versions are defined by /version.php
 //
 // This file is tailored to MySQL
 
@@ -2334,6 +2324,8 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2006092601) {
         table_column('log_display', 'field', 'field', 'varchar', '200', '', '', 'not null', '');
     }
+
+    //////  DO NOT ADD NEW THINGS HERE!!  USE upgrade.php and the lib/ddllib.php functions.
 
     return $result;
 }
