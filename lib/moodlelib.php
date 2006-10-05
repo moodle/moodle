@@ -1592,19 +1592,21 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
             }
             return;
         }
+
  
     /// If the whole course is hidden from us then we can stop now
 
-        if (!($course->visible && course_parent_visible($course)) &&
-               !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id)) ){
-            print_header();
-            notice(get_string('coursehidden'), $CFG->wwwroot .'/');
-        }    
-        
         if (!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
             print_error('nocontext');
         }
 
+        if (empty($USER->switchrole[$context->id]) &&
+            !($course->visible && course_parent_visible($course)) &&
+               !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id)) ){
+            print_header_simple();
+            notice(get_string('coursehidden'), $CFG->wwwroot .'/');
+        }    
+        
     /// If the user is a guest then treat them according to the course policy about guests
 
         if (has_capability('moodle/legacy:guest', $context, NULL, false)) {
