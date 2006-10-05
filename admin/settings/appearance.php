@@ -118,4 +118,6 @@ $temp = new admin_settingpage('mymoodle', get_string('mymoodle', 'admin'));
 $temp->add(new admin_setting_configcheckbox('mymoodleredirect', get_string('mymoodleredirect', 'admin'), get_string('configmymoodleredirect', 'admin'), 0));
 $ADMIN->add('appearance', $temp);
 
+$ADMIN->add('appearance', new admin_externalpage('stickyblocks', get_string('stickyblocks', 'admin'), "$CFG->wwwroot/$CFG->admin/stickyblocks.php"));
+
 ?>
