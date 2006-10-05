@@ -338,6 +338,7 @@ function calendar_get_popup($is_today, $event_timestart, $popupcontent='') {
         $popupcaption .= get_string('eventsfor', 'calendar', userdate($event_timestart, get_string('strftimedayshort')));
     }
     $popupcontent = str_replace("'", "\'", htmlspecialchars($popupcontent));
+    $popupcaption = str_replace("'", "\'", htmlspecialchars($popupcaption)); 
     $popup = 'onmouseover="return overlib(\''.$popupcontent.'\', CAPTION, \''.$popupcaption.'\');" onmouseout="return nd();"';
     return $popup;
 }
