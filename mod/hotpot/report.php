@@ -97,33 +97,49 @@
 	$user_ids = '';
 	$users = array();
 	switch ($formdata['reportusers']) {
-		case 'all':
-			$admin_ids = get_records_select_menu('user_admins');
-			if (is_array($admin_ids)) {
-				$users = array_merge($users, $admin_ids);
-			}
-			$creator_ids = get_records_select_menu('user_coursecreators');
-			if (is_array($creator_ids)) {
-				$users = array_merge($users, $creator_ids);
-			}
-			$teacher_ids = get_records_select_menu('user_teachers', "course IN ($course_ids)", 'course', 'id, userid');
-			if (is_array($teacher_ids)) {
-				$users = array_merge($users, $teacher_ids);
-			}
-			$guest_id = get_records_select_menu('user', "username='guest'", '', 'id,id');
-			if (is_array($guest_id)) {
-				$users = array_merge($users, $guest_id);
-			}
+		case 'allusers':
+            // anyone who has ever attempted this hotpot
+            if ($records = get_records_select('hotpot_attempts', "hotpot IN ($hotpot_ids)", '', 'id,userid')) {
+                foreach ($records as $record) {
+                    $users[$record->userid] = 0; // "0" means NOT a currently recognized participant
+                }
+            }
+			break;
+
+        case 'allparticipants':
+            // admins
+            if ($records = get_records_select('user_admins', 'id>0', '', 'id,userid')) {
+                foreach ($records as $record) {
+                    $users[$record->userid] = 1; // "1" signifies currently recognized participant
+                }
+            }
+            // course creators
+            if ($records = get_records_select('user_coursecreators', 'id>0', '', 'id,userid')) {
+                foreach ($records as $record) {
+                    $users[$record->userid] = 1;
+                }
+            }
+            // teachers
+            if ($records = get_records_select('user_teachers', "course IN ($course_ids)", '', 'id,userid')) {
+                foreach ($records as $record) {
+                    $users[$record->userid] = 1;
+                }
+            }
+            // guest user
+            if ($records = get_records_select('user', "username='guest'", '', 'id,id')) {
+                foreach ($records as $record) {
+                    $users[$record->id] = 1;
+                }
+            }
 			// add students next
 
-		case 'students':
-			$student_ids = get_records_select_menu('user_students', "course IN ($course_ids)", 'course', 'id, userid');
-			if (is_array($student_ids)) {
-				$users = array_merge($users, $student_ids);
-			}
-			$user_ids = array_values($users);
-			sort($user_ids);
-			$user_ids = join(',', array_unique($user_ids));
+		case 'existingstudents':
+            // students
+            if ($records = get_records_select('user_students', "course IN ($course_ids)", '', 'id,userid')) {
+                foreach ($records as $record) {
+                    $users[$record->userid] = 1;
+                }
+            }
 			break;
 
 		case 'this': // current user only
@@ -134,8 +150,11 @@
 			if (is_numeric($formdata['reportusers'])) {
 				$user_ids = $formdata['reportusers'];
 			}
-	}
-
+	} // end switch
+    if (empty($user_ids) && count($users)) {
+        ksort($users);
+        $user_ids = join(',', array_keys($users));
+    }
 	if (empty($user_ids)) {
 		print_heading(get_string('nousersyet'));
 		exit;
@@ -435,12 +454,13 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
 		);
 	}
 	$menus['reportusers'] = array(
-		'all' => get_string('allparticipants'),
-		'students' => get_string('students')
+		'allusers' => get_string('allusers', 'hotpot'),
+		'allparticipants' => get_string('allparticipants'),
+		'existingstudents' => get_string('existingstudents')
 	);
 	$users = get_records_sql("
 		SELECT 
-			u.*
+			u.id, u.firstname, u.lastname
 		FROM 
 			{$CFG->prefix}user AS u,
 			{$CFG->prefix}user_students AS us
@@ -452,7 +472,7 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
 	if ($users) {
 		$menus['reportusers'][''] = '------'; // separator
 		foreach ($users as $id=>$user) {
-				$menus['reportusers']["$id"] = fullname($user);
+            $menus['reportusers']["$id"] = fullname($user);
 		}
 	}
 	$menus['reportattempts'] = array(
@@ -599,11 +619,11 @@ function hotpot_get_records_groupby($function, $fieldnames, $table, $select, $gr
 		if (empty($record->joinedvalues)) {
 			unset($records[$id]);
 		} else {
-			$formdata = explode('_', $record->joinedvalues);
+			$values = explode('_', $record->joinedvalues);
 
 			for ($i=0; $i<$fieldcount; $i++) {
 				$fieldname = $fieldnames[$i];
-				$records[$id]->$fieldname = $formdata[$i];
+				$records[$id]->$fieldname = $values[$i];
 			}
 		}
 		unset($record->joinedvalues);
