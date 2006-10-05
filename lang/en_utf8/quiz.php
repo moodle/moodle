@@ -368,7 +368,6 @@ $string['quiz:preview'] = 'Preview quizzes';
 $string['quiz:grade'] = 'Grade quizzes manually';
 $string['quiz:viewreports'] = 'View quiz reports';
 $string['quiz:deleteattempts'] = 'Delete quiz attempts';
-$string['quiz:grade'] = 'Preview quizzes';
 $string['quizavailable'] = 'The quiz is available until: $a';
 $string['quizclose'] = 'Close the quiz';
 $string['quizclosed'] = 'This quiz closed on $a';
