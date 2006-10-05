@@ -182,12 +182,13 @@
     if ($roleid) {        /// prints a form to swap roles
 
     /// Get all existing participants in this context.
+        // Why is this not done with get_users???
 
         if (!$contextusers = get_role_users($roleid, $context, false, 'u.id, u.firstname, u.lastname, u.email')) {
             $contextusers = array();
         }
 
-        $select  = "username <> 'guest' AND deleted = 0 AND confirmed = 1";
+        $select  = "username <> 'guest' AND username <> 'changeme' AND deleted = 0 AND confirmed = 1";
     
         $usercount = count_records_select('user', $select) - count($contextusers);
 
