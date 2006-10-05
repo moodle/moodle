@@ -273,7 +273,7 @@ function SCORMapi1_3() {
                             errorCode = "0";
                             <?php 
                                 if (debugging('',DEBUG_DEVELOPER)) {
-                                    echo 'alert(element+": "+eval(element));';
+                                    echo 'alert("GetValue("+element+") -> "+eval(element));';
                                 }
                             ?>
                             return eval(element);
@@ -361,7 +361,7 @@ function SCORMapi1_3() {
                                     } else {
                                         subelement = subelement.concat('.'+elementIndex);
                                     }
-                                    if ((typeof eval(subelement)) == "undefined") {
+                                    if (((typeof eval(subelement)) == "undefined") && (errorCode == "0"))  {
                                         eval(subelement+' = new Object();');
                                         if (subelement.substr(0,14) == 'cmi.objectives') {
                                             eval(subelement+'.score = new Object();');
@@ -376,6 +376,11 @@ function SCORMapi1_3() {
                                             eval(subelement+'.objectives._count = 0;');
                                             eval(subelement+'.correct_responses = new Object();');
                                             eval(subelement+'.correct_responses._count = 0;');
+                                        }
+                                        if (subelement.substr(0,25) == 'cmi.comments_from_learner') {
+                                            eval(subelement+'.comment = "";');
+                                            eval(subelement+'.location = "";');
+                                            eval(subelement+'.timestamp = "";');
                                         }
                                     }
                                 }
@@ -393,7 +398,7 @@ function SCORMapi1_3() {
                                             errorCode = "0";
                                             <?php 
                                                 if (debugging('',DEBUG_DEVELOPER)) {
-                                                    echo 'alert(element+":= "+value);';
+                                                    echo 'alert("SetValue("+element+","+value+") -> OK");';
                                                 }
                                             ?>
                                             return "true";
@@ -408,7 +413,7 @@ function SCORMapi1_3() {
                                     errorCode = "0";
                                     <?php 
                                         if (debugging('',DEBUG_DEVELOPER)) {
-                                            echo 'alert(element+":= "+value);';
+                                            echo 'alert("SetValue("+element+","+value+") -> OK");';
                                         }
                                     ?>
                                     return "true";
@@ -621,11 +626,6 @@ function SCORMapi1_3() {
     }
 
     function TotalTime() {
-        <?php 
-            if (debugging('',DEBUG_DEVELOPER)) {
-                echo 'alert("TotalTime");';
-            }
-        ?>
         total_time = AddTime(cmi.total_time, cmi.session_time);
         return '&'+underscore('cmi.total_time')+'='+escape(total_time);
     }
@@ -657,11 +657,6 @@ function SCORMapi1_3() {
     }
 
     function StoreData(data,storetotaltime) {
-        <?php 
-            if (debugging('',DEBUG_DEVELOPER)) {
-                echo 'alert("StoreData");';
-            }
-        ?>
         if (storetotaltime) {
             if (cmi.mode == 'normal') {
                 if (cmi.credit == 'credit') {
