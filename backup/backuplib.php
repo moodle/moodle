@@ -55,8 +55,11 @@
                     //Is needed user (exists in needed_users) 
                     if (isset($needed_users[$backupable_user->id])) {
                         $backupable_user->info .= "needed";
-                    }
-                    
+                    } else if (isset($course_users[$backupable_user->id])) {
+                        $backupable_user->info .= "needed"; 
+                    }   // Yu: also needed because they can view course
+                        // might need another variable
+                                        
                     //Now create the backup_id record
                     $backupids_rec->backup_code = $backup_unique_code;
                     $backupids_rec->table_name = "user";

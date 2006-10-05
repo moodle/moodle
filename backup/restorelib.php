@@ -898,17 +898,21 @@
                     if (!empty($sect->mods)) {
                         //For each mod inside section
                         foreach ($sect->mods as $keym => $mod) {
+                            // Yu: This part is called repeatedly for every instance, 
+                            // so it is necessary to set the granular flag and check isset() 
+                            // when the first instance of this type of mod is processed.
+                            if (!isset($restore->mods[$mod->type]->granular) && is_array($restore->mods[$mod->type]->instances)) {
+                                // This defines whether we want to restore specific
+                                // instances of the modules (granular restore), or
+                                // whether we don't care and just want to restore
+                                // all module instances (non-granular).
+                                $restore->mods[$mod->type]->granular = true;
+                            } else {
+                                $restore->mods[$mod->type]->granular = false;
+                            }
+                          
                             //Check if we've to restore this module (and instance) 
-                            if ($restore->mods[$mod->type]->restore) {
-                                
-                                if (is_array($restore->mods[$mod->type]->instances)) {
-                                    // This defines whether we want to restore specific
-                                    // instances of the modules (granular restore), or
-                                    // whether we don't care and just want to restore
-                                    // all module instances (non-granular).
-                                    $restore->mods[$mod->type]->granular = true;
-                                }
-                                
+                            if ($restore->mods[$mod->type]->restore) {                      
                                 if (empty($restore->mods[$mod->type]->granular)  // we don't care about per instance
                                     || (array_key_exists($mod->instance,$restore->mods[$mod->type]->instances) 
                                         && !empty($restore->mods[$mod->type]->instances[$mod->instance]->restore))) {
@@ -3507,30 +3511,7 @@
             $this->level--;
             $this->content = "";
 
-        }      
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+        }
 
         //This is the endTag handler we use where we are reading the course_header zone (todo="COURSE_HEADER")
         function endElementCourseHeader($parser, $tagName) {
@@ -6107,7 +6088,7 @@
         if (!empty($course->roleassignments)) {
             $courseassignments = $course->roleassignments;
 
-            foreach ($courseassignments as $oldroleid => $courseassignment) {          
+            foreach ($courseassignments as $oldroleid => $courseassignment) {    
                 restore_write_roleassignments($restore, $courseassignment->assignments, "course", CONTEXT_COURSE, $course->course_id, $oldroleid);
             }
         }
@@ -6234,7 +6215,6 @@
             $newcontext = get_context_instance($contextlevel, $oldinstance->new_id);
             $assignment->contextid = $newcontext->id; // new context id
             // might already have same assignment           
-            
             role_assign($assignment->roleid, $assignment->userid, 0, $assignment->contextid, $assignment->timestart, $assignment->timeend, $assignment->hidden, $assignment->enrol);
             
         }  

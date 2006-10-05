@@ -470,7 +470,8 @@ if ($info->backup_moodle_version < 2006092801) {
 } else {
     // 1.7 and above backup
     $roles = restore_read_xml_roles($xml_file);
-    if (is_array($roles)) { // possible to have course with no roles
+    
+    if (!empty($roles->roles)) { // possible to have course with no roles
 
         foreach ($roles->roles as $roleid=>$role) {
             echo ('<tr><td align="right">');
