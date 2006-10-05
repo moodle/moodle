@@ -1803,7 +1803,7 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
     $LIKE      = sql_ilike();
     $fullname  = sql_fullname();
 
-    $select = 'deleted <> 1';
+    $select = "deleted <> '1' AND username <> 'changeme'";
 
     if (!empty($search)) {
         $search = trim($search);
