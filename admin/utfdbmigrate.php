@@ -517,7 +517,7 @@ function db_migrate2utf8(){   //Eloy: Perhaps some type of limit parameter here
                                Note that this code will leave remaining NOT NULL fiels
                                unmodified at all, folowing the old approach 
                             */
-                            if($cols = $db->MetaColumns($prefix.$dbtablename)) {
+                            if(($cols = $db->MetaColumns($prefix.$dbtablename)) && $fieldname != 'dummy') {
                                 $cols = array_change_key_case($cols, CASE_LOWER); ///lowercase col names
                                 $notnull = 'NOT NULL';  ///Old default
                                 if ($col = $cols[strtolower($fieldname)]) {
