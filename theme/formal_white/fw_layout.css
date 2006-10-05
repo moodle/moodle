@@ -218,4 +218,6 @@ table.calendarmonth tr td  {
   border-style: dashed;
 }
 
-
+#content {
+  clear: both;
+}
