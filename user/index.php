@@ -325,7 +325,10 @@
     //$select .= $course->enrolperiod?', s.timeend ':'';
     $from   = "FROM {$CFG->prefix}user u INNER JOIN
     {$CFG->prefix}role_assignments r on u.id=r.userid LEFT OUTER JOIN
-    {$CFG->prefix}user_lastaccess ul on r.userid=ul.userid ";
+    {$CFG->prefix}user_lastaccess ul on (r.userid=ul.userid and ul.courseid = $course->id)"; 
+    // join on 2 conditions
+    // otherwise we run into the problem of having records in ul table, but not relevant course
+    // and user record is not pulled out
     $where  = "WHERE (r.contextid = $context->id OR r.contextid in $listofcontexts)
         AND u.deleted = 0 $selectrole
         AND (ul.courseid = $course->id OR ul.courseid IS NULL)
