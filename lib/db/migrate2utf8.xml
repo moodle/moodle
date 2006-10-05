@@ -349,28 +349,6 @@
         <FIELD name="std_time" method="NO_CONV" type="varchar" length="5" />
       </FIELDS>
     </TABLE>
-    <TABLE name="user_students">
-      <FIELDS>
-        <FIELD name="enrol" method="NO_CONV" type="varchar" length="20" dropindex="enrol" addindex="enrol(enrol(20))"/>
-      </FIELDS>
-    </TABLE>
-    <TABLE name="user_teachers">
-      <FIELDS>
-        <FIELD name="role" method="PLAIN_SQL_UPDATE" type="varchar" length="40">
-          <SQL_DETECT_USER>
-            SELECT ut.userid
-            FROM {$CFG->prefix}user_teachers ut
-            WHERE ut.id = RECORDID
-          </SQL_DETECT_USER>
-          <SQL_DETECT_COURSE>
-            SELECT ut.course
-            FROM {$CFG->prefix}user_teachers ut
-            WHERE ut.id = RECORDID
-          </SQL_DETECT_COURSE>
-        </FIELD>
-        <FIELD name="enrol" method="NO_CONV" type="varchar" length="20" dropindex="enrol" addindex="enrol(enrol(20))"/>
-      </FIELDS>
-    </TABLE>
     <TABLE name="stats_daily" />
     <TABLE name="stats_weekly" />
     <TABLE name="stats_monthly" />
@@ -395,8 +373,6 @@
         <FIELD name="value" method="NO_CONV" type="varchar" length="255" />
       </FIELDS>
     </TABLE>
-    <TABLE name="user_admins" />
-    <TABLE name="user_coursecreators" />
     <TABLE name="course">
       <FIELDS>
         <FIELD name="currency" method="NO_CONV" type="char" length="3" />
