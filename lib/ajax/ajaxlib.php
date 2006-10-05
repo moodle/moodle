@@ -1,10 +1,9 @@
 <?php // Library functions for using AJAX with Moodle
 
 /**
- *Print require statements for javascript libraries
- *Takes in an array of either full paths or shortnames and it will translate them to full paths
+ * Print require statements for javascript libraries
+ * Takes in an array of either full paths or shortnames and it will translate them to full paths
  **/
-
 function print_require_js($list) {
     global $CFG;
 
@@ -22,16 +21,19 @@ function print_require_js($list) {
             );
 
 
-    for ($i=0;$i<count($list);$i++) {
+    for ($i=0; $i<count($list); $i++) {
         if ($translatelist[$list[$i]]) {
-            echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$translatelist[$list[$i]]."'></script>\n\r";
+            echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$translatelist[$list[$i]]."'></script>\n";
         } else {
-            echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$list[$i]."'></script>\n\r";
+            echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$list[$i]."'></script>\n";
         }
     }
 }
 
-//used to create view of document to be passed to javascript on pageload
+
+/**
+ * Used to create view of document to be passed to javascript on pageload.
+ */
 class jsportal{
 
     var $currentblocksection = null;
@@ -40,15 +42,17 @@ class jsportal{
     var $output = '';
 
 
-    //takes id of block and adds it
-    function block_add($id,$hidden=false){
+    /**
+     * Takes id of block and adds it
+     */
+    function block_add($id, $hidden=false){
         $hidden_binary = 0;
 
         if ($hidden) {
             $hidden_binary = 1;
         }
 
-        $this->blocks[count($this->blocks)] = array($this->currentblocksection,$id,$hidden_binary);
+        $this->blocks[count($this->blocks)] = array($this->currentblocksection, $id, $hidden_binary);
     }
 
 
@@ -56,21 +60,21 @@ class jsportal{
         global $CFG;
 
         $blocksoutput = $output = '';
-        for ($i=0;$i<count($this->blocks);$i++) {
-            $blocksoutput.="['".$this->blocks[$i][0]."','".$this->blocks[$i][1]."','".$this->blocks[$i][2]."']";
+        for ($i=0; $i<count($this->blocks); $i++) {
+            $blocksoutput .= "['".$this->blocks[$i][0]."','".$this->blocks[$i][1]."','".$this->blocks[$i][2]."']";
             if ($i != (count($this->blocks)-1)) {
-                $blocksoutput.=",";
+                $blocksoutput .= ',';
             }
         }
 
-        $output .="<script language='javascript'>\r";
-        $output .=" 	main.portal.id = ".$id."\r";
-        $output .="     main.portal.blocks = new Array(".$blocksoutput.");\r";        
-        $output .="     main.portal.strings['wwwroot']='".$CFG->wwwroot."';\r";        
-        $output .="     main.portal.strings['update']='".get_string('update')."';\r";  
-        $output .="     onload.load()\r";
-        $output .="     main.process_blocks();\r";
-        $output .="</script>";
+        $output .= "<script language='javascript'>\n";
+        $output .= " 	main.portal.id = ".$id.";\n";
+        $output .= "     main.portal.blocks = new Array(".$blocksoutput.");\n";        
+        $output .= "     main.portal.strings['wwwroot']='".$CFG->wwwroot."';\n";        
+        $output .= "     main.portal.strings['update']='".get_string('update')."';\n";  
+        $output .= "     onload.load();\n";
+        $output .= "     main.process_blocks();\n";
+        $output .= "</script>";
         echo $output;
     }
 }
