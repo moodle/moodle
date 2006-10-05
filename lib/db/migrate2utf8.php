@@ -250,7 +250,9 @@ function migrate2utf8_role_name($recordid){
 		$userlang = null; // Non existing
         $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
     }
-/// We are going to use textlib facilities
+
+/// Initialise $result
+    $result = $role->name;
 
 /// Convert the text
     if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
@@ -286,7 +288,9 @@ function migrate2utf8_role_description($recordid){
 		$userlang = null; // Non existing
         $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
     }
-/// We are going to use textlib facilities
+
+/// Initialise $result
+    $result = $role->description;
 
 /// Convert the text
     if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
@@ -594,7 +598,9 @@ function migrate2utf8_config_value($recordid){
 
         $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
     }
-/// We are going to use textlib facilities
+
+/// Initialise $result
+    $result = $config->value;
     
 /// Convert the text
     if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
@@ -670,7 +676,8 @@ function migrate2utf8_course_categories_name($recordid){
         $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
     }
 
-/// We are going to use textlib facilities
+/// Initialise $result
+    $result = $coursecategories->name;
     
 /// Convert the text
     if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {

@@ -24,8 +24,9 @@ function migrate2utf8_backup_ids_info($recordid){
         $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
     }
 
-/// We are going to use textlib facilities
-    
+/// Initialise $result
+    $result = $backupids->info;
+
 /// Convert the text
     if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
         $result = utfconvert($backupids->info, $fromenc);
