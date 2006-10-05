@@ -62,7 +62,7 @@
 
     //only check pop ups if the user is not a teacher, and popup is set
     
-    $bodytags = (isteacher($course->id) or !$quiz->popup)?'':'onload="popupchecker(\'This section of the test is in secure mode, this means that you need to take the quiz in a secure window. Please turn off your popup blocker. Thank you.\');"';
+    $bodytags = (isteacher($course->id) or !$quiz->popup)?'':'onload="popupchecker(\'' . get_string('popupblockerwarning', 'quiz') . '\');"';
     $PAGE->print_header($course->shortname.': %fullname%','',$bodytags);
 
     echo '<table id="layout-table"><tr>';

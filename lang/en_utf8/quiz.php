@@ -324,6 +324,7 @@ $string['penaltyfactor'] = 'Penalty factor';
 $string['penaltyscheme'] = 'Apply penalties';
 $string['percentcorrect'] = 'Percent Correct';
 $string['popup'] = 'Show quiz in a &quot;secure&quot; window';
+$string['popupblockerwarning'] = 'This section of the test is in secure mode, this means that you need to take the quiz in a secure window. Please turn off your popup blocker. Thank you.';
 $string['popupnotice'] = 'Students will see this quiz in a secure window';
 $string['preview'] = 'Preview';
 $string['previewquestion'] = 'Preview question';
