@@ -463,14 +463,34 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
 			u.id, u.firstname, u.lastname
 		FROM 
 			{$CFG->prefix}user AS u,
+			{$CFG->prefix}hotpot_attempts AS ha
+		WHERE
+			u.id = ha.userid AND ha.hotpot=$hotpot->id
+		ORDER BY
+			u.lastname
+	");
+	$students = get_records_sql("
+		SELECT 
+			u.id, u.firstname, u.lastname
+		FROM 
+			{$CFG->prefix}user AS u,
 			{$CFG->prefix}user_students AS us
 		WHERE
 			u.id = us.userid AND us.course=$course->id
 		ORDER BY
 			u.lastname
 	");
-	if ($users) {
-		$menus['reportusers'][''] = '------'; // separator
+	if (!empty($students)) {
+		$menus['reportusers']['separator01'] = '------';
+		foreach ($students as $id=>$user) {
+            if (isset($users[$id])) {
+                $menus['reportusers']["$id"] = fullname($user);
+                unset($users[$id]);
+            }
+		}
+	}
+	if (!empty($users)) {
+		$menus['reportusers']['separator02'] = '------';
 		foreach ($users as $id=>$user) {
             $menus['reportusers']["$id"] = fullname($user);
 		}
