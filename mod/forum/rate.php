@@ -47,7 +47,10 @@
             $postid = (int)$postid;
             $lastpostid = $postid;
 
-            if ($oldrating = get_record("forum_ratings", "userid", $USER->id, "post", $postid)) {
+            if ($rating == FORUM_UNSET_POST_RATING) {
+                delete_records('forum_ratings', 'post', $postid, 'userid', $USER->id);
+
+            } else if ($oldrating = get_record("forum_ratings", "userid", $USER->id, "post", $postid)) {
                 if ($rating != $oldrating->rating) {
                     $oldrating->rating = $rating;
                     $oldrating->time = time();
@@ -55,7 +58,7 @@
                         error("Could not update an old rating ($postid = $rating)");
                     }
                 }
-            } else if ($rating) {
+            } else {
                 unset($newrating);
                 $newrating->userid = $USER->id;
                 $newrating->time = time();

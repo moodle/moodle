@@ -17,6 +17,8 @@ define('FORUM_TRACKING_OFF', 0);
 define('FORUM_TRACKING_OPTIONAL', 1);
 define('FORUM_TRACKING_ON', 2);
 
+define('FORUM_UNSET_POST_RATING', -999);
+
 $FORUM_LAYOUT_MODES = array ( FORUM_MODE_FLATOLDEST => get_string('modeflatoldestfirst', 'forum'),
                               FORUM_MODE_FLATNEWEST => get_string('modeflatnewestfirst', 'forum'),
                               FORUM_MODE_THREADED   => get_string('modethreaded', 'forum'),
@@ -2389,14 +2391,14 @@ function forum_print_rating_menu($postid, $userid, $scale) {
     static $strrate;
 
     if (!$rating = get_record("forum_ratings", "userid", $userid, "post", $postid)) {
-        $rating->rating = 0;
+        $rating->rating = FORUM_UNSET_POST_RATING;
     }
 
     if (empty($strrate)) {
         $strrate = get_string("rate", "forum");
     }
-
-    choose_from_menu($scale, $postid, $rating->rating, "$strrate...");
+    $scale = array(FORUM_UNSET_POST_RATING => $strrate.'...') + $scale;
+    choose_from_menu($scale, $postid, $rating->rating, '');
 }
 
 /**
