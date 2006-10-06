@@ -123,7 +123,8 @@ class block_admin_tree extends block_base {
 
         if ($this->tempcontent !== '') {
             $this->content = new stdClass;
-            $this->content->text = '<script type="text/javascript">' . "\n\n";
+            $this->content->text  = '<script type="text/javascript">'."\n";
+            $this->content->text .= '<!--' . "\n";
             $this->content->text .= 'var vh_numspans = ' . ($this->spancounter - 1) . ';' . "\n";
             $this->content->text .= 'var vh_content = new Array();' . "\n";
             $this->content->text .= 'function getspan(spanid) {' . "\n";
@@ -166,11 +167,12 @@ class block_admin_tree extends block_base {
             $this->content->text .= '}' . "\n";
 
             $this->content->text .= 'function collapseall() {' . "\n";
-            $this->content->text .= '  for (i = vh_numspans; i > 0; i--) {' . "\n";
+            $this->content->text .= '  for (i = vh_numspans; i > 0; i=i-1 ) {' . "\n";
             $this->content->text .= '    collapse("vh_span" + String(i));' . "\n";
             $this->content->text .= '  }' . "\n";
             $this->content->text .= '}' . "\n";
 
+            $this->content->text .= '-->' . "\n";
             $this->content->text .= '</script>' . "\n";
             $this->content->text .= '<div align="left">' . "\n";
 
@@ -178,9 +180,11 @@ class block_admin_tree extends block_base {
 
             $this->content->text .= '</div>' . "\n";
             $this->content->text .= '<script type="text/javascript">' . "\n";
+            $this->content->text .= '<!--' . "\n";
             $this->content->text .= 'collapseall();' . "\n";
             $this->content->text .= $this->expandjavascript;
 
+            $this->content->text .= '-->' . "\n";
             $this->content->text .= '</script>' . "\n";
 
             $searchcontent = isset($CFG->adminsearchquery) ? $CFG->adminsearchquery : '';
