@@ -37,6 +37,7 @@ $string['data:approve'] = 'Approve unapproved entries';
 $string['data:manageentries'] = 'Manage entries';
 $string['data:managecomments'] = 'Manage comments';
 $string['data:managetemplates'] = 'Manage templates';
+$string['data:manageuserpresets'] = 'Manage all template presets';
 $string['data:viewrating'] = 'View ratings';
 $string['data:viewentry'] = 'View entries';
 $string['data:viewalluserpresets'] = 'View presets from all users';

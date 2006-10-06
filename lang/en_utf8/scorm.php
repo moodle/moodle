@@ -40,6 +40,7 @@ $string['score'] = 'Score';
 $string['scorm:viewreport'] = 'View reports';
 $string['scorm:savetrack'] = 'Save tracks';
 $string['scorm:viewscores'] = 'View scores';
+$string['scorm:skipview'] = 'Skip overview';
 $string['viewallreports'] = 'View reports for $a attempts';
 $string['display'] = 'Display package';
 $string['expcoll'] = 'Expand/Collide';
