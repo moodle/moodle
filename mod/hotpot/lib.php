@@ -165,6 +165,12 @@ define("HOTPOT_DISPLAYNEXT_QUIZ",   "0");
 define("HOTPOT_DISPLAYNEXT_COURSE", "1");
 define("HOTPOT_DISPLAYNEXT_INDEX",  "2");
 
+/**
+ * If start and end date for the quiz are more than this many seconds apart
+ * they will be represented by two separate events in the calendar
+ */
+define("HOTPOT_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
+
 //////////////////////////////////
 /// CORE FUNCTIONS
 
@@ -175,40 +181,40 @@ define("HOTPOT_DISPLAYNEXT_INDEX",  "2");
 //    string:
 //        display as error message and return to course view
 //  true (or non-zero number):
-//        continue to $hp->redirect (if set) OR hotpot/view.php (to displsay quiz)
+//        continue to $hotpot->redirect (if set) OR hotpot/view.php (to displsay quiz)
 
-// $hp is an object containing the values of the form in mod.html
+// $hotpot is an object containing the values of the form in mod.html
 // i.e. all the fields in the 'hotpot' table, plus the following:
-//  $hp->course       : an id in the 'course' table
-//  $hp->coursemodule : an id in the 'course_modules' table
-//  $hp->section      : an id in the 'course_sections' table
-//  $hp->module       : an id in the 'modules' table
-//  $hp->modulename   : always 'hotpot'
-//  $hp->instance     : an id in the 'hotpot' table
-//  $hp->mode         : 'add' or 'update'
-//  $hp->sesskey      : unique string required for Moodle's session management
+//  $hotpot->course       : an id in the 'course' table
+//  $hotpot->coursemodule : an id in the 'course_modules' table
+//  $hotpot->section      : an id in the 'course_sections' table
+//  $hotpot->module       : an id in the 'modules' table
+//  $hotpot->modulename   : always 'hotpot'
+//  $hotpot->instance     : an id in the 'hotpot' table
+//  $hotpot->mode         : 'add' or 'update'
+//  $hotpot->sesskey      : unique string required for Moodle's session management
 
-function hotpot_add_instance(&$hp) {
-	if (hotpot_set_form_values($hp)) {
-		if ($result = insert_record('hotpot', $hp)) {
-            hotpot_update_events($hp);
+function hotpot_add_instance(&$hotpot) {
+    if (hotpot_set_form_values($hotpot)) {
+        if ($result = insert_record('hotpot', $hotpot)) {
+            hotpot_update_events($hotpot);
         }
-	} else {
-		$result=  false;
-	}
-	return $result;
+    } else {
+        $result=  false;
+    }
+    return $result;
 }
 
-function hotpot_update_instance(&$hp) {
-	if (hotpot_set_form_values($hp)) {
-		$hp->id = $hp->instance;
-		if ($result = update_record('hotpot', $hp)) {
-            hotpot_update_events($hp);
+function hotpot_update_instance(&$hotpot) {
+    if (hotpot_set_form_values($hotpot)) {
+        $hotpot->id = $hotpot->instance;
+        if ($result = update_record('hotpot', $hotpot)) {
+            hotpot_update_events($hotpot);
         }
-	} else {
-		$result=  false;
-	}
-	return $result;
+    } else {
+        $result=  false;
+    }
+    return $result;
 }
 function hotpot_update_events($hotpot) {
 
@@ -216,7 +222,7 @@ function hotpot_update_events($hotpot) {
     delete_records('event', 'modulename', 'hotpot', 'instance', $hotpot->id);
 
     $event = new stdClass();
-    $event->description = $hotpot->summary;
+    $event->description = addslashes($hotpot->summary);
     $event->courseid    = $hotpot->course;
     $event->groupid     = 0;
     $event->userid      = 0;
@@ -236,13 +242,13 @@ function hotpot_update_events($hotpot) {
 
         if ($event->timeduration > HOTPOT_MAX_EVENT_LENGTH) {  /// Long durations create two events
     
-            $event->name          = $hotpot->name.' ('.get_string('hotpotopens', 'hotpot').')';
+            $event->name          = addslashes($hotpot->name).' ('.get_string('hotpotopens', 'hotpot').')';
             $event->timeduration  = 0;
             add_event($event);
     
             $event->timestart    = $hotpot->timeclose;
             $event->eventtype    = 'close';
-            $event->name         = $hotpot->name.' ('.get_string('hotpotcloses', 'hotpot').')';
+            $event->name         = addslashes($hotpot->name).' ('.get_string('hotpotcloses', 'hotpot').')';
             unset($event->id);
             add_event($event);
         } else { // single event with duration
@@ -250,12 +256,12 @@ function hotpot_update_events($hotpot) {
             add_event($event);
         }
     } elseif ($hotpot->timeopen) { // only an open date
-        $event->name          = $hotpot->name.' ('.get_string('hotpotopens', 'hotpot').')';
+        $event->name          = addslashes($hotpot->name).' ('.get_string('hotpotopens', 'hotpot').')';
         $event->eventtype   = 'open';
         $event->timeduration = 0;
         add_event($event);
     } elseif ($hotpot->timeclose) { // only a closing date
-        $event->name         = $hotpot->name.' ('.get_string('hotpotcloses', 'hotpot').')';
+        $event->name         = addslashes($hotpot->name).' ('.get_string('hotpotcloses', 'hotpot').')';
         $event->timestart    = $hotpot->timeclose;
         $event->eventtype    = 'close';
         $event->timeduration = 0;
@@ -263,101 +269,101 @@ function hotpot_update_events($hotpot) {
     }
 }
 
-function hotpot_set_form_values(&$hp) {
+function hotpot_set_form_values(&$hotpot) {
     $ok = true;
-    $hp->errors = array(); // these will be reported by moderr.html
+    $hotpot->errors = array(); // these will be reported by moderr.html
 
-    if (empty($hp->reference)) {
+    if (empty($hotpot->reference)) {
         $ok = false;
-        $hp->errors['reference']= get_string('error_nofilename', 'hotpot');
+        $hotpot->errors['reference']= get_string('error_nofilename', 'hotpot');
     }
 
-    if ($hp->studentfeedbackurl=='http://') {
-        $hp->studentfeedbackurl = '';
+    if ($hotpot->studentfeedbackurl=='http://') {
+        $hotpot->studentfeedbackurl = '';
     }
 
-    if (empty($hp->studentfeedbackurl)) {
-        switch ($hp->studentfeedback) {
+    if (empty($hotpot->studentfeedbackurl)) {
+        switch ($hotpot->studentfeedback) {
             case HOTPOT_FEEDBACK_WEBPAGE:
                 $ok = false;
-                $hp->errors['studentfeedbackurl']= get_string('error_nofeedbackurlwebpage', 'hotpot');
+                $hotpot->errors['studentfeedbackurl']= get_string('error_nofeedbackurlwebpage', 'hotpot');
             break;
             case HOTPOT_FEEDBACK_FORMMAIL:
                 $ok = false;
-                $hp->errors['studentfeedbackurl']= get_string('error_nofeedbackurlformmail', 'hotpot');
+                $hotpot->errors['studentfeedbackurl']= get_string('error_nofeedbackurlformmail', 'hotpot');
             break;
         }
     }
 
     $time = time();
-    $hp->timecreated = $time;
-    $hp->timemodified = $time;
+    $hotpot->timecreated = $time;
+    $hotpot->timemodified = $time;
 
-    if (empty($hp->enabletimeopen)) {
-        $hp->timeopen = 0;
+    if (empty($hotpot->enabletimeopen)) {
+        $hotpot->timeopen = 0;
     } else {
-        $hp->timeopen = make_timestamp(
-            $hp->openyear, $hp->openmonth, $hp->openday,
-            $hp->openhour, $hp->openminute, 0
+        $hotpot->timeopen = make_timestamp(
+            $hotpot->openyear, $hotpot->openmonth, $hotpot->openday,
+            $hotpot->openhour, $hotpot->openminute, 0
         );
     }
 
-    if (empty($hp->enabletimeclose)) {
-        $hp->timeclose = 0;
+    if (empty($hotpot->enabletimeclose)) {
+        $hotpot->timeclose = 0;
     } else {
-        $hp->timeclose = make_timestamp(
-            $hp->closeyear, $hp->closemonth, $hp->closeday,
-            $hp->closehour, $hp->closeminute, 0
+        $hotpot->timeclose = make_timestamp(
+            $hotpot->closeyear, $hotpot->closemonth, $hotpot->closeday,
+            $hotpot->closehour, $hotpot->closeminute, 0
         );
     }
 
-    if ($hp->quizchain==HOTPOT_YES) {
-        switch ($hp->mode) {
+    if ($hotpot->quizchain==HOTPOT_YES) {
+        switch ($hotpot->mode) {
             case 'add':
-                $ok = hotpot_add_chain($hp);
+                $ok = hotpot_add_chain($hotpot);
             break;
             case 'update':
-                $ok = hotpot_update_chain($hp);
+                $ok = hotpot_update_chain($hotpot);
             break;
         }
-    } else { // $hp->quizchain==HOTPOT_NO
-        hotpot_set_name_summary_reference($hp);
+    } else { // $hotpot->quizchain==HOTPOT_NO
+        hotpot_set_name_summary_reference($hotpot);
     }
 
-    switch ($hp->displaynext) {
+    switch ($hotpot->displaynext) {
         // N.B. redirection only works for Moodle 1.5+
         case HOTPOT_DISPLAYNEXT_COURSE:
-            $hp->redirect = true;
-            $hp->redirecturl = "view.php?id=$hp->course";
+            $hotpot->redirect = true;
+            $hotpot->redirecturl = "view.php?id=$hotpot->course";
             break;
         case HOTPOT_DISPLAYNEXT_INDEX:
-            $hp->redirect = true;
-            $hp->redirecturl = "../mod/hotpot/index.php?id=$hp->course";
+            $hotpot->redirect = true;
+            $hotpot->redirecturl = "../mod/hotpot/index.php?id=$hotpot->course";
             break;
         default:
             // use Moodle default action (i.e. go on to display the hotpot quiz)
     }
 
-    // if ($ok && $hp->setdefaults) {
+    // if ($ok && $hotpot->setdefaults) {
     if ($ok) {
-        set_user_preference('hotpot_timeopen', $hp->timeopen);
-        set_user_preference('hotpot_timeclose', $hp->timeclose);
-        set_user_preference('hotpot_navigation', $hp->navigation);
-        set_user_preference('hotpot_outputformat', $hp->outputformat);
-        set_user_preference('hotpot_studentfeedback', $hp->studentfeedback);
-        set_user_preference('hotpot_studentfeedbackurl', $hp->studentfeedbackurl);
-        set_user_preference('hotpot_forceplugins', $hp->forceplugins);
-        set_user_preference('hotpot_shownextquiz', $hp->shownextquiz);
-        set_user_preference('hotpot_review', $hp->review);
-        set_user_preference('hotpot_grade', $hp->grade);
-        set_user_preference('hotpot_grademethod', $hp->grademethod);
-        set_user_preference('hotpot_attempts', $hp->attempts);
-        set_user_preference('hotpot_subnet', $hp->subnet);
-        set_user_preference('hotpot_displaynext', $hp->displaynext);
-        if ($hp->mode=='add') {
-            set_user_preference('hotpot_quizchain', $hp->quizchain);
-            set_user_preference('hotpot_namesource', $hp->namesource);
-            set_user_preference('hotpot_summarysource', $hp->summarysource);
+        set_user_preference('hotpot_timeopen', $hotpot->timeopen);
+        set_user_preference('hotpot_timeclose', $hotpot->timeclose);
+        set_user_preference('hotpot_navigation', $hotpot->navigation);
+        set_user_preference('hotpot_outputformat', $hotpot->outputformat);
+        set_user_preference('hotpot_studentfeedback', $hotpot->studentfeedback);
+        set_user_preference('hotpot_studentfeedbackurl', $hotpot->studentfeedbackurl);
+        set_user_preference('hotpot_forceplugins', $hotpot->forceplugins);
+        set_user_preference('hotpot_shownextquiz', $hotpot->shownextquiz);
+        set_user_preference('hotpot_review', $hotpot->review);
+        set_user_preference('hotpot_grade', $hotpot->grade);
+        set_user_preference('hotpot_grademethod', $hotpot->grademethod);
+        set_user_preference('hotpot_attempts', $hotpot->attempts);
+        set_user_preference('hotpot_subnet', $hotpot->subnet);
+        set_user_preference('hotpot_displaynext', $hotpot->displaynext);
+        if ($hotpot->mode=='add') {
+            set_user_preference('hotpot_quizchain', $hotpot->quizchain);
+            set_user_preference('hotpot_namesource', $hotpot->namesource);
+            set_user_preference('hotpot_summarysource', $hotpot->summarysource);
         }
     }
     return $ok;
@@ -449,20 +455,20 @@ function hotpot_is_visible(&$cm) {
     }
     return $visible;
 }
-function hotpot_add_chain(&$hp) {
+function hotpot_add_chain(&$hotpot) {
 /// add a chain of hotpot actiivities
 
     global $CFG, $course;
 
     $ok = true;
-    $hp->names = array();
-    $hp->summaries = array();
-    $hp->references = array();
+    $hotpot->names = array();
+    $hotpot->summaries = array();
+    $hotpot->references = array();
 
-    $xml_quiz = new hotpot_xml_quiz($hp, false, false, false, false, false);
+    $xml_quiz = new hotpot_xml_quiz($hotpot, false, false, false, false, false);
 
     if (isset($xml_quiz->error)) {
-        $hp->errors['reference'] = $xml_quiz->error;
+        $hotpot->errors['reference'] = $xml_quiz->error;
         $ok = false;
 
     } else if (is_dir($xml_quiz->filepath)) {
@@ -471,22 +477,22 @@ function hotpot_add_chain(&$hp) {
         if ($dh = @opendir($xml_quiz->filepath)) {
             while ($file = @readdir($dh)) {
                 if (preg_match('/\.(jbc|jcl|jcw|jmt|jmx|jqz|htm|html)$/', $file)) {
-                    $hp->references[] = "$xml_quiz->reference/$file";
+                    $hotpot->references[] = "$xml_quiz->reference/$file";
                 }
             }
             closedir($dh);
 
             // get titles
-            foreach ($hp->references as $i=>$reference) {
+            foreach ($hotpot->references as $i=>$reference) {
                 $filepath = $xml_quiz->fileroot.'/'.$reference;
-                hotpot_get_titles_and_next_ex($hp, $filepath);
-                $hp->names[$i] = $hp->exercisetitle;
-                $hp->summaries[$i] = $hp->exercisesubtitle;
+                hotpot_get_titles_and_next_ex($hotpot, $filepath);
+                $hotpot->names[$i] = $hotpot->exercisetitle;
+                $hotpot->summaries[$i] = $hotpot->exercisesubtitle;
             }
 
         } else {
             $ok = false;
-            $hp->errors['reference'] = get_string('error_couldnotopenfolder', 'hotpot', $hp->reference);
+            $hotpot->errors['reference'] = get_string('error_couldnotopenfolder', 'hotpot', $hotpot->reference);
         }
 
     } else if (is_file($xml_quiz->filepath)) {
@@ -494,17 +500,17 @@ function hotpot_add_chain(&$hp) {
         $filerootlength = strlen($xml_quiz->fileroot) + 1;
 
         while ($xml_quiz->filepath) {
-            hotpot_get_titles_and_next_ex($hp, $xml_quiz->filepath, true);
-            $hp->names[] = $hp->exercisetitle;
-            $hp->summaries[] = $hp->exercisesubtitle;
-            $hp->references[] = substr($xml_quiz->filepath, $filerootlength);
+            hotpot_get_titles_and_next_ex($hotpot, $xml_quiz->filepath, true);
+            $hotpot->names[] = $hotpot->exercisetitle;
+            $hotpot->summaries[] = $hotpot->exercisesubtitle;
+            $hotpot->references[] = substr($xml_quiz->filepath, $filerootlength);
 
-            if ($hp->nextexercise) {
-                $filepath = $xml_quiz->fileroot.'/'.$xml_quiz->filesubdir.$hp->nextexercise;
+            if ($hotpot->nextexercise) {
+                $filepath = $xml_quiz->fileroot.'/'.$xml_quiz->filesubdir.$hotpot->nextexercise;
 
                 // check file is not already in chain
                 $reference = substr($filepath, $filerootlength);
-                if (in_array($reference, $hp->references)) {
+                if (in_array($reference, $hotpot->references)) {
                     $filepath = '';
                 }
             } else {
@@ -519,85 +525,85 @@ function hotpot_add_chain(&$hp) {
 
     } else {
         $ok = false;
-        $hp->errors['reference'] = get_string('error_notfileorfolder', 'hotpot', $hp->reference);
+        $hotpot->errors['reference'] = get_string('error_notfileorfolder', 'hotpot', $hotpot->reference);
     }
 
-    if (empty($hp->references) && empty($hp->errors['reference'])) {
+    if (empty($hotpot->references) && empty($hotpot->errors['reference'])) {
         $ok = false;
-        $hp->errors['reference'] = get_string('error_noquizzesfound', 'hotpot', $hp->reference);
+        $hotpot->errors['reference'] = get_string('error_noquizzesfound', 'hotpot', $hotpot->reference);
     }
 
     if ($ok) {
-        $hp->visible = HOTPOT_YES;
+        $hotpot->visible = HOTPOT_YES;
 
-        if (trim($hp->name)=='') {
-            $hp->name = get_string("modulename", $hp->modulename);
+        if (trim($hotpot->name)=='') {
+            $hotpot->name = get_string("modulename", $hotpot->modulename);
         }
-        $hp->specificname = $hp->name;
-        $hp->specificsummary = $hp->summary;
+        $hotpot->specificname = $hotpot->name;
+        $hotpot->specificsummary = $hotpot->summary;
 
         // add all except last activity in chain
 
-        $i_max = count($hp->references)-1;
+        $i_max = count($hotpot->references)-1;
         for ($i=0; $i<$i_max; $i++) {
 
-            hotpot_set_name_summary_reference($hp, $i);
-            $hp->reference = addslashes($hp->reference);
+            hotpot_set_name_summary_reference($hotpot, $i);
+            $hotpot->reference = addslashes($hotpot->reference);
 
-            if (!$hp->instance = insert_record("hotpot", $hp)) {
-                error("Could not add a new instance of $hp->modulename", "view.php?id=$hp->course");
+            if (!$hotpot->instance = insert_record("hotpot", $hotpot)) {
+                error("Could not add a new instance of $hotpot->modulename", "view.php?id=$hotpot->course");
             }
 
             // store (hotpot table) id of start of chain
             if ($i==0) {
-                $hp->startofchain = $hp->instance;
+                $hotpot->startofchain = $hotpot->instance;
             }
 
             if (isset($course->groupmode)) {
-                $hp->groupmode = $course->groupmode;
+                $hotpot->groupmode = $course->groupmode;
             }
 
-            if (! $hp->coursemodule = add_course_module($hp)) {
+            if (! $hotpot->coursemodule = add_course_module($hotpot)) {
                 error("Could not add a new course module");
             }
-            if (! $sectionid = add_mod_to_section($hp) ) {
+            if (! $sectionid = add_mod_to_section($hotpot) ) {
                 error("Could not add the new course module to that section");
             }
 
-            if (! set_field("course_modules", "section", $sectionid, "id", $hp->coursemodule)) {
+            if (! set_field("course_modules", "section", $sectionid, "id", $hotpot->coursemodule)) {
                 error("Could not update the course module with the correct section");
             }
 
-            add_to_log($hp->course, "course", "add mod",
-                "../mod/$hp->modulename/view.php?id=$hp->coursemodule",
-                "$hp->modulename $hp->instance"
+            add_to_log($hotpot->course, "course", "add mod",
+                "../mod/$hotpot->modulename/view.php?id=$hotpot->coursemodule",
+                "$hotpot->modulename $hotpot->instance"
             );
-            add_to_log($hp->course, $hp->modulename, "add",
-                "view.php?id=$hp->coursemodule",
-                "$hp->instance", $hp->coursemodule
+            add_to_log($hotpot->course, $hotpot->modulename, "add",
+                "view.php?id=$hotpot->coursemodule",
+                "$hotpot->instance", $hotpot->coursemodule
             );
 
             // hide tail of chain
-            if ($hp->shownextquiz==HOTPOT_YES) {
-                $hp->visible = HOTPOT_NO;
+            if ($hotpot->shownextquiz==HOTPOT_YES) {
+                $hotpot->visible = HOTPOT_NO;
             }
-        } // end for ($hp->references)
+        } // end for ($hotpot->references)
 
         // settings for final activity in chain
-        hotpot_set_name_summary_reference($hp, $i);
-        $hp->reference = addslashes($hp->references[$i]);
-        $hp->shownextquiz = HOTPOT_NO;
+        hotpot_set_name_summary_reference($hotpot, $i);
+        $hotpot->reference = addslashes($hotpot->references[$i]);
+        $hotpot->shownextquiz = HOTPOT_NO;
 
-        if (isset($hp->startofchain)) {
+        if (isset($hotpot->startofchain)) {
             // redirection only works for Moodle 1.5+
-            $hp->redirect = true;
-            $hp->redirecturl = "$CFG->wwwroot/mod/hotpot/view.php?hp=$hp->startofchain";
+            $hotpot->redirect = true;
+            $hotpot->redirecturl = "$CFG->wwwroot/mod/hotpot/view.php?hp=$hotpot->startofchain";
         }
     } // end if $ok
 
     return $ok;
 }
-function hotpot_set_name_summary_reference(&$hp, $chain_index=NULL) {
+function hotpot_set_name_summary_reference(&$hotpot, $chain_index=NULL) {
 
     $xml_quiz = NULL;
 
@@ -609,56 +615,56 @@ function hotpot_set_name_summary_reference(&$hp, $chain_index=NULL) {
         // are we adding a chain?
         if (isset($chain_index)) {
 
-            switch ($hp->$textsource) {
+            switch ($hotpot->$textsource) {
                 case HOTPOT_TEXTSOURCE_QUIZ:
                     if ($textfield=='name') {
-                        $hp->exercisetitle = $hp->names[$chain_index];
+                        $hotpot->exercisetitle = $hotpot->names[$chain_index];
                     } else if ($textfield=='summary') {
-                        $hp->exercisesubtitle = $hp->summaries[$chain_index];
+                        $hotpot->exercisesubtitle = $hotpot->summaries[$chain_index];
                     }
                     break;
                 case HOTPOT_TEXTSOURCE_SPECIFIC:
                     $specifictext = 'specific'.$textfield;
-                    if (empty($hp->$specifictext) && trim($hp->$specifictext)=='') {
-                        $hp->$textfield = '';
+                    if (empty($hotpot->$specifictext) && trim($hotpot->$specifictext)=='') {
+                        $hotpot->$textfield = '';
                     } else {
-                        $hp->$textfield = $hp->$specifictext.' ('.($chain_index+1).')';
+                        $hotpot->$textfield = $hotpot->$specifictext.' ('.($chain_index+1).')';
                     }
                     break;
             }
-            $hp->reference = $hp->references[$chain_index];
+            $hotpot->reference = $hotpot->references[$chain_index];
         }
 
-        if ($hp->$textsource==HOTPOT_TEXTSOURCE_QUIZ) {
+        if ($hotpot->$textsource==HOTPOT_TEXTSOURCE_QUIZ) {
             if (empty($xml_quiz) && !isset($chain_index)) {
-                $xml_quiz = new hotpot_xml_quiz($hp, false, false, false, false, false);
-                hotpot_get_titles_and_next_ex($hp, $xml_quiz->filepath);
+                $xml_quiz = new hotpot_xml_quiz($hotpot, false, false, false, false, false);
+                hotpot_get_titles_and_next_ex($hotpot, $xml_quiz->filepath);
             }
             if ($textfield=='name') {
-                $hp->$textfield = addslashes($hp->exercisetitle);
+                $hotpot->$textfield = addslashes($hotpot->exercisetitle);
             } else if ($textfield=='summary') {
-                $hp->$textfield = addslashes($hp->exercisesubtitle);
+                $hotpot->$textfield = addslashes($hotpot->exercisesubtitle);
             }
         }
-        switch ($hp->$textsource) {
+        switch ($hotpot->$textsource) {
             case HOTPOT_TEXTSOURCE_FILENAME:
-                $hp->$textfield = basename($hp->reference);
+                $hotpot->$textfield = basename($hotpot->reference);
                 break;
             case HOTPOT_TEXTSOURCE_FILEPATH:
-                $hp->$textfield = '';
+                $hotpot->$textfield = '';
                 // continue to next lines
             default:
-                if (empty($hp->$textfield)) {
-                    $hp->$textfield = str_replace('/', ' ', $hp->reference);
+                if (empty($hotpot->$textfield)) {
+                    $hotpot->$textfield = str_replace('/', ' ', $hotpot->reference);
                 }
         } // end switch
     } // end foreach
 }
-function hotpot_get_titles_and_next_ex(&$hp, $filepath, $get_next=false) {
+function hotpot_get_titles_and_next_ex(&$hotpot, $filepath, $get_next=false) {
 
-    $hp->exercisetitle = '';
-    $hp->exercisesubtitle = '';
-    $hp->nextexercise = '';
+    $hotpot->exercisetitle = '';
+    $hotpot->exercisesubtitle = '';
+    $hotpot->nextexercise = '';
 
     // read the quiz file source
     if ($source = file_get_contents($filepath)) {
@@ -721,9 +727,9 @@ function hotpot_get_titles_and_next_ex(&$hp, $filepath, $get_next=false) {
             }
         }
 
-        $hp->nextexercise = $next;
-        $hp->exercisetitle = (empty($title) || is_array($title)) ? basename($filepath) : $title;
-        $hp->exercisesubtitle = (empty($subtitle) || is_array($subtitle)) ? $hp->exercisetitle : $subtitle;
+        $hotpot->nextexercise = $next;
+        $hotpot->exercisetitle = (empty($title) || is_array($title)) ? basename($filepath) : $title;
+        $hotpot->exercisesubtitle = (empty($subtitle) || is_array($subtitle)) ? $hotpot->exercisetitle : $subtitle;
     }
 }
 function hotpot_get_all_instances_in_course($modulename, $course) {
@@ -805,11 +811,11 @@ function hotpot_get_all_instances_in_course($modulename, $course) {
     return $instances;
 }
 
-function hotpot_update_chain(&$hp) {
+function hotpot_update_chain(&$hotpot) {
 /// update a chain of hotpot actiivities
 
     $ok = true;
-    if ($hotpot_modules = hotpot_get_chain($hp)) {
+    if ($hotpot_modules = hotpot_get_chain($hotpot)) {
 
         // skip updating of these fields
         $skipfields = array('id', 'course', 'name', 'reference', 'summary', 'shownextquiz');
@@ -817,16 +823,16 @@ function hotpot_update_chain(&$hp) {
 
         foreach ($hotpot_modules as $hotpot_module) {
 
-            if ($hp->instance==$hotpot_module->id) {
+            if ($hotpot->instance==$hotpot_module->id) {
                 // don't need to update this hotpot
 
             } else {
                 // shortcut to hotpot record
-                $hotpot = &$hotpot_module->hotpot;
+                $thishotpot = &$hotpot_module->hotpot;
 
                 // get a list of fields to update (first time only)
                 if (empty($fields)) {
-                    $fields = array_keys(get_object_vars($hotpot));
+                    $fields = array_keys(get_object_vars($thishotpot));
                 }
 
                 // assume update is NOT required
@@ -834,17 +840,17 @@ function hotpot_update_chain(&$hp) {
 
                 // update field values (except $skipfields)
                 foreach($fields as $field) {
-                    if (in_array($field, $skipfields) || $hotpot->$field==$hp->$field) {
+                    if (in_array($field, $skipfields) || $thishotpot->$field==$hotpot->$field) {
                         // update not required for this field
                     } else {
                         $require_update = true;
-                        $hotpot->$field = $hp->$field;
+                        $thishotpot->$field = $hotpot->$field;
                     }
                 }
 
-                // update this $hotpot, if required
-                if ($require_update && !update_record("hotpot", $hotpot)) {
-                    error("Could not update the $hp->modulename", "view.php?id=$hp->course");
+                // update $thishotpot, if required
+                if ($require_update && !update_record("hotpot", $thishotpot)) {
+                    error("Could not update the $hotpot->modulename", "view.php?id=$hotpot->course");
                 }
             }
         } // end foreach $ids
@@ -866,7 +872,9 @@ function hotpot_delete_instance($id) {
             delete_records_select("hotpot_details",   "attempt IN ($ids)");
             delete_records_select("hotpot_responses", "attempt IN ($ids)");
         }
-    }
+         // remove calendar events for this hotpot
+        delete_records('event', 'modulename', 'hotpot', 'instance', $id);
+   }
     return $result;
 }
 function hotpot_delete_and_notify($table, $select, $strtable) {
@@ -880,11 +888,11 @@ function hotpot_delete_and_notify($table, $select, $strtable) {
     }
 }
 
-function hotpot_user_complete($course, $user, $mod, $hp) {
+function hotpot_user_complete($course, $user, $mod, $hotpot) {
 /// Print a detailed representation of what a  user has done with
 /// a given particular instance of this module, for user activity reports.
 
-    $report = hotpot_user_outline($course, $user, $mod, $hp);
+    $report = hotpot_user_outline($course, $user, $mod, $hotpot);
     if (empty($report)) {
         print get_string("noactivity", "hotpot");
     } else {
@@ -894,7 +902,7 @@ function hotpot_user_complete($course, $user, $mod, $hp) {
     return true;
 }
 
-function hotpot_user_outline($course, $user, $mod, $hp) {
+function hotpot_user_outline($course, $user, $mod, $hotpot) {
 /// Return a small object with summary information about what a
 /// user has done with a given particular instance of this module
 /// Used for user activity reports.
@@ -902,7 +910,8 @@ function hotpot_user_outline($course, $user, $mod, $hp) {
 /// $report->info = a short text description
 
     $report = NULL;
-    if ($records = get_records_select("hotpot_attempts", "hotpot='$hp->id' AND userid='$user->id'", "timestart ASC", "*")) {
+    if ($records = get_records_select("hotpot_attempts", "hotpot='$hotpot->id' AND userid='$user->id'", "timestart ASC", "*")) {
+        $report = new stdClass();
         $scores = array();
         foreach ($records as $record){
             if (empty($report->time)) {
@@ -2226,6 +2235,14 @@ function hotpot_string_id($str) {
         }
     }
     return $id;
+}
+
+function hotpot_get_view_actions() {
+    return array('view','view all','report');
+}
+
+function hotpot_get_post_actions() {
+    return array('attempt','review','submit');
 }
 
 if (!function_exists('file_get_contents')) {
