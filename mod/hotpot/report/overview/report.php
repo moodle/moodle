@@ -86,7 +86,7 @@ class hotpot_report extends hotpot_default_report {
 					$attemptnumber = '<a href="review.php?hp='.$hotpot->id.'&attempt='.$attempt->id.'">'.$attemptnumber.'</a>';
 					$starttime = '<a href="review.php?hp='.$hotpot->id.'&attempt='.$attempt->id.'">'.$starttime.'</a>';
 				}
-				if ($is_html && has_capability('mod/hotpot:viewreport',get_context_instance(CONTEXT_COURSE, $course))) {
+				if ($is_html && has_capability('mod/hotpot:viewreport',get_context_instance(CONTEXT_COURSE, $course->id))) {
 					$checkbox = '<input type=checkbox name="box'.$attempt->clickreportid.'" value="'.$attempt->clickreportid.'">'.$spacer;
 				} else {
 					$checkbox = '';
