@@ -78,7 +78,7 @@ function hotpot_restore_mods($mod, $restore) {
         $more_restore = '';
         // print a message after each hotpot is backed up
         if (!defined('RESTORE_SILENTLY')) {
-            $more_restore .= 'print "<li>".get_string("modulename", "hotpot")." &quot;".$record->name."&quot;</li>";';
+            $more_restore .= 'print "<li>".get_string("modulename", "hotpot")." &quot;".format_string(stripslashes($record->name),true)."&quot;</li>";';
         }
         $more_restore .= 'backup_flush(300);';
         if (function_exists('restore_userdata_selected')) {
