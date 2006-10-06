@@ -7,11 +7,17 @@ function hotpot_upgrade($oldversion) {
     $update_to_v2 = "$CFG->dirroot/mod/hotpot/db/update_to_v2.php";
 
     // if the version number indicates this could be an early HotPot v2.1 (Moodle 1.6),
-    // check this is not actually HotPot v2.0 (Moodle 1.5) with an overly advanced version number
+    // check this is not actually HotPot v1 or v2.0 (Moodle 1.5) with an overly advanced version number
     if ($oldversion>2005031400 && $oldversion<=2006082899) {
         require_once $update_to_v2;
-        if (hotpot_db_field_exists('hotpot_attempts', 'details')) {
-            $oldversion = 2005031400;
+        if (hotpot_db_table_exists('hotpot_attempts')) {
+            if (hotpot_db_field_exists('hotpot_attempts', 'details')) {
+                // HotPot v2.0 (Moodle 1.5)
+                $oldversion = 2005031400;
+            }
+        } else {
+            // HotPot v1
+            $oldversion = 2004122000;
         }
     }
 
