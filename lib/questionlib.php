@@ -1419,14 +1419,19 @@ function add_indented_names($categories) {
  * @param integer $selected optionally, the id of a category to be selected by default in the dropdown.
  */
 function question_category_select_menu($courseid, $published = false, $only_editable = false, $selected = "") {
-
+    global $CFG;
+    
     // get sql fragment for published
     $publishsql="";
     if ($published) {
-        $publishsql = "or publish=1";
+        $publishsql = " OR publish = 1";
     }
 
-    $categories = get_records_select("question_categories","course=$courseid $publishsql", 'parent, sortorder, name ASC');
+    $categories = get_records_sql("
+            SELECT cat.*, c.shortname AS coursename 
+            FROM {$CFG->prefix}question_categories cat, {$CFG->prefix}course c
+            WHERE c.id = cat.course AND (cat.course = $courseid $publishsql)
+            ORDER BY parent, sortorder, name ASC");
 
     $categories = add_indented_names($categories);
 
@@ -1445,22 +1450,27 @@ function question_category_select_menu($courseid, $published = false, $only_edit
     echo "</select>\n";
 }
 
+/**
+ * If the category is not from this course, and it is a published category,
+ * then return the course category name with the course shortname appended in
+ * brackets. Otherwise, just return the category name.
+ */
 function question_category_coursename($category, $courseid = 0) {
-/// if the category is not from this course and is published , adds on the course
-/// name
     $cname = (isset($category->indentedname)) ? $category->indentedname : $category->name;
     if ($category->course != $courseid && $category->publish) {
-        if ($catcourse=get_record("course","id",$category->course)) {
-            $cname .= " ($catcourse->shortname) ";
+        if (!empty($category->coursename)) {
+            $coursename = $category->coursename;
+        } else {
+            $coursename = get_field('course', 'shortname', 'id', $category->course);
         }
+        $cname .= " ($coursename)";
     }
     return $cname;
 }
 
-
 /**
-* Returns a comma separated list of ids of the category and all subcategories
-*/
+ * Returns a comma separated list of ids of the category and all subcategories
+ */
 function question_categorylist($categoryid) {
     // returns a comma separated list of ids of the category and all subcategories
     $categorylist = $categoryid;

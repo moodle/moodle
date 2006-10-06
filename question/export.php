@@ -137,20 +137,6 @@
         $exportfilename = default_export_filename($course, $category);
     }
 
-    /// Get all the existing categories now
-    if (!$categories = get_records_select("question_categories", "course = '{$course->id}' OR publish = '1'", "parent, sortorder, name ASC")) {
-        error("Could not find any question categories!");
-    }
-    $categories = add_indented_names($categories);
-    foreach ($categories as $key => $cat) {
-       if ($catcourse = get_record("course", "id", $cat->course)) {
-           if ($cat->publish && $cat->course != $course->id) {
-               $cat->indentedname .= " ($catcourse->shortname)";
-           }
-           $catmenu[$cat->id] = $cat->indentedname;
-       }
-    }
-    
     print_heading_with_help($strexportquestions, "export", "quiz");
 
     print_simple_box_start("center");
@@ -165,7 +151,7 @@
         echo question_category_coursename($category);
         echo " <input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
     } else { // no category specified, let user choose
-        choose_from_menu($catmenu, "category", $category->id, "");
+        question_category_select_menu($course->id, true, false, $category->id);
     }
     //echo str_replace('&nbsp;', '', $category->name) . " ($categorycourse->shortname)";
     echo "</td></tr>\n";
