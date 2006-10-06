@@ -6,12 +6,13 @@
         <FIELD name="transid" method="NO_CONV" type="varchar" length="255" />
         <FIELD name="amount" method="NO_CONV" type="varchar" length="10" />
         <FIELD name="currency" method="NO_CONV" type="char" length="3" />
+        <FIELD name="paymentmethod" method="NO_CONV" type="enum('cc', 'echeck')" length="0" default="cc"/>
       </FIELDS>
     </TABLE>
     <TABLE name="enrol_authorize_refunds">
       <FIELDS>
         <FIELD name="amount" method="NO_CONV" type="varchar" length="10" />
-      </FIELDS>
+      </FIELDS>   
     </TABLE>
   </TABLES>
 </DBMIGRATION>

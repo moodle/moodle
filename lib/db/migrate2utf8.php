@@ -228,6 +228,164 @@ function migrate2utf8_user($fields, $crash, $debug, $maxrecords, $done, $tablest
 
 }
 
+function migrate2utf8_user_info_category_name($recordid) {
+    global $CFG, $globallang;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$uic = get_record('user_info_category', 'id', $recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = null;  //Non existing!
+		$userlang = null; // Non existing
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
+
+/// Initialise $result
+    $result = $uic->name;
+
+/// Convert the text
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($uic->name, $fromenc);
+
+        $newuic = new object;
+        $newuic->id = $recordid;
+        $newuic->name = $result;
+        migrate2utf8_update_record('user_info_category',$newuic);
+    }
+/// And finally, just return the converted field
+    return $result;  
+}
+
+function migrate2utf8_user_info_data_data($recordid) {
+    global $CFG, $globallang;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$uid = get_record('user_info_data', 'id', $recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+    
+    $user = get_record_sql("SELECT u.lang, u.lang 
+                            FROM {$CFG->prefix}user u,
+                                 {$CFG->prefix}user_info_data uid
+                            WHERE u.id = uid.userid
+                                  AND uid.id = $recordid");
+    
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = null;  //Non existing!
+		$userlang = $user->lang; // Non existing
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
+
+/// Initialise $result
+    $result = $uid->data;
+
+/// Convert the text
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($uic->data, $fromenc);
+
+        $newuid = new object;
+        $newuid->id = $recordid;
+        $newuid->data = $result;
+        migrate2utf8_update_record('user_info_data',$newuid);
+    }
+/// And finally, just return the converted field
+    return $result;  
+}
+
+function migrate2utf8_user_info_field_name($recordid) {
+    global $CFG, $globallang;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$uif = get_record('user_info_field', 'id', $recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = null;  //Non existing!
+		$userlang = null; // Non existing
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
+
+/// Initialise $result
+    $result = $uif->name;
+
+/// Convert the text
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($uif->name, $fromenc);
+        $newuif = new object;
+        $newuif->id = $recordid;
+        $newuif->name = $result;
+        migrate2utf8_update_record('user_info_field',$newuif);
+    }
+/// And finally, just return the converted field
+    return $result;  
+}
+
+function migrate2utf8_user_info_field_defaultdata($recordid) {
+    global $CFG, $globallang;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$uif = get_record('user_info_field', 'id', $recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = null;  //Non existing!
+		$userlang = null; // Non existing
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
+
+/// Initialise $result
+    $result = $uif->name;
+
+/// Convert the text
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($uif->defaultdata, $fromenc);
+        $newuif = new object;
+        $newuif->id = $recordid;
+        $newuif->defaultdata = $result;
+        migrate2utf8_update_record('user_info_field',$newuif);
+    }
+/// And finally, just return the converted field
+    return $result;  
+}
 
 function migrate2utf8_role_name($recordid){
     global $CFG, $globallang;
@@ -261,6 +419,44 @@ function migrate2utf8_role_name($recordid){
         $newrole = new object;
         $newrole->id = $recordid;
         $newrole->name = $result;
+        migrate2utf8_update_record('role',$newrole);
+    }
+/// And finally, just return the converted field
+    return $result;
+}
+
+function migrate2utf8_role_shortname($recordid){
+    global $CFG, $globallang;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$role = get_record('role', 'id', $recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = null;  //Non existing!
+		$userlang = null; // Non existing
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
+
+/// Initialise $result
+    $result = $role->name;
+
+/// Convert the text
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($role->shortname, $fromenc);
+
+        $newrole = new object;
+        $newrole->id = $recordid;
+        $newrole->shortname = $result;
         migrate2utf8_update_record('role',$newrole);
     }
 /// And finally, just return the converted field

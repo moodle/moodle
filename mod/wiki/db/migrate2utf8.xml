@@ -104,5 +104,22 @@
         </FIELD>
       </FIELDS>
     </TABLE>
+    <TABLE name="wiki_locks">
+        <FIELD name="pagename" method="PLAIN_SQL_UPDATE" type="varchar" length="255">
+          <SQL_DETECT_USER>
+           SELECT wl.userid
+           FROM {$CFG->prefix}wiki_locks wl
+           WHERE wl.id=RECORDID
+          </SQL_DETECT_USER>
+          <SQL_DETECT_COURSE>
+           SELECT w.course
+           FROM {$CFG->prefix}wiki w,
+                {$CFG->prefix}wiki_locks wl
+           WHERE w.id = wl.wikiid
+                 AND wl.id = RECORDID
+          </SQL_DETECT_COURSE>
+        </FIELD>
+      </FIELDS>
+    </TABLE>   
   </TABLES>
 </DBMIGRATION>

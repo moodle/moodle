@@ -405,6 +405,43 @@ function migrate2utf8_data_csstemplate($recordid){
     return $result;
 }
 
+function migrate2utf8_data_jstemplate($recordid){
+    global $CFG, $globallang;
+
+/// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if (!$data = get_record('data','id',$recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($data->course);  //Non existing!
+        $userlang   = get_main_teacher_lang($data->course); //N.E.!!
+        $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+    }
+
+/// We are going to use textlib facilities
+
+/// Convert the text
+    if (($fromenc != 'utf-8') && ($fromenc != 'UTF-8')) {
+        $result = utfconvert($data->jstemplate, $fromenc);
+
+        $newdata= new object;
+        $newdata->id = $recordid;
+        $newdata->jstemplate = $result;
+        migrate2utf8_update_record('data',$newdata);
+    }
+/// And finally, just return the converted field
+    return $result;
+}
 
 function migrate2utf8_data_listtemplateheader($recordid){
     global $CFG, $globallang;

@@ -9,6 +9,39 @@
       </FIELDS>
     </TABLE>
     <TABLE name="user_lastaccess" />
+    <TABLE name="user_info_category">
+	  <FIELDS>
+	    <FIELD name="name" method="PHP_FUNCTION" type="varchar" length="255">
+	      <PHP_FUNCTION>
+	        migrate2utf8_user_info_category_name(RECORDID)
+	      </PHP_FUNCTION>	     
+	    </FIELD>	
+      </FIELDS>
+    </TABLE>    
+    <TABLE name="user_info_data">
+	  <FIELDS>
+	    <FIELD name="data" method="PHP_FUNCTION" type="longtext" length="0">
+	      <PHP_FUNCTION>
+	        migrate2utf8_user_info_data_data(RECORDID)
+	      </PHP_FUNCTION>	     
+	    </FIELD>		
+      </FIELDS>
+    </TABLE>    
+    <TABLE name="user_info_field">
+	  <FIELDS>
+	    <FIELD name="name" method="PHP_FUNCTION" type="varchar" length="255">
+	      <PHP_FUNCTION>
+	        migrate2utf8_user_info_field_name(RECORDID)
+	      </PHP_FUNCTION>	     
+	    </FIELD>
+	    <FIELD name="datatype" method="NO_CONV" type="varchar" length="255" />    
+        <FIELD name="defaultdata" method="PHP_FUNCTION" type="longtext" length="0">
+	      <PHP_FUNCTION>
+	        migrate2utf8_user_info_field_defaultdata(RECORDID)
+	      </PHP_FUNCTION>	     
+	    </FIELD>		
+      </FIELDS>
+    </TABLE>
     <TABLE name="role">
 	  <FIELDS>
 	    <FIELD name="name" method="PHP_FUNCTION" type="varchar" length="255">
@@ -16,6 +49,11 @@
 	        migrate2utf8_role_name(RECORDID)
 	      </PHP_FUNCTION>	     
 	    </FIELD>
+	    <FIELD name="shortname" method="NO_CONV" type="varchar" length="100">
+	      <PHP_FUNCTION>
+	        migrate2utf8_role_shortname(RECORDID)
+	      </PHP_FUNCTION>	     
+	    </FIELD>    
 	    <FIELD name="description" method="PHP_FUNCTION" type="text" length="0">
 	      <PHP_FUNCTION>
 	        migrate2utf8_role_description(RECORDID)
@@ -23,7 +61,6 @@
 	    </FIELD>		
       </FIELDS>
     </TABLE>
-    
     <TABLE name="context" />
     <TABLE name="role_allow_assign" />
     <TABLE name="role_allow_override" />
@@ -31,8 +68,7 @@
 	  <FIELDS>
 	    <FIELD name="enrol" method="NO_CONV" type="varchar" length="20" />	
       </FIELDS>
-    </TABLE>
-    
+    </TABLE>    
     <TABLE name="role_capabilities">
 	  <FIELDS>
 	    <FIELD name="capability" method="NO_CONV" type="varchar" length="255" dropindex="roleid-contextid-capability" adduniqueindex ="roleid-contextid-capability(roleid, contextid, capability(255))" />		
@@ -349,9 +385,21 @@
         <FIELD name="std_time" method="NO_CONV" type="varchar" length="5" />
       </FIELDS>
     </TABLE>
-    <TABLE name="stats_daily" />
-    <TABLE name="stats_weekly" />
-    <TABLE name="stats_monthly" />
+    <TABLE name="stats_daily">
+      <FIELDS>
+        <FIELD name="stattype" method="NO_CONV" type="enum('enrolments', 'activity', 'logins')" default="activity" length="0" />
+      </FIELDS>
+    </TABLE>
+    <TABLE name="stats_weekly">
+      <FIELDS>
+        <FIELD name="stattype" method="NO_CONV" type="enum('enrolments', 'activity', 'logins')" default="activity" length="0" />
+      </FIELDS>
+    </TABLE>
+    <TABLE name="stats_monthly">
+      <FIELDS>
+        <FIELD name="stattype" method="NO_CONV" type="enum('enrolments', 'activity', 'logins')" default="activity" length="0" />
+      </FIELDS>
+    </TABLE>
     <TABLE name="stats_user_daily">
       <FIELDS>
         <FIELD name="stattype" method="NO_CONV" type="varchar" length="30" />
