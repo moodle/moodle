@@ -964,18 +964,21 @@ function exercise_list_submissions_for_admin($exercise) {
             $table->size = array ("*", "*", "*", "*", "*");
             $table->cellpadding = 2;
             $table->cellspacing = 0;
+
+            /// NOTE:  user_teachers was ripped from the following SQL without a proper fix - XXX TO DO
+
             if ($groupid) {
                 $stats = get_record_sql("SELECT COUNT(*) as count, AVG(grade) AS mean, 
                         STDDEV(grade) AS stddev, MIN(grade) AS min, MAX(grade) AS max 
                         FROM {$CFG->prefix}groups_members g, {$CFG->prefix}exercise_assessments a, 
-                        {$CFG->prefix}exercise_submissions s, {$CFG->prefix}user_teachers t  
+                        {$CFG->prefix}exercise_submissions s
                         WHERE g.groupid = $groupid AND s.userid = g.userid AND a.submissionid = s.id 
-                        AND a.userid = t.userid AND a.exerciseid = $exercise->id");
+                        AND a.exerciseid = $exercise->id");
             } else { // no group/all participants
                 $stats = get_record_sql("SELECT COUNT(*) as count, AVG(grade) AS mean, 
                         STDDEV(grade) AS stddev, MIN(grade) AS min, MAX(grade) AS max 
-                        FROM {$CFG->prefix}exercise_assessments a, {$CFG->prefix}user_teachers t 
-                        WHERE a.userid = t.userid AND a.exerciseid = $exercise->id");
+                        FROM {$CFG->prefix}exercise_assessments a
+                        WHERE a.exerciseid = $exercise->id");
             }   
             $table->data[] = array($stats->count, number_format($stats->mean * $exercise->grade / 100.0, 1), 
                     number_format($stats->stddev * $exercise->grade / 100.0, 1), 
