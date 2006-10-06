@@ -38,7 +38,7 @@
 
 /// Check some PHP server settings
 
-    $documentationlink = "please read the <a href=\"../doc/?frame=install.html&amp;sub=webserver\">install documentation</a>";
+    $documentationlink = '<a href="http://docs.moodle.org/en/Installation">Installation docs</a>';
 
     if (ini_get_bool('session.auto_start')) {
         error("The PHP server variable 'session.auto_start' should be Off - $documentationlink");
