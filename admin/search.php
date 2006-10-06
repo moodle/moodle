@@ -51,7 +51,7 @@ admin_externalpage_print_header($adminroot);
 
 // print_simple_box(get_string('upgradesettingsintro','admin'),'','100%','',5,'generalbox','');
 
-echo '<form action="search.php" method="post" name="mainform" id="adminsettings">';
+echo '<form action="search.php" method="post" name="adminsettings" id="adminsettings">';
 echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
 echo '<input type="hidden" name="query" value="' . s($query) . '" />';
 echo '<fieldset>';
