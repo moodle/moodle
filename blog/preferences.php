@@ -4,46 +4,52 @@
     require_once('../config.php');
     require_once($CFG->dirroot.'/blog/lib.php');
 
-    require_login();
+    $courseid = optional_param('courseid', SITEID, PARAM_INT);
+
+    if ($courseid == SITEID) {
+        require_login();
+        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    } else {
+        require_login($courseid);
+        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    }
 
     if (empty($CFG->bloglevel)) {
         error('Blogging is disabled!');
     }
 
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-
-    // Ensure that the logged in user has the capability to view blog entries for now,
-    // because there is only $pagesize which affects the viewing ;-)
-    require_capability('moodle/blog:view', $sitecontext);
+    require_capability('moodle/blog:view', $context);
 
 /// If data submitted, then process and store.
 
     if (data_submitted()) {
+        $pagesize = required_param('pagesize', PARAM_INT);
 
-        $pagesize = optional_param('pagesize', 10, PARAM_INT);
-        if ($pagesize < 1 ) {
-            error ('invalid page size');
+        if ($pagesize < 1) {
+            error('invalid page size');
         }
         set_user_preference('blogpagesize', $pagesize);
-         // the best guess is IMHO to redirect to blog page, so that user reviews the changed preferences - skodak
-        redirect($CFG->wwwroot.'/blog/index.php');
+
+        // now try to guess where to go from here ;-)
+        if ($courseid == SITEID) {
+            redirect($CFG->wwwroot.'/blog/index.php');
+        } else {
+            redirect($CFG->wwwroot.'/blog/index.php?filtertype=course&amp;filterselect='.$courseid);
+        }
     }
 
     $site = get_site();
-    $pageMeta = '' . "\n";
 
     $strpreferences = get_string('preferences');
-    $strblogs = get_string('blogs', 'blog');
+    $strblogs       = get_string('blogs', 'blog');
 
     $navigation = "<a href='".$CFG->wwwroot."/blog/'>$strblogs</a> -> $strpreferences";
 
-    print_header("$site->shortname: $strblogs : $strpreferences", $strblogs, $navigation, '', $pageMeta, true, '', '');
-
+    print_header("$site->shortname: $strblogs : $strpreferences", $strblogs, $navigation);
     print_heading($strpreferences);
 
     print_simple_box_start('center', '', '');
-
-    include('./preferences.html');
+    require('./preferences.html');
     print_simple_box_end();
 
     print_footer();

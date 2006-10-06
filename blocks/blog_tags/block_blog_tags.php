@@ -41,7 +41,7 @@ class block_blog_tags extends block_base {
 
     function get_content() {
 
-        global $CFG, $SITE, $COURSE;
+        global $CFG, $SITE, $COURSE, $USER;
 
         if (empty($CFG->bloglevel)) {
             $this->content->text = '';
@@ -75,7 +75,7 @@ class block_blog_tags extends block_base {
         /// Get a list of tags
 
         $timewithin = $this->config->timewithin * 24 * 60 * 60; /// convert to seconds
-        
+
         $sql  = 'SELECT t.id, t.type, t.text, COUNT(DISTINCT bt.id) as ct ';
         $sql .= "FROM {$CFG->prefix}tags as t, {$CFG->prefix}blog_tag_instance as bt, {$CFG->prefix}post as p ";
         $sql .= 'WHERE t.id = bt.tagid ';
@@ -92,16 +92,16 @@ class block_blog_tags extends block_base {
         /// 1. tags with the same count should have the same size class
         /// 2. however many tags we have should be spread evenly over the
         ///    20 size classes
-        
+
             $totaltags  = count($tags);
             $currenttag = 0;
 
             $size = 20;
             $lasttagct = -1;
-            
+
             $etags = array();
             foreach ($tags as $tag) {
-            
+
                 $currenttag++;
 
                 if ($currenttag == 1) {
@@ -111,7 +111,7 @@ class block_blog_tags extends block_base {
                     $lasttagct = $tag->ct;
                     $size = 20 - ( (int)((($currenttag - 1) / $totaltags) * 20) );
                 }
-                
+
                 $tag->class = "$tag->type s$size";
                 $etags[] = $tag;
 
@@ -120,7 +120,7 @@ class block_blog_tags extends block_base {
         /// Now we sort the tag display order
             $CFG->tagsort = $this->config->sort;
             usort($etags, "blog_tags_sort");
-            
+
         /// Finally we create the output
             foreach ($etags as $tag) {
                 switch ($CFG->bloglevel) {
@@ -129,14 +129,14 @@ class block_blog_tags extends block_base {
                         $filterselect = $USER->id;
                     break;
 
-                    case BLOG_GROUP_LEVEL: 
+                    case BLOG_GROUP_LEVEL:
                         $filtertype = 'group';
                         $filterselect = get_current_group($this->instance->pageid);
                     break;
 
                     case BLOG_COURSE_LEVEL:
                         $filtertype = 'course';
-                        if (isset($COURSE->id)) {     
+                        if (isset($COURSE->id)) {
                             $filterselect = $COURSE->id;
                         } else {
                             $filterselect = $this->instance->pageid;
@@ -144,7 +144,7 @@ class block_blog_tags extends block_base {
                     break;
 
                     default:
-                        if (isset($COURSE->id) && $COURSE->id != SITEID) {     
+                        if (isset($COURSE->id) && $COURSE->id != SITEID) {
                             $filtertype = 'course';
                             $filterselect = $COURSE->id;
                         } else {

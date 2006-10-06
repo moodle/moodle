@@ -3,13 +3,13 @@
 require_once($CFG->dirroot .'/blog/lib.php');
 
 class block_blog_menu extends block_base {
-    
+
     function init() {
         $this->title = get_string('blockmenutitle', 'blog');
         $this->content_type = BLOCK_TYPE_TEXT;
         $this->version = 2004112000;
     }
-    
+
     function get_content() {
         global $CFG, $course;
 
@@ -55,33 +55,33 @@ class block_blog_menu extends block_base {
             $courseviewlink = '';
             $addentrylink = '';
             $coursearg = '';
-            
+
             $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-            
+
             if (isset($course) && isset($course->id)
                     && $course->id != 0 && $course->id != SITEID) {
-                
+
                 $incoursecontext = true;
                 $curcontext = get_context_instance(CONTEXT_COURSE, $course->id);
             } else {
                 $incoursecontext = false;
                 $curcontext = $sitecontext;
             }
-            
+
             $canviewblogs = has_capability('moodle/blog:view', $curcontext);
-            
+
             /// Accessibility: markup as a list.
-            
+
             if ( (isloggedin() && !isguest()) && $incoursecontext
                     && $CFG->bloglevel >= BLOG_COURSE_LEVEL && $canviewblogs) {
-                    
+
                 $coursearg = '&amp;courseid='.$course->id;
                 // a course is specified
-                
+
                 $courseviewlink = '<li><a href="'. $CFG->wwwroot .'/blog/index.php?filtertype=course&amp;filterselect='. $course->id .'">';
                 $courseviewlink .= get_string('viewcourseentries', 'blog') ."</a></li>\n";
             }
-            
+
             $blogmodon = false;
 
             if ( (isloggedin() && !isguest())
@@ -90,15 +90,14 @@ class block_blog_menu extends block_base {
 
                 // show Add entry link - moderation is off, or moderation is on and the user is viewing the block within the context of a course
                 if (has_capability('moodle/blog:create', $curcontext)) {
-                    $addentrylink = '<li><a href="'. $CFG->wwwroot. '/blog/edit.php?userid='.
-                                    $userBlog->userid . $coursearg .'">'.
-                                    get_string('addnewentry', 'blog') ."</a></li>\n";
+                    $addentrylink = '<li><a href="'. $CFG->wwwroot. '/blog/edit.php?action=add'
+                                   .$coursearg.'">'.get_string('addnewentry', 'blog') ."</a></li>\n";
                 }
                 // show View my entries link
                 $addentrylink .= '<li><a href="'. $CFG->wwwroot .'/blog/index.php?userid='.
                                  $userBlog->userid.'">'.get_string('viewmyentries', 'blog').
                                  "</a></li>\n";
-                
+
                 // show link to manage blog prefs
                 $addentrylink .= '<li><a href="'. $CFG->wwwroot. '/blog/preferences.php?userid='.
                                  $userBlog->userid . $coursearg .'">'.
@@ -113,14 +112,14 @@ class block_blog_menu extends block_base {
                 $output .= '<li><a href="'. $CFG->wwwroot .'/blog/index.php?filtertype=site&amp;">';
                 $output .= get_string('viewsiteentries', 'blog')."</a></li>\n";
             }
-            
+
             if (isloggedin() && !isguest()
                     && (has_capability('moodle/blog:manageofficialtags', $sitecontext)
                     || has_capability('moodle/blog:managepersonaltags', $curcontext))) {
 
                 $output .= '<li>'. link_to_popup_window("/blog/tags.php",'popup',get_string('tagmanagement'), 400, 500, 'Popup window', 'none', true) ."</li>\n";
             }
-            
+
             // show Help with blogging link
             //$output .= '<li><a href="'. $CFG->wwwroot .'/help.php?module=blog&amp;file=user.html">';
             //$output .= get_string('helpblogging', 'blog') ."</a></li>\n";

@@ -11,14 +11,16 @@ class page_blog extends page_base {
     var $editing = false;
     var $courserecord = NULL;
     var $courseid = NULL;
-    
+    var $filtertype = NULL;
+    var $filterselect = NULL;
+
     // Mandatory; should return our identifier.
     function get_type() {
         global $CFG;
         require_once($CFG->dirroot .'/blog/lib.php');
         return PAGE_BLOG_VIEW;
     }
-    
+
     // we have no format type, use 'blog'
     //I think it's a bug, but if this is left the default NULL value then pages can
     //fail to load completely
@@ -37,7 +39,7 @@ class page_blog extends page_base {
             $this->id = 0; //set blog id to 0
         }
     }
-    
+
     // Here you should load up all heavy-duty data for your page. Basically everything that
     // does not NEED to be loaded for the class to make basic decisions should NOT be loaded
     // in init_quick() and instead deferred here. Of course this function had better recognize
@@ -58,7 +60,7 @@ class page_blog extends page_base {
             }
         }
         $this->full_init_done = true;
-    }    
+    }
 
     // For this test page, only admins are going to be allowed editing (for simplicity).
     function user_allowed_editing() {
@@ -71,13 +73,10 @@ class page_blog extends page_base {
     // Also, admins are considered to have "always on" editing (I wanted to avoid duplicating
     // the code that turns editing on/off here; you can roll your own or copy course/view.php).
     function user_is_editing() {
-         if (isloggedin() && !isguest()) {
+        global $SESSION;
 
-            global $SESSION;
-            if (empty($SESSION->blog_editing_enabled)) {
-                $SESSION->blog_editing_enabled = false;
-            }
-            $this->editing = $SESSION->blog_editing_enabled;
+        if (isloggedin() && !isguest()) {
+            $this->editing = !empty($SESSION->blog_editing_enabled);
             return $this->editing;
         }
         return false;
@@ -86,6 +85,7 @@ class page_blog extends page_base {
     //over-ride parent method's print_header because blog already passes more than just the title along
     function print_header($pageTitle='', $pageHeading='', $pageNavigation='', $pageFocus='', $pageMeta='') {
         global $USER;
+
         $this->init_full();
         $extraheader = '';
         if (!empty($USER) && !empty($USER->id)) {
@@ -93,10 +93,11 @@ class page_blog extends page_base {
         }
         print_header($pageTitle, $pageHeading, $pageNavigation, $pageFocus, $pageMeta, true, $extraheader );
     }
-    
+
     // This should point to the script that displays us
     function url_get_path() {
         global $CFG;
+
         return $CFG->wwwroot .'/blog/index.php';
     }
 
@@ -107,12 +108,14 @@ class page_blog extends page_base {
             return $array;
         }
 
-        //I should likely just bring blog filter in here and return 
-        //the output of a filter method like get_params
-        //instead let's simply return the userid and courseid        
-        $array['userid'] = $this->id;
         if (!empty($this->courseid)) {
             $array['courseid'] = $this->courseid;
+        }
+        if (!empty($this->filtertype)) {
+            $array['filtertype'] = $this->filtertype;
+        }
+        if (!empty($this->filterselect)) {
+            $array['filterselect'] = $this->filterselect;
         }
         return $array;
     }
@@ -123,7 +126,7 @@ class page_blog extends page_base {
     function blocks_get_positions() {
         return array(BLOCK_POS_LEFT, BLOCK_POS_RIGHT);
     }
-    
+
     // When a new block is created in this page, which position should it go to?
     function blocks_default_position() {
         return BLOCK_POS_RIGHT;
@@ -134,9 +137,9 @@ class page_blog extends page_base {
     // colons (:) to delimit between block positions in the page. See blocks_get_positions() for additional info.
     function blocks_get_default() {
         global $CFG;
-        
+
         $this->init_full();
-        
+
         // It's a normal blog page
         if (!empty($CFG->{'defaultblocks_'. $this->get_type()})) {
             $blocknames = $CFG->{'defaultblocks_'. $this->get_type()};
@@ -144,9 +147,9 @@ class page_blog extends page_base {
             /// Failsafe - in case nothing was defined.
             $blocknames = 'admin,calendar_month,online_users,blog_menu';
         }
-        
+
         return $blocknames;
-    }    
+    }
 
     // And finally, a little block move logic. Given a block's previous position and where
     // we want to move it to, return its new position. Pretty self-documenting.
@@ -163,21 +166,25 @@ class page_blog extends page_base {
     function get_extra_header_string() {
         global $SESSION, $CFG, $USER;
 
-        $editformstring = '';        
-        if (isloggedin() && !isguest()) {
-            if (!empty($SESSION->blog_editing_enabled) && ($SESSION->blog_editing_enabled)) {
+        $editformstring = '';
+        if ($this->user_allowed_editing()) {
+            if (!empty($SESSION->blog_editing_enabled)) {
                 $editingString = get_string('turneditingoff');
             } else {
                 $editingString = get_string('turneditingon');
             }
-            $url = $this->url_get_full(); 
-            $editval = empty($SESSION->blog_editing_enabled) ? 1 : 0;
-            $editformstring = '<form target="'. $CFG->framename .'" method="get" action="'.$url.'/blog/index.php">'.
-                '<input type="hidden" name="edit" value="'.$editval.'" />'.
-                '<input type="submit" value="'. $editingString .'" /></form>';
+
+            $params = $this->url_get_parameters();
+            $params['edit'] = empty($SESSION->blog_editing_enabled) ? 1 : 0;
+            $paramstring = '';
+            foreach ($params as $key=>$val) {
+                $paramstring .= '<input type="hidden" name="'.$key.'" value="'.s($val).'" />';
+            }
+            $editformstring = '<form target="'.$CFG->framename.'" method="get" action="'.$this->url_get_path().'">'
+                             .$paramstring.'<input type="submit" value="'.$editingString.'" /></form>';
         }
 
-        return $editformstring;        
-    }    
+        return $editformstring;
+    }
 }
 ?>

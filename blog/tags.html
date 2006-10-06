@@ -1,4 +1,8 @@
 <?php
+$otags  = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'official\' ORDER by text ASC');
+$ptags1 = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'personal\' AND userid = '.$USER->id.' ORDER by text ASC');
+$ptags2 = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'personal\' AND userid <> '.$USER->id.' ORDER by text ASC');
+
 print_heading(get_string('tagmanagement'));
 ?>
 
@@ -7,29 +11,27 @@ print_heading(get_string('tagmanagement'));
         <td width="50%"><?php print_string('otags','blog');?></td>
         <td width="50%"><?php print_string('ptags','blog');?></td>
     </tr>
-    
+
     <tr>
         <td>
             <form action="tags.php" method="POST">
             <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
             <?php
-            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-            if (has_capability('moodle/blog:manageofficialtags', $context)) {
+            if (has_capability('moodle/blog:manageofficialtags', $sitecontext)) {
             ?>
             <select name="tags[]" multiple="multiple" size="8">
             <?php
-                $otags = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'official\' ORDER by text ASC');
                 foreach ($otags as $otag) {
                     echo '<option value="'.$otag->id.'">'.$otag->text.'</option>';
                 }
             ?>
             </select>
-            <input type="hidden" name="mode" value="delete" />
+            <input type="hidden" name="action" value="delete" />
             <br />
             <input type="submit" value="<?php print_string('delete');?>" />
             <?php }
                 else {
-                    if ($otags = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'official\' ORDER by text ASC')) {
+                    if ($otags) {
                         foreach ($otags as $otag) {
                             echo '<br />'.$otag->text;
                         }
@@ -38,17 +40,15 @@ print_heading(get_string('tagmanagement'));
             ?>
             </form>
         </td>
-        
+
         <td>
             <form action="tags.php" method="POST">
             <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
             <select name="tags[]" multiple="multiple" size="8">
             <?php
-                $ptags1 = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'personal\' AND userid = '.$USER->id.' ORDER by text ASC');
-                $ptags2 = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'personal\' AND userid <> '.$USER->id.' ORDER by text ASC');
-                
+
                 $ptags = array();
-                
+
                 if (!empty($ptags1)) { // user's own tag exists
                     if (!empty($ptags2)) { // user's own tags, and other users tags exist, we merge
                         $ptags = array_merge($ptags1, $ptags2);
@@ -57,7 +57,7 @@ print_heading(get_string('tagmanagement'));
                     }
                 } else if (!empty($ptags2)) {
                     $ptags = $ptags2;
-                } 
+                }
 
                 if (!empty($ptags)) {
                     foreach ($ptags as $ptag) {
@@ -66,37 +66,37 @@ print_heading(get_string('tagmanagement'));
                 }
             ?>
             </select>
-            <input type="hidden" name="mode" value="delete" />
+            <input type="hidden" name="action" value="delete" />
             <br />
             <input type="submit" value="<?php print_string('delete');?>" />
             </form>
         </td>
     </tr>
-    
+
     <tr>
         <td>
-            <?php if (has_capability('moodle/blog:manageofficialtags', $context)) { ?>
+            <?php if (has_capability('moodle/blog:manageofficialtags', $sitecontext)) { ?>
             <form action="tags.php" method="POST">
             <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
             <?php print_string('addotags','blog');?>:<br/>
             <input type="text" name="otag" />
             <input type="submit" value="<?php print_string('add');?>" />
-            <input type="hidden" name="mode" value="addofficial" />
+            <input type="hidden" name="action" value="addofficial" />
             </form>
             <?php }?>
         </td>
-        
+
         <td>
             <form action="tags.php" method="POST">
             <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
             <?php print_string('addptags','blog');?><br/>
             <input type="text" name="ptag" />
             <input type="submit" value="<?php print_string('add');?>" />
-            <input type="hidden" name="mode" value="addpersonal" />
+            <input type="hidden" name="action" value="addpersonal" />
             </form>
         </td>
     </tr>
-    
+
 </table>
 
 <p align="center">

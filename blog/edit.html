@@ -1,38 +1,39 @@
 <?php //$Id$
 
-    if (!isset($post->groupid)) {
-        $post->groupid = 0;
-    }
-
     // find all the tags this post uses
     $usedtags = array();
-    if (isset($post->postid)) {
-        if ($tagsused = get_records('blog_tag_instance', 'entryid', $post->postid)) {
+    if (!empty($post->id)) {
+        if ($tagsused = get_records('blog_tag_instance', 'entryid', $post->id)) {
             foreach ($tagsused as $usedtag) {
                 $usedtags[] = $usedtag -> tagid;
             }
         }
     }
+
+    if ($usehtmleditor) {
+        // clean and convert to html before editting
+        $options = new object();
+        $options->smiley = false;
+        $options->filter = false;
+        $options->nocache = true;
+        $post->summary = format_text($post->summary, $post->format, $options);
+    }
 ?>
 
-<!-- the following form is based on moodle/mod/forum/post.html -->
+<form name="entry" method="post" action="edit.php" >
 
-<form name="entry" method="post" action="<?php echo $CFG->wwwroot;?>/blog/edit.php" id="entry" <?php echo $onsubmit; ?> enctype="multipart/form-data">
-<input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
-<input type="hidden" name="referrer" value="<?php echo $referrer; ?>" />
-
-
-<table border="0" cellpadding="5" id="edittable">
+<table border="0" cellpadding="5">
 <tr valign="top">
     <td align="right">&nbsp;
     </td>
-    <td colspan="2"><strong><?php echo $formHeading; ?></strong>
+    <td colspan="2"><strong><?php echo $strformheading; ?></strong>
     </td>
 </tr>
 <tr valign="top">
     <td align="right"><strong><?php print_string('entrytitle', 'blog'); ?>:</strong></td>
     <td colspan="2">
-        <input type="text" name="etitle" size="60" value="<?php p($post->etitle) ?>" id="etitle" />
+        <input type="text" name="subject" size="60" value="<?php p($post->subject) ?>" />
+        <?php  if (isset($errors["subject"])) formerr($errors["subject"]); ?>
     </td>
 </tr>
 <tr valign="top">
@@ -104,12 +105,8 @@
 
 <tr valign="top">
     <td align="right"><strong>
-    <?php 
-        if (isset($post->useextendedbody) && $post->useextendedbody) {
-            print_string('entryexcerpt', 'blog'); 
-        } else {
-            print_string('entrybody', 'blog');         
-        }
+    <?php
+            print_string('entrybody', 'blog');
     ?>:
     </strong><br /><br />
     <small><small>
@@ -121,11 +118,11 @@
         } else {
            emoticonhelpbutton('entry', 'body');
         }
-    ?>     
-    </small></small>              
+    ?>
+    </small></small>
     </td>
     <td align="left" colspan="2">
-    <?php print_textarea($usehtmleditor, 25, 62, 500, 600, 'body', $post->body); ?>
+    <?php print_textarea($usehtmleditor, 25, 62, 500, 600, 'summary', $post->summary); ?>
     </td>
 </tr>
 <tr valign="top">
@@ -136,7 +133,7 @@
             print_string('formathtml');
             echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
         } else {
-            choose_from_menu(format_text_menu(), "format", $post->format, "");
+            choose_from_menu(format_text_menu(), 'format', $post->format, '');
         }
      ?>
     <small><small>
@@ -144,24 +141,25 @@
         helpbutton('textformat', get_string('helpformatting'));
      ?>
     </small></small>
+    <?php  if (isset($errors["summary"])) formerr($errors["summary"]); ?>
     </td>
 </tr>
 <tr>
     <td align="center" colspan="3">
-        <input type="hidden" name="editform" value="1" id="editform" />
-        <input type="hidden" name="userid" value="<?php echo $userid; ?>" id="userid" />
-        <input type="hidden" name="tem" id="tem" />
+        <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
+        <input type="hidden" name="action" value="<?php echo $action; ?>" />
+        <input type="hidden" name="courseid" value="<?php echo $courseid; ?>" />
 <?php
-    if (isset($post->postid) && ($post->postid != -1) ) {
+    if ($action == 'add') {
 ?>
-        <input type="hidden" name="postid" value="<?php echo $post->postid; ?>" id="postid" />
-        <input type="hidden" name="act" value="update" id="act" />
-        <input type="submit" value="Update" id="Submit1" name="Submit1" />&nbsp;
-        <input type="button" value="Cancel" onclick="javascript:history.go(-1)" id="cancel" name="cancel" />
+        <input type="hidden" name="action" value="add" />
+        <input type="submit" value="<?php print_string('add'); ?>" />&nbsp;
+        <input type="button" value="<?php print_string('cancel'); ?>" onclick="javascript:history.go(-1)" />
 <?php
     } else { ?>
-        <input type="hidden" name="act" value="save" id="act" />
-        <input type="submit" value="<?php print_string('savechanges'); ?>" id="savechanges" name="Submit2" />&nbsp;
+        <input type="hidden" name="id" value="<?php echo $post->id; ?>" />
+        <input type="submit" value="<?php print_string('savechanges'); ?>" />&nbsp;
+        <input type="button" value="<?php print_string('cancel'); ?>" onclick="javascript:history.go(-1)" />
 <?php } ?>
     </td>
 </tr>

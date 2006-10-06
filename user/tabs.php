@@ -87,6 +87,8 @@
 
         $toprow[] = new tabobject('profile', $CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id, get_string('profile'));
 
+        $sitecontext     = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
         $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
 
     /// Can only edit profile if it belongs to user or current user is admin and not editing primary admin
@@ -95,7 +97,7 @@
             $mainadmin->id = 0; /// Weird - no primary admin!
         }
         if ((!empty($USER->id) and ($USER->id == $user->id) and !isguest()) or
-            (has_capability('moodle/user:editprofile', get_context_instance(CONTEXT_USER, $user->id)) and ($user->id != $mainadmin->id)) ) {
+            (has_capability('moodle/user:editprofile', $personalcontext) and ($user->id != $mainadmin->id)) ) {
 
             if(empty($CFG->loginhttps)) {
                 $wwwroot = $CFG->wwwroot;
@@ -125,11 +127,17 @@
             }
 
         }
-    /// Blog entry, everyone can view
-        if ($CFG->bloglevel > 0 && has_capability('moodle/user:readuserblogs')) { // only if blog is enabled. Permission check kicks in when display list
-            $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?userid='.$user->id.'&amp;courseid='.$course->id, get_string('blogs', 'blog'));
+
+    /// Personal blog entries tab
+        if ($CFG->bloglevel > 0
+          and (has_capability('moodle/user:readuserblogs', $personalcontext) // can review students posts
+            or has_capability('moodle/blog:manageentries', $sitecontext)     // entry manager can see all posts
+            or ($user->id == $USER->id and has_capability('moodle/blog:create', $sitecontext)) // viewing self
+            or ($CFG->bloglevel > 1 and has_capability('moodle/blog:create', $sitecontext, $user->id) and (has_capability('moodle/blog:view', $sitecontext) or has_capability('moodle/blog:view', $coursecontext)))
+          )) {
+
+            $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?userid='.$user->id.'&amp;courseid='.$course->id, get_string('blog', 'blog'));
         }
-        
 
     /// Current user must be teacher of the course or the course allows user to view their reports
     
