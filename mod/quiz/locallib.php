@@ -652,7 +652,7 @@ function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
     // Provide the links to the question review and comment script
     $options->questionreviewlink = '/mod/quiz/reviewquestion.php';
 
-    if ($context && has_capability('mod/quiz:viewreports'. $context) and !$attempt->preview) {
+    if ($context && has_capability('mod/quiz:viewreports', $context) and !$attempt->preview) {
         // The teacher should be shown everything except during preview when the teachers
         // wants to see just what the students see
         $options->responses = true;
