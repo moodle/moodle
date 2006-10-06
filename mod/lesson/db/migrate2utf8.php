@@ -41,7 +41,7 @@ function migrate2utf8_lesson_attempts_useranswer($recordid) {
     // if unserialize success, meaning it is an object
     if ($attempt = unserialize($lessonattempts->useranswer)) {
         $attempt->answer = utfconvert($attempt->answer, $fromencstudent);
-        $attempt->response = utfconvert(attempt->response, $fromencteacher);
+        $attempt->response = utfconvert($attempt->response, $fromencteacher);
         $newla = new object;
         $newla->id = $recordid;
         $newla->useranswer = serialize($attempt); // serialize it back    
