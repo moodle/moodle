@@ -1188,7 +1188,7 @@ function question_process_comment($question, &$state, &$attempt, $comment, $grad
 
     // Update the comment and save it in the database
     $state->manualcomment = $comment;
-    if (!set_field('question_sessions', 'comment', $comment, 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
+    if (!set_field('question_sessions', 'manualcomment', $comment, 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
         error("Cannot save comment");
     }
     // If the teacher has changed the grade then update the attempt and the state
