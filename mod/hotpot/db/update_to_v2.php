@@ -6,10 +6,11 @@ function hotpot_update_to_v2_2() {
     // remove the index on hotpot_questions.name
     $table = 'hotpot_questions';
     $field = 'name';
-    $index = "{$table}_{$field}_idx";
     if (strtolower($CFG->dbtype)=='postgres7') {
-        $index = "{$CFG->prefix}$index";
-    }
+        $index = "{$CFG->prefix}{$table}_{$field}_idx";
+    } else {
+        $index = "{$table}_{$field}_idx";
+	}
     hotpot_db_delete_index("{$CFG->prefix}$table", $index);
     
     // add new hotpot_questions.md5key field (and index)
@@ -29,10 +30,11 @@ function hotpot_update_to_v2_2() {
     // remove the index on hotpot_strings.string
     $table = 'hotpot_strings';
     $field = 'string';
-    $index = "{$table}_{$field}_idx";
     if (strtolower($CFG->dbtype)=='postgres7') {
-        $index = "{$CFG->prefix}$index";
-    }
+        $index = "{$CFG->prefix}{$table}_{$field}_idx";
+    } else {
+        $index = "{$table}_{$field}_idx";
+	}
     hotpot_db_delete_index("{$CFG->prefix}$table", $index);
 
     // add new hotpot_strings.md5key field (and index)
@@ -174,33 +176,23 @@ function hotpot_update_to_v2_1_16() {
     global $CFG;
     $ok = true;
 
-    // settings for the "hotpot_questions_name_idx" index
-    $length = 20;
-    $field = 'name';
-    $table = 'hotpot_questions';
-    $index = "{$table}_{$field}_idx";
-
-    // remove the index
-    hotpot_db_delete_index("{$CFG->prefix}$table", $index);
-    hotpot_db_delete_index("{$CFG->prefix}$table", "{$CFG->prefix}$index");
+    // remove the questions name index
+    hotpot_db_delete_index("{$CFG->prefix}hotpot_questions", "hotpot_questions_name_idx");
+    hotpot_db_delete_index("{$CFG->prefix}hotpot_questions", "{$CFG->prefix}hotpot_questions_name_idx");
 
     // make sure type of 'name' is a text field (not varchar 255)
-    $ok = $ok && hotpot_db_update_field_type($table, $field, $field, 'TEXT',   '',  '', 'NOT NULL', '');
-
-    // restore the index
-    $ok = $ok && hotpot_db_add_index($table, $field, $length);
+    $ok = $ok && hotpot_db_update_field_type('hotpot_questions', 'name', 'name', 'TEXT',   '',  '', 'NOT NULL', '');
 
     if (strtolower($CFG->dbtype)=='mysql') {
 
         // set default values on certain VARCHAR(255) fields
-        $varchar_fields = array(
-            'hotpot.studentfeedbackurl',
-            'hotpot_responses.correct',
-            'hotpot_responses.wrong',
-            'hotpot_responses.ignored'
+        $fields = array(
+            'hotpot' => 'studentfeedbackurl',
+            'hotpot_responses' => 'correct',
+            'hotpot_responses' => 'wrong',
+            'hotpot_responses' => 'ignored'
         );
-        foreach ($varchar_fields as $varchar_field) {
-            list ($table, $field) = explode('.', $varchar_field);
+        foreach ($fields as $table=>$field) {
             execute_sql("UPDATE {$CFG->prefix}$table SET $field='' WHERE $field IS NULL");
             $ok = $ok && hotpot_db_update_field_type($table, $field, $field, 'VARCHAR', 255, '', 'NOT NULL', '');
         }
@@ -210,19 +202,16 @@ function hotpot_update_to_v2_1_16() {
         $ok = $ok && hotpot_index_remove_prefix('hotpot_attempts', 'userid');
         $ok = $ok && hotpot_index_remove_prefix('hotpot_details', 'attempt');
         $ok = $ok && hotpot_index_remove_prefix('hotpot_questions', 'hotpot');
-        //$ok = $ok && hotpot_index_remove_prefix('hotpot_questions', 'name', 20);
         $ok = $ok && hotpot_index_remove_prefix('hotpot_responses', 'attempt');
         $ok = $ok && hotpot_index_remove_prefix('hotpot_responses', 'question');
-        $ok = $ok && hotpot_index_remove_prefix('hotpot_strings', 'string', 20);
     }
     return $ok;
 }
-function hotpot_index_remove_prefix($table, $field, $length=0) {
+function hotpot_index_remove_prefix($table, $field) {
     global $CFG;
-    $index = "{$table}_{$field}_idx";
-    hotpot_db_delete_index("{$CFG->prefix}$table", "{$CFG->prefix}$index");
-    hotpot_db_delete_index("{$CFG->prefix}$table", $index);
-    return hotpot_db_add_index($table, $field, $length);
+    hotpot_db_delete_index("{$CFG->prefix}$table", "{$CFG->prefix}{$table}_{$field}_idx");
+    hotpot_db_delete_index("{$CFG->prefix}$table", "{$table}_{$field}_idx");
+    return hotpot_db_add_index($table, $field);
 }
 
 function hotpot_update_to_v2_1_8() {
@@ -260,22 +249,6 @@ function hotpot_update_to_v2_1_6() {
         $ok = $ok && hotpot_db_remove_field($table, 'groupid');
         if (hotpot_db_field_exists($table, 'microreportid') && !hotpot_db_field_exists($table, 'clickreportid')) {
             $ok = $ok && hotpot_db_update_field_type($table, 'microreportid', 'clickreportid', 'INTEGER', 10, 'UNSIGNED', 'NULL');
-        }
-
-        // hotpot_questions (add index on question "name")
-        $table = 'hotpot_questions';
-        $field = 'name';
-        $index = "{$table}_{$field}_idx";
-        if (!hotpot_db_index_exists("{$CFG->prefix}$table", "{$CFG->prefix}$index")) {
-            hotpot_db_add_index($table, $field, '20');
-        }
-
-        // hotpot_strings (add index on "string")
-        $table = "hotpot_strings";
-        $field = 'string';
-        $index = "{$table}_{$field}_idx";
-        if (!hotpot_db_index_exists("{$CFG->prefix}$table", "{$CFG->prefix}$index")) {
-            hotpot_db_add_index($table, $field, '20');
         }
     }
 
@@ -414,11 +387,9 @@ function hotpot_update_to_v2_1() {
     $ok = $ok && hotpot_db_add_index('hotpot_attempts', 'hotpot');
     $ok = $ok && hotpot_db_add_index('hotpot_attempts', 'userid');
     $ok = $ok && hotpot_db_add_index('hotpot_details', 'attempt');
-    $ok = $ok && hotpot_db_add_index('hotpot_questions', 'name', 20);
     $ok = $ok && hotpot_db_add_index('hotpot_questions', 'hotpot');
     $ok = $ok && hotpot_db_add_index('hotpot_responses', 'attempt');
     $ok = $ok && hotpot_db_add_index('hotpot_responses', 'question');
-    $ok = $ok && hotpot_db_add_index('hotpot_strings', 'string', 20);
     // hotpot_string: correct double-encoded HTML entities
     $ok = $ok && execute_sql("
         UPDATE {$CFG->prefix}hotpot_strings 
@@ -1016,18 +987,10 @@ function hotpot_db_add_index($table, $field, $length='') {
 
     switch (strtolower($CFG->dbtype)) {
         case 'mysql' :
-            $field = "`$field`";
-            if ($length) {
-                $field = "$field ($length)";
-            }
-            $ok = $ok && $db->Execute("ALTER TABLE `$table` ADD INDEX `$index` ($field)");
+            $ok = $ok && $db->Execute("ALTER TABLE `$table` ADD INDEX `$index` (`$field`)");
         break;
         case 'postgres7' :
-            $field = '"'.$field.'"';
-            if ($length) {
-                $field = "SUBSTR($field,$length)";
-            }
-            $ok = $ok && $db->Execute("CREATE INDEX $index ON $table ($field)");
+            $ok = $ok && $db->Execute("CREATE INDEX $index ON $table (\"$field\")");
         break;
         default: // unknown database type
             $ok = false;
