@@ -1088,7 +1088,10 @@ function moodle_install_roles() {
 
 /// Delete the old user tables when we are done
 
-    /// XXX TODO
+    drop_table(new XMLDBTable('user_students'));
+    drop_table(new XMLDBTable('user_teachers'));
+    drop_table(new XMLDBTable('user_coursecreators'));
+    drop_table(new XMLDBTable('user_admins'));
 
 }
 
