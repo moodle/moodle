@@ -138,11 +138,11 @@ class block_admin_tree extends block_base {
             $this->content->text .= 'function toggle(spanid) {' . "\n";
             $this->content->text .= '  if (getspan(spanid).innerHTML == "") {' . "\n";
             $this->content->text .= '    getspan(spanid).innerHTML = vh_content[spanid];' . "\n";
-            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = "<img src=\"' . $CFG->wwwroot . '/blocks/admin_tree/open.gif\" border=\"0\" alt=\"[open folder]\" />";' . "\n";
+            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" border="0" alt="[open folder]" />\';' . "\n";
             $this->content->text .= '  } else {' . "\n";
             $this->content->text .= '    vh_content[spanid] = getspan(spanid).innerHTML;' . "\n";
             $this->content->text .= '    getspan(spanid).innerHTML = "";' . "\n";
-            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = "<img src=\"' . $CFG->wwwroot . '/blocks/admin_tree/closed.gif\" border=\"0\" alt=\"[closed folder]\" />";' . "\n";
+            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/closed.gif" border="0" alt="[closed folder]" />\';' . "\n";
             $this->content->text .= '  }' . "\n";
             $this->content->text .= '}' . "\n";
 
@@ -150,13 +150,13 @@ class block_admin_tree extends block_base {
             $this->content->text .= '  if (getspan(spanid).innerHTML !== "") {' . "\n";
             $this->content->text .= '    vh_content[spanid] = getspan(spanid).innerHTML;' . "\n";
             $this->content->text .= '    getspan(spanid).innerHTML = "";' . "\n";
-            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = "<img src=\"' . $CFG->wwwroot . '/blocks/admin_tree/closed.gif\" border=\"0\" alt=\"[closed folder]\" />";' . "\n";
+            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/closed.gif" border="0" alt="[closed folder]" />\';' . "\n";
             $this->content->text .= '  }' . "\n";
             $this->content->text .= '}' . "\n";
 
             $this->content->text .= 'function expand(spanid) {' . "\n";
             $this->content->text .= '  getspan(spanid).innerHTML = vh_content[spanid];' . "\n";
-            $this->content->text .= '  getspan(spanid + "indicator").innerHTML = "<img src=\"' . $CFG->wwwroot . '/blocks/admin_tree/open.gif\" border=\"0\" alt=\"[open folder]\" />";' . "\n";
+            $this->content->text .= '  getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" border="0" alt="[open folder]" />\';' . "\n";
             $this->content->text .= '}' . "\n";
 
             $this->content->text .= 'function expandall() {' . "\n";
