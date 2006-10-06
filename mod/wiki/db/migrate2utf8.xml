@@ -105,6 +105,7 @@
       </FIELDS>
     </TABLE>
     <TABLE name="wiki_locks">
+      <FIELDS>
         <FIELD name="pagename" method="PLAIN_SQL_UPDATE" type="varchar" length="255">
           <SQL_DETECT_USER>
            SELECT wl.userid
