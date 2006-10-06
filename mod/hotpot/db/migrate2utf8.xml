@@ -8,6 +8,7 @@
                 migrate2utf8_hotpot_strings_string(RECORDID)
             </PHP_FUNCTION>
           </FIELD>
+          <FIELD name="md5key" method="NO_CONV" type="varchar" length="32" />
       </FIELDS>
     </TABLE>
     <TABLE name="hotpot_responses">
@@ -46,6 +47,7 @@
             migrate2utf8_hotpot_questions_name(RECORDID)
           </PHP_FUNCTION>
         </FIELD>
+        <FIELD name="md5key" method="NO_CONV" type="varchar" length="32" />
       </FIELDS>
     </TABLE>
     <TABLE name="hotpot">
