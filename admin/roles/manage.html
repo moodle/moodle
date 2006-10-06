@@ -14,12 +14,12 @@
 ?>
 
 
-<table cellpadding="9" cellspacing="0" align="center">
 <form name="rolesform" action="manage.php" method="post">
 <input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
 <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
 <input type="hidden" name="action" value="<?php if ($action != 'view') { echo p($action); } ?>" />
 
+<table cellpadding="9" cellspacing="0" align="center">
 <tr valign="top">
     <td align="right"><?php print_string('name') ?>:</td>
     <td><?php
