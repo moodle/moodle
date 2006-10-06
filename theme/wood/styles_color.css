@@ -182,7 +182,7 @@ table.files th,
 .cal_popup_fg,
 #course-view .section td.content,
 table.files,
-fieldset.adminsettings {
+#adminsettings fieldset {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
     border-bottom:1px solid #330000;
