@@ -1,4 +1,63 @@
 <?php // $Id$
+
+// fix for MDL-6336
+// handling serialized object
+function migrate2utf8_lesson_attempts_useranswer($recordid) {
+    global $CFG, $globallang;
+  
+    /// Some trivial checks
+    if (empty($recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+
+    $user = get_record_sql("SELECT la.userid
+           FROM {$CFG->prefix}lesson_attempts la
+           WHERE la.id=$recordid");
+
+    $course = get_record_sql("SELECT l.course
+           FROM {$CFG->prefix}lesson l,
+                {$CFG->prefix}lesson_attempts la
+           WHERE l.id = la.lessonid
+                 AND la.id = $recordid");
+  
+    if (!$lessonattempts = get_record('lesson_attempts','id',$recordid)) {
+        log_the_problem_somewhere();
+        return false;
+    }
+  
+    if ($globallang) {
+        $fromenc = $globallang;
+    } else {
+        $sitelang   = $CFG->lang;
+        $courselang = get_course_lang($course->course);
+        $userlang   = get_user_lang($user->userid);        
+        $fromencstudent = get_original_encoding($sitelang, $courselang, $userlang); // this is used for answer field
+        $userlang = get_main_teacher_lang($course->course);       
+        $fromencteacher = get_original_encoding($sitelang, $courselang, $userlang); // this is used for response field       
+    }
+    
+    $result = $lessonattempts->useranswer; // init to avoid warnings
+    // if unserialize success, meaning it is an object
+    if ($attempt = unserialize($lessonattempts->useranswer)) {
+        $attempt->answer = utfconvert($attempt->answer, $fromencstudent);
+        $attempt->response = utfconvert(attempt->response, $fromencteacher);
+        $newla = new object;
+        $newla->id = $recordid;
+        $newla->useranswer = serialize($attempt); // serialize it back    
+        migrate2utf8_update_record('lesson_attempts', $newla);
+      
+    } else { // just a string
+        $result = utfconvert($lessonattempts->useranswer, $fromencstudent);
+        $newla = new object;
+        $newla->id = $recordid;
+        $newla->useranswer =  $result;// serialize it back
+        migrate2utf8_update_record('lesson_attempts', $newla);
+    }
+    
+    return $result;
+}
+
 function migrate2utf8_lesson_answers_answer($recordid){
     global $CFG, $globallang;
 
