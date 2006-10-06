@@ -243,8 +243,8 @@ function exercise_count_student_submissions($exercise) {
         $select = '';
     }
 
-    return count_records_sql("SELECT count(*) FROM {$CFG->prefix}exercise_submissions s, {$CFG->prefix}user_students u
-                            WHERE $select s.userid = u.userid
+    return count_records_sql("SELECT count(*) FROM {$CFG->prefix}exercise_submissions s
+                            WHERE $select 
                               AND s.exerciseid = $exercise->id
                               AND timecreated > 0");
     }
@@ -492,14 +492,14 @@ function exercise_get_best_submission_grades($exercise) {
         $select = '';
     }
 
-    return get_records_sql("SELECT DISTINCT u.userid, MAX(a.grade) AS grade FROM 
+    return get_records_sql("SELECT DISTINCT s.userid, MAX(a.grade) AS grade FROM 
                         {$CFG->prefix}exercise_submissions s, 
-                        {$CFG->prefix}exercise_assessments a, {$CFG->prefix}user_students u 
-                            WHERE $select s.userid = u.userid
+                        {$CFG->prefix}exercise_assessments a
+                            WHERE $select 
                               AND s.exerciseid = $exercise->id
                               AND s.late = 0
                               AND a.submissionid = s.id
-                              GROUP BY u.userid");
+                              GROUP BY s.userid");
 }
 
 
@@ -545,12 +545,10 @@ function exercise_get_student_submissions($exercise, $order = "time", $groupid =
                 $select = '';
             }
 
-            return get_records_sql("SELECT s.*, AVG(a.grade) AS grade FROM {$CFG->prefix}user_students u, 
+            return get_records_sql("SELECT s.*, AVG(a.grade) AS grade FROM 
                     {$CFG->prefix}groups_members g, {$CFG->prefix}exercise_submissions s, 
                     {$CFG->prefix}exercise_assessments a
                     WHERE $select g.groupid = $groupid
-                    AND u.userid = g.userid
-                    AND s.userid = u.userid
                     AND s.exerciseid = $exercise->id
                     AND a.submissionid = s.id
                     GROUP BY s.id
@@ -571,12 +569,9 @@ function exercise_get_student_submissions($exercise, $order = "time", $groupid =
         $select = '';
     }
 
-        return get_records_sql("SELECT s.* FROM {$CFG->prefix}user_students u, {$CFG->prefix}user n, 
+        return get_records_sql("SELECT s.* FROM  {$CFG->prefix}user n, 
                 {$CFG->prefix}groups_members g, {$CFG->prefix}exercise_submissions s
                 WHERE $select g.groupid = $groupid
-                AND u.userid = g.userid
-                AND s.userid = u.userid
-                AND n.id = u.userid
                 AND s.exerciseid = $exercise->id
                 ORDER BY $order");
 
@@ -592,8 +587,8 @@ function exercise_get_student_submissions($exercise, $order = "time", $groupid =
             }
 
             return get_records_sql("SELECT s.*, AVG(a.grade) AS grade FROM {$CFG->prefix}exercise_submissions s, 
-                    {$CFG->prefix}user_students u, {$CFG->prefix}exercise_assessments a
-                    WHERE $select s.userid = u.userid
+                    {$CFG->prefix}exercise_assessments a
+                    WHERE $select 
                     AND s.exerciseid = $exercise->id
                     AND a.submissionid = s.id
                     GROUP BY s.id
@@ -615,9 +610,8 @@ function exercise_get_student_submissions($exercise, $order = "time", $groupid =
         }
 
         return get_records_sql("SELECT s.* FROM {$CFG->prefix}exercise_submissions s, 
-                {$CFG->prefix}user_students u, {$CFG->prefix}user n  
-                WHERE $select s.userid = u.userid
-                AND n.id = u.userid
+                {$CFG->prefix}user n  
+                WHERE $select 
                 AND s.exerciseid = $exercise->id
                 ORDER BY $order");
     }
@@ -669,9 +663,9 @@ function exercise_get_ungraded_assessments_student($exercise) {
     }
 
     $cutofftime =time() - $CFG->maxeditingtime;
-    return get_records_sql("SELECT a.* FROM {$CFG->prefix}exercise_submissions s, {$CFG->prefix}user_students u,
+    return get_records_sql("SELECT a.* FROM {$CFG->prefix}exercise_submissions s
                             {$CFG->prefix}exercise_assessments a
-                            WHERE $select s.userid = u.userid
+                            WHERE $select 
                               AND s.exerciseid = $exercise->id
                               AND a.submissionid = s.id
                               AND (a.timegraded = 0 OR a.timegraded > $cutofftime)

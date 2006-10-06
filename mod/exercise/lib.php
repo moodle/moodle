@@ -686,14 +686,13 @@ function exercise_get_mean_submission_grades($exercise) {
     $timenow = time();
     $grades = get_records_sql("SELECT DISTINCT u.userid, AVG(a.grade) AS grade FROM 
                         {$CFG->prefix}exercise_submissions s, 
-                        {$CFG->prefix}exercise_assessments a, {$CFG->prefix}user_students u 
-                            WHERE u.course = $exercise->course
-                              AND s.userid = u.userid
+                        {$CFG->prefix}exercise_assessments a
+                            WHERE 
                               AND s.exerciseid = $exercise->id
                               AND s.late = 0
                               AND a.submissionid = s.id
                               AND a.timecreated < $timenow
-                              GROUP BY u.userid");
+                              GROUP BY s.userid");
     return $grades;
 }
 
