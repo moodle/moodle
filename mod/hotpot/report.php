@@ -48,7 +48,7 @@
     $formdata = array(
         'mode' => $mode,
         'reportcourse'     => isadmin() ? optional_param('reportcourse', get_user_preferences('hotpot_reportcourse', 'this')) : 'this',
-        'reportusers'      => isteacher($course->id) ? optional_param('reportusers', get_user_preferences('hotpot_reportusers', 'all')) : 'this',
+        'reportusers'      => isteacher($course->id) ? optional_param('reportusers', get_user_preferences('hotpot_reportusers', 'allusers')) : 'this',
         'reportattempts'   => optional_param('reportattempts', get_user_preferences('hotpot_reportattempts', 'all')),
         'reportformat'     => optional_param('reportformat', 'htm'),
         'reportshowlegend' => optional_param('reportshowlegend', get_user_preferences('hotpot_reportshowlegend', '0')),
