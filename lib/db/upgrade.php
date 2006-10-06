@@ -33,6 +33,23 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2006100601) {         /// Disable the exercise module because it's unmaintained
+        if ($module = get_record('modules', 'name', 'exercise')) {
+            if ($module->visible) {
+                // Hide/disable the module entry
+                set_field('modules', 'visible', '0', 'id', $module->id); 
+                // Save existing visible state for all activities
+                set_field('course_modules', 'visibleold', '1', 'visible' ,'1', 'module', $module->id);
+                set_field('course_modules', 'visibleold', '0', 'visible' ,'0', 'module', $module->id);
+                // Hide all activities
+                set_field('course_modules', 'visible', '0', 'module', $module->id);
+    
+                require_once($CFG->dirroot.'/course/lib.php');
+                rebuild_course_cache();  // Rebuld cache for all modules because they might have changed
+            }
+        }
+    }
+
     return $result;
 }
 
