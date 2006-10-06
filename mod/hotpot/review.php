@@ -59,7 +59,7 @@
     print '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
     print_heading($hotpot->name);
     hotpot_print_attempt_summary($hotpot, $attempt);
-    hotpot_print_review_buttons($course, $hotpot, $attempt);
+    hotpot_print_review_buttons($course, $hotpot, $attempt, $context);
     $action = has_capability('mod/hotpot:viewreport',$context) ? optional_param('action') : '';
     if ($action) {
         $xml = get_field('hotpot_details', 'details', 'attempt', $attempt->id);
@@ -81,7 +81,7 @@
     } else {
         hotpot_print_attempt_details($hotpot, $attempt);
     }
-    hotpot_print_review_buttons($course, $hotpot, $attempt);
+    hotpot_print_review_buttons($course, $hotpot, $attempt, $context);
     print_footer($course);
 ///////////////////////////
 //    functions
@@ -128,7 +128,7 @@ function hotpot_print_attempt_summary(&$hotpot, &$attempt) {
     print '</table>';
     print_simple_box_end();
 }
-function hotpot_print_review_buttons(&$course, &$hotpot, &$attempt) {
+function hotpot_print_review_buttons(&$course, &$hotpot, &$attempt, $context) {
     print "\n".'<table border="0" align="center" cellpadding="2" cellspacing="2" class="generaltable">';
     print "\n<tr>\n".'<td align="center">';
     print_single_button("report.php?hp=$hotpot->id", NULL, get_string('continue'), 'post');
