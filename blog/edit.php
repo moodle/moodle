@@ -255,12 +255,12 @@ function add_tags_info($postid) {
     $tag = new object();
     $tag->entryid = $post->id;
     $tag->userid = $post->userid;
-    $tag->timemodified = time();
-
-    /// Add tags information
-    if ($otags = optional_param('otags','', PARAM_INT)) {
-        foreach ($otags as $otag) {
-            $tag->tagid = $otag;
+        $tag->timemodified = time();
+        
+        /// Add tags information
+        if ($otags = optional_param('otags','', PARAM_INT)) {
+            foreach ($otags as $otag) {
+                $tag->tagid = $otag;
             insert_record('blog_tag_instance', $tag);
         }
     }
