@@ -99,9 +99,9 @@
 
     $attemptoptions = array();
     $attemptoptions[0] = get_string("attemptsunlimited", "quiz");
-    $attemptoptions[1] = "1 ".strtolower(get_string("attempt", "quiz"));
+    $attemptoptions[1] = "1 ".moodle_strtolower(get_string("attempt", "quiz"));
     for ($i=2;$i<=6;$i++) {
-        $attemptoptions[$i] = "$i ".strtolower(get_string("attempts", "quiz"));
+        $attemptoptions[$i] = "$i ".moodle_strtolower(get_string("attempts", "quiz"));
     }
 
 ?>

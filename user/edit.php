@@ -353,7 +353,7 @@
         echo "</center>";
     }
 
-    $teacher = strtolower($course->teacher);
+    $teacher = $course->teacher;
     if (!has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         $teacheronly = '('.get_string('teacheronly', '', $teacher).')';
     } else {

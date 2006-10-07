@@ -1582,7 +1582,7 @@ function get_import_export_formats( $type ) {
 function default_export_filename($course,$category) {
     //Take off some characters in the filename !!
     $takeoff = array(" ", ":", "/", "\\", "|");
-    $export_word = str_replace($takeoff,"_",strtolower(get_string("exportfilename","quiz")));
+    $export_word = str_replace($takeoff,"_",moodle_strtolower(get_string("exportfilename","quiz")));
     //If non-translated, use "export"
     if (substr($export_word,0,1) == "[") {
         $export_word= "export";
@@ -1608,9 +1608,9 @@ function default_export_filename($course,$category) {
     //The export word
     $export_name = $export_word."-";
     //The shortname
-    $export_name .= strtolower($export_shortname)."-";
+    $export_name .= moodle_strtolower($export_shortname)."-";
     //The category name
-    $export_name .= strtolower($export_categoryname)."-";
+    $export_name .= moodle_strtolower($export_categoryname)."-";
     //The date format
     $export_name .= userdate(time(),$export_date_format,99,false);
     //The extension - no extension, supplied by format

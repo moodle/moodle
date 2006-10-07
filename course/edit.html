@@ -432,7 +432,7 @@
     $options[0] = get_string("no");
     $options[1] = get_string("yes");
     choose_from_menu($options,"restrictmodules",$form->restrictmodules,"","togglemodules(this.selectedIndex);","");
-?>&nbsp;</td><td>&nbsp;<?php p(strtolower(get_string('to'))); ?>&nbsp;</td><td>&nbsp;
+?>&nbsp;</td><td>&nbsp;<?php p(moodle_strtolower(get_string('to'))); ?>&nbsp;</td><td>&nbsp;
     <select name="allowedmods[]" id="allowedmods" multiple="multiple" size="10" <?php echo ((empty($form->restrictmodules)) ? "disabled=\"disabled\"" : ""); ?>>
     <?php
     $mods = get_records("modules");

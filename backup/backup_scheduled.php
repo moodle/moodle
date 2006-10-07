@@ -437,7 +437,7 @@ function schedule_backup_course_configure($course,$starttime = 0) {
         //Calculate the backup word
         //Take off some characters in the filename !!
         $takeoff = array(" ", ":", "/", "\\", "|");
-        $backup_word = str_replace($takeoff,"_",strtolower(get_string("backupfilename")));
+        $backup_word = str_replace($takeoff,"_",moodle_strtolower(get_string("backupfilename")));
         //If non-translated, use "backup"
         if (substr($backup_word,0,1) == "[") {
             $backup_word= "backup";
@@ -460,7 +460,7 @@ function schedule_backup_course_configure($course,$starttime = 0) {
         //The backup word
         $backup_name = $backup_word."-";
         //The shortname
-        $backup_name .= strtolower($backup_shortname)."-";
+        $backup_name .= moodle_strtolower($backup_shortname)."-";
         //The date format
         $backup_name .= userdate(time(),$backup_date_format,99,false);
         //The extension
@@ -471,7 +471,7 @@ function schedule_backup_course_configure($course,$starttime = 0) {
         //Calculate the string to match the keep preference
         $keep_name = $backup_word."-";
         //The shortname
-        $keep_name .= strtolower($backup_shortname)."-";
+        $keep_name .= moodle_strtolower($backup_shortname)."-";
         //And finally, clean everything
         $keep_name = clean_filename($keep_name);
  

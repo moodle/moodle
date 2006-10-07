@@ -1820,7 +1820,7 @@
                     //Process contacts
                     if ($contactcount) {
                         if (!defined('RESTORE_SILENTLY')) {
-                            echo '<li>'.strtolower(get_string('contacts','message')).'</li>';
+                            echo '<li>'.moodle_strtolower(get_string('contacts','message')).'</li>';
                         }
                         $counter = 0;
                         while ($counter < $contactcount) {

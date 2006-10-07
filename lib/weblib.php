@@ -1988,7 +1988,7 @@ function highlight($needle, $haystack, $case=0,
  */
 function highlightfast($needle, $haystack) {
 
-    $parts = explode(strtolower($needle), strtolower($haystack));
+    $parts = explode(moodle_strtolower($needle), moodle_strtolower($haystack));
 
     $pos = 0;
 

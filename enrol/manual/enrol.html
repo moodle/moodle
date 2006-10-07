@@ -4,7 +4,7 @@
     if ($teacher) {
         $teachername = "<a href=\"../user/view.php?id=$teacher->id&course=".SITEID."\">".fullname($teacher)."</a>.";
     } else {
-        $teachername = get_string('yourteacher', '', strtolower($course->teacher));
+        $teachername = get_string('yourteacher', '', $course->teacher);
     }
     print_string('enrolmentkeyfrom', '', $teachername);
  ?>

@@ -63,7 +63,7 @@
     <td align="right"><b><?php print_string('forumtype', 'forum')?>:</b></td>
     <td>
     <?php
-       $student = strtolower($course->student);
+       $student = $course->student;
        require_once("$CFG->dirroot/mod/forum/lib.php");
        asort($FORUM_TYPES);
        if (! $form->type) {
