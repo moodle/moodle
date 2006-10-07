@@ -3285,7 +3285,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
     }
     $str .= '<textarea id="edit-'. $name .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">';
     if ($usehtmleditor) {
-        $str .= htmlspecialchars(stripslashes_safe($value)); // needed for editing of cleaned text!
+        $str .= htmlspecialchars($value); // needed for editing of cleaned text!
     } else {
         $str .= s($value);
     }
