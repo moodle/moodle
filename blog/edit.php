@@ -115,8 +115,8 @@ if ($editid) {  // User is editing a post
     $blogEntry = get_record('post','id',$editid);
 
     //using an unformatted entry body here so that extra formatting information is not stored in the db
-    $post->body = stripslashes_safe($blogEntry->summary);
-    $post->etitle = stripslashes_safe($blogEntry->subject);
+    $post->body = $blogEntry->summary;
+    $post->etitle = $blogEntry->subject;
     $post->postid = $editid;
     $post->userid = $blogEntry->userid;
     $post->format = $blogEntry->format;
@@ -194,8 +194,8 @@ function do_save($post) {
 
         /// Write a blog entry into database
         $blogEntry = new object;
-        $blogEntry->subject = addslashes($post->etitle);
-        $blogEntry->summary = addslashes($post->body);
+        $blogEntry->subject = $post->etitle;
+        $blogEntry->summary = $post->body;
         $blogEntry->module = 'blog';
         $blogEntry->userid = $USER->id;
         $blogEntry->format = $post->format;
@@ -267,8 +267,8 @@ function do_update($post) {
 //  echo "id id ".$post->postid;
 //  print_object($blogentry);  //debug
 
-    $blogEntry->subject = addslashes($post->etitle);
-    $blogEntry->summary = addslashes($post->body);
+    $blogEntry->subject = $post->etitle;
+    $blogEntry->summary = $post->body;
     if ($blogEntry->summary == '<br />') {
         $blogEntry->summary = '';
     }

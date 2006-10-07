@@ -151,10 +151,10 @@
 
         global $USER, $CFG, $course, $ME;
 
-        $template['body'] = get_formatted_entry_body(stripslashes_safe($blogEntry->summary), $blogEntry->format);
+        $template['body'] = get_formatted_entry_body($blogEntry->summary, $blogEntry->format);
         $template['title'] = '<a name="'. $blogEntry->subject .'"></a>';
         //enclose the title in nolink tags so that moodle formatting doesn't autolink the text
-        $template['title'] .= '<span class="nolink">'. stripslashes_safe($blogEntry->subject);
+        $template['title'] .= '<span class="nolink">'. $blogEntry->subject;
         $template['title'] .= '</span>';
         $template['userid'] = $blogEntry->userid;
         $template['author'] = fullname(get_record('user','id',$blogEntry->userid));
@@ -339,7 +339,7 @@
         if ($format) {
             return format_text($body, $format);
         }
-        return stripslashes_safe($body);
+        return $body;
     }
 
 /// Main filter function
