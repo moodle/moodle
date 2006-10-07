@@ -2,7 +2,7 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $attemptid = required_param("attemptid");
+    $attemptid = required_param('attemptid', PARAM_INT);
 
     // get attempt, hotpot, course and course_module records
     if (! $attempt = get_record("hotpot_attempts", "id", $attemptid)) {

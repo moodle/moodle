@@ -6,14 +6,15 @@
     require_once("../../course/lib.php");
     require_once("lib.php");
 
-    $id = required_param("id");   // course
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $id);
-    
+    $id = required_param('id', PARAM_INT);   // course    
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID is incorrect");
     }
 
     require_login($course->id);
+
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $id);
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
     add_to_log($course->id, "hotpot", "view all", "index.php?id=$course->id", "");
 
@@ -44,7 +45,7 @@
     $next_url = "$CFG->wwwroot/course/view.php?id=$course->id";
 
     // get display section, if any
-    $section = optional_param('section', 0);
+    $section = optional_param('section', 0, PARAM_INT);
     if ($section) {
         $displaysection = course_set_display($course->id, $section);
     } else {
@@ -55,60 +56,59 @@
         }
     }
 
-    // Get all instances of this module
-    if (!$hotpots = hotpot_get_all_instances_in_course("hotpot", $course)) {
-        $hotpots = array();
-    }
-
-    // if necessary, remove hotpots that are not in section0 or this $USER's display section
-    if ($displaysection) {
-        foreach ($hotpots as $coursemodule=>$hotpot) {
-            if ($hotpot->section!=0 && $hotpot->section!=$displaysection) {
-                unset($hotpots[$coursemodule]);
-            }
+    // Get all hotpot instances in this course
+    $hotpots = array();
+    if ($hotpot_instances = hotpot_get_all_instances_in_course('hotpot', $course)) {
+        foreach ($hotpot_instances as $hotpot_instance) {
+            if ($displaysection>0 && $hotpot_instance->section>0 && $displaysection<>$hotpot_instance->section) {
+                // do nothing (user is not diplaying this section)
+            } else {
+                $hotpots[$hotpot_instance->id] = $hotpot_instance;
+            } 
         }
     }
-
     if (empty($hotpots)) {
         notice("There are no $strmodulenameplural", $next_url);
         exit;
     }
+    $hotpotids = implode(',', array_keys($hotpots));
 
-    // get list of hotpot ids
-    $hotpotids = array();
-    foreach ($hotpots as $cmid=>$hotpot) {
-        $hotpotids[] = $hotpot->id;
-    }
-    $hotpotids = implode(',', $hotpotids);
+    if (has_capability('mod/hotpot:grade', $sitecontext)) {
 
-    if (has_capability('mod/hotpot:grade', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        // array of hotpots to be regraded
+        $regrade_hotpots = array();
 
-        // get regrade settings, if any
-        $regrade = optional_param("regrade");
-        $confirm = optional_param("confirm");
-
-        // check regrade is valid
-        unset($regrade_cmid);
-        if (isset($regrade)) {
-            foreach ($hotpots as $cmid=>$hotpot) {
-                $found = false;
-                if ($hotpot->id==$regrade) {
-                    $regrade_cmid = $cmid;
+        // do we need to regrade any or all of the hotpots?
+        $regrade = optional_param('regrade', 0, PARAM_SEQUENCE);
+        if ($regrade) {
+            // add valid hotpot ids to the regrade array
+            $regrade = explode(',', $regrade);
+            foreach ($regrade as $id) {
+                if (isset($hotpots[$id])) {
+                    $regrade_hotpots[$id] = &$hotpots[$id];
                 }
             }
+            $regrade = implode(',', array_keys($regrade_hotpots));
         }
+        if ($regrade) {
 
-        // regrade, if necessary
-        if (isset($regrade_cmid)) {
-
-            if (empty($confirm)) {
-
-                $strregradecheck = get_string('regradecheck', 'hotpot', $hotpots[$regrade_cmid]->name);
+            $confirm = optional_param('confirm', 0, PARAM_BOOL);
+            if (!$confirm) {
 
                 print_simple_box_start("center", "60%", "#FFAAAA", 20, "noticebox");
-                print_heading($strregradecheck);
+
+                if (count($regrade_hotpots)==1) {
+                    print_heading(get_string('regradecheck', 'hotpot', $regrade_hotpots[$regrade]->name));
+                } else {
+                    print_heading(get_string('regradecheck', 'hotpot', ''));
+                    print '<ul>';
+                    foreach ($regrade_hotpots as $hotpot) {
+                        print "<li>$hotpot->name</li>";
+                    }
+                    print '</ul>';
+                }
                 print ''
-                .   '<table border="0"><tr><td>'
+                .   '<div align="center"><table border="0"><tr><td>'
                 .   '<form target="_parent" method="post" action="'.$ME.'">'
                 .   '<input type="hidden" name="id" value="'.$course->id.'">'
                 .   '<input type="hidden" name="regrade" value="'.$regrade.'" />'
@@ -122,104 +122,89 @@
                 .   $sesskey
                 .   '<input type="submit" value="'.get_string("no").'" />'
                 .   '</form>'
-                .   '</td></tr></table>'
+                .   '</td></tr></table></div>'
                 ;
+
                 print_simple_box_end();
                 print_footer($course);
                 exit;
 
             } else { // regrade has been confirmed, so proceed
 
-                if ($regrade=='all') {
-                    $select = "hotpot IN ($hotpotids)";
-                } else {
-                    $select = "hotpot=$regrade";
-                }
+                // start hotpot counter and timer
+                $hotpotstart = microtime();
+                $hotpotcount = 0;
 
-                $questionids = array();
-                if ($questions = get_records_select("hotpot_questions", $select)) {
-                    $questionids = array_keys($questions);
-                }
-                $questionids = implode(',', $questionids);
+                // regrade attempts for these hotpots
+                foreach ($regrade_hotpots as $hotpot) {
+                    notify("<b>$hotpot->name</b>");
 
-                if ($questionids) {
-                    hotpot_delete_and_notify('hotpot_questions', "id IN ($questionids)", get_string('question', 'quiz'));
-                    hotpot_delete_and_notify('hotpot_responses', "question IN ($questionids)", get_string('answer', 'quiz'));
-                }
+                    // delete questions and responses for this hotpot
+                    if ($records = get_records_select('hotpot_questions', "hotpot=$hotpot->id", '', 'id,hotpot')) {
+                        $questionids = implode(',', array_keys($records));
+                        hotpot_delete_and_notify('hotpot_questions', "id IN ($questionids)", get_string('question', 'quiz'));
+                        hotpot_delete_and_notify('hotpot_responses', "question IN ($questionids)", get_string('answer', 'quiz'));
+                    }
 
-                if ($attempts = get_records_select('hotpot_attempts', $select)) {
+                    // start attempt counter and timer
+                    $attemptstart = microtime();
+                    $attemptcount = 0;
 
-                    // start counter and timer
-                    $start = microtime();
-                    $count = 0;
-
-                    // use while loop instead of foreach loop
-                    // to allow the possibility of splitting a regrade 
-                    // and so avoid "maximum script time exceeded" errors
-                    $attemptids = array_keys($attempts);
-                    $i_max = count($attemptids);
-                    $i = 0;
-                    while ($i<$i_max) {
-
-                        $attemptid = $attemptids[$i];
-                        $attempt =&$attempts[$attemptid];
-
-                        $attempt->details = get_field('hotpot_details', 'details', 'attempt', $attemptid);
-                        if ($attempt->details) {
-
-                            hotpot_add_attempt_details($attempt);
-                            if (! update_record('hotpot_attempts', $attempt)) {
-                                error("Could not update attempt record: ".$db->ErrorMsg(), $next_url);
+                    // regrade attempts, if any, for this hotpot
+                    if ($attempts = get_records_select('hotpot_attempts', "hotpot=$hotpot->id")) {
+                        foreach ($attempts as $attempt) {
+                            $attempt->details = get_field('hotpot_details', 'details', 'attempt', $attempt->id);
+                            if ($attempt->details) {
+                                hotpot_add_attempt_details($attempt);
+                                if (! update_record('hotpot_attempts', $attempt)) {
+                                    error("Could not update attempt record: ".$db->ErrorMsg(), $next_url);
+                                }
                             }
+                            $attemptcount++;
                         }
-                        $count++;
-                        $i++;
                     }
-                    if ($count) {
-                        notify(get_string('added', 'moodle', "$count x ".get_string('attempts', 'quiz')));
+                    if ($attemptcount) {
+                        $msg = get_string('added', 'moodle', "$attemptcount x ".get_string('attempts', 'quiz'));
+                        if (!empty($CFG->hotpot_showtimes)) {
+                            $msg .= ' ('.format_time(sprintf("%0.2f", microtime_diff($attemptstart, microtime()))).')';
+                        }
+                        notify($msg);
                     }
-                    $msg = get_string('regradecomplete', 'quiz');
+                    $hotpotcount++;
+                } // end foreach $hotpots
+                if ($hotpotcount) {
+                    $msg = get_string('regrade', 'quiz').": $hotpotcount x ".get_string('modulenameplural', 'hotpot');
                     if (!empty($CFG->hotpot_showtimes)) {
-                        $duration = format_time(sprintf("%0.2f", microtime_diff($start, microtime())));
-                        $msg .= " ($duration)";
+                        $msg .= ' ('.format_time(sprintf("%0.2f", microtime_diff($hotpotstart, microtime()))).')';
                     }
                     notify($msg);
                 }
-            }
+                notify(get_string('regradecomplete', 'quiz'));
+            } // end if $confirm
         } // end regrade
-
-        //print '<center><form action="'.$ME.'" method="post">';
-        //print '<input type="hidden" name="id" value="'.$course->id.'">';
-        //print '<input type="submit" name="regrade" value="'.get_string('regrade', 'quiz').'">';
-        //print '</form></center>'."\n";
-
 
         // get duplicate hotpot-name questions
         //  - JMatch LHS is longer than 255 bytes
         //  - JQuiz question text is longer than 255 bytes
-        //  - other unidentified situations ?!?
+        //  - other unidentified situations ?!
 
-        $field = '';
-        $questions = false;
-        $regradehotpots = array();
-
-        $field = sql_concat('hotpot', "'_'", 'name');
-        
-        if ($field) {
-            $questions = get_records_sql("
-                SELECT $field, COUNT(*), hotpot, name
+        $regrade_hotpots = array();
+        $concat_field = sql_concat('hotpot', "'_'", 'name');
+        if ($concat_field) {
+            $records = get_records_sql("
+                SELECT $concat_field, COUNT(*), hotpot, name
                 FROM {$CFG->prefix}hotpot_questions 
                 WHERE hotpot IN ($hotpotids)
                 GROUP BY hotpot, name 
                 HAVING COUNT(*) >1
             ");
-        }
-        if ($questions) {
-            foreach ($questions as $question) {
-                $regradehotpots[] = $question->hotpot;
+            if ($records) {
+                foreach ($records as $record) {
+                    $regrade_hotpots[$record->hotpot] = 1;
+                }
+                ksort($regrade_hotpots);
+                $regrade_hotpots = array_keys($regrade_hotpots);
             }
-            $regradehotpots = array_unique($regradehotpots);
-            sort($regradehotpots);
         }
     }
 
@@ -252,7 +237,7 @@
         // so this operation could be done after getting the $totals from the attempts table
     }
     $totals = get_records_sql("SELECT $fields FROM $tables WHERE $select GROUP BY a.hotpot");
-//remove i here ihas_capability
+
     if (has_capability('mod/hotpot:grade', get_context_instance(CONTEXT_SYSTEM, SITEID)) && empty($usejoin)) {
         foreach ($hotpots as $hotpot) {
             $totals[$hotpot->id]->detailcount = 0;
@@ -364,8 +349,8 @@
             }
         }
 
-        if (has_capability('mod/hotpot:grade', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-            if (in_array($hotpot->id, $regradehotpots)) {
+        if (has_capability('mod/hotpot:grade', $sitecontext)) {
+            if (in_array($hotpot->id, $regrade_hotpots)) {
                 $report .= ' <font color="red">'.$strregraderequired.'</font>';
             }
         }
@@ -389,7 +374,7 @@
 
         array_push($data, $quizname, $quizclose, $bestscore, $report);
 
-        if (has_capability('mod/hotpot:grade', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if (has_capability('mod/hotpot:grade', $sitecontext)) {
             if (empty($totals[$hotpot->id]->detailcount)) {
                 // no details records for this hotpot, so disable regrade
                 $regradebutton = '&nbsp;';

@@ -8,8 +8,8 @@
         require_once("../../config.php");
         require_once("lib.php");
 
-        $id = optional_param("id"); // Course Module ID, or
-        $hp = optional_param("hp"); // hotpot ID
+        $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or
+        $hp = optional_param('hp', 0, PARAM_INT); // hotpot ID
 
         if ($id) {
             if (! $cm = get_coursemodule_from_id('hotpot', $id)) {
@@ -50,7 +50,7 @@
     $button = update_module_button($cm->id, $course->id, get_string("modulename", "hotpot").'" style="font-size:0.75em;');
     $loggedinas = '<span class="logininfo">'.user_login_string($course, $USER).'</span>';
     $time = time();
-    $hppassword = optional_param('hppassword');
+    $hppassword = optional_param('hppassword', '');
     if (HOTPOT_FIRST_ATTEMPT && !has_capability('mod/hotpot:grade', $context)) {
         // check this quiz is available to this student
         // error message, if quiz is unavailable
@@ -116,9 +116,9 @@
     if(!$hp = new hotpot_xml_quiz($hotpot)) {
         error("Quiz is unavailable at the moment");
     }
-    $get_js = optional_param('js');
-    $get_css = optional_param('css');
-    $framename = optional_param('framename');
+    $get_js = optional_param('js', '', PARAM_ALPHA);
+    $get_css = optional_param('css', '', PARAM_ALPHA);
+    $framename = optional_param('framename', '', PARAM_ALPHA);
     // look for <frameset> (HP5 v5)
     $frameset = '';
     $frameset_tags = '';

@@ -2,9 +2,11 @@
 // This page prints a review of a particular quiz attempt
     require_once("../../config.php");
     require_once("lib.php");
-    $id = optional_param("id"); // Course Module ID, or
-    $hp = optional_param("hp"); // hotpot ID
-    $attempt = required_param("attempt"); // A particular attempt ID for review
+
+    $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or
+    $hp = optional_param('hp', 0, PARAM_INT); // hotpot ID
+    $attempt = required_param('attempt', PARAM_INT); // A particular attempt ID for review
+
     if ($id) {
         if (! $cm = get_coursemodule_from_id('hotpot', $id)) {
             error("Course Module ID was incorrect");
@@ -60,7 +62,7 @@
     print_heading($hotpot->name);
     hotpot_print_attempt_summary($hotpot, $attempt);
     hotpot_print_review_buttons($course, $hotpot, $attempt, $context);
-    $action = has_capability('mod/hotpot:viewreport',$context) ? optional_param('action') : '';
+    $action = has_capability('mod/hotpot:viewreport',$context) ? optional_param('action', '', PARAM_ALPHA) : '';
     if ($action) {
         $xml = get_field('hotpot_details', 'details', 'attempt', $attempt->id);
         print '<hr>';

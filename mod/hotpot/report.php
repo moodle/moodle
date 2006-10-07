@@ -5,8 +5,8 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id = optional_param("id"); // Course Module ID, or
-    $hp = optional_param("hp"); // hotpot ID
+    $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or
+    $hp = optional_param('hp', 0, PARAM_INT); // hotpot ID
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('hotpot', $id)) {
@@ -42,7 +42,7 @@
 
     // get report mode
     if (has_capability('mod/hotpot:viewreport',$modulecontext)) {
-        $mode = optional_param('mode', 'overview');
+        $mode = optional_param('mode', 'overview', PARAM_ALPHA);
     } else {
         // ordinary students have no choice
         $mode = 'overview';
@@ -51,12 +51,12 @@
     // assemble array of form data
     $formdata = array(
         'mode' => $mode,
-        'reportusers'      => has_capability('mod/hotpot:viewreport',$modulecontext) ? optional_param('reportusers', get_user_preferences('hotpot_reportusers', 'allusers')) : 'this',
-        'reportattempts'   => optional_param('reportattempts', get_user_preferences('hotpot_reportattempts', 'all')),
-        'reportformat'     => optional_param('reportformat', 'htm'),
-        'reportshowlegend' => optional_param('reportshowlegend', get_user_preferences('hotpot_reportshowlegend', '0')),
-        'reportencoding'   => optional_param('reportencoding', get_user_preferences('hotpot_reportencoding', '')),
-        'reportwrapdata'   => optional_param('reportwrapdata', get_user_preferences('hotpot_reportwrapdata', '1')),
+        'reportusers'      => has_capability('mod/hotpot:viewreport',$modulecontext) ? optional_param('reportusers', get_user_preferences('hotpot_reportusers', 'allusers'), PARAM_ALPHA) : 'this',
+        'reportattempts'   => optional_param('reportattempts', get_user_preferences('hotpot_reportattempts', 'all'), PARAM_ALPHA),
+        'reportformat'     => optional_param('reportformat', 'htm', PARAM_ALPHA),
+        'reportshowlegend' => optional_param('reportshowlegend', get_user_preferences('hotpot_reportshowlegend', '0'), PARAM_INT),
+        'reportencoding'   => optional_param('reportencoding', get_user_preferences('hotpot_reportencoding', ''), PARAM_ALPHANUM),
+        'reportwrapdata'   => optional_param('reportwrapdata', get_user_preferences('hotpot_reportwrapdata', '1'), PARAM_INT),
     );
 
     foreach ($formdata as $name=>$value) {
@@ -77,7 +77,7 @@
 
     // delete selected attempts, if any
     if (has_capability('mod/hotpot:deleteattempt',$modulecontext)) {
-        $del = optional_param("del", "");
+        $del = optional_param('del', '', PARAM_ALPHA);
         hotpot_delete_selected_attempts($hotpot, $del);
     }
 
@@ -292,8 +292,6 @@
     }
 
 /// Open the selected hotpot report and display it
-
-    $mode = clean_param($mode, PARAM_SAFEDIR);
 
     if (! is_readable("report/$mode/report.php")) {
         error("Report not known (".clean_text($mode).")", $course_homeurl);
