@@ -34,7 +34,6 @@
     // get the roles context for this course
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
     $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 
     // set homeurl of couse (for error messages)
     $course_homeurl = "$CFG->wwwroot/course/view.php?id=$course->id";
@@ -43,16 +42,15 @@
 
     // get report mode
     if (has_capability('mod/hotpot:viewreport',$modulecontext)) {
-        $mode = optional_param("mode", "overview");
+        $mode = optional_param('mode', 'overview');
     } else {
-        // students have no choice
+        // ordinary students have no choice
         $mode = 'overview';
     }
 
     // assemble array of form data
     $formdata = array(
         'mode' => $mode,
-        'reportcourse'     => has_capability('mod/hotpot:viewreport', $sitecontext) ? optional_param('reportcourse', get_user_preferences('hotpot_reportcourse', 'this')) : 'this',
         'reportusers'      => has_capability('mod/hotpot:viewreport',$modulecontext) ? optional_param('reportusers', get_user_preferences('hotpot_reportusers', 'allusers')) : 'this',
         'reportattempts'   => optional_param('reportattempts', get_user_preferences('hotpot_reportattempts', 'all')),
         'reportformat'     => optional_param('reportformat', 'htm'),
@@ -83,39 +81,16 @@
         hotpot_delete_selected_attempts($hotpot, $del);
     }
 
-    $hotpot_ids = '';
-    $course_ids = '';
-    switch ($formdata['reportcourse']) {
-        case 'all' :
-            if (has_capability('mod/hotpot:viewreport', $sitecontext)) {
-                // site admin can view hotpot reports in all courses
-                $records = get_records_select('course', '', '', 'id, id');
-            } else {
-                // get courses for which this user has "mod/hotpot:viewreport" capability
-                $records = get_user_capability_course('mod/hotpot:viewreport');
-            }
-            if (!empty($records)) {
-                $course_ids = join(',', array_keys($records));
-                $select = "reference='$hotpot->reference' && course IN ($course_ids)";
-                if ($records = get_records_select_menu('hotpot', $select, '', 'id, course, reference')) {
-                    $hotpot_ids = join(',', array_keys($records));
-                }
-            }
-            break;
-        case 'this':
-            $course_ids = $course->id;
-            $hotpot_ids = $hotpot->id;
-            break;
-    }
     $user_ids = '';
     $users = array();
     switch ($formdata['reportusers']) {
         case 'allusers':
             // anyone who has ever attempted this hotpot
-            if ($records = get_records_select('hotpot_attempts', "hotpot IN ($hotpot_ids)", '', 'id,userid')) {
+            if ($records = get_records_select('hotpot_attempts', "hotpot=$hotpot->id", '', 'id,userid')) {
                 foreach ($records as $record) {
-                    $users[$record->userid] = 0; // "0" means NOT a currently recognized participant
+                    $users[$record->userid] = 0; // "0" means user is NOT currently allowed to attempt this HotPot
                 }
+                unset($records);
             }
             break;
 
@@ -123,8 +98,9 @@
             // anyone currently allowed to attempt this HotPot
             if ($records = get_users_by_capability($modulecontext, 'mod/hotpot:attempt', 'u.id,u.id', 'u.id')) {
                 foreach ($records as $record) {
-                    $users[$record->id] = 1; // "1" signifies a user who is allowed to do a HotPot in this course
+                    $users[$record->id] = 1; // "1" means user is allowed to do this HotPot
                 }
+                unset($records);
             }
             break;
 
@@ -136,38 +112,6 @@
                     if (empty($teachers[$record->id])) {
                         $users[$record->id] = 1;
                     }
-                }
-            }
-            break;
-
-        case 'students':
-        
-            $modulecontexts = array();
-            // first find all applicable contextids, put them in a bit array
-            foreach (explode(',', $course_ids) as $course_id) {
-                
-                $modulecontext = get_context_instance(CONTEXT_COURSE, $course_id);
-                
-                // first add self to list
-                if (!in_array($modulecontext->id, $modulecontexts)) {
-                    $modulecontexts[] = $modulecontext->id;
-                }
-               
-                // then add all parent contexts               
-                if ($parents = get_parent_contexts($modulecontext)) {
-                    foreach ($parents as $parent) {
-                        if (!in_array($parent->id, $modulecontexts)) {
-                            $modulecontexts[] = $parent->id;
-                        }
-                    }
-                }
-            }
-            $modulecontextslist = implode(',', $modulecontexts);
-            
-            // this sort order might not make sense
-            if ($records = get_records_select_menu('role_assignments', "contextid IN ($modulecontextslist)", 'contextid', 'id, userid')) {
-                foreach ($records as $record) {
-                    $users[$record->userid] = 1;
                 }
             }
             break;
@@ -192,7 +136,7 @@
 
     // database table and selection conditions
     $table = "{$CFG->prefix}hotpot_attempts AS a";
-    $select = "a.hotpot IN ($hotpot_ids) AND a.userid IN ($user_ids)";
+    $select = "a.hotpot=$hotpot->id AND a.userid IN ($user_ids)";
     if ($mode!='overview') {
         $select .= ' AND a.status<>'.HOTPOT_STATUS_INPROGRESS;
     }
@@ -435,8 +379,8 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
     $navigation = "<a href=index.php?id=$course->id>$strmodulenameplural</a> -> ";
     $navigation .= "<a href=\"view.php?id=$cm->id\">$hotpot->name</a> -> ";
 
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-    if (has_capability('mod/hotpot:viewreport',$coursecontext)) {
+    $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if (has_capability('mod/hotpot:viewreport',$modulecontext)) {
         if ($mode=='overview' || $mode=='simplestat' || $mode=='fullstat') {
             $module = "quiz";
         } else {
@@ -480,13 +424,6 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
             $menus['mode'][$name] = get_string("report$name", $module);
         }
     }
-    if (has_capability('mod/hotpot:viewreport', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-        // admins can choose the course
-        $menus['reportcourse'] = array(
-            'this' => get_string('thiscourse', 'hotpot'), // $course->shortname,
-            'all' => get_string('allmycourses', 'hotpot')
-        );
-    }
 
     $menus['reportusers'] = array('allusers' => get_string('allusers', 'hotpot'));
 
@@ -503,10 +440,13 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
             u.lastname
     ");
 
-    // get enrolled students
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-    $teachers = get_users_by_capability($coursecontext, 'mod/hotpot:viewreport', 'u.id,u.firstname,u.lastname', 'u.lastname');
-    $students = get_users_by_capability($coursecontext, 'mod/hotpot:attempt', 'u.id,u.firstname,u.lastname', 'u.lastname');
+    // get context
+    $cm = get_coursemodule_from_instance('hotpot', $hotpot->id);
+    $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    // get teachers enrolled students
+    $teachers = get_users_by_capability($modulecontext, 'mod/hotpot:viewreport', 'u.id,u.firstname,u.lastname', 'u.lastname');
+    $students = get_users_by_capability($modulecontext, 'mod/hotpot:attempt', 'u.id,u.firstname,u.lastname', 'u.lastname');
 
     if (!empty($students)) {
         $firsttime = true;
@@ -617,7 +557,7 @@ function hotpot_get_report_names($names='') {
 
     return $reports;
 }
-function hotpot_get_report_users($course_ids, $formdata) {
+function hotpot_get_report_users($course, $formdata) {
     $users = array();
 
     /// Check to see if groups are being used in this module
@@ -650,7 +590,6 @@ function hotpot_get_report_users($course_ids, $formdata) {
 function hotpot_get_records_groupby($function, $fieldnames, $table, $select, $groupby) {
     // $function is an SQL aggregate function (MAX or MIN)
 
-    global $CFG;
     $fields = sql_concat_join("'_'", $fieldnames);
     $fields = "$groupby, $function($fields) AS joinedvalues";
 
@@ -668,11 +607,11 @@ function hotpot_get_records_groupby($function, $fieldnames, $table, $select, $gr
         if (empty($record->joinedvalues)) {
             unset($records[$id]);
         } else {
-            $formdata = explode('_', $record->joinedvalues);
+            $values = explode('_', $record->joinedvalues);
 
             for ($i=0; $i<$fieldcount; $i++) {
                 $fieldname = $fieldnames[$i];
-                $records[$id]->$fieldname = $formdata[$i];
+                $records[$id]->$fieldname = $values[$i];
             }
         }
         unset($record->joinedvalues);
