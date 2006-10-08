@@ -470,6 +470,41 @@ function find_index_name($table, $index) {
 }
 
 /**
+ * Given one XMLDBTable, the function returns the name of its sequence in DB (if exists)
+ * of false if it doesn't exist
+ *
+ * @param XMLDBTable the table to be searched
+ * @return string sequence name of false
+ */
+function find_sequence_name($table) {
+
+    global $CFG, $db;
+
+    $sequencename = false;
+
+/// Do this function silenty (to avoid output in install/upgrade process)
+    $olddbdebug = $db->debug;
+    $db->debug = false;
+
+    if (strtolower(get_class($table)) != 'xmldbtable') {
+        $db->debug = $olddbdebug; //Re-set original $db->debug
+        return false;
+    }
+
+/// Check table exists
+    if (!table_exists($table)) {
+        debugging('Table ' . $table->getName() . ' do not exist. Sequence not found', DEBUG_DEVELOPER);
+        $db->debug = $olddbdebug; //Re-set original $db->debug
+        return false; //Table doesn't exist, nothing to do
+    }
+
+    $sequencename = $table->getSequenceFromDB($CFG->dbtype, $CFG->prefix);
+
+    $db->debug = $olddbdebug; //Re-set original $db->debug
+    return $sequencename;
+}
+
+/**
  * This function will load one entire XMLDB file, generating all the needed
  * SQL statements, specific for each RDBMS ($CFG->dbtype) and, finally, it
  * will execute all those statements against the DB.
