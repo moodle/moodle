@@ -746,7 +746,7 @@ function blocks_execute_repositioning_atomic(&$instance, $newpos, $newweight, $p
         $sql = 'UPDATE '. $CFG->prefix .'block_instance SET weight = weight + 1 WHERE pagetype = \''. $instance->pagetype.
                       '\' AND pageid = '. $instance->pageid .' AND position = \'' .$newpos.
             '\' AND weight >= '. $newweight;
-    }echo $sql;
+    }
     execute_sql($sql,false);
     
     
@@ -809,7 +809,7 @@ function blocks_get_by_page_pinned($page) {
         if (!array_key_exists($pos,$weights)) {
             $weights[$pos] = 0;
         }
-        foreach ($blocks as $block) {//echo("\r\nid=".$block->id."-");
+        foreach ($blocks as $block) {
             $pinned[$pos][$weights[$pos]] = $block;
             $weights[$pos]++;
         }
@@ -830,7 +830,7 @@ function blocks_get_by_page($page) {
         return $arr;
     }
 
-    foreach($blocks as $block) {//echo("id2=".$block->id);
+    foreach($blocks as $block) {
         $arr[$block->position][$block->weight] = $block;
     }
 
