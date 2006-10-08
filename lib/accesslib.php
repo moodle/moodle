@@ -939,7 +939,7 @@ function moodle_install_roles() {
     $guestrole          = create_role(get_string('guest'), 'guest',
                                       get_string('guestdescription'), 'moodle/legacy:guest');
 
-/// Now is the correct moment to install capabilitites - after creation of legacy roles, but before assigning of roles
+/// Now is the correct moment to install capabilities - after creation of legacy roles, but before assigning of roles
 
     if (!assign_capability('moodle/site:doanything', CAP_ALLOW, $adminrole, $systemcontext->id)) {
         error('Could not assign moodle/site:doanything to the admin role');
@@ -1164,7 +1164,6 @@ function create_context($contextlevel, $instanceid) {
     if (!$context = get_record('context','contextlevel',$contextlevel,'instanceid',$instanceid)) {
         if (!validate_context($contextlevel, $instanceid)) {
             debugging('Error: Invalid context creation request for level "'.s($contextlevel).'", instance "'.s($instanceid).'".');
-            debug_print_backtrace();
             return NULL;
         }
         $context = new object();
@@ -1882,7 +1881,7 @@ function update_capabilities($component='moodle') {
     if ($cachedcaps) {
         foreach ($cachedcaps as $cachedcap) {
             array_push($storedcaps, $cachedcap->name);
-            // update risk bitmasks in existing capabilitites if needed
+            // update risk bitmasks in existing capabilities if needed
             if (array_key_exists($cachedcap->name, $filecaps)) {
                 if (!array_key_exists('riskbitmask', $filecaps[$cachedcap->name])) {
                     $filecaps[$cachedcap->name]['riskbitmask'] = 0; // no risk if not specified
@@ -2162,7 +2161,7 @@ function fetch_context_capabilities($context) {
  */
 function fetch_context_independent_capabilities() {
 
-    //only CONTEXT_SYSTEM capabilitites here or it will break the hack in fetch_context_capabilities()
+    //only CONTEXT_SYSTEM capabilities here or it will break the hack in fetch_context_capabilities()
     $contextindependentcaps = array(
         'moodle/site:accessallgroups'
         );

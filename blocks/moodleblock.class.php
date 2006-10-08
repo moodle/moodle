@@ -413,7 +413,7 @@ class block_base {
             $errors[] = 'invalid_content_type';
             $correct = false;
         }
-        //following selftest was not working when roles&capabilitites were used from block 
+        //following selftest was not working when roles&capabilities were used from block 
 /*        if ($this->get_content() === NULL) {
             $errors[] = 'content_not_set';
             $correct = false;
