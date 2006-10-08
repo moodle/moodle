@@ -1105,11 +1105,16 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 /// get the next sequence value here and insert it manually.
     if ( $CFG->dbtype === 'oci8po' && $returnid == true) {
     /// We need this here (move this function to dmlib?)
-        include_once($CFG->libdir . '/xmldb/classes/generators/XMLDBGenerator.class.php');
-        include_once($CFG->libdir . '/xmldb/classes/generators/oci8po/oci8po.class.php');
-        $generator = new XMLDBoci8po();
-        $generator->setPrefix($CFG->prefix);
-        $seqname = $generator->getNameForObject($table, $primarykey, 'seq');
+        include_once($CFG->libdir . '/ddllib.php');
+        $xmldb_table = new XMLDBTable($table);
+        $seqname = find_sequence_name($xmldb_table);
+        if (!$seqname) {
+        /// Fallback, seqname not found, something is wrong. Inform and use the alternative getNameForObject() method
+            debugging('Sequence name for table ' . $table->getName() . ' not found', DEBUG_DEVELOPER);
+            $generator = new XMLDBoci8po();
+            $generator->setPrefix($CFG->prefix);
+            $seqname = $generator->getNameForObject($table, $primarykey, 'seq');
+        }
         if ($nextval = (int)get_field_sql("SELECT $seqname.NEXTVAL from dual")) {
             $dataobject->{$primarykey} = $nextval;
         }
@@ -1120,10 +1125,26 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
         oracle_dirty_hack($table, $dataobject); // Convert object to the correct "empty" values for Oracle DB
     }
 /// End DIRTY HACK
+
+/// Under Oracle we have our own insert record process
+/// detect all the clob/blob fields and change their contents to @#CLOB#@ and @#BLOB#@
+/// saving them into $foundclobs and $foundblobs [$fieldname]->contents
+    if ($CFG->dbtype == 'oci8po' && !empty($dataobject->{$primarykey})) {
+        $foundclobs = array();
+        $foundblobs = array();
+        ///TODO
+    }
     
 /// Get the correct SQL from adoDB
     if (!$insertSQL = $db->GetInsertSQL($rs, (array)$dataobject, true)) {
         return false;
+    }
+
+/// Under Oracle, replace all the '@#CLOB#@' and '@#BLOB#@' ocurrences to empty_clob() and empty_blob()
+/// if we know we have some of them in the query
+    if ($CFG->dbtype == 'oci8po' && !empty($dataobject->{$primarykey}) && 
+        (!empty($foundclobs) || !empty($foundblobs))) {
+        ///TODO
     }
 
 /// Run the SQL statement
@@ -1134,6 +1155,13 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
             error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $insertSQL");
         }
         return false;
+    }
+
+/// Under Oracle, finally, Update all the Clobs and Blobs present in the record
+/// if we know we have some of them in the query
+    if ($CFG->dbtype == 'oci8po' && !empty($dataobject->{$primarykey}) && 
+        (!empty($foundclobs) || !empty($foundblobs))) {
+        //TODO
     }
 
 /// If a return ID is not needed then just return true now
