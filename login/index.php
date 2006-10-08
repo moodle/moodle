@@ -175,7 +175,7 @@
 
             } else {
                 // no wantsurl stored or external - go to homepage
-                $urltogo = $CFG->wwwroot;
+                $urltogo = $CFG->wwwroot.'/';
                 unset($SESSION->wantsurl);
             }
 
