@@ -2398,6 +2398,7 @@ function assignment_print_overview($courses, &$htmlarray) {
     $strnotsubmittedyet = get_string('notsubmittedyet', 'assignment');
     $strsubmitted = get_string('submitted', 'assignment');
     $strassignment = get_string('modulename', 'assignment');
+    $strreviewed = get_string('reviewed','assignment');
 
     foreach ($assignments as $assignment) {
         $str = '<div class="assignment overview"><div class="name">'.$strassignment. ': '.
@@ -2433,6 +2434,8 @@ function assignment_print_overview($courses, &$htmlarray) {
             if ($submission = get_record_sql($sql)) {
                 if ($submission->teacher == 0 && $submission->timemarked == 0) {
                     $str .= $strsubmitted . ', ' . $strnotgradedyet;
+                } else if ($submission->grade <= 0) {
+                    $str .= $strsubmitted . ', ' . $strreviewed;
                 } else {
                     $str .= $strsubmitted . ', ' . $strgraded;
                 }

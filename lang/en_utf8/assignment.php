@@ -96,6 +96,7 @@ $string['pagesize'] = 'Submissions shown per page';
 $string['preventlate'] = 'Prevent late submissions';
 $string['quickgrade'] = 'Allow quick grading';
 $string['responsefiles'] = 'Response files';
+$string['reviewed'] = 'Reviewed';
 $string['saveallfeedback'] = 'Save all my feedback';
 $string['sendformarking'] = 'Send for marking';
 $string['submission'] = 'Submission';
