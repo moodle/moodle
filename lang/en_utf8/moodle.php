@@ -1113,6 +1113,7 @@ $string['resetinfo'] = 'This page allows you to empty a course of user data, whi
 $string['resetstartdate'] = 'Reset start date';
 $string['resettodefaults'] = 'Reset to defaults';
 $string['resortcoursesbyname'] = 'Re-sort courses by name';
+$string['resource'] = 'Resource';
 $string['resources'] = 'Resources';
 $string['restore'] = 'Restore';
 $string['restorecancelled'] = 'Restore canceled';
