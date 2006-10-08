@@ -273,7 +273,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
     global $USER, $CONTEXT, $CFG;
 
     if (debugging() && !record_exists('capabilities', 'name', $capability)) {
-        debugging('Cabability "'.$capability.'" was not found! This should be fixed in code.');
+        debugging('Capability "'.$capability.'" was not found! This should be fixed in code.');
     }
 
     if (empty($userid) && empty($USER->capabilities)) {   // Real user, first time here
@@ -1164,6 +1164,7 @@ function create_context($contextlevel, $instanceid) {
     if (!$context = get_record('context','contextlevel',$contextlevel,'instanceid',$instanceid)) {
         if (!validate_context($contextlevel, $instanceid)) {
             debugging('Error: Invalid context creation request for level "'.s($contextlevel).'", instance "'.s($instanceid).'".');
+            debug_print_backtrace();
             return NULL;
         }
         $context = new object();
