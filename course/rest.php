@@ -31,7 +31,6 @@ if (!$course = get_record('course', 'id', $courseid)) {
 
 $PAGE = page_create_object(PAGE_COURSE_VIEW, $course->id);
 $pageblocks = blocks_setup($PAGE,BLOCKS_PINNED_BOTH);
-
 if (!empty($instanceid)) {
     $blockinstance = blocks_find_instance($instanceid, $pageblocks);
     if (!$blockinstance || $blockinstance->pageid != $course->id || $blockinstance->pagetype != 'course-view') {
@@ -57,14 +56,8 @@ switch($_SERVER['REQUEST_METHOD']) {
                     break;
      
                 case 'position':  
-                    $newblockinstance = new object;
-                    $newblockinstance->id = $blockinstance->id;
-                    $newblockinstance->position = $column;
-                    $newblockinstance->weight = $value;
-                    if (!update_record('block_instance',$newblockinstance)) {
-                        error_log('AJAX commands.php: Failed to update block with ID '.$blockinstance->id);
-                        die;
-                    }
+                    //while not entirely restful this will handle all the details of moving a block                    
+                    blocks_execute_repositioning_atomic($blockinstance, $column, $value);                    
                     break;
             }
             break;
