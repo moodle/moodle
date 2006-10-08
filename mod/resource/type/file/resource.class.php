@@ -351,6 +351,7 @@ function display() {
     $frameset = optional_param( 'frameset','' );
     if (empty($frameset) and !$embedded and !$inpopup and ($resource->options == "frame")) {
         $encoding = current_charset();
+        @header('Content-Type: text/html; charset='.$encoding);
         echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
         echo "<html dir=\"ltr\">\n";
         echo '<head>';
@@ -440,7 +441,7 @@ function display() {
             echo "<center><p>";
             echo '<object classid="CLSID:22D6f312-B0F6-11D0-94AB-0080C74C7E95"';
             echo '        codebase="http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=5,1,52,701" ';
-            echo '        standby="Loading Microsoft® Windows® Media Player components..." ';
+            echo '        standby="Loading Microsoftï¿½ Windowsï¿½ Media Player components..." ';
             echo '        id="msplayer" align="" type="application/x-oleobject">';
             echo "<param name=\"Filename\" value=\"$fullurl\">";
             echo '<param name="ShowControls" value="true" />';
