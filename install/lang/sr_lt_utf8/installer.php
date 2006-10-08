@@ -12,7 +12,7 @@
 $string['admindirerror'] = 'Specificirani administratorski direktorijum je netačan';
 $string['admindirname'] = 'Administratorski direktorijum';
 $string['admindirsettinghead'] = 'Podešavanje administratorskog direktorijuma';
-$string['admindirsettingsub'] = 'Poneki web serveri koriste /admin kao specijalni URL za pristup raznim podešavanjima ili nečem drugom. Nažalost to je u konfliktu sa standardnom Moodle lokacijom za administratorske stranice. Možete rešiti problem preimenovanjem administratorskog direktorijuma u Vašoj instalaciji, i navođenjem tog novog naziva ovde. Na primer: <br /> <br /><b>moodleadmin</b><br /> <br />
+$string['admindirsettingsub'] = 'Poneki Web serveri koriste /admin kao specijalni URL za pristup raznim podešavanjima ili nečem drugom. Nažalost to je u konfliktu sa standardnom Moodle lokacijom za administratorske stranice. Možete rešiti problem preimenovanjem administratorskog direktorijuma u Vašoj instalaciji, i navođenjem tog novog naziva ovde. Na primer: <br /> <br /><b>moodleadmin</b><br /> <br />
 Ovo podešavanje će prepraviti administratorske linkove u Moodle sistemu.';
 $string['bypassed'] = 'Izbegnuto';
 $string['cannotcreatelangdir'] = 'Nije moguće kreiranje direktorijuma jezika';
@@ -31,7 +31,7 @@ $string['closewindow'] = 'Zatvorite ovaj prozor';
 $string['compatibilitysettingshead'] = 'Provera Vaših PHP podešavanja...';
 $string['compatibilitysettingssub'] = 'Vaš server bi trebao proći sve ove testove da bi Moodle na njemu uspešno funkcionisao';
 $string['componentisuptodate'] = 'Komponenta je dostupna u svojoj najnovijoj verziji.';
-$string['configfilenotwritten'] = 'Instalacioni skript nije bio u mogućnosti da automatski kreira datoteku config.php koja bi sadržavala Vaša odabrana podešavanja, verovatno zbog toga što nema prava na pisanje (menjanje sadržaja) u Vašem Moodle direktorijumu. Ako to želite, možete ručno kopirati kod u datoteku config.php u osnovnom direktorijumu Vaše Moodle instalacije.';
+$string['configfilenotwritten'] = 'Instalacioni skript nije bio u mogućnosti da automatski kreira datoteku config.php koja bi sadržavala Vaša odabrana podešavanja, verojatno zbog toga što nema prava na pisanje (menjanje sadržaja) u Vašem Moodle direktorijumu. Ako to želite, možete ručno kopirati kod u datoteku config.php u osnovnom direktorijumu Vaše Moodle instalacije.';
 $string['configfilewritten'] = 'config.php je uspešno kreiran';
 $string['configurationcompletehead'] = 'Konfiguracija je završena';
 $string['configurationcompletesub'] = 'Moodle je pokušao da sačuva Vašu konfiguraciju u datoteci smeštenoj u korenskom direktorijumu Moodle instalacije.';
@@ -42,7 +42,7 @@ $string['databasecreationsettingssub'] = '<b>Tip:</b> postavljeno na \"mysql\" p
 <b>Server:</b> postavljeno na \"localhost\" prilikom instalacije<br />
 <b>Naziv:</b> naziv baze podataka, npr. moodle<br />
 <b>Korisnik:</b> postavljeno na \"root\" prilikom instalacije<br />
-<b>Lozinka:</b> Vaša lozinka za pristup bazi podataka<br />
+<b>Lozinka:</b> Vaša lozinka za bazu podataka<br />
 <b>Prefiks tabela:</b> opcioni prefiks koji će se koristiti u nazivima svih tabela';
 $string['databasesettingshead'] = 'Sada je potrebno konfigurisati bazu podataka u kojoj će se čuvati veći deo Moodle podataka. Ta baza podataka mora već biti kreirana, kao i korisničko ime i lozinka za pristup istoj.';
 $string['databasesettingssub'] = '<b>Tip:</b> mysql ili postgres7<br />
@@ -71,7 +71,7 @@ Vodite računa o velikim i malim slovima.
 <br />
 <br />
 <b>Direktorijum podataka:</b>
-Morate odrediti mesto na kom će Moodle čuvati učitane datoteke. Korisnik web servera (obično \'niko\' ili \'apache\') bi morao imati mogućnost da čita podatke iz tog direktorijuma, ali i da ih u njega upisuje, ali oni ne bi trebali biti dostupni direktno preko web-a.';
+Morate odrediti mesto na kom će Moodle čuvati postavljene datoteke. Korisnik web servera (obično \'niko\' ili \'apache\') bi morao imati mogućnost da čita podatke iz tog direktorijuma, ali i da ih u njega upisuje, ali oni ne bi trebali biti dostupni direktno preko web-a.';
 $string['dirroot'] = 'Moodle direktorijum';
 $string['dirrooterror'] = 'Podešavanje \'Moodle direktorijuma\' je čini se netačno - ne može se tamo naći Moodle instalacija. Niža vrednost će biti ponovo dovedena na početni položaj.';
 $string['download'] = 'Preuzeti';
@@ -90,7 +90,7 @@ $string['environmentsub'] = 'Proverava se da li razne komponente Vašeg sistema 
 $string['environmentxmlerror'] = 'Greška u čitanju podataka okruženja ($a->error_code)';
 $string['error'] = 'Greška';
 $string['fail'] = 'Nije prošlo';
-$string['fileuploads'] = 'Katalog za učitavanja datoteka';
+$string['fileuploads'] = 'Postavljanje datoteka';
 $string['fileuploadserror'] = 'Ova opcija bi trebala biti uključena';
 $string['gdversion'] = 'GD verzija';
 $string['gdversionerror'] = 'GD datoteka sa izvornim kodom trebala bi prezentirati proces i kreirati slike';
@@ -161,5 +161,5 @@ $string['wrongdestpath'] = 'Pogrešna odredišna putanja.';
 $string['wrongsourcebase'] = 'Pogrešan izvorni URL baze.';
 $string['wrongzipfilename'] = 'Pogrešan naziv arhive.';
 $string['wwwroot'] = 'Web adresa';
-$string['wwwrooterror'] = 'Navedena \'web adresa\' se čini nevalidnom - ova Moodle instalacija izgleda nije na njoj. Vrednost navedena ispod je resetovana.';
+$string['wwwrooterror'] = 'Navedena \'Web adresa\' se čini nevalidnom - ova Moodle instalacija izgleda nije na njoj. Vrednost navedena ispod je resetovana.';
 ?>
