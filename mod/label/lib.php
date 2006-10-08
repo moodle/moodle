@@ -10,10 +10,11 @@ function label_add_instance($label) {
 /// (defined by the form in mod.html) this function 
 /// will create a new instance and return the id number 
 /// of the new instance.
+    $textlib = textlib_get_instance();
 
     $label->name = addslashes(strip_tags(format_string(stripslashes($label->content),true)));
-    if (strlen($label->name) > LABEL_MAX_NAME_LENGTH) {
-        $label->name = substr($label->name, 0, LABEL_MAX_NAME_LENGTH)."...";
+    if ($textlib->strlen($label->name, current_charset()) > LABEL_MAX_NAME_LENGTH) {
+        $label->name = $textlib->substr($label->name, 0, LABEL_MAX_NAME_LENGTH, current_charset())."...";
     }
     $label->timemodified = time();
 
@@ -25,10 +26,11 @@ function label_update_instance($label) {
 /// Given an object containing all the necessary data, 
 /// (defined by the form in mod.html) this function 
 /// will update an existing instance with new data.
+    $textlib = textlib_get_instance();
 
     $label->name = addslashes(strip_tags(format_string(stripslashes($label->content),true)));
-    if (strlen($label->name) > LABEL_MAX_NAME_LENGTH) {
-        $label->name = substr($label->name, 0, LABEL_MAX_NAME_LENGTH)."...";
+    if ($textlib->strlen($label->name, current_charset()) > LABEL_MAX_NAME_LENGTH) {
+        $label->name = $textlib->substr($label->name, 0, LABEL_MAX_NAME_LENGTH, current_charset())."...";
     }
     $label->timemodified = time();
     $label->id = $label->instance;
