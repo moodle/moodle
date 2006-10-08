@@ -35,21 +35,20 @@
 
     if (!empty($pt)) {
 
+        require_once($CFG->dirroot.$pagetypes[$pt]['lib']);
+        
+        define('ADMIN_STICKYBLOCKS',$pt);
+        
+        $PAGE = page_create_object($pt);
+        $blocks = blocks_setup($PAGE,BLOCKS_PINNED_TRUE);
+        $blocks_preferred_width = bounded_number(180, blocks_preferred_width($blocks[BLOCK_POS_LEFT]), 210);
+
         print_header($strtitle,$strtitle,'<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/index.php">'.
                      get_string('administration').'</a> -> '.$strtitle);
     
         echo '<table border="0" cellpadding="3" cellspacing="0" width="100%" id="layout-table">';
         echo '<tr valign="top">';
 
-        require_once($CFG->dirroot.$pagetypes[$pt]['lib']);
-        
-        define('ADMIN_STICKYBLOCKS',$pt);
-        
-        $PAGE = page_create_object($pt);
-        
-        $blocks = blocks_setup($PAGE,BLOCKS_PINNED_TRUE);
-        
-        $blocks_preferred_width = bounded_number(180, blocks_preferred_width($blocks[BLOCK_POS_LEFT]), 210);
         echo '<td valign="top" style="width: '.$blocks_preferred_width.'px;" id="left-column">';
         
         blocks_print_group($PAGE, $blocks, BLOCK_POS_LEFT);
