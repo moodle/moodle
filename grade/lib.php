@@ -157,7 +157,7 @@ function grade_get_formatted_grades() {
     global $CFG;
     global $course;
     global $preferences;
-    $i = 1;
+    $i = 2; // index to differentiate activities with the same name MDL-6876
     $grades = grade_get_grades();
     if (isset($grades)) {
         // iterate through all students
@@ -179,7 +179,7 @@ function grade_get_formatted_grades() {
                             if ($instance->name != '') {                
                                 // duplicate grade item name, the user should know better than to name to things by the same name, but to make sure grades don't disappear lets modify the name slightly
                                 if (isset($all_categories["$cur_category"]["$instance->name"])) {
-                                    $instance->name= $instance->name.' *'.$i.'*';
+                                    $instance->name= $instance->name.' #'.$i++;
                                 }
 
                                 if (isset($students_grade->grades) && $students_grade->grades != '') {
