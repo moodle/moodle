@@ -39,12 +39,12 @@
     $strtopic = get_string('topic');
     $strname = get_string('name');
     $strdata = get_string('modulename','data');
+
+    print_header_simple($strdata, '', $strdata, '', '', true, "", navmenu($course));
   
     if (! $datas = get_all_instances_in_course("data", $course)) {
         notice("There are no databases", "$CFG->wwwroot/course/view.php?id=$course->id");
     }
-
-    print_header_simple($strdata, '', $strdata, '', '', true, "", navmenu($course));
 
     $timenow  = time();
     $strname  = get_string('name');
