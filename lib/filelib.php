@@ -103,6 +103,8 @@ function get_mimetypes_array() {
         'smi'  => array ('type'=>'application/smil', 'icon'=>'text.gif'),
         'smil' => array ('type'=>'application/smil', 'icon'=>'text.gif'),
         'sqt'  => array ('type'=>'text/xml', 'icon'=>'xml.gif'),
+        'svg'  => array ('type'=>'image/svg+xml', 'icon'=>'image.gif'),
+        'svgz' => array ('type'=>'image/svg+xml', 'icon'=>'image.gif'),
         'swa'  => array ('type'=>'application/x-director', 'icon'=>'flash.gif'),
         'swf'  => array ('type'=>'application/x-shockwave-flash', 'icon'=>'flash.gif'),
         'swfl' => array ('type'=>'application/x-shockwave-flash', 'icon'=>'flash.gif'),
