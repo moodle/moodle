@@ -69,7 +69,7 @@ $string['helpupload'] = '<p>This type of assignment allows each participant to u
    can be used to give each participant different file to work with.</p>
    <p>Participants may also enter notes describing the submitted files, progress status or any other text information.</p>
    <p>Submission of this type of assignment must be manually finalized by the participant. You can review the current status
-   at any time, unfinished assignments are marked af Draft. You can revert any ungraded assignment back to draft status.</p>';
+   at any time, unfinished assignments are marked as Draft. You can revert any ungraded assignment back to draft status.</p>';
 $string['helpuploadsingle'] = '<p>This type of assignment allows each participant to upload a 
    single file, of any type.</p> <p>This might be a Word processor document, an image, 
    a zipped web site, or anything you ask them to submit.</p>';
