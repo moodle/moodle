@@ -501,6 +501,32 @@ class XMLDBoci8po extends XMLDBgenerator {
     }
 
     /**
+     * Given one XMLDBTable returns one string with the sequence of the table
+     * in the table (fetched from DB)
+     * The sequence name for oracle is calculated by looking the corresponding
+     * trigger and retrieving the sequence name from it (because sequences are
+     * independent elements)
+     * If no sequence is found, returns false
+     */
+    function getSequenceFromDB($xmldb_table) {
+
+         $tablename = strtoupper($this->getTableName($xmldb_table));
+         $sequencename = false;
+
+        if ($trigger = get_record_sql("SELECT trigger_name, trigger_body
+                                         FROM user_triggers
+                                        WHERE table_name = '{$tablename}'")) {
+        /// If trigger found, regexp it looking for the sequence name
+            preg_match('/.*SELECT (.*)\.nextval/i', $trigger->trigger_body, $matches);
+            if (isset($matches[1])) {
+                $sequencename = $matches[1];
+            }
+        }
+
+        return $sequencename;
+    }
+
+    /**
      * Returns an array of reserved words (lowercase) for this DB
      */
     function getReservedWords() {

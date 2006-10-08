@@ -1035,6 +1035,19 @@ class XMLDBTable extends XMLDBObject {
         }
         return $results;
     }
+
+    /**
+     * This function will return the name of the sequence created for the pk of the table specified
+     * Just one simple wrapper over generators. Returns false if not found
+     * Note that not all DB use sequences (only Oracle and PostgreSQL)
+     */
+    function getSequenceFromDB($dbtype, $prefix) {
+
+        $classname = 'XMLDB' . $dbtype;
+        $generator = new $classname();
+        $generator->setPrefix($prefix);
+        return $generator->getSequenceFromDB($this);
+    }
 }
 
 ?>

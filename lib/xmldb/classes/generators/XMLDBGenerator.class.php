@@ -1066,6 +1066,15 @@ class XMLDBgenerator {
         }
     }
 
+    /**
+     * Returns the name (string) of the sequence used in the table for the autonumeric pk
+     * Only some DB have this implemented
+     */
+    function getSequenceFromDB($xmldb_table) {
+        return false;
+    }
+
+
 /// ALL THESE FUNCTION MUST BE CUSTOMISED BY ALL THE XMLDGenerator classes
 
     /**
