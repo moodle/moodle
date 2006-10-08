@@ -62,7 +62,7 @@
         if ($id) {
             $redirecto = $CFG->wwwroot . '/course/view.php?id=' . $id; //Course page
         } else {
-            $redirecto = $CFG->wwwroot;
+            $redirecto = $CFG->wwwroot.'/';
         }
         redirect ($redirecto, get_string('backupcancelled')); //Site page
         exit;

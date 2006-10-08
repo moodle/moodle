@@ -21,7 +21,7 @@ global $USER;
 if (isset($_SERVER['HTTP_REFERER'])) {
     $referrer = $_SERVER['HTTP_REFERER'];
 } else {
-    $referrer = $CFG->wwwroot;
+    $referrer = $CFG->wwwroot.'/';
 }
 
 

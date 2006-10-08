@@ -281,7 +281,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
     }
 
     if (empty($SESSION->wantsurl)) {
-        $SESSION->wantsurl = array_key_exists('HTTP_REFERER',$_SERVER) ? $_SERVER["HTTP_REFERER"] : $CFG->wwwroot; 
+        $SESSION->wantsurl = array_key_exists('HTTP_REFERER',$_SERVER) ? $_SERVER["HTTP_REFERER"] : $CFG->wwwroot.'/'; 
     }
 
     if (get_moodle_cookie() == '') {   
