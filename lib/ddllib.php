@@ -55,12 +55,14 @@
     require_once($CFG->libdir . '/xmldb/classes/XMLDBStatement.class.php');
 
 /// Based on $CFG->dbtype, add the proper generator class
+    if (!file_exists($CFG->libdir . '/xmldb/classes/generators/' . $CFG->dbtype . '/' . $CFG->dbtype . '.class.php')) {
+        error ('DB Type: ' . $CFG->dbtype . ' not supported by XMLDDB');
+    }
     require_once($CFG->libdir . '/xmldb/classes/generators/' . $CFG->dbtype . '/' . $CFG->dbtype . '.class.php');
+
 
 /// Add other libraries
     require_once($CFG->libdir . '/xmlize.php');
-
-
 /**
  * Add a new field to a table, or modify an existing one (if oldfield is defined).
  * Warning: Please be careful on primary keys, as this function will eat auto_increments
