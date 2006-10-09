@@ -18,6 +18,11 @@ Our changes:
  * drivers-adodb-postgres7.inc.php - removed (commented) one buggy ServerInfo() call that
        was preventing PG version detection to work. http://tracker.moodle.org/browse/MDL-6647
        Once solved by adodb guys, we'll undo this (affects to version v4.92a of ADOdb)
+ * drivers/adodb-odbc_mssql.inc.php - added one missing function (MetaIndexes) that is
+       required in order to support the driver properly. Work in progress for the annoying
+       http://tracker.moodle.org/browse/MDL-6877.
+       Once implemented by adodb guys, we'll return to their official distro.
+
  
 skodak
 30 August 2006
