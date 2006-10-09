@@ -19,6 +19,8 @@ if (!defined('_ADODB_ODBC_LAYER')) {
 	include(ADODB_DIR."/drivers/adodb-odbc.inc.php");
 }
 
+include_once(ADODB_DIR."/drivers/adodb-mssql.inc.php"); //Include mssql driver to wrap some functions
+
  
 class  ADODB_odbc_mssql extends ADODB_odbc {	
 	var $databaseType = 'odbc_mssql';
@@ -152,6 +154,12 @@ order by constraint_name, referenced_table_name, keyno";
 		if (!stristr($transaction_mode,'isolation')) $transaction_mode = 'ISOLATION LEVEL '.$transaction_mode;
 		$this->Execute("SET TRANSACTION ".$transaction_mode);
 	}
+
+    //Just wrap over mssql because this is one mssql odbc db
+    function &MetaIndexes($table,$primary=false)
+    {
+        return ADODB_mssql::MetaIndexes($table,$primary);
+    }
 	
 	// "Stein-Aksel Basma" <basma@accelero.no>
 	// tested with MSSQL 2000
