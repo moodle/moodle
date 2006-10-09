@@ -496,15 +496,18 @@ $CFG->os = PHP_OS;
 /// Load up theme variables (colours etc)
 
     if (!isset($CFG->themedir)) {
-        $CFG->themedir = $CFG->dirroot.'/theme/';
-        $CFG->themewww = $CFG->wwwroot.'/theme/';
+        $CFG->themedir = $CFG->dirroot.'/theme';
+        $CFG->themewww = $CFG->wwwroot.'/theme';
     }
+    $CFG->httpsthemewww = $CFG->themewww; 
 
     if (isset($_GET['theme'])) {
         if ($CFG->allowthemechangeonurl || confirm_sesskey()) {
-            if (!detect_munged_arguments($_GET['theme'], 0) and file_exists($CFG->themedir. $_GET['theme'])) {
-                $SESSION->theme = $_GET['theme'];
+            $themename = clean_param($_GET['theme'], PARAM_SAFEDIR);
+            if (($themename != '') and file_exists($CFG->themedir.'/'.$themename)) {
+                $SESSION->theme = $themename;
             }
+            unset($themename);
         }
     }
 

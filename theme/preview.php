@@ -4,7 +4,7 @@
 
     $preview = optional_param('preview','standard',PARAM_FILE); // which theme to show
 
-    if (!file_exists($preview)) {
+    if (!file_exists($CFG->themedir .'/'. $preview)) {
         $preview = 'standard';
     }
 

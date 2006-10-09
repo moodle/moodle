@@ -176,7 +176,7 @@
                 if (empty($THEME->custompix)) {
                     $pixpath = "$CFG->wwwroot/pix";
                 } else {
-                    $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
+                    $pixpath = "$CFG->themedir/$CFG->theme/pix";
                 }
                 echo "<a title=\"".get_string("settings")."\" href=\"$CFG->wwwroot/course/edit.php?id=$course->id\"><img".
                     " src=\"$pixpath/t/edit.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";

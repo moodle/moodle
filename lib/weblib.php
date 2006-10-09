@@ -2414,7 +2414,7 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
 
     if (!empty($forceconfig)) {        // Page wants to use the config from this theme instead
         unset($THEME);
-        include($CFG->themedir.$forceconfig.'/'.'config.php');
+        include($CFG->themedir.'/'.$forceconfig.'/'.'config.php');
     }
 
 /// If this is the standard theme calling us, then find out what sheets we need
@@ -2445,8 +2445,8 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
 /// Work out the last modified date for this theme
 
     foreach ($THEME->sheets as $sheet) {
-        if (file_exists($CFG->themedir.$themename.'/'.$sheet.'.css')) {
-            $sheetmodified = filemtime($CFG->themedir.$themename.'/'.$sheet.'.css');
+        if (file_exists($CFG->themedir.'/'.$themename.'/'.$sheet.'.css')) {
+            $sheetmodified = filemtime($CFG->themedir.'/'.$themename.'/'.$sheet.'.css');
             if ($sheetmodified > $lastmodified) {
                 $lastmodified = $sheetmodified;
             }
@@ -2504,12 +2504,12 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
     /// Actually output all the files in order.
         foreach ($files as $file) {
             echo '/***** '.$file[1].' start *****/'."\n\n";
-            @include_once($file[0].$file[1]);
+            @include_once($file[0].'/'.$file[1]);
             echo '/***** '.$file[1].' end *****/'."\n\n";
         }
     }
 
-    return $CFG->themewww.$themename;   // Only to help old themes (1.4 and earlier)
+    return $CFG->themewww.'/'.$themename;   // Only to help old themes (1.4 and earlier)
 }
 
 
@@ -2523,13 +2523,13 @@ function theme_setup($theme = '', $params=NULL) {
     }
 
 /// If the theme doesn't exist for some reason then revert to standardwhite
-    if (!file_exists($CFG->themedir. $theme .'/config.php')) {
+    if (!file_exists($CFG->themedir .'/'. $theme .'/config.php')) {
         $CFG->theme = $theme = 'standardwhite';
     }
 
 /// Load up the theme config
     $THEME = NULL;   // Just to be sure
-    include($CFG->themedir. $theme .'/config.php');  // Main config for current theme
+    include($CFG->themedir .'/'. $theme .'/config.php');  // Main config for current theme
 
 /// Put together the parameters
     if (!$params) {
@@ -2556,23 +2556,23 @@ function theme_setup($theme = '', $params=NULL) {
         $CFG->pixpath = $CFG->wwwroot .'/pix';
         $CFG->modpixpath = $CFG->wwwroot .'/mod';
     } else {
-        $CFG->pixpath = $CFG->themewww . $theme .'/pix';
-        $CFG->modpixpath = $CFG->themewww . $theme .'/pix/mod';
+        $CFG->pixpath = $CFG->themewww .'/'. $theme .'/pix';
+        $CFG->modpixpath = $CFG->themewww .'/'. $theme .'/pix/mod';
     }
 
 /// Header and footer paths
-    $CFG->header = $CFG->themedir . $theme .'/header.html';
-    $CFG->footer = $CFG->themedir . $theme .'/footer.html';
+    $CFG->header = $CFG->themedir .'/'. $theme .'/header.html';
+    $CFG->footer = $CFG->themedir .'/'. $theme .'/footer.html';
 
 /// Define stylesheet loading order
     $CFG->stylesheets = array();
     if ($theme != 'standard') {    /// The standard sheet is always loaded first
-        $CFG->stylesheets[] = $CFG->themewww.'standard/styles.php'.$paramstring;
+        $CFG->stylesheets[] = $CFG->themewww.'/standard/styles.php'.$paramstring;
     }
     if (!empty($THEME->parent)) {  /// Parent stylesheets are loaded next
-        $CFG->stylesheets[] = $CFG->themewww.$THEME->parent.'/styles.php'.$paramstring;
+        $CFG->stylesheets[] = $CFG->themewww.'/'.$THEME->parent.'/styles.php'.$paramstring;
     }
-    $CFG->stylesheets[] = $CFG->themewww.$theme.'/styles.php'.$paramstring;
+    $CFG->stylesheets[] = $CFG->themewww.'/'.$theme.'/styles.php'.$paramstring;
 
 }
 

@@ -20,11 +20,11 @@ if (isset($THEME->chameleonenabled) && $THEME->chameleonenabled) {
         $chameleon_theme = (isset($CFG->coursetheme)) ? $CFG->coursetheme : current_theme();
 ?>
 
-<style type="text/css"> @import '<?php echo "$CFG->wwwroot/theme/$chameleon_theme" ?>/ui/chameleon_ui.css'; </style>
+<style type="text/css"> @import '<?php echo "$CFG->themewww/$chameleon_theme" ?>/ui/chameleon_ui.css'; </style>
 
-<script type="text/javascript" src="<?php echo "$CFG->wwwroot/theme/$chameleon_theme/ui/css_query.js" ?>"> </script>
-<script type="text/javascript" src="<?php echo "$CFG->wwwroot/theme/$chameleon_theme/ui/sarissa.js" ?>"> </script>
-<script type="text/javascript" src="<?php echo "$CFG->wwwroot/theme/$chameleon_theme/ui/chameleon_js.php$chameleon_courseparam" ?>"> </script>
+<script type="text/javascript" src="<?php echo "$CFG->themewww/$chameleon_theme/ui/css_query.js" ?>"> </script>
+<script type="text/javascript" src="<?php echo "$CFG->themewww/$chameleon_theme/ui/sarissa.js" ?>"> </script>
+<script type="text/javascript" src="<?php echo "$CFG->themewww/$chameleon_theme/ui/chameleon_js.php$chameleon_courseparam" ?>"> </script>
 
 <?php
     }

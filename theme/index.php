@@ -23,7 +23,7 @@
 
 
     if ($choose and confirm_sesskey()) {
-        if (!is_dir($choose)) {
+        if (!is_dir($CFG->themedir .'/'. $choose)) {
             error("This theme is not installed!");
         }
         if (set_config("theme", $choose)) {
@@ -64,11 +64,11 @@
 
         unset($THEME);
 
-        if (!file_exists($CFG->themedir.$theme.'/config.php')) {   // bad folder
+        if (!file_exists($CFG->themedir.'/'.$theme.'/config.php')) {   // bad folder
             continue;
         }
 
-        include($CFG->themedir.$theme.'/config.php');
+        include($CFG->themedir.'/'.$theme.'/config.php');
 
         $readme = '';
         $screenshot = '';
@@ -76,10 +76,10 @@
 
         if (file_exists("$theme/README.html")) {
             $readme =  '<li>'.
-            link_to_popup_window('/theme/'.$theme.'/README.html', $theme, $strinfo, 400, 500, '', 'none', true).'</li>';
+            link_to_popup_window($CFG->themewww .'/'. $theme .'/README.html', $theme, $strinfo, 400, 500, '', 'none', true).'</li>';
         } else if (file_exists("$theme/README.txt")) {
             $readme =  '<li>'.
-            link_to_popup_window('/theme/'.$theme.'/README.txt', $theme, $strinfo, 400, 500, '', 'none', true).'</li>';
+            link_to_popup_window($CFG->themewww .'/'. $theme .'/README.txt', $theme, $strinfo, 400, 500, '', 'none', true).'</li>';
         }
         if (file_exists("$theme/screenshot.png")) {
             $screenshotpath = "$theme/screenshot.png";

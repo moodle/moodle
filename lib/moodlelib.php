@@ -4670,11 +4670,11 @@ function get_list_of_themes() {
     }
 
     foreach ($themelist as $key => $theme) {
-        if (!file_exists("$CFG->dirroot/theme/$theme/config.php")) {   // bad folder
+        if (!file_exists("$CFG->themedir/$theme/config.php")) {   // bad folder
             continue;
         }
         unset($THEME);    // Note this is not the global one!!  :-)
-        include("$CFG->dirroot/theme/$theme/config.php");
+        include("$CFG->themedir/$theme/config.php");
         if (!isset($THEME->sheets)) {   // Not a valid 1.5 theme
             continue;
         }
@@ -5127,10 +5127,21 @@ function get_list_of_plugins($plugin='mod', $exclude='', $basedir='') {
     $plugins = array();
 
     if (empty($basedir)) {
-        $basedir = $CFG->dirroot .'/'. $plugin;
+
+        # This switch allows us to use the appropiate theme directory - and potentialy alternatives for other plugins
+        switch ($plugin) {
+        case "theme":
+            $basedir = $CFG->themedir;
+            break;
+
+        default:
+            $basedir = $CFG->dirroot .'/'. $plugin;
+        }
+
     } else {
         $basedir = $basedir .'/'. $plugin;
     }
+
     if (file_exists($basedir) && filetype($basedir) == 'dir') {
         $dirhandle = opendir($basedir);
         while (false !== ($dir = readdir($dirhandle))) {
@@ -5978,8 +5989,10 @@ function httpsrequired() {
     if (!empty($CFG->loginhttps)) {
         $HTTPSPAGEREQUIRED = true;
         $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
+        $CFG->httpsthemewww = str_replace('http:', 'https:', $CFG->themewww);
     } else {
         $CFG->httpswwwroot = $CFG->wwwroot;
+        $CFG->httpsthemewww = $CFG->themewww;
     }
 }
 
