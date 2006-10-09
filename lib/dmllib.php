@@ -1424,6 +1424,7 @@ function sql_order_by_text($fieldname, $numchars=32) {
 
     switch ($CFG->dbtype) {
         case 'mssql':
+        case 'odbc_mssql':
             return 'CONVERT(varchar, ' . $fieldname . ', ' . $numchars . ')';
             break;
         case 'oci8po':
@@ -1574,6 +1575,7 @@ function configure_dbconnection() {
             }
             break;
         case 'mssql':
+        case 'odbc_mssql':
         /// No need to set charset. It must be specified in the driver conf
         /// Allow quoted identifiers
             $db->Execute('SET QUOTED_IDENTIFIER ON');

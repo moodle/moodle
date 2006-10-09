@@ -44,6 +44,7 @@
       </VENDOR>
       <VENDOR name="postgres" version="7.4" />
       <VENDOR name="mssql" version="9.0" />
+      <VENDOR name="odbc_mssql" version="9.0" />
       <VENDOR name="oracle" version="9.0" />
     </DATABASE>
     <PHP version="4.3.0" level="required">
