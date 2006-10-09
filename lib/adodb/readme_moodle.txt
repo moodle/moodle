@@ -22,6 +22,10 @@ Our changes:
        required in order to support the driver properly. Work in progress for the annoying
        http://tracker.moodle.org/browse/MDL-6877.
        Once implemented by adodb guys, we'll return to their official distro.
+ * drivers/adodb-odbc_mssql.inc.php - Fixed one buggy function (ServerInfo) that was not 
+       working properly. Simplified logic (now that we are FETCH_ASSOC). Work in progress
+       for the annoying http://tracker.moodle.org/browse/MDL-6877.
+       Once fixed by adodb guys, we'll return to their official distro.
 
  
 skodak
