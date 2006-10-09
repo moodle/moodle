@@ -10,6 +10,7 @@
             }
         }
     }
+    $userdata->threshold = '0.8';
 ?>
 //
 // SCORM 1.3 API Implementation
@@ -18,23 +19,28 @@ function SCORMapi1_3() {
     // Standard Data Type Definition
     CMIString200 = '^.{0,200}$';
     CMIString250 = '^.{0,250}$';
-    CMIString1000 = '^.{0,1000}$';
+    CMILangString250 = '^([^\{][^l][^a][^n][^g][^=][^\}]|(\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\}))(.{0,250})$|^$';
+    CMIString1000 = '^.{0,1500}$';
     CMIString4000 = '^.{0,4000}$';
-    CMITime = '^(\\d{4})(-\\d{2})(-\\d{2})(T[0-2]{1}[0-9]{1}):([0-5]{1}[0-9]{1}):([0-5]{1}[0-9]{1})(\\.[0-9]{1,2})?(Z|(-?[0-1]{1}[0-9]{1})(:[0-5]{1}[0-9]{1})?)?$';
+    CMILangString4000 = '^([^\{][^l][^a][^n][^g][^=][^\}]|(\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\}))(.{0,4000})$|^$';
+    CMIString64000 = '^.{0,64000}$';
+    CMILang = '^(\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{0,8})?\})?$';
+    CMILang = '^([^\{][^l][^a][^n][^g][^=][^\}]|(\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\}))$';
+    CMITime = '^(19[7-9]{1}[0-9]{1}|20[0-2]{1}[0-9]{1}|203[0-8]{1})((-(0[1-9]{1}|1[0-2]{1}))((-(0[1-9]{1}|[1-2]{1}[0-9]{1}|3[0-1]{1}))(T([0-1]{1}[0-9]{1}|2[0-3]{1})((:[0-5]{1}[0-9]{1})((:[0-5]{1}[0-9]{1})((\\.[0-9]{1,2})((Z|([+|-]([0-1]{1}[0-9]{1}|2[0-3]{1})))(:[0-5]{1}[0-9]{1})?)?)?)?)?)?)?)?$';
     CMITimespan = '^P(\\d+Y)?(\\d+M)?(\\d+D)?(T(\\d+H)?(\\d+M)?(\\d+(\.\\d{1,2})?S)?)?$';
     CMIInteger = '^\\d+$';
     CMISInteger = '^-?([0-9]+)$';
-    CMIDecimal = '^-?([0-9]{0,3})(\\.[0-9]{1,7})?$';
-    CMIIdentifier = '^\\w{1,200}$';
-    CMILongIdentifier = '^\\w{1,4000}$';
+    CMIDecimal = '^-?([0-9]{1,4})(\\.[0-9]{1,18})?$';
+    CMIIdentifier = '^\\S{1,200}$';
+    CMILongIdentifier = '^\\S{1,4000}$';
     CMIFeedback = CMIString200; // This must be redefined
     CMIIndex = '[._](\\d+).';
     // Vocabulary Data Type Definition
     CMICStatus = '^completed$|^incomplete$|^not attempted$|^unknown$';
     CMISStatus = '^passed$|^failed$|^unknown$';
-    CMIExit = '^time-out$|^suspend$|^logout$|^$';
-    CMIType = '^true-false$|^choice$|^fill-in$|^matching$|^performance$|^sequencing$|^likert$|^numeric$';
-    CMIResult = '^correct$|^wrong$|^unanticipated$|^neutral$|^([0-9]{0,3})?(\\.[0-9]{1,2})?$';
+    CMIExit = '^time-out$|^suspend$|^logout$|^normal$|^$';
+    CMIType = '^true-false$|^choice$|^(long)?fill-in$|^matching$|^performance$|^sequencing$|^likert$|^numeric$|^other$';
+    CMIResult = '^correct$|^incorrect$|^unanticipated$|^neutral$|^-?([0-9]{1,4})?(\\.[0-9]{1,18})?$';
     NAVEvent = '^previous$|^continue$';
     // Children lists
     cmi_children = '_version, comments_from_learner, comments_from_lms, completion_status, credit, entry, exit, interactions, launch_data, learner_id, learner_name, learner_preference, location, max_time_allowed, mode, objectives, progress_measure, scaled_passing_score, score, session_time, success_status, suspend_data, time_limit_action, total_time';
@@ -56,14 +62,14 @@ function SCORMapi1_3() {
         'cmi._version':{'defaultvalue':'1.0', 'mod':'r'},
         'cmi.comments_from_learner._children':{'defaultvalue':comments_children, 'mod':'r'},
         'cmi.comments_from_learner._count':{'mod':'r', 'defaultvalue':'0'},
-        'cmi.comments_from_learner.n.comment':{'format':CMIString4000, 'mod':'rw'},
+        'cmi.comments_from_learner.n.comment':{'format':CMILangString4000, 'mod':'rw'},
         'cmi.comments_from_learner.n.location':{'format':CMIString250, 'mod':'rw'},
         'cmi.comments_from_learner.n.timestamp':{'format':CMITime, 'mod':'rw'},
         'cmi.comments_from_lms._children':{'defaultvalue':comments_children, 'mod':'r'},
         'cmi.comments_from_lms._count':{'mod':'r', 'defaultvalue':'0'},
-        'cmi.comments_from_lms.n.comment':{'format':CMIString4000, 'mod':'r'},
+        'cmi.comments_from_lms.n.comment':{'format':CMILangString4000, 'mod':'r'},
         'cmi.comments_from_lms.n.location':{'format':CMIString250, 'mod':'r'},
-        'cmi.comments_from_lms.n.date_time':{'format':CMITime, 'mod':'r'},
+        'cmi.comments_from_lms.n.timestamp':{'format':CMITime, 'mod':'r'},
         'cmi.completion_status':{'defaultvalue':'<?php echo isset($userdata->{'cmi.completion_status'})?$userdata->{'cmi.completion_status'}:'unknown' ?>', 'format':CMICStatus, 'mod':'rw'},
         'cmi.completion_threshold':{'defaultvalue':<?php echo isset($userdata->threshold)?'\''.$userdata->threshold.'\'':'null' ?>, 'mod':'r'},
         'cmi.credit':{'defaultvalue':'<?php echo isset($userdata->credit)?$userdata->credit:'' ?>', 'mod':'r'},
@@ -82,13 +88,13 @@ function SCORMapi1_3() {
         'cmi.interactions.n.learner_response':{'pattern':CMIIndex, 'format':CMIFeedback, 'mod':'rw'},
         'cmi.interactions.n.result':{'pattern':CMIIndex, 'format':CMIResult, 'mod':'rw'},
         'cmi.interactions.n.latency':{'pattern':CMIIndex, 'format':CMITimespan, 'mod':'rw'},
-        'cmi.interactions.n.description':{'pattern':CMIIndex, 'format':CMIString250, 'mod':'rw'},
+        'cmi.interactions.n.description':{'pattern':CMIIndex, 'format':CMILangString250, 'mod':'rw'},
         'cmi.launch_data':{'defaultvalue':<?php echo isset($userdata->datafromlms)?'\''.$userdata->datafromlms.'\'':'null' ?>, 'mod':'r'},
         'cmi.learner_id':{'defaultvalue':'<?php echo $userdata->student_id ?>', 'mod':'r'},
         'cmi.learner_name':{'defaultvalue':'<?php echo addslashes($userdata->student_name) ?>', 'mod':'r'},
         'cmi.learner_preference._children':{'defaultvalue':student_preference_children, 'mod':'r'},
         'cmi.learner_preference.audio_level':{'defaultvalue':'0', 'format':CMIDecimal, 'range':audio_range, 'mod':'rw'},
-        'cmi.learner_preference.language':{'defaultvalue':'', 'format':CMIString250, 'mod':'rw'},
+        'cmi.learner_preference.language':{'defaultvalue':'', 'format':CMILang, 'mod':'rw'},
         'cmi.learner_preference.delivery_speed':{'defaultvalue':'0', 'format':CMIDecimal, 'range':speed_range, 'mod':'rw'},
         'cmi.learner_preference.audio_caption':{'defaultvalue':'0', 'format':CMISInteger, 'range':text_range, 'mod':'rw'},
         'cmi.location':{'defaultvalue':<?php echo isset($userdata->{'cmi.location'})?'\''.$userdata->{'cmi.location'}.'\'':'null' ?>, 'format':CMIString1000, 'mod':'rw'},
@@ -104,7 +110,7 @@ function SCORMapi1_3() {
         'cmi.objectives.n.score.max':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'mod':'rw'},
         'cmi.objectives.n.success_status':{'defaultvalue':'unknown', 'pattern':CMIIndex, 'format':CMISStatus, 'mod':'rw'},
         'cmi.objectives.n.completion_status':{'defaultvalue':'unknown', 'pattern':CMIIndex, 'format':CMISStatus, 'mod':'rw'},
-        'cmi.objectives.n.description':{'pattern':CMIIndex, 'format':CMIString250, 'mod':'rw'},
+        'cmi.objectives.n.description':{'pattern':CMIIndex, 'format':CMILangString250, 'mod':'rw'},
         'cmi.progress_measure':{'defaultvalue':'<?php echo isset($userdata->{'cmi.progess_measure'})?$userdata->{'cmi.progress_measure'}:'' ?>', 'format':CMIDecimal, 'range':progress_range, 'mod':'rw'},
         'cmi.scaled_passing_score':{'defaultvalue':<?php echo isset($userdata->mnm)?'\''.$userdata->mnm.'\'':'null' ?>, 'format':CMIDecimal, 'range':scaled_range, 'mod':'r'},
         'cmi.score._children':{'pattern':CMIIndex, 'mod':'r'},
@@ -114,7 +120,7 @@ function SCORMapi1_3() {
         'cmi.score.max':{'defaultvalue':'<?php echo isset($userdata->{'cmi.score.max'})?$userdata->{'cmi.score.max'}:'' ?>', 'format':CMIDecimal, 'mod':'rw'},
         'cmi.session_time':{'format':CMITimespan, 'mod':'w', 'defaultvalue':'PT0H0M0S'},
         'cmi.success_status':{'defaultvalue':'<?php echo isset($userdata->{'cmi.success_status'})?$userdata->{'cmi.success_status'}:'unknown' ?>', 'format':CMISStatus, 'mod':'rw'},
-        'cmi.suspend_data':{'defaultvalue':<?php echo isset($userdata->{'cmi.suspend_data'})?'\''.$userdata->{'cmi.suspend_data'}.'\'':'null' ?>, 'format':CMIString4000, 'mod':'rw'},
+        'cmi.suspend_data':{'defaultvalue':<?php echo isset($userdata->{'cmi.suspend_data'})?'\''.$userdata->{'cmi.suspend_data'}.'\'':'null' ?>, 'format':CMIString64000, 'mod':'rw'},
         'cmi.time_limit_action':{'defaultvalue':<?php echo isset($userdata->timelimitaction)?'\''.$userdata->timelimitaction.'\'':'null' ?>, 'mod':'r'},
         'cmi.total_time':{'defaultvalue':'<?php echo isset($userdata->{'cmi.total_time'})?$userdata->{'cmi.total_time'}:'PT0H0M0S' ?>', 'mod':'r'},
         'nav.event':{'defaultvalue':'', 'format':NAVEvent, 'mod':'w'}
@@ -270,13 +276,17 @@ function SCORMapi1_3() {
                             subelement += '.'+elementIndexes[i++];
                         }
                         if (subelement == element) {
-                            errorCode = "0";
-                            <?php 
-                                if (debugging('',DEBUG_DEVELOPER)) {
-                                    echo 'alert("GetValue("+element+") -> "+eval(element));';
-                                }
-                            ?>
-                            return eval(element);
+                            if ((typeof eval(subelement) != "undefined") && (eval(subelement) != null)) {
+                                errorCode = "0";
+                                <?php 
+                                    if (debugging('',DEBUG_DEVELOPER)) {
+                                        echo 'alert("GetValue("+element+") -> "+eval(element));';
+                                    }
+                                ?>
+                                return eval(element);
+                            } else {
+                                errorCode = "403";
+                            }
                         } else {
                             errorCode = "301";
                         }
@@ -342,7 +352,7 @@ function SCORMapi1_3() {
                             if (element != elementmodel) {
                                 elementIndexes = element.split('.');
                                 subelement = 'cmi';
-                                for (i=1;i < elementIndexes.length-1;i++) {
+                                for (i=1;(i < elementIndexes.length-1) && (errorCode=="0");i++) {
                                     elementIndex = elementIndexes[i];
                                     if (elementIndexes[i+1].match(/^\d+$/)) {
                                         if ((typeof eval(subelement+'.'+elementIndex)) == "undefined") {
@@ -376,15 +386,12 @@ function SCORMapi1_3() {
                                             eval(subelement+'.objectives._count = 0;');
                                             eval(subelement+'.correct_responses = new Object();');
                                             eval(subelement+'.correct_responses._count = 0;');
-                                        }
-                                        if (subelement.substr(0,25) == 'cmi.comments_from_learner') {
-                                            eval(subelement+'.comment = "";');
-                                            eval(subelement+'.location = "";');
-                                            eval(subelement+'.timestamp = "";');
-                                        }
+                                        } 
                                     }
                                 }
-                                element = subelement.concat('.'+elementIndexes[elementIndexes.length-1]);
+                                if (errorCode == "0") {
+                                    element = subelement.concat('.'+elementIndexes[elementIndexes.length-1]);
+                                }
                             }
                             //Store data
                             if (errorCode == "0") {
