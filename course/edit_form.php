@@ -204,7 +204,9 @@
                             "((this.selectedIndex==0)?true:false);"));
         $mods = array(0=>get_string('allownone'));
         $mods += get_records_menu("modules", '','','','id, name');
-        $disabled=($mform->exportValue('restrictmodules')===0) ? array('disabled' => 'disabled') : array();
+        $disabled=($mform->exportValue('restrictmodules')==1) ? array() :array('disabled' => 'disabled') ;
+        
+        
         $mform->addElement('select', 'allowedmods', get_string("to"),$mods,
                         array('multiple'=>"multiple", 'size'=>"10", 'id'=>"allowedmods")
                                 +$disabled);

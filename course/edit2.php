@@ -164,9 +164,9 @@
     if(!isset($default->defaultrole)) {
         $default->defaultrole = 0;  // Use site default
     }
-    include("edit_form.php");
     $mform->setDefaults((array)$default);
-    
+    include("edit_form.php");
+            
 /*    //setconstant overrides data coming from the form as well as default
     //we use this to pass data into the form which we've already processed.
     $mform->setConstants(array('id'=>$id,
