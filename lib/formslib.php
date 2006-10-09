@@ -285,7 +285,6 @@ class moodleform_renderer extends HTML_QuickForm_Renderer_Tableless{
     */
     var $_requiredNoteTemplate = 
         "\n\t\t<div class=\"fdescription\">{requiredNote}</div>";
-    var $_htmleditors=array();
     function moodleform_renderer(){
         // switch next two lines for ol li containers for form items.
         //        $this->_elementTemplates=array('default'=>"\n\t\t<li class=\"fitem\"><label>{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"qfelement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></li>");
