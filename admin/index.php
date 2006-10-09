@@ -289,11 +289,6 @@
         notice(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'), 'index.php', 'none');
     }
 
-/// Send $CFG->unicodedb to DB to have it available for next requests
-    set_config('unicodedb', $CFG->unicodedb);
-
-
-
 /// Find and check all main modules and load them up or upgrade them if necessary
 /// first old *.php update and then the new upgrade.php script
     upgrade_activity_modules("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
