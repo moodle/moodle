@@ -18,7 +18,7 @@
  
     $tcourseids = '';
  
-    if ($teachers = get_user_capability_course('moodle/course:edit')) {
+    if ($teachers = get_user_capability_course('moodle/course:update')) {
         foreach ($teachers as $teacher) {
             if ($teacher->id != $course->id && $teacher->id != SITEID){
                 $tcourseids .= $teacher->id.',';

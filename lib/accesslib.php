@@ -2867,7 +2867,7 @@ function get_user_capability_course($capability, $userid='') {
     $courses = get_records_select('course', '', '', 'id, id');
 
     foreach ($courses as $course) {
-        if (has_capability($capability, get_context_capability(CONTEXT_COURSE, $course->id))) {
+        if (has_capability($capability, get_context_instance(CONTEXT_COURSE, $course->id))) {
             $usercourses[] = $course;
         }
     }
