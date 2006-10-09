@@ -177,10 +177,9 @@
 
 /// If data submitted, then process and store.
 
-    if ($mform->validate()) {
+    if ($fromform=$mform->data_submitted()) {
 
-        $fromform=(object)$mform->exportValues();
-
+        
         if (!empty($fromform->enrolstartdisabled)){
             $fromform->enrolstartdate = 0;
         }

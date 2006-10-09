@@ -199,6 +199,37 @@ class moodleform extends HTML_QuickForm_DHTMLRulesTableless{
             return $unfiltered;
         }
     }
+    /**
+     * Initializes a default form value
+     *
+     * @param     string   $elementname        element name
+     * @param     mixed    $values             values for that element name
+     * @param     mixed    $filter             (optional) filter(s) to apply to default value
+     * @access    public
+     * @return    void
+     */
+    function setDefault($elementName='', $defaultValue = null, $filter = null){
+        $this->setDefaults(array($elementName =>$defaultValue), $filter);
+    } // end func setDefault
+    /**
+     * Returns 'safe' elements' values
+     *
+     * Unlike getSubmitValues(), this will return only the values 
+     * corresponding to the elements present in the form.
+     * This function also runs validate() and returns false if the form doesn't validate
+     * 
+     * @param   mixed   Array/string of element names, whose values we want. If not set then return all elements.
+     * @access  public
+     * @return  object   An object with property values set to elements' values
+     * @throws  HTML_QuickForm_Error
+     */
+    function data_submitted($elementList = null, $addslashes=true){
+        if (!$this->validate()){
+            return false;
+        }else{
+            return (object)$this->exportValues($elementList, $addslashes);
+        }
+    }
 }
 
 /**
@@ -310,7 +341,12 @@ class moodleform_renderer extends HTML_QuickForm_Renderer_Tableless{
             
         }
         $this->_templates[$element->getName()]=$html;
-        $element->updateAttributes(array('id'=>'id_'.$element->getAttribute('id')));
+        if (!is_null($element->getAttribute('id'))) {
+            $id = $element->getAttribute('id');
+        } else {
+            $id = $element->getName();
+        }
+        $element->updateAttributes(array('id'=>'id_'.$id));
         parent::renderElement($element, $required, $error);
     }
 
