@@ -43,7 +43,7 @@
         <BYPASS function="bypass_mysql416_reqs" message="mysql416bypassed" />
       </VENDOR>
       <VENDOR name="postgres" version="7.4" />
-      <VENDOR name="mssql" version="8.0" />
+      <VENDOR name="mssql" version="9.0" />
       <VENDOR name="oracle" version="9.0" />
     </DATABASE>
     <PHP version="4.3.0" level="required">
