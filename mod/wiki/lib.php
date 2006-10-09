@@ -448,23 +448,28 @@ function wiki_get_entry(&$wiki, &$course, $userid=0, $groupid=0) {
     case 'group':
         /// If there is a groupmode, get the user's group id.
         $groupmode = groupmode($course, $wiki);
-        //echo "groupid is in wiki_get_entry ".$groupid."<br />";
-        /// If a specific group was requested, return it, if allowed.
-        if ($groupid and wiki_user_can_access_group_wiki($wiki, $groupid, $course)) {
-            $wentry = wiki_get_group_entry($wiki, $groupid);
-        }
-        else if ($groupmode) {
-            $mygroupids = mygroupid($course->id);
-            /// If there is no entry for this user, check if this user is a teacher.
-            //this is broken for multiple groups /*mygroupid($course->id)*/
-            //while ($groupindex < size(mygroupids) AND !$wentry = wiki_get_group_entry($))
-            if (!$wentry = wiki_get_group_entry($wiki, $mygroupids[0])){//always default to first group it returns, can change later!
-    /*  if (wiki_is_teacher($wiki, $USER->id)) {
-                    /// If this user is a teacher, return the first entry.
-                    if ($wentries = wiki_get_entries($wiki)) {
-                        $wentry = current($wentries);
-                    }
-                } */
+        if($groupmode) {
+            if(!$groupid) {
+                if(($mygroupids=mygroupid($course->id)) && count($mygroupids)>0) {
+                    // Use first group. They ought to be able to change later
+                    $groupid=$mygroupids[0];
+                } else {
+                    // Whatever groups are in the course, pick one
+                    $coursegroups=get_records('groups','courseid',$course->id,'','id,name');
+                    if(!$coursegroups || count($coursegroups)==0) {
+                        error("Can't access wiki in group mode when no groups are configured for the course"); 
+                    } 
+                    $unkeyed=array_values($coursegroups); // Make sure first item is index 0
+                    $groupid=$unkeyed[0]->id;
+                }
+            }
+        
+            //echo "groupid is in wiki_get_entry ".$groupid."<br />";
+            /// If a specific group was requested, return it, if allowed.
+            if ($groupid and wiki_user_can_access_group_wiki($wiki, $groupid, $course)) {
+                $wentry = wiki_get_group_entry($wiki, $groupid);
+            } else {
+                error("Cannot access any groups for this wiki");
             }
         }
         /// If mode is 'nogroups', then groupid is zero.

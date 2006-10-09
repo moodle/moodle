@@ -283,7 +283,7 @@
     echo '    <div id="wikiPageActions">
     ';
     /// The top row contains links to other wikis, if applicable.
-    if ($wiki_list = wiki_get_other_wikis($wiki, $USER, $course, $wiki_entry->id)) {
+    if ($wiki_entry && $wiki_list = wiki_get_other_wikis($wiki, $USER, $course, $wiki_entry->id)) {
         //echo "wiki list ";print_r($wiki_list);
         $selected="";
         
@@ -347,7 +347,7 @@
     <div id="wiki-view" class="mwiki">
     ';
 
-    if($ewiki_title==$wiki_entry->pagename && !empty($wiki->summary)) {
+    if($wiki_entry && $ewiki_title==$wiki_entry->pagename && !empty($wiki->summary)) {
       if (trim(strip_tags($wiki->summary))) {
           print_simple_box(format_text($wiki->summary, FORMAT_MOODLE), 'center', '70%', '', 5, 'generalbox', 'intro');
       }
@@ -400,7 +400,7 @@
     /// actions will have the form [action]/[pagename]. If the action is 'view' or the  '/'
     /// isn't there (so the action defaults to 'view'), filter it.
     /// If the page does not yet exist, the display will default to 'edit'.
-    if((count($actions) < 2 || $actions[0] == "view") &&
+    if((count($actions) < 2 || $actions[0] == "view") && $wiki_entry && 
         record_exists('wiki_pages', 'pagename', addslashes($page), 'wiki', $wiki_entry->id)) {
         print(format_text($content, $moodle_format));
     } else if($actions[0]=='edit' && $reallyedit) {
