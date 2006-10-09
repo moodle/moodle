@@ -49,15 +49,13 @@ class  ADODB_odbc_mssql extends ADODB_odbc {
 	}
 
 	// crashes php...
+    //Note replaced by some different code to allow it to work properly
+    //for Moode environmental checks
 	function ServerInfo()
 	{
-	global $ADODB_FETCH_MODE;
-		$save = $ADODB_FETCH_MODE;
-		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 		$row = $this->GetRow("execute sp_server_info 2");
-		$ADODB_FETCH_MODE = $save;
-		if (!is_array($row)) return false;
-		$arr['description'] = $row[2];
+
+		$arr['description'] = $row['attribute_value'];
 		$arr['version'] = ADOConnection::_findvers($arr['description']);
 		return $arr;
 	}
@@ -76,7 +74,6 @@ class  ADODB_odbc_mssql extends ADODB_odbc {
 	// they are in the same stored procedure, function, or batch.
 			return $this->GetOne($this->identitySQL);
 	}
-	
 	
 	function MetaForeignKeys($table, $owner=false, $upper=false)
 	{
