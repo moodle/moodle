@@ -4341,12 +4341,6 @@ function forum_delete_userdata($data, $showfeedback=true) {
             notify($strreset.': '.get_string('namenews','forum'), 'notifysuccess');
         }
     }
-    if (!empty($data->reset_forum_teacher)) {
-        $select = "$sql and f.type = 'teacher' ";
-        if (execute_sql($select, false) and $showfeedback) {
-            notify($strreset.': '.get_string('nameteacher','forum'), 'notifysuccess');
-        }
-    }
     if (!empty($data->reset_forum_single)) {
         $select = "$sql and f.type = 'single' and fp.parent > 0 ";
         if (execute_sql($select, false) and $showfeedback) {
@@ -4383,7 +4377,6 @@ function forum_delete_userdata($data, $showfeedback=true) {
 function forum_reset_course_form($course) {
     echo get_string('resetforums', 'forum'); echo ':<br />';
     print_checkbox('reset_forum_news', 1, true, get_string('namenews','forum'), '', '');  echo '<br />';
-    print_checkbox('reset_forum_teacher', 1, true, get_string('nameteacher','forum'), '', '');  echo '<br />';
     print_checkbox('reset_forum_single', 1, true, get_string('singleforum','forum'), '', '');  echo '<br />';
     print_checkbox('reset_forum_eachuser', 1, true, get_string('eachuserforum','forum'), '', '');  echo '<br />';
     print_checkbox('reset_forum_general', 1, true, get_string('generalforum','forum'), '', '');  echo '<br />';
