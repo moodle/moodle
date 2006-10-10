@@ -60,122 +60,15 @@
     }
 
 
-/// For moodleform we reconstruct all the data about the form after submission before we
-/// extract data submitted. So we can then tell for select, checkbox and radio fields what
-/// options could have been submitted by the form eg submitted value for a single selection
-/// select field must be one of the options of the select field.
 
-// $default will be used for the default value of a field if no data has been submitted.
-
-    if (!empty($course)) {
-        $default = $course;
-        $default->allowedmods = array();
-        if ($am = get_records("course_allowed_modules","course",$course->id)) {
-            foreach ($am as $m) {
-                $default->allowedmods[] = $m->module;
-            }
-        } else {
-            if (empty($course->restrictmodules)) {
-                $default->allowedmods = explode(',',$CFG->defaultallowedmodules);
-            } // it'll be greyed out but we want these by default anyway.
-        }        
-    } else {
-        $default->startdate = time() + 3600 * 24;
-        $default->fullname = get_string("defaultcoursefullname");
-        $default->shortname = get_string("defaultcourseshortname");
-        $default->summary = get_string("defaultcoursesummary");
-        $default->format = "weeks";
-        $default->password = "";
-        $default->guest = 0;
-        $default->numsections = 10;
-        $default->idnumber = '';
-        $default->cost = '';
-        $default->currency = empty($CFG->enrol_currency) ? 'USD' : $CFG->enrol_currency;
-        $default->newsitems = 5;
-        $default->showgrades = 1;
-        $default->groupmode = 0;
-        $default->groupmodeforce = 0;
-        $default->category = $category;
-        $default->id = "";
-        $default->visible = 1;
-        $default->allowedmods = array();
-        if ($CFG->restrictmodulesfor == 'all') {
-            $default->allowedmods = explode(',',$CFG->defaultallowedmodules);
-            if (!empty($CFG->restrictbydefault)) {
-                $default->restrictmodules = 1;
-            }
-        }
-
-
-    }
-
-    // Make sure all variables are defined
-    if (!isset($default->showreports)) {
-        $default->showreports = 0;
-    }
-    if (!isset($default->maxbytes)) {
-        $default->maxbytes = 0;
-    }
-    if (!isset($default->hiddensections)) {
-        $default->hiddensections = 0;
-    }
-    if (!isset($default->lang)) {
-        $default->lang = '';
-    }
-    if (!isset($default->theme)) {
-        $default->theme = '';
-    }
-    if (!isset($default->enrol)) {
-        $default->enrol = '';
-    }
-    if (!isset($default->enrollable)) {
-        $default->enrollable = 1;
-    }
-    if (!isset($default->enrolstartdate)) {
-        $default->enrolstartdate = 0;
-    }
-    if (!$default->enrolstartdate) {
-        $default->enrolstartdisabled = 1;
-    }
-    if (!isset($default->enrolenddate)) {
-        $default->enrolenddate = 0;
-    }
-    if (!$default->enrolenddate) {
-        $default->enrolenddisabled = 1;
-    }
-    if (!isset($default->enrolperiod)) {
-        $default->enrolperiod = 0;
-    }
-    if (!isset($default->expirynotify)) {
-        $default->expirynotify = 0;
-    }
-    if (!isset($default->notifystudents)) {
-        $default->notifystudents = 0;
-    }
-    if (!isset($default->expirythreshold)) {
-        $default->expirythreshold = 10 * 86400;
-    }
-    if (!isset($default->metacourse)) {
-        $default->metacourse = 0;
-    }
-    if(!isset($default->restrictmodules)) {
-        $default->restrictmodules = 0;
-    }
-    if(!isset($default->defaultrole)) {
-        $default->defaultrole = 0;  // Use site default
-    }
-    $mform->setDefaults((array)$default);
     include("edit_form.php");
             
-/*    //setconstant overrides data coming from the form as well as default
-    //we use this to pass data into the form which we've already processed.
-    $mform->setConstants(array('id'=>$id,
-                            'category'=>$category));
 
-
-*/
 
 /// If data submitted, then process and store.
+// data_submitted tries to validate form data and returns false if 
+// the user inputted data is invalid and the form should be redisplayed with 
+// feedback.
 
     if ($fromform=$mform->data_submitted()) {
 
@@ -278,6 +171,7 @@
     }
 
 
+//print the form
 
     $streditcoursesettings = get_string("editcoursesettings");
     $straddnewcourse = get_string("addnewcourse");

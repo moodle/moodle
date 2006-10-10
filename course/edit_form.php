@@ -1,4 +1,54 @@
 <?php
+/// For moodleform we reconstruct all the data about the form after submission before we
+/// extract data submitted. So we can then tell for select, checkbox and radio fields what
+/// options could have been submitted by the form eg submitted value for a single selection
+/// select field must be one of the options of the select field.
+
+// $default will be used for the default value of a field if no data has been submitted.
+
+    if (!empty($course)) {
+        //this is what we do if we are editing a record from the db
+        $default = $course;
+        $default->allowedmods = array();
+        if ($am = get_records("course_allowed_modules","course",$course->id)) {
+            foreach ($am as $m) {
+                $default->allowedmods[] = $m->module;
+            }
+        } else {
+            if (empty($course->restrictmodules)) {
+                $default->allowedmods = explode(',',$CFG->defaultallowedmodules);
+            } // it'll be greyed out but we want these by default anyway.
+        }        
+    } else {
+        //this is a brand new course!
+        $default->startdate = time() + 3600 * 24;
+        $default->fullname = get_string("defaultcoursefullname");
+        $default->shortname = get_string("defaultcourseshortname");
+        $default->summary = get_string("defaultcoursesummary");
+        $default->format = "weeks";
+        $default->password = "";
+        $default->guest = 0;
+        $default->numsections = 10;
+        $default->idnumber = '';
+        $default->cost = '';
+        $default->currency = empty($CFG->enrol_currency) ? 'USD' : $CFG->enrol_currency;
+        $default->newsitems = 5;
+        $default->showgrades = 1;
+        $default->groupmode = 0;
+        $default->groupmodeforce = 0;
+        $default->category = $category;
+        $default->id = "";
+        $default->visible = 1;
+        $default->allowedmods = array();
+        if ($CFG->restrictmodulesfor == 'all') {
+            $default->allowedmods = explode(',',$CFG->defaultallowedmodules);
+            if (!empty($CFG->restrictbydefault)) {
+                $default->restrictmodules = 1;
+            }
+        }
+
+
+    }
 
     $mform->addElement('header','general', get_string("general"));
     if (has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $default->category))) { 
@@ -7,12 +57,16 @@
         make_categories_list($displaylist, $parentlist);
         $mform->addElement('select', "category", get_string("category"), $displaylist );
     }
-    
+    $mform->setDefault('fullname', $default->fullname);
     $mform->addElement('text','fullname', get_string("fullname"),'maxlength="254" size="50"');
+    $mform->setDefault('shortname', $default->shortname);
     $mform->addElement('text','shortname', get_string("shortname"),'maxlength="15" size="10"');
+    $mform->setDefault('idnumber', $default->idnumber);
     $mform->addElement('text','idnumber', get_string("idnumbercourse"),'maxlength="100"  size="10"');
+    $mform->setDefault('summary', $default->summary);
     $mform->addElement('htmleditor','summary', get_string("summary"), array('rows'=>'10', 'cols'=>'65'));
 
+    $mform->setDefault('format', $default->format);
     $courseformats = get_list_of_plugins("course/format");
     $formcourseformats = array();
 
@@ -22,17 +76,21 @@
 
     $mform->addElement('select', 'format', get_string("format"), $formcourseformats );
 
+    $mform->setDefault('numsections', $default->numsections);
     for ($i=1; $i<=52; $i++) {
       $sectionmenu[$i] = "$i";
     } 
     $mform->addElement('select', 'numsections', get_string("numberweeks"), $sectionmenu);
+    $mform->setDefault('startdate', $default->startdate);
     $mform->addElement('date_selector', 'startdate', get_string('startdate'));
 
+    $mform->setDefault('hiddensections',(isset($default->hiddensections))?$default->hiddensections:0);
     unset($choices);
     $choices["0"] = get_string("hiddensectionscollapsed");
     $choices["1"] = get_string("hiddensectionsinvisible");
     $mform->addElement('select', 'hiddensections', get_string("hiddensections"), $choices);
 
+    $mform->setDefault('newsitems', $default->newsitems);
     $newsitem = get_string("newsitem");
     $newsitems = get_string("newsitems");
     $options = array("0" => "0 $newsitems",
@@ -48,23 +106,30 @@
                     "10" => "10 $newsitems");
     $mform->addElement('select', 'newsitems', get_string("newsitemsnumber"), $options);
 
+    $mform->setDefault('showgrades', $default->showgrades);
     unset($choices);
     $choices["0"] = get_string("no");
     $choices["1"] = get_string("yes");
     $mform->addElement('select', 'showgrades', get_string("showgrades"), $choices);
     unset($choices);
+    $mform->setDefault('showreports',(isset($default->showreports))?$default->showreports:0);
     $choices["0"] = get_string("no");
     $choices["1"] = get_string("yes");
     $mform->addElement('select', 'showreports', get_string("showreports"), $choices);
+    $mform->setDefault('maxbytes',(isset($default->maxbytes))?$default->maxbytes:0);
     $choices = get_max_upload_sizes($CFG->maxbytes);
     $mform->addElement('select', 'maxbytes', get_string("maximumupload"), $choices);
     if (!empty($CFG->allowcoursethemes)) {
+        $mform->setDefault('theme',(isset($default->theme))?$default->theme:'');
+       
         $themes=array();
         $themes[''] = get_string("forceno");
         $themes += get_list_of_themes();
         $mform->addElement('select', 'theme', get_string("forcetheme"), $themes);
     }
     unset($choices);
+    $mform->setDefault('metacourse',(isset($default->metacourse))?$default->metacourse:0);
+
     if (empty($disable_meta)) {
         $meta=array();
         $meta[0] = get_string('no');
@@ -77,6 +142,7 @@
         
     }
     
+    $mform->setDefault('defaultrole',(isset($default->defaultrole))?$default->defaultrole:0);
     $roles = get_assignable_roles($context);
     asort($roles);
     $choices = array();
@@ -88,7 +154,7 @@
     }
 
     $choices = $choices + $roles;    
-    $defaultroleelement=$mform->addElement('select', 'defaultrole', get_string('defaultrole'), $choices );
+    $defaultroleelement=$mform->addElement('select', 'defaultrole', get_string('defaultrole', 'role'), $choices );
     if ($mform->exportValue('defaultrole') && !isset($roles[$mform->exportValue('defaultrole')])) {  // Existing setting is one we can't choose
         if ($coursedefaultrole = get_record('role', 'id', $mform->exportValue('defaultrole'))) {
             
@@ -100,7 +166,8 @@
     
 
     $mform->addElement('header','enrolhdr', get_string("enrolment"));
-
+    $mform->setDefault('enrol',(isset($default->enrol))?$default->enrol:'');
+       
     $modules = explode(',', $CFG->enrol_plugins_enabled);
     foreach ($modules as $module) {
         $name = get_string("enrolname", "enrol_$module");
@@ -114,22 +181,34 @@
     $choices = array_merge(array('' => get_string('sitedefault').' ('.get_string("enrolname", "enrol_$CFG->enrol").')'), $choices);
     $mform->addElement('select', 'enrol', get_string("enrolmentplugins"), $choices );
     
+    $mform->setDefault('enrollable',(isset($default->enrollable))?$default->enrollable:1);
     $radio = array();
     $radio[] = &moodleform::createElement('radio', 'enrollable', null, get_string("no"), 0);
     $radio[] = &moodleform::createElement('radio', 'enrollable', null, get_string("yes"), 1);
     $radio[] = &moodleform::createElement('radio', 'enrollable', null, get_string("enroldate"), 2);
     $mform->addGroup($radio, 'enrollable', get_string("enrollable"), ' ', false);
     
+    $mform->setDefault('enrolstartdate',(isset($default->enrolstartdate))?$default->enrolstartdate:0);
+    $mform->setDefault('enrolstartdisabled',
+                            (!isset($default->enrolstartdate)||
+                                (isset($default->enrolstartdate)&&!$default->enrolstartdate)
+                            ?1:0));
     $enroldatestartgrp = array();
     $enroldatestartgrp[] = &moodleform::createElement('date_selector', 'enrolstartdate');
     $enroldatestartgrp[] = &moodleform::createElement('checkbox', 'enrolstartdisabled', null, get_string('disable'));
     $mform->addGroup($enroldatestartgrp, '', get_string('enrolstartdate'), ' ', false);
     
+    $mform->setDefault('enrolenddate',(isset($default->enrolenddate))?$default->enrolenddate:0);
+    $mform->setDefault('enrolenddisabled',
+                            (!isset($default->enrolenddate)||
+                                (isset($default->enrolenddate)&&!$default->enrolenddate)
+                            ?1:0));
     $enroldateendgrp = array();
     $enroldateendgrp[] = &moodleform::createElement('date_selector', 'enrolenddate');
     $enroldateendgrp[] = &moodleform::createElement('checkbox', 'enrolenddisabled', null, get_string('disable'));
     $mform->addGroup($enroldateendgrp, 'enroldateendgrp', get_string('enrolenddate'), ' ', false);
     
+    $mform->setDefault('enrolperiod',(isset($default->enrolperiod))?$default->enrolperiod:0);
     $periodmenu=array();
     $periodmenu[0] = get_string('unlimited');
     for ($i=1; $i<=365; $i++) {
@@ -141,11 +220,14 @@
     
     $mform->addElement('header','expirynotifyhdr', get_string("expirynotify"));
     
+    $mform->setDefault('expirynotify',(isset($default->expirynotify))?$default->expirynotify:0);
     unset($choices);
     $choices["0"] = get_string("no");
     $choices["1"] = get_string("yes");
     $mform->addElement('select', 'expirynotify', get_string("expirynotify"), $choices);
+    $mform->setDefault('notifystudents',(isset($default->notifystudents))?$default->notifystudents:0);
     $mform->addElement('select', 'notifystudents', get_string("expirynotifystudents"), $choices);
+    $mform->setDefault('expirythreshold',(isset($default->expirythreshold))?$default->expirythreshold:10 * 86400);
     $thresholdmenu=array();
     for ($i=1; $i<=30; $i++) {
         $seconds = $i * 86400;
@@ -155,27 +237,37 @@
     
     
     $mform->addElement('header','', get_string("groupmode"));
+
+    $mform->setDefault('groupmode', $default->groupmode);
     unset($choices);
     $choices[NOGROUPS] = get_string("groupsnone");
     $choices[SEPARATEGROUPS] = get_string("groupsseparate");
     $choices[VISIBLEGROUPS] = get_string("groupsvisible");
     $mform->addElement('select', 'groupmode', get_string("groupmode"), $choices);
+    $mform->setDefault('groupmodeforce', $default->groupmodeforce);
     unset($choices);
     $choices["0"] = get_string("no");
     $choices["1"] = get_string("yes");
     $mform->addElement('select', 'groupmodeforce', get_string("force"), $choices);
+
     $mform->addElement('header','', get_string("availability"));
+
+    $mform->setDefault('visible', $default->visible);
     unset($choices);
     $choices["0"] = get_string("courseavailablenot");
     $choices["1"] = get_string("courseavailable");
     $mform->addElement('select', 'visible', get_string("availability"), $choices);
+    $mform->setDefault('password', $default->password);
     $mform->addElement('text', 'password', get_string("enrolmentkey"), 'size="25"');
+    $mform->setDefault('guest', $default->guest);
     unset($choices);
     $choices["0"] = get_string("guestsno");
     $choices["1"] = get_string("guestsyes");
     $choices["2"] = get_string("guestskey");
     $mform->addElement('select', 'guest', get_string("opentoguests"), $choices);
     if (isset($course) && method_exists(enrolment_factory::factory($course->enrol), 'print_entry') && $course->enrol != 'manual') {
+        $mform->setDefault('cost', $default->cost);
+        $mform->setDefault('currency', $default->currency);
         $costgroup=array();
         $currencies = get_list_of_currencies();
         $costgroup[]= &moodleform::createElement('text','cost', '', 'maxlength="6" size="6"');
@@ -184,6 +276,7 @@
     }
 
     $mform->addElement('header','', get_string("language"));
+    $mform->setDefault('lang',(isset($default->lang))?$default->lang:'');
     $languages=array();
     $languages[''] = get_string("forceno");
     $languages += get_list_of_languages();
@@ -194,6 +287,7 @@
     }
     $mform->addElement('hidden', 'id', null);
    
+    $mform->setDefault('restrictmodules',(isset($default->restrictmodules))?$default->restrictmodules:0);
     if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID)) && ((!empty($course->requested) && $CFG->restrictmodulesfor == 'requested') || $CFG->restrictmodulesfor == 'all')) {         
         unset($options);
         $options[0] = get_string("no");
@@ -207,6 +301,7 @@
         $disabled=($mform->exportValue('restrictmodules')==1) ? array() :array('disabled' => 'disabled') ;
         
         
+        $mform->setDefault('allowedmods', $default->allowedmods);
         $mform->addElement('select', 'allowedmods', get_string("to"),$mods,
                         array('multiple'=>"multiple", 'size'=>"10", 'id'=>"allowedmods")
                                 +$disabled);
@@ -237,7 +332,7 @@
                              'showreports'=>array("coursereports", get_string("activityreport")),
                              'maxbytes'=>array("courseuploadsize", get_string("maximumupload")),
                              'metacourse'=>array("metacourse", get_string("metacourse")),
-                             'defaultrole'=>array("coursedefaultrole", get_string("defaultrole"))),
+                             'defaultrole'=>array("coursedefaultrole", get_string("defaultrole", 'role'))),
                                     true);
     $mform->addElement('submit', 'submit', get_string("savechanges"));
     
