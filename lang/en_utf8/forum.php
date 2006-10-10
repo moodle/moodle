@@ -127,7 +127,6 @@ $string['movedmarker'] = '(Moved)';
 $string['movethisdiscussionto'] = 'Move this discussion to ... ';
 $string['namenews'] = 'News forum';
 $string['namesocial'] = 'Social forum';
-$string['nameteacher'] = 'Teacher forum';
 $string['newforumposts'] = 'New forum posts';
 $string['nodiscussions'] = 'There are no discussion topics yet in this forum';
 $string['noguestpost'] = 'Sorry, guests are not allowed to post.';
