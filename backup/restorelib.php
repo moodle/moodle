@@ -5359,7 +5359,7 @@
 
     function restore_execute(&$restore,$info,$course_header,&$errorstr) {
       
-        global $CFG;
+        global $CFG, $USER;
         $status = true;        
         
         //Checks for the required files/functions to restore every module
@@ -5853,6 +5853,13 @@
             }
         }
 
+        /*******************************************************************************
+         ************* Restore of Roles and Capabilities happens here ******************
+         *******************************************************************************/
+        
+        $status = restore_create_roles($restore, $xml_file);
+        $status = restore_roles_settings($restore, $xml_file);
+
         //Now if all is OK, update:
         //   - course modinfo field 
         //   - categories table
@@ -5866,22 +5873,21 @@
             //categories table
             $course = get_record("course","id",$restore->course_id); 
             fix_course_sortorder();
-            //Make the user a teacher if the course hasn't teachers (bug 2381)
-            if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-                /* this is not working
-                if (!$checktea = get_records('user_teachers','course', $restore->course_id)) {
-                    //Add the teacher to the course
-                    $status = add_teacher($USER->id, $restore->course_id);
-                } */
+            // Check if the user has course update capability in the newly restored course
+            // there is no need to load his capabilities again, because restore_roles_settings
+            // would have loaded it anyway, if there is any assignments. 
+            // fix for MDL-6831
+            $newcontext = get_context_instance(CONTEXT_COURSE, $restore->course_id);
+            if (!has_capability('course:manageactivities', $newcontext)) {
+                if ($legacyteachers = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+                    if ($legacyteacher = array_shift($legacyteachers)) {
+                        role_assign($legacyteacher->id, $USER->id, 0, $newcontext->id);
+                    }
+                } else {
+                    notify('Could not find a legacy teacher role. You might need your moodle admin to assign a role with editing privilages to this course.');
+                }
             }
         }
-
-        /*******************************************************************************
-         ************* Restore of Roles and Capabilities happens here ******************
-         *******************************************************************************/
-        
-        restore_create_roles($restore, $xml_file);
-        restore_roles_settings($restore, $xml_file);
 
         //Cleanup temps (files and db)
         if ($status) {
@@ -6067,6 +6073,8 @@
                 }
             }
         }
+    
+        return true;
     }
     
     /**
@@ -6187,6 +6195,8 @@
                 }
             }
         }
+        
+        return true;
     }
     
     // auxillary function to write role assignments read from xml to db
