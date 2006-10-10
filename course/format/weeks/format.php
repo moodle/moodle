@@ -48,16 +48,15 @@
         $strmoveup   = get_string('moveup');
         $strmovedown = get_string('movedown');
 
-        if (!empty($USER->ajax) && debugging('', DEBUG_DEVELOPER)) {   /// XXX TODO Debugging only temporary until fixed
+        if (!empty($USER->ajax)) {
 
          // If user doesnt want AJAX, then they wont get it, 
          // from here everything detects $COURSE->javascriptportal
-                               
             $COURSE->javascriptportal = new jsportal();
 
             print_require_js(array('yui_yahoo','yui_dom','yui_event','yui_dragdrop', 'yui_connection',
                                    'ajaxcourse_blocks','ajaxcourse_sections','ajaxcourse'));
-            
+
             //javascript logging facilities
             if (debugging())  {
                 print_require_js(Array('yui_logger'));
@@ -189,12 +188,22 @@
             echo '<tr id="section-'.$section.'" class="section main'.$sectionstyle.'">';
             echo '<td class="left side">&nbsp;</td>';
 
+            if (!empty($USER->ajax) && $editing) {
+                // Temporarily hide the dates for the weeks. We do it this way
+                // for now. Eventually, we'll have to modify the javascript code
+                // to handle re-calculation of dates when sections are moved
+                // around. For now, just hide all the dates to avoid confusion.
+                $weekperiod = '';
+            } else {
+                $weekperiod = $weekday.' '.$endweekday;
+            }
+
             echo '<td class="content">';
             if (!has_capability('moodle/course:viewhiddensections', $context) and !$thissection->visible) {   // Hidden for students
-                echo '<div class="weekdates">'.$weekday.' - '.$endweekday.' ('.get_string('notavailable').')</div>';
+                echo '<div class="weekdates">'.$weekperiod.' ('.get_string('notavailable').')</div>';
 
             } else {
-                echo '<div class="weekdates">'.$weekday.' - '.$endweekday.'</div>';
+                echo '<div class="weekdates">'.$weekperiod.'</div>';
 
                 echo '<div class="summary">';
                 $summaryformatoptions->noclean = true;
