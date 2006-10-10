@@ -200,6 +200,7 @@ $string['repliesone'] = '$a reply so far';
 $string['reply'] = 'Reply';
 $string['replyforum'] = 'Reply to forum';
 $string['resetforums'] = 'Remove all posts from these types of forums';
+$string['resetsubscriptions'] = 'Remove forum subscriptions';
 $string['rsssubscriberssdiscussions'] = 'Display the RSS feed for \'$a\' discussions';
 $string['rsssubscriberssposts'] = 'Display the RSS feed for \'$a\' posts';
 $string['search'] = 'Search';
