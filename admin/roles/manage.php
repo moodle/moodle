@@ -151,7 +151,7 @@
                     $localoverride = get_record_sql($SQL);
 
                     if ($localoverride) { // update current overrides
-                        if ($value == 0) { // inherit = delete
+                        if ($value == CAP_INHERIT) { // inherit = delete
                             unassign_capability($capname, $roleid, $sitecontext->id);
 
                         } else {
@@ -161,7 +161,9 @@
                             update_record('role_capabilities', $localoverride);
                         }
                     } else { // insert a record
-                        assign_capability($capname, $value, $roleid, $sitecontext->id);
+                        if ($value != CAP_INHERIT) {
+                            assign_capability($capname, $value, $roleid, $sitecontext->id);
+                        }
                     }
                 }
 
