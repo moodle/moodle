@@ -69,16 +69,23 @@
     
 	// Remove lock when we go to another wiki page (such as the cancel page)
     if(!$reallyedit) {
-    		wiki_release_lock($wiki->id,$pagename);
+        wiki_release_lock($wiki->id,$pagename);
     }
-    
-    // We must have the edit lock in order to be permitted to save    
-    if(!empty($_POST['content'])) {
-    	    list($ok,$lock)=wiki_obtain_lock($wiki->id,$pagename);
-    	    if(!$ok) {
-    	    		$strsavenolock=get_string('savenolock','wiki');
-    	    	    error($strsavenolock,$CFG->wwwroot.'/mod/wiki/view.php?id='.$cm->id.'&page=view/'.urlencode($pagename));
-    	    }
+    if(array_key_exists('content',$_POST)) {
+        // Do not allow blank content because it causes problems (the wiki decides
+        // the page should automatically go into edit mode, but Moodle doesn't realise
+        // this and filters out the JS)
+        if($_POST['content']=='') {
+            $_POST['content']="\n";
+            $_REQUEST['content']="\n";
+        }
+
+        // We must have the edit lock in order to be permitted to save    
+    	list($ok,$lock)=wiki_obtain_lock($wiki->id,$pagename);
+    	if(!$ok) {
+    	    $strsavenolock=get_string('savenolock','wiki');
+    	    error($strsavenolock,$CFG->wwwroot.'/mod/wiki/view.php?id='.$cm->id.'&page=view/'.urlencode($pagename));
+    	}
     }
     
     /// Add the course module 'groupmode' to the wiki object, for easy access.
