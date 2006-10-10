@@ -47,7 +47,6 @@
     // assemble array of form data
     $formdata = array(
         'mode' => $mode,
-        'reportcourse'     => isadmin() ? optional_param('reportcourse', get_user_preferences('hotpot_reportcourse', 'this')) : 'this',
         'reportusers'      => isteacher($course->id) ? optional_param('reportusers', get_user_preferences('hotpot_reportusers', 'allusers')) : 'this',
         'reportattempts'   => optional_param('reportattempts', get_user_preferences('hotpot_reportattempts', 'all')),
         'reportformat'     => optional_param('reportformat', 'htm'),
@@ -78,28 +77,12 @@
         hotpot_delete_selected_attempts($hotpot, $del);
     }
 
-    $hotpot_ids = '';
-    $course_ids = '';
-    switch ($formdata['reportcourse']) {
-        case 'this':
-            $course_ids = $course->id;
-            $hotpot_ids = $hotpot->id;
-            break;
-        case 'all' :
-            $records = get_records_select_menu('user_teachers', "userid='$USER->id'", 'course', 'id, course');
-            $course_ids = join(',', array_values($records));
-
-            $records = get_records_select_menu('hotpot', "reference='$hotpot->reference'", 'reference', 'id, reference');
-            $hotpot_ids = join(',', array_keys($records));
-            break;
-    }
-
     $user_ids = '';
     $users = array();
     switch ($formdata['reportusers']) {
         case 'allusers':
             // anyone who has ever attempted this hotpot
-            if ($records = get_records_select('hotpot_attempts', "hotpot IN ($hotpot_ids)", '', 'id,userid')) {
+            if ($records = get_records_select('hotpot_attempts', "hotpot=$hotpot->id", '', 'id,userid')) {
                 foreach ($records as $record) {
                     $users[$record->userid] = 0; // "0" means NOT a currently recognized participant
                 }
@@ -120,7 +103,7 @@
                 }
             }
             // teachers
-            if ($records = get_records_select('user_teachers', "course IN ($course_ids)", '', 'id,userid')) {
+            if ($records = get_records_select('user_teachers', "course=$course->id", '', 'id,userid')) {
                 foreach ($records as $record) {
                     $users[$record->userid] = 1;
                 }
@@ -135,7 +118,7 @@
 
         case 'existingstudents':
             // students
-            if ($records = get_records_select('user_students', "course IN ($course_ids)", '', 'id,userid')) {
+            if ($records = get_records_select('user_students', "course=$course->id", '', 'id,userid')) {
                 foreach ($records as $record) {
                     $users[$record->userid] = 1;
                 }
@@ -162,7 +145,7 @@
 
     // database table and selection conditions
     $table = "{$CFG->prefix}hotpot_attempts AS a";
-    $select = "a.hotpot IN ($hotpot_ids) AND a.userid IN ($user_ids)";
+    $select = "a.hotpot=$hotpot->id AND a.userid IN ($user_ids)";
     if ($mode!='overview') {
         $select .= ' AND a.status<>'.HOTPOT_STATUS_INPROGRESS;
     }
@@ -447,17 +430,9 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
             $menus['mode'][$name] = get_string("report$name", $module);
         }
     }
-    if (isadmin()) {
-        $menus['reportcourse'] = array(
-            'this' => get_string('thiscourse', 'hotpot'), // $course->shortname,
-            'all' => get_string('allmycourses', 'hotpot')
-        );
-    }
-    $menus['reportusers'] = array(
-        'allusers' => get_string('allusers', 'hotpot'),
-        'allparticipants' => get_string('allparticipants'),
-        'existingstudents' => get_string('existingstudents')
-    );
+
+    $menus['reportusers'] = array('allusers' => get_string('allusers', 'hotpot'));
+
     $users = get_records_sql("
         SELECT 
             u.id, u.firstname, u.lastname
@@ -481,17 +456,27 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
             u.lastname
     ");
     if (!empty($students)) {
-        $menus['reportusers']['separator01'] = '------';
+        $firsttime = true;
         foreach ($students as $id=>$user) {
             if (isset($users[$id])) {
+                if ($firsttime) {
+                    $firsttime = false; // so we only do this once
+                    $menus['reportusers']['allparticipants'] = get_string('allparticipants');
+                    $menus['reportusers']['existingstudents'] = get_string('existingstudents');
+                    $menus['reportusers'][] = '------';
+                }
                 $menus['reportusers']["$id"] = fullname($user);
                 unset($users[$id]);
             }
         }
     }
     if (!empty($users)) {
-        $menus['reportusers']['separator02'] = '------';
+        $firsttime = true;
         foreach ($users as $id=>$user) {
+            if ($firsttime) {
+                $firsttime = false; // so we only do this once
+                $menus['reportusers'][] = '======';
+            }
             $menus['reportusers']["$id"] = fullname($user);
         }
     }
