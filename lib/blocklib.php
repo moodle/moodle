@@ -703,11 +703,11 @@ function blocks_execute_url_action(&$PAGE, &$pageblocks,$pinned=false) {
 
 // This shouldn't be used externally at all, it's here for use by blocks_execute_action()
 // in order to reduce code repetition.
-function blocks_execute_repositioning(&$instance, $newpos, $newweight, $pinned=false) {
+function blocks_execute_repositioning(&$instance, $newpos, $newweight, $pinned=false, $checkPos=true) {
     global $CFG;
 
-    // If it's staying where it is, don't do anything
-    if($newpos == $instance->position) {
+    // If it's staying where it is, don't do anything, unless overridden
+    if(($newpos == $instance->position)&& $checkPos) {
         return;
     }
 
@@ -736,6 +736,9 @@ function blocks_execute_repositioning(&$instance, $newpos, $newweight, $pinned=f
 //like blocks_execute_repositiong except completely atomic, handles all aspects of the positioning
 function blocks_execute_repositioning_atomic(&$instance, $newpos, $newweight, $pinned=false){    
     global $CFG;
+    
+    if($instance->weight == $newweight)
+        return false;
 
     //make room for block insert
     if (!empty($pinned)) {
@@ -749,13 +752,16 @@ function blocks_execute_repositioning_atomic(&$instance, $newpos, $newweight, $p
     }
     execute_sql($sql,false);
     
-    
-    
-    //reposition blocks
-    blocks_execute_repositioning($instance,$newpos,$newweight,$pinned);
-    
+    //adjusts the wieghts for changes in the weight list
+    if($newweight < $instance->weight){
+        $instance->weight+=2;
+    }else{
+        $newweight--;
+    }
 
-    
+
+    //reposition blocks
+    blocks_execute_repositioning($instance,$newpos,$newweight,$pinned,false);
 }
 
 function blocks_get_pinned($page) {
