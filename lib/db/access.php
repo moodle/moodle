@@ -533,7 +533,7 @@ $moodle_capabilities = array(
             'student' => CAP_PREVENT,
             'teacher' => CAP_PREVENT,
             'editingteacher' => CAP_PREVENT,
-            'coursecreator' => CAP_PREVENT,
+            'coursecreator' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
     ),
