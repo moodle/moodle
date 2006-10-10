@@ -46,10 +46,10 @@
         
         //basic search form
         $this->content->text =
-            '<form name="query" method="get" action="search/query.php">'
-          . "<label for=''>$label</label>"
-          . '<input type="text" name="query_string" length="50" value=""/>'
-          . '<input type="submit" value="'.$button.'"/>'
+            '<form name="query" method="get" action="'. $CFG->wwwroot .'/search/query.php">'
+          . '<label for="block_search_q">'. $label .'</label>'
+          . '<input id="block_search_q" type="text" name="query_string" length="50" />'
+          . '<input type="submit" value="'.$button.'" />'
           . '</form>';
       } else {
         $this->content->text = "Sorry folks, PHP 5 is needed for the new search module.";

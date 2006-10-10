@@ -1,6 +1,6 @@
 <?php
-
-  /* The query page - accepts a user-entered query string and returns results.
+  /**
+   * The query page - accepts a user-entered query string and returns results.
    *
    * Queries are boolean-aware, e.g.:
    *
@@ -20,10 +20,12 @@
    * '+author:helen +author:foster'
    *   All articles written by Helen Foster
    *
-   * */
+   */
 
   require_once('../config.php');
   require_once("$CFG->dirroot/search/lib.php");
+
+  $adv = new Object();
 
   //check for php5, but don't die yet (see line 52)
   if ($check = search_check_php5()) {
@@ -133,17 +135,18 @@
 
   $vars = get_object_vars($adv);
 
-  foreach ($vars as $key => $value) {
-    $adv->$key = stripslashes(htmlentities($value));
-  } //foreach
-
+  if (isset($vars)) {
+    foreach ($vars as $key => $value) {
+      $adv->$key = stripslashes(htmlentities($value));
+    } //foreach
+  }
 ?>
 
 <form name="query" method="get" action="query.php">
   <?php if (!$advanced) { ?>
-    <input type="text" name="query_string" length="50" value="<?php print stripslashes(htmlentities($query_string)) ?>"/>
-    &nbsp;<input type="submit" value="Search"/>&nbsp;&nbsp;
-    <a href="query.php?a=1">Advanced search</a>
+    <input type="text" name="query_string" length="50" value="<?php print stripslashes(htmlentities($query_string)) ?>" />
+    &nbsp;<input type="submit" value="Search" /> &nbsp;
+    <a href="query.php?a=1">Advanced search</a> |
     <a href="stats.php">Statistics</a>
   <?php } else {
     print_simple_box_start('center', '', 'white', 10);
@@ -154,17 +157,17 @@
 
     <tr>
       <td width="240">These words must appear:</td>
-      <td><input type="text" name="mustappear" length="50" value="<?php print $adv->mustappear; ?>"/></td>
+      <td><input type="text" name="mustappear" length="50" value="<?php print $adv->mustappear; ?>" /></td>
     </tr>
 
     <tr>
       <td>These words must not appear:</td>
-      <td><input type="text" name="notappear" length="50" value="<?php print $adv->notappear; ?>"/></td>
+      <td><input type="text" name="notappear" length="50" value="<?php print $adv->notappear; ?>" /></td>
     </tr>
 
     <tr>
       <td>These words help improve rank:</td>
-      <td><input type="text" name="canappear" length="50" value="<?php print $adv->canappear; ?>"/></td>
+      <td><input type="text" name="canappear" length="50" value="<?php print $adv->canappear; ?>" /></td>
     </tr>
 
     <tr>
@@ -184,23 +187,23 @@
 
     <tr>
       <td>Words in title:</td>
-      <td><input type="text" name="title" length="50" value="<?php print $adv->title; ?>"/></td>
+      <td><input type="text" name="title" length="50" value="<?php print $adv->title; ?>" /></td>
     </tr>
 
     <tr>
       <td>Author name:</td>
-      <td><input type="text" name="author" length="50" value="<?php print $adv->author; ?>"/></td>
+      <td><input type="text" name="author" length="50" value="<?php print $adv->author; ?>" /></td>
     </tr>
 
     <tr>
-      <td colspan="3" align="center"><br><input type="submit" value="Search"/></td>
+      <td colspan="3" align="center"><br /><input type="submit" value="Search" /></td>
     </tr>
 
     <tr>
       <td colspan="3" align="center">
         <table border="0" cellpadding="0" cellspacing="0">
           <tr>
-            <td><a href="query.php">Normal search</a>&nbsp;</td>
+            <td><a href="query.php">Normal search</a> |</td>
             <td>&nbsp;<a href="stats.php">Statistics</a></td>
           </tr>
         </table>
@@ -230,7 +233,7 @@
   print ' documents.';
 
   if (!$sq->is_valid_index() and isadmin()) {
-    print "<br><br>Admin: There appears to be no index, click <a href='indexersplash.php'>here</a> to create one.";
+    print "<p>Admin: There appears to be no search index. Please <a href='indexersplash.php'>create an index</a>.</p>\n";
   } //if
 
   print '</div>';
@@ -243,10 +246,10 @@
     search_stopwatch();
     $hit_count = $sq->count();
 
-    print "<br>";
+    print "<br />";
 
     print $hit_count." results returned for '".stripslashes($query_string)."'.";
-    print "<br>";
+    print "<br />";
 
     if ($hit_count > 0) {
       $page_links = $sq->page_numbers();
@@ -262,10 +265,10 @@
       print "<ol>";
 
       foreach ($hits as $listing) {
-        print "<li value='".($listing->number+1)."'><a href='".$listing->url."'>$listing->title</a><br>\n"
-             ."<em>".search_shorten_url($listing->url, 70)."</em><br>\n"
-             ."Type: ".$listing->doctype.", score: ".round($listing->score, 3).", author: ".$listing->author."<br>\n"
-             ."<br></li>\n";
+        print "<li value='".($listing->number+1)."'><a href='".$listing->url."'>$listing->title</a><br />\n"
+             ."<em>".search_shorten_url($listing->url, 70)."</em><br />\n"
+             ."Type: ".$listing->doctype.", score: ".round($listing->score, 3).", author: ".$listing->author."\n"
+             ."</li>\n";
       } //for
 
       print "</ol>";
