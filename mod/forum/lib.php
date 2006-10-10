@@ -4385,7 +4385,6 @@ function forum_reset_course_form($course) {
     echo '</p>';
 }
 
-<<<<<<< lib.php
 
 /**
  * Converts a forum to use the Roles System
