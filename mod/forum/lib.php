@@ -4327,9 +4327,10 @@ function forum_check_throttling($forum) {
 function forum_delete_userdata($data, $showfeedback=true) {
     global $CFG;
 
-    $sql = 'DELETE FROM fp USING '.$CFG->prefix.'forum_discussions fd, 
-                                 '.$CFG->prefix.'forum_posts fp, 
-                                 '.$CFG->prefix.'forum f
+    $sql = 'DELETE FROM '.$CFG->prefix.'forum_posts
+                  USING '.$CFG->prefix.'forum_discussions fd, 
+                        '.$CFG->prefix.'forum_posts fp, 
+                        '.$CFG->prefix.'forum f
             WHERE fp.discussion=fd.id and f.course='.$data->courseid.' AND f.id=fd.forum';
 
     $strreset = get_string('reset');
@@ -4364,6 +4365,17 @@ function forum_delete_userdata($data, $showfeedback=true) {
             notify($strreset.': '.get_string('generalforum','forum'), 'notifysuccess');
         }
     }
+    if (!empty($data->reset_forum_subscriptions)) {
+        $subscripsql = "DELETE FROM {$CFG->prefix}forum_subscriptions
+                              USING {$CFG->prefix}forum_subscriptions fs,
+                                    {$CFG->prefix}forum f
+                              WHERE fs.forum = f.id
+                                AND f.course = {$data->courseid}";
+
+        if (execute_sql($subscripsql, false) and $showfeedback) {
+            notify($strreset.': '.get_string('resetsubscriptions','forum'), 'notifysuccess');
+        }
+    }
 }
 
 
@@ -4375,8 +4387,12 @@ function forum_reset_course_form($course) {
     print_checkbox('reset_forum_single', 1, true, get_string('singleforum','forum'), '', '');  echo '<br />';
     print_checkbox('reset_forum_eachuser', 1, true, get_string('eachuserforum','forum'), '', '');  echo '<br />';
     print_checkbox('reset_forum_general', 1, true, get_string('generalforum','forum'), '', '');  echo '<br />';
+    echo '<p>';
+    print_checkbox('reset_forum_subscriptions', 1, true, get_string('resetsubscriptions','forum'), '', '');
+    echo '</p>';
 }
 
+<<<<<<< lib.php
 
 /**
  * Converts a forum to use the Roles System
