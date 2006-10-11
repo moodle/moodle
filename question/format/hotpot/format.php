@@ -20,8 +20,29 @@ class qformat_hotpot extends qformat_default {
         /// where each item is a question object as defined by
         /// readquestion().
 
-        // parse the xml source
+        // set baseurl
+        global $CFG;
+        if ($CFG->slasharguments) {
+            $baseurl = "$CFG->wwwroot/file.php/{$this->course->id}/";
+        } else {
+            $baseurl = "$CFG->wwwroot/file.php?file=/{$this->course->id}/";
+        }
+
+        // get import file name
+        global $params;
+        if (isset($params) && !empty($params->choosefile)) {
+            // course file (Moodle >=1.6+)
+            $filename = $params->choosefile;
+        } else {
+            // uploaded file (all Moodles)
+            $filename = basename($_FILES['newfile']['tmp_name']);
+        }
+
+        // get hotpot file source
         $source = implode($lines, " ");
+        $source = hotpot_convert_relative_urls($source, $baseurl, $filename);
+
+        // create xml tree for this hotpot
         $xml = new hotpot_xml_tree($source);
 
         // determine the quiz type
@@ -588,6 +609,120 @@ function hotpot_utf8_to_html_entity($char) {
         $dec += ($ord << $HOTPOT_UTF8_SHIFT[$len][$pos]); 
     }
     return '&#x'.sprintf('%04X', $dec).';';
+}
+
+function hotpot_convert_relative_urls($str, $baseurl, $filename) {
+    $tagopen = '(?:(<)|(&lt;)|(&amp;#x003C;))'; // left angle bracket
+    $tagclose = '(?(2)>|(?(3)&gt;|(?(4)&amp;#x003E;)))'; //  right angle bracket (to match left angle bracket)
+
+    $space = '\s+'; // at least one space
+    $anychar = '(?:[^>]*?)'; // any character
+
+    $quoteopen = '("|&quot;|&amp;quot;)'; // open quote
+    $quoteclose = '\\5'; //  close quote (to match open quote)
+
+    $replace = "hotpot_convert_relative_url('".$baseurl."', '".$filename."', '\\1', '\\6', '\\7')";
+
+    $tags = array('script'=>'src', 'link'=>'href', 'a'=>'href','img'=>'src','param'=>'value', 'object'=>'data', 'embed'=>'src');
+    foreach ($tags as $tag=>$attribute) {
+        if ($tag=='param') {
+            $url = '\S+?\.\S+?'; // must include a filename and have no spaces
+        } else {
+            $url = '.*?';
+        }
+        $search = "%($tagopen$tag$space$anychar$attribute=$quoteopen)($url)($quoteclose$anychar$tagclose)%ise";
+        $str = preg_replace($search, $replace, $str);
+    }
+
+    return $str;
+}
+
+function hotpot_convert_relative_url($baseurl, $filename, $opentag, $url, $closetag, $stripslashes=true) {
+    if ($stripslashes) {
+        $opentag = stripslashes($opentag);
+        $url = stripslashes($url);
+        $closetag = stripslashes($closetag);
+    }
+
+    // catch <PARAM name="FlashVars" value="TheSound=soundfile.mp3">
+    //    ampersands can appear as "&", "&amp;" or "&amp;#x0026;amp;"
+    if (preg_match('|^'.'\w+=[^&]+'.'('.'&((amp;#x0026;)?amp;)?'.'\w+=[^&]+)*'.'$|', $url)) {
+        $query = $url;
+        $url = '';
+        $fragment = '';
+
+    // parse the $url into $matches
+    //    [1] path
+    //    [2] query string, if any
+    //    [3] anchor fragment, if any
+    } else if (preg_match('|^'.'([^?]*)'.'((?:\\?[^#]*)?)'.'((?:#.*)?)'.'$|', $url, $matches)) {
+        $url = $matches[1];
+        $query = $matches[2];
+        $fragment = $matches[3];
+
+    // there appears to be no query or fragment in this url
+    } else {
+        $query = '';
+        $fragment = '';
+    }
+
+    if ($url) {
+        $url = hotpot_convert_url($baseurl, $filename, $url, false);
+    }
+
+    if ($query) {
+        $search = '#'.'(file|src|thesound)='."([^&]+)".'#ise';
+        $replace = "'\\1='.hotpot_convert_url('".$baseurl."','".$filename."','\\2')";
+        $query = preg_replace($search, $replace, $query);
+    }
+
+    $url = $opentag.$url.$query.$fragment.$closetag;
+
+    return $url;
+}
+
+function hotpot_convert_url($baseurl, $filename, $url, $stripslashes=true) {
+    // maintain a cache of converted urls
+    static $HOTPOT_RELATIVE_URLS = array();
+
+    if ($stripslashes) {
+        $url = stripslashes($url);
+    }
+
+    // is this an absolute url? (or javascript pseudo url)
+    if (preg_match('%^(http://|/|javascript:)%i', $url)) {
+        // do nothing
+
+    // has this relative url already been converted?
+    } else if (isset($HOTPOT_RELATIVE_URLS[$url])) {
+        $url = $HOTPOT_RELATIVE_URLS[$url];
+
+    } else {
+        $relativeurl = $url;
+
+        // get the subdirectory, $dir, of the quiz $filename
+        $dir = dirname($filename);
+
+        // allow for leading "./" and "../"
+        while (preg_match('|^(\.{1,2})/(.*)$|', $url, $matches)) {
+            if ($matches[1]=='..') {
+                $dir = dirname($dir);
+            }
+            $url = $matches[2];
+        }
+
+        // add subdirectory, $dir, to $baseurl, if necessary
+        if ($dir && $dir<>'.') {
+            $baseurl .= "$dir/";
+        }
+
+        // prefix $url with $baseurl
+        $url = "$baseurl$url";
+
+        // add url to cache
+        $HOTPOT_RELATIVE_URLS[$relativeurl] = $url;
+    }
+    return $url;
 }
 
 // allow importing in Moodle v1.4 (and less)
