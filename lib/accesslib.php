@@ -312,8 +312,28 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
 
     if ($doanything) {
 
-        // Check site
-        if (empty($USER->switchrole[$context->id])) {  // Ignore site setting if switchrole is active
+    /// First make sure that we aren't in a "switched role"
+
+        $switchroleactive = false;             // Assume it isn't active in this context
+
+        if (!empty($USER->switchrole)) {       // Switchrole is active somewhere!
+            if (!empty($USER->switchrole[$context->id])) {  // Because of current context
+                $switchroleactive = true;   
+            } else {                                        // Check parent contexts
+                if ($parentcontextids = get_parent_contexts($context)) {
+                    foreach ($parentcontextids as $parentcontextid) {
+                        if (!empty($USER->switchrole[$parentcontextid])) {  // Yep, switchroles active here
+                            $switchroleactive = true;   
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+    /// Check the site context for doanything (most common) first 
+
+        if (empty($switchroleactive)) {  // Ignore site setting if switchrole is active
             $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
             if (isset($capabilities[$sitecontext->id]['moodle/site:doanything'])) {
                 return (0 < $capabilities[$sitecontext->id]['moodle/site:doanything']);
