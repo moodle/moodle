@@ -6,11 +6,6 @@ $enrol_authorize_capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
-            'guest' => CAP_PROHIBIT,
-            'student' => CAP_PREVENT,
-            'teacher' => CAP_PREVENT,
-            'editingteacher' => CAP_PREVENT,
-            'coursecreator' => CAP_PREVENT,
             'admin' => CAP_ALLOW
         )
     )
