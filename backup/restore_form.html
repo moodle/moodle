@@ -422,7 +422,11 @@ $xml_file  = $CFG->dataroot."/temp/backup/".$backup_unique_code."/moodle.xml";
 
 $info = restore_read_xml_info($xml_file);
 
-$siterolesarray = get_assignable_roles (get_context_instance(CONTEXT_COURSE, $course->id), "shortname");
+if ($course->id == SITEID) {
+    $siterolesarray = get_assignable_roles (get_context_instance(CONTEXT_SYSTEM, SITEID), "shortname");  
+} else {
+    $siterolesarray = get_assignable_roles (get_context_instance(CONTEXT_COURSE, $course->id), "shortname");
+}
 
 echo ('<table width="100%" class="restore-form-instances">');
 echo ('<tr><td align="right"><b>'.get_string('sourcerole').'</b></td><td align="left"><b>'.get_string('targetrole').'</b></td></tr>');
