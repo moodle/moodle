@@ -1421,13 +1421,15 @@ function delete_role($roleid) {
  * @param contextid - context id
  * @param roleid - role id
  * @param permission - int 1,-1 or -1000
+ * should not be writing if permission is 0
  */
 function assign_capability($capability, $permission, $roleid, $contextid, $overwrite=false) {
 
     global $USER;
 
-    if (empty($permission) || $permission == 0) { // if permission is not set
+    if (empty($permission) || $permission == CAP_INHERIT) { // if permission is not set
         unassign_capability($capability, $roleid, $contextid);
+        return true;
     }
 
     $existing = get_record('role_capabilities', 'contextid', $contextid, 'roleid', $roleid, 'capability', $capability);
