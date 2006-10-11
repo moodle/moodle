@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.92a 29 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
+V4.93 10 Oct 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -62,16 +62,28 @@ function adodb_microtime()
 }
 
 /* sql code timing */
-function& adodb_log_sql(&$conn,$sql,$inputarr)
+function& adodb_log_sql(&$connx,$sql,$inputarr)
 {
-	
     $perf_table = adodb_perf::table();
-	$conn->fnExecute = false;
+	$connx->fnExecute = false;
 	$t0 = microtime();
-	$rs =& $conn->Execute($sql,$inputarr);
+	$rs =& $connx->Execute($sql,$inputarr);
 	$t1 = microtime();
 
-	if (!empty($conn->_logsql) && (empty($conn->_logsqlErrors) || !$rs)) {
+	if (!empty($connx->_logsql) && (empty($connx->_logsqlErrors) || !$rs)) {
+	global $ADODB_LOG_CONN;
+	
+		if (!empty($ADODB_LOG_CONN)) {
+			$conn = &$ADODB_LOG_CONN;
+			if ($conn->databaseType != $connx->databaseType)
+				$prefix = '/*dbx='.$connx->databaseType .'*/ ';
+			else
+				$prefix = '';
+		} else {
+			$conn =& $connx;
+			$prefix = '';
+		}
+		
 		$conn->_logsql = false; // disable logsql error simulation
 		$dbT = $conn->databaseType;
 		
@@ -84,8 +96,8 @@ function& adodb_log_sql(&$conn,$sql,$inputarr)
 		$time = $a1 - $a0;
 	
 		if (!$rs) {
-			$errM = $conn->ErrorMsg();
-			$errN = $conn->ErrorNo();
+			$errM = $connx->ErrorMsg();
+			$errN = $connx->ErrorNo();
 			$conn->lastInsID = 0;
 			$tracer = substr('ERROR: '.htmlspecialchars($errM),0,250);
 		} else {
@@ -126,6 +138,7 @@ function& adodb_log_sql(&$conn,$sql,$inputarr)
 		}
 		
 		if (is_array($sql)) $sql = $sql[0];
+		if ($prefix) $sql = $prefix.$sql;
 		$arr = array('b'=>strlen($sql).'.'.crc32($sql),
 					'c'=>substr($sql,0,3900), 'd'=>$params,'e'=>$tracer,'f'=>adodb_round($time,6));
 		//var_dump($arr);
@@ -136,7 +149,7 @@ function& adodb_log_sql(&$conn,$sql,$inputarr)
 		if (empty($d)) $d = date("'Y-m-d H:i:s'");
 		if ($conn->dataProvider == 'oci8' && $dbT != 'oci8po') {
 			$isql = "insert into $perf_table values($d,:b,:c,:d,:e,:f)";
-		} else if ($dbT == 'odbc_mssql' || $dbT == 'informix' || $dbT == 'odbtp') {
+		} else if ($dbT == 'odbc_mssql' || $dbT == 'informix' || strncmp($dbT,'odbtp',4)==0) {
 			$timer = $arr['f'];
 			if ($dbT == 'informix') $sql2 = substr($sql2,0,230);
 
@@ -152,7 +165,6 @@ function& adodb_log_sql(&$conn,$sql,$inputarr)
 			if ($dbT == 'db2') $arr['f'] = (float) $arr['f'];
 			$isql = "insert into $perf_table (created,sql0,sql1,params,tracer,timer) values( $d,?,?,?,?,?)";
 		}
-
 		$ok = $conn->Execute($isql,$arr);
 		$conn->debug = $saved;
 		
@@ -178,10 +190,10 @@ function& adodb_log_sql(&$conn,$sql,$inputarr)
 				$conn->_logsql = false;
 			}
 		}
-		$conn->_errorMsg = $errM;
-		$conn->_errorCode = $errN;
+		$connx->_errorMsg = $errM;
+		$connx->_errorCode = $errN;
 	} 
-	$conn->fnExecute = 'adodb_log_sql';
+	$connx->fnExecute = 'adodb_log_sql';
 	return $rs;
 }
 
