@@ -439,7 +439,7 @@ if ($info->backup_moodle_version < 2006092801) {
     $roles = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     $editteacher = array_shift($roles);
-    choose_from_menu ($siterolesarray, "defaultteacheredit", $editteacher->id);
+    choose_from_menu ($siterolesarray, "defaultteacheredit", $editteacher->id, 'new role', '', '0');
     echo ('</td></tr>');
     
     /// Non-editting teacher
@@ -451,7 +451,7 @@ if ($info->backup_moodle_version < 2006092801) {
     $roles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM, SITEID));
     $teacher = array_shift($roles);
     
-    choose_from_menu ($siterolesarray, "defaultteacher", $teacher->id);
+    choose_from_menu ($siterolesarray, "defaultteacher", $teacher->id, 'new role', '', '0');
     echo ('</td></tr>');
      
     
@@ -464,7 +464,7 @@ if ($info->backup_moodle_version < 2006092801) {
     $roles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM, SITEID));
     $studentrole = array_shift($roles);
     
-    choose_from_menu ($siterolesarray, "defaultstudent", $studentrole->id);
+    choose_from_menu ($siterolesarray, "defaultstudent", $studentrole->id, 'new role', '', '0');
     echo ('</td></tr>');
   
 } else {
