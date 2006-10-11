@@ -581,28 +581,37 @@ function validate_form(&$form, &$err) {
 
 function calendar_add_event_allowed($courseid, $groupid, $userid) {
     global $USER;
-    
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $group->courseid);
-    
-    if ($courseid == 0 && $groupid == 0 && $userid == $USER->id && has_capability('moodle/calendar:manageownentries', $context)) {
-        return true;
+
+    // can not be using guest account
+    if ($USER->username == "guest") {
+        return false;  
     }
-    else if($courseid == 0 && $groupid != 0) {
-        $group = get_record('groups', 'id', $groupid);
-        if($group === false) {
-            return false;
-        }
-        $course = get_record('course', 'id', $courseid);
-        if ($course->groupmode == SEPARATE_GROUPS) {
-            return has_capability('moodle/calendar:manageentries', $context) && ismember($groupid);
-        } else {
-            return has_capability('moodle/calendar:manageentries', $context);
-        }
-    }
-    else if($courseid != 0 && has_capability('moodle/calendar:manageentries', $context)) {
+    
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    // if user has manageentries at site level, return true
+    if (has_capability('manageentries', $sitecontext)) {
         return true;
     }
 
+    // editting userid account
+    if ($event->userid) {  
+        if ($event->userid == $USER->id) {
+            return (has_capability('moodle/calendar:manageownentries', $sitecontext));
+        }
+    } else if ($event->groupid) {
+        $group = get_record('groups', 'id', $event->groupid);
+        if($group === false) {
+            return false;
+        } 
+        
+        // this is ok because if you have this capability at course level, you should be able 
+        // to edit group calendar too
+        // there is no need to check membership, because if you have this capability
+        // you will have a role in this group context
+        return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_GROUP, $group->id));
+    } else if ($event->courseid) {
+        return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $event->courseid)); 
+    }
     return false;
 }
 
