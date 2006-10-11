@@ -139,11 +139,39 @@ switch($_SERVER['REQUEST_METHOD']) {
                 break; 
                 
             case 'resource':
-                if (!$mod = get_record('course_modules', 'id', $id, 'course', $course->id)) {
-                    error_log('AJAX commands.php: Bad course module ID '.$id);
+                if (!$cm = get_record('course_modules', 'id', $id, 'course', $course->id)) {
+                    error_log('AJAX rest.php: Bad course module ID '.$id);
                     die;
                 }
-                delete_course_module($id);
+                if (!$mod = get_record('modules', 'id', $cm->module)) {
+                    error_log('AJAX rest.php: Bad module ID '.$cm->module);
+                    die;
+                }
+                $mod->name = clean_param($mod->name, PARAM_SAFEDIR);  // For safety
+                $modlib = "$CFG->dirroot/mod/$mod->name/lib.php";
+
+                if (file_exists($modlib)) {
+                    include_once($modlib);
+                } else {
+                    error_log("Ajax rest.php: This module is missing important code ($modlib)");
+                    die;
+                }
+                $deleteinstancefunction = $mod->name."_delete_instance";
+
+                // Run the module's cleanup funtion.
+                if (!$deleteinstancefunction($cm->instance)) {
+                    error_log("Ajax rest.php: Could not delete the $mod->name (instance)");
+                    die;
+                }
+                // Remove the course_modules entry.
+                if (!delete_course_module($cm->id)) {
+                    error_log("Ajax rest.php: Could not delete the $mod->modulename (coursemodule)");
+                    die;
+                }
+
+                add_to_log($courseid, "course", "delete mod",
+                           "view.php?id=$courseid",
+                           "$mod->name $cm->instance", $cm->id);
                 break;
         }
         break;
