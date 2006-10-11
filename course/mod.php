@@ -64,7 +64,7 @@
 
         require_login($course->id); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        require_capability('moodle/course:update', $context);
+        require_capability('moodle/course:manageactivities', $context);
         
         $mod->course = $course->id;
         $mod->modulename = clean_param($mod->modulename, PARAM_SAFEDIR);  // For safety
@@ -244,7 +244,7 @@
 
         require_login($section->course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $section->course);
-        require_capability('moodle/course:update', $context);
+        require_capability('moodle/course:manageactivities', $context);
 
         if (!ismoving($section->course)) {
             error("You need to copy something first!");
@@ -274,7 +274,7 @@
 
         require_login($cm->course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $cm->course);
-        require_capability('moodle/course:update', $context);
+        require_capability('moodle/course:manageactivities', $context);
 
         $cm->indent += $indent;
 
@@ -301,7 +301,7 @@
 
         require_login($cm->course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $cm->course);
-        require_capability('moodle/course:update', $context);
+        require_capability('moodle/course:activityvisibility', $context);
 
         set_coursemodule_visible($cm->id, 0);
 
@@ -322,7 +322,7 @@
 
         require_login($cm->course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $cm->course);
-        require_capability('moodle/course:update', $context);
+        require_capability('moodle/course:activityvisibility', $context);
 
         if (! $section = get_record("course_sections", "id", $cm->section)) {
             error("This module doesn't exist");
@@ -354,7 +354,7 @@
 
         require_login($cm->course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $cm->course);
-        require_capability('moodle/course:update', $context);
+        require_capability('moodle/course:manageactivities', $context);
 
         set_coursemodule_groupmode($cm->id, $groupmode);
 
@@ -375,7 +375,7 @@
 
         require_login($cm->course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $cm->course);
-        require_capability('moodle/course:update', $context);
+        require_capability('moodle/course:manageactivities', $context);
 
         if (! $section = get_record("course_sections", "id", $cm->section)) {
             error("This module doesn't exist");
@@ -417,7 +417,7 @@
 
         require_login($cm->course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $cm->course);
-        require_capability('moodle/course:update', $context);
+        require_capability('moodle/course:manageactivities', $context);
         
         if (! $module = get_record("modules", "id", $cm->module)) {
             error("This module doesn't exist");
@@ -474,7 +474,7 @@
 
         require_login($course->id); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        require_capability('moodle/course:update', $context);
+        require_capability('moodle/course:manageactivities', $context);
 
         if (! $module = get_record("modules", "id", $cm->module)) {
             error("This module doesn't exist");
@@ -532,7 +532,7 @@
 
         require_login($course->id); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        require_capability('moodle/course:update', $context);
+        require_capability('moodle/course:manageactivities', $context);
         
         if (! $module = get_record("modules", "id", $cm->module)) {
             error("This module doesn't exist");
@@ -588,7 +588,10 @@
         if (! $module = get_record("modules", "name", $add)) {
             error("This module type doesn't exist");
         }
-
+        
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        require_capability('moodle/course:manageactivities', $context);
+        
         if (!course_allowed_module($course,$module->id)) {
             error("This module has been disabled for this particular course");
         }
@@ -633,7 +636,7 @@
 
     require_login($course->id); // needed to setup proper $COURSE
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    require_capability('moodle/course:update', $context);
+    require_capability('moodle/course:manageactivities', $context);
 
     $streditinga = get_string("editinga", "moodle", $fullmodulename);
     $strmodulenameplural = get_string("modulenameplural", $module->name);
