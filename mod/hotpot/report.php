@@ -77,14 +77,36 @@
         hotpot_delete_selected_attempts($hotpot, $del);
     }
 
+    // check for groups
+    if (preg_match('/^group(\d*)$/', $formdata['reportusers'], $matches)) {
+        // validate groupid
+        if (is_numeric($matches[1]) && get_field('groups', 'courseid', 'id', $matches[1])===$course->id) {
+            $formdata['reportusers'] = 'group';
+            $formdata['reportgroupid'] = $matches[1];
+        } else {
+            $formdata['reportgroupid'] = 0; // groupid is invalid
+        }
+    }
+
     $user_ids = '';
     $users = array();
+
     switch ($formdata['reportusers']) {
+
         case 'allusers':
             // anyone who has ever attempted this hotpot
             if ($records = get_records_select('hotpot_attempts', "hotpot=$hotpot->id", '', 'id,userid')) {
                 foreach ($records as $record) {
                     $users[$record->userid] = 0; // "0" means NOT a currently recognized participant
+                }
+            }
+            break;
+
+        case 'group':
+            // group members
+            if ($records = get_records_select('groups_members', "groupid=".$formdata['reportgroupid'], '', 'id,userid')) {
+                foreach ($records as $record) {
+                    $users[$record->userid] = 1; // "1" signifies currently recognized participant
                 }
             }
             break;
@@ -134,6 +156,7 @@
                 $user_ids = $formdata['reportusers'];
             }
     } // end switch
+
     if (empty($user_ids) && count($users)) {
         ksort($users);
         $user_ids = join(',', array_keys($users));
@@ -431,7 +454,17 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
         }
     }
 
-    $menus['reportusers'] = array('allusers' => get_string('allusers', 'hotpot'));
+    $menus['reportusers'] = array(
+        'allusers' => get_string('allusers', 'hotpot'),
+        'allparticipants' => get_string('allparticipants')
+    );
+
+    // groups
+    if ($groups = get_records_select('groups', "courseid='$course->id'", '', 'id,name')) {
+        foreach ($groups as $group) {
+            $menus['reportusers']["group$group->id"] = get_string('group').': '.$group->name;
+        }
+    }
 
     $users = get_records_sql("
         SELECT 
@@ -455,29 +488,31 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
         ORDER BY
             u.lastname
     ");
+
+    // current students
     if (!empty($students)) {
         $firsttime = true;
-        foreach ($students as $id=>$user) {
-            if (isset($users[$id])) {
+        foreach ($students as $user) {
+            if (isset($users[$user->id])) {
                 if ($firsttime) {
                     $firsttime = false; // so we only do this once
-                    $menus['reportusers']['allparticipants'] = get_string('allparticipants');
                     $menus['reportusers']['existingstudents'] = get_string('existingstudents');
                     $menus['reportusers'][] = '------';
                 }
-                $menus['reportusers']["$id"] = fullname($user);
-                unset($users[$id]);
+                $menus['reportusers']["$user->id"] = fullname($user);
+                unset($users[$user->id]);
             }
         }
     }
+    // others (former students, teachers, admins, course creators)
     if (!empty($users)) {
         $firsttime = true;
-        foreach ($users as $id=>$user) {
+        foreach ($users as $user) {
             if ($firsttime) {
                 $firsttime = false; // so we only do this once
                 $menus['reportusers'][] = '======';
             }
-            $menus['reportusers']["$id"] = fullname($user);
+            $menus['reportusers']["$user->id"] = fullname($user);
         }
     }
     $menus['reportattempts'] = array(
