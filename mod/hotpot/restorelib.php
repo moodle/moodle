@@ -482,34 +482,33 @@ function hotpot_restore_logs($restore, $log) {
 function hotpot_restore_dates($recordtype, &$restore, &$xml, $TAGS, $NAMETAG='NAME') {
     if (!empty($restore->course_startdateoffset)) {
 
-            // check course backup data directory exists
-            $course_dir = $CFG->dataroot."/".$restore->course_id."/backupdata";
-            check_dir_exists($course_dir, true);
+        // check course backup data directory exists
+        $course_dir = $CFG->dataroot."/".$restore->course_id."/backupdata";
+        check_dir_exists($course_dir, true);
 
-            // open $restorelog and start output for this HotPot
-            $restorelog = fopen("$course_dir/restorelog.html", "a");
-            fwrite ($restorelog, "<br>Hotpot - ".$xml['NAME'][0]['#']." <br>");
+        // open $restorelog and start output for this HotPot
+        $restorelog = fopen("$course_dir/restorelog.html", "a");
+        fwrite ($restorelog, "<br>Hotpot - ".$xml['NAME'][0]['#']." <br>");
 
-            // loop through time fields
-            $TAGS = array('TIMEOPEN', 'TIMECLOSE', 'TIMECREATED', 'TIMEMODIFIED');
-            foreach ($TAGS as $TAG) {
+        // loop through time fields
+        $TAGS = array('TIMEOPEN', 'TIMECLOSE', 'TIMECREATED', 'TIMEMODIFIED');
+        foreach ($TAGS as $TAG) {
 
-                // check $TAG has a sensible value
-                if (!empty($xml[$TAG][0]['#']) && is_string($xml[$TAG][0]['#'])) {
+            // check $TAG has a sensible value
+            if (!empty($xml[$TAG][0]['#']) && is_string($xml[$TAG][0]['#'])) {
 
-                    // write old date to $restorelog
-                    $value = $xml[$TAG][0]['#'];
-                    $date = usergetdate($value);
-                    fwrite ($restorelog, "$TAG was ". $date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']);
+                // write old date to $restorelog
+                $value = $xml[$TAG][0]['#'];
+                $date = usergetdate($value);
+                fwrite ($restorelog, "$TAG was ". $date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']);
 
-                    // write new date to $restorelog
-                    $value += $restore->course_startdateoffset;
-                    $date = usergetdate($value);
-                    fwrite ($restorelog, "&nbsp;&nbsp;&nbsp;$TAG is now ". $date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
+                // write new date to $restorelog
+                $value += $restore->course_startdateoffset;
+                $date = usergetdate($value);
+                fwrite ($restorelog, "&nbsp;&nbsp;&nbsp;$TAG is now ". $date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
 
-                    // update $value in $xml tree (as a string)
-                    $xml[$TAG][0]['#'] = "$value";
-                }
+                // update $value in $xml tree (as a string)
+                $xml[$TAG][0]['#'] = "$value";
             }
         }
     }
