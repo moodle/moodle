@@ -234,7 +234,7 @@
 
     // stop now if no attempts were found
     if (empty($attempts)) {
-        print_heading(get_string('noattempts','quiz'));
+        print_heading(get_string('noattemptstoshow','quiz'));
         exit;
     }
 
