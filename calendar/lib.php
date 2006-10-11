@@ -1164,34 +1164,39 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
 }
 
 function calendar_edit_event_allowed($event) {
+    
     global $USER;
 
-    $context = get_context_instance(CONTEXT_COURSE, $event->courseid);
+    // can not be using guest account
+    if ($USER->username == "guest") {
+        return false;  
+    }
     
-    if(!has_capability('moodle/calendar:manageownentries', $context)) {
-        return false;
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    // if user has manageentries at site level, return true
+    if (has_capability('manageentries', $sitecontext)) {
+        return true;
     }
 
-    if ($event->courseid != 0 && has_capability('moodle/calendar:manageentries', $context)) {
-        return true;
-    } else if ($event->courseid == 0 && $event->groupid != 0) {
-        // Group event
+    // editting userid account
+    if ($event->userid) {  
+        if ($event->userid == $USER->id) {
+            return (has_capability('moodle/calendar:manageownentries', $sitecontext));
+        }
+    } else if ($event->groupid) {
         $group = get_record('groups', 'id', $event->groupid);
         if($group === false) {
             return false;
-        }
-        $course = get_record('course', 'id', $event->courseid);
+        } 
         
-        if ($course->groupmode == SEPARATE_GROUPS) {
-            return has_capability('moodle/calendar:manageownentries', $context) && ismember($event->groupid);
-        } else {
-            return has_capability('moodle/calendar:manageownentries', $context);
-        }
-    } else if ($event->courseid == 0 && $event->groupid == 0 && $event->userid == $USER->id && has_capability('moodle/calendar:manageownentries', $context)) {
-        // User event, owned by this user
-        return true;
+        // this is ok because if you have this capability at course level, you should be able 
+        // to edit group calendar too
+        // there is no need to check membership, because if you have this capability
+        // you will have a role in this group context
+        return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_GROUP, $group->id));  
+    } else if ($event->courseid) {
+        return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $event->courseid)); 
     }
-
     return false;
 }
 
