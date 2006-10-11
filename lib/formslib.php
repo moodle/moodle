@@ -388,6 +388,7 @@ moodleform::registerElementType('select', "$CFG->libdir/form/select.php", 'moodl
 moodleform::registerElementType('text', "$CFG->libdir/form/text.php", 'moodleform_text');
 moodleform::registerElementType('textarea', "$CFG->libdir/form/textarea.php", 'moodleform_textarea');
 moodleform::registerElementType('date_selector', "$CFG->libdir/form/dateselector.php", 'moodleform_date_selector');
+moodleform::registerElementType('date_time_selector', "$CFG->libdir/form/datetimeselector.php", 'moodleform_date_time_selector');
 moodleform::registerElementType('htmleditor', "$CFG->libdir/form/htmleditor.php", 'moodleform_htmleditor');
 moodleform::registerElementType('static', "$CFG->libdir/form/static.php", 'moodleform_static');
 moodleform::registerElementType('hidden', "$CFG->libdir/form/hidden.php", 'moodleform_hidden');

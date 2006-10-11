@@ -4,25 +4,25 @@ require_once "$CFG->libdir/form/group.php";
 require_once "$CFG->libdir/formslib.php";
 
 /**
- * Class for a group of elements used to input a date.
+ * Class for a group of elements used to input a date and time.
  * 
- * Emulates moodle print_date_selector function 
+ * Emulates moodle print_date_selector function and also allows you to select a time.
  * 
  * @author Jamie Pratt <me@jamiep.org>
  * @access public
  */
-class moodleform_date_selector extends moodleform_group
-{
+class moodleform_date_time_selector extends moodleform_group{
     /**
-    * Control the fieldnames for form elements
+    * Options for the element
     *
     * startyear => integer start of range of years that can be selected
     * stopyear => integer last year that can be selected
     * timezone => float/string timezone
     * applydst => apply users daylight savings adjustment?
+    * step     => step to increment minutes by
     */
     var $_options = array('startyear'=>1970, 'stopyear'=>2020,
-                    'timezone'=>99, 'applydst'=>true);
+                    'timezone'=>99, 'applydst'=>true, 'step'=>5);
 
    /**
     * These complement separators, they are appended to the resultant HTML
@@ -30,6 +30,8 @@ class moodleform_date_selector extends moodleform_group
     * @var      array
     */
     var $_wrap = array('', '');
+    
+    //var $_seperator=array('', '', 'Time ', '');
 
    /**
     * Class constructor
@@ -40,12 +42,12 @@ class moodleform_date_selector extends moodleform_group
     * @param    array   Options to control the element's display
     * @param    mixed   Either a typical HTML attribute string or an associative array
     */
-    function moodleform_date_selector($elementName = null, $elementLabel = null, $options = array(), $attributes = null)
+    function moodleform_date_time_selector($elementName = null, $elementLabel = null, $options = array(), $attributes = null)
     {
         $this->HTML_QuickForm_element($elementName, $elementLabel, $attributes);
         $this->_persistantFreeze = true;
         $this->_appendName = true;
-        $this->_type = 'date_selector';
+        $this->_type = 'date_time_selector';
         // set the options, do not bother setting bogus ones
         if (is_array($options)) {
             foreach ($options as $name => $value) {
@@ -75,9 +77,17 @@ class moodleform_date_selector extends moodleform_group
         for ($i=$this->_options['startyear']; $i<=$this->_options['stopyear']; $i++) {
             $years[$i] = $i;
         }
+        for ($i=0; $i<=23; $i++) {
+            $hours[$i] = sprintf("%02d",$i);
+        }
+        for ($i=0; $i<60; $i+=$this->_options['step']) {
+            $minutes[$i] = sprintf("%02d",$i);
+        }
         $this->_elements[] =& moodleform::createElement('select', 'day', null, $days, $this->getAttributes(), true);
         $this->_elements[] =& moodleform::createElement('select','month', null, $months, $this->getAttributes(), true);
         $this->_elements[] =& moodleform::createElement('select','year', null, $years, $this->getAttributes(), true);
+        $this->_elements[] =& moodleform::createElement('select', 'hour', null, $hours, $this->getAttributes(), true);
+        $this->_elements[] =& moodleform::createElement('select','minute', null, $minutes, $this->getAttributes(), true);
 
     }
 
@@ -92,6 +102,8 @@ class moodleform_date_selector extends moodleform_group
         if (!is_array($value)) {
             $currentdate = usergetdate($value);
             $value = array(
+                'minute' => $currentdate['minutes'],
+                'hour' => $currentdate['hours'],
                 'day' => $currentdate['mday'],
                 'month' => $currentdate['mon'],
                 'year' => $currentdate['year']);
@@ -144,10 +156,14 @@ class moodleform_date_selector extends moodleform_group
         $valuearray = $this->_elements[0]->exportValue($submitValues[$this->getName()], true);
         $valuearray +=$this->_elements[1]->exportValue($submitValues[$this->getName()], true);
         $valuearray +=$this->_elements[2]->exportValue($submitValues[$this->getName()], true);
+        $valuearray +=$this->_elements[3]->exportValue($submitValues[$this->getName()], true);
+        $valuearray +=$this->_elements[4]->exportValue($submitValues[$this->getName()], true);
         $value[$this->getName()]=make_timestamp($valuearray['year'],
                                $valuearray['month'],
                                $valuearray['day'],
-                               0,0,0,
+                               $valuearray['hour'],
+                               $valuearray['minute'],
+                               0,
                                $this->_options['timezone'],
                                $this->_options['applydst']);
         return $value;
