@@ -52,12 +52,7 @@ $mod_assignment_capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
-            'guest' => CAP_PREVENT,
-            'student' => CAP_ALLOW,
-            'teacher' => CAP_INHERIT,
-            'editingteacher' => CAP_INHERIT,
-            'coursecreator' => CAP_INHERIT,
-            'admin' => CAP_INHERIT
+            'student' => CAP_ALLOW
         )
     ),
 
@@ -66,8 +61,6 @@ $mod_assignment_capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
-            'guest' => CAP_PREVENT,
-            'student' => CAP_PREVENT,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'coursecreator' => CAP_ALLOW,

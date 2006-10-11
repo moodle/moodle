@@ -13,12 +13,11 @@ $mod_wiki_capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
-            'guest' => CAP_PREVENT,
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'coursecreator' => CAP_PREVENT,
-            'admin' => CAP_PREVENT
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
         )
     ),
 
@@ -29,11 +28,8 @@ $mod_wiki_capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
-            'guest' => CAP_PREVENT,
-            'student' => CAP_PREVENT,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'coursecreator' => CAP_PREVENT,
             'admin' => CAP_ALLOW
         )
     ),
@@ -45,8 +41,6 @@ $mod_wiki_capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
-            'guest' => CAP_PREVENT,
-            'student' => CAP_PREVENT,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'coursecreator' => CAP_ALLOW,
