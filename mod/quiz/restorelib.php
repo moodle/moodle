@@ -99,8 +99,8 @@
             $quiz->password = backup_todb($info['MOD']['#']['PASSWORD']['0']['#']);
             $quiz->subnet = backup_todb($info['MOD']['#']['SUBNET']['0']['#']);
             $quiz->popup = backup_todb($info['MOD']['#']['POPUP']['0']['#']);
-            $quiz->delay1 = backup_todb($info['MOD']['#']['DELAY1']['0']['#']);
-            $quiz->delay2 = backup_todb($info['MOD']['#']['DELAY2']['0']['#']);
+            $quiz->delay1 = isset($info['MOD']['#']['DELAY1']['0']['#'])?backup_todb($info['MOD']['#']['DELAY1']['0']['#']):'';
+            $quiz->delay2 = isset($info['MOD']['#']['DELAY2']['0']['#'])?backup_todb($info['MOD']['#']['DELAY2']['0']['#']):'';
             //We have to recode the questions field (a list of questions id and pagebreaks)
             $quiz->questions = quiz_recode_layout($quiz->questions, $restore);
 
