@@ -52,16 +52,23 @@
 </tr>
 </table>
 
-<?php print_heading(get_string('permissions','role')) ?>
+<?php 
+    print_heading(get_string('permissions','role'));
+
+    $strinherit = get_string('inherit','role');
+    $strallow = get_string('allow','role');
+    $strprevent = get_string('prevent','role');
+    $strprohibit = get_string('prohibit','role');
+?>
 
 <table class="rolecap" align="center">
 
 <tr>
 <th class="name" align="left"><?php print_string('capability','role') ?></th>
-<th class="inherit"><?php print_string('inherit','role') ?></th>
-<th class="allow"><?php print_string('allow','role') ?></th>
-<th class="prevent"><?php print_string('prevent','role') ?></th>
-<th class="prohibit"><?php print_string('prohibit','role') ?></th>
+<th class="inherit"><?php p($strinherit); ?></th>
+<th class="allow"><?php p($strallow); ?></th>
+<th class="prevent"><?php p($strprevent); ?></th>
+<th class="prohibit"><?php p($strprohibit); ?></th>
 <th class="risk"><?php print_string('risks','role') ?></th>
 </tr>
 
@@ -120,10 +127,10 @@ foreach ($capabilities as $capability) {
 
         <tr class="rolecap <?php echo $rowclasses; ?>">
         <td class="name"><span title="<?php echo $capability->name ?>"><?php echo get_capability_string($capability->name); ?></span></td>
-        <td class="inherit"><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_INHERIT ?>" <?php if (!isset($localoverride->permission) || $localoverride->permission==CAP_INHERIT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
-        <td class="allow"><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_ALLOW ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_ALLOW){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
-        <td class="prevent" ><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_PREVENT ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_PREVENT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
-        <td class="prohibit" ><input type="radio" name="<?php echo $capability->name; ?>" value="<?php echo CAP_PROHIBIT ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_PROHIBIT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
+        <td class="inherit"><input type="radio" title="<?php p($strinherit); ?>" name="<?php echo $capability->name; ?>" value="<?php echo CAP_INHERIT ?>" <?php if (!isset($localoverride->permission) || $localoverride->permission==CAP_INHERIT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
+        <td class="allow"><input type="radio" title="<?php p($strallow); ?>" name="<?php echo $capability->name; ?>" value="<?php echo CAP_ALLOW ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_ALLOW){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
+        <td class="prevent" ><input type="radio" title="<?php p($strprevent); ?>" name="<?php echo $capability->name; ?>" value="<?php echo CAP_PREVENT ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_PREVENT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
+        <td class="prohibit" ><input type="radio" title="<?php p($strprohibit); ?>" name="<?php echo $capability->name; ?>" value="<?php echo CAP_PROHIBIT ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_PROHIBIT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
         <td class="risk"><?php 
             echo $riskinfo; 
         ?></td>
