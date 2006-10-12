@@ -565,7 +565,7 @@
             $course->lang = addslashes($course_header->course_lang);
             $course->theme = addslashes($course_header->course_theme);
             $course->cost = addslashes($course_header->course_cost);
-            $course->currency = addslashes($course_header->course_currency);
+            $course->currency = isset($course_header->course_currency)?addslashes($course_header->course_currency):'';
             $course->marker = addslashes($course_header->course_marker);
             $course->visible = addslashes($course_header->course_visible);
             $course->hiddensections = addslashes($course_header->course_hiddensections);
@@ -901,7 +901,7 @@
                             // Yu: This part is called repeatedly for every instance, 
                             // so it is necessary to set the granular flag and check isset() 
                             // when the first instance of this type of mod is processed.
-                            if (!isset($restore->mods[$mod->type]->granular) && is_array($restore->mods[$mod->type]->instances)) {
+                            if (!isset($restore->mods[$mod->type]->granular) && isset($restore->mods[$mod->type]->instances) && is_array($restore->mods[$mod->type]->instances)) {
                                 // This defines whether we want to restore specific
                                 // instances of the modules (granular restore), or
                                 // whether we don't care and just want to restore
@@ -912,7 +912,7 @@
                             }
                           
                             //Check if we've to restore this module (and instance) 
-                            if ($restore->mods[$mod->type]->restore) {                      
+                            if (!empty($restore->mods[$mod->type]->restore)) {                      
                                 if (empty($restore->mods[$mod->type]->granular)  // we don't care about per instance
                                     || (array_key_exists($mod->instance,$restore->mods[$mod->type]->instances) 
                                         && !empty($restore->mods[$mod->type]->instances[$mod->instance]->restore))) {
@@ -4901,7 +4901,7 @@
                     $mod_id = $data["MOD"]["#"]["ID"]["0"]["#"];
                     $mod_type = $data["MOD"]["#"]["MODTYPE"]["0"]["#"];
                     //Only if we've selected to restore it
-                    if  ($this->preferences->mods[$mod_type]->restore) {
+                    if  (!empty($this->preferences->mods[$mod_type]->restore)) {
                         //Save to db
                         $status = backup_putid($this->preferences->backup_unique_code,$mod_type,$mod_id,
                                      null,$data);
@@ -5878,7 +5878,7 @@
             // would have loaded it anyway, if there is any assignments. 
             // fix for MDL-6831
             $newcontext = get_context_instance(CONTEXT_COURSE, $restore->course_id);
-            if (!has_capability('course:manageactivities', $newcontext)) {
+            if (!has_capability('moodle/course:manageactivities', $newcontext)) {
                 if ($legacyteachers = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM, SITEID))) {
                     if ($legacyteacher = array_shift($legacyteachers)) {
                         role_assign($legacyteacher->id, $USER->id, 0, $newcontext->id);
