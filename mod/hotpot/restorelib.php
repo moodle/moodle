@@ -480,6 +480,7 @@ function hotpot_restore_logs($restore, $log) {
     return $status ? $log : false;
 }
 function hotpot_restore_dates($recordtype, &$restore, &$xml, $TAGS, $NAMETAG='NAME') {
+    global $CFG;
     if (!empty($restore->course_startdateoffset)) {
 
         // check course backup data directory exists
