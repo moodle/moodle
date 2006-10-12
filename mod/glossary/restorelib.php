@@ -244,7 +244,7 @@
         $status = true;
 
         //Get the comments array
-        $comments = $info['#']['COMMENTS']['0']['#']['COMMENT'];
+        $comments = isset($info['#']['COMMENTS']['0']['#']['COMMENT'])?$info['#']['COMMENTS']['0']['#']['COMMENT']:array();
 
         //Iterate over comments
         for($i = 0; $i < sizeof($comments); $i++) {
@@ -305,7 +305,7 @@
         $status = true;
 
         //Get the ratings array
-        $ratings = $info['#']['RATINGS']['0']['#']['RATING'];
+        $ratings = isset($info['#']['RATINGS']['0']['#']['RATING'])?$info['#']['RATINGS']['0']['#']['RATING']:array();
 
         //Iterate over ratings
         for($i = 0; $i < sizeof($ratings); $i++) {
@@ -356,7 +356,7 @@
         $status = true;
 
         //Get the comments array
-        $aliases = $info['#']['ALIASES']['0']['#']['ALIAS'];
+        $aliases = isset($info['#']['ALIASES']['0']['#']['ALIAS'])?$info['#']['ALIASES']['0']['#']['ALIAS']:array();
 
         //Iterate over comments
         for($i = 0; $i < sizeof($aliases); $i++) {
@@ -448,7 +448,7 @@
         $status = true;
 
         //Get the entryids array
-        $entryids = $info['#']['ENTRIES']['0']['#']['ENTRY'];
+        $entryids = isset($info['#']['ENTRIES']['0']['#']['ENTRY'])?$info['#']['ENTRIES']['0']['#']['ENTRY']:array();
 
         //Iterate over entryids
         for($i = 0; $i < sizeof($entryids); $i++) {
