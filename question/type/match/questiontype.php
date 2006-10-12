@@ -454,7 +454,7 @@ class question_match_qtype extends default_questiontype {
             //Now, build the question_match_SUB record structure
             $match_sub = new stdClass;
             $match_sub->question = $new_question_id;
-            $match_sub->code = backup_todb($mat_info['#']['CODE']['0']['#']);
+            $match_sub->code = isset($mat_info['#']['CODE']['0']['#'])?backup_todb($mat_info['#']['CODE']['0']['#']):'';
             if (!$match_sub->code) {
                 $match_sub->code = $oldid;
             }
