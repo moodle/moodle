@@ -45,7 +45,7 @@
         //Iterate
         foreach($modules as $name => $module) {
             //Only if the module is being restored
-            if ($module->restore == 1) {
+            if (isset($module->restore) && $module->restore == 1) {
                 //Include module library
                 include_once("$CFG->dirroot/mod/$name/lib.php");
                 //If module_refresh_events exists
@@ -72,7 +72,7 @@
         }
         foreach ($restore->mods as $name => $info) {
             //If the module is being restored
-            if ($info->restore == 1) {
+            if (isset($info->restore) && $info->restore == 1) {
                 //Check if the xxxx_decode_content_links_caller exists
                 include_once("$CFG->dirroot/mod/$name/restorelib.php");
                 $function_name = $name."_decode_content_links_caller";
