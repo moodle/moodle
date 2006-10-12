@@ -100,14 +100,10 @@ $text_source_options = array(
         <td align="left"><?php 
             if ($form->mode=='add') {
                 choose_from_menu($text_source_options, "summarysource", "$form->summarysource", "");
-                //choose_from_menu(
-                //    $text_source_options, "summarysource", "$form->summarysource", "",
-                //    "return hotpot_lockoptions('form', 'summarysource', summaryhideitems, nameoffvalues)"
-                //);
+                print '<br />';
             } else {
                 print '<input type="hidden" name="summarysource" value="'.HOTPOT_TEXTSOURCE_SPECIFIC.'">';
             }
-            print '<br />';
             if (function_exists("print_textarea") && isset($usehtmleditor)) {
                 print_textarea($usehtmleditor, 10, 65, 680, 400, "summary", $form->summary);
             } else {
