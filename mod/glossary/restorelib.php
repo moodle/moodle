@@ -159,7 +159,7 @@
         $status = true;
 
         //Get the entries array
-        $entries = $info['MOD']['#']['ENTRIES']['0']['#']['ENTRY'];
+        $entries = isset($info['MOD']['#']['ENTRIES']['0']['#']['ENTRY'])?$info['MOD']['#']['ENTRIES']['0']['#']['ENTRY']:array();
 
         //Iterate over entries
         for($i = 0; $i < sizeof($entries); $i++) {
@@ -396,7 +396,7 @@
         $status = true;
 
         //Get the categories array
-        $categories = $info['MOD']['#']['CATEGORIES']['0']['#']['CATEGORY'];
+        $categories = isset($info['MOD']['#']['CATEGORIES']['0']['#']['CATEGORY'])?$info['MOD']['#']['CATEGORIES']['0']['#']['CATEGORY']:array();
 
         //Iterate over categories
         for($i = 0; $i < sizeof($categories); $i++) {
