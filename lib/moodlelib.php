@@ -1630,8 +1630,15 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
                     break;
 
                 default:    /// Guests not allowed
-                    print_header_simple();
-                    notice(get_string('guestsnotallowed', '', $course->fullname), "$CFG->wwwroot/login/index.php");
+                    print_header_simple('', '', get_string('loggedinasguest'));
+                    if (empty($USER->switchrole[$context->id])) {  // Normal guest
+                        notice(get_string('guestsnotallowed', '', $course->fullname), "$CFG->wwwroot/login/index.php");
+                    } else {
+                        notify(get_string('guestsnotallowed', '', $course->fullname));
+                        echo '<div class="notifyproblem">'.switchroles_form($course->id).'</div>';
+                        print_footer($course);
+                        exit;
+                    }
                     break;
             }
 
