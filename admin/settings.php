@@ -49,37 +49,6 @@ if (!($root->check_access())) {
 
 $CFG->pagepath = 'admin/setting/'.$section;
 
-// WRITING SUBMITTED DATA (IF ANY) -------------------------------------------------------------------------------
-
-if ($data = data_submitted()) {
-    if (confirm_sesskey()) {
-        $olddbsessions = !empty($CFG->dbsessions);
-        $errors = $root->write_settings((array)$data);
-        //force logout if dbsession setting changes
-        if ($olddbsessions != !empty($CFG->dbsessions)) {
-            require_logout();
-        }
-        if (empty($errors)) {
-            switch ($return) {
-                case 'site':
-                    redirect("$CFG->wwwroot/");
-                case 'admin':
-                    redirect("$CFG->wwwroot/$CFG->admin/");
-                default:
-                    // following redirect should display confirmation message because it redirects
-                    // to the same page, user might not know if save button worked
-                    redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=" . $PAGE->section, get_string('changessaved'),2);
-            }
-        } else {
-            error(get_string('errorwithsettings', 'admin') . ' <br />' . $errors);
-        }
-    } else {
-        error(get_string('confirmsesskeybad', 'error'));
-        die;
-    }
-}
-
-// ---------------------------------------------------------------------------------------------------------------
 
 
 if (!empty($SITE->fullname)) {
@@ -104,6 +73,38 @@ if (!empty($SITE->fullname)) {
     print_simple_box(get_string('configintrosite', 'admin'), 'center', '50%');
 
 }
+
+
+// WRITING SUBMITTED DATA (IF ANY) -------------------------------------------------------------------------------
+
+if ($data = data_submitted()) {
+    if (confirm_sesskey()) {
+        $olddbsessions = !empty($CFG->dbsessions);
+        $errors = $root->write_settings((array)$data);
+        //force logout if dbsession setting changes
+        if ($olddbsessions != !empty($CFG->dbsessions)) {
+            require_logout();
+        }
+        if (empty($errors)) {
+            switch ($return) {
+                case 'site':
+                    redirect("$CFG->wwwroot/");
+                case 'admin':
+                    redirect("$CFG->wwwroot/$CFG->admin/");
+                default:
+                    notify(get_string('changessaved'));
+            }
+        } else {
+            notify(get_string('errorwithsettings', 'admin') . ' <br />' . $errors);
+        }
+    } else {
+        error(get_string('confirmsesskeybad', 'error'));
+    }
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+
+
 
 echo '<form action="settings.php" method="post" name="adminsettings" id="adminsettings">';
 echo '<input type="hidden" name="section" value="' . $PAGE->section . '" />';
