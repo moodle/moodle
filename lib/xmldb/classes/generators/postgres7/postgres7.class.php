@@ -370,10 +370,11 @@ class XMLDBpostgres7 extends XMLDBgenerator {
         if ($xmldb_field->getEnum()) {
         /// Drop the current enum
             $results = array_merge($results, $this->getDropEnumSQL($xmldb_table, $xmldb_field));
-        /// Change field name
-            $xmldb_field->setName($newname);
+        /// Change field name (over a clone to avoid some potential problems later)
+            $new_xmldb_field = clone($xmldb_field);
+            $new_xmldb_field->setName($newname);
         /// Recreate the enum
-            $results = array_merge($results, $this->getCreateEnumSQL($xmldb_table, $xmldb_field));
+            $results = array_merge($results, $this->getCreateEnumSQL($xmldb_table, $new_xmldb_field));
         }
 
         return $results;
