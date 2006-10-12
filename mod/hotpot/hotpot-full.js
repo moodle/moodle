@@ -1579,7 +1579,6 @@ function hpClickCheck(hp, t, v, args) {
     						}
                             var is_wrong = (ii==ii_max);
                         }
-if (!window.gdb)window.gdb=!confirm('is_wrong=['+is_wrong+'], g=['+g+']');
 						if (is_wrong) { // guess is wrong
 							if (!HP[_wrong][i]) HP[_wrong][i] = new Array();
 							var ii_max = HP[_wrong][i].length;
