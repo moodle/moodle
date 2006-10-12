@@ -434,7 +434,7 @@ class question_multichoice_qtype extends default_questiontype {
             $multichoice->layout = backup_todb($mul_info['#']['LAYOUT']['0']['#']);
             $multichoice->answers = backup_todb($mul_info['#']['ANSWERS']['0']['#']);
             $multichoice->single = backup_todb($mul_info['#']['SINGLE']['0']['#']);
-            $multichoice->shuffleanswers = backup_todb($mul_info['#']['SHUFFLEANSWERS']['0']['#']);
+            $multichoice->shuffleanswers = isset($mul_info['#']['SHUFFLEANSWERS']['0']['#'])?backup_todb($mul_info['#']['SHUFFLEANSWERS']['0']['#']):'';
             if (array_key_exists("CORRECTFEEDBACK", $mul_info['#'])) {
                 $multichoice->correctfeedback = backup_todb($mul_info['#']['CORRECTFEEDBACK']['0']['#']);
             } else {
