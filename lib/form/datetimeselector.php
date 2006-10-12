@@ -11,7 +11,7 @@ require_once "$CFG->libdir/formslib.php";
  * @author Jamie Pratt <me@jamiep.org>
  * @access public
  */
-class moodleform_date_time_selector extends moodleform_group{
+class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
     /**
     * Options for the element
     *
@@ -42,7 +42,7 @@ class moodleform_date_time_selector extends moodleform_group{
     * @param    array   Options to control the element's display
     * @param    mixed   Either a typical HTML attribute string or an associative array
     */
-    function moodleform_date_time_selector($elementName = null, $elementLabel = null, $options = array(), $attributes = null)
+    function MoodleQuickForm_date_time_selector($elementName = null, $elementLabel = null, $options = array(), $attributes = null)
     {
         $this->HTML_QuickForm_element($elementName, $elementLabel, $attributes);
         $this->_persistantFreeze = true;
@@ -83,11 +83,11 @@ class moodleform_date_time_selector extends moodleform_group{
         for ($i=0; $i<60; $i+=$this->_options['step']) {
             $minutes[$i] = sprintf("%02d",$i);
         }
-        $this->_elements[] =& moodleform::createElement('select', 'day', null, $days, $this->getAttributes(), true);
-        $this->_elements[] =& moodleform::createElement('select','month', null, $months, $this->getAttributes(), true);
-        $this->_elements[] =& moodleform::createElement('select','year', null, $years, $this->getAttributes(), true);
-        $this->_elements[] =& moodleform::createElement('select', 'hour', null, $hours, $this->getAttributes(), true);
-        $this->_elements[] =& moodleform::createElement('select','minute', null, $minutes, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select', 'day', null, $days, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select','month', null, $months, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select','year', null, $years, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select', 'hour', null, $hours, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select','minute', null, $minutes, $this->getAttributes(), true);
 
     }
 

@@ -7,7 +7,7 @@ require_once('HTML/QuickForm/textarea.php');
  * @author       Jamie Pratt
  * @access       public
  */
-class moodleform_textarea extends HTML_QuickForm_textarea{
+class MoodleQuickForm_textarea extends HTML_QuickForm_textarea{
     /**
      * html for help button, if empty then no help
      *

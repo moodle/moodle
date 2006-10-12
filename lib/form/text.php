@@ -7,7 +7,7 @@ require_once("HTML/QuickForm/text.php");
  * @author       Jamie Pratt
  * @access       public
  */
-class moodleform_text extends HTML_QuickForm_text{
+class MoodleQuickForm_text extends HTML_QuickForm_text{
     /**
      * html for help button, if empty then no help
      *

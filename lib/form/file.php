@@ -7,7 +7,7 @@ require_once('HTML/QuickForm/file.php');
  * @author       Jamie Pratt
  * @access       public
  */
-class moodleform_file extends HTML_QuickForm_file{
+class MoodleQuickForm_file extends HTML_QuickForm_file{
     /**
      * html for help button, if empty then no help
      *

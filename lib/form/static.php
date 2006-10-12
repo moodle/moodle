@@ -7,7 +7,7 @@ require_once("HTML/QuickForm/static.php");
  * @author       Jamie Pratt
  * @access       public
  */
-class moodleform_static extends HTML_QuickForm_static{
+class MoodleQuickForm_static extends HTML_QuickForm_static{
     /**
      * html for help button, if empty then no help
      *

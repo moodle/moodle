@@ -8,6 +8,10 @@
 
     include_once $CFG->libdir.'/formslib.php';
 
+    print_header();
+    notice('This file is disabled due to recent changes in formslib.php, edit3.php will be here soon ;-).');
+    die;
+
     require_login();
 
     $mform =& new moodleform('edit_course', 'post', 'edit2.php');

@@ -7,7 +7,7 @@ require_once('HTML/QuickForm/radio.php');
  * @author       Jamie Pratt
  * @access       public
  */
-class moodleform_radio extends HTML_QuickForm_radio{
+class MoodleQuickForm_radio extends HTML_QuickForm_radio{
     /**
      * html for help button, if empty then no help
      *

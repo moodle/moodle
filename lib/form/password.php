@@ -7,7 +7,7 @@ require_once('HTML/QuickForm/password.php');
  * @author       Jamie Pratt
  * @access       public
  */
-class moodleform_password extends HTML_QuickForm_password{
+class MoodleQuickForm_password extends HTML_QuickForm_password{
     /**
      * html for help button, if empty then no help
      *

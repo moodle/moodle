@@ -7,7 +7,7 @@ require_once('HTML/QuickForm/select.php');
  * @author       Jamie Pratt
  * @access       public
  */
-class moodleform_select extends HTML_QuickForm_select{
+class MoodleQuickForm_select extends HTML_QuickForm_select{
     /**
      * html for help button, if empty then no help
      *

@@ -10,7 +10,7 @@ require_once("HTML/QuickForm/group.php");
  * @since        PHP4.04pl1
  * @access       public
  */
-class moodleform_group extends HTML_QuickForm_group{
+class MoodleQuickForm_group extends HTML_QuickForm_group{
     /**
      * html for help button, if empty then no help
      *

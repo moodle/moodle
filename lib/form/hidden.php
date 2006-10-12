@@ -7,7 +7,7 @@ require_once('HTML/QuickForm/hidden.php');
  * @author       Jamie Pratt
  * @access       public
  */
-class moodleform_hidden extends HTML_QuickForm_hidden{
+class MoodleQuickForm_hidden extends HTML_QuickForm_hidden{
     /**
      * html for help button, if empty then no help
      *

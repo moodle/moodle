@@ -7,7 +7,7 @@ require_once('HTML/QuickForm/checkbox.php');
  * @author       Jamie Pratt
  * @access       public
  */
-class moodleform_checkbox extends HTML_QuickForm_checkbox{
+class MoodleQuickForm_checkbox extends HTML_QuickForm_checkbox{
     /**
      * html for help button, if empty then no help
      *
