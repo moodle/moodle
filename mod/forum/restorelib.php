@@ -89,9 +89,9 @@
             $forum->rsstype = backup_todb($info['MOD']['#']['RSSTYPE']['0']['#']);
             $forum->rssarticles = backup_todb($info['MOD']['#']['RSSARTICLES']['0']['#']);
             $forum->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
-            $forum->warnafter = backup_todb($info['MOD']['#']['WARNAFTER']['0']['#']);
-            $forum->blockafter = backup_todb($info['MOD']['#']['BLOCKAFTER']['0']['#']);
-            $forum->blockperiod = backup_todb($info['MOD']['#']['BLOCKPERIOD']['0']['#']);
+            $forum->warnafter = isset($info['MOD']['#']['WARNAFTER']['0']['#'])?backup_todb($info['MOD']['#']['WARNAFTER']['0']['#']):'';
+            $forum->blockafter = isset($info['MOD']['#']['BLOCKAFTER']['0']['#'])?backup_todb($info['MOD']['#']['BLOCKAFTER']['0']['#']):'';
+            $forum->blockperiod = isset($info['MOD']['#']['BLOCKPERIOD']['0']['#'])?backup_todb($info['MOD']['#']['BLOCKPERIOD']['0']['#']):'';
 
 
             //We have to recode the scale field if it's <0 (positive is a grade, not a scale)
