@@ -55,7 +55,7 @@
             $assignment->var3 = backup_todb($info['MOD']['#']['VAR3']['0']['#']);
             $assignment->var4 = backup_todb($info['MOD']['#']['VAR4']['0']['#']);
             $assignment->var5 = backup_todb($info['MOD']['#']['VAR5']['0']['#']);
-            $assignment->type = backup_todb($info['MOD']['#']['TYPE']['0']['#']);
+            $assignment->type = isset($info['MOD']['#']['TYPE']['0']['#'])?backup_todb($info['MOD']['#']['TYPE']['0']['#']):'';
             $assignment->assignmenttype = backup_todb($info['MOD']['#']['ASSIGNMENTTYPE']['0']['#']);
             $assignment->maxbytes = backup_todb($info['MOD']['#']['MAXBYTES']['0']['#']);
             $assignment->timedue = backup_todb($info['MOD']['#']['TIMEDUE']['0']['#']);
