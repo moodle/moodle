@@ -365,7 +365,7 @@
                     } else {
                         $tab[$elem][1] = get_string("included")." ".get_string("withoutuserdata");
                     }
-                    if (is_array($mod->instances) && count($mod->instances)) {
+                    if (isset($mod->instances) && is_array($mod->instances) && count($mod->instances)) {
                         foreach ($mod->instances as $instance) {
                             if ($instance->backup) {
                                 $elem++;
