@@ -80,7 +80,7 @@ class moodleform {
 
         if ($validated === null) {
             $internal_val = $this->_form->validate();
-            $moodle_val = $this->validation($this->_form->exportValues(null, false));
+            $moodle_val = $this->validation($this->_form->exportValues(null, true));
             if ($moodle_val !== true) {
                 if (!empty($moodle_val)) {
                     foreach ($moodle_val as $element=>$msg) {
