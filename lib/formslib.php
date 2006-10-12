@@ -165,7 +165,9 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     function setType($elementname, $paramtype) {
         $this->_types[$elementname] = $paramtype;
     }
-
+    function setTypes($paramtypes) {
+        $this->_types = $paramtypes + $this->_types;
+    }
     function updateSubmission($submission) {
         if (empty($submission)) {
             $this->_submitValues = array();
@@ -204,33 +206,41 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         $this->setDefaults(array($elementName=>$defaultValue), $filter);
     } // end func setDefault
     /**
-     * Class constructor - same parameters as HTML_QuickForm_DHTMLRulesTableless
+     * Add an array of buttons to the form
      * @param    array       $buttons          An associative array representing help button to attach to
      *                                          to the form. keys of array correspond to names of elements in form.
      *
      * @access   public
     */
-
     function setHelpButtons($buttons, $suppresscheck=false){
 
-        foreach ($this->_elements as $no => $element){
-            if (array_key_exists($element->getName(), $buttons)){
-
-                if (method_exists($element, 'setHelpButton')){
-                    $this->_elements[$no]->setHelpButton($buttons[$element->getName()]);
-                }else{
-                    $a=new object();
-                    $a->name=$element->getName();
-                    $a->classname=get_class($element);
-                    print_error('nomethodforaddinghelpbutton', 'form', '', $a);
-                }
-                unset($buttons[$element->getName()]);
+        foreach ($buttons as $elementname => $button){
+            $this->setHelpButton($elementname, $button, $suppresscheck);
+        }
+    }
+    /**
+     * Add a single button
+     *
+     * @param string $elementname name of the element to add the item to
+     * @param array $button - arguments to pass to setHelpButton
+     * @param boolean $suppresscheck - whether to throw an error if the element
+     *                                  doesn't exist.
+     */
+    function setHelpButton($elementname, $button, $suppresscheck=false){
+        if (array_key_exists($elementname, $this->_elementIndex)){
+            //_elements has a numeric index, this code accesses the elements by name
+            $element=&$this->_elements[$this->_elementIndex[$elementname]];
+            if (method_exists($element, 'setHelpButton')){
+                $element->setHelpButton($button);
+            }else{
+                $a=new object();
+                $a->name=$element->getName();
+                $a->classname=get_class($element);
+                print_error('nomethodforaddinghelpbutton', 'form', '', $a);
             }
-
-        }
-        if (count($buttons)&& !$suppresscheck){
-            print_error('nonexistentformelements', 'form', '', join(', ', array_keys($buttons)));
-        }
+        }elseif (!$suppresscheck){
+            print_error('nonexistentformelements', 'form', '', $elementname);
+        }        
     }
 
     function exportValues($elementList= null, $addslashes=true){
