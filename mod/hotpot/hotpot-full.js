@@ -1014,9 +1014,23 @@ function GetJClozeQuestionDetails(hp, v) {
 				if (r!=2.1) { // exclude Find-It 3a
 					for (var i=0, ii=0; i<I[q][1].length; i++) {
 						var s = I[q][1][i][0];
-						if (typeof(s)=='string' && s!='' && (s.toUpperCase() != correct.toUpperCase())) {
-							x[ii++] = s;
-						}
+                        if (typeof(s)=='string' && s!='') {
+                            if (s.toUpperCase() == correct.toUpperCase()) {
+                                var is_ignored = false;
+                            } else {
+                                // DropDown 2.4
+                                var is_ignored = true;
+                                var iii_max = HP[_wrong][q] ? HP[_wrong][q].length : 0;
+                                for (var iii=0; iii<iii_max; iii++) {
+                                    if (s.toUpperCase() == HP[_wrong][q][iii].toUpperCase()) {
+                                        var is_ignored = false;
+                                    }
+                                }
+                            }
+    						if (is_ignored) {
+    							x[ii++] = s;
+    						}
+                        }
 					}
 				}
 				qDetails += hpHiddenField(Q+'ignored', x);
@@ -1526,7 +1540,18 @@ function hpClickCheck(hp, t, v, args) {
 					if (hp==5) {
 						g = eval('document.Cloze.Gap'+i+'.value');
 					} else if (hp==6) {
-						g = Get_SelectedDropValue(i);
+						var ii = Get_SelectedDropValue(i);
+                        if (isNaN(ii) || ii<0) { // 'null' || -1
+                            g = ''; // no guess yet
+                        } else {
+                			if (window.MakeIndividualDropdowns) {
+                                var is_wrong = (ii!=0);
+                                g = I[i][1][ii][0];
+                            } else { 
+                                var is_wrong = (ii!=i);
+                                g = I[ii][1][0][0];
+                            }
+                        }
 					}
 				} else if (r==2.1 && i==args[0]) { // Find-It 3a
 					g = I[i][1][0][0];
@@ -1539,18 +1564,23 @@ function hpClickCheck(hp, t, v, args) {
 					// is this a new guess at this gap?
 					if (ii==0 || g!=HP[_guesses][i][ii-1]) { 
 						HP[_guesses][i][ii] = g;
-						var G = g.toUpperCase();
-	
-						var ii_max = I[i][1].length;
-						for (var ii=0; ii<ii_max; ii++) {
-							if (window.CaseSensitive) {
-								if (g==I[i][1][ii][0]) break;
-							} else {
-								if (G==I[i][1][ii][0].toUpperCase()) break;
-							}
-						}
-	
-						if (ii==ii_max) { // guess is wrong
+                        if (r==1) {
+                            // Rottmeier DropDown 2.4
+                            // do nothing 
+                        } else {
+    						var G = g.toUpperCase();	
+    						var ii_max = I[i][1].length;
+    						for (var ii=0; ii<ii_max; ii++) {
+    							if (window.CaseSensitive) {
+    								if (g==I[i][1][ii][0]) break;
+    							} else {
+    								if (G==I[i][1][ii][0].toUpperCase()) break;
+    							}
+    						}
+                            var is_wrong = (ii==ii_max);
+                        }
+if (!window.gdb)window.gdb=!confirm('is_wrong=['+is_wrong+'], g=['+g+']');
+						if (is_wrong) { // guess is wrong
 							if (!HP[_wrong][i]) HP[_wrong][i] = new Array();
 							var ii_max = HP[_wrong][i].length;
 							for (var ii=0; ii<ii_max; ii++) {
@@ -1888,7 +1918,7 @@ function hpHiddenField(name, value, comma, forceHTML) {
 		if (comma==null) comma = ','; 
 		for (var i=0; i<i_max; i++) {
 			values[i] = trim(values[i]);
-			if (values[i]!='') {
+			if (values[i]!=null && values[i]!='') {
 				value += (i==0 ? '' : comma) +  encode_entities(values[i]);
 			}
 		}
