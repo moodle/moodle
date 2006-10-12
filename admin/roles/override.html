@@ -1,3 +1,10 @@
+<?php 
+    $strinherit = get_string('inherit','role');
+    $strallow = get_string('allow','role');
+    $strprevent = get_string('prevent','role');
+    $strprohibit = get_string('prohibit','role');
+?>
+
 <form name="overrideform" action="override.php" method="post">
     <input type="hidden" name="contextid" value="<?php p($contextid) ?>">
     <input type="hidden" name="roleid" value="<?php p($roleid) ?>">
@@ -8,10 +15,10 @@
     <table class="rolecap">
         <tr>
             <th class="name" align="left"><?php print_string('capability','role') ?></th>
-            <th class="inherit"><?php print_string('inherit','role') ?></th>
-            <th class="allow"><?php print_string('allow','role') ?></th>
-            <th class="prevent"><?php print_string('prevent','role') ?></th>
-            <th class="prohibit"><?php print_string('prohibit','role') ?></th>
+            <th class="inherit"><?php p($strinherit); ?></th>
+            <th class="allow"><?php p($strallow); ?></th>
+            <th class="prevent"><?php p($strprevent); ?></th>
+            <th class="prohibit"><?php p($strprohibit); ?></th>
             <th class="risk"><?php print_string('risks','role') ?></th>
         </tr>
         <?php
@@ -79,28 +86,28 @@
           <td class="name"><?php echo get_capability_string($capability->name); ?></td>
 
              <td class="inherit">
-             <input type="radio" name="<?php echo $capability->name; ?>" value="0"
+             <input type="radio" title="<?php p($strinherit); ?>" name="<?php echo $capability->name; ?>" value="0"
                 <?php
                     if ($localpermission == CAP_INHERIT) {echo 'checked="checked"';}
                     if ($isdisabled)           {echo 'disabled="disabled"';}?> />
              </td>
 
-             <td class="inherit <?php if ($isallow) {echo ' capcurrent';} ?>">
-             <input type="radio" name="<?php echo $capability->name; ?>"
+             <td class="allow <?php if ($isallow) {echo ' capcurrent';} ?>">
+             <input type="radio" title="<?php p($strallow); ?>" name="<?php echo $capability->name; ?>"
                 <?php echo ' value="'.CAP_ALLOW.'"';
                    if ($localpermission == CAP_ALLOW) {echo ' checked="checked"';}
                    if ($isdisabled)                   {echo ' disabled="disabled"';}?> />
              </td>
 
              <td class="prevent <?php if ($isprevent) {echo ' capcurrent';} ?>">
-             <input type="radio" name="<?php echo $capability->name; ?>"
+             <input type="radio" title="<?php p($strprevent); ?>" name="<?php echo $capability->name; ?>"
                 <?php echo ' value="'.CAP_PREVENT.'"';
                    if ($localpermission == CAP_PREVENT) {echo ' checked="checked"';}
                    if ($isdisabled)                     {echo ' disabled="disabled"';}?> />
              </td>
 
              <td class="prohibit <?php if ($isprohibit) {echo ' capcurrent';} ?>">
-             <input type="radio" name="<?php echo $capability->name; ?>"
+             <input type="radio" title="<?php p($strprohibit); ?>" name="<?php echo $capability->name; ?>"
                 <?php echo ' value="'.CAP_PROHIBIT.'"';
                    if ($localpermission == CAP_PROHIBIT) {echo ' checked="checked"';}
                    if ($isdisabled)                      {echo ' disabled="disabled"';}?> />
