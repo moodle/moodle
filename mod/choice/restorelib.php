@@ -53,7 +53,7 @@
             $choice->text = backup_todb($info['MOD']['#']['TEXT']['0']['#']);
             $choice->format = backup_todb($info['MOD']['#']['FORMAT']['0']['#']);
             $choice->publish = backup_todb($info['MOD']['#']['PUBLISH']['0']['#']);
-            $choice->showresults = backup_todb($info['MOD']['#']['SHOWRESULTS']['0']['#']);
+            $choice->showresults = isset($info['MOD']['#']['SHOWRESULTS']['0']['#'])?backup_todb($info['MOD']['#']['SHOWRESULTS']['0']['#']):'';
             $choice->display = backup_todb($info['MOD']['#']['DISPLAY']['0']['#']);
             $choice->allowupdate = backup_todb($info['MOD']['#']['ALLOWUPDATE']['0']['#']);
             $choice->showunanswered = backup_todb($info['MOD']['#']['SHOWUNANSWERED']['0']['#']);
@@ -172,7 +172,7 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
 
             //We'll need this later!!
             $oldid = backup_todb($opt_info['#']['ID']['0']['#']);
-            $olduserid = backup_todb($opt_info['#']['USERID']['0']['#']);
+            $olduserid = isset($opt_info['#']['USERID']['0']['#'])?backup_todb($opt_info['#']['USERID']['0']['#']):'';
 
             //Now, build the CHOICE_OPTIONS record structure
             $option->choiceid = $choiceid;
