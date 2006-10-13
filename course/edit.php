@@ -9,6 +9,11 @@
     $id       = optional_param('id', 0, PARAM_INT); // course id
     $category = optional_param('category', 0, PARAM_INT); // possible default category
 
+    // redirect to new form if testing as developer
+    if (!empty($CFG->use_new_forms)) {
+        redirect('edit2.php?id='.$id.'&amp;category='.$category);
+    }
+
     require_login();
    
     $disable_meta = false;
