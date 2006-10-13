@@ -106,7 +106,7 @@
     if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
         if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
             echo '<td>';
-            print_group_menu($groups, $groupmode, $currentgroup, "view.php?id=$cm->id");
+            print_group_menu($groups, $groupmode, $currentgroup, "$CFG->wwwroot/mod/forum/view.php?id=$cm->id");
             echo '</td>';
         }
     }
