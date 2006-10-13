@@ -68,11 +68,42 @@ $string['databasesettingssub'] = '<b>Type:</b> mysql or postgres7<br />
        <b>User:</b> your database username<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> optional prefix to use for all table names';
+$string['databasesettingssub_mysql'] = '<b>Type:</b> MySQL<br />
+       <b>Host:</b> eg localhost or db.isp.com<br />
+       <b>Name:</b> database name, eg moodle<br />
+       <b>User:</b> your database username<br />
+       <b>Password:</b> your database password<br />
+       <b>Tables Prefix:</b> prefix to use for all table names (optional)';
+$string['databasesettingssub_postgres7'] = '<b>Type:</b> PostgreSQL<br />
+       <b>Host:</b> eg localhost or db.isp.com<br />
+       <b>Name:</b> database name, eg moodle<br />
+       <b>User:</b> your database username<br />
+       <b>Password:</b> your database password<br />
+       <b>Tables Prefix:</b> prefix to use for all table names (mandatory)';
+$string['databasesettingssub_mssql'] = '<b>Type:</b> SQL*Server<br />
+       <b>Host:</b> eg localhost or db.isp.com<br />
+       <b>Name:</b> database name, eg moodle<br />
+       <b>User:</b> your database username<br />
+       <b>Password:</b> your database password<br />
+       <b>Tables Prefix:</b> prefix to use for all table names (mandatory)';
+$string['databasesettingssub_odbc_mssql'] = '<b>Type:</b> SQL*Server (over ODBC) <b>Experimental!</b><br />
+       <b>Host:</b> given name of the DSN in the ODBC control panel<br />
+       <b>Name:</b> database name, eg moodle<br />
+       <b>User:</b> your database username<br />
+       <b>Password:</b> your database password<br />
+       <b>Tables Prefix:</b> prefix to use for all table names (mandatory)';
+$string['databasesettingssub_oci8po'] = '<b>Type:</b> Oracle<br />
+       <b>Host:</b> not used, can be left blank<br />
+       <b>Name:</b> given name of the tnsnames.ora connection<br />
+       <b>User:</b> your database username<br />
+       <b>Password:</b> your database password<br />
+       <b>Tables Prefix:</b> prefix to use for all table names (mandatory, 2cc max)';
 $string['dataroot'] = 'Data Directory';
 $string['datarooterror'] = 'The \'Data Directory\' you specified could not be found or created.  Either correct the path or create that directory manually.';
 $string['dbconnectionerror'] = 'We could not connect to the database you specified. Please check your database settings.';
 $string['dbcreationerror'] = 'Database creation error. Could not create the given database name with the settings provided';
 $string['dbwrongencoding'] = 'The selected database is running under one non-recommended encoding ($a). It would be better to use one Unicode (UTF-8) encoded database instead. Anyway, you can bypass this test by selecting the \"Skip DB Encoding Test\" check below, but you could experience problems in the future.';
+$string['dbwrongprefix'] = 'You must follow prefix rules as explained above.';
 $string['dbhost'] = 'Host Server';
 $string['dbpass'] = 'Password';
 $string['dbprefix'] = 'Tables prefix';
@@ -191,7 +222,12 @@ $string['memorylimithelp'] = '<p>The PHP memory limit for your server is current
     <p>However, on some servers this will prevent <b>all</b> PHP pages from working 
     (you will see errors when you look at pages) so you\'ll have to remove the .htaccess file.</p></li>
 </ol>';
+$string['mssql'] = 'SQL*Server (mssql)';
+$string['mysql'] = 'MySQL (mysql)';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MySQL extension so that it can communicate with MySQL.  Please check your php.ini file or recompile PHP.';
+$string['oci8po'] = 'Oracle (oci8po)';
+$string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
+$string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['pass'] = 'Pass';
 $string['phpversion'] = 'PHP version';
 $string['phpversionerror'] = 'PHP version must be at least 4.3.0 or 5.1.0 (5.0.x has a number of known problems).';
