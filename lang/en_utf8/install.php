@@ -86,24 +86,26 @@ $string['databasesettingssub_mssql'] = '<b>Type:</b> SQL*Server<br />
        <b>User:</b> your database username<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> prefix to use for all table names (mandatory)';
-$string['databasesettingssub_odbc_mssql'] = '<b>Type:</b> SQL*Server (over ODBC) <b>Experimental!</b><br />
+$string['databasesettingssub_odbc_mssql'] = '<b>Type:</b> SQL*Server (over ODBC) <b><font color=\"red\">Experimental! (not for use in production)</font></b><br />
        <b>Host:</b> given name of the DSN in the ODBC control panel<br />
        <b>Name:</b> database name, eg moodle<br />
        <b>User:</b> your database username<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> prefix to use for all table names (mandatory)';
 $string['databasesettingssub_oci8po'] = '<b>Type:</b> Oracle<br />
-       <b>Host:</b> not used, can be left blank<br />
+       <b>Host:</b> not used, must be left blank<br />
        <b>Name:</b> given name of the tnsnames.ora connection<br />
        <b>User:</b> your database username<br />
        <b>Password:</b> your database password<br />
-       <b>Tables Prefix:</b> prefix to use for all table names (mandatory, 2cc max)';
+       <b>Tables Prefix:</b> prefix to use for all table names (mandatory, 2cc. max)';
 $string['dataroot'] = 'Data Directory';
 $string['datarooterror'] = 'The \'Data Directory\' you specified could not be found or created.  Either correct the path or create that directory manually.';
 $string['dbconnectionerror'] = 'We could not connect to the database you specified. Please check your database settings.';
 $string['dbcreationerror'] = 'Database creation error. Could not create the given database name with the settings provided';
 $string['dbwrongencoding'] = 'The selected database is running under one non-recommended encoding ($a). It would be better to use one Unicode (UTF-8) encoded database instead. Anyway, you can bypass this test by selecting the \"Skip DB Encoding Test\" check below, but you could experience problems in the future.';
-$string['dbwrongprefix'] = 'You must follow prefix rules as explained above.';
+$string['dbwronghostserver'] = 'You must follow \"Host\" rules as explained above.';
+$string['dbwrongnlslang'] = 'The NLS_LANG environment variable in your web server must use the AL32UTF8 charset. See PHP documentation about how to configure OCI8 properly.';
+$string['dbwrongprefix'] = 'You must follow \"Tables Prefix\" rules as explained above.';
 $string['dbhost'] = 'Host Server';
 $string['dbpass'] = 'Password';
 $string['dbprefix'] = 'Tables prefix';
@@ -223,10 +225,14 @@ $string['memorylimithelp'] = '<p>The PHP memory limit for your server is current
     (you will see errors when you look at pages) so you\'ll have to remove the .htaccess file.</p></li>
 </ol>';
 $string['mssql'] = 'SQL*Server (mssql)';
+$string['mssqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MSSQL extension so that it can communicate with SQL*Server.  Please check your php.ini file or recompile PHP.';
 $string['mysql'] = 'MySQL (mysql)';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MySQL extension so that it can communicate with MySQL.  Please check your php.ini file or recompile PHP.';
 $string['oci8po'] = 'Oracle (oci8po)';
+$string['ociextensionisnotpresentinphp'] = 'PHP has not been properly configured with the OCI8 extension so that it can communicate with Oracle.  Please check your php.ini file or recompile PHP.';
+$string['odbcextensionisnotpresentinphp'] = 'PHP has not been properly configured with the ODBC extension so that it can communicate with SQL*Server.  Please check your php.ini file or recompile PHP.';
 $string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
+$string['pgsqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the PGSQL extension so that it can communicate with PostgreSQL.  Please check your php.ini file or recompile PHP.';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['pass'] = 'Pass';
 $string['phpversion'] = 'PHP version';
