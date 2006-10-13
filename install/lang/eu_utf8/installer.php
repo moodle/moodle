@@ -88,6 +88,13 @@ $string['fileuploads'] = 'Fitxategien igoerak';
 $string['fileuploadserror'] = 'Aktibatuta egon behar du';
 $string['gdversion'] = 'GD bertsioa';
 $string['gdversionerror'] = 'GD liburutegiak bertan egon behar luke irudiak sortu eta prozesatzeko';
+$string['gdversionhelp'] = '<p>Zure zerbitzariak GDa instalaturik ez daukala dirudi.</p>
+
+<p>GD Moodlek irudiak (erabiltzaileen ikurrak, esaterako) prozesatzeko beharrezko duen PHP liburutegia da, baita irudi berriak sortzeko ere (ad., logoak). Moodlek GD gabe lan egin dezake, baina aipatutako baliabideak ez dituzu izango.</p>
+
+<p>UNIX ingurunean GD PHPri eransteko, PHP konpilatu --with-gd parametroa erabiliz.</p>
+
+<p>Windows ingurunean, php.ini edita dezakezu, libgd.dll-ri dagozkion iruzkinen lerroa kenduz.</p>';
 $string['globalsquotes'] = 'Ezarpen orokorren erabilera ez segurua';
 $string['globalsquoteserror'] = 'PHP ezarpenak zehaztu: register_globals indargabetu edo/eta magic_quotes_gpc ezarri';
 $string['help'] = 'Laguntza';

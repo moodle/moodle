@@ -90,6 +90,13 @@ $string['fileuploads'] = '上传文件';
 $string['fileuploadserror'] = '这应当是开启的';
 $string['gdversion'] = 'GD版本';
 $string['gdversionerror'] = '为了能够处理和创建图片，服务器上必须有GD库。';
+$string['gdversionhelp'] = '<p>您的服务器看上去并没有安装GD。</p>
+
+<p>PHP要有GD库才能让Moodle处理图像(如用户图标)。没有GD，Moodle还是可以工作的——只是那些需要GD的功能就不能使用了。</p>
+
+<p>在Unix上为PHP增加GD功能，可以用--with-gd选项来编译PHP。</p>
+
+<p>在Windows上，修改php.ini并去掉libgd.dll行前的注释符号就可以了。</p>';
 $string['globalsquotes'] = '处理全局变量的方式不安全';
 $string['globalsquoteserror'] = '修正您的PHP设置：禁用register_globals和/或启动magic_quotes_gpc。';
 $string['help'] = '帮助';

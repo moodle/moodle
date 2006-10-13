@@ -33,6 +33,16 @@ $string['fileuploads'] = 'File tải lên';
 $string['fileuploadserror'] = 'Điều này sẽ là';
 $string['gdversion'] = 'Phiên bản GD';
 $string['gdversionerror'] = 'Thư viện GD nên được cho phép để xử lý và tạo các hình ảnh';
+$string['gdversionhelp'] = '<p> Máy chủ của bạn hình như không cài GD.</p>
+
+<p>GD là một thư viện mà được yêu cầu bởi PHP để cho phép Moodle xử lý các hình ảnh 
+   (như biểu tượng trong hồ sơ các nhân) và tạo các hình ảnh mới (ví dụ 
+   các đồ thị bản ghi).  Moodle vẫn làm việc không có GD - những đặc trưng này sẽ 
+   không có sẵn đối với bạn.</p>
+
+<p>Để thêm GD vào PHP dưới hệ điều hành Unix, biên dịch PHP sử dụng tham số--with-gd. </p>
+
+<p>Dưới hệ điều hành Windows bạn có thể soạn thảo file php.ini và bỏ dấu chú thích dòng tham chiếu đến libgd.dll.</p>';
 $string['help'] = 'Trợ giúp';
 $string['installation'] = 'Cài đặt';
 $string['language'] = 'Ngôn ngữ';

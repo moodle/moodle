@@ -92,6 +92,13 @@ $string['fileuploads'] = 'Nahrávání souborů (FIle Uploads)';
 $string['fileuploadserror'] = 'Mělo by být zapnuto';
 $string['gdversion'] = 'Verze GD';
 $string['gdversionerror'] = 'Knihovna GD se používá pro zpracovávání a tvorbu obrázků (např. fotografií, grafů apod.).';
+$string['gdversionhelp'] = '<p>Na vašem serveru zřejmě není nainstalována knihovna GD.</p>
+
+<p>GD je knihovna, kterou vyžaduje PHP k tomu, aby mohl Moodle zpracovávat obrázky (např. ikony uživatelů) a vytvářet nové obrázky (např. grafy přístupů na vaše stránky). Moodle bude fungovat i bez GD, ale tyto funkce nebudou dostupné.</p>
+
+<p>V Unixu můžete přidat GD do PHP tak, že zkompilujte PHP s parametrem --with-gd.</p>
+
+<p>Ve Windows stačí většinou upravit php.ini a odkomentovat řádek odkazující na libgd.dll.</p>';
 $string['globalsquotes'] = 'Nezabezpečené zacházení s globálními proměnnými';
 $string['globalsquoteserror'] = 'Upravte nastavení PHP: zakažte register_globals a/nebo povolte magic_quotes_gpc';
 $string['help'] = 'Nápověda';
