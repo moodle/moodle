@@ -140,7 +140,9 @@ $INSTALL['version'] = $version;
 $INSTALL['release'] = $release;
 
 /// Have the $db object ready because we are going to use it often
+define ('ADODB_ASSOC_CASE', 0); //Use lowercase fieldnames for ADODB_FETCH_ASSOC
 $db = &ADONewConnection($INSTALL['dbtype']);
+$db->SetFetchMode(ADODB_FETCH_ASSOC);
 
 /// guess the www root
 if ($INSTALL['wwwroot'] == '') {
@@ -280,6 +282,50 @@ if ($INSTALL['stage'] == DATABASE) {
         }
     }
 
+    if ($INSTALL['dbtype'] == 'postgres7') {  /// Check PostgreSQL extension is present
+        if (!extension_loaded('pgsql')) {
+            $errormsg = get_string('pgsqlextensionisnotpresentinphp', 'install');
+            $nextstage = DATABASE;
+        }
+    }
+
+    if ($INSTALL['dbtype'] == 'mssql') {  /// Check MSSQL extension is present
+        if (!extension_loaded('mssql')) {
+            $errormsg = get_string('mssqlextensionisnotpresentinphp', 'install');
+            $nextstage = DATABASE;
+        }
+    }
+
+    if ($INSTALL['dbtype'] == 'odbc_mssql') {  /// Check ODBC extension is present
+        if (!extension_loaded('odbc')) {
+            $errormsg = get_string('odbcextensionisnotpresentinphp', 'install');
+            $nextstage = DATABASE;
+        }
+    }
+
+    if ($INSTALL['dbtype'] == 'oci8po') {  /// Check OCI extension is present
+        if (!extension_loaded('oci8')) {
+            $errormsg = get_string('ociextensionisnotpresentinphp', 'install');
+            $nextstage = DATABASE;
+        }
+    }
+
+    if (empty($INSTALL['prefix']) && $INSTALL['dbtype'] != 'mysql') { // All DBs but MySQL require prefix (reserv. words)
+        $errormsg = get_string('dbwrongprefix', 'install');
+        $nextstage = DATABASE;
+    }
+
+    if ($INSTALL['dbtype'] == 'oci8po' && strlen($INSTALL['prefix']) > 2) { // Oracle max prefix = 2cc (30cc limit)
+        $errormsg = get_string('dbwrongprefix', 'install');
+        $nextstage = DATABASE;
+    }
+
+    if ($INSTALL['dbtype'] == 'oci8po' && !empty($INSTALL['dbhost'])) { // Oracle host must be blank (tnsnames.ora has it)
+        $errormsg = get_string('dbwronghostserver', 'install');
+        $nextstage = DATABASE;
+    }
+
+
     if (empty($errormsg)) {
 
         error_reporting(0);  // Hide errors 
@@ -352,6 +398,26 @@ if ($INSTALL['stage'] == DATABASE) {
                             } else {
                                 $INSTALL['dbencodingtestresults'] = true;
                             }
+                        }
+                        break;
+                    case 'oci8po':
+                    ///Get Oracle NLS_CHARACTERSET value
+                        $rs = $db->Execute("SELECT value FROM nls_database_parameters WHERE parameter = 'NLS_CHARACTERSET'");
+                        if ($rs && $rs->RecordCount() > 0) {
+                            $encoding = $rs->fields['value'];
+                            if (strtoupper($encoding) != 'AL32UTF8') {
+                                $errormsg = get_string('dbwrongencoding', 'install', $encoding);
+                                $nextstage = DATABASE;
+                                $INSTALL['dbencodingtestresults'] = false;
+                            } else {
+                                $INSTALL['dbencodingtestresults'] = true;
+                            }
+                        }
+                    /// Get client NLS_LANG environment variable
+                        if (strpos(getenv('NLS_LANG'), 'AL32UTF8') === false) { // Oracle client must be correct UTF8
+                            $errormsg = get_string('dbwrongnlslang', 'install', $encoding);
+                            $nextstage = DATABASE;
+                            $INSTALL['dbencodingtestresults'] = false;
                         }
                         break;
                 }
@@ -534,6 +600,7 @@ if ($nextstage == SAVE) {
 <title>Moodle Install</title>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <?php css_styles() ?>
+<?php database_js() ?>
 
 </head>
 
@@ -561,9 +628,40 @@ if (isset($_GET['help'])) {
     <tr>
         <td class="td_mainheading" colspan="2">
             <p class="p_mainheading"><?php echo $headstagetext[$nextstage] ?></p>
-            <?php if (!empty($substagetext[$nextstage])) { ?>
-            <p class="p_subheading"><?php echo $substagetext[$nextstage] ?></p>
-            <?php } ?>
+            <?php /// Exceptionaly, depending of the DB selected, we show some different text
+                  /// from the standard one to show better instructions for each DB
+                if ($nextstage == DATABASE) {
+                    echo '<script language="JavaScript" type="text/javascript" defer="defer">window.onload=toggledbinfo;</script>';
+                    echo '<div id="mysql" name="mysql">' . get_string('databasesettingssub_mysql', 'install') . '</div>';
+
+                    echo '<div id="postgres7" name="postgres7">' . get_string('databasesettingssub_postgres7', 'install') . '</div>';
+
+                    echo '<div id="mssql" name="mssql">' . get_string('databasesettingssub_mssql', 'install');
+                /// Link to mssql installation page
+                    echo '<p align="right"><a href="http://docs.moodle.org/en/Installing_MSSQL_for_PHP" target="_blank">';
+                    echo '<img src="' . $INSTALL['wwwrootform'] . '/pix/docs.gif' . '" alt="Docs" />';
+                    echo get_string('moodledocslink', 'install') . '</a></p>';
+                    echo '</div>';
+
+                    echo '<div id="odbc_mssql" name="odbc_mssql">'. get_string('databasesettingssub_odbc_mssql', 'install');
+                /// Link to mssql installation page
+                    echo '<p align="right"><a href="http://docs.moodle.org/en/Installing_MSSQL_for_PHP" target="_blank">';
+                    echo '<img src="' . $INSTALL['wwwrootform'] . '/pix/docs.gif' . '" alt="Docs" />';
+                    echo get_string('moodledocslink', 'install') . '</a></p>';
+                    echo '</div>';
+
+                    echo '<div id="oci8po" name="oci8po">' . get_string('databasesettingssub_oci8po', 'install');
+                /// Link to mssql installation page
+                    echo '<p align="right"><a href="http://docs.moodle.org/en/Installing_Oracle_for_PHP" target="_blank">';
+                    echo '<img src="' . $INSTALL['wwwrootform'] . '/pix/docs.gif' . '" alt="Docs" />';
+                    echo get_string('moodledocslink', 'install') . '</a></p>';
+                    echo '</div>';
+                } else {
+                    if (!empty($substagetext[$nextstage])) {
+                        echo '<p class="p_subheading">' . $substagetext[$nextstage] . '</p>';
+                    }
+                }
+            ?>
         </td>
     </tr>
 
@@ -740,7 +838,12 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
             <tr>
                 <td class="td_left"><p><?php print_string('dbtype', 'install') ?></p></td>
                 <td class="td_right">
-                <?php choose_from_menu (array("mysql" => "mysql", "postgres7" => "postgres7", 'mssql' => 'mssql'), 'dbtype', $INSTALL['dbtype'], '') ?>
+                <?php choose_from_menu (array('mysql' => get_string('mysql', 'install'),
+                                              'oci8po' => get_string('oci8po', 'install'),
+                                              'postgres7' => get_string('postgres7', 'install'), 
+                                              'mssql' => get_string('mssql', 'install'), 
+                                              'odbc_mssql' => get_string('odbc_mssql', 'install')), 
+                                        'dbtype', $INSTALL['dbtype'], '', 'toggledbinfo();') ?>
                 </td>
             </tr>
             <tr>
@@ -1130,8 +1233,59 @@ function css_styles() {
         padding: 20px;
         color: #ff0000;
     }
+    #mysql, #postgres7, #mssql, #odbc_mssql, #oci8po {
+        display: none;
+    }
 
 </style>
+
+<?php
+}
+
+//==========================================================================//
+
+function database_js() {
+?>
+
+<script language="JavaScript" type="text/javascript" defer="defer">
+function toggledbinfo() {
+    //Calculate selected value
+    var showid = 'mysql';
+    if (document.installform.dbtype.value) {
+        showid = document.installform.dbtype.value;
+    }
+    if (document.getElementById) {
+        //Hide all the divs
+        document.getElementById('mysql').style.display = '';
+        document.getElementById('postgres7').style.display = '';
+        document.getElementById('mssql').style.display = '';
+        document.getElementById('odbc_mssql').style.display = '';
+        document.getElementById('oci8po').style.display = '';
+        //Show the selected div
+        document.getElementById(showid).style.display = 'block';
+    } else if (document.all) {
+        //This is the way old msie versions work
+        //Hide all the divs
+        document.all['mysql'].style.display = '';
+        document.all['postgres7'].style.display = '';
+        document.all['mssql'].style.display = '';
+        document.all['odbc_mssql'].style.display = '';
+        document.all['oci8po'].style.display = '';
+        //Show the selected div
+        document.all[showid].style.display = 'block';
+    } else if (document.layers) {
+        //This is the way nn4 works
+        //Hide all the divs
+        document.layers['mysql'].style.display = '';
+        document.layers['postgres7'].style.display = '';
+        document.layers['mssql'].style.display = '';
+        document.layers['odbc_mssql'].style.display = '';
+        document.layers['oci8po'].style.display = '';
+        //Show the selected div
+        document.layers[showid].style.display = 'block';
+    }
+}
+</script>
 
 <?php
 }
