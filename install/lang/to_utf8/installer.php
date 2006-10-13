@@ -33,6 +33,14 @@ $string['fileuploads'] = '\'Apu-louti e faile';
 $string['fileuploadserror'] = '\'Oku totonu ke \'oni eni';
 $string['gdversion'] = 'Vesini GD ';
 $string['gdversionerror'] = '\'Oku totonu ke \'i heni e laipeli GD kene polosesi mo fakatupu e ngaahi \'imisi';
+$string['gdversionhelp'] = '<p>Ngalingali \'oku te\'ekiai ke fokotu\'u e GD \'i ho\'o Seeva.</p>
+
+<p>GD koe laipeli \'oku fiema\'u he\'e is PHPkene fakangofua e Muutolo kene polosesi e ngaahi \'imisi 
+   (hangee koe \'aikoni \'oe \'iusa poloofaile) mo fakatupu ha ngaahi \'imisi fo\'ou (hangee koe ngaahi kalafi loka).  \'E kei ngaue pe \'ae Muutolo ia neogno \'oku \'ikai ha GD - Ka he\'ikai ke faingamalie e ngaahi me\'a ia ko \'eni kia koe .</p>
+
+<p>Ke tanaki e GD ki he PHP \'ihe Unix, fakatahataha\'i e PHP ngaue\'aki e --moe-gd tafatafa\'aki.</p>
+
+<p>\'Ihe Uinitou, teke fa\'amalava pee \'o \'etita\'i php.ini mo to\'o e komeni \'oe laine fakahinohino libgd.dll.</p>';
 $string['help'] = 'Tokoni';
 $string['installation'] = 'Fokotu\'u';
 $string['language'] = 'Lea';

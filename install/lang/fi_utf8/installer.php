@@ -38,6 +38,13 @@ $string['fileuploads'] = 'Tiedostojen lähettäminen';
 $string['fileuploadserror'] = 'Tämän pitäisi olla päällä';
 $string['gdversion'] = 'GD versio';
 $string['gdversionerror'] = 'GD kirjaston pitäisi olla päällä, että voidaan käsitellä ja luoda kuvia.';
+$string['gdversionhelp'] = '<p>Palvelimellasi ei näyttäisi olevan GD:tä asennettuna.</p>
+
+<p>GD on kirjasto jonka PHP vaatii voidakseen antaa Moodlen käsitellä kuvia (esimerkiksi käyttäjäprofiili kuvakkeita) ja luoda uusia kuvia (esimerkiksi kirjauskuvioita) Moodle toimii ilman GD:täkin, mutta silloin nämä toiminnot eivät ole saatavilla.</p>
+
+<p>Lisätäksesi GD:n PHP:hen Unix:in alaisena, käännä PHP käyttäen --with-gd parametria.</p>
+
+<p>Windowsin alaisena voit yleensä muokata php.ini:ä ja olla kommentoimatta rivivertailua libgd.dll.</p>';
 $string['help'] = 'Ohje';
 $string['info'] = 'Tiedot';
 $string['installation'] = 'asennus';

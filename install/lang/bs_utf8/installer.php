@@ -33,6 +33,13 @@ $string['fileuploads'] = 'Katalog za učitavanja datoteka';
 $string['fileuploadserror'] = 'Ovo bi trebalo biti uključeno';
 $string['gdversion'] = 'GD verzija';
 $string['gdversionerror'] = 'GD datoteka sa izvornim kodom trebala bi prezentirati proces i kreirati duplikate';
+$string['gdversionhelp'] = '<p>Vaš server neće izgledati isto imajući GD instalaciju.</p>
+
+<p>GD je datoteka sa izvornim kodom što je potrebno da PHP dozvoli Moodle da izradi duplikate (kao što je ikona korisničkog profila) i da kreira nove duplikate (kao što je operativni registar slika).  Moodle će još uvijek raditi bez GD a ova lica jednostavno neće biti dostupna vama.</p>
+
+<p>Da dodate GD u PHP na osnovu Unixa, kompajlirate PHP koristeći se gd parametrom.</p>
+
+<p>Na osnovu Windows obično možete podesiti php.ini i ne bilježiti liniju referencirajući libgd.dll.</p>';
 $string['help'] = 'Pomoć';
 $string['installation'] = 'Instalacija';
 $string['language'] = 'Jezik';

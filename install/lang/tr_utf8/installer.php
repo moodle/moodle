@@ -97,6 +97,15 @@ $string['fileuploads'] = 'Dosya Göndermeleri';
 $string['fileuploadserror'] = 'Bu açık olmalı';
 $string['gdversion'] = 'GD sürümü';
 $string['gdversionerror'] = 'GD kütüphanesi resimleri oluşturma ve işleme özelliği sunmalı';
+$string['gdversionhelp'] = '<p>Sunucunuzda GD kütüphanesi kurulu görülmüyor.</p>
+
+<p>Moodle\'ın resimleri işlemesi ve yeni resim oluşturması için GD kütüphanesi PHP kurulumu sırasında gereklidir. Örneğin,
+Moodle bu kütüphane sayesinde kullanıcı resimlerinin tırnak resimlerini çıkartır ve loglarla ilgili grafikler oluşturur.
+Moodle GD olmadan da çalışır, ancak yukarıda bahsedilen özelliklerden yararlanamazsınız.</p>
+
+<p>Unix altında PHP\'ye GD desteğini sağlamak için, PHP\'yi --with-gd parametresiyle derleyin.</p>
+
+<p>Windows altında php.ini dosyasını düzenler ve libgd.dll\'yi referans eden satırdaki yorumları kaldırırsınız.</p>';
 $string['globalsquotes'] = 'Güvensiz Global Değişkenler';
 $string['globalsquoteserror'] = 'PHP ayarlarınızı düzeltin. register_globals\'ı kapalı ve/veya magic_quotes_gpc açık tutun.';
 $string['help'] = 'Yardım';

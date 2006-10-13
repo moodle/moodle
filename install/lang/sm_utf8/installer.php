@@ -33,6 +33,16 @@ $string['fileuploads'] = 'Faila ua tu\'uina atu';
 $string['fileuploadserror'] = 'O le mea lea sa tatau ona i luga o le';
 $string['gdversion'] = 'Liliuga GD ';
 $string['gdversionerror'] = 'O le faletusi (library) GD e tatau ona i ai aua le faiga ma le fa\'agasologa o ata.';
+$string['gdversionhelp'] = '<p>Your server does not seem to have GD installed.</p>
+
+<p>GD is a library that is required by PHP to allow Moodle to process images 
+   (such as the user profile icons) and to create new images (such as 
+   the log graphs).  Moodle will still work without GD - these features 
+   will just not be available to you.</p>
+
+<p>To add GD to PHP under Unix, compile PHP using the --with-gd parameter.</p>
+
+<p>Under Windows you can usually edit php.ini and uncomment the line referencing libgd.dll.</p>';
 $string['help'] = 'Fesoasoani';
 $string['installation'] = 'Fa\'atu/Install';
 $string['language'] = 'Gagana';

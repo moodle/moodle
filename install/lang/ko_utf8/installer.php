@@ -92,6 +92,9 @@ $string['fileuploads'] = '파일 올리기';
 $string['fileuploadserror'] = '이것은 켜져야 합니다.';
 $string['gdversion'] = 'GD 의 버전';
 $string['gdversionerror'] = 'GD 라이브러리는 사진이나 그림을 처리하기 위해서는 필수적으로 있어야만 합니다.';
+$string['gdversionhelp'] = '<P>당신의 서버는 GD가 설치된 것으로 보여지지 않습니다.
+
+<P>GD는 무들이 (사용자 아이콘과 같은) 그림이나 (함수 그래프와 같은) 새로운 이미지를 생성,처리할 수 있도록 PHP에 의해서 요구되는 라이브러리 입니다. 하지만 무들은 GD없이도 작동되는데, 이 때는 GD가 제공하는 기능은 사용할 수 없을 것입니다.';
 $string['globalsquotes'] = '전역변수 조작 안전성 결여';
 $string['globalsquoteserror'] = 'PHP.ini 속의 설정을 다음과 같이 고치십시오:  register_globals 및 enable magic_quotes_gpc 을 끄십시오(Off).';
 $string['help'] = '도움';

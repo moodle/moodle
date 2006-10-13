@@ -101,6 +101,16 @@ $string['fileuploads'] = 'Mga Inahon na Sako';
 $string['fileuploadserror'] = 'Dapat ay buhay ito';
 $string['gdversion'] = 'Bersiyon ng GD';
 $string['gdversionerror'] = 'Dapat ay may GD library para maproseso at makalikha ng mga larawan';
+$string['gdversionhelp'] = '<p>Mukhang hindi nakaluklok ang GD sa server mo.</p>
+
+<p>Ang GD ay isang library na kailangan ng PHP upang mapahintulutan ang Moodle na magproseso ng mga larawan
+   (tulad ng mga ikon ng pagkakakilanlan ng tagagamit) at upang lumikha ng mga bagong larawan (tulad ng
+   mga talaguhitan ng log).  Gagana pa rin ang Moodle kahit walang GD - hindi mo lamang magagamit
+   ang mga katangiang ito.</p>
+
+<p>Para maidagdag ang GD sa PHP sa loob ng Unix, ikompayl ang PHP gamit ang  --with-gd na parameter.</p>
+
+<p>Sa loob ng Windows kadalasan ay maeedit mo ang php.ini at tanggalin ang comment sa linya na tumutukoy sa  libgd.dll.</p>';
 $string['globalsquotes'] = 'Di-ligtas na Pagmanipula ng mga Global';
 $string['globalsquoteserror'] = 'Ayusin ang iyong mga kaayusan ng PHP:  patayin ang register_globals at/o buhayin ang magic_quotes_gpc';
 $string['help'] = 'Tulong';
