@@ -33,6 +33,13 @@ $string['fileuploads'] = 'Fil uploads';
 $string['fileuploadserror'] = 'Denne skulle være aktiveret';
 $string['gdversion'] = 'GD version';
 $string['gdversionerror'] = 'GD library skal være tilgængelig for PHP for at der kan billeder kan manipuleres og oprettes.';
+$string['gdversionhelp'] = '<p>Det lader til at din server ikke har GD installeret.</p>
+
+<p>GD er et library som PHP bruger til at behandle billeder (såsom brugerprofil-billeder) og til at oprette nye billeder såsom loggrafer. Moodle kan stadig fungere uden GD - men disse funktioner vil så ikke være til rådighed.</p>
+
+<p>For at tilføje GD på unix skal PHP kompileres med \'--with-gd\" parameteret.</p>
+
+<p>Under windows er det normalt nok at udkommentere den linje i php.ini der referere til libgd.dll </p>';
 $string['help'] = 'Hjælp';
 $string['info'] = 'Information';
 $string['installation'] = 'Installation';

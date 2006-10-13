@@ -33,6 +33,11 @@ $string['fileuploads'] = 'Failide üleslaadimine';
 $string['fileuploadserror'] = 'See peaks olema sisse lülitatud';
 $string['gdversion'] = 'GD versioon';
 $string['gdversionerror'] = 'GD teek ei tohiks olla esitatud piltide protsessimiseks ja loomiseks';
+$string['gdversionhelp'] = '<p>Sinu serveril ei paist GD installeeritud olevat.</p>
+
+<p>GD on andmeteek mis on vajalik PHP-le selleks et ta lubaks Moodlel protsessida pilte. (Selliseid nagu profiili ikoone) ja luua uusi pilte ( nagu graafika logi) Moodle tõõtab ikka ilma GD-ta aha need võimalused oleksid teil välja lülitatud.</p>
+
+<p>GD lisamine PHP-le Unixi all, kompileeri PHP-d kasutates --with-gd parameetrit.</p>';
 $string['help'] = 'Abi';
 $string['info'] = 'Infromatsioon';
 $string['installation'] = 'Installeerimine';

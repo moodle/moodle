@@ -107,6 +107,16 @@ $string['fileuploads'] = 'Nalaganje datotek';
 $string['fileuploadserror'] = 'To bi moralo biti vključeno';
 $string['gdversion'] = 'Različica GD';
 $string['gdversionerror'] = 'Knjižnica GD mora biti prisotno za obdelavo in ustvarjanje slik';
+$string['gdversionhelp'] = '<p>Na vašem strežniku kot kaže ni nameščen GD.</p>
+
+<p>GD je knjižnica, ki jo potrebuje PHP, da lahko Moodle obdeluje slike 
+   (kot so ikone uporabniškega profila) in ustvarja nove slike (kot so 
+   grafi dnevnikov).  Moodle bo deloval tudi brez GD - te možnosti 
+   vam preprosto ne bodo na voljo.</p>
+
+<p>Za dodajanje GD v PHP v sistemu Unix, prevedite PHP s parametrom --with-gd.</p>
+
+<p>V okolju Windows lahko običajno uredite php.ini in odkomentirate vrstico, ki se sklicuje na libgd.dll.</p>';
 $string['globalsquotes'] = 'Nevarna obravnava globalnih spremenljivk';
 $string['globalsquoteserror'] = 'Popravite vaše PHP nastavitve: onemogočite register_globals in / ali omogočite magic_quotes_gpc';
 $string['help'] = 'Pomoč';

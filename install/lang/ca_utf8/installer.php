@@ -90,6 +90,13 @@ $string['fileuploads'] = 'Càrrega de fitxers';
 $string['fileuploadserror'] = 'Hauria d\'estar habilitada';
 $string['gdversion'] = 'Versió GD';
 $string['gdversionerror'] = 'La biblioteca GD hauria d\'estar present per processar i crear imatges';
+$string['gdversionhelp'] = '<p>Sembla que el vostre servidor no té instal·lat el GD.</p>
+
+<p>GD és una biblioteca requerida pel PHP per tal que Moodle pugui processar imatges (p. ex. les icones dels perfils d\'usuari) i crear imatges noves (p. ex. els gràfics dels registres d\'activitat). Moodle pot funcionar sense GD, però aquestes característiques no estaran disponibles.</p>
+
+<p>Per afegir GD al PHP en Unix, compileu el PHP amb el paràmetre --with-gd.</p>
+
+<p>En Windows generalment es pot editar el fitxer php.ini i treure el comentari de la línia que porti la referència a libgd.dll.</p>';
 $string['globalsquotes'] = 'Gestió insegura dels globals';
 $string['globalsquoteserror'] = 'Arregleu els paràmetres del vostre PHP: inhabiliteu register_globals i/o habiliteu magic_quotes_gpc';
 $string['help'] = 'Ajuda';
