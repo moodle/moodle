@@ -266,7 +266,9 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
                             echo "<input type=\"hidden\" name=\"$user_info_var\" value=\"0\" />";
                         }
                         echo "</td></tr>";
-                        $instances = $info->mods[$modname]->instances;
+                        if (isset($info->mods[$modname]->instances)) {
+                            $instances = $info->mods[$modname]->instances;
+                        }
                         if (!empty($instances) && is_array($instances)) {
                             echo '<tr><td></td><td colspan="3"><table class="restore-form-instances">';
                             foreach ($instances as $instance) {
