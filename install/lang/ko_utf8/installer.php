@@ -50,6 +50,36 @@ $string['databasesettingssub'] = '<b>종류:</b> mysql 또는 postgres7<br />
 <b>사용자:</b> 데이터베이스 사용자명<br />
 <b>암호:</b> 데이터베이스 암호<br />
 <b>테이블 접두어:</b> 모든 테이블에 사용되는 선택적 접두어';
+$string['databasesettingssub_mssql'] = '<b>종류:</b> SQL*Server<br />
+<b>호스트:</b>예: localhost 또는 db.isp.com <br />
+<b>이름:</b> 데이터베이스 이름, 예:moodle<br />
+<b>사용자:</b> 데이터베이스 사용자명<br />
+<b>암호:</b> 데이터베이스 암호<br />
+<b>테이블 접두어:</b> 모든 테이블에 사용되는 접두어';
+$string['databasesettingssub_mysql'] = '<b>종류:</b> MySQL<br />
+<b>호스트:</b>예: localhost 또는 db.isp.com <br />
+<b>이름:</b> 데이터베이스 이름, 예:moodle<br />
+<b>사용자:</b> 데이터베이스 사용자명<br />
+<b>암호:</b> 데이터베이스 암호<br />
+<b>테이블 접두어:</b> 모든 테이블에 사용되는 접두어(선택적)';
+$string['databasesettingssub_oci8po'] = '<b>종류:</b>  Oracle<br />
+<b>호스트:</b> 사용되지 않음, 공백으로 둠<br />
+<b>이름:</b> tnsnames.ora 접속에 쓰는 이름<br />
+<b>사용자:</b> 데이터베이스 사용자명<br />
+<b>암호:</b> 데이터베이스 암호<br />
+<b>테이블 접두어:</b> 모든 테이블에 사용되는 접두어(mandatory, 2cc max)';
+$string['databasesettingssub_odbc_mssql'] = '<b>종류:</b> SQL*Server (over ODBC) <b>Experimental!</b><br />
+<b>호스트:</b>ODBC조절패널의 DSN에서 부여한 이름<br />
+<b>이름:</b> 데이터베이스 이름, 예:moodle<br />
+<b>사용자:</b> 데이터베이스 사용자명<br />
+<b>암호:</b> 데이터베이스 암호<br />
+<b>테이블 접두어:</b> 모든 테이블에 사용되는 접두어(mandatory)';
+$string['databasesettingssub_postgres7'] = '<b>종류:</b>  PostgreSQL<br />
+<b>호스트:</b>예: localhost 또는 db.isp.com <br />
+<b>이름:</b> 데이터베이스 이름, 예:moodle<br />
+<b>사용자:</b> 데이터베이스 사용자명<br />
+<b>암호:</b> 데이터베이스 암호<br />
+<b>테이블 접두어:</b> 모든 테이블에 사용되는 접두어 (mandatory)';
 $string['dataroot'] = '데이타 경로';
 $string['datarooterror'] = '당신이 지정한 \'데이타 경로\'가 없거나 생성되지 않았습니다. 정확한 경로를 적거나 수동으로 그 디렉토리를 생성해 놓으시오.';
 $string['dbconnectionerror'] = '지정한 데이터베이스에 연결할 수 없습니다. 데이타베이스의 설정을 점검하시오.';
@@ -58,6 +88,9 @@ $string['dbhost'] = '호스트 서버';
 $string['dbprefix'] = '접두어';
 $string['dbtype'] = '형태';
 $string['dbwrongencoding'] = '선택된 데이터베이스는 바람직하지 않은 엔코딩 방법($a)에 의해 동작하고 있습니다. 유니코드 UTF-8로 인코딩 되는 데이터베이스를 사용하는 것이 좋습니다. 아래의\"DB 엔코딩 테스트 건너뛰기\"를 선택하여 이 테스트를 건너뛸 수 있지만 추후에 문제가 야기될 수 있습니다.';
+$string['dbwronghostserver'] = '이미 설명한 \"Host\"의 규칙을 따라야만 합니다.';
+$string['dbwrongnlslang'] = '웹서버의 NLS_LANG 환경 변수들은 AL32UTF8 문자셋으로 작성되어야만 합니다. OCI8을 제대로 설정하기 위해서는 PHP문서를 참고하십시오.';
+$string['dbwrongprefix'] = '위에 설명한 대로 접두사 붙이는 규칙을 따라야만 합니다.';
 $string['directorysettingshead'] = '무들 설치 위치를 확인하기 바랍니다.';
 $string['directorysettingssub'] = '<b>웹 주소:</b>
 무들이 접속될 완전한 웹주소를 기입하시오.
@@ -125,21 +158,31 @@ $string['memorylimithelp'] = '<p>현재 서버의 PHP 메모리 사용량은 $a 
 <P><blockquote>php_value memory_limit 16M<blockquote></p>
 <p>그러나 어떤 서버에서는 이러한 기능이 모든 PHP페이지에 적용되어 버릴 수도 있게 되는 데 (당신이 페이지를 살펴보았을때 문제를 찾을 것이다) 이 때에는 .htaccess 를 제거해야 하고 다른 방안을 찾아봐야 할 것입니다.</p></li></ol>';
 $string['missingrequiredfield'] = '필요한 항목이 빠져 있습니다.';
+$string['moodledocslink'] = '이 페이지를 위한 무들 문서';
+$string['mssql'] = 'SQL*Server (mssql)';
+$string['mssqlextensionisnotpresentinphp'] = 'SQL*서버와 연동할 수 있는 MSSQL확장자에 대한 PHP가 적절하게 설정되지 못했습니다. php.ini 파일을 점검해 보거나 PHP를 재컴파일 하세요.';
+$string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = '당신의 사이트가 iso-8859-1 (라틴) 언어만을 사용하는 경우 현재 설치된 MySQL 4.1.12 혹은 그 이상 버전을 사용할 수 있습니다.';
 $string['mysql416required'] = '모든 데이터가 향후 UTF-8로 변환될 수 있도록 하기위해서는 MySQL 4.1.16 이상 버전이 무들 1.6버전에 필요합니다.';
-$string['mysqlextensionisnotpresentinphp'] = 'php.ini 는 mysql과 연동되도록 적절하게 설정되지 못했습니다. 당신의 php.ini 파일을 점검해 보거나 PHP를 재컴파일 하세요.';
+$string['mysqlextensionisnotpresentinphp'] = 'MySQL과 연동할 수 있는 MySQL확장자에 대한 PHP가 적절하게 설정되지 못했습니다. php.ini 파일을 점검해 보거나 PHP를 재컴파일 하세요.';
 $string['name'] = '이름';
 $string['next'] = '다음으로';
+$string['oci8po'] = 'Oracle (oci8po)';
+$string['ociextensionisnotpresentinphp'] = '오라클과 연동할 수 있는 OCI8확장자에 대한 PHP가 적절하게 설정되지 못했습니다. php.ini 파일을 점검해 보거나 PHP를 재컴파일 하세요.';
+$string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
+$string['odbcextensionisnotpresentinphp'] = 'SQL*서버와 연동할 수 있는 ODBC확장자에 대한 PHP가 적절하게 설정되지 못했습니다. php.ini 파일을 점검해 보거나 PHP를 재컴파일 하세요.';
 $string['ok'] = 'OK';
 $string['parentlanguage'] = 'en';
 $string['pass'] = '통과';
 $string['password'] = '비밀번호';
+$string['pgsqlextensionisnotpresentinphp'] = 'PostgreSQL과 연동할 수 있는 PGSQL확장자에 대한 PHP가 적절하게 설정되지 못했습니다. php.ini 파일을 점검해 보거나 PHP를 재컴파일 하세요.';
 $string['php50restricted'] = 'PHP 5.0.x 는 약간의 버그가 보고되었습니다. 5.1.x로 판올림 하시던가, 아니면 4.3.x 혹은 4.4.x로 바꿔주시기 바랍니다.';
 $string['phpversion'] = 'php버젼';
 $string['phpversionerror'] = 'php 버젼은 최소한 4.3.0 혹은 5.1.0. 이상 이어야합니다.(5.0.x는 버그가 있다고 알려져 있습니다)';
 $string['phpversionhelp'] = '<p>무들은 적어도 PHP4.3.0 혹은 5.1.0. 이상 이어야합니다.(5.0.x는 버그가 있다고 알려져 있습니다)</p>
 <p>현재 구동되고 있는 PHP버전은 $a 입니다.</p>
 <p>PHP를 업그레이드 하시거나 새버전을 제공하는 웹호스팅 업체로 이전하기를 권합니다!<br />(만일 5.0.x버전을 사용 중이라면 4.4.x 버전으로 다운그레이드 할 수 있습니다)</p>';
+$string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = '이전으로';
 $string['remotedownloadnotallowed'] = '서버로 구성요소를 내려받는 것이 허용되지 않습니다. (allow_url_fopen 이 비활성화 됨).<br /><br /> 수동으로 <a href=\"$a->url\">$a->url</a> 파일을 다운로드 하고, 서버의 \"$a->dest\" 에 복사한 후 압축을 푸셔야 합니다.';
 $string['report'] = '보고';

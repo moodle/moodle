@@ -73,6 +73,7 @@ $string['memorylimithelp'] = '<p>The PHP memory limit for your server is current
     <p>However, on some servers this will prevent <b>all</b> PHP pages from working 
     (you will see errors when you look at pages) so you\'ll have to remove the .htaccess file.</p></li>
 </ol>';
+$string['moodledocslink'] = 'Moodledokumentasjon for denne siden';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MySQL extension so that it can communicate with MySQL.  Please check your php.ini file or recompile PHP.';
 $string['name'] = 'Navn';
 $string['next'] = 'Neste';

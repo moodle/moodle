@@ -116,6 +116,7 @@ Pozwoli to Moodle ustawić samoczynnie limit pamięci. </li>
 <p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p> jednakże na niektórych serwerach będzie uniemożliwiało to działanie <b> wszystkich </b> stron PHP (ujrzysz błędy na stronie), a więc będziesz zmuszony usunąć plik .htaccess. </p></li></ol>”';
 $string['missingrequiredfield'] = 'Brak wymaganego pola';
+$string['moodledocslink'] = 'Dokumentacja moodle dla tej strony';
 $string['mysql416bypassed'] = 'Jezeli Twoja strona używa ISO-8859-1 możesz nadal używać właśnie zainstalowanej  MySQL 4.1.12 (lub wyższej).';
 $string['mysql416required'] = 'MySQL 4.1.16 jest najniższą wersją polecaną dla Moodle 1.6 gwarantującą że wszystkie dane będą konwertowane do UTF8.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP nie został prawidłowo skonfigurowany z rozszerzeniem MySQL, co może zostać zakomunikowane przez MySQL. Sprawdź proszę swój plik php.ini lub przekompiluj PHP';

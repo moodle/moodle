@@ -152,6 +152,7 @@ $string['memorylimithelp'] = '<p>Omejitev pomnilnika PHP je trenutno na vašem s
     (ob prikazu strani boste videli napake) in boste morali odstraniti datoteko .htaccess.</p></li>
 </ol>';
 $string['missingrequiredfield'] = 'Zahtevano polje manjka';
+$string['moodledocslink'] = 'Moodle dokumentacija za to stran';
 $string['mysql416bypassed'] = 'Če vaša stran uporablja SAMO jezike v kodni tabeli ISO-8859-1, lahko nadaljujete z uporabo trenutno nameščene različice MySQL 4.1.12 (ali višje).';
 $string['mysql416required'] = 'MySQL 4.1.16 je najnižja zahtevana različica za Moodle 1.6 z jamstvom, da bodo lahko vsi podatki pretvorjeni v UTF-8 v prihodnje.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP ni bil pravilno konfiguriran z razširitvijo MySQL in zato ne more komunicirati z MySQL.  Prosimo, preverite vašo datoteko php.ini ali ponovno prevedite PHP.';

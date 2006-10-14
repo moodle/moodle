@@ -59,6 +59,36 @@ $string['databasesettingssub'] = '<b>Type:</b> mysql or postgres7<br />
        <b>User:</b> your database username<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> optional prefix to use for all table names';
+$string['databasesettingssub_mssql'] = '<b>Type:</b> SQL*Server<br />
+       <b>Host:</b> eg localhost or db.isp.com<br />
+       <b>Name:</b> database name, eg moodle<br />
+       <b>User:</b> your database username<br />
+       <b>Password:</b> your database password<br />
+       <b>Tables Prefix:</b> prefix to use for all table names (mandatory)';
+$string['databasesettingssub_mysql'] = '<b>Type:</b> MySQL<br />
+       <b>Host:</b> eg localhost or db.isp.com<br />
+       <b>Name:</b> database name, eg moodle<br />
+       <b>User:</b> your database username<br />
+       <b>Password:</b> your database password<br />
+       <b>Tables Prefix:</b> prefix to use for all table names (optional)';
+$string['databasesettingssub_oci8po'] = '<b>Type:</b> Oracle<br />
+       <b>Host:</b> not used, must be left blank<br />
+       <b>Name:</b> given name of the tnsnames.ora connection<br />
+       <b>User:</b> your database username<br />
+       <b>Password:</b> your database password<br />
+       <b>Tables Prefix:</b> prefix to use for all table names (mandatory, 2cc. max)';
+$string['databasesettingssub_odbc_mssql'] = '<b>Type:</b> SQL*Server (over ODBC) <b><font color=\"red\">Experimental! (not for use in production)</font></b><br />
+       <b>Host:</b> given name of the DSN in the ODBC control panel<br />
+       <b>Name:</b> database name, eg moodle<br />
+       <b>User:</b> your database username<br />
+       <b>Password:</b> your database password<br />
+       <b>Tables Prefix:</b> prefix to use for all table names (mandatory)';
+$string['databasesettingssub_postgres7'] = '<b>Type:</b> PostgreSQL<br />
+       <b>Host:</b> eg localhost or db.isp.com<br />
+       <b>Name:</b> database name, eg moodle<br />
+       <b>User:</b> your database username<br />
+       <b>Password:</b> your database password<br />
+       <b>Tables Prefix:</b> prefix to use for all table names (mandatory)';
 $string['dataroot'] = 'Data Directory';
 $string['datarooterror'] = 'The \'Data Directory\' you specified could not be found or created.  Either correct the path or create that directory manually.';
 $string['dbconnectionerror'] = 'We could not connect to the database you specified. Please check your database settings.';
@@ -67,6 +97,9 @@ $string['dbhost'] = 'Host Server';
 $string['dbprefix'] = 'Tables prefix';
 $string['dbtype'] = 'Type';
 $string['dbwrongencoding'] = 'The selected database is running under one non-recommended encoding ($a). It would be better to use one Unicode (UTF-8) encoded database instead. Anyway, you can bypass this test by selecting the \"Skip DB Encoding Test\" check below, but you could experience problems in the future.';
+$string['dbwronghostserver'] = 'You must follow \"Host\" rules as explained above.';
+$string['dbwrongnlslang'] = 'The NLS_LANG environment variable in your web server must use the AL32UTF8 charset. See PHP documentation about how to configure OCI8 properly.';
+$string['dbwrongprefix'] = 'You must follow \"Tables Prefix\" rules as explained above.';
 $string['directorysettingshead'] = 'Please confirm the locations of this Moodle installation';
 $string['directorysettingssub'] ='<b>Web Address:</b>
 Specify the full web address where Moodle will be accessed.  
@@ -152,14 +185,23 @@ $string['memorylimithelp'] = '<p>The PHP memory limit for your server is current
     (you will see errors when you look at pages) so you\'ll have to remove the .htaccess file.</p></li>
 </ol>';
 $string['missingrequiredfield'] = 'Some required field is missing';
+$string['moodledocslink'] = 'Moodle Docs for this page';
+$string['mssql'] = 'SQL*Server (mssql)';
+$string['mssqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MSSQL extension so that it can communicate with SQL*Server.  Please check your php.ini file or recompile PHP.';
+$string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'However, if your site is using iso-8859-1 (latin) languages ONLY, you may continue using your currently installed MySQL 4.1.12 (or higher).';
 $string['mysql416required'] = 'MySQL 4.1.16 is the minimum version required for Moodle 1.6 in order to guarantee that all data can be converted to UTF-8 in the future.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MySQL extension so that it can communicate with MySQL.  Please check your php.ini file or recompile PHP.';
 $string['name'] = 'Name';
 $string['next'] = 'Next';
+$string['oci8po'] = 'Oracle (oci8po)';
+$string['ociextensionisnotpresentinphp'] = 'PHP has not been properly configured with the OCI8 extension so that it can communicate with Oracle.  Please check your php.ini file or recompile PHP.';
+$string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
+$string['odbcextensionisnotpresentinphp'] = 'PHP has not been properly configured with the ODBC extension so that it can communicate with SQL*Server.  Please check your php.ini file or recompile PHP.';
 $string['ok'] = 'OK';
 $string['pass'] = 'Pass';
 $string['password'] = 'Password';
+$string['pgsqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the PGSQL extension so that it can communicate with PostgreSQL.  Please check your php.ini file or recompile PHP.';
 $string['php50restricted'] = 'PHP 5.0.x has a number of known problems, please upgrade to 5.1.x or downgrade to 4.3.x or 4.4.x';
 $string['phpversion'] = 'PHP version';
 $string['phpversionerror'] = 'PHP version must be at least 4.3.0 or 5.1.0 (5.0.x has a number of known problems).';
@@ -167,6 +209,7 @@ $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.3.0 
 <p>You are currently running version $a</p>
 <p>You must upgrade PHP or move to a host with a newer version of PHP!<br/>
 (In case of 5.0.x you could also downgrade to 4.4.x version)</p>';
+$string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Previous';
 $string['remotedownloadnotallowed'] = 'Download of components to your server isn\'t allowed (allow_url_fopen is disabled).<br /><br />You must download the <a href=\"$a->url\">$a->url</a> file manually, copy it to \"$a->dest\" in your server and unzip it there.';
 $string['report'] = 'Report';

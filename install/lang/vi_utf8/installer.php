@@ -69,6 +69,7 @@ $string['memorylimithelp'] = '<p> PHP thiết lập giới hạn bộ nhớ cho 
     <p>Tuy nhiên, trên một số máy chủ điều này có thể ngăn cản <b>tất cả</b> các trang PHP làm việc 
     (bạn sẽ nhìn thấy các lỗi khi bạn xem xét những trang này )vì thế bạn sẽ pahỉ di chuyền file .htaccess.</p></li>
 </ol>';
+$string['moodledocslink'] = 'Tài liệu cho trang này';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP chưa được cấu hình thuộc tính với đuôi mở rộng MySQL với mục đích là để nó có thể làm việc tốt với MySQL. Vui lòng kiểm tra file php.ini hoặc biên dịch lại PHP.';
 $string['name'] = 'Tiêu đề';
 $string['next'] = 'Tiếp theo';

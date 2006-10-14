@@ -67,6 +67,7 @@ Tämä sallii Moodlen asettaa muistirajan itse.</li>
 <p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>Kuitenkin, joillain palvelimilla tämä estää  <b>kaikkia</b> PHP sivuja toimimasta (näet virheet, kun katsot sivuja), joten sinun täytyy poistaa .htaccess tiedosto.</p></li>
 </ol>';
+$string['moodledocslink'] = 'Moodle Docs tästä sivusta';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP:tä ei ole kunnolla valittu asetukseksi MySQL laajennuksen kanssa, jotta se voisi kommunikoida MySQL:n kanssa. Tarkista php.ini tiedostosi tai käännä PHP uudelleen.';
 $string['name'] = 'Nimi';
 $string['next'] = 'Seuraava';

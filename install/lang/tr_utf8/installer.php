@@ -145,6 +145,7 @@ için yapmasını isteyin.</li>
 Böyle bir durumda .htaccess dosyasını silmeniz gerekiyor.</p></li>
 </ol>';
 $string['missingrequiredfield'] = 'Bazı gerekli alanlar eksik';
+$string['moodledocslink'] = 'Bu sayfa için Moodle Belgeleri';
 $string['mysql416bypassed'] = 'Siteniz SADECE iso-8859-1 (latin) dillerini kullanıyorsa şimdiki kurulu  MySQL 4.1.12 (veya yüksek) veritabanını kullanmaya devam edebilirsiniz.';
 $string['mysql416required'] = 'Moodle 1.6 için ilerde tüm verilerin UTF-8\'e çevrilebilmesinin garantilenmesi için en az MySQL 4.1.16 kurulu olması gerekir.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP, büyük ihtimal MySQL uzantısıyla birlikte yapılandırılmamış. Bu yüzden MySQL ile bağlantı kurulamıyor. php.ini dosyasını kontrol edin veya PHP\'yi tekrar derleyin.';

@@ -144,6 +144,7 @@ $string['memorylimithelp'] = '<p>Ang memory limit ng PHP para sa server mo ay ka
     (makakakita ka ng mga error kapag tumingin ka sa mga pahina) kaya\'t kakailanganin mong tanggalin ang sakong .htaccess.</p></li>
 </ol>';
 $string['missingrequiredfield'] = 'May ilang nawawalang pitak na kailangan';
+$string['moodledocslink'] = 'Mga Dokyu ng Moodle para sa pahinang ito';
 $string['mysql416bypassed'] = 'Magkagayuman, kung TANGING iso-8859-1 (latin) na wika ang ginagamit ng site mo, maaari mong ipagpatuloy ang kasalukuyan mong nakaluklok na MySQL 4.1.12 (o mas bago).';
 $string['mysql416required'] = 'Ang MySQL 4.1.16 ang minimum na bersiyong kinakailangan ng Moodle 1.6 upang matiyak na lahat ng datos ay makukumberte sa UTF-8, sa hinaharap.';
 $string['mysqlextensionisnotpresentinphp'] = 'Hindi isinaayos ang PHP na may MySQL extension para magawa nitong makipag-usap sa MySQL.  Pakitsek ang iyong sakong php.ini o muling ikompayl ang PHP.';

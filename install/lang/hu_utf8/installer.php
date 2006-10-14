@@ -125,6 +125,7 @@ beállítást pl. 16M-ra. Ha nem éri el az állományt, kérje meg a rendszerad
 (az oldalak hibát jeleznek), ezért el kell távolítania a .htaccess állományt.</p></li>
 </ol>';
 $string['missingrequiredfield'] = 'Egy szükséges mező hiányzik';
+$string['moodledocslink'] = 'Az oldalhoz tartozó Moodle Docs';
 $string['mysql416bypassed'] = 'Ha viszont a portálja CSAK iso-8859-1 (latin) nyelveket használ, továbbra is használhatja a pillanatnyilag telepített MySQL 4.1.12 (vagy magasabb) verziót.';
 $string['mysql416required'] = 'A Moodle 1.6 esetén a MySQL minimális verziószáma a 4.1.16 annak érdekében, hogy a későbbiekben minden adatot UTF-8 formában lehessen tárolni.';
 $string['mysqlextensionisnotpresentinphp'] = 'A PHP nincs jól beállítva a MySQL kiterjesztéshez, így nem tud ele kommunikálni. Ellenőrizze a php.ini fájlt vagy fordítsa újra a PHP-t.';
