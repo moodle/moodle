@@ -125,6 +125,7 @@ $string['memorylimithelp'] = '<p>El límit de memòria del PHP del vostre servid
 <p>Tanmateix, en alguns servidors això farà que no funcioni <b>cap</b> pàgina PHP (es visualitzaran errors) en el qual cas hauríeu de suprimir el fitxer .htaccess.</p></li>
 </ol>';
 $string['missingrequiredfield'] = 'Falta algun camp necessari';
+$string['moodledocslink'] = 'Documentació de Moodle per a aquesta pàgina';
 $string['mysql416bypassed'] = 'Tanmateix, si el vostre lloc fa servir NOMÉS llengües romàniques (iso-8859-1), podeu seguir utilitzant el MySQL 4.1.12 (o superior) instal·lat.';
 $string['mysql416required'] = 'MySQL 4.1.16 és la versió mínima requerida per Moodle 1.6 a fi de garantir la conversió de totes les dades a UTF-8 en el futur.';
 $string['mysqlextensionisnotpresentinphp'] = 'El PHP no s\'ha configurat correctament amb l\'extensió MySQL per tal que es pugui comunicar amb MySQL. Comproveu el fitxer php.ini o recompileu el PHP.';

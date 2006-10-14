@@ -125,6 +125,7 @@ Com esta operação Moodle será capaz de configurar o limite de memória sózin
 <p>Alguns servidores não aceitam este procedimento e <b>todas</b> as páginas PHP do servidor ficam bloqueadas ou imprimem mensagens de erro. Neste caso será necessário cancelar o arquivo .htaccess .</p>
 </li></ol> ';
 $string['missingrequiredfield'] = 'Faltam informações obrigatórias';
+$string['moodledocslink'] = 'Documentação de Moodle relativa a esta página';
 $string['mysql416bypassed'] = 'Entretanto, se o seu site usa apenas idiomas iso-8859-1 (latin), você pode continuar a usar a sua base de dados atual MySQL 4.1.12 (ou superior).';
 $string['mysql416required'] = 'MySQL 4.1.16 é a versão mínima necessária para ainstalação de Moodle 1.6 em modo que os daados possam ser convertidos para UTF-8.';
 $string['mysqlextensionisnotpresentinphp'] = 'O PHP não foi configurado corretamente com a extensão MySQL e não pode comunicar com a base de dados. Controle o seu php.ini ou faça a recompilação do PHP.';

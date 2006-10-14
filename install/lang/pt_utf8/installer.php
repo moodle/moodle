@@ -59,6 +59,7 @@ $string['installation'] = 'Instalação';
 $string['language'] = 'Língua';
 $string['magicquotesruntimeerror'] = 'Isto deveria estar desactivado';
 $string['memorylimit'] = 'Limite de memoria';
+$string['moodledocslink'] = 'Documentação Moodle para esta página';
 $string['name'] = 'Nome(s)';
 $string['next'] = 'Próximo';
 $string['ok'] = 'OK';

@@ -129,6 +129,7 @@ na hodnotu blízkou 16M. Nemáte-li taková práva, požádejte správce vašeho
 <p>Bohužel, v některých případech tím vyřadíte z provozu <b>všechny</b> PHP stránky (při jejich prohlížení uvidíte chybová hlášení), takže budete muset soubor .htaccess zase odstranit.</li>
 </ol>';
 $string['missingrequiredfield'] = 'Chybí některé z povinných polí';
+$string['moodledocslink'] = 'Dokumentace k této stránce';
 $string['mysql416bypassed'] = 'Pokud ovšem ve vaší instalaci Moodlu používáte POUZE jazyky založené na latince (iso-8859-1), můžete nadále používat momentálně nainstalovanou verzi MySQL 4.1.12 (nebo vyšší).';
 $string['mysql416required'] = 'Minimální verzí požadovanou pro Moodle 1.6 -- a pro pozdější bezpečný převod všech dat do UTF-8 -- je MySQL 4.1.16.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP nebylo korektně nakonfigurováno pro komunikaci v MySQL. Zkontrolujte váš php.ini nebo překompilujte PHP.';

@@ -122,6 +122,7 @@ Hierdoor kan Moodle zelf zijn geheugenlimiet instellen.
 <p>Opgelet: op sommige servers zal dit verhinderen dat <b>alle</b> PHP-bestanden uitgevoerd worden. (je zult foutmeldingen zien wanneer je naar php-pagina\'s kijkt) Je zult dan het .htaccess-bestand moeten verwijderen.</li>
 </ol>';
 $string['missingrequiredfield'] = 'Vereist veld ontbreekt';
+$string['moodledocslink'] = 'Hulp uit Moodle Docs voor deze pagina';
 $string['mysql416bypassed'] = 'Als je site echter UITSLUITEND iso-8859-1 (latin) talen gebruikt, dan kun je MySQL 4.1.12 (of hoger) blijven gebruiken.';
 $string['mysql416required'] = 'MySQL 4.1.16 is de minimum versie die nodig is voor Moodle 1.6 om te kunnen garanderen dat alle gegevens naar UTF-8 geconverteerd zullen worden.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP is niet goed geconfigureerd met de MySQL-extentie om met MySQL te communiceren. Controleer je php.ini-bestand of hercompileer PHP.';
