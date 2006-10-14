@@ -126,6 +126,7 @@ Na niektorých PHP serveroch, si môžete vytvoriť súbor .htaccess v Adresári
 <p>Avšak, na niektorých serveroch bude toto brániť <b>všetkým</b> PHP stránkam v práci (budete vidieť chyby, keď sa pozriete na stránky), takže budete musieť odstrániť súbor .htaccess.</p></li>
 </ol>';
 $string['missingrequiredfield'] = 'Chýba niektoré z povinných polí';
+$string['moodledocslink'] = 'Moodle Docs pre túto stránku';
 $string['mysql416bypassed'] = 'Ak ale vo vašej inštalácii Moodle používate IBA jazyky založené na latinke (iso-8859-1), môžete aj ďalej používať súčasne nainštalovanú verziu MySQL 4.1.12 (alebo vyšší).';
 $string['mysql416required'] = 'Minimálnou verziou potrebnou pre Moodle 1.6 -- a pre neskorší bezpečný prevod všetkých údajov do UTF-8 -- je MySQL 4.1.16.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP nebolo správne nakonfigurované s MySQL rozšírením, a tak nemôže komunikovať s MySQL. Prosím, skontrolujte si Váš php.ini súbor alebo znovu vytvorte PHP.';

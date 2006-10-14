@@ -40,17 +40,47 @@ $string['database'] = 'データベース';
 $string['databasecreationsettingshead'] = 'ほとんどのMoodleデータが保存されるデータベース設定を行ってください。このデータベースはインストーラーにより、下記の設定が指定された形で自動的に作成されます。';
 $string['databasecreationsettingssub'] = '<b>タイプ:</b> インストーラーにより「mysql」に修正されました。<br />
 <b>ホスト:</b> インストーラーにより「localhost」に修正されました。<br />
-<b>データベース名:</b> データベース名、例 moodle<br />
+<b>データベース名:</b> 例 moodle<br />
 <b>ユーザ名:</b> インストーラーにより「root」に修正されました。<br />
 <b>パスワード:</b> あなたのデータベースパスワードです。<br />
 <b>テーブル接頭辞:</b> すべてのテーブル名に使用される任意の接頭辞です。';
-$string['databasesettingshead'] = 'ほとんどのMoodleデータが保存されるデータベースの設定を行います。このデータベースは、アクセスするためのユーザ名およびパスワードと共にすでに作成されている必要があります。';
+$string['databasesettingshead'] = 'ほとんどのMoodleデータが保存されるデータベース設定を行います。このデータベースは、アクセスするためのユーザ名およびパスワードと共にすでに作成されている必要があります。';
 $string['databasesettingssub'] = '<b>タイプ:</b> mysql または postgres7<br />
 <b>ホスト:</b> 例 localhost または db.isp.com<br />
-<b>データベース名:</b> 例:moodle<br />
+<b>データベース名:</b> 例 moodle<br />
 <b>ユーザ名:</b> データベースのユーザ名<br />
 <b>パスワード:</b> データベースのパスワード<br />
-<b>テーブル接頭辞:</b> すべてのテーブル名にオプションで使用する接頭辞';
+<b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 ( 任意 )';
+$string['databasesettingssub_mssql'] = '<b>タイプ:</b> SQL*Server<br />
+<b>ホスト:</b> 例 localhost または db.isp.com<br />
+<b>データベース名:</b> 例 moodle<br />
+<b>ユーザ名:</b> データベースのユーザ名<br />
+<b>パスワード:</b> データベースのパスワード<br />
+<b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 ( 必須 )';
+$string['databasesettingssub_mysql'] = '<b>タイプ:</b> MySQL<br />
+<b>ホスト:</b> 例 localhost または db.isp.com<br />
+<b>データベース名:</b> 例 moodle<br />
+<b>ユーザ名:</b> データベースのユーザ名<br />
+<b>パスワード:</b> データベースのパスワード<br />
+<b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 ( 任意 )';
+$string['databasesettingssub_oci8po'] = '<b>タイプ:</b> Oracle<br />
+<b>ホスト:</b> 使用されませんので空白にしてください。<br />
+<b>データベース名:</b>tnsnames.oraのコネクション名<br />
+<b>ユーザ名:</b> データベースのユーザ名<br />
+<b>パスワード:</b> データベースのパスワード<br />
+<b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 ( 必須、最大2cc. )';
+$string['databasesettingssub_odbc_mssql'] = '<b>タイプ:</b> SQL*Server (over ODBC) <b><font color=\"red\">実験的! ( 運用環境には使用しないでください。 )</font></b><br />
+<b>ホスト:</b>ODBCコントロールパネルのDSN名<br />
+<b>データベース名:</b> 例 moodle<br />
+<b>ユーザ名:</b> データベースのユーザ名<br />
+<b>パスワード:</b> データベースのパスワード<br />
+<b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 ( 必須 )';
+$string['databasesettingssub_postgres7'] = '<b>タイプ:</b> PostgreSQL<br />
+<b>ホスト:</b> 例 localhost または db.isp.com<br />
+<b>データベース名:</b> 例 moodle<br />
+<b>ユーザ名:</b> データベースのユーザ名<br />
+<b>パスワード:</b> データベースのパスワード<br />
+<b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 ( 必須 )';
 $string['dataroot'] = 'データディレクトリ';
 $string['datarooterror'] = 'あなたが指定した「データディレクトリ」が見つからないか、作成されませんでした。パスを訂正するか、ディレクトリを手動で作成してください。';
 $string['dbconnectionerror'] = 'あなたが指定したデータベースに接続できませんでした。データベース設定を確認してください。';
@@ -59,6 +89,9 @@ $string['dbhost'] = 'ホストサーバ';
 $string['dbprefix'] = 'テーブル接頭辞';
 $string['dbtype'] = 'タイプ';
 $string['dbwrongencoding'] = '選択したデータベースは、非推奨のエンコーディング ( $a ) で動作しています。代わりにユニコード ( UTF-8 ) でエンコードされたデータベースの使用をお勧めします。下記の「DBエンコーディングテストをスキップ」をチェックすることで、このテストをバイパスできますが、将来的に問題が発生する恐れがあります。';
+$string['dbwronghostserver'] = '上記説明の「ホスト」ルールに従ってください。';
+$string['dbwrongnlslang'] = 'あなたのウェブサーバのNLS_LANG環境変数には、AL32UTF8文字セットを使用してください。OCI8を適切に設定するには、PHPドキュメンテーションをご覧ください。';
+$string['dbwrongprefix'] = '上記説明の接頭辞に従ってください。';
 $string['directorysettingshead'] = 'Moodleのインストール先を確認してください。';
 $string['directorysettingssub'] = '<p><b>ウェブアドレス:</b>
 Moodleにアクセスする完全なウェブアドレスを指定してください。複数のURLよりアクセス可能な場合は、学生が利用する最も自然なURLを選択してください。末尾にスラッシュを付けないでください。</p>
@@ -126,14 +159,23 @@ $string['memorylimithelp'] = '<p>現在、サーバのPHPメモリー制限が $
 <p>しかし、この設定が<b>すべての</b>PHPページの動作を妨げる場合もあります。ページ閲覧時にエラーが表示される場合は、.htaccessファイルを削除してください。</p>
 </ol>';
 $string['missingrequiredfield'] = 'いくつかの必須入力フィールドに入力されていません。';
+$string['moodledocslink'] = 'このページのMoodle Docs';
+$string['mssql'] = 'SQL*Server (mssql)';
+$string['mssqlextensionisnotpresentinphp'] = 'PHPのMSSQL extensionが適切に設定されていないため、SQL*Serverと通信できません。あなたのphp.iniファイルをチェックするか、PHPを再コンパイルしてください。';
+$string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'あなたのサイトがiso-8859-1 ( ラテン ) 言語のみ使用している場合、現在インストールされている MySQL 4.1.12 ( またはそれ以上 ) を使用することができます。';
 $string['mysql416required'] = 'Moodle1.6では、将来すべてのデータをUTF-8に変換するため、MySQL 4.1.16が要求される最低限のバージョンです。';
-$string['mysqlextensionisnotpresentinphp'] = 'MySQLと通信できるようにPHPのMySQL extension設定が正しく設定されていません。php.iniを確認するか、PHPを再度コンパイルしてください。';
+$string['mysqlextensionisnotpresentinphp'] = 'PHPのMySQL extensionが適切に設定されていないため、MySQLと通信できません。あなたのphp.iniファイルをチェックするか、PHPを再コンパイルしてください。';
 $string['name'] = '名称';
 $string['next'] = '次へ';
+$string['oci8po'] = 'Oracle (oci8po)';
+$string['ociextensionisnotpresentinphp'] = 'PHPのOCI8 extensionが適切に設定されていないため、Oracleと通信できません。あなたのphp.iniファイルをチェックするか、PHPを再コンパイルしてください。';
+$string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
+$string['odbcextensionisnotpresentinphp'] = 'PHPのODBC extensionが適切に設定されていないため、SQL*Serverと通信できません。あなたのphp.iniファイルをチェックするか、PHPを再コンパイルしてください。';
 $string['ok'] = 'OK';
 $string['pass'] = 'パス';
 $string['password'] = 'パスワード';
+$string['pgsqlextensionisnotpresentinphp'] = 'PHPのPGSQL extensionが適切に設定されていないため、PostgreSQLと通信できません。あなたのphp.iniファイルをチェックするか、PHPを再コンパイルしてください。';
 $string['php50restricted'] = 'PHP 5.0.x には数多くの既知の問題があります。5.1.x にアップグレードするか、4.3.x または 4.4.x にダウングレードしてください。';
 $string['phpversion'] = 'PHPバージョン';
 $string['phpversionerror'] = 'PHPバージョンは少なくとも 4.3.0 または 5.1.0 をお使いください ( 5.0.x には既知の多数の問題があります )。';
@@ -141,6 +183,7 @@ $string['phpversionhelp'] = '<p>Moodleには、少なくとも 4.3.0 または 5
 <p>現在、バージョン $a が動作しています。</p>
 <p>PHPをアップグレードするか、新しいバージョンがインストールされているホストに移動してください!<br/>
 ( 5.0.x の場合、バージョン 4.4.x にダウングレードすることもできます。 )</p>';
+$string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = '前へ';
 $string['remotedownloadnotallowed'] = 'あなたのサーバーにコンポーネントをダウンロードすることができません ( allow_url_fopen が無効 )。<br /><br /><a href=\"$a->url\">$a->url</a> ファイルを手動でダウンロードして、サーバの「 $a->dest 」にコピーした後、解凍してください。';
 $string['report'] = 'レポート';

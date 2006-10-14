@@ -125,6 +125,7 @@ Horrek Moodlek berak memoria-muga ezartzea ahalbidetzen du.</li>
 (orriak ikustean erroreak ere ikusiko dituzu). Kasu horretan, .htaccess fitxategia ezabatu beharko duzu.</p></li>
 </ol>';
 $string['missingrequiredfield'] = 'Beharrezko eremuren bat falta da.';
+$string['moodledocslink'] = 'Moodle Doc-ak orri honetarako';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP ez da ongi ezarri MySQL luzapenarekin datu-basearekin komunikatzeko. Php.ini fitxategia aztertu edo PHP konpilatu, mesedez.';
 $string['name'] = 'Izena';
 $string['next'] = 'Hurrengoa';

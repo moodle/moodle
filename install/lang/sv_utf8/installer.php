@@ -119,6 +119,7 @@ $string['memorylimithelp'] = '<p>Minnesbegränsningen för PHP på Din server ä
 <li>På en del PHP-servrar kan Du skapa en .htaccess-fil i Moodle-katalogen som innehåller den här raden: <blockquote>php_value memory_limit 16M</blockquote>.<br />Detta kan dock på en del servrar leda till att <b>inga</b> PHP-sidor fungerar. (Du får Error-sidor istället för de riktiga) så då får Du ta bort .htaccess-filen.</li>
 </ol>';
 $string['missingrequiredfield'] = 'Det saknas några obligatoriska fält';
+$string['moodledocslink'] = 'Moodle Docs för den här sidan';
 $string['mysql416bypassed'] = 'Om Du emellertid på Din webbplats använder BARA språk som är kodade enligt ISO-8859-1 så kan Du fortsätta att använda Din aktuella installation av MySQL 4.1.12 (eller högre).';
 $string['mysql416required'] = 'MySQL 4.1.16 är den äldsta version som Du kan använda tillsammans med Moodle 1.6 om Du vill säkerställa att alla data kan konverteras till UTF-8 i framtiden.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP har inte konfigurerats på det sätt som måste i förhållande till MySQL-extensionen för att kunna kommunicera med MySQL. Var snäll och kontrollera Din php.ini-fil eller kompilera om PHP.';

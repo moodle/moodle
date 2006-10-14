@@ -31,6 +31,7 @@ $string['info'] = 'Информация';
 $string['installation'] = 'Установка';
 $string['language'] = 'Язык';
 $string['memorylimit'] = 'Предел памяти';
+$string['moodledocslink'] = 'Документация Moodle для этой страницы';
 $string['name'] = 'Название';
 $string['next'] = 'Дальше';
 $string['ok'] = 'OK';

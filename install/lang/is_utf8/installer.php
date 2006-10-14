@@ -80,6 +80,7 @@ $string['langdownloadok'] = 'Tungumálið $a hefur verið sótt og sett upp. Inn
 $string['language'] = 'Tungumál';
 $string['mbstringrecommended'] = 'Mælt er með uppsetningu á MBSTRING safninu í því skyni að auka virkni vefsins, sérstaklega ef vefurinn styður við tungumál sem ekki eru af latneskum stofni (non-latin).';
 $string['missingrequiredfield'] = 'Einhverjir reitir eru enn óútfylltir';
+$string['moodledocslink'] = 'Hjálp fyrir þessa síðu';
 $string['mysql416bypassed'] = 'Ef vefurinn notast hinsvegar EINUNGIS við iso-8859-1 (latin) stafasettið er óhætt að notast áfram við MySQL 4.1.12 eða yngri útgáfur.';
 $string['mysql416required'] = 'Moodle gerir lágmarkskröfu um MySQL 4.1.16 gagnagrunninn til þess að trygga að mögulegt sé að yfirfæra öll gögn yfir í UTF-8.';
 $string['name'] = 'Nafn';
