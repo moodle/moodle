@@ -299,11 +299,16 @@ class course_edit_form extends moodleform {
             $costgroup[]= &MoodleQuickForm::createElement('text','cost', '', 'maxlength="6" size="6"');
             $costgroup[]= &MoodleQuickForm::createElement('select', 'currency', '', $currencies);
             $mform->addGroup($costgroup, 'costgrp', get_string('cost'), '&nbsp;', false);
+            //defining a rule for a form element within a group :
+            $costgrprules=array();
+            //set the message to null to tell Moodle to use a default message
+            //available for most rules, fetched from language pack (err_{rulename}).
+            $costgrprules['cost'][]=array(null, 'numeric', null, 'client');
+            $mform->addGroupRule('costgrp',$costgrprules);
             $mform->setHelpButton('costgrp', array('cost', get_string('cost')), true);
             $mform->setDefault('cost', '');
             $mform->setDefault('currency', empty($CFG->enrol_currency) ? 'USD' : $CFG->enrol_currency);
-            // TODO: fix rule usage and add proper error message
-            //$mform->addRule('cost', get_string('error'), 'numeric', null, 'client');
+            
         }
 
 //--------------------------------------------------------------------------------

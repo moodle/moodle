@@ -20,20 +20,22 @@ if ($CFG->debug >= DEBUG_ALL){
 }
 
 class moodleform {
+    var $_formname;        // form name
     var $_form;        // quickform object definition
     var $_customdata;  // globals workaround
 
     function moodleform($action, $customdata=null, $method='post', $target='', $attributes=null) {
-        $form_name = rtrim(get_class($this), '_form');
+        $this->_formname = rtrim(get_class($this), '_form');
         $this->_customdata = $customdata;
-        $this->_form =& new MoodleQuickForm($form_name, $method, $action, $target, $attributes);
+        $this->_form =& new MoodleQuickForm($this->_formname, $method, $action, $target, $attributes);
 
         $this->definition();
 
         $this->_form->addElement('hidden', 'sesskey', null); // automatic sesskey protection
         $this->_form->setDefault('sesskey', sesskey());
-        $this->_form->addElement('hidden', '_qf__', null);   // form submission marker
-        $this->_form->setDefault('_qf__', 1);
+        $this->_form->addElement('hidden', '_qf__'.$this->_formname, null);   // form submission marker
+        $this->_form->setDefault('_qf__'.$this->_formname, 1);
+        $this->_form->_setDefaultRuleMessages();
 
         // we have to know all input types before processing submission ;-)
         $this->_process_submission($method);
@@ -51,8 +53,8 @@ class moodleform {
         }
 
         // following trick is needed to enable proper sesskey checks when using GET forms
-        // the _qf__ serves as a marker that form was actually submitted
-        if (array_key_exists('_qf__', $submission) and $submission['_qf__'] == 1) {
+        // the _qf__.$this->_formname serves as a marker that form was actually submitted
+        if (array_key_exists('_qf__'.$this->_formname, $submission) and $submission['_qf__'.$this->_formname] == 1) {
             if (!confirm_sesskey()) {
                 error('Incorrect sesskey submitted, form not accepted!');
             }
@@ -97,6 +99,8 @@ class moodleform {
     function data_submitted($slashed=true) {
         if ($this->is_submitted() and $this->is_validated()) {
             $data = $this->_form->exportValues(null, $slashed);
+            unset($data['sesskey']); // we do not need to return sesskey
+            unset($data['_qf__'.$this->_formname]);   // we do not need the submission marker too
             if (empty($data)) {
                 return NULL;
             } else {
@@ -245,8 +249,6 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
 
     function exportValues($elementList= null, $addslashes=true){
         $unfiltered=parent::exportValues($elementList);
-        unset($unfiltered['sesskey']); // we do not need to return sesskey
-        unset($unfiltered['_qf__']);   // we do not need the submission marker too
 
         if ($addslashes){
             return $this->_recursiveFilter('addslashes',$unfiltered);
@@ -254,6 +256,184 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             return $unfiltered;
         }
     }
+    /**
+     * Returns the client side validation script
+     *
+     * The code here was copied from HTML_QuickForm_DHTMLRulesTableless who copied it from  HTML_QuickForm
+     * and slightly modified to run rules per-element
+     * Needed to override this because of an error with client side validation of grouped elements.
+     *
+     * @access    public
+     * @return    string    Javascript to perform validation, empty string if no 'client' rules were added
+     */
+    function getValidationScript()
+    {
+        if (empty($this->_rules) || empty($this->_attributes['onsubmit'])) {
+            return '';
+        }
+
+        include_once('HTML/QuickForm/RuleRegistry.php');
+        $registry =& HTML_QuickForm_RuleRegistry::singleton();
+        $test = array();
+        $js_escape = array(
+            "\r"    => '\r',
+            "\n"    => '\n',
+            "\t"    => '\t',
+            "'"     => "\\'",
+            '"'     => '\"',
+            '\\'    => '\\\\'
+        );
+
+        foreach ($this->_rules as $elementName => $rules) {
+            foreach ($rules as $rule) {
+                if ('client' == $rule['validation']) {
+                    unset($element);
+
+                    $dependent  = isset($rule['dependent']) && is_array($rule['dependent']);
+                    $rule['message'] = strtr($rule['message'], $js_escape);
+
+                    if (isset($rule['group'])) {
+                        $group    =& $this->getElement($rule['group']);
+                        // No JavaScript validation for frozen elements
+                        if ($group->isFrozen()) {
+                            continue 2;
+                        }
+                        $elements =& $group->getElements();
+                        foreach (array_keys($elements) as $key) {
+                            if ($elementName == $group->getElementName($key)) {
+                                $element =& $elements[$key];
+                                break;
+                            }
+                        }
+                    } elseif ($dependent) {
+                        $element   =  array();
+                        $element[] =& $this->getElement($elementName);
+                        foreach ($rule['dependent'] as $idx => $elName) {
+                            $element[] =& $this->getElement($elName);
+                        }
+                    } else {
+                        $element =& $this->getElement($elementName);
+                    }
+                    // No JavaScript validation for frozen elements
+                    if (is_object($element) && $element->isFrozen()) {
+                        continue 2;
+                    } elseif (is_array($element)) {
+                        foreach (array_keys($element) as $key) {
+                            if ($element[$key]->isFrozen()) {
+                                continue 3;
+                            }
+                        }
+                    }
+                    // Fix for bug displaying errors for elements in a group
+                    //$test[$elementName][] = $registry->getValidationScript($element, $elementName, $rule);
+                    $test[$elementName][0][] = $registry->getValidationScript($element, $elementName, $rule);
+                    $test[$elementName][1]=$element;
+                    //end of fix
+                }
+            }
+        }
+        $js = '
+<script type="text/javascript">
+//<![CDATA[
+function qf_errorHandler(element, _qfMsg) {
+  div = element.parentNode;
+  if (_qfMsg != \'\') {
+    span = document.createElement("span");
+    span.className = "error";
+    span.appendChild(document.createTextNode(_qfMsg.substring(3)));
+    br = document.createElement("br");
+
+    var errorDiv = document.getElementById(element.name + \'_errorDiv\');
+    if (!errorDiv) {
+      errorDiv = document.createElement("div");
+      errorDiv.id = element.name + \'_errorDiv\';
+    }
+    while (errorDiv.firstChild) {
+      errorDiv.removeChild(errorDiv.firstChild);
+    }
+    
+    errorDiv.insertBefore(br, errorDiv.firstChild);
+    errorDiv.insertBefore(span, errorDiv.firstChild);
+    element.parentNode.insertBefore(errorDiv, element.parentNode.firstChild);
+
+    if (div.className.substr(div.className.length - 6, 6) != " error"
+        && div.className != "error") {
+      div.className += " error";
+    }
+
+    return false;
+  } else {
+    var errorDiv = document.getElementById(element.name + \'_errorDiv\');
+    if (errorDiv) {
+      errorDiv.parentNode.removeChild(errorDiv);
+    }
+
+    if (div.className.substr(div.className.length - 6, 6) == " error") {
+      div.className = div.className.substr(0, div.className.length - 6);
+    } else if (div.className == "error") {
+      div.className = "";
+    }
+
+    return true;
+  }
+}';
+        $validateJS = '';
+        foreach ($test as $elementName => $jsandelement) {
+            // Fix for bug displaying errors for elements in a group
+            //unset($element);
+            list($jsArr,$element)=$jsandelement;
+            //end of fix
+            $js .= '
+function validate_' . $this->_attributes['id'] . '_' . $elementName . '(element) {
+  var value = \'\';
+  var errFlag = new Array();
+  var _qfGroups = {};
+  var _qfMsg = \'\';
+  var frm = element.parentNode;
+  while (frm && frm.nodeName != "FORM") {
+    frm = frm.parentNode;
+  }
+' . join("\n", $jsArr) . '
+  return qf_errorHandler(element, _qfMsg);
+}
+';
+            $validateJS .= '
+  ret = validate_' . $this->_attributes['id'] . '_' . $elementName.'(frm.elements[\''.$elementName.'\']) && ret;';
+            // Fix for bug displaying errors for elements in a group
+            //unset($element);
+            //$element =& $this->getElement($elementName);
+            //end of fix
+            $valFunc = 'validate_' . $this->_attributes['id'] . '_' . $elementName . '(this)';
+            $onBlur = $element->getAttribute('onBlur');
+            $onChange = $element->getAttribute('onChange');
+            $element->updateAttributes(array('onBlur' => $onBlur . $valFunc,
+                                             'onChange' => $onChange . $valFunc));
+        }
+        $js .= '
+function validate_' . $this->_attributes['id'] . '(frm) {
+  var ret = true;
+' . $validateJS . ';
+  return ret;
+}
+//]]>
+</script>';
+        return $js;
+    } // end func getValidationScript
+    function _setDefaultRuleMessages(){
+        foreach ($this->_rules as $field => $rulesarr){
+            foreach ($rulesarr as $key => $rule){
+                if ($rule['message']===null){
+                    $a=new object();
+                    $a->format=$rule['format'];
+                    $str=get_string('err_'.$rule['type'], 'form', $a);
+                    if (strpos($str, '[[')!==0){
+                        $this->_rules[$field][$key]['message']=$str;
+                    }    
+                }
+            }
+        }
+    }
+
 }
 
 /**
