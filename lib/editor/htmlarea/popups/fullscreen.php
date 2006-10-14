@@ -78,7 +78,7 @@ function cloneObject(obj) {
     newObj = obj.constructor();
   }
 
-  // check for function objects (as usual, IE is fucked up)
+  // check for function objects (as usual, IE is phucked up)
   if (obj.constructor.toString().indexOf("function Function(") >= 0) {
     newObj = obj; // just copy reference to it
   } else for (var n in obj) {
