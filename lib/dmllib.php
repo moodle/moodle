@@ -1146,7 +1146,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
     if ($CFG->dbtype == 'oci8po' && !empty($dataobject->{$primarykey}) && 
         (!empty($foundclobs) || !empty($foundblobs))) {
         $insertSQL = str_replace("'@#CLOB#@'", 'empty_clob()', $insertSQL);
-        $insertSQL =str_replace("'@#BLOB#@'", 'empty_blob()', $insertSQL);
+        $insertSQL = str_replace("'@#BLOB#@'", 'empty_blob()', $insertSQL);
     }
 
 /// Run the SQL statement
@@ -1751,7 +1751,7 @@ function oracle_detect_lobs ($table, &$dataobject, &$clobs, &$blobs,$usecache = 
  * @param $table string the table where the record is going to be inserted/updated (without prefix)
  * @param $primaryvalue integer value of the primary key (to identify the record to be updated)
  * @param $clobs array of clobs to be updated
- * @param $dataobject array of blobs to be updated
+ * @param $blobs array of blobs to be updated
  */
 function oracle_update_lobs ($table, $primaryvalue, &$clobs, &$blobs) {
 
@@ -1765,13 +1765,27 @@ function oracle_update_lobs ($table, $primaryvalue, &$clobs, &$blobs) {
 /// Update all the clobs
     if ($clobs) {
         foreach ($clobs as $key => $value) {
-            $db->UpdateClob($CFG->prefix.$table, $key, $value, 'id='.$primaryvalue);
+            if (!$db->UpdateClob($CFG->prefix.$table, $key, $value, 'id='.$primaryvalue)) {
+                $statement = "UpdateClob('$CFG->prefix$table', '$key', '" . substr($value, 0, 100) . "...', 'id='$primaryvalue)";
+                debugging($db->ErrorMsg() ."<br /><br />$statement");
+                if (!empty($CFG->dblogerror)) {
+                    $debug=array_shift(debug_backtrace());
+                    error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $statement");
+                }
+            }
         }
     }
 /// Update all the blobs
     if ($blobs) {
         foreach ($blobs as $key => $value) {
-            $db->UpdateBlob($CFG->prefix.$table, $key, $value, 'id='.$primaryvalue);
+            if(!$db->UpdateBlob($CFG->prefix.$table, $key, $value, 'id='.$primaryvalue)) {
+                $statement = "UpdateBlob('$CFG->prefix$table', '$key', '" . substr($value, 0, 100) . "...', 'id='$primaryvalue)";
+                debugging($db->ErrorMsg() ."<br /><br />$statement");
+                if (!empty($CFG->dblogerror)) {
+                    $debug=array_shift(debug_backtrace());
+                    error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $statement");
+                }
+            }
         }
     }
 }
