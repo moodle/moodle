@@ -171,15 +171,13 @@ function blocks_name_allowed_in_format($name, $pageformat) {
     $formats = block_method_result($name, 'applicable_formats');
     $accept  = NULL;
     $depth   = -1;
-    if (isset($formats)) {
-        foreach($formats as $format => $allowed) {
-            $thisformat = '^'.str_replace('*', '[^-]*', $format).'.*$';
-            if(ereg($thisformat, $pageformat)) {
-                if(($scount = substr_count($format, '-')) > $depth) {
-                    $depth  = $scount;
-                    $accept = $allowed;
-               }
-           }
+    foreach($formats as $format => $allowed) {
+        $thisformat = '^'.str_replace('*', '[^-]*', $format).'.*$';
+        if(ereg($thisformat, $pageformat)) {
+            if(($scount = substr_count($format, '-')) > $depth) {
+                $depth  = $scount;
+                $accept = $allowed;
+            }
         }
     }
     if($accept === NULL) {
@@ -1167,7 +1165,7 @@ function upgrade_blocks_plugins($continueto) {
 
             /// Run de old and new upgrade functions for the module
                 $oldupgrade_function = $block->name .'_upgrade';
-                $newupgrade_function = 'xmldb_' . $block->name .'_upgrade';
+                $newupgrade_function = 'xmldb_block_' . $block->name .'_upgrade';
 
             /// First, the old function if exists
                 $oldupgrade_status = true;
