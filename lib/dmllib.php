@@ -990,8 +990,30 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
         oracle_dirty_hack($table, $dataobject); // Convert object to the correct "empty" values for Oracle DB
         $newvalue = $dataobject->{$newfield};
     }
-    /// End DIRTY HACK
+    // End DIRTY HACK
 
+/// Under Oracle we have our own set field process
+/// If the field being updated is clob/blob, we use our alternate update here
+/// They will be updated later
+    if ($CFG->dbtype == 'oci8po' && !empty($select)) {
+    /// Detect lobs
+        $foundclobs = array();
+        $foundblobs = array();
+        oracle_detect_lobs($table, $dataobject, $foundclobs, $foundblobs);
+    }
+
+/// Under Oracle, finally, Update all the Clobs and Blobs present in the record
+/// if we know we have some of them in the query
+    if ($CFG->dbtype == 'oci8po' && !empty($select) &&
+        (!empty($foundclobs) || !empty($foundblobs))) {
+        if (!oracle_update_lobs($table, $select, $foundclobs, $foundblobs)) {
+            return false; //Some error happened while updating LOBs
+        } else {
+            return true; //Everrything was ok
+        }
+    }
+
+/// Arriving here, standard update 
     return $db->Execute('UPDATE '. $CFG->prefix . $table .' SET '. $newfield  .' = \''. $newvalue .'\' '. $select);
 }
 
@@ -1163,7 +1185,9 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 /// if we know we have some of them in the query
     if ($CFG->dbtype == 'oci8po' && !empty($dataobject->{$primarykey}) && 
         (!empty($foundclobs) || !empty($foundblobs))) {
-        oracle_update_lobs($table, $dataobject->{$primarykey}, $foundclobs, $foundblobs);
+        if (!oracle_update_lobs($table, $dataobject->{$primarykey}, $foundclobs, $foundblobs)) {
+            return false; //Some error happened while updating LOBs
+        }
     }
 
 /// If a return ID is not needed then just return true now
@@ -1240,7 +1264,7 @@ function update_record($table, $dataobject) {
     /// Detect lobs
         $foundclobs = array();
         $foundblobs = array();
-        oracle_detect_lobs($table, $dataobject, $foundclobs, $foundblobs, true, true);
+        oracle_detect_lobs($table, $dataobject, $foundclobs, $foundblobs, true);
     }
 
     // Determine all the fields in the table
@@ -1293,7 +1317,9 @@ function update_record($table, $dataobject) {
 /// if we know we have some of them in the query
     if ($CFG->dbtype == 'oci8po' && !empty($dataobject->id) && 
         (!empty($foundclobs) || !empty($foundblobs))) {
-        oracle_update_lobs($table, $dataobject->id, $foundclobs, $foundblobs);
+        if (!oracle_update_lobs($table, $dataobject->id, $foundclobs, $foundblobs)) {
+            return false; //Some error happened while updating LOBs
+        }
     }
 
     return true;
@@ -1751,7 +1777,7 @@ function oracle_detect_lobs ($table, &$dataobject, &$clobs, &$blobs, $unset = fa
             continue;
         }
     /// If the field is CLOB, update its value to '@#CLOB#@' and store it in the $clobs array
-        if ($columns[strtolower($fieldname)]->type == 'CLOB') {
+        if ($columns[strtolower($fieldname)]->type == 'CLOB') { // && strlen($dataobject->$fieldname) > 3999
             $clobs[$fieldname] = $dataobject->$fieldname;
             if ($unset) {
                 unset($dataobject->$fieldname);
@@ -1762,7 +1788,7 @@ function oracle_detect_lobs ($table, &$dataobject, &$clobs, &$blobs, $unset = fa
         }
 
     /// If the field is BLOB, update its value to '@#BLOB#@' and store it in the $blobs array
-        if ($columns[strtolower($fieldname)]->type == 'BLOB') {
+        if ($columns[strtolower($fieldname)]->type == 'BLOB') { // && strlen($dataobject->$fieldname) > 3999
             $clobs[$fieldname] = $dataobject->$fieldname;
             if ($unset) {
                 unset($dataobject->$fieldname);
@@ -1782,24 +1808,35 @@ function oracle_detect_lobs ($table, &$dataobject, &$clobs, &$blobs, $unset = fa
  * This function is private and must not be used outside dmllib at all
  *
  * @param $table string the table where the record is going to be inserted/updated (without prefix)
- * @param $primaryvalue integer value of the primary key (to identify the record to be updated)
+ * @param $sqlcondition mixed value defining the records to be LOB-updated. It it's a number, must point
+ *        to the PK og the table (id field), else it's processed as one harcoded SQL condition (WHERE clause)
  * @param $clobs array of clobs to be updated
  * @param $blobs array of blobs to be updated
  */
-function oracle_update_lobs ($table, $primaryvalue, &$clobs, &$blobs) {
+function oracle_update_lobs ($table, $sqlcondition, &$clobs, &$blobs) {
 
     global $CFG, $db;
 
+    $status = true;
+
 /// If the db isn't Oracle, return without modif
     if ( $CFG->dbtype != 'oci8po') {
-        return;
+        return false;
+    }
+
+/// Calculate the update sql condition
+    if (is_numeric($sqlcondition)) { /// If passing a number, it's the PK of the table (id)
+        $sqlcondition = 'id=' . $sqlcondition;
+    } else { /// Else, it's a formal standard SQL condition, we try to delete the WHERE in case it exists
+        $sqlcondition = trim(preg_replace('/^WHERE/is', '', trim($sqlcondition)));
     }
 
 /// Update all the clobs
     if ($clobs) {
         foreach ($clobs as $key => $value) {
-            if (!$db->UpdateClob($CFG->prefix.$table, $key, $value, 'id='.$primaryvalue)) {
-                $statement = "UpdateClob('$CFG->prefix$table', '$key', '" . substr($value, 0, 100) . "...', 'id='$primaryvalue)";
+            if (!$db->UpdateClob($CFG->prefix.$table, $key, $value, $sqlcondition)) {
+                $status = false;
+                $statement = "UpdateClob('$CFG->prefix$table', '$key', '" . substr($value, 0, 100) . "...', '$sqlcondition')";
                 debugging($db->ErrorMsg() ."<br /><br />$statement");
                 if (!empty($CFG->dblogerror)) {
                     $debug=array_shift(debug_backtrace());
@@ -1811,8 +1848,9 @@ function oracle_update_lobs ($table, $primaryvalue, &$clobs, &$blobs) {
 /// Update all the blobs
     if ($blobs) {
         foreach ($blobs as $key => $value) {
-            if(!$db->UpdateBlob($CFG->prefix.$table, $key, $value, 'id='.$primaryvalue)) {
-                $statement = "UpdateBlob('$CFG->prefix$table', '$key', '" . substr($value, 0, 100) . "...', 'id='$primaryvalue)";
+            if(!$db->UpdateBlob($CFG->prefix.$table, $key, $value, $sqlcondition)) {
+                $status = false;
+                $statement = "UpdateBlob('$CFG->prefix$table', '$key', '" . substr($value, 0, 100) . "...', '$sqlcondition')";
                 debugging($db->ErrorMsg() ."<br /><br />$statement");
                 if (!empty($CFG->dblogerror)) {
                     $debug=array_shift(debug_backtrace());
@@ -1821,6 +1859,7 @@ function oracle_update_lobs ($table, $primaryvalue, &$clobs, &$blobs) {
             }
         }
     }
+    return $status;
 }
 
 ?>
