@@ -264,7 +264,7 @@ function choice_user_submit_response($formanswer, $choice, $userid, $courseid, $
             }
         }               
                 
-        $countanswers = count($countans);
+        $countanswers = $countans;
     } else {
         $countanswers = 0;
     }
