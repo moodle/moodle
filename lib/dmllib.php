@@ -38,6 +38,7 @@
 /// GLOBAL CONSTANTS /////////////////////////////////////////////////////////
 
 $empty_rs_cache = array();   // Keeps copies of the recordsets used in one invocation
+$metadata_cache = array();   // Keeps copies of the MetaColumns() for each table used in one invocations
 
 /// FUNCTIONS FOR DATABASE HANDLING  ////////////////////////////////
 
@@ -1132,7 +1133,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
     if ($CFG->dbtype == 'oci8po' && !empty($dataobject->{$primarykey})) {
         $foundclobs = array();
         $foundblobs = array();
-        ///TODO
+        oracle_detect_lobs($table, $dataobject, $foundclobs, $foundblobs);
     }
     
 /// Get the correct SQL from adoDB
@@ -1144,7 +1145,8 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 /// if we know we have some of them in the query
     if ($CFG->dbtype == 'oci8po' && !empty($dataobject->{$primarykey}) && 
         (!empty($foundclobs) || !empty($foundblobs))) {
-        ///TODO
+        $insertSQL = str_replace("'@#CLOB#@'", 'empty_clob()', $insertSQL);
+        $insertSQL =str_replace("'@#BLOB#@'", 'empty_blob()', $insertSQL);
     }
 
 /// Run the SQL statement
@@ -1161,7 +1163,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 /// if we know we have some of them in the query
     if ($CFG->dbtype == 'oci8po' && !empty($dataobject->{$primarykey}) && 
         (!empty($foundclobs) || !empty($foundblobs))) {
-        //TODO
+        oracle_update_lobs($table, $dataobject->{$primarykey}, $foundclobs, $foundblobs);
     }
 
 /// If a return ID is not needed then just return true now
@@ -1424,6 +1426,7 @@ function sql_order_by_text($fieldname, $numchars=32) {
 
     switch ($CFG->dbtype) {
         case 'mssql':
+        case 'mssql_n':
         case 'odbc_mssql':
             return 'CONVERT(varchar, ' . $fieldname . ', ' . $numchars . ')';
             break;
@@ -1575,6 +1578,7 @@ function configure_dbconnection() {
             }
             break;
         case 'mssql':
+        case 'mssql_n':
         case 'odbc_mssql':
         /// No need to set charset. It must be specified in the driver conf
         /// Allow quoted identifiers
@@ -1586,6 +1590,7 @@ function configure_dbconnection() {
             ini_set('magic_quotes_sybase', '1');
         /// NOTE: Not 100% useful because GPC has been addslashed with the setting off
         ///       so IT'S MANDATORY TO CHANGE THIS UNDER php.ini or .htaccess for this DB
+        ///       or to turn off magic_quotes to allow Moodle to do it properly
             break;
         case 'oci8po':
         /// No need to set charset. It must be specified by the NLS_LANG env. variable
@@ -1593,6 +1598,7 @@ function configure_dbconnection() {
             ini_set('magic_quotes_sybase', '1');
         /// NOTE: Not 100% useful because GPC has been addslashed with the setting off
         ///       so IT'S MANDATORY TO ENABLE THIS UNDER php.ini or .htaccess for this DB
+        ///       or to turn off magic_quotes to allow Moodle to do it properly
             break;
     }
 }
@@ -1607,6 +1613,8 @@ function configure_dbconnection() {
  * Note that this function is 100% private and should be used, exclusively by DML functions
  * in this file. Also, this is considered a DIRTY HACK to be removed when possible. (stronk7)
  *
+ * This function is private and must not be used outside dmllib at all
+ *
  * @param $table string the table where the record is going to be inserted/updated (without prefix)
  * @param $dataobject object the object to be inserted/updated
  * @param $usecache boolean flag to determinate if we must use the per request cache of metadata
@@ -1614,11 +1622,11 @@ function configure_dbconnection() {
  */
 function oracle_dirty_hack ($table, &$dataobject, $usecache = true) {
 
-    global $CFG, $db;
+    global $CFG, $db, $metadata_cache;
 
 /// Init and delete metadata cache
-    if (!isset($metadatacache) || !$usecache) {
-        static $metadatacache = array();
+    if (!isset($metadata_cache) || !$usecache) {
+        $metadata_cache = array();
     }
 
 /// For Oracle DB, empty strings are converted to NULLs in DB
@@ -1638,10 +1646,10 @@ function oracle_dirty_hack ($table, &$dataobject, $usecache = true) {
     }
 
 /// Get Meta info to know what to change, using the cached meta if exists
-    if (!isset($metadatacache[$table])) {
-        $metadatacache[$table] = array_change_key_case($db->MetaColumns($CFG->prefix . $table), CASE_LOWER);
+    if (!isset($metadata_cache[$table])) {
+        $metadata_cache[$table] = array_change_key_case($db->MetaColumns($CFG->prefix . $table), CASE_LOWER);
     }
-    $columns = $metadatacache[$table];
+    $columns = $metadata_cache[$table];
 /// Iterate over all the fields in the insert, transforming values
 /// in the best possible form
     foreach ($dataobject as $fieldname => $fieldvalue) {
@@ -1676,5 +1684,96 @@ function oracle_dirty_hack ($table, &$dataobject, $usecache = true) {
     }
 }
 /// End of DIRTY HACK
+
+/**
+ * This function will search for all the CLOBs and BLOBs fields passed in the dataobject, replacing
+ * their contents by the fixed strings '@#CLOB#@' and '@#BLOB' and returning one array for all the
+ * found CLOBS and another for all the found BLOBS
+ * Used by Oracle drivers to perform the two-step insertion/update of LOBs
+ *
+ * This function is private and must not be used outside dmllib at all
+ *
+ * @param $table string the table where the record is going to be inserted/updated (without prefix)
+ * @param $dataobject object the object to be inserted/updated
+ * @param $clobs array of clobs detected
+ * @param $dataobject array of blobs detected
+ * @param $usecache boolean flag to determinate if we must use the per request cache of metadata
+ *        true to use it, false to ignore and delete it
+ */
+function oracle_detect_lobs ($table, &$dataobject, &$clobs, &$blobs,$usecache = true) {
+
+    global $CFG, $db, $metadata_cache;
+
+/// Init and delete metadata cache
+    if (!isset($metadata_cache) || !$usecache) {
+        $metadata_cache = array();
+    }
+
+/// If the db isn't Oracle, return without modif
+    if ( $CFG->dbtype != 'oci8po') {
+        return;
+    }
+
+/// Get Meta info to know what to change, using the cached meta if exists
+    if (!isset($metadata_cache[$table])) {
+        $metadata_cache[$table] = array_change_key_case($db->MetaColumns($CFG->prefix . $table), CASE_LOWER);
+    }
+    $columns = $metadata_cache[$table];
+
+    foreach ($dataobject as $fieldname => $fieldvalue) {
+    /// If the field doesn't exist in metadata, skip
+        if (!isset($columns[strtolower($fieldname)])) {
+            continue;
+        }
+    /// If the field is CLOB, update its value to '@#CLOB#@' and store it in the $clobs array
+        if ($columns[strtolower($fieldname)]->type == 'CLOB') {
+            $clobs[$fieldname] = $dataobject->$fieldname;
+            $dataobject->$fieldname = '@#CLOB#@';
+            continue;
+        }
+
+    /// If the field is BLOB, update its value to '@#BLOB#@' and store it in the $blobs array
+        if ($columns[strtolower($fieldname)]->type == 'BLOB') {
+            $clobs[$fieldname] = $dataobject->$fieldname;
+            $dataobject->$fieldname = '@#BLOB#@';
+            continue;
+        }
+    }
+}
+
+/**
+ * This function will iterate over $clobs and $blobs array, executing the needed
+ * UpdateClob() and UpdateBlob() ADOdb function calls to store LOBs contents properly
+ * Records to be updated are always searched by PK (id always!)
+ *
+ * This function is private and must not be used outside dmllib at all
+ *
+ * @param $table string the table where the record is going to be inserted/updated (without prefix)
+ * @param $primaryvalue integer value of the primary key (to identify the record to be updated)
+ * @param $clobs array of clobs to be updated
+ * @param $dataobject array of blobs to be updated
+ */
+function oracle_update_lobs ($table, $primaryvalue, &$clobs, &$blobs) {
+
+    global $CFG, $db;
+
+/// If the db isn't Oracle, return without modif
+    if ( $CFG->dbtype != 'oci8po') {
+        return;
+    }
+
+/// Update all the clobs
+    if ($clobs) {
+        foreach ($clobs as $key => $value) {
+            $db->UpdateClob($CFG->prefix.$table, $key, $value, 'id='.$primaryvalue);
+        }
+    }
+/// Update all the blobs
+    if ($blobs) {
+        foreach ($blobs as $key => $value) {
+            $db->UpdateBlob($CFG->prefix.$table, $key, $value, 'id='.$primaryvalue);
+        }
+    }
+}
 
 ?>
