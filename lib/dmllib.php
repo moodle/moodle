@@ -1232,6 +1232,17 @@ function update_record($table, $dataobject) {
     }
 /// End DIRTY HACK
 
+/// Under Oracle we have our own update record process
+/// detect all the clob/blob fields and delete them from the record being updated
+/// saving them into $foundclobs and $foundblobs [$fieldname]->contents
+/// They will be updated later
+    if ($CFG->dbtype == 'oci8po' && !empty($dataobject->id)) {
+    /// Detect lobs
+        $foundclobs = array();
+        $foundblobs = array();
+        oracle_detect_lobs($table, $dataobject, $foundclobs, $foundblobs, true, true);
+    }
+
     // Determine all the fields in the table
     if (!$columns = $db->MetaColumns($CFG->prefix . $table)) {
         return false;
@@ -1241,6 +1252,7 @@ function update_record($table, $dataobject) {
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
     // Pull out data matching these fields
+    $ddd = array();
     foreach ($columns as $column) {
         if ($column->name <> 'id' and isset($data[$column->name]) ) {
             $ddd[$column->name] = $data[$column->name];
@@ -1256,24 +1268,35 @@ function update_record($table, $dataobject) {
     $count = 0;
     $update = '';
 
-    foreach ($ddd as $key => $value) {
-        $count++;
-        $update .= $key .' = \''. $value .'\'';   // All incoming data is already quoted
-        if ($count < $numddd) {
-            $update .= ', ';
+/// Only if we have fields to be updated (this will prevent both wrong updates + 
+/// updates of only LOBs in Oracle
+    if ($numddd) {
+        foreach ($ddd as $key => $value) {
+            $count++;
+            $update .= $key .' = \''. $value .'\'';   // All incoming data is already quoted
+            if ($count < $numddd) {
+                $update .= ', ';
+            }
+        }
+
+        if (!$rs = $db->Execute('UPDATE '. $CFG->prefix . $table .' SET '. $update .' WHERE id = \''. $dataobject->id .'\'')) {
+            debugging($db->ErrorMsg() .'<br /><br />UPDATE '. $CFG->prefix . $table .' SET '. $update .' WHERE id = \''. $dataobject->id .'\'');
+            if (!empty($CFG->dblogerror)) {
+                $debug=array_shift(debug_backtrace());
+                error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  UPDATE $CFG->prefix$table SET $update WHERE id = '$dataobject->id'");
+            }
+            return false;
         }
     }
 
-    if ($rs = $db->Execute('UPDATE '. $CFG->prefix . $table .' SET '. $update .' WHERE id = \''. $dataobject->id .'\'')) {
-        return true;
-    } else {
-        debugging($db->ErrorMsg() .'<br /><br />UPDATE '. $CFG->prefix . $table .' SET '. $update .' WHERE id = \''. $dataobject->id .'\'');
-        if (!empty($CFG->dblogerror)) {
-            $debug=array_shift(debug_backtrace());
-            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  UPDATE $CFG->prefix$table SET $update WHERE id = '$dataobject->id'");
-        }
-        return false;
+/// Under Oracle, finally, Update all the Clobs and Blobs present in the record
+/// if we know we have some of them in the query
+    if ($CFG->dbtype == 'oci8po' && !empty($dataobject->id) && 
+        (!empty($foundclobs) || !empty($foundblobs))) {
+        oracle_update_lobs($table, $dataobject->id, $foundclobs, $foundblobs);
     }
+
+    return true;
 }
 
 
@@ -1697,10 +1720,12 @@ function oracle_dirty_hack ($table, &$dataobject, $usecache = true) {
  * @param $dataobject object the object to be inserted/updated
  * @param $clobs array of clobs detected
  * @param $dataobject array of blobs detected
+ * @param $unset boolean to specify if we must unset found LOBs from the original object (true) or
+ *        just return them modified to @#CLOB#@ and @#BLOB#@ (false)
  * @param $usecache boolean flag to determinate if we must use the per request cache of metadata
  *        true to use it, false to ignore and delete it
  */
-function oracle_detect_lobs ($table, &$dataobject, &$clobs, &$blobs,$usecache = true) {
+function oracle_detect_lobs ($table, &$dataobject, &$clobs, &$blobs, $unset = false, $usecache = true) {
 
     global $CFG, $db, $metadata_cache;
 
@@ -1728,14 +1753,22 @@ function oracle_detect_lobs ($table, &$dataobject, &$clobs, &$blobs,$usecache = 
     /// If the field is CLOB, update its value to '@#CLOB#@' and store it in the $clobs array
         if ($columns[strtolower($fieldname)]->type == 'CLOB') {
             $clobs[$fieldname] = $dataobject->$fieldname;
-            $dataobject->$fieldname = '@#CLOB#@';
+            if ($unset) {
+                unset($dataobject->$fieldname);
+            } else {
+                $dataobject->$fieldname = '@#CLOB#@';
+            }
             continue;
         }
 
     /// If the field is BLOB, update its value to '@#BLOB#@' and store it in the $blobs array
         if ($columns[strtolower($fieldname)]->type == 'BLOB') {
             $clobs[$fieldname] = $dataobject->$fieldname;
-            $dataobject->$fieldname = '@#BLOB#@';
+            if ($unset) {
+                unset($dataobject->$fieldname);
+            } else {
+                $dataobject->$fieldname = '@#BLOB#@';
+            }
             continue;
         }
     }
