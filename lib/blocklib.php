@@ -1167,7 +1167,7 @@ function upgrade_blocks_plugins($continueto) {
 
             /// Run de old and new upgrade functions for the module
                 $oldupgrade_function = $block->name .'_upgrade';
-                $newupgrade_function = 'xmldb_' . $block->name .'_upgrade';
+                $newupgrade_function = 'xmldb_block_' . $block->name .'_upgrade';
 
             /// First, the old function if exists
                 $oldupgrade_status = true;
