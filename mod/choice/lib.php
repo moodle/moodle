@@ -67,7 +67,7 @@ function choice_add_instance($choice) {
 
     //insert answers    
     if ($choice->id = insert_record("choice", $choice)) {
-        foreach ($choice as $name => $value) {        
+        foreach ($choice as $name => $value) {
             if (strstr($name, "newoption")) {   /// New option
                 $value = trim($value);
                 if (isset($value) && $value <> '') {
@@ -78,7 +78,7 @@ function choice_add_instance($choice) {
                         $option->maxanswers = $choice->{'newlimit'.substr($name, 9)};
                     }
                     $option->timemodified = time();
-                    insert_record("choice_options", $option);                
+                    insert_record("choice_options", $option);
                 }
             }
         }
@@ -105,10 +105,10 @@ function choice_update_instance($choice) {
         $choice->timeopen = 0;
         $choice->timeclose = 0;
     }
-    
+
     //update answers
-    
-    foreach ($choice as $name => $value) {        
+
+    foreach ($choice as $name => $value) {
         $value = trim($value);
 
         if (strstr($name, "oldoption")) {  // Old option
@@ -134,13 +134,13 @@ function choice_update_instance($choice) {
                     $option->maxanswers = $choice->{'newlimit'.substr($name, 9)};
                 }
                 $option->timemodified = time();
-                insert_record("choice_options", $option);                
+                insert_record("choice_options", $option);
             }
-        }      
+        }
     }
 
     return update_record('choice', $choice);
-      
+
 }
 
 function choice_show_form($choice, $user, $cm) {
@@ -154,10 +154,10 @@ $cdisplay = array();
     foreach ($choice->option as $optionid => $text) {
         if (isset($text)) { //make sure there are no dud entries in the db with blank text values.
             $countanswers = (get_records("choice_answers", "optionid", $optionid));
-            $countans = 0;           
+            $countans = 0;
             if (!empty($countanswers)) {
-                foreach ($countanswers as $ca) { //only return enrolled users.				
-				    if (isstudent($cm->course, $ca->userid) or isteacher($cm->course, $ca->userid)) {	
+                foreach ($countanswers as $ca) { //only return enrolled users.
+                    if (isstudent($cm->course, $ca->userid) or isteacher($cm->course, $ca->userid)) {
                         $countans = $countans+1;
                     }
                 }
@@ -169,21 +169,21 @@ $cdisplay = array();
             }
             $maxans = $choice->maxanswers[$optionid];
 
-	    	$cdisplay[$aid]->optionid = $optionid;
-		    $cdisplay[$aid]->text = $text;
-		    $cdisplay[$aid]->maxanswers = $maxans;
-		    $cdisplay[$aid]->countanswers = $countans;
+            $cdisplay[$aid]->optionid = $optionid;
+            $cdisplay[$aid]->text = $text;
+            $cdisplay[$aid]->maxanswers = $maxans;
+            $cdisplay[$aid]->countanswers = $countans;
 
-		    if ($current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user->id, 'optionid', $optionid)) {
-    			$cdisplay[$aid]->checked = ' checked="checked" ';	
-		    } else {
-    			$cdisplay[$aid]->checked = '';	
-	    	}
+            if ($current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user->id, 'optionid', $optionid)) {
+                $cdisplay[$aid]->checked = ' checked="checked" ';
+            } else {
+                $cdisplay[$aid]->checked = '';
+            }
             if ($choice->limitanswers && ($countans >= $maxans) && (empty($cdisplay[$aid]->checked)) ) {
-				$cdisplay[$aid]->disabled = ' disabled="disabled" ';	
-			} else {
-				$cdisplay[$aid]->disabled = '';	
-		    }
+                $cdisplay[$aid]->disabled = ' disabled="disabled" ';
+            } else {
+                $cdisplay[$aid]->disabled = '';
+            }
             $aid++;
         }
     }
@@ -191,16 +191,16 @@ $cdisplay = array();
         switch ($choice->display) {
             case CHOICE_DISPLAY_HORIZONTAL:
                 echo "<table cellpadding=\"20\" cellspacing=\"20\" align=\"center\"><tr>";
-				                    
+
                 foreach ($cdisplay as $cd) { 
                     echo "<td align=\"center\" valign=\"top\">";
                     echo "<input type=\"radio\" name=\"answer\" value=\"".$cd->optionid."\" alt=\"".strip_tags(format_text($cd->text))."\"". $cd->checked.$cd->disabled." />";                    
-                    if (!empty($cd->disabled)) {               
+                    if (!empty($cd->disabled)) {
                             echo format_text($cd->text."<br /><strong>".get_string('full', 'choice')."</strong>");				    
-				    } else {
+                    } else {
                         echo format_text($cd->text);
                     }
-                        echo "</td>";                    
+                        echo "</td>";
                 }
                 echo "</tr>";
                 echo "</table>";
@@ -220,8 +220,8 @@ $cdisplay = array();
                             
                             if (!empty($cd->disabled)) {
                                 echo get_string('full', 'choice');
-						    } elseif(!empty($cd->checked)) {
-							    //currently do nothing - maybe some text could be added here to signfy that the choice has been 'selected'
+                            } elseif(!empty($cd->checked)) {
+                                //currently do nothing - maybe some text could be added here to signfy that the choice has been 'selected'
                             } elseif ($cd->maxanswers-$cd->countanswers==1) {
                                 echo ($cd->maxanswers - $cd->countanswers);
                                 echo " ".get_string('spaceleft', 'choice');
@@ -254,25 +254,25 @@ $cdisplay = array();
 function choice_user_submit_response($formanswer, $choice, $userid, $courseid, $cm) {
 
 $current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $userid);
-	
-	$countanswers = get_records("choice_answers", "optionid", $formanswer);
+
+    $countanswers = get_records("choice_answers", "optionid", $formanswer);
             if ($countanswers) {
             $countans = 0;
             foreach ($countanswers as $ca) { //only return enrolled users.
-				if (isstudent($courseid, $ca->userid) or isteacher($courseid, $ca->userid)) {	
-			   	    $countans = $countans+1;
-			    }
-			}				
-				
-                $countanswers = count($countans);
+                if (isstudent($courseid, $ca->userid) or isteacher($courseid, $ca->userid)) {
+                    $countans = $countans+1;
+                }
+            }
+
+                $countanswers = $countans;
                 } else {
                     $countanswers = 0;
                 }
             $maxans = $choice->maxanswers[$formanswer];
             
-            if (!($choice->limitanswers && ($countanswers >= $maxans) )) {				
+            if (!($choice->limitanswers && ($countanswers >= $maxans) )) {
                 if ($current) {
-					
+
                     $newanswer = $current;
                     $newanswer->optionid = $formanswer;
                     $newanswer->timemodified = time();
@@ -300,7 +300,7 @@ $current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user
 
 
 function choice_show_reportlink($choice, $courseid, $cmid) {
-	    if ( $allanswers = get_records("choice_answers", "choiceid", $choice->id)) {
+        if ( $allanswers = get_records("choice_answers", "choiceid", $choice->id)) {
             $responsecount = 0;
             foreach ($allanswers as $aa) {
                 if (isstudent($courseid, $aa->userid) or isteacher($courseid, $aa->userid)) { //check to make sure user is enrolled in course.
@@ -318,11 +318,11 @@ function choice_show_reportlink($choice, $courseid, $cmid) {
 function choice_show_results($choice, $course, $cm, $forcepublish='') {
 
         global $CFG, $COLUMN_HEIGHT, $USER;
-        print_heading(get_string("responses", "choice"));        
+        print_heading(get_string("responses", "choice"));
         if (empty($forcepublish)) { //alow the publish setting to be overridden
-			$forcepublish = $choice->publish;
-		}		
-		        
+            $forcepublish = $choice->publish;
+        }
+
         /// Check to see if groups are being used in this choice
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
         $currentgroup = setup_and_print_groups($course, $groupmode, $_SERVER['PHP_SELF']."?id=$cm->id");
@@ -379,12 +379,12 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
             $tablewidth = (int) (100.0 / count($useranswer));
 
             if (isteacher($course->id, $USER->id)) {
-				echo '<div id="tablecontainer">';
+                echo '<div id="tablecontainer">';
                 echo '<form id="attemptsform" method="post" action="'.$_SERVER['PHP_SELF'].'" onsubmit="var menu = document.getElementById(\'menuaction\'); return (menu.options[menu.selectedIndex].value == \'delete\' ? \''.addslashes(get_string('deleteattemptcheck','quiz')).'\' : true);">';
                 echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
                 echo '<input type="hidden" name="mode" value="overview" />';
             }
-            
+
             echo "<table cellpadding=\"5\" cellspacing=\"10\" align=\"center\" class=\"results names\">";            
             echo "<tr>";
             $count = 0;
@@ -440,14 +440,14 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                     continue;
                 }
                 echo "<td align=\"center\" class=\"count\">";
-                $countanswers = get_records("choice_answers", "optionid", $optionid);                
-                $countans = 0;  
-                if (!empty($countanswers)) {              
-                    foreach ($countanswers as $ca) { //only return enrolled users.		                			
-				        if (isstudent($course->id, $ca->userid) or isteacher($course->id, $ca->userid)) {							
-			   	           $countans = $countans+1;
-			            }			        
-			        }
+                $countanswers = get_records("choice_answers", "optionid", $optionid);
+                $countans = 0;
+                if (!empty($countanswers)) {
+                    foreach ($countanswers as $ca) { //only return enrolled users.
+                        if (isstudent($course->id, $ca->userid) or isteacher($course->id, $ca->userid)) {
+                            $countans = $countans+1;
+                        }
+                    }
                 }
                 if ($choice->limitanswers && !$optionid==0) {
                     echo get_string("taken", "choice").":";
@@ -480,13 +480,13 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
             
             echo "</tr></table>";
             if (isteacher($course->id, $USER->id)) {
-			    echo "</form></div>";
-			}
+                echo "</form></div>";
+            }
             break;
 
 
           case CHOICE_PUBLISH_ANONYMOUS:
-          
+
             $tablewidth = (int) (100.0 / count($useranswer));
 
             echo "<table cellpadding=\"5\" cellspacing=\"0\" align=\"center\" class=\"results anonymous\">";
@@ -562,13 +562,13 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
             echo "</tr></table>";
 
             break;
-        }	
+        }
 }
 
 
 function choice_delete_responses($attemptids) {
-	
-	if(!is_array($attemptids) || empty($attemptids)) {
+
+    if(!is_array($attemptids) || empty($attemptids)) {
         return false;
     }
 
@@ -647,10 +647,10 @@ function choice_get_choice($choiceid) {
 
     if ($choice = get_record("choice", "id", $choiceid)) {
         if ($options = get_records("choice_options", "choiceid", $choiceid, "id")) {
-            foreach ($options as $option) {                         
+            foreach ($options as $option) {
                 $choice->option[$option->id] = $option->text; 
                 $choice->maxanswers[$option->id] = $option->maxanswers;
-            }        
+            }
             return $choice;
         }
     }
