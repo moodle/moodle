@@ -1663,10 +1663,10 @@ class admin_setting_sitesettext extends admin_setting_configtext {
 
     var $id;
 
-    function admin_setting_sitesettext($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW) {
+    function admin_setting_sitesettext($name, $visiblename, $description, $defaultsetting) {
 
         $this->id = SITEID;
-        parent::admin_setting_configtext($name, $visiblename, $description, $defaultsetting, $paramtype);
+        parent::admin_setting_configtext($name, $visiblename, $description, $defaultsetting);
 
     }
 
@@ -1675,7 +1675,16 @@ class admin_setting_sitesettext extends admin_setting_configtext {
         return (isset($site->{$this->name}) ? $site->{$this->name} : NULL);
     }
 
+    function validate($data) {
+        $cleaned = clean_param($data, PARAM_NOTAGS);
+        if ($cleaned == '') {
+            return false; // can not be empty
+        }
+        return ("$data" == "$cleaned"); // implicit conversion to string is needed to do exact comparison
+    }
+
     function write_setting($data) {
+        $data = trim($data);
         if (!$this->validate($data)) {
             return get_string('validateerror', 'admin') . $this->visiblename . '<br />';
         }
