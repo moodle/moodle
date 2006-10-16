@@ -78,8 +78,7 @@ if ($data = data_submitted()) {
     } else {
         error(get_string('confirmsesskeybad', 'error'));
     }
-    //reload site
-    $SITE = get_record('course', 'id', $SITE->id);
+    //update $COURSE to match changed $SITE
     $COURSE = clone($SITE);
 }
 
