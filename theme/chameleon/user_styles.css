@@ -1,11 +1,15 @@
 body {
   font-size: 100%;
   color: #333333;
-  font-family: "Bitstream Vera Serif", georgia, times, serif;
+  font-family: 'Bitstream Vera Serif', georgia, times, serif;
   margin: 0;
-  padding: 0 10px 10px;
+  padding: 0;
+}
+div#page {
+  margin: 0 10px;
+  padding-top: 5px;
   border-top-width: 10px;
-  border-top-style: none;
+  border-top-style: solid;
   border-top-color: #55CC00;
 }
 div.clearer {
@@ -343,10 +347,4 @@ fieldset.adminsettings {
 }
 form.mform div.textarea textarea {
   width: 35em;
-}
-div#page {
-  padding-top: 5px;
-  border-top-width: 10px;
-  border-top-style: solid;
-  border-top-color: #55CC00;
 }
