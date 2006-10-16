@@ -47,12 +47,12 @@
         $data = backup_getid($restore->backup_unique_code,$mod->modtype,$mod->id);
 
         if ($data) {
-            //Now get completed xmlized object   
-            $info = $data->info; 
-            //First, check the course_id backup folder exists in CFG->dataroot
-            $dest_dir = $CFG->dataroot."/".$restore->course_id."/backupdata";
-            check_dir_exists($dest_dir,true);
-            $restorelog_file = fopen("$dest_dir/restorelog.html","a");     
+            //Now get completed xmlized object
+            $info = $data->info;
+            // if necessary, write to restorelog and adjust date/time fields
+            if ($restore->course_startdateoffset) {
+                restore_log_date_changes('Exercise', $restore, $info['MOD']['#'], array('DEADLINE'));
+            }
             //traverse_xmlize($info);                                                              //Debug
             //print_object ($GLOBALS['traverse_array']);                                           //Debug
             //$GLOBALS['traverse_array']="";                                                       //Debug

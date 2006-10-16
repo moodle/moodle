@@ -39,10 +39,10 @@
         if ($data) {
             //Now get completed xmlized object
             $info = $data->info;
-            //First, check the course_id backup folder exists in CFG->dataroot
-            $dest_dir = $CFG->dataroot."/".$restore->course_id."/backupdata";
-            check_dir_exists($dest_dir,true);
-            $restorelog_file = fopen("$dest_dir/restorelog.html","a");
+            // if necessary, write to restorelog and adjust date/time fields
+            if ($restore->course_startdateoffset) {
+                restore_log_date_changes('Choice', $restore, $info['MOD']['#'], array('TIMEOPEN', 'TIMECLOSE'));
+            }
             //traverse_xmlize($info);                                                                     //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
@@ -59,18 +59,7 @@
             $choice->showunanswered = backup_todb($info['MOD']['#']['SHOWUNANSWERED']['0']['#']);
             $choice->limitanswers = backup_todb($info['MOD']['#']['LIMITANSWERS']['0']['#']); 
             $choice->timeopen = backup_todb($info['MOD']['#']['TIMEOPEN']['0']['#']);
-            $date = usergetdate($choice->timeopen);
-            fwrite ($restorelog_file,"<br>The Choice - ".$choice->name." <br>");
-            fwrite ($restorelog_file,"The TIMEOPEN was  " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");         
-            $choice->timeopen += $restore->course_startdateoffset;
-            $date = usergetdate($choice->timeopen);
-            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;The TIMEOPEN is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
             $choice->timeclose = backup_todb($info['MOD']['#']['TIMECLOSE']['0']['#']);
-            $date = usergetdate($choice->timeclose);
-            fwrite ($restorelog_file,"The TIMECLOSE was  " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
-            $choice->timeclose += $restore->course_startdateoffset;
-            $date = usergetdate($choice->timeclose);
-            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the TIMECLOSE is now  " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
             $choice->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
             //To mantain compatibilty, in 1.4 the publish setting meaning has changed. We

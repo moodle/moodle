@@ -2205,10 +2205,7 @@
         //Get admin->id for later use
         $admin = get_admin();
         $adminid = $admin->id;
-        //First, we check the course_id backup data folder exists
-        $dest_dir = $CFG->dataroot."/".$restore->course_id."/backupdata";
-        check_dir_exists($dest_dir,true);
-        $restorelog_file = fopen("$dest_dir/restorelog.html","a");
+
         //Now, if we have anything in events, we have to restore that
         //events
         if ($events) {
@@ -2227,6 +2224,11 @@
                         //print_object ($GLOBALS['traverse_array']);                                                  //Debug
                         //$GLOBALS['traverse_array']="";                                                              //Debug
 
+                        //if necessary, write to restorelog and adjust date/time fields
+                        if ($restore->course_startdateoffset) {
+                            restore_log_date_changes('Events', $restore, $info['EVENT']['#'], array('TIMESTART'));
+                        }
+
                         //Now build the EVENT record structure
                         $eve->name = backup_todb($info['EVENT']['#']['NAME']['0']['#']);
                         $eve->description = backup_todb($info['EVENT']['#']['DESCRIPTION']['0']['#']);
@@ -2239,11 +2241,6 @@
                         $eve->instance = 0;
                         $eve->eventtype = backup_todb($info['EVENT']['#']['EVENTTYPE']['0']['#']);  
                         $eve->timestart = backup_todb($info['EVENT']['#']['TIMESTART']['0']['#']);
-                        $date = usergetdate($eve->timestart);
-                        fwrite ($restorelog_file,"The Event - ".$eve->name. " - TIMESTART was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
-                        $eve->timestart +=  $restore->course_startdateoffset;
-                        $date = usergetdate($eve->timestart);
-                        fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the Event TIMESTART is now " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
                         $eve->timeduration = backup_todb($info['EVENT']['#']['TIMEDURATION']['0']['#']);
                         $eve->visible = backup_todb($info['EVENT']['#']['VISIBLE']['0']['#']);
                         $eve->timemodified = backup_todb($info['EVENT']['#']['TIMEMODIFIED']['0']['#']);
@@ -6259,5 +6256,65 @@
                 insert_record('role_capabilities', $override);
             }
         }  
-    }  
+    }
+    //write activity date changes to the html log file, and update date values in the the xml array
+    function restore_log_date_changes($recordtype, &$restore, &$xml, $TAGS, $NAMETAG='NAME') { 
+
+        global $CFG; 
+        $openlog = false; 
+     
+        // loop through time fields in $TAGS 
+        foreach ($TAGS as $TAG) { 
+
+            // check $TAG has a sensible value 
+            if (!empty($xml[$TAG][0]['#']) && is_string($xml[$TAG][0]['#']) && is_numeric($xml[$TAG][0]['#'])) { 
+
+                if ($openlog==false) { 
+                    $openlog = true; // only come through here once
+
+                    // open file for writing 
+                    $course_dir = "$CFG->dataroot/$restore->course_id/backupdata"; 
+                    check_dir_exists($course_dir, true); 
+                    $restorelog = fopen("$course_dir/restorelog.html", "a");
+                 
+                    // start output for this record 
+                    $msg = new stdClass(); 
+                    $msg->recordtype = $recordtype; 
+                    $msg->recordname = $xml[$NAMETAG][0]['#']; 
+                    fwrite ($restorelog, get_string("backupdaterecordtype", "moodle", $msg)); 
+                } 
+
+                // write old date to $restorelog 
+                $value = $xml[$TAG][0]['#']; 
+                $date = usergetdate($value); 
+
+                $msg = new stdClass(); 
+                $msg->TAG = $TAG; 
+                $msg->weekday = $date['weekday']; 
+                $msg->mday = $date['mday']; 
+                $msg->month = $date['month']; 
+                $msg->year = $date['year']; 
+                fwrite ($restorelog, get_string("backupdateold", "moodle", $msg)); 
+
+                // write new date to $restorelog 
+                $value += $restore->course_startdateoffset; 
+                $date = usergetdate($value); 
+
+                $msg = new stdClass(); 
+                $msg->TAG = $TAG; 
+                $msg->weekday = $date['weekday']; 
+                $msg->mday = $date['mday']; 
+                $msg->month = $date['month']; 
+                $msg->year = $date['year']; 
+                fwrite ($restorelog, get_string("backupdatenew", "moodle", $msg)); 
+
+                // update $value in $xml tree for calling module 
+                $xml[$TAG][0]['#'] = "$value"; 
+            } 
+        }
+        // close the restore log, if it was opened
+        if ($openlog) {
+           fclose($restorelog); 
+        }
+    }
 ?>

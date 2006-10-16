@@ -46,11 +46,11 @@ function data_restore_mods($mod,$restore) {
 
     if ($data) {
         //Now get completed xmlized object
-        $info = $data->info; 
-        //First, check the course_id backup folder exists in CFG->dataroot
-        $dest_dir = $CFG->dataroot."/".$restore->course_id."/backupdata";
-        check_dir_exists($dest_dir,true);
-        $restorelog_file = fopen("$dest_dir/restorelog.html","a");
+        $info = $data->info;
+        // if necessary, write to restorelog and adjust date/time fields
+        if ($restore->course_startdateoffset) {
+            restore_log_date_changes('Database', $restore, $info['MOD']['#'], array('TIMEAVAILABLEFROM', 'TIMEAVAILABLETO','TIMEVIEWFROM', 'TIMEVIEWTO'));
+        }
         //traverse_xmlize($info);                                                                     //Debug
         //print_object ($GLOBALS['traverse_array']);                                                  //Debug
         //$GLOBALS['traverse_array']="";                                                              //Debug
@@ -65,30 +65,9 @@ function data_restore_mods($mod,$restore) {
         }
         $database->comments = backup_todb($info['MOD']['#']['COMMENTS']['0']['#']);
         $database->timeavailablefrom = backup_todb($info['MOD']['#']['TIMEAVAILABLEFROM']['0']['#']);
-        $date = usergetdate($database->timeavailablefrom);
-        fwrite ($restorelog_file,"<br>The Database - ".$database->name." <br>");
-        fwrite ($restorelog_file,"The TIMEAVAILABLEFROM was  " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year'].""); 
-        $database->timeavailablefrom += $restore->course_startdateoffset;
-        $date = usergetdate($database->timeavailablefrom);
-        fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the TTIMEAVAILABLEFROM is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
         $database->timeavailableto = backup_todb($info['MOD']['#']['TIMEAVAILABLETO']['0']['#']);
-        $date = usergetdate($database->timeavailableto);
-        fwrite ($restorelog_file,"The TIMEAVAILABLETO was  " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year'].""); 
-        $database->timeavailableto += $restore->course_startdateoffset;
-        $date = usergetdate($database->timeavailableto);
-        fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the TIMEAVAILABLETO is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
         $database->timeviewfrom = backup_todb($info['MOD']['#']['TIMEVIEWFROM']['0']['#']);
-        $date = usergetdate($database->timeviewfrom);
-        fwrite ($restorelog_file,"The TIMEVIEWFROM was  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."");
-        $database->timeviewfrom += $restore->course_startdateoffset;
-        $date = usergetdate($database->timeviewfrom);
-        fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the TIMEVIEWFROM is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
         $database->timeviewto = backup_todb($info['MOD']['#']['TIMEVIEWTO']['0']['#']);
-        $date = usergetdate($database->timeviewto);
-        fwrite ($restorelog_file,"The TIMEVIEWTO was  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."");
-        $database->timeviewto += $restore->course_startdateoffset;
-        $date = usergetdate($database->timeviewto);
-        fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the TIMEVIEWTO is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
         // Only relevant for restoring backups from 1.6 in a 1.7 install.
         if (isset($info['MOD']['#']['PARTICIPANTS']['0']['#'])) {
             $database->participants = backup_todb($info['MOD']['#']['PARTICIPANTS']['0']['#']);

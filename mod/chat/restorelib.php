@@ -34,14 +34,14 @@
         if ($data) {
             //Now get completed xmlized object   
             $info = $data->info;
-            //First, check the course_id backup folder exists in CFG->dataroot
-            $dest_dir = $CFG->dataroot."/".$restore->course_id."/backupdata";
-            check_dir_exists($dest_dir,true);
-            $restorelog_file = fopen("$dest_dir/restorelog.html","a");
+
             //traverse_xmlize($info);                                                                     //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
-
+            // if necessary, write to restorelog and adjust date/time fields
+            if ($restore->course_startdateoffset) {
+                restore_log_date_changes('Chat', $restore, $info['MOD']['#'], array('CHATTIME'));
+            }
             //Now, build the CHAT record structure
             $chat->course = $restore->course_id;
             $chat->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
@@ -50,12 +50,6 @@
             $chat->studentlogs = backup_todb($info['MOD']['#']['STUDENTLOGS']['0']['#']);
             $chat->schedule = backup_todb($info['MOD']['#']['SCHEDULE']['0']['#']);
             $chat->chattime = backup_todb($info['MOD']['#']['CHATTIME']['0']['#']);
-            $date = usergetdate($chat->chattime);
-            fwrite ($restorelog_file,"The Chat - ".$chat->name." <br>");
-            fwrite ($restorelog_file,"The CHATTIME was  " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
-            $chat->chattime += $restore->course_startdateoffset;
-            $date = usergetdate($chat->chattime);
-            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the CHATTIME is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br><br>");
             $chat->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
             //The structure is equal to the db, so insert the chat

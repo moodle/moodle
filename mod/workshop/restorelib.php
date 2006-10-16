@@ -48,10 +48,10 @@
         if ($data) {
             //Now get completed xmlized object   
             $info = $data->info;
-            //First, check the course_id backup folder exists in CFG->dataroot
-            $dest_dir = $CFG->dataroot."/".$restore->course_id."/backupdata";
-            check_dir_exists($dest_dir,true);
-            $restorelog_file = fopen("$dest_dir/restorelog.html","a");
+            //if necessary, write to restorelog and adjust date/time fields
+            if ($restore->course_startdateoffset) {
+                restore_log_date_changes('Workshop', $restore, $info['MOD']['#'], array('SUBMISSIONSTART','ASSESSMENTSTART', 'SUBMISSIONEND', 'ASSESSMENTEND', 'RELEASEGRADES'));
+            }
             //traverse_xmlize($info);                                                                     //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
@@ -73,37 +73,11 @@
             $workshop->includeself = backup_todb($info['MOD']['#']['INCLUDESELF']['0']['#']);
             $workshop->maxbytes = backup_todb($info['MOD']['#']['MAXBYTES']['0']['#']);
             $workshop->submissionstart = backup_todb($info['MOD']['#']['SUBMISSIONSTART']['0']['#']);
-            $date = usergetdate($workshop->submissionstart);
-            fwrite ($restorelog_file,"<br>The Workshop - ".$workshop->name." <br>");
-            fwrite ($restorelog_file,"The SUBMISSIONSTART time was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
-            $workshop->submissionstart  += $restore->course_startdateoffset;
-            $date = usergetdate($workshop->submissionstart);
-            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the SUBMISSIONSTART time is now " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
             $workshop->assessmentstart = backup_todb($info['MOD']['#']['ASSESSMENTSTART']['0']['#']);
-            $date = usergetdate($workshop->assessmentstart);
-            fwrite ($restorelog_file,"The ASSESSMENTSTART time was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
-            $workshop->assessmentstart  += $restore->course_startdateoffset;
-            $date = usergetdate($workshop->assessmentstart);
-            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the ASSESSMENTSTART time is now " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
             $workshop->deadline = backup_todb($info['MOD']['#']['DEADLINE']['0']['#']);
             $workshop->submissionend = backup_todb($info['MOD']['#']['SUBMISSIONEND']['0']['#']);
-            $date = usergetdate($workshop->submissionend);
-            fwrite ($restorelog_file,"The SUBMISSIONEND time was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
-            $workshop->submissionend  += $restore->course_startdateoffset;
-            $date = usergetdate($workshop->submissionend);
-            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the SUBMISSIONEND time is now " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
             $workshop->assessmentend = backup_todb($info['MOD']['#']['ASSESSMENTEND']['0']['#']);
-            $date = usergetdate($workshop->assessmentend);
-            fwrite ($restorelog_file,"The ASSESSMENTEND time was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
-            $workshop->assessmentend  += $restore->course_startdateoffset;
-            $date = usergetdate($workshop->assessmentend);
-            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the ASSESSMENTEND time is now " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
             $workshop->releasegrades = backup_todb($info['MOD']['#']['RELEASEGRADES']['0']['#']);
-            $date = usergetdate($workshop->releasegrades);
-            fwrite ($restorelog_file,"The RELEASEGRADES time was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
-            $workshop->releasegrades  += $restore->course_startdateoffset;
-            $date = usergetdate($workshop->releasegrades);
-            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the RELEASEGRADES time is now " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
             $workshop->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
             $workshop->gradinggrade = backup_todb($info['MOD']['#']['GRADINGGRADE']['0']['#']);
             $workshop->ntassessments = backup_todb($info['MOD']['#']['NTASSESSMENTS']['0']['#']);
@@ -351,10 +325,7 @@
 
         //Get the submissions array 
         $submissions = $info['MOD']['#']['SUBMISSIONS']['0']['#']['SUBMISSION'];
-        //First, we check the course_id backup folder exists in CFG->dataroot
-        $dest_dir = $CFG->dataroot."/".$restore->course_id."/backupdata";
-        check_dir_exists($dest_dir,true);
-        $restorelog_file = fopen("$dest_dir/restorelog.html","a");            
+            
         //Iterate over submissions
         for($i = 0; $i < sizeof($submissions); $i++) {
             $sub_info = $submissions[$i];
@@ -371,11 +342,7 @@
             $submission->userid = backup_todb($sub_info['#']['USERID']['0']['#']);
             $submission->title = backup_todb($sub_info['#']['TITLE']['0']['#']); 
             $submission->timecreated = backup_todb($sub_info['#']['TIMECREATED']['0']['#']);
-            $date = usergetdate($submission->timecreated);
-            fwrite ($restorelog_file,"The Submission - ".$submission->title. " - TIMECREATED was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
             $submission->timecreated += $restore->course_startdateoffset;
-            $date = usergetdate($submission->timecreated);
-            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the Submission TIMECREATED is now " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."<br>"); 
             $submission->mailed = backup_todb($sub_info['#']['MAILED']['0']['#']);
             $submission->description = backup_todb($sub_info['#']['DESCRIPTION']['0']['#']);
             $submission->gradinggrade = backup_todb($sub_info['#']['GRADINGGRADE']['0']['#']);

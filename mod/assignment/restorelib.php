@@ -32,12 +32,12 @@
         $data = backup_getid($restore->backup_unique_code,$mod->modtype,$mod->id);
 
         if ($data) {
-            //Now get completed xmlized object   
-            $info = $data->info; 
-            //First, check the course_id backup folder exists in CFG->dataroot
-            $dest_dir = $CFG->dataroot."/".$restore->course_id."/backupdata";
-            check_dir_exists($dest_dir,true);
-            $restorelog_file = fopen("$dest_dir/restorelog.html","a");            
+            //Now get completed xmlized object
+            $info = $data->info;
+            //if necessary, write to restorelog and adjust date/time fields
+            if ($restore->course_startdateoffset) {
+                restore_log_date_changes('Assignment', $restore, $info['MOD']['#'], array('TIMEDUE', 'TIMEAVAILABLE'));
+            }
             //traverse_xmlize($info);                                                                     //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
@@ -59,18 +59,7 @@
             $assignment->assignmenttype = backup_todb($info['MOD']['#']['ASSIGNMENTTYPE']['0']['#']);
             $assignment->maxbytes = backup_todb($info['MOD']['#']['MAXBYTES']['0']['#']);
             $assignment->timedue = backup_todb($info['MOD']['#']['TIMEDUE']['0']['#']);
-            $date = usergetdate($assignment->timedue);
-            fwrite ($restorelog_file,"<br>The Assignment - ".$assignment->name." <br>");
-            fwrite ($restorelog_file,"The TIMEDUE was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");      
-            $assignment->timedue += $restore->course_startdateoffset;
-            $date = usergetdate($assignment->timedue);
-            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the TIMEDUE is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
             $assignment->timeavailable = backup_todb($info['MOD']['#']['TIMEAVAILABLE']['0']['#']);
-            $date = usergetdate($assignment->timeavailable);
-            fwrite ($restorelog_file,"The TIMEAVAILABLE was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
-            $assignment->timeavailable += $restore->course_startdateoffset;
-            $date = usergetdate($assignment->timeavailable);
-            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the TIMEAVAILABLE is now " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
             $assignment->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
             $assignment->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
