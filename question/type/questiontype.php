@@ -806,7 +806,14 @@ class default_questiontype {
     */
     function response_summary($question, $state, $length=80) {
         // This should almost certainly be overridden
-        return substr(implode(',', $this->get_actual_response($question, $state)), 0, $length);
+        $responses = $this->get_actual_response($question, $state);
+        if (empty($responses) || !is_array($responses)) {
+            $responses = array();
+        }
+        if (is_array($responses)) {
+            $responses = implode(',', $responses);
+        }
+        return substr($responses, 0, $length);
     }
 
     /**
