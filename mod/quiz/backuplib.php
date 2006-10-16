@@ -54,8 +54,8 @@
 
         //Detect used categories (by category in questions)
         $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
-                                   (backup_code, table_name, old_id)
-                               SELECT DISTINCT $backup_unique_code,'question_categories',t.category
+                                   (backup_code, table_name, old_id, info)
+                               SELECT DISTINCT $backup_unique_code,'question_categories',t.category,''
                                FROM {$CFG->prefix}question t,
                                     {$CFG->prefix}quiz_question_instances g
                                     $from
