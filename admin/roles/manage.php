@@ -171,6 +171,7 @@
                     // update normal role settings
                     $role->id = $roleid;
                     $role->name = $name;
+                    $role->shortname = $shortname;
                     $role->description = $description;
 
                     if (!update_record('role', $role)) {
