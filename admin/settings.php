@@ -51,31 +51,9 @@ $CFG->pagepath = 'admin/setting/'.$section;
 
 
 
-if (!empty($SITE->fullname)) {
-    $pageblocks = blocks_setup($PAGE);
+/// WRITING SUBMITTED DATA (IF ANY) -------------------------------------------------------------------------------
 
-    $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
-                                            BLOCK_L_MAX_WIDTH);
-    $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
-                                            BLOCK_R_MAX_WIDTH);
-
-    // print header stuff
-    $PAGE->print_header();
-
-    echo '<table id="layout-table"><tr>';
-    echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
-    blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-    echo '</td>';
-    echo '<td id="middle-column">';
-} else {
-
-    print_header();
-    print_simple_box(get_string('configintrosite', 'admin'), 'center', '50%');
-
-}
-
-
-// WRITING SUBMITTED DATA (IF ANY) -------------------------------------------------------------------------------
+$statusmsg = '';
 
 if ($data = data_submitted()) {
     if (confirm_sesskey()) {
@@ -92,19 +70,46 @@ if ($data = data_submitted()) {
                 case 'admin':
                     redirect("$CFG->wwwroot/$CFG->admin/");
                 default:
-                    notify(get_string('changessaved'));
+                    $statusmsg = get_string('changessaved');
             }
         } else {
-            notify(get_string('errorwithsettings', 'admin') . ' <br />' . $errors);
+            $statusmsg = get_string('errorwithsettings', 'admin') . ' <br />' . $errors;
         }
     } else {
         error(get_string('confirmsesskeybad', 'error'));
     }
 }
 
+
+/// print header stuff ------------------------------------------------------------
+// header must be printed after the redirects and require_logout
+if (!empty($SITE->fullname)) {
+    $pageblocks = blocks_setup($PAGE);
+
+    $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
+                                            BLOCK_L_MAX_WIDTH);
+    $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
+                                            BLOCK_R_MAX_WIDTH);
+
+    $PAGE->print_header();
+
+    echo '<table id="layout-table"><tr>';
+    echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
+    blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+    echo '</td>';
+    echo '<td id="middle-column">';
+} else {
+
+    print_header();
+    print_simple_box(get_string('configintrosite', 'admin'), 'center', '50%');
+
+}
+
+if ($statusmsg != '') {
+    notify ($statusmsg);
+}
+
 // ---------------------------------------------------------------------------------------------------------------
-
-
 
 echo '<form action="settings.php" method="post" name="adminsettings" id="adminsettings">';
 echo '<input type="hidden" name="section" value="' . $PAGE->section . '" />';
