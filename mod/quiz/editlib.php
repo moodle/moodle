@@ -257,7 +257,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
         print_question_icon($question, $canedit);
         echo "</td>";
         echo '<td align="left">';
-        if ($question->qtype == DESCRIPTION) {
+        if ($question->qtype == 'description') {
             echo "<input type=\"hidden\" name=\"q$qnum\" value=\"0\" /> \n";
         } else {
             echo '<input type="text" name="q'.$qnum.'" size="2" value="'.$quiz->grades[$qnum].
@@ -267,9 +267,11 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
 
         $context = $quiz->id ? '&amp;contextquiz='.$quiz->id : '';
         $quiz_id = $quiz->id ? '&amp;quizid=' . $quiz->id : '';
-        echo "<a title=\"$strpreview\" href=\"javascript:void(0)\" onClick=\"openpopup('/question/preview.php?id=$qnum$quiz_id','questionpreview', " . 
-                QUESTION_PREVIEW_POPUP_OPTIONS . ", false)\">
-                <img src=\"$CFG->pixpath/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
+        if ($question->qtype != 'random') {
+            echo "<a title=\"$strpreview\" href=\"javascript:void(0)\" onClick=\"openpopup('/question/preview.php?id=$qnum$quiz_id','questionpreview', " . 
+                    QUESTION_PREVIEW_POPUP_OPTIONS . ", false)\">
+                    <img src=\"$CFG->pixpath/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
+        }
         if ($canedit) {
             echo "<a title=\"$stredit\" href=\"$CFG->wwwroot/question/question.php?id=$qnum$context\">
                     <img src=\"$CFG->pixpath/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>";
