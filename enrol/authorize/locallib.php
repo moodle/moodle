@@ -24,6 +24,8 @@ function authorize_print_orders($courseid, $userid)
 
     $perpage = 10;
     $status = optional_param('status', AN_STATUS_NONE, PARAM_INT);
+    $searchtype = optional_param('searchtype', 'id', PARAM_ALPHA);
+    $idortransid = optional_param('idortransid', '0', PARAM_INT);
 
     if (! has_capability('enrol/authorize:managepayments', get_context_instance(CONTEXT_COURSE, $courseid))) {
         $userid = $USER->id;
@@ -36,6 +38,9 @@ function authorize_print_orders($courseid, $userid)
                         AN_STATUS_CREDIT => $authstrs->refunded,
                         AN_STATUS_VOID => $authstrs->cancelled,
                         AN_STATUS_EXPIRE => $authstrs->expired,
+                        AN_STATUS_UNDERREVIEW => $authstrs->underreview,
+                        AN_STATUS_APPROVEDREVIEW => $authstrs->approvedreview,
+                        AN_STATUS_REVIEWFAILED => $authstrs->reviewfailed,
                         AN_STATUS_TEST => $authstrs->tested
     );
 
@@ -47,12 +52,28 @@ function authorize_print_orders($courseid, $userid)
             }
         }
         if (!empty($popupcrs)) {
-            print_simple_box_start('center', '100%');
-            echo "$strs->status: ";
-            echo popup_form($baseurl.'&amp;course='.$courseid.'&amp;status=',$statusmenu,'statusmenu',$status,'','','',true);
-            echo " &nbsp; $strs->course: ";
-            echo popup_form($baseurl.'&amp;status='.$status.'&amp;course=',$popupcrs,'coursesmenu',$courseid,'','','',true);
-            print_simple_box_end();
+            echo "<table border='0' width='100%' cellspacing=0 cellpadding=3 class='generaltable generalbox'>";
+            echo "<tr>";
+            echo "<td width='5%'>$strs->status: </td><td width='10%'>";popup_form($baseurl.'&amp;course='.$courseid.'&amp;status=',$statusmenu,'statusmenu',$status,'','','',false);echo"</td>\n";
+            echo "<td width='5%'>$strs->course: </td><td width='10%'>";popup_form($baseurl.'&amp;status='.$status.'&amp;course=',$popupcrs,'coursesmenu',$courseid,'','','',false);echo"</td>\n";
+            if (has_capability('enrol/authorize:uploadcsv', get_context_instance(CONTEXT_USER, $USER->id))) {
+                echo "<form method='get' action='uploadcsv.php'>";
+                echo "<td rowspan=2 align='center' valign='middle' width='50%'><input type='submit' value='".get_string('uploadcsv', 'enrol_authorize')."'></td>";
+                echo "</form>";
+            }
+            else {
+                echo "<td rowspan=2 width='100%'>&nbsp;</td>";
+            }
+            echo "</tr>\n";
+
+            echo "<tr><td>$strs->search: </td>"; $searchmenu = array('id' => $authstrs->orderid, 'transid' => $authstrs->transid);
+            echo "<form method='POST' action='index.php' autocomplete='off'>";
+            echo "<td colspan=3>"; choose_from_menu($searchmenu, 'searchtype', $searchtype, '');
+            echo " = <input type='text' size='14' name='idortransid' value='' /> ";
+            echo "<input type='submit' value='$strs->search' /></td>";
+            echo "</form>";
+            echo "</tr>";
+            echo "</table>";
         }
     }
 
@@ -99,11 +120,23 @@ function authorize_print_orders($courseid, $userid)
         }
     }
 
-    if ($userid > 0) {
-        $where .= "AND (e.userid = '" . $userid . "') ";
-    }
     if ($courseid != SITEID) {
         $where .= "AND (e.courseid = '" . $courseid . "') ";
+    }
+
+    if (!empty($idortransid)) {
+        // Ignore old where.
+        if ($searchtype == 'transid') {
+            $where = "WHERE (e.transid = $idortransid) ";
+        }
+        else {
+            $where = "WHERE (e.id = $idortransid) ";
+        }
+    }
+
+    // This must be always last where!!!
+    if ($userid > 0) {
+        $where .= "AND (e.userid = '" . $userid . "') ";
     }
 
     if ($sort = $table->get_sql_sort()) {
@@ -181,9 +214,7 @@ function authorize_print_order_details($orderno)
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 
     if ($USER->id != $order->userid) { // Current user viewing someone else's order
-        if (! has_capability('enrol/authorize:managepayments', $coursecontext)) {
-           error("You don't have access rights on this order.");
-        }
+        require_capability('enrol/authorize:managepayments', $coursecontext);
     }
 
     echo "<form action=\"index.php\" method=\"post\">\n";
@@ -231,21 +262,16 @@ function authorize_print_order_details($orderno)
         else {
             $message = '';
             $extra = NULL;
-            $success = authorize_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE);
-            if (!$success) {
+            if (AN_APPROVED != authorize_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE)) {
                 $table->data[] = array("<b><font color='red'>$strs->error:</font></b>", $message);
             }
             else {
                 if (empty($CFG->an_test)) {
                     $user = get_record('user', 'id', $order->userid);
-                    if (!empty($CFG->enrol_mailstudents)) {
-                        $a = new stdClass;
-                        $a->courses = $course->fullname;
-                        $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
-                        $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$user->id";
-                        $course->welcomemessage = get_string('welcometocoursesemail', 'enrol_authorize', $a);
-                    }
                     if (enrol_into_course($course, $user, 'manual')) {
+                        if (!empty($CFG->enrol_mailstudents)) {
+                            send_welcome_messages($order->id);
+                        }
                         redirect("index.php?order=$orderno");
                     }
                     else {
@@ -299,8 +325,7 @@ function authorize_print_order_details($orderno)
             else {
                 $extra->amount = $amount;
                 $message = '';
-                $success = authorize_action($order, $message, $extra, AN_ACTION_CREDIT);
-                if ($success) {
+                if (AN_APPROVED == authorize_action($order, $message, $extra, AN_ACTION_CREDIT)) {
                     if (empty($CFG->an_test)) {
                         if (empty($extra->id)) {
                             $table->data[] = array("<b><font color=red>$strs->error:</font></b>", 'insert record error');
@@ -343,8 +368,7 @@ function authorize_print_order_details($orderno)
             else {
                 $extra = NULL;
                 $message = '';
-                $success = authorize_action($order, $message, $extra, AN_ACTION_VOID);
-                if ($success) {
+                if (AN_APPROVED == authorize_action($order, $message, $extra, AN_ACTION_VOID)) {
                     if (empty($CFG->an_test)) {
                         redirect("index.php?order=$orderno");
                     }
@@ -392,8 +416,7 @@ function authorize_print_order_details($orderno)
                 else {
                     $message = '';
                     $extra = NULL;
-                    $success = authorize_action($suborder, $message, $extra, AN_ACTION_VOID);
-                    if ($success) {
+                    if (AN_APPROVED == authorize_action($suborder, $message, $extra, AN_ACTION_VOID)) {
                         if (empty($CFG->an_test)) {
                             if (!empty($unenrol)) {
                                 role_unassign(0, $order->userid, 0, $coursecontext->id);
@@ -555,10 +578,10 @@ function authorize_get_status_action($order)
 
     case AN_STATUS_AUTHCAPTURE:
         if (authorize_settled($order)) {
-            if ($canmanage) {
+            if ($order->paymentmethod == AN_METHOD_CC && $canmanage) {
                 $ret->actions = array(ORDER_REFUND);
             }
-            $ret->status = 'capturedsettled';
+            $ret->status = 'settled';
         }
         else {
             if ($order->paymentmethod == AN_METHOD_CC && $canmanage) {
@@ -591,6 +614,21 @@ function authorize_get_status_action($order)
         $ret->status = 'expired';
         return $ret;
 
+    case AN_STATUS_UNDERREVIEW:
+        $ret->status = 'underreview';
+        return $ret;
+
+    case AN_STATUS_APPROVEDREVIEW:
+        $ret->status = 'approvedreview';
+        return $ret;
+
+    case AN_STATUS_REVIEWFAILED:
+        if ($canmanage) {
+            $ret->actions = array(ORDER_DELETE);
+        }
+        $ret->status = 'reviewfailed';
+        return $ret;
+
     default:
         return $ret;
     }
@@ -600,23 +638,25 @@ function authorize_get_status_action($order)
 function authorize_get_status_color($status)
 {
     $color = 'black';
-    switch ($status) {
-        case 'new':
-        case 'tested':
-        case 'cancelled':
-        case 'authorizedpendingcapture':
-            $color = '#FF6600'; // orange
+    switch ($status)
+    {
+        case 'settled':
+        case 'approvedreview':
+        case 'capturedpendingsettle':
+            $color = '#339900'; // green
             break;
 
-        case 'capturedpendingsettle':
-        case 'capturedsettled':
-        case 'settled':
-            $color = '#339900'; // green
+        case 'new':
+        case 'tested':
+        case 'underreview':
+        case 'authorizedpendingcapture':
+            $color = '#FF6600'; // orange
             break;
 
         case 'expired':
         case 'cancelled':
         case 'refunded';
+        case 'reviewfailed':
             $color = '#FF0033'; // red
             break;
     }

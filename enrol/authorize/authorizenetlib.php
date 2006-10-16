@@ -4,9 +4,6 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
-define('AN_APPROVED', '1');
-define('AN_DECLINED', '2');
-define('AN_ERROR',    '3');
 define('AN_DELIM',    '|');
 define('AN_ENCAP',    '"');
 
@@ -86,11 +83,11 @@ function authorize_expired(&$order)
  * sends email to admin.
  *
  * @param object &$order Which transaction data will be sent. See enrol_authorize table.
- * @param string &$message Information about error message if this function returns false.
+ * @param string &$message Information about error message.
  * @param object &$extra Extra data that used for refunding and credit card information.
  * @param int $action Which action will be performed. See AN_ACTION_*
  * @param string $cctype Used internally to configure credit types automatically.
- * @return bool true Transaction was successful, false otherwise. Use $message for reason.
+ * @return int AN_APPROVED Transaction was successful, AN_RETURNZERO otherwise. Use $message for reason.
  * @author Ethem Evlice <ethem a.t evlice d.o.t com>
  * @uses $CFG
  */
@@ -122,7 +119,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
 
     if (empty($order) or empty($order->id)) {
         $message = "Check order->id!";
-        return false;
+        return AN_RETURNZERO;
     }
 
     $method = $order->paymentmethod;
@@ -131,20 +128,20 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
     }
     elseif ($method != AN_METHOD_CC && $method != AN_METHOD_ECHECK) {
         $message = "Invalid method: $method";
-        return false;
+        return AN_RETURNZERO;
     }
 
     $action = intval($action);
     if ($method == AN_METHOD_ECHECK) {
-        if ($action != AN_ACTION_AUTH_CAPTURE && $action != AN_ACTION_CREDIT) {
-            $message = "Please perform AUTH_CAPTURE or CREDIT for echecks";
-            return false;
+        if ($action != AN_ACTION_AUTH_CAPTURE /*&& $action != AN_ACTION_CREDIT*/) {
+            $message = "Please perform only AUTH_CAPTURE for echecks";
+            return AN_RETURNZERO;
         }
     }
 
     if ($action <= AN_ACTION_NONE or $action > AN_ACTION_VOID) {
         $message = "Invalid action!";
-        return false;
+        return AN_RETURNZERO;
     }
 
     $poststring = $conststring;
@@ -160,15 +157,15 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
         {
             if ($order->status != AN_STATUS_NONE) {
                 $message = "Order status must be AN_STATUS_NONE(0)!";
-                return false;
+                return AN_RETURNZERO;
             }
             elseif (empty($extra)) {
                 $message = "Need extra fields!";
-                return false;
+                return AN_RETURNZERO;
             }
             elseif (($action == AN_ACTION_CAPTURE_ONLY) and empty($extra->x_auth_code)) {
                 $message = "x_auth_code is required for capture only transactions!";
-                return false;
+                return AN_RETURNZERO;
             }
 
             $ext = (array)$extra;
@@ -185,11 +182,11 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
         {
             if ($order->status != AN_STATUS_AUTH) {
                 $message = "Order status must be authorized!";
-                return false;
+                return AN_RETURNZERO;
             }
             if (authorize_expired($order)) {
                 $message = "Transaction must be captured within 30 days. EXPIRED!";
-                return false;
+                return AN_RETURNZERO;
             }
             $poststring .= '&x_type=PRIOR_AUTH_CAPTURE&x_trans_id=' . urlencode($order->transid);
             break;
@@ -199,29 +196,30 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
         {
             if ($order->status != AN_STATUS_AUTHCAPTURE) {
                 $message = "Order status must be authorized/captured!";
-                return false;
+                return AN_RETURNZERO;
             }
             if (!authorize_settled($order)) {
                 $message = "Order must be settled. Try VOID, check Cut-Off time if it fails!";
-                return false;
+                return AN_RETURNZERO;
             }
             $timenowsettle = authorize_getsettletime(time());
             $timediff = $timenowsettle - (120 * 3600 * 24);
             if ($order->settletime < $timediff) {
                 $message = "Order must be credited within 120 days!";
-                return false;
+                return AN_RETURNZERO;
             }
             if (empty($extra)) {
                 $message = "Need extra fields to REFUND!";
-                return false;
+                return AN_RETURNZERO;
             }
             $total = floatval($extra->sum) + floatval($extra->amount);
             if (($extra->amount == 0) || ($total > $order->amount)) {
                 $message = "Can be credited up to original amount.";
-                return false;
+                return AN_RETURNZERO;
             }
             $poststring .= '&x_type=CREDIT&x_trans_id=' . urlencode($order->transid);
             $poststring .= '&x_currency_code=' . urlencode($order->currency);
+            $poststring .= '&x_invoice_num=' . urlencode($extra->orderid);
             $poststring .= '&x_amount=' . urlencode($extra->amount);
             if ($method == AN_METHOD_CC) {
                 $poststring .= '&x_card_num=' . sprintf("%04d", intval($order->cclastfour));
@@ -233,7 +231,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
         {
             if (authorize_expired($order) || authorize_settled($order)) {
                 $message = "The transaction cannot be voided due to the fact that it is expired or settled.";
-                return false;
+                return AN_RETURNZERO;
             }
             $poststring .= '&x_type=VOID&x_trans_id=' . urlencode($order->transid);
             break;
@@ -241,7 +239,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
 
         default: {
             $message = "Invalid action: $action";
-            return false;
+            return AN_RETURNZERO;
         }
     }
 
@@ -254,7 +252,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
     $fp = fsockopen("ssl://$host", 443, $errno, $errstr, 60);
     if (!$fp) {
         $message =  "no connection: $errstr ($errno)";
-        return false;
+        return AN_RETURNZERO;
     }
 
     // critical section
@@ -278,7 +276,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
     if (!stristr($tmpstr, 'content-length')) {
         $message =  "content-length error";
         @fclose($fp);
-        return false;
+        return AN_RETURNZERO;
     }
     $length = trim(substr($tmpstr, strpos($tmpstr,'content-length')+15));
     fgets($fp, 4096);
@@ -287,7 +285,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
     $response = explode(AN_ENCAP.AN_DELIM.AN_ENCAP, $data);
     if ($response === false) {
         $message = "response error";
-        return false;
+        return AN_RETURNZERO;
     }
     $rcount = count($response) - 1;
     if ($response[0]{0} == AN_ENCAP) {
@@ -297,11 +295,12 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
         $response[$rcount] = substr($response[$rcount], 0, -1);
     }
 
-    if ($response[0] == AN_APPROVED)
+    $responsecode = intval($response[0]);
+    if ($responsecode == AN_APPROVED || $responsecode == AN_REVIEW)
     {
         $transid = intval($response[6]);
         if ($test || $transid == 0) {
-            return true; // don't update original transaction in test mode.
+            return $responsecode; // don't update original transaction in test mode.
         }
         switch ($action) {
             case AN_ACTION_AUTH_ONLY:
@@ -310,13 +309,19 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
             case AN_ACTION_PRIOR_AUTH_CAPTURE:
             {
                 $order->transid = $transid;
-                if ($action == AN_ACTION_AUTH_ONLY) {
-                    $order->status = AN_STATUS_AUTH;
-                    // don't update order->settletime
-                } else {
-                    $order->status = AN_STATUS_AUTHCAPTURE;
-                    $order->settletime = authorize_getsettletime(time());
+
+                if ($method == AN_METHOD_CC) {
+                    if ($action == AN_ACTION_AUTH_ONLY || $responsecode == AN_REVIEW) {
+                        $order->status = AN_STATUS_AUTH;
+                    } else {
+                        $order->status = AN_STATUS_AUTHCAPTURE;
+                        $order->settletime = authorize_getsettletime(time());
+                    }
                 }
+                elseif ($method == AN_METHOD_ECHECK) {
+                    $order->status = AN_STATUS_UNDERREVIEW;
+                }
+
                 if (! update_record('enrol_authorize', $order)) {
                     email_to_admin("Error while trying to update data " .
                     "in table enrol_authorize. Please edit manually this record: ID=$order->id.", $order);
@@ -332,6 +337,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                 $extra->settletime = authorize_getsettletime(time());
                 unset($extra->sum); // this is not used in refunds table.
                 if (! $extra->id = insert_record('enrol_authorize_refunds', $extra)) {
+                    unset($extra->id);
                     email_to_admin("Error while trying to insert data " .
                     "into table enrol_authorize_refunds. Please add manually this record:", $extra);
                 }
@@ -345,16 +351,15 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                     unset($order->paymentmethod);
                 }
                 $order->status = AN_STATUS_VOID;
-                // don't update order->settletime
                 if (! update_record($tableupdate, $order)) {
                     email_to_admin("Error while trying to update data " .
                     "in table $tableupdate. Please edit manually this record: ID=$order->id.", $order);
                 }
                 break;
             }
-            default: return false;
+            default:
+                return AN_RETURNZERO;
         }
-        return true;
     }
     else
     {
@@ -428,8 +433,8 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                 }
             }
         }
-        return false;
     }
+    return $responsecode;
 }
 
 ?>
