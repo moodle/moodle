@@ -169,6 +169,8 @@ switch($_SERVER['REQUEST_METHOD']) {
                     die;
                 }
 
+                rebuild_course_cache($course->id);
+
                 add_to_log($courseid, "course", "delete mod",
                            "view.php?id=$courseid",
                            "$mod->name $cm->instance", $cm->id);
