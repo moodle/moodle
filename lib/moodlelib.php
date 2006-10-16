@@ -5950,9 +5950,10 @@ function make_unique_id_code($extra='') {
  * Function to check the passed address is within the passed subnet
  *
  * The parameter is a comma separated string of subnet definitions.
- * Subnet strings can be in one of two formats:
+ * Subnet strings can be in one of three formats:
  *   1: xxx.xxx.xxx.xxx/xx
  *   2: xxx.xxx
+ *   3: xxx.xxx.xxx.xxx-xxx   //a range of IP addresses in the last group.
  * Code for type 1 modified from user posted comments by mediator at
  * {@link http://au.php.net/manual/en/function.ip2long.php}
  *
@@ -5969,11 +5970,18 @@ function address_in_subnet($addr, $subnetstr) {
     foreach ($subnets as $subnet) {
         $subnet = trim($subnet);
         if (strpos($subnet, '/') !== false) { /// type 1
-
             list($ip, $mask) = explode('/', $subnet);
             $mask = 0xffffffff << (32 - $mask);
             $found = ((ip2long($addr) & $mask) == (ip2long($ip) & $mask));
-
+        } else if (strpos($subnet, '-') !== false)  {/// type 3
+            $subnetparts = explode('.', $subnet);
+            $addrparts = explode('.', $addr);
+            $subnetrange = explode('-', array_pop($subnetparts));
+            if (count($subnetrange) == 2) {
+                $lastaddrpart = array_pop($addrparts);
+                $found = ($subnetparts == $addrparts &&
+                        $subnetrange[0] <= $lastaddrpart && $lastaddrpart <= $subnetrange[1]);
+            }
         } else { /// type 2
             $found = (strpos($addr, $subnet) === 0);
         }
@@ -5982,7 +5990,6 @@ function address_in_subnet($addr, $subnetstr) {
             break;
         }
     }
-
     return $found;
 }
 
