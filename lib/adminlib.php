@@ -1693,7 +1693,10 @@ class admin_setting_sitesettext extends admin_setting_configtext {
         $record->id = $this->id;
         $record->{$this->name} = $data;
         $record->timemodified = time();
-        return (update_record('course', $record) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
+        $status = update_record('course', $record) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />';
+        //now update $SITE
+        global $SITE;
+        $SITE = get_record('course', 'id', $SITE->id);
     }
 
 }
