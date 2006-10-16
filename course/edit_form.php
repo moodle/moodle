@@ -331,12 +331,10 @@ class course_edit_form extends moodleform {
                                 "((this.selectedIndex==0)?true:false);"));
             $mods = array(0=>get_string('allownone'));
             $mods += get_records_menu('modules', '','','','id, name');
-            $disabled=($mform->exportValue('restrictmodules')==1) ? array() :array('disabled' => 'disabled') ;
 
 
             $mform->addElement('select', 'allowedmods', get_string('to'),$mods,
-                            array('multiple'=>'multiple', 'size'=>'10', 'id'=>'allowedmods')
-                                    +$disabled);
+                            array('multiple'=>'multiple', 'size'=>'10', 'id'=>'allowedmods'));
         }else {
             $mform->addElement('hidden', 'restrictmodules', null);
         }
@@ -371,6 +369,18 @@ class course_edit_form extends moodleform {
             $this->set_defaults($course);
         }
 
+
+
+    }
+    function definition_after_data(){
+        
+        if ($this->_form->elementExists('allowedmods')){
+            if ($this->_form->exportValue('restrictmodules')!=1){
+                $this->_form->getElement('allowedmods')->
+                        updateAttributes(array('disabled' => 'disabled')) ;
+            }
+            
+        }
     }
 
 /// perform some extra moodle validation

@@ -63,6 +63,7 @@ class moodleform {
         }
 
         $this->_form->updateSubmission($submission);
+        $this->definition_after_data();
     }
 
     function set_defaults($default_values, $slashed=false) {
@@ -118,6 +119,16 @@ class moodleform {
     // abstract method - always override
     function definition() {
         error('Abstract form_definition() method in class '.get_class($this).' must be overriden, please fix the code.');
+    }
+    
+    /**
+     * Another abstract function. This one is called after submitted data has
+     * been processed and is available. All form setup that is dependent on form values
+     * should go in here.
+     *
+     */
+    function definition_after_data(){
+        
     }
 
     // dummy stub method - override if needed
