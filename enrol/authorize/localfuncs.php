@@ -31,9 +31,18 @@ function prevent_double_paid($course)
 {
     global $CFG, $SESSION, $USER;
 
-    $status = empty($CFG->an_test) ? AN_STATUS_AUTH : AN_STATUS_NONE;
+    $sql = "SELECT id FROM {$CFG->prefix}enrol_authorize
+            WHERE userid = $USER->id
+              AND courseid = $course->id ";
 
-    if ($rec=get_record('enrol_authorize','userid',$USER->id,'courseid',$course->id,'status',$status,'id')) {
+    if (empty($CFG->an_test)) { // Real mode
+        $sql .= 'AND status IN('.AN_STATUS_AUTH.','.AN_STATUS_UNDERREVIEW.','.AN_STATUS_APPROVEDREVIEW.')';
+    }
+    else { // Test mode
+        $sql .= 'AND status='.AN_STATUS_NONE;
+    }
+
+    if ($rec = get_record_sql($sql)) {
         $a = new stdClass;
         $a->orderid = $rec->id;
         $a->url = "$CFG->wwwroot/enrol/authorize/index.php?order=$a->orderid";
@@ -306,6 +315,56 @@ function email_to_admin($subject, $data)
     $message .= print_r($data, true);
     email_to_user($admin, $admin, "$SITE->fullname: Authorize.net ERROR", $message);
 }
+
+
+function send_welcome_messages($orderdata)
+{
+    global $CFG, $SITE;
+
+    if (empty($orderdata)) {
+    	return;
+    }
+
+    if (is_numeric($orderdata)) {
+        $orderdata = array($orderdata);
+    }
+
+    $select = "SELECT e.id, e.courseid, e.userid, c.fullname
+                 FROM {$CFG->prefix}enrol_authorize e
+                 INNER JOIN {$CFG->prefix}course c ON c.id = e.courseid
+               WHERE e.id IN(" . implode(',', $orderdata) . ")
+               ORDER BY e.userid";
+
+    $emailinfo = get_records_sql($select);
+    $emailcount = count($emailinfo);
+    if ($emailcount == 1) {
+        $ei = reset($emailinfo);
+        if (!$sender = get_teacher($ei->courseid)) {
+            $sender = get_admin();
+        }
+    }
+    else {
+        $sender = get_admin();
+    }
+
+    $ei = reset($emailinfo);
+    while ($ei !== false) {
+        $usercourses = array();
+        $lastuserid = $ei->userid;
+        for ($current = $ei; $current !== false && $current->userid == $lastuserid; $current = next($emailinfo)) {   
+             $usercourses[] = $current->fullname;
+        }
+        $ei = $current;
+        $a = new stdClass;
+        $a->courses = implode("\n", $usercourses);
+        $a->profileurl = "$CFG->wwwroot/user/view.php?id=$lastuserid";
+        $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$lastuserid";
+        $emailmessage = get_string('welcometocoursesemail', 'enrol_authorize', $a);
+        $user = get_record('user', 'id', $lastuserid);
+        @email_to_user($user, $sender, get_string("enrolmentnew", '', $SITE->shortname), $emailmessage);
+    }
+}
+
 
 function check_openssl_loaded()
 {

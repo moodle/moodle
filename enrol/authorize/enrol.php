@@ -27,7 +27,7 @@ class enrolment_plugin_authorize
 
 
     /**
-     * Shows a credit card form for registration.
+     * Presents registration forms.
      *
      * @param object $course Course info
      * @access public
@@ -93,7 +93,7 @@ class enrolment_plugin_authorize
 
 
     /**
-     * Checks form params.
+     * Validates registration forms and enrols student to course.
      *
      * @param object $form Form parameters
      * @param object $course Course info
@@ -122,8 +122,7 @@ class enrolment_plugin_authorize
 
 
     /**
-     * Credit card number mode.
-     * Send to authorize.net.
+     * The user submitted credit card form.
      *
      * @param object $form Form parameters
      * @param object $course Course info
@@ -188,8 +187,7 @@ class enrolment_plugin_authorize
         $message = '';
         $an_review = !empty($CFG->an_review);
         $action = $an_review ? AN_ACTION_AUTH_ONLY : AN_ACTION_AUTH_CAPTURE;
-        $success = authorize_action($order, $message, $extra, $action, $form->cctype);
-        if (!$success) {
+        if (AN_APPROVED != authorize_action($order, $message, $extra, $action, $form->cctype)) {
             email_to_admin($message, $order);
             $this->authorizeerrors['header'] = $message;
             return;
@@ -234,14 +232,10 @@ class enrolment_plugin_authorize
         }
 
         // Credit card captured, ENROL student now...
-        if (!empty($CFG->enrol_mailstudents)) {
-            $a = new stdClass;
-            $a->courses = $course->fullname;
-            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id";
-            $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$USER->id";
-            $course->welcomemessage = get_string('welcometocoursesemail', 'enrol_authorize', $a);
-        }
         if (enrol_into_course($course, $USER, 'manual')) {
+            if (!empty($CFG->enrol_mailstudents)) {
+                send_welcome_messages($order->id);
+            }
             $teacher = get_teacher($course->id);
             if (!empty($CFG->enrol_mailteachers)) {
                 $a = new stdClass;
@@ -277,6 +271,14 @@ class enrolment_plugin_authorize
         redirect($destination);
     }
 
+
+    /**
+     * The user submitted echeck form.
+     *
+     * @param object $form Form parameters
+     * @param object $course Course info
+     * @access private
+     */
     function echeck_submit($form, $course)
     {
         global $CFG, $USER, $SESSION;
@@ -334,62 +336,15 @@ class enrolment_plugin_authorize
         $extra->x_phone = '';
         $extra->x_fax = '';
 
-        $message = ''; // 2 actions only for echecks: auth_capture and credit
-        $success = authorize_action($order, $message, $extra, AN_ACTION_AUTH_CAPTURE);
-        if (!$success) {
+        $message = '';
+        if (AN_REVIEW != authorize_action($order, $message, $extra, AN_ACTION_AUTH_CAPTURE)) {
             email_to_admin($message, $order);
             $this->authorizeerrors['header'] = $message;
             return;
         }
 
         $SESSION->ccpaid = 1; // security check: don't duplicate payment
-        if ($order->transid == 0) { // TEST MODE
-            enrol_into_course($course, $USER, 'manual');
-            redirect("$CFG->wwwroot/course/view.php?id=$course->id");
-        }
-
-        // ENROL student now ...
-        if (!empty($CFG->enrol_mailstudents)) {
-            $a = new stdClass;
-            $a->courses = $course->fullname;
-            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id";
-            $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$USER->id";
-            $course->welcomemessage = get_string('welcometocoursesemail', 'enrol_authorize', $a);
-        }
-        if (enrol_into_course($course, $USER, 'manual')) {
-            $teacher = get_teacher($course->id);
-            if (!empty($CFG->enrol_mailteachers)) {
-                $a = new stdClass;
-                $a->course = "$course->fullname";
-                $a->user = fullname($USER);
-                email_to_user($teacher,
-                              $USER,
-                              get_string("enrolmentnew", '', $course->shortname),
-                              get_string('enrolmentnewuser', '', $a));
-            }
-            if (!empty($CFG->enrol_mailadmins)) {
-                $a = new stdClass;
-                $a->course = "$course->fullname";
-                $a->user = fullname($USER);
-                $admins = get_admins();
-                foreach ($admins as $admin) {
-                    email_to_user($admin,
-                                  $USER,
-                                  get_string("enrolmentnew", '', $course->shortname),
-                                  get_string('enrolmentnewuser', '', $a));
-                }
-            }
-        } else {
-            email_to_admin("Error while trying to enrol " .
-            fullname($USER) . " in '$course->fullname'", $order);
-        }
-
-        if ($SESSION->wantsurl) {
-            $destination = $SESSION->wantsurl; unset($SESSION->wantsurl);
-        } else {
-            $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
-        }
-        redirect($destination);
+        redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '30');
     }
 
 
@@ -580,7 +535,7 @@ class enrolment_plugin_authorize
      */
     function cron()
     {
-        global $CFG, $SITE;
+        global $CFG;
         require_once($CFG->dirroot.'/enrol/authorize/authorizenetlib.php');
 
         $oneday = 86400;
@@ -642,8 +597,7 @@ class enrolment_plugin_authorize
         foreach ($orders as $order) {
             $message = '';
             $extra = NULL;
-            $success = authorize_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE);
-            if ($success) {
+            if (AN_APPROVED == authorize_action($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE)) {
                 if ($lastcourseid != $order->courseid) {
                     $lastcourseid = $order->courseid;
                     $course = get_record('course', 'id', $lastcourseid);
@@ -692,37 +646,11 @@ class enrolment_plugin_authorize
         }
 
         // Send emails to students about which courses have enrolled.
-        if (empty($sendem)) {
-            return;
+        if (!empty($sendem)) {
+            mtrace("    sending welcome messages to students", ": ");
+            send_welcome_messages($sendem);
+            mtrace("sent");
         }
-
-        mtrace("    sending welcome messages to students", ": ");
-        $select = "SELECT E.id, E.courseid, E.userid, C.fullname " .
-                  "FROM {$CFG->prefix}enrol_authorize E " .
-                  "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
-                  "WHERE E.id IN(" . implode(',', $sendem) . ") " .
-                  "ORDER BY E.userid";
-        $emailinfo = get_records_sql($select);
-        $emailcount = count($emailinfo);
-        for($i = 0; $i < $emailcount; ) {
-            $usercourses = array();
-            $lastuserid = $emailinfo[$i]->userid;
-            for ($j=$i; $j < $emailcount and $emailinfo[$j]->userid == $lastuserid; $j++) {
-                $usercourses[] = $emailinfo[$j]->fullname;
-            }
-            $a = new stdClass;
-            $a->courses = implode("\n", $usercourses);
-            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$lastuserid";
-            $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$lastuserid";
-            $emailmessage = get_string('welcometocoursesemail', 'enrol_authorize', $a);
-            $user = get_record('user', 'id', $lastuserid);
-            email_to_user($user,
-                          $adminuser,
-                          get_string("enrolmentnew", '', $SITE->shortname),
-                          $emailmessage);
-            $i = $j;
-        }
-        mtrace("sent");
     }
 
     /**
@@ -752,6 +680,8 @@ class enrolment_plugin_authorize
         $timediff60 = $settlementtime - (60 * $oneday);
         $select = "(status='".AN_STATUS_EXPIRE."') AND (timecreated<'$timediff60')";
         delete_records_select('enrol_authorize', $select);
+
+        // XXX TODO SEND EMAIL to uploadcsv user
 
         // Daily warning email for pending orders expiring.
         if (empty($CFG->an_emailexpired)) {
@@ -788,12 +718,15 @@ class enrolment_plugin_authorize
         }
 
         $sorttype = empty($CFG->an_sorttype) ? 'ttl' : $CFG->an_sorttype;
-        $where = "(E.status='". AN_STATUS_AUTH ."') AND (E.timecreated<'$timediffem') AND (E.timecreated>'$timediff30')";
-        $sql = "SELECT E.courseid, E.currency, C.fullname, C.shortname, " .
-               "COUNT(E.courseid) AS cnt, SUM(E.amount) as ttl " .
-               "FROM {$CFG->prefix}enrol_authorize E " .
-               "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
-               "WHERE $where GROUP BY E.courseid ORDER BY $sorttype DESC";
+        $sql = "SELECT e.courseid, e.currency, c.fullname, c.shortname,
+                  COUNT(e.courseid) AS cnt, SUM(e.amount) as ttl
+                FROM {$CFG->prefix}enrol_authorize e
+                  INNER JOIN {$CFG->prefix}course c ON c.id = e.courseid
+                WHERE (e.status = ". AN_STATUS_AUTH .")
+                  AND (e.timecreated < $timediffem)
+                  AND (e.timecreated > $timediff30)
+                GROUP BY e.courseid
+                ORDER BY $sorttype DESC";
 
         $courseinfos = get_records_sql($sql);
         foreach($courseinfos as $courseinfo) {
