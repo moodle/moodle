@@ -65,9 +65,9 @@ function choice_add_instance($choice) {
         $choice->timeclose = 0;
     }
 
-    //insert answers    
+    //insert answers
     if ($choice->id = insert_record("choice", $choice)) {
-        foreach ($choice as $name => $value) {        
+        foreach ($choice as $name => $value) {
             if (strstr($name, "newoption")) {   /// New option
                 $value = trim($value);
                 if (isset($value) && $value <> '') {
@@ -78,7 +78,7 @@ function choice_add_instance($choice) {
                         $option->maxanswers = $choice->{'newlimit'.substr($name, 9)};
                     }
                     $option->timemodified = time();
-                    insert_record("choice_options", $option);                
+                    insert_record("choice_options", $option);
                 }
             }
         }
@@ -105,10 +105,10 @@ function choice_update_instance($choice) {
         $choice->timeopen = 0;
         $choice->timeclose = 0;
     }
-    
+
     //update answers
-    
-    foreach ($choice as $name => $value) {        
+
+    foreach ($choice as $name => $value) {
         $value = trim($value);
 
         if (strstr($name, "oldoption")) {  // Old option
@@ -134,13 +134,13 @@ function choice_update_instance($choice) {
                     $option->maxanswers = $choice->{'newlimit'.substr($name, 9)};
                 }
                 $option->timemodified = time();
-                insert_record("choice_options", $option);                
+                insert_record("choice_options", $option);
             }
-        }      
+        }
     }
 
     return update_record('choice', $choice);
-      
+
 }
 
 function choice_show_form($choice, $user, $cm) {
@@ -157,7 +157,7 @@ function choice_show_form($choice, $user, $cm) {
             $countans = 0;           
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
             if (!empty($countanswers)) {
-                foreach ($countanswers as $ca) { //only return enrolled users.                  
+                foreach ($countanswers as $ca) { //only return enrolled users.
                     if (has_capability('mod/choice:choose', $context)) {
                         $countans = $countans+1;
                     }
@@ -176,12 +176,12 @@ function choice_show_form($choice, $user, $cm) {
             $cdisplay[$aid]->countanswers = $countans;
 
             if ($current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user->id, 'optionid', $optionid)) {
-                $cdisplay[$aid]->checked = ' checked="checked" ';   
+                $cdisplay[$aid]->checked = ' checked="checked" ';
             } else {
-                $cdisplay[$aid]->checked = '';  
+                $cdisplay[$aid]->checked = '';
             }
             if ($choice->limitanswers && ($countans >= $maxans) && (empty($cdisplay[$aid]->checked)) ) {
-                $cdisplay[$aid]->disabled = ' disabled="disabled" ';    
+                $cdisplay[$aid]->disabled = ' disabled="disabled" ';
             } else {
                 $cdisplay[$aid]->disabled = ''; 
             }
@@ -195,13 +195,13 @@ function choice_show_form($choice, $user, $cm) {
                                     
             foreach ($cdisplay as $cd) { 
                 echo "<td align=\"center\" valign=\"top\">";
-                echo "<input type=\"radio\" name=\"answer\" value=\"".$cd->optionid."\" alt=\"".strip_tags(format_text($cd->text))."\"". $cd->checked.$cd->disabled." />";                    
+                echo "<input type=\"radio\" name=\"answer\" value=\"".$cd->optionid."\" alt=\"".strip_tags(format_text($cd->text))."\"". $cd->checked.$cd->disabled." />";
                 if (!empty($cd->disabled)) {               
-                    echo format_text($cd->text."<br /><strong>".get_string('full', 'choice')."</strong>");                  
+                    echo format_text($cd->text."<br /><strong>".get_string('full', 'choice')."</strong>");
                 } else {
                     echo format_text($cd->text);
                 }
-                echo "</td>";                    
+                echo "</td>";
             }
             echo "</tr>";
             echo "</table>";
@@ -210,15 +210,15 @@ function choice_show_form($choice, $user, $cm) {
         case CHOICE_DISPLAY_VERTICAL:
             $displayoptions->para = false;
             echo "<table cellpadding=\"10\" cellspacing=\"10\" align=\"center\">";
-            foreach ($cdisplay as $cd) {                    
+            foreach ($cdisplay as $cd) {
                 echo "<tr><td align=\"left\">";
-                echo "<input type=\"radio\" name=\"answer\" value=\"".$cd->optionid."\" alt=\"".strip_tags(format_text($cd->text))."\"". $cd->checked.$cd->disabled." />";                    
+                echo "<input type=\"radio\" name=\"answer\" value=\"".$cd->optionid."\" alt=\"".strip_tags(format_text($cd->text))."\"". $cd->checked.$cd->disabled." />";
 
                 echo format_text($cd->text. ' ', FORMAT_MOODLE, $displayoptions); //display text for option.
-                        
+
                 if ($choice->limitanswers && ($choice->showresults==CHOICE_SHOWRESULTS_ALWAYS) ){ //if limit is enabled, and show results always has been selected, display info beside each choice.
                     echo "</td><td>";
-                            
+
                     if (!empty($cd->disabled)) {
                         echo get_string('full', 'choice');
                     } elseif(!empty($cd->checked)) {
@@ -262,15 +262,15 @@ function choice_user_submit_response($formanswer, $choice, $userid, $courseid, $
             if (has_capability('mod/choice:choose', $context)) {
                 $countans = $countans+1;
             }
-        }               
-                
-        $countanswers = count($countans);
+        }
+
+        $countanswers = $countans;
     } else {
         $countanswers = 0;
     }
     $maxans = $choice->maxanswers[$formanswer];
-            
-    if (!($choice->limitanswers && ($countanswers >= $maxans) )) {              
+
+    if (!($choice->limitanswers && ($countanswers >= $maxans) )) {
         if ($current) {
                     
             $newanswer = $current;
@@ -317,14 +317,14 @@ function choice_show_reportlink($choice, $courseid, $cmid) {
 }
 
 function choice_show_results($choice, $course, $cm, $forcepublish='') {
-            
+
     global $CFG, $COLUMN_HEIGHT, $USER;
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    print_heading(get_string("responses", "choice"));        
+    print_heading(get_string("responses", "choice"));
     if (empty($forcepublish)) { //alow the publish setting to be overridden
         $forcepublish = $choice->publish;
-    }       
-                
+    }
+
         /// Check to see if groups are being used in this choice
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
         $currentgroup = setup_and_print_groups($course, $groupmode, $_SERVER['PHP_SELF']."?id=$cm->id");
@@ -382,7 +382,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
                 echo '<input type="hidden" name="mode" value="overview" />';
             }
-            
+
             echo "<table cellpadding=\"5\" cellspacing=\"10\" align=\"center\" class=\"results names\">";            
             echo "<tr>";
             $count = 0;
@@ -441,13 +441,13 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                     continue;
                 }
                 echo "<td align=\"center\" class=\"count\">";
-                $countanswers = get_records("choice_answers", "optionid", $optionid);                
+                $countanswers = get_records("choice_answers", "optionid", $optionid);
                 $countans = 0;  
                 if (!empty($countanswers)) {              
-                    foreach ($countanswers as $ca) { //only return enrolled users.                            
-                        if (has_capability('mod/choice:choose', get_context_instance(CONTEXT_MODULE, $cm->id))) {                        
+                    foreach ($countanswers as $ca) { //only return enrolled users.
+                        if (has_capability('mod/choice:choose', get_context_instance(CONTEXT_MODULE, $cm->id))) {
                            $countans = $countans+1;
-                        }                   
+                        }
                     }
                 }
                 if ($choice->limitanswers && !$optionid==0) {
@@ -485,7 +485,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
 
 
         case CHOICE_PUBLISH_ANONYMOUS:
-          
+
             $tablewidth = (int) (100.0 / count($useranswer));
 
             echo "<table cellpadding=\"5\" cellspacing=\"0\" align=\"center\" class=\"results anonymous\">";
@@ -636,18 +636,18 @@ function choice_get_option_text($choice, $id) {
         return $result->text;
     } else {
         return get_string("notanswered", "choice");
-    }            
+    }
 }
 
 function choice_get_choice($choiceid) {
-// Gets a full choice record      
+// Gets a full choice record
 
     if ($choice = get_record("choice", "id", $choiceid)) {
         if ($options = get_records("choice_options", "choiceid", $choiceid, "id")) {
-            foreach ($options as $option) {                         
+            foreach ($options as $option) {
                 $choice->option[$option->id] = $option->text; 
                 $choice->maxanswers[$option->id] = $option->maxanswers;
-            }        
+            }
             return $choice;
         }
     }
