@@ -165,7 +165,7 @@
     $postfun = $module->name.'_get_post_actions';
 
     if (!function_exists($viewfun) || !function_exists($postfun)) {
-        error(get_string('modulemisssingcode','error',$module->name),$baseurl);
+        error(get_string('modulemissingcode','error',$module->name),$baseurl);
     }
 
     $viewnames = $viewfun();
