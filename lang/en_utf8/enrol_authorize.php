@@ -1,5 +1,5 @@
-<?PHP // $Id$
-      // enrol_authorize.php - created with Moodle 1.7 dev (2006083102)
+<?PHP // $Id$ 
+      // enrol_authorize.php - created with Moodle 1.7 dev (2006100601)
 
 
 $string['adminacceptccs'] = 'Which credit card types will be accepted?';
@@ -9,12 +9,12 @@ $string['adminauthorizeemail'] = 'Email Sending Settings';
 $string['adminauthorizesettings'] = 'Authorize.net Settings';
 $string['adminauthorizewide'] = 'Site-Wide Settings';
 $string['adminavs'] = 'Check this if you have activated Address Verification System (AVS) in your authorize.net account. This demands address fields like street, state, country and zip when user fills out payment form.';
-$string['admincronsetup'] = 'The cron.php maintenance script has not been run for at least 24 hours. <br />Cron must be enabled if you want to use scheduled-capture feature.<br /><b>Enable</b> \'Authorize.net plugin\' and <b>setup cron</b> properly; or <b>uncheck an_review</b> again.<br />If you disable scheduled-capture, transactions will be cancelled unless you review them within 30 days.<br />Check <b>an_review</b> and enter <b>\'0\' to an_capture_day</b> field<br />if you want to <b>manually</b> accept/deny payments within 30 days.';
+$string['admincronsetup'] = 'The cron.php maintenance script has not been run for at least 24 hours.<br />Cron must be enabled if you want to use scheduled-capture feature.<br /><b>Enable</b> \'Authorize.net plugin\' and <b>setup cron</b> properly; or <b>uncheck an_review</b> again.<br />If you disable scheduled-capture, transactions will be cancelled unless you review them within 30 days.<br />Check <b>an_review</b> and enter <b>\'0\' to an_capture_day</b> field<br />if you want to <b>manually</b> accept/deny payments within 30 days.';
 $string['adminemailexpired'] = 'This is useful for \'Manual-Capture\'. Admins are notified <b>$a</b> days prior to pending orders expiring.';
 $string['adminemailexpiredsort'] = 'When the number of pending orders expiring are sent to the teachers via email, which one is important?';
-$string['adminemailexpiredsortcount'] = 'The number of the orders';
-$string['adminemailexpiredsortsum'] = 'The total of the amounts';
-$string['adminemailexpiredteacher'] = 'If you have enabled manual-capture (see above) and teachers can manage the payments, teacher may also notified about pending orders expiring. This will send an email to each course teachers about how many pending orders expiring.';
+$string['adminemailexpiredsortcount'] = 'Order count';
+$string['adminemailexpiredsortsum'] = 'Total amount';
+$string['adminemailexpiredteacher'] = 'If you have enabled manual-capture (see above) and teachers can manage the payments, they may also notified about pending orders expiring. This will send an email to each course teachers about the count of the pending orders to expire.';
 $string['adminemailexpsetting'] = '(0=disable sending email, default=2, max=5)<br />(Manual capture settings for sending email: cron=enabled, an_review=checked, an_capture_day=0, an_emailexpired=1-5)';
 $string['adminhelpcapturetitle'] = 'Scheduled-Capture Day';
 $string['adminhelpreviewtitle'] = 'Order Review';
@@ -30,14 +30,14 @@ $string['adminneworder'] = 'Dear Admin,
 
    SCHEDULED-CAPTURE ENABLED?: $a->acstatus
 
-  If scheduled-capture enabled the credit card will be captured on $a->captureon
-  and then student will be enrolled to course, otherwise it will be expired
+  If the scheduled-capture is active, the credit card is to be captured on $a->captureon
+  and then the user is to be enrolled to course; otherwise it will be expired
   on $a->expireon and cannot be captured after this day.
 
-  Also you can accept/deny the payment to enrol the student immediately following this link:
+  You can also accept/deny the payment to enrol the student immediately following this link:
   $a->url';
-$string['adminnewordersubject'] = '$a->course: New Pending Order($a->orderid)';
-$string['adminpendingorders'] = 'You have disabled scheduled-capture feature.<br />Total $a->count transactions with a status of \'Authorized/Pending Capture\' will be cancelled unless you check it.<br />To accept/deny payments go to <a href=\'$a->url\'>Payment Management</a> page.';
+$string['adminnewordersubject'] = '$a->course; New Pending Order: $a->orderid';
+$string['adminpendingorders'] = 'You have disabled scheduled-capture feature.<br />Total $a->count transactions with the status of \'Authorized/Pending Capture\' are to be cancelled unless you check them.<br />To accept/deny payments, go to <a href=\'$a->url\'>Payment Management</a> page.';
 $string['adminreview'] = 'Review order before processing the credit card.';
 $string['adminteachermanagepay'] = 'Teachers can manage the payments of the course.';
 $string['amount'] = 'Amount';
@@ -46,6 +46,7 @@ $string['anpassword'] = 'Authorize.net: Password';
 $string['anreferer'] = 'Define the URL referer if you have set up this in your authorize.net account. This will send a line \"Referer: URL\" embedded in the web request.';
 $string['antestmode'] = 'Run transactions in test mode only (no money will be drawn)';
 $string['antrankey'] = 'Authorize.net: Transaction Key';
+$string['approvedreview'] = 'Approved Review';
 $string['authcaptured'] = 'Authorized / Captured';
 $string['authorize:managepayments'] = 'Manage payments';
 $string['authorizedpendingcapture'] = 'Authorized / Pending Capture';
@@ -56,7 +57,7 @@ $string['avsg'] = 'Non-U.S. Card Issuing Bank';
 $string['avsn'] = 'No match on address (street) nor postal code';
 $string['avsp'] = 'Address Verification System not applicable';
 $string['avsr'] = 'Retry - System unavailable or timed out';
-$string['avsresult'] = '<b>AVS Result:</b> $a';
+$string['avsresult'] = 'AVS Result: $a';
 $string['avss'] = 'Service not supported by issuer';
 $string['avsu'] = 'Address information is unavailable';
 $string['avsw'] = '9 digit postal code matches, address (street) does not';
@@ -68,7 +69,7 @@ $string['cancelled'] = 'Cancelled';
 $string['capture'] = 'Capture';
 $string['capturedpendingsettle'] = 'Captured / Pending Settlement';
 $string['capturedsettled'] = 'Captured / Settled';
-$string['captureyes'] = 'The credit card will be captured and student will be enrolled to course. Are you sure?';
+$string['captureyes'] = 'The credit card will be captured and the student will be enrolled to the course. Are you sure?';
 $string['ccexpire'] = 'Expiry Date';
 $string['ccexpired'] = 'The credit card has expired';
 $string['ccinvalid'] = 'Invalid card number';
@@ -78,10 +79,10 @@ $string['ccvv'] = 'Card Verification';
 $string['ccvvhelp'] = 'Look at the back of card (last 3 digits)';
 $string['choosemethod'] = 'If you know the enrolment key of the cource, please enter it; otherwise you need to pay for this course.';
 $string['chooseone'] = 'Fill one or both of the following two fields. The password isn\'t shown.';
-$string['costdefaultdesc'] = '<strong>In course settings, enter -1</strong> to cost field to use this default cost.';
+$string['costdefaultdesc'] = '<strong>In course settings, enter -1</strong> to use this default cost to course cost field.';
 $string['cutofftime'] = 'Transaction Cut-Off Time. When the last transaction is picked up for settlement?';
 $string['delete'] = 'Destroy';
-$string['description'] = 'The Authorize.net module allows you to set up paid courses via CC providers.  If the cost for any course is zero, then students are not asked to pay for entry.  Two ways to set the course cost (1) a site-wide cost as a default for the whole site or (2) a course setting that you can set for each course individually. The course cost overrides the site cost.<br /><br /><b>Note:</b> If you enter an enrolment key in the course settings, then students will also have the option to enrol using a key. This is useful if you have a mixture of paying and non-paying students.';
+$string['description'] = 'The Authorize.net module allows you to set up paid courses via payment providers. If the cost for any course is zero, then students are not asked to pay for entry. Two ways to set the course cost (1) a site-wide cost as a default for the whole site or (2) a course setting that you can set for each course individually. The course cost overrides the site cost.<br /><br /><b>Note:</b> If you enter an enrolment key in the course settings, then students will also have the option to enrol using a key. This is useful if you have a mixture of paying and non-paying students.';
 $string['echeckabacode'] = 'Bank ABA Number';
 $string['echeckaccnum'] = 'Bank Account Number';
 $string['echeckacctype'] = 'Bank Account Type';
@@ -112,7 +113,7 @@ $string['nameoncard'] = 'Name on Card';
 $string['new'] = 'New';
 $string['noreturns'] = 'No returns!';
 $string['notsettled'] = 'Not settled';
-$string['orderid'] = 'Order ID';
+$string['orderid'] = 'OrderID';
 $string['paymentmanagement'] = 'Payment Management';
 $string['paymentmethod'] = 'Payment Method';
 $string['paymentpending'] = 'Your payment is pending for this course with this order number $a->orderid.  See <a href=\'$a->url\'>Order Details</a>.';
@@ -162,20 +163,23 @@ $string['refund'] = 'Refund';
 $string['refunded'] = 'Refunded';
 $string['returns'] = 'Returns';
 $string['reviewday'] = 'Capture the credit card automatically unless a teacher or administrator review the order within <b>$a</b> days. CRON MUST BE ENABLED.<br />(0 day means it will disable scheduled-capture, also means teacher or admin review order manually. Transaction will be cancelled if you disable scheduled-capture or unless you review it within 30 days.)';
+$string['reviewfailed'] = 'Review Failed';
 $string['reviewnotify'] = 'Your payment will be reviewed. Expect an email within a few days from your teacher.';
 $string['sendpaymentbutton'] = 'Send Payment';
 $string['settled'] = 'Settled';
 $string['settlementdate'] = 'Settlement Date';
-$string['subvoidyes'] = 'Refunded transaction $a->transid will be cancelled and it will credit $a->amount to your account. Are you sure?';
+$string['subvoidyes'] = 'The transaction refunded ($a->transid) is going to be cancelled and this will cause crediting $a->amount to your account. Are you sure?';
 $string['tested'] = 'Tested';
 $string['testmode'] = '[TEST MODE]';
-$string['testwarning'] = 'Capture/Void/Credit seems working in test mode, but no record was updated or inserted in database.';
-$string['transid'] = 'Transaction ID';
+$string['testwarning'] = 'Capturing/Voiding/Refunding seems working in test mode, but no record was updated or inserted in database.';
+$string['transid'] = 'TransactionID';
+$string['underreview'] = 'Under Review';
 $string['unenrolstudent'] = 'Unenrol student?';
+$string['uploadcsv'] = 'Upload a CSV file';
 $string['usingccmethod'] = 'Enrol using <a href=\"$a->url\"><strong>Credit Card</strong></a>';
 $string['usingecheckmethod'] = 'Enrol using <a href=\"$a->url\"><strong>eCheck</strong></a>';
 $string['void'] = 'Void';
-$string['voidyes'] = 'Transaction will be cancelled. Are you sure?';
+$string['voidyes'] = 'The transaction will be cancelled. Are you sure?';
 $string['welcometocoursesemail'] = 'Dear student,
 
 Thanks for your payments. You have enrolled these courses:
