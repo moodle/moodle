@@ -111,6 +111,9 @@ $string['reportformat'] = 'Format';
 
 $string['reportbutton'] = 'Generate report';
 
+$string['thiscourse'] = 'This course'; //necessary for 1.6 and older
+$string['allmycourses'] = 'All my courses'; //necessary for 1.6 and older
+
 $string['allusers'] = 'All users';
 
 $string['attemptsall'] = 'All attempts';
