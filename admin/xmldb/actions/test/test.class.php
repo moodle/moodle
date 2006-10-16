@@ -721,6 +721,20 @@ class test extends XMLDBAction {
             $tests['rename table'] = $test;
         }
 
+    /// 41th test. Getting the PK sequence name for one table
+        if ($test->status) {
+            $table->setName('newnameforthetable');
+            $test->sql =  array(find_sequence_name($table));
+            $test->status = find_sequence_name($table);
+            if (!$test->status) {
+                if (!$test->error = $db->ErrorMsg()) { //If no db errors, result is ok. Just the driver doesn't support this
+                    $test->sql = array('not needed for this DB');
+                    $test->status = true;
+                }
+            }
+            $tests['find sequence name'] = $test;
+        }
+
 
 
     /// TODO: Check here values of the inserted records to see that everything ha the correct value
