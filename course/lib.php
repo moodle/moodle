@@ -2078,7 +2078,7 @@ function print_visible_setting($form, $course=NULL) {
     }
     
     echo '<tr valign="top">';
-    echo '<td align="right"><b>'.get_string('visibletostudents','',moodle_strtolower($course->students)).':</b></td>';
+    echo '<td align="right"><b>'.get_string('visible', '').':</b></td>';
     echo '<td align="left">';
     unset($choices);
     $choices[1] = get_string('show');
