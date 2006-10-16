@@ -1,11 +1,11 @@
 body {
   font-size: 100%;
   color: #333333;
-  font-family: georgia, times, serif;
+  font-family: "Bitstream Vera Serif", georgia, times, serif;
   margin: 0;
-  padding: 5px 10px 10px;
+  padding: 0 10px 10px;
   border-top-width: 10px;
-  border-top-style: solid;
+  border-top-style: none;
   border-top-color: #55CC00;
 }
 div.clearer {
@@ -340,4 +340,13 @@ fieldset.adminsettings {
   border-width: 1px;
   border-style: solid;
   border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
+}
+form.mform div.textarea textarea {
+  width: 35em;
+}
+div#page {
+  padding-top: 5px;
+  border-top-width: 10px;
+  border-top-style: solid;
+  border-top-color: #55CC00;
 }
