@@ -63,6 +63,7 @@ $string['sessionerroruser'] = 'Your session has timed out.  Please login again.'
 $string['sessionerroruser2'] = 'A server error that affects your login session was detected. Please login again or restart your browser.';
 $string['sessionipnomatch'] = 'Sorry, but your IP number seems to have changed from when you first logged in.  This security feature prevents crackers stealing your identity while logged in to this site.  Normal users should not be seeing this message - please ask the site administrator for help.';
 $string['statscatchupmode'] = 'Statistics is currently in catchup mode. So far $a->daysdone day(s) have been processed and $a->dayspending are pending. Check back soon!';
+$string['unicodeupgradeerror'] = 'Sorry, but your database is not already in Unicode, and this version of Moodle is not able to migrate your database to Unicode.  Please upgrade to Moodle 1.7.x first and perform the Unicode migration from the Admin page.  After that is done you should be able to migrate to Moodle $a';
 $string['unknowncourse'] = 'Unknown course named \"$a\"';
 $string['unknownuseraction'] = 'Sorry, I do not understand this user action.';
 $string['usernotaddederror'] = 'User \"$a\" not added - unknown error';

@@ -206,6 +206,12 @@
     if ($CFG->version) {
         if ($version > $CFG->version) {  // upgrade
 
+        /// If the database is not already Unicode then we do not allow upgrading!
+        /// Instead, we print an error telling them to upgrade to 1.7 first.  MDL-6857
+            if (empty($CFG->unicodedb)) {
+                print_error('unicodeupgradeerror', 'error', '', $version);
+            }
+
             $a->oldversion = "$CFG->release ($CFG->version)";
             $a->newversion = "$release ($version)";
             $strdatabasechecking = get_string("databasechecking", "", $a);
@@ -479,10 +485,6 @@
         print_simple_box(get_string('sitemaintenancewarning', 'admin') , 'center', '60%');
     }
 
-/// Alert to display the utf-8 migration button (if !unicode yet and DB is MySQL or PG)
-    if (empty($CFG->unicodedb) && in_array($CFG->dbtype, array('mysql', 'postgres7'))) {
-        print_simple_box(get_string('unicodeupgradenotice', 'admin') , 'center', '60%');
-    }
 
 /// Print slightly annoying registration button every six months   ;-)
 /// You can set the "registered" variable to something far in the future
