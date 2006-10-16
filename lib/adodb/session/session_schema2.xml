@@ -30,7 +30,7 @@
       <descr></descr>
     </field>
 
-    <field name="DATA" type="XL">
+    <field name="SESSDATA" type="XL">
       <descr></descr>
       <NOTNULL/>
     </field>

@@ -1,6 +1,6 @@
 <?php
 /*
- V4.92a 29 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
+ V4.93 10 Oct 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -237,6 +237,9 @@ select viewname,'V' from pg_views where viewname like $mask";
 	function qstr($s,$magic_quotes=false)
 	{
 		if (!$magic_quotes) {
+			if (ADODB_PHPVER >= 0x5200) {
+				return  "'".pg_escape_string($this->_connectionID,$s)."'";
+			} 
 			if (ADODB_PHPVER >= 0x4200) {
 				return  "'".pg_escape_string($s)."'";
 			}
@@ -424,6 +427,7 @@ select viewname,'V' from pg_views where viewname like $mask";
 	*/
 	function BlobEncode($blob)
 	{
+		if (ADODB_PHPVER >= 0x5200) return pg_escape_bytea($this->_connectionID, $blob);
 		if (ADODB_PHPVER >= 0x4200) return pg_escape_bytea($blob);
 		
 		/*92=backslash, 0=null, 39=single-quote*/
@@ -683,6 +687,12 @@ WHERE (c2.relname=\'%s\' or c2.relname=lower(\'%s\'))';
 		}
 		if ($this->_connectionID === false) return false;
 		$this->Execute("set datestyle='ISO'");
+		
+		$info = $this->ServerInfo();
+		$this->pgVersion = (float) substr($info['version'],0,3);
+		if ($this->pgVersion >= 7.1) { // good till version 999
+			$this->_nestedSQL = true;
+		}
 		return true;
 	}
 	

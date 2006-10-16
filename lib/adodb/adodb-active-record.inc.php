@@ -1,7 +1,7 @@
 <?php
 /*
 
-@version V4.92a 29 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
+@version V4.93 10 Oct 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
   Latest version is available at http://adodb.sourceforge.net
  
   Released under both BSD license and Lesser GPL library license. 
@@ -41,7 +41,12 @@ function ADODB_SetDatabaseAdapter(&$db)
 	global $_ADODB_ACTIVE_DBS;
 	
 		foreach($_ADODB_ACTIVE_DBS as $k => $d) {
-			if ($d->db == $db) return $k;
+			if (PHP_VERSION >= 5) {
+				if ($d->db == $db) return $k;
+			} else {
+				if ($d->db->_connectionID == $db->_connectionID && $db->database == $d->db->database) 
+					return $k;
+			}
 		}
 		
 		$obj = new ADODB_Active_DB();
@@ -218,12 +223,12 @@ class ADODB_Active_Record {
 			break;
 		default:
 			foreach($cols as $name => $fldobj) {
-				$name = ($name);
+				$name = ($fldobj->$name);
 				$this->$name = null;
 				$attr[$name] = $fldobj;
 			}
 			foreach($pkeys as $k => $name) {
-				$keys[$name] = ($name);
+				$keys[$name] = $cols[$name]->name;
 			}
 			break;
 		}
