@@ -17,8 +17,8 @@ $ADMIN->add('themes', new admin_externalpage('themeselector', get_string('themes
 
 // "frontpage" settingpage
 $temp = new admin_settingpage('frontpage', get_string('frontpage','admin'));
-$temp->add(new admin_setting_sitesettext('fullname', get_string('fullsitename'), '', '', PARAM_NOTAGS));
-$temp->add(new admin_setting_sitesettext('shortname', get_string('shortsitename'), '', PARAM_NOTAGS));
+$temp->add(new admin_setting_sitesettext('fullname', get_string('fullsitename'), '', ''));
+$temp->add(new admin_setting_sitesettext('shortname', get_string('shortsitename'), '', ''));
 $temp->add(new admin_setting_special_frontpagedesc());
 $temp->add(new admin_setting_courselist_frontpage(false)); // non-loggedin version of the setting (that's what the parameter is for :) )
 $temp->add(new admin_setting_courselist_frontpage(true)); // loggedin version of the setting
