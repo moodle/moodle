@@ -798,30 +798,29 @@ class enrolment_plugin_authorize
         }
 
         mtrace("    sending welcome messages to students", ": ");
-        $select = "SELECT E.id, E.courseid, E.userid, C.fullname " .
-                  "FROM {$CFG->prefix}enrol_authorize E " .
-                  "INNER JOIN {$CFG->prefix}course C ON C.id = E.courseid " .
-                  "WHERE E.id IN(" . implode(',', $sendem) . ") " .
-                  "ORDER BY E.userid";
+        $select = "SELECT e.id, e.courseid, e.userid, c.fullname
+                 FROM {$CFG->prefix}enrol_authorize e
+                 INNER JOIN {$CFG->prefix}course c ON c.id = e.courseid
+               WHERE e.id IN(" . implode(',', $sendem) . ")
+               ORDER BY e.userid";
+
         $emailinfo = get_records_sql($select);
         $emailcount = count($emailinfo);
-        for($i = 0; $i < $emailcount; ) {
+        $ei = reset($emailinfo);
+        while ($ei !== false) {
             $usercourses = array();
-            $lastuserid = $emailinfo[$i]->userid;
-            for ($j=$i; $j < $emailcount and $emailinfo[$j]->userid == $lastuserid; $j++) {
-                $usercourses[] = $emailinfo[$j]->fullname;
+            $lastuserid = $ei->userid;
+            for ($current = $ei; $current !== false && $current->userid == $lastuserid; $current = next($emailinfo)) {
+                $usercourses[] = $current->fullname;
             }
+            $ei = $current;
             $a = new stdClass;
             $a->courses = implode("\n", $usercourses);
             $a->profileurl = "$CFG->wwwroot/user/view.php?id=$lastuserid";
             $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$lastuserid";
             $emailmessage = get_string('welcometocoursesemail', 'enrol_authorize', $a);
             $user = get_record('user', 'id', $lastuserid);
-            email_to_user($user,
-                          $adminuser,
-                          get_string("enrolmentnew", '', $SITE->shortname),
-                          $emailmessage);
-            $i = $j;
+            @email_to_user($user, $adminuser, get_string("enrolmentnew", '', $SITE->shortname), $emailmessage);
         }
         mtrace("sent");
     }
