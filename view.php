@@ -1,4 +1,4 @@
-<?PHP // $Id: view.php,v 1.1 2006/03/12 18:39:59 skodak Exp $
+<?PHP // $Id: view.php,v 1.2 2006/10/16 08:05:26 gustav_delius Exp $
 
 require_once('../../config.php');
 require_once('lib.php');
@@ -226,7 +226,7 @@ $doimport = ($isteacher and $edit) ? '<font size="-1"> (<a href="import.php?id='
         $content = '';
         if (!$book->customtitles) {
           if ($currsubtitle == '&nbsp;') {
-              $content .= '<p class="book_chapter_title">'.$currtitle.'<p>';
+              $content .= '<p class="book_chapter_title">'.$currtitle.'</p>';
           } else {
               $content .= '<p class="book_chapter_title">'.$currtitle.'<br />'.$currsubtitle.'</p>';
           }
