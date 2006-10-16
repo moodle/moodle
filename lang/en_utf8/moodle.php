@@ -1421,6 +1421,7 @@ $string['virusfoundsubject'] = '$a: Virus found!';
 $string['virusfounduser'] = 'The file you have uploaded, $a->filename, has been scanned by a virus checker and found to be infected! Your file upload was NOT successful.';
 $string['virusplaceholder'] = 'This file that has been uploaded was found to contain a virus and has been moved or delted and the user notified.';
 $string['visible'] = 'Visible';
+$string['visibletostudents'] = 'Visible to $a'; //depreciated after 1.6
 $string['warningdeleteresource'] ='Warning: $a is referred in a resource. Would you like to update the resource?';
 $string['webpage'] = 'Web page';
 $string['week'] = 'Week';
