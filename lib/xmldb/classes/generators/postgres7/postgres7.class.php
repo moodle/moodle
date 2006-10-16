@@ -446,6 +446,29 @@ class XMLDBpostgres7 extends XMLDBgenerator {
         return $results;
     }
 
+/**
+ * Given one XMLDBTable returns one string with the sequence of the table
+ * in the table (fetched from DB)
+ * The sequence name for Postgres has one standard name convention: 
+ *     tablename_fieldname_seq
+ * so we just calculate it and confirm it's present in pg_class
+ * If no sequence is found, returns false
+ */
+function getSequenceFromDB($xmldb_table) {
+
+    $tablename = $this->getTableName($xmldb_table);
+    $sequencename = $tablename . '_id_seq';
+
+    if (!get_record_sql("SELECT *
+                     FROM pg_class
+                     WHERE relname = '{$sequencename}'
+                       AND relkind = 'S'")) {
+        $sequencename = false;
+    }
+
+    return $sequencename;
+}
+
     /**
      * Returns an array of reserved words (lowercase) for this DB
      */
