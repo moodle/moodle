@@ -11,9 +11,12 @@
 
 $string['closewindow'] = 'इस विन्डो को बन्द कीजिए';
 $string['continue'] = 'जारी रखें';
+$string['database'] = 'डेटाबेस';
 $string['language'] = 'भाषा';
+$string['name'] = 'नाम';
+$string['next'] = 'अगला';
 $string['password'] = 'पासवर्ड';
 $string['thischarset'] = 'UTF-8';
-$string['thislanguage'] = 'हिन्दी';
+$string['thislanguage'] = 'िहन्दी';
 $string['user'] = 'यूज़र';
 ?>

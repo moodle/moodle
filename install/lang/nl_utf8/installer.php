@@ -50,6 +50,37 @@ $string['databasesettingssub'] = '<b>Type:</b> mysql of postgres7<br />
 <b>Gebruiker:</b> de gebruikersnaam voor jouw database<br />
 <b>Wachtwoord:</b> het wachtwoord voor je databank<br />
 <b>Tabelvoorvoegsel:</b> een voorvoegsel dat je wil gebruiken voor alle tabelnamen';
+$string['databasesettingssub_mssql'] = '<b>Type:</b> SQL*Server<br />
+<b>Host:</b> vb localhost of db.isp.com<br />
+<b>Naam:</b> database naam, vb moodle<br />
+<b>Gebruiker:</b> de gebruikersnaam voor jouw database<br />
+<b>Wachtwoord:</b> het wachtwoord voor je databank<br />
+<b>Tabelvoorvoegsel:</b>voorvoegsel voor alle tabelnamen (verplicht)';
+$string['databasesettingssub_mysql'] = '<b>Type:</b> MYSQL<br />
+<b>Host:</b> vb localhost of db.isp.com<br />
+<b>Naam:</b> database naam, vb moodle<br />
+<b>Gebruiker:</b> de gebruikersnaam voor jouw database<br />
+<b>Wachtwoord:</b> het wachtwoord voor je databank<br />
+<b>Tabelvoorvoegsel:</b>een voorvoegsel dat je wil gebruiken voor alle tabelnamen (optioneel)';
+$string['databasesettingssub_oci8po'] = '<b>Type:</b> Oracle<br />
+<b>Host:</b>niet gebruikt - moet leeggelaten worden<br />
+<b>Naam:</b> database naam of de tnsnames.ora connection<br />
+<b>Gebruiker:</b> de gebruikersnaam voor jouw database<br />
+<b>Wachtwoord:</b> het wachtwoord voor je databank<br />
+<b>Tabelvoorvoegsel:</b>voorvoegsel voor alle tabelnamen (verplicht, 2 tekens maximum)';
+$string['databasesettingssub_odbc_mssql'] = '<b>Type:</b> SQL*Server (over ODBC)<br />
+<b><font color=\"red\">Experimental! (not for use in production)</font></b><br />
+<b>Host:</b>De naam van de DSN die je geeft in het ODBC controlescherm<br />
+<b>Naam:</b> database naam vb Moodle<br />
+<b>Gebruiker:</b> de gebruikersnaam voor jouw database<br />
+<b>Wachtwoord:</b> het wachtwoord voor je databank<br />
+<b>Tabelvoorvoegsel:</b>voorvoegsel voor alle tabelnamen (verplicht)';
+$string['databasesettingssub_postgres7'] = '<b>Type:</b> PostgreSQL<br />
+<b>Host:</b> vb localhost of db.isp.com<br />
+<b>Naam:</b> database naam vb Moodle<br />
+<b>Gebruiker:</b> de gebruikersnaam voor jouw database<br />
+<b>Wachtwoord:</b> het wachtwoord voor je databank<br />
+<b>Tabelvoorvoegsel:</b>voorvoegsel voor alle tabelnamen (verplicht)';
 $string['dataroot'] = 'Gegevens';
 $string['datarooterror'] = 'De \'data-map\' die je opgaf kon niet gevonden of gemaakt worden. Verbeter ofwel het pad of maak die map manueel.';
 $string['dbconnectionerror'] = 'We konden geen verbinding maken met de databank die je opgegeven hebt. Controleer je databankinstellingen';
@@ -58,6 +89,9 @@ $string['dbhost'] = 'Hostserver';
 $string['dbprefix'] = 'Tabelvoorvoegsel';
 $string['dbtype'] = 'Type';
 $string['dbwrongencoding'] = 'De gekozen databank loopt niet onder Unicode (UTF8), maar onder een ongeschikte encodering ($a). Je kunt beter een Unicode (UTF8) databank gebruiken. Als je wil, kun je deze test overslaan door hieronder op \"Negeer DB-encodingtest\" te klikken, maar je zou hierdoor wel problemen kunnen krijgen.';
+$string['dbwronghostserver'] = 'Je moet de \"Host\" regels volgen zoals hierboven uitgelegd';
+$string['dbwrongnlslang'] = 'De NLS_LANG omgevingsvariable van je webserver moet de AL32UTF8 tekenset gebruiken. Zie ook je PHP documentatie over hoe OCI8 correct te configureren.';
+$string['dbwrongprefix'] = 'Je moet de \"Tabel voorvoegselregels\" volgen zoals hierboven beschreven';
 $string['directorysettingshead'] = 'Bevestig de locaties voor dese Moodle-installatie';
 $string['directorysettingssub'] = '<b>Webadres:</b>
 Geef hier het volledig webadres (URL) langswaar moodle zall bekeken worden. Als je website via verschillende URL\'s toegankelijk is, kies dan diegene die je leerlingen normaal zullen gebruiken. Opgelet, geen schuine streep achteraan.
@@ -73,7 +107,7 @@ $string['dirroot'] = 'Moodle-map';
 $string['dirrooterror'] = 'De instelling voor \'Moodle-map\' was niet juist - we kunnen daar geen Moodle-installatie vinden. Onderstaande waarde is gereset.';
 $string['download'] = 'Download';
 $string['downloadedfilecheckfailed'] = 'Controle van het gedownloade bestand mislukt';
-$string['downloadlanguagebutton'] = 'Download het &quot;$a&quot; taalpakket';
+$string['downloadlanguagebutton'] = 'Download het \"$a\" taalpakket';
 $string['downloadlanguagehead'] = 'Download taalpakket';
 $string['downloadlanguagenotneeded'] = 'Je kunt het installatieproces verder laten lopen met het standaard taalpakket, \"$a\".';
 $string['downloadlanguagesub'] = 'Je kun nu een taalpakket downloaden en de installatie in die taal verder zetten.<br /><br />Als je dit taalpakket niet kunt downloaden, dan zal de installatie in het Engels verder gaan. (Als de installatie is afgewerkt, krijg je terug de mogelijkheid om nieuwe taalpakketten te downloaden en te installeren)';
@@ -123,19 +157,28 @@ Hierdoor kan Moodle zelf zijn geheugenlimiet instellen.
 </ol>';
 $string['missingrequiredfield'] = 'Vereist veld ontbreekt';
 $string['moodledocslink'] = 'Hulp uit Moodle Docs voor deze pagina';
+$string['mssql'] = 'SQL*Server (mssql)';
+$string['mssqlextensionisnotpresentinphp'] = 'PHP is niet juist geconfigureerd met de MSSQL-extentie en kan niet communiceren met SQL*Server. Controleer je php.ini-bestand of hercompileer PHP';
+$string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'Als je site echter UITSLUITEND iso-8859-1 (latin) talen gebruikt, dan kun je MySQL 4.1.12 (of hoger) blijven gebruiken.';
 $string['mysql416required'] = 'MySQL 4.1.16 is de minimum versie die nodig is voor Moodle 1.6 om te kunnen garanderen dat alle gegevens naar UTF-8 geconverteerd zullen worden.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP is niet goed geconfigureerd met de MySQL-extentie om met MySQL te communiceren. Controleer je php.ini-bestand of hercompileer PHP.';
 $string['name'] = 'Naam';
 $string['next'] = 'Volgende';
+$string['oci8po'] = 'Oracle (oci8po)';
+$string['ociextensionisnotpresentinphp'] = 'PHP is niet juist geconfigureerd met de OCI8-extentie en kan niet communiceren met Oracle. Controleer je php.ini-bestand of hercompileer PHP.';
+$string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
+$string['odbcextensionisnotpresentinphp'] = 'PHP is niet juist geïnstalleerd met de ODBC-extentie en kan niet communiceren met SQL*Server. Controleer je php.ini-bestand of hercompileer PHP.';
 $string['ok'] = 'OK';
 $string['pass'] = 'OK';
 $string['password'] = 'Wachtwoord';
+$string['pgsqlextensionisnotpresentinphp'] = 'PHP is niet juist geïnstalleerd met de PGSQL-extentie en kan niet communiceren met PostgreSQL. Controleer je php.ini-bestand of hercompileer PHP.';
 $string['php50restricted'] = 'PHP 5.0.x heeft een heel aantal bekende problemen. Upgrade naar 5.1.x of downgrade naar 4.3.x of 4.4.x';
 $string['phpversion'] = 'PHP-versie';
 $string['phpversionerror'] = 'PHP-versie moet minstens 4.1.0 zijn';
 $string['phpversionhelp'] = '<p>Moodle heeft minstens PHP-versie 4.1.0 nodig.</p> <p>De huidige versie op je server is $a</p>
 <p>Je moet PHP upgraden of verhuizen naar een host met een nieuwere versie van PHP!</p>';
+$string['postgres7'] = 'PostgreSQL (postgres 7)';
 $string['previous'] = 'Vorige';
 $string['remotedownloadnotallowed'] = 'Het downloaden van componenten naar je server is niet toegelaten (allow_url_fopen is uitgeschakeld)<br /><br />Je moet het <a href=\"$a->url\">$a->url</a>bestand manueel downloaden en het kopiëren naar \"$a->dest\" op je server en het daar unzippen.';
 $string['report'] = 'Rapport';
@@ -150,7 +193,7 @@ $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Nederlands';
 $string['user'] = 'Gebruiker';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
-$string['welcomep20'] = 'Je krijgt deze pagina te zien omdat je met succes het <strong>$a->packname $a->packversion</strong> packet op je computer gezet en gestart hebt. Proficiat! 	';
+$string['welcomep20'] = 'Je krijgt deze pagina te zien omdat je met succes het <strong>$a->packname $a->packversion</strong> packet op je computer gezet en gestart hebt. Proficiat!';
 $string['welcomep30'] = 'Deze uitgave van <strong>$a->installername</strong> bevat de software die nodig is om een omgeving te creëren waarin <strong>Moodle</strong> zal werken, namelijk:';
 $string['welcomep40'] = 'Dit pakket bevat ook <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong>.';
 $string['welcomep50'] = 'Het gebruik van alle programma\'s in dit pakket wordt geregeld door hun respectievelijke licenties. Het complete <strong>$a->installername</strong> pakket is
