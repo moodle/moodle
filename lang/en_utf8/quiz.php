@@ -97,6 +97,7 @@ $string['copyingfrom'] = 'Creating a copy of the question \'$a\'';
 $string['copyingquestion'] = 'Copying a question';
 $string['correct'] = 'Correct';
 $string['correctanswer'] = 'Correct answer';
+$string['correctansweris'] = 'Correct answer: $a';
 $string['correctanswerformula'] = 'Correct Answer Formula';
 $string['correctanswerlength'] = 'Significant Figures';
 $string['correctanswers'] = 'Correct answers';
