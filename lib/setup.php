@@ -119,6 +119,10 @@ global $HTTPSPAGEREQUIRED;
 
     $db = &ADONewConnection($CFG->dbtype);
 
+    // See MDL-6760 for why this is necessary. In Moodle 1.8, once we start using NULLs properly,
+    // we probably want to change this value to ''.
+    $db->null2null = 'A long random string that will never, ever match something we want to insert into the database, I hope. \'';
+
     error_reporting(0);  // Hide errors
 
     if (!isset($CFG->dbpersist) or !empty($CFG->dbpersist)) {    // Use persistent connection (default)
