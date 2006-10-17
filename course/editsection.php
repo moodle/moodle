@@ -57,7 +57,7 @@
         $strsummaryof = get_string('summaryof', '', " $sectionname $form->section");
     }
 
-    print_header_simple($stredit, '', $stredit);
+    print_header_simple($stredit, '', $stredit, 'theform.summary' );
 
     print_heading($strsummaryof);
     print_simple_box_start('center');
