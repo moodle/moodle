@@ -11,7 +11,7 @@ class course_request_form extends moodleform {
         $mform->addRule('shortname',get_string('missingfullname'),'required', null, 'client');
         $mform->setType('shortname', PARAM_TEXT);
 
-        $mform->addElement('textarea','summary',get_string("summary"),array('rows'=>'15','cols'=>'50'));
+        $mform->addElement('htmleditor','summary',get_string("summary"),array('rows'=>'15','cols'=>'50'));
         $mform->addRule('summary',get_string('missingsummary'),'required', null, 'client');
         $mform->setType('summary', PARAM_TEXT);
 
@@ -22,7 +22,7 @@ class course_request_form extends moodleform {
         $mform->addElement('text','password',get_string("enrolmentkey"),'size="25"');
         $mform->setType('password', PARAM_RAW);
 
-        
+
         $mform->addElement('submit','',get_string("savechanges"));
     }
 
@@ -44,14 +44,13 @@ class course_request_form extends moodleform {
         }
 
         if (!empty($foundcourses)) {
-            
+
             if (!empty($foundcourses)) {
                 foreach ($foundcourses as $foundcourse) {
                     if (isset($foundcourse->requester) && $foundcourse->requester) {
                         $pending = 1;
                         $foundcoursenames[] = $foundcourse->fullname.' [*]';
-                    }
-                    else {
+                    } else {
                         $foundcoursenames[] = $foundcourse->fullname;
                     }
                 }
