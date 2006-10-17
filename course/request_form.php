@@ -13,7 +13,7 @@ class course_request_form extends moodleform {
 
         $mform->addElement('htmleditor','summary',get_string("summary"),array('rows'=>'15','cols'=>'50'));
         $mform->addRule('summary',get_string('missingsummary'),'required', null, 'client');
-        $mform->setType('summary', PARAM_TEXT);
+        $mform->setType('summary', PARAM_RAW);
 
         $mform->addElement('textarea','reason',get_string("courserequestreason"),array('rows'=>'15','cols'=>'50'));
         $mform->addRule('reason',get_string('missingreqreason'),'required', null, 'client');
