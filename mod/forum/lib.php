@@ -2956,11 +2956,6 @@ function forum_user_can_view_post($post, $course, $cm, $forum, $discussion, $use
     if (!has_capability('mod/forum:viewdiscussion', $modcontext)) {
         return false;
     }
-    
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-    if (!has_capability('moodle/course:view', $coursecontext)) {
-        return false;
-    }
 
 /// If it's a grouped discussion, make sure the user is a member
     if ($discussion->groupid > 0) {
