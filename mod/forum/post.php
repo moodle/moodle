@@ -311,6 +311,9 @@
             }
         }
 
+        $post->subject = stripslashes_safe($post->subject);
+        $post->message = stripslashes_safe($post->message);
+
     } else if (!empty($forum)) {      // User is starting a new discussion in a forum
 
         $SESSION->fromurl = $_SERVER["HTTP_REFERER"];
