@@ -1,13 +1,13 @@
 <?php // $Id$
 /**
-* Allows a teacher to create, edit and delete categories
-*
-* @version $Id$
-* @author Martin Dougiamas and many others.
-*         {@link http://moodle.org}
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package question
-*/
+ * Allows a teacher to create, edit and delete categories
+ *
+ * @version $Id$
+ * @author Martin Dougiamas and many others.
+ *         {@link http://moodle.org}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package question
+ *//** */
 
     require_once("../config.php");
     require_once("editlib.php");
@@ -43,10 +43,7 @@
     $qcobject = new question_category_object();
     $qcobject->set_course($course);
 
-    //==========
-    // PAGE HEADER
-    //==========
-
+    // Page header
     // TODO: generalise this to any activity
     if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
         $strupdatemodule = isteacheredit($course->id)
@@ -68,10 +65,7 @@
         include('tabs.php');
     }
 
-    //==========
-    // ACTIONS
-    //==========
-
+    // Process actions.
     if (isset($_REQUEST['sesskey']) and confirm_sesskey()) { // sesskey must be ok
         if (!empty($param->delete) and empty($param->cancel)) {
             if (!empty($param->confirm)) {
@@ -109,16 +103,8 @@
         }
     }
 
-    //==========
-    // DISPLAY
-    //==========
-
     // display the user interface
     $qcobject->display_user_interface($param->page);
 
     print_footer($course);
-
-
-
-
 ?>
