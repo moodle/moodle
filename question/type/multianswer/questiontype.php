@@ -224,8 +224,7 @@ class embedded_cloze_qtype extends default_questiontype {
 
             $inputname = $nameprefix.$positionkey;
             $response = isset($state->responses[$positionkey])
-                    ? $state->responses[$positionkey] : null;
-
+                    ? stripslashes($state->responses[$positionkey]) : null;
 
             // Determine feedback popup if any
             $popup = '';
