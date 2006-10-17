@@ -142,7 +142,8 @@ class test extends XMLDBAction {
             $table->addFieldInfo('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '30', null, null, null, null, null, 'Moodle');
             $table->addFieldInfo('secondname', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, null);
-            $table->addFieldInfo('intro', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('intro', XMLDB_TYPE_TEXT, 'medium', null, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('avatar', XMLDB_TYPE_BINARY, 'medium', null, null, null, null, null, null);
             $table->addFieldInfo('grade', XMLDB_TYPE_NUMBER, '20,10', null, null, null, null, null, '');
             $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
         /// Get SQL code and execute it
@@ -723,6 +724,7 @@ class test extends XMLDBAction {
 
     /// 41th test. Getting the PK sequence name for one table
         if ($test->status) {
+            $test = new stdClass;
             $table->setName('newnameforthetable');
             $test->sql =  array(find_sequence_name($table));
             $test->status = find_sequence_name($table);
@@ -735,7 +737,143 @@ class test extends XMLDBAction {
             $tests['find sequence name'] = $test;
         }
 
+    /// 42th test. Inserting TEXT contents
+        $textlib = textlib_get_instance();
+        if ($test->status) {
+            $test = new stdClass;
+            $test->status = false;
+            $test->sql = array();
+            $basetext = '日本語 • Русский • Deutsch • English • Español • Français • Italiano • Nederlands • Polski • Português • Svenska • العربية • فارسی 한국어 • עברית • ไทย中文  Ελληνικά • Български • Српски • Українська • Bosanski • Català • Česky • Dansk • Eesti • Simple English • Esperanto • Euskara • Galego • Hrvatski • Ido • Bahasa Indonesia • Íslenska • Lëtzebuergesch • Lietuvių • Magyar • Bahasa Melayu اردو • ئۇيغۇرچه • हिन्दी • नेपाल भाषा मराठी • தமிழ் Հայերեն • Беларуская • Чăваш • Ирон æвзаг • Македонски • Сибирской говор • Afrikaans • Aragonés • Arpitan • Asturianu • Kreyòl Ayisyen • Azərbaycan • Bân-lâm-gú • Basa Banyumasan • Brezhoneg • Corsu • Cymraeg • Deitsch • Føroyskt • Frysk • Furlan • Gaeilge • Gàidhlig • Ilokano • Interlingua • Basa Jawa • Kapampangan • Kernewek • Kurdî  كوردی • Ladino  לאדינו • Latina • Latviešu • Limburgs • Lumbaart • Nedersaksisch • Nouormand • Occitan • O‘zbek • Piemontèis • Plattdüütsch • Ripoarisch • Sámegiella • Scots • Shqip • Sicilianu • Sinugboanon • Srpskohrvatski / Српскохрватски • Basa Sunda • Kiswahili • Tagalog • Tatarça • Walon • Winaray  Авар • Башҡорт • Кыргызча  Монгол • Қазақша • Тоҷикӣ • Удмурт • Armãneashce • Bamanankan • Eald Englisc • Gaelg • Interlingue • Kaszëbsczi • Kongo • Ligure • Lingála • lojban • Malagasy • Malti • Māori • Nāhuatl • Ekakairũ Naoero • Novial • Pangasinán • Tok Pisin • Romani / रोमानी • Rumantsch • Runa Simi • Sardu • Tetun • Türkmen / تركمن / Туркмен • Vèneto • Volapük • Võro • West-Vlaoms • Wollof • Zazaki • Žemaitėška';
+        /// Create one big text (1.500.000 chars)
+            $fulltext = '';
+            for ($i=0; $i<1000; $i++) { //1500 * 1000 chars
+                $fulltext .= $basetext;
+            }
 
+        /// Build the record to insert
+            $rec->intro = addslashes($fulltext);
+            $rec->name = 'texttest';
+        /// Calculate its length
+            $textlen = $textlib->strlen($fulltext, current_charset());
+            if ($rec->id = insert_record('newnameforthetable', $rec)) {
+                if ($new = get_record('newnameforthetable', 'id', $rec->id)) {
+                    delete_records('newnameforthetable', 'id', $new->id);
+                    $newtextlen = $textlib->strlen($new->intro, current_charset());
+                    if ($rec->intro === $new->intro) {
+                        $test->sql = array($newtextlen . ' cc. (text) sent and received ok');
+                        $test->status = true;
+                    } else {
+                        $test->error = $db->ErrorMsg();
+                        $test->sql = array($newtextlen . ' cc. (text) transfer failed. Data changed!');
+                        $test->status = false;
+                    }
+                } else {
+                    $test->error = $db->ErrorMsg();
+                }
+            } else {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['insert record '. $textlen . ' cc. (text)'] = $test;
+        }
+
+    /// 43th test. Inserting BINARY contents
+        if ($test->status) {
+            $test = new stdClass;
+            $test->status = false;
+        /// Build the record to insert
+            $rec->avatar = addslashes($fulltext);
+            $rec->name = 'textbinary';
+        /// Calculate its length
+            $textlen = strlen($fulltext);
+            if ($rec->id = insert_record('newnameforthetable', $rec)) {
+                if ($new = get_record('newnameforthetable', 'id', $rec->id)) {
+                    $newtextlen = strlen($new->avatar);
+                    if ($rec->avatar === $new->avatar) {
+                        $test->sql = array($newtextlen . ' bytes (binary) sent and received ok');
+                        $test->status = true;
+                    } else {
+                        $test->error = $db->ErrorMsg();
+                        $test->sql = array($newtextlen . ' bytes (binary) transfer failed. Data changed!');
+                        $test->status = false;
+                    }
+                } else {
+                    $test->error = $db->ErrorMsg();
+                }
+            } else {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['insert record '. $textlen . ' bytes (binary)'] = $test;
+        }
+
+    /// 44th test. update_record with TEXT and BINARY contents
+        if ($test->status) {
+            $test = new stdClass;
+            $test->status = false;
+            $test->sql = array();
+        /// Build the record to insert
+            $rec->intro = addslashes($basetext);
+            $rec->avatar = addslashes($basetext);
+            $rec->name = 'updatelobs';
+        /// Calculate its length
+            $textlen = $textlib->strlen($basetext, current_charset());
+            $imglen = strlen($basetext);
+            if (update_record('newnameforthetable', $rec)) {
+                if ($new = get_record('newnameforthetable', 'id', $rec->id)) {
+                    $newtextlen = $textlib->strlen($new->intro, current_charset());
+                    $newimglen = strlen($new->avatar);
+                    if ($rec->avatar === $new->avatar && $rec->intro === $new->intro) {
+                        $test->sql = array($newtextlen . ' cc. (text) sent and received ok',
+                                           $newimglen . ' bytes (binary) sent and received ok');
+                        $test->status = true;
+                    } else {
+                        if ($rec->avatar !== $new->avatar) {
+                            $test->error = $db->ErrorMsg();
+                            $test->sql = array($newimglen . ' bytes (binary) transfer failed. Data changed!');
+                            $test->status = false;
+                        } else {
+                            $test->error = $db->ErrorMsg();
+                            $test->sql = array($newtextlen . ' cc. (text) transfer failed. Data changed!');
+                            $test->status = false;
+                        }
+                    }
+                } else {
+                    $test->error = $db->ErrorMsg();
+                }
+            } else {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['update record '. $textlen . ' cc. (text) and ' . $imglen . ' bytes (binary)'] = $test;
+        }
+
+    /// 45th test. set_field with BINARY contents
+        if ($test->status) {
+            $test = new stdClass;
+            $test->status = false;
+            $test->sql = array();
+        /// Build the record to insert
+            $rec->avatar = addslashes($fulltext);
+            $rec->name = 'updatelobs';
+        /// Calculate its length
+            $textlen = strlen($fulltext);
+            if (set_field('newnameforthetable', 'avatar', $rec->avatar, 'name', $rec->name)) {
+                if ($new = get_record('newnameforthetable', 'id', $rec->id)) {
+                    $newtextlen = strlen($new->avatar);
+                    if ($rec->avatar === $new->avatar) {
+                        $test->sql = array($newtextlen . ' bytes (binary) sent and received ok');
+                        $test->status = true;
+                    } else {
+                        $test->error = $db->ErrorMsg();
+                        $test->sql = array($newtextlen . ' bytes (binary) transfer failed. Data changed!');
+                        $test->status = false;
+                    }
+                } else {
+                    $test->error = $db->ErrorMsg();
+                }
+            } else {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['set field '. $textlen . ' bytes (binary)'] = $test;
+        }
 
     /// TODO: Check here values of the inserted records to see that everything ha the correct value
 
