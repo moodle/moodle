@@ -292,7 +292,10 @@ class qformat_gift extends qformat_default {
                     }
                     $question->fraction[$key] = $answer_weight;
                     $question->feedback[$key] = $this->commentparser($answer); // commentparser also removes comment from $answer
-                    $question->answer[$key]   = addslashes($this->escapedchar_post($answer));    
+                    $question->answer[$key]   = addslashes($this->escapedchar_post($answer));
+                    $question->correctfeedback = '';
+                    $question->partiallycorrectfeedback = '';
+                    $question->incorrectfeedback = '';
                 }  // end foreach answer
     
                 //$question->defaultgrade = 1;

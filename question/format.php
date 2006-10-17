@@ -181,6 +181,7 @@ class qformat_default {
         $question->image = "";
         $question->usecase = 0;
         $question->multiplier = array();
+        $question->generalfeedback = '';
 
         return $question;
     }
