@@ -7,6 +7,11 @@
 function print_require_js($list) {
     global $CFG;
 
+    if (!check_browser_version('MSIE', 6.0) && !check_browser_version('Firefox', '1.5')) {
+        // We still have issues with YUI in other browsers.
+        return;
+    }
+
     //list of shortname to filepath translations
     $translatelist = array(
             'yui_yahoo' => '/lib/yui/yahoo/yahoo.js',
@@ -34,7 +39,7 @@ function print_require_js($list) {
 /**
  * Used to create view of document to be passed to javascript on pageload.
  */
-class jsportal{
+class jsportal {
 
     var $currentblocksection = null;
     var $blocks = array();
@@ -45,18 +50,17 @@ class jsportal{
     /**
      * Takes id of block and adds it
      */
-    function block_add($id, $hidden=false){
+    function block_add($id, $hidden=false ){
         $hidden_binary = 0;
 
         if ($hidden) {
             $hidden_binary = 1;
         }
-
         $this->blocks[count($this->blocks)] = array($this->currentblocksection, $id, $hidden_binary);
     }
 
 
-    function print_javascript($id){
+    function print_javascript($id) {
         global $CFG;
 
         $blocksoutput = $output = '';
@@ -69,14 +73,14 @@ class jsportal{
 
         $output .= "<script language='javascript'>\n";
         $output .= " 	main.portal.id = ".$id.";\n";
-        $output .= "     main.portal.blocks = new Array(".$blocksoutput.");\n";        
-        $output .= "     main.portal.strings['wwwroot']='".$CFG->wwwroot."';\n";        
-        $output .= "     main.portal.strings['update']='".get_string('update')."';\n";
-        $output .= "     main.portal.strings['deletecheck']='".get_string('deletecheck','','_var_')."';\n"; 
-        $output .= "     main.portal.strings['resource']='".get_string('resource')."';\n"; 
-        $output .= "     main.portal.strings['activity']='".get_string('activity')."';\n";         
-        $output .= "     onload.load();\n";
-        $output .= "     main.process_blocks();\n";
+        $output .= "    main.portal.blocks = new Array(".$blocksoutput.");\n";        
+        $output .= "    main.portal.strings['wwwroot']='".$CFG->wwwroot."';\n";        
+        $output .= "    main.portal.strings['update']='".get_string('update')."';\n";
+        $output .= "    main.portal.strings['deletecheck']='".get_string('deletecheck','','_var_')."';\n"; 
+        $output .= "    main.portal.strings['resource']='".get_string('resource')."';\n"; 
+        $output .= "    main.portal.strings['activity']='".get_string('activity')."';\n";         
+        $output .= "    onload.load();\n";
+        $output .= "    main.process_blocks();\n";
         $output .= "</script>";
         echo $output;
     }
