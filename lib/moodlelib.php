@@ -2917,7 +2917,7 @@ function reset_course_userdata($data, $showfeedback=true) {
     // deletes all role assignments, and local override, these have no courseid in table and needs separate process
     $context = get_context_instance(CONTEXT_COURSE, $data->courseid);
     delete_records('role_assignments', 'contextid', $context->id);
-    delete_records('role_role_capabilities', 'contextid', $context->id);
+    delete_records('role_capabilities', 'contextid', $context->id);
    
     return $result;
 }
