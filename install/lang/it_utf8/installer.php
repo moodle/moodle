@@ -102,6 +102,7 @@ $string['mysqlextensionisnotpresentinphp'] = 'Il PHP non è stato correttamente 
 $string['name'] = 'Nome';
 $string['next'] = 'Prossimo';
 $string['ok'] = 'OK';
+$string['parentlanguage'] = '<< TRADUTTORI: Se la vostra lingua ha una \"Parent language\" che Moodle deve usare quando mancano stringhe nel vostro language pack, allora dovete specificare qui il suo codice. Se il campo viene lasciato vuoto verrà usato l\'inglese. Esempio: it>>';
 $string['pass'] = 'Passato';
 $string['password'] = 'Password';
 $string['php50restricted'] = 'PHP 5.0.x ha diversi problemi conosciuti, si prega di aggiornare alla versione 5.1.x o tornare alle versioni 4.3.x o 4.4.x';
@@ -112,7 +113,8 @@ $string['phpversionhelp'] = '<p>Moodle richiede come minimo la versione 4.1.0 de
 <p>È necessario aggiornare il PHP o spostarsi su un server con una versione di PHP più recente!</p>';
 $string['previous'] = 'Precedente';
 $string['remotedownloadnotallowed'] = 'Non è permesso scaricare i componenti su vostro server (allow_url_fopen è disabilitato). <br /><br /> È necessario scaricare manualmente il file <a href=\"$a->url\">$a->url</a>, copiarlo in \"$a->dest\" sul vostro server e scompattarlo la.';
-$string['report'] = 'Risultato';
+$string['report'] = 'Rapporto';
+$string['restricted'] = 'Ridotto';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle può avere problemi con il safemode impostato a on';
 $string['sessionautostart'] = 'Session Auto Start';
