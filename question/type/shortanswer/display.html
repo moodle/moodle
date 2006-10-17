@@ -24,6 +24,6 @@
 
 <?php if ($correctanswer) { ?>
     <div class="correctness correct">
-    <?php echo get_string('correctanswer', 'quiz').': '. $correctanswer; ?>
+    <?php print_string('correctansweris', 'quiz', s($correctanswer)); ?>
   </div>
 <?php } ?>
