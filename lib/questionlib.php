@@ -1191,33 +1191,39 @@ function question_process_comment($question, &$state, &$attempt, $comment, $grad
     if (!set_field('question_sessions', 'manualcomment', $comment, 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
         error("Cannot save comment");
     }
-    // If the teacher has changed the grade then update the attempt and the state
-    // The modified attempt is stored to the database, the state not yet but the
-    // $state->changed flag is set 
+
+    // Update the attempt if the score has changed.
     if (abs($state->last_graded->grade - $grade) > 0.002) {
-        // the teacher has changed the grade
         $attempt->sumgrades = $attempt->sumgrades - $state->last_graded->grade + $grade;
         $attempt->timemodified = time();
         if (!update_record('quiz_attempts', $attempt)) {
             error('Failed to save the current quiz attempt!');
         }
+    }
 
+    // Update the state if either the score has changed, or this is the first
+    // manual grade event.
+    // We don't need to store the modified state in the database, we just need
+    // to set the $state->changed flag.
+    if (abs($state->last_graded->grade - $grade) > 0.002 ||
+            $state->last_graded->event != QUESTION_EVENTMANUALGRADE) {
         $state->raw_grade = $grade;
         $state->grade = $grade;
         $state->penalty = 0;
         $state->timestamp = time();
         $state->seq_number++;
-        // We need to indicate that the state has changed in order for it to be saved
-        $state->changed = 1;
-        // We want to update existing state (rather than creating new one) if it
-        // was itself created by a manual grading event
-        $state->update = ($state->event == QUESTION_EVENTMANUALGRADE) ? 1 : 0;
         $state->event = QUESTION_EVENTMANUALGRADE;
+
+        // We want to update existing state (rather than creating new one) if it
+        // was itself created by a manual grading event.
+        $state->update = ($state->event == QUESTION_EVENTMANUALGRADE) ? 1 : 0;
 
         // Update the last graded state (don't simplify!)
         unset($state->last_graded);
         $state->last_graded = clone($state);
-        unset($state->last_graded->changed);
+
+        // We need to indicate that the state has changed in order for it to be saved.
+        $state->changed = 1;
     }
 
 }
