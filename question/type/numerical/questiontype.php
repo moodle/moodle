@@ -34,7 +34,8 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                                 "FROM {$CFG->prefix}question_answers a, " .
                                 "     {$CFG->prefix}question_numerical n " .
                                 "WHERE a.question = $question->id " .
-                                "AND   a.id = n.answer;")) {
+                                "    AND   a.id = n.answer " .
+                                "ORDER BY a.id ASC")) {
             notify('Error: Missing question answer!');
             return false;
         }
