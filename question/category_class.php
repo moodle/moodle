@@ -1,14 +1,14 @@
 <?php // $Id$
 /**
-* Class question_category_object
-*
-* Used for handling changes to the question categories
-*
-* @version $Id$
-* @author Martin Dougiamas and many others. {@link http://moodle.org}
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package question
-*/
+ * Class question_category_object
+ *
+ * Used for handling changes to the question categories
+ *
+ * @version $Id$
+ * @author Martin Dougiamas and many others. {@link http://moodle.org}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package question
+ */
 
 // number of categories to display on page
 define( "PAGE_LENGTH",25 );
@@ -27,12 +27,11 @@ class question_category_object {
     var $course;
     var $topcount;
 
-/**
-* Constructor
-*
-* Gets necessary strings and sets relevant path information
-*
-*/
+    /**
+     * Constructor
+     *
+     * Gets necessary strings and sets relevant path information
+     */
     function question_category_object() {
         global $CFG;
 
@@ -63,21 +62,21 @@ class question_category_object {
 
     }
 
-/**
-* Sets the course for this object
-*
-* @param object course
-*/
+    /**
+     * Sets the course for this object
+     *
+     * @param object course
+     */
     function set_course($course) {
         $this->course = $course;
     }
 
-/**
-* Displays the user interface
-*
-* @param object modform
-* @param int $page page number to display (0=don't paginate)
-*/
+    /**
+     * Displays the user interface
+     *
+     * @param object modform
+     * @param int $page page number to display (0=don't paginate)
+     */
     function display_user_interface($page=0) {
         $this->initialize();
 
@@ -97,10 +96,9 @@ class question_category_object {
     }
 
 
-/**
-* Initializes this classes general category-related variables
-*
-*/
+    /**
+     * Initializes this classes general category-related variables
+     */
     function initialize() {
 
         /// Get the existing categories
@@ -127,9 +125,9 @@ class question_category_object {
         $this->pagecount = (integer) ceil( $count / PAGE_LENGTH );
     }
 
-/**
- * display list of page numbers for navigation
- */
+    /**
+     * display list of page numbers for navigation
+     */
     function display_page_numbers( $page=0 ) {
         global $USER;
 
@@ -146,10 +144,9 @@ class question_category_object {
         echo "</div>";
     }
 
-/**
-* Outputs a table to allow entry of a new category
-*
-*/
+    /**
+     * Outputs a table to allow entry of a new category
+     */
     function output_new_table() {
         global $USER;
         $publishoptions[0] = get_string("no");
@@ -197,14 +194,14 @@ class question_category_object {
         echo '</form>';
     }
 
-/**
-* Outputs a table to allow editing/rearranging of existing categories
-*
-* $this->initialize() must have already been called
-*
-* @param object course
-* @param int $page page to display (0=do not paginate)
-*/
+    /**
+     * Outputs a table to allow editing/rearranging of existing categories
+     *
+     * $this->initialize() must have already been called
+     *
+     * @param object course
+     * @param int $page page to display (0=do not paginate)
+     */
     function output_edit_table($page=0) {
         $this->edittable->head  = array ($this->str->category, $this->str->categoryinfo, $this->str->questions, $this->str->publish,
                                     $this->str->delete, $this->str->order, $this->str->parent);
@@ -226,13 +223,14 @@ class question_category_object {
         $this->build_edit_table_body($this->categories, $page, $firstcat, $lastcat);
         print_table($this->edittable);
     }
-/**
-* Recursively builds up the edit-categories table body
-*
-* @param array categories contains category objects in  a tree representation
-* @param mixed courses String with shortname of course | array containing courseid=>shortname
-* @param int depth controls the indenting
-*/
+    
+    /**
+     * Recursively builds up the edit-categories table body
+     *
+     * @param array categories contains category objects in  a tree representation
+     * @param mixed courses String with shortname of course | array containing courseid=>shortname
+     * @param int depth controls the indenting
+     */
     function build_edit_table_body($categories, $page = 0, $firstcat = 1, $lastcat = 99999, $depth = 0) {
         $countcats = count($categories);
         $count = 0;
@@ -262,12 +260,12 @@ class question_category_object {
         }
     }
 
-/**
-* gets all the courseids for the given categories
-*
-* @param array categories contains category objects in  a tree representation
-* @return array courseids flat array in form categoryid=>courseid
-*/
+    /**
+     * gets all the courseids for the given categories
+     *
+     * @param array categories contains category objects in  a tree representation
+     * @return array courseids flat array in form categoryid=>courseid
+     */
     function get_course_ids($categories) {
         $courseids = array();
         foreach ($categories as $key=>$cat) {
@@ -279,16 +277,16 @@ class question_category_object {
         return $courseids;
     }
 
-/**
-* Constructs each row of the edit-categories table
-*
-* @param object category
-* @param int depth controls the indenting
-* @param string shortname short name of the course
-* @param boolean up can it be moved up?
-* @param boolean down can it be moved down?
-* @param int page page number
-*/
+    /**
+     * Constructs each row of the edit-categories table
+     *
+     * @param object category
+     * @param int depth controls the indenting
+     * @param string shortname short name of the course
+     * @param boolean up can it be moved up?
+     * @param boolean down can it be moved down?
+     * @param int page page number
+     */
     function edit_question_category_row($category, $depth, $up = false, $down = false, $page = 0) {
         global $USER;
         $fill = str_repeat($this->tab, $depth);
@@ -393,13 +391,12 @@ class question_category_object {
         }
     }
 
-
-/**
-* Outputs a table to allow editing of an existing category
-*
-* @param object category
-* @param int page current page
-*/
+    /**
+     * Outputs a table to allow editing of an existing category
+     *
+     * @param object category
+     * @param int page current page
+     */
     function output_edit_single_table($category, $page=1) {
         global $USER;
         $publishoptions[0] = get_string("no");
@@ -451,16 +448,15 @@ class question_category_object {
         echo '</form></p>';
     }
 
-
-/**
-* Creates an array of "full-path" category strings
-* Structure:
-*    key => string
-*    where key is the category id, and string contains the name of all ancestors as well as the particular category name
-*   E.g. '123'=>'Language / English / Grammar / Modal Verbs"
-*
-* @param array $categories an array containing categories arranged in a tree structure
-*/
+    /**
+     * Creates an array of "full-path" category strings
+     * Structure:
+     *    key => string
+     *    where key is the category id, and string contains the name of all ancestors as well as the particular category name
+     *   E.g. '123'=>'Language / English / Grammar / Modal Verbs"
+     *
+     * @param array $categories an array containing categories arranged in a tree structure
+     */
     function expanded_category_strings($categories, $parent=null) {
         $prefix = is_null($parent) ? '' : "$parent / ";
         $categorystrings = array();
@@ -474,16 +470,15 @@ class question_category_object {
         return $categorystrings;
     }
 
-
-/**
-* Arranges the categories into a hierarchical tree
-*
-* If a category has children, it's "children" property holds an array of children
-* The questioncount for each category is also calculated
-*
-* @param    array records a flat list of the categories
-* @return   array categorytree a hierarchical list of the categories
-*/
+    /**
+     * Arranges the categories into a hierarchical tree
+     *
+     * If a category has children, it's "children" property holds an array of children
+     * The questioncount for each category is also calculated
+     *
+     * @param    array records a flat list of the categories
+     * @return   array categorytree a hierarchical list of the categories
+     */
     function arrange_categories($records) {
     //TODO: get the question count for all records with one sql statement: select category, count(*) from question group by category
         $levels = array();
@@ -525,16 +520,15 @@ class question_category_object {
         return $categorytree;
     }
 
-
-/**
-* Sets the viable parents
-*
-*  Viable parents are any except for the category itself, or any of it's descendants
-*  The parentstrings parameter is passed by reference and changed by this function.
-*
-* @param    array parentstrings a list of parentstrings
-* @param   object category
-*/
+    /**
+     * Sets the viable parents
+     *
+     *  Viable parents are any except for the category itself, or any of it's descendants
+     *  The parentstrings parameter is passed by reference and changed by this function.
+     *
+     * @param    array parentstrings a list of parentstrings
+     * @param   object category
+     */
     function set_viable_parents(&$parentstrings, $category) {
 
         unset($parentstrings[$category->id]);
@@ -545,13 +539,13 @@ class question_category_object {
         }
     }
 
-/**
-* Gets question categories
-*
-* @param    int parent - if given, restrict records to those with this parent id.
-* @param    string sort - [[sortfield [,sortfield]] {ASC|DESC}]
-* @return   array categories
-*/
+    /**
+     * Gets question categories
+     *
+     * @param    int parent - if given, restrict records to those with this parent id.
+     * @param    string sort - [[sortfield [,sortfield]] {ASC|DESC}]
+     * @return   array categories
+     */
     function get_question_categories($parent=null, $sort="sortorder ASC") {
 
         if (is_null($parent)) {
@@ -563,13 +557,12 @@ class question_category_object {
         return $categories;
     }
 
-
-/**
-* Deletes an existing question category
-*
-* @param    int deletecat  id of category to delete
-* @param    int destcategoryid id of category which will inherit the orphans of deletecat
-*/
+    /**
+     * Deletes an existing question category
+     *
+     * @param    int deletecat  id of category to delete
+     * @param    int destcategoryid id of category which will inherit the orphans of deletecat
+     */
     function delete_category($deletecat, $destcategoryid = null) {
         global $USER;
 
@@ -619,16 +612,16 @@ class question_category_object {
 
         /// Finally delete the category itself
         if (delete_records("question_categories", "id", $category->id)) {
-            notify(get_string("categorydeleted", "quiz", $category->name), 'green');
+            notify(get_string("categorydeleted", "quiz", $category->name), 'notifysuccess');
         }
     }
 
-/**
-* Moves a category up or down in the display order
-*
-* @param    string direction  up|down
-* @param    int categoryid id of category to move
-*/
+    /**
+     * Moves a category up or down in the display order
+     *
+     * @param    string direction  up|down
+     * @param    int categoryid id of category to move
+     */
     function move_category_up_down ($direction, $categoryid) {
     /// Move a category up or down
         $swapcategory = NULL;
@@ -677,12 +670,12 @@ class question_category_object {
         }
     }
 
-/**
-* Changes the parent of a category
-*
-* @param    int categoryid
-* @param    int parentid
-*/
+    /**
+     * Changes the parent of a category
+     *
+     * @param    int categoryid
+     * @param    int parentid
+     */
     function move_category($categoryid, $parentid) {
     /// Move a category to a new parent
 
@@ -695,12 +688,12 @@ class question_category_object {
         }
     }
 
-/**
-* Changes the published status of a category
-*
-* @param    boolean publish
-* @param    int categoryid
-*/
+    /**
+     * Changes the published status of a category
+     *
+     * @param    boolean publish
+     * @param    int categoryid
+     */
     function publish_category($publish, $categoryid) {
     /// Hide or publish a category
 
@@ -713,16 +706,20 @@ class question_category_object {
         }
     }
 
-/**
-* Creates a new category with given params
-*
-* @param int $newparent       id of the parent category
-* @param string $newcategory  the name for the new category
-* @param string $newinfo      the info field for the new category
-* @param int $newpublish      whether to publish the category
-* @param int $newcourse       the id of the associated course
-*/
+    /**
+     * Creates a new category with given params
+     *
+     * @param int $newparent       id of the parent category
+     * @param string $newcategory  the name for the new category
+     * @param string $newinfo      the info field for the new category
+     * @param int $newpublish      whether to publish the category
+     * @param int $newcourse       the id of the associated course
+     */
     function add_category($newparent, $newcategory, $newinfo, $newpublish, $newcourse) {
+        if (empty($newcategory)) {
+            notify(get_string('categorynamecantbeblank', 'quiz'), 'notifyproblem');
+            return false;
+        }
 
         if ($newparent) {
             // first check that the parent category is in the correct course
@@ -742,22 +739,25 @@ class question_category_object {
         if (!insert_record("question_categories", $cat)) {
             error("Could not insert the new question category '$newcategory'", "category.php?id={$newcourse}");
         } else {
-            notify(get_string("categoryadded", "quiz", $newcategory), 'green');
+            notify(get_string("categoryadded", "quiz", $newcategory), 'notifysuccess');
         }
-
     }
 
-/**
-* Updates an existing category with given params
-*
-* @param    int updateid
-* @param    int updateparent
-* @param    string updatename
-* @param    string updateinfo
-* @param    int updatepublish
-* @param    int courseid the id of the associated course
-*/
+    /**
+     * Updates an existing category with given params
+     *
+     * @param    int updateid
+     * @param    int updateparent
+     * @param    string updatename
+     * @param    string updateinfo
+     * @param    int updatepublish
+     * @param    int courseid the id of the associated course
+     */
     function update_category($updateid, $updateparent, $updatename, $updateinfo, $updatepublish, $courseid) {
+        if (empty($updatename)) {
+            notify(get_string('categorynamecantbeblank', 'quiz'), 'notifyproblem');
+            return false;
+        }
 
         $cat = NULL;
         $cat->id = $updateid;
@@ -768,10 +768,9 @@ class question_category_object {
         if (!update_record("question_categories", $cat)) {
             error("Could not update the category '$updatename'", "category.php?id={$courseid}");
         } else {
-            notify(get_string("categoryupdated", 'quiz'), 'green');
+            notify(get_string("categoryupdated", 'quiz'), 'notifysuccess');
         }
     }
-
 }
 
 ?>
