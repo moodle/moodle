@@ -54,10 +54,10 @@
         if ($data) {
             //Now get completed xmlized object
             $info = $data->info;
-            //First, check the course_id backup folder exists in CFG->dataroot
-            $dest_dir = $CFG->dataroot."/".$restore->course_id."/backupdata";
-            check_dir_exists($dest_dir,true);
-            $restorelog_file = fopen("$dest_dir/restorelog.html","a");            
+            //if necessary, write to restorelog and adjust date/time fields
+            if ($restore->course_startdateoffset) {
+                restore_log_date_changes('Quiz', $restore, $info['MOD']['#'], array('TIMEOPEN', 'TIMECLOSE'));
+            }            
             //traverse_xmlize($info);                                                                     //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
@@ -68,18 +68,7 @@
             $quiz->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
             $quiz->intro = backup_todb($info['MOD']['#']['INTRO']['0']['#']); 
             $quiz->timeopen = backup_todb($info['MOD']['#']['TIMEOPEN']['0']['#']);
-            $date = usergetdate($quiz->timeopen);
-            fwrite ($restorelog_file,"<br>The Quiz - ".$quiz->name." <br>");
-            fwrite ($restorelog_file,"The TIMEOPEN was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
-            $quiz->timeopen += $restore->course_startdateoffset;
-            $date = usergetdate($quiz->timeopen);
-            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the TIMEOPEN is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
             $quiz->timeclose = backup_todb($info['MOD']['#']['TIMECLOSE']['0']['#']);
-            $date = usergetdate($quiz->timeclose);
-            fwrite ($restorelog_file,"The TIMECLOSE was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
-            $quiz->timeclose += $restore->course_startdateoffset;
-            $date = usergetdate($quiz->timeclose);
-            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the TIMECLOSE is now " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."<br><br>");
             $quiz->optionflags = backup_todb($info['MOD']['#']['OPTIONFLAGS']['0']['#']);
             $quiz->penaltyscheme = backup_todb($info['MOD']['#']['PENALTYSCHEME']['0']['#']);
             $quiz->attempts = backup_todb($info['MOD']['#']['ATTEMPTS_NUMBER']['0']['#']);

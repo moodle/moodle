@@ -51,10 +51,10 @@
         if ($data) {
             //Now get completed xmlized object
             $info = $data->info;
-            //First, check the course_id backup folder exists in CFG->dataroot
-            $dest_dir = $CFG->dataroot."/".$restore->course_id."/backupdata";
-            check_dir_exists($dest_dir,true);
-            $restorelog_file = fopen("$dest_dir/restorelog.html","a");            
+            //if necessary, write to restorelog and adjust date/time fields
+            if ($restore->course_startdateoffset) {
+                restore_log_date_changes('Lesson', $restore, $info['MOD']['#'], array('AVAILABLE', 'DEADLINE'));
+            }
             //traverse_xmlize($info);                                                              //Debug
             //print_object ($GLOBALS['traverse_array']);                                           //Debug
             //$GLOBALS['traverse_array']="";                                                       //Debug
@@ -95,20 +95,9 @@
             $lesson->displayleftif = isset($info['MOD']['#']['DISPLAYLEFTIF']['0']['#'])?backup_todb($info['MOD']['#']['DISPLAYLEFTIF']['0']['#']):'';
             $lesson->progressbar = isset($info['MOD']['#']['PROGRESSBAR']['0']['#'])?backup_todb($info['MOD']['#']['PROGRESSBAR']['0']['#']):'';
             $lesson->highscores = backup_todb($info['MOD']['#']['SHOWHIGHSCORES']['0']['#']);
-            $lesson->maxhighscores = backup_todb($info['MOD']['#']['MAXHIGHSCORES']['0']['#']);  
+            $lesson->maxhighscores = backup_todb($info['MOD']['#']['MAXHIGHSCORES']['0']['#']);
             $lesson->available = backup_todb($info['MOD']['#']['AVAILABLE']['0']['#']);
-            $date = usergetdate($lesson->available);
-            fwrite ($restorelog_file,"<br>The Lesson - ".$lesson->name." <br>");
-            fwrite ($restorelog_file,"The Time AVAILABLE was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
-            $lesson->available += $restore->course_startdateoffset;
-            $date = usergetdate($lesson->available);
-            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the Time AVAILABLE is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
             $lesson->deadline = backup_todb($info['MOD']['#']['DEADLINE']['0']['#']);
-            $date = usergetdate($lesson->deadline);
-            fwrite ($restorelog_file,"The DEADLINE was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
-            $lesson->deadline += $restore->course_startdateoffset;
-            $date = usergetdate($lesson->deadline);
-            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the DEADLINE is now " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."<br>");
             $lesson->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
             //The structure is equal to the db, so insert the lesson
