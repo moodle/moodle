@@ -121,7 +121,7 @@
                 $entry->userid = $user->new_id;
             }
             //We have to recode the groupid field
-            $group = backup_getid($restore->backup_unique_code,"group",$entry->groupid);
+            $group = backup_getid($restore->backup_unique_code, 'groups', $entry->groupid);
             if ($group) {
                 $entry->groupid = $group->new_id;
             }
