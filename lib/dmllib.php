@@ -1736,7 +1736,7 @@ function oracle_dirty_hack ($table, &$dataobject, $usecache = true) {
 
 /**
  * This function will search for all the CLOBs and BLOBs fields passed in the dataobject, replacing
- * their contents by the fixed strings '@#CLOB#@' and '@#BLOB' and returning one array for all the
+ * their contents by the fixed strings '@#CLOB#@' and '@#BLOB#@' and returning one array for all the
  * found CLOBS and another for all the found BLOBS
  * Used by Oracle drivers to perform the two-step insertion/update of LOBs
  *
@@ -1789,7 +1789,7 @@ function oracle_detect_lobs ($table, &$dataobject, &$clobs, &$blobs, $unset = fa
 
     /// If the field is BLOB, update its value to '@#BLOB#@' and store it in the $blobs array
         if ($columns[strtolower($fieldname)]->type == 'BLOB') { // && strlen($dataobject->$fieldname) > 3999
-            $clobs[$fieldname] = $dataobject->$fieldname;
+            $blobs[$fieldname] = $dataobject->$fieldname;
             if ($unset) {
                 unset($dataobject->$fieldname);
             } else {
