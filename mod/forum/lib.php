@@ -4322,44 +4322,42 @@ function forum_check_throttling($forum) {
 function forum_delete_userdata($data, $showfeedback=true) {
     global $CFG;
 
-    $sql = 'DELETE FROM '.$CFG->prefix.'forum_posts
-                  USING '.$CFG->prefix.'forum_discussions fd, 
-                        '.$CFG->prefix.'forum_posts fp, 
-                        '.$CFG->prefix.'forum f
-            WHERE fp.discussion=fd.id and f.course='.$data->courseid.' AND f.id=fd.forum';
+    $sql = "DELETE FROM {$CFG->prefix}forum_posts
+              WHERE discussion IN (
+                SELECT fd.id FROM {$CFG->prefix}forum_discussions fd, {$CFG->prefix}forum f
+                  WHERE f.course={$data->courseid} AND f.id=fd.forum "; // closing ) added bellow
 
     $strreset = get_string('reset');
 
     if (!empty($data->reset_forum_news)) {
-        $select = "$sql and f.type = 'news' ";
+        $select = "$sql AND f.type = 'news' )";
         if (execute_sql($select, false) and $showfeedback) {
             notify($strreset.': '.get_string('namenews','forum'), 'notifysuccess');
         }
     }
     if (!empty($data->reset_forum_single)) {
-        $select = "$sql and f.type = 'single' and fp.parent > 0 ";
+        $select = "$sql AND f.type = 'single' and fp.parent > 0 )";
         if (execute_sql($select, false) and $showfeedback) {
             notify($strreset.': '.get_string('singleforum','forum'), 'notifysuccess');
         }
     }
     if (!empty($data->reset_forum_eachuser)) {
-        $select = "$sql and f.type = 'eachuser' ";
+        $select = "$sql AND f.type = 'eachuser' )";
         if (execute_sql($select, false) and $showfeedback) {
             notify($strreset.': '.get_string('eachuserforum','forum'), 'notifysuccess');
         }
     }
     if (!empty($data->reset_forum_general)) {
-        $select = "$sql and f.type = 'general' ";
+        $select = "$sql AND f.type = 'general' )";
         if (execute_sql($select, false) and $showfeedback) {
             notify($strreset.': '.get_string('generalforum','forum'), 'notifysuccess');
         }
     }
     if (!empty($data->reset_forum_subscriptions)) {
         $subscripsql = "DELETE FROM {$CFG->prefix}forum_subscriptions
-                              USING {$CFG->prefix}forum_subscriptions fs,
-                                    {$CFG->prefix}forum f
-                              WHERE fs.forum = f.id
-                                AND f.course = {$data->courseid}";
+                          WHERE forum IN (
+                            SELECT id FROM {$CFG->prefix}forum
+                              WHERE course = {$data->courseid} )";
 
         if (execute_sql($subscripsql, false) and $showfeedback) {
             notify($strreset.': '.get_string('resetsubscriptions','forum'), 'notifysuccess');
