@@ -46,7 +46,7 @@
         }
 
         $strforums = get_string('modulenameplural', 'forum');
-        if ($course->category) {
+        if ($course->id != SITEID) {
             print_header($course->shortname, $course->fullname,
                  "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
                   <a href=\"../forum/index.php?id=$course->id\">$strforums</a> ->
@@ -310,6 +310,9 @@
                 $discussion->timeend = 0;
             }
         }
+
+        $post->subject = stripslashes_safe($post->subject);
+        $post->message = stripslashes_safe($post->message);
 
     } else if (!empty($forum)) {      // User is starting a new discussion in a forum
 
@@ -668,19 +671,20 @@
     }
 
     if (empty($post->subject)) {
-        $formstart = "theform.subject";
+        $formstart = 'theform.subject';
     } else {
-        $formstart = "";
+        $formstart = '';
     }
 
     if ($post->parent) {
-        $navtail = "<a href=\"discuss.php?d=$discussion->id\">".format_string($toppost->subject,true)."</a> -> ".get_string("editing", "forum");
+        $navtail = ' -> <a href="discuss.php?d='.$discussion->id.'">'.format_string($toppost->subject,true).'</a> -> '.
+                    get_string('editing', 'forum');
     } else {
-        $navtail = format_string($toppost->subject);
+        $navtail = ' -> '.format_string($toppost->subject);
     }
 
     if (empty($post->edit)) {
-        $post->edit = "";
+        $post->edit = '';
     }
 
     $strforums = get_string("modulenameplural", "forum");
@@ -704,7 +708,7 @@
         // Show the discussion name in the breadcrumbs.
         $strdiscussionname = format_string($discussion->name).':';
     }
-    if ($course->category) {
+    if ($course->id != SITEID) {
         print_header("$course->shortname: $strdiscussionname ".
                       format_string($toppost->subject), "$course->fullname",
                      "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
