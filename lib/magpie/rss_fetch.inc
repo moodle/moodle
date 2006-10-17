@@ -163,7 +163,7 @@ function fetch_rss ($url, $postdata=null) {
         // setup headers
         if ( $cache_status == 'STALE' ) {
             $rss = $cache->get( $cache_key );
-            if ( $rss and $rss->etag and $rss->last_modified ) {
+            if ( $rss and !empty($rss->etag) and !empty($rss->last_modified) ) { // moodle fixes
                 $request_headers['If-None-Match'] = $rss->etag;
                 $request_headers['If-Last-Modified'] = $rss->last_modified;
             }
@@ -318,14 +318,15 @@ function _response_to_rss ($resp) {
                 $field = $h;
                 $val = "";
             }
-            
-            if ( $field == 'ETag' ) {
-                $rss->etag = $val;
+// start of moodle modification
+            if ( strtolower($field) == 'etag' ) { // field names are case insensitive - sites are sending Etag, ETag, etc.
+                $rss->etag = rtrim($val);         // trailing newline problem discovered by Matthew Bockol
             }
             
-            if ( $field == 'Last-Modified' ) {
-                $rss->last_modified = $val;
+            if ( strtolower($field) == 'last-modified' ) { // field names are case insensitive
+                $rss->last_modified = rtrim($val);         // we do not want any whitespace after it
             }
+// end of moodle modification
         }
         
         return $rss;    
