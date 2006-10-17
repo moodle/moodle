@@ -102,7 +102,8 @@
                                           'sesskey' => $USER->sesskey,
                                           'blockaction' => 'config',
                                           'currentaction' => 'managefeeds',
-                                          'id' => $this->courseid
+                                          'id' => $this->courseid,
+                                          'section' => 'rss'
                                           ));
                 $output .= '<div align="center"><a title="'. get_string('feedsaddedit', 'block_rss_client') .'" href="'. $script .'">'. get_string('feedsaddedit', 'block_rss_client') .'</a></div>';
             } else {
@@ -113,7 +114,8 @@
                                           'sesskey' => $USER->sesskey,
                                           'blockaction' => 'config',
                                           'currentaction' => 'configblock',
-                                          'id' => $this->courseid
+                                          'id' => $this->courseid,
+                                          'section' => 'rss'
                                           ));
                     $output .= '<div align="center"><a title="'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'" href="'. $script.'">'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'</a></div>';
                 }
