@@ -2410,10 +2410,7 @@ function forum_print_rating_menu($postid, $userid, $scale) {
  * @param $forumtype - optional
  */
 function forum_print_mode_form($id, $mode, $forumtype='') {
-    $FORUM_LAYOUT_MODES = array ( FORUM_MODE_FLATOLDEST => get_string('modeflatoldestfirst', 'forum'),
-                              FORUM_MODE_FLATNEWEST => get_string('modeflatnewestfirst', 'forum'),
-                              FORUM_MODE_THREADED   => get_string('modethreaded', 'forum'),
-                              FORUM_MODE_NESTED     => get_string('modenested', 'forum') );
+    global $FORUM_LAYOUT_MODES;
 
     echo "<div align=\"center\">";
     if ($forumtype == 'single') {
