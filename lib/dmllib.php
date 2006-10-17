@@ -983,30 +983,32 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
 
     $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
 
+    $dataobject = new StdClass;
+    $dataobject->{$newfield} = $newvalue;
     // Oracle DIRTY HACK - 
     if ($CFG->dbtype == 'oci8po') {
-        $dataobject = new StdClass;
-        $dataobject->{$newfield} = $newvalue;
         oracle_dirty_hack($table, $dataobject); // Convert object to the correct "empty" values for Oracle DB
         $newvalue = $dataobject->{$newfield};
     }
     // End DIRTY HACK
 
-/// Under Oracle we have our own set field process
+/// Under Oracle and MSSQL we have our own set field process
 /// If the field being updated is clob/blob, we use our alternate update here
 /// They will be updated later
-    if ($CFG->dbtype == 'oci8po' && !empty($select)) {
+    if (($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'odbc_mssql' || $CFG->dbtype == 'mssql_n')
+      && !empty($select)) {
     /// Detect lobs
         $foundclobs = array();
         $foundblobs = array();
-        oracle_detect_lobs($table, $dataobject, $foundclobs, $foundblobs);
+        db_detect_lobs($table, $dataobject, $foundclobs, $foundblobs);
     }
 
-/// Under Oracle, finally, Update all the Clobs and Blobs present in the record
+/// Under Oracle and MSSQL, finally, Update all the Clobs and Blobs present in the record
 /// if we know we have some of them in the query
-    if ($CFG->dbtype == 'oci8po' && !empty($select) &&
-        (!empty($foundclobs) || !empty($foundblobs))) {
-        if (!oracle_update_lobs($table, $select, $foundclobs, $foundblobs)) {
+    if (($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'odbc_mssql' || $CFG->dbtype == 'mssql_n')
+      && !empty($select) &&
+      (!empty($foundclobs) || !empty($foundblobs))) {
+        if (!db_update_lobs($table, $select, $foundclobs, $foundblobs)) {
             return false; //Some error happened while updating LOBs
         } else {
             return true; //Everrything was ok
@@ -1152,10 +1154,11 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 /// Under Oracle we have our own insert record process
 /// detect all the clob/blob fields and change their contents to @#CLOB#@ and @#BLOB#@
 /// saving them into $foundclobs and $foundblobs [$fieldname]->contents
-    if ($CFG->dbtype == 'oci8po' && !empty($dataobject->{$primarykey})) {
+/// Same for mssql (only processing blobs - image fields)
+    if (($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'odbc_mssql' || $CFG->dbtype == 'mssql_n')) {
         $foundclobs = array();
         $foundblobs = array();
-        oracle_detect_lobs($table, $dataobject, $foundclobs, $foundblobs);
+        db_detect_lobs($table, $dataobject, $foundclobs, $foundblobs);
     }
     
 /// Get the correct SQL from adoDB
@@ -1163,12 +1166,25 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
         return false;
     }
 
-/// Under Oracle, replace all the '@#CLOB#@' and '@#BLOB#@' ocurrences to empty_clob() and empty_blob()
+/// Under Oracle and MSSQL, replace all the '@#CLOB#@' and '@#BLOB#@' ocurrences to proper default values
 /// if we know we have some of them in the query
-    if ($CFG->dbtype == 'oci8po' && !empty($dataobject->{$primarykey}) && 
-        (!empty($foundclobs) || !empty($foundblobs))) {
-        $insertSQL = str_replace("'@#CLOB#@'", 'empty_clob()', $insertSQL);
-        $insertSQL = str_replace("'@#BLOB#@'", 'empty_blob()', $insertSQL);
+    if (($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'odbc_mssql' || $CFG->dbtype == 'mssql_n') &&
+      (!empty($foundclobs) || !empty($foundblobs))) {
+    /// Initial configuration, based on DB
+        switch ($CFG->dbtype) {
+            case 'oci8po':
+                $clobdefault = 'empty_clob()'; //Value of empty default clobs for this DB
+                $blobdefault = 'empty_blob()'; //Value of empty default blobs for this DB
+                break;
+            case 'mssql':
+            case 'odbc_mssql': 
+            case 'mssql_n':
+                $clobdefault = 'null'; //Value of empty default clobs for this DB (under mssql this won't be executed
+                $blobdefault = 'null'; //Value of empty default blobs for this DB
+                break;  
+        }
+        $insertSQL = str_replace("'@#CLOB#@'", $clobdefault, $insertSQL);
+        $insertSQL = str_replace("'@#BLOB#@'", $blobdefault, $insertSQL);
     }
 
 /// Run the SQL statement
@@ -1183,9 +1199,10 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
 /// Under Oracle, finally, Update all the Clobs and Blobs present in the record
 /// if we know we have some of them in the query
-    if ($CFG->dbtype == 'oci8po' && !empty($dataobject->{$primarykey}) && 
-        (!empty($foundclobs) || !empty($foundblobs))) {
-        if (!oracle_update_lobs($table, $dataobject->{$primarykey}, $foundclobs, $foundblobs)) {
+    if ($CFG->dbtype == 'oci8po' &&
+      !empty($dataobject->{$primarykey}) && 
+      (!empty($foundclobs) || !empty($foundblobs))) {
+        if (!db_update_lobs($table, $dataobject->{$primarykey}, $foundclobs, $foundblobs)) {
             return false; //Some error happened while updating LOBs
         }
     }
@@ -1205,6 +1222,16 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 /// however we have some postgres fallback in case we failed
 /// to find the sequence.
     $id = $db->Insert_ID();
+
+/// Under MSSQL all the Blobs (IMAGE) present in the record
+/// if we know we have some of them in the query
+    if (($CFG->dbtype == 'mssql' || $CFG->dbtype == 'odbc_mssql' || $CFG->dbtype == 'mssql_n') &&
+      !empty($id) && 
+      (!empty($foundclobs) || !empty($foundblobs))) {
+        if (!db_update_lobs($table, $id, $foundclobs, $foundblobs)) {
+            return false; //Some error happened while updating LOBs
+        }
+    }
 
     if ($CFG->dbtype === 'postgres7') {
         // try to get the primary key based on id
@@ -1256,15 +1283,16 @@ function update_record($table, $dataobject) {
     }
 /// End DIRTY HACK
 
-/// Under Oracle we have our own update record process
+/// Under Oracle and MSSQL we have our own update record process
 /// detect all the clob/blob fields and delete them from the record being updated
 /// saving them into $foundclobs and $foundblobs [$fieldname]->contents
 /// They will be updated later
-    if ($CFG->dbtype == 'oci8po' && !empty($dataobject->id)) {
+    if (($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'odbc_mssql' || $CFG->dbtype == 'mssql_n')
+      && !empty($dataobject->id)) {
     /// Detect lobs
         $foundclobs = array();
         $foundblobs = array();
-        oracle_detect_lobs($table, $dataobject, $foundclobs, $foundblobs, true);
+        db_detect_lobs($table, $dataobject, $foundclobs, $foundblobs, true);
     }
 
     // Determine all the fields in the table
@@ -1313,11 +1341,12 @@ function update_record($table, $dataobject) {
         }
     }
 
-/// Under Oracle, finally, Update all the Clobs and Blobs present in the record
+/// Under Oracle AND MSSQL, finally, Update all the Clobs and Blobs present in the record
 /// if we know we have some of them in the query
-    if ($CFG->dbtype == 'oci8po' && !empty($dataobject->id) && 
-        (!empty($foundclobs) || !empty($foundblobs))) {
-        if (!oracle_update_lobs($table, $dataobject->id, $foundclobs, $foundblobs)) {
+    if (($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'odbc_mssql' || $CFG->dbtype == 'mssql_n')
+      && !empty($dataobject->id) && 
+      (!empty($foundclobs) || !empty($foundblobs))) {
+        if (!db_update_lobs($table, $dataobject->id, $foundclobs, $foundblobs)) {
             return false; //Some error happened while updating LOBs
         }
     }
@@ -1738,7 +1767,8 @@ function oracle_dirty_hack ($table, &$dataobject, $usecache = true) {
  * This function will search for all the CLOBs and BLOBs fields passed in the dataobject, replacing
  * their contents by the fixed strings '@#CLOB#@' and '@#BLOB#@' and returning one array for all the
  * found CLOBS and another for all the found BLOBS
- * Used by Oracle drivers to perform the two-step insertion/update of LOBs
+ * Used by Oracle drivers to perform the two-step insertion/update of LOBs and
+ * by MSSQL to perform the same exclusively for BLOBs (IMAGE fields)
  *
  * This function is private and must not be used outside dmllib at all
  *
@@ -1751,18 +1781,31 @@ function oracle_dirty_hack ($table, &$dataobject, $usecache = true) {
  * @param $usecache boolean flag to determinate if we must use the per request cache of metadata
  *        true to use it, false to ignore and delete it
  */
-function oracle_detect_lobs ($table, &$dataobject, &$clobs, &$blobs, $unset = false, $usecache = true) {
+function db_detect_lobs ($table, &$dataobject, &$clobs, &$blobs, $unset = false, $usecache = true) {
 
     global $CFG, $db, $metadata_cache;
+
+    $dataarray = (array)$dataobject; //Convert to array. It's supposed that PHP 4.3 doesn't iterate over objects
+
+/// Initial configuration, based on DB
+    switch ($CFG->dbtype) {
+        case 'oci8po':
+            $clobdbtype = 'CLOB'; //Name of clobs for this DB
+            $blobdbtype = 'BLOB'; //Name of blobs for this DB
+            break;
+        case 'mssql':
+        case 'odbc_mssql':
+        case 'mssql_n':
+            $clobdbtype = 'NOTPROCESSES'; //Name of clobs for this DB (under mssql flavours we don't process CLOBS)
+            $blobdbtype = 'IMAGE'; //Name of blobs for this DB
+            break;
+        default:
+            return; //Other DB doesn't need this two step to happen, prevent continue
+    }
 
 /// Init and delete metadata cache
     if (!isset($metadata_cache) || !$usecache) {
         $metadata_cache = array();
-    }
-
-/// If the db isn't Oracle, return without modif
-    if ( $CFG->dbtype != 'oci8po') {
-        return;
     }
 
 /// Get Meta info to know what to change, using the cached meta if exists
@@ -1771,13 +1814,13 @@ function oracle_detect_lobs ($table, &$dataobject, &$clobs, &$blobs, $unset = fa
     }
     $columns = $metadata_cache[$table];
 
-    foreach ($dataobject as $fieldname => $fieldvalue) {
+    foreach ($dataarray as $fieldname => $fieldvalue) {
     /// If the field doesn't exist in metadata, skip
         if (!isset($columns[strtolower($fieldname)])) {
             continue;
         }
     /// If the field is CLOB, update its value to '@#CLOB#@' and store it in the $clobs array
-        if ($columns[strtolower($fieldname)]->type == 'CLOB') { // && strlen($dataobject->$fieldname) > 3999
+        if (strtoupper($columns[strtolower($fieldname)]->type) == $clobdbtype) { // && strlen($dataobject->$fieldname) > 3999
             $clobs[$fieldname] = $dataobject->$fieldname;
             if ($unset) {
                 unset($dataobject->$fieldname);
@@ -1787,8 +1830,8 @@ function oracle_detect_lobs ($table, &$dataobject, &$clobs, &$blobs, $unset = fa
             continue;
         }
 
-    /// If the field is BLOB, update its value to '@#BLOB#@' and store it in the $blobs array
-        if ($columns[strtolower($fieldname)]->type == 'BLOB') { // && strlen($dataobject->$fieldname) > 3999
+    /// If the field is BLOB OR IMAGE, update its value to '@#BLOB#@' and store it in the $blobs array
+        if (strtoupper($columns[strtolower($fieldname)]->type) == $blobdbtype) { // && strlen($dataobject->$fieldname) > 3999
             $blobs[$fieldname] = $dataobject->$fieldname;
             if ($unset) {
                 unset($dataobject->$fieldname);
@@ -1805,6 +1848,8 @@ function oracle_detect_lobs ($table, &$dataobject, &$clobs, &$blobs, $unset = fa
  * UpdateClob() and UpdateBlob() ADOdb function calls to store LOBs contents properly
  * Records to be updated are always searched by PK (id always!)
  *
+ * Used by Orace CLOBS and BLOBS and MSSQL IMAGES
+ *
  * This function is private and must not be used outside dmllib at all
  *
  * @param $table string the table where the record is going to be inserted/updated (without prefix)
@@ -1813,15 +1858,26 @@ function oracle_detect_lobs ($table, &$dataobject, &$clobs, &$blobs, $unset = fa
  * @param $clobs array of clobs to be updated
  * @param $blobs array of blobs to be updated
  */
-function oracle_update_lobs ($table, $sqlcondition, &$clobs, &$blobs) {
+function db_update_lobs ($table, $sqlcondition, &$clobs, &$blobs) {
 
     global $CFG, $db;
 
     $status = true;
 
-/// If the db isn't Oracle, return without modif
-    if ( $CFG->dbtype != 'oci8po') {
-        return false;
+/// Initial configuration, based on DB
+    switch ($CFG->dbtype) {
+        case 'oci8po':
+            $clobdbtype = 'CLOB'; //Name of clobs for this DB
+            $blobdbtype = 'BLOB'; //Name of blobs for this DB
+            break;
+        case 'mssql':
+        case 'odbc_mssql':
+        case 'mssql_n':
+            $clobdbtype = 'NOTPROCESSES'; //Name of clobs for this DB (under mssql flavours we don't process CLOBS)
+            $blobdbtype = 'IMAGE'; //Name of blobs for this DB
+            break;
+        default:
+            return; //Other DB doesn't need this two step to happen, prevent continue
     }
 
 /// Calculate the update sql condition
