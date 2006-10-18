@@ -7,12 +7,12 @@
  **/
 function print_require_js($list) {
     global $CFG;
-
+/*
     if (!check_browser_version('MSIE', 6.0) && !check_browser_version('Firefox', '1.5')) {
         // We still have issues with YUI in other browsers.
         return;
     }
-
+*/
     //list of shortname to filepath translations
     $translatelist = array(
             'yui_yahoo' => '/lib/yui/yahoo/yahoo.js',
@@ -34,7 +34,7 @@ function print_require_js($list) {
             echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$list[$i]."'></script>\n";
         }
     }
-    /*
+    
     if (debugging('', DEBUG_DEVELOPER)) {
         echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$translatelist['yui_logger']."'></script>\n";
         
@@ -49,20 +49,26 @@ function print_require_js($list) {
         ?>
         <script type="text/javascript">
 
-            var logcontainer = null;
+            function showLogger() {
+                var logcontainer = null;
             
-            var logconfig = {
-                left: "60%",
-                top: "40px"
-            };
-            var logreader = new YAHOO.widget.LogReader(logcontainer, logconfig);
-            logreader.newestOnTop = false;
-            logreader.setTitle('Moodle Debug: YUI Log Console');
-
+                var logconfig = {
+                    left: "60%",
+                    top: "40px"
+                };
+                var logreader = new YAHOO.widget.LogReader(logcontainer, logconfig);
+            
+                logreader.newestOnTop = false;
+                logreader.setTitle('Moodle Debug: YUI Log Console');
+            }
+            
+            setTimeout(showLogger, 1);  // IE does not allow changing HTML
+                                        // tables via DOM until they are
+                                        // fully rendered.
         </script>
         <?php
     }
-    */
+    
 }
 
 
