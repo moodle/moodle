@@ -34,7 +34,7 @@ function print_require_js($list) {
             echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$list[$i]."'></script>\n";
         }
     }
-
+    /*
     if (debugging('', DEBUG_DEVELOPER)) {
         echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$translatelist['yui_logger']."'></script>\n";
         
@@ -48,13 +48,13 @@ function print_require_js($list) {
         echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$translatelist['yui_dragdrop']."'></script>\n";
         ?>
         <script type="text/javascript">
-            
-            var logcontainer = null;
 
+            var logcontainer = null;
+            
             var logconfig = {
                 left: "60%",
-                top: "40px",
-            }
+                top: "40px"
+            };
             var logreader = new YAHOO.widget.LogReader(logcontainer, logconfig);
             logreader.newestOnTop = false;
             logreader.setTitle('Moodle Debug: YUI Log Console');
@@ -62,6 +62,7 @@ function print_require_js($list) {
         </script>
         <?php
     }
+    */
 }
 
 
