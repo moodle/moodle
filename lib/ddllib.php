@@ -1140,4 +1140,15 @@ function rename_index($table, $index, $newname, $continue=true, $feedback=true) 
     return execute_sql_arr($sqlarr, $continue, $feedback);
 }
 
+/* trys to change default db encoding to utf8, if empty db
+ */
+function change_db_encoding() {
+    global $CFG, $db;  
+    // try forcing utf8 collation, if mysql db and no tables present
+    if (!$db->Metatables() && ($CFG->dbtype=='mysql')) {
+        $SQL = 'ALTER DATABASE '.$CFG->dbname.' CHARACTER SET utf8';
+        execute_sql($SQL, false); // silent, if it fails it fails
+    }
+}
+
 ?>
