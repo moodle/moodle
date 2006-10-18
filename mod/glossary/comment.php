@@ -78,7 +78,7 @@
         if (!$glossary->allowcomments && !isteacher($glossary->course)) {
                 error('You can\'t delete comments in this glossary!');
             }
-        if ( $confirm ) {
+        if ( data_submitted() and $confirm ) {
             delete_records('glossary_comments','id', $cid);
 
             print_simple_box_start('center','40%', '#FFBBBB');
