@@ -115,9 +115,15 @@
                 $realpost = new object;
                 $realpost->userid = -1;
             }
-
-            if ( !(($realpost->userid == $USER->id && has_capability('mod/forum:replypost', $modcontext)) ||
-                        has_capability('mod/forum:editanypost', $modcontext)) ) {
+            
+            
+            // if user has edit any post capability
+            // or has either startnewdiscussion or reply capability and is editting own post
+            // then he can proceed
+            // MDL-7066
+            if ( !(($realpost->userid == $USER->id && (has_capability('mod/forum:replypost', $modcontext) 
+                                || has_capability('mod/forum:startdiscussion', $modcontext))) ||
+                                has_capability('mod/forum:editanypost', $modcontext)) ) {
                 error("You can not update this post");
             }
 
