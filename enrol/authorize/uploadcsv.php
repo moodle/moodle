@@ -1,4 +1,5 @@
 <?php // $Id$
+=======
 
 /// Load libraries
     require_once('../../config.php');
@@ -98,66 +99,76 @@ function authorize_process_csv($filename)
 /// Read lines
     $sendem = array();
     $ignoredlines = '';
-    $faultlog = '';
+
     $imported = 0;
+    $updated = 0;
+    $ignored = 0;
     while (($data = fgetcsv($handle, 8192, ",")) !== FALSE) {
         if (count($data) != $numfields) {
-            continue; // ignore empty lines
+            $ignored++; // ignore empty lines
+            continue;
         }
 
-        $transstatus = $data[$csvfields['Transaction Status']];
-        $transtype = $data[$csvfields['Transaction Type']];
         $transid = $data[$csvfields['Transaction ID']];
-        $settlementdatetime = strtotime($data[$csvfields['Settlement Date/Time']]);
+        $transtype = $data[$csvfields['Transaction Type']];
+        $transstatus = $data[$csvfields['Transaction Status']];
+        $settlementdate = strtotime($data[$csvfields['Settlement Date/Time']]);
 
         if ($transstatus == 'Approved Review' || $transstatus == 'Review Failed') {
             if ($order = get_record('enrol_authorize', 'transid', $transid)) {
                 $order->status = ($transstatus == 'Approved Review') ? AN_STATUS_APPROVEDREVIEW : AN_STATUS_REVIEWFAILED;
                 update_record('enrol_authorize', $order);
+                $updated++; // Updated order status
             }
             continue;
         }
 
-        // We want only status=Settled Successfully and type=Authorization w/ Auto Capture
         if (! ($transstatus == 'Settled Successfully' && $transtype == 'Authorization w/ Auto Capture')) {
-            $ignoredlines .= $transid . "\n";
+            $ignored++;
+            $ignoredlines .= $transid . ": Not settled\n";
             continue;
         }
 
         // TransactionId must match
         $order = get_record('enrol_authorize', 'transid', $transid);
-        if (!$order) { // Not our business
-            $ignoredlines .= $transid . "\n";
+        if (!$order) {
+            $ignored++;
+            $ignoredlines .= $transid . ": Not our business\n";
             continue;
         }
 
         // Authorized/Captured and Settled
         $order->status = AN_STATUS_AUTHCAPTURE;
-        $order->settletime = $settlementdatetime;
+        $order->settletime = $settlementdate;
         update_record('enrol_authorize', $order);
+        $updated++; // Updated order status and settlement date
 
         if ($order->paymentmethod != AN_METHOD_ECHECK) {
-            $ignoredlines .= $transid . "\n";
-            continue; // We only interest in ECHECK
+            $ignored++;
+            $ignoredlines .= $transid . ": The method must be echeck\n";
+            continue;
         }
 
         // Get course and context
         $course = get_record('course', 'id', $order->courseid);
         if (!$course) {
-            $ignoredlines .= $transid . "\n";
-            continue; // Could not find this course
+            $ignored++;
+            $ignoredlines .= $transid . ": Could not find this course: " . $order->courseid . "\n";
+            continue;
         }
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         if (!$coursecontext) {
-            $ignoredlines .= $transid . "\n";
-            continue; // Could not find this course context
+            $ignored++;
+            $ignoredlines .= $transid . ": Could not find course context: " . $order->courseid . "\n";
+            continue;
         }
 
         // Get user
         $user = get_record('user', 'id', $order->userid);
         if (!$user) {
-            $ignoredlines .= $transid . "\n";
-            continue; // Could not find this user
+            $ignored++;
+            $ignoredlines .= $transid . ": Could not find this user: " . $order->userid . "\n";
+            continue;
         }
 
         // If user wasn't enrolled, enrol now. Ignore otherwise. Because admin user might submit this file again.
@@ -176,13 +187,21 @@ function authorize_process_csv($filename)
                     }
                 }
                 else {
-                    $faultlog .= "Error while trying to enrol ".fullname($user)." in '$course->fullname' \n";
+                    $ignoredlines .= $transid . ": Error while trying to enrol " . fullname($user) . " in '$course->fullname' \n";
                 }
             }
         }
     }
     fclose($handle);
-    notice("Done... Total $imported record(s) has been imported.");
+
+/// Show result
+    notice("<b>Done...</b><br />Imported: $imported<br />Updated: $updated<br />Ignored: $ignored");
+
+/// Send email to admin
+    if (!empty($ignoredlines)) {
+        $admin = get_admin();
+        email_to_user($admin, $admin, "$SITE->fullname: Authorize.net CSV ERROR LOG", $ignoredlines);
+    }
 
 /// Send welcome messages to users
     if (!empty($sendem)) {
