@@ -2845,38 +2845,42 @@ function reset_course_userdata($data, $showfeedback=true) {
     }
 
     // Delete other stuff
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $data->courseid);
 
-    if (!empty($data->reset_students)) {
-        /// Delete student enrolments
-        if (delete_records('user_students', 'course', $data->courseid)) {
-            if ($showfeedback) {
-                notify($strdeleted .' user_students', 'notifysuccess');
+    if (!empty($data->reset_students) or !empty($data->reset_teachers)) {
+        $teachers     = array_keys(get_users_by_capability($coursecontext, 'moodle/course:update'));
+        $participants = array_keys(get_users_by_capability($coursecontext, 'moodle/course:view'));
+        $students     = array_diff($participants, $teachers);
+
+        if (!empty($data->reset_students)) {
+            foreach ($students as $studentid) {
+                role_unassign(0, $studentid, 0, $coursecontext->id);
             }
-        } else {
-            $result = false;
-        }
+            if ($showfeedback) {
+                notify($strdeleted .' '.get_string('students'), 'notifysuccess');
+            }
 
-        /// Delete group members (but keep the groups)
-        if ($groups = get_records('groups', 'courseid', $data->courseid)) {
-            foreach ($groups as $group) {
-                if (delete_records('groups_members', 'groupid', $group->id)) {
-                    if ($showfeedback) {
-                        notify($strdeleted .' groups_members', 'notifysuccess');
+            /// Delete group members (but keep the groups)
+            if ($groups = get_records('groups', 'courseid', $data->courseid)) {
+                foreach ($groups as $group) {
+                    if (delete_records('groups_members', 'groupid', $group->id)) {
+                        if ($showfeedback) {
+                            notify($strdeleted .' groups_members', 'notifysuccess');
+                        }
+                    } else {
+                        $result = false;
                     }
-                } else {
-                    $result = false;
                 }
             }
         }
-    }
 
-    if (!empty($data->reset_teachers)) {
-        if (delete_records('user_teachers', 'course', $data->courseid)) {
-            if ($showfeedback) {
-                notify($strdeleted .' user_teachers', 'notifysuccess');
+        if (!empty($data->reset_teachers)) {
+            foreach ($teachers as $teacherid) {
+                role_unassign(0, $teacherid, 0, $coursecontext->id);
             }
-        } else {
-            $result = false;
+            if ($showfeedback) {
+                notify($strdeleted .' '.get_string('teachers'), 'notifysuccess');
+            }
         }
     }
 
@@ -2916,9 +2920,8 @@ function reset_course_userdata($data, $showfeedback=true) {
 
     // deletes all role assignments, and local override, these have no courseid in table and needs separate process
     $context = get_context_instance(CONTEXT_COURSE, $data->courseid);
-    delete_records('role_assignments', 'contextid', $context->id);
     delete_records('role_capabilities', 'contextid', $context->id);
-   
+
     return $result;
 }
 
