@@ -71,11 +71,6 @@
 
             print_require_js(array('yui_yahoo','yui_dom','yui_event','yui_dragdrop', 'yui_connection',
                                    'ajaxcourse_blocks','ajaxcourse_sections','ajaxcourse'));
-            
-            //javascript logging facilities
-            if (debugging())  {
-                print_require_js(Array('yui_logger'));
-            }
         }
     }
 
