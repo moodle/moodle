@@ -478,7 +478,7 @@ class assignment_base {
         // delete file area with all attachments - ignore errors
         require_once($CFG->libdir.'/filelib.php');
         fulldelete($CFG->dataroot.'/'.$assignment->course.'/'.$CFG->moddata.'/assignment/'.$assignment->id);
- 
+
         return $result;
     }
 
