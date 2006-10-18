@@ -1,8 +1,9 @@
 <?php // Library functions for using AJAX with Moodle
 
 /**
- * Print require statements for javascript libraries
- * Takes in an array of either full paths or shortnames and it will translate them to full paths
+ * Print require statements for javascript libraries.
+ * Takes in an array of either full paths or shortnames and it will translate
+ * them to full paths.
  **/
 function print_require_js($list) {
     global $CFG;
@@ -32,6 +33,34 @@ function print_require_js($list) {
         } else {
             echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$list[$i]."'></script>\n";
         }
+    }
+
+    if (debugging('', DEBUG_DEVELOPER)) {
+        echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$translatelist['yui_logger']."'></script>\n";
+        
+        // Dependencies for the logger.
+        echo "<link type='text/css' rel='stylesheet' href='{$CFG->wwwroot}/lib/yui/logger/assets/logger.css'>";
+        
+        // FIXME: Below might get included more than once.
+        echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$translatelist['yui_yahoo']."'></script>\n";
+        echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$translatelist['yui_dom']."'></script>\n";
+        echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$translatelist['yui_event']."'></script>\n";
+        echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$translatelist['yui_dragdrop']."'></script>\n";
+        ?>
+        <script type="text/javascript">
+            
+            var logcontainer = null;
+
+            var logconfig = {
+                left: "60%",
+                top: "40px",
+            }
+            var logreader = new YAHOO.widget.LogReader(logcontainer, logconfig);
+            logreader.newestOnTop = false;
+            logreader.setTitle('Moodle Debug: YUI Log Console');
+
+        </script>
+        <?php
     }
 }
 
