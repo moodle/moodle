@@ -444,11 +444,13 @@ class assignment_base {
     /**
      * Deletes an assignment activity
      *
-     * Deletes all database records and calendar events for this assignment.
+     * Deletes all database records, files and calendar events for this assignment.
      * @param $assignment object The assignment to be deleted
      * @return boolean False indicates error
      */
     function delete_instance($assignment) {
+        global $CFG;
+
         $result = true;
 
         if (! delete_records('assignment_submissions', 'assignment', $assignment->id)) {
@@ -472,6 +474,10 @@ class assignment_base {
                 $result = false;
             }
         }
+
+        // delete file area with all attachments - ignore errors
+        require_once($CFG->libdir.'/filelib.php');
+        fulldelete($CFG->dataroot.'/'.$assignment->course.'/'.$CFG->moddata.'/assignment/'.$assignment->id);
 
         return $result;
     }
