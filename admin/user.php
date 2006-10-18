@@ -169,7 +169,7 @@
                 $updateuser = new object();
                 $updateuser->id = $user->id;
                 $updateuser->deleted = 1;
-                $updateuser->username = "$user->email.".time();  // Remember it just in case
+                $updateuser->username = addslashes("$user->email.".time());  // Remember it just in case
                 $updateuser->email = '';               // Clear this field to free it up
                 $updateuser->idnumber = '';               // Clear this field to free it up
                 $updateuser->timemodified = time();
