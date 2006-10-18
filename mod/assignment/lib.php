@@ -1988,7 +1988,7 @@ function assignment_print_recent_activity($course, $isteacher, $timestart) {
     global $CFG;
 
     $content = false;
-    $assignments = NULL;
+    $assignments = array();
 
     if (!$logs = get_records_select('log', 'time > \''.$timestart.'\' AND '.
                                            'course = \''.$course->id.'\' AND '.
@@ -1999,6 +1999,7 @@ function assignment_print_recent_activity($course, $isteacher, $timestart) {
 
     foreach ($logs as $log) {
         //Create a temp valid module structure (course,id)
+        $tempmod = new object();
         $tempmod->course = $log->course;
         $tempmod->id = $log->info;
         //Obtain the visible property from the instance
@@ -2006,13 +2007,15 @@ function assignment_print_recent_activity($course, $isteacher, $timestart) {
 
         //Only if the mod is visible
         if ($modvisible) {
-            $assignments[$log->info] = assignment_log_info($log);
-            $assignments[$log->info]->time = $log->time;
-            $assignments[$log->info]->url  = str_replace('&', '&amp;', $log->url);
+            if ($info = assignment_log_info($log)) {
+                $assignments[$log->info] = $info;
+                $assignments[$log->info]->time = $log->time;
+                $assignments[$log->info]->url  = str_replace('&', '&amp;', $log->url);
+            }
         }
     }
 
-    if ($assignments) {
+    if (!empty($assignments)) {
         print_headline(get_string('newsubmissions', 'assignment').':');
         foreach ($assignments as $assignment) {
             print_recent_activity_note($assignment->time, $assignment, $assignment->name,
