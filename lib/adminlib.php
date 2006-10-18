@@ -2431,7 +2431,7 @@ function admin_get_root() {
 
     if (!isset($ADMIN)) {
         // start the admin tree!
-        $ADMIN = new admin_category('root','Administration');
+        $ADMIN = new admin_category('root', get_string("administration"));
         // we process this file first to get categories up and running
         include($CFG->dirroot . '/'.$CFG->admin.'/settings/top.php');
 
