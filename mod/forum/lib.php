@@ -96,7 +96,7 @@ function forum_add_instance($forum) {
 
     $forum->timemodified = time();
 
-    if (!$forum->assessed) {
+    if (!isset($forum->assessed)) {
         $forum->assessed = 0;
     }
     
