@@ -140,6 +140,8 @@
 
     /// Both old .sql files and new install.xml are supported
     /// But we prioritise install.xml (XMLDB) if present
+    
+        change_db_encoding(); // first try to change db encoding to utf8
         $status = false;
         if (file_exists("$CFG->libdir/db/install.xml")) {
             $status = install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
