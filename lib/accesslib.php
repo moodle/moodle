@@ -724,7 +724,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
         if (!empty($otheruserid)) { // we are pulling out other user's capabilities, do not write to session
 
             if (capability_prohibits($capability->capability, $context, $capability->sum, $usercap)) {
-                $usercap[$capability->id][$capability->capability] = -9000;
+                $usercap[$capability->id][$capability->capability] = CAP_PROHIBIT;
                 continue;
             }
 
@@ -733,7 +733,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
         } else {
 
             if (capability_prohibits($capability->capability, $context, $capability->sum)) { // if any parent or parent's parent is set to prohibit
-                $USER->capabilities[$capability->id][$capability->capability] = -9000;
+                $USER->capabilities[$capability->id][$capability->capability] = CAP_PROHIBIT;
                 continue;
             }
 
@@ -818,20 +818,20 @@ function check_enrolment_plugins(&$user) {
 function capability_prohibits($capability, $context, $sum='', $array='') {
     global $USER;
 
-    if ($sum < -8000) {
+    if ($sum < (CAP_PROHIBIT/2)) {
         // If this capability is set to prohibit.
         return true;
     }
 
-    if (isset($array)) {
+    if (!empty($array)) {
         if (isset($array[$context->id][$capability])
-                && $array[$context->id][$capability] < -8000) {
+                && $array[$context->id][$capability] < (CAP_PROHIBIT/2)) {
             return true;
         }
     } else {
         // Else if set in session.
         if (isset($USER->capabilities[$context->id][$capability])
-                && $USER->capabilities[$context->id][$capability] < -8000) {
+                && $USER->capabilities[$context->id][$capability] < (CAP_PROHIBIT/2)) {
             return true;
         }
     }
