@@ -642,7 +642,7 @@
     $strmodulenameplural = get_string("modulenameplural", $module->name);
 
     if ($module->name == "label") {
-        $focuscursor = "";
+        $focuscursor = "form.content";
     } else {
         $focuscursor = "form.name";
     }
