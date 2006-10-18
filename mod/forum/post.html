@@ -95,7 +95,7 @@ trusttext_prepare_edit($post->message, $post->format, $usehtmleditor, $modcontex
 </tr>
 
 
-<?php if ($forum->maxbytes != 1) {  //  1 = No attachments at all
+<?php if ($forum->maxbytes != 1 && has_capability('mod/forum:createattachment', $modcontext))  {  //  1 = No attachments at all
 ?>
 
 <tr valign="top">
