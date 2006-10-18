@@ -436,6 +436,20 @@ class assignment_upload extends assignment_base {
 
         $returnurl = 'view.php?id='.$this->cm->id;
 
+        if ($submission = $this->get_submission($USER->id)) {
+            $defaulttext = $submission->data1;
+        } else {
+            $defaulttext = '';
+        }
+
+        if (!$this->can_update_notes($submission)) {
+            $this->view_header(get_string('upload'));
+            notify(get_string('uploaderror', 'assignment'));
+            print_continue($returnurl);
+            $this->view_footer();
+            die;
+        }
+
         if (data_submitted() and $action == 'savenotes') {
             $text = required_param('text', PARAM_RAW); // to be cleaned before display
             $submission = $this->get_submission($USER->id, true); // get or create submission
@@ -457,12 +471,6 @@ class assignment_upload extends assignment_base {
         }
 
         /// show notes edit form
-        if ($submission = $this->get_submission($USER->id)) {
-            $defaulttext = $submission->data1;
-        } else {
-            $defaulttext = '';
-        }
-
         $this->view_header(get_string('notes', 'assignment'));
         print_heading(get_string('notes', 'assignment'), 'center');
 
