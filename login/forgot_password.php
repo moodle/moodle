@@ -219,7 +219,7 @@ if ($page=='emailmaybeconfirmed') {
 // check $page for appropriate page to display
 if ($page=='emailconfirm') {
     // Confirm (internal method) email sent
-    $protectedemail = preg_replace('/([^@]*)@(.*)/', '???????@$2', $user->email); // obfuscate the email address to protect privacy
+    $protectedemail = preg_replace('/([^@]*)@(.*)/', '******@$2', $user->email); // obfuscate the email address to protect privacy
     $txt->emailpasswordconfirmsent = get_string( 'emailpasswordconfirmsent','',$protectedemail );
     notice( $txt->emailpasswordconfirmsent,$CFG->wwwroot.'/index.php'); 
 }
