@@ -1268,6 +1268,11 @@ function get_context_instance($contextlevel=NULL, $instance=SITEID) {
     global $context_cache, $context_cache_id, $CONTEXT;
     static $allowed_contexts = array(CONTEXT_SYSTEM, CONTEXT_PERSONAL, CONTEXT_USER, CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_GROUP, CONTEXT_MODULE, CONTEXT_BLOCK);
 
+    // This is really a systen context
+    if ($contextlevel == CONTEXT_COURSE && $instance == SITEID) {
+        $contextlevel = CONTEXT_SYSTEM;
+    }
+
 /// If no level is supplied then return the current global context if there is one
     if (empty($contextlevel)) {
         if (empty($CONTEXT)) {
