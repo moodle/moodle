@@ -1932,15 +1932,14 @@
                 if ($categories) {
                     foreach ($categories as $category) {
                         $restoredcategory = get_record('question_categories','id',$category->new_id);
+                        $restoredcategory = addslashes_object($restoredcategory);
                         if ($restoredcategory->parent != 0) {
-                            //echo 'Parent '.$restoredcategory->parent.' is ';           //Debug
                             $idcat = backup_getid($restore->backup_unique_code,'question_categories',$restoredcategory->parent);
                             if ($idcat->new_id) {
                                 $restoredcategory->parent = $idcat->new_id;
                             } else {
                                 $restoredcategory->parent = 0;
                             }
-                            //echo $restoredcategory->parent.' now<br />';  //Debug
                             update_record('question_categories', $restoredcategory);
                         }
                     }
