@@ -308,7 +308,7 @@ class course_edit_form extends moodleform {
             $mform->setHelpButton('costgrp', array('cost', get_string('cost')), true);
             $mform->setDefault('cost', '');
             $mform->setDefault('currency', empty($CFG->enrol_currency) ? 'USD' : $CFG->enrol_currency);
-            
+
         }
 
 //--------------------------------------------------------------------------------
@@ -373,15 +373,16 @@ class course_edit_form extends moodleform {
 
     }
     function definition_after_data(){
-        
-        if ($this->_form->elementExists('allowedmods')){
-            if ($this->_form->exportValue('restrictmodules')!=1){
-                $this->_form->getElement('allowedmods')->
-                        updateAttributes(array('disabled' => 'disabled')) ;
-            }
-            
-        }
-    }
+       $mform=&$this->_form;
+       if ($mform->elementExists('allowedmods')){
+           if ($mform->exportValue('restrictmodules')!=1){
+               $allowedmods=&$mform->getElement('allowedmods');
+               $allowedmods->
+                       updateAttributes(array('disabled'
+                        => 'disabled')) ;
+           }
+       }
+   }
 
 /// perform some extra moodle validation
     function validation($data){
