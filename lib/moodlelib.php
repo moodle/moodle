@@ -6114,8 +6114,18 @@ function zip_files ($originalfiles, $destination) {
     if (empty($CFG->zip)) {    // Use built-in php-based zip function
 
         include_once("$CFG->libdir/pclzip/pclzip.lib.php");
+        //rewrite filenames because the old method with PCLZIP_OPT_REMOVE_PATH does not work under win32
+        $zipfiles = array();
+        $start = strlen($origpath)+1;
+        foreach($files as $file) {
+            $tf = array();
+            $tf[PCLZIP_ATT_FILE_NAME] = $file;
+            $tf[PCLZIP_ATT_FILE_NEW_FULL_NAME] = substr($file, $start);
+            $zipfiles[] = $tf;
+        }
+        //create the archive
         $archive = new PclZip(cleardoubleslashes("$destpath/$destfilename"));
-        if (($list = $archive->create($files, PCLZIP_OPT_REMOVE_PATH,$origpath) == 0)) {
+        if (($list = $archive->create($zipfiles) == 0)) {
             notice($archive->errorInfo(true));
             return false;
         }
