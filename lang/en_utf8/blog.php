@@ -15,6 +15,7 @@ $string['courseblog'] = 'Course blog: $a';
 $string['entrybody'] = 'Blog entry body';
 $string['entrybodyonlydesc'] = 'Entry description';
 $string['entryerrornotyours'] = 'This entry is not yours';
+$string['entrydeleted'] = 'Blog entry deleted';
 $string['entrysaved'] = 'Your entry has been saved';
 $string['entrytitle'] = 'Entry title';
 $string['entryupdated'] = 'Blog entry updated';
