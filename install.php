@@ -296,6 +296,13 @@ if ($INSTALL['stage'] == DATABASE) {
         }
     }
 
+    if ($INSTALL['dbtype'] == 'mssql_n') {  /// Check MSSQL extension is present
+        if (!extension_loaded('mssql')) {
+            $errormsg = get_string('mssqlextensionisnotpresentinphp', 'install');
+            $nextstage = DATABASE;
+        }
+    }
+
     if ($INSTALL['dbtype'] == 'odbc_mssql') {  /// Check ODBC extension is present
         if (!extension_loaded('odbc')) {
             $errormsg = get_string('odbcextensionisnotpresentinphp', 'install');
@@ -643,6 +650,13 @@ if (isset($_GET['help'])) {
                     echo get_string('moodledocslink', 'install') . '</a></p>';
                     echo '</div>';
 
+                    echo '<div id="mssql_n" name="mssql">' . get_string('databasesettingssub_mssql_n', 'install');
+                /// Link to mssql installation page
+                    echo '<p align="right"><a href="http://docs.moodle.org/en/Installing_MSSQL_for_PHP" target="_blank">';
+                    echo '<img src="' . $INSTALL['wwwrootform'] . '/pix/docs.gif' . '" alt="Docs" />';
+                    echo get_string('moodledocslink', 'install') . '</a></p>';
+                    echo '</div>';
+
                     echo '<div id="odbc_mssql" name="odbc_mssql">'. get_string('databasesettingssub_odbc_mssql', 'install');
                 /// Link to mssql installation page
                     echo '<p align="right"><a href="http://docs.moodle.org/en/Installing_MSSQL_for_PHP" target="_blank">';
@@ -651,7 +665,7 @@ if (isset($_GET['help'])) {
                     echo '</div>';
 
                     echo '<div id="oci8po" name="oci8po">' . get_string('databasesettingssub_oci8po', 'install');
-                /// Link to mssql installation page
+                /// Link to oracle installation page
                     echo '<p align="right"><a href="http://docs.moodle.org/en/Installing_Oracle_for_PHP" target="_blank">';
                     echo '<img src="' . $INSTALL['wwwrootform'] . '/pix/docs.gif' . '" alt="Docs" />';
                     echo get_string('moodledocslink', 'install') . '</a></p>';
@@ -842,6 +856,7 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
                                               'oci8po' => get_string('oci8po', 'install'),
                                               'postgres7' => get_string('postgres7', 'install'), 
                                               'mssql' => get_string('mssql', 'install'), 
+                                              'mssql_n' => get_string('mssql_n', 'install'), 
                                               'odbc_mssql' => get_string('odbc_mssql', 'install')), 
                                         'dbtype', $INSTALL['dbtype'], '', 'toggledbinfo();') ?>
                 </td>
@@ -1233,7 +1248,7 @@ function css_styles() {
         padding: 20px;
         color: #ff0000;
     }
-    #mysql, #postgres7, #mssql, #odbc_mssql, #oci8po {
+    #mysql, #postgres7, #mssql, #mssql_n, #odbc_mssql, #oci8po {
         display: none;
     }
 
@@ -1259,6 +1274,7 @@ function toggledbinfo() {
         document.getElementById('mysql').style.display = '';
         document.getElementById('postgres7').style.display = '';
         document.getElementById('mssql').style.display = '';
+        document.getElementById('mssql_n').style.display = '';
         document.getElementById('odbc_mssql').style.display = '';
         document.getElementById('oci8po').style.display = '';
         //Show the selected div
@@ -1269,6 +1285,7 @@ function toggledbinfo() {
         document.all['mysql'].style.display = '';
         document.all['postgres7'].style.display = '';
         document.all['mssql'].style.display = '';
+        document.all['mssql_n'].style.display = '';
         document.all['odbc_mssql'].style.display = '';
         document.all['oci8po'].style.display = '';
         //Show the selected div
@@ -1279,6 +1296,7 @@ function toggledbinfo() {
         document.layers['mysql'].style.display = '';
         document.layers['postgres7'].style.display = '';
         document.layers['mssql'].style.display = '';
+        document.layers['mssql_n'].style.display = '';
         document.layers['odbc_mssql'].style.display = '';
         document.layers['oci8po'].style.display = '';
         //Show the selected div
