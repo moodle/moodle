@@ -259,9 +259,17 @@
         global $CFG;
 
         // everyone gets draft access
-        $options = array ( 'draft' => get_string('publishtonoone', 'blog') );
-        $options['site'] = get_string('publishtosite', 'blog');
-        $options['public'] = get_string('publishtoworld', 'blog');
+        if ($CFG->bloglevel >= BLOG_USER_LEVEL) {
+            $options = array ( 'draft' => get_string('publishtonoone', 'blog') );
+        }
+        
+        if ($CFG->bloglevel > BLOG_USER_LEVEL) {
+            $options['site'] = get_string('publishtosite', 'blog');
+        }
+        
+        if ($CFG->bloglevel >= BLOG_GLOBAL_LEVEL) {
+            $options['public'] = get_string('publishtoworld', 'blog');
+        }
 
         return $options;
     }
