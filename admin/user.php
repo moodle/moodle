@@ -19,7 +19,7 @@
         redirect('index.php');
     }
 
-    if (!$CFG->rolesactive) {   // No admin user yet.
+    if (empty($CFG->rolesactive)) {   // No admin user yet.
 
         $user = new object();
         $user->firstname    = get_string('admin');
