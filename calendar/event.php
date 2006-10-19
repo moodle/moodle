@@ -262,7 +262,7 @@
     }
 
     print_header($site->shortname.': '.$strcalendar.': '.$title, $strcalendar, $nav.' -> '.$title,
-                 $focus, '', true, '', user_login_string($site));
+                 'eventform.name', '', true, 'new.name', user_login_string($site));
 
     echo calendar_overlib_html();
 
