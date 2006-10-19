@@ -3680,6 +3680,22 @@ function forum_add_user_default_subscriptions($userid, $context) {
         case CONTEXT_SYSTEM:   // For the whole site
              if ($courses = get_records('course')) {
                  foreach ($courses as $course) {
+                     if ($course->id == SITEID) {
+                         // temporary workaround for bug MDL-7114
+                         if ($forums = get_all_instances_in_course('forum', $course)) {
+                             foreach ($forums as $forum) {
+                                 if ($forum->forcesubscribe != FORUM_INITIALSUBSCRIBE) {
+                                     continue;
+                                 }
+                                 if ($modcontext = get_context_instance(CONTEXT_MODULE, $forum->coursemodule)) {
+                                     if (has_capability('mod/forum:viewdiscussion', $modcontext, $userid)) {
+                                         forum_subscribe($userid, $forum->id);
+                                     }
+                                 }
+                             }
+                         }
+                         continue;  
+                     }
                      $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
                      forum_add_user_default_subscriptions($userid, $subcontext);
                  }
@@ -3689,6 +3705,9 @@ function forum_add_user_default_subscriptions($userid, $context) {
         case CONTEXT_COURSECAT:   // For a whole category
              if ($courses = get_records('course', 'category', $context->instanceid)) {
                  foreach ($courses as $course) {
+                     if ($course->id == SITEID) {
+                        continue; // temporary workaround for bug MDL-7114  
+                     }
                      $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
                      forum_add_user_default_subscriptions($userid, $subcontext);
                  }
