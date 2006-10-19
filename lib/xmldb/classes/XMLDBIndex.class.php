@@ -96,6 +96,7 @@ class XMLDBIndex extends XMLDBObject {
             $this->name = trim($xmlarr['@']['NAME']);
         } else {
             $this->errormsg = 'Missing NAME attribute';
+            xmldb_dbg($this->errormsg);
             $result = false;
         }
 
@@ -107,10 +108,12 @@ class XMLDBIndex extends XMLDBObject {
                 $this->unique = false;
             } else {
                 $this->errormsg = 'Incorrect UNIQUE attribute (true/false allowed)';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         } else {
                 $this->errormsg = 'Undefined UNIQUE attribute';
+                xmldb_dbg($this->errormsg);
                 $result = false;
         }
 
@@ -124,14 +127,17 @@ class XMLDBIndex extends XMLDBObject {
                     }
                 } else {
                     $this->errormsg = 'Incorrect FIELDS attribute (comma separated of fields)';
+                    xmldb_dbg($this->errormsg);
                     $result = false;
                 }
             } else {
                 $this->errormsg = 'Empty FIELDS attribute';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         } else {
             $this->errormsg = 'Missing FIELDS attribute';
+            xmldb_dbg($this->errormsg);
             $result = false;
         }
     /// Finally, set the array of fields

@@ -342,18 +342,21 @@ class XMLDBStructure extends XMLDBObject {
             $this->path = trim($xmlarr['XMLDB']['@']['PATH']);
         } else {
             $this->errormsg = 'Missing PATH attribute';
+            xmldb_dbg($this->errormsg);
             $result = false;
         }
         if (isset($xmlarr['XMLDB']['@']['VERSION'])) {
             $this->version = trim($xmlarr['XMLDB']['@']['VERSION']);
         } else {
             $this->errormsg = 'Missing VERSION attribute';
+            xmldb_dbg($this->errormsg);
             $result = false;
         }
         if (isset($xmlarr['XMLDB']['@']['COMMENT'])) {
             $this->comment = trim($xmlarr['XMLDB']['@']['COMMENT']);
         } else {
             $this->errormsg = 'Missing COMMENT attribute';
+            xmldb_dbg($this->errormsg);
             $result = false;
         }
 
@@ -369,11 +372,13 @@ class XMLDBStructure extends XMLDBObject {
                 $this->tables[] = $table;
                 if (!$table->isLoaded()) {
                     $this->errormsg = 'Problem loading table ' . $name;
+                    xmldb_dbg($this->errormsg);
                     $result = false;
                 }
             }
         } else {
             $this->errormsg = 'Missing TABLES section';
+            xmldb_dbg($this->errormsg);
             $result = false;
         }
 
@@ -382,16 +387,19 @@ class XMLDBStructure extends XMLDBObject {
         /// Check tables names are ok (lowercase, a-z _-)
             if (!$this->checkNameValues($this->tables)) {
                 $this->errormsg = 'Some TABLES name values are incorrect';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         /// Check previous & next are ok (duplicates and existing tables)
             if ($result && !$this->checkPreviousNextValues($this->tables)) {
                 $this->errormsg = 'Some TABLES previous/next values are incorrect';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         /// Order tables
             if ($result && !$this->orderTables($this->tables)) {
                 $this->errormsg = 'Error ordering the tables';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         }
@@ -408,6 +416,7 @@ class XMLDBStructure extends XMLDBObject {
                 $this->statements[] = $statement;
                 if (!$statement->isLoaded()) {
                     $this->errormsg = 'Problem loading statement ' . $name;
+                    xmldb_dbg($this->errormsg);
                     $result = false;
                 }
             }
@@ -418,16 +427,19 @@ class XMLDBStructure extends XMLDBObject {
         /// Check statements names are ok (lowercase, a-z _-)
             if (!$this->checkNameValues($this->statements)) {
                 $this->errormsg = 'Some STATEMENTS name values are incorrect';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         /// Check previous & next are ok (duplicates and existing statements)
             if ($result && !$this->checkPreviousNextValues($this->statements)) {
                 $this->errormsg = 'Some STATEMENTS previous/next values are incorrect';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         /// Order statements
             if ($result && !$this->orderStatements($this->statements)) {
                 $this->errormsg = 'Error ordering the statements';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         }

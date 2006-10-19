@@ -133,6 +133,7 @@ class XMLDBKey extends XMLDBObject {
             $this->name = trim($xmlarr['@']['NAME']);
         } else {
             $this->errormsg = 'Missing NAME attribute';
+            xmldb_dbg($this->errormsg);
             $result = false;
         }
 
@@ -143,10 +144,12 @@ class XMLDBKey extends XMLDBObject {
                 $this->type = $type;
             } else {
                 $this->errormsg = 'Invalid TYPE attribute';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         } else {
             $this->errormsg = 'Missing TYPE attribute';
+            xmldb_dbg($this->errormsg);
             $result = false;
         }
 
@@ -160,14 +163,17 @@ class XMLDBKey extends XMLDBObject {
                     }
                 } else {
                     $this->errormsg = 'Incorrect FIELDS attribute (comma separated of fields)';
+                    xmldb_dbg($this->errormsg);
                     $result = false;
                 }
             } else {
                 $this->errormsg = 'Empty FIELDS attribute';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         } else {
             $this->errormsg = 'Missing FIELDS attribute';
+            xmldb_dbg($this->errormsg);
             $result = false;
         }
     /// Finally, set the array of fields
@@ -180,15 +186,18 @@ class XMLDBKey extends XMLDBObject {
                 $reftable = strtolower(trim($xmlarr['@']['REFTABLE']));
                 if (!$reftable) {
                     $this->errormsg = 'Empty REFTABLE attribute';
+                    xmldb_dbg($this->errormsg);
                     $result = false;
                 }
             } else {
                 $this->errormsg = 'Wrong REFTABLE attribute (only FK can have it)';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         } else if ($this->type == XMLDB_KEY_FOREIGN ||
                    $this->type == XMLDB_KEY_FOREIGN_UNIQUE) {
             $this->errormsg = 'Missing REFTABLE attribute';
+            xmldb_dbg($this->errormsg);
             $result = false;
         }
     /// Finally, set the reftable
@@ -210,19 +219,23 @@ class XMLDBKey extends XMLDBObject {
                         }
                     } else {
                         $this->errormsg = 'Incorrect REFFIELDS attribute (comma separated of fields)';
+                        xmldb_dbg($this->errormsg);
                         $result = false;
                     }
                 } else {
                     $this->errormsg = 'Empty REFFIELDS attribute';
+                    xmldb_dbg($this->errormsg);
                     $result = false;
                 }
             } else {
                 $this->errormsg = 'Wrong REFFIELDS attribute (only FK can have it)';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         } else if ($this->type == XMLDB_KEY_FOREIGN ||
                    $this->type == XMLDB_KEY_FOREIGN_UNIQUE) {
             $this->errormsg = 'Missing REFFIELDS attribute';
+            xmldb_dbg($this->errormsg);
             $result = false;
         }
     /// Finally, set the array of reffields

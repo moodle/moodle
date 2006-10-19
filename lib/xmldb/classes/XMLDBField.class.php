@@ -252,6 +252,7 @@ class XMLDBField extends XMLDBObject {
             $this->name = trim($xmlarr['@']['NAME']);
         } else {
             $this->errormsg = 'Missing NAME attribute';
+            xmldb_dbg($this->errormsg);
             $result = false;
         }
 
@@ -262,10 +263,12 @@ class XMLDBField extends XMLDBObject {
                 $this->type = $type;
             } else {
                 $this->errormsg = 'Invalid TYPE attribute';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         } else {
             $this->errormsg = 'Missing TYPE attribute';
+            xmldb_dbg($this->errormsg);
             $result = false;
         }
 
@@ -277,9 +280,11 @@ class XMLDBField extends XMLDBObject {
                 $this->type == XMLDB_TYPE_CHAR) {
                 if (!(is_numeric($length)&&(intval($length)==floatval($length)))) {
                     $this->errormsg = 'Incorrect LENGTH attribute for int, number or char fields';
+                    xmldb_dbg($this->errormsg);
                     $result = false;
                 } else if (!$length) {
                     $this->errormsg = 'Zero LENGTH attribute';
+                    xmldb_dbg($this->errormsg);
                     $result = false;
                 }
             }
@@ -293,6 +298,7 @@ class XMLDBField extends XMLDBObject {
                     $length != 'medium' &&
                     $length != 'small') {
                     $this->errormsg = 'Incorrect LENGTH attribute for text and binary fields (only big, medium and small allowed)';
+                    xmldb_dbg($this->errormsg);
                     $result = false;
                 }
             }
@@ -308,6 +314,7 @@ class XMLDBField extends XMLDBObject {
                 $this->unsigned = false;
             } else {
                 $this->errormsg = 'Incorrect UNSIGNED attribute (true/false allowed)';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         }
@@ -320,6 +327,7 @@ class XMLDBField extends XMLDBObject {
                 $this->notnull = false;
             } else {
                 $this->errormsg = 'Incorrect NOTNULL attribute (true/false allowed)';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         }
@@ -332,6 +340,7 @@ class XMLDBField extends XMLDBObject {
                 $this->sequence = false;
             } else {
                 $this->errormsg = 'Incorrect SEQUENCE attribute (true/false allowed)';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         }
@@ -348,6 +357,7 @@ class XMLDBField extends XMLDBObject {
                 $this->enum = false;
             } else {
                 $this->errormsg = 'Incorrect ENUM attribute (true/false allowed)';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         }
@@ -356,6 +366,7 @@ class XMLDBField extends XMLDBObject {
             $enumvalues = strtolower(trim($xmlarr['@']['ENUMVALUES']));
             if (!$this->enum) {
                 $this->errormsg = 'Wrong ENUMVALUES attribute (not ENUM)';
+                xmldb_dbg($this->errormsg);
                 $result = false;
                 $this->enumvalues = $enumvalues;
             } else {
@@ -374,16 +385,19 @@ class XMLDBField extends XMLDBObject {
                         if (substr($enumelement, 0, 1) != "'" ||
                             substr($enumelement, -1, 1) != "'") {
                             $this->errormsg = 'Incorrect ENUMVALUES attribute (some value is not properly quoted)';
+                            xmldb_dbg($this->errormsg);
                             $result = false;
                         }
                     }
                 } else {
                     $this->errormsg = 'Incorrect ENUMVALUES attribute (comma separated of quoted values)';
+                    xmldb_dbg($this->errormsg);
                     $result = false;
                 }
             }
         } else if ($this->enum) {
             $this->errormsg = 'Incorrect ENUMVALUES attribute (field is not declared as ENUM)';
+            xmldb_dbg($this->errormsg);
             $result = false;
         }
     /// Finally, set the value
@@ -399,13 +413,16 @@ class XMLDBField extends XMLDBObject {
                 $this->type == XMLDB_TYPE_FLOAT) {
                 if (!(is_numeric($decimals)&&(intval($decimals)==floatval($decimals)))) {
                     $this->errormsg = 'Incorrect DECIMALS attribute for number field';
+                    xmldb_dbg($this->errormsg);
                     $result = false;
                 } else if ($this->length <= $decimals){
                     $this->errormsg = 'Incorrect DECIMALS attribute (bigget than length)';
+                    xmldb_dbg($this->errormsg);
                     $result = false;
                 }
             } else {
                 $this->errormsg = 'Incorrect DECIMALS attribute for non-number field';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         } else {

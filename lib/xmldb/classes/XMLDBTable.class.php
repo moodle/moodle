@@ -444,12 +444,14 @@ class XMLDBTable extends XMLDBObject {
             $this->name = trim($xmlarr['@']['NAME']);
         } else {
             $this->errormsg = 'Missing NAME attribute';
+            xmldb_dbg($this->errormsg);
             $result = false;
         }
         if (isset($xmlarr['@']['COMMENT'])) {
             $this->comment = trim($xmlarr['@']['COMMENT']);
         } else {
             $this->errormsg = 'Missing COMMENT attribute';
+            xmldb_dbg($this->errormsg);
             $result = false;
         }
         if (isset($xmlarr['@']['PREVIOUS'])) {
@@ -471,11 +473,13 @@ class XMLDBTable extends XMLDBObject {
                 $this->fields[] = $field;
                 if (!$field->isLoaded()) {
                     $this->errormsg = 'Problem loading field ' . $name;
+                    xmldb_dbg($this->errormsg);
                     $result = false;
                 }
             }
         } else {
             $this->errormsg = 'Missing FIELDS section';
+            xmldb_dbg($this->errormsg);
             $result = false;
         }
 
@@ -484,16 +488,19 @@ class XMLDBTable extends XMLDBObject {
         /// Check field names are ok (lowercase, a-z _-)
             if (!$this->checkNameValues($this->fields)) {
                 $this->errormsg = 'Some FIELDS name values are incorrect';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         /// Check previous & next are ok (duplicates and existing fields)
             if ($result && !$this->checkPreviousNextValues($this->fields)) {
                 $this->errormsg = 'Some FIELDS previous/next values are incorrect';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         /// Order fields
             if ($result && !$this->orderFields($this->fields)) {
                 $this->errormsg = 'Error ordering the fields';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         }
@@ -510,11 +517,13 @@ class XMLDBTable extends XMLDBObject {
                 $this->keys[] = $key;
                 if (!$key->isLoaded()) {
                     $this->errormsg = 'Problem loading key ' . $name;
+                    xmldb_dbg($this->errormsg);
                     $result = false;
                 }
             }
         } else {
             $this->errormsg = 'Missing KEYS section (at least one PK must exist)';
+            xmldb_dbg($this->errormsg);
             $result = false;
         }
 
@@ -523,16 +532,19 @@ class XMLDBTable extends XMLDBObject {
         /// Check keys names are ok (lowercase, a-z _-)
             if (!$this->checkNameValues($this->keys)) {
                 $this->errormsg = 'Some KEYS name values are incorrect';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         /// Check previous & next are ok (duplicates and existing keys)
             if ($result && !$this->checkPreviousNextValues($this->keys)) {
                 $this->errormsg = 'Some KEYS previous/next values are incorrect';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         /// Order keys
             if ($result && !$this->orderKeys($this->keys)) {
                 $this->errormsg = 'Error ordering the keys';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         /// TODO: Only one PK
@@ -552,6 +564,7 @@ class XMLDBTable extends XMLDBObject {
                 $this->indexes[] = $index;
                 if (!$index->isLoaded()) {
                     $this->errormsg = 'Problem loading index ' . $name;
+                    xmldb_dbg($this->errormsg);
                     $result = false;
                 }
             }
@@ -562,16 +575,19 @@ class XMLDBTable extends XMLDBObject {
         /// Check field names are ok (lowercase, a-z _-)
             if (!$this->checkNameValues($this->indexes)) {
                 $this->errormsg = 'Some INDEXES name values are incorrect';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         /// Check previous & next are ok (duplicates and existing INDEXES)
             if ($result && !$this->checkPreviousNextValues($this->indexes)) {
                 $this->errormsg = 'Some INDEXES previous/next values are incorrect';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         /// Order indexes
             if ($result && !$this->orderIndexes($this->indexes)) {
                 $this->errormsg = 'Error ordering the indexes';
+                xmldb_dbg($this->errormsg);
                 $result = false;
             }
         /// TODO: Not indexes with repeated fields
