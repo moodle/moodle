@@ -339,15 +339,19 @@ class question_multichoice_qtype extends default_questiontype {
         include("$CFG->dirroot/question/type/multichoice/display.html");
     }
 
-    
-
     function grade_responses(&$question, &$state, $cmoptions) {
         if($question->options->single) {
-            $state->raw_grade = $question->options->answers[reset($state->responses)]->fraction;
+            $response = reset($state->responses);
+            if ($response) {
+                $state->raw_grade = $question->options->answers[$response]->fraction;
+            } else {
+                $state->raw_grade = 0;
+            }
         } else {
-            $state->raw_grade = 0;
             foreach ($state->responses as $response) {
-                $state->raw_grade += $question->options->answers[$response]->fraction;
+                if ($response) {
+                    $state->raw_grade += $question->options->answers[$response]->fraction;
+                }
             }
         }
                 
