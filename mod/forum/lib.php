@@ -1577,7 +1577,8 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
     }
 
     //TODO: there must be a nice way to do this that keeps both postgres and mysql 3.2x happy but I can't find it right now.
-    if ($CFG->dbtype == 'postgres7' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'odbc_mssql' || $CFG->dbtype == 'oci8po') {
+    if ($CFG->dbtype == 'postgres7' || $CFG->dbtype == 'mssql' || 
+        $CFG->dbtype == 'mssql_n' || $CFG->dbtype == 'odbc_mssql' || $CFG->dbtype == 'oci8po') {
         return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
                                    u.firstname, u.lastname, u.email, u.picture $umfields
                               FROM {$CFG->prefix}forum_discussions d
