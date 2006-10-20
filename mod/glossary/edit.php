@@ -38,9 +38,12 @@ if ($CFG->dbtype == 'postgres7' ) {
         $lcase = 'lcase';
 }
 
-if (!$glossary->studentcanpost && !has_capability('mod/glossary:manageentries', $context)) {
-    error("You can't add/edit entries to this glossary!");
+if ($e) { // if entry is sepcified
+    require_capability('mod/glossary:manageentries', $context);
+} else { // new entry
+    require_capability('mod/glossary:write', $context);
 }
+
 if ( $confirm ) {
     $form = data_submitted();
     trusttext_after_edit($form->text, $context);
