@@ -2911,7 +2911,7 @@ function get_roles_on_exact_context($context) {
 
     global $CFG;
 
-    return get_records_sql("SELECT DISTINCT r.*
+    return get_records_sql("SELECT r.*
                             FROM {$CFG->prefix}role_assignments ra,
                                  {$CFG->prefix}role r
                             WHERE ra.roleid = r.id
@@ -2980,7 +2980,7 @@ function get_roles_with_override_on_context($context) {
 
     global $CFG;
 
-    return get_records_sql("SELECT DISTINCT r.*
+    return get_records_sql("SELECT r.*
                             FROM {$CFG->prefix}role_capabilities rc,
                                  {$CFG->prefix}role r
                             WHERE rc.roleid = r.id
@@ -3003,7 +3003,7 @@ function get_roles_with_assignment_on_context($context) {
 
     global $CFG;
 
-    return get_records_sql("SELECT DISTINCT r.*
+    return get_records_sql("SELECT r.*
                             FROM {$CFG->prefix}role_assignments ra,
                                  {$CFG->prefix}role r
                             WHERE ra.roleid = r.id
