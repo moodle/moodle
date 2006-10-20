@@ -182,7 +182,7 @@
 
     /// this needs permission checkings
 
-    if (!empty($showroles)) { // this variable controls whether this roles is showed, or not, so only user/view page should set this flag
+    if (!empty($showroles) && has_capability('moodle/role:assign',$usercontext)) { // this variable controls whether this roles is showed, or not, so only user/view page should set this flag
         $usercontext = get_context_instance(CONTEXT_USER, $user->id);
         $toprow[] = new tabobject('roles', $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$usercontext->id.'&amp;userid='.$user->id.'&amp;courseid='.$course->id
                               ,get_string('roles'));
