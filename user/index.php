@@ -252,7 +252,18 @@
 
 
     if ($roles = get_roles_used_in_context($context)) {
-        foreach ($roles as $role) {
+        
+        // We should exclude "admin" users (those with "doanything" at site level) because 
+        // Otherwise they appear in every participant list
+
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+        $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext);
+
+          foreach ($roles as $role) {
+            if (isset($doanythingroles[$role->id])) {   // Avoid this role (ie admin)
+                unset($roles[$role->id]);
+                continue;
+            }
             $rolenames[$role->id] = strip_tags(format_string($role->name));   // Used in menus etc later on
         }
     }
