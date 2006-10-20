@@ -320,9 +320,11 @@
                     echo '<a title="'.$strsettings.'" href="'.$CFG->wwwroot.'/course/edit.php?id='.
                          $acourse->id.'">'.
                          '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.$stredit.'" /></a> ';
-                    echo '<a title="'.$strassignteachers.'" href="'.$CFG->wwwroot.'/course/teacher.php?id='.
-                         $acourse->id.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/user.gif" height="11" width="11" border="0" alt="'.$strassignteachers.'" /></a> ';
+                    // role assignment link     
+                    if (has_capability('moodle/role:assign', $context)) { 
+                        echo'<a title="'.get_string('assignroles', 'role').'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'"><img src="'.$CFG->pixpath.'/i/roles.gif" height="11" width="11" alt="'.get_string('assignroles', 'role').'" /></a>';
+                    }                       
+                         
                     if (has_capability('moodle/course:delete', $context)) {
                         echo '<a title="'.$strdelete.'" href="delete.php?id='.$acourse->id.'">'.
                              '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.$strdelete.'" /></a> ';
