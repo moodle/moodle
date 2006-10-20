@@ -376,10 +376,17 @@
         if (! $course = get_record("course", "id", $discussion->course)) {
             error("The course number was incorrect ($discussion->course)");
         }
+
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         
         if (! forum_user_can_post($forum)) {
-            error("Sorry, but you can not post in this forum.");
+            if (has_capability('moodle/legacy:guest', $coursecontext, NULL, false)) {  // User is a guest here!
+                $SESSION->wantsurl = $FULLME;
+                $SESSION->enrolcancel = $_SERVER['HTTP_REFERER'];
+                redirect($CFG->wwwroot.'/course/enrol.php?id='.$course->id, get_string('youneedtoenrol'));
+            } else {
+                print_error('nopostforum', 'forum');
+            }
         }
         
         if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {

@@ -143,16 +143,14 @@ class block_admin extends block_list {
         }
 
     /// Authorize hooks
-        if (has_capability('enrol/authorize:managepayments', $context)) {
-            if ($course->enrol == 'authorize' || (empty($course->enrol) && $CFG->enrol == 'authorize')) {
-                require_once($CFG->dirroot.'/enrol/authorize/const.php');
-                $paymenturl = '<a href="'.$CFG->wwwroot.'/enrol/authorize/index.php?course='.$course->id.'">'.get_string('payments').'</a> ';
-                if ($cnt = count_records('enrol_authorize', 'status', AN_STATUS_AUTH, 'courseid', $course->id)) {
-                    $paymenturl .= '<a href="'.$CFG->wwwroot.'/enrol/authorize/index.php?status='.AN_STATUS_AUTH.'&amp;course='.$course->id.'">'.get_string('paymentpending', 'moodle', $cnt).'</a>';
-                }
-                $this->content->items[] = $paymenturl;
-                $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/payment.gif" alt="" />';
+        if ($course->enrol == 'authorize' || (empty($course->enrol) && $CFG->enrol == 'authorize')) {
+            require_once($CFG->dirroot.'/enrol/authorize/const.php');
+            $paymenturl = '<a href="'.$CFG->wwwroot.'/enrol/authorize/index.php?course='.$course->id.'">'.get_string('payments').'</a> ';
+            if ($cnt = count_records('enrol_authorize', 'status', AN_STATUS_AUTH, 'courseid', $course->id)) {
+                $paymenturl .= '<a href="'.$CFG->wwwroot.'/enrol/authorize/index.php?status='.AN_STATUS_AUTH.'&amp;course='.$course->id.'">'.get_string('paymentpending', 'moodle', $cnt).'</a>';
             }
+            $this->content->items[] = $paymenturl;
+            $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/payment.gif" alt="" />';
         }
 
     /// View course grades (or just your own grades, same link)
@@ -162,13 +160,15 @@ class block_admin extends block_list {
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/grades.gif" alt="" />';
         }
 
-    /// Person can unenrol themselves from this course
-        if (has_capability('moodle/role:unassignself', $context, NULL, false) and empty($course->metacourse)) {
-            $this->content->items[]='<a href="unenrol.php?id='.$this->instance->pageid.'">'.get_string('unenrolme', '', $course->shortname).'</a>';
-            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" alt="" />';
+        if (empty($course->metacourse)) {
+            if (has_capability('moodle/legacy:guest', $context, NULL, false)) {   // Are a guest now
+                $this->content->items[]='<a href="enrol.php?id='.$this->instance->pageid.'">'.get_string('enrolme', '', $course->shortname).'</a>';
+                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" alt="" />';
+            } else if (has_capability('moodle/role:unassignself', $context, NULL, false)) {  // Have some role
+                $this->content->items[]='<a href="unenrol.php?id='.$this->instance->pageid.'">'.get_string('unenrolme', '', $course->shortname).'</a>';
+                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" alt="" />';
+            }
         }
-
-
 
     /// Should the following two be in this block?
 

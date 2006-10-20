@@ -1469,6 +1469,7 @@ $string['yahooid'] = 'Yahoo ID';
 $string['yes'] = 'Yes';
 $string['youareabouttocreatezip'] = 'You are about to create a zip file containing';
 $string['youaregoingtorestorefrom'] = 'You are about to start the restore process for';
+$string['youneedtoenrol'] = 'To perform that action you need to enrol in this course.';
 $string['yourlastlogin'] = 'Your last login was';
 $string['yourself'] = 'yourself';
 $string['yourteacher'] = 'your $a';
