@@ -1145,13 +1145,13 @@ function rename_index($table, $index, $newname, $continue=true, $feedback=true) 
 function change_db_encoding() {
     global $CFG, $db;  
     // try forcing utf8 collation, if mysql db and no tables present
-    if (!$db->Metatables() && ($CFG->dbtype=='mysql') && empty($CFG->unicodedb)) {
+    if (empty($CFG->unicodedb) && ($CFG->dbtype=='mysql') && !$db->Metatables()) {
         $SQL = 'ALTER DATABASE '.$CFG->dbname.' CHARACTER SET utf8';
         execute_sql($SQL, false); // silent, if it fails it fails
         if (setup_is_unicodedb()) {
-            // set_config('unicodedb','true'); // can not set config because there is no config table yet =(
+            $CFG->unicodedb = true;
             configure_dbconnection();   
-        } 
+        }
     }
 }
 
