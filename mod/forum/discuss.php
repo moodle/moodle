@@ -164,7 +164,7 @@
 /// If so, make sure the current person is allowed to see this discussion
 /// Also, if we know they should be able to reply, then explicitly set $canreply
 
-    $canreply = NULL;   /// No override one way or the other
+    $canreply = true;   /// By default, because guests etc will be asked to log in
     $groupmode = groupmode($course, $cm);
     
     
@@ -186,8 +186,7 @@
 
         } else if ($groupmode == VISIBLEGROUPS) {
             $canreply = ( (empty($mygroupid) && $discussion->groupid == -1) ||
-                    (ismember($discussion->groupid) || $mygroupid == $discussion->groupid) &&
-                    has_capability('mod/forum:replypost', $modcontext) );
+                    (ismember($discussion->groupid) || $mygroupid == $discussion->groupid) );
         }
     }
 
