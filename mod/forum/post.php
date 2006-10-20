@@ -13,14 +13,16 @@
     $name = optional_param('name','',PARAM_CLEAN);
     $confirm = optional_param('confirm',0,PARAM_INT);
     
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);  
 
-    if (isguest()) {
+    if (has_capability('moodle/legacy:guest', $sitecontext, NULL, false)) {
+
         $wwwroot = $CFG->wwwroot.'/login/index.php';
         if (!empty($CFG->loginhttps)) {
             $wwwroot = str_replace('http','https', $wwwroot);
         }
 
-        if (isset($forum)) {      // User is starting a new discussion in a forum
+        if (!empty($forum)) {      // User is starting a new discussion in a forum
             if (! $forum = get_record('forum', 'id', $forum)) {
                 error('The forum number was incorrect');
             }
