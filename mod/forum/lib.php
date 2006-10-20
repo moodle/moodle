@@ -3766,13 +3766,23 @@ function forum_remove_user_subscriptions($userid, $context) {
     switch ($context->contextlevel) {
 
         case CONTEXT_SYSTEM:   // For the whole site
-             if ($courses = get_records('course')) {
-                 foreach ($courses as $course) {
-                     $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
-                     forum_remove_user_subscriptions($userid, $subcontext);
-                 }
-             }
-             break;
+            if ($courses = get_records('course')) {
+                foreach ($courses as $course) {
+                    if ($course->id == SITEID) {
+                        if ($course = get_records('course', 'id', $context->instanceid)) {
+                            if ($forums = get_all_instances_in_course('forum', $course)) {
+                                foreach ($forums as $forum) {
+                                    forum_unsubscribe($userid, $forum->id);
+                                }  
+                            }
+                        }
+                        continue;  
+                    }
+                    $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                    forum_remove_user_subscriptions($userid, $subcontext);
+                }
+            }
+            break;
 
         case CONTEXT_COURSECAT:   // For a whole category
              if ($courses = get_records('course', 'category', $context->instanceid)) {
