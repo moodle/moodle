@@ -75,7 +75,7 @@ function print_entry($course) {
                 print_error('couldnotassignrole');
             }
 
-            if ($SESSION->wantsurl) {
+            if (!empty($SESSION->wantsurl)) {
                 $destination = $SESSION->wantsurl;
                 unset($SESSION->wantsurl);
             } else {
@@ -86,7 +86,13 @@ function print_entry($course) {
 
         } else if (!empty($_GET['cancel'])) {
             unset($SESSION->wantsurl);
-            redirect($CFG->wwwroot);
+            if (!empty($SESSION->enrolcancel)) {
+                $destination = $SESSION->enrolcancel;
+                unset($SESSION->enrolcancel);
+            } else {
+                $destination = $CFG->wwwroot;
+            }
+            redirect($destination);
         }
     }
 
