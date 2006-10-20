@@ -24,6 +24,7 @@
 
     require_once('../../config.php');
     require_once('lib.php');
+    require_once("$CFG->libdir/rsslib.php");
 
     $id    = optional_param('id', 0, PARAM_INT);    // course module id
     $d     = optional_param('d', 0, PARAM_INT);    // database id
@@ -90,12 +91,26 @@
     }
   
 
-/// Print the page header
+/// RSS and CSS and JS meta
+    $meta = '';
+    if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
+        $rsspath = rss_get_url($course->id, $USER->id, 'data', $data->id);
+        $meta .= '<link rel="alternate" type="application/rss+xml" ';
+        $meta .= 'title ="'.$course->shortname.': %fullname%" href="'.$rsspath.'" />';
+    }
+    if ($data->csstemplate) {
+        $meta .= '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/data/css.php?d='.$data->id.'" /> ';
+    }
+    if ($data->jstemplate) {
+        $meta .= '<script type="text/javascript" src="'.$CFG->wwwroot.'/mod/data/js.php?d='.$data->id.'"></script>';
+    }
 
+
+/// Print the page header
     $strdata = get_string('modulenameplural','data');
 
     print_header_simple($data->name, '', "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name",
-                        '', '', true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')), 
+                        '', $meta, true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')), 
                         navmenu($course, $cm), '', '');
 
     print_heading(format_string($data->name));
