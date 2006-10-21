@@ -674,7 +674,8 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields='*'
                 // the course needs to be visible, or user must have moodle/course:viewhiddencourses 
                 // capability set to view hidden courses  
                 $context = get_context_instance(CONTEXT_COURSE, $course->id);
-                if (has_capability('moodle/course:view', $context, $userid) && 
+                if ( has_capability('moodle/course:view', $context, $userid, false) && 
+                    !has_capability('moodle/legacy:guest', $context, $userid, false) &&
                     ($course->visible || has_capability('moodle/course:viewhiddencourses', $context, $userid))) {
                     $mycourses[$course->id] = $course;
                 }
