@@ -170,6 +170,10 @@
             $articlesleft = $glossary->rssarticles;
             $item = NULL;
             $user = NULL;
+
+            $formatoptions = new object;
+            $formatoptions->trusttext = true;
+
             foreach ($recs as $rec) {
                 unset($item);
                 unset($user);
@@ -179,7 +183,7 @@
                 $item->author = fullname($user);
                 $item->pubdate = $rec->entrytimecreated;
                 $item->link = $CFG->wwwroot."/mod/glossary/showentry.php?courseid=".$glossary->course."&eid=".$rec->entryid;
-                $item->description = format_text($rec->entrydefinition,$rec->entryformat,NULL,$glossary->course);
+                $item->description = format_text($rec->entrydefinition,$rec->entryformat,$formatoptions,$glossary->course);
                 $items[] = $item;
                 $articlesleft--;
                 if ($articlesleft < 1) {
@@ -228,6 +232,10 @@
             $articlesleft = $glossary->rssarticles;
             $item = NULL;
             $user = NULL;
+
+            $formatoptions = new object;
+            $formatoptions->trusttext = true;
+
             foreach ($recs as $rec) {
                 unset($item);
                 unset($user);
@@ -237,7 +245,7 @@
                 //$item->author = fullname($user);
                 $item->pubdate = $rec->entrytimecreated;
                 $item->link = $CFG->wwwroot."/mod/glossary/showentry.php?courseid=".$glossary->course."&eid=".$rec->entryid;
-                $item->description = format_text($rec->entrydefinition,$rec->entryformat,NULL,$glossary->course);
+                $item->description = format_text($rec->entrydefinition,$rec->entryformat,$formatoptions,$glossary->course);
                 $items[] = $item;
                 $articlesleft--;
                 if ($articlesleft < 1) {
