@@ -93,7 +93,7 @@ class test extends XMLDBAction {
         $table->addFieldInfo('type', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general');
         $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, '');
         $table->addFieldInfo('intro', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, '');
-        $table->addFieldInfo('logo', XMLDB_TYPE_BINARY, 'big', null, XMLDB_NOTNULL, null, null, null, '');
+        $table->addFieldInfo('logo', XMLDB_TYPE_BINARY, 'big', null, XMLDB_NOTNULL, null, null, null);
         $table->addFieldInfo('assessed', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('assesstimestart', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('assesstimefinish', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
@@ -144,7 +144,7 @@ class test extends XMLDBAction {
             $table->addFieldInfo('secondname', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, null);
             $table->addFieldInfo('intro', XMLDB_TYPE_TEXT, 'medium', null, XMLDB_NOTNULL, null, null, null, null);
             $table->addFieldInfo('avatar', XMLDB_TYPE_BINARY, 'medium', null, null, null, null, null, null);
-            $table->addFieldInfo('grade', XMLDB_TYPE_NUMBER, '20,10', null, null, null, null, null, '');
+            $table->addFieldInfo('grade', XMLDB_TYPE_NUMBER, '20,10', null, null, null, null, null);
             $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -182,7 +182,7 @@ class test extends XMLDBAction {
             if (!$test->status) {
                 $test->error = $db->ErrorMsg();
             }
-            $tests['add field'] = $test;
+            $tests['add enum field'] = $test;
         }
 
     /// 5th test. Dropping one complex enum field
@@ -194,7 +194,7 @@ class test extends XMLDBAction {
             if (!$test->status) {
                 $test->error = $db->ErrorMsg();
             }
-            $tests['drop field'] = $test;
+            $tests['drop enum field'] = $test;
         }
 
     /// 6th test. Adding one complex enum field
@@ -209,22 +209,38 @@ class test extends XMLDBAction {
             if (!$test->status) {
                 $test->error = $db->ErrorMsg();
             }
-            $tests['add field again'] = $test;
+            $tests['add enum field again'] = $test;
         }
 
-    /// 7th test. Dropping one complex enum field
+    /// 7th test. Adding one numeric field
+        if ($test->status) {
+        /// Create a new field (numeric)
+            $field = new XMLDBField('onenumber');
+            $field->setAttributes(XMLDB_TYPE_INTEGER, '6', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, 0, 'type');
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $test->sql = $table->getAddFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = add_field($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['add numeric field'] = $test;
+        }
+
+    /// 8th test. Dropping one complex enum field
         if ($test->status) {
         /// Create a new field with complex specs (enums are good candidates)
+            $field = new XMLDBField('type');
             $test = new stdClass;
             $test->sql = $table->getDropFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
             $test->status = drop_field($table, $field, false, false);
             if (!$test->status) {
                 $test->error = $db->ErrorMsg();
             }
-            $tests['drop field again'] = $test;
+            $tests['drop enum field again'] = $test;
         }
 
-    /// 8th test. Change the type of one column from integer to varchar
+    /// 9th test. Change the type of one column from integer to varchar
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -239,7 +255,7 @@ class test extends XMLDBAction {
             $tests['change field type (int2char)'] = $test;
         }
 
-    /// 9th test. Change the type of one column from varchar to integer
+    /// 10th test. Change the type of one column from varchar to integer
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -254,7 +270,7 @@ class test extends XMLDBAction {
             $tests['change field type (char2int)'] = $test;
         }
 
-    /// 10th test. Change the type of one column from number to varchar
+    /// 11th test. Change the type of one column from number to varchar
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -269,7 +285,7 @@ class test extends XMLDBAction {
             $tests['change field type (number2char)'] = $test;
         }
 
-    /// 11th test. Change the type of one column from varchar to float
+    /// 12th test. Change the type of one column from varchar to float
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -284,7 +300,7 @@ class test extends XMLDBAction {
             $tests['change field type (char2float)'] = $test;
         }
 
-    /// 12th test. Change the type of one column from float to char
+    /// 13th test. Change the type of one column from float to char
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -299,7 +315,7 @@ class test extends XMLDBAction {
             $tests['change field type (float2char)'] = $test;
         }
 
-    /// 13th test. Change the type of one column from char to number
+    /// 14th test. Change the type of one column from char to number
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -315,7 +331,7 @@ class test extends XMLDBAction {
         }
 
 
-    /// 14th test. Change the precision of one text field
+    /// 15th test. Change the precision of one text field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -330,7 +346,7 @@ class test extends XMLDBAction {
             $tests['change field precision (text)'] = $test;
         }
 
-    /// 15th test. Change the precision of one char field
+    /// 16th test. Change the precision of one char field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -345,7 +361,7 @@ class test extends XMLDBAction {
             $tests['change field precision (char)'] = $test;
         }
 
-    /// 16th test. Change the precision of one numeric field
+    /// 17th test. Change the precision of one numeric field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -360,7 +376,7 @@ class test extends XMLDBAction {
             $tests['change field precision (number)'] = $test;
         }
 
-    /// 17th test. Change the sign of one numeric field to unsigned
+    /// 18th test. Change the sign of one numeric field to unsigned
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -375,7 +391,7 @@ class test extends XMLDBAction {
             $tests['change field sign (unsigned)'] = $test;
         }
 
-    /// 18th test. Change the sign of one numeric field to signed
+    /// 19th test. Change the sign of one numeric field to signed
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -390,7 +406,7 @@ class test extends XMLDBAction {
             $tests['change field sign (signed)'] = $test;
         }
 
-    /// 19th test. Change the nullability of one char field to not null
+    /// 20th test. Change the nullability of one char field to not null
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -405,7 +421,7 @@ class test extends XMLDBAction {
             $tests['change field nullability (not null)'] = $test;
         }
 
-    /// 20th test. Change the nullability of one char field to null
+    /// 21th test. Change the nullability of one char field to null
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -420,7 +436,7 @@ class test extends XMLDBAction {
             $tests['change field nullability (null)'] = $test;
         }
 
-    /// 21th test. Dropping the default of one field
+    /// 22th test. Dropping the default of one field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -435,7 +451,7 @@ class test extends XMLDBAction {
             $tests['drop field default of NULL field'] = $test;
         }
 
-    /// 22th test. Creating the default for one field
+    /// 23th test. Creating the default for one field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -450,7 +466,7 @@ class test extends XMLDBAction {
             $tests['add field default of NULL field'] = $test;
         }
 
-    /// 23th test. Creating the default for one field
+    /// 24th test. Creating the default for one field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -466,7 +482,7 @@ class test extends XMLDBAction {
         }
 
 
-    /// 24th test. Dropping the default of one NOT NULL field
+    /// 25th test. Dropping the default of one NOT NULL field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -481,7 +497,7 @@ class test extends XMLDBAction {
             $tests['drop field default of NOT NULL field'] = $test;
         }
 
-    /// 25th test. Adding one unique index to the table
+    /// 26th test. Adding one unique index to the table
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -496,7 +512,7 @@ class test extends XMLDBAction {
             $tests['add unique index'] = $test;
         }
 
-    /// 26th test. Adding one not unique index to the table
+    /// 27th test. Adding one not unique index to the table
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -511,7 +527,7 @@ class test extends XMLDBAction {
             $tests['add not unique index'] = $test;
         }
 
-    /// 27th test. Re-add the same index than previous test. Check find_index_name() works.
+    /// 28th test. Re-add the same index than previous test. Check find_index_name() works.
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -530,7 +546,7 @@ class test extends XMLDBAction {
             $tests['check find_index_name()'] = $test;
         }
 
-    /// 28th test. Dropping one index from the table
+    /// 29th test. Dropping one index from the table
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -545,7 +561,7 @@ class test extends XMLDBAction {
             $tests['drop index'] = $test;
         }
 
-    /// 29th test. Adding one unique key to the table
+    /// 30th test. Adding one unique key to the table
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -560,7 +576,7 @@ class test extends XMLDBAction {
             $tests['add unique key'] = $test;
         }
 
-    /// 30th test. Adding one foreign+unique key to the table
+    /// 31th test. Adding one foreign+unique key to the table
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -575,7 +591,7 @@ class test extends XMLDBAction {
             $tests['add foreign+unique key'] = $test;
         }
 
-    /// 31th test. Drop one key
+    /// 32th test. Drop one key
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -590,7 +606,7 @@ class test extends XMLDBAction {
             $tests['drop foreign+unique key'] = $test;
         }
 
-    /// 32th test. Adding one foreign key to the table
+    /// 33th test. Adding one foreign key to the table
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -605,7 +621,7 @@ class test extends XMLDBAction {
             $tests['add foreign key'] = $test;
         }
 
-    /// 33th test. Drop one foreign key
+    /// 34th test. Drop one foreign key
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -620,7 +636,7 @@ class test extends XMLDBAction {
             $tests['drop foreign key'] = $test;
         }
 
-    /// 34th test. Adding one complex enum field
+    /// 35th test. Adding one complex enum field
         if ($test->status) {
         /// Create a new field with complex specs (enums are good candidates)
             $field = new XMLDBField('type');
@@ -635,7 +651,7 @@ class test extends XMLDBAction {
             $tests['add field with enum'] = $test;
         }
 
-    /// 35th test. Dropping the enum of one field
+    /// 36th test. Dropping the enum of one field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -650,7 +666,7 @@ class test extends XMLDBAction {
             $tests['delete enumlist from one field'] = $test;
         }
 
-    /// 36th test. Creating the enum for one field
+    /// 37th test. Creating the enum for one field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -664,7 +680,7 @@ class test extends XMLDBAction {
             $tests['add enumlist to one field'] = $test;
         }
 
-    /// 37th test. Renaming one index
+    /// 38th test. Renaming one index
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -679,7 +695,7 @@ class test extends XMLDBAction {
             $tests['rename index (experimental. DO NOT USE IT)'] = $test;
         }
 
-    /// 38th test. Renaming one key
+    /// 39th test. Renaming one key
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -694,7 +710,7 @@ class test extends XMLDBAction {
             $tests['rename key (experimental. DO NOT USE IT)'] = $test;
         }
 
-    /// 39th test. Renaming one field
+    /// 40th test. Renaming one field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -709,7 +725,7 @@ class test extends XMLDBAction {
             $tests['rename field'] = $test;
         }
 
-    /// 40th test. Renaming one table
+    /// 41th test. Renaming one table
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -722,7 +738,7 @@ class test extends XMLDBAction {
             $tests['rename table'] = $test;
         }
 
-    /// 41th test. Getting the PK sequence name for one table
+    /// 42th test. Getting the PK sequence name for one table
         if ($test->status) {
             $test = new stdClass;
             $table->setName('newnameforthetable');
@@ -737,7 +753,7 @@ class test extends XMLDBAction {
             $tests['find sequence name'] = $test;
         }
 
-    /// 42th test. Inserting TEXT contents
+    /// 43th test. Inserting TEXT contents
         $textlib = textlib_get_instance();
         if ($test->status) {
             $test = new stdClass;
@@ -776,13 +792,13 @@ class test extends XMLDBAction {
             $tests['insert record '. $textlen . ' cc. (text)'] = $test;
         }
 
-    /// 43th test. Inserting BINARY contents
+    /// 44th test. Inserting BINARY contents
         if ($test->status) {
             $test = new stdClass;
             $test->status = false;
         /// Build the record to insert
             $rec->avatar = addslashes($fulltext);
-            $rec->name = 'textbinary';
+            $rec->name = 'binarytest';
         /// Calculate its length
             $textlen = strlen($fulltext);
             if ($rec->id = insert_record('newnameforthetable', $rec)) {
@@ -805,7 +821,7 @@ class test extends XMLDBAction {
             $tests['insert record '. $textlen . ' bytes (binary)'] = $test;
         }
 
-    /// 44th test. update_record with TEXT and BINARY contents
+    /// 45th test. update_record with TEXT and BINARY contents
         if ($test->status) {
             $test = new stdClass;
             $test->status = false;
@@ -845,7 +861,37 @@ class test extends XMLDBAction {
             $tests['update record '. $textlen . ' cc. (text) and ' . $imglen . ' bytes (binary)'] = $test;
         }
 
-    /// 45th test. set_field with BINARY contents
+    /// 46th test. set_field with TEXT contents
+        if ($test->status) {
+            $test = new stdClass;
+            $test->status = false;
+            $test->sql = array();
+        /// Build the record to insert
+            $rec->intro = addslashes($fulltext);
+            $rec->name = 'updatelobs';
+        /// Calculate its length
+            $textlen = $textlib->strlen($fulltext, current_charset());
+            if (set_field('newnameforthetable', 'intro', $rec->intro, 'name', $rec->name)) {
+                if ($new = get_record('newnameforthetable', 'id', $rec->id)) {
+                    $newtextlen = $textlib->strlen($new->intro);
+                    if ($rec->intro === $new->intro) {
+                        $test->sql = array($newtextlen . ' cc. (text) sent and received ok');
+                        $test->status = true;
+                    } else {
+                        $test->error = $db->ErrorMsg();
+                        $test->sql = array($newtextlen . ' cc. (text) transfer failed. Data changed!');
+                        $test->status = false;
+                    }
+                } else {
+                    $test->error = $db->ErrorMsg();
+                }
+            } else {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['set field '. $textlen . ' cc. (text)'] = $test;
+        }
+
+    /// 47th test. set_field with BINARY contents
         if ($test->status) {
             $test = new stdClass;
             $test->status = false;
