@@ -50,6 +50,12 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2006101001) {         /// Disable the LAMS module by default
+        if (!count_records('lams')) {
+            set_field('modules', 'visible', 0, 'name', 'lams');  // Disable it by default
+        }
+    }
+
     return $result;
 }
 
