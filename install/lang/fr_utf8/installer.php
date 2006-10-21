@@ -50,7 +50,13 @@ $string['databasesettingssub'] = '<strong>Type&nbsp;:</strong> «&nbsp;mysql&nbs
 <strong>Utilisateur&nbsp;:</strong> le nom d\'utilisateur de la base de données<br />
 <strong>Mot de passe&nbsp;:</strong> le mot de passe de la base de données<br />
 <strong>Préfixe des tables&nbsp;:</strong> le préfixe à utiliser pour les noms de toutes les tables (facultatif)';
-$string['databasesettingssub_mssql'] = '<strong>Type&nbsp;:</strong> SQL*Server<br />
+$string['databasesettingssub_mssql'] = '<strong>Type&nbsp;:</strong> SQL*Server (sans UTF-8) <strong><font color=\"red\">Expérimental&nbsp;! (ne pas utiliser en production)</font></strong><br />
+<strong>Serveur hôte&nbsp;:</strong> le plus souvent «&nbsp;localhost&nbsp;» ou par exemple «&nbsp;db.isp.com&nbsp;»<br />
+<strong>Nom&nbsp;:</strong> nom de la base de données, par exemple «&nbsp;moodle&nbsp;»<br />
+<strong>Utilisateur&nbsp;:</strong> le nom d\'utilisateur de la base de données<br />
+<strong>Mot de passe&nbsp;:</strong> le mot de passe de la base de données<br />
+<strong>Préfixe des tables&nbsp;:</strong> le préfixe à utiliser pour les noms de toutes les tables (requis)';
+$string['databasesettingssub_mssql_n'] = '<strong>Type&nbsp;:</strong> SQL*Server (UTF-8 activé)<br />
 <strong>Serveur hôte&nbsp;:</strong> le plus souvent «&nbsp;localhost&nbsp;» ou par exemple «&nbsp;db.isp.com&nbsp;»<br />
 <strong>Nom&nbsp;:</strong> nom de la base de données, par exemple «&nbsp;moodle&nbsp;»<br />
 <strong>Utilisateur&nbsp;:</strong> le nom d\'utilisateur de la base de données<br />
@@ -68,7 +74,7 @@ $string['databasesettingssub_oci8po'] = '<strong>Type&nbsp;:</strong> Oracle<br 
 <strong>Utilisateur&nbsp;:</strong> le nom d\'utilisateur de la base de données<br />
 <strong>Mot de passe&nbsp;:</strong> le mot de passe de la base de données<br />
 <strong>Préfixe des tables&nbsp;:</strong> le préfixe à utiliser pour les noms de toutes les tables (requis, max. 2cc.)';
-$string['databasesettingssub_odbc_mssql'] = '<strong>Type&nbsp;:</strong> SQL*Server (via ODBC)<strong> <font color=\"red\">Experimental&nbsp;! (ne pas utiliser en production)</font></strong><br />
+$string['databasesettingssub_odbc_mssql'] = '<strong>Type&nbsp;:</strong> SQL*Server (via ODBC) <strong><font color=\"red\">Expérimental&nbsp;! (ne pas utiliser en production)</font></strong><br />
 <strong>Serveur hôte&nbsp;:</strong> Nom du DSN dans le panneau de contrôle ODBC<br />
 <strong>Nom&nbsp;:</strong> nom de la base de données, par exemple «&nbsp;moodle&nbsp;»<br />
 <strong>Utilisateur&nbsp;:</strong> le nom d\'utilisateur de la base de données<br />
@@ -142,6 +148,7 @@ $string['memorylimithelp'] = '<p>La limite de mémoire de PHP sur votre serveur 
 $string['missingrequiredfield'] = 'Un champ obligatoire n\'est pas renseigné';
 $string['moodledocslink'] = 'Documentation Moodle pour cette page';
 $string['mssql'] = 'SQL*Server (mssql)';
+$string['mssql_n'] = 'SQL*Server avec support de UTF-8 (mssql_n)';
 $string['mssqlextensionisnotpresentinphp'] = 'La configuration de l\'extension MSSQL de PHP n\'a pas été effectuée correctement. De ce fait, PHP ne peut communiquer avec SQL*Server. Veuillez vérifier votre fichier «&nbsp;php.ini&nbsp;» ou recompiler PHP.';
 $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'Toutefois, si votre site utilise UNIQUEMENT des langues encodées en iso-8859-1 (latin), vous pouvez continuer à utiliser votre version actuelle de MySQL 4.1.12 (ou ultérieure).';
