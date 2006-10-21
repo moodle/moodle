@@ -284,7 +284,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
         }
     }
 
-    if ($userid && $userid != $USER->id) {
+    if ($userid && (($USER === NULL) or ($userid != $USER->id))) {
         if (empty($USER->id) or ($userid != $USER->id)) {
             $capabilities = load_user_capability($capability, $context, $userid);
         } else { //$USER->id == $userid
