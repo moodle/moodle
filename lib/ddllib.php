@@ -678,6 +678,12 @@ function add_field($table, $field, $continue=true, $feedback=true) {
         return true;
     }
 
+/// If NOT NULL and no default given, check the table is empty
+    if ($field->getNotNull() && $field->getDefault() === NULL && count_records($table->getName())) {
+        debugging('Field ' . $field->getName() . ' cannot be added. Not null fields added to non empty tables require default value. Create skipped', DEBUG_DEVELOPER);
+         return true;
+    }
+
     if(!$sqlarr = $table->getAddFieldSQL($CFG->dbtype, $CFG->prefix, $field, false)) {
         return true; //Empty array = nothing to do = no error
     }
