@@ -263,7 +263,7 @@
                 $item->description = format_text($rec->postmessage,$rec->postformat,$formatoptions,$forum->course);
 
 
-                $post_file_area_name = str_replace('//', '/', "$forum->course/$CFG->moddata/$rec->course/forum/$forum->id/$rec->postid");
+                $post_file_area_name = str_replace('//', '/', "$forum->course/$CFG->moddata/forum/$forum->id/$rec->postid");
                 $post_files = get_directory_list("$CFG->dataroot/$post_file_area_name");
                 
                 if (!empty($post_files)) {            
