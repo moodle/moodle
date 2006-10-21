@@ -36,7 +36,7 @@ class block_course_list extends block_list {
 
         if (empty($CFG->disablemycourses) and 
             !empty($USER->id) and 
-            !(has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM, SITEID)) and $adminseesall)and
+            !(has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM)) and $adminseesall) and
             !isguest()) {    // Just print My Courses
             if ($courses = get_my_courses($USER->id)) {
                 foreach ($courses as $course) {
