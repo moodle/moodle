@@ -53,7 +53,13 @@ $string['databasesettingssub'] = '<b>Tipi:</b> mysql veya postgres7<br />
 <b>Kullanıcı:</b> veritabanı kullanıcısı<br />
 <b>Şifre:</b> kullanıcı şifresi<br />
 <b>Tablo öneki:</b> tüm tablo isimleri için isteğe bağlı önek';
-$string['databasesettingssub_mssql'] = '<b>Tipi:</b> SQL*Server<br />
+$string['databasesettingssub_mssql'] = '<b>Tipi:</b> SQL*Server (UTF-8 yok)<br />
+<b>Sunucu:</b> ör: localhost veya db.iss.com<br />
+<b>Adı:</b> veritabanı adı, ör: moodle<br />
+<b>Kullanıcı:</b> veritabanı kullanıcısı<br />
+<b>Şifre:</b> kullanıcı şifresi<br />
+<b>Tablo öneki:</b> tüm tablo isimleri için ön ek (gerekli)';
+$string['databasesettingssub_mssql_n'] = '<b>Tipi:</b> SQL*Server (UTF-8 etkin)<br />
 <b>Sunucu:</b> ör: localhost veya db.iss.com<br />
 <b>Adı:</b> veritabanı adı, ör: moodle<br />
 <b>Kullanıcı:</b> veritabanı kullanıcısı<br />
@@ -180,7 +186,8 @@ Böyle bir durumda .htaccess dosyasını silmeniz gerekiyor.</p></li>
 $string['missingrequiredfield'] = 'Bazı gerekli alanlar eksik';
 $string['moodledocslink'] = 'Bu sayfa için Moodle Belgeleri';
 $string['mssql'] = 'SQL*Server (mssql)';
-$string['mssqlextensionisnotpresentinphp'] = 'PHP, SQL*Server ile iletişim kurabilmek için düzgün bir şekilde yapılandırılmamış. Lütfen php.ini dosyasını kontrol edin veya PHP\'yi tekrar derleyin.';
+$string['mssql_n'] = 'SQL*Server - UTF8 destekli (mssql_n)';
+$string['mssqlextensionisnotpresentinphp'] = 'PHP, SQL*Server ile iletişim kurabilmek için mssql uzantısı düzgün bir şekilde yapılandırılmamış. Lütfen php.ini dosyasını kontrol edin veya PHP\'yi tekrar derleyin.';
 $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'Siteniz SADECE iso-8859-1 (latin) dillerini kullanıyorsa şimdiki kurulu  MySQL 4.1.12 (veya yüksek) veritabanını kullanmaya devam edebilirsiniz.';
 $string['mysql416required'] = 'Moodle 1.6 için ilerde tüm verilerin UTF-8\'e çevrilebilmesinin garantilenmesi için en az MySQL 4.1.16 kurulu olması gerekir.';
