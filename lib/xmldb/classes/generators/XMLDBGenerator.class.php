@@ -439,7 +439,7 @@ class XMLDBgenerator {
 
         $default = null;
 
-        if ($xmldb_field->getDefault() != NULL) {
+        if ($xmldb_field->getDefault() !== NULL) {
             if ($xmldb_field->getType() == XMLDB_TYPE_CHAR ||
                 $xmldb_field->getType() == XMLDB_TYPE_TEXT) {
                     $default = "'" . addslashes($xmldb_field->getDefault()) . "'";
