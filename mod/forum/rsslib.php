@@ -246,6 +246,10 @@
             $articlesleft = $forum->rssarticles;
             $item = NULL;
             $user = NULL;
+
+            $formatoptions = new object;
+            $formatoptions->trusttext = true;
+
             foreach ($recs as $rec) {
                 unset($item);
                 unset($user);
@@ -256,10 +260,10 @@
                 $item->author = fullname($user);
                 $item->pubdate = $rec->postcreated;
                 $item->link = $CFG->wwwroot."/mod/forum/discuss.php?d=".$rec->discussionid."&parent=".$rec->postid;
-                $item->description = format_text($rec->postmessage,$rec->postformat,NULL,$forum->course);
+                $item->description = format_text($rec->postmessage,$rec->postformat,$formatoptions,$forum->course);
 
 
-                $post_file_area_name = str_replace('//', '/', "$forum->course/$CFG->moddata/$rec->course/forum/$forum->id/$rec->postid");
+                $post_file_area_name = str_replace('//', '/', "$forum->course/$CFG->moddata/forum/$forum->id/$rec->postid");
                 $post_files = get_directory_list("$CFG->dataroot/$post_file_area_name");
                 
                 if (!empty($post_files)) {            
