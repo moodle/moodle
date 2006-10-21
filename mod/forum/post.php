@@ -435,12 +435,6 @@
         if (! $forum = get_record("forum", "id", $discussion->forum)) {
             error("The forum number was incorrect ($discussion->forum)");
         }
-        if (!($forum->type == 'news' && !$post->parent && $discussion->timestart > time())) {
-            if (((time() - $post->created) > $CFG->maxeditingtime) and
-                        !has_capability('mod/forum:editanypost', $modcontext)) {
-                error( get_string("maxtimehaspassed", "forum", format_time($CFG->maxeditingtime)) );
-            }
-        }
         if (! $course = get_record("course", "id", $discussion->course)) {
             error("The course number was incorrect ($discussion->course)");
         }
@@ -448,6 +442,12 @@
             error('Could not get the course module for the forum instance.');
         } else {
             $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        }
+        if (!($forum->type == 'news' && !$post->parent && $discussion->timestart > time())) {
+            if (((time() - $post->created) > $CFG->maxeditingtime) and
+                        !has_capability('mod/forum:editanypost', $modcontext)) {
+                error( get_string("maxtimehaspassed", "forum", format_time($CFG->maxeditingtime)) );
+            }
         }
         if (($post->userid <> $USER->id) and
                     !has_capability('mod/forum:editanypost', $modcontext)) {
