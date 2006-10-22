@@ -754,6 +754,9 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
         }
     }
 
+    if ($messagesearch == '') { // if only 1 letter words searched
+        return false;
+    }
 
     $messagesearch = "($messagesearch) ";
 
