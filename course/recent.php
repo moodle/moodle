@@ -60,9 +60,9 @@
         if (empty($date)) { // no date picked, default to last login time
             $date = time() - COURSE_MAX_RECENT_PERIOD;
 
-            if (!empty($USER->timeaccess[$course->id])) {
-                if ($USER->timeaccess[$course->id] > $date) {
-                    $date = $USER->timeaccess[$course->id];
+            if (!empty($USER->lastcourseaccess[$course->id])) {
+                if ($USER->lastcourseaccess[$course->id] > $date) {
+                    $date = $USER->lastcourseaccess[$course->id];
                 }
             }
         }
