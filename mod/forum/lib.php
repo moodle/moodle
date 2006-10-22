@@ -3155,7 +3155,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
         $numdiscussions = count($discussions);
 
         ///Show the paging bar
-        print_paging_bar($numdiscussions, $page, $maxdiscussions, "view.php?f=$forum->id&");
+        print_paging_bar($numdiscussions, $page, $maxdiscussions, "view.php?f=$forum->id&amp;");
 
         //Calculate the page "window"
         $pagestart = ($page * $maxdiscussions) + 1;
