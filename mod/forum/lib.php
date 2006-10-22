@@ -2199,7 +2199,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
                     echo '</a>';
                     echo '<a title="'.$strmarkalldread.'" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?f='.
                          $forum->id.'&amp;d='.$post->discussion.'&amp;mark=read&amp;returnpage=view.php">' .
-                         '<img src="'.$CFG->pixpath.'/t/clear.gif" height="11" width="11" /></a>';
+                         '<img src="'.$CFG->pixpath.'/t/clear.gif" height="11" width="11" alt="" /></a>';
                     echo '</span>';
                 } else {
                     echo '<span class="read">';
@@ -3155,7 +3155,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
         $numdiscussions = count($discussions);
 
         ///Show the paging bar
-        print_paging_bar($numdiscussions, $page, $maxdiscussions, "view.php?f=$forum->id&");
+        print_paging_bar($numdiscussions, $page, $maxdiscussions, "view.php?f=$forum->id&amp;");
 
         //Calculate the page "window"
         $pagestart = ($page * $maxdiscussions) + 1;
@@ -3197,7 +3197,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
                     echo '&nbsp;<a title="'.get_string('markallread', 'forum').
                          '" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?f='.
                          $forum->id.'&amp;mark=read&amp;returnpage=view.php">'.
-                         '<img src="'.$CFG->pixpath.'/t/clear.gif" height="11" width="11" border="0" /></a>';
+                         '<img src="'.$CFG->pixpath.'/t/clear.gif" height="11" width="11" border="0" alt="" /></a>';
                 }
                 echo '</th>';
             }
@@ -3288,7 +3288,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
     }
 
     if ($page != -1) { ///Show the paging bar
-        print_paging_bar($numdiscussions, $page, $maxdiscussions, "view.php?f=$forum->id&");
+        print_paging_bar($numdiscussions, $page, $maxdiscussions, "view.php?f=$forum->id&amp;");
     }
 }
 
