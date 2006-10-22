@@ -2547,6 +2547,12 @@ function get_complete_user_data($field, $value) {
         }
     }
 
+    if ($lastaccesses = get_records('user_lastaccess', 'userid', $user->id)) {
+        foreach ($lastaccesses as $lastaccess) {
+            $user->lastcourseaccess[$lastaccess->courseid] = $lastaccess->timeaccess;
+        }
+    }
+
     if ($groups = get_records('groups_members', 'userid', $user->id)) {
         foreach ($groups as $groupmember) {
             $courseid = get_field('groups', 'courseid', 'id', $groupmember->groupid);
