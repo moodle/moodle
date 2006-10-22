@@ -545,17 +545,11 @@ function get_recordset_select($table, $select='', $sort='', $fields='*', $limitf
         $select = ' WHERE '. $select;
     }
 
-    if ($limitfrom !== '') {
-        $limit = sql_paging_limit($limitfrom, $limitnum);
-    } else {
-        $limit = '';
-    }
-
     if ($sort) {
         $sort = ' ORDER BY '. $sort;
     }
 
-    return get_recordset_sql('SELECT '. $fields .' FROM '. $CFG->prefix . $table . $select . $sort .' '. $limit);
+    return get_recordset_sql('SELECT '. $fields .' FROM '. $CFG->prefix . $table . $select . $sort, $limitfrom, $limitnum);
 }
 
 /**
@@ -811,10 +805,12 @@ function recordset_to_menu($rs) {
  * @param string $value the value the field must have (requred if field1 is given, else optional).
  * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
  * @param string $fields a comma separated list of fields to return (optional, by default all fields are returned).
+ * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
+ * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
  * @return mixed an associative array, or false if no records were found or an error occured.
  */
-function get_records_menu($table, $field='', $value='', $sort='', $fields='*') {
-    $rs = get_recordset($table, $field, $value, $sort, $fields);
+function get_records_menu($table, $field='', $value='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+    $rs = get_recordset($table, $field, $value, $sort, $fields, $limitfrom, $limitnum);
     return recordset_to_menu($rs);
 }
 
@@ -828,10 +824,12 @@ function get_records_menu($table, $field='', $value='', $sort='', $fields='*') {
  * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
  * @param string $sort Sort order (optional) - a valid SQL order parameter
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
+ * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
  * @return mixed an associative array, or false if no records were found or an error occured.
  */
-function get_records_select_menu($table, $select='', $sort='', $fields='*') {
-    $rs = get_recordset_select($table, $select, $sort, $fields);
+function get_records_select_menu($table, $select='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+    $rs = get_recordset_select($table, $select, $sort, $fields, $limitfrom, $limitnum);
     return recordset_to_menu($rs);
 }
 
@@ -842,10 +840,12 @@ function get_records_select_menu($table, $select='', $sort='', $fields='*') {
  * Return value as for @see function get_records_menu.
  *
  * @param string $sql The SQL string you wish to be executed.
+ * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
+ * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
  * @return mixed an associative array, or false if no records were found or an error occured.
  */
-function get_records_sql_menu($sql) {
-    $rs = get_recordset_sql($sql);
+function get_records_sql_menu($sql, $limitfrom='', $limitnum='') {
+    $rs = get_recordset_sql($sql, $limitfrom, $limitnum);
     return recordset_to_menu($rs);
 }
 
