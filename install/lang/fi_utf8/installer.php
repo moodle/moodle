@@ -23,7 +23,7 @@ $string['cannotdownloadzipfile'] = 'ZIP-tiedostoa ei voitu ladata';
 $string['cannotfindcomponent'] = 'Komponenttia ei löytynyt';
 $string['cannotsavemd5file'] = 'MD5-tiedostoa ei voitu tallentaa';
 $string['cannotsavezipfile'] = 'Zip-tiedosta ei voitu tallentaa';
-$string['cannotunzipfile'] = 'Zip-tiedoa ei voitu purkaa';
+$string['cannotunzipfile'] = 'Zip-tiedostoa ei voitu purkaa';
 $string['caution'] = 'Varoitus';
 $string['check'] = 'Tarkista';
 $string['chooselanguagehead'] = 'Valitse kieli';
@@ -31,7 +31,7 @@ $string['chooselanguagesub'] = 'Valitse kieli asennusohjelmaa varten. Voit valit
 $string['closewindow'] = 'Sulje tämä ikkuna';
 $string['compatibilitysettingshead'] = 'Tarkistetaan PHP:n asetukset';
 $string['compatibilitysettingssub'] = 'Palvelimesi pitää läpäistä kaikki testit jotta moodle toimisi oikein.';
-$string['componentisuptodate'] = 'Komponenttia on ajan tasalla';
+$string['componentisuptodate'] = 'Komponentti on ajan tasalla';
 $string['configfilenotwritten'] = 'Asennus ei pystynyt luomaan automaattisesti config.php tiedostoa, joka olisi sisältänyt valitsemasi asetukset, todennäköisesti koska Moodlen hakemisto on kirjoitussuojattu. Voit manuaalisesti kopioida seuraavan koodin tiedostoon nimeltä config.php Moodlen päähakemiston sisällä.';
 $string['configfilewritten'] = 'config.php on luotu.';
 $string['configurationcompletehead'] = 'Asetukset suoritettu';
@@ -155,6 +155,7 @@ Tämä sallii Moodlen asettaa muistirajan itse.</li>
 <p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>Kuitenkin, joillain palvelimilla tämä estää  <b>kaikkia</b> PHP sivuja toimimasta (näet virheet, kun katsot sivuja), joten sinun täytyy poistaa .htaccess tiedosto.</p></li>
 </ol>';
+$string['missingrequiredfield'] = 'JOitakin vaadituista kentistä puuttuu';
 $string['moodledocslink'] = 'Moodle Docs tästä sivusta';
 $string['mysql416bypassed'] = 'Kuitenkin jos teidän sivustonne käyttää vain iso-8859-1 merkistöä, te voitte jatkaa nykyisen mySQL 4.1.12 käyttöä.';
 $string['mysql416required'] = 'MySQL 4.1.16 on  vähimmäisversio joka vaaditaan Moodle1.6:lle, jotta takaa, että kaikki data voidaan muuntaa UTF-8:ksi tulevaisuudessa';
@@ -183,6 +184,8 @@ $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Suomi';
 $string['user'] = 'Käyttäjä';
 $string['welcomep70'] = 'Klikkaa \"Seuraava\"-painiketta jatkaaksesi moodlen asennusta';
+$string['wrongdestpath'] = 'Virheellinen kohde kansio';
+$string['wrongzipfilename'] = 'Virheellinen zip-tiedoston nimi';
 $string['wwwroot'] = 'Web-osoite';
 $string['wwwrooterror'] = 'Web-osoite ei näyttäisi olevan voimassa- tämä Moodle asennus ei näyttäisi olevan siellä.';
 ?>
