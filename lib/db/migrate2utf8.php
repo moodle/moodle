@@ -71,8 +71,8 @@ function migrate2utf8_user($fields, $crash, $debug, $maxrecords, $done, $tablest
     }
 
     while ($counter < $totalrecords) {    //while there is still something
-        $SQL = 'SELECT * FROM '.$CFG->prefix.'user ORDER BY id ASC '.sql_paging_limit($counter, $recordsetsize);
-        if ($records = get_records_sql($SQL)) {
+        $SQL = 'SELECT * FROM '.$CFG->prefix.'user ORDER BY id ASC';
+        if ($records = get_records_sql($SQL, $counter, $recordsetsize)) {
             foreach ($records as $record) {
 
             //if we are up this far, either no crash, or crash with same table, field name.
