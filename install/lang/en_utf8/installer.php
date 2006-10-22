@@ -59,7 +59,7 @@ $string['databasesettingssub'] = '<b>Type:</b> mysql or postgres7<br />
        <b>User:</b> your database username<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> optional prefix to use for all table names';
-$string['databasesettingssub_mssql'] = '<b>Type:</b> SQL*Server (non UTF-8)<b><font color=\"red\">Experimenta! (not for use in production)</font></b><br />
+$string['databasesettingssub_mssql'] = '<b>Type:</b> SQL*Server (non UTF-8) <b><font color=\"red\">Experimental! (not for use in production)</font></b><br />
        <b>Host:</b> eg localhost or db.isp.com<br />
        <b>Name:</b> database name, eg moodle<br />
        <b>User:</b> your database username<br />
