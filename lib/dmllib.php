@@ -894,7 +894,7 @@ function get_field_select($table, $return, $select) {
 function get_field_sql($sql) {
     global $CFG;
 
-    $rs = get_recordset_sql($sql);
+    $rs = get_recordset_sql($sql, 0, 1);
 
     if ($rs && $rs->RecordCount() == 1) {
         /// DIRTY HACK to retrieve all the ' ' (1 space) fields converted back
@@ -1368,6 +1368,8 @@ function update_record($table, $dataobject) {
  */
 function sql_paging_limit($page, $recordsperpage) {
     global $CFG;
+
+    debugging('Function sql_paging_limit() is deprecated. Replace it with the correct use of limitfrom, limitnum parameters', DEBUG_DEVELOPER);
 
     switch ($CFG->dbtype) {
         case 'postgres7':
