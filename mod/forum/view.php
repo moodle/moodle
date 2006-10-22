@@ -202,11 +202,11 @@
             if (forum_tp_is_tracked($forum, $USER->id)) {
                 $trtitle = get_string('notrackforum', 'forum');
                 $trackedlink = '<a title="'.get_string('notrackforum', 'forum').'" href="settracking.php?id='.
-                               $forum->id.'&returnpage=view.php">'.get_string('forumtracked', 'forum').'</a>';
+                               $forum->id.'&amp;returnpage=view.php">'.get_string('forumtracked', 'forum').'</a>';
             } else {
                 $trtitle = get_string('trackforum', 'forum');
                 $trackedlink = '<a title="'.get_string('trackforum', 'forum').'" href="settracking.php?id='.
-                               $forum->id.'&returnpage=view.php">'.get_string('forumtrackednot', 'forum').'</a>';
+                               $forum->id.'&amp;returnpage=view.php">'.get_string('forumtrackednot', 'forum').'</a>';
             }
             echo "<br />";
             echo "<span class=\"helplink\">$trackedlink</span>";
