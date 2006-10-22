@@ -232,6 +232,8 @@ function message_print_search() {
         message_print_search_results($frm);
         
     } else {
+/*
+/// unfinished buggy code disabled in search.html anyway 
         // find all courses this use has readallmessages capabilities in
         if ($teachers = get_user_capability_course('moodle/site:readallmessages')) {
             $courses = get_courses('all', 'c.sortorder ASC', 'c.id, c.shortname');
@@ -241,7 +243,7 @@ function message_print_search() {
             }
             $cs .= '</select>';
         }
-        
+*/
         include('search.html');
     }
 }
