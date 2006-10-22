@@ -780,9 +780,9 @@ function print_recent_activity($course) {
 
     $timestart = time() - COURSE_MAX_RECENT_PERIOD;
 
-    if (!empty($USER->timeaccess[$course->id])) {
-        if ($USER->timeaccess[$course->id] > $timestart) {
-            $timestart = $USER->timeaccess[$course->id];
+    if (!empty($USER->lastcourseaccess[$course->id])) {
+        if ($USER->lastcourseaccess[$course->id] > $timestart) {
+            $timestart = $USER->lastcourseaccess[$course->id];
         }
     }
 
