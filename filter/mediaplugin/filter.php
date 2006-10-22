@@ -27,7 +27,7 @@ function mediaplugin_filter($courseid, $text) {
             if (!empty($THEME->filter_mediaplugin_colors)) {
                 $c = $THEME->filter_mediaplugin_colors;   // You can set this up in your theme/xxx/config.php
             } else {
-                $c = 'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&waitForPlay=yes&';
+                $c = 'bgColour=000000&amp;btnColour=ffffff&amp;btnBorderColour=cccccc&amp;iconColour=000000&amp;iconOverColour=00cc00&amp;trackColour=cccccc&amp;handleColour=ffffff&amp;loaderColour=ffffff&amp;waitForPlay=yes&amp;';
             }
         }
         // $c = htmlentities($c);  // Commented out pending bug 5223
