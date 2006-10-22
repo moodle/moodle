@@ -164,7 +164,7 @@
                 if (isset($sections[$i])) {   // should always be true
 
                     $section = $sections[$i];
-                    $showsection = (has_capability('moodle/course:viewhiddensections', $context) or $section->visible or !$course->hiddensections);
+                    $showsection = (has_capability('moodle/course:viewhiddensections', $coursecontext) or $section->visible or !$course->hiddensections);
 
                     if ($showsection) { // prevent hidden sections in user activity. Thanks to Geoff Wilbert!
 
