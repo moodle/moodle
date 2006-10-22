@@ -47,7 +47,7 @@
 
 /// Check that the user is not blocking us!!
     if ($contact = get_record('message_contacts', 'userid', $user->id, 'contactid', $USER->id)) {
-        if ($contact->blocked and !has_capability('moodle/site:readmessages', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if ($contact->blocked and !has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             print_heading(get_string('userisblockingyou', 'message'));
             exit;
         }
