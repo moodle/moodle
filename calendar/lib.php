@@ -1174,7 +1174,7 @@ function calendar_edit_event_allowed($event) {
     
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
     // if user has manageentries at site level, return true
-    if (has_capability('manageentries', $sitecontext)) {
+    if (has_capability('moodle/calendar:manageentries', $sitecontext)) {
         return true;
     }
 
