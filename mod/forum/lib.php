@@ -3115,7 +3115,9 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 
 /// If the user can post discussions, then this is a good place to put the button for it
     //add group mode in there, to test for visible group
-    if (forum_user_can_post_discussion($forum, $currentgroup, $groupmode)) {
+    if (forum_user_can_post_discussion($forum, $currentgroup, $groupmode) ||
+        has_capability('moodle/legacy:guest', $context, NULL, false)) {  
+
         echo '<div class="singlebutton forumaddnew">';
         echo "<form name=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
         echo "<input type=\"hidden\" name=\"forum\" value=\"$forum->id\" />";
