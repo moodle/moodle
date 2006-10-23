@@ -2,9 +2,6 @@
 
 include_once($CFG->dirroot.'/mod/glossary/lib.php');
 
-if (!isset($form->studentcanpost)) {
-    $form->studentcanpost = $CFG->glossary_studentspost;
-}
 if (!isset($form->allowduplicatedentries)) {
     $form->allowduplicatedentries = $CFG->glossary_dupentries;
 }
@@ -148,25 +145,6 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
   echo "<input type=\"hidden\" name=\"mainglossary\" value=\"0\" />";
 }
 ?>
-<tr valign="top">
-    <td align="right"><b><?php p(get_string("studentcanpost", "glossary")) ?>:</b><br />
-    <font size="1"><?php p(get_string("warningstudentcapost","glossary")) ?></font></td>
-    <td align="left">
-  <select size="1" name="studentcanpost">
-  <option value="1" <?php
-   if ( $form->studentcanpost ) {
-      echo "selected=\"selected\"";
-   }
-   ?>><?php echo get_string("yes") ?></option>
-  <option value="0" <?php
-   if ( !$form->studentcanpost ) {
-      echo "selected=\"selected\"";
-   }
-   ?>><?php echo get_string("no") ?>
-  </option>
-  </select> <?php helpbutton("studentcanpost", get_string("studentcanpost", "glossary"), "glossary") ?>
-    </td>
-</tr>
 <tr valign="top">
     <td align="right"><b><?php echo get_string("allowduplicatedentries", "glossary") ?>:</b></td>
     <td align="left">
