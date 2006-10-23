@@ -468,7 +468,7 @@ function stats_get_start_from($str) {
     global $CFG;
 
     // if it's not our first run, just return the most recent.
-    if ($timeend = get_field_sql('SELECT timeend FROM '.$CFG->prefix.'stats_'.$str.' ORDER BY timeend DESC LIMIT 1')) {
+    if ($timeend = get_field_sql('SELECT timeend FROM '.$CFG->prefix.'stats_'.$str.' ORDER BY timeend DESC')) {
         return $timeend;
     }
     
@@ -476,7 +476,7 @@ function stats_get_start_from($str) {
     $function = 'stats_get_base_'.$str;
     switch ($CFG->statsfirstrun) {
         case 'all': 
-            return $function(get_field_sql('SELECT time FROM '.$CFG->prefix.'log ORDER BY time LIMIT 1'));
+            return $function(get_field_sql('SELECT time FROM '.$CFG->prefix.'log ORDER BY time'));
             break;
         case 'none': 
             return $function(strtotime('-1 day',time()));
