@@ -589,7 +589,7 @@ function calendar_add_event_allowed($courseid, $groupid, $userid) {
     
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
     // if user has manageentries at site level, return true
-    if (has_capability('manageentries', $sitecontext)) {
+    if (has_capability('moodle/calendar:manageentries', $sitecontext)) {
         return true;
     }
 
