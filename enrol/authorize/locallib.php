@@ -146,14 +146,8 @@ function authorize_print_orders($courseid, $userid)
     $totalcount = count_records_sql('SELECT COUNT(*) ' . $from . $where);
     $table->initialbars($totalcount > $perpage);
     $table->pagesize($perpage, $totalcount);
-    if ($table->get_page_start() !== '' && $table->get_page_size() !== '') {
-        $limit = ' ' . sql_paging_limit($table->get_page_start(), $table->get_page_size());
-    }
-    else {
-        $limit = '';
-    }
 
-    if ($records = get_records_sql($select . $from . $where . $sort . $limit)) {
+    if ($records = get_records_sql($select . $from . $where . $sort, $table->get_page_start(), $table->get_page_size())) {
         foreach ($records as $record) {
             $actionstatus = authorize_get_status_action($record);
             $color = authorize_get_status_color($actionstatus->status);

@@ -532,16 +532,18 @@
 
         }
 
+        $limitfrom = 0;
+        $limitnum = 0;
+
         if ($fetchstart !== '' && $limit) {
-            $limit = sql_paging_limit($fetchstart, $fetchlimit);
-        } else {
-            $limit = '';
+            $limitfrom = $fetchstart;
+            $limitnum = $fetchlimit;
         }
 
         $orderby = ' ORDER BY '. $sort .' ';
 
         //echo 'Debug: BlogFilter fetch_entries() sql="'. $SQL . $orderby . $limit .'"<br />'. $this->categoryid; //debug
-        $records = get_records_sql($SQL . $orderby . $limit);
+        $records = get_records_sql($SQL . $orderby, $limitfrom, $limitnum);
 
 //        print_object($records); //debug
 

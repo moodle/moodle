@@ -260,11 +260,6 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
 
     global $CFG;
 
-    if ($recordsperpage) {
-        $limit = sql_paging_limit($page, $recordsperpage);
-    } else {
-        $limit = '';
-    }
     $LIKE      = sql_ilike();
     $fullname  = sql_fullname();
 
@@ -290,7 +285,7 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
 /// warning: will return UNCONFIRMED USERS
     return get_records_sql("SELECT id, username, email, firstname, lastname, city, country, lastaccess, confirmed
                               FROM {$CFG->prefix}user
-                             WHERE $select $sort $limit ");
+                             WHERE $select $sort", $page, $recordsperpage);
 
 }
 
@@ -704,8 +699,6 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
 
     global $CFG;
 
-    $limit = sql_paging_limit($page, $recordsperpage);
-
     //to allow case-insensitive search for postgesql
     if ($CFG->dbtype == 'postgres7') {
         $LIKE = 'ILIKE';
@@ -749,7 +742,7 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
 
     $totalcount = count_records_sql('SELECT COUNT(*) FROM '. $selectsql);
 
-    $courses = get_records_sql('SELECT * FROM '. $selectsql .' ORDER BY '. $sort .' '. $limit);
+    $courses = get_records_sql('SELECT * FROM '. $selectsql .' ORDER BY '. $sort, $page, $recordsperpage);
 
     if ($courses) {  /// Remove unavailable courses from the list
         foreach ($courses as $key => $course) {

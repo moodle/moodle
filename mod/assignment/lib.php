@@ -843,10 +843,8 @@ class assignment_base {
             $sort = 'ORDER BY '.$sort.' ';
         }
 
-        $limit = sql_paging_limit($offset+1, 1);
-
         $nextid = 0;
-        if (($auser = get_record_sql($select.$sql.$sort.$limit, false, true)) !== false) {
+        if (($auser = get_records_sql($select.$sql.$sort, $offset+1, 1)) !== false) {
             $nextid = $auser->id;
         }
 
@@ -1100,13 +1098,6 @@ class assignment_base {
     
         $table->pagesize($perpage, count($users));
         
-        if($table->get_page_start() !== '' && $table->get_page_size() !== '') {
-            $limit = ' '.sql_paging_limit($table->get_page_start(), $table->get_page_size());     
-        }
-        else {
-            $limit = '';
-        }
-    
         ///offset used to calculate index of student in that particular query, needed for the pop up to know who's next
         $offset = $page * $perpage;
         
@@ -1114,7 +1105,7 @@ class assignment_base {
         $strgrade  = get_string('grade');
         $grademenu = make_grades_menu($this->assignment->grade);
 
-        if (($ausers = get_records_sql($select.$sql.$sort.$limit)) !== false) {
+        if (($ausers = get_records_sql($select.$sql.$sort, $table->get_page_start(), $table->get_page_size())) !== false) {
             
             foreach ($ausers as $auser) {
                 $picture = print_user_picture($auser->id, $course->id, $auser->picture, false, true);
