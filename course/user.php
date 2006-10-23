@@ -140,13 +140,17 @@
 
             echo '<center><img src="'.$CFG->wwwroot.'/course/report/stats/graph.php?mode='.STATS_MODE_DETAILED.'&course='.$course->id.'&time='.$time.'&report='.STATS_REPORT_USER_VIEW.'&userid='.$user->id.'" /></center>';
 
+            // What the heck is this about?   -- MD
             $stats = stats_fix_zeros($stats,$param->timeafter,$param->table,(!empty($param->line2)),(!empty($param->line3)));
-            
+
             $table = new object();
             $table->align = array('left','center','center','center');
             $param->table = str_replace('user_','',$param->table);
             $table->head = array(get_string('periodending','moodle',$param->table),$param->line1,$param->line2,$param->line3);
-            foreach  ($stats as $stat) {
+            foreach ($stats as $stat) {
+                if (!empty($stat->zerofixed)) {  // Don't know why this is necessary, see stats_fix_zeros above - MD
+                    continue;
+                }
                 $a = array(userdate($stat->timeend,get_string('strftimedate'),$CFG->timezone),$stat->line1);
                 $a[] = $stat->line2;
                 $a[] = $stat->line3;
