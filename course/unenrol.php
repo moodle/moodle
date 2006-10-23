@@ -39,20 +39,22 @@
     }
 
     if ($confirm and confirm_sesskey()) {
-
         if ($userid) {
             if (! role_unassign(0, $userid, 0, $context->id)) {
                 error("An error occurred while trying to unenrol that person.");
             }
+
+            add_to_log($course->id, 'course', 'unenrol', "view.php?id=$course->id", $userid);
+            redirect($CFG->wwwroot.'/user/index.php?id='.$course->id);
+
         } else {
             if (! role_unassign(0, $USER->id, 0, $context->id)) {
                 error("An error occurred while trying to unenrol you.");
             }
+            add_to_log($course->id, 'course', 'unenrol', "view.php?id=$course->id", $USER->id);
+
+            redirect($CFG->wwwroot);
         }
-
-        add_to_log($course->id, 'course', 'unenrol', "view.php?id=$course->id", $USER->id);
-
-        redirect($CFG->wwwroot.'/user/index.php?id='.$course->id);
     }
 
 
