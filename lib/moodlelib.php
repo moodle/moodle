@@ -1631,7 +1631,11 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
 
                     break;
 
-                case 2:    /// Guests allowed with key (drop through to logic below)
+                case 2:    /// Guests allowed with key 
+                    if (!empty($USER->enrolkey[$course->id])) {   // Set by enrol/manual/enrol.php
+                        return true;
+                    }
+                    //  otherwise drop through to logic below (--> enrol.php)
                     break;
 
                 default:    /// Guests not allowed
