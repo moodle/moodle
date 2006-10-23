@@ -291,7 +291,7 @@
             if (!empty($CFG->statsmaxruntime)) {
                 $time = $CFG->statsmaxruntime+(60*30); // add on half an hour just to make sure (it could take that long to break out of the loop)
             }
-            if (!get_field_sql('SELECT id FROM '.$CFG->prefix.'stats_daily LIMIT 1')) {
+            if (!get_field_sql('SELECT id FROM '.$CFG->prefix.'stats_daily')) {
                 // first run, set another lock. we'll check for this in subsequent runs to set the timeout to later for the normal lock.
                 set_cron_lock('statsfirstrunlock',true,$time,true);
                 $firsttime = true;

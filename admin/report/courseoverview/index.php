@@ -31,9 +31,9 @@
 
     $tableprefix = $CFG->prefix.'stats_';
 
-    $earliestday = get_field_sql('SELECT timeend FROM '.$tableprefix.'daily ORDER BY timeend LIMIT 1');
-    $earliestweek = get_field_sql('SELECT timeend FROM '.$tableprefix.'weekly ORDER BY timeend LIMIT 1');
-    $earliestmonth = get_field_sql('SELECT timeend FROM '.$tableprefix.'monthly ORDER BY timeend LIMIT 1');
+    $earliestday = get_field_sql('SELECT timeend FROM '.$tableprefix.'daily ORDER BY timeend');
+    $earliestweek = get_field_sql('SELECT timeend FROM '.$tableprefix.'weekly ORDER BY timeend');
+    $earliestmonth = get_field_sql('SELECT timeend FROM '.$tableprefix.'monthly ORDER BY timeend');
 
     if (empty($earliestday)) $earliestday = time();
     if (empty($earliestweek)) $earliestweek = time();
@@ -66,18 +66,17 @@
         $param = stats_get_parameters($time,$report,SITEID,STATS_MODE_RANKED);
 
         if (!empty($param->sql)) {
-            $sql = $param->sql ." LIMIT ".$numcourses;
+            $sql = $param->sql;
         } else {
             $sql = "SELECT courseid,".$param->fields." FROM ".$CFG->prefix.'stats_'.$param->table
                 ." WHERE timeend >= ".$param->timeafter.' AND stattype = \'activity\''
                 ." GROUP BY courseid "
                 .$param->extras
-                ." ORDER BY ".$param->orderby
-                ." LIMIT ".$numcourses;
+                ." ORDER BY ".$param->orderby;
         }
         error_log($sql);
 
-        $courses = get_records_sql($sql);
+        $courses = get_records_sql($sql, 0, $numcourses);
 
         if (empty($courses)) {
             notify(get_string('statsnodata'));
