@@ -894,6 +894,13 @@ function get_field_select($table, $return, $select) {
 function get_field_sql($sql) {
     global $CFG;
 
+/// Strip potential LIMIT uses arriving here, debugging them (MDL-7173)
+    $newsql = preg_replace('/ LIMIT [0-9, ]+$/is', '', $sql);
+    if ($newsql != $sql) {
+        debugging('Incorrect use of LIMIT clause (not cross-db) in call to get_field_sql(): ' . $sql, DEBUG_DEVELOPER);
+        $sql = $newsql;
+    }
+
     $rs = get_recordset_sql($sql, 0, 1);
 
     if ($rs && $rs->RecordCount() == 1) {
