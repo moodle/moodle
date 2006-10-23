@@ -32,7 +32,7 @@
 /// thus got to this script by mistake.  This might occur if enrolments 
 /// changed during this session or something
 
-    if (has_capability('moodle/course:view', $context)) {
+    if (has_capability('moodle/course:view', $context) and !has_capability('moodle/legacy:guest', $context)) {
         if ($SESSION->wantsurl) {
             $destination = $SESSION->wantsurl;
             unset($SESSION->wantsurl);
