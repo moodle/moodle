@@ -2475,4 +2475,12 @@ function assignment_display_lateness($timesubmitted, $timedue) {
     }
 }
 
+function assignment_get_view_actions() {
+    return array('view');
+}
+
+function assignment_get_post_actions() {
+    return array('upload');
+}
+
 ?>
