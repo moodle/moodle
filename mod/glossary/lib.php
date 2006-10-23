@@ -803,7 +803,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
     }
 
 
-    if (has_capability('mod/glossary:write', $context) or (!empty($USER->id) and $glossary->studentcanpost and $entry->userid == $USER->id)) {
+    if (has_capability('mod/glossary:manageentries', $context) or (!empty($USER->id) and has_capability('mod/glossary:write', $context) and $entry->userid == $USER->id)) {
         // only teachers can export entries so check it out
         if (has_capability('mod/glossary:export', $context) and !$ismainglossary and !$importedentry) {
             $mainglossary = get_record('glossary','mainglossary',1,'course',$course->id);
@@ -823,7 +823,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         // -It isn't a imported entry (so nobody can edit a imported (from secondary to main) entry)) and
         // -The user is teacher or he is a student with time permissions (edit period or editalways defined).
         $ineditperiod = ((time() - $entry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
-        if ( !$importedentry and (has_capability('mod/glossary:manageentries', $context) or ($entry->userid == $USER->id and ($ineditperiod and $glossary->studentcanpost)))) {
+        if ( !$importedentry and (has_capability('mod/glossary:manageentries', $context) or ($entry->userid == $USER->id and ($ineditperiod and has_capability('mod/glossary:write', $context))))) {
             $output = true;
             $return .= " <a title=\"" . get_string("delete") . "\" href=\"deleteentry.php?id=$cm->id&amp;mode=delete&amp;entry=$entry->id&amp;prevmode=$mode&amp;hook=$hook\"><img src=\"";
             $return .= $icon;
