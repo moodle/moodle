@@ -4,7 +4,8 @@
     $id = required_param('id', PARAM_INT);
 
     if (!$course = get_record("course", "id", $id)) {
-        $course->fullname = "";   // Just to keep display happy, though browsing may fail
+        $course = get_site();
+        $id = SITEID;
     }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
