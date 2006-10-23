@@ -207,10 +207,9 @@
             }
 
             reset_login_count();
-            if (!empty($CFG->rolesactive)) {
-                load_user_capability(); // load user's capabilities
-                load_defaultuser_role();    // All users get this by default
-            }
+
+            load_all_capabilities();     /// This is what lets the user do anything on the site  :-)
+
             redirect($urltogo);
 
             exit;

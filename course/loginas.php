@@ -9,7 +9,7 @@
 
     if (!empty($USER->realuser)) {
         $USER = get_complete_user_data('id', $USER->realuser);
-        load_user_capability();   // load all this user's normal capabilities
+        load_all_capabilities();   // load all this user's normal capabilities
 
         if (isset($SESSION->oldcurrentgroup)) {      // Restore previous "current group" cache.
             $SESSION->currentgroup = $SESSION->oldcurrentgroup;

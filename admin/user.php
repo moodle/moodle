@@ -65,7 +65,7 @@
 
         sesskey();   // For added security, used to check script parameters
 
-        load_user_capability();
+        load_all_capabilities();
 
         redirect("$CFG->wwwroot/user/edit.php?id=$user->id&amp;course=$site->id");  // Edit thyself
         exit;

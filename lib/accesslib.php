@@ -538,6 +538,10 @@ function load_user_capability($capability='', $context ='', $userid='') {
 
     global $USER, $CFG;
 
+    if (empty($CFG->rolesactive)) {
+        return false;
+    }
+
     if (empty($userid)) {
         if (empty($USER->id)) {               // We have no user to get capabilities for
             debugging('User not logged in for load_user_capability!');
@@ -754,9 +758,29 @@ function load_user_capability($capability='', $context ='', $userid='') {
     if (!empty($otheruserid)) {
         return $usercap; // return the array
     }
-    // see array in session to see what it looks like
-
 }
+
+
+/*
+ *  A convenience function to completely load all the capabilities 
+ *  for the current user.   This is what gets called from login, for example.
+ */
+function load_all_capabilities() {
+    global $USER;
+
+    if (empty($USER->username)) {
+        return;
+    }
+
+    load_user_capability();         // Load basic capabilities assigned to this user
+
+    if ($USER->username == 'guest') {
+        load_guest_role();          // All non-guest users get this by default
+    } else {
+        load_defaultuser_role();    // All non-guest users get this by default
+    }
+}
+
 
 /*
  * Check all the login enrolment information for the given user object
@@ -1646,7 +1670,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
 
     /// If the user is the current user, then reload the capabilities too.
         if (!empty($USER->id) && $USER->id == $userid) {
-            load_user_capability();
+            load_all_capabilities();
         }
         
     /// Ask all the modules if anything needs to be done for this user
@@ -1711,7 +1735,7 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0) {
 
                 /// If the user is the current user, then reload the capabilities too.
                 if (!empty($USER->id) && $USER->id == $ra->userid) {
-                    load_user_capability();
+                    load_all_capabilities();
                 }
                 $context = get_record('context', 'id', $ra->contextid);
 
