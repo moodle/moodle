@@ -26,7 +26,7 @@
 
 /// Refreshing all current role assignments for the current user
 
-    load_user_capability();
+    load_all_capabilities();
 
 /// Double check just in case they are actually enrolled already and 
 /// thus got to this script by mistake.  This might occur if enrolments 

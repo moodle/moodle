@@ -16,7 +16,7 @@
     require_login();
 
 /// Refreshing enrolment data in the USER session
-    load_user_capability();
+    load_all_capabilities();
 
     if ($SESSION->wantsurl) {
         $destination = $SESSION->wantsurl;
