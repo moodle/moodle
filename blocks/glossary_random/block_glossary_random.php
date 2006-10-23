@@ -169,7 +169,6 @@ class block_glossary_random extends block_base {
         // place link to glossary in the footer if the glossary is visible
         $glossaryid = $this->config->glossary;
         $glossary=get_record('glossary', 'id', $glossaryid);
-        $studentcanpost = $glossary->studentcanpost; //needed to decide on which footer
 
         //Create a temp valid module structure (course,id)
         $tempmod->course = $this->course->id;
@@ -178,7 +177,7 @@ class block_glossary_random extends block_base {
         //Obtain the visible property from the instance
         if (instance_is_visible('glossary', $tempmod)) {
             $cm = get_coursemodule_from_instance('glossary',$glossaryid, $this->course->id) ;
-            if ($studentcanpost) {
+            if (has_capability('mod/glossary:write', get_context_instance(CONTEXT_MODULE, $cm->id))) {
                 $this->content->footer = '<a href="'.$CFG->wwwroot.'/mod/glossary/edit.php?id='.$cm->id
                 .'" title="'.$this->config->addentry.'">'.$this->config->addentry.'</a><br />';
             } else {
