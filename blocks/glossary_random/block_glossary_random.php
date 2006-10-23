@@ -41,11 +41,14 @@ class block_glossary_random extends block_base {
                 $this->instance_config_commit();
             }
 
+            $limitfrom = 0;
+            $limitnum = 1;
+
             switch ($this->config->type) {
 
                 case BGR_RANDOMLY:
                     $i = rand(1,$numberofentries);
-                    $LIMIT = sql_paging_limit($i-1, 1);
+                    $limitfrom = $i-1;
                     $SORT = 'ASC';
                     break;
 
@@ -58,13 +61,13 @@ class block_glossary_random extends block_base {
                     if ($i > $numberofentries) {  // Loop back to beginning
                         $i = 1;
                     }
-                    $LIMIT = sql_paging_limit($i-1, 1);
+                    $limitfrom = $i-1;
                     $SORT = 'ASC';
                     break;
 
                 default:  // BGR_LASTMODIFIED
                     $i = $numberofentries;
-                    $LIMIT = 'LIMIT 1';    // The last one
+                    $limitfrom = 0;
                     $SORT = 'DESC';
                     break;
             }
@@ -73,7 +76,7 @@ class block_glossary_random extends block_base {
                                          '    FROM '.$CFG->prefix.'glossary_entries'.
                                          '   WHERE glossaryid = '.$this->config->glossary.
                                          '     AND approved = 1 '.
-                                         'ORDER BY timemodified '.$SORT.' '.$LIMIT)) {
+                                         'ORDER BY timemodified '.$SORT, $limitfrom, $limitnum)) {
 
                 $entry = reset($entry);
 

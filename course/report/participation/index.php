@@ -276,11 +276,7 @@
         $table->initialbars($totalcount > $perpage);
         $table->pagesize($perpage, $matchcount);
 
-        if($table->get_page_start() !== '' && $table->get_page_size() !== '') {
-            $sql .= ' '.sql_paging_limit($table->get_page_start(), $table->get_page_size());
-        }
-
-        if (!$users = get_records_sql($sql)) {
+        if (!$users = get_records_sql($sql, $table->get_page_start(), $table->get_page_size())) {
             $users = array(); // tablelib will handle saying 'Nothing to display' for us.
         }
 
