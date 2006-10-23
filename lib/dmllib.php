@@ -1147,7 +1147,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
             $generator->setPrefix($CFG->prefix);
             $seqname = $generator->getNameForObject($table, $primarykey, 'seq');
         }
-        if ($nextval = (int)get_field_sql("SELECT $seqname.NEXTVAL from dual")) {
+        if ($nextval = (int)$db->GenID($seqname)) {
             $dataobject->{$primarykey} = $nextval;
         }
     }
