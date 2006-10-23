@@ -1207,8 +1207,8 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
         }
     }
 
-/// If a return ID is not needed then just return true now
-    if (!$returnid) {
+/// If a return ID is not needed then just return true now (but not in MSSQL DBs, where we may have some pending tasks)
+    if (!$returnid && !($CFG->dbtype == 'mssql' || $CFG->dbtype == 'odbc_mssql' || $CFG->dbtype == 'mssql_n')) {
         return true;
     }
 
@@ -1218,7 +1218,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
         return $dataobject->{$primarykey};
     }
 
-/// This only gets triggered with non-Postgres databases
+/// This only gets triggered with MySQL and MSQL databases
 /// however we have some postgres fallback in case we failed
 /// to find the sequence.
     $id = $db->Insert_ID();
