@@ -19,27 +19,6 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right>glossary_studentspost:</td>
-    <td>
-    <select size=1 name=glossary_studentspost>
-<?php 
-    $yselected = "";
-    $nselected = "";
-    if ($CFG->glossary_studentspost) {
-        $yselected = " selected=\"selected\" ";
-    } else {
-        $nselected = " selected=\"selected\" ";
-    }
-?>
-    <option value=1 <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value=0 <?php p($nselected) ?>><?php p($no)?></option>
-    </select>
-    </td>
-    <td>
-    <?php print_string("cnfstudentcanpost", "glossary") ?>
-    </td>
-</tr>
-<tr valign=top>
     <td align=right>glossary_dupentries:</td>
     <td>
     <select size=1 name=glossary_dupentries>
