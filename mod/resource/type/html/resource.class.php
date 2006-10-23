@@ -141,7 +141,7 @@ function display() {
 
                 $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$cm->id}\" target=\"resource{$resource->id}\" onclick=\"return openpopup('/mod/resource/view.php?inpopup=true&amp;id={$cm->id}', 'resource{$resource->id}','{$resource->popup}');\">".format_string($resource->name,true)."</a>";
 
-                echo "<p>&nbsp</p>";
+                echo "<p>&nbsp;</p>";
                 echo '<p align="center">';
                 print_string('popupresource', 'resource');
                 echo '<br />';

@@ -3124,7 +3124,7 @@ has_capability('moodle/course:viewhiddenuserfields', $context)) {
     if (!isset($hiddenfields['lastaccess'])) {
         if ($user->lastaccess) {
             $output .= $string->lastaccess .': '. userdate($user->lastaccess);
-            $output .= '&nbsp ('. format_time(time() - $user->lastaccess, $datestring) .')';
+            $output .= '&nbsp; ('. format_time(time() - $user->lastaccess, $datestring) .')';
         } else {
             $output .= $string->lastaccess .': '. $string->never;
         }
