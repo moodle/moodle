@@ -72,9 +72,9 @@ class block_online_users extends block_base {
                       ul.userid = u.id
                       $courseselect
                       $timeselect
-                      $groupselect ".sql_paging_limit(0,20);
+                      $groupselect ";
         
-        if ($pusers = get_records_sql($SQL)) {
+        if ($pusers = get_records_sql($SQL, 0, 20)) {
             foreach ($pusers as $puser) {
                 $puser->fullname = fullname($puser);
                 $users[$puser->id] = $puser;  
@@ -95,8 +95,14 @@ class block_online_users extends block_base {
             foreach ($users as $user) {
                 $this->content->text .= '<li class="listentry">';
                 $timeago = format_time(time() - max($user->timeaccess, $user->lastaccess)); //bruno to calculate correctly on frontpage 
-                $this->content->text .= print_user_picture($user->id, $COURSE->id, $user->picture, 16, true).' ';
-                $this->content->text .= '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$COURSE->id.'" title="'.$timeago.'">'.$user->fullname.'</a>';
+                if ($user->username == 'guest') {
+                    $this->content->text .= print_user_picture($user->id, $COURSE->id, $user->picture, 16, true, false).' ';
+                    $this->content->text .= get_string('guestuser');
+
+                } else {
+                    $this->content->text .= print_user_picture($user->id, $COURSE->id, $user->picture, 16, true).' ';
+                    $this->content->text .= '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$COURSE->id.'" title="'.$timeago.'">'.$user->fullname.'</a>';
+                }
                 if (!empty($USER->id) and ($USER->id != $user->id) and !empty($CFG->messaging) and 
                     !isguest() and $user->username != 'guest') {  // Only when logged in and messaging active etc
                     $this->content->text .= "\n".' <a title="'.get_string('messageselectadd').'" target="message_'.$user->id.'" href="'.$CFG->wwwroot.'/message/discussion.php?id='.$user->id.'" onclick="return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message_'.$user->id.'\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);">'
