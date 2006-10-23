@@ -13,7 +13,7 @@ $string['admindirerror'] = 'Ylläpitohakemisto on määritetty väärin';
 $string['admindirname'] = 'Ylläpitohakemisto';
 $string['admindirsettinghead'] = 'Asetetaan ylläpitohakemisto';
 $string['admindirsettingsub'] = 'Jotkut sivustot käyttävät /admin-hakemistoa omiin tarkoituksiinsa. Tämä on ristiriidassa moodlen /admin-kansion kanssa.
-Voit kosrja tämän nimeämällä moodlen admin-kansion uudelleen antamalla nimen tähän <br />
+Voit korjata tämän nimeämällä moodlen admin-kansion uudelleen antamalla nimen tähän <br />
 Esim moodleadmin';
 $string['bypassed'] = 'Ohitettu';
 $string['cannotcreatelangdir'] = 'Kielihakemistoa ei voitu luoda';
@@ -32,7 +32,7 @@ $string['closewindow'] = 'Sulje tämä ikkuna';
 $string['compatibilitysettingshead'] = 'Tarkistetaan PHP:n asetukset';
 $string['compatibilitysettingssub'] = 'Palvelimesi pitää läpäistä kaikki testit jotta moodle toimisi oikein.';
 $string['componentisuptodate'] = 'Komponentti on ajan tasalla';
-$string['configfilenotwritten'] = 'Asennus ei pystynyt luomaan automaattisesti config.php tiedostoa, joka olisi sisältänyt valitsemasi asetukset, todennäköisesti koska Moodlen hakemisto on kirjoitussuojattu. Voit manuaalisesti kopioida seuraavan koodin tiedostoon nimeltä config.php Moodlen päähakemiston sisällä.';
+$string['configfilenotwritten'] = 'Asennus ei pystynyt luomaan automaattisesti config.php tiedostoa, joka olisi sisältänyt valitsemasi asetukset. Todennäköisesti koska Moodlen hakemisto on kirjoitussuojattu. Voit  kopioida seuraavan koodin tiedostoon nimeltä config.php  ja tallentaa tiedostin Moodlen päähakemiston sisälle.';
 $string['configfilewritten'] = 'config.php on luotu.';
 $string['configurationcompletehead'] = 'Asetukset suoritettu';
 $string['configurationcompletesub'] = 'Moodle yritti tallentaa asetustiedostoa \"config.php\" moodlen asennuskansioon.';
