@@ -38,12 +38,13 @@
                 choice_delete_responses($attemptids); //delete responses.
                 redirect("view.php?id=$cm->id");
             }
-        }    
-        
-        if (empty($form->answer)) {
+        }
+        $answer = optional_param('answer', '', PARAM_INT);
+
+        if (empty($answer)) {
             redirect("view.php?id=$cm->id", get_string('mustchooseone', 'choice'));
         } else {
-            choice_user_submit_response($form->answer, $choice, $USER->id, $course->id, $cm);
+            choice_user_submit_response($answer, $choice, $USER->id, $course->id, $cm);
         }
         redirect("view.php?id=$cm->id");
         exit;
@@ -70,7 +71,8 @@
     }
 
     //if user has already made a selection, and they are not allowed to update it, show their selected answer.
-    if (!empty($USER->id) && ($current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $USER->id))) {
+    if (!empty($USER->id) && ($current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $USER->id)) &&
+        empty($choice->allowupdate) ) {
         print_simple_box(get_string("yourselection", "choice", userdate($choice->timeopen)).": ".format_string(choice_get_option_text($choice, $current->optionid)), "center");
     }
 
