@@ -67,7 +67,7 @@
 //             $strstats";
 
 //    print_header("$course->shortname: $strstats", "$course->fullname",
-//                  $crumb, '', '', true, '&nbsp', $menu);
+//                  $crumb, '', '', true, '&nbsp;', $menu);
 
 
     require_once($CFG->dirroot.'/course/report/stats/report.php');

@@ -96,7 +96,7 @@
         $table->cellpadding = 4;
         $table->cellspacing = 3;
         $table->align = array('center','center','center','center','center','center','center');
-        $table->head = array('&nbsp',get_string('shortname'),get_string('fullname'),get_string('requestedby'),get_string('summary'),
+        $table->head = array('&nbsp;',get_string('shortname'),get_string('fullname'),get_string('requestedby'),get_string('summary'),
                                get_string('requestreason'),'');
         $strrequireskey = get_string('requireskey');
         foreach ($pending as $course) {

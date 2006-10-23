@@ -69,7 +69,7 @@ function display() {
             navmenu($course, $cm));
 
     if (has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $course->id))) {
-        echo "<div align=\"right\"><img src=\"$CFG->pixpath/i/files.gif\" height=\"16\" width=\"16\" alt=\"\" />&nbsp".
+        echo "<div align=\"right\"><img src=\"$CFG->pixpath/i/files.gif\" height=\"16\" width=\"16\" alt=\"\" />&nbsp;".
             "<a href=\"$CFG->wwwroot/files/index.php?id={$course->id}&amp;wdir=/{$resource->reference}$subdir\">".
             get_string("editfiles")."...</a></div>";
     }
