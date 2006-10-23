@@ -16,7 +16,7 @@
     
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
-    if (!has_capability('mod/forum:ratepost', $context)) {
+    if (!has_capability('mod/forum:rate', $context)) {
         error('You do not have the permission to rate this post');
     }
     
