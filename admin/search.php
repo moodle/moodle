@@ -13,43 +13,50 @@ admin_externalpage_setup('search', $adminroot); // now hidden page
 $CFG->adminsearchquery = $query;  // So we can reference it in search boxes later in this invocation
 
 
-$resultshtml = search_settings_html(admin_get_root(), $query);
-
 // now we'll deal with the case that the admin has submitted the form with changed settings
+
+$statusmsg = '';
+
 if ($data = data_submitted()) {
     $data = (array)$data;
     if (confirm_sesskey()) {
+        $olddbsessions = !empty($CFG->dbsessions);
         $changedsettings = search_settings(admin_get_root(), $query);
         $errors = '';
 
         foreach($changedsettings as $changedsetting) {
-            if (isset($data['s_' . $changedsetting->name])) {
-                $errors .= $changedsetting->write_setting($data['s_' . $changedsetting->name]);
-            } else {
-                $errors .= $changedsetting->write_setting($changedsetting->defaultsetting);
+            if (!isset($data['s_' . $changedsetting->name])) {
+                $data['s_' . $changedsetting->name] = ''; // needed for checkboxes
             }
+            $errors .= $changedsetting->write_setting($data['s_' . $changedsetting->name]);
+        }
+
+        if ($olddbsessions != !empty($CFG->dbsessions)) {
+            require_logout();
         }
 
         if (empty($errors)) {
-            // there must be either redirect without message or continue button or else upgrade would be sometimes broken
-            redirect($CFG->wwwroot . '/' . $CFG->admin . '/search.php?query=' . $query);
-            die;
+            $statusmsg = get_string('changessaved');
         } else {
-            error(get_string('errorwithsettings', 'admin') . ' <br />' . $errors);
-            die;
+            $statusmsg = get_string('errorwithsettings', 'admin') . ' <br />' . $errors;
         }
     } else {
         error(get_string('confirmsesskeybad', 'error'));
-        die;
     }
-
+    // now update $SITE - it might have been changed
+    $SITE = get_record('course', 'id', $SITE->id);
+    $COURSE = clone($SITE);
 }
 
 // and finally, if we get here, then there are matching settings and we have to print a form
 // to modify them
 admin_externalpage_print_header($adminroot);
 
-// print_simple_box(get_string('upgradesettingsintro','admin'),'','100%','',5,'generalbox','');
+if ($statusmsg != '') {
+    notify ($statusmsg);
+}
+
+$resultshtml = search_settings_html(admin_get_root(), $query);
 
 echo '<form action="search.php" method="post" name="adminsettings" id="adminsettings">';
 echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
