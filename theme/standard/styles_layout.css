@@ -1946,10 +1946,10 @@ body#mod-forum-search .introcontent {
   width: 100%;
 }
 
-.mod-glossary .tabs {
+.mod-glossary .glossarydisplay .tabs {
   margin-bottom: 0px;
 }
-.mod-glossary .tabs .side {
+.mod-glossary .glossarydisplay .tabs .side {
   border-style: none;
   border-width: 0px;
   width: auto;
