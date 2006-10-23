@@ -153,7 +153,7 @@
         }
     }
 
-    if (!empty($USER->id)) {
+    if (!empty($USER->id) && !has_capability('moodle/legacy:guest', $context, NULL, false)) {
         echo '<td align="right" class="subscription">';
         $SESSION->fromdiscussion = "$FULLME";
         if (forum_is_forcesubscribed($forum->id)) {

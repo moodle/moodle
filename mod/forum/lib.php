@@ -2904,6 +2904,10 @@ function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=
         return false;
     }
 
+    if (has_capability('moodle/legacy:guest', $context, NULL, false)) {  // User is a guest here!
+        return false;
+    }
+
     if ($forum->type == "eachuser") {
         return (!forum_user_has_posted_discussion($forum->id, $USER->id));
     } else if ($currentgroup) {
@@ -2935,9 +2939,11 @@ function forum_user_can_post($forum, $user=NULL) {
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if (isset($user)) {
-        $canreply = has_capability('mod/forum:replypost', $context, false, $user->id);
+        $canreply = has_capability('mod/forum:replypost', $context, $user->id, false) &&
+                    !has_capability('moodle/legacy:guest', $context, $user->id, false);
     } else {
-        $canreply = has_capability('mod/forum:replypost', $context, false);
+        $canreply = has_capability('mod/forum:replypost', $context, NULL, false) &&
+                    !has_capability('moodle/legacy:guest', $context, NULL, false);
     }
 
     return $canreply;

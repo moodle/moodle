@@ -86,15 +86,18 @@
     $info->name  = fullname($user);
     $info->forum = format_string($forum->name);
 
-    if ( forum_is_subscribed($user->id, $forum->id) ) {
-        if (forum_unsubscribe($user->id, $forum->id) ) {
+    if (forum_is_subscribed($user->id, $forum->id)) {
+        if (forum_unsubscribe($user->id, $forum->id)) {
             add_to_log($course->id, "forum", "unsubscribe", "view.php?f=$forum->id", $forum->id, $cm->id);
             redirect($returnto, get_string("nownotsubscribed", "forum", $info), 1);
         } else {
             error("Could not unsubscribe you from that forum", $_SERVER["HTTP_REFERER"]);
         }
 
-    } else { // subscribe
+    } else if (has_capability('moodle/legacy:guest', $context, $user->id, false)) { // Guests can not subscribe
+        error("Guests can not subscribe to forums", $_SERVER["HTTP_REFERER"]);
+
+    } else {  // subscribe
         if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE &&
                     !has_capability('mod/forum:managesubscriptions', $context)) {
             error(get_string('disallowsubscribe'),$_SERVER["HTTP_REFERER"]);
