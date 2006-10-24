@@ -34,47 +34,60 @@
 $moodle_capabilities = array(
 
     'moodle/site:doanything' => array(
+
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS | RISK_CONFIG,
+
         'captype' => 'admin',
         'contextlevel' => CONTEXT_SYSTEM
     ),
 
     'moodle/legacy:guest' => array(
+
         'captype' => 'legacy',
         'contextlevel' => CONTEXT_SYSTEM
     ),
 
 
     'moodle/legacy:student' => array(
+
         'riskbitmask' => RISK_SPAM,
+
         'captype' => 'legacy',
         'contextlevel' => CONTEXT_SYSTEM
     ),
 
 
     'moodle/legacy:teacher' => array(
+
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL,
+
         'captype' => 'legacy',
         'contextlevel' => CONTEXT_SYSTEM
     ),
 
 
     'moodle/legacy:editingteacher' => array(
+
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+
         'captype' => 'legacy',
         'contextlevel' => CONTEXT_SYSTEM
     ),
 
 
     'moodle/legacy:coursecreator' => array(
+
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+
         'captype' => 'legacy',
         'contextlevel' => CONTEXT_SYSTEM
     ),
 
 
     'moodle/legacy:admin' => array(
+
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS | RISK_CONFIG,
+
         'captype' => 'legacy',
         'contextlevel' => CONTEXT_SYSTEM
     ),
@@ -93,6 +106,8 @@ $moodle_capabilities = array(
 
     'moodle/site:readallmessages' => array(
 
+        'riskbitmask' => RISK_PERSONAL,
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
@@ -101,6 +116,8 @@ $moodle_capabilities = array(
     ),
 
     'moodle/site:approvecourse' => array(
+
+        'riskbitmask' => RISK_XSS,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
@@ -249,6 +266,8 @@ $moodle_capabilities = array(
 
     'moodle/user:delete' => array(
 
+        'riskbitmask' => RISK_PERSONAL,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
@@ -291,6 +310,7 @@ $moodle_capabilities = array(
     ),
 
     'moodle/user:viewusergrades' => array(
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -301,7 +321,7 @@ $moodle_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'moodle/user:loginas' => array(
 
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS | RISK_CONFIG,
@@ -326,6 +346,8 @@ $moodle_capabilities = array(
 
     'moodle/role:override' => array(
 
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
@@ -335,6 +357,8 @@ $moodle_capabilities = array(
 
     'moodle/role:manage' => array(
 
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
@@ -343,6 +367,7 @@ $moodle_capabilities = array(
     ),
 
     'moodle/role:unassignself' => array(
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
@@ -355,6 +380,7 @@ $moodle_capabilities = array(
     ),
 
     'moodle/role:viewhiddenassigns' => array(
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
@@ -366,7 +392,9 @@ $moodle_capabilities = array(
     ),
 
     'moodle/role:switchroles' => array(
+
         'riskbitmask' => RISK_XSS,
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
@@ -727,6 +755,7 @@ $moodle_capabilities = array(
     // The next 3 might make no sense for some roles, e.g teacher, etc.
     // since the next level up is site. These are more for the parent role
     'moodle/user:readuserposts' => array(
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_USER,
         'legacy' => array(
@@ -739,6 +768,7 @@ $moodle_capabilities = array(
     ),
 
     'moodle/user:readuserblogs' => array(
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_USER,
         'legacy' => array(
@@ -751,6 +781,7 @@ $moodle_capabilities = array(
     ),
 
     'moodle/user:viewuseractivitiesreport' => array(
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_USER,
         'legacy' => array(
@@ -786,6 +817,7 @@ $moodle_capabilities = array(
     ),
 
     'moodle/question:export' => array(
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -796,6 +828,7 @@ $moodle_capabilities = array(
     ),
 
     'moodle/question:managecategory' => array(
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -819,6 +852,7 @@ $moodle_capabilities = array(
     ),
 
     'moodle/site:doclinks' => array(
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
@@ -830,6 +864,7 @@ $moodle_capabilities = array(
     ),
 
     'moodle/course:sectionvisibility' => array(
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -840,6 +875,7 @@ $moodle_capabilities = array(
     ),
 
     'moodle/course:useremail' => array(
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -849,6 +885,7 @@ $moodle_capabilities = array(
     ),
 
     'moodle/course:viewhiddensections' => array(
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -859,6 +896,7 @@ $moodle_capabilities = array(
     ),
 
     'moodle/course:setcurrentsection' => array(
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -869,6 +907,9 @@ $moodle_capabilities = array(
     ),
 
     'moodle/course:viewcoursegrades' => array(
+
+        'riskbitmask' => RISK_PERSONAL,
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -880,6 +921,9 @@ $moodle_capabilities = array(
     ),
 
     'moodle/course:managegrades' => array(
+
+        'riskbitmask' => RISK_PERSONAL,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
