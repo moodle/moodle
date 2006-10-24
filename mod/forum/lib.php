@@ -3690,7 +3690,7 @@ function forum_add_user_default_subscriptions($userid, $context) {
                  foreach ($courses as $course) {
                      if ($course->id == SITEID) {
                          // temporary workaround for bug MDL-7114
-                         if ($forums = get_all_instances_in_course('forum', $course)) {
+                         if ($forums = get_all_instances_in_course('forum', $course, $userid, false)) {
                              foreach ($forums as $forum) {
                                  if ($forum->forcesubscribe != FORUM_INITIALSUBSCRIBE) {
                                      continue;
@@ -3731,7 +3731,7 @@ function forum_add_user_default_subscriptions($userid, $context) {
 
         case CONTEXT_COURSE:   // For a whole course
              if ($course = get_record('course', 'id', $context->instanceid)) {
-                 if ($forums = get_all_instances_in_course('forum', $course)) {
+                 if ($forums = get_all_instances_in_course('forum', $course, $userid, false)) {
                      foreach ($forums as $forum) {
                          if ($forum->forcesubscribe != FORUM_INITIALSUBSCRIBE) {
                              continue;
@@ -3778,9 +3778,13 @@ function forum_remove_user_subscriptions($userid, $context) {
                 foreach ($courses as $course) {
                     if ($course->id == SITEID) {
                         if ($course = get_records('course', 'id', $context->instanceid)) {
-                            if ($forums = get_all_instances_in_course('forum', $course)) {
+                             if ($forums = get_all_instances_in_course('forum', $course, $userid, true)) {
                                 foreach ($forums as $forum) {
-                                    forum_unsubscribe($userid, $forum->id);
+                                     if ($modcontext = get_context_instance(CONTEXT_MODULE, $forum->coursemodule)) {
+                                         if (!has_capability('mod/forum:viewdiscussion', $modcontext, $userid)) {
+                                             forum_unsubscribe($userid, $forum->id);
+                                         }
+                                     }
                                 }  
                             }
                         }
@@ -3808,10 +3812,14 @@ function forum_remove_user_subscriptions($userid, $context) {
              break;
 
         case CONTEXT_COURSE:   // For a whole course
-             if ($course = get_records('course', 'id', $context->instanceid)) {
-                 if ($forums = get_all_instances_in_course('forum', $course)) {
+             if ($course = get_record('course', 'id', $context->instanceid)) {
+                 if ($forums = get_all_instances_in_course('forum', $course, $userid, true)) {
                      foreach ($forums as $forum) {
-                         forum_unsubscribe($userid, $forum->id);
+                         if ($modcontext = get_context_instance(CONTEXT_MODULE, $forum->coursemodule)) {
+                             if (!has_capability('mod/forum:viewdiscussion', $modcontext, $userid)) {
+                                 forum_unsubscribe($userid, $forum->id);
+                             }
+                         }
                      }
                  }
              }
@@ -3820,7 +3828,9 @@ function forum_remove_user_subscriptions($userid, $context) {
         case CONTEXT_MODULE:   // Just one forum
              if ($cm = get_coursemodule_from_id('forum', $context->instanceid)) {
                  if ($forum = get_record('forum', 'id', $cm->instance)) { 
-                     forum_unsubscribe($userid, $forum->id);
+                     if (!has_capability('mod/forum:viewdiscussion', $context, $userid)) {
+                         forum_unsubscribe($userid, $forum->id);
+                     }
                  }
              }
              break;
