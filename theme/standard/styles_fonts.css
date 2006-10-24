@@ -227,6 +227,10 @@ body#admin-index .copyright {
   font-size: 0.8em;
 }
 
+#admin-roles-manage .rolecap .cap-desc .cap-name {
+    font-size: 75%;
+}
+
 #adminsettings .form-shortname {
     font-size: 75%;
 }
