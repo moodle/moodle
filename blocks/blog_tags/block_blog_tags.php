@@ -77,16 +77,15 @@ class block_blog_tags extends block_base {
         $timewithin = $this->config->timewithin * 24 * 60 * 60; /// convert to seconds
 
         $sql  = 'SELECT t.id, t.type, t.text, COUNT(DISTINCT bt.id) as ct ';
-        $sql .= "FROM {$CFG->prefix}tags as t, {$CFG->prefix}blog_tag_instance as bt, {$CFG->prefix}post as p ";
+        $sql .= "FROM {$CFG->prefix}tags t, {$CFG->prefix}blog_tag_instance bt, {$CFG->prefix}post p ";
         $sql .= 'WHERE t.id = bt.tagid ';
         $sql .= 'AND p.id = bt.entryid ';
         $sql .= 'AND (p.publishstate = \'site\' or p.publishstate=\'public\') ';
         $sql .= "AND bt.timemodified > {$timewithin} ";
         $sql .= 'GROUP BY t.id, t.type, t.text ';
-        $sql .= 'ORDER BY ct DESC, t.text ASC ';
-        $sql .= "LIMIT {$this->config->numberoftags} ";
+        $sql .= 'ORDER BY ct DESC, t.text ASC';
 
-        if ($tags = get_records_sql($sql)) {
+        if ($tags = get_records_sql($sql, 0, $this->config->numberoftags)) {
 
         /// There are 2 things to do:
         /// 1. tags with the same count should have the same size class

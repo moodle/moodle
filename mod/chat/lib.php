@@ -369,10 +369,10 @@ function chat_get_latest_message($chatid, $groupid=0) {
         $groupselect = "";
     }
 
-    if (!$rs = $db->Execute("SELECT *
-                               FROM {$CFG->prefix}chat_messages
-                              WHERE chatid = '$chatid' $groupselect
-                           ORDER BY timestamp DESC LIMIT 1")) {
+    if (!$rs = $db->SelectLimit("SELECT *
+                                 FROM {$CFG->prefix}chat_messages
+                                 WHERE chatid = '$chatid' $groupselect
+                                 ORDER BY timestamp DESC", 1)) {
         return false;
     }
     if ($rs->RecordCount() == 1) {

@@ -295,17 +295,11 @@
     } 
     $count = count_records_sql("select count(*) $sqlfrom $sqlwhere");
 
-    $sqllimit = '';
+    $limitfrom = $offset;
+    $limitnum = 0;
     
     if ( $offset >= 0 ) {
-        switch ($CFG->dbtype) {
-        case 'postgres7':
-            $sqllimit = " LIMIT $entriesbypage OFFSET $offset";
-        break;
-        case 'mysql':
-            $sqllimit = " LIMIT $offset, $entriesbypage";
-        break;
-        }    
+        $limitnum = $entriesbypage;
     }
-    $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby $sqllimit");
+    $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby", $limitfrom, $limitnum);
 ?>
