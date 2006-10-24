@@ -1093,7 +1093,7 @@ function get_coursemodule_from_instance($modulename, $instance, $courseid=0) {
  * @param array  $courses This depends on an accurate $course->modinfo
  * @return array of instances
  */
-function get_all_instances_in_courses($modulename,$courses) {
+function get_all_instances_in_courses($modulename, $courses, $userid=NULL, $includeinvisible=false) {
     global $CFG;
     if (empty($courses) || !is_array($courses) || count($courses) == 0) {
         return array();
@@ -1114,8 +1114,10 @@ function get_all_instances_in_courses($modulename,$courses) {
     $outputarray = array();
 
     foreach ($courses as $course) {
-        // Hide non-visible instances from students
-        if (has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+        if ($includeinvisible) {
+            $invisible = -1;
+        } else if (has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id), $userid)) {
+            // Usually hide non-visible instances from students
             $invisible = -1;
         } else {
             $invisible = 0;
@@ -1151,7 +1153,7 @@ function get_all_instances_in_courses($modulename,$courses) {
  * @param string  $modulename The name of the module to get instances for
  * @param object(course)  $course This depends on an accurate $course->modinfo
  */
-function get_all_instances_in_course($modulename, $course) {
+function get_all_instances_in_course($modulename, $course, $userid=NULL, $includeinvisible=false) {
 
     global $CFG;
 
@@ -1176,8 +1178,10 @@ function get_all_instances_in_course($modulename, $course) {
         return array();
     }
 
-    // Hide non-visible instances from students
-    if (has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+    if ($includeinvisible) {
+        $invisible = -1;
+    } else if (has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id), $userid)) {
+        // Usually hide non-visible instances from students
         $invisible = -1;
     } else {
         $invisible = 0;
