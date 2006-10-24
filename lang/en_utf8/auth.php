@@ -30,7 +30,7 @@ $string['auth_dbfielduser'] = 'Name of the field containing usernames';
 $string['auth_dbhost'] = 'The computer hosting the database server.';
 $string['auth_dbname'] = 'Name of the database itself';
 $string['auth_dbpass'] = 'Password matching the above username';
-$string['auth_dbpasstype'] = '<p>Specify the format that the password field is using. MD5 encryption is useful for connecting to other common web applications like PostNuke.</p> <p>Use \'internal\' if you want to the external DB to manage usernames & email addresses, but Moodle to manage passwords. If you use \'internal\', you <i>must</i> provide a populated email address field in the external DB, and you must execute auth/db/cron.php regularly. Moodle will send an email to new users with a temporary password.</p>'; 
+$string['auth_dbpasstype'] = '<p>Specify the format that the password field is using. MD5 encryption is useful for connecting to other common web applications like PostNuke.</p> <p>Use \'internal\' if you want to the external DB to manage usernames & email addresses, but Moodle to manage passwords. If you use \'internal\', you <i>must</i> provide a populated email address field in the external DB, and you must execute auth/db/auth_db_sync_users.php regularly. Moodle will send an email to new users with a temporary password.</p>'; 
 $string['auth_dbtable'] = 'Name of the table in the database';
 $string['auth_dbtitle'] = 'Use an external database';
 $string['auth_dbtype'] = 'The database type (See the <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb documentation</a> for details)';
