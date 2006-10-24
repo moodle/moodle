@@ -12,6 +12,10 @@
 
     require_login();
 
+    if ($USER->username == 'guest') {                      // Guests can't enrol in anything!
+        redirect($CFG->wwwroot.'/login/index.php');
+    }
+
     if (! $course = get_record('course', 'id', $id) ) {
         error("That's an invalid course id");
     }
