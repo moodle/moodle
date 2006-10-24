@@ -5,8 +5,9 @@
  * Takes in an array of either full paths or shortnames and it will translate
  * them to full paths.
  **/
-function print_require_js($list) {
+function require_js($list) {
     global $CFG;
+    $output = '';
 
     if (!check_browser_version('MSIE', 6.0) && !check_browser_version('Firefox', 1.5)) {
         // We still have issues with YUI in other browsers.
@@ -29,64 +30,33 @@ function print_require_js($list) {
 
     for ($i=0; $i<count($list); $i++) {
         if ($translatelist[$list[$i]]) {
-            echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$translatelist[$list[$i]]."'></script>\n";
+            $output .= "<script type='text/javascript' src='".$CFG->wwwroot.''.$translatelist[$list[$i]]."'></script>\n";
+            if ($translatelist[$list[$i]] == '/lib/yui/logger/logger.js') {
+                // Special case. We need the css.
+                $output .= "<link type='text/css' rel='stylesheet' href='{$CFG->wwwroot}/lib/yui/logger/assets/logger.css'>";
+            }
         } else {
-            echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$list[$i]."'></script>\n";
+            $output .= "<script type='text/javascript' src='".$CFG->wwwroot.''.$list[$i]."'></script>\n";
         }
     }
-    /*
-    if (debugging('', DEBUG_DEVELOPER)) {
-        echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$translatelist['yui_logger']."'></script>\n";
-        
-        // Dependencies for the logger.
-        echo "<link type='text/css' rel='stylesheet' href='{$CFG->wwwroot}/lib/yui/logger/assets/logger.css'>";
-        
-        // FIXME: Below might get included more than once.
-        echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$translatelist['yui_yahoo']."'></script>\n";
-        echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$translatelist['yui_dom']."'></script>\n";
-        echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$translatelist['yui_event']."'></script>\n";
-        echo "<script type='text/javascript' src='".$CFG->wwwroot.''.$translatelist['yui_dragdrop']."'></script>\n";
-        ?>
-        <script type="text/javascript">
-
-            function showLogger() {
-                var logcontainer = null;
-
-                var logconfig = {
-                    left: "60%",
-                    top: "40px"
-                };
-                var logreader = new YAHOO.widget.LogReader(logcontainer, logconfig);
-
-                logreader.newestOnTop = false;
-                logreader.setTitle('Moodle Debug: YUI Log Console');
-            }
-            
-            setTimeout(showLogger, 1);  // IE does not allow changing HTML
-                                        // tables via DOM until they are
-                                        // fully rendered.
-        </script>
-        <?php
-    }
-    */
+    return $output;
 }
 
 
 /**
- * Used to create view of document to be passed to javascript on pageload.
+ * Used to create view of document to be passed to JavaScript on pageload.
+ * We use this class to pass data from PHP to JavaScript.
  */
 class jsportal {
 
     var $currentblocksection = null;
     var $blocks = array();
-    var $blocksoutput = '';
-    var $output = '';
 
 
     /**
      * Takes id of block and adds it
      */
-    function block_add($id, $hidden=false ){
+    function block_add($id, $hidden=false){
         $hidden_binary = 0;
 
         if ($hidden) {
@@ -96,30 +66,39 @@ class jsportal {
     }
 
 
-    function print_javascript($id) {
+    /**
+     * Prints the JavaScript code needed to set up AJAX for the course.
+     */
+    function print_javascript($courseid, $return=false) {
         global $CFG;
 
         $blocksoutput = $output = '';
         for ($i=0; $i<count($this->blocks); $i++) {
-            $blocksoutput .= "['".$this->blocks[$i][0]."','".$this->blocks[$i][1]."','".$this->blocks[$i][2]."']";
-            if ($i != (count($this->blocks)-1)) {
+            $blocksoutput .= "['".$this->blocks[$i][0]."',
+                             '".$this->blocks[$i][1]."',
+                             '".$this->blocks[$i][2]."']";
+
+            if ($i != (count($this->blocks) - 1)) {
                 $blocksoutput .= ',';
             }
         }
-
         $output .= "<script language='javascript'>\n";
-        $output .= " 	main.portal.id = ".$id.";\n";
-        $output .= "    main.portal.blocks = new Array(".$blocksoutput.");\n";        
-        $output .= "    main.portal.strings['wwwroot']='".$CFG->wwwroot."';\n";        
+        $output .= " 	main.portal.id = ".$courseid.";\n";
+        $output .= "    main.portal.blocks = new Array(".$blocksoutput.");\n";
+        $output .= "    main.portal.strings['wwwroot']='".$CFG->wwwroot."';\n";
         $output .= "    main.portal.strings['update']='".get_string('update')."';\n";
-        $output .= "    main.portal.strings['deletecheck']='".get_string('deletecheck','','_var_')."';\n"; 
-        $output .= "    main.portal.strings['resource']='".get_string('resource')."';\n"; 
-        $output .= "    main.portal.strings['activity']='".get_string('activity')."';\n";         
-        $output .= "    onload.load();\n";
+        $output .= "    main.portal.strings['deletecheck']='".get_string('deletecheck','','_var_')."';\n";
+        $output .= "    main.portal.strings['resource']='".get_string('resource')."';\n";
+        $output .= "    main.portal.strings['activity']='".get_string('activity')."';\n";
+        $output .= "    onloadobj.load();\n";
         $output .= "    main.process_blocks();\n";
         $output .= "</script>";
-        echo $output;
+        if ($return) {
+            return $output;
+        } else {
+            echo $output;
+        }
     }
-}
 
+}
 ?>

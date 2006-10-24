@@ -47,16 +47,6 @@
         $strweekshow = get_string('weekshow', '', $strstudents);
         $strmoveup   = get_string('moveup');
         $strmovedown = get_string('movedown');
-
-        if (!empty($USER->ajax)) {
-
-         // If user doesnt want AJAX, then they wont get it, 
-         // from here everything detects $COURSE->javascriptportal
-            $COURSE->javascriptportal = new jsportal();
-
-            print_require_js(array('yui_yahoo','yui_dom','yui_event','yui_dragdrop', 'yui_connection',
-                                   'ajaxcourse_blocks','ajaxcourse_sections','ajaxcourse'));
-        }
     }
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -274,10 +264,5 @@
     }
 
     echo '</tr></table>';
-
-    //create javascript portal code
-    if (!empty($COURSE->javascriptportal)) {
-        $COURSE->javascriptportal->print_javascript($course->id);
-    }
 
 ?>
