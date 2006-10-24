@@ -115,6 +115,8 @@ $mod_data_capabilities = array(
 
     'mod/data:manageentries' => array(
 
+        'riskbitmask' => RISK_SPAM,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -126,6 +128,8 @@ $mod_data_capabilities = array(
     ),
 
     'mod/data:managecomments' => array(
+
+        'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
@@ -139,7 +143,7 @@ $mod_data_capabilities = array(
 
     'mod/data:managetemplates' => array(
 
-        'riskbitmask' => RISK_SPAM,
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
