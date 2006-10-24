@@ -41,6 +41,24 @@ class moodleform {
         $this->_process_submission($method);
 
     }
+    /**
+     * To autofocus on first form element with error.
+     *
+     * @return string  javascript to select form element with first error or
+     * '' if no errors.
+     */
+    function focus(){
+        $form=$this->_form;
+        if (isset($form->_errors) &&  0!=count($form->_errors)){
+            $errorkeys=array_keys($form->_errors);
+            $elkeys=array_keys($form->_elementIndex);
+            $keyinorder=array_intersect($elkeys, $errorkeys);
+            $el='getElementById(\'id_'.array_shift($keyinorder).'\')';
+            return $el;
+        } else{
+            return '';
+        }
+    }
 
     function _process_submission($method) {
         $submission = array();
@@ -120,7 +138,7 @@ class moodleform {
     function definition() {
         error('Abstract form_definition() method in class '.get_class($this).' must be overriden, please fix the code.');
     }
-    
+
     /**
      * Another abstract function. This one is called after submitted data has
      * been processed and is available. All form setup that is dependent on form values
@@ -128,7 +146,7 @@ class moodleform {
      *
      */
     function definition_after_data(){
-        
+
     }
 
     // dummy stub method - override if needed
@@ -197,10 +215,10 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             $this->_flagSubmitted = true;
         }
 
-        // need to tell all elements that they need to update their value attribute. 
-         foreach (array_keys($this->_elements) as $key) { 
-             $this->_elements[$key]->onQuickFormEvent('updateValue', null, $this); 
-         } 
+        // need to tell all elements that they need to update their value attribute.
+         foreach (array_keys($this->_elements) as $key) {
+             $this->_elements[$key]->onQuickFormEvent('updateValue', null, $this);
+         }
     }
 
     function getReqHTML(){
@@ -255,7 +273,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             }
         }elseif (!$suppresscheck){
             print_error('nonexistentformelements', 'form', '', $elementname);
-        }        
+        }
     }
 
     function exportValues($elementList= null, $addslashes=true){
@@ -362,7 +380,7 @@ function qf_errorHandler(element, _qfMsg) {
     while (errorDiv.firstChild) {
       errorDiv.removeChild(errorDiv.firstChild);
     }
-    
+
     errorDiv.insertBefore(br, errorDiv.firstChild);
     errorDiv.insertBefore(span, errorDiv.firstChild);
     element.parentNode.insertBefore(errorDiv, element.parentNode.firstChild);
@@ -439,7 +457,7 @@ function validate_' . $this->_attributes['id'] . '(frm) {
                     $str=get_string('err_'.$rule['type'], 'form', $a);
                     if (strpos($str, '[[')!==0){
                         $this->_rules[$field][$key]['message']=$str;
-                    }    
+                    }
                 }
             }
         }
