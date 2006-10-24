@@ -320,7 +320,7 @@ function get_users_unconfirmed($cutofftime=2000000000) {
                              FROM {$CFG->prefix}user
                             WHERE confirmed = 0
                               AND firstaccess > 0
-                              AND firstaccess < '$cutofftime'");
+                              AND firstaccess < $cutofftime");
 }
 
 /**
@@ -334,8 +334,9 @@ function get_users_longtimenosee($cutofftime) {
     global $CFG;
     return get_records_sql("SELECT userid as id, courseid
                               FROM {$CFG->prefix}user_lastaccess
-                             WHERE timeaccess > '0'
-                               AND timeaccess < '$cutofftime' ");
+                             WHERE courseid != ".SITEID."
+                               AND timeaccess > 0
+                               AND timeaccess < $cutofftime ");
 }
 
 /**
@@ -352,7 +353,7 @@ function get_users_not_fully_set_up($cutofftime=2000000000) {
                              FROM {$CFG->prefix}user
                             WHERE confirmed = 1
                              AND lastaccess > 0
-                             AND lastaccess < '$cutofftime'
+                             AND lastaccess < $cutofftime
                              AND deleted = 0
                              AND (lastname = '' OR firstname = '' OR email = '')");
 }
