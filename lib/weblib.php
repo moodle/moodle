@@ -1256,6 +1256,10 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 
     global $CFG, $course;
 
+    if ($text === '') {
+        return ''; // no need to do any filters and cleaning
+    }
+
     if (!isset($options->trusttext)) {
         $options->trusttext = false;
     }
@@ -1287,7 +1291,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 
     if (!empty($CFG->cachetext) and empty($options->nocache)) {
         $time = time() - $CFG->cachetext;
-        $md5key = md5($text.'-'.$courseid.$options->noclean.$options->smiley.$options->filter.$options->para.$options->newlines.$format.current_language().$courseid.$options->trusttext);
+        $md5key = md5($text.'-'.(int)$courseid.'-'.current_language().'-'.(int)$format.(int)$options->trusttext).(int)$options->noclean.(int)$options->smiley.(int)$options->filter.(int)$options->para.(int)$options->newlines;
         if ($oldcacheitem = get_record_sql('SELECT * FROM '.$CFG->prefix.'cache_text WHERE md5key = \''.$md5key.'\'', true)) {
             if ($oldcacheitem->timemodified >= $time) {
                 return $oldcacheitem->formattedtext;
@@ -1307,6 +1311,10 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         } else {
             $options->noclean = false;
         }
+    } else if (!debugging('', DEBUG_DEVELOPER)) {
+        // strip any forgotten trusttext in non-developer mode
+        // do not forget to disable text cache when debugging trusttext!!
+        $text = trusttext_strip($text);
     }
 
     $CFG->currenttextiscacheable = true;   // Default status - can be changed by any filter
