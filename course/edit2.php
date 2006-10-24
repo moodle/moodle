@@ -97,11 +97,11 @@ if (!empty($course)) {
     if (!empty($course)) {
         print_header($streditcoursesettings, "$course->fullname",
                      "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>
-                      -> $streditcoursesettings");
+                      -> $streditcoursesettings", $editform->focus());
     } else {
         print_header("$site->shortname: $straddnewcourse", "$site->fullname",
                      "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> ".
-                     "<a href=\"index.php\">$strcategories</a> -> $straddnewcourse");
+                     "<a href=\"index.php\">$strcategories</a> -> $straddnewcourse", $editform->focus());
     }
 
     print_heading($streditcoursesettings);
