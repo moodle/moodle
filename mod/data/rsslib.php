@@ -38,12 +38,11 @@
                         $approved = ($data->approval) ? ' AND dr.approved = 1 ' : ' ';
 
                         $sql = 'SELECT dr.* ' .
-                                    "FROM {$CFG->prefix}data_records AS dr " .
+                                    "FROM {$CFG->prefix}data_records dr " .
                                     "WHERE dr.dataid = {$data->id} " .$approved.
-                                    'ORDER BY dr.timecreated DESC ' .
-                                    "LIMIT {$data->rssarticles}";
+                                    'ORDER BY dr.timecreated DESC';
                         
-                        if (!$records = get_records_sql($sql)) {
+                        if (!$records = get_records_sql($sql, 0, $data->rssarticles)) {
                             continue;
                         }
 
