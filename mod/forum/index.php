@@ -334,7 +334,7 @@
                     if (($forum->trackingtype == FORUM_TRACKING_ON) || 
                         !isset($untracked[$forum->id])) {
                         $groupid = ($groupmode==SEPARATEGROUPS
-                                    && !has_capability('modforum:viewdiscussionsfromallgroups', $context))
+                                    && !has_capability('moodle/site:accessallgroups', $context))
                                     ? $currentgroup : false;
                         $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                         if ($unread > 0) {
@@ -399,7 +399,7 @@
                     if (forum_is_forcesubscribed($forum->id)) {
                         $sublink = $stryes;
                     } else {
-                        if ($groupmode and !has_capability('mod/forum:viewdiscussionsfromallgroups', $context)
+                        if ($groupmode and !has_capability('moodle/site:accessallgroups', $context)
                                     and !mygroupid($course->id)) {
                             $sublink = $strno;   // Can't subscribe to a group forum (not in a group)
                             if ($groupmode == SEPARATEGROUPS) {
