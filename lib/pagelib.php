@@ -366,7 +366,7 @@ class page_course extends page_base {
 
     // This function prints out the common part of the page's header.
     // You should NEVER print the header "by hand" in other code.
-    function print_header($title, $morebreadcrumbs = NULL) {
+    function print_header($title, $morebreadcrumbs=NULL, $meta='', $bodytags='') {
         global $USER, $CFG;
 
         $this->init_full();
@@ -406,7 +406,7 @@ class page_course extends page_base {
         $buttons = empty($morebreadcrumbs) ? $buttons : '&nbsp;';
 
         print_header($title, $this->courserecord->fullname, $crumbtext,
-                     '', '', true, $buttons, user_login_string($this->courserecord, $USER));
+                     '', $meta, true, $buttons, user_login_string($this->courserecord, $USER), false, $bodytags);
     }
 
     // SELF-REPORTING SECTION
