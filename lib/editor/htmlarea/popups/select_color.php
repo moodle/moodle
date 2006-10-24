@@ -1,8 +1,11 @@
 <?php
 include("../../../../config.php");
 ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
+<meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>" />
 <title><?php print_string("selectcolor","editor");?></title>
 <style type="text/css">
 html, body { width: 238; height: 188; }
