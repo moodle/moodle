@@ -976,3 +976,12 @@ body#mod-quiz-report table#attempts .r1 {
   background-color:#FFFFFF;
   border: 1px solid #cecece;
 }
+
+#admin-roles-manage .rolecap  {
+  border:none;
+  border-bottom:1px solid;
+  border-bottom-color: #cecece;
+}
+#admin-roles-manage .rolecap .cap-desc .cap-name {
+  color: #888;
+}

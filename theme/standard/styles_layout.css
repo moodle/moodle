@@ -549,6 +549,10 @@ body#admin-roles-manage table.generalbox {
   text-align:center;
 }
 
+#admin-roles-manage .rolecap .cap-desc .cap-name {
+  display: block;
+}
+
 #adminsettings fieldset {
   margin-top: 1em;
   padding: 1em 0.5em;
