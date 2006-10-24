@@ -1052,8 +1052,8 @@ function popup_form($common, $options, $formname, $selected='', $nothing='choose
 
     $output .= '</select>';
     $output .= '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    $output .= '<noscript id="noscript'.$formname.'" style="display: inline;">';
-    $output .= '<input type="submit" value="'.$go.'" /></noscript>';
+    $output .= '<div id="noscript'.$formname.'" style="display: inline;">';
+    $output .= '<input type="submit" value="'.$go.'" /></div>';
     $output .= '<script type="text/javascript">'.
                "\n<!--\n".
                'document.getElementById("noscript'.$formname.'").style.display = "none";'.
