@@ -776,13 +776,15 @@ function print_recent_activity($course) {
 
     global $CFG, $USER, $SESSION;
 
-    $isteacher = has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id));
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
     $timestart = time() - COURSE_MAX_RECENT_PERIOD;
 
-    if (!empty($USER->lastcourseaccess[$course->id])) {
-        if ($USER->lastcourseaccess[$course->id] > $timestart) {
-            $timestart = $USER->lastcourseaccess[$course->id];
+    if (!has_capability('moodle/legacy:guest', $context, NULL, false)) {
+        if (!empty($USER->lastcourseaccess[$course->id])) {
+            if ($USER->lastcourseaccess[$course->id] > $timestart) {
+                $timestart = $USER->lastcourseaccess[$course->id];
+            }
         }
     }
 
@@ -888,13 +890,15 @@ function print_recent_activity($course) {
 
     $mods = get_records('modules', 'visible', '1', 'name', 'id, name');
 
+    $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
+
     foreach ($mods as $mod) {      // Each module gets it's own logs and prints them
         include_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
         $print_recent_activity = $mod->name.'_print_recent_activity';
         if (function_exists($print_recent_activity)) {
             //
             // NOTE:
-            //   $isteacher is to be deprecated!
+            //   $isteacher (second parameter below) is to be deprecated!
             //
             // TODO:
             //   1) Make sure that all _print_recent_activity functions are
@@ -902,7 +906,7 @@ function print_recent_activity($course) {
             //   2) Eventually, remove the $isteacher parameter from the
             //      function calls.
             //
-            $modcontent = $print_recent_activity($course, $isteacher, $timestart);
+            $modcontent = $print_recent_activity($course, $viewfullnames, $timestart);
             if ($modcontent) {
                 $content = true;
             }
