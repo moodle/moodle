@@ -129,12 +129,14 @@
         }
 
     /// Personal blog entries tab
-        if ($CFG->bloglevel > 0
-          and (has_capability('moodle/user:readuserblogs', $personalcontext) // can review students posts
+        require_once($CFG->dirroot.'/blog/lib.php');
+        if ($CFG->bloglevel >= BLOG_USER_LEVEL and // blogs must be enabled
+            (has_capability('moodle/user:readuserblogs', $personalcontext) // can review posts (parents etc)
             or has_capability('moodle/blog:manageentries', $sitecontext)     // entry manager can see all posts
             or ($user->id == $USER->id and has_capability('moodle/blog:create', $sitecontext)) // viewing self
-            or ($CFG->bloglevel > 1 and has_capability('moodle/blog:create', $sitecontext, $user->id) and (has_capability('moodle/blog:view', $sitecontext) or has_capability('moodle/blog:view', $coursecontext)))
-          )) {
+            or (has_capability('moodle/blog:view', $sitecontext) or has_capability('moodle/blog:view', $coursecontext))
+            ) // able to read blogs in site or course context
+        ) { //end if
 
             $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?userid='.$user->id.'&amp;courseid='.$course->id, get_string('blog', 'blog'));
         }
