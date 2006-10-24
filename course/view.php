@@ -5,6 +5,7 @@
     require_once('../config.php');
     require_once('lib.php');
     require_once($CFG->libdir.'/blocklib.php');
+    require_once($CFG->libdir.'/ajax/ajaxlib.php');
 
     $id          = optional_param('id', 0, PARAM_INT);
     $name        = optional_param('name', '', PARAM_RAW);
@@ -74,12 +75,12 @@
     }
 
     $PAGE = page_create_object(PAGE_COURSE_VIEW, $course->id);
-    $pageblocks = blocks_setup($PAGE,BLOCKS_PINNED_BOTH);
+    $pageblocks = blocks_setup($PAGE, BLOCKS_PINNED_BOTH);
+
 
     if (!isset($USER->editing)) {
         $USER->editing = 0;
     }
-
     if ($PAGE->user_allowed_editing()) {
         if (($edit == 1) and confirm_sesskey()) {
             $USER->editing = 1;
@@ -112,13 +113,53 @@
 
     $SESSION->fromdiscussion = $CFG->wwwroot .'/course/view.php?id='. $course->id;
 
-    if ($course->id == SITEID) {      // This course is not a real course.
+
+    if ($course->id == SITEID) {
+        // This course is not a real course.
         redirect($CFG->wwwroot .'/');
     }
 
-    $PAGE->print_header(get_string('course').': %fullname%');
 
-    echo '<div class="course-content">';  // course wrapper start
+    // AJAX-capable course format?
+    $useajax = false;
+    $ajaxformatfile = $CFG->dirroot.'/course/format/'.$course->format.'/ajax.php';
+
+    if (file_exists($ajaxformatfile)) {
+        require_once($ajaxformatfile);
+        if ($USER->editing && !empty($USER->ajax) && $CFG->ajaxcapable) {
+            $useajax = true;
+        }
+    }
+    $meta = '';
+    $bodytags = '';
+    
+    if ($useajax) {
+        $meta = require_js(array('yui_yahoo', 'yui_dom', 'yui_event', 'yui_dragdrop', 'yui_connection'));
+
+        if (debugging('', DEBUG_DEVELOPER)) {  // Need to detect whether we're using ajax too.
+            $meta .= require_js(array('yui_logger'));
+
+            $bodytags = 'onLoad = "javascript:
+            show_logger = function() {
+                var logreader = new YAHOO.widget.LogReader();
+                logreader.newestOnTop = false;
+                logreader.setTitle(\'Moodle Debug: YUI Log Console\');
+            };
+            show_logger();
+            "';
+        }
+        // Okay, global variable alert. VERY UGLY. We need to create this object
+        // here before the <blockname>_print_block() function is called, since
+        // that function needs to set some stuff in the javascriptportal object.
+        // Like I said... VERY UGLY.
+        $COURSE->javascriptportal = new jsportal();
+    }
+
+
+    $PAGE->print_header(get_string('course').': %fullname%', NULL, $meta, $bodytags);
+    // Course wrapper start.
+    echo '<div class="course-content">';
+
 
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
 
@@ -135,16 +176,31 @@
         }
     }
 
-    if (empty($course->modinfo)) {       // Course cache was never made
+
+    if (empty($course->modinfo)) {
+        // Course cache was never made.
         rebuild_course_cache($course->id);
         if (! $course = get_record('course', 'id', $course->id) ) {
             error("That's an invalid course id");
         }
     }
 
-    require($CFG->dirroot .'/course/format/'. $course->format .'/format.php');  // Include the actual course format
 
-    echo '</div>';  // content wrapper end
+    // Include the actual course format.
+    require($CFG->dirroot .'/course/format/'. $course->format .'/format.php');
+    // Content wrapper end.
+    echo '</div>';
+
+
+    // Use AJAX?
+    if ($useajax) {
+        // At the bottom because we want to process sections and activities
+        // after the relevant html has been generated.
+        echo require_js(array('ajaxcourse_blocks', 'ajaxcourse_sections', 'ajaxcourse'));
+        $COURSE->javascriptportal->print_javascript($course->id);
+    }
+
+
     print_footer(NULL, $course);
 
 ?>
