@@ -3,7 +3,6 @@
     /// this allows a student to request a course be created for them.
 
     require_once('../config.php');
-    include_once $CFG->libdir.'/formslib.php';
 
     require_login();
 
@@ -17,15 +16,15 @@
         error(get_string('courserequestdisabled'));
     }
 
+    $requestform = new course_request_form('request.php');
 
     $strtitle = get_string('courserequest');
-    print_header($strtitle,$strtitle,$strtitle);
+    print_header($strtitle,$strtitle,$strtitle, $requestform->focus());
 
     print_simple_box_start("center");
     print_string('courserequestintro');
     print_simple_box_end();
 
-    $requestform = new course_request_form('request.php');
 
     if (($data = $requestform->data_submitted())) {
 

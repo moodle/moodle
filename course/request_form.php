@@ -1,4 +1,5 @@
 <?php
+include_once $CFG->libdir.'/formslib.php';
 class course_request_form extends moodleform {
     function definition() {
         $mform    =& $this->_form;
