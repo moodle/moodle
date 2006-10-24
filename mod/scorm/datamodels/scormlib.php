@@ -31,7 +31,11 @@ function scorm_get_manifest($blocks,$scoes) {
                                     if (isset($metadata['tagData']) && (preg_match("/^(1\.2)$|^(CAM )?(1\.3)$/",$metadata['tagData'],$matches))) {
                                         $scoes->version = 'SCORM_'.$matches[count($matches)-1];
                                     } else {
-                                        $scoes->version = 'SCORM_1.2';
+                                        if (isset($metadata['tagData']) && (preg_match("/^2004 3rd Edition$/",$metadata['tagData'],$matches))) {
+                                            $scoes->version = 'SCORM_1.3';
+                                        } else {
+                                            $scoes->version = 'SCORM_1.2';
+                                        }
                                     }
                                 }
                             }
