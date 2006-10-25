@@ -1291,7 +1291,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 
     if (!empty($CFG->cachetext) and empty($options->nocache)) {
         $time = time() - $CFG->cachetext;
-        $md5key = md5($text.'-'.(int)$courseid.'-'.current_language().'-'.(int)$format.(int)$options->trusttext).(int)$options->noclean.(int)$options->smiley.(int)$options->filter.(int)$options->para.(int)$options->newlines;
+        $md5key = md5($text.'-'.(int)$courseid.'-'.current_language().'-'.(int)$format.(int)$options->trusttext.(int)$options->noclean.(int)$options->smiley.(int)$options->filter.(int)$options->para.(int)$options->newlines);
         if ($oldcacheitem = get_record_sql('SELECT * FROM '.$CFG->prefix.'cache_text WHERE md5key = \''.$md5key.'\'', true)) {
             if ($oldcacheitem->timemodified >= $time) {
                 return $oldcacheitem->formattedtext;
