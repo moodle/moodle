@@ -256,9 +256,11 @@ function grade_get_formatted_grades() {
                 } 
             }
         }
-        
-        // set the students name under student_data (this has the added bonus of creating an entry for students who do not have any grades)
-        $students = get_course_students($course->id);
+        if (!$students = grade_get_course_students($course->id)) {
+            return false;  
+        }
+
+                              
         if (isset($students) && $students) {
             foreach ($students as $userid => $student) {
                 $grades_by_student["$userid"]['student_data']['firstname'] = $student->firstname;
@@ -1218,7 +1220,7 @@ function grade_download($download, $id) {
     if ($currentgroup) {
         $students = get_group_students($currentgroup, "u.lastname ASC");
     } else {
-        $students = get_course_students($course->id, "u.lastname ASC");
+        $students = grade_get_course_students($course->id);
     }
 
     if (!empty($students)) {
@@ -1978,14 +1980,16 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
     global $group; // yu: fix for 5814
     global $preferences;
     
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    
+    if (!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
+        return false;
+    }
+
     if (!has_capability('moodle/course:viewcoursegrades', $context)) {
         $view_by_student = $USER->id;    
     }
     
     list($grades_by_student, $all_categories) = grade_get_formatted_grades();
-    
+
     if ($grades_by_student != 0 && $all_categories != 0) {
       
         // output a form for the user to download the grades.  
@@ -2988,5 +2992,33 @@ function print_student_grade($user, $course) {
             }
         }
     } // a new Moodle nesting record? ;-) 
+}
+
+function grade_get_course_students($courseid) {
+    global $CFG;
+    // The list of roles to display is stored in CFG->gradebook_roles
+    if (!$context = get_context_instance(CONTEXT_COURSE, $courseid)) {
+        return false;  
+    } 
+        
+    $configvar = get_config('', 'gradebook_roles');
+    if (empty($configvar->value)) {
+        notify ('no roles defined in admin->appearance->graderoles');
+        return false; // no roles to displayreturn false;  
+    }
+         
+    if ($rolestoget = explode(',', $configvar->value)) {
+        foreach ($rolestoget as $crole) {
+            if ($tempstudents = get_role_users($crole, $context, true)) {
+                foreach ($tempstudents as $tempuserid=>$tempstudent) {
+                    $students[$tempuserid] = $tempstudent;  
+                }            
+            }
+        }
+    } else {
+        notify ('no roles defined in admin->appearance->graderoles');
+        return false; // no roles to displayreturn false;  
+    }
+    return $students;
 }
 ?>

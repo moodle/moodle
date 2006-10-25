@@ -2303,6 +2303,80 @@ class admin_setting_special_calendar_weekend extends admin_setting {
 
 }
 
+/* 
+ * this is used in config->appearance->gradeconfig 
+ */
+class admin_setting_special_gradebook_roles extends admin_setting {
+
+    function admin_setting_special_gradebook_roles() {
+        $name = 'gradebook_roles';
+        $visiblename = get_string('gradebook_roles', 'admin');
+        $description = get_string('gradebook_roles', 'admin');
+        
+        $value = array();
+        
+        if ($studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {          
+            foreach ($studentroles as $roleid=>$studentrole) {
+                $value[$roleid] = 1;  
+            }
+        }
+
+        parent::admin_setting($name, $visiblename, $description, $value);
+    }
+
+    function get_setting() {
+        global $CFG;
+        if (isset($CFG->{$this->name})) {
+            return explode(',', $CFG->{$this->name});
+        } else {
+            return NULL;
+        }
+    }
+
+    function write_setting($data) {
+        if (!empty($data)) {
+            $str = '';
+            foreach($data as $key => $value) {
+                if ($value) {
+                    $str .= $key.',';
+                }
+            }
+            return set_config($this->name, rtrim($str, ","))?'':get_string('errorsetting', 'admin') . $this->visiblename . '<br />';
+        } else {
+            return set_config($this->name, '')?'':get_string('errorsetting', 'admin') . $this->visiblename . '<br />';  
+        }  
+    }
+
+    function output_html() {
+
+        if ($this->get_setting() === NULL) {
+            $currentsetting = $this->defaultsetting;
+        } else {
+            $currentsetting = $this->get_setting();
+        }
+        
+        // from to process which roles to display
+        if ($roles = get_records('role')) {
+            $return = '<table><tr><td class="c0">'.get_string('showroles','grades').':</td></tr>';        
+            foreach ($roles as $roleid=>$role) {  
+                if (is_array($currentsetting) && in_array($roleid, $currentsetting)) {
+                    $checked = 'checked="checked"';
+                } else {
+                    $checked = ''; 
+                }
+                            
+                $return .= '<tr><td class="c0">';
+                $return .= '<input type="checkbox" name="s_'.$this->name.'['.$roleid.']" value="1" '.$checked.'>'.$role->name;
+                $return .= '</td></tr>';
+            }
+            $return .= '</table>'; 
+        }
+        
+        return format_admin_setting($this->name, $this->visiblename, $return, $this->description);
+
+    }
+
+}
 
 class admin_setting_special_perfdebug extends admin_setting_configcheckbox {
 
