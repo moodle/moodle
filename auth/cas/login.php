@@ -159,6 +159,8 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
             reset_login_count();
 
+            load_all_capabilities();     /// This is what lets the user do anything on the site  :-)
+
             redirect($urltogo);
 
             exit;
@@ -265,6 +267,8 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
         }
 
         reset_login_count();
+
+        load_all_capabilities();     /// This is what lets the user do anything on the site  :-)
 
         redirect($urltogo);
 
