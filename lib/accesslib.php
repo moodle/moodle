@@ -518,6 +518,53 @@ function capability_search($capability, $context, $capabilities) {
     return $permission;
 }
 
+// auxillary function for load_user_capabilities()
+// if context c1 is a parent (or itself) of context c2
+// returns true
+function is_parent_context($c1, $c2) {
+    static $parentsarray;
+    
+    // context can be itself and this is ok
+    if ($c1 == $c2) {
+        return true;  
+    }
+    // hit in cache?
+    if (isset($parentsarray[$c1][$c2])) {
+        return $parentsarray[$c1][$c2];
+    }
+    
+    if (!$co2 = get_record('context', 'id', $c2)) {
+        return false;
+    }
+
+    if (!$parents = get_parent_contexts($co2)) {
+        return false;
+    }
+    
+    foreach ($parents as $parent) {
+        $parentsarray[$parent][$c2] = true;
+    }
+
+    if (in_array($c1, $parents)) {
+        return true;  
+    } else { // else not a parent, set the cache anyway
+        $parentsarray[$c1][$c2] = false;
+        return false;
+    }
+}
+
+
+/*
+ * auxillary function for load_user_capabilities()
+ * handler in usort() to sort contexts according to level
+ */
+function roles_context_cmp($contexta, $contextb) {
+   if ($contexta->contextlevel == $contextb->contextlevel) {
+       return 0;
+   }
+   return ($contexta->contextlevel < $contextb->contextlevel) ? -1 : 1;
+}
+
 
 /**
  * This function should be called immediately after a login, when $USER is set.
@@ -604,8 +651,10 @@ function load_user_capability($capability='', $context ='', $userid='') {
 /// The second part gets the capabilities of overriden roles.
 
     $siteinstance = get_context_instance(CONTEXT_SYSTEM, SITEID);
-
-    $SQL = "  SELECT rc.capability, c1.id, (c1.contextlevel * 100) AS aggrlevel,
+    $capabilities = array();  // Reinitialize.
+    
+    // SQL for normal capabilities
+    $SQL1 = "SELECT rc.capability, c1.id as id1, c1.id as id2, (c1.contextlevel * 100) AS aggrlevel,
                      SUM(rc.permission) AS sum
                      FROM
                      {$CFG->prefix}role_assignments ra,
@@ -622,11 +671,37 @@ function load_user_capability($capability='', $context ='', $userid='') {
               GROUP BY
                      rc.capability, (c1.contextlevel * 100), c1.id
                      HAVING
-                     SUM(rc.permission) != 0
-              UNION
+                     SUM(rc.permission) != 0          
+              ORDER BY
+                     aggrlevel ASC";
+    
+    if (!$rs = get_recordset_sql($SQL1)) {
+        error("Query failed in load_user_capability.");
+    }
 
-              SELECT rc.capability, c2.id, (c1.contextlevel * 100 + c2.contextlevel) AS aggrlevel,
-                     SUM(rc.permission) AS sum
+    if ($rs && $rs->RecordCount() > 0) {
+        while (!$rs->EOF) {
+            $array = $rs->fields;
+            $temprecord = new object;
+
+            foreach ($array as $key=>$val) {
+                if ($key == 'aggrlevel') {
+                    $temprecord->contextlevel = $val;
+                } else {
+                    $temprecord->{$key} = $val;
+                }
+            }
+            
+            $capabilities[] = $temprecord;
+            $rs->MoveNext();
+        }
+    }              
+    // SQL for overrides
+    // this is take out because we have no way of making sure c1 is indeed related to c2 (parent)
+    // if we do not group by sum, it is possible to have multiple records of rc.capability, c1.id, c2.id, tuple having
+    // different values, we can maually sum it when we go through the list
+    $SQL2 = "SELECT rc.capability, c1.id as id1, c2.id as id2, (c1.contextlevel * 100 + c2.contextlevel) AS aggrlevel,
+                     rc.permission AS sum
                      FROM
                      {$CFG->prefix}role_assignments ra,
                      {$CFG->prefix}role_capabilities rc,
@@ -643,15 +718,15 @@ function load_user_capability($capability='', $context ='', $userid='') {
                      $timesql
 
               GROUP BY
-                     rc.capability, (c1.contextlevel * 100 + c2.contextlevel), c2.id, c1.id
+                     rc.capability, (c1.contextlevel * 100 + c2.contextlevel), c1.id, c2.id
                      HAVING
-                     SUM(rc.permission) != 0
+                     rc.permission != 0
               ORDER BY
                      aggrlevel ASC
             ";
 
-    $capabilities = array();  // Reinitialize.
-    if (!$rs = get_recordset_sql($SQL)) {
+
+    if (!$rs = get_recordset_sql($SQL2)) {
         error("Query failed in load_user_capability.");
     }
 
@@ -667,10 +742,20 @@ function load_user_capability($capability='', $context ='', $userid='') {
                     $temprecord->{$key} = $val;
                 }
             }
-            $capabilities[] = $temprecord;
+            // for overrides, we have to make sure that context2 is a child of context1
+            // otherwise the combination makes no sense
+            if (is_parent_context($temprecord->id1, $temprecord->id2)) {
+                $capabilities[] = $temprecord;
+            } // only write if relevant
             $rs->MoveNext();
         }
     }
+    
+    // this step sorts capabilities according to the contextlevel
+    // it is very important because the order matters when we 
+    // go through each capabilities later. (i.e. higher level contextlevel
+    // will override lower contextlevel settings
+    usort($capabilities, 'roles_context_cmp');
 
     /* so up to this point we should have somethign like this
      * $capabilities[1]    ->contextlevel = 1000
@@ -721,23 +806,26 @@ function load_user_capability($capability='', $context ='', $userid='') {
     $usercap = array(); // for other user's capabilities
     foreach ($capabilities as $capability) {
 
-        if (!$context = get_context_instance_by_id($capability->id)) {
+        if (!$context = get_context_instance_by_id($capability->id2)) {
             continue; // incorrect stale context
         }
 
         if (!empty($otheruserid)) { // we are pulling out other user's capabilities, do not write to session
 
             if (capability_prohibits($capability->capability, $context, $capability->sum, $usercap)) {
-                $usercap[$capability->id][$capability->capability] = CAP_PROHIBIT;
+                $usercap[$capability->id2][$capability->capability] = CAP_PROHIBIT;
                 continue;
             }
-
-            $usercap[$capability->id][$capability->capability] = $capability->sum;
+            if (!empty($usercap[$capability->id2][$capability->capability])) {
+                $usercap[$capability->id2][$capability->capability] += $capability->sum;
+            } else {
+                $usercap[$capability->id2][$capability->capability] = $capability->sum;
+            }
 
         } else {
 
             if (capability_prohibits($capability->capability, $context, $capability->sum)) { // if any parent or parent's parent is set to prohibit
-                $USER->capabilities[$capability->id][$capability->capability] = CAP_PROHIBIT;
+                $USER->capabilities[$capability->id2][$capability->capability] = CAP_PROHIBIT;
                 continue;
             }
 
@@ -748,7 +836,11 @@ function load_user_capability($capability='', $context ='', $userid='') {
             // parental prohibits
             // no point writing 0, since 0 = inherit
             // we need to write even if it's 0, because it could be an inherit override
-            $USER->capabilities[$capability->id][$capability->capability] = $capability->sum;
+            if (!empty($USER->capabilities[$capability->id2][$capability->capability])) {
+                $USER->capabilities[$capability->id2][$capability->capability] += $capability->sum;
+            } else {
+                $USER->capabilities[$capability->id2][$capability->capability] = $capability->sum;
+            }
         }
     }
 
