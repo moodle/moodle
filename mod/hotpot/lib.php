@@ -759,10 +759,10 @@ function hotpot_get_all_instances_in_course($modulename, $course) {
             cs.visible AS sectionvisible,
             thismodule.*
         FROM
-            {$CFG->prefix}course_modules AS cm,
-            {$CFG->prefix}course_sections AS cs,
-            {$CFG->prefix}modules AS m,
-            {$CFG->prefix}$modulename AS thismodule
+            {$CFG->prefix}course_modules cm,
+            {$CFG->prefix}course_sections cs,
+            {$CFG->prefix}modules m,
+            {$CFG->prefix}$modulename thismodule
         WHERE
             m.name = '$modulename' AND
             m.id = cm.module AND
@@ -963,8 +963,8 @@ function hotpot_print_recent_activity($course, $isteacher, $timestart) {
             h.name AS name,
             COUNT(*) AS count_attempts
         FROM
-            {$CFG->prefix}hotpot AS h,
-            {$CFG->prefix}hotpot_attempts AS a
+            {$CFG->prefix}hotpot h,
+            {$CFG->prefix}hotpot_attempts a
         WHERE
             h.course = $course->id
             AND h.id = a.hotpot
@@ -1021,10 +1021,10 @@ function hotpot_get_recent_mod_activity(&$activities, &$index, $sincetime, $cour
             cm.instance, cm.section,
             u.firstname, u.lastname, u.picture
         FROM
-            {$CFG->prefix}hotpot_attempts AS a,
-            {$CFG->prefix}hotpot AS h,
-            {$CFG->prefix}course_modules AS cm,
-            {$CFG->prefix}user AS u
+            {$CFG->prefix}hotpot_attempts a,
+            {$CFG->prefix}hotpot h,
+            {$CFG->prefix}course_modules cm,
+            {$CFG->prefix}user u
         WHERE
             a.timefinish > '$sincetime'
             AND a.id = a.clickreportid

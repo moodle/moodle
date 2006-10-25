@@ -55,8 +55,8 @@ function glossary_filter($courseid, $text) {
     
         $aliases = get_records_sql('SELECT ga.id, ge.glossaryid, ga.alias as concept, ge.concept as originalconcept, 
                                            casesensitive, 0 AS category, fullmatch 
-                                      FROM '.$CFG->prefix.'glossary_alias AS ga, 
-                                           '.$CFG->prefix.'glossary_entries AS ge
+                                      FROM '.$CFG->prefix.'glossary_alias ga, 
+                                           '.$CFG->prefix.'glossary_entries ge
                                      WHERE ga.entryid = ge.id
                                        AND ge.glossaryid IN ('.$glossarylist.')
                                        AND ge.usedynalink != 0 

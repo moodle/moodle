@@ -94,8 +94,8 @@
         // Now we look for random questions that can use questions from subcategories
         // because we will have to add these subcategories
         $sql = "SELECT t.id, t.category 
-                  FROM {$CFG->prefix}quiz_question_instances AS g,
-                       {$CFG->prefix}question AS t
+                  FROM {$CFG->prefix}quiz_question_instances g,
+                       {$CFG->prefix}question t
                        $from
                  WHERE $where t.id = g.question
                    AND t.qtype = '".RANDOM."'

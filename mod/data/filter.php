@@ -29,10 +29,10 @@
                    'dr.id AS recordid, ' .
                    'dc.content AS content, ' .
                    'd.id AS dataid ' .
-                        'FROM '.$CFG->prefix.'data AS d, ' .
-                        $CFG->prefix.'data_fields AS df, ' .
-                        $CFG->prefix.'data_records AS dr, ' .
-                        $CFG->prefix.'data_content AS dc ' .
+                        'FROM '.$CFG->prefix.'data d, ' .
+                        $CFG->prefix.'data_fields df, ' .
+                        $CFG->prefix.'data_records dr, ' .
+                        $CFG->prefix.'data_content dc ' .
                             "WHERE (d.course = '$courseid' or d.course = '".SITEID."')" .
                             'AND d.id = df.dataid ' .
                             'AND df.id = dc.fieldid ' .

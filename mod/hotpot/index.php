@@ -212,7 +212,7 @@
     $start = microtime();
 
     // get total number of attempts, users and details for these hotpots
-    $tables = "{$CFG->prefix}hotpot_attempts AS a";
+    $tables = "{$CFG->prefix}hotpot_attempts a";
     $fields = "
         a.hotpot AS hotpot,
         COUNT(DISTINCT a.clickreportid) AS attemptcount,
@@ -229,7 +229,7 @@
     $usejoin = 0;
     if (has_capability('mod/hotpot:grade', get_context_instance(CONTEXT_SYSTEM, SITEID)) && $usejoin) {
         // join attempts table and details table
-        $tables .= ",{$CFG->prefix}hotpot_details AS d";
+        $tables .= ",{$CFG->prefix}hotpot_details d";
         $fields .= ',COUNT(DISTINCT d.id) AS detailcount';
         $select .= " AND a.id=d.attempt";
 

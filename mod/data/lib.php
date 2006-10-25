@@ -1225,11 +1225,11 @@ function data_fieldname_exists($name, $dataid, $fieldid=0) {
 
     $LIKE = sql_ilike();
     if ($fieldid) { 
-        return record_exists_sql("SELECT * from {$CFG->prefix}data_fields AS df 
+        return record_exists_sql("SELECT * from {$CFG->prefix}data_fields df 
                                   WHERE df.name $LIKE '$name' AND df.dataid = $dataid
                                     AND ((df.id < $fieldid) OR (df.id > $fieldid))");
     } else {
-        return record_exists_sql("SELECT * from {$CFG->prefix}data_fields AS df 
+        return record_exists_sql("SELECT * from {$CFG->prefix}data_fields df 
                                   WHERE df.name $LIKE '$name' AND df.dataid = $dataid");
     }
 }

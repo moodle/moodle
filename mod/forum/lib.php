@@ -1147,8 +1147,8 @@ function forum_get_readable_forums($userid, $courseid=0) {
                                 cm.id AS cmid,
                                 cm.visible AS cmvisible,
                                 cm.groupmode AS cmgroupmode
-                           FROM {$CFG->prefix}course_modules AS cm,
-                                {$CFG->prefix}forum AS f
+                           FROM {$CFG->prefix}course_modules cm,
+                                {$CFG->prefix}forum f
                           WHERE cm.instance = f.id
                             AND cm.course = {$course->id}
                             AND cm.module = {$forummod->id}
@@ -2878,8 +2878,8 @@ function forum_discussions_user_has_posted_in($forumid, $userid) {
 
     $haspostedsql = "SELECT DISTINCT(d.id) AS id,
                             d.*
-                       FROM {$CFG->prefix}forum_posts AS p,
-                            {$CFG->prefix}forum_discussions AS d
+                       FROM {$CFG->prefix}forum_posts p,
+                            {$CFG->prefix}forum_discussions d
                       WHERE p.discussion = d.id
                         AND d.forum = $forumid
                         AND p.userid = $userid";
