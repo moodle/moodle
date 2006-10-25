@@ -88,8 +88,8 @@ class block_blog_menu extends block_base {
                         && (!$blogmodon || ($blogmodon && $coursearg != ''))
                         && $CFG->bloglevel >= BLOG_USER_LEVEL ) {
 
-                // show Add entry link - moderation is off, or moderation is on and the user is viewing the block within the context of a course
-                if (has_capability('moodle/blog:create', $curcontext)) {
+                // show Add entry link
+                if (has_capability('moodle/blog:create', $sitecontext)) {
                     $addentrylink = '<li><a href="'. $CFG->wwwroot. '/blog/edit.php?action=add'
                                    .$coursearg.'">'.get_string('addnewentry', 'blog') ."</a></li>\n";
                 }
@@ -113,9 +113,9 @@ class block_blog_menu extends block_base {
                 $output .= get_string('viewsiteentries', 'blog')."</a></li>\n";
             }
 
-            if (isloggedin() && !isguest()
-                    && (has_capability('moodle/blog:manageofficialtags', $sitecontext)
-                    || has_capability('moodle/blog:managepersonaltags', $curcontext))) {
+            if (has_capability('moodle/blog:manageofficialtags', $sitecontext)
+              or has_capability('moodle/blog:managepersonaltags', $sitecontext)
+              or has_capability('moodle/blog:create', $sitecontext)) {
 
                 $output .= '<li>'. link_to_popup_window("/blog/tags.php",'popup',get_string('tagmanagement'), 400, 500, 'Popup window', 'none', true) ."</li>\n";
             }
