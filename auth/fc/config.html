@@ -1,169 +1,85 @@
 <?php
-
     if (!isset($config->auth_fchost)) {
-
         $config->auth_fchost = "127.0.0.1";
-
     }
-
     if (!isset($config->auth_fcfppport)) {
-
         $config->auth_fcfppport = "3333";
-
     }
-
     if (!isset($config->auth_fcuserid)) {
-
         $config->auth_fcuserid = "fcMoodle";
-
     }
-
     if (!isset($config->auth_fcpasswd)) {
-
         $config->auth_fcpasswd = "";
-
     }    
-
     if (!isset($config->auth_fccreators)) {
-
         $config->auth_fccreators = "";
-
     }   
-
 ?>
 
-
-
 <tr valign="top" class="required">
-
     <td align="right">auth_fchost:</td>
-
     <td>
-
         <input name="auth_fchost" type="text" size="30" value="<?php echo $config->auth_fchost?>" />
-
     <?php  if (isset($err["auth_fchost"])) formerr($err["auth_fchost"]); ?>
-
     </td>
-
     <td>
-
     <?php  print_string("auth_fchost","auth") ?>
-
     </td>
-
 </tr>
 
-
-
 <tr valign="top" class="required">
-
     <td align="right">auth_fcfppport:</td>
-
     <td>
-
         <input name="auth_fcfppport" type="text" size="30" value="<?php echo $config->auth_fcfppport?>" />
-
     <?php  if (isset($err["auth_fcfppport"])) formerr($err["auth_fchost"]); ?>
-
     </td>
-
     <td>
-
     <?php  print_string("auth_fcfppport","auth") ?>
-
     </td>
-
 </tr>
 
-
-
 <tr valign="top" class="required">
-
     <td align="right">auth_fcuserid:</td>
-
     <td>
-
         <input name="auth_fcuserid" type="text" size="30" maxlength="15" value="<?php echo $config->auth_fcuserid?>" />
-
     <?php  if (isset($err["auth_fcuserid"])) formerr($err["auth_fcuserid"]); ?>
-
     </td>
-
     <td>
-
     <?php  print_string("auth_fcuserid","auth") ?>
-
     </td>
-
 </tr>
 
-
-
 <tr valign="top" class="required">
-
     <td align="right">auth_fcpasswd:</td>
-
     <td>
-
         <input name="auth_fcpasswd" type="password" size="30" maxlength="12" value="<?php echo $config->auth_fcpasswd?>" />
-
     <?php  if (isset($err["auth_fcpasswd"])) formerr($err["auth_fcpasswd"]); ?>
-
     </td>
-
     <td>
-
     <?php  print_string("auth_fcpasswd","auth") ?>
-
     </td>
-
 </tr>
-
-
 
 <tr valign="top" class="required">
-
     <td align="right">auth_fccreators:</td>
-
     <td>
-
         <input name="auth_fccreators" type="text" size="30" value="<?php echo $config->auth_fccreators?>" />
-
     <?php  if (isset($err["auth_fccreators"])) formerr($err["auth_fccreators"]); ?>
-
     </td>
-
     <td>
-
     <?php  print_string("auth_fccreators","auth") ?>
-
     </td>
-
 </tr>
-
-
-
 
 
 <tr valign="top">
-
     <td align="right"><?php  print_string("instructions", "auth") ?>:</td>
-
     <td>
-
     <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
-
     </td>
-
     <td>
-
     <?php  print_string("authinstructions","auth") ?>
-
     <?php  helpbutton("text", get_string("helptext")) ?>
-
     </td>
-
 </tr>
-
 <?php print_auth_lock_options($auth, $user_fields, get_string('auth_fieldlocks_help', 'auth'), false, false); ?>
