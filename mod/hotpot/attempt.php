@@ -434,9 +434,9 @@ function hotpot_set_attempt_details(&$attempt) {
             SELECT
                 r.*
             FROM
-                {$CFG->prefix}hotpot_attempts AS a,
-                {$CFG->prefix}hotpot_questions AS q,
-                {$CFG->prefix}hotpot_responses AS r
+                {$CFG->prefix}hotpot_attempts a,
+                {$CFG->prefix}hotpot_questions q,
+                {$CFG->prefix}hotpot_responses r
             WHERE
                 a.clickreportid = $attempt->clickreportid AND
                 a.id = r.attempt AND

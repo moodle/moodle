@@ -551,7 +551,7 @@ function auth_sync_users ($bulk_insert_records = 1000, $do_updates=1) {
         
     }
     if ( $do_updates && !(empty($updatekeys)) ) { // run updates only if relevant
-        $users = get_records_sql('SELECT u.username, u.id FROM ' . $CFG->prefix . 'user  AS u WHERE u.deleted=0 and u.auth=\'' . AUTH_LDAP_NAME . '\'' );
+        $users = get_records_sql('SELECT u.username, u.id FROM ' . $CFG->prefix . 'user  u WHERE u.deleted=0 and u.auth=\'' . AUTH_LDAP_NAME . '\'' );
         if (!empty($users)) {
             print "User entries to update: ". count($users). "\n";
             

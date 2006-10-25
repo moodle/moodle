@@ -119,7 +119,7 @@ function hotpot_remove_orphans($secondarytable, $secondarykeyfield, $primarytabl
         SELECT 
             t2.$secondarykeyfield, t2.$secondarykeyfield
         FROM 
-            {$CFG->prefix}$secondarytable AS t2 LEFT JOIN {$CFG->prefix}$primarytable AS t1 
+            {$CFG->prefix}$secondarytable t2 LEFT JOIN {$CFG->prefix}$primarytable t1 
             ON (t2.$secondarykeyfield = t1.id)
         WHERE 
             t1.$primarykeyfield IS NULL
@@ -355,7 +355,7 @@ function hotpot_update_to_v2_1() {
                 $sql = "
                     INSERT INTO {$CFG->prefix}$table (attempt, details) 
                     SELECT a.id AS attempt, a.details AS details
-                        FROM {$CFG->prefix}hotpot_attempts AS a
+                        FROM {$CFG->prefix}hotpot_attempts a
                         WHERE 
                             a.details IS NOT NULL AND a.details <> ''
                             AND a.details LIKE '<?xml%' AND a.details LIKE '%</hpjsresult>'

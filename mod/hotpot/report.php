@@ -135,7 +135,7 @@
     }
 
     // database table and selection conditions
-    $table = "{$CFG->prefix}hotpot_attempts AS a";
+    $table = "{$CFG->prefix}hotpot_attempts a";
     $select = "a.hotpot=$hotpot->id AND a.userid IN ($user_ids)";
     if ($mode!='overview') {
         $select .= ' AND a.status<>'.HOTPOT_STATUS_INPROGRESS;
@@ -204,7 +204,7 @@
     if ($select) {
         // add user information to SQL query
         $select .= ' AND a.userid = u.id';
-        $table .= ", {$CFG->prefix}user AS u";
+        $table .= ", {$CFG->prefix}user u";
         $order = "u.lastname, a.attempt, a.timefinish";
         // get the attempts (at last!)
         $attempts = get_records_sql("SELECT $fields FROM $table WHERE $select ORDER BY $order");
@@ -430,8 +430,8 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
         SELECT 
             u.id, u.firstname, u.lastname
         FROM 
-            {$CFG->prefix}user AS u,
-            {$CFG->prefix}hotpot_attempts AS ha
+            {$CFG->prefix}user u,
+            {$CFG->prefix}hotpot_attempts ha
         WHERE
             u.id = ha.userid AND ha.hotpot=$hotpot->id
         ORDER BY
