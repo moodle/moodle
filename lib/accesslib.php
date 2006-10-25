@@ -55,7 +55,7 @@ function load_guest_role($context=NULL) {
         return false;
     }
 
-    if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID)) {
+    if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM)) {
         return false;
     }
 
@@ -86,7 +86,7 @@ function load_guest_role($context=NULL) {
 function load_notloggedin_role() {
     global $CFG, $USER;
 
-    if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID)) {
+    if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM)) {
         return false;
     }
 
@@ -115,7 +115,7 @@ function load_notloggedin_role() {
 function load_defaultuser_role() {
     global $CFG, $USER;
 
-    if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID)) {
+    if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM)) {
         return false;
     }
 
@@ -334,7 +334,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
     /// Check the site context for doanything (most common) first 
 
         if (empty($switchroleactive)) {  // Ignore site setting if switchrole is active
-            $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+            $sitecontext = get_context_instance(CONTEXT_SYSTEM);
             if (isset($capabilities[$sitecontext->id]['moodle/site:doanything'])) {
                 return (0 < $capabilities[$sitecontext->id]['moodle/site:doanything']);
             }
@@ -466,12 +466,12 @@ function capability_search($capability, $context, $capabilities) {
         break;
 
         case CONTEXT_PERSONAL:
-            $parentcontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+            $parentcontext = get_context_instance(CONTEXT_SYSTEM);
             $permission = capability_search($capability, $parentcontext, $capabilities);
         break;
 
         case CONTEXT_USER:
-            $parentcontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+            $parentcontext = get_context_instance(CONTEXT_SYSTEM);
             $permission = capability_search($capability, $parentcontext, $capabilities);
         break;
 
@@ -480,7 +480,7 @@ function capability_search($capability, $context, $capabilities) {
             if (!empty($coursecat->parent)) { // return parent value if it exists
                 $parentcontext = get_context_instance(CONTEXT_COURSECAT, $coursecat->parent);
             } else { // else return site value
-                $parentcontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+                $parentcontext = get_context_instance(CONTEXT_SYSTEM);
             }
             $permission = capability_search($capability, $parentcontext, $capabilities);
         break;
@@ -572,16 +572,19 @@ function roles_context_cmp($contexta, $contextb) {
  * i.e. site/metacourse/course_category/course/moduleinstance
  * Note we should only load capabilities if they are explicitly assigned already,
  * we should not load all module's capability!
- * @param $userid - the id of the user whose capabilities we want to load
- * @return array
- * possible just s simple 2D array with [contextid][capabilityname]
+ *
  * [Capabilities] => [26][forum_post] = 1
  *                   [26][forum_start] = -8990
  *                   [26][forum_edit] = -1
  *                   [273][blah blah] = 1
  *                   [273][blah blah blah] = 2
+ *
+ * @param $capability string - Only get a specific capability (string)
+ * @param $context object - Only get capabilities for a specific context object
+ * @param $userid integer - the id of the user whose capabilities we want to load
+ * @return array of permissions (or nothing if they get assigned to $USER)
  */
-function load_user_capability($capability='', $context ='', $userid='') {
+function load_user_capability($capability='', $context = NULL, $userid='') {
 
     global $USER, $CFG;
 
@@ -650,7 +653,7 @@ function load_user_capability($capability='', $context ='', $userid='') {
 /// The first part gets the capabilities of orginal role.
 /// The second part gets the capabilities of overriden roles.
 
-    $siteinstance = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $siteinstance = get_context_instance(CONTEXT_SYSTEM);
     $capabilities = array();  // Reinitialize.
     
     // SQL for normal capabilities
@@ -1074,7 +1077,7 @@ function moodle_install_roles() {
     global $CFG, $db;
 
 /// Create a system wide context for assignemnt.
-    $systemcontext = $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $systemcontext = $context = get_context_instance(CONTEXT_SYSTEM);
 
 
 /// Create default/legacy roles and capabilities.
@@ -1265,7 +1268,7 @@ function assign_legacy_capabilities($capability, $legacyperms) {
 
     foreach ($legacyperms as $type => $perm) {
 
-        $systemcontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
         // The legacy capabilities are:
         //   'moodle/legacy:guest'
@@ -1513,7 +1516,9 @@ function create_role($name, $shortname, $description, $legacy='') {
         $role->sortorder += 1;
     }
 
-    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    if (!$context = get_context_instance(CONTEXT_SYSTEM)) {
+        return false;
+    }
 
     if ($id = insert_record('role', $role)) {
         if ($legacy) {
@@ -1650,7 +1655,7 @@ function get_roles_with_capability($capability, $permission=NULL, $context='') {
         if ($contexts = get_parent_contexts($context)) {
             $listofcontexts = '('.implode(',', $contexts).')';
         } else {
-            $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+            $sitecontext = get_context_instance(CONTEXT_SYSTEM);
             $listofcontexts = '('.$sitecontext->id.')'; // must be site
         }
         $contextstr = "AND (rc.contextid = '$context->id' OR  rc.contextid IN $listofcontexts)";
@@ -2398,7 +2403,7 @@ function get_parent_contexts($context) {
         break;
 
         case CONTEXT_PERSONAL:
-            if (!$parent = get_context_instance(CONTEXT_SYSTEM, SITEID)) {
+            if (!$parent = get_context_instance(CONTEXT_SYSTEM)) {
                 return array();
             } else {
                 return array($parent->id);
@@ -2406,7 +2411,7 @@ function get_parent_contexts($context) {
         break;
 
         case CONTEXT_USER:
-            if (!$parent = get_context_instance(CONTEXT_SYSTEM, SITEID)) {
+            if (!$parent = get_context_instance(CONTEXT_SYSTEM)) {
                 return array();
             } else {
                 return array($parent->id);
@@ -2421,7 +2426,7 @@ function get_parent_contexts($context) {
                 $parent = get_context_instance(CONTEXT_COURSECAT, $coursecat->parent);
                 return array_merge(array($parent->id), get_parent_contexts($parent));
             } else { // else return site value
-                $parent = get_context_instance(CONTEXT_SYSTEM, SITEID);
+                $parent = get_context_instance(CONTEXT_SYSTEM);
                 return array($parent->id);
             }
         break;
@@ -2901,7 +2906,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 /// Sorting out roles with this capability set
     if ($possibleroles = get_roles_with_capability($capability, CAP_ALLOW, $context)) {
         if (!$doanything) {
-            if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID)) {
+            if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM)) {
                 return false;    // Something is seriously wrong
             }
             $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext);
@@ -3091,7 +3096,7 @@ function role_switch($roleid, $context) {
         return false;
     }
 
-    if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID)) {
+    if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM)) {
         return false;
     }
 
