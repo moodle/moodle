@@ -1092,7 +1092,7 @@ function moodle_install_roles() {
                                       get_string('defaultcoursestudentdescription'), 'moodle/legacy:student');
     $guestrole          = create_role(get_string('guest'), 'guest',
                                       get_string('guestdescription'), 'moodle/legacy:guest');
-
+    
 /// Now is the correct moment to install capabilities - after creation of legacy roles, but before assigning of roles
 
     if (!assign_capability('moodle/site:doanything', CAP_ALLOW, $adminrole, $systemcontext->id)) {
@@ -2952,8 +2952,15 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
  * @param bool parent if true, get list of users assigned in higher context too
  * @return array()
  */
-function get_role_users($roleid, $context, $parent=false, $fields='u.*', $sort='u.lastname ASC') {
+function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.lastname ASC') {
     global $CFG;
+
+    if (empty($fields)) {
+        $fields = 'u.id, u.confirmed, u.username, u.firstname, u.lastname, '.
+                  'u.maildisplay, u.mailformat, u.maildigest, u.email, u.city, '.
+                  'u.country, u.picture, u.idnumber, u.department, u.institution, '.
+                  'u.emailstop, u.lang, u.timezone';
+    }
 
     if ($parent) {
         if ($contexts = get_parent_contexts($context)) {
