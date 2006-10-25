@@ -52,7 +52,7 @@
 </tr>
 </table>
 
-<?php 
+<?php
     print_heading(get_string('permissions','role'));
 
     $strinherit = get_string('inherit','role');
@@ -78,6 +78,9 @@
 $contextlevel = 0;
 $component = '';
 
+$strrisks = s(get_string('risks', 'role'));
+$strcapabilities = s(get_string('capabilities', 'role'));
+
 foreach ($capabilities as $capability) {
     // prints a breaker if component or name or context level
     if ($capability->component != $component or $capability->contextlevel != $contextlevel) {
@@ -99,9 +102,6 @@ foreach ($capabilities as $capability) {
     }
 
     $disabled = ($action != 'edit' and $action != 'add') ? ' disabled="disabled" ' : '';
-
-    $strrisks = htmlentities(get_string('risks', 'role'));
-    $strcapabilities = htmlentities(get_string('capabilities', 'role'));
 
     $riskinfo = '<td class="risk managetrust">';
     $rowclasses = '';
