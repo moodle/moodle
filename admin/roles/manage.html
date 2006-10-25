@@ -98,7 +98,7 @@ foreach ($capabilities as $capability) {
         $localoverride->permission = $role->{$capability->name};
     }
 
-    $disabled = ($action != 'edit') ? ' disabled="disabled" ' : '';
+    $disabled = ($action != 'edit' and $action != 'add') ? ' disabled="disabled" ' : '';
 
     $strrisks = htmlentities(get_string('risks', 'role'));
     $strcapabilities = htmlentities(get_string('capabilities', 'role'));
