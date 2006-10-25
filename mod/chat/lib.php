@@ -178,9 +178,9 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
     $lastpingsearch = ($CFG->chat_method == 'sockets') ? '': 'AND cu.lastping > \''.$timeold.'\'';
 
     if (!$chatusers = get_records_sql("SELECT u.id, cu.chatid, u.firstname, u.lastname
-                                        FROM {$CFG->prefix}chat_users as cu,
-                                             {$CFG->prefix}chat as ch,
-                                             {$CFG->prefix}user as u
+                                        FROM {$CFG->prefix}chat_users cu,
+                                             {$CFG->prefix}chat ch,
+                                             {$CFG->prefix}user u
                                        WHERE cu.userid = u.id
                                          AND cu.chatid = ch.id $lastpingsearch
                                          AND ch.course = '$course->id'

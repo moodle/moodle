@@ -697,8 +697,8 @@ function data_delete_instance($id) {    //takes the dataid
     /// Delete all the associated information
 
     // get all the records in this data
-    $sql = 'SELECT c.* FROM '.$CFG->prefix.'data_records as r LEFT JOIN '.
-           $CFG->prefix.'data_content as c ON c.recordid = r.id WHERE r.dataid = '.$id;
+    $sql = 'SELECT c.* FROM '.$CFG->prefix.'data_records r LEFT JOIN '.
+           $CFG->prefix.'data_content c ON c.recordid = r.id WHERE r.dataid = '.$id;
     
     if ($contents = get_records_sql($sql)){
 
