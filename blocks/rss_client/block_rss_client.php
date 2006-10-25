@@ -123,7 +123,7 @@
             $numids = count($rssidarray);
             $count = 0;
             foreach ($rssidarray as $rssid) {
-                $output .=  $this->get_rss_by_id($rssid, $display_description, $shownumentries, ($numids > 1) ? true : false);
+                $output .=  clean_text($this->get_rss_by_id($rssid, $display_description, $shownumentries, ($numids > 1) ? true : false), FORMAT_HTML);
                 if ($numids > 1 && $count != $numids -1 && !empty($rssfeedstring)) {
                     $output .= '<hr width="80%" />';
                 }
