@@ -721,9 +721,7 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
                      $timesql
 
               GROUP BY
-                     rc.capability, (c1.contextlevel * 100 + c2.contextlevel), c1.id, c2.id
-                     HAVING
-                     rc.permission != 0
+                     rc.capability, (c1.contextlevel * 100 + c2.contextlevel), c1.id, c2.id, rc.permission
               ORDER BY
                      aggrlevel ASC
             ";
