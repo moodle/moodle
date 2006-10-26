@@ -51,6 +51,42 @@ $string['databasesettingssub'] = '<b>Tipus:</b> mysql o postgres7<br />
 <b>Usuari:</b> nom de l\'usuari de la base de dades<br />
 <b>Contrasenya:</b> contrasenya de l\'usuari de la base de dades<br />
 <b>Prefix de les taules:</b> prefix opcional per utilitzar en els noms de totes les taules';
+$string['databasesettingssub_mssql'] = '<b>Tipus:</b> SQL*Server (no UTF-8) <b><font color=\"red\">Experimental! (no per a utilitzar en producció)</font></b><br />
+<b>Servidor:</b> p. ex. localhost o db.isp.com<br />
+<b>Nom:</b> nom de la base de dades, p. ex. moodle<br />
+<b>Usuari:</b> el vostre nom d\'usuari de la base de dades<br />
+<b>Contrasenya:</b> la vostra contrasenya de la base de dades<br />
+<b>Prefix de les taules:</b> prefix que cal anteposar als noms de totes les taules (obligatori)';
+$string['databasesettingssub_mssql_n'] = '<b>Tipus:</b> SQL*Server (UTF-8 habilitat)<br />
+<b>Servidor:</b> p. ex. localhost o db.isp.com<br />
+<b>Nom:</b> nom de la base de dades, p. ex. moodle<br />
+<b>Usuari:</b> el vostre nom d\'usuari de la base de dades<br />
+<b>Contrasenya:</b> la vostra contrasenya de la base de dades<br />
+<b>Prefix de les taules:</b> prefix que cal anteposar als noms de totes les taules (obligatori)';
+$string['databasesettingssub_mysql'] = '<b>Tipus:</b> MySQL<br />
+<b>Servidor:</b> p. ex. localhost o db.isp.com<br />
+<b>Nom:</b> nom de la base de dades, p. ex. moodle<br />
+<b>Usuari:</b> el vostre nom d\'usuari de la base de dades<br />
+<b>Contrasenya:</b> la vostra contrasenya de la base de dades<br />
+<b>Prefix de les taules:</b> prefix que cal anteposar als noms de totes les taules (opcional)';
+$string['databasesettingssub_oci8po'] = '<b>Tipus:</b> Oracle<br />
+<b>Servidor:</b> no utilitzat, s\'ha de deixar en blanc<br />
+<b>Nom:</b> nom de la connexió tnsnames.ora<br />
+<b>Usuari:</b> el vostre nom d\'usuari de la base de dades<br />
+<b>Contrasenya:</b> la vostra contrasenya de la base de dades<br />
+<b>Prefix de les taules:</b> prefix que cal anteposar als noms de totes les taules (obligatori, màxim 2 caràcters)';
+$string['databasesettingssub_odbc_mssql'] = '<b>Tipus:</b> SQL*Server (sobre ODBC) <b><font color=\"red\">Experimental! (no per a utilitzar en producció)</font></b><br />
+<b>Servidor:</b> nom del DSN al tauler de control de l\'ODBC<br />
+<b>Nom:</b> nom de la base de dades, p. ex. moodle<br />
+<b>Usuari:</b> el vostre nom d\'usuari de la base de dades<br />
+<b>Contrasenya:</b> la vostra contrasenya de la base de dades<br />
+<b>Prefix de les taules:</b> prefix que cal anteposar als noms de totes les taules (obligatori)';
+$string['databasesettingssub_postgres7'] = '<b>Tipus:</b> PostgreSQL<br />
+<b>Servidor:</b> p. ex. localhost o db.isp.com<br />
+<b>Nom:</b> nom de la base de dades, p. ex. moodle<br />
+<b>Usuari:</b> el vostre nom d\'usuari de la base de dades<br />
+<b>Contrasenya:</b> la vostra contrasenya de la base de dades<br />
+<b>Prefix de les taules:</b> prefix que cal anteposar als noms de totes les taules (obligatori)';
 $string['dataroot'] = 'Directori de dades';
 $string['datarooterror'] = 'No s\'ha pogut trobar o crear el directori de dades que heu especificat. Corregiu el camí o creeu el directori a mà.';
 $string['dbconnectionerror'] = 'No es pot obrir la connexió amb la base de dades que heu especificat. Comproveu els paràmetres de la base de dades.';
@@ -59,6 +95,9 @@ $string['dbhost'] = 'Ordinador servidor';
 $string['dbprefix'] = 'Prefix de taules';
 $string['dbtype'] = 'Tipus';
 $string['dbwrongencoding'] = 'La base de dades que heu seleccionat està funcionant amb una codificació ($a) no recomanada. Seria millor utilitzar una base de dades amb codificació Unicode (UTF-8). De totes maneres, podeu deixar de banda aquesta prova si seleccioneu més avall \"Omet la prova de codificació de la base de dades\", però podríeu experimentar problemes en el futur.';
+$string['dbwronghostserver'] = 'Heu de seguir les regles referents al servidor, exposades més amunt.';
+$string['dbwrongnlslang'] = 'La variable d\'entorn NLS_LANG del vostre servidor web ha d\'utilitzar el joc de caràcters AL32UTF8. Consulteu la documentació de PHP sobre la configuració correcta d\'OCI8.';
+$string['dbwrongprefix'] = 'Heu de seguir les regles referents al prefix de les taules, exposades més amunt.';
 $string['directorysettingshead'] = 'Confirmeu les ubicacions d\'aquesta instal·lació de Moodle.';
 $string['directorysettingssub'] = '<b>Adreça web:</b>
 Especifiqueu l\'adreça web completa per a accedir a Moodle. Si el vostre lloc és accessible per mitjà de diversos URL, trieu el més natural per als estudiants. No inclogueu la barra final.</p>
@@ -72,7 +111,7 @@ $string['dirroot'] = 'Directori de Moodle';
 $string['dirrooterror'] = 'El paràmetre \'Directori de Moodle\' sembla incorrecte: no s\'hi ha pogut trobat cap instal·lació de Moodle. S\'ha reiniciat el valor del paràmetre.';
 $string['download'] = 'Baixa';
 $string['downloadedfilecheckfailed'] = 'Ha fallat la comprovació del fitxer baixat';
-$string['downloadlanguagebutton'] = 'Baixa el paquet d\'idioma &quot;$a&quot;';
+$string['downloadlanguagebutton'] = 'Baixa el paquet d\'idioma \"$a\"';
 $string['downloadlanguagehead'] = 'Baixa paquet d\'idioma';
 $string['downloadlanguagenotneeded'] = 'Podeu continuar el procés d\'instal·lació amb el paquet d\'idioma per defecte \"$a\".';
 $string['downloadlanguagesub'] = 'Ara teniu l\'opció de baixar un paquet d\'idioma i continuar el procés d\'instal·lació en aquest idioma.<br /><br />Si no podeu baixar el paquet, el procés d\'instal·lació prosseguirà en anglès. (Després que s\'hagi completat la instal·lació, tindreu l\'oportunitat de baixar i instal·lar paquets d\'idioma addicionals.)';
@@ -126,20 +165,30 @@ $string['memorylimithelp'] = '<p>El límit de memòria del PHP del vostre servid
 </ol>';
 $string['missingrequiredfield'] = 'Falta algun camp necessari';
 $string['moodledocslink'] = 'Documentació de Moodle per a aquesta pàgina';
+$string['mssql'] = 'SQL*Server (mssql)';
+$string['mssql_n'] = 'SQL*Server amb UTF-8 (mssql_n)';
+$string['mssqlextensionisnotpresentinphp'] = 'El PHP no s\'ha configurat correctament amb l\'extensió MSSQL de manera que pugui comunicar-se amb SQL*Server. Reviseu el fitxer php.ini o recompileu PHP.';
+$string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'Tanmateix, si el vostre lloc fa servir NOMÉS llengües romàniques (iso-8859-1), podeu seguir utilitzant el MySQL 4.1.12 (o superior) instal·lat.';
 $string['mysql416required'] = 'MySQL 4.1.16 és la versió mínima requerida per Moodle 1.6 a fi de garantir la conversió de totes les dades a UTF-8 en el futur.';
-$string['mysqlextensionisnotpresentinphp'] = 'El PHP no s\'ha configurat correctament amb l\'extensió MySQL per tal que es pugui comunicar amb MySQL. Comproveu el fitxer php.ini o recompileu el PHP.';
+$string['mysqlextensionisnotpresentinphp'] = 'El PHP no s\'ha configurat correctament amb l\'extensió MySQL de manera que pugui comunicar-se amb MySQL. Reviseu el fitxer php.ini o recompileu el PHP.';
 $string['name'] = 'Nom';
 $string['next'] = 'Següent';
+$string['oci8po'] = 'Oracle (oci8po)';
+$string['ociextensionisnotpresentinphp'] = 'El PHP no s\'ha configurat correctament amb l\'extensió OCI8 de manera que pugui comunicar-se amb Oracle. Reviseu el fitxer php.ini o recompileu el PHP.';
+$string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
+$string['odbcextensionisnotpresentinphp'] = 'El PHP no s\'ha configurat correctament amb l\'extensió ODBC de manera que pugui comunicar-se amb Oracle. Reviseu el fitxer php.ini o recompileu el PHP.';
 $string['ok'] = 'OK';
 $string['pass'] = 'Correcte';
 $string['password'] = 'Contrasenya';
+$string['pgsqlextensionisnotpresentinphp'] = 'El PHP no s\'ha configurat correctament amb l\'extensió PGSQL de manera que pugui comunicar-se amb PostgreSQL. Reviseu el fitxer php.ini o recompileu el PHP.';
 $string['php50restricted'] = 'PHP 5.0 té alguns problemes coneguts. Actualitzeu-vos si us plau a 5.1.x o torneu a 4.3.x o 4.4.x';
 $string['phpversion'] = 'Versió PHP';
 $string['phpversionerror'] = 'La versió del PHP ha de ser com a mínim la 4.1.0';
 $string['phpversionhelp'] = '<p>Moodle necessita la versió de PHP 4.1.0 o posterior.</p>
 <p>A hores d\'ara esteu utilitzant la versió $a.</p>
 <p>Us caldrà actualitzar el PHP o traslladar Moodle a un ordinador amb una versió de PHP més recent.</p>';
+$string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Anterior';
 $string['remotedownloadnotallowed'] = 'El vostre servidor no permet baixar components ((allow_url_fopen inhabilitat).<br /><br />Baixeu manualment el fitxer <a href=\"$a->url\">$a->url</a>, copieu en la ubicació \"$a->dest\" del vostre servidor i descomprimiu-lo allí.';
 $string['report'] = 'Informe';
