@@ -1,4 +1,10 @@
 <?PHP
+
+// THIS FILE IS DEPRECATED!  PLEASE DO NOT MAKE CHANGES TO IT!
+//
+// IT IS USED ONLY FOR UPGRADES FROM BEFORE MOODLE 1.7, ALL 
+// LATER CHANGES SHOULD USE upgrade.php IN THIS DIRECTORY.
+
 function hotpot_upgrade($oldversion) {
     global $CFG;
     $ok = true;
@@ -56,6 +62,8 @@ function hotpot_upgrade($oldversion) {
         require_once $update_to_v2;
         $ok = $ok && hotpot_update_to_v2_2();
     }
+
+    //////  DO NOT ADD NEW THINGS HERE!!  USE upgrade.php and the lib/ddllib.php functions.
 
     return $ok;
 }

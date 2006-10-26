@@ -1,5 +1,10 @@
 <?php // $Id$
 
+// THIS FILE IS DEPRECATED!  PLEASE DO NOT MAKE CHANGES TO IT!
+//
+// IT IS USED ONLY FOR UPGRADES FROM BEFORE MOODLE 1.7, ALL 
+// LATER CHANGES SHOULD USE upgrade.php IN THIS DIRECTORY.
+
 function survey_upgrade($oldversion) {
 // This function does anything necessary to upgrade
 // older versions to match current functionality
@@ -213,6 +218,8 @@ function survey_upgrade($oldversion) {
         execute_sql("UPDATE {$CFG->prefix}survey_questions SET intro='' WHERE intro IS NULL");
         table_column('survey_questions','intro','intro','varchar','50','','','not null');
     }
+
+    //////  DO NOT ADD NEW THINGS HERE!!  USE upgrade.php and the lib/ddllib.php functions.
 
     return true;
 }

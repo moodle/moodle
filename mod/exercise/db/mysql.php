@@ -1,5 +1,10 @@
 <?php // $Id$
 
+// THIS FILE IS DEPRECATED!  PLEASE DO NOT MAKE CHANGES TO IT!
+//
+// IT IS USED ONLY FOR UPGRADES FROM BEFORE MOODLE 1.7, ALL 
+// LATER CHANGES SHOULD USE upgrade.php IN THIS DIRECTORY.
+
 function exercise_upgrade($oldversion) {
 // This function does anything necessary to upgrade
 // older versions to match current functionality
@@ -55,6 +60,8 @@ function exercise_upgrade($oldversion) {
         modify_database('','ALTER TABLE prefix_exercise_rubrics ADD INDEX exerciseid (exerciseid);');
         modify_database('','ALTER TABLE prefix_exercise_grades ADD INDEX exerciseid (exerciseid);');
     }
+
+    //////  DO NOT ADD NEW THINGS HERE!!  USE upgrade.php and the lib/ddllib.php functions.
 
     return true;
 }

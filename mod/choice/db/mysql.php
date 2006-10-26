@@ -1,5 +1,10 @@
 <?php // $Id$
 
+// THIS FILE IS DEPRECATED!  PLEASE DO NOT MAKE CHANGES TO IT!
+//
+// IT IS USED ONLY FOR UPGRADES FROM BEFORE MOODLE 1.7, ALL 
+// LATER CHANGES SHOULD USE upgrade.php IN THIS DIRECTORY.
+
 function choice_upgrade($oldversion) {
     
     global $CFG;
@@ -122,6 +127,9 @@ function choice_upgrade($oldversion) {
     if ($oldversion < 2006020900) { //rename release column to showanswers - Release is now reserved word in mySql
         table_column('choice', '`release`', 'showresults', 'TINYINT', '2', 'unsigned', 0, 'not null');
     }
+
+    //////  DO NOT ADD NEW THINGS HERE!!  USE upgrade.php and the lib/ddllib.php functions.
+
     return true;
 }
 

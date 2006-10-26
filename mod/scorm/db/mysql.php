@@ -1,5 +1,10 @@
 <?php // $Id$
 
+// THIS FILE IS DEPRECATED!  PLEASE DO NOT MAKE CHANGES TO IT!
+//
+// IT IS USED ONLY FOR UPGRADES FROM BEFORE MOODLE 1.7, ALL 
+// LATER CHANGES SHOULD USE upgrade.php IN THIS DIRECTORY.
+
 function scorm_upgrade($oldversion) {
 /// This function does anything necessary to upgrade
 /// older versions to match current functionality
@@ -225,6 +230,8 @@ function scorm_upgrade($oldversion) {
         execute_sql("DELETE FROM {$CFG->prefix}log_display WHERE module = 'scorm' AND action = 'review' AND mtable = 'resource' AND field = 'name';", false);  // MDL-6516
         execute_sql("INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('scorm', 'review', 'scorm', 'name');", false);
     }
+
+    //////  DO NOT ADD NEW THINGS HERE!!  USE upgrade.php and the lib/ddllib.php functions.
 
     return true;
 }

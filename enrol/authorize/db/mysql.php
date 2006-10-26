@@ -1,5 +1,10 @@
 <?php //$Id$
 
+// THIS FILE IS DEPRECATED!  PLEASE DO NOT MAKE CHANGES TO IT!
+//
+// IT IS USED ONLY FOR UPGRADES FROM BEFORE MOODLE 1.7, ALL 
+// LATER CHANGES SHOULD USE upgrade.php IN THIS DIRECTORY.
+
 // MySQL commands for upgrading this enrolment module
 
 function enrol_authorize_upgrade($oldversion=0) {
@@ -131,6 +136,8 @@ function enrol_authorize_upgrade($oldversion=0) {
         // new ENUM field: paymentmethod(cc,echeck)
         execute_sql("ALTER TABLE `{$CFG->prefix}enrol_authorize` ADD paymentmethod enum('cc', 'echeck') NOT NULL default 'cc' AFTER `id`", true);
     }
+
+    //////  DO NOT ADD NEW THINGS HERE!!  USE upgrade.php and the lib/ddllib.php functions.
 
     return $result;
 }
