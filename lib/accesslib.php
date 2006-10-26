@@ -272,10 +272,47 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
 
     global $USER, $CONTEXT, $CFG;
 
-    if (debugging() && !record_exists('capabilities', 'name', $capability)) {
-        debugging('Capability "'.$capability.'" was not found! This should be fixed in code.');
+    static $capcache = array();   // Cache of capabilities 
+
+
+/// Some sanity checks
+    if (debugging()) {
+        if ($capability == 'debugcache') {
+            print_object($capcache);
+            return true;
+        }
+        if (!record_exists('capabilities', 'name', $capability)) {
+            debugging('Capability "'.$capability.'" was not found! This should be fixed in code.');
+        }
+        if ($doanything != true and $doanything != false) {
+            debugging('Capability parameter "doanything" is wierd ("'.$doanything.'"). This should be fixed in code.');
+        }
+        if (!is_object($context) && $context !== NULL) {
+            debugging('Incorrect context parameter "'.$context.'" for has_capability(), object expected! This should be fixed in code.');
+        }
     }
 
+/// Make sure we know the current context
+    if (empty($context)) {              // Use default CONTEXT if none specified
+        if (empty($CONTEXT)) {
+            return false;
+        } else {
+            $context = $CONTEXT;
+        }
+    } else {                            // A context was given to us
+        if (empty($CONTEXT)) {
+            $CONTEXT = $context;        // Store FIRST used context in this global as future default
+        }
+    }
+
+/// Check and return cache in case we've processed this one before.
+
+    $cachekey = $capability.'_'.$context->id.'_'.intval($userid).'_'.intval($doanything);
+    if (isset($capcache[$cachekey])) {
+        return $capcache[$cachekey];
+    }
+
+/// Set up user's default roles
     if (empty($userid) && empty($USER->capabilities)) {   // Real user, first time here
         if (isloggedin()) {
             load_defaultuser_role();    // All users get this by default
@@ -284,31 +321,20 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
         }
     }
 
+/// Load up the capabilities list or item as necessary
     if ($userid && (($USER === NULL) or ($userid != $USER->id))) {
         if (empty($USER->id) or ($userid != $USER->id)) {
-            $capabilities = load_user_capability($capability, $context, $userid);
+            $capabilities = load_user_capability($capability, $context, $userid);  // expensive
         } else { //$USER->id == $userid
             $capabilities = empty($USER->capabilities) ? NULL : $USER->capabilities;
         }
     } else { // no userid
         $capabilities = empty($USER->capabilities) ? NULL : $USER->capabilities;
+        $userid = $USER->id;
     }
 
-    if (empty($context)) {                 // Use default CONTEXT if none specified
-        if (empty($CONTEXT)) {
-            return false;
-        } else {
-            $context = $CONTEXT;
-        }
-    } else {                               // A context was given to us
-        if (empty($CONTEXT)) {
-            $CONTEXT = $context;           // Store FIRST used context in this global as future default
-        }
-    }
 
-    if (!is_object($context)) {
-        debugging('Incorrect context parameter "'.$context.'" for has_capability(), object expected! This should be fixed in code.');
-    }
+/// First deal with the "doanything" capability
 
     if ($doanything) {
 
@@ -336,7 +362,9 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
         if (empty($switchroleactive)) {  // Ignore site setting if switchrole is active
             $sitecontext = get_context_instance(CONTEXT_SYSTEM);
             if (isset($capabilities[$sitecontext->id]['moodle/site:doanything'])) {
-                return (0 < $capabilities[$sitecontext->id]['moodle/site:doanything']);
+                $result = (0 < $capabilities[$sitecontext->id]['moodle/site:doanything']);
+                $capcache[$cachekey] = $result;
+                return $result;
             }
         }
 
@@ -347,7 +375,9 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
                 $parentcats = get_parent_cats($context, CONTEXT_COURSECAT);
                 foreach ($parentcats as $parentcat) {
                     if (isset($capabilities[$parentcat]['moodle/site:doanything'])) {
-                        return (0 < $capabilities[$parentcat]['moodle/site:doanything']);
+                        $result = (0 < $capabilities[$parentcat]['moodle/site:doanything']);
+                        $capcache[$cachekey] = $result;
+                        return $result;
                     }
                 }
             break;
@@ -358,7 +388,9 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
 
                 foreach ($parentcats as $parentcat) {
                     if (isset($capabilities[$parentcat]['do_anything'])) {
-                        return (0 < $capabilities[$parentcat]['do_anything']);
+                        $result = (0 < $capabilities[$parentcat]['do_anything']);
+                        $capcache[$cachekey] = $result;
+                        return $result;
                     }
                 }
             break;
@@ -371,13 +403,17 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
                 $parentcats = get_parent_cats($courseinstance, CONTEXT_COURSE);
                 foreach ($parentcats as $parentcat) {
                     if (isset($capabilities[$parentcat->id]['do_anything'])) {
-                        return (0 < $capabilities[$parentcat->id]['do_anything']);
+                        $result = (0 < $capabilities[$parentcat->id]['do_anything']);
+                        $capcache[$cachekey] = $result;
+                        return $result;
                     }
                 }
 
                 $coursecontext = '';
                 if (isset($capabilities[$courseinstance->id]['do_anything'])) {
-                    return (0 < $capabilities[$courseinstance->id]['do_anything']);
+                    $result = (0 < $capabilities[$courseinstance->id]['do_anything']);
+                    $capcache[$cachekey] = $result;
+                    return $result;
                 }
 
             break;
@@ -390,13 +426,17 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
                 if ($parentcats = get_parent_cats($courseinstance, CONTEXT_COURSE)) {
                     foreach ($parentcats as $parentcat) {
                         if (isset($capabilities[$parentcat]['do_anything'])) {
-                            return (0 < $capabilities[$parentcat]['do_anything']);
+                            $result = (0 < $capabilities[$parentcat]['do_anything']);
+                            $capcache[$cachekey] = $result;
+                            return $result;
                         }
                     }
                 }
 
                 if (isset($capabilities[$courseinstance->id]['do_anything'])) {
-                    return (0 < $capabilities[$courseinstance->id]['do_anything']);
+                    $result = (0 < $capabilities[$courseinstance->id]['do_anything']);
+                    $capcache[$cachekey] = $result;
+                    return $result;
                 }
 
             break;
@@ -410,12 +450,16 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
                 $parentcats = get_parent_cats($courseinstance, CONTEXT_COURSE);
                 foreach ($parentcats as $parentcat) {
                     if (isset($capabilities[$parentcat]['do_anything'])) {
-                        return (0 < $capabilities[$parentcat]['do_anything']);
+                        $result = (0 < $capabilities[$parentcat]['do_anything']);
+                        $capcache[$cachekey] = $result;
+                        return $result;
                     }
                 }
 
                 if (isset($capabilities[$courseinstance->id]['do_anything'])) {
-                    return (0 < $capabilities[$courseinstance->id]['do_anything']);
+                    $result = (0 < $capabilities[$courseinstance->id]['do_anything']);
+                    $capcache[$cachekey] = $result;
+                    return $result;
                 }
             break;
 
@@ -427,11 +471,15 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
 
         // Last: check self.
         if (isset($capabilities[$context->id]['do_anything'])) {
-            return (0 < $capabilities[$context->id]['do_anything']);
+            $result = (0 < $capabilities[$context->id]['do_anything']);
+            $capcache[$cachekey] = $result;
+            return $result;
         }
     }
     // do_anything has not been set, we now look for it the normal way.
-    return (0 < capability_search($capability, $context, $capabilities));
+    $result = (0 < capability_search($capability, $context, $capabilities));
+    $capcache[$cachekey] = $result;
+    return $result;
 
 }
 
