@@ -40,21 +40,25 @@ function authorize_print_orders()
                         AN_STATUS_TEST => $authstrs->tested
     );
 
-    if ($courses = get_courses('all', 'c.sortorder ASC', 'c.id,c.fullname,c.enrol')) {
+    $sql = "SELECT id, fullname FROM {$CFG->prefix}course ";
+    if ($CFG->enrol == 'authorize') { // default enrolment plugin
+        $sql .= "WHERE (enrol IS NULL) OR (enrol='') OR (enrol = 'authorize') ";
+    }
+    else {
+        $sql .= "WHERE (enrol = 'authorize') ";
+    }
+    $sql .= "ORDER BY sortorder, fullname";
+    if ($courses = get_records_sql($sql)) {
         $popupcrs = array();
         foreach ($courses as $crs) {
-            if ($crs->enrol == 'authorize' || (empty($crs->enrol) && $CFG->enrol == 'authorize')) {
-                $popupcrs[intval($crs->id)] = $crs->fullname;
-            }
+            $popupcrs[$crs->id] = $crs->fullname;
         }
-        if (!empty($popupcrs)) {
-            print_simple_box_start('center', '100%');
-            echo "$strs->status: ";
-            echo popup_form($baseurl.'&amp;course='.$courseid.'&amp;status=',$statusmenu,'statusmenu',$status,'','','',true);
-            echo " &nbsp; $strs->course: ";
-            echo popup_form($baseurl.'&amp;status='.$status.'&amp;course=',$popupcrs,'coursesmenu',$courseid,'','','',true);
-            print_simple_box_end();
-        }
+        print_simple_box_start('center', '100%');
+        echo "$strs->status: ";
+        echo popup_form($baseurl.'&amp;course='.$courseid.'&amp;status=',$statusmenu,'statusmenu',$status,'','','',true);
+        echo " &nbsp; $strs->course: ";
+        echo popup_form($baseurl.'&amp;status='.$status.'&amp;course=',$popupcrs,'coursesmenu',$courseid,'','','',true);
+        print_simple_box_end();
     }
 
     $table = new flexible_table('enrol-authorize');
