@@ -53,7 +53,14 @@
     moodle_setlocale();
 
 /// send mime type and encoding
-    @header('Content-Type: text/plain; charset='.current_charset());
+    if (check_browser_version('MSIE')) {
+        //ugly IE hack to work around downloading instead of viewing
+        @header('Content-Type: text/html; charset='.current_charset());
+        echo "<xmp>"; //<pre> is not good enough for us here
+    } else {
+        //send proper plaintext header
+        @header('Content-Type: text/plain; charset='.current_charset());
+    }
 
 /// Start output log
 
@@ -333,5 +340,10 @@
 
     $difftime = microtime_diff($starttime, microtime());
     mtrace("Execution took ".$difftime." seconds"); 
+
+/// finishe the IE hack
+    if (check_browser_version('MSIE')) {
+        echo "</xmp>";
+    }
 
 ?>
