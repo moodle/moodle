@@ -5208,11 +5208,11 @@ function check_php_version($version='4.1.0') {
  * @return bool
  */
  function check_browser_version($brand='MSIE', $version=5.5) {
-    $agent = $_SERVER['HTTP_USER_AGENT'];
-
-    if (empty($agent)) {
+    if (empty($_SERVER['HTTP_USER_AGENT'])) {
         return false;
     }
+
+    $agent = $_SERVER['HTTP_USER_AGENT'];
 
     switch ($brand) {
 
