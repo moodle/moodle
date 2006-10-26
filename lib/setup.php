@@ -579,6 +579,9 @@ $CFG->os = PHP_OS;
                     $USER = guest_user();
                 }
             }
+            if (!empty($USER)) {
+                load_all_capabilities();
+            }
         }
     }
 
