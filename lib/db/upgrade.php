@@ -55,8 +55,36 @@ function xmldb_main_upgrade($oldversion=0) {
             set_field('modules', 'visible', 0, 'name', 'lams');  // Disable it by default
         }
     }
+    
+    if ($result && $oldversion < 2006102600) {
+
+        /// Define fields to be added to user_info_field
+        $table  = new XMLDBTable('user_info_field');
+        $field = new XMLDBField('description');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null, 'categoryid');
+        $field1 = new XMLDBField('param1');
+        $field1->setAttributes(XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null, 'defaultdata');
+        $field2 = new XMLDBField('param2');
+        $field2->setAttributes(XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null, 'param1');
+        $field3 = new XMLDBField('param3');
+        $field3->setAttributes(XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null, 'param2');
+        $field4 = new XMLDBField('param4');
+        $field4->setAttributes(XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null, 'param3');
+        $field5 = new XMLDBField('param5');
+        $field5->setAttributes(XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null, 'param4');
+
+        /// Launch add fields
+        $result = $result && add_field($table, $field);
+        $result = $result && add_field($table, $field1);
+        $result = $result && add_field($table, $field2);
+        $result = $result && add_field($table, $field3);
+        $result = $result && add_field($table, $field4);
+        $result = $result && add_field($table, $field5);
+    }
+    
 
     return $result;
+
 }
 
 ?>
