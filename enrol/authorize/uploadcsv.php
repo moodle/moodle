@@ -172,8 +172,7 @@ function authorize_process_csv($filename)
 
         // If user wasn't enrolled, enrol now. Ignore otherwise. Because admin user might submit this file again.
         if ($role = get_default_course_role($course)) {
-            $ra = get_record('role_assignments', 'roleid', $role->id, 'contextid', $coursecontext->id, 'userid', $user->id);
-            if (empty($ra)) { // Not enrolled, so enrol
+            if (! user_has_role_assignment($user->id, $role->id, $coursecontext->id)) {
                 $timestart = $timeend = 0;
                 if ($course->enrolperiod) {
                     $timestart = time();
