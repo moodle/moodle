@@ -35,16 +35,16 @@
  * If your local customisations require changes to the database, use the files:
  * 
  * local/version.php
- * local/db/{$CFG->dbtype}.php
+ * local/db/upgrade.php
  * 
  * In the file version.php, set the variable $local_version to a versionstamp
- * value like 2006030300.
+ * value like 2006030300 (a concatenation of year, month, day, serial).
  * 
- * In the file {$CFG->dbtype}.php, implement the
- * function local_upgrade($oldversion) to make the database changes.
+ * In the file upgrade.php, implement the
+ * function xmldb_local_upgrade($oldversion) to make the database changes.
  * 
- * Note that you don't need to have the {$CFG->dbtype}.sql file. Instead,
- * when your moodle instance is first installed, local_upgrade() will be called
+ * Note that you don't need to have an install.xml file. Instead,
+ * when your moodle instance is first installed, xmldb_local_upgrade() will be called
  * with $oldversion set to 0, so that all the updates run.
  * 
  * 
@@ -64,8 +64,8 @@
 /**
  * This function checks to see whether local database customisations are up-to-date
  * by comparing $CFG->local_version to the variable $local_version defined in 
- * local/version.php. If not, it looks for a function called 'local_upgrade'
- * in a file called 'local/db/{$CFG->dbtype}.php', and if it's there calls it with the 
+ * local/version.php. If not, it looks for a function called 'xmldb_local_upgrade'
+ * in a file called 'local/db/upgrade.php', and if it's there calls it with the 
  * appropiate $oldversion parameter. Then it updates $CFG->local_version.
  * On success it prints a continue link. On failure it prints an error.
  * 
@@ -78,7 +78,7 @@ function upgrade_local_db($continueto) {
     global $CFG, $db;
     
     // if we don't have code version or a db upgrade file, just return true, we're unneeded
-    if (!file_exists($CFG->dirroot.'/local/version.php') || !file_exists($CFG->dirroot.'/local/db/'.$CFG->dbtype.'.php')) {
+    if (!file_exists($CFG->dirroot.'/local/version.php') || !file_exists($CFG->dirroot.'/local/db/upgrade.php')) {
         return true;
     }
 
@@ -94,10 +94,10 @@ function upgrade_local_db($continueto) {
                  '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>');
         
         upgrade_log_start();
-        require_once ($CFG->dirroot .'/local/db/'. $CFG->dbtype .'.php');
+        require_once ($CFG->dirroot .'/local/db/upgrade.php');
 
         $db->debug=true;
-        if (local_upgrade($CFG->local_version)) {
+        if (xmldb_local_upgrade($CFG->local_version)) {
             $db->debug=false;
             if (set_config('local_version', $local_version)) {
                 notify(get_string('databasesuccess'), 'notifysuccess');
