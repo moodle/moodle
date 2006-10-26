@@ -12,6 +12,7 @@
     }
     $userdata->threshold = '0.8';
 ?>
+    var cmi = new Object();
 
 //
 // SCORM 1.3 API Implementation
@@ -35,6 +36,7 @@ function SCORMapi1_3() {
     CMILongIdentifier = '^\\S{0,4000}[a-zA-Z0-9]$';
     CMIFeedback = CMIString200; // This must be redefined
     CMIIndex = '[._](\\d+).';
+    CMIIndexStore = '.N(\\d+).';
     // Vocabulary Data Type Definition
     CMICStatus = '^completed$|^incomplete$|^not attempted$|^unknown$';
     CMISStatus = '^passed$|^failed$|^unknown$';
@@ -46,7 +48,7 @@ function SCORMapi1_3() {
     cmi_children = '_version, comments_from_learner, comments_from_lms, completion_status, credit, entry, exit, interactions, launch_data, learner_id, learner_name, learner_preference, location, max_time_allowed, mode, objectives, progress_measure, scaled_passing_score, score, session_time, success_status, suspend_data, time_limit_action, total_time';
     comments_children = 'comment, timestamp, location';
     score_children = 'max, raw, scaled, min';
-    objectives_children = 'id, score, success_status, completion_status, description';
+    objectives_children = 'progress_measure, completion_status, success_status, description, score, id';
     student_data_children = 'mastery_score, max_time_allowed, time_limit_action';
     student_preference_children = 'audio_level, audio_caption, delivery_speed, language';
     interactions_children = 'id, type, objectives, timestamp, correct_responses, weighting, learner_response, result, latency, description';
@@ -109,15 +111,16 @@ function SCORMapi1_3() {
         'cmi.objectives.n.score.min':{'defaultvalue':null, 'pattern':CMIIndex, 'format':CMIDecimal, 'mod':'rw'},
         'cmi.objectives.n.score.max':{'defaultvalue':null, 'pattern':CMIIndex, 'format':CMIDecimal, 'mod':'rw'},
         'cmi.objectives.n.success_status':{'defaultvalue':'unknown', 'pattern':CMIIndex, 'format':CMISStatus, 'mod':'rw'},
-        'cmi.objectives.n.completion_status':{'defaultvalue':'unknown', 'pattern':CMIIndex, 'format':CMISStatus, 'mod':'rw'},
+        'cmi.objectives.n.completion_status':{'defaultvalue':'unknown', 'pattern':CMIIndex, 'format':CMICStatus, 'mod':'rw'},
+        'cmi.objectives.n.progress_measure':{'defaultvalue':null, 'format':CMIDecimal, 'range':progress_range, 'mod':'rw'},
         'cmi.objectives.n.description':{'pattern':CMIIndex, 'format':CMILangString250, 'mod':'rw'},
-        'cmi.progress_measure':{'defaultvalue':'<?php echo isset($userdata->{'cmi.progess_measure'})?$userdata->{'cmi.progress_measure'}:'' ?>', 'format':CMIDecimal, 'range':progress_range, 'mod':'rw'},
+        'cmi.progress_measure':{'defaultvalue':'<?php echo isset($userdata->{'cmi.progess_measure'})?$userdata->{'cmi.progress_measure'}:'null' ?>', 'format':CMIDecimal, 'range':progress_range, 'mod':'rw'},
         'cmi.scaled_passing_score':{'defaultvalue':<?php echo isset($userdata->mnm)?'\''.$userdata->mnm.'\'':'null' ?>, 'format':CMIDecimal, 'range':scaled_range, 'mod':'r'},
         'cmi.score._children':{'defaultvalue':score_children, 'mod':'r'},
         'cmi.score.scaled':{'defaultvalue':'<?php echo isset($userdata->{'cmi.score.scaled'})?$userdata->{'cmi.score.scaled'}:'null' ?>', 'format':CMIDecimal, 'range':scaled_range, 'mod':'rw'},
         'cmi.score.raw':{'defaultvalue':'<?php echo isset($userdata->{'cmi.score.raw'})?$userdata->{'cmi.score.raw'}:'null' ?>', 'format':CMIDecimal, 'mod':'rw'},
         'cmi.score.min':{'defaultvalue':'<?php echo isset($userdata->{'cmi.score.min'})?$userdata->{'cmi.score.min'}:'null' ?>', 'format':CMIDecimal, 'mod':'rw'},
-        'cmi.score.max':{'defaultvalue':'<?php echo isset($userdata->{'cmi.score.max'})?$userdata->{'cmi.score.max'}:'' ?>', 'format':CMIDecimal, 'mod':'rw'},
+        'cmi.score.max':{'defaultvalue':'<?php echo isset($userdata->{'cmi.score.max'})?$userdata->{'cmi.score.max'}:'null' ?>', 'format':CMIDecimal, 'mod':'rw'},
         'cmi.session_time':{'format':CMITimespan, 'mod':'w', 'defaultvalue':'PT0H0M0S'},
         'cmi.success_status':{'defaultvalue':'<?php echo isset($userdata->{'cmi.success_status'})?$userdata->{'cmi.success_status'}:'unknown' ?>', 'format':CMISStatus, 'mod':'rw'},
         'cmi.suspend_data':{'defaultvalue':<?php echo isset($userdata->{'cmi.suspend_data'})?'\''.$userdata->{'cmi.suspend_data'}.'\'':'null' ?>, 'format':CMIString64000, 'mod':'rw'},
@@ -128,7 +131,7 @@ function SCORMapi1_3() {
     //
     // Datamodel inizialization
     //
-    var cmi = new Object();
+//    var cmi = new Object();
         cmi.comments_from_learner = new Object();
         cmi.comments_from_learner._count = 0;
         cmi.comments_from_lms = new Object();
@@ -268,7 +271,7 @@ function SCORMapi1_3() {
                 elementmodel = element.replace(expression,'.n.');
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'w') {
-                        element = element.replace(expression, "_$1.");
+                        element = element.replace(expression, ".N$1.");
                         elementIndexes = element.split('.');
                         subelement = 'cmi';
                         i = 1;
@@ -355,26 +358,47 @@ function SCORMapi1_3() {
                                 for (i=1;(i < elementIndexes.length-1) && (errorCode=="0");i++) {
                                     elementIndex = elementIndexes[i];
                                     if (elementIndexes[i+1].match(/^\d+$/)) {
+                                        if ((parseInt(elementIndexes[i+1]) > 0) && (elementIndexes[i+1].charAt(0) == 0)) {
+                                            // Index has a leading 0 (zero), this is not a number
+                                            errorCode = "351";
+                                        }
                                         parentelement = subelement+'.'+elementIndex;
-                                        subelement = subelement.concat('.'+elementIndex+'_'+elementIndexes[i+1]);
-                                        elemlen = element.length;
-                                        if ((typeof eval(subelement)) == "undefined") {
+                                        if (elementIndexes[i+1] > eval(parentelement+'._count')) {
+                                            errorCode = "351";
+                                            diagnostic = "Data Model Element Collection Set Out Of Order";
+                                        }
+                                        subelement = subelement.concat('.'+elementIndex+'.N'+elementIndexes[i+1]);
+                                        i++;
+                                        if (((typeof eval(subelement)) == "undefined") && (i < elementIndexes.length-2)) {
+                                            errorCode="408";
+                                        }
+                                    } else {
+                                        subelement = subelement.concat('.'+elementIndex);
+                                    }
+                                }
+                                if (errorCode == "0") {
+                                    element = subelement.concat('.'+elementIndexes[elementIndexes.length-1]);
+                                    elemlen = element.length;
+                                       if (((typeof eval(subelement)) == "undefined") && (errorCode == "0")) {
                                             parentmodel = 'cmi.objectives';
-                                            maxmodel = 'cmi.objectives_nnn.id';
+                                            maxmodel = 'cmi.objectives.Nxxx.id';
                                             if (subelement.substr(0,parentmodel.length) == parentmodel) {
                                                  if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
                                                     //This is a parentmodel.n.id element
-                                                    if (!duplicatedID(parentelement,value)) {
-                                                        if (elementIndexes[i+1] == eval(parentelement+'._count')) {
-                                                            eval(parentelement+'._count++;');
-                                                        } 
-                                                        if (elementIndexes[i+1] > eval(parentelement+'._count')) {
-                                                            errorCode = "351";
-                                                            diagnostic = "Data Model Element Collection Set Out Of Order";
-                                                        } else {
+                                                    if (!duplicatedID(parentmodel,value)) {
+                                                        if (elementIndexes[elementIndexes.length-2] == eval(parentmodel+'._count')) {
+                                                            eval(parentmodel+'._count++;');
                                                             eval(subelement+' = new Object();');
-                                                            eval(subelement+'.score = new Object();');
-                                                            eval(subelement+'.score._children = score_children;');
+                                                            subobject = eval(subelement);
+                                                            subobject.success_status = datamodel["cmi.objectives.n.success_status"].defaultvalue;
+                                                            subobject.completion_status = datamodel["cmi.objectives.n.completion_status"].defaultvalue;
+                                                            subobject.progress_measure = datamodel["cmi.objectives.n.progress_measure"].defaultvalue;
+                                                            subobject.score = new Object();
+                                                            subobject.score._children = score_children;
+                                                            subobject.score.scaled = datamodel["cmi.objectives.n.score.scaled"].defaultvalue;
+                                                            subobject.score.raw = datamodel["cmi.objectives.n.score.raw"].defaultvalue;
+                                                            subobject.score.min = datamodel["cmi.objectives.n.score.min"].defaultvalue;
+                                                            subobject.score.max = datamodel["cmi.objectives.n.score.max"].defaultvalue;
                                                         }
                                                     } else {
                                                         errorCode="351";
@@ -384,7 +408,7 @@ function SCORMapi1_3() {
                                                     if (!definedID(subelement,parentmodel)) {
                                                         errorCode="408";
                                                     } else {
-                                                        if (duplicatedID(parentelement,value)) {
+                                                        if (duplicatedID(parentmodel,value)) {
                                                             errorCode="351";
                                                             diagnostic = "Data Model Element ID Already Exists";
                                                         }
@@ -392,24 +416,19 @@ function SCORMapi1_3() {
                                                 }
                                             } else {
                                                 parentmodel = 'cmi.interactions';
-                                                maxmodel = 'cmi.interactions_nnn.id';
+                                                maxmodel = 'cmi.interactions.Nxxx.id';
                                                 if (subelement.substr(0,parentmodel.length) == parentmodel) {
                                                     if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
                                                         //This is a parentmodel.n.id element
-                                                        if (!duplicatedID(parentelement,value)) {
-                                                            if (elementIndexes[i+1] == eval(parentelement+'._count')) {
-                                                                eval(parentelement+'._count++;');
-                                                            } 
-                                                            if (elementIndexes[i+1] > eval(parentelement+'._count')) {
-                                                                errorCode = "351";
-                                                                diagnostic = "Data Model Element Collection Set Out Of Order";
-                                                            } else {
+                                                        if (!duplicatedID(parentmodel,value)) {
+                                                            if (elementIndexes[elementIndexes.length-2] == eval(parentmodel+'._count')) {
+                                                                eval(parentmodel+'._count++;');
                                                                 eval(subelement+' = new Object();');
                                                                 eval(subelement+'.objectives = new Object();');
                                                                 eval(subelement+'.objectives._count = 0;');
                                                                 eval(subelement+'.correct_responses = new Object();');
                                                                 eval(subelement+'.correct_responses._count = 0;');
-                                                            }
+                                                            } 
                                                         } else {
                                                             errorCode="351";
                                                             diagnostic = "Data Model Element ID Already Exists";
@@ -418,44 +437,33 @@ function SCORMapi1_3() {
                                                         if (!definedID(subelement,parentmodel)) {
                                                             errorCode="408";
                                                         } else {
-alert('interactions not ID'+parentelement);
-                                                            if (duplicatedID(parentelement,value)) {
+                                                            if (duplicatedID(parentmodel,value)) {
                                                                 errorCode="351";
                                                                 diagnostic = "Data Model Element ID Already Exists";
-                                                            } else {
-
-                                                                if (elementIndexes[i+1] == eval(parentelement+'._count')) {
-                                                                    eval(parentelement+'._count++;');
-                                                                } 
-                                                                if (elementIndexes[i+1] > eval(parentelement+'._count')) {
-                                                                    errorCode = "351";
-                                                                    diagnostic = "Data Model Element Collection Set Out Of Order";
-                                                                }
                                                             }
                                                         }
                                                     }
                                                 } else { 
                                                     if (errorCode == "0") {
-                                                        if (elementIndexes[i+1] == eval(parentelement+'._count')) {
-                                                            eval(parentelement+'._count++;');
+                                                        if (elementIndexes[elementIndexes.length-2] == eval(parentmodel+'._count')) {
+                                                            eval(parentmodel+'._count++;');
+                                                            eval(subelement+' = new Object();');
                                                         } 
-                                                        if (elementIndexes[i+1] > eval(parentelement+'._count')) {
-                                                            errorCode = "351";
-                                                            diagnostic = "Data Model Element Collection Set Out Of Order";
-                                                        } else {
-                                                             eval(subelement+' = new Object();');
-                                                        }
                                                     }
                                                 }
                                             }
-                                        }
-                                        i++;
-                                    } else {
-                                        subelement = subelement.concat('.'+elementIndex);
-                                    }
-                                }
-                                if (errorCode == "0") {
-                                    element = subelement.concat('.'+elementIndexes[elementIndexes.length-1]);
+                                         } else {
+                                             parentmodel = 'cmi.objectives';
+                                             maxmodel = 'cmi.objectives.Nxxx.id';
+                                             if (subelement.substr(0,parentmodel.length) == parentmodel) {
+                                                 if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
+                                                     if (eval(element) != value) {
+                                                         errorCode = "351";
+                                                         diagnostic = "Write Once Violation";
+                                                     }
+                                                 }
+                                             }
+                                         }
                                 }
                             }
                             //Store data
@@ -665,7 +673,7 @@ alert('interactions not ID'+parentelement);
     function duplicatedID (element, value) {
         var found = false;
         var elements = eval(element+'._count');
-alert('duplicate '+element+' '+elements);
+//alert('duplicate '+element+' '+elements);
         for (n=0;(n<elements) && (!found);n++) {
             if (eval(element+'_'+n+'.id') == value) {
                 found = true;
@@ -734,7 +742,7 @@ alert('duplicate '+element+' '+elements);
                 datastring += CollectData(data[property],parent+'.'+property);
             } else {
                 element = parent+'.'+property;
-                expression = new RegExp(CMIIndex,'g');
+                expression = new RegExp(CMIIndexStore,'g');
                 elementmodel = element.replace(expression,'.n.');
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
@@ -780,7 +788,11 @@ alert('duplicate '+element+' '+elements);
         }
         datastring += '&attempt=<?php echo $attempt ?>';
         datastring += '&scoid=<?php echo $sco->id ?>';
-        //popupwin(datastring);
+        <?php
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'popupwin(datastring);';
+            }
+        ?>
         var myRequest = NewHttpReq();
         result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php p($USER->sesskey) ?>"+datastring);
         results = result.split('\n');

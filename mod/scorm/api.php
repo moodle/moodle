@@ -36,7 +36,12 @@
     require_login($course->id, false, $cm);
     
     if ($usertrack=scorm_get_tracks($scoid,$USER->id,$attempt)) {
-        $userdata = $usertrack;
+        if ((isset($usertrack->{'cmi.exit'}) && ($usertrack->{'cmi.exit'} != 'time-out')) || ($scorm->version != "SCORM_1.3")) {
+            $userdata = $usertrack;
+        } else {
+            $userdata->status = '';
+            $userdata->score_raw = '';
+        }
     } else {
         $userdata->status = '';
         $userdata->score_raw = '';
@@ -53,10 +58,18 @@
         $userdata->credit = 'no-credit';
     }    
     if ($sco = get_record('scorm_scoes','id',$scoid)) {
-        $userdata->datafromlms = $sco->datafromlms;
-        $userdata->masteryscore = $sco->masteryscore;
-        $userdata->maxtimeallowed = $sco->maxtimeallowed;
-        $userdata->timelimitaction = $sco->timelimitaction;
+        if (!empty($sco->datafromlms)) {
+            $userdata->datafromlms = $sco->datafromlms;
+        }
+        if (!empty($sco->masteryscore)) {
+            $userdata->masteryscore = $sco->masteryscore;
+        }
+        if (!empty($sco->maxtimeallowed)) {
+            $userdata->maxtimeallowed = $sco->maxtimeallowed;
+        }
+        if (!empty($sco->timelimitaction)) {
+            $userdata->timelimitaction = $sco->timelimitaction;
+        }
     } else {
         error('Sco not found');
     }
@@ -70,5 +83,6 @@
 
 var errorCode = "0";
 function underscore(str) {
+    str = str.replace(/.N/g,".");
     return str.replace(/\./g,"__");
 }
