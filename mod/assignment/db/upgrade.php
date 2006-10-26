@@ -1,7 +1,7 @@
 <?php  //$Id$
 
 // This file keeps track of upgrades to 
-// the glossary module
+// the assignment module
 //
 // Sometimes, changes between versions involve
 // alterations to database structures and other
@@ -17,7 +17,7 @@
 // The commands in here will all be database-neutral,
 // using the functions defined in lib/ddllib.php
 
-function xmldb_glossary_upgrade($oldversion=0) {
+function xmldb_assignment_upgrade($oldversion=0) {
 
     global $CFG, $THEME, $db;
 
