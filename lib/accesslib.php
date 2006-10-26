@@ -804,6 +804,15 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
      *  if it's not set to prohibit already, and if different
      *  ........ that should be it ........
      */
+     
+    // This is the flag used for detecting the current context level. Since we are going through
+    // the array in ascending order of context level. For normal capabilities, there should only 
+    // be 1 value per (capability,  contextlevel, context), because they are already summed. But, 
+    // for overrides, since we are processing them separate, we need to sum the relevcant entries. 
+    // We set this flag when we hit a new level.
+    // If the flag is already set, we keep adding (summing), otherwise, we just override previous 
+    // settings (from lower level contexts)     
+    $capflags = array(); // (contextid, contextlevel, capability)
     $usercap = array(); // for other user's capabilities
     foreach ($capabilities as $capability) {
 
@@ -817,10 +826,16 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
                 $usercap[$capability->id2][$capability->capability] = CAP_PROHIBIT;
                 continue;
             }
-            if (!empty($usercap[$capability->id2][$capability->capability])) {
-                $usercap[$capability->id2][$capability->capability] += $capability->sum;
+            if (isset($usercap[$capability->id2][$capability->capability])) { // use isset because it can be sum 0
+                if (!empty($capflags[$capability->id2][$capability->contextlevel][$capability->capability])) {
+                    $usercap[$capability->id2][$capability->capability] += $capability->sum;
+                } else { // else we override, and update flag
+                    $usercap[$capability->id2][$capability->capability] = $capability->sum;
+                    $capflags[$capability->id2][$capability->contextlevel][$capability->capability] = true;
+                }
             } else {
                 $usercap[$capability->id2][$capability->capability] = $capability->sum;
+                $capflags[$capability->id2][$capability->contextlevel][$capability->capability] = true;
             }
 
         } else {
@@ -835,18 +850,24 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
             // since 3050 shows up after 3000, and 3070 shows up after 3050,
             // it should be ok just to overwrite like this, provided that there's no
             // parental prohibits
-            // no point writing 0, since 0 = inherit
             // we need to write even if it's 0, because it could be an inherit override
-            if (!empty($USER->capabilities[$capability->id2][$capability->capability])) {
-                $USER->capabilities[$capability->id2][$capability->capability] += $capability->sum;
+            if (isset($USER->capabilities[$capability->id2][$capability->capability])) {
+                if (!empty($capflags[$capability->id2][$capability->contextlevel][$capability->capability])) {
+                    $USER->capabilities[$capability->id2][$capability->capability] += $capability->sum;
+                } else { // else we override, and update flag
+                    $USER->capabilities[$capability->id2][$capability->capability] = $capability->sum;
+                    $capflags[$capability->id2][$capability->contextlevel][$capability->capability] = true;
+                }
             } else {
                 $USER->capabilities[$capability->id2][$capability->capability] = $capability->sum;
+                $capflags[$capability->id2][$capability->contextlevel][$capability->capability] = true;
             }
         }
     }
 
     // now we don't care about the huge array anymore, we can dispose it.
     unset($capabilities);
+    unset($capflags);
 
     if (!empty($otheruserid)) {
         return $usercap; // return the array
