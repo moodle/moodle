@@ -39,6 +39,7 @@
 
 $empty_rs_cache = array();   // Keeps copies of the recordsets used in one invocation
 $metadata_cache = array();   // Keeps copies of the MetaColumns() for each table used in one invocations
+$record_cache = array();     // Keeps copies of all simple get_record results from one invocation
 
 /// FUNCTIONS FOR DATABASE HANDLING  ////////////////////////////////
 
@@ -354,6 +355,7 @@ function count_records_sql($sql) {
 
 /// GENERIC FUNCTIONS TO GET, INSERT, OR UPDATE DATA  ///////////////////////////////////
 
+
 /**
  * Get a single record as an object
  *
@@ -368,12 +370,29 @@ function count_records_sql($sql) {
  * @return mixed a fieldset object containing the first mathcing record, or false if none found.
  */
 function get_record($table, $field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields='*') {
-
-    global $CFG;
-
+    
+    global $CFG, $record_cache;
+    
+    // Check to see whether this record is eligible for caching (fields=*, only condition is id)
+    $docache = false;
+    if ($field1=='id' && !$field2 && !$field3 && $fields=='*') {
+        $docache = true;
+        // If it's in the cache, return it
+        if (!empty($record_cache[$table][$value1])) {
+            return $record_cache[$table][$value1];
+        }
+    }
+    
     $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
 
-    return get_record_sql('SELECT '.$fields.' FROM '. $CFG->prefix . $table .' '. $select);
+    $record = get_record_sql('SELECT '.$fields.' FROM '. $CFG->prefix . $table .' '. $select);
+    
+    // If we're caching records, store this one (supposing we got something - we don't cache failures)
+    if ($record && $docache) {
+        $record_cache[$table][$value1] = $record;
+    }
+
+    return $record;
 }
 
 /**
@@ -1022,6 +1041,10 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
         }
     }
 
+    // Clear entire record cache for table (could be improved to check for ID limitation) 
+    global $record_cache;
+    unset($record_cache[$table]);
+
 /// Arriving here, standard update 
     return $db->Execute('UPDATE '. $CFG->prefix . $table .' SET '. $newfield  .' = \''. $newvalue .'\' '. $select);
 }
@@ -1275,6 +1298,10 @@ function update_record($table, $dataobject) {
     if (! isset($dataobject->id) ) {
         return false;
     }
+
+    // Remove this record from record cache since it will change
+    global $record_cache;
+    unset($record_cache[$table][$dataobject->id]);
 
 /// Temporary hack as part of phasing out all access to obsolete user tables  XXX
     if (!empty($CFG->rolesactive)) {
