@@ -326,8 +326,7 @@
 
         $stradministration = get_string("administration");
         print_header("$course->shortname: $streditmyprofile", "$course->fullname",
-                     "<a href=\"$CFG->wwwroot/$CFG->admin/\">$stradministration</a> -> ".
-                     "<a href=\"$CFG->wwwroot/$CFG->admin/users.php\">$strusers</a> -> $straddnewuser", "");
+                     "<a href=\"$CFG->wwwroot/$CFG->admin/\">$stradministration</a> -> $straddnewuser", "");
     }
 
 
