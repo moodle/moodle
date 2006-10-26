@@ -44,37 +44,41 @@ function authorize_print_orders($courseid, $userid)
                         AN_STATUS_TEST => $authstrs->tested
     );
 
-    if ($courses = get_courses('all', 'c.sortorder ASC', 'c.id,c.fullname,c.enrol')) {
+    $sql = "SELECT id, fullname FROM {$CFG->prefix}course ";
+    if ($CFG->enrol == 'authorize') { // default enrolment plugin
+        $sql .= "WHERE (enrol IS NULL) OR (enrol='') OR (enrol = 'authorize') ";
+    }
+    else {
+        $sql .= "WHERE (enrol = 'authorize') ";
+    }
+    $sql .= "ORDER BY sortorder, fullname";
+    if ($courses = get_records_sql($sql)) {
         $popupcrs = array();
         foreach ($courses as $crs) {
-            if ($crs->enrol == 'authorize' || (empty($crs->enrol) && $CFG->enrol == 'authorize')) {
-                $popupcrs[intval($crs->id)] = $crs->fullname;
-            }
+            $popupcrs[$crs->id] = $crs->fullname;
         }
-        if (!empty($popupcrs)) {
-            echo "<table border='0' width='100%' cellspacing=0 cellpadding=3 class='generaltable generalbox'>";
-            echo "<tr>";
-            echo "<td width='5%'>$strs->status: </td><td width='10%'>";popup_form($baseurl.'&amp;course='.$courseid.'&amp;status=',$statusmenu,'statusmenu',$status,'','','',false);echo"</td>\n";
-            echo "<td width='5%'>$strs->course: </td><td width='10%'>";popup_form($baseurl.'&amp;status='.$status.'&amp;course=',$popupcrs,'coursesmenu',$courseid,'','','',false);echo"</td>\n";
-            if (has_capability('enrol/authorize:uploadcsv', get_context_instance(CONTEXT_USER, $USER->id))) {
-                echo "<form method='get' action='uploadcsv.php'>";
-                echo "<td rowspan=2 align='center' valign='middle' width='50%'><input type='submit' value='".get_string('uploadcsv', 'enrol_authorize')."'></td>";
-                echo "</form>";
-            }
-            else {
-                echo "<td rowspan=2 width='100%'>&nbsp;</td>";
-            }
-            echo "</tr>\n";
-
-            echo "<tr><td>$strs->search: </td>"; $searchmenu = array('id' => $authstrs->orderid, 'transid' => $authstrs->transid);
-            echo "<form method='POST' action='index.php' autocomplete='off'>";
-            echo "<td colspan=3>"; choose_from_menu($searchmenu, 'searchtype', $searchtype, '');
-            echo " = <input type='text' size='14' name='idortransid' value='' /> ";
-            echo "<input type='submit' value='$strs->search' /></td>";
+        echo "<table border='0' width='100%' cellspacing=0 cellpadding=3 class='generaltable generalbox'>";
+        echo "<tr>";
+        echo "<td width='5%'>$strs->status: </td><td width='10%'>";popup_form($baseurl.'&amp;course='.$courseid.'&amp;status=',$statusmenu,'statusmenu',$status,'','','',false);echo"</td>\n";
+        echo "<td width='5%'>$strs->course: </td><td width='10%'>";popup_form($baseurl.'&amp;status='.$status.'&amp;course=',$popupcrs,'coursesmenu',$courseid,'','','',false);echo"</td>\n";
+        if (has_capability('enrol/authorize:uploadcsv', get_context_instance(CONTEXT_USER, $USER->id))) {
+            echo "<form method='get' action='uploadcsv.php'>";
+            echo "<td rowspan=2 align='center' valign='middle' width='50%'><input type='submit' value='".get_string('uploadcsv', 'enrol_authorize')."'></td>";
             echo "</form>";
-            echo "</tr>";
-            echo "</table>";
         }
+        else {
+            echo "<td rowspan=2 width='100%'>&nbsp;</td>";
+        }
+        echo "</tr>\n";
+
+        echo "<tr><td>$strs->search: </td>"; $searchmenu = array('id' => $authstrs->orderid, 'transid' => $authstrs->transid);
+        echo "<form method='POST' action='index.php' autocomplete='off'>";
+        echo "<td colspan=3>"; choose_from_menu($searchmenu, 'searchtype', $searchtype, '');
+        echo " = <input type='text' size='14' name='idortransid' value='' /> ";
+        echo "<input type='submit' value='$strs->search' /></td>";
+        echo "</form>";
+        echo "</tr>";
+        echo "</table>";
     }
 
     $table = new flexible_table('enrol-authorize');
