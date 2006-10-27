@@ -2303,21 +2303,21 @@ class admin_setting_special_calendar_weekend extends admin_setting {
 
 }
 
-/* 
- * this is used in config->appearance->gradeconfig 
+/*
+ * this is used in config->appearance->gradeconfig
  */
 class admin_setting_special_gradebook_roles extends admin_setting {
 
     function admin_setting_special_gradebook_roles() {
         $name = 'gradebook_roles';
-        $visiblename = get_string('gradebook_roles', 'admin');
-        $description = get_string('gradebook_roles', 'admin');
-        
+        $visiblename = get_string('gradebookroles', 'admin');
+        $description = get_string('configgradebookroles', 'admin');
+
         $value = array();
-        
-        if ($studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {          
+
+        if ($studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
             foreach ($studentroles as $roleid=>$studentrole) {
-                $value[$roleid] = 1;  
+                $value[$roleid] = 1;
             }
         }
 
@@ -2343,8 +2343,8 @@ class admin_setting_special_gradebook_roles extends admin_setting {
             }
             return set_config($this->name, rtrim($str, ","))?'':get_string('errorsetting', 'admin') . $this->visiblename . '<br />';
         } else {
-            return set_config($this->name, '')?'':get_string('errorsetting', 'admin') . $this->visiblename . '<br />';  
-        }  
+            return set_config($this->name, '')?'':get_string('errorsetting', 'admin') . $this->visiblename . '<br />';
+        }
     }
 
     function output_html() {
@@ -2354,24 +2354,27 @@ class admin_setting_special_gradebook_roles extends admin_setting {
         } else {
             $currentsetting = $this->get_setting();
         }
-        
+
         // from to process which roles to display
         if ($roles = get_records('role')) {
-            $return = '<table><tr><td class="c0">'.get_string('showroles','grades').':</td></tr>';        
-            foreach ($roles as $roleid=>$role) {  
+            $return = '<div class="form-group">';
+            $first = true;
+            foreach ($roles as $roleid=>$role) {
                 if (is_array($currentsetting) && in_array($roleid, $currentsetting)) {
                     $checked = 'checked="checked"';
                 } else {
-                    $checked = ''; 
+                    $checked = '';
                 }
-                            
-                $return .= '<tr><td class="c0">';
-                $return .= '<input type="checkbox" name="s_'.$this->name.'['.$roleid.']" value="1" '.$checked.'>'.$role->name;
-                $return .= '</td></tr>';
+                if ($first) {
+                    $first = false;
+                } else {
+                    $return .= '<br />';
+                }
+                $return .= '<input type="checkbox" name="s_'.$this->name.'['.$roleid.']" value="1" '.$checked.'>&nbsp;'.$role->name;
             }
-            $return .= '</table>'; 
+            $return .= '</div>';
         }
-        
+
         return format_admin_setting($this->name, $this->visiblename, $return, $this->description);
 
     }
