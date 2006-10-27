@@ -767,7 +767,7 @@ $string['loginsteps'] = 'Hi! For full access to courses you\'ll need to take
    <li>Read your email, and click on the web link it contains.</li>
    <li>Your account will be confirmed and you will be logged in.</li>
    <li>Now, select the course you want to participate in.</li>
-   <li>If you are prompted for a \"enrolment key\" - use the one
+   <li>If you are prompted for an \"enrolment key\" - use the one
    that your teacher has given you. This will \"enrol\" you in the
    course.</li>
    <li>You can now access the full course. From now on you will only need
