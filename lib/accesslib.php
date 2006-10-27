@@ -130,7 +130,8 @@ function load_defaultuser_role() {
     if ($capabilities = get_records_select('role_capabilities',
                                      "roleid = $CFG->defaultuserroleid AND contextid = $sitecontext->id")) {
         foreach ($capabilities as $capability) {
-            if (!isset($USER->capabilities[$sitecontext->id][$capability->capability])) {  // Don't overwrite
+            if (!isset($USER->capabilities[$sitecontext->id][$capability->capability]) 
+                && $capability->permission != 0) {  // Don't overwrite if it's already set, nor store 'inherit'
                 $USER->capabilities[$sitecontext->id][$capability->capability] = $capability->permission;
             }
         }
