@@ -1301,8 +1301,10 @@ function update_record($table, $dataobject) {
 
     // Remove this record from record cache since it will change
     global $record_cache;
-    unset($record_cache[$table][$dataobject->id]);
-
+    if (isset($record_cache[$table][$dataobject->id])) {
+        unset($record_cache[$table][$dataobject->id]);
+    }
+    
 /// Temporary hack as part of phasing out all access to obsolete user tables  XXX
     if (!empty($CFG->rolesactive)) {
         if (in_array($table, array('user_students', 'user_teachers', 'user_coursecreators', 'user_admins'))) {
