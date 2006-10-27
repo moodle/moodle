@@ -1175,7 +1175,8 @@ function data_print_comment($data, $comment, $page=0) {
     echo '</td>';
 
     echo '<td class="topic starter" align="left"><div class="author">';
-    $fullname = fullname($comment->userid, has_capability('moodle/site:viewfullnames', $context));
+    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
+    $by = new object();
     $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.
                 $user->id.'&amp;course='.$data->course.'">'.$fullname.'</a>';
     $by->date = userdate($comment->modified);
