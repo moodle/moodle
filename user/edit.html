@@ -202,7 +202,7 @@ if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SI
     unset($choices);
     $choices["0"] = get_string("ajaxno");
     $choices["1"] = get_string("ajaxyes");
-    choose_from_menu ($choices, 'ajax', $user->ajax, "") ?>
+    choose_from_menu ($choices, 'ajax', $user->ajax, '', '', 0, false, empty($CFG->enableajax)) ?>
     </td>
 </tr>
 <tr>

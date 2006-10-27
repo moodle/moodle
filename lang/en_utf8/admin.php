@@ -3,6 +3,9 @@
 
 
 // begin {added with admin cleanup}
+
+$string['enableajax'] = 'Enable AJAX';
+$string['configenableajax'] = 'If you enable AJAX features users can disable them in their profile, otherwise AJAX is disabled for everybody.';
 $string['autologinguests'] = 'Auto-login guests';
 $string['search'] = 'Search';
 $string['searchresults'] = 'Search Results';

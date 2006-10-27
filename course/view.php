@@ -129,8 +129,8 @@
     if (file_exists($ajaxformatfile)) {
         require_once($ajaxformatfile);
 
-        if ($USER->editing && !empty($USER->ajax) && $CFG->ajaxcapable) {
-            
+        if ($USER->editing && !empty($USER->ajax) && !empty($CFG->enableajax) && $CFG->ajaxcapable) {
+
             if ($meta = require_js(array('yui_yahoo',
                                          'yui_dom',
                                          'yui_event',
