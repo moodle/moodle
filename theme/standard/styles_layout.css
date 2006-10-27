@@ -68,6 +68,11 @@ h6.main {
   display:block;
 }
 
+.clearfix {
+  min-width: 0;
+  overflow: hidden;
+}
+
 .clearfix:after {
   /* content: "<!-- -->";  */
   content: "."; 
@@ -296,12 +301,13 @@ div.hide {
 }
 
 .navbar {
-  width:100%;
+  width:auto;
   padding:3px 0.5em;
   border-width:1px;
   border-style:solid;
 }
 
+/*
 div.navbar {
   width: auto;
 }
@@ -309,6 +315,7 @@ div.navbar {
 table.navbar {
   width: 100%;
 }
+*/
 
 .navbar .navbutton form {
   float: left;
