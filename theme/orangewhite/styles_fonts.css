@@ -81,6 +81,9 @@ pre code {
 .bold {
   font-weight:bold
 }
+.breadcrumb .sep {
+  font-family: verdana, arial, helvetica, sans-serif;
+}
 .generalboxcontent {
   font-size:0.8em
 }
@@ -193,6 +196,12 @@ table.formtable tbody th {
 }
 #admin-index .generaltable .cell {
   line-height: 1.9em;
+}
+#adminsettings fieldset span.form-shortname {
+  font-size: 90%;
+}
+#adminsettings fieldset {
+  font-size: 80%;
 }
 
 /***

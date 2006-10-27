@@ -173,6 +173,13 @@ img.resize {
 #admin-maintenance #content {
   padding-bottom: 15px;
 }
+#adminsettings fieldset {
+  border-width: 1px;
+  border-style: solid;
+}
+form.mform div.textarea textarea {
+  width: 35em;
+}
 
 /***
  *** Content
@@ -274,6 +281,9 @@ img.resize {
 #calendar .maincalendar .calendarmonth {
   width:75%
 }
+.sideblock .calendar-controls .current {
+  text-align: center;
+}
 
 /***
  *** Course
@@ -369,3 +379,8 @@ img.resize {
 .mod-resource #content {
   margin-top:1px
 }
+
+/***
+ *** New stuff
+ ***/
+
