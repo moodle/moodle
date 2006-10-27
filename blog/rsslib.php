@@ -67,9 +67,7 @@
 
     /// Get all the posts from the database
 
-        //$blogFilter =& new BlogFilter(0, 0, 20, 0, $type, $id, $tagid);
-
-        $blogposts = fetch_entries(0, 0, 20, 0, $type, $id, $tagid); //$blogFilter->fetch_entries();
+        $blogposts = fetch_entries('', 20, '', $type, $id, $tagid);
 
     /// Now generate an array of RSS items
         if ($blogposts) {
