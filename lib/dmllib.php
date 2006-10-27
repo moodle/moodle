@@ -1080,7 +1080,7 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
  */
 function delete_records($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
 
-    global $db, $CFG;
+    global $db, $CFG, $record_cache;
 
     // Clear record_cache based on the parameters passed (individual record or whole table)
     if ($field1 == 'id') {
@@ -1120,7 +1120,7 @@ function delete_records($table, $field1='', $value1='', $field2='', $value2='', 
  */
 function delete_records_select($table, $select='') {
 
-    global $CFG, $db;
+    global $CFG, $db, $record_cache;
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
