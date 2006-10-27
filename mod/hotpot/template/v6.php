@@ -420,14 +420,21 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 
         $options = '<option value="x">'.$this->parent->xml_value('data,matching-exercise,default-right-item').'</option>';
         foreach ($r_keys as $key) {
-            $options .= '<option value="'.$key.'">'.$r_items[$key]['text'][0]['#'].'</option>'."\n";
+            if (empty($r_items[$key]['fixed'][0]['#'])) {
+                $options .= '<option value="'.$key.'">'.$r_items[$key]['text'][0]['#'].'</option>'."\n";
+            }
         }
 
         $str = '';
         foreach ($l_keys as $key) {
             $str .= '<tr><td class="LeftItem">'.$l_items[$key]['text'][0]['#'].'</td>';
-            $str .= '<td class="RightItem"><select id="s'.$key.'_'.$key.'">'.$options.'</select></td>';
-            $str .= '<td></td></tr>';
+            $str .= '<td class="RightItem">';
+            if (empty($r_items[$key]['fixed'][0]['#'])) {
+                $str .= '<select id="s'.$key.'_'.$key.'">'.$options.'</select>';
+            }  else {
+                $str .= $r_items[$key]['text'][0]['#'];
+            }
+            $str .= '</td><td></td></tr>';
         }
         return $str;
     }
@@ -717,7 +724,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
             $str .= "D[$i] = new Array();\n";
             $str .= "D[$i][0] = '".$this->js_safe($item['text'][0]['#'], true)."';\n";
             $str .= "D[$i][1] = ".($i+1).";\n";
-            $str .= "D[$i][2] = 0;\n";
+            $str .= "D[$i][2] = '".$this->int_value($item['fixed'][0]['#'])."';\n";
         }
         return $str;
     }
