@@ -3,7 +3,9 @@
 
 
 // begin {added with admin cleanup}
-
+$string['gradebook'] = 'Gradebook';
+$string['gradebookroles'] = 'Graded roles';
+$string['configgradebookroles'] = 'Which roles are gradable?';
 $string['enableajax'] = 'Enable AJAX';
 $string['configenableajax'] = 'If you enable AJAX features users can disable them in their profile, otherwise AJAX is disabled for everybody.';
 $string['autologinguests'] = 'Auto-login guests';
