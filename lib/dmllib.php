@@ -1003,7 +1003,7 @@ function get_fieldset_sql($sql) {
  */
 function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
 
-    global $db, $CFG;
+    global $db, $CFG, $record_cache;
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
@@ -1041,9 +1041,24 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
         }
     }
 
-    // Clear entire record cache for table (could be improved to check for ID limitation) 
-    global $record_cache;
-    unset($record_cache[$table]);
+    // Clear record_cache based on the parameters passed (individual record or whole table)
+    if ($field1 == 'id') {
+        if (isset($record_cache[$table][$value1])) {
+            unset($record_cache[$table][$value1]);
+        }
+    } else if ($field2 == 'id') {
+        if (isset($record_cache[$table][$value2])) {
+            unset($record_cache[$table][$value2]);
+        }
+    } else if ($field3 == 'id') {
+        if (isset($record_cache[$table][$value3])) {
+            unset($record_cache[$table][$value3]);
+        }
+    } else {
+        if (isset($record_cache[$table])) {
+            unset($record_cache[$table]);
+        }
+    }
 
 /// Arriving here, standard update 
     return $db->Execute('UPDATE '. $CFG->prefix . $table .' SET '. $newfield  .' = \''. $newvalue .'\' '. $select);
@@ -1066,6 +1081,25 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
 function delete_records($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
 
     global $db, $CFG;
+
+    // Clear record_cache based on the parameters passed (individual record or whole table)
+    if ($field1 == 'id') {
+        if (isset($record_cache[$table][$value1])) {
+            unset($record_cache[$table][$value1]);
+        }
+    } else if ($field2 == 'id') {
+        if (isset($record_cache[$table][$value2])) {
+            unset($record_cache[$table][$value2]);
+        }
+    } else if ($field3 == 'id') {
+        if (isset($record_cache[$table][$value3])) {
+            unset($record_cache[$table][$value3]);
+        }
+    } else {
+        if (isset($record_cache[$table])) {
+            unset($record_cache[$table]);
+        }
+    }
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
@@ -1092,6 +1126,11 @@ function delete_records_select($table, $select='') {
 
     if ($select) {
         $select = 'WHERE '.$select;
+    }
+
+    // Clear record_cache (whole table)
+    if (isset($record_cache[$table])) {
+        unset($record_cache[$table]);
     }
 
     return $db->Execute('DELETE FROM '. $CFG->prefix . $table .' '. $select);
@@ -1293,14 +1332,13 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
  */
 function update_record($table, $dataobject) {
 
-    global $db, $CFG;
+    global $db, $CFG, $record_cache;
 
     if (! isset($dataobject->id) ) {
         return false;
     }
 
     // Remove this record from record cache since it will change
-    global $record_cache;
     if (isset($record_cache[$table][$dataobject->id])) {
         unset($record_cache[$table][$dataobject->id]);
     }
