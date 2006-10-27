@@ -69,6 +69,11 @@ h6.main {
   display:block;
 }
 
+.clearfix {
+  min-width: 0;
+  overflow: hidden;
+}
+
 .clearfix:after {
   /* content: "<!-- -->";  */
   content: "."; 
@@ -399,8 +404,7 @@ form.mform div.error,form.mform fieldset.error {
 }
 
 .navbar {
-  height:100%;
-  width:98%;
+  width:auto;
   padding:3px 0.5em;
   border-width:1px;
   border-style:solid;
