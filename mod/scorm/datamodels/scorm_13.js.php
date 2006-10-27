@@ -43,14 +43,16 @@ function SCORMapi1_3() {
     CMIExit = '^time-out$|^suspend$|^logout$|^normal$|^$';
     CMIType = '^true-false$|^choice$|^(long-)?fill-in$|^matching$|^performance$|^sequencing$|^likert$|^numeric$|^other$';
     CMIResult = '^correct$|^incorrect$|^unanticipated$|^neutral$|^-?([0-9]{1,4})(\\.[0-9]{1,18})?$';
-    NAVEvent = '^previous$|^continue$';
+    NAVEvent = '^previous$|^continue$|^exit$|^exitAll$|^abandon$|^abandonAll$|^suspendAll$|^{target=\\S{0,200}[a-zA-Z0-9]}choice$';
+    NAVBoolean = '^unknown$|^true$|^false$';
+    NAVTarget = '^previous$|^continue$|^{target=\\S{0,200}[a-zA-Z0-9]}$'
     // Children lists
     cmi_children = '_version, comments_from_learner, comments_from_lms, completion_status, credit, entry, exit, interactions, launch_data, learner_id, learner_name, learner_preference, location, max_time_allowed, mode, objectives, progress_measure, scaled_passing_score, score, session_time, success_status, suspend_data, time_limit_action, total_time';
     comments_children = 'comment, timestamp, location';
     score_children = 'max, raw, scaled, min';
     objectives_children = 'progress_measure, completion_status, success_status, description, score, id';
     student_data_children = 'mastery_score, max_time_allowed, time_limit_action';
-    student_preference_children = 'audio_level, audio_caption, delivery_speed, language';
+    student_preference_children = 'audio_level, audio_captioning, delivery_speed, language';
     interactions_children = 'id, type, objectives, timestamp, correct_responses, weighting, learner_response, result, latency, description';
     // Data ranges
     scaled_range = '-1#1';
@@ -114,19 +116,19 @@ function SCORMapi1_3() {
         'cmi.objectives.n.completion_status':{'defaultvalue':'unknown', 'pattern':CMIIndex, 'format':CMICStatus, 'mod':'rw'},
         'cmi.objectives.n.progress_measure':{'defaultvalue':null, 'format':CMIDecimal, 'range':progress_range, 'mod':'rw'},
         'cmi.objectives.n.description':{'pattern':CMIIndex, 'format':CMILangString250, 'mod':'rw'},
-        'cmi.progress_measure':{'defaultvalue':'<?php echo isset($userdata->{'cmi.progess_measure'})?$userdata->{'cmi.progress_measure'}:'null' ?>', 'format':CMIDecimal, 'range':progress_range, 'mod':'rw'},
-        'cmi.scaled_passing_score':{'defaultvalue':<?php echo isset($userdata->mnm)?'\''.$userdata->mnm.'\'':'null' ?>, 'format':CMIDecimal, 'range':scaled_range, 'mod':'r'},
+        'cmi.progress_measure':{'defaultvalue':<?php echo isset($userdata->{'cmi.progess_measure'})?'\''.$userdata->{'cmi.progress_measure'}.'\'':'null' ?>, 'format':CMIDecimal, 'range':progress_range, 'mod':'rw'},
+        'cmi.scaled_passing_score':{'defaultvalue':<?php echo isset($userdata->{'cmi.scaled_passing_score'})?'\''.$userdata->{'cmi.scaled_passing_score'}.'\'':'null' ?>, 'format':CMIDecimal, 'range':scaled_range, 'mod':'r'},
         'cmi.score._children':{'defaultvalue':score_children, 'mod':'r'},
-        'cmi.score.scaled':{'defaultvalue':'<?php echo isset($userdata->{'cmi.score.scaled'})?$userdata->{'cmi.score.scaled'}:'null' ?>', 'format':CMIDecimal, 'range':scaled_range, 'mod':'rw'},
-        'cmi.score.raw':{'defaultvalue':'<?php echo isset($userdata->{'cmi.score.raw'})?$userdata->{'cmi.score.raw'}:'null' ?>', 'format':CMIDecimal, 'mod':'rw'},
-        'cmi.score.min':{'defaultvalue':'<?php echo isset($userdata->{'cmi.score.min'})?$userdata->{'cmi.score.min'}:'null' ?>', 'format':CMIDecimal, 'mod':'rw'},
-        'cmi.score.max':{'defaultvalue':'<?php echo isset($userdata->{'cmi.score.max'})?$userdata->{'cmi.score.max'}:'null' ?>', 'format':CMIDecimal, 'mod':'rw'},
+        'cmi.score.scaled':{'defaultvalue':<?php echo isset($userdata->{'cmi.score.scaled'})?'\''.$userdata->{'cmi.score.scaled'}.'\'':'null' ?>, 'format':CMIDecimal, 'range':scaled_range, 'mod':'rw'},
+        'cmi.score.raw':{'defaultvalue':<?php echo isset($userdata->{'cmi.score.raw'})?'\''.$userdata->{'cmi.score.raw'}.'\'':'null' ?>, 'format':CMIDecimal, 'mod':'rw'},
+        'cmi.score.min':{'defaultvalue':<?php echo isset($userdata->{'cmi.score.min'})?'\''.$userdata->{'cmi.score.min'}.'\'':'null' ?>, 'format':CMIDecimal, 'mod':'rw'},
+        'cmi.score.max':{'defaultvalue':<?php echo isset($userdata->{'cmi.score.max'})?'\''.$userdata->{'cmi.score.max'}.'\'':'null' ?>, 'format':CMIDecimal, 'mod':'rw'},
         'cmi.session_time':{'format':CMITimespan, 'mod':'w', 'defaultvalue':'PT0H0M0S'},
         'cmi.success_status':{'defaultvalue':'<?php echo isset($userdata->{'cmi.success_status'})?$userdata->{'cmi.success_status'}:'unknown' ?>', 'format':CMISStatus, 'mod':'rw'},
         'cmi.suspend_data':{'defaultvalue':<?php echo isset($userdata->{'cmi.suspend_data'})?'\''.$userdata->{'cmi.suspend_data'}.'\'':'null' ?>, 'format':CMIString64000, 'mod':'rw'},
         'cmi.time_limit_action':{'defaultvalue':<?php echo isset($userdata->timelimitaction)?'\''.$userdata->timelimitaction.'\'':'null' ?>, 'mod':'r'},
         'cmi.total_time':{'defaultvalue':'<?php echo isset($userdata->{'cmi.total_time'})?$userdata->{'cmi.total_time'}:'PT0H0M0S' ?>', 'mod':'r'},
-        'nav.event':{'defaultvalue':'', 'format':NAVEvent, 'mod':'w'}
+        'adl.nav.request':{'defaultvalue':'_none_', 'format':NAVEvent, 'mod':'rw'}
     };
     //
     // Datamodel inizialization
@@ -144,7 +146,8 @@ function SCORMapi1_3() {
         cmi.score = new Object();
 
     // Navigation Object
-    var nav = new Object();
+    var adl = new Object();
+        adl.nav = new Object();
 
     for (element in datamodel) {
         if (element.match(/\.n\./) == null) {
@@ -162,7 +165,7 @@ function SCORMapi1_3() {
     foreach($userdata as $element => $value){
         if (substr($element,0,14) == 'cmi.objectives') {
             preg_match('/.(\d+)./',$element,$matches);
-            $element = preg_replace('/.(\d+)./',"_\$1.",$element);
+            $element = preg_replace('/.(\d+)./',".N\$1.",$element);
             if ($matches[1] == $count) {
                 $count++;
                 $end = strpos($element,$matches[1])+strlen($matches[1]);
@@ -271,9 +274,9 @@ function SCORMapi1_3() {
                 elementmodel = element.replace(expression,'.n.');
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'w') {
-                        element = element.replace(expression, ".N$1.");
+                        element = element.replace(/\.(\d+)\./, ".N$1.");
                         elementIndexes = element.split('.');
-                        subelement = 'cmi';
+                        subelement = element.substr(0,3);
                         i = 1;
                         while ((i < elementIndexes.length) && (typeof eval(subelement) != "undefined")) {
                             subelement += '.'+elementIndexes[i++];
@@ -317,7 +320,22 @@ function SCORMapi1_3() {
                             errorCode = "401";
                         }
                     } else {
-                        errorCode = "401";
+                        parentmodel = 'adl.nav.request_valid.';
+                        if (element.substr(0,parentmodel.length) == parentmodel) {
+                            if (element.substr(parentmodel.length).match(NAVTarget) == null) {
+                                errorCode = "301";
+                            } else {
+                                if (adl.nav.request == element.substr(parentmodel.length)) {
+                                    return "true";
+                                } else if (adl.nav.request == '_none_') {
+                                    return "unknown";
+                                } else {
+                                    return "false";
+                                }
+                            }
+                        } else {
+                            errorCode = "401";
+                        }
                     }
                 }
             } else {
@@ -355,6 +373,7 @@ function SCORMapi1_3() {
                             if (element != elementmodel) {
                                 elementIndexes = element.split('.');
                                 subelement = 'cmi';
+                                parentelement = 'cmi';
                                 for (i=1;(i < elementIndexes.length-1) && (errorCode=="0");i++) {
                                     elementIndex = elementIndexes[i];
                                     if (elementIndexes[i+1].match(/^\d+$/)) {
@@ -379,82 +398,93 @@ function SCORMapi1_3() {
                                 if (errorCode == "0") {
                                     element = subelement.concat('.'+elementIndexes[elementIndexes.length-1]);
                                     elemlen = element.length;
-                                       if (((typeof eval(subelement)) == "undefined") && (errorCode == "0")) {
-                                            parentmodel = 'cmi.objectives';
-                                            maxmodel = 'cmi.objectives.Nxxx.id';
+                                    if (((typeof eval(subelement)) == "undefined") && (errorCode == "0")) {
+                                        parentmodel = 'cmi.objectives';
+                                        maxmodel = 'cmi.objectives.Nxxx.id';
+                                        if (subelement.substr(0,parentmodel.length) == parentmodel) {
+                                             if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
+                                                //This is a parentmodel.n.id element
+                                                if (!duplicatedID(parentmodel,value)) {
+                                                    if (elementIndexes[elementIndexes.length-2] == eval(parentmodel+'._count')) {
+                                                        eval(parentmodel+'._count++;');
+                                                        eval(subelement+' = new Object();');
+                                                        subobject = eval(subelement);
+                                                        subobject.success_status = datamodel["cmi.objectives.n.success_status"].defaultvalue;
+                                                        subobject.completion_status = datamodel["cmi.objectives.n.completion_status"].defaultvalue;
+                                                        subobject.progress_measure = datamodel["cmi.objectives.n.progress_measure"].defaultvalue;
+                                                        subobject.score = new Object();
+                                                        subobject.score._children = score_children;
+                                                        subobject.score.scaled = datamodel["cmi.objectives.n.score.scaled"].defaultvalue;
+                                                        subobject.score.raw = datamodel["cmi.objectives.n.score.raw"].defaultvalue;
+                                                        subobject.score.min = datamodel["cmi.objectives.n.score.min"].defaultvalue;
+                                                        subobject.score.max = datamodel["cmi.objectives.n.score.max"].defaultvalue;
+                                                    }
+                                                } else {
+                                                    errorCode="351";
+                                                    diagnostic = "Data Model Element ID Already Exists";
+                                                }
+                                            } else {
+                                                if (typeof eval(subelement) == "undefined") {
+                                                    errorCode="408";
+                                                } else {
+                                                    if (duplicatedID(parentmodel,value)) {
+                                                        errorCode="351";
+                                                        diagnostic = "Data Model Element ID Already Exists";
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            parentmodel = 'cmi.interactions';
+                                            maxmodel = 'cmi.interactions.Nxxx.id';
                                             if (subelement.substr(0,parentmodel.length) == parentmodel) {
-                                                 if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
+                                                if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
                                                     //This is a parentmodel.n.id element
                                                     if (!duplicatedID(parentmodel,value)) {
                                                         if (elementIndexes[elementIndexes.length-2] == eval(parentmodel+'._count')) {
                                                             eval(parentmodel+'._count++;');
                                                             eval(subelement+' = new Object();');
                                                             subobject = eval(subelement);
-                                                            subobject.success_status = datamodel["cmi.objectives.n.success_status"].defaultvalue;
-                                                            subobject.completion_status = datamodel["cmi.objectives.n.completion_status"].defaultvalue;
-                                                            subobject.progress_measure = datamodel["cmi.objectives.n.progress_measure"].defaultvalue;
-                                                            subobject.score = new Object();
-                                                            subobject.score._children = score_children;
-                                                            subobject.score.scaled = datamodel["cmi.objectives.n.score.scaled"].defaultvalue;
-                                                            subobject.score.raw = datamodel["cmi.objectives.n.score.raw"].defaultvalue;
-                                                            subobject.score.min = datamodel["cmi.objectives.n.score.min"].defaultvalue;
-                                                            subobject.score.max = datamodel["cmi.objectives.n.score.max"].defaultvalue;
-                                                        }
+                                                            subobject.objectives = new Object();
+                                                            subobject.objectives._count = 0;
+                                                        } 
                                                     } else {
                                                         errorCode="351";
                                                         diagnostic = "Data Model Element ID Already Exists";
                                                     }
                                                 } else {
-                                                    if (!definedID(subelement,parentmodel)) {
+                                                    if (typeof eval(subelement) == "undefined") {
                                                         errorCode="408";
                                                     } else {
-                                                        if (duplicatedID(parentmodel,value)) {
-                                                            errorCode="351";
-                                                            diagnostic = "Data Model Element ID Already Exists";
-                                                        }
-                                                    }
-                                                }
-                                            } else {
-                                                parentmodel = 'cmi.interactions';
-                                                maxmodel = 'cmi.interactions.Nxxx.id';
-                                                if (subelement.substr(0,parentmodel.length) == parentmodel) {
-                                                    if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
-                                                        //This is a parentmodel.n.id element
-                                                        if (!duplicatedID(parentmodel,value)) {
-                                                            if (elementIndexes[elementIndexes.length-2] == eval(parentmodel+'._count')) {
-                                                                eval(parentmodel+'._count++;');
-                                                                eval(subelement+' = new Object();');
-                                                                eval(subelement+'.objectives = new Object();');
-                                                                eval(subelement+'.objectives._count = 0;');
-                                                                eval(subelement+'.correct_responses = new Object();');
-                                                                eval(subelement+'.correct_responses._count = 0;');
-                                                            } 
-                                                        } else {
-                                                            errorCode="351";
-                                                            diagnostic = "Data Model Element ID Already Exists";
-                                                        }
-                                                    } else {
-                                                        if (!definedID(subelement,parentmodel)) {
-                                                            errorCode="408";
-                                                        } else {
-                                                            if (duplicatedID(parentmodel,value)) {
-                                                                errorCode="351";
-                                                                diagnostic = "Data Model Element ID Already Exists";
-                                                            }
-                                                        }
-                                                    }
-                                                } else { 
-                                                    if (errorCode == "0") {
-                                                        if (elementIndexes[elementIndexes.length-2] == eval(parentmodel+'._count')) {
-                                                            eval(parentmodel+'._count++;');
-                                                            eval(subelement+' = new Object();');
+                                                        maxmodel = 'cmi.interactions.Nxxx.type';
+                                                        if ((elemlen <= maxmodel.length) && (element.substr(elemlen-4) == 'type') && (errorCode=="0")) { 
+                                                            subobject = eval(subelement);
+                                                            subobject.correct_responses = new Object();
+                                                            subobject.correct_responses._count = 0;
                                                         } 
                                                     }
                                                 }
+                                            } else { 
+                                                if (errorCode == "0") {
+                                                    if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
+                                                        eval(parentelement+'._count++;');
+                                                        eval(subelement+' = new Object();');
+                                                    } 
+                                                }
                                             }
+                                        }
+                                     } else {
+                                         parentmodel = 'cmi.objectives';
+                                         maxmodel = 'cmi.objectives.Nxxx.id';
+                                         if (subelement.substr(0,parentmodel.length) == parentmodel) {
+                                             if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
+                                                 if (eval(element) != value) {
+                                                     errorCode = "351";
+                                                     diagnostic = "Write Once Violation";
+                                                 }
+                                             }
                                          } else {
-                                             parentmodel = 'cmi.objectives';
-                                             maxmodel = 'cmi.objectives.Nxxx.id';
+                                             parentmodel = 'cmi.interactions';
+                                             maxmodel = 'cmi.interactions.Nxxx.id';
                                              if (subelement.substr(0,parentmodel.length) == parentmodel) {
                                                  if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
                                                      if (eval(element) != value) {
@@ -464,6 +494,7 @@ function SCORMapi1_3() {
                                                  }
                                              }
                                          }
+                                     }
                                 }
                             }
                             //Store data
@@ -490,7 +521,7 @@ function SCORMapi1_3() {
                                     }
                                 } else {
                                     eval(element+'="'+value+'";');
-                                    errorCode = "0";
+                                    errorCode = "0"; 
                                     <?php 
                                         if (debugging('',DEBUG_DEVELOPER)) {
                                             echo 'alert("SetValue("+element+","+value+") -> OK");';
@@ -657,29 +688,27 @@ function SCORMapi1_3() {
         return param;
     }
 
-    function definedID (element,parent) {
-        ss = element.indexOf('.',parent.length);
-        if (ss == -1) {
-            ss = element.length;
-        }
-        elementobj = eval(element.substr(0,ss));
-        if (((typeof elementobj) == "undefined") || ((typeof elementobj.id) == "undefined")) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
     function duplicatedID (element, value) {
         var found = false;
         var elements = eval(element+'._count');
-//alert('duplicate '+element+' '+elements);
         for (n=0;(n<elements) && (!found);n++) {
-            if (eval(element+'_'+n+'.id') == value) {
+            if (eval(element+'.N'+n+'.id') == value) {
                 found = true;
             }
         } 
         return found;
+    }
+
+    function getElementModel(element) {
+        if (typeof datamodel[element] != "undefined") {
+            return element;
+        } else {
+            expression = new RegExp(CMIIndex,'g');
+            elementmodel = element.replace(expression,'.n.');
+            if (typeof datamodel[elementmodel] != "undefined") {
+                return elementmodel;
+            }
+        }
     }
 
     function AddTime (first, second) {
@@ -765,7 +794,7 @@ function SCORMapi1_3() {
         if (storetotaltime) {
             if (cmi.mode == 'normal') {
                 if (cmi.credit == 'credit') {
-                    if ((cmi.completion_threshold != null) && (cmi.progress_measure != '')) {
+                    if ((cmi.completion_threshold != null) && (cmi.progress_measure != null)) {
                         if (cmi.progress_measure >= cmi.completion_threshold) {
                             cmi.completion_status = 'completed';
                         } else {
