@@ -62,19 +62,20 @@
 
     //Check name of module
     if (!$isblog) {
-        $mods = get_list_of_plugins("mod");
+        $mods = get_list_of_plugins('mod');
         if (!in_array(strtolower($modulename), $mods)) {
             rss_not_found();
         }
+        //Get course_module to check it's visible
+        if (!$cm = get_coursemodule_from_instance($modulename,$instance,$courseid)) {
+            rss_not_found();
+        }
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $isuser = has_capability('moodle/course:view', $context, $userid);   // Not ideal, this should be module-specific, but deferring until RSS gets a revamp with codes in the URLs
+    } else {
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $isuser = has_capability('moodle/course:view', $context, $userid);
     }
-
-    //Get course_module to check it's visible
-    if (!$isblog && (!$cm = get_coursemodule_from_instance($modulename,$instance,$courseid)) ) {
-        rss_not_found();
-    }
-
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $isuser = has_capability('moodle/course:view', $context, $userid);
     
     //Check for "security" if !course->guest or course->password
     if ($course->id != SITEID) {
