@@ -530,6 +530,12 @@ function install_from_xmldb_file($file) {
 
     $loaded = $xmldb_file->loadXMLStructure();
     if (!$loaded || !$xmldb_file->isLoaded()) {
+    /// Show info about the error if we can find it
+        if ($structure =& $xmldb_file->getStructure()) {
+            if ($errors = $structure->getAllErrors()) {
+                notify('Errors found in XMLDB file: '. implode (', ', $errors));
+            }
+        }
         return false;
     }
 
