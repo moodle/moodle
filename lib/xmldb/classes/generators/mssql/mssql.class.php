@@ -489,7 +489,7 @@ class XMLDBmssql extends XMLDBgenerator {
             'load', 'max', 'min', 'mirrorexit', 'national', 'nocheck', 'nonclustered',
             'not', 'null', 'nullif', 'of', 'off', 'offsets', 'on', 'once', 'only', 'open',
             'opendatasource', 'openquery', 'openrowset', 'openxml', 'option', 'or', 'order',
-            'outer', 'over', 'percent', 'perm', 'permanent', 'pipe', 'plan', 'precision',
+            'outer', 'over', 'percent', 'perm', 'permanent', 'pipe', 'pivot', 'plan', 'precision',
             'prepare', 'primary', 'print', 'privileges', 'proc', 'procedure', 'processexit',
             'public', 'raiserror', 'read', 'readtext', 'reconfigure', 'references',
             'repeatable', 'replication', 'restore', 'restrict', 'return', 'revoke',
