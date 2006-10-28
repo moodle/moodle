@@ -1007,6 +1007,25 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
+    // Clear record_cache based on the parameters passed (individual record or whole table)
+    if ($field1 == 'id') {
+        if (isset($record_cache[$table][$value1])) {
+            unset($record_cache[$table][$value1]);
+        }
+    } else if ($field2 == 'id') {
+        if (isset($record_cache[$table][$value2])) {
+            unset($record_cache[$table][$value2]);
+        }
+    } else if ($field3 == 'id') {
+        if (isset($record_cache[$table][$value3])) {
+            unset($record_cache[$table][$value3]);
+        }
+    } else {
+        if (isset($record_cache[$table])) {
+            unset($record_cache[$table]);
+        }
+    }
+
     $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
 
     $dataobject = new StdClass;
@@ -1038,25 +1057,6 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
             return false; //Some error happened while updating LOBs
         } else {
             return true; //Everrything was ok
-        }
-    }
-
-    // Clear record_cache based on the parameters passed (individual record or whole table)
-    if ($field1 == 'id') {
-        if (isset($record_cache[$table][$value1])) {
-            unset($record_cache[$table][$value1]);
-        }
-    } else if ($field2 == 'id') {
-        if (isset($record_cache[$table][$value2])) {
-            unset($record_cache[$table][$value2]);
-        }
-    } else if ($field3 == 'id') {
-        if (isset($record_cache[$table][$value3])) {
-            unset($record_cache[$table][$value3]);
-        }
-    } else {
-        if (isset($record_cache[$table])) {
-            unset($record_cache[$table]);
         }
     }
 
@@ -1122,15 +1122,15 @@ function delete_records_select($table, $select='') {
 
     global $CFG, $db, $record_cache;
 
+    // Clear record_cache (whole table)
+    if (isset($record_cache[$table])) {
+        unset($record_cache[$table]);
+    }
+
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
     if ($select) {
         $select = 'WHERE '.$select;
-    }
-
-    // Clear record_cache (whole table)
-    if (isset($record_cache[$table])) {
-        unset($record_cache[$table]);
     }
 
     return $db->Execute('DELETE FROM '. $CFG->prefix . $table .' '. $select);
