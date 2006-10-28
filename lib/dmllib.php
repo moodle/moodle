@@ -375,7 +375,7 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
     
     // Check to see whether this record is eligible for caching (fields=*, only condition is id)
     $docache = false;
-    if ($field1=='id' && !$field2 && !$field3 && $fields=='*') {
+    if (!empty($CFG->enablerecordcache) && $field1=='id' && !$field2 && !$field3 && $fields=='*') {
         $docache = true;
         // If it's in the cache, return it
         if (!empty($record_cache[$table][$value1])) {
@@ -388,7 +388,7 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
     $record = get_record_sql('SELECT '.$fields.' FROM '. $CFG->prefix . $table .' '. $select);
     
     // If we're caching records, store this one (supposing we got something - we don't cache failures)
-    if ($record && $docache) {
+    if (!empty($CFG->enablerecordcache) && $record && $docache) {
         $record_cache[$table][$value1] = $record;
     }
 
@@ -1008,21 +1008,23 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
     // Clear record_cache based on the parameters passed (individual record or whole table)
-    if ($field1 == 'id') {
-        if (isset($record_cache[$table][$value1])) {
-            unset($record_cache[$table][$value1]);
-        }
-    } else if ($field2 == 'id') {
-        if (isset($record_cache[$table][$value2])) {
-            unset($record_cache[$table][$value2]);
-        }
-    } else if ($field3 == 'id') {
-        if (isset($record_cache[$table][$value3])) {
-            unset($record_cache[$table][$value3]);
-        }
-    } else {
-        if (isset($record_cache[$table])) {
-            unset($record_cache[$table]);
+    if (!empty($CFG->enablerecordcache)) {
+        if ($field1 == 'id') {
+            if (isset($record_cache[$table][$value1])) {
+                unset($record_cache[$table][$value1]);
+            }
+        } else if ($field2 == 'id') {
+            if (isset($record_cache[$table][$value2])) {
+                unset($record_cache[$table][$value2]);
+            }
+        } else if ($field3 == 'id') {
+            if (isset($record_cache[$table][$value3])) {
+                unset($record_cache[$table][$value3]);
+            }
+        } else {
+            if (isset($record_cache[$table])) {
+                unset($record_cache[$table]);
+            }
         }
     }
 
@@ -1083,21 +1085,23 @@ function delete_records($table, $field1='', $value1='', $field2='', $value2='', 
     global $db, $CFG, $record_cache;
 
     // Clear record_cache based on the parameters passed (individual record or whole table)
-    if ($field1 == 'id') {
-        if (isset($record_cache[$table][$value1])) {
-            unset($record_cache[$table][$value1]);
-        }
-    } else if ($field2 == 'id') {
-        if (isset($record_cache[$table][$value2])) {
-            unset($record_cache[$table][$value2]);
-        }
-    } else if ($field3 == 'id') {
-        if (isset($record_cache[$table][$value3])) {
-            unset($record_cache[$table][$value3]);
-        }
-    } else {
-        if (isset($record_cache[$table])) {
-            unset($record_cache[$table]);
+    if (!empty($CFG->enablerecordcache)) {
+        if ($field1 == 'id') {
+            if (isset($record_cache[$table][$value1])) {
+                unset($record_cache[$table][$value1]);
+            }
+        } else if ($field2 == 'id') {
+            if (isset($record_cache[$table][$value2])) {
+                unset($record_cache[$table][$value2]);
+            }
+        } else if ($field3 == 'id') {
+            if (isset($record_cache[$table][$value3])) {
+                unset($record_cache[$table][$value3]);
+            }
+        } else {
+            if (isset($record_cache[$table])) {
+                unset($record_cache[$table]);
+            }
         }
     }
 
@@ -1123,7 +1127,7 @@ function delete_records_select($table, $select='') {
     global $CFG, $db, $record_cache;
 
     // Clear record_cache (whole table)
-    if (isset($record_cache[$table])) {
+    if (!empty($CFG->enablerecordcache) && isset($record_cache[$table])) {
         unset($record_cache[$table]);
     }
 
@@ -1339,7 +1343,7 @@ function update_record($table, $dataobject) {
     }
 
     // Remove this record from record cache since it will change
-    if (isset($record_cache[$table][$dataobject->id])) {
+    if (!empty($CFG->enablerecordcache) && isset($record_cache[$table][$dataobject->id])) {
         unset($record_cache[$table][$dataobject->id]);
     }
     
