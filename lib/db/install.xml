@@ -980,7 +980,7 @@
         <FIELD NAME="param1" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="General parameter field" PREVIOUS="defaultdata" NEXT="param2"/>
         <FIELD NAME="param2" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="General parameter field" PREVIOUS="param1" NEXT="param3"/>
         <FIELD NAME="param3" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="General parameter field" PREVIOUS="param2" NEXT="param4"/>
-        <FIELD NAME="param4" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="General parameter field" PREVIOUS="param2" NEXT="param5"/>
+        <FIELD NAME="param4" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="General parameter field" PREVIOUS="param3" NEXT="param5"/>
         <FIELD NAME="param5" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="General parameter field" PREVIOUS="param4"/>
       </FIELDS>
       <KEYS>
