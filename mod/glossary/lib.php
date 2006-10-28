@@ -799,7 +799,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
     
     if (has_capability('mod/glossary:comment', $context)) {
         $output = true;
-        $return .= ' <a title="' . get_string('addcomment','glossary') . '" href="comment.php?id='.$cm->id.'&amp;eid='.$entry->id.'"><img src="comment.gif" height="11" width="11" border="0" alt="'.get_string('addcomment','glossary').'" /></a>';
+        $return .= ' <a title="' . get_string('addcomment','glossary') . '" href="comment.php?action=add&amp;eid='.$entry->id.'"><img src="comment.gif" height="11" width="11" border="0" alt="'.get_string('addcomment','glossary').'" /></a>';
     }
 
 
@@ -1589,11 +1589,11 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
 
     $ineditperiod = ((time() - $comment->timemodified <  $CFG->maxeditingtime) || $glossary->editalways);
     if ( ($glossary->allowcomments &&  $ineditperiod && $USER->id == $comment->userid)  || has_capability('mod/glossary:managecomments', $context)) {
-        echo "<a href=\"comment.php?id=$cm->id&amp;eid=$entry->id&amp;cid=$comment->id&amp;action=edit\"><img  
+        echo "<a href=\"comment.php?cid=$comment->id&amp;action=edit\"><img  
                alt=\"" . get_string("edit") . "\" src=\"$CFG->pixpath/t/edit.gif\" height=\"11\" width=\"11\" border=\"0\" /></a> ";
     }
     if ( ($glossary->allowcomments && $USER->id == $comment->userid) || has_capability('mod/glossary:managecomments', $context) ) {
-        echo "<a href=\"comment.php?id=$cm->id&amp;eid=$entry->id&amp;cid=$comment->id&amp;action=delete\"><img  
+        echo "<a href=\"comment.php?cid=$comment->id&amp;action=delete\"><img  
                alt=\"" . get_string("delete") . "\" src=\"$CFG->pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\" /></a>";
     }
    
