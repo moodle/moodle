@@ -1167,8 +1167,4 @@ function change_db_encoding() {
     }
 }
 
-function xmldb_dbg($message) {
-    error_log($message);
-}
-
 ?>
