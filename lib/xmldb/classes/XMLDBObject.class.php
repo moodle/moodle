@@ -332,6 +332,27 @@ class XMLDBObject {
     }
 
     /**
+     * This function will perform the central debug of all the XMLDB classes
+     * being called automatically every time one error is found. Apart from 
+     * the main actions performed in it (XMLDB agnostic) it looks for one
+     * function called xmldb_debug() and invokes it, passing both the
+     * message code and the whole object. 
+     * So, to perform custom debugging just add such function to your libs.
+     * 
+     * Call to the external hook function can be disabled by request by
+     * defining XMLDB_SKIP_DEBUG_HOOK
+     */
+    function debug($message) {
+
+    /// Check for xmldb_debug($message, $xmldb_object)
+        $funcname = 'xmldb_debug';
+    /// If exists and XMLDB_SKIP_DEBUG_HOOK is undefined
+        if (function_exists($funcname) && !defined('XMLDB_SKIP_DEBUG_HOOK')) {
+            $funcname($message, $this);
+        }
+    }
+
+    /**
      * Returns one array of elements from one comma separated string,
      * supporting quoted strings containing commas and concat function calls
      */

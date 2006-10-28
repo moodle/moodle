@@ -103,7 +103,7 @@ class XMLDBStatement extends XMLDBObject {
             $this->table = strtolower(trim($xmlarr['@']['TABLE']));
         } else {
             $this->errormsg = 'Missing TABLE attribute';
-            xmldb_dbg($this->errormsg);
+            $this->debug($this->errormsg);
             $result = false;
         }
 
@@ -114,12 +114,12 @@ class XMLDBStatement extends XMLDBObject {
                 $this->type = $type;
             } else {
                 $this->errormsg = 'Invalid TYPE attribute';
-                xmldb_dbg($this->errormsg);
+                $this->debug($this->errormsg);
                 $result = false;
             }
         } else {
             $this->errormsg = 'Missing TYPE attribute';
-            xmldb_dbg($this->errormsg);
+            $this->debug($this->errormsg);
             $result = false;
         }
 
@@ -134,7 +134,7 @@ class XMLDBStatement extends XMLDBObject {
                         $sentencesarr[] = trim($sentence['@']['TEXT']);
                     } else {
                         $this->errormsg = 'Missing TEXT attribute in sentence';
-                        xmldb_dbg($this->errormsg);
+                        $this->debug($this->errormsg);
                         $result = false;
                     }
                 }
@@ -155,22 +155,22 @@ class XMLDBStatement extends XMLDBObject {
                 /// Check that we aren't inserting the id field
                     if (in_array('id', $fields)) {
                         $this->errormsg = 'Cannot insert the "id" field. It is an autonumeric column';
-                        xmldb_dbg($this->errormsg);
+                        $this->debug($this->errormsg);
                         $result = false;
                     }
                     if ($result && count($fields) == 0) {
                         $this->errormsg = 'Missing fields in sentence "' . $sentence . '"';
-                        xmldb_dbg($this->errormsg);
+                        $this->debug($this->errormsg);
                         $result = false;
                     }
                     if ($result && count($values) == 0) {
                         $this->errormsg = 'Missing values in sentence "' . $sentence . '"';
-                        xmldb_dbg($this->errormsg);
+                        $this->debug($this->errormsg);
                         $result = false;
                     }
                     if ($result && count($fields) != count($values)) {
                         $this->errormsg = 'Incorrect number of fields (' .implode(', ', $fields) . ') or values (' . implode(', ', $values) . ')';
-                        xmldb_dbg($this->errormsg);
+                        $this->debug($this->errormsg);
                         $result = false;
                     }
                 }
@@ -178,7 +178,7 @@ class XMLDBStatement extends XMLDBObject {
         } else {
         /// Sentences different from INSERT are not valid for now
             $this->errormsg = 'Only INSERT statements are supported';
-            xmldb_dbg($this->errormsg);
+            $this->debug($this->errormsg);
             $result = false;
         }
 
