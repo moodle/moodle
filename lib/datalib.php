@@ -1517,5 +1517,20 @@ function category_parent_visible($parent = 0) {
     return $v;
 }
 
+/**
+ * This function is the official hook inside XMLDB stuff to delegate its debug to one 
+ * external function.
+ *
+ * Any script can avoid calls to this function by defining XMLDB_SKIP_DEBUG_HOOK before
+ * using XMLDB classes. Obviously, also, if this function doesn't exist, it isn't invoked ;-)
+ *
+ * @param $message string contains the error message
+ * @param $object object XMLDB object that fired the debug
+ */
+function xmldb_debug($message, $object) {
+
+    error_log($message);
+}
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
