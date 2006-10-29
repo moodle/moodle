@@ -233,7 +233,7 @@ function require_capability($capability, $context=NULL, $userid=NULL, $doanythin
 
 /// If the current user is not logged in, then make sure they are
 
-    if (empty($userid) and empty($USER->id)) {
+    if (empty($userid) and empty($USER->capabilities)) {
         if ($context && ($context->contextlevel == CONTEXT_COURSE)) {
             require_login($context->instanceid);
         } else if ($context && ($context->contextlevel == CONTEXT_MODULE)) {
