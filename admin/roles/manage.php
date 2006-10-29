@@ -281,13 +281,13 @@
 
         switch ($action) {
             case 'add':
-                print_heading(get_string('addrole', 'role'));
+                print_heading_with_help(get_string('addrole', 'role'), 'role');
                 break;
             case 'view':
-                print_heading(get_string('viewrole', 'role'));
+                print_heading_with_help(get_string('viewrole', 'role'), 'role');
                 break;
             case 'edit':
-                print_heading(get_string('editrole', 'role'));
+                print_heading_with_help(get_string('editrole', 'role'), 'role');
                 break;
         }
 
