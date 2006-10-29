@@ -49,6 +49,7 @@ $string['antrankey'] = 'Authorize.net: Transaction Key';
 $string['approvedreview'] = 'Approved Review';
 $string['authcaptured'] = 'Authorized / Captured';
 $string['authorize:managepayments'] = 'Manage payments';
+$string['authorize:uploadcsv']='Upload CSV file';
 $string['authorizedpendingcapture'] = 'Authorized / Pending Capture';
 $string['avsa'] = 'Address (street) matches, postal code does not';
 $string['avsb'] = 'Address information not provided';
