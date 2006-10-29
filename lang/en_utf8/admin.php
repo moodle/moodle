@@ -371,6 +371,7 @@ $string['invaliduserchangeme'] = 'Username "changeme" is reserved -- you cannot 
 $string['lang16notify'] = 'Moodle 1.6 and above allows you to install and update language packs directly from download.moodle.org by following the link below';
 $string['langedit'] = 'Language editing';
 $string['langpacks'] = 'Language packs';
+$string['langimport'] = 'Language import utility';
 $string['langimportsuccess'] = 'Language pack successfully upgraded';
 $string['langpackremoved'] = 'Language pack was uninstalled';
 $string['langpackupdated'] = 'Language pack $a was successfully installed';
