@@ -1,0 +1,64 @@
+<p align="center"><b>Permissions</b></p>
+
+<p>
+Permissions are the settings that you grant for specific capabilities.
+</p>
+
+<p>
+For example, one capability is "Start new discussions" (in forums).
+</p>
+
+<p>
+In each role, you can choose to set the permission for such a capability 
+to one of four values:
+<dl>
+<dt>Inherit</dt>
+<dd>This is the default setting, generally.  It's a neutral setting that
+    means "use whatever setting the user already had".   If a role 
+    gets assigned to someone (eg in a course) that has this permission for 
+    a capability, then the actual permission they'll have will just be 
+    the same as they already had at higher-level contexts (eg categories
+    or site level).  Ultimately, if permission is never allowed at any 
+    level, then the user will have no permission for that capability.
+    </dd>
+
+<dt>Allow</dt>
+<dd>By choosing this you are granting permission for this capability
+    to people who are assigned this role.  This permission applies
+    for the context that this role gets assigned plus all "lower"
+    contexts.  For example, if this role is a student role assigned
+    to a course, then students will be able to "start new discussions"
+    in all forums in that course, UNLESS some forum contains an 
+    override or a new assignment with a Prevent or Prohibit value
+    for this capability.</dd>
+
+<dt>Prevent</dt>
+<dd>By choosing this you are removing permission for this capability,
+    even if the users with this role were allowed that permission in 
+    a higher context.</dd>
+
+<dt>Prohibit</dt>
+<dd>This is rarely needed, but occasionally you might want to completely
+    deny permissions to a role in a way that can NOT be overridden at 
+    any lower context.  A good example of when you might need this is 
+    when an admin wants to prohibit one person from starting new 
+    discussions in any forum on the whole site.   In this case they 
+    can create a role with that capability set to "Prohibit" and then 
+    assign it to that user in the site context.
+  </dd>
+
+</dl>
+</p>
+
+<p align="center"><b>Conflict resolution of permissions</b></p>
+
+<p> If two roles are assigned to a person in the same context, one with 
+    Allow and one with Prevent, which one wins?  In this case, Moodle will 
+    look up the context tree for a "decider".   </p>
+    
+<p> For example, a student has two roles in a course, one that allows 
+    them to start new discussions, one that prevents them.  In this case, 
+    we check the categories and the site contexts, looking for another 
+    defined permission to help us decide.  If we don't find one, then 
+    permission is prevented by default (the two settings cancelled each other out).
+</p>
