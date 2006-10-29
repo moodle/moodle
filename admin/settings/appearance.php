@@ -120,7 +120,7 @@ $ADMIN->add('appearance', $temp);
 
 // new CFG variable for gradebook (what roles to display)
 $temp = new admin_settingpage('gradebook', get_string('gradebook', 'admin'));
-$temp->add(new admin_setting_special_gradebook_roles());
+$temp->add(new admin_setting_special_gradebookroles());
 $ADMIN->add('appearance', $temp);
 
 

@@ -2996,12 +2996,12 @@ function print_student_grade($user, $course) {
 
 function grade_get_course_students($courseid) {
     global $CFG;
-    // The list of roles to display is stored in CFG->gradebook_roles
+    // The list of roles to display is stored in CFG->gradebookroles
     if (!$context = get_context_instance(CONTEXT_COURSE, $courseid)) {
         return false;  
     } 
         
-    $configvar = get_config('', 'gradebook_roles');
+    $configvar = get_config('', 'gradebookroles');
     if (empty($configvar->value)) {
         notify ('no roles defined in admin->appearance->graderoles');
         return false; // no roles to displayreturn false;  
