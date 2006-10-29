@@ -1,6 +1,5 @@
 <?php //$Id$
 
-// TODO - THE HELP BUTTON FOR FORMATTING TO BE Included and formatting drop down box.
 require_once $CFG->libdir.'/formslib.php';
 
 class glossary_comment_form extends moodleform {
@@ -13,6 +12,7 @@ class glossary_comment_form extends moodleform {
         $mform->setType('entrycomment', PARAM_RAW); // processed by trusttext or cleaned before the display
 
         $mform->addElement('format', 'format', get_string('format'));
+        $mform->setHelpButton('format', array("textformat", get_string("helpformatting")));
 
         // hidden optional params
         $mform->addElement('hidden', 'cid', 0);
