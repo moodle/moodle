@@ -48,67 +48,80 @@
         }
     }
 
-    if (!$currentuser && $course->id != SITEID && 
-        !has_capability('moodle/course:view', $coursecontext, $user->id, false)) {
-        print_error('usernotavailable');
-    }
-
-    if ($course->id != SITEID) {
-        if ($lastaccess = get_record('user_lastaccess', 'userid', $user->id, 'courseid', $course->id)) {
-            $user->lastaccess = $lastaccess->timeaccess;
-        }
-    }
-
-    $personalprofile = get_string('personalprofile');
-    $participants = get_string("participants");
-
-
-    if (groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $coursecontext)) {   // Groups must be kept separate
-        require_login();
-
-        ///this is changed because of mygroupid
-        $gtrue = false;
-        if ($mygroups = mygroupid($course->id)){
-            foreach ($mygroups as $group){
-                if (ismember($group, $user->id)){
-                    $gtrue = true;
-                }
-            }
-        }
-        // took the teacheredit check out because teacheredit will have moodle/site:accessallgroups capability
-        // which was already checked
-        if (!$currentuser && !$gtrue) {
-            print_header("$personalprofile: ", "$personalprofile: ",
-                         "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
-                          <a href=\"index.php?id=$course->id\">$participants</a>",
-                          "", "", true, "&nbsp;", navmenu($course));
-            error(get_string("groupnotamember"), "../course/view.php?id=$course->id");
-        }
-    }
-  
-    if ($course->id == SITEID and !$currentuser) {  // To reduce possibility of "browsing" userbase at site level
-        if ($CFG->forceloginforprofiles and !isteacherinanycourse() and !isteacherinanycourse($user->id)) {  // Teachers can browse and be browsed at site level. If not forceloginforprofiles, allow access (bug #4366)
-            print_header("$personalprofile: ", "$personalprofile: ",
-                          "<a href=\"index.php?id=$course->id\">$participants</a>",
-                          "", "", true, "&nbsp;", navmenu($course));
-            print_heading(get_string('usernotavailable', 'error'));
-            print_footer($course);
-            die;
-        }
-    }
-
-
-/// We've established they can see the user's name at least, so what about the rest?
+    $strpersonalprofile = get_string('personalprofile');
+    $strparticipants = get_string("participants");
+    $struser = get_string("user");
 
     $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $coursecontext));
 
+/// If the user being shown is not ourselves, then make sure we are allowed to see them!
+
+    if (!$currentuser) {
+
+        if ($course->id == SITEID) {  // Reduce possibility of "browsing" userbase at site level
+            if ($CFG->forceloginforprofiles and !isteacherinanycourse() and !isteacherinanycourse($user->id)) {  // Teachers can browse and be browsed at site level. If not forceloginforprofiles, allow access (bug #4366)
+                print_header("$strpersonalprofile: ", "$strpersonalprofile: ",
+                              "<a href=\"index.php?id=$course->id\">$strparticipants</a> -> $struser",
+                              "", "", true, "&nbsp;", navmenu($course));
+                print_heading(get_string('usernotavailable', 'error'));
+                print_footer($course);
+                exit;
+            }
+        } else {   // Normal course
+            if (!has_capability('moodle/course:view', $coursecontext, $user->id, false)) {
+                if (has_capability('moodle/course:view', $coursecontext)) {
+                    print_header("$strpersonalprofile: ", "$strpersonalprofile: ",
+                                     "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
+                                  <a href=\"index.php?id=$course->id\">$strparticipants</a> -> $fullname",
+                                  "", "", true, "&nbsp;", navmenu($course));
+                    print_heading(get_string('notenrolled', '', $fullname));
+                } else {
+                    print_header("$strpersonalprofile: ", "$strpersonalprofile: ",
+                                     "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
+                                  <a href=\"index.php?id=$course->id\">$strparticipants</a> -> $struser",
+                                  "", "", true, "&nbsp;", navmenu($course));
+                    print_heading(get_string('notenrolledprofile'));
+                }
+                print_continue($_SERVER['HTTP_REFERER']);
+                print_footer($course);
+                exit;
+            }
+        }
+
+
+        // If groups are in use, make sure we can see that group
+        if (groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $coursecontext)) {
+            require_login();
+    
+            ///this is changed because of mygroupid
+            $gtrue = false;
+            if ($mygroups = mygroupid($course->id)){
+                foreach ($mygroups as $group){
+                    if (ismember($group, $user->id)){
+                        $gtrue = true;
+                    }
+                }
+            }
+            if (!$gtrue) {
+                print_header("$strpersonalprofile: ", "$strpersonalprofile: ",
+                             "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
+                              <a href=\"index.php?id=$course->id\">$strparticipants</a>",
+                              "", "", true, "&nbsp;", navmenu($course));
+                error(get_string("groupnotamember"), "../course/view.php?id=$course->id");
+            }
+        }
+    }
+  
+
+/// We've established they can see the user's name at least, so what about the rest?
+
     if ($course->category) {
-        print_header("$personalprofile: $fullname", "$personalprofile: $fullname",
+        print_header("$strpersonalprofile: $fullname", "$strpersonalprofile: $fullname",
                      "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
-                      <a href=\"index.php?id=$course->id\">$participants</a> -> $fullname",
+                      <a href=\"index.php?id=$course->id\">$strparticipants</a> -> $fullname",
                       "", "", true, "&nbsp;", navmenu($course));
     } else {
-        print_header("$course->fullname: $personalprofile: $fullname", "$course->fullname",
+        print_header("$course->fullname: $strpersonalprofile: $fullname", "$course->fullname",
                      "$fullname", "", "", true, "&nbsp;", navmenu($course));
     }
 
@@ -128,6 +141,12 @@
 /// OK, security out the way, now we are showing the user
 
     add_to_log($course->id, "user", "view", "view.php?id=$user->id&course=$course->id", "$user->id");
+
+    if ($course->id != SITEID) {
+        if ($lastaccess = get_record('user_lastaccess', 'userid', $user->id, 'courseid', $course->id)) {
+            $user->lastaccess = $lastaccess->timeaccess;
+        }
+    }
 
 
 /// Get the hidden field list
