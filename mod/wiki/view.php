@@ -7,7 +7,7 @@
     require_once("../../config.php");
     require_once("lib.php");
     #require_once("$CFG->dirroot/course/lib.php"); // For side-blocks    
-    require_once(dirname(__FILE__).'/../../lib/ajax/ajaxlib.php');
+    require_once($CFG->libdir . '/ajax/ajaxlib.php');
 
     $ewiki_action = optional_param('ewiki_action', '', PARAM_ALPHA);     // Action on Wiki-Page
     $id           = optional_param('id', 0, PARAM_INT);                  // Course Module ID, or
@@ -444,7 +444,7 @@
             }
         } else {
         		// OK, the page is now locked to us. Put in the AJAX for keeping the lock
-            print_require_js(array('yui_yahoo','yui_connection'));
+            require_js(array('yui_yahoo','yui_connection'));
             $strlockcancelled=get_string('lockcancelled','wiki');
             $strnojslockwarning=get_string('nojslockwarning','wiki');
             $intervalms=WIKI_LOCK_RECONFIRM*1000;
