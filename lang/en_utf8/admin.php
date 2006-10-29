@@ -5,9 +5,9 @@
 // begin {added with admin cleanup}
 $string['gradebook'] = 'Gradebook';
 $string['gradebookroles'] = 'Graded roles';
-$string['configgradebookroles'] = 'Which roles are gradable?';
+$string['configgradebookroles'] = 'This setting allows you to control who appears on the gradebook.  Users need to have at least one of these roles in a course to be shown in the gradebook for that course.';
 $string['enableajax'] = 'Enable AJAX';
-$string['configenableajax'] = 'If you enable AJAX features users can disable them in their profile, otherwise AJAX is disabled for everybody.';
+$string['configenableajax'] = 'This setting allows you to control the use of AJAX (advanced client/server interfaces using Javascript) across the whole site.  With this setting enabled users can sill make a choice in their profile, otherwise AJAX is disabled for everybody.';
 $string['autologinguests'] = 'Auto-login guests';
 $string['search'] = 'Search';
 $string['searchresults'] = 'Search Results';

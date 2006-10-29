@@ -2306,22 +2306,14 @@ class admin_setting_special_calendar_weekend extends admin_setting {
 /*
  * this is used in config->appearance->gradeconfig
  */
-class admin_setting_special_gradebook_roles extends admin_setting {
+class admin_setting_special_gradebookroles extends admin_setting {
 
-    function admin_setting_special_gradebook_roles() {
-        $name = 'gradebook_roles';
+    function admin_setting_special_gradebookroles() {
+        $name = 'gradebookroles';
         $visiblename = get_string('gradebookroles', 'admin');
         $description = get_string('configgradebookroles', 'admin');
 
-        $value = array();
-
-        if ($studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
-            foreach ($studentroles as $roleid=>$studentrole) {
-                $value[$roleid] = 1;
-            }
-        }
-
-        parent::admin_setting($name, $visiblename, $description, $value);
+        parent::admin_setting($name, $visiblename, $description, '');
     }
 
     function get_setting() {
@@ -2329,14 +2321,20 @@ class admin_setting_special_gradebook_roles extends admin_setting {
         if (isset($CFG->{$this->name})) {
             return explode(',', $CFG->{$this->name});
         } else {
-            return NULL;
+            $value = array();
+            if ($studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
+                foreach ($studentroles as $roleid=>$studentrole) {
+                    $value[] = $roleid;
+                }
+            }
+            return $value;
         }
     }
 
     function write_setting($data) {
         if (!empty($data)) {
             $str = '';
-            foreach($data as $key => $value) {
+            foreach ($data as $key => $value) {
                 if ($value) {
                     $str .= $key.',';
                 }
