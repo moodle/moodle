@@ -2313,7 +2313,7 @@ class admin_setting_special_gradebookroles extends admin_setting {
         $visiblename = get_string('gradebookroles', 'admin');
         $description = get_string('configgradebookroles', 'admin');
 
-        $default = $this->get_setting;
+        $default = $this->get_setting();
 
         if (empty($default)) {
             $default = array(5);    // The student role in a default install
