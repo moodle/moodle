@@ -32,10 +32,10 @@
 <?php } ?>
     <div class="clearer">&nbsp;</div>
 <?php if ($navigation) { // This is the navigation table with breadcrumbs  ?>
-    <table class="navbar"><tr><td>
+    <div class="navbar clearfix">
         <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
         <div class="navbutton"><?php echo $button; ?></div>
-    </td></tr></table>
+    </div>
 <?php } else if ($heading) { // If no navigation, but a heading, then print a line  
 ?>
         <hr size="1" noshade="noshade" />
