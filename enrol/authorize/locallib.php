@@ -33,6 +33,7 @@ function authorize_print_orders($courseid, $userid)
 
     $baseurl = $CFG->wwwroot."/enrol/authorize/index.php?user=$userid";
     $statusmenu = array(AN_STATUS_NONE => $strs->all,
+                        AN_STATUS_AUTH | AN_STATUS_UNDERREVIEW | AN_STATUS_APPROVEDREVIEW => $authstrs->allpendingorders,
                         AN_STATUS_AUTH => $authstrs->authorizedpendingcapture,
                         AN_STATUS_AUTHCAPTURE => $authstrs->authcaptured,
                         AN_STATUS_CREDIT => $authstrs->refunded,
@@ -100,6 +101,10 @@ function authorize_print_orders($courseid, $userid)
     if ($status > AN_STATUS_NONE) {
         switch ($status)
         {
+            case AN_STATUS_AUTH | AN_STATUS_UNDERREVIEW | AN_STATUS_APPROVEDREVIEW:
+                $where .= 'AND (e.status IN('.AN_STATUS_AUTH.','.AN_STATUS_UNDERREVIEW.','.AN_STATUS_APPROVEDREVIEW.')) ';
+                break;
+
             case AN_STATUS_CREDIT:
                 $from .= "INNER JOIN {$CFG->prefix}enrol_authorize_refunds r ON e.id = r.orderid ";
                 $where .= "AND (e.status = '" . AN_STATUS_AUTHCAPTURE . "') ";
