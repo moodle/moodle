@@ -226,11 +226,7 @@
                     if ( $newentry->casesensitive ) {
                         $dupentry = get_record("glossary_entries","concept",$newentry->concept,"glossaryid",$glossary->id);
                     } else {
-                        if ($CFG->dbtype == 'postgres7') {
-                            $dupentry = get_record("glossary_entries","lower(concept)",moodle_strtolower($newentry->concept),"glossaryid",$glossary->id);
-                        }else {
-                            $dupentry = get_record("glossary_entries","lcase(concept)",moodle_strtolower($newentry->concept),"glossaryid",$glossary->id);
-                        }
+                        $dupentry = get_record("glossary_entries","lower(concept)",moodle_strtolower($newentry->concept),"glossaryid",$glossary->id);
                     }
                     if ($dupentry) {
                         $permissiongranted = 0;
