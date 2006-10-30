@@ -2809,8 +2809,10 @@ function remove_course_contents($courseid, $showfeedback=true) {
     question_delete_course($course, $showfeedback);
 
 /// Delete all roles and overiddes in the course context (but keep the course context)
-    delete_context(CONTEXT_COURSE, $course->id);
-
+    if ($courseid != SITEID) {
+        delete_context(CONTEXT_COURSE, $course->id);
+    }
+    
     return $result;
 }
 
