@@ -167,7 +167,7 @@
                     $currentpivot = $upperpivot;
 
                     $pivottoshow = $currentpivot;
-                    if ( isset($entry->userid) ) {
+                    if ( isset($entry->userispivot) ) {
                         // printing the user icon if defined (only when browsing authors)
                         $user = get_record("user","id",$entry->userid);
                         $pivottoshow = fullname($user);

@@ -91,7 +91,7 @@
             $where = '';
         }
 
-        $sqlselect  = "SELECT ge.*, $usernamefield AS glossarypivot ";
+        $sqlselect  = "SELECT ge.*, $usernamefield AS glossarypivot, 1 AS userispivot ";
         $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge, {$CFG->prefix}user u";
         $sqlwhere   = "WHERE ge.userid = u.id  AND
                              (ge.approved != 0 $userid)
@@ -268,5 +268,6 @@
     if ( $offset >= 0 ) {
         $limitnum = $entriesbypage;
     }
+
     $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby", $limitfrom, $limitnum);
 ?>

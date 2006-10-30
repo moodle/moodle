@@ -354,7 +354,7 @@
 
                     echo '<tr>';
                     $pivottoshow = $currentpivot;
-                    if ( isset($entry->userid) ) {
+                    if ( isset($entry->userispivot) ) {
                     // printing the user icon if defined (only when browsing authors)
                         echo '<td align="left">';
 
