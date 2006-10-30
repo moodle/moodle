@@ -132,7 +132,8 @@ if (!isset($frm->acceptechecktypes)) {
 
 <tr valign="top">
     <td align="right">an_authcode:</td>
-    <td><?php print_checkbox('an_authcode', '1', !empty($frm->an_authcode)) ?><br />
+    <td><?php print_checkbox('an_authcode', '1', !empty($frm->an_authcode)) ?>
+        <?php helpbutton('authcode', '', 'enrol/authorize'); ?><br />
         <?php print_string("adminauthcode", "enrol_authorize") ?></td>
 </tr>
 
