@@ -410,6 +410,10 @@ form.mform div.error,form.mform fieldset.error {
   border-style:solid;
 }
 
+table.navbar {
+  width: 100%;
+}
+
 .navbar .navbutton form {
   float: left;
 }
