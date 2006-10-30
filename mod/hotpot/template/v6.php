@@ -724,7 +724,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
             $str .= "D[$i] = new Array();\n";
             $str .= "D[$i][0] = '".$this->js_safe($item['text'][0]['#'], true)."';\n";
             $str .= "D[$i][1] = ".($i+1).";\n";
-            $str .= "D[$i][2] = '".$this->int_value($item['fixed'][0]['#'])."';\n";
+            $str .= "D[$i][2] = '".(empty($item['fixed'][0]['#']) ? 0 : 1)."';\n";
         }
         return $str;
     }
