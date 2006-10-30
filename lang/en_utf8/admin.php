@@ -6,7 +6,6 @@
 $string['experimental'] = 'Experimental';
 $string['enableglobalsearch'] = 'Enable global search';
 $string['configenableglobalsearch'] = 'This setting enables global text searching in resources and activities, it is not compatible with PHP 4.';
-$string['enableajax'] = 'Enable AJAX';
 $string['gradebook'] = 'Gradebook';
 $string['gradebookroles'] = 'Graded roles';
 $string['configgradebookroles'] = 'This setting allows you to control who appears on the gradebook.  Users need to have at least one of these roles in a course to be shown in the gradebook for that course.';
