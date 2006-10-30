@@ -9,9 +9,6 @@ function require_js($list) {
     global $CFG;
     $output = '';
 
-    return;     // Okay AJAX is nowhere near ready. Disabling until the major
-                // issues are resolved.
-
     if (!check_browser_version('MSIE', 6.0) && !check_browser_version('Firefox', 1.5)) {
         // We still have issues with YUI in other browsers.
         return;
