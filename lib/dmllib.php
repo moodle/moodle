@@ -1557,6 +1557,7 @@ function sql_isnull($fieldname) {
  * AS keyword at all, only columns for postgres.
  * @uses $CFG
  * @ return string the keyword
+ * @deprecated Moodle 1.7 because coding guidelines now enforce to use AS in column aliases
  */
 function sql_as() {
     global $CFG, $db;
