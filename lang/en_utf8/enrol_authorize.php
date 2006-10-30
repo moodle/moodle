@@ -39,7 +39,6 @@ $string['adminnewordersubject'] = '$a->course: New Pending Order($a->orderid)';
 $string['adminpendingorders'] = 'You have disabled scheduled-capture feature.<br />Total $a->count transactions with a status of \'Authorized/Pending Capture\' will be cancelled unless you check it.<br />To accept/deny payments go to <a href=\'$a->url\'>Payment Management</a> page.';
 $string['adminreview'] = 'Review order before processing the credit card.';
 $string['adminteachermanagepay'] = 'Teachers can manage the payments of the course.';
-$string['allpendingorders'] = 'All Pending Orders';
 $string['amount'] = 'Amount';
 $string['anlogin'] = 'Authorize.net: Login name';
 $string['anpassword'] = 'Authorize.net: Password';
