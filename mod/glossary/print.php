@@ -152,7 +152,7 @@
         foreach ($allentries as $entry) {
 
             // Setting the pivot for the current entry
-            $pivot = $entry->pivot;
+            $pivot = $entry->glossarypivot;
             $upperpivot = $textlib->strtoupper($pivot, current_charset());
             // Reduce pivot to 1cc if necessary
             if ( !$fullpivot ) {
