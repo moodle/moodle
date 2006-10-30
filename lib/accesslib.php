@@ -1228,7 +1228,10 @@ function moodle_install_roles() {
         if ($rs = get_recordset('user_teachers')) {
             while (! $rs->EOF) {
                 $teacher = $rs->FetchObj();
-
+                // ignore site level teacher assignments
+                if ($teacher->course == SITEID) {
+                    continue;  
+                }
                 // populate the user_lastaccess table
                 $access = new object();
                 $access->timeaccess = $teacher->timeaccess;
