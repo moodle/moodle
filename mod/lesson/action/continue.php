@@ -773,5 +773,5 @@
     
     lesson_print_header($cm, $course, $lesson, 'navigation');
 
-    include($CFG->wwwroot.'/mod/lesson/action/continue.html');
+    include(dirname(__FILE__).'/continue.html');
 ?>
