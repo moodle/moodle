@@ -18,7 +18,7 @@ define('ORDER_VOID',    'void');
  */
 function authorize_print_orders()
 {
-    global $CFG, $USER;
+    global $CFG, $USER, $SITE;
     global $strs, $authstrs;
     global $courseid, $userid;
     require_once($CFG->libdir.'/tablelib.php');
@@ -40,19 +40,16 @@ function authorize_print_orders()
                         AN_STATUS_TEST => $authstrs->tested
     );
 
-    $sql = "SELECT id, fullname FROM {$CFG->prefix}course ";
+    $sql = "SELECT c.id, c.fullname FROM {$CFG->prefix}course c INNER JOIN {$CFG->prefix}enrol_authorize e ON c.id = e.courseid ";
     if ($CFG->enrol == 'authorize') { // default enrolment plugin
-        $sql .= "WHERE (enrol IS NULL) OR (enrol='') OR (enrol = 'authorize') ";
+        $sql .= "WHERE (c.enrol IS NULL) OR (c.enrol='') OR (c.enrol = 'authorize') ";
     }
     else {
-        $sql .= "WHERE (enrol = 'authorize') ";
+        $sql .= "WHERE (c.enrol = 'authorize') ";
     }
-    $sql .= "ORDER BY sortorder, fullname";
-    if ($courses = get_records_sql($sql)) {
-        $popupcrs = array();
-        foreach ($courses as $crs) {
-            $popupcrs[$crs->id] = $crs->fullname;
-        }
+    $sql .= "ORDER BY c.sortorder, c.fullname";
+    if ($popupcrs = get_records_sql_menu($sql)) {
+        $popupcrs[$SITE->id] = $SITE->fullname;
         print_simple_box_start('center', '100%');
         echo "$strs->status: ";
         echo popup_form($baseurl.'&amp;course='.$courseid.'&amp;status=',$statusmenu,'statusmenu',$status,'','','',true);
