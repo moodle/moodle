@@ -45,18 +45,19 @@ class moodleform {
      * To autofocus on first form element with error.
      *
      * @return string  javascript to select form element with first error or
-     * '' if no errors.
+     * first element if no errors.
      */
     function focus(){
         $form=$this->_form;
+        $elkeys=array_keys($form->_elementIndex);
         if (isset($form->_errors) &&  0!=count($form->_errors)){
             $errorkeys=array_keys($form->_errors);
-            $elkeys=array_keys($form->_elementIndex);
             $keyinorder=array_intersect($elkeys, $errorkeys);
             $el='getElementById(\'id_'.array_shift($keyinorder).'\')';
             return $el;
         } else{
-            return '';
+            $el='getElementById(\'id_'.array_shift($elkeys).'\')';
+            return $el;
         }
     }
 
