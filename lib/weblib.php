@@ -2218,6 +2218,10 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         $pageclass .= ' editing';
     }
 
+    if (!empty($CFG->blocksdrag)) {
+        $pageclass .= ' drag';
+    }
+
     $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
 
     ob_start();
