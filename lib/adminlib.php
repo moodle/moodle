@@ -2313,12 +2313,18 @@ class admin_setting_special_gradebookroles extends admin_setting {
         $visiblename = get_string('gradebookroles', 'admin');
         $description = get_string('configgradebookroles', 'admin');
 
-        parent::admin_setting($name, $visiblename, $description, '');
+        $default = $this->get_setting;
+
+        if (empty($default)) {
+            $default = array(5);    // The student role in a default install
+        }
+
+        parent::admin_setting($name, $visiblename, $description, $default);
     }
 
     function get_setting() {
         global $CFG;
-        if (isset($CFG->{$this->name})) {
+        if (!empty($CFG->{$this->name})) {
             return explode(',', $CFG->{$this->name});
         } else {
             $value = array();
