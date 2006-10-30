@@ -114,6 +114,10 @@
         } else {
             unset_user_preference('mailcharset', $user->id);
         }
+        if (empty($CFG->enableajax)) {
+            unset($usernew->ajax);
+        }
+
         $usernew->maildigest    = clean_param($usernew->maildigest,    PARAM_INT);
         $usernew->autosubscribe = clean_param($usernew->autosubscribe, PARAM_INT);
         if (!empty($CFG->htmleditor)) {
