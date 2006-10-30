@@ -11,6 +11,9 @@
 **   Support of rejoinders
 **
 ** $Log$
+** Revision 1.5  2006/10/30 16:22:58  thepurpleblob
+** fixed a notice
+**
 ** Revision 1.4  2006/08/10 18:23:39  tjhunt
 ** Convert tabs to spaces.
 **
@@ -147,9 +150,6 @@ class qformat_examview extends qformat_default {
             $question->questiontext = $htmltext;
             $question->name = $question->questiontext;
             $question->qtype = MATCH;
-            // No images with this format
-            // print($question->questiontext.' '.$question->id."<BR>");
-            
             $question->subquestions = array();
             $question->subanswers = array();
             foreach($match_group->subquestions as $key => $value) {
@@ -165,20 +165,15 @@ class qformat_examview extends qformat_default {
         }
     }
     
-    // cleans unicode characters from string
-    // add to the array unicode_array as necessary
     function cleanUnicode($text) {
-        //$unicode_array = array("&#2019;" => "'");
-        //return strtr($text, $unicode_array);
         return str_replace('&#x2019;', "'", $text);
     }
-    
-    function readquestions($lines)
-    {
+
+    function readquestions($lines) {
         /// Parses an array of lines into an array of questions,
         /// where each item is a question object as defined by
         /// readquestion().
-        
+
         $questions = array();
         $currentquestion = array();
         
@@ -186,7 +181,9 @@ class qformat_examview extends qformat_default {
         $text = $this->cleanUnicode($text);
 
         $xml = xmlize($text, 0);
-        $this->parse_matching_groups($xml['examview']['#']['matching-group']);
+        if (!empty($xml['examview']['#']['matching-group'])) {
+            $this->parse_matching_groups($xml['examview']['#']['matching-group']);
+        }
         
         $questionNode = $xml['examview']['#']['question'];
         foreach($questionNode as $currentquestion) {
@@ -205,8 +202,8 @@ class qformat_examview extends qformat_default {
     // end readquestions
     
     function htmlPrepare($htmltext)
-    {
-        $text = trim($text);
+    { 
+        // $text = trim($text);
         $text = s($htmltext);
         //$htmltext = nl2br($text);
         return $text;
