@@ -23,7 +23,7 @@
 /// Load strings. All strings should be defined here. locallib.php uses these strings.
     $strs = get_strings(array('search','status','action','time','course','confirm','no','all','none','error'));
     $authstrs = get_strings(array('orderid','nameoncard','echeckfirslasttname','void','capture','refund','delete',
-                'authcaptured','authorizedpendingcapture','capturedpendingsettle','settled',
+                'allpendingorders','authcaptured','authorizedpendingcapture','capturedpendingsettle','settled',
                 'refunded','cancelled','expired','underreview','approvedreview','reviewfailed','tested','new',
                 'paymentmethod','methodcc','methodecheck',
                 'transid','settlementdate','notsettled','amount','unenrolstudent'), 'enrol_authorize');
