@@ -3019,6 +3019,6 @@ function grade_get_course_students($courseid) {
         notify ('no roles defined in admin->appearance->graderoles');
         return false; // no roles to displayreturn false;  
     }
-    return $students;
+    return isset($students)?$students:'';
 }
 ?>
