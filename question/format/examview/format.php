@@ -6,11 +6,14 @@
 **
 ** @TODO:
 **   Take care of odd unicode character mapping (ex: curly quotes)
-**	 Image and table support
+**   Image and table support
 **   Formatting support
 **   Support of rejoinders
 **
 ** $Log$
+** Revision 1.2.2.2  2006/10/30 16:13:27  thepurpleblob
+** Removed loads of tabs and fixed a notice.
+**
 ** Revision 1.2.2.1  2006/05/04 11:15:11  thepurpleblob
 ** htmlentities() replaced by s()
 **
@@ -136,51 +139,47 @@ class qformat_examview extends qformat_default {
         }
         foreach($this->matching_questions as $match_group) {
             $question = $this->defaultquestion();
-			$htmltext = $this->htmlPrepare($match_group->questiontext);
-			$htmltext = addslashes($htmltext);
+            $htmltext = $this->htmlPrepare($match_group->questiontext);
+            $htmltext = addslashes($htmltext);
             $question->questiontext = $htmltext;
             $question->name = $question->questiontext;
             $question->qtype = MATCH;
-            // No images with this format
-            //		print($question->questiontext.' '.$question->id."<BR>");
-            
             $question->subquestions = array();
             $question->subanswers = array();
             foreach($match_group->subquestions as $key => $value) {
-			    $htmltext = $this->htmlPrepare($value);
-				$htmltext = addslashes($htmltext);
+                $htmltext = $this->htmlPrepare($value);
+                $htmltext = addslashes($htmltext);
                 $question->subquestions[] = $htmltext;
 
                 $htmltext = $this->htmlPrepare($match_group->subanswers[$key]);
-				$htmltext = addslashes($htmltext);
+                $htmltext = addslashes($htmltext);
                 $question->subanswers[] = $htmltext;
             }
             $questions[] = $question;
         }
     }
     
-	// cleans unicode characters from string
-	// add to the array unicode_array as necessary
-	function cleanUnicode($text) {
-		//$unicode_array = array(	"&#2019;" => "'");
-		//return strtr($text, $unicode_array);		
-		return str_replace('&#x2019;', "'", $text);
-	}
-	
-    function readquestions($lines)
-    {
+    // cleans unicode characters from string
+    // add to the array unicode_array as necessary
+    function cleanUnicode($text) {
+        return str_replace('&#x2019;', "'", $text);
+    }
+
+    function readquestions($lines) {
         /// Parses an array of lines into an array of questions,
         /// where each item is a question object as defined by
         /// readquestion().
-        
+
         $questions = array();
         $currentquestion = array();
         
         $text = implode($lines, ' ');
-		$text = $this->cleanUnicode($text);
+        $text = $this->cleanUnicode($text);
 
         $xml = xmlize($text, 0);
-        $this->parse_matching_groups($xml['examview']['#']['matching-group']);
+        if (!empty($xml['examview']['#']['matching-group'])) {
+            $this->parse_matching_groups($xml['examview']['#']['matching-group']);
+        }
         
         $questionNode = $xml['examview']['#']['question'];
         foreach($questionNode as $currentquestion) {
@@ -199,8 +198,8 @@ class qformat_examview extends qformat_default {
     // end readquestions
     
     function htmlPrepare($htmltext)
-    {
-        $text = trim($text);
+    { echo "<pre>"; print_r( $htmltext ); echo "</pre>";
+        // $text = trim($text);
         $text = s($htmltext);
         //$htmltext = nl2br($text);
         return $text;
