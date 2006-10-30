@@ -518,7 +518,7 @@ function quiz_process_options(&$quiz) {
         $boundary = trim($quiz->feedbackboundaries[$i]);
         if (!is_numeric($boundary)) {
             if (strlen($boundary) > 0 && $boundary[strlen($boundary) - 1] == '%') {
-                $boundary = substr($boundary, 0, -1);
+                $boundary = trim(substr($boundary, 0, -1));
                 if (is_numeric($boundary)) {
                     $boundary = $boundary * $quiz->grade / 100.0;
                 } else {
