@@ -1202,7 +1202,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
     }
 /// End DIRTY HACK
 
-/// Under Oracle we have our own insert record process
+/// Under Oracle and MSSQL we have our own insert record process
 /// detect all the clob/blob fields and change their contents to @#CLOB#@ and @#BLOB#@
 /// saving them into $foundclobs and $foundblobs [$fieldname]->contents
 /// Same for mssql (only processing blobs - image fields)
@@ -1912,7 +1912,11 @@ function db_detect_lobs ($table, &$dataobject, &$clobs, &$blobs, $unset = false,
             continue;
         }
     /// If the field is CLOB, update its value to '@#CLOB#@' and store it in the $clobs array
-        if (strtoupper($columns[strtolower($fieldname)]->type) == $clobdbtype) { // && strlen($dataobject->$fieldname) > 3999
+        if (strtoupper($columns[strtolower($fieldname)]->type) == $clobdbtype) { 
+        /// Oracle optimization. CLOBs under 4000cc can be directly inserted (no need to apply 2-phases to them)
+            if ($db->dbtype = 'oci8po' && strlen($dataobject->$fieldname) < 4000) {
+                continue;
+            }
             $clobs[$fieldname] = $dataobject->$fieldname;
             if ($unset) {
                 unset($dataobject->$fieldname);
@@ -1923,7 +1927,7 @@ function db_detect_lobs ($table, &$dataobject, &$clobs, &$blobs, $unset = false,
         }
 
     /// If the field is BLOB OR IMAGE, update its value to '@#BLOB#@' and store it in the $blobs array
-        if (strtoupper($columns[strtolower($fieldname)]->type) == $blobdbtype) { // && strlen($dataobject->$fieldname) > 3999
+        if (strtoupper($columns[strtolower($fieldname)]->type) == $blobdbtype) {
             $blobs[$fieldname] = $dataobject->$fieldname;
             if ($unset) {
                 unset($dataobject->$fieldname);
