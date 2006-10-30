@@ -458,7 +458,12 @@ function authorize_print_order_details($orderno)
     else { // SHOW
         $actions = '';
         if (empty($status->actions)) {
-            $actions .= $strs->none;
+            if (($order->paymentmethod == AN_METHOD_ECHECK) && has_capability('enrol/authorize:uploadcsv', get_context_instance(CONTEXT_USER, $USER->id))) {
+                $actions .= '<a href="uploadcsv.php">'.get_string('uploadcsv', 'enrol_authorize').'</a>';
+            }
+            else {
+                $actions .= $strs->none;
+            }
         }
         else {
             foreach ($status->actions as $value) {
