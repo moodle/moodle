@@ -102,13 +102,13 @@
         print_simple_box_end();
 
         if ($timenow < $timefinish) {
-            if ($entry->modified) {
+            if (!empty($entry->modified)) {
                 echo '<div class="lastedit"><strong>'.get_string('lastedited').':</strong> ';
                 echo userdate($entry->modified);
                 echo ' ('.get_string('numwords', '', count_words($entry->text)).')';
                 echo "</div>";
             }
-            if ($journal->days) {
+            if (!empty($journal->days)) {
                 echo '<div class="editend"><strong>'.get_string('editingends', 'journal').':</strong> ';
                 echo userdate($timefinish).'</div>';
             }
@@ -117,7 +117,7 @@
             echo userdate($timefinish).'</div>';
         }
 
-        if ($entry->entrycomment or $entry->rating) {
+        if (!empty($entry->entrycomment) or !empty($entry->rating)) {
             $grades = make_grades_menu($journal->assessed);
             print_heading(get_string('feedback'));
             journal_print_feedback($course, $entry, $grades);

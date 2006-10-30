@@ -312,41 +312,24 @@ function journal_scale_used ($journalid,$scaleid) {
 function journal_get_users_done($journal) {
     global $CFG;
 
-    // make sure it works on the site course
-    $select = "s.course = '$journal->course' AND";
-    if ($journal->course == SITEID) {
-        $select = '';
-    }
-
-    $studentjournals = get_records_sql ("SELECT u.*
+    $journals = get_records_sql ("SELECT u.*
                                   FROM {$CFG->prefix}journal_entries j,
-                                       {$CFG->prefix}user u, 
-                                       {$CFG->prefix}user_students s
+                                       {$CFG->prefix}user u 
                                  WHERE j.userid = u.id
-                                   AND s.userid = u.id 
-                                   AND $select j.journal = $journal->id
-                              ORDER BY j.modified DESC");
-
-    $teacherjournals = get_records_sql ("SELECT u.*
-                                  FROM {$CFG->prefix}journal_entries j,
-                                       {$CFG->prefix}user u, 
-                                       {$CFG->prefix}user_teachers t
-                                 WHERE j.userid = u.id
-                                   AND t.userid = u.id 
                                    AND j.journal = $journal->id
-                                   AND t.course = $journal->course
                               ORDER BY j.modified DESC");
 
-    if ($studentjournals and !$teacherjournals) {
-        return $studentjournals;
+    if (empty($journals)) {
+        return NULL;
     }
-    if ($teacherjournals and !$studentjournals) {
-        return $teacherjournals;
+
+    // remove unenrolled participants
+    foreach ($journals as $key=>$user) {
+        if (!isteacher($journal->course, $user->id) and !isstudent($journal->course, $user->id)) {
+            unset($journals[$key]);
+        } 
     }
-    if (!$teacherjournals and !$studentjournals) {
-        return array();
-    }
-    return(array_merge($studentjournals, $teacherjournals));
+    return $journals;
 }
 
 function journal_count_entries($journal, $groupid=0) {
@@ -364,29 +347,24 @@ function journal_count_entries($journal, $groupid=0) {
 
     } else { /// Count all the entries from the whole course
     
-        // make sure it works on the site course
-        $select = "s.course = '$journal->course' AND";
-        if ($journal->course == SITEID) {
-            $select = '';
+        $journals = get_records_sql ("SELECT u.*
+                                      FROM {$CFG->prefix}journal_entries j,
+                                           {$CFG->prefix}user u 
+                                     WHERE j.userid = u.id
+                                       AND j.journal = $journal->id
+                                  ORDER BY j.modified DESC");
+
+        if (empty($journals)) {
+            return 0;
         }
 
-        $studentjournals = count_records_sql("SELECT COUNT(*)
-                                                 FROM {$CFG->prefix}journal_entries j,
-                                                      {$CFG->prefix}user u, 
-                                                      {$CFG->prefix}user_students s
-                                                WHERE j.userid = u.id
-                                                  AND s.userid = u.id 
-                                                  AND $select j.journal = $journal->id");
-
-        $teacherjournals = count_records_sql("SELECT COUNT(*)
-                                                 FROM {$CFG->prefix}journal_entries j,
-                                                      {$CFG->prefix}user u, 
-                                                      {$CFG->prefix}user_teachers t
-                                                WHERE j.userid = u.id
-                                                  AND t.userid = u.id 
-                                                  AND j.journal = $journal->id
-                                                  AND t.course = $journal->course ");
-        return ($studentjournals + $teacherjournals);
+        // remove unenrolled participants
+        foreach ($journals as $key=>$user) {
+            if (!isteacher($journal->course, $user->id) and !isstudent($journal->course, $user->id)) {
+                unset($journals[$key]);
+            } 
+        }
+        return count($journals);
     }
 }
 
