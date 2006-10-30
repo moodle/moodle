@@ -7,6 +7,14 @@
   require_once('../config.php');
   require_once("$CFG->dirroot/search/lib.php");
 
+  if ($CFG->forcelogin) {
+    require_login();
+  }
+
+  if (empty($CFG->enableglobalsearch)) {
+    error('Global searching is not enabled.');
+  }
+
   //check for php5, but don't die yet
   if ($check = search_check_php5()) {
     require_once("$CFG->dirroot/search/indexlib.php");

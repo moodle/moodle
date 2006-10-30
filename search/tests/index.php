@@ -15,6 +15,10 @@
 
   require_login();
 
+  if (empty($CFG->enableglobalsearch)) {
+    error('Global searching is not enabled.');
+  }
+
   if (!isadmin()) {
     error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
   } //if

@@ -88,7 +88,6 @@ $ADMIN->add('server', $temp);
 $temp = new admin_settingpage('debugging', get_string('debugging', 'admin'));
 $temp->add(new admin_setting_special_debug());
 $temp->add(new admin_setting_special_perfdebug());
-$temp->add(new admin_setting_configcheckbox('enableajax', get_string('enableajax', 'admin'), get_string('configenableajax', 'admin'), 0));
 $ADMIN->add('server', $temp);
 
 
