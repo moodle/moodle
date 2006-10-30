@@ -57,7 +57,7 @@ class block_admin extends block_list {
                 $this->content->items[]='<a href="view.php?id='.$this->instance->pageid.'&amp;edit=on&amp;sesskey='.sesskey().'">'.get_string('turneditingon').'</a>';
             }
             
-            $this->content->items[]='<a href="edit.php?id='.$this->instance->pageid.'">'.get_string('settings').'</a>';
+            $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/edit.php?id='.$this->instance->pageid.'">'.get_string('settings').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/settings.gif" alt="" />';
         }
             
