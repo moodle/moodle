@@ -11,6 +11,9 @@
 **   Support of rejoinders
 **
 ** $Log$
+** Revision 1.2.2.3  2006/10/30 16:19:32  thepurpleblob
+** Whoops - left some debugging stuff in place.
+**
 ** Revision 1.2.2.2  2006/10/30 16:13:27  thepurpleblob
 ** Removed loads of tabs and fixed a notice.
 **
@@ -198,7 +201,7 @@ class qformat_examview extends qformat_default {
     // end readquestions
     
     function htmlPrepare($htmltext)
-    { echo "<pre>"; print_r( $htmltext ); echo "</pre>";
+    { 
         // $text = trim($text);
         $text = s($htmltext);
         //$htmltext = nl2br($text);
