@@ -38,3 +38,8 @@ div.header {
   background-repeat: repeat;
   background-attachment: scroll;
 }
+
+.breadcrumb .sep {
+  color:#999999;
+}
+   
