@@ -7,6 +7,7 @@
     $user     = optional_param('user', -1);
     $group    = optional_param('group', -1);
     $action   = optional_param('action', 'grades');
+    $cview    = optional_param('cview', -1);
 
     if (!$course = get_record('course', 'id', $id)) {
         error('No course ID');
