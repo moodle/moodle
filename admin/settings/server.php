@@ -176,6 +176,11 @@ $ADMIN->add('server', new admin_externalpage('environment', get_string('environm
 $ADMIN->add('server', new admin_externalpage('phpinfo', get_string('phpinfo'), "$CFG->wwwroot/$CFG->admin/phpinfo.php"));
 
 
+// "performance" settingpage
+$temp = new admin_settingpage('performance', get_string('performance', 'admin'));
+$temp->add(new admin_setting_configcheckbox('enablerecordcache', get_string('enablerecordcache', 'admin'), get_string('configenablerecordcache', 'admin'), 1));
+$ADMIN->add('server', $temp);
+
 if (file_exists("$CFG->dirroot/$CFG->admin/mysql/frame.php")) {
     $ADMIN->add('server', new admin_externalpage('database', get_string('managedatabase'), "$CFG->wwwroot/$CFG->admin/mysql/frame.php"));
 }
