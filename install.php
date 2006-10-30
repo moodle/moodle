@@ -220,7 +220,7 @@ if ($INSTALL['stage'] == DIRECTORY) {
     error_reporting(0);
     
     /// check wwwroot
-    if (ini_get('allow_url_fopen')) {
+    if (ini_get('allow_url_fopen') && false) {  /// This was not reliable
         if (($fh = @fopen($INSTALL['wwwrootform'].'/install.php', 'r')) === false) {
             $errormsg .= get_string('wwwrooterror', 'install').'<br />';
             $INSTALL['wwwrootform'] = $INSTALL['wwwroot'];
@@ -354,8 +354,8 @@ if ($INSTALL['stage'] == DATABASE) {
                 }
             }
         } else {
-        /// We have been able to connect properly, just test the database encoding now. It should be Unicode for 1.6
-        /// installations (although not mandatory for now). Just show one message about it and allow to skip this test.
+        /// We have been able to connect properly, just test the database encoding now. 
+        /// It must be Unicode for 1.8 installations. Just show one message about it and allow to skip this test.
             if (empty($INSTALL['skipdbencodingtest'])) {
             /// We haven't checked the skip test checkbox, so perform the test
                 $encoding = '';
@@ -455,10 +455,11 @@ if ($nextstage == ADMIN or $INSTALL['stage'] == ADMIN) {
         $nextstage = ($goforward) ? ENVIRONMENT : DATABASE;
         fclose($fh);
     } else {
-        if ($nextstage != ADMIN) {
-            $errormsg = get_string('admindirerror', 'install');
-            $nextstage = ADMIN;
-        }
+        $nextstage = ($goforward) ? ENVIRONMENT : DATABASE;
+        //if ($nextstage != ADMIN) {
+        //    $errormsg = get_string('admindirerror', 'install');
+        //    $nextstage = ADMIN;
+        // }
     }
 }
 
@@ -646,7 +647,7 @@ if (isset($_GET['help'])) {
                     echo '<div id="mssql" name="mssql">' . get_string('databasesettingssub_mssql', 'install');
                 /// Link to mssql installation page
                     echo '<p align="right"><a href="http://docs.moodle.org/en/Installing_MSSQL_for_PHP" target="_blank">';
-                    echo '<img src="' . $INSTALL['wwwrootform'] . '/pix/docs.gif' . '" alt="Docs" />';
+                    echo '<img src="' . $INSTALL['wwwrootform'] . '/pix/docs.gif' . '" alt="Docs" border="0" />';
                     echo get_string('moodledocslink', 'install') . '</a></p>';
                     echo '</div>';
 
@@ -660,14 +661,14 @@ if (isset($_GET['help'])) {
                     echo '<div id="odbc_mssql" name="odbc_mssql">'. get_string('databasesettingssub_odbc_mssql', 'install');
                 /// Link to mssql installation page
                     echo '<p align="right"><a href="http://docs.moodle.org/en/Installing_MSSQL_for_PHP" target="_blank">';
-                    echo '<img src="' . $INSTALL['wwwrootform'] . '/pix/docs.gif' . '" alt="Docs" />';
+                    echo '<img src="' . $INSTALL['wwwrootform'] . '/pix/docs.gif' . '" alt="Docs" border="0" />';
                     echo get_string('moodledocslink', 'install') . '</a></p>';
                     echo '</div>';
 
                     echo '<div id="oci8po" name="oci8po">' . get_string('databasesettingssub_oci8po', 'install');
                 /// Link to oracle installation page
                     echo '<p align="right"><a href="http://docs.moodle.org/en/Installing_Oracle_for_PHP" target="_blank">';
-                    echo '<img src="' . $INSTALL['wwwrootform'] . '/pix/docs.gif' . '" alt="Docs" />';
+                    echo '<img src="' . $INSTALL['wwwrootform'] . '/pix/docs.gif' . '" alt="Docs" border="0" />';
                     echo get_string('moodledocslink', 'install') . '</a></p>';
                     echo '</div>';
                 } else {
