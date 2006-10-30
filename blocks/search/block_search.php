@@ -30,7 +30,11 @@
       
     function get_content() {
       global $CFG;
-      
+
+      if (empty($CFG->enableglobalsearch)) {
+        return '';
+      }
+
       //cache block contents
       if ($this->content !== NULL) {
         return $this->content;

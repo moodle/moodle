@@ -15,6 +15,10 @@
   require_once('../config.php');
   require_once("$CFG->dirroot/search/lib.php");
 
+  if (empty($CFG->enableglobalsearch)) {
+    error('Global searching is not enabled.');
+  }
+
   mtrace("<pre>Starting cron...\n");
 
   mtrace("--DELETE----");

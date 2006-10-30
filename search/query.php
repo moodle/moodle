@@ -25,6 +25,14 @@
   require_once('../config.php');
   require_once("$CFG->dirroot/search/lib.php");
 
+  if ($CFG->forcelogin) {
+    require_login();
+  }
+
+  if (empty($CFG->enableglobalsearch)) {
+    error('Global searching is not enabled.');
+  }
+
   $adv = new Object();
 
   //check for php5, but don't die yet (see line 52)
