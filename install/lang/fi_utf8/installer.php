@@ -125,7 +125,7 @@ $string['gdversion'] = 'GD versio';
 $string['gdversionerror'] = 'GD kirjaston pitäisi olla päällä, että voidaan käsitellä ja luoda kuvia.';
 $string['gdversionhelp'] = '<p>Palvelimellasi ei näyttäisi olevan GD:tä asennettuna.</p>
 
-<p>GD on kirjasto jonka PHP vaatii voidakseen antaa Moodlen käsitellä kuvia (esimerkiksi käyttäjäprofiili kuvakkeita) ja luoda uusia kuvia (esimerkiksi kirjauskuvioita) Moodle toimii ilman GD:täkin, mutta silloin nämä toiminnot eivät ole saatavilla.</p>
+<p>GD on kirjasto jonka PHP vaatii jotta Moodlen voisi käsitellä kuvia (esimerkiksi käyttäjä kuvia) ja luoda uusia kuvia (esimerkiksi kaavioita) Moodle toimii ilman GD:täkin, mutta silloin nämä toiminnot eivät ole saatavilla.</p>
 
 <p>Lisätäksesi GD:n PHP:hen Unix:in alaisena, käännä PHP käyttäen --with-gd parametria.</p>
 
