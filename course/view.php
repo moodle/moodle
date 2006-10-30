@@ -121,7 +121,7 @@
 
 
     // AJAX-capable course format?
-    $useajax = false;
+    $CFG->useajax = false;
     $ajaxformatfile = $CFG->dirroot.'/course/format/'.$course->format.'/ajax.php';
     $meta = '';
     $bodytags = '';
@@ -154,13 +154,12 @@
                 // function is called, since that function needs to set some
                 // stuff in the javascriptportal object.
                 $COURSE->javascriptportal = new jsportal();
-                $useajax = true;
-
-            } else {
-                $useajax = false;
+                $CFG->useajax = true;
             }
         }
     }
+
+    $CFG->blocksdrag = $CFG->useajax;   // this will add a new class to the header so we can style differently
 
 
     $PAGE->print_header(get_string('course').': %fullname%', NULL, $meta, $bodytags);
@@ -200,7 +199,7 @@
 
 
     // Use AJAX?
-    if ($useajax) {
+    if ($CFG->useajax) {
         // At the bottom because we want to process sections and activities
         // after the relevant html has been generated.
         if ($jsincludes = require_js(array('ajaxcourse_blocks',
