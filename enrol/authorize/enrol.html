@@ -32,7 +32,7 @@ function print_cc_form($classreference)
     global $CFG, $USER;
 
     $formvars = array(
-        'ccaddress', 'cccity', 'ccstate', 'cccountry', 'cczip',
+        'ccaddress', 'cccity', 'ccstate', 'cccountry', 'cczip', 'ccauthcode', 'haveauth',
         'ccfirstname', 'cclastname', 'cc', 'ccexpiremm', 'ccexpireyyyy', 'cctype', 'cvv'
     );
     foreach ($formvars as $var) {
@@ -102,7 +102,18 @@ function print_cc_form($classreference)
       <?php helpbutton('cvv', '', 'enrol/authorize'); ?>
       <?php if (!empty($classreference->authorizeerrors['cvv'])) { formerr($classreference->authorizeerrors['cvv']); } ?></td>
     </tr>
-    <?php if (!empty($CFG->an_avs)) { /* Address Verification System */ ?>
+
+    <?php if (!empty($CFG->an_authcode)) : /* Authorization Code */ ?>
+    <tr>
+      <td align="right" valign="top"><?php print_string("authcode", "enrol_authorize") ?>: </td>
+      <td align="left"><?php print_checkbox('haveauth', '1', !empty($form->haveauth), get_string("haveauthcode", "enrol_authorize")) ?>
+      <?php helpbutton('authcode', '', 'enrol/authorize'); ?><br />
+      <input type="text" name="ccauthcode" size="8" value="<?php p($form->ccauthcode) ?>" />
+      <?php if (!empty($classreference->authorizeerrors['ccauthcode'])) { formerr($classreference->authorizeerrors['ccauthcode']); } ?></td>
+    </tr>
+    <?php endif; ?>
+
+    <?php if (!empty($CFG->an_avs)) : /* Address Verification System */ ?>
     <tr>
       <td align="right"><?php print_string("address") ?>: </td>
       <td align="left"><input type="text" name="ccaddress" size="32" value="<?php p($useraddress) ?>" />
@@ -119,7 +130,7 @@ function print_cc_form($classreference)
       <td align="left"><?php choose_from_menu(get_list_of_countries(), "cccountry", $usercountry, get_string("selectacountry")."..."); ?>
       <?php if (!empty($classreference->authorizeerrors['cccountry'])) { formerr($classreference->authorizeerrors['cccountry']); } ?></td>
     </tr>
-    <?php } else { /* not AVS */ ?>
+    <?php else: /* not AVS */ ?>
     <tr>
     <td colspan="2">
       <input type="hidden" name="ccstate" value="" />
@@ -128,7 +139,8 @@ function print_cc_form($classreference)
       <input type="hidden" name="cccountry" value="<?php p($usercountry) ?>" />
     </td>
     </tr>
-    <?php } ?>
+    <?php endif; ?>
+
     <tr>
       <td align="right"><?php print_string("zipcode", "enrol_authorize") ?>: </td>
       <td align="left"><input type="text" name="cczip" size="5" value="<?php p($form->cczip) ?>" />

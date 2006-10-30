@@ -244,8 +244,11 @@ function validate_cc_form($form, &$err)
         $err['cctype'] = get_string('missingcctype', 'enrol_authorize');
     }
 
-    if (!empty($CFG->an_avs))
-    {
+    if (!empty($CFG->an_authcode) && !empty($form->haveauth) && empty($form->ccauthcode)) {
+        $err['ccauthcode'] = get_string('missingccauthcode', 'enrol_authorize');
+    }
+
+    if (!empty($CFG->an_avs)) {
         if (empty($form->ccaddress)) {
             $err['ccaddress'] = get_string('missingaddress', 'enrol_authorize');
         }
@@ -351,7 +354,7 @@ function send_welcome_messages($orderdata)
     while ($ei !== false) {
         $usercourses = array();
         $lastuserid = $ei->userid;
-        for ($current = $ei; $current !== false && $current->userid == $lastuserid; $current = next($emailinfo)) {   
+        for ($current = $ei; $current !== false && $current->userid == $lastuserid; $current = next($emailinfo)) {
              $usercourses[] = $current->fullname;
         }
         $ei = $current;

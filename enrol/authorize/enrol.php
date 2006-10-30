@@ -184,9 +184,19 @@ class enrolment_plugin_authorize
         $extra->x_phone = '';
         $extra->x_fax = '';
 
+        $revieworder = false;
+        $action = AN_ACTION_AUTH_CAPTURE;
+
+        if (!empty($CFG->an_authcode) && !empty($form->ccauthcode)) {
+            $action = AN_ACTION_CAPTURE_ONLY;
+            $extra->x_auth_code = $form->ccauthcode;
+        }
+        elseif (!empty($CFG->an_review)) {
+            $revieworder = true;
+            $action = AN_ACTION_AUTH_ONLY;
+        }
+
         $message = '';
-        $an_review = !empty($CFG->an_review);
-        $action = $an_review ? AN_ACTION_AUTH_ONLY : AN_ACTION_AUTH_CAPTURE;
         if (AN_APPROVED != authorize_action($order, $message, $extra, $action, $form->cctype)) {
             email_to_admin($message, $order);
             $this->authorizeerrors['header'] = $message;
@@ -195,7 +205,7 @@ class enrolment_plugin_authorize
 
         $SESSION->ccpaid = 1; // security check: don't duplicate payment
         if ($order->transid == 0) { // TEST MODE
-            if ($an_review) {
+            if ($revieworder) {
                 redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '30');
             }
             else {
@@ -205,7 +215,7 @@ class enrolment_plugin_authorize
             return;
         }
 
-        if ($an_review) { // review enabled, inform site payment managers and redirect the user who have paid to main page.
+        if ($revieworder) { // review enabled, inform site payment managers and redirect the user who have paid to main page.
             $a = new stdClass;
             $a->url = "$CFG->wwwroot/enrol/authorize/index.php?order=$order->id";
             $a->orderid = $order->id;
@@ -453,6 +463,7 @@ class enrolment_plugin_authorize
 
         // optional authorize.net settings
         set_config('an_avs', optional_param('an_avs', 0, PARAM_BOOL));
+        set_config('an_authcode', optional_param('an_authcode', 0, PARAM_BOOL));
         set_config('an_test', optional_param('an_test', 0, PARAM_BOOL));
         set_config('an_referer', optional_param('an_referer', 'http://', PARAM_URL));
 

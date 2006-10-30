@@ -12,6 +12,7 @@ if (!isset($frm->an_password)) $frm->an_password = '';
 if (!isset($frm->delete_current)) $frm->delete_current = '';
 if (!isset($frm->an_referer)) $frm->an_referer = 'http://';
 if (!isset($frm->an_avs)) $frm->an_avs = '';
+if (!isset($frm->an_authcode)) $frm->an_authcode = '';
 if (!isset($frm->an_test)) $frm->an_test = '';
 if (!isset($frm->an_review)) $frm->an_review = '';
 if (!isset($frm->an_capture_day)) $frm->an_capture_day = '5';
@@ -127,6 +128,12 @@ if (!isset($frm->acceptechecktypes)) {
     <td align="right">an_avs:</td>
     <td><?php print_checkbox('an_avs', '1', !empty($frm->an_avs)) ?><br />
         <?php print_string("adminavs", "enrol_authorize") ?></td>
+</tr>
+
+<tr valign="top">
+    <td align="right">an_authcode:</td>
+    <td><?php print_checkbox('an_authcode', '1', !empty($frm->an_authcode)) ?><br />
+        <?php print_string("adminauthcode", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
