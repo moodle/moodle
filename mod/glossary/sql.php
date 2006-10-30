@@ -79,25 +79,14 @@
     case GLOSSARY_AUTHOR_VIEW:
 
         $where = '';
-        switch ($CFG->dbtype) {
-        case 'postgres7':
-            $usernametoshow = "u.firstname || ' ' || u.lastname";
-            if ( $sqlsortkey == 'FIRSTNAME' ) {
-                $usernamefield = "u.firstname || ' ' || u.lastname";
-            } else {
-                $usernamefield = "u.lastname || ' ' || u.firstname";
-            }
-            $where = "AND substr(upper($usernamefield),1," .  $textlib->strlen($hook, current_charset()) . ") = '" . $textlib->strtoupper($hook, current_charset()) . "'";
-        break;
-        case 'mysql':
-            if ( $sqlsortkey == 'FIRSTNAME' ) {
-                $usernamefield = sql_fullname('u.firstname' , 'u.lastname');
-            } else {
-                $usernamefield = sql_fullname('u.lastname' , 'u.firsttname');
-            }
-            $where = "AND left(upper($usernamefield)," .  $textlib->strlen($hook, current_charset()) . ") = '$hook'";
-        break;
+
+        if ( $sqlsortkey == 'FIRSTNAME' ) {
+            $usernamefield = sql_fullname('u.firstname' , 'u.lastname');
+        } else {
+            $usernamefield = sql_fullname('u.lastname' , 'u.firstname');
         }
+        $where = "AND " . sql_substr() . "(upper($usernamefield),1," .  $textlib->strlen($hook, current_charset()) . ") = '" . $textlib->strtoupper($hook, current_charset()) . "'";
+
         if ( $hook == 'ALL' ) {
             $where = '';
         }
@@ -116,14 +105,7 @@
 
         $where = '';
         if ($hook != 'ALL' and $hook != 'SPECIAL') {
-            switch ($CFG->dbtype) {
-            case 'postgres7':
-                $where = 'AND substr(upper(concept),1,' .  $textlib->strlen($hook, current_charset()) . ') = \'' . $textlib->strtoupper($hook, current_charset()) . '\'';
-            break;
-            case 'mysql':
-                $where = 'AND left(upper(concept),' .  $textlib->strlen($hook, current_charset()) . ") = '$hook'";
-            break;
-            }
+            $where = 'AND ' . sql_substr() . '(upper(concept),1,' .  $textlib->strlen($hook, current_charset()) . ') = \'' . $textlib->strtoupper($hook, current_charset()) . '\'';
         }
 
         $sqlselect  = "SELECT ge.*, ge.concept AS glossarypivot";
@@ -246,14 +228,7 @@
 
         case 'letter': 
             if ($hook != 'ALL' and $hook != 'SPECIAL') {
-                switch ($CFG->dbtype) {
-                case 'postgres7':
-                    $where = 'AND substr(upper(concept),1,' .  $textlib->strlen($hook, current_charset()) . ') = \'' . $textlib->strtoupper($hook, current_charset()) . '\'';
-                break;
-                case 'mysql':
-                    $where = 'AND left(upper(concept),' .  $textlib->strlen($hook, current_charset()) . ") = '" . $textlib->strtoupper($hook, current_charset()) . "'";
-                break;
-                }
+                $where = 'AND ' . sql_substr() . '(upper(concept),1,' .  $textlib->strlen($hook, current_charset()) . ') = \'' . $textlib->strtoupper($hook, current_charset()) . '\'';
             }
             if ($hook == 'SPECIAL') {
                 //Create appropiate IN contents
@@ -265,14 +240,7 @@
                     }
                     $sqlalphabet .= '\''.$alphabet[$i].'\'';
                 }
-                switch ($CFG->dbtype) {
-                case 'postgres7':
-                    $where = 'AND substr(upper(concept),1,1) NOT IN (' . $textlib->strtoupper($sqlalphabet, current_charset()) . ')';
-                break;
-                case 'mysql':
-                    $where = 'AND left(upper(concept),1) NOT IN (' . $textlib->strtoupper($sqlalphabet, current_charset()) . ')';
-                break;
-                }
+                $where = 'AND ' . sql_substr() . '(upper(concept),1,1) NOT IN (' . $textlib->strtoupper($sqlalphabet, current_charset()) . ')';
             }
         break;
         }
