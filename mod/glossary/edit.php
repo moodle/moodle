@@ -32,12 +32,6 @@ if (! $glossary = get_record("glossary", "id", $cm->instance)) {
     error("Course module is incorrect");
 }
 
-if ($CFG->dbtype == 'postgres7' ) {
-        $lcase = 'lower';
-} else {
-        $lcase = 'lcase';
-}
-
 if ($e) { // if entry is sepcified
     require_capability('mod/glossary:manageentries', $context);
 } else { // new entry
@@ -139,7 +133,7 @@ if ( $confirm ) {
 
         $permissiongranted = 1;
         if ( !$glossary->allowduplicatedentries ) {
-            if ($dupentries = get_records("glossary_entries","$lcase(concept)", moodle_strtolower($newentry->concept))) {
+            if ($dupentries = get_records("glossary_entries","lower(concept)", moodle_strtolower($newentry->concept))) {
                 foreach ($dupentries as $curentry) {
                     if ( $glossary->id == $curentry->glossaryid ) {
                        if ( $curentry->id != $e ) {
@@ -179,7 +173,7 @@ if ( $confirm ) {
 
         $permissiongranted = 1;
         if ( !$glossary->allowduplicatedentries ) {
-            if ($dupentries = get_record("glossary_entries","$lcase(concept)", moodle_strtolower($newentry->concept), "glossaryid", $glossary->id)) {
+            if ($dupentries = get_record("glossary_entries","lower(concept)", moodle_strtolower($newentry->concept), "glossaryid", $glossary->id)) {
                 $permissiongranted = 0;
             }
         }

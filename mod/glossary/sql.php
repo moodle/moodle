@@ -95,7 +95,7 @@
             } else {
                 $usernamefield = sql_fullname('u.lastname' , 'u.firsttname');
             }
-            $where = "AND left(ucase($usernamefield)," .  $textlib->strlen($hook, current_charset()) . ") = '$hook'";
+            $where = "AND left(upper($usernamefield)," .  $textlib->strlen($hook, current_charset()) . ") = '$hook'";
         break;
         }
         if ( $hook == 'ALL' ) {
@@ -121,7 +121,7 @@
                 $where = 'AND substr(upper(concept),1,' .  $textlib->strlen($hook, current_charset()) . ') = \'' . $textlib->strtoupper($hook, current_charset()) . '\'';
             break;
             case 'mysql':
-                $where = 'AND left(ucase(concept),' .  $textlib->strlen($hook, current_charset()) . ") = '$hook'";
+                $where = 'AND left(upper(concept),' .  $textlib->strlen($hook, current_charset()) . ") = '$hook'";
             break;
             }
         }
@@ -251,7 +251,7 @@
                     $where = 'AND substr(upper(concept),1,' .  $textlib->strlen($hook, current_charset()) . ') = \'' . $textlib->strtoupper($hook, current_charset()) . '\'';
                 break;
                 case 'mysql':
-                    $where = 'AND left(ucase(concept),' .  $textlib->strlen($hook, current_charset()) . ") = '" . $textlib->strtoupper($hook, current_charset()) . "'";
+                    $where = 'AND left(upper(concept),' .  $textlib->strlen($hook, current_charset()) . ") = '" . $textlib->strtoupper($hook, current_charset()) . "'";
                 break;
                 }
             }
@@ -270,7 +270,7 @@
                     $where = 'AND substr(upper(concept),1,1) NOT IN (' . $textlib->strtoupper($sqlalphabet, current_charset()) . ')';
                 break;
                 case 'mysql':
-                    $where = 'AND left(ucase(concept),1) NOT IN (' . $textlib->strtoupper($sqlalphabet, current_charset()) . ')';
+                    $where = 'AND left(upper(concept),1) NOT IN (' . $textlib->strtoupper($sqlalphabet, current_charset()) . ')';
                 break;
                 }
             }

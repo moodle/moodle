@@ -23,12 +23,6 @@
         }
     }
     
-    if ($CFG->dbtype == 'postgres7' ) {
-            $lcase = 'lower';
-    } else {
-            $lcase = 'lcase';
-    }
-
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/glossary:export', $context);
 
@@ -61,7 +55,7 @@
 
         } else {
             if ( ! $mainglossary->allowduplicatedentries ) {
-                $dupentry = get_record('glossary_entries','glossaryid', $mainglossary->id, $lcase.'(concept)',moodle_strtolower(addslashes($entry->concept)));
+                $dupentry = get_record('glossary_entries','glossaryid', $mainglossary->id, 'lower(concept)',moodle_strtolower(addslashes($entry->concept)));
                 if ( $dupentry ) {
                     $PermissionGranted = 0;
                 }
