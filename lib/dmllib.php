@@ -1571,6 +1571,17 @@ function sql_as() {
 }
 
 /**
+ * Returns the proper substr() function for each DB
+ * Relies on ADOdb $db->substr property
+ */
+function sql_substr() {
+
+    global $db;
+
+    return $db->substr;
+}
+
+/**
  * Returns the SQL text to be used to order by one TEXT (clob) column, because
  * some RDBMS doesn't support direct ordering of such fields.
  * Note that the use or queries being ordered by TEXT columns must be minimised,
