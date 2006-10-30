@@ -40,7 +40,7 @@
     case GLOSSARY_CATEGORY_VIEW:
         if ($hook == GLOSSARY_SHOW_ALL_CATEGORIES  ) { 
 
-            $sqlselect = "SELECT gec.id, ge.*, gec.entryid, gc.name AS glossarypivot";
+            $sqlselect = "SELECT gec.id AS cid, ge.*, gec.entryid, gc.name AS glossarypivot";
             $sqlfrom   = "FROM {$CFG->prefix}glossary_entries ge,
                          {$CFG->prefix}glossary_entries_categories gec,
                          {$CFG->prefix}glossary_categories gc";
@@ -91,7 +91,7 @@
             $where = '';
         }
 
-        $sqlselect  = "SELECT ge.id, $usernamefield AS glossarypivot, u.id as uid, ge.*";
+        $sqlselect  = "SELECT ge.*, $usernamefield AS glossarypivot ";
         $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge, {$CFG->prefix}user u";
         $sqlwhere   = "WHERE ge.userid = u.id  AND
                              (ge.approved != 0 $userid)

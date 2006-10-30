@@ -354,11 +354,11 @@
 
                     echo '<tr>';
                     $pivottoshow = $currentpivot;
-                    if ( isset($entry->uid) ) {
+                    if ( isset($entry->userid) ) {
                     // printing the user icon if defined (only when browsing authors)
                         echo '<td align="left">';
 
-                        $user = get_record("user","id",$entry->uid);
+                        $user = get_record("user","id",$entry->userid);
                         print_user_picture($user->id, $course->id, $user->picture);
                         $pivottoshow = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
                     } else {
