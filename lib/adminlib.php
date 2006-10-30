@@ -2327,13 +2327,7 @@ class admin_setting_special_gradebookroles extends admin_setting {
         if (!empty($CFG->{$this->name})) {
             return explode(',', $CFG->{$this->name});
         } else {
-            $value = array();
-            if ($studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
-                foreach ($studentroles as $roleid=>$studentrole) {
-                    $value[] = $roleid;
-                }
-            }
-            return $value;
+            return null;
         }
     }
 
