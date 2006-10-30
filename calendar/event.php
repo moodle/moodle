@@ -181,7 +181,7 @@
         case 'new':
             $title = get_string('newevent', 'calendar');
             $form = data_submitted();
-            if(!empty($form) && $form->type == 'defined') {
+            if(!empty($form) && !empty($form->name)) {
 
                 $form->name = clean_text(strip_tags($form->name, '<lang><span>'));
 
@@ -198,7 +198,7 @@
                 else {
                     $form->timeduration = 0;
                 }
-                if(!calendar_add_event_allowed($form->courseid, $form->groupid, $form->userid)) {
+                if(!calendar_add_event_allowed($form)) {
                     error('You are not authorized to do this');
                 }
                 validate_form($form, $err);
@@ -405,6 +405,7 @@
                     $form->repeat = 0;
                     $form->repeats = '';
                     $form->minutes = '';
+                    $form->type = 'user';
                     $header = get_string('typeuser', 'calendar');
                 break;
                 case 'group':
@@ -427,6 +428,7 @@
                         $form->repeat = 0;
                         $form->repeats = '';
                         $form->minutes = '';
+                        $form->type = 'group';
                         $header = get_string('typegroup', 'calendar');
                     }
                 break;
@@ -450,6 +452,7 @@
                         $form->repeat = 0;
                         $form->repeats = '';
                         $form->minutes = '';
+                        $form->type = 'course';
                         $header = get_string('typecourse', 'calendar');
                     }
                 break;
@@ -467,9 +470,9 @@
                     $form->repeat = 0;
                     $form->repeats = '';
                     $form->minutes = '';
+                    $form->type = 'site';
                     $header = get_string('typesite', 'calendar');
                 break;
-                case 'defined':
                 case 'select':
                 break;
                 default:
@@ -579,40 +582,44 @@ function validate_form(&$form, &$err) {
     }
 }
 
-function calendar_add_event_allowed($courseid, $groupid, $userid) {
+function calendar_add_event_allowed($event) {
     global $USER;
 
     // can not be using guest account
-    if ($USER->username == "guest") {
+    if (empty($USER->id) or $USER->username == 'guest') {
         return false;  
     }
-    
+
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-    // if user has manageentries at site level, return true
+    // if user has manageentries at site level, always return true
     if (has_capability('moodle/calendar:manageentries', $sitecontext)) {
         return true;
     }
 
-    // editting userid account
-    if ($event->userid) {  
-        if ($event->userid == $USER->id) {
-            return (has_capability('moodle/calendar:manageownentries', $sitecontext));
-        }
-    } else if ($event->groupid) {
-        $group = get_record('groups', 'id', $event->groupid);
-        if($group === false) {
-            return false;
-        } 
-        
-        // this is ok because if you have this capability at course level, you should be able 
-        // to edit group calendar too
-        // there is no need to check membership, because if you have this capability
-        // you will have a role in this group context
-        return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_GROUP, $group->id));
-    } else if ($event->courseid) {
-        return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $event->courseid)); 
+    switch ($event->type) {
+        case 'course':
+            return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $event->courseid));
+
+        case 'group':
+            if (!$group = get_record('groups', 'id', $event->groupid)) {
+                return false;
+            } 
+            // this is ok because if you have this capability at course level, you should be able 
+            // to edit group calendar too
+            // there is no need to check membership, because if you have this capability
+            // you will have a role in this group context
+            return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_GROUP, $group->id));
+
+        case 'user':
+            if ($event->userid == $USER->id) {
+                return (has_capability('moodle/calendar:manageownentries', $sitecontext));
+            }
+            //there is no 'break;' intentionally
+
+        case 'site':
+        default:
+            return false; // should already return true above if having moodle/calendar:manageentries
     }
-    return false;
 }
 
 function calendar_get_allowed_types(&$allowed) {
