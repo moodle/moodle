@@ -18,7 +18,6 @@
 
 /// fullpivot indicate if the whole pivot should be compared agasint the db or just the first letter
 /// printpivot indicate if the pivot should be printed or not
-    $as = sql_as(); ///To use or no the AS keyword on column aliases
 
     switch ( $sortkey ) {    
     case "CREATION": 
@@ -41,7 +40,7 @@
     case GLOSSARY_CATEGORY_VIEW:
         if ($hook == GLOSSARY_SHOW_ALL_CATEGORIES  ) { 
 
-            $sqlselect = "SELECT gec.id, ge.*, gec.entryid, gc.name $as glossarypivot";
+            $sqlselect = "SELECT gec.id, ge.*, gec.entryid, gc.name AS glossarypivot";
             $sqlfrom   = "FROM {$CFG->prefix}glossary_entries ge,
                          {$CFG->prefix}glossary_entries_categories gec,
                          {$CFG->prefix}glossary_categories gc";
@@ -54,7 +53,7 @@
         } elseif ($hook == GLOSSARY_SHOW_NOT_CATEGORISED ) { 
 
             $printpivot = 0;
-            $sqlselect = "SELECT ge.*, concept $as glossarypivot";
+            $sqlselect = "SELECT ge.*, concept AS glossarypivot";
             $sqlfrom   = "FROM {$CFG->prefix}glossary_entries ge LEFT JOIN {$CFG->prefix}glossary_entries_categories gec
                           ON ge.id = gec.entryid";
             $sqlwhere  = "WHERE (glossaryid = '$glossary->id' OR sourceglossaryid = '$glossary->id') AND
@@ -66,7 +65,7 @@
         } else {
 
             $printpivot = 0;
-            $sqlselect  = "SELECT ge.*, ce.entryid, c.name $as glossarypivot";
+            $sqlselect  = "SELECT ge.*, ce.entryid, c.name AS glossarypivot";
             $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge, {$CFG->prefix}glossary_entries_categories ce, {$CFG->prefix}glossary_categories c";
             $sqlwhere   = "WHERE ge.id = ce.entryid AND ce.categoryid = '$hook' AND
                                  ce.categoryid = c.id AND ge.approved != 0 AND
@@ -103,7 +102,7 @@
             $where = '';
         }
 
-        $sqlselect  = "SELECT ge.id, $usernamefield $as glossarypivot, u.id as uid, ge.*";
+        $sqlselect  = "SELECT ge.id, $usernamefield AS glossarypivot, u.id as uid, ge.*";
         $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge, {$CFG->prefix}user u";
         $sqlwhere   = "WHERE ge.userid = u.id  AND
                              (ge.approved != 0 $userid)
@@ -127,7 +126,7 @@
             }
         }
 
-        $sqlselect  = "SELECT ge.*, ge.concept $as glossarypivot";
+        $sqlselect  = "SELECT ge.*, ge.concept AS glossarypivot";
         $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge";
         $sqlwhere   = "WHERE (ge.glossaryid = '$glossary->id' OR ge.sourceglossaryid = '$glossary->id') AND
                              ge.approved = 0 $where";
@@ -142,7 +141,7 @@
         $printpivot = 0;
     case GLOSSARY_STANDARD_VIEW:
     default:
-        $sqlselect  = "SELECT ge.*, ge.concept $as glossarypivot";
+        $sqlselect  = "SELECT ge.*, ge.concept AS glossarypivot";
         $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge";
 
         $where = '';
