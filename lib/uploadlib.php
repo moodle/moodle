@@ -301,7 +301,10 @@ class upload_manager {
      * @todo verify return type - this function does not appear to return anything since $file is passed in by reference
      */
     function handle_filename_collision($destination, &$file, $format='%s_%d.%s') {
-        $bits = explode('.', $file['name']);
+        $part1 = explode('.', $file['name']); 
+        $bits = array(); 
+        $bits[1] = array_pop($part1); 
+        $bits[0] = implode('.', $part1);
         // check for collisions and append a nice numberydoo.
         if (file_exists($destination .'/'. $file['name'])) {
             $a->oldname = $file['name'];
