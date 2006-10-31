@@ -46,7 +46,7 @@
 
 function authorize_process_csv($filename)
 {
-    global $CFG;
+    global $CFG, $SITE;
 
 /// We need these fields
     $myfields = array(
@@ -192,9 +192,6 @@ function authorize_process_csv($filename)
     }
     fclose($handle);
 
-/// Show result
-    notice("<b>Done...</b><br />Imported: $imported<br />Updated: $updated<br />Ignored: $ignored");
-
 /// Send email to admin
     if (!empty($ignoredlines)) {
         $admin = get_admin();
@@ -205,6 +202,9 @@ function authorize_process_csv($filename)
     if (!empty($sendem)) {
         send_welcome_messages($sendem);
     }
+
+/// Show result
+    notice("<b>Done...</b><br />Imported: $imported<br />Updated: $updated<br />Ignored: $ignored");
 }
 
 ?>
