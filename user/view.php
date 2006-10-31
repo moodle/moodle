@@ -406,13 +406,13 @@
     echo "<td></td>";
     echo "</tr></table></div>\n";
 
-
-    if (debugging() && $USER->id == $user->id) {   // TEMPORARY in DEV!   XXX TODO
+/*
+    if (debugging() && $USER->id == $user->id) {   // TEMPORARY in DEV!
         echo '<hr />';
         print_heading('DEBUG MODE:  User session variables');
         print_object($USER);
     }
-
+*/
 
     print_footer($course);
 
