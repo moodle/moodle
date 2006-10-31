@@ -739,6 +739,12 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
         if (strlen($searchterm) < 2) {
             continue;
         }
+    /// Under Oracle and MSSQL, trim the + and - operators and perform
+    /// simpler LIKE search
+        if ($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'mssql_n' || $CFG->dbtype == 'odbc_mssql') {
+            $searchterm = trim($searchterm, '+-');
+        }
+
         if ($messagesearch) {
             $messagesearch .= " AND ";
         }
