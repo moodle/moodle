@@ -235,22 +235,11 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
          $field = implode("", array_keys($args));
          $content = strtolower(implode("", $args));
          if ($field == "id") { $field = "pagename"; }
-         switch ($CFG->dbtype) {
-            case 'postgres7':
-                $sql= "SELECT pagename AS id, version, flags" .
-                    (EWIKI_DBQUERY_BUFFER && ($field!="pagename") ? ", $field" : "") .
-                    " FROM " . $CFG->prefix.EWIKI_DB_TABLE_NAME .
-                    " WHERE $field ILIKE '%".anydb_escape_string($content)."%'  and wiki=".$wiki_entry->id .
-                    " GROUP BY id, pagename, version, flags ".  
-                    (EWIKI_DBQUERY_BUFFER && ($field!="pagename") ? ", $field" : "") ;
-                break;
-            default: 
-                $sql= "SELECT pagename AS id, version, flags" .
-                    (EWIKI_DBQUERY_BUFFER && ($field!="pagename") ? ", $field" : "") .
-                    " FROM " . $CFG->prefix.EWIKI_DB_TABLE_NAME .
-                    " WHERE LOCATE('" . anydb_escape_string($content) . "', LCASE($field))  and wiki=".$wiki_entry->id .
-                    " GROUP BY id, version DESC";
-         }
+         $sql= "SELECT pagename AS id, version, flags" .
+             (EWIKI_DBQUERY_BUFFER && ($field!="pagename") ? ", $field" : "") .
+             " FROM " . $CFG->prefix.EWIKI_DB_TABLE_NAME .
+             " WHERE $field " . sql_ilike() . " '%".anydb_escape_string($content)."%'  and wiki=".$wiki_entry->id .
+             " ORDER BY id, version ASC";
          $result=get_records_sql($sql);
 
          $r = new ewiki_dbquery_result(array("id","version",$field));
