@@ -199,12 +199,7 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
             if ($chat = get_record('chat', 'id', $chatuser->chatid)) {
               
                 // we find the course module id
-                $chatmod = get_record('modules', 'name', 'chat');
-                $SQL = "select * from {$CFG->prefix}course_modules where
-                        course = $course->id 
-                        and module = $chatmod->id
-                        and instance = $chat->id";
-                $cm = get_records_sql($SQL);
+                $cm = get_coursemodule_from_instance('chat', $chat->id, $course->id);
                 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
               
                 // needs to be fixed
@@ -219,7 +214,7 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
             }
             $current = $chatuser->chatid;
         }
-        $fullname = fullname($chatuser, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_MODULE, $cm->id)));
+        $fullname = fullname($chatuser, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
         echo '<li class="info name">'.$fullname.'</li>';
     }
 
