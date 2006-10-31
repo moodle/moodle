@@ -116,7 +116,6 @@
         $adminroot = admin_get_root();
         admin_externalpage_setup('assignroles', $adminroot);
         admin_externalpage_print_header($adminroot);
-        print_heading($straction);
     } else {
         $currenttab = '';
         $tabsmode = 'assign';
@@ -178,6 +177,9 @@
             $previoussearch = 0;
         }
     }
+
+
+    print_heading_with_help(get_string('assignroles', 'role'), 'assignroles');
 
     if ($roleid) {        /// prints a form to swap roles
 
@@ -243,14 +245,15 @@
         $table->tablealign = 'center';
         $table->cellpadding = 5;
         $table->cellspacing = 0;
-        $table->width = '20%';
-        $table->head = array(get_string('roles', 'role'), get_string('users'));
-        $table->wrap = array('nowrap', 'nowrap');
-        $table->align = array('right', 'center');
+        $table->width = '60%';
+        $table->head = array(get_string('roles', 'role'), get_string('description'), get_string('users'));
+        $table->wrap = array('nowrap', '', 'nowrap');
+        $table->align = array('right', 'left', 'center');
 
         foreach ($assignableroles as $roleid => $rolename) {
             $countusers = count_role_users($roleid, $context);
-            $table->data[] = array('<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$rolename.'</a>', $countusers);
+            $description = format_string(get_field('role', 'description', 'id', $roleid));
+            $table->data[] = array('<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$rolename.'</a>',$description, $countusers);
         }
 
         print_table($table);

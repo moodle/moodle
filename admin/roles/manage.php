@@ -281,13 +281,13 @@
 
         switch ($action) {
             case 'add':
-                print_heading_with_help(get_string('addrole', 'role'), 'role');
+                print_heading_with_help(get_string('addrole', 'role'), 'roles');
                 break;
             case 'view':
-                print_heading_with_help(get_string('viewrole', 'role'), 'role');
+                print_heading_with_help(get_string('viewrole', 'role'), 'roles');
                 break;
             case 'edit':
-                print_heading_with_help(get_string('editrole', 'role'), 'role');
+                print_heading_with_help(get_string('editrole', 'role'), 'roles');
                 break;
         }
 
@@ -317,6 +317,8 @@
         }
 
     } else {
+
+        print_heading_with_help(get_string('roles', 'role'), 'roles');
 
         $table = new object;
 
