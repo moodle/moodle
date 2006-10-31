@@ -402,8 +402,8 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
 
                 $parentcats = get_parent_cats($courseinstance, CONTEXT_COURSE);
                 foreach ($parentcats as $parentcat) {
-                    if (isset($capabilities[$parentcat->id]['do_anything'])) {
-                        $result = (0 < $capabilities[$parentcat->id]['do_anything']);
+                    if (isset($capabilities[$parentcat]['do_anything'])) {
+                        $result = (0 < $capabilities[$parentcat]['do_anything']);
                         $capcache[$cachekey] = $result;
                         return $result;
                     }
