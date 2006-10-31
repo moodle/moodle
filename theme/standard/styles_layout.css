@@ -69,6 +69,11 @@ h6.main {
   display:block;
 }
 
+.clearfix {
+  min-width: 0;
+  overflow: hidden;
+}
+
 .clearfix:after {
   /* content: "<!-- -->";  */
   content: "."; 
@@ -399,14 +404,10 @@ form.mform div.error,form.mform fieldset.error {
 }
 
 .navbar {
-  width:100%;
+  width:auto;
   padding:3px 0.5em;
   border-width:1px;
   border-style:solid;
-}
-
-div.navbar {
-  width: auto;
 }
 
 table.navbar {
@@ -551,7 +552,12 @@ body#admin-roles-manage table.generalbox {
 
 #admin-roles-manage .rolecap .cap-desc .cap-name,
 #admin-roles-override .rolecap .cap-desc .cap-name {
-	  display: block;
+  display: block;
+}
+
+#admin-roles-override .cell.c1,
+#admin-roles-assign .cell.c1 {
+  padding-top: 0.75em;
 }
 
 #adminsettings fieldset {
@@ -664,9 +670,9 @@ a.skip-block, .skip-block {
 
 ul.list, ul.list li, ol.list, ol.list li {
   list-style-type:none;
-  padding:0%;
-  margin:0%;
-  text-indent:0%;
+  padding:0;
+  margin:0;
+  text-indent:0;
 } 
 
 .sideblock .content h3,
@@ -675,8 +681,8 @@ ul.list, ul.list li, ol.list, ol.list li {
 }
 /*.sideblock .content h3, ??*/
 .sideblock .content h2 {
-  margin:0%;
-  padding:0%;
+  margin:1.5em 0 0;
+  padding:0;
 }
 
 .sideblock {
@@ -686,7 +692,7 @@ ul.list, ul.list li, ol.list, ol.list li {
 
 .sideblock .header, .sideblock h2.header {
   text-align: left;
-  margin:0%;
+  margin:0;
   padding:4px;
   padding-top:0;
   border-width: 1px;
@@ -694,8 +700,8 @@ ul.list, ul.list li, ol.list, ol.list li {
   border-bottom: none;
 }
 .sideblock h2 {
-  margin:0%;
-  padding:0%;
+  margin:0;
+  padding:0;
 }
 
 .sideblock .header .hide-show {
@@ -1189,7 +1195,7 @@ body#course-view .unread {
   margin-left: 3em;
 } 
 
-body#course-view.editing .sideblock .header {
+body#course-view.drag .sideblock .header {
   cursor: move;
 }
 

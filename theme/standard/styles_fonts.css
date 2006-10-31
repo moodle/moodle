@@ -229,12 +229,18 @@ body#admin-index .copyright {
 
 #admin-roles-manage .rolecap .cap-desc .cap-name,
 #admin-roles-override .rolecap .cap-desc .cap-name {
-    font-size: 75%;
+  font-size: 0.75em;
 }
 
 #adminsettings .form-shortname {
-    font-size: 75%;
+  font-size: 0.75em;
 }
+
+#admin-roles-override .cell.c1,
+#admin-roles-assign .cell.c1 {
+  font-size: 0.7em;
+}
+
 
 /***
  *** Blocks

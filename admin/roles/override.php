@@ -141,6 +141,7 @@
         include_once('tabs.php');
     }
 
+    print_heading_with_help(get_string('overrides', 'role'), 'overrides');
 
     $overridableroles = get_overridable_roles($context);
 
@@ -188,15 +189,16 @@
         $table->tablealign = 'center';
         $table->cellpadding = 5;
         $table->cellspacing = 0;
-        $table->width = '20%';
-        $table->head = array(get_string('roles', 'role'), get_string('overrides', 'role'));
-        $table->wrap = array('nowrap', 'nowrap');
-        $table->align = array('right', 'center');
+        $table->width = '60%';
+        $table->head = array(get_string('roles', 'role'), get_string('description'), get_string('overrides', 'role'));
+        $table->wrap = array('nowrap', '', 'nowrap');
+        $table->align = array('right', 'left', 'center');
 
         foreach ($overridableroles as $roleid => $rolename) {
             $countusers = 0;
             $overridecount = count_records_select('role_capabilities', "roleid = $roleid AND contextid = $context->id");
-            $table->data[] = array('<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$rolename.'</a>', $overridecount);
+            $description = format_string(get_field('role', 'description', 'id', $roleid));
+            $table->data[] = array('<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$rolename.'</a>', $description, $overridecount);
         }
 
         print_table($table);
