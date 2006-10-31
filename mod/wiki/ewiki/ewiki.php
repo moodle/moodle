@@ -1087,6 +1087,8 @@ function ewiki_page_versions($id=0, $data=0) {
 
 function ewiki_page_search($id, &$data, $action) {
 
+   global $CFG;
+
    $o = ewiki_make_title($id, $id, 2, $action);
 
    if (! ($q = @$_REQUEST["q"])) {
@@ -1099,7 +1101,11 @@ function ewiki_page_search($id, &$data, $action) {
    else {
       $found = array();
 
-      $q = preg_replace('/\s*[^\w]+\s*/', ' ', $q);
+      if ($CFG->unicodedb) {
+          $q = preg_replace('/\s*[\W]+\s*/u', ' ', $q);
+      } else {
+          $q = preg_replace('/\s*[^\w]+\s*/', ' ', $q);
+      }
       foreach (explode(" ", $q) as $search) {
 
          if (empty($search)) { continue; }
