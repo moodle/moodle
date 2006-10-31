@@ -43,6 +43,7 @@ if (empty($USER->id)) {
 $PAGE->courseid     = $courseid;
 $PAGE->filtertype   = $filtertype;
 $PAGE->filterselect = $filterselect;
+$PAGE->tagid        = $tagid;
 
 $PAGE->init_full(); //init the BlogInfo object and the courserecord object
 
