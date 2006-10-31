@@ -6208,7 +6208,7 @@
             }        
             $assignment->userid = $olduser->new_id; // new userid here
             $oldmodifier = backup_getid($restore->backup_unique_code,"user",$assignment->modifierid);
-            $assignment->modifierid = $oldmodifier->new_id?$oldmodifier->new_id:0; // new modifier id here
+            $assignment->modifierid = !empty($oldmodifier->new_id) ? $oldmodifier->new_id : 0; // new modifier id here
             $assignment->roleid = $role->new_id; // restored new role id
 
             // hack to make the correct contextid for course level imports
