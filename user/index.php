@@ -405,7 +405,11 @@
         }
         print_heading($heading, 'center', 3);
     } else {
-        print_heading(get_string('allparticipants'), 'center', 3);
+        if ($matchcount < $totalcount) {
+            print_heading(get_string('allparticipants').': '.$matchcount.'/'.$totalcount, 'center', 3);
+        } else {
+            print_heading(get_string('allparticipants').': '.$matchcount, 'center', 3);
+        }
     }
 
 
