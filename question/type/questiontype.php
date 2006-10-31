@@ -463,7 +463,7 @@ class default_questiontype {
         if (isteacheredit($cmoptions->course)) {
             $stredit = get_string('edit');
             $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" border="0" alt="'.$stredit.'" />';
-            $editlink = link_to_popup_window('/question/question.php?id='.$question->id, $stredit, $linktext, 450, 550, $stredit, '', true);
+            $editlink = link_to_popup_window('/question/question.php?inpopup=1&amp;id='.$question->id, 'editquestion', $linktext, 450, 550, $stredit, '', true);
         }
 
         $grade = '';
@@ -999,7 +999,8 @@ class default_questiontype {
         echo '<input type="submit" name="cancel" value="'.get_string("cancel").'" />
               <input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />
               <input type="hidden" name="id" value="'.$question->id.'" />
-              <input type="hidden" name="qtype" value="'.$question->qtype.'" />';
+              <input type="hidden" name="qtype" value="'.$question->qtype.'" />
+              <input type="hidden" name="inpopup" value="'.optional_param('inpopup', 0, PARAM_INT).'" />';
         // The following hidden field indicates that the versioning code should be turned on, i.e.,
         // that old versions should be kept if necessary
         echo '<input type="hidden" name="versioning" value="on" />

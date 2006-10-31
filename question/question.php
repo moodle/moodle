@@ -27,7 +27,7 @@
 
     $qtype = optional_param('qtype', '', PARAM_FILE);
     $category = optional_param('category', 0, PARAM_INT);
-    
+    $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
     
     $CFG->pagepath = 'question/type/'.$qtype;
     
@@ -252,7 +252,14 @@
             //    $QTYPES[$question->qtype]->get_question_options($question);
             //    quiz_regrade_question_in_quizzes($question, $replaceinquiz);
             //}
-            redirect($SESSION->returnurl);
+
+            $strsaved = get_string('changessaved');
+            if ($inpopup) {
+                notify($strsaved, '');
+                close_window(3);
+            } else {
+                redirect($SESSION->returnurl, $strsaved);
+            }
         }
     }
 
