@@ -20,7 +20,7 @@
     
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
-    require_capability('mod/lesson:edit');
+    require_capability('mod/lesson:edit', $context);
     
 /// Handle any preprocessing before header is printed - based on $mode
     switch ($mode) {
