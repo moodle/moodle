@@ -4749,16 +4749,21 @@ function redirect($url, $message='', $delay=-1) {
  * @param string $message The message to print out
  * @param string $style Optional style to display message text in
  * @param string $align Alignment option
+ * @param bool $return whether to return an output string or echo now
  */
-function notify ($message, $style='notifyproblem', $align='center') {
-
+function notify($message, $style='notifyproblem', $align='center', $return=false) {
     if ($style == 'green') {
         $style = 'notifysuccess';  // backward compatible with old color system
     }
 
     $message = clean_text($message);
 
-    echo '<div class="'.$style.'" align="'. $align .'">'. $message .'</div>'."<br />\n";
+    $output = '<div class="'.$style.'" align="'. $align .'">'. $message .'</div>'."<br />\n";
+    
+    if ($return) {
+        return $output;
+    }
+    echo $output;
 }
 
 
