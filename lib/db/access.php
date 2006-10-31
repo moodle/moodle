@@ -668,13 +668,14 @@ $moodle_capabilities = array(
         )
     ),
 
-    'moodle/blog:create' => array(
+    'moodle/blog:create' => array( // works in CONTEXT_SYSTEM only
 
         'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
+            'guest' => CAP_ALLOW, // needed for default role that allows everybody to post blog entries
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
@@ -723,13 +724,14 @@ $moodle_capabilities = array(
         )
     ),
 
-    'moodle/calendar:manageownentries' => array(
+    'moodle/calendar:manageownentries' => array( // works in CONTEXT_SYSTEM only
 
         'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
+            'guest' => CAP_ALLOW, // needed for default role that allows everybody to add user entries
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
