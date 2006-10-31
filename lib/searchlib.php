@@ -339,6 +339,14 @@ function search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $
         $type = $parsetree[$i]->getType();
         $value = $parsetree[$i]->getValue();
 
+    /// Under Oracle and MSSQL, transform TOKEN searches into STRING searches and trim +- chars
+        if ($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'mssql_n' || $CFG->dbtype == 'odbc_mssql') {
+            $value = trim($value, '+-');
+            if ($type == TOKEN_EXACT) {
+                $type = TOKEN_STRING;
+            }
+        }
+
         switch($type){
             case TOKEN_STRING: 
                 $SQLString .= "(($datafield $LIKE '%$value%') OR ($metafield $LIKE '%$value%') )";
