@@ -46,10 +46,11 @@
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_utils'] = 'mbstring';
     } else {
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_utils'] = '';
-    /// And this directoy must exist to allow Typo to cache conversion 
-    /// tables when using internal functions
-        make_upload_directory('temp/typo3temp/cs');
     }
+
+/// And this directory must exist to allow Typo to cache conversion 
+/// tables when using internal functions
+    make_upload_directory('temp/typo3temp/cs');
 
 /// Default mask for Typo
     $GLOBALS['TYPO3_CONF_VARS']['BE']['fileCreateMask'] = $CFG->directorypermissions;
