@@ -1231,6 +1231,7 @@ function moodle_install_roles() {
                 // ignore site level teacher assignments
                 if ($teacher->course == SITEID) {
                     $progresscount++;
+                    $rs->MoveNext();
                     continue;  
                 }
                 // populate the user_lastaccess table
