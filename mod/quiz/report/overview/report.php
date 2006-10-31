@@ -350,8 +350,12 @@ class quiz_report extends quiz_default_report {
 
         // Fetch the attempts
         if (!empty($from)) { // if we're in the site course and displaying no attempts, it makes no sense to do the query.
-            $attempts = get_records_sql($select.$from.$where.$sort,
+            if (!$download) {
+                $attempts = get_records_sql($select.$from.$where.$sort,
                                         $table->get_page_start(), $table->get_page_size());
+            } else {
+                $attempts = get_records_sql($select.$from.$where.$sort);
+            }
         } else {
             $attempts = array();
         }
