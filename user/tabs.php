@@ -170,10 +170,10 @@
                                                  '&amp;user='.$user->id.'&amp;mode=stats',get_string('stats'));
                 }
                 
-                // needs permission checking!!!
-                
-                $secondrow[] = new tabobject('grade', $CFG->wwwroot.'/course/user.php?id='.$course->id.
+                if ($course->showgrades) {
+                    $secondrow[] = new tabobject('grade', $CFG->wwwroot.'/course/user.php?id='.$course->id.
                                           '&amp;user='.$user->id.'&amp;mode=grade', get_string('grade'));
+                }
                                 
             }
 

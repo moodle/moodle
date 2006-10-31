@@ -2959,26 +2959,29 @@ function print_student_grade($user, $course) {
                 $sectionmods = explode(",", $section->sequence);
                 foreach ($sectionmods as $sectionmod) {
                     $mod = $mods[$sectionmod];
-                    $instance = get_record("$mod->modname", "id", "$mod->instance");
+                    if (empty($mod->modname)) {
+                        continue;  // Just in case, see MDL-7150
+                    }
+                    $instance = get_record($mod->modname, 'id', $mod->instance);
                     $libfile = "$CFG->dirroot/mod/$mod->modname/lib.php";    
                     
                     if (file_exists($libfile)) {
                         require_once($libfile);
-                        $gradefunction = $mod->modname."_grades";
+                        $gradefunction = $mod->modname.'_grades';
                         if (function_exists($gradefunction)) {   // Skip modules without grade function
                             if ($modgrades = $gradefunction($mod->instance)) {
                                 if (!empty($modgrades->maxgrade)) {
                                     if ($mod->visible) {
-                                        $maxgrade = "$modgrades->maxgrade";
+                                        $maxgrade = $modgrades->maxgrade;
                                     } else {
-                                        $maxgrade = "$modgrades->maxgrade";
+                                        $maxgrade = $modgrades->maxgrade;
                                     }
                                 } else {
-                                    $maxgrade = "";
+                                    $maxgrade = '';
                                 }
                                 
                                 if ($maxgrade) { 
-                                    echo "<br/>";
+                                    echo '<br />';
                                     if (!empty($modgrades->grades[$user->id])) {
                                         $currentgrade = $modgrades->grades[$user->id];
                                         echo "$mod->modfullname: ".format_string($instance->name,true)." - $currentgrade/$maxgrade";            } else {
