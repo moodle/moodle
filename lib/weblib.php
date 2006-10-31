@@ -690,15 +690,20 @@ function close_window_button($name='closewindow', $return=false) {
  * Try and close the current window immediately using Javascript
  */
 function close_window($delay=0) {
-    echo '<script language="JavaScript" type="text/javascript">'."\n";
-    echo '<!--'."\n";
-    if ($delay) {
-        sleep($delay);
+?>
+<script type="text/javascript">
+<!--
+    function close_this_window() {
+        self.close();
     }
-    echo 'self.close();'."\n";
-    echo '-->'."\n";
-    echo '</script>'."\n";
-    exit;
+    setTimeout("close_this_window()", <?php echo $delay * 1000 ?>);
+-->
+</script>
+<noscript><center>
+<?php print_string('pleaseclose') ?>
+</center></noscript>
+<?php
+    die;
 }
 
 
