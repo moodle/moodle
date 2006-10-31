@@ -243,7 +243,7 @@
             if (is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/scorm")) {
                 $handle = opendir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/scorm");
                 while (false!==($item = readdir($handle))) {
-                    if ($item != '.' && $item != '..' && is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/sorm/".$item)
+                    if ($item != '.' && $item != '..' && is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/scorm/".$item)
                         && array_key_exists($item,$preferences->mods['scorm']->instances)
                         && !empty($preferences->mods['scorm']->instances[$item]->backup)) {
                         $status = backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/scorm/".$item,

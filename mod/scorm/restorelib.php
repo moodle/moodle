@@ -124,8 +124,7 @@
 
             if ($newid) {
                 //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,$mod->modtype,
-                             $mod->id, $newid);
+                backup_putid($restore->backup_unique_code,$mod->modtype, $mod->id, $newid);
                 $scorm->id = $newid;
                 //Now copy moddata associated files
                 $status = scorm_restore_files ($scorm, $restore);
