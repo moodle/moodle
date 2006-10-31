@@ -69,8 +69,10 @@
     switch ($mode) {
         case "grade":
             $course = get_record('course', 'id', required_param('id', PARAM_INT));
-            require_once($CFG->dirroot.'/grade/lib.php');
-            print_student_grade($user, $course);
+            if (!empty($course->showgrades)) {
+                require_once($CFG->dirroot.'/grade/lib.php');
+                print_student_grade($user, $course);
+            }
             break;
       
         case "todaylogs" :
