@@ -987,6 +987,12 @@ function glossary_search($course, $searchterms, $extended = 0, $glossary = NULL)
             $definitionsearch.= " OR ";
         }
 
+    /// Under Oracle and MSSQL, trim the + and - operators and perform
+    /// simpler LIKE search
+        if ($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'mssql_n' || $CFG->dbtype == 'odbc_mssql') {
+            $searchterm = trim($searchterm, '+-');
+        }
+
         if (substr($searchterm,0,1) == "+") {
             $searchterm = substr($searchterm,1);
             $conceptsearch.= " e.concept $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
