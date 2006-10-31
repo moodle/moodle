@@ -13,6 +13,7 @@ class page_blog extends page_base {
     var $courseid = NULL;
     var $filtertype = NULL;
     var $filterselect = NULL;
+    var $tagid = NULL;
 
     // Mandatory; should return our identifier.
     function get_type() {
@@ -102,6 +103,7 @@ class page_blog extends page_base {
     }
 
     function url_get_parameters() {
+        
         $array = array();
         if (!$this->full_init_done) {
             $array['userid'] = $this->id;
@@ -116,6 +118,9 @@ class page_blog extends page_base {
         }
         if (!empty($this->filterselect)) {
             $array['filterselect'] = $this->filterselect;
+        }
+        if (!empty($this->tagid)) {
+            $array['tagid'] = $this->tagid;  
         }
         return $array;
     }
