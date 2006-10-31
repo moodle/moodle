@@ -552,7 +552,12 @@ body#admin-roles-manage table.generalbox {
 
 #admin-roles-manage .rolecap .cap-desc .cap-name,
 #admin-roles-override .rolecap .cap-desc .cap-name {
-	  display: block;
+  display: block;
+}
+
+#admin-roles-override .cell.c1,
+#admin-roles-assign .cell.c1 {
+  padding-top: 0.75em;
 }
 
 #adminsettings fieldset {
