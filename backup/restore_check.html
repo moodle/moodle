@@ -17,7 +17,7 @@
     //Detect if we are coming from the restore form
     $fromform = optional_param ('fromform', 0, PARAM_INT);
 
-    if ($form1 = data_submitted()); {
+    if ($form1 = data_submitted()) {
         $currentcourseshortname = $course_header->course_shortname; //"store_ShortName";
         $course_header->course_shortname =  $form1->shortname;  //"update_ShortName";    
         $course_header->course_fullname =   $form1->fullname;   //"update_FullName";  
