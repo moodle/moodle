@@ -717,6 +717,13 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
     $summarysearch = '';
 
     foreach ($searchterms as $searchterm) {
+
+    /// Under Oracle and MSSQL, trim the + and - operators and perform
+    /// simpler LIKE search
+        if ($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'mssql_n' || $CFG->dbtype == 'odbc_mssql') {
+            $searchterm = trim($searchterm, '+-');
+        }
+
         if ($fullnamesearch) {
             $fullnamesearch .= ' AND ';
         }
