@@ -102,18 +102,6 @@
 
 
 
-    // print the results at the bottom of the screen
-
-    if ( $choice->showresults == CHOICE_SHOWRESULTS_ALWAYS or
-        ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_ANSWER and $current ) or
-        ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_CLOSE and $choice->timeclose <= time() ) )  {
-
-        choice_show_results($choice, $course, $cm);
-
-    } else if (!$choiceformshown) {
-        print_simple_box(get_string('noresultsviewable', 'choice'), 'center');
-    } 
-    
     if (!$choiceformshown) {
 
         $sitecontext = get_context_instance(CONTEXT_SYSTEM);
@@ -140,6 +128,19 @@
 
         }
     }
+
+    // print the results at the bottom of the screen
+
+    if ( $choice->showresults == CHOICE_SHOWRESULTS_ALWAYS or
+        ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_ANSWER and $current ) or
+        ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_CLOSE and $choice->timeclose <= time() ) )  {
+
+        choice_show_results($choice, $course, $cm);
+
+    } else if (!$choiceformshown) {
+        print_simple_box(get_string('noresultsviewable', 'choice'), 'center');
+    } 
+
 
     print_footer($course);
 
