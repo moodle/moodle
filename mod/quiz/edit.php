@@ -38,6 +38,15 @@
     $streditingquestions = get_string('editquestions', "quiz");
     $streditingquiz = get_string("editinga", "moodle", $strquiz);
 
+    // We might get here after editing a question in a popup window. 
+    // In which case we will want to close the window automatically.
+    // 
+    // Unfortunately, we can only detect this condition at the top of
+    // this file, but we should only output the JavaScript after print_header,
+    // which has to happen lower down the file. Therefore, we cache
+    // any necessary JavaScript in this variable.
+    $scripttooutputafterprint_header = '';
+
     if ($modform = data_submitted() and !empty($modform->course)) { // data submitted
 
         $SESSION->modform = $modform;    // Save the form in the current session
@@ -63,24 +72,17 @@
             error('cmunknown');
         }
     } else {
-        // we might get here after editing a question in
-        // a popup window. So close window automatically.
-        // 
-        // But we certainly should not be doing this before
-        // print_header, since it throws browsers into quirks mode.
-        // Unfortunately there is no easy fix. Bug #5811 covers this. 
-?>
-<script type="text/javascript">
+        $scripttooutputafterprint_header = '<script type="text/javascript">
 <!--
-if (self.name == 'editquestion') {
+if (self.name == "editquestion") {
     self.close();
 }
 -->
 </script>
 <noscript>
-<?php notify(get_string('pleaseclose', 'quiz')); ?>
+' . notify(get_string('pleaseclose', 'quiz'), 'notifyproblem', 'center', true) . '
 </noscript>
-<?php
+';
         // no quiz or course was specified so we need to use the stored modform
         if (isset($SESSION->modform)) {
             $modform = $SESSION->modform;
@@ -318,6 +320,7 @@ if (self.name == 'editquestion') {
                  " -> <a href=\"view.php?q=$modform->instance\">".format_string($modform->name).'</a>'.
                  " -> $streditingquiz", "", "",
                  true, $strupdatemodule);
+        echo $scripttooutputafterprint_header;
 
         $currenttab = 'edit';
         $mode = 'editq';
@@ -355,6 +358,7 @@ if (self.name == 'editquestion') {
              " -> <a href=\"view.php?q=$modform->instance\">".format_string($modform->name).'</a>'.
              " -> $streditingquiz",
              "", "", true, $strupdatemodule);
+    echo $scripttooutputafterprint_header;
 
     $currenttab = 'edit';
     $mode = 'editq';
