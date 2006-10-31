@@ -79,7 +79,7 @@
                     echo $formatmessage->html;
                 }
             }
-            print_simple_box_end('center');
+            print_simple_box_end();
         }
 
         if (!$deletesession or !has_capability('mod/chat:deletelog', $context)) {
