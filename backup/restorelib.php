@@ -5346,7 +5346,7 @@
      */
     function restore_userdata_selected($restore,$modname,$modid) {
         // check first for per instance array
-        if (!empty($restore->mods[$modname]->instances)) { // supports per instance
+        if (!empty($restore->mods[$modname]->granular)) { // supports per instance
             return array_key_exists($modid,$restore->mods[$modname]->instances) 
                 && !empty($restore->mods[$modname]->instances[$modid]->userinfo);
         }
