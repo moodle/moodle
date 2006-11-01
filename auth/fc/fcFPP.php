@@ -111,7 +111,8 @@ class fcFPP
 		$this->_user = $userid;
 		$this->_pwd  = $passwd; 
 		return TRUE;		
-	    } elseif (preg_match ("/^\Sorry/",$line)){	//Denied access but a valid user and password
+        } elseif (strpos($line, 'You are not allowed')){ // Denied access but a valid user and password
+                                                         // "Sorry. You are not allowed to login with the FPP interface"
 	    	return TRUE;
 	    } else {					//Invalid user or password
 		return FALSE;
