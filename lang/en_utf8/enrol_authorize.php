@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_authorize.php - created with Moodle 1.7 dev (2006100601)
+      // enrol_authorize.php - created with Moodle 1.7 beta + (2006101003)
 
 
 $string['adminacceptccs'] = 'Which credit card types will be accepted?';
@@ -52,7 +52,7 @@ $string['approvedreview'] = 'Approved Review';
 $string['authcaptured'] = 'Authorized / Captured';
 $string['authcode'] = 'Authorization Code';
 $string['authorize:managepayments'] = 'Manage payments';
-$string['authorize:uploadcsv']='Upload CSV file';
+$string['authorize:uploadcsv'] = 'Upload CSV file';
 $string['authorizedpendingcapture'] = 'Authorized / Pending Capture';
 $string['avsa'] = 'Address (street) matches, postal code does not';
 $string['avsb'] = 'Address information not provided';

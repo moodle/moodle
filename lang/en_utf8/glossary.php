@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // glossary.php - created with Moodle 1.7 beta + (2006101003)
 
 
 $string['addcomment'] = 'Add comment';
@@ -95,8 +95,8 @@ $string['explainalphabet'] = 'Browse the glossary using this index';
 $string['explainexport'] = 'Click on the button below to export glossary entries.<br />You can import it anytime you wish in this or other course.<p>Please note that attachments (e.g. images) and authors are not exported.</p>';
 $string['explainimport'] = 'You must specify the file to import and define the criteria of the process.<p>Submit your request and review the results.</p>';
 $string['explainspecial'] = 'Shows entries that do not begin with a letter';
-$string['exportentries'] = 'Export entries';
 $string['exportedentry'] = 'Exported entry';
+$string['exportentries'] = 'Export entries';
 $string['exportfile'] = 'Export entries to file';
 $string['exportglossary'] = 'Export glossary';
 $string['exporttomainglossary'] = 'Export to main glossary';
@@ -105,19 +105,19 @@ $string['fillfields'] = 'Concept and definition are mandatory fields.';
 $string['filtername'] = 'Glossary Auto-linking';
 $string['fullmatch'] = 'Match whole words only';
 $string['globalglossary'] = 'Global glossary';
+$string['glossary:approve'] = 'Approve unapproved entries';
+$string['glossary:comment'] = 'Create comments';
+$string['glossary:export'] = 'Export entries';
+$string['glossary:import'] = 'Import entries';
+$string['glossary:managecategories'] = 'Manage categories';
+$string['glossary:managecomments'] = 'Manage comments';
+$string['glossary:manageentries'] = 'Manage entries';
+$string['glossary:rate'] = 'Rate entries';
+$string['glossary:view'] = 'View glossary';
+$string['glossary:viewrating'] = 'View ratings';
+$string['glossary:write'] = 'Create new entries';
 $string['glossaryleveldefaultsettings'] = 'Glossary Level Default Settings';
 $string['glossarytype'] = 'Glossary Type';
-$string['glossary:view'] = 'View glossary';
-$string['glossary:write'] = 'Create new entries';
-$string['glossary:manageentries'] = 'Manage entries';
-$string['glossary:managecategories'] = 'Manage categories';
-$string['glossary:comment'] = 'Create comments';
-$string['glossary:managecomments'] = 'Manage comments';
-$string['glossary:import'] = 'Import entries';
-$string['glossary:export'] = 'Export entries';
-$string['glossary:approve'] = 'Approve unapproved entries';
-$string['glossary:rate'] = 'Rate entries';
-$string['glossary:viewrating'] = 'View ratings';
 $string['importcategories'] = 'Import categories';
 $string['importedcategories'] = 'Imported categories';
 $string['importedentries'] = 'Imported entries';

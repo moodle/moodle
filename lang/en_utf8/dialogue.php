@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // dialogue.php - created with Moodle 1.2 development (2003111400)
+<?PHP // $Id$ 
+      // dialogue.php - created with Moodle 1.7 beta + (2006101003)
 
 
 $string['addmynewentries'] = 'Add my New Entries';
@@ -18,11 +18,7 @@ $string['dialoguemail'] = '$a->userfrom has posted a new entry in your
 
 dialogue entry for \'$a->dialogue\'
 
-
-
 You can see it appended to your dialogue entry:
-
-
 
     $a->url';
 $string['dialoguemailhtml'] = '$a->userfrom has posted a new entry in your
@@ -46,8 +42,8 @@ $string['newentry'] = 'New Entry';
 $string['noavailablepeople'] = 'There is no one available to have a Dialogue with.';
 $string['nopersonchosen'] = 'No Person Chosen';
 $string['nosubject'] = 'No Subject Entered';
-$string['notextentered'] = 'No Text Entered';
 $string['notavailable'] = 'Dialogues are not available to guest users';
+$string['notextentered'] = 'No Text Entered';
 $string['notstarted'] = 'You have not started this dialogue yet';
 $string['notyetseen'] = 'Not yet seen';
 $string['numberofentries'] = 'Number of entries';
@@ -58,8 +54,8 @@ $string['onyouwrote'] = 'On $a you wrote';
 $string['open'] = 'Open';
 $string['openadialoguewith'] = 'Open a Dialogue with';
 $string['opendialogue'] = 'Open Dialogue';
-$string['opendialogues'] = 'Open Dialogues';
 $string['opendialogueentries'] = 'Open dialogue entries';
+$string['opendialogues'] = 'Open Dialogues';
 $string['pane0'] = 'Open a Dialogue';
 $string['pane1'] = '$a Dialogues awaiting Replies from you';
 $string['pane1one'] = '1 Dialogue awaiting a Reply from you';

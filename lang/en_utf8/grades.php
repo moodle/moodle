@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031700)
+      // grades.php - created with Moodle 1.7 beta + (2006101003)
 
 
 $string['addcategory'] = 'Add Category';
@@ -22,7 +22,7 @@ $string['displayweighted'] = 'Display Weighted Grades';
 $string['dropped'] = 'Dropped';
 $string['dropxlowest'] = 'Drop X Lowest';
 $string['dropxlowestwarning'] = 'Note: If you use drop x lowest the grading assumes that all items in the category have the same point value. If point values differ results will be unpredictable';
-$string['errorgradevaluenonnumeric'] = 'Received non-numeric for low or high grade for ';
+$string['errorgradevaluenonnumeric'] = 'Received non-numeric for low or high grade for';
 $string['errornocategorizedid'] = 'Could not get an uncategorized id!';
 $string['errornocourse'] = 'Could not get course information';
 $string['errorreprintheadersnonnumeric'] = 'Received non-numeric value for reprint-headers';
@@ -31,11 +31,6 @@ $string['excluded'] = 'Excluded';
 $string['extracredit'] = 'Extra Credit';
 $string['extracreditwarning'] = 'Note: Setting all items for a category to extra credit will effectively remove them from the grade calculation. Since there will be no point total';
 $string['forstudents'] = 'For Students';
-$string['gradeitemaddusers'] = 'Exclude from Grading';
-$string['gradeitemmembersselected'] = 'Excluded from Grading';
-$string['gradeitemnonmembers'] = 'Included in Grading';
-$string['gradeitemremovemembers'] = 'Include in Grading';
-$string['gradeitems'] = 'Grade Items';
 $string['gradebook'] = 'Gradebook';
 $string['gradebookhiddenerror'] = 'The gradebook is currently set to hide everything from students.';
 $string['gradecategoryhelp'] = 'Grade Category Help';
@@ -43,6 +38,11 @@ $string['gradeexceptions'] = 'Grade Exceptions';
 $string['gradeexceptionshelp'] = 'Grade Exceptions Help';
 $string['gradehelp'] = 'Grade Help';
 $string['gradeitem'] = 'Grade Item';
+$string['gradeitemaddusers'] = 'Exclude from Grading';
+$string['gradeitemmembersselected'] = 'Excluded from Grading';
+$string['gradeitemnonmembers'] = 'Included in Grading';
+$string['gradeitemremovemembers'] = 'Include in Grading';
+$string['gradeitems'] = 'Grade Items';
 $string['gradeletter'] = 'Grade Letter';
 $string['gradeletterhelp'] = 'Grade Letter Help';
 $string['gradeletternote'] = 'To delete a grade letter just empty any of the<br /> three text areas for that letter and click submit.';
@@ -74,7 +74,7 @@ $string['nogradeletters'] = 'No grade letters set';
 $string['nogradesreturned'] = 'No grades returned';
 $string['nolettergrade'] = 'No letter grade for';
 $string['nomode'] = 'NA';
-$string['nonnumericweight'] = 'Received non-numeric value for ';
+$string['nonnumericweight'] = 'Received non-numeric value for';
 $string['nonweightedpct'] = 'non-weighted %%';
 $string['notteachererror'] = 'You must be a teacher to use this feature.';
 $string['pctoftotalgrade'] = '%% of total grade';

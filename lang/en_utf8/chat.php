@@ -1,9 +1,11 @@
-<?php // $Id$ 
+<?PHP // $Id$ 
+      // chat.php - created with Moodle 1.7 beta + (2006101003)
+
 
 $string['beep'] = 'beep';
 $string['chat:chat'] = 'Talk in a chat';
-$string['chat:readlog'] = 'Read chat logs';
 $string['chat:deletelog'] = 'Delete chat logs';
+$string['chat:readlog'] = 'Read chat logs';
 $string['chatintro'] = 'Introduction text';
 $string['chatname'] = 'Name of this chat room';
 $string['chatreport'] = 'Chat sessions';
@@ -35,16 +37,16 @@ $string['messagebeepsyou'] = '$a has just beeped you!';
 $string['messageenter'] = '$a has just entered this chat';
 $string['messageexit'] = '$a has left this chat';
 $string['messages'] = 'Messages';
-$string['methodnormal'] = 'Normal method';
 $string['methoddaemon'] = 'Chat server daemon';
+$string['methodnormal'] = 'Normal method';
 $string['modulename'] = 'Chat';
 $string['modulenameplural'] = 'Chats';
 $string['neverdeletemessages'] = 'Never delete messages';
 $string['nextsession'] = 'Next scheduled session';
 $string['noguests'] = 'The chat is not open to guests';
 $string['nomessages'] = 'No messages yet';
-$string['normalstream'] = 'Stream';
 $string['normalkeepalive'] = 'KeepAlive';
+$string['normalstream'] = 'Stream';
 $string['noscheduledsession'] = 'No scheduled session';
 $string['repeatdaily'] = 'At the same time every day';
 $string['repeatnone'] = 'No repeats - publish the specified time only';

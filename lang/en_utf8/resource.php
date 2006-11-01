@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
+      // resource.php - created with Moodle 1.7 beta + (2006101003)
 
 
 $string['addresource'] = 'Add a resource';
@@ -50,8 +50,8 @@ $string['htmlfragment'] = 'HTML fragment';
 $string['imspackageloaded'] = 'Package loaded';
 $string['localfile'] = 'Local file';
 $string['localfilechoose'] = 'Choose a local file (CD-ROM)';
-$string['localfileinfo'] = '<p>Choose a local file from your computer. The file will not be uploaded to the web site, but Moodle will look for the same file on the computer of anyone viewing this resource.</p><p>This is mostly useful when you have large media files stored on a standard CD-ROM that you distribute to all participants.  Each participant is able to choose their own local path for such files, by <a href=\"$a\" target=\"_blank\">editing their user profile</a>.</p>';
 $string['localfilehelp'] = 'Help displaying local files';
+$string['localfileinfo'] = '<p>Choose a local file from your computer. The file will not be uploaded to the web site, but Moodle will look for the same file on the computer of anyone viewing this resource.</p><p>This is mostly useful when you have large media files stored on a standard CD-ROM that you distribute to all participants.  Each participant is able to choose their own local path for such files, by <a href=\"$a\" target=\"_blank\">editing their user profile</a>.</p>';
 $string['localfilepath'] = 'To set your own local path for this resource, choose any file from the drive (usually a CD_ROM) on your computer where the resource exists. The file will not be uploaded but the drive information will be stored and used for any local file resources';
 $string['localfileselect'] = 'Choose this file path.';
 $string['maindirectory'] = 'Main files directory';
@@ -110,9 +110,9 @@ $string['resourcetypeims'] = 'Add an IMS Content Package';
 $string['resourcetypelabel'] = 'Insert a label';
 $string['resourcetyperepository'] = 'Link to a repository object';
 $string['resourcetypetext'] = 'Compose a text page';
-$string['showcourseblocks'] = 'Show the course blocks';
 $string['searchweb'] = 'Search for web page';
 $string['serverurl'] = 'Server URL ($a->wwwroot)';
+$string['showcourseblocks'] = 'Show the course blocks';
 $string['skipsubmenus'] = 'Skip sub-menu pages';
 $string['tableofcontents'] = 'Table of contents';
 $string['upbutton'] = 'Up';

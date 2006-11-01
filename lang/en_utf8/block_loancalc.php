@@ -1,12 +1,15 @@
-<?php // $Id$
-$string['loancalc'] = 'Loan calculator';
+<?PHP // $Id$ 
+      // block_loancalc.php - created with Moodle 1.7 beta + (2006101003)
+
+
 $string['amountofloan'] = 'Amount of loan';
-$string['repaymentamount'] = 'Repayment amount';
-$string['loanterm']  = 'Loan term (years)';
+$string['fortnightly'] = 'Fortnightly';
 $string['interestrate'] = 'Interest rate';
+$string['loancalc'] = 'Loan calculator';
+$string['loanterm'] = 'Loan term (years)';
+$string['monthly'] = 'Monthly';
+$string['repaymentamount'] = 'Repayment amount';
 $string['repaymentfreq'] = 'Repayment frequency';
 $string['weekly'] = 'Weekly';
-$string['fortnightly']  = 'Fortnightly';
-$string['monthly'] = 'Monthly';
 
 ?>

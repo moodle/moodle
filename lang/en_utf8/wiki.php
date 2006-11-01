@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // wiki.php - created with Moodle 1.4 alpha (2004081900)
+<?PHP // $Id$ 
+      // wiki.php - created with Moodle 1.7 beta + (2006101003)
 
 
 $string['action'] = '-- Action --';
@@ -94,7 +94,7 @@ $string['linkok'] = 'OK';
 $string['linkschecked'] = 'Links checked';
 $string['listall'] = 'List all';
 $string['listcandidates'] = 'List candidates';
-$string['lockcancelled'] = 'Your editing lock has been overridden and somebody else is now editing this page. If you wish to keep your changes, please select and copy them before clicking Cancel; then try to edit again.';  
+$string['lockcancelled'] = 'Your editing lock has been overridden and somebody else is now editing this page. If you wish to keep your changes, please select and copy them before clicking Cancel; then try to edit again.';
 $string['meta'] = 'Meta data';
 $string['moduledirectory'] = 'Module Directory';
 $string['modulename'] = 'Wiki';
@@ -106,7 +106,7 @@ $string['noadministrationaction'] = 'No administration action given.';
 $string['nocandidatestoremove'] = 'No candidate pages to remove, choose \'$a\' to show all pages.';
 $string['nochangestorevert'] = 'No changes to revert.';
 $string['nohtml'] = 'No HTML';
-$string['nojslockwarning'] = 'Because Javascript is disabled in your browser, it is possible that somebody else could edit this page. If that happens, you won\'t be able to save your changes. Please try to make your edits quickly, or turn Javascript on and reload this page.'; 
+$string['nojslockwarning'] = 'Because Javascript is disabled in your browser, it is possible that somebody else could edit this page. If that happens, you won\'t be able to save your changes. Please try to make your edits quickly, or turn Javascript on and reload this page.';
 $string['nolinksfound'] = 'No links found on page.';
 $string['noregexp'] = 'This must be a fixed string (you cannot use * or regex), at best use the attackers` IP address or host name, but do not include the port number (because it increased with every http access).';
 $string['notadministratewiki'] = 'You are not allowed to administrate this wiki !';
@@ -118,13 +118,13 @@ $string['optional'] = 'Optional';
 $string['orphanedpage'] = 'Orphaned page';
 $string['orphanedpages'] = 'Orphaned pages';
 $string['otherwikis'] = 'Other Wikis';
+$string['overridebutton'] = 'Override lock';
 $string['overrideinfo'] = 'You can override this user\'s lock, but doing so may cause them to lose their changes! Please take care.';
-$string['overridebutton'] = 'Override lock';  
 $string['ownerunknown'] = 'unknown';
 $string['pageactions'] = 'Page actions';
 $string['pageindex'] = 'Page Index';
 $string['pageinfo'] = 'Page information';
-$string['pagelocked'] = '<p><strong>This page is being edited by $a->name.</strong> They began editing at $a->since and still have the window open as of $a->seen.</p><p>You need to wait for them to finish before you can edit this page.</p>'; 
+$string['pagelocked'] = '<p><strong>This page is being edited by $a->name.</strong> They began editing at $a->since and still have the window open as of $a->seen.</p><p>You need to wait for them to finish before you can edit this page.</p>';
 $string['pagename'] = 'Page name';
 $string['pagenamechoice'] = '- or -';
 $string['pageslinkingto'] = 'Pages linking to this page';
@@ -136,7 +136,7 @@ $string['preview'] = 'Preview';
 $string['readonly'] = 'Read only page';
 $string['refs'] = 'References';
 $string['reloadlinkdescription'] = 'Reloads the page, so that any new content is shown.';
-$string['reloadlinktext'] = 'Reload this page'; 
+$string['reloadlinktext'] = 'Reload this page';
 $string['removenotice'] = 'Note that only unreferenced pages will be listed here. And because the ewiki engine itself does only limited testing if a page is referenced it may miss some of them here.<br />If you however empty a page first, it will get listed here too. Various other database diagnostics are made as well.';
 $string['removepagecheck'] = 'Are you sure that you want to delete these pages ?';
 $string['removepages'] = 'Remove pages';
@@ -183,9 +183,9 @@ $string['versionstodelete'] = 'Version(s) to delete';
 $string['viewpage'] = 'View Page';
 $string['viewsmfor'] = 'View sitemap for';
 $string['wantedpages'] = 'Wanted pages';
-$string['wiki:participate'] = 'Edit wiki pages';
 $string['wiki:manage'] = 'Manage wiki settings';
 $string['wiki:overridelock'] = 'Override locked pages';
+$string['wiki:participate'] = 'Edit wiki pages';
 $string['wikidefaultpagename'] = 'WikiIndex';
 $string['wikiexport'] = 'Export pages';
 $string['wikiexportcomment'] = 'Here you can configure the export to your needs.';
@@ -198,4 +198,5 @@ $string['wikiusage'] = 'Wiki usage';
 $string['withbinaries'] = 'Include binary content';
 $string['withvirtualpages'] = 'Include Wiki-Links';
 $string['wrongversionrange'] = '$a is not a correct range!';
+
 ?>
