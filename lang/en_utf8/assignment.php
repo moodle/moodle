@@ -1,14 +1,14 @@
-<?php // $Id$
-      // assignment.php - created with Moodle 1.2 + (2004032100)
+<?PHP // $Id$ 
+      // assignment.php - created with Moodle 1.7 beta + (2006101003)
 
 
 $string['allowdeleting'] = 'Allow deleting';
 $string['allowmaxfiles'] = 'Maximum number of uploaded files';
 $string['allownotes'] = 'Allow notes';
 $string['allowresubmit'] = 'Allow resubmitting';
-$string['assignment:view'] = 'View assignment';
 $string['assignment:grade'] = 'Grade assignment';
 $string['assignment:submit'] = 'Submit assignment';
+$string['assignment:view'] = 'View assignment';
 $string['assignmentdetails'] = 'Assignment details';
 $string['assignmentmail'] = '$a->teacher has posted some feedback on your
 assignment submission for \'$a->assignment\'
@@ -35,9 +35,7 @@ $string['duedateno'] = 'No due date';
 $string['early'] = '$a early';
 $string['editmysubmission'] = 'Edit my submission';
 $string['emailstudents'] = 'Email alerts to students';
-$string['emailteachers'] = 'Email alerts to teachers';
-$string['emailteachermail'] = '
-$a->username has updated their assignment submission
+$string['emailteachermail'] = '$a->username has updated their assignment submission
 for \'$a->assignment\'
 
 It is available here:
@@ -46,6 +44,7 @@ It is available here:
 $string['emailteachermailhtml'] = '$a->username has updated their assignment submission
 for <i>\'$a->assignment\'</i><br /><br />
 It is <a href=\"$a->url\">available on the web site</a>.';
+$string['emailteachers'] = 'Email alerts to teachers';
 $string['emptysubmission'] = 'You have not submitted anything yet';
 $string['existingfiledeleted'] = 'Existing file has been deleted: $a';
 $string['failedupdatefeedback'] = 'Failed to update submission feedback for user $a';
@@ -53,8 +52,8 @@ $string['feedback'] = 'Feedback';
 $string['feedbackfromteacher'] = 'Feedback from the $a';
 $string['feedbackupdated'] = 'Submissions feedback updated for $a people';
 $string['graded'] = 'Graded';
-$string['guestnoupload'] = 'Sorry, guests are not allowed to upload';
 $string['guestnosubmit'] = 'Sorry, guests are not allowed to submit an assignment. You have to log in/ register before you can submit your answer';
+$string['guestnoupload'] = 'Sorry, guests are not allowed to upload';
 $string['helpoffline'] = '<p>This is useful when the assignment is performed outside of Moodle.  It could be
    something elsewhere on the web or face-to-face.</p><p>Students can see a description of the assignment, 
    but can\'t upload files or anything.  Grading works normally, and students will get notifications of 
@@ -73,8 +72,8 @@ $string['helpupload'] = '<p>This type of assignment allows each participant to u
 $string['helpuploadsingle'] = '<p>This type of assignment allows each participant to upload a 
    single file, of any type.</p> <p>This might be a Word processor document, an image, 
    a zipped web site, or anything you ask them to submit.</p>';
-$string['late'] = '$a late';
 $string['hideintro'] = 'Hide description before available date';
+$string['late'] = '$a late';
 $string['maximumgrade'] = 'Maximum grade';
 $string['maximumsize'] = 'Maximum size';
 $string['modulename'] = 'Assignment';
@@ -82,10 +81,10 @@ $string['modulenameplural'] = 'Assignments';
 $string['newsubmissions'] = 'Assignments submitted';
 $string['noassignments'] = 'There are no assignments yet';
 $string['noattempts'] = 'No attempts have been made on this assignment';
-$string['nofilesyet'] = 'No files submitted yet';
 $string['nofiles'] = 'No files were submitted';
-$string['notes'] = 'Notes';
+$string['nofilesyet'] = 'No files submitted yet';
 $string['notavailableyet'] = 'Sorry, this assignment is not yet available.<br />Assignment instructions will be displayed here on the date given bellow.';
+$string['notes'] = 'Notes';
 $string['notesempty'] = 'No entry';
 $string['notesupdateerror'] = 'Error when updating notes';
 $string['notgradedyet'] = 'Not graded yet';

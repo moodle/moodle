@@ -1,4 +1,6 @@
-<?php // $Id$
+<?PHP // $Id$ 
+      // calendar.php - created with Moodle 1.7 beta + (2006101003)
+
 
 $string['calendar'] = 'Calendar';
 $string['calendarheading'] = '$a Calendar';
@@ -40,11 +42,15 @@ $string['explain_maxevents'] = 'This sets the maximum number of upcoming events 
 $string['explain_persistflt'] = 'If this is enabled, then Moodle will remember your last event filter settings and automatically restore them each time you login.';
 $string['explain_startwday'] = 'Calendar weeks will be shown as starting on the day that you select here.';
 $string['explain_timeformat'] = 'You can choose to see times in either 12 or 24 hour format. If you choose \"default\", then the format will be automatically chosen according to the language you use in the site.';
+$string['fri'] = 'Fri';
+$string['friday'] = 'Friday';
 $string['globalevents'] = 'Global events';
 $string['gotocalendar'] = 'Go to calendar';
 $string['groupevents'] = 'Group events';
 $string['hidden'] = 'hidden';
 $string['manyevents'] = '$a events';
+$string['mon'] = 'Mon';
+$string['monday'] = 'Monday';
 $string['monthlyview'] = 'Monthly View';
 $string['newevent'] = 'New Event';
 $string['noupcomingevents'] = 'There are no upcoming events';
@@ -59,10 +65,16 @@ $string['preferences_available'] = 'Your personal preferences';
 $string['repeateditall'] = 'Apply changes to all $a events in this repeat series';
 $string['repeateditthis'] = 'Apply changes to this event only';
 $string['repeatnone'] = 'No repeats';
-$string['repeatweeksl'] = 'Repeat weekly, creating altogether ';
+$string['repeatweeksl'] = 'Repeat weekly, creating altogether';
 $string['repeatweeksr'] = 'events';
+$string['sat'] = 'Sat';
+$string['saturday'] = 'Saturday';
 $string['shown'] = 'shown';
 $string['spanningevents'] = 'Events underway';
+$string['sun'] = 'Sun';
+$string['sunday'] = 'Sunday';
+$string['thu'] = 'Thu';
+$string['thursday'] = 'Thursday';
 $string['timeformat_12'] = '12-hour (am/pm)';
 $string['timeformat_24'] = '24-hour';
 $string['today'] = 'Today';
@@ -77,28 +89,17 @@ $string['tt_showcourse'] = 'Course events are hidden (click to show)';
 $string['tt_showglobal'] = 'Global events are hidden (click to show)';
 $string['tt_showgroups'] = 'Group events are hidden (click to show)';
 $string['tt_showuser'] = 'User events are hidden (click to show)';
+$string['tue'] = 'Tue';
+$string['tuesday'] = 'Tuesday';
 $string['typecourse'] = 'Course event';
 $string['typegroup'] = 'Group event';
 $string['typesite'] = 'Site event';
 $string['typeuser'] = 'User event';
 $string['upcomingevents'] = 'Upcoming Events';
 $string['userevents'] = 'User events';
+$string['wed'] = 'Wed';
+$string['wednesday'] = 'Wednesday';
 $string['yesterday'] = 'Yesterday';
 $string['youcandeleteallrepeats'] = 'This event is part of a repeating event series. You can delete this event only, or all $a events in the series at once.';
-
-$string['sun'] = 'Sun';
-$string['mon'] = 'Mon';
-$string['tue'] = 'Tue';
-$string['wed'] = 'Wed';
-$string['thu'] = 'Thu';
-$string['fri'] = 'Fri';
-$string['sat'] = 'Sat';
-$string['sunday'] = 'Sunday';
-$string['monday'] = 'Monday';
-$string['tuesday'] = 'Tuesday';
-$string['wednesday'] = 'Wednesday';
-$string['thursday'] = 'Thursday';
-$string['friday'] = 'Friday';
-$string['saturday'] = 'Saturday';
 
 ?>

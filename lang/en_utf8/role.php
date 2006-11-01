@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // newrole.php - created with Moodle 1.7 beta + (2006101003)
+      // role.php - created with Moodle 1.7 beta + (2006101003)
 
 
 $string['addrole'] = 'Add a new role';

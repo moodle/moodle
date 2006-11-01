@@ -1,6 +1,6 @@
-<?php // $Id$ 
+<?PHP // $Id$ 
+      // enrol_manual.php - created with Moodle 1.7 beta + (2006101003)
 
-$string['enrolname'] = 'Internal Enrolment';
 
 $string['description'] = 'This is the default form of enrolment. There are two main ways a student can be enrolled in a particular course.
 <ul>
@@ -9,5 +9,6 @@ $string['description'] = 'This is the default form of enrolment. There are two m
 <li>A course can have a password defined, known as an \"enrolment key\".  Anyone who knows this key is 
     able to add themselves to a course.</li>
 </ul>';
+$string['enrolname'] = 'Internal Enrolment';
 
 ?>

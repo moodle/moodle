@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // exercise.php - created with Moodle 1.7 beta + (2006101003)
 
 
 $string['absent'] = 'Absent';
@@ -71,7 +71,7 @@ $string['mail1'] = 'Your assignment \'$a\' has been assessed by';
 $string['mail2'] = 'The comments and grade can be seen in the Exercise Assignment \'$a\'';
 $string['mail3'] = 'You can see it in your Exercise Assignment';
 $string['mail6'] = 'Your assessment of the assignment \'$a\' has by reviewed';
-$string['mail7'] = 'The comments given by the $a can be seen in the Exercise Assignment ';
+$string['mail7'] = 'The comments given by the $a can be seen in the Exercise Assignment';
 $string['managingassignment'] = 'Managing the Exercise';
 $string['maximum'] = 'Maximum';
 $string['maximumgradeforstudentassessments'] = 'Maximum Grade for Student Assessments: $a';
@@ -92,7 +92,7 @@ $string['noteonassessmentelements'] = 'Note that grading is broken down into a n
     Elements before making the assignment available to students. This is done by<br />
     clicking on the assignment in the course, if no elements are present you will be asked<br />
     to add them. You can change the number of elements using the Edit Assignment screen,<br />
-    the elements themselves can be amended from the \"Managing Assignment\" screen. ';
+    the elements themselves can be amended from the \"Managing Assignment\" screen.';
 $string['noteongradinggrade'] = 'This grade is a measure of how well your assessment agrees with the assessment of <br />
     your work by the $a. The higher the grade the closer the agreement.';
 $string['noteonstudentassessments'] = '{Grade from student / Grading Grade for assessment}';

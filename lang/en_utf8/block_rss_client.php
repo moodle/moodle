@@ -1,6 +1,8 @@
-<?php // $Id$ 
+<?PHP // $Id$ 
+      // block_rss_client.php - created with Moodle 1.7 beta + (2006101003)
 
-$string['addfeed'] = 'Add a news feed URL: ';
+
+$string['addfeed'] = 'Add a news feed URL:';
 $string['addheadlineblock'] = 'Add RSS headline block';
 $string['addnew'] = 'Add New';
 $string['blockname'] = 'RSS Client';
@@ -17,12 +19,12 @@ $string['displaydescriptionlabel'] = 'Display each link\'s description?';
 $string['editfeeds'] = 'Edit, subscribe or unsubsribe from RSS/Atom news feeds';
 $string['editnewsfeeds'] = 'Edit news feeds';
 $string['editrssblock'] = 'Edit RSS Headline Block';
+$string['feed'] = 'Feed';
 $string['feedadded'] = 'News feed added';
 $string['feeddeleted'] = 'News feed deleted';
-$string['feed'] = 'Feed';
+$string['feeds'] = 'News Feeds';
 $string['feedsaddedit'] = 'Add/Edit Feeds';
 $string['feedsconfigurenewinstance'] = 'Click here to configure this block to display RSS feeds.';
-$string['feeds'] = 'News Feeds';
 $string['feedstitle'] = 'Remote RSS Feeds';
 $string['feedupdated'] = 'News feed updated';
 $string['findmorefeeds'] = 'Find more rss feeds';
@@ -30,18 +32,17 @@ $string['managefeeds'] = 'Manage all my feeds';
 $string['nofeeds'] = 'There are no RSS feeds defined for this site.';
 $string['pickfeed'] = 'Pick a news feed';
 $string['remotenewsfeed'] = 'Remote News Feed';
+$string['rss_client:createprivatefeeds'] = 'Create private RSS feeds';
+$string['rss_client:createsharedfeeds'] = 'Create shared RSS feeds';
+$string['rss_client:manageanyfeeds'] = 'Manage any RSS feeds';
+$string['rss_client:manageownfeeds'] = 'Manage own RSS feeds';
 $string['seeallfeeds'] = 'See all feeds';
 $string['sharedfeed'] = 'Shared feed';
 $string['shownumentrieslabel'] = 'Max number entries to show per block.';
 $string['submitters'] = 'Who will be allowed to define new rss feeds? Defined feeds are available for any page on your site.';
 $string['timeout'] = 'blockrsstimeout';
 $string['timeoutdesc'] = 'Time in minutes for an RSS feed to live in cache.';
-$string['updatefeed'] = 'Update a news feed URL: ';
+$string['updatefeed'] = 'Update a news feed URL:';
 $string['validatefeed'] = 'Validate feed';
-
-$string['rss_client:createprivatefeeds'] = 'Create private RSS feeds';
-$string['rss_client:createsharedfeeds'] = 'Create shared RSS feeds';
-$string['rss_client:manageownfeeds'] = 'Manage own RSS feeds';
-$string['rss_client:manageanyfeeds'] = 'Manage any RSS feeds';
 
 ?>

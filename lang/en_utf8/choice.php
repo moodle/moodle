@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // choice.php - created with Moodle 1.7 beta + (2006101003)
 
 
 $string['addmorechoices'] = 'Add more choices';
@@ -7,9 +7,9 @@ $string['allowupdate'] = 'Allow choice to be updated';
 $string['answered'] = 'Answered';
 $string['choice'] = 'Choice';
 $string['choice:choose'] = 'Record a choice';
-$string['choice:readresponses'] = 'Read responses';
 $string['choice:deleteresponses'] = 'Delete responses';
 $string['choice:downloadresponses'] = 'Download responses';
+$string['choice:readresponses'] = 'Read responses';
 $string['choiceclose'] = 'Until';
 $string['choicename'] = 'Choice name';
 $string['choiceopen'] = 'Open';
@@ -25,9 +25,9 @@ $string['modulename'] = 'Choice';
 $string['modulenameplural'] = 'Choices';
 $string['mustchooseone'] = 'You must choose an answer before saving.  Nothing was saved.';
 $string['noguestchoose'] = 'Sorry, guests are not allowed to make choices.';
+$string['noresultsviewable'] = 'The results are not currently viewable.';
 $string['notanswered'] = 'Not answered yet';
 $string['notopenyet'] = 'Sorry, this activity is not available until $a';
-$string['noresultsviewable'] = 'The results are not currently viewable.';
 $string['privacy'] = 'Privacy of results';
 $string['publish'] = 'Publish results';
 $string['publishafteranswer'] = 'Show results to a student after they answer';
@@ -44,7 +44,7 @@ $string['spaceleft'] = 'space available';
 $string['spacesleft'] = 'spaces available';
 $string['taken'] = 'Taken';
 $string['timerestrict'] = 'Restrict answering to this time period';
-$string['yourselection'] = 'Your selection';
 $string['viewallresponses'] = 'View $a responses';
+$string['yourselection'] = 'Your selection';
 
 ?>

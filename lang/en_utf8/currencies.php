@@ -1,5 +1,6 @@
-<?php // $Id$ 
-      // currencies.php - created with Moodle 1.5.2 (2005060220)
+<?PHP // $Id$ 
+      // currencies.php - created with Moodle 1.7 beta + (2006101003)
+
 
 $string['AED'] = 'United Arab Emirates Dirham';
 $string['AFA'] = 'Afghanistan Afghani';
@@ -32,10 +33,10 @@ $string['CNY'] = 'Yuan (Chinese) Renminbi';
 $string['COP'] = 'Colombian Peso';
 $string['CRC'] = 'Costa Rican Colon';
 $string['CSD'] = 'Serbian Dinar';
-$string['CZK'] = 'Czech Koruna';
 $string['CUP'] = 'Cuban Peso';
 $string['CVE'] = 'Escudo Caboverdiano';
 $string['CYP'] = 'Cyprus Pound';
+$string['CZK'] = 'Czech Koruna';
 $string['DJF'] = 'Djibouti Franc';
 $string['DKK'] = 'Danish Krone';
 $string['DOP'] = 'Dominican Peso';

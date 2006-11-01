@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // countries.php - created with Moodle 1.2 development (2003111400)
+<?PHP // $Id$ 
+      // countries.php - created with Moodle 1.7 beta + (2006101003)
 
 
 $string['AD'] = 'Andorra';

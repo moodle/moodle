@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // newdata.php - created with Moodle 1.7 beta + (2006101003)
+      // data.php - created with Moodle 1.7 beta + (2006101003)
 
 
 $string['action'] = 'Action';

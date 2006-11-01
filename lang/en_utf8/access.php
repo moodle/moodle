@@ -1,15 +1,6 @@
-<?php // $Id$
-      // access.php - created with Moodle 1.6 (2006030300)
-/**
- * General accessibility, usability and navigation language file.
- *
- * Most 'Alt' text and table summaries should go in the specific module language file.
- *
- * @copyright &copy; 2006 The Open University
- * @author N.D.Freear@open.ac.uk, and others
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package
- */
+<?PHP // $Id$ 
+      // access.php - created with Moodle 1.7 beta + (2006101003)
+
 
 $string['access'] = 'Accessibility';
 $string['accesshelp'] = 'Accessibility help';

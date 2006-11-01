@@ -1,12 +1,6 @@
-<?php  // $Id$
-/**
- * Language entries for Lesson Module
- *
- * @version $Id$
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package lesson
- **/
- 
+<?PHP // $Id$ 
+      // lesson.php - created with Moodle 1.7 beta + (2006101003)
+
 
 $string['accesscontrol'] = 'Access control';
 $string['actionaftercorrectanswer'] = 'Action after correct answer';
@@ -67,7 +61,7 @@ $string['credit'] = 'Credit';
 $string['customscoring'] = 'Custom scoring';
 $string['deadline'] = 'Deadline';
 $string['defaultessayresponse'] = 'Your essay will be graded by the course instructor.';
-$string['deletedefaults'] = 'Deleted $a x lesson default';      
+$string['deletedefaults'] = 'Deleted $a x lesson default';
 $string['deletedpage'] = 'Deleted page';
 $string['deleting'] = 'Deleting';
 $string['deletingpage'] = 'Deleting page: $a';
@@ -79,7 +73,7 @@ $string['didnotreceivecredit'] = 'Did not receive credit';
 $string['displaydefaultfeedback'] = 'Display default feedback';
 $string['displayhighscores'] = 'Display high scores';
 $string['displayinleftmenu'] = 'Display in left menu?';
-$string['displayleftif'] = 'and only display if $a has grade greater than: ';
+$string['displayleftif'] = 'and only display if $a has grade greater than:';
 $string['displayleftmenu'] = 'Display left menu';
 $string['displayofgrade'] = 'Display of grade (for students only)';
 $string['displayreview'] = 'Display review button';
@@ -101,7 +95,7 @@ $string['enterpassword'] = 'Please enter the password:';
 $string['eolstudentoutoftime'] = 'Attention:  You ran out of time for this lesson.  Your last answer may not have counted if it was answered after the time was up.';
 $string['eolstudentoutoftimenoanswers'] = 'You did not answer any questions.  You have received a 0 for this lesson.';
 $string['essay'] = 'Essay';
-$string['essayemailmessage'] = '<p>Essay prompt:<blockquote>$a->question</blockquote></p><p>Your response:<blockquote><em>$a->response</em></blockquote></p><p>$a->teacher\'s comments:<blockquote><em>$a->comment</em></blockquote></p><p>You have received $a->earned out of $a->outof for this essay question.</p><p>Your grade for the lesson has been changed to $a->newgrade&#37;.</p>';  // &#37; = %
+$string['essayemailmessage'] = '<p>Essay prompt:<blockquote>$a->question</blockquote></p><p>Your response:<blockquote><em>$a->response</em></blockquote></p><p>$a->teacher\'s comments:<blockquote><em>$a->comment</em></blockquote></p><p>You have received $a->earned out of $a->outof for this essay question.</p><p>Your grade for the lesson has been changed to $a->newgrade&#37;.</p>';
 $string['essayemailsubject'] = 'Your grade for $a question';
 $string['essays'] = 'Essays';
 $string['essayscore'] = 'Essay score';
@@ -112,7 +106,7 @@ $string['flowcontrol'] = 'Flow control';
 $string['full'] = 'Expanded';
 $string['general'] = 'General';
 $string['grade'] = 'Grade';
-$string['gradebetterthan'] = 'Grade better than (&#37;)'; // &#37; = %
+$string['gradebetterthan'] = 'Grade better than (&#37;)';
 $string['gradebetterthanerror'] = 'Earn a grade better than $a percent';
 $string['gradeessay'] = 'Grade essay questions ($a->notgradedcount not graded and $a->notsentcount not sent)';
 $string['gradeis'] = 'Grade is $a';
@@ -132,6 +126,8 @@ $string['jumps'] = 'Jumps';
 $string['jumpsto'] = 'Jumps to <em>$a</em>';
 $string['leftduringtimed'] = 'You have left during a timed lesson.<br />Please click on Continue to restart the lesson.';
 $string['leftduringtimednoretake'] = 'You have left during a timed lesson and you are<br />not allowed to retake or continue the lesson.';
+$string['lesson:edit'] = 'Edit a lesson activity';
+$string['lesson:manage'] = 'Manage a lesson activity';
 $string['lessonclosed'] = 'This lesson closed on $a.';
 $string['lessoncloses'] = 'Lesson closes';
 $string['lessondefault'] = 'Use this lesson\'s settings as defaults';
@@ -141,9 +137,6 @@ $string['lessonnotready'] = 'This lesson is not ready to be taken.  Please conta
 $string['lessonopen'] = 'This lesson will be open on $a.';
 $string['lessonopens'] = 'Lesson opens';
 $string['lessonpagelinkingbroken'] = 'First page not found.  Lesson page linking must be broken.  Please contact an admin.';
-$string['lessonstats'] = 'Lesson statistics';
-$string['lesson:edit'] = 'Edit a lesson activity';
-$string['lesson:manage'] = 'Manage a lesson activity';
 $string['lessonstats'] = 'Lesson statistics';
 $string['loginfail'] = 'Login failed, please try again...';
 $string['lowscore'] = 'Low score';
@@ -157,11 +150,11 @@ $string['maximumnumberofattempts'] = 'Maximum number of attempts';
 $string['maximumnumberofattemptsreached'] = 'Maximum number of attempts reached - Moving to next page';
 $string['maxtime'] = 'Time limit (minutes)';
 $string['maxtimewarning'] = 'You have $a minute(s) to finish the lesson.';
-$string['mediaclose'] = 'Show close button: ';
+$string['mediaclose'] = 'Show close button:';
 $string['mediafile'] = 'Pop-up to file or web page';
 $string['mediafilepopup'] = 'Click here to view this lesson\'s media file.';
-$string['mediaheight'] = 'Window height: ';
-$string['mediawidth'] = ' width: ';
+$string['mediaheight'] = 'Window height:';
+$string['mediawidth'] = 'width:';
 $string['minimumnumberofquestions'] = 'Minimum number of questions';
 $string['missingname'] = 'Please enter a nickname';
 $string['modattempts'] = 'Allow student review';
@@ -230,7 +223,7 @@ $string['progressbar'] = 'Progress Bar';
 $string['progressbarteacherwarning'] = 'Progress Bar does not display for $a';
 $string['qtype'] = 'Page type';
 $string['question'] = 'Question';
-$string['questionoption'] = 'Question ';
+$string['questionoption'] = 'Question';
 $string['questiontype'] = 'Question type';
 $string['randombranch'] = 'Random branch page';
 $string['randompageinbranch'] = 'Random question within a branch';
@@ -304,6 +297,5 @@ $string['youranswer'] = 'Your answer';
 $string['yourcurrentgradeis'] = 'Your current grade is $a';
 $string['yourcurrentgradeisoutof'] = 'Your current grade is $a->grade out of $a->total';
 $string['youshouldview'] = 'You should answer at least: $a';
-
 
 ?>
