@@ -1,4 +1,7 @@
-<?php
+<?PHP // $Id$ 
+      // xmldb.php - created with Moodle 1.7 beta + (2006101003)
+
+
 $string['aftertable'] = 'After Table:';
 $string['back'] = 'Back';
 $string['backtomainview'] = 'Back To Main';
@@ -43,7 +46,7 @@ $string['fields'] = 'Fields';
 $string['filenotwriteable'] = 'File not writeable';
 $string['floatincorrectdecimals'] = 'Incorrect number of decimals for float field';
 $string['floatincorrectlength'] = 'Incorrect length for float field';
-$string['gotolastused'] = ' Go to last used file';
+$string['gotolastused'] = 'Go to last used file';
 $string['incorrectfieldname'] = 'Incorrect name';
 $string['indexes'] = 'Indexes';
 $string['integerincorrectlength'] = 'Incorrect length for integer field';
@@ -74,10 +77,10 @@ $string['revert_changes'] = 'Revert Changes';
 $string['save'] = 'Save';
 $string['selectaction'] = 'Select Action:';
 $string['selectdb'] = 'Select Database:';
+$string['selectfieldkeyindex'] = 'Select Field/Key/Index:';
 $string['selectonecommand'] = 'Please, select one Action from the list to view PHP code';
 $string['selectonefieldkeyindex'] = 'Please, select one Field/Key/Index from the list to view the PHP code';
 $string['selecttable'] = 'Select Table:';
-$string['selectfieldkeyindex'] = 'Select Field/Key/Index:';
 $string['sentences'] = 'Sentences';
 $string['statements'] = 'Statements';
 $string['statementtable'] = 'Statement Table:';
@@ -92,13 +95,14 @@ $string['view'] = 'View';
 $string['view_reserved_words'] = 'View Reserved Words';
 $string['view_structure_php'] = 'View Structure PHP';
 $string['view_structure_sql'] = 'View Structure SQL';
-$string['view_table_sql'] = 'View Table SQL';
 $string['view_table_php'] = 'View Table PHP';
+$string['view_table_sql'] = 'View Table SQL';
 $string['viewedited'] = 'View Edited';
 $string['vieworiginal'] = 'View Original';
 $string['viewphpcode'] = 'View PHP Code';
 $string['viewsqlcode'] = 'View SQL Code';
 $string['wronglengthforenum'] = 'Incorrect length for enum field';
 $string['wrongnumberoffieldsorvalues'] = 'Incorrect number of fields or values in sentence';
-$string['wrongreservedwords'] = 'Currently Used Reserved Words<br />(note that table names aren\'t important if using \$CFG->prefix)';
+$string['wrongreservedwords'] = 'Currently Used Reserved Words<br />(note that table names aren\'t important if using $CFG->prefix)';
+
 ?>
