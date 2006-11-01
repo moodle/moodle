@@ -428,9 +428,10 @@ $string['sitemaintenanceoff'] = 'Maintenance mode has been disabled and the site
 $string['sitemaintenanceon'] = 'Your site is currently in maintenance mode (only admins can log in or use the site).';
 $string['sitemaintenancewarning'] = 'Your site is currently in maintenance mode (only admins can log in).  To return this site to normal operation, <a href=\"maintenance.php\">disable maintenance mode</a>.';
 $string['stickyblocks'] = 'Sticky blocks';
-$string['stickyblocksduplicatenotice'] = 'If any block you add here is already present in a particular page, it will result in a duplicate.<br />Only the pinned block will be non-editable, the duplicate will still be editable.';
-$string['stickyblockspagetype'] = 'Page type to configure';
 $string['stickyblockscourseview'] = 'Course page';
+$string['stickyblocksduplicatenotice'] = 'If any block you add here is already present in a particular page, it will result in a duplicate.<br />Only the pinned block will be non-editable, the duplicate will still be editable.';
+$string['stickyblocksmymoodle'] = 'My moodle';
+$string['stickyblockspagetype'] = 'Page type to configure';
 $string['releasenoteslink'] = 'For information about this version of Moodle, please see the online <a target=\"_new\" href=\"$a\">Release Notes</a>';
 $string['renameerrors'] = 'Errors in renames';
 $string['tabselectedtofront'] = 'On tables with tabs, should the row with the currently selected tag be placed at the front';
@@ -462,5 +463,6 @@ $string['usersupdated']  = 'Users updated';
 $string['updateaccounts']  = 'Update existing accounts';
 $string['updatetimezones'] = 'Update timezones';
 $string['upwards']  = 'upwards';
+$string['configshowsiteparticipantslist'] = 'All of these site students and site teachers will be listed on the site participants list. Who shall be allowed to see this site participants list?';
 
 ?>
