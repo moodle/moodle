@@ -1334,7 +1334,7 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
                    FROM $fromsql
                   WHERE $selectsql";
 
-    $searchsql = "SELECT DISTINCT(p.id), p.*,
+    $searchsql = "SELECT p.*,
                          d.forum,
                          u.firstname,
                          u.lastname,
