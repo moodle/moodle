@@ -2382,6 +2382,7 @@ function authenticate_user_login($username, $password) {
             $user = create_user_record($username, $password, $auth);
         }
 
+/*
         if (function_exists('auth_iscreator')) {    // Check if the user is a creator
             $useriscreator = auth_iscreator($username);
             if (!is_null($useriscreator)) {
@@ -2397,6 +2398,23 @@ function authenticate_user_login($username, $password) {
                         if (! delete_records('user_coursecreators', 'userid', $user->id)) {
                             error('Cannot remove user from course creators.');
                         }
+                    }
+                }
+            }
+        }
+*/
+        // fix for MDL-6928
+        
+        if (function_exists('auth_iscreator')) {                    
+            $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+            if ($creatorroles = get_roles_with_capability('moodle/legacy:coursecreator', CAP_ALLOW)) {
+                $creatorrole = array_shift($creatorroles); // We can only use one, let's use the first one
+                // Check if the user is a creator
+                if (auth_iscreator($username)) { // Following calls will not create duplicates
+                    if ($useriscreator) {
+                       role_assign($creatorrole->id, $user->id, 0, $sitecontext->id, 0, 0, 0, 'ldap');
+                    } else {
+                       role_unassign($creatorrole->id, $user->id, 0, $sitecontext->id);
                     }
                 }
             }
