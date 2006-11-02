@@ -227,21 +227,30 @@ function get_parent_cats($context, $type) {
  * @param string $stringfile - which stringfile to get it from
  */
 function require_capability($capability, $context=NULL, $userid=NULL, $doanything=true,
-                            $errormessage="nopermissions", $stringfile='') {
+                            $errormessage='nopermissions', $stringfile='') {
 
-    global $USER;
+    global $USER, $CFG;
 
-/// If the current user is not logged in, then make sure they are
+/// If the current user is not logged in, then make sure they are (if needed)
 
     if (empty($userid) and empty($USER->capabilities)) {
         if ($context && ($context->contextlevel == CONTEXT_COURSE)) {
             require_login($context->instanceid);
         } else if ($context && ($context->contextlevel == CONTEXT_MODULE)) {
             if ($cm = get_record('course_modules','id',$context->instanceid)) {
-                require_login($cm->course, true, $cm);
+                if (!$course = get_record('course', 'id', $cm->course)) {
+                    error('Incorrect course.');
+                }
+                require_course_login($course, true, $cm);
+
             } else {
                 require_login();
             }
+        } else if ($context && ($context->contextlevel == CONTEXT_SYSTEM)) {
+            if (!empty($CFG->forcelogin)) {
+                require_login();
+            }
+
         } else {
             require_login();
         }
