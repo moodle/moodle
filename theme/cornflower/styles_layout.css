@@ -11,11 +11,14 @@
 
   admin
   blocks
+  blog
   calendar
   course
   doc
+  grades
   login
   message
+  question
   tabs
   user
 
@@ -43,24 +46,28 @@ h6.main {
   margin-top: 8px;
 }
 
-#layout-table #left-column,
-#layout-table #middle-column,
-#layout-table #right-column
+
+#layout-table #middle-column
+
 {
   vertical-align:top;
 }
 
-#layout-table #middle-column {
-  padding-left:12px;
-  padding-right:12px;
-}
-
-#layout-table #left-column {
-  padding-left:10px;
+#layout-table #left-column
+{
+  vertical-align:top;
+  padding-left:5px;
 }
 
 #layout-table #right-column {
-  padding-right:10px;
+  vertical-align:top;
+  padding-right:5px;
+}
+
+
+#layout-table #middle-column {
+  padding-left:12px;
+  padding-right:12px;
 }
 
 .clearer {
@@ -70,6 +77,26 @@ h6.main {
   height:1px;
   border:none;
   background:transparent;
+  display:block;
+}
+
+.clearfix:after {
+  content: "."; 
+  display: block; 
+  height: 0; 
+  clear: both; 
+  visibility: hidden;
+}
+
+.clearfix {display: inline-table;}
+
+/* Hides from IE-mac \*/
+* html .clearfix {height: 1%;}
+.clearfix {display: block;}
+/* End hide from IE-mac */
+
+.mdl-align {
+  text-align: center;
 }
 
 .continuebutton {
@@ -88,6 +115,13 @@ table {
 a img {
   border:none;
 }
+
+img.userpicture,
+img.grouppicture,
+.block_online_users .listentry img {
+  border: 0px solid
+}
+
 .notifyproblem {
   text-align: center;
   padding: 10px;
@@ -101,37 +135,55 @@ a img {
 .generalbox {
   border-width:1px;
   border-style:solid;
+  margin-bottom: 15px;
 }
 
 .generalbox#intro {
-  text-align:center;
 }
 
 .noticebox {
   border-width:1px;
   border-style:solid;
 }
+
 .errorbox {
   border-width:1px;
   border-style:solid;
   margin: 1em 15%;
   width: 70%;
 }
+
 .errorbox .title {
   padding: 5px;
 }
+
 .informationbox {
   border-width:1px;
   border-style:solid;
 }
+
 .feedbackbox {
   border-width:1px;
   border-style:solid;
 }
+
 .feedbackby {
 }
+
 .feedback {
 }
+
+.generaltable {
+  border-width: 1px;
+  border-style: solid;
+}
+
+.generaltable .cell {
+  border-width: 1px;
+  border-style: solid;
+  border-collapse: collapse;
+}
+
 .initialbar {
   text-align: center;
 }
@@ -160,9 +212,11 @@ a img {
 .pagingbar {
   text-align:center;
 }
+
 .pagingbar a {
   padding-left: 10px;
 }
+
 .pagingbar .thispage {
   padding-left: 10px;
 }
@@ -181,6 +235,12 @@ table.formtable tbody th
   padding: 5px;
 }
 
+table.formtable tbody .htmlarea td,
+table.formtable tbody .htmlarea th
+{
+  padding: 0px;
+}
+
 .paging {
   text-align: center;
   margin: 10px 0px 10px 0px;
@@ -194,42 +254,94 @@ table.formtable tbody th
   vertical-align: top;
 }
 
+.helplink img {
+  vertical-align: middle;
+  margin: 0px 2px;
+  width: 17px;
+  height: 17px;
+}
+
+form.popupform {
+  display: inline;
+}
+
+/*Accessibility: text 'seen' by screen readers but not visual users. Fixed for RTL languages, example Farsi. */
+.accesshide {
+  position:absolute;
+  top:-1000px;
+  left:10px;
+  font-weight:normal;
+  font-size:1em;
+}
+span.hide,
+div.hide {
+  display:none;
+}
+
 
 /***
  *** Header
  ***/
 
+.headerskip {
+  position:absolute;
+  right:20em;
+  font-size:0.8em;
+}
+
 #header-home {
-  padding:1em 0.5em;
-  height:2em;
 }
 
 #header {
-  padding:0.1em 0.5em;
 }
 
 .headermain {
   float:left;
 }
 
-#header .headermain {
-  margin:0.2em 0em;
-}
-
-.headermenu {
-  float:right;
-  text-align:right;
+div.headermenu 
+{
+	position: absolute;
+	top: 10px;
+	right: 10px;
 }
 
 .navbar {
+  width:100%;
   padding:3px 0.5em;
-  height:1.3em;
- 
+  border-width:0px;
+  border-style:solid;
+}
+
+div.navbar {
+  width: auto;
+}
+
+table.navbar {
+  width: 100%;
+}
+
+.navbar .navbutton form {
+  float: left;
+}
+
+.navbar .navbutton {
+  margin-top: 3px;
 }
 
 .navbar .breadcrumb {
   float:left;
   margin:0.2em 0em;
+}
+
+.breadcrumb ul {
+  padding:0%;
+  margin:0%;
+  text-indent:0%;
+  list-style:none;
+}
+.breadcrumb li {
+  display:inline;
 }
 
 .navbar .navbutton,
@@ -241,6 +353,10 @@ table.formtable tbody th
   margin-top: 4em;
 }
 
+.reportlink {
+  text-align:right;
+}
+
 
 /***
  *** Footer
@@ -248,6 +364,7 @@ table.formtable tbody th
 
 #footer {
   text-align:center;
+  margin-top: 100px;
 }
 
 .homelink {
@@ -259,14 +376,24 @@ table.formtable tbody th
   padding-right:1em;
 }
 
+.performanceinfo {
+  margin: 2em;
+}
 
+.performanceinfo span {
+  display: block;
+}
 
 /***
  *** Admin
  ***/
-
+ 
 body#admin-index .c0 {
   vertical-align: top;
+} 
+
+body#admin-index .c1 {
+  vertical-align: middle;
 } 
 
 body#admin-modules table.generaltable td.cell,
@@ -275,40 +402,98 @@ body#admin-modules .generaltablecell {
   padding-bottom: 2px;
 } 
 
-body#admin-blocks table.generaltable td.cell,
-body#admin-blocks .generaltablecell {
-  padding-top: 1px;
-  padding-bottom: 1px;
+body#admin-blocks table#blocks,
+body#admin-blocks table#incompatible {
+  width: 70%;
+  margin: auto;
+}
+
+body#admin-blocks table#blocks th,
+body#admin-blocks table#incompatible th,
+body#admin-blocks table#blocks td.cell,
+body#admin-blocks table#incompatible td.cell {
+  padding: 4px;
+  text-align: center;
+  vertical-align: middle;
 } 
 
+body#admin-blocks table#blocks td.c0,
+body#admin-blocks table#blocks th.c0,
+body#admin-blocks table#incompatible td.c0,
+body#admin-blocks table#incompatible th.c0 {
+  text-align: left;
+}
+
+body#admin-blocks 
 body#admin-config .confighelp {
   display: block;
   padding-bottom: 20px;
 }
 
-
 /***
  *** Blocks
  ***/
+ 
+/*Accessibility: Skip block link, for screen reader users. */
+a.skip-block, .skip-block {
+  display:block;
+  width:2em; 
+  height:1px;
+}
+.sideblock .skip-block {
+  height:4px;
+}
+.skip-block-to {
+  font-size:1px;
+}
+
+.sideblock li .icon img {
+  width:16px;
+  height:16px;
+}
+
+ul.list, ul.list li, ol.list, ol.list li {
+  list-style-type:none;
+  padding:0%;
+  margin:0%;
+  text-indent:0%;
+} 
 
 .sideblock .content h3,
 .sideblock .content h2 {
   text-align: left;
 }
-
-.sideblock {
-  width: 100%;
-  margin-bottom:1em;
+/*.sideblock .content h3, ??*/
+.sideblock .content h2 {
+  margin:0%;
+  padding:0%;
 }
 
-.sideblock .header {
-    background-image:url(images/sideblock.jpg);
-    text-align: left;
-      padding:4px;
+.sideblock {
+  margin-bottom:1em;
+  width: 100%;
+  border-top: 1px solid #2D412B;
+	border-right: 1px solid #2D412B;
+	border-bottom: 2px groove #000000;
+	border-left: 1px solid #2D412B;
+}
+
+.sideblock .header, .sideblock h2.header {
+  text-align: left;
+  margin:0%;
+  padding:4px;
+  padding-bottom:0%;
+  border-width: 1px;
+  border-style: solid;
+  border-bottom: none;
+}
+.sideblock h2 {
+  margin:0%;
+  padding:0%;
 }
 
 .sideblock .header .hide-show {
-
+  float:right;
 }
 
 .sideblock .header .hide-show img.hide-show-image {
@@ -318,12 +503,9 @@ body#admin-config .confighelp {
 }
 
 .sideblock .header .commands {
-  float: right;
-  margin-top: 0.3em;
-}
-
-.sideblock .header .title {
-
+  margin-top: -0.9em;
+  float:right;
+  clear: both;
 }
 
 .sideblock .header .commands a {
@@ -331,7 +513,9 @@ body#admin-config .confighelp {
 }
 
 .sideblock .content {
-  padding:4px;
+  padding: 4px;
+  border-width: 1px;
+  border-style: solid;
 }
 
 .sideblock .content hr {
@@ -341,7 +525,17 @@ body#admin-config .confighelp {
   border:none;
   border-top:1px solid;
 }
-.sideblock.hidden .content {
+
+#left-column .hidden .header,
+#right-column .hidden .header
+{
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+
+#left-column .hidden .content,
+#right-column .hidden .content
+{
   display: none;
 }
 
@@ -354,19 +548,44 @@ body#admin-config .confighelp {
 }
 
 .sideblock .footer {
-  margin-top:4px;
+  margin-bottom: 4px;
   text-align:center;
 }
+
 .sideblock .header .icon.hide,
 .sideblock .header .icon.edit {
   margin-right: 6px;
 }
 
-.sideblock .head {
-  margin-top: 5px;
+.sideblock .content .head {
+  margin-top: 10px;
+}
+
+.blockconfigtable {
+  margin-top: 0;
+}
+
+.blockconfiginstancecontent .tabs {
+  margin-bottom: 0px;
+}
+
+.block_online_users .listentry {
+  padding-top:5px;
 }
 
 
+/***
+ *** Blogs
+ ***/
+
+
+.blogpost .audience {
+  text-align: right;
+}
+
+.blogpost .tags {
+  margin-top: 15px;
+}
 
 
 /***
@@ -379,11 +598,18 @@ body#admin-config .confighelp {
   border-collapse: separate;
 }
 
+#calendar h2,
+#calendar h3
+{
+  text-align: center;
+}
+
 #calendar .maincalendar,
 #calendar .sidecalendar
 {
   vertical-align: top;
   border: 1px solid;
+  padding: 0px;
 }
 
 #calendar .sidecalendar {
@@ -431,7 +657,8 @@ table.minicalendar td {
 }
 
 #calendar .maincalendar .filters table,
-#calendar .sidecalendar .filters table
+#calendar .sidecalendar .filters table,
+.sideblock.block_calendar_month .filters table
 {
   border-collapse:separate;
   border-spacing: 2px;
@@ -464,9 +691,13 @@ table.minicalendar td {
   margin-top: 4px;
 }
 
+.minicalendarblock {
+  padding: 0px 4px;
+}
+
 table.minicalendar {
   width: 100%;
-  margin:10px auto;
+  margin: 10px auto;
   padding:2px;
   border-width:1px;
   border-style:solid;
@@ -558,7 +789,7 @@ table.minicalendar th {
 
 #calendar .today,
 .minicalendar .today {
-  border:2px solid !important;
+  border:2px solid;
 }
   
 .cal_popup_bg {
@@ -577,23 +808,27 @@ table.minicalendar th {
   padding-bottom:2px;
 }
 
-table.calendar-controls {
-  width: 100%;
-}
-
-table.calendar-controls .previous,
-table.calendar-controls .next
+/*Accessibility: controls now div and span, 20:58:20% or 12:74:12% */
+.calendar-controls .previous,
+.calendar-controls .next
 {
   width: 12%;
 }
-table.calendar-controls .previous {
+.calendar-controls .previous {
   text-align: left;
 }
-table.calendar-controls .current {
+.calendar-controls .current {
   text-align: center;
 }
-table.calendar-controls .next {
+.calendar-controls .next {
   text-align: right;
+}
+span.previous, span.current, span.next {
+  display: block;
+  float: left;
+}
+span.current {
+  width: 76%;
 }
 
 #calendar .maincalendar .calendar-controls .previous,
@@ -601,11 +836,18 @@ table.calendar-controls .next {
 {
   width: 30%;
 }
+#calendar .maincalendar .calendar-controls .current {
+  width: 40%;
+}
 
+#calendar .indent {
+    padding-left: 20px;
+}
 
 /***
  *** Course
  ***/
+ 
 .activitydate, .activityhead {
   text-align:center;
 }
@@ -614,7 +856,7 @@ table.calendar-controls .next {
   vertical-align:top;
 }
 
-#course-view .section .content {
+#course-view .section td.content {
   padding:5px;
   border-style:solid;
   border-width:1px;
@@ -622,19 +864,19 @@ table.calendar-controls .next {
   border-right:0px;
 }
 
-#course-view .section .side {
+#course-view .section td.side {
   padding:5px;
   border-style:solid;
   border-width:1px;
 }
 
-#course-view .section .left {
+#course-view .section td.left {
   border-right:0px;
   text-align:center;
   width: 1.5em;
 }
 
-#course-view .section .right {
+#course-view .section td.right {
   border-left:0px;
   text-align:center;
   width: 1.5em;
@@ -643,19 +885,78 @@ table.calendar-controls .next {
 #course-view .current .side {
 }
 
-#course-view .topics {
-  margin-top: 9px;
-}
-
-#course-view .weeks {
-  margin-top: 9px;
-}
-
 #course-view .section .spacer {
   height:0.5em;
 }
 
 #course-view .section .weekdates {
+}
+
+#course-view ul.section, 
+#site-index ul.section, 
+#course-view ul.section li, 
+#site-index ul.section li { 
+  margin: 0;
+  padding: 0;
+  text-indent: 0;
+  list-style: none;
+}
+
+#course-view ul.section li.activity ul li, 
+#site-index ul.section li.activity ul li { 
+  list-style: disc; 
+}
+
+/*Accessibility: No-tables course format. */
+#course-view ul.weekscss, .weekscss li { 
+  margin: 0;
+  padding: 0;
+  text-indent: 0;
+  list-style: none;
+}
+/* Window-width: 800 pixels.
+   IE doesn't support, see inline IE conditional comment. */
+.weekscss-format {
+  min-width: 763px;
+}
+.weekscss-format .block_adminblock select,
+.weekscss-format .block_calendar_month .minicalendar {
+  width: 100%;
+  padding: 0;
+}
+.weekscss-format .block_calendar_month .minicalendar th,
+.weekscss-format .block_calendar_month .minicalendar td {
+  padding: 0.1em 0 0.1em 1px;
+}
+.weekscss-format #middle-column {
+  margin: 0 12.5em 0 12.5em;
+}
+.weekscss-format #left-column,
+.weekscss-format #right-column {
+  width: 11.5em;
+}
+.weekscss-format #left-column {
+  float: left;
+}
+.weekscss-format #right-column {
+  float: right;
+}
+.weekscss li.section {
+  margin-bottom: 0.5em;
+  border-style:solid;
+  border-width:1px;
+}
+.weekscss .content, 
+.weekscss .side {
+  padding: 5px;
+}
+.weekscss .content {
+  margin: 0 1.7em 0 1.7em;
+}
+.weekscss .right {
+  width: 1.6em;
+  float: right;
+  text-align:center;
 }
 
 .section .activity img.activityicon {
@@ -676,6 +977,7 @@ body#course-view .unread {
 body#course-enrol .generalbox {
   margin-top: 20px;
 }
+
 body#course-enrol .coursebox {
   margin-top: 20px;
 }
@@ -702,20 +1004,22 @@ body#course-user .section h2 {
 }
 
 
-.headingblock {
-    padding:5px;
-}
-
-.headingblock header{
-
+.headingblock, h2.headingblock {
+  background-image:url(images/longbar.jpg);
+  border-top: 1px solid #739FC4;
+  border-right: 1px solid #4A677F;
+  border-bottom: 2px groove #4A677F;
+  border-left: 1px solid #4A677F;
+  padding:6px;
 }
 
 .headingblock .link {
   text-align:right;
 }
 
-body#site-index .headingblock {
-  margin-bottom: 8px;
+body#site-index .headingblock,
+body#course-view .headingblock {
+  margin-bottom: 9px;
 }
 
 .coursebox {
@@ -728,6 +1032,9 @@ body#site-index .headingblock {
   border-style:solid;
 }
 
+.courseboxcontent .cost {
+  padding-top: 20px;
+}
 
 
 /***
@@ -746,9 +1053,47 @@ body#doc-contents ul {
 }
 
 
+
+/***
+ *** Grades
+ ***/
+
+body#grade-index .grades {
+  border-width:1px;
+  border-style:solid;
+  border-collapse: separate;
+}
+
+body#grade-index .grades td {
+  border-width:0px 1px 0px 1px;
+  border-style:solid;
+  border-collapse: collapse;
+}
+
+body#grade-index .grades .header {
+  vertical-align: top;
+}
+
+body#grade-index .grades .points,
+body#grade-index .grades .percent,
+body#grade-index .grades .weighted {
+  text-align: right;
+}
+
+.backup-form-instances {
+   margin:0px 20px 0px 20px;
+}
+.restore-form-instances {
+   margin:0px 20px 0px 20px;
+}
+
 /***
  *** Login
  ***/
+
+.loginbox {
+  margin-top:15px;
+}
 
 .loginbox .content {
   border-width:1px;
@@ -761,27 +1106,168 @@ body#doc-contents ul {
  *** Message
  ***/
 
-.message_link {
+.message .link {
   vertical-align:middle;
 }
 
-.message_search_results {
-  border-collapse:collapse;
-  border-spacing:0px;
-}
-
-table.message_search_results td {
+table.message .searchresults td {
   padding:5px;
   border-width:1px;
   border-style:solid;
+  border-collapse:collapse;
+  border-spacing:0px;
 }
-.message_summary_link {
+.message .summary .link {
   text-align:right;
 }
-.message_heading {
+.message .heading {
   text-align:center;
 }
 
+.message .note {
+  text-align:center;
+  padding:10px;
+}
+
+#message-user .commands span {
+  margin-left:10px;
+  margin-right:10px;
+}
+
+body#message-messages {
+  padding:10px;
+}
+
+
+/***
+ *** MyMoodle
+ ***/
+
+.my .courseboxcontent .overview .info {
+  margin-left:20px;
+}
+
+.my .courseboxcontent .overview {
+  margin-bottom:10px;
+}
+
+
+/***
+ *** Question
+ ***/
+
+.que {
+  width: 90%;
+  text-align: left;
+  margin: 10px auto 15px auto;
+  border: 1px solid;
+  clear: both;
+}
+.que .info {
+  float: left;
+  margin: 5px;
+  width: 8%;
+}
+.que .grade {
+  margin-top: 0.5em;
+}
+.que .content {
+  float: right;
+  margin: 5px;
+  width: 88%;
+}
+.que .qtext {
+  margin-bottom: 1.5em;
+}
+.que .ablock {
+  margin: 0.7em 0 0.3em 0;
+}
+.que .prompt {
+  float: left;
+  width: 15%;
+  height: 2em;
+  padding-top: 0.3em;
+}
+.que .control {
+  width: 5%;
+}
+.que .answer {
+  float: right;
+  width: 83%;
+  margin-bottom: 0.5em;
+}
+.que .submit {
+  position: relative;
+  clear: both;
+  float: left;
+}
+/* MSIE Hack */
+* html .que .submit {
+  float: none;
+}
+.multianswer .submit {
+  margin-top: 1em;
+}
+.que .c0,
+.que .c1 {
+  padding: 0.3em 0 0.3em 0.3em;
+  vertical-align: top;
+}
+.que .feedback {
+  clear: both;
+  float: right;
+  width: 83%;
+  padding: 0 0 0.3em 0.3em;
+  border: 1px solid;
+}
+.multichoice .feedback {
+  width: auto;
+  vertical-align: top;
+  padding-top: 0.3em;
+  border-style: none;
+}
+.essay .feedback {
+  border-style: none;
+}
+.multichoice .text {
+  width: auto;
+}
+.calculated .answer,
+.numerical .answer,
+.shortanswer .answer,
+.truefalse .answer {
+  padding: 0.3em 0 0.3em 0.3em;
+}
+.shortanswer .answer input {
+  width: 85%;
+}
+.truefalse .answer span {
+  float: left;
+  clear: left;
+  padding: 0.2em 0;
+}
+.que .grading,
+.que .comment,
+.que .commentlink,
+.que .history {
+  float: right;
+  margin: 5px;
+  width: 88%;
+}
+
+/***
+ *** Logs
+ ***/
+
+.logtable td,
+.logtable th {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.logtable th {
+  text-align:left;
+}
 
 /***
  *** Tabs
@@ -790,41 +1276,48 @@ table.message_search_results td {
 .tabs {
   width: auto;
   margin-bottom: 15px;
+  border-collapse: collapse;
 }
+
+.tabs td {
+  padding: 0px;
+}
+
 .tabs .side {
+  width: 50%;
   border-style: solid;
   border-width: 0px 0px 1px 0px;
-  width: 50%;
 }
 
 .tabrow {
   border-collapse:collapse;
   width:100%;
-  margin:0;
+  margin: 1px 0px 0px 0px;
 }
+
 .tabrow td {
-  height:34px;
-  padding:0 0 0 14px;
+  padding:0 0 0px 14px;
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
 }
+
 .tabrow th {
   display:none;
 }
 .tabrow td .tablink {
   display:block;
-  height:34px;
-  line-height:38px;
-  padding:0 14px 0 0;
+  padding:10px 14px 4px 0px;
   text-align:center;
   white-space:nowrap;
   text-decoration:none;
 }
-.tabrow .last span {
+.tabrow .last {
   display:block;
   padding:0px 1px 0px 0px;
 }
           
-.tabrow .selected .tablink {
-  line-height:38px;
+.tabrow td.selected {
+  border-width: 0px;
 }
 
 
@@ -885,10 +1378,54 @@ table.groupinfobox {
   width: 100px;
   vertical-align: top;
 }
-body#user-index #longtimenosee {
-  text-align:center;
+
+body#user-index h2 {
+  text-align: center;
 }
 
+body#user-index #longtimenosee,
+body#user-index #showall {
+  text-align: center;
+}
+
+body#user-index #showall {
+  margin: 10px 0px;
+}
+
+body#user-index table#teachers,
+body#user-index table#students {
+  margin: auto;
+  width: 80%;
+}
+body#user-index table#teachers td,
+body#user-index table#teachers th,
+body#user-index table#students td,
+body#user-index table#students th {
+  vertical-align: middle;
+  text-align: left;
+  padding: 4px;
+}
+
+body#user-index table.controls {
+  width: 100%;
+}
+body#user-index table.controls tr {
+  vertical-align: top;
+}
+body#user-index table.controls td.right,
+body#user-index table.controls td.left {
+  padding: 4px;
+}
+body#user-index table.controls .right {
+  text-align: right;
+}
+body#course-participation h2 {
+  text-align:center;
+}
+body#course-participation #showall {
+  text-align:center;
+  margin: 10px 0px;
+}
 
 /***
  *** Modules: Assignment
@@ -897,6 +1434,25 @@ body#user-index #longtimenosee {
 /***
  *** Modules: Chat
  ***/
+
+#mod-chat-gui_header_js-jsupdate {
+  margin:10px
+}
+#mod-chat-gui_header_js-jsupdate .chat-event,
+#mod-chat-gui_header_js-jsupdate .chat-message {
+  width:100%;
+  padding:0;
+  margin-top:7px
+}
+.chat-event .picture,
+.chat-message .picture {
+  width:40px;
+  vertical-align:top;
+}
+.chat-event .text,
+.chat-message .text {
+  text-align: left;
+}
 
 /***
  *** Modules: Choice
@@ -927,10 +1483,16 @@ body#user-index #longtimenosee {
 .forumpost .commands {
   padding-top: 0.5em;
   text-align:right;
+  clear: both;
 }
 
 .forumpost .ratings {
   padding-top: 1em;
+  text-align:right;
+}
+
+.forumpost .attachments {
+  padding: 7px;
   text-align:right;
 }
 
@@ -987,6 +1549,7 @@ body#mod-forum-search .introcontent {
 
 .forumheaderlist .replies {
   text-align: center;
+  white-space: nowrap;
 }
 
 .forumheaderlist .picture {
@@ -997,8 +1560,9 @@ body#mod-forum-search .introcontent {
   vertical-align: middle;
 }
 
-.forumheaderlist .discussion .lastpost {
+.forumheaderlist .lastpost {
   white-space: nowrap;
+  text-align: right;
 }
 
 .forumheaderlist .discussion .author {
@@ -1016,9 +1580,21 @@ body#mod-forum-search .introcontent {
   padding-left: 3px;
   padding-right: 3px;
 }
-#mod-forum-discuss .unread .forumpost .message {
+#mod-forum-discuss .forumpost.unread .content {
   border-style: solid;
   border-width: 2px;
+}
+#mod-forum-index .unread img,
+#mod-forum-view .unread img 
+{
+  margin-left: 5px;
+}
+
+#email .unsubscribelink {
+  margin-top:20px;
+  border-width: 0px 1px 0px 0px;
+  border-style: solid;
+  text-align:center;
 }
 
 
@@ -1029,6 +1605,11 @@ body#mod-forum-search .introcontent {
 .glossarypost .commands {
   width: 200px;
   white-space: nowrap;
+}
+
+#mod-glossary-comments .glossarypost,
+#mod-glossary-comment .glossarypost {
+      margin-top: 15px;
 }
 
 .entryboxheader {
@@ -1178,16 +1759,19 @@ body#mod-forum-search .introcontent {
  *** Modules: Lesson
  ***/
 
+
 /***
  *** Modules: Quiz
  ***/
 
-.feedbacktext {
-  display:block;
+
+#mod-quiz-attempt #page {
+	text-align: center;
 }
 
 body#mod-quiz-report table#attempts,
-body#mod-quiz-report table#commands
+body#mod-quiz-report table#commands,
+body#mod-quiz-report table#itemanalysis
 {
   width: 80%;
   margin: auto;
@@ -1211,9 +1795,7 @@ body#mod-quiz-report table#attempts td {
   border-right-width: 1px;
   border-left-style: solid;
   border-right-style: solid;
-}
-.feedbacktext {
-  text-align:right;
+  vertical-align: middle;
 }
 body#mod-quiz-report table#attempts .header {
   text-align: left;
@@ -1225,11 +1807,61 @@ body#mod-quiz-report .controls {
   text-align: center;
 }
 
-
+/* .navbutton form {
+  display: inline;
+  } */
 
 /***
  *** Modules: Resource
  ***/
+
+.ims-nav-bar {
+  position: relative; 
+  padding:0.1em;
+}
+
+.ims-nav-button a,
+.ims-nav-dimmed {
+  padding-left:1em;
+  padding-right:1em;
+}
+
+#ims-containerdiv {
+  margin-top:0.2em;
+}
+
+#ims-menudiv {
+  position:absolute;
+  width:250px;
+  overflow:auto;
+}
+
+#ims-menudiv ol {
+  list-style-type:none;
+  margin:0px;
+  padding-left:1em;
+}
+
+#ims-contentframe {
+  position:absolute;
+  overflow:auto;
+  left:260px;
+  border:1px solid;
+  width:640px;
+  height:480px;
+}
+
+#ims-contentframe-no-nav {
+  position:absolute;
+  overflow:auto;
+  border:1px solid;
+  width:640px;
+  height:480px;
+}
+
+#mod-resource-view div#footer {
+  margin-top: 5px;
+}
 
 /***
  *** Modules: Scorm
@@ -1246,4 +1878,20 @@ body#mod-quiz-report .controls {
 /***
  *** Modules: Workshop
  ***/
-
+/* cms-navi */
+ul.cms-navi-list {
+    list-style: disc outside url('../../cms/pix/btn_black.gif');
+}
+li.cms-active-1 {
+    list-style-image: url('../../cms/pix/btn_red.gif');
+    margin-left: -1.5em;
+    font-weight: bold;
+}
+li.cms-active-2 {
+    list-style-image: url('../../cms/pix/btn_blue.gif');
+    margin-left: -1.5em;
+}
+li.cms-inactive {
+    font-weight: normal;
+    margin-left: -1.5em;
+}

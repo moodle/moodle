@@ -17,6 +17,7 @@
   doc
   login
   message
+  question
   tabs
   user
 
@@ -30,7 +31,7 @@
 
 a:link,
 a:visited {
-  color:#4A677F;
+  color:#39546b;
 }
 
 a.dimmed:link,
@@ -39,8 +40,7 @@ a.dimmed:visited {
 }
 
 a:hover {
-  color:#ffffff;
-  background-color: #4A677F;
+  color:#032d50;
 }
 
 a.autolink:link,
@@ -53,21 +53,27 @@ a.autolink.glossary:hover {
   cursor: help;
 }
 
+img.userpicture,
+img.grouppicture {
+  border-color:#000
+}
+
+.block_online_users .listentry img {
+  border:#888
+}
+
 body {
   background-color:#739FC4;
-  border-color:#F7F7F7;
-}
+  border-color:#F7F7F7;}
 
 th.header,
 td.header,
 div.header {
-    background-color: #739FC4;
+  background-color: #739FC4;
 }
 
 .navbar {
-  background-color:#D0E2EE;
-  border-color:#D0E2EE;
-  
+  border-color:#739FC4;
 }
 
 table.formtable tbody th {
@@ -109,7 +115,7 @@ table.formtable tbody th {
   border-color:#739FC4; 
 }
 .feedbackbox {
-  border-color: #739FC4; 
+  border-color: #888888; 
 }
 .feedbackby {
   background-color:#BBBBBB;
@@ -121,8 +127,12 @@ table.formtable tbody th {
 
 .errorbox {
   color:#ffffff;
-  border-color:#739FC4;
+  border-color:#660000;
   background-color:#990000;
+}
+
+.errorboxcontent {
+  background-color:#FFBBBB;
 }
 
 .tabledivider {
@@ -146,7 +156,7 @@ table.formtable tbody th {
 }
 
 .unread {
-  background: #78A2CD;
+  background: #FFD991;
 } 
 
 .censoredtext {
@@ -168,19 +178,57 @@ table.formtable tbody th {
 }
 
 
+.generaltable .cell {
+  background-color:#FFFFFF;
+  border-color:#EEEEEE; 
+}
+
+.generaltable {
+  border-color:#EEEEEE; 
+}
+
+
 
 /***
  *** Header
  ***/
 
+.headerskip a:link,
+.headerskip a:visited,
+.headerskip a:hover {
+  color: #FFF;
+}
+
+#header-home, #header {
+background: #FFF url(images/hdbg.jpg) 1px 0 repeat-x;
+    	
+
+}
+
+.headermain {
+  
+  float: none;
+
+  
+}
+
+.headermenu {
+
+}
+
 /***
  *** Footer
  ***/
 
+/*Accessibility: .debugwarn */
+.debugwarn {
+  text-align: center;
+  background: #FDD;
+}
+
 .homelink a:link,
 .homelink a:visited,
 .homelink a:hover {
-  background-color: #739FC4;
   color: #000;
   text-decoration: none;
 }
@@ -208,11 +256,11 @@ table.formtable tbody th {
 }
 
 .admin .generalbox {
-  border-color:#739FC4; 
+  border-color:#BBBBBB; 
 }
 
 .admin .informationbox {
-  border-color:#739FC4; 
+  border-color:#BBBBBB; 
   background-color:#FFFFFF; 
 }
 
@@ -220,35 +268,71 @@ body#admin-index .c0 {
   background-color: #FAFAFA;
 }
 
+body#admin-blocks table#blocks .r0,
+body#admin-blocks table#incompatible .r0 {
+  background-color: #f0f0f0;
+}
 
+body#admin-blocks table#blocks .r1,
+body#admin-blocks table#incompatible .r1 {
+  background-color: #fafafa;
+}
+
+body#admin-blocks table#incompatible td.c0 {
+  color: #ff0000;
+}
+
+table.flexible  .r0 {
+  background-color: #f0f0f0;
+}
+
+table.flexible .r1 {
+  background-color: #fafafa;
+}
 
 /***
  *** Blocks
  ***/
 
+div.sideblock div.header
+{
+	background: transparent url(images/sideblock.jpg) 0  ;
+	border: none;
+	padding: 0 0 0 8px;
+	margin: 0;
+	height: 29px;
+	}
+div.sideblock div.header div.title {
+    height: 29px;
+	padding: 6px 0 0 0;
+	margin: 0;
+	height/**/:/**/ 26px;
+}
+
+
 .sideblock {
     border-top: 1px solid #739FC4;
-    border-right: 1px solid #4A677F;
-    border-bottom: 2px groove #4A677F;
-    border-left: 1px solid #4A677F;
+    border-right: 1px solid #39546b;
+    border-bottom: 2px groove #39546b;
+    border-left: 1px solid #39546b;
 }
 
 
-
-.sideblock .header {
-  background-color: #739FC4;
-  border-bottom: 2px groove #739FC4;
-}
 
 .sideblock .content {
   background-color:#FFFFFF;
 }
 
 .sideblock .content hr {
+  border-top-color:#999999;
 }
 
-.sideblock .list {
+#left-column .hidden .header,
+#right-column .hidden .header
+{
+  border-bottom-color: #dddddd;
 }
+
 .sideblock .header .hide-show img.hide-show-image {
   background: url('../../pix/t/switch_minus.gif') no-repeat bottom;
 }
@@ -257,6 +341,30 @@ body#admin-index .c0 {
   background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
 
+.blockconfigtable {
+  background-color:#FFFFFF;
+  border-left:1px solid;
+  border-right:1px solid;
+  border-bottom:1px solid;
+  border-color:#AAAAAA;
+}
+
+
+/***
+ *** Blogs
+ ***/
+
+.blogpost.blogdraft .content {
+  background-color:#EEEEEE;
+}
+
+.block_blog_tags .official {
+  color: #0000cc;
+}
+
+.block_blog_tags .personal {
+  color: #666699;
+}
 
 
 /***
@@ -265,7 +373,8 @@ body#admin-index .c0 {
 
 #calendar .maincalendar,
 #calendar .sidecalendar {
-  border-color: #739FC4;
+  background-color:#FFFFFF;
+  border-color:#739FC4;
 }
 
 #calendar .maincalendar table.calendarmonth th {
@@ -283,45 +392,51 @@ table.minicalendar {
 #calendar .maincalendar .eventlist .event .topic,
 #calendar .maincalendar .eventlist .event .picture,
 #calendar .maincalendar .eventlist .event .side {
-  background-color:#FFFFFF;
+  background-color:#EEEEEE;
 }
 
 #calendar .maincalendar table.calendarmonth ul.events-underway {
-  color:#739FC4;
+  color:#999999;
+}
+
+/*Accessibility: increase contrast, darker link/weekend colors, lighter event backgrounds. */
+.minicalendar a,
+.calendarmonth a {
+  color:#000077;
 }
 
 #calendar .event_global,
 .minicalendar .event_global,
 .block_calendar_month .event_global {
-  border-color:#2EBA0E !important;
-  background-color:#2EBA0E;
+  border-color:#D6F8CD !important; /* #C5E7BC */
+  background-color:#D6F8CD;
 }
 
 #calendar .event_course,
 .minicalendar .event_course,
 .block_calendar_month .event_course {
-  border-color:#FF9966 !important;
-  background-color:#FF9966;
+  border-color:#FFD3BD !important; /* #EEC2AC */
+  background-color:#FFD3BD;
 }
 
 #calendar .event_group,
 .minicalendar .event_group,
 .block_calendar_month .event_group {
-  border-color:#FBBB23 !important;
-  background-color:#FBBB23;
+  border-color:#FEE7AE !important; /* #EDD69D */
+  background-color:#FEE7AE;
 }
 
 #calendar .event_user,
 .minicalendar .event_user,
 .block_calendar_month .event_user {
-  border-color:#A1BECB !important;
-  background-color:#A1BECB;
+  border-color:#DCE7EC !important; /* #CBD6DB */
+  background-color:#DCE7EC;
 }
 
 #calendar .duration_global,
 .minicalendar .duration_global {
-  border-top-color:#2EBA0E !important;
-  border-bottom-color:#2EBA0E !important;
+  border-top-color:#66D14D !important;
+  border-bottom-color:#66D14D !important;
 }
 
 #calendar .duration_course,
@@ -344,12 +459,12 @@ table.minicalendar {
 
 #calendar .weekend,
 .minicalendar .weekend {
-  color:#FF0000;
+  color:#990000;
 }
 
 #calendar .today,
 .minicalendar .today {
-  border-color:#000000 !important;
+  border-color:#444444;
 }
 
 .cal_popup_fg {
@@ -364,7 +479,7 @@ table.minicalendar {
 #calendar .maincalendar .filters table,
 #calendar .sidecalendar .filters table,
 .block_calendar_month .filters table {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 }
 
 
@@ -375,10 +490,7 @@ table.minicalendar {
 
 /* course, entry-page, login */
 .headingblock {
-  border-top: 1px solid #739FC4;
-  border-right: 1px solid #4A677F;
-  border-bottom: 2px groove #4A677F;
-  border-left: 1px solid #4A677F;
+  border-color:#739FC4;
 }
 
 /* course */
@@ -386,30 +498,40 @@ table.minicalendar {
   border-color:#739FC4;
 }
 
-
+#course-view .weekscss .section,
 #course-view .section td {
   border-color:#739FC4;
 }
 
-#course-view .section .content {
-    background-color:#FFFFFF;
+/* .content should match the body background, sides are white. */
+#course-view .content {
+  background: #ffffff;
 }
 
-#course-view .section .side {
+#course-view .weekscss .section,
+#course-view .section td.side {
   background: #739FC4;
 }
 
+#course-view .section .side {
+}
+
 #course-view .section .left {
-    background: #739FC4;
 }
 
 #course-view .section .right {
-    
 }
 
-#course-view .current .side{
+#course-view .weekscss .current,
+#course-view .current td.side {
   background: #A2BED8;
 }
+
+#course-view .weekscss .hidden,
+#course-view .hidden td.side {
+  background: #DDDDDD;
+}
+
 
 #course-view .topics {
 }
@@ -421,26 +543,65 @@ table.minicalendar {
 }
 
 #course-view .section .weekdates {
-  color:#4A677F;
+  color: #777777;
+}
+
+#course-view .weekscss .weekdates {
+  color: #39546b;
 }
 
 .categoryboxcontent,
 .courseboxcontent {
-    border-top: 1px solid #739FC4;
-    border-right: 1px solid #4A677F;
-    border-bottom: 2px groove #4A677F;
-    border-left: 1px solid #4A677F;
-    background: #FFFFFF;
+  border-top: 1px solid #739FC4;
+  border-right: 1px solid #39546b;
+  border-bottom: 2px groove #39546b;
+  border-left: 1px solid #39546b;
+  background: #FFFFFF;
 }
 body#course-user .section {
-    border-color:#AAAAAA;
+  border-color:#AAAAAA;
 }
 
+#admin-report .plugin,
+#course-report .plugin,
+#course-import .plugin {
+  margin-bottom: 20px;
+  margin-left:10%;
+  margin-right:10%;
+
+  border-bottom: 1px solid #cecece;
+  border-top: 1px solid #cecece;
+  border-right: 1px solid #cecece;
+  border-left: 1px solid #cecece;
+
+  background-color: #fdfdfd;
+}
 
 
 /***
  *** Doc
  ***/
+
+/***
+ *** Grades
+ ***/
+
+body#grade-index .grades {
+  border-color:black;
+}
+
+body#grade-index .grades td {
+  border-color:#e0e0e0;
+}
+
+body#grade-index .grades .r0 {
+  background-color: #ffffff;
+}
+
+body#grade-index .grades .r1 {
+  background-color: #f0f0f0;
+}
+
 
 /***
  *** Login
@@ -459,15 +620,62 @@ table.message_search_results td {
   border-color:#739FC4;
 }
 
-.message .author {
-  color: #739FC4;
+.message.other .author {
+  color: #8888CC;
+}
+
+.message.me .author {
+  color: #999999;
 }
 
 .message .time {
-  color: #739FC4;
+  color: #999999;
 }
 
 .message .content {
+}
+
+/***
+ *** Question
+ ***/
+
+.que {
+	border-color: #DDD;
+}
+.que .r0 {
+	background-color: #F5F5F5;
+}
+.que .r1 {
+	background-color: #EEE;
+}
+.calculated .answer,
+.numerical .answer,
+.shortanswer .answer,
+.truefalse .answer {
+	background-color: #EEE;
+}
+.calculated .feedback,
+.numerical .feedback,
+.shortanswer .feedback,
+.truefalse .feedback {
+  border-color: #DDD;
+}	
+.que.multianswer .incorrect {
+    background-color: #faa;
+}
+.que.multianswer .partiallycorrect {
+    background-color: #ff9;
+}
+.que.multianswer .correct {
+    background-color: #afa;
+}
+
+/***
+ *** Logs
+ ***/
+
+.logtable .r1 {
+  background-color:#EEEEEE;
 }
 
 
@@ -477,25 +685,15 @@ table.message_search_results td {
 
 .tablink a:link,
 .tablink a:visited {
-  color:#4A677F;
-}
-
-.tablink a:hover{
- background-color:#4A677F;
-  color:#FFFFFF;
+  color:#000066;
 }
 
 .selected .tablink a:link,
 .selected .tablink a:visited {
-  color:#4A677F;
+  color:#000000;
 }
-
-.selected .tablink a:hover {
-  color:#FFFFFF;
-  background-color:#4A677F;
-}
-
-.tabs .side {
+.tabs .side,
+.tabrow td {
   border-color: #AAAAAA;
 }
 .tabrow td {
@@ -510,8 +708,8 @@ table.message_search_results td {
 .tabrow td:hover .tablink {
   background-image:url(pix/tab/right_hover.gif);
 }
-.tabrow .last span {
-  background:url(pix/tab/right_end.gif) top right no-repeat;
+.tabrow .last {
+  background: transparent url(pix/tab/right_end.gif) top right no-repeat;
 }
 .tabrow .selected {
   background:url(pix/tab/left_active.gif) top left no-repeat;
@@ -532,42 +730,30 @@ table.message_search_results td {
  ***/
 
 .userpicture {
-  background:#EEEEEE; 
 }
 
 .userinfobox {
-  border-color: #739FC4;
-  background-color: #F7F7F7;
+  border-color:#739FC4;
 }
 .groupinfobox {
-  border-color: #739FC4;
-  background-color: #FCFCFC;
+  border-color:#739FC4;
 }
-
-
-/***
- *** Modules: Assignment
- ***/
-
-.assignmentsubmission {
-}
-
-.assignmentnew .assignmentfeedback{
-  background-color:#DDDDDD;
-}   
-  
-.assignmentold .assignmentfeedback{
-  background-color:#BBBBBB;
-}
-
-.assignmentheading {
-  background-color:#BBBBBB;
-}
-
 
 /***
  *** Modules: Chat
  ***/
+
+#mod-chat-gui_header_js-jsupdate .text {
+  color:#000
+}
+#mod-chat-gui_header_js-jsupdate .event,
+#mod-chat-gui_header_js-jsupdate .title {
+  color:#888
+}
+
+#mod-chat-gui_header_js-chatinput .wait {
+    background: #dddddd;
+}
 
 /***
  *** Modules: Choice
@@ -580,6 +766,7 @@ table.message_search_results td {
 .forumheaderlist,
 .forumpost {
   border-color:#1D5083;
+  background-color:#FFFFFF;
 }
 
 .forumpost .content {
@@ -591,17 +778,15 @@ table.message_search_results td {
 }
 
 .forumpost .topic {
-  border-bottom-color: #739FC4;
-  background:#D0E2EE; 
-
-}
+  background:#D0E2EE;
+   }
 
 .forumpost .starter {
   background:#739FC4; 
 }
 
 .forumheaderlist .discussion .starter {
-  background:#D0E2EE; 
+  background:#ffffff; 
 }
 
 .forumheaderlist td {
@@ -701,17 +886,51 @@ table.message_search_results td {
  *** Modules: Quiz
  ***/
 
-body#mod-quiz-report table#attempts td {
-  border-color: #739FC4;
+/* body#mod-quiz-report table#attempts td {
+  border-color: #dddddd;
 }
 body#mod-quiz-report table#attempts .r1 {
   background-color: #eeeeee;
 }
-
+ */
 
 /***
  *** Modules: Resource
  ***/
+
+.ims-nav-dimmed {
+  color: #AAAAAA;
+  text-decoration: none;
+}
+
+.ims-nav-button a:link,
+.ims-nav-button a:visited,
+.ims-nav-button a:hover {
+  color: #000;
+  text-decoration: none;
+}
+
+.ims-nav-dimmed,
+.ims-nav-button a:link,
+.ims-nav-button a:visited {
+  border-top: 1px solid #cecece;
+  border-bottom: 2px solid #4a4a4a;
+  border-left: 1px solid #cecece;
+  border-right: 2px solid #4a4a4a;
+}
+
+.ims-nav-button a:hover {
+  border-bottom: 1px solid #cecece;
+  border-top: 2px solid #4a4a4a;
+  border-right: 1px solid #cecece;
+  border-left: 2px solid #4a4a4a;
+}
+
+#ims-contentframe,
+#ims-contentframe-no-nav {
+  border-color: #cecece;
+}
+
 
 /***
  *** Modules: Scorm
@@ -745,33 +964,10 @@ body#mod-quiz-report table#attempts .r1 {
   background-color:#DDDDDD;
 }
 
-.headermenu a:link {
-    text-decoration: none;
-    color: #ffffff;
-}
-.headermenu a:visited {
-    text-decoration: none;
-    color: #ffffff;
-}
-.headermenu a:hover {
-    text-decoration: underline;
-    color: #ffffff;
+.error {
+  color:#ff0000;
 }
 
-.headerhomemain {
-    font-size: x-large;
-    font-weight: bold;
-}
-
-.headerhomemenu a:link {
-    text-decoration: none;
-    color: #ffffff;
-}
-.headerhomemenu a:visited {
-    text-decoration: none;
-    color: #ffffff;
-}
-.headerhomemenu a:hover {
-    text-decoration: underline;
-    color: #ffffff;
+.generalboxcontent {
+  background-color:#FFFFFF;
 }

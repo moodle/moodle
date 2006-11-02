@@ -14,6 +14,7 @@
   calendar
   course
   doc
+  grades
   login
   message
   tabs
@@ -33,8 +34,9 @@
 }
 
 body, td, th, li {
-  font-family:"Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-  font-size:0.95em;
+  font-family:Arial, Verdana, Helvetica, sans-serif;
+  font-size:95%;
+  letter-spacing:0.02em;
 }
 
 th {
@@ -95,6 +97,7 @@ h4 {
   font-weight: bold;
 }
 
+.categorybox .category,
 .categorybox .category {
   font-size:1.2em;
   font-weight:bold;
@@ -105,12 +108,7 @@ h4 {
 }
 
 .headingblock {
-  font-weight: normal;
-}
-
-.headingblock .header .title {
-font-weight:normal;
-  float: left;
+  font-weight: bold;
 }
 
 .headingblock .link {
@@ -153,7 +151,7 @@ font-weight:normal;
 
 .logininfo,
 #header-home .headermenu font {
-  font-size:x-small;
+  font-size:0.8em;
 }
 
 
@@ -164,6 +162,10 @@ font-weight:normal;
 .homelink {
 }
 
+
+.performanceinfo {
+  font-size: 0.6em;
+}
 
 
 /***
@@ -180,32 +182,41 @@ table.formtable tbody th {
  *** Blocks
  ***/
 
+.sideblock .header {
+  font-size:0.9em;
+  font-weight: normal;
+}
+
+.sideblock .content {
+  font-size:0.9em;
+  line-height:1.2em;
+}
+
 .sideblock .content h3,
 .sideblock .content h2 {
   font-size:1.0em;
 }
 .sideblock .header .commands {
-  font-size: 0.75em;
-}
-
-.sideblock .header .title {
-font-weight:normal;
+  font-size:0.9em;
 }
 
 .sideblock .footer {
-  font-size:0.75em;
+  font-size:0.9em;
 }
 
 .sideblock .head,
-.sideblock .info {
-  font-size: 0.85em;
+.sideblock .info,
+.sideblock .event {
+  font-size: 0.9em;
 }
 
 .sideblock .date {
   font-style: italic;
 }
 
-
+.block_site_main_menu .footer select {
+  font-size: 0.8em;
+}
 
 /***
  *** Calendar
@@ -233,7 +244,11 @@ font-weight:normal;
 }
 
 #calendar .sidecalendar .filters {
-  font-size:0.75em;
+  font-size:0.8em;
+}
+
+.sideblock .filters td {
+  font-size:1.1em;
 }
 
 #calendar .maincalendar .controls {
@@ -267,9 +282,25 @@ table.minicalendar {
 /***
  *** Course
  ***/
+#course-view .section {
+  font-size:0.95em;
+  line-height:1.2em;
+}
+
+#course-view .section .activity {
+  padding:0.2em 0;
+}
+
+#course-view .section .activity a {
+  line-height:1em;
+}
+
+#course-view .section .left {
+  font-weight:bold;
+}
 
 .activitydate, .activityhead {
-  font-size:0.7em;
+  font-size:0.9em;
 }
 
 .weeklydatetext {
@@ -283,17 +314,17 @@ table.minicalendar {
 
 .coursebox .teachers,
 .coursebox .cost {
-  font-size:0.8em;
+  font-size:0.9em;
 }
 
 .coursebox .summary {
-  font-size:0.7em;
+  font-size:0.9em;
 }
 
-
-#course-view .section .left {
-  font-weight:bold;
+#course-recent h2.main {
+  font-size:1.1em;
 }
+
 
 
 
@@ -301,66 +332,104 @@ table.minicalendar {
  *** Doc
  ***/
 body#doc-contents h1 {
-  font-size: 1em;
+  font-size: 0.9em;
 }
 body#doc-contents ul {
   font-size: 0.8em;
 }
 
 
+/***
+ *** Grades
+ ***/
+
+body#grade-index .grades .header {
+  font-weight: bold;
+  font-size: 0.7em;
+}
+
 
 /***
  *** Login
  ***/
+
+#login-index .content {
+  font-size: 0.85em;
+}
+
+
+/***
+ *** Logs
+ ***/
+
+.logtable td {
+  font-size: 0.8em;
+}
+.logtable th {
+  font-size: 0.9em;
+}
 
 
 /***
  *** Message
  ***/
 
-.message_summary_link {
-  font-size:small;
-}
-
-.message_link {
-  font-size:x-small;
+.message .link {
+  font-size:0.8em;
 }
 
 .message_form {
-  font-size:0.78em;
+  font-size:0.8em;
 }
 
-.message_heading {
-  font-size:medium;
+.message .heading {
+  font-size:1.0em;
   font-weight:bold;
 }
 
-.message_date,
-.message_contact,
-.message_summary {
-  font-size:small;
+.message .date,
+.message .contact,
+.message .summary {
+  font-size:0.9em;
 }
 
-.message_small_note, 
-.message_pix {
-  font-size:x-small;
+.message .note, 
+.message .pix {
+  font-size:0.8em;
 }
 
 .message .author {
   font-weight: bold;
+  font-size:0.8em;
 }
 
 .message .time {
   font-style: italic;
+  font-size:0.8em;
 }
 
 .message .content {
+  font-size:0.8em;
+}
+
+#message-user .commands span {
+  font-size:0.7em;
+  white-space:nowrap;
+}
+
+#message-user .name {
+  font-weight: bold;
+  font-size:1.1em;
 }
 
 
 /***
  *** Tabs
  ***/
+.tablink {
+  font-size:0.8em;
+}
+
 .tablink a:hover {
   text-decoration: none;
 }
@@ -383,13 +452,25 @@ body#doc-contents ul {
  *** Modules: Assignment
  ***/
 
+#mod-assignment-index .cell {
+  font-size:0.8em;
+}
+
 /***
  *** Modules: Chat
  ***/
 
+#mod-chat-index .cell {
+  font-size:0.8em;
+}
+
 /***
  *** Modules: Choice
  ***/
+
+#mod-choice-index .cell {
+  font-size:0.8em;
+}
   
 /***
  *** Modules: Forum
@@ -404,11 +485,18 @@ body#doc-contents ul {
 .forumpost .topic .author {
   font-size: 0.8em;
 }
+.forumpost .commands,
+.forumpost .link {
+  font-size: 0.9em;
+}
 .forumheaderlist .discussion .lastpost {
   font-size: 0.7em;
 }
 body#mod-forum-search .introcontent {
   font-weight:bold;
+}
+body#mod-forum-index .generalbox .cell {
+  font-size: 0.80em;
 }
 
 
@@ -418,17 +506,20 @@ body#mod-forum-search .introcontent {
  ***/
 
 .glossarypost .commands {
-  font-size: 0.7em;
+  font-size: 0.8em;
 }
-.glossarypost .entryheader .author {
-  font-size: 0.7em;
+.glossarypost .entryheader .author,
+.glossarypost .entryheader .time {
+  font-size: 0.8em;
+}
+.glossarypost .entryheader .time {
   font-style: italic;
 }
 .concept {
   font-weight: bold;
 }
 .glossarycomment .time {
-  font-size: 0.7em;
+  font-size: 0.8em;
   font-style: italic;
 }
 .entrylowersection .aliases {
@@ -439,6 +530,9 @@ body#mod-forum-search .introcontent {
   font-size: 0.8em;
 }
 
+#mod-glossary-index .cell {
+  font-size:0.8em;
+}
 
 
 /***
@@ -461,6 +555,10 @@ body#mod-forum-search .introcontent {
   font-style: italic;
 }
 
+#mod-journal-index .cell {
+  font-size:0.8em;
+}
+
 /***
  *** Modules: Label
  ***/
@@ -469,12 +567,20 @@ body#mod-forum-search .introcontent {
  *** Modules: Lesson
  ***/
 
+#mod-lesson-index .cell {
+  font-size:0.8em;
+}
+
 /***
  *** Modules: Quiz
  ***/
 
 .editorhelptext {
-  font-size:x-small;
+  font-size:0.7em;
+}
+
+#mod-quiz-index .cell {
+  font-size:0.8em;
 }
 
 
@@ -482,19 +588,40 @@ body#mod-forum-search .introcontent {
  *** Modules: Resource
  ***/
 
+#mod-resource-index .cell {
+  font-size:0.8em;
+}
+
+
 /***
  *** Modules: Scorm
  ***/
+
+#mod-scorm-index .cell {
+  font-size:0.8em;
+}
 
 /***
  *** Modules: Survey
  ***/
 
+#mod-survey-index .cell {
+  font-size:0.8em;
+}
+
 /***
  *** Modules: Wiki
  ***/
 
+#mod-wiki-index .cell {
+  font-size:0.8em;
+}
+
 /***
  *** Modules: Workshop
  ***/
+
+#mod-workshop-index .cell {
+  font-size:0.8em;
+}
 
