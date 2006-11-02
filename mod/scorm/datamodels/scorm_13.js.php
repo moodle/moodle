@@ -3,7 +3,7 @@
         if ($userdata->status == '') {
             $userdata->entry = 'ab-initio';
         } else {
-            if (isset($userdata->{'cmi.exit'}) && ($userdata->{'cmi.exit'} == 'suspend')) {
+            if (isset($userdata->{'cmi.exit'}) && (($userdata->{'cmi.exit'} == 'suspend') || ($userdata->{'cmi.exit'} == 'logout'))) {
                 $userdata->entry = 'resume';
             } else {
                 $userdata->entry = '';
@@ -12,6 +12,8 @@
     }
     $userdata->threshold = '0.8';
 ?>
+    var cmi = new Object();
+
 //
 // SCORM 1.3 API Implementation
 //
@@ -19,36 +21,38 @@ function SCORMapi1_3() {
     // Standard Data Type Definition
     CMIString200 = '^.{0,200}$';
     CMIString250 = '^.{0,250}$';
-    CMILangString250 = '^([^\{][^l][^a][^n][^g][^=][^\}]|(\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\}))(.{0,250})$|^$';
+    CMILangString250 = '^(\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\})?([^\{].{0,250}$)?';
     CMIString1000 = '^.{0,1500}$';
     CMIString4000 = '^.{0,4000}$';
-    CMILangString4000 = '^([^\{][^l][^a][^n][^g][^=][^\}]|(\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\}))(.{0,4000})$|^$';
+    CMILangString4000 = '^(\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\})?([^\{].{0,4000}$)?';
     CMIString64000 = '^.{0,64000}$';
-    CMILang = '^(\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{0,8})?\})?$';
-    CMILang = '^([^\{][^l][^a][^n][^g][^=][^\}]|(\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\}))$';
+    CMILang = '^([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?$|^$';
     CMITime = '^(19[7-9]{1}[0-9]{1}|20[0-2]{1}[0-9]{1}|203[0-8]{1})((-(0[1-9]{1}|1[0-2]{1}))((-(0[1-9]{1}|[1-2]{1}[0-9]{1}|3[0-1]{1}))(T([0-1]{1}[0-9]{1}|2[0-3]{1})((:[0-5]{1}[0-9]{1})((:[0-5]{1}[0-9]{1})((\\.[0-9]{1,2})((Z|([+|-]([0-1]{1}[0-9]{1}|2[0-3]{1})))(:[0-5]{1}[0-9]{1})?)?)?)?)?)?)?)?$';
-    CMITimespan = '^P(\\d+Y)?(\\d+M)?(\\d+D)?(T(\\d+H)?(\\d+M)?(\\d+(\.\\d{1,2})?S)?)?$';
+    CMITimespan = '^P(\\d+Y)?(\\d+M)?(\\d+D)?(T(((\\d+H)(\\d+M)?(\\d+(\.\\d{1,2})?S)?)|((\\d+M)(\\d+(\.\\d{1,2})?S)?)|((\\d+(\.\\d{1,2})?S))))?$';
     CMIInteger = '^\\d+$';
     CMISInteger = '^-?([0-9]+)$';
     CMIDecimal = '^-?([0-9]{1,4})(\\.[0-9]{1,18})?$';
-    CMIIdentifier = '^\\S{1,200}$';
-    CMILongIdentifier = '^\\S{1,4000}$';
+    CMIIdentifier = '^\\S{0,200}[a-zA-Z0-9]$';
+    CMILongIdentifier = '^\\S{0,4000}[a-zA-Z0-9]$';
     CMIFeedback = CMIString200; // This must be redefined
     CMIIndex = '[._](\\d+).';
+    CMIIndexStore = '.N(\\d+).';
     // Vocabulary Data Type Definition
     CMICStatus = '^completed$|^incomplete$|^not attempted$|^unknown$';
     CMISStatus = '^passed$|^failed$|^unknown$';
     CMIExit = '^time-out$|^suspend$|^logout$|^normal$|^$';
-    CMIType = '^true-false$|^choice$|^(long)?fill-in$|^matching$|^performance$|^sequencing$|^likert$|^numeric$|^other$';
-    CMIResult = '^correct$|^incorrect$|^unanticipated$|^neutral$|^-?([0-9]{1,4})?(\\.[0-9]{1,18})?$';
-    NAVEvent = '^previous$|^continue$';
+    CMIType = '^true-false$|^choice$|^(long-)?fill-in$|^matching$|^performance$|^sequencing$|^likert$|^numeric$|^other$';
+    CMIResult = '^correct$|^incorrect$|^unanticipated$|^neutral$|^-?([0-9]{1,4})(\\.[0-9]{1,18})?$';
+    NAVEvent = '^previous$|^continue$|^exit$|^exitAll$|^abandon$|^abandonAll$|^suspendAll$|^{target=\\S{0,200}[a-zA-Z0-9]}choice$';
+    NAVBoolean = '^unknown$|^true$|^false$';
+    NAVTarget = '^previous$|^continue$|^choice.{target=\\S{0,200}[a-zA-Z0-9]}$'
     // Children lists
     cmi_children = '_version, comments_from_learner, comments_from_lms, completion_status, credit, entry, exit, interactions, launch_data, learner_id, learner_name, learner_preference, location, max_time_allowed, mode, objectives, progress_measure, scaled_passing_score, score, session_time, success_status, suspend_data, time_limit_action, total_time';
     comments_children = 'comment, timestamp, location';
-    score_children = 'scaled, raw, min, max';
-    objectives_children = 'id, score, success_status, completion_status, description';
+    score_children = 'max, raw, scaled, min';
+    objectives_children = 'progress_measure, completion_status, success_status, description, score, id';
     student_data_children = 'mastery_score, max_time_allowed, time_limit_action';
-    student_preference_children = 'audio_level, language, delivery_speed, audio_caption';
+    student_preference_children = 'audio_level, audio_captioning, delivery_speed, language';
     interactions_children = 'id, type, objectives, timestamp, correct_responses, weighting, learner_response, result, latency, description';
     // Data ranges
     scaled_range = '-1#1';
@@ -93,51 +97,57 @@ function SCORMapi1_3() {
         'cmi.learner_id':{'defaultvalue':'<?php echo $userdata->student_id ?>', 'mod':'r'},
         'cmi.learner_name':{'defaultvalue':'<?php echo addslashes($userdata->student_name) ?>', 'mod':'r'},
         'cmi.learner_preference._children':{'defaultvalue':student_preference_children, 'mod':'r'},
-        'cmi.learner_preference.audio_level':{'defaultvalue':'0', 'format':CMIDecimal, 'range':audio_range, 'mod':'rw'},
+        'cmi.learner_preference.audio_level':{'defaultvalue':'1', 'format':CMIDecimal, 'range':audio_range, 'mod':'rw'},
         'cmi.learner_preference.language':{'defaultvalue':'', 'format':CMILang, 'mod':'rw'},
-        'cmi.learner_preference.delivery_speed':{'defaultvalue':'0', 'format':CMIDecimal, 'range':speed_range, 'mod':'rw'},
-        'cmi.learner_preference.audio_caption':{'defaultvalue':'0', 'format':CMISInteger, 'range':text_range, 'mod':'rw'},
+        'cmi.learner_preference.delivery_speed':{'defaultvalue':'1', 'format':CMIDecimal, 'range':speed_range, 'mod':'rw'},
+        'cmi.learner_preference.audio_captioning':{'defaultvalue':'0', 'format':CMISInteger, 'range':text_range, 'mod':'rw'},
         'cmi.location':{'defaultvalue':<?php echo isset($userdata->{'cmi.location'})?'\''.$userdata->{'cmi.location'}.'\'':'null' ?>, 'format':CMIString1000, 'mod':'rw'},
         'cmi.max_time_allowed':{'defaultvalue':<?php echo isset($userdata->maxtimeallowed)?'\''.$userdata->maxtimeallowed.'\'':'null' ?>, 'mod':'r'},
         'cmi.mode':{'defaultvalue':'<?php echo $userdata->mode ?>', 'mod':'r'},
         'cmi.objectives._children':{'defaultvalue':objectives_children, 'mod':'r'},
         'cmi.objectives._count':{'mod':'r', 'defaultvalue':'0'},
         'cmi.objectives.n.id':{'pattern':CMIIndex, 'format':CMILongIdentifier, 'mod':'rw'},
-        'cmi.objectives.n.score._children':{'pattern':CMIIndex, 'mod':'r'},
-        'cmi.objectives.n.score.scaled':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':scaled_range, 'mod':'rw'},
-        'cmi.objectives.n.score.raw':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'mod':'rw'},
-        'cmi.objectives.n.score.min':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'mod':'rw'},
-        'cmi.objectives.n.score.max':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'mod':'rw'},
+        'cmi.objectives.n.score._children':{'defaultvalue':score_children, 'pattern':CMIIndex, 'mod':'r'},
+        'cmi.objectives.n.score.scaled':{'defaultvalue':null, 'pattern':CMIIndex, 'format':CMIDecimal, 'range':scaled_range, 'mod':'rw'},
+        'cmi.objectives.n.score.raw':{'defaultvalue':null, 'pattern':CMIIndex, 'format':CMIDecimal, 'mod':'rw'},
+        'cmi.objectives.n.score.min':{'defaultvalue':null, 'pattern':CMIIndex, 'format':CMIDecimal, 'mod':'rw'},
+        'cmi.objectives.n.score.max':{'defaultvalue':null, 'pattern':CMIIndex, 'format':CMIDecimal, 'mod':'rw'},
         'cmi.objectives.n.success_status':{'defaultvalue':'unknown', 'pattern':CMIIndex, 'format':CMISStatus, 'mod':'rw'},
-        'cmi.objectives.n.completion_status':{'defaultvalue':'unknown', 'pattern':CMIIndex, 'format':CMISStatus, 'mod':'rw'},
+        'cmi.objectives.n.completion_status':{'defaultvalue':'unknown', 'pattern':CMIIndex, 'format':CMICStatus, 'mod':'rw'},
+        'cmi.objectives.n.progress_measure':{'defaultvalue':null, 'format':CMIDecimal, 'range':progress_range, 'mod':'rw'},
         'cmi.objectives.n.description':{'pattern':CMIIndex, 'format':CMILangString250, 'mod':'rw'},
-        'cmi.progress_measure':{'defaultvalue':'<?php echo isset($userdata->{'cmi.progess_measure'})?$userdata->{'cmi.progress_measure'}:'' ?>', 'format':CMIDecimal, 'range':progress_range, 'mod':'rw'},
-        'cmi.scaled_passing_score':{'defaultvalue':<?php echo isset($userdata->mnm)?'\''.$userdata->mnm.'\'':'null' ?>, 'format':CMIDecimal, 'range':scaled_range, 'mod':'r'},
-        'cmi.score._children':{'pattern':CMIIndex, 'mod':'r'},
-        'cmi.score.scaled':{'defaultvalue':'<?php echo isset($userdata->{'cmi.score.scaled'})?$userdata->{'cmi.score.scaled'}:'' ?>', 'format':CMIDecimal, 'range':scaled_range, 'mod':'rw'},
-        'cmi.score.raw':{'defaultvalue':'<?php echo isset($userdata->{'cmi.score.raw'})?$userdata->{'cmi.score.raw'}:'' ?>', 'format':CMIDecimal, 'mod':'rw'},
-        'cmi.score.min':{'defaultvalue':'<?php echo isset($userdata->{'cmi.score.min'})?$userdata->{'cmi.score.min'}:'' ?>', 'format':CMIDecimal, 'mod':'rw'},
-        'cmi.score.max':{'defaultvalue':'<?php echo isset($userdata->{'cmi.score.max'})?$userdata->{'cmi.score.max'}:'' ?>', 'format':CMIDecimal, 'mod':'rw'},
+        'cmi.progress_measure':{'defaultvalue':<?php echo isset($userdata->{'cmi.progess_measure'})?'\''.$userdata->{'cmi.progress_measure'}.'\'':'null' ?>, 'format':CMIDecimal, 'range':progress_range, 'mod':'rw'},
+        'cmi.scaled_passing_score':{'defaultvalue':<?php echo isset($userdata->{'cmi.scaled_passing_score'})?'\''.$userdata->{'cmi.scaled_passing_score'}.'\'':'null' ?>, 'format':CMIDecimal, 'range':scaled_range, 'mod':'r'},
+        'cmi.score._children':{'defaultvalue':score_children, 'mod':'r'},
+        'cmi.score.scaled':{'defaultvalue':<?php echo isset($userdata->{'cmi.score.scaled'})?'\''.$userdata->{'cmi.score.scaled'}.'\'':'null' ?>, 'format':CMIDecimal, 'range':scaled_range, 'mod':'rw'},
+        'cmi.score.raw':{'defaultvalue':<?php echo isset($userdata->{'cmi.score.raw'})?'\''.$userdata->{'cmi.score.raw'}.'\'':'null' ?>, 'format':CMIDecimal, 'mod':'rw'},
+        'cmi.score.min':{'defaultvalue':<?php echo isset($userdata->{'cmi.score.min'})?'\''.$userdata->{'cmi.score.min'}.'\'':'null' ?>, 'format':CMIDecimal, 'mod':'rw'},
+        'cmi.score.max':{'defaultvalue':<?php echo isset($userdata->{'cmi.score.max'})?'\''.$userdata->{'cmi.score.max'}.'\'':'null' ?>, 'format':CMIDecimal, 'mod':'rw'},
         'cmi.session_time':{'format':CMITimespan, 'mod':'w', 'defaultvalue':'PT0H0M0S'},
         'cmi.success_status':{'defaultvalue':'<?php echo isset($userdata->{'cmi.success_status'})?$userdata->{'cmi.success_status'}:'unknown' ?>', 'format':CMISStatus, 'mod':'rw'},
         'cmi.suspend_data':{'defaultvalue':<?php echo isset($userdata->{'cmi.suspend_data'})?'\''.$userdata->{'cmi.suspend_data'}.'\'':'null' ?>, 'format':CMIString64000, 'mod':'rw'},
         'cmi.time_limit_action':{'defaultvalue':<?php echo isset($userdata->timelimitaction)?'\''.$userdata->timelimitaction.'\'':'null' ?>, 'mod':'r'},
         'cmi.total_time':{'defaultvalue':'<?php echo isset($userdata->{'cmi.total_time'})?$userdata->{'cmi.total_time'}:'PT0H0M0S' ?>', 'mod':'r'},
-        'nav.event':{'defaultvalue':'', 'format':NAVEvent, 'mod':'w'}
+        'adl.nav.request':{'defaultvalue':'_none_', 'format':NAVEvent, 'mod':'rw'}
     };
     //
     // Datamodel inizialization
     //
-    var cmi = new Object();
+//    var cmi = new Object();
         cmi.comments_from_learner = new Object();
+        cmi.comments_from_learner._count = 0;
         cmi.comments_from_lms = new Object();
+        cmi.comments_from_lms._count = 0;
         cmi.interactions = new Object();
+        cmi.interactions._count = 0;
         cmi.learner_preference = new Object();
         cmi.objectives = new Object();
+        cmi.objectives._count = 0;
         cmi.score = new Object();
 
     // Navigation Object
-    var nav = new Object();
+    var adl = new Object();
+        adl.nav = new Object();
 
     for (element in datamodel) {
         if (element.match(/\.n\./) == null) {
@@ -155,7 +165,7 @@ function SCORMapi1_3() {
     foreach($userdata as $element => $value){
         if (substr($element,0,14) == 'cmi.objectives') {
             preg_match('/.(\d+)./',$element,$matches);
-            $element = preg_replace('/.(\d+)./',"_\$1.",$element);
+            $element = preg_replace('/.(\d+)./',".N\$1.",$element);
             if ($matches[1] == $count) {
                 $count++;
                 $end = strpos($element,$matches[1])+strlen($matches[1]);
@@ -163,10 +173,6 @@ function SCORMapi1_3() {
                 echo '    '.$subelement." = new Object();\n";
                 echo '    '.$subelement.".score = new Object();\n";
                 echo '    '.$subelement.".score._children = score_children;\n";
-                echo '    '.$subelement.".score.scaled = '';\n";
-                echo '    '.$subelement.".score.raw = '';\n";
-                echo '    '.$subelement.".score.min = '';\n";
-                echo '    '.$subelement.".score.max = '';\n";
             }
             echo '    '.$element.' = \''.$value."';\n";
         }
@@ -268,9 +274,9 @@ function SCORMapi1_3() {
                 elementmodel = element.replace(expression,'.n.');
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'w') {
-                        element = element.replace(expression, "_$1.");
+                        element = element.replace(/\.(\d+)\./, ".N$1.");
                         elementIndexes = element.split('.');
-                        subelement = 'cmi';
+                        subelement = element.substr(0,3);
                         i = 1;
                         while ((i < elementIndexes.length) && (typeof eval(subelement) != "undefined")) {
                             subelement += '.'+elementIndexes[i++];
@@ -314,7 +320,22 @@ function SCORMapi1_3() {
                             errorCode = "401";
                         }
                     } else {
-                        errorCode = "401";
+                        parentmodel = 'adl.nav.request_valid.';
+                        if (element.substr(0,parentmodel.length) == parentmodel) {
+                            if (element.substr(parentmodel.length).match(NAVTarget) == null) {
+                                errorCode = "301";
+                            } else {
+                                if (adl.nav.request == element.substr(parentmodel.length)) {
+                                    return "true";
+                                } else if (adl.nav.request == '_none_') {
+                                    return "unknown";
+                                } else {
+                                    return "false";
+                                }
+                            }
+                        } else {
+                            errorCode = "401";
+                        }
                     }
                 }
             } else {
@@ -347,50 +368,133 @@ function SCORMapi1_3() {
                         expression = new RegExp(eval('datamodel["'+elementmodel+'"].format'));
                         value = value+'';
                         matches = value.match(expression);
-                        if (matches != null) {
+                        if ((matches != null) && ((matches.join('').length > 0) || (value.length == 0))) {
                             //Create dynamic data model element
                             if (element != elementmodel) {
                                 elementIndexes = element.split('.');
                                 subelement = 'cmi';
+                                parentelement = 'cmi';
                                 for (i=1;(i < elementIndexes.length-1) && (errorCode=="0");i++) {
                                     elementIndex = elementIndexes[i];
                                     if (elementIndexes[i+1].match(/^\d+$/)) {
-                                        if ((typeof eval(subelement+'.'+elementIndex)) == "undefined") {
-                                            eval(subelement+'.'+elementIndex+' = new Object();');
-                                            eval(subelement+'.'+elementIndex+'._count = 0;');
+                                        if ((parseInt(elementIndexes[i+1]) > 0) && (elementIndexes[i+1].charAt(0) == 0)) {
+                                            // Index has a leading 0 (zero), this is not a number
+                                            errorCode = "351";
                                         }
-                                        if (elementIndexes[i+1] == eval(subelement+'.'+elementIndex+'._count')) {
-                                            eval(subelement+'.'+elementIndex+'._count++;');
-                                        } 
-                                        if (elementIndexes[i+1] > eval(subelement+'.'+elementIndex+'._count')) {
+                                        parentelement = subelement+'.'+elementIndex;
+                                        if (elementIndexes[i+1] > eval(parentelement+'._count')) {
                                             errorCode = "351";
                                             diagnostic = "Data Model Element Collection Set Out Of Order";
                                         }
-                                        subelement = subelement.concat('.'+elementIndex+'_'+elementIndexes[i+1]);
+                                        subelement = subelement.concat('.'+elementIndex+'.N'+elementIndexes[i+1]);
                                         i++;
+                                        if (((typeof eval(subelement)) == "undefined") && (i < elementIndexes.length-2)) {
+                                            errorCode="408";
+                                        }
                                     } else {
                                         subelement = subelement.concat('.'+elementIndex);
-                                    }
-                                    if (((typeof eval(subelement)) == "undefined") && (errorCode == "0"))  {
-                                        eval(subelement+' = new Object();');
-                                        if (subelement.substr(0,14) == 'cmi.objectives') {
-                                            eval(subelement+'.score = new Object();');
-                                            eval(subelement+'.score._children = score_children;');
-                                            eval(subelement+'.score.scaled = "";');
-                                            eval(subelement+'.score.raw = "";');
-                                            eval(subelement+'.score.min = "";');
-                                            eval(subelement+'.score.max = "";');
-                                        }
-                                        if (subelement.substr(0,16) == 'cmi.interactions') {
-                                            eval(subelement+'.objectives = new Object();');
-                                            eval(subelement+'.objectives._count = 0;');
-                                            eval(subelement+'.correct_responses = new Object();');
-                                            eval(subelement+'.correct_responses._count = 0;');
-                                        } 
                                     }
                                 }
                                 if (errorCode == "0") {
                                     element = subelement.concat('.'+elementIndexes[elementIndexes.length-1]);
+                                    elemlen = element.length;
+                                    if (((typeof eval(subelement)) == "undefined") && (errorCode == "0")) {
+                                        parentmodel = 'cmi.objectives';
+                                        maxmodel = 'cmi.objectives.Nxxx.id';
+                                        if (subelement.substr(0,parentmodel.length) == parentmodel) {
+                                             if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
+                                                //This is a parentmodel.n.id element
+                                                if (!duplicatedID(parentmodel,value)) {
+                                                    if (elementIndexes[elementIndexes.length-2] == eval(parentmodel+'._count')) {
+                                                        eval(parentmodel+'._count++;');
+                                                        eval(subelement+' = new Object();');
+                                                        subobject = eval(subelement);
+                                                        subobject.success_status = datamodel["cmi.objectives.n.success_status"].defaultvalue;
+                                                        subobject.completion_status = datamodel["cmi.objectives.n.completion_status"].defaultvalue;
+                                                        subobject.progress_measure = datamodel["cmi.objectives.n.progress_measure"].defaultvalue;
+                                                        subobject.score = new Object();
+                                                        subobject.score._children = score_children;
+                                                        subobject.score.scaled = datamodel["cmi.objectives.n.score.scaled"].defaultvalue;
+                                                        subobject.score.raw = datamodel["cmi.objectives.n.score.raw"].defaultvalue;
+                                                        subobject.score.min = datamodel["cmi.objectives.n.score.min"].defaultvalue;
+                                                        subobject.score.max = datamodel["cmi.objectives.n.score.max"].defaultvalue;
+                                                    }
+                                                } else {
+                                                    errorCode="351";
+                                                    diagnostic = "Data Model Element ID Already Exists";
+                                                }
+                                            } else {
+                                                if (typeof eval(subelement) == "undefined") {
+                                                    errorCode="408";
+                                                } else {
+                                                    if (duplicatedID(parentmodel,value)) {
+                                                        errorCode="351";
+                                                        diagnostic = "Data Model Element ID Already Exists";
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            parentmodel = 'cmi.interactions';
+                                            maxmodel = 'cmi.interactions.Nxxx.id';
+                                            if (subelement.substr(0,parentmodel.length) == parentmodel) {
+                                                if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
+                                                    //This is a parentmodel.n.id element
+                                                    if (!duplicatedID(parentmodel,value)) {
+                                                        if (elementIndexes[elementIndexes.length-2] == eval(parentmodel+'._count')) {
+                                                            eval(parentmodel+'._count++;');
+                                                            eval(subelement+' = new Object();');
+                                                            subobject = eval(subelement);
+                                                            subobject.objectives = new Object();
+                                                            subobject.objectives._count = 0;
+                                                        } 
+                                                    } else {
+                                                        errorCode="351";
+                                                        diagnostic = "Data Model Element ID Already Exists";
+                                                    }
+                                                } else {
+                                                    if (typeof eval(subelement) == "undefined") {
+                                                        errorCode="408";
+                                                    } else {
+                                                        maxmodel = 'cmi.interactions.Nxxx.type';
+                                                        if ((elemlen <= maxmodel.length) && (element.substr(elemlen-4) == 'type') && (errorCode=="0")) { 
+                                                            subobject = eval(subelement);
+                                                            subobject.correct_responses = new Object();
+                                                            subobject.correct_responses._count = 0;
+                                                        } 
+                                                    }
+                                                }
+                                            } else { 
+                                                if (errorCode == "0") {
+                                                    if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
+                                                        eval(parentelement+'._count++;');
+                                                        eval(subelement+' = new Object();');
+                                                    } 
+                                                }
+                                            }
+                                        }
+                                     } else {
+                                         parentmodel = 'cmi.objectives';
+                                         maxmodel = 'cmi.objectives.Nxxx.id';
+                                         if (subelement.substr(0,parentmodel.length) == parentmodel) {
+                                             if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
+                                                 if (eval(element) != value) {
+                                                     errorCode = "351";
+                                                     diagnostic = "Write Once Violation";
+                                                 }
+                                             }
+                                         } else {
+                                             parentmodel = 'cmi.interactions';
+                                             maxmodel = 'cmi.interactions.Nxxx.id';
+                                             if (subelement.substr(0,parentmodel.length) == parentmodel) {
+                                                 if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
+                                                     if (eval(element) != value) {
+                                                         errorCode = "351";
+                                                         diagnostic = "Write Once Violation";
+                                                     }
+                                                 }
+                                             }
+                                         }
+                                     }
                                 }
                             }
                             //Store data
@@ -417,7 +521,7 @@ function SCORMapi1_3() {
                                     }
                                 } else {
                                     eval(element+'="'+value+'";');
-                                    errorCode = "0";
+                                    errorCode = "0"; 
                                     <?php 
                                         if (debugging('',DEBUG_DEVELOPER)) {
                                             echo 'alert("SetValue("+element+","+value+") -> OK");';
@@ -578,10 +682,33 @@ function SCORMapi1_3() {
     }
     
     function GetDiagnostic (param) {
-        if (param == "") {
+        if (diagnostic != "") {
             return diagnostic;
         }
         return param;
+    }
+
+    function duplicatedID (element, value) {
+        var found = false;
+        var elements = eval(element+'._count');
+        for (n=0;(n<elements) && (!found);n++) {
+            if (eval(element+'.N'+n+'.id') == value) {
+                found = true;
+            }
+        } 
+        return found;
+    }
+
+    function getElementModel(element) {
+        if (typeof datamodel[element] != "undefined") {
+            return element;
+        } else {
+            expression = new RegExp(CMIIndex,'g');
+            elementmodel = element.replace(expression,'.n.');
+            if (typeof datamodel[elementmodel] != "undefined") {
+                return elementmodel;
+            }
+        }
     }
 
     function AddTime (first, second) {
@@ -644,7 +771,7 @@ function SCORMapi1_3() {
                 datastring += CollectData(data[property],parent+'.'+property);
             } else {
                 element = parent+'.'+property;
-                expression = new RegExp(CMIIndex,'g');
+                expression = new RegExp(CMIIndexStore,'g');
                 elementmodel = element.replace(expression,'.n.');
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
@@ -667,7 +794,7 @@ function SCORMapi1_3() {
         if (storetotaltime) {
             if (cmi.mode == 'normal') {
                 if (cmi.credit == 'credit') {
-                    if ((cmi.completion_threshold != null) && (cmi.progress_measure != '')) {
+                    if ((cmi.completion_threshold != null) && (cmi.progress_measure != null)) {
                         if (cmi.progress_measure >= cmi.completion_threshold) {
                             cmi.completion_status = 'completed';
                         } else {
@@ -690,7 +817,11 @@ function SCORMapi1_3() {
         }
         datastring += '&attempt=<?php echo $attempt ?>';
         datastring += '&scoid=<?php echo $sco->id ?>';
-        //popupwin(datastring);
+        <?php
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'popupwin(datastring);';
+            }
+        ?>
         var myRequest = NewHttpReq();
         result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php p($USER->sesskey) ?>"+datastring);
         results = result.split('\n');
