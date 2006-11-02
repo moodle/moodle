@@ -408,6 +408,24 @@ function wiki_get_default_entry(&$wiki, &$course, $userid=0, $groupid=0) {
 /// $groupid group or teacher wiki.
 /// Creates one if it needs to and it can.
     global $USER;
+    /// If there is a groupmode, get the user's group id.
+    $groupmode = groupmode($course, $wiki);
+    // if groups mode is in use and no group supplied, use the first one found
+    if ($groupmode && !$groupid) {
+        if(($mygroupids=mygroupid($course->id)) && count($mygroupids)>0) {
+            // Use first group. They ought to be able to change later
+            $groupid=$mygroupids[0];
+        } else {
+            // Whatever groups are in the course, pick one
+            $coursegroups=get_records('groups','courseid',$course->id,'','id,name');
+            if(!$coursegroups || count($coursegroups)==0) {
+                error("Can't access wiki in group mode when no groups are configured for the course"); 
+            } 
+            $unkeyed=array_values($coursegroups); // Make sure first item is index 0
+            $groupid=$unkeyed[0]->id;
+        }
+    }
+
     /// If the wiki entry doesn't exist, can this user create it?
     if (($wiki_entry = wiki_get_entry($wiki, $course, $userid, $groupid)) === false) {
         if (wiki_can_add_entry($wiki, $USER, $course, $userid, $groupid)) {
@@ -827,6 +845,7 @@ function wiki_add_entry(&$wiki, &$course, $userid=0, $groupid=0) {
         $wiki_entry->groupid = $groupid;
         $wiki_entry->pagename = wiki_page_name($wiki);
         $wiki_entry->timemodified = time();
+        
         break;
 
     case 'teacher':
@@ -877,6 +896,10 @@ function wiki_can_add_entry(&$wiki, &$user, &$course, $userid=0, $groupid=0) {
 
     case 'group':
         /// If mode is 'nogroups', then all participants can add wikis.
+        if (wiki_is_teacheredit($wiki, $user->id)) {
+            return true;  
+        }
+        
         if (!$groupmode) {
             return (wiki_is_student($wiki, $user->id) or wiki_is_teacher($wiki, $user->id));
         }
