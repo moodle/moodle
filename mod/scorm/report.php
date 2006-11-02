@@ -96,6 +96,7 @@
 
     if (empty($b)) {
         if (empty($a)) {
+            // No options, show the global scorm report
             if ($scousers=get_records_select("scorm_scoes_track", "scormid='$scorm->id' GROUP BY userid,scormid", "", "userid,scormid")) {
                 $table = new stdClass();
                 $table->head = array('&nbsp;', get_string('name'));
@@ -146,6 +147,7 @@
             print_table($table);
         } else {
             if (!empty($user)) {
+                // User SCORM report
                 if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' ORDER BY id")) {
                     if (!empty($userdata)) {
                         print_simple_box_start('center');
@@ -207,9 +209,11 @@
             }
         }
     } else {
+        // User SCO report
         if (!empty($userdata)) {
             print_simple_box_start('center');
-            print_heading(format_string($sco->title));
+            //print_heading(format_string($sco->title));
+            print_heading('<a href="'.$CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&mode=browse&scoid='.$sco->id.'" target="_new">'.format_string($sco->title).'</a>'); 
             echo '<div align="center">'."\n";
             print_user_picture($user, $course->id, $userdata->picture, false, false);
             echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user&course=$course->id\">".
