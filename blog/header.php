@@ -110,10 +110,10 @@ if ($ME == $CFG->wwwroot.'/blog/edit.php') {  /// We are in edit mode, print the
 
         case 'course':
             if ($tagid || !empty($tag)) {
-                print_header_simple("$course->shortname: $blogstring", $course->fullname,
+                print_header("$course->shortname: $blogstring", $course->fullname,
                             '<a href="index.php?filtertype=course&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
             } else {
-                print_header_simple("$course->shortname: $blogstring", $course->fullname,
+                print_header("$course->shortname: $blogstring", $course->fullname,
                             $blogstring,'','',true,$PAGE->get_extra_header_string());
             }
         break;
@@ -123,11 +123,11 @@ if ($ME == $CFG->wwwroot.'/blog/edit.php') {  /// We are in edit mode, print the
             $thisgroup = get_record('groups', 'id', $filterselect);
 
             if ($tagid || !empty($tag)) {
-                print_header_simple("$course->shortname: $blogstring", $course->fullname,
+                print_header("$course->shortname: $blogstring", $course->fullname,
                             '<a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$filterselect.'">'.$thisgroup->name.'</a> ->
                             <a href="index.php?filtertype=group&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
             } else {
-                print_header_simple("$course->shortname: $blogstring", $course->fullname,
+                print_header("$course->shortname: $blogstring", $course->fullname,
                             '<a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$filterselect.'">'.$thisgroup->name."</a> ->
                             $blogstring",'','',true,$PAGE->get_extra_header_string());
 
