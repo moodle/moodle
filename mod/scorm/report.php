@@ -254,6 +254,7 @@
                                   'status' => 'cmi.core.lesson_status',
                                   'time' => 'cmi.core.total_time');
             }
+            $printedelements = array();
             foreach ($elements as $key => $element) {
                 if (isset($trackdata->$element)) {
                     $existelements = true;
