@@ -99,7 +99,7 @@ class view_structure_php extends XMLDBAction {
     /// Calculate the popup of commands
         $commands = array('create_table',
                          'drop_table',
-                         'rename_table (not imp!)');
+                         'rename_table');
         foreach ($commands as $command) {
             $popcommands[$command] = str_replace('_', ' ', $command);
         }
