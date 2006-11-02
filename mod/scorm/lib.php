@@ -23,6 +23,10 @@ function scorm_add_instance($scorm) {
         //sanitize submitted values a bit
         $scorm->width = clean_param($scorm->width, PARAM_INT);
         $scorm->height = clean_param($scorm->height, PARAM_INT);
+
+        if (!isset($scorm->whatgrade)) {
+            $scorm->whatgrade = 0;
+        }
         $scorm->grademethod = ($scorm->whatgrade * 10) + $scorm->grademethod;
 
         $id = insert_record('scorm', $scorm);
@@ -64,6 +68,9 @@ function scorm_update_instance($scorm) {
     $scorm->width = str_replace('%','',$scorm->width);
     $scorm->height = str_replace('%','',$scorm->height);
 
+    if (!isset($scorm->whatgrade)) {
+        $scorm->whatgrade = 0;
+    }
     $scorm->grademethod = ($scorm->whatgrade * 10) + $scorm->grademethod;
 
     // Check if scorm manifest needs to be reparsed
