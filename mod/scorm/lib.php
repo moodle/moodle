@@ -882,9 +882,14 @@ function scorm_parse_scorm($manifestfile,$scormid) {
     $launch = 0;
 
     if (is_file($manifestfile)) {
-        $xmlstring = file_get_contents($manifestfile);
+        $xmltext = file_get_contents($manifestfile);
+
+        $pattern = '/&(?!\w{2,6};)/';
+        $replacement = '&amp;';
+        $xmltext = preg_replace($pattern, $replacement, $xmltext);
+
         $objXML = new xml2Array();
-        $manifests = $objXML->parse($xmlstring);
+        $manifests = $objXML->parse($xmltext);
             
         $scoes = new stdClass();
         $scoes->version = '';
