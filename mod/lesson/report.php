@@ -17,7 +17,7 @@
 
     list($cm, $course, $lesson) = lesson_get_basics($id);
 
-    if (! $students = get_records_sql("SELECT DISTINCT u.*
+    if (! $students = get_records_sql("SELECT u.*
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}lesson_attempts a
                                  WHERE a.lessonid = '$lesson->id' and

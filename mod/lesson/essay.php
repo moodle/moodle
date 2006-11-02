@@ -30,7 +30,7 @@
                 // Get only the attempts that are in response to essay questions
                 if ($essayattempts = get_records_select('lesson_attempts', 'pageid IN('.implode(',', array_keys($pages)).')')) {
                     // Get all the users who have taken this lesson, order by their last name
-                    if (!$users = get_records_sql("SELECT DISTINCT u.*
+                    if (!$users = get_records_sql("SELECT u.*
                                              FROM {$CFG->prefix}user u,
                                                   {$CFG->prefix}lesson_attempts a
                                              WHERE a.lessonid = '$lesson->id' and
@@ -130,7 +130,7 @@
                 }
             } else {
                 $queryadd = '';
-                if (!$users = get_records_sql("SELECT DISTINCT u.*
+                if (!$users = get_records_sql("SELECT u.*
                                          FROM {$CFG->prefix}user u,
                                               {$CFG->prefix}lesson_attempts a
                                          WHERE a.lessonid = '$lesson->id' and
