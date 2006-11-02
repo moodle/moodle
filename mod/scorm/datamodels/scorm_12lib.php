@@ -81,7 +81,7 @@ function scorm_eval_prerequisites($prerequisites,$usertracks) {
                             $setelements = explode(',', substr($prerequisites, $open+1, $close-($open+1)-1));
                             $settrue = 0;
                             foreach ($setelements as $setelement) {
-                                if (eval_prerequisites($setelement,$usertracks)) {
+                                if (scorm_eval_prerequisites($setelement,$usertracks)) {
                                     $settrue++;
                                 }
                             }
@@ -288,10 +288,10 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         $scoid = $sco->id;
                     }
                     if ($sco->scormtype == 'sco') {
-                        $statusicon= '<img src="'.$scormpixdir.'/notattempted.gif" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
+                        $statusicon = '<img src="'.$scormpixdir.'/notattempted.gif" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
                         $incomplete = true;
                     } else {
-                        $statusicon .= '<img src="'.$scormpixdir.'/asset.gif" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
+                        $statusicon = '<img src="'.$scormpixdir.'/asset.gif" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
                     }
                 }
                 if ($sco->id == $scoid) {
@@ -318,7 +318,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                     if ($sco->id == $scoid) {
                         $result->prerequisites = false;
                     }
-                    $result->toc .= '&nbsp;'.$sco->title."</li>\n";
+                    $result->toc .= $statusicon.'&nbsp;'.$sco->title."</li>\n";
                 }
             } else {
                 $result->toc .= '&nbsp;'.$sco->title."</li>\n";
