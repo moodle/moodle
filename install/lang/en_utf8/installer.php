@@ -12,7 +12,7 @@
 $string['admindirerror'] = 'The admin directory specified is incorrect';
 $string['admindirname'] = 'Admin Directory';
 $string['admindirsettinghead'] = 'Setting the admin directory ...';
-$string['admindirsettingsub'] = '    A very few webhosts use /admin as a special URL for you to access a 
+$string['admindirsettingsub'] = 'A very few webhosts use /admin as a special URL for you to access a 
     control panel or something.  Unfortunately this conflicts with the 
     standard location for the Moodle admin pages.  You can fix this by 
     renaming the admin directory in your installation, and putting that 
@@ -107,7 +107,7 @@ $string['dbwronghostserver'] = 'You must follow \"Host\" rules as explained abov
 $string['dbwrongnlslang'] = 'The NLS_LANG environment variable in your web server must use the AL32UTF8 charset. See PHP documentation about how to configure OCI8 properly.';
 $string['dbwrongprefix'] = 'You must follow \"Tables Prefix\" rules as explained above.';
 $string['directorysettingshead'] = 'Please confirm the locations of this Moodle installation';
-$string['directorysettingssub'] ='<b>Web Address:</b>
+$string['directorysettingssub'] = '<b>Web Address:</b>
 Specify the full web address where Moodle will be accessed.  
 If your web site is accessible via multiple URLs then choose the 
 most natural one that your students would use.  Do not include 
