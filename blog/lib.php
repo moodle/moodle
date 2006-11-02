@@ -90,10 +90,11 @@
         $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
         $morelink = '<br />&nbsp;&nbsp;';
-
+    
+        $totalentries = get_viewable_entry_count($postid, $bloglimit, $start, $filtertype, $filterselect, $tagid, $tag, $sort='lastmodified DESC');
         $blogEntries = fetch_entries($postid, $bloglimit, $start, $filtertype, $filterselect, $tagid, $tag, $sort='lastmodified DESC', true);
-        
-        print_paging_bar(count($blogEntries), $blogpage, $bloglimit, get_baseurl($filtertype, $filterselect), 'blogpage');
+
+        print_paging_bar($totalentries, $blogpage, $bloglimit, get_baseurl($filtertype, $filterselect), 'blogpage');
 
         if ($CFG->enablerssfeeds) {
             blog_rss_print_link($filtertype, $filterselect, $tag);
@@ -114,17 +115,22 @@
                 blog_print_entry($blogEntry, 'list', $filtertype, $filterselect); //print this entry.
                 $count++;
             }
+            
+            print_paging_bar($totalentries, $blogpage, $bloglimit, get_baseurl($filtertype, $filterselect), 'blogpage');
+            
             if (!$count) {
                 print '<br /><center>'. get_string('noentriesyet', 'blog') .'</center><br />';
 
             }
-
+                       
             print $morelink.'<br />'."\n";
             return;
         }
 
         $output = '<br /><center>'. get_string('noentriesyet', 'blog') .'</center><br />';
-        print $output;
+        
+        print $output;       
+
     }
 
 
