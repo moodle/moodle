@@ -70,7 +70,7 @@ class enrolment_plugin_authorize
         }
 
         print_simple_box_start('center');
-        if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM, SITEID), $USER->id, false)) {
+        if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), $USER->id, false)) {
             $curcost = get_course_cost($course);
             echo '<div align="center">';
             echo '<p>'.get_string('paymentrequired').'</p>';
@@ -221,7 +221,7 @@ class enrolment_plugin_authorize
             $a->course = $course->shortname;
             $a->orderid = $order->id;
             $emailsubject = get_string('adminnewordersubject', 'enrol_authorize', $a);
-            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+            $context = get_context_instance(CONTEXT_SYSTEM);
             if ($sitepaymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments')) {
                 foreach ($sitepaymentmanagers as $sitepaymentmanager) {
                     email_to_user($sitepaymentmanager, $USER, $emailsubject, $emailmessage);
@@ -715,7 +715,7 @@ class enrolment_plugin_authorize
         $a->pending = $count;
         $a->days = $CFG->an_emailexpired;
         $a->course = $SITE->fullname;
-        $a->enrolurl = "$CFG->wwwroot/$CFG->admin/users.php";
+        $a->enrolurl = "$CFG->wwwroot/$CFG->admin/enrol_config.php?enrol=authorize";
         $a->url = $CFG->wwwroot.'/enrol/authorize/index.php?status='.AN_STATUS_AUTH;
         $message = get_string('pendingordersemail', 'enrol_authorize', $a);
         $adminuser = get_admin();
