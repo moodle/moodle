@@ -119,6 +119,9 @@
                 blog_print_entry($blogEntry, 'list', $filtertype, $filterselect); //print this entry.
                 $count++;
             }
+
+            print_paging_bar(get_viewable_entry_count($userid, $postid, $limit, $start,$filtertype, $filterselect, $tagid, $tag, $sort='lastmodified DESC'), $blogpage, $bloglimit, get_baseurl($filtertype, $filterselect), 'blogpage');
+
             if (!$count) {
                 print '<br /><center>'. get_string('noentriesyet', 'blog') .'</center><br />';
 
