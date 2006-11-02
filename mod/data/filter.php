@@ -25,7 +25,7 @@
         if (empty($contentlist)) {
             // We look for text field contents only, and only if the field has
             // autolink enabled (param1).
-            $sql = 'SELECT DISTINCT(dc.id) AS contentid, ' .
+            $sql = 'SELECT dc.id AS contentid, ' .
                    'dr.id AS recordid, ' .
                    'dc.content AS content, ' .
                    'd.id AS dataid ' .

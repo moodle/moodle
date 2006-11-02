@@ -1157,7 +1157,7 @@ function forum_get_readable_forums($userid, $courseid=0) {
             $selecthidden = '';
         }
         
-        $selectforums = "SELECT DISTINCT(f.id) AS id,
+        $selectforums = "SELECT f.id AS id,
                                 f.name AS name,
                                 f.type AS type,
                                 f.course AS course,
@@ -2907,7 +2907,7 @@ function forum_user_has_posted_discussion($forumid, $userid) {
 function forum_discussions_user_has_posted_in($forumid, $userid) {
     global $CFG;
 
-    $haspostedsql = "SELECT DISTINCT(d.id) AS id,
+    $haspostedsql = "SELECT d.id AS id,
                             d.*
                        FROM {$CFG->prefix}forum_posts p,
                             {$CFG->prefix}forum_discussions d
