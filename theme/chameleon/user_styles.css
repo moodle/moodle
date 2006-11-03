@@ -277,6 +277,11 @@ td.courseboxcontent {
   background-color: #DCE7EC;
   border-color: #DCE7EC;
 }
+table.cal_popup_bg {
+  background-color: #F8F8F8;
+  border-color: #EEFFDD;
+  color: #333333;
+}
 div.sideblock div.calendar-controls span.current {
   text-align: center;
 }
