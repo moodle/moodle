@@ -49,7 +49,7 @@ function authorize_print_orders()
     }
     $sql .= "ORDER BY c.sortorder, c.fullname";
     if ($popupcrs = get_records_sql_menu($sql)) {
-        $popupcrs[$SITE->id] = $SITE->fullname;
+        $popupcrs = array($SITE->id => $SITE->fullname) + $popupcrs;
         print_simple_box_start('center', '100%');
         echo "$strs->status: ";
         echo popup_form($baseurl.'&amp;course='.$courseid.'&amp;status=',$statusmenu,'statusmenu',$status,'','','',true);
