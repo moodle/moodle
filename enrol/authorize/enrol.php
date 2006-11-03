@@ -221,10 +221,10 @@ class enrolment_plugin_authorize
             $a->course = $course->shortname;
             $a->orderid = $order->id;
             $emailsubject = get_string('adminnewordersubject', 'enrol_authorize', $a);
-            $context = get_context_instance(CONTEXT_SYSTEM);
-            if ($sitepaymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments')) {
-                foreach ($sitepaymentmanagers as $sitepaymentmanager) {
-                    email_to_user($sitepaymentmanager, $USER, $emailsubject, $emailmessage);
+            $context = get_context_instance(CONTEXT_COURSE, $course->id);
+            if ($paymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments')) {
+                foreach ($paymentmanagers as $paymentmanager) {
+                    email_to_user($paymentmanager, $USER, $emailsubject, $emailmessage);
                 }
             }
             redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '30');
