@@ -309,3 +309,8 @@ td.categoryboxcontent {
 table.formtable th {
   text-align: right;
 }
+table.cal_popup_bg {
+  background-color: #F8F8F8;
+  border-color: #EEFFDD;
+  color: #333333;
+}
