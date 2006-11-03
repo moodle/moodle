@@ -205,7 +205,7 @@ class enrolment_plugin_authorize
             return;
         }
 
-        if ($an_review) { // review enabled, inform site payment managers and redirect the user who have paid to main page.
+        if ($an_review) { // review enabled, inform payment managers and redirect the user who have paid to main page.
             $a = new stdClass;
             $a->url = "$CFG->wwwroot/enrol/authorize/index.php?order=$order->id";
             $a->orderid = $order->id;
@@ -236,12 +236,14 @@ class enrolment_plugin_authorize
             if (!empty($CFG->enrol_mailstudents)) {
                 send_welcome_messages($order->id);
             }
-            $teacher = get_teacher($course->id);
             if (!empty($CFG->enrol_mailteachers)) {
+                $context = get_context_instance(CONTEXT_COURSE, $course->id);
+                $paymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments', '', '', '0', '1');
+                $paymentmanager = array_shift($paymentmanagers);
                 $a = new stdClass;
                 $a->course = "$course->fullname";
                 $a->user = fullname($USER);
-                email_to_user($teacher,
+                email_to_user($paymentmanager,
                               $USER,
                               get_string("enrolmentnew", '', $course->shortname),
                               get_string('enrolmentnewuser', '', $a));
@@ -259,8 +261,7 @@ class enrolment_plugin_authorize
                 }
             }
         } else {
-            email_to_admin("Error while trying to enrol " .
-            fullname($USER) . " in '$course->fullname'", $order);
+            email_to_admin("Error while trying to enrol " . fullname($USER) . " in '$course->fullname'", $order);
         }
 
         if ($SESSION->wantsurl) {
@@ -268,7 +269,8 @@ class enrolment_plugin_authorize
         } else {
             $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
         }
-        redirect($destination);
+        load_all_capabilities();
+        redirect($destination, get_string('paymentthanks', 'moodle', $course->fullname), 10);
     }
 
 

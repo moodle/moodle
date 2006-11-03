@@ -322,7 +322,7 @@ function send_welcome_messages($orderdata)
     global $CFG, $SITE;
 
     if (empty($orderdata)) {
-    	return;
+        return;
     }
 
     if (is_numeric($orderdata)) {
@@ -336,12 +336,11 @@ function send_welcome_messages($orderdata)
                ORDER BY e.userid";
 
     $emailinfo = get_records_sql($select);
-    $emailcount = count($emailinfo);
-    if ($emailcount == 1) {
+    if (1 == count($emailinfo)) {
         $ei = reset($emailinfo);
-        if (!$sender = get_teacher($ei->courseid)) {
-            $sender = get_admin();
-        }
+        $context = get_context_instance(CONTEXT_COURSE, $ei->courseid);
+        $paymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments', '', '', '0', '1');
+        $sender = array_shift($paymentmanagers);
     }
     else {
         $sender = get_admin();
@@ -351,8 +350,8 @@ function send_welcome_messages($orderdata)
     while ($ei !== false) {
         $usercourses = array();
         $lastuserid = $ei->userid;
-        for ($current = $ei; $current !== false && $current->userid == $lastuserid; $current = next($emailinfo)) {   
-             $usercourses[] = $current->fullname;
+        for ($current = $ei; $current !== false && $current->userid == $lastuserid; $current = next($emailinfo)) {
+            $usercourses[] = $current->fullname;
         }
         $ei = $current;
         $a = new stdClass;
