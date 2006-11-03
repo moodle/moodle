@@ -54,7 +54,7 @@ function authorize_print_orders($courseid, $userid)
     }
     $sql .= "ORDER BY c.sortorder, c.fullname";
     if ($popupcrs = get_records_sql_menu($sql)) {
-        $popupcrs[$SITE->id] = $SITE->fullname;
+        $popupcrs = array($SITE->id => $SITE->fullname) + $popupcrs;
         echo "<table border='0' width='100%' cellspacing=0 cellpadding=3 class='generaltable generalbox'>";
         echo "<tr>";
         echo "<td width='5%'>$strs->status: </td><td width='10%'>";popup_form($baseurl.'&amp;course='.$courseid.'&amp;status=',$statusmenu,'statusmenu',$status,'','','',false);echo"</td>\n";
