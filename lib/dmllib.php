@@ -40,6 +40,7 @@
 $empty_rs_cache = array();   // Keeps copies of the recordsets used in one invocation
 $metadata_cache = array();   // Keeps copies of the MetaColumns() for each table used in one invocations
 $record_cache = array();     // Keeps copies of all simple get_record results from one invocation
+$record_cache_size = 0;      // Count of get_record results stored in this invocation
 
 /// FUNCTIONS FOR DATABASE HANDLING  ////////////////////////////////
 
@@ -371,7 +372,7 @@ function count_records_sql($sql) {
  */
 function get_record($table, $field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields='*') {
     
-    global $CFG, $record_cache;
+    global $CFG, $record_cache, $record_cache_count;
     
     // Check to see whether this record is eligible for caching (fields=*, only condition is id)
     $docache = false;
@@ -388,8 +389,12 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
     $record = get_record_sql('SELECT '.$fields.' FROM '. $CFG->prefix . $table .' '. $select);
     
     // If we're caching records, store this one (supposing we got something - we don't cache failures)
-    if (!empty($CFG->enablerecordcache) && $record && $docache) {
+    if ($record && $docache && $record_cache_count<$CFG->enablerecordcache) {
         $record_cache[$table][$value1] = $record;
+        // We only cache records up to a limit. This is to prevent memory usage becoming 
+        // unreasonably high for pages which do things like, load every student record in
+        // a course, or some such.
+        $record_cache_count++;
     }
 
     return $record;
