@@ -125,6 +125,7 @@
                 $newgroup->courseid = $course->id;
                 $newgroup->lang = current_language();
                 $newgroup->timecreated = time();
+                $newgroup->description = ''; // can not be null MDL-7300
                 if (!insert_record("groups", $newgroup)) {
                     notify("Could not insert the new group '$newgroup->name'");
                 }
