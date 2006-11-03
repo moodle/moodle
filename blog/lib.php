@@ -437,6 +437,12 @@
             $tagquerysql = '';
         }
 
+        if (isloggedin()) {
+            $permissionsql =  '(p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.')';
+        } else {
+            $permissionsql =  'p.publishstate = \'public\'';
+        }
+
 
         /****************************************
          * depending on the type, there are 4   *
@@ -445,61 +451,33 @@
 
         $requiredfields = 'p.*, u.firstname,u.lastname,u.email';
 
+        if ($filtertype == 'course' && $filterselect == SITEID) {  // Really a site
+            $filtertype = 'site';
+        }
+
         switch ($filtertype) {
 
             case 'site':
 
-                if (isloggedin()) {
-
-                    $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
-                            .$CFG->prefix.'user u
-                            WHERE p.userid = u.id '.$tagquerysql.'
-                            AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.')
-                            AND u.deleted = 0';
-
-                } else {
-
-                    $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
-                            .$CFG->prefix.'user u
-                            WHERE p.userid = u.id '.$tagquerysql.'
-                            AND p.publishstate = \'public\'
-                            AND u.deleted = 0';
-                }
+                $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
+                        .$CFG->prefix.'user u
+                        WHERE p.userid = u.id '.$tagquerysql.'
+                        AND u.deleted = 0
+                        AND '.$permissionsql;
 
             break;
 
             case 'course':
-                if ($filterselect != SITEID) {
+                // all users with a role assigned
+                $context = get_context_instance(CONTEXT_COURSE, $filterselect);
 
-                    // all users with a role assigned
-                    $context = get_context_instance(CONTEXT_COURSE, $filterselect);
-
-                    $SQL = '(SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
-                            .$CFG->prefix.'role_assignments ra, '.$CFG->prefix.'user u
-                            WHERE p.userid = ra.userid '.$tagquerysql.'
-                            AND ra.contextid '.get_related_contexts_string($context).'
-                            AND u.id = p.userid
-                            AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.'))';
-                } else {
-
-                    if (isloggedin()) {
-
-                        $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
-                                .$CFG->prefix.'user u
-                                WHERE p.userid = u.id '.$tagquerysql.'
-                                AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.')
-                                AND u.deleted = 0';
-
-                    } else {
-
-                        $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
-                                .$CFG->prefix.'user u
-                                WHERE p.userid = u.id '.$tagquerysql.'
-                                AND p.publishstate = \'public\'
-                                AND u.deleted = 0';
-                    }
-
-                }
+                $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
+                        .$CFG->prefix.'role_assignments ra, '.$CFG->prefix.'user u
+                        WHERE p.userid = ra.userid '.$tagquerysql.'
+                        AND ra.contextid '.get_related_contexts_string($context).'
+                        AND u.id = p.userid
+                        AND u.deleted = 0
+                        AND '.$permissionsql;
 
             break;
 
@@ -510,32 +488,20 @@
                         WHERE p.userid = m.userid '.$tagquerysql.'
                         AND u.id = p.userid
                         AND m.groupid = '.$filterselect.'
-                        AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.')';
+                        AND u.deleted = 0
+                        AND '.$permissionsql;
 
             break;
 
             case 'user':
 
-                if (isloggedin()) {
-
-                    $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
-                            .$CFG->prefix.'user u
-                            WHERE p.userid = u.id '.$tagquerysql.'
-                            AND u.id = '.$filterselect.'
-                            AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.')';
-                } else {
-
-                    $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
-                            .$CFG->prefix.'user u
-                            WHERE p.userid = u.id '.$tagquerysql.'
-                            AND u.id = '.$filterselect.'
-                            AND p.publishstate = \'public\'';
-
-                }
-
+                $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
+                        .$CFG->prefix.'user u
+                        WHERE p.userid = u.id '.$tagquerysql.'
+                        AND u.id = '.$filterselect.'
+                        AND u.deleted = 0
+                        AND '.$permissionsql;
             break;
-
-
         }
 
         $limitfrom = 0;
@@ -548,10 +514,9 @@
 
         $orderby = ' ORDER BY '. $sort .' ';
 
-        //echo 'Debug: BlogFilter fetch_entries() sql="'. $SQL . $orderby . $limit .'"<br />'. $this->categoryid; //debug
+        //global $db; $db->debug = true;
         $records = get_records_sql($SQL . $orderby, $limitfrom, $limitnum);
-
-//        print_object($records); //debug
+        //$db->debug = false;
 
         if (empty($records)) {
             return array();
