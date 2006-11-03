@@ -287,7 +287,16 @@ function add_instance($resource) {
     if (isset($resource->windowsettingspref)) {
         set_user_preference('resource_windowsettingspref', $resource->windowsettingspref);
     }
+    
+    // fix for MDL-7300
+    if (!isset($resource->alltext)) { 
+        $resource->alltext = '';  
+    }
 
+    if (!isset($recourse->popup)) {
+        $resource->popup = '';  
+    }    
+        
     return insert_record("resource", $resource);
 }
 
