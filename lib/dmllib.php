@@ -690,6 +690,18 @@ function recordset_to_array($rs) {
                 $objects[$key] = (object) $record; /// To object
             }
             return $objects;
+    /// Fallback in case we only have 1 field in the recordset. MDL-5877
+        } else if ($rs->_numOfFields == 1 && $records = $rs->GetRows()) {
+            foreach ($records as $key => $record) {
+            /// Really DIRTY HACK for Oracle, but it's the only way to make it work
+            /// until we got all those NOT NULL DEFAULT '' out from Moodle
+                if ($CFG->dbtype == 'oci8po') {
+                    array_walk($record, 'onespace2empty');
+                }
+            /// End of DIRTY HACK
+                $objects[$record[$firstcolumn->name]] = (object) $record; /// The key is the first column value (like Assoc)
+            }
+            return $objects;
         } else {
             return false;
         }
