@@ -168,6 +168,9 @@ function db_lowercase() {
  * Only tested with mysql dump files (mysqldump -p -d moodle)
  *
  * @uses $CFG
+ *
+ * @deprecated Moodle 1.7 use the new XMLDB stuff in lib/ddllib.php
+ *
  * @param string $sqlfile The path where a file with sql commands can be found on the server.
  * @param string $sqlstring If no path is supplied then a string with semicolon delimited sql
  * commands can be supplied in this argument.
@@ -176,6 +179,10 @@ function db_lowercase() {
 function modify_database($sqlfile='', $sqlstring='') {
 
     global $CFG;
+
+    if ($CFG->version > 2006101004) {
+        debugging('Function modify_database() is deprecated. Replace it with the new XMLDB stuff.', DEBUG_DEVELOPER);
+    }
 
     $success = true;  // Let's be optimistic
 
