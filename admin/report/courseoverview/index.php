@@ -78,7 +78,11 @@
             error(get_string('statsnodata'),$CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/index.php');
         }
 
-        echo '<center><img src="'.$CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/reportsgraph.php?time='.$time.'&report='.$report.'&numcourses='.$numcourses.'" /></center>';
+        if (empty($CFG->gdversion)) {
+            echo "<center>(".get_string("gdneed").")</center>";
+        } else {
+            echo '<center><img src="'.$CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/reportsgraph.php?time='.$time.'&report='.$report.'&numcourses='.$numcourses.'" /></center>';
+        }
         
         $table = new object();
         $table->align = array('left','center','center','center');
