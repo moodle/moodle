@@ -51,7 +51,7 @@ class MoodleExcelWorkbook {
         $this->pear_excel_workbook = new Spreadsheet_Excel_Writer($filename);
     /// Prepare it to accept UTF-16LE data and to encode it properly
         $this->pear_excel_workbook->setVersion(8);
-    /// Choose our temporary directory, because default system tmp might not be writable - see MDL-7176, found by paulo.matos
+    /// Choose our temporary directory - see MDL-7176, found by paulo.matos
         make_upload_directory('temp/excel', false);
         $this->pear_excel_workbook->setTempDir($CFG->dataroot.'/temp/excel');
     }
