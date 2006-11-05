@@ -188,6 +188,12 @@
             $canreply = ( (empty($mygroupid) && $discussion->groupid == -1) ||
                     (ismember($discussion->groupid) || $mygroupid == $discussion->groupid) );
         }
+    } else {
+        if (!has_capability('mod/forum:replypost', $modcontext)) {
+            if (!has_capability('moodle/legacy:guest', $coursecontext, NULL, false)) {  // User is a guest here!
+                $canreply = false;
+            }
+        }
     }
 
 
