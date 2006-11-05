@@ -180,7 +180,7 @@ function modify_database($sqlfile='', $sqlstring='') {
 
     global $CFG;
 
-    if ($CFG->version > 2006101004) {
+    if ($CFG->version > 2006101007) {
         debugging('Function modify_database() is deprecated. Replace it with the new XMLDB stuff.', DEBUG_DEVELOPER);
     }
 
