@@ -73,6 +73,7 @@ HTMLArea.I18N = {
         paste:          "<?php print_string("paste","editor") ?>",
         insertsmile:    "<?php print_string("insertsmile","editor") ?>",
         insertchar:     "<?php print_string("insertchar","editor") ?>",
+        search_replace: "<?php print_string("searchandreplace","editor") ?>",
         clean:          "<?php print_string("wordclean","editor") ?>",
         lefttoright:    "<?php print_string("lefttoright","editor");?>",
         righttoleft:    "<?php print_string("righttoleft","editor");?>"
