@@ -50,7 +50,13 @@ $string['databasesettingssub'] = '<b>Type:</b> mysql of postgres7<br />
 <b>Gebruiker:</b> de gebruikersnaam voor jouw database<br />
 <b>Wachtwoord:</b> het wachtwoord voor je databank<br />
 <b>Tabelvoorvoegsel:</b> een voorvoegsel dat je wil gebruiken voor alle tabelnamen';
-$string['databasesettingssub_mssql'] = '<b>Type:</b> SQL*Server<br />
+$string['databasesettingssub_mssql'] = '<b>Type:</b> SQL*Server (geen UTF-8)<b><font color=\"red\">Experimenteel! (niet voor gebruik op productiemachine)</font></b><br />
+<b>Host:</b> vb localhost of db.isp.com<br />
+<b>Naam:</b> database naam, vb moodle<br />
+<b>Gebruiker:</b> de gebruikersnaam voor jouw database<br />
+<b>Wachtwoord:</b> het wachtwoord voor je databank<br />
+<b>Tabelvoorvoegsel:</b>voorvoegsel voor alle tabelnamen (verplicht)';
+$string['databasesettingssub_mssql_n'] = '<b>Type:</b> SQL*Server (UTF-8 ingeschakeld)<br />
 <b>Host:</b> vb localhost of db.isp.com<br />
 <b>Naam:</b> database naam, vb moodle<br />
 <b>Gebruiker:</b> de gebruikersnaam voor jouw database<br />
@@ -158,6 +164,7 @@ Hierdoor kan Moodle zelf zijn geheugenlimiet instellen.
 $string['missingrequiredfield'] = 'Vereist veld ontbreekt';
 $string['moodledocslink'] = 'Hulp uit Moodle Docs voor deze pagina';
 $string['mssql'] = 'SQL*Server (mssql)';
+$string['mssql_n'] = 'SQL*Server met UTF-8 ingeschakeld (mssql_n)';
 $string['mssqlextensionisnotpresentinphp'] = 'PHP is niet juist geconfigureerd met de MSSQL-extentie en kan niet communiceren met SQL*Server. Controleer je php.ini-bestand of hercompileer PHP';
 $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'Als je site echter UITSLUITEND iso-8859-1 (latin) talen gebruikt, dan kun je MySQL 4.1.12 (of hoger) blijven gebruiken.';
