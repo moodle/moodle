@@ -37,8 +37,8 @@ function Init() {
 
 function onOK() {
   var required = {
-    "f_url": "You must enter the URL",
-    "f_alt": "Please enter the alternate text"
+    "f_url": "<?php print_string("mustenterurl", "editor");?>",
+    "f_url": "<?php print_string("pleaseenteralt", "editor");?>"
   };
   for (var i in required) {
     var el = document.getElementById(i);
@@ -76,7 +76,7 @@ function onPreview() {
   var f_url = document.getElementById("f_url");
   var url = f_url.value;
   if (!url) {
-    alert("You have to enter an URL first");
+    alert("<?php print_string("enterurlfirst","editor");?>");
     f_url.focus();
     return false;
   }
