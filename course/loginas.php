@@ -50,15 +50,15 @@
     } else {
         require_login($course->id);
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        if (!has_capability('moodle/course:view', $context, $userid, false)) {
+            error('This user is not in this course!');
+        }
     }
 
 /// User must have permissions
 
     require_capability('moodle/user:loginas', $context);
 
-    if (!has_capability('moodle/course:view', $context, $userid, false)) {
-        error('This user is not in this course!');
-    }
 
 /// Remember current timeaccess settings for later
 
