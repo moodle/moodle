@@ -279,21 +279,19 @@
         print_row(get_string('msnid').':', s($user->msn));
     }
 
-    if (isteacher($course->id)) {
-        if ($mycourses = get_my_courses($user->id)) {
-            $courselisting = '';
-            foreach ($mycourses as $mycourse) {
-                if ($mycourse->visible and $mycourse->category) {
-                    if ($mycourse->id != $course->id){
-                        $courselisting .= "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$mycourse->id\">$mycourse->fullname</a>, ";
-                    }
-                    else {
-                        $courselisting .= "$mycourse->fullname, ";
-                    }
+    if ($mycourses = get_my_courses($user->id)) {
+        $courselisting = '';
+        foreach ($mycourses as $mycourse) {
+            if ($mycourse->visible and $mycourse->category) {
+                if ($mycourse->id != $course->id){
+                    $courselisting .= "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$mycourse->id\">$mycourse->fullname</a>, ";
+                }
+                else {
+                    $courselisting .= "$mycourse->fullname, ";
                 }
             }
-            print_row(get_string('courses').':', rtrim($courselisting,', '));
         }
+        print_row(get_string('courses').':', rtrim($courselisting,', '));
     }
 
     if (!isset($hiddenfields['lastaccess'])) {
