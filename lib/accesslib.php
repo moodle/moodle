@@ -451,24 +451,31 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
             break;
 
             case CONTEXT_BLOCK:
-                // 1 to 1 to course.
-                // Find course.
+                // not necessarily 1 to 1 to course.
                 $block = get_record('block_instance','id',$context->instanceid);
-                $courseinstance = get_context_instance(CONTEXT_COURSE, $block->pageid); // needs check
-
-                $parentcats = get_parent_cats($courseinstance, CONTEXT_COURSE);
-                foreach ($parentcats as $parentcat) {
-                    if (isset($capabilities[$parentcat]['do_anything'])) {
-                        $result = (0 < $capabilities[$parentcat]['do_anything']);
+                if ($block->pagetype == 'course-view') {
+                    $courseinstance = get_context_instance(CONTEXT_COURSE, $block->pageid); // needs check
+                    $parentcats = get_parent_cats($courseinstance, CONTEXT_COURSE);
+                
+                    foreach ($parentcats as $parentcat) {
+                        if (isset($capabilities[$parentcat]['do_anything'])) {
+                            $result = (0 < $capabilities[$parentcat]['do_anything']);
+                            $capcache[$cachekey] = $result;
+                            return $result;
+                        }
+                    }
+                
+                    if (isset($capabilities[$courseinstance->id]['do_anything'])) {
+                        $result = (0 < $capabilities[$courseinstance->id]['do_anything']);
                         $capcache[$cachekey] = $result;
                         return $result;
                     }
-                }
-
-                if (isset($capabilities[$courseinstance->id]['do_anything'])) {
-                    $result = (0 < $capabilities[$courseinstance->id]['do_anything']);
-                    $capcache[$cachekey] = $result;
-                    return $result;
+                } else { // if not course-view type of blocks, check site
+                    if (isset($capabilities[$sitecontext->id]['do_anything'])) {
+                        $result = (0 < $capabilities[$sitecontext->id]['do_anything']);
+                        $capcache[$cachekey] = $result;
+                        return $result;
+                    }
                 }
             break;
 
@@ -561,9 +568,13 @@ function capability_search($capability, $context, $capabilities) {
             $permission = capability_search($capability, $parentcontext, $capabilities);
         break;
 
-        case CONTEXT_BLOCK: // 1 to 1 to course
+        case CONTEXT_BLOCK: // not necessarily 1 to 1 to course
             $block = get_record('block_instance','id',$context->instanceid);
-            $parentcontext = get_context_instance(CONTEXT_COURSE, $block->pageid); // needs check
+            if ($block->pagetype == 'course-view') {
+                $parentcontext = get_context_instance(CONTEXT_COURSE, $block->pageid); // needs check
+            } else {
+                $parentcontext = get_context_instance(CONTEXT_SYSTEM); 
+            }           
             $permission = capability_search($capability, $parentcontext, $capabilities);
         break;
 
