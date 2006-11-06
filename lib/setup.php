@@ -560,7 +560,7 @@ $CFG->os = PHP_OS;
     moodle_setlocale();
 
     if (!empty($CFG->opentogoogle)) {
-        if (empty($_SESSION['USER'])) {  // Ignore anyone logged in
+        if (empty($USER->id)) {  // Ignore anyone logged in
             if (!empty($_SERVER['HTTP_USER_AGENT'])) {
                 if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== false ) {
                     $USER = guest_user();
