@@ -2087,7 +2087,6 @@ body#mod-quiz-report .controls {
 
 #ims-contentframe {
   position:absolute;
-  overflow:auto;
   left:260px;
   border:1px solid;
   width:640px;
@@ -2096,7 +2095,6 @@ body#mod-quiz-report .controls {
 
 #ims-contentframe-no-nav {
   position:absolute;
-  overflow:auto;
   border:1px solid;
   width:640px;
   height:480px;
