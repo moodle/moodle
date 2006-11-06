@@ -25,6 +25,7 @@
     add_to_log($course->id, "course", "recent", "recent.php?id=$course->id", "$course->id");
 
     $strrecentactivity = get_string("recentactivity");
+    $meta = '<meta name="robots" content="none" />'; // prevent duplicate content in search engines MDL-7299
 
     $loggedinas = user_login_string($course, $USER);
 
@@ -42,13 +43,13 @@
         if ($date)
             $dateinfo = userdate($date, get_string("strftimedaydate"));
 
-        if ($course->category) {
+        if ($course->id != SITEID) {
             print_header("$course->shortname: $strrecentactivity", "$course->fullname",
                          "<a href=\"view.php?id=$course->id\">$course->shortname</a> ->
-                          <a href=\"recent.php?id=$course->id\">$strrecentactivity</a> -> $userinfo, $dateinfo", "");
+                          <a href=\"recent.php?id=$course->id\">$strrecentactivity</a> -> $userinfo, $dateinfo", "", $meta);
         } else {
             print_header("$course->shortname: $strrecentactivity", "$course->fullname",
-                         "<a href=\"recent.php?id=$course->id\">$strrecentactivity</a> -> $userinfo, $dateinfo", "");
+                         "<a href=\"recent.php?id=$course->id\">$strrecentactivity</a> -> $userinfo, $dateinfo", "", $meta);
         }
 
         print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")", '', 3);
@@ -67,12 +68,12 @@
             }
         }
 
-        if ($course->category) {
+        if ($course->id != SITEID) {
             print_header("$course->shortname: $strrecentactivity", "$course->fullname",
-                     "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strrecentactivity", "");
+                     "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strrecentactivity", "", $meta);
         } else {
             print_header("$course->shortname: $strrecentactivity", "$course->fullname",
-                     "$strrecentactivity", "");
+                     "$strrecentactivity", "", $meta);
         }
 
         print_heading(get_string("activitysince", "", userdate($date)));
