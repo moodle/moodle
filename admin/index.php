@@ -229,8 +229,11 @@
             }
 
             if (empty($confirmupgrade)) {
+
+
                 print_header($strdatabasechecking, $stradministration, $strdatabasechecking,
                         "", "", false, "&nbsp;", "&nbsp;");
+
                 notice_yesno(get_string('upgradesure', 'admin', $a->newversion), 'index.php?confirmupgrade=yes', 'index.php');
                 exit;
 
@@ -238,10 +241,15 @@
                 $strdatabasesuccess  = get_string("databasesuccess");
                 print_header($strdatabasechecking, $stradministration, $strdatabasechecking,
                         "", $linktoscrolltoerrors, false, "&nbsp;", "&nbsp;");
+
             /// return to original debugging level
                 $CFG->debug = $origdebug;
                 error_reporting($CFG->debug);
                 upgrade_log_start();
+
+            /// Upgrade current language pack if we can
+                upgrade_language_pack();   
+
                 print_heading($strdatabasechecking);
                 $db->debug=true;
             /// Launch the old main upgrade (if exists)

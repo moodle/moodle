@@ -2570,4 +2570,39 @@ function format_admin_setting($name, $title='', $form='', $description='') {
            "\n\n";
 }
 
+/* 
+ * Try to upgrade the given language pack (or current language)
+ * If it doesn't work, fail silently and return false
+ */
+function upgrade_language_pack($lang='') {
+    global $CFG;
+
+    if (empty($lang)) {
+        $lang = current_language();
+    }
+
+    if ($lang == 'en_utf8') {
+        return true;  // Nothing to do
+    }
+
+    notify(get_string('langimport', 'admin').': '.$lang.' ... ', 'notifysuccess');
+
+    @mkdir ($CFG->dataroot.'/temp/');    //make it in case it's a fresh install, it might not be there
+    @mkdir ($CFG->dataroot.'/lang/');
+
+    require_once($CFG->libdir.'/componentlib.class.php');
+
+    if ($cd = new component_installer('http://download.moodle.org', 'lang16', $lang.'.zip', 'languages.md5', 'lang')) {
+        $status = $cd->install(); //returns ERROR | UPTODATE | INSTALLED
+
+        if ($status == INSTALLED) {
+            debugging('Downloading successful: '.$lang);
+            @unlink($CFG->dataroot.'/cache/languages');
+            return true;
+        }
+    }
+
+    return false;
+}
+
 ?>
