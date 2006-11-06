@@ -168,7 +168,7 @@
                         // thread.
                         $discussionurl = "view.php?f=$forum->id";
                     } else {
-                        $discussionurl = "discuss.php?d=$post->discussion#$post->id";
+                        $discussionurl = "discuss.php?d=$post->discussion";
                     }
                     add_to_log($course->id, "forum", "update post",
                             "$discussionurl&amp;parent=$post->id", "$post->id", $cm->id);
