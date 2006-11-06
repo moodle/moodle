@@ -259,7 +259,7 @@
         $sitecontext = get_context_instance(CONTEXT_SYSTEM);
         $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext);
 
-          foreach ($roles as $role) {
+        foreach ($roles as $role) {
             if (isset($doanythingroles[$role->id])) {   // Avoid this role (ie admin)
                 unset($roles[$role->id]);
                 continue;
@@ -383,7 +383,7 @@
 
     /// If there are multiple Roles in the course, then show a drop down menu for switching
 
-    if ($rolenames) {
+    if (!empty($rolenames)) {
         echo '<div class="rolesform">';
         echo get_string('currentrole', 'role').': ';
         $rolenames = array(0 => get_string('all')) + $rolenames;
