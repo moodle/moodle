@@ -1,22 +1,25 @@
 <?PHP  
-/*******************************************************************************
- * Library of basic group functions. 
- * 
+/**
+ * Library of basic group functions.
+ *
  * These functions are essentially just wrappers for the equivalent database
  * functions in db/dbgrouplib.php
  * 
- * It is advised that you do not create groups that do not belong to a grouping, 
- * although to allow maximum 
- * flexibility, functions are provided that allow you to do this. 
+ * It is advised that you do not create groups that do not belong to a 
+ * grouping, although to allow maximum flexibility, functions are 
+ * provided that allow you to do this. 
  * Note that groups (and groupings - see groupinglib.php) must belong to a 
- * course. There is no reason why
- * a group cannot belong to more than one course, although this might cause 
- * problems when group members are not
- * users of one of the courses. 
+ * course. There is no reason why a group cannot belong to more than one
+ * course, although this might cause problems when group members are not
+ * users of one of the courses.
  * At the moment, there are no checks that group members are also users of a 
- * course.  
- ******************************************************************************/
-
+ * course.
+ * 
+ * @copyright &copy; 2006 The Open University
+ * @author J.White AT open.ac.uk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package groups
+ */
 require_once($CFG->dirroot.'/group/db/dbbasicgrouplib.php');
 
 
@@ -97,6 +100,7 @@ function groups_get_group_settings($groupid) {
  * @return string The path of the image for the group
  */
 function groups_get_group_image_path($groupid) {
+    $image = ''; //TODO: ??
 	return $CFG->dataroot.'/groups/'.$groupid.'/'.$image;
 }
 
@@ -138,11 +142,8 @@ function groups_get_users_not_in_group($courseid, $groupid) {
  * if an error occurred. 
  */
 function groups_users_in_common_group($userid1, $userid2) {
-	return groups_db_users_in_common_group($userid1, $userid1); 
+	return groups_db_users_in_common_group($userid1, $userid2); 
 }
-
-
-
 
 
 /*****************************
@@ -194,30 +195,30 @@ function groups_set_default_group_settings($groupinfo = null) {
     if (!isset($groupinfo->name)) {
         $groupinfo->name = 'Temporary Group Name';
     }
-    
+
     if (!isset($groupinfo->description)) {
         $groupinfo->description = '';
     }
-   
+
     if (!isset($groupinfo->lang)) {
         $groupinfo->lang = current_language();
     }
-    
+
     if (!isset($groupinfo->theme)) {
         $groupinfo->theme = '';
     }
-    
+
     if (!isset($groupinfo->picture)) {
-        $groupinfo->picture = '';
+        $groupinfo->picture = 0;
     }
 
     if (!isset($groupinfo->hidepicture)) {
-        $groupinfo->hidepicture = '1';
+        $groupinfo->hidepicture = 1;
     }
-    
+
     if (isset($groupinfo->hidepicture)) {
-    	if ($groupinfo->hidepicture != '0' and $groupinfo->hidepicture != '1') {
-    		$groupinfo->hidepicture = '1';
+    	if ($groupinfo->hidepicture != 0 and $groupinfo->hidepicture != 1) {
+    		$groupinfo->hidepicture = 1;
     	}
     }
 
@@ -309,4 +310,5 @@ function groups_delete_group($groupid) {
 function groups_remove_member($userid, $groupid) {
 	return  groups_db_remove_member($userid, $groupid);
 }
+
 ?>
