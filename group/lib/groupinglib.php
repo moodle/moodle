@@ -1,17 +1,21 @@
-<?PHP 
-/******************************************************************************
+<?php 
+/**
  * A grouping is a set of groups that belong to a course. 
- * There may be any number of groupings for a course and a group may belong to 
- * more than one grouping.
- ******************************************************************************/ 
-
+ * There may be any number of groupings for a course and a group may
+ * belong to more than one grouping.
+ *
+ * @copyright &copy; 2006 The Open University
+ * @author J.White AT open.ac.uk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package groups
+ */
 require_once($CFG->dirroot.'/group/lib/basicgrouplib.php');
 require_once($CFG->dirroot.'/group/db/dbgroupinglib.php');
+
 
 /*****************************
         Access/List functions  
  *****************************/
-
 
 
 /**
@@ -153,35 +157,35 @@ function groups_set_default_grouping_settings($groupingsettings = null) {
     if (!isset($groupingsettings->name)) {
         $groupingsettings->name = 'Temporary Grouping Name';
     }
-    
+
     if (!isset($groupingsettings->description)) {
         $groupingsettings->description = '';
     }
-    
-    if (!isset($groupsettings->viewowngroup)) {
-    	$groupsettings->viewowngroup = 1;
+
+    if (!isset($groupingsettings->viewowngroup)) {
+    	$groupingsettings->viewowngroup = 1;
     }
-    
-    if (!isset($groupsettings->viewgroupsmembers)) {
-    	$groupsettings->viewgroupsmembers = 0;
+
+    if (!isset($groupingsettings->viewallgroupsmembers)) {
+    	$groupingsettings->viewallgroupsmembers = 0;
     }
-    
-    if (!isset($groupsettings->viewgroupsactivities)) {
-    	$groupsettings->viewgroupsactivities = 0;
+
+    if (!isset($groupingsettings->viewallgroupsactivities)) {
+    	$groupingsettings->viewallgroupsactivities = 0;
     }
-    
-    if (!isset($groupsettings->teachersgroupmark)) {
-    	$groupsettings->teachersgroupmark = 0;
+
+    if (!isset($groupingsettings->teachersgroupmark)) {
+    	$groupingsettings->teachersgroupmark = 0;
     }  
-    
-    if (!isset($groupsettings->teachersgroupview)) {
-    	$groupsettings->teachersgroupview = 0;
+
+    if (!isset($groupingsettings->teachersgroupview)) {
+    	$groupingsettings->teachersgroupview = 0;
     }               
-    
-    if (!isset($groupsettings->teachersoverride)) {
-    	$groupsettings->teachersoverride = 1;
+
+    if (!isset($groupingsettings->teachersoverride)) {
+    	$groupingsettings->teachersoverride = 1;
     }  
-    
+
 	return $groupingsettings;
 }
 
@@ -243,9 +247,7 @@ function groups_grouping_exists($groupingid) {
  function groups_grouping_belongs_to_course($groupingid, $courseid) {
  	return groups_db_grouping_belongs_to_course($groupingid, $courseid);
  }
- 
 
- 
 
 /*****************************
         Creation functions  
@@ -306,7 +308,6 @@ function groups_set_grouping_name($groupingid, $name) {
 }
 
 
-
 /**
  * Sets a grouping to use for a particular instance of a module in a course
  * @param int $groupingid The id of the grouping
@@ -344,4 +345,5 @@ function groups_delete_grouping($groupingid) {
     return groups_db_delete_grouping($groupingid);
     
 }
+
 ?>
