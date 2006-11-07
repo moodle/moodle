@@ -3,8 +3,8 @@
  * and to take information from XML documents and either return information from them or modifiy the 
  * form appropriately. 
  */
- 
- 
+
+
 function onGroupingChange() {
 	hideAllForms();
 	showElement("groupeditform");
@@ -129,26 +129,15 @@ function updateGroupings() {
 
 var updateGroupingsResponseCallback = 
 { 
-  success:updateGroupingsResponse, 
-  failure:responseFailure, 
-};
+  success:function(o) {
 
-
-/**
- *  The callback function for updateGroupings()
- * Takes the XML containing the grouping details that has been sent back and updates the display. 
- */
-function updateGroupingsResponse() {
-	
-	alert("Called updateGroupingsResponse");	
-    if (updategroupingsrequest.readyState == 4 && updategroupingsrequest.status == 200) {
-        alert("updateGroupingsResponse called");
-      	var xmlDoc = updategroupingsrequest.responseXML;
-      	error = getFromXML(updategroupingsrequest.responseXML, 'error');
+        // alert("updateGroupingsResponse called");
+      	var xmlDoc = o.responseXML;
+      	error = getFromXML(o.responseXML, 'error');
       	if (error != null) {
       		alert(error);	
       	}       	
-      	alert(updategroupingsrequest.responseText);
+      	// alert(o.responseXML);
       	var noofoptions = addOptionsFromXML("groupings", xmlDoc);
       	
       	// If the selected grouping is not set, set it to the first grouping in the list
@@ -173,8 +162,12 @@ function updateGroupingsResponse() {
       		enableButton("showcreategroupform");
       		enableButton("showaddgroupstogroupingform");
       	}
-    }
-}
+}, 
+  failure:responseFailure, 
+};
+
+
+
 
 /** 
  * Updates the list of groups when groupingid is marked as selected
@@ -243,13 +236,5 @@ function updateSelectedGroupResponse() {
       	var noofoptions = addOptionsFromXML("members", xmlDoc);   	
     } 
 }
-
-
-
-
-
-
-
-
 
 
