@@ -56,7 +56,8 @@ class basicgrouplib_test extends UnitTestCase {
     }
 
     function test_add_member() {
-        $this->assertTrue(groups_add_member($this->userid, $this->groupid));
+        // NOTE, interface change on add_member, remove_member. 
+        $this->assertTrue(groups_add_member($this->groupid, $this->userid));
         $this->assertTrue(groups_is_member($this->groupid, $this->userid));
         $this->assertTrue($userids = groups_get_members($this->groupid));
         //...
@@ -66,7 +67,7 @@ class basicgrouplib_test extends UnitTestCase {
     }
 
     function test_remove_member() {
-        $this->assertTrue(groups_remove_member($this->userid, $this->groupid));
+        $this->assertTrue(groups_remove_member($this->groupid, $this->userid));
         $this->assertFalse(groups_is_member($this->groupid, $this->userid));
     }
 

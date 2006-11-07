@@ -1,4 +1,4 @@
-<?PHP  
+<?php
 /**
  * Library of basic group functions.
  *
@@ -260,13 +260,13 @@ function groups_set_group_settings($groupid, $groupsettings) {
 
 /**
  * Adds a specified user to a group
- * @param int $groupid  The group id
  * @param int $userid   The user id
+ * @param int $groupid  The group id
  * @return boolean True if user added successfully or the user is already a 
  * member of the group, false otherwise. 
  * See comment above on web service autoupdating. 
  */
-function groups_add_member($userid, $groupid) {
+function groups_add_member($groupid, $userid) {
 	$useradded = false;
     
     $alreadymember = groups_is_member($groupid, $userid);
@@ -275,7 +275,7 @@ function groups_add_member($userid, $groupid) {
     } elseif ($alreadymember) {
     	$useradded = true;
     } else {
-		$useradded = groups_db_add_member($userid, $groupid);
+		$useradded = groups_db_add_member($groupid, $userid);
     }
 
 	return $useradded;
@@ -302,13 +302,13 @@ function groups_delete_group($groupid) {
 
 /**
  * Deletes the specified user from the specified group
- * @param int $userid The user to delete
  * @param int $groupid The group to delete the user from
+ * @param int $userid The user to delete
  * @return boolean True if deletion was successful, false otherwise
  * See comment above on web service autoupdating. 
  */
-function groups_remove_member($userid, $groupid) {
-	return  groups_db_remove_member($userid, $groupid);
+function groups_remove_member($groupid, $userid) {
+	return  groups_db_remove_member($groupid, $userid);
 }
 
 ?>

@@ -276,7 +276,7 @@ function groups_db_create_group($courseid, $groupsettings = false) {
  * @param int $userid   The user id
  * @return boolean True if user added successfully, false otherwise. 
  */
-function groups_db_add_member($userid, $groupid) {
+function groups_db_add_member($groupid, $userid) {
 	// Check that the user and group are valid
     if (!$userid or !$groupid or !groups_db_group_exists($groupid)) {
         $useradded = false;
@@ -328,11 +328,11 @@ function groups_db_set_group_settings($groupid, $groupsettings) {
 
 /**
  * Deletes the specified user from the specified group
- * @param int $userid The user to delete
  * @param int $groupid The group to delete the user from
+ * @param int $userid The user to delete
  * @return boolean True if deletion was successful, false otherwise
  */
-function groups_db_remove_member($userid, $groupid) {
+function groups_db_remove_member($groupid, $userid) {
     if (!$userid or !$groupid) {
         $success = false;
     } else {
