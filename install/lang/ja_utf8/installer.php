@@ -50,43 +50,43 @@ $string['databasesettingssub'] = '<b>タイプ:</b> mysql または postgres7<br
 <b>データベース名:</b> 例 moodle<br />
 <b>ユーザ名:</b> データベースのユーザ名<br />
 <b>パスワード:</b> データベースのパスワード<br />
-<b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 ( 任意 )';
-$string['databasesettingssub_mssql'] = '<b>タイプ:</b> SQL*Server (　非UTF-8　)<b><font color=\"red\">実験用! ( 運用環境には使用しないでください。 )</font></b><br />
+<b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 (任意)';
+$string['databasesettingssub_mssql'] = '<b>タイプ:</b> SQL*Server (　非UTF-8　)<b><font color=\"red\">実験用! (運用環境には使用しないでください。)</font></b><br />
 <b>ホスト:</b> 例 localhost または db.isp.com<br />
 <b>データベース名:</b> 例 moodle<br />
 <b>ユーザ名:</b> データベースのユーザ名<br />
 <b>パスワード:</b> データベースのパスワード<br />
-<b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 ( 必須 )';
-$string['databasesettingssub_mssql_n'] = '<b>タイプ:</b> SQL*Server (　UTF-8　)<b><font color=\"red\">実験用! ( 運用環境には使用しないでください。 )</font></b><br />
+<b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 (必須)';
+$string['databasesettingssub_mssql_n'] = '<b>タイプ:</b> SQL*Server (　UTF-8　)<b><font color=\"red\">実験用! (運用環境には使用しないでください。)</font></b><br />
 <b>ホスト:</b> 例 localhost または db.isp.com<br />
 <b>データベース名:</b> 例 moodle<br />
 <b>ユーザ名:</b> データベースのユーザ名<br />
 <b>パスワード:</b> データベースのパスワード<br />
-<b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 ( 必須 )';
+<b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 (必須)';
 $string['databasesettingssub_mysql'] = '<b>タイプ:</b> MySQL<br />
 <b>ホスト:</b> 例 localhost または db.isp.com<br />
 <b>データベース名:</b> 例 moodle<br />
 <b>ユーザ名:</b> データベースのユーザ名<br />
 <b>パスワード:</b> データベースのパスワード<br />
-<b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 ( 任意 )';
+<b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 (任意)';
 $string['databasesettingssub_oci8po'] = '<b>タイプ:</b> Oracle<br />
 <b>ホスト:</b> 使用されませんので空白にしてください。<br />
 <b>データベース名:</b>tnsnames.oraのコネクション名<br />
 <b>ユーザ名:</b> データベースのユーザ名<br />
 <b>パスワード:</b> データベースのパスワード<br />
-<b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 ( 必須、最大2cc. )';
-$string['databasesettingssub_odbc_mssql'] = '<b>タイプ:</b> SQL*Server ( ODBC経由 ) <b><font color=\"red\">実験用! ( 運用環境には使用しないでください。 )</font></b><br />
+<b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 (必須、最大2cc.)';
+$string['databasesettingssub_odbc_mssql'] = '<b>タイプ:</b> SQL*Server (ODBC経由) <b><font color=\"red\">実験用! (運用環境には使用しないでください。)</font></b><br />
 <b>ホスト:</b>ODBCコントロールパネルのDSN名<br />
 <b>データベース名:</b> 例 moodle<br />
 <b>ユーザ名:</b> データベースのユーザ名<br />
 <b>パスワード:</b> データベースのパスワード<br />
-<b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 ( 必須 )';
+<b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 (必須)';
 $string['databasesettingssub_postgres7'] = '<b>タイプ:</b> PostgreSQL<br />
 <b>ホスト:</b> 例 localhost または db.isp.com<br />
 <b>データベース名:</b> 例 moodle<br />
 <b>ユーザ名:</b> データベースのユーザ名<br />
 <b>パスワード:</b> データベースのパスワード<br />
-<b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 ( 必須 )';
+<b>テーブル接頭辞:</b> すべてのテーブル名に使用する接頭辞 (必須)';
 $string['dataroot'] = 'データディレクトリ';
 $string['datarooterror'] = 'あなたが指定した「データディレクトリ」が見つからないか、作成されませんでした。パスを訂正するか、ディレクトリを手動で作成してください。';
 $string['dbconnectionerror'] = 'あなたが指定したデータベースに接続できませんでした。データベース設定を確認してください。';
@@ -94,7 +94,7 @@ $string['dbcreationerror'] = 'データベース作成エラー。設定で指�
 $string['dbhost'] = 'ホストサーバ';
 $string['dbprefix'] = 'テーブル接頭辞';
 $string['dbtype'] = 'タイプ';
-$string['dbwrongencoding'] = '選択したデータベースは、非推奨のエンコーディング ( $a ) で動作しています。代わりにユニコード ( UTF-8 ) でエンコードされたデータベースの使用をお勧めします。下記の「DBエンコーディングテストをスキップ」をチェックすることで、このテストをバイパスできますが、将来的に問題が発生する恐れがあります。';
+$string['dbwrongencoding'] = '選択したデータベースは、非推奨のエンコーディング ($a) で動作しています。代わりにユニコード (UTF-8) でエンコードされたデータベースの使用をお勧めします。下記の「DBエンコーディングテストをスキップ」をチェックすることで、このテストをバイパスできますが、将来的に問題が発生する恐れがあります。';
 $string['dbwronghostserver'] = '上記説明の「ホスト」ルールに従ってください。';
 $string['dbwrongnlslang'] = 'あなたのウェブサーバのNLS_LANG環境変数には、AL32UTF8文字セットを使用してください。OCI8を適切に設定するには、PHPドキュメンテーションをご覧ください。';
 $string['dbwrongprefix'] = '上記説明の接頭辞に従ってください。';
@@ -108,7 +108,7 @@ Moodleにアクセスする完全なウェブアドレスを指定してくだ�
 <br />
 <br />
 <p><b>データディレクトリ:</b>
-Moodleが、アップロードされたファイルを保存する場所が必要です。 このディレクトリは、ウェブサーバのユーザ ( 通常は「nobody」または「apache」 ) が読み込みおよび書き込みできるようにしてください。しかし、ウェブから直接アクセスできないようにしてください。</p>';
+Moodleが、アップロードされたファイルを保存する場所が必要です。 このディレクトリは、ウェブサーバのユーザ (通常は「nobody」または「apache」) が読み込みおよび書き込みできるようにしてください。しかし、ウェブから直接アクセスできないようにしてください。</p>';
 $string['dirroot'] = 'Moodleディレクトリ';
 $string['dirrooterror'] = '「Moodleディレクトリ」設定が間違っているようです - インストール済みMoodleが見つかりませんでした。下記の値がリセットされました。';
 $string['download'] = 'ダウンロード';
@@ -116,15 +116,15 @@ $string['downloadedfilecheckfailed'] = 'ダウンロードファイルのチェ�
 $string['downloadlanguagebutton'] = '「 $a 」言語パックをダウンロードする';
 $string['downloadlanguagehead'] = '言語パックのダウンロード';
 $string['downloadlanguagenotneeded'] = 'デフォルトの言語パック「 $a 」でインストール処理を続けることができます。';
-$string['downloadlanguagesub'] = 'あなたは、この言語パックをダウンロードして、インストール処理を継続することができます。<br /><br />言語パックのダウンロードを無効にしている場合、インストール処理は英語で継続されます。 ( インストール処理が完了した後、他の言語パックをダウンロードして、インストールすることができます。 )';
-$string['environmenterrortodo'] = 'このバージョンのMoodleをインストールする前に、発見された動作環境の問題 ( エラー ) を解消してください!';
+$string['downloadlanguagesub'] = 'あなたは、この言語パックをダウンロードして、インストール処理を継続することができます。<br /><br />言語パックのダウンロードを無効にしている場合、インストール処理は英語で継続されます。 (インストール処理が完了した後、他の言語パックをダウンロードして、インストールすることができます。)';
+$string['environmenterrortodo'] = 'このバージョンのMoodleをインストールする前に、発見された動作環境の問題 (エラー) を解消してください!';
 $string['environmenthead'] = 'あなたの環境を確認しています ...';
 $string['environmentrecommendinstall'] = 'インストールおよびEnabledを推奨します。';
 $string['environmentrecommendversion'] = 'バージョン $a->needed 以上を推奨します。あなたは現在 $a->current を使用しています。';
 $string['environmentrequireinstall'] = 'インストールおよびEnabledが必須です。';
 $string['environmentrequireversion'] = 'バージョン $a->needed以上が必須です。あなたは現在 $a->current を使用しています。';
 $string['environmentsub'] = 'あなたのシステムに関する様々な要素が、システム要件に合致するか確認しています。';
-$string['environmentxmlerror'] = '環境データ ( $a->error_code ) の読み込み中にエラーが発生しました。';
+$string['environmentxmlerror'] = '環境データ ($a->error_code) の読み込み中にエラーが発生しました。';
 $string['error'] = 'エラー';
 $string['fail'] = '失敗';
 $string['fileuploads'] = 'ファイルアップロード';
@@ -133,7 +133,7 @@ $string['gdversion'] = 'GDバージョン';
 $string['gdversionerror'] = 'イメージの処理および作成を行うにはGDライブラリが必要です。';
 $string['gdversionhelp'] = '<p>あなたのサーバには、GDがインストールされていないようです。</p>
 
-<p>GDは、Moodleがイメージ ( ユーザプロフィールアイコン等 ) を処理したり、新しいイメージ ( ロググラフ等 ) を作成するためにPHPが必要とするライブラリです。Moodleは、GDなしでも動作します -  イメージ処理等が使用できないだけです。</p>
+<p>GDは、Moodleがイメージ (ユーザプロフィールアイコン等) を処理したり、新しいイメージ (ロググラフ等) を作成するためにPHPが必要とするライブラリです。Moodleは、GDなしでも動作します -  イメージ処理等が使用できないだけです。</p>
 
 <p>Unix環境下で、GDをPHPにインストールするには、PHPを --with-gd パラメータでコンパイルしてください。</p>
 
@@ -170,7 +170,7 @@ $string['mssql'] = 'SQL*Server (mssql)';
 $string['mssql_n'] = 'SQL*Server UTF-8サポート (mssql_n)';
 $string['mssqlextensionisnotpresentinphp'] = 'PHPのMSSQL extensionが適切に設定されていないため、SQL*Serverと通信できません。あなたのphp.iniファイルをチェックするか、PHPを再コンパイルしてください。';
 $string['mysql'] = 'MySQL (mysql)';
-$string['mysql416bypassed'] = 'あなたのサイトがiso-8859-1 ( ラテン ) 言語のみ使用している場合、現在インストールされている MySQL 4.1.12 ( またはそれ以上 ) を使用することができます。';
+$string['mysql416bypassed'] = 'あなたのサイトがiso-8859-1 (ラテン) 言語のみ使用している場合、現在インストールされている MySQL 4.1.12 (またはそれ以上) を使用することができます。';
 $string['mysql416required'] = 'Moodle1.6では、将来すべてのデータをUTF-8に変換するため、MySQL 4.1.16が要求される最低限のバージョンです。';
 $string['mysqlextensionisnotpresentinphp'] = 'PHPのMySQL extensionが適切に設定されていないため、MySQLと通信できません。あなたのphp.iniファイルをチェックするか、PHPを再コンパイルしてください。';
 $string['name'] = '名称';
@@ -185,14 +185,14 @@ $string['password'] = 'パスワード';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHPのPGSQL extensionが適切に設定されていないため、PostgreSQLと通信できません。あなたのphp.iniファイルをチェックするか、PHPを再コンパイルしてください。';
 $string['php50restricted'] = 'PHP 5.0.x には数多くの既知の問題があります。5.1.x にアップグレードするか、4.3.x または 4.4.x にダウングレードしてください。';
 $string['phpversion'] = 'PHPバージョン';
-$string['phpversionerror'] = 'PHPバージョンは少なくとも 4.3.0 または 5.1.0 をお使いください ( 5.0.x には既知の多数の問題があります )。';
-$string['phpversionhelp'] = '<p>Moodleには、少なくとも 4.3.0 または 5.1.0 のPHPバージョンが必要です ( 5.0.x には既知の多数の問題があります )。</p>
+$string['phpversionerror'] = 'PHPバージョンは少なくとも 4.3.0 または 5.1.0 をお使いください (5.0.x には既知の多数の問題があります)。';
+$string['phpversionhelp'] = '<p>Moodleには、少なくとも 4.3.0 または 5.1.0 のPHPバージョンが必要です (5.0.x には既知の多数の問題があります)。</p>
 <p>現在、バージョン $a が動作しています。</p>
 <p>PHPをアップグレードするか、新しいバージョンがインストールされているホストに移動してください!<br/>
-( 5.0.x の場合、バージョン 4.4.x にダウングレードすることもできます。 )</p>';
+(5.0.x の場合、バージョン 4.4.x にダウングレードすることもできます。)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = '前へ';
-$string['remotedownloadnotallowed'] = 'あなたのサーバーにコンポーネントをダウンロードすることができません ( allow_url_fopen が無効 )。<br /><br /><a href=\"$a->url\">$a->url</a> ファイルを手動でダウンロードして、サーバの「 $a->dest 」にコピーした後、解凍してください。';
+$string['remotedownloadnotallowed'] = 'あなたのサーバーにコンポーネントをダウンロードすることができません (allow_url_fopen が無効)。<br /><br /><a href=\"$a->url\">$a->url</a> ファイルを手動でダウンロードして、サーバの「 $a->dest 」にコピーした後、解凍してください。';
 $string['report'] = 'レポート';
 $string['restricted'] = '使用禁止';
 $string['safemode'] = 'セーフモード';
@@ -204,7 +204,7 @@ $string['status'] = '状態';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = '日本語';
 $string['user'] = 'ユーザ';
-$string['welcomep10'] = '$a->installername ( $a->installerversion )';
+$string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'インストールが正常に完了したため、このページをご覧頂いています。あなたのコンピュータで <strong>$a->packname $a->packversion</strong> パッケージを起動してください。';
 $string['welcomep30'] = 'このリリース <strong>$a->installername</strong> には、<strong>Moodle</strong> で環境を作成するアプリケーションが含まれています。すなわち:';
 $string['welcomep40'] = 'パッケージには <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong> も含まれています。';
