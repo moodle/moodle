@@ -32,7 +32,6 @@ class MoodleQuickForm_format extends MoodleQuickForm_select{
         HTML_QuickForm_element::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
         $this->_persistantFreeze = true;
         $this->_type = 'format';
-        echo $useHtmlEditor;
         $this->_useHtmlEditor=$useHtmlEditor;
         if ($this->_useHtmlEditor==null){
             $this->_useHtmlEditor=can_use_html_editor();
@@ -74,14 +73,15 @@ class MoodleQuickForm_format extends MoodleQuickForm_select{
                     }
                 }
                 if (null !== $value) {
-                    $this->setValue($value);
+                    $format=$value;
                 }else{
-                    if ($this->_useHtmlEditor){
-                        $this->setValue(array(FORMAT_HTML));
-
-                    }else{
-                        $this->setValue(array(FORMAT_MOODLE));
-                    }
+                    $format=FORMAT_MOODLE;
+                }
+                $caller->setFormat($this->getName(), $format, $this->_useHtmlEditor);
+                if ($this->_useHtmlEditor){
+                    $this->setValue(array(FORMAT_HTML));
+                }else{
+                    $this->setValue(array($format));
                 }
                 return true;
                 break;

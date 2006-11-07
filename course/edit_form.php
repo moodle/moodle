@@ -42,7 +42,7 @@ class course_edit_form extends moodleform {
 
 /// form definition with new course defaults
 //--------------------------------------------------------------------------------
-        $mform->addElement('header','general', get_string('general'));
+        $mform->addElement('header','general', get_string('general', 'form'));
 
         //must have create course capability in both categories in order to move course
         if (has_capability('moodle/course:create', $categorycontext)) {
