@@ -46,6 +46,7 @@
     define('NO_PHP_EXTENSIONS_SECTION_FOUND',    8);
     define('NO_PHP_EXTENSIONS_NAME_FOUND',       9);
     define('NO_DATABASE_VENDOR_VERSION_FOUND',  10);
+    define('NO_UNICODE_SECTION_FOUND',          11);
 
 /**
  * This function will perform the whole check, returning
@@ -395,6 +396,7 @@ function environment_check($version) {
 
     $results = array(); //To store all the results
 
+    $results[] = environment_check_unicode($version);
     $results[] = environment_check_database($version);
     $results[] = environment_check_php($version);
 
@@ -535,6 +537,59 @@ function environment_check_php($version) {
     return $result;
 }
 
+
+/**
+ * This function will check if unicode database requirements are satisfied
+ * @param string $version xml version we are going to use to test this server
+ * @return object results encapsulated in one environment_result object
+ */
+function environment_check_unicode($version) {
+    global $db;
+
+    $result = new environment_results('unicode');
+
+    /// Get the enviroment version we need
+    if (!$data = get_environment_for_version($version)) {
+    /// Error. No version data found
+        $result->setStatus(false);
+        $result->setErrorCode(NO_VERSION_DATA_FOUND);
+        return $result;
+    }
+
+    /// Extract the unicode part
+
+    if (!isset($data['#']['UNICODE'])) {
+    /// Error. No DATABASE section found
+        $result->setStatus(false);
+        $result->setErrorCode(NO_UNICODE_SECTION_FOUND);
+        return $result;
+    } else {
+    /// Extract level
+        if (isset($data['#']['UNICODE']['0']['@']['level'])) {
+            $level = $data['#']['UNICODE']['0']['@']['level'];
+            if ($level != 'optional') {
+                $level = 'required';
+            }
+        }
+    }
+
+    if (!$unicodedb = setup_is_unicodedb()) {
+        $result->setStatus(false);
+    } else {
+        $result->setStatus(true);
+    }
+
+    $result->setLevel($level);
+
+/// Process messages, modifying the $result if needed.
+    process_environment_messages($data['#']['UNICODE'][0], $result);
+/// Process bypass, modifying $result if needed.
+    process_environment_bypass($data['#']['UNICODE'][0], $result);
+/// Process restrict, modifying $result if needed.
+    process_environment_restrict($data['#']['UNICODE'][0], $result);
+
+    return $result;
+}
 
 /**
  * This function will check if database requirements are satisfied
