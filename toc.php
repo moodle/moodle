@@ -1,4 +1,4 @@
-<?PHP // $Id: toc.php,v 1.1 2006/03/12 18:39:59 skodak Exp $
+<?PHP // $Id: toc.php,v 1.2 2006/11/07 18:32:05 skodak Exp $
 
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
  
@@ -62,13 +62,13 @@ if ($print) { ///TOC for printing
                 $nch++;
                 $ns = 0;
                 $toc .= ($first) ? '<li>' : '</ul></li><li>';
-                if ($book->numbering === NUM_NUMBERS) {
+                if ($book->numbering == NUM_NUMBERS) {
                       $title = "$nch $title";
                 }
             } else {
                 $ns++;
                 $toc .= ($first) ? '<li><ul><li>' : '<li>';
-                if ($book->numbering === NUM_NUMBERS) {
+                if ($book->numbering == NUM_NUMBERS) {
                       $title = "$nch.$ns $title";
                 }
             }
@@ -90,11 +90,11 @@ if ($print) { ///TOC for printing
             if (!$ch->hidden) {
                 $nch++;
                 $ns = 0;
-                if ($book->numbering === NUM_NUMBERS) {
+                if ($book->numbering == NUM_NUMBERS) {
                     $title = "$nch $title";
                 }
             } else {
-                if ($book->numbering === NUM_NUMBERS) {
+                if ($book->numbering == NUM_NUMBERS) {
                     $title = "x $title";
                 }
                 $title = '<span class="dimmed_text">'.$title.'</span>';
@@ -104,18 +104,18 @@ if ($print) { ///TOC for printing
             $toc .= ($first) ? '<li><ul><li>' : '<li>';
             if (!$ch->hidden) {
                 $ns++;
-                if ($book->numbering === NUM_NUMBERS) {
+                if ($book->numbering == NUM_NUMBERS) {
                     $title = "$nch.$ns $title";
                 }
             } else {
-                if ($book->numbering === NUM_NUMBERS) {
+                if ($book->numbering == NUM_NUMBERS) {
                     $title = "x.x $title";
                 }
                 $title = '<span class="dimmed_text">'.$title.'</span>';
             }
         }
 
-        if ($ch->id === $chapter->id) {
+        if ($ch->id == $chapter->id) {
             $toc .= '<strong>'.$title.'</strong>';
             if ($ch->subchapter) {
                 $currtitle = $prevtitle;
@@ -156,18 +156,18 @@ if ($print) { ///TOC for printing
                 $nch++;
                 $ns = 0;
                 $toc .= ($first) ? '<li>' : '</ul></li><li>';
-                if ($book->numbering === NUM_NUMBERS) {
+                if ($book->numbering == NUM_NUMBERS) {
                       $title = "$nch $title";
                 }
             $prevtitle = $title;
             } else {
                 $ns++;
                 $toc .= ($first) ? '<li><ul><li>' : '<li>';
-                if ($book->numbering === NUM_NUMBERS) {
+                if ($book->numbering == NUM_NUMBERS) {
                       $title = "$nch.$ns $title";
                 }
             }
-            if ($ch->id === $chapter->id) {
+            if ($ch->id == $chapter->id) {
                 $toc .= '<strong>'.$title.'</strong>';
                 if ($ch->subchapter) {
                     $currtitle = $prevtitle;
