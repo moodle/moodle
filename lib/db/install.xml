@@ -72,7 +72,7 @@
         <FIELD NAME="enrolstartdate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="enrollable" NEXT="enrolenddate"/>
         <FIELD NAME="enrolenddate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="enrolstartdate" NEXT="enrol"/>
         <FIELD NAME="enrol" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="enrolenddate" NEXT="defaultrole"/>
-        <FIELD NAME="defaultrole" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="The default role given to participants who self-enrol" PREVIOUS="enrol"/>
+        <FIELD NAME="defaultrole" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="The default role given to participants who self-enrol" PREVIOUS="enrol"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for course"/>
