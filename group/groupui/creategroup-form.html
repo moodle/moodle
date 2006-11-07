@@ -1,8 +1,8 @@
 <div id="creategroupform" class="popup">
-    <h3><?php print_string('creategroup', 'groups'); ?> <span id="selectedgroupingforcreatinggroup"></span></h3>
+    <h3><?php print_string('creategroup', 'group'); ?> <span id="selectedgroupingforcreatinggroup"></span></h3>
     <form action="">
         <p><?php print_string('groupname', 'groups');?></p>
-        <p><input id="newgroupname" type="text" size="40" value="<?php print_string('defaultgroupname', 'groups'); ?>" />
+        <p><input id="newgroupname" type="text" size="40" value="<?php print_string('defaultgroupname', 'group'); ?>" />
         <p><?php print_string("groupingdescription", 'groups') ?><br />
                     <?php helpbutton("text", get_string("helptext")) ?></p>
         <p><?php print_textarea($usehtmleditor, 5, 45, 200, 400, "newgroupdescription");?></p>
@@ -17,14 +17,14 @@
             <p><?php print_string("newpicture", 'groups') ?></p>
             <p><?php upload_print_form_fragment(1,array('newgroupicon'),null,false,null,0,0,false);
 				     helpbutton("picture", get_string("helppicture"));
-				     print_string("maxsize", "", display_size($maxbytes), 'groups'); ?>
+				     print_string("maxsize", "", display_size($maxbytes), 'group'); ?>
                </p>
             <?php 
             	}  
             ?>
             </table>
             
-            <p><input type="button" id="creategroup" value="<?php print_string('creategroup', 'groups'); ?>" /></p>
-            <p><input type="button" id="cancelcreategroup" value="<?php print_string('cancel', 'groups'); ?>" /></p>      
+            <p><input type="button" id="creategroup" value="<?php print_string('creategroup', 'group'); ?>" /></p>
+            <p><input type="button" id="cancelcreategroup" value="<?php print_string('cancel', 'group'); ?>" /></p>      
     </form>
 </div>

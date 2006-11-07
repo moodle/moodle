@@ -1,7 +1,7 @@
 <div id="editgroupsettingsform" class="popup">
-    <h3><?php print_string('editgroupsettings', 'groups'); ?></h3>
+    <h3><?php print_string('editgroupsettings', 'group'); ?></h3>
     <form action="">
-        <p><?php print_string('groupname', 'groups'); ?></p>
+        <p><?php print_string('groupname', 'group'); ?></p>
         <p><input id="groupname" type="text" size="40" /></p>
         <p><?php print_string("description") ?><br />
                     <?php helpbutton("text", get_string("helptext")) ?></p>
@@ -15,8 +15,8 @@
             <p><?php print_string("newpicture") ?></p>
             <p><?php upload_print_form_fragment(1,array('groupicon'),null,false,null,0,0,false);
 				     helpbutton("picture", get_string("helppicture"));
-				     print_string("maxsize", "", display_size($maxbytes), 'groups'); ?></p>
+				     print_string("maxsize", "", display_size($maxbytes), 'group'); ?></p>
             <?php } ?>
-            <p><input type="button" id="editgroupsettings" value="<?php print_string('save', 'groups'); ?>" />&nbsp;<input type="button" id="canceleditgroupsettings" value="<?php print_string('cancel', 'groups'); ?>" /></p>
+            <p><input type="button" id="editgroupsettings" value="<?php print_string('save', 'group'); ?>" />&nbsp;<input type="button" id="canceleditgroupsettings" value="<?php print_string('cancel', 'group'); ?>" /></p>
     </form>
 </div>
