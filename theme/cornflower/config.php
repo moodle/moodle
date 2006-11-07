@@ -124,4 +124,19 @@ $THEME->custompix = false;
 ////////////////////////////////////////////////////////////////////////////////
 
 
+
+// These colours are not used anymore, so I've set them to 
+// bright green to help identify where they should be removed
+// These lines will be deleted soon
+
+$THEME->body         = "#22FF22";  // Main page color
+$THEME->cellheading  = "#22FF22";  // Standard headings of big tables
+$THEME->cellheading2 = "#22FF22";  // Highlight headings of tables
+$THEME->cellcontent  = "#22FF22";  // For areas with text
+$THEME->cellcontent2 = "#22FF22";  // Alternate colour
+$THEME->borders      = "#22FF22";  // Table borders
+$THEME->highlight    = "#22FF22";  // Highlighted text (eg after a search)
+$THEME->hidden       = "#22FF22";  // To color things that are hidden
+$THEME->autolink     = "#22FF22";  // To color auto-generated links (eg glossary)
+
 ?>
