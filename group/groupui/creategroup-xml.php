@@ -7,8 +7,8 @@ header("Content-Type: text/xml");
 echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
 echo '<groupsresponse>';
 
-include_once('../../../config.php');
-include('../lib/lib.php');
+require_once('../../config.php');
+require_once('../lib/lib.php');
 $groupingid = required_param('groupingid', PARAM_INT);
 
 $groupsettings->name = required_param('groupname');
@@ -31,7 +31,7 @@ if (confirm_sesskey() and isteacheredit($courseid)) {
 			echo '<error>Failed to add group to grouping</error>';
 		} else {
 			// Upload a picture file if there was one - note that we don't remove any previous icons	
-			require_once($CFG->dirroot.'/lib/uploadlib.php');
+			require_once($CFG->libdir.'/uploadlib.php');
 		    $um = new upload_manager('newgroupicon', false, false, null, false, 0, true, true);
 		    if ($um->preprocess_files()) {
 		    	require_once("$CFG->libdir/gdlib.php");

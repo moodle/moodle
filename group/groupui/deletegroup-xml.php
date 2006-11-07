@@ -6,8 +6,8 @@ header("Content-Type: text/xml");
 echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
 echo '<groupsresponse>';
 
-include_once('../../../config.php');
-include("../lib/lib.php");
+require_once('../../config.php');
+require_once('../lib/lib.php');
 
 $groupid = required_param('groupid', PARAM_INT);
 $courseid = required_param('courseid', PARAM_INT);

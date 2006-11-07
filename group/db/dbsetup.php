@@ -3,8 +3,8 @@
 /***************************************************************************
  * Functions required for setting up the database to use the new groups
  **************************************************************************/
-include_once('../../../config.php');
-include_once($CFG->dirroot.'/lib/datalib.php');
+//require_once('../../config.php');
+require_once($CFG->libdir.'/datalib.php');
 
 
 // @@@ TO DO Needs lots of sorting out so proper install/upgrade and also 

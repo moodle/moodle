@@ -1,6 +1,6 @@
 <?php
-include_once("../../../config.php");
-include("../lib/lib.php");
+require_once('../../config.php');
+require_once('../lib/lib.php');
 
 $courseid     = required_param('courseid', PARAM_INT);
 $groupingid = required_param('groupingid', PARAM_INT);
@@ -17,7 +17,7 @@ if (isteacheredit($courseid)) {
 	print_header("$course->shortname: $strgroups", "$course->fullname", 
 	             "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
 	             "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
-	             "-> <a href=\"$CFG->wwwroot/course/groups/groupui/index.php?id=$courseid\">$strgroups</a>".
+	             "-> <a href=\"$CFG->wwwroot/group/groupui/index.php?id=$courseid\">$strgroups</a>".
 	             "-> Display grouping", "", "", true, '', user_login_string($course, $USER));
 	
 	$groupingsettings = groups_get_grouping_settings($groupingid);

@@ -17,7 +17,7 @@
  * course.  
  ******************************************************************************/
 
-include_once($CFG->dirroot.'/course/groups/db/dbbasicgrouplib.php');
+require_once($CFG->dirroot.'/group/db/dbbasicgrouplib.php');
 
 
 /***************************** 

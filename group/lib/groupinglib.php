@@ -5,8 +5,8 @@
  * more than one grouping.
  ******************************************************************************/ 
 
-include_once($CFG->dirroot.'/course/groups/lib/basicgrouplib.php');
-include_once($CFG->dirroot.'/course/groups/db/dbgroupinglib.php');
+require_once($CFG->dirroot.'/group/lib/basicgrouplib.php');
+require_once($CFG->dirroot.'/group/db/dbgroupinglib.php');
 
 /*****************************
         Access/List functions  

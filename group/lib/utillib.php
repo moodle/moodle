@@ -6,7 +6,7 @@
  ********************************************************/
 
 
-include_once($CFG->dirroot.'/lib/moodlelib.php');
+require_once($CFG->libdir.'/moodlelib.php');
 
 
 /**********************************

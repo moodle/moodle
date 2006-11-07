@@ -4,11 +4,11 @@
  * The main group management user interface
  ************************************************/
 
-require_once('../../../config.php');
-require_once('../../lib.php');
-require_once('../../../lib/moodlelib.php');
+require_once('../../config.php');
 require_once('../lib/lib.php');
-require_once($CFG->dirroot.'/lib/uploadlib.php');
+//require_once('../../course/lib.php');
+require_once($CFG->libdir.'/moodlelib.php');
+require_once($CFG->libdir.'/uploadlib.php');
 
 $error = false;
  
@@ -50,7 +50,7 @@ if (!$error) {
 	             "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
 	             "-> $strgroups", "", "", true, '', user_login_string($course, $USER));
 	             
-	include('form.html');
+	require_once('form.html');
 	
 	print_footer($course);
 

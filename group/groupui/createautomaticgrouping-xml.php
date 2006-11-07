@@ -8,8 +8,8 @@ echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
 echo '<groupsresponse>';
 
 
-include_once("../../../config.php");
-include("../lib/lib.php");
+require_once('../../config.php');
+require_once('../lib/lib.php');
 
 require_login($courseid);
 

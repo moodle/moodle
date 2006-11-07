@@ -5,8 +5,8 @@
  * groups_groups and groups_groups_users.
  ******************************************************************************/
 
-include_once($CFG->dirroot.'/lib/datalib.php');
-include_once($CFG->dirroot.'/course/groups/lib/lib.php');
+require_once($CFG->libdir.'/datalib.php');
+require_once($CFG->dirroot.'/group/lib/lib.php');
 
 
 /*******************************************************************************

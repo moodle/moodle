@@ -1,9 +1,8 @@
 <?php
 
-include_once('../../config.php');
-include_once($CFG->dirroot.'/course/groups/lib/configlib.php');
-include_once($CFG->dirroot.'/course/groups/db/dbsetup.php');
-include_once($CFG->dirroot.'/course/groups/lib/utillib.php');
+require_once('../config.php');
+require_once($CFG->dirroot.'/group/db/dbsetup.php');
+require_once($CFG->dirroot.'/group/lib/utillib.php');
 
 // Set up the database 
 groups_create_database_tables();

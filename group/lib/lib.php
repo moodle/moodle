@@ -1,10 +1,10 @@
 <?php
 
-include_once($CFG->dirroot.'/course/groups/lib/basicgrouplib.php');
+require_once($CFG->dirroot.'/group/lib/basicgrouplib.php');
 
-include_once($CFG->dirroot.'/course/groups/lib/groupinglib.php');
+require_once($CFG->dirroot.'/group/lib/groupinglib.php');
 
-include_once($CFG->dirroot.'/course/groups/lib/utillib.php');
+require_once($CFG->dirroot.'/group/lib/utillib.php');
 
-include_once($CFG->dirroot.'/course/groups/lib/automaticgroupinglib.php');
+require_once($CFG->dirroot.'/group/lib/automaticgroupinglib.php');
 ?>

@@ -6,7 +6,7 @@
  * tables that store information about groups.
  ******************************************************************************/
 
-include_once($CFG->dirroot.'/lib/datalib.php');
+require_once($CFG->libdir.'/datalib.php');
 
 /*******************************************************************************
         Access/List functions  
@@ -422,4 +422,3 @@ function groups_db_delete_grouping($groupingid) {
 }
 
 ?>
-
