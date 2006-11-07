@@ -290,14 +290,14 @@ if ($INSTALL['stage'] == DATABASE) {
     }
 
     if ($INSTALL['dbtype'] == 'mssql') {  /// Check MSSQL extension is present
-        if (!extension_loaded('mssql')) {
+        if (!function_exists('mssql_connect')) {
             $errormsg = get_string('mssqlextensionisnotpresentinphp', 'install');
             $nextstage = DATABASE;
         }
     }
 
     if ($INSTALL['dbtype'] == 'mssql_n') {  /// Check MSSQL extension is present
-        if (!extension_loaded('mssql')) {
+        if (!function_exists('mssql_connect')) {
             $errormsg = get_string('mssqlextensionisnotpresentinphp', 'install');
             $nextstage = DATABASE;
         }
