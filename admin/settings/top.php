@@ -28,7 +28,12 @@ $ADMIN->add('root', new admin_category('appearance', get_string('appearance','ad
 $ADMIN->add('root', new admin_category('server', get_string('server','admin')));
 
 $ADMIN->add('root', new admin_category('reports', get_string('reports')));
-foreach(get_list_of_plugins('admin/report') as $plugin) {
+foreach (get_list_of_plugins('admin/report') as $plugin) {
+/// This snippet is temporary until simpletest can be fixed to use xmldb.   See MDL-7377   XXX TODO
+    if ($plugin == 'simpletest' && $CFG->dbtype != 'mysql' && $CFG->dbtype != 'postgres7') {
+        continue;
+    }
+/// End of removable snippet
     $ADMIN->add('reports', new admin_externalpage('report'.$plugin, get_string($plugin, 'admin'), "$CFG->wwwroot/$CFG->admin/report/$plugin/index.php"));
 }
 
