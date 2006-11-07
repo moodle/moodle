@@ -162,7 +162,7 @@ function get_guest_role() {
 
 /**
  * This functions get all the course categories in proper order
- * @param int $context
+ * @param object $context
  * @param int $type
  * @return array of contextids
  */
