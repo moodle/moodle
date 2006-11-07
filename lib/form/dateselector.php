@@ -5,9 +5,9 @@ require_once "$CFG->libdir/formslib.php";
 
 /**
  * Class for a group of elements used to input a date.
- * 
- * Emulates moodle print_date_selector function 
- * 
+ *
+ * Emulates moodle print_date_selector function
+ *
  * @author Jamie Pratt <me@jamiep.org>
  * @access public
  */
@@ -33,7 +33,7 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
 
    /**
     * Class constructor
-    * 
+    *
     * @access   public
     * @param    string  Element's name
     * @param    mixed   Label(s) for an element
@@ -76,8 +76,8 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
             $years[$i] = $i;
         }
         $this->_elements[] =& MoodleQuickForm::createElement('select', 'day', null, $days, $this->getAttributes(), true);
-        $this->_elements[] =& MoodleQuickForm::createElement('select','month', null, $months, $this->getAttributes(), true);
-        $this->_elements[] =& MoodleQuickForm::createElement('select','year', null, $years, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select', 'month', null, $months, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select', 'year', null, $years, $this->getAttributes(), true);
 
     }
 
@@ -95,7 +95,7 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
                 'day' => $currentdate['mday'],
                 'month' => $currentdate['mon'],
                 'year' => $currentdate['year']);
-            
+
         }
         parent::setValue($value);
     }
