@@ -4,7 +4,7 @@
  *
  * @copyright &copy; 2006 The Open University
  * @author J.White AT open.ac.uk
- * @author N.D.Freear@open.ac.uk   
+ * @author N.D.Freear@open.ac.uk
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package groups
  */
@@ -203,6 +203,7 @@ function groups_db_copy_moodle_group_to_imsgroup($groupid, $courseid) {
 	
 	// Only copy the group if the group exists. 
 	if ($groupsettings != false) {
+        $record = new Object();
 		$record->name = $groupsettings->name;
 		$record->description = $groupsettings->description;
 		$record->password = $groupsettings->password;
@@ -212,25 +213,28 @@ function groups_db_copy_moodle_group_to_imsgroup($groupid, $courseid) {
 		$record->hidepicture = $groupsettings->hidepicture;
 		$record->timecreated = $groupsettings->timecreated;
 		$record->timemodified = $groupsettings->timemodified;
+
 		$newgroupid = insert_record('groups_groups', $record);
 	    if (!$newgroupid) {
 	    	$success = false;
 	    }
-		
+
+        $courserecord = new Object();
 		$courserecord->courseid = $groupsettings->courseid;
 		$courserecord->groupid = $newgroupid;
 		
 		$added = insert_record('groups_courses_groups', $courserecord);
-			            
-	     if (!$added) {
-	     	$success = false;
-	     }  
-	     
-	     // Copy over the group members
+
+	    if (!$added) {
+	        $success = false;
+	    }  
+
+	    // Copy over the group members
 		$groupmembers = get_records('groups_users', 'groupid', $groupid);
 		if ($groupmembers != false) {
 			foreach($groupmembers as $member) {
-				$record->groupid = $newgroupid;
+                $record = new Object();
+                $record->groupid = $newgroupid;
 				$record->userid = $member->userid;
 				$useradded = insert_record('groups_groups_users', $record);
 				if (!$useradded) {
@@ -238,13 +242,12 @@ function groups_db_copy_moodle_group_to_imsgroup($groupid, $courseid) {
 				}
 			}
 		}
+	}
 
-	} 
-	
 	if (!$success) {
 		notify('Copy operations from Moodle groups to IMS Groups failed');
 	}
-     
+
     return $success;
 }
 

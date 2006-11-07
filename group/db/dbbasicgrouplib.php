@@ -1,10 +1,14 @@
 <?php 
-/*******************************************************************************
+/**
  * Functions to make changes to groups in the database i.e. functions that 
- * access the groups_courses_groups, 
- * groups_groups and groups_groups_users.
- ******************************************************************************/
-
+ * access tables:
+ *     groups_courses_groups, groups_groups and groups_groups_users.
+ *
+ * @copyright &copy; 2006 The Open University
+ * @author J.White AT open.ac.uk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package groups
+ */
 require_once($CFG->libdir.'/datalib.php');
 require_once($CFG->dirroot.'/group/lib/lib.php');
 
@@ -23,7 +27,6 @@ require_once($CFG->dirroot.'/group/lib/lib.php');
 function groups_db_get_user($userid) {
 	$query = get_record('user', 'id', $userid);
 	return $query;
-	
 }
 
 
@@ -55,7 +58,7 @@ function groups_db_get_user($userid) {
 	        }
         }
     }
-    
+
     return $groupids;
 }
 
@@ -142,7 +145,7 @@ function groups_db_get_group_settings($groupid) {
                 WHERE id = $groupid";
         $groupsettings = get_record_sql($sql);
     }
-  
+
     return $groupsettings;	
 
 }
@@ -160,11 +163,11 @@ function groups_db_users_in_common_group($userid1, $userid2) {
 			"INNER JOIN {$tableprefix}groups_members AS gm2 " .
 			"ON gm1.groupid =gm2.groupid" .
 			"WHERE gm1.userid = $userid1 AND gm2.userid = $userid2";
-    $commonggroups = get_record_sql($sql);
+    $commongroups = get_record_sql($sql);
     if ($commongroups) {
     	$havecommongroup = true;
     }
-    
+
     return $havecommongroup;           
 }
 
@@ -187,7 +190,7 @@ function groups_db_group_exists($groupid) {
     } else {
         $exists = record_exists($table = 'groups_groups', 'id', $groupid);
     }
-    
+
     return $exists;
 }
 
@@ -224,7 +227,7 @@ function groups_db_group_belongs_to_course($groupid, $courseid) {
                                   'groupid', $groupid, 
                                   'courseid', $courseid);
     }
-    
+
     return $ismember;
 }
 
@@ -249,11 +252,11 @@ function groups_db_create_group($courseid, $groupsettings = false) {
     	$record = $groupsettings;
         $record->timecreated = time();
         $record->timemodified = time();
-        print_r($record);
+        //print_r($record);
         $groupid = insert_record('groups_groups', $record);
 
-        
         if ($groupid != false) {
+            $record2 = new Object();
 	        $record2->courseid = $courseid;
 	        $record2->groupid = $groupid;
 	        $record2->timeadded = time();
@@ -282,12 +285,13 @@ function groups_db_add_member($userid, $groupid) {
 		$useradded = true;
 	} else {
         // Add the user to the group
+        $record = new Object();
 		$record->groupid = $groupid;
 		$record->userid = $userid;
 		$record->timeadded = time();
 		$useradded = insert_record($table = 'groups_groups_users', $record);
 	}
-	
+
 	return $useradded;
 }
 
@@ -312,7 +316,7 @@ function groups_db_set_group_settings($groupid, $groupsettings) {
             $success = false;
         }
     }
-     
+
     return $success;
 	
 }
@@ -342,7 +346,7 @@ function groups_db_remove_member($userid, $groupid) {
             $success = true;
         }
     }
-    
+
     return $success;
 }
 
@@ -369,24 +373,24 @@ function groups_db_delete_group($groupid) {
 	            }
 	        }
         }
-    	
-       // Remove any groupings that the group belongs to     
-	   $groupingids = groups_get_groupings_for_group($groupid); 
-	   if ($groupingids != false) {
-		   foreach($groupingids as $groupingid) {
-		       $groupremoved = groups_remove_group_from_grouping($groupid, 
-		                                                         $groupingid);
-		       if(!$groupremoved) {
+
+        // Remove any groupings that the group belongs to     
+	    $groupingids = groups_get_groupings_for_group($groupid); 
+ 	    if ($groupingids != false) {
+		    foreach($groupingids as $groupingid) {
+		        $groupremoved = groups_remove_group_from_grouping($groupid, 
+		                                                          $groupingid);
+		        if(!$groupremoved) {
 		       		$success = false; 
-		       }
-		   }
-	   }
-		
+		        }
+		    }
+	    }
+
 		$results = delete_records('groups_courses_groups', 'groupid', $groupid);
 		if ($results == false) {
 			$success = false;
 		}
-		
+
         // Delete the group itself
         $results = delete_records($table = 'groups_groups', $field1 = 'id', 
                                   $value1 = $groupid);
@@ -396,7 +400,8 @@ function groups_db_delete_group($groupid) {
             $success = false;
         }
     }
-    
+
     return $success;
 }
+
 ?>

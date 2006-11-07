@@ -1,11 +1,15 @@
 <?php
-/*******************************************************************************
+/**
  * Functions to make changes to groupings in the database. In general these 
- * access the groups_groupings, groups_courses_groupings and 
- * groups_groupings_groups tables, although some all access the groups
- * tables that store information about groups.
- ******************************************************************************/
-
+ * access the tables:
+ *     groups_groupings, groups_courses_groupings and groups_groupings_groups
+ * although some access all the tables that store information about groups.
+ *
+ * @copyright &copy; 2006 The Open University
+ * @author J.White AT open.ac.uk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package groups
+ */
 require_once($CFG->libdir.'/datalib.php');
 
 /*******************************************************************************
@@ -271,6 +275,7 @@ function groups_db_create_grouping($courseid, $groupingsettings = false) {
 
         $groupingid = insert_record('groups_groupings', $record);
         if ($groupingid != false) {
+            $record2 = new Object();
 	        $record2->courseid = $courseid;
 	        $record2->groupingid = $groupingid;
 	        $record2->timeadded = time();
@@ -297,9 +302,11 @@ function groups_db_add_group_to_grouping($groupid, $groupingid) {
         $success = false;
     } else {
         $success = true;
+        $record = new Object();
         $record->groupingid = $groupingid;
         $record->groupid = $groupid;
         $record->timeadded = time();
+
         $results = insert_record('groups_groupings_groups', $record);
         if (!$results) {
             $success = false;
@@ -346,6 +353,7 @@ function groups_db_set_grouping_for_coursemodule($groupingid, $coursemoduleid) {
 	if (!$groupingid or !$coursemoduleid) {
 		$success = false;
 	} else {
+        $record = new Object();
 		$record->id = $coursemoduleid;
 		$record->groupingid = $groupingid;
 		$result = update_record('course_modules', $record);
@@ -411,12 +419,12 @@ function groups_db_delete_grouping($groupingid) {
             $success = false;
         } 
         
-       $results = delete_records('groups_groupings', 'id', $groupingid);
+        $results = delete_records('groups_groupings', 'id', $groupingid);
         if ($results == false) {
             $success = false;
         } 
     }
-    
+
     return $success;
     
 }

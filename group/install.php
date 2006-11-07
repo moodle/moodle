@@ -1,5 +1,13 @@
 <?php
-
+/**
+ * Functions required for setting up the database to use the new groups.
+ *
+ * @copyright &copy; 2006 The Open University
+ * @author J.White AT open.ac.uk
+ * @author N.D.Freear@open.ac.uk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package groups
+ */
 require_once('../config.php');
 require_once($CFG->dirroot.'/group/db/dbsetup.php');
 require_once($CFG->dirroot.'/group/lib/utillib.php');
@@ -20,6 +28,7 @@ groups_create_database_tables();
  * @return int The id of the grouping to which the groups have been copied, or false if an error occurred. 
  */
 function groups_copy_moodle_groups_to_groups($courseid) {
+    $groupingsettings = new Object();
 	$groupingsettings->name = 'Old moodle groups';
 	$groupingid = groups_create_grouping($courseid, $groupingsettings);
 
