@@ -261,6 +261,12 @@ table.formtable tbody .htmlarea th
   height: 17px;
 }
 
+img.emoticon {
+  vertical-align: middle;
+  width: 15px;
+  height: 15px;
+}
+
 form.popupform {
   display: inline;
 }
