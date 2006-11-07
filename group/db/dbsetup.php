@@ -88,30 +88,31 @@ function groups_create_database_tables() {
 									)";
 									  
         $creategroupingstablesql = "CREATE TABLE `{$table_prefix}groups_groupings` (
-								  `id` int(10) unsigned NOT NULL auto_increment,
-								  `name` varchar(254) collate latin1_general_ci NOT NULL default '',
-								  `description` text collate latin1_general_ci NOT NULL,
-								  `timecreated` int(10) unsigned NOT NULL default '0',
-								  PRIMARY KEY  (`id`),
-								  UNIQUE KEY `id` (`id`)
-								)  ";
-																	   
-        $creategroupingsgroupstablesql = "CREATE TABLE IF NOT EXISTS `{$table_prefix}groups_groupings_groups` (
-									  `id` int(10) unsigned NOT NULL auto_increment,
-									  `groupingid` int(10) unsigned default '0',
-									  `groupid` int(10) NOT NULL,
-									  `timecreated` int(10) unsigned NOT NULL default '0',
-    								  `viewowngroup` binary(1) NOT NULL,
-									  `viewallgroupsmembers` binary(1) NOT NULL,
-									  `viewallgroupsactivities` binary(1) NOT NULL,
-									  `teachersgroupmark` binary(1) NOT NULL,
-									  `teachersgroupview` binary(1) NOT NULL,
-									  `teachersoverride` binary(1) NOT NULL, .
-									  PRIMARY KEY  (`id`),
-									  UNIQUE KEY `id` (`id`),
-									  KEY `courseid` (`groupingid`)
-									)  ";								  
+                            `id` int(10) unsigned NOT NULL auto_increment,
+                            `name` varchar(254) collate latin1_general_ci NOT NULL default '',
+                            `description` text collate latin1_general_ci NOT NULL,
+                            `timecreated` int(10) unsigned NOT NULL default '0',
+                            `viewowngroup` binary(1) NOT NULL,
+                            `viewallgroupsmembers` binary(1) NOT NULL,
+                            `viewallgroupsactivities` binary(1) NOT NULL,
+                            `teachersgroupmark` binary(1) NOT NULL,
+                            `teachersgroupview` binary(1) NOT NULL,
+                            `teachersoverride` binary(1) NOT NULL,
+                            PRIMARY KEY  (`id`),
+                            UNIQUE KEY `id` (`id`)
+                          ) ";
 
+        $creategroupingsgroupstablesql = "CREATE TABLE IF NOT EXISTS `{$table_prefix}groups_groupings_groups` (
+                            `id` int(10) unsigned NOT NULL auto_increment,
+                            `groupingid` int(10) unsigned default '0',
+                            `groupid` int(10) NOT NULL,
+                            `timeadded` int(10) unsigned NOT NULL default '0',
+
+                            PRIMARY KEY  (`id`),
+                            UNIQUE KEY `id` (`id`),
+                            KEY `courseid` (`groupingid`)
+                          ) ";
+                          //TODO: `timecreated` int(10) unsigned NOT NULL default '0',                                  
     } else { //postgres7
 
         $createcoursegrouptablesql = "CREATE TABLE {$CFG->prefix}groups_courses_groups (
@@ -160,13 +161,6 @@ function groups_create_database_tables() {
                             id SERIAL PRIMARY KEY,
                             name varchar(254) NOT NULL default '',
                             description text NOT NULL,
-                            timecreated integer NOT NULL default '0'
-                          ) ";
-                                                                       
-        $creategroupingsgroupstablesql = "CREATE TABLE {$CFG->prefix}groups_groupings_groups (
-                            id SERIAL PRIMARY KEY,
-                            groupingid integer default '0',
-                            groupid integer NOT NULL,
                             timecreated integer NOT NULL default '0',
                             viewowngroup integer NOT NULL,
                             viewallgroupsmembers integer NOT NULL,
@@ -174,9 +168,17 @@ function groups_create_database_tables() {
                             teachersgroupmark integer NOT NULL,
                             teachersgroupview integer NOT NULL,
                             teachersoverride integer NOT NULL
+                          ) ";
+
+        $creategroupingsgroupstablesql = "CREATE TABLE {$CFG->prefix}groups_groupings_groups (
+                            id SERIAL PRIMARY KEY,
+                            groupingid integer default '0',
+                            groupid integer NOT NULL,
+                            timeadded integer NOT NULL default '0'
                           );
                           CREATE INDEX {$CFG->prefix}groups_groupings_groups_groupingid_idx ON {$CFG->prefix}groups_groupings_groups (groupingid);
                           ";
+                          //TODO: timecreated default '0'
     }
 
 	modify_database('',$createcoursegrouptablesql );
