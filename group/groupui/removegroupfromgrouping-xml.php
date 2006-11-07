@@ -1,0 +1,28 @@
+<?php
+/**********************************************
+ * Removes a specified group from a specified grouping
+ * (but does not delete the group)
+ **********************************************/
+
+header("Content-Type: text/xml");
+echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
+echo '<groupsresponse>';
+
+include_once("../../../config.php");
+include("../lib/lib.php");
+
+$groupid = required_param('groupid', PARAM_INT);
+$groupingid = required_param('groupingid', PARAM_INT);
+$courseid = required_param('courseid', PARAM_INT);
+
+require_login($courseid);
+	
+if (confirm_sesskey() and isteacheredit($courseid)) {
+	$groupingremoved = groups_remove_group_from_grouping($groupid, $groupingid);
+	if (!$groupingremoved) {
+		echo '<error>Failed to remove group from grouping</error>';
+	}
+}
+
+echo '</groupsresponse>';
+?>

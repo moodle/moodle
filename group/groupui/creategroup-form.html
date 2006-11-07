@@ -1,0 +1,30 @@
+<div id="creategroupform" class="popup">
+    <h3><?php print_string('creategroup', 'groups'); ?> <span id="selectedgroupingforcreatinggroup"></span></h3>
+    <form action="">
+        <p><?php print_string('groupname', 'groups');?></p>
+        <p><input id="newgroupname" type="text" size="40" value="<?php print_string('defaultgroupname', 'groups'); ?>" />
+        <p><?php print_string("groupingdescription", 'groups') ?><br />
+                    <?php helpbutton("text", get_string("helptext")) ?></p>
+        <p><?php print_textarea($usehtmleditor, 5, 45, 200, 400, "newgroupdescription");?></p>
+        <p><?php print_string('enrolmentkey', 'groups') ?></p>
+        <p><input type="text" id="newgroupenrolmentkey" size="25" /></p>
+        <?php if ($printuploadpicture) {  ?>
+        <p><?php print_string('hidepicture', 'groups') ?></p>
+        <p><?php $options = NULL; $options[0] = get_string("no"); $options[1] = get_string("yes"); 
+                 choose_from_menu ($options, "newgrouphidepicture", $group->hidepicture, "");?>
+                ></p>
+
+            <p><?php print_string("newpicture", 'groups') ?></p>
+            <p><?php upload_print_form_fragment(1,array('newgroupicon'),null,false,null,0,0,false);
+				     helpbutton("picture", get_string("helppicture"));
+				     print_string("maxsize", "", display_size($maxbytes), 'groups'); ?>
+               </p>
+            <?php 
+            	}  
+            ?>
+            </table>
+            
+            <p><input type="button" id="creategroup" value="<?php print_string('creategroup', 'groups'); ?>" /></p>
+            <p><input type="button" id="cancelcreategroup" value="<?php print_string('cancel', 'groups'); ?>" /></p>      
+    </form>
+</div>
