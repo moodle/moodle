@@ -83,7 +83,7 @@ function journal_upgrade($oldversion) {
     }
 
     if ($oldversion < 2006092100) {
-        table_column('journal_entries', 'comment', 'entrycomment', 'text', '', '', '');
+        table_column('journal_entries', 'comment', 'entrycomment', 'text', '', '', '', 'null');
     }
 
     //////  DO NOT ADD NEW THINGS HERE!!  USE upgrade.php and the lib/ddllib.php functions.
