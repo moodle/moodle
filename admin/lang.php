@@ -4,6 +4,9 @@
     *
     * CHANGES
     *
+    * 2006/11/07 mudrd8mz
+    * Fixed bug MDL-7361. Thanks to Dan Poltawski for the patch proposal.
+    *
     * 2006/06/08 mudrd8mz
     * 1) Fixed bug 5745 reported by Harry Smith so now can edit en_utf8_local pack
     * 2) More notification messages included
@@ -133,13 +136,14 @@
 
     // Get a list of all the root files in the English directory
 
+    $langbase = $CFG->dataroot . '/lang';
     $enlangdir = "$CFG->dirroot/lang/en_utf8";
     if ($currentlang == 'en_utf8') {
         $langdir = $enlangdir;
     } else {
-        $langdir = "$CFG->dataroot/lang/$currentlang";
+        $langdir = "$langbase/$currentlang";
     }
-    $locallangdir = "$CFG->dataroot/lang/{$currentlang}_local";
+    $locallangdir = "$langbase/{$currentlang}_local";
 
     if (! $stringfiles = get_directory_list($enlangdir, "", false)) {
         error("Could not find English language pack!");
@@ -256,6 +260,14 @@
 
     } else if ($mode == "compare") {
    
+        if (!file_exists($langbase) ){
+            if (!lang_make_directory($langbase) ){
+                error('ERROR: Could not create base lang directory ' . $langbase);
+            } else {
+                echo '<div class="notifysuccess" align="center">Created directory '.
+                                                     $langbase .'</div>'."<br />\n";
+            }
+        } 
         if (!$uselocal && !file_exists($langdir)) {
             if (!lang_make_directory($langdir)) {
                 error('ERROR: Could not create directory '.$langdir);
@@ -573,7 +585,7 @@ function lang_fix_value_from_file($value='') {
  * Try and create a new language directory.
  *
  * @uses $CFG
- * @param string $directory  directory name under $CFG->dataroot/lang eg cs_utf8_local
+ * @param string $directory full path to the directory under $langbase
  * @return string|false Returns full path to directory if successful, false if not
  */
 function lang_make_directory($dir, $shownotices=true) {
