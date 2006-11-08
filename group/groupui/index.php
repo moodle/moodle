@@ -15,7 +15,7 @@ require_once($CFG->libdir.'/uploadlib.php');
 
 $error = false;
  
-$courseid = required_param('id');         
+$courseid = required_param('id', PARAM_INTEGER);         
 
 // Get the course information so we can print the header and check the course id
 // is valid
@@ -52,6 +52,9 @@ if (!$error) {
 	             "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
 	             "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
 	             "-> $strgroups", "", "", true, '', user_login_string($course, $USER));
+
+    //TODO: set to false in /course/group.php
+    $usehtmleditor = false;
 
 	require_once('form.html');
 
