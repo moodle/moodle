@@ -106,7 +106,10 @@
     $isseparategroups = ($course->groupmode == SEPARATEGROUPS and $course->groupmodeforce and
                          !has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id)));
 
-    if ($isseparategroups and (!$currentgroup) ) {  //XXX
+    if ($isseparategroups and (!$currentgroup) ) { 
+        print_header("$course->shortname: ".get_string('participants'), $course->fullname,
+                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> ".
+                     get_string('participants'), "", "", true, "&nbsp;", navmenu($course));
         print_heading(get_string("notingroup", "forum"));
         print_footer($course);
         exit;
