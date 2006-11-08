@@ -2,18 +2,19 @@
 /**********************************************
  * Adds a new grouping
  **********************************************/
- 
-header("Content-Type: text/xml");
-echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
-echo '<groupsresponse>';
 
 require_once('../../config.php');
 require_once('../lib/lib.php');
-$groupingid = required_param('groupingid');
-$courseid = required_param('courseid', PARAM_INT);
 
-$groupingsettings->name =required_param('groupingname');
-$groupingsettings->description = required_param('description');
+@header('Content-Type: text/xml; charset=utf-8');
+echo '<?xml version="1.0" encoding="utf-8"?>';
+echo '<groupsresponse>';
+
+$groupingid = required_param('groupingid', PARAM_INT);
+$courseid   = required_param('courseid', PARAM_INT);
+
+$groupingsettings->name       = required_param('groupingname', PARAM_ALPHANUM);
+$groupingsettings->description= required_param('description', PARAM_ALPHANUM);
 
 require_login($courseid);
 	

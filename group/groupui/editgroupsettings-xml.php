@@ -3,18 +3,19 @@
  * Adds a new grouping
  **********************************************/
  
-header("Content-Type: text/xml");
-echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
-echo '<groupsresponse>';
-
 require_once('../../config.php');
 require_once('../lib/lib.php');
-$groupid = required_param('groupid');
-$groupname = required_param('groupname');
-$description = required_param('description');
-$enrolmentkey = required_param('enrolmentkey');
-$hidepicture = required_param('hidepicture');
-$courseid = required_param('courseid', PARAM_INT);
+
+@header('Content-Type: text/xml; charset=utf-8');
+echo '<?xml version="1.0" encoding="utf-8"?>';
+echo '<groupsresponse>';
+
+$groupid     = required_param('groupid', PARAM_INT);
+$groupname   = required_param('groupname', PARAM_ALPHANUM);
+$description = required_param('description', PARAM_ALPHANUM);
+$enrolmentkey= required_param('enrolmentkey', PARAM_ALPHANUM);
+$hidepicture = required_param('hidepicture', PARAM_INT); //TODO: PARAM_BOOL ??
+$courseid    = required_param('courseid', PARAM_INT);
 
 require_login($courseid);
 	

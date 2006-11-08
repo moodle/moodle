@@ -2,17 +2,17 @@
 /**********************************************
  * Adds users to a group
  **********************************************/
- 
-header("Content-Type: text/xml");
-echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
-echo '<groupsresponse>';
 
 require_once('../../config.php');
 require_once('../lib/lib.php');
 
-$groupid = required_param('groupid', PARAM_INT);
-$users = required_param('users');
+@header('Content-Type: text/xml; charset=utf-8');
+echo '<?xml version="1.0" encoding="utf-8"?>';
+echo '<groupsresponse>';
+
 $courseid = required_param('courseid', PARAM_INT);
+$groupid  = required_param('groupid', PARAM_INT);
+$users    = required_param('users', PARAM_SEQUENCE);
 
 require_login($courseid);
 	

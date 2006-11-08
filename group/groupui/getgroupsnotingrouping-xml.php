@@ -3,15 +3,16 @@
  * Gets the groups not in a grouping for a course
  * and returns them in an XML format
  **********************************************/
-header("Content-Type: text/xml");
-echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
+
+require_once('../lib/lib.php');
+require_once('../../config.php');
+
+@header('Content-Type: text/xml; charset=utf-8');
+echo '<?xml version="1.0" encoding="utf-8"?>';
 echo '<groupsresponse>';
 
-require_once("../lib/lib.php");
-require_once("../../config.php");
-
-$groupingid = required_param('groupingid');
-$courseid = required_param('courseid');
+$groupingid = required_param('groupingid', PARAM_INT);
+$courseid   = required_param('courseid', PARAM_INT);
 
 require_login($courseid);
 	

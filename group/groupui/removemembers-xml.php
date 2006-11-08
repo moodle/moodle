@@ -1,20 +1,19 @@
 <?php
-
 /**********************************************
  * Takes a groupid and comma-separated list of 
  * userids, and removes each of those userids 
  * from the specified group
  **********************************************/
 
-header("Content-Type: text/xml");
-echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
+require_once('../../config.php');
+require_once('../lib/lib.php');
+
+@header('Content-Type: text/xml; charset=utf-8');
+echo '<?xml version="1.0" encoding="utf-8"?>';
 echo '<groupsresponse>';
 
-require_once("../../config.php");
-require_once("../lib/lib.php");
-
-$groupid = required_param('groupid', PARAM_INT);
-$users = required_param('users');
+$groupid  = required_param('groupid', PARAM_INT);
+$users    = required_param('users', PARAM_SEQUENCE);
 $courseid = required_param('courseid', PARAM_INT);
 
 require_login($courseid);

@@ -2,20 +2,22 @@
 /**********************************************
  * Adds a new group to a grouping
  **********************************************/
- 
-header("Content-Type: text/xml");
-echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
-echo '<groupsresponse>';
 
 require_once('../../config.php');
 require_once('../lib/lib.php');
+
+@header('Content-Type: text/xml; charset=utf-8');
+echo '<?xml version="1.0" encoding="utf-8"?>';
+echo '<groupsresponse>';
+
+$courseid   = required_param('courseid', PARAM_INT);
 $groupingid = required_param('groupingid', PARAM_INT);
 
-$groupsettings->name = required_param('groupname');
-$courseid = required_param('courseid', PARAM_INT);
-$groupsettings->description  = required_param('description');
-$groupsettings->enrolmentkey  = required_param('enrolmentkey', PARAM_ALPHANUM);
-$groupsettings->hidepicture = optional_param('hidepicture');
+$groupsettings->name        = required_param('groupname', PARAM_ALPHANUM);
+$groupsettings->description = required_param('description', PARAM_ALPHANUM);
+$groupsettings->enrolmentkey= required_param('enrolmentkey', PARAM_ALPHANUM);
+$groupsettings->hidepicture = optional_param('hidepicture', PARAM_INT);
+
 
 require_login($courseid);
 	
