@@ -48,8 +48,14 @@
         require_login();
     }
 
-    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-        if (moodle_needs_upgrading()) {
+    if ($CFG->rolesactive) { // if already using roles system
+        if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+            if (moodle_needs_upgrading()) {
+                redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
+            }
+        }
+    } else { // if upgrading from 1.6 or below
+        if (isadmin() && moodle_needs_upgrading()) {
             redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
         }
     }
