@@ -2313,14 +2313,17 @@ class admin_setting_special_gradebookroles extends admin_setting {
         $visiblename = get_string('gradebookroles', 'admin');
         $description = get_string('configgradebookroles', 'admin');
         $default = array(5=>'1');    // The student role in a default install
-
         parent::admin_setting($name, $visiblename, $description, $default);
     }
 
     function get_setting() {
         global $CFG;
         if (!empty($CFG->{$this->name})) {
-            return explode(',', $CFG->{$this->name});
+            $result = explode(',', $CFG->{$this->name});
+            foreach ($result as $roleid) {
+                $array[$roleid] = 1;  
+            }
+            return $array;
         } else {
             return null;
         }
@@ -2347,13 +2350,12 @@ class admin_setting_special_gradebookroles extends admin_setting {
         } else {
             $currentsetting = $this->get_setting();
         }
-
         // from to process which roles to display
         if ($roles = get_records('role')) {
             $return = '<div class="form-group">';
             $first = true;
             foreach ($roles as $roleid=>$role) {
-                if (is_array($currentsetting) && in_array($roleid, $currentsetting)) {
+                if (is_array($currentsetting) && in_array($roleid, array_keys($currentsetting))) {
                     $checked = 'checked="checked"';
                 } else {
                     $checked = '';
