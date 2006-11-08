@@ -37,17 +37,44 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right">
-        <strong><?php print_string('publishto', 'blog'); ?>:</strong>
-    </td>
-    <td colspan="2">
-     <?php
-        $options = blog_applicable_publish_states(); //$blogEntry may be null
-        choose_from_menu($options, 'publishstate', $post->publishstate, '');
-     ?>
+    <td align="right"><strong>
     <?php
-        helpbutton('publish_state', get_string('helppublish', 'blog'), 'blog');
+            print_string('entrybody', 'blog');
+    ?>:
+    </strong><br /><br />
+    <small><small>
+    <?php
+        helpbutton('writing', get_string('helpwriting'), 'moodle', true, true);
+        echo '<br />';
+        if ($usehtmleditor) {
+           helpbutton('richtext', get_string('helprichtext'), 'moodle', true, true);
+        } else {
+           emoticonhelpbutton('entry', 'body');
+        }
+    ?>
+    </small></small>
+    </td>
+    <td align="left" colspan="2">
+    <?php print_textarea($usehtmleditor, 25, 62, 500, 600, 'summary', $post->summary); ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><strong><?php print_string('formattexttype'); ?>:</strong></td>
+    <td colspan="2">
+    <?php
+        if ($usehtmleditor) {   /// Trying this out for a while
+            print_string('formathtml');
+            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
+        } else {
+            choose_from_menu(format_text_menu(), 'format', $post->format, '');
+        }
      ?>
+    <small><small>
+    <?php
+        helpbutton('textformat', get_string('helpformatting'));
+     ?>
+    </small></small>
+    <?php  if (isset($errors["summary"])) formerr($errors["summary"]); ?>
     </td>
 </tr>
 <tr valign="top">
@@ -100,48 +127,18 @@
         </table>
     </td>
 </tr>
-
-
-
 <tr valign="top">
-    <td align="right"><strong>
-    <?php
-            print_string('entrybody', 'blog');
-    ?>:
-    </strong><br /><br />
-    <small><small>
-    <?php
-        helpbutton('writing', get_string('helpwriting'), 'moodle', true, true);
-        echo '<br />';
-        if ($usehtmleditor) {
-           helpbutton('richtext', get_string('helprichtext'), 'moodle', true, true);
-        } else {
-           emoticonhelpbutton('entry', 'body');
-        }
-    ?>
-    </small></small>
+    <td align="right">
+        <strong><?php print_string('publishto', 'blog'); ?>:</strong>
     </td>
-    <td align="left" colspan="2">
-    <?php print_textarea($usehtmleditor, 25, 62, 500, 600, 'summary', $post->summary); ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><strong><?php print_string('formattexttype'); ?>:</strong></td>
     <td colspan="2">
-    <?php
-        if ($usehtmleditor) {   /// Trying this out for a while
-            print_string('formathtml');
-            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
-        } else {
-            choose_from_menu(format_text_menu(), 'format', $post->format, '');
-        }
+     <?php
+        $options = blog_applicable_publish_states(); //$blogEntry may be null
+        choose_from_menu($options, 'publishstate', $post->publishstate, '');
      ?>
-    <small><small>
     <?php
-        helpbutton('textformat', get_string('helpformatting'));
+        helpbutton('publish_state', get_string('helppublish', 'blog'), 'blog');
      ?>
-    </small></small>
-    <?php  if (isset($errors["summary"])) formerr($errors["summary"]); ?>
     </td>
 </tr>
 <tr>
