@@ -131,20 +131,6 @@ class moodleform {
         }
     }
 
-    /**
-     * Called after setting up defaults for form and before displaying it.
-     *
-     * @param string $elementname
-     * @param string $formatname
-     * @param object $context
-     */
-    function trusttext_prepare_edit($elementname, $formatname, $context) {
-        $defaultvalue=$this->_form->_defaultValues[$elementname];
-        extract($this->_form->_formats[$formatname]);// format and usehtml
-        trusttext_prepare_edit($defaultvalue, $format,
-                         $usehtml, $context);
-        $this->_form->setDefault($elementname, $defaultvalue);
-    }
 
     function display() {
         $this->_form->display();
@@ -171,11 +157,11 @@ class moodleform {
         return true;
     }
 
+
 }
 
 class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     var $_types = array();
-    var $_formats = array();
 
 
     /**
@@ -211,9 +197,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                     $this->_helpImageURL.'" />');
         $this->setRequiredNote(get_string('denotesreq', 'form', $this->getReqHTML()));
     }
-    function setFormat($elementname, $format, $usehtml) {
-        $this->_formats[$elementname]=compact('format', 'usehtml');
-    }
+
     function setType($elementname, $paramtype) {
         $this->_types[$elementname] = $paramtype;
     }
@@ -481,7 +465,39 @@ function validate_' . $this->_attributes['id'] . '(frm) {
             }
         }
     }
+    function getLockOptionStartScript(){
 
+        return '';
+    }
+    function getLockOptionEndScript(){
+
+        return '';
+    }
+
+    function addGroupmodeSetting($course) {
+
+        if (! $course = get_record('course', 'id', $course)) {
+            error("This course doesn't exist");
+        }
+
+        if ($form->coursemodule) {
+            if (! $cm = get_record('course_modules', 'id', $form->coursemodule)) {
+                error("This course module doesn't exist");
+            }
+        } else {
+            $cm = null;
+        }
+        $groupmode = groupmode($course, $cm);
+        if ($course->groupmode or (!$course->groupmodeforce)) {
+            unset($choices);
+            $choices[NOGROUPS] = get_string('groupsnone');
+            $choices[SEPARATEGROUPS] = get_string('groupsseparate');
+            $choices[VISIBLEGROUPS] = get_string('groupsvisible');
+            choose_from_menu($choices, 'groupmode', $groupmode, '', '', 0, false, $course->groupmodeforce);
+
+        }
+
+    }
 }
 
 /**
@@ -604,6 +620,16 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         }
         $element->updateAttributes(array('id'=>'id_'.$id));
         parent::renderElement($element, $required, $error);
+    }
+    function finishForm(&$form){
+        parent::finishForm($form);
+        // add a validation script
+        if ('' != ($script = $form->getLockOptionStartScript())) {
+            $this->_html = $script . "\n" . $this->_html;
+        }
+        if ('' != ($script = $form->getLockOptionEndScript())) {
+            $this->_html = $this->_html . "\n" . $script;
+        }
     }
 }
 

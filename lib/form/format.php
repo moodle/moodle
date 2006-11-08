@@ -77,7 +77,6 @@ class MoodleQuickForm_format extends MoodleQuickForm_select{
                 }else{
                     $format=FORMAT_MOODLE;
                 }
-                $caller->setFormat($this->getName(), $format, $this->_useHtmlEditor);
                 if ($this->_useHtmlEditor){
                     $this->setValue(array(FORMAT_HTML));
                 }else{

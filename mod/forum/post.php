@@ -732,8 +732,10 @@
                     (!empty($USER->autosubscribe));
 
 
-    $mform_post->set_defaults(array('general'=>$heading,
-                                    'subject'=>$post->subject,
+    trusttext_prepare_edit($post->message, $post->format, can_use_html_editor(), $modcontext);
+
+    $mform_post->set_defaults(array(    'general'=>$heading,
+                                        'subject'=>$post->subject,
                                         'message'=>$post->message,
                                         'subscribe'=>$subscribe?1:0,
                                         'mailnow'=>!empty($post->mailnow),
@@ -772,7 +774,6 @@
                                         array('discussion'=>$discussion->id):
                                         array()));
 
-    $mform_post->trusttext_prepare_edit('message', 'format', $modcontext);
 
     $mform_post->display();
 
