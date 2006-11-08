@@ -190,6 +190,7 @@
         }
     } else {
         if (!has_capability('mod/forum:replypost', $modcontext)) {
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
             if (!has_capability('moodle/legacy:guest', $coursecontext, NULL, false)) {  // User is a guest here!
                 $canreply = false;
             }
