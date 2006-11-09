@@ -1,6 +1,6 @@
 <?php  // $Id$
 
-include_once $CFG->libdir.'/formslib.php';
+require_once($CFG->libdir.'/formslib.php');
 
 class course_request_form extends moodleform {
     function definition() {

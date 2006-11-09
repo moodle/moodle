@@ -3,10 +3,9 @@
     /// this allows a student to request a course be created for them.
 
     require_once('../config.php');
+    require_once('request_form.php');
 
     require_login();
-
-    require_once('request_form.php');
 
     if (isguest()) {
         error("No guests here!");
