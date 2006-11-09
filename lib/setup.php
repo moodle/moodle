@@ -213,6 +213,7 @@ global $HTTPSPAGEREQUIRED;
             set_config('unicodedb', $CFG->unicodedb);
         }
     }
+    
 /// Set the client/server and connection to utf8 if necessary
 /// and configure some other specific variables for each db
     configure_dbconnection();
@@ -637,4 +638,9 @@ $CFG->os = PHP_OS;
         }
     }
 
+/// Moodle 1.8 needs to be run on unicode, kill if not unicodedb
+    if (!$CFG->unicodedb) {
+        print_error('unicoderequired', 'admin');
+    }
+    
 ?>
