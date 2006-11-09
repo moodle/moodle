@@ -456,7 +456,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         foreach ($this->_rules as $elementName => $rules) {
             foreach ($rules as $rule) {
                 if ('client' == $rule['validation']) {
-                    $element = new object();
+                    $element = NULL; // initialize or unset 
 
                     $dependent  = isset($rule['dependent']) && is_array($rule['dependent']);
                     $rule['message'] = strtr($rule['message'], $js_escape);
@@ -626,7 +626,7 @@ function validate_' . $this->_attributes['id'] . '(frm) {
         }
         $groupmode = groupmode($course, $cm);
         if ($course->groupmode or (!$course->groupmodeforce)) {
-            $choices = new object();
+            $choices = array();
             $choices[NOGROUPS] = get_string('groupsnone');
             $choices[SEPARATEGROUPS] = get_string('groupsseparate');
             $choices[VISIBLEGROUPS] = get_string('groupsvisible');
