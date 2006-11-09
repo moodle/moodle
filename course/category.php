@@ -37,7 +37,6 @@
             $USER->categoryediting = $categoryedit;
         }
         $navbaritem = update_category_button($category->id);
-
         $creatorediting = !empty($USER->categoryediting);
         $adminediting = (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID)) and $creatorediting);
 
@@ -315,44 +314,46 @@
             echo '<tr>';
             echo '<td><a '.$linkcss.' href="view.php?id='.$acourse->id.'">'.$acourse->fullname.'</a></td>';
             if ($creatorediting) {
-                if ($adminediting) {
-                    echo "<td>";
+                echo "<td>";
+                if (has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $acourse->id))) {
                     echo '<a title="'.$strsettings.'" href="'.$CFG->wwwroot.'/course/edit.php?id='.
                          $acourse->id.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.$stredit.'" /></a> ';
-                    // role assignment link     
-                    if (has_capability('moodle/role:assign', $context)) { 
-                        echo'<a title="'.get_string('assignroles', 'role').'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'"><img src="'.$CFG->pixpath.'/i/roles.gif" height="11" width="11" alt="'.get_string('assignroles', 'role').'" /></a>';
-                    }                       
+                         '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.$stredit.'" /></a> ';        }
+                
+                // role assignment link     
+                if (has_capability('moodle/role:assign', $context)) { 
+                    echo'<a title="'.get_string('assignroles', 'role').'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'"><img src="'.$CFG->pixpath.'/i/roles.gif" height="11" width="11" alt="'.get_string('assignroles', 'role').'" /></a>';
+                }                       
                          
-                    if (has_capability('moodle/course:delete', $context)) {
-                        echo '<a title="'.$strdelete.'" href="delete.php?id='.$acourse->id.'">'.
-                             '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.$strdelete.'" /></a> ';
-                    }
+                if (has_capability('moodle/course:delete', $context)) {
+                    echo '<a title="'.$strdelete.'" href="delete.php?id='.$acourse->id.'">'.
+                            '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.$strdelete.'" /></a> ';
+                }
 
-                    if (has_capability('moodle/course:visibility', $context)) {
-                        if (!empty($acourse->visible)) {
-                            echo '<a title="'.$strhide.'" href="category.php?id='.$category->id.'&amp;page='.$page.
-                                '&amp;perpage='.$perpage.'&amp;hide='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
-                                '<img src="'.$CFG->pixpath.'/t/hide.gif" height="11" width="11" border="0" alt="'.$strhide.'" /></a> ';
-                        } else {
-                            echo '<a title="'.$strshow.'" href="category.php?id='.$category->id.'&amp;page='.$page.
-                                '&amp;perpage='.$perpage.'&amp;show='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
-                                '<img src="'.$CFG->pixpath.'/t/show.gif" height="11" width="11" border="0" alt="'.$strshow.'" /></a> ';
-                        }
+                if (has_capability('moodle/course:visibility', $context)) {
+                    if (!empty($acourse->visible)) {
+                        echo '<a title="'.$strhide.'" href="category.php?id='.$category->id.'&amp;page='.$page.
+                            '&amp;perpage='.$perpage.'&amp;hide='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
+                            '<img src="'.$CFG->pixpath.'/t/hide.gif" height="11" width="11" border="0" alt="'.$strhide.'" /></a> ';
+                    } else {
+                        echo '<a title="'.$strshow.'" href="category.php?id='.$category->id.'&amp;page='.$page.
+                            '&amp;perpage='.$perpage.'&amp;show='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
+                            '<img src="'.$CFG->pixpath.'/t/show.gif" height="11" width="11" border="0" alt="'.$strshow.'" /></a> ';
                     }
+                }
 
-                    if (has_capability('moodle/site:backup', $context)) {
-                        echo '<a title="'.$strbackup.'" href="../backup/backup.php?id='.$acourse->id.'">'.
-                             '<img src="'.$CFG->pixpath.'/t/backup.gif" height="11" width="11" border="0" alt="" /></a> ';
-                    }
+                if (has_capability('moodle/site:backup', $context)) {
+                    echo '<a title="'.$strbackup.'" href="../backup/backup.php?id='.$acourse->id.'">'.
+                            '<img src="'.$CFG->pixpath.'/t/backup.gif" height="11" width="11" border="0" alt="" /></a> ';
+                }
                     
-                    if (has_capability('moodle/site:restore', $context)) {
-                        echo '<a title="'.$strrestore.'" href="../files/index.php?id='.$acourse->id.
-                                 '&amp;wdir=/backupdata">'.
-                                 '<img src="'.$CFG->pixpath.'/t/restore.gif" height="11" width="11" border="0" alt="" /></a> ';
-                    }
+                if (has_capability('moodle/site:restore', $context)) {
+                    echo '<a title="'.$strrestore.'" href="../files/index.php?id='.$acourse->id.
+                         '&amp;wdir=/backupdata">'.
+                         '<img src="'.$CFG->pixpath.'/t/restore.gif" height="11" width="11" border="0" alt="" /></a> ';
+                }
 
+                if (has_capability('moodle/category:update', $context)) {
                     if ($up) {
                         echo '<a title="'.$strmoveup.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                              '&amp;perpage='.$perpage.'&amp;moveup='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
@@ -368,20 +369,13 @@
                     } else {
                         echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /> ';
                     }
-
-                    echo '</td>';
-                    echo '<td align="center">';
-                    echo '<input type="checkbox" name="c'.$acourse->id.'" />';
                     $abletomovecourses = true;
-
-                } else if (has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $acourse->id))) {
-                    echo '<td>';
-                    echo '<a title="'.$strsettings.'" href="'.$CFG->wwwroot.'/course/edit.php?id='.$acourse->id.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.$strsettings.'" /></a> ';
-                    echo '<a title="'.$strassignteachers.'" href="'.$CFG->wwwroot.'/course/teacher.php?id='.$acourse->id.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/user.gif" height="11" width="11" border="0" alt="'.$strassignteachers.'" /></a> ';
                 }
+                
                 echo '</td>';
+                echo '<td align="center">';
+                echo '<input type="checkbox" name="c'.$acourse->id.'" />';
+                            
             } else {
                 echo '<td align="right">';
                 if (!empty($acourse->guest)) {
