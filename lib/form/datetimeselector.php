@@ -5,9 +5,9 @@ require_once "$CFG->libdir/formslib.php";
 
 /**
  * Class for a group of elements used to input a date and time.
- * 
+ *
  * Emulates moodle print_date_selector function and also allows you to select a time.
- * 
+ *
  * @author Jamie Pratt <me@jamiep.org>
  * @access public
  */
@@ -30,12 +30,12 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
     * @var      array
     */
     var $_wrap = array('', '');
-    
+
     //var $_seperator=array('', '', 'Time ', '');
 
    /**
     * Class constructor
-    * 
+    *
     * @access   public
     * @param    string  Element's name
     * @param    mixed   Label(s) for an element
@@ -89,12 +89,13 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
         $this->_elements[] =& MoodleQuickForm::createElement('select', 'hour', null, $hours, $this->getAttributes(), true);
         $this->_elements[] =& MoodleQuickForm::createElement('select','minute', null, $minutes, $this->getAttributes(), true);
 
+        $this->setValue();
     }
 
     // }}}
     // {{{ setValue()
 
-    function setValue($value)
+    function setValue($value=0)
     {
         if (!($value)) {
             $value = time();
@@ -107,7 +108,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
                 'day' => $currentdate['mday'],
                 'month' => $currentdate['mon'],
                 'year' => $currentdate['year']);
-            
+
         }
         parent::setValue($value);
     }

@@ -78,13 +78,14 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
         $this->_elements[] =& MoodleQuickForm::createElement('select', 'day', null, $days, $this->getAttributes(), true);
         $this->_elements[] =& MoodleQuickForm::createElement('select', 'month', null, $months, $this->getAttributes(), true);
         $this->_elements[] =& MoodleQuickForm::createElement('select', 'year', null, $years, $this->getAttributes(), true);
+        $this->setValue();
 
     }
 
     // }}}
     // {{{ setValue()
 
-    function setValue($value)
+    function setValue($value=0)
     {
         if (!($value)) {
             $value = time();

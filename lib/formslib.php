@@ -280,6 +280,74 @@ class moodleform {
         return true;
     }
 }
+/**
+ * For extra methods for form wrapper specific to be used for module add / update forms.
+ *
+ */
+class moodleform_mod extends moodleform {
+    function standard_coursemodule_elements(){
+        $mform=$this->_form;
+        $mform->addElement('header', '', get_string('modstandardels', 'form'));
+        $mform->addElement('modgroupmode', 'groupmode', get_string('groupmode'));
+        $mform->setHelpButton('groupmode', array('groupmode', get_string('groupmode')));
+        $mform->setType('groupmode', PARAM_INT);
+
+        $mform->addElement('modvisible', 'visible', get_string('visible'));
+        $mform->setType('visible', PARAM_INT);
+
+        $mform->addElement('hidden', 'course', 0);
+        $mform->setType('course', PARAM_INT);
+
+        $mform->addElement('hidden', 'coursemodule', 0);
+        $mform->setType('coursemodule', PARAM_INT);
+
+        $mform->addElement('hidden', 'section', 0);
+        $mform->setType('section', PARAM_INT);
+
+        $mform->addElement('hidden', 'module', 0);
+        $mform->setType('module', PARAM_INT);
+
+        $mform->addElement('hidden', 'modulename', '');
+        $mform->setType('modulename', PARAM_SAFEDIR);
+
+        $mform->addElement('hidden', 'instance', 0);
+        $mform->setType('instance', PARAM_INT);
+
+        $mform->addElement('hidden', 'add', 0);
+        $mform->setType('add', PARAM_ALPHA);
+
+        $mform->addElement('hidden', 'update', 0);
+        $mform->setType('update', PARAM_INT);
+    }
+
+    function standard_coursemodule_elements_setup($course, $cm, $section){
+        $this->modgroupmode_setup($course, $cm);
+        $this->modvisible_setup($course, $cm, $section);
+    }
+    function modgroupmode_setup($course, $cm){
+        $this->set_defaults(array('groupmode'=>groupmode($course, $cm)));
+
+    }
+    function modvisible_setup($course, $cm, $section){
+        if ($cm) {
+            $visible = $cm->visible;
+        } else {
+            $visible = 1;
+        }
+
+        if (!$cm) { // adding activity
+                    //in this case $form->section is the section number, not the id
+            $hiddensection = !get_field('course_sections', 'visible', 'section', $section, 'course', $course->id);
+        } else { //updating activity
+            $hiddensection = !get_field('course_sections', 'visible', 'id', $section);
+        }
+        if ($hiddensection) {
+            $visible = 0;
+        }
+         $this->set_defaults(array('visible'=>$visible));
+    }
+
+}
 
 class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     var $_types = array();
@@ -611,30 +679,6 @@ function validate_' . $this->_attributes['id'] . '(frm) {
         return '';
     }
 
-    function addGroupmodeSetting($course) {
-
-        if (! $course = get_record('course', 'id', $course)) {
-            error("This course doesn't exist");
-        }
-
-        if ($form->coursemodule) {
-            if (! $cm = get_record('course_modules', 'id', $form->coursemodule)) {
-                error("This course module doesn't exist");
-            }
-        } else {
-            $cm = null;
-        }
-        $groupmode = groupmode($course, $cm);
-        if ($course->groupmode or (!$course->groupmodeforce)) {
-            $choices = array();
-            $choices[NOGROUPS] = get_string('groupsnone');
-            $choices[SEPARATEGROUPS] = get_string('groupsseparate');
-            $choices[VISIBLEGROUPS] = get_string('groupsvisible');
-            choose_from_menu($choices, 'groupmode', $groupmode, '', '', 0, false, $course->groupmodeforce);
-
-        }
-
-    }
 }
 
 /**
@@ -787,5 +831,7 @@ MoodleQuickForm::registerElementType('htmleditor', "$CFG->libdir/form/htmleditor
 MoodleQuickForm::registerElementType('format', "$CFG->libdir/form/format.php", 'MoodleQuickForm_format');
 MoodleQuickForm::registerElementType('static', "$CFG->libdir/form/static.php", 'MoodleQuickForm_static');
 MoodleQuickForm::registerElementType('hidden', "$CFG->libdir/form/hidden.php", 'MoodleQuickForm_hidden');
+MoodleQuickForm::registerElementType('modvisible', "$CFG->libdir/form/modvisible.php", 'MoodleQuickForm_modvisible');
+MoodleQuickForm::registerElementType('modgroupmode', "$CFG->libdir/form/modgroupmode.php", 'MoodleQuickForm_modgroupmode');
 
 ?>
