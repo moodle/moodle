@@ -160,7 +160,7 @@ class moodleform {
         }
         $filter = $slashed ? 'stripslashes' : NULL;
         $this->_form->setDefaults($default_values, $filter);
-        //update form definition when data changed 
+        //update form definition when data changed
         $this->definition_after_data();
     }
 
@@ -229,7 +229,7 @@ class moodleform {
 
     /**
      * Save verified uploaded files into directory. Upload process can be customised from definition()
-     * method by creating instance of upload manager and storing it in $this->_upload_form 
+     * method by creating instance of upload manager and storing it in $this->_upload_form
      *
      * @param string $destination where to store uploaded files
      * @return bool success
@@ -272,9 +272,9 @@ class moodleform {
      * Dummy stub method - override if you needed to perform some extra validation.
      * If there are errors return array of errors ("fieldname"=>"error message"),
      * otherwise true if ok.
-     * 
+     *
      * @param array $data array of ("fieldname"=>value) of submitted data
-     * @return bool array of errors or true if ok   
+     * @return bool array of errors or true if ok
      */
     function validation($data) {
         return true;
