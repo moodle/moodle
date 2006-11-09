@@ -24,7 +24,7 @@ class course_edit_form extends moodleform {
                 $disable_meta = get_string('metaalreadyinmeta');
 
             } else if ($course->metacourse) {
-                if (count_records('course_meta', 'parent_course', $coursecourse->id) > 0) {
+                if (count_records('course_meta', 'parent_course', $course->id) > 0) {
                     $disable_meta = get_string('metaalreadyhascourses');
                 }
 
@@ -157,12 +157,14 @@ class course_edit_form extends moodleform {
         $meta[1] = get_string('yes');
         if ($disable_meta === false) {
             $mform->addElement('select', 'metacourse', get_string('managemeta'), $meta);
+            $mform->setHelpButton('metacourse', array('metacourse', get_string('metacourse')), true);
+            $mform->setDefault('metacourse', 0);
         } else {
-            $mform->addElement('static', 'metacourse', get_string('managemeta'),
+            // no metacourse element - we do not want to change it anyway!
+            $mform->addElement('static', 'nometacourse', get_string('managemeta'),
                 ((empty($course->metacourse)) ? $meta[0] : $meta[1]) . " - $disable_meta ");
+            $mform->setHelpButton('nometacourse', array('metacourse', get_string('metacourse')), true);
         }
-        $mform->setHelpButton('metacourse', array('metacourse', get_string('metacourse')), true);
-        $mform->setDefault('metacourse', 0);
 
         $roles = get_assignable_roles($context);
         if (!empty($course)) {
