@@ -4,7 +4,6 @@
     require_once('../config.php');
     require_once($CFG->dirroot.'/enrol/enrol.class.php');
     require_once($CFG->libdir.'/blocklib.php');
-    require_once($CFG->libdir.'/formslib.php');
     require_once('lib.php');
     require_once('edit_form.php');
 

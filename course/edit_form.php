@@ -1,5 +1,7 @@
 <?php  //$Id$
 
+require_once($CFG->libdir.'/formslib.php');
+
 class course_edit_form extends moodleform {
 
     function definition() {
