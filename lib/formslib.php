@@ -15,14 +15,17 @@ require_once 'HTML/QuickForm.php';
 require_once 'HTML/QuickForm/DHTMLRulesTableless.php';
 require_once 'HTML/QuickForm/Renderer/Tableless.php';
 
+require_once $CFG->libdir.'/uploadlib.php';
+
 if ($CFG->debug >= DEBUG_ALL){
     PEAR::setErrorHandling(PEAR_ERROR_PRINT);
 }
 
 class moodleform {
-    var $_formname;        // form name
-    var $_form;        // quickform object definition
-    var $_customdata;  // globals workaround
+    var $_formname;       // form name
+    var $_form;           // quickform object definition
+    var $_customdata;     // globals workaround
+    var $_upload_manager; // file upload manager
 
     function moodleform($action, $customdata=null, $method='post', $target='', $attributes=null) {
         $this->_formname = rtrim(get_class($this), '_form');
@@ -63,6 +66,7 @@ class moodleform {
 
     function _process_submission($method) {
         $submission = array();
+        $files = array();
         if ($method == 'post') {
             if (!empty($_POST)) {
                 $submission = $_POST;
@@ -81,8 +85,52 @@ class moodleform {
             $submission = array();
         }
 
-        $this->_form->updateSubmission($submission);
+        $this->_form->updateSubmission($submission, $_FILES);
         $this->definition_after_data();
+    }
+
+    function _validate_files() {
+        if (empty($_FILES)) {
+            // we do not need to do any checks because no files were submitted
+            // TODO: find out why server side required rule does not work for uploaded files;
+            //       testing is easily done by always returning true from this function and adding
+            //       $mform->addRule('soubor', get_string('required'), 'required', null, 'server');
+            //       and submitting form without selected file
+            return true;
+        }
+        $errors = array();
+        $mform =& $this->_form;
+
+        // create default upload manager if not already created
+        if (empty($this->_upload_manager)) {
+            $this->_upload_manager = new upload_manager();
+        }
+
+        // check the files
+        $status = $this->_upload_manager->preprocess_files();
+
+        // now check that we really want each file
+        foreach ($_FILES as $elname=>$file) {
+            if ($mform->elementExists($elname) and $mform->getElementType($elname)=='file') {
+                $required = $mform->isElementRequired($elname);
+                if (!empty($this->_upload_manager->files[$elname]['uploadlog']) and empty($this->_upload_manager->files[$elname]['clear'])) {
+                    if (!$required and $file['error'] == UPLOAD_ERR_NO_FILE) {
+                        // file not uploaded and not required - ignore it
+                        continue;
+                    }
+                    $errors[$elname] = $this->_upload_manager->files[$elname]['uploadlog'];
+                }
+            } else {
+                error('Incorrect upload attemp!');
+            }
+        }
+
+        // return errors if found
+        if ($status and 0 == count($errors)){
+            return true;
+        } else {
+            return $errors;
+        }
     }
 
     function set_defaults($default_values, $slashed=false) {
@@ -98,7 +146,7 @@ class moodleform {
     }
 
     function is_validated() {
-        static $validated = null;
+        static $validated = null; // one validation is enough
 
         if ($validated === null) {
             $internal_val = $this->_form->validate();
@@ -111,7 +159,16 @@ class moodleform {
                 }
                 $moodle_val = false;
             }
-            $validated = ($internal_val and $moodle_val);
+            $file_val = $this->_validate_files();
+            if ($file_val !== true) {
+                if (!empty($file_val)) {
+                    foreach ($file_val as $element=>$msg) {
+                        $this->_form->setElementError($element, $msg);
+                    }
+                }
+                $file_val = false;
+            }
+            $validated = ($internal_val and $moodle_val and $file_val);
         }
         return $validated;
     }
@@ -131,12 +188,25 @@ class moodleform {
         }
     }
 
+    function save_files($destination) {
+        if (empty($this->_upload_manager)) {
+            return false;
+        }
+        if ($this->is_submitted() and $this->is_validated()) {
+            return $this->_upload_manager->save_files($destination);
+        }
+        return false;
+    }
 
     function display() {
         $this->_form->display();
     }
 
-    // abstract method - always override
+    /**
+     * abstract method - always override.
+     *
+     * If you need special handling of uploaded files, create instance of $this->_upload_manager here.
+     */
     function definition() {
         error('Abstract form_definition() method in class '.get_class($this).' must be overriden, please fix the code.');
     }
@@ -201,13 +271,16 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     function setType($elementname, $paramtype) {
         $this->_types[$elementname] = $paramtype;
     }
+
     function setTypes($paramtypes) {
         $this->_types = $paramtypes + $this->_types;
     }
-    function updateSubmission($submission) {
+
+    function updateSubmission($submission, $files) {
+        $this->_flagSubmitted = false;
+
         if (empty($submission)) {
             $this->_submitValues = array();
-            $this->_flagSubmitted = false;
         } else {
             foreach ($submission as $key=>$s) {
                 if (array_key_exists($key, $this->_types)) {
@@ -215,6 +288,19 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                 }
             }
             $this->_submitValues = $this->_recursiveFilter('stripslashes', $submission);
+            $this->_flagSubmitted = true;
+        }
+
+        if (empty($files)) {
+            $this->_submitFiles = array();
+        } else {
+            if (1 == get_magic_quotes_gpc()) {
+                foreach ($files as $elname=>$file) {
+                    // dangerous characters in filenames are cleaned later in upload_manager
+                    $files[$elname]['name'] = stripslashes($files[$elname]['name']);
+                }
+            }
+            $this->_submitFiles = $files;
             $this->_flagSubmitted = true;
         }
 
@@ -319,7 +405,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         foreach ($this->_rules as $elementName => $rules) {
             foreach ($rules as $rule) {
                 if ('client' == $rule['validation']) {
-                    unset($element);
+                    $element = new object();
 
                     $dependent  = isset($rule['dependent']) && is_array($rule['dependent']);
                     $rule['message'] = strtr($rule['message'], $js_escape);
@@ -489,7 +575,7 @@ function validate_' . $this->_attributes['id'] . '(frm) {
         }
         $groupmode = groupmode($course, $cm);
         if ($course->groupmode or (!$course->groupmodeforce)) {
-            unset($choices);
+            $choices = new object();
             $choices[NOGROUPS] = get_string('groupsnone');
             $choices[SEPARATEGROUPS] = get_string('groupsseparate');
             $choices[VISIBLEGROUPS] = get_string('groupsvisible');
