@@ -21,6 +21,9 @@ if ($CFG->debug >= DEBUG_ALL){
     PEAR::setErrorHandling(PEAR_ERROR_PRINT);
 }
 
+/**
+ * Moodle specific wrapper that separates quickforms syntax from moodle code.
+ */
 class moodleform {
     var $_formname;       // form name
     var $_form;           // quickform object definition
@@ -43,7 +46,10 @@ class moodleform {
         // we have to know all input types before processing submission ;-)
         $this->_process_submission($method);
 
+        // update form definition based on final data
+        $this->definition_after_data();
     }
+
     /**
      * To autofocus on first form element with error.
      *
@@ -64,9 +70,12 @@ class moodleform {
         }
     }
 
+    /**
+     * Internal method. Alters submitted data to be suitable for quickforms processing.
+     * Must be called when the form is fully set up.
+     */
     function _process_submission($method) {
         $submission = array();
-        $files = array();
         if ($method == 'post') {
             if (!empty($_POST)) {
                 $submission = $_POST;
@@ -81,14 +90,18 @@ class moodleform {
             if (!confirm_sesskey()) {
                 error('Incorrect sesskey submitted, form not accepted!');
             }
+            $files = $_FILES;
         } else {
             $submission = array();
+            $files = array();
         }
 
-        $this->_form->updateSubmission($submission, $_FILES);
-        $this->definition_after_data();
+        $this->_form->updateSubmission($submission, $files);
     }
 
+    /**
+     * Internal method. Validates all uploaded files.
+     */
     function _validate_files() {
         if (empty($_FILES)) {
             // we do not need to do any checks because no files were submitted
@@ -133,18 +146,38 @@ class moodleform {
         }
     }
 
+    /**
+     * Use existing data as form defaults. Usually new entry defaults are stored directly in
+     * form definition (new entry form); this function is used to apply defaults for entries that already exist
+     * in database (edit entry form).
+     *
+     * @param mixed $default_values object or array of default values
+     * @param bool $slased true if magic quotes applied to data values
+     */
     function set_defaults($default_values, $slashed=false) {
         if (is_object($default_values)) {
             $default_values = (array)$default_values;
         }
         $filter = $slashed ? 'stripslashes' : NULL;
         $this->_form->setDefaults($default_values, $filter);
+        //update form definition when data changed 
+        $this->definition_after_data();
     }
 
+    /**
+     * Check that form was submitted. Does not check validity of submitted data.
+     *
+     * @return bool true if form properly submitted
+     */
     function is_submitted() {
         return $this->_form->isSubmitted();
     }
 
+    /**
+     * Check that form data is valid.
+     *
+     * @return bool true if form data valid
+     */
     function is_validated() {
         static $validated = null; // one validation is enough
 
@@ -173,6 +206,12 @@ class moodleform {
         return $validated;
     }
 
+    /**
+     * Return submitted data if properly submitted.
+     *
+     * @param bool $slashed true means return data with addslashes applied
+     * @return object submitted data; NULL if not valid or not submitted
+     */
     function data_submitted($slashed=true) {
         if ($this->is_submitted() and $this->is_validated()) {
             $data = $this->_form->exportValues(null, $slashed);
@@ -188,6 +227,13 @@ class moodleform {
         }
     }
 
+    /**
+     * Save verified uploaded files into directory. Upload process can be customised from definition()
+     * method by creating instance of upload manager and storing it in $this->_upload_form 
+     *
+     * @param string $destination where to store uploaded files
+     * @return bool success
+     */
     function save_files($destination) {
         if (empty($this->_upload_manager)) {
             return false;
@@ -198,12 +244,15 @@ class moodleform {
         return false;
     }
 
+    /**
+     * Print html form.
+     */
     function display() {
         $this->_form->display();
     }
 
     /**
-     * abstract method - always override.
+     * Abstract method - always override!
      *
      * If you need special handling of uploaded files, create instance of $this->_upload_manager here.
      */
@@ -212,22 +261,24 @@ class moodleform {
     }
 
     /**
-     * Another abstract function. This one is called after submitted data has
-     * been processed and is available. All form setup that is dependent on form values
-     * should go in here.
-     *
+     * Dummy stub method - override if you need to setup the form depending on current
+     * values. This method is called after definition(), data submission and set_defaults().
+     * All form setup that is dependent on form values should go in here.
      */
     function definition_after_data(){
-
     }
 
-    // dummy stub method - override if needed
+    /**
+     * Dummy stub method - override if you needed to perform some extra validation.
+     * If there are errors return array of errors ("fieldname"=>"error message"),
+     * otherwise true if ok.
+     * 
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @return bool array of errors or true if ok   
+     */
     function validation($data) {
-        // return array of errors ("fieldname"=>"error message") or true if ok
         return true;
     }
-
-
 }
 
 class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
