@@ -58,9 +58,6 @@ function chat_add_instance($chat) {
 
     $chat->timemodified = time();
 
-    $chat->chattime = make_timestamp($chat->chatyear, $chat->chatmonth, $chat->chatday,
-                                     $chat->chathour, $chat->chatminute);
-
     if ($returnid = insert_record("chat", $chat)) {
 
         $event = NULL;
@@ -90,12 +87,10 @@ function chat_update_instance($chat) {
     $chat->timemodified = time();
     $chat->id = $chat->instance;
 
-    $chat->chattime = make_timestamp($chat->chatyear, $chat->chatmonth, $chat->chatday,
-                                     $chat->chathour, $chat->chatminute);
 
     if ($returnid = update_record("chat", $chat)) {
 
-        $event = NULL;
+        $event = new object();
 
         if ($event->id = get_field('event', 'id', 'modulename', 'chat', 'instance', $chat->id)) {
 
@@ -197,11 +192,11 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
                 $current = 0;
             }
             if ($chat = get_record('chat', 'id', $chatuser->chatid)) {
-              
+
                 // we find the course module id
                 $cm = get_coursemodule_from_instance('chat', $chat->id, $course->id);
                 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-              
+
                 // needs to be fixed
                 if (!(has_capability('mod/chat:readlog', $context) or instance_is_visible('chat', $chat))) {  // Chat hidden to students
                     continue;
@@ -574,7 +569,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     $text = format_text($text, FORMAT_MOODLE, $options, $courseid);
     // And now check for special cases
     if (substr($text, 0, 5) == 'beep ') {
-        /// It's a beep! 
+        /// It's a beep!
         $beepwho = trim(substr($text, 5));
 
         if ($beepwho == 'all') {   // everyone
@@ -587,7 +582,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
             $outinfo = $message->strtime.': '.get_string('messagebeepsyou', 'chat', fullname($sender));
             $outmain = '';
             $output->beep = true;
-          
+
         } else {  //something is not caught?
             return false;
         }
@@ -609,7 +604,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         $outinfo = $message->strtime.' '.$sender->firstname;
         $outmain = $text;
     }
-     
+
     /// Format the message as a small table
 
     $output->text  = strip_tags($outinfo.': '.$outmain);

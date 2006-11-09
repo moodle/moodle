@@ -41,8 +41,31 @@
         }
     }
 
+    //check if we are adding / editing a module that has new forms using formslib
+    if (!empty($add)){
+        $modname=$add;
+        if (file_exists("../mod/$modname/mod_form.php")) {
+            $id = required_param('id',PARAM_INT);
+            $section = required_param('section',PARAM_INT);
 
-    if (!empty($course) and confirm_sesskey()) {    // add or update form submitted
+            redirect("modedit.php?add=$add&course=$id&section=$section");
+        }
+    }elseif (!empty($update)){
+        if (!$modname=get_field_sql("SELECT md.name
+                           FROM {$CFG->prefix}course_modules cm,
+                                {$CFG->prefix}modules md
+                           WHERE cm.id = '$update' AND
+                                 md.id = cm.module")){
+            error('Invalid course module id!');
+        }
+        if (file_exists("../mod/$modname/mod_form.php")) {
+            redirect("modedit.php?update=$update");
+        }
+    }
+    //not adding / editing a module that has new forms using formslib
+    //carry on
+
+    if (!empty($course) and confirm_sesskey()) {    // add, delete or update form submitted
 
         if (empty($mod->coursemodule)) { //add
             if (! $course = get_record("course", "id", $mod->course)) {
@@ -65,7 +88,7 @@
         require_login($course->id); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         require_capability('moodle/course:manageactivities', $context);
-        
+
         $mod->course = $course->id;
         $mod->modulename = clean_param($mod->modulename, PARAM_SAFEDIR);  // For safety
         $modlib = "$CFG->dirroot/mod/$mod->modulename/lib.php";
@@ -418,7 +441,7 @@
         require_login($cm->course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $cm->course);
         require_capability('moodle/course:manageactivities', $context);
-        
+
         if (! $module = get_record("modules", "id", $cm->module)) {
             error("This module doesn't exist");
         }
@@ -512,7 +535,7 @@
             $pageheading = get_string("updatinga", "moodle", $fullmodulename);
         }
         $strnav = "<a href=\"$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id\">".format_string($form->name,true)."</a> ->";
-        
+
         if ($module->name == 'resource') {
             $CFG->pagepath = 'mod/'.$module->name.'/'.$form->type;
         } else {
@@ -533,7 +556,7 @@
         require_login($course->id); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         require_capability('moodle/course:manageactivities', $context);
-        
+
         if (! $module = get_record("modules", "id", $cm->module)) {
             error("This module doesn't exist");
         }
@@ -588,10 +611,10 @@
         if (! $module = get_record("modules", "name", $add)) {
             error("This module type doesn't exist");
         }
-        
+
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         require_capability('moodle/course:manageactivities', $context);
-        
+
         if (!course_allowed_module($course,$module->id)) {
             error("This module has been disabled for this particular course");
         }

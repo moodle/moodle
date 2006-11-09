@@ -17,5 +17,5 @@ $string['nomethodforaddinghelpbutton'] = 'There is no method for adding a help b
 $string['nonexistentformelements'] = 'Trying to add help buttons to nonexistent form elements : $a';
 $string['requiredelement'] = 'Required field.';
 $string['general'] = 'General Settings';
-
+$string['modstandardels']='Common Module Settings';
 ?>

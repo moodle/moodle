@@ -264,7 +264,7 @@ function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limit
     // and so the next 86400 seconds worth of logs are printed.
 
     /// Setup for group handling.
-    
+
     /// If the group mode is separate, and this user does not have editing privileges,
     /// then only the user's group can be viewed.
     if ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
@@ -332,26 +332,26 @@ function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limit
     }
 
     $totalcount = 0;  // Initialise
-    
+
     $result = array();
     $result['logs'] = get_logs($selector, $order, $limitfrom, $limitnum, $totalcount);
     $result['totalcount'] = $totalcount;
     return $result;
 }
-    
-    
+
+
 function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100,
                    $url="", $modname="", $modid=0, $modaction="", $groupid=0) {
-    
+
     global $CFG;
-    
+
     if (!$logs = build_logs_array($course, $user, $date, $order, $page*$perpage, $perpage,
                        $modname, $modid, $modaction, $groupid)) {
         notify("No logs found!");
         print_footer($course);
         exit;
     }
-    
+
     if ($course->id == SITEID) {
         $courses[0] = '';
         if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname,c.visible')) {
@@ -360,7 +360,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
             }
         }
     }
-    
+
     $totalcount = $logs['totalcount'];
     $count=0;
     $ldcache = array();
@@ -412,7 +412,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
             }
         }
 
-        //Filter log->info 
+        //Filter log->info
         $log->info = format_string($log->info);
 
         $log->url  = strip_tags(urldecode($log->url));   // Some XSS protection
@@ -451,12 +451,12 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
 
     $text = get_string('course')."\t".get_string('time')."\t".get_string('ip_address')."\t".
             get_string('fullname')."\t".get_string('action')."\t".get_string('info');
-    
+
     if (!$logs = build_logs_array($course, $user, $date, $order, '', '',
                        $modname, $modid, $modaction, $groupid)) {
         return false;
     }
-    
+
     if ($course->id == SITEID) {
         $courses[0] = '';
         if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname')) {
@@ -465,7 +465,7 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
             }
         }
     }
-    
+
     $count=0;
     $ldcache = array();
     $tt = getdate(time());
@@ -475,7 +475,7 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
 
     $filename = 'logs_'.userdate(time(),get_string('backupnameformat'),99,false);
     $filename .= '.txt';
-    header("Content-Type: application/download\n");   
+    header("Content-Type: application/download\n");
     header("Content-Disposition: attachment; filename=$filename");
     header("Expires: 0");
     header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
@@ -504,7 +504,7 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
             }
         }
 
-        //Filter log->info 
+        //Filter log->info
         $log->info = format_string($log->info);
 
         $log->url  = strip_tags(urldecode($log->url));     // Some XSS protection
@@ -523,16 +523,16 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
 
 function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
                         $modid, $modaction, $groupid) {
-    
+
     global $CFG;
 
     require_once("$CFG->libdir/excellib.class.php");
-    
+
     if (!$logs = build_logs_array($course, $user, $date, $order, '', '',
                        $modname, $modid, $modaction, $groupid)) {
         return false;
     }
-    
+
     if ($course->id == SITEID) {
         $courses[0] = '';
         if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname')) {
@@ -541,7 +541,7 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
             }
         }
     }
-    
+
     $count=0;
     $ldcache = array();
     $tt = getdate(time());
@@ -552,14 +552,14 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
     $nroPages = ceil(count($logs)/(EXCELROWS-FIRSTUSEDEXCELROW+1));
     $filename = 'logs_'.userdate(time(),get_string('backupnameformat'),99,false);
     $filename .= '.xls';
-    
+
     $workbook = new MoodleExcelWorkbook('-');
     $workbook->send($filename);
-    
+
     $worksheet = array();
     $headers = array(get_string('course'), get_string('time'), get_string('ip_address'),
                         get_string('fullname'),    get_string('action'), get_string('info'));
-    
+
     // Creating worksheets
     for ($wsnumber = 1; $wsnumber <= $nroPages; $wsnumber++) {
         $sheettitle = get_string('excel_sheettitle', 'logs', $wsnumber).$nroPages;
@@ -612,7 +612,7 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
                 $row = FIRSTUSEDEXCELROW;
             }
         }
-        
+
         $myxls->write($row, 0, $courses[$log->course], '');
         // Excel counts from 1/1/1900
         $excelTime=25569+$log->time/(3600*24);
@@ -622,7 +622,7 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
         $myxls->write($row, 3, $fullname, '');
         $myxls->write($row, 4, $log->module.' '.$log->action, '');
         $myxls->write($row, 5, $log->info, '');
-    
+
         $row++;
     }
 
@@ -636,15 +636,15 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
 
 function print_log_ooo($course, $user, $date, $order='l.time DESC', $modname,
                         $modid, $modaction, $groupid) {
-    
+
     global $CFG;
     require_once($CFG->libdir.'/phpdocwriter/lib/include.php');
-    
+
     if (!$logs = build_logs_array($course, $user, $date, $order, '', '',
                        $modname, $modid, $modaction, $groupid)) {
         return false;
     }
-    
+
     if ($course->id == SITEID) {
         $courses[0] = '';
         if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname')) {
@@ -653,7 +653,7 @@ function print_log_ooo($course, $user, $date, $order='l.time DESC', $modname,
             }
         }
     }
-    
+
     $count=0;
     $ldcache = array();
     $tt = getdate(time());
@@ -681,10 +681,10 @@ function print_log_ooo($course, $user, $date, $order='l.time DESC', $modname,
     $sxw->AddPageDef(array('name'=>'Standard', 'margins'=>'1,1,1,1', 'w'=>'29.7', 'h'=>'21'));
     $sxw->Write(get_string('savedat').userdate(time(), $strftimedatetime));
     $sxw->Ln(3);
-    
+
     $headers = array(get_string('course'), get_string('time'), get_string('ip_address'),
                         get_string('fullname'),    get_string('action'), get_string('info'));
-    
+
     foreach($headers as $key=>$header){
         $headers[$key] = eregi_replace ("<br?>", " ",$header);
     }
@@ -705,7 +705,7 @@ function print_log_ooo($course, $user, $date, $order='l.time DESC', $modname,
             }
         }
 
-        // Filter log->info 
+        // Filter log->info
         $log->info = format_string($log->info);
 
         $log->url  = strip_tags(urldecode($log->url));     // Some XSS protection
@@ -720,7 +720,7 @@ function print_log_ooo($course, $user, $date, $order='l.time DESC', $modname,
     }
     $sxw->Table($headers,$data);
     $sxw->Output();
-    
+
     return true;
 }
 */
@@ -809,13 +809,13 @@ function print_recent_activity($course) {
     if ($users) {
         echo '<div class="newusers">';
         if (! $heading) {
-            print_headline(get_string("newusers").':', 3);      
+            print_headline(get_string("newusers").':', 3);
             $heading = true;
             $content = true;
         }
         echo "<ol class=\"list\">\n";
         foreach ($users as $user) {
-            
+
             $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
             echo '<li class="name"><a href="'.$CFG->wwwroot."/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a></li>\n";
         }
@@ -1201,7 +1201,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
         }
     } elseif ($ismoving) {
         echo "<ul class=\"section\">\n";
-    }    
+    }
     if ($ismoving) {
         echo '<li><a title="'.$strmovefull.'"'.
              ' href="'.$CFG->wwwroot.'/course/mod.php?movetosection='.$section->id.'&amp;sesskey='.$USER->sesskey.'">'.
@@ -1253,7 +1253,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
         if (!course_allowed_module($course,$key))
             unset($modnames[$key]);
     }
-    
+
     // this is stupid but labels get put into resource, so if resource is hidden and label is not, we're in trouble.
     if (course_allowed_module($course,'label') && empty($resourceallowed)) {
         $modnames['label'] = get_string('modulename', 'label');
@@ -1305,10 +1305,10 @@ function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
 
     // initialize the arrays if needed
     if (!is_array($list)) {
-        $list = array(); 
+        $list = array();
     }
     if (!is_array($parents)) {
-        $parents = array(); 
+        $parents = array();
     }
 
     if ($category) {
@@ -1549,8 +1549,8 @@ function print_course($course, $width="100%") {
          $linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.
          $course->fullname.'</a></b><br />';
 
-    if ($teachers = get_users_by_capability($context, 'moodle/course:update', 
-                                            'u.*, ul.timeaccess as lastaccess, ra.hidden', 
+    if ($teachers = get_users_by_capability($context, 'moodle/course:update',
+                                            'u.*, ul.timeaccess as lastaccess, ra.hidden',
                                             'r.sortorder ASC', '','','','', false)) {
         $canseehidden = has_capability('moodle/role:viewhiddenassigns', $context);
         $namesarray = array();
@@ -1752,7 +1752,7 @@ function set_coursemodule_visible($id, $visible, $prevstateoverrides=false) {
 
 /*
  * Delete a course module and any associated data at the course level (events)
- * Until 1.5 this function simply marked a deleted flag ... now it 
+ * Until 1.5 this function simply marked a deleted flag ... now it
  * deletes it completely.
  *
  */
@@ -1992,11 +1992,11 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
 }
 
 /**
- * given a course object with shortname & fullname, this function will 
+ * given a course object with shortname & fullname, this function will
  * truncate the the number of chars allowed and add ... if it was too long
  */
 function course_format_name ($course,$max=100) {
-    
+
     $str = $course->shortname.': '.$course->fullname;
     if (strlen($str) <= $max) {
         return $str;
@@ -2080,7 +2080,7 @@ function print_visible_setting($form, $course=NULL) {
     if ($hiddensection) {
         $visible = false;
     }
-    
+
     echo '<tr valign="top">';
     echo '<td align="right"><b>'.get_string('visible', '').':</b></td>';
     echo '<td align="left">';
@@ -2089,7 +2089,7 @@ function print_visible_setting($form, $course=NULL) {
     $choices[0] = get_string('hide');
     choose_from_menu($choices, 'visible', $visible, '', '', 0, false, $hiddensection);
     echo '</td></tr>';
-} 
+}
 
 function update_restricted_mods($course,$mods) {
     delete_records("course_allowed_modules","course",$course->id);
@@ -2110,7 +2110,7 @@ function update_restricted_mods($course,$mods) {
 /**
  * This function will take an int (module id) or a string (module name)
  * and return true or false, whether it's allowed in the given course (object)
- * $mod is not allowed to be an object, as the field for the module id is inconsistent 
+ * $mod is not allowed to be an object, as the field for the module id is inconsistent
  * depending on where in the code it's called from (sometimes $mod->id, sometimes $mod->module)
  */
 
@@ -2118,7 +2118,7 @@ function course_allowed_module($course,$mod) {
     if (empty($course->restrictmodules)) {
         return true;
     }
-    
+
     // i am not sure this capability is correct
     if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         return true;
@@ -2138,7 +2138,7 @@ function course_allowed_module($course,$mod) {
 /***
  *** Efficiently moves many courses around while maintaining
  *** sortorder in order.
- *** 
+ ***
  *** $courseids is an array of course ids
  ***
  **/
@@ -2148,11 +2148,11 @@ function move_courses ($courseids, $categoryid) {
     global $CFG;
 
     if (!empty($courseids)) {
-       
-            $courseids = array_reverse($courseids); 
+
+            $courseids = array_reverse($courseids);
 
             foreach ($courseids as $courseid) {
-                                      
+
                 if (! $course  = get_record("course", "id", $courseid)) {
                     notify("Error finding course $courseid");
                 } else {
@@ -2162,7 +2162,7 @@ function move_courses ($courseids, $categoryid) {
                     if ($sortorder === false) {
                         // the category is empty
                         // rather than let the db default to 0
-                        // set it to > 100 and avoid extra work in fix_coursesortorder()                        
+                        // set it to > 100 and avoid extra work in fix_coursesortorder()
                         $sortorder = 200;
                     } else if ($sortorder < 10) {
                         fix_course_sortorder($categoryid);
@@ -2178,14 +2178,14 @@ function move_courses ($courseids, $categoryid) {
                     $course->teachers = addslashes($course->teachers);
                     $course->student = addslashes($course->student);
                     $course->students = addslashes($course->students);
-                    
+
                     if (!update_record('course', $course)) {
                         notify("An error occurred - course not moved!");
                     }
                 }
             }
             fix_course_sortorder();
-        }    
+        }
     return true;
 }
 
