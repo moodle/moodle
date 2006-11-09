@@ -110,13 +110,12 @@
 
 /// If no search results then get potential students for this course excluding users already in course
     if (empty($searchcourses)) {
+        $numcourses = count_courses_notin_metacourse($course->id);
 
-        $numcourses = get_courses_notin_metacourse($course->id,true);
-
-        $courses = array();
-
-        if ($numcourses <= MAX_COURSES_PER_PAGE) {
+        if ($numcourses > 0 and $numcourses <= MAX_COURSES_PER_PAGE) {
             $courses = get_courses_notin_metacourse($course->id);
+        } else {
+            $courses = array();
         }
     }
 
