@@ -1,29 +1,31 @@
-<?php // $Id$
+<?php  // $Id$
 
-    require_once("../config.php");
+    require_once('../config.php');
     require_once("../auth/$CFG->auth/lib.php");
+    require_once('signup_form.php');
 
     //HTTPS is potentially required in this page
     httpsrequired();
-    include("signup_form.php");
-    $mform_signup = new login_signup_form('signup.php','');
+
+    $mform_signup = new login_signup_form('signup.php');
 
     if ($CFG->auth != 'email' and (empty($CFG->auth_user_create) or !(function_exists('auth_user_create'))) ) {
         error("Sorry, you may not use this page.");
     }
 
-    if ($fromform = $mform_signup->data_submitted()) {
+    if ($user = $mform_signup->data_submitted()) {
 
-        $plainpass = $fromform->password;
-        $fromform->password = hash_internal_user_password($plainpass);
-        $fromform->confirmed = 0;
-        $fromform->lang = current_language();
-        $fromform->firstaccess = time();
-        $fromform->secret = random_string(15);
-        $fromform->auth = $CFG->auth;
+        $plainpass = $user->password;
+        $user->password    = hash_internal_user_password($plainpass);
+        $user->confirmed   = 0;
+        $user->lang        = current_language();
+        $user->firstaccess = time();
+        $user->secret      = random_string(15);
+        $user->auth        = $CFG->auth;
+
         if (!empty($CFG->auth_user_create) and function_exists('auth_user_create') ){
-            if (! auth_user_exists($fromform->username)) {
-                if (! auth_user_create($fromform,$plainpass)) {
+            if (! auth_user_exists($user->username)) {
+                if (! auth_user_create($user, $plainpass)) {
                     error("Could not add user to authentication module!");
                 }
             } else {
@@ -31,28 +33,26 @@
             }
         }
 
-        if (! ($fromform->id = insert_record("user", $fromform)) ) {
+        if (! ($user->id = insert_record('user', $user))) {
             error("Could not add your record to the database!");
         }
 
-        if (! send_confirmation_email($fromform)) {
+        if (! send_confirmation_email($user)) {
             error("Tried to send you an email but failed!");
         }
 
         $emailconfirm = get_string("emailconfirm");
         print_header($emailconfirm, $emailconfirm, $emailconfirm);
-        notice(get_string("emailconfirmsent", "", $fromform->email), "$CFG->wwwroot/index.php");
+        notice(get_string("emailconfirmsent", "", $user->email), "$CFG->wwwroot/index.php");
         exit;
     }
 
 
-
-
-    $newaccount = get_string("newaccount");
-    $login = get_string("login");
+    $newaccount = get_string('newaccount');
+    $login      = get_string('login');
 
     if (empty($CFG->langmenu)) {
-        $langmenu = "";
+        $langmenu = '';
     } else {
         $currlang = current_language();
         $langs    = get_list_of_languages();
@@ -62,8 +62,6 @@
 
     $mform_signup->display();
     print_footer();
-
-
 
 
 ?>
