@@ -240,17 +240,13 @@ $mod_forum_capabilities = array(
         )
     ),
 
-    'mod/forum:nothrottling' => array(
+    'mod/forum:throttlingapplies' => array(
 
         'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
         )
     )
 );
