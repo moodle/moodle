@@ -103,15 +103,24 @@
         error('Invalid operation.');
     }
 
-    $modmoodleform = "../mod/$module->name/mod_form.php";
+    $modmoodleform = "$CFG->dirroot/mod/$module->name/mod_form.php";
     if (file_exists($modmoodleform)) {
         require_once($modmoodleform);
-        $mformclassname=$module->name.'_mod_form';
-        $mform=& new $mformclassname('modedit.php');
 
     }else{
         error('No formslib form description file found for this activity.');
     }
+
+    $modlib = "$CFG->dirroot/mod/$module->name/lib.php";
+    if (file_exists($modlib)) {
+        include_once($modlib);
+    } else {
+        error("This module is missing important code! ($modlib)");
+    }
+
+    $mformclassname=$module->name.'_mod_form';
+    $mform=& new $mformclassname('modedit.php');
+
     if ($fromform=$mform->data_submitted()){
         if (empty($fromform->coursemodule)) { //add
             if (! $course = get_record("course", "id", $fromform->course)) {
@@ -137,13 +146,7 @@
 
         $fromform->course = $course->id;
         $fromform->modulename = clean_param($fromform->modulename, PARAM_SAFEDIR);  // For safety
-        $modlib = "$CFG->dirroot/mod/$fromform->modulename/lib.php";
 
-        if (file_exists($modlib)) {
-            include_once($modlib);
-        } else {
-            error("This module is missing important code! ($modlib)");
-        }
         $addinstancefunction    = $fromform->modulename."_add_instance";
         $updateinstancefunction = $fromform->modulename."_update_instance";
 
