@@ -12,7 +12,7 @@ class glossary_comment_form extends moodleform {
         $mform->setType('entrycomment', PARAM_RAW); // processed by trusttext or cleaned before the display
 
         $mform->addElement('format', 'format', get_string('format'));
-        $mform->setHelpButton('format', array("textformat", get_string("helpformatting")));
+        $mform->setHelpButton('format', array('textformat', get_string('helpformatting')));
 
         // hidden optional params
         $mform->addElement('hidden', 'cid', 0);
