@@ -73,7 +73,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
         }
     }
 
-    
+
 /// This field just sets up a default field object
     function define_default_field() {
         if (empty($this->data->id)) {
@@ -118,7 +118,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
 
         return true;
     }
-    
+
 /// Insert a new field in the database
 /// We assume the field object is already defined as $this->field
     function insert_field() {
@@ -160,7 +160,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
         } else {
             $content = '';
         }
-        
+
         $str = '<div title="'.$this->field->description.'">';
         $str .= '<input style="width:300px;" type="text" name="field_'.$this->field->id.'" id="field_'.$this->field->id.'" value="'.s($content).'" />';
         $str .= '</div>';
@@ -190,7 +190,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
         }
         echo '<input type="hidden" name="type" value="'.$this->type.'" />'."\n";
         echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />'."\n";
-   
+
         print_heading($this->name());
 
         require_once($CFG->dirroot.'/mod/data/field/'.$this->type.'/mod.html');
@@ -204,11 +204,11 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
 
         print_simple_box_end();
     }
-    
+
 /// Display the content of the field in browse mode
     function display_browse_field($recordid, $template) {
         if ($content = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
-            if (isset($content->content)) {                
+            if (isset($content->content)) {
                 if ($this->field->param1 == '1') {  // We are autolinking this field, so disable linking within us
                     //$content->content = '<span class="nolink">'.$content->content.'</span>';
                     //$content->content1 = FORMAT_HTML;
@@ -223,7 +223,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
         }
         return false;
     }
-    
+
 /// Update the content of one data field in the data_content table
     function update_content($recordid, $value, $name=''){
         $content = new object;
@@ -238,12 +238,12 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
             return insert_record('data_content', $content);
         }
     }
-    
+
 /// Delete all content associated with the field
     function delete_content($recordid=0) {
 
         $this->delete_content_files($recordid);
-        
+
         if ($recordid) {
             return delete_records('data_content', 'fieldid', $this->field->id, 'recordid', $recordid);
         } else {
@@ -264,13 +264,13 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
 
         return fulldelete($dir);
     }
-    
+
 
 /// Check if a field from an add form is empty
     function notemptyfield($value, $name) {
         return !empty($value);
     }
-    
+
 /// Just in case a field needs to print something before the whole form
     function print_before_form() {
     }
@@ -278,8 +278,8 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
 /// Just in case a field needs to print something after the whole form
     function print_after_form() {
     }
-    
-    
+
+
 /// Returns the sortable field for the content. By default, it's just content
 /// but for some plugins, it could be content 1 - content4
     function get_sort_field() {
@@ -295,7 +295,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
     function name(){
         return get_string('name'.$this->type, 'data');
     }
-    
+
 /// Prints the respective type icon
     function image() {
         global $CFG;
@@ -306,7 +306,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
         return $str;
     }
 
-    
+
 }  //end of major class data_field_base
 
 
@@ -325,10 +325,10 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
     if ($template == 'csstemplate') {
         return '';
     }
-    
+
     //get all the fields for that database
     if ($fields = get_records('data_fields', 'dataid', $data->id, 'id')) {
-   
+
         $str = '<div align="center">';
         $str .= '<table>';
 
@@ -347,7 +347,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
                 $str .= '[['.$field->name.']]';
             }
             $str .= '</td></tr>';
-            
+
         }
         if ($template != 'addtemplate' and $template != 'rsstemplate') {    //if not adding, we put tags in there
             $str .= '<tr><td align="center" colspan="2">##Edit##  ##More##  ##Delete##  ##Approve##</td></tr>';
@@ -389,20 +389,20 @@ function data_replace_field_in_templates($data, $searchfieldname, $newfieldname)
         $prestring = '';
         $poststring = '';
     }
-    
+
     $newdata->id = $data->id;
     $newdata->singletemplate = addslashes(str_replace('[['.$searchfieldname.']]',
             $prestring.$newfieldname.$poststring, $data->singletemplate));
-    
+
     $newdata->listtemplate = addslashes(str_replace('[['.$searchfieldname.']]',
             $prestring.$newfieldname.$poststring, $data->listtemplate));
-    
+
     $newdata->addtemplate = addslashes(str_replace('[['.$searchfieldname.']]',
             $prestring.$newfieldname.$poststring, $data->addtemplate));
-    
+
     $newdata->rsstemplate = addslashes(str_replace('[['.$searchfieldname.']]',
             $prestring.$newfieldname.$poststring, $data->rsstemplate));
-    
+
     return update_record('data', $newdata);
 }
 
@@ -545,7 +545,7 @@ function data_numentries($data){
  ****************************************************************/
 function data_add_record($data, $groupid=0){
     global $USER;
-    
+
     $cm = data_get_cm($data);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -598,31 +598,19 @@ function data_add_instance($data) {
 
     $data->timemodified = time();
 
-    if (!empty($data->availablefromenable)) {
-        $data->timeavailablefrom  = make_timestamp($data->availablefromyear, $data->availablefrommonth, $data->availablefromday,
-                                                  $data->availablefromhour, $data->availablefromminute, 0);
-    } else {
+    if (empty($data->availablefromenable)) {
         $data->timeavailablefrom = 0;
     }
 
-    if (!empty($data->availabletoenable)) {
-        $data->timeavailableto  = make_timestamp($data->availabletoyear, $data->availabletomonth, $data->availabletoday,
-                                                 $data->availabletohour, $data->availabletominute, 0);
-    } else {
+    if (empty($data->availabletoenable)) {
         $data->timeavailableto = 0;
     }
 
-    if (!empty($data->viewfromenable)) {
-        $data->timeviewfrom  = make_timestamp($data->viewfromyear, $data->viewfrommonth, $data->viewfromday,
-                                              $data->viewfromhour, $data->viewfromminute, 0);
-    } else {
+    if (empty($data->viewfromenable)) {
         $data->timeviewfrom = 0;
     }
- 
-    if (!empty($data->viewtoenable)) {
-        $data->timeviewto  = make_timestamp($data->viewtoyear, $data->viewtomonth, $data->viewtoday,
-                                              $data->viewtohour, $data->viewtominute, 0);
-    } else {
+
+    if (empty($data->viewtoenable)) {
         $data->timeviewto = 0;
     }
 
@@ -639,48 +627,36 @@ function data_add_instance($data) {
  ************************************************************************/
 function data_update_instance($data) {
     global $CFG;
-    
+
     $data->id = $data->instance;
-    
+
     if (empty($data->assessed)) {
         $data->assessed = 0;
     }
-    
+
     $data->timemodified = time();
 
-    if (!empty($data->availablefromenable)) {
-        $data->timeavailablefrom  = make_timestamp($data->availablefromyear, $data->availablefrommonth, $data->availablefromday,
-                                                  $data->availablefromhour, $data->availablefromminute, 0);
-    } else {
+    if (empty($data->availablefromenable)) {
         $data->timeavailablefrom = 0;
     }
 
-    if (!empty($data->availabletoenable)) {
-        $data->timeavailableto  = make_timestamp($data->availabletoyear, $data->availabletomonth, $data->availabletoday,
-                                                 $data->availabletohour, $data->availabletominute, 0);
-    } else {
+    if (empty($data->availabletoenable)) {
         $data->timeavailableto = 0;
     }
 
-    if (!empty($data->viewfromenable)) {
-        $data->timeviewfrom  = make_timestamp($data->viewfromyear, $data->viewfrommonth, $data->viewfromday,
-                                              $data->viewfromhour, $data->viewfromminute, 0);
-    } else {
+    if (empty($data->viewfromenable)) {
         $data->timeviewfrom = 0;
     }
- 
-    if (!empty($data->viewtoenable)) {
-        $data->timeviewto  = make_timestamp($data->viewtoyear, $data->viewtomonth, $data->viewtoday,
-                                              $data->viewtohour, $data->viewtominute, 0);
-    } else {
+
+    if (empty($data->viewtoenable)) {
         $data->timeviewto = 0;
     }
-    
+
     if (! $data->instance = update_record('data', $data)) {
         return false;
     }
     return $data->instance;
-    
+
 }
 
 /************************************************************************
@@ -699,11 +675,11 @@ function data_delete_instance($id) {    //takes the dataid
     // get all the records in this data
     $sql = 'SELECT c.* FROM '.$CFG->prefix.'data_records r LEFT JOIN '.
            $CFG->prefix.'data_content c ON c.recordid = r.id WHERE r.dataid = '.$id;
-    
+
     if ($contents = get_records_sql($sql)){
 
         foreach($contents as $content){
-            
+
             $field = get_record('data_fields','id',$content->fieldid);
             if ($g = data_get_field($field, $data)){
                 $g->delete_content_files($id, $content->recordid, $content->content);
@@ -734,8 +710,8 @@ function data_user_outline($course, $user, $mod, $data) {
 
     if ($countrecords = count_records('data_records', 'dataid', $data->id, 'userid', $user->id)) {
         $result->info = get_string('numrecords', 'data', $countrecords);
-        $lastrecord   = get_record_sql('SELECT id,timemodified FROM '.$CFG->prefix.'data_records 
-                                         WHERE dataid = '.$data->id.' AND userid = '.$user->id.' 
+        $lastrecord   = get_record_sql('SELECT id,timemodified FROM '.$CFG->prefix.'data_records
+                                         WHERE dataid = '.$data->id.' AND userid = '.$user->id.'
                                       ORDER BY timemodified DESC', true);
         $result->time = $lastrecord->timemodified;
         return $result;
@@ -749,7 +725,7 @@ function data_user_outline($course, $user, $mod, $data) {
  ************************************************************************/
 function data_user_complete($course, $user, $mod, $data) {
 
-    if ($records = get_records_select('data_records', 'dataid = '.$data->id.' AND userid = '.$user->id, 
+    if ($records = get_records_select('data_records', 'dataid = '.$data->id.' AND userid = '.$user->id,
                                                       'timemodified DESC')) {
 
         data_print_template('singletemplate', $records, $data);
@@ -776,7 +752,7 @@ function data_get_participants($dataid) {
                                       {$CFG->prefix}data_records r,
                                       {$CFG->prefix}data_comments c
                                  WHERE r.dataid = '$dataid'
-                                   AND u.id = r.userid 
+                                   AND u.id = r.userid
                                    AND r.id = c.recordid");
 
     $ratings = get_records_sql("SELECT DISTINCT u.id, u.id
@@ -784,10 +760,10 @@ function data_get_participants($dataid) {
                                      {$CFG->prefix}data_records r,
                                      {$CFG->prefix}data_ratings a
                                 WHERE r.dataid = '$dataid'
-                                  AND u.id = r.userid 
+                                  AND u.id = r.userid
                                   AND r.id = a.recordid");
     $participants = array();
-    
+
     if ($records){
         foreach ($records as $record) {
             $participants[$record->id] = $record;
@@ -803,7 +779,7 @@ function data_get_participants($dataid) {
             $participants[$rating->id] = $rating;
         }
     }
-                                  
+
     return $participants;
 }
 
@@ -900,7 +876,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
         } else {
             $replacement[] = '';
         }
-        
+
         $patterns[]='/\#\#Comments\#\#/i';
         if (($template == 'listtemplate') && ($data->comments)) {
             $comments = count_records('data_comments','recordid',$record->id);
@@ -916,7 +892,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
         if ($return) {
             return format_text($newtext, FORMAT_HTML, $options);
         } else {
-            echo format_text($newtext, FORMAT_HTML, $options); 
+            echo format_text($newtext, FORMAT_HTML, $options);
         }
 
         /**********************************
@@ -989,7 +965,7 @@ function data_print_ratings($data, $record) {
 
     $cm = data_get_cm($data);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    
+
     $ratingsmenuused = false;
     if ($data->assessed and !empty($USER->id)) {
         if ($ratings->scale = make_grades_menu($data->scale)) {
@@ -1141,14 +1117,14 @@ function data_print_comments($data, $record, $page=0) {
             data_print_comment($data, $comment, $page);
         }
     }
-    
+
     if (isloggedin() and !isguest()) {
         echo '<div class="newcomment" align="center"><form method="post" action="'.$CFG->wwwroot.'/mod/data/comment.php">';
         echo '<input type="hidden" name="mode" value="add" />';
         echo '<input type="hidden" name="page" value="'.$page.'" />';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<input type="hidden" name="rid" value="'.$record->id.'" />';
-    
+
         echo '<textarea rows="8" cols="50" name="commentcontent"></textarea>';
         echo '<br /><input type="submit" value="'.get_string('addcomment','data').'" />';
         echo '</form></div>';
@@ -1159,10 +1135,10 @@ function data_print_comments($data, $record, $page=0) {
 function data_print_comment($data, $comment, $page=0) {
 
     global $USER, $CFG;
-    
+
     $cm = data_get_cm($data);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    
+
     $stredit = get_string('edit');
     $strdelete = get_string('delete');
 
@@ -1225,12 +1201,12 @@ function data_fieldname_exists($name, $dataid, $fieldid=0) {
     global $CFG;
 
     $LIKE = sql_ilike();
-    if ($fieldid) { 
-        return record_exists_sql("SELECT * from {$CFG->prefix}data_fields df 
+    if ($fieldid) {
+        return record_exists_sql("SELECT * from {$CFG->prefix}data_fields df
                                   WHERE df.name $LIKE '$name' AND df.dataid = $dataid
                                     AND ((df.id < $fieldid) OR (df.id > $fieldid))");
     } else {
-        return record_exists_sql("SELECT * from {$CFG->prefix}data_fields df 
+        return record_exists_sql("SELECT * from {$CFG->prefix}data_fields df
                                   WHERE df.name $LIKE '$name' AND df.dataid = $dataid");
     }
 }
@@ -1273,9 +1249,9 @@ function data_get_cm($data) {
  * @return boolean      - data module was converted or not
  */
 function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array(), $cmid=NULL) {
-    
+
     global $CFG;
-    
+
     if (!isset($data->participants) && !isset($data->assesspublic)
             && !isset($data->groupmode)) {
         // We assume that this database has already been converted to use the
@@ -1283,7 +1259,7 @@ function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array
         // upgraded to use Roles.
         return false;
     }
-    
+
     if (empty($cmid)) {
         // We were not given the course_module id. Try to find it.
         if (!$cm = get_coursemodule_from_instance('data', $data->id)) {
@@ -1294,8 +1270,8 @@ function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array
         }
     }
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
-    
-    
+
+
     // $data->participants:
     // 1 - Only teachers can add entries
     // 3 - Teachers and students can add entries
@@ -1317,7 +1293,7 @@ function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array
             }
             break;
     }
-    
+
     // $data->assessed:
     // 2 - Only teachers can rate posts
     // 1 - Everyone can rate posts
@@ -1348,7 +1324,7 @@ function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array
             }
             break;
     }
-    
+
     // $data->assesspublic:
     // 0 - Students can only see their own ratings
     // 1 - Students can see everyone's ratings
@@ -1374,7 +1350,7 @@ function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array
     if (empty($cm)) {
         $cm = get_record('course_modules', 'id', $cmid);
     }
-    
+
     // $cm->groupmode:
     // 0 - No groups
     // 1 - Separate groups
@@ -1402,7 +1378,7 @@ function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array
     return true;
 }
 
-/* 
+/*
  * Returns the best name to show for a preset
  */
 function data_preset_name($shortname, $path) {
@@ -1417,14 +1393,14 @@ function data_preset_name($shortname, $path) {
     }
 }
 
-/* 
+/*
  * Returns an array of all the available presets
  */
 function data_get_available_presets($context) {
     global $CFG, $USER;
 
     $presets = array();
-    
+
     if ($dirs = get_list_of_plugins('mod/data/preset')) {
         foreach ($dirs as $dir) {
             $fulldir = $CFG->dirroot.'/mod/data/preset/'.$dir;
@@ -1488,8 +1464,8 @@ function data_print_header($course, $cm, $data, $currenttab='') {
 
     $strdata = get_string('modulenameplural','data');
 
-    print_header_simple($data->name, '', "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name", 
-            '', '', true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')), 
+    print_header_simple($data->name, '', "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name",
+            '', '', true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
             navmenu($course, $cm));
 
     print_heading(format_string($data->name));
