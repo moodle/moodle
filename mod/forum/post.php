@@ -6,19 +6,17 @@
     require_once('lib.php');
     require_once('post_form.php');
 
-    $reply = optional_param('reply', 0, PARAM_INT);
-    $forum = optional_param('forum', 0, PARAM_INT);
-    $edit = optional_param('edit', 0, PARAM_INT);
-    $delete = optional_param('delete', 0, PARAM_INT);
-    $prune = optional_param('prune', 0, PARAM_INT);
-    $name = optional_param('name', '', PARAM_CLEAN);
+    $reply   = optional_param('reply', 0, PARAM_INT);
+    $forum   = optional_param('forum', 0, PARAM_INT);
+    $edit    = optional_param('edit', 0, PARAM_INT);
+    $delete  = optional_param('delete', 0, PARAM_INT);
+    $prune   = optional_param('prune', 0, PARAM_INT);
+    $name    = optional_param('name', '', PARAM_CLEAN);
     $confirm = optional_param('confirm', 0, PARAM_INT);
 
 
-    $page_params=array('reply'=>$reply,
-                        'forum'=>$forum,
-                        'edit'=>$edit); //these page_params will be passed as hidden variables
-                                    //later in the form.
+    //these page_params will be passed as hidden variables later in the form.
+    $page_params = array('reply'=>$reply, 'forum'=>$forum, 'edit'=>$edit);
 
     $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
@@ -72,6 +70,7 @@
         print_footer($course);
         exit;
     }
+
     require_login(0, false);   // Script is useless unless they're logged in
 
     if (!empty($forum)) {      // User is starting a new discussion in a forum
@@ -103,13 +102,14 @@
 
         // Load up the $post variable.
 
-        $post->course = $course->id;
-        $post->forum  = $forum->id;
+        $post = new object();
+        $post->course     = $course->id;
+        $post->forum      = $forum->id;
         $post->discussion = 0;           // ie discussion # not defined yet
-        $post->parent = 0;
-        $post->subject = "";
-        $post->userid = $USER->id;
-        $post->message = "";
+        $post->parent     = 0;
+        $post->subject    = '';
+        $post->userid     = $USER->id;
+        $post->message    = '';
 
         $post->groupid = get_current_group($course->id);
         if ($post->groupid == 0) {
@@ -158,13 +158,14 @@
 
         // Load up the $post variable.
 
-        $post->course  = $course->id;
-        $post->forum  = $forum->id;
+        $post = new object();
+        $post->course      = $course->id;
+        $post->forum       = $forum->id;
         $post->discussion  = $parent->discussion;
-        $post->parent = $parent->id;
-        $post->subject = $parent->subject;
-        $post->userid = $USER->id;
-        $post->message = "";
+        $post->parent      = $parent->id;
+        $post->subject     = $parent->subject;
+        $post->userid      = $USER->id;
+        $post->message     = '';
 
         $strre = get_string('re', 'forum');
         if (!(substr($post->subject, 0, strlen($strre)) == $strre)) {
@@ -172,6 +173,7 @@
         }
 
         unset($SESSION->fromdiscussion);
+
     } else if (!empty($edit)) {  // User is editing their own post
 
         if (! $post = forum_get_post_full($edit)) {
@@ -208,11 +210,13 @@
             error("You can't edit other people's posts!");
         }
 
-        // Load up the $post variable.
-        $post->edit = $edit;
 
-        $post->course  = $course->id;
+        // Load up the $post variable.
+        $post->edit   = $edit;
+        $post->course = $course->id;
         $post->forum  = $forum->id;
+
+        trusttext_prepare_edit($post->message, $post->format, can_use_html_editor(), $modcontext);
 
         unset($SESSION->fromdiscussion);
 
@@ -355,23 +359,25 @@
 
         if (!empty($name)) {    // User has confirmed the prune
 
-            $newdiscussion->course = $discussion->course;
-            $newdiscussion->forum = $discussion->forum;
-            $newdiscussion->name = $name;
-            $newdiscussion->firstpost = $post->id;
-            $newdiscussion->userid = $discussion->userid;
-            $newdiscussion->groupid = $discussion->groupid;
-            $newdiscussion->assessed = $discussion->assessed;
+            $newdiscussion = new object();
+            $newdiscussion->course       = $discussion->course;
+            $newdiscussion->forum        = $discussion->forum;
+            $newdiscussion->name         = $name;
+            $newdiscussion->firstpost    = $post->id;
+            $newdiscussion->userid       = $discussion->userid;
+            $newdiscussion->groupid      = $discussion->groupid;
+            $newdiscussion->assessed     = $discussion->assessed;
             $newdiscussion->usermodified = $post->userid;
-            $newdiscussion->timestart = $discussion->timestart;
-            $newdiscussion->timeend = $discussion->timeend;
+            $newdiscussion->timestart    = $discussion->timestart;
+            $newdiscussion->timeend      = $discussion->timeend;
 
             if (!$newid = insert_record('forum_discussions', $newdiscussion)) {
                 error('Could not create new discussion');
             }
 
-            $newpost->id = $post->id;
-            $newpost->parent = 0;
+            $newpost = new object();
+            $newpost->id      = $post->id;
+            $newpost->parent  = 0;
             $newpost->subject = $name;
 
             if (!update_record("forum_posts", $newpost)) {
@@ -419,7 +425,7 @@
         $coursecontext = get_context_instance(CONTEXT_COURSE, $forum->course);
     }
 
-    $mform_post = new forum_post_form('post.php', compact('coursecontext', 'forum', 'post'));
+    $mform_post = new forum_post_form('post.php', array('coursecontext'=>$coursecontext, 'forum'=>$forum, 'post'=>$post));
 
     if ($fromform = $mform_post->data_submitted()) {
 
@@ -702,16 +708,16 @@
                 forum_print_posts_threaded($parent->id, $course->id, 0, false, false, $user_read_array, $discussion->forum);
             }
         }
-        $heading=get_string("yourreply", "forum");
+        $heading = get_string("yourreply", "forum");
     } else {
         $forum->intro = trim($forum->intro);
         if (!empty($forum->intro)) {
             print_simple_box(format_text($forum->intro), 'center');
         }
         if ($forum->type == 'qanda') {
-            $heading=get_string('yournewquestion', 'forum');
+            $heading = get_string('yournewquestion', 'forum');
         } else {
-            $heading=get_string('yournewtopic', 'forum');
+            $heading = get_string('yournewtopic', 'forum');
         }
     }
 
@@ -731,8 +737,6 @@
     $subscribe=(isset($post->forum)&&forum_is_subscribed($USER->id, $post->forum)) ||
                     (!empty($USER->autosubscribe));
 
-
-    trusttext_prepare_edit($post->message, $post->format, can_use_html_editor(), $modcontext);
 
     $mform_post->set_defaults(array(    'general'=>$heading,
                                         'subject'=>$post->subject,
