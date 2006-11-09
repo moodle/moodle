@@ -234,10 +234,42 @@
 
             redirect('manage.php');
             break;
-
+        case 'duplicate':
+            // duplicate current role
+            $sourcerole = get_record('role','id',$roleid);
+            
+            $fullname = $sourcerole->name;
+            $shortname = $sourcerole->shortname;
+            $currentfullname = "";
+            $currentshortname = "";
+            $counter = 0;
+            
+            // find a name for the duplicated role  
+            do {
+                if ($counter) {
+                    $suffixfull = " ".get_string("copyasnoun")." ".$counter;
+                    $suffixshort = "_".$counter;
+                } else {
+                    $suffixfull = "";
+                    $suffixshort = "";
+                }
+                $currentfullname = $fullname.$suffixfull;
+                // Limit the size of shortname - database column accepts <= 15 chars
+                $currentshortname = substr($shortname, 0, 15 - strlen($suffixshort)).$suffixshort;
+                $coursefull  = get_record("role","name",addslashes($currentfullname));
+                $courseshort = get_record("role","shortname",addslashes($currentshortname));
+                $counter++;
+            } while ($coursefull || $courseshort);
+                
+            $description = 'duplicate of '.$fullname;    
+            if ($newrole = create_role($currentfullname, $currentshortname, $description)) {
+                // dupilcate all the capabilities
+                role_cap_duplicate($sourcerole, $newrole);
+            }         
+            redirect('manage.php');
+            break;
         default:
             break;
-
     }
 
 /// print UI now
@@ -417,4 +449,18 @@ function switch_roles($first, $second) {
     return $status;
 }
 
+// duplicates all the base definitions of a role
+function role_cap_duplicate($sourcerole, $targetrole) {
+    global $CFG;
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+    $caps = get_records_sql("SELECT * FROM {$CFG->prefix}role_capabilities
+                             WHERE roleid = $sourcerole->id
+                             AND contextid = $systemcontext->id");                                           
+    // adding capabilities
+    foreach ($caps as $cap) {
+        unset($cap->id);
+        $cap->roleid = $targetrole;
+        insert_record('role_capabilities', $cap);
+    }  
+}
 ?>
