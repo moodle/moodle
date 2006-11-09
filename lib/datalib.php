@@ -102,15 +102,15 @@ function count_courses_notin_metacourse($metacourseid) {
 
     $alreadycourses = get_courses_in_metacourse($metacourseid);
 
-    $sql = "SELECT 1, COUNT(c.id) AS notin FROM {$CFG->prefix}course c
+    $sql = "SELECT COUNT(c.id) AS notin FROM {$CFG->prefix}course c
              WHERE ".((!empty($alreadycourses)) ? "c.id NOT IN (".implode(',',array_keys($alreadycourses)).")
               AND " : "")." c.id !=$metacourseid and c.id != ".SITEID." and c.metacourse != 1";
 
-    if (!$result = get_records_sql($sql)) {
+    if (!$count = get_record_sql($sql)) {
         return 0;
     }
 
-    return $result[1]->notin;
+    return $count->notin;
 }
 
 /**
