@@ -1,44 +1,46 @@
-<?php
+<?php  // $Id$
+
 include_once $CFG->libdir.'/formslib.php';
+
 class course_request_form extends moodleform {
     function definition() {
-        $mform    =& $this->_form;
+        $mform =& $this->_form;
 
-        $mform->addElement('text','fullname',get_string("fullname"),'maxlength="254" size="50"');
-        $mform->addRule('fullname',get_string('missingshortname'),'required', null, 'client');
+        $mform->addElement('text', 'fullname', get_string('fullname'), 'maxlength="254" size="50"');
+        $mform->addRule('fullname', get_string('missingshortname'), 'required', null, 'client');
         $mform->setType('fullname', PARAM_TEXT);
 
-        $mform->addElement('text','shortname',get_string("shortname"),'maxlength="15" size="10"');
-        $mform->addRule('shortname',get_string('missingfullname'),'required', null, 'client');
+        $mform->addElement('text', 'shortname', get_string('shortname'), 'maxlength="15" size="10"');
+        $mform->addRule('shortname', get_string('missingfullname'), 'required', null, 'client');
         $mform->setType('shortname', PARAM_TEXT);
 
-        $mform->addElement('htmleditor','summary',get_string("summary"),array('rows'=>'15','cols'=>'50'));
-        $mform->addRule('summary',get_string('missingsummary'),'required', null, 'client');
+        $mform->addElement('htmleditor', 'summary', get_string('summary'), array('rows'=>'15', 'cols'=>'50'));
+        $mform->addRule('summary', get_string('missingsummary'), 'required', null, 'client');
         $mform->setType('summary', PARAM_RAW);
 
-        $mform->addElement('textarea','reason',get_string("courserequestreason"),array('rows'=>'15','cols'=>'50'));
-        $mform->addRule('reason',get_string('missingreqreason'),'required', null, 'client');
+        $mform->addElement('textarea', 'reason', get_string('courserequestreason'), array('rows'=>'15', 'cols'=>'50'));
+        $mform->addRule('reason', get_string('missingreqreason'), 'required', null, 'client');
         $mform->setType('reason', PARAM_TEXT);
 
-        $mform->addElement('text','password',get_string("enrolmentkey"),'size="25"');
+        $mform->addElement('text', 'password', get_string('enrolmentkey'), 'size="25"');
         $mform->setType('password', PARAM_RAW);
 
 
-        $mform->addElement('submit','',get_string("savechanges"));
+        $mform->addElement('submit', '', get_string('savechanges'));
     }
 
     function validation($data) {
-        $errors=array();
+        $errors = array();
         $foundcourses = null;
         $foundreqcourses = null;
 
         if (!empty($data['shortname'])) {
-            $foundcourses = get_records("course", "shortname", $data['shortname']);
-            $foundreqcourses = get_records("course_request", "shortname", $data['shortname']);
+            $foundcourses = get_records('course', 'shortname', $data['shortname']);
+            $foundreqcourses = get_records('course_request', 'shortname', $data['shortname']);
         }
         if (!empty($foundreqcourses)) {
             if (!empty($foundcourses)) {
-                $foundcourses = array_merge($foundcourses,$foundreqcourses);
+                $foundcourses = array_merge($foundcourses, $foundreqcourses);
             } else {
                 $foundcourses = $foundreqcourses;
             }
@@ -57,20 +59,19 @@ class course_request_form extends moodleform {
                 }
                 $foundcoursenamestring = addslashes(implode(',', $foundcoursenames));
 
-                $errors["shortname"] = get_string("shortnametaken", "", $foundcoursenamestring);
+                $errors['shortname'] = get_string('shortnametaken', '', $foundcoursenamestring);
                 if (!empty($pending)) {
-                    $errors["shortname"] .= get_string('starpending');
+                    $errors['shortname'] .= get_string('starpending');
                 }
             }
         }
-        if (0==count($errors)){
+        if (0 == count($errors)){
             return true;
-        }else {
+        } else {
             return $errors;
         }
 
     }
-
 
 }
 ?>

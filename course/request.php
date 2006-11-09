@@ -19,9 +19,9 @@
     $requestform = new course_request_form('request.php');
 
     $strtitle = get_string('courserequest');
-    print_header($strtitle,$strtitle,$strtitle, $requestform->focus());
+    print_header($strtitle, $strtitle, $strtitle, $requestform->focus());
 
-    print_simple_box_start("center");
+    print_simple_box_start('center');
     print_string('courserequestintro');
     print_simple_box_end();
 
@@ -30,14 +30,13 @@
 
         $data->requester = $USER->id;
 
-        if (insert_record('course_request',$data)) {
+        if (insert_record('course_request', $data)) {
             notice(get_string('courserequestsuccess'));
         } else {
             notice(get_string('courserequestfailed'));
         }
         print_footer();
         exit;
-
 
     }
 
@@ -47,7 +46,6 @@
     print_footer();
 
     exit;
-
 
 
 ?>
