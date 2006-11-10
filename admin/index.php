@@ -142,6 +142,11 @@
     /// But we prioritise install.xml (XMLDB) if present
     
         change_db_encoding(); // first try to change db encoding to utf8
+        if (!setup_is_unicodedb()) {
+            // If could not convert successfully, throw error, and prevent installation
+            print_error('unicoderequired', 'admin');  
+        }   
+    
         $status = false;
         if (file_exists("$CFG->libdir/db/install.xml")) {
             $status = install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
