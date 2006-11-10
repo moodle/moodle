@@ -103,13 +103,15 @@ function data_backup_one_mod($bf,$preferences,$data) {
     
     // if we've selected to backup users info, then call any other functions we need
     // including backing up individual files
+    
+    $status = backup_data_fields($bf,$preferences,$data->id);
+
     if (backup_userdata_selected($preferences,'data',$data->id)) {
         //$status = backup_someuserdata_for_this_instance();
         //$status = backup_somefiles_for_this_instance();
         // ... etc
 
         $status = backup_data_records($bf,$preferences,$data->id);
-        $status = backup_data_fields($bf,$preferences,$data->id);
         if ($status) {
             $status = backup_data_files_instance($bf,$preferences,$data->id);    //recursive copy
         }
