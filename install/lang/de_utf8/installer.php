@@ -17,19 +17,19 @@ z.B.: <br /> <br /><b>moodleadmin</b><br />
 Dies ändert die Links für das Admin-Verzeichnis in Moodle.';
 $string['bypassed'] = 'Unberücksichtigt';
 $string['cannotcreatelangdir'] = 'Das Verzeichnis \"lang\" kann nicht angelegt werden.';
-$string['cannotcreatetempdir'] = 'Temporäres Verzeichnis kann nicht angelegt werden.';
+$string['cannotcreatetempdir'] = 'Das temporäre Verzeichnis kann nicht angelegt werden.';
 $string['cannotdownloadcomponents'] = 'Komponenten können nicht heruntergeladen werden.';
 $string['cannotdownloadzipfile'] = 'ZIP-Datei kann nicht heruntergeladen werden.';
 $string['cannotfindcomponent'] = 'Komponente wurde nicht gefunden.';
-$string['cannotsavemd5file'] = 'md5-Datei konnte nicht gespeichert werden.';
-$string['cannotsavezipfile'] = 'ZIP-Datei konnte nicht gespeichert werden';
-$string['cannotunzipfile'] = 'Datei konnte nicht entpackt werden.';
+$string['cannotsavemd5file'] = 'Die md5-Datei konnte nicht gespeichert werden.';
+$string['cannotsavezipfile'] = 'Die ZIP-Datei konnte nicht gespeichert werden';
+$string['cannotunzipfile'] = 'Die Datei konnte nicht entpackt werden.';
 $string['caution'] = 'Warnung';
 $string['check'] = 'Prüfen';
 $string['chooselanguagehead'] = 'Eine Sprache wählen';
 $string['chooselanguagesub'] = 'Wählen Sie eine Sprache, die Sie während der Installation verwenden wollen. Nach der Installation können Sie die Sprache für die Oberfläche und die Nutzer/innen festlegen.';
 $string['closewindow'] = 'Dieses Fenster schließen';
-$string['compatibilitysettingshead'] = 'Prüfung Ihrer  PHP- Einstellungen ...';
+$string['compatibilitysettingshead'] = 'Prüfung Ihrer PHP-Einstellungen ...';
 $string['compatibilitysettingssub'] = 'Alle Tests sollten vom Server bestätigt werden, damit Moodle später reibungslos laufen kann.';
 $string['componentisuptodate'] = 'Die Komponente ist nicht aktuell.';
 $string['configfilenotwritten'] = 'Das Installationsscript kann die Datei config.php, welche die gewählten Einstellungen enthält, nicht automatisch erstellen. Der web-user hat keine Schreibrechte für das Moodle-Verzeichnis. Sie können den folgenden Code manuell in der Datei config.php speichern und diese dann ins Moodle- Hauptverzeichnis kopieren.';
@@ -52,7 +52,13 @@ $string['databasesettingssub'] = '<b>Typ:</b> mysql oder postgres7<br />
 <b>Nutzer:</b> Ihr Anmeldename für die Datenbank<br />
 <b>Passwort:</b> Ihr Passwort für die Datenbank<br />
 <b>Tabellen-Prefix:</b> optionaler Prefix für alle Tabellen';
-$string['databasesettingssub_mssql'] = '<b>Typ:</b> SQL*Server<br />
+$string['databasesettingssub_mssql'] = '<b>Typ:</b> SQL*Server (ohne UTF-8)<br />
+<b>Host:</b> z.B. localhost oder db.isp.com<br />
+<b>Name:</b> Datenbankname, z.B. moodle<br />
+<b>User:</b> Ihr Anmeldename für die Datenbank<br />
+<b>Password:</b> Ihr Passwort für die Datenbank<br />
+<b>Tabellen-Prefix:</b> Prefix für alle Tabellen (notwendig)';
+$string['databasesettingssub_mssql_n'] = '<b>Typ:</b> SQL*Server (mit UTF-8)<br />
 <b>Host:</b> z.B. localhost oder db.isp.com<br />
 <b>Name:</b> Datenbankname, z.B. moodle<br />
 <b>User:</b> Ihr Anmeldename für die Datenbank<br />
@@ -106,7 +112,7 @@ web-user des Servers haben. (üblicherweise \'nobody\' or \'apache\'), aber es s
 $string['dirroot'] = 'Moodle-Verzeichnis';
 $string['dirrooterror'] = 'Die Einstellungen für das Moodle-Verzeichnis sind nicht korrekt.  Es wurde keine Moodle-Installation gefunden. Die anderen Werte wurden gelöscht.';
 $string['download'] = 'Herunterladen';
-$string['downloadedfilecheckfailed'] = 'Prüfung der heruntergeladenen Datei ist gescheitert';
+$string['downloadedfilecheckfailed'] = 'PDie rüfung der heruntergeladenen Datei ist gescheitert';
 $string['downloadlanguagebutton'] = 'Download des \"$a\" Sprachpakets';
 $string['downloadlanguagehead'] = 'Download der Sprachpakete';
 $string['downloadlanguagenotneeded'] = 'Sie können die Installation mit dem Sprachpaket \"$a\" fortsetzen.';
@@ -129,7 +135,7 @@ $string['gdversionhelp'] = '<p>Auf Ihrem Server ist vermutlich GD nicht installi
 <p>GD ist eine Bibliothek, die von PHP benötigt wird, um damit Bilder von Moodle angezeigt werden können, z.B. Nutzer-Bilder oder grafische Darstellungen der Log-Daten. Moodle arbeitet auch ohne GD. Die o.g. Funktionen stehen Ihnen dann jedoch nicht zur Verfügung.</p>
 <p> Wenn Sie GD unter UNIX zu PHP hinzufügen wollen, kompilieren Sie PHP unter Verwendung des Parameters   with-gd </p>
 <p>Unter Windows können Sie die Datei php.ini bearbeiten und die Zeile libgd.dll auskommentieren.</p>';
-$string['globalsquotes'] = 'Unsichere Einstellung von Globals';
+$string['globalsquotes'] = 'Unsichere Einstellung von Globalparametern';
 $string['globalsquoteserror'] = 'Prüfen Sie die PHP-Einstellungen: deaktivieren Sie register_globals und/oder aktivieren Sie magic_quotes_gpc';
 $string['help'] = 'Hilfe';
 $string['iconvrecommended'] = 'Die Installation der ICONV Bibliothek wird zur Leistungsverbesserung dringend empfohlen. Dies ist besonders wichtig, wenn Sie Sprachen mit anderen als lateinischen Zeichensätzen verwenden.';
@@ -143,7 +149,7 @@ $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Dies sollte ausgeschaltet sein (\'off\')';
 $string['mbstringrecommended'] = 'Die Installation der MBSTRING Bibliothek wird zur Leistungsverbesserung dringend empfohlen. Dies ist besonders wichtig, wenn Sie Sprachen mit anderen als lateinischen Zeichensätzen verwenden.';
 $string['memorylimit'] = 'Memory Limit';
-$string['memorylimiterror'] = 'Die PHP-Speichereinstellung memory_limit ist zu niedrig. Es wird bei der künftigen Nutzung vermutlich zu Problemen kommen.';
+$string['memorylimiterror'] = 'Die PHP-Speichereinstellung memory_limit ist zu niedrig. Dies könnte später zu Problemen führen.';
 $string['memorylimithelp'] = '<p>Die PHP-Einstellung memory_limit für Ihren Server ist zur Zeit auf $a eingestellt. </p>
 <p>Dies wird vermutlich zu Problemen führen, wenn Sie Moodle mit vielen Aktivitäten oder vielen Nutzer/innen verwenden. </p>
 <p>Wir empfehlen die Einstellung zu erhöhen. Empfohlen werden 16M oder mehr. Dies können Sie auf verschiedene Arten machen:</p>
@@ -156,6 +162,7 @@ $string['memorylimithelp'] = '<p>Die PHP-Einstellung memory_limit für Ihren Ser
 $string['missingrequiredfield'] = 'Einige erforderliche Felder sind nicht ausgefüllt.';
 $string['moodledocslink'] = 'Moodle-Dokumentation für diese Seite';
 $string['mssql'] = 'SQL*Server (mssql)';
+$string['mssql_n'] = 'SQL*Server mit UTF-8-Unterstützung (mssql_n)';
 $string['mssqlextensionisnotpresentinphp'] = 'PHP wurde nicht richtig konfiguriert, um über die MSSQL-Erweiterung mit SQL*Server zu kommunizieren. Bitte prüfen Sie die Datei php.ini oder kompilieren Sie PHP neu.';
 $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'Wenn Sie auf Ihrer Site ausschließlich ISO-8859-1 (lateinische) Sprachen verwenden, können Sie die derzeitige MySQL-Version 4.1.12 (oder höher) verwenden.';
