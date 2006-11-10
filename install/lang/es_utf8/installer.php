@@ -152,7 +152,7 @@ $string['phpversionhelp'] = '<p>Moodle requiere una versión de PHP 4.1.0 o supe
 <p>Su versión es $a</p>
 <p>Debe actualizar PHP o acudir a otro servidor con una versión más reciente de PHP</p>';
 $string['previous'] = 'Anterior';
-$string['remotedownloadnotallowed'] = 'No está permitido descargar los componentes a su servidor (allow_url_fopen está deshabilitado).<br /><br />Debe descargar el archivo <a href=\"$a->url\">$a->url</a> manualmente, y copiarlo a \"$a->dest\" ';
+$string['remotedownloadnotallowed'] = 'No está permitido descargar los componentes a su servidor (allow_url_fopen está deshabilitado).<br /><br />Debe descargar el archivo <a href=\"$a->url\">$a->url</a> manualmente, y copiarlo a \"$a->dest\"';
 $string['report'] = 'Informe';
 $string['restricted'] = 'Restringido';
 $string['safemode'] = 'Safe Mode';
