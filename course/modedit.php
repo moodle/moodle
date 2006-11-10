@@ -119,7 +119,7 @@
     }
 
     $mformclassname=$module->name.'_mod_form';
-    $mform=& new $mformclassname('modedit.php');
+    $mform=& new $mformclassname('modedit.php', array('course' => $course));
 
     if ($fromform=$mform->data_submitted()){
         if (empty($fromform->coursemodule)) { //add
