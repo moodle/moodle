@@ -229,6 +229,7 @@ $string['skipdbencodingtest'] = 'Skip DB Encoding Test';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'English';
+$string['unicoderecommended'] = 'Storing all your data in Unicode (UTF-8) is recommended. New installations should be performed into databases that have their default character set as Unicode.  If you are upgrading, you should perform the UTF-8 migration process (see the Admin page).';
 $string['user'] = 'User';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'You are seeing this page because you have successfully installed and 
