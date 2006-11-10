@@ -181,6 +181,7 @@ $string['skipdbencodingtest'] = 'Ne pas effectuer le test d\'encodage de la base
 $string['status'] = 'Statut';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Français';
+$string['unicoderecommended'] = 'La migration de la base de données vers UTF-8 est recommandée. Les nouvelles installations devraient être effectuées dans des bases de données supportant unicode.';
 $string['user'] = 'Utilisateur';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'Vous voyez cette page, car vous avez installé Moodle correctement et lancé le logiciel <strong>$a->packname $a->packversion</strong> sur votre ordinateur. Félicitations&nbsp;!';
