@@ -112,11 +112,12 @@ function data_restore_mods($mod,$restore) {
                 // Moodle 1.5
                 $restore_userdata_selected = $restore->mods['data']->userinfo;
             }
+            
+            //Restore data_fields first!!! need to hold an array of [oldid]=>newid due to double dependencies
+            $status = $status and data_fields_restore_mods ($mod->id, $newid, $info, $restore);
+            
             if ($restore_userdata_selected) {
-                //Restore data_fields first!!! need to hold an array of [oldid]=>newid due to double dependencies
-                $status = $status and data_fields_restore_mods ($mod->id, $newid, $info, $restore);
                 $status = $status and data_records_restore_mods ($mod->id, $newid, $info, $restore);
-
             }
 
             // If the backup contained $data->participants, $data->assesspublic
