@@ -203,6 +203,7 @@ $string['skipdbencodingtest'] = 'DBエンコーディングテストをスキッ
 $string['status'] = '状態';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = '日本語';
+$string['unicoderecommended'] = 'あなたのすべてのデータをユニコードフォーマット (UTF-8) で保存することが推奨されます。Moodleの新しいインストールは、ユニコードがデフォルトキャラクタにセットされたデータベースに実行される必要があります。アップグレードの場合、UTF-8移行プロセスを実行してださい (詳細は管理ページをご覧ください)。';
 $string['user'] = 'ユーザ';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'インストールが正常に完了したため、このページをご覧頂いています。あなたのコンピュータで <strong>$a->packname $a->packversion</strong> パッケージを起動してください。';
