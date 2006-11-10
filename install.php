@@ -52,10 +52,6 @@ if ( empty($INSTALL['language']) and empty($_POST['language']) ) {
     $INSTALL['dbname']          = 'moodle';
     $INSTALL['prefix']          = 'mdl_';
 
-    $INSTALL['dbencodingtestresults']  = false;
-    $INSTALL['showskipdbencodingtest'] = false;
-    $INSTALL['skipdbencodingtest']     = false;
-
     $INSTALL['downloadlangpack']       = false;
     $INSTALL['showdownloadlangpack']   = true;
     $INSTALL['downloadlangpackerror']  = '';
@@ -255,13 +251,6 @@ if ($INSTALL['stage'] == DIRECTORY) {
 /// Try to connect to the database. If that fails then try to create the database
 
 if ($INSTALL['stage'] == DATABASE) {
-
-    /// First of all, analyze skipdbencodingtest status
-     if (isset($_POST['skipdbencodingtest'])) {
-         $INSTALL['skipdbencodingtest'] = true;
-     } else {
-         $INSTALL['skipdbencodingtest'] = false;
-     }
     
     /// different format for postgres7 by socket
     if ($INSTALL['dbtype'] == 'postgres7' and ($INSTALL['dbhost'] == 'localhost' || $INSTALL['dbhost'] == '127.0.0.1')) {
@@ -332,7 +321,6 @@ if ($INSTALL['stage'] == DATABASE) {
         $nextstage = DATABASE;
     }
 
-
     if (empty($errormsg)) {
 
         error_reporting(0);  // Hide errors 
@@ -355,79 +343,33 @@ if ($INSTALL['stage'] == DATABASE) {
             }
         } else {
         /// We have been able to connect properly, just test the database encoding now. 
-        /// It must be Unicode for 1.8 installations. Just show one message about it and allow to skip this test.
-            if (empty($INSTALL['skipdbencodingtest'])) {
-            /// We haven't checked the skip test checkbox, so perform the test
-                $encoding = '';
-                switch ($INSTALL['dbtype']) {
-                    case 'mysql':
-                    ///Get MySQL character_set_database value
-                        $rs = $db->Execute("SHOW VARIABLES LIKE 'character_set_database'");
-                        if ($rs && $rs->RecordCount() > 0) {
-                            $records = $rs->GetAssoc(true);
-                            $encoding = $records['character_set_database']['Value'];
-                            if (strtoupper($encoding) == 'UTF8') {
-                                $INSTALL['dbencodingtestresults'] = true;
-                            } else {
-                                // Try to set the encoding now!
-                                if (! $db->Metatables()) {  // We have no tables so go ahead
-                                    $db->Execute("ALTER DATABASE `".$INSTALL['dbname']."` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci");
-                                    $rs = $db->Execute("SHOW VARIABLES LIKE 'character_set_database'");  // this works
+        /// It must be Unicode for 1.8 installations.
 
-                                    $records = $rs->GetAssoc(true);
-                                    $encoding = $records['character_set_database']['Value'];
+            $encoding = '';
+            switch ($INSTALL['dbtype']) {
+                case 'mysql':
+                ///Get MySQL character_set_database value
+                    $rs = $db->Execute("SHOW VARIABLES LIKE 'character_set_database'");
+                    if ($rs && $rs->RecordCount() > 0) {
+                        $records = $rs->GetAssoc(true);
+                        $encoding = $records['character_set_database']['Value'];
+                        if (!strtoupper($encoding) == 'UTF8') {
+                            // Try to set the encoding now!
+                            if (! $db->Metatables()) {  // We have no tables so go ahead
+                                $db->Execute("ALTER DATABASE `".$INSTALL['dbname']."` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci");
+                                $rs = $db->Execute("SHOW VARIABLES LIKE 'character_set_database'");  // this works
 
-                                    if (strtoupper($encoding) == 'UTF8') {
-                                        $INSTALL['dbencodingtestresults'] = true;
-                                    } else {
-                                        $errormsg = get_string('dbwrongencoding', 'install', $encoding);
-                                        $nextstage = DATABASE;
-                                        $INSTALL['showskipdbencodingtest'] = true;
-                                        $INSTALL['dbencodingtestresults'] = false;
-                                    } 
-                                } else {
-                                    $INSTALL['showskipdbencodingtest'] = true;
-                                    $INSTALL['dbencodingtestresults'] = false;
-                                }
                             }
                         }
-                        break;
-                    case 'postgres7':
-                    ///Get PostgreSQL server_encoding value
-                        $rs = $db->Execute("SHOW server_encoding");
-                        if ($rs && $rs->RecordCount() > 0) {
-                            $encoding = $rs->fields['server_encoding'];
-                            if (strtoupper($encoding) != 'UNICODE' && strtoupper($encoding) != 'UTF8') {
-                                $errormsg = get_string('dbwrongencoding', 'install', $encoding);
-                                $nextstage = DATABASE;
-                                $INSTALL['showskipdbencodingtest'] = true;
-                                $INSTALL['dbencodingtestresults'] = false;
-                            } else {
-                                $INSTALL['dbencodingtestresults'] = true;
-                            }
-                        }
-                        break;
-                    case 'oci8po':
-                    ///Get Oracle NLS_CHARACTERSET value
-                        $rs = $db->Execute("SELECT value FROM nls_database_parameters WHERE parameter = 'NLS_CHARACTERSET'");
-                        if ($rs && $rs->RecordCount() > 0) {
-                            $encoding = $rs->fields['value'];
-                            if (strtoupper($encoding) != 'AL32UTF8') {
-                                $errormsg = get_string('dbwrongencoding', 'install', $encoding);
-                                $nextstage = DATABASE;
-                                $INSTALL['dbencodingtestresults'] = false;
-                            } else {
-                                $INSTALL['dbencodingtestresults'] = true;
-                            }
-                        }
-                    /// Get client NLS_LANG environment variable
-                        if (strpos(getenv('NLS_LANG'), 'AL32UTF8') === false) { // Oracle client must be correct UTF8
-                            $errormsg = get_string('dbwrongnlslang', 'install', $encoding);
-                            $nextstage = DATABASE;
-                            $INSTALL['dbencodingtestresults'] = false;
-                        }
-                        break;
-                }
+                        /// If conversion fails, skip, let environment testing do the job
+                    }
+                    break;
+                case 'postgres7':
+                /// Skip, let environment testing do the job
+                    break;
+                case 'oci8po':
+                /// Skip, let environment testing do the job
+                    break;
             }
         }
     }
@@ -575,11 +517,6 @@ if ($nextstage == SAVE) {
 
     $str .= '$CFG->directorypermissions = 00777;  // try 02777 on a server in Safe Mode'."\r\n";
     $str .= "\r\n";
-
-    if (!$INSTALL['skipdbencodingtest'] && $INSTALL['dbencodingtestresults']) {
-        $str .= '$CFG->unicodedb = true;  // Database is utf8'."\r\n";
-        $str .= "\r\n";
-    }
 
     $str .= 'require_once("$CFG->dirroot/lib/setup.php");'."\r\n";
     $str .= '// MAKE SURE WHEN YOU EDIT THIS FILE THAT THERE ARE NO SPACES, BLANK LINES,'."\r\n";
@@ -892,13 +829,6 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
                     <input type="text" size="40" name="prefix" value="<?php echo $INSTALL['prefix'] ?>" />
                 </td>
             </tr>
-            <?php if ($INSTALL['showskipdbencodingtest']) { ?>
-            <tr>
-                <td class="td_left" colspan="2">
-                    <?php print_checkbox ('skipdbencodingtest', '1', $INSTALL['skipdbencodingtest'], get_string('skipdbencodingtest', 'install')) ?>
-                </td>
-            </tr>
-            <?php } ?>
 
 <?php
             break;
