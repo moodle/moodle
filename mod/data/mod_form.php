@@ -61,7 +61,6 @@ class data_mod_form extends moodleform_mod {
 		$mform->setHelpButton('approval', array('requireapproval', get_string('requireapproval', 'data'), 'data'));
 
         $mform->addElement('select', 'numberrssarticles', get_string('numberrssarticles', 'data') , $countoptions);
-		$mform->setHelpButton('approval', array('requireapproval', get_string('requireapproval', 'data'), 'data'));
 
         $mform->addElement('checkbox', 'assessed', get_string("allowratings", "data") , get_string('ratingsuse', 'data'));
 
