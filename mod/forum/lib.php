@@ -100,12 +100,7 @@ function forum_add_instance($forum) {
         $forum->assessed = 0;
     }
 
-    if (!empty($forum->ratingtime)) {
-        $forum->assesstimestart  = make_timestamp($forum->startyear, $forum->startmonth, $forum->startday,
-                                                  $forum->starthour, $forum->startminute, 0);
-        $forum->assesstimefinish = make_timestamp($forum->finishyear, $forum->finishmonth, $forum->finishday,
-                                                  $forum->finishhour, $forum->finishminute, 0);
-    } else {
+    if (empty($forum->ratingtime)) {
         $forum->assesstimestart  = 0;
         $forum->assesstimefinish = 0;
     }
@@ -152,11 +147,6 @@ function forum_update_instance($forum) {
     }
 
     if (!empty($forum->ratingtime)) {
-        $forum->assesstimestart  = make_timestamp($forum->startyear, $forum->startmonth, $forum->startday,
-                                                  $forum->starthour, $forum->startminute, 0);
-        $forum->assesstimefinish = make_timestamp($forum->finishyear, $forum->finishmonth, $forum->finishday,
-                                                  $forum->finishhour, $forum->finishminute, 0);
-    } else {
         $forum->assesstimestart  = 0;
         $forum->assesstimefinish = 0;
     }
