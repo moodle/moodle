@@ -935,13 +935,13 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
         }
     }
 
-/// If we are running under Windows and unicode is enabled, try to convert the datestring
-/// to current_charset() (because it's impossible to specify UTF-8 to fetch locale info in Win32)
+/// If we are running under Windows convert from windows encoding to UTF-8
+/// (because it's impossible to specify UTF-8 to fetch locale info in Win32)
 
-   if (!empty($CFG->unicodedb) && $CFG->ostype == 'WINDOWS') {
+   if ($CFG->ostype == 'WINDOWS') {
        if ($localewincharset = get_string('localewincharset')) {
            $textlib = textlib_get_instance();
-           $datestring = $textlib->convert($datestring, $localewincharset, current_charset());
+           $datestring = $textlib->convert($datestring, $localewincharset, 'UTF-8');
        }
    }
 
@@ -2456,12 +2456,9 @@ function validate_internal_user_password(&$user, $password) {
 
     $validated = false;
 
-    if (!empty($CFG->unicodedb)) {
-        $textlib = textlib_get_instance();
-        $convpassword = $textlib->convert($password, 'UTF-8', get_string('oldcharset'));
-    } else {
-        $convpassword = $password; //no conversion yet
-    }
+	// get password original encoding in case it was not updated to unicode yet
+    $textlib = textlib_get_instance();
+    $convpassword = $textlib->convert($password, 'UTF-8', get_string('oldcharset'));
 
     if ($user->password == md5($password.$CFG->passwordsaltmain) or $user->password == md5($password)
         or $user->password == md5($convpassword.$CFG->passwordsaltmain) or $user->password == md5($convpassword)) {
@@ -3321,7 +3318,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     $mail->Version = 'Moodle '. $CFG->version;           // mailer version
     $mail->PluginDir = $CFG->libdir .'/phpmailer/';      // plugin directory (eg smtp plugin)
 
-    $mail->CharSet = current_charset(true);              //User charset, recalculating it in each call
+    $mail->CharSet = 'UTF-8';
 
     if ($CFG->smtphosts == 'qmail') {
         $mail->IsQmail();                              // use Qmail system
@@ -3418,7 +3415,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 
 /// If we are running under Unicode and sitemailcharset or allowusermailcharset are set, convert the email
 /// encoding to the specified one
-    if (!empty($CFG->unicodedb) && (!empty($CFG->sitemailcharset) || !empty($CFG->allowusermailcharset))) {
+    if ((!empty($CFG->sitemailcharset) || !empty($CFG->allowusermailcharset))) {
     /// Set it to site mail charset
         $charset = $CFG->sitemailcharset;
     /// Overwrite it with the user mail charset
@@ -4086,9 +4083,9 @@ function display_size($size) {
  */
 function clean_filename($string) {
     global $CFG;
-    if (empty($CFG->unicodecleanfilename) || empty($CFG->unicodedb)) {
+    if (empty($CFG->unicodecleanfilename)) {
         $textlib = textlib_get_instance();
-        $string = $textlib->specialtoascii($string, current_charset());
+        $string = $textlib->specialtoascii($string);
         $string = preg_replace('/[^\.a-zA-Z\d\_-]/','_', $string ); // only allowed chars
     } else {
         //clean only ascii range
@@ -4136,27 +4133,14 @@ function current_language() {
 /* Return the code of the current charset
  * based in some config options and the lang being used
  * caching it per request.
+ * 
+ * Obsoleted function.
+ * 
  * @param $ignorecache to skip cached value and recalculate it again
- * @uses $CFG
- * @return string
+ * @return string always returns UTF-8
  */
 function current_charset($ignorecache = false) {
-
-    global $CFG;
-
-    static $currentcharset;
-
-    if (!empty($currentcharset) and !$ignorecache) { /// Cached. Return it.
-        return $currentcharset;
-    }
-
-    if (!empty($CFG->unicode) || !empty($CFG->unicodedb)) {
-        $currentcharset = 'UTF-8';
-    } else {
-        $currentcharset = get_string('thischarset');
-    }
-
-    return $currentcharset;
+    return 'UTF-8';
 }
 
 /**
@@ -4277,9 +4261,7 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
         }
     }
 
-/// Depending upon $CFG->unicodedb, we are going to check moodle.php or langconfig.php,
-/// default to a different lang pack, and redefine the module for some special strings
-/// that, under 1.6 lang packs, reside under langconfig.php
+/// originally these special strings were stored in moodle.php now we are only in langconfig.php
     $langconfigstrs = array('alphabet', 'backupnameformat', 'firstdayofweek', 'locale', 
                             'localewin', 'localewincharset', 'oldcharset',
                             'parentlanguage', 'strftimedate', 'strftimedateshort', 'strftimedatetime',
@@ -4287,15 +4269,10 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
                             'strftimemonthyear', 'strftimerecent', 'strftimerecentfull', 'strftimetime',
                             'thischarset', 'thisdirection', 'thislanguage');
 
-    if (!empty($CFG->unicodedb)) {
-        $filetocheck = 'langconfig.php';
-        $defaultlang = 'en_utf8';
-        if (in_array($identifier, $langconfigstrs)) {
-            $module = 'langconfig';  //This strings are under langconfig.php for 1.6 lang packs
-        }
-    } else {
-        $filetocheck = 'moodle.php';
-        $defaultlang = 'en';
+    $filetocheck = 'langconfig.php';
+    $defaultlang = 'en_utf8';
+    if (in_array($identifier, $langconfigstrs)) {
+        $module = 'langconfig';  //This strings are under langconfig.php for 1.6 lang packs
     }
 
     $lang = current_language();
@@ -4509,12 +4486,7 @@ function get_list_of_languages() {
 
     $languages = array();
 
-/// Depending upon $CFG->unicodedb, we are going to check moodle.php or langconfig.php
-    if (!empty($CFG->unicodedb)) {
-        $filetocheck = 'langconfig.php';
-    } else {
-        $filetocheck = 'moodle.php';
-    }
+    $filetocheck = 'langconfig.php';
 
     if ( (!defined('FULLME') || FULLME !== 'cron')
          && !empty($CFG->langcache) && file_exists($CFG->dataroot .'/cache/languages')) {
@@ -4545,12 +4517,6 @@ function get_list_of_languages() {
                 $shortlang = $lang;
             }
         /// Search under dirroot/lang
-        /// If $CFG->unicodedb = false, ignore new lang packs
-            if (empty($CFG->unicodedb)) {
-                if (file_exists($CFG->dirroot .'/lang/'. $lang .'/langconfig.php')) {
-                    continue;
-                }
-            }
             if (file_exists($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck)) {
                 include($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck);
                 if (!empty($string['thislanguage'])) {
@@ -4559,12 +4525,6 @@ function get_list_of_languages() {
                 unset($string);
             }
         /// And moodledata/lang
-        /// If $CFG->unicodedb = false, ignore new lang packs
-            if (empty($CFG->unicodedb)) {
-                if (file_exists($CFG->dataroot .'/lang/'. $lang .'/langconfig.php')) {
-                    continue;
-                }
-            }
             if (file_exists($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck)) {
                 include($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck);
                 if (!empty($string['thislanguage'])) {
@@ -4593,12 +4553,6 @@ function get_list_of_languages() {
                 $shortlang = $lang;
             }
         /// Search under moodledata/lang
-        /// If $CFG->unicodedb = false, ignore new lang packs
-            if (empty($CFG->unicodedb)) {
-                if (file_exists($CFG->dataroot .'/lang/'. $lang .'/langconfig.php')) {
-                    continue;
-                }
-            }
             if (file_exists($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck)) {
                 include($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck);
                 if (!empty($string['thislanguage'])) {
@@ -4607,12 +4561,6 @@ function get_list_of_languages() {
                 unset($string);
             }
         /// And dirroot/lang
-        /// If $CFG->unicodedb = false, ignore new lang packs
-            if (empty($CFG->unicodedb)) {
-                if (file_exists($CFG->dirroot .'/lang/'. $lang .'/langconfig.php')) {
-                    continue;
-                }
-            }
             if (file_exists($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck)) {
                 include($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck);
                 if (!empty($string['thislanguage'])) {
@@ -5531,7 +5479,7 @@ function moodle_setlocale($locale='') {
     $oldlocale = $currentlocale;
 
 /// Fetch the correct locale based on ostype
-    if(!empty($CFG->unicodedb) && $CFG->ostype == 'WINDOWS') {
+    if($CFG->ostype == 'WINDOWS') {
         $stringtofetch = 'localewin';
     } else {
         $stringtofetch = 'locale';
@@ -5586,9 +5534,9 @@ function moodle_setlocale($locale='') {
  */
 function moodle_strtolower ($string, $encoding='') {
     
-    //If not specified, get the current encoding
+    //If not specified use utf8
     if (empty($encoding)) {
-        $encoding = current_charset();
+        $encoding = 'UTF-8';
     }
     //Use text services
     $textlib = textlib_get_instance();
@@ -5623,7 +5571,7 @@ function count_letters($string) {
     $string = strip_tags($string); // Tags are out now
     $string = ereg_replace('[[:space:]]*','',$string); //Whitespace are out now
 
-    return $textlib->strlen($string, current_charset());
+    return $textlib->strlen($string);
 }
 
 /**
