@@ -201,26 +201,9 @@ global $HTTPSPAGEREQUIRED;
         $originalconfigdebug = -1;
     }
 
-/// If $CFG->unicodedb is not set, get it from database or calculate it because we need
-/// to know it to "set names" properly.
-/// (this is the only database interaction before "set names")
-    if (!isset($CFG->unicodedb)) {
-        $utftmp = get_config('', 'unicodedb');
-        if ($utftmp !== false) {  //Only if the record exists
-        $CFG->unicodedb = $utftmp->value;
-        } else {
-            $CFG->unicodedb = setup_is_unicodedb();
-            set_config('unicodedb', $CFG->unicodedb);
-        }
-    }
-    
-/// Set the client/server and connection to utf8 if necessary
+/// Set the client/server and connection to utf8
 /// and configure some other specific variables for each db
     configure_dbconnection();
-
-/// Now that "set names" has been executed it is safe to
-/// work with the DB, but never before this!
-
 
 /// Load up any configuration from the config table
     $CFG = get_config();
@@ -551,7 +534,7 @@ $CFG->os = PHP_OS;
     unset($lang);
     if (empty($CFG->lang)) {
         if (empty($SESSION->lang)) {
-            $CFG->lang = !empty($CFG->unicodedb) ? 'en_utf8' : 'en';
+            $CFG->lang = 'en_utf8';
         } else {
             $CFG->lang = $SESSION->lang;
         }
@@ -638,9 +621,6 @@ $CFG->os = PHP_OS;
         }
     }
 
-/// Moodle 1.8 needs to be run on unicode, kill if not unicodedb
-    if (!$CFG->unicodedb) {
-        print_error('unicoderequired', 'admin');
-    }
-    
+/// note: we can not block non utf-8 installatrions here, because empty mysql database
+/// might be converted to utf-8 in admin/index.php during installation
 ?>

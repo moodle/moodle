@@ -537,9 +537,6 @@ class resource_ims extends resource_base {
             }
         }
 
-    /// Select encoding
-        $encoding = current_charset();
-    
     /// print navigation buttons if needed  
         if (!empty($this->parameters->navigationbuttons)) {
             $this->print_nav($items, $resource, $page);
@@ -758,11 +755,6 @@ class resource_ims extends resource_base {
         foreach ($items as $item) {
             if (!is_object($item)) {
                 continue;
-            }
-        /// Convert text from UTF-8 to current charset if needed
-            if (empty($CFG->unicodedb)) {
-                $textlib = textlib_get_instance();
-                $item->title = $textlib->convert($item->title, 'UTF-8', current_charset());
             }
         /// Skip pages until we arrive to $page
             if ($item->id < $page) {

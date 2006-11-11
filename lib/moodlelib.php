@@ -941,7 +941,7 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
    if ($CFG->ostype == 'WINDOWS') {
        if ($localewincharset = get_string('localewincharset')) {
            $textlib = textlib_get_instance();
-           $datestring = $textlib->convert($datestring, $localewincharset, 'UTF-8');
+           $datestring = $textlib->convert($datestring, $localewincharset, 'utf-8');
        }
    }
 
@@ -2458,7 +2458,7 @@ function validate_internal_user_password(&$user, $password) {
 
 	// get password original encoding in case it was not updated to unicode yet
     $textlib = textlib_get_instance();
-    $convpassword = $textlib->convert($password, 'UTF-8', get_string('oldcharset'));
+    $convpassword = $textlib->convert($password, 'utf-8', get_string('oldcharset'));
 
     if ($user->password == md5($password.$CFG->passwordsaltmain) or $user->password == md5($password)
         or $user->password == md5($convpassword.$CFG->passwordsaltmain) or $user->password == md5($convpassword)) {
@@ -3318,7 +3318,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     $mail->Version = 'Moodle '. $CFG->version;           // mailer version
     $mail->PluginDir = $CFG->libdir .'/phpmailer/';      // plugin directory (eg smtp plugin)
 
-    $mail->CharSet = 'UTF-8';
+    $mail->CharSet = 'utf-8';
 
     if ($CFG->smtphosts == 'qmail') {
         $mail->IsQmail();                              // use Qmail system
@@ -4130,14 +4130,10 @@ function current_language() {
     return $return;
 }
 
-/* Return the code of the current charset
- * based in some config options and the lang being used
- * caching it per request.
- * 
- * Obsoleted function.
- * 
- * @param $ignorecache to skip cached value and recalculate it again
- * @return string always returns UTF-8
+/* Obsoleted function - returns the code of the current charset - originally depended on the selected language pack.
+ *
+ * @param $ignorecache not used anymore
+ * @return string always returns 'UTF-8'
  */
 function current_charset($ignorecache = false) {
     return 'UTF-8';
@@ -5530,7 +5526,7 @@ function moodle_setlocale($locale='') {
  * @param string $encoding The encoding on the string.
  * @return string
  * @todo Add examples of calling this function with/without encoding types
- * @deprecated Use textlib->strtolower($text, current_charset()) instead.
+ * @deprecated Use textlib->strtolower($text) instead.
  */
 function moodle_strtolower ($string, $encoding='') {
     

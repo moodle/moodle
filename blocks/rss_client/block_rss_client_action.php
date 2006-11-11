@@ -52,7 +52,7 @@ $shared         = optional_param('shared', 0, PARAM_INT);
 
 
 if (!defined('MAGPIE_OUTPUT_ENCODING')) {
-    define('MAGPIE_OUTPUT_ENCODING', current_charset());  // see bug 3107
+    define('MAGPIE_OUTPUT_ENCODING', 'utf-8');  // see bug 3107
 }
 
 

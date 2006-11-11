@@ -1760,16 +1760,10 @@ function configure_dbconnection() {
 
     switch ($CFG->dbtype) {
         case 'mysql':
-        /// Set names if needed
-            if ($CFG->unicodedb) {
-                $db->Execute("SET NAMES 'utf8'");
-            }
+            $db->Execute("SET NAMES 'utf8'");
             break;
         case 'postgres7':
-        /// Set names if needed
-            if ($CFG->unicodedb) {
-                $db->Execute("SET NAMES 'utf8'");
-            }
+            $db->Execute("SET NAMES 'utf8'");
             break;
         case 'mssql':
         case 'mssql_n':

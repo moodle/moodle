@@ -21,16 +21,13 @@
         error("User ID was incorrect");
     }
 
-/// Select encoding
-    $encoding = current_charset();
-
 /// Print frameset to contain all the various panes
-    @header('Content-Type: text/html; charset='.$encoding);
+    @header('Content-Type: text/html; charset=utf-8');
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
     <html>
      <head>
-       <meta http-equiv="content-type" content="text/html; charset=<?php echo $encoding ?>" />
+       <meta http-equiv="content-type" content="text/html; charset=utf-8" />
        <title><?php echo get_string('discussion', 'message').': '.fullname($user) ?></title>
      </head>
      <frameset rows="110,*,0,200" border="0" marginwidth="2" marginheight="1">

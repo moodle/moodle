@@ -312,7 +312,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
             $filesize = strlen($path);
             $pathisstring = true;
         } else if ($mimetype == 'text/plain') {
-            @header('Content-Type: Text/plain; charset='.current_charset()); //add encoding
+            @header('Content-Type: Text/plain; charset=utf-8'); //add encoding
         } else {
             @header('Content-Type: '.$mimetype);
         }
@@ -357,7 +357,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
             }
 
             @header('Content-Length: '.strlen($output));
-            @header('Content-Type: text/html; charset='.current_charset()); //add encoding
+            @header('Content-Type: text/html; charset=utf-8'); //add encoding
             while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
             echo $output;
         } else {    // Just send it out raw

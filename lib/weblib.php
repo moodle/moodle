@@ -428,11 +428,11 @@ function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
 
 /// Process the string adding the cut when necessary
     $output = '';
-    $length = $textlib->strlen($string, current_charset());
+    $length = $textlib->strlen($string);
     $wordlength = 0;
 
     for ($i=0; $i<$length; $i++) {
-        $char = $textlib->substr($string, $i, 1, current_charset());
+        $char = $textlib->substr($string, $i, 1);
         if ($char == ' ' or $char == "\t" or $char == "\n" or $char == "\r" or $char == "<" or $char == ">") {
             $wordlength = 0;
         } else {
@@ -2141,11 +2141,9 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     }
 
 
-    $encoding = current_charset();
-
-    $meta = '<meta http-equiv="content-type" content="text/html; charset='. $encoding .'" />'. "\n". $meta ."\n";
+    $meta = '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'. "\n". $meta ."\n";
     if (!$usexml) {
-        @header('Content-type: text/html; charset='.$encoding);
+        @header('Content-type: text/html; charset=utf-8');
     }
 
     if ( get_string('thisdirection') == 'rtl' ) {

@@ -164,10 +164,6 @@ $CFG->admin = 'admin';
 //      $CFG->defaultblocks = 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
 //
 //
-// This setting will put Moodle in Unicode mode. Please note that database must support it.
-// Do not enable this if your database in not converted to UTF-8!
-//     $CFG->unicodedb = true;
-//
 // Allow unicode characters in uploaded files, generated reports, etc.
 // This setting is new and not much tested, there are known problems
 // with backup/restore that will not be solved, because native infozip

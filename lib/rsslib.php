@@ -321,13 +321,7 @@ function rss_full_tag($tag,$level=0,$endline=true,$content,$attributes=null) {
     global $CFG;
     $st = rss_start_tag($tag,$level,$endline,$attributes);
     $co="";
-    if (!empty($CFG->unicodedb)) {
-        // Don't perform the conversion. Contents are Unicode.
-        $co = preg_replace("/\r\n|\r/", "\n", htmlspecialchars($content));
-    } else {
-        // Perform the conversion. Contents aren't Unicode.
-        $co = preg_replace("/\r\n|\r/", "\n", utf8_encode(htmlspecialchars($content)));
-    }
+    $co = preg_replace("/\r\n|\r/", "\n", htmlspecialchars($content));
     $et = rss_end_tag($tag,0,true);
 
     return $st.$co.$et;

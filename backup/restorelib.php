@@ -346,7 +346,7 @@
             //Print backup general info
             print_table($table);
 
-            if ($info->backup_backup_version <= 2005070500 && !empty($CFG->unicodedb)) {
+            if ($info->backup_backup_version <= 2005070500) {
                  notify(get_string('backupnonisowarning'));  // Message informing that this backup may not work!
             }
 
@@ -3016,13 +3016,7 @@
         //This function is used to get the current contents property value
         //They are trimed (and converted from utf8 if needed)
         function getContents() {
-            global $CFG;
-
-            if (empty($CFG->unicodedb)) {
-                return trim(utf8_decode($this->content));
-            } else {
-                return trim($this->content);
-            }
+            return trim($this->content);
         }
  
         //This is the startTag handler we use where we are reading the info zone (todo="INFO")

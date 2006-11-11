@@ -14,9 +14,6 @@
         error("Messaging is disabled on this site");
     }
 
-/// Select encoding
-    $encoding = current_charset();
-
 /// Script parameters
     $userid       = required_param('id', PARAM_INT);
     $userfullname = strip_tags(required_param('name', PARAM_RAW));
@@ -34,14 +31,14 @@
 
     echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'."\n";
     echo '<html><head><title> </title>';
-    echo '<meta http-equiv="content-type" content="text/html; charset='.$encoding.'" />';
+    echo '<meta http-equiv="content-type" content="text/html; charset=utf-8" />';
     echo '<script type="text/javascript">'."\n";
     echo '<!--'."\n";
     echo 'if (parent.messages.document.getElementById("messagestarted") == null) {'."\n";
     echo '  parent.messages.document.close();'."\n";
     echo '  parent.messages.document.open("text/html","replace");'."\n";
     echo '  parent.messages.document.write("<html><head><title> <\/title>");'."\n";
-    echo '  parent.messages.document.write("<meta http-equiv=\"content-type\" content=\"text/html; charset='.current_charset().'\" />");'."\n";
+    echo '  parent.messages.document.write("<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />");'."\n";
     echo '  parent.messages.document.write("<base target=\"_blank\" />");'."\n";
     echo '  parent.messages.document.write("'.addslashes($stylesheetshtml).'");'."\n";
     echo '  parent.messages.document.write("<\/head><body class=\"message course-1\" id=\"message-messages\"><div style=\"display: none\" id=\"messagestarted\">&nbsp;<\/div>");'."\n";

@@ -62,7 +62,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
 <html>
  <head>
-  <meta http-equiv="content-type" content="text/html; charset=<?php echo current_charset(); ?>" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <title>
    <?php echo "$strchat: $course->shortname: ".format_string($chat->name,true)."$groupname" ?>
   </title>

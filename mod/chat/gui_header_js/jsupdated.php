@@ -80,7 +80,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
     <head>
-        <meta http-equiv="content-type" content="text/html; charset=<?php echo current_charset(); ?>" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <script type="text/javascript">
         <!--
         if (parent.msg.document.getElementById("msgStarted") == null) {
@@ -88,7 +88,7 @@
             parent.msg.document.open("text/html","replace");
             parent.msg.document.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
             parent.msg.document.write("<html><head>");
-            parent.msg.document.write("<meta http-equiv=\"content-type\" content=\"text/html; charset=<?php echo current_charset(); ?>\" />");
+            parent.msg.document.write("<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />");
             parent.msg.document.write("<base target=\"_blank\" />");
             parent.msg.document.write("<?php echo $stylesheetshtml ?>");
             parent.msg.document.write("</head><body class=\"mod-chat-gui_header_js course-<?php echo $chatuser->course ?>\" id=\"mod-chat-gui_header_js-jsupdate\"><div style=\"display: none\" id=\"msgStarted\">&nbsp;</div>");

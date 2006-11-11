@@ -55,11 +55,11 @@
 /// send mime type and encoding
     if (check_browser_version('MSIE')) {
         //ugly IE hack to work around downloading instead of viewing
-        @header('Content-Type: text/html; charset='.current_charset());
+        @header('Content-Type: text/html; charset=utf-8');
         echo "<xmp>"; //<pre> is not good enough for us here
     } else {
         //send proper plaintext header
-        @header('Content-Type: text/plain; charset='.current_charset());
+        @header('Content-Type: text/plain; charset=utf-8');
     }
 
 /// Start output log

@@ -125,7 +125,7 @@ class MoodleExcelWorksheet {
     /// Loading the textlib singleton instance. We are going to need it.
         $textlib = textlib_get_instance();
     /// Convert the text from its original encoding to UTF-16LE
-        $str = $textlib->convert($str, current_charset(), 'utf-16le');
+        $str = $textlib->convert($str, 'utf-8', 'utf-16le');
     /// Add the string safely to the PEAR Worksheet
         $this->pear_excel_worksheet->writeString($row, $col, $str, $format);
     }

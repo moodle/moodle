@@ -137,7 +137,7 @@ if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SI
     choose_from_menu ($choices, "mailformat", $user->mailformat, "") ?>
     </td>
 </tr>
-<?php if (!empty($CFG->unicodedb) && !empty($CFG->allowusermailcharset)) { ?>
+<?php if (!empty($CFG->allowusermailcharset)) { ?>
 <tr>
     <th><?php print_string("emailcharset") ?>:</th>
     <td><?php
@@ -148,7 +148,7 @@ if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SI
         if (!empty($CFG->sitemailcharset)) {
             $choices['0'] = get_string('site').' ('.$CFG->sitemailcharset.')';
         } else {
-            $choices['0'] = get_string('default').' ('.current_charset().')';
+            $choices['0'] = get_string('default').' (UTF-8)';
         }
         $choices = array_merge($choices, $charsets);
         choose_from_menu($choices, 'mailcharset', $mailcharset, ''); ?>

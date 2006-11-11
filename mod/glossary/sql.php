@@ -85,7 +85,7 @@
         } else {
             $usernamefield = sql_fullname('u.lastname' , 'u.firstname');
         }
-        $where = "AND " . sql_substr() . "(upper($usernamefield),1," .  $textlib->strlen($hook, current_charset()) . ") = '" . $textlib->strtoupper($hook, current_charset()) . "'";
+        $where = "AND " . sql_substr() . "(upper($usernamefield),1," .  $textlib->strlen($hook) . ") = '" . $textlib->strtoupper($hook) . "'";
 
         if ( $hook == 'ALL' ) {
             $where = '';
@@ -105,7 +105,7 @@
 
         $where = '';
         if ($hook != 'ALL' and $hook != 'SPECIAL') {
-            $where = 'AND ' . sql_substr() . '(upper(concept),1,' .  $textlib->strlen($hook, current_charset()) . ') = \'' . $textlib->strtoupper($hook, current_charset()) . '\'';
+            $where = 'AND ' . sql_substr() . '(upper(concept),1,' .  $textlib->strlen($hook) . ') = \'' . $textlib->strtoupper($hook) . '\'';
         }
 
         $sqlselect  = "SELECT ge.*, ge.concept AS glossarypivot";
@@ -235,7 +235,7 @@
 
         case 'letter': 
             if ($hook != 'ALL' and $hook != 'SPECIAL') {
-                $where = 'AND ' . sql_substr() . '(upper(concept),1,' .  $textlib->strlen($hook, current_charset()) . ') = \'' . $textlib->strtoupper($hook, current_charset()) . '\'';
+                $where = 'AND ' . sql_substr() . '(upper(concept),1,' .  $textlib->strlen($hook) . ') = \'' . $textlib->strtoupper($hook) . '\'';
             }
             if ($hook == 'SPECIAL') {
                 //Create appropiate IN contents
@@ -247,7 +247,7 @@
                     }
                     $sqlalphabet .= '\''.$alphabet[$i].'\'';
                 }
-                $where = 'AND ' . sql_substr() . '(upper(concept),1,1) NOT IN (' . $textlib->strtoupper($sqlalphabet, current_charset()) . ')';
+                $where = 'AND ' . sql_substr() . '(upper(concept),1,1) NOT IN (' . $textlib->strtoupper($sqlalphabet) . ')';
             }
         break;
         }

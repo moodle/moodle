@@ -1803,10 +1803,6 @@ function glossary_read_imported_file($file) {
         }
         fclose($h);
     }
-    if (empty($CFG->unicodedb)) {
-        $textlib = textlib_get_instance();
-        $line = $textlib->convert($line, 'UTF-8', current_charset());
-    }
     return xmlize($line, 0);
 }
 
@@ -1835,10 +1831,6 @@ function glossary_full_tag($tag,$level=0,$endline=true,$content) {
         global $CFG;
     
         $st = glossary_start_tag($tag,$level,$endline);
-        if (empty($CFG->unicodedb)) {
-            $textlib = textlib_get_instance();
-            $content = $textlib->convert($content, current_charset(), 'UTF-8');
-        }
         $co = preg_replace("/\r\n|\r/", "\n", s($content));
         $et = glossary_end_tag($tag,0,true);
         return $st.$co.$et;

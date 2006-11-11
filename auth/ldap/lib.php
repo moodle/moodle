@@ -127,18 +127,12 @@ function auth_get_userinfo($username){
             $ldapval = NULL;
             foreach ($values as $value) {
                 if(is_array($user_entry[0][strtolower($value)])) {
-                    if (!empty($CFG->unicodedb)) {
-                        $newval = addslashes(stripslashes($user_entry[0][strtolower($value)][0]));
-                    } else {
-                        $newval = addslashes(stripslashes(utf8_decode($user_entry[0][strtolower($value)][0])));
-                    }
+                    // TODO: fix encoding conversion
+                    $newval = addslashes(stripslashes($user_entry[0][strtolower($value)][0]));
                 }
                 else {
-                    if (!empty($CFG->unicodedb)) {
-                        $newval = addslashes(stripslashes($user_entry[0][strtolower($value)]));
-                    } else {
-                        $newval = addslashes(stripslashes(utf8_decode($user_entry[0][strtolower($value)])));
-                    }
+                    // TODO: fix encoding conversion
+                    $newval = addslashes(stripslashes($user_entry[0][strtolower($value)]));
                 }
                 if (!empty($newval)) { // favour ldap entries that are set
                     $ldapval = $newval;
@@ -216,11 +210,7 @@ function auth_user_create ($userobject,$plainpass) {
         }
         foreach ($values as $value) {
             if(!empty($userobject->$key) ){
-                if (!empty($CFG->unicodedb)) {
-                    $newuser[$value]= $userobject->$key;
-                } else {
-                    $newuser[$value]=utf8_encode($userobject->$key);
-                }
+                $newuser[$value]= $userobject->$key;
             }
         }
     }

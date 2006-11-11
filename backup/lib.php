@@ -531,13 +531,7 @@
     //This function is used to add slashes (and decode from UTF-8 if needed)
     //It's used intensivelly when restoring modules and saving them in db
     function backup_todb ($data) {
-        global $CFG;
-
-        if (empty($CFG->unicodedb)) {
-            return restore_decode_absolute_links(addslashes(utf8_decode($data)));
-        } else {
-            return restore_decode_absolute_links(addslashes($data));
-        }
+        return restore_decode_absolute_links(addslashes($data));
     }
 
     //This function is used to check that every necessary function to 

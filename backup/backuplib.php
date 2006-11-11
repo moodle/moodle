@@ -435,13 +435,7 @@
         //because they are forbiden in XML 1.0 specs. The expression below seems to be
         //UTF-8 safe too because it simply ignores the rest of characters.
         $content = preg_replace("/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is","",$content);
-        if (!empty($CFG->unicodedb)) {
-            // Don't perform the conversion. Contents are Unicode.
-            $content = preg_replace("/\r\n|\r/", "\n", htmlspecialchars($content));
-        } else {
-            // Perform the conversion. Contents aren't Unicode.
-            $content = preg_replace("/\r\n|\r/", "\n", utf8_encode(htmlspecialchars($content)));
-        } 
+        $content = preg_replace("/\r\n|\r/", "\n", htmlspecialchars($content));
         return $content; 
     }
 

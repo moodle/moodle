@@ -293,31 +293,7 @@ class xml2Array {
        $values = array();
        $lookingfor = 1;
 
-       if (empty($CFG->unicodedb)) {  // If Unicode DB support enable does not convert string
-           $textlib = textlib_get_instance();
-           for ($i = 0; $i < $textlib->strlen($str,'utf-8'); $i++) {
-               $thisvalue = ord($str[$i]);
-               if ($thisvalue < 128) {
-                   $entities .= $str[$i]; // Leave ASCII chars unchanged 
-               } else {
-                   if (count($values) == 0) {
-                       $lookingfor = ($thisvalue < 224) ? 2 : 3;
-                   }
-                   $values[] = $thisvalue;
-                   if (count($values) == $lookingfor) {
-                       $number = ($lookingfor == 3) ?
-                           (($values[0] % 16) * 4096) + (($values[1] % 64) * 64) + ($values[2] % 64):
-                           (($values[0] % 32) * 64) + ($values[1] % 64);
-                       $entities .= '&#' . $number . ';';
-                       $values = array();
-                       $lookingfor = 1;
-                   }
-               }
-           }
-           return $entities;
-       } else {
-           return $str;
-       }
+       return $str;
    }
 
    /**

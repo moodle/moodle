@@ -187,7 +187,7 @@ function process_config($config) {
 //To avoid wrong (for PayPal) characters in sent data
 function sanitise_for_paypal($text) {
     $textlib = textlib_get_instance();
-    $text  = $textlib->specialtoascii($text, current_charset());
+    $text  = $textlib->specialtoascii($text);
     // TODO: characters that have no ascii equivalents are not sanitized properly :-(
     return $text;
 }

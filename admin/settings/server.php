@@ -47,15 +47,12 @@ $temp->add(new admin_setting_configselect('digestmailtime', get_string('digestma
                                                                                                                                                           '21' => '21',
                                                                                                                                                           '22' => '22',
                                                                                                                                                           '23' => '23')));
-if (!empty($CFG->unicodedb)) { // These options are only available if running under unicodedb
-    unset($options);
-    unset($charsets);
-    $charsets = get_list_of_charsets();
-    $options['0'] = get_string('none');
-    $options = array_merge($options, $charsets);
-    $temp->add(new admin_setting_configselect('sitemailcharset', get_string('sitemailcharset', 'admin'), get_string('configsitemailcharset','admin'), '', $options));
-    $temp->add(new admin_setting_configcheckbox('allowusermailcharset', get_string('allowusermailcharset', 'admin'), get_string('configallowusermailcharset', 'admin'), 0));
-}
+$charsets = get_list_of_charsets();
+$options = array();
+$options['0'] = get_string('none');
+$options = array_merge($options, $charsets);
+$temp->add(new admin_setting_configselect('sitemailcharset', get_string('sitemailcharset', 'admin'), get_string('configsitemailcharset','admin'), '', $options));
+$temp->add(new admin_setting_configcheckbox('allowusermailcharset', get_string('allowusermailcharset', 'admin'), get_string('configallowusermailcharset', 'admin'), 0));
 $ADMIN->add('server', $temp, 100);
 
 

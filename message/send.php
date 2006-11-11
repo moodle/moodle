@@ -19,9 +19,6 @@
         $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />';
     }
 
-/// Select encoding
-    $encoding = current_charset();
-
 /// Select direction
     if ( get_string('thisdirection') == 'rtl' ) {
         $direction = ' dir="rtl"';
@@ -29,10 +26,10 @@
         $direction = ' dir="ltr"';
     }
 
-    @header('Content-Type: text/html; charset='.$encoding);
+    @header('Content-Type: text/html; charset=utf-8');
     echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
     echo "<html $direction>\n<head>\n";
-    echo '<meta http-equiv="content-type" content="text/html; charset='.$encoding.'" />';
+    echo '<meta http-equiv="content-type" content="text/html; charset=utf-8" />';
     echo $stylesheetshtml;
 
 /// Script parameters

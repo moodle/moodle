@@ -35,9 +35,6 @@
 /// fast forward to first non-index page
     while (empty($items[$page]->href)) $page++;
     
-/// Select encoding
-    $encoding = current_charset();
-
 /// Select direction
     if (get_string('thisdirection') == 'rtl') {
         $direction = ' dir="rtl"';
@@ -88,11 +85,6 @@
         foreach ($items as $item) {
             if (!is_object($item)) {
                 continue;
-            }
-        /// Convert text from UTF-8 to current charset if needed
-            if (empty($CFG->unicodedb)) {
-                $textlib = textlib_get_instance();
-                $item->title = $textlib->convert($item->title, 'UTF-8', current_charset());
             }
         /// Skip pages until we arrive to $page
             if ($item->id < $page) {

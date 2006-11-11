@@ -168,7 +168,7 @@
         require_once($CFG->libdir .'/rsslib.php');
         require_once(MAGPIE_DIR .'rss_fetch.inc');
         if (!defined('MAGPIE_OUTPUT_ENCODING')) {
-            define('MAGPIE_OUTPUT_ENCODING', current_charset());  // see bug 3107
+            define('MAGPIE_OUTPUT_ENCODING', 'utf-8');  // see bug 3107
         }
 
         $rss_record = get_record('block_rss_client', 'id', $rssid);
@@ -275,11 +275,11 @@
      /// Loading the textlib singleton instance. We are going to need it.
          $textlib = textlib_get_instance();
 
-         if ($textlib->strlen($title,current_charset()) <= $max) {
+         if ($textlib->strlen($title) <= $max) {
              return $title;
          }
          else {
-             return $textlib->substr($title,0,$max-3,current_charset()).'...';
+             return $textlib->substr($title,0,$max-3).'...';
          }
      }
 }

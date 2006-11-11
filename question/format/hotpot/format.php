@@ -492,10 +492,6 @@ class hotpot_xml_tree {
         } else {
             // encode htmlentities in JCloze
             $this->encode_cdata($str, 'gap-fill');
-            // encode as utf8
-            if (empty($CFG->unicodedb)) {
-                $str = utf8_encode($str);
-            }
             // xmlize (=convert xml to tree)
             $this->xml =  xmlize($str, 0);
         }
@@ -507,9 +503,6 @@ class hotpot_xml_tree {
         eval('$value = &$this->xml'.$this->xml_root.$tags.$more_tags.';');
 
         if (is_string($value)) {
-            if (empty($CFG->unicodedb)) {
-                $value = utf8_decode($value);
-            }
 
             // decode angle brackets and ampersands
             $value = strtr($value, array('&#x003C;'=>'<', '&#x003E;'=>'>', '&#x0026;'=>'&'));

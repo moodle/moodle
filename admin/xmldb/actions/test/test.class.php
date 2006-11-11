@@ -770,11 +770,11 @@ class test extends XMLDBAction {
             $rec->intro = addslashes($fulltext);
             $rec->name = 'texttest';
         /// Calculate its length
-            $textlen = $textlib->strlen($fulltext, current_charset());
+            $textlen = $textlib->strlen($fulltext);
             if ($rec->id = insert_record('newnameforthetable', $rec)) {
                 if ($new = get_record('newnameforthetable', 'id', $rec->id)) {
                     delete_records('newnameforthetable', 'id', $new->id);
-                    $newtextlen = $textlib->strlen($new->intro, current_charset());
+                    $newtextlen = $textlib->strlen($new->intro);
                     if ($rec->intro === $new->intro) {
                         $test->sql = array($newtextlen . ' cc. (text) sent and received ok');
                         $test->status = true;
@@ -831,11 +831,11 @@ class test extends XMLDBAction {
             $rec->avatar = addslashes($basetext);
             $rec->name = 'updatelobs';
         /// Calculate its length
-            $textlen = $textlib->strlen($basetext, current_charset());
+            $textlen = $textlib->strlen($basetext);
             $imglen = strlen($basetext);
             if (update_record('newnameforthetable', $rec)) {
                 if ($new = get_record('newnameforthetable', 'id', $rec->id)) {
-                    $newtextlen = $textlib->strlen($new->intro, current_charset());
+                    $newtextlen = $textlib->strlen($new->intro);
                     $newimglen = strlen($new->avatar);
                     if ($rec->avatar === $new->avatar && $rec->intro === $new->intro) {
                         $test->sql = array($newtextlen . ' cc. (text) sent and received ok',
@@ -870,7 +870,7 @@ class test extends XMLDBAction {
             $rec->intro = addslashes($fulltext);
             $rec->name = 'updatelobs';
         /// Calculate its length
-            $textlen = $textlib->strlen($fulltext, current_charset());
+            $textlen = $textlib->strlen($fulltext);
             if (set_field('newnameforthetable', 'intro', $rec->intro, 'name', $rec->name)) {
                 if ($new = get_record('newnameforthetable', 'id', $rec->id)) {
                     $newtextlen = $textlib->strlen($new->intro);

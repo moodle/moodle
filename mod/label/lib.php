@@ -13,8 +13,8 @@ function label_add_instance($label) {
     $textlib = textlib_get_instance();
 
     $label->name = addslashes(strip_tags(format_string(stripslashes($label->content),true)));
-    if ($textlib->strlen($label->name, current_charset()) > LABEL_MAX_NAME_LENGTH) {
-        $label->name = $textlib->substr($label->name, 0, LABEL_MAX_NAME_LENGTH, current_charset())."...";
+    if ($textlib->strlen($label->name) > LABEL_MAX_NAME_LENGTH) {
+        $label->name = $textlib->substr($label->name, 0, LABEL_MAX_NAME_LENGTH)."...";
     }
     $label->timemodified = time();
 
@@ -29,8 +29,8 @@ function label_update_instance($label) {
     $textlib = textlib_get_instance();
 
     $label->name = addslashes(strip_tags(format_string(stripslashes($label->content),true)));
-    if ($textlib->strlen($label->name, current_charset()) > LABEL_MAX_NAME_LENGTH) {
-        $label->name = $textlib->substr($label->name, 0, LABEL_MAX_NAME_LENGTH, current_charset())."...";
+    if ($textlib->strlen($label->name) > LABEL_MAX_NAME_LENGTH) {
+        $label->name = $textlib->substr($label->name, 0, LABEL_MAX_NAME_LENGTH)."...";
     }
     $label->timemodified = time();
     $label->id = $label->instance;

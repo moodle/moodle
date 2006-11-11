@@ -336,10 +336,10 @@
 
             // Setting the pivot for the current entry
             $pivot = $entry->glossarypivot;
-            $upperpivot = $textlib->strtoupper($pivot, current_charset());
+            $upperpivot = $textlib->strtoupper($pivot);
             // Reduce pivot to 1cc if necessary
             if ( !$fullpivot ) {
-                $upperpivot = $textlib->substr($upperpivot, 0, 1, current_charset());
+                $upperpivot = $textlib->substr($upperpivot, 0, 1);
             }            
             
             // if there's a group break

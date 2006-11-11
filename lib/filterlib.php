@@ -164,9 +164,8 @@ function filter_phrases ($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsc
             }
         }
 
-        $u = empty($CFG->unicodedb) ? '' : 'u'; //regex unicode modifier
     /// Regular expression modifiers
-        $modifiers = ($linkobject->work_casesensitive) ? 's' : 'is'.$u;
+        $modifiers = ($linkobject->work_casesensitive) ? 's' : 'isu'; // works in unicode mode!
 
     /// Do we need to do a fullmatch?
     /// If yes then go through and remove any non full matching entries
