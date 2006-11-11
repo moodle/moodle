@@ -201,6 +201,7 @@ $string['skipdbencodingtest'] = 'Omet la prova de codificació de la base de dad
 $string['status'] = 'Estat';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Català';
+$string['unicoderecommended'] = 'Es recomana emmagatzemar totes les dades en Unicode (UTF-8). Les noves instal·lacions s\'haurien de realitzar en bases de dades que tinguin definit com a Unicode el conjunt de caràcters per defecte. Si esteu fent una actualització, hauríeu de passar el procés de migració a UTF-8 (vg. la pàgina d\'Administració).';
 $string['user'] = 'Usuari';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'Esteu veient aquesta pàgina perquè heu instal·lat amb èxit i heu executat el paquet <strong>$a->packname $a->packversion</strong>. Felicitacions!';
