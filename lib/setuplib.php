@@ -91,13 +91,19 @@ function make_upload_directory($directory, $shownotices=true) {
  */
 function setup_is_unicodedb() {
 
-    global $CFG, $db;
+    global $CFG, $db, $INSTALL;
 
     $unicodedb = false;
 
-    switch ($CFG->dbtype) {
+    // Since this function is also used during installation process, i.e. during install.php before $CFG->dbtype is set.
+    // we need to get dbtype from the right variable
+    if (!empty($INSTALL['dbtype'])) {
+        $dbtype = $INSTALL['dbtype'];
+    } else {
+        $dbtype = $CFG->dbtype;
+    }
+    switch ($dbtype) {
         case 'mysql':
-        /// Get MySQL character_set_database value
             $rs = $db->Execute("SHOW VARIABLES LIKE 'character_set_database'");
             if ($rs && $rs->RecordCount() > 0) {
                 $records = $rs->GetAssoc(true);
