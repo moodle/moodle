@@ -9,6 +9,11 @@
     $courseid = optional_param('course', SITEID, PARAM_INT);
     $userid   = optional_param('user', 0, PARAM_INT);
 
+/// Get course
+    if (!$course = get_record('course', 'id', $courseid)) {
+        error('Could not find that course');
+    }
+
 /// Only site users can access to this page
     require_login(); // Don't use $courseid! User may want to see old orders.
 
@@ -30,9 +35,9 @@
 
 /// Print header
     $strpaymentmanagement = get_string('paymentmanagement', 'enrol_authorize');
-    print_header_simple("$strpaymentmanagement", "", "<a href=\"index.php\">$strpaymentmanagement</a>");
+    print_header_simple($strpaymentmanagement, "", "<a href=\"index.php\">$strpaymentmanagement</a>");
 
-/// If orderid is empty, print orders
+/// If orderid is empty, user wants to see all orders
     if (empty($orderid)) {
         authorize_print_orders($courseid, $userid);
     } else {
