@@ -118,7 +118,7 @@
                     }
                     break;
                 default:
-                    if (!$course->category or empty($forum->section)) {   // Site level or section 0
+                    if (($course->id == SITEID) or empty($forum->section)) {   // Site level or section 0
                         $generalforums[] = $forum;
                         if (isset($forum->keyreference)) {
                             unset($learningforums[$forum->keyreference]);
@@ -308,7 +308,7 @@
 
     /// Now let's process the learning forums
 
-    if ($course->category) {    // Only real courses have learning forums
+    if ($course->id != SITEID) {    // Only real courses have learning forums
         // Add extra field for section number, at the front
         array_unshift($learningtable->head, "");
         array_unshift($learningtable->align, "center");
@@ -446,7 +446,7 @@
 
     /// Output the page
 
-    if ($course->category) {
+    if ($course->id != SITEID) {
         print_header("$course->shortname: $strforums", "$course->fullname",
                     "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> $strforums",
                     "", "", true, $searchform, navmenu($course));

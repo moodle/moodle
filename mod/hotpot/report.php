@@ -411,7 +411,7 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
     } else {
         $navigation .= get_string("report", "quiz");
     }
-    if ($course->category) {
+    if ($course->id != SITEID) {
         $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> $navigation";
     }
     $button = update_module_button($cm->id, $course->id, $strmodulename);

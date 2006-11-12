@@ -60,7 +60,7 @@
         print_error('nopermissions');
     }
 
-    if (!$course->category) {
+    if ($course->id == SITEID) {
         if (!has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             print_header("$course->shortname: ".get_string('participants'), $course->fullname,
                          get_string('participants'), "", "", true, "&nbsp;", navmenu($course));
@@ -120,7 +120,7 @@
 
 /// Print headers
 
-    if ($course->category) {
+    if ($course->id != SITEID) {
         print_header("$course->shortname: ".get_string('participants'), $course->fullname,
                      "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> -> ".
                      get_string('participants'), "", "", true, "&nbsp;", navmenu($course));

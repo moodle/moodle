@@ -31,7 +31,7 @@
         }
 
         $strforums = get_string('modulenameplural', 'forum');
-        if ($course->category) {
+        if ($course->id != SITEID) {
             print_header($course->shortname, $course->fullname,
                  "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
                   <a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> 

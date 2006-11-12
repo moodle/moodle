@@ -113,7 +113,7 @@ function resource_base($cmid=0) {
         $this->strresource  = get_string("modulename", "resource");
         $this->strresources = get_string("modulenameplural", "resource");
 
-        if ($this->course->category) {
+        if ($this->course->id != SITEID) {
             $this->navigation = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/course/view.php?id={$this->course->id}\">{$this->course->shortname}</a> -> ".
                                 "<a target=\"{$CFG->framename}\" href=\"index.php?id={$this->course->id}\">$this->strresources</a> ->";
         } else {

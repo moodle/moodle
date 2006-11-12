@@ -3118,7 +3118,7 @@ function print_user($user, $course, $messageselect=false, $return=false) {
     if (!empty($user->role) and ($user->role <> $course->teacher)) {
         $output .= $string->role .': '. $user->role .'<br />';
     }
-    if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category and !isguest()) or
+    if ($user->maildisplay == 1 or ($user->maildisplay == 2 and ($course->id != SITEID) and !isguest()) or
 has_capability('moodle/course:viewhiddenuserfields', $context)) {
         $output .= $string->email .': <a href="mailto:'. $user->email .'">'. $user->email .'</a><br />';
     }

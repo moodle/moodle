@@ -30,7 +30,7 @@ if ((count($users) > 0) and ($form = data_submitted()) and confirm_sesskey()) {
 
 /// Print headers
 
-if ($course->category) {
+if ($course->id != SITEID) {
     print_header("$course->shortname: ".get_string('extendenrol'), $course->fullname,
     "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> -> ".
     get_string('extendenrol'), "", "", true, "&nbsp;", navmenu($course));

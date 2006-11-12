@@ -24,7 +24,7 @@
 
 /// Print the header
 
-    if ($course->category) {
+    if ($course->id != SITEID) {
         $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
     }
 

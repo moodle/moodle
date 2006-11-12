@@ -66,7 +66,7 @@
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $navigation = "";
-    if ($course->category) {
+    if ($course->id != SITEID) {
         $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
     }
 

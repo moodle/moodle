@@ -37,7 +37,7 @@
     $title = "$course->shortname: $strmodulenameplural";
     $heading = "$course->fullname";
     $navigation = "$strmodulenameplural";
-    if ($course->category) {
+    if ($course->id != SITEID) {
         $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> $navigation";
     }
     print_header($title, $heading, $navigation, "", "", true, "", navmenu($course));

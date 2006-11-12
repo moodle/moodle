@@ -42,7 +42,7 @@
     $strscorms = get_string("modulenameplural", "scorm");
     $strscorm  = get_string("modulename", "scorm");
 
-    if ($course->category != 0) { 
+    if ($course->id != SITEID) { 
         $navigation = "<a target=\"{$CFG->framename}\" href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
         if ($scorms = get_all_instances_in_course('scorm', $course)) {
             // The module SCORM activity with the least id is the course  

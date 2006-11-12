@@ -150,7 +150,7 @@
 
     $searchform = forum_search_form($course);
 
-    if ($course->category) {
+    if ($course->id != SITEID) {
         print_header("$course->shortname: ".format_string($discussion->name), "$course->fullname",
                      "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
                       $navmiddle $navtail", "", "", true, $searchform, navmenu($course, $cm));

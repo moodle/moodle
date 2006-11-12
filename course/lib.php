@@ -1513,7 +1513,7 @@ function print_courses($category, $width="100%", $hidesitecourse = false) {
 
     if ($courses) {
         foreach ($courses as $course) {
-            if ($hidesitecourse && !$course->category) {
+            if ($hidesitecourse and ($course->id == SITEID)) {
                 continue;
             }
             print_course($course, $width);
@@ -1598,7 +1598,7 @@ function print_my_moodle() {
 
     if ($courses = get_my_courses($USER->id)) {
         foreach ($courses as $course) {
-            if (!$course->category) {
+            if ($course->id == SITEID) {
                 continue;
             }
             print_course($course, "100%");

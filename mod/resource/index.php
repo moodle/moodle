@@ -12,7 +12,7 @@
         error("Course ID is incorrect");
     }
 
-    if ($course->category) {
+    if ($course->id != SITEID) {
         require_login($course->id);
         $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
     } else {

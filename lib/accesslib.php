@@ -2527,7 +2527,7 @@ function get_parent_contexts($context) {
             if (!$course = get_record('course','id',$context->instanceid)) {
                 return array();
             }
-            if (!empty($course->category)) {
+            if ($course->id != SITEID) {
                 $parent = get_context_instance(CONTEXT_COURSECAT, $course->category);
                 return array_merge(array($parent->id), get_parent_contexts($parent));
             } else {

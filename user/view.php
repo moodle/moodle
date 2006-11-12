@@ -115,7 +115,7 @@
 
 /// We've established they can see the user's name at least, so what about the rest?
 
-    if ($course->category) {
+    if ($course->id != SITEID) {
         print_header("$strpersonalprofile: $fullname", "$strpersonalprofile: $fullname",
                      "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
                       <a href=\"index.php?id=$course->id\">$strparticipants</a> -> $fullname",
@@ -126,7 +126,7 @@
     }
 
 
-    if ($course->category and ! isguest() ) {   // Need to have access to a course to see that info
+    if (($course->id != SITEID) and ! isguest() ) {   // Need to have access to a course to see that info
         if (!has_capability('moodle/course:view', $coursecontext)) {
             print_heading(get_string('notenrolled', '', $fullname));
             print_footer($course);
@@ -210,7 +210,7 @@
     }
 
     if ($user->maildisplay == 1 or
-       ($user->maildisplay == 2 and $course->category and !isguest()) or
+       ($user->maildisplay == 2 and ($course->id != SITEID) and !isguest()) or
        isteacher($course->id)) {
 
         $emailswitch = '';

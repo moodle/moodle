@@ -114,7 +114,7 @@
     }
 /// Processing standard security processes
     $navigation = "";
-    if ($course->category) {
+    if ($course->id != SITEID) {
         $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
         require_login($course->id);
     }

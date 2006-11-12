@@ -77,7 +77,7 @@ class assignment_base {
             $this->strsubmissions = get_string('submissions', 'assignment');
             $this->strlastmodified = get_string('lastmodified');
 
-            if ($this->course->category) {
+            if ($this->course->id != SITEID) {
                 $this->navigation = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/course/view.php?id={$this->course->id}\">{$this->course->shortname}</a> -> ".
                                     "<a target=\"{$CFG->framename}\" href=\"index.php?id={$this->course->id}\">$this->strassignments</a> ->";
             } else {

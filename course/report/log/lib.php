@@ -31,7 +31,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     // Get all the possible users
     $users = array();
 
-    if ($course->category) {
+    if ($course->id != SITEID) {
         if ($selectedgroup) {   // If using a group, only get users in that group.
             $courseusers = get_group_users($selectedgroup, 'u.lastname ASC', '', 'u.id, u.firstname, u.lastname, u.idnumber');
         } else {
@@ -103,7 +103,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         }
     }
 
-    if (has_capability('moodle/site:viewreports', $sitecontext) && !$course->category) {
+    if (has_capability('moodle/site:viewreports', $sitecontext) && ($course->id == SITEID)) {
         $activities["site_errors"] = get_string("siteerrors");
         if ($modid === "site_errors") {
             $selectedactivity = "site_errors";
@@ -162,7 +162,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     } else {
         //        echo '<input type="hidden" name="id" value="'.$course->id.'" />';
         $courses = array();
-        $courses[$course->id] = $course->fullname . ((empty($course->category)) ? ' (Site) ' : '');
+        $courses[$course->id] = $course->fullname . (($course->id == SITEID) ? ' (Site) ' : '');
         choose_from_menu($courses,"id",$course->id,false);
         if (has_capability('moodle/site:viewreports', $sitecontext)) {
             $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"

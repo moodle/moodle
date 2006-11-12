@@ -56,7 +56,7 @@
 
     add_to_log($course->id, "survey", "view report", "report.php?id=$cm->id", "$survey->id", $cm->id);
 
-    if ($course->category) {
+    if ($course->id != SITEID) {
         $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
                        <a href=\"index.php?id=$course->id\">$strsurveys</a> ->
                        <a href=\"view.php?id=$cm->id\">".format_string($survey->name,true)."</a> -> ";

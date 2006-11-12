@@ -272,7 +272,7 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
     }
     
 /// Header setup
-    if ($course->category) {
+    if ($course->id != SITEID) {
         $navigation = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\" title=\"$course->fullname\">$course->shortname</a> ->";
     } else {
         $navigation = '';

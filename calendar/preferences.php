@@ -10,7 +10,7 @@
         }
     }
 
-    if ($course->category) {
+    if ($course->id != SITEID) {
         require_login($course->id);
     }
 
@@ -56,7 +56,7 @@
     $strcalendar = get_string('calendar', 'calendar');
     $strpreferences = get_string('preferences', 'calendar');
 
-    if ($course->category) {
+    if ($course->id != SITEID) {
         $navigation = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
                        <a href=\"view.php\">$strcalendar</a> -> $strpreferences";
     } else {

@@ -36,7 +36,7 @@
     $strmode         = get_string($mode, 'forum');
     $fullname        = fullname($user, has_capability('moodle/site:viewfullnames', $syscontext));
 
-    if ($course->category) {
+    if ($course->id != SITEID) {
         print_header("$course->shortname: $fullname: $strmode", "$course->fullname",
                  "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
                   <a href=\"$CFG->wwwroot/user/index.php?id=$course->id\">$strparticipants</a> ->

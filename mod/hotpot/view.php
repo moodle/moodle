@@ -44,7 +44,7 @@
     $heading = "$course->fullname";
     $target = empty($CFG->framename) ? '' : ' target="'.$CFG->framename.'"'; 
     $navigation = '<a'.$target.' href="'.$CFG->wwwroot.'/mod/hotpot/index.php?id='.$course->id.'">'.get_string("modulenameplural", "hotpot")."</a> -> $hotpot->name";
-    if ($course->category) {
+    if ($course->id != SITEID) {
         $navigation = '<a'.$target.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> -> '.$navigation;
     }
     $button = update_module_button($cm->id, $course->id, get_string("modulename", "hotpot").'" style="font-size:0.75em;');

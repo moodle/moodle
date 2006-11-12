@@ -42,7 +42,7 @@
     $strmode           = get_string($mode);
     $fullname          = fullname($user, true);
 
-    if ($course->category) {
+    if ($course->id != SITEID) {
         print_header("$course->shortname: $stractivityreport ($mode)", "$course->fullname",
                  "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
                   <a href=\"../user/index.php?id=$course->id\">$strparticipants</a> ->

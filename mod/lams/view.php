@@ -28,7 +28,7 @@ add_to_log($course->id, "lams", "view", "view.php?id=$cm->id", "$lams->id");
 
 /// Print the page header
 
-//if ($course->category) {
+//if ($course->id != SITEID) {
 //    $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
 //}
 print_header_simple(format_string($lams->name), "",

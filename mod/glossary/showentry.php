@@ -40,7 +40,7 @@
 
     if (!empty($courseid)) {
         $course = get_record("course", "id", $courseid);
-        if ($course->category) {
+        if ($course->id != SITEID) {
             require_login($courseid);
         }
 
@@ -48,7 +48,7 @@
         $strsearch = get_string("search");
 
         $CFG->framename = "newwindow";
-        if ($course->category) {
+        if ($course->id != SITEID) {
             print_header(strip_tags("$course->shortname: $strglossaries $strsearch"), "$course->fullname",
             "<a target=\"newwindow\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $strglossaries -> $strsearch", "", "", true, "&nbsp;", "&nbsp;");
         } else {

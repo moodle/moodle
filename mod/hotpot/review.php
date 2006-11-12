@@ -53,7 +53,7 @@
     $title = "$course->shortname: $hotpot->name";
     $heading = "$course->fullname";
     $navigation = "<a href=\"index.php?id=$course->id\">$strmodulenameplural</a> -> ".get_string("review", "quiz");
-    if ($course->category) {
+    if ($course->id != SITEID) {
         $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> $navigation";
     }
     $button = update_module_button($cm->id, $course->id, $strmodulename);
