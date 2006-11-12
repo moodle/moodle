@@ -1,7 +1,21 @@
-<?php
+<?php // $Id$
 /**
  * formslib.php - library of classes for creating forms in Moodle, based on PEAR QuickForms.
- * THIS IS NOT YET PART OF THE MOODLE API, IT IS HERE FOR TESTING ONLY
+ *
+ * To use formslib then you will want to create a new file purpose_form.php eg. edit_form.php
+ * and you want to name your class something like {modulename}_{purpose}_form. Your class will
+ * extend moodleform overriding abstract classes definition and optionally defintion_after_data
+ * and validation.
+ *
+ * See examples of use of this library in course/edit.php and course/edit_form.php
+ *
+ * A few notes :
+ *      form defintion is used for both printing of form and processing and should be the same
+ *              for both or you may lose some submitted data which won't be let through.
+ *      you should be using setType for every form element except select, radio or checkbox
+ *              elements, these elements clean themselves.
+ *
+ *
  * @author  Jamie Pratt
  * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
@@ -22,7 +36,11 @@ if ($CFG->debug >= DEBUG_ALL){
 }
 
 /**
- * Moodle specific wrapper that separates quickforms syntax from moodle code.
+ * Moodle specific wrapper that separates quickforms syntax from moodle code. You won't directly
+ * use this class you should write a class defintion which extends this class or a more specific
+ * subclass such a moodleform_mod for each form you want to display and/or process with formslib.
+ *
+ * You will write your own definition() method which performs the form set up.
  */
 class moodleform {
     var $_formname;       // form name
@@ -30,6 +48,29 @@ class moodleform {
     var $_customdata;     // globals workaround
     var $_upload_manager; // file upload manager
 
+    /**
+     * The constructor function calls the abstract function definition() and it will then
+     * process and clean and attempt to validate incoming data.
+     *
+     * It will call your custom validate method to validate data and will also check any rules
+     * you have specified in definition using addRule
+     *
+     * The name of the form (id attribute of the form) is automatically generated depending on
+     * the name you gave the class extending moodleform. You should call your class something
+     * like
+     *
+     * @param string $action the action attribute for the form.
+     * @param array $customdata if your form defintion method needs access to data such as $course
+     *               $cm, etc. to construct the form definition then pass it in this array. You can
+     *               use globals for somethings.
+     * @param string $method if you set this to anything other than 'post' then _GET and _POST will
+     *               be merged and used as incoming data to the form.
+     * @param string $target target frame for form submission. You will rarely use this. Don't use
+     *                  it if you don't need to as the target attribute is deprecated in xhtml
+     *                  strict.
+     * @param mixed $attributes you can pass a string of html attributes here or an array.
+     * @return moodleform
+     */
     function moodleform($action, $customdata=null, $method='post', $target='', $attributes=null) {
         $this->_formname = rtrim(get_class($this), '_form');
         $this->_customdata = $customdata;
@@ -51,10 +92,11 @@ class moodleform {
     }
 
     /**
-     * To autofocus on first form element with error.
+     * To autofocus on first form element or first element with error.
      *
      * @return string  javascript to select form element with first error or
-     * first element if no errors.
+     *                  first element if no errors. Use this as a parameter
+     *                  when calling print_header
      */
     function focus(){
         $form=$this->_form;
@@ -147,9 +189,9 @@ class moodleform {
     }
 
     /**
-     * Use existing data as form defaults. Usually new entry defaults are stored directly in
-     * form definition (new entry form); this function is used to apply defaults for entries that already exist
-     * in database (edit entry form).
+     * Load in existing data as form defaults. Usually new entry defaults are stored directly in
+     * form definition (new entry form); this function is used to load in data where values
+     * already exist and data is being edited (edit entry form).
      *
      * @param mixed $default_values object or array of default values
      * @param bool $slased true if magic quotes applied to data values
@@ -207,7 +249,8 @@ class moodleform {
     }
 
     /**
-     * Return submitted data if properly submitted.
+     * Return submitted data if properly submitted or returns NULL if validation fails or
+     * if there is no submitted data.
      *
      * @param bool $slashed true means return data with addslashes applied
      * @return object submitted data; NULL if not valid or not submitted
@@ -281,10 +324,15 @@ class moodleform {
     }
 }
 /**
- * For extra methods for form wrapper specific to be used for module add / update forms.
+ * This class adds extra methods to form wrapper specific to be used for module
+ * add / update forms (mod/{modname}.mod_form.php replaces deprecared mod/{modname}/mod.html
  *
  */
 class moodleform_mod extends moodleform {
+    /**
+     * Adds all the standard elements to a form to edit the settings for an activity module.
+     *
+     */
     function standard_coursemodule_elements(){
         $mform=$this->_form;
         $mform->addElement('header', '', get_string('modstandardels', 'form'));
@@ -320,14 +368,36 @@ class moodleform_mod extends moodleform {
         $mform->setType('update', PARAM_INT);
     }
 
+    /**
+     * This function is called by course/modedit.php to setup defaults for standard form
+     * elements.
+     *
+     * @param object $course
+     * @param object $cm
+     * @param integer $section
+     */
     function standard_coursemodule_elements_setup($course, $cm, $section){
         $this->modgroupmode_setup($course, $cm);
         $this->modvisible_setup($course, $cm, $section);
     }
+    /**
+     * You can call this to load the default for the groupmode element.
+     *
+     * @param object $course
+     * @param object $cm
+     */
     function modgroupmode_setup($course, $cm){
         $this->set_defaults(array('groupmode'=>groupmode($course, $cm)));
 
     }
+    /**
+     * Sets the default for modvisible form element.
+     *
+     * @param object $course
+     * @param object $cm
+     * @param integer $section section is a db id when updating a activity config
+     *                   or the section no when adding a new activity
+     */
     function modvisible_setup($course, $cm, $section){
         if ($cm) {
             $visible = $cm->visible;
@@ -349,6 +419,13 @@ class moodleform_mod extends moodleform {
 
 }
 
+/**
+ * You never extend this class directly. The class methods of this class are available from
+ * the private $this->_form property on moodleform and it's children. You generally only
+ * call methods on this class from within abstract methods that you override on moodleform such
+ * as definition and definition_after_data
+ *
+ */
 class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     var $_types = array();
 
@@ -387,10 +464,33 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         $this->setRequiredNote(get_string('denotesreq', 'form', $this->getReqHTML()));
     }
 
+    /**
+     * Should be used for all elements of a form except for select, radio and checkboxes which
+     * clean their own data.
+     *
+     * @param string $elementname
+     * @param integer $paramtype use the constants PARAM_*.
+     *     *  PARAM_CLEAN is deprecated and you should try to use a more specific type.
+     *     *  PARAM_TEXT should be used for cleaning data that is expected to be plain text.
+     *          It will strip all html tags. But will still let tags for multilang support
+     *          through.
+     *     *  PARAM_RAW means no cleaning whatsoever, it is used mostly for data from the
+     *          html editor. Data from the editor is later cleaned before display using
+     *          format_text() function. PARAM_RAW can also be used for data that is validated
+     *          by some other way or printed by p() or s().
+     *     *  PARAM_INT should be used for integers.
+     *     *  PARAM_ACTION is an alias of PARAM_ALPHA and is used for hidden fields specifying
+     *          form actions.
+     */
     function setType($elementname, $paramtype) {
         $this->_types[$elementname] = $paramtype;
     }
 
+    /**
+     * See description of setType above. This can be used to set several types at once.
+     *
+     * @param array $paramtypes
+     */
     function setTypes($paramtypes) {
         $this->_types = $paramtypes + $this->_types;
     }
@@ -434,7 +534,8 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     }
 
     /**
-     * Initializes a default form value
+     * Initializes a default form value. Used to specify the default for a new entry where
+     * no data is loaded in using moodleform::set_defaults()
      *
      * @param     string   $elementname        element name
      * @param     mixed    $values             values for that element name
@@ -460,7 +561,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         }
     }
     /**
-     * Add a single button
+     * Add a single button.
      *
      * @param string $elementname name of the element to add the item to
      * @param array $button - arguments to pass to setHelpButton
@@ -524,7 +625,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         foreach ($this->_rules as $elementName => $rules) {
             foreach ($rules as $rule) {
                 if ('client' == $rule['validation']) {
-                    unset($element); //TODO: find out how to properly initialize it 
+                    unset($element); //TODO: find out how to properly initialize it
 
                     $dependent  = isset($rule['dependent']) && is_array($rule['dependent']);
                     $rule['message'] = strtr($rule['message'], $js_escape);
