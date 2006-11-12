@@ -131,8 +131,16 @@ class forum_mod_form extends moodleform_mod {
 	function definition_after_data(){
 		$mform    =& $this->_form;
 	    $type=&$mform->getElement('type');
-        $typevalue=$mform->exportValue('type');
-        if ($typevalue=='news' || $typevalue=='social'){
+        $typevalue=$mform->getElementValue('type');
+        //we don't want to have these appear as possible selections in the form but
+        //we want the form to display them if they are set.
+        if ($typevalue[0]=='news'){
+            $type->addOption(get_string('namenews', 'forum'), 'news');
+            $type->freeze();
+            $type->setPersistantFreeze(true);
+        }
+        if ($typevalue[0]=='social'){
+            $type->addOption(get_string('namesocial', 'forum'), 'social');
             $type->freeze();
             $type->setPersistantFreeze(true);
         }
