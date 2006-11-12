@@ -157,8 +157,17 @@
 
         } else if ($remove and !empty($frm->removeselect) and confirm_sesskey()) {
 
+            $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+            $topleveladmin = ( ($context->id == $sitecontext->id) && 
+                                has_capability('moodle/site:doanything', $sitecontext) );
+
             foreach ($frm->removeselect as $removeuser) {
                 $removeuser = clean_param($removeuser, PARAM_INT);
+
+                if ($topleveladmin && ($removeuser == $USER->id)) {   // Prevent unassigning oneself from being admin
+                    continue;
+                }
+
                 if (! role_unassign($roleid, $removeuser, 0, $context->id)) {
                     $errors[] = "Could not remove user with id $removeuser from this role!";
                 } else if ($inmeta) {
