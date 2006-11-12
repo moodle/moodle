@@ -10,7 +10,7 @@
     $userid   = optional_param('user', 0, PARAM_INT);
 
 /// Get course
-    if (!$course = get_record('course', 'id', $courseid)) {
+    if (! $course = get_record('course', 'id', $courseid)) {
         error('Could not find that course');
     }
 
@@ -19,10 +19,6 @@
 
     if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), $USER->id, false)) {
         error("Guests cannot use this page.");
-    }
-
-    if (! $course = get_record('course', 'id', $courseid)) {
-        error('Could not find that course');
     }
 
 /// Load strings. All strings should be defined here. locallib.php uses these strings.
