@@ -425,7 +425,12 @@
         $coursecontext = get_context_instance(CONTEXT_COURSE, $forum->course);
     }
 
-    $mform_post = new forum_post_form('post.php', array('coursecontext'=>$coursecontext, 'forum'=>$forum, 'post'=>$post));
+    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) { // For the logs
+        error('Could not get the course module for the forum instance.');
+    }
+    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    $mform_post = new forum_post_form('post.php', array('course'=>$course, 'coursecontext'=>$coursecontext, 'modcontext'=>$modcontext, 'forum'=>$forum, 'post'=>$post));
 
     if ($fromform = $mform_post->data_submitted()) {
 
@@ -443,10 +448,6 @@
         // TODO add attachment processing
         //$fromform->attachment = isset($_FILES['attachment']) ? $_FILES['attachment'] : NULL;
 
-        if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) { // For the logs
-            error('Could not get the course module for the forum instance.');
-        }
-        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         trusttext_after_edit($fromform->message, $modcontext);
 
         if ($fromform->edit) {           // Updating a post

@@ -10,10 +10,19 @@ class forum_post_form extends moodleform {
 		$mform    =& $this->_form;
 		$renderer =& $mform->defaultRenderer();
 
+        $course        = $this->_customdata['course'];
 		$coursecontext = $this->_customdata['coursecontext'];
+        $modcontext    = $this->_customdata['modcontext'];
         $forum         = $this->_customdata['forum'];
         $post          = $this->_customdata['post'];
 
+
+        // the upload manager is used directly in post precessing, moodleform::save_files() is not used yet
+        $this->_upload_manager = new upload_manager('attachment', true, false, $course, false, $forum->maxbytes, true, true);
+
+        // set file max size to enable proper server side validation
+        $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes, $forum->maxbytes);
+        $mform->setMaxFileSize($maxbytes);
 
         $mform->addElement('header', 'general', '');//fill in the data depending on page params
                                                     //later using set_defaults
@@ -49,9 +58,15 @@ class forum_post_form extends moodleform {
             $mform->setHelpButton('subscribemessage', array('subscription', get_string('subscription', 'forum'), 'forum'));
 		}
 
-		if (empty($post->id) && has_capability('moodle/course:manageactivities', $coursecontext)) {
+        if ($forum->maxbytes != 1 && has_capability('mod/forum:createattachment', $modcontext))  {  //  1 = No attachments at all
+            $mform->addElement('file', 'attachment', get_string('attachment', 'forum'));
+            $mform->setHelpButton('attachment', array('attachment', get_string('attachemnt', 'forum'), 'forum'));
+        
+        }
+
+        if (empty($post->id) && has_capability('moodle/course:manageactivities', $coursecontext)) {
             $mform->addElement('checkbox', 'mailnow', get_string('mailnow', 'forum'));
-		}
+        }
 
 		if (!isset($discussion->timestart)) {
 			$discussion->timestart = 0;
