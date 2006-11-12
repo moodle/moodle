@@ -3,7 +3,7 @@ global $CFG;
 require_once "$CFG->libdir/form/select.php";
 
 /**
- * HTML class for a editor format drop down element
+ * HTML class for a drop down element to select groupmode in an activity mod update form
  *
  * @author       Jamie Pratt
  * @access       public
@@ -26,9 +26,6 @@ class MoodleQuickForm_modgroupmode extends MoodleQuickForm_select{
         HTML_QuickForm_element::HTML_QuickForm_element($elementName, $elementLabel, $attributes, null);
         $this->_type = 'modgroupmode';
 
-        /*if ($options['course']->groupmodeforce){
-           $this->updateAttributes(array('disabled'=>'disabled'));
-        }*/
 
     } //end constructor
 
@@ -47,26 +44,10 @@ class MoodleQuickForm_modgroupmode extends MoodleQuickForm_select{
         switch ($event) {
             case 'createElement':
                 $choices=array();
-                $choices[NOGROUPS] = get_string('groupsnone');
-                $choices[SEPARATEGROUPS] = get_string('groupsseparate');
-                $choices[VISIBLEGROUPS] = get_string('groupsvisible');
+                $choices[0] = get_string('no');
+                $choices[1] = get_string('yes');
                 $this->load($choices);
                 break;
-            /*case 'updateValue' :
-                $value = $this->_findValue($caller->_constantValues);
-                if (null === $value) {
-                    $value = $this->_findValue($caller->_submitValues);
-                    if (null === $value && (!$caller->isSubmitted() || !$this->getMultiple())) {
-                        $value = $this->_findValue($caller->_defaultValues);
-                    }
-                }
-                if (null !== $value) {
-                    $this->setValue($value);
-                }else{
-                    $this->setValue(groupmode($options['course'], $options['cm']));
-                }
-                return true;
-                break;*/
         }
         return parent::onQuickFormEvent($event, $arg, $caller);
     }
