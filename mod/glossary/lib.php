@@ -1482,7 +1482,7 @@ global $CFG;
              $neworder = '&amp;sortorder=asc';
              $newordertitle = $asc;
          }
-         $icon = " <img src=\"$sortorder.gif\" border=\"0\" width=\"16\" height=\"16\" alt=\"\" />";
+         $icon = " <img src=\"$sortorder.gif\" border=\"0\" width=\"16\" height=\"16\" alt=\"". get_string($sortorder)."\" />";
      } else {
          if ( $sortkey != 'CREATION' and $sortkey != 'UPDATE' and
                $sortkey != 'FIRSTNAME' and $sortkey != 'LASTNAME' ) {
