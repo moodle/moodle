@@ -4,10 +4,9 @@ class forum_mod_form extends moodleform_mod {
 
 	function definition() {
 
-		global $CFG, $FORUM_TYPES;
+		global $CFG, $FORUM_TYPES, $COURSE;
 		$mform    =& $this->_form;
 		$renderer =& $mform->defaultRenderer();
-		$course=$this->_customdata['course'];
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -40,14 +39,15 @@ class forum_mod_form extends moodleform_mod {
         $mform->addElement('select', 'trackingtype', get_string('trackingtype', 'forum'), $options);
 		$mform->setHelpButton('trackingtype', array('trackingtype', get_string('trackingtype', 'forum'), 'forum'));
 
-        $choices = get_max_upload_sizes($CFG->maxbytes, $course->maxbytes);
+        $choices = get_max_upload_sizes($CFG->maxbytes, $COURSE->maxbytes);
         $choices[1] = get_string('uploadnotallowed');
-        $choices[0] = get_string('courseuploadlimit') . ' ('.display_size($course->maxbytes).')';
+        $choices[0] = get_string('courseuploadlimit') . ' ('.display_size($COURSE->maxbytes).')';
         $mform->addElement('select', 'maxbytes', get_string('maxattachmentsize', 'forum'), $choices);
 		$mform->setHelpButton('maxbytes', array('maxattachmentsize', get_string('maxattachmentsize', 'forum'), 'forum'));
 		$mform->setDefault('maxbytes', $CFG->forum_maxbytes);
 
         if ($CFG->enablerssfeeds && isset($CFG->forum_enablerssfeeds) && $CFG->forum_enablerssfeeds) {
+//-------------------------------------------------------------------------------
             $mform->addElement('header', '', get_string('rss'));
             $choices = array();
             $choices[0] = get_string('none');
@@ -74,24 +74,17 @@ class forum_mod_form extends moodleform_mod {
             $mform->setHelpButton('rssarticles', array('rssarticles', get_string('rssarticles'), 'forum'));
         }
 
+//-------------------------------------------------------------------------------
         $mform->addElement('header', '', get_string('grade'));
-        $mform->addElement('checkbox', 'assessed', get_string('allowratings', 'data') , get_string('ratingsuse', 'data'));
+        $mform->addElement('checkbox', 'assessed', get_string('allowratings', 'forum') , get_string('ratingsuse', 'forum'));
 
-        $strscale = get_string('scale');
-        $strscales = get_string('scales');
-        $scales = get_scales_menu($course->id);
-        foreach ($scales as $i => $scalename) {
-            $grades[-$i] = $strscale .': '. $scalename;
-        }
-        for ($i=100; $i>=1; $i--) {
-            $grades[$i] = $i;
-        }
-        $mform->addElement('select', 'scale', get_string('grade') , $grades);
+        $mform->addElement('modgrade', 'scale', get_string('grade'), false);
 
         $mform->addElement('date_time_selector', 'assesstimestart', get_string('from'));
 
         $mform->addElement('date_time_selector', 'assesstimefinish', get_string('to'));
 
+//-------------------------------------------------------------------------------
         $mform->addElement('header', '', get_string('blockafter', 'forum'));
         $mform->addElement('text', 'warnafter', get_string('warnafter', 'forum'));
 		$mform->setType('warnafter', PARAM_INT);
@@ -119,6 +112,7 @@ class forum_mod_form extends moodleform_mod {
         $mform->addElement('select', 'blockperiod', get_string("blockperiod", "forum") , $options);
 		$mform->setHelpButton('blockperiod', array('manageposts', get_string('blockperiod', 'forum'),'forum'));
 
+//-------------------------------------------------------------------------------
 		$this->standard_coursemodule_elements();
 
         $buttonarray=array();

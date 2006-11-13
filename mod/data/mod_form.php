@@ -7,7 +7,6 @@ class data_mod_form extends moodleform_mod {
 		global $CFG;
 		$mform    =& $this->_form;
 		$renderer =& $mform->defaultRenderer();
-		$course=$this->_customdata['course'];
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -64,16 +63,7 @@ class data_mod_form extends moodleform_mod {
 
         $mform->addElement('checkbox', 'assessed', get_string("allowratings", "data") , get_string('ratingsuse', 'data'));
 
-        $strscale = get_string('scale');
-        $strscales = get_string('scales');
-        $scales = get_scales_menu($course->id);
-        foreach ($scales as $i => $scalename) {
-            $grades[-$i] = $strscale .': '. $scalename;
-        }
-        for ($i=100; $i>=1; $i--) {
-            $grades[$i] = $i;
-        }
-        $mform->addElement('select', 'scale', get_string('grade') , $grades);
+        $mform->addElement('modgrade', 'scale', get_string('grade'), false);
 
 
         $this->standard_coursemodule_elements();
