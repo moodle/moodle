@@ -3096,7 +3096,7 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL) {
 */
 function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $displayformat='plain', $sort='',
                                         $currentgroup=-1, $groupmode=-1, $page=-1) {
-    global $CFG, $USER, $SITE;
+    global $CFG, $USER;
     
     if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
         error('Course Module ID was incorrect');
