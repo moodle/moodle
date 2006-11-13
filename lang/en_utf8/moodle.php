@@ -1401,6 +1401,7 @@ $string['usernameemailmatch'] = 'The username and email address do not relate to
 $string['usernameexists'] = 'This username already exists, choose another';
 $string['usernamenotfound'] = 'The username was not found in the database';
 $string['usernotconfirmed'] = 'Could not confirm $a';
+$string['userpic'] = 'User picture';
 $string['userprofilefor'] = 'User profile for $a';
 $string['users'] = 'Users';
 $string['usersnew'] = 'New users';

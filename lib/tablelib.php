@@ -487,6 +487,10 @@ class flexible_table {
                 }
                 break;
 
+                case 'userpic':
+                    // do nothing, do not display sortable links      
+                break;
+
                 default:
                 if($this->is_sortable) {
                     if($primary_sort_column == $column) {

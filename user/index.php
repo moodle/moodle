@@ -274,8 +274,8 @@
 
     /// Define a table showing a list of users in the current role selection
 
-    $tablecolumns = array('picture', 'fullname');
-    $tableheaders = array('', get_string('fullname'));
+    $tablecolumns = array('userpic', 'fullname');
+    $tableheaders = array(get_string('userpic'), get_string('fullname'));
     if (!isset($hiddenfields['city'])) {
         $tablecolumns[] = 'city';
         $tableheaders[] = get_string('city');
@@ -304,7 +304,7 @@
     $table->define_columns($tablecolumns);
     $table->define_headers($tableheaders);
     $table->define_baseurl($baseurl);
-
+    
     $table->sortable(true, 'lastaccess', SORT_DESC);
 
     $table->set_attribute('cellspacing', '0');
