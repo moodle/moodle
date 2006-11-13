@@ -2046,6 +2046,9 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
             $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.
                           $post->discussion.'#'.$post->parent.'">'.$strparent.'</a>';
         }
+        $editownpost = $ownpost && has_capability('mod/forum:replypost', $modcontext);
+    } else {
+        $editownpost = $ownpost && has_capability('mod/forum:startdiscussion', $modcontext);
     }
 
     $forumtype = get_field('forum', 'type', 'id', $post->forum);
@@ -2058,7 +2061,10 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         $age = 0;
     }
     $editanypost = has_capability('mod/forum:editanypost', $modcontext);
-    if ($ownpost or $editanypost) {
+
+    
+    
+    if ($editownpost or $editanypost) {
         if (($age < $CFG->maxeditingtime) or $editanypost) {
             $commands[] =  '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?edit='.$post->id.'">'.$stredit.'</a>';
         }
@@ -2071,12 +2077,13 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
                       '" title="'.$strpruneheading.'">'.$strprune.'</a>';
     }
 
-    if (($ownpost and $age < $CFG->maxeditingtime) or
-                has_capability('mod/forum:editanypost', $modcontext)) {
+    if (($ownpost and $age < $CFG->maxeditingtime
+                and has_capability('mod/forum:deleteownpost', $modcontext))
+                or has_capability('mod/forum:deleteanypost', $modcontext)) {
         $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?delete='.$post->id.'">'.$strdelete.'</a>';
     }
 
-    if ($reply) {
+    if ($reply and has_capability('mod/forum:replypost', $modcontext)) {
         $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?reply='.$post->id.'">'.$strreply.'</a>';
     }
 
