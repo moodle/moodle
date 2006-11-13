@@ -154,7 +154,7 @@
                 email_paypal_error_to_admin("Error while trying to insert valid transaction", $data);
             }
 
-            if (enrol_into_course($course, $user, 'paypal')) {
+            if (!enrol_into_course($course, $user, 'paypal')) {
                 email_paypal_error_to_admin("Error while trying to enrol ".fullname($user)." in '$course->fullname'", $data);
                 die;
             } else {
@@ -203,7 +203,7 @@
 
 function email_paypal_error_to_admin($subject, $data) {
     $admin = get_admin();
-    $site = get_admin();
+    $site = get_site();
 
     $message = "$site->fullname:  Transaction failed.\n\n$subject\n\n";
 
