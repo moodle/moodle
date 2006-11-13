@@ -2041,9 +2041,6 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
             $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.
                           $post->discussion.'#'.$post->parent.'">'.$strparent.'</a>';
         }
-        $editownpost = $ownpost && has_capability('mod/forum:replypost', $modcontext);
-    } else {
-        $editownpost = $ownpost && has_capability('mod/forum:startdiscussion', $modcontext);
     }
 
     $forumtype = get_field('forum', 'type', 'id', $post->forum);
@@ -2059,7 +2056,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     
     
-    if ($editownpost or $editanypost) {
+    if ($ownpost or $editanypost) {
         if (($age < $CFG->maxeditingtime) or $editanypost) {
             $commands[] =  '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?edit='.$post->id.'">'.$stredit.'</a>';
         }
@@ -2078,7 +2075,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?delete='.$post->id.'">'.$strdelete.'</a>';
     }
 
-    if ($reply and has_capability('mod/forum:replypost', $modcontext)) {
+    if ($reply) {
         $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?reply='.$post->id.'">'.$strreply.'</a>';
     }
 
@@ -2968,9 +2965,11 @@ function forum_user_can_post($forum, $user=NULL) {
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if (isset($user)) {
-        $canreply = has_capability('mod/forum:replypost', $context, $user->id, false);
+        $canreply = has_capability('mod/forum:replypost', $context, $user->id, false)
+                && !has_capability('moodle/legacy:guest', $context, $user->id, false);
     } else {
-        $canreply = has_capability('mod/forum:replypost', $context, NULL, false);
+        $canreply = has_capability('mod/forum:replypost', $context, NULL, false)
+                && !has_capability('moodle/legacy:guest', $context, NULL, false);
     }
 
     return $canreply;
@@ -3097,7 +3096,7 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL) {
 */
 function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $displayformat='plain', $sort='',
                                         $currentgroup=-1, $groupmode=-1, $page=-1) {
-    global $CFG, $USER;
+    global $CFG, $USER, $SITE;
     
     if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
         error('Course Module ID was incorrect');
@@ -3140,9 +3139,14 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
         $visiblegroups = $currentgroup;
     }
 
-/// If the user can post discussions, then this is a good place to put the button for it
-    //add group mode in there, to test for visible group
-    if (forum_user_can_post_discussion($forum, $currentgroup, $groupmode)) {  
+/// If the user can post discussions, then this is a good place to put the
+/// button for it. We do not show the button if we are showing site news
+/// and the current user is a guest.
+
+    // TODO: Add group mode in there, to test for visible group.
+    if (forum_user_can_post_discussion($forum, $currentgroup, $groupmode)
+            || (has_capability('moodle/legacy:guest', $context, NULL, false)
+            && $course->id != SITEID)) {
 
         echo '<div class="singlebutton forumaddnew">';
         echo "<form name=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
