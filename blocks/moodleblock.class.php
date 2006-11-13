@@ -358,7 +358,7 @@ class block_base {
      
          // place holder for roles button
          $movebuttons .= '<a class="icon roles" title="'. $this->str->assignroles .'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$blockcontext->id.'">' .
-                        '<img src="'.$CFG->pixpath.'/i/roles.gif" alt="'.$this->str->assignroles.'" /></a>';
+                        '<img src="'.$CFG->pixpath.'/i/roles.gif" alt="'.$this->str->assignroles.'" height="11" width="11" border="0"/></a>';
      
         $movebuttons .= '<a class="icon hide" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
                         '<img src="'. $CFG->pixpath.$icon .'" alt="'.$title.'" /></a>';
