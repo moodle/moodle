@@ -24,7 +24,7 @@ if (confirm_sesskey() and isteacheredit($courseid)) {
 	if ($userids != false) {
 		// Remove each user in turn from the group. 
 		foreach($userids as $userid) {
-			$useradded = groups_remove_member($userid, $groupid);
+			$useradded = groups_remove_member($groupid, $userid);
 			if (!$useradded) {
 				echo "<error>Failed to adduser $userid</error>";
 			}

@@ -21,7 +21,7 @@ if (confirm_sesskey() and isteacheredit($courseid)) {
 	
 	if ($userids != false) {
 		foreach($userids as $userid) {
-			$useradded = groups_add_member($userid, $groupid);
+			$useradded = groups_add_member($groupid, $userid);
 			if (!$useradded) {
 				echo '<error>Failed to add user $userid to group</error>';
 			}
