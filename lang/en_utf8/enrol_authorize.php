@@ -1,5 +1,5 @@
-<?PHP // $Id$
-      // enrol_authorize.php - created with Moodle 1.7 beta + (2006101003)
+<?PHP // $Id$ 
+      // enrol_authorize.php - created with Moodle 1.8 dev (2006102600)
 
 
 $string['adminacceptccs'] = 'Which credit card types will be accepted?';
@@ -10,7 +10,7 @@ $string['adminauthorizeemail'] = 'Email Sending Settings';
 $string['adminauthorizesettings'] = 'Authorize.net Settings';
 $string['adminauthorizewide'] = 'Site-Wide Settings';
 $string['adminavs'] = 'Check this if you have activated Address Verification System (AVS) in your authorize.net account. This demands address fields like street, state, country and zip when user fills out payment form.';
-$string['adminconfighttps'] = 'Please ensure that you have \"<a href=\"$a->url\">turned loginhttps ON</a>\" to use this plugin<br />in Admin &gt;&gt; Variables &gt;&gt; Security &gt;&gt; HTTP security.';
+$string['adminconfighttps'] = 'Please ensure that you have \"<a href=\"$a->url\">turned loginhttps ON</a>\" to use this plugin<br />in Admin >> Variables >> Security >> HTTP security.';
 $string['adminconfighttpsgo'] = 'Go to the <a href=\"$a->url\">secure page</a> to configure this plugin.';
 $string['admincronsetup'] = 'The cron.php maintenance script has not been run for at least 24 hours.<br />Cron must be enabled if you want to use scheduled-capture feature.<br /><b>Enable</b> \'Authorize.net plugin\' and <b>setup cron</b> properly; or <b>uncheck an_review</b> again.<br />If you disable scheduled-capture, transactions will be cancelled unless you review them within 30 days.<br />Check <b>an_review</b> and enter <b>\'0\' to an_capture_day</b> field<br />if you want to <b>manually</b> accept/deny payments within 30 days.';
 $string['adminemailexpired'] = 'This is useful for \'Manual-Capture\'. Admins are notified <b>$a</b> days prior to pending orders expiring.';
@@ -117,6 +117,7 @@ $string['missingccexpire'] = 'Missing expiration date';
 $string['missingcctype'] = 'Missing card type';
 $string['missingcvv'] = 'Missing verification number';
 $string['missingzip'] = 'Missing postal code';
+$string['mypaymentsonly'] = 'Show my payments only';
 $string['nameoncard'] = 'Name on Card';
 $string['new'] = 'New';
 $string['noreturns'] = 'No returns!';
