@@ -41,11 +41,8 @@ function authorize_print_orders()
     );
 
     $sql = "SELECT c.id, c.fullname FROM {$CFG->prefix}course c INNER JOIN {$CFG->prefix}enrol_authorize e ON c.id = e.courseid ";
-    if ($CFG->enrol == 'authorize') { // default enrolment plugin
-        $sql .= "WHERE (c.enrol IS NULL) OR (c.enrol='') OR (c.enrol = 'authorize') ";
-    }
-    else {
-        $sql .= "WHERE (c.enrol = 'authorize') ";
+    if ($userid > 0) {
+    	$sql .= "WHERE (e.userid='$userid') ";
     }
     $sql .= "ORDER BY c.sortorder, c.fullname";
     if ($popupcrs = get_records_sql_menu($sql)) {
@@ -67,7 +64,7 @@ function authorize_print_orders()
 
     $table->define_columns(array('id', 'timecreated', 'userid', 'status', ''));
     $table->define_headers(array($authstrs->orderid, $strs->time, $authstrs->nameoncard, $strs->status, $strs->action));
-    $table->define_baseurl($baseurl."&amp;status=$status");
+    $table->define_baseurl($baseurl."&amp;status=$status&amp;course=$courseid");
 
     $table->sortable(true, 'id', SORT_DESC);
     $table->pageable(true);
