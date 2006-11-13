@@ -14,7 +14,7 @@ Changes:
 - 10. 2005: Added better error messages and moved text to language directories
 - 02. 2006: Simplified authentication so that authorization works properly
             Added instructions for IIS
-            
+- 11. 2006: User capabilities are now loaded properly as of Moodle 1.7+
 
 
 Moodle Configuration with Dual login
@@ -163,11 +163,6 @@ Example file:
     }
 ?>
 --
-
-Bugs
---------------------------------------------------------------------------------
-Please send bug reports concerning the Shibboleth part to 
-Lukas Haemmerle <haemmerle@switch.ch>
 
 --------------------------------------------------------------------------------
 In case of problems and questions with Shibboleth authentication, contact 
