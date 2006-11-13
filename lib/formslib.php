@@ -336,12 +336,15 @@ class moodleform_mod extends moodleform {
     function standard_coursemodule_elements(){
         $mform=$this->_form;
         $mform->addElement('header', '', get_string('modstandardels', 'form'));
+
         $mform->addElement('modgroupmode', 'groupmode', get_string('groupmode'));
-        $mform->setType('groupmode', PARAM_INT);
 
         $mform->addElement('modvisible', 'visible', get_string('visible'));
-        $mform->setType('visible', PARAM_INT);
+        $this->standard_hidden_coursemodule_elements();
+    }
 
+    function standard_hidden_coursemodule_elements(){
+        $mform=$this->_form;
         $mform->addElement('hidden', 'course', 0);
         $mform->setType('course', PARAM_INT);
 
