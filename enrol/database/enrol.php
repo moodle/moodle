@@ -604,6 +604,7 @@ function enrol_connect() {
     // Try to connect to the external database
     $enroldb = &ADONewConnection($CFG->enrol_dbtype);
     if ($enroldb->PConnect($CFG->enrol_dbhost,$CFG->enrol_dbuser,$CFG->enrol_dbpass,$CFG->enrol_dbname)) {
+        $enroldb->SetFetchMode(ADODB_FETCH_ASSOC); ///Set Assoc mode always after DB connection
         return $enroldb;
     } else {
         // do a bit of cleanup, and lot the problem
