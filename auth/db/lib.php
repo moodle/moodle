@@ -22,7 +22,8 @@ function auth_user_login ($username, $password) {
 
     // Connect to the external database
     $authdb = &ADONewConnection($CFG->auth_dbtype); 
-    $authdb->PConnect($CFG->auth_dbhost,$CFG->auth_dbuser,$CFG->auth_dbpass,$CFG->auth_dbname); 
+    $authdb->PConnect($CFG->auth_dbhost,$CFG->auth_dbuser,$CFG->auth_dbpass,$CFG->auth_dbname);
+    $authdb->SetFetchMode(ADODB_FETCH_ASSOC); ///Set Assoc mode always after DB connection
 
     if ($CFG->auth_dbpasstype === 'internal') { 
         // lookup username externally, but resolve
@@ -92,6 +93,7 @@ function auth_get_userinfo($username){
     ADOLoadCode($CFG->auth_dbtype);          
     $authdb = &ADONewConnection();         
     $authdb->PConnect($CFG->auth_dbhost,$CFG->auth_dbuser,$CFG->auth_dbpass,$CFG->auth_dbname); 
+    $authdb->SetFetchMode(ADODB_FETCH_ASSOC); ///Set Assoc mode always after DB connection
 
     $fields = array("firstname", "lastname", "email", "phone1", "phone2", 
                     "department", "address", "city", "country", "description", 
@@ -302,6 +304,7 @@ function auth_user_exists ($username) {
     global $CFG;
     $authdb = &ADONewConnection($CFG->auth_dbtype); 
     $authdb->PConnect($CFG->auth_dbhost,$CFG->auth_dbuser,$CFG->auth_dbpass,$CFG->auth_dbname); 
+    $authdb->SetFetchMode(ADODB_FETCH_ASSOC); ///Set Assoc mode always after DB connection
 
     $rs = $authdb->Execute("SELECT * FROM $CFG->auth_dbtable 
                                  WHERE $CFG->auth_dbfielduser = '$username' ");
@@ -334,6 +337,7 @@ function auth_get_userlist() {
     // Connect to the external database
     $authdb = &ADONewConnection($CFG->auth_dbtype); 
     $authdb->PConnect($CFG->auth_dbhost,$CFG->auth_dbuser,$CFG->auth_dbpass,$CFG->auth_dbname); 
+    $authdb->SetFetchMode(ADODB_FETCH_ASSOC); ///Set Assoc mode always after DB connection
 
     // fetch userlist
     $rs = $authdb->Execute("SELECT $CFG->auth_dbfielduser AS username
