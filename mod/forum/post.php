@@ -399,7 +399,7 @@
             if (groupmode($course, $cm)) {   // Make sure user can post here
                 $mygroupid = mygroupid($course->id);
                 if (!((empty($mygroupid) and $discussion->groupid == -1) || (ismember($discussion->groupid)/*$mygroupid == $discussion->groupid*/))) {
-                    error("Sorry, but you can not post in this discussion.");
+                    print_error('nopostdiscussion', 'forum');
                 }
             }
             if (!$cm->visible and !has_capability('moodle/course:manageactivities', $coursecontext)) {

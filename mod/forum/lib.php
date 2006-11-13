@@ -1833,11 +1833,6 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
                       $post->discussion.'&amp;parent='.$post->parent.'">'.get_string('parent', 'forum').'</a>';
     }
 
-    if ($ownpost) {
-        $commands[] = '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/post.php?delete='.$post->id.'">'.
-                      get_string('delete', 'forum').'</a>';
-    }
-
     if ($reply) {
         $commands[] = '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/post.php?reply='.$post->id.'">'.
                       get_string('reply', 'forum').'</a>';
@@ -2942,10 +2937,6 @@ function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=
         return false;
     }
 
-    if (has_capability('moodle/legacy:guest', $context, NULL, false)) {  // User is a guest here!
-        return false;
-    }
-
     if ($forum->type == "eachuser") {
         return (!forum_user_has_posted_discussion($forum->id, $USER->id));
     } else if ($currentgroup) {
@@ -2977,11 +2968,9 @@ function forum_user_can_post($forum, $user=NULL) {
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if (isset($user)) {
-        $canreply = has_capability('mod/forum:replypost', $context, $user->id, false) &&
-                    !has_capability('moodle/legacy:guest', $context, $user->id, false);
+        $canreply = has_capability('mod/forum:replypost', $context, $user->id, false);
     } else {
-        $canreply = has_capability('mod/forum:replypost', $context, NULL, false) &&
-                    !has_capability('moodle/legacy:guest', $context, NULL, false);
+        $canreply = has_capability('mod/forum:replypost', $context, NULL, false);
     }
 
     return $canreply;
@@ -3153,8 +3142,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 
 /// If the user can post discussions, then this is a good place to put the button for it
     //add group mode in there, to test for visible group
-    if (forum_user_can_post_discussion($forum, $currentgroup, $groupmode) ||
-        has_capability('moodle/legacy:guest', $context, NULL, false)) {  
+    if (forum_user_can_post_discussion($forum, $currentgroup, $groupmode)) {  
 
         echo '<div class="singlebutton forumaddnew">';
         echo "<form name=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
