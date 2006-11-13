@@ -337,7 +337,6 @@ class moodleform_mod extends moodleform {
         $mform=$this->_form;
         $mform->addElement('header', '', get_string('modstandardels', 'form'));
         $mform->addElement('modgroupmode', 'groupmode', get_string('groupmode'));
-        $mform->setHelpButton('groupmode', array('groupmode', get_string('groupmode')));
         $mform->setType('groupmode', PARAM_INT);
 
         $mform->addElement('modvisible', 'visible', get_string('visible'));
@@ -554,26 +553,27 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      *
      * @access   public
     */
-    function setHelpButtons($buttons, $suppresscheck=false){
+    function setHelpButtons($buttons, $suppresscheck=false, $function='helpbutton'){
 
         foreach ($buttons as $elementname => $button){
-            $this->setHelpButton($elementname, $button, $suppresscheck);
+            $this->setHelpButton($elementname, $button, $suppresscheck, $function);
         }
     }
     /**
      * Add a single button.
      *
      * @param string $elementname name of the element to add the item to
-     * @param array $button - arguments to pass to setHelpButton
+     * @param array $button - arguments to pass to function $function
      * @param boolean $suppresscheck - whether to throw an error if the element
      *                                  doesn't exist.
+     * @param string $function - function to generate html from the arguments in $button
      */
-    function setHelpButton($elementname, $button, $suppresscheck=false){
+    function setHelpButton($elementname, $button, $suppresscheck=false, $function='helpbutton'){
         if (array_key_exists($elementname, $this->_elementIndex)){
             //_elements has a numeric index, this code accesses the elements by name
             $element=&$this->_elements[$this->_elementIndex[$elementname]];
             if (method_exists($element, 'setHelpButton')){
-                $element->setHelpButton($button);
+                $element->setHelpButton($button, $function);
             }else{
                 $a=new object();
                 $a->name=$element->getName();
@@ -935,5 +935,6 @@ MoodleQuickForm::registerElementType('hidden', "$CFG->libdir/form/hidden.php", '
 MoodleQuickForm::registerElementType('modvisible', "$CFG->libdir/form/modvisible.php", 'MoodleQuickForm_modvisible');
 MoodleQuickForm::registerElementType('modgroupmode', "$CFG->libdir/form/modgroupmode.php", 'MoodleQuickForm_modgroupmode');
 MoodleQuickForm::registerElementType('selectyesno', "$CFG->libdir/form/selectyesno.php", 'MoodleQuickForm_selectyesno');
+MoodleQuickForm::registerElementType('modgrade', "$CFG->libdir/form/modgrade.php", 'MoodleQuickForm_modgrade');
 
 ?>

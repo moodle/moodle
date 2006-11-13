@@ -9,8 +9,6 @@ require_once "$CFG->libdir/form/select.php";
  * @access       public
  */
 class MoodleQuickForm_modgroupmode extends MoodleQuickForm_select{
-
-
     /**
      * Class constructor
      *
@@ -43,9 +41,10 @@ class MoodleQuickForm_modgroupmode extends MoodleQuickForm_select{
     {
         switch ($event) {
             case 'createElement':
-                $choices=array();
+                $choices = array();
                 $choices[0] = get_string('no');
                 $choices[1] = get_string('yes');
+                $this->setHelpButton(array('groupmode', get_string('groupmode')));
                 $this->load($choices);
                 break;
         }
