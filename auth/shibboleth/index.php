@@ -56,6 +56,15 @@
                 $urltogo = $CFG->wwwroot.'/';      /// Go to the standard home page
                 unset($SESSION->wantsurl);         /// Just in case
             }
+            
+            /// Go to my-moodle page instead of homepage if mymoodleredirect enabled
+            if (!has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM, SITEID)) and !empty($CFG->mymoodleredirect) and !isguest()) {
+                if ($urltogo == $CFG->wwwroot or $urltogo == $CFG->wwwroot.'/' or $urltogo == $CFG->wwwroot.'/index.php') {
+                    $urltogo = $CFG->wwwroot.'/my/';
+                }
+            }
+            
+            load_all_capabilities();     /// This is what lets the user do anything on the site  :-)
 
             redirect($urltogo);
         }
