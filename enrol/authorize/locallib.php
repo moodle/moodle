@@ -26,8 +26,11 @@ function authorize_print_orders($courseid, $userid)
     $status = optional_param('status', AN_STATUS_NONE, PARAM_INT);
     $searchtype = optional_param('searchtype', 'id', PARAM_ALPHA);
     $idortransid = optional_param('idortransid', '0', PARAM_INT);
+    $showonlymy = optional_param('showonlymy', 0, PARAM_BOOL);
 
-    if (! has_capability('enrol/authorize:managepayments', get_context_instance(CONTEXT_COURSE, $courseid))) {
+    $canmanagepayments = has_capability('enrol/authorize:managepayments', get_context_instance(CONTEXT_COURSE, $courseid));
+
+    if ($showonlymy || !$canmanagepayments) {
         $userid = $USER->id;
     }
 
@@ -46,19 +49,26 @@ function authorize_print_orders($courseid, $userid)
     );
 
     $sql = "SELECT c.id, c.fullname FROM {$CFG->prefix}course c INNER JOIN {$CFG->prefix}enrol_authorize e ON c.id = e.courseid ";
-    if ($CFG->enrol == 'authorize') { // default enrolment plugin
-        $sql .= "WHERE (c.enrol IS NULL) OR (c.enrol='') OR (c.enrol = 'authorize') ";
-    }
-    else {
-        $sql .= "WHERE (c.enrol = 'authorize') ";
+    if ($userid > 0) {
+        $sql .= "WHERE (e.userid='$userid') ";
     }
     $sql .= "ORDER BY c.sortorder, c.fullname";
     if ($popupcrs = get_records_sql_menu($sql)) {
         $popupcrs = array($SITE->id => $SITE->fullname) + $popupcrs;
         echo "<table border='0' width='100%' cellspacing=0 cellpadding=3 class='generaltable generalbox'>";
         echo "<tr>";
-        echo "<td width='5%'>$strs->status: </td><td width='10%'>";popup_form($baseurl.'&amp;course='.$courseid.'&amp;status=',$statusmenu,'statusmenu',$status,'','','',false);echo"</td>\n";
-        echo "<td width='5%'>$strs->course: </td><td width='10%'>";popup_form($baseurl.'&amp;status='.$status.'&amp;course=',$popupcrs,'coursesmenu',$courseid,'','','',false);echo"</td>\n";
+        echo "<td width='5%' valign='top'>$strs->status: </td><td width='10%'>";
+        popup_form($baseurl.'&amp;course='.$courseid.'&amp;status=',$statusmenu,'statusmenu',$status,'','','',false);
+        if ($canmanagepayments) {
+            echo "<br />\n";
+            print_checkbox('showonlymy', '1', $userid == $USER->id, get_string('mypaymentsonly', 'enrol_authorize'), '',
+            "var locationtogo = '{$CFG->wwwroot}/enrol/authorize/index.php?status=$status&amp;course=$courseid';
+                                  locationtogo += '&amp;user=' + (this.checked ? '$USER->id' : '0');
+                                  top.location.href=locationtogo;");
+        }
+        echo "</td>\n";
+        echo "<td width='5%' valign='top'>$strs->course: </td><td width='10%' valign='top'>";
+        popup_form($baseurl.'&amp;status='.$status.'&amp;course=',$popupcrs,'coursesmenu',$courseid,'','','',false);echo"</td>\n";
         if (has_capability('enrol/authorize:uploadcsv', get_context_instance(CONTEXT_USER, $USER->id))) {
             echo "<form method='get' action='uploadcsv.php'>";
             echo "<td rowspan=2 align='center' valign='middle' width='50%'><input type='submit' value='".get_string('uploadcsv', 'enrol_authorize')."'></td>";
@@ -88,7 +98,7 @@ function authorize_print_orders($courseid, $userid)
 
     $table->define_columns(array('id', 'timecreated', 'userid', 'status', ''));
     $table->define_headers(array($authstrs->orderid, $strs->time, $authstrs->nameoncard, $strs->status, $strs->action));
-    $table->define_baseurl($baseurl."&amp;status=$status");
+    $table->define_baseurl($baseurl."&amp;status=$status&amp;course=$courseid");
 
     $table->sortable(true, 'id', SORT_DESC);
     $table->pageable(true);
