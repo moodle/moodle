@@ -340,6 +340,7 @@ class moodleform_mod extends moodleform {
         $mform->addElement('modgroupmode', 'groupmode', get_string('groupmode'));
 
         $mform->addElement('modvisible', 'visible', get_string('visible'));
+
         $this->standard_hidden_coursemodule_elements();
     }
 
@@ -939,5 +940,6 @@ MoodleQuickForm::registerElementType('modvisible', "$CFG->libdir/form/modvisible
 MoodleQuickForm::registerElementType('modgroupmode', "$CFG->libdir/form/modgroupmode.php", 'MoodleQuickForm_modgroupmode');
 MoodleQuickForm::registerElementType('selectyesno', "$CFG->libdir/form/selectyesno.php", 'MoodleQuickForm_selectyesno');
 MoodleQuickForm::registerElementType('modgrade', "$CFG->libdir/form/modgrade.php", 'MoodleQuickForm_modgrade');
+MoodleQuickForm::registerElementType('submit', "$CFG->libdir/form/submit.php", 'MoodleQuickForm_submit');
 
 ?>
