@@ -775,7 +775,7 @@ class test extends XMLDBAction {
                 if ($new = get_record('newnameforthetable', 'id', $rec->id)) {
                     delete_records('newnameforthetable', 'id', $new->id);
                     $newtextlen = $textlib->strlen($new->intro);
-                    if ($rec->intro === $new->intro) {
+                    if ($fulltext === $new->intro) {
                         $test->sql = array($newtextlen . ' cc. (text) sent and received ok');
                         $test->status = true;
                     } else {
@@ -804,7 +804,7 @@ class test extends XMLDBAction {
             if ($rec->id = insert_record('newnameforthetable', $rec)) {
                 if ($new = get_record('newnameforthetable', 'id', $rec->id)) {
                     $newtextlen = strlen($new->avatar);
-                    if ($rec->avatar === $new->avatar) {
+                    if ($fulltext === $new->avatar) {
                         $test->sql = array($newtextlen . ' bytes (binary) sent and received ok');
                         $test->status = true;
                     } else {
@@ -837,7 +837,7 @@ class test extends XMLDBAction {
                 if ($new = get_record('newnameforthetable', 'id', $rec->id)) {
                     $newtextlen = $textlib->strlen($new->intro);
                     $newimglen = strlen($new->avatar);
-                    if ($rec->avatar === $new->avatar && $rec->intro === $new->intro) {
+                    if ($basetext === $new->avatar && $basetext === $new->intro) {
                         $test->sql = array($newtextlen . ' cc. (text) sent and received ok',
                                            $newimglen . ' bytes (binary) sent and received ok');
                         $test->status = true;
@@ -874,7 +874,7 @@ class test extends XMLDBAction {
             if (set_field('newnameforthetable', 'intro', $rec->intro, 'name', $rec->name)) {
                 if ($new = get_record('newnameforthetable', 'id', $rec->id)) {
                     $newtextlen = $textlib->strlen($new->intro);
-                    if ($rec->intro === $new->intro) {
+                    if ($fulltext === $new->intro) {
                         $test->sql = array($newtextlen . ' cc. (text) sent and received ok');
                         $test->status = true;
                     } else {
@@ -904,7 +904,7 @@ class test extends XMLDBAction {
             if (set_field('newnameforthetable', 'avatar', $rec->avatar, 'name', $rec->name)) {
                 if ($new = get_record('newnameforthetable', 'id', $rec->id)) {
                     $newtextlen = strlen($new->avatar);
-                    if ($rec->avatar === $new->avatar) {
+                    if ($fulltext === $new->avatar) {
                         $test->sql = array($newtextlen . ' bytes (binary) sent and received ok');
                         $test->status = true;
                     } else {
