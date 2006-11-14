@@ -19,11 +19,10 @@ class glossary_mod_form extends moodleform_mod {
 		$mform->setType('intro', PARAM_RAW);
 		$mform->addRule('intro', get_string('required'), 'required', null, 'client');
 
-        $options=array();
-        $options=array_combine(range(1,10), range(1,10))+//keys, values, step=1
-                   array_combine(range(15,100, 5), range(15,100, 5)) ;
-        $mform->addElement('select', 'entbypage', get_string('entbypage', 'glossary'), $options);
+        $mform->addElement('text', 'entbypage', get_string('entbypage', 'glossary'));
         $mform->setDefault('entbypage', 10);
+        $mform->addRule('entbypage', null, 'required', null, 'client');
+        $mform->addRule('entbypage', null, 'numeric', null, 'client');
 
         if (has_capability('mod/glossary:manageentries', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             $mform->addElement('checkbox', 'globalglossary', get_string('isglobal', 'glossary'));
