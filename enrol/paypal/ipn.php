@@ -41,6 +41,7 @@
     $data->courseid         = (int)$custom[1];
     $data->payment_gross    = $data->mc_gross;
     $data->payment_currency = $data->mc_currency;
+    $data->timeupdated      = time();
 
 
 /// get the user and course records
