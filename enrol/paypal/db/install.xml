@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <XMLDB PATH="enrol/paypal/db" VERSION="20060807" COMMENT="XMLDB file for Moodle enrol/paypal">
   <TABLES>
-    <TABLE NAME="enrol_paypal" COMMENT="Holds all known information about Paypal transactions">
+    <TABLE NAME="enrol_paypal" COMMENT="Holds all known information about PayPal transactions">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="business"/>
         <FIELD NAME="business" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="receiver_email"/>

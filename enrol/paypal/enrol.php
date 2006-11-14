@@ -1,5 +1,5 @@
 <?php  // $Id$
-       // Implements all the main code for the Paypal plugin
+       // Implements all the main code for the PayPal plugin
 
 require_once("$CFG->dirroot/enrol/enrol.class.php");
 

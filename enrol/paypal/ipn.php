@@ -1,11 +1,11 @@
 <?php  // $Id$
 
 /**
-* Listens for Instant Payment Notification from Paypal
+* Listens for Instant Payment Notification from PayPal
 *
-* This script waits for Payment notification from Paypal,
-* then double checks that data by sending it back to Paypal.
-* If Paypal verifies this then it sets up the enrolment for that
+* This script waits for Payment notification from PayPal,
+* then double checks that data by sending it back to PayPal.
+* If PayPal verifies this then it sets up the enrolment for that
 * 
 * Set the $user->timeaccess course array
 *
@@ -21,7 +21,7 @@
         error("Sorry, you can not use the script that way.");
     }
 
-/// Read all the data from Paypal and get it ready for later
+/// Read all the data from PayPal and get it ready for later
 
     $req = 'cmd=_notify-validate';
 
@@ -64,7 +64,7 @@
     $paypaladdr = empty($CFG->usepaypalsandbox) ? 'www.paypal.com' : 'www.sandbox.paypal.com';
     $fp = fsockopen ($paypaladdr, 80, $errno, $errstr, 30);
 
-    if (!$fp) {  /// Could not open a socket to Paypal - FAIL
+    if (!$fp) {  /// Could not open a socket to PayPal - FAIL
         echo "<p>Error: could not access paypal.com</p>";
         email_paypal_error_to_admin("Could not access paypal.com to verify payment", $data);
         die;
@@ -96,7 +96,7 @@
             // Email user to let them know. Email admin.
 
             if ($data->payment_status == "Pending" and $data->pending_reason != "echeck") {
-                email_to_user($user, get_admin(), "Moodle: Paypal payment", "Your Paypal payment is pending.");
+                email_to_user($user, get_admin(), "Moodle: PayPal payment", "Your PayPal payment is pending.");
                 email_paypal_error_to_admin("Payment pending", $data);
                 die;
             }

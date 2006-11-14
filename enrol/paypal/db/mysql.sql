@@ -20,4 +20,4 @@ CREATE TABLE `prefix_enrol_paypal` (
   `payment_type` varchar(30) NOT NULL default '',
   `timeupdated` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM COMMENT='Holds all known information about Paypal transactions' ;
+) TYPE=MyISAM COMMENT='Holds all known information about PayPal transactions' ;
