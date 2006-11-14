@@ -6,7 +6,7 @@
 * This script waits for Payment notification from PayPal,
 * then double checks that data by sending it back to PayPal.
 * If PayPal verifies this then it sets up the enrolment for that
-* 
+*
 * Set the $user->timeaccess course array
 *
 * @param    user  referenced object, must contain $user->id already set
@@ -21,14 +21,19 @@
         error("Sorry, you can not use the script that way.");
     }
 
-/// Read all the data from PayPal and get it ready for later
+/// Read all the data from PayPal and get it ready for later;
+/// we expect only valid UTF-8 encoding, it is the responsibility
+/// of user to set it up properly in PayPal business acount,
+/// it is documented in docs wiki.
 
     $req = 'cmd=_notify-validate';
 
+    $data = new object();
+
     foreach ($_POST as $key => $value) {
-        $value = urlencode(stripslashes($value));
-        $req .= "&$key=$value";
-        $data->$key = urldecode($value);
+        $value = stripslashes($value);
+        $req .= "&$key=".urlencode($value);
+        $data->$key = $value;
     }
 
     $custom = explode('-', $data->custom);
@@ -104,7 +109,7 @@
             // If our status is not completed or not pending on an echeck clearance then ignore and die
             // This check is redundant at present but may be useful if paypal extend the return codes in the future
 
-            if (! ( $data->payment_status == "Completed" or 
+            if (! ( $data->payment_status == "Completed" or
                    ($data->payment_status == "Pending" and $data->pending_reason == "echeck") ) ) {
                 die;
             }
@@ -117,14 +122,14 @@
                 email_paypal_error_to_admin("Transaction $data->txn_id is being repeated!", $data);
                 die;
 
-            } 
-            
+            }
+
             if ($data->business != $CFG->enrol_paypalbusiness) {   // Check that the email is the one we want it to be
                 email_paypal_error_to_admin("Business email is $data->business (not $CFG->enrol_paypalbusiness)", $data);
                 die;
 
-            } 
-            
+            }
+
             if (!$user = get_record('user', 'id', $data->userid)) {   // Check that user exists
                 email_paypal_error_to_admin("User $data->userid doesn't exist", $data);
                 die;
@@ -143,7 +148,7 @@
             }
             $cost = format_float($cost, 2);
 
-            if ($data->payment_gross < $cost) {   
+            if ($data->payment_gross < $cost) {
                 email_paypal_error_to_admin("Amount paid is not enough ($data->payment_gross < $cost))", $data);
                 die;
 
@@ -164,14 +169,14 @@
                 if (!empty($CFG->enrol_mailstudents)) {
                     $a->coursename = "$course->fullname";
                     $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
-                    email_to_user($user, $teacher, get_string("enrolmentnew", '', $course->shortname), 
+                    email_to_user($user, $teacher, get_string("enrolmentnew", '', $course->shortname),
                                   get_string('welcometocoursetext', '', $a));
                 }
 
                 if (!empty($CFG->enrol_mailteachers)) {
                     $a->course = "$course->fullname";
                     $a->user = fullname($user);
-                    email_to_user($teacher, $user, get_string("enrolmentnew", '', $course->shortname), 
+                    email_to_user($teacher, $user, get_string("enrolmentnew", '', $course->shortname),
                                   get_string('enrolmentnewuser', '', $a));
                 }
 
@@ -180,7 +185,7 @@
                     $a->user = fullname($user);
                     $admins = get_admins();
                     foreach ($admins as $admin) {
-                        email_to_user($admin, $user, get_string("enrolmentnew", '', $course->shortname), 
+                        email_to_user($admin, $user, get_string("enrolmentnew", '', $course->shortname),
                                       get_string('enrolmentnewuser', '', $a));
                     }
                 }

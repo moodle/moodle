@@ -10,6 +10,7 @@
 <form action="<?php echo $paypalurl ?>" method="post">
 
 <input type="hidden" name="cmd" value="_xclick" />
+<input type="hidden" name="charset" value="utf-8" />
 <input type="hidden" name="business" value="<?php p($CFG->enrol_paypalbusiness)?>" />
 <input type="hidden" name="item_name" value="<?php p($coursefullname) ?>" />
 <input type="hidden" name="item_number" value="<?php p($courseshortname) ?>" />

@@ -32,7 +32,7 @@ function print_entry($course) {
 
     } else {
 
-        print_header($strloginto, $course->fullname, 
+        print_header($strloginto, $course->fullname,
                      "<a href=\"$CFG->wwwroot/course/\">$strcourses</a> -> $strloginto");
         print_course($course, "80%");
 
@@ -56,13 +56,13 @@ function print_entry($course) {
             echo '</div>';
         } else {
             //Sanitise some fields before building the PayPal form
-            $coursefullname  = $this->sanitise_for_paypal($course->fullname);
-            $courseshortname = $this->sanitise_for_paypal($course->shortname);
-            $userfullname    = $this->sanitise_for_paypal(fullname($USER));
-            $userfirstname   = $this->sanitise_for_paypal($USER->firstname);
-            $userlastname    = $this->sanitise_for_paypal($USER->lastname);
-            $useraddress     = $this->sanitise_for_paypal($USER->address);
-            $usercity        = $this->sanitise_for_paypal($USER->city);
+            $coursefullname  = $course->fullname;
+            $courseshortname = $course->shortname;
+            $userfullname    = fullname($USER);
+            $userfirstname   = $USER->firstname;
+            $userlastname    = $USER->lastname;
+            $useraddress     = $USER->address;
+            $usercity        = $USER->city;
 
             include($CFG->dirroot.'/enrol/paypal/enrol.html');
         }
@@ -99,7 +99,7 @@ function get_access_icons($course) {
         $str = $manual->get_access_icons($course);
 
     } else {
-    
+
         $strrequirespayment = get_string("requirespayment");
         $strcost = get_string("cost");
 
@@ -115,10 +115,10 @@ function get_access_icons($course) {
            case 'AUD': $currency = '$'; break;
            default:    $currency = '$'; break;
         }
-        
+
         $str .= '<div class="cost" title="'.$strrequirespayment.'">'.$strcost.': ';
         $str .= $currency.format_float($cost,2).'</div>';
-        
+
     }
 
     return $str;
@@ -137,12 +137,12 @@ function config_form($frm) {
                                 'AUD' => 'Australian Dollars'
                              );
 
-    $vars = array('enrol_cost', 'enrol_currency', 'enrol_paypalbusiness', 
+    $vars = array('enrol_cost', 'enrol_currency', 'enrol_paypalbusiness',
                   'enrol_mailstudents', 'enrol_mailteachers', 'enrol_mailadmins');
     foreach ($vars as $var) {
         if (!isset($frm->$var)) {
             $frm->$var = '';
-        } 
+        }
     }
 
     include("$CFG->dirroot/enrol/paypal/config.html");
@@ -179,17 +179,9 @@ function process_config($config) {
         $config->enrol_mailadmins = '';
     }
     set_config('enrol_mailadmins', $config->enrol_mailadmins);
-    
+
     return true;
 
-}
-
-//To avoid wrong (for PayPal) characters in sent data
-function sanitise_for_paypal($text) {
-    $textlib = textlib_get_instance();
-    $text  = $textlib->specialtoascii($text);
-    // TODO: characters that have no ascii equivalents are not sanitized properly :-(
-    return $text;
 }
 
 /**
