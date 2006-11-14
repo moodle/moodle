@@ -3,8 +3,10 @@
 <p><?php print_string("paymentrequired") ?></p>
 <p><b><?php echo get_string("cost").": $CFG->enrol_currency $cost"; ?></b></p>
 <p><?php print_string("paymentinstant") ?></p>
-        
-<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<?php
+    $paypalurl = empty($CFG->usepaypalsandbox) ? 'https://www.paypal.com/cgi-bin/webscr' : 'https://www.sandbox.paypal.com/cgi-bin/webscr';
+?> 
+<form action="<?php echo $paypalurl ?>" method="post">
 
 <input type="hidden" name="cmd" value="_xclick">
 <input type="hidden" name="business" value="<?php p($CFG->enrol_paypalbusiness)?>">
