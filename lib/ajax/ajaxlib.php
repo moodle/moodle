@@ -86,6 +86,7 @@ class jsportal {
         $output .= " 	main.portal.id = ".$courseid.";\n";
         $output .= "    main.portal.blocks = new Array(".$blocksoutput.");\n";
         $output .= "    main.portal.strings['wwwroot']='".$CFG->wwwroot."';\n";
+        $output .= "    main.portal.strings['pixpath']='".$CFG->pixpath."';\n";
         $output .= "    main.portal.strings['update']='".get_string('update')."';\n";
         $output .= "    main.portal.strings['deletecheck']='".get_string('deletecheck','','_var_')."';\n";
         $output .= "    main.portal.strings['resource']='".get_string('resource')."';\n";
