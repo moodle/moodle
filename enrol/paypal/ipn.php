@@ -112,7 +112,7 @@
 
 
 
-            if ($existing = get_record("enrol_paypal", "txn_id", $data->txn_id)) {   // Make sure this transaction doesn't exist already
+            if ($existing = get_record("enrol_paypal", "txn_id", addslashes($data->txn_id))) {   // Make sure this transaction doesn't exist already
                 email_paypal_error_to_admin("Transaction $data->txn_id is being repeated!", $data);
                 die;
 
@@ -150,7 +150,7 @@
 
             // ALL CLEAR !
 
-            if (!insert_record("enrol_paypal", $data)) {       // Insert a transaction record
+            if (!insert_record("enrol_paypal", addslashes_object($data))) {       // Insert a transaction record
                 email_paypal_error_to_admin("Error while trying to insert valid transaction", $data);
             }
 
@@ -188,7 +188,7 @@
 
 
         } else if (strcmp ($result, "INVALID") == 0) { // ERROR
-            insert_record("enrol_paypal", $data, false);
+            insert_record("enrol_paypal", addslashes_object($data), false);
             email_paypal_error_to_admin("Received an invalid payment notification!! (Fake payment?)", $data);
         }
     }
