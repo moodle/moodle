@@ -1480,7 +1480,7 @@ function question_category_select_menu($courseid, $published = false, $only_edit
             SELECT cat.*, c.shortname AS coursename 
             FROM {$CFG->prefix}question_categories cat, {$CFG->prefix}course c
             WHERE c.id = cat.course AND (cat.course = $courseid $publishsql)
-            ORDER BY parent, sortorder, name ASC");
+            ORDER BY cat.parent, cat.sortorder, cat.name ASC");
 
     $categories = add_indented_names($categories);
 
