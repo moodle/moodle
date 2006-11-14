@@ -16,12 +16,12 @@ function require_js($list) {
 
     //list of shortname to filepath translations
     $translatelist = array(
-            'yui_yahoo' => '/lib/yui/yahoo/yahoo.js',
-            'yui_dom' => '/lib/yui/dom/dom.js',
-            'yui_event' => '/lib/yui/event/event.js',
-            'yui_dragdrop' => '/lib/yui/dragdrop/dragdrop.js',
-            'yui_logger' => '/lib/yui/logger/logger.js',
-            'yui_connection' => '/lib/yui/connection/connection.js',        
+            'yui_yahoo' => '/lib/yui/yahoo/yahoo-min.js',
+            'yui_dom' => '/lib/yui/dom/dom-min.js',
+            'yui_event' => '/lib/yui/event/event-min.js',
+            'yui_dragdrop' => '/lib/yui/dragdrop/dragdrop-min.js',
+            'yui_logger' => '/lib/yui/logger/logger-min.js',
+            'yui_connection' => '/lib/yui/connection/connection-min.js',        
             'ajaxcourse_blocks' => '/lib/ajax/block_classes.js',
             'ajaxcourse_sections' => '/lib/ajax/section_classes.js',
             'ajaxcourse' => '/lib/ajax/ajaxcourse.js'
@@ -31,7 +31,7 @@ function require_js($list) {
     for ($i=0; $i<count($list); $i++) {
         if ($translatelist[$list[$i]]) {
             $output .= "<script type='text/javascript' src='".$CFG->wwwroot.''.$translatelist[$list[$i]]."'></script>\n";
-            if ($translatelist[$list[$i]] == '/lib/yui/logger/logger.js') {
+            if ($translatelist[$list[$i]] == '/lib/yui/logger/logger-min.js') {
                 // Special case. We need the css.
                 $output .= "<link type='text/css' rel='stylesheet' href='{$CFG->wwwroot}/lib/yui/logger/assets/logger.css'>";
             }
