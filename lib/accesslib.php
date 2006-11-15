@@ -2707,11 +2707,21 @@ function get_component_string($component, $contextlevel) {
 /**
  * Gets the list of roles assigned to this context and up (parents)
  * @param object $context
+ * @param view - set to true when roles are pulled for display only
+ *               this is so that we can filter roles with no visible 
+ *               assignment, for example, you might want to "hide" all
+ *               course creators when browsing the course participants
+ *               list.
  * @return array
  */
-function get_roles_used_in_context($context) {
+function get_roles_used_in_context($context, $view = false) {
 
     global $CFG;
+    
+    // filter for roles with all hidden assignments
+    // no need to return when only pulling roles for reviewing
+    // e.g. participants page.
+    $hiddensql = ($view && has_capability('moodle/role:viewhiddenassigns', $context))? '':' AND ra.hidden = 0 ';   
     $contextlist = get_related_contexts_string($context);
 
     $sql = "SELECT DISTINCT r.id,
@@ -2722,6 +2732,7 @@ function get_roles_used_in_context($context) {
                    {$CFG->prefix}role r
              WHERE r.id = ra.roleid
                AND ra.contextid $contextlist
+                   $hiddensql
           ORDER BY r.sortorder ASC";
 
     return get_records_sql($sql);

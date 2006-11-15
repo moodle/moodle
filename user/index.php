@@ -254,7 +254,7 @@
     }
 
 
-    if ($roles = get_roles_used_in_context($context)) {
+    if ($roles = get_roles_used_in_context($context, true)) {
         
         // We should exclude "admin" users (those with "doanything" at site level) because 
         // Otherwise they appear in every participant list
@@ -335,18 +335,22 @@
         $selectrole = " ";
     }
     $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.city, u.country,
-        u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, ul.timeaccess AS lastaccess '; // s.lastaccess
+        u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, ul.timeaccess AS lastaccess, r.hidden '; // s.lastaccess
     //$select .= $course->enrolperiod?', s.timeend ':'';
     $from   = "FROM {$CFG->prefix}user u INNER JOIN
     {$CFG->prefix}role_assignments r on u.id=r.userid LEFT OUTER JOIN
     {$CFG->prefix}user_lastaccess ul on (r.userid=ul.userid and ul.courseid = $course->id)"; 
+    
+    $hiddensql = has_capability('moodle/role:viewhiddenassigns', $context)? '':' AND r.hidden = 0 ';
+    
     // join on 2 conditions
     // otherwise we run into the problem of having records in ul table, but not relevant course
     // and user record is not pulled out
     $where  = "WHERE (r.contextid = $context->id OR r.contextid in $listofcontexts)
         AND u.deleted = 0 $selectrole
         AND (ul.courseid = $course->id OR ul.courseid IS NULL)
-        AND u.username <> 'guest' ";
+        AND u.username <> 'guest' 
+        $hiddensql ";
         $where .= get_lastaccess_sql($accesssince);
 
     $wheresearch = '';
@@ -514,8 +518,17 @@
     } else {
         $countrysort = (strpos($sort, 'country') !== false);
         $timeformat = get_string('strftimedate');
+
+
         if (!empty($userlist))  {
             foreach ($userlist as $user) {
+                if ($user->hidden) {        
+                // if the assignment is hidden, display icon
+                    $hidden = "<img src=\"{$CFG->pixpath}/t/hide.gif\" alt=\"".get_string('hiddenassign')."\" class=\"hide-show-image\"/>";
+                } else {
+                    $hidden = '';  
+                }
+                
                 if ($user->lastaccess) {
                     $lastaccess = format_time(time() - $user->lastaccess, $datestring);
                 } else {
@@ -536,7 +549,7 @@
 
                 $data = array (
                         print_user_picture($user->id, $course->id, $user->picture, false, true),
-                        '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></strong>');
+                        '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></strong>'.$hidden);
                 if (!isset($hiddenfields['city'])) {
                     $data[] = $user->city;
                 }

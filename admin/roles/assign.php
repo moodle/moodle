@@ -19,7 +19,7 @@
     $timeend        = optional_param('timened', 0, PARAM_INT);
     $userid         = optional_param('userid', 0, PARAM_INT); // needed for user tabs
     $courseid       = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
-
+    
     $errors = array();
 
     $previoussearch = ($searchtext != '') or ($previoussearch) ? 1:0;
