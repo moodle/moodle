@@ -1,229 +1,222 @@
 <?php // $Id$
 
-/// Prevent double paid
-    prevent_double_paid($course);
+require_once($CFG->libdir.'/formslib.php');
 
-/// Get payment methods enabled and use the first method as default payment method
-    $paymentmethodsenabled = get_list_of_payment_methods(); // methods enabled
-    $paymentmethod = optional_param('paymentmethod', $paymentmethodsenabled[0], PARAM_ALPHA); // user's payment preference
-
-    if (!in_array($paymentmethod, $paymentmethodsenabled)) {
-        error("Invalid payment method: $paymentmethod");
-    }
-
-    switch ($paymentmethod)
+class authorize_enrol_form extends moodleform
+{
+    function definition()
     {
-        case AN_METHOD_CC:
-        {
-            print_cc_form($this);
-            break;
-        }
-
-        case AN_METHOD_ECHECK:
-        {
-            print_echeck_form($this);
-            break;
-        }
-    }
-
-function print_cc_form($classreference)
-{
-    global $form, $course;
-    global $CFG, $USER;
-
-    $formvars = array(
-        'ccaddress', 'cccity', 'ccstate', 'cccountry', 'cczip', 'ccauthcode', 'haveauth',
-        'ccfirstname', 'cclastname', 'cc', 'ccexpiremm', 'ccexpireyyyy', 'cctype', 'cvv'
-    );
-    foreach ($formvars as $var) {
-        if (!isset($form->$var)) {
-            $form->$var = '';
-        }
-    }
-
-    $curcost = get_course_cost($course);
-    $userfirstname = empty($form->ccfirstname) ? $USER->firstname : $form->ccfirstname;
-    $userlastname = empty($form->cclastname) ? $USER->lastname : $form->cclastname;
-    $useraddress = empty($form->ccaddress) ? $USER->address : $form->ccaddress;
-    $usercity = empty($form->cccity) ? $USER->city : $form->cccity;
-    $usercountry = empty($form->cccountry) ? $USER->country : $form->cccountry;
-?>
-<!-- BEGIN CC -->
-    <p align="center"><?php if (!empty($classreference->authorizeerrors['header'])) { formerr($classreference->authorizeerrors['header']); } ?></p>
-    <div align="center">
-
-    <p align="right"><?php print_other_method(AN_METHOD_CC) ?></p>
-    <p><?php print_string("paymentrequired") ?></p>
-    <p><b><?php echo get_string("cost").": $curcost[currency] $curcost[cost]"; ?></b></p>
-    <p><?php print_string("paymentinstant") ?></p>
-
-    <form name="form" method="post" action="enrol.php" autocomplete="off">
-    <input type="hidden" name="id" value="<?php p($course->id) ?>" />
-    <input type="hidden" name="paymentmethod" value="<?php p(AN_METHOD_CC) ?>" />
-    <table align="center" width="100%" border=0>
-    <tr>
-      <td align="right"><?php print_string("ccno", "enrol_authorize") ?>: </td>
-      <td align="left"><input type="text" name="cc" size="16" value="<?php p($form->cc) ?>" />
-      <?php if (!empty($classreference->authorizeerrors['cc'])) { formerr($classreference->authorizeerrors['cc']); } ?></td>
-    </tr>
-    <tr>
-      <td align="right"><?php print_string("nameoncard", "enrol_authorize") ?>: </td>
-      <td align="left"><input type="text" name="ccfirstname" size="8" value="<?php p($userfirstname) ?>" />
-      <input type="text" name="cclastname" size="8" value="<?php p($userlastname) ?>" />
-      <?php if (!empty($classreference->authorizeerrors['ccfirstlast'])) { formerr($classreference->authorizeerrors['ccfirstlast']); } ?></td>
-    </tr>
-    <tr>
-      <td align="right"><?php print_string("ccexpire", "enrol_authorize") ?>: </td>
-      <td align="left"><?php
-      for ($i=1; $i<=12; $i++) {
-          $months[$i] = userdate(gmmktime(12,0,0,$i,1,2000), "%B");
-      }
-      choose_from_menu($months, 'ccexpiremm', $form->ccexpiremm);
-      $nowdate = getdate();
-      $nowyear = $nowdate["year"]-1;
-      for ($i=$nowyear; $i<=$nowyear+11; $i++) {
-          $years[$i] = $i;
-      }
-      choose_from_menu($years, 'ccexpireyyyy', $form->ccexpireyyyy);
-      if (!empty($classreference->authorizeerrors['ccexpire'])) { formerr($classreference->authorizeerrors['ccexpire']); }
-      ?></td>
-    </tr>
-    <tr>
-      <td align="right"><?php print_string("cctype", "enrol_authorize") ?>: </td>
-      <td align="left"><?php
-      choose_from_menu(get_list_of_creditcards(), 'cctype', $form->cctype);
-      if (!empty($classreference->authorizeerrors['cctype'])) { formerr($classreference->authorizeerrors['cctype']); }
-      ?>
-    </td>
-    </tr>
-    <tr>
-      <td align="right"><?php print_string("ccvv", "enrol_authorize") ?>: </td>
-      <td align="left"><input type="text" name="cvv" size="4" maxlength="4" value="<?php p($form->cvv) ?>" />
-      <?php helpbutton('cvv', '', 'enrol/authorize'); ?>
-      <?php if (!empty($classreference->authorizeerrors['cvv'])) { formerr($classreference->authorizeerrors['cvv']); } ?></td>
-    </tr>
-
-    <?php if (!empty($CFG->an_authcode)) : /* Authorization Code */ ?>
-    <tr>
-      <td align="right" valign="top"><?php print_string("authcode", "enrol_authorize") ?>: </td>
-      <td align="left"><?php print_checkbox('haveauth', '1', !empty($form->haveauth), get_string("haveauthcode", "enrol_authorize")) ?>
-      <?php helpbutton('authcode', '', 'enrol/authorize'); ?><br />
-      <input type="text" name="ccauthcode" size="8" value="<?php p($form->ccauthcode) ?>" />
-      <?php if (!empty($classreference->authorizeerrors['ccauthcode'])) { formerr($classreference->authorizeerrors['ccauthcode']); } ?></td>
-    </tr>
-    <?php endif; ?>
-
-    <?php if (!empty($CFG->an_avs)) : /* Address Verification System */ ?>
-    <tr>
-      <td align="right"><?php print_string("address") ?>: </td>
-      <td align="left"><input type="text" name="ccaddress" size="32" value="<?php p($useraddress) ?>" />
-      <?php if (!empty($classreference->authorizeerrors['ccaddress'])) { formerr($classreference->authorizeerrors['ccaddress']); } ?></td>
-    </tr>
-    <tr>
-      <td align="right"><?php print_string("city") ?> / <?php print_string("state") ?>: </td>
-      <td align="left"><input type="text" name="cccity" size="16" value="<?php p($usercity) ?>" /> /
-      <input type="text" name="ccstate" size="2" maxlength="2" value="<?php p($form->ccstate) ?>" />
-      <?php if (!empty($classreference->authorizeerrors['cccity'])) { formerr($classreference->authorizeerrors['cccity']); } ?></td>
-    </tr>
-    <tr>
-      <td align="right"><?php print_string("country") ?>: </td>
-      <td align="left"><?php choose_from_menu(get_list_of_countries(), "cccountry", $usercountry, get_string("selectacountry")."..."); ?>
-      <?php if (!empty($classreference->authorizeerrors['cccountry'])) { formerr($classreference->authorizeerrors['cccountry']); } ?></td>
-    </tr>
-    <?php else: /* not AVS */ ?>
-    <tr>
-    <td colspan="2">
-      <input type="hidden" name="ccstate" value="" />
-      <input type="hidden" name="ccaddress" value="<?php p($useraddress) ?>" />
-      <input type="hidden" name="cccity" value="<?php p($usercity) ?>" />
-      <input type="hidden" name="cccountry" value="<?php p($usercountry) ?>" />
-    </td>
-    </tr>
-    <?php endif; ?>
-
-    <tr>
-      <td align="right"><?php print_string("zipcode", "enrol_authorize") ?>: </td>
-      <td align="left"><input type="text" name="cczip" size="5" value="<?php p($form->cczip) ?>" />
-      <?php if (!empty($classreference->authorizeerrors['cczip'])) { formerr($classreference->authorizeerrors['cczip']); } ?></td>
-    </tr>
-    </table>
-    <input type="submit" value="<?php print_string("sendpaymentbutton", "enrol_authorize") ?>">
-    </form>
-    </div>
-<!-- END CC -->
-<?php
-}
-
-function print_echeck_form($classreference)
-{
-        global $form, $course;
+        global $course;
         global $CFG, $USER;
 
-        $formvars = array('abacode', 'accnum', 'acctype', 'bankname', 'firstname', 'lastname');
-        foreach ($formvars as $var) {
-            if (!isset($form->$var)) {
-                $form->$var = '';
+        $paymentmethodsenabled = get_list_of_payment_methods();
+        $paymentmethod = optional_param('paymentmethod', $paymentmethodsenabled[0], PARAM_ALPHA);
+        if (!in_array($paymentmethod, $paymentmethodsenabled)) {
+            error("Invalid payment method: $paymentmethod");
+        }
+
+        $mform =& $this->_form;
+        $renderer =& $mform->defaultRenderer();
+
+        $mform->addElement('header', '', '&nbsp;&nbsp;' . get_string('paymentrequired'), '');
+
+        $mform->addElement('hidden', 'id', $course->id);
+        $mform->setType('id', PARAM_INT);
+
+        $mform->addElement('hidden', 'paymentmethod', $paymentmethod);
+        $mform->setType('paymentmethod', PARAM_ALPHA);
+
+        $firstlastnamegrp = array();
+        $firstlastnamegrp[] = &MoodleQuickForm::createElement('text', 'firstname', '', 'size="10"');
+        $firstlastnamegrp[] = &MoodleQuickForm::createElement('text', 'lastname', '', 'size="10"');
+        $mform->addGroup($firstlastnamegrp, 'firstlastgrp', get_string('nameoncard', 'enrol_authorize'), '&nbsp;', false);
+        $firstlastnamegrprules = array();
+        $firstlastnamegrprules['firstname'][] = array(get_string('missingfirstname'), 'required', null, 'client');
+        $firstlastnamegrprules['lastname'][] = array(get_string('missinglastname'), 'required', null, 'client');
+        $mform->addGroupRule('firstlastgrp', $firstlastnamegrprules);
+        $mform->setType('firstname', PARAM_ALPHANUM);
+        $mform->setType('lastname', PARAM_ALPHANUM);
+        $mform->setDefault('firstname', $USER->firstname);
+        $mform->setDefault('lastname', $USER->lastname);
+
+        if (AN_METHOD_CC == $paymentmethod)
+        {
+            $mform->addElement('text', 'cc', get_string('ccno', 'enrol_authorize'), 'size="16"');
+            $mform->setType('cc', PARAM_ALPHANUM);
+            $mform->setDefault('cc', '');
+            $mform->addRule('cc', get_string('missingcc', 'enrol_authorize'), 'required', null, 'client');
+            $mform->addRule('cc', get_string('ccinvalid', 'enrol_authorize'), 'numeric', null, 'client');
+
+            $creditcardsmenu = array('' => get_string('choose')) + get_list_of_creditcards();
+            $mform->addElement('select', 'cctype', get_string('cctype', 'enrol_authorize'), $creditcardsmenu);
+            $mform->setType('cctype', PARAM_ALPHA);
+            $mform->addRule('cctype', get_string('missingcctype', 'enrol_authorize'), 'required', null, 'client');
+            $mform->setDefault('cctype', '');
+
+            $monthsmenu = array('' => get_string('choose'));
+            for ($i = 1; $i <= 12; $i++) {
+                $monthsmenu[$i] = userdate(gmmktime(12, 0, 0, $i, 1, 2000), "%B");
+            }
+            $yearsmenu = array('' => get_string('choose'));
+            $nowdate = getdate();
+            $nowyear = $nowdate["year"] - 1;
+            for ($i = $nowyear; $i <= $nowyear + 11; $i++) {
+                $yearsmenu[$i] = $i;
+            }
+            $ccexpiregrp = array();
+            $ccexpiregrp[] = &MoodleQuickForm::createElement('select', 'ccexpiremm', '', $monthsmenu);
+            $ccexpiregrp[] = &MoodleQuickForm::createElement('select', 'ccexpireyyyy', '', $yearsmenu);
+            $mform->addGroup($ccexpiregrp, 'ccexpiregrp', get_string('ccexpire', 'enrol_authorize'), '&nbsp;', false);
+            $ccexpiregrprules = array();
+            $ccexpiregrprules['ccexpiremm'][] = array(get_string('missingccexpire', 'enrol_authorize'), 'required', null, 'client');
+            $ccexpiregrprules['ccexpireyyyy'][] = array(get_string('missingccexpire', 'enrol_authorize'), 'required', null, 'client');
+            $mform->addGroupRule('ccexpiregrp', $ccexpiregrprules);
+            $mform->setType('ccexpiremm', PARAM_INT);
+            $mform->setType('ccexpireyyyy', PARAM_INT);
+            $mform->setDefault('ccexpiremm', '');
+            $mform->setDefault('ccexpireyyyy', '');
+
+            $mform->addElement('text', 'cvv', get_string('ccvv', 'enrol_authorize'), 'size="4"');
+            $mform->setHelpButton('cvv', array('cvv',get_string('ccvv', 'enrol_authorize'),'enrol/authorize'), true);
+            $mform->setType('cvv', PARAM_ALPHANUM);
+            $mform->setDefault('cvv', '');
+            $mform->addRule('cvv', get_string('missingcvv', 'enrol_authorize'), 'required', null, 'client');
+            $mform->addRule('cvv', get_string('missingcvv', 'enrol_authorize'), 'numeric', null, 'client');
+
+            if (!empty($CFG->an_authcode)) {
+                $ccauthgrp = array();
+                $ccauthgrp[] = &MoodleQuickForm::createElement('checkbox', 'haveauth', null, get_string('haveauthcode', 'enrol_authorize'));
+                $ccauthgrp[] = &MoodleQuickForm::createElement('static', 'nextline', null, '<br />');
+                $ccauthgrp[] = &MoodleQuickForm::createElement('text', 'ccauthcode', '', 'size="8"');
+                $mform->addGroup($ccauthgrp, 'ccauthgrp', get_string('authcode', 'enrol_authorize'), '&nbsp;', false);
+                $mform->setHelpButton('ccauthgrp', array('authcode',get_string('authcode', 'enrol_authorize'),'enrol/authorize'), true);
+                $ccauthgrprules = array();
+                $ccauthgrprules['ccauthcode'][] = array(get_string('missingccauthcode', 'enrol_authorize'), 'numeric', null, 'client');
+                $mform->addGroupRule('ccauthgrp', $ccauthgrprules);
+                $mform->setDefault('haveauth', '');
+                $mform->setDefault('ccauthcode', '');
+            }
+
+            if (!empty($CFG->an_avs)) {
+                $mform->addElement('header', '', '&nbsp;&nbsp;' . get_string('address'), '');
+
+                $mform->addElement('text', 'ccaddress', get_string('address'), 'size="20"');
+                $mform->setType('ccaddress', PARAM_ALPHANUM);
+                $mform->setDefault('ccaddress', $USER->address);
+                $mform->addRule('ccaddress', get_string('missingaddress', 'enrol_authorize'), 'required', null, 'client');
+
+                $citystategrp = array();
+                $citystategrp[] = &MoodleQuickForm::createElement('text', 'cccity', '', 'size="10"');
+                $citystategrp[] = &MoodleQuickForm::createElement('text', 'ccstate', '', 'size="10"');
+                $mform->addGroup($citystategrp, 'citystategrp', get_string('city') . ' / ' . get_string('state'), '&nbsp;', false);
+                $citystategrprules = array();
+                $citystategrprules['cccity'][] = array(get_string('missingcity'), 'required', null, 'client');
+                $mform->addGroupRule('citystategrp', $citystategrprules);
+                $mform->setType('cccity', PARAM_ALPHANUM);
+                $mform->setType('ccstate', PARAM_ALPHANUM);
+                $mform->setDefault('cccity', $USER->city);
+                $mform->setDefault('ccstate', '');
+
+                $mform->addElement('select', 'cccountry', get_string('country'), get_list_of_countries());
+                $mform->addRule('cccountry', get_string('missingcountry'), 'required', null, 'client');
+                $mform->setType('cccountry', PARAM_ALPHA);
+                $mform->setDefault('cccountry', $USER->country);
+            }
+            else {
+                $mform->addElement('hidden', 'ccstate', '');
+                $mform->addElement('hidden', 'ccaddress', $USER->address);
+                $mform->addElement('hidden', 'cccity', $USER->city);
+                $mform->addElement('hidden', 'cccountry', $USER->country);
+            }
+        }
+        elseif (AN_METHOD_ECHECK == $paymentmethod)
+        {
+            $mform->addElement('text', 'abacode', get_string('echeckabacode', 'enrol_authorize'), 'size="9" maxlength="9"');
+            $mform->setHelpButton('abacode', array('aba',get_string('echeckabacode', 'enrol_authorize'),'enrol/authorize'), true);
+            $mform->setType('abacode', PARAM_ALPHANUM);
+            $mform->setDefault('abacode', '');
+            $mform->addRule('abacode', get_string('missingaba', 'enrol_authorize'), 'required', null, 'client');
+            $mform->addRule('abacode', get_string('missingaba', 'enrol_authorize'), 'numeric', null, 'client');
+
+            $mform->addElement('text', 'accnum', get_string('echeckaccnum', 'enrol_authorize'), 'size="20" maxlength="20"');
+            $mform->setType('accnum', PARAM_ALPHANUM);
+            $mform->setDefault('accnum', '');
+            $mform->addRule('accnum', get_string('invalidaccnum', 'enrol_authorize'), 'required', null, 'client');
+            $mform->addRule('accnum', get_string('invalidaccnum', 'enrol_authorize'), 'numeric', null, 'client');
+
+            $acctypes = array();
+            $acctypesenabled = get_list_of_bank_account_types();
+            foreach ($acctypesenabled as $key) {
+                $acctypes[$key] = get_string("echeck".strtolower($key), "enrol_authorize");
+            }
+            $acctypes = array('' => get_string('choose')) + $acctypes;
+            $mform->addElement('select', 'acctype', get_string('echeckacctype', 'enrol_authorize'), $acctypes);
+            $mform->setType('acctype', PARAM_ALPHA);
+            $mform->addRule('acctype', get_string('invalidacctype', 'enrol_authorize'), 'required', null, 'client');
+            $mform->setDefault('acctype', '');
+
+            $mform->addElement('text', 'bankname', get_string('echeckbankname', 'enrol_authorize'), 'size="20" maxlength="50"');
+            $mform->setType('bankname', PARAM_ALPHANUM);
+            $mform->setDefault('bankname', '');
+            $mform->addRule('bankname', get_string('missingbankname', 'enrol_authorize'), 'required', null, 'client');
+        }
+
+        $mform->addElement('text', 'cczip', get_string('zipcode', 'enrol_authorize'), 'size="5"');
+        $mform->setType('cczip', PARAM_ALPHANUM);
+        $mform->setDefault('cczip', '');
+        $mform->addRule('cczip', get_string('missingzip', 'enrol_authorize'), 'required', null, 'client');
+        $mform->addRule('cczip', get_string('missingzip', 'enrol_authorize'), 'numeric', null, 'client');
+
+        $mform->addElement('submit', 'submit', get_string('sendpaymentbutton', 'enrol_authorize'));
+        $renderer->addStopFieldsetElements('submit');
+    }
+
+    function validation($data)
+    {
+        global $CFG;
+
+        $err = array();
+
+        if (AN_METHOD_CC == $data['paymentmethod'])
+        {
+            if (!in_array($data['cctype'], array_keys(get_list_of_creditcards()))) {
+                $err['cctype'] = get_string('missingcctype', 'enrol_authorize');
+            }
+
+            $expdate = sprintf("%02d", intval($data['ccexpiremm'])) . $data['ccexpireyyyy'];
+            $validcc = CCVal($data['cc'], $data['cctype'], $expdate);
+            if (!$validcc) {
+                if ($validcc === 0) {
+                    $err['ccexpiregrp'] = get_string('ccexpired', 'enrol_authorize');
+                }
+                else {
+                    $err['cc'] = get_string('ccinvalid', 'enrol_authorize');
+                }
+            }
+
+            if (!empty($CFG->an_authcode) && !empty($data['haveauth']) && empty($data['ccauthcode'])) {
+                $err['ccauthgrp'] = get_string('missingccauthcode', 'enrol_authorize');
+            }
+        }
+        elseif (AN_METHOD_ECHECK == $data['paymentmethod'])
+        {
+            if (!ABAVal($data['abacode'])) {
+                $err['abacode'] = get_string('invalidaba', 'enrol_authorize');
+            }
+
+            if (!in_array($data['acctype'], get_list_of_bank_account_types())) {
+                $err['acctype'] = get_string('invalidacctype', 'enrol_authorize');
             }
         }
 
-        $curcost = get_course_cost($course);
-        $userfirstname = empty($form->firstname) ? $USER->firstname : $form->firstname;
-        $userlastname = empty($form->lastname) ? $USER->lastname : $form->lastname;
-?>
-<!-- BEGIN ECHECK -->
-    <p align="center"><?php if (!empty($classreference->authorizeerrors['header'])) { formerr($classreference->authorizeerrors['header']); } ?></p>
-    <div align="center">
+        if (!empty($err)) {
+            $err['header'] = get_string('someerrorswerefound');
+            return $err;
+        }
 
-    <p align="right"><?php print_other_method(AN_METHOD_ECHECK) ?></p>
-    <p><?php print_string("paymentrequired") ?></p>
-    <p><b><?php echo get_string("cost").": $curcost[currency] $curcost[cost]"; ?></b></p>
-    <p><?php print_string("paymentinstant") ?></p>
+        return true;
+    }
 
-    <form name="form" method="post" action="enrol.php" autocomplete="off">
-    <input type="hidden" name="id" value="<?php p($course->id) ?>" />
-    <input type="hidden" name="paymentmethod" value="<?php p(AN_METHOD_ECHECK) ?>" />
-    <table align="center" width="100%" border=0>
-    <tr>
-      <td align="right"><?php print_string("echeckabacode", "enrol_authorize") ?>: </td>
-      <td align="left"><input type="text" name="abacode" size="9" maxlength="9" value="<?php p($form->abacode) ?>" />
-      <?php helpbutton('aba', '', 'enrol/authorize'); ?>
-      <?php if (!empty($classreference->authorizeerrors['abacode'])) { formerr($classreference->authorizeerrors['abacode']); } ?></td>
-    </tr>
-    <tr>
-      <td align="right"><?php print_string("echeckaccnum", "enrol_authorize") ?>: </td>
-      <td align="left"><input type="text" name="accnum" size="20" maxlength="20" value="<?php p($form->accnum) ?>" />
-      <?php if (!empty($classreference->authorizeerrors['accnum'])) { formerr($classreference->authorizeerrors['accnum']); } ?></td>
-    </tr>
-    <tr>
-      <td align="right"><?php print_string("echeckacctype", "enrol_authorize") ?>: </td>
-      <td align="left"><?php
-      $acctypes = array();
-      $acctypesenabled = get_list_of_bank_account_types();
-      foreach ($acctypesenabled as $key) {
-          $acctypes[$key] = get_string("echeck".strtolower($key), "enrol_authorize");
-      }
-      choose_from_menu($acctypes, 'acctype', $form->acctype);
-      if (!empty($classreference->authorizeerrors['acctype'])) { formerr($classreference->authorizeerrors['acctype']); }
-      ?>
-    </td>
-    </tr>
-    <tr>
-      <td align="right"><?php print_string("echeckbankname", "enrol_authorize") ?>: </td>
-      <td align="left"><input type="text" name="bankname" size="20" maxlength="50" value="<?php p($form->bankname) ?>" />
-      <?php if (!empty($classreference->authorizeerrors['bankname'])) { formerr($classreference->authorizeerrors['bankname']); } ?></td>
-    </tr>
-    <tr>
-      <td align="right"><?php print_string("echeckfirslasttname", "enrol_authorize") ?>: </td>
-      <td align="left"><input type="text" name="firstname" size="8" value="<?php p($userfirstname) ?>" />
-      <input type="text" name="lastname" size="8" value="<?php p($userlastname) ?>" />
-      <?php if (!empty($classreference->authorizeerrors['firstlast'])) { formerr($classreference->authorizeerrors['firstlast']); } ?></td>
-    </tr>
-    </table>
-    <input type="submit" value="<?php print_string("sendpaymentbutton", "enrol_authorize") ?>">
-    </form>
-    </div>
-<!-- END ECHECK -->
-<?php
 }
 
 function print_other_method($currentmethod)

@@ -45,6 +45,7 @@ class enrolment_plugin_authorize
             return;
         }
 
+        prevent_double_paid($course);
         httpsrequired();
 
         if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') {
@@ -69,7 +70,7 @@ class enrolment_plugin_authorize
             print_heading(get_string('choosemethod', 'enrol_authorize'), 'center');
         }
 
-        print_simple_box_start('center');
+        print_simple_box_start('center', '80%');
         if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), $USER->id, false)) {
             $curcost = get_course_cost($course);
             echo '<div align="center">';
@@ -77,8 +78,23 @@ class enrolment_plugin_authorize
             echo '<p><b>'.get_string('cost').": $curcost[currency] $curcost[cost]".'</b></p>';
             echo '<p><a href="'.$CFG->httpswwwroot.'/login/">'.get_string('loginsite').'</a></p>';
             echo '</div>';
-        } else {
-            include($CFG->dirroot.'/enrol/authorize/enrol_form.php');
+        }
+        else {
+            require_once($CFG->dirroot.'/enrol/authorize/enrol_form.php');
+            $authorize_enrol = new authorize_enrol_form('enrol.php');
+            if ($authorize_enrol->data_submitted() &&
+               (AN_METHOD_CC == $form->paymentmethod || AN_METHOD_ECHECK == $form->paymentmethod)) {
+                switch ($form->paymentmethod) {
+                    case AN_METHOD_CC:
+                    $this->cc_submit($form, $course);
+                    break;
+
+                    case AN_METHOD_ECHECK:
+                    $this->echeck_submit($form, $course);
+                    break;
+                }
+            }
+            $authorize_enrol->display();
         }
         print_simple_box_end();
 
@@ -110,15 +126,8 @@ class enrolment_plugin_authorize
                 $this->errormsg = $manual->errormsg;
             }
         }
-        elseif (!empty($form->paymentmethod) && in_array($form->paymentmethod, get_list_of_payment_methods())) {
-            if ($form->paymentmethod == AN_METHOD_CC && validate_cc_form($form, $this->authorizeerrors)) {
-                $this->cc_submit($form, $course);
-            }
-            elseif($form->paymentmethod == AN_METHOD_ECHECK && validate_echeck_form($form, $this->authorizeerrors)) {
-                $this->echeck_submit($form, $course);
-            }
-        }
     }
+
 
 
     /**
@@ -144,7 +153,7 @@ class enrolment_plugin_authorize
         $order = new stdClass();
         $order->paymentmethod = AN_METHOD_CC;
         $order->cclastfour = substr($form->cc, -4);
-        $order->ccname = $form->ccfirstname . " " . $form->cclastname;
+        $order->ccname = $form->firstname . " " . $form->lastname;
         $order->courseid = $course->id;
         $order->userid = $USER->id;
         $order->status = AN_STATUS_NONE; // it will be changed...
@@ -166,8 +175,8 @@ class enrolment_plugin_authorize
         $extra->x_exp_date = $exp_date;
         $extra->x_currency_code = $curcost['currency'];
         $extra->x_amount = $curcost['cost'];
-        $extra->x_first_name = $form->ccfirstname;
-        $extra->x_last_name = $form->cclastname;
+        $extra->x_first_name = $form->firstname;
+        $extra->x_last_name = $form->lastname;
         $extra->x_country = $form->cccountry;
         $extra->x_address = $form->ccaddress;
         $extra->x_state = $form->ccstate;
