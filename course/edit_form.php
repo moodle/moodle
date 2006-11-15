@@ -188,6 +188,7 @@ class course_edit_form extends moodleform {
 //--------------------------------------------------------------------------------
         $mform->addElement('header','enrolhdr', get_string('enrolments'));
 
+        $choices = array();
         $modules = explode(',', $CFG->enrol_plugins_enabled);
         foreach ($modules as $module) {
             $name = get_string('enrolname', "enrol_$module");
