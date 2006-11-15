@@ -23,7 +23,7 @@
     $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
     if ($choose) {
-        if (count(explode('.', $choose)) != 2) {
+        if (count(explode('.', $choose)) > 2) {
             error('Incorrect format for choose parameter');
         }
     }
@@ -78,7 +78,7 @@
             print_header();
 
             $chooseparts = explode('.', $choose);
-
+            if (count($chooseparts)==2){
             ?>
             <script language="javascript" type="text/javascript">
             <!--
@@ -90,6 +90,20 @@
             </script>
 
             <?php
+            } elseif (count($chooseparts)==1){
+            ?>
+            <script language="javascript" type="text/javascript">
+            <!--
+            function set_value(txt) {
+                opener.document.getElementById('<?php echo $chooseparts[0] ?>').value = txt;
+                window.close();
+            }
+            -->
+            </script>
+
+            <?php
+
+            }
             $fullnav = str_replace('->', '&raquo;', "$course->shortname -> $fullnav");
             echo '<div id="nav-bar">'.$fullnav.'</div>';
 
