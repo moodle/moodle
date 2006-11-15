@@ -45,8 +45,7 @@
                   update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
     }
 
-    $users = get_course_users($course->id, "u.firstname ASC", '', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber') + get_admins();
-
+    $users = get_users_by_capability($context, 'mod/choice:choose');
 
     if (!$users) {
         print_heading(get_string("nousersyet"));        
