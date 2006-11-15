@@ -9,7 +9,7 @@
 ?>
 <html>
 <head><title><?php print_string("fullscreen","editor");?></title>
-<meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <style type="text/css">
 @import url(../htmlarea.css);
 html, body {    margin: 0px; border: 0px; background-color: buttonface; } </style>
@@ -17,9 +17,9 @@ html, body {    margin: 0px; border: 0px; background-color: buttonface; } </styl
 
 <script type="text/javascript" src="../htmlarea.php?id=<?php p($id); ?>"></script>
 <script type="text/javascript" src="../lang/en.php"></script>
-<script type="text/javascript" src="../dialog.js" charset="<?php print_string('thischarset'); ?>"></script>
-<script type="text/javascript" src="../plugins/TableOperations/table-operations.js" charset="<?php print_string('thischarset'); ?>"></script>
-<script type="text/javascript" src="../plugins/TableOperations/lang/en.js" charset="<?php print_string('thischarset'); ?>"></script>
+<script type="text/javascript" src="../dialog.js" charset="utf-8"></script>
+<script type="text/javascript" src="../plugins/TableOperations/table-operations.js" charset="utf-8"></script>
+<script type="text/javascript" src="../plugins/TableOperations/lang/en.js" charset="utf-8"></script>
 <script type="text/javascript">
 // load same scripts that were present in the opener page
 var scripts = opener.document.getElementsByTagName("script");

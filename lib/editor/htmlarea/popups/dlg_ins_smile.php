@@ -37,7 +37,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-<meta http-equiv="content-type" content="text/html; charset=<?php print_string('thischarset'); ?>" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <title><?php print_string('insertsmile', 'editor'); ?></title>
 <link rel="stylesheet" href="dialog.css" type="text/css" />
 <script language="javascript" type="text/javascript" src="popup.js"></script>

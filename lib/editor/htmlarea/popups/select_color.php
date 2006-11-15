@@ -5,7 +5,7 @@ include("../../../../config.php");
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-<meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <title><?php print_string("selectcolor","editor");?></title>
 <style type="text/css">
 html, body { width: 238; height: 188; }

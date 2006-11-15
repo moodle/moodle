@@ -12,7 +12,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=<?php print_string("thischarset");?>" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title><?php print_string("insertlink","editor");?></title>
   <script language="javascript" type="text/javascript" src="popup.js"></script>
   <script language="javascript" type="text/javascript">

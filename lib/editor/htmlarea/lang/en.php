@@ -10,8 +10,7 @@
     //    ob_start("ob_gzhandler");
     //}
 
-    $charset = get_string('thischarset');
-    header("Content-type: application/x-javascript; charset: $charset");  // Correct MIME type
+    header("Content-type: application/x-javascript; charset: utf-8");  // Correct MIME type
     header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
     header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
     // See Bug #2387
