@@ -2,6 +2,8 @@
 /**
  * Functions required for setting up the database to use the new groups.
  *
+ * TODO: replace with, postrges7.sql, mysql.php, install.xml
+ *
  * @copyright &copy; 2006 The Open University
  * @author J.White AT open.ac.uk
  * @author N.D.Freear@open.ac.uk
@@ -45,49 +47,54 @@ require_once($CFG->libdir.'/datalib.php');
  */
 function groups_create_database_tables() {
 	global $CFG;
-	$table_prefix = $CFG->prefix;
 
     if ('mysql' == $CFG->dbtype) {
 
-        $createcoursegrouptablesql = "CREATE TABLE IF NOT EXISTS  `{$table_prefix}groups_courses_groups`
-								 (`id` int(10) unsigned NOT NULL auto_increment,
-  					               `courseid` int(10) unsigned NOT NULL default '0',
-  							       `groupid` int(11) NOT NULL,
-  							        PRIMARY KEY  (`id`),
-  						            UNIQUE KEY `id` (`id`),  KEY `courseid` (`courseid`))";
-  						            
-        $creategroupstablesql = "CREATE TABLE IF NOT EXISTS `{$table_prefix}groups_groups` (
-  							`id` int(10) unsigned NOT NULL auto_increment,
-  							`name` varchar(254) collate latin1_general_ci NOT NULL default '',
-  							`description` text collate latin1_general_ci NOT NULL,
-  							`enrolmentkey` varchar(50) collate latin1_general_ci NOT NULL default '',
-  							`lang` varchar(10) collate latin1_general_ci NOT NULL default 'en',
-  							`theme` varchar(50) collate latin1_general_ci NOT NULL default '',
-  							`picture` int(10) unsigned NOT NULL default '0',
-  							`hidepicture` int(2) unsigned NOT NULL default '0',
-  							`timecreated` int(10) unsigned NOT NULL default '0',
-  							`timemodified` int(10) unsigned NOT NULL default '0',
-  							PRIMARY KEY  (`id`), UNIQUE KEY `id` (`id`))";
+        $createcoursegrouptablesql = "CREATE TABLE IF NOT EXISTS `{$CFG->prefix}groups_courses_groups` (
+                            `id` int(10) unsigned NOT NULL auto_increment,
+                            `courseid` int(10) unsigned NOT NULL default '0',
+                            `groupid` int(11) NOT NULL,
+                            PRIMARY KEY  (`id`),
+                            UNIQUE KEY `id` (`id`),
+                            KEY `courseid` (`courseid`)
+                          ) ";
 
+        $creategroupstablesql = "CREATE TABLE IF NOT EXISTS `{$CFG->prefix}groups_groups` (
+                            `id` int(10) unsigned NOT NULL auto_increment,
+                            `name` varchar(254) collate latin1_general_ci NOT NULL default '',
+                            `description` text collate latin1_general_ci NOT NULL,
+                            `enrolmentkey` varchar(50) collate latin1_general_ci NOT NULL default '',
+                            `lang` varchar(10) collate latin1_general_ci NOT NULL default 'en',
+                            `theme` varchar(50) collate latin1_general_ci NOT NULL default '',
+                            `picture` int(10) unsigned NOT NULL default '0',
+                            `hidepicture` int(2) unsigned NOT NULL default '0',
+                            `timecreated` int(10) unsigned NOT NULL default '0',
+                            `timemodified` int(10) unsigned NOT NULL default '0',
+                            PRIMARY KEY  (`id`),
+                            UNIQUE KEY `id` (`id`)
+                          ) ";
 
-        $creategroupsuserstablesql = "CREATE TABLE IF NOT EXISTS `{$table_prefix}groups_groups_users` (
-								  `id` int(10) unsigned NOT NULL auto_increment,
-								  `groupid` int(10) unsigned NOT NULL default '0',
-								  `userid` int(10) unsigned NOT NULL default '0',
-								  `timeadded` int(10) unsigned NOT NULL default '0',
-								  PRIMARY KEY  (`id`), UNIQUE KEY `id` (`id`),
-								  KEY `groupid` (`groupid`), KEY `userid` (`userid`))  ";
-	
-        $createcoursesgroupingtablesql = "CREATE TABLE IF NOT EXISTS `{$table_prefix}groups_courses_groupings` (
-									  `id` int(10) unsigned NOT NULL auto_increment,
-									  `courseid` int(10) unsigned NOT NULL default '0',
-									  `groupingid` mediumint(9) NOT NULL,
-									  PRIMARY KEY  (`id`),
-									  UNIQUE KEY `id` (`id`),
-									  KEY `courseid` (`courseid`)
-									)";
-									  
-        $creategroupingstablesql = "CREATE TABLE `{$table_prefix}groups_groupings` (
+        $creategroupsuserstablesql = "CREATE TABLE IF NOT EXISTS `{$CFG->prefix}groups_groups_users` (
+                            `id` int(10) unsigned NOT NULL auto_increment,
+                            `groupid` int(10) unsigned NOT NULL default '0',
+                            `userid` int(10) unsigned NOT NULL default '0',
+                            `timeadded` int(10) unsigned NOT NULL default '0',
+                            PRIMARY KEY  (`id`),
+                            UNIQUE KEY `id` (`id`),
+                            KEY `groupid` (`groupid`),
+                            KEY `userid` (`userid`)
+                          ) ";
+    
+        $createcoursesgroupingtablesql = "CREATE TABLE IF NOT EXISTS `{$CFG->prefix}groups_courses_groupings` (
+                            `id` int(10) unsigned NOT NULL auto_increment,
+                            `courseid` int(10) unsigned NOT NULL default '0',
+                            `groupingid` mediumint(9) NOT NULL,
+                            PRIMARY KEY  (`id`),
+                            UNIQUE KEY `id` (`id`),
+                            KEY `courseid` (`courseid`)
+                          ) ";
+
+        $creategroupingstablesql = "CREATE TABLE `{$CFG->prefix}groups_groupings` (
                             `id` int(10) unsigned NOT NULL auto_increment,
                             `name` varchar(254) collate latin1_general_ci NOT NULL default '',
                             `description` text collate latin1_general_ci NOT NULL,
@@ -102,17 +109,16 @@ function groups_create_database_tables() {
                             UNIQUE KEY `id` (`id`)
                           ) ";
 
-        $creategroupingsgroupstablesql = "CREATE TABLE IF NOT EXISTS `{$table_prefix}groups_groupings_groups` (
+        $creategroupingsgroupstablesql = "CREATE TABLE IF NOT EXISTS `{$CFG->prefix}groups_groupings_groups` (
                             `id` int(10) unsigned NOT NULL auto_increment,
                             `groupingid` int(10) unsigned default '0',
                             `groupid` int(10) NOT NULL,
                             `timeadded` int(10) unsigned NOT NULL default '0',
-
                             PRIMARY KEY  (`id`),
                             UNIQUE KEY `id` (`id`),
                             KEY `courseid` (`groupingid`)
                           ) ";
-                          //TODO: `timecreated` int(10) unsigned NOT NULL default '0',                                  
+
     } else { //postgres7
 
         $createcoursegrouptablesql = "CREATE TABLE {$CFG->prefix}groups_courses_groups (
@@ -178,16 +184,14 @@ function groups_create_database_tables() {
                           );
                           CREATE INDEX {$CFG->prefix}groups_groupings_groups_groupingid_idx ON {$CFG->prefix}groups_groupings_groups (groupingid);
                           ";
-                          //TODO: timecreated default '0'
     }
 
-	modify_database('',$createcoursegrouptablesql );
-	modify_database('',$creategroupstablesql );
-	modify_database('',$creategroupsuserstablesql);
-	modify_database('',$createcoursesgroupingtablesql);
-	modify_database('',$creategroupingstablesql);
-	modify_database('',$creategroupingsgroupstablesql );
-
+    modify_database('', $createcoursegrouptablesql);
+    modify_database('', $creategroupstablesql);
+    modify_database('', $creategroupsuserstablesql);
+    modify_database('', $createcoursesgroupingtablesql);
+    modify_database('', $creategroupingstablesql);
+    modify_database('', $creategroupingsgroupstablesql);
 }
 
 
