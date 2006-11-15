@@ -52,6 +52,42 @@ $string['databasesettingssub'] = '<strong>Típus:</strong> mysql vagy postgres7<
 <strong>Felhasználó:</strong>az Ön adatbázishoz használt azonosítója<br />
 <strong>Jelszó:</strong> az Ön adatbázishoz használt jelszava<br />
 <strong>Táblázat előtagja:</strong> opcionális előtag az összes táblanévhez';
+$string['databasesettingssub_mssql'] = "<b>Típus:</b> SQL*Server (nem UTF-8) <b><font color=\"red\">Kísérleti! (élesben nem használandó)</font></b><br />
+       <b>Gazdagép:</b> pl. localhost vagy db.isp.com<br />
+       <b>Név:</b> adatbázis neve, pl. moodle<br />
+       <b>Felhasználó:</b> az Ön adatbázis-felhasználói neve<br />
+       <b>Jelszó:</b> az Ön adatbázis-jelszava<br />
+       <b>Táblázati előtag:</b> minden táblázatnévhez használandó előtag (kötelező)";
+$string['databasesettingssub_mssql_n'] = "<b>Típus:</b> SQL*Server (UTF-8-at használ)<br />
+       <b>Gazdagép:</b> pl. localhost vagy db.isp.com<br />
+       <b>Név:</b> adatbázis neve, pl. moodle<br />
+       <b>Felhasználó:</b> az Ön adatbázis-felhasználói neve<br />
+       <b>Jelszó:</b> az Ön adatbázis-jelszava<br />
+       <b>Táblázati előtag:</b> minden táblázatnévhez használandó előtag (kötelező)";
+$string['databasesettingssub_mysql'] = "<b>Típus:</b> MySQL<br />
+       <b>Gazdagép:</b> pl. localhost vagy db.isp.com<br />
+       <b>Név:</b> adatbázis neve, pl. moodle<br />
+       <b>Felhasználó:</b> az Ön adatbázis-felhasználói neve<br />
+       <b>Jelszó:</b> az Ön adatbázis-jelszava<br />
+       <b>Táblázati előtag:</b> minden táblázatnévhez használandó előtag (választható)";
+$string['databasesettingssub_oci8po'] = "<b>Típus:</b> Oracle<br />
+       <b>Gazdagép:</b> pl. localhost vagy db.isp.com<br />
+       <b>Név:</b> adatbázis neve, pl. moodle<br />
+       <b>Felhasználó:</b> az Ön adatbázis-felhasználói neve<br />
+       <b>Jelszó:</b> az Ön adatbázis-jelszava<br />
+       <b>Táblázati előtag:</b> minden táblázatnévhez használandó előtag (kötelező, max. 2 cc)";
+$string['databasesettingssub_odbc_mssql'] = "<b>Típus:</b> SQL*Server (over ODBC) <b><font color=\"red\">Kísérleti! (élesben nem használandó)</font></b><br />
+       <b>Gazdagép:</b> az ODBC kezelőpaneljében megadott DSN neve<br />
+       <b>Név:</b> adatbázis neve, pl. moodle<br />
+       <b>Felhasználó:</b> az Ön adatbázis-felhasználói neve<br />
+       <b>Kelszó:</b> az Ön adatbázis-jelszava<br />
+       <b>Táblázati előtag:</b> minden táblázatnévhez használandó előtag (kötelező)";
+$string['databasesettingssub_postgres7'] = "<b>Típus:</b> PostgreSQL<br />
+       <b>Gazdagép:</b> pl. localhost vagy db.isp.com<br />
+       <b>Név:</b> adatbázis neve, pl. moodle<br />
+       <b>Felhasználó:</b> az Ön adatbázis-felhasználói neve<br />
+       <b>Jelszó:</b> az Ön adatbázis-jelszava<br />
+       <b>Táblázati előtag:</b> minden táblázatnévhez használandó előtag (kötelező)";
 $string['dataroot'] = 'Adatkönyvtár';
 $string['datarooterror'] = 'A megadott \'Adatkönyvtár\' nem létezik vagy nem sikerült létrehozni. Módosítsa az útvonalat vagy hozza létre a könyvtárat.';
 $string['dbconnectionerror'] = 'Nem sikerült a megadott adatbázishoz csatlakozni. Ellenőrizze adatbázisának beállításait.';
@@ -60,6 +96,9 @@ $string['dbhost'] = 'Gazdagép szervere';
 $string['dbprefix'] = 'Táblázat előtagja';
 $string['dbtype'] = 'Típus';
 $string['dbwrongencoding'] = 'A kiválasztott adatbázis egy nem ajánlott kódolást használ ($a). Helyette ajánlatos unikódos (UTF-8) adatbázist használni. Egyébként ezt a tesztet átugorhatja, ha bejelöli alább az \"Adatbázis kódolásának ellenőrzése\" négyzetet, bár így a későbbiekben gondjai támadhatnak.';
+$string['dbwronghostserver'] = "A fentiek szerinti \"Gazdagép\" beállítási szabályait tartsa be.";
+$string['dbwrongnlslang'] = "Webszerverében az NLS_LANG környezetváltozónak az AL32UTF8 karakterkészletet kell használni. Az OCI8 megfelelő beálításával kapcsolatban lásd a PHP dokumentációját.";
+$string['dbwrongprefix'] = "A fentiek szerinti \"Táblázati előtag\" beállítási szabályait tartsa be.";
 $string['directorysettingshead'] = 'Erősítse meg a Moodle telepítésének helyét.';
 $string['directorysettingssub'] = '<strong>Webcím:</strong>
 Adja meg a teljes webcímet, ahol a Moodle elérhető lesz. Ha portálja több URL-ről is elérhető, adja meg azt, amelyet a tanulók leginkább használni fognak. Ne tegyen a végére perjelet.
@@ -79,14 +118,14 @@ $string['downloadlanguagebutton'] = 'Töltse le a(z) \"$a\" nyelvi csomagot';
 $string['downloadlanguagehead'] = 'Töltse le a nyelvi csomagot';
 $string['downloadlanguagenotneeded'] = 'Folytathatja a telepítést az alapértelmezés szerinti \"$a\" nyelvi csomaggal.';
 $string['downloadlanguagesub'] = 'Letölthet most egy nyelvi csomagot és azon a nyelven folytathatja a telepítést.<br /><br />Ha nem tudja letölteni, folytathatja a telepítést angol nyelven. (A telepítés végén lehetősége lesz további nyelvi csomagok letöltésére és telepítésére.)';
-$string['environmenterrortodo'] = 'A fentiekben fellelt összes környezeti problémát (hibát) el kell hárítania, mielőtt folytatja a Moodle ezen változatának a telepítését!';
+$string['environmenterrortodo'] = 'A fentiekben fellelt összes környezeti problémát (hibát) el kell hárítania, mielőtt folytatja a Moodle ezen változatának a telepítését!';	
 $string['environmenthead'] = 'Környezetének ellenőrzése ...';
-$string['environmentrecommendinstall'] = 'ajánlott telepíteni/bekapcsolni';
-$string['environmentrecommendversion'] = 'a $a->needed változat használata ajánlott a mostani $a->current helyett';
-$string['environmentrequireinstall'] = 'szükséges telepíteni/bekapcsolni';
-$string['environmentrequireversion'] = 'a $a->needed változat használata szükséges a mostani $a->current helyett';
+$string['environmentrecommendinstall'] = 'ajánlott telepíteni/bekapcsolni';	
+$string['environmentrecommendversion'] = 'a $a->needed változat használata ajánlott a mostani $a->current helyett';	
+$string['environmentrequireinstall'] = 'szükséges telepíteni/bekapcsolni';	
+$string['environmentrequireversion'] = 'a $a->needed változat használata szükséges a mostani $a->current helyett';	
 $string['environmentsub'] = 'Ellenőrizzük, hogy rendszerének különféle összetevői megfelelnek-e a rendszerkövetelményeknek';
-$string['environmentxmlerror'] = 'Hiba környezeti adatok ($a->error_code) olvasása közben';
+$string['environmentxmlerror'] = 'Hiba környezeti adatok ($a->error_code) olvasása közben';	
 $string['error'] = 'Hiba';
 $string['fail'] = 'Hiba';
 $string['fileuploads'] = 'Állományok feltöltése';
@@ -100,7 +139,7 @@ $string['gdversionhelp'] = '<p>Feltehetőleg szerverén nincs telepítve a GD.</
 $string['globalsquotes'] = 'Globális változók nem biztonságos kezelése';
 $string['globalsquoteserror'] = 'Javítsa ki a PHP beállításait: kapcsolja ki a disable register_globals és/vagy az enable magic_quotes_gpc opciókat';
 $string['help'] = 'Súgó';
-$string['iconvrecommended'] = 'Ajánlatos az opcionális ICONV könyvtár telepítése a portál teljesítményének a növelése érdekében, különösen abban az esetben, ha a portál támogatja nem latin nyelvek használatát.';
+$string['iconvrecommended'] = 'Ajánlatos az opcionális ICONV könyvtár telepítése a portál teljesítményének a növelése érdekében, különösen abban az esetben, ha a portál támogatja nem latin nyelvek használatát.';	
 $string['info'] = 'Információ';
 $string['installation'] = 'Telepítés';
 $string['invalidmd5'] = 'Érvénytelen md5.';
@@ -109,7 +148,7 @@ $string['langdownloadok'] = 'A(z) \"$a\" nyelv telepítése sikerült. A telepí
 $string['language'] = 'Nyelv';
 $string['magicquotesruntime'] = 'Futásidejű Magic Quotes';
 $string['magicquotesruntimeerror'] = 'Kikapcsolva kell lennie';
-$string['mbstringrecommended'] = 'A portál teljesítményének javítása érdekében ajánlatos telepíteni az opcionális MBSTRING könyvtárat, különösen, ha a portál támogatja nem latin nyelvek használatát. ';
+$string['mbstringrecommended'] = 'A portál teljesítményének javítása érdekében ajánlatos telepíteni az opcionális MBSTRING könyvtárat, különösen, ha a portál támogatja nem latin nyelvek használatát. ';	
 $string['memorylimit'] = 'Memóriakorlát';
 $string['memorylimiterror'] = 'A PHP memóriakorlátja túl alacsonyra van állítva... ez a későbbiekben gondot okozhat.';
 $string['memorylimithelp'] = '<p>Szerverén a PHP memóriakorlátja jelenleg $a.</p>
@@ -126,22 +165,34 @@ beállítást pl. 16M-ra. Ha nem éri el az állományt, kérje meg a rendszerad
 </ol>';
 $string['missingrequiredfield'] = 'Egy szükséges mező hiányzik';
 $string['moodledocslink'] = 'Az oldalhoz tartozó Moodle Docs';
-$string['mysql416bypassed'] = 'Ha viszont a portálja CSAK iso-8859-1 (latin) nyelveket használ, továbbra is használhatja a pillanatnyilag telepített MySQL 4.1.12 (vagy magasabb) verziót.';
-$string['mysql416required'] = 'A Moodle 1.6 esetén a MySQL minimális verziószáma a 4.1.16 annak érdekében, hogy a későbbiekben minden adatot UTF-8 formában lehessen tárolni.';
+$string['mssql'] = "SQL*Server (mssql)";
+$string['mssql_n'] = "SQL*Server UTF-8 támogatással (mssql_n)";
+$string['mssqlextensionisnotpresentinphp'] = "A PHP nincs megfelelően beállítva az MSSQL-bővítéshez, egy nem tud kommunikálni az SQL*Serverrel.  Ellenőrizze a php.ini állományt vagy fordítsa le újra a PHP-t.";
+$string['mysql'] = "MySQL (mysql)";
+$string['mysql416bypassed'] = 'Ha viszont a portálja CSAK iso-8859-1 (latin) nyelveket használ, továbbra is használhatja a pillanatnyilag telepített MySQL 4.1.12 (vagy magasabb) verziót.';	
+$string['mysql416required'] = 'A Moodle 1.6 esetén a MySQL minimális verziószáma a 4.1.16 annak érdekében, hogy a későbbiekben minden adatot UTF-8 formában lehessen tárolni.';	
 $string['mysqlextensionisnotpresentinphp'] = 'A PHP nincs jól beállítva a MySQL kiterjesztéshez, így nem tud ele kommunikálni. Ellenőrizze a php.ini fájlt vagy fordítsa újra a PHP-t.';
 $string['name'] = 'Név';
 $string['next'] = 'Következő';
+$string['oci8po'] = "Oracle (oci8po)";
+$string['ociextensionisnotpresentinphp'] = "A PHP nincs megfelelően beállítva az OCI8 bővítéshez, egy nem tud kommunikálni az Oracle-lal. Ellenőrizze a php.ini állományt vagy fordítsa le újra a PHP-t.";
+$string['odbc_mssql'] = "SQL*Server over ODBC (odbc_mssql)";
+$string['odbcextensionisnotpresentinphp'] = "A PHP nincs megfelelően beállítva az ODBC-bővítéshez, egy nem tud kommunikálni az SQL*Serverrel.  Ellenőrizze a php.ini állományt vagy fordítsa le újra a PHP-t.";
 $string['ok'] = 'Rendben';
 $string['pass'] = 'Rendben';
 $string['password'] = 'Jelszó';
+$string['pgsqlextensionisnotpresentinphp'] = "A PHP nincs megfelelően beállítva az PGSQL-bővítéshez, egy nem tud kommunikálni a PostgreSQL-lel.  Ellenőrizze a php.ini állományt vagy fordítsa le újra a PHP-t.";
+$string['php50restricted'] = "A PHP 5.0.x számos ismert problémával rendelkezik, frissítsen 5.1.x-re vagy térjen vissza a 4.3.x vagy 4.4.x változathoz";	
 $string['phpversion'] = 'PHP-verzió';
 $string['phpversionerror'] = 'A PHP-verzió legalább 4.1.0 legyen';
 $string['phpversionhelp'] = '<p>A Moodle használatához legalább PHP 4.1.0 verziója szükséges.</p>
 <p>Az Ön által használt verzió $a</p>
 <p>Frissítse a PHP-verziót vagy térjen át újabb PHP-verziót működtető gazdagépre!</p>';
+$string['postgres7'] = "PostgreSQL (postgres7)";
 $string['previous'] = 'Előző';
 $string['remotedownloadnotallowed'] = 'Az összetevőket nem lehet szerverére letölteni(az allow_url_fopen ki van kapcsolva).<br /><br />A(z) <a href=\"$a->url\">$a->url</a> állományt töltse le kézzel, másolja át szerverén a(z) \"$a->dest\" célkönyvtárba és csomagolja ki ott.';
 $string['report'] = 'Jelentés';
+$string['restricted'] = "Korlátozott";
 $string['safemode'] = 'Biztonságos mód';
 $string['safemodeerror'] = 'A Moodle bekapcsolt biztonságos mód esetén akadályba ütközhet';
 $string['sessionautostart'] = 'Folyamat automatikus kezdése';
