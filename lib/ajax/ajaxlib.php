@@ -11,7 +11,7 @@ function require_js($list) {
 
     if (!check_browser_version('MSIE', 6.0)
                 && !check_browser_version('Firefox', 1.5)
-                && !check_browser_version('Camino', 1.0.2)) {
+                && !check_browser_version('Camino', '1.0.2')) {
         // We still have issues with AJAX in other browsers.
         return;
     }
