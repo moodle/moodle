@@ -335,7 +335,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
     if ($currentgroup) {
         $users = get_group_users($currentgroup, "u.firstname ASC", '', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber');
     } else {
-        $users = get_users_by_capability($context, 'mod/choice:choose');
+        $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC');
     }
 
     if (!$users) {
