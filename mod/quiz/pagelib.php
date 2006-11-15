@@ -1,6 +1,7 @@
 <?php // $Id$
 
 require_once($CFG->libdir.'/pagelib.php');
+require_once($CFG->dirroot.'/course/lib.php'); // needed for some blocks
 
 define('PAGE_QUIZ_VIEW',   'mod-quiz-view');
 
