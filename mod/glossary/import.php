@@ -108,11 +108,6 @@
                 $glossary->timemodified = time();
 
                 // Setting the default values if no values were passed
-                if ( isset($xmlglossary['STUDENTCANPOST'][0]['#']) ) {
-                    $glossary->studentcanpost = addslashes($xmlglossary['STUDENTCANPOST'][0]['#']);
-                } else {
-                    $glossary->studentcanpost = $CFG->glossary_studentspost;
-                }
                 if ( isset($xmlglossary['ENTBYPAGE'][0]['#']) ) {
                     $glossary->entbypage = addslashes($xmlglossary['ENTBYPAGE'][0]['#']);
                 } else {

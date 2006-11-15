@@ -49,7 +49,7 @@
         error("You can't delete other people's entries!");
     }
     $ineditperiod = ((time() - $entry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
-    if ((!$ineditperiod or !$glossary->studentcanpost) and !$manageentries) {
+    if (!$ineditperiod and !$manageentries) {
         error("You can't delete this. Time expired!");
     }
 

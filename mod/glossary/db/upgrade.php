@@ -31,7 +31,17 @@ function xmldb_glossary_upgrade($oldversion=0) {
 /// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
 ///     $result = result of "/lib/ddllib.php" function calls
 /// }
+    
+    if ($result && $oldversion < 2006111400) {
 
+    /// Define field studentcanpost to be dropped from glossary
+        $table = new XMLDBTable('glossary');
+        $field = new XMLDBField('studentcanpost');
+
+    /// Launch drop field studentcanpost
+        $result = $result && drop_field($table, $field);
+    }  
+    
     return $result;
 }
 

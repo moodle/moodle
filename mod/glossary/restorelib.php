@@ -53,7 +53,6 @@
             $glossary->course = $restore->course_id;
             $glossary->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
             $glossary->intro = backup_todb($info['MOD']['#']['INTRO']['0']['#']);
-            $glossary->studentcanpost = backup_todb($info['MOD']['#']['STUDENTCANPOST']['0']['#']);
             $glossary->allowduplicatedentries = backup_todb($info['MOD']['#']['ALLOWDUPLICATEDENTRIES']['0']['#']);
             $glossary->displayformat = backup_todb($info['MOD']['#']['DISPLAYFORMAT']['0']['#']);
             $glossary->mainglossary = backup_todb($info['MOD']['#']['MAINGLOSSARY']['0']['#']);

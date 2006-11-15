@@ -1690,7 +1690,6 @@ function glossary_generate_export_file($glossary, $hook = "", $hook = 0) {
     $co .= glossary_start_tag("INFO",1,true);
         $co .= glossary_full_tag("NAME",2,false,$glossary->name);
         $co .= glossary_full_tag("INTRO",2,false,$glossary->intro);
-        $co .= glossary_full_tag("STUDENTCANPOST",2,false,$glossary->studentcanpost);
         $co .= glossary_full_tag("ALLOWDUPLICATEDENTRIES",2,false,$glossary->allowduplicatedentries);
         $co .= glossary_full_tag("DISPLAYFORMAT",2,false,$glossary->displayformat);
         $co .= glossary_full_tag("SHOWSPECIAL",2,false,$glossary->showspecial);
