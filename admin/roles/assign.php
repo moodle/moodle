@@ -36,7 +36,6 @@
         error("Context ID was incorrect (can't find it)");
     }
 
-
     $inmeta = 0;
     if ($context->contextlevel == CONTEXT_COURSE) {
         $courseid = $context->instanceid;
@@ -63,7 +62,6 @@
     require_capability('moodle/role:assign', $context);
 
     $assignableroles = get_assignable_roles($context);
-
 /// Get some language strings
 
     $strassignusers = get_string('assignusers', 'role');
@@ -121,7 +119,6 @@
         $tabsmode = 'assign';
         include_once('tabs.php');
     }
-
 
 /// Process incoming role assignment
 
@@ -186,7 +183,6 @@
             $previoussearch = 0;
         }
     }
-
 
     print_heading_with_help(get_string('assignroles', 'role'), 'assignroles');
 

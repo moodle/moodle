@@ -162,6 +162,8 @@ function get_guest_role() {
 
 /**
  * This functions get all the course categories in proper order
+ * (!)note this only gets course category contexts, and not the site
+ * context
  * @param object $context
  * @param int $type
  * @return array of contextids
@@ -171,6 +173,8 @@ function get_parent_cats($context, $type) {
     $parents = array();
 
     switch ($type) {
+        // a category can be the parent of another category
+        // there is no limit of depth in this case
         case CONTEXT_COURSECAT:
             if (!$cat = get_record('course_categories','id',$context->instanceid)) {
                 break;
@@ -184,7 +188,10 @@ function get_parent_cats($context, $type) {
                 $cat = get_record('course_categories','id',$cat->parent);
             }
         break;
-
+        
+        // a course always fall into a category, unless it's a site course
+        // this happens when SITEID = $course->id
+        // in this case the parent of the course is site context
         case CONTEXT_COURSE:
             if (!$course = get_record('course', 'id', $context->instanceid)) {
                 break;
@@ -197,6 +204,10 @@ function get_parent_cats($context, $type) {
 
             if (!$cat = get_record('course_categories','id',$course->category)) {
                 break;
+            }
+            // Yu: Separating site and site course context
+            if ($course->id == SITEID) {
+                break;  
             }
 
             while (!empty($cat->parent)) {
@@ -282,7 +293,6 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
     global $USER, $CONTEXT, $CFG;
 
     static $capcache = array();   // Cache of capabilities 
-
 
 /// Some sanity checks
     if (debugging()) {
@@ -376,7 +386,8 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
                 return $result;
             }
         }
-
+    /// If it's not set at site level, it is possible to be set on other levels
+    /// Though this usage is not common and can cause risks
         switch ($context->contextlevel) {
 
             case CONTEXT_COURSECAT:
@@ -481,7 +492,8 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
 
             default:
                 // CONTEXT_SYSTEM: CONTEXT_PERSONAL: CONTEXT_USER:
-                // Do nothing.
+                // Do nothing, because the parents are site context
+                // which has been checked already
             break;
         }
 
@@ -492,7 +504,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
             return $result;
         }
     }
-    // do_anything has not been set, we now look for it the normal way.
+    /// do_anything has not been set, we now look for it the normal way. (checking individual capability)
     $result = (0 < capability_search($capability, $context, $capabilities));
     $capcache[$cachekey] = $result;
     return $result;
@@ -502,10 +514,10 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
 
 /**
  * In a separate function so that we won't have to deal with do_anything.
- * again. Used by function has_capability.
+ * again. Used by function has_capability().
  * @param $capability - capability string
  * @param $context - the context object
- * @param $capabilities - either $USER->capability or loaded array
+ * @param $capabilities - either $USER->capability or loaded array (for other users)
  * @return permission (int)
  */
 function capability_search($capability, $context, $capabilities) {
@@ -515,7 +527,8 @@ function capability_search($capability, $context, $capabilities) {
     if (!isset($context->id)) {
         return 0;
     }
-
+    // if already set in the array explicitly, no need to look for it in parent 
+    // context any longer
     if (isset($capabilities[$context->id][$capability])) {
         return ($capabilities[$context->id][$capability]);
     }
@@ -552,7 +565,12 @@ function capability_search($capability, $context, $capabilities) {
         case CONTEXT_COURSE: // 1 to 1 to course cat
             // find the course cat, and return its value
             $course = get_record('course','id',$context->instanceid);
-            $parentcontext = get_context_instance(CONTEXT_COURSECAT, $course->category);
+            // Yu: Separating site and site course context
+            if ($course->id == SITEID) {
+                $parentcontext = get_context_instance(CONTEXT_SYSTEM);
+            } else {
+                $parentcontext = get_context_instance(CONTEXT_COURSECAT, $course->category);
+            }
             $permission = capability_search($capability, $parentcontext, $capabilities);
         break;
 
@@ -586,9 +604,13 @@ function capability_search($capability, $context, $capabilities) {
     return $permission;
 }
 
-// auxillary function for load_user_capabilities()
-// if context c1 is a parent (or itself) of context c2
-// returns true
+/**
+ * auxillary function for load_user_capabilities()
+ * checks if context c1 is a parent (or itself) of context c2
+ * @param int $c1 - context id of context 1
+ * @param int $c2 - context id of context 2
+ * @return bool
+ */
 function is_parent_context($c1, $c2) {
     static $parentsarray;
     
@@ -625,6 +647,9 @@ function is_parent_context($c1, $c2) {
 /*
  * auxillary function for load_user_capabilities()
  * handler in usort() to sort contexts according to level
+ * @param object contexta
+ * @param object contextb
+ * @return int
  */
 function roles_context_cmp($contexta, $contextb) {
    if ($contexta->contextlevel == $contextb->contextlevel) {
@@ -655,7 +680,8 @@ function roles_context_cmp($contexta, $contextb) {
 function load_user_capability($capability='', $context = NULL, $userid='') {
 
     global $USER, $CFG;
-
+    // this flag has not been set! 
+    // (not clean install, or upgraded successfully to 1.7 and up)
     if (empty($CFG->rolesactive)) {
         return false;
     }
@@ -1070,7 +1096,7 @@ function capability_prohibits($capability, $context, $sum='', $array='') {
             // Coursecat -> coursecat or site.
             if (!$coursecat = get_record('course_categories','id',$context->instanceid)) {
                 return false;
-            }
+            }         
             if (!empty($coursecat->parent)) {
                 // return parent value if exist.
                 $parent = get_context_instance(CONTEXT_COURSECAT, $coursecat->parent);
@@ -1087,7 +1113,12 @@ function capability_prohibits($capability, $context, $sum='', $array='') {
             if (!$course = get_record('course','id',$context->instanceid)) {
                 return false;
             }
-            $parent = get_context_instance(CONTEXT_COURSECAT, $course->category);
+            // Yu: Separating site and site course context
+            if ($course->id == SITEID) {
+                $parent = get_context_instance(CONTEXT_SYSTEM);
+            } else {
+                $parent = get_context_instance(CONTEXT_COURSECAT, $course->category);
+            }
             return capability_prohibits($capability, $parent);
         break;
 
@@ -1498,9 +1529,11 @@ function get_context_instance($contextlevel=NULL, $instance=SITEID) {
     static $allowed_contexts = array(CONTEXT_SYSTEM, CONTEXT_PERSONAL, CONTEXT_USER, CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_GROUP, CONTEXT_MODULE, CONTEXT_BLOCK);
 
     // This is really a systen context
+    // Yu: Separating site and site course context
+    /*
     if ($contextlevel == CONTEXT_COURSE && $instance == SITEID) {
         $contextlevel = CONTEXT_SYSTEM;
-    }
+    }*/
 
 /// If no level is supplied then return the current global context if there is one
     if (empty($contextlevel)) {
@@ -2531,7 +2564,9 @@ function get_parent_contexts($context) {
                 $parent = get_context_instance(CONTEXT_COURSECAT, $course->category);
                 return array_merge(array($parent->id), get_parent_contexts($parent));
             } else {
-                return array();
+                // Yu: Separating site and site course context
+                $parent = get_context_instance(CONTEXT_SYSTEM);
+                return array($parent->id);
             }
         break;
 
@@ -2955,6 +2990,8 @@ function get_default_course_role($course) {
 /**
  * who has this capability in this context
  * does not handling user level resolving!!!
+ * (!)pleaes note if $fields is empty this function attempts to get u.*
+ * which can get rather large.
  * i.e 1 person has 2 roles 1 allow, 1 prevent, this will not work properly
  * @param $context - object
  * @param $capability - string capability
