@@ -1226,10 +1226,6 @@ function question_new_attempt_uniqueid($modulename='quiz') {
     if (!$id = insert_record('question_attempts', $attempt)) {
         error('Could not create new entry in question_attempts table');
     }
-
-    // The following is really not needed any more and will be removed in 1.7
-    set_config('attemptuniqueid', $id);
-
     return $id;
 }
 
