@@ -275,12 +275,12 @@ global $HTTPSPAGEREQUIRED;
 /// - WINDOWS: for any Windows flavour.
 /// - UNIX: for the rest
 /// Also, $CFG->os can continue being used if more specialization is required
-if (stristr(PHP_OS, 'win') && !stristr(PHP_OS, 'darwin')) {
-    $CFG->ostype = 'WINDOWS';
-} else {
-    $CFG->ostype = 'UNIX';
-}
-$CFG->os = PHP_OS;
+    if (stristr(PHP_OS, 'win') && !stristr(PHP_OS, 'darwin')) {
+        $CFG->ostype = 'WINDOWS';
+    } else {
+        $CFG->ostype = 'UNIX';
+    }
+    $CFG->os = PHP_OS;
 
 /// Setup cache dir for Smarty and others
     if (!file_exists($CFG->dataroot .'/cache')) {
