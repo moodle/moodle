@@ -845,7 +845,8 @@ class assignment_base {
 
         $nextid = 0;
         if (($auser = get_records_sql($select.$sql.$sort, $offset+1, 1)) !== false) {
-            $nextid = $auser->id;
+            $nextuser = array_shift($auser);
+            $nextid = $nextuser->id;
         }
 
         print_header(get_string('feedback', 'assignment').':'.fullname($user, true).':'.format_string($this->assignment->name));
