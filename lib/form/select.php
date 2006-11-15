@@ -42,5 +42,26 @@ class MoodleQuickForm_select extends HTML_QuickForm_select{
     function getHelpButton(){
         return $this->_helpbutton;
     }
+    /**
+     * Removes an OPTION from the SELECT
+     *
+     * @param     string    $value      Value for the OPTION to remove
+     * @since     1.0
+     * @access    public
+     * @return    void
+     */
+    function removeOption($value)
+    {
+        $key=array_search($value, $this->_values);
+        if ($key!==FALSE || $key!==null) {
+            unset($this->_values[$key]);
+        }
+        foreach ($this->_options as $key=>$option){
+            if ($option['attr']['value']==$value){
+                unset($this->_options[$key]);
+                return;
+            }
+        }
+    } // end func removeOption
 }
 ?>
