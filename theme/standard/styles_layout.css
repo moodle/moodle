@@ -1201,7 +1201,7 @@ body#course-view .unread {
   margin-left: 3em;
 } 
 
-body#course-view.drag .sideblock .header {
+body#course-view .drag.sideblock .header {
   cursor: move;
 }
 
