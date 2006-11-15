@@ -1207,16 +1207,18 @@ function question_process_comment($question, &$state, &$attempt, $comment, $grad
     // to set the $state->changed flag.
     if (abs($state->last_graded->grade - $grade) > 0.002 ||
             $state->last_graded->event != QUESTION_EVENTMANUALGRADE) {
+
+        // We want to update existing state (rather than creating new one) if it
+        // was itself created by a manual grading event.
+        $state->update = ($state->event == QUESTION_EVENTMANUALGRADE) ? 1 : 0;
+
+        // Update the other parts of the state object.
         $state->raw_grade = $grade;
         $state->grade = $grade;
         $state->penalty = 0;
         $state->timestamp = time();
         $state->seq_number++;
         $state->event = QUESTION_EVENTMANUALGRADE;
-
-        // We want to update existing state (rather than creating new one) if it
-        // was itself created by a manual grading event.
-        $state->update = ($state->event == QUESTION_EVENTMANUALGRADE) ? 1 : 0;
 
         // Update the last graded state (don't simplify!)
         unset($state->last_graded);
