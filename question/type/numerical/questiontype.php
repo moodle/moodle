@@ -96,11 +96,11 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     function save_question_options($question) {
         
         // Get old versions of the objects
-        if (!$oldanswers = get_records("question_answers", "question", $question->id)) {
+        if (!$oldanswers = get_records('question_answers', 'question', $question->id, 'id ASC')) {
             $oldanswers = array();
         }
 
-        if (!$oldoptions = get_records("question_numerical", "question", $question->id)) {
+        if (!$oldoptions = get_records('question_numerical', 'question', $question->id, 'answer ASC')) {
             $oldoptions = array();
         }
 
@@ -193,7 +193,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     }
 
     function save_numerical_units($question) {
-        if (!$oldunits = get_records("question_numerical_units", "question", $question->id)) {
+        if (!$oldunits = get_records('question_numerical_units', 'question', $question->id, 'id ASC')) {
             $oldunits = array();
         }
 
@@ -424,7 +424,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
         $status = true;
 
-        $numericals = get_records("question_numerical","question",$question,"id");
+        $numericals = get_records('question_numerical', 'question', $question, 'id ASC');
         //If there are numericals
         if ($numericals) {
             //Iterate over each numerical
