@@ -129,15 +129,26 @@ function load_defaultuser_role() {
 
     if ($capabilities = get_records_select('role_capabilities',
                                      "roleid = $CFG->defaultuserroleid AND contextid = $sitecontext->id AND permission <> 0")) {
+        // Find out if this default role is a guest role, for the hack below                                        
+        $defaultisguestrole=false;
         foreach ($capabilities as $capability) {
+            if($capability->capability=='moodle/legacy:guest') {
+                $defaultisguestrole=true;
+            }
+        }                                        
+        foreach ($capabilities as $capability) {
+            // If the default role is a guest role, then don't copy legacy:guest,
+            // otherwise this user could get confused with a REAL guest. Also don't copy
+            // course:view, which is a hack that's necessary because guest roles are 
+            // not really handled properly (see MDL-7513)
+            if($defaultisguestrole && $USER->username!='guest' &&
+                ($capability->capability=='moodle/legacy:guest' || 
+                    $capability->capability=='moodle/course:view')) {
+                continue;
+            }
+            
             // Don't overwrite capabilities from real role...
-            if (!isset($USER->capabilities[$sitecontext->id][$capability->capability])
-                // ...and if the default role is a guest role, then don't copy legacy:guest,
-                // otherwise this user could get confused with a REAL guest. Also don't copy
-                // course:view, which is a hack that's necessary because guest roles are 
-                // not really handled properly (see MDL-7513)
-                && (($capability->capability!='moodle/legacy:guest' 
-                    && $capability->capability!='moodle/course:view') || $USER->username=='guest')) {
+            if (!isset($USER->capabilities[$sitecontext->id][$capability->capability])) {
                 $USER->capabilities[$sitecontext->id][$capability->capability] = $capability->permission;
             }
         }
