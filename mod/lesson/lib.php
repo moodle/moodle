@@ -11,22 +11,15 @@ define("LESSON_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
 
 /*******************************************************************/
 function lesson_add_instance($lesson) {
-/// Given an object containing all the necessary data, 
-/// (defined by the form in mod.html) this function 
-/// will create a new instance and return the id number 
+/// Given an object containing all the necessary data,
+/// (defined by the form in mod.html) this function
+/// will create a new instance and return the id number
 /// of the new instance.
     global $SESSION;
 
     $lesson->timemodified = time();
 
-    $lesson->available = make_timestamp($lesson->availableyear, 
-            $lesson->availablemonth, $lesson->availableday, $lesson->availablehour, 
-            $lesson->availableminute);
 
-    $lesson->deadline = make_timestamp($lesson->deadlineyear, 
-            $lesson->deadlinemonth, $lesson->deadlineday, $lesson->deadlinehour, 
-            $lesson->deadlineminute);
-    
     if(empty($lesson->timespent) or !is_numeric($lesson->timespent) or $lesson->timespent < 0) {
         $lesson->timespent = 0;
     }
@@ -48,20 +41,12 @@ function lesson_add_instance($lesson) {
     unset($lesson->completed);
     unset($lesson->gradebetterthan);
 
-    // sanitize given values a bit
-    $lesson->maxtime = clean_param($lesson->maxtime, PARAM_INT);
-    $lesson->width = clean_param($lesson->width, PARAM_INT);
-    $lesson->height = clean_param($lesson->height, PARAM_INT);
-    $lesson->mediawidth = clean_param($lesson->mediawidth, PARAM_INT);
-    $lesson->mediaheight = clean_param($lesson->mediaheight, PARAM_INT);
-    $lesson->maxhighscores = clean_param($lesson->maxhighscores, PARAM_INT);
-
     if (!empty($lesson->password)) {
         $lesson->password = md5($lesson->password);
     } else {
         unset($lesson->password);
     }
-    
+
     if (!$lesson->id = insert_record("lesson", $lesson)) {
         return false; // bad
     }
@@ -82,7 +67,7 @@ function lesson_add_instance($lesson) {
     } else {
         unset($lesson->lessondefault);
     }
-    
+
     // got this code from quiz, thanks quiz!!!
     delete_records('event', 'modulename', 'lesson', 'instance', $lesson->id);  // Just in case
 
@@ -121,17 +106,11 @@ function lesson_add_instance($lesson) {
 
 /*******************************************************************/
 function lesson_update_instance($lesson) {
-/// Given an object containing all the necessary data, 
-/// (defined by the form in mod.html) this function 
+/// Given an object containing all the necessary data,
+/// (defined by the form in mod.html) this function
 /// will update an existing instance with new data.
 
     $lesson->timemodified = time();
-    $lesson->available = make_timestamp($lesson->availableyear, 
-            $lesson->availablemonth, $lesson->availableday, $lesson->availablehour, 
-            $lesson->availableminute);
-    $lesson->deadline = make_timestamp($lesson->deadlineyear, 
-            $lesson->deadlinemonth, $lesson->deadlineday, $lesson->deadlinehour, 
-            $lesson->deadlineminute);
     $lesson->id = $lesson->instance;
 
     if(empty($lesson->timespent) or !is_numeric($lesson->timespent) or $lesson->timespent < 0) {
@@ -177,7 +156,7 @@ function lesson_update_instance($lesson) {
     } else {
         unset($lesson->lessondefault);
     }
-    
+
     // update the calendar events (credit goes to quiz module)
     if ($events = get_records_select('event', "modulename = 'lesson' and instance = '$lesson->id'")) {
         foreach($events as $event) {
@@ -220,9 +199,9 @@ function lesson_update_instance($lesson) {
 
 /*******************************************************************/
 function lesson_delete_instance($id) {
-/// Given an ID of an instance of this module, 
-/// this function will permanently delete the instance 
-/// and any data that depends on it.  
+/// Given an ID of an instance of this module,
+/// this function will permanently delete the instance
+/// and any data that depends on it.
 
     if (! $lesson = get_record("lesson", "id", "$id")) {
         return false;
@@ -259,7 +238,7 @@ function lesson_delete_instance($id) {
             delete_event($event->id);
         }
     }
-    
+
     return $result;
 }
 
@@ -277,18 +256,18 @@ function lesson_delete_course($course, $feedback=true) {
 
     $count = count_records('lesson_default', 'course', $course->id);
     delete_records('lesson_default', 'course', $course->id);
-    
+
     //Inform about changes performed if feedback is enabled
     if ($feedback) {
         notify(get_string('deletedefaults', 'lesson', $count));
     }
-    
+
     return true;
 }
 
 /*******************************************************************/
 function lesson_user_outline($course, $user, $mod, $lesson) {
-/// Return a small object with summary information about what a 
+/// Return a small object with summary information about what a
 /// user has done with a given particular instance of this module
 /// Used for user activity reports.
 /// $return->time = the time they did it
@@ -315,7 +294,7 @@ function lesson_user_outline($course, $user, $mod, $lesson) {
 
 /*******************************************************************/
 function lesson_user_complete($course, $user, $mod, $lesson) {
-/// Print a detailed representation of what a  user has done with 
+/// Print a detailed representation of what a  user has done with
 /// a given particular instance of this module, for user activity reports.
 
     if ($attempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND userid = $user->id",
@@ -332,7 +311,7 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
         $retry = 0;
         $npages = 0;
         $ncorrect = 0;
-        
+
         foreach ($attempts as $attempt) {
             if ($attempt->retry == $retry) {
                 $npages++;
@@ -374,26 +353,26 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
         echo get_string("no")." ".get_string("attempts", "lesson");
     }
 
-    
+
     return true;
 }
 
 /*******************************************************************/
 function lesson_print_recent_activity($course, $isteacher, $timestart) {
-/// Given a course and a time, this module should find recent activity 
-/// that has occurred in lesson activities and print it out. 
+/// Given a course and a time, this module should find recent activity
+/// that has occurred in lesson activities and print it out.
 /// Return true if there was output, or false is there was none.
 
     global $CFG;
 
-    return false;  //  True if anything was printed, otherwise false 
+    return false;  //  True if anything was printed, otherwise false
 }
 
 /*******************************************************************/
 function lesson_cron () {
 /// Function to be run periodically according to the moodle cron
-/// This function searches for things that need to be done, such 
-/// as sending out mail, toggling flags etc ... 
+/// This function searches for things that need to be done, such
+/// as sending out mail, toggling flags etc ...
 
     global $CFG;
 
@@ -402,7 +381,7 @@ function lesson_cron () {
 
 /*******************************************************************/
 function lesson_grades($lessonid) {
-/// Must return an array of grades for a given instance of this module, 
+/// Must return an array of grades for a given instance of this module,
 /// indexed by user.  It also returns a maximum allowed grade.
     global $CFG;
 
@@ -416,7 +395,7 @@ function lesson_grades($lessonid) {
         $grades = get_records_sql_menu("SELECT userid,AVG(grade) FROM {$CFG->prefix}lesson_grades WHERE
             lessonid = $lessonid GROUP BY userid");
     }
-    
+
     // convert grades from percentages and tidy the numbers
     if (!$lesson->practice) {  // dont display practice lessons
         if ($grades) {
@@ -425,7 +404,7 @@ function lesson_grades($lessonid) {
             }
         }
         $return->maxgrade = $lesson->grade;
-        
+
         return $return;
     } else {
         return NULL;
@@ -439,7 +418,7 @@ function lesson_get_participants($lessonid) {
 //in the instance, independient of his role (student, teacher, admin...)
 
     global $CFG;
-    
+
     //Get students
     $students = get_records_sql("SELECT DISTINCT u.id, u.id
                                  FROM {$CFG->prefix}user u,
