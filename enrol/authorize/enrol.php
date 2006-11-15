@@ -78,7 +78,7 @@ class enrolment_plugin_authorize
             echo '<p><a href="'.$CFG->httpswwwroot.'/login/">'.get_string('loginsite').'</a></p>';
             echo '</div>';
         } else {
-            include($CFG->dirroot.'/enrol/authorize/enrol.html');
+            include($CFG->dirroot.'/enrol/authorize/enrol_form.php');
         }
         print_simple_box_end();
 
@@ -448,7 +448,7 @@ class enrolment_plugin_authorize
             }
         }
 
-        include($CFG->dirroot.'/enrol/authorize/config.html');
+        include($CFG->dirroot.'/enrol/authorize/config_form.php');
     }
 
 
