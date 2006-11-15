@@ -10,6 +10,23 @@
     $add           = optional_param('add', '', PARAM_ALPHA);
     $update        = optional_param('update', 0, PARAM_INT);
 
+    $cancel        = optional_param('cancel', 0, PARAM_BOOL);
+
+    if ($cancel) {
+        if (!empty($SESSION->returnpage)) {
+            $return = $SESSION->returnpage;
+            unset($SESSION->returnpage);
+            redirect($return);
+        } else {
+            $course = required_param('course', PARAM_INT);
+            $section = optional_param('section', '', PARAM_INT);
+            if (! $course = get_record("course", "id", $course)) {
+                error("This course doesn't exist");
+            }
+            redirect("view.php?id=$course->id#section-$section");
+        }
+    }
+
     if (!empty($add)){
         $section = required_param('section', PARAM_INT);
         $course = required_param('course', PARAM_INT);
