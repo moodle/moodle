@@ -37,7 +37,7 @@ class question_shortanswer_qtype extends default_questiontype {
     function save_question_options($question) {
         $result = new stdClass;
         
-        if (!$oldanswers = get_records("question_answers", "question", $question->id, "id ASC")) {
+        if (!$oldanswers = get_records('question_answers', 'question', $question->id, 'id ASC')) {
             $oldanswers = array();
         }
 
@@ -228,7 +228,7 @@ class question_shortanswer_qtype extends default_questiontype {
 
         $status = true;
 
-        $shortanswers = get_records("question_shortanswer","question",$question,"id");
+        $shortanswers = get_records('question_shortanswer', 'question', $question, 'id ASC');
         //If there are shortanswers
         if ($shortanswers) {
             //Iterate over each shortanswer
