@@ -130,16 +130,16 @@ function load_defaultuser_role() {
     if ($capabilities = get_records_select('role_capabilities',
                                      "roleid = $CFG->defaultuserroleid AND contextid = $sitecontext->id AND permission <> 0")) {
         foreach ($capabilities as $capability) {
-            if (!isset($USER->capabilities[$sitecontext->id][$capability->capability])) {  // Don't overwrite
+            // Don't overwrite capabilities from real role...
+            if (!isset($USER->capabilities[$sitecontext->id][$capability->capability])
+                // ...and if the default role is a guest role, then don't copy legacy:guest,
+                // otherwise this user could get confused with a REAL guest. Also don't copy
+                // course:view, which is a hack that's necessary because guest roles are 
+                // not really handled properly (see MDL-7513)
+                && (($capability->capability!='moodle/legacy:guest' 
+                    && $capability->capability!='moodle/course:view') || $USER->username=='guest')) {
                 $USER->capabilities[$sitecontext->id][$capability->capability] = $capability->permission;
             }
-        }
-
-        // SPECIAL EXCEPTION:  If the default user role is actually a guest role, then
-        // remove some capabilities so this user doesn't get confused with a REAL guest
-        if (isset($USER->capabilities[$sitecontext->id]['moodle/legacy:guest']) and $USER->username != 'guest') {
-            unset($USER->capabilities[$sitecontext->id]['moodle/legacy:guest']);
-            unset($USER->capabilities[$sitecontext->id]['moodle/course:view']);  // No access to courses by default
         }
     }
 
