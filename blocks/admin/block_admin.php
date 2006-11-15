@@ -22,7 +22,7 @@ class block_admin extends block_list {
         if (empty($this->instance)) {
             return $this->content = '';
         } else if ($this->instance->pageid == SITEID) {
-            return $this->content = '';
+            // return $this->content = '';
         }
 
         if (!empty($this->instance->pageid)) {
@@ -49,7 +49,7 @@ class block_admin extends block_list {
 
     /// Course editing on/off
 
-        if (has_capability('moodle/course:update', $context)) {
+        if (has_capability('moodle/course:update', $context) && ($course->id!==SITEID)) {
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/edit.gif" alt="" />';
             if (isediting($this->instance->pageid)) {
                 $this->content->items[]='<a href="view.php?id='.$this->instance->pageid.'&amp;edit=off&amp;sesskey='.sesskey().'">'.get_string('turneditingoff').'</a>';
@@ -86,7 +86,7 @@ class block_admin extends block_list {
 
     /// Manage groups in this course
 
-        if (($course->groupmode || !$course->groupmodeforce) && has_capability('moodle/course:managegroups', $context)) {
+        if (($course->groupmode || !$course->groupmodeforce) && has_capability('moodle/course:managegroups', $context) && ($course->id!==SITEID)) {
             $strgroups = get_string('groups');
             $this->content->items[]='<a title="'.$strgroups.'" href="'.$CFG->wwwroot.'/course/groups.php?id='.$this->instance->pageid.'">'.$strgroups.'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/group.gif" alt="" />';
@@ -106,44 +106,44 @@ class block_admin extends block_list {
         }
         
     /// Import data from other courses
-        if (has_capability('moodle/site:import', $context)) {
+        if (has_capability('moodle/site:import', $context) && ($course->id!==SITEID)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/import.php?id='.$this->instance->pageid.'">'.get_string('import').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" alt="" />';
         }
         
     /// Reset this course
-        if (has_capability('moodle/course:reset', $context)) {
+        if (has_capability('moodle/course:reset', $context) && ($course->id!==SITEID)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/reset.php?id='.$this->instance->pageid.'">'.get_string('reset').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/return.gif" alt="" />';
         }
         
     /// View course reports
-        if (has_capability('moodle/site:viewreports', $context)) {
+        if (has_capability('moodle/site:viewreports', $context) && ($course->id!==SITEID)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/report.php?id='.$this->instance->pageid.'">'.get_string('reports').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/stats.gif" alt="" />';
         }
         
     /// Manage questions
-        if (has_capability('moodle/question:manage', $context)) {
+        if (has_capability('moodle/question:manage', $context) && ($course->id!==SITEID)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/question/edit.php?courseid='.$this->instance->pageid.'&amp;clean=true">'.get_string('questions', 'quiz').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/questions.gif" alt="" />';
         }
 
     /// Manage scales
-        if (has_capability('moodle/course:managescales', $context)) {
+        if (has_capability('moodle/course:managescales', $context) && ($course->id!==SITEID)) {
             $this->content->items[]='<a href="scales.php?id='.$this->instance->pageid.'">'.get_string('scales').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/scales.gif" alt="" />';      
         }
         
 
     /// Manage files
-        if (has_capability('moodle/course:managefiles', $context)) {
+        if (has_capability('moodle/course:managefiles', $context) && ($course->id!==SITEID)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/files/index.php?id='.$this->instance->pageid.'">'.get_string('files').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/files.gif" alt="" />';
         }
 
     /// Authorize hooks
-        if ($course->enrol == 'authorize' || (empty($course->enrol) && $CFG->enrol == 'authorize')) {
+        if ($course->enrol == 'authorize' || (empty($course->enrol) && $CFG->enrol == 'authorize') && ($course->id!==SITEID)) {
             require_once($CFG->dirroot.'/enrol/authorize/const.php');
             $paymenturl = '<a href="'.$CFG->wwwroot.'/enrol/authorize/index.php?course='.$course->id.'">'.get_string('payments').'</a> ';
             if (has_capability('enrol/authorize:managepayments', $context)) {
@@ -156,13 +156,13 @@ class block_admin extends block_list {
         }
 
     /// View course grades (or just your own grades, same link)
-        if (has_capability('moodle/course:viewcoursegrades', $context) or 
-            (has_capability('moodle/user:viewusergrades', $context) && $course->showgrades)) {
+        if ((has_capability('moodle/course:viewcoursegrades', $context) or 
+            (has_capability('moodle/user:viewusergrades', $context) && $course->showgrades)) && ($course->id!==SITEID)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/index.php?id='.$this->instance->pageid.'">'.get_string('grades').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/grades.gif" alt="" />';
         }
 
-        if (empty($course->metacourse)) {
+        if (empty($course->metacourse) && ($course->id!==SITEID)) {
             if (has_capability('moodle/legacy:guest', $context, NULL, false)) {   // Are a guest now
                 $this->content->items[]='<a href="enrol.php?id='.$this->instance->pageid.'">'.get_string('enrolme', '', $course->shortname).'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" alt="" />';
@@ -201,7 +201,9 @@ class block_admin extends block_list {
     }
 
     function applicable_formats() {
-        return array('all' => false, 'course' => true);
+        // Yu: Separating site and site course context
+        // Have to enable for site as well
+        return array('all' => true, 'course' => true);
     }
 }
 
