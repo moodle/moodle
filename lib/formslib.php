@@ -44,9 +44,24 @@ if ($CFG->debug >= DEBUG_ALL){
  */
 class moodleform {
     var $_formname;       // form name
-    var $_form;           // quickform object definition
-    var $_customdata;     // globals workaround
-    var $_upload_manager; // file upload manager
+    /**
+     * quickform object definition
+     *
+     * @var MoodleQuickForm
+     */
+    var $_form;
+    /**
+     * globals workaround
+     *
+     * @var array
+     */
+    var $_customdata;
+    /**
+     * file upload manager
+     *
+     * @var upload_manager
+     */
+    var $_upload_manager; //
 
     /**
      * The constructor function calls the abstract function definition() and it will then
@@ -329,16 +344,18 @@ class moodleform {
  *
  */
 class moodleform_mod extends moodleform {
+
     /**
      * Adds all the standard elements to a form to edit the settings for an activity module.
      *
+     * @param bool $supportsgroups does this module support groups?
      */
-    function standard_coursemodule_elements(){
+    function standard_coursemodule_elements($supportsgroups=true){
         $mform =& $this->_form;
         $mform->addElement('header', '', get_string('modstandardels', 'form'));
-
-        $mform->addElement('modgroupmode', 'groupmode', get_string('groupmode'));
-
+        if ($supportsgroups){
+            $mform->addElement('modgroupmode', 'groupmode', get_string('groupmode'));
+        }
         $mform->addElement('modvisible', 'visible', get_string('visible'));
 
         $this->standard_hidden_coursemodule_elements();
@@ -384,7 +401,7 @@ class moodleform_mod extends moodleform {
         $this->modvisible_setup($course, $cm, $section);
     }
     /**
-     * You can call this to load the default for the groupmode element.
+     * This is called from modedit.php to load the default for the groupmode element.
      *
      * @param object $course
      * @param object $cm
@@ -394,7 +411,7 @@ class moodleform_mod extends moodleform {
 
     }
     /**
-     * Sets the default for modvisible form element.
+     *  This is called from modedit.php to set the default for modvisible form element.
      *
      * @param object $course
      * @param object $cm
@@ -941,5 +958,7 @@ MoodleQuickForm::registerElementType('modgroupmode', "$CFG->libdir/form/modgroup
 MoodleQuickForm::registerElementType('selectyesno', "$CFG->libdir/form/selectyesno.php", 'MoodleQuickForm_selectyesno');
 MoodleQuickForm::registerElementType('modgrade', "$CFG->libdir/form/modgrade.php", 'MoodleQuickForm_modgrade');
 MoodleQuickForm::registerElementType('submit', "$CFG->libdir/form/submit.php", 'MoodleQuickForm_submit');
+MoodleQuickForm::registerElementType('button', "$CFG->libdir/form/button.php", 'MoodleQuickForm_button');
+MoodleQuickForm::registerElementType('choosecoursefile', "$CFG->libdir/form/choosecoursefile.php", 'MoodleQuickForm_choosecoursefile');
 
 ?>
