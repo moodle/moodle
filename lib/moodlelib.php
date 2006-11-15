@@ -5211,6 +5211,16 @@ function check_php_version($version='4.1.0') {
 
     switch ($brand) {
 
+      case 'Camino':   /// Mozilla Firefox browsers
+
+              if (preg_match("/Camino\/([0-9\.]+)/i", $agent, $match)) {
+                  if (version_compare($match[1], $version) >= 0) {
+                      return true;
+                  }
+              }
+              break;
+
+
       case 'Firefox':   /// Mozilla Firefox browsers
 
           if (preg_match("/Firefox\/([0-9\.]+)/i", $agent, $match)) {
