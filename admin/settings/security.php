@@ -33,6 +33,9 @@ $temp->add(new admin_setting_configselect('bloglevel', get_string('bloglevel', '
                                                                                                                                           1 => get_string('personalblogs','blog'),
                                                                                                                                           0 => get_string('disableblogs','blog'))));
 
+$temp->add(new admin_setting_configcheckbox('cronclionly', get_string('cronclionly', 'admin'), get_string('configcronclionly', 'admin'), 0));
+$temp->add(new admin_setting_configtext('cronremotepassword', get_string('cronremotepassword', 'admin'), get_string('configcronremotepassword', 'admin'), '', PARAM_RAW));
+
 $ADMIN->add('security', $temp);
 
 

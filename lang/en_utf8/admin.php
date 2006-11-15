@@ -130,6 +130,10 @@ $string['configprotectusernames'] = 'By default forget_password.php does not dis
 $string['configproxyhost'] = 'If this <b>server</b> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname and port here.  Otherwise leave it blank.';
 $string['configproxyport'] = 'If this server needs to use a proxy computer, then provide the proxy port here.';
 $string['configquarantinedir'] = 'If you want clam AV to move infected files to a quarantine directory, enter it here. It must be writable by the webserver.  If you leave this blank, or if you enter a directory that doesn\'t exit or isn\'t writable, infected files will be deleted.  Do not include a trailing slash.';
+$string['configcronclionly'] = 'If this is set, then the cron script can only be run from the commandline instead of via the web.  This overrides the cron password setting below.';
+$string['configcronremotepassword'] = 'This means that the cron.php script cannot be run from a web browser without supplying the password using the following form of URL:<pre>
+    http://site.example.com/admin.cron.php?password=opensesame
+</pre>If this is left empty, no password is required.';
 $string['configrequestedstudentname'] = 'Word for student used in requested courses';
 $string['configrequestedstudentsname'] = 'Word for students used in requested courses';
 $string['configrequestedteachername'] = 'Word for teacher used in requested courses';
@@ -180,6 +184,10 @@ $string['courseoverview'] = 'Course overview';
 $string['courserequests'] = 'Course Requests';
 $string['courses'] = 'Courses';
 $string['coursesperpage'] = 'Courses per page';
+$string['cronclionly'] = 'Cron execution via command line only';
+$string['cronerrorclionly'] = 'Sorry, internet access to this page has been disabled by the administrator.';
+$string['cronerrorpassword'] = 'Sorry, you have not provided a valid password to access this page';
+$string['cronremotepassword'] = 'Cron password for remote access';
 $string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours.';
 $string['datarootsecuritywarning'] = 'Your site configuration might not be secure. Please make sure that your dataroot directory ($a) is not directly accessible via web.';
 $string['dbmigrate'] = 'Moodle Database Migration';

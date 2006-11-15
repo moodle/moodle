@@ -29,6 +29,23 @@
     require_once(dirname(__FILE__) . '/../config.php');
     require_once($CFG->libdir.'/adminlib.php');
 
+    if (isset($_SERVER['REMOTE_ADDR'])) { // if the script is accessed via the web.
+        if (!empty($CFG->cronclionly)) { 
+            // This script can only be run via the cli.
+            print_error('cronerrorclionly', 'admin');
+            exit;
+        }
+        // This script is being called via the web, so check the password if there is one.
+        if (!empty($CFG->cronremotepassword)) {
+            $pass = optional_param('password', '', PARAM_RAW);
+            if($pass != $CFG->cronremotepassword) {
+                // wrong password.
+                print_error('cronerrorpassword', 'admin'); 
+                exit;
+            }
+        }
+    }
+
     if (!$alreadyadmin = has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         unset($_SESSION['USER']);
         unset($USER);
