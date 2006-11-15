@@ -861,7 +861,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
             $replacement[] = '';
         }
         $patterns[]='/\#\#More\#\#/i';
-        $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'"><img src="'.$CFG->pixpath.'/i/search.gif" height="11" width="11" border="0" alt="'.get_string('more').'" /></a>';
+        $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'"><img src="'.$CFG->pixpath.'/i/search.gif" height="11" width="11" border="0" alt="'.get_string('more', 'data').'" /></a>';
 
         $patterns[]='/\#\#MoreURL\#\#/i';
         $replacement[] = $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id;
