@@ -245,11 +245,6 @@ class block_base {
                 // The full treatment, please. Include the title text.
                 print_side_block($this->_title_html(), $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes(), $this->title);
             }
-            
-            //make a record of the block for the ajax course format to use
-            if (!empty($COURSE->javascriptportal)) {
-                $COURSE->javascriptportal->block_add('inst'.$this->instance->id,!$this->instance->visible);    
-            }
         }
     }
 
@@ -705,11 +700,6 @@ class block_list extends block_base {
                 // The full treatment, please. Include the title text.
                 print_side_block($this->_title_html(), '', $this->content->items, $this->content->icons, 
                                  $this->content->footer, $this->html_attributes(), $this->title);
-            }
-            
-            //make a record of the block for the ajax course format to use
-            if (!empty($COURSE->javascriptportal)) {
-                $COURSE->javascriptportal->block_add('inst'.$this->instance->id,!$this->instance->visible);    
             }
         }
     }
