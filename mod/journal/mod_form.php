@@ -4,7 +4,7 @@ class journal_mod_form extends moodleform_mod {
 
 	function definition() {
 
-		global $CFG, $COURSE;
+		global $COURSE;
 		$mform    =& $this->_form;
 		$renderer =& $mform->defaultRenderer();
 

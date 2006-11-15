@@ -35,7 +35,6 @@ class forum_post_form extends moodleform {
 		$mform->addRule('message', get_string('required'), 'required', null, 'client');
 
         $mform->addElement('format', 'format', get_string('format'));
-        $mform->setHelpButton('format', array('textformat', get_string('helpformatting')));
 
 
 		if (isset($forum->id) && forum_is_forcesubscribed($forum->id)) {
