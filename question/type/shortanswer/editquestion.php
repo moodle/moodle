@@ -5,7 +5,7 @@
         $options->usecase = 0;
     }
     if (!empty($options->answers)) {
-        $answersraw = get_records_list("question_answers", "id", $options->answers);
+        $answersraw = get_records_list("question_answers", "id", $options->answers, 'id ASC');
     }
 
     $answers = array();
