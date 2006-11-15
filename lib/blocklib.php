@@ -269,7 +269,7 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
     $isediting = $page->user_is_editing();
 
     foreach($pageblocks[$position] as $instance) {
-
+        
         // $instance may have ->rec and ->obj
         // cached from when we walked $pageblocks
         // in blocks_have_content()
@@ -323,17 +323,21 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
             }
         } else {
             global $COURSE;
-            if(!empty($COURSE->javascriptportal))
-                 $COURSE->javascriptportal->currentblocksection = $position;            
+            if(!empty($COURSE->javascriptportal)) {
+                 $COURSE->javascriptportal->currentblocksection = $position;
+            }
             $obj->_print_block();
-            
         }
-    }
+        if (!empty($COURSE->javascriptportal)
+                    && (empty($instance->pinned) || !$instance->pinned)) {
+            $COURSE->javascriptportal->block_add('inst'.$instance->id, !$instance->visible);    
+        }
+    } // End foreach
+
 
     if ($page->blocks_default_position() == $position && $page->user_is_editing()) {
         blocks_print_adminblock($page, $pageblocks);
     }
-
 }
 
 // This iterates over an array of blocks and calculates the preferred width
@@ -707,19 +711,22 @@ function blocks_execute_repositioning(&$instance, $newpos, $newweight, $pinned=f
     global $CFG;
 
     // If it's staying where it is, don't do anything, unless overridden
-    if(($newpos == $instance->position)&& $checkPos) {
+    if (($newpos == $instance->position) && $checkPos) {
         return;
     }
 
     // Close the weight gap we 'll leave behind
     if (!empty($pinned)) {
-        $sql = 'UPDATE '. $CFG->prefix .'block_instance SET weight = weight - 1 WHERE pagetype = \''. $instance->pagetype.
-                      '\' AND position = \'' .$instance->position.
-            '\' AND weight > '. $instance->weight;
+        $sql = 'UPDATE '. $CFG->prefix .'block_instance SET weight = weight - 1 '.
+                        'WHERE pagetype = \''. $instance->pagetype.
+                        '\' AND position = \'' .$instance->position.
+                        '\' AND weight > '. $instance->weight;
     } else {
-        $sql = 'UPDATE '. $CFG->prefix .'block_instance SET weight = weight - 1 WHERE pagetype = \''. $instance->pagetype.
-                      '\' AND pageid = '. $instance->pageid .' AND position = \'' .$instance->position.
-            '\' AND weight > '. $instance->weight;
+        $sql = 'UPDATE '. $CFG->prefix .'block_instance SET weight = weight - 1 '.
+                        'WHERE pagetype = \''. $instance->pagetype.
+                        '\' AND pageid = '. $instance->pageid .
+                        ' AND position = \'' .$instance->position.
+                        '\' AND weight > '. $instance->weight;
     }
     execute_sql($sql,false);
 
@@ -737,33 +744,42 @@ function blocks_execute_repositioning(&$instance, $newpos, $newweight, $pinned=f
 function blocks_execute_repositioning_atomic(&$instance, $newpos, $newweight, $pinned=false){    
     global $CFG;
     
-    if($instance->weight == $newweight)
+    if ($instance->weight == $newweight) {
         return false;
+    }
 
     //make room for block insert
     if (!empty($pinned)) {
-        $sql = 'UPDATE '. $CFG->prefix .'block_instance SET weight = weight + 1 WHERE pagetype = \''. $instance->pagetype.
-                      '\' AND position = \'' .$newpos.
-            '\' AND weight >= '. $newweight;
+        $sql = 'UPDATE '. $CFG->prefix .'block_instance SET weight = weight + 1 '.
+                        'WHERE pagetype = \''. $instance->pagetype.
+                        '\' AND position = \'' .$newpos.
+                        '\' AND weight >= '. $newweight;
     } else {
-        $sql = 'UPDATE '. $CFG->prefix .'block_instance SET weight = weight + 1 WHERE pagetype = \''. $instance->pagetype.
-                      '\' AND pageid = '. $instance->pageid .' AND position = \'' .$newpos.
-            '\' AND weight >= '. $newweight;
+        $sql = 'UPDATE '. $CFG->prefix .'block_instance SET weight = weight + 1 '.
+                        'WHERE pagetype = \''. $instance->pagetype.
+                        '\' AND pageid = '. $instance->pageid.
+                        ' AND position = \'' .$newpos.
+                        '\' AND weight >= '. $newweight;
     }
     execute_sql($sql,false);
     
     //adjusts the wieghts for changes in the weight list
-    if($newweight < $instance->weight){
+    if ($newweight < $instance->weight) {
         $instance->weight+=2;
-    }else{
+    } else {
         $newweight--;
     }
-
 
     //reposition blocks
     blocks_execute_repositioning($instance,$newpos,$newweight,$pinned,false);
 }
 
+
+/**
+ * Returns an array consisting of 2 arrays:
+ * 1) Array of pinned blocks for position BLOCK_POS_LEFT
+ * 2) Array of pinned blocks for position BLOCK_POS_RIGHT
+ */
 function blocks_get_pinned($page) {
     
     $visible = true;
@@ -774,7 +790,8 @@ function blocks_get_pinned($page) {
         }
     }
     
-    $blocks = get_records_select('block_pinned', 'pagetype = \''. $page->get_type() .'\''.(($visible) ? 'AND visible = 1' : ''), 'position, weight');
+    $blocks = get_records_select('block_pinned', 'pagetype = \''. $page->get_type() .
+                    '\''.(($visible) ? 'AND visible = 1' : ''), 'position, weight');
 
     $positions = $page->blocks_get_positions();
     $arr = array();
@@ -798,6 +815,11 @@ function blocks_get_pinned($page) {
 }
 
 
+/**
+ * Similar to blocks_get_by_page(), except that, the array returned includes
+ * pinned blocks as well. Pinned blocks are always appended before normal
+ * block instances.
+ */
 function blocks_get_by_page_pinned($page) {
     $pinned = blocks_get_pinned($page);
     $user = blocks_get_by_page($page);
@@ -823,8 +845,13 @@ function blocks_get_by_page_pinned($page) {
     return $pinned;
 }
 
+
+/**
+ * Returns an array of blocks for the page. Pinned blocks are excluded.
+ */
 function blocks_get_by_page($page) {
-    $blocks = get_records_select('block_instance', "pageid = '". $page->get_id() ."' AND pagetype = '". $page->get_type() ."'", 'position, weight');
+    $blocks = get_records_select('block_instance', "pageid = '". $page->get_id() .
+                "' AND pagetype = '". $page->get_type() ."'", 'position, weight');
 
     $positions = $page->blocks_get_positions();
     $arr = array();
@@ -839,9 +866,9 @@ function blocks_get_by_page($page) {
     foreach($blocks as $block) {
         $arr[$block->position][$block->weight] = $block;
     }
-
-    return $arr;    
+    return $arr;
 }
+
 
 //This function prints the block to admin blocks as necessary
 function blocks_print_adminblock(&$page, &$pageblocks) {
