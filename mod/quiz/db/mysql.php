@@ -5,45 +5,47 @@ function quiz_upgrade($oldversion) {
 // older versions to match current functionality
 
     global $CFG, $QTYPES, $db;
+    $success = true;
+
     require_once("$CFG->dirroot/mod/quiz/locallib.php");
 
-    if ($oldversion < 2002101800) {
-        execute_sql(" ALTER TABLE `quiz_attempts` ".
+    if ($success && $oldversion < 2002101800) {
+        $success = $success && execute_sql(" ALTER TABLE `quiz_attempts` ".
                     " ADD `timestart` INT(10) UNSIGNED DEFAULT '0' NOT NULL AFTER `sumgrades` , ".
                     " ADD `timefinish` INT(10) UNSIGNED DEFAULT '0' NOT NULL AFTER `timestart` ");
-        execute_sql(" UPDATE `quiz_attempts` SET timestart = timemodified ");
-        execute_sql(" UPDATE `quiz_attempts` SET timefinish = timemodified ");
+        $success = $success && execute_sql(" UPDATE `quiz_attempts` SET timestart = timemodified ");
+        $success = $success && execute_sql(" UPDATE `quiz_attempts` SET timefinish = timemodified ");
     }
-    if ($oldversion < 2002102101) {
-        execute_sql(" DELETE FROM log_display WHERE module = 'quiz' ");
-        execute_sql(" INSERT INTO log_display (module, action, mtable, field) VALUES ('quiz', 'view', 'quiz', 'name') ");
-        execute_sql(" INSERT INTO log_display (module, action, mtable, field) VALUES ('quiz', 'report', 'quiz', 'name') ");
-        execute_sql(" INSERT INTO log_display (module, action, mtable, field) VALUES ('quiz', 'attempt', 'quiz', 'name') ");
-        execute_sql(" INSERT INTO log_display (module, action, mtable, field) VALUES ('quiz', 'submit', 'quiz', 'name') ");
+    if ($success && $oldversion < 2002102101) {
+        $success = $success && execute_sql(" DELETE FROM log_display WHERE module = 'quiz' ");
+        $success = $success && execute_sql(" INSERT INTO log_display (module, action, mtable, field) VALUES ('quiz', 'view', 'quiz', 'name') ");
+        $success = $success && execute_sql(" INSERT INTO log_display (module, action, mtable, field) VALUES ('quiz', 'report', 'quiz', 'name') ");
+        $success = $success && execute_sql(" INSERT INTO log_display (module, action, mtable, field) VALUES ('quiz', 'attempt', 'quiz', 'name') ");
+        $success = $success && execute_sql(" INSERT INTO log_display (module, action, mtable, field) VALUES ('quiz', 'submit', 'quiz', 'name') ");
     }
-    if ($oldversion < 2002102600) {
-        execute_sql(" ALTER TABLE `quiz_answers` CHANGE `feedback` `feedback` TEXT NOT NULL ");
+    if ($success && $oldversion < 2002102600) {
+        $success = $success && execute_sql(" ALTER TABLE `quiz_answers` CHANGE `feedback` `feedback` TEXT NOT NULL ");
     }
 
-    if ($oldversion < 2002122300) {
-        execute_sql("ALTER TABLE `quiz_grades` CHANGE `user` `userid` INT(10) UNSIGNED DEFAULT '0' NOT NULL ");
-        execute_sql("ALTER TABLE `quiz_attempts` CHANGE `user` `userid` INT(10) UNSIGNED DEFAULT '0' NOT NULL ");
+    if ($success && $oldversion < 2002122300) {
+        $success = $success && execute_sql("ALTER TABLE `quiz_grades` CHANGE `user` `userid` INT(10) UNSIGNED DEFAULT '0' NOT NULL ");
+        $success = $success && execute_sql("ALTER TABLE `quiz_attempts` CHANGE `user` `userid` INT(10) UNSIGNED DEFAULT '0' NOT NULL ");
     }
 
     // prefixes required from here on, or use table_column()
 
-    if ($oldversion < 2003010100) {
-        execute_sql(" ALTER TABLE {$CFG->prefix}quiz ADD review TINYINT(4) UNSIGNED DEFAULT '0' NOT NULL AFTER `grademethod` ");
+    if ($success && $oldversion < 2003010100) {
+        $success = $success && execute_sql(" ALTER TABLE {$CFG->prefix}quiz ADD review TINYINT(4) UNSIGNED DEFAULT '0' NOT NULL AFTER `grademethod` ");
     }
 
-    if ($oldversion < 2003010301) {
-        table_column("quiz_truefalse", "true", "trueanswer", "INTEGER", "10", "UNSIGNED", "0", "NOT NULL", "");
-        table_column("quiz_truefalse", "false", "falseanswer", "INTEGER", "10", "UNSIGNED", "0", "NOT NULL", "");
-        table_column("quiz_questions", "type", "qtype", "INTEGER", "10", "UNSIGNED", "0", "NOT NULL", "");
+    if ($success && $oldversion < 2003010301) {
+        $success = $success && table_column("quiz_truefalse", "true", "trueanswer", "INTEGER", "10", "UNSIGNED", "0", "NOT NULL", "");
+        $success = $success && table_column("quiz_truefalse", "false", "falseanswer", "INTEGER", "10", "UNSIGNED", "0", "NOT NULL", "");
+        $success = $success && table_column("quiz_questions", "type", "qtype", "INTEGER", "10", "UNSIGNED", "0", "NOT NULL", "");
     }
 
-    if ($oldversion < 2003022303) {
-        modify_database ("", "CREATE TABLE `prefix_quiz_randommatch` (
+    if ($success && $oldversion < 2003022303) {
+        $success = $success && modify_database ("", "CREATE TABLE `prefix_quiz_randommatch` (
                              `id` int(10) unsigned NOT NULL auto_increment,
                              `question` int(10) unsigned NOT NULL default '0',
                              `choose` INT UNSIGNED DEFAULT '4' NOT NULL,
@@ -51,26 +53,26 @@ function quiz_upgrade($oldversion) {
                           );");
     }
 
-    if ($oldversion < 2003030303) {
-        table_column("quiz_questions", "", "defaultgrade", "INTEGER", "6", "UNSIGNED", "1", "NOT NULL", "image");
+    if ($success && $oldversion < 2003030303) {
+        $success = $success && table_column("quiz_questions", "", "defaultgrade", "INTEGER", "6", "UNSIGNED", "1", "NOT NULL", "image");
     }
 
-    if ($oldversion < 2003032601) {
-        execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_answers` ADD INDEX(question) ");
-        execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_attempts` ADD INDEX(quiz) ");
-        execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_attempts` ADD INDEX(userid) ");
-        execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_grades` ADD INDEX(quiz) ");
-        execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_grades` ADD INDEX(userid) ");
-        execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_question_grades` ADD INDEX(quiz) ");
-        execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_question_grades` ADD INDEX(question) ");
-        execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_randommatch` ADD INDEX(question) ");
-        execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_responses` ADD INDEX(attempt) ");
-        execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_responses` ADD INDEX(question) ");
+    if ($success && $oldversion < 2003032601) {
+        $success = $success && execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_answers` ADD INDEX(question) ");
+        $success = $success && execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_attempts` ADD INDEX(quiz) ");
+        $success = $success && execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_attempts` ADD INDEX(userid) ");
+        $success = $success && execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_grades` ADD INDEX(quiz) ");
+        $success = $success && execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_grades` ADD INDEX(userid) ");
+        $success = $success && execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_question_grades` ADD INDEX(quiz) ");
+        $success = $success && execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_question_grades` ADD INDEX(question) ");
+        $success = $success && execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_randommatch` ADD INDEX(question) ");
+        $success = $success && execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_responses` ADD INDEX(attempt) ");
+        $success = $success && execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_responses` ADD INDEX(question) ");
     }
 
-    if ($oldversion < 2003033100) {
-        modify_database ("", "ALTER TABLE prefix_quiz_randommatch RENAME prefix_quiz_randomsamatch ");
-        modify_database ("", "CREATE TABLE `prefix_quiz_match` (
+    if ($success && $oldversion < 2003033100) {
+        $success = $success && modify_database ("", "ALTER TABLE prefix_quiz_randommatch RENAME prefix_quiz_randomsamatch ");
+        $success = $success && modify_database ("", "CREATE TABLE `prefix_quiz_match` (
                              `id` int(10) unsigned NOT NULL auto_increment,
                              `question` int(10) unsigned NOT NULL default '0',
                              `subquestions` varchar(255) NOT NULL default '',
@@ -78,7 +80,7 @@ function quiz_upgrade($oldversion) {
                              KEY `question` (`question`)
                            );");
 
-        modify_database ("", "CREATE TABLE `prefix_quiz_match_sub` (
+        $success = $success && modify_database ("", "CREATE TABLE `prefix_quiz_match_sub` (
                              `id` int(10) unsigned NOT NULL auto_increment,
                              `question` int(10) unsigned NOT NULL default '0',
                              `questiontext` text NOT NULL,
@@ -88,14 +90,14 @@ function quiz_upgrade($oldversion) {
                            );");
     }
 
-    if ($oldversion < 2003040901) {
-        table_column("quiz", "", "shufflequestions", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "review");
-        table_column("quiz", "", "shuffleanswers", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "shufflequestions");
+    if ($success && $oldversion < 2003040901) {
+        $success = $success && table_column("quiz", "", "shufflequestions", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "review");
+        $success = $success && table_column("quiz", "", "shuffleanswers", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "shufflequestions");
     }
 
-    if ($oldversion < 2003071001) {
+    if ($success && $oldversion < 2003071001) {
 
-        modify_database ("", " CREATE TABLE `prefix_quiz_numerical` (
+        $success = $success && modify_database ("", " CREATE TABLE `prefix_quiz_numerical` (
                                `id` int(10) unsigned NOT NULL auto_increment,
                                `question` int(10) unsigned NOT NULL default '0',
                                `answer` int(10) unsigned NOT NULL default '0',
@@ -106,12 +108,12 @@ function quiz_upgrade($oldversion) {
                              ) TYPE=MyISAM COMMENT='Options for numerical questions'; ");
     }
 
-    if ($oldversion < 2003072400) {
-        execute_sql(" INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('quiz', 'review', 'quiz', 'name') ");
+    if ($success && $oldversion < 2003072400) {
+        $success = $success && execute_sql(" INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('quiz', 'review', 'quiz', 'name') ");
     }
 
-    if ($oldversion < 2003072901) {
-        modify_database ("", " CREATE TABLE `prefix_quiz_multianswers` (
+    if ($success && $oldversion < 2003072901) {
+        $success = $success && modify_database ("", " CREATE TABLE `prefix_quiz_multianswers` (
                                `id` int(10) unsigned NOT NULL auto_increment,
                                 `question` int(10) unsigned NOT NULL default '0',
                                 `answers` varchar(255) NOT NULL default '',
@@ -123,44 +125,46 @@ function quiz_upgrade($oldversion) {
                               ) TYPE=MyISAM COMMENT='Options for multianswer questions'; ");
     }
 
-    if ($oldversion < 2003080301) {
-        execute_sql(" ALTER TABLE {$CFG->prefix}quiz ADD eachattemptbuildsonthelast TINYINT(4) DEFAULT '0' NOT NULL AFTER `attempts` ");
+    if ($success && $oldversion < 2003080301) {
+        $success = $success && execute_sql(" ALTER TABLE {$CFG->prefix}quiz ADD eachattemptbuildsonthelast TINYINT(4) DEFAULT '0' NOT NULL AFTER `attempts` ");
     }
 
-    if ($oldversion < 2003080400) {
-        table_column("quiz", "eachattemptbuildsonthelast", "attemptonlast", "TINYINT", "4", "UNSIGNED", "0", "NOT NULL", "");
+    if ($success && $oldversion < 2003080400) {
+        $success = $success && table_column("quiz", "eachattemptbuildsonthelast", "attemptonlast", "TINYINT", "4", "UNSIGNED", "0", "NOT NULL", "");
     }
 
-    if ($oldversion < 2003082300) {
-        table_column("quiz_questions", "", "stamp", "varchar", "255", "", "", "not null", "qtype");
+    if ($success && $oldversion < 2003082300) {
+        $success = $success && table_column("quiz_questions", "", "stamp", "varchar", "255", "", "", "not null", "qtype");
     }
 
-    if ($oldversion < 2003082301) {
-        table_column("quiz_questions", "stamp", "stamp", "varchar", "255", "", "", "not null");
-        table_column("quiz_questions", "", "version", "integer", "10", "", "1", "not null", "stamp");
+    if ($success && $oldversion < 2003082301) {
+        $success = $success && table_column("quiz_questions", "stamp", "stamp", "varchar", "255", "", "", "not null");
+        $success = $success && table_column("quiz_questions", "", "version", "integer", "10", "", "1", "not null", "stamp");
         if ($questions = get_records("quiz_questions")) {
             foreach ($questions as $question) {
                 $stamp = make_unique_id_code();
-                if (!set_field("quiz_questions", "stamp", $stamp, "id", $question->id)) {
+                if (!($success = $success && set_field("quiz_questions", "stamp", $stamp, "id", $question->id))) {
                     notify("Error while adding stamp to question id = $question->id");
+                    break;
                 }
             }
         }
     }
 
-    if ($oldversion < 2003082700) {
-        table_column("quiz_categories", "", "stamp", "varchar", "255", "", "", "not null");
+    if ($success && $oldversion < 2003082700) {
+        $success = $success && table_column("quiz_categories", "", "stamp", "varchar", "255", "", "", "not null");
         if ($categories = get_records("quiz_categories")) {
             foreach ($categories as $category) {
                 $stamp = make_unique_id_code();
-                if (!set_field("quiz_categories", "stamp", $stamp, "id", $category->id)) {
+                if (!($success = $success && set_field("quiz_categories", "stamp", $stamp, "id", $category->id))) {
                     notify("Error while adding stamp to category id = $category->id");
+                    break;
                 }
             }
         }
     }
 
-    if ($oldversion < 2003111100) {
+    if ($success && $oldversion < 2003111100) {
         $duplicates = get_records_sql("SELECT stamp as id,count(*) as cuenta
                                        FROM {$CFG->prefix}quiz_questions
                                        GROUP BY stamp
@@ -173,7 +177,7 @@ function quiz_upgrade($oldversion) {
                 $add = 1;
                 foreach ($questions as $question) {
                     echo "Changing question id $question->id stamp to ".$duplicate->id.$add."<br />";
-                    set_field("quiz_questions","stamp",$duplicate->id.$add,"id",$question->id);
+                    $success = $success && set_field("quiz_questions","stamp",$duplicate->id.$add,"id",$question->id);
                     $add++;
                 }
             }
@@ -182,34 +186,34 @@ function quiz_upgrade($oldversion) {
         }
     }
 
-    if ($oldversion < 2004021300) {
-        table_column("quiz_questions", "", "questiontextformat", "integer", "2", "", "0", "not null", "questiontext");
+    if ($success && $oldversion < 2004021300) {
+        $success = $success && table_column("quiz_questions", "", "questiontextformat", "integer", "2", "", "0", "not null", "questiontext");
     }
 
-    if ($oldversion < 2004021900) {
-        modify_database("","INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'add', 'quiz', 'name');");
-        modify_database("","INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'update', 'quiz', 'name');");
+    if ($success && $oldversion < 2004021900) {
+        $success = $success && modify_database("","INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'add', 'quiz', 'name');");
+        $success = $success && modify_database("","INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'update', 'quiz', 'name');");
     }
 
-    if ($oldversion < 2004051700) {
+    if ($success && $oldversion < 2004051700) {
         include_once("$CFG->dirroot/mod/quiz/lib.php");
-        quiz_refresh_events();
+        $success = $success && quiz_refresh_events();
     }
 
-    if ($oldversion < 2004060200) {
-        execute_sql(" ALTER TABLE {$CFG->prefix}quiz ADD timelimit INT(2) UNSIGNED DEFAULT '0' NOT NULL ");
+    if ($success && $oldversion < 2004060200) {
+        $success = $success && execute_sql(" ALTER TABLE {$CFG->prefix}quiz ADD timelimit INT(2) UNSIGNED DEFAULT '0' NOT NULL ");
     }
 
-    if ($oldversion < 2004070700) {
-        table_column("quiz", "", "password", "varchar", "255", "", "", "not null", "");
-        table_column("quiz", "", "subnet", "varchar", "255", "", "", "not null", "");
+    if ($success && $oldversion < 2004070700) {
+        $success = $success && table_column("quiz", "", "password", "varchar", "255", "", "", "not null", "");
+        $success = $success && table_column("quiz", "", "subnet", "varchar", "255", "", "", "not null", "");
     }
 
-    if ($oldversion < 2004073001) {
+    if ($success && $oldversion < 2004073001) {
         // Six new tables:
 
         // One table for handling units for numerical questions
-        modify_database ("", " CREATE TABLE `prefix_quiz_numerical_units` (
+        $success = $success && modify_database ("", " CREATE TABLE `prefix_quiz_numerical_units` (
                                `id` int(10) unsigned NOT NULL auto_increment,
                                `question` int(10) unsigned NOT NULL default '0',
                                `multiplier` decimal(40,20) NOT NULL default '1.00000000000000000000',
@@ -219,7 +223,7 @@ function quiz_upgrade($oldversion) {
 
         // Four tables for handling distribution and storage of
         // individual data for dataset dependent question types
-        modify_database ("", " CREATE TABLE `prefix_quiz_attemptonlast_datasets` (
+        $success = $success && modify_database ("", " CREATE TABLE `prefix_quiz_attemptonlast_datasets` (
                                `id` int(10) unsigned NOT NULL auto_increment,
                                `category` int(10) unsigned NOT NULL default '0',
                                `userid` int(10) unsigned NOT NULL default '0',
@@ -227,7 +231,7 @@ function quiz_upgrade($oldversion) {
                                PRIMARY KEY  (`id`),
                                UNIQUE KEY `category` (`category`,`userid`)
             ) TYPE=MyISAM COMMENT='Dataset number for attemptonlast attempts per user'; ");
-        modify_database ("", " CREATE TABLE `prefix_quiz_dataset_definitions` (
+        $success = $success && modify_database ("", " CREATE TABLE `prefix_quiz_dataset_definitions` (
                                `id` int(10) unsigned NOT NULL auto_increment,
                                `category` int(10) unsigned NOT NULL default '0',
                                `name` varchar(255) NOT NULL default '',
@@ -236,7 +240,7 @@ function quiz_upgrade($oldversion) {
                                `itemcount` int(10) unsigned NOT NULL default '0',
                                PRIMARY KEY  (`id`)
             ) TYPE=MyISAM COMMENT='Organises and stores properties for dataset items'; ");
-        modify_database ("", " CREATE TABLE `prefix_quiz_dataset_items` (
+        $success = $success && modify_database ("", " CREATE TABLE `prefix_quiz_dataset_items` (
                                `id` int(10) unsigned NOT NULL auto_increment,
                                `definition` int(10) unsigned NOT NULL default '0',
                                `number` int(10) unsigned NOT NULL default '0',
@@ -244,7 +248,7 @@ function quiz_upgrade($oldversion) {
                                PRIMARY KEY  (`id`),
                                KEY `definition` (`definition`)
                              ) TYPE=MyISAM COMMENT='Individual dataset items'; ");
-        modify_database ("", " CREATE TABLE `prefix_quiz_question_datasets` (
+        $success = $success && modify_database ("", " CREATE TABLE `prefix_quiz_question_datasets` (
                                `id` int(10) unsigned NOT NULL auto_increment,
                                `question` int(10) unsigned NOT NULL default '0',
                                `datasetdefinition` int(10) unsigned NOT NULL default '0',
@@ -254,7 +258,7 @@ function quiz_upgrade($oldversion) {
 
         // One table for new question type calculated
         //  - the first dataset dependent question type
-        modify_database ("", " CREATE TABLE `prefix_quiz_calculated` (
+        $success = $success && modify_database ("", " CREATE TABLE `prefix_quiz_calculated` (
                                `id` int(10) unsigned NOT NULL auto_increment,
                                `question` int(10) unsigned NOT NULL default '0',
                                `answer` int(10) unsigned NOT NULL default '0',
@@ -266,57 +270,57 @@ function quiz_upgrade($oldversion) {
                 ) TYPE=MyISAM COMMENT='Options for questions of type calculated'; ");
     }
 
-    if ($oldversion < 2004111400) {
-        table_column("quiz_responses", "answer", "answer", "text", "", "", "", "not null");
+    if ($success && $oldversion < 2004111400) {
+        $success = $success && table_column("quiz_responses", "answer", "answer", "text", "", "", "", "not null");
     }
 
-    if ($oldversion < 2004111700) {
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz DROP INDEX course;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_calculated DROP INDEX answer;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_categories DROP INDEX course;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_dataset_definitions DROP INDEX category;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_numerical DROP INDEX question;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_numerical_units DROP INDEX question;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_questions DROP INDEX category;",false);
+    if ($success && $oldversion < 2004111700) {
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz DROP INDEX course;",false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_calculated DROP INDEX answer;",false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_categories DROP INDEX course;",false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_dataset_definitions DROP INDEX category;",false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_numerical DROP INDEX question;",false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_numerical_units DROP INDEX question;",false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_questions DROP INDEX category;",false);
 
-        modify_database('','ALTER TABLE prefix_quiz ADD INDEX course (course);');
-        modify_database('','ALTER TABLE prefix_quiz_calculated ADD INDEX answer (answer);');
-        modify_database('','ALTER TABLE prefix_quiz_categories ADD INDEX course (course);');
-        modify_database('','ALTER TABLE prefix_quiz_dataset_definitions ADD INDEX category (category);');
-        modify_database('','ALTER TABLE prefix_quiz_numerical ADD INDEX question (question);');
-        modify_database('','ALTER TABLE prefix_quiz_numerical_units ADD INDEX question (question);');
-        modify_database('','ALTER TABLE prefix_quiz_questions ADD INDEX category (category);');
+        $success = $success && modify_database('','ALTER TABLE prefix_quiz ADD INDEX course (course);');
+        $success = $success && modify_database('','ALTER TABLE prefix_quiz_calculated ADD INDEX answer (answer);');
+        $success = $success && modify_database('','ALTER TABLE prefix_quiz_categories ADD INDEX course (course);');
+        $success = $success && modify_database('','ALTER TABLE prefix_quiz_dataset_definitions ADD INDEX category (category);');
+        $success = $success && modify_database('','ALTER TABLE prefix_quiz_numerical ADD INDEX question (question);');
+        $success = $success && modify_database('','ALTER TABLE prefix_quiz_numerical_units ADD INDEX question (question);');
+        $success = $success && modify_database('','ALTER TABLE prefix_quiz_questions ADD INDEX category (category);');
     }
 
-    if ($oldversion < 2004120501) {
-        table_column("quiz_calculated", "", "correctanswerformat", "integer", "10", "", "2", "not null", "correctanswerlength");
+    if ($success && $oldversion < 2004120501) {
+        $success = $success && table_column("quiz_calculated", "", "correctanswerformat", "integer", "10", "", "2", "not null", "correctanswerlength");
     }
 
-    if ($oldversion < 2004121400) {  // New field to determine popup window behaviour
-        table_column("quiz", "", "popup", "integer", "4", "", "0", "not null", "subnet");
+    if ($success && $oldversion < 2004121400) {  // New field to determine popup window behaviour
+        $success = $success && table_column("quiz", "", "popup", "integer", "4", "", "0", "not null", "subnet");
     }
 
-    if ($oldversion < 2005010201) {
-        table_column('quiz_categories', '', 'parent');
-        table_column('quiz_categories', '', 'sortorder', 'integer', '10', '', '999');
+    if ($success && $oldversion < 2005010201) {
+        $success = $success && table_column('quiz_categories', '', 'parent');
+        $success = $success && table_column('quiz_categories', '', 'sortorder', 'integer', '10', '', '999');
     }
 
-    if ($oldversion < 2005010300) {
-        table_column("quiz", "", "questionsperpage", "integer", "10", "", "0", "not null", "review");
+    if ($success && $oldversion < 2005010300) {
+        $success = $success && table_column("quiz", "", "questionsperpage", "integer", "10", "", "0", "not null", "review");
     }
 
-    if ($oldversion < 2005012700) {
-        table_column('quiz_grades', 'grade', 'grade', 'real', 2, '');
+    if ($success && $oldversion < 2005012700) {
+        $success = $success && table_column('quiz_grades', 'grade', 'grade', 'real', 2, '');
     }
 
-    if ($oldversion < 2005021400) {
-        table_column("quiz", "", "decimalpoints", "integer", "4", "", "2", "not null", "grademethod");
+    if ($success && $oldversion < 2005021400) {
+        $success = $success && table_column("quiz", "", "decimalpoints", "integer", "4", "", "2", "not null", "grademethod");
     }
 
-    if($oldversion < 2005022800) {
-        table_column('quiz_questions', '', 'hidden', 'integer', '1', 'unsigned', '0', 'not null', 'version');
-        table_column('quiz_responses', '', 'originalquestion', 'integer', '10', 'unsigned', '0', 'not null', 'question');
-        modify_database ('', "CREATE TABLE `prefix_quiz_question_version` (
+    if($success && $oldversion < 2005022800) {
+        $success = $success && table_column('quiz_questions', '', 'hidden', 'integer', '1', 'unsigned', '0', 'not null', 'version');
+        $success = $success && table_column('quiz_responses', '', 'originalquestion', 'integer', '10', 'unsigned', '0', 'not null', 'question');
+        $success = $success && modify_database ('', "CREATE TABLE `prefix_quiz_question_version` (
                               `id` int(10) unsigned NOT NULL auto_increment,
                               `quiz` int(10) unsigned NOT NULL default '0',
                               `oldquestion` int(10) unsigned NOT NULL default '0',
@@ -327,15 +331,15 @@ function quiz_upgrade($oldversion) {
                             ) TYPE=MyISAM COMMENT='The mapping between old and new versions of a question';");
     }
 
-    if ($oldversion < 2005032000) {
-        execute_sql(" INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('quiz', 'editquestions', 'quiz', 'name') ");
+    if ($success && $oldversion < 2005032000) {
+        $success = $success && execute_sql(" INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('quiz', 'editquestions', 'quiz', 'name') ");
     }
 
-    if ($oldversion < 2005032300) {
-        modify_database ('', 'ALTER TABLE prefix_quiz_question_version RENAME prefix_quiz_question_versions;');
+    if ($success && $oldversion < 2005032300) {
+        $success = $success && modify_database ('', 'ALTER TABLE prefix_quiz_question_version RENAME prefix_quiz_question_versions;');
     }
 
-    if ($oldversion < 2005041200) { // replace wiki-like with markdown
+    if ($success && $oldversion < 2005041200) { // replace wiki-like with markdown
         include_once( "$CFG->dirroot/lib/wiki_to_markdown.php" );
         $wtm = new WikiToMarkdown();
         $sql = "select course from {$CFG->prefix}quiz_categories c, {$CFG->prefix}quiz_questions q ";
@@ -344,35 +348,35 @@ function quiz_upgrade($oldversion) {
         $wtm->update( 'quiz_questions', 'questiontext', 'questiontextformat', $sql );
     }
 
-    if ($oldversion < 2005041304) {
+    if ($success && $oldversion < 2005041304) {
         // make random questions hidden
-        modify_database('', "UPDATE prefix_quiz_questions SET hidden = '1' WHERE qtype ='".RANDOM."';");
+        $success = $success && modify_database('', "UPDATE prefix_quiz_questions SET hidden = '1' WHERE qtype ='".RANDOM."';");
     }
 
-    if ($oldversion < 2005042002) {
-        table_column('quiz_answers', 'answer', 'answer', 'text', '', '', '', 'not null', '');
+    if ($success && $oldversion < 2005042002) {
+        $success = $success && table_column('quiz_answers', 'answer', 'answer', 'text', '', '', '', 'not null', '');
     }
 
-    if ($oldversion < 2005042400) {
+    if ($success && $oldversion < 2005042400) {
 
     // Changes to quiz table
 
         // The bits of the optionflags field will hold various option flags
-        table_column('quiz', '', 'optionflags', 'integer', '10', 'unsigned', '0', 'not null', 'timeclose');
+        $success = $success && table_column('quiz', '', 'optionflags', 'integer', '10', 'unsigned', '0', 'not null', 'timeclose');
 
         // The penalty scheme
-        table_column('quiz', '', 'penaltyscheme', 'integer', '4', 'unsigned', '0', 'not null', 'optionflags');
+        $success = $success && table_column('quiz', '', 'penaltyscheme', 'integer', '4', 'unsigned', '0', 'not null', 'optionflags');
 
         // The review options are now all stored in the bits of the review field
-        table_column('quiz', 'review', 'review', 'integer', 10, 'unsigned', 0, 'not null', '');
+        $success = $success && table_column('quiz', 'review', 'review', 'integer', 10, 'unsigned', 0, 'not null', '');
 
     /// Changes to quiz_attempts table
 
         // The preview flag marks teacher previews
-        table_column('quiz_attempts', '', 'preview', 'tinyint', '2', 'unsigned', '0', 'not null', 'timemodified');
+        $success = $success && table_column('quiz_attempts', '', 'preview', 'tinyint', '2', 'unsigned', '0', 'not null', 'timemodified');
 
         // The layout is the list of questions with inserted page breaks.
-        table_column('quiz_attempts', '', 'layout', 'text', '', '', '', 'not null', 'timemodified');
+        $success = $success && table_column('quiz_attempts', '', 'layout', 'text', '', '', '', 'not null', 'timemodified');
         // For old quiz attempts we will set this to the repaginated question list from $quiz->questions
 
     /// The following updates of field values require a loop through all quizzes
@@ -388,14 +392,14 @@ function quiz_upgrade($oldversion) {
                 // repaginate
                 if ($quiz->questionsperpage) {
                     $quiz->questions = quiz_repaginate($quiz->questions, $quiz->questionsperpage);
-                    set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->id);
+                    $success = $success && set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->id);
                 }
-                set_field('quiz_attempts', 'layout', $quiz->questions, 'quiz', $quiz->id);
+                $success = $success && set_field('quiz_attempts', 'layout', $quiz->questions, 'quiz', $quiz->id);
 
                 // set preview flag
                 if ($teachers = get_course_teachers($quiz->course)) {
                     $teacherids = implode(',', array_keys($teachers));
-                    execute_sql("UPDATE {$CFG->prefix}quiz_attempts SET preview = 1 WHERE userid IN ($teacherids)");
+                    $success = $success && execute_sql("UPDATE {$CFG->prefix}quiz_attempts SET preview = 1 WHERE userid IN ($teacherids)");
                 }
 
                 // set review flags in quiz table
@@ -412,48 +416,48 @@ function quiz_upgrade($oldversion) {
                 if ($quiz->review & 2) {
                     $review += QUIZ_REVIEW_OPEN;
                 }
-                set_field('quiz', 'review', $review, 'id', $quiz->id);
+                $success = $success && set_field('quiz', 'review', $review, 'id', $quiz->id);
             }
             $db->debug = $olddebug;
         }
 
         // We can now drop the fields whose data has been moved to the review field
-        execute_sql(" ALTER TABLE `{$CFG->prefix}quiz` DROP feedback");
-        execute_sql(" ALTER TABLE `{$CFG->prefix}quiz` DROP correctanswers");
+        $success = $success && execute_sql(" ALTER TABLE `{$CFG->prefix}quiz` DROP feedback");
+        $success = $success && execute_sql(" ALTER TABLE `{$CFG->prefix}quiz` DROP correctanswers");
 
     /// Renaming tables
 
         // rename the quiz_question_grades table to quiz_question_instances
-        modify_database ('', 'ALTER TABLE prefix_quiz_question_grades RENAME prefix_quiz_question_instances;');
+        $success = $success && modify_database ('', 'ALTER TABLE prefix_quiz_question_grades RENAME prefix_quiz_question_instances;');
 
         // rename the quiz_responses table quiz_states
-        modify_database ('', 'ALTER TABLE prefix_quiz_responses RENAME prefix_quiz_states;');
+        $success = $success && modify_database ('', 'ALTER TABLE prefix_quiz_responses RENAME prefix_quiz_states;');
 
     /// add columns to quiz_states table
 
         // The sequence number of the state.
-        table_column('quiz_states', '', 'seq_number', 'integer', '6', 'unsigned', '0', 'not null', 'originalquestion');
+        $success = $success && table_column('quiz_states', '', 'seq_number', 'integer', '6', 'unsigned', '0', 'not null', 'originalquestion');
         // For existing states we leave this at 0 because in the old quiz code there was only one response allowed
 
         // The time the state was created.
-        table_column('quiz_states', '', 'timestamp', 'integer', '10', 'unsigned', '0', 'not null', 'answer');
+        $success = $success && table_column('quiz_states', '', 'timestamp', 'integer', '10', 'unsigned', '0', 'not null', 'answer');
         // For existing states we will below set this to the timemodified field of the attempt
 
         // The type of event that led to the creation of the state
-        table_column('quiz_states', '', 'event', 'integer', '4', 'unsigned', '0', 'not null', 'timestamp');
+        $success = $success && table_column('quiz_states', '', 'event', 'integer', '4', 'unsigned', '0', 'not null', 'timestamp');
 
         // The raw grade
-        table_column('quiz_states', '', 'raw_grade', 'varchar', '10', '', '', 'not null', 'grade');
+        $success = $success && table_column('quiz_states', '', 'raw_grade', 'varchar', '10', '', '', 'not null', 'grade');
         // For existing states (no penalties) this is equal to the grade
-        execute_sql("UPDATE {$CFG->prefix}quiz_states SET raw_grade = grade");
+        $success = $success && execute_sql("UPDATE {$CFG->prefix}quiz_states SET raw_grade = grade");
 
         // The penalty that the response attracted
-        table_column('quiz_states', '', 'penalty', 'varchar', '10', '', '0.0', 'not null', 'raw_grade');
+        $success = $success && table_column('quiz_states', '', 'penalty', 'varchar', '10', '', '0.0', 'not null', 'raw_grade');
         // For existing states this can stay at 0 because penalties did not exist previously.
 
     /// New table for pointers to newest and newest graded states
 
-        modify_database('', "CREATE TABLE `prefix_quiz_newest_states` (
+        $success = $success && modify_database('', "CREATE TABLE `prefix_quiz_newest_states` (
                              `id` int(10) unsigned NOT NULL auto_increment,
                              `attemptid` int(10) unsigned NOT NULL default '0',
                              `questionid` int(10) unsigned NOT NULL default '0',
@@ -479,9 +483,9 @@ function quiz_upgrade($oldversion) {
 
     /// Entries for the log_display table
 
-        modify_database('', " INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'preview', 'quiz', 'name');");
-        modify_database('', " INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'start attempt', 'quiz', 'name');");
-        modify_database('', " INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'close attempt', 'quiz', 'name');");
+        $success = $success && modify_database('', " INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'preview', 'quiz', 'name');");
+        $success = $success && modify_database('', " INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'start attempt', 'quiz', 'name');");
+        $success = $success && modify_database('', " INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'close attempt', 'quiz', 'name');");
 
     /// update the default settings in $CFG
         $review = (QUIZ_REVIEW_IMMEDIATELY & (QUIZ_REVIEW_RESPONSES + QUIZ_REVIEW_SCORES));
@@ -497,16 +501,16 @@ function quiz_upgrade($oldversion) {
         if (isset($CFG->quiz_review) and ($CFG->quiz_review & 2)) {
             $review += QUIZ_REVIEW_OPEN;
         }
-        set_config('quiz_review', $review);
+        $success = $success && set_config('quiz_review', $review);
 
     /// Use tolerance instead of min and max in numerical question type
-        table_column('quiz_numerical', '', 'tolerance', 'varchar', '255', '', '0.0', 'not null', 'answer');
-        execute_sql("UPDATE {$CFG->prefix}quiz_numerical SET tolerance = (max-min)/2");
-        modify_database('', 'ALTER TABLE `prefix_quiz_numerical` DROP `min`'); // Replaced by tolerance
-        modify_database('', 'ALTER TABLE `prefix_quiz_numerical` DROP `max`'); // Replaced by tolerance
+        $success = $success && table_column('quiz_numerical', '', 'tolerance', 'varchar', '255', '', '0.0', 'not null', 'answer');
+        $success = $success && execute_sql("UPDATE {$CFG->prefix}quiz_numerical SET tolerance = (max-min)/2");
+        $success = $success && modify_database('', 'ALTER TABLE `prefix_quiz_numerical` DROP `min`'); // Replaced by tolerance
+        $success = $success && modify_database('', 'ALTER TABLE `prefix_quiz_numerical` DROP `max`'); // Replaced by tolerance
 
     /// Tables for Remote Questions
-        modify_database ('', "CREATE TABLE `prefix_quiz_rqp` (
+        $success = $success && modify_database ('', "CREATE TABLE `prefix_quiz_rqp` (
                               `id` int(10) unsigned NOT NULL auto_increment,
                               `question` int(10) unsigned NOT NULL default '0',
                               `type` int(10) unsigned NOT NULL default '0',
@@ -518,7 +522,7 @@ function quiz_upgrade($oldversion) {
                               KEY `question` (`question`)
                               ) TYPE=MyISAM COMMENT='Options for RQP questions';");
 
-        modify_database ('', "CREATE TABLE `prefix_quiz_rqp_type` (
+        $success = $success && modify_database ('', "CREATE TABLE `prefix_quiz_rqp_type` (
                               `id` int(10) unsigned NOT NULL auto_increment,
                               `name` varchar(255) NOT NULL default '',
                               `rendering_server` varchar(255) NOT NULL default '',
@@ -528,7 +532,7 @@ function quiz_upgrade($oldversion) {
                               UNIQUE KEY `name` (`name`)
                               ) TYPE=MyISAM COMMENT='RQP question types and the servers to be used to process them';");
 
-        modify_database ('', "CREATE TABLE `prefix_quiz_rqp_states` (
+        $success = $success && modify_database ('', "CREATE TABLE `prefix_quiz_rqp_states` (
                               `id` int(10) unsigned NOT NULL auto_increment,
                               `stateid` int(10) unsigned NOT NULL default '0',
                               `responses` text NOT NULL default '',
@@ -538,21 +542,21 @@ function quiz_upgrade($oldversion) {
                               ) TYPE=MyISAM COMMENT='RQP question type specific state information';");
     }
 
-    if ($oldversion < 2005050300) {
+    if ($success && $oldversion < 2005050300) {
         // length of question determines question numbering. Currently all questions require one
         // question number except for DESCRIPTION questions.
-        table_column('quiz_questions', '', 'length', 'integer', '10', 'unsigned', '1', 'not null', 'qtype');
-        execute_sql("UPDATE {$CFG->prefix}quiz_questions SET length = 0 WHERE qtype = ".DESCRIPTION);
+        $success = $success && table_column('quiz_questions', '', 'length', 'integer', '10', 'unsigned', '1', 'not null', 'qtype');
+        $success = $success && execute_sql("UPDATE {$CFG->prefix}quiz_questions SET length = 0 WHERE qtype = ".DESCRIPTION);
     }
 
-    if ($oldversion < 2005050408) {
-        table_column('quiz_questions', '', 'penalty', 'float', '', '', '0.1', 'not null', 'defaultgrade');
-        table_column('quiz_newest_states', 'new', 'newest', 'integer', '10', 'unsigned', '0', 'not null');
+    if ($success && $oldversion < 2005050408) {
+        $success = $success && table_column('quiz_questions', '', 'penalty', 'float', '', '', '0.1', 'not null', 'defaultgrade');
+        $success = $success && table_column('quiz_newest_states', 'new', 'newest', 'integer', '10', 'unsigned', '0', 'not null');
     }
 
-    if ($oldversion < 2005051400) {
-        modify_database('', 'ALTER TABLE prefix_quiz_rqp_type RENAME prefix_quiz_rqp_types;');
-    	modify_database('', "CREATE TABLE `prefix_quiz_rqp_servers` (
+    if ($success && $oldversion < 2005051400) {
+        $success = $success && modify_database('', 'ALTER TABLE prefix_quiz_rqp_type RENAME prefix_quiz_rqp_types;');
+    	$success = $success && modify_database('', "CREATE TABLE `prefix_quiz_rqp_servers` (
     			      id int(10) unsigned NOT NULL auto_increment,
     			      typeid int(10) unsigned NOT NULL default '0',
     			      url varchar(255) NOT NULL default '',
@@ -562,22 +566,23 @@ function quiz_upgrade($oldversion) {
     			    ) TYPE=MyISAM COMMENT='Information about RQP servers';");
     	if ($types = get_records('quiz_rqp_types')) {
     	    foreach($types as $type) {
+                $server = new stdClass;
         		$server->typeid = $type->id;
         		$server->url = $type->rendering_server;
         		$server->can_render = 1;
-        		insert_record('quiz_rqp_servers', $server);
+        		$success = $success && insert_record('quiz_rqp_servers', $server);
     	    }
     	}
-        modify_database('', 'ALTER TABLE prefix_quiz_rqp_types DROP rendering_server');
-        modify_database('', 'ALTER TABLE prefix_quiz_rqp_types DROP cloning_server');
-        modify_database('', 'ALTER TABLE prefix_quiz_rqp_types DROP flags');
+        $success = $success && modify_database('', 'ALTER TABLE prefix_quiz_rqp_types DROP rendering_server');
+        $success = $success && modify_database('', 'ALTER TABLE prefix_quiz_rqp_types DROP cloning_server');
+        $success = $success && modify_database('', 'ALTER TABLE prefix_quiz_rqp_types DROP flags');
     }
 
-    if ($oldversion < 2005051401) {
+    if ($success && $oldversion < 2005051401) {
         // Some earlier changes are undone here, so we need another condition
         if ($oldversion >= 2005042900) {
             // Restore the answer field
-            table_column('quiz_numerical', '', 'answer', 'integer', '10', 'unsigned', '0', 'not null', 'answers');
+            $success = $success && table_column('quiz_numerical', '', 'answer', 'integer', '10', 'unsigned', '0', 'not null', 'answers');
             $singleanswer = array();
             if ($numericals = get_records('quiz_numerical')) {
                 $numericals = array_values($numericals);
@@ -592,10 +597,10 @@ function quiz_upgrade($oldversion) {
                         $answers = explode(',', $numerical->answers);
                         foreach ($answers as $answer) {
                             $numerical->answer = $answer;
-                            insert_record('quiz_numerical', $numerical);
+                            $success = $success && insert_record('quiz_numerical', $numerical);
                         }
                         // ... and get rid of the old record
-                        delete_records('quiz_numerical', 'id', $id);
+                        $success = $success && delete_records('quiz_numerical', 'id', $id);
                     } else {
                         $singleanswer[] = $numerical->id;
                     }
@@ -605,21 +610,21 @@ function quiz_upgrade($oldversion) {
             // Do all of these at once
             if (!empty($singleanswer)) {
                 $singleanswer = implode(',', $singleanswer);
-                modify_database('', "UPDATE prefix_quiz_numerical SET answer = answers WHERE id IN ($singleanswer);");
+                $success = $success && modify_database('', "UPDATE prefix_quiz_numerical SET answer = answers WHERE id IN ($singleanswer);");
             }
 
             // All answer fields are set, so we can delete the answers field
-            modify_database('', 'ALTER TABLE `prefix_quiz_numerical` DROP `answers`');
+            $success = $success && modify_database('', 'ALTER TABLE `prefix_quiz_numerical` DROP `answers`');
 
         // If the earlier changes weren't made we can safely do only the
         // bits here.
         } else {
             // Comma separated questionids will be stored as sequence
-            table_column('quiz_multianswers', '', 'sequence',  'varchar', '255', '', '', 'not null', 'question');
+            $success = $success && table_column('quiz_multianswers', '', 'sequence',  'varchar', '255', '', '', 'not null', 'question');
             // Change the type of positionkey to int, so that the sorting works!
-            table_column('quiz_multianswers', 'positionkey', 'positionkey',  'integer', '10', 'unsigned', '0', 'not null', '');
-            table_column('quiz_questions', '', 'parent', 'integer', '10', 'unsigned', '0', 'not null', 'category');
-            modify_database('', "UPDATE prefix_quiz_questions SET parent = id WHERE qtype ='".RANDOM."';");
+            $success = $success && table_column('quiz_multianswers', 'positionkey', 'positionkey',  'integer', '10', 'unsigned', '0', 'not null', '');
+            $success = $success && table_column('quiz_questions', '', 'parent', 'integer', '10', 'unsigned', '0', 'not null', 'category');
+            $success = $success && modify_database('', "UPDATE prefix_quiz_questions SET parent = id WHERE qtype ='".RANDOM."';");
 
             // Each multianswer record is converted to a question object and then
             // inserted as a new question into the quiz_questions table.
@@ -671,18 +676,19 @@ function quiz_upgrade($oldversion) {
                     // $multianswers[$i]->defaultgrade is set in the query
                     // $multianswers[$i]->qtype is set in the query
                     $id = insert_record('quiz_questions', $multianswers[$i]);
+                    $success = $success && $id;
                     $sequence[$pos] = $id;
 
                 // Update the quiz_answers table to point to these new questions
-                execute_sql("UPDATE {$CFG->prefix}quiz_answers SET question = '$id' WHERE id IN ($answers)", false);
+                $success = $success && execute_sql("UPDATE {$CFG->prefix}quiz_answers SET question = '$id' WHERE id IN ($answers)", false);
                 // Update the questiontype tables to point to these new questions
 
                     if (SHORTANSWER == $multianswers[$i]->qtype) {
-                        execute_sql("UPDATE {$CFG->prefix}quiz_shortanswer SET question = '$id' WHERE answers = '$answers'", false);
+                        $success = $success && execute_sql("UPDATE {$CFG->prefix}quiz_shortanswer SET question = '$id' WHERE answers = '$answers'", false);
                     } else if (MULTICHOICE == $multianswers[$i]->qtype) {
-                        execute_sql("UPDATE {$CFG->prefix}quiz_multichoice SET question = '$id' WHERE answers = '$answers'", false);
+                        $success = $success && execute_sql("UPDATE {$CFG->prefix}quiz_multichoice SET question = '$id' WHERE answers = '$answers'", false);
                     } else if (NUMERICAL == $multianswers[$i]->qtype) {
-                        execute_sql("UPDATE {$CFG->prefix}quiz_numerical SET question = '$id' WHERE answer IN ($answers)", false);
+                        $success = $success && execute_sql("UPDATE {$CFG->prefix}quiz_numerical SET question = '$id' WHERE answer IN ($answers)", false);
                     }
 
                     // Whenever we're through with the subquestions of one multianswer
@@ -707,15 +713,15 @@ function quiz_upgrade($oldversion) {
                                     }
                                 }
                                 $state->answer = rtrim($state->answer, ','); // strip trailing comma
-                                update_record('quiz_states', $state);
+                                $success = $success && update_record('quiz_states', $state);
                             }
                         }
 
-                        delete_records('quiz_multianswers', 'question', $parent);
+                        $success = $success && delete_records('quiz_multianswers', 'question', $parent);
                         $multi = new stdClass;
                         $multi->question = $parent;
                         $multi->sequence = implode(',', $sequence);
-                        insert_record('quiz_multianswers', $multi);
+                        $success = $success && insert_record('quiz_multianswers', $multi);
 
                         if (isset($multianswers[$i+1])) {
                             $parent    = $multianswers[$i+1]->parent;
@@ -728,14 +734,14 @@ function quiz_upgrade($oldversion) {
             }
 
             // Remove redundant fields from quiz_multianswers
-            modify_database('', 'ALTER TABLE `prefix_quiz_multianswers` DROP `answers`');
-            modify_database('', 'ALTER TABLE `prefix_quiz_multianswers` DROP `positionkey`');
-            modify_database('', 'ALTER TABLE `prefix_quiz_multianswers` DROP `answertype`');
-            modify_database('', 'ALTER TABLE `prefix_quiz_multianswers` DROP `norm`');
+            $success = $success && modify_database('', 'ALTER TABLE `prefix_quiz_multianswers` DROP `answers`');
+            $success = $success && modify_database('', 'ALTER TABLE `prefix_quiz_multianswers` DROP `positionkey`');
+            $success = $success && modify_database('', 'ALTER TABLE `prefix_quiz_multianswers` DROP `answertype`');
+            $success = $success && modify_database('', 'ALTER TABLE `prefix_quiz_multianswers` DROP `norm`');
         }
     }
 
-    if ($oldversion < 2005052004) {
+    if ($success && $oldversion < 2005052004) {
         // We need to remove some duplicate entries that may be present in some databases
         // due to a faulty restore script
 
@@ -758,7 +764,7 @@ function quiz_upgrade($oldversion) {
                     if ($skip) {
                         $skip = false;
                     } else {
-                        delete_records('quiz_numerical','id', $id->id);
+                        $success = $success && delete_records('quiz_numerical','id', $id->id);
                     }
                 }
             }
@@ -783,7 +789,7 @@ function quiz_upgrade($oldversion) {
                     if ($skip) {
                         $skip = false;
                     } else {
-                        delete_records('quiz_shortanswer','id', $id->id);
+                        $success = $success && delete_records('quiz_shortanswer','id', $id->id);
                     }
                 }
             }
@@ -808,14 +814,14 @@ function quiz_upgrade($oldversion) {
                     if ($skip) {
                         $skip = false;
                     } else {
-                        delete_records('quiz_multichoice','id', $id->id);
+                        $success = $success && delete_records('quiz_multichoice','id', $id->id);
                     }
                 }
             }
         }
     }
 
-    if ($oldversion < 2005060300) {
+    if ($success && $oldversion < 2005060300) {
         //Search all the orphan categories (those whose course doesn't exist)
         //and process them, deleting or moving them to site course - Bug 2459
 
@@ -832,7 +838,7 @@ function quiz_upgrade($oldversion) {
                 //Process it with question_delete_course(). It will do all the hard work.
                 if (!record_exists('course', 'id', $course->id)) {
                     require_once("$CFG->libdir/questionlib.php ");
-                    question_delete_course($course);
+                    $success = $success && question_delete_course($course);
                 }
             }
         }
@@ -840,8 +846,8 @@ function quiz_upgrade($oldversion) {
         $db->debug = $olddebug;
     }
 
-    if ($oldversion < 2005062600) {
-        modify_database ('', "
+    if ($success && $oldversion < 2005062600) {
+        $success = $success && modify_database ('', "
             CREATE TABLE `prefix_quiz_essay` (
                 `id` int(10) unsigned NOT NULL auto_increment,
                 `question` int(10) unsigned NOT NULL default '0',
@@ -850,7 +856,7 @@ function quiz_upgrade($oldversion) {
                 KEY `question` (`question`)
            ) TYPE=MyISAM COMMENT='Options for essay questions'");
     
-        modify_database ('', "
+        $success = $success && modify_database ('', "
             CREATE TABLE `prefix_quiz_essay_states` (
               `id` int(10) unsigned NOT NULL auto_increment,
               `stateid` int(10) unsigned NOT NULL default '0',
@@ -861,197 +867,197 @@ function quiz_upgrade($oldversion) {
             ) TYPE=MyISAM COMMENT='essay question type specific state information'");
     }
 
-    if ($oldversion < 2005070202) {
+    if ($success && $oldversion < 2005070202) {
         // add new unique id to prepare the way for lesson module to have its own attempts table
-        table_column('quiz_attempts', '', 'uniqueid', 'integer', '10', 'unsigned', '0', 'not null', 'id');
+        $success = $success && table_column('quiz_attempts', '', 'uniqueid', 'integer', '10', 'unsigned', '0', 'not null', 'id');
         // initially we can use the id as the unique id because no other modules use attempts yet.
-        execute_sql("UPDATE {$CFG->prefix}quiz_attempts SET uniqueid = id", false);
+        $success = $success && execute_sql("UPDATE {$CFG->prefix}quiz_attempts SET uniqueid = id", false);
         // we set $CFG->attemptuniqueid to the next available id
         $record = get_record_sql("SELECT max(id)+1 AS nextid FROM {$CFG->prefix}quiz_attempts");
-        set_config('attemptuniqueid', empty($record->nextid) ? 1 : $record->nextid);
+        $success = $success && set_config('attemptuniqueid', empty($record->nextid) ? 1 : $record->nextid);
     }
     
-    if ($oldversion < 2006020801) {
+    if ($success && $oldversion < 2006020801) {
         // add new field to store time delay between the first and second quiz attempt
-        table_column('quiz', '', 'delay1', 'integer', '10', 'unsigned', '0', 'not null', 'popup');
+        $success = $success && table_column('quiz', '', 'delay1', 'integer', '10', 'unsigned', '0', 'not null', 'popup');
         // add new field to store time delay between the second and any additional quizes
-        table_column('quiz', '', 'delay2', 'integer', '10', 'unsigned', '0', 'not null', 'delay1');
+        $success = $success && table_column('quiz', '', 'delay2', 'integer', '10', 'unsigned', '0', 'not null', 'delay1');
     }
 
-    if ($oldversion < 2006021101) {
+    if ($success && $oldversion < 2006021101) {
         // set defaultgrade field properly (probably not necessary, but better make sure)
-        execute_sql("UPDATE {$CFG->prefix}quiz_questions SET defaultgrade = '1' WHERE defaultgrade = '0'", false);
-        execute_sql("UPDATE {$CFG->prefix}quiz_questions SET defaultgrade = '0' WHERE qtype = '".DESCRIPTION."'", false);
+        $success = $success && execute_sql("UPDATE {$CFG->prefix}quiz_questions SET defaultgrade = '1' WHERE defaultgrade = '0'", false);
+        $success = $success && execute_sql("UPDATE {$CFG->prefix}quiz_questions SET defaultgrade = '0' WHERE qtype = '".DESCRIPTION."'", false);
     }
 
-    if ($oldversion < 2006021103) {
+    if ($success && $oldversion < 2006021103) {
         // add new field to store the question-level shuffleanswers option
-        table_column('quiz_match', '', 'shuffleanswers', 'tinyint', '4', 'unsigned', '1', 'not null', 'subquestions');
-        table_column('quiz_multichoice', '', 'shuffleanswers', 'tinyint', '4', 'unsigned', '1', 'not null', 'single');
-        table_column('quiz_randomsamatch', '', 'shuffleanswers', 'tinyint', '4', 'unsigned', '1', 'not null', 'choose');
+        $success = $success && table_column('quiz_match', '', 'shuffleanswers', 'tinyint', '4', 'unsigned', '1', 'not null', 'subquestions');
+        $success = $success && table_column('quiz_multichoice', '', 'shuffleanswers', 'tinyint', '4', 'unsigned', '1', 'not null', 'single');
+        $success = $success && table_column('quiz_randomsamatch', '', 'shuffleanswers', 'tinyint', '4', 'unsigned', '1', 'not null', 'choose');
     }
 
-    if ($oldversion < 2006021104) {
+    if ($success && $oldversion < 2006021104) {
         // add originalversion field for the new versioning mechanism
-        table_column('quiz_question_versions', '', 'originalquestion', 'int', '10', 'unsigned', '0', 'not null', 'newquestion');
+        $success = $success && table_column('quiz_question_versions', '', 'originalquestion', 'int', '10', 'unsigned', '0', 'not null', 'newquestion');
     }
 
-    if ($oldversion < 2006021301) {
-        modify_database('','ALTER TABLE prefix_quiz_attempts ADD UNIQUE INDEX uniqueid (uniqueid);');
+    if ($success && $oldversion < 2006021301) {
+        $success = $success && modify_database('','ALTER TABLE prefix_quiz_attempts ADD UNIQUE INDEX uniqueid (uniqueid);');
     }
 
-    if ($oldversion < 2006021302) {
-        table_column('quiz_match_sub', '', 'code', 'int', '10', 'unsigned', '0', 'not null', 'id');
-        execute_sql("UPDATE {$CFG->prefix}quiz_match_sub SET code = id", false);
+    if ($success && $oldversion < 2006021302) {
+        $success = $success && table_column('quiz_match_sub', '', 'code', 'int', '10', 'unsigned', '0', 'not null', 'id');
+        $success = $success && execute_sql("UPDATE {$CFG->prefix}quiz_match_sub SET code = id", false);
     }
-    if ($oldversion < 2006021304) {
+    if ($success && $oldversion < 2006021304) {
         // convert sequence field to text to accomodate very long sequences, see bug 4257
-        table_column('quiz_multianswers', 'sequence', 'sequence',  'text', '', '', '', 'not null', 'question');
+        $success = $success && table_column('quiz_multianswers', 'sequence', 'sequence',  'text', '', '', '', 'not null', 'question');
     }
 
-    if ($oldversion < 2006021501) {
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_newest_states RENAME {$CFG->prefix}question_sessions", false);
+    if ($success && $oldversion < 2006021501) {
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_newest_states RENAME {$CFG->prefix}question_sessions", false);
     }
 
-    if ($oldversion < 2006022200) {
+    if ($success && $oldversion < 2006022200) {
         // convert grade fields to float
-        set_field('quiz_attempts', 'sumgrades', 0, 'sumgrades', '');
-        table_column('quiz_attempts', 'sumgrades', 'sumgrades',  'float', '', '', '0', 'not null');
+        $success = $success && set_field('quiz_attempts', 'sumgrades', 0, 'sumgrades', '');
+        $success = $success && table_column('quiz_attempts', 'sumgrades', 'sumgrades',  'float', '', '', '0', 'not null');
 
-        set_field('quiz_answers', 'fraction', 0, 'fraction', '');
-        table_column('quiz_answers', 'fraction', 'fraction',  'float', '', '', '0', 'not null');
+        $success = $success && set_field('quiz_answers', 'fraction', 0, 'fraction', '');
+        $success = $success && table_column('quiz_answers', 'fraction', 'fraction',  'float', '', '', '0', 'not null');
 
-        set_field('quiz_essay_states', 'fraction', 0, 'fraction', '');
-        table_column('quiz_essay_states', 'fraction', 'fraction',  'float', '', '', '0', 'not null');
+        $success = $success && set_field('quiz_essay_states', 'fraction', 0, 'fraction', '');
+        $success = $success && table_column('quiz_essay_states', 'fraction', 'fraction',  'float', '', '', '0', 'not null');
 
-        set_field('quiz_states', 'grade', 0, 'grade', '');
-        table_column('quiz_states', 'grade', 'grade',  'float', '', '', '0', 'not null');
+        $success = $success && set_field('quiz_states', 'grade', 0, 'grade', '');
+        $success = $success && table_column('quiz_states', 'grade', 'grade',  'float', '', '', '0', 'not null');
 
-        set_field('quiz_states', 'raw_grade', 0, 'raw_grade', '');
-        table_column('quiz_states', 'raw_grade', 'raw_grade',  'float', '', '', '0', 'not null');
+        $success = $success && set_field('quiz_states', 'raw_grade', 0, 'raw_grade', '');
+        $success = $success && table_column('quiz_states', 'raw_grade', 'raw_grade',  'float', '', '', '0', 'not null');
 
-        set_field('quiz_states', 'penalty', 0, 'penalty', '');
-        table_column('quiz_states', 'penalty', 'penalty',  'float', '', '', '0', 'not null');
+        $success = $success && set_field('quiz_states', 'penalty', 0, 'penalty', '');
+        $success = $success && table_column('quiz_states', 'penalty', 'penalty',  'float', '', '', '0', 'not null');
 
-        set_field('question_sessions', 'sumpenalty', 0, 'sumpenalty', '');
-        table_column('question_sessions', 'sumpenalty', 'sumpenalty',  'float', '', '', '0', 'not null');
+        $success = $success && set_field('question_sessions', 'sumpenalty', 0, 'sumpenalty', '');
+        $success = $success && table_column('question_sessions', 'sumpenalty', 'sumpenalty',  'float', '', '', '0', 'not null');
     }
 
-    if ($oldversion < 2006022400) {
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_questions RENAME {$CFG->prefix}question", false);
+    if ($success && $oldversion < 2006022400) {
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_questions RENAME {$CFG->prefix}question", false);
     }
 
-    if ($oldversion < 2006022402) {
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_states RENAME {$CFG->prefix}question_states", false);
+    if ($success && $oldversion < 2006022402) {
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_states RENAME {$CFG->prefix}question_states", false);
     }
 
-    if ($oldversion < 2006022800) {
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_answers RENAME {$CFG->prefix}question_answers", false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_categories RENAME {$CFG->prefix}question_categories", false);
+    if ($success && $oldversion < 2006022800) {
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_answers RENAME {$CFG->prefix}question_answers", false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_categories RENAME {$CFG->prefix}question_categories", false);
     }
 
-    if ($oldversion < 2006031202) {
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_truefalse RENAME {$CFG->prefix}question_truefalse", false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_shortanswer RENAME {$CFG->prefix}question_shortanswer", false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_multianswers RENAME {$CFG->prefix}question_multianswer", false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_multichoice RENAME {$CFG->prefix}question_multichoice", false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_numerical RENAME {$CFG->prefix}question_numerical", false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_numerical_units RENAME {$CFG->prefix}question_numerical_units", false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_randomsamatch RENAME {$CFG->prefix}question_randomsamatch", false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_match RENAME {$CFG->prefix}question_match", false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_match_sub RENAME {$CFG->prefix}question_match_sub", false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_calculated RENAME {$CFG->prefix}question_calculated", false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_dataset_definitions RENAME {$CFG->prefix}question_dataset_definitions", false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_dataset_items RENAME {$CFG->prefix}question_dataset_items", false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_question_datasets RENAME {$CFG->prefix}question_datasets", false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_rqp RENAME {$CFG->prefix}question_rqp", false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_rqp_servers RENAME {$CFG->prefix}question_rqp_servers", false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_rqp_states RENAME {$CFG->prefix}question_rqp_states", false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_rqp_types RENAME {$CFG->prefix}question_rqp_types", false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_essay RENAME {$CFG->prefix}question_essay", false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_essay_states RENAME {$CFG->prefix}question_essay_states", false);
+    if ($success && $oldversion < 2006031202) {
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_truefalse RENAME {$CFG->prefix}question_truefalse", false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_shortanswer RENAME {$CFG->prefix}question_shortanswer", false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_multianswers RENAME {$CFG->prefix}question_multianswer", false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_multichoice RENAME {$CFG->prefix}question_multichoice", false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_numerical RENAME {$CFG->prefix}question_numerical", false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_numerical_units RENAME {$CFG->prefix}question_numerical_units", false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_randomsamatch RENAME {$CFG->prefix}question_randomsamatch", false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_match RENAME {$CFG->prefix}question_match", false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_match_sub RENAME {$CFG->prefix}question_match_sub", false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_calculated RENAME {$CFG->prefix}question_calculated", false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_dataset_definitions RENAME {$CFG->prefix}question_dataset_definitions", false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_dataset_items RENAME {$CFG->prefix}question_dataset_items", false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_question_datasets RENAME {$CFG->prefix}question_datasets", false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_rqp RENAME {$CFG->prefix}question_rqp", false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_rqp_servers RENAME {$CFG->prefix}question_rqp_servers", false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_rqp_states RENAME {$CFG->prefix}question_rqp_states", false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_rqp_types RENAME {$CFG->prefix}question_rqp_types", false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_essay RENAME {$CFG->prefix}question_essay", false);
+        $success = $success && execute_sql("ALTER TABLE {$CFG->prefix}quiz_essay_states RENAME {$CFG->prefix}question_essay_states", false);
     }
 
-    if ($oldversion < 2006032100) {
+    if ($success && $oldversion < 2006032100) {
         // change from the old questiontype numbers to using the questiontype names
-        table_column('question', 'qtype', 'qtype',  'varchar', 20, '', '', 'not null');
-        set_field('question', 'qtype', 'shortanswer', 'qtype', 1);
-        set_field('question', 'qtype', 'truefalse', 'qtype', 2);
-        set_field('question', 'qtype', 'multichoice', 'qtype', 3);
-        set_field('question', 'qtype', 'random', 'qtype', 4);
-        set_field('question', 'qtype', 'match', 'qtype', 5);
-        set_field('question', 'qtype', 'randomsamatch', 'qtype', 6);
-        set_field('question', 'qtype', 'description', 'qtype', 7);
-        set_field('question', 'qtype', 'numerical', 'qtype', 8);
-        set_field('question', 'qtype', 'multianswer', 'qtype', 9);
-        set_field('question', 'qtype', 'calculated', 'qtype', 10);
-        set_field('question', 'qtype', 'rqp', 'qtype', 11);
-        set_field('question', 'qtype', 'essay', 'qtype', 12);
+        $success = $success && table_column('question', 'qtype', 'qtype',  'varchar', 20, '', '', 'not null');
+        $success = $success && set_field('question', 'qtype', 'shortanswer', 'qtype', 1);
+        $success = $success && set_field('question', 'qtype', 'truefalse', 'qtype', 2);
+        $success = $success && set_field('question', 'qtype', 'multichoice', 'qtype', 3);
+        $success = $success && set_field('question', 'qtype', 'random', 'qtype', 4);
+        $success = $success && set_field('question', 'qtype', 'match', 'qtype', 5);
+        $success = $success && set_field('question', 'qtype', 'randomsamatch', 'qtype', 6);
+        $success = $success && set_field('question', 'qtype', 'description', 'qtype', 7);
+        $success = $success && set_field('question', 'qtype', 'numerical', 'qtype', 8);
+        $success = $success && set_field('question', 'qtype', 'multianswer', 'qtype', 9);
+        $success = $success && set_field('question', 'qtype', 'calculated', 'qtype', 10);
+        $success = $success && set_field('question', 'qtype', 'rqp', 'qtype', 11);
+        $success = $success && set_field('question', 'qtype', 'essay', 'qtype', 12);
     }
 
-    if ($oldversion < 2006032200) {
+    if ($success && $oldversion < 2006032200) {
         // set version for all questiontypes that already have their tables installed
-        set_config('qtype_calculated_version', 2006032100);
-        set_config('qtype_essay_version', 2006032100);
-        set_config('qtype_match_version', 2006032100);
-        set_config('qtype_multianswer_version', 2006032100);
-        set_config('qtype_multichoice_version', 2006032100);
-        set_config('qtype_numerical_version', 2006032100);
-        set_config('qtype_randomsamatch_version', 2006032100);
-        set_config('qtype_rqp_version', 2006032100);
-        set_config('qtype_shortanswer_version', 2006032100);
-        set_config('qtype_truefalse_version', 2006032100);
+        $success = $success && set_config('qtype_calculated_version', 2006032100);
+        $success = $success && set_config('qtype_essay_version', 2006032100);
+        $success = $success && set_config('qtype_match_version', 2006032100);
+        $success = $success && set_config('qtype_multianswer_version', 2006032100);
+        $success = $success && set_config('qtype_multichoice_version', 2006032100);
+        $success = $success && set_config('qtype_numerical_version', 2006032100);
+        $success = $success && set_config('qtype_randomsamatch_version', 2006032100);
+        $success = $success && set_config('qtype_rqp_version', 2006032100);
+        $success = $success && set_config('qtype_shortanswer_version', 2006032100);
+        $success = $success && set_config('qtype_truefalse_version', 2006032100);
     }
 
-    if ($oldversion < 2006040600) {
-        table_column('question_sessions', '', 'comment', 'text', '', '', '', 'not null', 'sumpenalty');
+    if ($success && $oldversion < 2006040600) {
+        $success = $success && table_column('question_sessions', '', 'comment', 'text', '', '', '', 'not null', 'sumpenalty');
     }
 
-    if ($oldversion < 2006040900) {
-        modify_database('', "UPDATE prefix_question SET parent = id WHERE qtype ='random';");
+    if ($success && $oldversion < 2006040900) {
+        $success = $success && modify_database('', "UPDATE prefix_question SET parent = id WHERE qtype ='random';");
     }
 
-    if ($oldversion < 2006041000) {
-        modify_database('', " INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'continue attempt', 'quiz', 'name');");
+    if ($success && $oldversion < 2006041000) {
+        $success = $success && modify_database('', " INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('quiz', 'continue attempt', 'quiz', 'name');");
     }
 
-    if ($oldversion < 2006041001) {
-        table_column('question', 'version', 'version', 'varchar', 255);
+    if ($success && $oldversion < 2006041001) {
+        $success = $success && table_column('question', 'version', 'version', 'varchar', 255);
     }
 
-    if ($oldversion < 2006042800) {
+    if ($success && $oldversion < 2006042800) {
         // Check we have some un-renamed tables (verified in some servers)
         if ($tables = $db->MetaTables('TABLES')) {
             if (in_array($CFG->prefix.'quiz_randommatch', $tables) &&
                 !in_array($CFG->prefix.'question_randomsamatch', $tables)) {
-                modify_database ("", "ALTER TABLE prefix_quiz_randommatch RENAME prefix_question_randomsamatch ");
+                $success = $success && modify_database ("", "ALTER TABLE prefix_quiz_randommatch RENAME prefix_question_randomsamatch ");
             }
             // Check for one possible missing field in one table
             if ($columns = $db->MetaColumnNames($CFG->prefix.'question_randomsamatch')) {
                 if (!in_array('shuffleanswers', $columns)) {
-                    table_column('question_randomsamatch', '', 'shuffleanswers', 'tinyint', '4', 'unsigned', '1', 'not null', 'choose');
+                    $success = $success && table_column('question_randomsamatch', '', 'shuffleanswers', 'tinyint', '4', 'unsigned', '1', 'not null', 'choose');
                 }
             }
         }
     }
 
-    if ($oldversion < 2006042801) {
+    if ($success && $oldversion < 2006042801) {
         // The newgraded field must always point to a valid state
-        modify_database("","UPDATE prefix_question_sessions SET newgraded = newest where newgraded = '0'");
+        $success = $success && modify_database("","UPDATE prefix_question_sessions SET newgraded = newest where newgraded = '0'");
 
         // The following table is discussed in bug 5468
-        modify_database ("", "CREATE TABLE prefix_question_attempts (
+        $success = $success && modify_database ("", "CREATE TABLE prefix_question_attempts (
                                   id int(10) unsigned NOT NULL auto_increment,
                                   modulename varchar(20) NOT NULL default 'quiz',
                                   PRIMARY KEY  (id)
                                 ) TYPE=MyISAM COMMENT='Student attempts. This table gets extended by the modules';");
         // create one entry for all the existing quiz attempts
-        modify_database ("", "INSERT INTO prefix_question_attempts (id)
+        $success = $success && modify_database ("", "INSERT INTO prefix_question_attempts (id)
                                    SELECT uniqueid
                                    FROM prefix_quiz_attempts;");
     }
 
-    if ($oldversion < 2006060700) { // fix for 5720
+    if ($success && $oldversion < 2006060700) { // fix for 5720
 
         // Copy the teacher comments from the question_essay_states table to the new
         // question_sessions table.
@@ -1071,8 +1077,9 @@ function quiz_upgrade($oldversion) {
 
                 if ($result->isgraded) {
                     // Graded - save comment to the sessions and change state event to QUESTION_EVENTMANUALGRADE
-                    if (!set_field('question_sessions', 'comment', $result->essaycomment, 'attemptid', $result->uniqueid, 'questionid', $result->questionid)) {
+                    if (!($success = $success && set_field('question_sessions', 'comment', $result->essaycomment, 'attemptid', $result->uniqueid, 'questionid', $result->questionid))) {
                         notify("Essay Table Migration: Cannot save comment");
+                        break;
                     }
                     $state->event = 9; //QUESTION_EVENTMANUALGRADE;
                 } else {
@@ -1081,20 +1088,20 @@ function quiz_upgrade($oldversion) {
                 }
 
                 // Save the event
-                if (!update_record('question_states', $state)) {
+                if (!($success = $success && update_record('question_states', $state))) {
                     notify("Essay Table Migration: Cannot update state");
+                    break;
                 }
             }
         }
         
         // dropping unused tables
-        execute_sql('DROP TABLE '.$CFG->prefix.'question_essay_states');
-        execute_sql('DROP TABLE '.$CFG->prefix.'question_essay');
-        execute_sql('DROP TABLE '.$CFG->prefix.'quiz_attemptonlast_datasets', false);
+        $success = $success && execute_sql('DROP TABLE '.$CFG->prefix.'question_essay_states');
+        $success = $success && execute_sql('DROP TABLE '.$CFG->prefix.'question_essay');
+        $success = $success && execute_sql('DROP TABLE '.$CFG->prefix.'quiz_attemptonlast_datasets', false);
     }
 
-
-    return true;
+    return $success;
 }
 
 ?>
