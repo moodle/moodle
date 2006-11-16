@@ -436,7 +436,7 @@ function make_review_link($linktext, $quiz, $attempt) {
     }
 
     // If the attempt is still open, don't link.
-    if ($attempt->timefinish) {
+    if (!$attempt->timefinish) {
         return $linktext;
     }
     
