@@ -6,11 +6,10 @@ require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->libdir .'/pagelib.php');
 require_once($CFG->libdir .'/blocklib.php');
 
+
 // Initialise ALL the incoming parameters here, up front.
-
-$courseid = required_param('courseId', PARAM_INT);
-$class    = required_param('class', PARAM_ALPHA);
-
+$courseid   = required_param('courseId', PARAM_INT);
+$class      = required_param('class', PARAM_ALPHA);
 $field      = optional_param('field', '', PARAM_ALPHA);
 $instanceid = optional_param('instanceId', 0, PARAM_INT);
 $sectionid  = optional_param('sectionId', 0, PARAM_INT);
@@ -22,46 +21,51 @@ $summary    = optional_param('summary', '', PARAM_RAW);
 $sequence   = optional_param('sequence', '', PARAM_SEQUENCE);
 $visible    = optional_param('visible', 0, PARAM_INT);
 
-// Authorise the user and verify some incoming data
 
+// Authorise the user and verify some incoming data
 if (!$course = get_record('course', 'id', $courseid)) {
     error_log('AJAX commands.php: Course does not exist');
     die;
 }
 
 $PAGE = page_create_object(PAGE_COURSE_VIEW, $course->id);
-$pageblocks = blocks_setup($PAGE,BLOCKS_PINNED_BOTH);
+$pageblocks = blocks_setup($PAGE, BLOCKS_PINNED_BOTH);
+
 if (!empty($instanceid)) {
     $blockinstance = blocks_find_instance($instanceid, $pageblocks);
-    if (!$blockinstance || $blockinstance->pageid != $course->id || $blockinstance->pagetype != 'course-view') {
+    if (!$blockinstance || $blockinstance->pageid != $course->id
+                        || $blockinstance->pagetype != 'course-view') {
         error_log('AJAX commands.php: Bad block ID '.$instanceid);
         die;
     }
 }
 
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
-
 require_login($course->id);
 require_capability('moodle/course:update', $context);
 
-// OK, now let's process the parameters and do stuff
 
+
+// OK, now let's process the parameters and do stuff
 switch($_SERVER['REQUEST_METHOD']) {
     case 'POST':
+
         switch ($class) {
-            case 'block':                  
-            switch ($field) {
-                case 'visible':   
-                    blocks_execute_action($PAGE, $pageblocks, 'toggle', $blockinstance);
-                    break;
-     
-                case 'position':  
-                    //while not entirely restful this will handle all the details of moving a block                    
-                    blocks_execute_repositioning_atomic($blockinstance, $column, $value);                    
-                    break;
-            }
-            break;
- 
+            case 'block':
+
+                switch ($field) {
+                    case 'visible':   
+                        blocks_execute_action($PAGE, $pageblocks, 'toggle', $blockinstance);
+                        break;
+
+                    case 'position':  // Misleading case. Should probably call it 'move'.
+                        // We want to move the block around. This means changing
+                        // the column (position field) and/or block sort order
+                        // (weight field).
+                        blocks_move_block($PAGE, $blockinstance, $column, $value);
+                        break;
+                }
+                break;
 
             case 'section':
  
