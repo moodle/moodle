@@ -10,12 +10,12 @@ require_once($CFG->dirroot.'/enrol/authorize/localfuncs.php');
 class enrolment_plugin_authorize
 {
     /**
-     * Credit card and Echeck error messages.
+     * Error message after connected authorize.net.
      *
-     * @var array
+     * @var string
      * @access public
      */
-    var $authorizeerrors = array();
+    var $authorizeerror;
 
     /**
      * Cron log.
@@ -93,6 +93,9 @@ class enrolment_plugin_authorize
                     $this->echeck_submit($form, $course);
                     break;
                 }
+                if (!empty($this->authorizeerror)) {
+                    error($this->authorizeerror);
+                }
             }
             $authorize_enrol->display();
         }
@@ -165,7 +168,7 @@ class enrolment_plugin_authorize
         $order->id = insert_record("enrol_authorize", $order);
         if (!$order->id) {
             email_to_admin("Error while trying to insert new data", $order);
-            $this->authorizeerrors['header'] = "Insert record error. Admin has been notified!";
+            $this->authorizeerror = "Insert record error. Admin has been notified!";
             return;
         }
 
@@ -208,7 +211,7 @@ class enrolment_plugin_authorize
         $message = '';
         if (AN_APPROVED != authorize_action($order, $message, $extra, $action, $form->cctype)) {
             email_to_admin($message, $order);
-            $this->authorizeerrors['header'] = $message;
+            $this->authorizeerror = $message;
             return;
         }
 
@@ -327,7 +330,7 @@ class enrolment_plugin_authorize
         $order->id = insert_record("enrol_authorize", $order);
         if (!$order->id) {
             email_to_admin("Error while trying to insert new data", $order);
-            $this->authorizeerrors['header'] = "Insert record error. Admin has been notified!";
+            $this->authorizeerror = "Insert record error. Admin has been notified!";
             return;
         }
 
@@ -360,7 +363,7 @@ class enrolment_plugin_authorize
         $message = '';
         if (AN_REVIEW != authorize_action($order, $message, $extra, AN_ACTION_AUTH_CAPTURE)) {
             email_to_admin($message, $order);
-            $this->authorizeerrors['header'] = $message;
+            $this->authorizeerror = $message;
             return;
         }
 
