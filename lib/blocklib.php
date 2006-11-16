@@ -290,7 +290,7 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
             // Disabled by the admin
             continue;
         }
-            
+        
         if (empty($instance->obj)) {
             if (!$obj = block_instance($block->name, $instance)) {
                 // Invalid block
@@ -709,11 +709,11 @@ function blocks_execute_url_action(&$PAGE, &$pageblocks,$pinned=false) {
 
 // This shouldn't be used externally at all, it's here for use by blocks_execute_action()
 // in order to reduce code repetition.
-function blocks_execute_repositioning(&$instance, $newpos, $newweight, $pinned=false, $checkPos=true) {
+function blocks_execute_repositioning(&$instance, $newpos, $newweight, $pinned=false) {
     global $CFG;
 
     // If it's staying where it is, don't do anything, unless overridden
-    if (($newpos == $instance->position) && $checkPos) {
+    if ($newpos == $instance->position) {
         return;
     }
 
@@ -742,38 +742,82 @@ function blocks_execute_repositioning(&$instance, $newpos, $newweight, $pinned=f
     }
 }
 
-//like blocks_execute_repositiong except completely atomic, handles all aspects of the positioning
-function blocks_execute_repositioning_atomic(&$instance, $newpos, $newweight, $pinned=false){    
+
+/**
+ * Moves a block to the new position (column) and weight (sort order).
+ * @param $instance - The block instance to be moved.
+ * @param $destpos - BLOCK_POS_LEFT or BLOCK_POS_RIGHT. The destination column.
+ * @param $destweight - The destination sort order. If NULL, we add to the end
+ *                      of the destination column.
+ * @param $pinned - Are we moving pinned blocks? We can only move pinned blocks
+ *                  to a new position withing the pinned list. Likewise, we
+ *                  can only moved non-pinned blocks to a new position within
+ *                  the non-pinned list.
+ * @return boolean (success or failure).
+ */
+function blocks_move_block($page, &$instance, $destpos, $destweight=NULL, $pinned=false) {
     global $CFG;
     
-    if ($instance->weight == $newweight) {
+    if ($pinned) {
+        $blocklist = blocks_get_pinned($page);
+    } else {
+        $blocklist = blocks_get_by_page($page);
+    }
+    
+    if ($blocklist[$instance->position][$instance->weight]->id != $instance->id) {
+        // The source block instance is not where we think it is.
         return false;
     }
-
-    //make room for block insert
-    if (!empty($pinned)) {
-        $sql = 'UPDATE '. $CFG->prefix .'block_instance SET weight = weight + 1 '.
-                        'WHERE pagetype = \''. $instance->pagetype.
-                        '\' AND position = \'' .$newpos.
-                        '\' AND weight >= '. $newweight;
-    } else {
-        $sql = 'UPDATE '. $CFG->prefix .'block_instance SET weight = weight + 1 '.
-                        'WHERE pagetype = \''. $instance->pagetype.
-                        '\' AND pageid = '. $instance->pageid.
-                        ' AND position = \'' .$newpos.
-                        '\' AND weight >= '. $newweight;
-    }
-    execute_sql($sql,false);
     
-    //adjusts the wieghts for changes in the weight list
-    if ($newweight < $instance->weight) {
-        $instance->weight+=2;
+    // First we close the gap that will be left behind when we take out the
+    // block from it's current column.
+    if ($pinned) {
+        $closegapsql = "UPDATE {$CFG->prefix}block_instance 
+                           SET weight = weight - 1 
+                         WHERE weight > '$instance->weight' 
+                           AND position = '$instance->position' 
+                           AND pagetype = '$instance->pagetype'";
     } else {
-        $newweight--;
+        $closegapsql = "UPDATE {$CFG->prefix}block_instance 
+                           SET weight = weight - 1 
+                         WHERE weight > '$instance->weight' 
+                           AND position = '$instance->position' 
+                           AND pagetype = '$instance->pagetype'
+                           AND pageid = '$instance->pageid'";
     }
+    if (!execute_sql($closegapsql, false)) {
+        return false;
+    }
+    
+    // Now let's make space for the block being moved.
+    if ($pinned) {
+        $opengapsql = "UPDATE {$CFG->prefix}block_instance 
+                           SET weight = weight + 1 
+                         WHERE weight >= '$destweight' 
+                           AND position = '$destpos' 
+                           AND pagetype = '$instance->pagetype'";
+    } else {
+        $opengapsql = "UPDATE {$CFG->prefix}block_instance 
+                           SET weight = weight + 1 
+                         WHERE weight >= '$destweight' 
+                           AND position = '$destpos' 
+                           AND pagetype = '$instance->pagetype'
+                           AND pageid = '$instance->pageid'";
+    }
+    if (!execute_sql($opengapsql, false)) {
+        return false;
+    }
+    
+    // Move the block.
+    $instance->position = $destpos;
+    $instance->weight   = $destweight;
 
-    //reposition blocks
-    blocks_execute_repositioning($instance,$newpos,$newweight,$pinned,false);
+    if ($pinned) {
+        $table = 'block_pinned';
+    } else {
+        $table = 'block_instance';
+    }
+    return update_record($table, $instance);
 }
 
 
