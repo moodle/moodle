@@ -52,7 +52,7 @@ $post = new object(); // editing form data
 $usehtmleditor = can_use_richtext_editor();
 $strblogs = get_string('blogs','blog');
 
-
+/// Main switch for processing blog entry
 switch ($action) {
 
     case 'add':
@@ -143,7 +143,6 @@ print_footer();
 
 die;
 
-
 /*****************************   edit.php functions  ***************************/
 /*
 * Delete blog post from database
@@ -192,7 +191,6 @@ function do_add(&$post, &$errors) {
     $post->lastmodified = time();
     $post->created      = time();
 
-
     // Insert the new blog entry.
     if ($id = insert_record('post', $post)) {
         $post->id = $id;
@@ -239,7 +237,9 @@ function do_edit(&$post, &$errors) {
 
     // update record
     if (update_record('post', $post)) {
+        // delete all tags associated with this entry
         delete_records('blog_tag_instance', 'entryid', $post->id);
+        // add them back
         add_tags_info($post->id);
         add_to_log(SITEID, 'blog', 'update', 'index.php?userid='.$post->userid.'&postid='.$post->id, $post->subject);
 
@@ -249,26 +249,50 @@ function do_edit(&$post, &$errors) {
     
 }
 
+/**
+ * function to attach tags into a post
+ * @param int postid - id of the blog
+ */
 function add_tags_info($postid) {
+    
+    global $USER;
+    
     $post = get_record('post', 'id', $postid);
 
     $tag = new object();
     $tag->entryid = $post->id;
     $tag->userid = $post->userid;
-        $tag->timemodified = time();
+    $tag->timemodified = time();
         
-        /// Add tags information
-        if ($otags = optional_param('otags','', PARAM_INT)) {
-            foreach ($otags as $otag) {
-                $tag->tagid = $otag;
+    /// Attach official tags
+    if ($otags = optional_param('otags','', PARAM_INT)) {
+        foreach ($otags as $otag) {
+            $tag->tagid = $otag;
             insert_record('blog_tag_instance', $tag);
         }
     }
 
-    if ($ptags = optional_param('ptags','', PARAM_INT)) {
+    /// Attach Personal Tags
+    if ($ptags = optional_param('ptags','', PARAM_NOTAGS)) {
+        $ptags = explode(',',$ptags);
         foreach ($ptags as $ptag) {
-            $tag->tagid = $ptag;
-            insert_record('blog_tag_instance', $tag);
+            $ptag = trim($ptag);
+            // check for existance
+            // it does not matter whether it is an offical tag or personal tag
+            // we do not want to have 1 copy of offical tag and 1 copy of personal tag (for the same tag)
+            if ($ctag = get_record('tags', 'text', $ptag)) {
+                $tag->tagid = $ctag->id;
+                insert_record('blog_tag_instance', $tag);
+            } else { // create a personal tag
+                $ctag = new object;
+                $ctag->userid = $USER->id;
+                $ctag->text = $ptag;
+                $ctag->type = 'personal';
+                if ($tagid = insert_record('tags', $ctag)) {
+                    $tag->tagid = $tagid;
+                    insert_record('blog_tag_instance', $tag);
+                }         
+            }
         }
     }
 }

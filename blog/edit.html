@@ -109,19 +109,38 @@
                 &nbsp;&nbsp;</td>
 
                 <td>
-                <select name="ptags[]" multiple="multiple" size="8">
                 <?php
-                    $ptags = get_records_sql('SELECT * from '.$CFG->prefix.'tags WHERE type=\'personal\' ORDER by text ASC');
-                    foreach ($ptags as $ptag) {
-                        if (in_array($ptag->id, $usedtags)) {
-                            echo '<option value="'.$ptag->id.'" selected="selected">'.$ptag->text.'</option>';
-                        } else {
-                            echo '<option value="'.$ptag->id.'">'.$ptag->text.'</option>';
+                    if (!empty($post->id)) {
+                        $idsql = " AND bti.entryid = {$post->id}";
+                    } else {
+                        $idsql = " AND bti.entryid = 0";  
+                    }
+                    
+                    $pptag = '';
+                    if ($ptags = get_records_sql("SELECT t.* FROM 
+                                                 {$CFG->prefix}tags t, 
+                                                 {$CFG->prefix}blog_tag_instance bti
+                                                 WHERE t.id = bti.tagid
+                                                 AND t.type = 'personal'
+                                                 $idsql")) {
+                    
+                        foreach ($ptags as $ptag) {
+                            $pptag .= $ptag->text.',';  
                         }
+                        $pptag = rtrim($pptag, ",");
+                    }
+                
+                
+                ?>
+                <input type="text" name="ptags" value="<?php echo $pptag;?>"/>
+                <?php
+                    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+                    // only make sense to link if the user has capablity
+                    if (has_capability('moodle/blog:managepersonaltags', $sitecontext) || has_capability('moodle/blog:manageofficialtags', $sitecontext)) {
+                        echo "<br/>";
+                        link_to_popup_window("/blog/tags.php",'popup',get_string('tagmanagement'));
                     }
                 ?>
-                </select>
-    <?php link_to_popup_window("/blog/tags.php",'popup',get_string('tagmanagement')); ?>
                 </td>
             </tr>
         </table>

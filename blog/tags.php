@@ -1,10 +1,12 @@
 <?php
 require_once('../config.php');
 
+/// main switch for form processing to perform, add/delete etc
 $action = optional_param('action','',PARAM_ALPHA);
 
 require_login();
 
+/// blogs could be disabled altogether
 if (empty($CFG->bloglevel)) {
     error('Blogging is disabled!');
 }
@@ -13,29 +15,44 @@ if (isguest()) {
     error(get_string('noguestpost', 'blog'));
 }
 
+/// blogs are site level
 $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
 $error = '';
 
 switch ($action) {
+    /// Adding an official tag from submitted value
     case 'addofficial':
-        // only approved uses can add official tags
+        // Double check to make sure user has capability
         if (!has_capability('moodle/blog:manageofficialtags', $sitecontext)) {
             error('Can not add official tags tags');
         }
         if (data_submitted() and confirm_sesskey()) {
+            
             $otag = trim(required_param('otag', PARAM_NOTAGS));
+            // When adding ofical tag, we see if there's already a personal tag
+            // With the same Name, if there is, we just change the type
+            if ($tag = get_record('tags', 'text', $otag)) {
+                if ($tag->type == 'official') {
+                    // official tag already exist
+                    $error = get_string('tagalready');
+                    break;
+                } else { 
+                    $tag->type = 'official';
+                    update_record('tags', $tag);
+                    $tagid = $tag->id;
+                }
+                
+            } else { // Brand new offical tag
 
-            if (get_record('tags', 'text', $otag)) {
-                $error = get_string('tagalready');
-                break;
-            }
-            $tag = new object();
-            $tag->userid = $USER->id;
-            $tag->text   = $otag;
-            $tag->type   = 'official';
-            if (!$tagid = insert_record('tags', $tag)) {
-                error('Can not create tag!');
+                $tag = new object();
+                $tag->userid = $USER->id;
+                $tag->text   = $otag;
+                $tag->type   = 'official';
+            
+                if (!$tagid = insert_record('tags', $tag)) {
+                    error('Can not create tag!');
+                }
             }
 
             /// Write newly added tags back into window opener.
@@ -48,41 +65,10 @@ switch ($action) {
         }
 
     break;
-
-    case 'addpersonal':
-        /// Everyone can add personal tags as long as they can write blog entries.
-        if (!has_capability('moodle/blog:manageofficialtags', $sitecontext)
-          and !has_capability('moodle/blog:create', $sitecontext)) {
-            error('Can not add personal tags');
-        }
-        if (data_submitted() and confirm_sesskey()) {
-            $ptag = trim(required_param('ptag', PARAM_NOTAGS));
-
-            if (get_record('tags', 'text', $ptag)) {
-                $error = get_string('tagalready');
-                break;
-            }
-            $tag = new object();
-            $tag->userid = $USER->id;
-            $tag->text   = $ptag;
-            $tag->type   = 'personal';
-            if (!$tagid = insert_record('tags', $tag)) {
-                error('Can not create tag!');
-            }
-
-            /// Write newly added tags back into window opener.
-            echo '<script language="JavaScript" type="text/javascript">
-            var o = opener.document.createElement("option");
-            o.innerHTML = "<option>'.$tag->text.'</option>";
-            o.value = '.$tagid.';
-            opener.document.entry[\'ptags[]\'].insertBefore(o, null);
-            </script>';
-        }
-
-    break;
-
+    
+    /// Deletes a tag.
     case 'delete':
-        /// Delete a tag.
+        
         if (data_submitted() and confirm_sesskey()) {
             $tagids = optional_param('tags', array(), PARAM_INT);
 
@@ -103,19 +89,17 @@ switch ($action) {
                     continue;
                 }
 
-                if ($tag->type == 'personal') {
-                    if (has_capability('moodle/blog:managepersonaltags', $sitecontext)) {
-                        //ok - can delete any personal tag
-                    } else if (!has_capability('moodle/blog:create', $sitecontext) or $USER->id != $tag->userid) {
-                        // no delete - you must own the tag and be able to create blog entries
-                        continue;
-                    }
+                if ($tag->type == 'personal' and !has_capability('moodle/blog:managepersonaltags', $sitecontext)) {
+                    //can not delete
+                    continue;
                 }
-
-
+                
+                // Delete the tag itself
                 if (!delete_records('tags', 'id', $tagid)) {
                     error('Can not delete tag');
                 }
+                
+                // Deleteing all references to this tag
                 if (!delete_records('blog_tag_instance', 'tagid', $tagid)) {
                     error('Can not delete blog tag instances');
                 }
