@@ -19,6 +19,7 @@ class authorize_enrol_form extends moodleform
         $renderer =& $mform->defaultRenderer();
 
         $mform->addElement('header', '', '&nbsp;&nbsp;' . get_string('paymentrequired'), '');
+        $mform->addElement('static', '', '<div align="right">' . other_method($paymentmethod) . '&nbsp;&nbsp;</div>', '');
 
         $mform->addElement('hidden', 'id', $course->id);
         $mform->setType('id', PARAM_INT);
@@ -29,8 +30,8 @@ class authorize_enrol_form extends moodleform
         $firstlastnamestr = (AN_METHOD_CC == $paymentmethod) ?
                              get_string('nameoncard', 'enrol_authorize') : get_string('echeckfirslasttname', 'enrol_authorize');
         $firstlastnamegrp = array();
-        $firstlastnamegrp[] = &MoodleQuickForm::createElement('text', 'firstname', '', 'size="10"');
-        $firstlastnamegrp[] = &MoodleQuickForm::createElement('text', 'lastname', '', 'size="10"');
+        $firstlastnamegrp[] = &MoodleQuickForm::createElement('text', 'firstname', '', 'size="8"');
+        $firstlastnamegrp[] = &MoodleQuickForm::createElement('text', 'lastname', '', 'size="8"');
         $mform->addGroup($firstlastnamegrp, 'firstlastgrp', $firstlastnamestr, '&nbsp;', false);
         $firstlastnamegrprules = array();
         $firstlastnamegrprules['firstname'][] = array(get_string('missingfirstname'), 'required', null, 'client');
@@ -43,7 +44,7 @@ class authorize_enrol_form extends moodleform
 
         if (AN_METHOD_CC == $paymentmethod)
         {
-            $mform->addElement('text', 'cc', get_string('ccno', 'enrol_authorize'), 'size="16"');
+            $mform->addElement('text', 'cc', get_string('ccno', 'enrol_authorize'), 'size="20"');
             $mform->setType('cc', PARAM_ALPHANUM);
             $mform->setDefault('cc', '');
             $mform->addRule('cc', get_string('missingcc', 'enrol_authorize'), 'required', null, 'client');
@@ -102,15 +103,16 @@ class authorize_enrol_form extends moodleform
             if (!empty($CFG->an_avs)) {
                 $mform->addElement('header', '', '&nbsp;&nbsp;' . get_string('address'), '');
 
-                $mform->addElement('text', 'ccaddress', get_string('address'), 'size="20"');
+                $mform->addElement('text', 'ccaddress', get_string('address'), 'size="30"');
                 $mform->setType('ccaddress', PARAM_ALPHANUM);
                 $mform->setDefault('ccaddress', $USER->address);
                 $mform->addRule('ccaddress', get_string('missingaddress', 'enrol_authorize'), 'required', null, 'client');
 
                 $citystategrp = array();
-                $citystategrp[] = &MoodleQuickForm::createElement('text', 'cccity', '', 'size="10"');
-                $citystategrp[] = &MoodleQuickForm::createElement('text', 'ccstate', '', 'size="10"');
-                $mform->addGroup($citystategrp, 'citystategrp', get_string('city') . ' / ' . get_string('state'), '&nbsp;', false);
+                $citystategrp[] = &MoodleQuickForm::createElement('text', 'cccity', '', 'size="14"');
+                $citystategrp[] = &MoodleQuickForm::createElement('static', 'sep', null, ' - ');
+                $citystategrp[] = &MoodleQuickForm::createElement('text', 'ccstate', '', 'size="8"');
+                $mform->addGroup($citystategrp, 'citystategrp', get_string('city') . ' - ' . get_string('state'), '&nbsp;', false);
                 $citystategrprules = array();
                 $citystategrprules['cccity'][] = array(get_string('missingcity'), 'required', null, 'client');
                 $mform->addGroupRule('citystategrp', $citystategrprules);
@@ -216,7 +218,7 @@ class authorize_enrol_form extends moodleform
 
 }
 
-function print_other_method($currentmethod)
+function other_method($currentmethod)
 {
     global $course;
 
@@ -233,7 +235,10 @@ function print_other_method($currentmethod)
     if ($otheravailable) {
         $a = new stdClass;
         $a->url = $url;
-        print_string($stringtofetch, "enrol_authorize", $a);
+        return get_string($stringtofetch, "enrol_authorize", $a);
+    }
+    else {
+    	return '';
     }
 }
 ?>
