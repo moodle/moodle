@@ -2872,7 +2872,7 @@ function get_all_roles() {
  * @param int $userid
  * @return array
  */
-function get_user_roles($context, $userid=0, $checkparentcontexts=true) {
+function get_user_roles($context, $userid=0, $checkparentcontexts=true, $order='c.contextlevel DESC, r.sortorder ASC') {
 
     global $USER, $CFG, $db;
 
@@ -2897,7 +2897,7 @@ function get_user_roles($context, $userid=0, $checkparentcontexts=true) {
                            '   AND ra.roleid = r.id
                                AND ra.contextid = c.id
                                AND '.$contexts.
-                           ' ORDER BY c.contextlevel DESC, r.sortorder ASC');
+                           ' ORDER BY '.$order);
 }
 
 /**
@@ -3049,9 +3049,9 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 /// If context is a course, then construct sql for ul
     if ($context->contextlevel == CONTEXT_COURSE) {
         $courseid = $context->instanceid;
-        $coursesql = "AND (ul.courseid = $courseid OR ul.courseid IS NULL)";
+        $coursesql1 = "AND ul.courseid = $courseid";
     } else {
-        $coursesql = '';
+        $coursesql1 = '';
     }
 
 /// Sorting out roles with this capability set
@@ -3089,13 +3089,12 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     $from   = " FROM {$CFG->prefix}user u
                 INNER JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
                 INNER JOIN {$CFG->prefix}role r ON r.id = ra.roleid
-                LEFT OUTER JOIN {$CFG->prefix}user_lastaccess ul ON ul.userid = u.id
+                LEFT OUTER JOIN {$CFG->prefix}user_lastaccess ul ON (ul.userid = u.id $coursesql1)
                 $groupjoin";
     $where  = " WHERE ra.contextid ".get_related_contexts_string($context)."
                   AND u.deleted = 0
                   AND ra.roleid in $roleids
                       $exceptionsql
-                      $coursesql
                       $groupsql";
 
     return get_records_sql($select.$from.$where.$sortby, $limitfrom, $limitnum);
@@ -3332,5 +3331,4 @@ function user_has_role_assignment($userid, $roleid, $contextid=0) {
         return record_exists('role_assignments', 'userid', $userid, 'roleid', $roleid);
     }
 }
-
 ?>
