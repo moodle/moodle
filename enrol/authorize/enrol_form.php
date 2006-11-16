@@ -26,10 +26,12 @@ class authorize_enrol_form extends moodleform
         $mform->addElement('hidden', 'paymentmethod', $paymentmethod);
         $mform->setType('paymentmethod', PARAM_ALPHA);
 
+        $firstlastnamestr = (AN_METHOD_CC == $paymentmethod) ?
+                             get_string('nameoncard', 'enrol_authorize') : get_string('echeckfirslasttname', 'enrol_authorize');
         $firstlastnamegrp = array();
         $firstlastnamegrp[] = &MoodleQuickForm::createElement('text', 'firstname', '', 'size="10"');
         $firstlastnamegrp[] = &MoodleQuickForm::createElement('text', 'lastname', '', 'size="10"');
-        $mform->addGroup($firstlastnamegrp, 'firstlastgrp', get_string('nameoncard', 'enrol_authorize'), '&nbsp;', false);
+        $mform->addGroup($firstlastnamegrp, 'firstlastgrp', $firstlastnamestr, '&nbsp;', false);
         $firstlastnamegrprules = array();
         $firstlastnamegrprules['firstname'][] = array(get_string('missingfirstname'), 'required', null, 'client');
         $firstlastnamegrprules['lastname'][] = array(get_string('missinglastname'), 'required', null, 'client');
@@ -175,46 +177,41 @@ class authorize_enrol_form extends moodleform
     {
         global $CFG;
 
-        $err = array();
+        $errors = array();
 
         if (AN_METHOD_CC == $data['paymentmethod'])
         {
             if (!in_array($data['cctype'], array_keys(get_list_of_creditcards()))) {
-                $err['cctype'] = get_string('missingcctype', 'enrol_authorize');
+                $errors['cctype'] = get_string('missingcctype', 'enrol_authorize');
             }
 
             $expdate = sprintf("%02d", intval($data['ccexpiremm'])) . $data['ccexpireyyyy'];
             $validcc = CCVal($data['cc'], $data['cctype'], $expdate);
             if (!$validcc) {
                 if ($validcc === 0) {
-                    $err['ccexpiregrp'] = get_string('ccexpired', 'enrol_authorize');
+                    $errors['ccexpiregrp'] = get_string('ccexpired', 'enrol_authorize');
                 }
                 else {
-                    $err['cc'] = get_string('ccinvalid', 'enrol_authorize');
+                    $errors['cc'] = get_string('ccinvalid', 'enrol_authorize');
                 }
             }
 
             if (!empty($CFG->an_authcode) && !empty($data['haveauth']) && empty($data['ccauthcode'])) {
-                $err['ccauthgrp'] = get_string('missingccauthcode', 'enrol_authorize');
+                $errors['ccauthgrp'] = get_string('missingccauthcode', 'enrol_authorize');
             }
         }
         elseif (AN_METHOD_ECHECK == $data['paymentmethod'])
         {
             if (!ABAVal($data['abacode'])) {
-                $err['abacode'] = get_string('invalidaba', 'enrol_authorize');
+                $errors['abacode'] = get_string('invalidaba', 'enrol_authorize');
             }
 
             if (!in_array($data['acctype'], get_list_of_bank_account_types())) {
-                $err['acctype'] = get_string('invalidacctype', 'enrol_authorize');
+                $errors['acctype'] = get_string('invalidacctype', 'enrol_authorize');
             }
         }
 
-        if (!empty($err)) {
-            $err['header'] = get_string('someerrorswerefound');
-            return $err;
-        }
-
-        return true;
+        return (empty($errors) ? true : $errors);
     }
 
 }
