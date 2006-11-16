@@ -1556,7 +1556,7 @@ function print_course($course, $width="100%") {
         $namesarray = array();
         foreach ($teachers as $teacher) {
             if (!$teacher->hidden || $canseehidden) {
-                $roles = get_user_roles($context, $teacher->id);
+                $roles = get_user_roles($context, $teacher->id, true, 'r.sortorder ASC');
                 $role = array_shift($roles);  // First one
                 $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', $context));
                 $namesarray[] = format_string($role->name).': <a href="'.$CFG->wwwroot.'/user/view.php?id='.
