@@ -2870,9 +2870,14 @@ function get_all_roles() {
  * allow_override tables
  * @param object $context
  * @param int $userid
+ * @param view - set to true when roles are pulled for display only
+ *               this is so that we can filter roles with no visible 
+ *               assignment, for example, you might want to "hide" all
+ *               course creators when browsing the course participants
+ *               list.
  * @return array
  */
-function get_user_roles($context, $userid=0, $checkparentcontexts=true, $order='c.contextlevel DESC, r.sortorder ASC') {
+function get_user_roles($context, $userid=0, $checkparentcontexts=true, $order='c.contextlevel DESC, r.sortorder ASC', $view=false) {
 
     global $USER, $CFG, $db;
 
@@ -2882,6 +2887,8 @@ function get_user_roles($context, $userid=0, $checkparentcontexts=true, $order='
         }
         $userid = $USER->id;
     }
+    // set up hidden sql
+    $hiddensql = ($view && has_capability('moodle/role:viewhiddenassigns', $context))? '':' AND ra.hidden = 0 ';
 
     if ($checkparentcontexts && ($parents = get_parent_contexts($context))) {
         $contexts = ' ra.contextid IN ('.implode(',' , $parents).','.$context->id.')';
@@ -2896,7 +2903,7 @@ function get_user_roles($context, $userid=0, $checkparentcontexts=true, $order='
                              WHERE ra.userid = '.$userid.
                            '   AND ra.roleid = r.id
                                AND ra.contextid = c.id
-                               AND '.$contexts.
+                               AND '.$contexts . $hiddensql .
                            ' ORDER BY '.$order);
 }
 
@@ -3012,9 +3019,14 @@ function get_default_course_role($course) {
  * @param $limitnum - number of records to fetch
  * @param $groups - single group or array of groups - group(s) user is in
  * @param $exceptions - list of users to exclude
+ * @param view - set to true when roles are pulled for display only
+ *               this is so that we can filter roles with no visible 
+ *               assignment, for example, you might want to "hide" all
+ *               course creators when browsing the course participants
+ *               list.
  */
 function get_users_by_capability($context, $capability, $fields='', $sort='',
-                                 $limitfrom='', $limitnum='', $groups='', $exceptions='', $doanything=true) {
+                                 $limitfrom='', $limitnum='', $groups='', $exceptions='', $doanything=true, $view=false) {
     global $CFG;
 
 /// Sorting out groups
@@ -3045,6 +3057,8 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     }
 
     $sortby = $sort ? " ORDER BY $sort " : '';
+/// Set up hidden sql
+    $hiddensql = ($view && has_capability('moodle/role:viewhiddenassigns', $context))? '':' AND ra.hidden = 0 ';
 
 /// If context is a course, then construct sql for ul
     if ($context->contextlevel == CONTEXT_COURSE) {
@@ -3095,8 +3109,9 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
                   AND u.deleted = 0
                   AND ra.roleid in $roleids
                       $exceptionsql
-                      $groupsql";
-
+                      $groupsql
+                      $hiddensql";
+        
     return get_records_sql($select.$from.$where.$sortby, $limitfrom, $limitnum);
 }
 

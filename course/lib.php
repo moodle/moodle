@@ -1547,22 +1547,19 @@ function print_course($course, $width="100%") {
     echo '<td valign="top" width="50%" class="info">';
     echo '<b><a title="'.get_string('entercourse').'"'.
          $linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.
-         $course->fullname.'</a></b><br />';
-
+         $course->fullname.'</a></b><br />';   
+    
     if ($teachers = get_users_by_capability($context, 'moodle/course:update',
-                                            'u.*, ul.timeaccess as lastaccess, ra.hidden',
-                                            'r.sortorder ASC', '','','','', false)) {
-                                              
-        $canseehidden = has_capability('moodle/role:viewhiddenassigns', $context);
+                                            'u.*, ul.timeaccess as lastaccess',
+                                            'r.sortorder ASC', '','','','', false, true)) {        
         $namesarray = array();
         foreach ($teachers as $teacher) {
-            if (!$teacher->hidden || $canseehidden) {
-                $roles = get_user_roles($context, $teacher->id, true, 'r.sortorder ASC');
+            if ($roles = get_user_roles($context, $teacher->id, true, 'r.sortorder ASC', true)) {
                 $role = array_shift($roles);  // First one
                 $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', $context));
                 $namesarray[] = format_string($role->name).': <a href="'.$CFG->wwwroot.'/user/view.php?id='.
-                                  $teacher->id.'&amp;course='.SITEID.'">'.$fullname.'</a>';
-            }
+                                    $teacher->id.'&amp;course='.SITEID.'">'.$fullname.'</a>';
+            }          
         }
         if ($namesarray) {
             echo "<ul class=\"teachers\">\n<li>";
