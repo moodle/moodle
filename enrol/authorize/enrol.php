@@ -143,7 +143,7 @@ class enrolment_plugin_authorize
         $timenow = time();
         $order = new stdClass();
         $order->paymentmethod = AN_METHOD_CC;
-        $order->cclastfour = substr($form->cc, -4);
+        $order->refundinfo = substr($form->cc, -4);
         $order->ccname = $form->firstname . " " . $form->lastname;
         $order->courseid = $course->id;
         $order->userid = $USER->id;
@@ -296,7 +296,7 @@ class enrolment_plugin_authorize
         $timenow = time();
         $order = new stdClass();
         $order->paymentmethod = AN_METHOD_ECHECK;
-        $order->cclastfour = $isbusinesschecking ? 1 : 0;
+        $order->refundinfo = $isbusinesschecking ? 1 : 0;
         $order->ccname = $form->firstname . ' ' . $form->lastname;
         $order->courseid = $course->id;
         $order->userid = $USER->id;

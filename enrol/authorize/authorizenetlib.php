@@ -222,7 +222,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
             $poststring .= '&x_invoice_num=' . urlencode($extra->orderid);
             $poststring .= '&x_amount=' . urlencode($extra->amount);
             if ($method == AN_METHOD_CC) {
-                $poststring .= '&x_card_num=' . sprintf("%04d", intval($order->cclastfour));
+                $poststring .= '&x_card_num=' . sprintf("%04d", intval($order->refundinfo));
             }
             break;
         }
