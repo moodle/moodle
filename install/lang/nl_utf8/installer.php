@@ -198,6 +198,7 @@ $string['skipdbencodingtest'] = 'Negeer DB-encodingtest';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Nederlands';
+$string['unicoderecommended'] = 'Aanbevolen wordt om al je data als Unicode (UTF-8) te bewaren. Nieuwe installaties zouden moeten geïnstalleerd worden met Unicode als standaard tekenset voor de databank. Als je upgrade, moet je het UTF-8 migratieproces laten lopen (zie pagina Beheer).';
 $string['user'] = 'Gebruiker';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'Je krijgt deze pagina te zien omdat je met succes het <strong>$a->packname $a->packversion</strong> packet op je computer gezet en gestart hebt. Proficiat!';
