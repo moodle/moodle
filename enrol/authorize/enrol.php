@@ -163,7 +163,7 @@ class enrolment_plugin_authorize
         $timenow = time();
         $order = new stdClass();
         $order->cclastfour = substr($form->cc, -4);
-        $order->ccname = $form->ccfirstname . " " . $form->cclastname;
+        $order->ccname = $form->firstname . " " . $form->lastname;
         $order->courseid = $course->id;
         $order->userid = $USER->id;
         $order->status = AN_STATUS_NONE; // it will be changed...
@@ -185,8 +185,8 @@ class enrolment_plugin_authorize
         $extra->x_exp_date = $exp_date;
         $extra->x_currency_code = $curcost['currency'];
         $extra->x_amount = $curcost['cost'];
-        $extra->x_first_name = $form->ccfirstname;
-        $extra->x_last_name = $form->cclastname;
+        $extra->x_first_name = $form->firstname;
+        $extra->x_last_name = $form->lastname;
         $extra->x_country = $form->cccountry;
         $extra->x_address = $form->ccaddress;
         $extra->x_state = $form->ccstate;
@@ -334,7 +334,7 @@ class enrolment_plugin_authorize
             }
         }
 
-        if (empty($form->ccfirstname) || empty($form->cclastname)) {
+        if (empty($form->firstname) || empty($form->lastname)) {
             $this->ccerrors['ccfirstlast'] = get_string('missingfullname');
         }
 

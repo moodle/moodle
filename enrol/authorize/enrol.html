@@ -2,7 +2,7 @@
 
 enrolment_plugin_authorize::prevent_double_paid($course);
 $formvars = array('password', 'ccaddress', 'cccity', 'ccstate', 'cccountry', 'cczip',
-                  'ccfirstname', 'cclastname', 'cc', 'ccexpiremm', 'ccexpireyyyy', 'cctype', 'cvv');
+                  'firstname', 'lastname', 'cc', 'ccexpiremm', 'ccexpireyyyy', 'cctype', 'cvv');
 
 foreach ($formvars as $var) {
     if (!isset($form->$var)) {
@@ -11,8 +11,8 @@ foreach ($formvars as $var) {
 }
 
 $curcost = enrolment_plugin_authorize::get_course_cost($course);
-$userfirstname = empty($form->ccfirstname) ? $USER->firstname : $form->ccfirstname;
-$userlastname = empty($form->cclastname) ? $USER->lastname : $form->cclastname;
+$userfirstname = empty($form->firstname) ? $USER->firstname : $form->firstname;
+$userlastname = empty($form->lastname) ? $USER->lastname : $form->lastname;
 $useraddress = empty($form->ccaddress) ? $USER->address : $form->ccaddress;
 $usercity = empty($form->cccity) ? $USER->city : $form->cccity;
 $usercountry = empty($form->cccountry) ? $USER->country : $form->cccountry;
@@ -37,8 +37,8 @@ $usercountry = empty($form->cccountry) ? $USER->country : $form->cccountry;
 </tr>
 <tr>
   <td align="right"><?php print_string("nameoncard", "enrol_authorize") ?>: </td>
-  <td align="left"><input type="text" name="ccfirstname" size="8" value="<?php p($userfirstname) ?>" />
-  <input type="text" name="cclastname" size="8" value="<?php p($userlastname) ?>" />
+  <td align="left"><input type="text" name="firstname" size="8" value="<?php p($userfirstname) ?>" />
+  <input type="text" name="lastname" size="8" value="<?php p($userlastname) ?>" />
   <?php if (!empty($this->ccerrors['ccfirstlast'])) { formerr($this->ccerrors['ccfirstlast']); } ?></td>
 </tr>
 <tr>
