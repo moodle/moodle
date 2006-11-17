@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="enrol/authorize/db" VERSION="20060809" COMMENT="XMLDB file for Moodle enrol/authorize">
+<XMLDB PATH="enrol/authorize/db" VERSION="20061117" COMMENT="XMLDB file for Moodle enrol/authorize"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
   <TABLES>
     <TABLE NAME="enrol_authorize" COMMENT="Holds all known information about authorize.net transactions" NEXT="enrol_authorize_refunds">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="paymentmethod"/>
-        <FIELD NAME="paymentmethod" TYPE="char" LENGTH="6" NOTNULL="true" DEFAULT="cc" SEQUENCE="false" ENUM="true" ENUMVALUES="'cc', 'echeck'" PREVIOUS="id" NEXT="cclastfour"/>
-        <FIELD NAME="cclastfour" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="paymentmethod" NEXT="ccname"/>
-        <FIELD NAME="ccname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="cclastfour" NEXT="courseid"/>
+        <FIELD NAME="paymentmethod" TYPE="char" LENGTH="6" NOTNULL="true" DEFAULT="cc" SEQUENCE="false" ENUM="true" ENUMVALUES="'cc', 'echeck'" PREVIOUS="id" NEXT="refundinfo"/>
+        <FIELD NAME="refundinfo" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="paymentmethod" NEXT="ccname"/>
+        <FIELD NAME="ccname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="refundinfo" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="ccname" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="transid"/>
         <FIELD NAME="transid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="status"/>
