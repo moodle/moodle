@@ -9,13 +9,6 @@ require_once($CFG->dirroot.'/enrol/authorize/localfuncs.php');
  */
 class enrolment_plugin_authorize
 {
-    /**
-     * Error message after connected authorize.net.
-     *
-     * @var string
-     * @access public
-     */
-    var $authorizeerror;
 
     /**
      * Cron log.
@@ -81,23 +74,23 @@ class enrolment_plugin_authorize
         }
         else {
             require_once($CFG->dirroot.'/enrol/authorize/enrol_form.php');
-            $authorize_enrol = new authorize_enrol_form('enrol.php');
-            if ($authorize_enrol->data_submitted() &&
-               (AN_METHOD_CC == $form->paymentmethod || AN_METHOD_ECHECK == $form->paymentmethod)) {
+            $frmenrol = new authorize_enrol_form('enrol.php');
+            if ($frmenrol->data_submitted()) {
+                $authorizeerror = '';
                 switch ($form->paymentmethod) {
                     case AN_METHOD_CC:
-                    $this->cc_submit($form, $course);
-                    break;
+                        $authorizeerror = $this->cc_submit($form, $course);
+                        break;
 
                     case AN_METHOD_ECHECK:
-                    $this->echeck_submit($form, $course);
-                    break;
+                        $authorizeerror = $this->echeck_submit($form, $course);
+                        break;
                 }
-                if (!empty($this->authorizeerror)) {
-                    error($this->authorizeerror);
+                if (!empty($authorizeerror)) {
+                    error($authorizeerror);
                 }
             }
-            $authorize_enrol->display();
+            $frmenrol->display();
         }
         print_simple_box_end();
 
@@ -168,8 +161,7 @@ class enrolment_plugin_authorize
         $order->id = insert_record("enrol_authorize", $order);
         if (!$order->id) {
             email_to_admin("Error while trying to insert new data", $order);
-            $this->authorizeerror = "Insert record error. Admin has been notified!";
-            return;
+            return "Insert record error. Admin has been notified!";
         }
 
         $extra = new stdClass();
@@ -211,8 +203,7 @@ class enrolment_plugin_authorize
         $message = '';
         if (AN_APPROVED != authorize_action($order, $message, $extra, $action, $form->cctype)) {
             email_to_admin($message, $order);
-            $this->authorizeerror = $message;
-            return;
+            return $message;
         }
 
         $SESSION->ccpaid = 1; // security check: don't duplicate payment
@@ -331,8 +322,7 @@ class enrolment_plugin_authorize
         $order->id = insert_record("enrol_authorize", $order);
         if (!$order->id) {
             email_to_admin("Error while trying to insert new data", $order);
-            $this->authorizeerror = "Insert record error. Admin has been notified!";
-            return;
+            return "Insert record error. Admin has been notified!";
         }
 
         $extra = new stdClass();
@@ -364,8 +354,7 @@ class enrolment_plugin_authorize
         $message = '';
         if (AN_REVIEW != authorize_action($order, $message, $extra, AN_ACTION_AUTH_CAPTURE)) {
             email_to_admin($message, $order);
-            $this->authorizeerror = $message;
-            return;
+            return $message;
         }
 
         $SESSION->ccpaid = 1; // security check: don't duplicate payment
