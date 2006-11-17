@@ -112,7 +112,7 @@ class upload_manager {
                     continue; 
                 }
                 if ($this->status && !empty($CFG->runclamonupload)) {
-                    $this->status = clam_scan_file($this->files[$name],$this->course);
+                    $this->status = clam_scan_moodle_file($this->files[$name],$this->course);
                 }
                 if (!$this->status) {
                     if (!$this->config->recoverifmultiple && count($this->files) > 1) {
@@ -586,7 +586,7 @@ function clam_replace_infected_file($file) {
  * @param course $course {@link $COURSE}
  * @return int 1 if good, 0 if something goes wrong (opposite from actual error code from clam)
  */ 
-function clam_scan_file(&$file, $course) {
+function clam_scan_moodle_file(&$file, $course) {
     global $CFG, $USER;
 
     if (is_array($file) && is_uploaded_file($file['tmp_name'])) { // it's from $_FILES
