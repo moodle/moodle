@@ -144,7 +144,7 @@ class enrolment_plugin_authorize
         $order = new stdClass();
         $order->paymentmethod = AN_METHOD_CC;
         $order->cclastfour = substr($form->cc, -4);
-        $order->ccname = $form->ccfirstname . " " . $form->cclastname;
+        $order->ccname = $form->firstname . " " . $form->lastname;
         $order->courseid = $course->id;
         $order->userid = $USER->id;
         $order->status = AN_STATUS_NONE; // it will be changed...
@@ -166,8 +166,8 @@ class enrolment_plugin_authorize
         $extra->x_exp_date = $exp_date;
         $extra->x_currency_code = $curcost['currency'];
         $extra->x_amount = $curcost['cost'];
-        $extra->x_first_name = $form->ccfirstname;
-        $extra->x_last_name = $form->cclastname;
+        $extra->x_first_name = $form->firstname;
+        $extra->x_last_name = $form->lastname;
         $extra->x_country = $form->cccountry;
         $extra->x_address = $form->ccaddress;
         $extra->x_state = $form->ccstate;
@@ -290,12 +290,13 @@ class enrolment_plugin_authorize
 
         $useripno = getremoteaddr();
         $curcost = get_course_cost($course);
+        $isbusinesschecking = ($form->acctype == 'BUSINESSCHECKING');
 
         // NEW ECHECK ORDER
         $timenow = time();
         $order = new stdClass();
         $order->paymentmethod = AN_METHOD_ECHECK;
-        $order->cclastfour = 0;
+        $order->cclastfour = $isbusinesschecking ? 1 : 0;
         $order->ccname = $form->firstname . ' ' . $form->lastname;
         $order->courseid = $course->id;
         $order->userid = $USER->id;
@@ -316,7 +317,7 @@ class enrolment_plugin_authorize
         $extra->x_bank_aba_code = $form->abacode;
         $extra->x_bank_acct_num = $form->accnum;
         $extra->x_bank_acct_type = $form->acctype;
-        $extra->x_echeck_type = ($form->acctype == 'BUSINESSCHECKING') ? 'CCD' : 'WEB';
+        $extra->x_echeck_type = $isbusinesschecking ? 'CCD' : 'WEB';
         $extra->x_bank_name = $form->bankname;
         $extra->x_currency_code = $curcost['currency'];
         $extra->x_amount = $curcost['cost'];

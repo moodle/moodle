@@ -232,7 +232,7 @@ function validate_cc_form($form, &$err)
         }
     }
 
-    if (empty($form->ccfirstname) || empty($form->cclastname)) {
+    if (empty($form->firstname) || empty($form->lastname)) {
         $err['ccfirstlast'] = get_string('missingfullname');
     }
 
