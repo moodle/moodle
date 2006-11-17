@@ -173,7 +173,8 @@
             echo '<tr id="section-'.$section.'" class="section main'.$sectionstyle.'">';
             echo '<td class="left side">&nbsp;</td>';
 
-            if (!empty($USER->ajax) && $editing) {
+
+            if (ajaxenabled() && $editing) {
                 // Temporarily hide the dates for the weeks. We do it this way
                 // for now. Eventually, we'll have to modify the javascript code
                 // to handle re-calculation of dates when sections are moved
@@ -182,6 +183,7 @@
             } else {
                 $weekperiod = $weekday.' '.$endweekday;
             }
+
 
             echo '<td class="content">';
             if (!has_capability('moodle/course:viewhiddensections', $context) and !$thissection->visible) {   // Hidden for students
