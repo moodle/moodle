@@ -1777,7 +1777,6 @@ function replace_smilies(&$text) {
         'V-.'  => 'thoughtful',
         ':-P'  => 'tongueout',
         'B-)'  => 'cool',
-        'B)'   => 'cool',
         '^-)'  => 'approve',
         '8-)'  => 'wideeyes',
         ':o)'  => 'clown',
