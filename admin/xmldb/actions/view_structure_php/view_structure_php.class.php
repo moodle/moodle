@@ -211,7 +211,7 @@ class view_structure_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch create table for ' . $table->getName() . XMLDB_LINEFEED;
-        $result .= '        $status = $status && create_table($table);' . XMLDB_LINEFEED;
+        $result .= '        $result = $result && create_table($table);' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -249,7 +249,7 @@ class view_structure_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch drop table for ' . $table->getName() . XMLDB_LINEFEED;
-        $result .= '        $status = $status && drop_table($table);' . XMLDB_LINEFEED;
+        $result .= '        $result = $result && drop_table($table);' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -287,7 +287,7 @@ class view_structure_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch rename table for ' . $table->getName() . XMLDB_LINEFEED;
-        $result .= '        $status = $status && rename_table($table, ' . "'NEWNAMEGOESHERE'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $result = $result && rename_table($table, ' . "'NEWNAMEGOESHERE'" . ');' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
