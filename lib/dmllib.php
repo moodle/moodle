@@ -635,10 +635,10 @@ function get_recordset_sql($sql, $limitfrom=null, $limitnum=null) {
 
 /// Temporary hack as part of phasing out all access to obsolete user tables  XXX
     if (!empty($CFG->rolesactive)) {
-        if (strpos($sql, $CFG->prefix.'user_students') || 
-            strpos($sql, $CFG->prefix.'user_teachers') ||
-            strpos($sql, $CFG->prefix.'user_coursecreators') ||
-            strpos($sql, $CFG->prefix.'user_admins')) {
+        if (strpos($sql, ' '.$CFG->prefix.'user_students ') || 
+            strpos($sql, ' '.$CFG->prefix.'user_teachers ') ||
+            strpos($sql, ' '.$CFG->prefix.'user_coursecreators ') ||
+            strpos($sql, ' '.$CFG->prefix.'user_admins ')) {
             if (debugging()) { var_dump(debug_backtrace()); }
             error('This SQL relies on obsolete tables!  Your code must be fixed by a developer.');
         }
