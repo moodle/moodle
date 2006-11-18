@@ -12,9 +12,18 @@
 $string['admindirerror'] = 'The admin directory specified is incorrect';
 $string['admindirname'] = 'Admin Directory';
 $string['bypassed'] = 'Utelatt';
+$string['cannotcreatelangdir'] = 'Kan ikke opprette mappen \'lang\'.';
+$string['cannotcreatetempdir'] = 'Kan ikke opprette mappen \'temp';
+$string['cannotdownloadcomponents'] = 'Kan ikke laste ned komponentene.';
+$string['cannotdownloadzipfile'] = 'Kan ikke laste ned ZIP-fil.';
+$string['cannotfindcomponent'] = 'Kan ikke finne komponenten.';
+$string['cannotsavemd5file'] = 'Kan ikke lagre md5-fil.';
+$string['cannotsavezipfile'] = 'Kan ikke lagre ZIP-fil.';
+$string['cannotunzipfile'] = 'Kan ikke pakke opp (unzip) filen.';
 $string['caution'] = 'Caution';
 $string['check'] = 'Sjekk';
 $string['closewindow'] = 'Lukk dette vinduet';
+$string['componentisuptodate'] = 'Komponenten er ajourført.';
 $string['configfilenotwritten'] = 'The installer script was not able to automatically create a config.php file containing your chosen settings, probably because the Moodle directory is not writeable. You can manually copy the following code into a file named config.php within the root directory of Moodle.';
 $string['configfilewritten'] = 'config.php has been successfully created';
 $string['continue'] = 'Fortsett';
@@ -29,6 +38,7 @@ $string['dbtype'] = 'Type';
 $string['dirroot'] = 'Moodle Directory';
 $string['dirrooterror'] = 'The \'Moodle Directory\' setting seems to be incorrect - we can\'t find a Moodle installation there.  The value below has been reset.';
 $string['download'] = 'Download';
+$string['downloadedfilecheckfailed'] = 'Sjekk av nedlastet fil feilet.';
 $string['environmentrequireversion'] = 'Du må ha versjon $a->needed. Du kjører $a->current';
 $string['error'] = 'Feil';
 $string['fail'] = 'Fail';
@@ -49,6 +59,7 @@ $string['gdversionhelp'] = '<p>Your server does not seem to have GD installed.</
 $string['help'] = 'Hjelp';
 $string['info'] = 'Informasjon';
 $string['installation'] = 'Installation';
+$string['invalidmd5'] = 'Ugyldig md5';
 $string['language'] = 'Språk';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'This should be off';
@@ -73,6 +84,7 @@ $string['memorylimithelp'] = '<p>The PHP memory limit for your server is current
     <p>However, on some servers this will prevent <b>all</b> PHP pages from working 
     (you will see errors when you look at pages) so you\'ll have to remove the .htaccess file.</p></li>
 </ol>';
+$string['missingrequiredfield'] = 'Noen påkrevde felt mangler';
 $string['moodledocslink'] = 'Moodledokumentasjon for denne siden';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MySQL extension so that it can communicate with MySQL.  Please check your php.ini file or recompile PHP.';
 $string['name'] = 'Navn';
@@ -87,6 +99,8 @@ $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.1.0.
 <p>You are currently running version $a</p>
 <p>You must upgrade PHP or move to a host with a newer version of PHP!</p>';
 $string['previous'] = 'Forrige';
+$string['remotedownloadnotallowed'] = 'Nedlasting av komponenter til din tjenermaskin er ikke tillatt (allow_url_fopen er satt til ulovlig). <br /> <br />Du må laste ned
+<a href=\"$a->url\">$a->url</a>-filen manuelt, kopiere den til \"$a->dest\" på tjeneren og pakke den ut der.';
 $string['report'] = 'Rapport';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle may have trouble with safe mode on';
@@ -96,6 +110,9 @@ $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Norsk - bokmål';
 $string['user'] = 'Bruker';
+$string['wrongdestpath'] = 'Gal resultatmappe';
+$string['wrongsourcebase'] = 'Galt ZIP-filnavn.';
+$string['wrongzipfilename'] = 'Galt ZIP-filnavn.';
 $string['wwwroot'] = 'Web address';
 $string['wwwrooterror'] = 'The web address does not appear to be valid - this Moodle installation doesn\'t appear to be there.';
 ?>
