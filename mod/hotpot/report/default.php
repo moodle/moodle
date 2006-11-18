@@ -93,7 +93,7 @@ class hotpot_default_report {
             $legend->stat = array();
 
             // put the questions in order
-            sort($table->legend);
+            ksort($table->legend);
 
             foreach($table->legend as $q=>$question) {
 
