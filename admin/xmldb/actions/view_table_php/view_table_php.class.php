@@ -336,7 +336,7 @@ class view_table_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch add field ' . $field->getName() . XMLDB_LINEFEED;
-        $result .= '        $status = $status && add_field($table, $field);' . XMLDB_LINEFEED;
+        $result .= '        $result = $result && add_field($table, $field);' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -379,7 +379,7 @@ class view_table_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch drop field ' . $field->getName() . XMLDB_LINEFEED;
-        $result .= '        $status = $status && drop_field($table, $field);' . XMLDB_LINEFEED;
+        $result .= '        $result = $result && drop_field($table, $field);' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -422,7 +422,7 @@ class view_table_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch rename field ' . $field->getName() . XMLDB_LINEFEED;
-        $result .= '        $status = $status && rename_field($table, $field, ' . "'" . 'NEWNAMEGOESHERE' . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $result = $result && rename_field($table, $field, ' . "'" . 'NEWNAMEGOESHERE' . "'" . ');' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -475,7 +475,7 @@ class view_table_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch change of type for field ' . $field->getName() . XMLDB_LINEFEED;
-        $result .= '        $status = $status && change_field_type($table, $field);' . XMLDB_LINEFEED;
+        $result .= '        $result = $result && change_field_type($table, $field);' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -525,7 +525,7 @@ class view_table_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch change of precision for field ' . $field->getName() . XMLDB_LINEFEED;
-        $result .= '        $status = $status && change_field_precision($table, $field);' . XMLDB_LINEFEED;
+        $result .= '        $result = $result && change_field_precision($table, $field);' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -571,7 +571,7 @@ class view_table_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch change of sign for field ' . $field->getName() . XMLDB_LINEFEED;
-        $result .= '        $status = $status && change_field_unsigned($table, $field);' . XMLDB_LINEFEED;
+        $result .= '        $result = $result && change_field_unsigned($table, $field);' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -617,7 +617,7 @@ class view_table_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch change of nullability for field ' . $field->getName() . XMLDB_LINEFEED;
-        $result .= '        $status = $status && change_field_notnull($table, $field);' . XMLDB_LINEFEED;
+        $result .= '        $result = $result && change_field_notnull($table, $field);' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -664,7 +664,7 @@ class view_table_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch change of list of values for field ' . $field->getName() . XMLDB_LINEFEED;
-        $result .= '        $status = $status && change_field_enum($table, $field);' . XMLDB_LINEFEED;
+        $result .= '        $result = $result && change_field_enum($table, $field);' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -710,7 +710,7 @@ class view_table_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch change of default for field ' . $field->getName() . XMLDB_LINEFEED;
-        $result .= '        $status = $status && change_field_default($table, $field);' . XMLDB_LINEFEED;
+        $result .= '        $result = $result && change_field_default($table, $field);' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -754,7 +754,7 @@ class view_table_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch add key ' . $key->getName() . XMLDB_LINEFEED;
-        $result .= '        $status = $status && add_key($table, $key);' . XMLDB_LINEFEED;
+        $result .= '        $result = $result && add_key($table, $key);' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -798,7 +798,7 @@ class view_table_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch drop key ' . $key->getName() . XMLDB_LINEFEED;
-        $result .= '        $status = $status && drop_key($table, $key);' . XMLDB_LINEFEED;
+        $result .= '        $result = $result && drop_key($table, $key);' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -845,7 +845,7 @@ class view_table_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch rename key ' . $key->getName() . XMLDB_LINEFEED;
-        $result .= '        $status = $status && rename_key($table, $key, ' . "'" . 'NEWNAMEGOESHERE' . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $result = $result && rename_key($table, $key, ' . "'" . 'NEWNAMEGOESHERE' . "'" . ');' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -889,7 +889,7 @@ class view_table_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch add index ' . $index->getName() . XMLDB_LINEFEED;
-        $result .= '        $status = $status && add_index($table, $index);' . XMLDB_LINEFEED;
+        $result .= '        $result = $result && add_index($table, $index);' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -933,7 +933,7 @@ class view_table_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch drop index ' . $index->getName() . XMLDB_LINEFEED;
-        $result .= '        $status = $status && drop_index($table, $index);' . XMLDB_LINEFEED;
+        $result .= '        $result = $result && drop_index($table, $index);' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
@@ -980,7 +980,7 @@ class view_table_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch rename index ' . $index->getName() . XMLDB_LINEFEED;
-        $result .= '        $status = $status && rename_index($table, $index, ' . "'" . 'NEWNAMEGOESHERE' . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $result = $result && rename_index($table, $index, ' . "'" . 'NEWNAMEGOESHERE' . "'" . ');' . XMLDB_LINEFEED;
 
     /// Add standard PHP footer
         $result .= XMLDB_PHP_FOOTER;
