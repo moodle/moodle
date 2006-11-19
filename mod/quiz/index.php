@@ -124,7 +124,7 @@
                 //If all quiz's attempts have visible results, show bestgrade
                 if (all_attempt_results_visible($quiz, $USER)) {
                     $gradecol = "$bestgrade / $quiz->grade";
-                    $feedbackcol = quiz_feedback_for_grade($quiz, $bestgrade);
+                    $feedbackcol = quiz_feedback_for_grade($bestgrade, $quiz->id);
                 }
             }
         }
