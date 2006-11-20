@@ -214,16 +214,13 @@
                                             ORDER BY lastname ASC, firstname ASC');
 
         /// In the .html file below we loop through these results and exclude any in $contextusers
-    
-        echo '<form name="rolesform" action="assign.php" method="post">';
+
         echo '<div align="center">'.$strcurrentcontext.': '.print_context_name($context).'<br/>';
-        if ($userid) {
-            echo '<input type="hidden" name="userid" value="'.$userid.'" />';
-        }
-        echo '<input type="hidden" name="courseid" value="'.$courseid.'" />';
-        echo '<input type="hidden" name="contextid" value="'.$context->id.'" />'.$strroletoassign.': ';
-        choose_from_menu ($assignableroles, 'roleid', $roleid, get_string('listallroles', 'role').'...', $script='rolesform.submit()');
-        echo '</div></form>';
+        echo $strroletoassign.': ';
+        $assignableroles = array('0'=>get_string('listallroles', 'role').'...') + $assignableroles; 
+        popup_form("$CFG->wwwroot/$CFG->admin/roles/assign.php?userid=$userid&amp;courseid=$courseid&amp;contextid=$contextid&amp;roleid=",
+            $assignableroles, 'switchrole', $roleid, '');
+        echo '</div>';
 
         print_simple_box_start('center');
         include('assign.html');
