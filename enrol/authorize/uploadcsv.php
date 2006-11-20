@@ -111,6 +111,7 @@ function authorize_process_csv($filename)
         $transid = $data[$csvfields['Transaction ID']];
         $transtype = $data[$csvfields['Transaction Type']];
         $transstatus = $data[$csvfields['Transaction Status']];
+        $reftransid = $data[$csvfields['Reference Transaction ID']];
         $settlementdate = strtotime($data[$csvfields['Settlement Date/Time']]);
 
         if ($transstatus == 'Approved Review' || $transstatus == 'Review Failed') {
@@ -120,6 +121,23 @@ function authorize_process_csv($filename)
                 $updated++; // Updated order status
             }
             continue;
+        }
+
+        if (!empty($reftransid) && $transstatus == 'Settled Successfully' && $transtype == 'Credit') {
+            if ($refund = get_record('enrol_authorize_refunds', 'transid', $reftransid)) {
+                $order = get_record('enrol_authorize', 'id', $refund->orderid);
+                if (AN_METHOD_ECHECK == $order->paymentmethod) {
+                    $refund->status = AN_STATUS_CREDIT;
+                    $refund->settletime = $settlementdate;
+                    update_record('enrol_authorize_refunds', $refund);
+                    $updated++;
+                }
+            }
+            else {
+                $ignored++;
+                $ignoredlines .= $reftransid . ": Not our business, in refunds\n";
+                continue;
+            }
         }
 
         if (! ($transstatus == 'Settled Successfully' && $transtype == 'Authorization w/ Auto Capture')) {
