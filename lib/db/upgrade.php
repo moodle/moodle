@@ -82,6 +82,16 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field5);
     }
     
+    if ($result && $oldversion < 2006112000) {
+
+    /// Define field attachment to be added to post
+        $table = new XMLDBTable('post');
+        $field = new XMLDBField('attachment');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '100', null, null, null, null, null, null, 'format');
+
+    /// Launch add field attachment
+        $result = $result && add_field($table, $field);
+    }
 
     return $result;
 

@@ -35,14 +35,16 @@
     if (count($args) == 0) { // always at least courseid, may search for index.html in course root
         error('No valid arguments supplied');
     }
-
+  
     // security: limit access to existing course subdirectories
-    if (!$course = get_record_sql("SELECT * FROM {$CFG->prefix}course WHERE id='".(int)$args[0]."'")) {
+    // hack for blogs, needs proper security check too
+    if ((!$course = get_record_sql("SELECT * FROM {$CFG->prefix}course WHERE id='".(int)$args[0]."'")) && $args[0]!='blog') {
         error('Invalid course ID');
     }
 
     // security: prevent access to "000" or "1 something" directories
-    if ($args[0] != $course->id) {
+    // hack for blogs, needs proper security check too
+    if ($args[0] != $course->id && $args[0]!='blog') {
         error('Invalid course ID');
     }
 

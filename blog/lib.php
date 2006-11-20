@@ -198,6 +198,14 @@
     /// Actual content
 
         echo '</td><td class="content">'."\n";
+        
+        if ($blogEntry->attachment) {
+            echo '<div class="attachments">';
+            $attachedimages = blog_print_attachments($blogEntry);
+            echo '</div>';
+        } else {
+            $attachedimages = '';
+        }
 
         switch ($template['publishstate']) {
             case 'draft':
@@ -219,7 +227,9 @@
 
         // Print whole message
         echo format_text($template['body']);
-
+        
+        /// Print attachments
+        echo $attachedimages;
     /// Links to tags
 
         if ($blogtags = get_records_sql('SELECT t.* FROM '.$CFG->prefix.'tags t, '.$CFG->prefix.'blog_tag_instance ti
@@ -251,7 +261,91 @@
         echo '</td></tr></table>'."\n\n";
 
     }
+    
+    function blog_file_area_name($blogentry) {
+    //  Creates a directory file name, suitable for make_upload_directory()
+        global $CFG;
+        // $CFG->dataroot/blog/attachments/xxxx/file.jpg
+        return "blog/attachments/$blogentry->id";
+    }
 
+    function blog_file_area($blogentry) {
+        return make_upload_directory( blog_file_area_name($blogentry) );
+    }
+
+
+    function blog_print_attachments($blogentry, $return=NULL) {
+    // if return=html, then return a html string.
+    // if return=text, then return a text-only string.
+    // otherwise, print HTML for non-images, and return image HTML
+
+        global $CFG;
+
+        $filearea = blog_file_area_name($blogentry);
+
+        $imagereturn = "";
+        $output = "";
+
+        if ($basedir = blog_file_area($blogentry)) {
+            if ($files = get_directory_list($basedir)) {
+                $strattachment = get_string("attachment", "forum");
+                foreach ($files as $file) {
+                    include_once($CFG->libdir.'/filelib.php');
+                    $icon = mimeinfo("icon", $file);
+                    if ($CFG->slasharguments) {
+                        $ffurl = "$CFG->wwwroot/file.php/$filearea/$file";
+                    } else {
+                        $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
+                    }
+                    $image = "<img border=\"0\" src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" alt=\"\" />";
+
+                    if ($return == "html") {
+                        $output .= "<a href=\"$ffurl\">$image</a> ";
+                        $output .= "<a href=\"$ffurl\">$file</a><br />";
+
+                    } else if ($return == "text") {
+                        $output .= "$strattachment $file:\n$ffurl\n";
+
+                    } else {
+                        if ($icon == "image.gif") {    // Image attachments don't get printed as links
+                            $imagereturn .= "<br /><img src=\"$ffurl\" alt=\"\" />";
+                        } else {
+                            echo "<a href=\"$ffurl\">$image</a> ";
+                            echo filter_text("<a href=\"$ffurl\">$file</a><br />");
+                        }
+                    }
+                }
+            }
+        }
+
+        if ($return) {
+            return $output;
+        }
+
+        return $imagereturn;
+    }
+    
+    /**
+    * If successful, this function returns the name of the file
+    * @param $post is a full post record, including course and forum
+    * @param $newfile is a full upload array from $_FILES
+    * @param $message is a string to hold the messages.
+    */
+
+    function blog_add_attachment($blogentry, $inputname, &$message) {
+
+        global $CFG;
+
+        require_once($CFG->dirroot.'/lib/uploadlib.php');
+        $um = new upload_manager($inputname,true,false,null,false,$CFG->maxbytes,true,true);
+        $dir = blog_file_area_name($blogentry);
+        if ($um->process_file_uploads($dir)) {
+            $message .= $um->get_errors();
+            return $um->get_new_filename();
+        }
+        $message .= $um->get_errors();
+        echo $message;
+    }
 
     /**
      * Use this function to retrieve a list of publish states available for

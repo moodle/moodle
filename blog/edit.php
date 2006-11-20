@@ -190,10 +190,14 @@ function do_add(&$post, &$errors) {
     $post->userid       = $USER->id;
     $post->lastmodified = time();
     $post->created      = time();
-
+    
     // Insert the new blog entry.
     if ($id = insert_record('post', $post)) {
         $post->id = $id;
+        // add blog attachment
+        if ($post->attachment = blog_add_attachment($post, 'attachment',$message)) {
+            set_field("post", "attachment", $post->attachment, "id", $post->id);
+        }       
         add_tags_info($post->id);
         add_to_log(SITEID, 'blog', 'add', 'index.php?userid='.$post->userid.'&postid='.$posz->id, $post->subject);
 
@@ -234,13 +238,20 @@ function do_edit(&$post, &$errors) {
     }
 
     $post->lastmodified = time();
-
+    
+    if ($newfilename = blog_add_attachment($post, 'attachment',$message)) {
+        $post->attachment = $newfilename;
+    } else {
+        unset($post->attachment);
+    }
     // update record
     if (update_record('post', $post)) {
         // delete all tags associated with this entry
         delete_records('blog_tag_instance', 'entryid', $post->id);
         // add them back
         add_tags_info($post->id);
+        
+
         add_to_log(SITEID, 'blog', 'update', 'index.php?userid='.$post->userid.'&postid='.$post->id, $post->subject);
 
     } else {

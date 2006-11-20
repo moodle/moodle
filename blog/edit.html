@@ -20,7 +20,7 @@
     }
 ?>
 
-<form name="entry" method="post" action="edit.php" >
+<form name="entry" method="post" action="edit.php" enctype="multipart/form-data">
 
 <table border="0" cellpadding="5">
 <tr valign="top">
@@ -144,6 +144,17 @@
                 </td>
             </tr>
         </table>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><b><?php print_string("attachment", "forum") ?>:<br />(<?php print_string("optional") ?>)&nbsp;</b></td>
+    <td>
+    <?php $maxbytes = get_max_upload_file_size($CFG->maxbytes); ?>
+    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $maxbytes ?>" />
+    <input type="file" name="attachment" size="40" alt="<?php print_string("attachment", "forum") ?>" />
+    <?php
+    print_string("maxsize", "", display_size($maxbytes)); 
+    ?>
     </td>
 </tr>
 <tr valign="top">
