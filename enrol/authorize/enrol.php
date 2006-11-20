@@ -689,6 +689,7 @@ class enrolment_plugin_authorize
 
         $oneday = 86400;
         $timenow = time();
+        $onepass = $timenow - $oneday;
         $settlementtime = authorize_getsettletime($timenow);
         $timediff30 = $settlementtime - (30 * $oneday);
 
@@ -705,7 +706,24 @@ class enrolment_plugin_authorize
         $select = "(status='".AN_STATUS_EXPIRE."') AND (timecreated<'$timediff60')";
         delete_records_select('enrol_authorize', $select);
 
-        // XXX TODO SEND EMAIL to uploadcsv user
+        // XXX TODO SEND EMAIL to 'enrol/authorize:uploadcsv'
+        // get_users_by_capability() does not handling user level resolving
+        // After user resolving, get_admin() to get_users_by_capability()
+        $adminuser = get_admin();
+        $select = "status IN(".AN_STATUS_UNDERREVIEW.",".AN_STATUS_APPROVEDREVIEW.") " .
+                  "AND (timecreated<'$onepass') AND (timecreated>'$timediff60')";
+        $count = count_records_select('enrol_authorize', $select);
+        if ($count) {
+            $a = new stdClass;
+            $a->count = $count;
+            $a->course = $SITE->shortname;
+            $subject = get_string('pendingechecksubject', 'enrol_authorize', $a);
+            $a = new stdClass;
+            $a->count = $count;
+            $a->url = $CFG->wwwroot.'/enrol/authorize/uploadcsv.php';
+            $message = get_string('pendingecheckemail', 'enrol_authorize', $a);
+            @email_to_user($adminuser, $adminuser, $subject, $message);
+        }
 
         // Daily warning email for pending orders expiring.
         if (empty($CFG->an_emailexpired)) {
@@ -733,7 +751,6 @@ class enrolment_plugin_authorize
         $a->enrolurl = "$CFG->wwwroot/$CFG->admin/enrol_config.php?enrol=authorize";
         $a->url = $CFG->wwwroot.'/enrol/authorize/index.php?status='.AN_STATUS_AUTH;
         $message = get_string('pendingordersemail', 'enrol_authorize', $a);
-        $adminuser = get_admin();
         email_to_user($adminuser, $adminuser, $subject, $message);
 
         // Email to teachers
