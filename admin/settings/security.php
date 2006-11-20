@@ -87,8 +87,8 @@ $ADMIN->add('security', $temp);
 // "antivirus" settingpage
 $temp = new admin_settingpage('antivirus', get_string('antivirus', 'admin'));
 $temp->add(new admin_setting_configcheckbox('runclamonupload', get_string('runclamavonupload', 'admin'), get_string('configrunclamavonupload', 'admin'), 0));
-$temp->add(new admin_setting_configtext('pathtoclam', get_string('pathtoclam', 'admin'), get_string('configpathtoclam', 'admin'), '', PARAM_PATH));
-$temp->add(new admin_setting_configtext('quarantinedir', get_string('quarantinedir', 'admin'), get_string('configquarantinedir', 'admin'), '', PARAM_PATH));
+$temp->add(new admin_setting_configtext('pathtoclam', get_string('pathtoclam', 'admin'), get_string('configpathtoclam', 'admin'), '', PARAM_RAW)); // TODO: add path validation
+$temp->add(new admin_setting_configtext('quarantinedir', get_string('quarantinedir', 'admin'), get_string('configquarantinedir', 'admin'), '', PARAM_RAW)); // TODO: add path validation
 $temp->add(new admin_setting_configselect('clamfailureonupload', get_string('clamfailureonupload', 'admin'), get_string('configclamfailureonupload', 'admin'), 'donothing', array('donothing' => get_string('configclamdonothing', 'admin'),
                                                                                                                                                                                   'actlikevirus' => get_string('configclamactlikevirus', 'admin'))));
 $ADMIN->add('security', $temp);
