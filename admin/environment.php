@@ -121,11 +121,11 @@
     }
 
 /// Print form and popup menu
-    echo '<center><form method="post" action="environment.php">';
-    echo $strmoodleversion.' ';
-    choose_from_menu ($versions, 'version', $version, null, 'this.form.submit();' );
-    echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-    echo '</form></center>';
+    echo '<div align="center">'.$strmoodleversion.' ';
+    popup_form("$CFG->wwwroot/$CFG->admin/environment.php?version=",
+        $versions, 'selectversion', $version, '');
+    echo '</div>';
+
 /// End of main box
     print_simple_box_end();
 
