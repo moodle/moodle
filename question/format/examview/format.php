@@ -11,45 +11,9 @@
 **   Support of rejoinders
 **
 ** $Log$
-** Revision 1.4.4.1  2006/10/30 16:21:16  thepurpleblob
-** Fixed notice
-**
-** Revision 1.4  2006/08/10 18:23:39  tjhunt
-** Convert tabs to spaces.
-**
-** Revision 1.3  2006/05/04 11:17:50  thepurpleblob
-** Merging from STABLE
-**
-** Revision 1.2.2.2  2006/10/30 16:13:27  thepurpleblob
-** Removed loads of tabs and fixed a notice.
-**
-** Revision 1.2.2.3  2006/10/30 16:19:32  thepurpleblob
-** Whoops - left some debugging stuff in place.
-**
-** Revision 1.2.2.2  2006/10/30 16:13:27  thepurpleblob
-** Removed loads of tabs and fixed a notice.
-**
-** Revision 1.2.2.1  2006/05/04 11:15:11  thepurpleblob
-** htmlentities() replaced by s()
-**
-** Revision 1.2  2006/03/01 07:36:08  gustav_delius
-** Removing some more references to quiz from import/export code
-**
-** Revision 1.1  2006/02/24 15:14:04  thepurpleblob
-** Moving quiz import/export files to new question area.
-**
-** Revision 1.3  2006/02/13 16:17:22  thepurpleblob
-** Now used defaultquestion() method. Bug #4752
-**
-** Revision 1.2  2005/05/31 15:19:00  thepurpleblob
-** merged from STABLE
-**
-** Revision 1.1.2.1  2005/05/31 15:17:20  thepurpleblob
-** Took out dos line endings
-**
-** Revision 1.1  2005/05/16 08:12:40  thepurpleblob
-** Added support for Examview import.
-**
+** Revision 1.4.4.2  2006/11/20 13:00:34  thepurpleblob
+** Various improvements to Examview input.
+** Fixes MDL-7087 and MDL-7349. Partial fix for MDL-7184 (Examview part)
 **
 */
 
@@ -90,26 +54,31 @@ class qformat_examview extends qformat_default {
         return true;
     }
     
-    function print_matching_questions()
-    {
-        foreach($this->matching_questions as $key => $value) {
-            print("$key => $value->questiontext<BR>");
-            print("Questions:<UL>");
-            foreach($value->subquestions as $qkey => $qvalue) {
-                print("<LI>$qkey => $qvalue</LI>");
-            }
-            print("</UL>");
-            print("Choices:<UL>");
-            foreach($value->subchoices as $ckey => $cvalue) {
-                print("<LI>$ckey => $cvalue</LI>");
-            }
-            print("</UL>");
-            print("Answers:<UL>");
-            foreach($value->subanswers as $akey => $avalue) {
-                print("<LI>$akey => $avalue</LI>");
-            }
-            print("</UL>");
+    /**
+     * unxmlise reconstructs part of the xml data structure in order
+     * to identify the actual data therein
+     * @param array $xml section of the xml data structure
+     * @return string data with evrything else removed
+     */
+    function unxmlise( $xml ) {
+        // if it's not an array then it's probably just data
+        if (!is_array($xml)) {
+            $text = s(addslashes($xml));
         }
+        else {
+            // otherwise parse the array
+            $text = '';
+            foreach ($xml as $tag=>$data) {
+                // if tag is '@' then it's attributes and we don't care
+                if ($tag!=='@') { 
+                    $text = $text . $this->unxmlise( $data );
+                }
+            }
+        }
+
+        // currently we throw the tags we found
+        $text = strip_tags($text);
+        return $text;
     }
     
     function parse_matching_groups($matching_groups)
@@ -120,7 +89,7 @@ class qformat_examview extends qformat_default {
         foreach($matching_groups as $match_group) {
             $newgroup = NULL;
             $groupname = trim($match_group['@']['name']);
-            $questiontext = $this->ArrayTagToString($match_group['#']['text']['0']['#']);
+            $questiontext = $this->unxmlise($match_group['#']['text'][0]['#']);
             $newgroup->questiontext = trim($questiontext);
             $newgroup->subchoices = array();
             $newgroup->subquestions = array();
@@ -139,8 +108,9 @@ class qformat_examview extends qformat_default {
     function parse_ma($qrec, $groupname)
     {
         $match_group = $this->matching_questions[$groupname];
-        $phrase = trim($qrec['text']['0']['#']);
-        $answer = trim($qrec['answer']['0']['#']);
+        $phrase = trim($this->unxmlise($qrec['text']['0']['#']));
+        $answer = trim($this->unxmlise($qrec['answer']['0']['#']));
+        $answer = strip_tags( $answer );
         $match_group->subquestions[] = $phrase;
         $match_group->subanswers[] = $match_group->subchoices[$answer];
         $this->matching_questions[$groupname] = $match_group;
@@ -154,20 +124,17 @@ class qformat_examview extends qformat_default {
         }
         foreach($this->matching_questions as $match_group) {
             $question = $this->defaultquestion();
-            $htmltext = $this->htmlPrepare($match_group->questiontext);
-            $htmltext = addslashes($htmltext);
+            $htmltext = $this->s(addslashes($match_group->questiontext));
             $question->questiontext = $htmltext;
             $question->name = $question->questiontext;
             $question->qtype = MATCH;
             $question->subquestions = array();
             $question->subanswers = array();
             foreach($match_group->subquestions as $key => $value) {
-                $htmltext = $this->htmlPrepare($value);
-                $htmltext = addslashes($htmltext);
+                $htmltext = s(addslashes($value));
                 $question->subquestions[] = $htmltext;
 
-                $htmltext = $this->htmlPrepare($match_group->subanswers[$key]);
-                $htmltext = addslashes($htmltext);
+                $htmltext = $this->s(addslashes($match_group->subanswers[$key]));
                 $question->subanswers[] = $htmltext;
             }
             $questions[] = $question;
@@ -203,39 +170,10 @@ class qformat_examview extends qformat_default {
             }
         }
         
-        //    print('<hr>');
-        //    $this->print_matching_questions();
         $this->process_matches($questions);
-        //    print('<hr>');
-        
         return $questions;
     }
     // end readquestions
-    
-    function htmlPrepare($htmltext)
-    { 
-        // $text = trim($text);
-        $text = s($htmltext);
-        //$htmltext = nl2br($text);
-        return $text;
-    }
-    
-    function ArrayTagToString($aTag)
-    {
-        if (!is_array($aTag)) {
-            return $aTag;
-        }
-        $out = '';
-        foreach($aTag as $key => $value) {
-            if (is_array($value)) {
-                $out = $out.$this->ArrayTagToString($value);
-            } else {
-                $out = $value;
-            }
-        }
-        return $out;
-    }
-    
     
     function readquestion($qrec)
     {
@@ -245,9 +183,7 @@ class qformat_examview extends qformat_default {
         $question->qtype = $this->qtypes[$type];
         $question->single = 1;
         // Only one answer is allowed
-        $htmltext = $this->ArrayTagToString($qrec['#']['text'][0]['#']);
-        $htmltext = $this->htmlPrepare($htmltext);
-        $htmltext = addslashes($htmltext);
+        $htmltext = $this->unxmlise($qrec['#']['text'][0]['#']);
         $question->questiontext = $htmltext;
         $question->name = $question->questiontext;
         
@@ -301,8 +237,8 @@ class qformat_examview extends qformat_default {
         $choices = $qrec['choices'][0]['#'];
         foreach($choices as $key => $value) {
             if (strpos(trim($key),'choice-') !== FALSE) {
-                
-                $question->answer[$key] = $this->htmlPrepare($value[0]['#']);
+               
+                $question->answer[$key] = s($this->unxmlise($value[0]['#']));
                 if (strcmp($key, $answer) == 0) {
                     $question->fraction[$key] = 1;
                     $question->feedback[$key] = 'Correct';
@@ -318,7 +254,8 @@ class qformat_examview extends qformat_default {
     function parse_co($qrec, $question)
     {
         $question->usecase = 0;
-        $answer = trim($qrec['answer'][0]['#']);
+        $answer = trim($this->unxmlise($qrec['answer'][0]['#']));
+        $answer = strip_tags( $answer );
         $answers = explode("\n",$answer);
         
         foreach($answers as $key => $value) {
@@ -334,7 +271,8 @@ class qformat_examview extends qformat_default {
     
     function parse_nr($qrec, $question)
     {
-        $answer = trim($qrec['answer'][0]['#']);
+        $answer = trim($this->unxmlise($qrec['answer'][0]['#']));
+        $answer = strip_tags( $answer );
         $answers = explode("\n",$answer);
         
         foreach($answers as $key => $value) {
