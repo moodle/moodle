@@ -136,8 +136,8 @@ function authorize_process_csv($filename)
             else {
                 $ignored++;
                 $ignoredlines .= $reftransid . ": Not our business, in refunds\n";
-                continue;
             }
+            continue;
         }
 
         if (! ($transstatus == 'Settled Successfully' && $transtype == 'Authorization w/ Auto Capture')) {

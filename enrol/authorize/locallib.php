@@ -335,7 +335,8 @@ function authorize_print_order_details($orderno)
             else {
                 $extra->amount = $amount;
                 $message = '';
-                if (AN_APPROVED == authorize_action($order, $message, $extra, AN_ACTION_CREDIT)) {
+                $success = authorize_action($order, $message, $extra, AN_ACTION_CREDIT);
+                if (AN_APPROVED == $success || AN_REVIEW == $success) {
                     if (empty($CFG->an_test)) {
                         if (empty($extra->id)) {
                             $table->data[] = array("<b><font color=red>$strs->error:</font></b>", 'insert record error');
@@ -593,8 +594,10 @@ function authorize_get_status_action($order)
 
     case AN_STATUS_AUTHCAPTURE:
         if (authorize_settled($order)) {
-            if ($order->paymentmethod == AN_METHOD_CC && $canmanage) {
-                $ret->actions = array(ORDER_REFUND);
+            if ($canmanage) {
+                if (($order->paymentmethod == AN_METHOD_CC) || ($order->paymentmethod == AN_METHOD_ECHECK && !empty($order->refundinfo))) {
+                    $ret->actions = array(ORDER_REFUND);
+                }
             }
             $ret->status = 'settled';
         }
