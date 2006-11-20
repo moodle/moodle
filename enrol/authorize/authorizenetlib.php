@@ -217,6 +217,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
         $referer = "Referer: $CFG->an_referer\r\n";
     }
 
+    $errno = 0; $errstr = '';
     $host = $test ? 'certification.authorize.net' : 'secure.authorize.net';
     $fp = fsockopen("ssl://$host", 443, $errno, $errstr, 60);
     if (!$fp) {
