@@ -133,8 +133,8 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
 
     $action = intval($action);
     if ($method == AN_METHOD_ECHECK) {
-        if ($action != AN_ACTION_AUTH_CAPTURE /*&& $action != AN_ACTION_CREDIT*/) {
-            $message = "Please perform only AUTH_CAPTURE for echecks";
+        if ($action != AN_ACTION_AUTH_CAPTURE && $action != AN_ACTION_CREDIT) {
+            $message = "Please perform AUTH_CAPTURE or CREDIT for echecks";
             return AN_RETURNZERO;
         }
     }
@@ -224,6 +224,10 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
             if ($method == AN_METHOD_CC) {
                 $poststring .= '&x_card_num=' . sprintf("%04d", intval($order->refundinfo));
             }
+            elseif ($method == AN_METHOD_ECHECK && empty($order->refundinfo)) {
+                $message = "Business checkings can be refunded only.";
+                return AN_RETURNZERO;
+            }
             break;
         }
 
@@ -248,6 +252,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
         $referer = "Referer: $CFG->an_referer\r\n";
     }
 
+    $errno = 0; $errstr = '';
     $host = $test ? 'certification.authorize.net' : 'secure.authorize.net';
     $fp = fsockopen("ssl://$host", 443, $errno, $errstr, 60);
     if (!$fp) {
