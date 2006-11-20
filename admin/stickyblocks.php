@@ -65,11 +65,10 @@
 
     print_simple_box_start('center');
     print_heading($strheading);
-    echo '<form method="post" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/stickyblocks.php">'
-        .'<p align="center">'.get_string('stickyblockspagetype','admin').': ';
-    choose_from_menu($options,'pt',$pt,'choose','this.form.submit();');
-    echo '</p></form>';
-    echo get_string('stickyblocksduplicatenotice','admin');
+    echo '<div align="center">'.get_string('stickyblockspagetype','admin').': ';
+    popup_form("$CFG->wwwroot/$CFG->admin/stickyblocks.php?pt=", $options, 'selecttype', $pt);
+    echo '</div>';
+    echo '<p>'.get_string('stickyblocksduplicatenotice','admin').'</p>';
     print_simple_box_end();
 
 
