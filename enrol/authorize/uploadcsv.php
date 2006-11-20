@@ -123,7 +123,7 @@ function authorize_process_csv($filename)
             continue;
         }
 
-        if (!empty($reftransid) && $transstatus == 'Settled Successfully' && $transtype == 'Credit') {
+        if (!empty($reftransid) && is_numeric($reftransid) && 'Settled Successfully' == $transstatus && 'Credit' == $transtype) {
             if ($order = get_record('enrol_authorize', 'transid', $reftransid)) {
                 if (AN_METHOD_ECHECK == $order->paymentmethod) {
                     $refund = get_record('enrol_authorize_refunds', 'transid', $transid);
