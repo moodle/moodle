@@ -122,6 +122,13 @@ $string['orderid'] = 'OrderID';
 $string['paymentmanagement'] = 'Payment Management';
 $string['paymentmethod'] = 'Payment Method';
 $string['paymentpending'] = 'Your payment is pending for this course with this order number $a->orderid.  See <a href=\'$a->url\'>Order Details</a>.';
+$string['pendingecheckemail'] = 'Dear manager,
+
+There are $a->count pending echecks now and you have to upload a csv file to get the users enrolled.
+
+Click the link and read the help file on the page seen:
+$a->url';
+$string['pendingechecksubject'] = '$a->course: Pending eChecks($a->count)';
 $string['pendingordersemail'] = 'Dear admin,
 
 $a->pending transactions for course \"$a->course\" will expire unless you accept payment within $a->days days.
