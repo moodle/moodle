@@ -1882,87 +1882,104 @@ function sync_metacourses() {
 
 /**
  * Goes through all enrolment records for the courses inside the metacourse and sync with them.
+ * 
+ * @param mixed $course the metacourse to synch. Either the course object itself, or the courseid.
  */
-
 function sync_metacourse($course) {
     global $CFG;
-    $status = true;
 
+    // Check the course is valid.
     if (!is_object($course)) {
         if (!$course = get_record('course', 'id', $course)) {
             return false; // invalid course id
         }
     }
     
+    // Check that we actually have a metacourse.
     if (empty($course->metacourse)) {
-        return false; // can not sync normal course or not $course object
+        return false;
     }
 
+    // Get the context of the metacourse.
     $context = get_context_instance(CONTEXT_COURSE, $course->id); // SITEID can not be a metacourse
 
-    if (!$roles = get_records('role')) {
-        return false; // hmm, there should be always at least one role
-    }
-    
-    // always keep metacourse managers
+    // We do not ever want to unassign the list of metacourse manager, so get a list of them.
     if ($users = get_users_by_capability($context, 'moodle/course:managemetacourse')) {
         $managers = array_keys($users);
     } else {
         $managers = array();
     }
 
-    // find all role users in child courses + build list of current metacourse assignments
-    $in_childs = array(); 
-    foreach ($roles as $role) {
-        if ($users = get_role_users($role->id, $context, false)) {
-            $current[$role->id] = array_keys($users);
-        } else {
-            $current[$role->id] = array();
-        }
-        $in_childs[$role->id] = array(); //initialze array
+    // Get assignments of a user to a role that exist in a child course, but
+    // not in the meta coure. That is, get a list of the assignments that need to be made.
+    if (!$assignments = get_records_sql("
+            SELECT
+                ra.id, ra.roleid, ra.userid
+            FROM
+                {$CFG->prefix}role_assignments ra,
+                {$CFG->prefix}context con,
+                {$CFG->prefix}course_meta cm
+            WHERE
+                ra.contextid = con.id AND
+                con.contextlevel = " . CONTEXT_COURSE . " AND
+                con.instanceid = cm.child_course AND
+                cm.parent_course = {$course->id} AND
+                NOT EXISTS (
+                    SELECT 1 FROM
+                        {$CFG->prefix}role_assignments ra2
+                    WHERE
+                        ra2.userid = ra.userid AND
+                        ra2.roleid = ra.roleid AND
+                        ra2.contextid = {$context->id}
+                )
+    ")) {
+        $assignments = array();
     }
-    if ($children = get_records('course_meta', 'parent_course', $course->id)) {
-        foreach ($children as $child) {
-            $ch_context = get_context_instance(CONTEXT_COURSE, $child->child_course);
-            foreach ($roles as $role) {
-                if ($users = get_role_users($role->id, $ch_context, false)) {
 
-                    $users = array_keys($users);
-                    $in_childs[$role->id] = array_merge($in_childs[$role->id], $users);
-                }
-            }
+    // Get assignments of a user to a role that exist in the meta course, but
+    // not in any child courses. That is, get a list of the unassignments that need to be made.
+    if (!$unassignments = get_records_sql("
+            SELECT
+                ra.id, ra.roleid, ra.userid
+            FROM
+                {$CFG->prefix}role_assignments ra
+            WHERE
+                ra.contextid = {$context->id} AND
+                NOT EXISTS (
+                    SELECT 1 FROM
+                        {$CFG->prefix}role_assignments ra2,
+                        {$CFG->prefix}context con2,
+                        {$CFG->prefix}course_meta cm
+                    WHERE
+                        ra2.userid = ra.userid AND
+                        ra2.roleid = ra.roleid AND
+                        ra2.contextid = con2.id AND
+                        con2.contextlevel = " . CONTEXT_COURSE . " AND
+                        con2.instanceid = cm.child_course AND
+                        cm.parent_course = {$course->id}
+                )
+    ")) {
+        $unassignments = array();
+    }
+
+    $success = true;
+
+    // Make the unassignments, if they are not managers.
+    foreach ($unassignments as $unassignment) {
+        if (!in_array($unassignment->userid, $managers)) {
+            $success = role_unassign($unassignment->roleid, $unassignment->userid, 0, $context->id) && $success;
         }
     }
+
+    // Make the assignments.
+    foreach ($assignments as $assignment) {
+        $success = role_assign($assignment->roleid, $assignment->userid, 0, $context->id) && $success;
+    }
+
+    return $success;
     
-    foreach ($roles as $role) {
-        //clean up the duplicates from cuncurrent assignments in child courses
-        $in_childs[$role->id] = array_unique($in_childs[$role->id]);
-        //make a list of all potentially affected users
-    }
-
-    foreach ($roles as $role) {
-        foreach ($current[$role->id] as $userid) {
-            if (in_array($userid, $in_childs[$role->id])) {
-                // ok - no need to change anything
-                unset($in_childs[$role->id][array_search($userid, $in_childs[$role->id])]);
-            } else {
-                // unassign if not metacourse manager
-                if (!in_array($userid, $managers)) {
-                    //echo "unassigning uid: $userid from role: $role->id in context: $context->id <br>\n";
-                    role_unassign($role->id, $userid, 0, $context->id);
-                }
-            }
-        }
-        // now assign roles to those left in $in_childs  
-        foreach ($in_childs[$role->id] as $userid) {
-            //echo "  assigning uid: $userid from role: $role->id in context: $context->id <br>\n";
-            role_assign($role->id, $userid, 0, $context->id);
-        }        
-    }
-
 // TODO: finish timeend and timestart
 // maybe we could rely on cron job to do the cleaning from time to time
-    return true;
 }
 
 /**
