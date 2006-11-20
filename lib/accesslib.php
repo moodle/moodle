@@ -1290,12 +1290,10 @@ function moodle_install_roles() {
         if ($rs = get_recordset('user_teachers')) {
             while (! $rs->EOF) {
                 $teacher = $rs->FetchObj();
-                // ignore site level teacher assignments
-                if ($teacher->course == SITEID) {
-                    $progresscount++;
-                    $rs->MoveNext();
-                    continue;  
-                }
+                
+                // removed code here to ignore site level assignments
+                // since the contexts are separated now
+                
                 // populate the user_lastaccess table
                 $access = new object();
                 $access->timeaccess = $teacher->timeaccess;
