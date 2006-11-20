@@ -108,7 +108,14 @@ class jsportal {
         $output .= "    main.portal.blocks = new Array(".$blocksoutput.");\n";
         $output .= "    main.portal.strings['wwwroot']='".$CFG->wwwroot."';\n";
         $output .= "    main.portal.strings['pixpath']='".$CFG->pixpath."';\n";
+        $output .= "    main.portal.strings['move']='".get_string('move')."';\n";
+        $output .= "    main.portal.strings['moveleft']='".get_string('moveleft')."';\n";
+        $output .= "    main.portal.strings['moveright']='".get_string('moveright')."';\n";
         $output .= "    main.portal.strings['update']='".get_string('update')."';\n";
+        $output .= "    main.portal.strings['groupsnone']='".get_string('groupsnone')."';\n";
+        $output .= "    main.portal.strings['groupsseparate']='".get_string('groupsseparate')."';\n";
+        $output .= "    main.portal.strings['groupsvisible']='".get_string('groupsvisible')."';\n";
+        $output .= "    main.portal.strings['clicktochange']='".get_string('clicktochange')."';\n";
         $output .= "    main.portal.strings['deletecheck']='".get_string('deletecheck','','_var_')."';\n";
         $output .= "    main.portal.strings['resource']='".get_string('resource')."';\n";
         $output .= "    main.portal.strings['activity']='".get_string('activity')."';\n";
