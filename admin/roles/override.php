@@ -147,17 +147,12 @@
 
     if ($roleid) {
     /// prints a form to swap roles
-        echo '<form name="rolesform" action="override.php" method="get">';
         echo '<div align="center">'.$strcurrentcontext.': '.print_context_name($context).'<br/>';
-        if ($userid) {
-            echo '<input type="hidden" name="userid" value="'.$userid.'" />';
-        }
-        if ($courseid) {
-            echo '<input type="hidden" name="courseid" value="'.$courseid.'" />';
-        }
-        echo '<input type="hidden" name="contextid" value="'.$context->id.'" />'.$strroletooverride.': ';
-        choose_from_menu ($overridableroles, 'roleid', $roleid, get_string('listallroles', 'role').'...', $script='rolesform.submit()');
-        echo '</div></form>';
+        echo $strroletooverride.': ';
+        $overridableroles = array('0'=>get_string('listallroles', 'role').'...') + $overridableroles; 
+        popup_form("$CFG->wwwroot/$CFG->admin/roles/override.php?userid=$userid&amp;courseid=$courseid&amp;contextid=$contextid&amp;roleid=",
+            $overridableroles, 'switchrole', $roleid, '');
+        echo '</div>';
 
         $parentcontexts = get_parent_contexts($context);
         if (!empty($parentcontexts)) {
