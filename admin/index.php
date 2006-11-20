@@ -146,8 +146,6 @@
             // If could not convert successfully, throw error, and prevent installation
             print_error('unicoderequired', 'admin');  
         }
-        // all new installs are in unicode - keep for backwards compatibility and 1.8 upgrade checks
-        set_config('unicodedb', 1);
     
         $status = false;
         if (file_exists("$CFG->libdir/db/install.xml")) {
@@ -157,6 +155,9 @@
         } else {
             error("Error: Your database ($CFG->dbtype) is not yet fully supported by Moodle or install.xml is not present.  See the lib/db directory.");
         }
+
+        // all new installs are in unicode - keep for backwards compatibility and 1.8 upgrade checks
+        set_config('unicodedb', 1);
 
     /// Continue with the instalation
         $db->debug = false;
