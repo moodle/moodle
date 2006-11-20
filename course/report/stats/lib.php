@@ -8,7 +8,7 @@
     require_once($CFG->dirroot.'/lib/statslib.php');
 
 
-    function report_stats_mode_menu($course, $mode, $time) {
+    function report_stats_mode_menu($course, $mode, $time, $url) {
         global $CFG;
         /*        
         $reportoptions = stats_get_report_options($course->id, $mode);
@@ -24,15 +24,8 @@
         if (has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             $options[STATS_MODE_RANKED] = get_string('reports');
         }
-
-        $menu = choose_from_menu($options,'mode',$mode,'','this.form.submit();',0,true);
-
-        $menu = '<form action="index.php" method="post">'."\n"
-            .'<input type="hidden" name="course" value="'.$course->id.'" />'."\n"
-            .'<input type="hidden" name="time" value="'.$time.'" />'."\n"
-            .$menu."\n".'</form>';
         
-        return $menu;
+        return popup_form($url."?course=$course->id&amp;time=$time&amp;mode=", $options, 'switchmode', $mode, '', '', '', true);
     }
 
 

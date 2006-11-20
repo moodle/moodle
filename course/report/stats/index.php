@@ -52,7 +52,7 @@
     $strreports = get_string("reports");
     $strstats = get_string('stats');
 
-    $menu = report_stats_mode_menu($course, $mode, $time);
+    $menu = report_stats_mode_menu($course, $mode, $time, "$CFG->wwwroot/course/report/stats/index.php");
 
     $crumb = "<a href=\"../../view.php?id=$course->id\">$course->shortname</a> ->
               <a href=\"../../report.php?id=$course->id\">$strreports</a> ->

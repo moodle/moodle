@@ -59,7 +59,7 @@
 //    $strreports = get_string("reports");
 //    $strstats = get_string('stats');
 //
-//    $menu = report_stats_mode_menu($course, $mode, $time);
+//    $menu = report_stats_mode_menu($course, $mode, $time); // add 4th $url parameter if uncommented!
 //
 //
 //    $crumb = "<a href=\"{$CFG->wwwroot}/admin\">".get_string('administration')."</a> ->
