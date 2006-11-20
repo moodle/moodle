@@ -224,9 +224,9 @@
             if (array_key_exists($roleid, $roles) and confirm_sesskey()) {
                 $role = $roles[$roleid];
                 if ($role->sortorder + 1 < $rolescount) {
-                    $bellow = $roles[$rolesort[$role->sortorder + 1]];
+                    $below = $roles[$rolesort[$role->sortorder + 1]];
 
-                    if (!switch_roles($role, $bellow)) {
+                    if (!switch_roles($role, $below)) {
                         error("Cannot move role with ID $roleid");
                     }
                 }
