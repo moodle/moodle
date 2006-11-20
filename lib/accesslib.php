@@ -1873,14 +1873,12 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         $newra->roleid = $roleid;
         $newra->contextid = $context->id;
         $newra->userid = $userid;
-        $newra->groupid = $groupid;
-
         $newra->hidden = $hidden;
         $newra->enrol = $enrol;
         $newra->timestart = $timestart;
         $newra->timeend = $timeend;
         $newra->timemodified = time();
-        $newra->modifier = empty($USER->id) ? 0 : $USER->id;
+        $newra->modifierid = empty($USER->id) ? 0 : $USER->id;
 
         $success = insert_record('role_assignments', $newra);
 
@@ -1892,7 +1890,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         $newra->timestart = $timestart;
         $newra->timeend = $timeend;
         $newra->timemodified = time();
-        $newra->modifier = empty($USER->id) ? 0 : $USER->id;
+        $newra->modifierid = empty($USER->id) ? 0 : $USER->id;
 
         $success = update_record('role_assignments', $newra);
     }
