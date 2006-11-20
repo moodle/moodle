@@ -42,22 +42,36 @@
 
     require_login($course->id);
 
-
-    if ($roles = get_roles_used_in_context($context)) {
-        foreach ($roles as $role) {
-            $options[$role->id] = $role->name;
-        }
-    } else { // no roles yet
-        if (has_capability('moodle/user:assign', $context)) {
-            redirect($CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id);
-        } else {
-            error ('no participants found for this course');
-        }
-    }
-
     if (!has_capability('moodle/course:viewparticipants', $context)
             && !has_capability('moodle/site:viewparticipants', $context)) {
         print_error('nopermissions');
+    }
+
+    $rolenames = array();
+
+    if ($roles = get_roles_used_in_context($context, true)) {
+        // We should exclude "admin" users (those with "doanything" at site level) because 
+        // Otherwise they appear in every participant list
+
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+        $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext);
+
+        foreach ($roles as $role) {
+            if (isset($doanythingroles[$role->id])) {   // Avoid this role (ie admin)
+                unset($roles[$role->id]);
+                continue;
+            }
+            $rolenames[$role->id] = strip_tags(format_string($role->name));   // Used in menus etc later on
+        }
+    }
+
+    // no roles to display yet?
+    if (empty($rolenames)) {    
+        if (has_capability('moodle/user:assign', $context)) {
+            redirect($CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id);
+        } else {
+            error ('No participants found for this course');
+        }
     }
 
     if ($course->id == SITEID) {
@@ -254,24 +268,6 @@
     }
 
 
-    if ($roles = get_roles_used_in_context($context, true)) {
-        
-        // We should exclude "admin" users (those with "doanything" at site level) because 
-        // Otherwise they appear in every participant list
-
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
-        $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext);
-
-        foreach ($roles as $role) {
-            if (isset($doanythingroles[$role->id])) {   // Avoid this role (ie admin)
-                unset($roles[$role->id]);
-                continue;
-            }
-            $rolenames[$role->id] = strip_tags(format_string($role->name));   // Used in menus etc later on
-        }
-    }
-
-
     /// Define a table showing a list of users in the current role selection
 
     $tablecolumns = array('userpic', 'fullname');
@@ -390,11 +386,11 @@
 
     /// If there are multiple Roles in the course, then show a drop down menu for switching
 
-    if (!empty($rolenames)) {
+    if (count($rolenames) > 1) {
         echo '<div class="rolesform">';
         echo get_string('currentrole', 'role').': ';
         $rolenames = array(0 => get_string('all')) + $rolenames;
-        popup_form('index.php?contextid='.$context->id.'&amp;sifirst=&amp;silast=&amp;roleid=', $rolenames,
+        popup_form("$CFG->wwwroot/user/index.php?contextid=$context->id&amp;sifirst=&amp;silast=&amp;roleid=", $rolenames,
                    'rolesform', $roleid, '');
         echo '</div>';
     }
