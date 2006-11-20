@@ -6047,7 +6047,7 @@
             
                     // done finding a unique name
             
-                    $newroleid = create_role($roledata->name,$roledata->shortname,'');
+                    $newroleid = create_role(addslashes($roledata->name),addslashes($roledata->shortname),'');
                     $status = backup_putid($restore->backup_unique_code,"role",$oldroleid,
                                      $newroleid); // adding a new id
                     foreach ($roledata->capabilities as $capability) {

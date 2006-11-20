@@ -1212,18 +1212,18 @@ function moodle_install_roles() {
 /// Create default/legacy roles and capabilities.
 /// (1 legacy capability per legacy role at system level).
 
-    $adminrole = create_role(get_string('administrator'), 'admin',
-                             get_string('administratordescription'), 'moodle/legacy:admin');
-    $coursecreatorrole  = create_role(get_string('coursecreators'), 'coursecreator',
-                                      get_string('coursecreatorsdescription'), 'moodle/legacy:coursecreator');
-    $editteacherrole    = create_role(get_string('defaultcourseteacher'), 'editingteacher',
-                                      get_string('defaultcourseteacherdescription'), 'moodle/legacy:editingteacher');
-    $noneditteacherrole = create_role(get_string('noneditingteacher'), 'teacher',
-                                      get_string('noneditingteacherdescription'), 'moodle/legacy:teacher');
-    $studentrole        = create_role(get_string('defaultcoursestudent'), 'student',
-                                      get_string('defaultcoursestudentdescription'), 'moodle/legacy:student');
-    $guestrole          = create_role(get_string('guest'), 'guest',
-                                      get_string('guestdescription'), 'moodle/legacy:guest');
+    $adminrole          = create_role(addslashes(get_string('administrator')), 'admin',
+                                      addslashes(get_string('administratordescription')), 'moodle/legacy:admin');
+    $coursecreatorrole  = create_role(addslashes(get_string('coursecreators')), 'coursecreator',
+                                      addslashes(get_string('coursecreatorsdescription')), 'moodle/legacy:coursecreator');
+    $editteacherrole    = create_role(addslashes(get_string('defaultcourseteacher')), 'editingteacher',
+                                      addslashes(get_string('defaultcourseteacherdescription')), 'moodle/legacy:editingteacher');
+    $noneditteacherrole = create_role(addslashes(get_string('noneditingteacher')), 'teacher',
+                                      addslashes(get_string('noneditingteacherdescription')), 'moodle/legacy:teacher');
+    $studentrole        = create_role(addslashes(get_string('defaultcoursestudent')), 'student',
+                                      addslashes(get_string('defaultcoursestudentdescription')), 'moodle/legacy:student');
+    $guestrole          = create_role(addslashes(get_string('guest')), 'guest',
+                                      addslashes(get_string('guestdescription')), 'moodle/legacy:guest');
     
 /// Now is the correct moment to install capabilities - after creation of legacy roles, but before assigning of roles
 
