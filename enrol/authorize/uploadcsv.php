@@ -50,7 +50,7 @@ function authorize_process_csv($filename)
 
 /// We need these fields
     $myfields = array(
-        'Transaction ID',           // enrol_authorize.transid
+        'Transaction ID',           // enrol_authorize.transid or enrol_authorize_refunds.transid; See: Reference Transaction ID
         'Transaction Status',       // Under Review,Approved Review,Review Failed,Settled Successfully
         'Transaction Type',         // Authorization w/ Auto Capture, Authorization Only, Capture Only, Credit, Void, Prior Authorization Capture
         'Settlement Amount',        //
@@ -59,7 +59,7 @@ function authorize_process_csv($filename)
         'Authorization Amount',     //
         'Authorization Currency',   //
         'Submit Date/Time',         // timecreated
-        'Reference Transaction ID', // enrol_authorize_refunds.transid
+        'Reference Transaction ID', // enrol_authorize.transid if Transaction Type = Credit
         'Total Amount',             // enrol_authorize.cost
         'Currency',                 // enrol_authorize.currency
         'Invoice Number',           // enrol_authorize.id: Don't trust this! Backup/Restore changes this
@@ -124,18 +124,24 @@ function authorize_process_csv($filename)
         }
 
         if (!empty($reftransid) && $transstatus == 'Settled Successfully' && $transtype == 'Credit') {
-            if ($refund = get_record('enrol_authorize_refunds', 'transid', $reftransid)) {
-                $order = get_record('enrol_authorize', 'id', $refund->orderid);
+            if ($order = get_record('enrol_authorize', 'transid', $reftransid)) {
                 if (AN_METHOD_ECHECK == $order->paymentmethod) {
-                    $refund->status = AN_STATUS_CREDIT;
-                    $refund->settletime = $settlementdate;
-                    update_record('enrol_authorize_refunds', $refund);
-                    $updated++;
+                    $refund = get_record('enrol_authorize_refunds', 'transid', $transid);
+                    if ($refund) {
+                        $refund->status = AN_STATUS_CREDIT;
+                        $refund->settletime = $settlementdate;
+                        update_record('enrol_authorize_refunds', $refund);
+                        $updated++;
+                    }
+                    else {
+                        $ignored++;
+                        $ignoredlines .= $reftransid . ": Not our business(Reference Transaction ID)\n";
+                    }
                 }
             }
             else {
                 $ignored++;
-                $ignoredlines .= $reftransid . ": Not our business, in refunds\n";
+                $ignoredlines .= $reftransid . ": Not our business(Transaction ID)\n";
             }
             continue;
         }
