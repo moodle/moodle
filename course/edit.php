@@ -42,9 +42,13 @@
         }
     } else {  // Admin is creating a new course
 
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-        if (!has_capability('moodle/course:create',$context)) {
-            error("You do not currently have course creation privileges!");
+        $context = get_context_instance(CONTEXT_COURSECAT, $category);
+        // first check to see if user has site level course creation. 
+        // This is because it is possible that coursecat = 0 when an admin is adding a course
+        if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+            if (!has_capability('moodle/course:create',$context)) {
+                error("You do not currently have course creation privileges!");
+            }
         }
 
         $course = NULL;
