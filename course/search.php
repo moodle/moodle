@@ -178,10 +178,16 @@
                 } else {
                     $pixpath = "$CFG->themedir/$CFG->theme/pix";
                 }
+                
                 echo "<a title=\"".get_string("settings")."\" href=\"$CFG->wwwroot/course/edit.php?id=$course->id\"><img".
                     " src=\"$pixpath/t/edit.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
-                echo "<a title=\"".get_string("assignteachers")."\" href=\"$CFG->wwwroot/course/teacher.php?id=$course->id\"><img".
-                    " src=\"$pixpath/t/user.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+           
+    		    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+    		    if (has_capability('moodle/role:assign', $coursecontext)) {
+                    echo'<a title="'.get_string('assignroles', 'role').'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$coursecontext->id.'">';
+    		        echo '<img src="'.$CFG->pixpath.'/i/roles.gif" height="11" width="11" alt="'.get_string('assignroles', 'role').'" /></a>';
+    		    }                
+                      
                 echo "<a title=\"".get_string("delete")."\" href=\"delete.php?id=$course->id\"><img".
                     " src=\"$pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
                 if (!empty($course->visible)) {
