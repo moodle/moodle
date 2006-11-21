@@ -131,13 +131,13 @@
     <script language="JavaScript" type="text/javascript" src="api.php?id=<?php echo $cm->id.$scoidstr.$modestr.$attemptstr ?>"></script>
 <?php
     }
-    if (($sco->previd != 0) && ($sco->previous == 0)) {
+    if (($sco->previd != 0) && ((!isset($sco->previous)) || ($sco->previous == 0))) {
         $scostr = '&scoid='.$sco->previd;
         echo '    <script language="javascript">var prev="'.$CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modepop.$scostr."\";</script>\n";
     } else {
         echo '    <script language="javascript">var prev="'.$CFG->wwwroot.'/mod/scorm/view.php?id='.$cm->id."\";</script>\n";
     }
-    if (($sco->nextid != 0) && ($sco->next == 0)) {
+    if (($sco->nextid != 0) && ((!isset($sco->next)) || ($sco->next == 0))) {
         $scostr = '&scoid='.$sco->nextid;
         echo '    <script language="javascript">var next="'.$CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modepop.$scostr."\";</script>\n";
     } else {
@@ -170,11 +170,11 @@
                (
                    (
                        ($sco->previd != 0) &&  // This is not the first learning object of the package
-                       ($sco->previous == 0)   // Moodle must manage the previous link
+                       ((!isset($sco->previous)) || ($sco->previous == 0))   // Moodle must manage the previous link
                    ) || 
                    (
                        ($sco->nextid != 0) &&  // This is not the last learning object of the package
-                       ($sco->next == 0)       // Moodle must manage the next link
+                       ((!isset($sco->next)) || ($sco->next == 0))       // Moodle must manage the next link
                    ) 
                )
            ) || ($scorm->hidetoc == 2)      // Teacher want to display toc in a small dropdown menu 
@@ -189,7 +189,7 @@
                 <div id="scormnav" class="right">
         <?php
             $orgstr = '&amp;currentorg='.$currentorg;
-            if (($scorm->hidenav == 0) && ($sco->previd != 0) && ($sco->previous == 0)) {
+            if (($scorm->hidenav == 0) && ($sco->previd != 0) && ((!isset($sco->previous)) || ($sco->previous == 0))) {
                 /// Print the prev LO link
                 $scostr = '&amp;scoid='.$sco->previd;
                 $url = $CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modestr.$scostr;
@@ -198,7 +198,7 @@
             if ($scorm->hidetoc == 2) {
                 echo $result->tocmenu;
             }
-            if (($scorm->hidenav == 0) && ($sco->nextid != 0) && ($sco->next == 0)) {
+            if (($scorm->hidenav == 0) && ($sco->nextid != 0) && ((!isset($sco->next)) || ($sco->next == 0))) {
                 /// Print the next LO link
                 $scostr = '&amp;scoid='.$sco->nextid;
                 $url = $CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modestr.$scostr;

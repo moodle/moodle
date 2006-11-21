@@ -1,6 +1,9 @@
 <?php  // $Id$
 
 /// Constants and settings for module scorm
+define('SCO_ALL', 0);
+define('SCO_DATA', 1);
+define('SCO_ONLY', 2);
 
 define('GRADESCOES', '0');
 define('GRADEHIGHEST', '1');
@@ -216,6 +219,26 @@ function scorm_validate($packagedir) {
         }
     }
     return $validation;
+}
+
+/**
+* Returns an object containing all datas relative to the given sco ID
+*
+* @param integer $id The sco ID
+* @return mixed (false if sco id does not exists)
+*/
+function scorm_get_sco($id,$what=SCO_ALL) {
+    if ($sco = get_record('scorm_scoes','id',$id)) {
+        $sco = ($what == SCO_DATA) ? new stdClass() : $sco;
+        if (($what != SCO_ONLY) && ($scodatas = get_records('scorm_scoes_data','scoid',$id))) {
+            foreach ($scodatas as $scodata) {
+                $sco->{$scodata->name} = $scodata->value;
+            }
+        }
+        return $sco;
+    } else {
+        return false;
+    }
 }
 
 function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value) {
@@ -519,11 +542,11 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
         }
     }
     $orgidentifier = '';
-    if ($org = get_record('scorm_scoes','id',$organization)) {
-        if (($org->organization == '') && ($org->launch == '')) {
-            $orgidentifier = $org->identifier;
+    if ($sco = scorm_get_sco($organization, SCO_ONLY)) {
+        if (($sco->organization == '') && ($sco->launch == '')) {
+            $orgidentifier = $sco->identifier;
         } else {
-            $orgidentifier = $org->organization;
+            $orgidentifier = $sco->organization;
         }
     }
     $scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));   // Just to be safe

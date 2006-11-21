@@ -30,7 +30,7 @@
             $attempt = 1;
         }
 
-        if ($sco = get_record('scorm_scoes','id',$scoid)) {
+        if ($sco = scorm_get_sco($scoid, SCO_ONLY)) {
             if (!$scorm = get_record('scorm','id',$sco->scorm)) {
                 error('Invalid script call');
             }
@@ -63,12 +63,12 @@
                             $userdata->credit = 'no-credit';
                         } 
                 
-                        if ($sco = get_record('scorm_scoes','id',$scoid)) {
+                        if ($sco = scorm_get_sco($scoid)) {
                             $userdata->course_id = $sco->identifier;
-                            $userdata->datafromlms = $sco->datafromlms;
-                            $userdata->masteryscore = $sco->masteryscore;
-                            $userdata->maxtimeallowed = $sco->maxtimeallowed;
-                            $userdata->timelimitaction = $sco->timelimitaction;
+                            $userdata->datafromlms = isset($sco->datafromlms)?$sco->datafromlms:'';
+                            $userdata->masteryscore = isset($sco->masteryscore)?$sco->masteryscore:'';
+                            $userdata->maxtimeallowed = isset($sco->maxtimeallowed)?$sco->maxtimeallowed:'';
+                            $userdata->timelimitaction = isset($sco->timelimitaction)?$sco->timelimitaction:'';
                                
                             echo "error = 0\nerror_text = Successful\naicc_data=\n";
                             echo "[Core]\n";

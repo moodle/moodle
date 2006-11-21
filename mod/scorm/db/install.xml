@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/scorm/db" VERSION="20060926" COMMENT="XMLDB file for Moodle mod/scorm"
+<XMLDB PATH="mod/scorm/db" VERSION="20061121" COMMENT="XMLDB file for Moodle mod/scorm"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -34,7 +34,7 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="scorm_scoes" COMMENT="each SCO part of the SCORM module" PREVIOUS="scorm" NEXT="scorm_scoes_track">
+    <TABLE NAME="scorm_scoes" COMMENT="each SCO part of the SCORM module" PREVIOUS="scorm" NEXT="scorm_scoes_data">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="scorm"/>
         <FIELD NAME="scorm" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="manifest"/>
@@ -42,24 +42,30 @@
         <FIELD NAME="organization" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="manifest" NEXT="parent"/>
         <FIELD NAME="parent" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="organization" NEXT="identifier"/>
         <FIELD NAME="identifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="parent" NEXT="launch"/>
-        <FIELD NAME="launch" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="identifier" NEXT="parameters"/>
-        <FIELD NAME="parameters" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="launch" NEXT="scormtype"/>
-        <FIELD NAME="scormtype" TYPE="char" LENGTH="5" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="parameters" NEXT="title"/>
-        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="scormtype" NEXT="prerequisites"/>
-        <FIELD NAME="prerequisites" TYPE="char" LENGTH="200" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="title" NEXT="maxtimeallowed"/>
-        <FIELD NAME="maxtimeallowed" TYPE="char" LENGTH="19" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="prerequisites" NEXT="timelimitaction"/>
-        <FIELD NAME="timelimitaction" TYPE="char" LENGTH="19" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="maxtimeallowed" NEXT="datafromlms"/>
-        <FIELD NAME="datafromlms" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="timelimitaction" NEXT="masteryscore"/>
-        <FIELD NAME="masteryscore" TYPE="char" LENGTH="200" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="datafromlms" NEXT="next"/>
-        <FIELD NAME="next" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="masteryscore" NEXT="previous"/>
-        <FIELD NAME="previous" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="next"/>
+        <FIELD NAME="launch" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="identifier" NEXT="scormtype"/>
+        <FIELD NAME="scormtype" TYPE="char" LENGTH="5" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="launch" NEXT="title"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="scormtype"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for scorm_scoes" NEXT="scorm"/>
         <KEY NAME="scorm" TYPE="foreign" FIELDS="scorm" REFTABLE="scorm" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="scorm_scoes_track" COMMENT="to track SCOes" PREVIOUS="scorm_scoes">
+    <TABLE NAME="scorm_scoes_data" COMMENT="Contains variable data get from packages" PREVIOUS="scorm_scoes" NEXT="scorm_scoes_track">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="scoid"/>
+        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="scoid" NEXT="value"/>
+        <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for scorm_scoes_data"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="dev_scorscoedata_sco_ix" UNIQUE="false" FIELDS="scoid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="scorm_scoes_track" COMMENT="to track SCOes" PREVIOUS="scorm_scoes_data">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="scormid"/>

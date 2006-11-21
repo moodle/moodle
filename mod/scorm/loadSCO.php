@@ -1,5 +1,5 @@
 <?php
-    require_once("../../config.php");
+    require_once('../../config.php');
     require_once('locallib.php');
 
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
@@ -8,23 +8,23 @@
 
     if (!empty($id)) {
         if (! $cm = get_coursemodule_from_id('scorm', $id)) {
-            error("Course Module ID was incorrect");
+            error('Course Module ID was incorrect');
         }
-        if (! $course = get_record("course", "id", $cm->course)) {
-            error("Course is misconfigured");
+        if (! $course = get_record('course', 'id', $cm->course)) {
+            error('Course is misconfigured');
         }
-        if (! $scorm = get_record("scorm", "id", $cm->instance)) {
-            error("Course module is incorrect");
+        if (! $scorm = get_record('scorm', 'id', $cm->instance)) {
+            error('Course module is incorrect');
         }
     } else if (!empty($a)) {
-        if (! $scorm = get_record("scorm", "id", $a)) {
-            error("Course module is incorrect");
+        if (! $scorm = get_record('scorm', 'id', $a)) {
+            error('Course module is incorrect');
         }
-        if (! $course = get_record("course", "id", $scorm->course)) {
-            error("Course is misconfigured");
+        if (! $course = get_record('course', 'id', $scorm->course)) {
+            error('Course is misconfigured');
         }
-        if (! $cm = get_coursemodule_from_instance("scorm", $scorm->id, $course->id)) {
-            error("Course Module ID was incorrect");
+        if (! $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id)) {
+            error('Course Module ID was incorrect');
         }
     } else {
         error('A required parameter is missing');
@@ -35,10 +35,10 @@
     //
     // Direct SCO request
     //
-        if ($sco = get_record("scorm_scoes","id",$scoid)) {
+        if ($sco = scorm_get_sco($scoid)) {
             if ($sco->launch == '') {
                 // Search for the next launchable sco
-                if ($scoes = get_records_select("scorm_scoes","scorm=".$scorm->id." AND launch<>'' AND id>".$sco->id,"id ASC")) {
+                if ($scoes = get_records_select('scorm_scoes','scorm='.$scorm->id." AND launch<>'' AND id>".$sco->id,'id ASC')) {
                     $sco = current($scoes);
                 }
             }
@@ -48,7 +48,7 @@
     // If no sco was found get the first of SCORM package
     //
     if (!isset($sco)) {
-        $scoes = get_records_select("scorm_scoes","scorm=".$scorm->id." AND launch<>''","id ASC");
+        $scoes = get_records_select('scorm_scoes','scorm='.$scorm->id." AND launch<>''",'id ASC');
         $sco = current($scoes);
     }
 
@@ -64,24 +64,28 @@
     //
     $connector = '';
     $version = substr($scorm->version,0,4);
-    if (!empty($sco->parameters) || ($version == 'AICC')) {
+    if ((isset($sco->parameters) && (!empty($sco->parameters))) || ($version == 'AICC')) {
         if (stripos($sco->launch,'?') !== false) {
             $connector = '&';
         } else {
             $connector = '?';
         }
-        if (!empty($sco->parameters) && ($sco->parameters[0] == '?')) {
+        if ((isset($sco->parameters) && (!empty($sco->parameters))) && ($sco->parameters[0] == '?')) {
             $sco->parameters = substr($sco->parameters,1);
         }
     }
     
     if ($version == 'AICC') {
-        if (!empty($sco->parameters)) {
+        if (isset($sco->parameters) && (!empty($sco->parameters))) {
             $sco->parameters = '&'. $sco->parameters;
         }
         $launcher = $sco->launch.$connector.'aicc_sid='.sesskey().'&aicc_url='.$CFG->wwwroot.'/mod/scorm/aicc.php'.$sco->parameters;
     } else {
-        $launcher = $sco->launch.$connector.$sco->parameters;
+        if (isset($sco->parameters) && (!empty($sco->parameters))) {
+            $launcher = $sco->launch.$connector.$sco->parameters;
+        } else {
+            $launcher = $sco->launch;
+        }
     }
     
     if (scorm_external_link($sco->launch)) {

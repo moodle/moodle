@@ -13,30 +13,30 @@
 
     if (!empty($id)) {
         if (! $cm = get_coursemodule_from_id('scorm', $id)) {
-            error("Course Module ID was incorrect");
+            error('Course Module ID was incorrect');
         }
-        if (! $course = get_record("course", "id", $cm->course)) {
-            error("Course is misconfigured");
+        if (! $course = get_record('course', 'id', $cm->course)) {
+            error('Course is misconfigured');
         }
-        if (! $scorm = get_record("scorm", "id", $cm->instance)) {
-            error("Course module is incorrect");
+        if (! $scorm = get_record('scorm', 'id', $cm->instance)) {
+            error('Course module is incorrect');
         }
     } else {
         if (!empty($b)) {
-            if (! $sco = get_record("scorm_scoes", "id", $b)) {
-                error("Scorm activity is incorrect");
+            if (! $sco = get_record('scorm_scoes', 'id', $b)) {
+                error('Scorm activity is incorrect');
             }
             $a = $sco->scorm;
         }
         if (!empty($a)) {
-            if (! $scorm = get_record("scorm", "id", $a)) {
-                error("Course module is incorrect");
+            if (! $scorm = get_record('scorm', 'id', $a)) {
+                error('Course module is incorrect');
             }
-            if (! $course = get_record("course", "id", $scorm->course)) {
-                error("Course is misconfigured");
+            if (! $course = get_record('course', 'id', $scorm->course)) {
+                error('Course is misconfigured');
             }
-            if (! $cm = get_coursemodule_from_instance("scorm", $scorm->id, $course->id)) {
-                error("Course Module ID was incorrect");
+            if (! $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id)) {
+                error('Course Module ID was incorrect');
             }
         }
     }
@@ -44,10 +44,10 @@
     require_login($course->id, false, $cm);
 
     if (!has_capability('mod/scorm:viewreport', get_context_instance(CONTEXT_MODULE,$cm->id))) {
-        error("You are not allowed to use this script");
+        error('You are not allowed to use this script');
     }
 
-    add_to_log($course->id, "scorm", "report", "report.php?id=$cm->id", "$scorm->id");
+    add_to_log($course->id, 'scorm', 'report', 'report.php?id='.$cm->id, $scorm->id);
 
     if (!empty($user)) {
         $userdata = scorm_get_user_data($user);
@@ -63,23 +63,23 @@
             $navigation = '';
         }
 
-        $strscorms = get_string("modulenameplural", "scorm");
-        $strscorm  = get_string("modulename", "scorm");
-        $strreport  = get_string("report", "scorm");
-        $strattempt  = get_string("attempt", "scorm");
+        $strscorms = get_string('modulenameplural', 'scorm');
+        $strscorm  = get_string('modulename', 'scorm');
+        $strreport  = get_string('report', 'scorm');
+        $strattempt  = get_string('attempt', 'scorm');
         $strname  = get_string('name');
         if (empty($b)) {
             if (empty($a)) {
                 print_header("$course->shortname: ".format_string($scorm->name), "$course->fullname",
                              "$navigation <a href=\"index.php?id=$course->id\">$strscorms</a>
                               -> <a href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a> -> $strreport",
-                             "", "", true);
+                             '', '', true);
             } else {
                 print_header("$course->shortname: ".format_string($scorm->name), "$course->fullname",
                              "$navigation <a href=\"index.php?id=$course->id\">$strscorms</a>
                               -> <a href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>
                               -> <a href=\"report.php?id=$cm->id\">$strreport</a> -> $strattempt $attempt - ".fullname($userdata),
-                             "", "", true);
+                             '', '', true);
             }
         } else {
             print_header("$course->shortname: ".format_string($scorm->name), "$course->fullname",
@@ -87,7 +87,7 @@
                       -> <a href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>
                       -> <a href=\"report.php?id=$cm->id\">$strreport</a>
                       -> <a href=\"report.php?a=$a&user=$user&attempt=$attempt\">$strattempt $attempt - ".fullname($userdata)."</a> -> $sco->title",
-                     "", "", true);
+                     '', '', true);
         }
         print_heading(format_string($scorm->name));
     }
@@ -97,7 +97,7 @@
     if (empty($b)) {
         if (empty($a)) {
             // No options, show the global scorm report
-            if ($scousers=get_records_select("scorm_scoes_track", "scormid='$scorm->id' GROUP BY userid,scormid", "", "userid,scormid")) {
+            if ($scousers=get_records_select('scorm_scoes_track', "scormid='$scorm->id' GROUP BY userid,scormid", "", "userid,scormid")) {
                 $table = new stdClass();
                 $table->head = array('&nbsp;', get_string('name'));
                 $table->align = array('center', 'left');
@@ -135,7 +135,7 @@
                                  fullname($userdata).'</a>';
                         $row[] = '<a href="report.php?a='.$scorm->id.'&user='.$scouser->userid.'&attempt='.$a.'">'.$a.'</a>';
                         $select = 'scormid = '.$scorm->id.' and userid = '.$scouser->userid.' and attempt = '.$a;
-                        $timetracks = get_record_select("scorm_scoes_track", $select,'min(timemodified) as started, max(timemodified) as last');      
+                        $timetracks = get_record_select('scorm_scoes_track', $select,'min(timemodified) as started, max(timemodified) as last');      
                         $row[] = userdate($timetracks->started, get_string('strftimedaydatetime'));
                         $row[] = userdate($timetracks->last, get_string('strftimedaydatetime'));
  
@@ -148,7 +148,7 @@
         } else {
             if (!empty($user)) {
                 // User SCORM report
-                if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' ORDER BY id")) {
+                if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' ORDER BY id")) {
                     if (!empty($userdata)) {
                         print_simple_box_start('center');
                         echo '<div align="center">'."\n";
@@ -258,6 +258,7 @@
                                   'status' => 'cmi.core.lesson_status',
                                   'time' => 'cmi.core.total_time');
             }
+            $printedelements = array();
             foreach ($elements as $key => $element) {
                 if (isset($trackdata->$element)) {
                     $existelements = true;

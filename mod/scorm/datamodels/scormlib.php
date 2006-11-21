@@ -177,6 +177,33 @@ function scorm_get_manifest($blocks,$scoes) {
                     }
                     $scoes->elements[$manifest][$parent->organization][$parent->identifier]->masteryscore = addslashes($block['tagData']);
                 break;
+                case 'ADLCP:COMPLETIONTHRESHOLD':
+                    $parent = array_pop($parents);
+                    array_push($parents, $parent);
+                    if (!isset($block['tagData'])) {
+                        $block['tagData'] = '';
+                    }
+                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->threshold = addslashes($block['tagData']);
+                break;
+                case 'ADLNAV:PRESENTATION':
+                    $parent = array_pop($parents);
+                    array_push($parents, $parent);
+                    foreach ($block['children'] as $adlnav) {
+                        if ($adlnav['name'] == 'ADLNAV:NAVIGATIONINTERFACE') {
+                            foreach ($adlnav['children'] as $adlnavInterface) {
+                                if ($adlnavInterface['name'] == 'ADLNAV:HIDELMSUI') {
+                                    if ($adlnavInterface['tagData'] == 'continue') {
+                                        $scoes->elements[$manifest][$parent->organization][$parent->identifier]->next = 1; 
+                                    }
+                                    if ($adlnavInterface['tagData'] == 'previous') {
+                                        $scoes->elements[$manifest][$parent->organization][$parent->identifier]->previous = 1; 
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                break;
             }
         }
     }
@@ -191,9 +218,14 @@ function scorm_parse_scorm($pkgdir,$scormid) {
 
     if (is_file($manifestfile)) {
     
-        $xmlstring = file_get_contents($manifestfile);
+        $xmltext = file_get_contents($manifestfile);
+
+        $pattern = '/&(?!\w{2,6};)/';
+        $replacement = '&amp;';
+        $xmltext = preg_replace($pattern, $replacement, $xmltext);
+
         $objXML = new xml2Array();
-        $manifests = $objXML->parse($xmlstring);
+        $manifests = $objXML->parse($xmltext);
         //print_r($manifests); 
         $scoes = new stdClass();
         $scoes->version = '';
@@ -205,13 +237,13 @@ function scorm_parse_scorm($pkgdir,$scormid) {
                 foreach ($organizations as $organization => $items) {
                     foreach ($items as $identifier => $item) {
                         // This new db mngt will support all SCORM future extensions
-                        /*$newitem = new stdClass(); 
+                        $newitem = new stdClass(); 
                         $newitem->scorm = $scormid;
                         $newitem->manifest = $manifest;
                         $newitem->organization = $organization;
                         $standarddatas = array('parent', 'identifier', 'launch', 'scormtype', 'title');
                         foreach ($standarddatas as $standarddata) {
-                            $newitem->$standarddata = $item->$standarddata;
+                            $newitem->$standarddata = addslashes($item->$standarddata);
                         }
 
                         if ($olditemid = scorm_array_search('identifier',$newitem->identifier,$olditems)) {
@@ -224,18 +256,18 @@ function scorm_parse_scorm($pkgdir,$scormid) {
                         }
 
                         $data = new stdClass();
-                        $data->scormid = $scormid;
                         $data->scoid = $id;
-                        $optionaldatas = scorm_optionals_data();
-                        foreach ($optionalsdatas as $optionaldata) {
-                            if (isset($item->$optionaldata)) {
-                                $data->name =  $optionaldata;
-                                $data->value = $item->$optionaldata;
-                                $dataid = insert_record('scorm_scoes_data');
+                        if ($optionaldatas = scorm_optionals_data($item,$standarddatas)) {
+                            foreach ($optionaldatas as $optionaldata) {
+                                if (isset($item->$optionaldata)) {
+                                    $data->name =  $optionaldata;
+                                    $data->value = addslashes($item->$optionaldata);
+                                    $dataid = insert_record('scorm_scoes_data',$data);
+                                }
                             }
-                        } */
+                        } 
 
-                        $item->scorm = $scormid;
+                        /*$item->scorm = $scormid;
                         $item->manifest = $manifest;
                         $item->organization = $organization;
                         if ($olditemid = scorm_array_search('identifier',$item->identifier,$olditems)) {
@@ -244,7 +276,7 @@ function scorm_parse_scorm($pkgdir,$scormid) {
                             unset($olditems[$olditemid]);
                         } else {
                             $id = insert_record('scorm_scoes',$item);
-                        }
+                        } */
                 
                         if (($launch == 0) && ((empty($scoes->defaultorg)) || ($scoes->defaultorg == $identifier))) {
                             $launch = $id;
@@ -264,6 +296,16 @@ function scorm_parse_scorm($pkgdir,$scormid) {
     } 
     
     return $launch;
+}
+
+function scorm_optionals_data($item, $standarddata) {
+    $result = array();
+    foreach ($item as $element => $value) {
+        if (! in_array($element, $standarddata)) {
+            $result[] = $element;
+        }
+    }
+    return $result;
 }
 
 /* Usage

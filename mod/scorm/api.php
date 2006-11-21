@@ -57,18 +57,9 @@
     } else {
         $userdata->credit = 'no-credit';
     }    
-    if ($sco = get_record('scorm_scoes','id',$scoid)) {
-        if (!empty($sco->datafromlms)) {
-            $userdata->datafromlms = $sco->datafromlms;
-        }
-        if (!empty($sco->masteryscore)) {
-            $userdata->masteryscore = $sco->masteryscore;
-        }
-        if (!empty($sco->maxtimeallowed)) {
-            $userdata->maxtimeallowed = $sco->maxtimeallowed;
-        }
-        if (!empty($sco->timelimitaction)) {
-            $userdata->timelimitaction = $sco->timelimitaction;
+    if ($scodatas = scorm_get_sco($scoid, SCO_DATA)) {
+        foreach ($scodatas as $key => $value) {
+            $userdata->$key = $value;
         }
     } else {
         error('Sco not found');

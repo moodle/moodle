@@ -174,19 +174,12 @@
             $sco->parent = backup_todb($sub_info['#']['PARENT']['0']['#']);
             $sco->identifier = backup_todb($sub_info['#']['IDENTIFIER']['0']['#']);
             $sco->launch = backup_todb($sub_info['#']['LAUNCH']['0']['#']);
+            $sco->title = backup_todb($sub_info['#']['TITLE']['0']['#']);
             if ($restore->backup_version < 2005031300) {
                 $sco->scormtype = backup_todb($sub_info['#']['TYPE']['0']['#']);
             } else {
                 $sco->scormtype = backup_todb($sub_info['#']['SCORMTYPE']['0']['#']);
             }
-            $sco->title = backup_todb($sub_info['#']['TITLE']['0']['#']);
-            $sco->prerequisites = backup_todb($sub_info['#']['PREREQUISITES']['0']['#']);
-            $sco->maxtimeallowed = backup_todb($sub_info['#']['MAXTIMEALLOWED']['0']['#']);
-            $sco->timelimitaction = backup_todb($sub_info['#']['TIMELIMITACTION']['0']['#']);
-            $sco->datafromlms = backup_todb($sub_info['#']['DATAFROMLMS']['0']['#']);
-            $sco->masteryscore = backup_todb($sub_info['#']['MASTERYSCORE']['0']['#']);
-            $sco->next = backup_todb($sub_info['#']['NEXT']['0']['#']);
-            $sco->previous = backup_todb($sub_info['#']['PREVIOUS']['0']['#']);
 
             //The structure is equal to the db, so insert the scorm_scoes
             $newid = insert_record ("scorm_scoes",$sco);
@@ -213,6 +206,15 @@
         
         return $status;
     }
+
+
+            $sco->prerequisites = backup_todb($sub_info['#']['PREREQUISITES']['0']['#']);
+            $sco->maxtimeallowed = backup_todb($sub_info['#']['MAXTIMEALLOWED']['0']['#']);
+            $sco->timelimitaction = backup_todb($sub_info['#']['TIMELIMITACTION']['0']['#']);
+            $sco->datafromlms = backup_todb($sub_info['#']['DATAFROMLMS']['0']['#']);
+            $sco->masteryscore = backup_todb($sub_info['#']['MASTERYSCORE']['0']['#']);
+            $sco->next = backup_todb($sub_info['#']['NEXT']['0']['#']);
+            $sco->previous = backup_todb($sub_info['#']['PREVIOUS']['0']['#']);
 
     //This function restores the scorm_scoes_track
     function scorm_scoes_tracks_restore_mods($scorm_id,$info,$restore) {

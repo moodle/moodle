@@ -68,7 +68,7 @@ function SCORMapi1_2() {
         'cmi.core.exit':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.exit'})?$userdata->{'cmi.core.exit'}:'' ?>', 'format':CMIExit, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
         'cmi.core.session_time':{'format':CMITimespan, 'mod':'w', 'defaultvalue':'00:00:00', 'readerror':'404', 'writeerror':'405'},
         'cmi.suspend_data':{'defaultvalue':'<?php echo isset($userdata->{'cmi.suspend_data'})?$userdata->{'cmi.suspend_data'}:'' ?>', 'format':CMIString4096, 'mod':'rw', 'writeerror':'405'},
-        'cmi.launch_data':{'defaultvalue':'<?php echo $userdata->datafromlms ?>', 'mod':'r', 'writeerror':'403'},
+        'cmi.launch_data':{'defaultvalue':'<?php echo isset($userdata->datafromlms)?$userdata->datafromlms:'' ?>', 'mod':'r', 'writeerror':'403'},
         'cmi.comments':{'defaultvalue':'<?php echo isset($userdata->{'cmi.comments'})?$userdata->{'cmi.comments'}:'' ?>', 'format':CMIString4096, 'mod':'rw', 'writeerror':'405'},
         'cmi.comments_from_lms':{'mod':'r', 'writeerror':'403'},
         'cmi.objectives._children':{'defaultvalue':objectives_children, 'mod':'r', 'writeerror':'402'},
@@ -80,9 +80,9 @@ function SCORMapi1_2() {
         'cmi.objectives.n.score.max':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
         'cmi.objectives.n.status':{'pattern':CMIIndex, 'format':CMIStatus2, 'mod':'rw', 'writeerror':'405'},
         'cmi.student_data._children':{'defaultvalue':student_data_children, 'mod':'r', 'writeerror':'402'},
-        'cmi.student_data.mastery_score':{'defaultvalue':'<?php echo $userdata->masteryscore ?>', 'mod':'r', 'writeerror':'403'},
-        'cmi.student_data.max_time_allowed':{'defaultvalue':'<?php echo $userdata->maxtimeallowed ?>', 'mod':'r', 'writeerror':'403'},
-        'cmi.student_data.time_limit_action':{'defaultvalue':'<?php echo $userdata->timelimitaction ?>', 'mod':'r', 'writeerror':'403'},
+        'cmi.student_data.mastery_score':{'defaultvalue':'<?php echo isset($userdata->masteryscore)?$userdata->masteryscore:'' ?>', 'mod':'r', 'writeerror':'403'},
+        'cmi.student_data.max_time_allowed':{'defaultvalue':'<?php echo isset($userdata->maxtimeallowed)?$userdata->maxtimeallowed:'' ?>', 'mod':'r', 'writeerror':'403'},
+        'cmi.student_data.time_limit_action':{'defaultvalue':'<?php echo isset($userdata->timelimitaction)?$userdata->timelimitaction:'' ?>', 'mod':'r', 'writeerror':'403'},
         'cmi.student_preference._children':{'defaultvalue':student_preference_children, 'mod':'r', 'writeerror':'402'},
         'cmi.student_preference.audio':{'defaultvalue':'0', 'format':CMISInteger, 'range':audio_range, 'mod':'rw', 'writeerror':'405'},
         'cmi.student_preference.language':{'defaultvalue':'', 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
@@ -167,7 +167,7 @@ function SCORMapi1_2() {
         if (param == "") {
             if (!Initialized) {
                 <?php 
-                    if (($CFG->debug > 7) && (isadmin())) {
+                    if (debugging('',DEBUG_DEVELOPER)) {
                         echo 'alert("Initialized SCORM 1.2");';
                     }
                 ?>
@@ -188,7 +188,7 @@ function SCORMapi1_2() {
         if (param == "") {
             if (Initialized) {
                 <?php 
-                    if (($CFG->debug > 7) && (isadmin())) {
+                    if (debugging('',DEBUG_DEVELOPER)) {
                         echo 'alert("Finished SCORM 1.2");';
                     }
                 ?>
@@ -233,7 +233,7 @@ function SCORMapi1_2() {
                             if (subelement == element) {
                             errorCode = "0";
                             <?php 
-                                if (($CFG->debug > 7) && (isadmin())) {
+                                if (debugging('',DEBUG_DEVELOPER)) {
                                     echo 'alert(element+": "+eval(element));';
                                 }
                             ?>
@@ -337,7 +337,7 @@ function SCORMapi1_2() {
                                         eval(element+'="'+value+'";');
                                         errorCode = "0";
                                         <?php 
-                                            if (($CFG->debug > 7) && (isadmin())) {
+                                            if (debugging('',DEBUG_DEVELOPER)) {
                                                 echo 'alert(element+":= "+value);';
                                             }
                                         ?>
@@ -353,7 +353,7 @@ function SCORMapi1_2() {
                                     }
                                     errorCode = "0";
                                     <?php 
-                                        if (($CFG->debug > 7) && (isadmin())) {
+                                        if (debugging('',DEBUG_DEVELOPER)) {
                                             echo 'alert(element+":= "+value);';
                                         }
                                     ?>
@@ -384,7 +384,7 @@ function SCORMapi1_2() {
             if (Initialized) {
                 result = StoreData(cmi,false);
                 <?php 
-                    if (($CFG->debug > 7) && (isadmin())) {
+                    if (debugging('',DEBUG_DEVELOPER)) {
                         echo 'alert("Data Commited");';
                     }
                 ?>
@@ -539,7 +539,7 @@ function SCORMapi1_2() {
             datastring = CollectData(data,'cmi');
         }
         datastring += '&attempt=<?php echo $attempt ?>';
-        datastring += '&scoid=<?php echo $sco->id ?>';
+        datastring += '&scoid=<?php echo $scoid ?>';
         
         var myRequest = NewHttpReq();
         result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php p($USER->sesskey) ?>"+datastring);
