@@ -79,10 +79,19 @@ class forum_mod_form extends moodleform_mod {
         $mform->addElement('checkbox', 'assessed', get_string('allowratings', 'forum') , get_string('ratingsuse', 'forum'));
 
         $mform->addElement('modgrade', 'scale', get_string('grade'), false);
+        $mform->addDependency('scale', 'assessed');
+
+        $mform->addElement('checkbox', 'ratingtime', get_string('ratingtime', 'forum'));
+        $mform->addDependency('ratingtime', 'assessed');
 
         $mform->addElement('date_time_selector', 'assesstimestart', get_string('from'));
+        $mform->addDependency('assesstimestart', 'assessed');
+        $mform->addDependency('assesstimestart', 'ratingtime');
 
         $mform->addElement('date_time_selector', 'assesstimefinish', get_string('to'));
+        $mform->addDependency('assesstimefinish', 'assessed');
+        $mform->addDependency('assesstimefinish', 'ratingtime');
+
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', '', get_string('blockafter', 'forum'));

@@ -818,6 +818,17 @@ function validate_' . $this->_attributes['id'] . '(frm) {
         $js .='</script>'."\n";
         return $js;
     }
+    /**
+     * Adds a dependency for $elementName which will be disabled if $condition is met.
+     * If $condition='checked' (default) then the condition is that the $dependentOn element
+     * is checked. If $condition is something else then it is checked to see if the value
+     * of the $dependentOn element is equal to $condition.
+     *
+     * @param string $elementName the name of the element which will be disabled
+     * @param string $dependentOn the name of the element whose state will be checked for
+     *                            condition
+     * @param string $condition the condition to check
+     */
     function addDependency($elementName, $dependentOn, $condition='checked'){
         $el=$this->getElement($elementName);
         if (is_a($el, 'HTML_QuickForm_group')){

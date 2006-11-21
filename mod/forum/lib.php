@@ -146,7 +146,7 @@ function forum_update_instance($forum) {
         $forum->assessed = 0;
     }
 
-    if (!empty($forum->ratingtime)) {
+    if (empty($forum->ratingtime)) {
         $forum->assesstimestart  = 0;
         $forum->assesstimefinish = 0;
     }
@@ -2044,8 +2044,8 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     }
     $editanypost = has_capability('mod/forum:editanypost', $modcontext);
 
-    
-    
+
+
     if ($ownpost or $editanypost) {
         if (($age < $CFG->maxeditingtime) or $editanypost) {
             $commands[] =  '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?edit='.$post->id.'">'.$stredit.'</a>';
