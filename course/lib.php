@@ -1882,16 +1882,16 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     static $sesskey;
 
     if (!isset($str)) {
-        $str->delete    = get_string("delete");
-        $str->move      = get_string("move");
-        $str->moveup    = get_string("moveup");
-        $str->movedown  = get_string("movedown");
-        $str->moveright = get_string("moveright");
-        $str->moveleft  = get_string("moveleft");
-        $str->update    = get_string("update");
-        $str->duplicate    = get_string("duplicate");
-        $str->hide      = get_string("hide");
-        $str->show      = get_string("show");
+        $str->delete         = get_string("delete");
+        $str->move           = get_string("move");
+        $str->moveup         = get_string("moveup");
+        $str->movedown       = get_string("movedown");
+        $str->moveright      = get_string("moveright");
+        $str->moveleft       = get_string("moveleft");
+        $str->update         = get_string("update");
+        $str->duplicate      = get_string("duplicate");
+        $str->hide           = get_string("hide");
+        $str->show           = get_string("show");
         $str->clicktochange  = get_string("clicktochange");
         $str->forcedmode     = get_string("forcedmode");
         $str->groupsnone     = get_string("groupsnone");
@@ -1913,32 +1913,35 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     }
 
     if ($mod->visible) {
-        $hideshow = '<a title="'.$str->hide.'" href="'.$path.'/mod.php?hide='.$mod->id.
+        $hideshow = '<a class="editing_hide" title="'.$str->hide.'" href="'.$path.'/mod.php?hide='.$mod->id.
                     '&amp;sesskey='.$sesskey.$section.'"><img'.
                     ' src="'.$CFG->pixpath.'/t/hide.gif" hspace="2" height="11" width="11" '.
-                    ' border="0" alt="'.$str->hide.'" /></a> ';
+                    ' border="0" alt="'.$str->hide.'" /></a>'."\n";
     } else {
-        $hideshow = '<a title="'.$str->show.'" href="'.$path.'/mod.php?show='.$mod->id.
+        $hideshow = '<a class="editing_show" title="'.$str->show.'" href="'.$path.'/mod.php?show='.$mod->id.
                     '&amp;sesskey='.$sesskey.$section.'"><img'.
                     ' src="'.$CFG->pixpath.'/t/show.gif" hspace="2" height="11" width="11" '.
-                    ' border="0" alt="'.$str->show.'" /></a> ';
+                    ' border="0" alt="'.$str->show.'" /></a>'."\n";
     }
     if ($mod->groupmode !== false) {
         if ($mod->groupmode == SEPARATEGROUPS) {
             $grouptitle = $str->groupsseparate;
+            $groupclass = 'editing_groupseparate';
             $groupimage = $CFG->pixpath.'/t/groups.gif';
             $grouplink  = $path.'/mod.php?id='.$mod->id.'&amp;groupmode=0&amp;sesskey='.$sesskey;
         } else if ($mod->groupmode == VISIBLEGROUPS) {
             $grouptitle = $str->groupsvisible;
+            $groupclass = 'editing_groupvisible';
             $groupimage = $CFG->pixpath.'/t/groupv.gif';
             $grouplink  = $path.'/mod.php?id='.$mod->id.'&amp;groupmode=1&amp;sesskey='.$sesskey;
         } else {
             $grouptitle = $str->groupsnone;
+            $groupclass = 'editing_groupsnone';
             $groupimage = $CFG->pixpath.'/t/groupn.gif';
             $grouplink  = $path.'/mod.php?id='.$mod->id.'&amp;groupmode=2&amp;sesskey='.$sesskey;
         }
         if ($mod->groupmodelink) {
-            $groupmode = '<a title="'.$grouptitle.' ('.$str->clicktochange.')" href="'.$grouplink.'">'.
+            $groupmode = '<a class="'.$groupclass.'" title="'.$grouptitle.' ('.$str->clicktochange.')" href="'.$grouplink.'">'.
                          '<img src="'.$groupimage.'" hspace="2" height="11" width="11" '.
                          'border="0" alt="'.$grouptitle.'" /></a>';
         } else {
@@ -1951,44 +1954,44 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     }
 
     if ($moveselect) {
-        $move =     '<a title="'.$str->move.'" href="'.$path.'/mod.php?copy='.$mod->id.
+        $move =     '<a class="editing_move" title="'.$str->move.'" href="'.$path.'/mod.php?copy='.$mod->id.
                     '&amp;sesskey='.$sesskey.$section.'"><img'.
                     ' src="'.$CFG->pixpath.'/t/move.gif" hspace="2" height="11" width="11" '.
-                    ' border="0" alt="'.$str->move.'" /></a>';
+                    ' border="0" alt="'.$str->move.'" /></a>'."\n";
     } else {
-        $move =     '<a title="'.$str->moveup.'" href="'.$path.'/mod.php?id='.$mod->id.
+        $move =     '<a class="editing_moveup" title="'.$str->moveup.'" href="'.$path.'/mod.php?id='.$mod->id.
                     '&amp;move=-1&amp;sesskey='.$sesskey.$section.'"><img'.
                     ' src="'.$CFG->pixpath.'/t/up.gif" hspace="2" height="11" width="11" '.
-                    ' border="0" alt="'.$str->moveup.'" /></a>'.
-                    '<a title="'.$str->movedown.'" href="'.$path.'/mod.php?id='.$mod->id.
+                    ' border="0" alt="'.$str->moveup.'" /></a>'."\n".
+                    '<a class="editing_movedown" title="'.$str->movedown.'" href="'.$path.'/mod.php?id='.$mod->id.
                     '&amp;move=1&amp;sesskey='.$sesskey.$section.'"><img'.
                     ' src="'.$CFG->pixpath.'/t/down.gif" hspace="2" height="11" width="11" '.
-                    ' border="0" alt="'.$str->movedown.'" /></a>';
+                    ' border="0" alt="'.$str->movedown.'" /></a>'."\n";
     }
 
     $leftright = "";
     if ($indent > 0) {
-        $leftright .= '<a title="'.$str->moveleft.'" href="'.$path.'/mod.php?id='.$mod->id.
+        $leftright .= '<a class="editing_moveleft" title="'.$str->moveleft.'" href="'.$path.'/mod.php?id='.$mod->id.
                       '&amp;indent=-1&amp;sesskey='.$sesskey.$section.'"><img'.
                       ' src="'.$CFG->pixpath.'/t/left.gif" hspace="2" height="11" width="11" '.
-                      ' border="0" alt="'.$str->moveleft.'" /></a>';
+                      ' border="0" alt="'.$str->moveleft.'" /></a>'."\n";
     }
     if ($indent >= 0) {
-        $leftright .= '<a title="'.$str->moveright.'" href="'.$path.'/mod.php?id='.$mod->id.
+        $leftright .= '<a class="editing_moveright" title="'.$str->moveright.'" href="'.$path.'/mod.php?id='.$mod->id.
                       '&amp;indent=1&amp;sesskey='.$sesskey.$section.'"><img'.
                       ' src="'.$CFG->pixpath.'/t/right.gif" hspace="2" height="11" width="11" '.
-                      ' border="0" alt="'.$str->moveright.'" /></a>';
+                      ' border="0" alt="'.$str->moveright.'" /></a>'."\n";
     }
 
-    return '<span class="commands">'.$leftright.$move.
-           '<a title="'.$str->update.'" href="'.$path.'/mod.php?update='.$mod->id.
+    return '<span class="commands">'."\n".$leftright.$move.
+           '<a class="editing_update" title="'.$str->update.'" href="'.$path.'/mod.php?update='.$mod->id.
            '&amp;sesskey='.$sesskey.$section.'"><img'.
            ' src="'.$CFG->pixpath.'/t/edit.gif" hspace="2" height="11" width="11" border="0" '.
-           ' alt="'.$str->update.'" /></a>'.
-           '<a title="'.$str->delete.'" href="'.$path.'/mod.php?delete='.$mod->id.
+           ' alt="'.$str->update.'" /></a>'."\n".
+           '<a class="editing_delete" title="'.$str->delete.'" href="'.$path.'/mod.php?delete='.$mod->id.
            '&amp;sesskey='.$sesskey.$section.'"><img'.
            ' src="'.$CFG->pixpath.'/t/delete.gif" hspace="2" height="11" width="11" border="0" '.
-           ' alt="'.$str->delete.'" /></a>'.$hideshow.$groupmode.'</span>';
+           ' alt="'.$str->delete.'" /></a>'."\n".$hideshow.$groupmode."\n".'</span>';
 }
 
 /**
