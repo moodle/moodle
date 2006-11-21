@@ -154,7 +154,6 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
     function exportValue(&$submitValues, $assoc = false)
     {
         $value = null;
-        print_object($submitValues);
         $valuearray = array();
         foreach ($this->_elements as $element){
             $thisexport = $element->exportValue($submitValues[$this->getName()], true);
