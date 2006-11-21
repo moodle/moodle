@@ -32,7 +32,7 @@
         error("Category not known!");
     }
 
-    if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (has_capability('moodle/course:create', $context)) {
         if ($categoryedit !== -1) {
             $USER->categoryediting = $categoryedit;
         }
@@ -50,7 +50,7 @@
     }
 
 
-    if (has_capability('moodle/category:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (has_capability('moodle/category:update', $context)) {
         /// Rename the category if requested
         if (!empty($rename) and confirm_sesskey()) {
             $category->name = $rename;
@@ -217,7 +217,7 @@
     if ($subcategories = get_records("course_categories", "parent", $category->id, "sortorder ASC")) {
         $firstentry = true;
         foreach ($subcategories as $subcategory) {
-            if ($subcategory->visible or has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+            if ($subcategory->visible or has_capability('moodle/course:create', $context)) {
                 $subcategorieswereshown = true;
                 if ($firstentry) {
                     echo '<table align="center" border="0" cellspacing="2" cellpadding="4" class="generalbox">';
@@ -304,7 +304,7 @@
 
         foreach ($courses as $acourse) {
           
-            $context = get_context_instance(CONTEXT_COURSE, $acourse->id);
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $acourse->id);
           
             $count++;
             $up = ($count > 1 || !$atfirstpage);
@@ -315,22 +315,22 @@
             echo '<td><a '.$linkcss.' href="view.php?id='.$acourse->id.'">'.$acourse->fullname.'</a></td>';
             if ($creatorediting) {
                 echo "<td>";
-                if (has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $acourse->id))) {
+                if (has_capability('moodle/course:update', $coursecontext)) {
                     echo '<a title="'.$strsettings.'" href="'.$CFG->wwwroot.'/course/edit.php?id='.
                          $acourse->id.'">'.
                          '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.$stredit.'" /></a> ';        }
                 
                 // role assignment link     
-                if (has_capability('moodle/role:assign', $context)) { 
-                    echo'<a title="'.get_string('assignroles', 'role').'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'"><img src="'.$CFG->pixpath.'/i/roles.gif" height="11" width="11" alt="'.get_string('assignroles', 'role').'" /></a>';
+                if (has_capability('moodle/role:assign', $coursecontext)) { 
+                    echo'<a title="'.get_string('assignroles', 'role').'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$coursecontext->id.'"><img src="'.$CFG->pixpath.'/i/roles.gif" height="11" width="11" alt="'.get_string('assignroles', 'role').'" /></a>';
                 }                       
                          
-                if (has_capability('moodle/course:delete', $context)) {
+                if (has_capability('moodle/course:delete', $coursecontext)) {
                     echo '<a title="'.$strdelete.'" href="delete.php?id='.$acourse->id.'">'.
                             '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.$strdelete.'" /></a> ';
                 }
 
-                if (has_capability('moodle/course:visibility', $context)) {
+                if (has_capability('moodle/course:visibility', $coursecontext)) {
                     if (!empty($acourse->visible)) {
                         echo '<a title="'.$strhide.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                             '&amp;perpage='.$perpage.'&amp;hide='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
@@ -342,12 +342,12 @@
                     }
                 }
 
-                if (has_capability('moodle/site:backup', $context)) {
+                if (has_capability('moodle/site:backup', $coursecontext)) {
                     echo '<a title="'.$strbackup.'" href="../backup/backup.php?id='.$acourse->id.'">'.
                             '<img src="'.$CFG->pixpath.'/t/backup.gif" height="11" width="11" border="0" alt="" /></a> ';
                 }
                     
-                if (has_capability('moodle/site:restore', $context)) {
+                if (has_capability('moodle/site:restore', $coursecontext)) {
                     echo '<a title="'.$strrestore.'" href="../files/index.php?id='.$acourse->id.
                          '&amp;wdir=/backupdata">'.
                          '<img src="'.$CFG->pixpath.'/t/restore.gif" height="11" width="11" border="0" alt="" /></a> ';
@@ -411,8 +411,7 @@
         echo '</form>';
         echo '<br />';
     }
-
-
+    
     echo '<center>';
     if (has_capability('moodle/category:update', get_context_instance(CONTEXT_SYSTEM, SITEID)) and $numcourses > 1) {           /// Print button to re-sort courses by name
         unset($options);
@@ -422,7 +421,6 @@
         print_single_button('category.php', $options, get_string('resortcoursesbyname'), 'get');
     }
 
-    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
     if (has_capability('moodle/course:create', $context)) {         /// Print button to create a new course
         unset($options);
         $options['category'] = $category->id;
@@ -430,7 +428,6 @@
         echo '<br />';
     }
 
-    $context = get_context_instance(CONTEXT_COURSECAT, $id);
     if (has_capability('moodle/category:update', $context)) {           /// Print form to rename the category
         $strrename= get_string('rename');
         echo '<form name="renameform" action="category.php" method="post">';
