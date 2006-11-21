@@ -163,14 +163,25 @@
             echo "<th>$strcategory</th>";
             echo "<th>$strselect</th>";
             echo "<th>$stredit</th>";
-            foreach ($courses as $course) {
+            foreach ($courses as $course) {    		    
+                
+                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                
                 $course->fullname = highlight("$search", $course->fullname);
                 $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
                 echo "<tr>";
                 echo "<td><a $linkcss href=\"view.php?id=$course->id\">$course->fullname</a></td>";
                 echo "<td>".$displaylist[$course->category]."</td>";
                 echo "<td align=\"center\">";
-                echo "<input type=\"checkbox\" name=\"c$course->id\">";
+                
+                // this is ok since this will get inherited from course category context
+                // if it is set
+                if (has_capability('moodle/category:update', $coursecontext)) {
+                    echo "<input type=\"checkbox\" name=\"c$course->id\">";
+                } else {
+                    echo "<input type=\"checkbox\" name=\"c$course->id\" disabled=\"disabled\">";
+                }
+                
                 echo "</td>";
                 echo "<td>";
                 if (empty($THEME->custompix)) {
@@ -179,30 +190,47 @@
                     $pixpath = "$CFG->themedir/$CFG->theme/pix";
                 }
                 
-                echo "<a title=\"".get_string("settings")."\" href=\"$CFG->wwwroot/course/edit.php?id=$course->id\"><img".
-                    " src=\"$pixpath/t/edit.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
-           
-    		    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                // checks whether user can update course settings
+                if (has_capability('moodle/course:update', $coursecontext)) {
+                    echo "<a title=\"".get_string("settings")."\" href=\"$CFG->wwwroot/course/edit.php?id=$course->id\"><img".
+                        " src=\"$pixpath/t/edit.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                }
+
+                // checks whether user can do role assignment
     		    if (has_capability('moodle/role:assign', $coursecontext)) {
                     echo'<a title="'.get_string('assignroles', 'role').'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$coursecontext->id.'">';
     		        echo '<img src="'.$CFG->pixpath.'/i/roles.gif" height="11" width="11" alt="'.get_string('assignroles', 'role').'" /></a>';
     		    }                
-                      
-                echo "<a title=\"".get_string("delete")."\" href=\"delete.php?id=$course->id\"><img".
-                    " src=\"$pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
-                if (!empty($course->visible)) {
-                    echo "<a title=\"".get_string("hide")."\" href=\"search.php?search=$encodedsearch&amp;perpage=$perpage&amp;page=$page&amp;hide=$course->id&amp;sesskey=$USER->sesskey\"><img".
-                        " src=\"$pixpath/t/hide.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
-                } else {
-                    echo "<a title=\"".get_string("show")."\" href=\"search.php?search=$encodedsearch&amp;perpage=$perpage&amp;page=$page&amp;show=$course->id&amp;sesskey=$USER->sesskey\"><img".
-                        " src=\"$pixpath/t/show.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+
+                // checks whether user can delete course
+                if (has_capability('moodle/course:delete', $coursecontext)) {  
+                    echo "<a title=\"".get_string("delete")."\" href=\"delete.php?id=$course->id\"><img".
+                        " src=\"$pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                }  
+
+                // checks whether user can change visibility
+                if (has_capability('moodle/course:visibility', $coursecontext)) {
+                    if (!empty($course->visible)) {
+                        echo "<a title=\"".get_string("hide")."\" href=\"search.php?search=$encodedsearch&amp;perpage=$perpage&amp;page=$page&amp;hide=$course->id&amp;sesskey=$USER->sesskey\"><img".
+                            " src=\"$pixpath/t/hide.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                    } else {
+                        echo "<a title=\"".get_string("show")."\" href=\"search.php?search=$encodedsearch&amp;perpage=$perpage&amp;page=$page&amp;show=$course->id&amp;sesskey=$USER->sesskey\"><img".
+                            " src=\"$pixpath/t/show.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                    }
+                }              
+
+                // checks whether user can do site backup
+                if (has_capability('moodle/site:backup', $coursecontext)) {
+                    echo "<a title=\"".get_string("backup")."\" href=\"../backup/backup.php?id=$course->id\"><img".
+                        " src=\"$pixpath/t/backup.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
                 }
                 
-                echo "<a title=\"".get_string("backup")."\" href=\"../backup/backup.php?id=$course->id\"><img".
-                    " src=\"$pixpath/t/backup.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
-                
-                echo "<a title=\"".get_string("restore")."\" href=\"../files/index.php?id=$course->id&wdir=/backupdata\"><img".
-                    " src=\"$pixpath/t/restore.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                // checks whether user can do restore
+                if (has_capability('moodle/site:restore', $coursecontext)) {
+                    echo "<a title=\"".get_string("restore")."\" href=\"../files/index.php?id=$course->id&wdir=/backupdata\"><img".
+                        " src=\"$pixpath/t/restore.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                }
+
                 echo "</td></tr>";
             }
             echo "<tr><td colspan=\"4\" align=\"center\">";
