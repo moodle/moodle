@@ -2388,7 +2388,7 @@ function authenticate_user_login($username, $password) {
                 $creatorrole = array_shift($creatorroles); // We can only use one, let's use the first one
                 // Check if the user is a creator
                 if (auth_iscreator($username)) { // Following calls will not create duplicates
-                    role_assign($creatorrole->id, $user->id, 0, $sitecontext->id, 0, 0, 0, 'ldap');
+                    role_assign($creatorrole->id, $user->id, 0, $sitecontext->id, 0, 0, 0, $auth);
                 } else {
                     role_unassign($creatorrole->id, $user->id, 0, $sitecontext->id);
                 }
