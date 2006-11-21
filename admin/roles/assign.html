@@ -25,7 +25,12 @@
           <?php
               foreach ($contextusers as $contextuser) {
                   $fullname = fullname($contextuser, true);
-                  echo "<option value=\"$contextuser->id\">".$fullname.", ".$contextuser->email."</option>\n";
+                  if ($contextuser->hidden) {
+                      $hidden=' ('.get_string('hidden').') ';  
+                  } else {
+                      $hidden="";  
+                  }
+                  echo "<option value=\"$contextuser->id\">".$fullname.", ".$contextuser->email.$hidden."</option>\n";
               }
           ?>
 
