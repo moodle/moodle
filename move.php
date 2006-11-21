@@ -1,4 +1,4 @@
-<?PHP // $Id: move.php,v 1.1 2006/03/12 18:39:59 skodak Exp $
+<?PHP // $Id: move.php,v 1.2 2006/11/21 19:26:36 skodak Exp $
 
 require('teacheraccess.php'); //page only for teachers
 $up  = optional_param('up', 0, PARAM_BOOL);
@@ -18,7 +18,7 @@ $i = 1;
 $found = 0;
 foreach ($oldchapters as $ch) {
     $chapters[$i] = $ch;
-    if ($chapter->id === $ch->id) {
+    if ($chapter->id == $ch->id) {
         $chs = $i;
         $che = $chs;
         if ($ch->subchapter) {
@@ -39,14 +39,14 @@ foreach ($oldchapters as $ch) {
 // find target chapter(s)
 if ($chapters[$chs]->subchapter) { //moving single subchapter up or down
     if ($up) {
-        if ($chs === 1) {
+        if ($chs == 1) {
             $nothing = 1; //already first
         } else {
             $ts = $chs - 1;
             $te = $ts;
         }
     } else { //down
-        if ($che === count($chapters)) {
+        if ($che == count($chapters)) {
             $nothing = 1; //already last
         } else {
             $ts = $che + 1;
@@ -55,7 +55,7 @@ if ($chapters[$chs]->subchapter) { //moving single subchapter up or down
     }
 } else { // moving chapter and looking for next/previous chapter
     if ($up) { //up
-        if ($chs === 1) {
+        if ($chs == 1) {
             $nothing = 1; //already first
         } else {
             $te = $chs - 1;
@@ -69,7 +69,7 @@ if ($chapters[$chs]->subchapter) { //moving single subchapter up or down
             }
         }
     } else { //down
-        if ($che === count($chapters)) {
+        if ($che == count($chapters)) {
             $nothing = 1; //already last
         } else {
             $ts = $che + 1;

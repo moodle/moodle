@@ -1,4 +1,4 @@
-<?PHP // $Id: delete.php,v 1.1 2006/03/12 18:39:59 skodak Exp $
+<?PHP // $Id: delete.php,v 1.2 2006/11/21 19:26:36 skodak Exp $
 
 require('teacheraccess.php'); //page only for teachers
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
@@ -30,7 +30,7 @@ if ($confirm) {  // the operation was confirmed.
         $chapters = get_records('book_chapters', 'bookid', $book->id, 'pagenum', 'id, subchapter');
         $found = false;
         foreach($chapters as $ch) {
-            if ($ch->id === $chapter->id) {
+            if ($ch->id == $chapter->id) {
                 $found = true;
             } else if ($found and $ch->subchapter) {
                 if (!delete_records('book_chapters', 'id', $ch->id)) {

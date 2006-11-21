@@ -1,4 +1,4 @@
-<?PHP // $Id: import.php,v 1.1 2006/03/12 18:39:59 skodak Exp $
+<?PHP // $Id: import.php,v 1.2 2006/11/21 19:26:36 skodak Exp $
 
 require_once('../../config.php');
 require_once('lib.php');
@@ -85,7 +85,7 @@ if (($form = data_submitted()) && (confirm_sesskey())) {
         $basedir = opendir($base);
         while ($file = readdir($basedir)) {
             $path = $base.'/'.$file;
-            if (filetype($path) === 'file' and preg_match($htmlpat, $file)) {
+            if (filetype($path) == 'file' and preg_match($htmlpat, $file)) {
                 $refs[] = str_replace($coursebase, '', $path);
             }
         }

@@ -1,4 +1,4 @@
-<?PHP // $Id: show.php,v 1.1 2006/03/12 18:39:59 skodak Exp $
+<?PHP // $Id: show.php,v 1.2 2006/11/21 19:26:36 skodak Exp $
 
 require('teacheraccess.php'); //page only for teachers
 
@@ -18,7 +18,7 @@ if (!$chapter->subchapter) {
     $chapters = get_records('book_chapters', 'bookid', $book->id, 'pagenum', 'id, subchapter, hidden');
     $found = 0;
     foreach($chapters as $ch) {
-        if ($ch->id === $chapter->id) {
+        if ($ch->id == $chapter->id) {
             $found = 1;
         } else if ($found and $ch->subchapter) {
             $ch->hidden = $chapter->hidden;
