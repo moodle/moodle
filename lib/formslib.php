@@ -448,6 +448,7 @@ class moodleform_mod extends moodleform {
  */
 class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     var $_types = array();
+    var $_dependencies = array();
 
 
     /**
@@ -794,13 +795,49 @@ function validate_' . $this->_attributes['id'] . '(frm) {
     }
     function getLockOptionStartScript(){
 
-        return '';
+        $js = '<script type="text/javascript" language="javascript">'."\n";
+        $js .= "var ".$this->getAttribute('id')."items= {";
+        foreach ($this->_dependencies as $dependentOn => $elements){
+            $js .= $dependentOn.' : {dependents :[';
+            foreach ($elements as $element){
+                $js.="'".$element['dependent']."', ";
+            }
+            $js=rtrim($js, ', ');
+            $js .= "],\n";
+            $js .= "condition : '{$element['condition']}'},\n";
+
+        };
+        $js=rtrim($js, ",\n");
+        $js .= '};'."\n";
+        $js .='</script>'."\n";
+        return $js;
     }
     function getLockOptionEndScript(){
-
-        return '';
+        $js = '<script type="text/javascript" language="javascript">'."\n";
+        $js .="lockoptionsall('".$this->getAttribute('id')."');\n";
+        $js .='</script>'."\n";
+        return $js;
     }
-
+    function addDependency($elementName, $dependentOn, $condition='checked'){
+        $el=$this->getElement($elementName);
+        if (is_a($el, 'HTML_QuickForm_group')){
+            $group=$el;
+            $els=$group->getElements();
+            foreach (array_keys($els) as $elkey){
+                $dependentNames[]=array('dependent'=>$group->getElementName($elkey),
+                                    'condition'=>$condition);
+            }
+        }else{
+            $dependentNames=array(array('dependent'=>$el->getName(),
+                                    'condition'=>$condition));
+        }
+        foreach ($dependentNames as $dependentName){
+            $dependentOnEl=$this->getElement($dependentOn);
+            $name=$dependentOnEl->getName();
+            $dependentOnEl->updateAttributes(array('onClick'=>"return lockoptionsall('".$this->getAttribute('id')."');\n"));
+            $this->_dependencies[$name][]=$dependentName;
+        }
+    }
 }
 
 /**
