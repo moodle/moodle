@@ -820,7 +820,8 @@ function validate_' . $this->_attributes['id'] . '(frm) {
     }
     /**
      * Adds a dependency for $elementName which will be disabled if $condition is met.
-     * If $condition='checked' (default) then the condition is that the $dependentOn element
+     * If $condition='notchecked' (default) then the condition is that the $dependentOn element
+     * is not checked. If $condition='checked' then the condition is that the $dependentOn element
      * is checked. If $condition is something else then it is checked to see if the value
      * of the $dependentOn element is equal to $condition.
      *
@@ -829,7 +830,7 @@ function validate_' . $this->_attributes['id'] . '(frm) {
      *                            condition
      * @param string $condition the condition to check
      */
-    function addDependency($elementName, $dependentOn, $condition='checked'){
+    function addDependency($elementName, $dependentOn, $condition='notchecked'){
         $el=$this->getElement($elementName);
         if (is_a($el, 'HTML_QuickForm_group')){
             $group=$el;

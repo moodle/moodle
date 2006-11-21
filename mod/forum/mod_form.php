@@ -95,20 +95,6 @@ class forum_mod_form extends moodleform_mod {
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', '', get_string('blockafter', 'forum'));
-        $mform->addElement('text', 'warnafter', get_string('warnafter', 'forum'));
-		$mform->setType('warnafter', PARAM_INT);
-		$mform->setDefault('warnafter', '0');
-		$mform->addRule('warnafter', null, 'required', null, 'client');
-		$mform->addRule('warnafter', null, 'numeric', null, 'client');
-		$mform->setHelpButton('warnafter', array('manageposts', get_string('warnafter', 'forum'),'forum'));
-
-        $mform->addElement('text', 'blockafter', get_string('blockafter', 'forum'));
-		$mform->setType('blockafter', PARAM_INT);
-		$mform->setDefault('blockafter', '0');
-		$mform->addRule('blockafter', null, 'required', null, 'client');
-		$mform->addRule('blockafter', null, 'numeric', null, 'client');
-		$mform->setHelpButton('blockafter', array('manageposts', get_string('blockafter', 'forum'),'forum'));
-
 		$options = array();
         $options[0] = get_string('blockperioddisabled','forum');
         $options[60*60*24]   = '1 '.get_string('day');
@@ -120,6 +106,21 @@ class forum_mod_form extends moodleform_mod {
         $options[60*60*24*7] = '1 '.get_string('week');
         $mform->addElement('select', 'blockperiod', get_string("blockperiod", "forum") , $options);
 		$mform->setHelpButton('blockperiod', array('manageposts', get_string('blockperiod', 'forum'),'forum'));
+
+		$mform->addElement('text', 'blockafter', get_string('blockafter', 'forum'));
+		$mform->setType('blockafter', PARAM_INT);
+		$mform->setDefault('blockafter', '0');
+		$mform->addRule('blockafter', null, 'numeric', null, 'client');
+		$mform->setHelpButton('blockafter', array('manageposts', get_string('blockafter', 'forum'),'forum'));
+		$mform->addDependency('blockafter', 'blockperiod', 0);
+
+
+        $mform->addElement('text', 'warnafter', get_string('warnafter', 'forum'));
+		$mform->setType('warnafter', PARAM_INT);
+		$mform->setDefault('warnafter', '0');
+		$mform->addRule('warnafter', null, 'numeric', null, 'client');
+		$mform->setHelpButton('warnafter', array('manageposts', get_string('warnafter', 'forum'),'forum'));
+		$mform->addDependency('warnafter', 'blockperiod', 0);
 
 //-------------------------------------------------------------------------------
 		$this->standard_coursemodule_elements();
@@ -146,6 +147,14 @@ class forum_mod_form extends moodleform_mod {
             $type->addOption(get_string('namesocial', 'forum'), 'social');
             $type->freeze();
             $type->setPersistantFreeze(true);
+        }
+        $assesstimestartvalue=is_array($mform->getElementValue('assesstimestart'));
+        $assesstimefinishvalue=is_array($mform->getElementValue('assesstimefinish'));
+        $ratingtime=&$mform->getElement('ratingtime');
+        if ($assesstimestartvalue && $assesstimefinishvalue){
+            $ratingtime->setValue(true);
+        } else {
+            $ratingtime->setValue(false);
         }
 	}
 
