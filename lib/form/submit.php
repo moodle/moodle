@@ -25,7 +25,7 @@ class MoodleQuickForm_submit extends HTML_QuickForm_submit
     function MoodleQuickForm_submit($elementName=null, $value=null, $attributes=null)
     {
         HTML_QuickForm_submit::HTML_QuickForm_submit($elementName, $value, $attributes);
-        if ($elementName='cancel'){
+        if ('cancel'==$elementName){
             //bypass form validation js :
             $this->updateAttributes(array('onclick'=>'this.form.submit();'));
         }

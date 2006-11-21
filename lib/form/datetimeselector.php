@@ -84,10 +84,10 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
             $minutes[$i] = sprintf("%02d",$i);
         }
         $this->_elements[] =& MoodleQuickForm::createElement('select', 'day', null, $days, $this->getAttributes(), true);
-        $this->_elements[] =& MoodleQuickForm::createElement('select','month', null, $months, $this->getAttributes(), true);
-        $this->_elements[] =& MoodleQuickForm::createElement('select','year', null, $years, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select', 'month', null, $months, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select', 'year', null, $years, $this->getAttributes(), true);
         $this->_elements[] =& MoodleQuickForm::createElement('select', 'hour', null, $hours, $this->getAttributes(), true);
-        $this->_elements[] =& MoodleQuickForm::createElement('select','minute', null, $minutes, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select', 'minute', null, $minutes, $this->getAttributes(), true);
 
         $this->setValue();
     }
@@ -154,20 +154,28 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
     function exportValue(&$submitValues, $assoc = false)
     {
         $value = null;
-        $valuearray = $this->_elements[0]->exportValue($submitValues[$this->getName()], true);
-        $valuearray +=$this->_elements[1]->exportValue($submitValues[$this->getName()], true);
-        $valuearray +=$this->_elements[2]->exportValue($submitValues[$this->getName()], true);
-        $valuearray +=$this->_elements[3]->exportValue($submitValues[$this->getName()], true);
-        $valuearray +=$this->_elements[4]->exportValue($submitValues[$this->getName()], true);
-        $value[$this->getName()]=make_timestamp($valuearray['year'],
-                               $valuearray['month'],
-                               $valuearray['day'],
-                               $valuearray['hour'],
-                               $valuearray['minute'],
-                               0,
-                               $this->_options['timezone'],
-                               $this->_options['applydst']);
-        return $value;
+        print_object($submitValues);
+        $valuearray = array();
+        foreach ($this->_elements as $element){
+            $thisexport = $element->exportValue($submitValues[$this->getName()], true);
+            if ($thisexport!=null){
+                $valuearray += $thisexport;
+            }
+        }
+        if (count($valuearray)){
+            $value[$this->getName()]=make_timestamp($valuearray['year'],
+                                   $valuearray['month'],
+                                   $valuearray['day'],
+                                   $valuearray['hour'],
+                                   $valuearray['minute'],
+                                   0,
+                                   $this->_options['timezone'],
+                                   $this->_options['applydst']);
+
+            return $value;
+        } else {
+            return null;
+        }
     }
 
     // }}}
