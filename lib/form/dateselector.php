@@ -142,15 +142,25 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
     function exportValue(&$submitValues, $assoc = false)
     {
         $value = null;
-        $valuearray = $this->_elements[0]->exportValue($submitValues[$this->getName()], true);
-        $valuearray +=$this->_elements[1]->exportValue($submitValues[$this->getName()], true);
-        $valuearray +=$this->_elements[2]->exportValue($submitValues[$this->getName()], true);
-        $value[$this->getName()]=make_timestamp($valuearray['year'],
-                               $valuearray['month'],
-                               $valuearray['day'],
-                               0,0,0,
-                               $this->_options['timezone'],
-                               $this->_options['applydst']);
+        $valuearray = array();
+        foreach ($this->_elements as $element){
+            $thisexport = $element->exportValue($submitValues[$this->getName()], true);
+            if ($thisexport!=null){
+                $valuearray += $thisexport;
+            }
+        }
+        if (count($valuearray)){
+            $value[$this->getName()]=make_timestamp($valuearray['year'],
+                                   $valuearray['month'],
+                                   $valuearray['day'],
+                                   0,0,0,
+                                   $this->_options['timezone'],
+                                   $this->_options['applydst']);
+
+            return $value;
+        } else {
+            return null;
+        }
         return $value;
     }
 
