@@ -38,7 +38,7 @@ class block_social_activities extends block_list {
         $groupbuttons = $course->groupmode;
         $groupbuttonslink = (!$course->groupmodeforce);
         $viewhiddenactivities = has_capability('moodle/course:viewhiddenactivities', $context);
-        $manageactivities = has_capability('moodle/course:manageactivities', $context);
+        $isediting = isediting($this->instance->pageid);
         $ismoving = ismoving($this->instance->pageid);
         if ($ismoving) {
             $strmovehere = get_string('movehere');
@@ -62,7 +62,7 @@ class block_social_activities extends block_list {
                     continue;
                 }
                 $mod = $mods[$modnumber];
-                if ($manageactivities && !$ismoving) {
+                if ($isediting && !$ismoving) {
                     if ($groupbuttons) {
                         if (! $mod->groupmodelink = $groupbuttonslink) {
                             $mod->groupmode = $course->groupmode;
@@ -116,7 +116,7 @@ class block_social_activities extends block_list {
             $this->content->icons[] = '';
         }
 
-        if ($manageactivities && $modnames) {
+        if ($isediting && $modnames) {
             $this->content->footer = print_section_add_menus($course, 0, $modnames, true, true);
         } else {
             $this->content->footer = '';
