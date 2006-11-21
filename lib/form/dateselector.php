@@ -161,7 +161,6 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
         } else {
             return null;
         }
-        return $value;
     }
 
     // }}}
