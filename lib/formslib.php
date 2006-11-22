@@ -114,18 +114,21 @@ class moodleform {
      *                  when calling print_header
      */
     function focus(){
-        $form=$this->_form;
+        $form =& $this->_form;
         $elkeys=array_keys($form->_elementIndex);
-        if (isset($form->_errors) &&  0!=count($form->_errors)){
-            $errorkeys=array_keys($form->_errors);
-            $keyinorder=array_intersect($elkeys, $errorkeys);
-            $el='getElementById(\'id_'.array_shift($keyinorder).'\')';
-            return $el;
-        } else{
-            $el='getElementById(\'id_'.array_shift($elkeys).'\')';
-            return $el;
+        if (isset($form->_errors) &&  0 != count($form->_errors)){
+            $errorkeys = array_keys($form->_errors);
+            $elkeys = array_intersect($elkeys, $errorkeys);
         }
-    }
+        $names=null;
+        while (!$names){
+          $el = array_shift($elkeys);
+          $names=$form->_getElNamesRecursive($el);
+        }
+        $name=array_shift($names);
+        $focus='forms[\''.$this->_form->getAttribute('id').'\'].elements[\''.$name.'\']';
+        return $focus;
+     }
 
     /**
      * Internal method. Alters submitted data to be suitable for quickforms processing.
@@ -816,22 +819,24 @@ function validate_' . $this->_attributes['id'] . '(frm) {
 
     function _getElNamesRecursive(&$element, $group=null){
         if ($group==null){
-            $el=$this->getElement($element);
+            $el = $this->getElement($element);
         } else {
-            $el=&$element;
+            $el = &$element;
         }
         if (is_a($el, 'HTML_QuickForm_group')){
-            $group=$el;
-            $elsInGroup=$group->getElements();
-            $elNames=array();
+            $group = $el;
+            $elsInGroup = $group->getElements();
+            $elNames = array();
             foreach ($elsInGroup as $elInGroup){
                 $elNames = array_merge($elNames, $this->_getElNamesRecursive($elInGroup, $group));
             }
         }else{
-            if ($group==null){
-                $elNames=array($el->getName());
+            if ($group != null){
+                $elNames = array($group->getElementName($el->getName()));
+            } elseif (is_a($el, 'HTML_QuickForm_header')) {
+                return null;
             } else {
-                $elNames=array($group->getElementName($el->getName()));
+                $elNames = array($el->getName());
             }
         }
         return $elNames;
@@ -839,8 +844,8 @@ function validate_' . $this->_attributes['id'] . '(frm) {
     }
     /**
      * Adds a dependency for $elementName which will be disabled if $condition is met.
-     * If $condition='notchecked' (default) then the condition is that the $dependentOn element
-     * is not checked. If $condition='checked' then the condition is that the $dependentOn element
+     * If $condition = 'notchecked' (default) then the condition is that the $dependentOn element
+     * is not checked. If $condition = 'checked' then the condition is that the $dependentOn element
      * is checked. If $condition is something else then it is checked to see if the value
      * of the $dependentOn element is equal to $condition.
      *
@@ -849,11 +854,11 @@ function validate_' . $this->_attributes['id'] . '(frm) {
      *                            condition
      * @param string $condition the condition to check
      */
-    function disabledIf($elementName, $dependentOn, $condition='notchecked'){
-        $dependents=$this->_getElNamesRecursive($elementName);
+    function disabledIf($elementName, $dependentOn, $condition = 'notchecked'){
+        $dependents = $this->_getElNamesRecursive($elementName);
         foreach ($dependents as $dependent){
-            if ($dependent != $dependentOn) {
-                $this->_dependencies[$dependentOn][]=array('dependent'=>$dependent,
+            if ($dependent !=  $dependentOn) {
+                $this->_dependencies[$dependentOn][] = array('dependent'=>$dependent,
                                     'condition'=>$condition);
             }
         }
@@ -918,15 +923,15 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     function MoodleQuickForm_Renderer(){
         // switch next two lines for ol li containers for form items.
         //        $this->_elementTemplates=array('default'=>"\n\t\t<li class=\"fitem\"><label>{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"qfelement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></li>");
-        $this->_elementTemplates=array('default'=>"\n\t\t<div class=\"fitem\"><label>{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"felement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></div>",
+        $this->_elementTemplates = array('default'=>"\n\t\t<div class=\"fitem\"><label>{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"felement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></div>",
         'fieldset'=>"\n\t\t<div class=\"fitem\"><label>{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><fieldset class=\"felement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</fieldset></div>");
 
         parent::HTML_QuickForm_Renderer_Tableless();
     }
 
     function startForm(&$form){
-        $this->_reqHTML=$form->getReqHTML();
-        $this->_elementTemplates=str_replace('{req}', $this->_reqHTML, $this->_elementTemplates);
+        $this->_reqHTML = $form->getReqHTML();
+        $this->_elementTemplates = str_replace('{req}', $this->_reqHTML, $this->_elementTemplates);
         parent::startForm($form);
     }
 
@@ -967,12 +972,12 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         }
         $html =str_replace('{type}', 'f'.$element->getType(), $html);
         if (method_exists($element, 'getHelpButton')){
-            $html=str_replace('{help}', $element->getHelpButton(), $html);
+            $html = str_replace('{help}', $element->getHelpButton(), $html);
         }else{
-            $html=str_replace('{help}', '', $html);
+            $html = str_replace('{help}', '', $html);
 
         }
-        $this->_templates[$element->getName()]=$html;
+        $this->_templates[$element->getName()] = $html;
         if (!is_null($element->getAttribute('id'))) {
             $id = $element->getAttribute('id');
         } else {
@@ -991,7 +996,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
 }
 
 
-$GLOBALS['_HTML_QuickForm_default_renderer']=& new MoodleQuickForm_Renderer();
+$GLOBALS['_HTML_QuickForm_default_renderer'] =& new MoodleQuickForm_Renderer();
 
 MoodleQuickForm::registerElementType('checkbox', "$CFG->libdir/form/checkbox.php", 'MoodleQuickForm_checkbox');
 MoodleQuickForm::registerElementType('file', "$CFG->libdir/form/file.php", 'MoodleQuickForm_file');
