@@ -400,9 +400,10 @@ function survey_print_multi($question) {
             $checklist["q$P$q->id"] = $numoptions;
         
         } else {
-            echo "<td width=\"10\" valign=\"middle\" rowspan=\"2\"><b>$qnum</b></td>";
+            // yu : fix for MDL-7501, possibly need to use user flag as this is quite ugly.
+            echo "<td width=\"10\" valign=\"middle\"><b>$qnum</b></td>";
             echo "<td width=\"10%\" nowrap=\"nowrap\"><font size=\"1\">$stripreferthat&nbsp;</font></td>";
-            echo "<td width=\"40%\" valign=\"middle\" rowspan=\"2\">$q->text</td>";
+            echo "<td width=\"40%\" valign=\"middle\">$q->text</td>";
             for ($i=1;$i<=$numoptions;$i++) {
                 echo "<td width=\"10%\" align=\"center\"><input type=\"radio\" name=\"qP$q->id\" value=\"$i\" alt=\"$i\"/></td>";
             }
@@ -410,7 +411,9 @@ function survey_print_multi($question) {
             echo "</tr>";
 
             echo "<tr class=\"$rowclass\">";
+            echo "<td width=\"10\" valign=\"middle\"><b>$qnum</b></td>";
             echo "<td width=\"10%\" nowrap=\"nowrap\"><font size=\"1\">$strifoundthat&nbsp;</font></td>";
+            echo "<td width=\"40%\" valign=\"middle\">$q->text</td>";
             for ($i=1;$i<=$numoptions;$i++) {
                 echo "<td width=\"10%\" align=\"center\"><input type=\"radio\" name=\"q$q->id\" value=\"$i\" alt=\"$i\" /></td>";
             }
