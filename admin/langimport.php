@@ -244,11 +244,11 @@
             }
             
             print_simple_box_start('center','60%');
-            echo '<table width="100%"><tr><td align="center">';
+            echo '<table width="100%"><tr><th align="center">';
             echo get_string('installedlangs','admin');
-            echo '</td><td align="center">';
+            echo '</th><th align="center">';
             echo get_string('availablelangs','admin');
-            echo '</td></tr>';
+            echo '</th></tr>';
             echo '<tr><td align="center" valign="top">';
             echo '<form name="uninstallform" action="langimport.php?mode=4" method="POST">';
             echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
