@@ -1475,10 +1475,7 @@ function count_login_failures($mode, $username, $lastlogin) {
  * @param mixed $object The data to be printed
  */
 function print_object($object) {
-
-    echo '<pre>';
-    print_r($object);
-    echo '</pre>';
+    echo '<pre>'.htmlspecialchars(print_r($object,true)).'</pre>';
 }
 
 
