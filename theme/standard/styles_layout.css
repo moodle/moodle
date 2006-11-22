@@ -68,10 +68,10 @@ h6.main {
   display:block;
 }
 
-.clearfix {
+/*.clearfix {
   min-width: 0;
   overflow: hidden;
-}
+}*/
 
 .clearfix:after {
   /* content: "<!-- -->";  */
@@ -83,6 +83,10 @@ h6.main {
 }
 
 /* .clearfix {display: inline-table;} */
+.clearfix {
+  /* display: inline-bl¶ock */
+  min-width: 0;
+}
 
 /* Hides from IE-mac \*/
 * html .clearfix {height: 1%;}
