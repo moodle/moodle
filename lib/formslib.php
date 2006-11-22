@@ -793,8 +793,8 @@ function validate_' . $this->_attributes['id'] . '(frm) {
             }
         }
     }
-    function getLockOptionStartScript(){
 
+    function getLockOptionEndScript(){
         $js = '<script type="text/javascript" language="javascript">'."\n";
         $js .= "var ".$this->getAttribute('id')."items= {";
         foreach ($this->_dependencies as $dependentOn => $elements){
@@ -809,14 +809,33 @@ function validate_' . $this->_attributes['id'] . '(frm) {
         };
         $js=rtrim($js, ",\n");
         $js .= '};'."\n";
+        $js .="lockoptionsallsetup('".$this->getAttribute('id')."');\n";
         $js .='</script>'."\n";
         return $js;
     }
-    function getLockOptionEndScript(){
-        $js = '<script type="text/javascript" language="javascript">'."\n";
-        $js .="lockoptionsall('".$this->getAttribute('id')."');\n";
-        $js .='</script>'."\n";
-        return $js;
+
+    function _getElNamesRecursive(&$element, $group=null){
+        if ($group==null){
+            $el=$this->getElement($element);
+        } else {
+            $el=&$element;
+        }
+        if (is_a($el, 'HTML_QuickForm_group')){
+            $group=$el;
+            $elsInGroup=$group->getElements();
+            $elNames=array();
+            foreach ($elsInGroup as $elInGroup){
+                $elNames = array_merge($elNames, $this->_getElNamesRecursive($elInGroup, $group));
+            }
+        }else{
+            if ($group==null){
+                $elNames=array($el->getName());
+            } else {
+                $elNames=array($group->getElementName($el->getName()));
+            }
+        }
+        return $elNames;
+
     }
     /**
      * Adds a dependency for $elementName which will be disabled if $condition is met.
@@ -831,23 +850,11 @@ function validate_' . $this->_attributes['id'] . '(frm) {
      * @param string $condition the condition to check
      */
     function addDependency($elementName, $dependentOn, $condition='notchecked'){
-        $el=$this->getElement($elementName);
-        if (is_a($el, 'HTML_QuickForm_group')){
-            $group=$el;
-            $els=$group->getElements();
-            foreach (array_keys($els) as $elkey){
-                $dependentNames[]=array('dependent'=>$group->getElementName($elkey),
-                                    'condition'=>$condition);
-            }
-        }else{
-            $dependentNames=array(array('dependent'=>$el->getName(),
-                                    'condition'=>$condition));
-        }
-        foreach ($dependentNames as $dependentName){
-            $dependentOnEl=$this->getElement($dependentOn);
-            $name=$dependentOnEl->getName();
-            $dependentOnEl->updateAttributes(array('onClick'=>"return lockoptionsall('".$this->getAttribute('id')."');\n"));
-            $this->_dependencies[$name][]=$dependentName;
+        $dependents=$this->_getElNamesRecursive($elementName);
+        foreach ($dependents as $dependent){
+
+            $this->_dependencies[$dependentOn][]=array('dependent'=>$dependent,
+                                'condition'=>$condition);
         }
     }
 }
@@ -975,10 +982,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     }
     function finishForm(&$form){
         parent::finishForm($form);
-        // add a validation script
-        if ('' != ($script = $form->getLockOptionStartScript())) {
-            $this->_html = $script . "\n" . $this->_html;
-        }
+        // add a lockoptions script
         if ('' != ($script = $form->getLockOptionEndScript())) {
             $this->_html = $this->_html . "\n" . $script;
         }
