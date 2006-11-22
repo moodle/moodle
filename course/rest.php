@@ -99,6 +99,18 @@ switch($_SERVER['REQUEST_METHOD']) {
                         set_coursemodule_groupmode($mod->id, $value);
                         break;
 
+                    case 'indentleft':
+                        if ($mod->indent > 0) {
+                            $mod->indent--;
+                            update_record('course_modules', $mod);
+                        }
+                        break;
+
+                    case 'indentright':
+                        $mod->indent++;
+                        update_record('course_modules', $mod);
+                        break;
+
                     case 'move':
                         if (!$section = get_record('course_sections','course',$course->id,'section',$sectionid)) {
                             error_log('AJAX commands.php: Bad section ID '.$sectionid);
