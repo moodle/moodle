@@ -849,12 +849,13 @@ function validate_' . $this->_attributes['id'] . '(frm) {
      *                            condition
      * @param string $condition the condition to check
      */
-    function addDependency($elementName, $dependentOn, $condition='notchecked'){
+    function disabledIf($elementName, $dependentOn, $condition='notchecked'){
         $dependents=$this->_getElNamesRecursive($elementName);
         foreach ($dependents as $dependent){
-
-            $this->_dependencies[$dependentOn][]=array('dependent'=>$dependent,
-                                'condition'=>$condition);
+            if ($dependent != $dependentOn) {
+                $this->_dependencies[$dependentOn][]=array('dependent'=>$dependent,
+                                    'condition'=>$condition);
+            }
         }
     }
 }

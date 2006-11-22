@@ -79,18 +79,18 @@ class forum_mod_form extends moodleform_mod {
         $mform->addElement('checkbox', 'assessed', get_string('allowratings', 'forum') , get_string('ratingsuse', 'forum'));
 
         $mform->addElement('modgrade', 'scale', get_string('grade'), false);
-        $mform->addDependency('scale', 'assessed');
+        $mform->disabledIf('scale', 'assessed');
 
         $mform->addElement('checkbox', 'ratingtime', get_string('ratingtime', 'forum'));
-        $mform->addDependency('ratingtime', 'assessed');
+        $mform->disabledIf('ratingtime', 'assessed');
 
         $mform->addElement('date_time_selector', 'assesstimestart', get_string('from'));
-        $mform->addDependency('assesstimestart', 'assessed');
-        $mform->addDependency('assesstimestart', 'ratingtime');
+        $mform->disabledIf('assesstimestart', 'assessed');
+        $mform->disabledIf('assesstimestart', 'ratingtime');
 
         $mform->addElement('date_time_selector', 'assesstimefinish', get_string('to'));
-        $mform->addDependency('assesstimefinish', 'assessed');
-        $mform->addDependency('assesstimefinish', 'ratingtime');
+        $mform->disabledIf('assesstimefinish', 'assessed');
+        $mform->disabledIf('assesstimefinish', 'ratingtime');
 
 
 //-------------------------------------------------------------------------------
@@ -112,7 +112,7 @@ class forum_mod_form extends moodleform_mod {
 		$mform->setDefault('blockafter', '0');
 		$mform->addRule('blockafter', null, 'numeric', null, 'client');
 		$mform->setHelpButton('blockafter', array('manageposts', get_string('blockafter', 'forum'),'forum'));
-		$mform->addDependency('blockafter', 'blockperiod', 0);
+		$mform->disabledIf('blockafter', 'blockperiod', 0);
 
 
         $mform->addElement('text', 'warnafter', get_string('warnafter', 'forum'));
@@ -120,7 +120,7 @@ class forum_mod_form extends moodleform_mod {
 		$mform->setDefault('warnafter', '0');
 		$mform->addRule('warnafter', null, 'numeric', null, 'client');
 		$mform->setHelpButton('warnafter', array('manageposts', get_string('warnafter', 'forum'),'forum'));
-		$mform->addDependency('warnafter', 'blockperiod', 0);
+		$mform->disabledIf('warnafter', 'blockperiod', 0);
 
 //-------------------------------------------------------------------------------
 		$this->standard_coursemodule_elements();
