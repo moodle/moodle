@@ -4,7 +4,7 @@ class glossary_mod_form extends moodleform_mod {
 
 	function definition() {
 
-		global $CFG;
+		global $CFG, $COURSE;
 		$mform    =& $this->_form;
 		$renderer =& $mform->defaultRenderer();
 
@@ -114,17 +114,32 @@ class glossary_mod_form extends moodleform_mod {
             $choices[50] = '50';
             $mform->addElement('select', 'rssarticles', get_string('rssarticles'), $choices);
             $mform->setHelpButton('rssarticles', array('rssarticles', get_string('rssarticles'), 'glossary'));
+            $mform->disabledIf('rssarticles', 'rsstype', 0);
         }
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', '', get_string('grade'));
-        $mform->addElement('checkbox', 'assessed', get_string('allowratings', 'glossary') , get_string('ratingsuse', 'glossary'));
+        $mform->addElement('checkbox', 'userating', get_string('allowratings', 'glossary') , get_string('ratingsuse', 'glossary'));
+
+        $options=array();
+        $options[2] = get_string('ratingonlyteachers', 'glossary', moodle_strtolower($COURSE->teachers));
+        $options[1] = get_string('ratingeveryone', 'glossary');
+        $mform->addElement('select', 'assessed', get_string('users'), $options);
+        $mform->disabledIf('assessed', 'userating');
 
         $mform->addElement('modgrade', 'scale', get_string('grade'), false);
+        $mform->disabledIf('scale', 'userating');
+
+        $mform->addElement('checkbox', 'ratingtime', get_string('ratingtime', 'glossary'));
+        $mform->disabledIf('ratingtime', 'userating');
 
         $mform->addElement('date_time_selector', 'assesstimestart', get_string('from'));
+        $mform->disabledIf('assesstimestart', 'userating');
+        $mform->disabledIf('assesstimestart', 'ratingtime');
 
         $mform->addElement('date_time_selector', 'assesstimefinish', get_string('to'));
+        $mform->disabledIf('assesstimefinish', 'userating');
+        $mform->disabledIf('assesstimefinish', 'ratingtime');
 
 //-------------------------------------------------------------------------------
         $this->standard_coursemodule_elements();
@@ -152,9 +167,23 @@ class glossary_mod_form extends moodleform_mod {
             $mainglossaryel->setPersistantFreeze(false);
 
         }
+
+
 	}
 
-
-
+	function set_defaults($default_values, $slashed=false){
+        if (is_object($default_values)) {
+            $default_values = (array)$default_values;
+        }
+        if (isset($default_values['assessed'])){
+	        $default_values['userating']=($default_values['assessed'])?true:false;
+	    }
+        if (isset($default_values['assessed'])){
+	        $default_values['ratingtime']=($default_values['assessed']
+        	                               && $default_values['assesstimestart']
+        	                               && $default_values['assesstimefinish'] )?1:0;
+	    }
+	    parent::set_defaults($default_values, $slashed);
+	}
 }
 ?>
