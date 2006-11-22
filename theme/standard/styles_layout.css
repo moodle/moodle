@@ -68,11 +68,6 @@ h6.main {
   display:block;
 }
 
-/*.clearfix {
-  min-width: 0;
-  overflow: hidden;
-}*/
-
 .clearfix:after {
   /* content: "<!-- -->";  */
   content: "."; 
@@ -82,7 +77,6 @@ h6.main {
   visibility: hidden;
 }
 
-/* .clearfix {display: inline-table;} */
 .clearfix {
   /* display: inline-bl¶ock */
   min-width: 0;
