@@ -41,6 +41,8 @@
     $stryes = get_string('yes');
     $strno = get_string('no');
     $strrss = get_string("rss");
+    $strweek = get_string('week');
+    $strsection = get_string('section');
 
     $searchform = forum_search_form($course);
 
@@ -310,7 +312,11 @@
 
     if ($course->id != SITEID) {    // Only real courses have learning forums
         // Add extra field for section number, at the front
-        array_unshift($learningtable->head, "");
+        if ($course->format == 'weeks' or $course->format == 'weekscss') {
+            array_unshift($learningtable->head, $strweek);
+        } else {
+            array_unshift($learningtable->head, $strsection);
+        }
         array_unshift($learningtable->align, "center");
 
 
