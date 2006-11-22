@@ -43,5 +43,19 @@ class MoodleQuickForm_file extends HTML_QuickForm_file{
     function getHelpButton(){
         return $this->_helpbutton;
     }
+
+    /**
+     * Override createElement event to add max files
+     */
+    function onQuickFormEvent($event, $arg, &$caller)
+    {
+        if ($event == 'createElement') {
+            $className = get_class($this);
+            $this->$className($arg[0], $arg[1].' ('.get_string('maxsize', '', display_size($caller->getMaxFileSize())).')', $arg[2]);
+            return true;
+        }
+        return parent::onQuickFormEvent($event, $arg, $caller);
+    } // end func onQuickFormEvent
+    
 }
 ?>
