@@ -92,6 +92,24 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add field attachment
         $result = $result && add_field($table, $field);
     }
+    
+    if ($result && $oldversion < 2006112200) {
+
+    /// Define field imagealt to be added to user
+        $table = new XMLDBTable('user');
+        $field = new XMLDBField('imagealt');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null, 'trustbitmask');
+
+    /// Launch add field imagealt
+        $result = $result && add_field($table, $field);
+        
+        $table = new XMLDBTable('user');
+        $field = new XMLDBField('screenreader');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, null, '0', 'imagealt');
+
+    /// Launch add field screenreader
+        $result = $result && add_field($table, $field);
+    }
 
     return $result;
 
