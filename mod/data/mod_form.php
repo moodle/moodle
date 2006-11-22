@@ -23,21 +23,25 @@ class data_mod_form extends moodleform_mod {
 	    $availablefromgroup[]=&MoodleQuickForm::createElement('date_selector', 'availablefrom', '');
 	    $availablefromgroup[]=&MoodleQuickForm::createElement('checkbox', 'availablefromenabled', '', get_string('enable'));
         $mform->addGroup($availablefromgroup, 'availablefromgroup', get_string('availablefromdate', 'data'), '&nbsp;', false);
+        $mform->addDependency('availablefromgroup', 'availablefromenabled');
 
         $availabletogroup=array();
 	    $availabletogroup[]=&MoodleQuickForm::createElement('date_selector', 'availableto', '');
 	    $availabletogroup[]=&MoodleQuickForm::createElement('checkbox', 'availabletoenabled', '', get_string('enable'));
         $mform->addGroup($availabletogroup, 'availabletogroup', get_string('availabletodate', 'data'), '&nbsp;', false);
+        $mform->addDependency('availabletogroup', 'availabletoenabled');
 
         $viewfromgroup=array();
 	    $viewfromgroup[]=&MoodleQuickForm::createElement('date_selector', 'viewfrom', '');
 	    $viewfromgroup[]=&MoodleQuickForm::createElement('checkbox', 'viewfromenabled', '', get_string('enable'));
         $mform->addGroup($viewfromgroup, 'viewfromgroup', get_string('viewfromdate', 'data'), '&nbsp;', false);
+        $mform->addDependency('viewfromgroup', 'viewfromenabled');
 
         $viewtogroup=array();
 	    $viewtogroup[]=&MoodleQuickForm::createElement('date_selector', 'viewto', '');
 	    $viewtogroup[]=&MoodleQuickForm::createElement('checkbox', 'viewtoenabled', '', get_string('enable'));
         $mform->addGroup($viewtogroup, 'viewtogroup', get_string('viewtodate', 'data'), '&nbsp;', false);
+        $mform->addDependency('viewtogroup', 'viewtoenabled');
 
 
         $countoptions=  array(0=>get_string('none'))+
@@ -64,6 +68,7 @@ class data_mod_form extends moodleform_mod {
         $mform->addElement('checkbox', 'assessed', get_string("allowratings", "data") , get_string('ratingsuse', 'data'));
 
         $mform->addElement('modgrade', 'scale', get_string('grade'), false);
+        $mform->addDependency('scale', 'assessed');
 
 
         $this->standard_coursemodule_elements();
