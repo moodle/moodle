@@ -1,4 +1,5 @@
 <?php // $Id$
+require_once($CFG->libdir.'/formslib.php');
 
 /**
  * Extend the base assignment class for assignments where you upload a single file
@@ -13,26 +14,67 @@ class assignment_online extends assignment_base {
     function view() {
 
         global $USER;
-        
-        $context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
+
+        $edit  = optional_param('edit', 0, PARAM_BOOL);
+        $saved = optional_param('saved', 0, PARAM_BOOL);
+
+        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
         require_capability('mod/assignment:view', $context);
-        
+
         $submission = $this->get_submission();
 
         //Guest can not submit nor edit an assignment (bug: 4604)
         if (!has_capability('mod/assignment:submit', $context)) {
             $editable = null;
-        }
-        else {
+        } else {
             $editable = $this->isopen() && (!$submission || $this->assignment->resubmit || !$submission->timemarked);
         }
-        $editmode = ($editable && !empty($_GET['edit']));
+        $editmode = ($editable and $edit);
 
         if ($editmode) {
             //guest can not edit or submit assignment
             if (!has_capability('mod/assignment:submit', $context)) {
                 error(get_string('guestnosubmit', 'assignment'));
             }
+        }
+
+/// prepare form and process submitted data
+        $mform = new assignment_online_edit_form('view.php');
+
+        $defaults = new object();
+        $defaults->id = $this->cm->id;
+        if (!empty($submission)) {
+            if ($this->usehtmleditor) {
+                $options = new object();
+                $options->smiley = false;
+                $options->filter = false;
+
+                $defaults->text   = format_text($submission->data1, $submission->data2, $options);
+                $defaults->format = FORMAT_HTML;
+            } else {
+                $defaults->text   = $submission->data1;
+                $defaults->format = $submission->data2;
+            }
+        }
+        $mform->set_defaults($defaults);
+
+        if ($data = $mform->data_submitted()) {      // No incoming data?
+            if ($editable && $this->update_submission($data)) {
+                //TODO fix log actions - needs db upgrade
+                $submission = $this->get_submission();
+                add_to_log($this->course->id, 'assignment', 'upload',
+                        'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
+                $this->email_teachers($submission);
+                //redirect to get updated submission date and word count
+                redirect('view.php?id='.$this->cm->id.'&saved=1');
+            } else {
+                // TODO: add better error message
+                notify(get_string("error")); //submitting not allowed!
+            }
+        }
+
+/// print header, etc. and display form if needed
+        if ($editmode) {
             $this->view_header(get_string('editmysubmission', 'assignment'));
         } else {
             $this->view_header();
@@ -42,27 +84,14 @@ class assignment_online extends assignment_base {
 
         $this->view_dates();
 
-        if ($data = data_submitted()) {      // No incoming data?
-            if ($editable && $this->update_submission($data)) {
-                //TODO fix log actions - needs db upgrade
-                $submission = $this->get_submission();
-                add_to_log($this->course->id, 'assignment', 'upload', 
-                        'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
-                $this->email_teachers($submission);
-                //redirect to get updated submission date and word count
-                redirect('view.php?id='.$this->cm->id.'&saved=1');
-            } else {
-                // TODO: add better error message
-                notify(get_string("error")); //submitting not allowed!
-            }
-        } else if (!empty($_GET['saved'])) {
-            notify(get_string('submissionsaved', 'assignment'));
+        if ($saved) {
+            notify(get_string('submissionsaved', 'assignment'), 'notifysuccess');
         }
 
         if (has_capability('mod/assignment:submit', $context)) {
             print_simple_box_start('center', '70%', '', '', 'generalbox', 'online');
             if ($editmode) {
-                $this->view_edit_form($submission);
+                $mform->display();
             } else {
                 if ($submission) {
                     echo format_text($submission->data1, $submission->data2);
@@ -72,15 +101,12 @@ class assignment_online extends assignment_base {
                     echo '<center>'.get_string('emptysubmission', 'assignment').'</center>';
                 }
                 if ($editable) {
-                    print_single_button('view.php', array('id'=>$this->cm->id,'edit'=>'1'), 
+                    print_single_button('view.php', array('id'=>$this->cm->id, 'edit'=>'1'),
                                          get_string('editmysubmission', 'assignment'));
                 }
             }
             print_simple_box_end();
-    
-            if ($editmode and $this->usehtmleditor) {
-                use_html_editor();   // MUst be at the end of the page
-            }
+
         }
 
         $this->view_feedback();
@@ -123,59 +149,15 @@ class assignment_online extends assignment_base {
         print_simple_box_end();
     }
 
-    function view_edit_form($submission = NULL) {
-        global $CFG;
-
-        $defaulttext = $submission ? $submission->data1 : '';
-        $defaultformat = $submission ? $submission->data2 : $this->defaultformat;
-
-        echo '<form name="theform" action="view.php" method="post">';  // do this so URLs look good
-
-        echo '<table cellspacing="0" class="editbox" align="center">';
-        echo '<tr><td align="right">';
-        helpbutton('reading', get_string('helpreading'), 'moodle', true, true);
-        echo '<br />';
-        helpbutton('writing', get_string('helpwriting'), 'moodle', true, true);
-        echo '<br />';
-        if ($this->usehtmleditor) {
-            helpbutton('richtext', get_string('helprichtext'), 'moodle', true, true);
-        } else {
-            emoticonhelpbutton('theform', 'text');
-        } 
-        echo '<br />';
-        echo '</td></tr>';
-        echo '<tr><td align="center">';
-        print_textarea($this->usehtmleditor, 20, 60, 630, 400, 'text', $defaulttext);
-        if (!$this->usehtmleditor) {
-            echo '<div align="right" class="format">';
-            print_string('formattexttype');
-            echo ':&nbsp;';
-            choose_from_menu(format_text_menu(), 'format', $defaultformat, '');
-            helpbutton('textformat', get_string('helpformatting'));
-            echo '</div>';
-        } else {
-            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
-        }
-        echo '</td></tr>';
-        echo '<tr><td align="center">';
-        echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
-        echo '<input type="submit" value="'.get_string('savechanges').'" />';
-        echo '<input type="reset" value="'.get_string('revert').'" />';
-        echo '</td></tr></table>';
-
-        echo '</form>';
-
-    }
-
     function update_submission($data) {
         global $CFG, $USER;
 
         $submission = $this->get_submission($USER->id, true);
 
-        $update = NULL;
-        $update->id = $submission->id;
-        $update->data1  = $data->text;
-        $update->format = $data->format;
+        $update = new object();
+        $update->id           = $submission->id;
+        $update->data1        = $data->text;
+        $update->data2        = $data->format;
         $update->timemodified = time();
 
         return update_record('assignment_submissions', $update);
@@ -190,28 +172,28 @@ class assignment_online extends assignment_base {
         $output = '<div class="files">'.
                   '<img align="middle" src="'.$CFG->pixpath.'/f/html.gif" height="16" width="16" alt="html" />'.
                   link_to_popup_window ('/mod/assignment/type/online/file.php?id='.$this->cm->id.'&amp;userid='.
-                  $submission->userid, 'file'.$userid, shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15), 450, 580, 
+                  $submission->userid, 'file'.$userid, shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15), 450, 580,
                   get_string('submission', 'assignment'), 'none', true).
                   '</div>';
                   return $output;
     }
-    
+
     function print_user_files($userid, $return=false) {
         global $CFG;
-    
+
         if (!$submission = $this->get_submission($userid)) {
             return '';
         }
-        
+
         $output = '<div class="files">'.
                   '<img align="middle" src="'.$CFG->pixpath.'/f/html.gif" height="16" width="16" alt="html" />'.
                   link_to_popup_window ('/mod/assignment/type/online/file.php?id='.$this->cm->id.'&amp;userid='.
-                  $submission->userid, 'file'.$userid, shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15), 450, 580, 
+                  $submission->userid, 'file'.$userid, shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15), 450, 580,
                   get_string('submission', 'assignment'), 'none', true).
                   '</div>';
 
         ///Stolen code from file.php
-        
+
         print_simple_box_start('center', '', '', 0, 'generalbox', 'wordcount');
         echo '<table>';
         //if ($assignment->timedue) {
@@ -229,9 +211,9 @@ class assignment_online extends assignment_base {
         echo '</table>';
         print_simple_box_end();
         print_simple_box(format_text($submission->data1, $submission->data2), 'center', '100%');
-        
+
         ///End of stolen code from file.php
-        
+
         if ($return) {
             //return $output;
         }
@@ -243,15 +225,37 @@ class assignment_online extends assignment_base {
             if ($this->usehtmleditor) {
                 // Convert to html, clean & copy student data to teacher
                 $submission->submissioncomment = format_text($submission->data1, $submission->data2);
-                $submission->format  = FORMAT_HTML;
+                $submission->format = FORMAT_HTML;
             } else {
                 // Copy student data to teacher
                 $submission->submissioncomment = $submission->data1;
-                $submission->format  = $submission->data2;
+                $submission->format = $submission->data2;
             }
         }
     }
 
+}
+
+class assignment_online_edit_form extends moodleform {
+    function definition() {
+        $mform =& $this->_form;
+
+        // visible elements
+        $mform->addElement('htmleditor', 'text', get_string('submission', 'assignment'));
+        $mform->setType('text', PARAM_RAW);
+
+        $mform->addElement('format', 'format', get_string('format'));
+        $mform->setHelpButton('format', array('textformat', get_string('helpformatting')));
+
+        // hidden optional params
+        $mform->addElement('hidden', 'id', 0);
+        $mform->setType('id', PARAM_INT);
+
+        // buttons
+        $buttonarray[] = &MoodleQuickForm::createElement('submit', 'submit', get_string('savechanges'));
+        $buttonarray[] = &MoodleQuickForm::createElement('reset', 'reset', get_string('revert'));
+        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+    }
 }
 
 ?>
