@@ -109,7 +109,7 @@ function groups_create_automatic_grouping($courseid, $nostudentspergroup,
 		    	} else {
 					if ($userids) {
 						foreach($userids as $userid) {
-		    				$usersadded = groups_add_member($userid, $groupid);
+		    				$usersadded = groups_add_member($groupid, $userid);
 							// If unsuccessful just carry on I guess
 						}
 					}
@@ -247,4 +247,5 @@ function groups_last_element_in_set($totalnoelements, $setsize, $nosets,
 
     return $lastelement;
 }
+
 ?>

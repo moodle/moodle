@@ -21,8 +21,8 @@ class groupinglib_test extends UnitTestCase {
     var $groupingid = 0;
 
     function __construct() {
-       parent::UnitTestCase();
-       //$this->setUpOnce();   
+        parent::UnitTestCase();
+        //$this->setUpOnce();
     }
     function __destruct() {
         //$this->tearDownOnce();
@@ -44,13 +44,13 @@ class groupinglib_test extends UnitTestCase {
         $this->groupid = groups_create_group($this->courseid);
         $groupinfo = groups_set_default_group_settings();
         $bok = groups_set_group_settings($this->groupid, $groupinfo);
-        $bok = groups_add_member($this->userid, $this->groupid);
+        $bok = groups_add_member($this->groupid, $this->userid);
     }
 
     function tearDown() {
         parent::tearDown();
 
-        $bok = groups_remove_member($this->userid, $this->groupid);
+        $bok = groups_remove_member($this->groupid, $this->userid);
         $bok = groups_delete_group($this->groupid);
     }
 

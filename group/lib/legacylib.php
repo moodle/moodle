@@ -1,6 +1,16 @@
 <?php
+/**
+ * Legacy groups functions - these were in moodlelib.php.
+ *
+ * @@@ Don't look at this file - still tons to do! 
+ *
+ * @copyright &copy; 2006 The Open University
+ * @author J.White AT open.ac.uk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package groups
+ */
 
-// @@@ Don't look at this file - still tons to do! 
+
 /**
  * Returns the groupid of a group with the name specified for the course 
  * specified. If there's more than one with the name specified it returns the 
@@ -171,8 +181,8 @@ function get_group_teachers($courseid, $groupid) {
  * @param int $userid   The user id to add to the group
  * @return bool
  */
-function add_user_to_group ($groupid, $userid) {
-    return groups_add_member($userid, $groupid) ;
+function add_user_to_group($groupid, $userid) {
+    return groups_add_member($groupid, $userid);
 }
 
 
@@ -185,8 +195,9 @@ function add_user_to_group ($groupid, $userid) {
  * @return array An array of the groupids that the user belongs to. 
  */
 function mygroupid($courseid) {
-	// TO DO - check whether needs to be groups or groupids. 
-	$groupids = groups_get_groups_for_user($USER, $courseid);
+    global $USER;
+	// TODO: check whether needs to be groups or groupids. 
+	$groupids = groups_get_groups_for_user($USER->id, $courseid);
    	return $groupids[0];
 }
 
@@ -197,14 +208,12 @@ function mygroupid($courseid) {
 function groupmode($course, $cm=null) {
 
     if ($cm and !$course->groupingid) {
-        return groups_has_groups_setup_for_instance($coursemodule);
+        //TODO: was $coursemodule
+        return groups_has_groups_setup_for_instance($cm);
     } else {
     	return groups_has_groups_setup($course->id);
     }
 }
-
-
-
 
 
 /**
@@ -270,7 +279,8 @@ function get_current_group($courseid, $full = false) {
  * @return int|false Returns the current group id or false if error.
  */
 function get_and_set_current_group($course, $groupmode, $groupid=-1) {
-	groups_has_permission($userid, $groupingid, $courseid, $groupid, $permissiontype);
+	//TODO: ?? groups_has_permission($userid, $groupingid, $courseid, $groupid, $permissiontype);
+
 	// Sets to the specified group, provided the current user has view permission 
     if (!$groupmode) {   // Groups don't even apply
         return false;
@@ -287,28 +297,29 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
             if (isteacheredit($course->id)) {          // Sets current default group
                 $currentgroupid = set_current_group($course->id, $group->id);
 
-            } else if ($groupmode == VISIBLEGROUPS) {
+            } elseif ($groupmode == VISIBLEGROUPS) {
                   // All groups are visible
                 //if (ismember($group->id)){
-                    $currentgroupid = set_current_group($course->id, $group->id);//set this since he might post
+                    $currentgroupid = set_current_group($course->id, $group->id); //set this since he might post
                 /*)}else {
                     $currentgroupid = $group->id;*/
-            } else if ($groupmode == SEPARATEGROUPS) { // student in separate groups switching
-                if (ismember($group->id)){//check if is a member
+            } elseif ($groupmode == SEPARATEGROUPS) { // student in separate groups switching
+                if (ismember($group->id)) { //check if is a member
                     $currentgroupid = set_current_group($course->id, $group->id); //might need to set_current_group?
                 }
                 else {
-                    echo ($group->id);
+                    echo($group->id);
                     notify('you do not belong to this group!',error);
                 }
             }
         }
-    } else {             // When groupid = 0 it means show ALL groups
-        //this is changed, non editting teacher needs access to group 0 as well, for viewing work in visible groups (need to set current group for multiple pages)
+    } else { // When groupid = 0 it means show ALL groups
+        // this is changed, non editting teacher needs access to group 0 as well,
+        // for viewing work in visible groups (need to set current group for multiple pages)
         if (isteacheredit($course->id) OR (isteacher($course->id) AND ($groupmode == VISIBLEGROUPS))) {          // Sets current default group
             $currentgroupid = set_current_group($course->id, 0);
 
-        } else if ($groupmode == VISIBLEGROUPS) {  // All groups are visible
+        } elseif ($groupmode == VISIBLEGROUPS) {  // All groups are visible
             $currentgroupid = 0;
         }
     }
@@ -355,7 +366,6 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
 }
 
 
-
 function oldgroups_print_user_group_info($currentgroup, $isseparategroups, $courseid) {
 	global $CFG;
 	    if ($currentgroup and (!$isseparategroups or isteacheredit($courseid))) {    /// Display info about the group
@@ -377,4 +387,5 @@ function oldgroups_print_user_group_info($currentgroup, $isseparategroups, $cour
         }
     }
 }
+
 ?>
