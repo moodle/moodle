@@ -1,0 +1,44 @@
+.yui-navset .yui-nav li a, .yui-navset .yui-content {
+    border:1px solid #000;  /* label and content borders */
+}
+
+.yui-navset .yui-nav .selected a, .yui-navset .yui-nav a:hover, .yui-navset .yui-content {
+    background-color:#f6f7ee; /* active tab, tab hover, and content bgcolor */
+}
+
+.yui-navset-top .yui-nav .selected a {
+    border-bottom:0; /* no bottom border for active tab */
+    padding-bottom:1px; /* to match height of other tabs */
+}
+
+.yui-navset-top .yui-content {
+    margin-top:-1px; /* for active tab overlap */
+}
+
+.yui-navset-bottom .yui-nav .selected a {
+    border-top:0; /* no bottom border for active tab */
+    padding-top:1px; /* to match height of other tabs */
+}
+
+.yui-navset-bottom .yui-content {
+    margin-bottom:-1px; /* for active tab overlap */
+}
+
+.yui-navset-left .yui-nav li.selected a {
+    border-right:0; /* no bottom border for active tab */
+    padding-right:1px; /* to match height of other tabs */
+}
+
+.yui-navset-left .yui-content {
+    margin-left:-1px; /* for active tab overlap */
+}
+
+.yui-navset-right .yui-nav li.selected a {
+    border-left:0; /* no bottom border for active tab */
+    padding-left:1px; /* to match height of other tabs */
+}
+
+.yui-navset-right .yui-content {
+    margin-right:-1px; /* for active tab overlap */
+    *margin-right:0; /* except IE */
+}
