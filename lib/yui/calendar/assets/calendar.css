@@ -2,17 +2,40 @@
 Copyright (c) 2006, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-Version 0.11.0
+Version 0.12
 */
 
-.yui-cal2upwrapper {*height:1%;} /* IE */
-.yui-cal2upwrapper:after {content:'.';clear:both;display:block;visibility:hidden;height:0;} /* others */
-
 .yui-calcontainer {
-	float:left;
+	position:relative;
 	padding:5px;
 	background-color:#F7F9FB;
 	border:1px solid #7B9EBD;
+	float:left;
+	overflow:hidden;
+}
+
+.yui-calcontainer iframe {
+	position:absolute;
+	border:none;
+	margin:0;padding:0;
+	left:-1px;
+	top:-1px;
+	z-index:0;
+	width:50em;
+	height:50em;
+}
+
+.yui-calcontainer.multi {
+	padding:0;
+}
+
+.yui-calcontainer.multi .groupcal {
+	padding:5px;
+	background-color:transparent;
+	z-index:1;
+	float:left;
+	position:relative;
+	border:none;
 }
 
 .yui-calcontainer .title {
@@ -20,20 +43,32 @@ Version 0.11.0
 	color:#000;
 	font-weight:bold;
 	margin-bottom:5px;
-	height:auto;
-	width:304px;
+	height:25px;
+	position:absolute;
+	top:3px;left:5px;
+	z-index:1;
+}
+
+.yui-calcontainer .close-icon {
+	position:absolute;
+	right:3px;
+	top:3px;
+	border:none;
+	z-index:1;
+}
+
+/* Calendar element styles */
+
+.yui-calendar {
+	font:100% sans-serif;
+	text-align:center;
+	border-spacing:0;
+	border-collapse:separate;
 	position:relative;
 }
 
-.yui-calcontainer .title .close-icon {
-	position:absolute;
-	right:0;
-	top:0;
-	border:none;
-}
-
-.yui-calcontainer .cal2up {
-	float:left;
+.yui-calcontainer.withtitle {
+	padding-top:1.5em;
 }
 
 .yui-calendar .calnavleft {
@@ -45,6 +80,7 @@ Version 0.11.0
 	width:9px;
 	height:12px;   
 	left:2px;
+	z-index:1;
 }
 
 .yui-calendar .calnavright {
@@ -56,22 +92,13 @@ Version 0.11.0
 	width:9px;
 	height:12px;  
 	right:2px;
-}
-
-/* Calendar element styles */
-
-.yui-calendar {
-	font:100% sans-serif;
-	text-align:center;
-	border-spacing:0;
-	border-collapse:separate;
+	z-index:1;
 }
 
 .yui-calendar td.calcell {
-	width:1.5em;
-	height:1em;
+	padding:.1em .2em;
 	border:1px solid #E0E0E0;
-	background-color:#FFF;
+	text-align:center;
 }
 
 .yui-calendar td.calcell a {
@@ -103,12 +130,6 @@ Version 0.11.0
 	border:1px solid #FF9900;
 }
 
-/* Added to perform some correction for Opera 8.5
-   hover redraw bug */
-table.yui-calendar:hover {
-	background-color:#FFF;
-}
-
 .yui-calendar td.calcell.calcellhover a {
 	color:#FFF;
 }
@@ -125,7 +146,6 @@ table.yui-calendar:hover {
 .yui-calendar td.calcell.highlight2 { background-color:#99CCFF; }
 .yui-calendar td.calcell.highlight3 { background-color:#FFCCCC; }
 .yui-calendar td.calcell.highlight4 { background-color:#CCFF99; }
-
 
 .yui-calendar .calhead {
 	border:1px solid #E0E0E0;
@@ -146,6 +166,8 @@ table.yui-calendar:hover {
 .yui-calendar .calweekdaycell {
 	color:#666;
 	font-weight:normal;
+	text-align:center;
+	width:1.5em;
 }
 
 .yui-calendar .calfoot {

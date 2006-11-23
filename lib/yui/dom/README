@@ -1,5 +1,34 @@
 Dom Release Notes
 
+*** version .12.0 ***
+
+* fixed getXY for IE null parent
+* branching set/getStyle at load time instead of run time 
+
+*** version 0.11.3 ***
+
+* fixed getX and getY returning incorrect values for collections 
+* fixed getXY incorrectly calculated for Opera inline elements
+* fixed isAncestor failure in safari when 2nd arg is document.documentElement
+* fixed infinite loop in replaceClass when oldClassName == newClassName 
+* getDocumentWidth no longer includes scrollbars 
+
+
+*** version 0.11.2 ***
+* limit depth of parent.document crawl to 1 for getXY
+* test offsetParent instead of parentNode for getXY
+* return null if no el fo r get
+* just addClass if no class to replace for replaceClass
+
+
+*** version 0.11.1 ***
+
+* return null if el is null for get()
+* test offsetParent rather than parentNode for getXY()
+* limit depth of parent.document crawl for IE getXY() to 1
+* if no oldClassName to replace, just addClass for replaceClass()
+
+
 *** version 0.11.0 ***
 * Work around Opera 9 broken currentStyle
 * Removed timeout wrapper from setXY retry
