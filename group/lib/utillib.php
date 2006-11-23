@@ -1,11 +1,15 @@
 <?php
-
-/******************************************************
+/**
+ * Utility functions for groups.
+ *
  * Functions to get information about users and courses that we could do with 
  * that don't use any of the groups and that I can't find anywhere else!
- ********************************************************/
-
-
+ *
+ * @copyright &copy; 2006 The Open University
+ * @author J.White AT open.ac.uk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package groups
+ */
 require_once($CFG->libdir.'/moodlelib.php');
 
 
@@ -85,10 +89,12 @@ function groups_get_user_displayname($userid, $courseid) {
  */
 function groups_get_group_displayname($groupid) {
 	$groupsettings = groups_get_group_settings($groupid);
-    $groupname = $groupsettings->name;
-	$nogroupmembers = groups_get_no_group_members($groupid);
-	$displayname= "$groupname ($nogroupmembers)"; 
-	return $displayname;
+    if ($groupsettings) {
+        $groupname = $groupsettings->name;
+        $count = groups_get_no_group_members($groupid);
+        return "$groupname ($count)"; 
+    }
+	return false;
 }
 
 
@@ -101,10 +107,12 @@ function groups_get_group_displayname($groupid) {
  */
 function groups_get_grouping_displayname($groupingid) {
 	$groupingsettings = groups_get_grouping_settings($groupingid);
-	$groupingname = $groupingsettings->name;
-    $nogroups= groups_get_no_groups_in_grouping($groupingid);
-    $displayname = "$groupingname ($nogroups)";
-    return $displayname;
+    if ($groupingsettings) {	
+        $groupingname = $groupingsettings->name;
+        $count = groups_get_no_groups_in_grouping($groupingid);
+        return "$groupingname ($count)";
+    }
+    return false;
 }
 
 
@@ -176,4 +184,16 @@ function groups_get_course_info($courseid){
 	}
     return $courseinfo;
 }
+
+/**
+ * Gets the course ID for a given group.
+ */
+function groups_get_course($groupid) {
+    $course_group = get_record('groups_courses_groups', 'groupid', $groupid);
+    if ($course_group) {
+        return $course_group->courseid;
+    }
+    return false;
+}
+
 ?>
