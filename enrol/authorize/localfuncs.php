@@ -31,9 +31,7 @@ function prevent_double_paid($course)
 {
     global $CFG, $SESSION, $USER;
 
-    $sql = "SELECT id FROM {$CFG->prefix}enrol_authorize
-            WHERE userid = $USER->id
-              AND courseid = $course->id ";
+    $sql = "SELECT id FROM {$CFG->prefix}enrol_authorize WHERE userid = '$USER->id' AND courseid = '$course->id' ";
 
     if (empty($CFG->an_test)) { // Real mode
         $sql .= 'AND status IN('.AN_STATUS_AUTH.','.AN_STATUS_UNDERREVIEW.','.AN_STATUS_APPROVEDREVIEW.')';
@@ -42,9 +40,9 @@ function prevent_double_paid($course)
         $sql .= 'AND status='.AN_STATUS_NONE;
     }
 
-    if ($rec = get_record_sql($sql)) {
+    if ($recid = get_field_sql($sql)) {
         $a = new stdClass;
-        $a->orderid = $rec->id;
+        $a->orderid = $recid;
         $a->url = "$CFG->wwwroot/enrol/authorize/index.php?order=$a->orderid";
         redirect($a->url, get_string("paymentpending", "enrol_authorize", $a), '10');
         return;
