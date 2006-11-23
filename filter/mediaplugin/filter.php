@@ -98,11 +98,9 @@ function mediaplugin_filter($courseid, $text) {
         $replace .= " <param name=\"movie\" value=\"$CFG->wwwroot/filter/mediaplugin/flvplayer.swf?file=\\2.flv\" />";
         $replace .= ' <param name="quality" value="high" />';
         $replace .= ' <param name="bgcolor" value="#FFFFFF" />';
-        $replace .= ' <param name="flashvars" value="'.$c.'" />';
         $replace .= " <embed src=\"$CFG->wwwroot/filter/mediaplugin/flvplayer.swf?file=\\2.flv\" ";
         $replace .= "  quality=\"high\" bgcolor=\"#FFFFFF\" width=\"480\" height=\"360\" name=\"flvplayer\" ";
         $replace .= ' type="application/x-shockwave-flash" ';
-        $replace .= ' flashvars="'.$c.'" ';
         $replace .= ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
         $replace .= '</embed>';
         $replace .= '</object>&nbsp;';
