@@ -761,7 +761,7 @@ function rfc2445_do_value_formatting($value, $type) {
         break;
         case RFC2445_TYPE_TEXT:
             // Escape entities
-            $value = strtr($value, array("\n" => '\\n', '\\' => '\\\\', ',' => '\\,', ';' => '\\;'));
+            $value = strtr($value, array("\r\n" => '\\n', "\n" => '\\n', '\\' => '\\\\', ',' => '\\,', ';' => '\\;'));
         break;
     }
     return $value;
