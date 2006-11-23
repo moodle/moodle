@@ -24,9 +24,7 @@
         error("That's an invalid course id");
     }
 
-    if (! $enrol = enrolment_factory::factory($course->enrol)) {
-        error("Could not determine course enrolment method!");
-    }
+    $enrol = enrolment_factory::factory($course->enrol); // do not use if (!$enrol... here, it can not work in PHP4 - see MDL-7529 
 
 /// Refreshing all current role assignments for the current user
 
