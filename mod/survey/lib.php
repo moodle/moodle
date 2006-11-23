@@ -348,8 +348,7 @@ function survey_shorten_name ($name, $numwords) {
 
 
 function survey_print_multi($question) {
-    GLOBAL $db, $qnum, $checklist;
-
+    GLOBAL $USER, $db, $qnum, $checklist;
 
     $stripreferthat = get_string("ipreferthat", "survey");
     $strifoundthat = get_string("ifoundthat", "survey");
@@ -380,33 +379,35 @@ function survey_print_multi($question) {
     echo "<td align=\"center\">&nbsp;</td></tr>\n";
 
     $subquestions = get_records_list("survey_questions", "id", $question->multi);
-
+    
     foreach ($subquestions as $q) {
         $qnum++;
         $rowclass = survey_question_rowclass($qnum);
-
         if ($q->text) {
             $q->text = get_string($q->text, "survey");
         }
 
         echo "<tr class=\"$rowclass\">";
         if ($oneanswer) {
+
             echo "<td width=\"10\" valign=\"top\"><b>$qnum</b></td>";
             echo "<td valign=\"top\">$q->text</td>";
-            for ($i=1;$i<=$numoptions;$i++) {
-                echo "<td width=\"10%\" align=\"center\"><input type=\"radio\" name=\"q$P$q->id\" value=\"$i\" alt=\"$i\" /></td>";
+            for ($i=1;$i<=$numoptions;$i++) {            
+                $screenreader = !empty($USER->screenreader)?"<label for=\"q$P$q->id".$i."\">".$options[$i-1]."</label><br/>":'';
+                echo "<td width=\"10%\" align=\"center\">".$screenreader."<input type=\"radio\" name=\"q$P$q->id\" id=\"q$P$q->id".$i."\" value=\"$i\" alt=\"$i\" /></td>";
             }
             echo "<td bgcolor=\"white\"><input type=\"radio\" name=\"q$P$q->id\" value=\"0\" checked=\"checked\" alt=\"0\" /></td>";
             $checklist["q$P$q->id"] = $numoptions;
         
-        } else {         
+        } else { 
             // yu : fix for MDL-7501, possibly need to use user flag as this is quite ugly.
             echo "<td width=\"10\" valign=\"middle\"><b>$qnum</b></td>";
             $qnum++;
             echo "<td width=\"10%\" nowrap=\"nowrap\"><font size=\"1\">$stripreferthat&nbsp;</font></td>";
             echo "<td width=\"40%\" valign=\"middle\">$q->text</td>";
             for ($i=1;$i<=$numoptions;$i++) {
-                echo "<td width=\"10%\" align=\"center\"><input type=\"radio\" name=\"qP$q->id\" value=\"$i\" alt=\"$i\"/></td>";
+                $screenreader = !empty($USER->screenreader)?"<label for=\"qP$q->id".$i."\">".$options[$i-1]."</label><br/>":'';
+                echo "<td width=\"10%\" align=\"center\">".$screenreader."<input type=\"radio\" name=\"qP$q->id\" id=\"qP$q->id".$i."\" value=\"$i\" alt=\"$i\"/></td>";
             }
             echo "<td><input type=\"radio\" name=\"qP$q->id\" value=\"0\" checked=\"checked\" alt=\"0\" /></td>";
             echo "</tr>";
@@ -416,13 +417,15 @@ function survey_print_multi($question) {
             echo "<td width=\"10%\" nowrap=\"nowrap\"><font size=\"1\">$strifoundthat&nbsp;</font></td>";
             echo "<td width=\"40%\" valign=\"middle\">$q->text</td>";
             for ($i=1;$i<=$numoptions;$i++) {
-                echo "<td width=\"10%\" align=\"center\"><input type=\"radio\" name=\"q$q->id\" value=\"$i\" alt=\"$i\" /></td>";
+                $screenreader = !empty($USER->screenreader)?"<label for=\"q$q->id".$i."\">".$options[$i-1]."</label><br/>":'';
+                echo "<td width=\"10%\" align=\"center\">".$screenreader."<input type=\"radio\" name=\"q$q->id\" id=\"q$q->id".$i."\" value=\"$i\" alt=\"$i\" /></td>";
             }
             echo "<td width=\"5%\"><input type=\"radio\" name=\"q$q->id\" value=\"0\" checked=\"checked\" alt=\"0\" /></td>";
             $checklist["qP$q->id"] = $numoptions;
             $checklist["q$q->id"] = $numoptions;            
         }
         echo "</tr>\n";
+        
     }
     echo "</table>";
 }
