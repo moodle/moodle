@@ -399,9 +399,10 @@ function survey_print_multi($question) {
             echo "<td bgcolor=\"white\"><input type=\"radio\" name=\"q$P$q->id\" value=\"0\" checked=\"checked\" alt=\"0\" /></td>";
             $checklist["q$P$q->id"] = $numoptions;
         
-        } else {
+        } else {         
             // yu : fix for MDL-7501, possibly need to use user flag as this is quite ugly.
             echo "<td width=\"10\" valign=\"middle\"><b>$qnum</b></td>";
+            $qnum++;
             echo "<td width=\"10%\" nowrap=\"nowrap\"><font size=\"1\">$stripreferthat&nbsp;</font></td>";
             echo "<td width=\"40%\" valign=\"middle\">$q->text</td>";
             for ($i=1;$i<=$numoptions;$i++) {
@@ -419,7 +420,7 @@ function survey_print_multi($question) {
             }
             echo "<td width=\"5%\"><input type=\"radio\" name=\"q$q->id\" value=\"0\" checked=\"checked\" alt=\"0\" /></td>";
             $checklist["qP$q->id"] = $numoptions;
-            $checklist["q$q->id"] = $numoptions;
+            $checklist["q$q->id"] = $numoptions;            
         }
         echo "</tr>\n";
     }
