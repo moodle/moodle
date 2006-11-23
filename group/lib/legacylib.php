@@ -5,7 +5,7 @@
  * @@@ Don't look at this file - still tons to do! 
  *
  * @copyright &copy; 2006 The Open University
- * @author J.White AT open.ac.uk
+ * @author J.White AT open.ac.uk and others
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package groups
  */
@@ -292,9 +292,10 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
         return $currentgroupid;
     }
 
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
     if ($groupid) {      // Try to change the current group to this groupid
         if ($group = get_record('groups', 'id', $groupid, 'courseid', $course->id)) { // Exists
-            if (isteacheredit($course->id)) {          // Sets current default group
+            if (has_capability('moodle/site:accessallgroups', $context)) {  // Sets current default group
                 $currentgroupid = set_current_group($course->id, $group->id);
 
             } elseif ($groupmode == VISIBLEGROUPS) {
@@ -316,7 +317,7 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
     } else { // When groupid = 0 it means show ALL groups
         // this is changed, non editting teacher needs access to group 0 as well,
         // for viewing work in visible groups (need to set current group for multiple pages)
-        if (isteacheredit($course->id) OR (isteacher($course->id) AND ($groupmode == VISIBLEGROUPS))) {          // Sets current default group
+        if (has_capability('moodle/site:accessallgroups', $context) AND ($groupmode == VISIBLEGROUPS)) { // Sets current default group
             $currentgroupid = set_current_group($course->id, 0);
 
         } elseif ($groupmode == VISIBLEGROUPS) {  // All groups are visible
@@ -354,7 +355,10 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
         return false;
     }
 
-    if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+
+    if ($groupmode == VISIBLEGROUPS
+        or ($groupmode and has_capability('moodle/site:accessallgroups', $context))) {
         groups_instance_print_grouping_selector();
     }//added code here to allow non-editting teacher to swap in-between his own groups
     //added code for students in separategrous to swtich groups
@@ -368,14 +372,16 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
 
 function oldgroups_print_user_group_info($currentgroup, $isseparategroups, $courseid) {
 	global $CFG;
-	    if ($currentgroup and (!$isseparategroups or isteacheredit($courseid))) {    /// Display info about the group
+	$context = get_context_instance(CONTEXT_COURSE, $courseid);
+    
+    if ($currentgroup and (!$isseparategroups or has_capability('moodle/site:accessallgroups', $context))) {    /// Display info about the group
         if ($group = get_record('groups', 'id', $currentgroup)) {              
             if (!empty($group->description) or (!empty($group->picture) and empty($group->hidepicture))) { 
                 echo '<table class="groupinfobox"><tr><td class="left side picture">';
                 print_group_picture($group, $course->id, true, false, false);
                 echo '</td><td class="content">';
                 echo '<h3>'.$group->name;
-                if (isteacheredit($courseid)) {
+                if (has_capability('moodle/site:accessallgroups', $context)) {
                     echo '&nbsp;<a title="'.get_string('editgroupprofile').'" href="../course/groups.php?id='.$course->id.'&amp;group='.$group->id.'">';
                     echo '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="" border="0">';
                     echo '</a>';
