@@ -11,6 +11,8 @@ $day  = optional_param('cal_d', 0, PARAM_INT);
 $mon  = optional_param('cal_m', 0, PARAM_INT);
 $yr   = optional_param('cal_y', 0, PARAM_INT);
 
+require_login();
+
 if(!$site = get_site()) {
     redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
 }
@@ -54,6 +56,9 @@ echo '<tr>';
 
 echo '<td class="maincalendar">';
 
+$username = $USER->username;
+$usernameencoded = urlencode($USER->username);
+$authtoken = sha1($USER->username . $USER->password);
 
 switch($action) {
     case 'advanced':
@@ -67,7 +72,7 @@ switch($action) {
         $allownextmonth = calendar_days_in_month($now['mon'], $now['year']) - $now['mday'] < 7;
         // If today it's weekend but tomorrow it isn't, do NOT give the "this week" option
         $allowthisweek  = !((CALENDAR_WEEKEND & (1 << $now['wday'])) && !(CALENDAR_WEEKEND & (1 << (($now['wday'] + 1) % 7))));
-        print_heading(get_string('export', 'calendar'));
+        echo '<div class="header">' . get_string('export', 'calendar') . '</div>';
         include('export_basic.html');
 }
 

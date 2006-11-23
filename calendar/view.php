@@ -150,6 +150,15 @@
             calendar_show_upcoming_events($courses, $groups, $users, get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS), get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS));
         break;
     }
+    
+    //Link to calendar export page
+    echo '<p><a href="export.php">' . get_string('exportcalendar', 'calendar') . '</a></p>';
+    
+    if (!empty($USER->id)) {
+        $authtoken = sha1($USER->username . $USER->password);
+        $usernameencoded = urlencode($USER->username);
+        echo "<p><a href=\"export_execute.php?preset_what=all&preset_time=recentupcoming&username=$usernameencoded&authtoken=$authtoken\">" . get_string('quickdownloadcalendar', 'calendar') . '</a></p>';
+    }
 
     echo '</td>';
 

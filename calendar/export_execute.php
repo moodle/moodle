@@ -5,16 +5,19 @@ require_once('../config.php');
 require_once($CFG->dirroot.'/calendar/lib.php');
 require_once($CFG->libdir.'/bennu/bennu.inc.php');
 
-require_login();
-if(isguest()) {
-    redirect($CFG->wwwroot.'/calendar/view.php');
+$username = required_param('username', PARAM_TEXT);
+$authtoken = required_param('authtoken', PARAM_ALPHANUM);
+
+//Fetch user information
+if (!$user = get_complete_user_data('username', $username)) {
+   //No such user
+   die("No such user '$username'");
 }
 
-$action = optional_param('action', '', PARAM_ALPHA);
-$course = optional_param('course', 0);
-$day  = optional_param('cal_d', 0, PARAM_INT);
-$mon  = optional_param('cal_m', 0, PARAM_INT);
-$yr   = optional_param('cal_y', 0, PARAM_INT);
+//Check authentication token
+if ($authtoken != sha1($username . $user->password)) {
+    die('Invalid authentication token');
+}
 
 $what = optional_param('preset_what', '', PARAM_ALPHA);
 $time = optional_param('preset_time', '', PARAM_ALPHA);
@@ -22,12 +25,19 @@ $time = optional_param('preset_time', '', PARAM_ALPHA);
 $now = usergetdate(time());
 // Let's see if we have sufficient and correct data
 $allowed_what = array('all', 'courses');
-$allowed_time = array('weeknow', 'weeknext', 'monthnow', 'monthnext');
+$allowed_time = array('weeknow', 'weeknext', 'monthnow', 'monthnext', 'recentupcoming');
 
 if(!empty($what) && !empty($time)) {
     if(in_array($what, $allowed_what) && in_array($time, $allowed_time)) {
-        $courses = array() + $USER->student + $USER->teacher;
-        $courses = array_keys($courses);
+        $courses = get_my_courses($user->id);
+        
+        $include_user = ($what == 'all');
+        if ($include_user) {
+            //Also include site (global) events
+            $courses[SITEID] = new stdClass;
+            $courses[SITEID]->shortname = get_string('globalevents', 'calendar');
+        }
+        
         switch($time) {
             case 'weeknow':
                 $startweekday  = get_user_preferences('calendar_startwday', CALENDAR_STARTING_WEEKDAY);
@@ -76,23 +86,21 @@ if(!empty($what) && !empty($time)) {
                 $timestart = make_timestamp($nextyear, $nextmonth, 1);
                 $timeend   = make_timestamp($nextyear, $nextmonth, calendar_days_in_month($nextmonth, $nextyear), 23, 59, 59);
             break;
+            case 'recentupcoming':
+                //Events in the last 5 or next 60 days
+                $timestart = time() - 432000;
+                $timeend = time() + 5184000;
+            break;
         }
-
-        /*        
-        print_object($now);
-        print_object('start: '. $timestart);
-        print_object('end: '. $timeend);
-        */
     }
     else {
         // Parameters given but incorrect, redirect back to export page
         redirect($CFG->wwwroot.'/calendar/export.php');
-        echo "aa";
         die();
     }
 }
 
-$whereclause = calendar_sql_where($timestart, $timeend, false, false, $courses, false);
+$whereclause = calendar_sql_where($timestart, $timeend, $include_user ? array($user->id) : false, false, array_keys($courses), false);
 if($whereclause === false) {
     $events = array();
 }
@@ -100,9 +108,8 @@ else {
     $events = get_records_select('event', $whereclause, 'timestart');
 }
 
-if(empty($events)) {
-    // TODO
-    die('no events');
+if ($events === false) {
+    $events = array();
 }
 
 $ical = new iCalendar;
@@ -111,11 +118,17 @@ foreach($events as $event) {
     $ev = new iCalendar_event;
     $ev->add_property('summary', $event->name);
     $ev->add_property('description', $event->description);
-    $ev->add_property('class', 'public'); // PUBLIC / PRIVATE / CONFIDENTIAL
-    $ev->add_property('last-modified', 0); // lastmodified
+    $ev->add_property('class', 'PUBLIC'); // PUBLIC / PRIVATE / CONFIDENTIAL
+    $ev->add_property('last-modified', Bennu::timestamp_to_datetime($event->timemodified));
     $ev->add_property('dtstamp', Bennu::timestamp_to_datetime()); // now
     $ev->add_property('dtstart', Bennu::timestamp_to_datetime($event->timestart)); // when event starts
-    $ev->add_property('duration', 0); // when event starts
+    if ($event->timeduration > 0) {
+        //dtend is better than duration, because it works in Microsoft Outlook and works better in Korganizer
+        $ev->add_property('dtend', Bennu::timestamp_to_datetime($event->timestart + $event->timeduration));
+    }
+    if ($event->courseid != 0) {
+        $ev->add_property('categories', $courses[$event->courseid]->shortname);
+    }
     $ical->add_component($ev);
 }
 
@@ -125,7 +138,7 @@ if(empty($serialized)) {
     die('bad serialization');
 }
 
-//IE compatibiltiy HACK!
+//IE compatibility HACK!
 if(ini_get('zlib.output_compression')) {
     ini_set('zlib.output_compression', 'Off');
 }
@@ -139,7 +152,7 @@ header('Pragma: no-cache');
 header('Accept-Ranges: none'); // Comment out if PDFs do not work...
 header('Content-disposition: attachment; filename='.$filename);
 header('Content-length: '.strlen($serialized));
-header('Content-type: text/plain');
+header('Content-type: text/calendar');
 
 echo $serialized;
 
