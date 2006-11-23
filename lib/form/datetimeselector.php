@@ -157,24 +157,26 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
         $valuearray = array();
         foreach ($this->_elements as $element){
             $thisexport = $element->exportValue($submitValues[$this->getName()], true);
-            if ($thisexport!=null){
+            if ($thisexport!==null){
                 $valuearray += $thisexport;
             }
         }
-        if (count($valuearray)){
-            $value[$this->getName()]=make_timestamp($valuearray['year'],
-                                   $valuearray['month'],
-                                   $valuearray['day'],
-                                   $valuearray['hour'],
-                                   $valuearray['minute'],
-                                   0,
-                                   $this->_options['timezone'],
-                                   $this->_options['applydst']);
-
-            return $value;
-        } else {
+        if (count($valuearray)==0){
             return null;
         }
+
+        $valuearray=$valuearray + array('year'=>1970, 'month'=>1, 'day'=>1, 'hour'=>0, 'minute'=>0);
+        $value[$this->getName()]=make_timestamp(
+                               $valuearray['year'],
+                               $valuearray['month'],
+                               $valuearray['day'],
+                               $valuearray['hour'],
+                               $valuearray['minute'],
+                               0,
+                               $this->_options['timezone'],
+                               $this->_options['applydst']);
+
+        return $value;
     }
 
     // }}}

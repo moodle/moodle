@@ -148,14 +148,18 @@ class forum_mod_form extends moodleform_mod {
             $type->freeze();
             $type->setPersistantFreeze(true);
         }
-        $assesstimestartvalue=is_array($mform->getElementValue('assesstimestart'));
-        $assesstimefinishvalue=is_array($mform->getElementValue('assesstimefinish'));
-        $ratingtime=&$mform->getElement('ratingtime');
-        if ($assesstimestartvalue && $assesstimefinishvalue){
-            $ratingtime->setValue(true);
-        } else {
-            $ratingtime->setValue(false);
+
+	}
+	function set_defaults($default_values, $slashed=false){
+        if (is_object($default_values)) {
+            $default_values = (array)$default_values;
         }
+        if (isset($default_values['assessed'])){
+	        $default_values['ratingtime']=($default_values['assessed']
+        	                               && $default_values['assesstimestart']
+        	                               && $default_values['assesstimefinish'] )?1:0;
+	    }
+	    parent::set_defaults($default_values, $slashed);
 	}
 
 
