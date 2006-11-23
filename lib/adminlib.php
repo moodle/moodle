@@ -1345,7 +1345,7 @@ class admin_setting_configtext extends admin_setting {
             $current = $this->get_setting();
         }
         return format_admin_setting($this->name, $this->visiblename,
-                '<input type="text" class="form-text" id="id_s_'.$this->name.'" name="s_'.$this->name.'" value="'.$current.'" />',
+                '<input type="text" class="form-text" id="id_s_'.$this->name.'" name="s_'.$this->name.'" value="'.s($current).'" />',
                 $this->description);
     }
 
