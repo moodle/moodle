@@ -556,7 +556,9 @@
         $secondsleft = 999999999999;
     }
     // If time limit is set include floating timer.
-    if ($quiz->timelimit > 0) {
+    // MDL-7495, no timer for users with disability
+    
+    if ($quiz->timelimit > 0 && !has_capability('mod/quiz:ignoretimelimits', $context)) {
 
         $timesincestart = time() - $attempt->timestart;
         $timerstartvalue = min($quiz->timelimit*60 - $timesincestart, $secondsleft);

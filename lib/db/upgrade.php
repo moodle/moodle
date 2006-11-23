@@ -25,7 +25,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     if ($oldversion < 2006100401) {
         /// Only for those tracking Moodle 1.7 dev, others will have these dropped in moodle_install_roles()
-        if (!empty($CFG->rolesactive)) {   
+        if (!empty($CFG->rolesactive)) {
             drop_table(new XMLDBTable('user_students'));
             drop_table(new XMLDBTable('user_teachers'));
             drop_table(new XMLDBTable('user_coursecreators'));

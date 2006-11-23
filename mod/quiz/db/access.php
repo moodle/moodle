@@ -93,6 +93,12 @@ $mod_quiz_capabilities = array(
             'coursecreator' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
+    ),
+    
+    'mod/quiz:ignoretimelimits' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array()
     )
 );
 
