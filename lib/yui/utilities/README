@@ -1,0 +1,20 @@
+utilities.js Release Notes
+
+*** version 0.12.0 ***
+
+The utilities.js file rolls up all of the YUI utility components into a single
+file; it includes the following components:
+
+* Yahoo Global Object
+* Event
+* Dom
+* Connection Manager
+* Animation
+* Drag & Drop
+
+For implementations that use a significant subset of these files, it may prove
+more efficient to include utilities.js as opposed to including separate files
+for each component.
+
+Note: If you are require only the Yahoo Global Object, Event Utility and Dom
+collection, consider using the special yahoo-event-dom.js aggregate instead.
