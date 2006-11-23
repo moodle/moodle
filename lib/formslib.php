@@ -225,6 +225,24 @@ class moodleform {
     }
 
     /**
+     * Set maximum allowed uploaded file size.
+     * Must be used BEFORE creating of file element!
+     *
+     * @param object $course
+     * @param object $modbytes - max size limit defined in module 
+     */
+    function set_max_file_size($course=null, $modbytes=0) {
+        global $CFG, $COURSE;
+
+        if (empty($course->id)) {
+            $course = $COURSE;
+        }
+
+        $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes, $modbytes);
+        $this->_form->setMaxFileSize($maxbytes);
+    }
+
+    /**
      * Check that form was submitted. Does not check validity of submitted data.
      *
      * @return bool true if form properly submitted

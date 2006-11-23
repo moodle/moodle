@@ -19,10 +19,7 @@ class forum_post_form extends moodleform {
 
         // the upload manager is used directly in post precessing, moodleform::save_files() is not used yet
         $this->_upload_manager = new upload_manager('attachment', true, false, $course, false, $forum->maxbytes, true, true);
-
-        // set file max size to enable proper server side validation
-        $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes, $forum->maxbytes);
-        $mform->setMaxFileSize($maxbytes);
+        $this->set_max_file_size($course, $forum->maxbytes);
 
         $mform->addElement('header', 'general', '');//fill in the data depending on page params
                                                     //later using set_defaults
