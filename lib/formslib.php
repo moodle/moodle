@@ -375,6 +375,25 @@ class moodleform {
         $this->_nosubmitbuttons[]=$addfieldsname;
     }
 
+    /**
+     * Method to add a repeating group of elements to a form.
+     *
+     * @param array $elementobjs Array of elements or groups of elements that are to be repeated
+     * @param integer $repeats no of times to repeat elements initially
+     * @param array $options Array of options to apply to elements. Array keys are element names.
+     *                      This is an array of arrays. The second sets of keys are the option types
+     *                      for the elements :
+     *                          'default' - default value is value
+     *                          'type' - PARAM_* constant is value
+     *                          'helpbutton' - helpbutton params array is value
+     *                          'disabledif' - last three moodleform::disabledIf()
+     *                                           params are value as an array
+     * @param string $repeathiddenname name for hidden element storing no of repeats in this form
+     * @param string $addfieldsname name for button to add more fields
+     * @param int $addfieldsno how many fields to add at a time
+     * @param array $addstring array of params for get_string for name of button, $a is no of fields that
+     *                                  will be added.
+     */
     function repeat_elements($elementobjs, $repeats, $options, $repeathiddenname, $addfieldsname, $addfieldsno=5, $addstring=array('addfields', 'form')){
         $repeats = optional_param($repeathiddenname, $repeats, PARAM_INT);
         $addfields = optional_param($addfieldsname, '', PARAM_TEXT);
