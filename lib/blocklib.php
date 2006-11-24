@@ -168,15 +168,17 @@ function blocks_remove_inappropriate($page) {
 }
 
 function blocks_name_allowed_in_format($name, $pageformat) {
-    $formats = block_method_result($name, 'applicable_formats');
+    
     $accept  = NULL;
     $depth   = -1;
-    foreach($formats as $format => $allowed) {
-        $thisformat = '^'.str_replace('*', '[^-]*', $format).'.*$';
-        if(ereg($thisformat, $pageformat)) {
-            if(($scount = substr_count($format, '-')) > $depth) {
-                $depth  = $scount;
-                $accept = $allowed;
+    if ($formats = block_method_result($name, 'applicable_formats')) {
+        foreach($formats as $format => $allowed) {
+            $thisformat = '^'.str_replace('*', '[^-]*', $format).'.*$';
+            if(ereg($thisformat, $pageformat)) {
+                if(($scount = substr_count($format, '-')) > $depth) {
+                    $depth  = $scount;
+                    $accept = $allowed;
+                }
             }
         }
     }
