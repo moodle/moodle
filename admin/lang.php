@@ -74,6 +74,8 @@
     $strchoosefiletoedit = get_string('langchoosefile', 'admin');
     $streditennotallowed = get_string('langnoeditenglish', 'admin');
     $strfilecreated = get_string('langfilecreated', 'admin');
+    $strprev = get_string('previous');
+    $strnext = get_string('next');
 
     // FIXME / TODO
     // remove following lines after adding string into proper english lang pack
@@ -448,9 +450,9 @@
                     if (LANG_DISPLAY_MISSING_LINKS) {
                         $missingtarget = '<a name="missing'.$missingcounter.'"></a>';
                         $missingnext = '<a href="#missing'.($missingcounter+1).'">'.
-                        '<img src="' . $CFG->pixpath . '/t/down.gif" height="11" width="11" border="0" alt="" /></a>';
+                        '<img src="' . $CFG->pixpath . '/t/down.gif" height="11" width="11" border="0" alt="'.$strnext.'" /></a>';
                         $missingprev = '<a href="#missing'.($missingcounter-1).'">'.
-                        '<img src="' . $CFG->pixpath . '/t/up.gif" height="11" width="11" border="0" alt="" /></a>';
+                        '<img src="' . $CFG->pixpath . '/t/up.gif" height="11" width="11" border="0" alt="'.$strprev.'" /></a>';
                     } else {
                         $missingtarget = '';
                         $missingnext = '';

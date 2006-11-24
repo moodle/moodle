@@ -85,7 +85,7 @@
             if (empty($CFG->gdversion)) {
                 echo '<div align="center">(' . get_string("gdneed") .')</div>';
             } else {
-                echo '<div align="center"><img src="'.$CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/reportsgraph.php?time='.$time.'&report='.$report.'&numcourses='.$numcourses.'" /></div>';
+                echo '<div align="center"><img alt="'.get_string('courseoverviewgraph').'" src="'.$CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/reportsgraph.php?time='.$time.'&report='.$report.'&numcourses='.$numcourses.'" /></div>';
             }
 
             $table = new StdClass;

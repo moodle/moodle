@@ -31,11 +31,13 @@ class block_admin_tree extends block_base {
 
     function open_folder($visiblename) {
         global $CFG;
+        $strfolderopened = s(get_string('folderopened'));
+
         for ($i = 0; $i < $this->currentdepth; $i++) {
             $this->tempcontent .= "&nbsp;&nbsp;&nbsp;";
         }
         $this->tempcontent .= '<a href="javascript:toggle(\'vh_span' . $this->spancounter . '\');">';
-        $this->tempcontent .= '<span id="vh_span' . $this->spancounter . 'indicator"><img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" border="0" alt="[open folder]" /></span> ';
+        $this->tempcontent .= '<span id="vh_span' . $this->spancounter . 'indicator"><img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" border="0" alt="'.$strfolderopened.'" /></span> ';
         $this->tempcontent .= $visiblename . '</a><br /><span id="vh_span' . $this->spancounter . '">' . "\n";
         $this->currentdepth++;
         $this->spancounter++;
@@ -51,7 +53,7 @@ class block_admin_tree extends block_base {
         for ($i = 0; $i < $this->currentdepth; $i++) {
             $this->tempcontent .= "&nbsp;&nbsp;&nbsp;";
         }
-        $this->tempcontent .= '<a class="'.$class.'" href="'.$link.'"><img src="'.$icon.'" border="0" alt="[item]" />'.
+        $this->tempcontent .= '<a class="'.$class.'" href="'.$link.'"><img src="'.$icon.'" border="0" alt="" />'.
                                $visiblename.'</a><br />'."\n";
     }
 

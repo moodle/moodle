@@ -201,13 +201,13 @@
         // get hide/show link
         if (in_array($path, $activefilters)) {
             $hideshow = "<a href=\"$myurl&amp;action=hide&amp;filterpath=$upath\">";
-            $hideshow .= "<img src=\"{$CFG->pixpath}/i/hide.gif\" height=\"16\" width=\"16\" alt=\"hide\" /></a>";
+            $hideshow .= "<img src=\"{$CFG->pixpath}/i/hide.gif\" height=\"16\" width=\"16\" alt=\"$txt->hide\" /></a>";
             $hidden = false;
             $displayname = "<span>$name</span>";
         }
         else {
             $hideshow = "<a href=\"$myurl&amp;action=show&amp;filterpath=$upath\">";
-            $hideshow .= "<img src=\"{$CFG->pixpath}/i/show.gif\" height=\"16\" width=\"16\" alt=\"show\" /></a>";
+            $hideshow .= "<img src=\"{$CFG->pixpath}/i/show.gif\" height=\"16\" width=\"16\" alt=\"$txt->show\" /></a>";
             $hidden = true;
             $displayname = "<span class=\"dimmed_text\">$name</span>";
         }
@@ -217,14 +217,14 @@
         if (!$hidden) {
             if ($updowncount>1) {
                 $updown .= "<a href=\"$myurl&amp;action=up&amp;filterpath=$upath\">";
-                $updown .= "<img src=\"$img/up.gif\" alt=\"up\" /></a>&nbsp;";
+                $updown .= "<img src=\"$img/up.gif\" alt=\"$txt->up\" /></a>&nbsp;";
             }
             else {
                 $updown .= "<img src=\"$CFG->pixpath/spacer.gif\" height=\"16\" width=\"16\" alt=\"\" />&nbsp;";
             }
             if ($updowncount<$activefilterscount) {
                 $updown .= "<a href=\"$myurl&amp;action=down&amp;filterpath=$upath\">";
-                $updown .= "<img src=\"$img/down.gif\" alt=\"down\" /></a>";
+                $updown .= "<img src=\"$img/down.gif\" alt=\"$txt->down\" /></a>";
             }
             else {
                 $updown .= "<img src=\"$CFG->pixpath/spacer.gif\" height=\"16\" width=\"16\" alt=\"\" />";

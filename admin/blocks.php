@@ -188,10 +188,10 @@
 
         if ($blocks[$blockid]->visible) {
             $visible = '<a href="blocks.php?hide='.$blockid.'&amp;sesskey='.$USER->sesskey.'" title="'.$strhide.'">'.
-                       '<img src="'.$CFG->pixpath.'/i/hide.gif" height="16" width="16" alt="" /></a>';
+                       '<img src="'.$CFG->pixpath.'/i/hide.gif" height="16" width="16" alt="'.$strhide.'" /></a>';
         } else {
             $visible = '<a href="blocks.php?show='.$blockid.'&amp;sesskey='.$USER->sesskey.'" title="'.$strshow.'">'.
-                       '<img src="'.$CFG->pixpath.'/i/show.gif" height="16" width="16" alt="" /></a>';
+                       '<img src="'.$CFG->pixpath.'/i/show.gif" height="16" width="16" alt="'.$strshow.'" /></a>';
             $class = ' class="dimmed_text"'; // Leading space required!
         }
         if ($blockobject->instance_allow_multiple()) {

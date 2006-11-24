@@ -344,13 +344,13 @@
 
                 if (has_capability('moodle/site:backup', $coursecontext)) {
                     echo '<a title="'.$strbackup.'" href="../backup/backup.php?id='.$acourse->id.'">'.
-                            '<img src="'.$CFG->pixpath.'/t/backup.gif" height="11" width="11" border="0" alt="" /></a> ';
+                            '<img src="'.$CFG->pixpath.'/t/backup.gif" height="11" width="11" border="0" alt="'.$strbackup.'" /></a> ';
                 }
                     
                 if (has_capability('moodle/site:restore', $coursecontext)) {
                     echo '<a title="'.$strrestore.'" href="../files/index.php?id='.$acourse->id.
                          '&amp;wdir=/backupdata">'.
-                         '<img src="'.$CFG->pixpath.'/t/restore.gif" height="11" width="11" border="0" alt="" /></a> ';
+                         '<img src="'.$CFG->pixpath.'/t/restore.gif" height="11" width="11" border="0" alt="'.$strrestore.'" /></a> ';
                 }
 
                 if (has_capability('moodle/category:update', $context)) {
@@ -381,16 +381,16 @@
                 if (!empty($acourse->guest)) {
                     echo '<a href="view.php?id='.$acourse->id.'"><img hspace="2" title="'.
                          $strallowguests.'" alt="" height="16" width="16" border="0" src="'.
-                         $CFG->pixpath.'/i/user.gif" /></a>';
+                         $CFG->pixpath.'/i/user.gif" alt="'.$strallowguests.'" /></a>';
                 }
                 if (!empty($acourse->password)) {
                     echo '<a href="view.php?id='.$acourse->id.'"><img hspace="2" title="'.
                          $strrequireskey.'" alt="" height="16" width="16" border="0" src="'.
-                         $CFG->pixpath.'/i/key.gif" /></a>';
+                         $CFG->pixpath.'/i/key.gif" alt="'.$strrequireskey.'" /></a>';
                 }
                 if (!empty($acourse->summary)) {
                     link_to_popup_window ("/course/info.php?id=$acourse->id", "courseinfo",
-                                          '<img hspace="2" alt="info" height="16" width="16" border="0" src="'.$CFG->pixpath.'/i/info.gif" />',
+                                          '<img hspace="2" alt="'.get_string('info').'" height="16" width="16" border="0" src="'.$CFG->pixpath.'/i/info.gif" />',
                                            400, 500, $strsummary);
                 }
                 echo "</td>";

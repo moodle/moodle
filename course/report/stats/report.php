@@ -108,9 +108,9 @@
                 echo "(".get_string("gdneed").")";
             } else {
                 if ($mode == STATS_MODE_DETAILED) {
-                    echo '<center><img src="'.$CFG->wwwroot.'/course/report/stats/graph.php?mode='.$mode.'&course='.$course->id.'&time='.$time.'&report='.$report.'&userid='.$userid.'" /></center>';
+                    echo '<center><img src="'.$CFG->wwwroot.'/course/report/stats/graph.php?mode='.$mode.'&course='.$course->id.'&time='.$time.'&report='.$report.'&userid='.$userid.'" alt="'.get_string('statisticsgraph').'" /></center>';
                 } else {
-                    echo '<center><img src="'.$CFG->wwwroot.'/course/report/stats/graph.php?mode='.$mode.'&course='.$course->id.'&time='.$time.'&report='.$report.'&roleid='.$roleid.'" /></center>';
+                    echo '<center><img src="'.$CFG->wwwroot.'/course/report/stats/graph.php?mode='.$mode.'&course='.$course->id.'&time='.$time.'&report='.$report.'&roleid='.$roleid.'" alt="'.get_string('statisticsgraph').'" /></center>';
                 }
             }
 

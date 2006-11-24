@@ -260,7 +260,7 @@ while ($section <= $course->numsections) {
 
             if (isediting($course->id)) {
                 echo ' <a title="'.$streditsummary.'" href="editsection.php?id='.$thissection->id.'">'.
-                    '<img src="'.$CFG->pixpath.'/t/edit.gif" border="0" height="11" width="11" alt="" /></a><br /><br />';
+                    '<img src="'.$CFG->pixpath.'/t/edit.gif" border="0" height="11" width="11" alt="'.$streditsummary.'" /></a><br /><br />';
             }
             echo '</div>';
 
@@ -275,11 +275,11 @@ while ($section <= $course->numsections) {
         echo '<td class="right side">';
         if ($displaysection == $section) {      // Show the zoom boxes
             echo '<a href="view.php?id='.$course->id.'&amp;topic=0#section-'.$section.'" title="'.$strshowalltopics.'">'.
-                '<img src="'.$CFG->pixpath.'/i/all.gif" height="25" width="16" border="0" /></a><br />';
+                '<img src="'.$CFG->pixpath.'/i/all.gif" height="25" width="16" border="0" alt="'.$strshowalltopics.'" /></a><br />';
         } else {
             $strshowonlytopic = get_string('showonlytopic', '', $section);
             echo '<a href="view.php?id='.$course->id.'&amp;topic='.$section.'" title="'.$strshowonlytopic.'">'.
-                '<img src="'.$CFG->pixpath.'/i/one.gif" height="16" width="16" border="0" alt="" /></a><br />';
+                '<img src="'.$CFG->pixpath.'/i/one.gif" height="16" width="16" border="0" alt="'.$strshowonlytopic.'" /></a><br />';
         }
 
         if (isediting($course->id)) {
