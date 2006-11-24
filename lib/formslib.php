@@ -64,6 +64,13 @@ class moodleform {
     var $_upload_manager; //
 
     /**
+     * Array of buttons that if pressed do not result in the processing of the form.
+     *
+     * @var array
+     */
+    var $_nosubmitbuttons=array();
+
+    /**
      * The constructor function calls the abstract function definition() and it will then
      * process and clean and attempt to validate incoming data.
      *
@@ -229,7 +236,7 @@ class moodleform {
      * Must be used BEFORE creating of file element!
      *
      * @param object $course
-     * @param object $modbytes - max size limit defined in module 
+     * @param object $modbytes - max size limit defined in module
      */
     function set_max_file_size($course=null, $modbytes=0) {
         global $CFG, $COURSE;
@@ -292,6 +299,11 @@ class moodleform {
      * @return object submitted data; NULL if not valid or not submitted
      */
     function data_submitted($slashed=true) {
+        foreach ($this->_nosubmitbuttons as $nosubmitbutton){
+            if (optional_param($nosubmitbutton, 0, PARAM_TEXT)){
+                return NULL;
+            }
+        }
         if ($this->is_submitted() and $this->is_validated()) {
             $data = $this->_form->exportValues(null, $slashed);
             unset($data['sesskey']); // we do not need to return sesskey
@@ -357,6 +369,71 @@ class moodleform {
      */
     function validation($data) {
         return true;
+    }
+
+    function _register_no_submit_button($addfieldsname){
+        $this->_nosubmitbuttons[]=$addfieldsname;
+    }
+
+    function repeat_elements($elementobjs, $repeats, $options, $repeathiddenname, $addfieldsname, $addfieldsno=5, $addstring=array('addfields', 'form')){
+        $repeats = optional_param($repeathiddenname, $repeats, PARAM_INT);
+        $addfields = optional_param($addfieldsname, '', PARAM_TEXT);
+        if (!empty($addfields)){
+            $repeats += $addfieldsno;
+        }
+        $this->_register_no_submit_button($addfieldsname);
+        $mform =& $this->_form;
+        $mform->addElement('hidden', $repeathiddenname, $repeats);
+        //value not to be overridden by submitted value
+        $mform->setConstants(array($repeathiddenname=>$repeats));
+        for ($i=0; $i<$repeats; $i++) {
+            foreach ($elementobjs as $elementobj){
+                $elementclone=clone($elementobj);
+                $name=$elementclone->getName();
+                $elementclone->setName($name."[$i]");
+                if (is_a($elementclone, 'HTML_QuickForm_header')){
+                    $value=$elementclone->_text;
+                    $elementclone->setValue($value.' '.($i+1));
+
+                }
+                $mform->addElement($elementclone);
+            }
+        }
+        for ($i=0; $i<$repeats; $i++) {
+            foreach ($options as $elementname => $elementoptions){
+                $pos=strpos($elementname, '[');
+                if ($pos!==FALSE){
+                    $realelementname = substr($elementname, 0, $pos+1)."[$i]";
+                    $realelementname .= substr($elementname, $pos+1);
+                }else {
+                    $realelementname = $elementname."[$i]";
+                }
+                foreach ($elementoptions as  $option => $params){
+
+                    switch ($option){
+                        case 'default' :
+                            $mform->setDefault($realelementname, $params);
+                            break;
+                        case 'type' :
+                            $mform->setType($realelementname, $params);
+                            break;
+                        case 'helpbutton' :
+                            $mform->setHelpButton($realelementname, $params);
+                            break;
+                        case 'disabledif' :
+                            $mform->disabledIf($realelementname, $params[0], $params[1], $params[2]);
+                            break;
+
+                    }
+                }
+            }
+        }
+        $mform->addElement('submit', $addfieldsname, get_string('addfields', 'form', $addfieldsno),
+                            array('onclick'=>'this.form.submit();'));//need this to bypass client validation
+
+		$renderer =& $mform->defaultRenderer();
+        $renderer->addStopFieldsetElements($addfieldsname);
+
     }
 }
 

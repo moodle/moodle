@@ -18,4 +18,6 @@ $string['nonexistentformelements'] = 'Trying to add help buttons to nonexistent 
 $string['requiredelement'] = 'Required field.';
 $string['general'] = 'General Settings';
 $string['modstandardels']='Common Module Settings';
+$string['miscellaneoussettings']='Miscellaneous Settings';
+$string['addfields']='Add $a fields to form';
 ?>

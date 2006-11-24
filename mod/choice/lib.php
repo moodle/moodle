@@ -48,38 +48,31 @@ function choice_user_complete($course, $user, $mod, $choice) {
 
 
 function choice_add_instance($choice) {
-// Given an object containing all the necessary data, 
-// (defined by the form in mod.html) this function 
-// will create a new instance and return the id number 
+// Given an object containing all the necessary data,
+// (defined by the form in mod.html) this function
+// will create a new instance and return the id number
 // of the new instance.
 
     $choice->timemodified = time();
 
-    if (!empty($choice->timerestrict) and $choice->timerestrict) {
-        $choice->timeopen = make_timestamp($choice->openyear, $choice->openmonth, $choice->openday,
-                                     $choice->openhour, $choice->openminute, 0);
-        $choice->timeclose = make_timestamp($choice->closeyear, $choice->closemonth, $choice->closeday,
-                                      $choice->closehour, $choice->closeminute, 0);
-    } else {
+    if (empty($choice->timerestrict)) {
         $choice->timeopen = 0;
         $choice->timeclose = 0;
     }
 
     //insert answers
     if ($choice->id = insert_record("choice", $choice)) {
-        foreach ($choice as $name => $value) {
-            if (strstr($name, "newoption")) {   /// New option
-                $value = trim($value);
-                if (isset($value) && $value <> '') {
-                    $option = NULL;
-                    $option->text = $value;
-                    $option->choiceid = $choice->id;
-                    if (isset($choice->{'newlimit'.substr($name, 9)})) {
-                        $option->maxanswers = $choice->{'newlimit'.substr($name, 9)};
-                    }
-                    $option->timemodified = time();
-                    insert_record("choice_options", $option);
+        foreach ($choice->option as $key => $value) {
+            $value = trim($value);
+            if (isset($value) && $value <> '') {
+                $option = new object();
+                $option->text = $value;
+                $option->choiceid = $choice->id;
+                if (isset($choice->limit[$key])) {
+                    $option->maxanswers = $choice->limit[$key];
                 }
+                $option->timemodified = time();
+                insert_record("choice_options", $option);
             }
         }
     }
@@ -88,52 +81,38 @@ function choice_add_instance($choice) {
 
 
 function choice_update_instance($choice) {
-// Given an object containing all the necessary data, 
-// (defined by the form in mod.html) this function 
+// Given an object containing all the necessary data,
+// (defined by the form in mod.html) this function
 // will update an existing instance with new data.
 
     $choice->id = $choice->instance;
     $choice->timemodified = time();
 
 
-    if (!empty($choice->timerestrict) and $choice->timerestrict) {
-        $choice->timeopen = make_timestamp($choice->openyear, $choice->openmonth, $choice->openday,
-                                     $choice->openhour, $choice->openminute, 0);
-        $choice->timeclose = make_timestamp($choice->closeyear, $choice->closemonth, $choice->closeday,
-                                      $choice->closehour, $choice->closeminute, 0);
-    } else {
+    if (empty($choice->timerestrict)) {
         $choice->timeopen = 0;
         $choice->timeclose = 0;
     }
 
-    //update answers
-
-    foreach ($choice as $name => $value) {
+    //update, delete or insert answers
+    foreach ($choice->option as $key => $value) {
         $value = trim($value);
-
-        if (strstr($name, "oldoption")) {  // Old option
+        $option = new object();
+        $option->text = $value;
+        $option->choiceid = $choice->id;
+        if (isset($choice->limit[$key])) {
+            $option->maxanswers = $choice->limit[$key];
+        }
+        $option->timemodified = time();
+        if (isset($choice->optionid[$key])){//existing choice record
+            $option->id=$choice->optionid[$key];
             if (isset($value) && $value <> '') {
-                $option = NULL;
-                $option->id = substr($name, 9); // Get the ID of the answer that needs to be updated.
-                $option->text = $value;
-                $option->choiceid = $choice->id;
-                if (isset($choice->{'oldlimit'.substr($name, 9)})) {
-                    $option->maxanswers = $choice->{'oldlimit'.substr($name, 9)};
-                }
-                $option->timemodified = time();
                 update_record("choice_options", $option);
             } else { //empty old option - needs to be deleted.
-                delete_records("choice_options", "id", substr($name, 9));
+                delete_records("choice_options", "id", $option->id);
             }
-        } else if (strstr($name, "newoption")) {   /// New option
-            if (isset($value)&& $value <> '') {
-                $option = NULL;
-                $option->text = $value;
-                $option->choiceid = $choice->id;
-                if (isset($choice->{'newlimit'.substr($name, 9)})) {
-                    $option->maxanswers = $choice->{'newlimit'.substr($name, 9)};
-                }
-                $option->timemodified = time();
+        } else {
+            if (isset($value) && $value <> '') {
                 insert_record("choice_options", $option);
             }
         }
@@ -144,7 +123,7 @@ function choice_update_instance($choice) {
 }
 
 function choice_show_form($choice, $user, $cm) {
-    
+
 //$cdisplay is an array of the display info for a choice $cdisplay[$optionid]->text  - text name of option.
 //                                                                            ->maxanswers -maxanswers for this option
 //                                                                            ->full - whether this option is full or not. 0=not full, 1=full
@@ -154,7 +133,7 @@ function choice_show_form($choice, $user, $cm) {
     foreach ($choice->option as $optionid => $text) {
         if (isset($text)) { //make sure there are no dud entries in the db with blank text values.
             $countanswers = (get_records("choice_answers", "optionid", $optionid));
-            $countans = 0;           
+            $countans = 0;
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
             if (!empty($countanswers)) {
                 foreach ($countanswers as $ca) { //only return enrolled users.
@@ -183,7 +162,7 @@ function choice_show_form($choice, $user, $cm) {
             if ($choice->limitanswers && ($countans >= $maxans) && (empty($cdisplay[$aid]->checked)) ) {
                 $cdisplay[$aid]->disabled = ' disabled="disabled" ';
             } else {
-                $cdisplay[$aid]->disabled = ''; 
+                $cdisplay[$aid]->disabled = '';
             }
             $aid++;
         }
@@ -192,11 +171,11 @@ function choice_show_form($choice, $user, $cm) {
     switch ($choice->display) {
         case CHOICE_DISPLAY_HORIZONTAL:
             echo "<table cellpadding=\"20\" cellspacing=\"20\" align=\"center\"><tr>";
-                                    
-            foreach ($cdisplay as $cd) { 
+
+            foreach ($cdisplay as $cd) {
                 echo "<td align=\"center\" valign=\"top\">";
                 echo "<input type=\"radio\" name=\"answer\" value=\"".$cd->optionid."\" alt=\"".strip_tags(format_text($cd->text))."\"". $cd->checked.$cd->disabled." />";
-                if (!empty($cd->disabled)) {               
+                if (!empty($cd->disabled)) {
                     echo format_text($cd->text."<br /><strong>".get_string('full', 'choice')."</strong>");
                 } else {
                     echo format_text($cd->text);
@@ -272,7 +251,7 @@ function choice_user_submit_response($formanswer, $choice, $userid, $courseid, $
 
     if (!($choice->limitanswers && ($countanswers >= $maxans) )) {
         if ($current) {
-                    
+
             $newanswer = $current;
             $newanswer->optionid = $formanswer;
             $newanswer->timemodified = time();
@@ -293,7 +272,7 @@ function choice_user_submit_response($formanswer, $choice, $userid, $courseid, $
         }
     } else {
         if (!($current->optionid==$formanswer)) { //check to see if current choice already selected - if not display error
-            error("this choice is full!");    
+            error("this choice is full!");
         }
     }
 }
@@ -383,7 +362,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 echo '<input type="hidden" name="mode" value="overview" />';
             }
 
-            echo "<table cellpadding=\"5\" cellspacing=\"10\" align=\"center\" class=\"results names\">";            
+            echo "<table cellpadding=\"5\" cellspacing=\"10\" align=\"center\" class=\"results names\">";
             echo "<tr>";
             $count = 0;
             foreach ($useranswer as $optionid => $userlist) {
@@ -442,8 +421,8 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 }
                 echo "<td align=\"center\" class=\"count\">";
                 $countanswers = get_records("choice_answers", "optionid", $optionid);
-                $countans = 0;  
-                if (!empty($countanswers)) {              
+                $countans = 0;
+                if (!empty($countanswers)) {
                     foreach ($countanswers as $ca) { //only return enrolled users.
                         if (has_capability('mod/choice:choose', get_context_instance(CONTEXT_MODULE, $cm->id))) {
                            $countans = $countans+1;
@@ -461,7 +440,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 echo "</td>";
                 $count++;
             }
-            
+
             /// Print "Select all" etc.
             if (has_capability('mod/choice:readresponses', $context)) {
                 echo '<tr><td><p>';
@@ -476,7 +455,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 echo '<script type="text/javascript">'."\n<!--\n".'document.getElementById("noscriptmenuaction").style.display = "none";'."\n-->\n".'</script>';
                 echo '</p></td></tr>';
             }
-                   
+
             echo "</tr></table>";
             if (has_capability('mod/choice:readresponses', $context)) {
                 echo "</form></div>";
@@ -561,12 +540,12 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
             echo "</tr></table>";
 
         break;
-    }   
+    }
 }
 
 
 function choice_delete_responses($attemptids) {
-    
+
     if(!is_array($attemptids) || empty($attemptids)) {
         return false;
     }
@@ -581,15 +560,15 @@ function choice_delete_responses($attemptids) {
         if ($todelete = get_record('choice_answers', 'id', $attemptid)) {
              delete_records('choice_answers', 'id', $attemptid);
         }
-    }    
+    }
     return true;
 }
 
 
 function choice_delete_instance($id) {
-// Given an ID of an instance of this module, 
-// this function will permanently delete the instance 
-// and any data that depends on it.  
+// Given an ID of an instance of this module,
+// this function will permanently delete the instance
+// and any data that depends on it.
 
     if (! $choice = get_record("choice", "id", "$id")) {
         return false;
@@ -607,7 +586,7 @@ function choice_delete_instance($id) {
 
     if (! delete_records("choice", "id", "$choice->id")) {
         $result = false;
-    }   
+    }
 
     return $result;
 }
@@ -645,7 +624,7 @@ function choice_get_choice($choiceid) {
     if ($choice = get_record("choice", "id", $choiceid)) {
         if ($options = get_records("choice_options", "choiceid", $choiceid, "id")) {
             foreach ($options as $option) {
-                $choice->option[$option->id] = $option->text; 
+                $choice->option[$option->id] = $option->text;
                 $choice->maxanswers[$option->id] = $option->maxanswers;
             }
             return $choice;
