@@ -25,7 +25,7 @@ class glossary_comment_form extends moodleform {
         $mform->setType('action', PARAM_ACTION);
 
         // buttons
-        $buttonarray[] = &MoodleQuickForm::createElement('submit', 'submit', get_string('savechanges'));
+        $buttonarray[] = &MoodleQuickForm::createElement('submit', 'submitbutton', get_string('savechanges'));
         $buttonarray[] = &MoodleQuickForm::createElement('reset', 'reset', get_string('revert'));
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
     }

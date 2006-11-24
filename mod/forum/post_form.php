@@ -57,7 +57,7 @@ class forum_post_form extends moodleform {
         if ($forum->maxbytes != 1 && has_capability('mod/forum:createattachment', $modcontext))  {  //  1 = No attachments at all
             $mform->addElement('file', 'attachment', get_string('attachment', 'forum'));
             $mform->setHelpButton('attachment', array('attachment', get_string('attachemnt', 'forum'), 'forum'));
-        
+
         }
 
         if (empty($post->id) && has_capability('moodle/course:manageactivities', $coursecontext)) {
@@ -97,7 +97,7 @@ class forum_post_form extends moodleform {
 		} else {
 			$submit_string = get_string('posttoforum', 'forum');
 		}
-		$mform->addElement('submit', 'submit', $submit_string);
+		$mform->addElement('submit', 'submitbutton', $submit_string);
 		$renderer->addStopFieldsetElements('submit');
 
 		$mform->addElement('hidden', 'course');

@@ -252,7 +252,7 @@ class assignment_online_edit_form extends moodleform {
         $mform->setType('id', PARAM_INT);
 
         // buttons
-        $buttonarray[] = &MoodleQuickForm::createElement('submit', 'submit', get_string('savechanges'));
+        $buttonarray[] = &MoodleQuickForm::createElement('submit', 'submitbutton', get_string('savechanges'));
         $buttonarray[] = &MoodleQuickForm::createElement('reset', 'reset', get_string('revert'));
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
     }

@@ -47,7 +47,7 @@ class journal_mod_form extends moodleform_mod {
 //-------------------------------------------------------------------------------
 
         $buttonarray=array();
-        $buttonarray[] = &MoodleQuickForm::createElement('submit', 'submit', get_string('savechanges'));
+        $buttonarray[] = &MoodleQuickForm::createElement('submit', 'submitbutton', get_string('savechanges'));
         $buttonarray[] = &MoodleQuickForm::createElement('submit', 'cancel', get_string('cancel'));
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
 		$renderer->addStopFieldsetElements('buttonar');

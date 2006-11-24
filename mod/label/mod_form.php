@@ -17,7 +17,7 @@ class label_mod_form extends moodleform_mod {
         $mform->addElement('modvisible', 'visible', get_string('visible'));
 
         $buttonarray=array();
-        $buttonarray[] = &MoodleQuickForm::createElement('submit', 'submit', get_string('savechanges'));
+        $buttonarray[] = &MoodleQuickForm::createElement('submit', 'submitbutton', get_string('savechanges'));
         $buttonarray[] = &MoodleQuickForm::createElement('submit', 'cancel', get_string('cancel'));
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
 		$renderer->addStopFieldsetElements('buttonar');

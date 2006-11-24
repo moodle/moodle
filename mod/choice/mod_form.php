@@ -30,9 +30,9 @@ class choice_mod_form extends moodleform_mod {
 
         if ($this->_instance){
             $repeatno=count_records('choice_options', 'choiceid', $this->_instance);
-            $repeatno+=2;
+            $repeatno += 2;
         } else {
-            $repeatno=10;
+            $repeatno = 5;
         }
 
         $this->repeat_elements($repeatarray, $repeatno,
@@ -43,7 +43,7 @@ class choice_mod_form extends moodleform_mod {
                           'option' => array('type'=>PARAM_TEXT,
                                             'helpbutton'=>array('options', get_string('modulenameplural', 'choice'), 'choice')),
                           'optionid' => array('type'=>PARAM_INT)),
-                    'option_repeats', 'option_add_fields');
+                    'option_repeats', 'option_add_fields', 3);
 
 
 
@@ -84,7 +84,7 @@ class choice_mod_form extends moodleform_mod {
 //-------------------------------------------------------------------------------
 
         $buttonarray=array();
-        $buttonarray[] = &MoodleQuickForm::createElement('submit', 'submit', get_string('savechanges'));
+        $buttonarray[] = &MoodleQuickForm::createElement('submit', 'submitbutton', get_string('savechanges'));
         $buttonarray[] = &MoodleQuickForm::createElement('submit', 'cancel', get_string('cancel'));
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
 		$renderer->addStopFieldsetElements('buttonar');
