@@ -82,8 +82,8 @@ class qformat_gift extends qformat_default {
     function escapedchar_pre($string) {
         //Replaces escaped control characters with a placeholder BEFORE processing
         
-        $escapedcharacters = array("\\#",    "\\=",    "\\{",    "\\}",    "\\~",    "\\n"   );  //dlnsk
-        $placeholders      = array("&&035;", "&&061;", "&&123;", "&&125;", "&&126;", "&&010" );  //dlnsk
+        $escapedcharacters = array("\\:",    "\\#",    "\\=",    "\\{",    "\\}",    "\\~",    "\\n"   );  //dlnsk
+        $placeholders      = array("&&058;", "&&035;", "&&061;", "&&123;", "&&125;", "&&126;", "&&010" );  //dlnsk
 
         $string = str_replace("\\\\", "&&092;", $string);
         $string = str_replace($escapedcharacters, $placeholders, $string);
@@ -93,8 +93,8 @@ class qformat_gift extends qformat_default {
 
     function escapedchar_post($string) {
         //Replaces placeholders with corresponding character AFTER processing is done
-        $placeholders = array("&&035;", "&&061;", "&&123;", "&&125;", "&&126;", "&&010"); //dlnsk
-        $characters   = array("#",      "=",      "{",      "}",      "~",      "\n"   ); //dlnsk
+        $placeholders = array("&&058;", "&&035;", "&&061;", "&&123;", "&&125;", "&&126;", "&&010"); //dlnsk
+        $characters   = array(":",     "#",      "=",      "{",      "}",      "~",      "\n"   ); //dlnsk
         $string = str_replace($placeholders, $characters, $string);
         return $string;
     }
@@ -493,10 +493,10 @@ class qformat_gift extends qformat_default {
     }    // end function readquestion($lines)
 
 function repchar( $text, $format=0 ) {
-    // escapes 'reserved' characters # = ~ { ) and removes new lines
+    // escapes 'reserved' characters # = ~ { ) : and removes new lines
     // also pushes text through format routine
-    $reserved = array( '#', '=', '~', '{', '}', "\n","\r");
-    $escaped =  array( '\#','\=','\~','\{','\}','\n',''  ); //dlnsk
+    $reserved = array( '#', '=', '~', '{', '}', ':', "\n","\r");
+    $escaped =  array( '\#','\=','\~','\{','\}','\:','\n',''  ); //dlnsk
 
     $newtext = str_replace( $reserved, $escaped, $text ); 
     $format = 0; // turn this off for now
@@ -553,7 +553,8 @@ function writequestion( $question ) {
 
         $wrong_feedback = $this->repchar( $wrong_feedback );
         $right_feedback = $this->repchar( $right_feedback );
-        $expout .= "::".$question->name."::".$tfname.$this->repchar( $question->questiontext,$textformat )."{".$this->repchar( $answertext );
+        $expout .= "::".$this->repchar($question->name)."::".$tfname.$this->repchar( $question->questiontext,$textformat );
+        $expout .= "{".$this->repchar( $answertext );
         if ($wrong_feedback!="") {
             $expout .= "#".$wrong_feedback;
         }
@@ -563,7 +564,7 @@ function writequestion( $question ) {
         $expout .= "}\n";
         break;
     case MULTICHOICE:
-        $expout .= "::".$question->name."::".$tfname.$this->repchar( $question->questiontext, $textformat )."{\n";
+        $expout .= "::".$this->repchar($question->name)."::".$tfname.$this->repchar( $question->questiontext, $textformat )."{\n";
         foreach($question->options->answers as $answer) {
             if ($answer->fraction==1) {
                 $answertext = '=';
@@ -584,7 +585,7 @@ function writequestion( $question ) {
         $expout .= "}\n";
         break;
     case SHORTANSWER:
-        $expout .= "::".$question->name."::".$tfname.$this->repchar( $question->questiontext, $textformat )."{\n";
+        $expout .= "::".$this->repchar($question->name)."::".$tfname.$this->repchar( $question->questiontext, $textformat )."{\n";
         foreach($question->options->answers as $answer) {
             $weight = 100 * $answer->fraction;
             $expout .= "\t=%".$weight."%".$this->repchar( $answer->answer )."#".$this->repchar( $answer->feedback )."\n";
@@ -592,7 +593,7 @@ function writequestion( $question ) {
         $expout .= "}\n";
         break;
     case NUMERICAL:
-        $expout .= "::".$question->name."::".$tfname.$this->repchar( $question->questiontext, $textformat )."{#\n";
+        $expout .= "::".$this->repchar($question->name)."::".$tfname.$this->repchar( $question->questiontext, $textformat )."{#\n";
         foreach ($question->options->answers as $answer) {
             if ($answer->answer != '') {
                 $expout .= "\t=".$answer->answer.":".(float)$answer->tolerance."#".$this->repchar( $answer->feedback )."\n";
@@ -603,7 +604,7 @@ function writequestion( $question ) {
         $expout .= "}\n";
         break;
     case MATCH:
-        $expout .= "::".$question->name."::".$tfname.$this->repchar( $question->questiontext, $textformat )."{\n";
+        $expout .= "::".$this->repchar($question->name)."::".$tfname.$this->repchar( $question->questiontext, $textformat )."{\n";
         foreach($question->options->subquestions as $subquestion) {
             $expout .= "\t=".$this->repchar( $subquestion->questiontext )." -> ".$this->repchar( $subquestion->answertext )."\n";
         }
