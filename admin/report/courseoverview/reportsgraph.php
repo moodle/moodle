@@ -39,6 +39,8 @@
     $graph->parameter['legend_size'] = 10;
     $graph->parameter['x_axis_angle'] = 90;
     $graph->parameter['title'] = false; // moodle will do a nicer job.
+    $graph->y_tick_labels = null;
+    $graph->offset_relation = null;
     if ($report != STATS_REPORT_ACTIVE_COURSES) {
         $graph->parameter['y_decimal_left'] = 2;
     }
