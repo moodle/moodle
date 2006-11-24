@@ -38,6 +38,7 @@
         input_chat_message.value = '';
         input_chat_message.className = 'wait';
         document.sendForm.submit();
+        enableForm();
         return false;
     }
 
