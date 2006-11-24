@@ -136,7 +136,7 @@
     }
 
     $mformclassname=$module->name.'_mod_form';
-    $mform=& new $mformclassname('modedit.php', array('course' => $course));
+    $mform=& new $mformclassname($form->instance, isset($cw->section)?$cw->section:$section, ((isset($cm))?$cm:null));
 
     if ($fromform=$mform->data_submitted()){
         if (empty($fromform->coursemodule)) { //add
@@ -299,7 +299,6 @@
         $icon = '<img align="middle" height="16" width="16" src="'.$CFG->modpixpath.'/'.$module->name.'/icon.gif" alt="" style="vertical-align: middle;" />&nbsp;';
 
         print_heading_with_help($pageheading, "mods", $module->name, $icon);
-        $mform->standard_coursemodule_elements_setup($course, isset($cm)?$cm:null, $form->section);
         $mform->set_defaults($form);
         $mform->display();
         print_footer($course);

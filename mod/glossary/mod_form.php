@@ -1,5 +1,6 @@
 <?php
-require_once ($CFG->libdir.'/formslib.php');
+require_once ('moodleform_mod.php');
+
 class glossary_mod_form extends moodleform_mod {
 
 	function definition() {
@@ -114,7 +115,7 @@ class glossary_mod_form extends moodleform_mod {
             $choices[50] = '50';
             $mform->addElement('select', 'rssarticles', get_string('rssarticles'), $choices);
             $mform->setHelpButton('rssarticles', array('rssarticles', get_string('rssarticles'), 'glossary'));
-            $mform->disabledIf('rssarticles', 'rsstype', 0);
+            $mform->disabledIf('rssarticles', 'rsstype', 'eq', 0);
         }
 
 //-------------------------------------------------------------------------------
@@ -170,11 +171,7 @@ class glossary_mod_form extends moodleform_mod {
 
 
 	}
-
-	function set_defaults($default_values, $slashed=false){
-        if (is_object($default_values)) {
-            $default_values = (array)$default_values;
-        }
+	function defaults_preprocessing($default_values){
         if (isset($default_values['assessed'])){
 	        $default_values['userating']=($default_values['assessed'])?true:false;
 	    }
@@ -183,7 +180,7 @@ class glossary_mod_form extends moodleform_mod {
         	                               && $default_values['assesstimestart']
         	                               && $default_values['assesstimefinish'] )?1:0;
 	    }
-	    parent::set_defaults($default_values, $slashed);
 	}
+
 }
 ?>

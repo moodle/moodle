@@ -1,5 +1,6 @@
 <?php
-require_once ($CFG->libdir.'/formslib.php');
+require_once ('moodleform_mod.php');
+
 class chat_mod_form extends moodleform_mod {
 
 	function definition() {

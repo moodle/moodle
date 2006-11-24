@@ -359,106 +359,6 @@ class moodleform {
         return true;
     }
 }
-/**
- * This class adds extra methods to form wrapper specific to be used for module
- * add / update forms (mod/{modname}.mod_form.php replaces deprecared mod/{modname}/mod.html
- *
- */
-class moodleform_mod extends moodleform {
-
-    /**
-     * Adds all the standard elements to a form to edit the settings for an activity module.
-     *
-     * @param bool $supportsgroups does this module support groups?
-     */
-    function standard_coursemodule_elements($supportsgroups=true){
-        $mform =& $this->_form;
-        $mform->addElement('header', '', get_string('modstandardels', 'form'));
-        if ($supportsgroups){
-            $mform->addElement('modgroupmode', 'groupmode', get_string('groupmode'));
-        }
-        $mform->addElement('modvisible', 'visible', get_string('visible'));
-
-        $this->standard_hidden_coursemodule_elements();
-    }
-
-    function standard_hidden_coursemodule_elements(){
-        $mform =& $this->_form;
-        $mform->addElement('hidden', 'course', 0);
-        $mform->setType('course', PARAM_INT);
-
-        $mform->addElement('hidden', 'coursemodule', 0);
-        $mform->setType('coursemodule', PARAM_INT);
-
-        $mform->addElement('hidden', 'section', 0);
-        $mform->setType('section', PARAM_INT);
-
-        $mform->addElement('hidden', 'module', 0);
-        $mform->setType('module', PARAM_INT);
-
-        $mform->addElement('hidden', 'modulename', '');
-        $mform->setType('modulename', PARAM_SAFEDIR);
-
-        $mform->addElement('hidden', 'instance', 0);
-        $mform->setType('instance', PARAM_INT);
-
-        $mform->addElement('hidden', 'add', 0);
-        $mform->setType('add', PARAM_ALPHA);
-
-        $mform->addElement('hidden', 'update', 0);
-        $mform->setType('update', PARAM_INT);
-    }
-
-    /**
-     * This function is called by course/modedit.php to setup defaults for standard form
-     * elements.
-     *
-     * @param object $course
-     * @param object $cm
-     * @param integer $section
-     */
-    function standard_coursemodule_elements_setup($course, $cm, $section){
-        $this->modgroupmode_setup($course, $cm);
-        $this->modvisible_setup($course, $cm, $section);
-    }
-    /**
-     * This is called from modedit.php to load the default for the groupmode element.
-     *
-     * @param object $course
-     * @param object $cm
-     */
-    function modgroupmode_setup($course, $cm){
-        $this->set_defaults(array('groupmode'=>groupmode($course, $cm)));
-
-    }
-    /**
-     *  This is called from modedit.php to set the default for modvisible form element.
-     *
-     * @param object $course
-     * @param object $cm
-     * @param integer $section section is a db id when updating a activity config
-     *                   or the section no when adding a new activity
-     */
-    function modvisible_setup($course, $cm, $section){
-        if ($cm) {
-            $visible = $cm->visible;
-        } else {
-            $visible = 1;
-        }
-
-        if (!$cm) { // adding activity
-                    //in this case $form->section is the section number, not the id
-            $hiddensection = !get_field('course_sections', 'visible', 'section', $section, 'course', $course->id);
-        } else { //updating activity
-            $hiddensection = !get_field('course_sections', 'visible', 'id', $section);
-        }
-        if ($hiddensection) {
-            $visible = 0;
-        }
-         $this->set_defaults(array('visible'=>$visible));
-    }
-
-}
 
 /**
  * You never extend this class directly. The class methods of this class are available from
@@ -825,7 +725,8 @@ function validate_' . $this->_attributes['id'] . '(frm) {
             }
             $js=rtrim($js, ', ');
             $js .= "],\n";
-            $js .= "condition : '{$element['condition']}'},\n";
+            $js .= "condition : '{$element['condition']}',\n";
+            $js .= "value : '{$element['value']}'},\n";
 
         };
         $js=rtrim($js, ",\n");
@@ -872,16 +773,17 @@ function validate_' . $this->_attributes['id'] . '(frm) {
      *                            condition
      * @param string $condition the condition to check
      */
-    function disabledIf($elementName, $dependentOn, $condition = 'notchecked'){
+    function disabledIf($elementName, $dependentOn, $condition = 'notchecked', $value=null){
         $dependents = $this->_getElNamesRecursive($elementName);
         foreach ($dependents as $dependent){
             if ($dependent !=  $dependentOn) {
                 $this->_dependencies[$dependentOn][] = array('dependent'=>$dependent,
-                                    'condition'=>$condition);
+                                    'condition'=>$condition, 'value'=>$value);
             }
         }
     }
 }
+
 
 /**
  * A renderer for MoodleQuickForm that only uses XHTML and CSS and no

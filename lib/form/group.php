@@ -53,3 +53,4 @@ class MoodleQuickForm_group extends HTML_QuickForm_group{
         return $this->_elementTemplateType;
     }
 }
+?>

@@ -7,7 +7,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/
-require_once ($CFG->libdir.'/formslib.php');
+require_once ('moodleform_mod.php');
+
 require_once('locallib.php');
 class lesson_mod_form extends moodleform_mod {
 
@@ -188,7 +189,10 @@ class lesson_mod_form extends moodleform_mod {
         $options = array(0=>get_string('none'));
         if ($lessons = get_all_instances_in_course('lesson', $COURSE)) {
             foreach($lessons as $lesson) {
-                $options[$lesson->id] = format_string($lesson->name, true);
+                if ($lesson->id != $this->_instance){
+                    $options[$lesson->id] = format_string($lesson->name, true);
+                }
+
             }
         }
         $mform->addElement('select', 'dependency', get_string('dependencyon', 'lesson'), $options);
@@ -208,25 +212,6 @@ class lesson_mod_form extends moodleform_mod {
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', '', get_string('mediafile', 'lesson'));
-
-        // get the modules
-        if ($mods = get_course_mods($COURSE->id)) {
-            $modinstances = array();
-            foreach ($mods as $mod) {
-
-                // get the module name and then store it in a new array
-                if ($module = get_coursemodule_from_instance($mod->modname, $mod->instance, $COURSE->id)) {
-                    $modinstances[$mod->id] = $mod->modname.' - '.$module->name;
-                }
-            }
-            asort($modinstances); // sort by module name
-            $modinstances=array(0=>get_string('none'))+$modinstances;
-
-            $mform->addElement('select', 'activitylink', get_string('activitylink', 'lesson'), $modinstances);
-            $mform->setHelpButton('activitylink', array('activitylink', get_string('activitylink', 'lesson'), 'lesson'));
-            $mform->setDefault('activitylink', 0);
-
-        }
 
         $mform->addElement('choosecoursefile', 'mediafile', get_string('mediafile', 'lesson'), array('courseid'=>$COURSE->id));
         $mform->setHelpButton('mediafile', array('mediafile', get_string('mediafile', 'lesson'), 'lesson'));
@@ -253,6 +238,28 @@ class lesson_mod_form extends moodleform_mod {
 //-------------------------------------------------------------------------------
         $mform->addElement('header', '', get_string('other', 'lesson'));
 
+
+        // get the modules
+        if ($mods = get_course_mods($COURSE->id)) {
+            $modinstances = array();
+            foreach ($mods as $mod) {
+
+                // get the module name and then store it in a new array
+                if ($module = get_coursemodule_from_instance($mod->modname, $mod->instance, $COURSE->id)) {
+                    if ($this->_cm->id != $mod->id){
+                        $modinstances[$mod->id] = $mod->modname.' - '.$module->name;
+                    }
+                }
+            }
+            asort($modinstances); // sort by module name
+            $modinstances=array(0=>get_string('none'))+$modinstances;
+
+            $mform->addElement('select', 'activitylink', get_string('activitylink', 'lesson'), $modinstances);
+            $mform->setHelpButton('activitylink', array('activitylink', get_string('activitylink', 'lesson'), 'lesson'));
+            $mform->setDefault('activitylink', 0);
+
+        }
+
         $mform->addElement('text', 'maxhighscores', get_string('maxhighscores', 'lesson'));
         $mform->setHelpButton('maxhighscores', array('maxhighscores', get_string('maxhighscores', 'lesson'), 'lesson'));
         $mform->setDefault('maxhighscores', 10);
@@ -275,44 +282,18 @@ class lesson_mod_form extends moodleform_mod {
 		$renderer->addStopFieldsetElements('buttonar');
 	}
 
-	function definition_after_data(){
-	    $mform    =& $this->_form;
-        $dependencyel =& $mform->getElement('dependency');
-        //unset this option from the dependency drop down :
-        $instance = $mform->getElementValue('instance');
-        if ($instance){
-            $dependencyel->removeOption($instance);
-        }
-        $update = $mform->getElementValue('update');
-        if ($update){
-            $activitylinkel =& $mform->getElement('activitylink');
-            $activitylinkel->removeOption($update);
 
+
+	function defaults_preprocessing(&$default_values){
+        if (isset($default_values['conditions'])) {
+            $conditions = unserialize($default_values['conditions']);
+            $default_values['timespent'] = $conditions->timespent;
+            $default_values['completed'] = $conditions->completed;
+            $default_values['gradebetterthan'] = $conditions->gradebetterthan;
+        }
+        if (isset($default_values['password'])) {
+            unset($default_values['password']);
         }
 	}
-    /**
-     * Load in existing data as form defaults. Usually new entry defaults are stored directly in
-     * form definition (new entry form); this function is used to load in data where values
-     * already exist and data is being edited (edit entry form).
-     *
-     * Overriding this to add functionality to unserialize some fields before setting deafaults for
-     * this module
-     *
-     * @param mixed $default_values object or array of default values
-     * @param bool $slased true if magic quotes applied to data values
-     */
-    function set_defaults($default_values, $slashed=false) {
-        if (isset($default_values->conditions)) {
-            $conditions = unserialize($default_values->conditions);
-            $default_values->timespent = $conditions->timespent;
-            $default_values->completed = $conditions->completed;
-            $default_values->gradebetterthan = $conditions->gradebetterthan;
-        }
-        if (isset($default_values->password)) {
-            unset($default_values->password);
-        }
-        parent::set_defaults($default_values, $slashed=false);
-    }
-
 }
 ?>

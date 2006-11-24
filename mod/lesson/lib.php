@@ -26,7 +26,7 @@ function lesson_add_instance($lesson) {
     if(!isset($lesson->completed)) {
         $lesson->completed = 0;
     }
-    if(empty($lesson->gradebetterthan) or !is_numeric($lesson->timespent) or $lesson->gradebetterthan < 0) {
+    if(empty($lesson->gradebetterthan) or !is_numeric($lesson->gradebetterthan) or $lesson->gradebetterthan < 0) {
         $lesson->gradebetterthan = 0;
     } else if ($lesson->gradebetterthan > 100) {
         $lesson->gradebetterthan = 100;
@@ -119,7 +119,7 @@ function lesson_update_instance($lesson) {
     if(!isset($lesson->completed)) {
         $lesson->completed = 0;
     }
-    if(empty($lesson->gradebetterthan) or !is_numeric($lesson->timespent) or $lesson->gradebetterthan < 0) {
+    if(empty($lesson->gradebetterthan) or !is_numeric($lesson->gradebetterthan) or $lesson->gradebetterthan < 0) {
         $lesson->gradebetterthan = 0;
     } else if ($lesson->gradebetterthan > 100) {
         $lesson->gradebetterthan = 100;

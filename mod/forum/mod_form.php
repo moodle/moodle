@@ -1,5 +1,6 @@
 <?php
-require_once ($CFG->libdir.'/formslib.php');
+require_once ('moodleform_mod.php');
+
 class forum_mod_form extends moodleform_mod {
 
 	function definition() {
@@ -112,7 +113,7 @@ class forum_mod_form extends moodleform_mod {
 		$mform->setDefault('blockafter', '0');
 		$mform->addRule('blockafter', null, 'numeric', null, 'client');
 		$mform->setHelpButton('blockafter', array('manageposts', get_string('blockafter', 'forum'),'forum'));
-		$mform->disabledIf('blockafter', 'blockperiod', 0);
+		$mform->disabledIf('blockafter', 'blockperiod', 'eq', 0);
 
 
         $mform->addElement('text', 'warnafter', get_string('warnafter', 'forum'));
@@ -120,7 +121,7 @@ class forum_mod_form extends moodleform_mod {
 		$mform->setDefault('warnafter', '0');
 		$mform->addRule('warnafter', null, 'numeric', null, 'client');
 		$mform->setHelpButton('warnafter', array('manageposts', get_string('warnafter', 'forum'),'forum'));
-		$mform->disabledIf('warnafter', 'blockperiod', 0);
+		$mform->disabledIf('warnafter', 'blockperiod', 'eq', 0);
 
 //-------------------------------------------------------------------------------
 		$this->standard_coursemodule_elements();
@@ -150,17 +151,14 @@ class forum_mod_form extends moodleform_mod {
         }
 
 	}
-	function set_defaults($default_values, $slashed=false){
-        if (is_object($default_values)) {
-            $default_values = (array)$default_values;
-        }
+	function defaults_preprocessing($default_values){
         if (isset($default_values['assessed'])){
 	        $default_values['ratingtime']=($default_values['assessed']
         	                               && $default_values['assesstimestart']
         	                               && $default_values['assesstimefinish'] )?1:0;
 	    }
-	    parent::set_defaults($default_values, $slashed);
 	}
+
 
 
 
