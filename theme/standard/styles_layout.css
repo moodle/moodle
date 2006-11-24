@@ -294,9 +294,9 @@ form.mform {
   width: 80%;
 }
 form.mform fieldset {
-  border: 1px solid black;
+  border: 1px solid #DDDDDD;
   padding: 10px 0;
-  margin: 0;
+  margin: 0.7em 0;
   width:100%;
 }
 form.mform fieldset.hidden, form.mform fieldset.felement {
@@ -307,6 +307,7 @@ form.mform fieldset.felement {
 }
 form.mform fieldset legend {
   font-weight: bold;
+  margin-left: 0.5em;
 }
 
 form.mform div.fitem {
