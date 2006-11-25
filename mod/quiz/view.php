@@ -306,7 +306,7 @@
             }
 
             if (!($moreattempts && $available)) {
-                print_continue($CFG->webroot . '/course/view.php?id=' . $course->id);
+                print_continue($CFG->wwwroot . '/course/view.php?id=' . $course->id);
             }
         }
 
