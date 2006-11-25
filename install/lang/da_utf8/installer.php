@@ -12,6 +12,7 @@
 $string['admindirerror'] = 'Det angivende admin biblioteket er forkert';
 $string['admindirname'] = 'Adminbibliotek';
 $string['caution'] = 'Pas på';
+$string['check'] = 'Kontroller';
 $string['closewindow'] = 'Luk dette vindue';
 $string['configfilenotwritten'] = 'Installationsscriptet var ikke i stand til at oprette config.php filen der indeholder de valgte indstillinger, sandsynligvis fordi den bruger hvis apache(PHP) kører med (apache, nobody ell) ikke har rettigheder til at skrive til moodlebiblioteket. Du kan manuelt kopiere den følgende kode ind i en fil med navnet \"config.php\" i roden af moodle-biblioteket.';
 $string['configfilewritten'] = 'config.php er blevet oprettet';
@@ -67,7 +68,7 @@ $string['name'] = 'Navn';
 $string['next'] = 'Næste';
 $string['ok'] = 'OK';
 $string['pass'] = 'OK';
-$string['password'] = 'Password';
+$string['password'] = 'Adgangskode';
 $string['phpversion'] = 'PHP version';
 $string['phpversionerror'] = 'PHP versionen skal være nyere end 4.1.0';
 $string['phpversionhelp'] = '<p>Moodle kræver en PHP version der er nyere end 4.1.0.</p>
