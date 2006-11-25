@@ -2,7 +2,7 @@
 
 <p><?php print_string("paymentrequired") ?></p>
 <p><b><?php echo get_string("cost").": $CFG->enrol_currency $cost"; ?></b></p>
-<p><img alt="PayPal" src="https://www.paypal.com/en_US/i/logo/PayPal_mark_60x38.gif" /></p>
+<p><img alt="<?php print_string('paypalaccepted', 'enrol_paypal') ?>" src="https://www.paypal.com/en_US/i/logo/PayPal_mark_60x38.gif" /></p>
 <p><?php print_string("paymentinstant") ?></p>
 <?php
     $paypalurl = empty($CFG->usepaypalsandbox) ? 'https://www.paypal.com/cgi-bin/webscr' : 'https://www.sandbox.paypal.com/cgi-bin/webscr';

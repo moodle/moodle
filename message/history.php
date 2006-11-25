@@ -46,8 +46,8 @@
     echo fullname($user1);
     echo '</td>';
     echo '<td align="center">';
-    echo '<img src="'.$CFG->wwwroot.'/pix/t/left.gif">';
-    echo '<img src="'.$CFG->wwwroot.'/pix/t/right.gif">';
+    echo '<img src="'.$CFG->wwwroot.'/pix/t/left.gif" alt="'.get_string('from').'">';
+    echo '<img src="'.$CFG->wwwroot.'/pix/t/right.gif" alt="'.get_string('to').'">';
     echo '</td>';
     echo '<td align="center">';
     echo print_user_picture($user2->id, SITEID, $user2->picture, 100, true, true, 'userwindow').'<br />';

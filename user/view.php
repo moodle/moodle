@@ -240,7 +240,7 @@
             }
             $emailswitch = "&nbsp;<a title=\"$switchclick\" ".
                            "href=\"view.php?id=$user->id&amp;course=$course->id&amp;$switchparam=1\">".
-                           "<img border=\"0\" width=\"11\" height=\"11\" src=\"$CFG->pixpath/t/$switchpix\" alt=\"\" /></a>";
+                           "<img border=\"0\" width=\"11\" height=\"11\" src=\"$CFG->pixpath/t/$switchpix\" alt=\"$switchclick\" /></a>";
 
         } else if ($currentuser) {         /// Can only re-enable an email this way
             if ($user->emailstop) {   // Include link that tells how to re-enable their email
@@ -266,7 +266,7 @@
 
     if ($user->skype && !isset($hiddenfields['skypeid'])) {
         print_row(get_string('skypeid').':','<a href="callto:'.urlencode($user->skype).'">'.s($user->skype). 
-            ' <img src="http://mystatus.skype.com/smallicon/'.urlencode($user->skype).'" alt="status" '.
+            ' <img src="http://mystatus.skype.com/smallicon/'.urlencode($user->skype).'" alt="'.get_string('status').'" '.
             ' height="16" width="16" /></a>');
     }
     if ($user->yahoo && !isset($hiddenfields['yahooid'])) {

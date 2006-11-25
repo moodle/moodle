@@ -554,6 +554,7 @@ $string['findmorecourses'] = 'Find more courses...';
 $string['firstdayofweek'] = '0';
 $string['firstname'] = 'First name';
 $string['firsttime'] = 'Is this your first time here?';
+$string['folder'] = 'Folder';
 $string['folderclosed'] = 'Closed folder';
 $string['folderopened'] = 'Opened folder';
 $string['followingoptional'] = 'The following items are optional';

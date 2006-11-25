@@ -3041,8 +3041,13 @@ function print_user_picture($userid, $courseid, $picture, $size=0, $return=false
         $class .= " defaultuserpic";
         $src =  "$CFG->pixpath/u/$file.png\"";
     }
+    if ($user = get_record('user', 'username', 'guest')) {
+        $username = fullname($user);
+    } else {
+        $username = get_string('none');
+    }
     $output .= "<img class=\"$class\" align=\"middle\" src=\"$src".
-                   " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
+                   " border=\"0\" width=\"$size\" height=\"$size\" alt=\"".s(get_string('user').' '.$username)."\" />";
     if ($link) {
         $output .= '</a>';
     }
@@ -3222,10 +3227,10 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
     if ($group->picture) {  // Print custom group picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
             $output .= '<img class="grouppicture" align="middle" src="'.$CFG->wwwroot.'/user/pixgroup.php/'.$group->id.'/'.$file.'.jpg"'.
-                       ' border="0" width="'.$size.'" height="'.$size.'" alt="" title="'.s($group->name).'"/>';
+                       ' border="0" width="'.$size.'" height="'.$size.'" alt="'.s(get_string('group').' '.$group->name).'" title="'.s($group->name).'"/>';
         } else {
             $output .= '<img class="grouppicture" align="middle" src="'.$CFG->wwwroot.'/user/pixgroup.php?file=/'.$group->id.'/'.$file.'.jpg"'.
-                       ' border="0" width="'.$size.'" height="'.$size.'" alt="" title="'.s($group->name).'"/>';
+                       ' border="0" width="'.$size.'" height="'.$size.'" alt="'.s(get_string('group').' '.$group->name).'" title="'.s($group->name).'"/>';
         }
     }
     if ($link or has_capability('moodle/site:accessallgroups', $context)) {
@@ -4225,7 +4230,7 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
             $class = 'activity '.$mod->mod;
             $class .= ($cmid == $mod->cm) ? ' selected' : '';
             $menu[] = '<li class="'.$class.'">'.
-                      '<img src="'.$CFG->modpixpath.'/'.$mod->mod.'/icon.gif" border="0" />'.
+                      '<img src="'.$CFG->modpixpath.'/'.$mod->mod.'/icon.gif" border="0" alt=""/>'.
                       '<a href="'.$CFG->wwwroot.'/mod/'.$url.'">'.$mod->name.'</a></li>';
             $previousmod = $mod;
         }
@@ -5359,7 +5364,8 @@ function page_doc_link($text='', $iconpath='') {
         $iconpath = $CFG->wwwroot . '/pix/docs.gif';
     }
 
-    $str .= '<img src="' .$iconpath. '" alt="Docs" />' .$text. '</a>';
+    // alt left blank intentionally to prevent repetition in screenreaders
+    $str .= '<img src="' .$iconpath. '" alt=" " />' .$text. '</a>';
 
     return $str;
 }

@@ -447,10 +447,10 @@ class flexible_table {
 
             if($this->is_collapsible) {
                 if(!empty($this->sess->collapse[$column])) {
-                    $icon_hide = ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_SHOW].'='.$column.'"><img src="'.$CFG->pixpath.'/t/switch_plus.gif" title="'.get_string('show').' '.$this->headers[$index].'" /></a>';
+                    $icon_hide = ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_SHOW].'='.$column.'"><img src="'.$CFG->pixpath.'/t/switch_plus.gif" title="'.get_string('show').' '.$this->headers[$index].'" alt="'.get_string('show').'" /></a>';
                 }
                 else if($this->headers[$index] !== NULL) {
-                    $icon_hide = ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_HIDE].'='.$column.'"><img src="'.$CFG->pixpath.'/t/switch_minus.gif" title="'.get_string('hide').' '.$this->headers[$index].'" /></a>';
+                    $icon_hide = ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_HIDE].'='.$column.'"><img src="'.$CFG->pixpath.'/t/switch_minus.gif" title="'.get_string('hide').' '.$this->headers[$index].'" alt="'.get_string('hide').'" /></a>';
                 }
             }
 
@@ -468,18 +468,18 @@ class flexible_table {
                     $icon_sort_first = $icon_sort_last = '';
                     if($primary_sort_column == 'firstname') {
                         if($primary_sort_order == SORT_ASC) {
-                            $icon_sort_first = ' <img src="'.$CFG->pixpath.'/t/down.gif" />';
+                            $icon_sort_first = ' <img src="'.$CFG->pixpath.'/t/down.gif" alt="'.get_string('asc').'" />';
                         }
                         else {
-                            $icon_sort_first = ' <img src="'.$CFG->pixpath.'/t/up.gif" />';
+                            $icon_sort_first = ' <img src="'.$CFG->pixpath.'/t/up.gif" alt="'.get_string('desc').'" />';
                         }
                     }
                     else if($primary_sort_column == 'lastname') {
                         if($primary_sort_order == SORT_ASC) {
-                            $icon_sort_last = ' <img src="'.$CFG->pixpath.'/t/down.gif" />';
+                            $icon_sort_last = ' <img src="'.$CFG->pixpath.'/t/down.gif" alt="'.get_string('asc').'" />';
                         }
                         else {
-                            $icon_sort_last = ' <img src="'.$CFG->pixpath.'/t/up.gif" />';
+                            $icon_sort_last = ' <img src="'.$CFG->pixpath.'/t/up.gif" alt="'.get_string('desc').'" />';
                         }
                     }
                     $this->headers[$index] = '<a href="'.$this->baseurl.$this->request[TABLE_VAR_SORT].'=firstname">'.get_string('firstname').'</a> '.$icon_sort_first.' / '.
@@ -495,10 +495,10 @@ class flexible_table {
                 if($this->is_sortable) {
                     if($primary_sort_column == $column) {
                         if($primary_sort_order == SORT_ASC) {
-                            $icon_sort = ' <img src="'.$CFG->pixpath.'/t/down.gif" />';
+                            $icon_sort = ' <img src="'.$CFG->pixpath.'/t/down.gif" alt="'.get_string('asc').'" />';
                         }
                         else {
-                            $icon_sort = ' <img src="'.$CFG->pixpath.'/t/up.gif" />';
+                            $icon_sort = ' <img src="'.$CFG->pixpath.'/t/up.gif" alt="'.get_string('desc').'" />';
                         }
                     }
                     $this->headers[$index] = '<a href="'.$this->baseurl.$this->request[TABLE_VAR_SORT].'='.$column.'">'.$this->headers[$index].'</a>';

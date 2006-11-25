@@ -52,6 +52,7 @@ function string_file_picture_algebra($imagefile, $tex= "", $height="", $width=""
   global $CFG;
 
   $output = "";
+  $origtex = $tex;
   if ($tex) {
     $tex = str_replace('&','&amp;',$tex);
     $tex = str_replace('<','&lt;',$tex);
@@ -76,7 +77,7 @@ function string_file_picture_algebra($imagefile, $tex= "", $height="", $width=""
       $output .= urlencode($tex) . "', 'popup', 'menubar=0,location=0,scrollbars,";
       $output .= "resizable,width=300,height=240', 0);\">";
     }
-    $output .= "<img border=\"0\" $title $height $width alt=\"\" src=\"";
+    $output .= "<img border=\"0\" $title $height $width alt=\"".s($origtex)."\" src=\"";
     if ($CFG->slasharguments) {        // Use this method if possible for better caching
       $output .= "$CFG->wwwroot/$CFG->algebrafilterdir/pix.php/$imagefile";
     } else {
