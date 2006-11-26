@@ -2287,7 +2287,7 @@ function exercise_print_tabbed_heading($tabs) {
     }
 
     // print_simple_box_start("center", "$table->width", "#ffffff", 0);
-    echo "<table width=\"$tabs-width\" border=\"0\" valign=\"top\" align=\"center\" ";
+    echo "<table width=\"$tabs->width\" border=\"0\" valign=\"top\" align=\"center\" ";
     echo " cellpadding=\"$tabs->cellpadding\" cellspacing=\"0\" class=\"generaltable\">\n";
 
     if (!empty($tabs->names)) {
