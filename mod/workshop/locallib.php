@@ -2864,7 +2864,7 @@ function workshop_print_submission($workshop, $submission) {
                     }
                     echo "<tr><td><b>".get_string("attachment", "workshop")." $n:</b> \n";
                     echo "<img src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" 
-                        border=\"0\" alt=\"File\" />".
+                        border=\"0\" alt=\"".get_string('file')."\" />".
                         "&nbsp;<a target=\"uploadedfile\" href=\"$CFG->wwwroot/$ffurl\">$file</a></td></tr>";
                     $n++;
                 }

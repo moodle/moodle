@@ -95,9 +95,11 @@ function display() {
     $strname = get_string("name");
     $strsize = get_string("size");
     $strmodified = get_string("modified");
+    $strfolder = get_string("folder");
+    $strfile = get_string("file");
 
     echo '<table cellpadding="4" cellspacing="1" class="files">';
-    echo "<tr><th colspan=\"2\" class=\"header name\">$strname</th>".
+    echo "<tr><th class=\"header name\">$strname</th>".
          "<th align=\"right\" colspan=\"2\" class=\"header size\">$strsize</th>".
          "<th align=\"right\" class=\"header date\">$strmodified</th>".
          "</tr>";
@@ -119,17 +121,14 @@ function display() {
         }
 
         if ($icon == 'folder.gif') {
-            echo '<tr class="folder"><td>';
-            echo "<img src=\"$CFG->pixpath/f/$icon\" width=\"16\" height=\"16\" alt=\"\"/>";
-            echo '</td>';
+            echo '<tr class="folder">';
             echo '<td nowrap="nowrap" class="name">';
-            echo "<a href=\"view.php?id={$cm->id}&amp;subdir=$subdir/$file\">$file</a>";
+            echo "<a href=\"view.php?id={$cm->id}&amp;subdir=$subdir/$file\">";
+            echo "<img src=\"$CFG->pixpath/f/$icon\" width=\"16\" height=\"16\" alt=\"$strfolder\" />&nbsp;$file</a>";
         } else {
-            echo '<tr class="file"><td>';
-            echo "<img src=\"$CFG->pixpath/f/$icon\" width=\"16\" height=\"16\" alt=\"\"/>";
-            echo '</td>';
+            echo '<tr class="file">';
             echo '<td nowrap="nowrap" class="name">';
-            link_to_popup_window($relativeurl, "resourcedirectory{$resource->id}", "$file", 450, 600, '');
+            link_to_popup_window($relativeurl, "resourcedirectory{$resource->id}", "<img src=\"$CFG->pixpath/f/$icon\" width=\"16\" height=\"16\" alt=\"$strfile\" />&nbsp;$file", 450, 600, '');
         }
         echo '</td>';
         echo '<td>&nbsp;</td>';

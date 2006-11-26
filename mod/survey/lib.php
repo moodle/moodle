@@ -487,7 +487,7 @@ function survey_print_graph($url) {
 
     } else {
         echo "<img height=\"$SURVEY_GHEIGHT\" width=\"$SURVEY_GWIDTH\" border=\"1\"".
-             " src=\"$CFG->wwwroot/mod/survey/graph.php?$url\" alt=\"\" />";
+             " src=\"$CFG->wwwroot/mod/survey/graph.php?$url\" alt=\"".get_string("surveygraph", "survey")."\" />";
     }
 }
 

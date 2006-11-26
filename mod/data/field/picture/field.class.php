@@ -64,7 +64,7 @@ class data_field_picture extends data_field_file {
                 .$this->field->id.'_filename" id="field_'.$this->field->id.'_filename" value="'.$description.'" /><br />';
         $str .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.$this->field->param3.'" />';
         if ($filepath){
-            $str .= '<img width="'.$this->previewwidth.'" height="'.$this->previewheight.'" src="'.$filepath.'" />';
+            $str .= '<img width="'.$this->previewwidth.'" height="'.$this->previewheight.'" src="'.$filepath.'" alt="" />';
         }
         $str .= '</div>';
         return $str;

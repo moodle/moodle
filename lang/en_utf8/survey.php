@@ -203,6 +203,7 @@ $string['survey:download'] = 'Download responses';
 $string['survey:participate'] = 'Respond to survey';
 $string['survey:readresponses'] = 'View responses';
 $string['surveycompleted'] = 'You\'ve completed this survey.  The graph below shows a summary of your results compared to the class averages.';
+$string['surveygraph'] = 'Survey graph';
 $string['surveyname'] = 'Survey name';
 $string['surveysaved'] = 'Survey saved';
 $string['surveytype'] = 'Survey type';

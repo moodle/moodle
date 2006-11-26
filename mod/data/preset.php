@@ -316,7 +316,7 @@ foreach ($presets as $id => $preset) {
     echo '<tr>';
     echo '<td>';
     if (!empty($preset->screenshot)) {
-        echo '<img width="150" class="presetscreenshot" src="'.$preset->screenshot.'" />';
+        echo '<img width="150" class="presetscreenshot" src="'.$preset->screenshot.'" alt="'.get_string('screenshot').'" />';
     }
     echo '</td><td>'.$preset->name;
     if (!empty($preset->userid)) {
