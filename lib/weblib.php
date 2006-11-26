@@ -2265,7 +2265,7 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
     global $COURSE, $CFG;   
 
     $shortname ='';
-    if ($COURSE->category) {
+    if ($COURSE->id != SITEID) {
         $shortname = '<a href="'.$CFG->wwwroot.'/course/view.php?id='. $COURSE->id .'">'. $COURSE->shortname .'</a> ->';
     }
 
