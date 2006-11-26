@@ -257,7 +257,7 @@
                 echo '<h3>'.$group->name;
                 if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
                     echo '&nbsp;<a title="'.get_string('editgroupprofile').'" href="../course/groups.php?id='.$course->id.'&amp;group='.$group->id.'">';
-                    echo '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="" border="0">';
+                    echo '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="'.get_string('editgroupprofile').'" border="0">';
                     echo '</a>';
                 }
                 echo '</h3>';
