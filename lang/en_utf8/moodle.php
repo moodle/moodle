@@ -1078,6 +1078,7 @@ $string['publicdirectory'] = 'Public directory';
 $string['publicdirectory0'] = 'Please do not publish this site';
 $string['publicdirectory1'] = 'Publish the site name only';
 $string['publicdirectory2'] = 'Publish the site name with a link';
+$string['publicdirectorytitle'] = 'See the current list of sites';
 $string['publicsitefileswarning'] = 'Note: files placed here can be accessed by anyone';
 $string['question'] = 'Question';
 $string['readinginfofrombackup'] = 'Reading info from backup';

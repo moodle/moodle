@@ -2219,7 +2219,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
                     echo '</a>';
                     echo '<a title="'.$strmarkalldread.'" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?f='.
                          $forum->id.'&amp;d='.$post->discussion.'&amp;mark=read&amp;returnpage=view.php">' .
-                         '<img src="'.$CFG->pixpath.'/t/clear.gif" height="11" width="11" alt="" /></a>';
+                         '<img src="'.$CFG->pixpath.'/t/clear.gif" height="11" width="11" alt="'.$strmarkalldread.'" /></a>';
                     echo '</span>';
                 } else {
                     echo '<span class="read">';
@@ -3227,7 +3227,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
                     echo '&nbsp;<a title="'.get_string('markallread', 'forum').
                          '" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?f='.
                          $forum->id.'&amp;mark=read&amp;returnpage=view.php">'.
-                         '<img src="'.$CFG->pixpath.'/t/clear.gif" height="11" width="11" border="0" alt="" /></a>';
+                         '<img src="'.$CFG->pixpath.'/t/clear.gif" height="11" width="11" border="0" alt="'.get_string('markallread', 'forum').'" /></a>';
                 }
                 echo '</th>';
             }

@@ -86,7 +86,7 @@
     echo "</tr>\n";
 
     echo "<tr valign=\"top\">\n";
-    echo "<td align=\"right\"><a href=\"http://moodle.org/sites/?country=$admin->country\" title=\"See the current list of sites\" target=_blank>".get_string("publicdirectory")."</a>:</td>\n";
+    echo "<td align=\"right\"><a href=\"http://moodle.org/sites/?country=$admin->country\" title=\"".get_string("publicdirectorytitle")."\" target=_blank>".get_string("publicdirectory")."</a>:</td>\n";
     echo "<td>";
     $options[0] = get_string("publicdirectory0");
     $options[1] = get_string("publicdirectory1");
