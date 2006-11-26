@@ -62,27 +62,32 @@
             $riskinfo = '<td class="risk managetrust">';
             $rowclasses = '';
             if (RISK_MANAGETRUST & (int)$capability->riskbitmask) {
-                $riskinfo .= '<a target="docspopup" title="'.get_string('riskmanagetrust', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/'.$strrisks.'">T</a>';
+                $riskinfo .= '<a target="docspopup" title="'.get_string('riskmanagetrust', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/'.$strrisks.'">';
+                $riskinfo .= '<img src="'.$CFG->pixpath.'/i/risk_managetrust.gif" alt="'.get_string('riskmanagetrustshort', 'admin').'" /></a>';
                 $rowclasses .= ' riskmanagetrust';
             }
             $riskinfo .= '</td><td class="risk config">';
             if (RISK_CONFIG & (int)$capability->riskbitmask) {
-                $riskinfo .= '<a target="docspopup" title="'.get_string('riskconfig', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/'.$strrisks.'">C</a>';
+                $riskinfo .= '<a target="docspopup" title="'.get_string('riskconfig', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/'.$strrisks.'">';
+                $riskinfo .= '<img src="'.$CFG->pixpath.'/i/risk_config.gif" alt="'.get_string('riskconfigshort', 'admin').'" /></a>';
                 $rowclasses .= ' riskconfig';
             }
             $riskinfo .= '</td><td class="risk xss">';
             if (RISK_XSS & (int)$capability->riskbitmask) {
-                $riskinfo .= '<a target="docspopup" title="'.get_string('riskxss', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/'.$strrisks.'">X</a>';
+                $riskinfo .= '<a target="docspopup" title="'.get_string('riskxss', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/'.$strrisks.'">';
+                $riskinfo .= '<img src="'.$CFG->pixpath.'/i/risk_xss.gif" alt="'.get_string('riskxssshort', 'admin').'" /></a>';
                 $rowclasses .= ' riskxss';
             }
             $riskinfo .= '</td><td class="risk personal">';
             if (RISK_PERSONAL & (int)$capability->riskbitmask) {
-                $riskinfo .= '<a target="docspopup" title="'.get_string('riskpersonal', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/'.$strrisks.'">P</a>';
+                $riskinfo .= '<a target="docspopup" title="'.get_string('riskpersonal', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/'.$strrisks.'">';
+                $riskinfo .= '<img src="'.$CFG->pixpath.'/i/risk_personal.gif" alt="'.get_string('riskpersonalshort', 'admin').'" /></a>';
                 $rowclasses .= ' riskpersonal';
             }
             $riskinfo .= '</td><td class="risk spam">';
             if (RISK_SPAM & (int)$capability->riskbitmask) {
-                $riskinfo .= '<a target="docspopup" title="'.get_string('riskspam', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/'.$strrisks.'">S</a>';
+                $riskinfo .= '<a target="docspopup" title="'.get_string('riskspam', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/'.$strrisks.'">';
+                $riskinfo .= '<img src="'.$CFG->pixpath.'/i/risk_spam.gif" alt="'.get_string('riskspamshort', 'admin').'" /></a>';
                 $rowclasses .= ' riskspam';
             }
             $riskinfo .= '</td>';
