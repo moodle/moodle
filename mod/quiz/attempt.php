@@ -319,7 +319,7 @@
             $action = new stdClass;
             $action->responses = $laststate->responses;
             $action->timestamp = $laststate->timestamp;
-            $action->event = QUESTION_EVENTOPEN;
+            $action->event = QUESTION_EVENTSAVE; //emulate save of questions from all pages MDL-7631
 
             // Process these responses ...
             question_process_responses($questions[$i], $states[$i], $action, $quiz, $attempt);
