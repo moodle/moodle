@@ -303,7 +303,7 @@ class embedded_cloze_qtype extends default_questiontype {
                 case 'shortanswer':
                 case 'numerical':
                     echo " <input $style $readonly $popup name=\"$inputname\"
-                            type=\"text\" value=\"$response\" size=\"12\" /> ";
+                            type=\"text\" value=\"".s($response)."\" size=\"12\" /> ";
                     break;
                 case 'multichoice':
                     $outputoptions = '<option></option>'; // Default empty option
