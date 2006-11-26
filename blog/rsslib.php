@@ -43,7 +43,7 @@
         } else {
             $path = $CFG->wwwroot.'/rss/file.php?file='.$path;
         }
-        print '<div align="right"><a href="'. $path .'"><img src="'. $rsspix .'" title="'. strip_tags($tooltiptext) .'" alt="" /></a></div>';
+        print '<div align="right"><a href="'. $path .'"><img src="'. $rsspix .'" title="'. strip_tags($tooltiptext) .'" alt="'.get_string('rss').'" /></a></div>';
 
     }
 
