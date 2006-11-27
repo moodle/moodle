@@ -3041,13 +3041,15 @@ function print_user_picture($userid, $courseid, $picture, $size=0, $return=false
         $class .= " defaultuserpic";
         $src =  "$CFG->pixpath/u/$file.png\"";
     }
-    if ($user = get_record('user', 'username', 'guest')) {
-        $username = fullname($user);
-    } else {
-        $username = get_string('none');
+    if ($user = get_record('user','id',$userid)) {
+        if (!empty($user->imagealt)) {
+            $imagealt = $user->imagealt;
+        } else {
+            $imagealt = get_string('pictureof','',fullname($user));
+        }    
     }
     $output .= "<img class=\"$class\" align=\"middle\" src=\"$src".
-                   " border=\"0\" width=\"$size\" height=\"$size\" alt=\"".s(get_string('user').' '.$username)."\" />";
+                   " border=\"0\" width=\"$size\" height=\"$size\" alt=\"".$imagealt."\" />";
     if ($link) {
         $output .= '</a>';
     }

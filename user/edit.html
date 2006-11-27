@@ -279,10 +279,17 @@ if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SI
     </td>
 </tr>
 <tr>
+    <th><?php print_string("screenreaderuse") ?>:</th>
+    <td><?php
+    unset($choices);
+    $choices["0"] = get_string("screenreaderno");
+    $choices["1"] = get_string("screenreaderyes");
+    choose_from_menu ($choices, 'screenreader', $user->screenreader, '', '', 0, false) ?>
+    </td>
+</tr>
+<tr>
     <td colspan="2" style="text-align: center;"><input type="submit" value="<?php print_string("updatemyprofile") ?>" /></td>
 </tr>
-
-
 <tr>
     <td colspan="2" align="center"> <br /><b><?php print_string("followingoptional") ?>:</b></td>
 </tr>
@@ -327,7 +334,12 @@ if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SI
     </td>
 </tr>
 <?php } ?>
-
+<tr>
+    <th><?php print_string("imagealt") ?>:</th>
+    <td>
+    <input type="text" name="imagealt" size="30" alt="<?php print_string("imagealt") ?>" maxlength="100" value="<?php p($user->imagealt) ?>" />
+    </td>
+</tr>
 <tr>
     <th><?php print_string("webpage") ?>:</th>
     <td><input type="text" name="url" size="50" alt="<?php print_string("webpage") ?>" maxlength="255" value="<?php p($user->url) ?>" />
