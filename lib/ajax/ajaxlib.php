@@ -56,7 +56,7 @@ function ajaxenabled() {
         return false;
     }
 
-    if (!empty($CFG->enableajax) && !empty($USER->ajax)) {
+    if (!empty($CFG->enableajax) && (!empty($USER->ajax) || !isloggedin())) {
         return true;
     } else {
         return false;
