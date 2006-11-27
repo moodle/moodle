@@ -4017,7 +4017,7 @@ function print_group_menu($groups, $groupmode, $currentgroup, $urlroot, $showall
  */
 function navmenu($course, $cm=NULL, $targetwindow='self') {
 
-    global $CFG, $THEME;
+    global $CFG, $THEME, $USER;
 
     if (empty($THEME->navmenuwidth)) {
         $width = 50;
@@ -4128,17 +4128,31 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
 
     }
     if ($backmod) {
+        // MDL-7486
+        if ($USER->screenreader) {
+            $larrow = get_string('previoussection');
+        } else {
+            $larrow = $THEME->larrow;
+        }    
+      
         $backtext= get_string('activityprev', 'access');
         $backmod = '<form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" target="'.$CFG->framename.'">'.
                    '<input type="hidden" name="id" value="'.$backmod->cm.'" />'.
-                   '<button type="submit" title="'.$backtext.'">'.$THEME->larrow.
+                   '<button type="submit" title="'.$backtext.'">'.$larrow.
                    '<span class="accesshide">'.$backtext.'</span></button></form>';
     }
     if ($nextmod) {
+        // MDL-7486    
+        if ($USER->screenreader) {
+            $rarrow = get_string('nextsection');
+        } else {
+            $rarrow = $THEME->rarrow;
+        }   
+      
         $nexttext= get_string('activitynext', 'access');
         $nextmod = '<form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php" target="'.$CFG->framename.'">'.
                    '<input type="hidden" name="id" value="'.$nextmod->cm.'" />'.
-                   '<button type="submit" title="'.$nexttext.'">'.$THEME->rarrow.
+                   '<button type="submit" title="'.$nexttext.'">'.$rarrow.
                    '<span class="accesshide">'.$nexttext.'</span></button></form>';
     }
 

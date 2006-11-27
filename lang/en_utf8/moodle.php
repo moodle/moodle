@@ -941,6 +941,7 @@ Cheers from the \'$a->sitename\' administrator,
 $a->signoff';
 $string['newusers'] = 'New users';
 $string['next'] = 'Next';
+$string['nextsection'] = 'Next section';
 $string['no'] = 'No';
 $string['nobody'] = 'Nobody';
 $string['nochange'] = 'No change';
@@ -1073,6 +1074,7 @@ $string['preview'] = 'Preview';
 $string['previewhtml'] = 'HTML Format Preview';
 $string['previeworchoose'] = 'Preview or choose a theme';
 $string['previous'] = 'Previous';
+$string['previoussection'] = 'Previous section';
 $string['profile'] = 'Profile';
 $string['publicdirectory'] = 'Public directory';
 $string['publicdirectory0'] = 'Please do not publish this site';
