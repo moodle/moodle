@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // choice.php - created with Moodle 1.7 beta + (2006101003)
 
 
@@ -17,6 +17,7 @@ $string['choicetext'] = 'Choice text';
 $string['displayhorizontal'] = 'Display horizontally';
 $string['displaymode'] = 'Display Mode';
 $string['displayvertical'] = 'Display vertically';
+$string['fillinatleastoneoption'] = 'You need to provide at least two possible answers.';
 $string['full'] = '(Full)';
 $string['havetologin'] = 'You have to log in before you can submit your choice';
 $string['limit'] = 'Limit';
