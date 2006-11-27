@@ -58,7 +58,11 @@ $statusmsg = '';
 if ($data = data_submitted()) {
     if (confirm_sesskey()) {
         $olddbsessions = !empty($CFG->dbsessions);
-        $errors = $root->write_settings((array)$data);
+        $unslashed = array();
+        foreach($data as $key=>$value) {
+            $unslashed[$key] = stripslashes($value);
+        }
+        $errors = $root->write_settings($unslashed);
         //force logout if dbsession setting changes
         if ($olddbsessions != !empty($CFG->dbsessions)) {
             require_logout();
