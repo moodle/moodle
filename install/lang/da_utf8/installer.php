@@ -11,6 +11,7 @@
 
 $string['admindirerror'] = 'Det angivende admin biblioteket er forkert';
 $string['admindirname'] = 'Adminbibliotek';
+$string['bypassed'] = 'Forbigået';
 $string['caution'] = 'Pas på';
 $string['check'] = 'Kontroller';
 $string['closewindow'] = 'Luk dette vindue';
@@ -63,6 +64,7 @@ indstillingen så der er minimum 16Mb til rådighed. Hvis du ikke har direkte ad
 <li>På nogle servere kan du oprette en \'.htaccess\' fil, gemme den i moodle biblioteket med linjen <p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>Det kan dog på nogle servere forårsage en fejl på <b>alle</b> PHPsiderne. i så fald kan du blive nødt til at fjerne \'.htaccess\' filen igen.</p></li>
 </ol>';
+$string['moodledocslink'] = 'Moodle Doks for denne side';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP er ikke blevet ordentligt konfigureret med MySQL  udvidelsen så den kan kommunikere med MySQL. Det kan skyldes at MySQL extension/dll ikke er loadet. Kontroller venlist phpinfo() og php.ini filen eller rekompiler PHP.';
 $string['name'] = 'Navn';
 $string['next'] = 'Næste';
@@ -75,6 +77,8 @@ $string['phpversionhelp'] = '<p>Moodle kræver en PHP version der er nyere end 4
 <p>Webserveren bruger i øjeblikket version $a</p>
 <p>Du bliver nødt til at opdatere PHP eller flytte systemet over på en anden webserver der har en nyere version af PHP!</p>';
 $string['previous'] = 'Forrige';
+$string['report'] = 'Rapport';
+$string['restricted'] = 'Afvist';
 $string['safemode'] = 'Safe mode';
 $string['safemodeerror'] = 'Moodle kan have problemer med \"Safe mode : on\"';
 $string['sessionautostart'] = 'Session autostart';
