@@ -4721,7 +4721,7 @@ function redirect($url, $message='', $delay=-1) {
             }
             // Replace all ..s
             while (true) {
-                $newurl = preg_replace('|/[^/]*/\.\./|', '/', $url);
+                $newurl = preg_replace('|/(?!\.\.)[^/]*/\.\./|', '/', $url);
                 if ($newurl == $url) {
                     break;
                 }
