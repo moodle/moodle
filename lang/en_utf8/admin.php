@@ -2,6 +2,7 @@
       // admin.php - created with Moodle 1.7 beta + (2006101003)
 
 
+$string['accessdenied'] = 'Access denied';
 $string['accounts'] = 'Accounts';
 $string['adminseesall'] = 'Admins See All';
 $string['adminseesallevents'] = 'Administrators see all events';
