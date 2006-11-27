@@ -24,14 +24,17 @@ if ($newsettingshtml == '') {
 
 // now we'll deal with the case that the admin has submitted the form with new settings
 if ($data = data_submitted()) {
-    $data = (array)$data;
+    $unslashed = array();
+    foreach($data as $key=>$value) {
+        $unslashed[$key] = stripslashes($value);
+    }
     if (confirm_sesskey()) {
         $newsettings = find_new_settings(admin_get_root());
         $errors = '';
 
         foreach($newsettings as $newsetting) {
-            if (isset($data['s_' . $newsetting->name])) {
-                $errors .= $newsetting->write_setting($data['s_' . $newsetting->name]);
+            if (isset($unslashed['s_' . $newsetting->name])) {
+                $errors .= $newsetting->write_setting($unslashed['s_' . $newsetting->name]);
             } else {
                 $errors .= $newsetting->write_setting($newsetting->defaultsetting);
             }

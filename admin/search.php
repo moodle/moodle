@@ -18,17 +18,20 @@ $CFG->adminsearchquery = $query;  // So we can reference it in search boxes late
 $statusmsg = '';
 
 if ($data = data_submitted()) {
-    $data = (array)$data;
+    $unslashed = array();
+    foreach($data as $key=>$value) {
+        $unslashed[$key] = stripslashes($value);
+    }
     if (confirm_sesskey()) {
         $olddbsessions = !empty($CFG->dbsessions);
         $changedsettings = search_settings(admin_get_root(), $query);
         $errors = '';
 
         foreach($changedsettings as $changedsetting) {
-            if (!isset($data['s_' . $changedsetting->name])) {
-                $data['s_' . $changedsetting->name] = ''; // needed for checkboxes
+            if (!isset($unslashed['s_' . $changedsetting->name])) {
+                $unslashed['s_' . $changedsetting->name] = ''; // needed for checkboxes
             }
-            $errors .= $changedsetting->write_setting($data['s_' . $changedsetting->name]);
+            $errors .= $changedsetting->write_setting($unslashed['s_' . $changedsetting->name]);
         }
 
         if ($olddbsessions != !empty($CFG->dbsessions)) {

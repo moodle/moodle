@@ -482,7 +482,7 @@ function clean_param($param, $type) {
  * In that case it doesn't affect $CFG.
  *
  * @param string $name the key to set
- * @param string $value the value to set
+ * @param string $value the value to set (without magic quotes)
  * @param string $plugin (optional) the plugin scope
  * @uses $CFG
  * @return bool
@@ -496,17 +496,19 @@ function set_config($name, $value, $plugin=NULL) {
         $CFG->$name = $value;  // So it's defined for this invocation at least
 
         if (get_field('config', 'name', 'name', $name)) {
-            return set_field('config', 'value', $value, 'name', $name);
+            return set_field('config', 'value', addslashes($value), 'name', $name);
         } else {
+            $config = new object();
             $config->name = $name;
-            $config->value = $value;
+            $config->value = addslashes($value);
             return insert_record('config', $config);
         }
     } else { // plugin scope
         if ($id = get_field('config_plugins', 'id', 'name', $name, 'plugin', $plugin)) {
-            return set_field('config_plugins', 'value', $value, 'id', $id);
+            return set_field('config_plugins', 'value', addslashes($value), 'id', $id);
         } else {
-            $config->plugin = $plugin;
+            $config = new object();
+            $config->plugin = addslashes($plugin);
             $config->name   = $name;
             $config->value  = $value;
             return insert_record('config_plugins', $config);
