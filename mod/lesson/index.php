@@ -8,7 +8,8 @@
  **/
 
     require_once("../../config.php");
-    require_once("locallib.php");
+    require_once($CFG->dirroot.'/mod/lesson/lib.php');
+    require_once($CFG->dirroot.'/mod/lesson/locallib.php');
 
     $id = required_param('id', PARAM_INT);   // course
 
@@ -30,7 +31,7 @@
 /// Print the header
 
     if ($course->category) {
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
+        $navigation = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->";
     } else {
         $navigation = '';
     }
@@ -86,19 +87,13 @@
             if (has_capability('mod/lesson:manage', $context)) {
                 $grade_value = $lesson->grade;
             } else {
-                // it's a student, show their mean or maximum grade
-                if ($lesson->usemaxgrade) {
-                    $grade = get_record_sql("SELECT MAX(grade) as grade FROM {$CFG->prefix}lesson_grades 
-                            WHERE lessonid = $lesson->id AND userid = $USER->id GROUP BY userid");
-                } else {
-                    $grade = get_record_sql("SELECT AVG(grade) as grade FROM {$CFG->prefix}lesson_grades 
-                            WHERE lessonid = $lesson->id AND userid = $USER->id GROUP BY userid");
-                }
-                if ($grade) {
+                // it's a student, show their grade
+                $grade_value = 0;
+                if ($return = lesson_grades($lesson->id)) {
                     // grades are stored as percentages
-                    $grade_value = number_format($grade->grade * $lesson->grade / 100, 1);
-                } else {
-                    $grade_value = 0;
+                    if (isset($return->grades[$USER->id])) {
+                        $grade_value = $return->grades[$USER->id];
+                    }
                 }
             }
             $table->data[] = array ($lesson->section, $link, $grade_value, $due);
