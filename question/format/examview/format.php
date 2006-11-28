@@ -106,7 +106,7 @@ class qformat_examview extends qformat_default {
         }
         foreach($this->matching_questions as $match_group) {
             $question = $this->defaultquestion();
-            $htmltext = $this->s(addslashes($match_group->questiontext));
+            $htmltext = s(addslashes($match_group->questiontext));
             $question->questiontext = $htmltext;
             $question->name = $question->questiontext;
             $question->qtype = MATCH;
@@ -116,7 +116,7 @@ class qformat_examview extends qformat_default {
                 $htmltext = s(addslashes($value));
                 $question->subquestions[] = $htmltext;
 
-                $htmltext = $this->s(addslashes($match_group->subanswers[$key]));
+                $htmltext = s(addslashes($match_group->subanswers[$key]));
                 $question->subanswers[] = $htmltext;
             }
             $questions[] = $question;
@@ -160,7 +160,12 @@ class qformat_examview extends qformat_default {
         
         $type = trim($qrec['@']['type']);
         $question = $this->defaultquestion();
-        $question->qtype = $this->qtypes[$type];
+        if (array_key_exists($type, $this->qtypes)) {
+            $question->qtype = $this->qtypes[$type];
+        }
+        else {
+            $question->qtype = null;
+        }
         $question->single = 1;
         // Only one answer is allowed
         $htmltext = $this->unxmlise($qrec['#']['text'][0]['#']);
