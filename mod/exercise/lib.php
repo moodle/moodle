@@ -14,20 +14,20 @@ $EXERCISE_TYPE = array (0 => get_string("notgraded", "exercise"),
                           3 => get_string("criterion", "exercise"),
                           4 => get_string("rubric", "exercise") );
 
-$EXERCISE_SCALES = array( 
+$EXERCISE_SCALES = array(
                     0 => array( 'name' => get_string("scaleyes", "exercise"), 'type' => 'radio', 'size' => 2, 'start' => get_string("yes"), 'end' => get_string("no")),
                     1 => array( 'name' => get_string("scalepresent", "exercise"), 'type' => 'radio', 'size' => 2, 'start' => get_string("present", "exercise"), 'end' => get_string("absent", "exercise")),
-                    2 => array( 'name' => get_string("scalecorrect", "exercise"), 'type' => 'radio', 'size' => 2, 'start' => get_string("correct", "exercise"), 'end' => get_string("incorrect", "exercise")), 
-                    3 => array( 'name' => get_string("scalegood3", "exercise"), 'type' => 'radio', 'size' => 3, 'start' => get_string("good", "exercise"), 'end' => get_string("poor", "exercise")), 
+                    2 => array( 'name' => get_string("scalecorrect", "exercise"), 'type' => 'radio', 'size' => 2, 'start' => get_string("correct", "exercise"), 'end' => get_string("incorrect", "exercise")),
+                    3 => array( 'name' => get_string("scalegood3", "exercise"), 'type' => 'radio', 'size' => 3, 'start' => get_string("good", "exercise"), 'end' => get_string("poor", "exercise")),
                     4 => array( 'name' => get_string("scaleexcellent4", "exercise"), 'type' => 'radio', 'size' => 4, 'start' => get_string("excellent", "exercise"), 'end' => get_string("verypoor", "exercise")),
                     5 => array( 'name' => get_string("scaleexcellent5", "exercise"), 'type' => 'radio', 'size' => 5, 'start' => get_string("excellent", "exercise"), 'end' => get_string("verypoor", "exercise")),
                     6 => array( 'name' => get_string("scaleexcellent7", "exercise"), 'type' => 'radio', 'size' => 7, 'start' => get_string("excellent", "exercise"), 'end' => get_string("verypoor", "exercise")),
                     7 => array( 'name' => get_string("scale10", "exercise"), 'type' => 'selection', 'size' => 10),
                     8 => array( 'name' => get_string("scale20", "exercise"), 'type' => 'selection', 'size' => 20),
-                    9 => array( 'name' => get_string("scale100", "exercise"), 'type' => 'selection', 'size' => 100)); 
+                    9 => array( 'name' => get_string("scale100", "exercise"), 'type' => 'selection', 'size' => 100));
 
-$EXERCISE_EWEIGHTS = array(  0 => -4.0, 1 => -2.0, 2 => -1.5, 3 => -1.0, 4 => -0.75, 5 => -0.5,  6 => -0.25, 
-                             7 => 0.0, 8 => 0.25, 9 => 0.5, 10 => 0.75, 11=> 1.0, 12 => 1.5, 13=> 2.0, 14 => 4.0); 
+$EXERCISE_EWEIGHTS = array(  0 => -4.0, 1 => -2.0, 2 => -1.5, 3 => -1.0, 4 => -0.75, 5 => -0.5,  6 => -0.25,
+                             7 => 0.0, 8 => 0.25, 9 => 0.5, 10 => 0.75, 11=> 1.0, 12 => 1.5, 13=> 2.0, 14 => 4.0);
 
 $EXERCISE_ASSESSMENT_COMPS = array (
                           0 => array('name' => get_string("verylax", "exercise"), 'value' => 1),
@@ -37,29 +37,25 @@ $EXERCISE_ASSESSMENT_COMPS = array (
                           4 => array('name' => get_string("verystrict", "exercise"), 'value' => 0.2) );
 
 /*** Standard Moodle functions ******************
-function exercise_add_instance($exercise) 
+function exercise_add_instance($exercise)
 function exercise_choose_from_menu ($options, $name, $selected="", $nothing="choose", $script="", $nothingvalue="0", $return=false) {
-function exercise_cron () 
-function exercise_delete_instance($id) 
-function exercise_grades($exerciseid) 
-function exercise_print_recent_activity(&$logs, $isteacher=false) 
-function exercise_update_instance($exercise) 
-function exercise_user_outline($course, $user, $mod, $exercise) 
-function exercise_user_complete($course, $user, $mod, $exercise) 
+function exercise_cron ()
+function exercise_delete_instance($id)
+function exercise_grades($exerciseid)
+function exercise_print_recent_activity(&$logs, $isteacher=false)
+function exercise_update_instance($exercise)
+function exercise_user_outline($course, $user, $mod, $exercise)
+function exercise_user_complete($course, $user, $mod, $exercise)
 **********************************************/
 
 /*******************************************************************/
 function exercise_add_instance($exercise) {
-// Given an object containing all the necessary data, 
-// (defined by the form in mod.html) this function 
-// will create a new instance and return the id number 
+// Given an object containing all the necessary data,
+// (defined by the form in mod.html) this function
+// will create a new instance and return the id number
 // of the new instance.
 
     $exercise->timemodified = time();
-    
-    $exercise->deadline = make_timestamp($exercise->deadlineyear, 
-            $exercise->deadlinemonth, $exercise->deadlineday, $exercise->deadlinehour, 
-            $exercise->deadlineminute);
 
     // encode password if necessary
     if (!empty($exercise->password)) {
@@ -94,7 +90,7 @@ function exercise_add_instance($exercise) {
 function exercise_choose_from_menu ($options, $name, $selected="", $nothing="choose", $script="", $nothingvalue="0", $return=false) {
 /// Given an array of value, creates a popup menu to be part of a form
 /// $options["value"]["label"]
-    
+
     if ($nothing == "choose") {
         $nothing = get_string("choose")."...";
     }
@@ -126,7 +122,7 @@ function exercise_choose_from_menu ($options, $name, $selected="", $nothing="cho
             //     $output .= ">$value</option>\n";
             //  }
             $output .= ">$label</option>\n";
-            
+
         }
     }
     $output .= "</select>\n";
@@ -136,7 +132,7 @@ function exercise_choose_from_menu ($options, $name, $selected="", $nothing="cho
     } else {
         echo $output;
     }
-}   
+}
 
 
 /*******************************************************************/
@@ -188,15 +184,15 @@ function exercise_cron() {
             if (! isstudent($course->id, $assessmentowner->id) and !isteacher($course->id, $assessmentowner->id)) {
                 continue;  // Not an active participant
             }
-    
+
             // if the submission belongs to a teacher it's a student assessment. No need to email anything.
-            if (isteacher($course->id, $submissionowner->id)) { 
+            if (isteacher($course->id, $submissionowner->id)) {
                 continue;
             }
 
             $strexercises = get_string("modulenameplural", "exercise");
             $strexercise  = get_string("modulename", "exercise");
-    
+
             // it's an assessment, tell the submission owner
             $USER->lang = $submissionowner->lang;
             $sendto = $submissionowner;
@@ -204,7 +200,7 @@ function exercise_cron() {
             $msg = get_string("mail1", "exercise", $submission->title).' '.fullname($assessmentowner).".\n";
             // "The comments and grade can be seen in the exercise assignment '$exercise->name'
             $msg .= get_string("mail2", "exercise", format_string($exercise->name,true))."\n\n";
-    
+
             $postsubject = "$course->shortname: $strexercises: ".format_string($exercise->name,true);
             $posttext  = "$course->shortname -> $strexercises -> ".format_string($exercise->name,true)."\n";
             $posttext .= "---------------------------------------------------------------------\n";
@@ -225,11 +221,11 @@ function exercise_cron() {
             } else {
               $posthtml = "";
             }
-    
+
             if (!$teacher = get_teacher($course->id)) {
                 echo "Error: can not find teacher for course $course->id!\n";
             }
-                
+
             if (! email_to_user($sendto, $teacher, $postsubject, $posttext, $posthtml)) {
                 echo "Error: exercise cron: Could not send out mail for id $submission->id to user $sendto->id ($sendto->email)\n";
             }
@@ -241,14 +237,14 @@ function exercise_cron() {
 
 /*******************************************************************/
 function exercise_delete_instance($id) {
-// Given an ID of an instance of this module, 
-// this function will permanently delete the instance 
-// and any data that depends on it.  
+// Given an ID of an instance of this module,
+// this function will permanently delete the instance
+// and any data that depends on it.
 
     if (! $exercise = get_record("exercise", "id", "$id")) {
         return false;
     }
-    
+
     // delete all the associated records in the exercise tables, start positive...
     $result = true;
 
@@ -286,11 +282,11 @@ function exercise_grades($exerciseid) {
     if (!$exercise = get_record("exercise", "id", $exerciseid)) {
         error("Exercise record not found");
     }
-    
+
     if (! $course = get_record("course", "id", $exercise->course)) {
         error("Course is misconfigured");
     }
-    
+
     if (!$return->maxgrade = ($exercise->grade + $exercise->gradinggrade)) {
         return NULL;
     }
@@ -302,7 +298,7 @@ function exercise_grades($exerciseid) {
             }
         }
     }
-    
+
     else { // use mean values
         if ($meangrades = exercise_get_mean_submission_grades($exercise)) {
             foreach ($meangrades as $grade) {
@@ -365,7 +361,7 @@ function exercise_print_recent_activity($course, $isteacher, $timestart) {
         }
     }
 
-    // have a look for new assessment gradings for this user 
+    // have a look for new assessment gradings for this user
     $gradecontent = false;
     if ($logs = exercise_get_grade_logs($course, $timestart)) {
         // got some, see if any belong to a visible module
@@ -395,7 +391,7 @@ function exercise_print_recent_activity($course, $isteacher, $timestart) {
         }
     }
 
-    // have a look for new assessments for this user 
+    // have a look for new assessments for this user
     $assesscontent = false;
     if (!$isteacher) { // teachers only need to see submissions
         if ($logs = exercise_get_assess_logs($course, $timestart)) {
@@ -440,15 +436,15 @@ function exercise_refresh_events($courseid = 0) {
 
     if ($courseid == 0) {
         if (! $exercises = get_records("exercise")) {
-            return true;        
-        }   
+            return true;
+        }
     } else {
         if (! $exercises = get_records("exercise", "course", $courseid)) {
             return true;
         }
     }
     $moduleid = get_field('modules', 'id', 'name', 'exercise');
-    
+
     foreach ($exercises as $exercise) {
         $event = NULL;
         $event->name        = addslashes($exercise->name);
@@ -457,35 +453,31 @@ function exercise_refresh_events($courseid = 0) {
 
         if ($event->id = get_field('event', 'id', 'modulename', 'exercise', 'instance', $exercise->id)) {
             update_event($event);
-    
+
         } else {
             $event->courseid    = $exercise->course;
             $event->groupid     = 0;
             $event->userid      = 0;
             $event->modulename  = 'exercise';
-            $event->instance    = $exercise->id; 
+            $event->instance    = $exercise->id;
             $event->eventtype   = 'deadline';
             $event->timeduration = 0;
-            $event->visible     = get_field('course_modules', 'visible', 'module', $moduleid, 'instance', $exercise->id); 
+            $event->visible     = get_field('course_modules', 'visible', 'module', $moduleid, 'instance', $exercise->id);
             add_event($event);
         }
 
     }
     return true;
-}   
+}
 
 
 /*******************************************************************/
 function exercise_update_instance($exercise) {
-// Given an object containing all the necessary data, 
-// (defined by the form in mod.html) this function 
+// Given an object containing all the necessary data,
+// (defined by the form in mod.html) this function
 // will update an existing instance with new data.
 
     $exercise->timemodified = time();
-
-    $exercise->deadline = make_timestamp($exercise->deadlineyear, 
-            $exercise->deadlinemonth, $exercise->deadlineday, $exercise->deadlinehour, 
-            $exercise->deadlineminute);
 
     // encode password if necessary
     if (!empty($exercise->password)) {
@@ -530,13 +522,13 @@ function exercise_user_complete($course, $user, $mod, $exercise) {
             if ($assessments = exercise_get_assessments($submission)) {
                 // should only be one but we'll loop anyway
                 foreach ($assessments as $assessment) {
-                    $table->data[] = array(exercise_print_submission_title($exercise, $submission), 
-                            userdate($submission->timecreated), userdate($assessment->timecreated), 
+                    $table->data[] = array(exercise_print_submission_title($exercise, $submission),
+                            userdate($submission->timecreated), userdate($assessment->timecreated),
                             $assessment->grade * $exercise->grade / 100.0);
                 }
             } else {
                 // submission not yet assessed (by teacher)
-                $table->data[] = array(exercise_print_submission_title($exercise, $submission), 
+                $table->data[] = array(exercise_print_submission_title($exercise, $submission),
                         userdate($submission->timecreated), get_string("notassessedyet", "exercise"), 0);
             }
         }
@@ -620,11 +612,11 @@ function exercise_get_assess_logs($course, $timestart) {
     $timethen = time() - $CFG->maxeditingtime;
     return get_records_sql("SELECT l.time, l.url, u.firstname, u.lastname, a.exerciseid, e.name
                              FROM {$CFG->prefix}log l,
-                                {$CFG->prefix}exercise e, 
-                                {$CFG->prefix}exercise_submissions s, 
-                                {$CFG->prefix}exercise_assessments a, 
+                                {$CFG->prefix}exercise e,
+                                {$CFG->prefix}exercise_submissions s,
+                                {$CFG->prefix}exercise_assessments a,
                                 {$CFG->prefix}user u
-                            WHERE l.time > $timestart AND l.time < $timethen 
+                            WHERE l.time > $timestart AND l.time < $timethen
                                 AND l.course = $course->id AND l.module = 'exercise'    AND l.action = 'assess'
                                 AND a.id = l.info AND s.id = a.submissionid AND s.userid = $USER->id
                                 AND u.id = a.userid AND e.id = a.exerciseid");
@@ -633,12 +625,12 @@ function exercise_get_assess_logs($course, $timestart) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 function exercise_get_assessments($submission) {
-    // Return all assessments for this submission provided they are after the editing time, 
+    // Return all assessments for this submission provided they are after the editing time,
     // ordered oldest first, newest last
     global $CFG;
 
     $timenow = time();
-    return get_records_select("exercise_assessments", "(submissionid = $submission->id) AND 
+    return get_records_select("exercise_assessments", "(submissionid = $submission->id) AND
         (timecreated < $timenow - $CFG->maxeditingtime)", "timecreated ASC");
 }
 
@@ -647,9 +639,9 @@ function exercise_get_assessments($submission) {
 function exercise_get_best_grade($submission) {
 // Returns the best grade of students' submission (there may, occassionally be more than one assessment)
     global $CFG;
-    
-    return get_record_sql("SELECT MAX(a.grade) AS grade FROM 
-                        {$CFG->prefix}exercise_assessments a 
+
+    return get_record_sql("SELECT MAX(a.grade) AS grade FROM
+                        {$CFG->prefix}exercise_assessments a
                             WHERE a.submissionid = $submission->id
                               GROUP BY a.submissionid");
 }
@@ -662,15 +654,15 @@ function exercise_get_grade_logs($course, $timestart) {
     if (empty($USER->id)) {
         return false;
     }
-    
+
     $timethen = time() - $CFG->maxeditingtime;
     return get_records_sql("SELECT l.time, l.url, u.firstname, u.lastname, a.exerciseid, e.name
                              FROM {$CFG->prefix}log l,
-                                {$CFG->prefix}exercise e, 
-                                {$CFG->prefix}exercise_submissions s, 
-                                {$CFG->prefix}exercise_assessments a, 
+                                {$CFG->prefix}exercise e,
+                                {$CFG->prefix}exercise_submissions s,
+                                {$CFG->prefix}exercise_assessments a,
                                 {$CFG->prefix}user u
-                            WHERE l.time > $timestart AND l.time < $timethen 
+                            WHERE l.time > $timestart AND l.time < $timethen
                                 AND l.course = $course->id AND l.module = 'exercise'    AND l.action = 'grade'
                                 AND a.id = l.info AND s.id = a.submissionid AND a.userid = $USER->id
                                 AND u.id = s.userid AND e.id = a.exerciseid");
@@ -682,12 +674,12 @@ function exercise_get_mean_submission_grades($exercise) {
 // Returns the mean grades of students' submissions
 // ignores hot assessments
     global $CFG;
-    
+
     $timenow = time();
-    $grades = get_records_sql("SELECT DISTINCT u.userid, AVG(a.grade) AS grade FROM 
-                        {$CFG->prefix}exercise_submissions s, 
+    $grades = get_records_sql("SELECT DISTINCT u.userid, AVG(a.grade) AS grade FROM
+                        {$CFG->prefix}exercise_submissions s,
                         {$CFG->prefix}exercise_assessments a
-                            WHERE 
+                            WHERE
                               AND s.exerciseid = $exercise->id
                               AND s.late = 0
                               AND a.submissionid = s.id
@@ -701,16 +693,16 @@ function exercise_get_mean_submission_grades($exercise) {
 function exercise_get_submit_logs($course, $timestart) {
     // get the "submit" entries and add the first and last names...
     global $CFG, $USER;
-    
+
     $timethen = time() - $CFG->maxeditingtime;
     return get_records_sql("SELECT l.time, l.url, u.firstname, u.lastname, l.info as exerciseid, e.name
                              FROM {$CFG->prefix}log l,
-                                {$CFG->prefix}exercise e, 
+                                {$CFG->prefix}exercise e,
                                 {$CFG->prefix}user u
-                            WHERE l.time > $timestart AND l.time < $timethen 
+                            WHERE l.time > $timestart AND l.time < $timethen
                                 AND l.course = $course->id AND l.module = 'exercise'
                                 AND l.action = 'submit'
-                                AND e.id = l.info 
+                                AND e.id = l.info
                                 AND u.id = l.userid");
 }
 
@@ -719,7 +711,7 @@ function exercise_get_submit_logs($course, $timestart) {
 function exercise_get_teacher_submission_assessments($exercise) {
 // Return all assessments on the teacher submissions, order by youngest first, oldest last
     global $CFG;
-    
+
     return get_records_sql("SELECT a.* FROM {$CFG->prefix}exercise_submissions s, {$CFG->prefix}exercise_assessments a
                             WHERE s.isexercise = 1
                               AND s.exerciseid = $exercise->id
@@ -734,8 +726,8 @@ function exercise_get_unmailed_assessments($cutofftime) {
     global $CFG;
     return get_records_sql("SELECT a.*, e.course, e.name
                               FROM {$CFG->prefix}exercise_assessments a, {$CFG->prefix}exercise e
-                             WHERE a.mailed = 0 
-                               AND a.timecreated < $cutofftime 
+                             WHERE a.mailed = 0
+                               AND a.timecreated < $cutofftime
                                AND e.id = a.exerciseid");
 }
 
@@ -759,7 +751,7 @@ function exercise_get_user_submissions($exercise, $user) {
 ///////////////////////////////////////////////////////////////////////////////////////////////
 function exercise_print_submission_title($exercise, $submission) {
     global $CFG;
-    
+
     if (!$submission->timecreated) { // a "no submission"
         return $submission->title;
         }
