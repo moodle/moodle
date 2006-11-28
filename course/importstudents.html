@@ -5,13 +5,13 @@
 <input type="hidden" name="id" value="<?php echo $id?>">
   <table align="center" border="0" cellpadding="5" cellspacing="0">
     <tr>
-      <th valign="top">
-          <?php echo count($alreadycourses) . " ". $stralreadycourses ?>
-      </th>
-      <th></th>
-      <th valign="top">
-          <?php echo $numcourses . " " . $strpotentialcourses ?>
-      </th>
+      <td valign="top">
+          <label for="removeselect"><?php echo count($alreadycourses) . " ". $stralreadycourses ?></label>
+      </td>
+      <td></td>
+      <td valign="top">
+          <label for="addselect"><?php echo $numcourses . " " . $strpotentialcourses ?></label>
+      </td>
     </tr>
     <tr>
       <td valign="top">

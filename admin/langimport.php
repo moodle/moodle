@@ -244,11 +244,11 @@
             }
             
             print_simple_box_start('center','60%');
-            echo '<table width="100%"><tr><th align="center">';
-            echo get_string('installedlangs','admin');
-            echo '</th><th align="center">';
-            echo get_string('availablelangs','admin');
-            echo '</th></tr>';
+            echo '<table width="100%"><tr><td align="center">';
+            echo '<label for="uninstalllang">'.get_string('installedlangs','admin').'</label>';
+            echo '</td><td align="center">';
+            echo '<label for="pack">'.get_string('availablelangs','admin').'</label>';
+            echo '</td></tr>';
             echo '<tr><td align="center" valign="top">';
             echo '<form name="uninstallform" action="langimport.php?mode=4" method="POST">';
             echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
@@ -257,7 +257,7 @@
 
             /// display installed langs here
 
-            echo '<select name="uninstalllang" size="15">';
+            echo '<select name="uninstalllang" id="uninstalllang" size="15">';
             foreach ($installedlangs as $clang =>$ilang){
                 echo '<option value="'.$clang.'">'.$ilang.'</option>';
             }
@@ -301,7 +301,7 @@
             echo '<form name="installform" method="POST" action="langimport.php?mode=2">';
             echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
             if ($remote) {
-                echo '<select name="pack" size="15">';
+                echo '<select name="pack" id="pack" size="15">';
             }
 
             foreach ($availablelangs as $alang) {

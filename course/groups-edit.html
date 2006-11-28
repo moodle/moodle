@@ -88,9 +88,9 @@ function groupWindow(selectgroup) {
 
   <table cellspacing="0" cellpadding="10" align="center" class="generaltable generalbox">
     <tr>
-      <th width="33%" align="center" class="header"><?php p($strmemberincourse) ?></td>
-      <th width="33%" align="center" class="header"><?php p($strgroups) ?></td>
-      <th width="33%" align="center" class="header"><?php p($strgroupmembersselected) ?></td>
+      <td width="33%" align="center" class="header"><label for="nonmembers"><?php p($strmemberincourse) ?></label></td>
+      <td width="33%" align="center" class="header"><label for="groups"><?php p($strgroups) ?></label></td>
+      <td width="33%" align="center" class="header"><label for="members"><?php p($strgroupmembersselected) ?></label></td>
     </tr>
     <tr align="center" valign="top">
       <td class="generalboxcontent"><p>
@@ -100,7 +100,7 @@ function groupWindow(selectgroup) {
           <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>">
           <input type="hidden" name="roleid" value="<?php p($roleid) ?>">
           
-          <select name="nonmembers[]" size="15" multiple="multiple">
+          <select name="nonmembers[]" size="15" id="nonmembers" multiple="multiple">
             <?php 
                 if (!empty($nonmembers)) {
                     foreach ($nonmembers as $id => $nonmembername) {
@@ -134,7 +134,7 @@ function groupWindow(selectgroup) {
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
           <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>">
           <input type="hidden" name="roleid" value="<?php p($roleid) ?>">
-          <select name="groups" size="15" onChange="updateMembers(this)">
+          <select name="groups" size="15" id="groups" onChange="updateMembers(this)">
             <?php 
                 if (!empty($listgroups)) {
                     foreach ($listgroups as $id => $listgroup) {
@@ -169,7 +169,7 @@ function groupWindow(selectgroup) {
           <input type="hidden" name="groupid" value="<?php p($selectedgroup) ?>" />
           <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>">
           <input type="hidden" name="roleid" value="<?php p($roleid) ?>">
-          <select name="members[]" size="15" multiple="multiple">
+          <select name="members[]" size="15" id="members" multiple="multiple">
             <?php 
                 if (!empty($members)) {
                     foreach ($members as $id => $membername) {
