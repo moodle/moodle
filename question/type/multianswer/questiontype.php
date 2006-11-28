@@ -189,7 +189,7 @@ class embedded_cloze_qtype extends default_questiontype {
     }
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
-        global $QTYPES;
+        global $QTYPES, $CFG, $USER;
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
         $disabled = empty($options->readonly) ? '' : 'disabled="disabled"';
         $formatoptions = new stdClass;
@@ -292,6 +292,9 @@ class embedded_cloze_qtype extends default_questiontype {
                 case 'numerical':
                     echo " <input $style $readonly $popup name=\"$inputname\"
                             type=\"text\" value=\"".s($response)."\" size=\"12\" /> ";
+                    if (!empty($feedback) && $USER->screenreader) {
+                        echo "<img src=\"$CFG->pixpath/i/feedback.gif\" alt=\"$feedback\" />";
+                    }
                     break;
                 case 'multichoice':
                     $outputoptions = '<option></option>'; // Default empty option
@@ -303,6 +306,9 @@ class embedded_cloze_qtype extends default_questiontype {
                    echo "<select $popup $disabled $style name=\"$inputname\">";
                    echo $outputoptions;
                    echo '</select>';
+                   if (!empty($feedback) && $USER->screenreader) {
+                        echo "<img src=\"$CFG->pixpath/i/feedback.gif\" alt=\"$feedback\" />";
+                   }
                    break;
                default:
                    error("Unable to recognize questiontype ($wrapped->qtype) of
