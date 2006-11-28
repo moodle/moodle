@@ -1,49 +1,4 @@
 <?php // $Id$
-/*
-**
-** Examview 4.0 XML format into Moodle 1.4.3
-** Author: Dan McCuaig ( dmccuaig@wvc.edu )
-**
-** @TODO:
-**   Take care of odd unicode character mapping (ex: curly quotes)
-**   Image and table support
-**   Formatting support
-**   Support of rejoinders
-**
-** $Log$
-** Revision 1.2.2.4  2006/11/20 12:57:04  thepurpleblob
-** Various improvements to Examview import.
-** Fixes MDL-7087 and MDL-7349. Fixes Examview part in MDL-7184
-**
-** Revision 1.2.2.3  2006/10/30 16:19:32  thepurpleblob
-** Whoops - left some debugging stuff in place.
-**
-** Revision 1.2.2.2  2006/10/30 16:13:27  thepurpleblob
-** Removed loads of tabs and fixed a notice.
-**
-** Revision 1.2.2.1  2006/05/04 11:15:11  thepurpleblob
-** htmlentities() replaced by s()
-**
-** Revision 1.2  2006/03/01 07:36:08  gustav_delius
-** Removing some more references to quiz from import/export code
-**
-** Revision 1.1  2006/02/24 15:14:04  thepurpleblob
-** Moving quiz import/export files to new question area.
-**
-** Revision 1.3  2006/02/13 16:17:22  thepurpleblob
-** Now used defaultquestion() method. Bug #4752
-**
-** Revision 1.2  2005/05/31 15:19:00  thepurpleblob
-** merged from STABLE
-**
-** Revision 1.1.2.1  2005/05/31 15:17:20  thepurpleblob
-** Took out dos line endings
-**
-** Revision 1.1  2005/05/16 08:12:40  thepurpleblob
-** Added support for Examview import.
-**
-**
-*/
 
 // Based on default.php, included by ../import.php
 
@@ -152,7 +107,7 @@ class qformat_examview extends qformat_default {
         }
         foreach($this->matching_questions as $match_group) {
             $question = $this->defaultquestion();
-            $htmltext = $this->s(addslashes($match_group->questiontext));
+            $htmltext = s(addslashes($match_group->questiontext));
             $question->questiontext = $htmltext;
             $question->name = $question->questiontext;
             $question->qtype = MATCH;
@@ -162,7 +117,7 @@ class qformat_examview extends qformat_default {
                 $htmltext = s(addslashes($value));
                 $question->subquestions[] = $htmltext;
 
-                $htmltext = $this->s(addslashes($match_group->subanswers[$key]));
+                $htmltext = s(addslashes($match_group->subanswers[$key]));
                 $question->subanswers[] = $htmltext;
             }
             $questions[] = $question;
@@ -208,7 +163,12 @@ class qformat_examview extends qformat_default {
         
         $type = trim($qrec['@']['type']);
         $question = $this->defaultquestion();
-        $question->qtype = $this->qtypes[$type];
+        if (array_key_exists($type, $this->qtypes)) {
+            $question->qtype = $this->qtypes[$type];
+        }
+        else {
+            $question->qtype = null;
+        }
         $question->single = 1;
         // Only one answer is allowed
         $htmltext = $this->unxmlise($qrec['#']['text'][0]['#']);
