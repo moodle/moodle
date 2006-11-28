@@ -850,6 +850,8 @@ function validate_' . $this->_attributes['id'] . '(frm) {
                 $elNames = array($group->getElementName($el->getName()));
             } elseif (is_a($el, 'HTML_QuickForm_header')) {
                 return null;
+            } elseif (method_exists($el, 'getPrivateName')) {
+                return array($el->getPrivateName());
             } else {
                 $elNames = array($el->getName());
             }

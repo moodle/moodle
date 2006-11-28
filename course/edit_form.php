@@ -214,9 +214,10 @@ class course_edit_form extends moodleform {
         $enroldatestartgrp = array();
         $enroldatestartgrp[] = &MoodleQuickForm::createElement('date_selector', 'enrolstartdate');
         $enroldatestartgrp[] = &MoodleQuickForm::createElement('checkbox', 'enrolstartdisabled', null, get_string('disable'));
-        $mform->addGroup($enroldatestartgrp, '', get_string('enrolstartdate'), ' ', false);
+        $mform->addGroup($enroldatestartgrp, 'enrolstartdategrp', get_string('enrolstartdate'), ' ', false);
         $mform->setDefault('enrolstartdate', 0);
         $mform->setDefault('enrolstartdisabled', 1);
+        $mform->disabledIf('enrolstartdategrp', 'enrolstartdisabled', 'checked');
 
         $enroldateendgrp = array();
         $enroldateendgrp[] = &MoodleQuickForm::createElement('date_selector', 'enrolenddate');
@@ -224,6 +225,7 @@ class course_edit_form extends moodleform {
         $mform->addGroup($enroldateendgrp, 'enroldateendgrp', get_string('enrolenddate'), ' ', false);
         $mform->setDefault('enrolenddate', 0);
         $mform->setDefault('enrolenddisabled', 1);
+        $mform->disabledIf('enroldateendgrp', 'enrolenddisabled', 'checked');
 
         $periodmenu=array();
         $periodmenu[0] = get_string('unlimited');
@@ -331,16 +333,15 @@ class course_edit_form extends moodleform {
             $options = array();
             $options['0'] = get_string('no');
             $options['1'] = get_string('yes');
-            $mform->addElement('select', 'restrictmodules', get_string('restrictmodules'), $options,
-                    array('onChange'=>"document.getElementById('id_allowedmods').disabled=".
-                                "((this.selectedIndex==0)?true:false);"));
+            $mform->addElement('select', 'restrictmodules', get_string('restrictmodules'), $options);
             $mods = array(0=>get_string('allownone'));
             $mods += get_records_menu('modules', '','','','id, name');
 
 
-            $mform->addElement('select', 'allowedmods', get_string('to'),$mods,
-                            array('multiple'=>'multiple', 'size'=>'10', 'id'=>'allowedmods'));
-        }else {
+            $mform->addElement('select', 'allowedmods', get_string('to'), $mods,
+                            array('multiple'=>'multiple', 'size'=>'10'));
+            $mform->disabledIf('allowedmods', 'restrictmodules', 'eq', 0);
+        } else {
             $mform->addElement('hidden', 'restrictmodules', null);
         }
         if ($CFG->restrictmodulesfor == 'all') {
@@ -352,8 +353,7 @@ class course_edit_form extends moodleform {
         $mform->setType('restrictmodules', PARAM_INT);
 
 //--------------------------------------------------------------------------------
-        $mform->addElement('submit', 'submit', get_string('savechanges'));
-
+        $mform->addElement('submit', 'submitbutton', get_string('savechanges'));
 //--------------------------------------------------------------------------------
         $mform->addElement('hidden', 'id', null);
         $mform->setType('id', PARAM_INT);
@@ -377,17 +377,7 @@ class course_edit_form extends moodleform {
 
 
     }
-    function definition_after_data(){
-       $mform=&$this->_form;
-       if ($mform->elementExists('allowedmods')){
-           if ($mform->exportValue('restrictmodules')!=1){
-               $allowedmods=&$mform->getElement('allowedmods');
-               $allowedmods->
-                       updateAttributes(array('disabled'
-                        => 'disabled')) ;
-           }
-       }
-   }
+
 
 /// perform some extra moodle validation
     function validation($data){
