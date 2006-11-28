@@ -366,7 +366,7 @@ class qformat_webct extends qformat_default {
                             case SHORTANSWER:
                                 if ($maxfraction != 1) {
                                     $maxfraction = $maxfraction * 100;
-                                    $errors[] = "'$question->name': ".get_string("wronggrade", "quiz", $nLineCounter).get_string("fractionsnomax", "quiz", $maxfraction);
+                                    $errors[] = "'$question->name': ".get_string("wronggrade", "quiz", $nLineCounter).' '.get_string("fractionsnomax", "quiz", $maxfraction);
                                     $QuestionOK = FALSE;
                                 }
                                 break;
@@ -375,7 +375,7 @@ class qformat_webct extends qformat_default {
                                 if ($question->single) {
                                     if ($maxfraction != 1) {
                                         $maxfraction = $maxfraction * 100;
-                                        $errors[] = "'$question->name': ".get_string("wronggrade", "quiz", $nLineCounter).get_string("fractionsnomax", "quiz", $maxfraction);
+                                        $errors[] = "'$question->name': ".get_string("wronggrade", "quiz", $nLineCounter).' '.get_string("fractionsnomax", "quiz", $maxfraction);
                                         $QuestionOK = FALSE;
                                     }
                                 } else {
@@ -383,7 +383,7 @@ class qformat_webct extends qformat_default {
                                     if ($totalfraction != 1) {
                                 echo "<p>$totalfraction</p>";
                                         $totalfraction = $totalfraction * 100;
-                                        $errors[] = "'$question->name': ".get_string("wronggrade", "quiz", $nLineCounter).get_string("fractionsaddwrong", "quiz", $totalfraction);
+                                        $errors[] = "'$question->name': ".get_string("wronggrade", "quiz", $nLineCounter).' '.get_string("fractionsaddwrong", "quiz", $totalfraction);
                                         $QuestionOK = FALSE;
                                     }
                                 }

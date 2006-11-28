@@ -337,6 +337,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
     }
     echo ' onchange="document.showbreaks.submit(); return true;" />';
     print_string('reordertool', 'quiz');
+    echo ' ';
     helpbutton('reorderingtool', get_string('reorderingtool', 'quiz'), 'quiz');
     
     echo '<div align="center"><input type="submit" name="repaginate" value="'. get_string('go') .'" /></div>';
