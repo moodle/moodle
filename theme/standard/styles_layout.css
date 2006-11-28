@@ -350,6 +350,7 @@ form.mform div.felement,  form.mform fieldset.felement{
   margin: 5px 0 0 10px;
   padding: 0;
   text-align:left;
+  width: 65%;
 }
 
 form.mform div.fdescription {
