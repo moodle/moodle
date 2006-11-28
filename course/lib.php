@@ -1158,12 +1158,19 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     }
 
                 } else { // Normal activity
+                
+                    if ($USER->screenreader) {
+                        $typestring = '('.get_string('modulename',$mod->modname).') ';
+                    } else {
+                        $typestring = '';
+                    }
+                
                     $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
                     echo '<img src="'.$icon.'"'.
                          ' class="activityicon" alt="'.$mod->modfullname.'" />'.
                          ' <a title="'.$mod->modfullname.'" '.$linkcss.' '.$extra.
                          ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.
-                         $instancename.'</a>';
+                         $typestring.$instancename.'</a>';
                 }
                 if ($usetracking && $mod->modname == 'forum') {
                     $groupmode = groupmode($course, $mod);
