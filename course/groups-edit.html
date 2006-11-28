@@ -156,7 +156,8 @@ function groupWindow(selectgroup) {
           <input type="submit" name="groupsremove" value="<?php p($strgroupremove) ?>" />
         </p>
         <p>
-          <input name="newgroupname" type="text" size="10" />
+          <label for="groupadd" class="accesshide"><?php p($strgroupadd) ?></label>
+          <input name="newgroupname" id="groupadd" type="text" size="10" />
           <input type="submit" name="groupsadd" value="<?php p($strgroupadd) ?>" />
         </p>
         </form>
