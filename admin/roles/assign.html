@@ -6,18 +6,11 @@
 <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
 <input type="hidden" name="contextid" value="<?php p($contextid) ?>" />
 <input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
-  <table align="center" border="0" cellpadding="5" cellspacing="0">
-    <tr>
-      <th valign="top">
-          <?php print_string('existingusers', 'role', count($contextusers)); ?>
-      </th>
-      <th></th>
-      <th valign="top">
-          <?php print_string('potentialusers', 'role', $usercount); ?>
-      </th>
-    </tr>
+  <table summary="" align="center" border="0" cellpadding="5" cellspacing="0">
     <tr>
       <td valign="top">
+          <label for="removeselect"><?php print_string('existingusers', 'role', count($contextusers)); ?></label>
+          <br />
           <select name="removeselect[]" size="20" id="removeselect" multiple="multiple"
                   onfocus="document.assignform.add.disabled=true;
                            document.assignform.remove.disabled=false;
@@ -26,9 +19,9 @@
               foreach ($contextusers as $contextuser) {
                   $fullname = fullname($contextuser, true);
                   if ($contextuser->hidden) {
-                      $hidden=' ('.get_string('hiddenassign').') ';  
+                      $hidden=' ('.get_string('hiddenassign').') ';
                   } else {
-                      $hidden="";  
+                      $hidden="";
                   }
                   echo "<option value=\"$contextuser->id\">".$fullname.", ".$contextuser->email.$hidden."</option>\n";
               }
@@ -36,17 +29,21 @@
 
           </select></td>
       <td valign="top">
-        <input type="checkbox" name="hidden" value="1" />
-        <img src="<?php echo $CFG->pixpath; ?>/t/hide.gif" alt="<?php print_string('hiddenassign') ?>" class="hide-show-image" />
         <br />
-        <input name="add" type="submit" id="add" value="&larr;" />
-        <br />
-        <input name="remove" type="submit" id="remove" value="&rarr;" />
-        <br />
+        <label title="<?php print_string('hiddenassign') ?>">
+            <input type="checkbox" name="hidden" value="1" />
+            <img src="<?php echo $CFG->pixpath; ?>/t/hide.gif" alt="<?php print_string('hiddenassign') ?>" class="hide-show-image" />
+        </label>
+        <?php check_theme_arrows(); ?>
+        <p class="arrow_button">
+            <input name="add" id="add" type="submit" value="<?php echo '&nbsp;'.$THEME->larrow.' &nbsp; &nbsp; '.get_string('add'); ?>" title="<?php print_string('add'); ?>" />
+            <br />
+            <input name="remove" id="remove" type="submit" value="<?php echo '&nbsp; '.$THEME->rarrow.' &nbsp; &nbsp; '.get_string('remove'); ?>" title="<?php print_string('remove'); ?>" />
+        </p>
       </td>
       <td valign="top">
-     <label for="addselect"><?php print_string('potentialusers', 'role', $usercount); ?></label>
-     <br />
+          <label for="addselect"><?php print_string('potentialusers', 'role', $usercount); ?></label>
+          <br />
           <select name="addselect[]" size="20" id="addselect" multiple="multiple"
                   onfocus="document.assignform.add.disabled=false;
                            document.assignform.remove.disabled=true;
@@ -83,7 +80,8 @@
           ?>
          </select>
          <br />
-         <input type="text" name="searchtext" size="30" value="<?php p($searchtext, true) ?>"
+         <label for="searchtext" class="accesshide"><?php p($strsearch) ?></label>
+         <input type="text" name="searchtext" id="searchtext" size="30" value="<?php p($searchtext, true) ?>"
                   onfocus ="document.assignform.add.disabled=true;
                             document.assignform.remove.disabled=true;
                             document.assignform.removeselect.selectedIndex=-1;
@@ -93,10 +91,9 @@
                                     document.assignform.previoussearch.value=1;
                                     document.assignform.submit();
                                } " />
-         <input name="search" id="search" type="submit" value="<?php p($strsearch) ?>" />
          <?php
-              if (!empty($searchusers)) {
-                  echo '<input name="showall" id="showall" type="submit" value="'.$strshowall.'" />'."\n";
+              if (!empty($searchtext)) {
+                  echo '<br /><input name="showall" id="showall" type="submit" value="'.$strshowall.'" />'."\n";
               }
          ?>
        </td>

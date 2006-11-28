@@ -271,6 +271,16 @@ form.popupform {
   display: inline;
 }
 
+.arrow_button {
+  margin-top:3em;
+}
+
+.arrow_button input {
+  width:2.4em;
+  padding:0.3em;
+  overflow:hidden;
+}
+
 /*Accessibility: text 'seen' by screen readers but not visual users. Fixed for RTL languages, example Farsi. */
 .accesshide {
   position:absolute;
