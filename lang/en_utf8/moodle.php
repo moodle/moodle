@@ -583,6 +583,7 @@ $string['formattopicsajax'] = 'Topics format - AJAX';
 $string['formatweeks'] = 'Weekly format';
 $string['formatweekscss'] = 'Weekly format - CSS/No tables';
 $string['formatwiki'] = 'Wiki-like format';
+$string['framesetinfo'] = 'This frameset document contains:';
 $string['from'] = 'From';
 $string['frontpagecategorycombo'] = 'Combo list';
 $string['frontpagecategorynames'] = 'List of categories';

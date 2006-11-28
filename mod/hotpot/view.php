@@ -379,12 +379,25 @@
                     print $hp->html;
                 break;
                 default:
+                    $txtframesetinfo = get_string('framesetinfo');
+                    $txttoptitle     = get_string('navigation', 'hotpot');
+                    $txtmaintitle    = get_string('modulename', 'hotpot');
+
                     $rows = empty($CFG->resource_framesize) ? 85 : $CFG->resource_framesize;
+
+                    @header('Content-Type: text/html; charset=utf-8');
+                    print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Frameset//EN\" \"http://www.w3.org/TR/html4/frameset.dtd\">\n";
                     print "<html>\n";
+                    print "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />\n";
                     print "<head><title>$title</title></head>\n";
                     print "<frameset rows=$rows,*>\n";
-                    print "<frame src=\"view.php?id=$cm->id&framename=top\">\n";
-                    print "<frame src=\"view.php?id=$cm->id&framename=main\">\n";
+                    print "<frame title=\"$txttoptitle\" src=\"view.php?id=$cm->id&framename=top\">\n";
+                    print "<frame title=\"$txtmaintitle\" src=\"view.php?id=$cm->id&framename=main\">\n";
+                    print "<noframes>\n";
+                    print "<p>$txtframesetinfo</p>\n";
+                    print "<ul><li><a href=\"view.php?id=$cm->id&framename=top\">$txttoptitle</a></li>\n";
+                    print "<li><a href=\"view.php?id=$cm->id&framename=main\">$txtmaintitle</a></li></ul>\n";
+                    print "</noframes>\n";
                     print "</frameset>\n";
                     print "</html>\n";
                 break;
