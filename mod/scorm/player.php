@@ -71,7 +71,7 @@
     // TOC processing
     //
     $scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));   // Just to be safe
-    if (!file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'lib.php') {
+    if (!file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'lib.php')) {
         $scorm->version = 'scorm_12';
     }
     require_once($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'lib.php');
