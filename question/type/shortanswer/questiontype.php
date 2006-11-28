@@ -190,7 +190,9 @@ class question_shortanswer_qtype extends default_questiontype {
             if ($question->options->usecase) {
                 return strcmp($state->responses[''], $teststate->responses['']) == 0;
             } else {
-                return strcasecmp($state->responses[''], $teststate->responses['']) == 0;
+                $textlib = textlib_get_instance();
+                return strcmp($textlib->strtolower($state->responses['']),
+                        $textlib->strtolower($teststate->responses[''])) == 0;
             }
         }
         return false;
