@@ -7,6 +7,7 @@ $string['answersingleno'] = 'Multiple answers allowed';
 $string['answersingleyes'] = 'One answer only';
 $string['choiceno'] = 'Choice $a';
 $string['choices'] = 'Available choices';
+$string['clozeaid'] = 'Enter missing word';
 $string['editingmultichoice'] = 'Editing a Multiple Choice question';
 $string['feedback'] = 'Feedback';
 $string['fillouttwochoices'] = 'You must fill out at least two choices.  Choices left blank will not be used.';

@@ -189,6 +189,7 @@ class embedded_cloze_qtype extends default_questiontype {
     }
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
+        
         global $QTYPES, $CFG, $USER;
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
         $disabled = empty($options->readonly) ? '' : 'disabled="disabled"';
@@ -196,12 +197,18 @@ class embedded_cloze_qtype extends default_questiontype {
         $formatoptions->noclean = true;
         $formatoptions->para = false;
         $nameprefix = $question->name_prefix;
-
+        
+        // adding an icon with alt to warn user this is a fill in the gap question
+        // MDL-7497
+        if ($USER->screenreader) {
+            echo "<img src=\"$CFG->wwwroot/question/type/$question->qtype/icon.gif\" ".
+                "height=\"16\" width=\"16\" alt=\"".get_string('clozeaid','qtype_multichoice')."\" />  ";
+        }
         // For this question type, we better print the image on top:
         if ($image = get_question_image($question, $cmoptions->course)) {
             echo('<img class="qimage" src="' . $image . '" alt="" /><br />');
         }
-
+        
         $qtextremaining = format_text($question->questiontext,
                                       $question->questiontextformat,
                                       $formatoptions, $cmoptions->course);
@@ -213,6 +220,7 @@ class embedded_cloze_qtype extends default_questiontype {
 
         while (ereg('\{#([^[:space:]}]*)}', $qtextremaining, $regs)) {
             $qtextsplits = explode($regs[0], $qtextremaining, 2);
+            echo "<label>"; // MDL-7497
             echo $qtextsplits[0];
             $qtextremaining = $qtextsplits[1];
 
@@ -315,6 +323,7 @@ class embedded_cloze_qtype extends default_questiontype {
                           question part $positionkey.");
                    break;
            }
+           echo "</label>"; // MDL-7497
         }
 
         // Print the final piece of question text:
