@@ -71,6 +71,9 @@
     // TOC processing
     //
     $scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));   // Just to be safe
+    if (empty($scorm->version)) {
+        $scorm->version = 'scorm_12';
+    }
     require_once($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'lib.php');
     $attempt = scorm_get_last_attempt($scorm->id, $USER->id);
     if (($newattempt=='on') && (($attempt < $scorm->maxattempt) || ($scorm->maxattempt == 0))) {
