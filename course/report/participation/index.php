@@ -291,7 +291,7 @@
         
         echo '<h2>'.get_string('counteditems', '', $a).'</h2>';
         echo '
-<script Language="JavaScript">
+<script type="text/javascript">
 <!--
 function checksubmit(form) {
     var destination = form.formaction.options[form.formaction.selectedIndex].value;

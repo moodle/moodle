@@ -418,7 +418,7 @@
 
     if ($bulkoperations) {
         echo '
-        <script Language="JavaScript">
+        <script type="text/javascript">
         <!--
         function checksubmit(form) {
             var destination = form.formaction.options[form.formaction.selectedIndex].value;
