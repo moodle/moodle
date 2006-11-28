@@ -62,15 +62,14 @@ class qformat_blackboard extends qformat_default {
 
     $questions = array();
 
-    process_tf($xml, $questions);
-    process_mc($xml, $questions);
-    process_ma($xml, $questions);
-    process_fib($xml, $questions);
-    process_matching($xml, $questions);
+    $this->process_tf($xml, $questions);
+    $this->process_mc($xml, $questions);
+    $this->process_ma($xml, $questions);
+    $this->process_fib($xml, $questions);
+    $this->process_matching($xml, $questions);
 
     return $questions;
   }
-}
 
 //----------------------------------------
 // Process True / False Questions
@@ -106,12 +105,12 @@ function process_tf($xml, &$questions) {
 
         if (strcmp($id, $correct_answer) == 0) {  // true is correct
             $question->answer = 1;
-            $question->feedbacktrue = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
-            $question->feedbackfalse = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
+            $question->feedbacktrue = addslashes(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
+            $question->feedbackfalse = addslashes(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
         } else {  // false is correct
             $question->answer = 0;
-            $question->feedbacktrue = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
-            $question->feedbackfalse = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
+            $question->feedbacktrue = addslashes(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
+            $question->feedbackfalse = addslashes(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
         }
         $questions[] = $question;
       }
@@ -154,10 +153,10 @@ function process_mc($xml, &$questions) {
             // if choice is the answer, give 100%, otherwise give 0%
             if (strcmp ($id, $correct_answer_id) == 0) {
                 $question->fraction[$j] = 1;
-                $question->feedback[$j] = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
+                $question->feedback[$j] = addslashes(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
             } else {
                 $question->fraction[$j] = 0;
-                $question->feedback[$j] = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
+                $question->feedback[$j] = addslashes(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
             }
         }
         $questions[] = $question;
@@ -253,8 +252,8 @@ function process_fib($xml, &$questions) {
 
         $question->answer[] = addslashes($answer);
         $question->fraction[] = 1;
-        $question->feedback[0] = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
-        $question->feedback[1] = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
+        $question->feedback[0] = addslashes(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
+        $question->feedback[1] = addslashes(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
          
         $questions[] = $question;
       }
@@ -327,5 +326,7 @@ function process_matching($xml, &$questions) {
         $questions[] = $question;
           
     }
+}
+
 }
 ?>
