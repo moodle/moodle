@@ -366,7 +366,7 @@ class course_edit_form extends moodleform {
 
 
 //--------------------------------------------------------------------------------
-        $renderer->addStopFieldsetElements('submit');
+        $renderer->addStopFieldsetElements('submitbutton');
 
 
 // now override defaults if course already exists
