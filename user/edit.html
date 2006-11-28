@@ -311,13 +311,18 @@ if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SI
     </td>
 </tr>
 <tr>
-    <th><?php print_string("newpicture") ?>:</th>
+    <th><?php print_string("newpicture") ?>:<br />
+        <?php
+            echo '(';
+            print_string("maxsize", "", display_size($maxbytes));
+            echo ') ';
+            helpbutton("picture", get_string("helppicture"));
+        ?>
+    </th>
     <td>
     <?php
        require_once($CFG->dirroot.'/lib/uploadlib.php');
        upload_print_form_fragment(1,array('imagefile'),null,false,null,0,0,false);
-       helpbutton("picture", get_string("helppicture"));
-       print_string("maxsize", "", display_size($maxbytes));
        if (isset($err["imagefile"])) formerr($err["imagefile"]);
     ?>
     </td>

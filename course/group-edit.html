@@ -38,13 +38,15 @@
     if (!empty($CFG->gdversion) and $maxbytes) {  
 ?>
 <tr valign="top">
-    <td align="right"><?php print_string("newpicture") ?>:</td>
+    <td align="right"><?php print_string("newpicture") ?>:<br />(<?php
+       print_string("maxsize", "", display_size($maxbytes));
+       echo ') '; 
+       helpbutton("picture", get_string("helppicture"));
+    ?></td>
     <td>
     <?php
        require_once($CFG->dirroot.'/lib/uploadlib.php');
        upload_print_form_fragment(1,array('imagefile'),null,false,null,0,0,false);
-       helpbutton("picture", get_string("helppicture"));
-       print_string("maxsize", "", display_size($maxbytes)); 
        if (isset($err["imagefile"])) formerr($err["imagefile"]);
     ?>
     </td>

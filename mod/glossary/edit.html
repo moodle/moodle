@@ -153,14 +153,20 @@ if (isset($errors)) {
 </tr>
 
 <tr valign="top">
-    <td align="right"><b><?php print_string("attachment", "glossary") ?>:<br />(<?php print_string("optional") ?>)&nbsp;</b></td>
+    <td align="right"><b><?php print_string("attachment", "glossary") ?>:<br />
+        <?php
+        echo '(';
+        print_string("maxsize", "", display_size(get_max_upload_file_size($CFG->maxbytes, $course->maxbytes)));
+        echo ')<br />';
+        print_string("optional");
+        echo ' ';
+        helpbutton("attachment", get_string("attachment", "glossary"), "glossary");
+        ?></b>
+    </td>
     <td>
     <?php
        require_once($CFG->dirroot.'/lib/uploadlib.php');
        upload_print_form_fragment(1,array('attachment'),null,false,null,$course->maxbytes,0,false);
-       helpbutton("attachment", get_string("attachment", "glossary"), "glossary");
-       echo '&nbsp;';
-       print_string("maxsize", "", display_size(get_max_upload_file_size($CFG->maxbytes, $course->maxbytes)));
     ?>
     </td>
 </tr>

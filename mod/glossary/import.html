@@ -1,14 +1,18 @@
 <form method="post" action="import.php" name="form" enctype="multipart/form-data">
 <table border="0" cellpadding="3" cellspacing="3" width="100%">
 <tr>
-    <td align="right" valign="top" width="30%"><b><?php print_string("filetoimport","glossary") ?>:</b></td>
+    <td align="right" valign="top" width="30%"><b><?php print_string("filetoimport","glossary") ?>:<br />
+        <?php
+           echo '(';
+           print_string("maxsize", "", display_size(get_max_upload_file_size($CFG->maxbytes, $course->maxbytes)));
+           echo ') '; 
+           helpbutton("filetoimport", get_string("filetoimport", "glossary"), "glossary"); 
+        ?>
+    </b></td>
     <td width="70%">
     <?php 
        require_once($CFG->dirroot.'/lib/uploadlib.php');
        upload_print_form_fragment(1,array('file'),null,false,null,0,0);
-       helpbutton("filetoimport", get_string("filetoimport", "glossary"), "glossary"); 
-       echo '&nbsp;';
-       print_string("maxsize", "", display_size(get_max_upload_file_size($CFG->maxbytes, $course->maxbytes))); 
     ?>
     </td>
 </tr>
