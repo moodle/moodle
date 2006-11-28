@@ -388,14 +388,24 @@ function lesson_grades($lessonid) {
     if (!$lesson = get_record("lesson", "id", $lessonid)) {
         return NULL;
     }
-    if ($lesson->usemaxgrade) {
-        $grades = get_records_sql_menu("SELECT userid,MAX(grade) FROM {$CFG->prefix}lesson_grades WHERE
-                lessonid = $lessonid GROUP BY userid");
-    } else {
-        $grades = get_records_sql_menu("SELECT userid,AVG(grade) FROM {$CFG->prefix}lesson_grades WHERE
+    if ($lesson->retake) {
+        if ($lesson->usemaxgrade) {
+            $grades = get_records_sql_menu("SELECT userid,MAX(grade) FROM {$CFG->prefix}lesson_grades WHERE
             lessonid = $lessonid GROUP BY userid");
+        } else {
+            $grades = get_records_sql_menu("SELECT userid,AVG(grade) FROM {$CFG->prefix}lesson_grades WHERE
+            lessonid = $lessonid GROUP BY userid");
+        }
+    } else {
+        // Retakes is turned Off; only count first attempt
+        $firstgrades = get_records_sql("SELECT userid, MIN(completed), grade FROM {$CFG->prefix}lesson_grades WHERE lessonid = $lessonid GROUP BY userid");
+        $grades = array();
+        if (!empty($firstgrades)) {
+            foreach($firstgrades as $userid => $info) {
+                $grades[$userid] = $info->grade;
+            }
+        }
     }
-
     // convert grades from percentages and tidy the numbers
     if (!$lesson->practice) {  // dont display practice lessons
         if ($grades) {
