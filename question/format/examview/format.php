@@ -1,55 +1,25 @@
 <?php // $Id$
-/*
-**
-** Examview 4.0 XML format into Moodle 1.4.3
-** Author: Dan McCuaig ( dmccuaig@wvc.edu )
-**
-** @TODO:
-**   Take care of odd unicode character mapping (ex: curly quotes)
-**   Image and table support
-**   Formatting support
-**   Support of rejoinders
-**
-** $Log$
-** Revision 1.4.4.3  2006/11/28 09:25:52  thepurpleblob
-** Fixed typo and a notice when question type is not supported.
-**
-** Revision 1.4.4.2  2006/11/20 13:00:34  thepurpleblob
-** Various improvements to Examview input.
-** Fixes MDL-7087 and MDL-7349. Partial fix for MDL-7184 (Examview part)
-**
-*/
 
 // Based on default.php, included by ../import.php
 
 require_once("$CFG->libdir/xmlize.php");
-//require_once("xmlize.php");
-
-/*
-define("SHORTANSWER",   "1");
-define("TRUEFALSE",     "2");
-define("MULTICHOICE",   "3");
-define("MATCH",         "5");
-define("DESCRIPTION",   "7");
-define("NUMERICAL",     "8");
-define("MULTIANSWER",   "9");
-define("CALCULATED",   "10");
-*/
 
 class qformat_examview extends qformat_default {
     
-    var $qtypes = array('tf' => TRUEFALSE,
-    'mc' => MULTICHOICE,
-    'yn' => TRUEFALSE,
-    'co' => SHORTANSWER,
-    'ma' => MATCH,
-    'mtf' => 99,
-    'nr' => NUMERICAL,
-    'pr' => 99,
-    'es' => 99,
-    'ca' => 99,
-    'ot' => 99
-    );
+    var $qtypes = array(
+        'tf' => TRUEFALSE,
+        'mc' => MULTICHOICE,
+        'yn' => TRUEFALSE,
+        'co' => SHORTANSWER,
+        'ma' => MATCH,
+        'mtf' => 99,
+        'nr' => NUMERICAL,
+        'pr' => 99,
+        'es' => 99,
+        'ca' => 99,
+        'ot' => 99,
+        'sa' => ESSAY
+        );
     
     var $matching_questions = array();
 
@@ -193,7 +163,7 @@ class qformat_examview extends qformat_default {
         // Only one answer is allowed
         $htmltext = $this->unxmlise($qrec['#']['text'][0]['#']);
         $question->questiontext = $htmltext;
-        $question->name = $question->questiontext;
+        $question->name = shorten_text( $question->questiontext, 250 );
         
         switch ($question->qtype) {
         case MULTICHOICE:
@@ -208,6 +178,9 @@ class qformat_examview extends qformat_default {
             break;
         case SHORTANSWER:
             $question = $this->parse_co($qrec['#'], $question);
+            break;
+        case ESSAY:
+            $question = $this->parse_sa($qrec['#'], $question);
             break;
         case NUMERICAL:
             $question = $this->parse_nr($qrec['#'], $question);
@@ -274,6 +247,13 @@ class qformat_examview extends qformat_default {
                 $question->feedback[$key] = "Correct";
             }
         }
+        return $question;
+    }
+
+    function parse_sa($qrec, $question) {
+        $feedback = trim($this->unxmlise($qrec['answer'][0]['#']));
+        $question->feedback = $feedback;
+        $question->fraction = 0;
         return $question;
     }
     
