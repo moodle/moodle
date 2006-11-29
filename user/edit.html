@@ -1,23 +1,25 @@
 <?php
-   if (!isset($user->htmleditor)) {
-       $user->htmleditor = 1;
-   }
-   if (!isset($user->ajax)) {
-       $user->ajax = 1;
-   }
-   if (!isset($user->picture)) {
-       $user->picture = NULL;
-   }
-   if (empty($user->lang)) {
-       $user->lang = $CFG->lang;
-   }
-   if (!isset($user->theme)) {
-       $user->theme = '';
-   }
-   if (!isset($user->trackforums)) {
-       $user->trackforums = 0;
-   }
-
+    if (!isset($user->htmleditor)) {
+        $user->htmleditor = 1;  
+    }
+    if (!isset($user->ajax)) {
+        $user->ajax = 1;
+    }
+    if (!isset($user->picture)) {
+        $user->picture = NULL;
+    }
+    if (empty($user->lang)) {
+        $user->lang = $CFG->lang;
+    }
+    if (!isset($user->theme)) {
+        $user->theme = '';
+    }
+    if (!isset($user->trackforums)) {
+        $user->trackforums = 0;
+    }
+    if (!isset($user->screenreader)) {
+        $user->screenreader = 0;   
+    }
 ?>
 
 <form method="post" name="form" enctype="multipart/form-data" action="edit.php">
