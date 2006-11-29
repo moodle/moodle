@@ -84,37 +84,34 @@ if (!isset($frm->acceptechecktypes)) {
 <tr valign="top"><td colspan="2"><h4><?php print_string("adminauthorizesettings", "enrol_authorize") ?></h4></td></tr>
 
 <tr valign="top">
-    <td align="right">an_login:</td>
-    <td><input type="text" name="an_login" value="<?php p($frm->an_login) ?>" /><br />
-        <?php print_string("anlogin", "enrol_authorize") ?></td>
+    <td align="right">&nbsp;&nbsp;</td>
+    <td><?php print_string("logininfo", "enrol_authorize") ?></td>
 </tr>
 
 <tr valign="top">
-    <td align="right">#&nbsp;#&nbsp;</td>
-    <td><?php print_string("chooseone", "enrol_authorize") ?></td>
+    <td align="right">an_login:<br /><?php echo (isset($mconfig->an_login)) ? '<font color=green>'.get_string('ok').'</font>' : ''; ?></td>
+    <td><?php print_string("anlogin", "enrol_authorize") ?><br /><input type="text" name="an_login" size="26" value="" /><sup>*</sup></td>
 </tr>
 
 <tr valign="top">
-    <td align="right">an_tran_key:</td>
-    <td><input type="text" name="an_tran_key" value="<?php p($frm->an_tran_key) ?>" /><sup>#1</sup><br />
-        <?php print_string("antrankey", "enrol_authorize") ?></td>
+    <td align="right">an_tran_key:<br /><?php echo (isset($mconfig->an_tran_key)) ? '<font color=green>'.get_string('ok').'</font>' : ''; ?></td>
+    <td><?php print_string("antrankey", "enrol_authorize") ?><br /><input type="text" name="an_tran_key" size="26" value="" /><sup>#1</sup></td>
 </tr>
 
 <tr valign="top">
-    <td align="right">an_password:</td>
-    <td><input type="text" name="an_password" value="" /><sup>#2</sup><br />
-        <?php print_string("anpassword", "enrol_authorize") ?><br />(<?php print_string("leavetokeep") ?>)</td>
+    <td align="right">an_password:<br /><?php echo (isset($mconfig->an_password)) ? '<font color=green>'.get_string('ok').'</font>' : ''; ?></td>
+    <td><?php print_string("anpassword", "enrol_authorize") ?><br /><input type="text" name="an_password" size="26" value="" /><sup>#2</sup></td>
 </tr>
 
 <tr valign="top">
     <td align="right">delete_current:</td>
     <td><?php print_checkbox('delete_current', '1', !empty($frm->delete_current)) ?> <br />
-        <?php print_string("deletecheck", "moodle", get_string('oldpassword')) ?><br /><br /></td>
+        <?php print_string("deletecheck", "moodle", get_string('oldpassword')) ?><br /><hr size="1" width="100%" noshade /></td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_referer:</td>
-    <td><input type="text" name="an_referer" value="<?php p($frm->an_referer) ?>" /><br />
+    <td><input type="text" name="an_referer" size="35" value="<?php p($frm->an_referer) ?>" /><br />
         <?php print_string("anreferer", "enrol_authorize") ?></td>
 </tr>
 

@@ -1,6 +1,6 @@
 <?php // $Id$
 
-$plugin->version  = 2006111700;
+$plugin->version  = 2006112900;
 $plugin->requires = 2006100401;
 
 ?>
