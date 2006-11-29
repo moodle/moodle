@@ -56,7 +56,7 @@ class forum_post_form extends moodleform {
 
         if ($forum->maxbytes != 1 && has_capability('mod/forum:createattachment', $modcontext))  {  //  1 = No attachments at all
             $mform->addElement('file', 'attachment', get_string('attachment', 'forum'));
-            $mform->setHelpButton('attachment', array('attachment', get_string('attachemnt', 'forum'), 'forum'));
+            $mform->setHelpButton('attachment', array('attachment', get_string('attachment', 'forum'), 'forum'));
 
         }
 
