@@ -4146,32 +4146,18 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
                     '<img class="icon log" src="'.$CFG->pixpath.'/i/log.gif" alt="'.$logstext.'" /></a>';
 
     }
-    if ($backmod) {
-        // MDL-7486
-        if ($USER->screenreader) {
-            $larrow = get_string('previoussection');
-        } else {
-            $larrow = $THEME->larrow;
-        }    
-      
+    if ($backmod) {     
         $backtext= get_string('activityprev', 'access');
         $backmod = '<form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" target="'.$CFG->framename.'">'.
                    '<input type="hidden" name="id" value="'.$backmod->cm.'" />'.
-                   '<button type="submit" title="'.$backtext.'">'.$larrow.
+                   '<button type="submit" title="'.$backtext.'">'.$THEME->larrow.
                    '<span class="accesshide">'.$backtext.'</span></button></form>';
     }
-    if ($nextmod) {
-        // MDL-7486    
-        if ($USER->screenreader) {
-            $rarrow = get_string('nextsection');
-        } else {
-            $rarrow = $THEME->rarrow;
-        }   
-      
+    if ($nextmod) {    
         $nexttext= get_string('activitynext', 'access');
         $nextmod = '<form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php" target="'.$CFG->framename.'">'.
                    '<input type="hidden" name="id" value="'.$nextmod->cm.'" />'.
-                   '<button type="submit" title="'.$nexttext.'">'.$rarrow.
+                   '<button type="submit" title="'.$nexttext.'">'.$THEME->rarrow.
                    '<span class="accesshide">'.$nexttext.'</span></button></form>';
     }
 
