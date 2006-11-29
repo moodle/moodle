@@ -214,6 +214,29 @@
      }</pre>
     <p>When the question is processed, the backslash is removed and is not saved in Moodle.</p>
 
+<h3>Specifying Categories</h3>
+
+<p>It is possible to change the category into which the questions are added within the GIFT file. 
+You can change the category as many times as you wish within the file. All questions after the modifier 
+up to the next modifier or the end of the file will be added to the specified category. Up to the first
+category modifier the category specified on the import screen will be used. Note that for this to work
+the <b>from file:</b> box must be ticked on the import screen.</p>
+
+<p>To include a category modifier include a line like this:
+
+<pre>
+$CATEGORY: tom/dick/harry
+</pre>
+
+or simply
+
+<pre>
+$CATEGORY: mycategory
+</pre>
+
+...the first example specifies a path of nested categories. In this cae the questions will go into <i>harry</i>. The 
+categories are created if they do not exist.</p>
+
 <p><u>Other Options:</u><br />
     Short Answer questions can be made case sensitive by changing &quot;0&quot; to &quot;1&quot; in the following line:<br />
     <tt>$question-&gt;usecase = 0;  // Ignore case</tt></p>
