@@ -142,6 +142,16 @@ class qformat_gift extends qformat_default {
         // Substitute escaped control characters with placeholders
         $text = $this->escapedchar_pre($text);
 
+        // Look for category modifier
+        if (ereg( '^\$CATEGORY:(.+)', $text, $matches)) {
+            $newcategory = $matches[1];
+
+            // build fake question to contain category
+            $question->qtype = 'category';
+            $question->category = $newcategory;
+            return $question;
+        }
+
         // QUESTION NAME parser
         if (substr($text, 0, 2) == "::") {
             $text = substr($text, 2);
