@@ -1533,6 +1533,42 @@ function question_categorylist($categoryid) {
     return $categorylist;
 }
 
+/**
+ * find and/or create the category described by a delimited list
+ * e.g. tom/dick/harry
+ * @param string catpath delimited category path
+ * @param string delimiter path delimiting character
+ * @param int courseid course to search for categories
+ * @return mixed category object or null if fails
+ */
+function create_category_path( $catpath, $delimiter='/', $courseid=0 ) {
+    $catnames = explode( $delimiter, $catpath );
+    $parent = 0;
+    $category = null;
+    foreach ($catnames as $catname) {
+        if ($category = get_record( 'question_categories', 'name', $catname, 'course', $courseid, 'parent', $parent )) {
+            $parent = $category->id;
+        }
+        else {
+            // create the new category        
+            $category = new object;
+            $category->course = $courseid;
+            $category->name = $catname;
+            $category->info = '';
+            $category->publish = false;
+            $category->parent = $parent;
+            $category->sortorder = 999;
+            $category->stamp = make_unique_id_code();
+            if (!($id = insert_record( 'question_categories', $category ))) {
+                error( "cannot create new category - $catname" );
+            }
+            $category->id = $id;
+            $parent = $id;
+        }
+    }
+    return $category;
+}
+
 
 //===========================
 // Import/Export Functions
