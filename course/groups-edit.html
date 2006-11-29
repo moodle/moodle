@@ -81,24 +81,20 @@ function groupWindow(selectgroup) {
 </script>
 
         <form name="rolesform1" action="groups.php" method="get">
-        <input type="hidden" name="id" value="<?php echo $courseid ?>">
+        <input type="hidden" name="id" value="<?php echo $courseid ?>" />
         <div align="center"><?php echo get_string('currentrole', 'role') ?>: 
             <?php choose_from_menu ($roleoptions, 'roleid', $roleid, '', $script='rolesform1.submit()') ?>
         </div></form>
 
   <table cellspacing="0" cellpadding="10" align="center" class="generaltable generalbox">
-    <tr>
-      <td width="33%" align="center" class="header"><label for="nonmembers"><?php p($strmemberincourse) ?></label></td>
-      <td width="33%" align="center" class="header"><label for="groups"><?php p($strgroups) ?></label></td>
-      <td width="33%" align="center" class="header"><label for="members"><?php p($strgroupmembersselected) ?></label></td>
-    </tr>
     <tr align="center" valign="top">
-      <td class="generalboxcontent"><p>
+      <td class="generalboxcontent">
+        <label for="nonmembers"><?php p($strmemberincourse) ?></label>
         <form name="form1" id="form1" method="post" action="groups.php">
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
           <input type="hidden" name="groupid" value="<?php p($selectedgroup) ?>" />
-          <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>">
-          <input type="hidden" name="roleid" value="<?php p($roleid) ?>">
+          <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>" />
+          <input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
           
           <select name="nonmembers[]" size="15" id="nonmembers" multiple="multiple">
             <?php 
@@ -115,25 +111,23 @@ function groupWindow(selectgroup) {
                 }
             ?>
           </select>
-          </p>
-          <p>
+          <br />
             <input type="submit" name="nonmembersadd" value="<?php p($strgroupaddusers) ?> -&gt;" 
                    onclick="updateGroup()" />
-          </p>
-          <!--<p>
+          <br />
+          <!--
             <input type="submit" name="nonmembersrandom" value="<?php p($strgrouprandomassign) ?> -&gt;" />
-          </p> -->
-          <p>
+          <br /> -->
             <input type="submit" name="nonmembersinfo" value="<?php p($strgroupinfopeople) ?>" 
                    onclick="return userWindow(document.form1['nonmembers[]']);" />
-          </p>
         </form>
       </td>
-      <td class="generalboxcontent"><p>
+      <td class="generalboxcontent">
+        <label for="groups"><?php p($strgroups) ?></label>
         <form name="form2" id="form2" method="post" action="groups.php">
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
-          <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>">
-          <input type="hidden" name="roleid" value="<?php p($roleid) ?>">
+          <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>" />
+          <input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
           <select name="groups" size="15" id="groups" onChange="updateMembers(this)">
             <?php 
                 if (!empty($listgroups)) {
@@ -147,29 +141,26 @@ function groupWindow(selectgroup) {
                 }
             ?>
           </select>
-        </p>
-        <p>
+        <br />
           <input type="submit" name="groupsinfo" value="<?php p($strgroupinfoedit) ?>" 
-                 onclick="return groupWindow(document.form2.groups);"/>
-        </p>
-        <p>
+                 onclick="return groupWindow(document.form2.groups);" />
+        <br />
           <input type="submit" name="groupsremove" value="<?php p($strgroupremove) ?>" />
-        </p>
-        <p>
+        <br />
           <label for="groupadd" class="accesshide"><?php p($strgroupadd) ?></label>
           <input name="newgroupname" id="groupadd" type="text" size="10" />
           <input type="submit" name="groupsadd" value="<?php p($strgroupadd) ?>" />
-        </p>
         </form>
       </td>
 
 
-      <td class="generalboxcontent"><p>
+      <td class="generalboxcontent">
+        <label for="members"><?php p($strgroupmembersselected) ?></label>
         <form name="form3" id="form3" method="post" action="groups.php">
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
           <input type="hidden" name="groupid" value="<?php p($selectedgroup) ?>" />
-          <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>">
-          <input type="hidden" name="roleid" value="<?php p($roleid) ?>">
+          <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>" />
+          <input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
           <select name="members[]" size="15" id="members" multiple="multiple">
             <?php 
                 if (!empty($members)) {
@@ -179,15 +170,12 @@ function groupWindow(selectgroup) {
                 }
             ?>
           </select>
-        </p>
-        <p>
+        <br />
           <input type="submit" name="membersinfo" value="<?php p($strgroupinfomembers) ?>"
                  onclick="return userWindow(document.form3['members[]']);" />
-        </p>
-        <p>
+        <br />
           <input type="submit" name="membersremove" value="<?php p($strgroupremovemembers) ?>" 
                  onclick="updateGroup()" />
-        </p>
         </form>
       </td>
     </tr>

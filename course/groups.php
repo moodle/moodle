@@ -216,6 +216,8 @@
 
 /// Print out the complete form
 
+    print_heading(get_string('groups'));
+
     include('groups-edit.html');
 
     print_footer($course);
