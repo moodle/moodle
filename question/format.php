@@ -10,9 +10,12 @@
 
 class qformat_default {
 
-    var $displayerrors = true;
+    // var $displayerrors = true;
     var $category = NULL;
     var $course = NULL;
+    var $filename = '';
+    var $matchgrades = 'error';
+    var $catfromfile = 0;
     var $questionids = array();
 
 // functions to indicate import/export functionality
@@ -26,25 +29,63 @@ class qformat_default {
       return false;
     }
 
+// Accessor methods
+
+    /**
+     * set the category
+     * @param object category the category object
+     */
+    function setCategory( $category ) {
+        $this->category = $category;
+    }
+
+    /**
+     * set the course class variable
+     * @param course object Moodle course variable
+     */
+    function setCourse( $course ) {
+        $this->course = $course;
+    }
+
+    /**
+     * set the filename
+     * @param string filename name of file to import/export
+     */
+    function setFilename( $filename ) {
+        $this->filename = $filename;
+    }
+
+    /**
+     * set matchgrades
+     * @param string matchgrades error or nearest for grades
+     */
+    function setMatchgrades( $matchgrades ) {
+        $this->matchgrades = $matchgrades;
+    }
+
+    /**
+     * set catfromfile
+     * @param bool catfromfile allow categories embedded in import file
+     */
+    function setCatfromfile( $catfromfile ) {
+        $this->catfromfile = $catfromfile;
+    }
+
 /// Importing functions
 
-    function importpreprocess($category, $course=NULL ) {
-    /// Does any pre-processing that may be desired
-
-        $this->category = $category;  // Important
-        $this->course = $course;
-
+    /**
+     * Perform any required pre-processing
+     */
+    function importpreprocess() {
         return true;
     }
 
     /**
-     *
-     * @param $matchgrades string 'error' or 'nearest', mismatched grades handling
+     * Process the file
+     * This method should not normally be overidden
      */
-    function importprocess($filename, $matchgrades='error') {
-    /// Processes a given file.  There's probably little need to change this
-
-        if (! $lines = $this->readdata($filename)) {
+    function importprocess() {
+        if (! $lines = $this->readdata($this->filename)) {
             notify( get_string('cannotread','quiz') );
             return false;
         }
@@ -63,16 +104,30 @@ class qformat_default {
         $count = 0;
 
         foreach ($questions as $question) {   // Process and store each question
+
+            // check for category modifiers
+            if ($question->qtype=='category') {
+                if ($this->catfromfile) {
+                    // find/create category object
+                    $catpath = $question->category;
+                    $newcategory = create_category_path( $catpath, '/', $this->course->id );
+                    if (!empty($newcategory)) {
+                        $this->category = $newcategory;
+                    }
+                }
+                continue; 
+            }
+
             $count++;
 
             echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
 
             // check for answer grades validity (must match fixed list of grades)
-            if (!empty($question->fraction)) {
+            if (!empty($question->fraction) and (is_array($question->fraction))) {
                 $fractions = $question->fraction;
                 $answersvalid = true; // in case they are!
                 foreach ($fractions as $key => $fraction) {
-                    $newfraction = match_grade_options($gradeoptionsfull, $fraction, $matchgrades);
+                    $newfraction = match_grade_options($gradeoptionsfull, $fraction, $this->matchgrades);
                     if ($newfraction===false) {
                         $answersvalid = false;
                     }
@@ -182,6 +237,9 @@ class qformat_default {
         $question->usecase = 0;
         $question->multiplier = array();
         $question->generalfeedback = '';
+        $question->correctfeedback = '';
+        $question->partiallycorrectfeedback = '';
+        $question->incorrectfeedback = '';
 
         return $question;
     }
@@ -250,11 +308,8 @@ class qformat_default {
         return ".txt";
     }
 
-    function exportpreprocess($category, $course) {
+    function exportpreprocess() {
     /// Does any pre-processing that may be desired
-
-        $this->category = $category;  // Important
-        $this->course = $course; // As is this!
 
         return true;
     }
@@ -267,7 +322,7 @@ class qformat_default {
         return $content;
     }
 
-    function exportprocess($filename) {
+    function exportprocess() {
     /// Exports a given category.  There's probably little need to change this
 
         global $CFG;
@@ -315,7 +370,7 @@ class qformat_default {
         $expout = $this->presave_process( $expout );
 
         // write file
-        $filepath = $path."/".$filename . $this->export_file_extension();
+        $filepath = $path."/".$this->filename . $this->export_file_extension();
         if (!$fh=fopen($filepath,"w")) {
             error( get_string('cannotopen','quiz',$filepath) );
         }

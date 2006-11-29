@@ -17,6 +17,7 @@
     $params = new stdClass;
     $params->choosefile = optional_param('choosefile','',PARAM_PATH);
     $categoryid = optional_param('category', 0, PARAM_INT);
+    $catfromfile = optional_param('catfromfile', 0, PARAM_BOOL );
     $courseid = optional_param('course', 0, PARAM_INT);
     $format = optional_param('format','',PARAM_FILE);
     $params->matchgrades = optional_param('matchgrades','',PARAM_ALPHA);
@@ -28,6 +29,8 @@
     $txt->editingquiz = get_string(isset($SESSION->modform->instance) ? "editingquiz" : "editquestions", "quiz");
     $txt->file = get_string('file');
     $txt->fileformat = get_string('fileformat','quiz');
+    $txt->fromfile = get_string('fromfile','quiz');
+    $txt->importcategory = get_string('importcategory','quiz');
     $txt->importerror = get_string('importerror','quiz');
     $txt->importfilearea = get_string('importfilearea','quiz');
     $txt->importfileupload = get_string('importfileupload','quiz');
@@ -153,12 +156,19 @@
             $classname = "qformat_$format";
             $qformat = new $classname();
 
-            if (! $qformat->importpreprocess($category,$course)) {             // Do anything before that we need to
+            // load data into class
+            $qformat->setCategory( $category );
+            $qformat->setCourse( $course );
+            $qformat->setFilename( $importfile );
+            $qformat->setMatchgrades( $params->matchgrades );
+            $qformat->setCatfromfile( $catfromfile );
+
+            if (! $qformat->importpreprocess()) {             // Do anything before that we need to
                 error( $txt->importerror ,
                       "$CFG->wwwroot/question/import.php?courseid={$course->id}&amp;category=$category->id");
             }
 
-            if (! $qformat->importprocess($importfile, $params->matchgrades) ) {     // Process the uploaded file
+            if (! $qformat->importprocess() ) {     // Process the uploaded file
                 error( $txt->importerror ,
                       "$CFG->wwwroot/question/import.php?courseid={$course->id}&amp;category=$category->id");
             }
@@ -221,7 +231,10 @@
         <table cellpadding="5">
             <tr>
                 <td align="right"><?php echo $txt->category; ?>:</td>
-                <td><?php choose_from_menu($catmenu, "category", $category->id, ""); ?></td>
+                <td><?php choose_from_menu($catmenu, "category", $category->id, ""); ?>
+                    <?php echo $txt->fromfile; ?>
+                    <input name="catfromfile" type="checkbox" />
+                    <?php helpbutton('importcategory', $txt->importcategory, 'quiz'); ?></td>
             </tr>
 
             <tr>

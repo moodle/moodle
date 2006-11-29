@@ -92,12 +92,16 @@
         $classname = "qformat_$format";
         $qformat = new $classname();
 
-        if (! $qformat->exportpreprocess($category, $course)) {   // Do anything before that we need to
+        $qformat->setCategory( $category );
+        $qformat->setCourse( $course );
+        $qformat->setFilename( $exportfilename );
+
+        if (! $qformat->exportpreprocess()) {   // Do anything before that we need to
             error( get_string('exporterror','quiz'),
                     "$CFG->wwwroot/question/export.php?courseid={$course->id}&amp;category=$category->id");
         }
 
-        if (! $qformat->exportprocess($exportfilename)) {         // Process the export data
+        if (! $qformat->exportprocess()) {         // Process the export data
             error( get_string('exporterror','quiz'),
                     "$CFG->wwwroot/question/export.php?courseid={$course->id}&amp;category=$category->id");
         }
