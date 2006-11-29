@@ -1,4 +1,5 @@
 <?php // $Id$
+require_once($CFG->libdir.'/formslib.php');
 
 define('ASSIGNMENT_STATUS_SUBMITTED', 'submitted');
 
@@ -436,11 +437,18 @@ class assignment_upload extends assignment_base {
 
         $returnurl = 'view.php?id='.$this->cm->id;
 
+        $mform = new assignment_upload_notes_form('upload.php');
+
+        $defaults = new object();
+        $defaults->id = $this->cm->id;
+
         if ($submission = $this->get_submission($USER->id)) {
-            $defaulttext = $submission->data1;
+            $defaults->text = $submission->data1;
         } else {
-            $defaulttext = '';
+            $defaults->text = '';
         }
+
+        $mform->set_defaults($defaults);
 
         if (!$this->can_update_notes($submission)) {
             $this->view_header(get_string('upload'));
@@ -450,13 +458,12 @@ class assignment_upload extends assignment_base {
             die;
         }
 
-        if (data_submitted('nomatch') and $action == 'savenotes') {
-            $text = required_param('text', PARAM_RAW); // to be cleaned before display
+        if ($data = $mform->data_submitted() and $action == 'savenotes') {
             $submission = $this->get_submission($USER->id, true); // get or create submission
             $updated = new object();
             $updated->id           = $submission->id;
             $updated->timemodified = time();
-            $updated->data1        = $text;
+            $updated->data1        = $data->text;
 
             if (update_record('assignment_submissions', $updated)) {
                 add_to_log($this->course->id, 'assignment', 'upload', 'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
@@ -472,30 +479,10 @@ class assignment_upload extends assignment_base {
 
         /// show notes edit form
         $this->view_header(get_string('notes', 'assignment'));
+
         print_heading(get_string('notes', 'assignment'), 'center');
 
-        echo '<form name="theform" action="upload.php" method="post">';
-        echo '<table cellspacing="0" class="editbox" align="center">';
-        echo '<tr><td align="right">';
-        helpbutton('reading', get_string('helpreading'), 'moodle', true, true);
-        echo '<br />';
-        helpbutton('writing', get_string('helpwriting'), 'moodle', true, true);
-        echo '<br />';
-        echo '</td></tr>';
-        echo '<tr><td align="center">';
-        print_textarea(can_use_html_editor(), 20, 60, 630, 400, 'text', $defaulttext);
-        echo '</td></tr>';
-        echo '<tr><td align="center">';
-        echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
-        echo '<input type="hidden" name="action" value="savenotes" />';
-        echo '<input type="submit" value="'.get_string('savechanges').'" />';
-        echo '<input type="reset" value="'.get_string('revert').'" />';
-        echo '</td></tr></table>';
-        echo '</form>';
-
-        if (can_use_html_editor()) {
-            use_html_editor();   // MUst be at the end of the page
-        }
+        $mform->display();
 
         $this->view_footer();
         die;
@@ -921,7 +908,27 @@ class assignment_upload extends assignment_base {
         return 0;
     }
 
+}
 
+class assignment_upload_notes_form extends moodleform {
+    function definition() {
+        $mform =& $this->_form;
+
+        // visible elements
+        $mform->addElement('htmleditor', 'text', get_string('notes', 'assignment'), array('cols'=>85, 'rows'=>30));
+        $mform->setType('text', PARAM_RAW); // to be cleaned before display
+
+        // hidden params
+        $mform->addElement('hidden', 'id', 0);
+        $mform->setType('id', PARAM_INT);
+        $mform->addElement('hidden', 'action', 'savenotes');
+        $mform->setType('id', PARAM_ALPHA);
+
+        // buttons
+        $buttonarray[] = &MoodleQuickForm::createElement('submit', 'submitbutton', get_string('savechanges'));
+        $buttonarray[] = &MoodleQuickForm::createElement('reset', 'reset', get_string('revert'));
+        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+    }
 }
 
 ?>

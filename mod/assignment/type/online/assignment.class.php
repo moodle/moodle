@@ -241,13 +241,13 @@ class assignment_online_edit_form extends moodleform {
         $mform =& $this->_form;
 
         // visible elements
-        $mform->addElement('htmleditor', 'text', get_string('submission', 'assignment'));
-        $mform->setType('text', PARAM_RAW);
+        $mform->addElement('htmleditor', 'text', get_string('submission', 'assignment'), array('cols'=>85, 'rows'=>30));
+        $mform->setType('text', PARAM_RAW); // to be cleaned before display
 
         $mform->addElement('format', 'format', get_string('format'));
         $mform->setHelpButton('format', array('textformat', get_string('helpformatting')));
 
-        // hidden optional params
+        // hidden params
         $mform->addElement('hidden', 'id', 0);
         $mform->setType('id', PARAM_INT);
 
