@@ -14,7 +14,7 @@ print_heading(get_string('tagmanagement'));
 
     <tr>
         <td>
-            <form action="tags.php" method="POST">
+            <form action="tags.php" method="post">
             <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
             <?php
             if (has_capability('moodle/blog:manageofficialtags', $sitecontext)) {
@@ -42,7 +42,7 @@ print_heading(get_string('tagmanagement'));
         </td>
 
         <td>
-            <form action="tags.php" method="POST">
+            <form action="tags.php" method="post">
             <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
             <select name="tags[]" multiple="multiple" id="ptags" size="8">
             <?php
@@ -77,10 +77,10 @@ print_heading(get_string('tagmanagement'));
     <tr>
         <td>
             <?php if (has_capability('moodle/blog:manageofficialtags', $sitecontext)) { ?>
-            <form action="tags.php" method="POST">
+            <form action="tags.php" method="post">
             <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
-            <?php print_string('addotags','blog');?>:<br/>
-            <input type="text" name="otag" />
+            <label for="newotag"><?php print_string('addotags','blog');?></label>:<br/>
+            <input type="text" name="otag" id="newotag" />
             <input type="submit" value="<?php print_string('add');?>" />
             <input type="hidden" name="action" value="addofficial" />
             </form>
