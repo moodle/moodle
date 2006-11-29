@@ -399,6 +399,20 @@ class qformat_xml extends qformat_default {
     }
 
     /**
+     * this is not a real question type. It's a dummy type used
+     * to specify the import category
+     * format is:
+     * <question type="category">
+     *     <category>tom/dick/harry</category>
+     * </question>
+     */
+    function import_category( $question ) {
+        $qo->qtype = 'category';
+        $qo->category = $question['#']['category'][0]['#'];
+        return $qo;
+    }
+
+    /**
      * parse the array of lines into an array of questions
      * this *could* burn memory - but it won't happen that much
      * so fingers crossed!
@@ -450,6 +464,9 @@ class qformat_xml extends qformat_default {
             elseif ($question_type=='essay') {
                 $qo = $this->import_essay( $question );
             }
+            elseif ($question_type=='category') {
+                $qo = $this->import_category( $question );
+            }
             else {
                 $notsupported = get_string( 'xmltypeunsupported','quiz',$question_type );
                 echo "<p>$notsupported</p>";
@@ -461,7 +478,6 @@ class qformat_xml extends qformat_default {
                 $questions[] = $qo;
             }
         }
-
         return $questions;
     }
 
