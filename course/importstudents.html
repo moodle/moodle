@@ -1,20 +1,13 @@
 
 <form name="studentform" id="studentform" method="post" action="importstudents.php">
-<input type="hidden" name="previoussearch" value="<?php echo $previoussearch ?>">
-<input type="hidden" name="sesskey" value="<?php echo sesskey() ?>">
-<input type="hidden" name="id" value="<?php echo $id?>">
-  <table align="center" border="0" cellpadding="5" cellspacing="0">
+<input type="hidden" name="previoussearch" value="<?php echo $previoussearch ?>" />
+<input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
+<input type="hidden" name="id" value="<?php echo $id?>" />
+  <table summary="" align="center" border="0" cellpadding="5" cellspacing="0">
     <tr>
       <td valign="top">
           <label for="removeselect"><?php echo count($alreadycourses) . " ". $stralreadycourses ?></label>
-      </td>
-      <td></td>
-      <td valign="top">
-          <label for="addselect"><?php echo $numcourses . " " . $strpotentialcourses ?></label>
-      </td>
-    </tr>
-    <tr>
-      <td valign="top">
+          <br />
           <select name="removeselect[]" size="20" id="removeselect" multiple
                   onFocus="document.studentform.add.disabled=true;
                            document.studentform.remove.disabled=false;
@@ -26,13 +19,16 @@
           ?>
           </select></td>
       <td valign="top">
-        <br />
-        <input name="add" type="submit" id="add" value="&larr;" />
-        <br />
-        <input name="remove" type="submit" id="remove" value="&rarr;" />
-        <br />
+        <?php check_theme_arrows(); ?>
+        <p class="arrow_button">
+            <input name="add" id="add" type="submit" value="<?php echo '&nbsp;'.$THEME->larrow.' &nbsp; &nbsp; '.get_string('add'); ?>" title="<?php print_string('add'); ?>" />
+            <br />
+            <input name="remove" id="remove" type="submit" value="<?php echo '&nbsp; '.$THEME->rarrow.' &nbsp; &nbsp; '.get_string('remove'); ?>" title="<?php print_string('remove'); ?>" />
+        </p>
       </td>
       <td valign="top">
+          <label for="addselect"><?php echo $numcourses . " " . $strpotentialcourses ?></label>
+          <br />
           <select name="addselect[]" size="20" id="addselect" multiple
                   onFocus="document.studentform.add.disabled=false;
                            document.studentform.remove.disabled=true;
@@ -60,7 +56,8 @@
           ?>
          </select>
          <br />
-         <input type="text" name="searchtext" size="30" value="<?php p($searchtext, true) ?>" 
+         <label for="searchtext" class="accesshide"><?php p($strsearch) ?></label>
+         <input type="text" name="searchtext" id="searchtext" size="30" value="<?php p($searchtext, true) ?>" 
                   onFocus ="document.studentform.add.disabled=true;
                             document.studentform.remove.disabled=true;
                             document.studentform.removeselect.selectedIndex=-1;

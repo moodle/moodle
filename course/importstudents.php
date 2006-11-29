@@ -51,6 +51,8 @@
 
 /// Print a help notice about the need to use this page
 
+    print_heading(get_string('childcourses'));
+
     if (!$frm = data_submitted()) {
         $note = get_string("importmetacoursenote");
         print_simple_box($note, "center", "50%");
@@ -118,7 +120,6 @@
             $courses = array();
         }
     }
-
 
     print_simple_box_start("center");
 
