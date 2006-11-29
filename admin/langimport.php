@@ -20,24 +20,24 @@
     define('CHANGE_SITE_LANG', 3);
     define('DELETION_OF_SELECTED_LANG', 4);
     define('UPDATE_ALL_LANG', 5);
-    
+
     $strlang = get_string('langimport','admin');
-    
+
     $strlanguage = get_string("language");
     $strthislanguage = get_string("thislanguage");
     $title = $strlang;
-        
+
     admin_externalpage_print_header($adminroot);
-    
+
 
     switch ($mode){
-    
+
         case INSTALLATION_OF_SELECTED_LANG:    ///installation of selected language pack
-        
+
             if (confirm_sesskey()) {
                 @mkdir ($CFG->dataroot.'/temp/');    //make it in case it's a fresh install, it might not be there
                 @mkdir ($CFG->dataroot.'/lang/');
-                
+
                 require_once($CFG->libdir.'/componentlib.class.php');
                 if ($cd = new component_installer('http://download.moodle.org', 'lang16',
                                                     $pack.'.zip', 'languages.md5', 'lang')) {
@@ -86,7 +86,7 @@
         case DELETION_OF_SELECTED_LANG:    //delete a directory(ies) containing a lang pack completely
 
             if (!$confirm && confirm_sesskey()) {
-                notice_yesno(get_string('uninstallconfirm', 'admin', $uninstalllang), 
+                notice_yesno(get_string('uninstallconfirm', 'admin', $uninstalllang),
                              'langimport.php?mode=4&amp;uninstalllang='.$uninstalllang.'&amp;confirm=1&amp;sesskey='.sesskey(),
                              'langimport.php');
             } else if (confirm_sesskey()) {
@@ -112,7 +112,7 @@
             }
             @unlink($CFG->dataroot.'/cache/languages');
         break;
-        
+
         case UPDATE_ALL_LANG:    //1 click update for all updatable language packs
 
             //0th pull a list from download.moodle.org,
@@ -214,7 +214,7 @@
             }
 
         break;
-        
+
         default:    //display choice mode
 
             $source = 'http://download.moodle.org/lang16/languages.md5';
@@ -242,21 +242,18 @@
                 echo '</div>';
                 print_simple_box_end();
             }
-            
+
             print_simple_box_start('center','60%');
-            echo '<table width="100%"><tr><td align="center">';
-            echo '<label for="uninstalllang">'.get_string('installedlangs','admin').'</label>';
-            echo '</td><td align="center">';
-            echo '<label for="pack">'.get_string('availablelangs','admin').'</label>';
-            echo '</td></tr>';
+            echo '<table summary="" width="100%">';
             echo '<tr><td align="center" valign="top">';
-            echo '<form name="uninstallform" action="langimport.php?mode=4" method="POST">';
+            echo '<form name="uninstallform" action="langimport.php?mode=4" method="post">';
             echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
             unset($CFG->langlist);   // ignore admin's langlist
             $installedlangs = get_list_of_languages();
 
             /// display installed langs here
 
+            echo '<label for="uninstalllang">'.get_string('installedlangs','admin')."</label><br />\n";
             echo '<select name="uninstalllang" id="uninstalllang" size="15">';
             foreach ($installedlangs as $clang =>$ilang){
                 echo '<option value="'.$clang.'">'.$ilang.'</option>';
@@ -264,42 +261,23 @@
             echo '</select>';
             echo '<br /><input type="submit" value="'.get_string('uninstall','admin').'" />';
             echo '</form>';
-            echo '<form name="updateform" action="langimport.php?mode=5" method="POST">';
+            echo '<form name="updateform" action="langimport.php?mode=5" method="post">';
             echo '<br /><input type="submit" value="'.get_string('updatelangs','admin').'" />';
             echo '</form>';
-            echo '<p />';
-            
+
             /// Display option to change site language
- 
- /// Erm... this doesn't seem to work. Plus it's redundant. -vinkmar
-            
-//            print_string('changesitelang','admin');
-//            $sitelanguage = get_record('config','name','lang');
-//            echo '<form name="changelangform" action="langimport.php?mode=3" method="POST">';
-//            echo '<select name="sitelangconfig">';
-//            
-//            foreach ($installedlangs as $clang =>$ilang) {
-//                if ($clang == $sitelanguage->value){
-//                    echo '<option value="'.$clang.'" selected="selected">'.$ilang.'</option>';
-//                } else {
-//                    echo '<option value="'.$clang.'">'.$ilang.'</option>';
-//                }
-//            }
-//            echo '</select>';
-//            echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-//            echo '<input type="submit" value="'.get_string('change','admin').'" />';
-//            echo '</form>';
 
             /// display to be installed langs here
 
             echo '</td><td align="center" valign="top">';
-            echo '<table><tr><td valign="top" align="center">';    //availabe langs table
+            //availabe langs table
             $empty = 1;    //something to pring
 
             /// if this language pack is not already installed, then we allow installation
 
-            echo '<form name="installform" method="POST" action="langimport.php?mode=2">';
+            echo '<form name="installform" method="post" action="langimport.php?mode=2">';
             echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
+            echo '<label for="pack">'.get_string('availablelangs','admin')."</label><br />\n";
             if ($remote) {
                 echo '<select name="pack" id="pack" size="15">';
             }
@@ -323,18 +301,16 @@
             }
             if ($remote) {
                 echo '</select>';
-                echo '<br/ ><input type="submit" value="<-- '.get_string('install','admin').'">';
+                echo '<br /><input type="submit" value="&larr; '.get_string('install','admin').'" />';
             }
             echo '</form>';
 
             if ($empty) {
-                echo '<tr><td align="center">';
+                echo '<br />';
                 print_string('nolanguagetodownload','admin');
-                echo '</td></tr>';
             }
 
-            echo '</td><tr></table>';    //close available langs table
-            echo '<form>';
+            //close available langs table
             echo '</td></tr></table>';
             print_simple_box_end();
 
@@ -343,7 +319,7 @@
     }    //close of main switch
 
     admin_externalpage_print_footer($adminroot);
-    
+
     /* returns a list of available language packs from a
      * local copy shipped with standard moodle distro
      * this is for site that can't perform fopen
@@ -360,8 +336,8 @@
         }
         return $availablelangs;
     }
-    
-    /* checks the md5 of the zip file, grabbed from download.moodle.org, 
+
+    /* checks the md5 of the zip file, grabbed from download.moodle.org,
      * against the md5 of the local language file from last update
      * @param string $lang
      * @param string $md5check
@@ -375,7 +351,7 @@
         }
         return false;
     }
-    
+
     //returns an array of languages, or false if can not read from source
     //uses a socket if proxy is set as a config variable
     function proxy_url($url) {
