@@ -98,7 +98,7 @@ class forum_post_form extends moodleform {
 			$submit_string = get_string('posttoforum', 'forum');
 		}
 		$mform->addElement('submit', 'submitbutton', $submit_string);
-		$renderer->addStopFieldsetElements('submit');
+		$renderer->addStopFieldsetElements('submitbutton');
 
 		$mform->addElement('hidden', 'course');
 		$mform->setType('course', PARAM_INT);
