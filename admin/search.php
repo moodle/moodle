@@ -18,10 +18,7 @@ $CFG->adminsearchquery = $query;  // So we can reference it in search boxes late
 $statusmsg = '';
 
 if ($data = data_submitted()) {
-    $unslashed = array();
-    foreach($data as $key=>$value) {
-        $unslashed[$key] = stripslashes($value);
-    }
+    $unslashed = (array)stripslashes_recursive($data);
     if (confirm_sesskey()) {
         $olddbsessions = !empty($CFG->dbsessions);
         $changedsettings = search_settings(admin_get_root(), $query);
@@ -72,6 +69,7 @@ if ($resultshtml != '') {
 } else {
     echo get_string('noresults','admin');
 }
+echo '</fieldset>';
 echo '</form>';
 
 admin_externalpage_print_footer($adminroot);
