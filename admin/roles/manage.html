@@ -142,7 +142,7 @@ foreach ($capabilities as $capability) {
     ?>
 
         <tr class="rolecap <?php echo $rowclasses; ?>">
-        <td class="name"><span class="cap-desc"><a target="docspopup" href="<?php echo $CFG->docroot.'/'.$lang.'/'.$strcapabilities.'/'.$capability->name ?>"><?php echo get_capability_string($capability->name); ?></a><span class="cap-name"><?php echo $capability->name ?></span></label></td>
+        <td class="name"><span class="cap-desc"><a target="docspopup" href="<?php echo $CFG->docroot.'/'.$lang.'/'.$strcapabilities.'/'.$capability->name ?>"><?php echo get_capability_string($capability->name); ?></a><span class="cap-name"><?php echo $capability->name ?></span></span></td>
         <td class="inherit"><input type="radio" title="<?php p($strinherit); ?>" name="<?php echo $capability->name; ?>" value="<?php echo CAP_INHERIT ?>" <?php if (!isset($localoverride->permission) || $localoverride->permission==CAP_INHERIT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
         <td class="allow"><input type="radio" title="<?php p($strallow); ?>" name="<?php echo $capability->name; ?>" value="<?php echo CAP_ALLOW ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_ALLOW){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
         <td class="prevent" ><input type="radio" title="<?php p($strprevent); ?>" name="<?php echo $capability->name; ?>" value="<?php echo CAP_PREVENT ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_PREVENT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
