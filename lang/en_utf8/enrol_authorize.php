@@ -106,7 +106,7 @@ $string['invalidaba'] = 'Invalid ABA number';
 $string['invalidaccnum'] = 'Invalid account number';
 $string['invalidacctype'] = 'Invalid account type';
 $string['logindesc'] = 'This option must be ON. <br /><br />Please ensure that you have turned <a href=\"$a->url\">loginhttps ON</a> in Admin >> Variables >> Security.<br /><br />Turning this on will make Moodle use a secure https connection just for the login and payment pages.';
-$string['logininfo'] = 'Login name, password and transaction key aren\'t shown due to security measure. There is no need to enter again if you have configured these fields before. You see a green text near the field if some fields were configured. If you enter first time these fields, the login name (*) is required and you must enter <strong>either</strong> the transaction key (#1) <strong>or</strong> the password (#2) in the appropriate box. We recommend you enter the transaction key due to more security measure. If you want to delete the current password tick the checkbox.';
+$string['logininfo'] = 'Login name, password and transaction key are not shown due to security precautions. There is no need to enter again if you have configured these fields before. You see a green text left of the box if some fields were already configured. If you enter these fields for the first time, the login name (*) is required and you must enter <strong>either</strong> the transaction key (#1) <strong>or</strong> the password (#2) in the appropriate box. We recommend you enter the transaction key due to security precautions. If you want to delete the current password, tick the checkbox.';
 $string['methodcc'] = 'Credit Card';
 $string['methodecheck'] = 'eCheck (ACH)';
 $string['missingaba'] = 'Missing ABA number';
