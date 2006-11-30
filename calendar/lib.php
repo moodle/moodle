@@ -635,7 +635,7 @@ function calendar_top_controls($type, $data) {
             $content .= '<span class="previous" title="'.get_string('monthprev','access').'">'.$prevlink."</span>\n";
             $content .= '<span class="hide"> | </span><span class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear')).'</a></span>';
             $content .= '<span class="hide"> | </span><span class="next" title="'.get_string('monthnext','access').'">'.$nextlink."</span>\n";
-            $content .= "<span class=\"clearer\"></span></div>\n";
+            $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
         break;
         case 'course':
             list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
@@ -646,7 +646,7 @@ function calendar_top_controls($type, $data) {
             $content .= '<span class="previous" title="'.get_string('monthprev','access').'">'.$prevlink."</span>\n";
             $content .= '<span class="hide"> | </span><span class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;course='.$data['id'].'&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear')).'</a></span>';
             $content .= '<span class="hide"> | </span><span class="next" title="'.get_string('monthnext','access').'">'.$nextlink."</span>\n";
-            $content .= "<span class=\"clearer\"></span></div>\n";
+            $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
         break;
         case 'upcoming':
             $content .= '<div style="text-align: center;"><a href="'.CALENDAR_URL.'view.php?view=upcoming">'.userdate($time, get_string('strftimemonthyear'))."</a></div>\n";
@@ -663,7 +663,7 @@ function calendar_top_controls($type, $data) {
             $content .= '<span class="previous"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $prevmonth, $prevyear)."\"> $THEME->larrow ".userdate($prevdate, get_string('strftimemonthyear')).'</a></span>';
             $content .= '<span class="hide"> | </span><span class="current">'.userdate($time, get_string('strftimemonthyear'))."</span>\n";
             $content .= '<span class="hide"> | </span><span class="next"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $nextmonth, $nextyear).'">'.userdate($nextdate, get_string('strftimemonthyear'))." $THEME->rarrow</a></span>\n";
-            $content .= "<span class=\"clearer\"></span></div>\n";
+            $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
         break;
         case 'day':
             $data['d'] = $date['mday']; // Just for convenience
@@ -687,7 +687,7 @@ function calendar_top_controls($type, $data) {
             $content .= '<span class="hide"> | </span><span class="current">'.$text.'</span>';
 
             $content .= '<span class="hide"> | </span><span class="next"><a href="'.calendar_get_link_href('view.php?view=day&amp;', $nextdate['mday'], $nextdate['mon'], $nextdate['year']).'">'.$nextname." $THEME->rarrow</a></span>\n";
-            $content .= "<span class=\"clearer\"></span></div>\n";
+            $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
         break;
     }
     return $content;
