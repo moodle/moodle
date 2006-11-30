@@ -4558,7 +4558,7 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
 
     //Accessibility: prefix the alt text/title with 'Help with', strip distracting dots '...'
     // PLEASE DO NOT CHANGE. ('...' is VERY distracting for non-visual users)
-    $tooltip = get_string('helpprefix', '', trim($title, ". \t"));
+    $tooltip = get_string('helpprefix2', '', trim($title, ". \t"));
     
     $linkobject = '';
 
@@ -4571,7 +4571,7 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
             $linkobject .= $imagetext;
         } else {
             $linkobject .= '<img alt="'.$tooltip.'" src="'.
-                    $CFG->pixpath .'/help.gif" />';
+                    $CFG->pixpath .'/help.gif" />';    
         }
 
     } else {
