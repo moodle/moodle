@@ -3635,6 +3635,10 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
     }
     $str .= '</textarea>'."\n";
     
+	if ($usehtmleditor) {
+		$str .= editorshortcutshelpbutton();
+	}
+
     if ($return) {
         return $str;
     }
@@ -4571,7 +4575,7 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
             $linkobject .= $imagetext;
         } else {
             $linkobject .= '<img alt="'.$tooltip.'" src="'.
-                    $CFG->pixpath .'/help.gif" />';    
+                   	$CFG->pixpath .'/help.gif" />';
         }
     } else {
         $linkobject .= $tooltip;
@@ -4614,6 +4618,21 @@ function emoticonhelpbutton($form, $field) {
     class="emoticon" style="margin-left:3px; padding-right:1px;" />';
 
     helpbutton('emoticons', get_string('helpemoticons'), 'moodle', true, true, '', false, $imagetext);
+}
+
+/**
+ * Print a help button.
+ *
+ * Prints a special help button for html editors (htmlarea in this case)
+ * @uses $CFG
+ */
+function editorshortcutshelpbutton() {
+
+    global $CFG;
+    $imagetext = '<img src="' . $CFG->wwwroot . '/lib/editor/htmlarea/images/kbhelp.gif" width="49" height="17" alt="'.
+					get_string('editorshortcutkeys').'" style="width:49px; height:17px; margin:0;" />';
+
+    return helpbutton('editorshortcuts', get_string('editorshortcutkeys'), 'moodle', true, false, '', true, $imagetext);
 }
 
 /**
