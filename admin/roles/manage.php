@@ -382,18 +382,18 @@
             $row[0] = '<a href="manage.php?roleid='.$role->id.'&amp;action=view">'.format_string($role->name).'</a>';
             $row[1] = format_text($role->description, FORMAT_HTML);
             $row[2] = s($role->shortname);
-            $row[3] = '<a title="'.$stredit.'" href="manage.php?action=edit&roleid='.$role->id.'">'.
+            $row[3] = '<a title="'.$stredit.'" href="manage.php?action=edit&amp;roleid='.$role->id.'">'.
                          '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.$stredit.'" /></a> ';
-            $row[3] .= '<a title="'.$strdelete.'" href="manage.php?action=delete&roleid='.$role->id.'&sesskey='.sesskey().'">'.
+            $row[3] .= '<a title="'.$strdelete.'" href="manage.php?action=delete&amp;roleid='.$role->id.'&amp;sesskey='.sesskey().'">'.
                          '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.$strdelete.'" /></a> ';
             if ($role->sortorder != 0) {
-                $row[3] .= '<a title="'.$strmoveup.'" href="manage.php?action=moveup&roleid='.$role->id.'&sesskey='.sesskey().'">'.
+                $row[3] .= '<a title="'.$strmoveup.'" href="manage.php?action=moveup&amp;roleid='.$role->id.'&amp;sesskey='.sesskey().'">'.
                      '<img src="'.$CFG->pixpath.'/t/up.gif" height="11" width="11" border="0" alt="'.$strmoveup.'" /></a> ';
             } else {
                 $row[3] .= '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /> ';
             }
             if ($role->sortorder+1 < $rolescount) {
-                $row[3] .= '<a title="'.$strmovedown.'" href="manage.php?action=movedown&roleid='.$role->id.'&sesskey='.sesskey().'">'.
+                $row[3] .= '<a title="'.$strmovedown.'" href="manage.php?action=movedown&amp;roleid='.$role->id.'&amp;sesskey='.sesskey().'">'.
                      '<img src="'.$CFG->pixpath.'/t/down.gif" height="11" width="11" border="0" alt="'.$strmovedown.'" /></a> ';
             } else {
                 $row[3] .= '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /> ';
