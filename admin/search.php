@@ -72,6 +72,7 @@ if ($resultshtml != '') {
 } else {
     echo get_string('noresults','admin');
 }
+echo '</fieldset>';
 echo '</form>';
 
 admin_externalpage_print_footer($adminroot);
