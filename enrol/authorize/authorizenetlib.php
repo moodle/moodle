@@ -104,7 +104,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
              'x_delim_char'      => AN_DELIM,
              'x_encap_char'      => AN_ENCAP,
              'x_relay_response'  => 'FALSE',
-             'x_login'           => urlencode(rc4decrypt($mconfig->an_login))
+             'x_login'           => rc4decrypt($mconfig->an_login)
         );
         $str = '';
         foreach($constdata as $ky => $vl) {
