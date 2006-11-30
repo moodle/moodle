@@ -15,7 +15,6 @@
 
 /// Print headings
 
-    $strcalendarsettings = get_string('calendarsettings', 'admin');
     $strimporttimezones = get_string('importtimezones', 'admin');
 
     admin_externalpage_print_header($adminroot);
@@ -23,16 +22,16 @@
     print_heading($strimporttimezones);
 
     if (!$ok or !confirm_sesskey()) {
-        $message = '<p>';
+        $message = '<br /><br />';
         $message .= $CFG->dataroot.'/temp/olson.txt<br />';
         $message .= $CFG->dataroot.'/temp/timezones.txt<br />';
         $message .= '<a href="http://download.moodle.org/timezones/">http://download.moodle.org/timezones/</a><br />';
         $message .= '<a href="'.$CFG->wwwroot.'/lib/timezones.txt">'.$CFG->dirroot.'/lib/timezones.txt</a><br />';
-        $message .= '</p>';
+        $message .= '<br />';
 
         $message = get_string("configintrotimezones", 'admin', $message);
 
-        notice_yesno($message, 'timezoneimport.php?ok=1&sesskey='.sesskey(), 'index.php');
+        notice_yesno($message, 'timezoneimport.php?ok=1&amp;sesskey='.sesskey(), 'index.php');
 
         admin_externalpage_print_footer($adminroot);
         exit;
