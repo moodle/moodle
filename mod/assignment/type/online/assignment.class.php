@@ -89,7 +89,7 @@ class assignment_online extends assignment_base {
         }
 
         if (has_capability('mod/assignment:submit', $context)) {
-            print_simple_box_start('center', '70%', '', '', 'generalbox', 'online');
+            print_simple_box_start('center', '70%', '', 0, 'generalbox', 'online');
             if ($editmode) {
                 $mform->display();
             } else {
@@ -124,7 +124,7 @@ class assignment_online extends assignment_base {
             return;
         }
 
-        print_simple_box_start('center', '', '', '', 'generalbox', 'dates');
+        print_simple_box_start('center', '', '', 0, 'generalbox', 'dates');
         echo '<table>';
         if ($this->assignment->timeavailable) {
             echo '<tr><td class="c0">'.get_string('availabledate','assignment').':</td>';

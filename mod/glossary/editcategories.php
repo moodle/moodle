@@ -229,7 +229,7 @@
              $options['hook'] = $hook;
              echo print_single_button("view.php", $options, get_string("back","glossary") );
              echo "</td></tr>";
-             echo "</tablee>";
+             echo "</table>";
 
             ?>
         </td>

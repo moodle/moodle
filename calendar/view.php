@@ -157,7 +157,7 @@
     if (!empty($USER->id)) {
         $authtoken = sha1($USER->username . $USER->password);
         $usernameencoded = urlencode($USER->username);
-        echo "<p><a href=\"export_execute.php?preset_what=all&preset_time=recentupcoming&username=$usernameencoded&authtoken=$authtoken\">" . get_string('quickdownloadcalendar', 'calendar') . '</a></p>';
+        echo "<p><a href=\"export_execute.php?preset_what=all&amp;preset_time=recentupcoming&amp;username=$usernameencoded&amp;authtoken=$authtoken\">" . get_string('quickdownloadcalendar', 'calendar') . '</a></p>';
     }
 
     echo '</td>';

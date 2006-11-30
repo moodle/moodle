@@ -1,7 +1,7 @@
 <form method="post" action="module.php" name="form">
 <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
 
-<table cellpadding=9 cellspacing=0 >
+<table cellpadding="9" cellspacing="0" >
 <tr valign=top>
     <td align=right><p>assignment_maxbytes:</td>
     <td><?php
@@ -14,8 +14,8 @@
     </td>
 </tr>
 
-<tr valign=top>
-    <td align=right><p>assignment_itemstocount:</td>
+<tr valign="top">
+    <td align="right"><p>assignment_itemstocount:</td>
     <td><?php
     unset($options);
     $options[ASSIGNMENT_COUNT_WORDS] = trim(get_string('numwords', ''));
@@ -29,8 +29,8 @@
 </tr>
 
 <tr>
-    <td colspan=3 align=center>
-    <input type="submit" value="<?php print_string("savechanges") ?>"></td>
+    <td colspan="3" align="center">
+    <input type="submit" value="<?php print_string("savechanges") ?>" /></td>
 </tr>
 </table>
 

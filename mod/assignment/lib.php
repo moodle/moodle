@@ -165,7 +165,7 @@ class assignment_base {
      * The default implementation prints the assignment description in a box
      */
     function view_intro() {
-        print_simple_box_start('center', '', '', '', 'generalbox', 'intro');
+        print_simple_box_start('center', '', '', 0, 'generalbox', 'intro');
         $formatoptions = new stdClass;
         $formatoptions->noclean = true;
         echo format_text($this->assignment->description, $this->assignment->format, $formatoptions);
@@ -183,7 +183,7 @@ class assignment_base {
             return;
         }
 
-        print_simple_box_start('center', '', '', '', 'generalbox', 'dates');
+        print_simple_box_start('center', '', '', 0, 'generalbox', 'dates');
         echo '<table>';
         if ($this->assignment->timeavailable) {
             echo '<tr><td class="c0">'.get_string('availabledate','assignment').':</td>';

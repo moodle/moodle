@@ -26,7 +26,7 @@ class assignment_upload extends assignment_base {
         if ($this->assignment->timeavailable > time()
           and !has_capability('mod/assignment:grade', $this->context)      // grading user can see it anytime
           and $this->assignment->var3) {                                   // force hiding before available date
-            print_simple_box_start('center', '', '', '', 'generalbox', 'intro');
+            print_simple_box_start('center', '', '', 0, 'generalbox', 'intro');
             print_string('notavailableyet', 'assignment');
             print_simple_box_end();
         } else {
