@@ -11,7 +11,6 @@
     $update        = optional_param('update', 0, PARAM_INT);
 
     $cancel        = optional_param('cancel', 0, PARAM_BOOL);
-
     if ($cancel) {
         if (!empty($SESSION->returnpage)) {
             $return = $SESSION->returnpage;
