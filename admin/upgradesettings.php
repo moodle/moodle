@@ -24,10 +24,7 @@ if ($newsettingshtml == '') {
 
 // now we'll deal with the case that the admin has submitted the form with new settings
 if ($data = data_submitted()) {
-    $unslashed = array();
-    foreach($data as $key=>$value) {
-        $unslashed[$key] = stripslashes($value);
-    }
+    $unslashed = (array)stripslashes_recursive($data);
     if (confirm_sesskey()) {
         $newsettings = find_new_settings(admin_get_root());
         $errors = '';
