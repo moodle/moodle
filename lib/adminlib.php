@@ -2020,8 +2020,8 @@ class admin_setting_special_editorhidebuttons extends admin_setting {
         $count = 0;
 
         foreach($this->items as $key => $value) {
-            if ($count % 15 == 0) {
-                $return .= '</div></td><td valign="top" align="right">';
+            if ($count % 15 == 0 and $count != 0) {
+                $return .= '</td><td valign="top" align="right">';
             }
 
             $return .= ($value == '' ? get_string($key,'editor') : '<img width="18" height="18" src="' . $CFG->wwwroot . '/lib/editor/htmlarea/images/' . $value . '" alt="' . get_string($key,'editor') . '" title="' . get_string($key,'editor') . '" />') . '&nbsp;';
