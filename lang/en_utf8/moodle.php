@@ -403,6 +403,7 @@ $string['editorfontlist'] = 'Fontlist';
 $string['editorfontsize'] = 'Default font-size';
 $string['editorresettodefaults'] = 'Reset to default values';
 $string['editorsettings'] = 'Editor settings';
+$string['editorshortcutkeys'] = 'Editor shortcut keys';
 $string['editsummary'] = 'Edit summary';
 $string['editthisactivity'] = 'Edit this activity';
 $string['editthiscategory'] = 'Edit this category';
