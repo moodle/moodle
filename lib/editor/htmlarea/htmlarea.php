@@ -79,6 +79,7 @@ function HTMLArea(textarea, config) {
         this._customUndo = true;
         this._mdoc = document; // cache the document, we need it in plugins
         this.doctype = '';
+		this.dropdowns = [];   // Array of select elements in the toolbar
     }
 };
 
@@ -419,6 +420,8 @@ HTMLArea.prototype._createToolbar = function () {
                 editor._comboSelected(el, txt);
             });
         }
+		editor.dropdowns[txt] = el;  // Keep track of the element for keyboard
+									 // access later.
         return el;
     }; // END of function: createSelect
 
@@ -790,37 +793,38 @@ HTMLArea.prototype.generate = function () {
     textarea.style.width = iframe.style.width;
     textarea.style.height = iframe.style.height;
 
-        if (HTMLArea.is_ie) {
-            doc.body.contentEditable = true;
-        }
+    if (HTMLArea.is_ie) {
+        doc.body.contentEditable = true;
+    }
 
-        // intercept some events; for updating the toolbar & keyboard handlers
-        HTMLArea._addEvents
-            (doc, ["keydown", "keypress", "mousedown", "mouseup", "drag"],
-             function (event) {
-                 return editor._editorEvent(HTMLArea.is_ie ? editor._iframe.contentWindow.event : event);
-             });
+    // intercept some events; for updating the toolbar & keyboard handlers
+    HTMLArea._addEvents
+          (doc, ["keydown", "keypress", "mousedown", "mouseup", "drag"],
+          function (event) {
+              return editor._editorEvent(HTMLArea.is_ie ? editor._iframe.contentWindow.event : event);
+          });
 
-        // check if any plugins have registered refresh handlers
-        for (var i in editor.plugins) {
-            var plugin = editor.plugins[i].instance;
-            if (typeof plugin.onGenerate == "function")
-                plugin.onGenerate();
+    // check if any plugins have registered refresh handlers
+    for (var i in editor.plugins) {
+        var plugin = editor.plugins[i].instance;
+        if (typeof plugin.onGenerate == "function") {
+            plugin.onGenerate();
+		}
         if (typeof plugin.onGenerateOnce == "function") {
             plugin.onGenerateOnce();
             plugin.onGenerateOnce = null;
         }
-        }
+    }
 
-        // Moodle fix for bug Bug #2521 Too long statusbar line in IE
-        //
-        //setTimeout(function() {
-        //editor.updateToolbar();
-        //}, 250);
+    // Moodle fix for bug Bug #2521 Too long statusbar line in IE
+    //
+    //setTimeout(function() {
+    //    editor.updateToolbar();
+    //}, 250);
 
-        if (typeof editor.onGenerate == "function")
-            editor.onGenerate();
-
+    if (typeof editor.onGenerate == "function") {
+        editor.onGenerate();
+	}
 };
 
 
@@ -1935,72 +1939,144 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
     return false;
 };
 
-/** A generic event handler for things that happen in the IFRAME's document.
- * This function also handles key bindings. */
+
+/**
+ * A generic event handler for things that happen in the IFRAME's document.
+ * This function also handles key bindings.
+ */
 HTMLArea.prototype._editorEvent = function(ev) {
+
     var editor = this;
     var keyEvent = (HTMLArea.is_ie && ev.type == "keydown") || (ev.type == "keypress");
-    if (keyEvent) {
-        for (var i in editor.plugins) {
+
+	if (keyEvent) {
+
+		for (var i in editor.plugins) {
             var plugin = editor.plugins[i].instance;
             if (typeof plugin.onKeyPress == "function") plugin.onKeyPress(ev);
         }
-    }
-    if (keyEvent && ev.ctrlKey && ! ev.altKey) {
-        var sel = null;
+
+		var sel = null;
         var range = null;
         var key = String.fromCharCode(HTMLArea.is_ie ? ev.keyCode : ev.charCode).toLowerCase();
         var cmd = null;
         var value = null;
-        switch (key) {
-            case 'a':
-            if (!HTMLArea.is_ie) {
-                // KEY select all
-                sel = this._getSelection();
-                sel.removeAllRanges();
-                range = this._createRange();
-                range.selectNodeContents(this._doc.body);
-                sel.addRange(range);
-                HTMLArea._stopEvent(ev);
-            }
-            break;
 
-            // simple key commands follow
+		if (ev.ctrlKey && !ev.altKey) {
+			/**
+			 * Ctrl modifier only.
+			 * We use these for shortcuts that change existing content,
+			 * e.g. make text bold.
+			 */
+			switch (key) {
 
-            case 'b': cmd = "bold"; break;
-            case 'i': cmd = "italic"; break;
-            case 'u': cmd = "underline"; break;
-            case 's': cmd = "strikethrough"; break;
-            case 'l': cmd = "justifyleft"; break;
-            case 'e': cmd = "justifycenter"; break;
-            case 'r': cmd = "justifyright"; break;
-            case 'j': cmd = "justifyfull"; break;
-            case 'z': cmd = "undo"; break;
-            case 'y': cmd = "redo"; break;
-            case 'v': if (! HTMLArea.is_gecko ) { cmd = "paste"; } break;
+				case 'a':
+					// Select all.
+	                if (!HTMLArea.is_ie) {
+	                    // KEY select all
+	                    sel = this._getSelection();
+	                    sel.removeAllRanges();
+	                    range = this._createRange();
+	                    range.selectNodeContents(this._doc.body);
+	                    sel.addRange(range);
+	                    HTMLArea._stopEvent(ev);
+	                }
+	                break;
 
-            case '0': cmd = "killword"; break;
+				// For the dropdowns, we assign focus to them so that they are
+				// keyboard accessible.
+				case 'o':
+					editor.dropdowns['fontname'].focus();
+					break;
+				case 'p':
+					editor.dropdowns['fontsize'].focus();
+					break;
+				case 'h':
+					editor.dropdowns['formatblock'].focus();
+					break;
 
-            // headings
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            cmd = "formatblock";
-            value = "h" + key;
-            if (HTMLArea.is_ie) {
-                value = "<" + value + ">";
-            }
-            break;
-        }
-        if (cmd) {
+	            case 'b': cmd = "bold"; break;
+	            case 'i': cmd = "italic"; break;
+	            case 'u': cmd = "underline"; break;
+	            case 's': cmd = "strikethrough"; break;
+				case ',': cmd = "subscript"; break;
+				case '.': cmd = "superscript"; break;
+				
+				case 'v': 
+					if (! HTMLArea.is_gecko ) {
+						cmd = "paste";
+					}
+					break;
+				
+				case '0': cmd = "killword"; break;
+				case 'z': cmd = "undo"; break;
+	            case 'y': cmd = "redo"; break;
+	            case 'l': cmd = "justifyleft"; break;
+	            case 'e': cmd = "justifycenter"; break;
+	            case 'r': cmd = "justifyright"; break;
+	            case 'j': cmd = "justifyfull"; break;
+				case '/': cmd = "lefttoright"; break;
+				case '|': cmd = "righttoleft"; break;
+				case ';': cmd = "outdent"; break;
+				case "'": cmd = "indent"; break;
+				case 'g': cmd = "forecolor"; break;
+				case 'k': cmd = "hilitecolor"; break;
+				case 'f': cmd = "searchandreplace"; break;
+				case '`': cmd = "htmlmode"; break;  // FIXME: can't toggle from source code to wysiwyg
+
+				case 'm':
+	                // Toggle fullscreen on or off.
+	                if (this.config.btnList['popupeditor'][0] == 'Enlarge Editor') {
+	                    cmd = 'popupeditor';
+	                } else {
+	                    window.close();
+	                }
+	                break;
+
+				// Headings.
+	            case '1':
+	            case '2':
+	            case '3':
+	            case '4':
+	            case '5':
+	            case '6':
+	            cmd = "formatblock";
+	            value = "h" + key;
+	            if (HTMLArea.is_ie) {
+	                value = "<" + value + ">";
+	            }
+	            break;
+
+			} // End switch (key)
+			
+			
+		} else if (ev.ctrlKey && ev.altKey) {
+			/**
+			 * Ctrl + Alt modifiers.
+			 * We use these for shortcuts that insert stuff, e.g. images.
+			 */
+			switch (key) {
+				case 'o': cmd = "insertorderedlist"; break;
+				case 'u': cmd = "insertunorderedlist"; break;
+				case 'r': cmd = "inserthorizontalrule"; break;
+				case 'a': cmd = "createanchor"; break;
+				case 'l': cmd = "createlink"; break;
+				case 'd': cmd = "unlink"; break;
+				case 'n': cmd = "nolink"; break;
+				case 'i': cmd = 'insertimage'; break;
+				case 't': cmd = 'inserttable'; break;
+				case 's': cmd = 'insertsmile'; break;
+				case 'c': cmd = 'insertchar'; break;
+			}	
+		}
+		
+		if (cmd) {
             // execute simple command
             this.execCommand(cmd, false, value);
             HTMLArea._stopEvent(ev);
         }
-    }
+	} // End if (keyEvent)
+
     /*
     else if (keyEvent) {
         // other keys here
@@ -2014,7 +2090,8 @@ HTMLArea.prototype._editorEvent = function(ev) {
         }
     }
     */
-    // update the toolbar state after some time
+
+    // Update the toolbar state after some time.
     if (editor._timerToolbar) {
         clearTimeout(editor._timerToolbar);
     }
@@ -2023,6 +2100,7 @@ HTMLArea.prototype._editorEvent = function(ev) {
         editor._timerToolbar = null;
     }, 50);
 };
+
 
 // retrieve the HTML
 HTMLArea.prototype.getHTML = function() {
@@ -2147,7 +2225,9 @@ HTMLArea.prototype._createRange = function(sel) {
     if (HTMLArea.is_ie) {
         return sel.createRange();
     } else {
-        this.focusEditor();
+		// Commented out because we need the dropdowns to be able to keep
+		// focus for keyboard accessibility. Comment by Vy-Shane Sin Fat.
+        //this.focusEditor();
         if (typeof sel != "undefined") {
             try {
             return sel.getRangeAt(0);
