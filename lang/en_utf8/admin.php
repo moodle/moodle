@@ -398,6 +398,7 @@ $string['runclamavonupload'] = 'Use clam AV on uploaded files';
 $string['savechanges'] = 'Save Changes';
 $string['search'] = 'Search';
 $string['searchresults'] = 'Search Results';
+$string['searchinsettings'] = 'Search in settings';
 $string['secureforms'] = 'Use additional form security';
 $string['security'] = 'Security';
 $string['server'] = 'Server';
