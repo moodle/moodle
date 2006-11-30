@@ -2441,7 +2441,7 @@ class admin_setting_special_coursemanager extends admin_setting {
                 } else {
                     $return .= '<br />';
                 }
-                $return .= '<input type="checkbox" name="s_'.$this->name.'['.$roleid.']" value="1" '.$checked.'>&nbsp;'.$role->name;
+                $return .= '<input type="checkbox" name="s_'.$this->name.'['.$roleid.']" value="1" '.$checked.' />&nbsp;'.$role->name;
             }
             $return .= '</div>';
         }

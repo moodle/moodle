@@ -90,7 +90,7 @@ if (!is_null($path)) {
 }
 // Print the form for adjusting options.
 print_simple_box_start('center', '70%');
-echo '<form method="GET" action="index.php">';
+echo '<form method="get" action="index.php">';
 print_heading($formheader);
 echo '<p>'; print_checkbox('showpasses', 1, $showpasses, get_string('showpasses', $langfile)); echo '</p>';
 echo '<p>'; print_checkbox('showsearch', 1, $showsearch, get_string('showsearch', $langfile)); echo '</p>';
