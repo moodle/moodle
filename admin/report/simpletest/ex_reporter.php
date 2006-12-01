@@ -38,14 +38,15 @@ class ExHtmlReporter extends HtmlReporter {
      * @param bool $showpasses Whether this reporter should output anything for passes.
      */
     function ExHtmlReporter($showpasses) {
-        global $CFG;
+        global $CFG, $THEME;
 
         $this->HtmlReporter();
         $this->showpasses = $showpasses;
 
         $this->strrunonlyfolder = $this->get_string('runonlyfolder');
         $this->strrunonlyfile = $this->get_string('runonlyfile');
-        $this->strseparator = ' <img src="' . $CFG->pixpath . '/a/r_breadcrumb.gif" class="resize" alt="" /> ';
+        check_theme_arrows();
+        $this->strseparator = ' <span class="sep">'.$THEME->rarrow.'</span> ';
     }
 
     /**
