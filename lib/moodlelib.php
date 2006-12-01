@@ -4732,7 +4732,7 @@ function get_list_of_pixnames($lang = '') {
     } else if (file_exists($CFG->dataroot .'/lang/'. $lang .'/pix.php')) {
         $path = $CFG->dataroot .'/lang/'. $lang .'/pix.php';
 
-    } else if ($parentlang = get_string('parentlanguage')) {
+    } else if ($parentlang = get_string('parentlanguage') and $parentlang != '[[parentlanguage]]') {
         return get_list_of_pixnames($parentlang); //return pixnames from parent language instead
     }
 
