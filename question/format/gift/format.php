@@ -143,7 +143,7 @@ class qformat_gift extends qformat_default {
         $text = $this->escapedchar_pre($text);
 
         // Look for category modifier
-        if (ereg( '^\$CATEGORY:(.+)', $text, $matches)) {
+        if (ereg( '^\$CATEGORY: *([A-Za-z0-9/]+)[[:space:]]', $text, $matches)) {
             $newcategory = $matches[1];
 
             // build fake question to contain category
