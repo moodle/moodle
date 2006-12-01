@@ -61,8 +61,8 @@ h6.main {
 
 .clearer {
   clear:both;
-  margin:0px;
-  padding:0px;
+  margin:0;
+  padding:0;
   height:1px;
   border:none;
   background:transparent;
@@ -99,11 +99,11 @@ h6.main {
 }
 
 form {
-  margin-bottom:0px;
+  margin-bottom:0;
 }
 
 table {
-  border-spacing: 0px;
+  border-spacing: 0;
   border-collapse: collapse;
 }
 
@@ -114,7 +114,7 @@ a img {
 img.userpicture,
 img.grouppicture,
 .block_online_users .listentry img {
-  border: 0px solid
+  border: 0 solid
 }
 
 .notifyproblem {
@@ -129,7 +129,7 @@ img.grouppicture,
 
 .notifytiny {
   text-align:left;
-  padding: 0px;
+  padding: 0;
 }
 
 .generalbox {
@@ -195,9 +195,9 @@ img.grouppicture,
 .tabledivider {
   border-width:1px;
   border-style:solid;
-  border-left:0px;
-  border-right:0px;
-  border-top:0px;
+  border-left:0;
+  border-right:0;
+  border-top:0;
 }
 
 .sitetopic {
@@ -238,12 +238,12 @@ table.formtable tbody th
 table.formtable tbody .htmlarea td,
 table.formtable tbody .htmlarea th
 {
-  padding: 0px;
+  padding: 0;
 }
 
 .paging {
   text-align: center;
-  margin: 10px 0px 10px 0px;
+  margin: 10px 0p 10px 0;
 }
 
 .unread {
@@ -256,7 +256,7 @@ table.formtable tbody .htmlarea th
 
 .helplink img {
   vertical-align: middle;
-  margin: 0px 2px;
+  margin: 0 2px;
   width: 17px;
   height: 17px;
 }
@@ -401,8 +401,8 @@ form#adminsettings div.htmlarea {
 
 .headermain, h1.headermain {
   float:left;
-  margin:0%;
-  padding:0%;
+  margin:0;
+  padding:0;
 }
 
 .headermenu {
@@ -431,13 +431,13 @@ table.navbar {
 
 .navbar .breadcrumb {
   float:left;
-  margin:0.2em 0em;
+  margin:0.2em 0;
 }
 
 .breadcrumb ul {
-  padding:0%;
-  margin:0%;
-  text-indent:0%;
+  padding:0;
+  margin:0;
+  text-indent:0;
   list-style:none;
 }
 .breadcrumb li {
@@ -675,11 +675,13 @@ a.skip-block, .skip-block {
   height:16px;
 }
 
-ul.list, ul.list li, ol.list, ol.list li {
-  list-style-type:none;
+.list, .unlist, .inline-list {
+  list-style:none;
   padding:0;
   margin:0;
-  text-indent:0;
+}
+.inline-list li {
+  display:inline;
 }
 
 .sideblock .content h3,
@@ -1121,25 +1123,21 @@ span.current {
 }
 
 #course-view ul.section,
-#site-index ul.section,
-#course-view ul.section li,
-#site-index ul.section li {
+#site-index ul.section {
   margin: 0;
   padding: 0;
-  text-indent: 0;
   list-style: none;
 }
 
-#course-view ul.section li.activity ul li,
+/*#course-view ul.section li.activity ul li,
 #site-index ul.section li.activity ul li {
   list-style: disc;
-}
+}*/
 
 /*Accessibility: No-tables course format. */
-#course-view ul.weekscss, .weekscss li {
+#course-view ul.weekscss {
   margin: 0;
   padding: 0;
-  text-indent: 0;
   list-style: none;
 }
 /* Window-width: 800 pixels.
@@ -1232,7 +1230,7 @@ body#course-user .section {
 }
 
 body#course-user .section h2 {
-  margin-top: 0px;
+  margin-top: 0;
 }
 
 
@@ -1240,7 +1238,7 @@ body#course-user .section h2 {
   border-width:1px;
   border-style:solid;
   padding:5px;
-  margin:0%;
+  margin:0;
 }
 
 .headingblock .link {
@@ -1270,7 +1268,6 @@ body#course-view .headingblock {
   list-style-type:none;
   padding:0;
   margin:0;
-  text-indent:0;
 }
 
 
@@ -1284,8 +1281,8 @@ body#doc-contents h1 {
 
 body#doc-contents ul {
   list-style-type: none;
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0p;
   width: 90%;
 }
 
@@ -1301,7 +1298,7 @@ body#grade-index .grades {
 }
 
 body#grade-index .grades td {
-  border-width:0px 1px 0px 1px;
+  border-width:0 1px 0 1px;
   border-style:solid;
   border-collapse: collapse;
 }
