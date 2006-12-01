@@ -539,6 +539,7 @@ $string['forcepasswordchangehelp'] = 'Prompt user to change it on their next log
 $string['forcepasswordchangenotice'] = 'You must change your password to proceed.';
 $string['forcetheme'] = 'Force theme';
 $string['forgotten'] = 'Forgotten your username or password?';
+$string['forgotteninvalidurl'] = 'Invalid password reset URL';
 $string['forgotaccount'] = 'Lost password?';
 $string['format'] = 'Format';
 $string['formathtml'] = 'HTML format';
