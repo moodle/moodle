@@ -48,17 +48,16 @@ class block_login extends block_base {
         $this->content->text = '';
 
         if (empty($USER->loggedin) or isguest()) {   // Show the block
-///            $this->content->text .= '<style> .loginform div { margin:0.4em 0.4em; text-align:right; } .loginform input { width: 6em; } .r2 input { text-align:center; } </style>'; //DONOTCOMMIT:TODO
 
             $this->content->text .= "\n".'<form class="loginform" name="login" method="post" action="'.$wwwroot.'/login/index.php">';
 
-            $this->content->text .= '<div class="r0"><label for="login_username">'.get_string('username').'</label>: ';
+            $this->content->text .= '<div class="c1"><label for="login_username">'.get_string('username').'</label>: ';
             $this->content->text .= '<input type="text" name="username" id="login_username" value="'.$username.'" /></div>';
 
-            $this->content->text .= '<div class="r1"><label for="login_password">'.get_string('password').'</label>: ';
+            $this->content->text .= '<div class="c1"><label for="login_password">'.get_string('password').'</label>: ';
             $this->content->text .= '<input type="password" name="password" id="login_password" value="" /></div>';
 
-            $this->content->text .= '<div class="r2"><input type="submit" value="'.get_string('login').'" /></div>';
+            $this->content->text .= '<div class="c1 btn"><input type="submit" value="'.get_string('login').'" /></div>';
 
             $this->content->text .= "</form>\n";
 

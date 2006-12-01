@@ -1344,6 +1344,13 @@ body#grade-index .grades .weighted {
   width: 6em;
 }
 
+.block_login .loginform div {
+  margin:0.3em 0.8em;
+  text-align:right;
+}
+.block_login .btn input {
+  text-align:center;
+}
 
 /***
  *** Message
