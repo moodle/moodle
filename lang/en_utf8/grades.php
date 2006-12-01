@@ -123,5 +123,6 @@ $string['weightedpct'] = 'weighted %%';
 $string['weightedpctcontribution'] = 'weighted %% contribution';
 $string['writinggradebookinfo'] = 'Writing Gradebook settings';
 $string['yes'] = 'Yes';
+$string['yourgrade'] = 'Your grade';
 
 ?>

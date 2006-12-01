@@ -1684,8 +1684,9 @@ function grade_view_category_grades($view_by_student) {
     
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     
+    // if can't see course grades, print single grade view
     if (!has_capability('moodle/course:viewcoursegrades', $context)) {
-        $view_by_student = $USER->id;
+        return print_student_grade($USER, $course);
     }
 
     if ($preferences->use_advanced == 0) {
@@ -1984,8 +1985,9 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
         return false;
     }
 
+    // if can't see course grades, print single grade view
     if (!has_capability('moodle/course:viewcoursegrades', $context)) {
-        $view_by_student = $USER->id;    
+        return print_student_grade($USER, $course);
     }
     
     list($grades_by_student, $all_categories) = grade_get_formatted_grades();
@@ -2933,6 +2935,7 @@ function grade_download_form($type='both') {
 
 /** 
  * Simply prints all grade of one student from all modules from a given course
+ * used in the grade book for student view, and grade button under user profile
  * @param int $userid;
  * @param int $courseid;
  */
@@ -2952,12 +2955,18 @@ function print_student_grade($user, $course) {
 
 /// Search through all the modules, pulling out grade data
     $sections = get_all_sections($course->id); // Sort everything the same as the course
+    
+    // prints table
+    
+    echo ('<table align="center" class="grades"><tr><th>'.get_string('activity').'</th><th>'.get_string('yourgrade','grades').'</th><th>'.get_string('maxgrade','grades').'</th></tr>');
+    
     for ($i=0; $i<=$course->numsections; $i++) {
         if (isset($sections[$i])) {   // should always be true
             $section = $sections[$i];
             if ($section->sequence) {
                 $sectionmods = explode(",", $section->sequence);
                 foreach ($sectionmods as $sectionmod) {
+                 
                     $mod = $mods[$sectionmod];
                     if (empty($mod->modname)) {
                         continue;  // Just in case, see MDL-7150
@@ -2981,12 +2990,17 @@ function print_student_grade($user, $course) {
                                 }
                                 
                                 if ($maxgrade) { 
-                                    echo '<br />';
+                                  
+                                    $link_id = grade_get_module_link($course->id, $mod->instance, $mod->module);
+                                    $link = $CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$link_id->id;
+
+                                    echo '<tr>';
                                     if (!empty($modgrades->grades[$user->id])) {
                                         $currentgrade = $modgrades->grades[$user->id];
-                                        echo "$mod->modfullname: ".format_string($instance->name,true)." - $currentgrade/$maxgrade";            } else {
-                                        echo "$mod->modfullname: ".format_string($instance->name,true)." - ".get_string('nograde')."/$maxgrade";                                        
+                                        echo "<td><a href='$link'>$mod->modfullname: ".format_string($instance->name,true)."</a></td><td>$currentgrade</td><td>$maxgrade</td>";            } else {
+                                        echo "<td><a href='$link'>$mod->modfullname: ".format_string($instance->name,true)."</td><td>".get_string('nograde')."</a></td><td>$maxgrade</td>";                                        
                                     }
+                                    echo '</tr>';                       
                                 }
                             }
                         }
@@ -2994,7 +3008,8 @@ function print_student_grade($user, $course) {
                 }
             }
         }
-    } // a new Moodle nesting record? ;-) 
+    } // a new Moodle nesting record? ;-)
+    echo '</table>';
 }
 
 function grade_get_course_students($courseid) {
