@@ -1911,7 +1911,7 @@ class admin_setting_special_editordictionary extends admin_setting_configselect 
 
             for ($i = 0; $i < $cnt; $i++) {
                 if (!empty($dictionaries[$i])) {
-                    $dicts[] = $dictionaries[$i];
+                    $dicts[$dictionaries[$i]] = $dictionaries[$i];
                 }
             }
         }
