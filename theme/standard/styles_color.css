@@ -196,7 +196,7 @@ table.formtable tbody th {
  *** Header
  ***/
 
-.breadcrumb .sep {
+.breadcrumb .sep, #admin-report-simpletest-index .sep {
   color:#aaa;
 }
 
