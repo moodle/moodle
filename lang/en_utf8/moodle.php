@@ -570,6 +570,7 @@ $string['forcepasswordchangenotice'] = 'You must change your password to proceed
 $string['forcetheme'] = 'Force theme';
 $string['forgotaccount'] = 'Lost password?';
 $string['forgotten'] = 'Forgotten your username or password?';
+$string['forgotteninvalidurl'] = 'Invalid password reset URL';
 $string['format'] = 'Format';
 $string['formathtml'] = 'HTML format';
 $string['formatlams'] = 'LAMS course format';
