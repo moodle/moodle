@@ -39,6 +39,7 @@ $txt->senddetails = get_string('senddetails');
 $txt->username = get_string('username');
 $txt->usernameemailmatch = get_string('usernameemailmatch');
 $txt->usernamenotfound = get_string('usernamenotfound');
+$txt->invalidurl = get_string('forgotteninvalidurl');
 
 $sesskey = sesskey();
 $errors = array();
@@ -179,7 +180,7 @@ if (!empty($param->p) and !empty($param->s)) {
     $user = get_complete_user_data('username',$param->s);
 
     // make sure that url relates to a valid user
-    if (!empty($user)) {
+    if (!empty($user) and $user->secret == $param->p) {
         // check this isn't guest user
         if (isguest( $user->id )) {
             error('You cannot change the guest password');
@@ -198,6 +199,8 @@ if (!empty($param->p) and !empty($param->s)) {
         $a->email = $user->email;
         $a->link = $changepasswordurl;
         $txt->emailpasswordsent = get_string( 'emailpasswordsent', '', $a );
+    } else {
+       $errors[] = $txt->invalidurl;
     }
 
 }
