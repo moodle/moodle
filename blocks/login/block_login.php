@@ -3,7 +3,7 @@
 class block_login extends block_base {
     function init() {
         $this->title = get_string('login');
-        $this->version = 2004081600;
+        $this->version = 2006102700; //TODO
     }
 
     function applicable_formats() {
@@ -48,18 +48,19 @@ class block_login extends block_base {
         $this->content->text = '';
 
         if (empty($USER->loggedin) or isguest()) {   // Show the block
-            $this->content->text .= '<form class="loginform" name="login" method="post" action="'.$wwwroot.'/login/index.php">';
-            $this->content->text .= '<table align="center" cellpadding="2" cellspacing="0" class="logintable">';
+///            $this->content->text .= '<style> .loginform div { margin:0.4em 0.4em; text-align:right; } .loginform input { width: 6em; } .r2 input { text-align:center; } </style>'; //DONOTCOMMIT:TODO
 
-            $this->content->text .= '<tr><td class="c0 r0" align="right">'.get_string('username').':</td>';
-            $this->content->text .= '<td class="c1 r0"><input type="text" name="username" size="10" value="'.$username.'" /></td></tr>';
+            $this->content->text .= "\n".'<form class="loginform" name="login" method="post" action="'.$wwwroot.'/login/index.php">';
 
-            $this->content->text .= '<tr><td class="c0 r1" align="right">'.get_string('password').':</td>';
-            $this->content->text .= '<td class="c1 r1"><input type="password" name="password" size="10" value="" /></td></tr>';
+            $this->content->text .= '<div class="r0"><label for="login_username">'.get_string('username').'</label>: ';
+            $this->content->text .= '<input type="text" name="username" id="login_username" value="'.$username.'" /></div>';
 
-            $this->content->text .= '<tr><td class="c0 r2">&nbsp;</td><td class="c1 r2" align="left"><input type="submit" value="'.get_string('login').'" /></td></tr>';
+            $this->content->text .= '<div class="r1"><label for="login_password">'.get_string('password').'</label>: ';
+            $this->content->text .= '<input type="password" name="password" id="login_password" value="" /></div>';
 
-            $this->content->text .= '</table></form>';
+            $this->content->text .= '<div class="r2"><input type="submit" value="'.get_string('login').'" /></div>';
+
+            $this->content->text .= "</form>\n";
 
             if (!empty($signup)) {
                 $this->content->footer .= '<div><a href="'.$signup.'">'.get_string('startsignup').'</a></div>';

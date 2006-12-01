@@ -202,12 +202,12 @@
                     isset($this->config->block_rss_client_show_channel_image) && 
                         $this->config->block_rss_client_show_channel_image &&
                             isset($rss->image) && isset($rss->image['link']) && isset($rss->image['title']) && isset($rss->image['url']) ) {
-                $returnstring .= '<div class="image" title="'. $rss->image['title'] .'"><a href="'. $rss->image['link'] .'"><img src="'. $rss->image['url'] .'" alt="'. $rss->image['title'] .'"/></a></div>';
+                $returnstring .= "\n".'<div class="image" title="'. $rss->image['title'] .'"><a href="'. $rss->image['link'] .'"><img src="'. $rss->image['url'] .'" alt="'. $rss->image['title'] .'" /></a></div>';
             }
 
             if ($showtitle) {
                 $returnstring .= '<div class="title">'. $feedtitle .'</div>';
-            } 
+            }
 
             $formatoptions->para = false;
 
@@ -283,4 +283,5 @@
          }
      }
 }
+
 ?>
