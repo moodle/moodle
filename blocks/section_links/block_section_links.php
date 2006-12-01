@@ -34,7 +34,7 @@ class block_section_links extends block_base {
             return $this->content;
         }
 
-        $this->content = New stdClass;
+        $this->content = new stdClass;
         $this->content->footer = '';
         $this->content->text   = '';
 
@@ -71,7 +71,7 @@ class block_section_links extends block_base {
         } else {
             $link = '#section-';
         }
-        $text = '';
+        $text = '<ol class="inline-list">';
         for ($i = $inc; $i <= $course->numsections; $i += $inc) {
             $isvisible = get_field('course_sections', 'visible', 'course', $this->instance->pageid, 'section', $i);
             if (!$isvisible and !has_capability('moodle/course:update', $context)) {
@@ -79,16 +79,17 @@ class block_section_links extends block_base {
             }
             $style = ($isvisible) ? '' : ' class="dimmed"';
             if ($i == $highlight) {
-                $text .= "<a href=\"$link$i\"$style><b>$i</b></a> ";
+                $text .= "<li><a href=\"$link$i\"$style><b>$i</b></a></li>\n";
             } else {
-                $text .= "<a href=\"$link$i\"$style>$i</a> ";
+                $text .= "<li><a href=\"$link$i\"$style>$i</a></li>\n";
             }
         }
+        $text .= '</ol>';
         if ($highlight) {
             $isvisible = get_field('course_sections', 'visible', 'course', $this->instance->pageid, 'section', $highlight);
             if ($isvisible or has_capability('moodle/course:update', $context)) {
                 $style = ($isvisible) ? '' : ' class="dimmed"';
-                $text .= "<br /><a href=\"$link$highlight\"$style>$linktext</a>";
+                $text .= "\n<a href=\"$link$highlight\"$style>$linktext</a>";
             }
         }
 
@@ -98,4 +99,5 @@ class block_section_links extends block_base {
         return $this->content;
     }
 }
+
 ?>
