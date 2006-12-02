@@ -29,18 +29,18 @@
             <table align="center" class="loginform">
               <tr class="username"> 
                 <td align="right" class="c0">
-                  <?php print_string("username") ?>:
+                  <label for="username"><?php print_string("username") ?></label>
                 </td>
                 <td class="c1">
-                  <input type="text" name="username" size="15" value="<?php p($frm->username) ?>" alt="<?php print_string("username") ?>" /> 
+                  <input type="text" name="username" id="username" size="15" value="<?php p($frm->username) ?>" alt="<?php print_string("username") ?>" /> 
                 </td>
               </tr>
               <tr class="password"> 
                 <td align="right" class="c0">
-                  <?php print_string("password") ?>:
+                  <label for="password"><?php print_string("password") ?></label>
                 </td>
                 <td class="c1">
-                  <input type="password" name="password" size="15" value="" alt="<?php print_string("password") ?>" />
+                  <input type="password" name="password" id="password" size="15" value="" alt="<?php print_string("password") ?>" />
                 </td>
               </tr>
             </table>

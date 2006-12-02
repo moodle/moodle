@@ -114,6 +114,7 @@
 
     print_header($strchangepassword, $strchangepassword, $navstr);
 
+    echo '<br />';
     print_simple_box_start('center');
     include('change_password_form.html');
     print_simple_box_end();
