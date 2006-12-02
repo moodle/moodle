@@ -267,14 +267,14 @@ else {
 <form action="forgot_password.php" method="post">
     <input type="hidden" name="sesskey" value="<?php echo $sesskey; ?>" />
     <input type="hidden" name="action" value="find" />
-    <table id="forgottenpassword">
+    <table id="forgottenpassword" cellpadding="2">
         <tr>
-            <td><?php echo $txt->username; ?></td>
-            <td><input type="text" name="username" size="25" /></td>
+            <td><label for="username"><?php echo $txt->username; ?></label></td>
+            <td><input type="text" name="username" id="username" size="25" /></td>
         </tr>
         <tr>
-            <td><?php echo $txt->email; ?></td>
-            <td><input type="text" name="email" size="25" /></td>
+            <td><label for="email"><?php echo $txt->email; ?></label></td>
+            <td><input type="text" name="email" id="email" size="25" /></td>
         </tr>
         <tr>
              <td>&nbsp;</td>
