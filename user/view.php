@@ -342,7 +342,12 @@
         if ($internalpassword ) {
             echo "<td nowrap=\"nowrap\"><form action=\"$internalpassword\" method=\"get\">";
             echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
-            echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" />";
+            if (!empty($USER->realuser)) {
+                // changing of password when "Logged in as" is not allowed
+                echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" disabled=\"disabled\" />";
+            } else {
+                echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" />";
+            }
             echo "</form></td>";
         } else if ( strlen($CFG->changepassword) > 1 ) {
             echo "<td nowrap=\"nowrap\"><form action=\"$CFG->changepassword\" method=\"get\">";

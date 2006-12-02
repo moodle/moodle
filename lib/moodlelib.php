@@ -1538,7 +1538,12 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
     if (!empty($USER->preference['auth_forcepasswordchange'])){
         if (is_internal_auth() || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
             $SESSION->wantsurl = $FULLME;
-            redirect($CFG->wwwroot .'/login/change_password.php');
+            if (empty($CFG->loginhttps)) {
+                redirect($CFG->wwwroot .'/login/change_password.php');
+            } else {
+                $wwwroot = str_replace('http:','https:', $CFG->wwwroot);
+                redirect($wwwroot .'/login/change_password.php');
+            }
         } elseif($CFG->changepassword) {
             redirect($CFG->changepassword);
         } else {
