@@ -468,7 +468,7 @@ line at the top of your web browser window.
 
 If you need help, please contact the site administrator,
 $a->admin';
-$string['emailpasswordconfirmationsubject'] = '$a: change password confirmation';
+$string['emailpasswordconfirmationsubject'] = '$a: Change password confirmation';
 $string['emailpasswordconfirmmaybesent'] = '<p>If you supplied correct username or address an email should have been sent to you.</p>
    <p>It contains easy instructions to confirm and complete this password change.
 If you continue to have difficulty, please contact the site administrator.</p>';
@@ -1184,6 +1184,7 @@ $string['secondstotime432000'] = '5 days';
 $string['secondstotime518400'] = '6 days';
 $string['secondstotime604800'] = '1 Week';
 $string['secondstotime86400'] = '1 day';
+$string['secretalreadyused'] = 'Change password confirmation link was already used, password was not changed.';
 $string['secs'] = 'secs';
 $string['section'] = 'Section';
 $string['sections'] = 'Sections';
