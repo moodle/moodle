@@ -16,6 +16,7 @@ define('BLOCKS_PINNED_FALSE',1);
 define('BLOCKS_PINNED_BOTH',2);
 
 require_once($CFG->libdir.'/pagelib.php');
+require_once($CFG->dirroot.'/course/lib.php'); // needed to solve all those: Call to undefined function: print_recent_activity() when adding Recent Activity 
 
 
 // Returns false if this block is incompatible with the current version of Moodle.
