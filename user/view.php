@@ -349,8 +349,8 @@
                 echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" />";
             }
             echo "</form></td>";
-        } else if ( strlen($CFG->changepassword) > 1 ) {
-            echo "<td nowrap=\"nowrap\"><form action=\"$CFG->changepassword\" method=\"get\">";
+        } else if ( strlen($CFG->{'auth_'.$user->auth.'_changepasswordurl'}) > 1 ) {
+            echo "<td nowrap=\"nowrap\"><form action=\"".$CFG->{'auth_'.$user->auth.'_changepasswordurl'}."\" method=\"get\">";
             echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" />";
             echo "</form></td>";
         }
