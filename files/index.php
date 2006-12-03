@@ -723,7 +723,7 @@ function displaydir ($wdir) {
                 $fileurl = rawurlencode(dirname($wdir));
                 print_cell();
                 // alt attribute intentionally empty to prevent repetition in screen reader
-                print_cell('left', '<a href="index.php?id='.$id.'&amp;wdir='.$fileurl.'&amp;choose='.$choose.'"><img src="'.$CFG->pixpath.'/f/parent.gif" height="16" width="16" alt=" " />&nbsp;'.get_string('parentfolder').'</a>', 'name');
+                print_cell('left', '<a href="index.php?id='.$id.'&amp;wdir='.$fileurl.'&amp;choose='.$choose.'"><img src="'.$CFG->pixpath.'/f/parent.gif" height="16" width="16" alt="" />&nbsp;'.get_string('parentfolder').'</a>', 'name');
                 print_cell();
                 print_cell();
                 print_cell();

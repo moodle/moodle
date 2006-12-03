@@ -5402,7 +5402,7 @@ function page_doc_link($text='', $iconpath='') {
     }
 
     // alt left blank intentionally to prevent repetition in screenreaders
-    $str .= '<img src="' .$iconpath. '" alt=" " />' .$text. '</a>';
+    $str .= '<img src="' .$iconpath. '" alt="" />' .$text. '</a>';
 
     return $str;
 }
