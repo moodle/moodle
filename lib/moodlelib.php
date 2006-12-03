@@ -440,7 +440,7 @@ function clean_param($param, $type) {
 
         case PARAM_URL:          // allow safe ftp, http, mailto urls
             include_once($CFG->dirroot . '/lib/validateurlsyntax.php');
-            if (!empty($param) && validateUrlSyntax($param, 's?H?S?F?E?u-P-a?I?p-f?q?r?')) {
+            if (!empty($param) && validateUrlSyntax($param, 's?H?S?F?E?u-P-a?I?p?f?q?r?')) {
                 // all is ok, param is respected
             } else {
                 $param =''; // not really ok
