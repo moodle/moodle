@@ -326,7 +326,7 @@ form.mform div.fitem {
   min-height: 1.5em;
 }
 
-form.mform label {
+form.mform .fitemtitle {
   display: block;
   float: left;
   width: 30%;
