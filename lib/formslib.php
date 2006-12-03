@@ -495,11 +495,11 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             $this->updateAttributes(array('class'=>'mform'));
         }
         $this->_helpImageURL="$CFG->wwwroot/lib/form/req.gif";
-        $this->_reqHTML =
+        $this->_reqHTML = '<img alt="'.get_string('requiredelement', 'form').'" src="'.$this->_helpImageURL.'" />';
+        $this->setRequiredNote(get_string('denotesreq', 'form',
             helpbutton('requiredelement', get_string('requiredelement', 'form'),'moodle',
-                 true, false, '', true, '<img alt="'.get_string('requiredelement', 'form').'" src="'.
-                    $this->_helpImageURL.'" />');
-        $this->setRequiredNote(get_string('denotesreq', 'form', $this->getReqHTML()));
+            true, false, '', true, '<img alt="'.get_string('requiredelement', 'form').'" src="'.
+            $this->_helpImageURL.'" />')));
     }
 
     /**
