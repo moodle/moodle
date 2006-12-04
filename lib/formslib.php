@@ -733,6 +733,9 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         $js = '
 <script type="text/javascript">
 //<![CDATA[
+
+var skipClientValidation = false;
+
 function qf_errorHandler(element, _qfMsg) {
   div = element.parentNode;
   if (_qfMsg != \'\') {
@@ -809,6 +812,9 @@ function validate_' . $this->_attributes['id'] . '_' . $elementName . '(element)
         }
         $js .= '
 function validate_' . $this->_attributes['id'] . '(frm) {
+  if (skipClientValidation) {
+     return true;
+  }
   var ret = true;
 ' . $validateJS . ';
   return ret;
