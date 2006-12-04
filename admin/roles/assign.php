@@ -155,9 +155,17 @@
         } else if ($remove and !empty($frm->removeselect) and confirm_sesskey()) {
 
             $sitecontext = get_context_instance(CONTEXT_SYSTEM);
-            $topleveladmin = ( ($context->id == $sitecontext->id) && 
-                                has_capability('moodle/site:doanything', $sitecontext) );
-
+            $topleveladmin = false;
+   
+            // we only worry about this if the role has doanything capability at site level
+            if ($adminroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext)) {
+                foreach ($adminroles as $adminrole) {
+                    if ($adminrole->id == $roleid) {
+                        $topleveladmin = true;
+                    }
+                }
+            }
+            
             foreach ($frm->removeselect as $removeuser) {
                 $removeuser = clean_param($removeuser, PARAM_INT);
 
