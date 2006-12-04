@@ -340,13 +340,28 @@
     $from   = "FROM {$CFG->prefix}user u INNER JOIN
     {$CFG->prefix}role_assignments r on u.id=r.userid LEFT OUTER JOIN
     {$CFG->prefix}user_lastaccess ul on (r.userid=ul.userid and ul.courseid = $course->id)"; 
+    
+    // excluse users with these admin role assignments
+    if ($doanythingroles) {
+        $adminroles = 'AND r.id NOT IN (';
+ 
+        foreach ($doanythingroles as $aroleid=>$role) {
+            $adminroles .= "$aroleid,";
+        }
+        $adminroles = rtrim($adminroles,",");
+        $adminroles .= ')';
+    } else {
+        $adminroles = '';
+    }
+    
     // join on 2 conditions
     // otherwise we run into the problem of having records in ul table, but not relevant course
     // and user record is not pulled out
     $where  = "WHERE (r.contextid = $context->id OR r.contextid in $listofcontexts)
         AND u.deleted = 0 $selectrole
         AND (ul.courseid = $course->id OR ul.courseid IS NULL)
-        AND u.username <> 'guest' ";
+        AND u.username <> 'guest' 
+        $adminroles";
         $where .= get_lastaccess_sql($accesssince);
 
     $wheresearch = '';
