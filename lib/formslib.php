@@ -263,7 +263,7 @@ class moodleform {
         $mform =& $this->_form;
         foreach ($mform->_noSubmitButtons as $nosubmitbutton){
             if (optional_param($nosubmitbutton, 0, PARAM_RAW)){
-                return NULL;
+                return false;
             }
         }
         if ($validated === null) {
