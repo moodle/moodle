@@ -1027,15 +1027,13 @@ function get_all_sections($courseid) {
 function course_set_display($courseid, $display=0) {
     global $USER;
 
-    if (empty($USER->id)) {
-        return false;
-    }
-
     if ($display == "all" or empty($display)) {
         $display = 0;
     }
 
-    if (record_exists("course_display", "userid", $USER->id, "course", $courseid)) {
+    if (empty($USER->id) or $USER->username == 'guest') {
+        //do not store settings in db for guests
+    } else if (record_exists("course_display", "userid", $USER->id, "course", $courseid)) {
         set_field("course_display", "display", $display, "userid", $USER->id, "course", $courseid);
     } else {
         $record->userid = $USER->id;

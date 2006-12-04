@@ -111,6 +111,13 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field);
     }
 
+    if ($oldversion < 2006120300) {    /// Delete guest course section settings
+        // following code can be executed repeatedly, such as when upgrading from 1.7.x - it is ok
+        if ($guest = get_record('user', 'username', 'guest')) {
+            execute_sql("DELETE FROM {$CFG->prefix}course_display where userid=$guest->id ;", true);
+        }
+    }
+
     return $result;
 
 }
