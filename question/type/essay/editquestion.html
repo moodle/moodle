@@ -3,10 +3,10 @@ $QTYPES[$question->qtype]->print_question_form_start($question, array(), $course
 ?>
 <tr valign="top">
     <td align="right">
-        <b><?php  print_string("feedback", "quiz") ?>:</b>
+        <b><?php print_string("feedback", "quiz") ?>:</b>
     </td>
     <td>
-        <textarea name="feedback" rows="2" cols="50" wrap="virtual"><?php  p($options->answer->feedback) ?></textarea>
+        <?php print_textarea(false, 10, 60, 630, 200, "feedback", $options->answer->feedback); ?>
     </td>
 </tr>
 
