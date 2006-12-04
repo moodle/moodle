@@ -45,10 +45,11 @@
     if (!empty($add)){
         $modname=$add;
         if (file_exists("../mod/$modname/mod_form.php")) {
-            $id = required_param('id',PARAM_INT);
-            $section = required_param('section',PARAM_INT);
+            $id = required_param('id', PARAM_INT);
+            $section = required_param('section', PARAM_INT);
+            $returntomod = optional_param('return', PARAM_BOOL);
 
-            redirect("modedit.php?add=$add&course=$id&section=$section");
+            redirect("modedit.php?add=$add&course=$id&section=$section&return=$returntomod");
         }
     }elseif (!empty($update)){
         if (!$modname=get_field_sql("SELECT md.name
@@ -58,8 +59,9 @@
                                  md.id = cm.module")){
             error('Invalid course module id!');
         }
+        $returntomod = optional_param('return', PARAM_BOOL);
         if (file_exists("../mod/$modname/mod_form.php")) {
-            redirect("modedit.php?update=$update");
+            redirect("modedit.php?update=$update&return=$returntomod");
         }
     }
     //not adding / editing a module that has new forms using formslib

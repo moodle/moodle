@@ -9,22 +9,8 @@
 
     $add           = optional_param('add', '', PARAM_ALPHA);
     $update        = optional_param('update', 0, PARAM_INT);
-
-    $cancel        = optional_param('cancel', 0, PARAM_BOOL);
-    if ($cancel) {
-        if (!empty($SESSION->returnpage)) {
-            $return = $SESSION->returnpage;
-            unset($SESSION->returnpage);
-            redirect($return);
-        } else {
-            $course = required_param('course', PARAM_INT);
-            $section = optional_param('section', '', PARAM_INT);
-            if (! $course = get_record("course", "id", $course)) {
-                error("This course doesn't exist");
-            }
-            redirect("view.php?id=$course->id#section-$section");
-        }
-    }
+    //return to course/view.php if false or mod/modname/view.php if true
+    $return        = optional_param('return', 0, PARAM_BOOL);
 
     if (!empty($add)){
         $section = required_param('section', PARAM_INT);
@@ -54,6 +40,7 @@
         $form->instance   = "";
         $form->coursemodule = "";
         $form->add=$add;
+        $form->return=0;//must be false if this is an add, go back to course view
         if (!empty($type)) {
             $form->type = $type;
         }
@@ -102,7 +89,8 @@
         $form->module       = $module->id;
         $form->modulename   = $module->name;
         $form->instance     = $cm->instance;
-        $form->update=$update;
+        $form->return = $return;
+        $form->update = $update;
 
         $sectionname    = get_string("name$course->format");
         $fullmodulename = get_string("modulename", $module->name);
@@ -135,9 +123,16 @@
     }
 
     $mformclassname=$module->name.'_mod_form';
-    $mform=& new $mformclassname($form->instance, isset($cw->section)?$cw->section:$section, ((isset($cm))?$cm:null));
+    $cousesection=isset($cw->section)?$cw->section:$section;
+    $mform=& new $mformclassname($form->instance, $cousesection, ((isset($cm))?$cm:null));
 
-    if ($fromform=$mform->data_submitted()){
+    if ($mform->is_cancelled()) {
+        if ($return && isset($cm)){
+            redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id");
+        } else {
+            redirect("view.php?id=$course->id#section-".$cousesection);
+        }
+    } elseif ($fromform=$mform->data_submitted()){
         if (empty($fromform->coursemodule)) { //add
             if (! $course = get_record("course", "id", $fromform->course)) {
                 error("This course doesn't exist");
@@ -175,12 +170,12 @@
                 }
             }
 
-            $return = $updateinstancefunction($fromform);
-            if (!$return) {
+            $returnfromfunc = $updateinstancefunction($fromform);
+            if (!$returnfromfunc) {
                 error("Could not update the $fromform->modulename", "view.php?id=$course->id");
             }
-            if (is_string($return)) {
-                error($return, "view.php?id=$course->id");
+            if (is_string($returnfromfunc)) {
+                error($returnfromfunc, "view.php?id=$course->id");
             }
 
             if (isset($fromform->visible)) {
@@ -191,11 +186,6 @@
                 set_coursemodule_groupmode($fromform->coursemodule, $fromform->groupmode);
             }
 
-            if (isset($fromform->redirect)) {
-                $SESSION->returnpage = $fromform->redirecturl;
-            } else {
-                $SESSION->returnpage = "$CFG->wwwroot/mod/$fromform->modulename/view.php?id=$fromform->coursemodule";
-            }
 
             add_to_log($course->id, "course", "update mod",
                        "../mod/$fromform->modulename/view.php?id=$fromform->coursemodule",
@@ -213,8 +203,8 @@
                 $fromform->name = get_string("modulename", $fromform->modulename);
             }
 
-            $return = $addinstancefunction($fromform);
-            if (!$return) {
+            $returnfromfunc = $addinstancefunction($fromform);
+            if (!$returnfromfunc) {
                 /*if (file_exists($moderr)) {
                     $form = $fromform;
                     include_once($moderr);
@@ -222,15 +212,15 @@
                 }*/
                 error("Could not add a new instance of $fromform->modulename", "view.php?id=$course->id");
             }
-            if (is_string($return)) {
-                error($return, "view.php?id=$course->id");
+            if (is_string($returnfromfunc)) {
+                error($returnfromfunc, "view.php?id=$course->id");
             }
 
             if (!isset($fromform->groupmode)) { // to deal with pre-1.5 modules
                 $fromform->groupmode = $course->groupmode;  /// Default groupmode the same as course
             }
 
-            $fromform->instance = $return;
+            $fromform->instance = $returnfromfunc;
 
             // course_modules and course_sections each contain a reference
             // to each other, so we have to update one of them twice.
@@ -252,12 +242,6 @@
             // make sure visibility is set correctly (in particular in calendar)
             set_coursemodule_visible($fromform->coursemodule, $fromform->visible);
 
-            if (isset($fromform->redirect)) {
-                $SESSION->returnpage = $fromform->redirecturl;
-            } else {
-                $SESSION->returnpage = "$CFG->wwwroot/mod/$fromform->modulename/view.php?id=$fromform->coursemodule";
-            }
-
             add_to_log($course->id, "course", "add mod",
                        "../mod/$fromform->modulename/view.php?id=$fromform->coursemodule",
                        "$fromform->modulename $fromform->instance");
@@ -270,12 +254,10 @@
 
         rebuild_course_cache($course->id);
 
-        if (!empty($SESSION->returnpage)) {
-            $return = $SESSION->returnpage;
-            unset($SESSION->returnpage);
-            redirect($return);
+        if ($return && isset($cm)){
+            redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id");
         } else {
-            redirect("view.php?id=$course->id#section-$sectionreturn");
+            redirect("view.php?id=$course->id#section-".$cousesection);
         }
         exit;
 

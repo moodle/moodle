@@ -45,16 +45,14 @@ class chat_mod_form extends moodleform_mod {
         $options[2]    = get_string('numdays', '', 2);
         $mform->addElement('select', 'keepdays', get_string('savemessages', 'chat'), $options);
 
-        $options=array();
-        $options[0]    = get_string('no');
-        $options[1]    = get_string('yes');
-        $mform->addElement('select', 'studentlogs', get_string('studentseereports', 'chat'), $options);
+        $mform->addElement('selectyesno', 'studentlogs', get_string('studentseereports', 'chat'));
 
         $this->standard_coursemodule_elements();
 
         $buttonarray=array();
-        $buttonarray[] = &MoodleQuickForm::createElement('submit', 'submitbutton', get_string('savechanges'));
-        $buttonarray[] = &MoodleQuickForm::createElement('submit', 'cancel', get_string('cancel'));
+        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
+        $buttonarray[] = &$mform->createElement('reset', 'reset', get_string('revert'));
+        $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
 		$renderer->addStopFieldsetElements('buttonar');
 	}

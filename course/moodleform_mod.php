@@ -99,6 +99,9 @@ class moodleform_mod extends moodleform {
 
         $mform->addElement('hidden', 'update', 0);
         $mform->setType('update', PARAM_INT);
+
+        $mform->addElement('hidden', 'return', 0);
+        $mform->setType('return', PARAM_BOOL);
     }
 
     /**

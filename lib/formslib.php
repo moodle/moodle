@@ -63,12 +63,7 @@ class moodleform {
      */
     var $_upload_manager; //
 
-    /**
-     * Array of buttons that if pressed do not result in the processing of the form.
-     *
-     * @var array
-     */
-    var $_nosubmitbuttons=array();
+
 
     /**
      * The constructor function calls the abstract function definition() and it will then
@@ -292,6 +287,21 @@ class moodleform {
     }
 
     /**
+     * Return true if a cancel button has been pressed resulting in the form being submitted.
+     *
+     * @return boolean true if a cancel button has been pressed
+     */
+    function is_cancelled(){
+        $mform =& $this->_form;
+        foreach ($mform->_cancelButtons as $cancelbutton){
+            if (optional_param($cancelbutton, 0, PARAM_TEXT)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Return submitted data if properly submitted or returns NULL if validation fails or
      * if there is no submitted data.
      *
@@ -299,13 +309,14 @@ class moodleform {
      * @return object submitted data; NULL if not valid or not submitted
      */
     function data_submitted($slashed=true) {
-        foreach ($this->_nosubmitbuttons as $nosubmitbutton){
+        $mform =& $this->_form;
+        foreach ($mform->_noSubmitButtons as $nosubmitbutton){
             if (optional_param($nosubmitbutton, 0, PARAM_TEXT)){
                 return NULL;
             }
         }
         if ($this->is_submitted() and $this->is_validated()) {
-            $data = $this->_form->exportValues(null, $slashed);
+            $data = $mform->exportValues(null, $slashed);
             unset($data['sesskey']); // we do not need to return sesskey
             unset($data['_qf__'.$this->_formname]);   // we do not need the submission marker too
             if (empty($data)) {
@@ -371,9 +382,7 @@ class moodleform {
         return true;
     }
 
-    function _register_no_submit_button($addfieldsname){
-        $this->_nosubmitbuttons[]=$addfieldsname;
-    }
+
 
     /**
      * Method to add a repeating group of elements to a form.
@@ -400,8 +409,8 @@ class moodleform {
         if (!empty($addfields)){
             $repeats += $addfieldsno;
         }
-        $this->_register_no_submit_button($addfieldsname);
         $mform =& $this->_form;
+        $mform->_registerNoSubmitButton($addfieldsname);
         $mform->addElement('hidden', $repeathiddenname, $repeats);
         //value not to be overridden by submitted value
         $mform->setConstants(array($repeathiddenname=>$repeats));
@@ -466,7 +475,18 @@ class moodleform {
 class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     var $_types = array();
     var $_dependencies = array();
-
+    /**
+     * Array of buttons that if pressed do not result in the processing of the form.
+     *
+     * @var array
+     */
+    var $_noSubmitButtons=array();
+    /**
+     * Array of buttons that if pressed do not result in the processing of the form.
+     *
+     * @var array
+     */
+    var $_cancelButtons=array();
 
     /**
      * Class constructor - same parameters as HTML_QuickForm_DHTMLRulesTableless
@@ -870,6 +890,7 @@ function validate_' . $this->_attributes['id'] . '(frm) {
      * @param string $dependentOn the name of the element whose state will be checked for
      *                            condition
      * @param string $condition the condition to check
+     * @param mixed $value used in conjunction with condition.
      */
     function disabledIf($elementName, $dependentOn, $condition = 'notchecked', $value=null){
         $dependents = $this->_getElNamesRecursive($elementName);
@@ -879,6 +900,12 @@ function validate_' . $this->_attributes['id'] . '(frm) {
                                     'condition'=>$condition, 'value'=>$value);
             }
         }
+    }
+    function _registerNoSubmitButton($addfieldsname){
+        $this->_noSubmitButtons[]=$addfieldsname;
+    }
+    function _registerCancelButton($addfieldsname){
+        $this->_cancelButtons[]=$addfieldsname;
     }
 }
 
@@ -1034,7 +1061,7 @@ MoodleQuickForm::registerElementType('modvisible', "$CFG->libdir/form/modvisible
 MoodleQuickForm::registerElementType('modgroupmode', "$CFG->libdir/form/modgroupmode.php", 'MoodleQuickForm_modgroupmode');
 MoodleQuickForm::registerElementType('selectyesno', "$CFG->libdir/form/selectyesno.php", 'MoodleQuickForm_selectyesno');
 MoodleQuickForm::registerElementType('modgrade', "$CFG->libdir/form/modgrade.php", 'MoodleQuickForm_modgrade');
-MoodleQuickForm::registerElementType('submit', "$CFG->libdir/form/submit.php", 'MoodleQuickForm_submit');
+MoodleQuickForm::registerElementType('cancel', "$CFG->libdir/form/cancel.php", 'MoodleQuickForm_cancel');
 MoodleQuickForm::registerElementType('button', "$CFG->libdir/form/button.php", 'MoodleQuickForm_button');
 MoodleQuickForm::registerElementType('choosecoursefile', "$CFG->libdir/form/choosecoursefile.php", 'MoodleQuickForm_choosecoursefile');
 
