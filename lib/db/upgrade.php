@@ -118,6 +118,10 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2006120400) {    /// Remove secureforms config setting
+        execute_sql("DELETE FROM {$CFG->prefix}config where name='secureforms' ;", true);
+    }
+
     return $result;
 
 }

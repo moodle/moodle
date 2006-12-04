@@ -44,7 +44,6 @@ $ADMIN->add('security', $temp);
 // "httpsecurity" settingpage
 $temp = new admin_settingpage('httpsecurity', get_string('httpsecurity', 'admin'));
 $temp->add(new admin_setting_configcheckbox('loginhttps', get_string('loginhttps', 'admin'), get_string('configloginhttps', 'admin'), 0));
-$temp->add(new admin_setting_configcheckbox('secureforms', get_string('secureforms', 'admin'), get_string('configsecureforms', 'admin'), 0));
 $ADMIN->add('security', $temp);
 
 

@@ -269,43 +269,6 @@ function qualified_me() {
 }
 
 /**
- * Determine if a web referer is valid
- *
- * Returns true if the referer is the same as the goodreferer. If
- * the referer to test is not specified, use {@link qualified_me()}.
- * If the admin has not set secure forms ($CFG->secureforms) then
- * this function returns true regardless of a match.
- *
- * @uses $CFG
- * @param string $goodreferer the url to compare to referer
- * @return boolean
- */
-function match_referer($goodreferer = '') {
-    global $CFG;
-
-    if (empty($CFG->secureforms)) {    // Don't bother checking referer
-        return true;
-    }
-
-    if ($goodreferer == 'nomatch') {   // Don't bother checking referer
-        return true;
-    }
-
-    if (empty($goodreferer)) {
-        $goodreferer = qualified_me();
-        // try to remove everything after ? because POST url may contain GET parameters (SID rewrite, etc.)
-        $pos = strpos($goodreferer, '?');
-        if ($pos !== FALSE) {
-            $goodreferer = substr($goodreferer, 0, $pos);
-        }
-    }
-
-    $referer = get_referer();
-
-    return (($referer == $goodreferer) or ($referer == $CFG->wwwroot .'/') or ($referer == $CFG->wwwroot .'/index.php'));
-}
-
-/**
  * Determine if there is data waiting to be processed from a form
  *
  * Used on most forms in Moodle to check for data
@@ -313,29 +276,17 @@ function match_referer($goodreferer = '') {
  * This object can be used in foreach loops without
  * casting because it's cast to (array) automatically
  *
- * Checks that submitted POST data exists, and also
- * checks the referer against the given url (it uses
- * the current page if none was specified.
+ * Checks that submitted POST data exists and returns it as object.
  *
- * @uses $CFG
- * @param string $url the url to compare to referer for secure forms
- * @return boolean
+ * @param string $url not used anymore
+ * @return mixed false or object
  */
 function data_submitted($url='') {
 
-
-    global $CFG;
-
     if (empty($_POST)) {
         return false;
-
     } else {
-        if (match_referer($url)) {
-            return (object)$_POST;
-        } else {
-            debugging('The form did not come from this page! (referer = '. get_referer() .')');
-            return false;
-        }
+        return (object)$_POST;
     }
 }
 
