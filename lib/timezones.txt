@@ -475,8 +475,6 @@ id,name,year,tzrule,gmtoff,dstoff,dst_month,dst_startday,dst_weekday,dst_skipwee
 474,Asia/Saigon,1970,,420,0,0,0,0,0,00:00,0,0,0,0,00:00
 475,Asia/Aden,1970,,180,0,0,0,0,0,00:00,0,0,0,0,00:00
 476,Australia/Darwin,1970,Aus,570,0,12,31,-1,0,21:30,3,-1,0,0,10:30
-477,Australia/Perth,1970,,480,0,0,0,0,0,00:00,0,0,0,0,00:00
-478,Australia/Perth,1974,,480,0,0,0,0,0,00:00,0,0,0,0,00:00
 479,Australia/Brisbane,1970,Aus,600,0,12,31,-1,0,22:00,3,-1,0,0,11:00
 480,Australia/Brisbane,1971,AQ,600,60,10,-1,0,0,12:00,1,1,-1,0,21:00
 481,Australia/Brisbane,1972,AQ,600,0,12,31,-1,0,22:00,2,-1,0,0,12:00
@@ -1866,3 +1864,13 @@ id,name,year,tzrule,gmtoff,dstoff,dst_month,dst_startday,dst_weekday,dst_skipwee
 1865,America/Montevideo,2005,Uruguay,-180,60,10,9,-1,0,-1:00,3,27,-1,0,-2:00
 1866,America/Montevideo,2006,Uruguay,-180,0,12,31,-1,0,09:00,3,12,-1,0,-2:00
 1867,America/Caracas,1970,,-240,0,0,0,0,0,00:00,0,0,0,0,00:00
+1868,Australia/Perth,1970,AW,480,0,0,0,0,0,,0,0,0,0,
+1869,Australia/Perth,1974,AW,480,60,10,-1,0,0,10:00,1,1,-1,0,19:00
+1870,Australia/Perth,1975,AW,480,0,12,31,-1,0,20:00,3,1,0,0,10:00
+1871,Australia/Perth,1983,AW,480,60,10,-1,0,0,10:00,1,1,-1,0,19:00
+1872,Australia/Perth,1984,AW,480,0,12,31,-1,0,20:00,3,1,0,0,10:00
+1873,Australia/Perth,1991,AW,480,60,11,17,-1,0,10:00,1,1,-1,0,19:00
+1874,Australia/Perth,1992,AW,480,0,12,31,-1,0,20:00,3,1,0,0,10:00
+1875,Australia/Perth,2006,AW,480,60,12,3,-1,0,10:00,1,1,-1,0,19:00
+1876,Australia/Perth,2007,AW,480,60,10,-1,0,0,10:00,3,-1,0,0,10:00
+1877,Australia/Perth,2009,AW,480,0,12,31,-1,0,20:00,3,-1,0,0,10:00
