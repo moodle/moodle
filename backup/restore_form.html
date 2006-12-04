@@ -169,15 +169,16 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
     echo "<td align=\"right\"><b>";
     echo get_string("restoreto").":</b>";
     echo "</td><td colspan=\"3\">";
-    if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSE, $id))) {
-        $restore_restoreto_options[0] = get_string("currentcoursedeleting");
-        $restore_restoreto_options[1] = get_string("currentcourseadding");
-    } 
+    
     if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         $restore_restoreto_options[0] = get_string("existingcoursedeleting");
         $restore_restoreto_options[1] = get_string("existingcourseadding");
         $restore_restoreto_options[2] = get_string("newcourse"); 
+    } else { // fix for MDL-7773
+        $restore_restoreto_options[0] = get_string("currentcoursedeleting");
+        $restore_restoreto_options[1] = get_string("currentcourseadding");
     }
+   
     choose_from_menu($restore_restoreto_options, "restore_restoreto", $restore_restoreto, "");
     echo "</td></tr>";
     if (iscreator()) {  //display these fields conditionally
