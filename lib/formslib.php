@@ -260,14 +260,19 @@ class moodleform {
      */
     function is_validated() {
         static $validated = null; // one validation is enough
-
+        $mform =& $this->_form;
+        foreach ($mform->_noSubmitButtons as $nosubmitbutton){
+            if (optional_param($nosubmitbutton, 0, PARAM_RAW)){
+                return NULL;
+            }
+        }
         if ($validated === null) {
-            $internal_val = $this->_form->validate();
-            $moodle_val = $this->validation($this->_form->exportValues(null, true));
+            $internal_val = $mform->validate();
+            $moodle_val = $this->validation($mform->exportValues(null, true));
             if ($moodle_val !== true) {
                 if (!empty($moodle_val)) {
                     foreach ($moodle_val as $element=>$msg) {
-                        $this->_form->setElementError($element, $msg);
+                        $mform->setElementError($element, $msg);
                     }
                 }
                 $moodle_val = false;
@@ -276,7 +281,7 @@ class moodleform {
             if ($file_val !== true) {
                 if (!empty($file_val)) {
                     foreach ($file_val as $element=>$msg) {
-                        $this->_form->setElementError($element, $msg);
+                        $mform->setElementError($element, $msg);
                     }
                 }
                 $file_val = false;
@@ -294,7 +299,7 @@ class moodleform {
     function is_cancelled(){
         $mform =& $this->_form;
         foreach ($mform->_cancelButtons as $cancelbutton){
-            if (optional_param($cancelbutton, 0, PARAM_TEXT)){
+            if (optional_param($cancelbutton, 0, PARAM_RAW)){
                 return true;
             }
         }
@@ -310,11 +315,7 @@ class moodleform {
      */
     function data_submitted($slashed=true) {
         $mform =& $this->_form;
-        foreach ($mform->_noSubmitButtons as $nosubmitbutton){
-            if (optional_param($nosubmitbutton, 0, PARAM_TEXT)){
-                return NULL;
-            }
-        }
+
         if ($this->is_submitted() and $this->is_validated()) {
             $data = $mform->exportValues(null, $slashed);
             unset($data['sesskey']); // we do not need to return sesskey
@@ -518,7 +519,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         $this->_reqHTML = '<img alt="'.get_string('requiredelement', 'form').'" src="'.$this->_helpImageURL.'" />';
         $this->setRequiredNote(get_string('denotesreq', 'form',
             helpbutton('requiredelement', get_string('requiredelement', 'form'),'moodle',
-            true, false, '', true, '<img alt="'.get_string('requiredelement', 'form').'" src="'.
+                 true, false, '', true, '<img alt="'.get_string('requiredelement', 'form').'" src="'.
             $this->_helpImageURL.'" />')));
     }
 
