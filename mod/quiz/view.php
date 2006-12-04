@@ -334,10 +334,10 @@
                     $lastattempttime = $lastattempt->timefinish;
                     if ($numattempts == 1 && $quiz->delay1 && $timenow <= $lastattempttime + $quiz->delay1) {
                         $tempunavailable = get_string('temporaryblocked', 'quiz') .
-                                ' <b>'. userdate($lastattempt + $quiz->delay1). '<b>';
+                                ' <b>'. userdate($lastattempttime + $quiz->delay1). '<b>';
                     } else if ($numattempts > 1 && $quiz->delay2 && $timenow <= $lastattempttime +  $quiz->delay2) {
                         $tempunavailable = get_string('temporaryblocked', 'quiz') .
-                                ' <b>'. userdate($lastattempt + $quiz->delay2). '<b>';
+                                ' <b>'. userdate($lastattempttime + $quiz->delay2). '<b>';
                     }
 
                     // If so, display a message and prevent the start button from appearing.
