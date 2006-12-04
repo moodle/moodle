@@ -384,6 +384,7 @@
         }
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+		$modcontext = get_context_instance(CONTEXT_MODULE, $forum->id);
         
         if (! forum_user_can_post($forum)) {
             if (has_capability('moodle/legacy:guest', $coursecontext, NULL, false)) {  // User is a guest here!
@@ -394,11 +395,13 @@
                 print_error('nopostforum', 'forum');
             }
         }
-        
+
         if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
             if (groupmode($course, $cm)) {   // Make sure user can post here
                 $mygroupid = mygroupid($course->id);
-                if (!((empty($mygroupid) and $discussion->groupid == -1) || (ismember($discussion->groupid)/*$mygroupid == $discussion->groupid*/))) {
+                if (!( (empty($mygroupid) and $discussion->groupid == -1)
+						|| (ismember($discussion->groupid)/*$mygroupid == $discussion->groupid*/)
+						|| has_capability('moodle/site:accessallgroups', $modcontext, NULL, false) )) {
                     print_error('nopostdiscussion', 'forum');
                 }
             }
