@@ -634,12 +634,14 @@ HTMLArea.prototype.generate = function () {
             }
             // Moodle hack end.
             var a = this.__msh_prevOnSubmit;
+            var ret = true;
             // call previous submit methods if they were there.
             if (typeof a != "undefined") {
                 for (var i = a.length; --i >= 0;) {
-                    a[i]();
+                    ret = a[i]() && ret;
                 }
             }
+            return ret;
         };
         if (typeof f.onreset == "function") {
             var funcref = f.onreset;

@@ -3578,7 +3578,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
             }
         }
     }
-    $str .= '<textarea class="form=textarea" id="edit-'. $name .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">';
+    $str .= '<textarea class="form=textarea" id="id_'. $name .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">';
     if ($usehtmleditor) {
         $str .= htmlspecialchars($value); // needed for editing of cleaned text!
     } else {
@@ -3621,7 +3621,7 @@ function print_richedit_javascript($form, $name, $source='no') {
 function use_html_editor($name='', $editorhidebuttons='') {
     $editor = 'editor_'.md5($name); //name might contain illegal characters
     echo '<script language="javascript" type="text/javascript" defer="defer">'."\n";
-    echo "$editor = new HTMLArea('edit-$name');\n";
+    echo "$editor = new HTMLArea('id_$name');\n";
     echo "var config = $editor.config;\n";
 
     echo print_editor_config($editorhidebuttons);

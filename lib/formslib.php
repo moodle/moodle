@@ -810,12 +810,16 @@ function validate_' . $this->_attributes['id'] . '_' . $elementName . '(element)
             $element->updateAttributes(array('onBlur' => $onBlur . $valFunc,
                                              'onChange' => $onChange . $valFunc));
         }
+//  do not rely on frm function parameter, because htmlarea breaks it when overloading the onsubmit method 
         $js .= '
 function validate_' . $this->_attributes['id'] . '(frm) {
   if (skipClientValidation) {
      return true;
   }
   var ret = true;
+
+  var frm = document.getElementById(\''. $this->_attributes['id'] .'\')
+
 ' . $validateJS . ';
   return ret;
 }
