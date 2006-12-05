@@ -271,7 +271,7 @@ function require_capability($capability, $context=NULL, $userid=NULL, $doanythin
  * only one of the 4 (moduleinstance, courseid, site, userid) would be set at 1 time
  * This is a recursive funciton.
  * @uses $USER
- * @param string $capability - name of the capability
+ * @param string $capability - name of the capability (or debugcache or clearcache)
  * @param object $context - a context object (record from context table)
  * @param integer $userid - a userid number
  * @param bool $doanything - if false, ignore do anything
@@ -283,6 +283,13 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
 
     static $capcache = array();   // Cache of capabilities 
 
+
+/// Cache management
+
+    if ($capability == 'clearcache') {
+        $capcache = array();             // Clear ALL the capability cache
+        return false;
+    }
 
 /// Some sanity checks
     if (debugging()) {
@@ -317,6 +324,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
 /// Check and return cache in case we've processed this one before.
 
     $cachekey = $capability.'_'.$context->id.'_'.intval($userid).'_'.intval($doanything);
+
     if (isset($capcache[$cachekey])) {
         return $capcache[$cachekey];
     }
@@ -342,14 +350,16 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
         $userid = $USER->id;
     }
 
+/// We act a little differently when switchroles is active
+
+    $switchroleactive = false;             // Assume it isn't active in this context
+
 
 /// First deal with the "doanything" capability
 
     if ($doanything) {
 
     /// First make sure that we aren't in a "switched role"
-
-        $switchroleactive = false;             // Assume it isn't active in this context
 
         if (!empty($USER->switchrole)) {       // Switchrole is active somewhere!
             if (!empty($USER->switchrole[$context->id])) {  // Because of current context
@@ -493,7 +503,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
         }
     }
     // do_anything has not been set, we now look for it the normal way.
-    $result = (0 < capability_search($capability, $context, $capabilities));
+    $result = (0 < capability_search($capability, $context, $capabilities, $switchroleactive));
     $capcache[$cachekey] = $result;
     return $result;
 
@@ -508,7 +518,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
  * @param $capabilities - either $USER->capability or loaded array
  * @return permission (int)
  */
-function capability_search($capability, $context, $capabilities) {
+function capability_search($capability, $context, $capabilities, $switchroleactive=false) {
 
     global $USER, $CFG;
 
@@ -550,10 +560,12 @@ function capability_search($capability, $context, $capabilities) {
         break;
 
         case CONTEXT_COURSE: // 1 to 1 to course cat
-            // find the course cat, and return its value
-            $course = get_record('course','id',$context->instanceid);
-            $parentcontext = get_context_instance(CONTEXT_COURSECAT, $course->category);
-            $permission = capability_search($capability, $parentcontext, $capabilities);
+            if (empty($switchroleactive)) {
+                // find the course cat, and return its value
+                $course = get_record('course','id',$context->instanceid);
+                $parentcontext = get_context_instance(CONTEXT_COURSECAT, $course->category);
+                $permission = capability_search($capability, $parentcontext, $capabilities);
+            }
         break;
 
         case CONTEXT_GROUP: // 1 to 1 to course
@@ -3173,6 +3185,7 @@ function role_switch($roleid, $context) {
         || !empty($USER->switchrole[$context->id])  || !confirm_sesskey()) {
         load_user_capability('', $context);   // Reset all permissions for this context to normal
         unset($USER->switchrole[$context->id]);  // Delete old capabilities
+        has_capability('clearcache');  
         return true;
     }
 
@@ -3204,6 +3217,10 @@ function role_switch($roleid, $context) {
 /// Add some permissions we are really going to always need, even if the role doesn't have them!
 
     $USER->capabilities[$context->id]['moodle/course:view'] = CAP_ALLOW;
+
+/// Clear the entire capability cache to avoid mixups
+
+    has_capability('clearcache');  
 
     return true;
 
