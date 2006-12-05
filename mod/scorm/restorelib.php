@@ -207,15 +207,6 @@
         return $status;
     }
 
-
-            $sco->prerequisites = backup_todb($sub_info['#']['PREREQUISITES']['0']['#']);
-            $sco->maxtimeallowed = backup_todb($sub_info['#']['MAXTIMEALLOWED']['0']['#']);
-            $sco->timelimitaction = backup_todb($sub_info['#']['TIMELIMITACTION']['0']['#']);
-            $sco->datafromlms = backup_todb($sub_info['#']['DATAFROMLMS']['0']['#']);
-            $sco->masteryscore = backup_todb($sub_info['#']['MASTERYSCORE']['0']['#']);
-            $sco->next = backup_todb($sub_info['#']['NEXT']['0']['#']);
-            $sco->previous = backup_todb($sub_info['#']['PREVIOUS']['0']['#']);
-
     //This function restores the scorm_scoes_track
     function scorm_scoes_tracks_restore_mods($scorm_id,$info,$restore) {
 
