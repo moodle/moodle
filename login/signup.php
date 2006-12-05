@@ -7,13 +7,15 @@
     //HTTPS is potentially required in this page
     httpsrequired();
 
-    $mform_signup = new login_signup_form('signup.php');
-
     if ($CFG->auth != 'email' and (empty($CFG->auth_user_create) or !(function_exists('auth_user_create'))) ) {
         error("Sorry, you may not use this page.");
     }
 
-    if ($user = $mform_signup->data_submitted()) {
+    $mform_signup = new login_signup_form('signup.php');
+
+    if ($mform_signup->is_cancelled()) {
+        redirect($CFG->httpswwwroot.'/login/index.php');
+    } else if ($user = $mform_signup->data_submitted()) {
 
         $plainpass = $user->password;
         $user->password    = hash_internal_user_password($plainpass);

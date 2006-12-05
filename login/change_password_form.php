@@ -46,9 +46,15 @@ class change_password_form extends moodleform {
         $mform->setType('id', PARAM_INT);
 
         // buttons
-        $mform->addelement('submit', 'submitbutton', get_string('changepassword'));
-
-        $renderer->addStopFieldsetElements('submitbutton');
+        if (empty($USER->preference['auth_forcepasswordchange'])) {
+            $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
+            $buttonarray[] = &$mform->createElement('cancel');
+            $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+            $renderer->addStopFieldsetElements('buttonar');
+        } else {
+            $mform->addElement('submit', 'submitbutton', get_string('savechanges'));
+            $renderer->addStopFieldsetElements('submitbutton');
+        }
     }
 
 /// perform extra password change validation

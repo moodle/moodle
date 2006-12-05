@@ -49,9 +49,12 @@ class login_signup_form extends moodleform {
 		$mform->addRule('country', get_string('missingcountry'), 'required', null, 'client');
         $mform->setDefault('country', '');
 
-		$mform->addElement('submit', 'submitbutton', get_string('createaccount'));
+        // buttons
+        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('createaccount'));
+        $buttonarray[] = &$mform->createElement('cancel');
+        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
 
-		$renderer->addStopFieldsetElements('submitbutton');
+        $renderer->addStopFieldsetElements('buttonar');
 	}
 
 	function definition_after_data(){

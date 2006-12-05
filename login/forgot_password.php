@@ -58,6 +58,10 @@ if (!empty($CFG->changepassword)) {
 
 $mform = new forgot_password_form('forgot_password.php');
 
+if ($mform->is_cancelled()) {
+    redirect($CFG->httpswwwroot.'/login/index.php');
+}
+
 if ($action == 'find' and $param = $mform->data_submitted()) {
 ///=====================
 /// find the user in the database and mail info
