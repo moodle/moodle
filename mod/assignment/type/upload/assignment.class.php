@@ -450,6 +450,10 @@ class assignment_upload extends assignment_base {
 
         $mform->set_defaults($defaults);
 
+        if ($mform->is_cancelled()) {
+            redirect('view.php?id='.$this->cm->id);
+        }
+
         if (!$this->can_update_notes($submission)) {
             $this->view_header(get_string('upload'));
             notify(get_string('uploaderror', 'assignment'));
@@ -925,8 +929,10 @@ class assignment_upload_notes_form extends moodleform {
         $mform->setType('id', PARAM_ALPHA);
 
         // buttons
-        $buttonarray[] = &MoodleQuickForm::createElement('submit', 'submitbutton', get_string('savechanges'));
-        $buttonarray[] = &MoodleQuickForm::createElement('reset', 'reset', get_string('revert'));
+        $buttonarray[] =& $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
+        $buttonarray[] =& $mform->createElement('reset', 'reset', get_string('revert'));
+        $buttonarray[] =& $mform->createElement('cancel');
+
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
     }
 }

@@ -58,6 +58,10 @@ class assignment_online extends assignment_base {
         }
         $mform->set_defaults($defaults);
 
+        if ($mform->is_cancelled()) {
+            redirect('view.php?id='.$this->cm->id);
+        }
+
         if ($data = $mform->data_submitted()) {      // No incoming data?
             if ($editable && $this->update_submission($data)) {
                 //TODO fix log actions - needs db upgrade
@@ -252,8 +256,10 @@ class assignment_online_edit_form extends moodleform {
         $mform->setType('id', PARAM_INT);
 
         // buttons
-        $buttonarray[] = &MoodleQuickForm::createElement('submit', 'submitbutton', get_string('savechanges'));
-        $buttonarray[] = &MoodleQuickForm::createElement('reset', 'reset', get_string('revert'));
+        $buttonarray[] =& $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
+        $buttonarray[] =& $mform->createElement('reset', 'reset', get_string('revert'));
+        $buttonarray[] =& $mform->createElement('cancel');
+
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
     }
 }
