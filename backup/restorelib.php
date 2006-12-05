@@ -5964,7 +5964,7 @@
         //Open file for writing    
         //First, check that course_id/backupdata folder exists in CFG->dataroot
         $dest_dir = $CFG->dataroot."/".$restore->course_id."/backupdata";
-        $status = check_dir_exists($dest_dir,true);
+        $status = check_dir_exists($dest_dir, true, true);
         $restorelog_file = fopen("$dest_dir/restorelog.html","a");
         //Write the footer to close the logging file
         fwrite ($restorelog_file,"<br>This file was written to directly by each modules restore process.");
