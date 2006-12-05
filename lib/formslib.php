@@ -739,23 +739,18 @@ var skipClientValidation = false;
 function qf_errorHandler(element, _qfMsg) {
   div = element.parentNode;
   if (_qfMsg != \'\') {
-    span = document.createElement("span");
-    span.className = "error";
-    span.appendChild(document.createTextNode(_qfMsg.substring(3)));
-    br = document.createElement("br");
-
-    var errorDiv = document.getElementById(element.name + \'_errorDiv\');
-    if (!errorDiv) {
-      errorDiv = document.createElement("div");
-      errorDiv.id = element.name + \'_errorDiv\';
+    var errorDiv = document.getElementById(\'id_error_\'.element.name);
+    if (!errorSpan) {
+      errorSpan = document.createElement("span");
+      errorSpan.id = \'id_error_\'.element.name;
     }
-    while (errorDiv.firstChild) {
-      errorDiv.removeChild(errorDiv.firstChild);
+    while (errorSpan.firstChild) {
+      errorSpan.removeChild(errorSpan.firstChild);
     }
 
-    errorDiv.insertBefore(br, errorDiv.firstChild);
-    errorDiv.insertBefore(span, errorDiv.firstChild);
-    element.parentNode.insertBefore(errorDiv, element.parentNode.firstChild);
+    errorSpan.insertBefore(br, errorSpan.firstChild);
+    errorSpan.appendChild(document.createTextNode(_qfMsg.substring(3)));
+    element.parentNode.insertBefore(errorSpan, element.parentNode.firstChild);
 
     if (div.className.substr(div.className.length - 6, 6) != " error"
         && div.className != "error") {
@@ -764,9 +759,9 @@ function qf_errorHandler(element, _qfMsg) {
 
     return false;
   } else {
-    var errorDiv = document.getElementById(element.name + \'_errorDiv\');
-    if (errorDiv) {
-      errorDiv.parentNode.removeChild(errorDiv);
+    var errorSpan = document.getElementById(\'id_error_\'.element.name);
+    if (errorSpan) {
+      errorSpan.parentNode.removeChild(errorSpan);
     }
 
     if (div.className.substr(div.className.length - 6, 6) == " error") {
@@ -810,7 +805,7 @@ function validate_' . $this->_attributes['id'] . '_' . $elementName . '(element)
             $element->updateAttributes(array('onBlur' => $onBlur . $valFunc,
                                              'onChange' => $onChange . $valFunc));
         }
-//  do not rely on frm function parameter, because htmlarea breaks it when overloading the onsubmit method 
+//  do not rely on frm function parameter, because htmlarea breaks it when overloading the onsubmit method
         $js .= '
 function validate_' . $this->_attributes['id'] . '(frm) {
   if (skipClientValidation) {
@@ -979,8 +974,8 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     function MoodleQuickForm_Renderer(){
         // switch next two lines for ol li containers for form items.
         //        $this->_elementTemplates=array('default'=>"\n\t\t<li class=\"fitem\"><label>{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"qfelement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></li>");
-        $this->_elementTemplates = array('default'=>"\n\t\t<div class=\"fitem\"><span class=\"fitemtitle\"><label>{label}<!-- BEGIN required -->{req}<!-- END required --></label>{help}</span><div class=\"felement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></div>",
-        'fieldset'=>"\n\t\t<div class=\"fitem\"><span class=\"fitemtitle\"><label>{label}<!-- BEGIN required -->{req}<!-- END required --></label>{help}</span><fieldset class=\"felement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</fieldset></div>");
+        $this->_elementTemplates = array('default'=>"\n\t\t<div class=\"fitem\"><span class=\"fitemtitle\"><label>{label}<!-- BEGIN required -->{req}<!-- END required --></label>{help}</span><div class=\"felement {type}<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\" id=\"id_error_{name}\">{error}</span><br /><!-- END error -->{element}</div></div>",
+        'fieldset'=>"\n\t\t<div class=\"fitem\"><span class=\"fitemtitle\"><label>{label}<!-- BEGIN required -->{req}<!-- END required --></label>{help}</span><fieldset class=\"felement {type}<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\" id=\"id_error_{name}\">{error}</span><br /><!-- END error -->{element}</fieldset></div>");
 
         parent::HTML_QuickForm_Renderer_Tableless();
     }
@@ -1004,6 +999,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $html =str_replace('{help}', '', $html);
 
         }
+        $html =str_replace('{name}', $group->getName(), $html);
         $html =str_replace('{type}', 'fgroup', $html);
 
         $this->_templates[$group->getName()]=$html;
@@ -1027,6 +1023,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
 
         }
         $html =str_replace('{type}', 'f'.$element->getType(), $html);
+        $html =str_replace('{name}', $element->getName(), $html);
         if (method_exists($element, 'getHelpButton')){
             $html = str_replace('{help}', $element->getHelpButton(), $html);
         }else{
