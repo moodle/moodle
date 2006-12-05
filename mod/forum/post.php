@@ -749,7 +749,7 @@
     if (!empty($parent) && !forum_user_can_see_post($forum, $discussion, $post)) {
         error("You cannot reply to this post");
     }
-    if (empty($parent) && !forum_user_can_post_discussion($forum)) {
+    if (empty($parent) && empty($edit) && !forum_user_can_post_discussion($forum)) {;
         error("You cannot start a new discussion in this forum");
     }
 
