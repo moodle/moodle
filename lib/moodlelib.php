@@ -1614,6 +1614,16 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
             notice(get_string('coursehidden'), $CFG->wwwroot .'/');
         }    
         
+    /// Non-guests who don't currently have access, check if they can be allowed in as a guest
+
+        if ($USER->username != 'guest' and !has_capability('moodle/course:view', $context)) {
+            if ($course->guest == 1) {
+                 // Temporarily assign them guest role for this context,
+                 // if it fails user is asked to enrol
+                 load_guest_role($context);
+            }
+        }
+
     /// If the user is a guest then treat them according to the course policy about guests
 
         if (has_capability('moodle/legacy:guest', $context, NULL, false)) {
@@ -1670,17 +1680,6 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
             }
             return;   // User is allowed to see this course
 
-    /// Otherwise, for non-guests who don't currently have access, check if they can be allowed in as a guest
-
-        } else {
-
-            if ($course->guest == 1) {    // Temporarily assign them guest role for this context
-                 if (!load_guest_role($context)) {
-                    print_header_simple();
-                    notice(get_string('guestsnotallowed', '', $course->fullname), "$CFG->wwwroot/login/index.php");
-                 }
-                 return;
-            }
         }
 
 
