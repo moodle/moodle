@@ -21,6 +21,7 @@ class forgot_password_form extends moodleform {
         $mform->setType('action', PARAM_ALPHA);
 
         // buttons
+        $buttonarray = array();
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('ok'));
         $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);

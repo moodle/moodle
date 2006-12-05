@@ -256,6 +256,7 @@ class assignment_online_edit_form extends moodleform {
         $mform->setType('id', PARAM_INT);
 
         // buttons
+        $buttonarray = array();
         $buttonarray[] =& $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
         $buttonarray[] =& $mform->createElement('reset', 'reset', get_string('revert'));
         $buttonarray[] =& $mform->createElement('cancel');

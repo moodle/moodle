@@ -54,6 +54,10 @@ function glossary_comment_add() {
     $mform = new glossary_comment_form('comment.php');
     $mform->set_defaults(array('eid'=>$eid, 'action'=>'add'));
 
+    if ($mform->is_cancelled()) {
+        redirect("comments.php?id=$cm->id&amp;eid=$entry->id");
+    }
+
     if ($data = $mform->data_submitted()) {
         trusttext_after_edit($data->entrycomment, $context);
 

@@ -47,6 +47,7 @@ class change_password_form extends moodleform {
 
         // buttons
         if (empty($USER->preference['auth_forcepasswordchange'])) {
+            $buttonarray = array();
             $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
             $buttonarray[] = &$mform->createElement('cancel');
             $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);

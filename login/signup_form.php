@@ -50,6 +50,7 @@ class login_signup_form extends moodleform {
         $mform->setDefault('country', '');
 
         // buttons
+        $buttonarray = array();
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('createaccount'));
         $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
