@@ -62,8 +62,8 @@
     }
 
     foreach ($courses as $c) {
-        if (isset($USER->timeaccess) && array_key_exists($c->id,$USER->timeaccess)) {
-            $courses[$c->id]->lastaccess = $USER->timeaccess[$c->id];
+        if (isset($USER->lastcourseaccess[$c->id])) {
+            $courses[$c->id]->lastaccess = $USER->lastcourseaccess[$c->id];
         } else {
             $courses[$c->id]->lastaccess = 0;
         }
