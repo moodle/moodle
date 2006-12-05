@@ -116,7 +116,7 @@
 
     //This function backups all the questions in selected category and their
     //asociated data
-    function backup_question($bf,$preferences,$category) {
+    function backup_question($bf,$preferences,$category, $level = 4) {
 
         global $CFG, $QTYPES;
 
@@ -129,31 +129,31 @@
         //If there are questions
         if ($questions) {
             //Write start tag
-            $status = fwrite ($bf,start_tag("QUESTIONS",4,true));
+            $status = fwrite ($bf,start_tag("QUESTIONS",$level,true));
             $counter = 0;
             //Iterate over each question
             foreach ($questions as $question) {
                 //Start question
-                $status = fwrite ($bf,start_tag("QUESTION",5,true));
+                $status = fwrite ($bf,start_tag("QUESTION",$level + 1,true));
                 //Print question contents
-                fwrite ($bf,full_tag("ID",6,false,$question->id));
-                fwrite ($bf,full_tag("PARENT",6,false,$question->parent));
-                fwrite ($bf,full_tag("NAME",6,false,$question->name));
-                fwrite ($bf,full_tag("QUESTIONTEXT",6,false,$question->questiontext));
-                fwrite ($bf,full_tag("QUESTIONTEXTFORMAT",6,false,$question->questiontextformat));
-                fwrite ($bf,full_tag("IMAGE",6,false,$question->image));
-                fwrite ($bf,full_tag("GENERALFEEDBACK",6,false,$question->generalfeedback));
-                fwrite ($bf,full_tag("DEFAULTGRADE",6,false,$question->defaultgrade));
-                fwrite ($bf,full_tag("PENALTY",6,false,$question->penalty));
-                fwrite ($bf,full_tag("QTYPE",6,false,$question->qtype));
-                fwrite ($bf,full_tag("LENGTH",6,false,$question->length));
-                fwrite ($bf,full_tag("STAMP",6,false,$question->stamp));
-                fwrite ($bf,full_tag("VERSION",6,false,$question->version));
-                fwrite ($bf,full_tag("HIDDEN",6,false,$question->hidden));
+                fwrite ($bf,full_tag("ID",$level + 2,false,$question->id));
+                fwrite ($bf,full_tag("PARENT",$level + 2,false,$question->parent));
+                fwrite ($bf,full_tag("NAME",$level + 2,false,$question->name));
+                fwrite ($bf,full_tag("QUESTIONTEXT",$level + 2,false,$question->questiontext));
+                fwrite ($bf,full_tag("QUESTIONTEXTFORMAT",$level + 2,false,$question->questiontextformat));
+                fwrite ($bf,full_tag("IMAGE",$level + 2,false,$question->image));
+                fwrite ($bf,full_tag("GENERALFEEDBACK",$level + 2,false,$question->generalfeedback));
+                fwrite ($bf,full_tag("DEFAULTGRADE",$level + 2,false,$question->defaultgrade));
+                fwrite ($bf,full_tag("PENALTY",$level + 2,false,$question->penalty));
+                fwrite ($bf,full_tag("QTYPE",$level + 2,false,$question->qtype));
+                fwrite ($bf,full_tag("LENGTH",$level + 2,false,$question->length));
+                fwrite ($bf,full_tag("STAMP",$level + 2,false,$question->stamp));
+                fwrite ($bf,full_tag("VERSION",$level + 2,false,$question->version));
+                fwrite ($bf,full_tag("HIDDEN",$level + 2,false,$question->hidden));
                 // Backup question type specific data
-                $status = $QTYPES[$question->qtype]->backup($bf,$preferences,$question->id);
+                $status = $QTYPES[$question->qtype]->backup($bf,$preferences,$question->id, $level + 2);
                 //End question
-                $status = fwrite ($bf,end_tag("QUESTION",5,true));
+                $status = fwrite ($bf,end_tag("QUESTION",$level + 1,true));
                 //Do some output
                 $counter++;
                 if ($counter % 10 == 0) {
@@ -165,14 +165,14 @@
                 }
             }
             //Write end tag
-            $status = fwrite ($bf,end_tag("QUESTIONS",4,true));
+            $status = fwrite ($bf,end_tag("QUESTIONS",$level,true));
         }
         return $status;
     }
 
     //This function backups the answers data in some question types
     //(truefalse, shortanswer,multichoice,numerical,calculated)
-    function question_backup_answers($bf,$preferences,$question) {
+    function question_backup_answers($bf,$preferences,$question, $level = 6) {
 
         global $CFG;
 
@@ -181,18 +181,18 @@
         $answers = get_records("question_answers","question",$question,"id");
         //If there are answers
         if ($answers) {
-            $status = fwrite ($bf,start_tag("ANSWERS",6,true));
+            $status = fwrite ($bf,start_tag("ANSWERS",$level,true));
             //Iterate over each answer
             foreach ($answers as $answer) {
-                $status = fwrite ($bf,start_tag("ANSWER",7,true));
+                $status = fwrite ($bf,start_tag("ANSWER",$level + 1,true));
                 //Print answer contents
-                fwrite ($bf,full_tag("ID",8,false,$answer->id));
-                fwrite ($bf,full_tag("ANSWER_TEXT",8,false,$answer->answer));
-                fwrite ($bf,full_tag("FRACTION",8,false,$answer->fraction));
-                fwrite ($bf,full_tag("FEEDBACK",8,false,$answer->feedback));
-                $status = fwrite ($bf,end_tag("ANSWER",7,true));
+                fwrite ($bf,full_tag("ID",$level + 2,false,$answer->id));
+                fwrite ($bf,full_tag("ANSWER_TEXT",$level + 2,false,$answer->answer));
+                fwrite ($bf,full_tag("FRACTION",$level + 2,false,$answer->fraction));
+                fwrite ($bf,full_tag("FEEDBACK",$level + 2,false,$answer->feedback));
+                $status = fwrite ($bf,end_tag("ANSWER",$level + 1,true));
             }
-            $status = fwrite ($bf,end_tag("ANSWERS",6,true));
+            $status = fwrite ($bf,end_tag("ANSWERS",$level,true));
         }
         return $status;
     }
@@ -291,7 +291,7 @@
 
 
     //Backup question_states contents (executed from backup_quiz_attempts)
-    function backup_question_states ($bf,$preferences,$attempt) {
+    function backup_question_states ($bf,$preferences,$attempt, $level = 6) {
 
         global $CFG;
 
@@ -301,34 +301,34 @@
         //If there are states
         if ($question_states) {
             //Write start tag
-            $status = fwrite ($bf,start_tag("STATES",6,true));
+            $status = fwrite ($bf,start_tag("STATES",$level,true));
             //Iterate over each state
             foreach ($question_states as $state) {
                 //Start state
-                $status = fwrite ($bf,start_tag("STATE",7,true));
+                $status = fwrite ($bf,start_tag("STATE",$level + 1,true));
                 //Print state contents
-                fwrite ($bf,full_tag("ID",8,false,$state->id));
-                fwrite ($bf,full_tag("QUESTION",8,false,$state->question));
-                fwrite ($bf,full_tag("ORIGINALQUESTION",8,false,$state->originalquestion));
-                fwrite ($bf,full_tag("SEQ_NUMBER",8,false,$state->seq_number));
-                fwrite ($bf,full_tag("ANSWER",8,false,$state->answer));
-                fwrite ($bf,full_tag("TIMESTAMP",8,false,$state->timestamp));
-                fwrite ($bf,full_tag("EVENT",8,false,$state->event));
-                fwrite ($bf,full_tag("GRADE",8,false,$state->grade));
-                fwrite ($bf,full_tag("RAW_GRADE",8,false,$state->raw_grade));
-                fwrite ($bf,full_tag("PENALTY",8,false,$state->penalty));
+                fwrite ($bf,full_tag("ID",$level + 2,false,$state->id));
+                fwrite ($bf,full_tag("QUESTION",$level + 2,false,$state->question));
+                fwrite ($bf,full_tag("ORIGINALQUESTION",$level + 2,false,$state->originalquestion));
+                fwrite ($bf,full_tag("SEQ_NUMBER",$level + 2,false,$state->seq_number));
+                fwrite ($bf,full_tag("ANSWER",$level + 2,false,$state->answer));
+                fwrite ($bf,full_tag("TIMESTAMP",$level + 2,false,$state->timestamp));
+                fwrite ($bf,full_tag("EVENT",$level + 2,false,$state->event));
+                fwrite ($bf,full_tag("GRADE",$level + 2,false,$state->grade));
+                fwrite ($bf,full_tag("RAW_GRADE",$level + 2,false,$state->raw_grade));
+                fwrite ($bf,full_tag("PENALTY",$level + 2,false,$state->penalty));
                 // now back up question type specific state information
-                $status = backup_question_rqp_state ($bf,$preferences,$state->id);
+                $status = backup_question_rqp_state ($bf,$preferences,$state->id, $level + 2);
                 //End state
-                $status = fwrite ($bf,end_tag("STATE",7,true));
+                $status = fwrite ($bf,end_tag("STATE",$level + 1,true));
             }
             //Write end tag
-            $status = fwrite ($bf,end_tag("STATES",6,true));
+            $status = fwrite ($bf,end_tag("STATES",$level,true));
         }
     }
 
     //Backup question_sessions contents (executed from backup_quiz_attempts)
-    function backup_question_sessions ($bf,$preferences,$attempt) {
+    function backup_question_sessions ($bf,$preferences,$attempt, $level = 6) {
         global $CFG;
 
         $status = true;
@@ -337,28 +337,28 @@
         //If there are sessions
         if ($question_sessions) {
             //Write start tag (the funny name 'newest states' has historical reasons)
-            $status = fwrite ($bf,start_tag("NEWEST_STATES",6,true));
+            $status = fwrite ($bf,start_tag("NEWEST_STATES",$level,true));
             //Iterate over each newest_state
             foreach ($question_sessions as $newest_state) {
                 //Start newest_state
-                $status = fwrite ($bf,start_tag("NEWEST_STATE",7,true));
+                $status = fwrite ($bf,start_tag("NEWEST_STATE",$level + 1,true));
                 //Print newest_state contents
-                fwrite ($bf,full_tag("ID",8,false,$newest_state->id));
-                fwrite ($bf,full_tag("QUESTIONID",8,false,$newest_state->questionid));
-                fwrite ($bf,full_tag("NEWEST",8,false,$newest_state->newest));
-                fwrite ($bf,full_tag("NEWGRADED",8,false,$newest_state->newgraded));
-                fwrite ($bf,full_tag("SUMPENALTY",8,false,$newest_state->sumpenalty));
+                fwrite ($bf,full_tag("ID",$level + 2,false,$newest_state->id));
+                fwrite ($bf,full_tag("QUESTIONID",$level + 2,false,$newest_state->questionid));
+                fwrite ($bf,full_tag("NEWEST",$level + 2,false,$newest_state->newest));
+                fwrite ($bf,full_tag("NEWGRADED",$level + 2,false,$newest_state->newgraded));
+                fwrite ($bf,full_tag("SUMPENALTY",$level + 2,false,$newest_state->sumpenalty));
                 //End newest_state
-                $status = fwrite ($bf,end_tag("NEWEST_STATE",7,true));
+                $status = fwrite ($bf,end_tag("NEWEST_STATE",$level + 1,true));
             }
             //Write end tag
-            $status = fwrite ($bf,end_tag("NEWEST_STATES",6,true));
+            $status = fwrite ($bf,end_tag("NEWEST_STATES",$level,true));
         }
         return $status;
     }
 
     //Backup question_rqp_state contents (executed from backup_question_states)
-    function backup_question_rqp_state ($bf,$preferences,$state) {
+    function backup_question_rqp_state ($bf,$preferences,$state, $level = 8) {
 
         global $CFG;
 
@@ -368,13 +368,13 @@
         //If there is a state
         if ($rqp_state) {
             //Write start tag
-            $status = fwrite ($bf,start_tag("RQP_STATE",8,true));
+            $status = fwrite ($bf,start_tag("RQP_STATE",$level,true));
             //Print state contents
-            fwrite ($bf,full_tag("RESPONSES",9,false,$rqp_state->responses));
-            fwrite ($bf,full_tag("PERSISTENT_DATA",9,false,$rqp_state->persistent_data));
-            fwrite ($bf,full_tag("TEMPLATE_VARS",9,false,$rqp_state->template_vars));
+            fwrite ($bf,full_tag("RESPONSES",$level + 1,false,$rqp_state->responses));
+            fwrite ($bf,full_tag("PERSISTENT_DATA",$level + 1,false,$rqp_state->persistent_data));
+            fwrite ($bf,full_tag("TEMPLATE_VARS",$level + 1,false,$rqp_state->template_vars));
             //Write end tag
-            $status = fwrite ($bf,end_tag("RQP_STATE",8,true));
+            $status = fwrite ($bf,end_tag("RQP_STATE",$level,true));
         }
         return $status;
     }
