@@ -6197,7 +6197,7 @@
         foreach ($assignments as $assignment) {
 
             $olduser = backup_getid($restore->backup_unique_code,"user",$assignment->userid);
-            if ($olduser->info == "notincourse") { // it's possible that user is not in the course
+            if (!$olduser || $olduser->info == "notincourse") { // it's possible that user is not in the course
                 continue;  
             }        
             $assignment->userid = $olduser->new_id; // new userid here
