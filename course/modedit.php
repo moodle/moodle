@@ -40,7 +40,7 @@
         $form->instance   = "";
         $form->coursemodule = "";
         $form->add=$add;
-        $form->return=0;//must be false if this is an add, go back to course view
+        $form->return=0;//must be false if this is an add, go back to course view on cancel
         if (!empty($type)) {
             $form->type = $type;
         }
@@ -254,11 +254,7 @@
 
         rebuild_course_cache($course->id);
 
-        if ($return && isset($cm)){
-            redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id");
-        } else {
-            redirect("view.php?id=$course->id#section-".$cousesection);
-        }
+        redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$fromform->coursemodule");
         exit;
 
     }else{

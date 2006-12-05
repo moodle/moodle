@@ -47,7 +47,7 @@
         if (file_exists("../mod/$modname/mod_form.php")) {
             $id = required_param('id', PARAM_INT);
             $section = required_param('section', PARAM_INT);
-            $returntomod = optional_param('return', PARAM_BOOL);
+            $returntomod = optional_param('return', 0, PARAM_BOOL);
 
             redirect("modedit.php?add=$add&course=$id&section=$section&return=$returntomod");
         }
@@ -59,7 +59,7 @@
                                  md.id = cm.module")){
             error('Invalid course module id!');
         }
-        $returntomod = optional_param('return', PARAM_BOOL);
+        $returntomod = optional_param('return', 0, PARAM_BOOL);
         if (file_exists("../mod/$modname/mod_form.php")) {
             redirect("modedit.php?update=$update&return=$returntomod");
         }
