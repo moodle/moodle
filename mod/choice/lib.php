@@ -104,7 +104,7 @@ function choice_update_instance($choice) {
             $option->maxanswers = $choice->limit[$key];
         }
         $option->timemodified = time();
-        if (isset($choice->optionid[$key])){//existing choice record
+        if (isset($choice->optionid[$key]) && !empty($choice->optionid[$key])){//existing choice record
             $option->id=$choice->optionid[$key];
             if (isset($value) && $value <> '') {
                 update_record("choice_options", $option);
