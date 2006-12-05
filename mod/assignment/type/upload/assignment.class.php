@@ -931,7 +931,7 @@ class assignment_upload_notes_form extends moodleform {
         // buttons
         $buttonarray = array();
         $buttonarray[] =& $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
-        $buttonarray[] =& $mform->createElement('reset', 'reset', get_string('revert'));
+        $buttonarray[] =& $mform->createElement('reset', 'resetbutton', get_string('revert'));
         $buttonarray[] =& $mform->createElement('cancel');
 
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
