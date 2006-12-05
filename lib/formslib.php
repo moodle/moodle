@@ -460,7 +460,7 @@ class moodleform {
         $mform->addElement('submit', $addfieldsname, get_string('addfields', 'form', $addfieldsno),
                             array('onclick'=>'this.form.submit();'));//need this to bypass client validation
 
-		$renderer =& $mform->defaultRenderer();
+        $renderer =& $mform->defaultRenderer();
         $renderer->addStopFieldsetElements($addfieldsname);
 
     }
@@ -739,17 +739,18 @@ var skipClientValidation = false;
 function qf_errorHandler(element, _qfMsg) {
   div = element.parentNode;
   if (_qfMsg != \'\') {
-    var errorDiv = document.getElementById(\'id_error_\'.element.name);
+    var errorSpan = document.getElementById(\'id_error_\'+element.name);
     if (!errorSpan) {
       errorSpan = document.createElement("span");
-      errorSpan.id = \'id_error_\'.element.name;
+      errorSpan.id = \'id_error_\'+element.name;
+      errorSpan.className = "error";
     }
     while (errorSpan.firstChild) {
       errorSpan.removeChild(errorSpan.firstChild);
     }
 
-    errorSpan.insertBefore(br, errorSpan.firstChild);
     errorSpan.appendChild(document.createTextNode(_qfMsg.substring(3)));
+    errorSpan.appendChild(document.createElement("br"));
     element.parentNode.insertBefore(errorSpan, element.parentNode.firstChild);
 
     if (div.className.substr(div.className.length - 6, 6) != " error"
@@ -759,7 +760,7 @@ function qf_errorHandler(element, _qfMsg) {
 
     return false;
   } else {
-    var errorSpan = document.getElementById(\'id_error_\'.element.name);
+    var errorSpan = document.getElementById(\'id_error_\'+element.name);
     if (errorSpan) {
       errorSpan.parentNode.removeChild(errorSpan);
     }
