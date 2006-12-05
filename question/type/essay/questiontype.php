@@ -104,6 +104,21 @@ class question_essay_qtype extends default_questiontype {
 
         return true;
     }
+
+    /**
+     * Backup the extra information specific to an essay question - over and above
+     * what is in the mdl_question table. 
+     * 
+     * @param file $bf The backup file to write to.
+     * @param object $preferences the blackup options controlling this backup.
+     * @param $questionid the id of the question being backed up.
+     * @param $level indent level in the backup file - so it can be formatted nicely.
+     */
+    function backup($bf, $preferences, $questionid, $level = 6) {
+        return question_backup_answers($bf, $preferences, $questionid, $level);
+    }
+
+    // Restore method not needed.
 }    
 //// END OF CLASS ////
 
