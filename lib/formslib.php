@@ -744,14 +744,15 @@ function qf_errorHandler(element, _qfMsg) {
       errorSpan = document.createElement("span");
       errorSpan.id = \'id_error_\'+element.name;
       errorSpan.className = "error";
+      element.parentNode.insertBefore(errorSpan, element.parentNode.firstChild);
     }
+
     while (errorSpan.firstChild) {
       errorSpan.removeChild(errorSpan.firstChild);
     }
 
     errorSpan.appendChild(document.createTextNode(_qfMsg.substring(3)));
     errorSpan.appendChild(document.createElement("br"));
-    element.parentNode.insertBefore(errorSpan, element.parentNode.firstChild);
 
     if (div.className.substr(div.className.length - 6, 6) != " error"
         && div.className != "error") {
