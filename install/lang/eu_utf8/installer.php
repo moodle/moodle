@@ -14,6 +14,7 @@ $string['admindirname'] = 'Admin direktorioa';
 $string['admindirsettinghead'] = 'Admin direktorioa aukeratu...';
 $string['admindirsettingsub'] = '<p>Oso web zerbitzari gutxik erabiltzen dute /admin kontrol-panel edo antzekora era sartzeko URL berezi gisa. Zoritxorrez, hau ez dator bat Moodlen lehenetsitako administrazio-orrien kokapenarekin. Nahi izanez gero, zure instalazioko admin direktorioaren izena alda dezakezu, hemen izen berria idatziz. Adibidez: <blockquote> moodleadmin</blockquote>.
 Horrela Moodleko admin loturak berrezarriko dira.</p>';
+$string['bypassed'] = 'Saihestua';
 $string['cannotcreatelangdir'] = 'Lang direktorioa ezin da sortu.';
 $string['cannotcreatetempdir'] = 'Temp direktorioa ezin da sortu.';
 $string['cannotdownloadcomponents'] = 'Ezin dira osagaiak jaitsi.';
@@ -81,6 +82,10 @@ $string['downloadlanguagehead'] = 'Hizkuntza-paketea jaitsi';
 $string['downloadlanguagenotneeded'] = 'Instalazio-prozesua lehenetsitako hizkuntzaz jarrai dezakezu, \"$a\".';
 $string['downloadlanguagesub'] = 'Orain zure hizkuntza-paketea jaisteko eta hizkuntza horretan instalazioarekin jarraitzeko aukera daukazu.<br /><br />Jaitsiera eskuragarri ez balitz, prozesuak ingelesez jarraituko luke (instalazioa burututakoan, beste hizkuntzak jaitsi eta instalatu ahal izango dituzu).';
 $string['environmenthead'] = 'Zure ingurunea konprobatzen';
+$string['environmentrecommendinstall'] = 'gomendagarria da instalatuta/gaituta egotea';
+$string['environmentrecommendversion'] = '$a->needed bertsioa gomendatzen da eta zu $a->current ari zara egikaritzen';
+$string['environmentrequireinstall'] = 'derrigorrezkoa da instalatuta/gaituta izatea';
+$string['environmentrequireversion'] = '$a->needed bertsioa beharrezkoa da eta zu $a->current ari zara egikaritzen';
 $string['environmentsub'] = 'Zure zerbitzariaren osagai ezberdinak sistemaren betebeharrekin bat datozen egiaztatzen ari gara';
 $string['error'] = 'Errorea';
 $string['fail'] = 'Errorea';
@@ -140,6 +145,7 @@ $string['phpversionhelp'] = '<p>Moodlek PHP 4.1.0 edo geroagoko bertsioa behar d
 $string['previous'] = 'Aurrekoa';
 $string['remotedownloadnotallowed'] = 'Osagaiak ezin dira zure zerbitzarira jaitsi (allow_url_fopen ez dago aktibatuta).<br /><br /><a href=\"$a->url\">$a->url</a> fitxategia eskuz jaitsi eta \"$a->dest\" kokapenean kopiatu behar duzu.';
 $string['report'] = 'Txostena';
+$string['restricted'] = 'Baimena behar da';
 $string['safemode'] = 'Modu segurua';
 $string['safemodeerror'] = 'Moodlek arazoak izan ditzake \'modu segurua\' ezarriz gero';
 $string['sessionautostart'] = 'Saioaren hasiera automatikoa';
