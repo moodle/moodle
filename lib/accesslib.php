@@ -74,6 +74,7 @@ function load_guest_role($context=NULL) {
         foreach ($capabilities as $capability) {
             $USER->capabilities[$context->id][$capability->capability] = $capability->permission;
         }
+        has_capability('clearcache');
     }
 
     return true;
@@ -103,6 +104,7 @@ function load_notloggedin_role() {
         foreach ($capabilities as $capability) {
             $USER->capabilities[$sitecontext->id][$capability->capability] = $capability->permission;
         }
+        has_capability('clearcache');
     }
 
     return true;
@@ -152,6 +154,7 @@ function load_defaultuser_role() {
                 $USER->capabilities[$sitecontext->id][$capability->capability] = $capability->permission;
             }
         }
+        has_capability('clearcache');
     }
 
     return true;
