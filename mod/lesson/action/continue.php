@@ -539,7 +539,9 @@
                 if (!$response) {
                     $response = get_string("thatsthewronganswer", "lesson");
                 }
-            }           
+            }
+            
+            $studentanswer = $userresponse;
             break;
 
         case LESSON_BRANCHTABLE:
