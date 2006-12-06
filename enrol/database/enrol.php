@@ -18,7 +18,7 @@ function setup_enrolments(&$user) {
     // $this->enrol_disconnect() as it is doing some nasty vodoo with $CFG->prefix
     $enroldb = $this->enrol_connect();
     if (!$enroldb) {
-        error_log('[ENROL_DB] Could not make a connection: '.$enroldb->ErrorMsg());
+        error_log('[ENROL_DB] Could not make a connection');
         return;
     }
 
