@@ -10,7 +10,16 @@
 <!-- Start view end -->
         </td>
         <td>
-            <?php echo $medialink ?>
+
+<?php if (!empty($medialink)) { ?>
+
+            <table width="150px">
+                <tr><td>
+                    <?php echo $medialink ?>
+                </td></tr>
+            </table>
+
+<?php } ?>
 
 <?php if($lesson->timed and !has_capability('mod/lesson:manage', $context)) { // Display for timed lessons and for students only ?>
     
