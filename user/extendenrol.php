@@ -21,14 +21,17 @@ if ((count($users) > 0) and ($form = data_submitted()) and confirm_sesskey()) {
 
     foreach ($form->userid as $k => $v) {
         // find all roles this student have in this course  
-        if ($students = get_records_sql("SELECT ra.timestart, ra.timeend 
+        if ($students = get_records_sql("SELECT ra.id, ra.roleid, ra.timestart, ra.timeend
                                        FROM {$CFG->prefix}role_assignments ra
                                        WHERE userid = $v
                                        AND contextid = $context->id")) {
             // enrol these users again, with time extension
             // not that this is not necessarily a student role
             foreach ($students as $student) {
-                enrol_student($v, $id, $student->timestart, $student->timeend + $form->extendperiod[$k]);
+                // only extend if the user can make role assignments on this role
+                if (user_can_assign($context, $student->roleid)) {
+                    role_assign($student->roleid, $v, 0, $context->id, $student->timestart, $student->timeend + $form->extendperiod[$k], 0);
+                }
             }
         }
     }
