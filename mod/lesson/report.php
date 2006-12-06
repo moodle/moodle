@@ -616,7 +616,7 @@
                                     $total = $stats["total"];
                                     unset($stats["total"]);
                                     foreach ($stats as $valentered => $ntimes) {
-                                        $data = "<input type=\"text\" size=\"50\" disabled=\"disabled\" readonly=\"readonly\" value=\"$valentered\">";
+                                        $data = '<input type="text" size="50" disabled="disabled" readonly="readonly" value="'.s($valentered).'" />';
                                         $percent = $ntimes / $total * 100;
                                         $percent = round($percent, 2);
                                         $percent .= "% ".get_string("enteredthis", "lesson");
@@ -628,7 +628,7 @@
                                 $i++;
                             } else if ($useranswer != NULL and $answer->id == $useranswer->answerid) {
                                 // get in here when a user answer matches one of the answers to the page
-                                $data = "<input type=\"text\" size=\"50\" disabled=\"disabled\" readonly=\"readonly\" value=\"$useranswer->useranswer\">";
+                                $data = '<input type="text" size="50" disabled="disabled" readonly="readonly" value="'.s($useranswer->useranswer).'">';
                                 if (isset($pagestats[$page->id][$useranswer->useranswer])) {
                                     $percent = $pagestats[$page->id][$useranswer->useranswer] / $pagestats[$page->id]["total"] * 100;
                                     $percent = round($percent, 2);
@@ -656,7 +656,7 @@
                                 }
                             } elseif ($answer == end($answers) && empty($answerdata) && $useranswer != NULL) {
                                 // get in here when what the user entered is not one of the answers
-                                $data = "<input type=\"text\" size=\"50\" disabled=\"disabled\" readonly=\"readonly\" value=\"$useranswer->useranswer\">";
+                                $data = '<input type="text" size="50" disabled="disabled" readonly="readonly" value="'.s($useranswer->useranswer).'">';
                                 if (isset($pagestats[$page->id][$useranswer->useranswer])) {
                                     $percent = $pagestats[$page->id][$useranswer->useranswer] / $pagestats[$page->id]["total"] * 100;
                                     $percent = round($percent, 2);

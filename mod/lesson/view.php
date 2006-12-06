@@ -556,7 +556,7 @@
                 case LESSON_SHORTANSWER :
                 case LESSON_NUMERICAL :
                     if (isset($USER->modattempts[$lesson->id])) {     
-                        $value = "value=\"$attempt->useranswer\"";
+                        $value = 'value="'.s($attempt->useranswer).'"';
                     } else {
                         $value = "";
                     }       
