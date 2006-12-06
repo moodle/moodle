@@ -297,32 +297,32 @@
         helpbutton('fields', get_string('addafield','data'), 'data');
         echo '</div>';
 
-        echo '<div class="sortdefault" align="center">';
-        echo '<form name="sortdefault" action="'.$CFG->wwwroot.'/mod/data/field.php" method="get">';
-        echo '<input type="hidden" name="d" value="'.$data->id.'" />';
-        echo '<input type="hidden" name="mode" value="sort" />';
-        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        echo '&nbsp;'.get_string('defaultsortfield','data').':';
-        $fields = get_records('data_fields','dataid',$data->id);
-        echo '<select name="defaultsort"><option value="0">'.get_string('dateentered','data').'</option>';
-        foreach ($fields as $field) {
-            if ($field->id == $data->defaultsort) {
-                echo '<option value="'.$field->id.'" selected="selected">'.$field->name.'</option>';
-            } else {
-                echo '<option value="'.$field->id.'">'.$field->name.'</option>';
+        if ($fields = get_records('data_fields','dataid',$data->id)) {
+            echo '<div class="sortdefault" align="center">';
+            echo '<form name="sortdefault" action="'.$CFG->wwwroot.'/mod/data/field.php" method="get">';
+            echo '<input type="hidden" name="d" value="'.$data->id.'" />';
+            echo '<input type="hidden" name="mode" value="sort" />';
+            echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+            echo '&nbsp;'.get_string('defaultsortfield','data').':';
+            echo '<select name="defaultsort"><option value="0">'.get_string('dateentered','data').'</option>';
+            foreach ($fields as $field) {
+                if ($field->id == $data->defaultsort) {
+                    echo '<option value="'.$field->id.'" selected="selected">'.$field->name.'</option>';
+                } else {
+                    echo '<option value="'.$field->id.'">'.$field->name.'</option>';
+                }
             }
+            echo '</select>';
+            echo '&nbsp;';
+            
+            $options = array(0 => get_string('ascending', 'data'),
+                             1 => get_string('descending', 'data'));
+            choose_from_menu($options, 'defaultsortdir', $data->defaultsortdir, '');
+            echo '<input type="submit" value="'.get_string('go').'" />';
+    
+            echo '</form>';
+            echo '</div>';
         }
-        echo '</select>';
-
-        echo '&nbsp;';
-        
-        $options = array(0 => get_string('ascending', 'data'),
-                         1 => get_string('descending', 'data'));
-        choose_from_menu($options, 'defaultsortdir', $data->defaultsortdir, '');
-        echo '<input type="submit" value="'.get_string('go').'" />';
-
-        echo '</form>';
-        echo '</div>';
 
 
     }
