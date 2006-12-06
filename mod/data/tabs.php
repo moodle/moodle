@@ -29,7 +29,6 @@
         error('You cannot call this script in that way');
     }
     
-    $cm = data_get_cm($data);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $inactive = NULL;

@@ -546,7 +546,7 @@ function data_numentries($data){
 function data_add_record($data, $groupid=0){
     global $USER;
 
-    $cm = data_get_cm($data);
+    $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $record->userid = $USER->id;
@@ -811,7 +811,7 @@ function data_get_coursemodule_info($coursemodule) {
 function data_print_template($template, $records, $data, $search='',$page=0, $return=false) {
     global $CFG;
 
-    $cm = data_get_cm($data);
+    $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     static $fields = NULL;
@@ -963,7 +963,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
 function data_print_ratings($data, $record) {
     global $USER;
 
-    $cm = data_get_cm($data);
+    $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $ratingsmenuused = false;
@@ -1136,7 +1136,7 @@ function data_print_comment($data, $comment, $page=0) {
 
     global $USER, $CFG;
 
-    $cm = data_get_cm($data);
+    $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $stredit = get_string('edit');
@@ -1223,17 +1223,6 @@ function data_convert_arrays_to_strings(&$fieldinput) {
             $fieldinput->$key = $str;
         }
     }
-}
-
-// returns the $cm given $data
-function data_get_cm($data) {
-    global $CFG, $course;
-    $datamod = get_record('modules', 'name', 'data');
-    $SQL = "select * from {$CFG->prefix}course_modules
-            where course = $course->id and
-            module = $datamod->id and
-            instance = $data->id";
-    return get_record_sql($SQL);
 }
 
 

@@ -24,10 +24,12 @@
     if (! $course = get_record('course', 'id', $data->course)) {
         error('Course is misconfigured');
     }
+    if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
+        error('Course Module ID was incorrect');
+    }
 
-    require_login($course->id);
+    require_login($course->id, false, $cm);
     
-    $cm = data_get_cm($data);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
     if ($commentid) {
@@ -111,7 +113,7 @@
         
         default:    //print all listing, and add comment form
             print_header();
-            data_print_comments($data, $record, $search, $template, $sort, $page, $rid, $order, $group);
+            data_print_comments($data, $record, $page);
             print_footer();
         break;
         
