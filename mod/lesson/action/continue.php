@@ -499,7 +499,7 @@
                 $noanswer = true;
                 break;
             }
-            $userresponse = $useranswer;
+            $studentanswer = $userresponse = $useranswer;
             if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
                 error("Continue: No answers found");
             }
@@ -540,8 +540,6 @@
                     $response = get_string("thatsthewronganswer", "lesson");
                 }
             }
-            
-            $studentanswer = $userresponse;
             break;
 
         case LESSON_BRANCHTABLE:
