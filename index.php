@@ -53,12 +53,17 @@
             if (moodle_needs_upgrading()) {
                 redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
             }
+        } else if (!empty($CFG->mymoodleredirect)) {    // Redirect logged-in users to My Moodle overview if required
+            if (isloggedin()) {
+                redirect($CFG->wwwroot .'/my/index.php');
+            }
         }
     } else { // if upgrading from 1.6 or below
         if (isadmin() && moodle_needs_upgrading()) {
             redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
         }
     }
+
 
     if (get_moodle_cookie() == '') {   
         set_moodle_cookie('nobody');   // To help search for cookies on login page
