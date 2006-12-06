@@ -8,11 +8,11 @@ if (! $course = get_record('course', 'id', $id)) {
     error("Course ID is incorrect");
 }
 
+$context = get_context_instance(CONTEXT_COURSE, $id);
 require_login($course->id);
 
-if (!isteacheredit($course->id)) {
-    error("You must be an editing teacher in this course, or an admin");
-}
+// to extend enrolments current user needs to be able to do role assignments
+require_capability('moodle/role:assign', $context);
 
 if ((count($users) > 0) and ($form = data_submitted()) and confirm_sesskey()) {
     if (count($form->userid) != count($form->extendperiod)) {
@@ -20,8 +20,16 @@ if ((count($users) > 0) and ($form = data_submitted()) and confirm_sesskey()) {
     }
 
     foreach ($form->userid as $k => $v) {
-        if ($student = get_record('user_students', 'userid', $v, 'course', $id)) {
-            enrol_student($v, $id, $student->timestart, $student->timeend + $form->extendperiod[$k]);
+        // find all roles this student have in this course  
+        if ($students = get_records_sql("SELECT ra.timestart, ra.timeend 
+                                       FROM {$CFG->prefix}role_assignments ra
+                                       WHERE userid = $v
+                                       AND contextid = $context->id")) {
+            // enrol these users again, with time extension
+            // not that this is not necessarily a student role
+            foreach ($students as $student) {
+                enrol_student($v, $id, $student->timestart, $student->timeend + $form->extendperiod[$k]);
+            }
         }
     }
 
@@ -57,7 +65,10 @@ $notavailable = get_string('notavailable');
 $unlimited = get_string('unlimited');
 foreach ($_POST as $k => $v) {
     if (preg_match('/^user(\d+)$/',$k,$m)) {
-        if (!($user = get_record_sql("SELECT * FROM {$CFG->prefix}user u INNER JOIN {$CFG->prefix}user_students s ON u.id=s.userid WHERE u.id={$m[1]} AND s.course=$course->id"))) {
+        
+        if (!($user = get_record_sql("SELECT * FROM {$CFG->prefix}user u 
+                                    INNER JOIN {$CFG->prefix}role_assignments ra ON u.id=ra.userid 
+                                    WHERE u.id={$m[1]} AND ra.contextid = $context->id"))) {
             continue;
         }
         if ($user->timestart) {
