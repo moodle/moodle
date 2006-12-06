@@ -119,6 +119,27 @@ function enrol_authorize_upgrade($oldversion=0) {
         delete_records('config_plugins', 'name', 'an_nextmail');
     }
 
+    if ($oldversion < 2006021531) { // Don't show authorize.net login info at config page
+        if (isset($CFG->an_login)) {
+            if (!empty($CFG->an_login)) {
+                set_config('an_login', rc4encrypt($CFG->an_login), 'enrol/authorize');
+            }
+            delete_records('config', 'name', 'an_login');
+        }
+        if (isset($CFG->an_tran_key)) {
+            if (!empty($CFG->an_tran_key)) {
+                set_config('an_tran_key', rc4encrypt($CFG->an_tran_key), 'enrol/authorize');
+            }
+            delete_records('config', 'name', 'an_tran_key');
+        }
+        if (isset($CFG->an_password)) {
+            if (!empty($CFG->an_password)) {
+                set_config('an_password', rc4encrypt($CFG->an_password), 'enrol/authorize');
+            }
+            delete_records('config', 'name', 'an_password');
+        }
+    }
+
     return $result;
 }
 

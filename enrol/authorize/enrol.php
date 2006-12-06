@@ -414,6 +414,7 @@ class enrolment_plugin_authorize
     function config_form($frm)
     {
         global $CFG;
+        $mconfig = get_config('enrol/authorize');
 
         if (! enrolment_plugin_authorize::check_openssl_loaded()) {
             notify('PHP must be compiled with SSL support (--with-openssl)');
@@ -436,7 +437,6 @@ class enrolment_plugin_authorize
             $captureday = intval($frm->an_capture_day);
             $emailexpired = intval($frm->an_emailexpired);
             if ($captureday > 0 || $emailexpired > 0) {
-                $mconfig = get_config('enrol/authorize');
                 if ((time() - intval($mconfig->an_lastcron) > 3600 * 24)) {
                     notify(get_string('admincronsetup', 'enrol_authorize'));
                 }
@@ -451,10 +451,10 @@ class enrolment_plugin_authorize
         }
 
         if (data_submitted()) {
-            if (empty($frm->an_login)) {
+            if (empty($mconfig->an_login)) {
                 notify("an_login required");
             }
-            if (empty($frm->an_tran_key) && empty($frm->an_password)) {
+            if (empty($mconfig->an_tran_key) && empty($mconfig->an_password)) {
                 notify("an_tran_key or an_password required");
             }
         }
@@ -473,6 +473,7 @@ class enrolment_plugin_authorize
     function process_config($config)
     {
         global $CFG;
+        $mconfig = get_config('enrol/authorize');
 
         // site settings
         if (($cost = optional_param('enrol_cost', 5, PARAM_INT)) > 0) {
@@ -507,12 +508,11 @@ class enrolment_plugin_authorize
 
         $captureday = ($captureday > 29) ? 29 : (($captureday < 0) ? 0 : $captureday);
         $emailexpired = ($emailexpired > 5) ? 5 : (($emailexpired < 0) ? 0 : $emailexpired);
-        $mconfig = get_config('enrol/authorize');
 
-        if ((!empty($reviewval)) &&
-            ($captureday > 0 || $emailexpired > 0) &&
-            (time() - intval($mconfig->an_lastcron) > 3600 * 24)) {
-            return false;
+        if (!empty($reviewval) && ($captureday > 0 || $emailexpired > 0)) {
+            if (time() - intval($mconfig->an_lastcron) > 3600 * 24) {
+                return false;
+            }
         }
 
         set_config('an_review', $reviewval);
@@ -527,30 +527,35 @@ class enrolment_plugin_authorize
             return false;
         }
 
-        // required fields
+        // REQUIRED fields;
+        // an_login
         $loginval = optional_param('an_login', '');
-        if (empty($loginval)) {
-        	return false;
-        }
-        set_config('an_login', $loginval);
-
-        $tranval = optional_param('an_tran_key', '');
-        $passwordval = optional_param('an_password', '');
-        $deletecurrent = optional_param('delete_current', '');
-
-        if (!empty($passwordval)) { // password is changing
-            set_config('an_password', $passwordval);
-        }
-        elseif (!empty($deletecurrent) and !empty($tranval)) {
-            set_config('an_password', '');
-            $CFG->an_password = '';
-        }
-
-        if (empty($tranval) and empty($CFG->an_password)) {
+        if (empty($loginval) && empty($mconfig->an_login)) {
             return false;
         }
+        $loginval = !empty($loginval) ? rc4encrypt($loginval) : strval($mconfig->an_login);
+        set_config('an_login', $loginval, 'enrol/authorize');
 
-        set_config('an_tran_key', $tranval);
+        // an_tran_key, an_password
+        $tranval = optional_param('an_tran_key', '');
+        $tranval = !empty($tranval) ? rc4encrypt($tranval) : (isset($mconfig->an_tran_key)?$mconfig->an_tran_key:'');
+        $passwordval = optional_param('an_password', '');
+        $passwordval = !empty($passwordval) ? rc4encrypt($passwordval) :(isset($mconfig->an_password)?$mconfig->an_password:'');
+        $deletecurrent = optional_param('delete_current', '0', PARAM_BOOL);
+        if (!empty($deletecurrent) and !empty($tranval)) {
+            delete_records('config_plugins', 'name', 'an_password', 'plugin', 'enrol/authorize');
+            $passwordval = '';
+        }
+        elseif (!empty($passwordval)) {
+            set_config('an_password', $passwordval, 'enrol/authorize');
+        }
+        if (empty($tranval) and empty($passwordval)) {
+            return false;
+        }
+        if (!empty($tranval)) {
+            set_config('an_tran_key', $tranval, 'enrol/authorize');
+        }
+
         return true;
     }
 
@@ -814,7 +819,6 @@ class enrolment_plugin_authorize
                ORDER BY e.userid";
 
         $emailinfo = get_records_sql($select);
-        $emailcount = count($emailinfo);
         $ei = reset($emailinfo);
         while ($ei !== false) {
             $usercourses = array();

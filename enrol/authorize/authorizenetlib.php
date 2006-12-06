@@ -95,6 +95,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
     $test = !empty($CFG->an_test);
 
     if (!isset($conststring)) {
+        $mconfig = get_config('enrol/authorize');
         $constdata = array(
              'x_version'         => '3.1',
              'x_delim_data'      => 'True',
@@ -102,16 +103,16 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
              'x_encap_char'      => AN_ENCAP,
              'x_relay_response'  => 'FALSE',
              'x_method'          => 'CC',
-             'x_login'           => $CFG->an_login,
+             'x_login'           => rc4decrypt($mconfig->an_login),
              'x_test_request'    => $test ? 'TRUE' : 'FALSE'
         );
         $str = '';
         foreach($constdata as $ky => $vl) {
             $str .= $ky . '=' . urlencode($vl) . '&';
         }
-        $str .= (!empty($CFG->an_tran_key)) ?
-                'x_tran_key=' . urlencode($CFG->an_tran_key):
-                'x_password=' . urlencode($CFG->an_password);
+        $str .= (!empty($mconfig->an_tran_key)) ?
+                'x_tran_key=' . urlencode(rc4decrypt($mconfig->an_tran_key)):
+                'x_password=' . urlencode(rc4decrypt($mconfig->an_password));
 
         $conststring = $str;
     }
