@@ -334,7 +334,8 @@ form.mform .fitemtitle {
   margin: 5px 0 0 10px;
   text-align: right;
 }
-div.fitem fieldset.fgroup label, div.fradio label,  div.fcheckbox label{
+div.fitem fieldset.fgroup label, div.fradio label,  div.fcheckbox label,
+fieldset.fdate_selector label {
   display:inline;
   float: none;
   width: auto;

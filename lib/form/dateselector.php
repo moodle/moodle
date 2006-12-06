@@ -20,9 +20,10 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
     * stopyear => integer last year that can be selected
     * timezone => float/string timezone
     * applydst => apply users daylight savings adjustment?
+    * optional => if true, show a checkbox beside the date to turn it on (or off)
     */
     var $_options = array('startyear'=>1970, 'stopyear'=>2020,
-                    'timezone'=>99, 'applydst'=>true);
+                    'timezone'=>99, 'applydst'=>true, 'optional'=>false);
 
    /**
     * These complement separators, they are appended to the resultant HTML
@@ -78,6 +79,10 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
         $this->_elements[] =& MoodleQuickForm::createElement('select', 'day', null, $days, $this->getAttributes(), true);
         $this->_elements[] =& MoodleQuickForm::createElement('select', 'month', null, $months, $this->getAttributes(), true);
         $this->_elements[] =& MoodleQuickForm::createElement('select', 'year', null, $years, $this->getAttributes(), true);
+        // If optional we add a checkbox (no text) which the user can use to turn if on
+        if($this->_options['optional']) {
+            $this->_elements[] =& MoodleQuickForm::createElement('checkbox','on', null, get_string('enable'), $this->getAttributes(), true);
+        }
         $this->setValue();
 
     }
@@ -87,6 +92,7 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
 
     function setValue($value=0)
     {
+        $requestvalue=$value;
         if (!($value)) {
             $value = time();
         }
@@ -96,7 +102,10 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
                 'day' => $currentdate['mday'],
                 'month' => $currentdate['mon'],
                 'year' => $currentdate['year']);
-
+            // If optional, default to off, unless a date was provided
+            if($this->_options['optional']) {
+                $value['on'] = $requestvalue ? true : false;
+            }
         }
         parent::setValue($value);
     }
@@ -150,6 +159,13 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
             }
         }
         if (count($valuearray)){
+            if($this->_options['optional']) {
+                // If checkbox is not on, the value is zero, so go no further
+                if(empty($valuearray['on'])) {
+                    $value[$this->getName()]=0;
+                    return $value;
+                }
+            }
             $value[$this->getName()]=make_timestamp($valuearray['year'],
                                    $valuearray['month'],
                                    $valuearray['day'],
