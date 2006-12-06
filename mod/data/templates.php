@@ -33,7 +33,7 @@
     $mode  = optional_param('mode', 'singletemplate', PARAM_ALPHA);
 
     if ($id) {
-        if (! $cm = get_record('course_modules', 'id', $id)) {
+        if (! $cm = get_coursemodule_from_id('data', $id)) {
             error('Course Module ID was incorrect');
         }
         if (! $course = get_record('course', 'id', $cm->course)) {
@@ -55,7 +55,8 @@
         }
     }
 
-    require_course_login($course, true, $cm);
+    require_login($course->id, false, $cm);
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/data:managetemplates', $context);
 

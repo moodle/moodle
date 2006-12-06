@@ -19,8 +19,8 @@ $shortname  = optional_param('shortname', '', PARAM_FILE); // directory the pres
 $file       = optional_param('file', '', PARAM_FILE); // uploaded file
 
 if ($id) {
-    if (! $cm = get_record('course_modules', 'id', $id)) {
-        error('Course Module ID Incorrect');
+    if (! $cm = get_coursemodule_from_id('data', $id)) {
+        error('Course Module ID was incorrect');
     }
     if (! $course = get_record('course', 'id', $cm->course)) {
         error('Course is misconfigured');
@@ -46,7 +46,7 @@ if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
     error('Could not find context');
 }
 
-require_login($course->id);
+require_login($course->id, false, $cm);
 
 require_capability('mod/data:managetemplates', $context);
 

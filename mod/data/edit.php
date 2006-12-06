@@ -56,7 +56,7 @@
         }
     }
     
-    require_course_login($course, false, $cm);
+    require_login($course->id, false, $cm);
     
     if (!isloggedin() or isguest()) {
         redirect('view.php?d='.$data->id);
