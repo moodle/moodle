@@ -330,9 +330,9 @@
     } else {
         $selectrole = " ";
     }
-    $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.city, u.country,
-        u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, ul.timeaccess AS lastaccess, r.hidden '; // s.lastaccess
-    //$select .= $course->enrolperiod?', s.timeend ':'';
+    $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.city, u.country, u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, ul.timeaccess AS lastaccess, r.hidden '; // s.lastaccess
+    $select .= $course->enrolperiod?', r.timeend ':'';
+
     $from   = "FROM {$CFG->prefix}user u INNER JOIN
     {$CFG->prefix}role_assignments r on u.id=r.userid LEFT OUTER JOIN
     {$CFG->prefix}user_lastaccess ul on (r.userid=ul.userid and ul.courseid = $course->id)"; 
@@ -390,7 +390,7 @@
         $sort = '';
     }
 
-    $matchcount = count_records_sql('SELECT COUNT(*) '.$from.$where.$wheresearch);
+    $matchcount = count_records_sql('SELECT COUNT(distinct u.id) '.$from.$where.$wheresearch);
 
     $table->initialbars($totalcount > $perpage);
     $table->pagesize($perpage, $matchcount);
