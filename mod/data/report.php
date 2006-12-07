@@ -6,14 +6,27 @@
     require_once("lib.php");
 
     $id   = required_param('id',PARAM_INT);
-    $sort = optional_param('sort', '', PARAM_RAW);
+    $sort = optional_param('sort', '', PARAM_ALPHA);
 
-    if (!$record = get_record('data_records','id',$id)) {
-        error("rating ID was incorrect");
+    if (!$record = get_record('data_records', 'id', $id)) {
+        error("Record ID is incorrect");
     }
-    
-    if (!$data = get_record('data','id',$record->dataid)) {
-        error("rating ID was incorrect");
+    if (!$data = get_record('data', 'id', $record->dataid)) {
+        error("Data ID is incorrect");
+    }
+    if (!$course = get_record('course', 'id', $data->course)) {
+        error("Course is misconfigured");
+    }
+    if (!$cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
+        error("Course Module ID was incorrect");
+    }
+
+    require_login($course->id, false, $cm);
+
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    if (!data_isowner($record->id) and !has_capability('mod/data:viewrating', $context) and !has_capability('mod/data:rate', $context)) {
+        error("You can not view ratings");
     }
 
     switch ($sort) {
