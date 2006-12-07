@@ -20,4 +20,9 @@ $string['general'] = 'General Settings';
 $string['modstandardels']='Common Module Settings';
 $string['miscellaneoussettings']='Miscellaneous Settings';
 $string['addfields']='Add $a fields to form';
+$string['day']='Day';
+$string['month']='Month';
+$string['year']='Year';
+$string['hour']='Hour';
+$string['minute']='Minute';
 ?>

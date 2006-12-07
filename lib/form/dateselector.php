@@ -76,9 +76,9 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
         for ($i=$this->_options['startyear']; $i<=$this->_options['stopyear']; $i++) {
             $years[$i] = $i;
         }
-        $this->_elements[] =& MoodleQuickForm::createElement('select', 'day', null, $days, $this->getAttributes(), true);
-        $this->_elements[] =& MoodleQuickForm::createElement('select', 'month', null, $months, $this->getAttributes(), true);
-        $this->_elements[] =& MoodleQuickForm::createElement('select', 'year', null, $years, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select', 'day', get_string('day', 'form'), $days, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select', 'month', get_string('month', 'form'), $months, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select', 'year', get_string('year', 'form'), $years, $this->getAttributes(), true);
         // If optional we add a checkbox (no text) which the user can use to turn if on
         if($this->_options['optional']) {
             $this->_elements[] =& MoodleQuickForm::createElement('checkbox','on', null, get_string('enable'), $this->getAttributes(), true);

@@ -83,11 +83,11 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
         for ($i=0; $i<60; $i+=$this->_options['step']) {
             $minutes[$i] = sprintf("%02d",$i);
         }
-        $this->_elements[] =& MoodleQuickForm::createElement('select', 'day', null, $days, $this->getAttributes(), true);
-        $this->_elements[] =& MoodleQuickForm::createElement('select', 'month', null, $months, $this->getAttributes(), true);
-        $this->_elements[] =& MoodleQuickForm::createElement('select', 'year', null, $years, $this->getAttributes(), true);
-        $this->_elements[] =& MoodleQuickForm::createElement('select', 'hour', null, $hours, $this->getAttributes(), true);
-        $this->_elements[] =& MoodleQuickForm::createElement('select', 'minute', null, $minutes, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select', 'day', get_string('day', 'form'), $days, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select', 'month', get_string('month', 'form'), $months, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select', 'year', get_string('year', 'form'), $years, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select', 'hour', get_string('hour', 'form'), $hours, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select', 'minute', get_string('minute', 'form'), $minutes, $this->getAttributes(), true);
 
         $this->setValue();
     }
