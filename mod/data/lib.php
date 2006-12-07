@@ -933,47 +933,36 @@ function data_print_ratings($data, $record) {
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    $ratingsmenuused = false;
-    if ($data->assessed and !empty($USER->id)) {
-        if ($ratings->scale = make_grades_menu($data->scale)) {
-            $ratings->allow = ($data->assessed and has_capability('mod/data:rate', $context));
-            if ($ratings->allow) {
-                echo '<div class="ratings" align="center">';
-                echo '<form name="form" method="post" action="rate.php">';
-                $useratings = true;
+    if ($data->assessed and !empty($USER->id)
+      and (has_capability('mod/data:rate', $context) or has_capability('mod/data:viewrating', $context) or data_isowner($record->id))) {
+        if ($ratingsscale = make_grades_menu($data->scale)) {
+            $ratingsmenuused = false;
 
-                if ($useratings) {
-                    if (has_capability('mod/data:rate', $context) and !data_isowner($record->id)) {
-                        data_print_ratings_mean($record->id, $ratings->scale, has_capability('mod/data:rate', $context));
-                        if (!empty($ratings->allow)) {
-                            echo '&nbsp;';
-                            data_print_rating_menu($record->id, $USER->id, $ratings->scale);
-                            $ratingsmenuused = true;
-                        }
+            echo '<div class="ratings" align="center">';
+            echo '<form name="form" method="post" action="rate.php">';
 
-                    } else if (data_isowner($record->id)) {
-                        data_print_ratings_mean($record->id, $ratings->scale, true);
+            if (has_capability('mod/data:rate', $context) and !data_isowner($record->id)) {
+                data_print_ratings_mean($record->id, $ratingsscale, has_capability('mod/data:viewrating', $context));
+                echo '&nbsp;';
+                data_print_rating_menu($record->id, $USER->id, $ratingsscale);
+                $ratingsmenuused = true;
 
-                    } else if (!empty($ratings->allow) ) {
-                        data_print_rating_menu($record->id, $USER->id, $ratings->scale);
-                        $ratingsmenuused = true;
-                    }
-                }
-
-                if ($data->scale < 0) {
-                    if ($scale = get_record("scale", "id", abs($data->scale))) {
-                        print_scale_menu_helpbutton($data->course, $scale );
-                    }
-                }
-
-                if ($ratingsmenuused) {
-                    echo '<input type="hidden" name="id" value="'.$data->course.'" />';
-                    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-                    echo "<input type=\"submit\" value=\"".get_string("sendinratings", "data")."\" />";
-                }
-                echo "</form>";
-                echo '</div>';
+            } else {
+                data_print_ratings_mean($record->id, $ratingsscale, true);
             }
+
+            if ($data->scale < 0) {
+                if ($scale = get_record('scale', 'id', abs($data->scale))) {
+                    print_scale_menu_helpbutton($data->course, $scale );
+                }
+            }
+
+            if ($ratingsmenuused) {
+                echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+                echo '<input type="submit" value="'.get_string('sendinratings', 'data').'" />';
+            }
+            echo '</form>';
+            echo '</div>';
         }
     }
 }
