@@ -20,29 +20,17 @@ class data_mod_form extends moodleform_mod {
 		$mform->setType('intro', PARAM_RAW);
 		$mform->addRule('intro', get_string('required'), 'required', null, 'client');
 
-        $availablefromgroup=array();
-	    $availablefromgroup[]=&MoodleQuickForm::createElement('date_selector', 'availablefrom', '');
-	    $availablefromgroup[]=&MoodleQuickForm::createElement('checkbox', 'availablefromenabled', '', get_string('enable'));
-        $mform->addGroup($availablefromgroup, 'availablefromgroup', get_string('availablefromdate', 'data'), '&nbsp;', false);
-        $mform->disabledIf('availablefromgroup', 'availablefromenabled');
+        $mform->addElement('date_selector', 'timeavailablefrom', get_string('availablefromdate', 'data'), array('optional'=>true));
+        $mform->disabledIf('timeavailablefrom', 'timeavailablefrom[on]');
 
-        $availabletogroup=array();
-	    $availabletogroup[]=&MoodleQuickForm::createElement('date_selector', 'availableto', '');
-	    $availabletogroup[]=&MoodleQuickForm::createElement('checkbox', 'availabletoenabled', '', get_string('enable'));
-        $mform->addGroup($availabletogroup, 'availabletogroup', get_string('availabletodate', 'data'), '&nbsp;', false);
-        $mform->disabledIf('availabletogroup', 'availabletoenabled');
+        $mform->addElement('date_selector', 'timeavailableto', get_string('availabletodate', 'data'), array('optional'=>true));
+        $mform->disabledIf('timeavailableto', 'timeavailableto[on]');
 
-        $viewfromgroup=array();
-	    $viewfromgroup[]=&MoodleQuickForm::createElement('date_selector', 'viewfrom', '');
-	    $viewfromgroup[]=&MoodleQuickForm::createElement('checkbox', 'viewfromenabled', '', get_string('enable'));
-        $mform->addGroup($viewfromgroup, 'viewfromgroup', get_string('viewfromdate', 'data'), '&nbsp;', false);
-        $mform->disabledIf('viewfromgroup', 'viewfromenabled');
+        $mform->addElement('date_selector', 'timeviewfrom', get_string('viewfromdate', 'data'), array('optional'=>true));
+        $mform->disabledIf('timeviewfrom', 'timeviewfrom[on]');
 
-        $viewtogroup=array();
-	    $viewtogroup[]=&MoodleQuickForm::createElement('date_selector', 'viewto', '');
-	    $viewtogroup[]=&MoodleQuickForm::createElement('checkbox', 'viewtoenabled', '', get_string('enable'));
-        $mform->addGroup($viewtogroup, 'viewtogroup', get_string('viewtodate', 'data'), '&nbsp;', false);
-        $mform->disabledIf('viewtogroup', 'viewtoenabled');
+        $mform->addElement('date_selector', 'timeviewto', get_string('viewtodate', 'data'), array('optional'=>true));
+        $mform->disabledIf('timeviewto', 'timeviewto[on]');
 
 
         $countoptions=  array(0=>get_string('none'))+

@@ -22,7 +22,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
     * step     => step to increment minutes by
     */
     var $_options = array('startyear'=>1970, 'stopyear'=>2020,
-                    'timezone'=>99, 'applydst'=>true, 'step'=>5);
+                    'timezone'=>99, 'applydst'=>true, 'step'=>5, 'optional'=>false);
 
    /**
     * These complement separators, they are appended to the resultant HTML
@@ -88,15 +88,31 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
         $this->_elements[] =& MoodleQuickForm::createElement('select', 'year', get_string('year', 'form'), $years, $this->getAttributes(), true);
         $this->_elements[] =& MoodleQuickForm::createElement('select', 'hour', get_string('hour', 'form'), $hours, $this->getAttributes(), true);
         $this->_elements[] =& MoodleQuickForm::createElement('select', 'minute', get_string('minute', 'form'), $minutes, $this->getAttributes(), true);
+        // If optional we add a checkbox which the user can use to turn if on
+        if($this->_options['optional']) {
+            $this->_elements[] =& MoodleQuickForm::createElement('checkbox', 'on', null, get_string('enable'), $this->getAttributes(), true);
+        }
 
         $this->setValue();
     }
 
     // }}}
+    // {{{ onQuickFormEvent()
+
+    function onQuickFormEvent($event, $arg, &$caller)
+    {
+        if ('updateValue' == $event) {
+            return HTML_QuickForm_element::onQuickFormEvent($event, $arg, $caller);
+        } else {
+            return parent::onQuickFormEvent($event, $arg, $caller);
+        }
+    }
+
     // {{{ setValue()
 
     function setValue($value=0)
     {
+        $requestvalue=$value;
         if (!($value)) {
             $value = time();
         }
@@ -108,7 +124,9 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
                 'day' => $currentdate['mday'],
                 'month' => $currentdate['mon'],
                 'year' => $currentdate['year']);
-
+            if($this->_options['optional']) {
+                $value['on'] = $requestvalue ? true : false;
+            }
         }
         parent::setValue($value);
     }
@@ -134,16 +152,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
     }
 
     // }}}
-    // {{{ onQuickFormEvent()
 
-    function onQuickFormEvent($event, $arg, &$caller)
-    {
-        if ('updateValue' == $event) {
-            return HTML_QuickForm_element::onQuickFormEvent($event, $arg, $caller);
-        } else {
-            return parent::onQuickFormEvent($event, $arg, $caller);
-        }
-    }
     /**
      * Output a timestamp. Give it the name of the group.
      *
@@ -161,22 +170,30 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
                 $valuearray += $thisexport;
             }
         }
-        if (count($valuearray)==0){
+        if (count($valuearray)){
+            if($this->_options['optional']) {
+                // If checkbox is not on, the value is zero, so go no further
+                if(empty($valuearray['on'])) {
+                    $value[$this->getName()]=0;
+                    return $value;
+                }
+            }
+            $valuearray=$valuearray + array('year'=>1970, 'month'=>1, 'day'=>1, 'hour'=>0, 'minute'=>0);
+            $value[$this->getName()]=make_timestamp(
+                                   $valuearray['year'],
+                                   $valuearray['month'],
+                                   $valuearray['day'],
+                                   $valuearray['hour'],
+                                   $valuearray['minute'],
+                                   0,
+                                   $this->_options['timezone'],
+                                   $this->_options['applydst']);
+
+            return $value;
+        } else {
+
             return null;
         }
-
-        $valuearray=$valuearray + array('year'=>1970, 'month'=>1, 'day'=>1, 'hour'=>0, 'minute'=>0);
-        $value[$this->getName()]=make_timestamp(
-                               $valuearray['year'],
-                               $valuearray['month'],
-                               $valuearray['day'],
-                               $valuearray['hour'],
-                               $valuearray['minute'],
-                               0,
-                               $this->_options['timezone'],
-                               $this->_options['applydst']);
-
-        return $value;
     }
 
     // }}}

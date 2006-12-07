@@ -598,23 +598,6 @@ function data_add_instance($data) {
 
     $data->timemodified = time();
 
-    if (empty($data->availablefromenable)) {
-        $data->timeavailablefrom = 0;
-    }
-
-    if (empty($data->availabletoenable)) {
-        $data->timeavailableto = 0;
-    }
-
-    if (empty($data->viewfromenable)) {
-        $data->timeviewfrom = 0;
-    }
-
-    if (empty($data->viewtoenable)) {
-        $data->timeviewto = 0;
-    }
-
-
     if (! $data->id = insert_record('data', $data)) {
         return false;
     }
@@ -635,22 +618,6 @@ function data_update_instance($data) {
     }
 
     $data->timemodified = time();
-
-    if (empty($data->availablefromenable)) {
-        $data->timeavailablefrom = 0;
-    }
-
-    if (empty($data->availabletoenable)) {
-        $data->timeavailableto = 0;
-    }
-
-    if (empty($data->viewfromenable)) {
-        $data->timeviewfrom = 0;
-    }
-
-    if (empty($data->viewtoenable)) {
-        $data->timeviewto = 0;
-    }
 
     if (! $data->instance = update_record('data', $data)) {
         return false;

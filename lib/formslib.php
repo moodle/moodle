@@ -843,7 +843,7 @@ function validate_' . $this->_attributes['id'] . '(frm) {
         $js = '<script type="text/javascript" language="javascript">'."\n";
         $js .= "var ".$this->getAttribute('id')."items= {";
         foreach ($this->_dependencies as $dependentOn => $elements){
-            $js .= $dependentOn.' : {dependents :[';
+            $js .= "'$dependentOn'".' : {dependents :[';
             foreach ($elements as $element){
                 $js.="'".$element['dependent']."', ";
             }
