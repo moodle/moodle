@@ -4504,7 +4504,14 @@ function print_error ($errorcode, $module='', $link='', $a=NULL) {
  */
 function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=false, $text='', $return=false,
                      $imagetext='') {
-    global $CFG;
+    global $CFG, $course;
+
+    // fix for MDL-7734
+    if ($course->lang) {
+        $forcelang = $course->lang;
+    } else {
+        $forcelang = '';
+    }
 
     if ($module == '') {
         $module = 'moodle';
@@ -4532,10 +4539,11 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
         $linkobject .= $tooltip;
     }
 
+    // fix for MDL-7734
     if ($text) {
-        $url = '/help.php?module='. $module .'&amp;text='. s(urlencode($text));
+        $url = '/help.php?module='. $module .'&amp;text='. s(urlencode($text).'&amp;forcelang='.$forcelang);
     } else {
-        $url = '/help.php?module='. $module .'&amp;file='. $page .'.html';
+        $url = '/help.php?module='. $module .'&amp;file='. $page .'.html&amp;forcelang='.$forcelang;
     }
 
     $link = '<span class="helplink">'. 
