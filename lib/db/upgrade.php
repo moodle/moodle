@@ -121,6 +121,15 @@ function xmldb_main_upgrade($oldversion=0) {
     if ($oldversion < 2006120400) {    /// Remove secureforms config setting
         execute_sql("DELETE FROM {$CFG->prefix}config where name='secureforms' ;", true);
     }
+    
+    if ($oldversion < 2006120700) { // add moodle/user:viewdetails to all roles!
+        if ($roles = get_records('role')) {
+            $context = get_context_instance(CONTEXT_SYSTEM);
+            foreach ($roles as $roleid=>$role) {
+                assign_capability('moodle/user:viewdetails', CAP_ALLOW, $roleid, $context->id);
+            }
+        }
+    }
 
     return $result;
 

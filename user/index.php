@@ -556,10 +556,19 @@
                         $country = $countries[$user->country];
                     }
                 }
-
+                
+                $usercontext = get_context_instance(CONTEXT_USER, $user->id);
+                
+                if ($piclink = ($USER->id == $user->id || has_capability('moodle/user:viewdetails', $context) ||has_capability('moodle/user:viewdetails', $context))) {
+                    $profilelink = '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></strong>';
+                } else {
+                    $profilelink = '<strong>'.fullname($user).'</strong>';   
+                }
+                               
                 $data = array (
-                        print_user_picture($user->id, $course->id, $user->picture, false, true),
-                        '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></strong>'.$hidden);
+                        print_user_picture($user->id, $course->id, $user->picture, false, true, $piclink),
+                        $profilelink);
+
                 if (!isset($hiddenfields['city'])) {
                     $data[] = $user->city;
                 }
