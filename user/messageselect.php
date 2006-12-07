@@ -86,7 +86,7 @@
                 $good = 1;
                 $teachers = array();
                 foreach ($SESSION->emailto[$id] as $user) {
-                    $good = $good && message_post_message($USER,$user,$messagebody,$format,'direct');
+                    $good = $good && message_post_message($USER,$user,addslashes($messagebody),$format,'direct');
                     if ($user->teacher) {
                         $teachers[] = $user->id;
                     }
