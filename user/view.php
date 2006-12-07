@@ -39,7 +39,11 @@
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
     }
     $usercontext   = get_context_instance(CONTEXT_USER, $user->id);       // User context
-
+    
+    // make sure user can view this student's profile
+    if ($USER->id != $user->id && !has_capability('moodle/user:viewdetails', $coursecontext) && !has_capability('moodle/user:viewdetails', $usercontext)) {
+        error('You can not view the profile of this user');
+    }
 
     if (!empty($CFG->forceloginforprofiles)) {
         require_login();
