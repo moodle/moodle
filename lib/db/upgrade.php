@@ -61,6 +61,15 @@ function xmldb_main_upgrade($oldversion=0) {
             execute_sql("DELETE FROM {$CFG->prefix}course_display where userid=$guest->id ;", true);
         }
     }
+    
+    if ($oldversion < 2006101009) { // add moodle/user:viewdetails to all roles!
+        if ($roles = get_records('role')) {
+            $context = get_context_instance(CONTEXT_SYSTEM);
+            foreach ($roles as $roleid=>$role) {
+                assign_capability('moodle/user:viewdetails', CAP_ALLOW, $roleid, $context->id);
+            }
+        }
+    }
 
     return $result;
 }
