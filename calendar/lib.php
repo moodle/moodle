@@ -1212,18 +1212,27 @@ function calendar_get_default_courses($ignoreref = false) {
     }
 
     $courses = array();
-    if(has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-        if(!empty($CFG->calendar_adminseesall)) {
+    if (has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if (!empty($CFG->calendar_adminseesall)) {
             $courses = get_records_sql('SELECT id, 1 FROM '.$CFG->prefix.'course');
             return $courses;
         }
     }
-    if(isset($USER->student) && is_array($USER->student)) {
-        $courses = $courses + $USER->student;
+    
+    // find all course this student can view
+    if ($allcourses = get_my_courses($USER->id,'visible DESC,sortorder ASC', '*', true)) {
+        foreach ($allcourses as $courseid=>$acourse) {
+            $context = get_context_instance(CONTEXT_COURSE, $courseid);
+            // let's try to see if there is any direct assignments on tihs context
+            if ($roleassign = get_record('role_assignments', 'contextid', $context->id, 'userid', $USER->id)) {
+                $auth = $roleassign->enrol;
+            } else {
+                $auth = '';
+            }              
+            $courses[$courseid] = $auth;           
+        }  
     }
-    if(isset($USER->teacher) && is_array($USER->teacher)) {
-        $courses = $courses + $USER->teacher;
-    }
+
     return $courses;
 }
 
