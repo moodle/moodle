@@ -43,16 +43,7 @@
 
     require_login($course->id, false, $cm);
 
-    
-    // get the mimetype
-    //$path_parts = pathinfo('http://www.apple.com');  //$lesson->mediafile
-    $mimetype = mimeinfo("type", $lesson->mediafile);  //$path_parts['basename']
-
-    //print_header();
-
-    if (substr_count($lesson->mediafile, '//') == 1) {
-        // OK, taking a leap of faith here.  We are assuming that teachers are cool
-        // and thus the mediafile is a url
+    if (is_url($lesson->mediafile)) {
         $fullurl = $lesson->mediafile;        
     } else {
         // get the full url to the file while taking into consideration $CFG->slasharguments    
@@ -64,7 +55,8 @@
         $fullurl = "$CFG->wwwroot$relativeurl";
     }
     
-    
+    // Get the mimetype
+    $mimetype = mimeinfo("type", $lesson->mediafile);    
 
     // find the correct type and print it out
     if ($mimetype == "audio/mp3") {    // It's an MP3 audio file
@@ -140,9 +132,9 @@
         echo '</object>';
         echo "</p></center>";
     
-    } else if ($mimetype == "application/x-shockwave-flash") {   // It's a flash file
+    //} else if ($mimetype == "application/x-shockwave-flash") {   // It's a flash file
     
-        error('Flash is not supported yet');
+    //    error('Flash is not supported yet');
     
     } else if ($mimetype == "audio/x-pn-realaudio") {   // It's a realmedia file
         
@@ -175,8 +167,23 @@
         }
         exit();
 
-    } else {
-        error('Unsupported mime type: '.$mimetype);
+    } else if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // Image
+
+        echo "<center><p>";
+        echo '<img class="lessonimage" src="'.s($fullurl).'" alt="" />';
+        echo "</p></center>";
+
+    } else {  // Default
+
+        // Get the file name
+        $file = pathinfo($lesson->mediafile);
+        $filename = basename($file['basename'], '.'.$file['extension']);
+
+        echo "<center><p>";
+        notify(get_string('clicktodownload', 'lesson'));
+        echo "<a href=\"$fullurl\">".format_string($filename).'</a>';
+        echo "</p></center>";
+        
     }
     
     function is_url($test_url) {
