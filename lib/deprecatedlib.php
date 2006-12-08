@@ -590,10 +590,13 @@ function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=''
 
     // make sure it works on the site course
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
-    $select = "(ul.courseid = '$courseid' OR ul.courseid IS NULL) AND ";
-    if ($courseid == SITEID) {
-        $select = '';
+
+    $select = "c.contextlevel=".CONTEXT_COURSE." AND "; // Must be on a course
+    if ($courseid != SITEID) {
+        // If not site, require specific course
+        $select.= "c.instanceid=$courseid AND ";
     }
+    $select.="rc.capability='moodle/legacy:student' AND rc.permission=".CAP_ALLOW." AND "; 
 
     $select .= ' u.deleted = \'0\' ';
 
@@ -633,37 +636,15 @@ function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=''
     }
 
     $students = get_records_sql("SELECT $fields
-                            FROM {$CFG->prefix}user u INNER JOIN
-                                 {$CFG->prefix}role_assignments ra on u.id=ra.userid LEFT OUTER JOIN
-                                 {$CFG->prefix}user_lastaccess ul on ul.userid=ra.userid
-                                 $groupmembers
-                            WHERE $select $search $sort $dir", $page, $recordsperpage);
+                                FROM {$CFG->prefix}user u INNER JOIN
+                                     {$CFG->prefix}role_assignments ra on u.id=ra.userid INNER JOIN
+                                     {$CFG->prefix}role_capabilities rc ON ra.roleid=rc.roleid INNER JOIN
+                                     {$CFG->prefix}context c ON c.id=ra.contextid LEFT OUTER JOIN
+                                     {$CFG->prefix}user_lastaccess ul on ul.userid=ra.userid
+                                     $groupmembers
+                                WHERE $select $search $sort $dir", $page, $recordsperpage); 
 
-    //if ($courseid != SITEID) {
     return $students;
-    //}
-/*
-    // We are here because we need the students for the site.
-    // These also include teachers on real courses minus those on the site
-    if ($teachers = get_records('user_teachers', 'course', SITEID)) {
-        foreach ($teachers as $teacher) {
-            $exceptions .= ','. $teacher->userid;
-        }
-        $exceptions = ltrim($exceptions, ',');
-        $select .= ' AND u.id NOT IN ('. $exceptions .')';
-    }
-    if (!$teachers = get_records_sql("SELECT $fields
-                            FROM {$CFG->prefix}user u,
-                                 {$CFG->prefix}user_teachers s
-                                 $groupmembers
-                            WHERE $select $search $sort $dir $limit")) {
-        return $students;
-    }
-    if (!$students) {
-        return $teachers;
-    }
-    return $teachers + $students;
-    */
 }
 
 /**
