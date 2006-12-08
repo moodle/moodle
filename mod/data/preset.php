@@ -1,6 +1,6 @@
 <?php // $Id$
 /* Preset Menu
- * 
+ *
  * This is the page that is the menu item in the config database
  * pages.
  */
@@ -11,12 +11,18 @@ require_once($CFG->libdir.'/uploadlib.php');
 require_once($CFG->libdir.'/xmlize.php');
 
 
-$id         = optional_param('id', 0, PARAM_INT);    // course module id
-$d          = optional_param('d', 0, PARAM_INT);     // database activity id 
-$action     = optional_param('action', 'base', PARAM_RAW); // current action
-$userid     = optional_param('userid', 0, PARAM_INT);   // owner of the preset
-$shortname  = optional_param('shortname', '', PARAM_FILE); // directory the preset is in
-$file       = optional_param('file', '', PARAM_FILE); // uploaded file
+$id       = optional_param('id', 0, PARAM_INT);    // course module id
+$d        = optional_param('d', 0, PARAM_INT);     // database activity id
+$action   = optional_param('action', 'base', PARAM_ALPHANUM); // current action
+$fullname = optional_param('fullname', '', PARAM_PATH); // directory the preset is in
+$file     = optional_param('file', '', PARAM_FILE); // uploaded file
+
+// find out preset owner userid and shortname
+$parts = explode('/', $fullname);
+$userid = empty($parts[0]) ? 0 : (int)$parts[0];
+$shortname = empty($parts[1]) ? '' : $parts[1];
+unset($parts);
+unset($fullname);
 
 if ($id) {
     if (! $cm = get_coursemodule_from_id('data', $id)) {
@@ -61,27 +67,32 @@ $sesskey = sesskey();
 /* Output */
 data_print_header($course, $cm, $data, 'presets');
 
-echo '<center>';
 switch ($action) {
 
         /***************** Deleting *****************/
     case 'confirmdelete' :
-        if (!confirm_sesskey()) {
+        if (!confirm_sesskey()) { // GET request ok here
             error("Sesskey Invalid");
         }
+
+        if ($userid > 0 and ($userid == $USER->id || has_capability('mod/data:manageuserpresets', $context))) {
+           //ok can delete
+        } else {
+            error("Invalid request");
+        }
+
         $path = data_preset_path($course, $userid, $shortname);
 
         $strwarning = get_string('deletewarning', 'data').'<br />'.
                       data_preset_name($shortname, $path);
 
-        $options = new object;
-        $options->shortname = $shortname;
-        $options->userid = $userid;
-        $options->action = 'delete';
-        $options->d = $data->id;
-        $options->sesskey = sesskey();
+        $options = new object();
+        $options->fullname = $userid.'/'.$shortname;
+        $options->action   = 'delete';
+        $options->d        = $data->id;
+        $options->sesskey  = sesskey();
 
-        $optionsno = new object;
+        $optionsno = new object();
         $optionsno->d = $data->id;
         notice_yesno($strwarning, 'preset.php', 'preset.php', $options, $optionsno, 'post', 'get');
         print_footer($course);
@@ -89,8 +100,14 @@ switch ($action) {
         break;
 
     case 'delete' :
-        if (!confirm_sesskey()) {
-            error('Sesskey Invalid');
+        if (!data_submitted() and !confirm_sesskey()) {
+            error("Invalid request");
+        }
+
+        if ($userid > 0 and ($userid == $USER->id || has_capability('mod/data:manageuserpresets', $context))) {
+           //ok can delete
+        } else {
+            error("Invalid request");
         }
 
         $presetpath = data_preset_path($course, $userid, $shortname);
@@ -101,15 +118,15 @@ switch ($action) {
         @rmdir($presetpath);
 
         $strdeleted = get_string('deleted', 'data');
-        notify("$shortname $strdeleted");
+        notify("$shortname $strdeleted", 'notifysuccess');
 
         break;
 
 
         /***************** Importing *****************/
     case 'importpreset' :
-        if (!confirm_sesskey()) {
-            error("Sesskey Invalid");
+        if (!data_submitted() or !confirm_sesskey()) {
+            error("Invalid request");
         }
 
         $pimporter = new PresetImporter($course, $cm, $data, $userid, $shortname);
@@ -121,8 +138,8 @@ switch ($action) {
 
         /* Imports a zip file. */
     case 'importzip' :
-        if (!confirm_sesskey()) {
-            error("Sesskey Invalid");
+        if (!data_submitted() or !confirm_sesskey()) {
+            error("Invalid request");
         }
 
         if (!make_upload_directory('temp/data/'.$USER->id)) {
@@ -144,8 +161,8 @@ switch ($action) {
         break;
 
     case 'finishimport':
-        if (!confirm_sesskey()) {
-            error('Sesskey Invalid');
+        if (!data_submitted() or !confirm_sesskey()) {
+            error("Invalid request");
         }
 
         $pimporter = new PresetImporter($course, $cm, $data, $userid, $shortname);
@@ -163,8 +180,13 @@ switch ($action) {
 
         /* Exports as a zip file ready for download. */
     case 'export':
+        if (!data_submitted() or !confirm_sesskey()) {
+            error("Invalid request");
+        }
+
+        echo '<div align="center">';
         $file = data_presets_export($course, $cm, $data);
-        echo get_string('exportedtozip', 'data')."<br>";
+        echo get_string('exportedtozip', 'data')."<br />";
         $perminantfile = $CFG->dataroot."/$course->id/moddata/data/$data->id/preset.zip";
         @unlink($perminantfile);
         /* is this created elsewhere? sometimes its not present... */
@@ -173,67 +195,70 @@ switch ($action) {
         /* now just move the zip into this folder to allow a nice download */
         if (!rename($file, $perminantfile)) error("Can't move zip");
         echo "<a href='$CFG->wwwroot/file.php/$course->id/moddata/data/$data->id/preset.zip'>".get_string('download', 'data')."</a>";
+        echo '</div>';
         break;
 
 
 
         /***************** Exporting *****************/
     case 'save1':
-        if (!confirm_sesskey()) {
-            error("Sesskey Invalid");
+        if (!data_submitted() or !confirm_sesskey()) {
+            error("Invalid request");
         }
 
         $strcontinue = get_string('continue');
         $strwarning = get_string('presetinfo', 'data');
+        $strname = get_string('shortname');
 
-        echo "<div align=center>";
-        echo "<p>$strwarning</p>";
-        echo "<form action='preset.php' method='POST'>";
-        echo "Name: <input type='textbox' name='name' value=\"$data->name\" />";
-        echo "<input type='hidden' name='action' value='save2' />";
-        echo "<input type='hidden' name='d' value='$data->id' />";
-        echo "<input type='hidden' name='sesskey' value='$sesskey' />";
-        echo "<input type='submit' value='$strcontinue' /></form></div>";
+        echo '<div align="center">';
+        echo '<p>'.$strwarning.'</p>';
+        echo '<form action="preset.php" method="post">';
+        echo '<label for="shorname">'.$strname.'</label> <input type="text" id="shorname" name="name" value="'.$data->name.'" />';
+        echo '<input type="hidden" name="action" value="save2" />';
+        echo '<input type="hidden" name="d" value="'.$data->id.'" />';
+        echo '<input type="hidden" name="sesskey" value="'.$sesskey.'" />';
+        echo '<input type="submit" value="'.$strcontinue.'" /></form></div>';
         print_footer($course);
         exit;
         break;
 
     case 'save2':
-        if (!confirm_sesskey()) {
-            error("Sesskey Invalid");
+        if (!data_submitted() or !confirm_sesskey()) {
+            error("Invalid request");
         }
 
         $strcontinue = get_string('continue');
-        $stroverwrite = get_string('overwrite');
+        $stroverwrite = get_string('overwrite', 'data');
+        $strname = get_string('shortname');
 
         $name = optional_param('name', $data->name, PARAM_FILE);
 
         if (is_directory_a_preset("$CFG->dataroot/data/preset/$USER->id/$name")) {
             notify("Preset already exists: Pick another name or overwrite");
 
-            echo "<div align=center>";
-            echo "<form action='preset.php' method='POST'>";
-            echo "New name: <input type='textbox' name='name' value=\"$name\" />";
-            echo "<input type='hidden' name='action' value='save2' />";
-            echo "<input type='hidden' name='d' value='$data->id' />";
-            echo "<input type='hidden' name='sesskey' value='$sesskey' />";
-            echo "<input type='submit' value='$strcontinue' /></form>";
+            echo '<div align="center">';
+            echo '<form action="preset.php" method="post">';
+            echo '<label for="shorname">'.$strname.'</label> <input type="textbox" name="name" value="'.$name.'" />';
+            echo '<input type="hidden" name="action" value="save2" />';
+            echo '<input type="hidden" name="d" value="'.$data->id.'" />';
+            echo '<input type="hidden" name="sesskey" value="'.$sesskey.'" />';
+            echo '<input type="submit" value="'.$strcontinue.'" /></form>';
 
-            echo "<form action='preset.php' method='POST'>";
-            echo "<input type='hidden' name='name' value=\"$name\" />";
-            echo "<input type='hidden' name='action' value='save3' />";
-            echo "<input type='hidden' name='d' value='$data->id' />";
-            echo "<input type='hidden' name='sesskey' value='$sesskey' />";
-            echo "<input type='submit' value='$stroverwrite' /></form>";
-            echo "</div>";
+            echo '<form action="preset.php" method="post">';
+            echo '<input type="hidden" name="name" value="'.$name.'" />';
+            echo '<input type="hidden" name="action" value="save3" />';
+            echo '<input type="hidden" name="d" value="'.$data->id.'" />';
+            echo '<input type="hidden" name="sesskey" value="'.$sesskey.'" />';
+            echo '<input type="submit" value="'.$stroverwrite.'" /></form>';
+            echo '</div>';
             print_footer($course);
             exit;
             break;
         }
 
     case 'save3':
-        if (!confirm_sesskey()) {
-            error("Sesskey Invalid");
+        if (!data_submitted() or !confirm_sesskey()) {
+            error("Invalid request");
         }
 
         $name = optional_param('name', $data->name, PARAM_FILE);
@@ -252,111 +277,104 @@ switch ($action) {
 
 $presets = data_get_available_presets($context);
 
-$strimport = get_string('import');
-$strfromfile = get_string('fromfile', 'data');
+$strimport         = get_string('import');
+$strfromfile       = get_string('fromfile', 'data');
 $strchooseorupload = get_string('chooseorupload', 'data');
-$strok = get_string('ok');
-$strusestandard = get_string('usestandard', 'data');
-$strchoose = get_string('choose');
-$strexport = get_string('export', 'data');
-$strexportaszip = get_string('exportaszip', 'data');
-$strsaveaspreset = get_string('saveaspreset', 'data');
-$strdelete = get_string('delete');
+$strusestandard    = get_string('usestandard', 'data');
+$strchoose         = get_string('choose');
+$strexport         = get_string('export', 'data');
+$strexportaszip    = get_string('exportaszip', 'data');
+$strsaveaspreset   = get_string('saveaspreset', 'data');
+$strsave           = get_string('save', 'data');
+$strdelete         = get_string('delete');
 
-echo '<table class="presetcontrols">';
-echo '<tr><td valign="top">';
-echo '<h3>'.$strexport.'</h3>';
-echo '</td><td colspan="2">';
+echo '<div align="center">';
+echo '<table class="presets" cellpadding="5">';
+echo '<tr><td valign="top" colspan="2" align="center"><h3>'.$strexport.'</h3></td></tr>';
 
-echo '<table>';
-echo '<tr><td>';
-$options = new object;
+echo '<tr><td><label for="zipexport">'.$strexportaszip.'</label>';
+helpbutton('exportzip', '', 'data');
+echo '</td><td>';
+$options = new object();
 $options->action = 'export';
 $options->d = $data->id;
 $options->sesskey = sesskey();
-helpbutton('exportzip', '', 'data');
-echo '</td><td>';
-print_single_button('preset.php', $options, $strexportaszip, 'post');
+print_single_button('preset.php', $options, $strexport, 'post');
+echo '</td></tr>';
 
-echo '</td></tr><tr><td>';
-$options = new object;
+echo '<tr><td><label for="zipexport">'.$strsaveaspreset.'</label>';
+helpbutton('savepreset', '', 'data');
+echo '</td><td>';
+$options = new object();
 $options->action = 'save1';
 $options->d = $data->id;
 $options->sesskey = sesskey();
-helpbutton('savepreset', '', 'data');     
-echo '</td><td>';
-print_single_button('preset.php', $options, $strsaveaspreset, 'post');
-echo '</td></tr></table>';
-
+print_single_button('preset.php', $options, $strsave, 'post');
 echo '</td></tr>';
 
-echo '<tr><td valign="top">';
-echo '<h3>'.$strimport.'</h3>';
-echo '</td><td>';
+
+echo '<tr><td valign="top" colspan="2" align="center"><h3>'.$strimport.'</h3></td></tr>';
+
+echo '<tr><td><label for="fromfile">'.$strfromfile.'</label>';
 helpbutton('importfromfile', '', 'data');
-echo $strfromfile.':';
 echo '</td><td>';
-echo '<form name="uploadpreset" method="post" action="preset.php" enctype="multipart/form-data">';
+
+echo '<form name="uploadpreset" method="post" action="preset.php">';
 echo '<input type="hidden" name="d" value="'.$data->id.'" />';
 echo '<input type="hidden" name="action" value="importzip" />';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-echo '<input name="file" size="20" value="" alt="file" type="text"><input name="coursefiles" title="Choose or upload a file" value="'.$strchooseorupload.'" onclick="return openpopup('."'/files/index.php?id=2&choose=uploadpreset.file', 'coursefiles', 'menubar=0,location=0,scrollbars,resizable,width=750,height=500', 0".');" type="button">';
-echo '<input type="submit" value="'.$strok.'" />';
+echo '<input name="file" size="20" value="" id="fromfile" type="text" /><input name="coursefiles" value="'.$strchooseorupload.'" onclick="return openpopup('."'/files/index.php?id=2&choose=uploadpreset.file', 'coursefiles', 'menubar=0,location=0,scrollbars,resizable,width=750,height=500', 0".');" type="button" />';
+echo '<input type="submit" value="'.$strimport.'" />';
 echo '</form>';
 echo '</td></tr>';
 
-echo '<tr><td>';
-echo '</td><td valign="top">';
+
+echo '<tr valign="top"><td><label>'.$strusestandard.'</label>';
 helpbutton('usepreset', '', 'data');
-echo $strusestandard.':';
 echo '</td><td>';
 
-echo '<table class="presets">';
+echo '<form name="presets" method="post" action="preset.php" >';
+echo '<input type="hidden" name="d" value="'.$data->id.'" />';
+echo '<input type="hidden" name="action" value="importpreset" />';
+echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+
+$i = 0;
 foreach ($presets as $id => $preset) {
-    echo '<tr>';
-    echo '<td>';
-    if (!empty($preset->screenshot)) {
-        echo '<img width="150" class="presetscreenshot" src="'.$preset->screenshot.'" alt="'.get_string('screenshot').'" />';
-    }
-    echo '</td><td>'.$preset->name;
+    $screenshot = '';
     if (!empty($preset->userid)) {
         $user = get_record('user', 'id', $preset->userid);
-        echo ' ('.fullname($user, has_capability('moodle/site:viewfullnames', $context)).')';
+        $desc = $preset->name.' ('.fullname($user, true).')';
+    } else {
+        $desc = $preset->name;
     }
-    echo '</td><td>';
-    $options = new object;
-    $options->shortname = $preset->shortname;
-    $options->userid = $preset->userid;
-    $options->action = 'importpreset';
-    $options->d = $data->id;
-    $options->sesskey = sesskey();
-    print_single_button('preset.php', $options, $strchoose, 'post');
-    echo '</td><td>';
-    if ($preset->userid > 0 && 
-          ($preset->userid == $USER->id || has_capability('mod/data:manageuserpresets', $context))) {
-        $options = new object;
-        $options->shortname = $preset->shortname;
-        $options->userid = $preset->userid;
-        $options->action = 'confirmdelete';
-        $options->d = $data->id;
-        $options->sesskey = sesskey();
-        print_single_button('preset.php', $options, $strdelete, 'post');
-    }
-    echo '</td></tr>';
-}
-echo '</table>';
 
+    if (!empty($preset->screenshot)) {
+        $screenshot = '<img width="150" class="presetscreenshot" src="'.$preset->screenshot.'" alt="'.get_string('screenshot').' '.$desc.'" />&nbsp;';
+    }
+
+    $fullname = $preset->userid.'/'.$preset->shortname;
+
+    $dellink = '';
+    if ($preset->userid > 0 and ($preset->userid == $USER->id || has_capability('mod/data:manageuserpresets', $context))) {
+        $dellink = '&nbsp;<a href="preset.php?d='.$data->id.'&amp;action=confirmdelete&amp;fullname='.$fullname.'&amp;sesskey='.sesskey().'">'.
+                   '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.$strdelete.' '.$desc.'" /></a>';
+    }
+
+    echo '<input type="radio" name="fullname" id="usepreset'.$i.'" value="'.$fullname.'" /><label for="usepreset'.$i++.'">'.$desc.'</label>'.$dellink.'<br />';
+}
+echo '<br />';
+echo '<input type="submit" value="'.$strchoose.'" />';
+echo '</form>';
 echo '</td></tr>';
 echo '</table>';
+echo '</div>';
 
 print_footer($course);
 
 
 
-
-
 function is_directory_a_preset($directory) {
-    $directory = rtrim($directory, '/\\') . '/';    
+    $directory = rtrim($directory, '/\\') . '/';
     if (file_exists($directory.'singletemplate.html') &&
             file_exists($directory.'listtemplate.html') &&
             file_exists($directory.'listtemplateheader.html') &&
@@ -364,12 +382,11 @@ function is_directory_a_preset($directory) {
             file_exists($directory.'addtemplate.html') &&
             file_exists($directory.'rsstemplate.html') &&
             file_exists($directory.'rsstitletemplate.html') &&
-            file_exists($directory.'csstemplate.css') && 
-            file_exists($directory.'jstemplate.js') && 
+            file_exists($directory.'csstemplate.css') &&
+            file_exists($directory.'jstemplate.js') &&
             file_exists($directory.'preset.xml')) return true;
     else return false;
 }
-
 
 
 function clean_preset($folder) {
@@ -429,7 +446,7 @@ function data_presets_export($course, $cm, $data) {
     $presetxml = "<preset>\n\n";
 
     /* Database settings first. Name not included? */
-    $settingssaved = array('intro', 'comments', 
+    $settingssaved = array('intro', 'comments',
             'requiredentries', 'requiredentriestoview', 'maxentries',
             'rssarticles', 'approval', 'scale', 'assessed',
             'defaultsort', 'defaultsortdir', 'editany');
@@ -487,7 +504,7 @@ function data_presets_export($course, $cm, $data) {
 
 
 
-class PresetImporter {   
+class PresetImporter {
     function PresetImporter($course, $cm, $data, $userid, $shortname) {
         global $CFG;
         $this->course = $course;
@@ -502,7 +519,7 @@ class PresetImporter {
         global $CFG;
 
         if (!is_directory_a_preset($this->folder)) {
-            error("$this->folder Not a preset");
+            error("$this->userid/$this->shortname Not a preset");
         }
 
         /* Grab XML */
@@ -557,56 +574,57 @@ class PresetImporter {
 
         $strblank = get_string('blank', 'data');
         $strnofields = get_string('nofields', 'data');
-        $strcontinue = get_string("continue");
-        $sesskey = sesskey();
+        $strcontinue = get_string('continue');
         $strwarning = get_string('mappingwarning', 'data');
         $strfieldmappings = get_string('fieldmappings', 'data');
-        $strnew = get_string("new");
-        $strold = get_string("old");
+        $strnew = get_string('new');
+        $strold = get_string('old');
+
+        $sesskey = sesskey();
 
         list($settings, $newfields,  $currentfields) = $this->get_settings();
 
-        echo '<div align="center"><form action="preset.php" method="POST">';
+        echo '<div align="center"><form action="preset.php" method="post">';
         echo '<input type="hidden" name="action" value="finishimport" />';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<input type="hidden" name="d" value="'.$this->data->id.'" />';
-        echo '<input type="hidden" name="userid" value="'.$this->userid.'" />';
-        echo '<input type="hidden" name="shortname" value="'.$this->shortname.'" />';
+        echo '<input type="hidden" name="fullname" value="'.$this->userid.'/'.$this->shortname.'" />';
 
         if ($currentfields != array() && $newfields != array()) {
             echo "<h3>$strfieldmappings ";
-            echo helpbutton('fieldmappings', '', 'data');
-            echo "</h3><table>";
+            helpbutton('fieldmappings', '', 'data');
+            echo '</h3><table>';
 
             foreach ($newfields as $nid => $newfield) {
-                echo "<tr><td>$newfield->name </td>";
-                echo "<td><select name='field_$nid'>";
+                echo "<tr><td><label for=\"id_$newfield->name\">$newfield->name</label></td>";
+                echo '<td><select name="field_'.$nid.'" id="id_'.$newfield->name.'">';
 
+                $selected = false;
                 foreach ($currentfields as $cid => $currentfield) {
                     if ($currentfield->type == $newfield->type) {
                         if ($currentfield->name == $newfield->name) {
-                            echo "<option value='$cid' selected='true'>$currentfield->name</option>";
+                            echo '<option value="'.$cid.'" selected="selected">'.$currentfield->name.'</option>';
                             $selected=true;
                         }
                         else {
-                            echo "<option value='$cid'>$currentfield->name</option>";
+                            echo '<option value="$cid">'.$currentfield->name.'</option>';
                         }
                     }
                 }
 
                 if ($selected)
-                    echo "<option value='-1'>-</option>";
+                    echo '<option value="-1">-</option>';
                 else
-                    echo "<option value='-1' selected='true'>-</option>";
-                echo "</select></td></tr>";
+                    echo '<option value="-1" selected="selected">-</option>';
+                echo '</select></td></tr>';
             }
-            echo "</table>";
+            echo '</table>';
             echo "<p>$strwarning</p>";
         }
         else if ($newfields == array()) {
             error("New preset has no defined fields!");
         }
-        echo "<input type='submit' value='$strcontinue' /></form></div>";
+        echo '<input type="submit" value="'.$strcontinue.'" /></form></div>';
 
     }
 
@@ -659,7 +677,7 @@ class PresetImporter {
             foreach ($currentfields as $cid => $currentfield) {
                 if (!array_key_exists($cid, $preservedfields)) {
                     /* Data not used anymore so wipe! */
-                    print "Deleting field $currentfield->name<br>";
+                    print "Deleting field $currentfield->name<br />";
                     $id = $currentfield->id;
 
                     if ($content = get_records('data_content', 'fieldid', $id)) {
@@ -677,7 +695,7 @@ class PresetImporter {
 
         data_update_instance(addslashes_object($settings));
 
-        if (strstr($this->folder, "/temp/")) clean_preset($this->folder); /* Removes the temporary files */
+        if (strstr($this->folder, '/temp/')) clean_preset($this->folder); /* Removes the temporary files */
         return true;
     }
 }

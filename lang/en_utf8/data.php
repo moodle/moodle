@@ -92,7 +92,7 @@ $string['file'] = 'File';
 $string['filtername'] = 'Database Auto-linking';
 $string['footer'] = 'Footer';
 $string['forcelinkname'] = 'Forced name for the link';
-$string['fromfile'] = 'from zip file';
+$string['fromfile'] = 'Import from zip file';
 $string['header'] = 'Header';
 $string['headeraddtemplate'] = 'Defines the interface when editing entries';
 $string['headercsstemplate'] = 'Defines local CSS styles for the other templates';
@@ -206,7 +206,7 @@ $string['updatefield'] = 'Update an existing field';
 $string['uploadfile'] = 'Upload file';
 $string['uploadrecords'] = 'Upload entries from a file';
 $string['url'] = 'Url';
-$string['usestandard'] = 'use a preset';
+$string['usestandard'] = 'Use a preset';
 $string['viewfromdate'] = 'Viewable from';
 $string['viewtodate'] = 'Viewable to';
 
