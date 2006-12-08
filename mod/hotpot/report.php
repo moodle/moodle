@@ -269,9 +269,15 @@
 
         $users[$userid]->attempts[] = &$attempts[$id];
 
-        if ($mode=='click' && isset($cr_attempts[$id])) {
-            $attempts[$id]->cr_lastclick = $cr_attempts[$id]->id;
-            $attempts[$id]->cr_timefinish = $cr_attempts[$id]->timefinish;
+        if ($mode=='click') {
+            // shortcut to clickreportid (=the id of the first attempt in this clickreport series)
+            $clickreportid = $attempt->clickreportid;
+            if (isset($cr_attempts[$clickreportid])) {
+                // store id of last attempt in this clickreport series
+                $attempts[$id]->cr_lastclick = $cr_attempts[$clickreportid]->id;
+                // store finish time of last attempt in this clickreport series
+                $attempts[$id]->cr_timefinish = $cr_attempts[$clickreportid]->timefinish;
+            }
         }
     }
 
