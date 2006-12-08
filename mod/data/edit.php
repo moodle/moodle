@@ -270,10 +270,10 @@
         ///then we generate strings to replace
         foreach ($possiblefields as $eachfield){
             $field = data_get_field($eachfield, $data);
-            $patterns[]="/\[\[".$field->field->name."\]\]/i";
+            $patterns[]="[[".$field->field->name."]]";
             $replacements[] = $field->display_add_field($rid);
         }
-        $newtext = preg_replace($patterns, $replacements, $data->{$mode});
+        $newtext = str_ireplace($patterns, $replacements, $data->{$mode});
 
     } else {    //if the add template is not yet defined, print the default form!
         echo data_generate_default_template($data, 'addtemplate', $rid, true, false);
