@@ -341,7 +341,7 @@
 
     // excluse users with these admin role assignments
     if ($doanythingroles) {
-        $adminroles = 'AND r.id NOT IN (';
+        $adminroles = 'AND r.roleid NOT IN (';
  
         foreach ($doanythingroles as $aroleid=>$role) {
             $adminroles .= "$aroleid,";
