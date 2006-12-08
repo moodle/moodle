@@ -868,13 +868,13 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
 
     /// Then we generate strings to replace for normal tags
         foreach ($fields as $field) {
-            $patterns[]='/\[\['.$field->field->name.'\]\]/i';
+            $patterns[]='[['.$field->field->name.']]';
             $replacement[] = highlight($search, $field->display_browse_field($record->id, $template));
         }
 
     /// Replacing special tags (##Edit##, ##Delete##, ##More##)
-        $patterns[]='/\#\#Edit\#\#/i';
-        $patterns[]='/\#\#Delete\#\#/i';
+        $patterns[]='##Edit##';
+        $patterns[]='##Delete##';
         if (has_capability('mod/data:manageentries', $context) or data_isowner($record->id)) {
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/edit.php?d='
                              .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.get_string('edit').'" /></a>';
@@ -884,24 +884,24 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
             $replacement[] = '';
             $replacement[] = '';
         }
-        $patterns[]='/\#\#More\#\#/i';
-        $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'"><img src="'.$CFG->pixpath.'/i/search.gif" height="11" width="11" border="0" alt="'.get_string('more').'" /></a>';
+        $patterns[]='##More##';
+        $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'"><img src="'.$CFG->pixpath.'/i/search.gif" height="11" width="11" border="0" alt="'.get_string('more', 'data').'" /></a>';
 
-        $patterns[]='/\#\#MoreURL\#\#/i';
+        $patterns[]='##MoreURL##';
         $replacement[] = $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id;
 
-        $patterns[]='/\#\#User\#\#/i';
+        $patterns[]='##User##';
         $replacement[] = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$record->userid.
                                '&amp;course='.$data->course.'">'.fullname($record).'</a>';
 
-        $patterns[]='/\#\#Approve\#\#/i';
+        $patterns[]='##Approve##';
         if (has_capability('mod/data:approve', $context) && ($data->approval) && (!$record->approved)){
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;approve='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/i/approve.gif" height="11" width="11" border="0" alt="'.get_string('approve').'" /></a>';
         } else {
             $replacement[] = '';
         }
-        
-        $patterns[]='/\#\#Comments\#\#/i';
+
+        $patterns[]='##Comments##';
         if (($template == 'listtemplate') && ($data->comments)) {
             $comments = count_records('data_comments','recordid',$record->id);
             $replacement[] = '<a href="view.php?rid='.$record->id.'#comments">'.get_string('commentsn','data', $comments).'</a>';
@@ -910,13 +910,13 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
         }
 
         ///actual replacement of the tags
-        $newtext = preg_replace($patterns, $replacement, $data->{$template});
+        $newtext = str_ireplace($patterns, $replacement, $data->{$template});
         $options->para=false;
         $options->noclean=true;
         if ($return) {
             return format_text($newtext, FORMAT_HTML, $options);
         } else {
-            echo format_text($newtext, FORMAT_HTML, $options); 
+            echo format_text($newtext, FORMAT_HTML, $options);
         }
 
         /**********************************
