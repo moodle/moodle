@@ -664,6 +664,9 @@ class PresetImporter {
                 else {
                     include_once("field/$newfield->type/field.class.php");
 
+                    if (!isset($newfield->description)) {
+                        $newfield->description = '';
+                    }
                     $classname = 'data_field_'.$newfield->type;
                     $fieldclass = new $classname($newfield, $this->data);
                     $fieldclass->insert_field();
