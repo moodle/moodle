@@ -41,6 +41,7 @@ $string['checkedthisone'] = 'checked this one.';
 $string['checknavigation'] = 'Check navigation';
 $string['checkquestion'] = 'Check question';
 $string['classstats'] = 'Class statistics';
+$string['clicktodownload'] = 'Click on the following link to download the file.';
 $string['clicktopost'] = 'Click here to post your grade on the High Scores list.';
 $string['clusterjump'] = 'Unseen question within a cluster';
 $string['clustertitle'] = 'Cluster';
@@ -297,5 +298,6 @@ $string['youranswer'] = 'Your answer';
 $string['yourcurrentgradeis'] = 'Your current grade is $a';
 $string['yourcurrentgradeisoutof'] = 'Your current grade is $a->grade out of $a->total';
 $string['youshouldview'] = 'You should answer at least: $a';
+
 
 ?>
