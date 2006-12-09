@@ -146,7 +146,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
                 }
                 break;
             case 'createElement':
-                if($this->_options['optional']) {
+                if($arg[2]['optional']) {
                     $caller->disabledIf($arg[0], $arg[0].'[off]', 'checked');
                 }
                 return parent::onQuickFormEvent($event, $arg, $caller);
