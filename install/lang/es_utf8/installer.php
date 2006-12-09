@@ -212,6 +212,7 @@ $string['skipdbencodingtest'] = 'Pasar por alto el test de decodificación de la
 $string['status'] = 'Estado';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Español - Internacional';
+$string['unicoderecommended'] = 'Se recomienda almacenar todos los datos en Unicode (UTF-8). Las instalaciones nuevas deberían ejecutarse en bases de datos cuyo juego de caracteres por defecto fuera Unicode. Si está realizando una actualización, debería llevar a cabo el proceso de migración UTF-8 (vea al respecto la página de Administración).';
 $string['user'] = 'Usuario';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'Si está viendo esta página es porque ha podido ejecutar el paquete

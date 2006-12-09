@@ -88,7 +88,7 @@ $string['downloadlanguagehead'] = 'Ilusong ang pakete ng wika';
 $string['downloadlanguagenotneeded'] = 'Maaari mong ipagpatuloy ang proseso ng pagluluklok sa pamamagitan ng umiiral na pakete ng wika, na \"$a\".';
 $string['downloadlanguagesub'] = 'May opsiyon ka ngayon na maglusong ng pakete ng wika at ipagpatuloy ang proseso ng pagluluklok sa
 wikang ito.<br /><br />Kung hindi mo mailusong ang pakete ng wika, ang proseso ng pagluluklok ay magpapatuloy sa Ingles.(Kapag tapos na ang proseso ng pagluluklok, magkakaroon ka ng pagkakataon na maglusong at magluklok ng iba pang pakete ng wika.)';
-$string['environmenterrortodo'] = 'Kailangan mo munang lutasin ang lahat ng suliraning pangkapaligiran (mga error) bago mo maituloy ang pagluklok ng bersiyon ng Moodle na ito.';
+$string['environmenterrortodo'] = 'Kailangan mo munang lutasin ang lahat ng suliraning pangkapaligiran (mga error) na natuklasan sa itaas bago mo maituloy ang pagluklok ng bersiyon ng Moodle na ito!';
 $string['environmenthead'] = 'Sinusuri ang kapaligiran mo...';
 $string['environmentrecommendinstall'] = 'ay iminumungkahing maluklok/mabuhay';
 $string['environmentrecommendversion'] = 'ang bersiyon $a->needed ay iminumungkahi at ang pinatatakbo mo ay $a->current';
@@ -170,6 +170,7 @@ $string['skipdbencodingtest'] = 'Lagpasan ang Pagsubok sa DB Encoding';
 $string['status'] = 'Katayuan';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Tagalog';
+$string['unicoderecommended'] = 'Iminumungkahi ang pag-imbak ng lahat ng datos mo sa Unicode (UTF-8).  Ang bagong luklok ay dapat may mga datosan na ang umiiral na set ng karakter ay Unicode.  Kung ginagawa mong bago ang iniluklok mo, dapat mong isakatuparan ang proseso ng pagsalin sa UTF-8 (tingnan ang pahinang pang-Admin).';
 $string['user'] = 'Tagagamit';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'Nakikita mo ang pahinang ito dahil matagumpay mong nailuklok at napagana ang paketeng <strong>$a->packname $a->packversion</strong> sa iyong kompyuter.  Maligayang bati!';
