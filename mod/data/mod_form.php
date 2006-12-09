@@ -21,16 +21,12 @@ class data_mod_form extends moodleform_mod {
 		$mform->addRule('intro', get_string('required'), 'required', null, 'client');
 
         $mform->addElement('date_selector', 'timeavailablefrom', get_string('availablefromdate', 'data'), array('optional'=>true));
-        $mform->disabledIf('timeavailablefrom', 'timeavailablefrom[on]');
 
         $mform->addElement('date_selector', 'timeavailableto', get_string('availabletodate', 'data'), array('optional'=>true));
-        $mform->disabledIf('timeavailableto', 'timeavailableto[on]');
 
         $mform->addElement('date_selector', 'timeviewfrom', get_string('viewfromdate', 'data'), array('optional'=>true));
-        $mform->disabledIf('timeviewfrom', 'timeviewfrom[on]');
 
         $mform->addElement('date_selector', 'timeviewto', get_string('viewtodate', 'data'), array('optional'=>true));
-        $mform->disabledIf('timeviewto', 'timeviewto[on]');
 
 
         $countoptions=  array(0=>get_string('none'))+
@@ -69,7 +65,6 @@ class data_mod_form extends moodleform_mod {
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
 		$renderer->addStopFieldsetElements('buttonar');
 	}
-
 
 
 }

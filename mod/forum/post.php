@@ -478,17 +478,8 @@
             if ($forum->type == 'news' && !$fromform->parent) {
                 $updatediscussion = new object;
                 $updatediscussion->id = $fromform->discussion;
-                if (empty($fromform->timestartdisabled)) {
-                    $updatediscussion->timestart = $fromform->timestart;
-                } else {
-                    $updatediscussion->timestart = 0;
-                }
-                if (empty($fromform->timeenddisabled)) {
-                    $updatediscussion->timeend = $fromform->timeend;
-                } else {
-                    $updatediscussion->timeend = 0;
-                }
-
+                $updatediscussion->timestart = $fromform->timestart;
+                $updatediscussion->timeend = $fromform->timeend;
                 if (!update_record('forum_discussions', $updatediscussion)) {
                     error(get_string("couldnotupdate", "forum"), $errordestination);
                 }
@@ -574,16 +565,8 @@
             if ($forum->type == 'news' && !$fromform->parent) {
                 $newstopic = true;
             }
-            if ($newstopic && empty($fromform->timestartdisabled)) {
-                $discussion->timestart = $fromform->timestart;
-            } else {
-                $discussion->timestart = 0;
-            }
-            if ($newstopic && empty($fromform->timeenddisabled)) {
-                $discussion->timeend = $fromform->timeend;
-            } else {
-                $discussion->timeend = 0;
-            }
+            $discussion->timestart = $fromform->timestart;
+            $discussion->timeend = $fromform->timeend;
 
             $message = '';
             if ($discussion->id = forum_add_discussion($discussion, $message)) {
@@ -751,6 +734,8 @@
                                         'userid'=>$post->userid,
                                         'parent'=>$post->parent,
                                         'discussion'=>$post->discussion,
+                                        'timestart'=>$discussion->timestart,
+                                        'timeend'=>$discussion->timeend,
                                         'course'=>$course->id)+
 
                                         $page_params+
@@ -762,22 +747,6 @@
                                 (isset($post->groupid)?array(
                                         'groupid'=>$post->groupid):
                                     array())+
-
-                                (isset($discussion->timestart)?
-                                        array('timestart'=>$discussion->timestart):
-                                        array('timestart'=>0))+
-
-                                (isset($discussion->timeend)?
-                                        array('timeend'=>$discussion->timeend):
-                                        array('timeend'=>0))+
-
-                                (isset($discussion->timestartdisabled)?
-                                        array('timestartdisabled'=>$discussion->timestartdisabled):
-                                        array('timestartdisabled'=>1))+
-
-                                (isset($discussion->timeenddisabled)?
-                                        array('timeenddisabled'=>$discussion->timeenddisabled):
-                                        array('timeenddisabled'=>1))+
 
                                 (isset($discussion->id)?
                                         array('discussion'=>$discussion->id):

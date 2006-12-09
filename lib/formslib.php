@@ -845,7 +845,12 @@ function validate_' . $this->_attributes['id'] . '(frm) {
         foreach ($this->_dependencies as $dependentOn => $elements){
             $js .= "'$dependentOn'".' : {dependents :[';
             foreach ($elements as $element){
-                $js.="'".$element['dependent']."', ";
+                $elementNames = $this->_getElNamesRecursive($element['dependent']);
+                foreach ($elementNames as $dependent){
+                    if ($dependent !=  $dependentOn) {
+                        $js.="'".$dependent."', ";
+                    }
+                }
             }
             $js=rtrim($js, ', ');
             $js .= "],\n";
@@ -901,13 +906,8 @@ function validate_' . $this->_attributes['id'] . '(frm) {
      * @param mixed $value used in conjunction with condition.
      */
     function disabledIf($elementName, $dependentOn, $condition = 'notchecked', $value=null){
-        $dependents = $this->_getElNamesRecursive($elementName);
-        foreach ($dependents as $dependent){
-            if ($dependent !=  $dependentOn) {
-                $this->_dependencies[$dependentOn][] = array('dependent'=>$dependent,
+        $this->_dependencies[$dependentOn][] = array('dependent'=>$elementName,
                                     'condition'=>$condition, 'value'=>$value);
-            }
-        }
     }
     function _registerNoSubmitButton($addfieldsname){
         $this->_noSubmitButtons[]=$addfieldsname;

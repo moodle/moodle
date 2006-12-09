@@ -81,46 +81,72 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
         $this->_elements[] =& MoodleQuickForm::createElement('select', 'year', get_string('year', 'form'), $years, $this->getAttributes(), true);
         // If optional we add a checkbox which the user can use to turn if on
         if($this->_options['optional']) {
-            $this->_elements[] =& MoodleQuickForm::createElement('checkbox', 'on', null, get_string('enable'), $this->getAttributes(), true);
+            $this->_elements[] =& MoodleQuickForm::createElement('checkbox', 'off', null, get_string('disable'), $this->getAttributes(), true);
         }
-        $this->setValue();
 
     }
 
     // }}}
     // {{{ onQuickFormEvent()
 
+    /**
+     * Called by HTML_QuickForm whenever form event is made on this element
+     *
+     * @param     string    $event  Name of event
+     * @param     mixed     $arg    event arguments
+     * @param     object    $caller calling object
+     * @since     1.0
+     * @access    public
+     * @return    void
+     */
     function onQuickFormEvent($event, $arg, &$caller)
     {
-        if ('updateValue' == $event) {
-            return HTML_QuickForm_element::onQuickFormEvent($event, $arg, $caller);
-        } else {
-            return parent::onQuickFormEvent($event, $arg, $caller);
+        switch ($event) {
+            case 'updateValue':
+                // constant values override both default and submitted ones
+                // default values are overriden by submitted
+                $value = $this->_findValue($caller->_constantValues);
+                if (null === $value) {
+                    // if no boxes were checked, then there is no value in the array
+                    // yet we don't want to display default value in this case
+                    if ($caller->isSubmitted()) {
+                        $value = $this->_findValue($caller->_submitValues);
+                    } else {
+                        $value = $this->_findValue($caller->_defaultValues);
+                    }
+                }
+                $requestvalue=$value;
+                if ($value == 0) {
+                    $value = time();
+                }
+                if (!is_array($value)) {
+                    $currentdate = usergetdate($value);
+                    $value = array(
+                        'day' => $currentdate['mday'],
+                        'month' => $currentdate['mon'],
+                        'year' => $currentdate['year']);
+                    // If optional, default to off, unless a date was provided
+                     if($this->_options['optional']) {
+                        $value['off'] = ($requestvalue == 0) ? true : false;
+                    }
+                } else {
+                    $value['off'] = (isset($value['off'])) ? true : false;
+                }
+                if (null !== $value){
+                    $this->setValue($value);
+                }
+                break;
+            case 'createElement':
+                if($arg[2]['optional']) {
+                    $caller->disabledIf($arg[0], $arg[0].'[off]', 'checked');
+                }
+                return parent::onQuickFormEvent($event, $arg, $caller);
+                break;
+            default:
+                return parent::onQuickFormEvent($event, $arg, $caller);
         }
-    }
-    // {{{ setValue()
+    } // end func onQuickFormEvent
 
-    function setValue($value=0)
-    {
-        $requestvalue=$value;
-        if (!($value)) {
-            $value = time();
-        }
-        if (!is_array($value)) {
-            $currentdate = usergetdate($value);
-            $value = array(
-                'day' => $currentdate['mday'],
-                'month' => $currentdate['mon'],
-                'year' => $currentdate['year']);
-            // If optional, default to off, unless a date was provided
-            if($this->_options['optional']) {
-                $value['on'] = $requestvalue ? true : false;
-            }
-        }
-        parent::setValue($value);
-    }
-
-    // }}}
     // {{{ toHtml()
 
     function toHtml()
@@ -161,12 +187,13 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
         }
         if (count($valuearray)){
             if($this->_options['optional']) {
-                // If checkbox is not on, the value is zero, so go no further
-                if(empty($valuearray['on'])) {
+                // If checkbox is on, the value is zero, so go no further
+                if(!empty($valuearray['off'])) {
                     $value[$this->getName()]=0;
                     return $value;
                 }
             }
+
             $value[$this->getName()]=make_timestamp($valuearray['year'],
                                    $valuearray['month'],
                                    $valuearray['day'],

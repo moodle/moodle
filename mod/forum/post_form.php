@@ -64,33 +64,21 @@ class forum_post_form extends moodleform {
             $mform->addElement('checkbox', 'mailnow', get_string('mailnow', 'forum'));
         }
 
-		if (!isset($discussion->timestart)) {
-			$discussion->timestart = 0;
-		}
-		if (!isset($discussion->timeend)) {
-			$discussion->timeend = 0;
-		}
 		if (!empty($CFG->forum_enabletimedposts) && !$post->parent) {
             $mform->addElement('header', '', get_string('displayperiod', 'forum'));
 
-		    $timestartgroup = array();
-		    $timestartgroup[] = &MoodleQuickForm::createElement('date_selector', 'timestart', get_string('timestartday', 'forum'));
-		    $timestartgroup[] = &MoodleQuickForm::createElement('checkbox', 'timestartdisabled', '', get_string('disable'));
-            $mform->addGroup($timestartgroup, 'timestartgroup', get_string('displaystart', 'forum'), '&nbsp;', false);
-			$mform->setHelpButton('timestartgroup', array('displayperiod', get_string('displayperiod', 'forum'), 'forum'));
+		    $mform->addElement('date_selector', 'timestart', get_string('displaystart', 'forum'), array('optional'=>true));
+		    $mform->setHelpButton('timestart', array('displayperiod', get_string('displayperiod', 'forum'), 'forum'));
 
-			$timeendgroup = array();
-		    $timeendgroup[] = &MoodleQuickForm::createElement('date_selector', 'timeend', get_string('timeendday', 'forum'));
-			$timeendgroup[] = &MoodleQuickForm::createElement('checkbox', 'timeenddisabled', '', get_string('disable'));
-            $mform->addGroup($timeendgroup, 'timeendgroup', get_string('displayend', 'forum'), '&nbsp;', false);
-			$mform->setHelpButton('timeendgroup', array('displayperiod', get_string('displayperiod', 'forum'), 'forum'));
+			$mform->addElement('date_selector', 'timeend', get_string('displayend', 'forum'), array('optional'=>true));
+			$mform->setHelpButton('timeend', array('displayperiod', get_string('displayperiod', 'forum'), 'forum'));
 
 		} else {
-			$mform->addElement('hidden', 'timestartdisabled', '1');
-			$mform->setType('timestartdisabled', PARAM_INT);
-			$mform->addElement('hidden', 'timeenddisabled', '1');
-			$mform->setType('timeenddisabled', PARAM_INT);
-
+		    $mform->addElement('hidden', 'timestart');
+			$mform->setType('timestart', PARAM_INT);
+			$mform->addElement('hidden', 'timeend');
+			$mform->setType('timeend', PARAM_INT);
+		    $mfrom->setConstants(array('timestart'=> 0, 'timeend'=>0));
 		}
 		if (isset($post->edit)) {
 			$submit_string = get_string('savechanges');
@@ -128,9 +116,9 @@ class forum_post_form extends moodleform {
 
 	function validation($data) {
 	    $error = array();
-        if (empty($data['timeenddisabled']) && empty($data['timestartdisabled'])
+        if (($data['timeend']!=0) && ($data['timestart']!=0)
                      && $data['timeend'] <= $data['timestart']) {
-             $error['timeendgroup'] = get_string('timestartenderror', 'forum');
+             $error['timeend'] = get_string('timestartenderror', 'forum');
         }
         return (count($error)==0) ? true : $error;
 	}
