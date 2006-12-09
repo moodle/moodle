@@ -89,7 +89,8 @@ class moodleform {
      * @return moodleform
      */
     function moodleform($action, $customdata=null, $method='post', $target='', $attributes=null) {
-        $this->_formname = rtrim(get_class($this), '_form');
+        //strip '_form' from the end of class name to make form 'id' attribute.
+        $this->_formname = preg_replace('/_form$/', '', get_class($this), 1);
         $this->_customdata = $customdata;
         $this->_form =& new MoodleQuickForm($this->_formname, $method, $action, $target, $attributes);
 
@@ -1038,7 +1039,10 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         } else {
             $id = $element->getName();
         }
-        $element->updateAttributes(array('id'=>'id_'.$id));
+        $id = preg_replace('/^qf_/', '', $id, 1);
+        if (strpos($id, 'id_') !== 0){
+            $element->updateAttributes(array('id'=>'id_'.$id));
+        }
         parent::renderElement($element, $required, $error);
     }
     function finishForm(&$form){

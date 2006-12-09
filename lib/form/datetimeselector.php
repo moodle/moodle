@@ -90,6 +90,11 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
         if($this->_options['optional']) {
             $this->_elements[] =& MoodleQuickForm::createElement('checkbox', 'off', null, get_string('disable'), $this->getAttributes(), true);
         }
+        foreach ($this->_elements as $element){
+            if (method_exists($element, 'setHiddenLabel')){
+                $element->setHiddenLabel(true);
+            }
+        }
 
     }
 

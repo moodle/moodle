@@ -18,7 +18,7 @@ class data_mod_form extends moodleform_mod {
 
 		$mform->addElement('htmleditor', 'intro', get_string('intro', 'data'));
 		$mform->setType('intro', PARAM_RAW);
-		$mform->addRule('intro', get_string('required'), 'required', null, 'client');
+		$mform->addRule('intro', null, 'required', null, 'client');
 
         $mform->addElement('date_selector', 'timeavailablefrom', get_string('availablefromdate', 'data'), array('optional'=>true));
 

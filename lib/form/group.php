@@ -52,5 +52,13 @@ class MoodleQuickForm_group extends HTML_QuickForm_group{
     function getElementTemplateType(){
         return $this->_elementTemplateType;
     }
+    function setElements($elements){
+        parent::setElements($elements);
+        foreach ($this->_elements as $element){
+            if (method_exists($element, 'setHiddenLabel')){
+                $element->setHiddenLabel(true);
+            }
+        }
+    }
 }
 ?>
