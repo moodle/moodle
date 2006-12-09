@@ -4507,7 +4507,7 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
     global $CFG, $course;
 
     // fix for MDL-7734
-    if ($course->lang) {
+    if (!empty($course->lang)) {
         $forcelang = $course->lang;
     } else {
         $forcelang = '';
