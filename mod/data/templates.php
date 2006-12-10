@@ -199,6 +199,7 @@
     foreach ($fields as $field) {
         echo '<option value="[['.$field->name.']]" title="'.$field->description.'">'.$field->name.' - [['.$field->name.']]</option>';
     }
+    echo '</optgroup>';
     
     // Print special tags. fix for MDL-7031
     if ($mode != 'addtemplate') {
@@ -210,6 +211,7 @@
         echo '<option value="##approve##">' .get_string('approve', 'data'). ' - ##approve##</option>';
         echo '<option value="##comments##">' .get_string('comments', 'data'). ' - ##comments##</option>';
         echo '<option value="##user##">' .get_string('user'). ' - ##user##</option>';
+        echo '</optgroup>';
     }
     echo '</select>';
     echo '<br /><br /><br /><br /><input type="submit" name="defaultform" value="'.get_string('resettemplate','data').'" />';
