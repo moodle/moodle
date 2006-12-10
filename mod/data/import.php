@@ -78,6 +78,13 @@
     print_header_simple($data->name, "", "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name", "", "", true, "", navmenu($course));
     print_heading(format_string($data->name));
 
+/// Groups needed for Add entry tab
+    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
+        $currentgroup = get_and_set_current_group($course, $groupmode);
+    } else {
+        $currentgroup = 0;
+    }
+
 /// Print the tabs
     $currenttab = 'add';
     include('tabs.php');

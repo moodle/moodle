@@ -43,7 +43,7 @@
     }
 
     if (isloggedin()) {
-        if (has_capability('mod/data:writeentry', $context)) { // took out participation list here!
+        if (data_user_can_add_entry($data, $currentgroup, $groupmode)) { // took out participation list here!
             $addstring = empty($editentry) ? get_string('add', 'data') : get_string('editentry', 'data');
             $row[] = new tabobject('add', $CFG->wwwroot.'/mod/data/edit.php?d='.$data->id, $addstring, '', true);
         }

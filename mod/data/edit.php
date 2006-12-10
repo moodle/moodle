@@ -180,7 +180,11 @@
             redirect($CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$rid);
 
         } else { /// Add some new records
-        
+
+            if (!data_user_can_add_entry($data, $currentgroup, $groupmode)) {
+                error('Can not add entries!');
+            }
+
         /// Check if maximum number of entry as specified by this database is reached
         /// Of course, you can't be stopped if you are an editting teacher! =)
 
