@@ -92,11 +92,17 @@
 /// Processing submitted data, i.e updating form.
     $resettemplate = false;
 
+/// html editor is by default disabled
+    $editor = isset($SESSION->data_use_editor) ? $SESSION->data_use_editor : (can_use_html_editor() ? 1 : 0); 
+
     if (($mytemplate = data_submitted($CFG->wwwroot.'/mod/data/templates.php')) && confirm_sesskey()) {
         $newtemplate->id = $data->id;
         $newtemplate->{$mode} = $mytemplate->template;
         
-        if (!empty($mytemplate->defaultform)) {
+        if (!empty($mytemplate->switcheditor)) {
+            $editor = $editor ? 0 : 1;
+            $SESSION->data_use_editor = $editor;
+        } else if (!empty($mytemplate->defaultform)) {
             // Reset the template to default, but don't save yet.
             $resettemplate = true;
             $data->{$mode} = data_generate_default_template($data, $mode, 0, false, false);
@@ -151,7 +157,7 @@
 
 
 /// Add the HTML editor(s).
-    $usehtmleditor = can_use_html_editor() && ($mode != 'csstemplate') && ($mode != 'jstemplate');
+    $usehtmleditor = $editor && can_use_html_editor() && ($mode != 'csstemplate') && ($mode != 'jstemplate');
     if ($mode == 'listtemplate'){
         // Print the list template header.
         echo '<tr>';
@@ -198,6 +204,15 @@
     }
     echo '</select>';
     echo '<br /><br /><br /><br /><input type="submit" name="defaultform" value="'.get_string('resettemplate','data').'" />';
+    if (can_use_html_editor()) {
+        echo '<br /><br />';
+        if ($editor) {
+            $switcheditor = get_string('editordisable', 'data');
+        } else {
+            $switcheditor = get_string('editorenable', 'data');
+        }
+        echo '<input type="submit" name="switcheditor" value="'.s($switcheditor).'" />';
+    }
     echo '</td>';
     
     echo '<td>';
