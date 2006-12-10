@@ -211,7 +211,7 @@
     }
     echo '</select>';
     echo '<br /><br /><br /><br /><input type="submit" name="defaultform" value="'.get_string('resettemplate','data').'" />';
-    if (can_use_html_editor()) {
+    if (can_use_html_editor() && ($mode != 'csstemplate') && ($mode != 'jstemplate')) {
         echo '<br /><br />';
         if ($editor) {
             $switcheditor = get_string('editordisable', 'data');
