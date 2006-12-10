@@ -170,7 +170,7 @@
         echo '<tr>';
         echo '<td>&nbsp;</td>';
         echo '<td>';
-        echo '<div align="center">'.get_string('header','data').'</div>';
+        echo '<div align="center"><label for="id_listtemplateheader">'.get_string('header','data').'</label></div>';
         print_textarea($usehtmleditor, 10, 72, 0, 0, 'listtemplateheader', $data->listtemplateheader);
         echo '</td>';
         echo '</tr>';
@@ -179,11 +179,11 @@
     // Print the main template.
     // Add all the available fields for this data.
     echo '<tr><td valign="top">';
-    echo get_string('availabletags','data');
+    echo '<label for="availabletags">'.get_string('availabletags','data').'</label>';
     helpbutton('tags', get_string('tags','data'), 'data');
     echo '<br />';
     
-    echo '<select name="fields1[]" size="10" ';
+    echo '<select name="fields1[]" id="availabletags" size="10" ';
     
     // Javascript to insert the field tags into the textarea.
     echo 'onclick="';
@@ -224,8 +224,11 @@
     
     echo '<td>';
     if ($mode == 'listtemplate'){
-        echo '<div align="center">'.get_string('multientry','data').'</div>';        
+        echo '<div align="center"><label for="id_template">'.get_string('multientry','data').'</label></div>';        
+    } else {
+        echo '<div align="center"><label for="id_template">'.get_string($mode,'data').'</label></div>';
     }
+
     print_textarea($usehtmleditor, 20, 72, 0, 0, 'template', $data->{$mode});
     echo '</td>';
     echo '</tr>';
@@ -234,7 +237,7 @@
         echo '<tr>';
         echo '<td>&nbsp;</td>';
         echo '<td>';
-        echo '<div align="center">'.get_string('footer','data').'</div>';
+        echo '<div align="center"><label for="id_listtemplatefooter">'.get_string('footer','data').'</label></div>';
         print_textarea($usehtmleditor, 10, 72, 0, 0, 'listtemplatefooter', $data->listtemplatefooter);
         echo '</td>';
         echo '</tr>';
@@ -242,7 +245,7 @@
         echo '<tr>';
         echo '<td>&nbsp;</td>';
         echo '<td>';
-        echo '<div align="center">'.get_string('rsstitletemplate','data').'</div>';
+        echo '<div align="center"><label for="id_rsstitletemplate">'.get_string('rsstitletemplate','data').'</label></div>';
         print_textarea($usehtmleditor, 10, 72, 0, 0, 'rsstitletemplate', $data->rsstitletemplate);
         echo '</td>';
         echo '</tr>';
