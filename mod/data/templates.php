@@ -195,19 +195,21 @@
     echo '">';
     
     $fields = get_records('data_fields', 'dataid', $data->id);
+    echo '<optgroup label="'.get_string('fields', 'data').'">';
     foreach ($fields as $field) {
-        echo '<option value="[['.$field->name.']]">'.$field->name.'</option>';
+        echo '<option value="[['.$field->name.']]" title="'.$field->description.'">'.$field->name.' - [['.$field->name.']]</option>';
     }
     
     // Print special tags. fix for MDL-7031
     if ($mode != 'addtemplate') {
-        echo '<option value="##edit##">##' .get_string('edit', 'data'). '##</option>';
-        echo '<option value="##more##">##' .get_string('more', 'data'). '##</option>';
-        echo '<option value="##moreurl##">##' .get_string('moreurl', 'data'). '##</option>';
-        echo '<option value="##delete##">##' .get_string('delete', 'data'). '##</option>';
-        echo '<option value="##approve##">##' .get_string('approve', 'data'). '##</option>';
-        echo '<option value="##comments##">##' .get_string('comments', 'data'). '##</option>';
-        echo '<option value="##user##">##' .get_string('user'). '##</option>';
+        echo '<optgroup label="'.get_string('buttons', 'data').'">';
+        echo '<option value="##edit##">' .get_string('edit', 'data'). ' - ##edit##</option>';
+        echo '<option value="##more##">' .get_string('more', 'data'). ' - ##more##</option>';
+        echo '<option value="##moreurl##">' .get_string('moreurl', 'data'). ' - ##moreurl##</option>';
+        echo '<option value="##delete##">' .get_string('delete', 'data'). ' - ##delete##</option>';
+        echo '<option value="##approve##">' .get_string('approve', 'data'). ' - ##approve##</option>';
+        echo '<option value="##comments##">' .get_string('comments', 'data'). ' - ##comments##</option>';
+        echo '<option value="##user##">' .get_string('user'). ' - ##user##</option>';
     }
     echo '</select>';
     echo '<br /><br /><br /><br /><input type="submit" name="defaultform" value="'.get_string('resettemplate','data').'" />';
