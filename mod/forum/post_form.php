@@ -78,7 +78,7 @@ class forum_post_form extends moodleform {
 			$mform->setType('timestart', PARAM_INT);
 			$mform->addElement('hidden', 'timeend');
 			$mform->setType('timeend', PARAM_INT);
-		    $mfrom->setConstants(array('timestart'=> 0, 'timeend'=>0));
+		    $mform->setConstants(array('timestart'=> 0, 'timeend'=>0));
 		}
 		if (isset($post->edit)) {
 			$submit_string = get_string('savechanges');
