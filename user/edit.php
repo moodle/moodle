@@ -166,7 +166,7 @@
                 if ( $authconfig->{$configvariable} === 'locked'
                      || ($authconfig->{$configvariable} === 'unlockedifempty' && !empty($user->$field)) ) {
                     if (!empty( $user->$field)) {
-                        $usernew->$field = $user->$field;
+                        $usernew->$field = addslashes($user->$field);
                     }
                 }
             }
