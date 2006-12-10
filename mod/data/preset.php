@@ -526,6 +526,7 @@ class PresetImporter {
                 $f->$param = $value[0]['#'];
             }
             $f->dataid = $this->data->id;
+            $f->type = clean_param($f->type, PARAM_ALPHA);
             $fields[] = $f;
         }
 
