@@ -734,14 +734,20 @@
                                         'userid'=>$post->userid,
                                         'parent'=>$post->parent,
                                         'discussion'=>$post->discussion,
-                                        'timestart'=>$discussion->timestart,
-                                        'timeend'=>$discussion->timeend,
                                         'course'=>$course->id)+
 
                                         $page_params+
 
                                 (isset($post->format)?array(
                                         'format'=>$post->format):
+                                    array())+
+
+                                (isset($dicussion->timestart)?array(
+                                        'timestart'=>$discussion->timestart):
+                                    array())+
+
+                                (isset($discussion->timeend)?array(
+                                        'timeend'=>$discussion->timeend):
                                     array())+
 
                                 (isset($post->groupid)?array(
