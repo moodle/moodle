@@ -33,6 +33,8 @@
 
     require_course_login($course);
 
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+
     add_to_log($course->id, "data", "view all", "index.php?id=$course->id", "");
 
     $strweek = get_string('week');
