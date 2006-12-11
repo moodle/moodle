@@ -165,7 +165,6 @@
     print_simple_box_start('center','80%');
     echo '<table cellpadding="4" cellspacing="0" border="0">';
 
-
 /// Add the HTML editor(s).
     $usehtmleditor = $editor && can_use_html_editor() && ($mode != 'csstemplate') && ($mode != 'jstemplate');
     if ($mode == 'listtemplate'){
@@ -180,52 +179,57 @@
     }
     
     // Print the main template.
-    // Add all the available fields for this data.
+
     echo '<tr><td valign="top">';
-    echo '<label for="availabletags">'.get_string('availabletags','data').'</label>';
-    helpbutton('tags', get_string('tags','data'), 'data');
-    echo '<br />';
-    
-    echo '<select name="fields1[]" id="availabletags" size="10" ';
-    
-    // Javascript to insert the field tags into the textarea.
-    echo 'onclick="';
-    echo 'if (typeof(currEditor) != \'undefined\' && currEditor._editMode == \'wysiwyg\') {';
-    echo '    currEditor.insertHTML(this.options[selectedIndex].value); ';     // HTMLArea-specific.
-    echo '} else {';
-    echo 'insertAtCursor(currTextarea, this.options[selectedIndex].value);';   // For inserting when in HTMLArea code view or for normal textareas.
-    echo '}';
-    echo '">';
-    
-    $fields = get_records('data_fields', 'dataid', $data->id);
-    echo '<optgroup label="'.get_string('fields', 'data').'">';
-    foreach ($fields as $field) {
-        echo '<option value="[['.$field->name.']]" title="'.$field->description.'">'.$field->name.' - [['.$field->name.']]</option>';
-    }
-    echo '</optgroup>';
-    
-    // Print special tags. fix for MDL-7031
-    if ($mode != 'addtemplate') {
-        echo '<optgroup label="'.get_string('buttons', 'data').'">';
-        echo '<option value="##edit##">' .get_string('edit', 'data'). ' - ##edit##</option>';
-        echo '<option value="##more##">' .get_string('more', 'data'). ' - ##more##</option>';
-        echo '<option value="##moreurl##">' .get_string('moreurl', 'data'). ' - ##moreurl##</option>';
-        echo '<option value="##delete##">' .get_string('delete', 'data'). ' - ##delete##</option>';
-        echo '<option value="##approve##">' .get_string('approve', 'data'). ' - ##approve##</option>';
-        echo '<option value="##comments##">' .get_string('comments', 'data'). ' - ##comments##</option>';
-        echo '<option value="##user##">' .get_string('user'). ' - ##user##</option>';
-        echo '</optgroup>';
-    }
-    echo '</select>';
-    echo '<br /><br /><br /><br /><input type="submit" name="defaultform" value="'.get_string('resettemplate','data').'" />';
-    if (can_use_html_editor() && ($mode != 'csstemplate') && ($mode != 'jstemplate')) {
-        echo '<br /><br />';
-        if ($editor) {
-            $switcheditor = get_string('editordisable', 'data');
-        } else {
-            $switcheditor = get_string('editorenable', 'data');
+    if ($mode != 'csstemplate' and $mode != 'jstemplate') {
+        // Add all the available fields for this data.
+        echo '<label for="availabletags">'.get_string('availabletags','data').'</label>';
+        helpbutton('tags', get_string('tags','data'), 'data');
+        echo '<br />';
+        
+        echo '<select name="fields1[]" id="availabletags" size="10" ';
+        
+        // Javascript to insert the field tags into the textarea.
+        echo 'onclick="';
+        echo 'if (typeof(currEditor) != \'undefined\' && currEditor._editMode == \'wysiwyg\') {';
+        echo '    currEditor.insertHTML(this.options[selectedIndex].value); ';     // HTMLArea-specific.
+        echo '} else {';
+        echo 'insertAtCursor(currTextarea, this.options[selectedIndex].value);';   // For inserting when in HTMLArea code view or for normal textareas.
+        echo '}';
+        echo '">';
+        
+        $fields = get_records('data_fields', 'dataid', $data->id);
+        echo '<optgroup label="'.get_string('fields', 'data').'">';
+        foreach ($fields as $field) {
+            echo '<option value="[['.$field->name.']]" title="'.$field->description.'">'.$field->name.' - [['.$field->name.']]</option>';
         }
-        echo '<input type="submit" name="switcheditor" value="'.s($switcheditor).'" />';
+        echo '</optgroup>';
+        
+        // Print special tags. fix for MDL-7031
+        if ($mode != 'addtemplate') {
+            echo '<optgroup label="'.get_string('buttons', 'data').'">';
+            echo '<option value="##edit##">' .get_string('edit', 'data'). ' - ##edit##</option>';
+            echo '<option value="##more##">' .get_string('more', 'data'). ' - ##more##</option>';
+            echo '<option value="##moreurl##">' .get_string('moreurl', 'data'). ' - ##moreurl##</option>';
+            echo '<option value="##delete##">' .get_string('delete', 'data'). ' - ##delete##</option>';
+            echo '<option value="##approve##">' .get_string('approve', 'data'). ' - ##approve##</option>';
+            echo '<option value="##comments##">' .get_string('comments', 'data'). ' - ##comments##</option>';
+            echo '<option value="##user##">' .get_string('user'). ' - ##user##</option>';
+            echo '</optgroup>';
+        }
+        echo '</select>';
+        echo '<br /><br /><br /><br /><input type="submit" name="defaultform" value="'.get_string('resettemplate','data').'" />';
+        if (can_use_html_editor()) {
+            echo '<br /><br />';
+            if ($editor) {
+                $switcheditor = get_string('editordisable', 'data');
+            } else {
+                $switcheditor = get_string('editorenable', 'data');
+            }
+            echo '<input type="submit" name="switcheditor" value="'.s($switcheditor).'" />';
+        }
+    } else {
+        echo '<br /><br /><br /><br /><input type="submit" name="defaultform" value="'.get_string('resettemplate','data').'" />';
     }
     echo '</td>';
     
