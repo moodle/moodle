@@ -203,9 +203,9 @@ class data_field_picture extends data_field_file {
                 break;
         }
 
-        
-        $thumbwidth  = $this->field->param4;
-        $thumbheight = $this->field->param5;
+        // fix for MDL-7270
+        $thumbwidth  = isset($this->field->param4)?$this->field->param4:'';
+        $thumbheight = isset($this->field->param5)?$this->field->param5:'';
         
         if ($thumbwidth || $thumbheight) { // Only if either width OR height specified do we want a thumbnail
             
