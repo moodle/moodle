@@ -245,11 +245,6 @@ class block_base {
                 // The full treatment, please. Include the title text.
                 print_side_block($this->_title_html(), $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes(), $this->title);
             }
-            
-            //make a record of the block for the ajax course format to use
-            if (!empty($COURSE->javascriptportal)) {
-                $COURSE->javascriptportal->block_add('inst'.$this->instance->id,!$this->instance->visible);    
-            }
         }
     }
 
@@ -272,7 +267,14 @@ class block_base {
         if (!empty($CFG->allowuserblockhiding)) {
             //Accessibility: added static 'alt' text for the +- icon.
             //TODO (nfreear): language string 'hide OR show block'
-            $title .= '<div class="hide-show"><a title="'.get_string('showhideblock','access').'" href="#" onclick="elementToggleHide(this, true, function(el) {return findParentNode(el, \'DIV\', \'sideblock\'); } ); return false;"><img src="'.$CFG->pixpath.'/spacer.gif" alt="'.get_string('showhideblock','access').'" class="hide-show-image" /></a></div>';
+            $title .= '<div class="hide-show">'.
+					  '<a title="'.get_string('showhideblock','access').
+					  '" href="#" onclick="elementToggleHide(this, true, function(el) {'.
+					  'return findParentNode(el, \'DIV\', \'sideblock\'); '.
+					  '}, \''.$CFG->pixpath.'\' ); return false;">'.
+					  '<img src="'.$CFG->pixpath.'/spacer.gif" '.
+					  'id = "togglehide_inst'.$this->instance->id.'"'.
+					  'alt="'.get_string('showhideblock','access').'" class="hide-show-image" /></a></div>';
         }
 
         //Accesssibility: added H2 (was in, weblib.php: print_side_block)
@@ -283,7 +285,6 @@ class block_base {
         }
 
         $title .= '</div>';
-
         return $title;
     }
 
@@ -705,11 +706,6 @@ class block_list extends block_base {
                 // The full treatment, please. Include the title text.
                 print_side_block($this->_title_html(), '', $this->content->items, $this->content->icons, 
                                  $this->content->footer, $this->html_attributes(), $this->title);
-            }
-            
-            //make a record of the block for the ajax course format to use
-            if (!empty($COURSE->javascriptportal)) {
-                $COURSE->javascriptportal->block_add('inst'.$this->instance->id,!$this->instance->visible);    
             }
         }
     }
