@@ -79,6 +79,128 @@ function xmldb_scorm_upgrade($oldversion=0) {
         }
     }
 
+    if ($result && $oldversion < 2006120900) {
+    /// Define table scorm_seq_objective to be created
+        $table = new XMLDBTable('scorm_seq_objective');
+
+    /// Adding fields to table scorm_seq_objective
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('scoid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('primaryobj', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('objectiveid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('satisfiedbymeasure', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, null, '1');
+        $table->addFieldInfo('minnormalizedmeasure', XMLDB_TYPE_FLOAT, '11, 4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0.0000');
+
+    /// Adding keys to table scorm_seq_objective
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('scorm_objective_uniq', XMLDB_KEY_UNIQUE, array('scoid', 'id'));
+        $table->addKeyInfo('scorm_objective_scoid', XMLDB_KEY_FOREIGN, array('scoid'), 'scorm_scoes', array('id'));
+
+    /// Launch create table for scorm_seq_objective
+        $result = $result && create_table($table);
+
+    /// Define table scorm_seq_mapinfo to be created
+        $table = new XMLDBTable('scorm_seq_mapinfo');
+
+    /// Adding fields to table scorm_seq_mapinfo
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('scoid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('objectiveid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('targetobjectiveid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('readsatisfiedstatus', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, null, '1');
+        $table->addFieldInfo('readnormalizedmeasure', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, null, '1');
+        $table->addFieldInfo('writesatisfiedstatus', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('writenormalizedmeasure', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, null, '0');
+
+    /// Adding keys to table scorm_seq_mapinfo
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('scorm_mapinfo_uniq', XMLDB_KEY_UNIQUE, array('scoid', 'id', 'objectiveid'));
+        $table->addKeyInfo('scorm_mapinfo_scoid', XMLDB_KEY_FOREIGN, array('scoid'), 'scorm_scoes', array('id'));
+        $table->addKeyInfo('scorm_mapinfo_objectiveid', XMLDB_KEY_FOREIGN, array('objectiveid'), 'scorm_seq_objective', array('id'));
+
+    /// Launch create table for scorm_seq_mapinfo
+        $result = $result && create_table($table);
+
+    /// Define table scorm_seq_ruleconds to be created
+        $table = new XMLDBTable('scorm_seq_ruleconds');
+
+    /// Adding fields to table scorm_seq_ruleconds
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('scoid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('conditioncombination', XMLDB_TYPE_CHAR, '3', null, XMLDB_NOTNULL, null, null, null, 'all');
+        $table->addFieldInfo('ruletype', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('action', XMLDB_TYPE_CHAR, '25', null, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table scorm_seq_ruleconds
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('scorm_ruleconds_un', XMLDB_KEY_UNIQUE, array('scoid', 'id'));
+        $table->addKeyInfo('scorm_ruleconds_scoid', XMLDB_KEY_FOREIGN, array('scoid'), 'scorm_scoes', array('id'));
+
+    /// Launch create table for scorm_seq_ruleconds
+        $result = $result && create_table($table);
+
+   /// Define table scorm_seq_rulecond to be created
+        $table = new XMLDBTable('scorm_seq_rulecond');
+
+    /// Adding fields to table scorm_seq_rulecond
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('scoid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('ruleconditionsid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('refrencedobjective', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('measurethreshold', XMLDB_TYPE_FLOAT, '11, 4', null, XMLDB_NOTNULL, null, null, null, '0.0000');
+        $table->addFieldInfo('operator', XMLDB_TYPE_CHAR, '5', null, XMLDB_NOTNULL, null, null, null, 'noOp');
+        $table->addFieldInfo('cond', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, 'always');
+
+    /// Adding keys to table scorm_seq_rulecond
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('scorm_rulecond_uniq', XMLDB_KEY_UNIQUE, array('id', 'scoid', 'ruleconditionsid'));
+        $table->addKeyInfo('scorm_rulecond_scoid', XMLDB_KEY_FOREIGN, array('scoid'), 'scorm_scoes', array('id'));
+        $table->addKeyInfo('scorm_rulecond_ruleconditionsid', XMLDB_KEY_FOREIGN, array('ruleconditionsid'), 'scorm_seq_ruleconds', array('id'));
+
+    /// Launch create table for scorm_seq_rulecond
+        $result = $result && create_table($table);
+
+   /// Define table scorm_seq_rolluprule to be created
+        $table = new XMLDBTable('scorm_seq_rolluprule');
+
+    /// Adding fields to table scorm_seq_rolluprule
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('scoid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('childactivityset', XMLDB_TYPE_CHAR, '15', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('minimumcount', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('minimumpercent', XMLDB_TYPE_FLOAT, '11, 4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0.0000');
+        $table->addFieldInfo('conditioncombination', XMLDB_TYPE_CHAR, '3', null, XMLDB_NOTNULL, null, null, null, 'all');
+        $table->addFieldInfo('action', XMLDB_TYPE_CHAR, '15', null, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table scorm_seq_rolluprule
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('scorm_rolluprule_uniq', XMLDB_KEY_UNIQUE, array('scoid', 'id'));
+        $table->addKeyInfo('scorm_rolluprule_scoid', XMLDB_KEY_FOREIGN, array('scoid'), 'scorm_scoes', array('id'));
+
+    /// Launch create table for scorm_seq_rolluprule
+        $result = $result && create_table($table);
+
+    /// Define table scorm_seq_rolluprulecond to be created
+        $table = new XMLDBTable('scorm_seq_rolluprulecond');
+
+    /// Adding fields to table scorm_seq_rolluprulecond
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('scoid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('rollupruleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('operator', XMLDB_TYPE_CHAR, '5', null, XMLDB_NOTNULL, null, null, null, 'noOp');
+        $table->addFieldInfo('cond', XMLDB_TYPE_CHAR, '25', null, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table scorm_seq_rolluprulecond
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('scorm_rulluprulecond_uniq', XMLDB_KEY_UNIQUE, array('scoid', 'rollupruleid', 'id'));
+        $table->addKeyInfo('scorm_rolluprulecond_scoid', XMLDB_KEY_FOREIGN, array('scoid'), 'scorm_scoes', array('id'));
+        $table->addKeyInfo('scorm_rolluprulecond_rolluprule', XMLDB_KEY_FOREIGN, array('rollupruleid'), 'scorm_seq_rolluprule', array('id'));
+
+    /// Launch create table for scorm_seq_rolluprulecond
+        $result = $result && create_table($table);
+    }
+    
+
     return $result;
 }
 
