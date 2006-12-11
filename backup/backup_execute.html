@@ -232,6 +232,14 @@
             }
         }
 
+        //Backup course format data, if any. 
+        echo '<li>'.get_string("courseformatdata").'</li>';
+        if($status) {
+                if (!$status = backup_format_data($backup_file,$preferences)) {
+                        notify("An error occurred while backing up the course format data");
+                }
+        }
+
         //Prints course end 
         if ($status) {
             if (!$status = backup_course_end($backup_file,$preferences)) {

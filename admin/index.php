@@ -347,6 +347,9 @@
 /// first old *.php update and then the new upgrade.php script
     upgrade_plugins('enrol', 'enrol', "$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
+/// Check all course formats and upgrade if necessary
+    upgrade_plugins('format','course/format',"$CFG->wwwroot/$CFG->admin/index.php");
+
 /// Check for local database customisations
 /// first old *.php update and then the new upgrade.php script
     require_once("$CFG->dirroot/lib/locallib.php");

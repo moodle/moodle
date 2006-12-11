@@ -208,6 +208,15 @@
         return $info;
     }
     
+    //This function read the xml file and store its data from the course format in an object
+    function restore_read_xml_formatdata ($xml_file) {
+
+        //We call the main read_xml function, with todo = FORMATDATA
+        $info = restore_read_xml ($xml_file,'FORMATDATA',false);
+
+        return $info;
+    }
+    
     //This function read the xml file and store its data from the metacourse in a object
     function restore_read_xml_metacourse ($xml_file) {
 
@@ -977,6 +986,42 @@
             $status = false;
         }
         return $status;
+    }
+
+    //Called to set up any course-format specific data that may be in the file
+    function restore_set_format_data($restore,$xml_file) {
+        global $CFG,$db;
+        
+        $status = true;
+        //Check it exists
+        if (!file_exists($xml_file)) {
+            return false;
+        }
+        //Load data from XML to info
+        if(!($info = restore_read_xml_formatdata($xml_file))) {
+                return false;
+        }
+
+        //Process format data if there is any
+        if (isset($info->format_data)) {
+                if(!$format=get_field('course','format','id',$restore->course_id)) {
+                    return false;
+                }
+                // If there was any data then it must have a restore method
+                $file=$CFG->dirroot."/course/format/$format/restorelib.php";
+                if(!file_exists($file)) {
+                    return false;
+                }
+                require_once($file);
+                $function=$format.'_restore_format_data';
+                if(!function_exists($function)) {
+                    return false;
+                }
+                return $function($restore,$info->format_data);
+        }
+        
+        // If we got here then there's no data, but that's cool
+        return true;
     }
 
     //This function creates all the metacourse data from xml, notifying 
@@ -3090,6 +3135,28 @@
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
         }
 
+        //This is the startTag handler we use where we are reading the optional format data zone (todo="FORMATDATA")
+        function startElementFormatData($parser, $tagName, $attrs) {
+            //Refresh properties     
+            $this->level++;
+            $this->tree[$this->level] = $tagName;   
+
+            //Output something to avoid browser timeouts...
+            backup_flush();
+
+            //Accumulate all the data inside this tag
+            if (isset($this->tree[3]) && $this->tree[3] == "FORMATDATA") {
+                if (!isset($this->temp)) {
+                    $this->temp = '';
+                }
+                $this->temp .= "<".$tagName.">";
+            }
+            
+            //Check if we are into FORMATDATA zone
+            //if ($this->tree[3] == "FORMATDATA")                                                         //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
+        }
+
         //This is the startTag handler we use where we are reading the metacourse zone (todo="METACOURSE")
         function startElementMetacourse($parser, $tagName, $attrs) {
 
@@ -4069,6 +4136,36 @@
 
         }
 
+        //This is the endTag handler we use where we are reading the optional format data zone (todo="FORMATDATA")
+        function endElementFormatData($parser, $tagName) {
+            //Check if we are into FORMATDATA zone
+            if ($this->tree[3] == 'FORMATDATA') {
+                if (!isset($this->temp)) {
+                    $this->temp = '';
+                }
+                $this->temp .= htmlspecialchars(trim($this->content))."</".$tagName.">";            
+            }
+
+            if($tagName=='FORMATDATA') {
+                //Did we have any data? If not don't bother
+                if($this->temp!='<FORMATDATA></FORMATDATA>') {
+                    //Prepend XML standard header to info gathered
+                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                    $this->temp='';
+                    
+                    //Call to xmlize for this portion of xml data (the FORMATDATA block)
+                    $this->info->format_data = xmlize($xml_data,0);
+                }         
+                //Stop parsing at end of FORMATDATA
+                $this->finished=true;
+            }
+
+            //Clear things
+            $this->tree[$this->level] = "";
+            $this->level--;
+            $this->content = "";
+        }
+
         //This is the endTag handler we use where we are reading the metacourse zone (todo="METACOURSE")
         function endElementMetacourse($parser, $tagName) {
             //Check if we are into METACOURSE zone
@@ -5028,6 +5125,9 @@
         } else if ($todo == "SECTIONS") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementSections", "endElementSections");
+        } else if ($todo == 'FORMATDATA') {
+            //Define handlers to that zone
+            xml_set_element_handler($xml_parser, "startElementFormatData", "endElementFormatData");
         } else if ($todo == "METACOURSE") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementMetacourse", "endElementMetacourse");
@@ -5761,6 +5861,24 @@
                         notify('Error while creating the course blocks');
                     } else {
                         $errorstr = "Error while creating the course blocks";
+                        return false;
+                    }
+                }
+            }
+        }
+
+        if($status) {
+            //If we are deleting and bringing into a course or making a new course, same situation
+            if($restore->restoreto == 0 || $restore->restoreto == 2) {
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo '<li>'.get_string('courseformatdata').'</li>';
+                }
+                if (!$status = restore_set_format_data($restore, $xml_file)) {
+                        $error = "Error while setting the course format data";
+                    if (!defined('RESTORE_SILENTLY')) {
+                        notify($error);
+                    } else {
+                        $errorstr=$error;
                         return false;
                     }
                 }

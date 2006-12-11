@@ -45,7 +45,7 @@
             $form->type = $type;
         }
 
-        $sectionname    = get_string("name$course->format");
+        $sectionname = get_section_name($course->format);
         $fullmodulename = get_string("modulename", $module->name);
 
         if ($form->section && $course->format != 'site') {
@@ -92,7 +92,7 @@
         $form->return = $return;
         $form->update = $update;
 
-        $sectionname    = get_string("name$course->format");
+        $sectionname = get_section_name($course->format);
         $fullmodulename = get_string("modulename", $module->name);
 
         if ($form->section && $course->format != 'site') {

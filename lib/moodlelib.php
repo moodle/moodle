@@ -4310,6 +4310,8 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
         } else if (strpos($module, 'report_') === 0) {  // It's a report lang file
             $locations[] =  $CFG->dirroot .'/'.$CFG->admin.'/report/'.substr($module, 7).'/lang/';
             $locations[] =  $CFG->dirroot .'/course/report/'.substr($module, 7).'/lang/';
+        } else if (strpos($module, 'format_') === 0) {  // Course format
+            $locations[] =  $CFG->dirroot  .'/course/format/'.substr($module,7).'/lang/';
         } else {                                // It's a normal activity
             $locations[] =  $CFG->dirroot .'/mod/'.$module.'/lang/';
         }

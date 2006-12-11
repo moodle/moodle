@@ -252,6 +252,7 @@ $string['coursecategory'] = 'Course category';
 $string['coursecreators'] = 'Course creator';
 $string['coursecreatorsdescription'] = 'Course creators can create new courses and teach in them.';
 $string['coursefiles'] = 'Course files';
+$string['courseformatdata'] = 'Course format data';
 $string['courseformats'] = 'Course formats';
 $string['coursegrades'] = 'Course grades';
 $string['coursehidden'] = 'This course is currently unavailable to students';

@@ -113,7 +113,7 @@ function upgrade_plugins($type, $dir, $return) {
                 if ($status) {
                     // OK so far, now update the plugins record
                     set_config($pluginversion, $plugin->version);
-                    if (!update_capabilities($dir.'/'.$plug)) {
+                    if (!update_capabilities($type.'/'.$plug)) {
                         error('Could not set up the capabilities for '.$module->name.'!');
                     }
                     notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
@@ -150,7 +150,7 @@ function upgrade_plugins($type, $dir, $return) {
                 if ($oldupgrade_status && $newupgrade_status) {    // No upgrading failed
                     // OK so far, now update the plugins record
                     set_config($pluginversion, $plugin->version);
-                    if (!update_capabilities($dir.'/'.$plug)) {
+                    if (!update_capabilities($type.'/'.$plug)) {
                         error('Could not update '.$plugin->name.' capabilities!');
                     }
                     notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');

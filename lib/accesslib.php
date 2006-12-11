@@ -2140,6 +2140,11 @@ function load_capability_def($component) {
             $defpath = $CFG->dirroot.'/'.$compparts[0].
                                 's/'.$compparts[1].'/db/access.php';
             $varprefix = $compparts[0].'_'.$compparts[1];
+        } else if ($compparts[0] == 'format') {
+            // Similar to the above, course formats are 'format' while they 
+            // are stored in 'course/format'.
+            $defpath = $CFG->dirroot.'/course/'.$component.'/db/access.php';
+            $varprefix = $compparts[0].'_'.$compparts[1];
         } else {
             $defpath = $CFG->dirroot.'/'.$component.'/db/access.php';
             $varprefix = str_replace('/', '_', $component);
@@ -2693,6 +2698,10 @@ function get_capability_string($capabilityname) {
 
         case 'enrol':
             $string = get_string($stringname, 'enrol_'.$componentname);
+        break;
+        
+        case 'format':
+            $string = get_string($stringname, 'format_'.$componentname);
         break;
 
         default:

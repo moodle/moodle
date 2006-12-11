@@ -966,6 +966,35 @@
 
     }
 
+    //Prints course's format data (any data the format might want to save).
+    function backup_format_data ($bf,$preferences) {
+        global $CFG;
+
+        // Check course format        
+        if(!($format=get_field('course','format','id',$preferences->backup_course))) {
+                return false;
+        }
+        // Write appropriate tag. Note that we always put this tag there even if
+        // blank, it makes parsing easier
+        fwrite ($bf,start_tag("FORMATDATA",2,true));
+        
+        $file=$CFG->dirroot."/course/format/$format/backuplib.php";
+        if(file_exists($file)) {
+            // If the file is there, the function must be or it's an error. 
+            require_once($file);
+            $function=$format.'_backup_format_data';
+            if(!function_exists($function)) {
+                    return false;
+            }
+            if(!$function($bf,$preferences)) {
+                    return false;
+            }
+        }
+
+        // This last return just checks the file writing has been ok (ish)        
+        return fwrite ($bf,end_tag("FORMATDATA",2,true));
+    }
+
     //Prints course's modules info (table course_modules)
     //Only for selected mods in preferences
     function backup_course_modules ($bf,$preferences,$section) {

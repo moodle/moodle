@@ -2445,6 +2445,16 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
             }
         }
 
+        if (!isset($THEME->courseformatsheets) || $THEME->courseformatsheets) { // Search for styles.php in course formats
+            if ($mods = get_list_of_plugins('format','',$CFG->dirroot.'/course')) {
+                foreach ($mods as $mod) {
+                    if (file_exists($CFG->dirroot.'/course/format/'.$mod.'/styles.php')) {
+                        $files[] = array($CFG->dirroot, '/course/format/'.$mod.'/styles.php');
+                    }
+                }
+            }
+        }
+
         if (!empty($THEME->langsheets)) {     // Search for styles.php within the current language
             if (file_exists($CFG->dirroot.'/lang/'.$lang.'/styles.php')) {
                 $files[] = array($CFG->dirroot, '/lang/'.$lang.'/styles.php');

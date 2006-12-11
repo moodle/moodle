@@ -80,6 +80,14 @@ $THEME->langsheets = false;
 /// different styles.
 
 
+$THEME->courseformatsheets = true;
+
+/// When this is enabled, this theme will search for files 
+/// named "styles.php" inside all course formats and 
+/// include them.  This allows course formats to provide 
+/// their own default styles.
+
+
 $THEME->navmenuwidth = 50;
 
 /// You can use this to control the cutoff point for strings 
