@@ -2417,10 +2417,11 @@ function assignment_print_overview($courses, &$htmlarray) {
             
             // count how many people can submit
             $submissions = 0; // init
-            $students = get_users_by_capability($context, 'mod/assignment:submit');
-            foreach ($students as $student) {
-                if (get_record('assignment_submissions', 'assignment', $assignment->id, 'userid', $student->id)) {
-                    $submissions++;  
+            if ($students = get_users_by_capability($context, 'mod/assignment:submit')) {
+                foreach ($students as $student) {
+                    if (get_record('assignment_submissions', 'assignment', $assignment->id, 'userid', $student->id)) {
+                        $submissions++;  
+                    }
                 }
             }
             
