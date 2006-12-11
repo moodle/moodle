@@ -188,18 +188,260 @@ function scorm_get_manifest($blocks,$scoes) {
                 case 'ADLNAV:PRESENTATION':
                     $parent = array_pop($parents);
                     array_push($parents, $parent);
-                    foreach ($block['children'] as $adlnav) {
-                        if ($adlnav['name'] == 'ADLNAV:NAVIGATIONINTERFACE') {
-                            foreach ($adlnav['children'] as $adlnavInterface) {
-                                if ($adlnavInterface['name'] == 'ADLNAV:HIDELMSUI') {
-                                    if ($adlnavInterface['tagData'] == 'continue') {
-                                        $scoes->elements[$manifest][$parent->organization][$parent->identifier]->next = 1; 
-                                    }
-                                    if ($adlnavInterface['tagData'] == 'previous') {
-                                        $scoes->elements[$manifest][$parent->organization][$parent->identifier]->previous = 1; 
+                    if (!empty($block['children'])) {
+                        foreach ($block['children'] as $adlnav) {
+                            if ($adlnav['name'] == 'ADLNAV:NAVIGATIONINTERFACE') {
+                                foreach ($adlnav['children'] as $adlnavInterface) {
+                                    if ($adlnavInterface['name'] == 'ADLNAV:HIDELMSUI') {
+                                        if ($adlnavInterface['tagData'] == 'continue') {
+                                            $scoes->elements[$manifest][$parent->organization][$parent->identifier]->hidecontinue = 1; 
+                                        }
+                                        if ($adlnavInterface['tagData'] == 'previous') {
+                                            $scoes->elements[$manifest][$parent->organization][$parent->identifier]->hideprevious = 1; 
+                                        }
+                                        if ($adlnavInterface['tagData'] == 'exit') {
+                                            $scoes->elements[$manifest][$parent->organization][$parent->identifier]->hideexit = 1; 
+                                        }
+                                        if ($adlnavInterface['tagData'] == 'exitAll') {
+                                            $scoes->elements[$manifest][$parent->organization][$parent->identifier]->hideexitall = 1; 
+                                        }
+                                        if ($adlnavInterface['tagData'] == 'abandon') {
+                                            $scoes->elements[$manifest][$parent->organization][$parent->identifier]->hideabandon = 1; 
+                                        }
+                                        if ($adlnavInterface['tagData'] == 'abandonAll') {
+                                            $scoes->elements[$manifest][$parent->organization][$parent->identifier]->hideabandonall = 1; 
+                                        }
+                                        if ($adlnavInterface['tagData'] == 'suspendAll') {
+                                            $scoes->elements[$manifest][$parent->organization][$parent->identifier]->hidesuspendall = 1; 
+                                        }
                                     }
                                 }
-
+                            }
+                        }
+                    }
+                break;
+                case 'IMSSS:SEQUENCING':
+                    $parent = array_pop($parents);
+                    array_push($parents, $parent);
+                    if (!empty($block['children'])) {
+                        foreach ($block['children'] as $sequencing) {
+                            if ($sequencing['name']=='IMSSS:CONTROLMODE') {
+                                if (isset($sequencing['attrs']['CHOICE'])) {
+                                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->choice = $sequencing['attrs']['CHOICE'] == 'true'?1:0;
+                                }
+                                if (isset($sequencing['attrs']['CHOICEEXIT'])) {
+                                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->choiceexit = $sequencing['attrs']['CHOICEEXIT'] == 'true'?1:0;
+                                }
+                                if (isset($sequencing['attrs']['FLOW'])) {
+                                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->flow = $sequencing['attrs']['FLOW'] == 'true'?1:0;
+                                }
+                                if (isset($sequencing['attrs']['FORWARDONLY'])) {
+                                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->forwardonly = $sequencing['attrs']['FORWARDONLY'] == 'true'?1:0;
+                                }
+                                if (isset($sequencing['attrs']['USECURRENTATTEMPTOBJECTINFO'])) {
+                                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->usecurrentattemptobjectinfo = $sequencing['attrs']['USECURRENTATTEMPTOBJECTINFO'] == 'true'?1:0;
+                                }
+                                if (isset($sequencing['attrs']['USECURRENTATTEMPTPROGRESSINFO'])) {
+                                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->usecurrentattemptprogressinfo = $sequencing['attrs']['USECURRENTATTEMPTPROGRESSINFO'] == 'true'?1:0;
+                                }
+                            }
+                            if ($sequencing['name']=='ADLSEQ:CONSTRAINEDCHOICECONSIDERATIONS') {
+                                if (isset($sequencing['attrs']['CONSTRAINCHOICE'])) {
+                                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->constrainChoice = $sequencing['attrs']['CONSTRAINCHOICE'] == 'true'?1:0;
+                                }
+                                if (isset($sequencing['attrs']['PREVENTACTIVATION'])) {
+                                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->preventactivation = $sequencing['attrs']['PREVENTACTIVATION'] == 'true'?1:0;
+                                }
+                            }
+                            if ($sequencing['name']=='IMSSS:OBJECTIVES') {
+                                $objectives = array();
+                                foreach ($sequencing['children'] as $objective) {
+                                    $objectivedata = new stdClass();
+                                    $objectivedata->primaryobj = 0;
+                                    switch ($objective['name']) {
+                                        case 'IMSSS:PRIMARYOBJECTIVE':
+                                            $objectivedata->primaryobj = 1;
+                                        case 'IMSSS:OBJECTIVE':
+                                            $objectivedata->satisfiedbymeasure = 0;
+                                            if (isset($objective['attrs']['SATISFIEDBYMEASURE'])) {
+                                                $objectivedata->satisfiedbymeasure = $objective['attrs']['SATISFIEDBYMEASURE']== 'true'?1:0;
+                                            }
+                                            $objectivedata->objectiveid = '';
+                                            if (isset($objective['attrs']['OBJECTIVEID'])) {
+                                                $objectivedata->objectiveid = $objective['attrs']['OBJECTIVEID'];
+                                            }
+                                            $objectivedata->minnormalizedmeasure = 1.0;
+                                            if (!empty($objective['children'])) {
+                                                $mapinfos = array();
+                                                foreach ($objective['children'] as $objectiveparam) {
+                                                    if ($objectiveparam['name']=='IMSSS:MINNORMALIZEDMEASURE') {
+                                                        $objectivedata->minnormalizedmeasure = $objectiveparam['tagData'];
+                                                    }
+                                                    if ($objectiveparam['name']=='IMSSS:MAPINFO') {
+                                                        $mapinfo = new stdClass();
+                                                        $mapinfo->targetobjectiveid = '';
+                                                        if (isset($objectiveparam['attrs']['TARGETOBJECTIVEID'])) {
+                                                            $mapinfo->targetobjectiveid = $objectiveparam['attrs']['TARGETOBJECTIVEID'];
+                                                        }
+                                                        $mapinfo->readsatisfiedstatus = 1;
+                                                        if (isset($objectiveparam['attrs']['READSATISFIEDSTATUS'])) {
+                                                            $mapinfo->readsatisfiedstatus = $objectiveparam['attrs']['READSATISFIEDSTATUS'] == 'true'?1:0;
+                                                        }
+                                                        $mapinfo->writesatisfiedstatus = 0;
+                                                        if (isset($objectiveparam['attrs']['WRITESATISFIEDSTATUS'])) {
+                                                            $mapinfo->writesatisfiedstatus = $objectiveparam['attrs']['WRITESATISFIEDSTATUS'] == 'true'?1:0;
+                                                        }
+                                                        $mapinfo->readnormalizemeasure = 1;
+                                                        if (isset($objectiveparam['attrs']['READNORMALIZEDMEASURE'])) {
+                                                            $mapinfo->readnormalizemeasure = $objectiveparam['attrs']['READNORMALIZEDMEASURE'] == 'true'?1:0;
+                                                        }
+                                                        $mapinfo->writenormalizemeasure = 0;
+                                                        if (isset($objectiveparam['attrs']['WRITENORMALIZEDMEASURE'])) {
+                                                            $mapinfo->writenormalizemeasure = $objectiveparam['attrs']['WRITENORMALIZEDMEASURE'] == 'true'?1:0;
+                                                        }
+                                                        array_push($mapinfos,$mapinfo);
+                                                    }
+                                                }
+                                                if (!empty($mapinfos)) {
+                                                    $objectivesdata->mapinfos = $mapinfos;
+                                                }
+                                            }
+                                        break;
+                                    }
+//print_object($objectivedata);
+                                    array_push($objectives,$objectivedata);
+                                }
+                                $scoes->elements[$manifest][$parent->organization][$parent->identifier]->objectives = $objectives;
+                            }
+                            if ($sequencing['name']=='IMSSS:LIMITCONDITIONS') {
+                                if (isset($sequencing['attrs']['ATTEMPTLIMIT'])) {
+                                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->attemptLimit = $sequencing['attrs']['ATTEMPTLIMIT'];                                
+                                }
+                                if (isset($sequencing['attrs']['ATTEMPTABSOLUTEDURATIONLIMIT'])) {
+                                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->attemptAbsoluteDurationLimit = $sequencing['attrs']['ATTEMPTABSOLUTEDURATIONLIMIT'];                                
+                                }
+                            }
+                            if ($sequencing['name']=='IMSSS:ROLLUPRULES') {
+                                if (isset($sequencing['attrs']['ROLLUPOBJECTIVESATISFIED'])) {
+                                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->rollupobjectivesatisfied = $sequencing['attrs']['ROLLUPOBJECTIVESATISFIED'] == 'true'?1:0;;
+                                }
+                                if (isset($sequencing['attrs']['ROLLUPPROGRESSCOMPLETION'])) {
+                                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->rollupprogresscompletion = $sequencing['attrs']['ROLLUPPROGRESSCOMPLETION'] == 'true'?1:0; 
+                                }
+                                if (isset($sequencing['attrs']['OBJECTIVEMEASUREWEIGHT'])) {
+                                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->objectivemeasureweight = $sequencing['attrs']['OBJECTIVEMEASUREWEIGHT'];                    
+                                }
+    
+                                if (!empty($sequencing['children'])){
+                                    $rolluprules = array();
+                                    foreach ($sequencing['children'] as $sequencingrolluprule) {
+                                        if ($sequencingrolluprule['name']=='IMSSS:ROLLUPRULE' ) {
+                                            $rolluprule = new stdClass();
+                                            $rolluprule->childactivityset = 'all';
+                                            if (isset($sequencingrolluprule['attrs']['CHILDACTIVITYSET'])) {
+                                                $rolluprule->childactivityset = $sequencingrolluprule['attrs']['CHILDACTIVITYSET'];
+                                            }
+                                            $rolluprule->minimumcount = 0;
+                                            if (isset($sequencingrolluprule['attrs']['MINIMUMCOUNT'])) {
+                                                $rolluprule->minimumcount = $sequencingrolluprule['attrs']['MINIMUMCOUNT'];
+                                            }
+                                            $rolluprule->minimumpercent = 0.0000;
+                                            if (isset($sequencingrolluprule['attrs']['MINIMUMPERCENT'])) {
+                                                $rolluprule->minimumpercent = $sequencingrolluprule['attrs']['MINIMUMPERCENT'];
+                                            }
+                                            if (!empty($sequencingrolluprule['children'])) {
+                                                foreach ($sequencingrolluprule['children'] as $rolluproleconditions) {
+                                                    if ($rolluproleconditions['name']=='IMSSS:ROLLUPCONDITIONS') {
+                                                        $conditions = array();
+                                                        $rolluprule->conditioncombination = 'all';
+                                                        if (isset($rolluproleconditions['attrs']['CONDITIONCOMBINATION'])) {
+                                                            $rolluprule->conditioncombination = $rolluproleconditions['attrs']['CONDITIONCOMBINATION'];
+                                                        }
+                                                        foreach ($rolluproleconditions['children'] as $rolluprulecondition) {
+                                                            if ($rolluprulecondition['name']=='IMSSS:ROLLUPCONDITION') {
+                                                                $condition = new stdClass();
+                                                                if (isset($rolluprulecondition['attrs']['CONDITION'])) {
+                                                                    $condition->cond = $rolluprulecondition['attrs']['CONDITION'];
+                                                                }
+                                                                $condition->operator = 'noOp';
+                                                                if (isset($rolluprulecondition['attrs']['OPERATOR'])) {
+                                                                    $condition->operator = $rolluprulecondition['attrs']['OPERATOR'];
+                                                                }
+                                                                array_push($conditions,$condition);    
+                                                            }
+                                                        }
+                                                        $rolluprule->conditions = $conditions;
+                                                    }
+                                                    if ($rolluproleconditions['name']=='IMSSS:ROLLUPACTION') {
+                                                        $rolluprule->rollupruleaction = $rolluproleconditions['attrs']['ACTION'];
+                                                    }
+                                                }
+                                            }
+                                            array_push($rolluprules, $rolluprule);
+                                        }
+                                    }
+                                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->rolluprules = $rolluprules;
+                                }
+                            }
+                            
+                            if ($sequencing['name']=='IMSSS:SEQUENCINGRULES') {
+                                if (!empty($sequencing['children'])) {
+                                    $sequencingrules = array();
+                                    foreach ($sequencing['children'] as $conditionrules) {
+                                        $conditiontype = -1;
+                                        switch($conditionrules['name']) {
+                                            case 'IMSSS:PRECONDITIONRULE':
+                                                $conditiontype = 0;
+                                            break;
+                                            case 'IMSSS:POSTCONDITIONRULE':
+                                                $conditiontype = 1;
+                                            break;
+                                            case 'IMSSS:EXITCONDITIONRULE':
+                                                $conditiontype = 2;
+                                            break;
+                                        }
+                                        if (!empty($conditionrules['children'])) {
+                                            $sequencingrule = new stdClass();
+                                            foreach ($conditionrules['children'] as $conditionrule) {
+                                                if ($conditionrule['name']=='IMSSS:RULECONDITIONS') {
+                                                    $ruleconditions = array();
+                                                    $sequencingrule->conditioncombination = 'all';
+                                                    if (isset($conditionrule['attrs']['CONDITIONCOMBINATION'])) {
+                                                        $sequencingrule->conditioncombination = $conditionrule['attrs']['CONDITIONCOMBINATION'];
+                                                    }
+                                                    foreach ($conditionrule['children'] as $rulecondition) {
+                                                        if ($rulecondition['name']=='IMSSS:RULECONDITION') {
+                                                            $condition = new stdClass();
+                                                            if (isset($rulecondition['attrs']['CONDITION'])) {
+                                                                $condition->cond = $rulecondition['attrs']['CONDITION'];
+                                                            }
+                                                            $condition->operator = 'noOp';
+                                                            if (isset($rulecondition['attrs']['OPERATOR'])) {
+                                                                $condition->operator = $rulecondition['attrs']['OPERATOR'];
+                                                            }
+                                                            $condition->measurethreshold = 0.0000;
+                                                            if (isset($rulecondition['attrs']['MEASURETHRESHOLD'])) {
+                                                                $condition->measurethreshold = $rulecondition['attrs']['MEASURETHRESHOLD'];
+                                                            }
+                                                            $condition->referencedobjective = '';
+                                                            if (isset($rulecondition['attrs']['REFERENCEDOBJECTIVE'])) {
+                                                                $condition->referencedobjective = $rulecondition['attrs']['REFERENCEDOBJECTIVE'];
+                                                            } 
+                                                            array_push($ruleconditions,$condition);
+                                                        }
+                                                    }
+                                                    $sequencingrule->ruleconditions = $ruleconditions;
+                                                }
+                                                if ($conditionrule['name']=='IMSSS:RULEACTION') {
+                                                    $sequencingrule->action = $conditionrule['attrs']['ACTION'];
+                                                }
+                                                $sequencingrule->type = $conditiontype;
+                                            }
+                                            array_push($sequencingrules,$sequencingrule);                                        
+                                        }
+                                    }
+                                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->sequencingrules = $sequencingrules;
+                                }
                             }
                         }
                     }
@@ -226,11 +468,11 @@ function scorm_parse_scorm($pkgdir,$scormid) {
 
         $objXML = new xml2Array();
         $manifests = $objXML->parse($xmltext);
-        //print_r($manifests); 
+//print_object($manifests); 
         $scoes = new stdClass();
         $scoes->version = '';
         $scoes = scorm_get_manifest($manifests,$scoes);
-
+//print_object($scoes);
         if (count($scoes->elements) > 0) {
             $olditems = get_records('scorm_scoes','scorm',$scormid);
             foreach ($scoes->elements as $manifest => $organizations) {
@@ -245,19 +487,20 @@ function scorm_parse_scorm($pkgdir,$scormid) {
                         foreach ($standarddatas as $standarddata) {
                             $newitem->$standarddata = addslashes($item->$standarddata);
                         }
-
-                        if ($olditemid = scorm_array_search('identifier',$newitem->identifier,$olditems)) {
+                        
+                        $id = 0; 
+                        if (!empty($olditems) && ($olditemid = scorm_array_search('identifier',$newitem->identifier,$olditems))) {
                             $newitem->id = $olditemid;
                             $id = update_record('scorm_scoes',$newitem);
                             unset($olditems[$olditemid]);
-                            delete_records('scorm_scoes_data','scoid',$olditem->id);
+                            delete_records('scorm_scoes_data','scoid',$olditemid);
                         } else {
                             $id = insert_record('scorm_scoes',$newitem);
                         }
 
-                        $data = new stdClass();
-                        $data->scoid = $id;
                         if ($optionaldatas = scorm_optionals_data($item,$standarddatas)) {
+                            $data = new stdClass();
+                            $data->scoid = $id;
                             foreach ($optionaldatas as $optionaldata) {
                                 if (isset($item->$optionaldata)) {
                                     $data->name =  $optionaldata;
@@ -265,19 +508,80 @@ function scorm_parse_scorm($pkgdir,$scormid) {
                                     $dataid = insert_record('scorm_scoes_data',$data);
                                 }
                             }
-                        } 
+                        }
 
-                        /*$item->scorm = $scormid;
-                        $item->manifest = $manifest;
-                        $item->organization = $organization;
-                        if ($olditemid = scorm_array_search('identifier',$item->identifier,$olditems)) {
-                            $item->id = $olditemid;
-                            $id = update_record('scorm_scoes',$item);
-                            unset($olditems[$olditemid]);
-                        } else {
-                            $id = insert_record('scorm_scoes',$item);
-                        } */
-                
+                        if (isset($item->sequencingrules)) {
+                            foreach($item->sequencingrules as $sequencingrule) {
+                                $rule = new stdClass();
+                                $rule->scoid = $id;
+                                $rule->ruletype = $sequencingrule->type;
+                                $rule->conditioncombination = $sequencingrule->conditioncombination;
+                                $rule->action = $sequencingrule->action;
+                                $ruleid = insert_record('scorm_seq_ruleconds',$rule);
+                                if (isset($sequencingrule->ruleconditions)) {
+                                    foreach($sequencingrule->ruleconditions as $rulecondition) {
+                                        $rulecond = new stdClass();
+                                        $rulecond->scoid = $id;
+                                        $rulecond->ruleconditionsid = $ruleid;
+                                        $rulecond->referencedobjective = $rulecondition->referencedobjective;
+                                        $rulecond->measurethreshold = $rulecondition->measurethreshold;
+                                        $rulecond->cond = $rulecondition->cond;
+                                        $rulecondid = insert_record('scorm_seq_rulecond',$rulecond);
+                                    }
+                                }
+                            }                        
+                        }
+                        
+                        if (isset($item->rolluprules)) {
+                            foreach($item->rolluprules as $rolluprule) {
+                                $rollup = new stdClass();
+                                $rollup->scoid =  $id;
+                                $rollup->childactivityset = $rolluprule->childactivityset;
+                                $rollup->minimumcount = $rolluprule->minimumcount;
+                                $rollup->minimumpercent = $rolluprule->minimumpercent;
+                                $rollup->rollupruleaction = $rolluprule->rollupruleaction;
+                                $rollup->conditioncombination = $rolluprule->conditioncombination;
+
+                                $rollupruleid = insert_record('scorm_seq_rolluprule',$rollup);
+                                if (isset($rollup->conditions)) {
+                                    foreach($rollup->conditions as $condition){
+                                        $cond = new stdClass();
+                                        $cond->scoid = $rollup->scoid;
+                                        $cond->rollupruleid = $rollupruleid;
+                                        $cond->operator = $condition->operator;
+                                        $cond->cond = $condition->cond;
+                                        $conditionid = insert_record('scorm_seq_rolluprulecond',$cond);
+                                    }
+                                }
+                            } 
+                        }
+
+                        if (isset($item->objectives)) {
+                            foreach($item->objectives as $objective) {
+                                $obj = new stdClass();
+                                $obj->scoid = $id;
+                                $obj->primaryobj = $objective->primaryobj;
+                                $obj->satisfiedbumeasure = $objective->satisfiedbymeasure;
+                                $obj->objectiveid = $objective->objectiveid;
+                                $obj->minnormalizedmeasure = $objective->minnormalizedmeasure; 
+                                $objectiveid = insert_record('scorm_seq_objective',$obj);
+                                if (isset($objective->mapinfos)) {
+//print_object($objective->mapinfos);
+                                    foreach($objective->mapinfos as $objmapinfo) {
+                                        $mapinfo = new stdClass();
+                                        $mapinfo->scoid = $id;
+                                        $mapinfo->objectiveid = $objectiveid;
+                                        $mapinfo->targetobjectiveid = $objmapinfo->targetobjectiveid;
+                                        $mapinfo->readsatisfiedstatus = $objmapinfo->readsatisfiedstatus;
+                                        $mapinfo->writesatisfiedstatus = $objmapinfo->writesatisfiedstatus;
+                                        $mapinfo->readnormalizedmeasure = $objmapinfo->readnormalizedmeasure;
+                                        $mapinfo->writenormalizedmeasure = $objmapinfo->writenormalizedmeasure;
+                                        $mapinfoid = insert_record('scorm_seq_mapinfo',$mapinfo);
+                                    }
+                                }
+                            }
+                        }
+//print_object($item);
                         if (($launch == 0) && ((empty($scoes->defaultorg)) || ($scoes->defaultorg == $identifier))) {
                             $launch = $id;
                         }
@@ -287,8 +591,14 @@ function scorm_parse_scorm($pkgdir,$scormid) {
             if (!empty($olditems)) {
                 foreach($olditems as $olditem) {
                    delete_records('scorm_scoes','id',$olditem->id);
-                   //delete_records('scorm_scoes_data','scoid',$olditem->id);
+                   delete_records('scorm_scoes_data','scoid',$olditem->id);
                    delete_records('scorm_scoes_track','scoid',$olditem->id);
+                   delete_records('scorm_seq_objective','scoid',$olditem->id);
+                   delete_records('scorm_seq_mapinfo','scoid',$olditem->id);
+                   delete_records('scorm_seq_ruleconds','scoid',$olditem->id);
+                   delete_records('scorm_seq_rulecond','scoid',$olditem->id);
+                   delete_records('scorm_seq_rolluprule','scoid',$olditem->id);
+                   delete_records('scorm_seq_rollupcond','scoid',$olditem->id);
                 }
             }
             set_field('scorm','version',$scoes->version,'id',$scormid);
@@ -300,9 +610,12 @@ function scorm_parse_scorm($pkgdir,$scormid) {
 
 function scorm_optionals_data($item, $standarddata) {
     $result = array();
+    $sequencingdata = array('sequencingrules','rolluprules','objectives');
     foreach ($item as $element => $value) {
         if (! in_array($element, $standarddata)) {
-            $result[] = $element;
+            if (! in_array($element, $sequencingdata)) {
+                $result[] = $element;
+            }
         }
     }
     return $result;
