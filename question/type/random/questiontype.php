@@ -237,7 +237,7 @@ class random_qtype extends default_questiontype {
 
     function compare_responses(&$question, $state, $teststate) {
         global $QTYPES;
-        $wrappedquestion = &$state->options->question;
+        $wrappedquestion = &$teststate->options->question;
         return $QTYPES[$wrappedquestion->qtype]
          ->compare_responses($wrappedquestion, $state, $teststate);
     }
