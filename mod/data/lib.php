@@ -854,13 +854,9 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
 
         ///actual replacement of the tags
         $newtext = str_ireplace($patterns, $replacement, $data->{$template});
-        $options->para=false;
-        $options->noclean=true;
-        if ($return) {
-            return format_text($newtext, FORMAT_HTML, $options);
-        } else {
-            echo format_text($newtext, FORMAT_HTML, $options);
-        }
+
+        /// no more html formatting and filtering - see MDL-6635
+        echo $newtext;
 
         /**********************************
          *    Printing Ratings Form       *
