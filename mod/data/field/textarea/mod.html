@@ -22,7 +22,7 @@
                 } else {
                     echo('"' . $this->field->param2 . '"');
                 }
-            ?> /> columns
+            ?> /> <?php echo get_string('columns', 'data'); ?>
         </td>
     </tr>
     <tr>
@@ -37,7 +37,7 @@
                 } else {
                     echo('"' . $this->field->param3 . '"');
                 }
-            ?> /> rows
+            ?> /> <?php echo get_string('rows', 'data'); ?>
         </td>
     </tr>
 </table>
