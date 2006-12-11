@@ -243,7 +243,7 @@ table.formtable tbody .htmlarea th
 
 .paging {
   text-align: center;
-  margin: 10px 0p 10px 0;
+  margin: 10px 0px 10px 0;
 }
 
 .unread {
@@ -1283,7 +1283,7 @@ body#doc-contents h1 {
 body#doc-contents ul {
   list-style-type: none;
   margin: 0;
-  padding: 0p;
+  padding: 0px;
   width: 90%;
 }
 
