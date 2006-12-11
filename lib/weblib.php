@@ -1691,11 +1691,8 @@ function cleanAttributes2($htmlArray){
             $arreach['value'] = preg_replace("/j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t/i", "Xjavascript", $arreach['value']);
             $arreach['value'] = preg_replace("/e\s*x\s*p\s*r\s*e\s*s\s*s\s*i\s*o\s*n/i", "Xexpression", $arreach['value']);
         }
-        $attStr .=  ' '.$arreach['name'].'="'.$arreach['value'].'" ';
+        $attStr .=  ' '.$arreach['name'].'="'.$arreach['value'].'"';
     }
-
-    // Remove last space from attribute list
-    $attStr = rtrim($attStr);
 
     $xhtml_slash = '';
     if (preg_match('%/\s*$%', $attrlist)) {
