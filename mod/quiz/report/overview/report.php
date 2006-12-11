@@ -442,7 +442,7 @@ class quiz_report extends quiz_default_report {
     /// Start form
 
                 echo '<div id="tablecontainer">';
-                echo '<form id="attemptsform" method="post" action="report.php" onsubmit="var menu = document.getElementById(\'menuaction\'); return (menu.options[menu.selectedIndex].value == \'delete\' ? \''.$strreallydel.'\' : true);">';
+                echo '<form id="attemptsform" method="post" action="report.php" onsubmit="var menu = document.getElementById(\'menuaction\'); return (menu.options[menu.selectedIndex].value == \'delete\' ? confirm(\''.$strreallydel.'\') : true);">';
                 echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
                 echo '<input type="hidden" name="mode" value="overview" />';
 
