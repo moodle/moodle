@@ -322,7 +322,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
     if (!$data && !$template) {
         return false;
     }
-    if ($template == 'csstemplate') {
+    if ($template == 'csstemplate' or $template == 'jstemplate' ) {
         return '';
     }
 
