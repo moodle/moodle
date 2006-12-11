@@ -854,8 +854,10 @@ class default_questiontype {
     *                          that it is safe to use.
     * @param object $teststate The state whose responses are to be
     *                          compared. The state will be of the same age or
-    *                          older than $state. Again, the method should only
-    *                          use the field $teststate->responses.
+    *                          older than $state. If possible, the method should 
+    *                          only use the field $teststate->responses, however
+    *                          any field that is set up by restore_session_and_responses
+    *                          can be used.
     */
     function compare_responses(&$question, $state, $teststate) {
         // The default implementation performs a comparison of the response
