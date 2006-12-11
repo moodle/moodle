@@ -732,7 +732,9 @@
                         echo $fullbuttonhtml;
                     } else {
                         echo '<tr><td>';
-                        print_simple_box($fullbuttonhtml, 'center');
+                        print_simple_box_start('center');
+                        echo $fullbuttonhtml;
+                        print_simple_box_end();
                         echo '</td></tr></table>'; // ends the answers table
                     }
                     
