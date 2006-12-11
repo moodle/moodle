@@ -332,7 +332,11 @@
         $status = true;
 
         //Get the quiz_attempts array
-        $attempts = $info['MOD']['#']['ATTEMPTS']['0']['#']['ATTEMPT'];
+        if (array_key_exists('ATTEMPTS', $info['MOD']['#'])) {
+            $attempts = $info['MOD']['#']['ATTEMPTS']['0']['#']['ATTEMPT'];
+        } else {
+            $attempts = array();
+        }
 
         //Iterate over attempts
         for($i = 0; $i < sizeof($attempts); $i++) {
@@ -406,7 +410,11 @@
         $status = true;
 
         //Get the quiz_grades array
-        $grades = $info['MOD']['#']['GRADES']['0']['#']['GRADE'];
+        if (array_key_exists('GRADES', $info['MOD']['#'])) {
+            $grades = $info['MOD']['#']['GRADES']['0']['#']['GRADE'];
+        } else {
+            $grades = array();
+        }
 
         //Iterate over grades
         for($i = 0; $i < sizeof($grades); $i++) {
