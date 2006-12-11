@@ -63,6 +63,7 @@ echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
 echo '<fieldset>';
 echo '<div class="clearer"><!-- --></div>';
 echo $newsettingshtml;
+echo '</fieldset>';
 echo '<div class="form-buttons"><input class="form-submit" type="submit" value="' . get_string('savechanges','admin') . '" /></div>';
 echo '</form>';
 

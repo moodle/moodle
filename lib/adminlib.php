@@ -2356,7 +2356,7 @@ class admin_setting_special_gradebookroles extends admin_setting {
             $first = true;
             foreach ($roles as $roleid=>$role) {
                 if (is_array($currentsetting) && in_array($roleid, array_keys($currentsetting))) {
-                    $checked = 'checked="checked"';
+                    $checked = ' checked="checked"';
                 } else {
                     $checked = '';
                 }
