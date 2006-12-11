@@ -293,9 +293,8 @@
     }
 
 /// Find the field we are sorting on
-    if ($sort) {
-        
-        $sortfield = data_get_field_from_id($sort, $data);
+    if ($sort and $sortfield = data_get_field_from_id($sort, $data)) {
+
         $sortcontent = $sortfield->get_sort_field();
         $sortcontentfull = $sortfield->get_sort_sql('c.'.$sortcontent);
 
