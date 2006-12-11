@@ -194,7 +194,7 @@ $LANGUAGES = array (
 
 "na" => "Nauru",
 
-"nb" => "Norwegian Bokmål",
+"nb" => "Norwegian Bokmï¿½l",
 
 "nd" => "Ndebele, North",
 
@@ -335,4 +335,3 @@ $LANGUAGES = array (
 
 
 ?>
-
