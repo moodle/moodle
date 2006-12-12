@@ -172,7 +172,7 @@
         echo '<tr>';
         echo '<td>&nbsp;</td>';
         echo '<td>';
-        echo '<div align="center"><label for="id_listtemplateheader">'.get_string('header','data').'</label></div>';
+        echo '<div align="center"><label for="edit-listtemplateheader">'.get_string('header','data').'</label></div>';
         print_textarea($usehtmleditor, 10, 72, 0, 0, 'listtemplateheader', $data->listtemplateheader);
         echo '</td>';
         echo '</tr>';
@@ -243,9 +243,9 @@
     
     echo '<td>';
     if ($mode == 'listtemplate'){
-        echo '<div align="center"><label for="id_template">'.get_string('multientry','data').'</label></div>';        
+        echo '<div align="center"><label for="edit-template">'.get_string('multientry','data').'</label></div>';        
     } else {
-        echo '<div align="center"><label for="id_template">'.get_string($mode,'data').'</label></div>';
+        echo '<div align="center"><label for="edit-template">'.get_string($mode,'data').'</label></div>';
     }
 
     print_textarea($usehtmleditor, 20, 72, 0, 0, 'template', $data->{$mode});
@@ -256,7 +256,7 @@
         echo '<tr>';
         echo '<td>&nbsp;</td>';
         echo '<td>';
-        echo '<div align="center"><label for="id_listtemplatefooter">'.get_string('footer','data').'</label></div>';
+        echo '<div align="center"><label for="edit-listtemplatefooter">'.get_string('footer','data').'</label></div>';
         print_textarea($usehtmleditor, 10, 72, 0, 0, 'listtemplatefooter', $data->listtemplatefooter);
         echo '</td>';
         echo '</tr>';
@@ -264,7 +264,7 @@
         echo '<tr>';
         echo '<td>&nbsp;</td>';
         echo '<td>';
-        echo '<div align="center"><label for="id_rsstitletemplate">'.get_string('rsstitletemplate','data').'</label></div>';
+        echo '<div align="center"><label for="edit-rsstitletemplate">'.get_string('rsstitletemplate','data').'</label></div>';
         print_textarea($usehtmleditor, 10, 72, 0, 0, 'rsstitletemplate', $data->rsstitletemplate);
         echo '</td>';
         echo '</tr>';
