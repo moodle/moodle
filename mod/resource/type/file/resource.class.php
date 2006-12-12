@@ -186,7 +186,7 @@ function update_instance($resource) {
 * @param    CFG     global object
 */
 function display() {
-    global $CFG, $THEME;
+    global $CFG, $THEME, $USER;
 
 /// Set up generic stuff first, including checking for access
     parent::display();
@@ -349,7 +349,7 @@ function display() {
     /// Now check whether we need to display a frameset
 
     $frameset = optional_param( 'frameset','' );
-    if (empty($frameset) and !$embedded and !$inpopup and ($resource->options == "frame")) {
+    if (empty($frameset) and !$embedded and !$inpopup and ($resource->options == "frame") and !$USER->screenreader) {
         @header('Content-Type: text/html; charset=utf-8');
         echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
         echo "<html dir=\"ltr\">\n";
@@ -357,11 +357,11 @@ function display() {
         echo '<meta http-equiv="content-type" content="text/html; charset=utf-8" />';
         echo "<title>{$course->shortname}: ".strip_tags(format_string($resource->name,true))."</title></head>\n";
         echo "<frameset rows=\"$CFG->resource_framesize,*\">";
-        echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;frameset=top\" />";
+        echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;frameset=top\" title=\"".get_string('modulename','resource')."\"/>";
         if (!empty($localpath)) {  // Show it like this so we interpose some HTML
-            echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;inpopup=true\" />";
+            echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;inpopup=true\" title=\"".get_string('modulename','resource')."\"/>";
         } else {
-            echo "<frame src=\"$fullurl\" />";
+            echo "<frame src=\"$fullurl\" title=\"".get_string('modulename','resource')."\"/>";
         }
         echo "</frameset>";
         echo "</html>";

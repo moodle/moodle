@@ -549,7 +549,7 @@ class resource_ims extends resource_base {
         }
         
     /// prints iframe filled with $fullurl
-        echo "<iframe id=\"".$contentframe."\" name=\"".$contentframe."\" src=\"{$fullurl}\">Your browser does not support inline frames or is currently configured not to display inline frames. Content can be viewed at {$fullurl}</iframe>"; //Content frame
+        echo "<iframe id=\"".$contentframe."\" name=\"".$contentframe."\" src=\"{$fullurl}\" title=\"".get_string('modulename','resource')."\">Your browser does not support inline frames or is currently configured not to display inline frames. Content can be viewed at {$fullurl}</iframe>"; //Content frame
         echo '</div>';
     }
 
