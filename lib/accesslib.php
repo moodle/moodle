@@ -2153,7 +2153,7 @@ function load_capability_def($component) {
     $capabilities = array();
 
     if (file_exists($defpath)) {
-        require_once($defpath);
+        require($defpath);
         $capabilities = ${$varprefix.'_capabilities'};
     }
     return $capabilities;
