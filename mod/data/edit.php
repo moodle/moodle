@@ -276,6 +276,8 @@
             $field = data_get_field($eachfield, $data);
             $patterns[]="[[".$field->field->name."]]";
             $replacements[] = $field->display_add_field($rid);
+            $patterns[]="[[".$field->field->name."#id]]";
+            $replacements[] = 'field_'.$field->field->id;
         }
         $newtext = str_ireplace($patterns, $replacements, $data->{$mode});
 

@@ -204,6 +204,14 @@
             echo '<option value="[['.$field->name.']]" title="'.$field->description.'">'.$field->name.' - [['.$field->name.']]</option>';
         }
         echo '</optgroup>';
+
+        if ($mode == 'addtemplate') {
+            echo '<optgroup label="'.get_string('fieldids', 'data').'">';
+            foreach ($fields as $field) {
+                echo '<option value="[['.$field->name.'#id]]" title="'.$field->description.' id">'.$field->name.' id - [['.$field->name.'#id]]</option>';
+            }
+            echo '</optgroup>';
+        }
         
         // Print special tags. fix for MDL-7031
         if ($mode != 'addtemplate') {

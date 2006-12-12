@@ -88,6 +88,7 @@ $string['fieldmappings'] = 'Field Mappings';
 $string['fieldname'] = 'Field name';
 $string['fieldoptions'] = 'Options (one per line)';
 $string['fields'] = 'Fields';
+$string['fieldids'] = 'Field ids';
 $string['fieldupdated'] = 'Field updated';
 $string['fieldwidth'] = 'Width';
 $string['fieldwidthlistview'] = 'Width in list view';
