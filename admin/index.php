@@ -183,7 +183,8 @@
                                                    'guestloginbutton' => 1,
                                                    'style' => 'default',
                                                    'template' => 'default',
-                                                   'theme' => 'standardwhite'));
+                                                   'theme' => 'standardwhite',
+                                                   'filter_multilang_converted' => 1));
 
             notify($strdatabasesuccess, "green");
         } else {
@@ -499,6 +500,11 @@
         $strinstallation = get_string('installation', 'install');
         $helpbutton = helpbutton('install', $strinstallation, 'moodle', true, false, '', true);
         print_simple_box(get_string('cronwarning', 'admin')."&nbsp;".$helpbutton, 'center', '60%');
+    }
+
+/// Print multilang upgrade notice if needed
+    if (empty($CFG->filter_multilang_converted)) {
+        print_simple_box(get_string('multilangupgradenotice', 'admin'), 'center', '60%');
     }
 
 /// Alert if we are currently in maintenance mode

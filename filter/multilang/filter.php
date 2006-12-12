@@ -23,29 +23,38 @@
 ///////////////////////////////////////////////////////////////////////////
 
 // Given XML multilinguage text, return relevant text according to
-// current language.  i.e.=
-//   - look for lang sections in the code.
+// current language:
+//   - look for multilang blocks in the text.
 //   - if there exists texts in the currently active language, print them.
 //   - else, if there exists texts in the current parent language, print them.
 //   - else, print the first language in the text.
 // Please note that English texts are not used as default anymore!
 //
-// This is an improved version of the original multilang filter by Gaetan Frenoy. 
-// It should be 100% compatible with the original one. Some new features are:
-//   - Supports a new "short" syntax to make things easier. Simply use:
-//         <span lang="XX">
-//   - Needs less resources and executes faster.
-//   - Allows any type of content to be used. No restrictions at all!
+// This version is based on original multilang filter by Gaetan Frenoy,
+// rewritten by Eloy and skodak.
+//
+// Following new syntax is not compatible with old one:
+//   <span lang="XX" class="multilang">one lang</span><span lang="YY" class="multilang">another language</span>
 
 function multilang_filter($courseid, $text) {
+    global $CFG;
 
     // [pj] I don't know about you but I find this new implementation funny :P
     // [skodak] I was laughing while rewriting it ;-)
-    $search = '/(<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.+?<\/(?:lang|span)>\s*)+/is';
+
+    if (empty($CFG->filter_multilang_force_old) and !empty($CFG->filter_multilang_converted)) {
+        // new syntax
+        $search = '/(<span lang="[a-zA-Z0-9_-]+" class="multilang">.+?<\/span>)(\s*<span lang="[a-zA-Z0-9_-]+" class="multilang">.+?<\/span>)+/is';
+    } else {
+        // old syntax
+        $search = '/(<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.+?<\/(?:lang|span)>)(\s*<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.+?<\/(?:lang|span)>)+/is';
+    }
     return preg_replace_callback($search, 'multilang_filter_impl', $text);
 }
 
 function multilang_filter_impl($langblock) {
+    global $CFG;
+
     $mylang = str_replace('_utf8', '', current_language());
     static $parentcache;
     if (!isset($parentcache)) {
@@ -58,7 +67,14 @@ function multilang_filter_impl($langblock) {
         $parentlang = $parentcache[$mylang];
     }
 
-    $searchtosplit = '/<(?:lang|span) lang="([a-zA-Z0-9_-]*)".*?>(.+?)<\/(?:lang|span)>/is';
+    if (empty($CFG->filter_multilang_force_old) and !empty($CFG->filter_multilang_converted)) {
+        // new syntax
+        $searchtosplit = '/<span lang="([a-zA-Z0-9_-]+)" class="multilang">(.+?)<\/span>/is';
+    } else {
+        // old syntax
+        $searchtosplit = '/<(?:lang|span) lang="([a-zA-Z0-9_-]*)".*?>(.+?)<\/(?:lang|span)>/is';
+    }
+
     preg_match_all($searchtosplit, $langblock[0], $rawlanglist);
 
     $langlist = array();

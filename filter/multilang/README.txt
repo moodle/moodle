@@ -6,7 +6,7 @@ To Install it:
 To Use it:
     - Create your contents in multiple languages.
     - Enclose every language content between:
-        <span lang="XX">your_content_here</span>
+        <span lang="XX" class="multilang">your_content_here</span><span lang="YY" class="multilang">your_content_other_lang</span>
     - Test it (by changing your language).
 
 How it works:
@@ -23,9 +23,9 @@ Definition of "lang block":
 
 One example in action:
     - This text:
-        <span lang="en">Hello!</span><span lang="es">Hola!</span>
+        <span lang="en" class="multilang">Hello!</span><span lang="es" class="multilang">Hola!</span>
         This text is common for every language because it's out from any lang block.
-        <span lang="en">Bye!</span><span lang="it">Ciao!</span>
+        <span lang="en" class="multilang">Bye!</span><span lang="it" class="multilang">Ciao!</span>
 
     - Will print, if current language is English:
         Hello!
@@ -41,3 +41,7 @@ One example in action:
 Ciao, Eloy :-)
 stronk7@moodle.org
 2005-11-16
+
+Syntax was changed in 1.8, the conversion of existing text is done from admin/multilangupgrade.php
+Ciao, skodak :-)
+2006-12-11
