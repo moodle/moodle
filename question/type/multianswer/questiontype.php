@@ -311,7 +311,12 @@ class embedded_cloze_qtype extends default_questiontype {
                                 ? ' selected="selected" ' : '';
                         $outputoptions .= "<option value=\"$mcanswer->id\" $selected>$mcanswer->answer</option>";
                     }
-                   echo "<select $popup $disabled $style name=\"$inputname\">";
+                   // In the next line, $readonly is invalid HTML, but it works in
+                   // all browsers. $disabled would be valid, but then the JS for
+                   // displaying the feedback does not work. Of course, we should
+                   // not be relying on JS (for accessibility reasons), but that is
+                   //a bigger problem.
+                   echo "<select $popup $readonly $style name=\"$inputname\">";
                    echo $outputoptions;
                    echo '</select>';
                    if (!empty($feedback) && $USER->screenreader) {
