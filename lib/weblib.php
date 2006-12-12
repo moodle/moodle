@@ -837,7 +837,9 @@ function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '',
         $name = 'unnamed';
     }
 
-    if (!$alt) {
+    if ($alt) {
+        $alt = strip_tags($alt);
+    } else {
         $alt = 'checkbox';
     }
 
@@ -2118,8 +2120,9 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     }
     @header('Accept-Ranges: none');
 
-    if ($usexml) {       // Added by Gustav Delius / Mad Alex for MathML output
-                         // Modified by Julian Sedding
+    if (empty($usexml)) {       
+        $direction =  ' xmlns="http://www.w3.org/1999/xhtml"'. $direction;  // See debug_header
+    } else {
         $currentlanguage = current_language();
         $mathplayer = preg_match("/MathPlayer/i", $_SERVER['HTTP_USER_AGENT']);
         if(!$mathplayer) {
@@ -2179,6 +2182,10 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     $output = ob_get_contents();
     ob_end_clean();
 
+    if (debugging(NULL, DEBUG_DEVELOPER)) {   // In developer debugging mode, convert page to XHTML strict
+        $output = debug_header($output);
+    }
+
     if (!empty($CFG->messaging)) {
         $output .= message_popup_window();
     }
@@ -2189,6 +2196,56 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         echo $output;
     }
 }
+
+/**
+ * Debugging aid: serve page as 'application/xhtml+xml' where possible,
+ *     and substitute the XHTML strict document type.
+ *     Note, requires the 'xmlns' fix in function print_header above.
+ *     See:  http://tracker.moodle.org/browse/MDL-7883
+ * TODO:
+ */
+function debug_header($output) {
+    global $CFG;
+    $strict = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
+    $xsl = '/lib/xhtml.xsl';
+
+    if (!headers_sent()) {
+        $ctype = 'Content-Type: ';
+        $prolog= "<?xml version='1.0' encoding='utf-8'?>\n";
+
+        if (isset($_SERVER['HTTP_ACCEPT']) 
+            && false !== strpos($_SERVER['HTTP_ACCEPT'], 'application/xhtml+xml')) {
+            //|| false !== strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') //Safari "Entity 'copy' not defined".
+            // Firefox et al.
+            $ctype .= 'application/xhtml+xml';
+            $prolog .= "<!--\n  DEBUG: $ctype \n-->\n";
+
+        } else if (file_exists($CFG->dirroot.$xsl)
+            && preg_match('/MSIE.*Windows NT/', $_SERVER['HTTP_USER_AGENT'])) {
+            // XSL hack for IE 5+ on Windows.
+            //$www_xsl = preg_replace('/(http:\/\/.+?\/).*/', '', $CFG->wwwroot) .$xsl;
+            $www_xsl = $CFG->wwwroot .$xsl;
+            $ctype .= 'application/xml';
+            $prolog .= "<?xml-stylesheet type='text/xsl' href='$www_xsl'?>\n";
+            $prolog .= "<!--\n  DEBUG: $ctype \n-->\n";
+
+        } else {
+            //ELSE: Mac/IE, old/non-XML browsers.
+            $ctype .= 'text/html';
+            $prolog = '';
+        }
+        @header($ctype.'; charset=utf-8');
+        $output = $prolog . $output;
+
+        // Test parser error-handling.
+        if (isset($_GET['error'])) {
+            $output .= "__ TEST: XML well-formed error < __\n";
+        }
+    }
+    return $output;
+}
+
+
 
 /**
  * This version of print_header is simpler because the course name does not have to be
