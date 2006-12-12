@@ -1,41 +1,39 @@
-<table width="100%">
+<table width="100%" cellpadding="5">
     <tr>
-        <td class="c0"><?php echo get_string('fieldname', 'data'); ?>:</td>
-        <td class="c1"><input class="fieldname" type="text" name="name" id="name" value="<?php echo($this->field->name); ?>" /></td>
+        <td class="c0"><label for="name"><?php echo get_string('fieldname', 'data'); ?></label></td>
+        <td class="c1"><input class="fieldname" type="text" name="name" id="name" value="<?php p($this->field->name); ?>" /></td>
     </tr>
     <tr>
-        <td class="c0"><?php echo get_string('fielddescription', 'data'); ?>:</td>
+        <td class="c0"><label for="description"><?php echo get_string('fielddescription', 'data'); ?></label></td>
         <td class="c1">
             <input class="fielddescription" type="text" name="description" id="description"
-            value="<?php echo($this->field->description); ?>" />
+            value="<?php p($this->field->description); ?>" />
         </td>
     </tr>
     <tr>
-        <td class="c0">
-            <?php echo get_string('fieldwidth', 'data'); ?>:
-        </td>
+        <td class="c0"><label for="param2">
+            <?php echo get_string('fieldwidth', 'data'); ?></label></td>
         <td class="c1">
-            <input style="width:50px;" type="text" name="param2" id="width" value=
+            <input style="width:50px;" type="text" name="param2" id="param2" value=
             <?php
                 if (empty($this->field->param2)) {
-                    echo '"60"';
+                    echo('"60"');
                 } else {
-                    echo('"' . $this->field->param2 . '"');
+                    echo '"'.s($this->field->param2).'"';
                 }
             ?> /> <?php echo get_string('columns', 'data'); ?>
         </td>
     </tr>
     <tr>
-        <td class="c0">
-            <?php echo get_string('fieldheight', 'data'); ?>:
-        </td>
+        <td class="c0"><label for="param3">
+            <?php echo get_string('fieldheight', 'data'); ?></label></td>
         <td class="c1">
-            <input style="width:50px;" type="text" name="param3" id="height" value=
+            <input style="width:50px;" type="text" name="param3" id="param3" value=
             <?php
                 if (empty($this->field->param3)) {
-                    echo '"35"';
+                    echo('"35"');
                 } else {
-                    echo('"' . $this->field->param3 . '"');
+                    echo '"'.s($this->field->param2).'"';
                 }
             ?> /> <?php echo get_string('rows', 'data'); ?>
         </td>

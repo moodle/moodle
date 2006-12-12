@@ -40,12 +40,14 @@ class data_field_radiobutton extends data_field_base {
             $content = '';
         }
 
-        $str = '<div title="'.$this->field->description.'">';
-        
+        $str = '<div title="'.s($this->field->description).'">';
+        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
+ 
+        $i = 0;
         foreach (explode("\n",$this->field->param1) as $radio) {
             $radio = trim($radio);
-            $str .= '<input type="radio" name="field_' . $this->field->id . '" ';
-            $str .= 'value="' . $radio . '" ';
+            $str .= '<input type="radio" id="field_'.$this->field->id.'_'.$i.'" name="field_' . $this->field->id . '" ';
+            $str .= 'value="' . s($radio) . '" ';
 
             if ($content == $radio) {
                 // Selected by user.
@@ -54,8 +56,10 @@ class data_field_radiobutton extends data_field_base {
                 $str .= '/>';
             }
 
-            $str .= $radio . '<br />';
+            $str .= '<label for="field_'.$this->field->id.'_'.$i.'">'.$radio.'</label><br />';
+            $i++;
         }
+        $str .= '</fieldset>'; 
         $str .= '</div>';
         return $str;
     }

@@ -292,7 +292,7 @@ echo '<div align="center">';
 echo '<table class="presets" cellpadding="5">';
 echo '<tr><td valign="top" colspan="2" align="center"><h3>'.$strexport.'</h3></td></tr>';
 
-echo '<tr><td><label for="zipexport">'.$strexportaszip.'</label>';
+echo '<tr><td><label>'.$strexportaszip.'</label>';
 helpbutton('exportzip', '', 'data');
 echo '</td><td>';
 $options = new object();
@@ -302,7 +302,7 @@ $options->sesskey = sesskey();
 print_single_button('preset.php', $options, $strexport, 'post');
 echo '</td></tr>';
 
-echo '<tr><td><label for="zipexport">'.$strsaveaspreset.'</label>';
+echo '<tr><td><label>'.$strsaveaspreset.'</label>';
 helpbutton('savepreset', '', 'data');
 echo '</td><td>';
 $options = new object();

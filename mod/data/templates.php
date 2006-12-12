@@ -208,6 +208,9 @@
         if ($mode == 'addtemplate') {
             echo '<optgroup label="'.get_string('fieldids', 'data').'">';
             foreach ($fields as $field) {
+                if (in_array($field->type, array('picture', 'checkbox', 'date', 'latlong', 'radiobutton'))) {
+                    continue; //ids are not usable for these composed items
+                }
                 echo '<option value="[['.$field->name.'#id]]" title="'.$field->description.' id">'.$field->name.' id - [['.$field->name.'#id]]</option>';
             }
             echo '</optgroup>';

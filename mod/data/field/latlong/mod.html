@@ -1,16 +1,16 @@
-<table width="100%">
+<table width="100%" cellpadding="5">
     <tr>
-        <td class="c0"><?php echo get_string('fieldname', 'data'); ?>:</td>
-        <td class="c1"><input class="fieldname" type="text" name="name" id="name" value = "<?php echo($this->field->name); ?>" /></td>
+        <td class="c0"><label for="name"><?php echo get_string('fieldname', 'data'); ?></label></td>
+        <td class="c1"><input class="fieldname" type="text" name="name" id="name" value="<?php p($this->field->name); ?>" /></td>
     </tr>
     <tr>
-        <td class="c0"><?php echo get_string('fielddescription', 'data'); ?>:</td>
-        <td class="c1"><input class="fielddescription" type="text" name="description" id="description" value = "<?php echo ($this->field->description);?>" /></td>
+        <td class="c0"><label for="description"><?php echo get_string('fielddescription', 'data'); ?></label></td>
+        <td class="c1"><input class="fielddescription" type="text" name="description" id="description" value="<?php p ($this->field->description);?>" /></td>
     </tr>
     <tr>
-        <td class="c0"><?php echo get_string('latlonglinkservicesdisplayed', 'data'); ?>:</td>
+        <td class="c0"><label for="param1"><?php echo get_string('latlonglinkservicesdisplayed', 'data'); ?></label></td>
         <td class="c1">
-          <select class="linkservicesdisplayed" name="param1[]" id="param1" multiple="multiple" size="<?php echo sizeof($this->linkoutservices) ?>">
+          <select class="linkservicesdisplayed" name="param1[]" id="param1" multiple="multiple" size="<?php p(sizeof($this->linkoutservices)); ?>">
             <?php
             $serviceschosen = explode(',', htmlspecialchars($this->field->param1));
             foreach($this->linkoutservices as $servicename=>$serviceurl) {
@@ -22,7 +22,7 @@
         </td>
     </tr>
     <tr>
-        <td class="c0"><?php echo get_string('latlongkmllabelling', 'data'); ?>:</td>
+        <td class="c0"><label for="param2"><?php echo get_string('latlongkmllabelling', 'data'); ?></label></td>
         <td class="c1">
           <select class="kmllabelling" name="param2" id="param2">
             <option value="-1"<?php if($this->field->param2==-1) echo ' selected="selected"' ?>><?php echo get_string('entry', 'data') ?> #</option>

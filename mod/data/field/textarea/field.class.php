@@ -72,13 +72,13 @@ class data_field_textarea extends data_field_base {
     
     function gen_textarea($usehtmleditor, $text='') {
         return print_textarea($usehtmleditor, $this->field->param3, $this->field->param2, 
-                              '', '', 'field_'.$this->field->id, $text, '', true);
+                              '', '', 'field_'.$this->field->id, $text, '', true, 'field_' . $this->field->id);
     }
     
     
     function print_after_form() {
         if (can_use_richtext_editor()) {
-            use_html_editor('field_' . $this->field->id);
+            use_html_editor('field_' . $this->field->id, '', 'field_' . $this->field->id);
         }
     }
     

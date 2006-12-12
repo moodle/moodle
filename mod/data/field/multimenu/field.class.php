@@ -40,12 +40,12 @@ class data_field_multimenu extends data_field_base {
             $content = array();
         }
 
-        $str = '<div title="'.$this->field->description.'">';
+        $str = '<div title="'.s($this->field->description).'">';
         $str .= '<select name="field_' . $this->field->id . '[]" id="field_' . $this->field->id . '" multiple="multiple">';
         
         foreach (explode("\n",$this->field->param1) as $option) {
             $option = trim($option);
-            $str .= '<option value="' . $option . '"';
+            $str .= '<option value="' . s($option) . '"';
 
             if (array_search($option, $content) !== false) {
                 // Selected by user.

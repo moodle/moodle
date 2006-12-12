@@ -64,11 +64,13 @@ class data_field_latlong extends data_field_base {
             }
         }
 
-        $str = '<div title="'.$this->field->description.'">';
+        $str = '<div title="'.s($this->field->description).'">';
+        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>'; 
         $str .= '<table><tr><td align="right">';
-        $str .= '<label for="field_'.$this->field->id.'_0">' . get_string('latitude', 'data') . '</label>:</td><td><input type="text" name="field_'.$this->field->id.'_0" id="field_'.$this->field->id.'_0" value="'.$lat.'" size="10" />°N</td></tr>';
-        $str .= '<tr><td align="right"><label for="field_'.$this->field->id.'_1">' . get_string('longitude', 'data') . '</label>:</td><td><input type="text" name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="'.$long.'" size="10" />°E</td></tr>';
+        $str .= '<label for="field_'.$this->field->id.'_0">' . get_string('latitude', 'data') . '</label></td><td><input type="text" name="field_'.$this->field->id.'_0" id="field_'.$this->field->id.'_0" value="'.s($lat).'" size="10" />°N</td></tr>';
+        $str .= '<tr><td align="right"><label for="field_'.$this->field->id.'_1">' . get_string('longitude', 'data') . '</label></td><td><input type="text" name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="'.s($long).'" size="10" />°E</td></tr>';
         $str .= '</table>';
+        $str .= '</fieldset>'; 
         $str .= '</div>';
         
         return $str;

@@ -57,15 +57,17 @@ class data_field_picture extends data_field_file {
             }
         }
 
-        $str = '<div title="'.$this->field->description.'">';
+        $str = '<div title="'.s($this->field->description).'">';
+        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>'; 
         $str .= '<input type="hidden" name ="field_'.$this->field->id.'_file" id="field_'.$this->field->id.'_file"  value="fakevalue" />';
-        $str .= get_string('picture','data'). ': <input type="file" name ="field_'.$this->field->id.'" id="field_'.$this->field->id.'" /><br />';
-        $str .= get_string('optionaldescription','data') .': <input type="text" name="field_'
-                .$this->field->id.'_filename" id="field_'.$this->field->id.'_filename" value="'.$description.'" /><br />';
-        $str .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.$this->field->param3.'" />';
+        $str .= '<label for="field_'.$this->field->id.'">'.get_string('picture','data'). '</label>&nbsp;<input type="file" name ="field_'.$this->field->id.'" id="field_'.$this->field->id.'" /><br />';
+        $str .= '<label for="field_'.$this->field->id.'_filename">'.get_string('optionaldescription','data') .'</label>&nbsp;<input type="text" name="field_'
+                .$this->field->id.'_filename" id="field_'.$this->field->id.'_filename" value="'.s($description).'" /><br />';
+        $str .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.s($this->field->param3).'" />';
         if ($filepath){
-            $str .= '<img width="'.$this->previewwidth.'" height="'.$this->previewheight.'" src="'.$filepath.'" alt="" />';
+            $str .= '<img width="'.s($this->previewwidth).'" height="'.s($this->previewheight).'" src="'.$filepath.'" alt="" />';
         }
+        $str .= '</fieldset>'; 
         $str .= '</div>';
         return $str;
     }
@@ -99,14 +101,14 @@ class data_field_picture extends data_field_file {
             }
 
             if ($template == 'listtemplate') {
-                $width = $this->field->param4 ? ' width="'.$this->field->param4.'" ' : ' ';
-                $height = $this->field->param5 ? ' height="'.$this->field->param5.'" ' : ' ';
+                $width = $this->field->param4 ? ' width="'.s($this->field->param4).'" ' : ' ';
+                $height = $this->field->param5 ? ' height="'.s($this->field->param5).'" ' : ' ';
                 $str = '<a href="view.php?d='.$this->field->dataid.'&amp;rid='.$recordid.'"><img '.
-                     $width.$height.' src="'.$thumbnailsource.'" alt="'.$alt.'" title="'.$title.'" border="0" /></a>';
+                     $width.$height.' src="'.$thumbnailsource.'" alt="'.s($alt).'" title="'.s($title).'" border="0" /></a>';
             } else {
-                $width = $this->field->param1 ? ' width="'.$this->field->param1.'" ':' ';
-                $height = $this->field->param2 ? ' height="'.$this->field->param2.'" ':' ';
-                $str = '<a href="'.$source.'"><img '.$width.$height.' src="'.$source.'" alt="'.$alt.'" title="'.$title.'" border="0"/></a>';
+                $width = $this->field->param1 ? ' width="'.s($this->field->param1).'" ':' ';
+                $height = $this->field->param2 ? ' height="'.s($this->field->param2).'" ':' ';
+                $str = '<a href="'.$source.'"><img '.$width.$height.' src="'.$source.'" alt="'.s($alt).'" title="'.s($title).'" border="0"/></a>';
             }
             return $str;
         }

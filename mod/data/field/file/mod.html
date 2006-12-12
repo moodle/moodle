@@ -1,10 +1,21 @@
-<table width="100%">
+<table width="100%" cellpadding="5">
     <tr>
-        <td class="c0"> <?php echo get_string('fieldname', 'data'); ?>: </td>
-        <td class="c1"> <input class="fieldname" type="text" name="name" id="name" value = "<?php echo($this->field->name); ?>" /></td>
+        <td class="c0"><label for="name"><?php echo get_string('fieldname', 'data'); ?></label></td>
+        <td class="c1"><input class="fieldname" type="text" name="name" id="name" value="<?php p($this->field->name); ?>" /></td>
     </tr>
     <tr>
-        <td class="c0"> <?php echo get_string('fielddescription', 'data'); ?>:</td>
-        <td class="c1"><input class="fielddescription" type="text" name="description" id="description" value = "<?php echo ($this->field->description);?>" /></td>
+        <td class="c0"><label for="description"><?php echo get_string('fielddescription', 'data'); ?></label></td>
+        <td class="c1"><input class="fielddescription" type="text" name="description" id="description" value="<?php p($this->field->description);?>" /></td>
+    </tr>
+    <tr>
+        <td class="c0"><label for="param3">
+            <?php echo get_string('maxsize', 'data'); ?></label></td>
+        <td class="c1">
+            <?php
+                $course->maxbytes = get_field('course', 'maxbytes', 'id', $this->data->course);
+                $choices = get_max_upload_sizes($CFG->maxbytes, $course->maxbytes);
+                choose_from_menu($choices, 'param3', $this->field->param3, '', '', 0, false, false, 0, 'param3');
+            ?>
+        </td>
     </tr>
 </table>

@@ -198,7 +198,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
         echo '<div align="center">';
         echo '<input type="submit" value="'.$savebutton.'" />'."\n";
         echo '<input type="submit" name="cancel" value="'.get_string('cancel').'" />'."\n";
-        echo '</div">';
+        echo '</div>';
 
         echo '</form>';
 
@@ -331,12 +331,20 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
     if ($fields = get_records('data_fields', 'dataid', $data->id, 'id')) {
 
         $str = '<div align="center">';
-        $str .= '<table>';
+        $str .= '<table cellpadding="5">';
 
         foreach ($fields as $field) {
 
             $str .= '<tr><td valign="top" align="right">';
-            $str .= $field->name.':';
+            if ($template == 'addtemplate') {
+                $str .= '<label';
+                if (!in_array($field->type, array('picture', 'checkbox', 'date', 'latlong', 'radiobutton'))) {
+                    $str .= ' for="[['.$field->name.'#id]]"';
+                }
+                $str .= '>'.$field->name.'</label>';
+            } else {
+                $str .= $field->name.': ';
+            }
             $str .= '</td>';
 
             $str .='<td>';
@@ -351,7 +359,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
 
         }
         if ($template != 'addtemplate' and $template != 'rsstemplate') {    //if not adding, we put tags in there
-            $str .= '<tr><td align="center" colspan="2">##Edit##  ##More##  ##Delete##  ##Approve##</td></tr>';
+            $str .= '<tr><td align="center" colspan="2">##edit##  ##more##  ##delete##  ##approve##</td></tr>';
         }
 
         $str .= '</table>';
@@ -827,35 +835,35 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
         }
 
     /// Replacing special tags (##Edit##, ##Delete##, ##More##)
-        $patterns[]='##Edit##';
-        $patterns[]='##Delete##';
+        $patterns[]='##edit##';
+        $patterns[]='##delete##';
         if (has_capability('mod/data:manageentries', $context) or data_isowner($record->id)) {
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/edit.php?d='
-                             .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.get_string('edit').'" /></a>';
+                             .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>';
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='
-                             .$data->id.'&amp;delete='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.get_string('delete').'" /></a>';
+                             .$data->id.'&amp;delete='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>';
         } else {
             $replacement[] = '';
             $replacement[] = '';
         }
-        $patterns[]='##More##';
-        $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'"><img src="'.$CFG->pixpath.'/i/search.gif" height="11" width="11" border="0" alt="'.get_string('more', 'data').'" /></a>';
+        $patterns[]='##more##';
+        $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'"><img src="'.$CFG->pixpath.'/i/search.gif" height="11" width="11" border="0" alt="'.get_string('more', 'data').'" title="'.get_string('more', 'data').'" /></a>';
 
-        $patterns[]='##MoreURL##';
+        $patterns[]='##moreurl##';
         $replacement[] = $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id;
 
-        $patterns[]='##User##';
+        $patterns[]='##user##';
         $replacement[] = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$record->userid.
                                '&amp;course='.$data->course.'">'.fullname($record).'</a>';
 
-        $patterns[]='##Approve##';
+        $patterns[]='##approve##';
         if (has_capability('mod/data:approve', $context) && ($data->approval) && (!$record->approved)){
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;approve='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/i/approve.gif" height="11" width="11" border="0" alt="'.get_string('approve').'" /></a>';
         } else {
             $replacement[] = '';
         }
 
-        $patterns[]='##Comments##';
+        $patterns[]='##comments##';
         if (($template == 'listtemplate') && ($data->comments)) {
             $comments = count_records('data_comments','recordid',$record->id);
             $replacement[] = '<a href="view.php?rid='.$record->id.'#comments">'.get_string('commentsn','data', $comments).'</a>';

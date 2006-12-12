@@ -39,7 +39,7 @@ class data_field_menu extends data_field_base {
             $content = '';
         }
 
-        $str = '<div title="'.$this->field->description.'">';
+        $str = '<div title="'.s($this->field->description).'">';
 
         $rawoptions = explode("\n",$this->field->param1);
         foreach ($rawoptions as $option) {
@@ -50,7 +50,7 @@ class data_field_menu extends data_field_base {
         }
 
         $str .= choose_from_menu($options, 'field_'.$this->field->id, $content, 
-                                 get_string('menuchoose', 'data'), '', '', true, false);
+                                 get_string('menuchoose', 'data'), '', '', true, false, 0, 'field_'.$this->field->id);
 
         $str .= '</div>';
 

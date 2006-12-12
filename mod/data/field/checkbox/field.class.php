@@ -40,26 +40,30 @@ class data_field_checkbox extends data_field_base {
             $content = explode('##', $content);
         }
 
-        $str = '<div title="'.$this->field->description.'">';
-        
+        $str = '<div title="'.s($this->field->description).'">';
+        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
+ 
+        $i = 0;
         foreach (explode("\n", $this->field->param1) as $checkbox) {
             $checkbox = trim($checkbox);
-            $str .= '<input type="checkbox" name="field_' . $this->field->id . '[]" ';
-            $str .= 'value="' . $checkbox . '" ';
+            $str .= '<input type="checkbox" id="field_'.$this->field->id.'_'.$i.'" name="field_' . $this->field->id . '[]" ';
+            $str .= 'value="' . s($checkbox) . '" ';
             
             if (array_search($checkbox, $content) !== false) {
                 $str .= 'checked />';
             } else {
                 $str .= '/>';
             }
-            $str .= $checkbox . '<br />';
+            $str .= '<label for="field_'.$this->field->id.'_'.$i.'">'.$checkbox.'</label><br />';
+            $i++;
         }
+        $str .= '</fieldset>'; 
         $str .= '</div>';
         return $str;
     }
 
     function update_content($recordid, $value, $name='') {
-        $content = new object;
+        $content = new object();
         $content->fieldid = $this->field->id;
         $content->recordid = $recordid;
         $content->content = $this->format_data_field_checkbox_content($value);
