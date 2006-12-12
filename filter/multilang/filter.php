@@ -44,10 +44,10 @@ function multilang_filter($courseid, $text) {
 
     if (empty($CFG->filter_multilang_force_old) and !empty($CFG->filter_multilang_converted)) {
         // new syntax
-        $search = '/(<span lang="[a-zA-Z0-9_-]+" class="multilang">.+?<\/span>)(\s*<span lang="[a-zA-Z0-9_-]+" class="multilang">.+?<\/span>)+/is';
+        $search = '/(<span lang="[a-zA-Z0-9_-]+" class="multilang">.*?<\/span>)(\s*<span lang="[a-zA-Z0-9_-]+" class="multilang">.*?<\/span>)+/is';
     } else {
         // old syntax
-        $search = '/(<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.+?<\/(?:lang|span)>)(\s*<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.+?<\/(?:lang|span)>)+/is';
+        $search = '/(<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.*?<\/(?:lang|span)>)(\s*<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.*?<\/(?:lang|span)>)+/is';
     }
     return preg_replace_callback($search, 'multilang_filter_impl', $text);
 }
@@ -69,10 +69,10 @@ function multilang_filter_impl($langblock) {
 
     if (empty($CFG->filter_multilang_force_old) and !empty($CFG->filter_multilang_converted)) {
         // new syntax
-        $searchtosplit = '/<span lang="([a-zA-Z0-9_-]+)" class="multilang">(.+?)<\/span>/is';
+        $searchtosplit = '/<span lang="([a-zA-Z0-9_-]+)" class="multilang">(.*?)<\/span>/is';
     } else {
         // old syntax
-        $searchtosplit = '/<(?:lang|span) lang="([a-zA-Z0-9_-]*)".*?>(.+?)<\/(?:lang|span)>/is';
+        $searchtosplit = '/<(?:lang|span) lang="([a-zA-Z0-9_-]*)".*?>(.*?)<\/(?:lang|span)>/is';
     }
 
     preg_match_all($searchtosplit, $langblock[0], $rawlanglist);
