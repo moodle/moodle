@@ -161,7 +161,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
             $content = '';
         }
 
-        $str = '<div title="'.$this->field->description.'">';
+        $str = '<div title="'.s($this->field->description).'">';
         $str .= '<input style="width:300px;" type="text" name="field_'.$this->field->id.'" id="field_'.$this->field->id.'" value="'.s($content).'" />';
         $str .= '</div>';
 
@@ -209,6 +209,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
     function display_browse_field($recordid, $template) {
         if ($content = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
             if (isset($content->content)) {
+                $options = new object();
                 if ($this->field->param1 == '1') {  // We are autolinking this field, so disable linking within us
                     //$content->content = '<span class="nolink">'.$content->content.'</span>';
                     //$content->content1 = FORMAT_HTML;
@@ -226,7 +227,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
 
 /// Update the content of one data field in the data_content table
     function update_content($recordid, $value, $name=''){
-        $content = new object;
+        $content = new object();
         $content->fieldid = $this->field->id;
         $content->recordid = $recordid;
         $content->content = clean_param($value, PARAM_NOTAGS);
@@ -361,6 +362,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
         }
 
         if ($update) {
+            $newdata = new object(); 
             $newdata->id = $data->id;
             $newdata->{$template} = $str;
             if (!update_record('data', $newdata)) {
@@ -384,23 +386,29 @@ function data_replace_field_in_templates($data, $searchfieldname, $newfieldname)
     if (!empty($newfieldname)) {
         $prestring = '[[';
         $poststring = ']]';
+        $idpart = '#id';
 
     } else {
         $prestring = '';
         $poststring = '';
+        $idpart = '';
     }
 
+    $newdata = new object();
     $newdata->id = $data->id;
-    $newdata->singletemplate = addslashes(str_replace('[['.$searchfieldname.']]',
+    $newdata->singletemplate = addslashes(str_ireplace('[['.$searchfieldname.']]',
             $prestring.$newfieldname.$poststring, $data->singletemplate));
 
-    $newdata->listtemplate = addslashes(str_replace('[['.$searchfieldname.']]',
+    $newdata->listtemplate = addslashes(str_ireplace('[['.$searchfieldname.']]',
             $prestring.$newfieldname.$poststring, $data->listtemplate));
 
-    $newdata->addtemplate = addslashes(str_replace('[['.$searchfieldname.']]',
+    $newdata->addtemplate = addslashes(str_ireplace('[['.$searchfieldname.']]',
             $prestring.$newfieldname.$poststring, $data->addtemplate));
 
-    $newdata->rsstemplate = addslashes(str_replace('[['.$searchfieldname.']]',
+    $newdata->addtemplate = addslashes(str_ireplace('[['.$searchfieldname.'#id]]',
+            $prestring.$newfieldname.$idpart.$poststring, $data->addtemplate));
+
+    $newdata->rsstemplate = addslashes(str_ireplace('[['.$searchfieldname.']]',
             $prestring.$newfieldname.$poststring, $data->rsstemplate));
 
     return update_record('data', $newdata);
@@ -412,6 +420,7 @@ function data_replace_field_in_templates($data, $searchfieldname, $newfieldname)
  ********************************************************/
 function data_append_new_field_to_templates($data, $newfieldname) {
 
+    $newdata = new object();
     $newdata->id = $data->id;
     $change = false;
 
@@ -549,6 +558,7 @@ function data_add_record($data, $groupid=0){
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
+    $record = new object();
     $record->userid = $USER->id;
     $record->dataid = $data->id;
     $record->groupid = $groupid;
@@ -676,6 +686,7 @@ function data_user_outline($course, $user, $mod, $data) {
     global $CFG;
 
     if ($countrecords = count_records('data_records', 'dataid', $data->id, 'userid', $user->id)) {
+        $result = new object();
         $result->info = get_string('numrecords', 'data', $countrecords);
         $lastrecord   = get_record_sql('SELECT id,timemodified FROM '.$CFG->prefix.'data_records
                                          WHERE dataid = '.$data->id.' AND userid = '.$user->id.'
