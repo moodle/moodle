@@ -1,9 +1,9 @@
 <?php
     if (isset($userdata->status)) {
-        if ($userdata->status == '') {
-            $userdata->entry = 'ab-initio';
+        if ($userdata->status == ''&& (!(($userdata->{'cmi.exit'} == 'suspend') || ($userdata->{'cmi.exit'} == 'logout'))&& !($userdata->{'adl.nav.request'} == 'suspendAll'))||($userdata->{'cmi.exit'} == 'normal')) {      //antes solo llegaba esta línea hasta el &&
+                $userdata->entry = 'ab-initio';
         } else {
-            if (isset($userdata->{'cmi.exit'}) && (($userdata->{'cmi.exit'} == 'suspend') || ($userdata->{'cmi.exit'} == 'logout'))) {
+            if ((isset($userdata->{'cmi.exit'}) && (($userdata->{'cmi.exit'} == 'suspend') || ($userdata->{'cmi.exit'} == 'logout')))||(($userdata->{'adl.nav.request'} == 'suspendAll')&& isset($userdata->{'adl.nav.request'}) )) {
                 $userdata->entry = 'resume';
             } else {
                 $userdata->entry = '';
@@ -446,6 +446,10 @@ function SCORMapi1_3() {
                                                             subobject = eval(subelement);
                                                             subobject.objectives = new Object();
                                                             subobject.objectives._count = 0;
+															subobject.correct_responses = new Object();//añadido
+                                                            subobject.correct_responses._count = 0;//añadido
+															
+                                                            
                                                         } 
                                                     } else {
                                                         errorCode="351";
@@ -458,8 +462,8 @@ function SCORMapi1_3() {
                                                         maxmodel = 'cmi.interactions.Nxxx.type';
                                                         if ((elemlen <= maxmodel.length) && (element.substr(elemlen-4) == 'type') && (errorCode=="0")) { 
                                                             subobject = eval(subelement);
-                                                            subobject.correct_responses = new Object();
-                                                            subobject.correct_responses._count = 0;
+                                                           //subobject.correct_responses = new Object();
+                                                           //subobject.correct_responses._count = 0;
                                                         } 
                                                     }
                                                 }
