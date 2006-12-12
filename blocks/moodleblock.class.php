@@ -273,7 +273,7 @@ class block_base {
 					  'return findParentNode(el, \'DIV\', \'sideblock\'); '.
 					  '}, \''.$CFG->pixpath.'\' ); return false;">'.
 					  '<img src="'.$CFG->pixpath.'/spacer.gif" '.
-					  'id = "togglehide_inst'.$this->instance->id.'"'.
+					  'id = "togglehide_inst'.$this->instance->id.'" '.
 					  'alt="'.get_string('showhideblock','access').'" class="hide-show-image" /></a></div>';
         }
 
