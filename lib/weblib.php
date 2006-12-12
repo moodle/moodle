@@ -3401,7 +3401,7 @@ function print_table($table, $return=false) {
             if (!isset($align[$key])) {
                 $align[$key] = '';
             }
-            $output .= '<th valign="top" '. $align[$key].$size[$key] .' nowrap="nowrap" class="header c'.$key.'">'. $heading .'</th>';
+            $output .= '<th valign="top" '. $align[$key].$size[$key] .' nowrap="nowrap" class="header c'.$key.'" scope="col">'. $heading .'</th>';
         }
         $output .= '</tr>'."\n";
     }
@@ -3527,7 +3527,7 @@ function make_table($table) {
             if (!isset($align[$key])) {
                 $align[$key] = '';
             }
-            $output .= '<th valign="top" '. $align[$key].$size[$key] .' nowrap="nowrap" class="'. $table->class .'header">'.$fontsize.$heading.'</th>';
+            $output .= '<th valign="top" '. $align[$key].$size[$key] .' nowrap="nowrap" class="'. $table->class .'header" scope="col">'.$fontsize.$heading.'</th>';
         }
         $output .= '</tr>'."\n";
     }
