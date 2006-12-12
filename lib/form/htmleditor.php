@@ -43,7 +43,7 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
     function toHtml(){
         if ($this->_options['canUseHtmlEditor'] && !$this->_flagFrozen){
             ob_start();
-            use_html_editor($this->getName());
+            use_html_editor($this->getName(), '', $this->getAttribute('id'));
             $script=ob_get_clean();
         } else {
             $script='';
@@ -60,7 +60,8 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
                                     $this->getName(),
                                     preg_replace("/(\r\n|\n|\r)/", '&#010;',$this->getValue()),
                                     $this->_options['course'],
-                                    true).$script;
+                                    true,
+                                    $this->getAttribute('id')).$script;
         }
     } //end func toHtml
 

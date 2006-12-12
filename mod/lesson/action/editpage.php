@@ -161,7 +161,7 @@
             switch ($page->qtype) {
                 case LESSON_MATCHING:
                     if ($n == 0) {
-                        echo "<tr><td><b><label for=\"id_answer[$n]\">".get_string('correctresponse', 'lesson').":</label></b>\n";
+                        echo "<tr><td><b><label for=\"edit-answer[$n]\">".get_string('correctresponse', 'lesson').":</label></b>\n";
                         if ($flags & LESSON_ANSWER_EDITOR) {
                             echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                                 "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" checked=\"checked\" />";
@@ -177,7 +177,7 @@
                             print_textarea(false, 6, 70, 630, 300, "answer[$n]", $answer->answer);
                         }
                     } elseif ($n == 1) {
-                        echo "<tr><td><b><label for=\"id_answer[$n]\">".get_string('wrongresponse', 'lesson').":</label></b>\n";
+                        echo "<tr><td><b><label for=\"edit-answer[$n]\">".get_string('wrongresponse', 'lesson').":</label></b>\n";
                         if ($flags & LESSON_ANSWER_EDITOR) {
                             echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                                 "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" checked=\"checked\" />";
@@ -194,7 +194,7 @@
                         }
                     } else {
                         $ncorrected = $n - 1;
-                        echo "<tr><td><b><label for=\"id_answer[$n]\">".get_string('answer', 'lesson')." $ncorrected:</label></b>\n";
+                        echo "<tr><td><b><label for=\"edit-answer[$n]\">".get_string('answer', 'lesson')." $ncorrected:</label></b>\n";
                         if ($flags & LESSON_ANSWER_EDITOR) {
                             echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                                 "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" checked=\"checked\" />"; 
@@ -210,7 +210,7 @@
                             print_textarea(false, 6, 70, 630, 300, "answer[$n]", $answer->answer);
                         }
                         echo "</td></tr>\n";
-                        echo "<tr><td><b><label for=\"id_response[$n]\">".get_string('matchesanswer', 'lesson')." $ncorrected:</label></b>\n";
+                        echo "<tr><td><b><label for=\"edit-response[$n]\">".get_string('matchesanswer', 'lesson')." $ncorrected:</label></b>\n";
                         if ($flags & LESSON_RESPONSE_EDITOR) {
                             echo " [<label for=\"responseeditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                                 "<input type=\"checkbox\" id=\"responseeditor[$n]\" name=\"responseeditor[$n]\" value=\"1\" checked=\"checked\" />";
@@ -232,7 +232,7 @@
                 case LESSON_MULTICHOICE:
                 case LESSON_SHORTANSWER:
                 case LESSON_NUMERICAL:                    
-                    echo "<tr><td><b><label for=\"id_answer[$n]\">".get_string('answer', 'lesson')." $nplus1:</label></b>\n";
+                    echo "<tr><td><b><label for=\"edit-answer[$n]\">".get_string('answer', 'lesson')." $nplus1:</label></b>\n";
                     if ($flags & LESSON_ANSWER_EDITOR and $page->qtype != LESSON_SHORTANSWER and $page->qtype != LESSON_NUMERICAL) {
                         echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                             "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" checked=\"checked\" />";
@@ -253,7 +253,7 @@
                         }
                     }
                     echo "</td></tr>\n";
-                    echo "<tr><td><b><label for=\"id_response[$n]\">".get_string('response', 'lesson')." $nplus1:</label></b>\n";
+                    echo "<tr><td><b><label for=\"edit-response[$n]\">".get_string('response', 'lesson')." $nplus1:</label></b>\n";
                     if ($flags & LESSON_RESPONSE_EDITOR) {
                         echo " [<label for=\"responseeditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                             "<input type=\"checkbox\" id=\"responseeditor[$n]\" name=\"responseeditor[$n]\" value=\"1\" checked=\"checked\" />";
@@ -271,7 +271,7 @@
                     echo "</td></tr>\n";
                     break;
                 case LESSON_BRANCHTABLE:
-                    echo "<tr><td><b><label for=\"id_answer[$n]\">".get_string("description", "lesson")." $nplus1:</label></b>\n";
+                    echo "<tr><td><b><label for=\"edit-answer[$n]\">".get_string("description", "lesson")." $nplus1:</label></b>\n";
                     if ($flags & LESSON_ANSWER_EDITOR) {
                         echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                             "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" checked=\"checked\" />";

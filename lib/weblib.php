@@ -666,7 +666,7 @@ function close_window($delay=0) {
  * @todo Finish documenting this function
  */
 function choose_from_menu ($options, $name, $selected='', $nothing='choose', $script='',
-                           $nothingvalue='0', $return=false, $disabled=false, $tabindex=0) {
+                           $nothingvalue='0', $return=false, $disabled=false, $tabindex=0, $id='') {
 
     if ($nothing == 'choose') {
         $nothing = get_string('choose') .'...';
@@ -681,10 +681,13 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
         $attributes .= ' tabindex="'.$tabindex.'"';
     }
 
-    $id = str_replace('[]', '', $name); // name may end in [], which would make an invalid id. e.g. numeric question type editing form.
-    $output = '<select id="menu'.$id.'" name="'. $name .'" '. $attributes .'>' . "\n";
+    if ($id ==='') {
+        $id = 'menu'.str_replace('[]', '', $name); // name may end in [], which would make an invalid id. e.g. numeric question type editing form.
+    }
+
+    $output = '<select id="'.$id.'" name="'. $name .'" '. $attributes .'>' . "\n";
     if ($nothing) {
-        $output .= '   <option value="'. $nothingvalue .'"'. "\n";
+        $output .= '   <option value="'. s($nothingvalue) .'"'. "\n";
         if ($nothingvalue === $selected) {
             $output .= ' selected="selected"';
         }
@@ -692,7 +695,7 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
     }
     if (!empty($options)) {
         foreach ($options as $value => $label) {
-            $output .= '   <option value="'. $value .'"';
+            $output .= '   <option value="'. s($value) .'"';
             if ((string)$value == (string)$selected) {
                 $output .= ' selected="selected"';
             }
@@ -3595,7 +3598,7 @@ function print_recent_activity_note($time, $user, $text, $link, $return=false) {
  * @param int $courseid ?
  * @todo Finish documenting this function
  */
-function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value='', $courseid=0, $return=false) {
+function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value='', $courseid=0, $return=false, $id='') {
 /// $width and height are legacy fields and no longer used as pixels like they used to be.
 /// However, you can set them to zero to override the mincols and minrows values below.
 
@@ -3605,6 +3608,10 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
     $mincols = 65;
     $minrows = 10;
     $str = '';
+    
+    if ($id === '') {
+        $id = 'edit-'.$name;
+    }
     
     if ( empty($CFG->editorsrc) ) { // for backward compatibility.
         if (empty($courseid)) {
@@ -3642,7 +3649,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
             }
         }
     }
-    $str .= '<textarea class="form=textarea" id="id_'. $name .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">';
+    $str .= '<textarea class="form=textarea" id="'. $id .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">';
     if ($usehtmleditor) {
         $str .= htmlspecialchars($value); // needed for editing of cleaned text!
     } else {
@@ -3682,10 +3689,13 @@ function print_richedit_javascript($form, $name, $source='no') {
  *
  * @param string $name Form element to replace with HTMl editor by name
  */
-function use_html_editor($name='', $editorhidebuttons='') {
+function use_html_editor($name='', $editorhidebuttons='', $id='') {
     $editor = 'editor_'.md5($name); //name might contain illegal characters
+    if ($id === '') {
+        $id = 'edit-'.$name;
+    }
     echo '<script language="javascript" type="text/javascript" defer="defer">'."\n";
-    echo "$editor = new HTMLArea('id_$name');\n";
+    echo "$editor = new HTMLArea('$id');\n";
     echo "var config = $editor.config;\n";
 
     echo print_editor_config($editorhidebuttons);
