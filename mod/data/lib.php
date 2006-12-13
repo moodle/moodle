@@ -358,8 +358,10 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
             $str .= '</td></tr>';
 
         }
-        if ($template != 'addtemplate' and $template != 'rsstemplate') {    //if not adding, we put tags in there
+        if ($template == 'listtemplate') {
             $str .= '<tr><td align="center" colspan="2">##edit##  ##more##  ##delete##  ##approve##</td></tr>';
+        } else if ($template == 'singletemplate') {
+            $str .= '<tr><td align="center" colspan="2">##edit##  ##delete##  ##approve##</td></tr>';
         }
 
         $str .= '</table>';
