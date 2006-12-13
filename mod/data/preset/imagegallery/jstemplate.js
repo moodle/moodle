@@ -11,7 +11,7 @@ function list() {
     for (i=0; i < imageDivs.length; i++) {
         currentHeight = imageDivs[i].offsetHeight;
         currentWidth = imageDivs[i].offsetWidth;
-        
+
         if (currentHeight > maxListHeight) {
             ratio = maxListHeight / currentHeight;
             imageDivs[i].style.width = (currentWidth*ratio) + 'px';
@@ -28,12 +28,12 @@ function single() {
     if (imageDiv) {
         currentHeight = imageDiv.offsetHeight;
         currentWidth  = imageDiv.offsetWidth;
-        
+
         if (currentHeight > maxHeight) {
             ratio = maxHeight / currentHeight;
             imageDiv.style.width = (currentWidth*ratio) + 'px';
             imageDiv.style.height = (currentHeight*ratio) + 'px';
-        
+
         }
     }
 }

@@ -24,7 +24,7 @@
 
 require_once($CFG->dirroot.'/mod/data/field/file/field.class.php'); // Base class is 'file'
 
-class data_field_picture extends data_field_file { 
+class data_field_picture extends data_field_file {
 
     var $type = 'picture';
 
@@ -58,7 +58,7 @@ class data_field_picture extends data_field_file {
         }
 
         $str = '<div title="'.s($this->field->description).'">';
-        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>'; 
+        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
         $str .= '<input type="hidden" name ="field_'.$this->field->id.'_file" id="field_'.$this->field->id.'_file"  value="fakevalue" />';
         $str .= '<label for="field_'.$this->field->id.'">'.get_string('picture','data'). '</label>&nbsp;<input type="file" name ="field_'.$this->field->id.'" id="field_'.$this->field->id.'" /><br />';
         $str .= '<label for="field_'.$this->field->id.'_filename">'.get_string('alttext','data') .'</label>&nbsp;<input type="text" name="field_'
@@ -67,14 +67,14 @@ class data_field_picture extends data_field_file {
         if ($filepath){
             $str .= '<img width="'.s($this->previewwidth).'" height="'.s($this->previewheight).'" src="'.$filepath.'" alt="" />';
         }
-        $str .= '</fieldset>'; 
+        $str .= '</fieldset>';
         $str .= '</div>';
         return $str;
     }
 
     function display_browse_field($recordid, $template) {
         global $CFG;
-        
+
         if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)){
             if (isset($content->content)){
                 $contents[0] = $content->content;
@@ -129,7 +129,7 @@ class data_field_picture extends data_field_file {
         if ($oldfield && ($oldfield->param4 != $this->field->param4 || $oldfield->param5 != $this->field->param5)) {
 
             // Check through all existing records and update the thumbnail
-            if ($contents = get_records('data_content', 'fieldid', $this->field->id)) { 
+            if ($contents = get_records('data_content', 'fieldid', $this->field->id)) {
                 if (count($contents) > 20) {
                     notify(get_string('resizingimages', 'data'), 'notifysuccess');
                     echo "\n\n";   // To make sure that ob_flush() has the desired effect
@@ -182,23 +182,23 @@ class data_field_picture extends data_field_file {
         }
 
         switch ($image->type) {
-            case 1: 
+            case 1:
                 if (function_exists('ImageCreateFromGIF')) {
-                    $im = ImageCreateFromGIF($originalfile); 
+                    $im = ImageCreateFromGIF($originalfile);
                 } else {
                     return;
                 }
                 break;
-            case 2: 
+            case 2:
                 if (function_exists('ImageCreateFromJPEG')) {
-                    $im = ImageCreateFromJPEG($originalfile); 
+                    $im = ImageCreateFromJPEG($originalfile);
                 } else {
                     return;
                 }
                 break;
             case 3:
                 if (function_exists('ImageCreateFromPNG')) {
-                    $im = ImageCreateFromPNG($originalfile); 
+                    $im = ImageCreateFromPNG($originalfile);
                 } else {
                     return;
                 }
@@ -208,12 +208,12 @@ class data_field_picture extends data_field_file {
         // fix for MDL-7270
         $thumbwidth  = isset($this->field->param4)?$this->field->param4:'';
         $thumbheight = isset($this->field->param5)?$this->field->param5:'';
-        
+
         if ($thumbwidth || $thumbheight) { // Only if either width OR height specified do we want a thumbnail
-            
+
             $wcrop = $image->width;
             $hcrop = $image->height;
-            
+
             if ($thumbwidth && !$thumbheight) {
                 $thumbheight = $image->height * $thumbwidth / $image->width;
             } else if($thumbheight && !$thumbwidth) {
@@ -227,7 +227,7 @@ class data_field_picture extends data_field_file {
                     $hcrop = intval($thumbheight * $wratio);
                 }
             }
-            
+
             // At this point both $thumbwidth and $thumbheight are set, and $wcrop and $hcrop
             if (function_exists('ImageCreateTrueColor') and $CFG->gdversion >= 2) {
                 $im1 = ImageCreateTrueColor($thumbwidth,$thumbheight);
@@ -236,21 +236,21 @@ class data_field_picture extends data_field_file {
             }
             $cx = $image->width  / 2;
             $cy = $image->height / 2;
-    
+
             // These "half" measurements use the "crop" values rather than the actual dimensions
             $halfwidth  = floor($wcrop * 0.5);
             $halfheight = floor($hcrop * 0.5);
-            
-            ImageCopyBicubic($im1, $im, 0, 0, $cx-$halfwidth, $cy-$halfheight, 
+
+            ImageCopyBicubic($im1, $im, 0, 0, $cx-$halfwidth, $cy-$halfheight,
                              $thumbwidth, $thumbheight, $halfwidth*2, $halfheight*2);
-    
+
             if (function_exists('ImageJpeg')) {
                 @touch($thumbnaillocation);  // Helps in Safe mode
                 if (ImageJpeg($im1, $thumbnaillocation, 90)) {
                     @chmod($thumbnaillocation, 0666);
                 }
             }
-            
+
         } else { // Try and remove the thumbnail - we don't want thumbnailing active
             @unlink($thumbnaillocation);
         }

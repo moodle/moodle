@@ -55,13 +55,13 @@
             error('Course Module ID was incorrect');
         }
     }
-    
+
     require_login($course->id, false, $cm);
-    
+
     if (!isloggedin() or isguest()) {
         redirect('view.php?d='.$data->id);
     }
-    
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 /// If it's hidden then it's don't show anything.  :)
@@ -72,7 +72,7 @@
                  "$navigation ".format_string($data->name), "", "", true, '', navmenu($course, $cm));
         notice(get_string("activityiscurrentlyhidden"));
     }
-    
+
 /// Can't use this if there are no fields
     if (has_capability('mod/data:managetemplates', $context)) {
         if (!record_exists('data_fields','dataid',$data->id)) {      // Brand new database!
@@ -89,7 +89,7 @@
     if ($cancel) {
         redirect('view.php?d='.$data->id);
     }
-  
+
 
 /// RSS and CSS and JS meta
     $meta = '';
@@ -110,7 +110,7 @@
     $strdata = get_string('modulenameplural','data');
 
     print_header_simple($data->name, '', "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name",
-                        '', $meta, true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')), 
+                        '', $meta, true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
                         navmenu($course, $cm), '', '');
 
     print_heading(format_string($data->name));
@@ -150,13 +150,13 @@
 
             /// All student edits are marked unapproved by default
             $record = get_record('data_records','id',$rid);
-            
+
             if ($data->approval == 1 || has_capability('mod/data:approve', $context)) {
                 $record->approved = 1;
             } else {
                 $record->approved = 0;
             }
-            
+
             $record->groupid = $currentgroup;
             $record->timemodified = time();
             update_record('data_records',$record);
@@ -197,26 +197,26 @@
             ///Empty form checking - you can't submit an empty form!
 
             $emptyform = true;      // assume the worst
-            
-            foreach ($datarecord as $name => $value) {  
+
+            foreach ($datarecord as $name => $value) {
                 if (!in_array($name, $ignorenames)) {
                     $namearr = explode('_', $name);  // Second one is the field id
                     if (empty($field->field) || ($namearr[1] != $field->field->id)) {  // Try to reuse classes
                         $field = data_get_field_from_id($namearr[1], $data);
                     }
                     if ($field->notemptyfield($value, $name)) {
-                        $emptyform = false;    
+                        $emptyform = false;
                         break;             // if anything has content, this form is not empty, so stop now!
                     }
                 }
-            }  
+            }
 
             if ($emptyform){    //nothing gets written to database
                 notify(get_string('emptyaddform','data'));
             }
 
             if (!$emptyform && $recordid = data_add_record($data, $currentgroup)) {    //add instance to data_record
-                
+
                 /// Insert a whole lot of empty records to make sure we have them
                 $fields = get_records('data_fields','dataid',$data->id);
                 foreach ($fields as $field) {
@@ -260,17 +260,17 @@
     echo '<input name="rid" value="'.$rid.'" type="hidden" />';
     echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
     print_simple_box_start('center','80%');
-    
+
     if (!$rid){
         print_heading(get_string('newentry','data'), '', 2);
     }
-        
+
     /******************************************
      * Regular expression replacement section *
      ******************************************/
     if ($data->addtemplate){
         $possiblefields = get_records('data_fields','dataid',$data->id,'id');
-        
+
         ///then we generate strings to replace
         foreach ($possiblefields as $eachfield){
             $field = data_get_field($eachfield, $data);
@@ -285,7 +285,7 @@
         echo data_generate_default_template($data, 'addtemplate', $rid, true, false);
         $newtext = '';
     }
-   
+
     echo $newtext;
     echo '<div align="center"><input type="submit" name="saveandview" value="'.get_string('saveandview','data').'" />';
     if ($rid) {
@@ -297,9 +297,9 @@
     print_simple_box_end();
     echo '</form>';
 
-    
+
 /// Upload records section. Only for teachers and the admin.
-    
+
     if (has_capability('mod/data:manageentries',$context)) {
         if ($import) {
             print_simple_box_start('center','80%');
@@ -348,6 +348,6 @@
         $field = data_get_field($eachfield, $data);
         $field->print_after_form();
     }
-    
+
     print_footer($course);
 ?>

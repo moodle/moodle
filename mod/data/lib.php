@@ -370,7 +370,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
         }
 
         if ($update) {
-            $newdata = new object(); 
+            $newdata = new object();
             $newdata->id = $data->id;
             $newdata->{$template} = $str;
             if (!update_record('data', $newdata)) {

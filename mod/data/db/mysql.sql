@@ -1,12 +1,12 @@
 # -- phpMyAdmin SQL Dump
 # -- version 2.6.2
 # -- http://www.phpmyadmin.net
-# -- 
+# --
 # -- Host: localhost
 # -- Generation Time: Aug 25, 2005 at 03:52 PM
 # -- Server version: 3.23.54
 # -- PHP Version: 4.2.2
-# -- 
+# --
 
 # -- --------------------------------------------------------
 

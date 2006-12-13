@@ -28,7 +28,7 @@
     require_once("$CFG->libdir/rsslib.php");
 
     require_once('pagelib.php');
-    
+
 
 /// One of these is necessary!
     $id    = optional_param('id', 0, PARAM_INT);  // course module id
@@ -42,7 +42,7 @@
 /// These can be added to perform an action on a record
     $approve = optional_param('approve', 0, PARAM_INT);    //approval recordid
     $delete = optional_param('delete', 0, PARAM_INT);    //delete recordid
-    
+
     if ($id) {
         if (! $cm = get_coursemodule_from_id('data', $id)) {
             error('Course Module ID was incorrect');
@@ -82,7 +82,7 @@
     }
 
     require_course_login($course, true, $cm);
-    
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/data:viewentry', $context);
 
@@ -165,10 +165,10 @@
         $meta .= '<script type="text/javascript" src="'.$CFG->wwwroot.'/mod/data/js.php?d='.$data->id.'"></script>';
     }
 
-    
+
 /// Print the page header
     $PAGE->print_header($course->shortname.': %fullname%', '', $meta);
-    
+
 
 /// If we have blocks, then print the left side here
     if (!empty($CFG->showblocksonmodpages)) {
@@ -182,7 +182,7 @@
     }
 
     print_heading(format_string($data->name));
-    
+
     // Do we need to show a link to the RSS feed for the records?
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
         echo '<div style="float:right;">';
@@ -190,14 +190,14 @@
         echo '</div>';
         echo '<div style="clear:both;"></div>';
     }
-    
+
     if ($data->intro and empty($page) and empty($record) and $mode != 'single') {
         print_simple_box(format_text($data->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
     }
 
 /// Check to see if groups are being used here
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode, 
+        $currentgroup = setup_and_print_groups($course, $groupmode,
                                             'view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).
                                             '&amp;order='.s($order).'&amp;');
     } else {
@@ -229,7 +229,7 @@
         } else {   // Print a confirmation page
             if ($deleterecord = get_record('data_records', 'id', $delete)) {   // Need to check this is valid
                 if ($deleterecord->dataid == $data->id) {                       // Must be from this database
-                    notice_yesno(get_string('confirmdeleterecord','data'), 
+                    notice_yesno(get_string('confirmdeleterecord','data'),
                             'view.php?d='.$data->id.'&amp;delete='.$delete.'&amp;confirm=1&amp;sesskey='.sesskey(),
                             'view.php?d='.$data->id);
 
@@ -252,7 +252,7 @@
     } else {
         $currenttab = 'list';
     }
-    include('tabs.php'); 
+    include('tabs.php');
 
 
 /// Approve any requested records
@@ -305,10 +305,10 @@
         $what = ' DISTINCT r.id, r.approved, r.userid, u.firstname, u.lastname, c.'.$sortcontent.' ';
         $count = ' COUNT(DISTINCT c.recordid) ';
         $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r,'.$CFG->prefix.'data_content c1, '.$CFG->prefix.'user u ';
-        $where =  'WHERE c.recordid = r.id 
-                     AND c.fieldid = '.$sort.' 
-                     AND r.dataid = '.$data->id.' 
-                     AND r.userid = u.id 
+        $where =  'WHERE c.recordid = r.id
+                     AND c.fieldid = '.$sort.'
+                     AND r.dataid = '.$data->id.'
+                     AND r.userid = u.id
                      AND c1.recordid = r.id ';
         $sortorder = ' ORDER BY '.$sortcontentfull.' '.$order.' , r.id ASC ';
         if ($search) {
@@ -317,12 +317,12 @@
             $searchselect = ' ';
         }
 
-    } else if ($search) { 
+    } else if ($search) {
         $what = ' DISTINCT r.id, r.approved, r.userid, u.firstname, u.lastname ';
         $count = ' COUNT(DISTINCT c.recordid) ';
         $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r, '.$CFG->prefix.'user u ';
-        $where =  'WHERE c.recordid = r.id 
-                     AND r.userid = u.id 
+        $where =  'WHERE c.recordid = r.id
+                     AND r.userid = u.id
                      AND r.dataid = '.$data->id;
         $sortorder = ' ORDER BY r.id ASC ';
         $searchselect = " AND (c.content LIKE '%$search%') ";
@@ -340,7 +340,7 @@
 /// To actually fetch the records
 
     $fromsql = ' FROM '.$tables.$where.$groupselect.$approveselect.$searchselect;
-     
+
     $sqlselect = 'SELECT '.$what.$fromsql.$sortorder;
 
     $sqlcount  = 'SELECT '.$count.$fromsql;   // Total number of records
@@ -358,10 +358,10 @@
 #            if ($content = get_field('data_content', 'content', 'recordid', $record->id, 'fieldid', $sort)) {
 #                $content = addslashes($content);
 #                if ($order == 'ASC') {
-#                    $lessthan = " AND $sortcontentfull < '$content' 
+#                    $lessthan = " AND $sortcontentfull < '$content'
 #                                   OR ($sortcontentfull = '$content' AND r.id < '$record->id') ";
 #                } else {
-#                    $lessthan = " AND $sortcontentfull > '$content' 
+#                    $lessthan = " AND $sortcontentfull > '$content'
 #                                   OR ($sortcontentfull = '$content' AND r.id < '$record->id') ";
 #                }
 #            } else {   // Failed to find data (shouldn't happen), so fall back to something easy
@@ -396,7 +396,7 @@
 
     if (empty($records)) {     // Nothing to show!
         if ($record) {         // Something was requested so try to show that at least (bug 5132)
-            if (has_capability('mod/data:manageentries', $context) || empty($data->approval) || 
+            if (has_capability('mod/data:manageentries', $context) || empty($data->approval) ||
                      $record->approved || (isloggedin() && $record->userid == $USER->id)) {
                 if (!$currentgroup || $record->groupid == $currentgroup || $record->groupid == 0) {
                     $records[] = $record;

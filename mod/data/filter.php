@@ -20,7 +20,7 @@
         if (empty($courseid)) {
             return $text;
         }
-        
+
         // Create a list of all the resources to search for. It may be cached already.
         if (empty($contentlist)) {
             // We look for text field contents only, and only if the field has
@@ -40,17 +40,17 @@
                             'AND dr.id = dc.recordid ' .
                             "AND df.type = 'text' " .
                             'AND df.param1 = 1';
-            
+
             if (!$datacontents = get_records_sql($sql)) {
                 return $text;
             }
-            
+
             $contentlist = array();
-            
+
             foreach ($datacontents as $datacontent) {
                 $currentcontent = trim($datacontent->content);
                 $strippedcontent = strip_tags($currentcontent);
-                
+
                 if (!empty($strippedcontent)) {
                     $contentlist[] = new filterobject(
                                             $currentcontent,

@@ -29,17 +29,17 @@
     }
 
     require_login($course->id, false, $cm);
-    
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    
+
     if ($commentid) {
         if (! $comment = get_record('data_comments', 'id', $commentid)) {
             error('Comment ID is misconfigured');
         }
-        if ($comment->recordid != $record->id) { 
+        if ($comment->recordid != $record->id) {
             error('Comment ID is misconfigured');
         }
-        if (!has_capability('mod/data:managecomments', $context) && $comment->userid != $USER->id) { 
+        if (!has_capability('mod/data:managecomments', $context) && $comment->userid != $USER->id) {
             error('Comment is not yours to edit!');
         }
     }
@@ -59,7 +59,7 @@
             }
             redirect('view.php?rid='.$record->id.'&amp;page='.$page, get_string('commentsaved', 'data'));
         break;
-        
+
         case 'edit':    //print edit form
             print_header();
             print_heading(get_string('edit'));
@@ -68,7 +68,7 @@
             echo '<input type="hidden" name="commentid" value="'.$comment->id.'" />';
             echo '<input type="hidden" name="rid" value="'.$record->id.'" />';
             echo '<input type="hidden" name="page" value="'.$page.'" />';
-            
+
             echo '<textarea name="commentcontent">'.s($comment->content).'</textarea>';
             echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
             echo '<input type="hidden" name="mode" value="editcommit" />';
@@ -77,7 +77,7 @@
             echo '</form></div>';
             print_footer();
         break;
-        
+
         case 'editcommit':  //update db
             if (empty($commentcontent)) {
                 redirect('view.php?rid='.$record->id.'&amp;page='.$page, get_string('commentempty', 'data'));
@@ -92,7 +92,7 @@
             }
             redirect('view.php?rid='.$record->id.'&amp;page='.$page, get_string('commentsaved', 'data'));
         break;
-        
+
         case 'delete':    //deletes single comment from db
             if ($confirm and confirm_sesskey() and $comment) {
                 delete_records('data_comments','id',$comment->id);
@@ -102,7 +102,7 @@
                 print_header();
                 data_print_comment($data, $comment, $page);
 
-                notice_yesno(get_string('deletecomment','data'), 
+                notice_yesno(get_string('deletecomment','data'),
                   'comment.php?rid='.$record->id.'&amp;commentid='.$comment->id.'&amp;page='.$page.
                               '&amp;sesskey='.sesskey().'&amp;mode=delete&amp;confirm=1',
                   'view.php?rid='.$record->id.'&amp;page='.$page);
@@ -110,13 +110,13 @@
             }
 
         break;
-        
+
         default:    //print all listing, and add comment form
             print_header();
             data_print_comments($data, $record, $page);
             print_footer();
         break;
-        
+
     }
 
 

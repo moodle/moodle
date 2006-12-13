@@ -24,7 +24,7 @@
             // Iterate over all data.
             if ($datas = get_records('data')) {
                 foreach ($datas as $data) {
-                    
+
                     if ($data->rssarticles > 0) {
 
                         // Get the first field in the list  (a hack for now until we have a selector)
@@ -41,7 +41,7 @@
                                     "FROM {$CFG->prefix}data_records dr " .
                                     "WHERE dr.dataid = {$data->id} " .$approved.
                                     'ORDER BY dr.timecreated DESC';
-                        
+
                         if (!$records = get_records_sql($sql, 0, $data->rssarticles)) {
                             continue;
                         }
@@ -55,7 +55,7 @@
                                 continue;
                             }
                         }
-                        
+
                         // Now create all the articles
                         mtrace('Creating feed for '.$data->name);
 
@@ -66,7 +66,7 @@
                             array_push($recordarray, $record);
 
                             $item = null;
-                            
+
                             // guess title or not
                             if ($data->rsstitletemplate) {
                                 $item->title = data_print_template('rsstitletemplate', $recordarray, $data, '', 0, true);
@@ -77,20 +77,20 @@
                             $item->description = data_print_template('rsstemplate', $recordarray, $data, '', 0, true);
                             $item->pubdate = $record->timecreated;
                             $item->link = $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&rid='.$record->id;
-                            
+
                             array_push($items, $item);
                         }
                         $course = get_record('course', 'id', $data->course);
-                        
+
                         // First all rss feeds common headers.
                         $header = rss_standard_header($course->shortname.': '.format_string($data->name,true),
                                                       $CFG->wwwroot."/mod/data/view.php?d=".$data->id,
                                                       format_string($data->intro,true));
-                        
+
                         if (!empty($header)) {
                             $articles = rss_add_items($items);
                         }
-                        
+
                         // Now all rss feeds common footers.
                         if (!empty($header) && !empty($articles)) {
                             $footer = rss_standard_footer();
@@ -98,7 +98,7 @@
                         // Now, if everything is ok, concatenate it.
                         if (!empty($header) && !empty($articles) && !empty($footer)) {
                             $rss = $header.$articles.$footer;
-                            
+
                             //Save the XML contents to file.
                             $status = rss_save_file('data', $data, $rss);
                         }

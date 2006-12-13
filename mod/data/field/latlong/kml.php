@@ -90,7 +90,7 @@ if($rid) { // List one single item
 } else {   // List all items in turn
 
     $contents = get_records('data_content', 'fieldid', $fieldid);
-    
+
     echo '<Document>';
 
     foreach($contents as $content) {
@@ -144,9 +144,9 @@ function data_latlong_kml_bottom() {
 
 function data_latlong_kml_get_item_name($content, $field) {
     // $field->param2 contains the user-specified labelling method
-    
+
     $name = '';
-    
+
     if($field->param2 > 0) {
         $name = htmlspecialchars(get_field('data_content', 'content', 'fieldid', $field->param2, 'recordid', $content->recordid));
     }elseif($field->param2 == -2) {
@@ -155,7 +155,7 @@ function data_latlong_kml_get_item_name($content, $field) {
     if($name=='') { // Done this way so that "item #" is the default that catches any problems
         $name = get_string('entry', 'data') . " #$content->recordid";
     }
-    
-    
+
+
     return $name;
 }

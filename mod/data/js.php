@@ -37,4 +37,4 @@
         header('Content-type: text/css');  // Correct MIME type
 
         echo $data->jstemplate;
-    } 
+    }

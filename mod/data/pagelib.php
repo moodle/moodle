@@ -79,7 +79,7 @@ class page_data extends page_generic_activity {
             $buttons = '&nbsp;';
         }
         print_header($title, $this->courserecord->fullname, $crumbtext, '', $meta, true, $buttons, navmenu($this->courserecord, $this->modulerecord));
-        
+
     }
 
     function get_type() {

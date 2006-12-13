@@ -23,7 +23,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 class data_field_file extends data_field_base {
-   
+
     var $type = 'file';
 
     function data_field_file($field=0, $data=0) {
@@ -61,14 +61,14 @@ class data_field_file extends data_field_base {
         }
 
         $str = '<div title="' . s($this->field->description) . '">';
-        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>'; 
+        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
         $str .= '<input type="hidden" name ="field_'.$this->field->id.'_file" value="fakevalue" />';
         $str .= get_string('file','data'). ' <input type="file" name ="field_'.$this->field->id.'" id="field_'.
                             $this->field->id.'" title="'.s($this->field->description).'" /><br />';
         $str .= get_string('optionalfilename','data').' <input type="text" name="field_' .$this->field->id.'_filename"
                             id="field_'.$this->field->id.'_filename" value="'.s($displayname).'" /><br />';
         $str .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.s($this->field->param3).'" />';
-        $str .= '</fieldset>'; 
+        $str .= '</fieldset>';
         $str .= '</div>';
 
         if ($recordid and isset($content)){                     // Print icon
@@ -87,7 +87,7 @@ class data_field_file extends data_field_base {
         if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)){
             $contents[0] = $content->content;
             $contents[1] = $content->content1;
-            
+
             $src = empty($contents[0])? '':$contents[0];
             $name = empty($contents[1])? $src:$contents[1];
 
@@ -98,10 +98,10 @@ class data_field_file extends data_field_base {
             } else {
                 $source = $CFG->wwwroot.'/file.php?file=/'.$path;
             }
-            
+
             $width = $this->field->param1 ? ' width = "'.s($this->field->param1).'" ':' ';
             $height = $this->field->param2 ? ' height = "'.s($this->field->param2).'" ':' ';
-            
+
             require_once($CFG->libdir.'/filelib.php');
             $icon = mimeinfo('icon', $src);
             $str = '<img src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />&nbsp;'.
@@ -169,7 +169,7 @@ class data_field_file extends data_field_base {
         }
         return false;
     }
-    
+
 }
 
 ?>

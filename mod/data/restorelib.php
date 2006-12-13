@@ -92,14 +92,14 @@ function data_restore_mods($mod,$restore) {
         if (isset($info['MOD']['#']['ASSESSPUBLIC']['0']['#'])) {
             $database->assesspublic = backup_todb($info['MOD']['#']['ASSESSPUBLIC']['0']['#']);
         }
-        
+
         $newid = insert_record ('data', $database);
 
         //Do some output
         if (!defined('RESTORE_SILENTLY')) {
             echo "<li>".get_string("modulename","data")." \"".format_string(stripslashes($database->name),true)."\"</li>";
         }
-        
+
         if ($newid) {
             //We have the newid, update backup_ids
             backup_putid($restore->backup_unique_code,$mod->modtype,
@@ -112,10 +112,10 @@ function data_restore_mods($mod,$restore) {
                 // Moodle 1.5
                 $restore_userdata_selected = $restore->mods['data']->userinfo;
             }
-            
+
             //Restore data_fields first!!! need to hold an array of [oldid]=>newid due to double dependencies
             $status = $status and data_fields_restore_mods ($mod->id, $newid, $info, $restore);
-            
+
             if ($restore_userdata_selected) {
                 $status = $status and data_records_restore_mods ($mod->id, $newid, $info, $restore);
             }
@@ -125,7 +125,7 @@ function data_restore_mods($mod,$restore) {
             // It means the backup was made pre Moodle 1.7. We check the
             // backup_version to make sure.
             if (isset($database->participants) && isset($database->assesspublic)) {
-                            
+
                 if (!$teacherroles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW)) {
                       notice('Default teacher role was not found. Roles and permissions '.
                              'for your database modules will have to be manually set.');
@@ -142,29 +142,29 @@ function data_restore_mods($mod,$restore) {
                 data_convert_to_roles($database, $teacherroles, $studentroles,
                                       $restore->mods['data']->instances[$mod->id]->restored_as_course_module);
             }
-            
+
         } else {
             $status = false;
         }
     } else {
         $status = false;
     }
-    
+
     return $status;
 }
 
 function data_fields_restore_mods ($old_data_id, $new_data_id, $info, $restore) {
 
     global $CFG, $fieldids;
-    
-    
+
+
     $fields = $info['MOD']['#']['FIELDS']['0']['#']['FIELD'];
 
     for ($i = 0; $i < sizeof($fields); $i++) {
-        
+
         $fie_info = $fields[$i];
         $oldid = backup_todb($fie_info['#']['ID']['0']['#']);
-        
+
         $field -> dataid = $new_data_id;
         $field -> type = backup_todb($fie_info['#']['TYPE']['0']['#']);
         $field -> name = backup_todb($fie_info['#']['NAME']['0']['#']);
@@ -179,9 +179,9 @@ function data_fields_restore_mods ($old_data_id, $new_data_id, $info, $restore) 
         $field -> param8 = backup_todb($fie_info['#']['PARAM8']['0']['#']);
         $field -> param9 = backup_todb($fie_info['#']['PARAM9']['0']['#']);
         $field -> param10 = backup_todb($fie_info['#']['PARAM10']['0']['#']);
-        
+
         $newid = insert_record ("data_fields",$field);
-        
+
         $fieldids[$oldid] = $newid;    //so we can use them in sub tables that depends on both fieldid and recordid
 
         //Do some output
@@ -194,14 +194,14 @@ function data_fields_restore_mods ($old_data_id, $new_data_id, $info, $restore) 
             }
             backup_flush(300);
         }
-        
+
         if ($newid) {
             //We have the newid, update backup_ids
             $status = backup_putid($restore->backup_unique_code,"data_fields",$oldid, $newid);
         } else {
             $status = false;
         }
-        
+
     }
     return $status;
 
@@ -231,7 +231,7 @@ function data_records_restore_mods ($old_data_id, $new_data_id, $info, $restore)
         if ($user) {
             $record->userid = $user->new_id;
         }
-        
+
         $newid = insert_record ("data_records",$record);
 
         //Do some output
@@ -322,7 +322,7 @@ function data_restore_files ($old_data_id, $new_data_id, $old_field_id, $new_fie
     //in CFG->dataroot
     $dest_dir = $CFG->dataroot."/".$restore->course_id;
     $status = check_dir_exists($dest_dir,true);
-    
+
     //Now, locate course's moddata directory
     $moddata_path = $CFG->dataroot."/".$restore->course_id."/".$CFG->moddata;
 
@@ -355,7 +355,7 @@ function data_restore_files ($old_data_id, $new_data_id, $old_field_id, $new_fie
         $this_record_path = $this_field_path = $this_field_path."/".$new_record_id;
         $status = check_dir_exists($this_record_path,true);
         //And now, copy temp_path to user_data_path
-        
+
         $status = @backup_copy_file($temp_path, $this_record_path);
     }
 

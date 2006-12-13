@@ -28,12 +28,12 @@
     if (empty($currenttab) or empty($data) or empty($course)) {
         error('You cannot call this script in that way');
     }
-    
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $inactive = NULL;
     $row = array();
-    
+
     $row[] = new tabobject('list', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id, get_string('list','data'), '', true);
 
     if (isset($record)) {
@@ -55,12 +55,12 @@
             } else {
                 $defaultemplate = 'singletemplate';
             }
-    
-            $row[] = new tabobject('templates', $CFG->wwwroot.'/mod/data/templates.php?d='.$data->id.'&amp;mode='.$defaultemplate, 
+
+            $row[] = new tabobject('templates', $CFG->wwwroot.'/mod/data/templates.php?d='.$data->id.'&amp;mode='.$defaultemplate,
                          get_string('templates','data'));
-            $row[] = new tabobject('fields', $CFG->wwwroot.'/mod/data/field.php?d='.$data->id, 
+            $row[] = new tabobject('fields', $CFG->wwwroot.'/mod/data/field.php?d='.$data->id,
                          get_string('fields','data'), '', true);
-            $row[] = new tabobject('presets', $CFG->wwwroot.'/mod/data/preset.php?d='.$data->id, 
+            $row[] = new tabobject('presets', $CFG->wwwroot.'/mod/data/preset.php?d='.$data->id,
                          get_string('presets', 'data'), '', true);
         }
     }
@@ -84,10 +84,10 @@
         }
         $tabs[] = $row;
     }
-    
+
 
 /// Print out the tabs and continue!
 
     print_tabs($tabs, $currenttab, $inactive);
-    
+
 ?>

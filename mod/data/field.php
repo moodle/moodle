@@ -25,7 +25,7 @@
     require_once('../../config.php');
     require_once('lib.php');
 
-    
+
     $id             = optional_param('id', 0, PARAM_INT);            // course module id
     $d              = optional_param('d', 0, PARAM_INT);             // database id
     $fid            = optional_param('fid', 0 , PARAM_INT);          // update field id
@@ -38,8 +38,8 @@
     if ($cancel) {
         $mode = 'list';
     }
-    
-    
+
+
     if ($id) {
         if (! $cm = get_coursemodule_from_id('data', $id)) {
             error('Course Module ID was incorrect');
@@ -67,7 +67,7 @@
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/data:managetemplates', $context);
-    
+
     /************************************
      *        Data Processing           *
      ***********************************/
@@ -77,14 +77,14 @@
             if (confirm_sesskey() and $fieldinput = data_submitted($CFG->wwwroot.'/mod/data/field.php')){
 
                 //$fieldinput->name = data_clean_field_name($fieldinput->name);
-                
+
             /// Only store this new field if it doesn't already exist.
                 if (($fieldinput->name == '') or data_fieldname_exists($fieldinput->name, $data->id)) {
 
                     $displaynoticebad = get_string('invalidfieldname','data');
 
-                } else {   
-                    
+                } else {
+
                 /// Check for arrays and convert to a comma-delimited string
                     data_convert_arrays_to_strings($fieldinput);
 
@@ -98,9 +98,9 @@
                 /// Update some templates
                     data_append_new_field_to_templates($data, $field->field->name);
 
-                    add_to_log($course->id, 'data', 'fields add', 
+                    add_to_log($course->id, 'data', 'fields add',
                                "field.php?d=$data->id&amp;mode=display&amp;fid=$fid", $fid, $cm->id);
-                    
+
                     $displaynoticegood = get_string('fieldadded','data');
                 }
             }
@@ -113,7 +113,7 @@
                 //$fieldinput->name = data_clean_field_name($fieldinput->name);
 
                 if (($fieldinput->name == '') or data_fieldname_exists($fieldinput->name, $data->id, $fieldinput->fid)) {
-                    
+
                     $displaynoticebad = get_string('invalidfieldname','data');
 
                 } else {
@@ -123,10 +123,10 @@
                 /// Create a field object to collect and store the data safely
                     $field = data_get_field_from_id($fid, $data);
                     $oldfieldname = $field->field->name;
-                    
+
                     $field->field->name = $fieldinput->name;
                     $field->field->description = $fieldinput->description;
-                    
+
                     for ($i=1; $i<=10; $i++) {
                         if (isset($fieldinput->{'param'.$i})) {
                             $field->field->{'param'.$i} = $fieldinput->{'param'.$i};
@@ -134,15 +134,15 @@
                             $field->field->{'param'.$i} = '';
                         }
                     }
-                    
+
                     $field->update_field();
-                    
+
                 /// Update the templates.
                     data_replace_field_in_templates($data, $oldfieldname, $field->field->name);
-                    
-                    add_to_log($course->id, 'data', 'fields update', 
+
+                    add_to_log($course->id, 'data', 'fields update',
                                "field.php?d=$data->id&amp;mode=display&amp;fid=$fid", $fid, $cm->id);
-                    
+
                     $displaynoticegood = get_string('fieldupdated','data');
                 }
             }
@@ -172,10 +172,10 @@
                                 error('There was an error updating the database');
                             }
                         }
-                        
-                        add_to_log($course->id, 'data', 'fields delete', 
+
+                        add_to_log($course->id, 'data', 'fields delete',
                                    "field.php?d=$data->id", $field->field->name, $cm->id);
-    
+
                         $displaynoticegood = get_string('fielddeleted', 'data');
                     }
 
@@ -186,7 +186,7 @@
                     // Print confirmation message.
                     $field = data_get_field_from_id($fid, $data);
 
-                    notice_yesno('<strong>'.$field->name().': '.$field->field->name.'</strong><br /><br />'. get_string('confirmdeletefield','data'), 
+                    notice_yesno('<strong>'.$field->name().': '.$field->field->name.'</strong><br /><br />'. get_string('confirmdeletefield','data'),
                                  'field.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$fid.'&amp;sesskey='.sesskey().'&amp;confirm=1',
                                  'field.php?d='.$data->id);
 
@@ -219,7 +219,7 @@
 
 
 /// Print the browsing interface
-    
+
     ///get the list of possible fields (plugins)
     $directories = get_list_of_plugins('mod/data/field/');
     $menufield = array();
@@ -228,7 +228,7 @@
         $menufield[$directory] = get_string($directory,'data');    //get from language files
     }
     asort($menufield);    //sort in alphabetical order
-    
+
 
     if (($mode == 'new') && (!empty($newtype)) && confirm_sesskey()) {          ///  Adding a new field
         $CFG->pagepath='mod/data/field/'.$newtype;
@@ -248,8 +248,8 @@
 
         $CFG->pagepath='mod/data/field/'.$newtype;
         data_print_header($course,$cm,$data,'fields');
-      
-        
+
+
         if (!record_exists('data_fields','dataid',$data->id)) {
             notify(get_string('nofieldindatabase','data'));  // nothing in database
             notify(get_string('pleaseaddsome','data', 'preset.php?id='.$cm->id));      // link to presets
@@ -262,7 +262,7 @@
 
             if ($fff = get_records('data_fields','dataid',$data->id,'id')){
                 foreach ($fff as $ff) {
-                    
+
                     $field = data_get_field($ff, $data);
 
                     $table->data[] = array(
@@ -282,13 +282,13 @@
                     '&nbsp;'.
                     '<a href="field.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.
                     '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>'
-                    
+
                     );
                 }
             }
             print_table($table);
-        } 
-        
+        }
+
 
         echo '<div class="fieldadd" align="center">';
         echo get_string('newfield','data').': ';
@@ -314,12 +314,12 @@
             }
             echo '</select>';
             echo '&nbsp;';
-            
+
             $options = array(0 => get_string('ascending', 'data'),
                              1 => get_string('descending', 'data'));
             choose_from_menu($options, 'defaultsortdir', $data->defaultsortdir, '');
             echo '<input type="submit" value="'.get_string('go').'" />';
-    
+
             echo '</form>';
             echo '</div>';
         }

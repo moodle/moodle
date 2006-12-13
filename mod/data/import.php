@@ -33,7 +33,7 @@
     $rid             = optional_param('rid', 0, PARAM_INT); // record id
     $fielddelimiter  = optional_param('fielddelimiter', ',', PARAM_CLEANHTML); // characters used as field delimiters for csv file import
     $fieldenclosure = optional_param('fieldenclosure', '', PARAM_CLEANHTML);   // characters used as record delimiters for csv file import
-        
+
     if ($id) {
         if (! $cm = get_coursemodule_from_id('data', $id)) {
             error('Course Module ID was incorrect');
@@ -56,10 +56,10 @@
             error('Course Module ID was incorrect');
         }
     }
-    
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/data:uploadentries', $context);
-    
+
     if (has_capability('mod/data:managetemplates', $context)) {
         if (!count_records('data_fields','dataid',$data->id)) {      // Brand new database!
             redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
@@ -71,7 +71,7 @@
             error (get_string('noaccess','data'));
         }
     }
-  
+
 
 /// Print the page header
     $strdata = get_string('modulenameplural','data');
@@ -88,13 +88,13 @@
 /// Print the tabs
     $currenttab = 'add';
     include('tabs.php');
-    
-    
+
+
     $um = new upload_manager('recordsfile', false, false, null, false, 0);
-    
+
     if ($um->preprocess_files() && confirm_sesskey()) {
         $filename = $um->files['recordsfile']['tmp_name'];
-        
+
         // Large files are likely to take their time and memory. Let PHP know
         // that we'll take longer, and that the process should be recycled soon
         // to free up memory.
@@ -103,26 +103,26 @@
         if (function_exists('apache_child_terminate')) {
             @apache_child_terminate();
         }
-        
+
         //Fix mac/dos newlines
         $text = my_file_get_contents($filename);
         $text = preg_replace('!\r\n?!',"\n",$text);
         $fp = fopen($filename, "w");
         fwrite($fp, $text);
         fclose($fp);
-        
+
         $recordsadded = 0;
-        
+
         if (!$records = data_get_records_csv($filename, $fielddelimiter, $fieldenclosure)) {
             error('get_records_csv failed to read data from the uploaded file. Please check file for field name typos and formatting errors.');
         } else {
             //$db->debug = true;
             $fieldnames = array_shift($records);
-            
+
             foreach ($records as $record) {
                 if ($recordid = data_add_record($data, 0)) {  // add instance to data_record
                     $fields = get_records('data_fields', 'dataid', $data->id, '', 'name, id, type');
-                    
+
                     // do a manual round of inserting, to make sure even empty contents get stored
                     foreach ($fields as $field) {
                         $content->recordid = $recordid;
@@ -179,14 +179,14 @@ function my_file_get_contents($filename, $use_include_path = 0) {
 // Perform a simple field count check for each record.
 function data_get_records_csv($filename, $fielddelimiter=',', $fieldenclosure="\n") {
     global $db;
-    
+
     if (empty($fielddelimiter)) {
         $fielddelimiter = ',';
     }
     if (empty($fieldenclosure)) {
         $fieldenclosure = "\n";
     }
-    
+
     if (!$fp = fopen($filename, "r")) {
         error('get_records_csv failed to open '.$filename);
     }
@@ -194,13 +194,13 @@ function data_get_records_csv($filename, $fielddelimiter=',', $fieldenclosure="\
     $rows = array();
 
     $fieldnames = fgetcsv($fp, 4096, $fielddelimiter, $fieldenclosure);
-    
+
     if (empty($fieldnames)) {
         fclose($fp);
         return false;
     }
     $rows[] = $fieldnames;
-    
+
     while (($data = fgetcsv($fp, 4096, $fielddelimiter, $fieldenclosure)) !== false) {
         if (count($data) > count($fieldnames)) {
             // For any given record, we can't have more data entities than the number of fields.
@@ -209,7 +209,7 @@ function data_get_records_csv($filename, $fielddelimiter=',', $fieldenclosure="\
         }
         $rows[] = $data;
     }
-    
+
     fclose($fp);
     return $rows;
 }

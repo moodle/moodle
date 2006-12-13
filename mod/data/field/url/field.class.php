@@ -54,7 +54,7 @@ class data_field_url extends data_field_base {
             $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="field_'.$this->field->id.'_0" value="'.s($url).'" size="60" />';
         }
         $str .= '</div>';
-        
+
         return $str;
     }
 
@@ -70,7 +70,7 @@ class data_field_url extends data_field_base {
             if (!empty($this->field->param2)) { // param2 forces the text to something
                 $text = $this->field->param2;
             }
-            
+
             if ($this->field->param1) { // param1 defines whether we want to autolink the url.
                 if (!empty($text)) {
                     $str = '<a href="'.$url.'">'.$text.'</a>';
@@ -101,7 +101,7 @@ class data_field_url extends data_field_base {
             default:
                 break;
         }
-        
+
         if ($oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
             $content->id = $oldcontent->id;
             return update_record('data_content', $content);
@@ -109,7 +109,7 @@ class data_field_url extends data_field_base {
             return insert_record('data_content', $content);
         }
     }
-    
+
     function notemptyfield($value, $name){
         $names = explode('_',$name);
         $value = clean_param($value, PARAM_URL);    //clean first

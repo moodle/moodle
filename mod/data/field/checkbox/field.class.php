@@ -25,14 +25,14 @@
 class data_field_checkbox extends data_field_base {
 
     var $type = 'checkbox';
-    
+
     function data_field_checkbox($field=0, $data=0) {
         parent::data_field_base($field, $data);
     }
-    
+
     function display_add_field($recordid=0) {
         global $CFG;
-       
+
         $content = array();
 
         if ($recordid) {
@@ -42,7 +42,7 @@ class data_field_checkbox extends data_field_base {
 
         $str = '<div title="'.s($this->field->description).'">';
         $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
- 
+
         $i = 0;
         foreach (explode("\n", $this->field->param1) as $checkbox) {
             $checkbox = trim($checkbox);
@@ -51,7 +51,7 @@ class data_field_checkbox extends data_field_base {
             }
             $str .= '<input type="checkbox" id="field_'.$this->field->id.'_'.$i.'" name="field_' . $this->field->id . '[]" ';
             $str .= 'value="' . s($checkbox) . '" ';
-            
+
             if (array_search($checkbox, $content) !== false) {
                 $str .= 'checked />';
             } else {
@@ -60,7 +60,7 @@ class data_field_checkbox extends data_field_base {
             $str .= '<label for="field_'.$this->field->id.'_'.$i.'">'.$checkbox.'</label><br />';
             $i++;
         }
-        $str .= '</fieldset>'; 
+        $str .= '</fieldset>';
         $str .= '</div>';
         return $str;
     }
@@ -70,7 +70,7 @@ class data_field_checkbox extends data_field_base {
         $content->fieldid = $this->field->id;
         $content->recordid = $recordid;
         $content->content = $this->format_data_field_checkbox_content($value);
-       
+
         if ($oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
             $content->id = $oldcontent->id;
             return update_record('data_content', $content);
@@ -78,9 +78,9 @@ class data_field_checkbox extends data_field_base {
             return insert_record('data_content', $content);
         }
     }
-    
+
     function display_browse_field($recordid, $template) {
-        
+
         if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)){
             $contentArr = array();
             if (!empty($content->content)) {

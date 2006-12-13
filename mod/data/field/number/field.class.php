@@ -35,7 +35,7 @@ class data_field_number extends data_field_base {
         $content->fieldid = $this->field->id;
         $content->recordid = $recordid;
         $content->content = (float)$value;
-        
+
         if ($oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
             $content->id = $oldcontent->id;
             return update_record('data_content', $content);
@@ -49,10 +49,10 @@ class data_field_number extends data_field_base {
 
         switch ($CFG->dbtype) {
             case 'mysql':   // string in an arithmetic operation is converted to a floating-point number
-                return '('.$fieldname.'+0.0)';  
+                return '('.$fieldname.'+0.0)';
 
             default:
-                return 'CAST('.$fieldname.' AS REAL)';  
+                return 'CAST('.$fieldname.' AS REAL)';
         }
     }
 

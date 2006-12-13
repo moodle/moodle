@@ -25,12 +25,12 @@
 class data_field_radiobutton extends data_field_base {
 
     var $type = 'radiobutton';
-    
+
     function data_field_radiobutton($field=0, $data=0) {
         parent::data_field_base($field, $data);
     }
-    
-    
+
+
     function display_add_field($recordid=0) {
         global $CFG;
 
@@ -42,7 +42,7 @@ class data_field_radiobutton extends data_field_base {
 
         $str = '<div title="'.s($this->field->description).'">';
         $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
- 
+
         $i = 0;
         foreach (explode("\n",$this->field->param1) as $radio) {
             $radio = trim($radio);
@@ -62,7 +62,7 @@ class data_field_radiobutton extends data_field_base {
             $str .= '<label for="field_'.$this->field->id.'_'.$i.'">'.$radio.'</label><br />';
             $i++;
         }
-        $str .= '</fieldset>'; 
+        $str .= '</fieldset>';
         $str .= '</div>';
         return $str;
     }

@@ -25,7 +25,7 @@
     require_once('../../config.php');
     require_once('lib.php');
     require_once($CFG->libdir.'/blocklib.php');
-    
+
     require_login();
 
     $id    = optional_param('id', 0, PARAM_INT);  // course module id
@@ -70,21 +70,21 @@
 /// Print the page header
 
     $strdata = get_string('modulenameplural','data');
-    
+
     // For the javascript for inserting template tags: initialise the default textarea to
     // 'edit_template' - it is always present in all different possible views.
 
     $editorobj = 'editor_'.md5('template');
-    
+
     $bodytag = 'onload="';
     $bodytag .= 'if (typeof('.$editorobj.') != \'undefined\') { currEditor = '.$editorobj.'; } ';
     $bodytag .= 'currTextarea = document.tempform.template;';
     $bodytag .= '" ';
-    
+
     print_header_simple($data->name, '', "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name",
-                        '', '', true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')), 
+                        '', '', true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
                         navmenu($course, $cm), '', $bodytag);
-    
+
     print_heading(format_string($data->name));
 
 /// Groups needed for Add entry tab
@@ -96,19 +96,19 @@
 
 /// Print the tabs.
     $currenttab = 'templates';
-    include('tabs.php'); 
+    include('tabs.php');
 
 
 /// Processing submitted data, i.e updating form.
     $resettemplate = false;
 
 /// html editor is by default disabled
-    $editor = isset($SESSION->data_use_editor) ? $SESSION->data_use_editor : (can_use_html_editor() ? 1 : 0); 
+    $editor = isset($SESSION->data_use_editor) ? $SESSION->data_use_editor : (can_use_html_editor() ? 1 : 0);
 
     if (($mytemplate = data_submitted($CFG->wwwroot.'/mod/data/templates.php')) && confirm_sesskey()) {
         $newtemplate->id = $data->id;
         $newtemplate->{$mode} = $mytemplate->template;
-        
+
         if (!empty($mytemplate->switcheditor)) {
             $editor = $editor ? 0 : 1;
             $SESSION->data_use_editor = $editor;
@@ -144,7 +144,7 @@
     }
 
 /// If everything is empty then generate some defaults
-    if (empty($data->addtemplate) and empty($data->singletemplate) and 
+    if (empty($data->addtemplate) and empty($data->singletemplate) and
         empty($data->listtemplate) and empty($data->rsstemplate)) {
         data_generate_default_template($data, 'singletemplate');
         data_generate_default_template($data, 'listtemplate');
@@ -177,7 +177,7 @@
         echo '</td>';
         echo '</tr>';
     }
-    
+
     // Print the main template.
 
     echo '<tr><td valign="top">';
@@ -186,9 +186,9 @@
         echo '<label for="availabletags">'.get_string('availabletags','data').'</label>';
         helpbutton('tags', get_string('tags','data'), 'data');
         echo '<br />';
-        
+
         echo '<select name="fields1[]" id="availabletags" size="10" ';
-        
+
         // Javascript to insert the field tags into the textarea.
         echo 'onclick="';
         echo 'if (typeof(currEditor) != \'undefined\' && currEditor._editMode == \'wysiwyg\') {';
@@ -197,7 +197,7 @@
         echo 'insertAtCursor(currTextarea, this.options[selectedIndex].value);';   // For inserting when in HTMLArea code view or for normal textareas.
         echo '}';
         echo '">';
-        
+
         $fields = get_records('data_fields', 'dataid', $data->id);
         echo '<optgroup label="'.get_string('fields', 'data').'">';
         foreach ($fields as $field) {
@@ -215,7 +215,7 @@
             }
             echo '</optgroup>';
         }
-        
+
         // Print special tags. fix for MDL-7031
         if ($mode != 'addtemplate') {
             echo '<optgroup label="'.get_string('buttons', 'data').'">';
@@ -243,10 +243,10 @@
         echo '<br /><br /><br /><br /><input type="submit" name="defaultform" value="'.get_string('resettemplate','data').'" />';
     }
     echo '</td>';
-    
+
     echo '<td>';
     if ($mode == 'listtemplate'){
-        echo '<div align="center"><label for="edit-template">'.get_string('multientry','data').'</label></div>';        
+        echo '<div align="center"><label for="edit-template">'.get_string('multientry','data').'</label></div>';
     } else {
         echo '<div align="center"><label for="edit-template">'.get_string($mode,'data').'</label></div>';
     }
@@ -254,7 +254,7 @@
     print_textarea($usehtmleditor, 20, 72, 0, 0, 'template', $data->{$mode});
     echo '</td>';
     echo '</tr>';
-    
+
     if ($mode == 'listtemplate'){
         echo '<tr>';
         echo '<td>&nbsp;</td>';
@@ -275,14 +275,14 @@
 
     echo '<tr><td align="center" colspan="2">';
     echo '<input type="submit" value="'.get_string('savetemplate','data').'" />&nbsp;';
-    
+
     echo '</td></tr></table>';
-    
-    
+
+
     print_simple_box_end();
     echo '</form>';
     if ($usehtmleditor) {
-        use_html_editor('template');        
+        use_html_editor('template');
         if ($mode == 'listtemplate'){
             use_html_editor('listtemplateheader');
             use_html_editor('listtemplatefooter');

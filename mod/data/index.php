@@ -43,7 +43,7 @@
     $strdata = get_string('modulename','data');
 
     print_header_simple($strdata, '', $strdata, '', '', true, "", navmenu($course));
-  
+
     if (! $datas = get_all_instances_in_course("data", $course)) {
         notice("There are no databases", "$CFG->wwwroot/course/view.php?id=$course->id");
     }
@@ -108,7 +108,7 @@
         } else {
             $numunapprovedrecords = '-';
         }
-        
+
         $rsslink = '';
         if ($rss && $data->rssarticles > 0) {
             $rsslink = rss_get_link($course->id, $USER->id, 'data', $data->id, 'RSS');
@@ -125,7 +125,7 @@
                 $currentsection = $data->section;
             }
             $row = array ($printsection, $link, $data->intro, $numrecords, $numunapprovedrecords);
-    
+
         } else {
             $row = array ($link, $data->intro, $numrecords, $numunapprovedrecords);
         }
@@ -140,5 +140,5 @@
     echo "<br />";
     print_table($table);
     print_footer($course);
-    
+
 ?>

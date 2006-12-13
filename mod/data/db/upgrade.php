@@ -1,6 +1,6 @@
 <?php  //$Id$
 
-// This file keeps track of upgrades to 
+// This file keeps track of upgrades to
 // the data module
 //
 // Sometimes, changes between versions involve
@@ -23,8 +23,8 @@ function xmldb_data_upgrade($oldversion=0) {
 
     $result = true;
 
-/// And upgrade begins here. For each one, you'll need one 
-/// block of code similar to the next one. Please, delete 
+/// And upgrade begins here. For each one, you'll need one
+/// block of code similar to the next one. Please, delete
 /// this comment lines once this file start handling proper
 /// upgrade code.
 

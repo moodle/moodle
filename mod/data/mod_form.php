@@ -3,22 +3,22 @@ require_once ('moodleform_mod.php');
 
 class data_mod_form extends moodleform_mod {
 
-	function definition() {
+    function definition() {
 
-		global $CFG;
-		$mform    =& $this->_form;
-		$renderer =& $mform->defaultRenderer();
+        global $CFG;
+        $mform    =& $this->_form;
+        $renderer =& $mform->defaultRenderer();
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         $mform->addElement('text', 'name', get_string('name'));
-		$mform->setType('name', PARAM_TEXT);
-		$mform->addRule('name', null, 'required', null, 'client');
+        $mform->setType('name', PARAM_TEXT);
+        $mform->addRule('name', null, 'required', null, 'client');
 
-		$mform->addElement('htmleditor', 'intro', get_string('intro', 'data'));
-		$mform->setType('intro', PARAM_RAW);
-		$mform->addRule('intro', null, 'required', null, 'client');
+        $mform->addElement('htmleditor', 'intro', get_string('intro', 'data'));
+        $mform->setType('intro', PARAM_RAW);
+        $mform->addRule('intro', null, 'required', null, 'client');
 
         $mform->addElement('date_selector', 'timeavailablefrom', get_string('availablefromdate', 'data'), array('optional'=>true));
 
@@ -33,20 +33,20 @@ class data_mod_form extends moodleform_mod {
                         (array_combine(range(1, DATA_MAX_ENTRIES),//keys
                                         range(1, DATA_MAX_ENTRIES)));//values
         $mform->addElement('select', 'requiredentries', get_string('requiredentries', 'data'), $countoptions);
-		$mform->setHelpButton('requiredentries', array('requiredentries', get_string('requiredentries', 'data'), 'data'));
+        $mform->setHelpButton('requiredentries', array('requiredentries', get_string('requiredentries', 'data'), 'data'));
 
         $mform->addElement('select', 'requiredentriestoview', get_string('requiredentriestoview', 'data'), $countoptions);
-		$mform->setHelpButton('requiredentriestoview', array('requiredentriestoview', get_string('requiredentriestoview', 'data'), 'data'));
+        $mform->setHelpButton('requiredentriestoview', array('requiredentriestoview', get_string('requiredentriestoview', 'data'), 'data'));
 
         $mform->addElement('select', 'maxentries', get_string('maxentries', 'data'), $countoptions);
-		$mform->setHelpButton('maxentries', array('maxentries', get_string('maxentries', 'data'), 'data'));
+        $mform->setHelpButton('maxentries', array('maxentries', get_string('maxentries', 'data'), 'data'));
 
         $ynoptions = array( 0 => get_string('no'), 1 => get_string('yes'));
         $mform->addElement('select', 'comments', get_string('comments', 'data'), $ynoptions);
-		$mform->setHelpButton('comments', array('comments', get_string('allowcomments', 'data'), 'data'));
+        $mform->setHelpButton('comments', array('comments', get_string('allowcomments', 'data'), 'data'));
 
         $mform->addElement('select', 'approval', get_string('requireapproval', 'data'), $ynoptions);
-		$mform->setHelpButton('approval', array('requireapproval', get_string('requireapproval', 'data'), 'data'));
+        $mform->setHelpButton('approval', array('requireapproval', get_string('requireapproval', 'data'), 'data'));
 
         $mform->addElement('select', 'numberrssarticles', get_string('numberrssarticles', 'data') , $countoptions);
 
@@ -63,8 +63,8 @@ class data_mod_form extends moodleform_mod {
         $buttonarray[] = &$mform->createElement('reset', 'resetbutton', get_string('revert'));
         $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-		$renderer->addStopFieldsetElements('buttonar');
-	}
+        $renderer->addStopFieldsetElements('buttonar');
+    }
 
 
 }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -25,7 +25,7 @@
 class data_field_latlong extends data_field_base {
 
     var $type = 'latlong';
-    
+
     // This is an array of URL schemes for linking out to services, using the float values of lat and long.
     // In each scheme, the special markers @lat@ and @long@ will be replaced by the float values.
     // The config options for the field store each service name that should be displayed, in a comma-separated
@@ -65,14 +65,14 @@ class data_field_latlong extends data_field_base {
         }
 
         $str = '<div title="'.s($this->field->description).'">';
-        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>'; 
+        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
         $str .= '<table><tr><td align="right">';
         $str .= '<label for="field_'.$this->field->id.'_0">' . get_string('latitude', 'data') . '</label></td><td><input type="text" name="field_'.$this->field->id.'_0" id="field_'.$this->field->id.'_0" value="'.s($lat).'" size="10" />°N</td></tr>';
         $str .= '<tr><td align="right"><label for="field_'.$this->field->id.'_1">' . get_string('longitude', 'data') . '</label></td><td><input type="text" name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="'.s($long).'" size="10" />°E</td></tr>';
         $str .= '</table>';
-        $str .= '</fieldset>'; 
+        $str .= '</fieldset>';
         $str .= '</div>';
-        
+
         return $str;
     }
 
@@ -85,7 +85,7 @@ class data_field_latlong extends data_field_base {
             if (empty($lat) or empty($long)) {
                 return '';
             }
-            
+
           if($lat < 0) {
               $compasslat = "" . sprintf('%01.4f', 0 - $lat) . '°S';
            } else {
@@ -96,11 +96,11 @@ class data_field_latlong extends data_field_base {
            } else {
               $compasslong = "" . sprintf('%01.4f', $long) . "°E";
           }
-          
+
             $str = '<form style="display:inline;">';
             $str.= "$compasslat, $compasslong";
-            
-            
+
+
             // Now let's create the jump-to-services link
             $servicesshown = explode(',', $this->field->param1);
 
@@ -122,7 +122,7 @@ class data_field_latlong extends data_field_base {
                           ."'>$servicesshown[0]</a> ";
             } elseif (sizeof($servicesshown)>1) {
                 $str .= "\n<select name='jumpto'>";
-    
+
                 foreach($servicesshown as $servicename){
                     // Add a link to a service
                     $str .= "\n  <option value='"
@@ -133,9 +133,9 @@ class data_field_latlong extends data_field_base {
                 //   which allows the "Go" button to refer to the drop-down selector.
                 $str .= "\n</select><input type='button' value='" . get_string('go') . "' onclick='if(previousSibling.value){self.location=previousSibling.value}'/>";
             }
-            
+
             $str.= '</form>';
-            
+
             return $str;
         }
         return false;
@@ -157,7 +157,7 @@ class data_field_latlong extends data_field_base {
             default:
                 break;
         }
-        
+
         if ($oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
             $content->id = $oldcontent->id;
             return update_record('data_content', $content);
@@ -171,10 +171,10 @@ class data_field_latlong extends data_field_base {
 
         switch ($CFG->dbtype) {
             case 'mysql':   // string in an arithmetic operation is converted to a floating-point number
-                return '('.$fieldname.'+0.0)';  
+                return '('.$fieldname.'+0.0)';
 
             default:
-                return 'CAST('.$fieldname.' AS REAL)';  
+                return 'CAST('.$fieldname.' AS REAL)';
         }
     }
 }

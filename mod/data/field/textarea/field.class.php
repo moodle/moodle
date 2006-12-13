@@ -25,12 +25,12 @@
 class data_field_textarea extends data_field_base {
 
     var $type = 'textarea';
-    
+
     function data_field_textarea($field=0, $data=0) {
         parent::data_field_base($field, $data);
     }
-    
-    
+
+
     function display_add_field($recordid=0) {
         global $CFG;
 
@@ -45,7 +45,7 @@ class data_field_textarea extends data_field_base {
         }
 
         $str = '<div title="'.$this->field->description.'">';
-        
+
         if (can_use_richtext_editor()) {
             // Show a rich text html editor.
             $str .= $this->gen_textarea(true, $text);
@@ -59,8 +59,8 @@ class data_field_textarea extends data_field_base {
             // Get the available text formats for this field.
             $formatsForField = format_text_menu();
             $str .= '<br />';
-            
-            $str .= choose_from_menu($formatsForField, 'field_' . $this->field->id . 
+
+            $str .= choose_from_menu($formatsForField, 'field_' . $this->field->id .
                                      '_content1', $format, 'choose', '', '', true);
 
             $str .= helpbutton('textformat', get_string('helpformatting'), 'moodle', true, false, '', true);
@@ -68,21 +68,21 @@ class data_field_textarea extends data_field_base {
         $str .= '</div>';
         return $str;
     }
-    
-    
+
+
     function gen_textarea($usehtmleditor, $text='') {
-        return print_textarea($usehtmleditor, $this->field->param3, $this->field->param2, 
+        return print_textarea($usehtmleditor, $this->field->param3, $this->field->param2,
                               '', '', 'field_'.$this->field->id, $text, '', true, 'field_' . $this->field->id);
     }
-    
-    
+
+
     function print_after_form() {
         if (can_use_richtext_editor()) {
             use_html_editor('field_' . $this->field->id, '', 'field_' . $this->field->id);
         }
     }
-    
-    
+
+
     function update_content($recordid, $value, $name='') {
         $content = new object;
         $content->fieldid = $this->field->id;

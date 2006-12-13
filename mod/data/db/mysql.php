@@ -2,7 +2,7 @@
 
 // THIS FILE IS DEPRECATED!  PLEASE DO NOT MAKE CHANGES TO IT!
 //
-// IT IS USED ONLY FOR UPGRADES FROM BEFORE MOODLE 1.7, ALL 
+// IT IS USED ONLY FOR UPGRADES FROM BEFORE MOODLE 1.7, ALL
 // LATER CHANGES SHOULD USE upgrade.php IN THIS DIRECTORY.
 
 function data_upgrade($oldversion) {
@@ -28,12 +28,12 @@ function data_upgrade($oldversion) {
         table_column("data", "", "assessed", "integer", "10");
         table_column("data", "", "assesspublic", "integer", "4");
     }
-    
+
     if ($oldversion < 2006022700) {
         table_column("data_comments", "", "created", "integer", "10");
         table_column("data_comments", "", "modified", "integer", "10");
     }
-    
+
     if ($oldversion < 2006030700) {
         modify_database('', "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'add', 'data', 'name')");
         modify_database('', "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'update', 'data', 'name')");
@@ -43,7 +43,7 @@ function data_upgrade($oldversion) {
         modify_database('', "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'templates saved', 'data', 'name')");
         modify_database('', "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('data', 'templates def', 'data', 'name')");
     }
-    
+
     if ($oldversion < 2006032700) {
         table_column('data', '', 'defaultsort', 'integer', '10', 'unsigned', '0');
         table_column('data', '', 'defaultsortdir', 'tinyint', '4', 'unsigned', '0', 'not null', 'defaultsort');
@@ -53,7 +53,7 @@ function data_upgrade($oldversion) {
     if ($oldversion < 2006032900) {
         table_column('data', '', 'csstemplate', 'text', '', '', '', 'not null', 'rsstemplate');
     }
-    
+
     if ($oldversion < 2006050500) { // 2 fields have got no default null values
         table_column('data_comments','content','content','text','','','','not null');
         table_column('data_fields','description','description','text','','','','not null');
@@ -68,7 +68,7 @@ function data_upgrade($oldversion) {
         table_column('data_fields','param9','param9','text','','','','not null');
         table_column('data_fields','param10','param10','text','','','','not null');
     }
-    
+
     if ($oldversion < 2006052400) {
         table_column('data','','rsstitletemplate','text','','','','not null','rsstemplate');
     }
@@ -76,7 +76,7 @@ function data_upgrade($oldversion) {
     if ($oldversion < 2006081700) {
         table_column('data', '', 'jstemplate', 'text', '', '', '', 'not null', 'csstemplate');
     }
-    
+
     if ($oldversion < 2006092000) {
         // Upgrades for new roles and capabilities support.
         require_once($CFG->dirroot.'/mod/data/lib.php');
@@ -110,7 +110,7 @@ function data_upgrade($oldversion) {
         modify_database('', 'ALTER TABLE prefix_data DROP COLUMN participants;');
         modify_database('', 'ALTER TABLE prefix_data DROP COLUMN assesspublic;');
         modify_database('', 'ALTER TABLE prefix_data DROP COLUMN ratings;');
-        
+
     }
 
     if ($oldversion < 2006092302) { // Changing some TEXT fields to NULLable and no default

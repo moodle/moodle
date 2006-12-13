@@ -25,12 +25,12 @@
 class data_field_multimenu extends data_field_base {
 
     var $type = 'multimenu';
-    
+
     function data_field_multimenu($field=0, $data=0) {
         parent::data_field_base($field, $data);
     }
-    
-    
+
+
     function display_add_field($recordid=0) {
 
         if ($recordid){
@@ -42,7 +42,7 @@ class data_field_multimenu extends data_field_base {
 
         $str = '<div title="'.s($this->field->description).'">';
         $str .= '<select name="field_' . $this->field->id . '[]" id="field_' . $this->field->id . '" multiple="multiple">';
-        
+
         foreach (explode("\n",$this->field->param1) as $option) {
             $option = trim($option);
             $str .= '<option value="' . s($option) . '"';
@@ -57,7 +57,7 @@ class data_field_multimenu extends data_field_base {
         }
         $str .= '</select>';
         $str .= '</div>';
-        
+
         return $str;
     }
 
@@ -74,7 +74,7 @@ class data_field_multimenu extends data_field_base {
             return insert_record('data_content', $content);
         }
     }
-    
+
     function format_data_field_multimenu_content($content) {
         if (!is_array($content)) {
             $str = $content;
@@ -88,8 +88,8 @@ class data_field_multimenu extends data_field_base {
         $str = clean_param($str, PARAM_NOTAGS);
         return $str;
     }
-    
-    
+
+
     function display_browse_field($recordid, $template) {
 
         if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)){

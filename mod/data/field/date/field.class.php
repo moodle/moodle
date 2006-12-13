@@ -43,7 +43,7 @@ class data_field_date extends data_field_base {
         }
 
         $str = '<div title="'.s($this->field->description).'">';
-        $str .= print_date_selector('field_'.$this->field->id.'_day', 'field_'.$this->field->id.'_month', 
+        $str .= print_date_selector('field_'.$this->field->id.'_day', 'field_'.$this->field->id.'_month',
                                     'field_'.$this->field->id.'_year', $content, true);
         $str .= '</div>';
 
@@ -63,7 +63,7 @@ class data_field_date extends data_field_base {
             $content->fieldid = $this->field->id;
             $content->recordid = $recordid;
             $content->content = make_timestamp($this->year, $this->month, $this->day, 12, 0, 0, 0, false);
-    
+
             if ($oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
                 $content->id = $oldcontent->id;
                 return update_record('data_content', $content);

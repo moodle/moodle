@@ -35,12 +35,12 @@
 
 
     //Return a content encoded to support interactivities linking. Every module
-  
+
 function data_backup_mods($bf,$preferences) {
     global $CFG;
 
     $status = true;
-    
+
     // iterate
     if ($datas = get_records('data','course',$preferences->backup_course,"id")) {
         foreach ($datas as $data) {
@@ -62,12 +62,12 @@ function data_backup_mods($bf,$preferences) {
 
 function data_backup_one_mod($bf,$preferences,$data) {
     global $CFG;
-        
+
     if (is_numeric($data)) { // backwards compatibility
         $data = get_record('data','id',$data);
     }
     $instanceid = $data->id;
-    
+
     $status = true;
 
 
@@ -98,25 +98,25 @@ function data_backup_one_mod($bf,$preferences,$data) {
     fwrite ($bf,full_tag("APPROVAL",4,false,$data->approval));
     fwrite ($bf,full_tag("SCALE",4,false,$data->scale));
     fwrite ($bf,full_tag("ASSESSED",4,false,$data->assessed));
-    
+
     // if we've selected to backup users info, then call any other functions we need
     // including backing up individual files
-    
+
     $status = backup_data_fields($bf,$preferences,$data->id);
-    
+
     if (backup_userdata_selected($preferences,'data',$data->id)) {
         //$status = backup_someuserdata_for_this_instance();
         //$status = backup_somefiles_for_this_instance();
         // ... etc
 
-        $status = backup_data_records($bf,$preferences,$data->id);        
+        $status = backup_data_records($bf,$preferences,$data->id);
         if ($status) {
             $status = backup_data_files_instance($bf,$preferences,$data->id);    //recursive copy
         }
     }
     fwrite ($bf,end_tag("MOD",3,true));
     return $status;
-    
+
 }
 
 
@@ -150,7 +150,7 @@ function backup_data_fields($bf,$preferences,$dataid){
                 fwrite ($bf,full_tag("PARAM8",6,false,$fie_sub->param8));
                 fwrite ($bf,full_tag("PARAM9",6,false,$fie_sub->param9));
                 fwrite ($bf,full_tag("PARAM10",6,false,$fie_sub->param10));
-                
+
                 //End submission
                 $status =fwrite ($bf,end_tag("FIELD",5,true));
             }
@@ -324,7 +324,7 @@ function backup_data_files($bf,$preferences) {
                                                $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/data");
         }
     }
-    
+
     return $status;
 }
 
@@ -365,7 +365,7 @@ function data_check_backup_mods($course,$user_data=false,$backup_unique_code,$in
         }
         return $info;
     }
-    
+
     // otherwise continue as normal
     //First the course data
     $info[0][0] = get_string("modulenameplural","data");
@@ -374,7 +374,7 @@ function data_check_backup_mods($course,$user_data=false,$backup_unique_code,$in
     } else {
         $info[0][1] = 0;
     }
-    
+
     //Now, if requested, the user_data
     if ($user_data) {
         // any other needed stuff

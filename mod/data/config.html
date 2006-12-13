@@ -19,13 +19,13 @@
                 $data_enablerssfeeds = true;
             }
 
- 
+
             choose_from_menu ($options, "data_enablerssfeeds", $data_enablerssfeeds, "", "", "");
         }
     ?>
     </td>
     <td>
-    <?php 
+    <?php
         print_string("configenablerssfeeds","data");
         if (!isset($CFG->enablerssfeeds) || $CFG->enablerssfeeds == 0) {
             print_string("configenablerssfeedsdisabled");
