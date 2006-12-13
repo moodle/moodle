@@ -907,15 +907,15 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '<br /><div class="datapreferences" align="center">';
     echo '<form name="options" action="view.php" method="get">';
     echo '<input type="hidden" name="d" value="'.$data->id.'" />';
-    echo get_string('pagesize','data').':';
+    echo '<label for="pref_perpage">'.get_string('pagesize','data').'</label> ';
     $pagesizes = array(1=>1,2=>2,3=>3,4=>4,5=>5,6=>6,7=>7,8=>8,9=>9,10=>10,15=>15,
                        20=>20,30=>30,40=>40,50=>50,100=>100,200=>200,300=>300,400=>400,500=>500,1000=>1000);
-    choose_from_menu($pagesizes, 'perpage', $perpage, 'choose', '', '0');
-    echo '&nbsp;'.get_string('search').': <input type="text" size="16" name="search" value="'.s($search).'" />';
-    echo '&nbsp;'.get_string('sortby').':';
+    choose_from_menu($pagesizes, 'perpage', $perpage, 'choose', '', '0', false, false, 0, 'pref_perpage');
+    echo '&nbsp;&nbsp;&nbsp;<label for="pref_search">'.get_string('search').'</label> <input type="text" size="16" name="search" id= "pref_search" value="'.s($search).'" />';
+    echo '&nbsp;&nbsp;&nbsp;<label for="pref_sortby">'.get_string('sortby').'</label> ';
     //foreach field, print the option
     $fields = get_records('data_fields','dataid',$data->id, 'name');
-    echo '<select name="sort"><option value="0">'.get_string('dateentered','data').'</option>';
+    echo '<select name="sort" id="pref_sortby"><option value="0">'.get_string('dateentered','data').'</option>';
     foreach ($fields as $field) {
         if ($field->id == $sort) {
             echo '<option value="'.$field->id.'" selected="selected">'.$field->name.'</option>';
@@ -924,7 +924,8 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
         }
     }
     echo '</select>';
-    echo '<select name="order">';
+    echo '<label for="pref_order" class="accesshide">'.get_string('order').'</label>';
+    echo '<select id="pref_order" name="order">';
     if ($order == 'ASC') {
         echo '<option value="ASC" selected="selected">'.get_string('ascending','data').'</option>';
     } else {
@@ -937,6 +938,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     }
     echo '</select>';
     //print ASC or DESC
+    echo '&nbsp;&nbsp;&nbsp;';
     echo '<input type="submit" value="'.get_string('savesettings','data').'" />';
     echo '</form>';
     echo '</div>';
