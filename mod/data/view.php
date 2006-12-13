@@ -114,6 +114,10 @@
         $SESSION->dataprefs[$data->id]['order'] = ($data->defaultsortdir == 0) ? 'ASC' : 'DESC';
     }
     $search = optional_param('search', $SESSION->dataprefs[$data->id]['search'], PARAM_NOTAGS);
+    $textlib = new textlib();
+    if ($textlib->strlen($search) < 2) {
+        $search = '';
+    }
     $SESSION->dataprefs[$data->id]['search'] = $search;   // Make it sticky
 
     $sort = optional_param('sort', $SESSION->dataprefs[$data->id]['sort'], PARAM_INT);

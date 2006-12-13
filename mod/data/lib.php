@@ -908,9 +908,9 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '<form name="options" action="view.php" method="get">';
     echo '<input type="hidden" name="d" value="'.$data->id.'" />';
     echo '<label for="pref_perpage">'.get_string('pagesize','data').'</label> ';
-    $pagesizes = array(1=>1,2=>2,3=>3,4=>4,5=>5,6=>6,7=>7,8=>8,9=>9,10=>10,15=>15,
+    $pagesizes = array(2=>2,3=>3,4=>4,5=>5,6=>6,7=>7,8=>8,9=>9,10=>10,15=>15,
                        20=>20,30=>30,40=>40,50=>50,100=>100,200=>200,300=>300,400=>400,500=>500,1000=>1000);
-    choose_from_menu($pagesizes, 'perpage', $perpage, 'choose', '', '0', false, false, 0, 'pref_perpage');
+    choose_from_menu($pagesizes, 'perpage', $perpage, '', '', '0', false, false, 0, 'pref_perpage');
     echo '&nbsp;&nbsp;&nbsp;<label for="pref_search">'.get_string('search').'</label> <input type="text" size="16" name="search" id= "pref_search" value="'.s($search).'" />';
     echo '&nbsp;&nbsp;&nbsp;<label for="pref_sortby">'.get_string('sortby').'</label> ';
     //foreach field, print the option
