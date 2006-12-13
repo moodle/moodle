@@ -591,7 +591,7 @@ class PresetImporter {
         echo '<input type="hidden" name="d" value="'.$this->data->id.'" />';
         echo '<input type="hidden" name="fullname" value="'.$this->userid.'/'.$this->shortname.'" />';
 
-        if ($currentfields != array() && $newfields != array()) {
+        if (!empty($currentfields) && !empty($newfields)) {
             echo "<h3>$strfieldmappings ";
             helpbutton('fieldmappings', '', 'data');
             echo '</h3><table>';
@@ -622,7 +622,7 @@ class PresetImporter {
             echo '</table>';
             echo "<p>$strwarning</p>";
         }
-        else if ($newfields == array()) {
+        else if (empty($newfields)) {
             error("New preset has no defined fields!");
         }
         echo '<input type="submit" value="'.$strcontinue.'" /></form></div>';
@@ -636,7 +636,7 @@ class PresetImporter {
         $preservedfields = array();
 
         /* Maps fields and makes new ones */
-        if ($newfields != array()) {
+        if (!empty($newfields)) {
             /* We require an injective mapping, and need to know what to protect */
             foreach ($newfields as $nid => $newfield) {
                 $cid = optional_param("field_$nid", -1, PARAM_INT);
@@ -677,7 +677,7 @@ class PresetImporter {
         }
 
         /* Get rid of all old unused data */
-        if ($preservedfields != array()) {
+        if (!empty($preservedfields)) {
             foreach ($currentfields as $cid => $currentfield) {
                 if (!array_key_exists($cid, $preservedfields)) {
                     /* Data not used anymore so wipe! */
