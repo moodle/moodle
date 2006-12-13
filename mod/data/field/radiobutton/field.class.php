@@ -46,6 +46,9 @@ class data_field_radiobutton extends data_field_base {
         $i = 0;
         foreach (explode("\n",$this->field->param1) as $radio) {
             $radio = trim($radio);
+            if ($radio === '') {
+                continue; // skip empty lines
+            }
             $str .= '<input type="radio" id="field_'.$this->field->id.'_'.$i.'" name="field_' . $this->field->id . '" ';
             $str .= 'value="' . s($radio) . '" ';
 

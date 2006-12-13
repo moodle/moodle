@@ -46,6 +46,9 @@ class data_field_checkbox extends data_field_base {
         $i = 0;
         foreach (explode("\n", $this->field->param1) as $checkbox) {
             $checkbox = trim($checkbox);
+            if ($checkbox === '') {
+                continue; // skip empty lines
+            }
             $str .= '<input type="checkbox" id="field_'.$this->field->id.'_'.$i.'" name="field_' . $this->field->id . '[]" ';
             $str .= 'value="' . s($checkbox) . '" ';
             
