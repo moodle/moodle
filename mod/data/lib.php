@@ -890,6 +890,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
          *    Printing Ratings Form       *
          *********************************/
         if (($template == 'singletemplate') && ($data->comments)) {    //prints ratings options
+
             data_print_comments($data, $record, $page);
         }
 
@@ -1081,7 +1082,7 @@ function data_get_ratings($recordid, $sort="u.firstname ASC") {
 
 
 //prints all comments + a text box for adding additional comment
-function data_print_comments($data, $record, $page=0) {
+function data_print_comments($data, $record, $page=0, $mform=false) {
 
     global $CFG;
 
@@ -1091,18 +1092,28 @@ function data_print_comments($data, $record, $page=0) {
         foreach ($comments as $comment) {
             data_print_comment($data, $comment, $page);
         }
+        echo '<br />';
     }
 
-    if (isloggedin() and !isguest()) {
-        echo '<div class="newcomment" align="center"><form method="post" action="'.$CFG->wwwroot.'/mod/data/comment.php">';
-        echo '<input type="hidden" name="mode" value="add" />';
-        echo '<input type="hidden" name="page" value="'.$page.'" />';
-        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        echo '<input type="hidden" name="rid" value="'.$record->id.'" />';
+    if (!isloggedin() or isguest()) {
+        return;
+    }
 
-        echo '<textarea rows="8" cols="50" name="commentcontent"></textarea>';
-        echo '<br /><input type="submit" value="'.get_string('addcomment','data').'" />';
-        echo '</form></div>';
+    $editor = optional_param('addcomment', 0, PARAM_BOOL);
+
+    if (!$mform and !$editor) {
+        echo '<div class="newcomment" align="center">';
+        echo '<a href="view.php?d='.$data->id.'&amp;page='.$page.'&amp;mode=single&amp;addcomment=1">'.get_string('addcomment', 'data').'</a>';
+        echo '</div>';
+    } else {
+        if (!$mform) {
+            require_once('comment_form.php');
+            $mform = new data_comment_form('comment.php');
+            $mform->set_defaults(array('mode'=>'add', 'page'=>$page, 'rid'=>$record->id));
+        }
+        echo '<div class="newcomment" align="center">';
+        $mform->display();
+        echo '</div>';
     }
 }
 
@@ -1146,8 +1157,7 @@ function data_print_comment($data, $comment, $page=0) {
     echo '</td><td class="content" align="left">'."\n";
 
     // Print whole message
-    $options->para = false;
-    echo format_text($comment->content, FORMAT_MOODLE, $options);
+    echo format_text($comment->content, $comment->format);
 
 /// Commands
 

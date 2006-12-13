@@ -32,6 +32,18 @@ function xmldb_data_upgrade($oldversion=0) {
 ///     $result = result of "/lib/ddllib.php" function calls
 /// }
 
+    if ($result && $oldversion < 2006121300) {
+
+    /// Define field format to be added to data_comments
+        $table = new XMLDBTable('data_comments');
+        $field = new XMLDBField('format');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'content');
+
+    /// Launch add field format
+        $result = $result && add_field($table, $field);
+
+    }
+
     return $result;
 }
 

@@ -2,17 +2,16 @@
 
     require_once('../../config.php');
     require_once('lib.php');
+    require_once('comment_form.php');
 
     //param needed to go back to view.php
-    $rid   = required_param('rid', PARAM_INT);   // Record ID
-    $page  = optional_param('page', 0, PARAM_INT);   // Page ID
+    $rid  = required_param('rid', PARAM_INT);   // Record ID
+    $page = optional_param('page', 0, PARAM_INT);   // Page ID
 
     //param needed for comment operations
-    $mode = optional_param('mode','',PARAM_ALPHA);
+    $mode = optional_param('mode','add',PARAM_ALPHA);
     $commentid = optional_param('commentid','',PARAM_INT);
     $confirm = optional_param('confirm','',PARAM_INT);
-    $commentcontent = trim(optional_param('commentcontent','',PARAM_NOTAGS));
-    $template = optional_param('template','',PARAM_ALPHA);
 
 
     if (! $record = get_record('data_records', 'id', $rid)) {
@@ -42,55 +41,67 @@
         if (!has_capability('mod/data:managecomments', $context) && $comment->userid != $USER->id) {
             error('Comment is not yours to edit!');
         }
+    } else {
+        $comment = false;
+    }
+
+
+    $mform = new data_comment_form('comment.php');
+    $mform->set_defaults(array('mode'=>$mode, 'page'=>$page, 'rid'=>$record->id, 'commentid'=>$commentid));
+    if ($comment) {
+        $format = $comment->format;
+        $content = $comment->content;
+        if (can_use_html_editor()) {
+            $options = new object();
+            $options->smiley = false;
+            $options->filter = false;
+            $content = format_text($content, $format, $options);
+            $format = FORMAT_HTML;
+        }
+        $mform->set_defaults(array('content'=>$content, 'format'=>$format));
+    }
+
+
+    if ($mform->is_cancelled()) {
+        redirect('view.php?rid='.$record->id.'&amp;page='.$page);
     }
 
     switch ($mode) {
         case 'add':
-            if (empty($commentcontent)) {
-                redirect('view.php?rid='.$record->id.'&amp;page='.$page, get_string('commentempty', 'data'));
+            if (!$formadata = $mform->data_submitted()) {
+                break; // something is wrong here, try again
             }
 
-            $newcomment = new object;
-            $newcomment->userid = $USER->id;
-            $newcomment->created = time();
+            $newcomment = new object();
+            $newcomment->userid   = $USER->id;
+            $newcomment->created  = time();
             $newcomment->modified = time();
-            if (($newcomment->content = $commentcontent) && ($newcomment->recordid = $record->id)) {
-                insert_record('data_comments',$newcomment);
+            $newcomment->content  = $formadata->content;
+            $newcomment->recordid = $formadata->rid;
+            if (insert_record('data_comments',$newcomment)) {
+                redirect('view.php?rid='.$record->id.'&amp;page='.$page);
+            } else {
+                error('Error while saving comment.');
             }
-            redirect('view.php?rid='.$record->id.'&amp;page='.$page, get_string('commentsaved', 'data'));
+
         break;
 
         case 'edit':    //print edit form
-            print_header();
-            print_heading(get_string('edit'));
-            echo '<div align="center">';
-            echo '<form action="comment.php" method="post">';
-            echo '<input type="hidden" name="commentid" value="'.$comment->id.'" />';
-            echo '<input type="hidden" name="rid" value="'.$record->id.'" />';
-            echo '<input type="hidden" name="page" value="'.$page.'" />';
-
-            echo '<textarea name="commentcontent">'.s($comment->content).'</textarea>';
-            echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-            echo '<input type="hidden" name="mode" value="editcommit" />';
-            echo '<br /><input type="submit" value="'.get_string('ok').'" />';
-            echo '<input type="button" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
-            echo '</form></div>';
-            print_footer();
-        break;
-
-        case 'editcommit':  //update db
-            if (empty($commentcontent)) {
-                redirect('view.php?rid='.$record->id.'&amp;page='.$page, get_string('commentempty', 'data'));
+            if (!$formadata = $mform->data_submitted()) {
+                break; // something is wrong here, try again
             }
 
-            if ($comment) {
-                $newcomment = new object;
-                $newcomment->id = $comment->id;
-                $newcomment->content = $commentcontent;
-                $newcomment->modified = time();
-                update_record('data_comments',$newcomment);
+            $updatedcomment = new object();
+            $updatedcomment->id       = $formadata->commentid;
+            $updatedcomment->content  = $formadata->content;
+            $updatedcomment->format   = $formadata->format;
+            $updatedcomment->modified = time();
+
+            if (update_record('data_comments',$updatedcomment)) {
+                redirect('view.php?rid='.$record->id.'&amp;page='.$page);
+            } else {
+                error('Error while saving comment.');
             }
-            redirect('view.php?rid='.$record->id.'&amp;page='.$page, get_string('commentsaved', 'data'));
         break;
 
         case 'delete':    //deletes single comment from db
@@ -108,16 +119,14 @@
                   'view.php?rid='.$record->id.'&amp;page='.$page);
                 print_footer();
             }
-
-        break;
-
-        default:    //print all listing, and add comment form
-            print_header();
-            data_print_comments($data, $record, $page);
-            print_footer();
+            die;
         break;
 
     }
+
+    print_header();
+    data_print_comments($data, $record, $page, $mform);
+    print_footer();
 
 
 ?>

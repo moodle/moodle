@@ -224,7 +224,7 @@
             echo '<option value="##approve##">' .get_string('approve', 'data'). ' - ##approve##</option>';
             echo '<option value="##user##">' .get_string('user'). ' - ##user##</option>';
             if ($mode != 'singletemplate') {
-                // more points to single template - not useable there 
+                // more points to single template - not useable there
                 echo '<option value="##more##">' .get_string('more', 'data'). ' - ##more##</option>';
                 echo '<option value="##moreurl##">' .get_string('moreurl', 'data'). ' - ##moreurl##</option>';
                 echo '<option value="##comments##">' .get_string('comments', 'data'). ' - ##comments##</option>';

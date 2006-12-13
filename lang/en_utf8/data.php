@@ -28,6 +28,7 @@ $string['chooseorupload'] = 'Choose file';
 $string['columns'] = 'columns';
 $string['commentdeleted'] = 'Comment deleted';
 $string['commentempty'] = 'Comment was empty';
+$string['comment'] = 'Comment';
 $string['comments'] = 'Comments';
 $string['commentsaved'] = 'Comment saved';
 $string['commentsn'] = '$a comment(s)';

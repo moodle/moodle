@@ -37,7 +37,7 @@
     $row[] = new tabobject('list', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id, get_string('list','data'), '', true);
 
     if (isset($record)) {
-        $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&rid='.$record->id, get_string('single','data'), '', true);
+        $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id, get_string('single','data'), '', true);
     } else {
         $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;mode=single', get_string('single','data'), '', true);
     }
