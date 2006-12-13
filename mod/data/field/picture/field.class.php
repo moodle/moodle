@@ -61,7 +61,7 @@ class data_field_picture extends data_field_file {
         $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>'; 
         $str .= '<input type="hidden" name ="field_'.$this->field->id.'_file" id="field_'.$this->field->id.'_file"  value="fakevalue" />';
         $str .= '<label for="field_'.$this->field->id.'">'.get_string('picture','data'). '</label>&nbsp;<input type="file" name ="field_'.$this->field->id.'" id="field_'.$this->field->id.'" /><br />';
-        $str .= '<label for="field_'.$this->field->id.'_filename">'.get_string('optionaldescription','data') .'</label>&nbsp;<input type="text" name="field_'
+        $str .= '<label for="field_'.$this->field->id.'_filename">'.get_string('alttext','data') .'</label>&nbsp;<input type="text" name="field_'
                 .$this->field->id.'_filename" id="field_'.$this->field->id.'_filename" value="'.s($description).'" /><br />';
         $str .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.s($this->field->param3).'" />';
         if ($filepath){
