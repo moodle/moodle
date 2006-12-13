@@ -302,10 +302,10 @@
     make_categories_list($displaylist, $parentlist, "");
 
     echo "<table align=\"center\" border=\"0\" cellspacing=\"2\" cellpadding=\"5\" class=\"generalbox\"><tr>";
-    echo "<th>$strcategories</th>";
-    echo "<th>$strcourses</th>";
-    echo "<th>$stredit</th>";
-    echo "<th>$strmovecategoryto</th>";
+    echo "<th scope=\"col\">$strcategories</th>";
+    echo "<th scope=\"col\">$strcourses</th>";
+    echo "<th scope=\"col\">$stredit</th>";
+    echo "<th scope=\"col\">$strmovecategoryto</th>";
     echo "</tr>";
 
     print_category_edit(NULL, $displaylist, $parentlist);

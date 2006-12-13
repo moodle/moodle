@@ -528,7 +528,7 @@
 
                 } else {
                     echo "<table cellpadding=\"4\" cellspacing=\"2\" border=\"0\" width=\"640\" class=\"files\">";
-                    echo "<tr class=\"file\"><th align=\"left\" class=\"header name\">$strname</th><th align=\"right\" class=\"header size\">$strsize</th><th align=\"right\" class=\"header date\">$strmodified</th></tr>";
+                    echo "<tr class=\"file\"><th align=\"left\" class=\"header name\" scope=\"col\">$strname</th><th align=\"right\" class=\"header size\" scope=\"col\">$strsize</th><th align=\"right\" class=\"header date\" scope=\"col\">$strmodified</th></tr>";
                     foreach ($list as $item) {
                         echo "<tr>";
                         print_cell("left", s($item['filename']), 'name');
@@ -701,11 +701,11 @@ function displaydir ($wdir) {
     echo "<hr width=\"640\" align=\"center\" noshade=\"noshade\" size=\"1\" />";
     echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\" width=\"640\" class=\"files\">";
     echo "<tr>";
-    echo "<th width=\"5\"></th>";
-    echo "<th align=\"left\" class=\"header name\">$strname</th>";
-    echo "<th align=\"right\" class=\"header size\">$strsize</th>";
-    echo "<th align=\"right\" class=\"header date\">$strmodified</th>";
-    echo "<th align=\"right\" class=\"header commands\">$straction</th>";
+    echo "<th width=\"5\" scope=\"col\"></th>";
+    echo "<th align=\"left\" class=\"header name\" scope=\"col\">$strname</th>";
+    echo "<th align=\"right\" class=\"header size\" scope=\"col\">$strsize</th>";
+    echo "<th align=\"right\" class=\"header date\" scope=\"col\">$strmodified</th>";
+    echo "<th align=\"right\" class=\"header commands\" scope=\"col\">$straction</th>";
     echo "</tr>\n";
 
     if ($wdir != "/") {

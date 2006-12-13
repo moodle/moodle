@@ -378,13 +378,13 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     echo "<table class=\"logtable\" border=\"0\" align=\"center\" cellpadding=\"3\" cellspacing=\"0\">\n";
     echo "<tr>";
     if ($course->id == SITEID) {
-        echo "<th class=\"c0 header\">".get_string('course')."</th>\n";
+        echo "<th class=\"c0 header\" scope=\"col\">".get_string('course')."</th>\n";
     }
-    echo "<th class=\"c1 header\">".get_string('time')."</th>\n";
-    echo "<th class=\"c2 header\">".get_string('ip_address')."</th>\n";
-    echo "<th class=\"c3 header\">".get_string('fullname')."</th>\n";
-    echo "<th class=\"c4 header\">".get_string('action')."</th>\n";
-    echo "<th class=\"c5 header\">".get_string('info')."</th>\n";
+    echo "<th class=\"c1 header\" scope=\"col\">".get_string('time')."</th>\n";
+    echo "<th class=\"c2 header\" scope=\"col\">".get_string('ip_address')."</th>\n";
+    echo "<th class=\"c3 header\" scope=\"col\">".get_string('fullname')."</th>\n";
+    echo "<th class=\"c4 header\" scope=\"col\">".get_string('action')."</th>\n";
+    echo "<th class=\"c5 header\" scope=\"col\">".get_string('info')."</th>\n";
     echo "</tr>\n";
 
     if (empty($logs['logs'])) {

@@ -359,7 +359,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     for($i = $display->minwday; $i <= $display->maxwday; ++$i) {
         // This uses the % operator to get the correct weekday no matter what shift we have
         // applied to the $display->minwday : $display->maxwday range from the default 0 : 6
-        echo '<th>'.get_string($CALENDARDAYS[$i % 7], 'calendar').'</th>';
+        echo '<th scope="col">'.get_string($CALENDARDAYS[$i % 7], 'calendar').'</th>';
     }
 
     echo '</tr><tr>'; // End of day names; prepare for day numbers

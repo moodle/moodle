@@ -2,7 +2,7 @@
 
 <table class="formtable">
 <tr>
-    <th style="width: 30%;"><?php print_string('pref_timeformat', 'calendar')?>:</th>
+    <th style="width: 30%;" scope="row"><?php print_string('pref_timeformat', 'calendar')?>:</th>
     <td>
     <?php
         $options = array();
@@ -16,7 +16,7 @@
 </tr>
 
 <tr>
-    <th><?php print_string('pref_startwday', 'calendar')?>:</th>
+    <th scope="row"><?php print_string('pref_startwday', 'calendar')?>:</th>
     <td>
     <?php
         $options = array();
@@ -34,7 +34,7 @@
 </tr>
 
 <tr>
-    <th><?php print_string('pref_maxevents', 'calendar')?>:</th>
+    <th scope="row"><?php print_string('pref_maxevents', 'calendar')?>:</th>
     <td>
     <?php
         $options = NULL;
@@ -48,7 +48,7 @@
 </tr>
 
 <tr>
-    <th><?php print_string('pref_lookahead', 'calendar')?>:</th>
+    <th scope="row"><?php print_string('pref_lookahead', 'calendar')?>:</th>
     <td>
     <?php
         $options = NULL;
@@ -62,7 +62,7 @@
 </tr>
 
 <tr>
-    <th><?php print_string('pref_persistflt', 'calendar')?>:</th>
+    <th scope="row"><?php print_string('pref_persistflt', 'calendar')?>:</th>
     <td>
     <?php choose_from_menu (array(0 => get_string('no'), 1 => get_string('yes')), 'persistflt', $prefs->persistflt, '', '', ''); ?>
     <p><?php print_string('explain_persistflt', 'calendar'); ?></p>

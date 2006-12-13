@@ -159,10 +159,10 @@
             echo "<input type=\"hidden\" name=\"page\" value=\"$page\">";
             echo "<input type=\"hidden\" name=\"perpage\" value=\"$perpage\">";
             echo "<table align=\"center\" border=0 cellspacing=2 cellpadding=4 class=\"generalbox\"><tr>";
-            echo "<th>$strcourses</th>";
-            echo "<th>$strcategory</th>";
-            echo "<th>$strselect</th>";
-            echo "<th>$stredit</th>";
+            echo "<th scope=\"col\">$strcourses</th>";
+            echo "<th scope=\"col\">$strcategory</th>";
+            echo "<th scope=\"col\">$strselect</th>";
+            echo "<th scope=\"col\">$stredit</th>";
             foreach ($courses as $course) {    		    
                 
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);

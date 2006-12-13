@@ -221,7 +221,7 @@
                 $subcategorieswereshown = true;
                 if ($firstentry) {
                     echo '<table align="center" border="0" cellspacing="2" cellpadding="4" class="generalbox">';
-                    echo '<tr><th>'.get_string('subcategories').'</th></tr>';
+                    echo '<tr><th scope="col">'.get_string('subcategories').'</th></tr>';
                     echo '<tr><td nowrap="nowrap">';
                     $firstentry = false;
                 }
@@ -277,14 +277,14 @@
         echo '<form name="movecourses" action="category.php" method="post">';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<table align="center" border="0" cellspacing="2" cellpadding="4" class="generalbox"><tr>';
-        echo '<th>'.$strcourses.'</th>';
+        echo '<th scope="col">'.$strcourses.'</th>';
         if ($creatorediting) {
-            echo '<th>'.$stredit.'</th>';
+            echo '<th scope="col">'.$stredit.'</th>';
             if ($adminediting) {
-                echo '<th>'.$strselect.'</th>';
+                echo '<th scope="col">'.$strselect.'</th>';
             }
         } else {
-            echo '<th>&nbsp;</th>';
+            echo '<th scope="col">&nbsp;</th>';
         }
         echo '</tr>';
 

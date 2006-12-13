@@ -2072,7 +2072,7 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
                         }
                         // only print the category headers if something is displayed for them
                         if ($preferences->show_weighted || $preferences->show_percent || $preferences->show_points) {
-                            $stats_link = '<a href="javascript:void(0)"onclick="window.open(\'?id='.$course->id.'&amp;action=stats&amp;category='.$category.'\',\''.get_string('statslink','grades').'\',\'height=200,width=300,scrollbars=no\')"><font size=-2>'.get_string('statslink','grades').'</font></a>';
+                            $stats_link = '<a href="javascript:void(0)" onclick="window.open(\'?id='.$course->id.'&amp;action=stats&amp;category='.$category.'\',\''.get_string('statslink','grades').'\',\'height=200,width=300,scrollbars=no\')"><font size="-2">'.get_string('statslink','grades').'</font></a>';
                             $header .= '<th colspan="'.$grade_columns.'"><a href="?id='.$course->id.'&amp;action=vcats&amp;cview='.$category;
                             if ($view_by_student != -1) {
                                 $header .= '&amp;user='.$view_by_student;
@@ -2132,7 +2132,7 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
                     $percent_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=percent&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('percentdescending','grades').'" /></a>';
                     $percent_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=percent_asc&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('percentascending','grades').'" /></a>';
                 }
-                $stats_link = '<a href="javascript:void(0)"onclick="window.open(\'?id='.$course->id.'&amp;action=stats&amp;category=all\',\''.get_string('statslink','grades').'\',\'height=200,width=300,scrollbars=no\')"><font size=-2>'.get_string('statslink','grades').'</font></a>';
+                $stats_link = '<a href="javascript:void(0)" onclick="window.open(\'?id='.$course->id.'&amp;action=stats&amp;category=all\',\''.get_string('statslink','grades').'\',\'height=200,width=300,scrollbars=no\')"><font size="-2">'.get_string('statslink','grades').'</font></a>';
                 $header .= '<th colspan="'.$total_columns.'">'.get_string('total','grades').'&nbsp;'.$stats_link.'</th>';
                 if (has_capability('moodle/course:viewcoursegrades', $context) && $view_by_student == -1) {
                     if ($preferences->show_points) {
