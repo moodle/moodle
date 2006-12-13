@@ -99,9 +99,9 @@ function display() {
     $strfile = get_string("file");
 
     echo '<table cellpadding="4" cellspacing="1" class="files">';
-    echo "<tr><th class=\"header name\">$strname</th>".
-         "<th align=\"right\" colspan=\"2\" class=\"header size\">$strsize</th>".
-         "<th align=\"right\" class=\"header date\">$strmodified</th>".
+    echo "<tr><th class=\"header name\" scope=\"col\">$strname</th>".
+         "<th align=\"right\" colspan=\"2\" class=\"header size\" scope=\"col\">$strsize</th>".
+         "<th align=\"right\" class=\"header date\" scope=\"col\">$strmodified</th>".
          "</tr>";
     foreach ($files as $file) {
         if (is_dir("$CFG->dataroot/$relativepath/$file")) {          // Must be a directory

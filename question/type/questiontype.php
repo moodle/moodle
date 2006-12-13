@@ -1046,9 +1046,9 @@ class default_questiontype {
             echo "<td align=\"left\">\n";
             echo "<table cellpadding=\"5\" align=\"left\" class=\"generalbox\" width=\"100%\">\n";
             echo "<tr>\n";
-            echo "<th align=\"left\" valign=\"top\" nowrap=\"nowrap\" class=\"generaltableheader c0\">$strquizname</th>\n";
-            echo "<th align=\"center\" valign=\"top\" nowrap=\"nowrap\" class=\"generaltableheader c0\">$strdoreplace</th>\n";
-            echo "<th align=\"left\" valign=\"top\" nowrap=\"nowrap\" class=\"generaltableheader c0\">$straffectedstudents</th>\n";
+            echo "<th align=\"left\" valign=\"top\" nowrap=\"nowrap\" class=\"generaltableheader c0\" scope=\"col\">$strquizname</th>\n";
+            echo "<th align=\"center\" valign=\"top\" nowrap=\"nowrap\" class=\"generaltableheader c0\" scope=\"col\">$strdoreplace</th>\n";
+            echo "<th align=\"left\" valign=\"top\" nowrap=\"nowrap\" class=\"generaltableheader c0\" scope=\"col\">$straffectedstudents</th>\n";
             echo "</tr>\n";
             foreach($quizzes as $quiz) {
                 // work out whethere it should be checked by default

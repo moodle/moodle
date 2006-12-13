@@ -330,15 +330,15 @@ function question_list($course, $categoryid, $quizid=0,
     print_simple_box_start('center', '100%', '#ffffff', 0);
     echo '<table id="categoryquestions" cellspacing="0"><tr>';
     $actionwidth = $canedit ? 95 : 70;
-    echo "<th width=\"$actionwidth\" nowrap=\"nowrap\" class=\"header\">$straction</th>";
+    echo "<th width=\"$actionwidth\" nowrap=\"nowrap\" class=\"header\" scope=\"col\">$straction</th>";
     
     $sortoptions = array('name, qtype ASC' => get_string("sortalpha", "quiz"),
                          'qtype, name ASC' => get_string("sorttypealpha", "quiz"),
                          'id ASC' => get_string("sortage", "quiz"));
     $orderselect  = choose_from_menu ($sortoptions, 'sortorder', $sortorder, false, 'this.form.submit();', '0', true);
     $orderselect .= '<noscript><input type="submit" value="'.get_string("sortsubmit", "quiz").'" /></noscript>';
-    echo "<th width=\"100%\" align=\"left\" nowrap=\"nowrap\" class=\"header\">$strquestionname $orderselect</th>
-    <th nowrap=\"nowrap\" class=\"header\">$strtype</th>";
+    echo "<th width=\"100%\" align=\"left\" nowrap=\"nowrap\" class=\"header\" scope=\"col\">$strquestionname $orderselect</th>
+    <th nowrap=\"nowrap\" class=\"header\" scope=\"col\">$strtype</th>";
     echo "</tr>\n";
     foreach ($questions as $question) {
         echo "<tr>\n<td nowrap=\"nowrap\">\n";

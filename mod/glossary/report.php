@@ -49,10 +49,10 @@
     } else {
         echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"3\" class=\"generalbox\" width=\"100%\">";
         echo "<tr>";
-        echo "<th class=\"header\">&nbsp;</th>";
-        echo "<th class=\"header\"><a href=\"report.php?id=$entry->id&amp;sort=firstname\">$strname</a></th>";
-        echo "<th width=\"100%\" class=\"header\"><a href=\"report.php?id=$entry->id&amp;sort=rating\">$strrating</a></th>";
-        echo "<th class=\"header\"><a href=\"report.php?id=$entry->id&amp;sort=time\">$strtime</a></th>";
+        echo "<th class=\"header\" scope=\"col\">&nbsp;</th>";
+        echo "<th class=\"header\" scope=\"col\"><a href=\"report.php?id=$entry->id&amp;sort=firstname\">$strname</a></th>";
+        echo "<th width=\"100%\" class=\"header\" scope=\"col\"><a href=\"report.php?id=$entry->id&amp;sort=rating\">$strrating</a></th>";
+        echo "<th class=\"header\" scope=\"col\"><a href=\"report.php?id=$entry->id&amp;sort=time\">$strtime</a></th>";
         foreach ($ratings as $rating) {
             if (has_capability('mod/glossary:manageentries', $context)) {
                 echo '<tr class="teacher">';

@@ -6254,10 +6254,10 @@ function unzip_show_status ($list,$removepath) {
         $strmodified = get_string("modified");
         $strstatus = get_string("status");
         echo "<table cellpadding=\"4\" cellspacing=\"2\" border=\"0\" width=\"640\">";
-        echo "<tr><th class=\"header\" align=\"left\">$strname</th>";
-        echo "<th class=\"header\" align=\"right\">$strsize</th>";
-        echo "<th class=\"header\" align=\"right\">$strmodified</th>";
-        echo "<th class=\"header\" align=\"right\">$strstatus</th></tr>";
+        echo "<tr><th class=\"header\" align=\"left\" scope=\"col\">$strname</th>";
+        echo "<th class=\"header\" align=\"right\" scope=\"col\">$strsize</th>";
+        echo "<th class=\"header\" align=\"right\" scope=\"col\">$strmodified</th>";
+        echo "<th class=\"header\" align=\"right\" scope=\"col\">$strstatus</th></tr>";
         foreach ($list as $item) {
             echo "<tr>";
             $item['filename'] = str_replace(cleardoubleslashes($removepath).'/', "", $item['filename']);

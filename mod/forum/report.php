@@ -55,10 +55,10 @@
     } else {
         echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"3\" class=\"generalbox\" width=\"100%\">";
         echo "<tr>";
-        echo "<th>&nbsp;</th>";
-        echo "<th><a href=\"report.php?id=$post->id&amp;sort=u.firstname\">$strname</a>";
-        echo "<th width=\"100%\"><a href=\"report.php?id=$post->id&amp;sort=r.rating\">$strrating</a>";
-        echo "<th><a href=\"report.php?id=$post->id&amp;sort=r.time\">$strtime</a>";
+        echo "<th scope=\"col\">&nbsp;</th>";
+        echo "<th scope=\"col\"><a href=\"report.php?id=$post->id&amp;sort=u.firstname\">$strname</a>";
+        echo "<th width=\"100%\" scope=\"col\"><a href=\"report.php?id=$post->id&amp;sort=r.rating\">$strrating</a>";
+        echo "<th scope=\"col\"><a href=\"report.php?id=$post->id&amp;sort=r.time\">$strtime</a>";
         foreach ($ratings as $rating) {
             echo '<tr class="forumpostheader">';
             echo "<td>";

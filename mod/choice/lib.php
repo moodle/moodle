@@ -367,9 +367,9 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
             $count = 0;
             foreach ($useranswer as $optionid => $userlist) {
                 if ($optionid) {
-                    echo "<th class=\"col$count header\" width=\"$tablewidth%\">";
+                    echo "<th class=\"col$count header\" width=\"$tablewidth%\" scope=\"col\">";
                 } else if ($choice->showunanswered) {
-                    echo "<th class=\"col$count header\" width=\"$tablewidth%\">";
+                    echo "<th class=\"col$count header\" width=\"$tablewidth%\" scope=\"col\">";
                 } else {
                     continue;
                 }
@@ -472,9 +472,9 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
             $count = 0;
             foreach ($useranswer as $optionid => $userlist) {
                 if ($optionid) {
-                    echo "<th width=\"$tablewidth%\" class=\"col$count header\">";
+                    echo "<th width=\"$tablewidth%\" class=\"col$count header\" scope=\"col\">";
                 } else if ($choice->showunanswered) {
-                    echo "<th width=\"$tablewidth%\" class=\"col$count header\">";
+                    echo "<th width=\"$tablewidth%\" class=\"col$count header\" scope=\"col\">";
                 } else {
                     continue;
                 }

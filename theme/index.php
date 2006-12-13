@@ -59,7 +59,7 @@
     $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
     echo "<table align=\"center\" cellpadding=\"7\" cellspacing=\"5\">";
-    echo "<tr class=\"generaltableheader\"><th>$strtheme</th><th>$strinfo</th></tr>";
+    echo "<tr class=\"generaltableheader\"><th scope=\"col\">$strtheme</th><th scope=\"col\">$strinfo</th></tr>";
     foreach ($themes as $theme) {
 
         unset($THEME);
