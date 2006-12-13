@@ -262,7 +262,7 @@ function grade_get_formatted_grades() {
 
                               
         if (isset($students) && $students) {
-            foreach ($students as $userid => $student) {
+            foreach ($students as $userid => $student) {  
                 $grades_by_student["$userid"]['student_data']['firstname'] = $student->firstname;
                 $grades_by_student["$userid"]['student_data']['lastname'] = $student->lastname;
                 $grades_by_student["$userid"]['student_data']['email'] = $student->email;
@@ -1631,9 +1631,9 @@ function grade_stats() {
 
     // output our data    
     print_header();
-    echo  '<table align="center"><tr><th colspan="3">'.$category.' '.get_string('stats','grades').'</th></tr>';
+    echo  '<table align="center"><tr><th colspan="3" scope="col">'.$category.' '.get_string('stats','grades').'</th></tr>';
     if ($preferences->show_weighted == 1 && $preferences->use_weighted_for_letter == 1 && $category== 'all') {
-        echo  '<tr><th>&nbsp;</th><th>'.get_string('points','grades').'<th>'.get_string('weight','grades').'</th></tr>';            
+        echo  '<tr><th scope="col">&nbsp;</th><th scope="col">'.get_string('points','grades').'<th scope="col">'.get_string('weight','grades').'</th></tr>';            
     }
 
     echo  '<tr><td align="right">'.get_string('max','grades').':</td><td align="right">'.$stats[$category]['max'].'</td>';
@@ -1681,7 +1681,7 @@ function grade_view_category_grades($view_by_student) {
     global $USER;
     global $preferences;
     global $group;
-    
+
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     
     // if can't see course grades, print single grade view
@@ -1731,7 +1731,7 @@ function grade_view_category_grades($view_by_student) {
             }
             echo '<table align="center" class="grades">';
             if (has_capability('moodle/course:viewcoursegrades', $context)) {
-                $header = '<tr class="header"><th rowspan="2">'.$student_heading_link.'</th>';
+                $header = '<tr class="header"><th rowspan="2" scope="col">'.$student_heading_link.'</th>';
             }
             else {
                 $header = '<tr class="header">';
@@ -1790,7 +1790,7 @@ function grade_view_category_grades($view_by_student) {
                         $student_link = '<a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=vcats&amp;user='.$student.'&amp;cview='.$cview.'">';
                     }
                     $student_link .= $grades_by_student[$student]['student_data']['lastname'].', '.$grades_by_student[$student]['student_data']['firstname'].'</a>';
-                    $row .= '<td class="fullname">'.$student_link.'</td>';
+                    $row .= '<th class="fullname" scope="row">'.$student_link.'</th>';
                 }
                 
                 foreach($categories as $category => $items) {
@@ -1809,17 +1809,17 @@ function grade_view_category_grades($view_by_student) {
                                     $link = $CFG->wwwroot.'/mod/'.$all_categories[$category][$assignment]['modname'].'/view.php?id='.$link_id->id;
                                     $all_categories[$category][$assignment]['link'] = $link;
                                     if ($all_categories[$category][$assignment]['hidden'] == 0) {
-                                        $header .= '<th class="'.$class.'" colspan="'.$grade_columns.'"><a href="'.$link.'">'.format_string($assignment,true).'</a>';
+                                        $header .= '<th class="'.$class.'" colspan="'.$grade_columns.'" scope="col"><a href="'.$link.'">'.format_string($assignment,true).'</a>';
                                     }
                                     else {
-                                        $header .= '<th class="'.$class.'" colspan="'.$grade_columns.'"><a class="dimmed" href="'.$link.'">'.format_string($assignment,true).'</a>';
+                                        $header .= '<th class="'.$class.'" colspan="'.$grade_columns.'" scope="col"><a class="dimmed" href="'.$link.'">'.format_string($assignment,true).'</a>';
                                     }
                                     if ($all_categories[$category][$assignment]['extra_credit'] == 1) {
                                         $header .= '<span class="extracredit">('.get_string('extracredit','grades').')</span>'; 
                                     }
                                     $header .='</th>';
                                     if ($preferences->show_points) {
-                                        $header1 .= '<th class="'.$class.'">'. $all_categories[$category][$assignment]['maxgrade'];
+                                        $header1 .= '<th class="'.$class.'" scope="col">'. $all_categories[$category][$assignment]['maxgrade'];
                                         if ($all_categories[$category][$assignment]['grade_against'] != $all_categories[$category][$assignment]['maxgrade']) {
                                             $header1 .= '('. $all_categories[$category][$assignment]['grade_against'].')';
                                         }
@@ -1828,10 +1828,10 @@ function grade_view_category_grades($view_by_student) {
                                                                         
                                     if($preferences->show_percent)    {
                                         if ($all_categories[$category][$assignment]['grade_against'] != $all_categories[$category][$assignment]['maxgrade']) {
-                                            $header1 .= '<th class="'.$class.'">'.get_string('scaledpct','grades').'</th>';
+                                            $header1 .= '<th class="'.$class.'" scope="col">'.get_string('scaledpct','grades').'</th>';
                                         }
                                         else {
-                                            $header1 .= '<th class="'.$class.'">'.get_string('rawpct','grades').'</th>';
+                                            $header1 .= '<th class="'.$class.'" scope="col">'.get_string('rawpct','grades').'</th>';
                                         }
                                     }
                                     if ($preferences->show_weighted) {
@@ -1841,7 +1841,7 @@ function grade_view_category_grades($view_by_student) {
                                         else {
                                             $cur_weighted_max = 0;
                                         }
-                                        $header1 .= '<th>'.$cur_weighted_max.get_string('pctoftotalgrade','grades').'</th>';
+                                        $header1 .= '<th scope="col">'.$cur_weighted_max.get_string('pctoftotalgrade','grades').'</th>';
                                     }
                                 }
 
@@ -1879,32 +1879,32 @@ function grade_view_category_grades($view_by_student) {
                         $total_sort_link = '';
                     }
                     
-                    $stats_link = '<a href="javascript:void(0)"onclick="window.open(\'?id='.$course->id.'&amp;action=stats&amp;group='.$group.'&amp;category='.$cview.'\',\''.get_string('statslink','grades').'\',\'height=200,width=300,scrollbars=no\')">'.get_string('statslink','grades').'</a>';
+                    $stats_link = '<a href="javascript:void(0)" onclick="window.open(\'?id='.$course->id.'&amp;action=stats&amp;group='.$group.'&amp;category='.$cview.'\',\''.get_string('statslink','grades').'\',\'height=200,width=300,scrollbars=no\')">'.get_string('statslink','grades').'</a>';
                     if ($all_categories[$cview]['stats']['drop'] != 0) {
-                        $header .= '<th class="'.$class.'" colspan="'.$grade_columns.'">'.get_string('total','grades').'&nbsp; (Lowest '. $all_categories[$cview]['stats']['drop']. ' Dropped)'.$total_sort_link.' '.$stats_link.'</th>';
+                        $header .= '<th class="'.$class.'" colspan="'.$grade_columns.'" scope="col">'.get_string('total','grades').'&nbsp; (Lowest '. $all_categories[$cview]['stats']['drop']. ' Dropped)'.$total_sort_link.' '.$stats_link.'</th>';
                     }
                     else {
-                        $header .= '<th class="'.$class.'" colspan="'.$grade_columns.'">'.get_string('total','grades').'&nbsp;'.$total_sort_link.' '.$stats_link.'</th>';
+                        $header .= '<th class="'.$class.'" colspan="'.$grade_columns.'" scope="col">'.get_string('total','grades').'&nbsp;'.$total_sort_link.' '.$stats_link.'</th>';
                     }
                     
                     if ($preferences->show_points) {
-                        $header1 .= '<th class="'.$class.'">'.$all_categories[$cview]['stats']['totalpoints'];
+                        $header1 .= '<th class="'.$class.'" scope="col">'.$all_categories[$cview]['stats']['totalpoints'];
                         if ($all_categories[$cview]['stats']['bonus_points'] != 0) {
                             $header1 .='(+'.$all_categories[$cview]['stats']['bonus_points'].')';
                         }
                         $header1 .='</th>';
                     }
                     if ($preferences->show_percent) {
-                        $header1 .= '<th class="'.$class.'">'.get_string('percent','grades').'</th>';
+                        $header1 .= '<th class="'.$class.'" scope="col">'.get_string('percent','grades').'</th>';
                     }
                     
                     
                     if ($preferences->show_weighted) {
-                        $header1 .= '<th class="'.$class.'">'.$all_categories[$cview]['stats']['weight'].get_string('pctoftotalgrade','grades').'</th>';
+                        $header1 .= '<th class="'.$class.'" scope="col">'.$all_categories[$cview]['stats']['weight'].get_string('pctoftotalgrade','grades').'</th>';
                     }
                     
                     if (has_capability('moodle/course:viewcoursegrades', $context)) {
-                        $header .= '<th rowspan="2">'.$student_heading_link.'</th></tr>';
+                        $header .= '<th rowspan="2" scope="col">'.$student_heading_link.'</th></tr>';
                     }
                     else {
                         $header .= '</tr>';
@@ -1913,7 +1913,7 @@ function grade_view_category_grades($view_by_student) {
                     //adjust colcount to reflect the actual number of columns output
                     $colcount++; // total column
                     $colcount = $colcount*$grade_columns + 2;
-                    echo  '<tr class="title"><th colspan="'.$colcount.'">';
+                    echo  '<tr class="title"><th colspan="'.$colcount.'" scope="col">';
                     if ($preferences->use_advanced != 0) {
                         echo  $cview.' '.get_string('grades','grades');
                     }
@@ -2023,7 +2023,7 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
             else {
                 $student_heading_link .= '<br /><a href="?id='.$course->id.'&amp;&amp;action=grades"><font size="-2">'.get_string('showallstudents','grades').'</font></a>';
             }
-            $header = '<tr><th rowspan="2">'.$student_heading_link.'</th>';
+            $header = '<tr><th rowspan="2" scope="col">'.$student_heading_link.'</th>';
         }
         else {
             $header = '</tr>';
@@ -2056,7 +2056,7 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
                 else {
                     $studentviewlink = '<a href="?id='.$course->id.'&amp;action=view_student_grades&amp;user='.$student.'">'.$grades_by_student[$student]['student_data']['lastname'].', '.$grades_by_student[$student]['student_data']['firstname'].'</a>';
                 }
-                $row .= '<td>'. $studentviewlink .'</td>';
+                $row .= '<th scope="row">'. $studentviewlink .'</th>';
             }
             ksort($categories);
 
@@ -2073,7 +2073,7 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
                         // only print the category headers if something is displayed for them
                         if ($preferences->show_weighted || $preferences->show_percent || $preferences->show_points) {
                             $stats_link = '<a href="javascript:void(0)" onclick="window.open(\'?id='.$course->id.'&amp;action=stats&amp;category='.$category.'\',\''.get_string('statslink','grades').'\',\'height=200,width=300,scrollbars=no\')"><font size="-2">'.get_string('statslink','grades').'</font></a>';
-                            $header .= '<th colspan="'.$grade_columns.'"><a href="?id='.$course->id.'&amp;action=vcats&amp;cview='.$category;
+                            $header .= '<th colspan="'.$grade_columns.'" scope="col"><a href="?id='.$course->id.'&amp;action=vcats&amp;cview='.$category;
                             if ($view_by_student != -1) {
                                 $header .= '&amp;user='.$view_by_student;
                             }
@@ -2084,17 +2084,17 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
                         }
                         $header .= '</th>';
                         if ($preferences->show_points) {
-                            $header1 .= '<th>'.get_string('points','grades').'('.$all_categories[$category]['stats']['totalpoints'].')';
+                            $header1 .= '<th scope="col">'.get_string('points','grades').'('.$all_categories[$category]['stats']['totalpoints'].')';
                             if ($all_categories[$category]['stats']['bonus_points'] != 0) {
                                 $header1 .='(+'.$all_categories[$category]['stats']['bonus_points'].')';
                             }
                             $header1 .='</th>';
                         }
                         if ($preferences->show_percent) {
-                            $header1 .= '<th>'.get_string('percent','grades').'</th>';
+                            $header1 .= '<th scope="col">'.get_string('percent','grades').'</th>';
                         }
                         if ($preferences->show_weighted) {
-                            $header1 .= '<th>'.get_string('weightedpctcontribution','grades').'</th>';
+                            $header1 .= '<th scope="col">'.get_string('weightedpctcontribution','grades').'</th>';
                         }
                         $maxpercent = $all_categories["$category"]['stats']['weight'] + $maxpercent;
                         //$total_course_points = $all_categories[$category]['stats']['totalpoints']+ $total_course_points;
@@ -2133,10 +2133,10 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
                     $percent_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=percent_asc&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('percentascending','grades').'" /></a>';
                 }
                 $stats_link = '<a href="javascript:void(0)" onclick="window.open(\'?id='.$course->id.'&amp;action=stats&amp;category=all\',\''.get_string('statslink','grades').'\',\'height=200,width=300,scrollbars=no\')"><font size="-2">'.get_string('statslink','grades').'</font></a>';
-                $header .= '<th colspan="'.$total_columns.'">'.get_string('total','grades').'&nbsp;'.$stats_link.'</th>';
+                $header .= '<th colspan="'.$total_columns.'" scope="col">'.get_string('total','grades').'&nbsp;'.$stats_link.'</th>';
                 if (has_capability('moodle/course:viewcoursegrades', $context) && $view_by_student == -1) {
                     if ($preferences->show_points) {
-                        $header1 .= '<th>'.get_string('points','grades').'('.$all_categories['stats']['totalpoints'].')';
+                        $header1 .= '<th scope="col">'.get_string('points','grades').'('.$all_categories['stats']['totalpoints'].')';
                         if ($category != 'student_data' && $all_categories[$category]['stats']['bonus_points'] != 0) {
 
                             $header1 .='(+'.$total_bonus_points.')';
@@ -2144,42 +2144,42 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
                         $header1 .= '<br />'.$points_sort_link.' '.'</th>';
                     }
                     if ($preferences->show_percent) {
-                        $header1 .= '<th>'.get_string('percentshort','grades').'<br />'.$percent_sort_link.' '.'</th>';
+                        $header1 .= '<th scope="col">'.get_string('percentshort','grades').'<br />'.$percent_sort_link.' '.'</th>';
                     }
                     if ($preferences->show_weighted) {
-                        $header1 .= '<th>'.get_string('weightedpct','grades').'('.$all_categories['stats']['weight'].')'.'<br />'.$weighted_sort_link.' '.'</th>';
+                        $header1 .= '<th scope="col">'.get_string('weightedpct','grades').'('.$all_categories['stats']['weight'].')'.'<br />'.$weighted_sort_link.' '.'</th>';
                     }
                     if ($preferences->show_letters) {
-                        $header1 .= '<th>'.get_string('lettergrade','grades').'<br />'.$grade_sort_link.' '.'</th>';
+                        $header1 .= '<th scope="col">'.get_string('lettergrade','grades').'<br />'.$grade_sort_link.' '.'</th>';
                     }
                     $header1 .= '</tr>';
                 }
                 else {
                     if ($preferences->show_points) {
-                        $header1 .= '<th>'.get_string('points','grades').'('.$all_categories['stats']['totalpoints'].')';
+                        $header1 .= '<th scope="col">'.get_string('points','grades').'('.$all_categories['stats']['totalpoints'].')';
                         if ($category != 'student_data' && $all_categories[$category]['stats']['bonus_points'] != 0) {
                             $header1 .='(+'.$total_bonus_points.')';
                         }
                         $header1 .= '</th>';
                     }
                     if ($preferences->show_percent) {
-                        $header1 .= '<th>'.get_string('percentshort','grades').'</th>';
+                        $header1 .= '<th scope="col">'.get_string('percentshort','grades').'</th>';
                     }
                     if ($preferences->show_weighted) {
-                        $header1 .= '<th>'.get_string('weightedpct','grades').'('.$all_categories['stats']['weight'].')</th>';
+                        $header1 .= '<th scope="col">'.get_string('weightedpct','grades').'('.$all_categories['stats']['weight'].')</th>';
                     }
                     if ($preferences->show_letters) {
-                        $header1 .= '<th>'.get_string('lettergrade','grades').'</th>';
+                        $header1 .= '<th scope="col">'.get_string('lettergrade','grades').'</th>';
                     }
                     $header1 .= '</tr>';
                 }
                 if (has_capability('moodle/course:viewcoursegrades', $context)) {
-                    $header .= '<th rowspan="2">'.$student_heading_link.'</th></tr>';
+                    $header .= '<th rowspan="2" scope="col">'.$student_heading_link.'</th></tr>';
                 }
                 // adjust colcount to reflect actual number of columns output
                 $colcount = $colcount * $grade_columns + $total_columns + 2;
   
-                echo  '<tr><th colspan="'.$colcount.'"><font size="+1">'.get_string('allgrades','grades').'</font>';
+                echo  '<tr><th colspan="'.$colcount.'" scope="col"><font size="+1">'.get_string('allgrades','grades').'</font>';
                 if (has_capability('moodle/course:viewcoursegrades', $context)) {
                     helpbutton('teacher', get_string('gradehelp','grades'), 'grade');
                 }
@@ -2316,7 +2316,7 @@ function grade_display_grade_weights() {
     
     $categories = get_records('grade_category', 'courseid', $course->id);
     if ($categories) {
-        echo  '<table border="0" cellspacing="2" cellpadding="5" align="center" class="generalbox"><tr><th colspan="5" class="header">'.get_string('setweights','grades');
+        echo  '<table border="0" cellspacing="2" cellpadding="5" align="center" class="generalbox"><tr><th colspan="5" class="header" scope="col">'.get_string('setweights','grades');
         helpbutton('weight', get_string('gradeweighthelp','grades'), 'grade');
         echo  '</th></tr>';
         echo  '<tr><td align="center" class="generaltableheader">'.get_string('category','grades').'</td><td align="center" class="generaltableheader">'.get_string('weight','grades').'</td><td align="center" class="generaltableheader">'.get_string('dropxlowest','grades').'</td><td align="center" class="generaltableheader">'.get_string('bonuspoints','grades').'</td><td align="center" class="generaltableheader">'.get_string('hidecategory','grades').'</td></tr>';
@@ -2371,7 +2371,7 @@ function grade_set_categories() {
     /// Collect modules data
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
     
-    echo  '<table border="0" cellspacing="2" cellpadding="5" align="center" class="generalbox"><tr><th colspan="5" class="header">'.get_string('setcategories','grades');
+    echo  '<table border="0" cellspacing="2" cellpadding="5" align="center" class="generalbox"><tr><th colspan="5" class="header" scope="col">'.get_string('setcategories','grades');
     helpbutton('category', get_string('gradecategoryhelp','grades'), 'grade');
     echo  '<tr><td align="center" class="generaltableheader">'.get_string('gradeitem','grades').'</td><td align="center" class="generaltableheader">'.get_string('category','grades').'</td><td align="center" class="generaltableheader">'.get_string('maxgrade','grades').'</td><td align="center" class="generaltableheader">'.get_string('curveto','grades').'</td><td align="center" class="generaltableheader">'.get_string('extracredit','grades').'</td></tr>';
     echo  '<form name="set_categories" method="post" action="./index.php" >';
@@ -2807,7 +2807,7 @@ function grade_display_letter_grades() {
         $letters[10]->courseid = $course->id;
     }
     
-    echo '<table border="0" cellspacing="2" cellpadding="5" align="center" class="generalbox"><tr><th colspan="3" class="header">'.get_string('setgradeletters','grades');
+    echo '<table border="0" cellspacing="2" cellpadding="5" align="center" class="generalbox"><tr><th colspan="3" class="header" scope="col">'.get_string('setgradeletters','grades');
     helpbutton('letter', get_string('gradeletterhelp','grades'), 'grade');
     echo '</th></tr><tr><td align="center" class="generaltableheader">'.get_string('gradeletter','grades').'</td><td align="center" class="generaltableheader">'.get_string('lowgradeletter','grades').'</td><td align="center" class="generaltableheader">'.get_string('highgradeletter','grades').'</td></tr>';
     echo '<form name="grade_letter"><input type="hidden" name="id" value="'.$course->id.'" />';
@@ -2958,7 +2958,7 @@ function print_student_grade($user, $course) {
     
     // prints table
     
-    echo ('<table align="center" class="grades"><tr><th>'.get_string('activity').'</th><th>'.get_string('yourgrade','grades').'</th><th>'.get_string('maxgrade','grades').'</th></tr>');
+    echo ('<table align="center" class="grades"><tr><th scope="col">'.get_string('activity').'</th><th scope="col">'.get_string('yourgrade','grades').'</th><th scope="col">'.get_string('maxgrade','grades').'</th></tr>');
     
     for ($i=0; $i<=$course->numsections; $i++) {
         if (isset($sections[$i])) {   // should always be true

@@ -49,7 +49,7 @@
 <tr><td align="center" colspan="2"><input type="submit" name="preview" value="Preview" /></td></tr>
 </table>
 <?php print_simple_box_end(); ?>
-<table align="center"><tr><th colspan="4"><?php print_string('currentlyselectedusers'); ?></th></tr>
+<table align="center"><tr><th colspan="4" scope="row"><?php print_string('currentlyselectedusers'); ?></th></tr>
 <?php
     if (count($SESSION->emailto[$id])) {
         if (!$course->teacher) {
