@@ -146,14 +146,28 @@ class question_shortanswer_qtype extends default_questiontype {
         $inputname = ' name="'.$nameprefix.'" ';
 
         $feedback = '';
+		$class = '';
+		$feedbackimg = '';
+
         if ($options->feedback) {
             foreach($question->options->answers as $answer) {
-                if($this->test_response($question, $state, $answer)) {
-                    if ($answer->feedback) {
+				if ($this->test_response($question, $state, $answer)) {
+					// Answer was correct or partially correct.
+					if ($answer->fraction == 1) {
+						$class = 'correct';
+						$feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_green_big.gif" alt="'.get_string('correct', 'quiz').'" width="16" height="16" />';
+					} else {
+						$class = 'partiallycorrect';
+						$feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_amber_big.gif" alt="'.get_string('partiallycorrect', 'quiz').'" width="16" height="16" />';					
+					}
+					if ($answer->feedback) {
                         $feedback = format_text($answer->feedback, true, $formatoptions, $cmoptions->course);
                     }
                     break;
-                }
+				} else {
+					$class = 'incorrect';
+					$feedbackimg = '<img src="'.$CFG->pixpath.'/i/cross_red_big.gif" alt="'.get_string('incorrect', 'quiz').'" width="16" height="16" />';
+				}
             }
         }
         
@@ -366,7 +380,7 @@ class question_shortanswer_qtype extends default_questiontype {
                     print_string('partiallycorrect', 'quiz');
                     // MDL-7496
                     if ($correctanswer) {
-                        echo ('<div class="correctness correct">');
+                        echo ('<div class="correctness">');
                         print_string('correctansweris', 'quiz', s($correctanswer));
                         echo ('</div>');
                     }
@@ -375,7 +389,7 @@ class question_shortanswer_qtype extends default_questiontype {
                     // MDL-7496
                     print_string('incorrect', 'quiz');                   
                     if ($correctanswer) {
-                        echo ('<div class="correctness correct">');
+                        echo ('<div class="correctness">');
                         print_string('correctansweris', 'quiz', s($correctanswer));
                         echo ('</div>');
                     }

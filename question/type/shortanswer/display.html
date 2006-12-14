@@ -12,7 +12,8 @@
   </div>
 
   <div class="answer">
-    <input type="text" <?php echo "$readonly $inputname $value"; ?> size="80"/>
+    <input type="text" class="<?php echo $class; ?>" <?php echo "$readonly $inputname $value"; ?> size="80"/>
+    <?php echo $feedbackimg; ?>
   </div>
   <?php if ($feedback) { ?>
     <div class="feedback">

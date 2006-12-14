@@ -284,10 +284,15 @@ class question_match_qtype extends default_questiontype {
                     and $options->correct_responses
                     and isset($correctanswers[$subquestion->id])
                     and ($correctanswers[$subquestion->id] == $response)) {
-                    $a->class = ' highlight ';
+                    $a->class = ' correct ';
+					$a->feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_green_big.gif" alt="'.get_string('correct', 'quiz').'" width="16" height="16" />';
+                } else if ($response) {
+                    $a->class = ' incorrect ';
+					$a->feedbackimg = '<img src="'.$CFG->pixpath.'/i/cross_red_big.gif" alt="'.get_string('incorrect', 'quiz').'" width="16" height="16" />';
                 } else {
-                    $a->class = '';
-                }
+					$a->class = ' ';
+					$a->feedbackimg = ' ';
+				}
     
                 $a->control = choose_from_menu($answers, $menuname, $response, 'choose', '', 0,
                  true, $options->readonly);

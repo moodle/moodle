@@ -17,11 +17,14 @@
         <td class="c1 control <?php echo $answer->class ?>">
           <?php echo $answer->control; ?>
         </td>
-<?php if (!empty($answer->feedback)) { ?>
+        <td>
+            <?php echo $answer->feedbackimg; ?>
+        </td>
+        <?php if (!empty($answer->feedback)) { ?>
         <td class="c0 feedback">
           <?php echo $answer->feedback; ?>
         </td>
-<?php } ?>
+        <?php } ?>
       </tr>
     <?php } ?>
   </table>
