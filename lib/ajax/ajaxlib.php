@@ -32,7 +32,7 @@ function require_js($list) {
             $output .= "<script type='text/javascript' src='".$CFG->wwwroot.''.$translatelist[$list[$i]]."'></script>\n";
             if ($translatelist[$list[$i]] == '/lib/yui/logger/logger-min.js') {
                 // Special case. We need the css.
-                $output .= "<link type='text/css' rel='stylesheet' href='{$CFG->wwwroot}/lib/yui/logger/assets/logger.css'>";
+                $output .= "<link type='text/css' rel='stylesheet' href='{$CFG->wwwroot}/lib/yui/logger/assets/logger.css' />";
             }
         } else {
             $output .= "<script type='text/javascript' src='".$CFG->wwwroot.''.$list[$i]."'></script>\n";
