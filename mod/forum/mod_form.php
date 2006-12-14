@@ -7,7 +7,6 @@ class forum_mod_form extends moodleform_mod {
 
 		global $CFG, $FORUM_TYPES, $COURSE;
 		$mform    =& $this->_form;
-		$renderer =& $mform->defaultRenderer();
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -131,7 +130,7 @@ class forum_mod_form extends moodleform_mod {
         $buttonarray[] = &$mform->createElement('reset', 'resetbutton', get_string('revert'));
         $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-		$renderer->addStopFieldsetElements('buttonar');
+		$mform->closeHeaderBefore('buttonar');
 	}
 
 	function definition_after_data(){

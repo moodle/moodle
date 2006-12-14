@@ -8,7 +8,6 @@ class forum_post_form extends moodleform {
 
 		global $CFG;
 		$mform    =& $this->_form;
-		$renderer =& $mform->defaultRenderer();
 
         $course        = $this->_customdata['course'];
 		$coursecontext = $this->_customdata['coursecontext'];
@@ -86,7 +85,7 @@ class forum_post_form extends moodleform {
 			$submit_string = get_string('posttoforum', 'forum');
 		}
 		$mform->addElement('submit', 'submitbutton', $submit_string);
-		$renderer->addStopFieldsetElements('submitbutton');
+		$mform->closeHeaderBefore('submitbutton');
 
 		$mform->addElement('hidden', 'course');
 		$mform->setType('course', PARAM_INT);

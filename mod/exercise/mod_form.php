@@ -7,7 +7,6 @@ class exercise_mod_form extends moodleform_mod {
 
 		global $CFG, $COURSE, $EXERCISE_TYPE, $EXERCISE_ASSESSMENT_COMPS;
 		$mform    =& $this->_form;
-		$renderer =& $mform->defaultRenderer();
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -107,7 +106,7 @@ class exercise_mod_form extends moodleform_mod {
         $buttonarray[] = &$mform->createElement('reset', 'resetbutton', get_string('revert'));
         $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-		$renderer->addStopFieldsetElements('buttonar');
+		$mform->closeHeaderBefore('buttonar');
 	}
 
 

@@ -7,7 +7,6 @@ class choice_mod_form extends moodleform_mod {
 	    global $CHOICE_SHOWRESULTS, $CHOICE_PUBLISH, $CHOICE_DISPLAY;
 
 		$mform    =& $this->_form;
-		$renderer =& $mform->defaultRenderer();
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -22,6 +21,7 @@ class choice_mod_form extends moodleform_mod {
 
         $mform->addElement('format', 'format', get_string('format'));
 
+//-------------------------------------------------------------------------------
         $repeatarray=array();
         $repeatarray[] = &MoodleQuickForm::createElement('header', '', get_string('choice','choice'));
         $repeatarray[] = &MoodleQuickForm::createElement('text', 'option', get_string('choice','choice'));
@@ -79,6 +79,7 @@ class choice_mod_form extends moodleform_mod {
 
         $mform->addElement('selectyesno', 'showunanswered', get_string("showunanswered", "choice"));
 
+
 //-------------------------------------------------------------------------------
 		$this->standard_coursemodule_elements();
 //-------------------------------------------------------------------------------
@@ -88,7 +89,7 @@ class choice_mod_form extends moodleform_mod {
         $buttonarray[] = &$mform->createElement('reset', 'resetbutton', get_string('revert'));
         $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-		$renderer->addStopFieldsetElements('buttonar');
+		$mform->closeHeaderBefore('buttonar');
 	}
 
 	function defaults_preprocessing(&$default_values){

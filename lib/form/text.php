@@ -19,8 +19,8 @@ class MoodleQuickForm_text extends HTML_QuickForm_text{
         $this->_hiddenLabel = $hiddenLabel;
     }
     function toHtml(){
-        $this->_generateId();
         if ($this->_hiddenLabel){
+            $this->_generateId();
             return '<label class="accesshide" for="'.$this->getAttribute('id').'" >'.
                         $this->getLabel().'</label>'.parent::toHtml();
         } else {

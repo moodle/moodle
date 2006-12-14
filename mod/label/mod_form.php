@@ -6,7 +6,6 @@ class label_mod_form extends moodleform_mod {
 	function definition() {
 
 		$mform    =& $this->_form;
-		$renderer =& $mform->defaultRenderer();
 
 		$mform->addElement('htmleditor', 'content', get_string('labeltext', 'label'));
 		$mform->setType('content', PARAM_RAW);
@@ -21,7 +20,7 @@ class label_mod_form extends moodleform_mod {
         $buttonarray[] = &$mform->createElement('reset', 'resetbutton', get_string('revert'));
         $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-		$renderer->addStopFieldsetElements('buttonar');
+		$mform->closeHeaderBefore('buttonar');
 	}
 
 }

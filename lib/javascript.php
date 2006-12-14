@@ -71,7 +71,6 @@ function inserttext(text) {
     echo "  $insertfield.focus();\n";
 ?>
 }
-
 <?php if (!empty($focus)) {
     if(($pos = strpos($focus, '.')) !== false) {
         $topelement = substr($focus, 0, $pos);

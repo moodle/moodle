@@ -1,6 +1,4 @@
 <?PHP // $Id$
-      // form.php - created with Moodle 1.7 beta + (2006101003)
-
 
 $string['denotesreq'] = '$a denotes required field.';
 $string['err_alphanumeric']='You must enter only letters or numbers here.';
@@ -25,4 +23,8 @@ $string['month']='Month';
 $string['year']='Year';
 $string['hour']='Hour';
 $string['minute']='Minute';
+
+$string['advancedelement']='Advanced Element';
+$string['hideadvanced']='Hide Advanced';
+$string['showadvanced']='Show Advanced';
 ?>
