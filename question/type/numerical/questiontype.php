@@ -350,7 +350,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                 /// Recalculate the tolerance and fall through
                 /// to the nominal case:
                 $tolerance = $answer->answer * $tolerance;
-                // Falls through to the nominal case -
+                // Falls through to the nominal case.
             case '2': case 'nominal':
                 $tolerance = abs($tolerance); // important - otherwise min and max are swapped
                 $max = $answer->answer + $tolerance;
