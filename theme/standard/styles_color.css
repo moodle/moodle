@@ -663,16 +663,17 @@ table.message_search_results td {
 }
 .que .feedback {
   border-color: #DDD;
-}    
-.que.multianswer .incorrect {
+}
+.que .incorrect {
     background-color: #faa;
 }
-.que.multianswer .partiallycorrect {
+.que .partiallycorrect {
     background-color: #ff9;
 }
-.que.multianswer .correct {
+.que .correct {
     background-color: #afa;
 }
+
 
 /***
  *** Logs
