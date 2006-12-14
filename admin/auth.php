@@ -123,17 +123,18 @@
 
     admin_externalpage_print_header($adminroot);
 
-    echo "<center><b>";
+    
     echo "<form target=\"{$CFG->framename}\" name=\"authmenu\" method=\"post\" action=\"auth.php\">";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\" />";
+    echo "<center><b>";
     print_string("chooseauthmethod","auth");
-
+    echo "</b></center>";
     echo '&nbsp;&nbsp;';
 
-    choose_from_menu ($options, "auth", $auth, "","document.location='auth.php?sesskey=$USER->sesskey&auth='+document.authmenu.auth.options[document.authmenu.auth.selectedIndex].value", "");
+    choose_from_menu ($options, "auth", $auth, "","document.location='auth.php?sesskey=$USER->sesskey&amp;auth='+document.authmenu.auth.options[document.authmenu.auth.selectedIndex].value", "");
 
-    echo "</b></center><br />";
-
+    //echo "</b></center><br />";
+    echo "<br />";
     print_simple_box_start("center", "100%");
     print_heading($options[$auth]);
 
@@ -152,7 +153,7 @@
 
     echo '<tr><td colspan="3">';
     print_heading(get_string('auth_common_settings', 'auth'));
-    echo '<td/></tr>';
+    echo '</td></tr>';
 
     if ($auth != "email" and $auth != "none" and $auth != "manual") {
         // display box for URL to change password. NB now on a per-method basis (multiple auth)
@@ -226,10 +227,11 @@
 
 
     echo '</table>';
-    echo '<p align="center"><input type="submit" value="'.get_string('savechanges').'"></p>';
-    echo '</form>';
-
+    echo '<p align="center"><input type="submit" value="'.get_string('savechanges').'" /></p>';
+    
     print_simple_box_end();
+    
+    echo '</form>';   
 
     admin_externalpage_print_footer($adminroot);
     exit;
@@ -249,7 +251,7 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
     } else {
         print_heading(get_string('auth_fieldlocks', 'auth'));
     }
-    echo '<td/></tr>';
+    echo '</td></tr>';
 
     $lockoptions = array ('unlocked'        => get_string('unlocked', 'auth'),
                           'unlockedifempty' => get_string('unlockedifempty', 'auth'),
