@@ -16,16 +16,25 @@ function require_js($list) {
     //list of shortname to filepath translations
     $translatelist = array(
             'yui_yahoo' => '/lib/yui/yahoo/yahoo-min.js',
+			'yui_animation' => '/lib/yui/animation/animation-min.js',
+			'yui_autocomplete' => '/lib/yui/autocomplete/autocomplete-min.js',
+			'yui_calendar' => '/lib/yui/calendar/calendar-min.js',
+			'yui_connection' => '/lib/yui/connection/connection-min.js',
+			'yui_container' => '/lib/yui/container/container-min.js',
             'yui_dom' => '/lib/yui/dom/dom-min.js',
+			'yui_dom-event' => '/lib/yui/yahoo-dom-event/yahoo-dom-event.js',
+			'yui_dragdrop' => '/lib/yui/dragdrop/dragdrop-min.js',
             'yui_event' => '/lib/yui/event/event-min.js',
-            'yui_dragdrop' => '/lib/yui/dragdrop/dragdrop-min.js',
             'yui_logger' => '/lib/yui/logger/logger-min.js',
-            'yui_connection' => '/lib/yui/connection/connection-min.js',        
+			'yui_menu' => '/lib/yui/menu/menu-min.js',
+			'yui_tabview' => '/lib/yui/tabview/tabview-min.js',
+			'yui_treeview' => '/lib/yui/treeview/treeview-min.js',
+			'yui_slider' => '/lib/yui/slider/slider-min.js',
+			'yui_utilities' => '/lib/yui/utilities/utilities.js',
             'ajaxcourse_blocks' => '/lib/ajax/block_classes.js',
             'ajaxcourse_sections' => '/lib/ajax/section_classes.js',
             'ajaxcourse' => '/lib/ajax/ajaxcourse.js'
             );
-
 
     for ($i=0; $i<count($list); $i++) {
         if ($translatelist[$list[$i]]) {
