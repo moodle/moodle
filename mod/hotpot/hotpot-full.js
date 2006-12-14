@@ -518,7 +518,7 @@ function QuizLogin(LoginPrompt) {
 		if (Login[0]) { // user name
 			var v = getCookie(self, 'UserName');
 			html += '<tr>'
-				+	'<th align=right nowrap>' + MSG[0] + ' :</th>'
+				+	'<th align="right" nowrap scope="row">' + MSG[0] + ' :</th>'
 				+	'<td>'
 			;
 			if (typeof(Login[0])=='boolean') { // text box
@@ -548,20 +548,20 @@ function QuizLogin(LoginPrompt) {
 		}
 		if (Login[1]) { // user ID
 			var v = getCookie(self, 'UserID');
-			html += '<tr><th align=right nowrap>' + MSG[1] + ' :</th><td><input type=text name=UserID value="' + v + '"></td></tr>';
+			html += '<tr><th align="right" nowrap scope="row">' + MSG[1] + ' :</th><td><input type=text name=UserID value="' + v + '"></td></tr>';
 		}
 		if (Login[2]) { // user email
 			var v = getCookie(self, 'UserEmail');
-			html += '<tr><th align=right nowrap>' + MSG[2] +' :</th><td><input type=text name=UserEmail value="' + v + '"></td></tr>';
+			html += '<tr><th align="right" nowrap scope="row">' + MSG[2] +' :</th><td><input type=text name=UserEmail value="' + v + '"></td></tr>';
 		}
 		if (Login[3]) { // quiz password
 			var v = getCookie(self, 'Password');
-			html += '<tr><th align=right nowrap>' + MSG[3] + ' :</th><td><input type=password name=Password value="' + v + '"></td></tr>';
+			html += '<tr><th align="right" nowrap scope="row">' + MSG[3] + ' :</th><td><input type=password name=Password value="' + v + '"></td></tr>';
 		}
 		if (Login[4]) { // cookie lifespan
 			var v = getCookie(self, 'CookieExpiry');
 			html += '<tr>'
-				+ 	'<th align=right nowrap>' + MSG[4] + ' :</th>'
+				+ 	'<th align="right" nowrap scope="row">' + MSG[4] + ' :</th>'
 				+ 	'<td>'
 				+		'<select name="CookieExpiry" size=1>'
 				+ 			makeOption('session', v, MSG[7])
@@ -574,7 +574,7 @@ function QuizLogin(LoginPrompt) {
 			;
 		}
 		html += 	'<tr>'
-			+		'<th>&nbsp;</th>'
+			+		'<th scope="row">&nbsp;</th>'
 			+		'<td nowrap>'
 			+			'<input type=submit value="' + MSG[5] + '"> '
 			+ 			'<input type=button value="' + MSG[6] + '" onClick="opener.goBack();self.close();">'
@@ -2101,8 +2101,8 @@ function hpFeedback() {
 			html += '<html><body>'
 				+ '<form action="' + FEEDBACK[0] + '" method="POST">'
 				+ '<table border="0">'
-				+ '<tr><th valign="top" align="right">' + FEEDBACK[7] + ':</th><td>' + document.title + '</td></tr>'
-				+ '<tr><th valign="top" align="right">' + FEEDBACK[8] + ': </th><td>'
+				+ '<tr><th valign="top" align="right" scope="row">' + FEEDBACK[7] + ':</th><td>' + document.title + '</td></tr>'
+				+ '<tr><th valign="top" align="right" scope="row">' + FEEDBACK[8] + ': </th><td>'
 			;
 			if (typeof(FEEDBACK[1])=='string') {
 				html += FEEDBACK[1] + hpHiddenField('recipient', FEEDBACK[1], ',', true);
@@ -2119,7 +2119,7 @@ function hpFeedback() {
 				}
 			}
 			html += '</td></tr>'
-				+	'<tr><th valign="top" align="right">' + FEEDBACK[9] + ':</th>'
+				+	'<tr><th valign="top" align="right" scope="row">' + FEEDBACK[9] + ':</th>'
 				+	'<td><TEXTAREA name="message" rows="10" cols="40"></TEXTAREA></td></tr>'
 				+	'<tr><td>&nbsp;</td><td><input type="submit" value="' + FEEDBACK[6] + '">'
 				+ 	hpHiddenField('realname', FEEDBACK[2], ',', true)
@@ -2137,8 +2137,8 @@ function hpFeedback() {
 					html += '<html><body>'
 						+ '<form action="' + FEEDBACK[0] + '" method="POST" onsubmit="this.action+=this.recipient.options[this.recipient.selectedIndex].value">'
 						+ '<table border="0">'
-						+ '<tr><th valign="top" align="right">' + FEEDBACK[7] + ':</th><td>' + document.title + '</td></tr>'
-						+ '<tr><th valign="top" align="right">' + FEEDBACK[8] + ': </th><td>'
+						+ '<tr><th valign="top" align="right" scope="row">' + FEEDBACK[7] + ':</th><td>' + document.title + '</td></tr>'
+						+ '<tr><th valign="top" align="right" scope="row">' + FEEDBACK[8] + ': </th><td>'
 					;
 					html += '<select name="recipient">';
 					for (var i=0; i<i_max; i++) {

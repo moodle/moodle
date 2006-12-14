@@ -519,7 +519,7 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
 
     print '<tr><td>';
     helpbutton('reportcontent', get_string('reportcontent', 'hotpot'), 'hotpot');
-    print '</td><th align="right">'.get_string('reportcontent', 'hotpot').':</th><td colspan="7">';
+    print '</td><th align="right" scope="col">'.get_string('reportcontent', 'hotpot').':</th><td colspan="7">';
     foreach ($menus as $name => $options) {
         $value = $formdata[$name];
         print choose_from_menu($options, $name, $value, "", "", 0, true);
@@ -561,7 +561,7 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
     print '</td>';
     foreach ($menus as $name => $options) {
         $value = $formdata[$name];
-        print '<th align="right">'.get_string($name, 'hotpot').':</th><td>'.choose_from_menu($options, $name, $value, "", "", 0, true).'</td>';
+        print '<th align="right" scope="col">'.get_string($name, 'hotpot').':</th><td>'.choose_from_menu($options, $name, $value, "", "", 0, true).'</td>';
     }
     print '</tr>';
 

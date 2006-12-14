@@ -28,7 +28,7 @@ var ec_quiz_finish = ec_page_start + <?php echo ($timerstartvalue * 1000); ?>;
     <td class="generalboxcontent" bgcolor="#ffffff" width="100%">
     <table class="generaltable" border="0" width="150" cellspacing="0" cellpadding="0">
     <tr>
-        <th class="generaltableheader" width="100%" scope=\"col\"><?php print_string("timeleft","quiz");?></th>
+        <th class="generaltableheader" width="100%" scope="col"><?php print_string("timeleft","quiz");?></th>
     </tr>
     <tr>
         <td id="QuizTimer" class="generaltablecell" align="center" width="100%">

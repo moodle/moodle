@@ -533,7 +533,7 @@
 
                 } else {
                     echo "<table cellpadding=\"4\" cellspacing=\"2\" border=\"0\">\n";
-                    echo "<tr>\n<th align=\"left\">$strname</th><th align=\"right\">$strsize</th><th align=\"right\">$strmodified</th></tr>";
+                    echo "<tr>\n<th align=\"left\" scope=\"col\">$strname</th><th align=\"right\" scope=\"col\">$strsize</th><th align=\"right\" scope=\"col\">$strmodified</th></tr>";
                     foreach ($list as $item) {
                         echo "<tr>";
                         print_cell("left", $item['filename']);

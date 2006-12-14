@@ -3216,16 +3216,16 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
         echo '<table cellspacing="0" class="forumheaderlist">';
         echo '<thead>';
         echo '<tr>';
-        echo '<th class="header topic">'.get_string('discussion', 'forum').'</th>';
-        echo '<th class="header author" colspan="2">'.get_string('startedby', 'forum').'</th>';
+        echo '<th class="header topic" scope="col">'.get_string('discussion', 'forum').'</th>';
+        echo '<th class="header author" colspan="2" scope="col">'.get_string('startedby', 'forum').'</th>';
         if ($groupmode > 0) {
-            echo '<th class="header group">'.get_string('group').'</th>';
+            echo '<th class="header group" scope="col">'.get_string('group').'</th>';
         }
         if (has_capability('mod/forum:viewdiscussion', $context)) {
-            echo '<th class="header replies">'.get_string('replies', 'forum').'</th>';
+            echo '<th class="header replies" scope="col">'.get_string('replies', 'forum').'</th>';
             /// If the forum can be tracked, display the unread column.
             if ($cantrack) {
-                echo '<th class="header replies">'.get_string('unread', 'forum');
+                echo '<th class="header replies" scope="col">'.get_string('unread', 'forum');
                 if ($forumtracked) {
                     echo '&nbsp;<a title="'.get_string('markallread', 'forum').
                          '" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?f='.
@@ -3235,7 +3235,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
                 echo '</th>';
             }
         }
-        echo '<th class="header lastpost">'.get_string('lastpost', 'forum').'</th>';
+        echo '<th class="header lastpost" scope="col">'.get_string('lastpost', 'forum').'</th>';
         echo '</tr>';
         echo '</thead>';
         echo '<tbody>';

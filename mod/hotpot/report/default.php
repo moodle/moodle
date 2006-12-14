@@ -366,7 +366,7 @@ class hotpot_default_report {
         $d = $table->tableclass.'cell';
         $h = $table->tableclass.'header';
 
-        $table->th_side = '<th valign="top" align="right" class="'.$h.'">';
+        $table->th_side = '<th valign="top" align="right" class="'.$h.'" scope="col">';
 
         $table->td = array();
         $table->th_top = array();
@@ -392,7 +392,7 @@ class hotpot_default_report {
             $size  = empty($table->size[$i])  ? '' : ' width="'.$table->size[$i].'"';
             $wrap  = empty($table->wrap[$i])  ? '' : ' nowrap="nowrap"';
 
-            $table->th_top[$i] = '<th align="center"'.$size.' class="'.$h.'" nowrap="nowrap">';
+            $table->th_top[$i] = '<th align="center"'.$size.' class="'.$h.'" nowrap="nowrap" scope="col">';
 
             $table->td[$i] = '<td valign="top"'.$align.$class.$wrap.'>';
 

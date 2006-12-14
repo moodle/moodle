@@ -180,7 +180,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
 
     print_simple_box_start('center', '100%', '#ffffff', 0);
     echo "<table border=\"0\" cellpadding=\"2\" cellspacing=\"0\" width=\"100%\">\n";
-    echo "<tr><th colspan=\"3\" nowrap=\"nowrap\" class=\"header\">$strorder</th><th class=\"header\">#</th><th align=\"left\" width=\"100%\" nowrap=\"nowrap\" class=\"header\">$strquestionname</th><th nowrap=\"nowrap\" class=\"header\">$strtype</th><th nowrap=\"nowrap\" class=\"header\">$strgrade</th><th align=\"center\" width=\"60\" nowrap=\"nowrap\" class=\"header\">$straction</th></tr>\n";
+    echo "<tr><th colspan=\"3\" nowrap=\"nowrap\" class=\"header\" scope=\"col\">$strorder</th><th class=\"header\" scope=\"col\">#</th><th align=\"left\" width=\"100%\" nowrap=\"nowrap\" class=\"header\" scope=\"col\">$strquestionname</th><th nowrap=\"nowrap\" class=\"header\" scope=\"col\">$strtype</th><th nowrap=\"nowrap\" class=\"header\" scope=\"col\">$strgrade</th><th align=\"center\" width=\"60\" nowrap=\"nowrap\" class=\"header\" scope=\"col\">$straction</th></tr>\n";
     foreach ($order as $i => $qnum) {
 
         if ($qnum and empty($questions[$qnum])) {

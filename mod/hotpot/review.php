@@ -123,7 +123,7 @@ function hotpot_print_attempt_summary(&$hotpot, &$attempt) {
                 default:
                     $name = get_string($field, 'quiz');
             }
-            print '<tr><th align="right" width="100" class="generaltableheader">'.$name.':</th><td class="generaltablecell">'.$value.'</td></tr>';
+            print '<tr><th align="right" width="100" class="generaltableheader" scope="row">'.$name.':</th><td class="generaltablecell">'.$value.'</td></tr>';
         }
     }
     // finish table
@@ -216,7 +216,7 @@ function hotpot_print_attempt_details(&$hotpot, &$attempt) {
                             $printedquestion = true;
                         }
                         // print response
-                        print '<tr><th align="right" width="100" class="generaltableheader">'.$f[$field]['name'].':</th><td colspan="'.($colspan-1).'" class="generaltablecell">'.$text.'</td></tr>'."\n";
+                        print '<tr><th align="right" width="100" class="generaltableheader" scope="row">'.$f[$field]['name'].':</th><td colspan="'.($colspan-1).'" class="generaltablecell">'.$text.'</td></tr>'."\n";
                     }
                 }
             }
@@ -231,7 +231,7 @@ function hotpot_print_attempt_details(&$hotpot, &$attempt) {
                     }
                     // print numeric response
                     $value = isset($question[$field]) ? $question[$field] : '-';
-                    print '<th align="right" width="100" class="generaltableheader">'.$f[$field]['name'].':</th><td class="generaltablecell">'.$value.'</td>';
+                    print '<th align="right" width="100" class="generaltableheader" scope="row">'.$f[$field]['name'].':</th><td class="generaltablecell">'.$value.'</td>';
                 }
             }
             print "</tr>\n";
