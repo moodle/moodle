@@ -111,6 +111,7 @@
         if (abs($displaymode) == 1) {  // If flat AND parent, then force nested display this time
             $displaymode = 3;
         }
+        $navtail = '';
     } else {
         $parent = $discussion->firstpost;
         $navtail = '-> '.format_string($discussion->name);
