@@ -117,8 +117,8 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             if ($dataanswer != '' || trim($question->feedback[$key])) {
                 $answer = new stdClass;
                 $answer->question = $question->id;
-                if (trim($dataanswer) == '') {
-                    $answer->answer = '';
+                if (trim($dataanswer) == '*') {
+                    $answer->answer = '*';
                 } else {
                     $answer->answer = $this->apply_unit($dataanswer, $units);
                     if ($answer->answer === false) {
@@ -269,8 +269,9 @@ class question_numerical_qtype extends question_shortanswer_qtype {
      * answer, false if it doesn't.
      */
     function test_response(&$question, &$state, $answer) {
-        if ($answer->answer == '') {
-            return true; // Blank answer matches anything.
+        // Deal with the match anything answer.
+        if ($answer->answer == '*') {
+            return true;
         }
 
         $response = $this->apply_unit(stripslashes($state->responses['']), $question->options->units);
@@ -297,7 +298,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
     function get_correct_responses(&$question, &$state) {
         $correct = parent::get_correct_responses($question, $state);
-        if ($unit = $this->get_default_numerical_unit($question)) {
+        if ($correct[''] != '*' && $unit = $this->get_default_numerical_unit($question)) {
             $correct[''] .= ' '.$unit->unit;
         }
         return $correct;
@@ -314,8 +315,8 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                 $r->answer = $answer->answer;
                 $r->credit = $answer->fraction;
                 $this->get_tolerance_interval($answer);
-                if ($unit) {
-                    $r->answer .= ' '.$unit->unit;
+                if ($r->answer != '*' && $unit) {
+                    $r->answer .= ' ' . $unit->unit;
                 }
                 if ($answer->max != $answer->min) {
                     $max = "$answer->max"; //format_float($answer->max, 2);
@@ -465,9 +466,12 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             $numerical = new stdClass;
             $numerical->question = $new_question_id;
             $numerical->answer = backup_todb($num_info['#']['ANSWER']['0']['#']);
+            if ($numerical->answer = '') {
+                $numerical->answer = '*';
+            }
             $numerical->tolerance = backup_todb($num_info['#']['TOLERANCE']['0']['#']);
 
-            ////We have to recode the answer field
+            //We have to recode the answer field
             $answer = backup_getid($restore->backup_unique_code,"question_answers",$numerical->answer);
             if ($answer) {
                 $numerical->answer = $answer->new_id;
