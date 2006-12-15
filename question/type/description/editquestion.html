@@ -1,5 +1,8 @@
 <?php
 $QTYPES[$question->qtype]->print_question_form_start($question, array(), $course, $usehtmleditor,
         array('defaultgrade', 'penalty'));
+?>
+      <input type="hidden" name="defaultgrade" value="0" />
+<?php
 $QTYPES[$question->qtype]->print_question_form_end($question);
 ?>
