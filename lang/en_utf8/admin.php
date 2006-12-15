@@ -469,6 +469,7 @@ $string['upgradesettingsintro'] = 'The settings shown below were added during yo
 $string['upgradesure'] = 'Your Moodle files have been changed, and you are about to automatically upgrade your server to this version: <br /><br />
 <strong>$a</strong> <br /><br />
 Once you do this you can not go back again. <br /><br />
+Please note that this process can take a long time. <br /><br />
 Are you sure you want to upgrade this server to this version?';
 $string['upgradingdata'] = 'Upgrading data';
 $string['upgradinglogs'] = 'Upgrading logs';
