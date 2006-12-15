@@ -27,6 +27,7 @@ $string['dbtype'] = 'Type';
 $string['dirroot'] = 'Thư mục Moodle';
 $string['dirrooterror'] = '  Thiết lập \'Thư mục Moodle\' dường như không đúng - chúng tôi không thể tìm thấy các file cài đặt Moodle ở đó. Giá trị dưới đây được đặt lại.';
 $string['download'] = 'Tải xuống';
+$string['environmentrequireinstall'] = 'cầnphải được cài hay kích hoạt.';
 $string['error'] = 'Lỗi';
 $string['fail'] = 'Thất bại';
 $string['fileuploads'] = 'File tải lên';
