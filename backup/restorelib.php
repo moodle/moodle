@@ -5324,7 +5324,7 @@
         
         if (!defined('RESTORE_SILENTLY')) {
             //End the main ul
-            echo "</ul>";
+            echo "</li></ul>";
             
             //End the main table
             echo "</td></tr>";
