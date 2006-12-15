@@ -23,14 +23,16 @@ function xmldb_qtype_multichoice_upgrade($oldversion=0) {
 
     $result = true;
 
-/// And upgrade begins here. For each one, you'll need one 
-/// block of code similar to the next one. Please, delete 
-/// this comment lines once this file start handling proper
-/// upgrade code.
-
-/// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
-///     $result = result of "/lib/ddllib.php" function calls
-/// }
+    // This upgrade actually belongs to the description question type,
+    // but that does not have a DB upgrade script. Therefore, multichoice
+    // is doing it.
+    // The need for this is that for a while, descriptions were being created
+    // with a defaultgrade of 1, when it shoud be 0. We need to reset them all to 0.
+    // See MDL-7925. 
+    if ($result && $oldversion < 2006081901) {
+        $result = set_field('question', 'defaultgrade', 0,
+                'qtype', DESCRIPTION, 'defaultgrade', 1);
+    }
 
     return $result;
 }
