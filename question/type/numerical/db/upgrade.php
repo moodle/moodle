@@ -23,14 +23,12 @@ function xmldb_qtype_numerical_upgrade($oldversion=0) {
 
     $result = true;
 
-/// And upgrade begins here. For each one, you'll need one 
-/// block of code similar to the next one. Please, delete 
-/// this comment lines once this file start handling proper
-/// upgrade code.
-
-/// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
-///     $result = result of "/lib/ddllib.php" function calls
-/// }
+    // In numerical questions, we are changing the 'match anything' answer
+    // from the empty string to *, to be like short answer questions.
+    if ($result && $oldversion < 2006121500) {
+        $result = set_field_select('question_answers', 'answer', '*',
+                "answer = '' AND question IN (SELECT id FROM {$CFG->prefix}question WHERE qtype = '" . NUMERICAL . "')");
+    }
 
     return $result;
 }

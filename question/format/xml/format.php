@@ -326,7 +326,12 @@ class qformat_xml extends qformat_default {
         $qo->fraction = array();
         $qo->tolerance = array();
         foreach ($answers as $answer) {
-            $qo->answer[] = $answer['#'][0];
+            $answertext = trim($answer['#'][0]);
+            if ($answertext == '') {
+                $qo->answer[] = '*';
+            } else {
+                $qo->answer[] = $answertext;
+            }
             $qo->feedback[] = $this->import_text( $answer['#']['feedback'][0]['#']['text'] );
             $qo->fraction[] = $answer['#']['fraction'][0]['#'];
             $qo->tolerance[] = $answer['#']['tolerance'][0]['#'];
