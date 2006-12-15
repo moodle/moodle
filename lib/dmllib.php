@@ -1027,9 +1027,7 @@ function get_fieldset_sql($sql) {
  */
 function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
 
-    global $db, $CFG, $record_cache;
-
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+    global $CFG, $record_cache;
 
     // Clear record_cache based on the parameters passed (individual record or whole table)
     if (!empty($CFG->enablerecordcache)) {
@@ -1053,6 +1051,40 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
     }
 
     $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
+
+    return set_field_select($table, $newfield, $newvalue, $select, true);
+}
+
+/**
+ * Set a single field in every table row where the select statement evaluates to true.
+ *
+ * @uses $CFG
+ * @uses $db
+ * @param string $table The database table to be checked against.
+ * @param string $newfield the field to set.
+ * @param string $newvalue the value to set the field to.
+ * @param string $select a fragment of SQL to be used in a where clause in the SQL call.
+ * @param boolean $localcall Leave this set to false. (Should only be set to true by set_field.)
+ * @return mixed An ADODB RecordSet object with the results from the SQL call or false.
+ */
+function set_field_select($table, $newfield, $newvalue, $select, $localcall = false) {
+
+    global $db, $CFG, $record_cache;
+
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+
+    if (!$localcall) {
+        if ($select) {
+            $select = 'WHERE ' . $select;
+        }
+    
+        // Clear record_cache based on the parameters passed (individual record or whole table)
+        if (!empty($CFG->enablerecordcache)) {
+            if (isset($record_cache[$table])) {
+                unset($record_cache[$table]);
+            }
+        }
+    }
 
     $dataobject = new StdClass;
     $dataobject->{$newfield} = $newvalue;
