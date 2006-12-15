@@ -819,8 +819,9 @@ function displaydir ($wdir) {
     if (!empty($count)) {
         choose_from_menu ($options, "action", "", "$strwithchosenfiles...", "javascript:document.dirform.submit()");
     }
-
+    echo "</td></tr></table>";
     echo "</form>";
+    echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\" width=\"640\"><tr>";
     echo "<td align=\"center\">";
     if (!empty($USER->fileop) and ($USER->fileop == "move") and ($USER->filesource <> $wdir)) {
         echo "<form action=\"index.php\" method=\"get\">";
