@@ -4,7 +4,6 @@
     //It cheks that the parammeter from restore_form are coherent.
     //It puts all the restore info in the session.
     //Finally, it calls restore_execute to do the hard work
-
     //Get objects from session
     if ($SESSION) {
         $info = $SESSION->info;
@@ -119,7 +118,7 @@
         //add new vars to restore object 
         $restore->course_startdateoffset = $coursestartdatedateoffset;
         $restore->course_shortname = $currentcourseshortname;
-        
+   
         // create role mappings, not sure all should be here
         if ($data2 = data_submitted()) {
             foreach ($data2 as $tempname=>$tempdata) {
@@ -265,6 +264,7 @@
             $hidden["launch"]             = "execute";
             $hidden["file"]               =  $file;
             $hidden["id"]                 =  $id;
+            print_string('longtimewarning','admin');
             print_single_button("restore.php", $hidden, get_string("restorecoursenow"),"post");
             echo "</center>";
         } else {
