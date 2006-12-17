@@ -182,7 +182,7 @@ $string['gdversionhelp'] = '<p>Your server does not seem to have GD installed.</
 
 <p>To add GD to PHP under Unix, compile PHP using the --with-gd parameter.</p>
 
-<p>Under Windows you can usually edit php.ini and uncomment the line referencing libgd.dll.</p>';
+<p>Under Windows you can usually edit php.ini and uncomment the line referencing php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Insecure Handling of Globals';
 $string['globalsquoteserror'] = 'Fix your PHP settings: disable register_globals and/or enable magic_quotes_gpc';
 $string['globalsquoteshelp'] = '<p>Combination of disabled Magic Quotes GPC and enabled Register Globals both at the same time is not recommended.</p>
