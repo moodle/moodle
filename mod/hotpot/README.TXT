@@ -1,6 +1,6 @@
-===============================================
-This is v2.2.0 of the HotPot module for Moodle
-===============================================
+==================================================
+This is v2.2.0 of the HotPot module for Moodle 1.7
+==================================================
 
    This module allows teachers to administer Hot Potatoes and TexToys quizzes via Moodle.
    It has been tested on:
@@ -33,84 +33,11 @@ IMPORTANT NOTICE
 TO INSTALL OR UPDATE THE HOTPOT MODULE
 ======================================
 
-1. Install the core scripts of the hotpot module
+   You should only install this module as part of a complete Moodle 1.7 package. 
 
-   (a) download http://download.moodle.org/download.php/modules/hotpot.zip
-       to the "mod" folder on your Moodle site
-   (b) remove the current "mod/hotpot" folder, if there is one (Unix: rm -fR hotpot)
-   (c) unzip the zip file so it creates a new "mod/hotpot" folder
+   Similarly, the recommended way to upgrade this module is to upgrade to a complete Moodle 1.7 package. 
 
-2. Install the messages and help files of the hotpot module
-
-   On Moodle 1.5 and earlier:
-   (a) download http://moodle.cvs.sourceforge.net/moodle/moodle/lang/en_utf8/hotpot.php
-       to "lang/en/hotpot.php" on your Moodle site
-   (b) download the files in http://moodle.cvs.sourceforge.net/moodle/moodle/lang/en_utf8/help/hotpot/
-       into "lang/en/help/hotpot/" on your Moodle site
-
-   On Moodle 1.6 and later:
-   (a) locate the "lang" folder on your Moodle site. 
-       Note: the default location for the "lang" folder is in the "$CFG->dataroot" directory defined in the config.php file for your Moodle site
-   (b) download http://moodle.cvs.sourceforge.net/moodle/moodle/lang/en_utf8/hotpot.php
-       to "lang/en_utf8/hotpot.php" on your Moodle site
-   (c) download the files in http://moodle.cvs.sourceforge.net/moodle/moodle/lang/en_utf8/help/hotpot/
-       into "lang/en_utf8/help/hotpot/" on your Moodle site
-
-3. copy and set up the file icons
-   [This step is not required for Moodle 1.5 and later, and is optional for Moodle 1.1 to 1.4]
-
-   (a) copy the hotpot icons (jcb.gif, jcl.gif, jcw.gif, jmt.gif, jmx.gif, jqz.gif)
-       from http://moodle.cvs.sourceforge.net/moodle/moodle/pix/f/
-       to "pix/f" on your Moodle site           
-   (b) open the "files/mimetypes.php" file on your Moodle site with a text editor
-   (c) insert the following lines just AFTER the line which reads "$mimeinfo = array (":
-       // additional mimetypes for the "hotpot" module
-       "jcb"  => array ("type"=>"text/xml", "icon"=>"jcb.gif"),
-       "jcl"  => array ("type"=>"text/xml", "icon"=>"jcl.gif"),
-       "jcw"  => array ("type"=>"text/xml", "icon"=>"jcw.gif"),
-       "jmt"  => array ("type"=>"text/xml", "icon"=>"jmt.gif"),
-       "jmx"  => array ("type"=>"text/xml", "icon"=>"jmx.gif"),
-       "jqz"  => array ("type"=>"text/xml", "icon"=>"jqz.gif"),
-       "rhb"  => array ("type"=>"text/xml", "icon"=>"xml.gif"),
-       "sqt"  => array ("type"=>"text/xml", "icon"=>"xml.gif"),
-   (d) save the changes and close the file
-
-4. enable import from Hot Potatoes XML files to Moodle's Quiz module
-   [This step is not required for Moodle 1.5 and later, and is optional for Moodle 1.1 to 1.4]
-
-   (a) if necessary, create a folder at "mod/quiz/format/hotpot" on your Moodle site
-   (b) download http://moodle.cvs.sourceforge.net/moodle/moodle/question/format/hotpot/format.php
-       to "mod/hotpot/quiz/format/hotpot/format.php" on your Moodle site
-
-   (c) open the "lang/en/quiz.php" file on your Moodle site with a text editor
-   (d) insert the following line just BEFORE the final line which reads "?>":
-        $string['hotpot'] = 'Hot Potatoes XML format';
-   (e) save the changes and close the file
-   
-   Steps (f), (g) and (h) are only required on Moodle 1.4.5
-   (f) open the "mod/quiz/import.php" file on your Moodle site with a text editor 
-   (g) if necessary, add 'hotpot' to the "fileformats" array on lines 9-10:
-        $fileformats = array('aiken','aon','blackboard','coursetestmanager',
-          'gift','learnwise','missingword','webct','xml','hotpot' );
-   (h) save the changes and close the file
-
-5. Login to your Moodle site as an administrator
-
-   a) If you are installing this module for the first time, you should see a report saying that the following (prefix)_hotpot tables have been successfuly created:
-      hotpot
-      hotpot_attempts
-      hotpot_details
-      hotpot_questions
-      hotpot_responses
-      hotpot_strings
-
-   b) If you are updating the module, you will probably see messages indicating the progress of the update
-   
-   c) If you get error messages, please copy and save them to a file on your PC, and then ask for help on Moodle's HotPot support forum:
-      go to http://moodle.org 
-      then click "Free Support",
-      then click "HotPot"
-
+   However, it is possible to download and unzip a complete Moodle 1.7 package and extract the "mod/hotpot" folder for use on your live Moodle 1.7 site.
 
 ========================
 TO USE THE HOTPOT MODULE
