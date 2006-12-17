@@ -1,11 +1,11 @@
 ==================================================
-This is v2.2.0 of the HotPot module for Moodle 1.7
+This is v2.2.0 of the HotPot module for Moodle 1.8
 ==================================================
 
    This module allows teachers to administer Hot Potatoes and TexToys quizzes via Moodle.
    It has been tested on:
       - Hot Potatoes 6
-      - Moodle 1.7
+      - Moodle 1.8
       - PHP 4.1 thru 5.1.2
       - MySQL 4.x thru 5.0
       - PostgreSQL 7.3 thru 8.2
@@ -33,11 +33,11 @@ IMPORTANT NOTICE
 TO INSTALL OR UPDATE THE HOTPOT MODULE
 ======================================
 
-   You should install only this module by installing the complete Moodle 1.7 package. 
+   You should install only this module by installing a complete Moodle 1.8 package. 
 
-   Similarly, the recommended way to upgrade this module is to upgrade to a complete Moodle 1.7 package. 
+   Similarly, the recommended way to upgrade this module is to upgrade to a complete Moodle 1.8 package. 
 
-   However, it is possible to download and unzip a complete Moodle 1.7 package and extract the "mod/hotpot" folder for use on your live Moodle 1.7 site.
+   However, it is possible to download and unzip a complete Moodle 1.8 package and extract the "mod/hotpot" folder for use on your live Moodle 1.8 site.
 
 ========================
 TO USE THE HOTPOT MODULE
