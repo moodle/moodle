@@ -877,23 +877,27 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
         $newtext = str_ireplace($patterns, $replacement, $data->{$template});
 
         /// no more html formatting and filtering - see MDL-6635
-        echo $newtext;
+        if ($return) {
+            return $newtext;
+        } else {
+            echo $newtext;
 
-        /**********************************
-         *    Printing Ratings Form       *
-         *********************************/
-        if ($template == 'singletemplate') {    //prints ratings options
-            data_print_ratings($data, $record);
+            // hack alert - return is always false in singletemplate anyway ;-)
+            /**********************************
+             *    Printing Ratings Form       *
+             *********************************/
+            if ($template == 'singletemplate') {    //prints ratings options
+                data_print_ratings($data, $record);
+            }
+    
+            /**********************************
+             *    Printing Ratings Form       *
+             *********************************/
+            if (($template == 'singletemplate') && ($data->comments)) {    //prints ratings options
+    
+                data_print_comments($data, $record, $page);
+            }
         }
-
-        /**********************************
-         *    Printing Ratings Form       *
-         *********************************/
-        if (($template == 'singletemplate') && ($data->comments)) {    //prints ratings options
-
-            data_print_comments($data, $record, $page);
-        }
-
     }
 }
 

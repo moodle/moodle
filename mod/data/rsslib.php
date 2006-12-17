@@ -68,7 +68,7 @@
                             $item = null;
 
                             // guess title or not
-                            if ($data->rsstitletemplate) {
+                            if (!empty($data->rsstitletemplate)) {
                                 $item->title = data_print_template('rsstitletemplate', $recordarray, $data, '', 0, true);
                             } else { // else we guess
                                 $item->title   = strip_tags(get_field('data_content', 'content',
