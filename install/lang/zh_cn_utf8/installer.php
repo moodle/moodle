@@ -96,7 +96,7 @@ $string['gdversionhelp'] = '<p>您的服务器看上去并没有安装GD。</p>
 
 <p>在Unix上为PHP增加GD功能，可以用--with-gd选项来编译PHP。</p>
 
-<p>在Windows上，修改php.ini并去掉libgd.dll行前的注释符号就可以了。</p>';
+<p>在Windows上，修改php.ini并去掉php_gd2.dll行前的注释符号就可以了。</p>';
 $string['globalsquotes'] = '处理全局变量的方式不安全';
 $string['globalsquoteserror'] = '修正您的PHP设置：禁用register_globals和/或启动magic_quotes_gpc。';
 $string['help'] = '帮助';

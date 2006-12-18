@@ -134,7 +134,7 @@ $string['gdversionerror'] = 'De GD-bibliotheek moet geïnstalleerd zijn om afbee
 $string['gdversionhelp'] = '<p>Blijkbaar is GD niet geïnstalleerd op je server.</p>
 <p>PHP heeft de GD-bibliotheek nodig om afbeeldingen te kunnen maken (zoals de grafieken van de logbestanden) en te verwerken (zoals de profielbestanden van de gebruikers). Moodle zal werken zonder GD - alleen deze mogelijkheden zullen het niet doen.</p>
 <p>Om GD toe te voegen aan PHP op een Unixmachine moet je PHP compileren met de --with-gd parameter.</p>
-<p>Onder Windows kun je gewoonlijk php.ini bewerken en de commentaartekens voor de lijn met libgd.dll verwijderen.</p>';
+<p>Onder Windows kun je gewoonlijk php.ini bewerken en de commentaartekens voor de lijn met php_gd2.dll verwijderen.</p>';
 $string['globalsquotes'] = 'Inveilige behandeling van globals';
 $string['globalsquoteserror'] = 'Zet je PHP instellingen juist: schakel register_globals uit en/of schakel magic_quotes_gpc in';
 $string['help'] = 'Help';
@@ -199,6 +199,7 @@ $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Nederlands';
 $string['unicoderecommended'] = 'Aanbevolen wordt om al je data als Unicode (UTF-8) te bewaren. Nieuwe installaties zouden moeten geïnstalleerd worden met Unicode als standaard tekenset voor de databank. Als je upgrade, moet je het UTF-8 migratieproces laten lopen (zie pagina Beheer).';
+$string['unicoderequired'] = 'Je moet al je data als Unicode (UTF-8) bewaren. Nieuwe installaties moeten geïnstalleerd worden met Unicode als standaard tekenset voor de databank. Als je upgrade, moet je het UTF-8 migratieproces laten lopen (zie pagina Beheer).';
 $string['user'] = 'Gebruiker';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'Je krijgt deze pagina te zien omdat je met succes het <strong>$a->packname $a->packversion</strong> packet op je computer gezet en gestart hebt. Proficiat!';

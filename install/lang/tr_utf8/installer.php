@@ -144,7 +144,7 @@ Moodle GD olmadan da çalışır, ancak yukarıda bahsedilen özelliklerden yara
 
 <p>Unix altında PHP\'ye GD desteğini sağlamak için, PHP\'yi --with-gd parametresiyle derleyin.</p>
 
-<p>Windows altında php.ini dosyasını düzenler ve libgd.dll\'yi referans eden satırdaki yorumları kaldırırsınız.</p>';
+<p>Windows altında php.ini dosyasını düzenler ve php_gd2.dll\'yi referans eden satırdaki yorumları kaldırırsınız.</p>';
 $string['globalsquotes'] = 'Güvensiz Global Değişkenler';
 $string['globalsquoteserror'] = 'PHP ayarlarınızı düzeltin. register_globals\'ı kapalı ve/veya magic_quotes_gpc açık tutun.';
 $string['help'] = 'Yardım';
@@ -222,6 +222,7 @@ $string['status'] = 'Durum';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Türkçe';
 $string['unicoderecommended'] = 'Bütün verilerinizi Unicode (UTF-8) olarak saklamanız tavsiye edilir. Yeni kurulumların veritabanlarına varsayılan olarak Unicode karakter setinde işlem yapması önerilir. Güncelleme yapıyorsanız, UTF-8 Çevirim işlemini yapmanız gerekiyor (Yönetici sayfasına bakınız).';
+$string['unicoderequired'] = 'Bütün verilerinizi Unicode (UTF-8) olarak saklamanız gerekir. Yeni kurulumların veritabanlarına varsayılan olarak Unicode karakter setinde işlem yapması gerekir. Güncelleme yapıyorsanız, UTF-8 Çevirim işlemini yapmanız gerekiyor (Yönetici sayfasına bakınız).';
 $string['user'] = 'Kullanıcı';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'Bilgisayarınıza <strong>$a->packname $a->packversion</strong> paketini başarıyla kurdunuz. Tebrikler!';
