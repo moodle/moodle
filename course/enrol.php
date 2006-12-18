@@ -8,12 +8,15 @@
     require_once("$CFG->dirroot/enrol/enrol.class.php");
 
     $id           = required_param('id', PARAM_INT);
-    $loginasguest = optional_param('loginasguest', 0, PARAM_BOOL);
+    $loginasguest = optional_param('loginasguest', 0, PARAM_BOOL); // hmm, is this still needed?
 
-    require_login();
-
-    if ($USER->username == 'guest') {                      // Guests can't enrol in anything!
-        redirect($CFG->wwwroot.'/login/index.php');
+    if (!isloggedin()) {
+        $wwwroot = $CFG->wwwroot;
+        if (!empty($CFG->loginhttps)) {
+            $wwwroot = str_replace('http:','https:', $wwwroot);
+        }
+        // do not use require_login here because we are usually comming from it 
+        redirect($wwwroot.'/login/index.php');
     }
 
     if (! $course = get_record('course', 'id', $id) ) {
@@ -34,7 +37,7 @@
 /// thus got to this script by mistake.  This might occur if enrolments 
 /// changed during this session or something
 
-    if (has_capability('moodle/course:view', $context) and !has_capability('moodle/legacy:guest', $context)) {
+    if (has_capability('moodle/course:view', $context) and !has_capability('moodle/legacy:guest', $context, NULL, false)) {
         if ($SESSION->wantsurl) {
             $destination = $SESSION->wantsurl;
             unset($SESSION->wantsurl);

@@ -137,11 +137,9 @@ function check_entry($form, $course) {
 
     $groupid = $this->check_group_entry($course->id, $form->password);
 
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
-
     if (($form->password == $course->password) or ($groupid !== false) ) {
 
-        if (has_capability('moodle/legacy:guest', $context, $USER->id, false)) {
+        if ($USER->username == 'guest') { // only real user guest, do not use this for users with guest role
             $USER->enrolkey[$course->id] = true;
             add_to_log($course->id, 'course', 'guest', 'view.php?id='.$course->id, getremoteaddr());
 
