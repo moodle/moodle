@@ -557,7 +557,7 @@ function link_to_popup_window ($url, $name='popup', $linkname='click here',
         $url = substr($url, strlen($CFG->wwwroot));
     }
 
-    $link = '<a target="'. $name .'" title="'. $title .'" href="'. $CFG->wwwroot . $url .'" '.
+    $link = '<a target="'. $name .'" title="'. s($title) .'" href="'. $CFG->wwwroot . $url .'" '.
            "onclick=\"return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>";
     if ($return) {
         return $link;
@@ -3084,7 +3084,7 @@ function print_user_picture($userid, $courseid, $picture, $size=0, $return=false
         }    
     }
     $output .= "<img class=\"$class\" align=\"middle\" src=\"$src".
-                   " border=\"0\" width=\"$size\" height=\"$size\" alt=\"".$imagealt."\" />";
+                   " border=\"0\" width=\"$size\" height=\"$size\" alt=\"".s($imagealt)."\" />";
     if ($link) {
         $output .= '</a>';
     }
