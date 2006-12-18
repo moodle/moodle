@@ -315,6 +315,7 @@ $string['log'] = 'Logs';
 $string['loginhttps'] = 'Use HTTPS for logins';
 $string['loglifetime'] = 'Keep logs for';
 $string['longtimenosee'] = 'Unsubscribe users from courses after';
+$string['longtimewarning'] = '<b>Please note that this process can take a long time.</b>';
 $string['mail'] = 'Email';
 $string['maintfileopenerror'] = 'Error opening maintenance files!';
 $string['maintinprogress'] = 'Maintenance is in progress...';
