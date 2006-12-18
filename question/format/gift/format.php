@@ -35,11 +35,11 @@
 class qformat_gift extends qformat_default {
 
     function provide_import() {
-      return true;
+        return true;
     }
 
     function provide_export() {
-      return true;
+        return true;
     }
 
     function answerweightparser(&$answer) {
@@ -65,18 +65,16 @@ class qformat_gift extends qformat_default {
     }
 
     function split_truefalse_comment($comment){
-      // splits up comment around # marks
-      // returns an array of true/false feedback
-      $feedback = explode('#',$comment);
-      if (count($feedback)>=2) {
-        $true_feedback = $feedback[0];
-        $false_feedback = $feedback[1];
-      }
-      else {
-        $true_feedback = $feedback[0];
-        $false_feedback = '';
-      }
-      return array( 'true'=>$true_feedback, 'false'=>$false_feedback );
+        // splits up comment around # marks
+        // returns an array of true/false feedback
+        $bits = explode('#',$comment);
+        $feedback = array('wrong' => $bits[0]);
+        if (count($bits) >= 2) {
+            $feedback['right'] = $bits[1];
+        } else {
+            $feedback['right'] = '';
+        }
+        return $feedback;
     }
     
     function escapedchar_pre($string) {
@@ -100,17 +98,17 @@ class qformat_gift extends qformat_default {
     }
 
     function check_answer_count( $min, $answers, $text ) {
-      $countanswers = count($answers);
-      if ($countanswers < $min) {
-        if ($this->displayerrors) {
-          $errormessage = get_string( 'importminerror', 'quiz' );
-            echo "<p>$text</p>\n"; 
-            echo "<p>$errormessage</p>\n"; 
-         }
-         return false;
-       }
+        $countanswers = count($answers);
+        if ($countanswers < $min) {
+            if ($this->displayerrors) {
+                $errormessage = get_string( 'importminerror', 'quiz' );
+                echo "<p>$text</p>\n"; 
+                echo "<p>$errormessage</p>\n"; 
+            }
+            return false;
+        }
 
-       return true;
+        return true;
     }
 
 
@@ -125,11 +123,11 @@ class qformat_gift extends qformat_default {
 
         // REMOVED COMMENTED LINES and IMPLODE
         foreach ($lines as $key => $line) {
-           $line = trim($line);
-           if (substr($line, 0, 2) == "//") {
+            $line = trim($line);
+            if (substr($line, 0, 2) == "//") {
                 // echo "Commented line removed.<br />";
                 $lines[$key] = " ";
-                }
+            }
         }
 
         $text = trim(implode(" ", $lines));
@@ -160,7 +158,7 @@ class qformat_gift extends qformat_default {
             if ($namefinish === false) {
                 $question->name = false;
                 // name will be assigned after processing question text below
-             } else {
+            } else {
                 $questionname = substr($text, 0, $namefinish);
                 $question->name = addslashes(trim($this->escapedchar_post($questionname)));
                 $text = trim(substr($text, $namefinish+2)); // Remove name from text
@@ -203,13 +201,13 @@ class qformat_gift extends qformat_default {
         $oldquestiontext = $questiontext;
         $questiontextformat = 0;
         if (substr($questiontext,0,1)=='[') {
-          $questiontext = substr( $questiontext,1 );
-          $rh_brace = strpos( $questiontext, ']' );
-          $qtformat= substr( $questiontext, 0, $rh_brace );
-          $questiontext = substr( $questiontext, $rh_brace+1 );
-          if (!$questiontextformat = text_format_name( $qtformat )) {
-            $questiontext = $oldquestiontext;
-          }          
+            $questiontext = substr( $questiontext,1 );
+            $rh_brace = strpos( $questiontext, ']' );
+            $qtformat= substr( $questiontext, 0, $rh_brace );
+            $questiontext = substr( $questiontext, $rh_brace+1 );
+            if (!$questiontextformat = text_format_name( $qtformat )) {
+                $questiontext = $oldquestiontext;
+            }          
         }
         $question->questiontextformat = $questiontextformat;
         $question->questiontext = addslashes(trim($this->escapedchar_post($questiontext)));
@@ -222,7 +220,7 @@ class qformat_gift extends qformat_default {
         // ensure name is not longer than 250 characters
         $question->name = shorten_text( $question->name, 250 );
 
-         // determine QUESTION TYPE
+        // determine QUESTION TYPE
         $question->qtype = NULL;
 
         if ($answertext{0} == "#"){
@@ -233,8 +231,8 @@ class qformat_gift extends qformat_default {
             $question->qtype = MULTICHOICE;
     
         } elseif (strpos($answertext, "=")  !== false 
-              AND strpos($answertext, "->") !== false) {
-              // only Matching contains both = and ->
+                && strpos($answertext, "->") !== false) {
+            // only Matching contains both = and ->
             $question->qtype = MATCH;
 
         } else { // either TRUEFALSE or SHORTANSWER
@@ -352,16 +350,16 @@ class qformat_gift extends qformat_default {
             case TRUEFALSE:
                 $answer = $answertext;
                 $comment = $this->commentparser($answer); // commentparser also removes comment from $answer
-                $feedback = $this->split_truefalse_comment( $comment );
+                $feedback = $this->split_truefalse_comment($comment);
 
                 if ($answer == "T" OR $answer == "TRUE") {
                     $question->answer = 1;
-                    $question->feedbackfalse = $feedback['true'];; //feedback if answer is wrong
-                    $question->feedbacktrue = $feedback['false']; // make sure this exists to stop notifications
+                    $question->feedbacktrue = $feedback['right'];
+                    $question->feedbackfalse = $feedback['wrong'];
                 } else {
                     $question->answer = 0;
-                    $question->feedbacktrue = $feedback['true']; //feedback if answer is wrong
-                    $question->feedbackfalse = $feedback['false']; // make sure this exists to stop notifications
+                    $question->feedbackfalse = $feedback['right'];
+                    $question->feedbacktrue = $feedback['wrong'];
                 }
 
                 //$question->defaultgrade = 1;
@@ -461,8 +459,7 @@ class qformat_gift extends qformat_default {
                         $ans = trim($answer);
                     }
     
-                    if (!is_numeric($ans) 
-                     OR !is_numeric($tol)) {
+                    if (!(is_numeric($ans) || $ans = '*') || !is_numeric($tol)) {
                         if ($this->displayerrors) {
                             $err = get_string( 'errornotnumbers' );
                             echo "<p>$text</p><p>$err</p>
@@ -511,7 +508,7 @@ function repchar( $text, $format=0 ) {
     $newtext = str_replace( $reserved, $escaped, $text ); 
     $format = 0; // turn this off for now
     if ($format) {
-      $newtext = format_text( $format );
+        $newtext = format_text( $format );
     }
     return $newtext;
     }
@@ -530,46 +527,35 @@ function writequestion( $question ) {
     $textformat = $question->questiontextformat;
     $tfname = "";
     if ($textformat!=FORMAT_MOODLE) {
-      $tfname = text_format_name( (int)$textformat );
-      $tfname = "[$tfname]";
+        $tfname = text_format_name( (int)$textformat );
+        $tfname = "[$tfname]";
     }
 
     // output depends on question type
     switch($question->qtype) {
     case TRUEFALSE:
-        $answers = $question->options->answers;
-        foreach ($answers as $answer) {
-            if (trim($answer->answer)=='True') {
-                if ($answer->fraction==1) {
-                    $answertext = 'TRUE';
-                    $right_feedback = $answer->feedback;
-                }
-                else {
-                    $answertext = 'FALSE';
-                    $wrong_feedback = $answer->feedback;
-                }
-            }
-            else {
-                if ($answer->fraction==1) {
-                    $answertext = 'FALSE';
-                    $right_feedback = $answer->feedback;
-                }
-                else {
-                    $answertext = 'TRUE';
-                    $wrong_feedback = $answer->feedback;
-                }
-            }
+        $trueanswer = $question->options->answers[$question->options->trueanswer];
+        $falseanswer = $question->options->answers[$question->options->falseanswer];
+        if ($trueanswer->fraction == 1) {
+            $answertext = 'TRUE';
+            $right_feedback = $trueanswer->feedback;
+            $wrong_feedback = $falseanswer->feedback;
+        } else {
+            $answertext = 'FALSE';
+            $right_feedback = $falseanswer->feedback;
+            $wrong_feedback = $trueanswer->feedback;
         }
 
-        $wrong_feedback = $this->repchar( $wrong_feedback );
-        $right_feedback = $this->repchar( $right_feedback );
-        $expout .= "::".$this->repchar($question->name)."::".$tfname.$this->repchar( $question->questiontext,$textformat );
-        $expout .= "{".$this->repchar( $answertext );
-        if ($wrong_feedback!="") {
-            $expout .= "#".$wrong_feedback;
+        $wrong_feedback = $this->repchar($wrong_feedback);
+        $right_feedback = $this->repchar($right_feedback);
+        $expout .= "::".$this->repchar($question->name)."::".$tfname.$this->repchar( $question->questiontext,$textformat )."{".$this->repchar( $answertext );
+        if ($wrong_feedback) {
+            $expout .= "#" . $wrong_feedback;
+        } else if ($right_feedback) {
+            $expout .= "#";
         }
-        if ($right_feedback!="") {
-            $expout .= "#".$right_feedback;
+        if ($right_feedback) {
+            $expout .= "#" . $right_feedback;
         }
         $expout .= "}\n";
         break;
@@ -583,8 +569,8 @@ function writequestion( $question ) {
                 $answertext = '~';
             }
             else {
-              $export_weight = $answer->fraction*100;
-              $answertext = "~%$export_weight%";
+                $export_weight = $answer->fraction*100;
+                $answertext = "~%$export_weight%";
             }
             $expout .= "\t".$answertext.$this->repchar( $answer->answer );
             if ($answer->feedback!="") {
