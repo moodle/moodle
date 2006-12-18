@@ -514,6 +514,7 @@ $string['toomanyrandom'] = 'The number of random questions required is more than
 $string['top'] = 'Top';
 $string['true'] = 'True';
 $string['truefalse'] = 'True/False';
+$string['truefalseimporterror'] = '<b>Warning</b>: The True/False question \'$a->questiontext\' could not be imported properly. It was not clear whether the correct answer is True of False. The question has been imported assuming that the answer is \'$a->answer\'. If this is not correct, you will need to edit the question.';
 $string['type'] = 'Type';
 $string['unfinished'] = 'open';
 $string['ungraded'] = 'Ungraded';
