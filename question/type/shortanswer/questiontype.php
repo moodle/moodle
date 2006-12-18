@@ -146,27 +146,21 @@ class question_shortanswer_qtype extends default_questiontype {
         $inputname = ' name="'.$nameprefix.'" ';
 
         $feedback = '';
-        $class = '';
-        $feedbackimg = '';
+        // Assume wrong answer first.
+        $class = question_get_feedback_class(0);
+        $feedbackimg = question_get_feedback_image(0);
 
         if ($options->feedback) {
             foreach($question->options->answers as $answer) {
+
                 if ($this->test_response($question, $state, $answer)) {
                     // Answer was correct or partially correct.
-                    if ($answer->fraction == 1) {
-                        $class = 'correct';
-                        $feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_green_big.gif" alt="'.get_string('correct', 'quiz').'" width="16" height="16" />';
-                    } else {
-                        $class = 'partiallycorrect';
-                        $feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_amber_big.gif" alt="'.get_string('partiallycorrect', 'quiz').'" width="16" height="16" />';                  
-                    }
+                    $class = question_get_feedback_class($answer->fraction);
+                    $feedbackimg = question_get_feedback_image($answer->fraction);
                     if ($answer->feedback) {
                         $feedback = format_text($answer->feedback, true, $formatoptions, $cmoptions->course);
                     }
                     break;
-                } else {
-                    $class = 'incorrect';
-                    $feedbackimg = '<img src="'.$CFG->pixpath.'/i/cross_red_big.gif" alt="'.get_string('incorrect', 'quiz').'" width="16" height="16" />';
                 }
             }
         }

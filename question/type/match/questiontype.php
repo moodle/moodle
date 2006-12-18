@@ -275,27 +275,32 @@ class question_match_qtype extends default_questiontype {
                 $a = new stdClass;
                 $a->text = $this->format_text($subquestion->questiontext,
                         $question->questiontextformat, $cmoptions);
-    
+
                 /// Drop-down list:
                 $menuname = $nameprefix.$subquestion->id;
                 $response = isset($state->responses[$subquestion->id])
                             ? $state->responses[$subquestion->id] : '0';
+
+                $a->class = ' ';
+                $a->feedbackimg = ' ';
+
                 if ($options->readonly
-                    and $options->correct_responses
-                    and isset($correctanswers[$subquestion->id])
-                    and ($correctanswers[$subquestion->id] == $response)) {
-                    $a->class = ' correct ';
-					$a->feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_green_big.gif" alt="'.get_string('correct', 'quiz').'" width="16" height="16" />';
-                } else if ($response) {
-                    $a->class = ' incorrect ';
-					$a->feedbackimg = '<img src="'.$CFG->pixpath.'/i/cross_red_big.gif" alt="'.get_string('incorrect', 'quiz').'" width="16" height="16" />';
+                            and $options->correct_responses
+                            and isset($correctanswers[$subquestion->id])
+                            and ($correctanswers[$subquestion->id] == $response)) {
+
+                    $correctresponse = 1;
                 } else {
-					$a->class = ' ';
-					$a->feedbackimg = ' ';
-				}
-    
-                $a->control = choose_from_menu($answers, $menuname, $response, 'choose', '', 0,
-                 true, $options->readonly);
+                    $correctresponse = 0;
+                }
+
+                if ($response) {
+                    $a->class = question_get_feedback_class($correctresponse);
+                    $a->feedbackimg = question_get_feedback_image($correctresponse);
+                }
+
+                $a->control = choose_from_menu($answers, $menuname, $response, 'choose',
+                                               '', 0, true, $options->readonly);
     
                 // Neither the editing interface or the database allow to provide
                 // fedback for this question type.
@@ -306,7 +311,7 @@ class question_match_qtype extends default_questiontype {
                 // && !empty($subquestion->options->answers[$responses[$key]]->feedback)) {
                 //    print_comment($subquestion->options->answers[$responses[$key]]->feedback);
                 //}
-    
+
                 $anss[] = $a;
             }
         }

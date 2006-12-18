@@ -283,58 +283,40 @@ class question_multichoice_qtype extends default_questiontype {
             $answer = &$answers[$aid];
             $qnumchar = chr(ord('a') + $key);
             $checked = '';
-			$chosen = false;
-			
+            $chosen = false;
+            
             if ($question->options->single) {
                 $type = 'type="radio"';
                 $name   = "name=\"{$question->name_prefix}\"";
                 if (isset($state->responses['']) and $aid == $state->responses['']) {
                     $checked = 'checked="checked"';
-					$chosen = true;
+                    $chosen = true;
                 }
             } else {
                 $type = ' type="checkbox" ';
                 $name   = "name=\"{$question->name_prefix}{$aid}\"";
                 if (isset($state->responses[$aid])) {
-					$checked = 'checked="checked"';
-					$chosen = true;
-				}
+                    $checked = 'checked="checked"';
+                    $chosen = true;
+                }
             }
 
             $a = new stdClass;
             $a->id   = $question->name_prefix . $aid;
-			$a->class = '';
-			$a->feedbackimg = '';
+            $a->class = '';
+            $a->feedbackimg = '';
 
             // Print the control
             $a->control = "<input $readonly id=\"$a->id\" $name $checked $type value=\"$aid\"" .
                  " alt=\"" . s($answer->answer) . '" />';
 
-			if ($options->readonly) {
-				// Means we need to display answer correctness.
-				if ($answer->fraction == 1) {
-					if ($chosen) {
-						$a->class = 'correct';
-						$a->feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_green_big.gif" alt="'.get_string('correct', 'quiz').'" width="16" height="16" />';
-					} else {
-						$a->feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_green_small.gif" alt="'.get_string('correct', 'quiz').'" width="16" height="16" />';
-					}
-				} else if ($answer->fraction > 0 && $answer->fraction < 1) {
-					if ($chosen) {
-						$a->class = 'partiallycorrect';
-						$a->feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_amber_big.gif" alt="'.get_string('partiallycorrect', 'quiz').'" width="16" height="16" />';
-					} else {
-						$a->feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_amber_small.gif" alt="'.get_string('partiallycorrect', 'quiz').'" width="16" height="16" />';
-					}
-				} else {
-					if ($chosen) {
-						$a->class = 'incorrect';
-						$a->feedbackimg = '<img src="'.$CFG->pixpath.'/i/cross_red_big.gif" alt="'.get_string('incorrect', 'quiz').'" width="16" height="16" />';
-					} else {
-						$a->feedbackimg = '<img src="'.$CFG->pixpath.'/i/cross_red_small.gif" alt="'.get_string('incorrect', 'quiz').'" width="16" height="16" />';
-					}
-				}
-			}
+            if ($options->readonly) {
+                // Means we need to display answer correctness.
+                if ($chosen) {
+                    $a->class = question_get_feedback_class($answer->fraction);
+                }
+                $a->feedbackimg = question_get_feedback_image($answer->fraction, $chosen);
+            }
 
             // Print the answer text
             $a->text = format_text("$qnumchar. $answer->answer", FORMAT_MOODLE, $formatoptions, $cmoptions->course);

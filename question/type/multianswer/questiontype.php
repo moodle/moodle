@@ -237,7 +237,7 @@ class embedded_cloze_qtype extends default_questiontype {
             // Determine feedback popup if any
             $popup = '';
             $style = '';
-			$feedbackimg = '';
+            $feedbackimg = '';
             if ($options->feedback) {
                 $chosenanswer = null;
                 switch ($wrapped->qtype) {
@@ -276,24 +276,12 @@ class embedded_cloze_qtype extends default_questiontype {
                 }
 
                 /// Determine style
-                if (!empty($chosenanswer) && $options->correct_responses) {
-                    if (!isset($chosenanswer->fraction)
-                            || $chosenanswer->fraction <= 0.0) {
-                        // The response must have been totally wrong.
-                        $style = 'class="incorrect"';
-						$feedbackimg = '<img src="'.$CFG->pixpath.'/i/cross_red_big.gif" alt="'.get_string('incorrect', 'quiz').'" width="16" height="16" />';
-                    } else if ($chosenanswer->fraction >= 1.0) {
-                        // The response was correct.
-                        $style = 'class="correct"';
-						$feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_green_big.gif" alt="'.get_string('correct', 'quiz').'" width="16" height="16" />';
-                    } else {
-                        // This response did at least give some credit.
-                        $style = 'class="partiallycorrect"';
-						$feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_amber_big.gif" alt="'.get_string('partiallycorrect', 'quiz').'" width="16" height="16" />';
-                    }
+                if (!empty($response)) {
+                    $style = 'class = "'.question_get_feedback_class($chosenanswer->fraction).'"';
+                    $feedbackimg = question_get_feedback_image($chosenanswer->fraction);
                 } else {
                     $style = '';
-					$feedbackimg = '';
+                    $feedbackimg = '';
                 }
             }
 
@@ -306,7 +294,7 @@ class embedded_cloze_qtype extends default_questiontype {
                     if (!empty($feedback) && $USER->screenreader) {
                         echo "<img src=\"$CFG->pixpath/i/feedback.gif\" alt=\"$feedback\" />";
                     }
-					echo $feedbackimg;
+                    echo $feedbackimg;
                     break;
                 case 'multichoice':
                     $outputoptions = '<option></option>'; // Default empty option
@@ -320,16 +308,16 @@ class embedded_cloze_qtype extends default_questiontype {
                     // displaying the feedback does not work. Of course, we should
                     // not be relying on JS (for accessibility reasons), but that is
                     // a bigger problem.
-					//
-					// The span is used for safari, which does not allow styling of
-					// selects.
+                    //
+                    // The span is used for safari, which does not allow styling of
+                    // selects.
                     echo "<span $style><select $popup $readonly $style name=\"$inputname\">";
                     echo $outputoptions;
                     echo '</select></span>';
                     if (!empty($feedback) && $USER->screenreader) {
                         echo "<img src=\"$CFG->pixpath/i/feedback.gif\" alt=\"$feedback\" />";
                     }
-				    echo $feedbackimg;
+                    echo $feedbackimg;
                     break;
                 default:
                     error("Unable to recognize questiontype ($wrapped->qtype) of

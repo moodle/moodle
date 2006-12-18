@@ -155,41 +155,25 @@ class question_truefalse_qtype extends default_questiontype {
         $falseanswer = &$answers[$question->options->falseanswer];
         $correctanswer = ($trueanswer->fraction == 1) ? $trueanswer : $falseanswer;
 
-		$trueclass = '';
-		$falseclass = '';
-		$truefeedbackimg = '';
-		$falsefeedbackimg = '';
+        $trueclass = '';
+        $falseclass = '';
+        $truefeedbackimg = '';
+        $falsefeedbackimg = '';
 
         // Work out which radio button to select (if any)
         $truechecked = ($state->responses[''] == $trueanswer->id) ? ' checked="checked"' : '';
         $falsechecked = ($state->responses[''] == $falseanswer->id) ? ' checked="checked"' : '';
 
         // Work out visual feedback for answer correctness.
-		if ($truechecked) {
-			if ($correctanswer == $trueanswer) {
-				$trueclass = ' class="correct"';
-				$falseclass = '';
-				$truefeedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_green_big.gif" alt="'.get_string('correct', 'quiz').'" width="16" height="16" />';
-				$falsefeedbackimg = '<img src="'.$CFG->pixpath.'/i/cross_red_small.gif" alt="'.get_string('incorrect', 'quiz').'" width="16" height="16" />';
-			} else if ($correctanswer == $falseanswer) {
-				$trueclass = '';
-				$falseclass = ' class="correct"';
-				$truefeedbackimg = '<img src="'.$CFG->pixpath.'/i/cross_red_small.gif" alt="'.get_string('incorrect', 'quiz').'" width="16" height="16" />';
-				$falsefeedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_green_big.gif" alt="'.get_string('correct', 'quiz').'" width="16" height="16" />';
-			}
-		} else if ($falsechecked) {
-			if ($correctanswer == $trueanswer) {
-				$trueclass = '';
-				$falseclass = ' class="incorrect"';
-				$truefeedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_green_small.gif" alt="'.get_string('correct', 'quiz').'" width="16" height="16" />';
-				$falsefeedbackimg = '<img src="'.$CFG->pixpath.'/i/cross_red_big.gif" alt="'.get_string('incorrect', 'quiz').'" width="16" height="16" />';
-			} else if ($correctanswer == $falseanswer) {
-				$trueclass = ' class="incorrect"';
-				$falseclass = '';
-				$truefeedbackimg = '<img src="'.$CFG->pixpath.'/i/cross_red_big.gif" alt="'.get_string('incorrect', 'quiz').'" width="16" height="16" />';
-				$falsefeedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_green_small.gif" alt="'.get_string('correct', 'quiz').'" width="16" height="16" />';
-			}
-		}
+        if ($truechecked) {
+            $trueclass = question_get_feedback_class($trueanswer->fraction);
+        } else if ($falsechecked) {
+            $falseclass = question_get_feedback_class($falseanswer->fraction);
+        }
+        if (isset($answers[$state->responses['']])) {
+            $truefeedbackimg = question_get_feedback_image($trueanswer->fraction, !empty($truechecked));
+            $falsefeedbackimg = question_get_feedback_image($falseanswer->fraction, !empty($falsechecked));
+        }
 
         $inputname = ' name="'.$question->name_prefix.'" ';
         $trueid    = $question->name_prefix.'true';
