@@ -163,6 +163,7 @@ function process_config($config) {
     if (!isset($config->enrol_paypalbusiness)) {
         $config->enrol_paypalbusiness = '';
     }
+    $config->enrol_paypalbusiness = trim($config->enrol_paypalbusiness); // remove trailing spaces etc.
     set_config('enrol_paypalbusiness', $config->enrol_paypalbusiness);
 
     if (!isset($config->enrol_mailstudents)) {
