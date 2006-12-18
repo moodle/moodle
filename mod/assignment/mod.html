@@ -40,7 +40,7 @@
 <tr valign="top">
     <td align="right"><b><?php print_string("assignmentname", "assignment") ?>:</b></td>
     <td>
-        <input type="text" name="name" size=60 value="<?php p($form->name) ?>">
+        <input type="text" name="name" size="60" value="<?php p($form->name) ?>" />
     </td>
 </tr>
 <tr valign="top">
@@ -78,7 +78,7 @@
     ?>
     </td>
 </tr>
-<tr valign=top>
+<tr valign="top">
 <td align="right"><b><?php print_string("grade") ?>:</b></td>
     <td>
         <?php
@@ -87,7 +87,7 @@
     </td>
 </tr>
 
-<tr valign=top>
+<tr valign="top">
    <td align="right"><b><?php print_string("availabledate","assignment") ?>:</b></td>
     <td>
         <input name="availableenable" type="checkbox" value="1" alt="<?php print_string('availabledate', 'assignment') ?>" onclick="return lockoptions('form', 'availableenable', availableitems)" <?php if ($form->timeavailable) echo 'checked="checked"' ?> />
@@ -104,7 +104,7 @@
     </td>
 </tr>
 
-<tr valign=top>
+<tr valign="top">
     <td align="right"><b><?php print_string("duedate", "assignment") ?>:</b></td>
     <td>
         <input name="dueenable" type="checkbox" value="1" alt="<?php print_string('duedate', 'assignment') ?>" onclick="return lockoptions('form', 'dueenable', dueitems)" <?php if ($form->timedue) echo 'checked="checked"' ?> />
