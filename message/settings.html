@@ -5,41 +5,41 @@
 <table cellpadding="5" align="center" class="message_form">
 
     <tr valign="top">
-        <td align="right"><input type="checkbox" name="showmessagewindow" alt="<?php print_string('showmessagewindow', 'message') ?>" <?php echo $cbshowmessagewindow ?> /></td>
-        <td colspan="2"><?php print_string('showmessagewindow', 'message') ?></td>
+        <td align="right"><input type="checkbox" name="showmessagewindow" id="showmessagewindow" <?php echo $cbshowmessagewindow ?> /></td>
+        <td colspan="2"><label for="showmessagewindow"><?php print_string('showmessagewindow', 'message') ?></label></td>
     </tr>
     <tr valign="top">
-        <td align="right"><input type="checkbox" name="blocknoncontacts" alt="<?php print_string('blocknoncontacts', 'message') ?>" <?php echo $cbblocknoncontacts ?>  /></td>
-        <td colspan="2"><?php print_string('blocknoncontacts', 'message') ?></td>
+        <td align="right"><input type="checkbox" name="blocknoncontacts" id="blocknoncontacts" <?php echo $cbblocknoncontacts ?>  /></td>
+        <td colspan="2"><label for="blocknoncontacts"><?php print_string('blocknoncontacts', 'message') ?></label></td>
     </tr>
     <tr valign="top">
-        <td align="right"><input type="checkbox" name="beepnewmessage" alt="<?php print_string('beepnewmessage', 'message') ?>" <?php echo $cbbeepnewmessage ?>  /></td>
-        <td colspan="2"><?php print_string('beepnewmessage', 'message') ?></td>
+        <td align="right"><input type="checkbox" name="beepnewmessage" id="beepnewmessage" <?php echo $cbbeepnewmessage ?>  /></td>
+        <td colspan="2"><label for="beepnewmessage"><?php print_string('beepnewmessage', 'message') ?></label></td>
     </tr>
     <tr valign="top">
-        <td align="right"><input type="checkbox" name="usehtmleditor" alt="<?php print_string('htmleditor') ?>" <?php echo $cbusehtmleditor ?>  /></td>
-        <td colspan="2"><?php print_string('htmleditor') ?></td>
+        <td align="right"><input type="checkbox" name="usehtmleditor" id="usehtmleditor" <?php echo $cbusehtmleditor ?>  /></td>
+        <td colspan="2"><label for="usehtmleditor"><?php print_string('htmleditor') ?></label></td>
     </tr>
 
     
     <tr valign="top">
-        <td><input type="checkbox" name="emailmessages" alt="<?php print_string('emailmessages', 'message') ?>" <?php echo $cbemailmessages ?>  /></td>
-        <td colspan="2"><?php print_string('emailmessages', 'message') ?></td>
+        <td><input type="checkbox" name="emailmessages" id="emailmessages" <?php echo $cbemailmessages ?>  /></td>
+        <td colspan="2"><label for="emailmessages"><?php print_string('emailmessages', 'message') ?></label></td>
     </tr>
     <tr valign="top">
         <td>&nbsp;</td>
-        <td align="right"><?php print_string('formorethan', 'message') ?>:</td>
-        <td><input type="text" name="emailtimenosee" size="2" value="<?php echo $txemailtimenosee ?>" alt="<?php print_string('timenosee', 'message') ?>" /> <?php print_string('mins') ?></td>
+        <td align="right"><label for="emailtimenosee"><?php print_string('formorethan', 'message') ?></label></td>
+        <td><input type="text" name="emailtimenosee" id="emailtimenosee" size="2" value="<?php p($txemailtimenosee) ?>" /> <?php print_string('mins') ?></td>
     </tr>
 
     <tr valign="top">
         <td>&nbsp;</td>
-        <td align="right"><?php print_string('email') ?>:</td>
-        <td><input type="text" name="emailaddress" size="20" value="<?php echo $txemailaddress ?>" alt="<?php print_string('email') ?>" /></td>
+        <td align="right"><label for="emailaddress"><?php print_string('email') ?></label></td>
+        <td><input type="text" name="emailaddress" id="emailaddress" size="20" value="<?php p($txemailaddress) ?>" /></td>
     </tr>
     <tr valign="top">
         <td>&nbsp;</td>
-        <td align="right"><?php print_string('format') ?>:</td>
+        <td align="right"><label for="menuemailformat"><?php print_string('format') ?></label></td>
         <td><?php echo $format_select ?>
         </td>
     </tr>

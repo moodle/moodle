@@ -6,45 +6,43 @@
 
 
     <tr>
-        <td colspan="3" class="message_heading"><?php print_string('searchforperson', 'message') ?></td>
+        <td colspan="3" class="message_heading"><?php print_heading(get_string('searchforperson', 'message')) ?></td>
     </tr>
     <tr>
-        <td align="right"><?php print_string('name') ?>:</td>
-        <td><input type="text" name="name" size="16" alt="<?php print_string('name')?>" /></td>
+        <td align="right"><label for="name"><?php print_string('name') ?></label></td>
+        <td><input type="text" name="name" size="16" id="name" /></td>
         <td><input type="submit" name="personsubmit" value="<?php print_string('search') ?>" /></td>
     </tr>
     <tr>
         <td>&nbsp;</td>
         <td colspan="2">
-            <input type="hidden" name="mycourses" value="0" />
-            <input type="checkbox" name="mycourses" alt="<?php print_string('onlymycourses', 'message') ?>" /><?php print_string('onlymycourses', 'message') ?></td>
+            <input type="checkbox" name="mycourses" id="mycourses" /><label for="mycourses"><?php print_string('onlymycourses', 'message') ?></label></td>
     </tr>
     
-    <tr><td colspan="3"><hr /></td></tr>
+    <tr><td colspan="3"></td></tr>
 
 
     <tr>
-        <td colspan="3" class="message_heading"><?php print_string('searchmessages', 'message') ?></td>
+        <td colspan="3" class="message_heading"><?php print_heading(get_string('searchmessages', 'message')) ?></td>
     </tr>
     <tr>
-        <td align="right"><?php print_string('keywords', 'message') ?>:</td>
-        <td><input type="text" name="keywords" size="16" alt="<?php print_string('keywords', 'message')?>" /></td>
+        <td align="right"><label for="keywords"><?php print_string('keywords', 'message') ?></label></td>
+        <td><input type="text" name="keywords" id="keywords" size="16" /></td>
         <td><input type="submit" name="keywordssubmit" value="<?php print_string('search') ?>" /></td>
     </tr>
     
     <tr>
         <td>&nbsp;</td>
         <td colspan="2">
-            <input type="hidden" name="includeblocked" value="0" />
-            <input type="checkbox" name="includeblocked" alt="<?php print_string('includeblockedusers', 'message') ?>" /><?php print_string('includeblockedusers', 'message') ?></td>
+            <input type="checkbox" name="includeblocked" id="includeblocked" /><label for="includeblocked"><?php print_string('includeblockedusers', 'message') ?></label></td>
     </tr>
     
-    <tr><td>&nbsp;</td><td colspan="2"><input type="radio" name="keywordsoption" alt="<?php print_string('onlytome', 'message') ?>" value="tome" /><?php print_string('onlytome', 'message') ?></td></tr>
-    <tr><td>&nbsp;</td><td colspan="2"><input type="radio" name="keywordsoption" alt="<?php print_string('onlyfromme', 'message') ?>" value="fromme" /><?php print_string('onlyfromme', 'message') ?></td></tr>
-    <tr><td>&nbsp;</td><td colspan="2"><input type="radio" checked="checked" name="keywordsoption" alt="<?php print_string('allmine', 'message') ?>" value="allmine" /><?php print_string('allmine', 'message') ?></td></tr>
+    <tr><td>&nbsp;</td><td colspan="2"><input type="radio" name="keywordsoption" id="keywordsoption1" value="tome" /><label for="keywordsoption1"><?php print_string('onlytome', 'message') ?></label></td></tr>
+    <tr><td>&nbsp;</td><td colspan="2"><input type="radio" name="keywordsoption" id="keywordsoption2" value="fromme" /><label for="keywordsoption2"><?php print_string('onlyfromme', 'message') ?></label></td></tr>
+    <tr><td>&nbsp;</td><td colspan="2"><input type="radio" checked="checked" name="keywordsoption" id="keywordsoption3" value="allmine" /><label for="keywordsoption3"><?php print_string('allmine', 'message') ?></label></td></tr>
     
     <?php if (has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM, SITEID))) { ?>
-    <tr><td>&nbsp;</td><td colspan="2"><input type="radio" name="keywordsoption" alt="<?php print_string('allusers', 'message') ?>" value="allusers" /><?php print_string('allusers', 'message') ?></td></tr>
+    <tr><td>&nbsp;</td><td colspan="2"><input type="radio" name="keywordsoption" id="keywordsoption4" value="allusers" /><label for="keywordsoption4"><?php print_string('allusers', 'message') ?></label></td></tr>
     <?php } ?>
 
 <?php

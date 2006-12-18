@@ -344,7 +344,7 @@ function message_print_search_results($frm) {
     /// search for person
     if (!empty($frm->personsubmit) and !empty($frm->name)) {
     
-        if ($frm->mycourses) {
+        if (optional_param('mycourses', 0, PARAM_BOOL)) {
             $users = array();
             $mycourses = get_my_courses($USER->id);
             foreach ($mycourses as $mycourse) {
@@ -451,7 +451,7 @@ function message_print_search_results($frm) {
             foreach ($messages as $message) {
 
             /// ignore messages to and from blocked users unless $frm->includeblocked is set
-                if ((!$frm->includeblocked) and (
+                if (!optional_param('includeblocked', 0, PARAM_BOOL) and (
                       ( isset($contacts[$message->useridfrom]) and ($contacts[$message->useridfrom]->blocked == 1)) or
                       ( isset($contacts[$message->useridto]  ) and ($contacts[$message->useridto]->blocked   == 1))
                                                 )
