@@ -193,7 +193,7 @@ function blocks_delete_instance($instance,$pinned=false) {
 
     // Get the block object and call instance_delete() if possible
     if(!$record = blocks_get_record($instance->blockid)) {
-        if(!$obj = block_instance($record->name, $instance)) {
+        if($obj = block_instance($record->name, $instance)) {
             // Return value ignored
             $obj->instance_delete();
         }
