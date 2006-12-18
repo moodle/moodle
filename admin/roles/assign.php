@@ -98,13 +98,13 @@
         if ($courseid != SITEID) {
             print_header("$fullname", "$fullname",
                      "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
-                      <a href=\"$CFG->wwwroot/user/index.php?id=$course->id\">$strparticipants</a> -> <a href=\"$CFG->wwwroot/user/view.php?id=$userid&course=$courseid\">$fullname</a> ->".$straction,
+                      <a href=\"$CFG->wwwroot/user/index.php?id=$course->id\">$strparticipants</a> -> <a href=\"$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid\">$fullname</a> ->".$straction,
                       "", "", true, "&nbsp;", navmenu($course));
 
         /// site header
         } else {
             print_header("$course->fullname: $fullname", "$course->fullname",
-                        "<a href=\"$CFG->wwwroot/user/view.php?id=$userid&course=$courseid\">$fullname</a> -> $straction", "", "", true, "&nbsp;", navmenu($course));
+                        "<a href=\"$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid\">$fullname</a> -> $straction", "", "", true, "&nbsp;", navmenu($course));
         }
 
         $showroles = 1;

@@ -66,7 +66,7 @@ if ($currenttab != 'update') {
             $COURSE = $course;
             print_header_simple($streditinga, '',
                     "<a href=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</a> ->
-                    $strnav <a href=\"$CFG->wwwroot/course/mod.php?update=$cm->id&sesskey=".sesskey()."\">$streditinga</a> -> $straction", $focuscursor, "", false);
+                    $strnav <a href=\"$CFG->wwwroot/course/mod.php?update=$cm->id&amp;sesskey=".sesskey()."\">$streditinga</a> -> $straction", $focuscursor, "", false);
 
             break;
 
