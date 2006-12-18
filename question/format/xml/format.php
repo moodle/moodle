@@ -191,22 +191,35 @@ class qformat_xml extends qformat_default {
         $qo->qtype = TRUEFALSE;
 
         // get answer info
-        $answers = $question['#']['answer'];
-        $fraction0 = $answers[0]['@']['fraction'];
-        $feedback0 = $this->import_text($answers[0]['#']['feedback'][0]['#']['text']);
-        $fraction1 = $answers[1]['@']['fraction'];
-        $feedback1 = $this->import_text($answers[1]['#']['feedback'][0]['#']['text']);
-
-        // sort out which is true and build object accordingly
-        if ($fraction0==100) { // then 0 index is true
-            $qo->answer = 1;
-            $qo->feedbacktrue=$feedback0;
-            $qo->feedbackfalse=$feedback1;
+        //
+        // In the past, it used to be assumed that the two answers were in the file
+        // true first, then false. Howevever that was not always true. Now, we
+        // try to match on the answer text, but in old exports, this will be a localised
+        // string, so if we don't find true or false, we fall back to the old system.
+        $first = true;
+        $warning = false;
+        foreach ($question['#']['answer'] as $answer) {
+            $answertext = $this->import_text($answer['#']['text']);
+            $feedback = $this->import_text($answer['#']['feedback'][0]['#']['text']);
+            if ($answertext != 'true' && $answertext != 'false') {
+                $warning = true;
+                $answertext = $first ? 'true' : 'false'; // Old style file, assume order is true/false.
+            } 
+            if ($answertext == 'true') {
+                $qo->answer = ($answer['@']['fraction'] == 100);
+                $qo->feedbacktrue = $feedback;
+            } else {
+                $qo->answer = ($answer['@']['fraction'] != 100);
+                $qo->feedbackfalse = $feedback;
+            }
+            $first = false;
         }
-        else {
-            $qo->answer = 0;
-            $qo->feedbacktrue = $feedback1;
-            $qo->feedbackfalse = $feedback0;
+
+        if ($warning) {
+            $a = new stdClass;
+            $a->questiontext = stripslashes($qo->questiontext);
+            $a->answer = get_string($qo->answer ? 'true' : 'false', 'quiz');
+            notify(get_string('truefalseimporterror', 'quiz', $a));
         }
 
         return $qo;
@@ -651,8 +664,13 @@ class qformat_xml extends qformat_default {
         case TRUEFALSE:
             foreach ($question->options->answers as $answer) {
                 $fraction_pc = round( $answer->fraction * 100 );
+                if ($answer->id == $question->options->trueanswer) {
+                    $answertext = 'true';
+                } else {
+                    $answertext = 'false';
+                } 
                 $expout .= "    <answer fraction=\"$fraction_pc\">\n";
-                $expout .= $this->writetext(strtolower($answer->answer),3)."\n";
+                $expout .= $this->writetext($answertext, 3) . "\n";
                 $expout .= "      <feedback>\n";
                 $expout .= $this->writetext( $answer->feedback,4,false );
                 $expout .= "      </feedback>\n";
