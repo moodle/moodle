@@ -2246,14 +2246,22 @@ class admin_setting_special_calendar_weekend extends admin_setting {
         $name = 'calendar_weekend';
         $visiblename = get_string('calendar_weekend', 'admin');
         $description = get_string('helpweekenddays', 'admin');
-        parent::admin_setting($name, $visiblename, $description, array('u' => 1, 's' => 1));
+        $default = array('u' => 1, 'm' => 0, 't' => 0, 'w' => 0, 'r' => 0, 'f' => 0, 's' => 1);
+        parent::admin_setting($name, $visiblename, $description, $default);
     }
 
     function get_setting() {
         global $CFG;
         if (isset($CFG->{$this->name})) {
-            $setting = intval($CFG->{$this->name});
-            return array('u' => $setting & 1, 'm' => $setting & 2, 't' => $setting & 4, 'w' => $setting & 8, 'r' => $setting & 16, 'f' => $setting & 32, 's' => $setting & 64);
+            $currentsetting = decbin($CFG->{$this->name});
+            $currentsetting = str_pad($currentsetting, 7, '0', STR_PAD_LEFT);
+            return array('u' => substr($currentsetting, 0, 1),
+                         'm' => substr($currentsetting, 1, 1),
+                         't' => substr($currentsetting, 2, 1),
+                         'w' => substr($currentsetting, 3, 1),
+                         'r' => substr($currentsetting, 4, 1),
+                         'f' => substr($currentsetting, 5, 1),
+                         's' => substr($currentsetting, 6, 1));
         } else {
             return NULL;
         }
@@ -2262,10 +2270,12 @@ class admin_setting_special_calendar_weekend extends admin_setting {
     function write_setting($data) {
         $week = 'umtwrfs';
         $result = array(0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0);
-        foreach($data as $key => $value) {
-          if ($value == '1') {
-              $result[strpos($week, $key)] = 1;
-          }
+        if (!empty($data)) {
+            foreach($data as $key => $value) {
+                if ($value == '1') {
+                    $result[strpos($week, $key)] = 1;
+                }
+            }
         }
         return (set_config($this->name, bindec(implode('',$result))) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
     }
@@ -2278,23 +2288,21 @@ class admin_setting_special_calendar_weekend extends admin_setting {
             $currentsetting = $this->get_setting();
         }
 
-        foreach(array('u','m','t','w','r','f','s') as $element) {
-            if (!isset($currentsetting[$element])) {
-                $currentsetting[$element] = 0;
-            }
-        }
+        // rewrite for simplicity
+        $currentsetting = $currentsetting['u'] . $currentsetting['m'] . $currentsetting['t'] . $currentsetting['w'] .
+                          $currentsetting['r'] . $currentsetting['f'] . $currentsetting['s'];
 
         $return = '<table><tr><td><div align="center">&nbsp;&nbsp;' . get_string('sunday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .
         get_string('monday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . get_string('tuesday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .
         get_string('wednesday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . get_string('thursday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' .
         get_string('friday', 'calendar') . '&nbsp;&nbsp;</div></td><td><div align="center">&nbsp;&nbsp;' . get_string('saturday', 'calendar') . '&nbsp;&nbsp;</div></td></tr><tr>' .
-        '<td><div align="center"><input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'u" name="s_'. $this->name .'[u]" value="1" ' . ($currentsetting['u'] ? 'checked="checked"' : '') . ' /></div></td>' .
-        '<td><div align="center"><input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'m" name="s_'. $this->name .'[m]" value="1" ' . ($currentsetting['m'] ? 'checked="checked"' : '') . ' /></div></td>' .
-        '<td><div align="center"><input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'t" name="s_'. $this->name .'[t]" value="1" ' . ($currentsetting['t'] ? 'checked="checked"' : '') . ' /></div></td>' .
-        '<td><div align="center"><input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'w" name="s_'. $this->name .'[w]" value="1" ' . ($currentsetting['w'] ? 'checked="checked"' : '') . ' /></div></td>' .
-        '<td><div align="center"><input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'r" name="s_'. $this->name .'[r]" value="1" ' . ($currentsetting['r'] ? 'checked="checked"' : '') . ' /></div></td>' .
-        '<td><div align="center"><input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'f" name="s_'. $this->name .'[f]" value="1" ' . ($currentsetting['f'] ? 'checked="checked"' : '') . ' /></div></td>' .
-        '<td><div align="center"><input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'s" name="s_'. $this->name .'[s]" value="1" ' . ($currentsetting['s'] ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'u" name="s_'. $this->name .'[u]" value="1" ' . (substr($currentsetting,0,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'m" name="s_'. $this->name .'[m]" value="1" ' . (substr($currentsetting,1,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'t" name="s_'. $this->name .'[t]" value="1" ' . (substr($currentsetting,2,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'w" name="s_'. $this->name .'[w]" value="1" ' . (substr($currentsetting,3,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'r" name="s_'. $this->name .'[r]" value="1" ' . (substr($currentsetting,4,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'f" name="s_'. $this->name .'[f]" value="1" ' . (substr($currentsetting,5,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
+        '<td><div align="center"><input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'s" name="s_'. $this->name .'[s]" value="1" ' . (substr($currentsetting,6,1) == '1' ? 'checked="checked"' : '') . ' /></div></td>' .
         '</tr></table>';
 
         return format_admin_setting($this->name, $this->visiblename, $return, $this->description);
