@@ -69,7 +69,7 @@ $string['gdversionerror'] = 'La libreria GD deve essere presente per elaborare e
 $string['gdversionhelp'] = '<p>Sul vostro server sembra non essere installato il supporto per le librerie GD.</p>
 <p>GD è una libreria che è richiesta dal PHP per permettere a Moodle di elaborare le immagini (come le icone dei profili utente) e creare nuove immagini (come i grafici dei log). Moodle continuerà  a funzionare senza GD - queste caratteristiche non saranno disponibili sulla vostra installazione.</p>
 <p>Per aggiungere GD al PHP su sistemi operativi Unix/Linux, compilare il PHP utilizzando l\'opzione --with-gd.</p>
-<p>Su Windows normalmente è possibile modificare il file php.ini e togliere il commento dalla linea che contiene libgd.dll.</p>';
+<p>Su Windows normalmente è possibile modificare il file php.ini e togliere il commento dalla linea che contiene php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Gestione insicura dei Globals';
 $string['globalsquoteserror'] = 'Correggere le impostazioni PHP: disabilitare register_globals e/o abilitare magic_quotes_gpc';
 $string['help'] = 'Aiuto';

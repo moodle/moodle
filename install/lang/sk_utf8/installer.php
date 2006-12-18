@@ -98,7 +98,7 @@ $string['gdversionhelp'] = '<p>Na Vašom serveri zrejme nie je nainštalovaná G
 
 <p>Keď chcete pridať GD do PHP pod Unixom, vytvorte PHP použitím --with-gd parameter.</p>
 
-<p>Pod Windows môžete upraviť php.ini a odkomentovať riadok obsahujúci libgd.dll.</p>';
+<p>Pod Windows môžete upraviť php.ini a odkomentovať riadok obsahujúci php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Nie bezpečné používanie globálnych premenných';
 $string['globalsquoteserror'] = 'Opravte svoje nastavenia PHP: vypnite register_globals a/alebo zapnite magic_quotes_gpc';
 $string['help'] = 'Pomoc';

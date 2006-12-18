@@ -86,7 +86,7 @@ $string['gdversionhelp'] = '<p> Nie masz zainstalowanego GD na swoim serwerze.</
 <p>„GD jest biblioteką wymaganą przez PHP w celu umożliwienia Moodle operacji na obrazach (takich jak ikony profilu użytkownika) i w celu tworzenia nowych obrazów (takich jak wykresy logowań). Moodle będzie pracował bez GD – te możliwości nie będą jednak dla Ciebie dostępne.</p>
 <p> Aby dodać GD do PHP pod Unix-em, skompiluj PHP używając parametru -- with-gd. </p>
 
-<p> Pod Windows-em można zazwyczaj edytować php.ini i pominąć linię odwołującą się do libgd.dll.</p>”';
+<p> Pod Windows-em można zazwyczaj edytować php.ini i pominąć linię odwołującą się do php_gd2.dll.</p>”';
 $string['globalsquotes'] = 'Groźne zarządzanie zmiennymi globalnymi';
 $string['globalsquoteserror'] = 'Ustal swoje ustawienia PHP:  niedostępne register_globals i/lub udostępnione magic_quotes_gpc';
 $string['help'] = 'Pomoc';

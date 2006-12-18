@@ -155,7 +155,7 @@ $string['gdversionhelp'] = '<p>Your server does not seem to have GD installed.</
 
 <p>To add GD to PHP under Unix, compile PHP using the --with-gd parameter.</p>
 
-<p>Under Windows you can usually edit php.ini and uncomment the line referencing libgd.dll.</p>';
+<p>Under Windows you can usually edit php.ini and uncomment the line referencing php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Insecure Handling of Globals';
 $string['globalsquoteserror'] = 'Fix your PHP settings: disable register_globals and/or enable magic_quotes_gpc';
 $string['help'] = 'Help';
@@ -230,6 +230,7 @@ $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'English';
 $string['unicoderecommended'] = 'Storing all your data in Unicode (UTF-8) is recommended. New installations should be performed into databases that have their default character set as Unicode.  If you are upgrading, you should perform the UTF-8 migration process (see the Admin page).';
+$string['unicoderequired'] = 'It is required that you store all your data in Unicode format (UTF-8). New installations must be performed into databases that have their default character set as Unicode.  If you are upgrading, you should perform the UTF-8 migration process (see the Admin page).';
 $string['user'] = 'User';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'You are seeing this page because you have successfully installed and 

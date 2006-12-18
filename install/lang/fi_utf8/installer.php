@@ -129,7 +129,7 @@ $string['gdversionhelp'] = '<p>Palvelimellasi ei näyttäisi olevan GD:tä asenn
 
 <p>Lisätäksesi GD:n PHP:hen Unix:in alaisena, käännä PHP käyttäen --with-gd parametria.</p>
 
-<p>Windowsin alaisena voit yleensä muokata php.ini:ä ja olla kommentoimatta rivivertailua libgd.dll.</p>';
+<p>Windowsin alaisena voit yleensä muokata php.ini:ä ja olla kommentoimatta rivivertailua php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Globaalien muuttujien turvaton käsittely';
 $string['help'] = 'Ohje';
 $string['iconvrecommended'] = 'Valinnaisen ICONV-kirjaston asentamista suositellaan  erityisesti silloin jos sivustolla käytetäänuseita eri kieliä.';

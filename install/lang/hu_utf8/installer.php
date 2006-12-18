@@ -135,7 +135,7 @@ $string['gdversionerror'] = 'Képek feldolgozásához és készítéséhez a GD-
 $string['gdversionhelp'] = '<p>Feltehetőleg szerverén nincs telepítve a GD.</p>
 <p>A GD a PHP számára szükséges könyvtár, mellyel a Moodle képeket (például felhasználói ikonokat) tud feldolgozni és újakat tud készíteni (például naplódiagramokat). A Moodle működik GD nélkül is - csak ezek a lehetőség nem lesznek az Ön számára elérhetők.</p>
 <p>A GD Unix alatti PHP-hez való hozzáadásához a PHP-t fordítsa a --with-gd paraméterrel.</p>
-<p>Windows alatt szerkesztheti a php.ini-t: el kell távolítani a megjegyzésjelet a libgd.dll-re hivatkozó sor elejéről.</p>';
+<p>Windows alatt szerkesztheti a php.ini-t: el kell távolítani a megjegyzésjelet a php_gd2.dll-re hivatkozó sor elejéről.</p>';
 $string['globalsquotes'] = 'Globális változók nem biztonságos kezelése';
 $string['globalsquoteserror'] = 'Javítsa ki a PHP beállításait: kapcsolja ki a disable register_globals és/vagy az enable magic_quotes_gpc opciókat';
 $string['help'] = 'Súgó';

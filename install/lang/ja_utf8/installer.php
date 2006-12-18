@@ -137,7 +137,7 @@ $string['gdversionhelp'] = '<p>あなたのサーバには、GDがインスト�
 
 <p>Unix環境下で、GDをPHPにインストールするには、PHPを --with-gd パラメータでコンパイルしてください。</p>
 
-<p>Windows環境下では、php.iniでlibgd.dllを参照している行のコメントアウトを取り除いてください。</p>';
+<p>Windows環境下では、php.iniでphp_gd2.dllを参照している行のコメントアウトを取り除いてください。</p>';
 $string['globalsquotes'] = '安全では無いGlobalsのハンドリング';
 $string['globalsquoteserror'] = 'PHP設定を修正してください: register_globalsを「Off」および/またはmagic_quotes_gpcを「On」';
 $string['help'] = 'ヘルプ';
@@ -204,6 +204,7 @@ $string['status'] = '状態';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = '日本語';
 $string['unicoderecommended'] = 'あなたのすべてのデータをユニコードフォーマット (UTF-8) で保存することが推奨されます。Moodleの新しいインストールは、ユニコードがデフォルトキャラクタにセットされたデータベースに実行される必要があります。アップグレードの場合、UTF-8移行プロセスを実行してださい (詳細は管理ページをご覧ください)。';
+$string['unicoderequired'] = 'あなたのすべてのデータをユニコードフォーマット (UTF-8) で保存することが必須です。Moodleの新しいインストールは、ユニコードがデフォルトキャラクタにセットされたデータベースに実行される必要があります。アップグレードの場合、UTF-8移行プロセスを実行してださい (詳細は管理ページをご覧ください)。';
 $string['user'] = 'ユーザ';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'インストールが正常に完了したため、このページをご覧頂いています。あなたのコンピュータで <strong>$a->packname $a->packversion</strong> パッケージを起動してください。';

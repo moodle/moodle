@@ -142,7 +142,7 @@ $string['gdversionhelp'] = '<p>Su servidor parece no tener el GD instalado.</p>
 
 <p>Para agregar GD a PHP en entorno Unix, compile PHP usando el parámetro --with-gd.</p>
 
-<p>En un entorno Windows, puede editar php.ini y quitar los comentarios de la línea referida a libgd.dll.</p>';
+<p>En un entorno Windows, puede editar php.ini y quitar los comentarios de la línea referida a php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Manejo Inseguro de Ajustes Globales';
 $string['globalsquoteserror'] = 'Fije sus ajustes PHP: deshabilite register_globals y/o habilite magic_quotes_gpc';
 $string['help'] = 'Ayuda';
@@ -213,6 +213,7 @@ $string['status'] = 'Estado';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Español - Internacional';
 $string['unicoderecommended'] = 'Se recomienda almacenar todos los datos en Unicode (UTF-8). Las instalaciones nuevas deberían ejecutarse en bases de datos cuyo juego de caracteres por defecto fuera Unicode. Si está realizando una actualización, debería llevar a cabo el proceso de migración UTF-8 (vea al respecto la página de Administración).';
+$string['unicoderequired'] = 'Es necesario que almacene todos sus datos en formato Unicode (UTF-8). Las instalaciones nuevas deberían ejecutarse en bases de datos cuyo juego de caracteres por defecto fuera Unicode. Si está realizando una actualización, debería llevar a cabo el proceso de migración UTF-8 (vea al respecto la página de Administración).';
 $string['user'] = 'Usuario';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'Si está viendo esta página es porque ha podido ejecutar el paquete

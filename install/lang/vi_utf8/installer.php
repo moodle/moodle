@@ -43,7 +43,7 @@ $string['gdversionhelp'] = '<p> Máy chủ của bạn hình như không cài GD
 
 <p>Để thêm GD vào PHP dưới hệ điều hành Unix, biên dịch PHP sử dụng tham số--with-gd. </p>
 
-<p>Dưới hệ điều hành Windows bạn có thể soạn thảo file php.ini và bỏ dấu chú thích dòng tham chiếu đến libgd.dll.</p>';
+<p>Dưới hệ điều hành Windows bạn có thể soạn thảo file php.ini và bỏ dấu chú thích dòng tham chiếu đến php_gd2.dll.</p>';
 $string['help'] = 'Trợ giúp';
 $string['installation'] = 'Cài đặt';
 $string['language'] = 'Ngôn ngữ';
