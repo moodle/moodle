@@ -27,8 +27,8 @@
     }
 
     @header('Content-Type: text/html; charset=utf-8');
-    echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
-    echo "<html $direction>\n<head>\n";
+    echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'."\n";
+    echo "<html $direction xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n";
     echo '<meta http-equiv="content-type" content="text/html; charset=utf-8" />';
     echo $stylesheetshtml;
 
@@ -85,7 +85,7 @@
         add_to_log(SITEID, 'message', 'write', 'history.php?user1='.$user->id.'&amp;user2='.$USER->id.'#m'.$messageid, $user->id);
     }
 
-    echo '</head>';
+    echo '<title></title></head>';
 
 
     echo '<body class="message course-1" id="message-send">';

@@ -49,7 +49,7 @@
         message_unblock_contact($unblockcontact);
     }
 
-    print_header('','','','','',false,'','',false,'leftmargin="2" topmargin="2" marginwidth="2" marginheight="2"');
+    print_header('','','','','',false,'','',false,'');
     echo '<table width="100%" cellpadding="0" cellspacing="0"><tr>';
     echo '<td width="100">';
     echo print_user_picture($user->id, SITEID, $user->picture, true, true, true, 'userwindow').'</td>';
@@ -87,6 +87,6 @@
 
     echo '</td></tr></table>';
 
-    echo '</table></table></body>'; // Close possible theme tables off
+    echo '</div></div></body></html>'; // Close possible theme tables off
 
 ?>

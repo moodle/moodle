@@ -35,7 +35,7 @@
 
 /// Our two users are defined - let's set up the page
 
-    print_header(get_string('messagehistory', 'message'), '', '', '', '<base target="_blank">');
+    print_header(get_string('messagehistory', 'message'), '', '', '', '<base target="_blank" />');
 
 /// Print out a heading including the users we are looking at
 
@@ -46,8 +46,8 @@
     echo fullname($user1);
     echo '</td>';
     echo '<td align="center">';
-    echo '<img src="'.$CFG->wwwroot.'/pix/t/left.gif" alt="'.get_string('from').'">';
-    echo '<img src="'.$CFG->wwwroot.'/pix/t/right.gif" alt="'.get_string('to').'">';
+    echo '<img src="'.$CFG->wwwroot.'/pix/t/left.gif" alt="'.get_string('from').'" />';
+    echo '<img src="'.$CFG->wwwroot.'/pix/t/right.gif" alt="'.get_string('to').'" />';
     echo '</td>';
     echo '<td align="center">';
     echo print_user_picture($user2->id, SITEID, $user2->picture, 100, true, true, 'userwindow').'<br />';
@@ -84,5 +84,6 @@
         print_heading(get_string('nomessagesfound', 'message'));
     }
 
+    print_footer('none');
 
 ?>

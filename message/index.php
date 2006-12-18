@@ -88,5 +88,6 @@
     }
 
     echo '</td> </tr> </table>';
-    echo ' </body> </html>';
+    print_footer('none');
+
 ?>
