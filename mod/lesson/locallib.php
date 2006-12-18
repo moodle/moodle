@@ -401,7 +401,7 @@ function lesson_print_messages() {
  **/
 function lesson_print_submit_link($name, $form, $align = 'center', $class='standardbutton', $title = '', $id = '', $return = false) {
     if (!empty($align)) {
-        $align = " align=\"$align\"";
+       // $align = " align=\"$align\"";
     }
     if (!empty($id)) {
         $id = " id=\"$id\"";

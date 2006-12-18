@@ -581,7 +581,7 @@
                         echo "<label for=\"answerid$i\">".format_text(trim($answer->answer), FORMAT_MOODLE, $options).'</label>';
                         echo '</td></tr>';
                         if ($answer != end($answers)) {
-                            echo "<tr><td><br></td></tr>";                            
+                            echo "<tr><td><br /></td></tr>";                            
                         }
                         $i++;
                     }
@@ -620,7 +620,7 @@
                         echo "<label for=\"answerid$i\" >".format_text(trim($answer->answer), FORMAT_MOODLE, $options).'</label>'; 
                         echo '</td></tr>';
                         if ($answer != end($answers)) {
-                            echo '<tr><td><br></td></tr>';
+                            echo '<tr><td><br /></td></tr>';
                         } 
                         $i++;
                     }
@@ -930,7 +930,7 @@
 
         // high scores code
         if ($lesson->highscores && !has_capability('mod/lesson:manage', $context) && !$lesson->practice) {
-            echo "<div align=\"center\"><br>";
+            echo "<div align=\"center\"><br />";
             if ($grades = get_records_select("lesson_grades", "lessonid = $lesson->id", "completed")) {
                 $madeit = false;
                 if ($highscores = get_records_select("lesson_high_scores", "lessonid = $lesson->id")) {
@@ -962,7 +962,7 @@
                     echo '</p>
                           </form>';
                 } else {
-                    echo get_string("nothighscore", "lesson", $lesson->maxhighscores)."<br>";
+                    echo get_string("nothighscore", "lesson", $lesson->maxhighscores)."<br />";
                 }
             }
             echo "<br /><div style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"$CFG->wwwroot/mod/lesson/highscores.php?id=$cm->id&amp;link=1\">".get_string("viewhighscores", "lesson").'</a></div>';
