@@ -130,9 +130,10 @@
         echo "<span class=\"dimmed_text\">$stridle <span name=\"uidles\" id=\"uidle{$chatuser->id}\">$idle</span></span>";
         echo " <a href=\"users.php?chat_sid=$chat_sid&amp;beep=$chatuser->id\">$strbeep</a>";
         echo '</font></p>';
-        echo '<td></tr>';
+        echo '</td></tr>';
     }
-    echo '</table></body></html>';
+    // added 2 </div>s, xhtml strict complaints
+    echo '</table></div></div></body></html>';
 
     //
     // Support HTTP Keep-Alive by printing Content-Length

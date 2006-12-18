@@ -67,5 +67,7 @@
         <input type="hidden" name="chat_sid" value="<?php echo $chat_sid ?>" />
         <input type="hidden" name="chat_message" />
     </form>
+</div>
+</div>
 </body>
 </html>
