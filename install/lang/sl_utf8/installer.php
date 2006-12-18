@@ -116,7 +116,7 @@ $string['gdversionhelp'] = '<p>Na vašem strežniku kot kaže ni nameščen GD.<
 
 <p>Za dodajanje GD v PHP v sistemu Unix, prevedite PHP s parametrom --with-gd.</p>
 
-<p>V okolju Windows lahko običajno uredite php.ini in odkomentirate vrstico, ki se sklicuje na libgd.dll.</p>';
+<p>V okolju Windows lahko običajno uredite php.ini in odkomentirate vrstico, ki se sklicuje na php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Nevarna obravnava globalnih spremenljivk';
 $string['globalsquoteserror'] = 'Popravite vaše PHP nastavitve: onemogočite register_globals in / ali omogočite magic_quotes_gpc';
 $string['help'] = 'Pomoč';

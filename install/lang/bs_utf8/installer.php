@@ -39,7 +39,7 @@ $string['gdversionhelp'] = '<p>Vaš server neće izgledati isto imajući GD inst
 
 <p>Da dodate GD u PHP na osnovu Unixa, kompajlirate PHP koristeći se gd parametrom.</p>
 
-<p>Na osnovu Windows obično možete podesiti php.ini i ne bilježiti liniju referencirajući libgd.dll.</p>';
+<p>Na osnovu Windows obično možete podesiti php.ini i ne bilježiti liniju referencirajući php_gd2.dll.</p>';
 $string['help'] = 'Pomoć';
 $string['installation'] = 'Instalacija';
 $string['language'] = 'Jezik';

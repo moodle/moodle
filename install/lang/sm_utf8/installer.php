@@ -42,7 +42,7 @@ $string['gdversionhelp'] = '<p>Your server does not seem to have GD installed.</
 
 <p>To add GD to PHP under Unix, compile PHP using the --with-gd parameter.</p>
 
-<p>Under Windows you can usually edit php.ini and uncomment the line referencing libgd.dll.</p>';
+<p>Under Windows you can usually edit php.ini and uncomment the line referencing php_gd2.dll.</p>';
 $string['help'] = 'Fesoasoani';
 $string['installation'] = 'Fa\'atu/Install';
 $string['language'] = 'Gagana';

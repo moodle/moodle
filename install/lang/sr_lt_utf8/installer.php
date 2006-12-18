@@ -100,7 +100,7 @@ $string['gdversionhelp'] = '<p>Na Vašem serveru izgleda nije instaliran GD.</p>
 
 <p>Da biste dodali GD u PHP pod Unix-om, kompajlirajte PHP koristeći --with-gd parametar.</p>
 
-<p>Pod Windows-om obično možete izmeniti php.ini i skinuti oznaku komentara u liniji koja se odnosi na libgd.dll.</p>';
+<p>Pod Windows-om obično možete izmeniti php.ini i skinuti oznaku komentara u liniji koja se odnosi na php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Nesigurno rukovanje globalnim varijablama';
 $string['globalsquoteserror'] = 'Popravite svoja PHP podešavanja: onemogućite register_globals i/ili omogućite magic_quotes_gpc';
 $string['help'] = 'Pomoć';

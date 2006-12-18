@@ -40,7 +40,7 @@ $string['gdversionhelp'] = '<p>Ngalingali \'oku te\'ekiai ke fokotu\'u e GD \'i 
 
 <p>Ke tanaki e GD ki he PHP \'ihe Unix, fakatahataha\'i e PHP ngaue\'aki e --moe-gd tafatafa\'aki.</p>
 
-<p>\'Ihe Uinitou, teke fa\'amalava pee \'o \'etita\'i php.ini mo to\'o e komeni \'oe laine fakahinohino libgd.dll.</p>';
+<p>\'Ihe Uinitou, teke fa\'amalava pee \'o \'etita\'i php.ini mo to\'o e komeni \'oe laine fakahinohino php_gd2.dll.</p>';
 $string['help'] = 'Tokoni';
 $string['installation'] = 'Fokotu\'u';
 $string['language'] = 'Lea';
