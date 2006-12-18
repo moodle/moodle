@@ -668,7 +668,8 @@ function get_recordset_sql($sql, $limitfrom=null, $limitnum=null) {
 }
 
 /**
- * Utility function used by the following 4 methods.
+ * Utility function used by the following 4 methods. Note that for this to work, the first column
+ * in the recordset must contain unique values, as it is used as the key to the associative array.
  *
  * @param object an ADODB RecordSet object.
  * @return mixed mixed an array of objects, or false if an error occured or the RecordSet was empty.
@@ -744,7 +745,9 @@ function onespace2empty(&$item, $key=null) {
  * @param string $field a field to check (optional).
  * @param string $value the value the field must have (requred if field1 is given, else optional).
  * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
- * @param string $fields a comma separated list of fields to return (optional, by default all fields are returned).
+ * @param string $fields a comma separated list of fields to return (optional, by default 
+ *   all fields are returned). The first field will be used as key for the
+ *   array so must be a unique field such as 'id'.
  * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
  * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
  * @return mixed an array of objects, or false if no records were found or an error occured.
@@ -762,7 +765,9 @@ function get_records($table, $field='', $value='', $sort='', $fields='*', $limit
  * @param string $table the table to query.
  * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
  * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
- * @param string $fields a comma separated list of fields to return (optional, by default all fields are returned).
+ * @param string $fields a comma separated list of fields to return 
+ *   (optional, by default all fields are returned). The first field will be used as key for the
+ *   array so must be a unique field such as 'id'.
  * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
  * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
  * @return mixed an array of objects, or false if no records were found or an error occured.
@@ -781,7 +786,9 @@ function get_records_select($table, $select='', $sort='', $fields='*', $limitfro
  * @param string $field The field to search
  * @param string $values Comma separated list of possible value
  * @param string $sort Sort order (as valid SQL sort parameter)
- * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @param string $fields A comma separated list of fields to be returned from the chosen table. If specified,
+ *   the first field should be a unique one such as 'id' since it will be used as a key in the associative
+ *   array.
  * @return mixed an array of objects, or false if no records were found or an error occured.
  */
 function get_records_list($table, $field='', $values='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
@@ -794,7 +801,9 @@ function get_records_list($table, $field='', $values='', $sort='', $fields='*', 
  *
  * Return value as for @see function get_records.
  *
- * @param string $sql the SQL select query to execute.
+ * @param string $sql the SQL select query to execute. The first column of this SELECT statement 
+ *   must be a unique value (usually the 'id' field), as it will be used as the key of the 
+ *   returned array.
  * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
  * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
  * @return mixed an array of objects, or false if no records were found or an error occured.
