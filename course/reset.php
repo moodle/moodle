@@ -91,8 +91,8 @@ The feature will also reset the start date of the course if necessary.
         error('No modules are installed!');
     }
     
-    echo '<input name="id" value="'.$course->id.'" type="hidden" /></p>';
-    echo '<input name="sesskey" value="'.sesskey().'" type="hidden" /></p>';
+    echo '<input name="id" value="'.$course->id.'" type="hidden" />';
+    echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
     echo '<p align="center"><input name="submit" value="'.$strresetcourse.'" type="submit" /></p>';
     echo '</form>';
     
