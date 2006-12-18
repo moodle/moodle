@@ -64,7 +64,7 @@ class enrolment_plugin_authorize
         }
 
         print_simple_box_start('center', '80%');
-        if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), $USER->id, false)) {
+        if ($USER->username == 'guest') { // only real guest user, not for users with guest role
             $curcost = get_course_cost($course);
             echo '<div align="center">';
             echo '<p>'.get_string('paymentrequired').'</p>';

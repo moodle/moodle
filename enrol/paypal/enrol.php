@@ -42,7 +42,7 @@ function print_entry($course) {
 
         print_simple_box_start("center");
 
-        if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM, SITEID), NULL, false)) {
+        if ($USER->username == 'guest') { // force login only for guest user, not real users with guest role
             if (empty($CFG->loginhttps)) {
                 $wwwroot = $CFG->wwwroot;
             } else {
