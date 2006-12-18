@@ -855,6 +855,67 @@ function question_extract_responses($questions, $formdata, $defaultevent=QUESTIO
 }
 
 
+/**
+ * Returns the html for question feedback image.
+ * @param float   $fraction  value representing the correctness of the user's
+ *                           response to a question.
+ * @param boolean $selected  whether or not the answer is the one that the
+ *                           user picked.
+ * @return string
+ */
+function question_get_feedback_image($fraction, $selected=true) {
+
+    global $CFG;
+
+    if ($fraction >= 1.0) {
+        if ($selected) {
+            $feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_green_big.gif" '.
+                            'alt="'.get_string('correct', 'quiz').'" width="16" height="16" />';
+        } else {
+            $feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_green_small.gif" '.
+                            'alt="'.get_string('correct', 'quiz').'" width="16" height="16" />';
+        }
+    } else if ($fraction > 0.0 && $fraction < 1.0) {
+        if ($selected) {
+            $feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_amber_big.gif" '.
+                            'alt="'.get_string('partiallycorrect', 'quiz').'" width="16" height="16" />';
+        } else {
+            $feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_amber_small.gif" '.
+                            'alt="'.get_string('partiallycorrect', 'quiz').'" width="16" height="16" />';
+        }
+    } else {
+        if ($selected) {
+            $feedbackimg = '<img src="'.$CFG->pixpath.'/i/cross_red_big.gif" '.
+                            'alt="'.get_string('incorrect', 'quiz').'" width="16" height="16" />';
+        } else {
+            $feedbackimg = '<img src="'.$CFG->pixpath.'/i/cross_red_small.gif" '.
+                            'alt="'.get_string('incorrect', 'quiz').'" width="16" height="16" />';
+        }
+    }
+    return $feedbackimg;
+}
+
+
+/**
+ * Returns the class name for question feedback.
+ * @param float  $fraction  value representing the correctness of the user's
+ *                          response to a question.
+ * @return string
+ */
+function question_get_feedback_class($fraction) {
+
+    global $CFG;
+
+    if ($fraction >= 1.0) {
+        $class = 'correct';
+    } else if ($fraction > 0.0 && $fraction < 1.0) {
+        $class = 'partiallycorrect';
+    } else {
+        $class = 'incorrect';
+    }
+    return $class;
+}
+
 
 /**
 * For a given question in an attempt we walk the complete history of states
