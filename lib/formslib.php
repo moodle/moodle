@@ -1,4 +1,4 @@
-`<?php // $Id$
+<?php // $Id$
 /**
  * formslib.php - library of classes for creating forms in Moodle, based on PEAR QuickForms.
  *
