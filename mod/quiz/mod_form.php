@@ -229,7 +229,6 @@ class quiz_mod_form extends moodleform_mod {
         $insertEl = &MoodleQuickForm::createElement('text', "feedbacktext[$nextel]", get_string('feedback', 'quiz'));
         $mform->insertElementBefore($insertEl, 'boundary_add_fields');
         $mform->setType("feedbacktext[$nextel]", PARAM_TEXT);
-        $mform->setHelpButton("feedbacktext[$nextel]", array('options', get_string('modulenameplural', 'choice'), 'choice'));
 
         $insertEl = &MoodleQuickForm::createElement('static', 'gradeboundarystatic2', get_string('gradeboundary', 'quiz'), '0%');
         $mform->insertElementBefore($insertEl, 'boundary_add_fields');
