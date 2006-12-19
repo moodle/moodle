@@ -4676,7 +4676,7 @@ function editorshortcutshelpbutton() {
  * @param string $link ?
  * @todo Finish documenting this function
  */
-function notice ($message, $link='', $course=NULL) {
+function notice ($message, $link='', $course=NULL, $adminroot='') {
     global $CFG, $SITE;
 
     $message = clean_text($message);
@@ -4693,6 +4693,13 @@ function notice ($message, $link='', $course=NULL) {
     echo '<br />';
     print_simple_box($message, 'center', '50%', '', '20', 'generalbox', 'notice');
     print_continue($link);
+    
+    // xhtml strict fix, need to make sure it's the right footer
+    if ($adminroot) {
+        admin_externalpage_print_footer($adminroot);
+        exit;
+    }
+    
     if (empty($course)) {
         print_footer($SITE);
     } else {

@@ -257,7 +257,7 @@
         if (!empty($somethingfound)) {
             print_continue("lang.php");
         } else {
-            notice(get_string("languagegood"), "lang.php");
+            notice(get_string("languagegood"), "lang.php", '', $adminroot);
         }
 
     } else if ($mode == "compare") {
