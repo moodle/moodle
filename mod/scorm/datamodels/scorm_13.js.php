@@ -268,21 +268,14 @@ function SCORMapi1_3() {
     function GetValue (element) {
         errorCode = "0";
         diagnostic = "";
-        if ((Initialized) && (!Terminated)) {//si está inicializado y no terminado
+        if ((Initialized) && (!Terminated)) {
             if (element !="") {
                 expression = new RegExp(CMIIndex,'g');
-                elementmodel = element.replace(expression,'.n.');//creamos su elementmodel
-
-				if (element=='cmi.interactions.0.objectives.0.id'){
-					alert("Estamos aquí, con el elemntmodel "+elementmodel);
-				}
+                elementmodel = element.replace(expression,'.n.');
 				
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
-                    if (eval('datamodel["'+elementmodel+'"].mod') != 'w') {//compruebo que está definido el modelo
-					//y compruebo que no es de solo escritura
-						if (element=='cmi.interactions.0.objectives.0.id'){
-							alert("Entro");
-						}
+                    if (eval('datamodel["'+elementmodel+'"].mod') != 'w') {
+					
                         element = element.replace(/\.(\d+)\./, ".N$1.");
 						element = element.replace(/\.(\d+)\./, ".N$1.");
 
@@ -290,33 +283,12 @@ function SCORMapi1_3() {
                         subelement = element.substr(0,3);
                         i = 1;
 						
-						if (elementmodel=='cmi.interactions.n.objectives.n.id'){
-							alert ("el element vale "+element+"y el subelement vale"+subelement);
-						}
-						
                         while ((i < elementIndexes.length) && (typeof eval(subelement) != "undefined")) {
                             subelement += '.'+elementIndexes[i++];
-	
-							if (elementmodel=='cmi.interactions.n.objectives.n.id'){
-								alert ("el element vale "+element+"y el subelement vale"+subelement);
-									if((typeof eval(subelement) != "undefined")){
-										alert("está definido");
-									}
-									else {
-										alert("no definido");
-									}
-
-							}
 						
                         }
-						if (elementmodel=='cmi.interactions.n.objectives.n.id'){
-								alert ("Tras el bucle el element vale "+element+"y el subelement vale"+subelement);
-							}
+						
                         if (subelement == element) {
-
-							if (elementmodel=='cmi.interactions.n.objectives.n.id'){
-								alert ("Tras el bucle, si element y sub son iguales el element vale "+element+"y el subelement vale"+subelement);
-							}
 
                             if ((typeof eval(subelement) != "undefined") && (eval(subelement) != null)) {
                                 errorCode = "0";
@@ -330,10 +302,6 @@ function SCORMapi1_3() {
                                 errorCode = "403";
                             }
                         } else {
-
-							if (elementmodel=='cmi.interactions.n.objectives.n.id'){
-								alert("element y subelement no son iguales");
-							}
                             errorCode = "301";
                         }
                     } else {
@@ -400,74 +368,64 @@ function SCORMapi1_3() {
         errorCode = "0";
         diagnostic = "";
 		if (element== 'cmi.interactions.0.learner_response' && value=='Dependency on cmi.interaction.n.type not established'){
-			//alert("entramos");
+			
 			errorCode="408";
 		}
-        if ((Initialized) && (!Terminated)) {//Si está inicializado y no terminado
-            if (element != "") {//Si hay un elemento
+        if ((Initialized) && (!Terminated)) {
+            if (element != "") {
                 expression = new RegExp(CMIIndex,'g');
-                elementmodel = element.replace(expression,'.n.');//cambio los números por n
-                if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {//miro si elementmodel definido
-                    if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {//si no es de sólo lectura
-                        expression = new RegExp(eval('datamodel["'+elementmodel+'"].format'));//ajusto a expReg
+                elementmodel = element.replace(expression,'.n.');
+                if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
+                    if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
+                        expression = new RegExp(eval('datamodel["'+elementmodel+'"].format'));
                         value = value+'';
                         matches = value.match(expression);
                         if ((matches != null) && ((matches.join('').length > 0) || (value.length == 0))) {
-						//si el valor a asignar se ajusta a la expresión regular
+						
                             //Create dynamic data model element
+
                             if (element != elementmodel) {
-                                elementIndexes = element.split('.');//divido el elemento en trozos
+                                elementIndexes = element.split('.');
                                 subelement = 'cmi';
                                 parentelement = 'cmi';
-                                for (i=1;(i < elementIndexes.length-1) && (errorCode=="0");i++) {//recorro trozos
+                                for (i=1;(i < elementIndexes.length-1) && (errorCode=="0");i++) {
                                     elementIndex = elementIndexes[i];
-                                    if (elementIndexes[i+1].match(/^\d+$/)) {//si el trozo es un dígito (índice)
-                                        if ((parseInt(elementIndexes[i+1]) > 0) && (elementIndexes[i+1].charAt(0) == 0)) {//si no es un número da error
+                                    if (elementIndexes[i+1].match(/^\d+$/)) {
+                                        if ((parseInt(elementIndexes[i+1]) > 0) && (elementIndexes[i+1].charAt(0) == 0)) {
                                             // Index has a leading 0 (zero), this is not a number
                                             errorCode = "351";
                                         }
                                         parentelement = subelement+'.'+elementIndex;
                                         if (elementIndexes[i+1] > eval(parentelement+'._count')) {
-										//si el número (índice) es mayor que el count, se desborda
+									
                                             errorCode = "351";
                                             diagnostic = "Data Model Element Collection Set Out Of Order";
                                         }
                                         subelement = subelement.concat('.'+elementIndex+'.N'+elementIndexes[i+1]);
                                         i++;
-										//formo la cadena y aumento el índice para saltar
+										
                                         if (((typeof eval(subelement)) == "undefined") && (i < elementIndexes.length-2)) {
-										//si el elemento no está definido, salta
                                             errorCode="408";
                                         }
-                                    } else {//si no es un dígito, sólo lo concateno a lo que había
+                                    } else {
                                         subelement = subelement.concat('.'+elementIndex);
                                     }
                                 }
-                                if (errorCode == "0") {//si no se produce ningún error en los índices
-									//if (element=='cmi.interactions.0.learner_response'){
-										//alert ("Ha llegado con el subelement "+subelement+" y el elementIndexes //"+elementIndexes[elementIndexes.length-1]); 
-									//}
+
+							
+
+                                if (errorCode == "0") {
+									
                                     element = subelement.concat('.'+elementIndexes[elementIndexes.length-1]);
                                     elemlen = element.length;
-									//if (element=='cmi.interactions.N0.learner_response'){
-										//alert ("Ha llegado2");
-									//}
-									//le añado la terminación (el learner response)
+									
                                     if (((typeof eval(subelement)) == "undefined") && (errorCode == "0")) {
-									//si el cmi.interactions.N0 no está definido
-										//if (element=='cmi.interactions.N0.learner_response'){
-										  //            alert ("Ha llegado3");
-										//}
-
-										//es porque es un cmi.objectives
                                         parentmodel = 'cmi.objectives';
                                         maxmodel = 'cmi.objectives.Nxxx.id';
                                         if (subelement.substr(0,parentmodel.length) == parentmodel) {
-										//si el subelement es un cmi.objectives
+										
                                              if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
-											 /*if (element=='cmi.interactions.N0.learner_response'){
-										              alert ("Ha llegado32");
-											}*/
+										
                                                 //This is a parentmodel.n.id element
                                                 if (!duplicatedID(parentmodel,value)) {
                                                     if (elementIndexes[elementIndexes.length-2] == eval(parentmodel+'._count')) {
@@ -490,9 +448,7 @@ function SCORMapi1_3() {
                                                 }
                                             } else {
 											
-											/*if (element=='cmi.interactions.N0.learner_response'){
-										              alert ("Ha llegado33");
-										}*/
+											
                                                 if (typeof eval(subelement) == "undefined") {
                                                     errorCode="408";
                                                 } else {
@@ -503,42 +459,42 @@ function SCORMapi1_3() {
                                                 }
                                             }
                                         } else {
-											//si no es un cmi.objectives es porque hay que construir el interactions
-											/*if (element=='cmi.interactions.N0.learner_response'){
-										              alert ("Ha llegado4");
-											}*/
+											
+
+								
                                             parentmodel = 'cmi.interactions';
                                             maxmodel = 'cmi.interactions.Nxxx.id';
-											//construyo el interactions
+											
                                             if (subelement.substr(0,parentmodel.length) == parentmodel) {
-											//si el subelement es un interactions
+											
                                                 if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
-													//si es un interactions.id
+												
                                                     //This is a parentmodel.n.id element
                                                     if (!duplicatedID(parentmodel,value)) {
-													//si no está duplicado, es porque es uno nuevo
+													
                                                         if (elementIndexes[elementIndexes.length-2] == eval(parentmodel+'._count')) {
-														//si es el ultimo elemento que hay hasta ahora
+														
                                                             eval(parentmodel+'._count++;');
-															//aumentamos el contador que indica el númElem
+															
                                                             eval(subelement+' = new Object();');
-															//creamos el nuevo objeto, el objectives y el corr_resp
+															
                                                             subobject = eval(subelement);
                                                             subobject.objectives = new Object();
                                                             subobject.objectives._count = 0;
-															subobject.correct_responses = new Object();//añadido
-                                                            subobject.correct_responses._count = 0;//añadido
+															subobject.correct_responses = new Object();
+                                                            subobject.correct_responses._count = 0;
 															
                                                             
                                                         } 
                                                     } else {
-													//si esta duplicado da un error
+												
                                                         errorCode="351";
                                                         diagnostic = "Data Model Element ID Already Exists";
                                                     }
                                                 } else {
-												//si no es un interactions y vemos que no esta definido dicho //elemento
+												
                                                     if (typeof eval(subelement) == "undefined") {
+													
                                                         errorCode="408";
                                                     } else {
                                                         maxmodel = 'cmi.interactions.Nxxx.type';
@@ -551,10 +507,8 @@ function SCORMapi1_3() {
                                                     }
                                                 }
                                             } else {
-											/*if (element=='cmi.interactions.N0.learner_response'){
-										              alert ("Ha llegado38");
-											}*/
-											//si no es ni objectives ni interactions lo construyo
+											
+											
                                                 if (errorCode == "0") {
                                                     if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
                                                         eval(parentelement+'._count++;');
@@ -565,44 +519,22 @@ function SCORMapi1_3() {
                                         }
                                      } else {
 
-									 //si ya está definido el subelement
-
-									/* if (element=='cmi.interactions.N0.learner_response'){//Aqui entra
-										              alert ("Ha llegado5");
-										}*/
                                          parentmodel = 'cmi.objectives';
                                          maxmodel = 'cmi.objectives.Nxxx.id';
                                          if (subelement.substr(0,parentmodel.length) == parentmodel) {
-													
-													/*if (element=='cmi.interactions.N0.learner_response'){
-										              alert ("Ha llegado6");
-													}*/
-
-											//si es un objectives
                                              if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) {
-												//si es id y es distinto de value da fallo porque no se cambia
+												
                                                  if (eval(element) != value) {
                                                      errorCode = "351";
                                                      diagnostic = "Write Once Violation";
                                                  }
                                              }
                                          } else {
-										 
-													/*if (element=='cmi.interactions.N0.learner_response'){//llega 
-										              alert ("Ha llegado63");
-													}*/
-
-											//si no es objectives miro si es interactions
+										
                                              parentmodel = 'cmi.interactions';
                                              maxmodel = 'cmi.interactions.Nxxx.id';
                                              if (subelement.substr(0,parentmodel.length) == parentmodel) {
                                                  if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
-
-														/*if (element=='cmi.interactions.N0.learner_response'){
-															alert ("Ha llegado64");
-														}*/
-
-												 //compruebo si intentan modificar su id
                                                      if (eval(element) != value) {
                                                          errorCode = "351";
                                                          diagnostic = "Write Once Violation";
@@ -615,11 +547,7 @@ function SCORMapi1_3() {
                             }
                             //Store data
                             if (errorCode == "0") {
-							//si no ha habido errores								
-								/*if (element=='cmi.interactions.N0.learner_response'){
-										              alert ("Ha llegado9");
-										}*/
-
+							
                                 if ((typeof eval('datamodel["'+elementmodel+'"].range')) != "undefined") {
                                     range = eval('datamodel["'+elementmodel+'"].range');
                                     ranges = range.split('#');
@@ -666,7 +594,6 @@ function SCORMapi1_3() {
                 errorCode = "351";
             }
         }
-		//Si está inicializado y no terminado termina aquí 
 
 		else {
             if (Terminated) {
