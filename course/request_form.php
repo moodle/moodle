@@ -26,7 +26,7 @@ class course_request_form extends moodleform {
         $mform->setType('password', PARAM_RAW);
 
 
-        $mform->addElement('submit', '', get_string('savechanges'));
+        $this->add_action_buttons();
     }
 
     function validation($data) {

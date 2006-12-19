@@ -79,13 +79,14 @@ class forum_post_form extends moodleform {
 			$mform->setType('timeend', PARAM_INT);
 		    $mform->setConstants(array('timestart'=> 0, 'timeend'=>0));
 		}
+//-------------------------------------------------------------------------------
+        // buttons
 		if (isset($post->edit)) {
 			$submit_string = get_string('savechanges');
 		} else {
 			$submit_string = get_string('posttoforum', 'forum');
 		}
-		$mform->addElement('submit', 'submitbutton', $submit_string);
-		$mform->closeHeaderBefore('submitbutton');
+        $this->add_action_buttons(false, true, $submit_string);
 
 		$mform->addElement('hidden', 'course');
 		$mform->setType('course', PARAM_INT);

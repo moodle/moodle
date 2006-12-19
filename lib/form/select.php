@@ -94,6 +94,18 @@ class MoodleQuickForm_select extends HTML_QuickForm_select{
             }
         }
     } // end func removeOption
+    /**
+     * Removes all OPTIONs from the SELECT
+     *
+     * @param     string    $value      Value for the OPTION to remove
+     * @since     1.0
+     * @access    public
+     * @return    void
+     */
+    function removeOptions()
+    {
+        $this->_options = array();
+    } // end func removeOption
 
 }
 ?>

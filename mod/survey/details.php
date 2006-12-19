@@ -31,7 +31,9 @@
             $mform->addElement('hidden', 'mode', $lastform->mode);
             $mform->addElement('hidden', 'visible', $lastform->visible);
             $mform->addElement('hidden', 'groupmode', $lastform->groupmode);
-            $mform->addElement('submit', 'submitbutton', get_string("savechanges"));
+//-------------------------------------------------------------------------------
+            // buttons
+            $this->add_action_buttons(false);
 
         }
     }

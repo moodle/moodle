@@ -60,10 +60,15 @@ if (!empty($course)) {
 
 /// first create the form
     $editform = new course_edit_form('edit.php', compact('course', 'category'));
+    if ($editform->is_cancelled()){
+        if (empty($course)) {
+            redirect($CFG->wwwroot);
+        } else {
+            redirect($CFG->wwwroot.'/course/view.php?id='.$course->id);
+        }
 
-
+    } elseif ($data = $editform->data_submitted()) {
 /// process data if submitted
-    if ($data = $editform->data_submitted()) {
 
         //preprocess data
         if ($data->enrolstartdisabled){

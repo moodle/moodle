@@ -8,7 +8,6 @@ class change_password_form extends moodleform {
         global $USER;
 
         $mform    =& $this->_form;
-        $renderer =& $mform->defaultRenderer();
 
         $mform->addElement('header', '', get_string('changepassword'), '');
         $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
@@ -47,14 +46,9 @@ class change_password_form extends moodleform {
 
         // buttons
         if (empty($USER->preference['auth_forcepasswordchange'])) {
-            $buttonarray = array();
-            $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
-            $buttonarray[] = &$mform->createElement('cancel');
-            $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-            $renderer->addStopFieldsetElements('buttonar');
+            $this->add_action_buttons(true, false);
         } else {
-            $mform->addElement('submit', 'submitbutton', get_string('savechanges'));
-            $renderer->addStopFieldsetElements('submitbutton');
+            $this->add_action_buttons(false, false);
         }
     }
 

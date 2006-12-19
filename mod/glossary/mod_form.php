@@ -34,7 +34,7 @@ class glossary_mod_form extends moodleform_mod {
 
         $options = array(1=>get_string('mainglossary', 'glossary'), 0=>get_string('secondaryglossary', 'glossary'));
         $mform->addElement('select', 'mainglossary', get_string('glossarytype', 'glossary'), $options);
-        $mform->setHelpButton('mainglossary', array('mainglossary', get_string('mainglossary', 'glossary'), 'glossary'));$mform->setDefault('allowduplicatedentries', $CFG->glossary_dupentries);
+        $mform->setHelpButton('mainglossary', array('mainglossary', get_string('mainglossary', 'glossary'), 'glossary'));
         $mform->setDefault('mainglossary', 0);
 
         $mform->addElement('selectyesno', 'allowduplicatedentries', get_string('allowduplicatedentries', 'glossary'), $options);
@@ -145,12 +145,8 @@ class glossary_mod_form extends moodleform_mod {
         $this->standard_coursemodule_elements();
 
 //-------------------------------------------------------------------------------
-        $buttonarray=array();
-        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
-        $buttonarray[] = &$mform->createElement('reset', 'resetbutton', get_string('revert'));
-        $buttonarray[] = &$mform->createElement('cancel');
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-		$mform->closeHeaderBefore('buttonar');
+        // buttons
+        $this->add_action_buttons();
 	}
 
 	function definition_after_data(){

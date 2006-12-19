@@ -24,13 +24,9 @@ class glossary_comment_form extends moodleform {
         $mform->addElement('hidden', 'action', '');
         $mform->setType('action', PARAM_ACTION);
 
+//-------------------------------------------------------------------------------
         // buttons
-        $buttonarray = array();
-        $buttonarray[] =& $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
-        $buttonarray[] =& $mform->createElement('reset', 'reset', get_string('revert'));
-        $buttonarray[] =& $mform->createElement('cancel');
-
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $this->add_action_buttons(false);
     }
 }
 ?>

@@ -25,8 +25,11 @@
     print_simple_box_end();
 
 
-    if (($data = $requestform->data_submitted())) {
+    if ($requestform->is_cancelled()){
 
+        redirect($CFG->wwwroot);
+
+    }elseif ($data = $requestform->data_submitted()) {
         $data->requester = $USER->id;
 
         if (insert_record('course_request', $data)) {
@@ -34,17 +37,12 @@
         } else {
             notice(get_string('courserequestfailed'));
         }
-        print_footer();
-        exit;
 
+    } else {
+
+        $requestform->display();
     }
 
-
-    $requestform->display();
-
     print_footer();
-
-    exit;
-
 
 ?>

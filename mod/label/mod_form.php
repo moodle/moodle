@@ -15,12 +15,10 @@ class label_mod_form extends moodleform_mod {
 
         $mform->addElement('modvisible', 'visible', get_string('visible'));
 
-        $buttonarray=array();
-        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
-        $buttonarray[] = &$mform->createElement('reset', 'resetbutton', get_string('revert'));
-        $buttonarray[] = &$mform->createElement('cancel');
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-		$mform->closeHeaderBefore('buttonar');
+//-------------------------------------------------------------------------------
+        // buttons
+        $this->add_action_buttons();
+
 	}
 
 }

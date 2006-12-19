@@ -27,13 +27,10 @@ class data_comment_form extends moodleform {
         $mform->addElement('hidden', 'commentid', 0);
         $mform->setType('commentid', PARAM_INT);
 
+//-------------------------------------------------------------------------------
         // buttons
-        $buttonarray = array();
-        $buttonarray[] =& $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
-        $buttonarray[] =& $mform->createElement('reset', 'reset', get_string('revert'));
-        $buttonarray[] =& $mform->createElement('cancel');
+        $this->add_action_buttons();
 
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
     }
 }
 ?>

@@ -8,7 +8,6 @@ class course_edit_form extends moodleform {
         global $USER, $CFG;
 
         $mform    =& $this->_form;
-        $renderer =& $mform->defaultRenderer();
 
         $course   = $this->_customdata['course'];
         $category = $this->_customdata['category'];
@@ -92,7 +91,7 @@ class course_edit_form extends moodleform {
             $formcourseformats["$courseformat"] = get_string("format$courseformat","format_$courseformat");
             if($formcourseformats["$courseformat"]=="[[format$courseformat]]") {
                 $formcourseformats["$courseformat"] = get_string("format$courseformat");
-            }        
+            }
         }
         $mform->addElement('select', 'format', get_string('format'), $formcourseformats);
         $mform->setHelpButton('format', array('courseformats', get_string('courseformats')), true);
@@ -356,7 +355,7 @@ class course_edit_form extends moodleform {
         $mform->setType('restrictmodules', PARAM_INT);
 
 //--------------------------------------------------------------------------------
-        $mform->addElement('submit', 'submitbutton', get_string('savechanges'));
+        $this->add_action_buttons();
 //--------------------------------------------------------------------------------
         $mform->addElement('hidden', 'id', null);
         $mform->setType('id', PARAM_INT);
@@ -368,8 +367,6 @@ class course_edit_form extends moodleform {
         $mform->addElement('hidden', 'students', get_string('defaultcoursestudents'));
 
 
-//--------------------------------------------------------------------------------
-        $renderer->addStopFieldsetElements('submitbutton');
 
 
 // now override defaults if course already exists

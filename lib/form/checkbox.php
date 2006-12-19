@@ -60,5 +60,42 @@ class MoodleQuickForm_checkbox extends HTML_QuickForm_checkbox{
             $this->updateAttributes(array('id' => substr(md5(microtime() . $idx++), 0, 6)));
         }
     } // end func _generateId
+    /**
+     * Called by HTML_QuickForm whenever form event is made on this element
+     *
+     * @param     string    $event  Name of event
+     * @param     mixed     $arg    event arguments
+     * @param     object    $caller calling object
+     * @since     1.0
+     * @access    public
+     * @return    void
+     */
+    function onQuickFormEvent($event, $arg, &$caller)
+    {
+        //fixes bug in quickforms which lets previous set value override submitted value if checkbox is not checked
+        // and no value is submitted
+        switch ($event) {
+            case 'updateValue':
+                // constant values override both default and submitted ones
+                // default values are overriden by submitted
+                $value = $this->_findValue($caller->_constantValues);
+                if (null === $value) {
+                    // if no boxes were checked, then there is no value in the array
+                    // yet we don't want to display default value in this case
+                    if ($caller->isSubmitted()) {
+                        $value = $this->_findValue($caller->_submitValues);
+                    } else {
+
+                        $value = $this->_findValue($caller->_defaultValues);
+                    }
+                }
+                //fix here. setChecked should not be conditional
+                $this->setChecked($value);
+                break;
+            default:
+                parent::onQuickFormEvent($event, $arg, $caller);
+        }
+        return true;
+    } // end func onQuickFormEvent
 }
 ?>

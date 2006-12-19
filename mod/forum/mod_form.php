@@ -124,13 +124,10 @@ class forum_mod_form extends moodleform_mod {
 
 //-------------------------------------------------------------------------------
 		$this->standard_coursemodule_elements();
+//-------------------------------------------------------------------------------
+        // buttons
+        $this->add_action_buttons();
 
-        $buttonarray=array();
-        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
-        $buttonarray[] = &$mform->createElement('reset', 'resetbutton', get_string('revert'));
-        $buttonarray[] = &$mform->createElement('cancel');
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-		$mform->closeHeaderBefore('buttonar');
 	}
 
 	function definition_after_data(){

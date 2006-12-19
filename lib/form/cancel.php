@@ -7,7 +7,7 @@ require_once('HTML/QuickForm/submit.php');
  * @author       Jamie Pratt
  * @access       public
  */
-class MoodleQuickForm_cancel extends HTML_QuickForm_submit
+class MoodleQuickForm_cancel extends MoodleQuickForm_submit
 {
     // {{{ constructor
 
@@ -26,7 +26,7 @@ class MoodleQuickForm_cancel extends HTML_QuickForm_submit
         if ($value==null){
             $value=get_string('cancel');
         }
-        HTML_QuickForm_submit::HTML_QuickForm_submit($elementName, $value, $attributes);
+        MoodleQuickForm_submit::MoodleQuickForm_submit($elementName, $value, $attributes);
         $this->updateAttributes(array('onclick'=>'skipClientValidation = true; return true;'));
     } //end constructor
     function onQuickFormEvent($event, $arg, &$caller)
@@ -43,5 +43,5 @@ class MoodleQuickForm_cancel extends HTML_QuickForm_submit
     } // end func onQuickFormEvent
 
     // }}}
-} //end class HTML_QuickForm_submit
+} //end class MoodleQuickForm_cancel
 ?>

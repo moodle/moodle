@@ -319,7 +319,10 @@ form.mform fieldset legend {
   font-weight: bold;
   margin-left: 0.5em;
 }
-
+form.mform fieldset .advancedbutton{
+   width:100%;
+   text-align:right;
+}
 form.mform div.fitem {
   clear: both;
   width: 100%;

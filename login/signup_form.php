@@ -7,7 +7,6 @@ class login_signup_form extends moodleform {
 		global $USER, $CFG;
 
 		$mform    =& $this->_form;
-		$renderer =& $mform->defaultRenderer();
 
 		$mform->addElement('header', '', get_string('createuserandpass'), '');
 
@@ -50,12 +49,8 @@ class login_signup_form extends moodleform {
         $mform->setDefault('country', '');
 
         // buttons
-        $buttonarray = array();
-        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('createaccount'));
-        $buttonarray[] = &$mform->createElement('cancel');
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $this->add_action_buttons(true, false, get_string('createaccount'));
 
-        $renderer->addStopFieldsetElements('buttonar');
 	}
 
 	function definition_after_data(){

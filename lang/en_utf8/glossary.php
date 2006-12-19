@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // glossary.php - created with Moodle 1.7 beta + (2006101003)
 
 
@@ -52,6 +52,9 @@ $string['concept'] = 'Concept';
 $string['concepts'] = 'Concepts';
 $string['configenablerssfeeds'] = 'This switch will enable the possibility of RSS feeds for all glosaries.  You will still need to turn feeds on manually in the settings for each glossary.';
 $string['currentglossary'] = 'Current glossary';
+$string['errconceptalreadyexists'] = 'This concept already exists. No duplicates allowed in this glossary.';
+$string['erredittimeexpired'] = 'The editing time for this entry has expired.';
+$string['errcannoteditothers'] = 'You cannot edit other people\'s entries.';
 $string['dateview'] = 'Browse by date';
 $string['defaultapproval'] = 'Approved by default';
 $string['definition'] = 'Definition';
@@ -124,6 +127,7 @@ $string['importedentries'] = 'Imported entries';
 $string['importentries'] = 'Import entries';
 $string['isglobal'] = 'Is this glossary global?';
 $string['linkcategory'] = 'Automatically link this category';
+$string['linking'] = 'Auto-linking';
 $string['mainglossary'] = 'Main glossary';
 $string['maxtimehaspassed'] = 'Sorry, but the maximum time for editing this comment ($a) has passed!';
 $string['modulename'] = 'Glossary';

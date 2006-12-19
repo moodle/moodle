@@ -34,8 +34,19 @@ require_once $CFG->libdir.'/uploadlib.php';
 define('FORM_ADVANCEDIMAGEURL', $CFG->wwwroot.'/lib/form/adv.gif');
 define('FORM_REQIMAGEURL', $CFG->wwwroot.'/lib/form/req.gif');
 
+/**
+ * Callback called when PEAR throws an error
+ *
+ * @param PEAR_Error $error
+ */
+function pear_handle_error($error){
+    echo '<strong>'.$error->GetMessage().'</strong> '.$error->getUserInfo();
+    echo '<br /> <strong>Backtrace </strong>:';
+    print_object($error->backtrace);
+}
+
 if ($CFG->debug >= DEBUG_ALL){
-    PEAR::setErrorHandling(PEAR_ERROR_PRINT);
+    PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, 'pear_handle_error');
 }
 
 /**
@@ -79,7 +90,8 @@ class moodleform {
      * the name you gave the class extending moodleform. You should call your class something
      * like
      *
-     * @param string $action the action attribute for the form.
+     * @param string $action the action attribute for the form. If empty defaults to auto detect the
+     *                  current url.
      * @param array $customdata if your form defintion method needs access to data such as $course
      *               $cm, etc. to construct the form definition then pass it in this array. You can
      *               use globals for somethings.
@@ -91,7 +103,10 @@ class moodleform {
      * @param mixed $attributes you can pass a string of html attributes here or an array.
      * @return moodleform
      */
-    function moodleform($action, $customdata=null, $method='post', $target='', $attributes=null) {
+    function moodleform($action=null, $customdata=null, $method='post', $target='', $attributes=null) {
+        if (empty($action)){
+            $action = strip_querystring(qualified_me());
+        }
         //strip '_form' from the end of class name to make form 'id' attribute.
         $this->_formname = preg_replace('/_form$/', '', get_class($this), 1);
         $this->_customdata = $customdata;
@@ -257,6 +272,23 @@ class moodleform {
         return $this->_form->isSubmitted();
     }
 
+    function no_submit_button_pressed(){
+        static $nosubmit = null; // one check is enough
+        if (!is_null($nosubmit)){
+            return $nosubmit;
+        }
+        $mform =& $this->_form;
+        $nosubmit = false;
+        foreach ($mform->_noSubmitButtons as $nosubmitbutton){
+            if (optional_param($nosubmitbutton, 0, PARAM_RAW)){
+                $nosubmit = true;
+                break;
+            }
+        }
+        return $nosubmit;
+    }
+
+
     /**
      * Check that form data is valid.
      *
@@ -265,21 +297,21 @@ class moodleform {
     function is_validated() {
         static $validated = null; // one validation is enough
         $mform =& $this->_form;
-        foreach ($mform->_noSubmitButtons as $nosubmitbutton){
-            if (optional_param($nosubmitbutton, 0, PARAM_RAW)){
-                return false;
-            }
+        if ($this->no_submit_button_pressed()){
+            return false;
         }
         if ($validated === null) {
             $internal_val = $mform->validate();
             $moodle_val = $this->validation($mform->exportValues(null, true));
             if ($moodle_val !== true) {
-                if (!empty($moodle_val)) {
+                if ((is_array($moodle_val) && count($moodle_val)!==0)) {
                     foreach ($moodle_val as $element=>$msg) {
                         $mform->setElementError($element, $msg);
                     }
+                    $moodle_val = false;
+                } else {
+                    $moodle_val = true;
                 }
-                $moodle_val = false;
             }
             $file_val = $this->_validate_files();
             if ($file_val !== true) {
@@ -302,9 +334,11 @@ class moodleform {
      */
     function is_cancelled(){
         $mform =& $this->_form;
-        foreach ($mform->_cancelButtons as $cancelbutton){
-            if (optional_param($cancelbutton, 0, PARAM_RAW)){
-                return true;
+        if ($mform->isSubmitted()){
+            foreach ($mform->_cancelButtons as $cancelbutton){
+                if (optional_param($cancelbutton, 0, PARAM_RAW)){
+                    return true;
+                }
             }
         }
         return false;
@@ -390,6 +424,7 @@ class moodleform {
 
 
 
+
     /**
      * Method to add a repeating group of elements to a form.
      *
@@ -408,6 +443,7 @@ class moodleform {
      * @param int $addfieldsno how many fields to add at a time
      * @param array $addstring array of params for get_string for name of button, $a is no of fields that
      *                                  will be added.
+     * @return int no of repeats of element in this page
      */
     function repeat_elements($elementobjs, $repeats, $options, $repeathiddenname, $addfieldsname, $addfieldsno=5, $addstring=array('addfields', 'form')){
         $repeats = optional_param($repeathiddenname, $repeats, PARAM_INT);
@@ -416,7 +452,7 @@ class moodleform {
             $repeats += $addfieldsno;
         }
         $mform =& $this->_form;
-        $mform->_registerNoSubmitButton($addfieldsname);
+        $mform->registerNoSubmitButton($addfieldsname);
         $mform->addElement('hidden', $repeathiddenname, $repeats);
         //value not to be overridden by submitted value
         $mform->setConstants(array($repeathiddenname=>$repeats));
@@ -462,12 +498,44 @@ class moodleform {
                 }
             }
         }
-        $mform->addElement('submit', $addfieldsname, get_string('addfields', 'form', $addfieldsno),
-                            array('onclick'=>'skipClientValidation = true; return true;'));//need this to bypass client validation
+        $mform->addElement('submit', $addfieldsname, get_string('addfields', 'form', $addfieldsno));
 
-        $renderer =& $mform->defaultRenderer();
-        $renderer->addStopFieldsetElements($addfieldsname);
+        $mform->closeHeaderBefore($addfieldsname);
+
         return $repeats;
+    }
+    /**
+     * Use this method to add the standard buttons to the end of your form. Pass a param of false
+     * if you don't want a cancel button in your form. If you have a cancel button make sure you
+     * check for it being pressed using is_cancelled() and redirecting if it is true before trying to
+     * get data with data_submitted().
+     *
+     * @param boolean $cancel whether to show cancel button, default true
+     * @param boolean $revert whether to show revert button, default true
+     * @param string $submitlabel label for submit button, defaults to get_string('savechanges')
+     */
+    function add_action_buttons($cancel = true, $revert = true, $submitlabel=null){
+        if (is_null($submitlabel)){
+            $submitlabel = get_string('savechanges');
+        }
+        $mform =& $this->_form;
+        if ($revert || $cancel){
+            //when two or more elements we need a group
+            $buttonarray=array();
+            $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitlabel);
+            if ($revert){
+                $buttonarray[] = &$mform->createElement('reset', 'resetbutton', get_string('revert'));
+            }
+            if ($cancel){
+                $buttonarray[] = &$mform->createElement('cancel');
+            }
+            $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+    		$mform->closeHeaderBefore('buttonar');
+        } else {
+            //no group needed
+            $mform->addElement('submit', 'submitbutton', $submitlabel);
+    		$mform->closeHeaderBefore('submitbutton');
+        }
     }
 }
 
@@ -542,8 +610,62 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             FORM_REQIMAGEURL.'" />')));
     }
 
-    function setShowAdvanced($showadvancedNow){
-        $this->_showAdvanced=$showadvancedNow;
+    /**
+     * Use this method to indicate an element in a form is an advanced field. If items in a form
+     * are marked as advanced then 'Hide/Show Advanced' buttons will automatically be displayed in the
+     * form so the user can decide whether to display advanced form controls.
+     *
+     * If you set a header element to advanced then all elements it contains will also be set as advanced.
+     *
+     * @param string $elementName group or element name (not the element name of something inside a group).
+     * @param boolean $advanced default true sets the element to advanced. False removes advanced mark.
+     */
+    function setAdvanced($elementName, $advanced=true){
+        if ($advanced){
+            $this->_advancedElements[$elementName]='';
+        } elseif (isset($this->_advancedElements[$elementName])) {
+            unset($this->_advancedElements[$elementName]);
+        }
+        if ($advanced && $this->getElementType('mform_showadvanced_last')===false){
+            $this->setShowAdvanced();
+            $this->registerNoSubmitButton('mform_showadvanced');
+
+            $this->addElement('hidden', 'mform_showadvanced_last');
+        }
+    }
+    /**
+     * Set whether to show advanced elements in the form on first displaying form. Default is not to
+     * display advanced elements in the form until 'Show Advanced' is pressed.
+     *
+     * You can get the last state of the form and possibly save it for this user by using
+     * value 'mform_showadvanced_last' in submitted data.
+     *
+     * @param boolean $showadvancedNow
+     */
+    function setShowAdvanced($showadvancedNow = null){
+        if ($showadvancedNow === null){
+            if ($this->_showAdvanced !== null){
+                return;
+            } else { //if setShowAdvanced is called without any preference
+                     //make the default to not show advanced elements.
+                $showadvancedNow = 0;
+            }
+
+        }
+        //value of hidden element
+        $hiddenLast = optional_param('mform_showadvanced_last', -1, PARAM_INT);
+        //value of button
+        $buttonPressed = optional_param('mform_showadvanced', 0, PARAM_RAW);
+        //toggle if button pressed or else stay the same
+        if ($hiddenLast == -1) {
+            $next = $showadvancedNow;
+        } elseif ($buttonPressed) { //toggle on button press
+            $next = !$hiddenLast;
+        } else {
+            $next = $hiddenLast;
+        }
+        $this->_showAdvanced = $next;
+        $this->setConstants(array('mform_showadvanced_last'=>$next));
     }
     function getShowAdvanced(){
         return $this->_showAdvanced;
@@ -616,34 +738,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         parent::accept($renderer);
     }
 
-    function setAdvanced($elementName, $advanced=true){
-        if ($advanced){
-            $this->_advancedElements[$elementName]='';
-        } elseif (isset($this->_advancedElements[$elementName])) {
-            unset($this->_advancedElements[$elementName]);
-        }
-        if ($advanced && $this->getShowAdvanced()===null){
-            //hidden element
-            $showadvanced_last = optional_param('mform_showadvanced_last', 0, PARAM_INT);
-            //button
-            $showadvanced = optional_param('mform_showadvanced', 0, PARAM_RAW);
-            //toggle if button pressed or else stay the same
-            if ($showadvanced && $showadvanced_last){
-                $showadvanced_now = 0;
-            } elseif ($showadvanced && !$showadvanced_last) {
-                $showadvanced_now = 1;
-            } else {
-                $showadvanced_now = $showadvanced_last;
-            }
 
-            $this->setConstants(array('mform_showadvanced_last'=>$showadvanced_now));
-            //below tells form whether to display elements or not
-            $this->setShowAdvanced($showadvanced_now);
-            $this->_registerNoSubmitButton('mform_showadvanced');
-
-            $this->addElement('hidden', 'mform_showadvanced_last');
-        }
-    }
 
     function closeHeaderBefore($elementName){
         $renderer =& $this->defaultRenderer();
@@ -1040,8 +1135,11 @@ function validate_' . $this->_attributes['id'] . '(frm) {
         $this->_dependencies[$dependentOn][] = array('dependent'=>$elementName,
                                     'condition'=>$condition, 'value'=>$value);
     }
-    function _registerNoSubmitButton($addfieldsname){
-        $this->_noSubmitButtons[]=$addfieldsname;
+    function registerNoSubmitButton($buttonname){
+        $this->_noSubmitButtons[]=$buttonname;
+    }
+    function isNoSubmitButton($buttonname){
+        return (array_search($buttonname, $this->_noSubmitButtons)!==FALSE);
     }
     function _registerCancelButton($addfieldsname){
         $this->_cancelButtons[]=$addfieldsname;
@@ -1079,7 +1177,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     * @access   private
     */
     var $_headerTemplate =
-       "\n\t\t<legend>{header}{advancedimg}{button}</legend>\n\t\t";
+       "\n\t\t<legend>{header}</legend>\n\t\t<div class=\"advancedbutton\">{advancedimg}{button}</div>\n\t\t";
 
    /**
     * Template used when closing a fieldset
@@ -1311,6 +1409,7 @@ MoodleQuickForm::registerElementType('modgrade', "$CFG->libdir/form/modgrade.php
 MoodleQuickForm::registerElementType('cancel', "$CFG->libdir/form/cancel.php", 'MoodleQuickForm_cancel');
 MoodleQuickForm::registerElementType('button', "$CFG->libdir/form/button.php", 'MoodleQuickForm_button');
 MoodleQuickForm::registerElementType('choosecoursefile', "$CFG->libdir/form/choosecoursefile.php", 'MoodleQuickForm_choosecoursefile');
-//MoodleQuickForm::registerElementType('header', "$CFG->libdir/form/header.php", 'MoodleQuickForm_header');  // where is it?
+MoodleQuickForm::registerElementType('header', "$CFG->libdir/form/header.php", 'MoodleQuickForm_header');
+MoodleQuickForm::registerElementType('submit', "$CFG->libdir/form/submit.php", 'MoodleQuickForm_submit');
 
 ?>

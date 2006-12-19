@@ -27,4 +27,8 @@ $string['minute']='Minute';
 $string['advancedelement']='Advanced Element';
 $string['hideadvanced']='Hide Advanced';
 $string['showadvanced']='Show Advanced';
+
+$string['timing'] = 'Timing';
+$string['security'] = 'Security';
+$string['display'] = 'Display';
 ?>

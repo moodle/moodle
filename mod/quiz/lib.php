@@ -56,7 +56,7 @@ define("QUIZ_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
  * (defined by the form in mod.html) this function
  * will create a new instance and return the id number
  * of the new instance.
- * 
+ *
  * @param object $quiz the data that came from the form.
  * @return mixed the id of the new instance on success,
  *          false or a string error message on failure.
@@ -78,7 +78,7 @@ function quiz_add_instance($quiz) {
 
     // Do the processing required after an add or an update.
     quiz_after_add_or_update($quiz);
-    
+
     return $quiz->id;
 }
 
@@ -86,7 +86,7 @@ function quiz_add_instance($quiz) {
  * Given an object containing all the necessary data,
  * (defined by the form in mod.html) this function
  * will update an existing instance with new data.
- * 
+ *
  * @param object $quiz the data that came from the form.
  * @return mixed true on success, false or a string error message on failure.
  */
@@ -175,7 +175,7 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
 /// $return->time = the time they did it
 /// $return->info = a short text description
     if ($grade = get_record('quiz_grades', 'userid', $user->id, 'quiz', $quiz->id)) {
-        
+
         $result = new stdClass;
         if ((float)$grade->grade) {
             $result->info = get_string('grade').':&nbsp;'.round($grade->grade, $quiz->decimalpoints);
@@ -464,25 +464,8 @@ function quiz_process_options(&$quiz) {
     $quiz->timemodified = time();
 
     // Quiz open time.
-    if (empty($quiz->availableenable)) {
-        $quiz->timeopen = 0;
+    if (empty($quiz->timeopen)) {
         $quiz->preventlate = 0;
-    } else {
-        $quiz->timeopen = make_timestamp($quiz->availableyear, $quiz->availablemonth, 
-                $quiz->availableday, $quiz->availablehour, $quiz->availableminute);
-    }
-
-    // Quiz close time.
-    if (empty($quiz->dueenable)) {
-        $quiz->timeclose = 0;
-    } else {
-        $quiz->timeclose = make_timestamp($quiz->dueyear, $quiz->duemonth, 
-                $quiz->dueday, $quiz->duehour, $quiz->dueminute);
-    }
-
-    // Check open and close times are consistent.
-    if ($quiz->timeopen != 0 && $quiz->timeclose != 0 && $quiz->timeclose < $quiz->timeopen) {
-        return get_string('closebeforeopen', 'quiz');
     }
 
     // Quiz name. (Make up a default if one was not given.)
@@ -494,15 +477,15 @@ function quiz_process_options(&$quiz) {
         }
     }
     $quiz->name = trim($quiz->name);
-    
+
     // Time limit. (Get rid of it if the checkbox was not ticked.)
-    if (empty($quiz->timelimitenable) or empty($quiz->timelimit) or $quiz->timelimit < 0) {
+    if (empty($quiz->timelimitenable)) {
         $quiz->timelimit = 0;
     }
     $quiz->timelimit = round($quiz->timelimit);
-    
+
     // Quiz feedback
-    
+
     // Clean up the boundary text.
     for ($i = 0; $i < count($quiz->feedbacktext); $i += 1) {
         if (empty($quiz->feedbacktext[$i])) {
@@ -511,7 +494,7 @@ function quiz_process_options(&$quiz) {
             $quiz->feedbacktext[$i] = trim($quiz->feedbacktext[$i]);
         }
     }
-    
+
     // Check the boundary value is a number or a percentage, and in range.
     $i = 0;
     while (!empty($quiz->feedbackboundaries[$i])) {
@@ -536,7 +519,7 @@ function quiz_process_options(&$quiz) {
         $i += 1;
     }
     $numboundaries = $i;
-    
+
     // Check there is nothing in the remaining unused fields.
     for ($i = $numboundaries; $i < count($quiz->feedbackboundaries); $i += 1) {
         if (!empty($quiz->feedbackboundaries[$i]) && trim($quiz->feedbackboundaries[$i]) != '') {
@@ -551,7 +534,7 @@ function quiz_process_options(&$quiz) {
     $quiz->feedbackboundaries[-1] = $quiz->grade + 1; // Needs to be bigger than $quiz->grade because of '<' test in quiz_feedback_for_grade().
     $quiz->feedbackboundaries[$numboundaries] = 0;
     $quiz->feedbackboundarycount = $numboundaries;
-    
+
     // Settings that get combined to go into the optionflags column.
     $quiz->optionflags = 0;
     if (!empty($quiz->adaptive)) {
@@ -644,14 +627,14 @@ function quiz_process_options(&$quiz) {
 /**
  * This function is called at the end of quiz_add_instance
  * and quiz_update_instance, to do the common processing.
- * 
+ *
  * @param object $quiz the quiz object.
  */
 function quiz_after_add_or_update($quiz) {
 
     // Save the feedback
     delete_records('quiz_feedback', 'quizid', $quiz->id);
-    
+
     for ($i = 0; $i <= $quiz->feedbackboundarycount; $i += 1) {
         $feedback = new stdClass;
         $feedback->quizid = $quiz->id;
@@ -664,9 +647,7 @@ function quiz_after_add_or_update($quiz) {
     }
 
     // Remember whether this user likes the advanced settings visible or hidden.
-    if (isset($quiz->optionsettingspref)) {
-        set_user_preference('quiz_optionsettingspref', $quiz->optionsettingspref);
-    }
+    set_user_preference('quiz_optionsettingspref', $quiz->mform_showadvanced_last);
 
     // Update the events relating to this quiz.
     // This is slightly inefficient, deleting the old events and creating new ones. However,

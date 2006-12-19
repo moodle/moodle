@@ -16,7 +16,6 @@ class authorize_enrol_form extends moodleform
         }
 
         $mform =& $this->_form;
-        $renderer =& $mform->defaultRenderer();
 
         $mform->addElement('header', '', '&nbsp;&nbsp;' . get_string('paymentrequired'), '');
         if ($othermethodstr = other_method($paymentmethod)) {
@@ -173,8 +172,7 @@ class authorize_enrol_form extends moodleform
         $mform->addRule('cczip', get_string('missingzip', 'enrol_authorize'), 'required', null, 'client');
         $mform->addRule('cczip', get_string('missingzip', 'enrol_authorize'), 'numeric', null, 'client');
 
-        $mform->addElement('submit', 'submit', get_string('sendpaymentbutton', 'enrol_authorize'));
-        $renderer->addStopFieldsetElements('submit');
+        $this->add_action_buttons(false, true, get_string('sendpaymentbutton', 'enrol_authorize'));
     }
 
     function validation($data)

@@ -57,12 +57,9 @@ class data_mod_form extends moodleform_mod {
 
         $this->standard_coursemodule_elements();
 
-        $buttonarray=array();
-        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
-        $buttonarray[] = &$mform->createElement('reset', 'resetbutton', get_string('revert'));
-        $buttonarray[] = &$mform->createElement('cancel');
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-		$mform->closeHeaderBefore('buttonar');
+//-------------------------------------------------------------------------------
+        // buttons
+        $this->add_action_buttons();
     }
 
 
