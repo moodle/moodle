@@ -4481,7 +4481,7 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
  * @param string $message The message to display to the user about the error.
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
  */
-function error ($message, $link='') {
+function error ($message, $link='', $adminroot='') {
 
     global $CFG, $SESSION;
     $message = clean_text($message);   // In case nasties are in here
@@ -4515,7 +4515,12 @@ function error ($message, $link='') {
         }
     }
     print_continue($link);
-    print_footer();
+    
+    if ($adminroot) {
+        admin_externalpage_print_footer($adminroot);
+    } else { 
+        print_footer();
+    }
     for ($i=0;$i<512;$i++) {  // Padding to help IE work with 404
         echo ' ';
     }
