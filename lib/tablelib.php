@@ -447,10 +447,12 @@ class flexible_table {
 
             if($this->is_collapsible) {
                 if(!empty($this->sess->collapse[$column])) {
-                    $icon_hide = ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_SHOW].'='.$column.'"><img src="'.$CFG->pixpath.'/t/switch_plus.gif" title="'.get_string('show').' '.$this->headers[$index].'" alt="'.get_string('show').'" /></a>';
+                    // some headers contain < br/> tags, do not include in title
+                    $icon_hide = ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_SHOW].'='.$column.'"><img src="'.$CFG->pixpath.'/t/switch_plus.gif" title="'.get_string('show').' '.strip_tags($this->headers[$index]).'" alt="'.get_string('show').'" /></a>';
                 }
                 else if($this->headers[$index] !== NULL) {
-                    $icon_hide = ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_HIDE].'='.$column.'"><img src="'.$CFG->pixpath.'/t/switch_minus.gif" title="'.get_string('hide').' '.$this->headers[$index].'" alt="'.get_string('hide').'" /></a>';
+                    // some headers contain < br/> tags, do not include in title
+                    $icon_hide = ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_HIDE].'='.$column.'"><img src="'.$CFG->pixpath.'/t/switch_minus.gif" title="'.get_string('hide').' '.strip_tags($this->headers[$index]).'" alt="'.get_string('hide').'" /></a>';
                 }
             }
 
