@@ -671,28 +671,6 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         return $this->_showAdvanced;
     }
 
-    /**
-     * Adds an element into the form
-     *
-     * If $element is a string representing element type, then this
-     * method accepts variable number of parameters, their meaning
-     * and count depending on $element
-     *
-     * @param    mixed      $element        element object or type of element to add (text, textarea, file...)
-     * @since    1.0
-     * @return   object     reference to element
-     * @access   public
-     * @throws   HTML_QuickForm_Error
-     */
-    function addElement($element)
-    {
-        //call parent with a variable ammount of arguments
-        $args = func_get_args();
-        $parent_name = get_parent_class($this);
-        //static method call
-
-        return call_user_func_array(array($parent_name, 'addElement'), $args);
-    }
 
    /**
     * Accepts a renderer
