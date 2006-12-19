@@ -401,7 +401,7 @@ function lesson_print_messages() {
  **/
 function lesson_print_submit_link($name, $form, $align = 'center', $class='standardbutton', $title = '', $id = '', $return = false) {
     if (!empty($align)) {
-       // $align = " align=\"$align\"";
+        $align = " align=\"$align\"";
     }
     if (!empty($id)) {
         $id = " id=\"$id\"";
@@ -410,14 +410,14 @@ function lesson_print_submit_link($name, $form, $align = 'center', $class='stand
         $title = $name;
     }
 
-    $output = "<div class=\"lessonbutton $class\"$align>\n";
+    $output = "<div class=\"lessonbutton $class\" $align>\n";
     $output .= "<script type=\"text/javascript\" charset=\"utf-8\">
                 <!--
                     document.write('<a href=\"javascript: document.$form.submit();\" title=\"".addslashes($title)."\"$id>".addslashes($name)."</a>');
                 // -->
                 </script>
                 <noscript>
-                <input type=\"submit\" value=\"$name\" align=\"$align\"$id />
+                <input type=\"submit\" value=\"$name\" $align $id />
                 </noscript>\n";
     $output .= "</div>\n";
     
