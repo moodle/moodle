@@ -411,14 +411,7 @@ function lesson_print_submit_link($name, $form, $align = 'center', $class='stand
     }
 
     $output = "<div class=\"lessonbutton $class\" $align>\n";
-    $output .= "<script type=\"text/javascript\" charset=\"utf-8\">
-                <!--
-                    document.write('<a href=\"javascript: document.$form.submit();\" title=\"".addslashes($title)."\"$id>".addslashes($name)."</a>');
-                // -->
-                </script>
-                <noscript>
-                <input type=\"submit\" value=\"$name\" $align $id />
-                </noscript>\n";
+    $output .= "<input type=\"submit\" value=\"$name\" $align $id />";
     $output .= "</div>\n";
     
     if ($return) {
