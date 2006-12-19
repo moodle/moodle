@@ -382,7 +382,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
         }
         if ($down) {
             echo "<a title=\"$str->movedown\" href=\"index.php?movedown=$category->id&amp;sesskey=$USER->sesskey\"><img".
-                 " src=\"$CFG->pixpath/t/down.gif\" height=\"11\" width=\"11\" border=\"0\"alt=\"$str->movedown\" /></a> ";
+                 " src=\"$CFG->pixpath/t/down.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"$str->movedown\" /></a> ";
         }
         echo "</td>";
 
