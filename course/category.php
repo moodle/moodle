@@ -375,7 +375,7 @@
                 echo '</td>';
                 echo '<td align="center">';
                 echo '<input type="checkbox" name="c'.$acourse->id.'" />';
-                            
+                echo '</td>';        
             } else {
                 echo '<td align="right">';
                 if (!empty($acourse->guest)) {
