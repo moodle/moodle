@@ -110,7 +110,7 @@
 
         close_window_button();
 
-        echo "<p>";
+        echo "<p/>";
         print_simple_box_start("center");
         print_heading($scale->name);
         echo "<center>";
@@ -118,7 +118,7 @@
         echo "</center>";
         echo text_to_html($scale->description);
         print_simple_box_end();
-        echo "<p>";
+        echo "<p/>";
 
         close_window_button();
 
@@ -206,7 +206,6 @@
         echo "<td><textarea name=\"description\" cols=\"50\" rows=\"8\" wrap=\"virtual\">".s($scale->description)."</textarea>";
         echo "</td>";
         echo "</tr>";
-        echo "<tr>";
         if ($scale->id) {
             echo "<tr valign=\"top\">";
             echo "<td align=\"right\">";
@@ -387,7 +386,7 @@
     print_simple_box_start('center');
     print_single_button($CFG->wwwroot.'/course/scales.php',$options,$srtcreatenewscale,'POST');
     print_simple_box_end();
-    echo "<p>";
+    echo "<p />";
 
     if (!empty($notify)) {
         notify($notify, "green");
