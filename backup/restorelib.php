@@ -5821,7 +5821,7 @@
         //Now create course modules as needed
         if ($status) {
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("creatingcoursemodules");
+                echo "<li>".get_string("creatingcoursemodules").'</li>';
             } 
             if (!$status = restore_create_modules($restore,$xml_file)) {
                 if (!defined('RESTORE_SILENTLY')) {
@@ -5836,7 +5836,7 @@
         //Now create gradebook as needed -- AFTER modules!!!
         if ($status) {
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("creatinggradebook");
+                echo "<li>".get_string("creatinggradebook").'</li>';
             } 
             if (!$status = restore_create_gradebook($restore,$xml_file)) {
                 if (!defined('RESTORE_SILENTLY')) {
@@ -6020,7 +6020,7 @@
             //End the main ul
             echo "</ul>";
             
-            //End the main table     
+            //End the main table
             echo "</td></tr>";
             echo "</table>";
         }
@@ -6124,9 +6124,12 @@
         // the following code creates new roles
         // but we could use more intelligent detection, and role mapping
         // get role mapping info from $restore
+        $rolemappings = array();
 
-        $rolemappings = $restore->rolesmapping; // an array
-        if ($info->roles) {
+        if (!empty($restore->rolesmapping)) {
+            $rolemappings = $restore->rolesmapping;
+        }
+        if (isset($info->roles) && $info->roles) {
             foreach ($info->roles as $oldroleid=>$roledata) {
             
             /// first we check if the roles are in the mappings
@@ -6181,7 +6184,6 @@
                 }
             }
         }
-    
         return true;
     }
     
@@ -6214,12 +6216,10 @@
         
         if (!empty($course->roleoverrides)) {
             $courseoverrides = $course->roleoverrides;
-            $rolemappings = $restore->rolesmapping;
             foreach ($courseoverrides as $oldroleid => $courseoverride) {
-            
                 // if not importing into exiting course, or creating new role, we are ok
                 // local course overrides to be respected (i.e. restored course overrides ignored)
-                if ($restore->restoreto != 1 || empty($rolemappings[$oldroleid])) {
+                if ($restore->restoreto != 1 || empty($restore->rolesmapping[$oldroleid])) {
                     restore_write_roleoverrides($restore, $courseoverride->overrides, "course", CONTEXT_COURSE, $course->course_id, $oldroleid);
                 }
             }
