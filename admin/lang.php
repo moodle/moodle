@@ -503,7 +503,7 @@
                 echo '    <input type="submit" name="update" value="'.get_string('savechanges').': '.$currentfile.'" />';
                 echo '</td></tr>';
             }
-            echo '</table>';
+            echo '</tr></table>';
             echo '</form>'; 
 
         } else {
