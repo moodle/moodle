@@ -5564,7 +5564,7 @@
             //Into new course
             if ($restore->restoreto == 2) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    echo "<li>".get_string("creatingsections").'</li>';
+                    echo "<li>".get_string("creatingsections");
                 }
                 if (!$status = restore_create_sections($restore,$xml_file)) {
                     if (!defined('RESTORE_SILENTLY')) {
@@ -5574,10 +5574,13 @@
                         return false;
                     }
                 }
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo '</li>';
+                }
                 //Into existing course
             } else if ($restore->restoreto == 0 or $restore->restoreto == 1) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    echo "<li>".get_string("checkingsections").'</li>';
+                    echo "<li>".get_string("checkingsections");
                 }
                 if (!$status = restore_create_sections($restore,$xml_file)) {
                     if (!defined('RESTORE_SILENTLY')) {
@@ -5586,6 +5589,9 @@
                         $errorstr = "Error creating sections in the existing course.";
                         return false;
                     } 
+                }
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo '</li>';
                 }
                 //Error
             } else {
@@ -5683,6 +5689,9 @@
                         return false;
                     }
                 }
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo '</li>';
+                }
             }
         }
         
@@ -5691,7 +5700,7 @@
         if ($status and ($restore->mods['quiz']->restore)) {
             include_once("$CFG->dirroot/question/restorelib.php");
             if (!defined('RESTORE_SILENTLY')) {
-                echo "</li><li>".get_string("creatingcategoriesandquestions");
+                echo "<li>".get_string("creatingcategoriesandquestions");
                 echo "<ul>";
             }
             if (!$status = restore_create_questions($restore,$xml_file)) {
@@ -5729,12 +5738,15 @@
                     echo "</li></ul>";
                 }
             }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '</li>';
+            }
         }
 
         //Now create course files as needed
         if ($status and ($restore->course_files)) {
             if (!defined('RESTORE_SILENTLY')) {
-                echo "</li><li>".get_string("copyingcoursefiles")."</li>";
+                echo "<li>".get_string("copyingcoursefiles")."</li>";
             }
             if (!$status = restore_course_files($restore)) {
                 if (empty($status)) {
@@ -5749,7 +5761,7 @@
                 //Inform about user dirs created from backup
                 if (!defined('RESTORE_SILENTLY')) {
                     echo "<ul>";
-                    echo "<li>".get_string("filesfolders").": ".$status;
+                    echo "<li>".get_string("filesfolders").": ".$status.'</li>';
                     echo "</ul>";
                 }       
             }
@@ -5776,7 +5788,7 @@
         //Now create scales as needed
         if ($status) {
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("creatingscales").'</li>';
+                echo "<li>".get_string("creatingscales");
             }
             if (!$status = restore_create_scales($restore,$xml_file)) {
                 if (!defined('RESTORE_SILENTLY')) {
@@ -5786,12 +5798,15 @@
                     return false;
                 }
             }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '</li>';
+            }
         }
 
         //Now create groups as needed
         if ($status) {
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("creatinggroups").'</li>';
+                echo "<li>".get_string("creatinggroups");
             }
             if (!$status = restore_create_groups($restore,$xml_file)) {
                 if (!defined('RESTORE_SILENTLY')) {
@@ -5801,12 +5816,15 @@
                     return false;
                 }
             }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '</li>';
+            }
         }
         
         //Now create events as needed
         if ($status) {
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("creatingevents").'</li>';
+                echo "<li>".get_string("creatingevents");
             }
             if (!$status = restore_create_events($restore,$xml_file)) {
                 if (!defined('RESTORE_SILENTLY')) {
@@ -5816,12 +5834,15 @@
                     return false;
                 }
             }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '</li>';
+            }
         }
 
         //Now create course modules as needed
         if ($status) {
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("creatingcoursemodules").'</li>';
+                echo "<li>".get_string("creatingcoursemodules");
             } 
             if (!$status = restore_create_modules($restore,$xml_file)) {
                 if (!defined('RESTORE_SILENTLY')) {
@@ -5831,12 +5852,15 @@
                     return false;
                 }
             }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '</li>';
+            }
         }
 
         //Now create gradebook as needed -- AFTER modules!!!
         if ($status) {
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("creatinggradebook").'</li>';
+                echo "<li>".get_string("creatinggradebook");
             } 
             if (!$status = restore_create_gradebook($restore,$xml_file)) {
                 if (!defined('RESTORE_SILENTLY')) {
@@ -5846,6 +5870,9 @@
                     return false;
                 }
             }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '</li>';
+            }
         }
 
         //Bring back the course blocks -- do it AFTER the modules!!!
@@ -5853,7 +5880,7 @@
             //If we are deleting and bringing into a course or making a new course, same situation
             if($restore->restoreto == 0 || $restore->restoreto == 2) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    echo '<li>'.get_string('creatingblocks').'</li>';
+                    echo '<li>'.get_string('creatingblocks');
                 }
                 $course_header->blockinfo = !empty($course_header->blockinfo) ? $course_header->blockinfo : NULL;
                 if (!$status = restore_create_blocks($restore, $info->backup_block_format, $course_header->blockinfo, $xml_file)) {
@@ -5864,6 +5891,9 @@
                         return false;
                     }
                 }
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo '</li>';
+                }
             }
         }
 
@@ -5871,7 +5901,7 @@
             //If we are deleting and bringing into a course or making a new course, same situation
             if($restore->restoreto == 0 || $restore->restoreto == 2) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    echo '<li>'.get_string('courseformatdata').'</li>';
+                    echo '<li>'.get_string('courseformatdata');
                 }
                 if (!$status = restore_set_format_data($restore, $xml_file)) {
                         $error = "Error while setting the course format data";
@@ -5882,13 +5912,16 @@
                         return false;
                     }
                 }
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo '</li>';
+                }
             }
         }
 
         //Now create log entries as needed
         if ($status and ($restore->logs)) {
             if (!defined('RESTORE_SILENTLY')) {
-                echo "</li><li>".get_string("creatinglogentries");
+                echo "<li>".get_string("creatinglogentries");
             }
             if (!$status = restore_create_logs($restore,$xml_file)) {
                 if (!defined('RESTORE_SILENTLY')) {
@@ -5898,12 +5931,15 @@
                     return false;
                 }
             }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '</li>';
+            }
         }    
 
         //Now, if all is OK, adjust the instance field in course_modules !!
         if ($status) {
             if (!defined('RESTORE_SILENTLY')) {
-                echo "</li><li>".get_string("checkinginstances").'</li>';
+                echo "<li>".get_string("checkinginstances");
             }
             if (!$status = restore_check_instances($restore)) {
                 if (!defined('RESTORE_SILENTLY')) {
@@ -5913,12 +5949,15 @@
                     return false;
                 }
             }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '</li>';
+            }
         }
 
         //Now, if all is OK, adjust activity events
         if ($status) {
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("refreshingevents").'</li>';
+                echo "<li>".get_string("refreshingevents");
             }
             if (!$status = restore_refresh_events($restore)) {
                 if (!defined('RESTORE_SILENTLY')) {
@@ -5927,6 +5966,9 @@
                     $errorstr = "Could not refresh events for activities!";
                     return false;
                 }
+            }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '</li>';
             }
         }
 
@@ -5942,6 +5984,9 @@
                     $errorstr = "Could not refresh events for activities!";
                     return false;
                 }
+            }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '</li>';
             }
         }
 
@@ -5959,6 +6004,9 @@
                     return false;
                 }
             }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '</li>';
+            }
         }
 
         /*******************************************************************************
@@ -5974,7 +6022,7 @@
         //   - add user as teacher
         if ($status) {
             if (!defined('RESTORE_SILENTLY')) {
-                echo "</li><li>".get_string("checkingcourse").'</li>';
+                echo "<li>".get_string("checkingcourse");
             } 
             //modinfo field
             rebuild_course_cache($restore->course_id);
@@ -5995,12 +6043,15 @@
                     notify('Could not find a legacy teacher role. You might need your moodle admin to assign a role with editing privilages to this course.');
                 }
             }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '</li>';
+            }
         }
 
         //Cleanup temps (files and db)
         if ($status) {
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("cleaningtempdata").'</li>';
+                echo "<li>".get_string("cleaningtempdata");
             }
             if (!$status = clean_temp_data ($restore)) {
                 if (!defined('RESTORE_SILENTLY')) {
@@ -6010,10 +6061,13 @@
                     return false;
                 }
             }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '</li>';
+            }
         }
 
         if ($status = restore_close_html($restore)){
-            echo "<li>Closing the Restorelog.html file.<li>";
+            echo '<li>Closing the Restorelog.html file.</li>';
         }
 
         if (!defined('RESTORE_SILENTLY')) {

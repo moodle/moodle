@@ -96,7 +96,7 @@
 
             //Do some output
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","forum")." \"".format_string(stripslashes($forum->name),true)."\"";
+                echo "<li>".get_string("modulename","forum")." \"".format_string(stripslashes($forum->name),true)."\"</li>";
             }
             backup_flush(300);
 
