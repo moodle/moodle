@@ -22,7 +22,9 @@
 
     require_login($course->id);
     $tocontext = get_context_instance(CONTEXT_COURSE, $id);
-    $fromcontext = get_context_instance(CONTEXT_COURSE, $fromcourse);
+    if ($fromcourse) {
+        $fromcontext = get_context_instance(CONTEXT_COURSE, $fromcourse);
+    }
     $syscontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
     if (!has_capability('moodle/course:manageactivities', $tocontext)) {

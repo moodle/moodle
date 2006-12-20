@@ -11,18 +11,18 @@
     $strusers = get_string("users");
     $strusersnew = get_string("usersnew");
     $strimportgroups = get_string("importgroups");
-
     print_heading_with_help($strimportgroups, 'uploadgroups');
     $maxuploadsize = get_max_upload_file_size();
     echo '<p align="center">';
     print_simple_box_start('center','80%');
-    echo '<form method="post" enctype="multipart/form-data" action="'.$CFG->wwwroot.'/course/import/groups/index.php?id='.$id.'">'.
-         $strchoose.':<input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'">'.
-         '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'">'.
-         '<input type="file" name="userfile" size="30">'.
-         '<input type="submit" value="'.$strimportgroups.'">'.
-         '</form></br>';
+    
+    // use formslib
+    include_once('import_form.php');
+    $mform_post = new group_import_form($CFG->wwwroot.'/course/import/groups/index.php?id='.$id, array('maxuploadsize'=>$maxuploadsize));
+    $mform_post ->display();
+        
     print_simple_box_end();
+   
     echo '</p>';
     
 ?>
