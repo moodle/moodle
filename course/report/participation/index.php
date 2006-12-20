@@ -152,7 +152,7 @@
     
     $baseurl =  $CFG->wwwroot.'/course/report/participation/index.php?id='.$course->id.'&amp;roleid='
         .$roleid.'&amp;instanceid='.$instanceid.'&amp;timefrom='.$timefrom.'&amp;moduleid='
-        .$moduleid.'&action='.$action.'&amp;perpage='.$perpage;
+        .$moduleid.'&amp;action='.$action.'&amp;perpage='.$perpage;
 
 
     // from here assume we have at least the module we're using.
@@ -334,7 +334,7 @@ function checknos() {
         echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
 
         foreach ($users as $u) {
-            $data = array('<a href="'.$CFG->wwwroot.'/user/view.php?id='.$u->userid.'&course='.$course->id.'">'.fullname($u,true).'</a>',
+            $data = array('<a href="'.$CFG->wwwroot.'/user/view.php?id='.$u->userid.'&amp;course='.$course->id.'">'.fullname($u,true).'</a>',
                           ((!empty($u->count)) ? get_string('yes').' ('.$u->count.') ' : get_string('no')),
                           '<input type="checkbox" name="user'.$u->userid.'" value="'.$u->count.'" />',
                           );
@@ -359,7 +359,7 @@ function checknos() {
         $displaylist['messageselect.php'] = get_string('messageselectadd');
         choose_from_menu ($displaylist, "formaction", "", get_string("withselectedusers"), "if(checksubmit(this.form))this.form.submit();", "");
         helpbutton("participantswithselectedusers", get_string("withselectedusers"));
-        echo '<input type="submit" value="' . get_string('ok') . '"';
+        echo '<input type="submit" value="' . get_string('ok') . '" />';
         echo '</center></form>';
     }
     
