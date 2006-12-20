@@ -369,10 +369,10 @@
             (has_capability('moodle/role:assign', $coursecontext, NULL) &&           // I can assign roles
              get_user_roles($coursecontext, $user->id)) ) {                          // This user has roles
 
-            echo '<td nowrap="nowrap"><form action="../course/unenrol.php" method="get" />';
+            echo '<td nowrap="nowrap"><form action="../course/unenrol.php" method="get">';
             echo '<input type="hidden" name="id" value="'.$course->id.'" />';
             echo '<input type="hidden" name="user" value="'.$user->id.'" />';
-            echo '<input type="submit" value="'.get_string('unenrolme', '', $course->shortname).'">';
+            echo '<input type="submit" value="'.get_string('unenrolme', '', $course->shortname).'" />';
             echo '</form></td>';
         }
     }
