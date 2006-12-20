@@ -59,9 +59,6 @@
                     default: print_string("section"); break;
                 }
                 echo " $i</h2>";
-
-                echo "<ul>";
-
                 echo "<table cellpadding=\"4\" cellspacing=\"0\">";
 
                 $sectionmods = explode(",", $section->sequence);
@@ -88,9 +85,6 @@
                 }
 
                 echo "</table>";
-                print_simple_box_end();
-
-                echo "</ul>";
             }
         }
     }
@@ -126,4 +120,3 @@ function print_outline_row($mod, $instance, $result) {
 }
 
 ?>
-
