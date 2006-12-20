@@ -154,6 +154,8 @@
                 notice_yesno("$strdeletecategorycheck",
                              "index.php?delete=$delete&amp;sure=".md5($deletecat->timemodified)."&amp;sesskey=$USER->sesskey",
                              "index.php?sesskey=$USER->sesskey");
+
+                admin_externalpage_print_footer($adminroot);
                 exit();
             }
         }
