@@ -45,7 +45,7 @@
     $strlessons = get_string("modulenameplural", "lesson");
 
     print_header_simple("$strimportppt", " $strimportppt",
-                 "<a href=index.php?id=$course->id>$strlessons</a> -> <a href=\"$CFG->wwwroot/mod/$modname/view.php?id=$cm->id\">".format_string($mod->name,true)."</a>-> $strimportppt");
+                 "<a href=\"index.php?id=$course->id\">$strlessons</a> -> <a href=\"$CFG->wwwroot/mod/$modname/view.php?id=$cm->id\">".format_string($mod->name,true)."</a>-> $strimportppt");
 
     if ($form = data_submitted()) {   /// Filename
 
@@ -86,17 +86,17 @@
     print_heading_with_help($strimportppt, "importppt", "lesson");
 
     print_simple_box_start("center");
-    echo "<form name=\"theform\" enctype=\"multipart/form-data\" method=\"post\" />";
+    echo "<form name=\"theform\" enctype=\"multipart/form-data\" method=\"post\">";
     echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
     echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />\n";
-    echo "<table cellpadding=5>";
+    echo "<table cellpadding=\"5\">";
 
-    echo "<tr><td align=right>";
+    echo "<tr><td align=\"right\">";
     print_string("upload");
     echo ":</td><td>";
-    echo " <input name=\"newfile\" type=\"file\" size=\"50\" />";
-    echo "</tr><tr><td>&nbsp;</td><td>";
-    echo " <input type=submit name=save value=\"".get_string("uploadthisfile")."\" />";
+    echo "<input name=\"newfile\" type=\"file\" size=\"50\" />";
+    echo "</td></tr><tr><td>&nbsp;</td><td>";
+    echo "<input type=\"submit\" name=\"save\" value=\"".get_string("uploadthisfile")."\" />";
     echo "</td></tr>";
 
     echo "</table>";
