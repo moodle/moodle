@@ -255,6 +255,7 @@
                 notify($strsaved, '');
                 close_window(3);
             } else {
+                echo '</div>';
                 redirect($SESSION->returnurl, $strsaved);
             }
         }
