@@ -21,9 +21,11 @@ print_heading(get_string('tagmanagement'));
             ?>
             <select name="tags[]" id="otags" multiple="multiple" size="8">
             <?php
+            if ($otags) {
                 foreach ($otags as $otag) {
                     echo '<option value="'.$otag->id.'">'.$otag->text.'</option>';
                 }
+            }
             ?>
             </select>
             <input type="hidden" name="action" value="delete" />
