@@ -278,7 +278,7 @@
                     $oldfile = $basedir.'/'.$file;
                     $newfile = $basedir.$wdir."/".$shortfile;
                     if (!rename($oldfile, $newfile)) {
-                        echo "<p>Error: $shortfile not moved";
+                        echo "<p>Error: $shortfile not moved</p>";
                     }
                 }
             }
@@ -307,7 +307,7 @@
                 $strcancel = get_string("cancel");
                 $strrenamefileto = get_string("renamefileto", "moodle", $file);
                 html_header($course, $wdir, "form.name");
-                echo "<p>$strrenamefileto:";
+                echo "<p>$strrenamefileto:</p>";
                 echo "<table><tr><td>";
                 echo "<form action=\"index.php\" method=\"post\" name=\"form\">";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
