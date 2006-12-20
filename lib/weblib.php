@@ -4829,6 +4829,9 @@ function redirect($url, $message='', $delay=-1) {
 -->
 </script>
 <?php
+    echo '</div> <!-- End content div -->';
+    echo '</body>';
+    echo '</html>';
     die;
 }
 
