@@ -350,7 +350,7 @@ function question_list($course, $categoryid, $quizid=0,
         }
         
         // preview
-        echo "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/question/preview.php?id=$question->id&quizid=$quizid','$strpreview', " .
+        echo "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/question/preview.php?id=$question->id&amp;quizid=$quizid','$strpreview', " .
                 QUESTION_PREVIEW_POPUP_OPTIONS . ", false)\"><img
                 src=\"$CFG->pixpath/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>&nbsp;";
         
