@@ -36,13 +36,13 @@
     // give teacher a blank proforma
     print_heading_with_help(get_string("addabranchtable", "lesson"), "overview", "lesson");
     ?>
-    <form name="form" method="post" action="lesson.php" />
+    <form name="form" method="post" action="lesson.php">
     <input type="hidden" name="id" value="<?PHP echo $cm->id ?>" />
-    <input type="hidden" name="action" value="insertpage">
+    <input type="hidden" name="action" value="insertpage" />
     <input type="hidden" name="pageid" value="<?PHP echo $pageid ?>" />
     <input type="hidden" name="qtype" value="<?PHP echo LESSON_BRANCHTABLE ?>" />
     <input type="hidden" name="sesskey" value="<?PHP echo $USER->sesskey ?>" />
-    <center><table class="generalbox" cellpadding=5 border=1>
+    <center><table class="generalbox" cellpadding="5" border="1">
     <tr valign="top">
     <td><b><label for="title"><?php print_string("pagetitle", "lesson"); ?>:</label></b><br />
     <input type="text" id="title" name="title" size="80" maxsize="255" value="" /></td></tr>
@@ -55,7 +55,7 @@
     echo "<tr><td>\n";
     echo "<center><input name=\"layout\" type=\"checkbox\" value=\"1\" checked=\"checked\" />";
     echo get_string("arrangebuttonshorizontally", "lesson")."\n";
-    echo "<br><input name=\"display\" type=\"checkbox\" value=\"1\" checked=\"checked\" />";
+    echo "<br /><input name=\"display\" type=\"checkbox\" value=\"1\" checked=\"checked\" />";
     echo get_string("displayinleftmenu", "lesson");
     echo "</center>\n";
     echo "</td></tr>\n";
@@ -64,7 +64,7 @@
         echo "<tr><td><b>".get_string("description", "lesson")." $iplus1:</b><br />\n";
         print_textarea(false, 10, 70, 630, 300, "answer[$i]");  // made the default set to off also removed use_html_editor(); line from down below, which made all textareas turn into html editors
         echo "</td></tr>\n";
-        echo "<tr><td><B>".get_string("jump", "lesson")." $iplus1:</b> \n";
+        echo "<tr><td><b>".get_string("jump", "lesson")." $iplus1:</b> \n";
         if ($i) {
             // answers 2, 3, 4... jumpto this page
             choose_from_menu($jump, "jumpto[$i]", 0, "");

@@ -275,13 +275,15 @@
                     }
                     
                     if (count($pages) == 1) {
+                        echo "</td></tr>";
                         break;
                     }
                     
                     $prevpageid = $page->id;
                     $pageid = $page->nextpageid;
+                    echo "</td></tr>";
                 }
-                echo "</table>";
+                echo "</td></tr></table>";
                 break;
         }
     } 

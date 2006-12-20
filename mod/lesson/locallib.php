@@ -480,7 +480,7 @@ function lesson_print_page_actions($cmid, $page, $printmove, $printaddpage = fal
     
     if (has_capability('mod/lesson:edit', $context)) {
         if ($printmove) {
-            $actions[] = "<a title=\"".get_string('move')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&action=move&pageid=$page->id\">
+            $actions[] = "<a title=\"".get_string('move')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;action=move&amp;pageid=$page->id\">
                           <img src=\"$CFG->pixpath/t/move.gif\" height=\"11\" width=\"11\" alt=\"".get_string('move')."\" border=\"0\" /></a>\n";
         }
         $actions[] = "<a title=\"".get_string('update')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;action=editpage&amp;pageid=$page->id\">
