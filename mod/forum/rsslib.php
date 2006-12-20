@@ -192,7 +192,7 @@
             foreach ($recs as $rec) {
                 unset($item);
                 unset($user);
-                $item->title = $rec->discussionname;
+                $item->title = format_string($rec->discussionname);
                 $user->firstname = $rec->userfirstname;
                 $user->lastname = $rec->userlastname;
                 $item->author = fullname($user);
