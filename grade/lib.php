@@ -1672,7 +1672,7 @@ function grade_stats() {
     }
     echo  '</tr>';
     echo  '</table>';
-    //print_footer();
+    print_footer();
 }
 
 function grade_view_category_grades($view_by_student) {
