@@ -291,7 +291,7 @@ class question_category_object {
         global $USER;
         $fill = str_repeat($this->tab, $depth);
 
-        $linkcss = $category->publish ? ' class="published"' : ' class="unpublished"';
+        $linkcss = $category->publish ? ' class="published" ' : ' class="unpublished" ';
 
         if (!empty($page)) {
             $pagelink="&amp;page=$page";
