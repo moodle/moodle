@@ -140,7 +140,60 @@
 
 
 /// OK, we have all the data, now present it to the user
-    if ($download == "xls" and confirm_sesskey()) {
+    if ($download == "ods" and confirm_sesskey()) {
+        require_once("../lib/odslib.class.php");
+
+    /// Calculate file name
+        $downloadfilename = clean_filename("$course->shortname $strgrades.ods");
+    /// Creating a workbook
+        $workbook = new MoodleODSWorkbook("-");
+    /// Sending HTTP headers
+        $workbook->send($downloadfilename);
+    /// Adding the worksheet
+        $myxls =& $workbook->add_worksheet($strgrades);
+    
+    /// Print names of all the fields
+        $myxls->write_string(0,0,get_string("firstname"));
+        $myxls->write_string(0,1,get_string("lastname"));
+        $myxls->write_string(0,2,get_string("idnumber"));
+        $myxls->write_string(0,3,get_string("institution"));
+        $myxls->write_string(0,4,get_string("department"));
+        $myxls->write_string(0,5,get_string("email"));
+        $pos=6;
+        foreach ($columns as $column) {
+            $myxls->write_string(0,$pos++,strip_tags($column));
+        }
+        $myxls->write_string(0,$pos,get_string("total"));
+    
+    
+    /// Print all the lines of data.
+        $i = 0;
+        foreach ($grades as $studentid => $studentgrades) {
+            $i++;
+            $student = $students[$studentid];
+            if (empty($totals[$student->id])) {
+                $totals[$student->id] = '';
+            }
+    
+            $myxls->write_string($i,0,$student->firstname);
+            $myxls->write_string($i,1,$student->lastname);
+            $myxls->write_string($i,2,$student->idnumber);
+            $myxls->write_string($i,3,$student->institution);
+            $myxls->write_string($i,4,$student->department);
+            $myxls->write_string($i,5,$student->email);
+            $j=6;
+            foreach ($studentgrades as $grade) {
+                $myxls->write_string($i,$j++,strip_tags($grade));
+            }
+            $myxls->write_number($i,$j,$totals[$student->id]);
+        }
+
+    /// Close the workbook
+        $workbook->close();
+    
+        exit;
+
+    } else if ($download == "xls" and confirm_sesskey()) {
         require_once("../lib/excellib.class.php");
 
     /// Calculate file name
@@ -246,13 +299,17 @@
 
         echo "<table border=\"0\" align=\"center\"><tr>";
         echo "<td>";
+        $options = array();
         $options["id"] = "$course->id";
-        $options["download"] = "xls";
+        $options["download"] = "ods";
         $options["sesskey"] = $USER->sesskey;
+        print_single_button("grades.php", $options, get_string("downloadods"));
+        echo "<td>";
+        $options["download"] = "xls";
         print_single_button("grades.php", $options, get_string("downloadexcel"));
         echo "<td>";
+        $options = array();
         $options["download"] = "txt";
-        $options["sesskey"] = $USER->sesskey;
         print_single_button("grades.php", $options, get_string("downloadtext"));
         echo "</table>";
     

@@ -738,14 +738,13 @@ function print_log_ods($course, $user, $date, $order='l.time DESC', $modname,
             }
         }
 
-        $myxls->write($row, 0, $courses[$log->course], '');
-        // Excel counts from 1/1/1900
-        $myxls->write_date($row, 1, $log->time, $formatDate);
-        $myxls->write($row, 2, $log->ip, '');
+        $myxls->write_string($row, 0, $courses[$log->course]);
+        $myxls->write_date($row, 1, $log->time);
+        $myxls->write_string($row, 2, $log->ip);
         $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
-        $myxls->write($row, 3, $fullname, '');
-        $myxls->write($row, 4, $log->module.' '.$log->action, '');
-        $myxls->write($row, 5, $log->info, '');
+        $myxls->write_string($row, 3, $fullname);
+        $myxls->write_string($row, 4, $log->module.' '.$log->action);
+        $myxls->write_string($row, 5, $log->info);
 
         $row++;
     }

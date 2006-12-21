@@ -420,13 +420,18 @@
         echo '<p align="center">'.get_string("downloadinfo", "survey").'</p>';
 
         echo '<center>';
+        $optons = array();
         $options["id"] = "$cm->id";
-        $options["type"] = "xls";
         $options["group"] = $currentgroup;
-        print_single_button("download.php", $options, get_string("downloadexcel", "survey"));
+
+        $options["type"] = "ods";
+        print_single_button("download.php", $options, get_string("downloadods"));
+
+        $options["type"] = "xls";
+        print_single_button("download.php", $options, get_string("downloadexcel"));
 
         $options["type"] = "txt";
-        print_single_button("download.php", $options, get_string("downloadtext", "survey"));
+        print_single_button("download.php", $options, get_string("downloadtext"));
         echo '</center>';
 
         break;

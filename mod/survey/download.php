@@ -116,6 +116,76 @@
         }
     }
 
+// Output the file as a valid ODS spreadsheet if required
+
+    if ($type == "ods") {
+        require_once("$CFG->libdir/odslib.class.php");
+
+    /// Calculate file name
+        $downloadfilename = clean_filename("$course->shortname ".strip_tags(format_string($survey->name,true))).'.ods';
+    /// Creating a workbook
+        $workbook = new MoodleODSWorkbook("-");
+    /// Sending HTTP headers
+        $workbook->send($downloadfilename);
+    /// Creating the first worksheet
+        $myxls =& $workbook->add_worksheet(substr(strip_tags(format_string($survey->name,true)), 0, 31));
+
+        $header = array("surveyid","surveyname","userid","firstname","lastname","email","idnumber","time", "notes");
+        $col=0;
+        foreach ($header as $item) {
+            $myxls->write_string(0,$col++,$item);
+        }
+        foreach ($order as $key => $qid) {
+            $question = $questions["$qid"];
+            if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
+                $myxls->write_string(0,$col++,"$question->text");
+            }
+            if ($question->type == "2" || $question->type == "3")  {
+                $myxls->write_string(0,$col++,"$question->text (preferred)");
+            }
+        }
+
+//      $date = $workbook->addformat();
+//      $date->set_num_format('mmmm-d-yyyy h:mm:ss AM/PM'); // ?? adjust the settings to reflect the PHP format below
+
+        $row = 0;
+        foreach ($results as $user => $rest) {
+            $col = 0;
+            $row++;
+            if (! $u = get_record("user", "id", $user)) {
+                error("Error finding student # $user");
+            }
+            if ($n = get_record("survey_analysis", "survey", $survey->id, "userid", $user)) {
+                $notes = $n->notes;
+            } else {
+                $notes = "No notes made";
+            }
+            $myxls->write_string($row,$col++,$survey->id);
+            $myxls->write_string($row,$col++,strip_tags(format_text($survey->name,true)));
+            $myxls->write_string($row,$col++,$user);
+            $myxls->write_string($row,$col++,$u->firstname);
+            $myxls->write_string($row,$col++,$u->lastname);
+            $myxls->write_string($row,$col++,$u->email);
+            $myxls->write_string($row,$col++,$u->idnumber);
+            $myxls->write_string($row,$col++, userdate($results["$user"]["time"], "%d-%b-%Y %I:%M:%S %p") );
+//          $myxls->write_number($row,$col++,$results["$user"]["time"],$date);
+            $myxls->write_string($row,$col++,$notes);
+
+            foreach ($order as $key => $qid) {
+                $question = $questions["$qid"];
+                if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
+                    $myxls->write_string($row,$col++, $results["$user"]["$qid"]["answer1"] );
+                }
+                if ($question->type == "2" || $question->type == "3")  {
+                    $myxls->write_string($row, $col++, $results["$user"]["$qid"]["answer2"] );
+                }
+            }
+        }
+        $workbook->close();
+
+        exit;
+    }
+
 // Output the file as a valid Excel spreadsheet if required
 
     if ($type == "xls") {

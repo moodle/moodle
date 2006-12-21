@@ -38,7 +38,7 @@
         redirect("report.php?id=$cm->id");                      
     }
         
-    if ($download <> "xls" and $download <> "txt" ) {
+    if ($download <> "xls" and $download <> "txt" and $download <> "ods") {
         print_header_simple(format_string($choice->name).": $strresponses", "",
                  "<a href=\"index.php?id=$course->id\">$strchoices</a> ->
                   <a href=\"view.php?id=$cm->id\">".format_string($choice->name,true)."</a> -> $strresponses", "", '', true,
@@ -78,7 +78,69 @@
         }
     }
     ksort($useranswer);
-    
+
+
+    if ($download == "ods" && has_capability('mod/choice:downloadresponses', $context)) {
+        require_once("$CFG->libdir/odslib.class.php");
+  
+    /// Calculate file name 
+        $filename = clean_filename("$course->shortname ".strip_tags(format_string($choice->name,true))).'.ods';
+    /// Creating a workbook
+        $workbook = new MoodleODSWorkbook("-");
+    /// Send HTTP headers
+        $workbook->send($filename);
+    /// Creating the first worksheet
+        $myxls =& $workbook->add_worksheet($strresponses);
+
+    /// Print names of all the fields
+        $myxls->write_string(0,0,get_string("lastname"));
+        $myxls->write_string(0,1,get_string("firstname"));
+        $myxls->write_string(0,2,get_string("idnumber"));
+        $myxls->write_string(0,3,get_string("group"));
+        $myxls->write_string(0,4,get_string("choice","choice"));
+        
+              
+    /// generate the data for the body of the spreadsheet
+        $i=0;  
+        $row=1;
+        if ($users) {
+            foreach ($users as $user) {        
+                // this needs fixing
+                
+                if (!($optionid==0 && has_capability('mod/choice:readresponses', $context, $user->id))) {
+                
+                    if (!empty($answers[$user->id]) && !($answers[$user->id]->optionid==0 && has_capability('mod/choice:readresponses', $context, $user->id) && $choice->showunanswered==0)) { // make sure admins and hidden teachers are not shown in not answered yet column, and not answered only shown if set in config page.
+
+                        $myxls->write_string($row,0,$user->lastname);
+                        $myxls->write_string($row,1,$user->firstname);
+                        $studentid=(!empty($user->idnumber) ? $user->idnumber : " ");
+                        $myxls->write_string($row,2,$studentid);
+                        $ug2 = '';
+                        if ($usergrps = user_group($course->id, $user->id)) {
+                            foreach ($usergrps as $ug) {
+                                $ug2 = $ug2. $ug->name;
+                            }
+                        }
+                        $myxls->write_string($row,3,$ug2);
+                    
+                        $useroption = choice_get_option_text($choice, $answers[$user->id]->optionid);
+                        if (isset($useroption)) {
+                            $myxls->write_string($row,4,format_string($useroption,true));
+                        }                 
+                        $row++;
+                    }
+                    $pos=4;
+                }
+            }
+
+    /// Close the workbook
+            $workbook->close();
+
+            exit;
+        } 
+    }
+
+
     //print spreadsheet if one is asked for:
     if ($download == "xls" && has_capability('mod/choice:downloadresponses', $context)) {
         require_once("$CFG->libdir/excellib.class.php");
@@ -188,8 +250,11 @@
     echo "<br />\n";
     echo "<table border=\"0\" align=\"center\"><tr>\n";
     echo "<td>";
-    unset($options);
+    $options = array();
     $options["id"] = "$cm->id";   
+    $options["download"] = "ods";
+    print_single_button("report.php", $options, get_string("downloadods"));
+    echo "</td><td>";
     $options["download"] = "xls";
     print_single_button("report.php", $options, get_string("downloadexcel"));
     echo "</td><td>";
