@@ -246,7 +246,7 @@
                 <td align="right"><?php echo $txt->matchgrades; ?></td>
                 <td><?php choose_from_menu($matchgrades,'matchgrades',$txt->matchgradeserror,'' );
                     helpbutton('matchgrades', $txt->matchgrades, 'quiz'); ?></td>
-            </td>
+            </tr>
         </table>
         <?php
         print_simple_box_end();
