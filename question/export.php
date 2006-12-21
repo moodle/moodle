@@ -122,8 +122,8 @@
         else {
           $efile = "{$CFG->wwwroot}/file.php?file=/".$qformat->question_get_export_dir()."/$exportfilename".$file_ext."&forcedownload=1";
         }
-        echo "</p><center><a href=\"$efile\">$download_str</a></center></p>";
-        echo "</p><center><font size=\"-1\">$downloadextra_str</font></center></p>";
+        echo "<p><center><a href=\"$efile\">$download_str</a></center></p>";
+        echo "<p><center><font size=\"-1\">$downloadextra_str</font></center></p>";
 
         print_continue("edit.php?courseid=$course->id");
         print_footer($course);
