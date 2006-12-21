@@ -5492,8 +5492,7 @@ function debugging($message='', $level=DEBUG_NORMAL) {
             if ($CFG->debugdisplay) {
                 notify($message, 'notifytiny');
             } else {
-                // moodle debug levels constants map well to PHP's own
-                trigger_error($message, $level);
+                trigger_error($message, E_USER_NOTICE);
             }
         }
         return true;
