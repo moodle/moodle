@@ -80,6 +80,13 @@
                     print_footer($course);
                 }
                 exit;
+            case 'downloadasods':
+                if (!print_log_ods($course, $user, $date, 'l.time DESC', $modname,
+                        $modid, $modaction, $group)) {
+                    notify("No logs found!");
+                    print_footer($course);
+                }
+                exit;
             case 'downloadasexcel':
                 if (!print_log_xls($course, $user, $date, 'l.time DESC', $modname,
                         $modid, $modaction, $group)) {
@@ -87,15 +94,6 @@
                     print_footer($course);
                 }
                 exit;
-            /*
-            case 'downloadasooo':
-                if (!print_log_ooo($course, $user, $date, 'l.time DESC', $modname,
-                        $modid, $modaction, $group)) {
-                    notify("No logs found!");
-                    print_footer($course);
-                }
-                exit;
-            */
         }
 
 

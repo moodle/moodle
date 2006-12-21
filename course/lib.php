@@ -352,13 +352,17 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         exit;
     }
 
+    $courses = array();
+
     if ($course->id == SITEID) {
         $courses[0] = '';
-        if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname,c.visible')) {
+        if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname')) {
             foreach ($ccc as $cc) {
                 $courses[$cc->id] = $cc->shortname;
             }
         }
+    } else {
+        $courses[$course->id] = $course->shortname;
     }
 
     $totalcount = $logs['totalcount'];
@@ -457,6 +461,8 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
         return false;
     }
 
+    $courses = array();
+
     if ($course->id == SITEID) {
         $courses[0] = '';
         if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname')) {
@@ -464,6 +470,8 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
                 $courses[$cc->id] = $cc->shortname;
             }
         }
+    } else {
+        $courses[$course->id] = $course->shortname;
     }
 
     $count=0;
@@ -533,6 +541,8 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
         return false;
     }
 
+    $courses = array();
+
     if ($course->id == SITEID) {
         $courses[0] = '';
         if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname')) {
@@ -540,6 +550,8 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
                 $courses[$cc->id] = $cc->shortname;
             }
         }
+    } else {
+        $courses[$course->id] = $course->shortname;
     }
 
     $count=0;
@@ -617,6 +629,118 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
         // Excel counts from 1/1/1900
         $excelTime=25569+$log->time/(3600*24);
         $myxls->write($row, 1, $excelTime, $formatDate);
+        $myxls->write($row, 2, $log->ip, '');
+        $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
+        $myxls->write($row, 3, $fullname, '');
+        $myxls->write($row, 4, $log->module.' '.$log->action, '');
+        $myxls->write($row, 5, $log->info, '');
+
+        $row++;
+    }
+
+    $workbook->close();
+    return true;
+}
+
+function print_log_ods($course, $user, $date, $order='l.time DESC', $modname,
+                        $modid, $modaction, $groupid) {
+
+    global $CFG;
+
+    require_once("$CFG->libdir/odslib.class.php");
+
+    if (!$logs = build_logs_array($course, $user, $date, $order, '', '',
+                       $modname, $modid, $modaction, $groupid)) {
+        return false;
+    }
+
+    $courses = array();
+
+    if ($course->id == SITEID) {
+        $courses[0] = '';
+        if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname')) {
+            foreach ($ccc as $cc) {
+                $courses[$cc->id] = $cc->shortname;
+            }
+        }
+    } else {
+        $courses[$course->id] = $course->shortname;
+    }
+
+    $count=0;
+    $ldcache = array();
+    $tt = getdate(time());
+    $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
+
+    $strftimedatetime = get_string("strftimedatetime");
+
+    $nroPages = ceil(count($logs)/(EXCELROWS-FIRSTUSEDEXCELROW+1));
+    $filename = 'logs_'.userdate(time(),get_string('backupnameformat'),99,false);
+    $filename .= '.ods';
+
+    $workbook = new MoodleODSWorkbook('-');
+    $workbook->send($filename);
+
+    $worksheet = array();
+    $headers = array(get_string('course'), get_string('time'), get_string('ip_address'),
+                        get_string('fullname'),    get_string('action'), get_string('info'));
+
+    // Creating worksheets
+    for ($wsnumber = 1; $wsnumber <= $nroPages; $wsnumber++) {
+        $sheettitle = get_string('excel_sheettitle', 'logs', $wsnumber).$nroPages;
+        $worksheet[$wsnumber] =& $workbook->add_worksheet($sheettitle);
+        $worksheet[$wsnumber]->set_column(1, 1, 30);
+        $worksheet[$wsnumber]->write_string(0, 0, get_string('savedat').
+                                    userdate(time(), $strftimedatetime));
+        $col = 0;
+        foreach ($headers as $item) {
+            $worksheet[$wsnumber]->write(FIRSTUSEDEXCELROW-1,$col,$item,'');
+            $col++;
+        }
+    }
+
+    if (empty($logs['logs'])) {
+        $workbook->close();
+        return true;
+    }
+
+    $formatDate =& $workbook->add_format();
+    $formatDate->set_num_format(get_string('log_excel_date_format'));
+
+    $row = FIRSTUSEDEXCELROW;
+    $wsnumber = 1;
+    $myxls =& $worksheet[$wsnumber];
+    foreach ($logs['logs'] as $log) {
+        if (isset($ldcache[$log->module][$log->action])) {
+            $ld = $ldcache[$log->module][$log->action];
+        } else {
+            $ld = get_record('log_display', 'module', $log->module, 'action', $log->action);
+            $ldcache[$log->module][$log->action] = $ld;
+        }
+        if ($ld && !empty($log->info)) {
+            // ugly hack to make sure fullname is shown correctly
+            if (($ld->mtable == 'user') and ($ld->field == sql_concat('firstname', "' '" , 'lastname'))) {
+                $log->info = fullname(get_record($ld->mtable, 'id', $log->info), true);
+            } else {
+                $log->info = get_field($ld->mtable, $ld->field, 'id', $log->info);
+            }
+        }
+
+        // Filter log->info
+        $log->info = format_string($log->info);
+        $log->info = strip_tags(urldecode($log->info));  // Some XSS protection
+
+        if ($nroPages>1) {
+            if ($row > EXCELROWS) {
+                $wsnumber++;
+                $myxls =& $worksheet[$wsnumber];
+                $row = FIRSTUSEDEXCELROW;
+            }
+        }
+
+        $myxls->write($row, 0, $courses[$log->course], '');
+        // Excel counts from 1/1/1900
+        $myxls->write_date($row, 1, $log->time, $formatDate);
         $myxls->write($row, 2, $log->ip, '');
         $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
         $myxls->write($row, 3, $fullname, '');

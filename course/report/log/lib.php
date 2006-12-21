@@ -206,13 +206,8 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     
     $logformats = array('showashtml' => get_string('displayonpage'),
                         'downloadascsv' => get_string('downloadtext'),
+                        'downloadasods' => get_string('downloadods'),
                         'downloadasexcel' => get_string('downloadexcel'));
-    /*
-    $logformats = array('showashtml' => get_string('displayonpage'),
-                        'downloadascsv' => get_string('downloadtext'),
-                        'downloadasexcel' => get_string('downloadexcel'),
-                        'downloadasooo' => get_string('downloadasooo'));
-    */
     choose_from_menu ($logformats, 'logformat', $logformat, false);
     echo '<input type="submit" value="'.get_string('gettheselogs').'" />';
     echo "</form>";
