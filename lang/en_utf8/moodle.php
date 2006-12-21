@@ -375,6 +375,7 @@ $string['documentation'] = 'Moodle Documentation';
 $string['donotask'] = 'Do Not Ask';
 $string['down'] = 'Down';
 $string['downloadexcel'] = 'Download in Excel format';
+$string['downloadods'] = 'Download in ODS format';
 $string['downloadtext'] = 'Download in text format';
 $string['doyouagree'] = 'Have you read these conditions and understood them?';
 $string['duplicate'] = 'Duplicate';

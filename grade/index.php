@@ -37,6 +37,9 @@
     if ($action == 'stats') {
         grade_stats();
         exit();
+    } else if ($action == 'ods') {
+        grade_download('ods', $id);
+        exit();
     } else if ($action == 'excel') {
         grade_download('xls', $id);
         exit();

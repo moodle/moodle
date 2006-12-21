@@ -1290,7 +1290,67 @@ function grade_download($download, $id) {
     } // a new Moodle nesting record? ;-)
 
 /// OK, we have all the data, now present it to the user
-    if ($download == "xls" and confirm_sesskey()) {
+/// OK, we have all the data, now present it to the user
+    if ($download == "ods" and confirm_sesskey()) {
+        require_once("../lib/odslib.class.php");
+
+    /// Calculate file name
+        $downloadfilename = clean_filename("$course->shortname $strgrades.ods");
+    /// Creating a workbook
+        $workbook = new MoodleODSWorkbook("-");
+    /// Sending HTTP headers
+        $workbook->send($downloadfilename);
+    /// Adding the worksheet
+        $myxls =& $workbook->add_worksheet($strgrades);
+    
+    /// Print names of all the fields
+        $myxls->write_string(0,0,get_string("firstname"));
+        $myxls->write_string(0,1,get_string("lastname"));
+        $myxls->write_string(0,2,get_string("idnumber"));
+        $myxls->write_string(0,3,get_string("institution"));
+        $myxls->write_string(0,4,get_string("department"));
+        $myxls->write_string(0,5,get_string("email"));
+        $pos=6;
+        foreach ($columns as $column) {
+            $myxls->write_string(0,$pos++,strip_tags($column));
+        }
+        $myxls->write_string(0,$pos,get_string("total"));
+    
+    /// Print all the lines of data.
+        $i = 0;
+        if (!empty($grades)) {
+            foreach ($grades as $studentid => $studentgrades) {
+                $i++;
+                $student = $students[$studentid];
+                if (empty($totals[$student->id])) {
+                    $totals[$student->id] = '';
+                }
+        
+                $myxls->write_string($i,0,$student->firstname);
+                $myxls->write_string($i,1,$student->lastname);
+                $myxls->write_string($i,2,$student->idnumber);
+                $myxls->write_string($i,3,$student->institution);
+                $myxls->write_string($i,4,$student->department);
+                $myxls->write_string($i,5,$student->email);
+                $j=6;
+                foreach ($studentgrades as $grade) {
+                    if (is_numeric($grade)) {
+                        $myxls->write_number($i,$j++,strip_tags($grade));
+                    }
+                    else {
+                        $myxls->write_string($i,$j++,strip_tags($grade));
+                    }
+                }
+                $myxls->write_number($i,$j,$totals[$student->id]);
+            }
+        }
+
+    /// Close the workbook
+        $workbook->close();
+    
+        exit;
+
+    } else if ($download == "xls" and confirm_sesskey()) {
         require_once("../lib/excellib.class.php");
 
     /// Calculate file name
@@ -2893,7 +2953,7 @@ function grade_set_letter_grades() {
 
 function grade_download_form($type='both') {
     global $course,$USER, $action, $cview;
-    if ($type != 'both' and $type != 'excel' and $type != 'text') {
+    if ($type != 'both' and $type != 'ods' and $type != 'excel' and $type != 'text') {
         $type = 'both';
     }
     
@@ -2902,6 +2962,12 @@ function grade_download_form($type='both') {
         $options['id'] = $course->id;
         $options['sesskey'] = $USER->sesskey;
         
+        if ($type == 'both' || $type == 'ods') {
+            $options['action'] = 'ods';
+            echo '<td align="center">';
+            print_single_button("index.php", $options, get_string("downloadods"));
+            echo '</td>';
+        }
         if ($type == 'both' || $type == 'excel') {
             $options['action'] = 'excel';
             echo '<td align="center">';
