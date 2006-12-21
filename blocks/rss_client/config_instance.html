@@ -169,7 +169,7 @@ if ($currentaction == 'configblock') {
     print '<tr valign="top"><td>';
     $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
     rss_display_feeds($id, $USER->id, '', $context);
-    print '</form>'; //not sure that this is needed
+    // print '</form>'; //not sure that this is needed //yu: took it out bad xhtml
     rss_print_form($act, $url, $rssid, $preferredtitle, $shared, $id, $context);
     print '</td></tr></table>';
 }
