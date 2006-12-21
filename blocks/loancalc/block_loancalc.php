@@ -15,7 +15,7 @@ class block_loancalc extends block_base {
         
         $this->content->text = '
         <script language="JavaScript">
-<!--
+        <![CDATA[
     function Next()
     {
         submitScreen("Next");
@@ -148,12 +148,10 @@ function comp(v) { // general entry point for all cases
 
     }
 } // function comp
-//-->
-            </script>
+]]>
+</script>
 <title></title>
-</head>
 
-<body>
 <h1></h1>
 <form method="post" id="vbankform" name="vbankform">
             <table>
@@ -161,33 +159,34 @@ function comp(v) { // general entry point for all cases
                     <td colspan="2">'.get_string('amountofloan','block_loancalc').'</td>
                 </tr>
                 <tr>
-                    <td><input name="LOANAMOUNT" id="LOANAMOUNT" size="17"></td>
-                    <td><a href="JavaScript:comp(\'pv\');"><img src="'.$calc.'" alt="calculate" border="0"></a></td>
+                    <td><input name="LOANAMOUNT" id="LOANAMOUNT" size="17" /></td>
+                    <td><a href="JavaScript:comp(\'pv\');"><img src="'.$calc.'" alt="calculate" border="0" /></a></td>
                 </tr>
                 <tr>
                     <td colspan="2">'.get_string('repaymentamount','block_loancalc').'</td>
                 </tr>
                 <tr>
-                    <td><input name="LOANREPAYMENT" id="LOANREPAYMENT" size="17"></td>
-                    <td><a href="JavaScript:comp(\'pmt\');"><img src="'.$calc.'" alt="calculate" border="0"></a></td>
+                    <td><input name="LOANREPAYMENT" id="LOANREPAYMENT" size="17" /></td>
+                    <td><a href="JavaScript:comp(\'pmt\');"><img src="'.$calc.'" alt="calculate" border="0" /></a></td>
                 </tr>
                 <tr>
                     <td colspan="2">'.get_string('loanterm','block_loancalc').'</td>
                 </tr>
                 <tr>
-                    <td><input name="LOANTERM" id="LOANTERM" size="17"></td>
-                    <td><a href="JavaScript:comp(\'np\');"><img src="'.$calc.'" alt="calculate" border="0"></a></td>
+                    <td><input name="LOANTERM" id="LOANTERM" size="17" /></td>
+                    <td><a href="JavaScript:comp(\'np\');"><img src="'.$calc.'" alt="calculate" border="0" /></a></td>
                 </tr>    
                 <tr>
                     <td colspan="2">'.get_string('interestrate','block_loancalc').'</td>
                 </tr>
                 <tr>
-                    <td><input name="LOANINTRATE" id="LOANINTRATE" size="17"></td>
+                    <td><input name="LOANINTRATE" id="LOANINTRATE" size="17" /></td>
                     <td></td>
                 </tr>    
                 <tr>
                     <td colspan="2">'.get_string('repaymentfreq','block_loancalc').'</td>
                 </tr>
+                <tr>
                     <td>';
         $options[52] = get_string('weekly','block_loancalc');
         $options[26] = get_string('fortnightly','block_loancalc');
