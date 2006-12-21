@@ -2373,6 +2373,7 @@ function grade_set_categories() {
     
     echo  '<table border="0" cellspacing="2" cellpadding="5" align="center" class="generalbox"><tr><th colspan="5" class="header" scope="col">'.get_string('setcategories','grades');
     helpbutton('category', get_string('gradecategoryhelp','grades'), 'grade');
+    echo  '</th></tr>';
     echo  '<tr><td align="center" class="generaltableheader">'.get_string('gradeitem','grades').'</td><td align="center" class="generaltableheader">'.get_string('category','grades').'</td><td align="center" class="generaltableheader">'.get_string('maxgrade','grades').'</td><td align="center" class="generaltableheader">'.get_string('curveto','grades').'</td><td align="center" class="generaltableheader">'.get_string('extracredit','grades').'</td></tr>';
     echo  '<form name="set_categories" method="post" action="./index.php" >';
     echo  '<input type="hidden" name="action" value="assign_categories" />';
@@ -2459,7 +2460,7 @@ function grade_set_categories() {
     echo  '</td></tr><tr><td colspan="5" align="center" class="generalboxcontent">';
     grade_delete_category_form();
     echo  '</td></tr></table>';
-    echo '<center>'.get_string('extracreditwarning','grades').'<center>';
+    echo '<center>'.get_string('extracreditwarning','grades').'</center>';
 }
 
 function grade_delete_category() {
