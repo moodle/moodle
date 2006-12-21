@@ -397,7 +397,7 @@ function question_list($course, $categoryid, $quizid=0,
      ' <a href="javascript:deselect_all_in(\'TABLE\', null, \'categoryquestions\');">'.$strselectnone.'</a>'.
      '</td><td align="right"><b>&nbsp;'.get_string('withselected', 'quiz').':</b></td></tr><tr><td>';
     if ($quizid && has_capability('mod/quiz:manage', $context)) {
-        echo "<input type=\"submit\" name=\"add\" value=\"< $straddtoquiz\" />\n";
+        echo "<input type=\"submit\" name=\"add\" value=\"$straddtoquiz\" />\n";
         echo '</td><td>';
     }
     // print delete and move selected question
