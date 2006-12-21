@@ -800,7 +800,7 @@
                 }
                 break;
         } // end of switch
-
+        echo "</div>"; // not sure where this one came from MDL-7861
         redirect("view.php?id=$cm->id", get_string("savedok","workshop"));
     }
 

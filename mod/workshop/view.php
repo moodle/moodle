@@ -305,7 +305,7 @@
         $currentgroup = get_current_group($course->id);
 
         /// Print admin links
-        echo "<td align=\"right\">";
+        echo "<table width=\"100%\"><tr><td>";
         echo "<a href=\"submissions.php?id=$cm->id&amp;action=adminlist\">".
             get_string("administration")."</a>\n";
 
