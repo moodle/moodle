@@ -86,6 +86,9 @@
                         }
                     }
                 }
+                echo '</td></tr>';
+                echo '</table>';
+                echo '</div>';
                 redirect("edit.php?courseid=$course->id");
             } else {
                 error("Confirmation string was incorrect");
@@ -117,10 +120,13 @@
 
             // Add an explanation about questions in use
             if ($inuse) {
-                $questionnames .= get_string('questionsinuse', 'quiz');
+                $questionnames .= '<br />'.get_string('questionsinuse', 'quiz');
             }
             notice_yesno(get_string("deletequestionscheck", "quiz", $questionnames),
                         "edit.php?courseid=$course->id&amp;sesskey=$USER->sesskey&amp;deleteselected=$questionlist&amp;confirm=".md5($questionlist), "edit.php?courseid=$course->id");
+
+            echo '</td></tr>';
+            echo '</table>';
             print_footer($course);
             exit;
         }
