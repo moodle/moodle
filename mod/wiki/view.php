@@ -392,14 +392,14 @@
     for($i=1; $i < $nqueries; $i++)
     {
         if( !strstr($queries[$i], 'allowcache') )
-            $me .= $queries[$i] . '&'; 
+            $me .= $queries[$i] . '&amp;'; 
     }
     $me .= 'allowcache=0';
 
     // Insert the link
     $linkdesc = get_string('reloadlinkdescription', 'wiki');
     $linktext = get_string('reloadlinktext', 'wiki');
-    echo "<div align='right' style='padding-bottom: 0.5em;'><a href='$me' title='$linkdesc'><input type='button' value='$linktext'></a></div>";
+    echo "<div align='right' style='padding-bottom: 0.5em;'><a href='$me' title='$linkdesc'><input type='button' value='$linktext' /></a></div>";
 
     print_simple_box_start('center', '100%', '', '20');
 
