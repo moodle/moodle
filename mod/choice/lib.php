@@ -397,7 +397,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                     if (!($optionid==0 && has_capability('mod/choice:readresponses', $context, $user->id))) { // make sure admins and hidden teachers are not shown in not answered yet column.
                         echo "<tr>";
                         if (has_capability('mod/choice:readresponses', $context) && $optionid!=0) {
-                            echo '<td width=\"5\" nowrap=\"nowrap\"><input type="checkbox" name="attemptid[]" value="'. $answers[$user->id]->id. '" /></td>';
+                            echo '<td width="5" nowrap="nowrap"><input type="checkbox" name="attemptid[]" value="'. $answers[$user->id]->id. '" /></td>';
                         }
                         echo "<td width=\"10\" nowrap=\"nowrap\" class=\"picture\">";
                         print_user_picture($user->id, $course->id, $user->picture);
@@ -440,11 +440,11 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 echo "</td>";
                 $count++;
             }
+            echo "</tr>";
 
             /// Print "Select all" etc.
             if (has_capability('mod/choice:readresponses', $context)) {
-                echo '<tr><td><p>';
-                echo '<tr><td>';
+                echo '<tr><td></td><td>';
                 echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectall', 'quiz').'</a> / ';
                 echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectnone', 'quiz').'</a> ';
                 echo '&nbsp;&nbsp;';
@@ -453,10 +453,10 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 echo '<noscript id="noscriptmenuaction" style="display: inline;">';
                 echo '<input type="submit" value="'.get_string('go').'" /></noscript>';
                 echo '<script type="text/javascript">'."\n<!--\n".'document.getElementById("noscriptmenuaction").style.display = "none";'."\n-->\n".'</script>';
-                echo '</p></td></tr>';
+                echo '</td><td></td></tr>';
             }
 
-            echo "</tr></table>";
+            echo "</table>";
             if (has_capability('mod/choice:readresponses', $context)) {
                 echo "</form></div>";
             }
