@@ -84,6 +84,7 @@ $ADMIN->add('server', $temp);
 // "debugging" settingpage
 $temp = new admin_settingpage('debugging', get_string('debugging', 'admin'));
 $temp->add(new admin_setting_special_debug());
+$temp->add(new admin_setting_special_debugdisplay());
 $temp->add(new admin_setting_special_perfdebug());
 $ADMIN->add('server', $temp);
 

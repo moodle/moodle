@@ -2489,6 +2489,39 @@ class admin_setting_special_perfdebug extends admin_setting_configcheckbox {
 
 }
 
+class admin_setting_special_debugdisplay extends admin_setting_configcheckbox {
+
+    function admin_setting_special_debugdisplay() {
+        $name = 'debugdisplay';
+        $visiblename = get_string('debugdisplay', 'admin');
+        $description = get_string('configdebugdisplay', 'admin');
+        parent::admin_setting_configcheckbox($name, $visiblename, $description, '');
+    }
+
+    function write_setting($data) {
+
+        if ($data == '1') {
+            return (set_config($this->name,1) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
+        } else {
+            return (set_config($this->name,0) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
+        }
+    }
+
+    function output_html() {
+
+        if ($this->get_setting() === NULL) {
+            $currentsetting = ini_get('display_error');
+        } else {
+            $currentsetting = $this->get_setting();
+        }
+
+        $return = '<input type="checkbox" class="form-checkbox" id="id_s_'.$this->name.'" name="s_'. $this->name .'" value="1" ' . ($currentsetting == 1 ? 'checked="checked"' : '') . ' />';
+        return format_admin_setting($this->name, $this->visiblename, $return, $this->description);
+    }
+
+}
+
+
 // Code for a function that helps externalpages print proper headers and footers
 // N.B.: THIS FUNCTION HANDLES AUTHENTICATION
 function admin_externalpage_setup($section, $adminroot) {
