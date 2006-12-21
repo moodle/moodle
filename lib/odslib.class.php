@@ -25,10 +25,13 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-// This code uses parts of the Minimalistic creator of OASIS OpenDocument
-// from phpMyAdmin (www.phpmyadmin.net)
-//   files: libraries/opendocument.lib.php and libraries/export/ods.php
-// and also parts of the original MoodleExcelWorkbook class.
+/*
+ * The xml used here is derived from output of KSpread 1.6.1
+ *
+ * Known problems:
+ *  - missing formatting
+ *  - write_date() works fine in OOo, but it does not work in KOffice - it knows only date or time but not both :-(
+ */
 
 class MoodleODSWorkbook {
     var $worksheets = array();
@@ -55,7 +58,7 @@ class MoodleODSWorkbook {
      *                          i.e: [bold]=1 for set_bold(1)...Optional!
      */
     function &add_format($properties = array()) {
-        $format = new MoodleODSFormat($this);
+        $format = new MoodleODSFormat($this, $properties);
         return $format;;
     }
 
@@ -120,7 +123,7 @@ class MoodleODSWorksheet {
     /* Constructs one Moodle Worksheet.
      * @param string $filename The name of the file
      */
-    function ODSWorksheet($name) {
+    function MoodleODSWorksheet($name) {
         $this->name = $name;
     }
 
@@ -415,19 +418,22 @@ function get_ods_content(&$worksheets) {
 
 /// header
     $buffer =
-        '<?xml version="1.0" encoding="UTF-8"?' . '>'
-        . '<office:document-content xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" '
-                . 'xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" '
-                . 'xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" '
-                . 'xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" '
-                . 'xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" office:version="1.0">'
-                . 'xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0"'
-        . '<office:body>'
-        . '<office:spreadsheet>';
+'<?xml version="1.0" encoding="UTF-8"?>
+<office:document-content xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:presentation="urn:oasis:names:tc:opendocument:xmlns:presentation:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <office:automatic-styles>
+  <style:style style:name="ta1" style:family="table" style:master-page-name="Standard1">
+   <style:table-properties table:display="true"/>
+  </style:style>
+  <style:style style:name="date0" style:family="table-cell"/>
+ </office:automatic-styles>
+ <office:body>
+  <office:spreadsheet>
+';
 
     foreach($worksheets as $ws) {
+
     /// worksheet header
-        $buffer .= '<table:table table:name="' . htmlspecialchars($ws->name) . '">';
+        $buffer .= '<table:table table:name="' . htmlspecialchars($ws->name) . '" table:style-name="ta1">'."\n".' <table:table-column/>'."\n";
 
         $nr = 0;
         $nc = 0;
@@ -443,39 +449,42 @@ function get_ods_content(&$worksheets) {
         }
 
         for($r=0; $r<=$nr; $r++) {
-            $buffer .= '<table:table-row>';
+            $buffer .= '<table:table-row>'."\n";
             for($c=0; $c<=$nc; $c++) {
                 if (isset($ws->data[$r][$c])) {
                     if ($ws->data[$r][$c]->type == 'date') {
-                        $buffer .= '<table:table-cell table:style-name="Default" office:value-type="date" office:date-value="' . strftime('%Y-%m-%dT%H:%M:%S', $ws->data[$r][$c]->value) . '">'
-                                 . '<text:p>' . htmlspecialchars($ws->data[$r][$c]->value) . '</text:p>'
-                                 . '</table:table-cell>';
+                        $buffer .= '<table:table-cell office:value-type="date" table:style-name="date0" office:date-value="' . strftime('%Y-%m-%dT%H:%M:%S', $ws->data[$r][$c]->value) . '">'
+                                 . '<text:p>' . strftime('%Y-%m-%dT%H:%M:%S', $ws->data[$r][$c]->value) . '</text:p>'
+                                 . '</table:table-cell>'."\n";
                     } else if ($ws->data[$r][$c]->type == 'float') {
                         $buffer .= '<table:table-cell office:value-type="float" office:value="' . htmlspecialchars($ws->data[$r][$c]->value) . '">'
                                  . '<text:p>' . htmlspecialchars($ws->data[$r][$c]->value) . '</text:p>'
-                                 . '</table:table-cell>';
+                                 . '</table:table-cell>'."\n";
                     } else if ($ws->data[$r][$c]->type == 'string') {
-                        $buffer .= '<table:table-cell office:value-type="string">'
+                        $buffer .= '<table:table-cell office:value-type="string" office:string-value="' . htmlspecialchars($ws->data[$r][$c]->value) . '">'
                                  . '<text:p>' . htmlspecialchars($ws->data[$r][$c]->value) . '</text:p>'
-                                 . '</table:table-cell>';
+                                 . '</table:table-cell>'."\n";
                     } else {
                         $buffer .= '<table:table-cell office:value-type="string">'
                                  . '<text:p>!!Error - unknown type!!</text:p>'
-                                 . '</table:table-cell>';
+                                 . '</table:table-cell>'."\n";
                     }
                 } else {
-                    $buffer .= '<table:table-cell/>';
+                    $buffer .= '<table:table-cell/>'."\n";
                 }
             }
-            $buffer .= '</table:table-row>';
+            $buffer .= '</table:table-row>'."\n";
         }
     /// worksheet footer
-        $buffer .= '</table:table>';
+        $buffer .= '</table:table>'."\n";
 
     }
 
 /// footer
-    $buffer .= '</office:spreadsheet></office:body></office:document-content>';
+    $buffer .=
+'  </office:spreadsheet>
+ </office:body>
+</office:document-content>';
 
     return $buffer;
 }
@@ -485,82 +494,69 @@ function get_ods_mimetype() {
 }
 
 function get_ods_meta() {
-    global $CFG;
+    global $CFG, $USER;
+
     return
-        '<?xml version="1.0" encoding="UTF-8"?'. '>'
-        . '<office:document-meta '
-            . 'xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" '
-            . 'xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" '
-            . 'office:version="1.0">'
-            . '<office:meta>'
-                . '<meta:generator>Moodle ' . $CFG->version. '</meta:generator>'
-                . '<meta:initial-creator>Moodle ' . $CFG->version . '</meta:initial-creator>'
-                . '<meta:creation-date>' . strftime('%Y-%m-%dT%H:%M:%S') . '</meta:creation-date>'
-            . '</office:meta>'
-        . '</office:document-meta>';
+'<?xml version="1.0" encoding="UTF-8"?>
+<office:document-meta xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <office:meta>
+  <meta:generator>Moodle '.$CFG->version.'</meta:generator>
+  <meta:initial-creator>'.fullname($USER, true).'</meta:initial-creator>
+  <meta:editing-cycles>1</meta:editing-cycles>
+  <meta:creation-date>'.strftime('%Y-%m-%dT%H:%M:%S').'</meta:creation-date>
+  <dc:date>'.strftime('%Y-%m-%dT%H:%M:%S').'</dc:date>
+  <dc:creator>'.fullname($USER, true).'</dc:creator>
+ </office:meta>
+</office:document-meta>';
 }
 
 function get_ods_styles() {
     return
-        '<?xml version="1.0" encoding="UTF-8"?' . '>'
-        . '<office:document-styles xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" '
-                . 'xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" '
-                . 'xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" '
-                . 'xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" '
-                . 'xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" office:version="1.0">'
-                . 'xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0"'
-            . '<office:font-face-decls>'
-                . '<style:font-face style:name="Arial Unicode MS" svg:font-family="\'Arial Unicode MS\'" style:font-pitch="variable"/>'
-                . '<style:font-face style:name="DejaVu Sans1" svg:font-family="\'DejaVu Sans\'" style:font-pitch="variable"/>'
-                . '<style:font-face style:name="HG Mincho Light J" svg:font-family="\'HG Mincho Light J\'" style:font-pitch="variable"/>'
-                . '<style:font-face style:name="DejaVu Serif" svg:font-family="\'DejaVu Serif\'" style:font-family-generic="roman" style:font-pitch="variable"/>'
-                . '<style:font-face style:name="Thorndale" svg:font-family="Thorndale" style:font-family-generic="roman" style:font-pitch="variable"/>'
-                . '<style:font-face style:name="DejaVu Sans" svg:font-family="\'DejaVu Sans\'" style:font-family-generic="swiss" style:font-pitch="variable"/>'
-            . '</office:font-face-decls>'
-            . '<office:styles>'
-                . '<style:style style:name="Default" style:family="table-cell" />'
-                . '<style:default-style style:family="paragraph">'
-                    . '<style:paragraph-properties fo:hyphenation-ladder-count="no-limit" style:text-autospace="ideograph-alpha" style:punctuation-wrap="hanging" style:line-break="strict" style:tab-stop-distance="0.4925in" style:writing-mode="page"/>'
-                    . '<style:text-properties style:use-window-font-color="true" style:font-name="DejaVu Serif" fo:font-size="12pt" fo:language="en" fo:country="US" style:font-name-asian="DejaVu Sans1" style:font-size-asian="12pt" style:language-asian="none" style:country-asian="none" style:font-name-complex="DejaVu Sans1" style:font-size-complex="12pt" style:language-complex="none" style:country-complex="none" fo:hyphenate="false" fo:hyphenation-remain-char-count="2" fo:hyphenation-push-char-count="2"/>'
-                . '</style:default-style>'
-                . '<style:style style:name="Standard" style:family="paragraph" style:class="text"/>'
-                . '<style:style style:name="Text_body" style:display-name="Text body" style:family="paragraph" style:parent-style-name="Standard" style:class="text">'
-                    . '<style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0.0835in"/>'
-                . '</style:style>'
-                . '<style:style style:name="Heading" style:family="paragraph" style:parent-style-name="Standard" style:next-style-name="Text_body" style:class="text">'
-                    . '<style:paragraph-properties fo:margin-top="0.1665in" fo:margin-bottom="0.0835in" fo:keep-with-next="always"/>'
-                    . '<style:text-properties style:font-name="DejaVu Sans" fo:font-size="14pt" style:font-name-asian="DejaVu Sans1" style:font-size-asian="14pt" style:font-name-complex="DejaVu Sans1" style:font-size-complex="14pt"/>'
-                    . '</style:style>'
-                . '<style:style style:name="Heading_1" style:display-name="Heading 1" style:family="paragraph" style:parent-style-name="Heading" style:next-style-name="Text_body" style:class="text" style:default-outline-level="1">'
-                    . '<style:text-properties style:font-name="Thorndale" fo:font-size="24pt" fo:font-weight="bold" style:font-name-asian="HG Mincho Light J" style:font-size-asian="24pt" style:font-weight-asian="bold" style:font-name-complex="Arial Unicode MS" style:font-size-complex="24pt" style:font-weight-complex="bold"/>'
-                . '</style:style>'
-                . '<style:style style:name="Heading_2" style:display-name="Heading 2" style:family="paragraph" style:parent-style-name="Heading" style:next-style-name="Text_body" style:class="text" style:default-outline-level="2">'
-                    . '<style:text-properties style:font-name="DejaVu Serif" fo:font-size="18pt" fo:font-weight="bold" style:font-name-asian="DejaVu Sans1" style:font-size-asian="18pt" style:font-weight-asian="bold" style:font-name-complex="DejaVu Sans1" style:font-size-complex="18pt" style:font-weight-complex="bold"/>'
-                . '</style:style>'
-            . '</office:styles>'
-            . '<office:automatic-styles>'
-                . '<style:page-layout style:name="pm1">'
-                    . '<style:page-layout-properties fo:page-width="8.2673in" fo:page-height="11.6925in" style:num-format="1" style:print-orientation="portrait" fo:margin-top="1in" fo:margin-bottom="1in" fo:margin-left="1.25in" fo:margin-right="1.25in" style:writing-mode="lr-tb" style:footnote-max-height="0in">'
-                        . '<style:footnote-sep style:width="0.0071in" style:distance-before-sep="0.0398in" style:distance-after-sep="0.0398in" style:adjustment="left" style:rel-width="25%" style:color="#000000"/>'
-                    . '</style:page-layout-properties>'
-                    . '<style:header-style/>'
-                    . '<style:footer-style/>'
-                . '</style:page-layout>'
-            . '</office:automatic-styles>'
-            . '<office:master-styles>'
-                . '<style:master-page style:name="Standard" style:page-layout-name="pm1"/>'
-            . '</office:master-styles>'
-        . '</office:document-styles>';
+'<?xml version="1.0" encoding="UTF-8"?>
+<office:document-styles xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:presentation="urn:oasis:names:tc:opendocument:xmlns:presentation:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <office:styles>
+  <style:default-style style:family="table-column">
+   <style:table-column-properties style:column-width="75pt"/>
+  </style:default-style>
+  <style:default-style style:family="table-row">
+   <style:table-row-properties style:row-height="15pt"/>
+  </style:default-style>
+  <style:default-style style:family="table-cell">
+   <style:table-cell-properties fo:background-color="#ffffff" style:cell-protect="protected" style:vertical-align="middle"/>
+   <style:text-properties fo:color="#000000" fo:font-family="Arial" fo:font-size="12pt"/>
+  </style:default-style>
+ </office:styles>
+ <office:automatic-styles>
+  <style:page-layout style:name="pm1">
+   <style:page-layout-properties fo:margin-bottom="56.6930116pt" fo:margin-left="56.6930116pt" fo:margin-right="56.6930116pt" fo:margin-top="56.6930116pt" fo:page-height="841.89122226pt" fo:page-width="595.2766218pt" style:print="objects charts drawings zero-values" style:print-orientation="portrait"/>
+  </style:page-layout>
+ </office:automatic-styles>
+ <office:master-styles>
+  <style:master-page style:name="Standard1" style:page-layout-name="pm1">
+   <style:header>
+ <text:p>
+  <text:sheet-name>???</text:sheet-name>
+ </text:p>
+</style:header><style:footer>
+ <text:p>
+  <text:sheet-name>Page </text:sheet-name>
+  <text:page-number>1</text:page-number>
+ </text:p>
+</style:footer>
+  </style:master-page>
+ </office:master-styles>
+</office:document-styles>
+';
 }
 
 function get_ods_manifest() {
     return
-        '<?xml version="1.0" encoding="UTF-8"?' . '>'
-        . '<manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0">'
-        . '<manifest:file-entry manifest:media-type="application/vnd.oasis.opendocument.spreadsheet" manifest:full-path="/"/>'
-        . '<manifest:file-entry manifest:media-type="text/xml" manifest:full-path="content.xml"/>'
-        . '<manifest:file-entry manifest:media-type="text/xml" manifest:full-path="meta.xml"/>'
-        . '<manifest:file-entry manifest:media-type="text/xml" manifest:full-path="styles.xml"/>'
-        . '</manifest:manifest>';
+'<?xml version="1.0" encoding="UTF-8"?>
+<manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0">
+ <manifest:file-entry manifest:media-type="application/vnd.oasis.opendocument.spreadsheet" manifest:full-path="/"/>
+ <manifest:file-entry manifest:media-type="text/xml" manifest:full-path="content.xml"/>
+ <manifest:file-entry manifest:media-type="text/xml" manifest:full-path="styles.xml"/>
+ <manifest:file-entry manifest:media-type="text/xml" manifest:full-path="meta.xml"/>
+</manifest:manifest>';
 }
 ?>
