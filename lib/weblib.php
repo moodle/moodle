@@ -5457,12 +5457,20 @@ function page_doc_link($text='', $iconpath='') {
 
 /**
  * Returns true if the current site debugging settings are equal or above specified level.
+ * If passed a parameter it will emit a debugging notice similar to trigger_error(). The
+ * routing of notices is controlled by $CFG->debugdisplay
  * eg use like this:
  *
  * 1)  debugging('a normal debug notice');
  * 2)  debugging('something really picky', DEBUG_ALL);
  * 3)  debugging('annoying debug message only for develpers', DEBUG_DEVELOPER);
- * 4)  if (debugging()) { echo "a bunch of commands could be here" } 
+ * 4)  if (debugging()) { perform extra debugging operations (do not use print or echo) }
+ *
+ * In code blocks controlled by debugging() (such as example 4)
+ * any output should be routed via debugging() itself, or the lower-level
+ * trigger_error() or error_log(). Using echo or print will break XHTML
+ * JS and HTTP headers.
+ *
  *
  * @param string $message a message to print
  * @param int $level the level at which this debugging statement should show
@@ -5478,13 +5486,15 @@ function debugging($message='', $level=DEBUG_NORMAL) {
 
     if ($CFG->debug >= $level) {
         if ($message) {
-            if (ini_get('display_errors') == true) {
+            if (!isset($CFG->debugdisplay)) {
+                $CFG->debugdisplay = ini_get('display_errors');
+            }
+            if ($CFG->debugdisplay) {
                 notify($message, 'notifytiny');
             } else {
                 // moodle debug levels constants map well to PHP's own
                 trigger_error($message, $level);
             }
-
         }
         return true;
     }
