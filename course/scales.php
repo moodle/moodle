@@ -121,7 +121,7 @@
         echo "<p/>";
 
         close_window_button();
-
+        print_footer();
         exit;
     }
 
