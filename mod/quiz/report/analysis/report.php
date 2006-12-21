@@ -207,7 +207,7 @@ class quiz_report extends quiz_default_report {
         $top -=$gap;
         $bottom +=$gap;
         foreach ($questions as $qid=>$q) {
-            $questions[$qid] = $this->report_question_stats(&$q, $attemptscores, $statstable, $top, $bottom);
+            $questions[$qid] = $this->report_question_stats($q, $attemptscores, $statstable, $top, $bottom);
         }
         unset($attemptscores);
         unset($statstable);
@@ -219,8 +219,8 @@ class quiz_report extends quiz_default_report {
             case "Excel" :
                 $this->Export_Excel($questions, $filename);
                 break;
-            case "OOo": 
-                $this->Export_OOo($questions, $filename);
+            case "ODS": 
+                $this->Export_ODS($questions, $filename);
                 break;
             case "CSV": 
                 $this->Export_CSV($questions, $filename);
@@ -391,12 +391,16 @@ class quiz_report extends quiz_default_report {
         echo "\n";
  
         echo '<table align="center"><tr>';
-        unset($options);
+        $options = array();
         $options["id"] = "$cm->id";
         $options["q"] = "$quiz->id";
         $options["mode"] = "analysis";
         $options['sesskey'] = $USER->sesskey;
         $options["noheader"] = "yes";
+        echo '<td>';        
+        $options["download"] = "ODS";
+        print_single_button("report.php", $options, get_string("downloadods"));
+        echo "</td>\n"; 
         echo '<td>';        
         $options["download"] = "Excel";
         print_single_button("report.php", $options, get_string("downloadexcel"));
@@ -527,7 +531,7 @@ class quiz_report extends quiz_default_report {
         
         $row = 3;
         foreach($questions as $q) {       
-            $rows = $this->print_row_stats_data(&$q);
+            $rows = $this->print_row_stats_data($q);
             foreach($rows as $rowdata){
                 $col = 0;
                 foreach($rowdata as $item){
@@ -544,27 +548,51 @@ class quiz_report extends quiz_default_report {
     }
 
 
-    function Export_OOo(&$questions, $filename) {
+    function Export_ODS(&$questions, $filename) {
         global $CFG;
-        require_once("$CFG->libdir/phpdocwriter/lib/include.php");
-        import('phpdocwriter.pdw_document');
-        header("Content-Type: application/download\n");   
-        header("Content-Disposition: attachment; filename=\"$filename.sxw\"");
-        header("Expires: 0");
-        header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
-        header("Pragma: public");
-        header("Content-Transfer-Encoding: binary");
+        require_once("$CFG->libdir/odslib.class.php");
 
-        $sxw = new pdw_document;
-        $sxw->SetFileName($filename);
-        $sxw->SetAuthor('Moodle');
-        $sxw->SetTitle(get_string('reportanalysis','quiz_analysis'));
-        $sxw->SetDescription(get_string('reportanalysis','quiz_analysis').' - '.$filename);
-        $sxw->SetLanguage('es','ES');
-        $sxw->SetStdFont("Times New Roman",12);
-        $sxw->AddPageDef(array('name'=>'Standard', 'margins'=>'1,1,1,1', 'w'=>'29.7', 'h'=>'21'));
-        $sxw->Write(get_string('analysistitle','quiz_analysis'));
-        $sxw->Ln(3);
+    /// Calculate file name
+        $filename .= ".ods";
+    /// Creating a workbook
+        $workbook = new MoodleODSWorkbook("-");
+    /// Sending HTTP headers
+        $workbook->send($filename);
+    /// Creating the first worksheet
+        $sheettitle = get_string('reportanalysis','quiz_analysis');
+        $myxls =& $workbook->add_worksheet($sheettitle);
+    /// format types
+        $format =& $workbook->add_format();
+        $format->set_bold(0);
+        $formatbc =& $workbook->add_format();
+        $formatbc->set_bold(1);
+        $formatb =& $workbook->add_format();
+        $formatb->set_bold(1);
+        $formaty =& $workbook->add_format();
+        $formaty->set_bg_color('yellow');
+        $formatyc =& $workbook->add_format();
+        $formatyc->set_bg_color('yellow'); //bold text on yellow bg
+        $formatyc->set_bold(1);
+        $formatyc->set_align('center');
+        $formatc =& $workbook->add_format();
+        $formatc->set_align('center');
+        $formatbc->set_align('center');
+        $formatbpct =& $workbook->add_format();
+        $formatbpct->set_bold(1);
+        $formatbpct->set_num_format('0.0%');
+        $formatbrt =& $workbook->add_format();
+        $formatbrt->set_bold(1);
+        $formatbrt->set_align('right');
+        $formatred =& $workbook->add_format();
+        $formatred->set_bold(1);
+        $formatred->set_color('red');
+        $formatred->set_align('center');
+        $formatblue =& $workbook->add_format();
+        $formatblue->set_bold(1);
+        $formatblue->set_color('blue');
+        $formatblue->set_align('center');
+    /// Here starts workshhet headers
+        $myxls->write_string(0,0,$sheettitle,$formatb);
 
         $headers = array(get_string('qidtitle','quiz_analysis'), get_string('qtypetitle','quiz_analysis'), 
                         get_string('qnametitle','quiz_analysis'), get_string('qtexttitle','quiz_analysis'), 
@@ -574,19 +602,27 @@ class quiz_report extends quiz_default_report {
                         get_string('facilitytitle','quiz_analysis'), get_string('stddevtitle','quiz_analysis'), 
                         get_string('dicsindextitle','quiz_analysis'), get_string('disccoefftitle','quiz_analysis')); 
 
-        foreach($headers as $key=>$header){
-            $headers[$key] = eregi_replace ("<br?>", " ",$header);
+        $col = 0;
+        foreach ($headers as $item) {
+            $myxls->write(2,$col,$item,$formatbc);
+            $col++;
         }
-
-        unset($data);
+        
+        $row = 3;
         foreach($questions as $q) {       
-            $rows = $this->print_row_stats_data(&$q);
-            foreach($rows as $row){
-                $data[] = $row;
+            $rows = $this->print_row_stats_data($q);
+            foreach($rows as $rowdata){
+                $col = 0;
+                foreach($rowdata as $item){
+                    $myxls->write($row,$col,$item,$format);
+                    $col++;
+                }
+                $row++;
             }
         }
-        $sxw->Table($headers,$data);
-        $sxw->Output();
+    /// Close the workbook
+        $workbook->close();
+
         exit;
     }
 
@@ -613,7 +649,7 @@ class quiz_report extends quiz_default_report {
         echo $text;
 
         foreach($questions as $q) {       
-            $rows = $this->print_row_stats_data(&$q);
+            $rows = $this->print_row_stats_data($q);
             foreach($rows as $row){
                 $text = implode("\t", $row);
                 echo $text." \n";

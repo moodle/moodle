@@ -447,12 +447,20 @@ function get_ods_content(&$worksheets) {
             for($c=0; $c<=$nc; $c++) {
                 if (isset($ws->data[$r][$c])) {
                     if ($ws->data[$r][$c]->type == 'date') {
-                        $buffer .= '<table:table-cell office:value-type="date" table:style-name="Default" office:date-value="' . strftime('%Y-%m-%dT%H:%M:%S', $ws->data[$r][$c]->value) . '">'
+                        $buffer .= '<table:table-cell table:style-name="Default" office:value-type="date" office:date-value="' . strftime('%Y-%m-%dT%H:%M:%S', $ws->data[$r][$c]->value) . '">'
+                                 . '<text:p>' . htmlspecialchars($ws->data[$r][$c]->value) . '</text:p>'
+                                 . '</table:table-cell>';
+                    } else if ($ws->data[$r][$c]->type == 'float') {
+                        $buffer .= '<table:table-cell office:value-type="float" office:value="' . htmlspecialchars($ws->data[$r][$c]->value) . '">'
+                                 . '<text:p>' . htmlspecialchars($ws->data[$r][$c]->value) . '</text:p>'
+                                 . '</table:table-cell>';
+                    } else if ($ws->data[$r][$c]->type == 'string') {
+                        $buffer .= '<table:table-cell office:value-type="string">'
                                  . '<text:p>' . htmlspecialchars($ws->data[$r][$c]->value) . '</text:p>'
                                  . '</table:table-cell>';
                     } else {
-                        $buffer .= '<table:table-cell office:value-type="' . $ws->data[$r][$c]->type . '">'
-                                 . '<text:p>' . htmlspecialchars($ws->data[$r][$c]->value) . '</text:p>'
+                        $buffer .= '<table:table-cell office:value-type="string">'
+                                 . '<text:p>!!Error - unknown type!!</text:p>'
                                  . '</table:table-cell>';
                     }
                 } else {

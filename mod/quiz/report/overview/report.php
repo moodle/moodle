@@ -162,6 +162,58 @@ class quiz_report extends quiz_default_report {
 
             // Start working -- this is necessary as soon as the niceties are over
             $table->setup();
+        } else if ($download =='ODS') {
+            require_once("$CFG->libdir/odslib.class.php");
+
+            $filename .= ".ods";
+            // Creating a workbook
+            $workbook = new MoodleODSWorkbook("-");
+            // Sending HTTP headers
+            $workbook->send($filename);
+            // Creating the first worksheet
+            $sheettitle = get_string('reportoverview','quiz');
+            $myxls =& $workbook->add_worksheet($sheettitle);
+            // format types
+            $format =& $workbook->add_format();
+            $format->set_bold(0);
+            $formatbc =& $workbook->add_format();
+            $formatbc->set_bold(1);
+            $formatbc->set_align('center');
+            $formatb =& $workbook->add_format();
+            $formatb->set_bold(1);
+            $formaty =& $workbook->add_format();
+            $formaty->set_bg_color('yellow');
+            $formatc =& $workbook->add_format();
+            $formatc->set_align('center');
+            $formatr =& $workbook->add_format();
+            $formatr->set_bold(1);
+            $formatr->set_color('red');
+            $formatr->set_align('center');
+            $formatg =& $workbook->add_format();
+            $formatg->set_bold(1);
+            $formatg->set_color('green');
+            $formatg->set_align('center');
+            // Here starts workshhet headers
+
+            $headers = array(get_string('fullname'), get_string('startedon', 'quiz'), get_string('timecompleted', 'quiz'), get_string('attemptduration', 'quiz'));
+
+            if ($quiz->grade and $quiz->sumgrades) {
+                $headers[] = get_string('grade', 'quiz').'/'.$quiz->grade;
+            }
+            if($detailedmarks) {
+                foreach ($questionids as $id) {
+                    $headers[] = '#'.$questions[$id]->number;
+                }
+            }
+            if ($hasfeedback) {
+                $headers[] = get_string('feedback', 'quiz');
+            }
+            $colnum = 0;
+            foreach ($headers as $item) {
+                $myxls->write(0,$colnum,$item,$formatbc);
+                $colnum++;
+            }
+            $rownum=1;
         } else if ($download =='Excel') {
             require_once("$CFG->libdir/excellib.class.php");
 
@@ -432,7 +484,7 @@ class quiz_report extends quiz_default_report {
                     }
                     if (!$download) {
                         $table->add_data($row);
-                    } else if ($download == 'Excel') {
+                    } else if ($download == 'Excel' or $download == 'ODS') {
                         $colnum = 0;
                         foreach($row as $item){
                             $myxls->write($rownum,$colnum,$item,$format);
@@ -474,12 +526,16 @@ class quiz_report extends quiz_default_report {
                 
                 if (!empty($attempts)) {
                     echo '<table align="center"><tr>';
-                    unset($options);
+                    $options = array();
                     $options["id"] = "$cm->id";
                     $options["q"] = "$quiz->id";
                     $options["mode"] = "overview";
                     $options['sesskey'] = sesskey();
                     $options["noheader"] = "yes";
+                    echo '<td>';
+                    $options["download"] = "ODS";
+                    print_single_button("report.php", $options, get_string("downloadods"));
+                    echo "</td>\n";
                     echo '<td>';
                     $options["download"] = "Excel";
                     print_single_button("report.php", $options, get_string("downloadexcel"));
@@ -493,7 +549,7 @@ class quiz_report extends quiz_default_report {
                     echo "</td>\n";
                     echo '</tr></table>';
                 }
-            } else if ($download == 'Excel') {
+            } else if ($download == 'Excel' or $download == 'ODS') {
                 $workbook->close();
                 exit;
             } else if ($download == 'CSV') {
