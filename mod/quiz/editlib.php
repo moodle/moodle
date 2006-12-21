@@ -223,9 +223,11 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
                           <img src=\"$CFG->pixpath/t/delete.gif\" border=\"0\" alt=\"$strremove\" /></a>";
                 }
                 echo '</td></tr></table></td>';
-                echo '<td colspan="2">&nbsp;</td></tr>';
+                echo '<td colspan="2">&nbsp;</td>';
             }
             $count++;
+            // missing </tr> here, if loop is broken, need to close the </tr> from line 199/201
+            echo "</tr>";
             continue;
         }
         $question = $questions[$qnum];
@@ -288,12 +290,14 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
 
     echo "<tr><td colspan=\"6\" align=\"right\">\n";
     print_string('total');
+    echo "</td>";
     echo ": <td align=\"left\">\n";
     echo "<b>$sumgrade</b>";
     echo "</td><td>&nbsp;\n</td></tr>\n";
 
     echo "<tr><td colspan=\"6\" align=\"right\">\n";
     print_string('maximumgrade');
+    echo "</td>";
     echo ": <td align=\"left\">\n";
     echo '<input type="text" name="maxgrade" size="2" tabindex="'.($qno+1)
      .'" value="'.$quiz->grade.'" />';
@@ -303,7 +307,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
 
     echo '<div align="center"><input type="submit" value="'.get_string('savechanges').'" />';
     echo '<input type="hidden" name="savechanges" value="save" /></div>';
-    echo '<input type="hidden" name="savequizid" value="'.$quiz->id.'" /></div>'; // ugly hack to prevent modform session "mistakes"
+    echo '<input type="hidden" name="savequizid" value="'.$quiz->id.'" />'; // ugly hack to prevent modform session "mistakes"
 
     print_simple_box_end();
     echo "</form>\n";
