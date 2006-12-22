@@ -422,6 +422,40 @@ class MoodleODSFormat {
 // OpenDocument XML functions
 //=============================
 function get_ods_content(&$worksheets) {
+    
+
+    // find out the size of worksheets and used formats
+    $formats = array();
+    $formatstyles = '';
+    $colstyles = '';
+
+    foreach($worksheets as $wsnum=>$ws) {
+        $ws->maxr = 0;
+        $ws->maxc = 0;
+        foreach($ws->data as $rnum=>$row) {
+            if ($rnum > $ws->maxr) {
+                $ws->maxr = $rnum;
+            }
+            foreach($row as $cnum=>$col) {
+                if ($cnum > $ws->maxc) {
+                    $ws->maxc = $cnum;
+                }
+            }
+        }
+
+        foreach($ws->columns as $cnum=>$col) {
+            if ($cnum > $ws->maxc) {
+                $ws->maxc = $cnum;
+            }
+            //define all column styles
+            if (!empty($ws->columns[$cnum])) {
+                $colstyles .= '
+  <style:style style:name="ws'.$wsnum.'co'.$cnum.'" style:family="table-column">
+   <style:table-column-properties style:column-width="'.$col->width.'pt"/>
+  </style:style>';
+            }
+        }
+    }
 
 /// header
     $buffer =
@@ -433,15 +467,8 @@ function get_ods_content(&$worksheets) {
   </style:style>
   <style:style style:name="date0" style:family="table-cell"/>';
 
-    //define all needed styles
-    foreach($worksheets as $ws) {
-        foreach($ws->columns as $ckey=>$col) {
-            $buffer .= '
-  <style:style style:name="co'.$ckey.'" style:family="table-column">
-   <style:table-column-properties style:column-width="'.$col->width.'pt"/>
-  </style:style>';
-        }
-    }
+$buffer .= $formatstyles;
+$buffer .= $colstyles;
 
  $buffer .= '
  </office:automatic-styles>
@@ -449,43 +476,24 @@ function get_ods_content(&$worksheets) {
   <office:spreadsheet>
 ';
 
-    foreach($worksheets as $ws) {
+    foreach($worksheets as $wsnum=>$ws) {
 
     /// worksheet header
         $buffer .= '<table:table table:name="' . htmlspecialchars($ws->name) . '" table:style-name="ta1">'."\n";
 
-        $maxr = 0;
-        $maxc = 0;
-        foreach($ws->data as $rkey=>$row) {
-            if ($rkey > $maxr) {
-                $maxr = $rkey;
-            }
-            foreach($row as $ckey=>$col) {
-                if ($ckey > $maxc) {
-                    $maxc = $ckey;
-                }
-            }
-        }
-
-        foreach($ws->columns as $ckey=>$col) {
-            if ($ckey > $maxc) {
-                $maxc = $ckey;
-            }
-        }
-
         // define column properties
-        for($c=0; $c<=$maxc; $c++) {
+        for($c=0; $c<=$ws->maxc; $c++) {
             if (!empty($ws->columns[$c])) {
-                $buffer .= '<table:table-column table:style-name="co'.$c.'"/>'."\n";
+                $buffer .= '<table:table-column table:style-name="ws'.$wsnum.'co'.$c.'"/>'."\n";
             } else {
                 $buffer .= '<table:table-column/>'."\n";
             }
         }
 
         // print all rows
-        for($r=0; $r<=$maxr; $r++) {
+        for($r=0; $r<=$ws->maxr; $r++) {
             $buffer .= '<table:table-row>'."\n";
-            for($c=0; $c<=$maxc; $c++) {
+            for($c=0; $c<=$ws->maxc; $c++) {
                 if (isset($ws->data[$r][$c])) {
                     if ($ws->data[$r][$c]->type == 'date') {
                         $buffer .= '<table:table-cell office:value-type="date" table:style-name="date0" office:date-value="' . strftime('%Y-%m-%dT%H:%M:%S', $ws->data[$r][$c]->value) . '">'
