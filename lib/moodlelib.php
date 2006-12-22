@@ -116,6 +116,11 @@ define('PARAM_INT',      0x0002);
 define('PARAM_INTEGER',  0x0002);
 
 /**
+ * PARAM_NUMBER - a real/floating point number. 
+ */
+define('PARAM_NUMBER',  0x000a);
+
+/**
  * PARAM_ALPHA - contains only english letters.
  */
 define('PARAM_ALPHA',    0x0004);
@@ -362,6 +367,9 @@ function clean_param($param, $type) {
 
         case PARAM_INT:
             return (int)$param;  // Convert to integer
+
+        case PARAM_NUMBER:
+            return (float)$param;  // Convert to integer
 
         case PARAM_ALPHA:        // Remove everything not a-z
             return eregi_replace('[^a-zA-Z]', '', $param);
