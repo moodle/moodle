@@ -25,7 +25,7 @@
 
 <script language="JavaScript" type="text/javascript" defer="defer">
 
-<!-- // Non-Static Javascript functions
+//<![CDATA[
 
 setTimeout('fix_column_widths()', 20);
 
@@ -80,5 +80,5 @@ function inserttext(text) {
     }
     echo "function setfocus() { if(document.$topelement) document.$focus.focus(); }\n"; } ?>
 
-// done hiding -->
+//]]>
 </script>
