@@ -1667,7 +1667,7 @@ function lesson_qtype_menu($qtypes, $selected="", $link="", $onclick="") {
     $tabrows = array();
 
     foreach ($qtypes as $qtype => $qtypename) {
-        $tabrows[] = new tabobject($qtype, "$link&amp;qtype=$qtype\" onClick=\"$onclick\"", $qtypename);
+        $tabrows[] = new tabobject($qtype, "$link&amp;qtype=$qtype\" onClick=\"$onclick", $qtypename);
     }
     $tabs[] = $tabrows;
     print_tabs($tabs, $selected);

@@ -40,23 +40,23 @@
             }
         }
     } else {
-        $linkadd = "&firstpage=1";
+        $linkadd = "&amp;firstpage=1";
     }
 
     // give teacher a blank proforma
     print_heading_with_help(get_string("addaquestionpage", "lesson"), "overview", "lesson");
     ?>
     <form name="form" method="post" action="lesson.php">
-    <input type="hidden" name="id" value="<?php echo $cm->id ?>">
-    <input type="hidden" name="action" value="insertpage">
-    <input type="hidden" name="pageid" value="<?php echo $pageid ?>">
-    <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>">
+    <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
+    <input type="hidden" name="action" value="insertpage" />
+    <input type="hidden" name="pageid" value="<?php echo $pageid ?>" />
+    <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
     <center>
       <?php
         echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
-        echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br>";
+        echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br />";
         lesson_qtype_menu($LESSON_QUESTION_TYPE, $qtype, 
-                          "lesson.php?id=$cm->id&action=addpage&pageid=".$pageid.$linkadd);
+                          "lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=".$pageid.$linkadd);
 
         if ( $qtype == LESSON_SHORTANSWER || $qtype == LESSON_MULTICHOICE ) {  // only display this option for Multichoice and shortanswer
             echo '<p>';
@@ -73,7 +73,7 @@
     <table cellpadding="5" class="generalbox" border="1">
     <tr valign="top">
     <td><b><label for="title"><?php print_string("pagetitle", "lesson"); ?>:</label></b><br />
-    <input type="text" id="title" name="title" size="80" maxsize="255" value=""></td></tr>
+    <input type="text" id="title" name="title" size="80" maxsize="255" value="" /></td></tr>
     <?php
     echo "<tr><td><b>";
     echo get_string("pagecontents", "lesson").":</b><br />\n";
@@ -101,9 +101,9 @@
                 helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                 if($lesson->custom) {
                     if ($i) {
-                        echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\">";
+                        echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\" />";
                     } else {
-                        echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"1\" size=\"5\">";
+                        echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"1\" size=\"5\" />";
                     }
                 }
                 echo "</td></tr>\n";
@@ -114,7 +114,7 @@
                 choose_from_menu($jump, "jumpto[0]", LESSON_NEXTPAGE, "");
                 helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                 if ($lesson->custom) {
-                    echo get_string("score", "lesson").": <input type=\"text\" name=\"score[0]\" value=\"1\" size=\"5\">";
+                    echo get_string("score", "lesson").": <input type=\"text\" name=\"score[0]\" value=\"1\" size=\"5\" />";
                 }
                 echo "</td></tr>\n";
             break;
@@ -142,7 +142,7 @@
                     choose_from_menu($jump, "jumpto[$i]", LESSON_NEXTPAGE, "");
                     helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                     if($lesson->custom) {
-                        echo get_string("correctanswerscore", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"1\" size=\"5\">";
+                        echo get_string("correctanswerscore", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"1\" size=\"5\" />";
                     }
                     echo "</td></tr>\n";
                 } elseif ($i == 3) {
@@ -150,7 +150,7 @@
                     choose_from_menu($jump, "jumpto[$i]", 0, "");
                     helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                     if($lesson->custom) {
-                        echo get_string("wronganswerscore", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\">";
+                        echo get_string("wronganswerscore", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\" />";
                     }
                     echo "</td></tr>\n";
                 }
@@ -168,7 +168,7 @@
                 echo "<tr><td><b>".get_string("response", "lesson")." $iplus1:</b><br />\n";
                 print_textarea(false, 6, 70, 630, 300, "response[$i]");
                 echo "</td></tr>\n";
-                echo "<tr><td><B>".get_string("jump", "lesson")." $iplus1:</b> \n";
+                echo "<tr><td><b>".get_string("jump", "lesson")." $iplus1:</b> \n";
                 if ($i) {
                     // answers 2, 3, 4... jumpto this page
                     choose_from_menu($jump, "jumpto[$i]", 0, "");
@@ -179,9 +179,9 @@
                 helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                 if($lesson->custom) {
                     if ($i) {
-                        echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\">";
+                        echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\" />";
                     } else {
-                        echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"1\" size=\"5\">";
+                        echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"1\" size=\"5\" />";
                     }
                 }
                 echo "</td></tr>\n";
@@ -191,7 +191,7 @@
     // close table and form
     ?>
     </table><br />
-    <input type="submit" value="<?php  print_string("addaquestionpage", "lesson") ?>">
-    <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
+    <input type="submit" value="<?php  print_string("addaquestionpage", "lesson") ?>" />
+    <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
     </center>
     </form>
