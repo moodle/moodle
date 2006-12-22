@@ -4801,7 +4801,7 @@ function redirect($url, $message='', $delay=-1) {
         @header('Location: '.$url);
         //another way for older browsers and already sent headers (eg trailing whitespace in config.php)
         echo '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />';
-        echo '<script type="text/javascript">'. "\n" .'<!--'. "\n". "location.replace('$surl');". "\n". '//-->'. "\n". '</script>';   // To cope with Mozilla bug
+        echo '<script type="text/javascript">'. "\n" .'//<![CDATA['. "\n". "location.replace('$surl');". "\n". '//]]>'. "\n". '</script>';   // To cope with Mozilla bug
         die;
     }
 
