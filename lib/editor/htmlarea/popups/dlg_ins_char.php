@@ -69,7 +69,7 @@ font-size: small; }
 </style>
 <script language="javascript" type="text/javascript" src="popup.js"></script>
 <script language="javascript" type="text/javascript">
-<!--
+//<![CDATA[
 function Init() {
   __dlg_init();
 }
@@ -109,7 +109,7 @@ function cancel() {
     __dlg_close(null);
     return false;
 }
-//-->
+//]]>
 </script>
 <title><?php print_string("choosechar","editor");?></title>
 </head>
@@ -123,9 +123,9 @@ function cancel() {
         <td>
 
        <script language="javascript" type="text/javascript">
-       <!--
+       //<![CDATA[
        document.write(tab(7,32))
-       //-->
+       //]]>
        </script>
 
         </td>

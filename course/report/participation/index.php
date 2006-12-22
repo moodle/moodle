@@ -292,7 +292,7 @@
         echo '<h2>'.get_string('counteditems', '', $a).'</h2>';
         echo '
 <script type="text/javascript">
-<!--
+//<![CDATA[
 function checksubmit(form) {
     var destination = form.formaction.options[form.formaction.selectedIndex].value;
     if (destination == "" || !checkchecked(form)) {
@@ -325,7 +325,7 @@ function checknos() {
     }
 }
 
-//-->
+//]]>
 </script>
 ';
         echo '<form action="'.$CFG->wwwroot.'/user/action_redir.php" method="post" name="studentsform" onSubmit="return checksubmit(this);">';

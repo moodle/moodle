@@ -433,7 +433,7 @@
     if ($bulkoperations) {
         echo '
         <script type="text/javascript">
-        <!--
+        //<![CDATA[
         function checksubmit(form) {
             var destination = form.formaction.options[form.formaction.selectedIndex].value;
             if (destination == "" || !checkchecked(form)) {
@@ -455,7 +455,7 @@
             }
             return checked;
         }
-        //-->
+        //]]>
         </script>
             ';
         echo '<form action="action_redir.php" method="post" name="participantsform" onSubmit="return checksubmit(this);">';

@@ -19,7 +19,7 @@
 <title><?php print_string("insertimage","editor");?></title>
 <script language="javascript" type="text/javascript" src="popup.js"></script>
 <script language="javascript" type="text/javascript">
-<!--
+//<![CDATA[
 var preview_window = null;
 
 function Init() {
@@ -146,7 +146,7 @@ function submit_form(dothis) {
     return false;
 }
 
-//-->
+//]]>
 </script>
 <style type="text/css">
 html, body {
