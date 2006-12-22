@@ -2897,7 +2897,7 @@ function grade_display_letter_grades() {
     echo '<tr><td align="center" class="generalboxcontent"><input size="8" type="text" name="letter'.$i.'" value="" /></td><td align="center" class="generalboxcontent"><input size="8" type="text" name="grade_low'.$i.'" value="" /></td><td align="center" class="generalboxcontent"><input type="text" size="8" name="grade_high'.$i.'" value="" /></td></tr>';
     echo '<tr><td colspan="3" align="center" class="generalboxcontent"><input type="submit" value="'.get_string('savechanges','grades').'" /></td></tr>';
     echo '<input type="hidden" name="totalitems" value="'.$i.'" />';
-    echo '</form><tr><td colspan="3" align="center" class="generalboxcontent">'.get_string('gradeletternote','grades').'</table>';
+    echo '</form><tr><td colspan="3" align="center" class="generalboxcontent">'.get_string('gradeletternote','grades').'</td></tr></table>';
 }
 
 function grade_set_letter_grades() {
