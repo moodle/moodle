@@ -65,9 +65,9 @@
         switch ($page->qtype) {
             case LESSON_MULTICHOICE :
                 echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
-                echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br>";
+                echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br />";
                 lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype, 
-                                  "lesson.php?id=$cm->id&action=editpage&pageid=$page->id",
+                                  "lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id",
                                   "document.editpage.redisplay.value=1;document.editpage.submit();");
                 echo "<p><b><label for=\"qoption\">".get_string('multianswer', 'lesson').":</label></b> \n";
                 if ($page->qoption) {
@@ -80,9 +80,9 @@
                 break;
             case LESSON_SHORTANSWER :
                 echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
-                echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br>";
+                echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br />";
                 lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype, 
-                                  "lesson.php?id=$cm->id&action=editpage&pageid=$page->id",
+                                  "lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id",
                                   "document.editpage.redisplay.value=1;document.editpage.submit();");
                 echo "<p><b><label for=\"qoption\">".get_string('casesensitive', 'lesson').":</label></b> \n";
                 if ($page->qoption) {
@@ -98,9 +98,9 @@
             case LESSON_MATCHING :
             case LESSON_NUMERICAL :
                 echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
-                echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br>";
+                echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br />";
                 lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype, 
-                                  "lesson.php?id=$cm->id&action=editpage&pageid=$page->id",
+                                  "lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id",
                                   "document.editpage.redisplay.value=1;document.editpage.submit();");
                 break;
         }
@@ -128,7 +128,7 @@
                 echo "<input name=\"layout\" type=\"checkbox\" value=\"1\" />";
             }
             echo get_string("arrangebuttonshorizontally", "lesson")."<center>\n";
-            echo "<br>";
+            echo "<br />";
             if ($page->display) {
                 echo "<center><input name=\"display\" type=\"checkbox\" value=\"1\" checked=\"checked\" />";
             } else {
@@ -149,10 +149,15 @@
         case LESSON_ENDOFBRANCH :
             echo "<input type=\"hidden\" name=\"qtype\" value=\"$page->qtype\" />\n";
             echo "<tr><td><b>".get_string("endofbranch", "lesson")."</b> \n";
-            break;                
-    }       
+            break;
+        default :
+            echo "<tr><td>";
+        break;             
+    }
+    // xhtml bug here 
     echo "</td></tr>\n";
     // get the answers in a set order, the id order
+
     if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
         foreach ($answers as $answer) {
             $flags = intval($answer->flags); // force into an integer
@@ -411,7 +416,7 @@
             switch ($page->qtype) {
                 case LESSON_ESSAY :
                     if ($i < 1) {
-                        echo "<tr><td><B>".get_string("jump", "lesson").":</b> \n";
+                        echo "<tr><td><b>".get_string("jump", "lesson").":</b> \n";
                         choose_from_menu($jump, "jumpto[$i]", 0, "");
                         helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                         if($lesson->custom) {
@@ -442,7 +447,7 @@
                 case LESSON_MULTICHOICE:
                 case LESSON_SHORTANSWER:
                 case LESSON_NUMERICAL:
-                    echo "<tr><td><B>".get_string("jump", "lesson")." $iplus1:</b> \n";
+                    echo "<tr><td><b>".get_string("jump", "lesson")." $iplus1:</b> \n";
                     choose_from_menu($jump, "jumpto[$i]", 0, "");
                     helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                     if($lesson->custom) {
@@ -451,7 +456,7 @@
                     echo "</td></tr>\n";
                     break;
                 case LESSON_BRANCHTABLE :
-                    echo "<tr><td><B>".get_string("jump", "lesson")." $iplus1:</b> \n";
+                    echo "<tr><td><b>".get_string("jump", "lesson")." $iplus1:</b> \n";
                     choose_from_menu($jump, "jumpto[$i]", 0, "");
                     helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                     echo "</td></tr>\n";

@@ -90,7 +90,7 @@
                 echo "<tr><td><b>".get_string("response", "lesson")." $iplus1:</b><br />\n";
                 print_textarea(false, 6, 70, 630, 300, "response[$i]");
                 echo "</td></tr>\n";
-                echo "<tr><td><B>".get_string("jump", "lesson")." $iplus1:</b> \n";
+                echo "<tr><td><b>".get_string("jump", "lesson")." $iplus1:</b> \n";
                 if ($i) {
                     // answers 2, 3, 4... jumpto this page
                     choose_from_menu($jump, "jumpto[$i]", 0, "");
@@ -110,7 +110,7 @@
             }
             break;
         case LESSON_ESSAY :
-                echo "<tr><td><B>".get_string("jump", "lesson").":</b> \n";
+                echo "<tr><td><b>".get_string("jump", "lesson").":</b> \n";
                 choose_from_menu($jump, "jumpto[0]", LESSON_NEXTPAGE, "");
                 helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                 if ($lesson->custom) {
