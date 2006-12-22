@@ -249,7 +249,8 @@ class MoodleODSWorksheet {
      * @param integer $level  The optional outline level (0-7)
      */
     function set_row($row, $height, $format = 0, $hidden = false, $level = 0) {
-        //not defined yet
+        $this->rows[$row] = new object();
+        $this->rows[$row]->height = $height;
     }
 
     /* Sets the width (and other settings) of one column
@@ -427,6 +428,7 @@ function get_ods_content(&$worksheets) {
     // find out the size of worksheets and used formats
     $formats = array();
     $formatstyles = '';
+    $rowstyles = '';
     $colstyles = '';
 
     foreach($worksheets as $wsnum=>$ws) {
@@ -440,6 +442,19 @@ function get_ods_content(&$worksheets) {
                 if ($cnum > $ws->maxc) {
                     $ws->maxc = $cnum;
                 }
+            }
+        }
+
+        foreach($ws->rows as $rnum=>$row) {
+            if ($rnum > $ws->maxr) {
+                $ws->maxr = $rnum;
+            }
+            //define all column styles
+            if (!empty($ws->rows[$rnum])) {
+                $rowstyles .= '
+  <style:style style:name="ws'.$wsnum.'ro'.$rnum.'" style:family="table-row">
+   <style:table-row-properties style:row-height="'.$row->height.'pt"/>
+  </style:style>';
             }
         }
 
@@ -468,6 +483,7 @@ function get_ods_content(&$worksheets) {
   <style:style style:name="date0" style:family="table-cell"/>';
 
 $buffer .= $formatstyles;
+$buffer .= $rowstyles;
 $buffer .= $colstyles;
 
  $buffer .= '
@@ -492,7 +508,11 @@ $buffer .= $colstyles;
 
         // print all rows
         for($r=0; $r<=$ws->maxr; $r++) {
-            $buffer .= '<table:table-row>'."\n";
+            if (!empty($ws->rows[$r])) {
+                $buffer .= '<table:table-row table:style-name="ws'.$wsnum.'ro'.$r.'">'."\n";
+            } else {
+                $buffer .= '<table:table-row>'."\n";
+            }
             for($c=0; $c<=$ws->maxc; $c++) {
                 if (isset($ws->data[$r][$c])) {
                     if ($ws->data[$r][$c]->type == 'date') {
