@@ -207,7 +207,7 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
 */
 function question_list($course, $categoryid, $quizid=0,
  $recurse=1, $page=0, $perpage=100, $showhidden=false, $sortorder='qtype, name ASC') {
-    global $QTYPE_MENU, $USER, $CFG;
+    global $QTYPE_MENU, $USER, $CFG, $THEME;
     
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
@@ -396,8 +396,9 @@ function question_list($course, $categoryid, $quizid=0,
     echo '<a href="javascript:select_all_in(\'TABLE\', null, \'categoryquestions\');">'.$strselectall.'</a> /'.
      ' <a href="javascript:deselect_all_in(\'TABLE\', null, \'categoryquestions\');">'.$strselectnone.'</a>'.
      '</td><td align="right"><b>&nbsp;'.get_string('withselected', 'quiz').':</b></td></tr><tr><td>';
+
     if ($quizid && has_capability('mod/quiz:manage', $context)) {
-        echo "<input type=\"submit\" name=\"add\" value=\"$straddtoquiz\" />\n";
+        echo "<input type=\"submit\" name=\"add\" value=\"{$THEME->larrow} $straddtoquiz\" />\n";
         echo '</td><td>';
     }
     // print delete and move selected question
