@@ -22,7 +22,7 @@ class question_truefalse_qtype extends default_questiontype {
         // Save answer 'True'
         if ($true = array_shift($oldanswers)) {  // Existing answer, so reuse it
             $true->answer   = get_string("true", "quiz");
-            $true->fraction = $question->answer;
+            $true->fraction = $question->correctanswer;
             $true->feedback = $question->feedbacktrue;
             if (!update_record("question_answers", $true)) {
                 $result->error = "Could not update quiz answer \"true\")!";
@@ -32,7 +32,7 @@ class question_truefalse_qtype extends default_questiontype {
             unset($true);
             $true->answer   = get_string("true", "quiz");
             $true->question = $question->id;
-            $true->fraction = $question->answer;
+            $true->fraction = $question->correctanswer;
             $true->feedback = $question->feedbacktrue;
             if (!$true->id = insert_record("question_answers", $true)) {
                 $result->error = "Could not insert quiz answer \"true\")!";
@@ -43,7 +43,7 @@ class question_truefalse_qtype extends default_questiontype {
         // Save answer 'False'
         if ($false = array_shift($oldanswers)) {  // Existing answer, so reuse it
             $false->answer   = get_string("false", "quiz");
-            $false->fraction = 1 - (int)$question->answer;
+            $false->fraction = 1 - (int)$question->correctanswer;
             $false->feedback = $question->feedbackfalse;
             if (!update_record("question_answers", $false)) {
                 $result->error = "Could not insert quiz answer \"false\")!";
@@ -53,7 +53,7 @@ class question_truefalse_qtype extends default_questiontype {
             unset($false);
             $false->answer   = get_string("false", "quiz");
             $false->question = $question->id;
-            $false->fraction = 1 - (int)$question->answer;
+            $false->fraction = 1 - (int)$question->correctanswer;
             $false->feedback = $question->feedbackfalse;
             if (!$false->id = insert_record("question_answers", $false)) {
                 $result->error = "Could not insert quiz answer \"false\")!";

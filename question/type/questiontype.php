@@ -72,6 +72,40 @@ class default_questiontype {
     }
 
     /**
+     * Return an instance of the question editing form definition. This looks for a
+     * class called edit_{$this->name()}_question_form in the file
+     * {$CFG->docroot}/question/type/{$this->name()}/edit_{$this->name()}_question_form.php
+     * and if it exists returns an instance of it.
+     *
+     * @param string $submiturl passed on to the constructor call.
+     * @return object an instance of the form definition, or null if one could not be found.
+     */
+    function create_editing_form($submiturl) {
+        global $CFG;
+        require_once("{$CFG->dirroot}/question/type/edit_question_form.php");
+        $definition_file = "{$CFG->dirroot}/question/type/{$this->name()}/edit_{$this->name()}_question_form.php";
+        if (!(is_readable($definition_file) && is_file($definition_file))) {
+            return null;
+        }
+        require_once($definition_file);
+        $classname = "edit_{$this->name()}_question_form";
+        if (!class_exists($classname)) {
+            return null;
+        }
+        return new $classname($submiturl);
+    }
+
+    /**
+     *
+     *
+     * @param $question
+     */
+    function set_default_options(&$question) {
+        $question->penalty = 0.1;
+        $question->defaultgrade = 1;
+    }
+
+    /**
     * Saves or updates a question after editing by a teacher
     *
     * Given some question info and some data about the answers

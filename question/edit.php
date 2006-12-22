@@ -31,6 +31,7 @@
     require_login($course->id, false);
   
     $SESSION->returnurl = $FULLME;
+    $SESSION->fromurl = $FULLME;
 
     // Print basic page layout.
 

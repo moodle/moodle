@@ -88,6 +88,10 @@
         error("Could not find question type: '$qtype'");
     }
 
+    if (!file_exists("type/$qtype/editquestion.php")) {
+        redirect(str_ireplace('question.php', 'question2.php', me()));
+    }
+
     require_login($course->id, false);
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
     require_capability('moodle/question:manage', $coursecontext);
