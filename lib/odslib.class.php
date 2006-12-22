@@ -58,7 +58,7 @@ class MoodleODSWorkbook {
      *                          i.e: [bold]=1 for set_bold(1)...Optional!
      */
     function &add_format($properties = array()) {
-        $format = new MoodleODSFormat($this, $properties);
+        $format = new MoodleODSFormat($properties);
         return $format;;
     }
 
@@ -117,6 +117,8 @@ class MoodleODSWorkbook {
 
 class MoodleODSWorksheet {
     var $data = array();
+    var $columns = array();
+    var $rows = array();
     var $name;
 
 
@@ -246,7 +248,7 @@ class MoodleODSWorksheet {
      * @param bool    $hidden The optional hidden attribute
      * @param integer $level  The optional outline level (0-7)
      */
-    function set_row ($row, $height, $format = 0, $hidden = false, $level = 0) {
+    function set_row($row, $height, $format = 0, $hidden = false, $level = 0) {
         //not defined yet
     }
 
@@ -258,25 +260,30 @@ class MoodleODSWorksheet {
      * @param integer $hidden   The optional hidden atribute
      * @param integer $level    The optional outline level (0-7)
      */
-    function set_column ($firstcol, $lastcol, $width, $format = 0, $hidden = false, $level = 0) {
-        //not defined yet
+    function set_column($firstcol, $lastcol, $width, $format = 0, $hidden = false, $level = 0) {
+        for($i=$firstcol; $i<=$lastcol; $i++) {
+            $this->columns[$i] = new object();
+            $this->columns[$i]->width = $width;
+        }
     }
 
 }
 
 /**
 * Define and operate over one Format.
-*
-* A big part of this class acts as a wrapper over the PEAR
-* Spreadsheet_Excel_Writer_Workbook and OLE libraries
-* maintaining Moodle functions isolated from underlying code.
 */
 class MoodleODSFormat {
+    var $formatid;
+    var $properties;
 
     /* Constructs one Moodle Format.
      * @param object $workbook The internal PEAR Workbook onject we are creating
      */
-    function MoodleODSFormat(&$workbook, $properties = array()) {
+    function MoodleODSFormat($properties = array()) {
+        static $fid = 1;
+       
+        $this->properties = $properties; 
+        $this->formatid = $fid++;
     }
 
     /* Set weight of the format
@@ -424,7 +431,19 @@ function get_ods_content(&$worksheets) {
   <style:style style:name="ta1" style:family="table" style:master-page-name="Standard1">
    <style:table-properties table:display="true"/>
   </style:style>
-  <style:style style:name="date0" style:family="table-cell"/>
+  <style:style style:name="date0" style:family="table-cell"/>';
+
+    //define all needed styles
+    foreach($worksheets as $ws) {
+        foreach($ws->columns as $ckey=>$col) {
+            $buffer .= '
+  <style:style style:name="co'.$ckey.'" style:family="table-column">
+   <style:table-column-properties style:column-width="'.$col->width.'pt"/>
+  </style:style>';
+        }
+    }
+
+ $buffer .= '
  </office:automatic-styles>
  <office:body>
   <office:spreadsheet>
@@ -433,24 +452,40 @@ function get_ods_content(&$worksheets) {
     foreach($worksheets as $ws) {
 
     /// worksheet header
-        $buffer .= '<table:table table:name="' . htmlspecialchars($ws->name) . '" table:style-name="ta1">'."\n".' <table:table-column/>'."\n";
+        $buffer .= '<table:table table:name="' . htmlspecialchars($ws->name) . '" table:style-name="ta1">'."\n";
 
-        $nr = 0;
-        $nc = 0;
+        $maxr = 0;
+        $maxc = 0;
         foreach($ws->data as $rkey=>$row) {
-            if ($rkey > $nr) {
-                $nr = $rkey;
+            if ($rkey > $maxr) {
+                $maxr = $rkey;
             }
             foreach($row as $ckey=>$col) {
-                if ($ckey > $nc) {
-                    $nc = $ckey;
+                if ($ckey > $maxc) {
+                    $maxc = $ckey;
                 }
             }
         }
 
-        for($r=0; $r<=$nr; $r++) {
+        foreach($ws->columns as $ckey=>$col) {
+            if ($ckey > $maxc) {
+                $maxc = $ckey;
+            }
+        }
+
+        // define column properties
+        for($c=0; $c<=$maxc; $c++) {
+            if (!empty($ws->columns[$c])) {
+                $buffer .= '<table:table-column table:style-name="co'.$c.'"/>'."\n";
+            } else {
+                $buffer .= '<table:table-column/>'."\n";
+            }
+        }
+
+        // print all rows
+        for($r=0; $r<=$maxr; $r++) {
             $buffer .= '<table:table-row>'."\n";
-            for($c=0; $c<=$nc; $c++) {
+            for($c=0; $c<=$maxc; $c++) {
                 if (isset($ws->data[$r][$c])) {
                     if ($ws->data[$r][$c]->type == 'date') {
                         $buffer .= '<table:table-cell office:value-type="date" table:style-name="date0" office:date-value="' . strftime('%Y-%m-%dT%H:%M:%S', $ws->data[$r][$c]->value) . '">'
