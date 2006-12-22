@@ -2440,10 +2440,15 @@ function grade_set_categories() {
     /// Collect modules data
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
     
-    echo  '<table border="0" cellspacing="2" cellpadding="5" align="center" class="generalbox"><tr><th colspan="5" class="header" scope="col">'.get_string('setcategories','grades');
+    echo  '<table border="0" cellspacing="2" cellpadding="5" align="center" class="generalbox">';
+    echo  '<tr><th colspan="5" class="header" scope="col">'.get_string('setcategories','grades');
     helpbutton('category', get_string('gradecategoryhelp','grades'), 'grade');
     echo  '</th></tr>';
-    echo  '<tr><td align="center" class="generaltableheader">'.get_string('gradeitem','grades').'</td><td align="center" class="generaltableheader">'.get_string('category','grades').'</td><td align="center" class="generaltableheader">'.get_string('maxgrade','grades').'</td><td align="center" class="generaltableheader">'.get_string('curveto','grades').'</td><td align="center" class="generaltableheader">'.get_string('extracredit','grades').'</td></tr>';
+    echo  '<tr><td align="center" class="generaltableheader">'.get_string('gradeitem','grades').'</td>';
+    echo  '<td align="center" class="generaltableheader">'.get_string('category','grades').'</td>';
+    echo  '<td align="center" class="generaltableheader">'.get_string('maxgrade','grades').'</td>';
+    echo  '<td align="center" class="generaltableheader">'.get_string('curveto','grades').'</td>';
+    echo  '<td align="center" class="generaltableheader">'.get_string('extracredit','grades').'</td></tr>';
     echo  '<form name="set_categories" method="post" action="./index.php" >';
     echo  '<input type="hidden" name="action" value="assign_categories" />';
     echo  '<input type="hidden" name="id" value="'.$course->id.'" />';
@@ -2876,11 +2881,15 @@ function grade_display_letter_grades() {
         $letters[10]->grade_high=59.99;
         $letters[10]->courseid = $course->id;
     }
-    
-    echo '<table border="0" cellspacing="2" cellpadding="5" align="center" class="generalbox"><tr><th colspan="3" class="header" scope="col">'.get_string('setgradeletters','grades');
-    helpbutton('letter', get_string('gradeletterhelp','grades'), 'grade');
-    echo '</th></tr><tr><td align="center" class="generaltableheader">'.get_string('gradeletter','grades').'</td><td align="center" class="generaltableheader">'.get_string('lowgradeletter','grades').'</td><td align="center" class="generaltableheader">'.get_string('highgradeletter','grades').'</td></tr>';
+
     echo '<form name="grade_letter"><input type="hidden" name="id" value="'.$course->id.'" />';
+    echo '<table border="0" cellspacing="2" cellpadding="5" align="center" class="generalbox"><tr>';
+    echo '<th colspan="3" class="header" scope="col">'.get_string('setgradeletters','grades');
+    helpbutton('letter', get_string('gradeletterhelp','grades'), 'grade');
+    echo '</th></tr>';
+    echo '<tr><td align="center" class="generaltableheader">'.get_string('gradeletter','grades').'</td>';
+    echo '<td align="center" class="generaltableheader">'.get_string('lowgradeletter','grades').'</td>';
+    echo '<td align="center" class="generaltableheader">'.get_string('highgradeletter','grades').'</td></tr>';
     echo '<input type="hidden" name="action" value="set_letter_grades" />';
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     $i=0;
@@ -2897,7 +2906,8 @@ function grade_display_letter_grades() {
     echo '<tr><td align="center" class="generalboxcontent"><input size="8" type="text" name="letter'.$i.'" value="" /></td><td align="center" class="generalboxcontent"><input size="8" type="text" name="grade_low'.$i.'" value="" /></td><td align="center" class="generalboxcontent"><input type="text" size="8" name="grade_high'.$i.'" value="" /></td></tr>';
     echo '<tr><td colspan="3" align="center" class="generalboxcontent"><input type="submit" value="'.get_string('savechanges','grades').'" /></td></tr>';
     echo '<input type="hidden" name="totalitems" value="'.$i.'" />';
-    echo '</form><tr><td colspan="3" align="center" class="generalboxcontent">'.get_string('gradeletternote','grades').'</td></tr></table>';
+    echo '<tr><td colspan="3" align="center" class="generalboxcontent">'.get_string('gradeletternote','grades').'</td></tr></table>';
+    echo '</form>';
 }
 
 function grade_set_letter_grades() {
