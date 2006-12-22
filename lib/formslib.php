@@ -1045,6 +1045,7 @@ function validate_' . $this->_attributes['id'] . '(frm) {
 
     function getLockOptionEndScript(){
         $js = '<script type="text/javascript" language="javascript">'."\n";
+        $js .= '//<![CDATA['."\n";
         $js .= "var ".$this->getAttribute('id')."items= {";
         foreach ($this->_dependencies as $dependentOn => $elements){
             $js .= "'$dependentOn'".' : {dependents :[';
@@ -1065,6 +1066,7 @@ function validate_' . $this->_attributes['id'] . '(frm) {
         $js=rtrim($js, ",\n");
         $js .= '};'."\n";
         $js .="lockoptionsallsetup('".$this->getAttribute('id')."');\n";
+        $js .='//]]>'."\n";
         $js .='</script>'."\n";
         return $js;
     }

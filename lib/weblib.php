@@ -3694,7 +3694,8 @@ function use_html_editor($name='', $editorhidebuttons='', $id='') {
     if ($id === '') {
         $id = 'edit-'.$name;
     }
-    echo '<script language="javascript" type="text/javascript" defer="defer">'."\n";
+    echo "\n".'<script language="javascript" type="text/javascript" defer="defer">'."\n";
+    echo '//<![CDATA['."\n";
     echo "$editor = new HTMLArea('$id');\n";
     echo "var config = $editor.config;\n";
 
@@ -3705,6 +3706,7 @@ function use_html_editor($name='', $editorhidebuttons='', $id='') {
     } else {
         echo "\n$editor.generate();\n";
     }
+    echo '//]]>'."\n";
     echo '</script>'."\n";
 }
 

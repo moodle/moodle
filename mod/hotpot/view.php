@@ -255,7 +255,7 @@
         foreach ($feedback as $i=>$str) {
             $js .= 'FEEDBACK['.$i."] = $str;\n";
         }
-        $js = '<script type="text/javascript" language="javascript">'."<!--\n"."FEEDBACK = new Array();\n".$js."//--></script>\n";
+        $js = '<script type="text/javascript" language="javascript">'."\n//<![CDATA[\n"."FEEDBACK = new Array();\n".$js."//]]>\n</script>\n";
         $hp->html = preg_replace('|</head>|i', "$js</head>", $hp->html, 1);
     }
     // insert hot-potatoes.js
@@ -302,7 +302,7 @@
         //  so some old or modified themes may not insert $body_tags
         $body .= ""
         .   '<script type="text/javascript">'."\n"
-        .   "<!--\n"
+        .   "//<![CDATA[\n"
         .   "   var s = (typeof(window.onload)=='function') ? onload.toString() : '';\n"
         .   "   if (s.indexOf('".$matches[3]."')<0) {\n"
         .   "       if (s=='') {\n" // no previous onload
@@ -312,7 +312,7 @@
         .   "           window.onload = new Function('window.onload_hotpot();'+'".$matches[3]."');\n"
         .   "       }\n"
         .   "    }\n"
-        .   "//-->\n"
+        .   "//]]>\n"
         .   "</script>\n"
         ;
         $footer = '</body>'.$footer;
