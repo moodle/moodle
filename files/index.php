@@ -188,18 +188,17 @@
                 $strcancel = get_string("cancel");
 
                 echo "<p>$struploadafile ($strmaxsize) --> <b>$wdir</b></p>";
+                echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"index.php\">";                
                 echo "<table><tr><td colspan=\"2\">";
-                echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"index.php\">";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"upload\" />";
                 echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
                 upload_print_form_fragment(1,array('userfile'),null,false,null,$upload_max_filesize,0,false);
-                echo " </td></tr><tr><td width=\"10\">";
+                echo " </td></tr></table>";
                 echo " <input type=\"submit\" name=\"save\" value=\"$struploadthisfile\" />";
                 echo "</form>";
-                echo "</td><td width=\"100%\">";
                 echo "<form action=\"index.php\" method=\"get\">";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
@@ -207,7 +206,6 @@
                 echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                 echo " <input type=\"submit\" value=\"$strcancel\" />";
                 echo "</form>";
-                echo "</td></tr></table>";
             }
             html_footer();
             break;
