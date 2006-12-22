@@ -243,6 +243,9 @@
                 }
             }
         break;
+        default: // no action
+            $title='';
+        break;
     }
     if(empty($focus)) $focus = '';
 
