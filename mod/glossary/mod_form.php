@@ -37,7 +37,7 @@ class glossary_mod_form extends moodleform_mod {
         $mform->setHelpButton('mainglossary', array('mainglossary', get_string('mainglossary', 'glossary'), 'glossary'));
         $mform->setDefault('mainglossary', 0);
 
-        $mform->addElement('selectyesno', 'allowduplicatedentries', get_string('allowduplicatedentries', 'glossary'), $options);
+        $mform->addElement('selectyesno', 'allowduplicatedentries', get_string('allowduplicatedentries', 'glossary'));
         $mform->setDefault('allowduplicatedentries', $CFG->glossary_dupentries);
         $mform->setHelpButton('allowduplicatedentries', array('allowduplicatedentries', get_string('allowduplicatedentries', 'glossary'), 'glossary'));
 
