@@ -1016,9 +1016,9 @@ function popup_form($common, $options, $formname, $selected='', $nothing='choose
     $output .= '<div id="noscript'.$formname.'" style="display: inline;">';
     $output .= '<input type="submit" value="'.$go.'" /></div>';
     $output .= '<script type="text/javascript">'.
-               "\n<!--\n".
+               "\n//<![CDATA[\n".
                'document.getElementById("noscript'.$formname.'").style.display = "none";'.
-               "\n-->\n".'</script>';
+               "\n//]]>\n".'</script>';
     $output .= '</form>' . "\n";
 
     if ($help) {
