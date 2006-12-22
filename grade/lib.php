@@ -3084,7 +3084,7 @@ function print_student_grade($user, $course) {
                                     if (!empty($modgrades->grades[$user->id])) {
                                         $currentgrade = $modgrades->grades[$user->id];
                                         echo "<td><a href='$link'>$mod->modfullname: ".format_string($instance->name,true)."</a></td><td>$currentgrade</td><td>$maxgrade</td>";            } else {
-                                        echo "<td><a href='$link'>$mod->modfullname: ".format_string($instance->name,true)."</td><td>".get_string('nograde')."</a></td><td>$maxgrade</td>";                                        
+                                        echo "<td><a href='$link'>$mod->modfullname: ".format_string($instance->name,true)."</a></td><td>".get_string('nograde')."</td><td>$maxgrade</td>";                                        
                                     }
                                     echo '</tr>';                       
                                 }
