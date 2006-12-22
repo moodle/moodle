@@ -82,7 +82,7 @@
     <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <script type="text/javascript">
-        <!--
+        //<![CDATA[
         if (parent.msg.document.getElementById("msgStarted") == null) {
             parent.msg.document.close();
             parent.msg.document.open("text/html","replace");
@@ -93,7 +93,7 @@
             parent.msg.document.write("<?php echo $stylesheetshtml ?>");
             parent.msg.document.write("</head><body class=\"mod-chat-gui_header_js course-<?php echo $chatuser->course ?>\" id=\"mod-chat-gui_header_js-jsupdate\"><div style=\"display: none\" id=\"msgStarted\">&nbsp;</div>");
         }
-        // -->
+        //]]>
         </script>
    </head>
    <body>
@@ -153,8 +153,8 @@
             $num = 0;
         }
 
-        print '<script type="text/javascript">' . "\n";
-        print "<!-- \n\n"; 
+        print '<script language="Javascript" type="text/javascript">' . "\n";
+        print "//<![CDATA[\n\n"; 
 
         $chat_newrow = ($chat_lastrow + $num) % 2;
 
@@ -199,7 +199,7 @@
         }
 
         print 'parent.msg.scroll(1,5000000);' . "\n\n";
-        print "// -->\n";
+        print "//]]>\n";
         print '</script>' . "\n\n";
         if ($beep) {
             print '<embed src="../beep.wav" autostart="true" hidden="true" name="beep" />';
@@ -211,10 +211,10 @@
 
     // here & should be written & :-D
     $refreshurl = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdated.php?chat_sid=$chat_sid&chat_lasttime=$chat_lasttime&chat_lastrow=$chat_newrow&chat_lastid=$chat_lastid"; 
-    print '<script type="text/javascript">' . "\n";
-    print "<!-- \n\n"; 
+    print '<script language="Javascript" type="text/javascript">' . "\n";
+    print "//<![CDATA[ \n\n"; 
     print "location.href = '$refreshurl';\n";
-    print "// -->\n";
+    print "//]]>\n";
     print '</script>' . "\n\n";
 
 ?>

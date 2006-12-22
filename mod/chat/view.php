@@ -151,7 +151,7 @@
             echo fullname($chatuser).'<br />';
             echo "<font color=\"#888888\">$stridle: ".format_time($lastping)."</font>";
             echo '</font></p>';
-            echo '<td></tr>';
+            echo '</td></tr>';
         }
         echo '</table>';
         print_simple_box_end();

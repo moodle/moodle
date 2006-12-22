@@ -68,6 +68,7 @@
 
     // no &amp; in url, does not work in header!
     $refreshurl = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdate.php?chat_sid=$chat_sid&chat_lasttime=$chat_newlasttime&chat_lastrow=$chat_newrow"; 
+    $refreshurlamp = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdate.php?chat_sid=$chat_sid&amp;chat_lasttime=$chat_newlasttime&amp;chat_lastrow=$chat_newrow"; 
 
     header('Expires: Sun, 28 Dec 1997 09:32:45 GMT');
     header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
@@ -90,9 +91,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
     <head>
+        <title> </title>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <script type="text/javascript">
-        <!--
+        //<![CDATA[
         if (parent.msg.document.getElementById("msgStarted") == null) {
             parent.msg.document.close();
             parent.msg.document.open("text/html","replace");
@@ -101,7 +103,7 @@
             parent.msg.document.write("<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />");
             parent.msg.document.write("<base target=\"_blank\" />");
             parent.msg.document.write("<?php echo $stylesheetshtml ?>");
-            parent.msg.document.write("</head><body class=\"mod-chat-gui_header_js course-<?php echo $chatuser->course ?>\" id=\"mod-chat-gui_header_js-jsupdate\"><div style=\"display: none\" id=\"msgStarted\">&nbsp;</div>");
+            parent.msg.document.write("<\/head><body class=\"mod-chat-gui_header_js course-<?php echo $chatuser->course ?>\" id=\"mod-chat-gui_header_js-jsupdate\"><div style=\"display: none\" id=\"msgStarted\">&nbsp;<\/div>");
         }
         <?php
         $beep = false;
@@ -142,7 +144,7 @@
         }
         ?>
         parent.msg.scroll(1,5000000);
-        // -->
+        //]]>
         </script>
     </head>
     <body>
@@ -151,7 +153,7 @@
                 echo '<embed src="../beep.wav" autostart="true" hidden="true" name="beep" />';
             }
         ?>
-       <a href="<?php echo $refreshurl ?>" name="refreshLink">Refresh link</a>
+       <a href="<?php echo $refreshurlamp ?>" name="refreshLink">Refresh link</a>
     </body>
 </html>
 <?php

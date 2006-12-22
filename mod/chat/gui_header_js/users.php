@@ -58,8 +58,8 @@
 
     ob_start();
     ?>
-    <script type="text/javascript">
-    <!--
+    <script language="JavaScript" type="text/javascript">
+    //<![CDATA[
     var timer = null
     var f = 1; //seconds
     var uidles = new Array(<?php echo count($chatusers) ?>);
@@ -92,7 +92,7 @@
         }
         timer = setTimeout("update()", f*1000);
     }
-    // -->
+    //]]>
     </script>
     <?php
 

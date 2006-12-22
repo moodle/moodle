@@ -27,8 +27,8 @@
 
     ob_start();
     ?>
-    <script type="text/javascript">
-    <!--
+    <script language="JavaScript" type="text/javascript">
+    //<![CDATA[
     var waitFlag = false;
     function empty_field_and_submit() {
         if(waitFlag) return false;
@@ -49,7 +49,7 @@
         input_chat_message.focus();
     }
 
-    // -->
+    //]]>
     </script>
     <?php
 
@@ -57,13 +57,13 @@
     print_header('', '', '', 'inputForm.chat_message', $meta, false);
 
 ?>
-    <form action="../empty.php" method="POST" target="empty" name="inputForm"
-          OnSubmit="return empty_field_and_submit()">
+    <form action="../empty.php" method="post" target="empty" name="inputForm"
+          onsubmit="return empty_field_and_submit()">
         &gt;&gt;<input type="text" id="input_chat_message" name="chat_message" size="60" value="" />
         <?php helpbutton('chatting', get_string('helpchatting', 'chat'), 'chat', true, false); ?>
     </form>
 
-    <form action="insert.php" method="POST" target="empty" name="sendForm">
+    <form action="insert.php" method="post" target="empty" name="sendForm">
         <input type="hidden" name="chat_sid" value="<?php echo $chat_sid ?>" />
         <input type="hidden" name="chat_message" />
     </form>
