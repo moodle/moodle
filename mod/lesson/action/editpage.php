@@ -55,7 +55,7 @@
     ?>
     <form name="editpage" method="post" action="lesson.php">
     <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
-    <input type="hidden" name="action" value="updatepage">
+    <input type="hidden" name="action" value="updatepage" />
     <input type="hidden" name="pageid" value="<?php echo $pageid ?>" />
     <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />        
     <input type="hidden" name="redirect" value="<?php echo $redirect ?>" />        
@@ -108,7 +108,7 @@
     <table cellpadding="5" class="generalbox" border="1">
     <tr valign="top">
     <td><b><label for="title"><?php print_string('pagetitle', 'lesson'); ?>:</label></b><br />
-    <input type="text" id="title" name="title" size="80" maxsize="255" value="<?php p($page->title) ?>"></td>
+    <input type="text" id="title" name="title" size="80" maxsize="255" value="<?php p($page->title) ?>" /></td>
     </tr>
     <?PHP
     echo "<tr><td><b>";
@@ -119,35 +119,35 @@
     $n = 0;
     switch ($page->qtype) {
         case LESSON_BRANCHTABLE :
-            echo "<input type=\"hidden\" name=\"qtype\" value=\"$page->qtype\">\n";
+            echo "<input type=\"hidden\" name=\"qtype\" value=\"$page->qtype\" />\n";
             echo "<tr><td>\n";
             echo "<center>";
             if ($page->layout) {
-                echo "<input checked=\"checked\" name=\"layout\" type=\"checkbox\" value=\"1\">";
+                echo "<input checked=\"checked\" name=\"layout\" type=\"checkbox\" value=\"1\" />";
             } else {
-                echo "<input name=\"layout\" type=\"checkbox\" value=\"1\">";
+                echo "<input name=\"layout\" type=\"checkbox\" value=\"1\" />";
             }
             echo get_string("arrangebuttonshorizontally", "lesson")."<center>\n";
             echo "<br>";
             if ($page->display) {
-                echo "<center><input name=\"display\" type=\"checkbox\" value=\"1\" checked=\"checked\">";
+                echo "<center><input name=\"display\" type=\"checkbox\" value=\"1\" checked=\"checked\" />";
             } else {
-                echo "<center><input name=\"display\" type=\"checkbox\" value=\"1\">";
+                echo "<center><input name=\"display\" type=\"checkbox\" value=\"1\" />";
             }                
             echo get_string("displayinleftmenu", "lesson")."<center>\n";
             echo "</td></tr>\n";
             echo "<tr><td><b>".get_string("branchtable", "lesson")."</b> \n";
             break;
         case LESSON_CLUSTER :
-            echo "<input type=\"hidden\" name=\"qtype\" value=\"$page->qtype\">\n";
+            echo "<input type=\"hidden\" name=\"qtype\" value=\"$page->qtype\" />\n";
             echo "<tr><td><b>".get_string("clustertitle", "lesson")."</b> \n";
             break;                
         case LESSON_ENDOFCLUSTER :
-            echo "<input type=\"hidden\" name=\"qtype\" value=\"$page->qtype\">\n";
+            echo "<input type=\"hidden\" name=\"qtype\" value=\"$page->qtype\" />\n";
             echo "<tr><td><b>".get_string("endofclustertitle", "lesson")."</b> \n";
             break;                            
         case LESSON_ENDOFBRANCH :
-            echo "<input type=\"hidden\" name=\"qtype\" value=\"$page->qtype\">\n";
+            echo "<input type=\"hidden\" name=\"qtype\" value=\"$page->qtype\" />\n";
             echo "<tr><td><b>".get_string("endofbranch", "lesson")."</b> \n";
             break;                
     }       
@@ -157,7 +157,7 @@
         foreach ($answers as $answer) {
             $flags = intval($answer->flags); // force into an integer
             $nplus1 = $n + 1;
-            echo "<input type=\"hidden\" name=\"answerid[$n]\" value=\"$answer->id\">\n";
+            echo "<input type=\"hidden\" name=\"answerid[$n]\" value=\"$answer->id\" />\n";
             switch ($page->qtype) {
                 case LESSON_MATCHING:
                     if ($n == 0) {
@@ -296,14 +296,14 @@
                         choose_from_menu($jump, "jumpto[$n]", $answer->jumpto, "");
                         helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                         if($lesson->custom)
-                            echo get_string("correctanswerscore", "lesson").": <input type=\"text\" name=\"score[$n]\" value=\"$answer->score\" size=\"5\">";
+                            echo get_string("correctanswerscore", "lesson").": <input type=\"text\" name=\"score[$n]\" value=\"$answer->score\" size=\"5\" />";
                         }
                     if ($n == 3) {
                         echo "<tr><td><b>".get_string("wronganswerjump", "lesson").":</b> \n";
                         choose_from_menu($jump, "jumpto[$n]", $answer->jumpto, "");
                         helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                         if($lesson->custom)
-                            echo get_string("wronganswerscore", "lesson").": <input type=\"text\" name=\"score[$n]\" value=\"$answer->score\" size=\"5\">";
+                            echo get_string("wronganswerscore", "lesson").": <input type=\"text\" name=\"score[$n]\" value=\"$answer->score\" size=\"5\" />";
                         }
                     echo "</td></tr>\n";
                     break;
@@ -312,7 +312,7 @@
                     choose_from_menu($jump, "jumpto[$n]", $answer->jumpto, "");
                     helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                     if($lesson->custom) {
-                        echo get_string("score", "lesson").": <input type=\"text\" name=\"score[$n]\" value=\"$answer->score\" size=\"5\">";
+                        echo get_string("score", "lesson").": <input type=\"text\" name=\"score[$n]\" value=\"$answer->score\" size=\"5\" />";
                     }
                     echo "</td></tr>\n";
                     break;
@@ -324,7 +324,7 @@
                     choose_from_menu($jump, "jumpto[$n]", $answer->jumpto, "");
                     helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                     if($lesson->custom) {
-                        echo get_string("score", "lesson")." $nplus1: <input type=\"text\" name=\"score[$n]\" value=\"$answer->score\" size=\"5\">";
+                        echo get_string("score", "lesson")." $nplus1: <input type=\"text\" name=\"score[$n]\" value=\"$answer->score\" size=\"5\" />";
                     }
                     echo "</td></tr>\n";
                     break;
@@ -355,20 +355,20 @@
                 break; // stop printing answers... only need two for true/false
             }
             $iplus1 = $i + 1;
-            echo "<input type=\"hidden\" name=\"answerid[$i]\" value=\"0\">\n";
+            echo "<input type=\"hidden\" name=\"answerid[$i]\" value=\"0\" />\n";
             switch ($page->qtype) {
                 case LESSON_MATCHING:
                     $icorrected = $i - 1;
                     echo "<tr><td><b>".get_string("answer", "lesson")." $icorrected:</b>\n";
                     echo " [".get_string("useeditor", "lesson").": ".
-                        "<input type=\"checkbox\" name=\"answereditor[$i]\" value=\"1\">";
+                        "<input type=\"checkbox\" name=\"answereditor[$i]\" value=\"1\" />";
                     helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                     echo "]<br />\n";
                     print_textarea(false, 10, 70, 630, 300, "answer[$i]");
                     echo "</td></tr>\n";
                     echo "<tr><td><b>".get_string("matchesanswer", "lesson")." $icorrected:</b>\n";
                     echo " [".get_string("useeditor", "lesson").": ".
-                        "<input type=\"checkbox\" name=\"responseeditor[$i]\" value=\"1\">";
+                        "<input type=\"checkbox\" name=\"responseeditor[$i]\" value=\"1\" />";
                     helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                     echo "]<br />\n";
                     print_textarea(false, 10, 70, 630, 300, "response[$i]");
@@ -381,7 +381,7 @@
                     echo "<tr><td><b>".get_string("answer", "lesson")." $iplus1:</b>\n";
                     if ($page->qtype != LESSON_SHORTANSWER and $page->qtype != LESSON_NUMERICAL) {
                         echo " [".get_string("useeditor", "lesson").": ".
-                            "<input type=\"checkbox\" name=\"answereditor[$i]\" value=\"1\">";
+                            "<input type=\"checkbox\" name=\"answereditor[$i]\" value=\"1\" />";
                         helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                         echo "]<br />\n";
                         print_textarea(false, 10, 70, 630, 300, "answer[$i]");
@@ -392,7 +392,7 @@
                     echo "</td></tr>\n";
                     echo "<tr><td><b>".get_string("response", "lesson")." $iplus1:</b>\n";
                     echo " [".get_string("useeditor", "lesson").": ".
-                        "<input type=\"checkbox\" name=\"responseeditor[$i]\" value=\"1\">";
+                        "<input type=\"checkbox\" name=\"responseeditor[$i]\" value=\"1\" />";
                     helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                     echo "]<br />\n";
                     print_textarea(false, 10, 70, 630, 300, "response[$i]");
@@ -401,7 +401,7 @@
                 case LESSON_BRANCHTABLE:
                     echo "<tr><td><b>".get_string("description", "lesson")." $iplus1:</b>\n";
                     echo " [".get_string("useeditor", "lesson").": ".
-                        "<input type=\"checkbox\" name=\"answereditor[$i]\" value=\"1\">";
+                        "<input type=\"checkbox\" name=\"answereditor[$i]\" value=\"1\" />";
                     helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                     echo "]<br />\n";
                     print_textarea(false, 10, 70, 630, 300, "answer[$i]");
@@ -415,7 +415,7 @@
                         choose_from_menu($jump, "jumpto[$i]", 0, "");
                         helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                         if($lesson->custom) {
-                            echo get_string("score", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"1\" size=\"5\">";
+                            echo get_string("score", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"1\" size=\"5\" />";
                         }
                         echo "</td></tr>\n";
                     }
@@ -426,14 +426,14 @@
                         choose_from_menu($jump, "jumpto[$i]", $answer->jumpto, "");
                         helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                         if($lesson->custom)
-                            echo get_string("correctanswerscore", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"$answer->score\" size=\"5\">";
+                            echo get_string("correctanswerscore", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"$answer->score\" size=\"5\" />";
                         }
                     if ($i == 3) {
                         echo "<tr><td><b>".get_string("wronganswerjump", "lesson").":</b> \n";
                         choose_from_menu($jump, "jumpto[$i]", $answer->jumpto, "");
                         helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                         if($lesson->custom)
-                            echo get_string("wronganswerscore", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"$answer->score\" size=\"5\">";
+                            echo get_string("wronganswerscore", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"$answer->score\" size=\"5\" />";
                         }
 
                     echo "</td></tr>\n";
@@ -446,7 +446,7 @@
                     choose_from_menu($jump, "jumpto[$i]", 0, "");
                     helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                     if($lesson->custom) {
-                        echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\">";
+                        echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\" />";
                     }
                     echo "</td></tr>\n";
                     break;
