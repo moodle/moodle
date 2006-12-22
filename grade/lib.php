@@ -2723,7 +2723,7 @@ function grade_display_grade_preferences($course, $preferences) {
     echo  '<input type="hidden" name="action" value="set_grade_preferences" />';
     echo  '<input type="hidden" name="id" value="'.$course->id.'" />';
     echo  '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    echo  '<table border="0" cellspacing="2" cellpadding="5" align="center" class="gradeprefs generalbox"';
+    echo  '<table border="0" cellspacing="2" cellpadding="5" align="center" class="gradeprefs generalbox">';
     
     $optionsyesno = NULL;
     $optionsyesno[0] = get_string('no');
