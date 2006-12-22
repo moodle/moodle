@@ -2376,15 +2376,21 @@ function grade_display_grade_weights() {
     
     $categories = get_records('grade_category', 'courseid', $course->id);
     if ($categories) {
-        echo  '<table border="0" cellspacing="2" cellpadding="5" align="center" class="generalbox"><tr><th colspan="5" class="header" scope="col">'.get_string('setweights','grades');
+        echo  '<form name="grade_weights" action="./index.php" method="post">';
+        echo  '<table border="0" cellspacing="2" cellpadding="5" align="center" class="generalbox">';
+        echo  '<tr><th colspan="5" class="header" scope="col">'.get_string('setweights','grades');
         helpbutton('weight', get_string('gradeweighthelp','grades'), 'grade');
         echo  '</th></tr>';
-        echo  '<tr><td align="center" class="generaltableheader">'.get_string('category','grades').'</td><td align="center" class="generaltableheader">'.get_string('weight','grades').'</td><td align="center" class="generaltableheader">'.get_string('dropxlowest','grades').'</td><td align="center" class="generaltableheader">'.get_string('bonuspoints','grades').'</td><td align="center" class="generaltableheader">'.get_string('hidecategory','grades').'</td></tr>';
-        echo  '<form name="grade_weights" action="./index.php" method="post">';
+        echo  '<tr><td align="center" class="generaltableheader">'.get_string('category','grades').'</td>';
+        echo  '<td align="center" class="generaltableheader">'.get_string('weight','grades').'</td>';
+        echo  '<td align="center" class="generaltableheader">'.get_string('dropxlowest','grades').'</td>';
+        echo  '<td align="center" class="generaltableheader">'.get_string('bonuspoints','grades').'</td>';
+        echo  '<td align="center" class="generaltableheader">'.get_string('hidecategory','grades').'</td>';
+        echo  '</tr>';
         echo  '<input type="hidden" name="id" value="'.$course->id.'" />';
         echo  '<input type="hidden" name="action" value="set_grade_weights" />';
         echo  '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-    
+
         $sum = 0;
         
         foreach($categories as $category) {
@@ -2404,9 +2410,11 @@ function grade_display_grade_weights() {
             if ($category->hidden == 1) {
                 echo  ' checked="checked"';
             }
-            echo  ' /></td>';
+            echo  ' /></td></tr>';
         }
-        echo  '<tr><td colspan="5" align="center" class="generalboxcontent"><input type="submit" value="'.get_string('savechanges','grades').'" /></td></tr></form>';
+        echo  '<tr><td colspan="5" align="center" class="generalboxcontent">';
+        echo  '<input type="submit" value="'.get_string('savechanges','grades').'" />';
+        echo  '</td></tr>';
         if ($sum != 100) {
             echo  '<tr><td colspan="5" align="center" class="generalboxcontent"><font color="red">'.get_string('totalweightnot100','grades').'</font></td></tr>';
         }
@@ -2419,6 +2427,7 @@ function grade_display_grade_weights() {
         echo  '<font color="red">'.get_string('setcategorieserror','grades').'</font>';
     }
     echo  '</table>';
+    echo  '</form>';
     echo  '<center>'.get_string('dropxlowestwarning','grades').'</center><br />';
 }
 
