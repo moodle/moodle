@@ -251,6 +251,8 @@ class MoodleODSWorksheet {
     function set_row($row, $height, $format = 0, $hidden = false, $level = 0) {
         $this->rows[$row] = new object();
         $this->rows[$row]->height = $height;
+        $this->rows[$row]->format = $format;
+        $this->rows[$row]->hidden = $hidden;
     }
 
     /* Sets the width (and other settings) of one column
@@ -265,6 +267,9 @@ class MoodleODSWorksheet {
         for($i=$firstcol; $i<=$lastcol; $i++) {
             $this->columns[$i] = new object();
             $this->columns[$i]->width = $width;
+            $this->columns[$i]->format = $format;
+            $this->columns[$i]->hidden = $hidden;
+            
         }
     }
 
@@ -274,7 +279,7 @@ class MoodleODSWorksheet {
 * Define and operate over one Format.
 */
 class MoodleODSFormat {
-    var $formatid;
+    var $id;
     var $properties;
 
     /* Constructs one Moodle Format.
@@ -284,7 +289,7 @@ class MoodleODSFormat {
         static $fid = 1;
        
         $this->properties = $properties; 
-        $this->formatid = $fid++;
+        $this->id = $fid++;
     }
 
     /* Set weight of the format
@@ -293,23 +298,27 @@ class MoodleODSFormat {
      *                        It's Optional, default is 1 (bold).
      */
     function set_bold($weight = 1) {
+        $this->properties['bold'] = $weight;
     }
 
     /* Set underline of the format
      * @param integer $underline The value for underline. Possible values are:
      *                           1 => underline, 2 => double underline
      */
-    function set_underline($underline) {
+    function set_underline($underline = 1) {
+        $this->properties['underline'] = $underline;
     }
 
     /* Set italic of the format
      */
     function set_italic() {
+        $this->properties['italic'] = true;
     }
 
     /* Set strikeout of the format
      */
     function set_strikeout() {
+        $this->properties['strikeout'] = true;
     }
 
     /* Set outlining of the format
@@ -333,6 +342,7 @@ class MoodleODSFormat {
      * @param mixed $color either a string (like 'blue'), or an integer (range is [8...63])
      */
     function set_color($color) {
+        $this->properties['color'] = $this->_get_color($color);
     }
 
     /* Set foreground color of the format
@@ -345,6 +355,7 @@ class MoodleODSFormat {
      * @param mixed $color either a string (like 'blue'), or an integer (range is [8...63])
      */
     function set_bg_color($color) {
+        $this->properties['bg_color'] = $this->_get_color($color);
     }
 
     /* Set the fill pattern of the format
@@ -363,18 +374,44 @@ class MoodleODSFormat {
      * @param string $location alignment for the cell ('left', 'right', etc...)
      */
     function set_align($location) {
+        switch ($location) {
+            case 'start':
+            case 'left': 
+                $this->properties['align'] = 'start';
+                break;
+            case 'center':
+                $this->properties['align'] = 'center';
+                break;
+            case 'end':
+            case 'right': 
+                $this->properties['align'] = 'end';
+                break;
+            default:
+                //ignore the rest == start
+        }
     }
 
     /* Set the cell horizontal alignment of the format
      * @param string $location alignment for the cell ('left', 'right', etc...)
      */
     function set_h_align($location) {
+        set_align($location);
     }
 
     /* Set the cell vertical alignment of the format
      * @param string $location alignment for the cell ('top', 'vleft', etc...)
      */
     function set_v_align($location) {
+        switch ($location) {
+            case 'top': 
+                $this->properties['v_align'] = 'top';
+                break;
+            case 'bottom':
+                $this->properties['v_align'] = 'bottom';
+                break;
+            default:
+                //ignore the rest == middle
+        }
     }
 
     /* Set the top border of the format
@@ -416,6 +453,37 @@ class MoodleODSFormat {
      */
     function set_num_format($num_format) {
     }
+
+    function _get_color($name_color = '') {
+        if (strpos($name_color, '#') === 0) {
+            return $name_color; // no conversion needed
+        }
+        
+        $colors = array('aqua'    => '#00FFFF',
+                        'cyan'    => '#00FFFF',
+                        'black'   => '#FFFFFF',
+                        'blue'    => '#0000FF',
+                        'brown'   => '#A52A2A',
+                        'magenta' => '#FF00FF',
+                        'fuchsia' => '#FF00FF',
+                        'gray'    => '#A0A0A0',
+                        'grey'    => '#A0A0A0',
+                        'green'   => '#00FF00',
+                        'lime'    => '#00FF00',
+                        'navy'    => '#000080',
+                        'orange'  => '#FF8000',
+                        'purple'  => '#800080',
+                        'red'     => '#FF0000',
+                        'silver'  => '#DCDCDC',
+                        'white'   => '#FFFFFF',
+                        'yellow'  => '#FFFF00');
+    
+        if(array_key_exists($name_color, $colors)) {
+            return $colors[$name_color];
+        } else {
+            return false;
+        }
+    }
 }
 
 
@@ -425,29 +493,39 @@ class MoodleODSFormat {
 function get_ods_content(&$worksheets) {
     
 
-    // find out the size of worksheets and used formats
+    // find out the size of worksheets and used styles
     $formats = array();
     $formatstyles = '';
     $rowstyles = '';
     $colstyles = '';
 
     foreach($worksheets as $wsnum=>$ws) {
-        $ws->maxr = 0;
-        $ws->maxc = 0;
+        $worksheets[$wsnum]->maxr = 0;
+        $worksheets[$wsnum]->maxc = 0;
         foreach($ws->data as $rnum=>$row) {
-            if ($rnum > $ws->maxr) {
-                $ws->maxr = $rnum;
+            if ($rnum > $worksheets[$wsnum]->maxr) {
+                $worksheets[$wsnum]->maxr = $rnum;
             }
-            foreach($row as $cnum=>$col) {
-                if ($cnum > $ws->maxc) {
-                    $ws->maxc = $cnum;
+            foreach($row as $cnum=>$cell) {
+                if ($cnum > $worksheets[$wsnum]->maxc) {
+                    $worksheets[$wsnum]->maxc = $cnum;
+                }
+                if (!empty($cell->format)) {
+                    if (!array_key_exists($cell->format->id, $formats)) {
+                        $formats[$cell->format->id] = $cell->format;
+                    }
                 }
             }
         }
 
         foreach($ws->rows as $rnum=>$row) {
-            if ($rnum > $ws->maxr) {
-                $ws->maxr = $rnum;
+            if (!empty($row->format)) {
+                if (!array_key_exists($row->format->id, $formats)) {
+                    $formats[$row->format->id] = $row->format;
+                }
+            }
+            if ($rnum > $worksheets[$wsnum]->maxr) {
+                $worksheets[$wsnum]->maxr = $rnum;
             }
             //define all column styles
             if (!empty($ws->rows[$rnum])) {
@@ -459,8 +537,13 @@ function get_ods_content(&$worksheets) {
         }
 
         foreach($ws->columns as $cnum=>$col) {
-            if ($cnum > $ws->maxc) {
-                $ws->maxc = $cnum;
+            if (!empty($col->format)) {
+                if (!array_key_exists($col->format->id, $formats)) {
+                    $formats[$col->format->id] = $col->format;
+                }
+            }
+            if ($cnum > $worksheets[$wsnum]->maxc) {
+                $worksheets[$wsnum]->maxc = $cnum;
             }
             //define all column styles
             if (!empty($ws->columns[$cnum])) {
@@ -470,6 +553,70 @@ function get_ods_content(&$worksheets) {
   </style:style>';
             }
         }
+    }
+
+    foreach($formats as $format) {
+        $textprop = '';
+        $cellprop = '';
+        $parprop  = '';
+        foreach($format->properties as $pname=>$pvalue) {
+            switch ($pname) {
+                case 'bold':
+                    if (!empty($pvalue)) {
+                        $textprop .= ' fo:font-weight="bold"';
+                    }
+                    break;
+                case 'italic':
+                    if (!empty($pvalue)) {
+                        $textprop .= ' fo:font-style="italic"';
+                    }
+                    break;
+                case 'underline':
+                    if (!empty($pvalue)) {
+                        $textprop .= ' style:text-underline-color="font-color" style:text-underline-style="solid" style:text-underline-width="auto"';
+                    }
+                    break;
+                case 'strikeout':
+                    if (!empty($pvalue)) {
+                        $textprop .= ' style:text-line-through-style="solid"';
+                    }
+                    break;
+                case 'color':
+                    if ($pvalue !== false) {
+                        $textprop .= ' fo:color="'.$pvalue.'"';
+                    }
+                    break;
+                case 'bg_color':
+                    if ($pvalue !== false) {
+                        $cellprop .= ' fo:background-color="'.$pvalue.'"';
+                    }
+                    break;
+                case 'align':
+                    $parprop .= ' fo:text-align="'.$pvalue.'"';
+                    break;
+                case 'v_align':
+                    $cellprop .= ' style:vertical-align="'.$pvalue.'"';
+                    break;
+            }
+        }
+        if (!empty($textprop)) {
+            $textprop = '
+   <style:text-properties'.$textprop.'/>';
+        }
+
+        if (!empty($cellprop)) {
+            $cellprop = '
+   <style:table-cell-properties'.$cellprop.'/>';
+        }
+
+        if (!empty($parprop)) {
+            $parprop = '
+   <style:paragraph-properties'.$parprop.'/>';
+        }
+
+        $formatstyles .= '
+  <style:style style:name="format'.$format->id.'" style:family="table-cell">'.$textprop.$cellprop.$parprop.'
+  </style:style>';
     }
 
 /// header
@@ -499,8 +646,15 @@ $buffer .= $colstyles;
 
         // define column properties
         for($c=0; $c<=$ws->maxc; $c++) {
-            if (!empty($ws->columns[$c])) {
-                $buffer .= '<table:table-column table:style-name="ws'.$wsnum.'co'.$c.'"/>'."\n";
+            if (array_key_exists($c, $ws->columns)) {
+                $extra = '';
+                if (!empty($ws->columns[$c]->format)) {
+                    $extra .= ' table:default-cell-style-name="format'.$ws->columns[$c]->format->id.'"';
+                }
+                if ($ws->columns[$c]->hidden) {
+                    $extra .= ' table:visibility="collapse"';
+                }
+                $buffer .= '<table:table-column table:style-name="ws'.$wsnum.'co'.$c.'"'.$extra.'/>'."\n";
             } else {
                 $buffer .= '<table:table-column/>'."\n";
             }
@@ -508,27 +662,39 @@ $buffer .= $colstyles;
 
         // print all rows
         for($r=0; $r<=$ws->maxr; $r++) {
-            if (!empty($ws->rows[$r])) {
-                $buffer .= '<table:table-row table:style-name="ws'.$wsnum.'ro'.$r.'">'."\n";
+            if (array_key_exists($r, $ws->rows)) {
+                $extra = '';
+                if (!empty($ws->rows[$r]->format)) {
+                    $extra .= ' table:default-cell-style-name="format'.$ws->rows[$r]->format->id.'"';
+                }
+                if ($ws->rows[$r]->hidden) {
+                    $extra .= ' table:visibility="collapse"';
+                }
+                $buffer .= '<table:table-row table:style-name="ws'.$wsnum.'ro'.$r.'"'.$extra.'>'."\n";
             } else {
                 $buffer .= '<table:table-row>'."\n";
             }
             for($c=0; $c<=$ws->maxc; $c++) {
                 if (isset($ws->data[$r][$c])) {
-                    if ($ws->data[$r][$c]->type == 'date') {
-                        $buffer .= '<table:table-cell office:value-type="date" table:style-name="date0" office:date-value="' . strftime('%Y-%m-%dT%H:%M:%S', $ws->data[$r][$c]->value) . '">'
-                                 . '<text:p>' . strftime('%Y-%m-%dT%H:%M:%S', $ws->data[$r][$c]->value) . '</text:p>'
+                    $cell = $ws->data[$r][$c];
+                    $extra = ' ';
+                    if (!empty($cell->format)) {
+                        $extra = ' table:style-name="format'.$cell->format->id.'"';
+                    }
+                    if ($cell->type == 'date') {
+                        $buffer .= '<table:table-cell office:value-type="date" table:style-name="date0" office:date-value="' . strftime('%Y-%m-%dT%H:%M:%S', $cell->value) . '"'.$extra.'>'
+                                 . '<text:p>' . strftime('%Y-%m-%dT%H:%M:%S', $cell->value) . '</text:p>'
                                  . '</table:table-cell>'."\n";
-                    } else if ($ws->data[$r][$c]->type == 'float') {
-                        $buffer .= '<table:table-cell office:value-type="float" office:value="' . htmlspecialchars($ws->data[$r][$c]->value) . '">'
-                                 . '<text:p>' . htmlspecialchars($ws->data[$r][$c]->value) . '</text:p>'
+                    } else if ($cell->type == 'float') {
+                        $buffer .= '<table:table-cell office:value-type="float" office:value="' . htmlspecialchars($cell->value) . '"'.$extra.'>'
+                                 . '<text:p>' . htmlspecialchars($cell->value) . '</text:p>'
                                  . '</table:table-cell>'."\n";
-                    } else if ($ws->data[$r][$c]->type == 'string') {
-                        $buffer .= '<table:table-cell office:value-type="string" office:string-value="' . htmlspecialchars($ws->data[$r][$c]->value) . '">'
-                                 . '<text:p>' . htmlspecialchars($ws->data[$r][$c]->value) . '</text:p>'
+                    } else if ($cell->type == 'string') {
+                        $buffer .= '<table:table-cell office:value-type="string" office:string-value="' . htmlspecialchars($cell->value) . '"'.$extra.'>'
+                                 . '<text:p>' . htmlspecialchars($cell->value) . '</text:p>'
                                  . '</table:table-cell>'."\n";
                     } else {
-                        $buffer .= '<table:table-cell office:value-type="string">'
+                        $buffer .= '<table:table-cell office:value-type="string"'.$extra.'>'
                                  . '<text:p>!!Error - unknown type!!</text:p>'
                                  . '</table:table-cell>'."\n";
                     }
