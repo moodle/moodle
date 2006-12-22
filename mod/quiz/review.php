@@ -30,7 +30,7 @@
     if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
         error("The course module for the quiz with id $quiz->id is missing");
     }
-    
+
     $grade = quiz_rescale_grade($attempt->sumgrades, $quiz);
     $feedback = quiz_feedback_for_grade($grade, $attempt->quiz);
 
@@ -194,7 +194,7 @@
                 $result->sumgrades = "0";
                 $result->grade = "0.0";
             }
-            
+
             $a = new stdClass;
             $percentage = round(($attempt->sumgrades/$quiz->sumgrades)*100, 0);
             $a->grade = $grade;
@@ -204,7 +204,7 @@
             $table->data[] = array("$strgrade:", get_string('outof', 'quiz', $a));
         }
     }
-    if ($options->feedback && $feedback) {
+    if ($options->overallfeedback && $feedback) {
         $table->data[] = array(get_string('feedback', 'quiz'), $feedback);
     }
     if ($isteacher and $attempt->userid == $USER->id) {

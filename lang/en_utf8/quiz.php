@@ -223,6 +223,7 @@ $string['gradeboundary'] = 'Grade boundary';
 $string['gradeessays'] = 'Grade Essays';
 $string['gradehighest'] = 'Highest grade';
 $string['grademethod'] = 'Grading method';
+$string['gradesofar'] = '$a->method: $a->mygrade / $a->quizgrade.';
 $string['gradingdetails'] = 'Marks for this submission: $a->raw/$a->max.';
 $string['gradingdetailsadjustment'] = 'With previous penalties this gives <strong>$a->cur/$a->max</strong>.';
 $string['gradingdetailspenalty'] = 'This submission attracted a penalty of $a.';
@@ -542,7 +543,7 @@ $string['wronguse'] = 'You can not use this page like that';
 $string['xhtml'] = 'XHTML Format';
 $string['xml'] = 'Moodle XML format';
 $string['xmltypeunsupported'] = 'Question type $a is not supported by xml import';
-$string['yourfinalgradeis'] = 'Your final grade for this quiz is $a';
+$string['yourfinalgradeis'] = 'Your final grade for this quiz is $a.';
 $string['zerosignificantfiguresnotallowed'] = 'The correct answer cannot have zero significant figures!';
 
 ?>

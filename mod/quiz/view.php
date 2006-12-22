@@ -78,7 +78,7 @@
     $currenttab = 'info';
     include('tabs.php');
 
-    // Print quiz name 
+    // Print quiz name
 
     print_heading(format_string($quiz->name));
 
@@ -169,19 +169,14 @@
         if ($attempts) {
 
             // Work out which columns we need, taking account what data is available in each attempt.
-            $gradecolumn = 0;
-            $overallstats = 1;
-            foreach ($attempts as $attempt) {
-                $attemptoptions = quiz_get_reviewoptions($quiz, $attempt, $context);
-                if ($attemptoptions->scores) {
-                    $gradecolumn = 1;
-                } else {
-                    $overallstats = 0;
-                }
-            }
-            $gradecolumn = $gradecolumn && $quiz->grade && $quiz->sumgrades;
-            $markcolumn = $gradecolumn && ($quiz->grade <> $quiz->sumgrades);
+            list($someoptions, $alloptions) = quiz_get_combined_reviewoptions($quiz, $attempts, $context);
+
+            $gradecolumn = $someoptions->scores && $quiz->grade && $quiz->sumgrades;
+            $markcolumn = $gradecolumn && ($quiz->grade != $quiz->sumgrades);
+            $overallstats = $alloptions->scores;
+
             $feedbackcolumn = quiz_has_feedback($quiz->id);
+            $overallfeedback = $feedbackcolumn && $alloptions->overallfeedback;
 
             // prepare table header
             $table->head = array($strattempt, $strtimecompleted);
@@ -265,7 +260,7 @@
                 }
 
                 if ($feedbackcolumn) {
-                    if ($attemptoptions->feedback) {
+                    if ($attemptoptions->overallfeedback) {
                         $row[] = quiz_feedback_for_grade($attemptgrade, $quiz->id);
                     } else {
                         $row[] = '';
@@ -287,32 +282,30 @@
             print_heading(get_string("nomoreattempts", "quiz"));
         }
 
-        if ($numattempts && $quiz->sumgrades) {
-            if (!is_null($mygrade)) {
+        if ($numattempts && $quiz->sumgrades && !is_null($mygrade)) {
+            if ($overallstats) {
                 if ($available && $moreattempts) {
-                    $strbestgrade = $QUIZ_GRADE_METHOD[$quiz->grademethod];
-                    $grademessage = "$strbestgrade: $mygrade / $quiz->grade.";
+                    $a = new stdClass;
+                    $a->method = $QUIZ_GRADE_METHOD[$quiz->grademethod];
+                    $a->mygrade = $mygrade;
+                    $a->quizgrade = $quiz->grade;
+                    print_heading(get_string('gradesofar', 'quiz', $a));
                 } else {
-                    $grademessage = get_string("yourfinalgradeis", "quiz", "$mygrade / $quiz->grade");
-                }
-
-                if ($overallstats) {
-                    print_heading($grademessage);
-                }
-
-                if ($feedbackcolumn) {
-                    echo '<p align="center">', quiz_feedback_for_grade($mygrade, $quiz->id), '</p>';
+                    print_heading(get_string('yourfinalgradeis', 'quiz', "$mygrade / $quiz->grade"));
                 }
             }
 
-            if (!($moreattempts && $available)) {
-                print_continue($CFG->wwwroot . '/course/view.php?id=' . $course->id);
+            if ($overallfeedback) {
+                echo '<p align="center">', quiz_feedback_for_grade($mygrade, $quiz->id), '</p>';
             }
         }
 
         // Print a button to start/continue an attempt, if appropriate.
-        if ($quiz->questions && $available && $moreattempts) {
 
+        if (!$quiz->questions) {
+            print_heading(get_string("noquestions", "quiz"));
+
+        } else if ($available && $moreattempts) {
             echo "<br />";
             echo "<div align=\"center\">";
 
@@ -327,7 +320,7 @@
                     $buttontext = get_string('reattemptquiz', 'quiz');
                 }
 
-                // Work out if the quiz is temporarily unavailable becuase of the delay option.
+                // Work out if the quiz is temporarily unavailable because of the delay option.
                 if (!empty($attempts)) {
                     $tempunavailable = '';
                     $lastattempt = end($attempts);
@@ -343,6 +336,7 @@
                     // If so, display a message and prevent the start button from appearing.
                     if ($tempunavailable) {
                         print_simple_box($tempunavailable, "center");
+                        print_continue($CFG->wwwroot . '/course/view.php?id=' . $course->id);
                         $buttontext = '';
                     }
                 }
@@ -353,13 +347,16 @@
                 $buttontext = htmlspecialchars($buttontext, ENT_QUOTES);
 
                 // Do we need a confirm javascript alert?
-                $strconfirmstartattempt =  '';
-                if ($quiz->timelimit && $quiz->attempts) {
+                if ($unfinished) {
+                    $strconfirmstartattempt =  '';
+                } else if ($quiz->timelimit && $quiz->attempts) {
                     $strconfirmstartattempt = addslashes(get_string('confirmstartattempttimelimit','quiz', $quiz->attempts));
                 } else if ($quiz->timelimit) {
                     $strconfirmstartattempt = addslashes(get_string('confirmstarttimelimit','quiz'));
                 } else if ($quiz->attempts) {
                     $strconfirmstartattempt = addslashes(get_string('confirmstartattemptlimit','quiz', $quiz->attempts));
+                } else {
+                    $strconfirmstartattempt =  '';
                 }
 
                 // Prepare options depending on whether the quiz should be a popup.
@@ -398,9 +395,8 @@ document.write('<input type="button" value="<?php echo $buttontext ?>" onclick="
             }
 
             echo "</div>\n";
-
-        } else if (!$quiz->questions) {
-            print_heading(get_string("noquestions", "quiz"));
+        } else {
+            print_continue($CFG->wwwroot . '/course/view.php?id=' . $course->id);
         }
     }
 
@@ -439,7 +435,7 @@ function make_review_link($linktext, $quiz, $attempt) {
     if (!$attempt->timefinish) {
         return $linktext;
     }
-    
+
     $url = "review.php?q=$quiz->id&amp;attempt=$attempt->id";
     if ($quiz->popup) {
         $windowoptions = "left=0, top=0, channelmode=yes, fullscreen=yes, scrollbars=yes, resizeable=no, directories=no, toolbar=no, titlebar=no, location=no, status=no, menubar=no";

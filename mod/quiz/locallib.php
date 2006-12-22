@@ -81,25 +81,37 @@ function quiz_create_attempt($quiz, $attemptnumber) {
 /**
  * Returns an unfinished attempt (if there is one) for the given
  * user on the given quiz. This function does not return preview attempts.
- * 
+ *
  * @param integer $quizid the id of the quiz.
  * @param integer $userid the id of the user.
- * 
- * @return mixed the unfinished attempt if there is one, false if not. 
+ *
+ * @return mixed the unfinished attempt if there is one, false if not.
  */
 function quiz_get_user_attempt_unfinished($quizid, $userid) {
-    return get_record_select("quiz_attempts", "quiz = $quizid AND userid = $userid AND timefinish = 0 AND preview = 0");
+    $attempts = quiz_get_user_attempts($quizid, $userid, 'unfinished');
+    if ($attempts) {
+        return array_shift($attempts);
+    } else {
+        return false;
+    }
 }
 
 /**
  * @param integer $quizid the quiz id.
  * @param integer $userid the userid.
- * @return an array of all the ueser's attempts at this quiz. Returns an empty array if there are none.
+ * @param string $status 'all', 'finished' or 'unfinished' to control
+ * @return an array of all the user's attempts at this quiz. Returns an empty array if there are none.
  */
-function quiz_get_user_attempts($quizid, $userid) {
-    if ($attempts = get_records_select("quiz_attempts", "quiz = '$quizid' AND userid = '$userid' AND timefinish > 0",
-            "attempt ASC")) {
-        return $attempts;                        
+function quiz_get_user_attempts($quizid, $userid, $status = 'finished') {
+    $status_condition = array(
+        'all' => '',
+        'finished' => ' AND timefinish > 0',
+        'unfinished' => ' AND timefinish = 0'
+    );
+    if ($attempts = get_records_select('quiz_attempts',
+            "quiz = '$quizid' AND userid = '$userid' AND preview = 0" . $status_condition[$status],
+            'attempt ASC')) {
+        return $attempts;
     } else {
         return array();
     }
@@ -267,7 +279,7 @@ function quiz_get_all_question_grades($quiz) {
 
 /**
  * Get the best current grade for a particular user in a quiz.
- * 
+ *
  * @param object $quiz the quiz object.
  * @param integer $userid the id of the user.
  * @return float the user's current grade for this quiz.
@@ -286,7 +298,7 @@ function quiz_get_best_grade($quiz, $userid) {
 /**
  * Convert the raw grade stored in $attempt into a grade out of the maximum
  * grade for this quiz.
- * 
+ *
  * @param float $rawgrade the unadjusted grade, fof example $attempt->sumgrades
  * @param object $quiz the quiz object. Only the fields grade, sumgrades and decimalpoints are used.
  * @return float the rescaled grade.
@@ -302,7 +314,7 @@ function quiz_rescale_grade($rawgrade, $quiz) {
 /**
  * Get the feedback text that should be show to a student who
  * got this grade on this quiz.
- * 
+ *
  * @param float $grade a grade on this quiz.
  * @param integer $quizid the id of the quiz object.
  * @return string the comment that corresponds to this grade (empty string if there is not one.
@@ -314,7 +326,7 @@ function quiz_feedback_for_grade($grade, $quizid) {
     if (empty($feedback)) {
         $feedback = '';
     }
-    
+
     return $feedback;
 }
 
@@ -332,10 +344,10 @@ function quiz_has_feedback($quizid) {
 }
 
 /**
- * The quiz grade is the score that student's results are marked out of. When it 
+ * The quiz grade is the score that student's results are marked out of. When it
  * changes, the corresponding data in quiz_grades and quiz_feedback needs to be
  * rescaled.
- * 
+ *
  * @param float $newgrade the new maximum grade for the quiz.
  * @param object $quiz the quiz we are updating. Passed by reference so its grade field can be updated too.
  * @return boolean indicating success or failure.
@@ -349,14 +361,14 @@ function quiz_set_grade($newgrade, &$quiz) {
 
     // Use a transaction, so that on those databases that support it, this is safer.
     begin_sql();
-    
+
     // Update the quiz table.
     $success = set_field('quiz', 'grade', $newgrade, 'id', $quiz->instance);
-    
+
     // Rescaling the other data is only possible if the old grade was non-zero.
     if ($quiz->grade > 1e-7) {
         global $CFG;
-    
+
         $factor = $newgrade/$quiz->grade;
         $quiz->grade = $newgrade;
 
@@ -375,7 +387,7 @@ function quiz_set_grade($newgrade, &$quiz) {
                 WHERE quizid = $quiz->id
         ", false);
     }
-    
+
     if ($success) {
         return commit_sql();
     } else {
@@ -407,7 +419,7 @@ function quiz_save_best_grade($quiz, $userid = null) {
     // Calculate the best grade
     $bestgrade = quiz_calculate_best_grade($quiz, $attempts);
     $bestgrade = quiz_rescale_grade($bestgrade, $quiz);
-    
+
     // Save the best grade in the database
     if ($grade = get_record('quiz_grades', 'quiz', $quiz->id, 'userid', $userid)) {
         $grade->grade = $bestgrade;
@@ -609,7 +621,7 @@ function quiz_get_question_review($quiz, $question) {
  */
 function quiz_get_renderoptions($reviewoptions, $state) {
     $options = new stdClass;
-    
+
     // Show the question in readonly (review) mode if the question is in
     // the closed state
     $options->readonly = question_state_is_closed($state);
@@ -626,6 +638,9 @@ function quiz_get_renderoptions($reviewoptions, $state) {
     // Show general feedback if the question has been graded and the quiz allows it.
     $options->generalfeedback = question_state_is_graded($state) && ($reviewoptions & QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
 
+    // Show overallfeedback once the attempt is over.
+    $options->overallfeedback = false;
+
     // Always show responses and scores
     $options->responses = true;
     $options->scores = true;
@@ -636,12 +651,12 @@ function quiz_get_renderoptions($reviewoptions, $state) {
 
 /**
  * Determine review options
- * 
+ *
  * @param object $quiz the quiz instance.
  * @param object $attempt the attempt in question.
  * @param $context the roles and permissions context,
  *          normally the context for the quiz module instance.
- * 
+ *
  * @return object an object with boolean fields responses, scores, feedback,
  *          correct_responses, solutions and general feedback
  */
@@ -661,7 +676,8 @@ function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
         $options->correct_responses = true;
         $options->solutions = false;
         $options->generalfeedback = true;
-        
+        $options->overallfeedback = true;
+
         // Show a link to the comment box only for closed attempts
         if ($attempt->timefinish) {
             $options->questioncommentlink = '/mod/quiz/comment.php';
@@ -680,36 +696,40 @@ function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
         $options->correct_responses = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
         $options->solutions = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
         $options->generalfeedback = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_GENERALFEEDBACK) ? 1 : 0;
+        $options->overallfeedback = $attempt->timefinish && ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_FEEDBACK);
     }
-    
+
     return $options;
 }
-////////////////////////////////////////////////////////////////////////////////
-/**
-* Return boolean indicating if the quiz has attempts with hidden grades
-*
-* Selects all attempts matching specified quiz & user, and examines each to
-* check they all have visible results.
-* @return boolean        If the quiz has attempts without visible results
-* @param object $quiz    The quiz being examined
-* @param object $user    The user concerned
-*/
-function all_attempt_results_visible($quiz, $user) {
-    global $CFG;
-    $sql = 'SELECT timefinish, preview FROM '.$CFG->prefix.'quiz_attempts qa'.
-        ' WHERE qa.quiz='.$quiz->id.' AND qa.userid='.$user->id.
-        ' ORDER BY id DESC';
-    if ($attempts = get_records_sql($sql)) {
-        foreach ($attempts as $attempt) {            
-            $attemptoptions = quiz_get_reviewoptions($quiz, $attempt);
-            //if any attempt has scores option not set, not all attempt results are
-            //visible
-            if (!$attemptoptions->scores) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
 
+/**
+ * Combines the review options from a number of different quiz attempts.
+ * Returns an array of two ojects, so he suggested way of calling this
+ * funciton is:
+ * list($someoptions, $alloptions) = quiz_get_combined_reviewoptions(...)
+ *
+ * @param object $quiz the quiz instance.
+ * @param array $attempts an array of attempt objects.
+ * @param $context the roles and permissions context,
+ *          normally the context for the quiz module instance.
+ *
+ * @return array of two options objects, one showing which options are true for
+ *          at least one of the attempts, the other showing which options are true
+ *          for all attempts.
+ */
+function quiz_get_combined_reviewoptions($quiz, $attempts, $context=null) {
+    $fields = array('readonly', 'scores', 'feedback', 'correct_responses', 'solutions', 'generalfeedback', 'overallfeedback');
+    $someoptions = new stdClass;
+    $alloptions = new stdClass;
+    foreach ($fields as $field) {
+        $someoptions->$field = false;
+        $alloptions->$field = true;
+    }
+    foreach ($attempts as $attempt) {
+        $attemptoptions = quiz_get_reviewoptions($quiz, $attempt, $context);
+        $someoptions->$field = $someoptions->$field || $attemptoptions->$field;
+        $alloptions->$field = $someoptions->$field && $attemptoptions->$field;
+    }
+    return array($someoptions, $alloptions);
+}
 ?>
