@@ -264,7 +264,7 @@
                     }
                     echo "</table></td></tr>\n<tr><td align=\"left\">";
                     lesson_print_add_links($cm->id, $page->id);
-                    echo "<tr><td>\n";
+                    echo "</td></tr><tr><td>\n";
                     // check the prev links - fix (silently) if necessary - there was a bug in
                     // versions 1 and 2 when add new pages. Not serious then as the backwards
                     // links were not used in those versions
@@ -283,7 +283,7 @@
                     $pageid = $page->nextpageid;
                     echo "</td></tr>";
                 }
-                echo "</td></tr></table>";
+                echo "</table>";
                 break;
         }
     } 
