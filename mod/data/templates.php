@@ -81,11 +81,27 @@
     $bodytag .= 'currTextarea = document.tempform.template;';
     $bodytag .= '" ';
 
+    // Javascript to insert the field tags into the textarea.
+    $meta = '<script language="JavaScript" type="text/javascript">'."\n";
+    $meta .= '//<![CDATA['."\n";
+    $meta .= 'function insert_field_tags(selectlist) {';
+    $meta .= '  if (typeof(currEditor) != \'undefined\' && currEditor._editMode == \'wysiwyg\') {';
+        // HTMLArea-specific
+    $meta .= '     currEditor.insertHTML(selectlist.options[selectlist.selectedIndex].value); '; 
+    $meta .= '  } else {';
+        // For inserting when in HTMLArea code view or for normal textareas
+    $meta .= '     insertAtCursor(currTextarea, selectlist.options[selectlist.selectedIndex].value);';   
+    $meta .= '  }'."\n";
+    $meta .= '}'."\n";
+    $meta .= '//]]>'."\n";
+    $meta .= '</script>'."\n";
+
     print_header_simple($data->name, '', "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name",
-                        '', '', true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
+                        '', $meta, true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
                         navmenu($course, $cm), '', $bodytag);
 
     print_heading(format_string($data->name));
+
 
 /// Groups needed for Add entry tab
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
@@ -152,7 +168,6 @@
         data_generate_default_template($data, 'rsstemplate');
     }
 
-/// Print the browsing interface.
 
     echo '<form name="tempform" action="templates.php?d='.$data->id.'&amp;mode='.$mode.'" method="post">';
     echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
@@ -187,16 +202,8 @@
         helpbutton('tags', get_string('tags','data'), 'data');
         echo '<br />';
 
-        echo '<select name="fields1[]" id="availabletags" size="10" ';
 
-        // Javascript to insert the field tags into the textarea.
-        echo 'onclick="';
-        echo 'if (typeof(currEditor) != \'undefined\' && currEditor._editMode == \'wysiwyg\') {';
-        echo '    currEditor.insertHTML(this.options[selectedIndex].value); ';     // HTMLArea-specific.
-        echo '} else {';
-        echo 'insertAtCursor(currTextarea, this.options[selectedIndex].value);';   // For inserting when in HTMLArea code view or for normal textareas.
-        echo '}';
-        echo '">';
+        echo '<select name="fields1[]" id="availabletags" size="10" onclick="insert_field_tags(this)">';
 
         $fields = get_records('data_fields', 'dataid', $data->id);
         echo '<optgroup label="'.get_string('fields', 'data').'">';
