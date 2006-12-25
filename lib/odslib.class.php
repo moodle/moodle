@@ -251,7 +251,7 @@ class MoodleODSWorksheet {
     function set_row($row, $height, $format = 0, $hidden = false, $level = 0) {
         $this->rows[$row] = new object();
         $this->rows[$row]->height = $height;
-        $this->rows[$row]->format = $format;
+        //$this->rows[$row]->format = $format; // TODO: fix and enable
         $this->rows[$row]->hidden = $hidden;
     }
 
@@ -267,9 +267,9 @@ class MoodleODSWorksheet {
         for($i=$firstcol; $i<=$lastcol; $i++) {
             $this->columns[$i] = new object();
             $this->columns[$i]->width = $width;
-            $this->columns[$i]->format = $format;
+            //$this->columns[$i]->format = $format; // TODO: fix and enable
             $this->columns[$i]->hidden = $hidden;
-            
+
         }
     }
 
@@ -287,9 +287,15 @@ class MoodleODSFormat {
      */
     function MoodleODSFormat($properties = array()) {
         static $fid = 1;
-       
-        $this->properties = $properties; 
+
         $this->id = $fid++;
+
+        foreach($properties as $property => $value) {
+            if(method_exists($this,"set_$property")) {
+                $aux = 'set_'.$property;
+                $this->$aux($value);
+            }
+        }
     }
 
     /* Set weight of the format
@@ -376,14 +382,14 @@ class MoodleODSFormat {
     function set_align($location) {
         switch ($location) {
             case 'start':
-            case 'left': 
+            case 'left':
                 $this->properties['align'] = 'start';
                 break;
             case 'center':
                 $this->properties['align'] = 'center';
                 break;
             case 'end':
-            case 'right': 
+            case 'right':
                 $this->properties['align'] = 'end';
                 break;
             default:
@@ -403,7 +409,7 @@ class MoodleODSFormat {
      */
     function set_v_align($location) {
         switch ($location) {
-            case 'top': 
+            case 'top':
                 $this->properties['v_align'] = 'top';
                 break;
             case 'bottom':
@@ -458,7 +464,7 @@ class MoodleODSFormat {
         if (strpos($name_color, '#') === 0) {
             return $name_color; // no conversion needed
         }
-        
+
         $colors = array('aqua'    => '#00FFFF',
                         'cyan'    => '#00FFFF',
                         'black'   => '#FFFFFF',
@@ -477,7 +483,7 @@ class MoodleODSFormat {
                         'silver'  => '#DCDCDC',
                         'white'   => '#FFFFFF',
                         'yellow'  => '#FFFF00');
-    
+
         if(array_key_exists($name_color, $colors)) {
             return $colors[$name_color];
         } else {
@@ -491,7 +497,7 @@ class MoodleODSFormat {
 // OpenDocument XML functions
 //=============================
 function get_ods_content(&$worksheets) {
-    
+
 
     // find out the size of worksheets and used styles
     $formats = array();
