@@ -1,5 +1,5 @@
 <?php // $Id$
-      
+
     require('../config.php');
 
     define('MESSAGE_DEFAULT_REFRESH', 5);
@@ -47,12 +47,12 @@
     @ob_implicit_flush(true);
     @ob_end_flush();
 
-    if ($messages = get_records_select('message', "useridto = '$USER->id' AND useridfrom = '$userid'", 
+    if ($messages = get_records_select('message', "useridto = '$USER->id' AND useridfrom = '$userid'",
                                        'timecreated')) {
         foreach ($messages as $message) {
             $time = userdate($message->timecreated, get_string('strftimedaytime'));
 
-            $options = NULL;
+            $options = new object();
             $options->para = false;
             $options->newlines = true;
             $printmessage = format_text($message->message, $message->format, $options, 0);
@@ -67,7 +67,7 @@
 
             /// Move the entry to the other table
             $message->timeread = time();
-            $message->message = addslashes($message->message);
+            $message = addslashes_object($message);
             $messageid = $message->id;
             unset($message->id);
             if (insert_record('message_read', $message)) {

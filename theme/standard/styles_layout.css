@@ -1360,6 +1360,56 @@ body#grade-index .grades .weighted {
  *** Message
  ***/
 
+.message-discussion-noframes #userinfo .userpicture {
+	float:left;
+}
+
+.message-discussion-noframes #userinfo .name h1 {
+  margin:0px;
+}
+
+.message-discussion-noframes #userinfo .name {
+  text-align:left;
+  margin-left:60px;
+}
+
+.message-discussion-noframes #userinfo .commands {
+  text-align:left;
+  margin-left:60px;
+}
+
+.message-discussion-noframes #userinfo .commands ul {
+  margin:0px;
+  padding:0px;
+  list-style-type:none;
+  display:inline;
+}
+
+.message-discussion-noframes #userinfo .commands ul li {
+  display:inline;
+  padding-right:16px;
+}
+
+.message-discussion-noframes #send {
+  padding-top:10px;
+  clear:both;
+}
+
+.message-discussion-noframes #send h1 {
+	margin:0px;
+}
+.message-discussion-noframes #messages {
+  padding-top:10px;
+}
+
+.message-discussion-noframes #send h1 {
+  margin:0px;
+}
+
+.message .noframesjslink {
+  margin-top:20px;
+}
+
 .message .link {
   vertical-align:middle;
 }

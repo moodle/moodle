@@ -1,5 +1,5 @@
 <?php // $Id$
-      
+
     require('../config.php');
     require('lib.php');
 
@@ -56,7 +56,7 @@
         }
     }
 
-    if ($message and confirm_sesskey()) {   /// Current user has just sent a message
+    if ($message!='' and confirm_sesskey()) {   /// Current user has just sent a message
 
     /// Save it to the database...
         $messageid = message_post_message($USER, $user, addslashes($message), $format, 'direct');
@@ -107,8 +107,9 @@
     }
     echo '<br /><input type="submit" value="'.get_string('sendmessage', 'message').'" />';
     echo '</form>';
+    echo '<div class="noframesjslink"><a target="_parent" href="discussion.php?id='.$userid.'&amp;noframesjs=1">'.get_string('noframesjs', 'message').'</a></div>';
     echo '</center>';
-    
+
     echo "\n<script type=\"text/javascript\">\n<!--\n";                  /// Focus on the textarea
     echo 'document.getElementById("edit-message").focus();'."\n";
     echo "\n-->\n</script>\n\n";

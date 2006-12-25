@@ -491,6 +491,27 @@ body#grade-index .grades .header {
  *** Message
  ***/
 
+.message-discussion-noframes #userinfo .name h1 {
+  font-weight: bold;
+  font-size:1em;
+}
+
+.message-discussion-noframes #userinfo .commands {
+  font-size:0.8em;
+}
+
+.message-discussion-noframes #send h1 {
+  font-size:1em;
+}
+
+.message .noframesjslink {
+  font-size:0.8em;
+}
+
+.message-discussion-noframes #messages h1 {
+  font-size:1em;
+}
+
 .message .link {
   font-size:0.8em;
 }
