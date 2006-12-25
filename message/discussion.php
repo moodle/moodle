@@ -166,7 +166,7 @@
         use_html_editor('message', 'formatblock subscript superscript copy cut paste clean undo redo justifyleft justifycenter justifyright justifyfull lefttoright righttoleft insertorderedlist insertunorderedlist outdent indent inserthorizontalrule createanchor nolink inserttable');
         echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
     } else {
-        print_textarea(false, 8, 60, 0, 0, 'message', $refreshedmessage);
+        print_textarea(false, 8, 50, 0, 0, 'message', $refreshedmessage);
         echo '<input type="hidden" name="format" value="'.FORMAT_MOODLE.'" />';
     }
     echo '<br /><input type="submit" value="'.get_string('sendmessage', 'message').'" />&nbsp;';
