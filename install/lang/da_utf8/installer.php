@@ -34,7 +34,7 @@ $string['environmentrecommendinstall'] = 'det anbefales installeret/aktiveret';
 $string['environmentrecommendversion'] = 'version $a->needed er anbefalet og du kører $a->current';
 $string['environmentrequireinstall'] = 'det er nødvendigt at installere/aktivere';
 $string['environmentrequireversion'] = 'version $a->needed er nødvendigt og du kører $a->current';
-$string['environmentxmlerror'] = 'Fejlved læsning af serveropsætningens data ($a->error_code)';
+$string['environmentxmlerror'] = 'Fejl ved læsning af serveropsætningens data ($a->error_code)';
 $string['error'] = 'Fejl';
 $string['fail'] = 'Mislykkedes';
 $string['fileuploads'] = 'Fil uploads';
@@ -49,11 +49,13 @@ $string['gdversionhelp'] = '<p>Det lader til at din server ikke har GD installer
 
 <p>Under windows er det normalt nok at udkommentere den linje i php.ini der referere til php_gd2.dll </p>';
 $string['help'] = 'Hjælp';
+$string['iconvrecommended'] = 'Det anbefales at installere/aktivere ICONV udvidelsen for at forbedre sitets hastighed, især hvis dit site understøtter sprog med ikke-latinske tegn.';
 $string['info'] = 'Information';
 $string['installation'] = 'Installation';
 $string['language'] = 'Sprog';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Denne skulle være deaktiveret';
+$string['mbstringrecommended'] = 'Det anbefales at installere/aktivere MBSTRING udvidelsen for at forbedre sitets ydeevne, især hvis sitet understøtter ikke-latinske sprog og tegn.';
 $string['memorylimit'] = 'Hukommelses begrænsning';
 $string['memorylimiterror'] = 'Den tilgængelige hukommelse til PHP er ret lav... Det kan være at der opstår problemer senere.';
 $string['memorylimithelp'] = '<p>Mængden af hukommelse som PHP kan bruge er sat til $a.</p>
@@ -71,6 +73,8 @@ indstillingen så der er minimum 16Mb til rådighed. Hvis du ikke har direkte ad
 <p>Det kan dog på nogle servere forårsage en fejl på <b>alle</b> PHPsiderne. i så fald kan du blive nødt til at fjerne \'.htaccess\' filen igen.</p></li>
 </ol>';
 $string['moodledocslink'] = 'Moodle Doks for denne side';
+$string['mysql416bypassed'] = 'Hvis sitet kun benytter iso-8859-1 (latin-1) sprog/tegnsæt, kan du fortsætte med at benytte den nuværende version 4.1.12 af MySQL (eller nyere)';
+$string['mysql416required'] = 'Moodle 1.6 skal som minimum bruge MySql version 4.1.16 for at garantere at data kan konverteres til UTF-8 fremover.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP er ikke blevet ordentligt konfigureret med MySQL  udvidelsen så den kan kommunikere med MySQL. Det kan skyldes at MySQL extension/dll ikke er loadet. Kontroller venlist phpinfo() og php.ini filen eller rekompiler PHP.';
 $string['name'] = 'Navn';
 $string['next'] = 'Næste';
@@ -93,6 +97,8 @@ $string['sessionautostarterror'] = 'Denne skulle være deaktiveret';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Dansk';
+$string['unicoderecommended'] = 'Alle data skal helst gemmes i Unicode (UTF-8). Nye installationer skal helst installeres i databaser der har UTF-8 som standard karaktersæt. Hvis du opgradere fra en tidligere installation bør du migrere eksisterende data til UTF-8 (se Admin siderne)';
+$string['unicoderequired'] = 'Alle data skal gemmes i Unicode (UTF-8). Nye installationer skal helst installeres i databaser der har UTF-8 som standard karaktersæt. Hvis du opgradere fra en tidligere installation bør du migrere eksisterende data til UTF-8 (se Admin siderne)';
 $string['user'] = 'Bruger';
 $string['wwwroot'] = 'Web adresse';
 $string['wwwrooterror'] = 'Webadressen lader ikke til at være korrekt - Moodleinstallationen kunne ikke findes der.';
