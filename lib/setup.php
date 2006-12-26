@@ -177,9 +177,11 @@ global $HTTPSPAGEREQUIRED;
         $CFG->admin = 'admin';   // This is relative to the wwwroot and dirroot
     }
 
+/// Increase memory limits if possible
+    raise_memory_limit('64M');    // We should never NEED this much but just in case...
 
 /// Load up standard libraries
-    
+
     require_once($CFG->libdir .'/textlib.class.php');   // Functions to handle multibyte strings
     require_once($CFG->libdir .'/weblib.php');          // Functions for producing HTML
     require_once($CFG->libdir .'/dmllib.php');          // Functions to handle DB data (DML)
@@ -187,11 +189,6 @@ global $HTTPSPAGEREQUIRED;
     require_once($CFG->libdir .'/accesslib.php');       // Access control functions
     require_once($CFG->libdir .'/deprecatedlib.php');   // Deprecated functions included for backward compatibility
     require_once($CFG->libdir .'/moodlelib.php');       // Other general-purpose functions
-
-
-/// Increase memory limits if possible
-
-    raise_memory_limit('64M');    // We should never NEED this much but just in case...
 
 /// Disable errors for now - needed for installation when debug enabled in config.php
     if (isset($CFG->debug)) {
