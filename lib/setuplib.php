@@ -32,6 +32,71 @@ function init_performance_info() {
 }
 
 /**
+ * Function to raise the memory limit to a new value.
+ * Will respect the memory limit if it is higher, thus allowing
+ * settings in php.ini, apache conf or command line switches
+ * to override it
+ *
+ * The memory limit should be expressed with a string (eg:'64M')
+ *
+ * @param string $newlimit the new memory limit
+ * @return bool
+ */
+function raise_memory_limit ($newlimit) {
+
+    if (empty($newlimit)) {
+        return false;
+    }
+
+    $cur = @ini_get('memory_limit');
+    if (empty($cur)) {
+        // if php is compiled without --enable-memory-limits
+        // apparently memory_limit is set to ''
+        $cur=0;
+    } else {
+        if ($cur == -1){
+            return true; // unlimited mem!
+        }
+      $cur = get_real_size($cur);
+    }
+
+    $new = get_real_size($newlimit);
+    if ($new > $cur) {
+        ini_set('memory_limit', $newlimit);
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Converts numbers like 10M into bytes.
+ *
+ * @param mixed $size The size to be converted
+ * @return mixed
+ */
+function get_real_size($size=0) {
+    if (!$size) {
+        return 0;
+    }
+    $scan['MB'] = 1048576;
+    $scan['Mb'] = 1048576;
+    $scan['M'] = 1048576;
+    $scan['m'] = 1048576;
+    $scan['KB'] = 1024;
+    $scan['Kb'] = 1024;
+    $scan['K'] = 1024;
+    $scan['k'] = 1024;
+
+    while (list($key) = each($scan)) {
+        if ((strlen($size)>strlen($key))&&(substr($size, strlen($size) - strlen($key))==$key)) {
+            $size = substr($size, 0, strlen($size) - strlen($key)) * $scan[$key];
+            break;
+        }
+    }
+    return $size;
+}
+
+/**
  * Create a directory.
  *
  * @uses $CFG
