@@ -61,6 +61,8 @@
     $message  = optional_param('message', '', PARAM_CLEAN);
     $format   = optional_param('format', FORMAT_MOODLE, PARAM_INT);
     $refresh  = optional_param('refresh', '', PARAM_RAW);
+    $last     = optional_param('last', 0, PARAM_INT);
+    $newonly  = optional_param('newonly', 0, PARAM_BOOL);
 
     $addcontact     = optional_param('addcontact',     0, PARAM_INT); // adding a contact
     $removecontact  = optional_param('removecontact',  0, PARAM_INT); // removing a contact
@@ -111,7 +113,7 @@
         if ($message!='') {
             message_post_message($USER, $user, $message, $format, 'direct');
         }
-        redirect('discussion.php?id='.$userid.'&amp;start='.$start.'&amp;noframesjs='.$noframesjs);
+        redirect('discussion.php?id='.$userid.'&amp;start='.$start.'&amp;noframesjs='.$noframesjs.'&amp;newonly='.$newonly.'&amp;last='.$last);
     }
 
 
@@ -122,27 +124,27 @@
     echo '<div class="message-discussion-noframes">';
     echo '<div id="userinfo">';
     echo print_user_picture($user->id, SITEID, $user->picture, 48, true, true, 'userwindow');
-    echo '<div class="name"><h1>'.get_string('discussion', 'message').': '.$userfullname.'</h1></div>';
+    echo '<div class="name"><h1>'.$userfullname.'</h1></div>';
     echo '<div class="commands"><ul>';
     if ($contact = get_record('message_contacts', 'userid', $USER->id, 'contactid', $user->id)) {
         if ($contact->blocked) {
             echo '<li>';
-            message_contact_link($user->id, 'add', false, 'discussion.php?id='.$user->id.'&amp;noframesjs='.$noframesjs, true);
+            message_contact_link($user->id, 'add', false, 'discussion.php?id='.$user->id.'&amp;noframesjs='.$noframesjs.'&amp;newonly='.$newonly.'&amp;last='.$last, true);
             echo '</li><li>';
-            message_contact_link($user->id, 'unblock', false, 'discussion.php?id='.$user->id.'&amp;noframesjs='.$noframesjs, true);
+            message_contact_link($user->id, 'unblock', false, 'discussion.php?id='.$user->id.'&amp;noframesjs='.$noframesjs.'&amp;newonly='.$newonly.'&amp;last='.$last, true);
             echo '</li>';
         } else {
             echo '<li>';
-            message_contact_link($user->id, 'remove', false, 'discussion.php?id='.$user->id.'&amp;noframesjs='.$noframesjs, true);
+            message_contact_link($user->id, 'remove', false, 'discussion.php?id='.$user->id.'&amp;noframesjs='.$noframesjs.'&amp;newonly='.$newonly.'&amp;last='.$last, true);
             echo '</li><li>';
-            message_contact_link($user->id, 'block', false, 'discussion.php?id='.$user->id.'&amp;noframesjs='.$noframesjs, true);
+            message_contact_link($user->id, 'block', false, 'discussion.php?id='.$user->id.'&amp;noframesjs='.$noframesjs.'&amp;newonly='.$newonly.'&amp;last='.$last, true);
             echo '</li>';
         }
     } else {
         echo '<li>';
-        message_contact_link($user->id, 'add', false, 'discussion.php?id='.$user->id.'&amp;noframesjs='.$noframesjs, true);
+        message_contact_link($user->id, 'add', false, 'discussion.php?id='.$user->id.'&amp;noframesjs='.$noframesjs.'&amp;newonly='.$newonly.'&amp;last='.$last, true);
         echo '</li><li>';
-        message_contact_link($user->id, 'block', false, 'discussion.php?id='.$user->id.'&amp;noframesjs='.$noframesjs, true);
+        message_contact_link($user->id, 'block', false, 'discussion.php?id='.$user->id.'&amp;noframesjs='.$noframesjs.'&amp;newonly='.$newonly.'&amp;last='.$last, true);
         echo '</li>';
     }
     echo '<li>';
@@ -157,10 +159,12 @@
     echo '<input type="hidden" name="id" value="'.$user->id.'" />';
     echo '<input type="hidden" name="start" value="'.$start.'" />';
     echo '<input type="hidden" name="noframesjs" value="'.$noframesjs.'" />';
+    echo '<input type="hidden" name="last" value="'.time().'" />';
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
 
     $usehtmleditor = (can_use_html_editor() && get_user_preferences('message_usehtmleditor', 0));
     echo '<h1><label for="edit-message">'.get_string('sendmessage', 'message').'</label></h1>';
+    echo '<div>';
     if ($usehtmleditor) {
         print_textarea(true, 8, 34, 100, 100, 'message', $refreshedmessage);
         use_html_editor('message', 'formatblock subscript superscript copy cut paste clean undo redo justifyleft justifycenter justifyright justifyfull lefttoright righttoleft insertorderedlist insertunorderedlist outdent indent inserthorizontalrule createanchor nolink inserttable');
@@ -169,8 +173,11 @@
         print_textarea(false, 8, 50, 0, 0, 'message', $refreshedmessage);
         echo '<input type="hidden" name="format" value="'.FORMAT_MOODLE.'" />';
     }
-    echo '<br /><input type="submit" value="'.get_string('sendmessage', 'message').'" />&nbsp;';
+    echo '</div><div>';
+    echo '<input type="submit" value="'.get_string('sendmessage', 'message').'" />&nbsp;';
     echo '<input type="submit" name="refresh" value="'.get_string('refresh', 'message').'" />';
+    echo '<input type="checkbox" name="newonly" id="newonly" '.($newonly?'checked="checked" ':'').'/><label for="newonly">'.get_string('newonlymsg', 'message').'</label>';
+    echo '</div>';
     echo '</form>';
     echo '</div>';
 
@@ -183,7 +190,13 @@
     $options->para = false;
     $options->newlines = true;
 
-    if ($messages = get_records_select('message_read', "(useridto = '$USER->id' AND useridfrom = '$userid' AND timeread > '$start') OR (useridto = '$userid' AND useridfrom = '$USER->id' AND timeread > '$start')")) {
+    if ($newonly) {
+        $lastsql = " AND timecreated > $last";
+    } else {
+        $lastsql = "";
+    }
+
+    if ($messages = get_records_select('message_read', "(useridto = '$USER->id' AND useridfrom = '$userid' AND timeread > '$start' $lastsql) OR (useridto = '$userid' AND useridfrom = '$USER->id' AND timeread > '$start' $lastsql)")) {
         foreach ($messages as $message) {
             $time = userdate($message->timecreated, get_string('strftimedaytime'));
 
@@ -203,7 +216,7 @@
         }
     }
 
-    if ($messages = get_records_select('message', "useridto = '$userid' AND useridfrom = '$USER->id'")) {
+    if ($messages = get_records_select('message', "useridto = '$userid' AND useridfrom = '$USER->id' $lastsql")) {
         foreach ($messages as $message) {
             $time = userdate($message->timecreated, get_string('strftimedaytime'));
 
@@ -217,7 +230,7 @@
         }
     }
 
-    if ($messages = get_records_select('message', "useridto = '$USER->id' AND useridfrom = '$userid'")) {
+    if ($messages = get_records_select('message', "useridto = '$USER->id' AND useridfrom = '$userid' $lastsql")) {
         foreach ($messages as $message) {
             $time = userdate($message->timecreated, get_string('strftimedaytime'));
 

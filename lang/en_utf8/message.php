@@ -34,6 +34,7 @@ $string['messages'] = 'Messages';
 $string['messaging'] = 'Messaging';
 $string['mycontacts'] = 'My Contacts';
 $string['newsearch'] = 'New search';
+$string['newonlymsg'] = 'Show only new';
 $string['noframesjs'] = 'Version without frames and JavaScript';
 $string['nomessages'] = 'No messages waiting';
 $string['nomessagesfound'] = 'No messages were found';
