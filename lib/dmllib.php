@@ -2097,7 +2097,7 @@ function rcache_set($table, $id, $rec) {
             // when an UPDATE or DELETE not bound by ID 
             // is taking place
             if (!$MCACHE->get($tablekey)) {
-                $MCACHE->set($reckey, $rec, false, 2);
+                $MCACHE->set($reckey, $rec, false, $CFG->rcachettl);
                 $MCACHE->delete($reckey . '_fill'); // release lock
             }
         }
@@ -2308,7 +2308,7 @@ function rcache_unset_table ($table) {
                                            $table));
         // at least as long as content keys to ensure they expire
         // before the dirty flag 
-        $MCACHE->set($tablekey, true, false, 2);
+        $MCACHE->set($tablekey, true, false, $CFG->rcachettl);
     }
     return true;
 }
