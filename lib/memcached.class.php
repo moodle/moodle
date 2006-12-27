@@ -1,6 +1,6 @@
 <?php
 /**
- ** This class abstracts eaccelerator/turckmmcache
+ ** This class abstracts PHP's PECL memcached
  ** API to provide
  ** 
  ** - get()
@@ -11,58 +11,63 @@
  **
  ** Author: Martin Langhoff <martin@catalyst.net.nz>
  **
- ** Note: do NOT store booleans here. For compatibility with
- ** memcached, a false value is indistinguisable from a 
- ** "not found in cache" response.
+ ** Note: do NOT store booleans here. With memcached, a false value 
+ ** is indistinguisable from a "not found in cache" response. 
  **/
 
 
-class eaccelerator {
+class memcached {
 
-    function eaccelerator() {
+    function memcached() {
         global $CFG;
-        if ( function_exists('eaccelerator_get')) {
-            $mode = 'eaccelerator';
-        } elseif (function_exists('mmcache_get')) {
-            $mode = 'mmcache';
+
+        if (!function_exists('memcache_connect')) {
+            debugging("Memcached is set to true but the memcached extension is not installed");
+            return false;
+        }
+        $this->_cache = new Memcache;
+
+        $hosts = split(',', $CFG->memcachedhosts);
+        if (count($hosts) === 1 && !empty($CFG->memcachedpconn)) {
+            // the faster pconnect is only available
+            // for single-server setups
+            // NOTE: PHP-PECL client is buggy and pconnect() 
+            // will segfault if the server is unavailable
+            $this->_cache->pconnect($hosts[0]);
         } else {
-            debugging("\$CFG->eaccelerator is set to true but the required functions are not available. You need to have either eaccelerator or turckmmcache extensions installed, compiled with the shmem keys option enabled.");
+            // multi-host setup will share key space
+            foreach ($hosts as $host) {
+                $host = trim($host);
+                $this->_cache->addServer($host);
+            }
         }
 
-        $this->mode   = $mode;
         $this->prefix = $CFG->dbname .'|' . $CFG->prefix . '|';
     }
 
     function status() {
-        if (isset($this->mode)) {
+        if (is_object($this->_cache)) {
             return true;
         }
         return false;
     }
 
     function set($key, $value, $ttl=0) {
-        $set    = $this->mode . '_put';
-        $unlock = $this->mode . '_unlock';
 
         // we may have acquired a lock via getforfill
         // release if it exists
-        @$unlock($this->prefix . $key . '_forfill');
+        @$this->_cache->delete($this->prefix . $key . '_forfill');
 
-        return $set($this->prefix . $key, serialize($value), $ttl);
+        return $this->_cache->set($this->prefix . $key, $value, false);
     }
 
     function get($key) {
-        $fn = $this->mode . '_get';
-        $rec = $fn($this->prefix . $key);
-        if (is_null($rec)) {
-            return false;
-        }
-        return unserialize($rec);
+        $rec = $this->_cache->get($this->prefix . $key);
+        return $rec;
     } 
         
     function delete($key) {
-        $fn = $this->mode . '_rm';
-        return $fn($this->prefix . $key);
+        return $this->_cache->delete($this->prefix . $key);
     }
 
     /**
@@ -88,17 +93,15 @@ class eaccelerator {
      * http://marc.theaimsgroup.com/?l=git&m=116562052506776&w=2
      *
      * @param $key string
-     * @return mixed on cache hit, false otherwise
+     * @return mixed on cache hit, NULL otherwise
      */
     function getforfill ($key) {
-        $get    = $this->mode . '_get';
-        $lock   = $this->mode . '_lock';
         
-        $rec = $get($this->prefix . $key);
-        if (!is_null($rec)) {
-            return unserialize($rec);
+        $rec = $this->_cache->get($this->prefix . $key);
+        if ($rec) {
+            return $rec;
         }
-        if ($lock($this->prefix . $key . '_forfill')) {
+        if ($this->_cache->add($this->prefix . $key . '_forfill', 'true', false, 1)) {
             // we obtained the _forfill lock
             // our caller will compute and set the value
             return false;
@@ -108,9 +111,9 @@ class eaccelerator {
         // actually, loop .05s waiting for it
         for ($n=0;$n<5;$n++) {
             usleep(10000);
-            $rec = $get($this->prefix . $key);
-            if (!is_null($rec)) {
-                return unserialize($rec);
+            $rec = $this->_cache->get($this->prefix . $key);
+            if ($rec) {
+                return $rec;
             }
         }
         return false;
@@ -125,8 +128,7 @@ class eaccelerator {
      * @return bool
      */
     function releaseforfill ($key) {
-        $unlock = $this->mode . '_unlock';
-        return $unlock($this->prefix . $key . '_forfill');
+        return $this->_cache->delete($this->prefix . $key . '_forfill');
     }
 }
 

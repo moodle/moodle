@@ -212,28 +212,13 @@ function setup_is_unicodedb() {
 function init_memcached() {
     global $CFG, $MCACHE;
 
-    if (!function_exists('memcache_connect')) {
-        debugging("Memcached is set to true but the memcached extension is not installed");
-        return false;
-    }
-                                               
-    $hosts = split(',', $CFG->memcachedhosts);
-    $MCACHE = new Memcache;
-    if (count($hosts) === 1 && !empty($CFG->memcachedpconn)) {
-        // the faster pconnect is only available
-        // for single-server setups
-        // NOTE: PHP-PECL client is buggy and pconnect() 
-        // will segfault if the server is unavailable
-        $MCACHE->pconnect($hosts[0]);
-    } else {
-        // multi-host setup will share key space
-        foreach ($hosts as $host) {
-            $host = trim($host);
-            $MCACHE->addServer($host);
-        }
-    }
-
-    return true;
+    include_once($CFG->libdir . '/memcached.class.php');
+    $MCACHE = new memcached;
+    if ($MCACHE->status()) {
+        return true;
+    } 
+    unset($MCACHE);
+    return false;                                           
 }
 
 function init_eaccelerator() {
@@ -241,7 +226,7 @@ function init_eaccelerator() {
 
     include_once($CFG->libdir . '/eaccelerator.class.php');
     $MCACHE = new eaccelerator;
-    if ($MCACHE->status) {
+    if ($MCACHE->status()) {
         return true;
     } 
     unset($MCACHE);
