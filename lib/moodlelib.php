@@ -6466,7 +6466,7 @@ function array_is_nested($array) {
  ***
  **/
 function get_performance_info() {
-    global $CFG, $PERF;
+    global $CFG, $PERF, $rcache;
 
     $info = array();
     $info['html'] = '';         // holds userfriendly HTML representation
@@ -6529,10 +6529,17 @@ function get_performance_info() {
     if (!empty($server_load)) {
         $info['serverload'] = $server_load;
         $info['html'] .= '<span class="serverload">Load average: '.$info['serverload'].'</span> ';
-        $info['txt'] .= 'serverload: '.$info['serverload'];
+        $info['txt'] .= "serverload: {$info['serverload']} ";
     }
 
-
+    if (isset($rcache->hits) && isset($rcache->misses)) {
+        $info['rcachehits'] = $rcache->hits;
+        $info['rcachemisses'] = $rcache->misses;
+        $info['html'] .= '<span class="rcache">Record cache hit/miss ratio : '. 
+            ($rcache->hits / $rcache->misses) . "({$rcache->hits}/{$rcache->misses})</span> ";
+        $info['txt'] .= 'rcache: '. ($rcache->hits / $rcache->misses) . 
+            "({$rcache->hits}/{$rcache->misses}) ";
+    }
     $info['html'] = '<div class="performanceinfo">'.$info['html'].'</div>';
     return $info;
 }

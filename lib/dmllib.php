@@ -39,8 +39,11 @@
 
 $empty_rs_cache = array();   // Keeps copies of the recordsets used in one invocation
 $metadata_cache = array();   // Keeps copies of the MetaColumns() for each table used in one invocations
-$record_cache = array();     // Keeps copies of all simple get_record results from one invocation
-$record_cache_size = 0;      // Count of get_record results stored in this invocation
+
+$rcache = new StdClass;      // Cache simple get_record results
+$rcache->data   = array();
+$rcache->hits   = 0;
+$rcache->misses = 0;
 
 /// FUNCTIONS FOR DATABASE HANDLING  ////////////////////////////////
 
@@ -379,15 +382,16 @@ function count_records_sql($sql) {
  */
 function get_record($table, $field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields='*') {
     
-    global $CFG, $record_cache, $record_cache_count;
+    global $CFG;
     
     // Check to see whether this record is eligible for caching (fields=*, only condition is id)
     $docache = false;
     if (!empty($CFG->enablerecordcache) && $field1=='id' && !$field2 && !$field3 && $fields=='*') {
         $docache = true;
         // If it's in the cache, return it
-        if (!empty($record_cache[$table][$value1])) {
-            return $record_cache[$table][$value1];
+        $cached = rcache_get($table, $value1);
+        if (!empty($cached)) {
+            return $cached;
         }
     }
     
@@ -395,13 +399,10 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
 
     $record = get_record_sql('SELECT '.$fields.' FROM '. $CFG->prefix . $table .' '. $select);
     
-    // If we're caching records, store this one (supposing we got something - we don't cache failures)
-    if ($record && $docache && $record_cache_count<$CFG->enablerecordcache) {
-        $record_cache[$table][$value1] = $record;
-        // We only cache records up to a limit. This is to prevent memory usage becoming 
-        // unreasonably high for pages which do things like, load every student record in
-        // a course, or some such.
-        $record_cache_count++;
+    // If we're caching records, store this one 
+    // (supposing we got something - we don't cache failures)
+    if ($record && $docache) {
+        rcache_set($table, $value1, $record);
     }
 
     return $record;
@@ -1036,26 +1037,19 @@ function get_fieldset_sql($sql) {
  */
 function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
 
-    global $CFG, $record_cache;
+    global $CFG;
 
-    // Clear record_cache based on the parameters passed (individual record or whole table)
+    // Clear record_cache based on the parameters passed
+    // (individual record or whole table)
     if (!empty($CFG->enablerecordcache)) {
         if ($field1 == 'id') {
-            if (isset($record_cache[$table][$value1])) {
-                unset($record_cache[$table][$value1]);
-            }
+            rcache_unset($table, $value1);
         } else if ($field2 == 'id') {
-            if (isset($record_cache[$table][$value2])) {
-                unset($record_cache[$table][$value2]);
-            }
+            rcache_unset($table, $value1);
         } else if ($field3 == 'id') {
-            if (isset($record_cache[$table][$value3])) {
-                unset($record_cache[$table][$value3]);
-            }
+            rcache_unset($table, $value1);
         } else {
-            if (isset($record_cache[$table])) {
-                unset($record_cache[$table]);
-            }
+            rcache_unset_table($table);
         }
     }
 
@@ -1078,7 +1072,7 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
  */
 function set_field_select($table, $newfield, $newvalue, $select, $localcall = false) {
 
-    global $db, $CFG, $record_cache;
+    global $db, $CFG;
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
@@ -1087,11 +1081,10 @@ function set_field_select($table, $newfield, $newvalue, $select, $localcall = fa
             $select = 'WHERE ' . $select;
         }
     
-        // Clear record_cache based on the parameters passed (individual record or whole table)
+        // Clear record_cache based on the parameters passed
+        // (individual record or whole table)
         if (!empty($CFG->enablerecordcache)) {
-            if (isset($record_cache[$table])) {
-                unset($record_cache[$table]);
-            }
+            rcache_unset_table($table);
         }
     }
 
@@ -1147,26 +1140,19 @@ function set_field_select($table, $newfield, $newvalue, $select, $localcall = fa
  */
 function delete_records($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
 
-    global $db, $CFG, $record_cache;
+    global $db, $CFG;
 
-    // Clear record_cache based on the parameters passed (individual record or whole table)
+    // Clear record_cache based on the parameters passed
+    // (individual record or whole table)
     if (!empty($CFG->enablerecordcache)) {
         if ($field1 == 'id') {
-            if (isset($record_cache[$table][$value1])) {
-                unset($record_cache[$table][$value1]);
-            }
+            rcache_unset($table, $value1);
         } else if ($field2 == 'id') {
-            if (isset($record_cache[$table][$value2])) {
-                unset($record_cache[$table][$value2]);
-            }
+            rcache_unset($table, $value2);
         } else if ($field3 == 'id') {
-            if (isset($record_cache[$table][$value3])) {
-                unset($record_cache[$table][$value3]);
-            }
+            rcache_unset($table, $value3);
         } else {
-            if (isset($record_cache[$table])) {
-                unset($record_cache[$table]);
-            }
+            rcache_unset_table($table);
         }
     }
 
@@ -1189,11 +1175,11 @@ function delete_records($table, $field1='', $value1='', $field2='', $value2='', 
  */
 function delete_records_select($table, $select='') {
 
-    global $CFG, $db, $record_cache;
+    global $CFG, $db;
 
     // Clear record_cache (whole table)
-    if (!empty($CFG->enablerecordcache) && isset($record_cache[$table])) {
-        unset($record_cache[$table]);
+    if (!empty($CFG->enablerecordcache)) {
+        rcache_unset_table($table);
     }
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
@@ -1401,15 +1387,15 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
  */
 function update_record($table, $dataobject) {
 
-    global $db, $CFG, $record_cache;
+    global $db, $CFG;
 
     if (! isset($dataobject->id) ) {
         return false;
     }
 
     // Remove this record from record cache since it will change
-    if (!empty($CFG->enablerecordcache) && isset($record_cache[$table][$dataobject->id])) {
-        unset($record_cache[$table][$dataobject->id]);
+    if (!empty($CFG->enablerecordcache)) {
+        rcache_unset($table, $dataobject->id);
     }
     
 /// Temporary hack as part of phasing out all access to obsolete user tables  XXX
@@ -2078,5 +2064,118 @@ function db_update_lobs ($table, $sqlcondition, &$clobs, &$blobs) {
     }
     return $status;
 }
+
+
+function rcache_set($table, $id, $rec) {
+    global $CFG, $rcache;
+
+    $rcache->data[$table][$id] = $rec;
+    return true;
+}
+
+function rcache_unset($table, $id) {
+    global $CFG, $rcache;
+
+    if (isset($rcache->data[$table][$id])) {
+        unset($rcache->data[$table][$id]);
+    }
+    return true;
+}
+
+/**
+ * Get cached record if available. ONLY use if you
+ * are trying to get the cached record and will NOT
+ * fetch it yourself if not cached. 
+ * 
+ * Use rcache_getforfill() if you are going to fetch 
+ * the record if not cached...
+ *
+ * This function is private and must not be used outside dmllib at all
+ *
+ * @param $table string
+ * @param $id integer
+ * @return mixed object-like record on cache hit, false otherwise
+ */
+function rcache_get($table, $id) {
+    global $CFG, $rcache;
+
+    if (isset($rcache->data[$table][$id])) {
+        $rcache->hits++;
+        return $rcache->data[$table][$id];
+    } else {
+        $rcache->misses++;
+        return false;
+    }
+}
+
+/**
+ * In the simple case, this function will 
+ * get cached record if available. If the record
+ * is not available, it will try to get an exclusive
+ * lock that announces that this process will fetch
+ * the record and populate the cache.
+ *
+ * If we fail to get the lock -- this means another
+ * process is going to fetch the rec and fill the cache
+ * so we wait (block) for a few microseconds while we wait for
+ * the cache to be filled or the lock to timeout.
+ * 
+ * If you get a false from this call, you _must_ fetch the 
+ * rec from DB and populate the cache ASAP or indicate that
+ * you won't by calling rcache_releaseforfill().
+ *
+ * This technique forces serialisation and so helps deal 
+ * with thundering herd scenarios where a lot of clients 
+ * ask the for the same idempotent (and costly) operation. 
+ * The implementation is based on suggestions in this message
+ * http://marc.theaimsgroup.com/?l=git&m=116562052506776&w=2
+ *
+ * This function is private and must not be used outside dmllib at all
+ *
+ * @param $table string
+ * @param $id integer
+ * @return mixed object-like record on cache hit, false otherwise
+ */
+function rcache_getforfill($table, $id) {
+    global $CFG, $rcache;
+
+    return rcache_get($table, $id);
+}
+
+/**
+ * Release the exclusive lock obtained by 
+ * rcache_getforfill(). See rcache_getforfill()
+ * for more details.
+ *
+ * This function is private and must not be used outside dmllib at all
+ *
+ * @param $table string
+ * @param $id integer
+ * @return bool
+ */
+function rcache_releaseforfill($table, $id) {
+    global $CFG, $rcache;
+
+    return true;
+}
+
+/**
+ * Remove or invalidate all rcache entries related to
+ * a table. Not all caching mechanisms cluster entries
+ * by table so in those cases we use alternative strategies.
+ *
+ * This function is private and must not be used outside dmllib at all
+ *
+ * @param $table string the table to invalidate records for
+ * @return bool
+ */
+function rcache_unset_table ($table) {
+    global $CFG, $rcache;
+    if (isset($rcache->data[$table])) {
+        unset($rcache->data[$table]);
+    }
+    return true;
+}
+
 
 ?>
