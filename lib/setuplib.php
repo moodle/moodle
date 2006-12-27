@@ -209,4 +209,29 @@ function setup_is_unicodedb() {
     return $unicodedb;
 }
 
+function init_memcached() {
+    global $CFG, $MCACHE;
+
+    if (!function_exists('memcache_connect')) {
+        debugging("Memcached is set to true but the memcached extension is not installed");
+        return false;
+    }
+                                               
+    $hosts = split(',', $CFG->memcachedhosts);
+    $MCACHE = new Memcache;
+    if (count($hosts) === 1) {
+        // the faster pconnect is only available
+        // for single-server setups
+        $MCACHE->pconnect($hosts[0]);
+    } else {
+        // multi-host setup will share key space
+        foreach ($hosts as $host) {
+            $host = trim($host);
+            $MCACHE->addServer($host);
+        }
+    }
+
+    return true;
+}
+
 ?>

@@ -44,6 +44,10 @@ global $CFG;
  * @global object(session) $SESSION
  */
 global $SESSION;
+/** 
+ * Definition of shared memory cache
+ */
+global $MCACHE;
 /**
  * Definition of course type
  * @global object(course) $COURSE
@@ -251,6 +255,12 @@ global $HTTPSPAGEREQUIRED;
     unset($originaldatabasedebug);
     error_reporting($CFG->debug);
 
+/// Shared-Memory cache init -- will set $MCACHE
+/// $MCACHE is a global object that offers at least add(), set() and delete()
+/// with similar semantics to the memcached PHP API http://php.net/memcache
+    if (!empty($CFG->memcached) && !empty($CFG->memcachedhosts)) {
+       init_memcached();
+    }
 
 /// Set a default enrolment configuration (see bug 1598)
     if (!isset($CFG->enrol)) {
