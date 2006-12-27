@@ -2180,26 +2180,17 @@ function rcache_get($table, $id) {
 }
 
 /**
- * In the simple case, this function will 
- * get cached record if available. If the record
- * is not available, it will try to get an exclusive
- * lock that announces that this process will fetch
- * the record and populate the cache.
+ * Get cached record if available. In most cases you want
+ * to use this function -- namely if you are trying to get 
+ * the cached record and will fetch it yourself if not cached.
+ * (and set the cache ;-)
  *
- * If we fail to get the lock -- this means another
- * process is going to fetch the rec and fill the cache
- * so we wait (block) for a few microseconds while we wait for
- * the cache to be filled or the lock to timeout.
- * 
- * If you get a false from this call, you _must_ fetch the 
- * rec from DB and populate the cache ASAP or indicate that
- * you won't by calling rcache_releaseforfill().
+ * Uses the getforfill caching mechanism. See lib/eaccelerator.class.php
+ * for a detailed description of the technique. 
  *
- * This technique forces serialisation and so helps deal 
- * with thundering herd scenarios where a lot of clients 
- * ask the for the same idempotent (and costly) operation. 
- * The implementation is based on suggestions in this message
- * http://marc.theaimsgroup.com/?l=git&m=116562052506776&w=2
+ * Note: if you call rcache_getforfill() you are making an implicit promise
+ * that if the cache is empty, you will later populate it, or cancel the promise
+ * calling rcache_releaseforfill();
  *
  * This function is private and must not be used outside dmllib at all
  *
