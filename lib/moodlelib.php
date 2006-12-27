@@ -6536,9 +6536,9 @@ function get_performance_info() {
         $info['rcachehits'] = $rcache->hits;
         $info['rcachemisses'] = $rcache->misses;
         $info['html'] .= '<span class="rcache">Record cache hit/miss ratio : '. 
-            ($rcache->hits / $rcache->misses) . "({$rcache->hits}/{$rcache->misses})</span> ";
-        $info['txt'] .= 'rcache: '. ($rcache->hits / $rcache->misses) . 
-            "({$rcache->hits}/{$rcache->misses}) ";
+            "{$rcache->hits}/{$rcache->misses}</span> ";
+        $info['txt'] .= 'rcache: '. 
+            "{$rcache->hits}/{$rcache->misses} ";
     }
     $info['html'] = '<div class="performanceinfo">'.$info['html'].'</div>';
     return $info;
