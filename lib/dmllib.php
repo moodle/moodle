@@ -2087,18 +2087,16 @@ function rcache_set($table, $id, $rec) {
     if ($CFG->rcache === 'internal') {
         $rcache->data[$table][$id] = $rec;
     } else {
-        $reckey = join('|', array($CFG->dbname, $CFG->prefix,
-                                  $table, $id));
-        $tablekey = $key = join('|', array($CFG->dbname, $CFG->prefix,
-                                           $table));
+        $key   = $table . '|' . $id;
+        
         if (isset($MCACHE)) {
-            // $tablekey is a flag used to mark
+            // $table is a flag used to mark
             // a table as dirty & uncacheable 
             // when an UPDATE or DELETE not bound by ID 
             // is taking place
-            if (!$MCACHE->get($tablekey)) {
-                $MCACHE->set($reckey, $rec, false, $CFG->rcachettl);
-                $MCACHE->delete($reckey . '_fill'); // release lock
+            if (!$MCACHE->get($table)) {
+                // this will also release the _forfill lock
+                $MCACHE->set($key, $rec, $CFG->rcachettl);
             }
         }
     }
@@ -2123,8 +2121,7 @@ function rcache_unset($table, $id) {
             unset($rcache->data[$table][$id]);
         }
     } else {
-        $key = join('|', array($CFG->dbname, $CFG->prefix,
-                               $table, $id));
+        $key   = $table . '|' . $id;
         if (isset($MCACHE)) {
             $MCACHE->delete($key);
         }
@@ -2159,20 +2156,17 @@ function rcache_get($table, $id) {
         } 
     }
 
-    $reckey = join('|', array($CFG->dbname, $CFG->prefix,
-                              $table, $id));
-    $tablekey = $key = join('|', array($CFG->dbname, $CFG->prefix,
-                                       $table));
     if (isset($MCACHE)) {
-        // $tablekey is a flag used to mark
+        $key   = $table . '|' . $id;
+        // we set $table as a flag used to mark
         // a table as dirty & uncacheable 
         // when an UPDATE or DELETE not bound by ID 
         // is taking place
-        if ($MCACHE->get($tablekey)) {
+        if ($MCACHE->get($table)) {
             $rcache->misses++;
             return false;
         } else {
-            $rec = $MCACHE->get($reckey);
+            $rec = $MCACHE->get($key);
             if (!empty($rec)) {
                 $rcache->hits++;
                 return $rec;
@@ -2220,44 +2214,23 @@ function rcache_getforfill($table, $id) {
         return rcache_get($table, $id);
     }
 
-    $reckey = join('|', array($CFG->dbname, $CFG->prefix,
-                              $table, $id));
-    $tablekey = $key = join('|', array($CFG->dbname, $CFG->prefix,
-                                       $table));
     if (isset($MCACHE)) {
-        // if $tablekey is set - we won't take the
+        $key   = $table . '|' . $id;
+        // if $table is set - we won't take the
         // lock either
-        if ($MCACHE->get($tablekey)) {
+        if ($MCACHE->get($table)) {
             $rcache->misses++;
             return false;
-        } else {
-            $rec = $MCACHE->get($reckey);
-            if (!empty($rec)) { // easy
-                $rcache->hits++;
-                return $rec;
-            } else {
-                // not found - get the "_fill" lock or poll for
-                // the results if someone's holding it
-                // get the lock for 1s and tag a miss
-                if ($MCACHE->add($reckey . '_fill', true, false, 1)) {
-                    $rcache->misses++;
-                    return false;
-                } else { // could not get the lock - loop .05s waiting for it
-                    for ($n=0;$n<5;$n++) {
-                        usleep(10000);
-                        $rec = $MCACHE->get($reckey);
-                        if (!empty($rec)) { // easy
-                            $rcache->hits++;
-                            return $rec;
-                        }
-                    }
-                    return false;
-                }
-            } 
         }
+        $rec = $MCACHE->getforfill($key);
+        if (!empty($rec)) {
+            $rcache->hits++;
+            return $rec;
+        } 
+        $rcache->misses++;
+        return false;
     }
     return false;
-
 }
 
 /**
@@ -2272,14 +2245,12 @@ function rcache_getforfill($table, $id) {
  * @return bool
  */
 function rcache_releaseforfill($table, $id) {
-    global $CFG, $MCACHE, $rcache;
-    $reckey = join('|', array($CFG->dbname, $CFG->prefix,
-                              $table, $id));
+    global $CFG, $MCACHE;
     
     if (isset($MCACHE)) {
-        $MCACHE->delete($reckey . '_fill');
+        $key   = $table . '|' . $id;
+        return $MCACHE->releaseforfill($key);
     }
-
     return true;
 }
 
@@ -2304,11 +2275,9 @@ function rcache_unset_table ($table) {
     }
 
     if (isset($MCACHE)) {
-        $tablekey = $key = join('|', array($CFG->dbname, $CFG->prefix,
-                                           $table));
         // at least as long as content keys to ensure they expire
         // before the dirty flag 
-        $MCACHE->set($tablekey, true, false, $CFG->rcachettl);
+        $MCACHE->set($tablekey, true, $CFG->rcachettl);
     }
     return true;
 }
