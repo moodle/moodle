@@ -386,10 +386,10 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
     
     // Check to see whether this record is eligible for caching (fields=*, only condition is id)
     $docache = false;
-    if (!empty($CFG->enablerecordcache) && $field1=='id' && !$field2 && !$field3 && $fields=='*') {
+    if (!empty($CFG->rcache) && $field1=='id' && !$field2 && !$field3 && $fields=='*') {
         $docache = true;
         // If it's in the cache, return it
-        $cached = rcache_get($table, $value1);
+        $cached = rcache_getforfill($table, $value1);
         if (!empty($cached)) {
             return $cached;
         }
@@ -401,10 +401,13 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
     
     // If we're caching records, store this one 
     // (supposing we got something - we don't cache failures)
-    if ($record && $docache) {
-        rcache_set($table, $value1, $record);
+    if ($docache) {
+        if (isset($record)) {
+            rcache_set($table, $value1, $record);
+        } else {
+            rcache_releaseforfill($table, $value1);
+        }
     }
-
     return $record;
 }
 
@@ -1041,7 +1044,7 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
 
     // Clear record_cache based on the parameters passed
     // (individual record or whole table)
-    if (!empty($CFG->enablerecordcache)) {
+    if (!empty($CFG->rcache)) {
         if ($field1 == 'id') {
             rcache_unset($table, $value1);
         } else if ($field2 == 'id') {
@@ -1083,7 +1086,7 @@ function set_field_select($table, $newfield, $newvalue, $select, $localcall = fa
     
         // Clear record_cache based on the parameters passed
         // (individual record or whole table)
-        if (!empty($CFG->enablerecordcache)) {
+        if (!empty($CFG->rcache)) {
             rcache_unset_table($table);
         }
     }
@@ -1144,7 +1147,7 @@ function delete_records($table, $field1='', $value1='', $field2='', $value2='', 
 
     // Clear record_cache based on the parameters passed
     // (individual record or whole table)
-    if (!empty($CFG->enablerecordcache)) {
+    if (!empty($CFG->rcache)) {
         if ($field1 == 'id') {
             rcache_unset($table, $value1);
         } else if ($field2 == 'id') {
@@ -1178,7 +1181,7 @@ function delete_records_select($table, $select='') {
     global $CFG, $db;
 
     // Clear record_cache (whole table)
-    if (!empty($CFG->enablerecordcache)) {
+    if (!empty($CFG->rcache)) {
         rcache_unset_table($table);
     }
 
@@ -1394,7 +1397,7 @@ function update_record($table, $dataobject) {
     }
 
     // Remove this record from record cache since it will change
-    if (!empty($CFG->enablerecordcache)) {
+    if (!empty($CFG->rcache)) {
         rcache_unset($table, $dataobject->id);
     }
     
@@ -2065,19 +2068,66 @@ function db_update_lobs ($table, $sqlcondition, &$clobs, &$blobs) {
     return $status;
 }
 
-
+/**
+ * Set cached record.
+ *
+ * If you have called rcache_getforfill() before, it will also
+ * release the lock.
+ *
+ * This function is private and must not be used outside dmllib at all
+ *
+ * @param $table string
+ * @param $id integer
+ * @param $rec obj
+ * @return bool
+ */
 function rcache_set($table, $id, $rec) {
-    global $CFG, $rcache;
+    global $CFG, $MCACHE, $rcache;
 
-    $rcache->data[$table][$id] = $rec;
+    if ($CFG->rcache === 'internal') {
+        $rcache->data[$table][$id] = $rec;
+    } else {
+        $reckey = join('|', array($CFG->dbname, $CFG->prefix,
+                                  $table, $id));
+        $tablekey = $key = join('|', array($CFG->dbname, $CFG->prefix,
+                                           $table));
+        if (isset($MCACHE)) {
+            // $tablekey is a flag used to mark
+            // a table as dirty & uncacheable 
+            // when an UPDATE or DELETE not bound by ID 
+            // is taking place
+            if (!$MCACHE->get($tablekey)) {
+                $MCACHE->set($reckey, $rec, false, 2);
+                $MCACHE->delete($reckey . '_fill'); // release lock
+            }
+        }
+    }
     return true;
+   
 }
 
+/**
+ * Unset cached record if it exists.
+ *
+ * This function is private and must not be used outside dmllib at all
+ *
+ * @param $table string
+ * @param $id integer
+ * @return bool
+ */
 function rcache_unset($table, $id) {
-    global $CFG, $rcache;
+    global $CFG, $MCACHE, $rcache;
 
-    if (isset($rcache->data[$table][$id])) {
-        unset($rcache->data[$table][$id]);
+    if ($CFG->rcache === 'internal') {
+        if (isset($rcache->data[$table][$id])) {
+            unset($rcache->data[$table][$id]);
+        }
+    } else {
+        $key = join('|', array($CFG->dbname, $CFG->prefix,
+                               $table, $id));
+        if (isset($MCACHE)) {
+            $MCACHE->delete($key);
+        }
     }
     return true;
 }
@@ -2097,15 +2147,42 @@ function rcache_unset($table, $id) {
  * @return mixed object-like record on cache hit, false otherwise
  */
 function rcache_get($table, $id) {
-    global $CFG, $rcache;
+    global $CFG, $MCACHE, $rcache;
 
-    if (isset($rcache->data[$table][$id])) {
-        $rcache->hits++;
-        return $rcache->data[$table][$id];
-    } else {
-        $rcache->misses++;
-        return false;
+    if ($CFG->rcache === 'internal') {
+        if (isset($rcache->data[$table][$id])) {
+            $rcache->hits++;
+            return $rcache->data[$table][$id];
+        } else {
+            $rcache->misses++;
+            return false;
+        } 
     }
+
+    $reckey = join('|', array($CFG->dbname, $CFG->prefix,
+                              $table, $id));
+    $tablekey = $key = join('|', array($CFG->dbname, $CFG->prefix,
+                                       $table));
+    if (isset($MCACHE)) {
+        // $tablekey is a flag used to mark
+        // a table as dirty & uncacheable 
+        // when an UPDATE or DELETE not bound by ID 
+        // is taking place
+        if ($MCACHE->get($tablekey)) {
+            $rcache->misses++;
+            return false;
+        } else {
+            $rec = $MCACHE->get($reckey);
+            if (!empty($rec)) {
+                $rcache->hits++;
+                return $rec;
+            } else {
+                $rcache->misses++;
+                return false;
+            } 
+        }
+    }
+    return false;
 }
 
 /**
@@ -2137,9 +2214,50 @@ function rcache_get($table, $id) {
  * @return mixed object-like record on cache hit, false otherwise
  */
 function rcache_getforfill($table, $id) {
-    global $CFG, $rcache;
+    global $CFG, $MCACHE, $rcache;
 
-    return rcache_get($table, $id);
+    if ($CFG->rcache === 'internal') {
+        return rcache_get($table, $id);
+    }
+
+    $reckey = join('|', array($CFG->dbname, $CFG->prefix,
+                              $table, $id));
+    $tablekey = $key = join('|', array($CFG->dbname, $CFG->prefix,
+                                       $table));
+    if (isset($MCACHE)) {
+        // if $tablekey is set - we won't take the
+        // lock either
+        if ($MCACHE->get($tablekey)) {
+            $rcache->misses++;
+            return false;
+        } else {
+            $rec = $MCACHE->get($reckey);
+            if (!empty($rec)) { // easy
+                $rcache->hits++;
+                return $rec;
+            } else {
+                // not found - get the "_fill" lock or poll for
+                // the results if someone's holding it
+                // get the lock for 1s and tag a miss
+                if ($MCACHE->add($reckey . '_fill', true, false, 1)) {
+                    $rcache->misses++;
+                    return false;
+                } else { // could not get the lock - loop .05s waiting for it
+                    for ($n=0;$n<5;$n++) {
+                        usleep(10000);
+                        $rec = $MCACHE->get($reckey);
+                        if (!empty($rec)) { // easy
+                            $rcache->hits++;
+                            return $rec;
+                        }
+                    }
+                    return false;
+                }
+            } 
+        }
+    }
+    return false;
+
 }
 
 /**
@@ -2154,7 +2272,13 @@ function rcache_getforfill($table, $id) {
  * @return bool
  */
 function rcache_releaseforfill($table, $id) {
-    global $CFG, $rcache;
+    global $CFG, $MCACHE, $rcache;
+    $reckey = join('|', array($CFG->dbname, $CFG->prefix,
+                              $table, $id));
+    
+    if (isset($MCACHE)) {
+        $MCACHE->delete($reckey . '_fill');
+    }
 
     return true;
 }
@@ -2170,12 +2294,23 @@ function rcache_releaseforfill($table, $id) {
  * @return bool
  */
 function rcache_unset_table ($table) {
-    global $CFG, $rcache;
-    if (isset($rcache->data[$table])) {
-        unset($rcache->data[$table]);
+    global $CFG, $MCACHE, $rcache;
+
+    if ($CFG->rcache === 'internal') {
+        if (isset($rcache->data[$table])) {
+            unset($rcache->data[$table]);
+        }
+        return true;
+    }
+
+    if (isset($MCACHE)) {
+        $tablekey = $key = join('|', array($CFG->dbname, $CFG->prefix,
+                                           $table));
+        // at least as long as content keys to ensure they expire
+        // before the dirty flag 
+        $MCACHE->set($tablekey, true, false, 2);
     }
     return true;
 }
-
 
 ?>
