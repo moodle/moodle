@@ -219,9 +219,11 @@ function init_memcached() {
                                                
     $hosts = split(',', $CFG->memcachedhosts);
     $MCACHE = new Memcache;
-    if (count($hosts) === 1) {
+    if (count($hosts) === 1 && !empty($CFG->memcachedpconn)) {
         // the faster pconnect is only available
         // for single-server setups
+        // NOTE: PHP-PECL client is buggy and pconnect() 
+        // will segfault if the server is unavailable
         $MCACHE->pconnect($hosts[0]);
     } else {
         // multi-host setup will share key space
