@@ -4799,7 +4799,7 @@ function redirect($url, $message='', $delay=-1) {
 
         $delay = 0;
         //try header redirection first
-        @header('HTTP/1.x 303 See Other'); //302 might not work for POST requests, 303 is ignored by obsolete clients
+        @header($_SERVER['SERVER_PROTOCOL'] . ' 303 See Other'); //302 might not work for POST requests, 303 is ignored by obsolete clients
         @header('Location: '.$url);
         //another way for older browsers and already sent headers (eg trailing whitespace in config.php)
         echo '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />';
