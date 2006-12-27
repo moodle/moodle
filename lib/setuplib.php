@@ -236,4 +236,18 @@ function init_memcached() {
     return true;
 }
 
+function init_eaccelerator() {
+    global $CFG, $MCACHE;
+
+    include_once($CFG->libdir . '/eaccelerator.class.php');
+    $MCACHE = new eaccelerator;
+    if ($MCACHE->status) {
+        return true;
+    } 
+    unset($MCACHE);
+    return false;
+}
+
+
+
 ?>

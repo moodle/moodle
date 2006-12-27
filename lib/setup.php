@@ -261,6 +261,9 @@ global $HTTPSPAGEREQUIRED;
     if (!empty($CFG->memcached) && !empty($CFG->memcachedhosts)) {
        init_memcached();
     }
+    if (!empty($CFG->eaccelerator)) {
+        init_eaccelerator();
+    }
 
 /// Set a default enrolment configuration (see bug 1598)
     if (!isset($CFG->enrol)) {
