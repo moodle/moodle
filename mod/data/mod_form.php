@@ -1,7 +1,7 @@
 <?php
 require_once ('moodleform_mod.php');
 
-class data_mod_form extends moodleform_mod {
+class mod_data_mod_form extends moodleform_mod {
 
     function definition() {
 

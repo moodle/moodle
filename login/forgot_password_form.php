@@ -2,7 +2,7 @@
 
 require_once $CFG->libdir.'/formslib.php';
 
-class forgot_password_form extends moodleform {
+class login_forgot_password_form extends moodleform {
 
     function definition() {
         $mform    =& $this->_form;

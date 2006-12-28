@@ -914,7 +914,7 @@ class assignment_upload extends assignment_base {
 
 }
 
-class assignment_upload_notes_form extends moodleform {
+class mod_assignment_upload_notes_form extends moodleform {
     function definition() {
         $mform =& $this->_form;
 

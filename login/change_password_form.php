@@ -2,7 +2,7 @@
 
 require_once $CFG->libdir.'/formslib.php';
 
-class change_password_form extends moodleform {
+class login_change_password_form extends moodleform {
 
     function definition() {
         global $USER;

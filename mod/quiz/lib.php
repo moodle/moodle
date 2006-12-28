@@ -646,8 +646,6 @@ function quiz_after_add_or_update($quiz) {
         }
     }
 
-    // Remember whether this user likes the advanced settings visible or hidden.
-    set_user_preference('quiz_optionsettingspref', $quiz->mform_showadvanced_last);
 
     // Update the events relating to this quiz.
     // This is slightly inefficient, deleting the old events and creating new ones. However,

@@ -2,7 +2,7 @@
 
 require_once($CFG->libdir.'/formslib.php');
 
-class forum_post_form extends moodleform {
+class mod_forum_post_form extends moodleform {
 
 	function definition() {
 

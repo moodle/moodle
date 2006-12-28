@@ -2,7 +2,7 @@
 
     require_once("../../config.php");
     include_once $CFG->libdir.'/formslib.php';
-    class survey_details_form extends moodleform {
+    class mod_survey_details_form extends moodleform {
 
         function definition() {
             $mform    =& $this->_form;

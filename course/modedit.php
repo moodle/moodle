@@ -125,6 +125,7 @@
     $mformclassname=$module->name.'_mod_form';
     $cousesection=isset($cw->section)?$cw->section:$section;
     $mform=& new $mformclassname($form->instance, $cousesection, ((isset($cm))?$cm:null));
+    $mform->set_defaults($form);
 
     if ($mform->is_cancelled()) {
         if ($return && isset($cm)){
@@ -276,7 +277,6 @@
         $icon = '<img align="middle" height="16" width="16" src="'.$CFG->modpixpath.'/'.$module->name.'/icon.gif" alt="" style="vertical-align: middle;" />&nbsp;';
 
         print_heading_with_help($pageheading, "mods", $module->name, $icon);
-        $mform->set_defaults($form);
         $mform->display();
         print_footer($course);
     }

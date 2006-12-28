@@ -240,7 +240,7 @@ class assignment_online extends assignment_base {
 
 }
 
-class assignment_online_edit_form extends moodleform {
+class mod_assignment_online_edit_form extends moodleform {
     function definition() {
         $mform =& $this->_form;
 

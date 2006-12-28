@@ -2,7 +2,7 @@
 
 require_once $CFG->libdir.'/formslib.php';
 
-class data_comment_form extends moodleform {
+class mod_data_comment_form extends moodleform {
     function definition() {
         $mform =& $this->_form;
 

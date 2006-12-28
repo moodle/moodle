@@ -928,16 +928,16 @@ $string['newuser'] = 'New user';
 $string['newusernewpasswordsubj'] = 'New user account';
 $string['newusernewpasswordtext'] = 'Hi $a->firstname,
 
-A new account has been created for you at \'$a->sitename\' 
+A new account has been created for you at \'$a->sitename\'
 and you have been issued with a new temporary password.
 
 Your current login information is now:
    username: $a->username
    password: $a->newpassword
-             (you will have to change your password 
+             (you will have to change your password
               when you login for the first time)
 
-To start using \'$a->sitename\', login at 
+To start using \'$a->sitename\', login at
    $a->link
 
 In most mail programs, this should appear as a blue link
@@ -975,7 +975,7 @@ $string['nopotentialcreators'] = 'No potential course creators';
 $string['nopotentialstudents'] = 'No potential students';
 $string['nopotentialteachers'] = 'No potential teachers';
 $string['norecentactivity'] = 'No recent activity';
-$string['noreplybouncemessage'] = 'You have replied to a no-reply email address. If you were attempting to reply to a forum post, please instead reply using the $a forums. 
+$string['noreplybouncemessage'] = 'You have replied to a no-reply email address. If you were attempting to reply to a forum post, please instead reply using the $a forums.
 
 Following is the content of your email:';
 $string['noreplybouncesubject'] = '$a - bounced email.';
@@ -1325,6 +1325,7 @@ $string['supplyinfo'] = 'Please supply some information about yourself';
 $string['switchrolereturn'] = 'Return to my normal role';
 $string['switchroleto'] = 'Switch role to...';
 $string['tag'] = 'Tag';
+$string['tagalready'] = 'This tag already exists';
 $string['tagmanagement'] = 'Add/delete tags ...';
 $string['tags'] = 'Tags';
 $string['targetrole'] = 'Target role';

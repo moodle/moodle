@@ -49,6 +49,7 @@ if ($CFG->debug >= DEBUG_ALL){
     PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, 'pear_handle_error');
 }
 
+
 /**
  * Moodle specific wrapper that separates quickforms syntax from moodle code. You won't directly
  * use this class you should write a class defintion which extends this class or a more specific
@@ -107,7 +108,8 @@ class moodleform {
         if (empty($action)){
             $action = strip_querystring(qualified_me());
         }
-        //strip '_form' from the end of class name to make form 'id' attribute.
+
+        //strip '_form' from the end of class name to make form name attribute.
         $this->_formname = preg_replace('/_form$/', '', get_class($this), 1);
         $this->_customdata = $customdata;
         $this->_form =& new MoodleQuickForm($this->_formname, $method, $action, $target, $attributes);
@@ -279,6 +281,9 @@ class moodleform {
         }
         $mform =& $this->_form;
         $nosubmit = false;
+        if (!$this->is_submitted()){
+            return false;
+        }
         foreach ($mform->_noSubmitButtons as $nosubmitbutton){
             if (optional_param($nosubmitbutton, 0, PARAM_RAW)){
                 $nosubmit = true;
@@ -297,9 +302,7 @@ class moodleform {
     function is_validated() {
         static $validated = null; // one validation is enough
         $mform =& $this->_form;
-        if ($this->no_submit_button_pressed()){
-            return false;
-        }
+
         if ($validated === null) {
             $internal_val = $mform->validate();
             $moodle_val = $this->validation($mform->exportValues(null, true));
@@ -324,7 +327,11 @@ class moodleform {
             }
             $validated = ($internal_val and $moodle_val and $file_val);
         }
-        return $validated;
+        if ($this->no_submit_button_pressed()){
+            return false;
+        } else {
+            return $validated;
+        }
     }
 
     /**
@@ -577,6 +584,15 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     var $_showAdvanced = null;
 
     /**
+     * The form name is derrived from the class name of the wrapper minus the trailing form
+     * It is a name with words joined by underscores whereas the id attribute is words joined by
+     * underscores.
+     *
+     * @var unknown_type
+     */
+    var $_formName = '';
+
+    /**
      * Class constructor - same parameters as HTML_QuickForm_DHTMLRulesTableless
      * @param    string      $formName          Form's name.
      * @param    string      $method            (optional)Form's method defaults to 'POST'
@@ -591,8 +607,9 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
 
         HTML_Common::HTML_Common($attributes);
         $target = empty($target) ? array() : array('target' => $target);
+        $this->_formName = $formName;
         //no 'name' atttribute for form in xhtml strict :
-        $attributes = array('action'=>$action, 'method'=>$method, 'id'=>$formName) + $target;
+        $attributes = array('action'=>$action, 'method'=>$method, 'id'=>strtr($formName, '_', '-')) + $target;
         $this->updateAttributes($attributes);
 
         //this is custom stuff for Moodle :
@@ -648,9 +665,9 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                 return;
             } else { //if setShowAdvanced is called without any preference
                      //make the default to not show advanced elements.
-                $showadvancedNow = 0;
+                $showadvancedNow = get_user_preferences(
+                                moodle_strtolower($this->_formName.'_showadvanced', 0));
             }
-
         }
         //value of hidden element
         $hiddenLast = optional_param('mform_showadvanced_last', -1, PARAM_INT);
@@ -665,6 +682,9 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             $next = $hiddenLast;
         }
         $this->_showAdvanced = $next;
+        if ($showadvancedNow != $next){
+            set_user_preference($this->_formName.'_showadvanced', $next);
+        }
         $this->setConstants(array('mform_showadvanced_last'=>$next));
     }
     function getShowAdvanced(){
@@ -859,6 +879,74 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         }
     }
     /**
+     * Adds a validation rule for the given field
+     *
+     * If the element is in fact a group, it will be considered as a whole.
+     * To validate grouped elements as separated entities,
+     * use addGroupRule instead of addRule.
+     *
+     * @param    string     $element       Form element name
+     * @param    string     $message       Message to display for invalid data
+     * @param    string     $type          Rule type, use getRegisteredRules() to get types
+     * @param    string     $format        (optional)Required for extra rule data
+     * @param    string     $validation    (optional)Where to perform validation: "server", "client"
+     * @param    boolean    $reset         Client-side validation: reset the form element to its original value if there is an error?
+     * @param    boolean    $force         Force the rule to be applied, even if the target form element does not exist
+     * @since    1.0
+     * @access   public
+     * @throws   HTML_QuickForm_Error
+     */
+    function addRule($element, $message, $type, $format=null, $validation='server', $reset = false, $force = false)
+    {
+        parent::addRule($element, $message, $type, $format, $validation, $reset, $force);
+        if ($validation == 'client') {
+            $this->updateAttributes(array('onsubmit' => 'try { var myValidator = validate_' . $this->_formName . '; } catch(e) { return true; } return myValidator(this);'));
+        }
+
+    } // end func addRule
+    /**
+     * Adds a validation rule for the given group of elements
+     *
+     * Only groups with a name can be assigned a validation rule
+     * Use addGroupRule when you need to validate elements inside the group.
+     * Use addRule if you need to validate the group as a whole. In this case,
+     * the same rule will be applied to all elements in the group.
+     * Use addRule if you need to validate the group against a function.
+     *
+     * @param    string     $group         Form group name
+     * @param    mixed      $arg1          Array for multiple elements or error message string for one element
+     * @param    string     $type          (optional)Rule type use getRegisteredRules() to get types
+     * @param    string     $format        (optional)Required for extra rule data
+     * @param    int        $howmany       (optional)How many valid elements should be in the group
+     * @param    string     $validation    (optional)Where to perform validation: "server", "client"
+     * @param    bool       $reset         Client-side: whether to reset the element's value to its original state if validation failed.
+     * @since    2.5
+     * @access   public
+     * @throws   HTML_QuickForm_Error
+     */
+    function addGroupRule($group, $arg1, $type='', $format=null, $howmany=0, $validation = 'server', $reset = false)
+    {
+        parent::addGroupRule($group, $arg1, $type, $format, $howmany, $validation, $reset);
+        if (is_array($arg1)) {
+             foreach ($arg1 as $elementIndex => $rules) {
+                foreach ($rules as $rule) {
+                    $validation = (isset($rule[3]) && 'client' == $rule[3])? 'client': 'server';
+
+                    if ('client' == $validation) {
+                        $this->updateAttributes(array('onsubmit' => 'try { var myValidator = validate_' . $this->_formName . '; } catch(e) { return true; } return myValidator(this);'));
+                    }
+                }
+            }
+        } elseif (is_string($arg1)) {
+
+            if ($validation == 'client') {
+                $this->updateAttributes(array('onsubmit' => 'try { var myValidator = validate_' . $formname . '; } catch(e) { return true; } return myValidator(this);'));
+            }
+        }
+    } // end func addGroupRule
+
+    // }}}
+    /**
      * Returns the client side validation script
      *
      * The code here was copied from HTML_QuickForm_DHTMLRulesTableless who copied it from  HTML_QuickForm
@@ -986,7 +1074,7 @@ function qf_errorHandler(element, _qfMsg) {
             list($jsArr,$element)=$jsandelement;
             //end of fix
             $js .= '
-function validate_' . $this->_attributes['id'] . '_' . $elementName . '(element) {
+function validate_' . $this->_formName . '_' . $elementName . '(element) {
   var value = \'\';
   var errFlag = new Array();
   var _qfGroups = {};
@@ -1000,12 +1088,12 @@ function validate_' . $this->_attributes['id'] . '_' . $elementName . '(element)
 }
 ';
             $validateJS .= '
-  ret = validate_' . $this->_attributes['id'] . '_' . $elementName.'(frm.elements[\''.$elementName.'\']) && ret;';
+  ret = validate_' . $this->_formName . '_' . $elementName.'(frm.elements[\''.$elementName.'\']) && ret;';
             // Fix for bug displaying errors for elements in a group
             //unset($element);
             //$element =& $this->getElement($elementName);
             //end of fix
-            $valFunc = 'validate_' . $this->_attributes['id'] . '_' . $elementName . '(this)';
+            $valFunc = 'validate_' . $this->_formName . '_' . $elementName . '(this)';
             $onBlur = $element->getAttribute('onBlur');
             $onChange = $element->getAttribute('onChange');
             $element->updateAttributes(array('onBlur' => $onBlur . $valFunc,
@@ -1013,7 +1101,7 @@ function validate_' . $this->_attributes['id'] . '_' . $elementName . '(element)
         }
 //  do not rely on frm function parameter, because htmlarea breaks it when overloading the onsubmit method
         $js .= '
-function validate_' . $this->_attributes['id'] . '(frm) {
+function validate_' . $this->_formName . '(frm) {
   if (skipClientValidation) {
      return true;
   }

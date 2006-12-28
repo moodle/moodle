@@ -3,7 +3,7 @@ require_once ('moodleform_mod.php');
 
 require_once("$CFG->dirroot/mod/quiz/locallib.php");
 
-class quiz_mod_form extends moodleform_mod {
+class mod_quiz_mod_form extends moodleform_mod {
     var $_feedbacks;
 
 	function definition() {
@@ -11,7 +11,6 @@ class quiz_mod_form extends moodleform_mod {
 		global $COURSE, $CFG, $QUIZ_GRADE_METHOD;
 		$mform    =& $this->_form;
 
-		$mform->setShowAdvanced(get_user_preferences('quiz_optionsettingspref', 0));
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 

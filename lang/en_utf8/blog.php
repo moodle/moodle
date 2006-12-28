@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // blog.php - created with Moodle 1.7 beta + (2006101003)
 
 
@@ -15,6 +15,7 @@ $string['blogs'] = 'Blogs';
 $string['blogtags'] = 'Blog Tags';
 $string['courseblog'] = 'Course blog: $a';
 $string['courseblogs'] = 'Users can only see blogs for people who share a course';
+$string['deleteotagswarn'] = 'Are you sure you want to remove this / these tags \nfrom all blog posts and remove it from the system?';
 $string['disableblogs'] = 'Disable blog system completely';
 $string['emptybody'] = 'Blog entry body can not be empty';
 $string['emptytitle'] = 'Blog entry title can not be empty';
@@ -47,6 +48,7 @@ $string['siteblogs'] = 'All site users can see all blog entries';
 $string['tagdatelastused'] = 'Date tag was last used';
 $string['tagsort'] = 'Sort the tag display by';
 $string['tagtext'] = 'Tag text';
+$string['tags'] = 'Tags';
 $string['timewithin'] = 'Display tags used within this many days';
 $string['updateentrywithid'] = 'Updating entry';
 $string['userblog'] = 'User blog: $a';

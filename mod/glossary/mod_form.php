@@ -1,7 +1,7 @@
 <?php
 require_once ('moodleform_mod.php');
 
-class glossary_mod_form extends moodleform_mod {
+class mod_glossary_mod_form extends moodleform_mod {
 
 	function definition() {
 

@@ -1,7 +1,7 @@
 <?php
 require_once ($CFG->dirroot.'/lib/formslib.php');
 
-class glossary_entry_form extends moodleform {
+class mod_glossary_entry_form extends moodleform {
 
 	function definition() {
 

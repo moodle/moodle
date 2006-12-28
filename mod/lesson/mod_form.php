@@ -10,7 +10,7 @@
 require_once ('moodleform_mod.php');
 
 require_once('locallib.php');
-class lesson_mod_form extends moodleform_mod {
+class mod_lesson_mod_form extends moodleform_mod {
 
 	function definition() {
 
