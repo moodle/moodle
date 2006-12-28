@@ -172,7 +172,7 @@ class enrol_authorize_form extends moodleform
         $mform->addRule('cczip', get_string('missingzip', 'enrol_authorize'), 'required', null, 'client');
         $mform->addRule('cczip', get_string('missingzip', 'enrol_authorize'), 'numeric', null, 'client');
 
-        $this->add_action_buttons(false, true, get_string('sendpaymentbutton', 'enrol_authorize'));
+        $this->add_action_buttons(false, get_string('sendpaymentbutton', 'enrol_authorize'));
     }
 
     function validation($data)

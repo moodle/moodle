@@ -86,7 +86,7 @@ class mod_forum_post_form extends moodleform {
 		} else {
 			$submit_string = get_string('posttoforum', 'forum');
 		}
-        $this->add_action_buttons(false, true, $submit_string);
+        $this->add_action_buttons(false, $submit_string);
 
 		$mform->addElement('hidden', 'course');
 		$mform->setType('course', PARAM_INT);

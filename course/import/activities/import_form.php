@@ -17,7 +17,7 @@ class course_import_activities_form_1 extends moodleform {
 
         // buttons
         $submit_string = get_string('usethiscourse');
-        $this->add_action_buttons(false, true, $submit_string);
+        $this->add_action_buttons(false, $submit_string);
 
         $mform->addElement('hidden', 'id');
 		$mform->setType('id', PARAM_INT);
@@ -44,7 +44,7 @@ class course_import_activities_form_2 extends moodleform {
 		$mform->addElement('text', 'fromcoursesearch', get_string('searchcourses'));
 
         // buttons
-        $this->add_action_buttons(false, true, get_string('searchcourses'));
+        $this->add_action_buttons(false, get_string('searchcourses'));
 
         $mform->addElement('hidden', 'id');
 		$mform->setType('id', PARAM_INT);

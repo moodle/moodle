@@ -49,7 +49,7 @@ class login_signup_form_1 extends moodleform {
         $mform->setDefault('country', '');
 
         // buttons
-        $this->add_action_buttons(true, false, get_string('createaccount'));
+        $this->add_action_buttons(true, get_string('createaccount'));
 
 	}
 

@@ -20,7 +20,7 @@ class login_forgot_password_form extends moodleform {
         $mform->addElement('hidden', 'action', 'find');
         $mform->setType('action', PARAM_ALPHA);
 
-        $this->add_action_buttons(true, false, get_string('ok'));
+        $this->add_action_buttons(true, get_string('ok'));
     }
 }
 
