@@ -17,8 +17,7 @@ class mod_forum_post_form extends moodleform {
 
 
         // the upload manager is used directly in post precessing, moodleform::save_files() is not used yet
-        $this->_upload_manager = new upload_manager('attachment', true, false, $course, false, $forum->maxbytes, true, true);
-        $this->set_max_file_size($course, $forum->maxbytes);
+        $this->set_upload_manager(new upload_manager('attachment', true, false, $course, false, $forum->maxbytes, true, true));
 
         $mform->addElement('header', 'general', '');//fill in the data depending on page params
                                                     //later using set_defaults

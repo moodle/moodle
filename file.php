@@ -6,6 +6,11 @@
       // Workaround:  file.php?file=/courseid/dir/dir/dir/filename.ext
       // Test:        file.php/testslasharguments
 
+
+      //TODO: Blog attachments do not have access control implemented - anybody can read them!
+      //      It might be better to move the code to separate file because the access
+      //      control is quite complex - see bolg/index.php 
+
     require_once('config.php');
     require_once('lib/filelib.php');
 
@@ -37,19 +42,26 @@
     }
   
     // security: limit access to existing course subdirectories
-    // hack for blogs, needs proper security check too
-    if ((!$course = get_record_sql("SELECT * FROM {$CFG->prefix}course WHERE id='".(int)$args[0]."'")) && $args[0]!='blog') {
+    if (($args[0]!='blog') and (!$course = get_record_sql("SELECT * FROM {$CFG->prefix}course WHERE id='".(int)$args[0]."'"))) {
         error('Invalid course ID');
     }
 
     // security: prevent access to "000" or "1 something" directories
     // hack for blogs, needs proper security check too
-    if ($args[0] != $course->id && $args[0]!='blog') {
+    if (($args[0] != 'blog') and ($args[0] != $course->id)) {
         error('Invalid course ID');
     }
 
     // security: login to course if necessary
-    if ($course->id != SITEID) {
+    if ($args[0] == 'blog') {
+        if (empty($CFG->bloglevel)) {
+            error('Blogging is disabled!');
+        } else if ($CFG->bloglevel < BLOG_GLOBAL_LEVEL) {
+            require_login();
+        } else if ($CFG->forcelogin) {
+            require_login();
+        }
+    } else if ($course->id != SITEID) {
         require_login($course->id);
     } else if ($CFG->forcelogin) {
         require_login();
@@ -105,6 +117,9 @@
             )) {
         $forcedownload  = 1; // force download of all attachments
     }
+    if ($args[0] == 'blog') {
+        $forcedownload  = 1; // force download of all attachments
+    }    
 
     // security: some protection of hidden resource files
     // warning: it may break backwards compatibility
@@ -137,15 +152,6 @@
     if (!file_exists($pathname)) {
         not_found($course->id);
     }
-
-    // extra security: keep symbolic links inside dataroot/courseid if required
-    /*if (!empty($CFG->checksymlinks)) {
-        $realpath = realpath($pathname);
-        $realdataroot = realpath($CFG->dataroot.'/'.$course->id);
-        if (strpos($realpath, $realdataroot) !== 0) {
-            not_found($course->id);
-        }
-    }*/
 
     // ========================================
     // finally send the file

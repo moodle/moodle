@@ -12,9 +12,8 @@ class blog_edit_form extends moodleform {
 		$post = $this->_customdata['existing'];
         $sitecontext = $this->_customdata['sitecontext'];
 
-        // the upload manager is used directly in post precessing, moodleform::save_files() is not used yet
-        $this->_upload_manager = new upload_manager('attachment', true, false, $COURSE, false, 0, true, true);
-        $this->set_max_file_size($COURSE);
+        // the upload manager is used directly in entry processing, moodleform::save_files() is not used yet
+        $this->set_upload_manager(new upload_manager('attachment', true, false, $COURSE, false, 0, true, true, false));
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
 		$mform->addElement('text', 'subject', get_string('entrytitle', 'blog'), 'size="60"');

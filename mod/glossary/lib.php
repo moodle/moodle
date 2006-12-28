@@ -1150,31 +1150,6 @@ function glossary_move_attachments($entry, $glossaryid) {
     return $return;
 }
 
-function glossary_add_attachment($entry, $inputname) {
-// $entry is a full entry record, including course and glossary
-// $newfile is a full upload array from $_FILES
-// If successful, this function returns the name of the file
-
-    global $CFG;
-
-    if (!$glossary = get_record("glossary","id",$entry->glossaryid)) {
-        return false;
-    }
-
-    if (!$course = get_record("course","id",$glossary->course)) {
-        return false;
-    }
-
-    require_once($CFG->dirroot.'/lib/uploadlib.php');
-    $um = new upload_manager($inputname,true,false,$course,false,0,false,true);
-    $dir = glossary_file_area_name($entry);
-
-    if ($um->process_file_uploads($dir)) {
-        return $um->get_new_filename();
-    }
-    // upload manager will take care of errors.
-}
-
 function glossary_print_attachments($entry, $return=NULL, $align="left") {
 // if return=html, then return a html string.
 // if return=text, then return a text-only string.

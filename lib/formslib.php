@@ -113,6 +113,7 @@ class moodleform {
         $this->_formname = preg_replace('/_form$/', '', get_class($this), 1);
         $this->_customdata = $customdata;
         $this->_form =& new MoodleQuickForm($this->_formname, $method, $action, $target, $attributes);
+        $this->set_upload_manager(new upload_manager());
 
         $this->definition();
 
@@ -197,11 +198,6 @@ class moodleform {
         $errors = array();
         $mform =& $this->_form;
 
-        // create default upload manager if not already created
-        if (empty($this->_upload_manager)) {
-            $this->_upload_manager = new upload_manager();
-        }
-
         // check the files
         $status = $this->_upload_manager->preprocess_files();
 
@@ -217,7 +213,7 @@ class moodleform {
                     $errors[$elname] = $this->_upload_manager->files[$elname]['uploadlog'];
                 }
             } else {
-                error('Incorrect upload attemp!');
+                error('Incorrect upload attempt!');
             }
         }
 
@@ -248,21 +244,18 @@ class moodleform {
     }
 
     /**
-     * Set maximum allowed uploaded file size.
+     * Set custom upload manager.
      * Must be used BEFORE creating of file element!
      *
-     * @param object $course
-     * @param object $modbytes - max size limit defined in module
+     * @param object $um - custom upload manager
      */
-    function set_max_file_size($course=null, $modbytes=0) {
-        global $CFG, $COURSE;
-
-        if (empty($course->id)) {
-            $course = $COURSE;
+    function set_upload_manager($um=false) {
+        if ($um === false) {
+            $um = new upload_manager();
         }
+        $this->_upload_manager = $um;
 
-        $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes, $modbytes);
-        $this->_form->setMaxFileSize($maxbytes);
+        $this->_form->setMaxFileSize($um->config->maxbytes);
     }
 
     /**
@@ -383,13 +376,19 @@ class moodleform {
      * @return bool success
      */
     function save_files($destination) {
-        if (empty($this->_upload_manager)) {
-            return false;
-        }
         if ($this->is_submitted() and $this->is_validated()) {
             return $this->_upload_manager->save_files($destination);
         }
         return false;
+    }
+
+    /**
+     * If we're only handling one file (if inputname was given in the constructor)
+     * this will return the (possibly changed) filename of the file.
+     * @return mixed false in case of failure, string if ok
+     */
+    function get_new_filename() {
+        return $this->_upload_manager->get_new_filename();
     }
 
     /**

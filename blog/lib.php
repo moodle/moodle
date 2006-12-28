@@ -10,16 +10,6 @@
 
 
     /**
-     * Blog access level constant declaration
-     */
-    define ('BLOG_USER_LEVEL', 1);
-    define ('BLOG_GROUP_LEVEL', 2);
-    define ('BLOG_COURSE_LEVEL', 3);
-    define ('BLOG_SITE_LEVEL', 4);
-    define ('BLOG_GLOBAL_LEVEL', 5);
-
-
-    /**
      * Definition of blogcourse page type (blog page with course id present).
      */
     //not used at the moment, and may not need to be
@@ -292,6 +282,7 @@
                 foreach ($files as $file) {
                     include_once($CFG->libdir.'/filelib.php');
                     $icon = mimeinfo("icon", $file);
+                    $type = mimeinfo("type", $file);
                     if ($CFG->slasharguments) {
                         $ffurl = "$CFG->wwwroot/file.php/$filearea/$file";
                     } else {
@@ -307,7 +298,7 @@
                         $output .= "$strattachment $file:\n$ffurl\n";
 
                     } else {
-                        if ($icon == "image.gif") {    // Image attachments don't get printed as links
+                        if (in_array($type, array('image/gif', 'image/jpeg', 'image/png'))) {    // Image attachments don't get printed as links
                             $imagereturn .= "<br /><img src=\"$ffurl\" alt=\"\" />";
                         } else {
                             echo "<a href=\"$ffurl\">$image</a> ";
@@ -324,28 +315,7 @@
 
         return $imagereturn;
     }
-    
-    /**
-    * If successful, this function returns the name of the file
-    * @param $post is a full post record, including course and forum
-    * @param $newfile is a full upload array from $_FILES
-    * @param $message is a string to hold the messages.
-    */
 
-    function blog_add_attachment($blogentry, $inputname, &$message) {
-
-        global $CFG;
-
-        require_once($CFG->dirroot.'/lib/uploadlib.php');
-        $um = new upload_manager($inputname,true,false,null,false,$CFG->maxbytes,true,true);
-        $dir = blog_file_area_name($blogentry);
-        if ($um->process_file_uploads($dir)) {
-            $message .= $um->get_errors();
-            return $um->get_new_filename();
-        }
-        $message .= $um->get_errors();
-        echo $message;
-    }
 
     /**
      * Use this function to retrieve a list of publish states available for

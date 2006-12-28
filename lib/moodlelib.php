@@ -235,6 +235,16 @@ define ('DEBUG_ALL', 2047);
 /** DEBUG_ALL with extra Moodle debug messages - (DEBUG_ALL | 32768) */
 define ('DEBUG_DEVELOPER', 34815);
 
+/**
+ * Blog access level constant declaration
+ */
+define ('BLOG_USER_LEVEL', 1);
+define ('BLOG_GROUP_LEVEL', 2);
+define ('BLOG_COURSE_LEVEL', 3);
+define ('BLOG_SITE_LEVEL', 4);
+define ('BLOG_GLOBAL_LEVEL', 5);
+
+
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
 /**

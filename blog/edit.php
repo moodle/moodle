@@ -73,22 +73,22 @@ $blogeditform = new blog_edit_form(null, compact('existing', 'sitecontext'));
 
 if ($blogeditform->is_cancelled()){
     redirect($returnurl);
-} elseif ($blogeditform->no_submit_button_pressed()) {
+} else if ($blogeditform->no_submit_button_pressed()) {
     no_submit_button_actions($blogeditform, $sitecontext);
 
 
-} elseif ($fromform = $blogeditform->data_submitted()){
+} else if ($fromform = $blogeditform->data_submitted()){
     //save stuff in db
     switch ($action) {
         case 'add':
-            do_add($fromform);
+            do_add($fromform, $blogeditform);
         break;
 
         case 'edit':
             if (!$existing) {
                 error('Incorrect blog post id');
             }
-            do_edit($fromform);
+            do_edit($fromform, $blogeditform);
         break;
         default :
             error('Unknown action!');
@@ -178,6 +178,7 @@ function no_submit_button_actions(&$blogeditform, $sitecontext){
     }
     $blogeditform->otags_select_setup();
 }
+
 function delete_otags($tagids, $sitecontext){
     foreach ($tagids as $tagid) {
 
@@ -208,6 +209,7 @@ function delete_otags($tagids, $sitecontext){
 
     }
 }
+
 function add_otag($otag){
     global $USER;
     $error = '';
@@ -233,6 +235,7 @@ function add_otag($otag){
     }
     return $error;
 }
+
 /*
 * Delete blog post from database
 */
@@ -252,23 +255,8 @@ function do_delete($post) {
 /**
  * Write a new blog entry into database
  */
-function do_add($post) {
+function do_add($post, $blogeditform) {
     global $CFG, $USER, $returnurl;
-
-    if ($post->summary == '<br />') {
-        $post->summary = '';
-    }
-
-    if ($post->subject == '') {
-        $errors['subject'] = get_string('emptytitle', 'blog');
-    }
-    if ($post->summary == '') {
-        $errors['summary'] = get_string('emptybody', 'blog');
-    }
-
-    if (!empty($errors)) {
-        return; // no saving
-    }
 
     $post->module       = 'blog';
     $post->userid       = $USER->id;
@@ -279,8 +267,9 @@ function do_add($post) {
     if ($id = insert_record('post', $post)) {
         $post->id = $id;
         // add blog attachment
-        if ($post->attachment = blog_add_attachment($post, 'attachment',$message)) {
-            set_field("post", "attachment", $post->attachment, "id", $post->id);
+        $dir = blog_file_area_name($post);
+        if ($blogeditform->save_files($dir) and $newfilename = $blogeditform->get_new_filename()) {
+            set_field("post", "attachment", $newfilename, "id", $post->id);
         }
         add_tags_info($post->id);
         add_to_log(SITEID, 'blog', 'add', 'index.php?userid='.$post->userid.'&postid='.$post->id, $post->subject);
@@ -296,19 +285,18 @@ function do_add($post) {
  * @param . $bloginfo_arg argument is reference to a blogInfo object.
  * @todo complete documenting this function. enable trackback and pingback between entries on the same server
  */
-function do_edit($post) {
+function do_edit($post, $blogeditform) {
 
     global $CFG, $USER, $returnurl;
 
 
     $post->lastmodified = time();
 
-/*  TODO add attachment processing
-    if ($newfilename = blog_add_attachment($post, 'attachment',$message)) {
+    $dir = blog_file_area_name($post);
+    if ($blogeditform->save_files($dir) and $newfilename = $blogeditform->get_new_filename()) {
         $post->attachment = $newfilename;
-    } else {
-        unset($post->attachment);
-    }*/
+    }
+
     // update record
     if (update_record('post', $post)) {
         // delete all tags associated with this entry

@@ -79,15 +79,12 @@ if ($mform->is_cancelled()){
     }
 
     if ($e) {
-        /* TODO process file uploads
-        $todb->attachment = $_FILES["attachment"];
-        if ($newfilename = glossary_add_attachment($todb, 'attachment')) {
-            $todb->attachment = $newfilename;
-        } else {
-            unset($todb->attachment);
-        }*/
         $todb->id = $e;
-        print_object($todb);
+        $dir = glossary_file_area_name($todb);
+        if ($mform->save_files($dir) and $newfilename = $mform->get_new_filename()) {
+            $todb->attachment = $newfilename;
+        }
+
         if (update_record('glossary_entries', $todb)) {
             add_to_log($course->id, "glossary", "update entry",
                        "view.php?id=$cm->id&amp;mode=entry&amp;hook=$todb->id",
@@ -105,14 +102,10 @@ if ($mform->is_cancelled()){
 
         if ($todb->id = insert_record("glossary_entries", $todb)) {
             $e = $todb->id;
-            /* TODO process file uploads
-            $todb->attachment = $_FILES["attachment"];
-            if ($newfilename = glossary_add_attachment($todb, 'attachment')) {
-                $todb->attachment = $newfilename;
-            } else {
-                 unset($todb->attachment);
+            $dir = glossary_file_area_name($todb);
+            if ($mform->save_files($dir) and $newfilename = $mform->get_new_filename()) {
+                set_field("glossary_entries", "attachment", $newfilename, "id", $todb->id);
             }
-            set_field("glossary_entries", "attachment", $newfilename, "id", $todb->id);*/
             add_to_log($course->id, "glossary", "add entry",
                        "view.php?id=$cm->id&amp;mode=entry&amp;hook=$todb->id", $todb->id,$cm->id);
         } else {

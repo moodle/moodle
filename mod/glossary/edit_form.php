@@ -9,10 +9,10 @@ class mod_glossary_entry_form extends moodleform {
 		$mform    =& $this->_form;
 
 		$glossary =& $this->_customdata['glossary'];
-		$mode =& $this->_customdata['mode'];
-		$cm =& $this->_customdata['cm'];
-		$hook =& $this->_customdata['hook'];
-		$e =& $this->_customdata['e'];
+		$mode     =& $this->_customdata['mode'];
+		$cm       =& $this->_customdata['cm'];
+		$hook     =& $this->_customdata['hook'];
+		$e        =& $this->_customdata['e'];
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -42,8 +42,7 @@ class mod_glossary_entry_form extends moodleform {
 		$mform->setType('aliases', PARAM_TEXT);
         $mform->setHelpButton('aliases', array('aliases2', strip_tags(get_string('aliases', 'glossary')), 'glossary'));
 
-        $this->set_max_file_size();
-        $this->_upload_manager = new upload_manager('attachment', true, false, $COURSE, false, 0, true, true);
+        $this->set_upload_manager(new upload_manager('attachment', true, false, $COURSE, false, 0, true, true, false));
 		$mform->addElement('file', 'attachment', get_string('attachment', 'forum'));
         $mform->setHelpButton('attachment', array('attachment', get_string('attachment', 'glossary'), 'glossary'));
 

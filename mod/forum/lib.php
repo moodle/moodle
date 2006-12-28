@@ -2575,6 +2575,7 @@ function forum_print_attachments($post, $return=NULL) {
             $strattachment = get_string("attachment", "forum");
             foreach ($files as $file) {
                 $icon = mimeinfo("icon", $file);
+                $type = mimeinfo("type", $file);
                 if ($CFG->slasharguments) {
                     $ffurl = "$CFG->wwwroot/file.php/$filearea/$file";
                 } else {
@@ -2590,7 +2591,7 @@ function forum_print_attachments($post, $return=NULL) {
                     $output .= "$strattachment $file:\n$ffurl\n";
 
                 } else {
-                    if ($icon == "image.gif") {    // Image attachments don't get printed as links
+                    if (in_array($type, array('image/gif', 'image/jpeg', 'image/png'))) {    // Image attachments don't get printed as links
                         $imagereturn .= "<br /><img src=\"$ffurl\" alt=\"\" />";
                     } else {
                         echo "<a href=\"$ffurl\">$image</a> ";
@@ -2634,6 +2635,7 @@ function forum_add_attachment($post, $inputname,&$message) {
         return $um->get_new_filename();
     }
     $message .= $um->get_errors();
+    return null;
 }
 
 function forum_add_new_post($post,&$message) {
