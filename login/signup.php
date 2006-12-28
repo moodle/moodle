@@ -11,7 +11,7 @@
         error("Sorry, you may not use this page.");
     }
 
-    $mform_signup = new login_signup_form('signup.php');
+    $mform_signup = new login_signup_form_1();
 
     if ($mform_signup->is_cancelled()) {
         redirect($CFG->httpswwwroot.'/login/index.php');

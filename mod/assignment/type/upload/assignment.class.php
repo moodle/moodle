@@ -437,7 +437,7 @@ class assignment_upload extends assignment_base {
 
         $returnurl = 'view.php?id='.$this->cm->id;
 
-        $mform = new assignment_upload_notes_form('upload.php');
+        $mform = new mod_assignment_upload_notes_form();
 
         $defaults = new object();
         $defaults->id = $this->cm->id;

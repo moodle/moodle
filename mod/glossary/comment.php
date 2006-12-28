@@ -51,7 +51,7 @@ function glossary_comment_add() {
         error('You can\'t add comments to this glossary!');
     }
 
-    $mform = new glossary_comment_form('comment.php');
+    $mform = new mod_glossary_comment_form();
     $mform->set_defaults(array('eid'=>$eid, 'action'=>'add'));
 
     if ($mform->is_cancelled()) {
@@ -174,7 +174,7 @@ function glossary_comment_edit() {
         error('You can\'t edit this. Time expired!');
     }
 
-    $mform = new glossary_comment_form('comment.php');
+    $mform = new mod_glossary_comment_form();
     trusttext_prepare_edit($comment->entrycomment, $comment->format, can_use_html_editor(), $context);
     $mform->set_defaults(array('cid'=>$cid, 'action'=>'edit', 'entrycomment'=>$comment->entrycomment, 'format'=>$comment->format));
 

@@ -122,7 +122,7 @@
         error("This module is missing important code! ($modlib)");
     }
 
-    $mformclassname=$module->name.'_mod_form';
+    $mformclassname = 'mod_'.$module->name.'_mod_form';
     $cousesection=isset($cw->section)?$cw->section:$section;
     $mform=& new $mformclassname($form->instance, $cousesection, ((isset($cm))?$cm:null));
     $mform->set_defaults($form);

@@ -6,7 +6,7 @@
 
     require_once($CFG->dirroot.'/course/lib.php');
     require_once($CFG->dirroot.'/backup/restorelib.php');
-    
+
     $syscontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
     // if we're not a course creator , we can only import from our own courses.
@@ -15,9 +15,9 @@
     }
 
     $strimport = get_string("importdata");
- 
+
     $tcourseids = '';
- 
+
     if ($teachers = get_user_capability_course('moodle/course:update')) {
         foreach ($teachers as $teacher) {
             if ($teacher->id != $course->id && $teacher->id != SITEID){
@@ -51,31 +51,31 @@
         notify(get_string('courseimportnotaught'));
         return; // yay , this will pass control back to the file that included or required us.
     }
-    
+
     // quick forms
     include_once('import_form.php');
-        
-    $mform_post = new activities_import_form_1($CFG->wwwroot.'/course/import/activities/index.php', array('options'=>$options, 'courseid' => $course->id, 'text'=> get_string('coursestaught')));
+
+    $mform_post = new course_import_activities_form_1($CFG->wwwroot.'/course/import/activities/index.php', array('options'=>$options, 'courseid' => $course->id, 'text'=> get_string('coursestaught')));
     $mform_post ->display();
-    
-    unset($options); 
+
+    unset($options);
     $options = array();
-    
+
     foreach ($cat_courses as $ccourse) {
         if ($ccourse->id != $course->id && $ccourse->id != SITEID) {
             $options[$ccourse->id] = $ccourse->fullname;
         }
     }
     $cat = get_record("course_categories","id",$course->category);
-    
+
     if (count($options) > 0) {
-        $mform_post = new activities_import_form_1($CFG->wwwroot.'/course/import/activities/index.php', array('options'=>$options, 'courseid' => $course->id, 'text' => get_string('coursescategory')));
+        $mform_post = new course_import_activities_form_1($CFG->wwwroot.'/course/import/activities/index.php', array('options'=>$options, 'courseid' => $course->id, 'text' => get_string('coursescategory')));
         $mform_post ->display();
     }
 
     if (!empty($creator)) {
-        $mform_post = new activities_import_form_2($CFG->wwwroot.'/course/import/activities/index.php', array('courseid' => $course->id));
-        $mform_post ->display();     
+        $mform_post = new course_import_activities_form_2($CFG->wwwroot.'/course/import/activities/index.php', array('courseid' => $course->id));
+        $mform_post ->display();
     }
 
     if (!empty($fromcoursesearch) && !empty($creator)) {

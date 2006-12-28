@@ -1,4 +1,4 @@
-<?php 
+<?php
 // $Id$
 // forgot password routine.
 // find the user and call the appropriate routine for their authentication
@@ -53,10 +53,10 @@ if (!empty($CFG->changepassword)) {
        set_config('auth_'.$auth.'_changepasswordurl', $CFG->changepassword);
     }
     set_config('changepassword', '');
-}       
+}
 
 
-$mform = new forgot_password_form('forgot_password.php');
+$mform = new login_forgot_password_form();
 
 if ($mform->is_cancelled()) {
     redirect($CFG->httpswwwroot.'/login/index.php');
@@ -106,7 +106,7 @@ if ($action == 'find' and $param = $mform->data_submitted()) {
             $user = $mailuser;
         }
     }
-   
+
     // if user located (and no errors) take the appropriate action
     if (empty($errors) and !empty($user)) {
         // check this user isn't 'unconfirmed'
@@ -117,7 +117,7 @@ if ($action == 'find' and $param = $mform->data_submitted()) {
             $authmethod = $user->auth;
             if (is_internal_auth($authmethod) or !empty($CFG->{'auth_'.$authmethod.'_stdchangepassword'})) {
                 // handle internal authentication
-               
+
                 // set 'secret' string
                 $user->secret = random_string(15);
                 if (!set_field('user', 'secret', $user->secret, 'id', $user->id)) {
@@ -203,7 +203,7 @@ if ($action == 'find' and $param = $mform->data_submitted()) {
 
         reset_login_count();
         $page = 'emailsent';
-      
+
         $changepasswordurl = "{$CFG->httpswwwroot}/login/change_password.php";
         $a = new object();
         $a->email = $user->email;

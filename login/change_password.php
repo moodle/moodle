@@ -28,7 +28,7 @@
         error('Can not use this script when "Logged in as"!');
     }
 
-    $mform = new change_password_form('change_password.php');
+    $mform = new login_change_password_form();
     $mform->set_defaults(array('id'=>$course->id, 'username'=>$USER->username));
 
     if ($mform->is_cancelled()) {

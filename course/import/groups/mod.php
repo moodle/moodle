@@ -15,14 +15,14 @@
     $maxuploadsize = get_max_upload_file_size();
     echo '<p align="center">';
     print_simple_box_start('center','80%');
-    
+
     // use formslib
     include_once('import_form.php');
-    $mform_post = new group_import_form($CFG->wwwroot.'/course/import/groups/index.php?id='.$id, array('maxuploadsize'=>$maxuploadsize));
+    $mform_post = new course_import_groups_form($CFG->wwwroot.'/course/import/groups/index.php?id='.$id, array('maxuploadsize'=>$maxuploadsize));
     $mform_post ->display();
-        
+
     print_simple_box_end();
-   
+
     echo '</p>';
-    
+
 ?>

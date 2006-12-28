@@ -56,7 +56,7 @@
         if (!$lastform->name or !$lastform->template) {
             error(get_string("filloutallfields"), $_SERVER["HTTP_REFERER"]);
         }
-        $mform = new survey_details_form($CFG->wwwroot.'/course/mod.php',array('lastform'=>stripslashes_safe($lastform)));
+        $mform = new mod_survey_details_form($CFG->wwwroot.'/course/mod.php', array('lastform'=>stripslashes_safe($lastform)));
         $mform->display();
         print_footer($course);
 

@@ -889,12 +889,12 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
             if ($template == 'singletemplate') {    //prints ratings options
                 data_print_ratings($data, $record);
             }
-    
+
             /**********************************
              *    Printing Ratings Form       *
              *********************************/
             if (($template == 'singletemplate') && ($data->comments)) {    //prints ratings options
-    
+
                 data_print_comments($data, $record, $page);
             }
         }
@@ -1112,7 +1112,7 @@ function data_print_comments($data, $record, $page=0, $mform=false) {
     } else {
         if (!$mform) {
             require_once('comment_form.php');
-            $mform = new data_comment_form('comment.php');
+            $mform = new mod_data_comment_form('comment.php');
             $mform->set_defaults(array('mode'=>'add', 'page'=>$page, 'rid'=>$record->id));
         }
         echo '<div class="newcomment" align="center">';

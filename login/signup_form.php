@@ -2,7 +2,7 @@
 
 require_once($CFG->libdir.'/formslib.php');
 
-class login_signup_form extends moodleform {
+class login_signup_form_1 extends moodleform {
 	function definition() {
 		global $USER, $CFG;
 

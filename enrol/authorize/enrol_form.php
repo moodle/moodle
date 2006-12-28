@@ -2,7 +2,7 @@
 
 require_once($CFG->libdir.'/formslib.php');
 
-class enrol_authorize_enrol_form extends moodleform
+class enrol_authorize_form extends moodleform
 {
     function definition()
     {

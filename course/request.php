@@ -15,7 +15,7 @@
         error(get_string('courserequestdisabled'));
     }
 
-    $requestform = new course_request_form('request.php');
+    $requestform = new course_request_form();
 
     $strtitle = get_string('courserequest');
     print_header($strtitle, $strtitle, $strtitle, $requestform->focus());

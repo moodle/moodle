@@ -39,7 +39,7 @@ if ($e) { // if entry is specified
     require_capability('mod/glossary:write', $context);
 }
 
-$mform =& new glossary_entry_form(null, compact('cm', 'glossary', 'hook', 'mode', 'e', 'context'));
+$mform =& new mod_glossary_entry_form(null, compact('cm', 'glossary', 'hook', 'mode', 'e', 'context'));
 if ($mform->is_cancelled()){
     if ($e){
         redirect("view.php?id=$cm->id&amp;mode=entry&amp;hook=$e");

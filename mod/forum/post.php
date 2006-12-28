@@ -434,7 +434,7 @@
     }
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    $mform_post = new forum_post_form('post.php', array('course'=>$course, 'coursecontext'=>$coursecontext, 'modcontext'=>$modcontext, 'forum'=>$forum, 'post'=>$post));
+    $mform_post = new mod_forum_post_form('post.php', array('course'=>$course, 'coursecontext'=>$coursecontext, 'modcontext'=>$modcontext, 'forum'=>$forum, 'post'=>$post));
 
     if ($fromform = $mform_post->data_submitted()) {
 

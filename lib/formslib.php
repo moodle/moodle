@@ -512,7 +512,7 @@ class moodleform {
         return $repeats;
     }
     /**
-     * Use this method to add the standard buttons to the end of your form. Pass a param of false
+     * Use this method to a cancel and submit button to the end of your form. Pass a param of false
      * if you don't want a cancel button in your form. If you have a cancel button make sure you
      * check for it being pressed using is_cancelled() and redirecting if it is true before trying to
      * get data with data_submitted().
@@ -521,21 +521,16 @@ class moodleform {
      * @param boolean $revert whether to show revert button, default true
      * @param string $submitlabel label for submit button, defaults to get_string('savechanges')
      */
-    function add_action_buttons($cancel = true, $revert = true, $submitlabel=null){
+    function add_action_buttons($cancel = true, $submitlabel=null){
         if (is_null($submitlabel)){
             $submitlabel = get_string('savechanges');
         }
         $mform =& $this->_form;
-        if ($revert || $cancel){
-            //when two or more elements we need a group
+        if ($cancel){
+            //when two elements we need a group
             $buttonarray=array();
             $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitlabel);
-            if ($revert){
-                $buttonarray[] = &$mform->createElement('reset', 'resetbutton', get_string('revert'));
-            }
-            if ($cancel){
-                $buttonarray[] = &$mform->createElement('cancel');
-            }
+            $buttonarray[] = &$mform->createElement('cancel');
             $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
     		$mform->closeHeaderBefore('buttonar');
         } else {
@@ -1134,7 +1129,7 @@ function validate_' . $this->_formName . '(frm) {
     function getLockOptionEndScript(){
         $js = '<script type="text/javascript" language="javascript">'."\n";
         $js .= '//<![CDATA['."\n";
-        $js .= "var ".$this->getAttribute('id')."items= {";
+        $js .= "var ".$this->_formName."items= {";
         foreach ($this->_dependencies as $dependentOn => $elements){
             $js .= "'$dependentOn'".' : {dependents :[';
             foreach ($elements as $element){

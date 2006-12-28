@@ -39,7 +39,7 @@ class assignment_online extends assignment_base {
         }
 
 /// prepare form and process submitted data
-        $mform = new assignment_online_edit_form('view.php');
+        $mform = new mod_assignment_online_edit_form();
 
         $defaults = new object();
         $defaults->id = $this->cm->id;

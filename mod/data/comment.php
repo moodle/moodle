@@ -46,7 +46,7 @@
     }
 
 
-    $mform = new data_comment_form('comment.php');
+    $mform = new mod_data_comment_form();
     $mform->set_defaults(array('mode'=>$mode, 'page'=>$page, 'rid'=>$record->id, 'commentid'=>$commentid));
     if ($comment) {
         $format = $comment->format;

@@ -69,15 +69,15 @@ if ($action=='delete'){
 }
 
 require_once('edit_form.php');
-$blogpostform = new blog_post_form(null, compact('existing', 'sitecontext'));
+$blogeditform = new blog_edit_form(null, compact('existing', 'sitecontext'));
 
-if ($blogpostform->is_cancelled()){
+if ($blogeditform->is_cancelled()){
     redirect($returnurl);
-} elseif ($blogpostform->no_submit_button_pressed()) {
-    no_submit_button_actions($blogpostform, $sitecontext);
+} elseif ($blogeditform->no_submit_button_pressed()) {
+    no_submit_button_actions($blogeditform, $sitecontext);
 
 
-} elseif ($fromform = $blogpostform->data_submitted()){
+} elseif ($fromform = $blogeditform->data_submitted()){
     //save stuff in db
     switch ($action) {
         case 'add':
@@ -152,8 +152,8 @@ if (!$user = get_record('user', 'id', $userid)) {
 print_header("$SITE->shortname: $strblogs", $SITE->fullname,
                 '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'">'.fullname($user).'</a> ->
                 <a href="'.$CFG->wwwroot.'/blog/index.php?userid='.$userid.'">'.$strblogs.'</a> -> '.$strformheading,'','',true);
-$blogpostform->set_defaults($post);
-$blogpostform->display();
+$blogeditform->set_defaults($post);
+$blogeditform->display();
 
 
 print_footer();
@@ -162,8 +162,8 @@ print_footer();
 die;
 
 /*****************************   edit.php functions  ***************************/
-function no_submit_button_actions(&$blogpostform, $sitecontext){
-    $mform =& $blogpostform->_form;
+function no_submit_button_actions(&$blogeditform, $sitecontext){
+    $mform =& $blogeditform->_form;
     $data = $mform->exportValues();
     //sesskey has been checked already no need to check that
     //check for official tags to add
@@ -176,7 +176,7 @@ function no_submit_button_actions(&$blogpostform, $sitecontext){
     if (!empty($data['deleteotags']) && !empty($data['otags'])){ // adding official tag
         delete_otags($data['otags'], $sitecontext);
     }
-    $blogpostform->otags_select_setup();
+    $blogeditform->otags_select_setup();
 }
 function delete_otags($tagids, $sitecontext){
     foreach ($tagids as $tagid) {
