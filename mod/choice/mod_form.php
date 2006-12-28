@@ -35,15 +35,18 @@ class mod_choice_mod_form extends moodleform_mod {
             $repeatno = 5;
         }
 
-        $this->repeat_elements($repeatarray, $repeatno,
-                    array('limit'=> array('default'=>0,
-                                          'type'=>PARAM_INT,
-                                          'disabledif'=>array('limitanswers', 'eq', 0)),
+        $repeateloptions = array();
+        $repeateloptions['limit'] = array(
+                                   'default'=>0,
+                                   'type'=>PARAM_INT,
+                                   'disabledif'=>array('limitanswers', 'eq', 0));
+        $repeateloptions['option'] = array(
+                                   'type'=>PARAM_TEXT,
+                                   'helpbutton'=>array('options', get_string('modulenameplural', 'choice'), 'choice'));
+        $repeateloptions['optionid'] = array('type'=>PARAM_INT);
 
-                          'option' => array('type'=>PARAM_TEXT,
-                                            'helpbutton'=>array('options', get_string('modulenameplural', 'choice'), 'choice')),
-                          'optionid' => array('type'=>PARAM_INT)),
-                    'option_repeats', 'option_add_fields', 3);
+        $this->repeat_elements($repeatarray, $repeatno,
+                    $repeateloptions, 'option_repeats', 'option_add_fields', 3);
 
 
 

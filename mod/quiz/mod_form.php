@@ -219,10 +219,13 @@ class mod_quiz_mod_form extends moodleform_mod {
             $this->_feedbacks = array();
         }
         $numfeedbacks = max(count($this->_feedbacks) * 1.5, 5);
+
+        $repeateloptions = array();
+        $repeateloptions ['feedbacktext'] = array('type'=>PARAM_TEXT);
+        $repeateloptions ['feedbackboundaries'] = array('type'=>PARAM_TEXT);
+
         $nextel=$this->repeat_elements($repeatarray, $numfeedbacks-1,
-                    array('feedbacktext'=> array('type'=>PARAM_TEXT),
-                          'feedbackboundaries' => array('type'=>PARAM_TEXT)),
-                    'boundary_repeats', 'boundary_add_fields', 3);
+                    $repeateloptions, 'boundary_repeats', 'boundary_add_fields', 3);
 
         //put some extra elements in before the button
         $insertEl = &MoodleQuickForm::createElement('text', "feedbacktext[$nextel]", get_string('feedback', 'quiz'));
