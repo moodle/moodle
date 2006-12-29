@@ -83,12 +83,12 @@ class default_questiontype {
     function create_editing_form($submiturl) {
         global $CFG;
         require_once("{$CFG->dirroot}/question/type/edit_question_form.php");
-        $definition_file = "{$CFG->dirroot}/question/type/{$this->name()}/edit_{$this->name()}_question_form.php";
+        $definition_file = $CFG->dirroot.'/question/type/'.$this->name().'/edit_'.$this->name().'_question_form.php';
         if (!(is_readable($definition_file) && is_file($definition_file))) {
             return null;
         }
         require_once($definition_file);
-        $classname = "edit_{$this->name()}_question_form";
+        $classname = 'edit_'.$this->name().'_question_form';
         if (!class_exists($classname)) {
             return null;
         }
