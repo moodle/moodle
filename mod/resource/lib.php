@@ -293,7 +293,7 @@ function add_instance($resource) {
         $resource->alltext = '';  
     }
 
-    if (!isset($recourse->popup)) {
+    if (!isset($resource->popup)) {
         $resource->popup = '';  
     }    
         
