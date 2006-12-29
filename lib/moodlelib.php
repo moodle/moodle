@@ -6075,8 +6075,14 @@ function zip_files ($originalfiles, $destination) {
             $filestozip .= " ";
         }
         //Construct the command
-        $separator = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? ' &' : ' ;';
-        $command = 'cd '.escapeshellarg($origpath).$separator.
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $separator = ' &';
+            $command= substr($CFG->dataroot, 0, 2).$separator; // change to drive with moodledata
+        } else {
+            $separator = ' ;';
+            $command= '';
+        }
+        $command .= 'cd '.escapeshellarg($origpath).$separator.
                     escapeshellarg($CFG->zip).' -r '.
                     escapeshellarg(cleardoubleslashes("$destpath/$destfilename")).' '.$filestozip;
         //All converted to backslashes in WIN
