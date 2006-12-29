@@ -711,7 +711,7 @@ function auth_ldap_bulk_insert($users){
     // bulk insert -- superfast with $bulk_insert_records
     $sql = 'INSERT INTO '.$CFG->prefix.'extuser (idnumber) VALUES ';
     // make those values safe
-    array_map('addslashes', $users);
+    $users = array_map('addslashes', $users);
     // join and quote the whole lot
     $sql = $sql . '(\'' . join('\'),(\'', $users) . '\')';
     print "+ " . count($users) . " users\n";
