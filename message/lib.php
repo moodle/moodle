@@ -212,7 +212,7 @@ document.write("'.$autorefresh.'")
 //]]>
 </script>';
     echo '<noscript><div align="center">';
-    echo print_single_button('index.php', false, get_string('refresh', 'message'));
+    echo print_single_button('index.php', false, get_string('refresh'));
     echo '</div></noscript>';
 }
 

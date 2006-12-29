@@ -48,7 +48,6 @@ $string['onlymycourses'] = 'Only in my courses';
 $string['onlytome'] = 'Only messages to me';
 $string['pagerefreshes'] = 'This page refreshes automatically every $a seconds';
 $string['readmessages'] = '$a read messages';
-$string['refresh'] = 'Refresh';
 $string['removecontact'] = 'Remove contact';
 $string['savemysettings'] = 'Save my settings';
 $string['search'] = 'Search';

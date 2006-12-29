@@ -175,7 +175,7 @@
     }
     echo '</div><div>';
     echo '<input type="submit" value="'.get_string('sendmessage', 'message').'" />&nbsp;';
-    echo '<input type="submit" name="refresh" value="'.get_string('refresh', 'message').'" />';
+    echo '<input type="submit" name="refresh" value="'.get_string('refresh').'" />';
     echo '<input type="checkbox" name="newonly" id="newonly" '.($newonly?'checked="checked" ':'').'/><label for="newonly">'.get_string('newonlymsg', 'message').'</label>';
     echo '</div>';
     echo '</form>';

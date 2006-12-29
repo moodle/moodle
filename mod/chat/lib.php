@@ -402,6 +402,7 @@ function chat_login_user($chatid, $version, $groupid, $course) {
             return false;
         }
     } else {
+        $chatuser = new object();
         $chatuser->chatid   = $chatid;
         $chatuser->userid   = $USER->id;
         $chatuser->groupid  = $groupid;
@@ -430,6 +431,7 @@ function chat_login_user($chatid, $version, $groupid, $course) {
         if ($version == 'sockets') {
             // do not send 'enter' message, chatd will do it
         } else {
+            $message = new object();
             $message->chatid    = $chatuser->chatid;
             $message->userid    = $chatuser->userid;
             $message->groupid   = $groupid;
@@ -452,12 +454,14 @@ function chat_delete_old_users() {
     global $CFG;
 
     $timeold = time() - $CFG->chat_old_ping;
+    $timeoldext = time() - ($CFG->chat_old_ping*2); // JSless basic gui needs much longer timeouts
 
-    $query = "lastping < '$timeold'";
+    $query = "(version<>'basic' AND lastping<'$timeold') OR (version='basic' AND lastping<'$timeoldext')";
 
     if ($oldusers = get_records_select('chat_users', $query) ) {
         delete_records_select('chat_users', $query);
         foreach ($oldusers as $olduser) {
+            $message = new object();
             $message->chatid    = $olduser->chatid;
             $message->userid    = $olduser->userid;
             $message->groupid   = $olduser->groupid;
@@ -516,7 +520,7 @@ function chat_update_chat_times($chatid=0) {
 function chat_format_message_manually($message, $courseid, $sender, $currentuser, $chat_lastrow=NULL) {
     global $CFG, $USER;
 
-    $output = New stdClass;
+    $output = new object();
     $output->beep = false;       // by default
     $output->refreshusers = false; // by default
 
@@ -552,6 +556,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         $output->text = $message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender));
         $output->html  = '<table class="chat-event"><tr'.$rowclass.'><td class="picture">'.$message->picture.'</td><td class="text">';
         $output->html .= '<span class="event">'.$output->text.'</span></td></tr></table>';
+        $output->basic = '<dl><dt>'.$message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender)).'</dt></dl>'; 
 
         if($message->message == 'exit' or $message->message == 'enter') {
             $output->refreshusers = true; //force user panel refresh ASAP
@@ -565,6 +570,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
 
     /// Parse the text to clean and filter it
 
+    $options = new object();
     $options->para = false;
     $text = format_text($text, FORMAT_MOODLE, $options, $courseid);
     // And now check for special cases
@@ -613,6 +619,9 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     $output->html .= "<span class=\"title\">$outinfo</span>";
     if ($outmain) {
         $output->html .= ": $outmain";
+        $output->basic = '<dl><dt>'.$outinfo.':</dt><dd>'.$outmain.'</dd></dl>'; 
+    } else {
+        $output->basic = '<dl><dt>'.$outinfo.'</dt></dl>'; 
     }
     $output->html .= "</td></tr></table>";
     return $output;
