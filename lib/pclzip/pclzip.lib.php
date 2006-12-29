@@ -1955,7 +1955,7 @@
       
       // ----- Reduce the filename
       //--(MAGIC-PclTrace)--//PclTraceFctMessage(__FILE__, __LINE__, 3, "Filedescr before reduction :'".$v_descr['filename']."'");
-      $v_descr['filename'] = PclZipUtilTranslateWinPath($v_descr['filename']);
+//      $v_descr['filename'] = PclZipUtilTranslateWinPath($v_descr['filename']); //Moolde fix - see MDL-7828
       $v_descr['filename'] = PclZipUtilPathReduction($v_descr['filename']);
       //--(MAGIC-PclTrace)--//PclTraceFctMessage(__FILE__, __LINE__, 3, "Filedescr after reduction :'".$v_descr['filename']."'");
       
