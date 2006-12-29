@@ -43,6 +43,7 @@ function get_mimetypes_array() {
         'h'    => array ('type'=>'text/plain', 'icon'=>'text.gif'),
         'hpp'  => array ('type'=>'text/plain', 'icon'=>'text.gif'),
         'hqx'  => array ('type'=>'application/mac-binhex40', 'icon'=>'zip.gif'),
+        'htc'  => array ('type'=>'text/x-component', 'icon'=>'text.gif'),
         'html' => array ('type'=>'text/html', 'icon'=>'html.gif'),
         'htm'  => array ('type'=>'text/html', 'icon'=>'html.gif'),
         'java' => array ('type'=>'text/plain', 'icon'=>'text.gif'),
