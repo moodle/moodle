@@ -1382,7 +1382,6 @@ body#grade-index .grades .weighted {
   margin:0px;
   padding:0px;
   list-style-type:none;
-  display:inline;
 }
 
 .message-discussion-noframes #userinfo .commands ul li {
@@ -1398,8 +1397,14 @@ body#grade-index .grades .weighted {
 .message-discussion-noframes #send h1 {
 	margin:0px;
 }
+
 .message-discussion-noframes #messages {
   padding-top:10px;
+}
+
+.message-discussion-noframes #messages ul.messagelist {
+  margin:0px;
+  padding:0px;
 }
 
 .message-discussion-noframes #send h1 {
