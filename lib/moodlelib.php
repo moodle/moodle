@@ -6333,22 +6333,6 @@ if(!function_exists('file_put_contents')) {
 }
 
 /**
- * html_entity_decode is only supported by php 4.3.0 and higher
- * so if it is not predefined, define it here
- *
- * @param string $string ?
- * @return string
- * @todo Finish documenting this function
- */
-if(!function_exists('html_entity_decode')) {
-     function html_entity_decode($string) {
-        $trans_tbl = get_html_translation_table(HTML_ENTITIES);
-        $trans_tbl = array_flip($trans_tbl);
-        return strtr($string, $trans_tbl);
-    }
-}
-
-/**
  * The clone keyword is only supported from PHP 5 onwards.
  * The behaviour of $obj2 = $obj1 differs fundamentally
  * between PHP 4 and PHP 5. In PHP 4 a copy of $obj1 was
@@ -6558,13 +6542,6 @@ function get_performance_info() {
     }
     $info['html'] = '<div class="performanceinfo">'.$info['html'].'</div>';
     return $info;
-}
-
-if (!function_exists('file_get_contents')) {
-   function file_get_contents($file) {
-       $file = file($file);
-       return $file ? implode('', $file) : false;
-   }
 }
 
 
