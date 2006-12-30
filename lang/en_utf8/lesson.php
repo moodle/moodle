@@ -1,7 +1,6 @@
 <?PHP // $Id$ 
       // lesson.php - created with Moodle 1.7 beta + (2006101003)
 
-
 $string['accesscontrol'] = 'Access control';
 $string['actionaftercorrectanswer'] = 'Action after correct answer';
 $string['actions'] = 'Actions';
@@ -139,10 +138,10 @@ $string['lessonopen'] = 'This lesson will be open on $a.';
 $string['lessonopens'] = 'Lesson opens';
 $string['lessonpagelinkingbroken'] = 'First page not found.  Lesson page linking must be broken.  Please contact an admin.';
 $string['lessonstats'] = 'Lesson statistics';
+$string['linkedmedia'] = 'Linked media';
 $string['loginfail'] = 'Login failed, please try again...';
 $string['lowscore'] = 'Low score';
 $string['lowtime'] = 'Low time';
-$string['mainmenu'] = 'Course menu';
 $string['manualgrading'] = 'Grade Essays';
 $string['matchesanswer'] = 'Matches with answer';
 $string['maxhighscores'] = 'Number of high scores displayed';
@@ -153,7 +152,7 @@ $string['maxtime'] = 'Time limit (minutes)';
 $string['maxtimewarning'] = 'You have $a minute(s) to finish the lesson.';
 $string['mediaclose'] = 'Show close button:';
 $string['mediafile'] = 'Pop-up to file or web page';
-$string['mediafilepopup'] = 'Click here to view this lesson\'s media file.';
+$string['mediafilepopup'] = 'Click here to view';
 $string['mediaheight'] = 'Window height:';
 $string['mediawidth'] = 'width:';
 $string['minimumnumberofquestions'] = 'Minimum number of questions';
@@ -235,7 +234,7 @@ $string['redisplaypage'] = 'Redisplay page';
 $string['report'] = 'Report';
 $string['reports'] = 'Reports';
 $string['response'] = 'Response';
-$string['returnmainmenu'] = 'Return to main menu';
+$string['returnto'] = 'Return to $a';
 $string['returntocourse'] = 'Return to the course';
 $string['review'] = 'Review';
 $string['reviewlesson'] = 'Review lesson';
@@ -298,6 +297,5 @@ $string['youranswer'] = 'Your answer';
 $string['yourcurrentgradeis'] = 'Your current grade is $a';
 $string['yourcurrentgradeisoutof'] = 'Your current grade is $a->grade out of $a->total';
 $string['youshouldview'] = 'You should answer at least: $a';
-
 
 ?>
