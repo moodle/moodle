@@ -158,8 +158,11 @@ function p($var, $strip=false) {
  * @return string
  */
 function get_referer() {
-
-    return strip_querystring(nvl($_SERVER['HTTP_REFERER']));
+    if (isset($_SERVER['HTTP_REFERER'])) {
+        return strip_querystring($_SERVER['HTTP_REFERER']);
+    } else {
+        return '';        
+    }
 }
 
 
