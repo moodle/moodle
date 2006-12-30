@@ -2387,7 +2387,8 @@ function authenticate_user_login($username, $password) {
     }
 
     if (empty($user->auth)) {      // For some reason it isn't set yet
-        if (!empty($user->id) && (isadmin($user->id) || isguest($user->id))) {
+        $primadmin = get_admin();
+        if (!empty($user->id) && (($user->id==$primadmin->id) || isguest($user->id))) {
             $auth = 'manual';    // Always assume these guys are internal
         } else {
             $auth = $CFG->auth;  // Normal users default to site method
