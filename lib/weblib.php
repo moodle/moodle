@@ -135,6 +135,28 @@ function p($var, $strip=false) {
     echo s($var, $strip);
 }
 
+/**
+ * Does proper javascript quoting.
+ * Do not use addslashes anymore, because it does not work when magic_quotes_sybase is enabled. 
+ * 
+ * @param mixed value
+ * @return mixed quoted result
+ */
+function addslashes_js($var) {
+    if (is_string($var)) {
+        $var = str_replace('\\', '\\\\', $var);
+        $var = str_replace(array('\'', '"', "\n", "\r", "\0"), array('\\\'', '\\"', '\\n', '\\r', '\\0'), $var);
+    } else if (is_array($var)) {
+        $var = array_map('addslashes_js', $var);
+    } else if (is_object($var)) {
+        $a = get_object_vars($var);
+        foreach ($a as $key=>$value) {
+          $a[$key] = addslashes_js($value);
+        }
+        $var = (object)$a;
+    }
+    return $var;
+}
 
 /**
  * Remove query string from url
