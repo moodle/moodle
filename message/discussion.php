@@ -281,9 +281,13 @@
     if (empty($allmessages)) {
         echo get_string('nomessagesfound', 'message');
     } else {
+        echo '<ul class="messagelist">';
         foreach ($allmessages as $message) {
+            echo '<li>';
             echo $message;
+            echo '</li>';
         }
+        echo '</ul>';
         if ($playbeep and get_user_preferences('message_beepnewmessage', 0)) {
             echo '<embed src="bell.wav" autostart="true" hidden="true" name="bell" />';
         }
