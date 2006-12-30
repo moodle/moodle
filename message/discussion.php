@@ -212,7 +212,13 @@
             $printmessage = '<div class="message other"><span class="author">'.$fullname.'</span> '.
                 '<span class="time">['.$time.']</span>: '.
                 '<span class="content">'.$printmessage.'</span></div>';
-            $allmessages[$message->timecreated] = $printmessage;
+            $i=0;
+            $sortkey = $message->timecreated."$i"; // we need string bacause we would run out of int range
+            while (array_key_exists($sortkey, $allmessages)) {
+                $i++;
+                $sortkey = $message->timecreated."$i";
+            }
+            $allmessages[$sortkey] = $printmessage;
         }
     }
 
@@ -226,7 +232,13 @@
             $printmessage = '<div class="message other"><span class="author">'.$mefullname.'</span> '.
                 '<span class="time">['.$time.']</span>: '.
                 '<span class="content">'.$printmessage.'</span></div>';
-            $allmessages[$message->timecreated] = $printmessage; // hack alert - let's hope users will not post exactly at the same time
+            $i=0;
+            $sortkey = $message->timecreated."$i"; // we need string bacause we would run out of int range
+            while (array_key_exists($sortkey, $allmessages)) {
+                $i++;
+                $sortkey = $message->timecreated."$i";
+            }
+            $allmessages[$sortkey] = $printmessage;
         }
     }
 
@@ -240,7 +252,13 @@
             $printmessage = '<div class="message other"><span class="author">'.$userfullname.'</span> '.
                 '<span class="time">['.$time.']</span>: '.
                 '<span class="content">'.$printmessage.'</span></div>';
-            $allmessages[$message->timecreated] = $printmessage;
+            $i=0;
+            $sortkey = $message->timecreated."$i"; // we need string bacause we would run out of int range
+            while (array_key_exists($sortkey, $allmessages)) {
+                $i++;
+                $sortkey = $message->timecreated."$i";
+            }
+            $allmessages[$sortkey] = $printmessage;
 
             /// Move the entry to the other table
 
