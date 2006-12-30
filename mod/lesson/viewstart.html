@@ -10,29 +10,10 @@
 <!-- Start view start -->
 <table>
     <tr valign="top">
-
-<?php
-if ($lesson->displayleft) {
-// Displaying left menu
-   if($firstpageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) { ?>
-
+        <!-- First Column -->
         <td valign="top">
-            <a href="#maincontent" class="skip"><?php print_string('skip', 'lesson') ?></a>
-            <div class="leftmenu_container">
-            <div class="leftmenu_title"><?php print_string('lessonmenu', 'lesson') ?></div>
-            <div class="leftmenu_courselink">
-            <a href="<?php echo "$CFG->wwwroot/course/view.php?id=$course->id"; ?>"><?php print_string("mainmenu", "lesson") ?></a>
-            </div>
-            <div class="leftmenu_links">
-            <?php lesson_print_tree_menu($lesson->id, $firstpageid, $cm->id) ?>
-            </div>
-            </div>
+            <?php print_menu_block($cm->id, $lesson); ?>
         </td>
-        
-<?php 
-    }  // End if($firstpageid = get...
-} // End if ($lesson->displayleft)
-?>
         <!-- Start main column -->
         <td width="100%" align="center">
             

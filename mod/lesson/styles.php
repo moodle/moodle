@@ -6,6 +6,14 @@
     text-align: left;
 }
 
+.mod-lesson .sideblock {
+    width: 170px;
+}
+
+.mod-lesson .clock .content {
+    text-align: center;
+}
+
 .mod-lesson .addlinks {
     font-size: .8em;
 }
@@ -92,29 +100,25 @@
 /***
  *** Left Menu Styles
  ***/
-
-.mod-lesson .leftmenu_container {
-  width:170px;
-  height:400px;
-  overflow:auto;
-  vertical-align:top;
-  padding-bottom: 15px;  /* for the sake of MacIE5 only */
-}
-.mod-lesson .leftmenu_title {
-}
-.mod-lesson .leftmenu_courselink {
-    font-size:.9em;
-}
-.mod-lesson .leftmenu_links {
-    font-size:.85em;
-    font-style: normal;
-}
-.mod-lesson .leftmenu_links ul {
-    list-style-type: none;
-    margin: 0px;
+.mod-lesson .menu .content {
     padding: 0px;
-    padding-top: 5px;
-    padding-left: 10px;
+}
+
+.mod-lesson .menu .menuwrapper {
+    max-height: 400px;
+    overflow: auto;
+    vertical-align: top;
+    margin-bottom: 10px;
+}
+
+.mod-lesson .menu ul {
+    list-style: none;
+    padding: 5px 0px 0px 5px;
+    margin: 0px;
+}
+
+.mod-lesson .menu li {
+    padding-bottom: 5px;
 }
 
 .mod-lesson .leftmenu_selected_link {

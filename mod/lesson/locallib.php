@@ -957,7 +957,6 @@ function lesson_save_question_options($question) {
  * @param int $pageid Id of the page from which you are jumping from.
  * @param int $jumpto The jumpto number.
  * @return boolean True or false after a series of tests.
- * @todo Can be optimized to only have to make 1 or 2 database calls instead of 1 foreach page in the lesson
  **/
 function lesson_iscorrect($pageid, $jumpto) {
     
@@ -977,18 +976,18 @@ function lesson_iscorrect($pageid, $jumpto) {
         return true;
     }
     // we have to run through the pages from pageid looking for jumpid
-    $apageid = get_field("lesson_pages", "nextpageid", "id", $pageid);
-    while (true) {
-        if ($jumpto == $apageid) {
-            return true;
-        }
-        if ($apageid) {
-            $apageid = get_field("lesson_pages", "nextpageid", "id", $apageid);
-        } else {
-            return false;
+    if ($lessonid = get_field('lesson_pages', 'lessonid', 'id', $pageid)) {
+        if ($pages = get_records('lesson_pages', 'lessonid', $lessonid, '', 'id, nextpageid')) {
+            $apageid = $pages[$pageid]->nextpageid;
+            while ($apageid != 0) {
+                if ($jumpto == $apageid) {
+                    return true;
+                }
+                $apageid = $pages[$apageid]->nextpageid;
+            }
         }
     }
-    return false; // should never be reached
+    return false;
 }
 
 /**
@@ -996,18 +995,17 @@ function lesson_iscorrect($pageid, $jumpto) {
  * a page that is enclosed by a branch table and an end of branch or end of lesson.
  * May call this function: {@link lesson_is_page_in_branch()}
  *
- * @param int $lesson_id Id of the lesson to which the page belongs.
+ * @param int $lesson Id of the lesson to which the page belongs.
  * @param int $pageid Id of the page.
  * @return boolean True or false.
- * @todo Change $lesson_id param to $lessonid.
  **/
-function lesson_display_branch_jumps($lesson_id, $pageid) {
+function lesson_display_branch_jumps($lessonid, $pageid) {
     if($pageid == 0) {
         // first page
         return false;
     }
     // get all of the lesson pages
-    if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lesson_id")) {
+    if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lessonid")) {
         // adding first page
         return false;
     }
@@ -1024,18 +1022,17 @@ function lesson_display_branch_jumps($lesson_id, $pageid) {
  * a page that is enclosed by a cluster page and an end of cluster or end of lesson 
  * May call this function: {@link lesson_is_page_in_cluster()}
  * 
- * @param int $lesson_id Id of the lesson to which the page belongs.
+ * @param int $lesson Id of the lesson to which the page belongs.
  * @param int $pageid Id of the page.
  * @return boolean True or false.
- * @todo Change $lesson_id param to $lessonid.
  **/
-function lesson_display_cluster_jump($lesson_id, $pageid) {
+function lesson_display_cluster_jump($lesson, $pageid) {
     if($pageid == 0) {
         // first page
         return false;
     }
     // get all of the lesson pages
-    if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lesson_id")) {
+    if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lesson")) {
         // adding first page
         return false;
     }
@@ -1085,20 +1082,19 @@ function lesson_display_teacher_warning($lesson) {
  * and if any pages are within a branch table or end of branch then only 1 page within 
  * the branch table or end of branch will be randomly selected (sub clustering).
  * 
- * @param int $lesson Id of the lesson.
- * @param int $user Id of the user.
+ * @param int $lessonid Id of the lesson.
+ * @param int $userid Id of the user.
  * @param int $pageid Id of the current page from which we are jumping from.
  * @return int The id of the next page.
- * @todo Change $lesson param to $lessonid and $user param to $userid
  **/
-function lesson_cluster_jump($lesson, $user, $pageid) {
+function lesson_cluster_jump($lessonid, $userid, $pageid) {
     // get the number of retakes
-    if (!$retakes = count_records("lesson_grades", "lessonid", $lesson, "userid", $user)) {
+    if (!$retakes = count_records("lesson_grades", "lessonid", $lessonid, "userid", $userid)) {
         $retakes = 0;
     }
 
     // get all the lesson_attempts aka what the user has seen
-    if ($seen = get_records_select("lesson_attempts", "lessonid = $lesson AND userid = $user AND retry = $retakes", "timeseen DESC")) {
+    if ($seen = get_records_select("lesson_attempts", "lessonid = $lessonid AND userid = $userid AND retry = $retakes", "timeseen DESC")) {
         foreach ($seen as $value) { // load it into an array that I can more easily use
             $seenpages[$value->pageid] = $value->pageid;
         }
@@ -1107,7 +1103,7 @@ function lesson_cluster_jump($lesson, $user, $pageid) {
     }
 
     // get the lesson pages
-    if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lesson")) {
+    if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lessonid")) {
         error("Error: could not find records in lesson_pages table");
     }
     // find the start of the cluster
@@ -1124,7 +1120,7 @@ function lesson_cluster_jump($lesson, $user, $pageid) {
     while (true) {  // now load all the pages into the cluster that are not already inside of a branch table.
         if ($lessonpages[$pageid]->qtype == LESSON_ENDOFCLUSTER) {
             // store the endofcluster page's jump
-            $exitjump = get_field("lesson_answers", "jumpto", "pageid", $pageid, "lessonid", $lesson);
+            $exitjump = get_field("lesson_answers", "jumpto", "pageid", $pageid, "lessonid", $lessonid);
             if ($exitjump == LESSON_NEXTPAGE) {
                 $exitjump = $lessonpages[$pageid]->nextpageid;
             }
@@ -1215,10 +1211,9 @@ function lesson_pages_in_branch($lessonpages, $branchid) {
  *
  * @see lesson_pages_in_branch()
  * @param int $lesson Id of the lesson.
- * @param int $user Id of the user.
+ * @param int $userid Id of the user.
  * @param int $pageid Id of the page from which we are jumping.
  * @return int Id of the next page.
- * @todo Change params $lesson to $lessonid and $user to $userid.
  **/
 function lesson_unseen_question_jump($lesson, $user, $pageid) {
     // get the number of retakes
@@ -1283,23 +1278,22 @@ function lesson_unseen_question_jump($lesson, $user, $pageid) {
 /**
  * Handles the unseen branch table jump.
  *
- * @param int $lesson Lesson id.
- * @param int $user User id.
+ * @param int $lessonid Lesson id.
+ * @param int $userid User id.
  * @return int Will return the page id of a branch table or end of lesson
- * @todo Change $lesson param to $lessonid and change $user param to $userid.
  **/
-function lesson_unseen_branch_jump($lesson, $user) {
-    if (!$retakes = count_records("lesson_grades", "lessonid", $lesson, "userid", $user)) {
+function lesson_unseen_branch_jump($lesson, $userid) {
+    if (!$retakes = count_records("lesson_grades", "lessonid", $lessonid, "userid", $userid)) {
         $retakes = 0;
     }
 
-    if (!$seenbranches = get_records_select("lesson_branch", "lessonid = $lesson AND userid = $user AND retry = $retakes",
+    if (!$seenbranches = get_records_select("lesson_branch", "lessonid = $lessonid AND userid = $userid AND retry = $retakes",
                 "timeseen DESC")) {
         error("Error: could not find records in lesson_branch table");
     }
 
     // get the lesson pages
-    if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lesson")) {
+    if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lessonid")) {
         error("Error: could not find records in lesson_pages table");
     }
     
@@ -1340,14 +1334,13 @@ function lesson_unseen_branch_jump($lesson, $user) {
 /**
  * Handles the random jump between a branch table and end of branch or end of lesson (LESSON_RANDOMPAGE).
  * 
- * @param int $lesson Lesson id.
+ * @param int $lessonid Lesson id.
  * @param int $pageid The id of the page that we are jumping from (?)
  * @return int The pageid of a random page that is within a branch table
- * @todo Change $lesson param to $lessonid.
  **/
-function lesson_random_question_jump($lesson, $pageid) {
+function lesson_random_question_jump($lessonid, $pageid) {
     // get the lesson pages
-    if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lesson")) {
+    if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lessonid")) {
         error("Error: could not find records in lesson_pages table");
     }
 
@@ -1426,73 +1419,6 @@ function lesson_is_page_in_cluster($pages, $pageid) {
         }
         $pageid = $pages[$pageid]->prevpageid;
     }
-}
-
-/**
- * Prints the contents for the left menu
- *
- * Runs through all of the lesson pages and calls {@link lesson_print_tree_link_menu()}
- * to print out the link.
- * 
- * @see lesson_print_tree_link_menu()
- * @param int $lessonid Lesson id.
- * @param int $pageid Page id of the first page of the lesson.
- * @param int $id The cmid of the lesson.
- * @param boolean $showpages An optional paramater to show question pages as well as branch tables in the left menu (NYI)
- * @todo change $id param to $cmid.  Finnish implementing the $showpages feature.  
- *       Not necessary to pass $pageid, we can find that out in the function.  
- *       Also, no real need for {@link lesson_print_tree_link_menu()}.  Everything can be handled in this function.
- */
-function lesson_print_tree_menu($lessonid, $pageid, $id, $showpages=false) {
-    if (!$pages = get_records_select("lesson_pages", "lessonid = $lessonid")) {
-        error("Error: could not find lesson pages");
-    }
-    echo '<ul>';
-    while ($pageid != 0) {
-        lesson_print_tree_link_menu($pages[$pageid], $id, true);            
-        $pageid = $pages[$pageid]->nextpageid;
-    }
-    echo '</ul>';
-}
-
-/**
- * Prints the actual link for the left menu
- *
- * Only prints branch tables that have display set to on.
- * 
- * @param object $page Lesson page object.
- * @param int $id The cmid of the lesson.
- * @param boolean $showpages An optional paramater to show question pages as well as branch tables in the left menu (NYI)
- * @todo change $id param to $cmid.  Finnish implementing the $showpages feature.
- */
-function lesson_print_tree_link_menu($page, $id, $showpages=false) { 
-    if ($page->qtype == LESSON_BRANCHTABLE && !$page->display) {
-        return false;
-    } elseif ($page->qtype != LESSON_BRANCHTABLE) {
-        return false;
-    }
-    
-    /*elseif ($page->qtype != LESSON_BRANCHTABLE && !$showpages) {
-        return false;
-    } elseif (!in_array($page->qtype, $LESSON_QUESTION_TYPE)) {
-        return false;
-    }*/
-    
-    // set up some variables  NoticeFix  changed whole function
-    $output = "";
-    $class = ' class="leftmenu_not_selected_link" ';
-    
-    if($page->id == optional_param('pageid', 0, PARAM_INT)) { 
-        $class = ' class="leftmenu_selected_link" '; 
-    } 
-    
-    $output .= '<li>';
-    
-    $output .= "<a $class href=\"view.php?id=$id&amp;pageid=$page->id\">".format_string($page->title,true)."</a>\n"; 
-      
-    $output .= "</li>";     
-
-    echo $output;
 }
 
 /**
@@ -1676,27 +1602,6 @@ function lesson_qtype_menu($qtypes, $selected="", $link="", $onclick="") {
 }
 
 /**
- * Checks to see if the nickname is naughty or not.
- * 
- * @todo Move this to highscores.php
- */
-function lesson_check_nickname($name) {
-
-    if (empty($name)) {
-        return false;
-    }
-    
-    $filterwords = explode(',', get_string('censorbadwords'));
-    
-    foreach ($filterwords as $filterword) {
-        if (strstr($name, $filterword)) {
-            return false;
-        }
-    }
-    return true;
-}
-
-/**
  * Prints out a Progress Bar which depicts a user's progress within a lesson.
  *
  * Currently works best with a linear lesson.  Clusters are counted as a single page.
@@ -1831,6 +1736,99 @@ function lesson_displayleftif($lesson) {
     
     // if we get to here, keep the original state of displayleft lesson setting
     return $lesson->displayleft;
+}
+
+/**
+ * If there is a media file associated with this 
+ * lesson, then print it in a block.
+ *
+ * @param int $cmid Course Module ID for this lesson
+ * @param object $lesson Full lesson record object
+ * @return void
+ **/
+function print_mediafile_block($cmid, $lesson) {
+    if (!empty($lesson->mediafile)) {
+        $url      = '/mod/lesson/mediafile.php?id='.$cmid;
+        $options  = 'menubar=0,location=0,left=5,top=5,scrollbars,resizable,width='. $lesson->mediawidth .',height='. $lesson->mediaheight;
+        $name     = 'lessonmediafile';
+
+        $content  = link_to_popup_window ($url, $name, get_string('mediafilepopup', 'lesson'), '', '', get_string('mediafilepopup', 'lesson'), $options, true);
+        $content .= helpbutton("mediafilestudent", get_string("mediafile", "lesson"), "lesson", true, false, '', true);
+        
+        print_side_block(get_string('linkedmedia', 'lesson'), $content, NULL, NULL, '', array('class' => 'mediafile'), get_string('linkedmedia', 'lesson'));
+    }
+}
+
+/**
+ * If a timed lesson and not a teacher, then
+ * print the clock
+ *
+ * @param int $cmid Course Module ID for this lesson
+ * @param object $lesson Full lesson record object
+ * @param object $timer Full timer record object
+ * @return void
+ **/
+function print_clock_block($cmid, $lesson, $timer) {
+    global $CFG;
+
+    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+
+    // Display for timed lessons and for students only
+    if($lesson->timed and !has_capability('mod/lesson:manage', $context) and !empty($timer)) {
+        $content  = '<script type="text/javascript" charset="utf-8">'."\n";
+        $content .= "<!--\n";
+        $content .= '    var starttime  = '.$timer->starttime.";\n";
+        $content .= '    var servertime = '.time().";\n";
+        $content .= '    var testlength = '.($lesson->maxtime * 60).";\n";
+        $content .= '    document.write(\'<script type="text/javascript" src="'.$CFG->wwwroot.'/mod/lesson/timer.js" charset="utf-8"><\/script>\');'."\n";
+        $content .= "    window.onload = function () { show_clock(); };\n";
+        $content .= "// -->\n";
+        $content .= "</script>\n";
+        $content .= "<noscript>\n";
+        $content .= lesson_print_time_remaining($timer->starttime, $lesson->maxtime, true)."\n";
+        $content .= "</noscript>\n";
+    
+        print_side_block(get_string('timeremaining', 'lesson'), $content, NULL, NULL, '', array('class' => 'clock'), get_string('timeremaining', 'lesson'));
+    }
+}
+
+/**
+ * If left menu is turned on, then this will
+ * print the menu in a block
+ *
+ * @param int $cmid Course Module ID for this lesson
+ * @param object $lesson Full lesson record object
+ * @return void
+ **/
+function print_menu_block($cmid, $lesson) {
+    global $CFG;
+
+    if ($lesson->displayleft) {
+        $pageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0);
+        $pages  = get_records_select('lesson_pages', "lessonid = $lesson->id");
+        $currentpageid = optional_param('pageid', $pageid, PARAM_INT);
+
+        if ($pageid and $pages) {
+            $content = '<a href="#maincontent" class="skip">'.get_string('skip', 'lesson')."</a>\n<div class=\"menuwrapper\">\n<ul>\n";
+
+            while ($pageid != 0) {
+                $page = $pages[$pageid];
+
+                // Only process branch tables with display turned on
+                if ($page->qtype == LESSON_BRANCHTABLE and $page->display) {
+                    if ($page->id == $currentpageid) { 
+                        $content .= '<li class="selected">'.format_string($page->title,true)."</a></li>\n";
+                    } else {
+                        $content .= "<li class=\"notselected\"><a href=\"$CFG->wwwroot/mod/lesson/view.php?id=$cmid&amp;pageid=$page->id\">".format_string($page->title,true)."</a></li>\n";
+                    }
+                    
+                }
+                $pageid = $page->nextpageid;
+            }
+            $content .= "</ul>\n</div>\n";
+            print_side_block(get_string('lessonmenu', 'lesson'), $content, NULL, NULL, '', array('class' => 'menu'), get_string('lessonmenu', 'lesson'));
+        }
+    }
 }
 
 ?>

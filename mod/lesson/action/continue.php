@@ -17,6 +17,7 @@
     // This is the code updates the lesson time for a timed test
     // get time information for this user
     $outoftime = false;
+    $timer = new stdClass;
     if (!has_capability('mod/lesson:manage', $context)) {
         if (!$timer = get_records_select('lesson_timer', "lessonid = $lesson->id AND userid = $USER->id", 'starttime')) {
             error('Error: could not find records');

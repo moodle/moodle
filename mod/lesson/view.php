@@ -27,23 +27,18 @@
 ///     Check for high scores
     if (!has_capability('mod/lesson:manage', $context)) {
 
-        if (time() < $lesson->available) {
+        if (time() < $lesson->available or time() > $lesson->deadline) {  // Deadline restrictions
+            if (time() > $lesson->deadline) {
+                $message = get_string('lessonclosed', 'lesson', userdate($lesson->deadline));
+            } else {
+                $message = get_string('lessonopen', 'lesson', userdate($lesson->available));
+            }
+            
             lesson_print_header($cm, $course, $lesson);
             print_simple_box_start('center');
             echo '<div align="center">';
-            echo get_string('lessonopen', 'lesson', userdate($lesson->available)).'<br />';
-            echo '<div class="lessonbutton standardbutton" style="padding: 5px;"><a href="../../course/view.php?id='. $course->id .'">'. get_string('returnmainmenu', 'lesson') .'</a></div>';
-            echo '</div>';
-            print_simple_box_end();
-            print_footer($course);
-            exit();
-
-        } else if (time() > $lesson->deadline) {
-            lesson_print_header($cm, $course, $lesson);
-            print_simple_box_start('center');
-            echo '<div align="center">';
-            echo get_string('lessonclosed', 'lesson', userdate($lesson->deadline)) .'<br />';
-            echo '<div class="lessonbutton standardbutton" style="padding: 5px;"><a href="../../course/view.php?id='. $course->id. '">'. get_string('returnmainmenu', 'lesson') .'</a></div>';
+            echo '<p>'.$message.'</p>';
+            echo '<div class="lessonbutton standardbutton" style="padding: 5px;"><a href="'.$CFG->wwwroot.'/course/view.php?id='. $course->id .'">'. get_string('returnto', 'lesson', format_string($course->fullname, true)) .'</a></div>';
             echo '</div>';
             print_simple_box_end();
             print_footer($course);
@@ -421,17 +416,9 @@
         // This is where several messages (usually warnings) are displayed
         // all of this is displayed above the actual page
         
-        if (!empty($lesson->mediafile)) {
-            $url = '/mod/lesson/mediafile.php?id='.$cm->id;
-            $options = 'menubar=0,location=0,left=5,top=5,scrollbars,resizable,width='. $lesson->mediawidth .',height='. $lesson->mediaheight;
-            $name = 'lessonmediafile';
-            $medialink = link_to_popup_window ($url, $name, get_string('mediafilepopup', 'lesson'), '', '', get_string('mediafilepopup', 'lesson'), $options, true);
-            $medialink .= helpbutton("mediafilestudent", get_string("mediafile", "lesson"), "lesson", true, false, '', true);
-        } else {
-            $medialink = '';
-        }
         // clock code
         // get time information for this user
+        $timer = new stdClass;
         if(!has_capability('mod/lesson:manage', $context)) {
             if (!$timer = get_records_select('lesson_timer', "lessonid = $lesson->id AND userid = $USER->id", 'starttime')) {
                 error('Error: could not find records');
@@ -999,8 +986,8 @@
             }
         }
 
-        echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"../../course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a></div>\n"; // Back to the menu (course view).
-        echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"../../grade/index.php?id=$course->id\">".get_string("viewgrades", "lesson")."</a></div>\n"; //view grades
+        echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">".get_string('returnto', 'lesson', format_string($course->fullname, true))."</a></div>\n";
+        echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"$CFG->wwwroot/grade/index.php?id=$course->id\">".get_string('viewgrades', 'lesson')."</a></div>\n";
     }
 
 /// Finish the page

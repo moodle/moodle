@@ -10,29 +10,10 @@
 <!-- Primary layout table -->
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
     <tr valign="top">
-
-<?php
-if ($lesson->displayleft) {
-// Displaying left menu
-   if($firstpageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) { ?>
-
-        <td>
-            <a href="#maincontent" class="skip"><?php print_string('skip', 'lesson') ?></a>
-            <div class="leftmenu_container">
-            <div class="leftmenu_title"><?php print_string('lessonmenu', 'lesson') ?></div>
-            <div class="leftmenu_courselink">
-            <a href="<?php echo "$CFG->wwwroot/course/view.php?id=$course->id"; ?>"><?php print_string("mainmenu", "lesson") ?></a>
-            </div>
-            <div class="leftmenu_links">
-            <?php lesson_print_tree_menu($lesson->id, $firstpageid, $cm->id) ?>
-            </div>
-            </div>
+        <!-- First Column -->
+        <td valign="top">
+            <?php print_menu_block($cm->id, $lesson); ?>
         </td>
-        
-<?php 
-    }  // End if($firstpageid = get...
-} // End if ($lesson->displayleft)
-?>
         <!-- Start Primary column -->
         <td align="center" width="100%">
     
@@ -112,34 +93,11 @@ if ($lesson->displayleft) {
             </form>
         </td>
         <!-- End primary column -->
-
-<?php if($lesson->timed and !has_capability('mod/lesson:manage', $context)) { // Display for timed lessons and for students only ?>
-    
         <td>
-            <table align="right" width="150px" class="generaltable generalbox" cellspacing="0" cellpadding="5px" border="0" valign="top">
-                <tr>
-                    <th class="header" scope="col"><?php print_string("timeremaining", "lesson") ?></th>
-                </tr>
-                <tr class="r0">
-                    <td align="center" class="c0">
-                        <script type="text/javascript" charset="utf-8">
-                        <!--
-                            var starttime  = <?php echo $timer->starttime ?>;
-                            var servertime = <?php echo time() ?>;
-                            var testlength = <?php echo $lesson->maxtime * 60 ?>;
-                            document.write('<script type="text/javascript" src="<?php echo $CFG->wwwroot ?>/mod/lesson/timer.js" charset="utf-8"><\/script>');
-                            window.onload = function () { show_clock(); };
-                        // -->
-                        </script>
-                        <noscript>
-                            <?php lesson_print_time_remaining($timer->starttime, $lesson->maxtime); ?>
-                        </noscript>
-                    </td>
-                </tr>
-            </table>
+            <!-- Third column -->
+            <?php print_clock_block($cm->id, $lesson, $timer); ?>
+            <?php print_mediafile_block($cm->id, $lesson); // If there is one ?>
         </td>
-<?php } //end if($lesson->timed) { ?>
-
-<!-- End primary layout table -->
     </tr>
 </table>
+<!-- End primary layout table -->

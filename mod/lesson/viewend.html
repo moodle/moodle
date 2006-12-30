@@ -10,41 +10,8 @@
 <!-- Start view end -->
         </td>
         <td>
-
-<?php if (!empty($medialink)) { ?>
-
-            <table width="150px">
-                <tr><td>
-                    <?php echo $medialink ?>
-                </td></tr>
-            </table>
-
-<?php } ?>
-
-<?php if($lesson->timed and !has_capability('mod/lesson:manage', $context)) { // Display for timed lessons and for students only ?>
-    
-            <table align="right" width="150px" class="generaltable generalbox" cellspacing="0" cellpadding="5px" border="0" valign="top">
-                <tr>
-                    <th class="header" scope="col"><?php print_string("timeremaining", "lesson") ?></th>
-                </tr>
-                <tr class="r0">
-                    <td align="center" class="c0">
-                        <script type="text/javascript" charset="utf-8">
-                        <!--
-                            var starttime  = <?php echo $timer->starttime ?>;
-                            var servertime = <?php echo time() ?>;
-                            var testlength = <?php echo $lesson->maxtime * 60 ?>;
-                            document.write('<script type="text/javascript" src="<?php echo $CFG->wwwroot ?>/mod/lesson/timer.js" charset="utf-8"><\/script>');
-                            window.onload = function () { show_clock(); };
-                        // -->
-                        </script>
-                        <noscript>
-                            <?php lesson_print_time_remaining($timer->starttime, $lesson->maxtime); ?>
-                        </noscript>
-                    </td>
-                </tr>
-            </table>
-<?php } //end if($lesson->timed) { ?>
+            <?php print_clock_block($cm->id, $lesson, $timer); ?>
+            <?php print_mediafile_block($cm->id, $lesson); // If there is one ?>
         </td>
     </tr>
 </table>
