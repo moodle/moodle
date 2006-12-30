@@ -215,7 +215,7 @@
 
     if ($user->maildisplay == 1 or
        ($user->maildisplay == 2 and ($course->id != SITEID) and !isguest()) or
-       isteacher($course->id)) {
+       has_capability('moodle/course:useremail', $coursecontext)) {
 
         $emailswitch = '';
 
