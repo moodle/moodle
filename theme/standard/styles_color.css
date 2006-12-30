@@ -748,9 +748,13 @@ table.message_search_results td {
  *** Modules: Chat
  ***/
 
+#mod-chat-gui_basic .text,
 #mod-chat-gui_header_js-jsupdate .text {
   color:#000
 }
+
+#mod-chat-gui_basic .event,
+#mod-chat-gui_basic .title,
 #mod-chat-gui_header_js-jsupdate .event,
 #mod-chat-gui_header_js-jsupdate .title {
   color:#888

@@ -1767,6 +1767,34 @@ body#user-index .rolesform {
   text-align: left;
 }
 
+#mod-chat-gui_basic #participants ul {
+  margin:0px;
+  padding:0px;
+  list-style-type:none;
+}
+
+#mod-chat-gui_basic #participants ul li {
+  display:inline;
+  margin-right:10px;
+}
+
+#mod-chat-gui_basic #participants ul li .userinfo {
+  display:inline;
+}
+
+#mod-chat-gui_basic #messages dl {
+  padding:0px;
+  margin:1px;
+}
+
+#mod-chat-gui_basic #messages dd,
+#mod-chat-gui_basic #messages dt {
+  margin-left:0px;
+  margin-right:5px;
+  padding:0px;
+  display:inline;
+}
+
 /***
  *** Modules: Choice
  ***/

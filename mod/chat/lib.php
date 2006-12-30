@@ -454,7 +454,7 @@ function chat_delete_old_users() {
     global $CFG;
 
     $timeold = time() - $CFG->chat_old_ping;
-    $timeoldext = time() - ($CFG->chat_old_ping*2); // JSless basic gui needs much longer timeouts
+    $timeoldext = time() - ($CFG->chat_old_ping*10); // JSless gui_basic needs much longer timeouts
 
     $query = "(version<>'basic' AND lastping<'$timeold') OR (version='basic' AND lastping<'$timeoldext')";
 
@@ -556,7 +556,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         $output->text = $message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender));
         $output->html  = '<table class="chat-event"><tr'.$rowclass.'><td class="picture">'.$message->picture.'</td><td class="text">';
         $output->html .= '<span class="event">'.$output->text.'</span></td></tr></table>';
-        $output->basic = '<dl><dt>'.$message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender)).'</dt></dl>'; 
+        $output->basic = '<dl><dt class="event">'.$message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender)).'</dt></dl>'; 
 
         if($message->message == 'exit' or $message->message == 'enter') {
             $output->refreshusers = true; //force user panel refresh ASAP
@@ -619,9 +619,9 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     $output->html .= "<span class=\"title\">$outinfo</span>";
     if ($outmain) {
         $output->html .= ": $outmain";
-        $output->basic = '<dl><dt>'.$outinfo.':</dt><dd>'.$outmain.'</dd></dl>'; 
+        $output->basic = '<dl><dt class="title">'.$outinfo.':</dt><dd class="text">'.$outmain.'</dd></dl>'; 
     } else {
-        $output->basic = '<dl><dt>'.$outinfo.'</dt></dl>'; 
+        $output->basic = '<dl><dt class="title">'.$outinfo.'</dt></dl>'; 
     }
     $output->html .= "</td></tr></table>";
     return $output;

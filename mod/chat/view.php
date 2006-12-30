@@ -107,6 +107,13 @@
         link_to_popup_window ("/mod/chat/gui_$CFG->chat_method/index.php?id=$chat->id$groupparam",
                               "chat$course->id$chat->id$groupparam", "$strenterchat", 500, 700, get_string('modulename', 'chat'));
         print_simple_box_end();
+        if ($CFG->chat_method == 'header_js') {
+            // show frame/js-less alternative
+            print_simple_box_start('center');
+            link_to_popup_window ("/mod/chat/gui_basic/index.php?id=$chat->id$groupparam",
+                                  "chat$course->id$chat->id$groupparam", '('.get_string('noframesjs', 'message').')', 500, 700, get_string('modulename', 'chat'));
+            print_simple_box_end();
+        }
     } else {
 /*    XXX TODO
         $wwwroot = $CFG->wwwroot.'/login/index.php';

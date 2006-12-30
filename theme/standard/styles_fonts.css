@@ -628,6 +628,15 @@ body#user-index #longtimenosee {
   font-size:0.8em;
 }
 
+
+#mod-chat-gui_basic h1 {
+  font-size:1.4em;
+}
+
+#mod-chat-gui_basic #participants .idle {
+  font-size:0.6em;
+}
+
 /***
  *** Modules: Choice
  ***/

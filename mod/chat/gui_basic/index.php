@@ -48,15 +48,11 @@
         error('Could not log in to chat room!!');
     }
 
-    if (!$chatuser = get_record('chat_users', 'sid', $chat_sid)) {
-        error('Not logged in!');
-    }
-
     if (!$chatusers = chat_get_users($chat->id, $groupid)) {
         error(get_string('errornousers', 'chat'));
     }
 
-    set_field('chat_users', 'lastping', time(), 'id', $USER->id);
+    set_field('chat_users', 'lastping', time(), 'sid', $chat_sid);
 
     if (!isset($SESSION->chatprefs)) {
         $SESSION->chatprefs = array();
@@ -66,15 +62,15 @@
         $SESSION->chatprefs[$chat->id]['chatentered'] = time();
     }
     $chatentered = $SESSION->chatprefs[$chat->id]['chatentered'];
-    
+
     $refreshedmessage = '';
 
     if (!empty($refresh) and data_submitted()) {
         $refreshedmessage = $message;
 
-    } else if (empty($refresh) and data_submitted() and confirm_sesskey()) {
-
         chat_delete_old_users();
+
+    } else if (empty($refresh) and data_submitted() and confirm_sesskey()) {
 
         if ($message!='') {
             $newmessage = new object();
@@ -88,31 +84,33 @@
                 error('Could not insert a chat message!');
             }
 
-            set_field('chat_users', 'lastmessageping', time(), 'id', $USER->id);
+            set_field('chat_users', 'lastmessageping', time(), 'sid', $chat_sid);
 
             add_to_log($course->id, 'chat', 'talk', "view.php?id=$cm->id", $chat->id, $cm->id);
         }
+
+        chat_delete_old_users();
 
         redirect('index.php?id='.$id.'&amp;newonly='.$newonly.'&amp;last='.$last);
     }
 
 
-    print_header($strchat.': '.format_string($chat->name));
+    print_header("$strchat: $course->shortname: ".format_string($chat->name,true)."$groupname");
 
-    echo '<div class="chat-basic">';
-    echo '<h2>'.get_string('participants').'</h2>';
-    echo '<div class="participants"><ul>';
+    echo '<div id="mod-chat-gui_basic">';
+    echo '<h1>'.get_string('participants').'</h1>';
+    echo '<div id="participants"><ul>';
     foreach($chatusers as $chu) {
         echo '<li>';
-        print_user_picture($chu->id, $course->id, $chu->picture, 24, false, false);
-        echo '&nbsp;'.fullname($chu).' - ';
-        $lastping = time() - $chatuser->lastmessageping;
-        $min = (int) ($lastping/60);
-        $sec = $lastping - ($min*60);
-        $min = $min < 10 ? '0'.$min : $min;
-        $sec = $sec < 10 ? '0'.$sec : $sec;
-        $idle = $min.':'.$sec;
-        echo '<span class="idle">'.$stridle.' '.format_time($lastping).'</span>';
+        print_user_picture($chu->id, $course->id, $chu->picture, 24, false, false, '', false);
+        echo '<div class="userinfo">';
+        echo fullname($chu).' ';
+        if ($idle = time() - $chu->lastmessageping) {
+            echo '<span class="idle">'.$stridle.' '.format_time($idle).'</span>';
+        } else {
+            echo '<span class="idle" />';
+        }
+        echo '</div>';
         echo '</li>';
     }
     echo '</ul></div>';
@@ -124,9 +122,9 @@
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
 
     $usehtmleditor = can_use_html_editor();
-    echo '<h2><label for="edit-message">'.get_string('sendmessage', 'message').'</label></h2>';
+    echo '<h1><label for="message">'.get_string('sendmessage', 'message').'</label></h1>';
     echo '<div>';
-    print_textarea(false, 2, 50, 0, 0, 'message', $refreshedmessage);
+    echo '<input type="text" id="message" name="message" value="'.s($refreshedmessage, true).'" size="60" />';
     echo '</div><div>';
     echo '<input type="submit" value="'.get_string('submit').'" />&nbsp;';
     echo '<input type="submit" name="refresh" value="'.get_string('refresh').'" />';
@@ -136,7 +134,7 @@
     echo '</div>';
 
     echo '<div id="messages">';
-    echo '<h2>'.get_string('messages', 'chat').'</h2>';
+    echo '<h1>'.get_string('messages', 'chat').'</h1>';
 
     $allmessages = array();
     $options = new object();

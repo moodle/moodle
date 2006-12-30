@@ -3040,10 +3040,12 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='',
  * @param int $size Size in pixels.  Special values are (true/1 = 100px) and (false/0 = 35px) for backward compatability
  * @param boolean $return If false print picture to current page, otherwise return the output as string
  * @param boolean $link Enclose printed image in a link to view specified course?
+ * @param string $target link target attribute
+ * @param boolean $alttext use username or userspecified text in image alt attribute
  * return string
  * @todo Finish documenting this function
  */
-function print_user_picture($userid, $courseid, $picture, $size=0, $return=false, $link=true, $target='') {
+function print_user_picture($userid, $courseid, $picture, $size=0, $return=false, $link=true, $target='', $alttext=true) {
     global $CFG;
 
     if ($link) {
@@ -3076,13 +3078,16 @@ function print_user_picture($userid, $courseid, $picture, $size=0, $return=false
         $class .= " defaultuserpic";
         $src =  "$CFG->pixpath/u/$file.png\"";
     }
-    if ($user = get_record('user','id',$userid)) {
+    if (!$alttext) {
+        $imagealt = '';
+    } else if ($user = get_record('user','id',$userid)) {
         if (!empty($user->imagealt)) {
             $imagealt = $user->imagealt;
         } else {
             $imagealt = get_string('pictureof','',fullname($user));
         }    
     }
+
     $output .= "<img class=\"$class\" align=\"middle\" src=\"$src".
                    " border=\"0\" width=\"$size\" height=\"$size\" alt=\"".s($imagealt)."\" />";
     if ($link) {
