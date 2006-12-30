@@ -75,6 +75,25 @@ function optional_variable(&$var, $default=0) {
 }
 
 /**
+ * Ensure that a variable is set
+ *
+ * Return $var if it is defined, otherwise return $default,
+ * This function is very similar to {@link optional_variable()}
+ *
+ * @param    mixed $var the variable which may be unset
+ * @param    mixed $default the value to return if $var is unset
+ * @return   mixed
+ */
+function nvl(&$var, $default='') {
+    global $CFG;
+
+    if (!empty($CFG->disableglobalshack)) {
+      error( "The nvl() function is deprecated ($var, $default)." );
+    }
+    return isset($var) ? $var : $default;
+}
+
+/**
  * Determines if a user an admin
  *
  * @uses $USER
