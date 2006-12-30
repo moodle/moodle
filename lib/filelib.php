@@ -475,14 +475,6 @@ function put_records_csv($file, $records, $table = NULL) {
 }
 
 
-if (!function_exists('file_get_contents')) {
-   function file_get_contents($file) {
-       $file = file($file);
-       return !$file ? false : implode('', $file);
-   }
-}
-
-
 /**
  * Recursively delete the file or folder with path $location. That is, 
  * if it is a file delete it. If it is a folder, delete all its content
