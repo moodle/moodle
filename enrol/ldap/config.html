@@ -73,9 +73,15 @@ foreach($roles as $role) {
 }
 
 // autocreate
-optional_variable($frm->enrol_ldap_autocreate, false);
-optional_variable($frm->enrol_ldap_category, 1);
-optional_variable($frm->enrol_ldap_template, '');
+if (!isset($frm->enrol_ldap_autocreate)) {
+    $frm->enrol_ldap_autocreate = false;   
+}
+if (!isset($frm->enrol_ldap_category)) {
+    $frm->enrol_ldap_category = 1;   
+}
+if (!isset($frm->enrol_ldap_template)) {
+    $frm->enrol_ldap_template = '';   
+}
 
 ?>
 
