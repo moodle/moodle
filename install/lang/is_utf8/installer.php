@@ -28,6 +28,7 @@ $string['compatibilitysettingshead'] = 'Stillingar á PHP athugaðar';
 $string['compatibilitysettingssub'] = 'Vefþjóninn verður að standast allar þessar prófanir til þess að tryggja að Moodle keyri án vandkvæða';
 $string['configfilenotwritten'] = 'Uppsetningarforritið gat ekki myndað config.php skránna sem hefur að geyma stillingar vefsins. Líklegast vegna þess að skrifheimild vantar á Moodle skráarsafnið. Þú getur leyst þetta með að búa til skránna config.php í rót vefins og afritað eftirfarandi kóða í hana.';
 $string['configfilewritten'] = 'config.php skráin hefur verið mynduð';
+$string['configurationcompletehead'] = 'Stillingu lokið';
 $string['configurationcompletesub'] = 'Moodle gerði tilraun til þess að vista uppsetningarskránna í rót Moodle skráarsafnins.';
 $string['continue'] = 'Áfram';
 $string['database'] = 'Gagnagrunnur';
@@ -54,6 +55,16 @@ $string['dbprefix'] = 'fortáknun taflna';
 $string['dbtype'] = 'Tegund';
 $string['dbwrongencoding'] = 'Kótun á uppgefnum gagnagrunni er af tegund ($a) sem ekki er mælt með. Betri kostur er að notast gagnagrunn með Unicode (UTF-8) kótun. Þú getur engu að síður haldið uppsetningunni áfram með því haka við \"Sleppa prófun á gagnagrunni\" hér að neðan, en mátt þá eiga von á vandamálum síðar.';
 $string['directorysettingshead'] = 'Vinsamlegast staðfestu staðsetningu á þessari Moodle uppsetningu';
+$string['directorysettingssub'] = '<b>Vefslóð:</b>
+Gefðu upp fulla vefslóð að Moodle. Ef Moodle er aðgengilegt af fleiri en einni slóð skaltu skrá þá slóð sem líklegast er að nemendur muni nota. Ekki hafa skástrik í endanum.
+<br />
+<br />
+<b>Moodle skráarsafnið:
+Gefðu upp slóðina að skráarsafninu þar sem Moodle er vistað.</p>
+<br />
+<br />
+<b>Gagnamappa:</b>
+Moodle þarf á að halda skráarsafni þar sem gögn eru vistuð. Athugaðu að vefþjónninn verður að hafa bæði les- OG SKRIFHEIMILD á þetta skráarsafn (venjulega \'nobody\' eða \'apache\'). Skráarsafnið á hins vegar ekki að vera aðgengilegt beint í gegnum vefinn.';
 $string['dirroot'] = 'Moodle skráarsafnið';
 $string['dirrooterror'] = 'Ekki tókst að finna Moodle uppsetningu í uppgefnu Moodle skráarsafni. Gildið hér að neðan hefur verið endursett.';
 $string['download'] = 'Sækja';
@@ -62,10 +73,13 @@ $string['downloadlanguagehead'] = 'Sækja tungumálapakka';
 $string['downloadlanguagenotneeded'] = 'Þú getur haldið áfram með uppsetninguna með sjálfgefnum tungumálapakka, \"$a\".';
 $string['downloadlanguagesub'] = 'Nú hefur þú kost á því að sækja tungumálapakka og halda uppsetningunni áfram á því tungumáli.<br /><br />
 Ef þú getur ekki sótt tungumálapakkann þá heldur uppsetningarferlið áfram á ensku. Eftir að uppsetningu lýkur getur þú sótt og sett upp önnur tungumál.';
+$string['environmenterrortodo'] = 'Þú verður að leysa úr öllum villuboðunum hér að ofan áður en haldið er áfram með innsetningu á þessari útgáfu af Moodle!';
 $string['environmentrecommendinstall'] = 'mælum við með að sé uppsett/virkt';
 $string['environmentrecommendversion'] = 'mælt er með útgáfu $a->needed en þú notast við útgáfu $a->current';
 $string['environmentrequireinstall'] = 'verður að vera uppsett/virkt';
 $string['environmentrequireversion'] = 'krafist er útgáfu $a->needed en þú notast við útgáfu $a->current';
+$string['environmentxmlerror'] = 'Villa kom upp við lestur á umhverfisgögnum
+($a->error_code)';
 $string['error'] = 'Villa';
 $string['fail'] = 'Ekki staðið';
 $string['gdversion'] = 'GD útgáfa';
@@ -81,10 +95,13 @@ $string['language'] = 'Tungumál';
 $string['mbstringrecommended'] = 'Mælt er með uppsetningu á MBSTRING safninu í því skyni að auka virkni vefsins, sérstaklega ef vefurinn styður við tungumál sem ekki eru af latneskum stofni (non-latin).';
 $string['missingrequiredfield'] = 'Einhverjir reitir eru enn óútfylltir';
 $string['moodledocslink'] = 'Hjálp fyrir þessa síðu';
+$string['mssql'] = 'SQL *vefþjónn (mssql)';
+$string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'Ef vefurinn notast hinsvegar EINUNGIS við iso-8859-1 (latin) stafasettið er óhætt að notast áfram við MySQL 4.1.12 eða yngri útgáfur.';
 $string['mysql416required'] = 'Moodle gerir lágmarkskröfu um MySQL 4.1.16 gagnagrunninn til þess að trygga að mögulegt sé að yfirfæra öll gögn yfir í UTF-8.';
 $string['name'] = 'Nafn';
 $string['next'] = 'Áfram';
+$string['oci8po'] = 'Oracle (oci8po)';
 $string['ok'] = 'OK';
 $string['parentlanguage'] = 'en';
 $string['pass'] = 'Staðið';
@@ -101,6 +118,7 @@ $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.3.0 
 <p>Þú er með útgáfu $a</p>
 <p>Þú verður að uppfæra PHP eða velja vefþjónustu sem býður upp á nýrri útgáfu af PHP!<br/>
 (Ef þú notar útgáfu 5.0.x gætir þú hugsanlega breytt yfir í 4.4.x)</p>';
+$string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Til baka';
 $string['report'] = 'Skýrsla';
 $string['restricted'] = 'Aðgangur takmarkaður';
