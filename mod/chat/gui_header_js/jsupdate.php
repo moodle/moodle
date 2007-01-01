@@ -80,7 +80,7 @@
     /// required stylesheets
     $stylesheetshtml = '';
     foreach ($CFG->stylesheets as $stylesheet) {
-        $stylesheetshtml .= '<link rel=\\"stylesheet\\" type=\\"text/css\\" href=\\"'.$stylesheet.'\\" />';
+        $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />';
     }
 
     // use ob to be able to send Content-Length headers
@@ -102,7 +102,7 @@
             parent.msg.document.write("<html><head>");
             parent.msg.document.write("<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />");
             parent.msg.document.write("<base target=\"_blank\" />");
-            parent.msg.document.write("<?php echo $stylesheetshtml ?>");
+            parent.msg.document.write("<?php echo addslashes_js($stylesheetshtml) ?>");
             parent.msg.document.write("<\/head><body class=\"mod-chat-gui_header_js course-<?php echo $chatuser->course ?>\" id=\"mod-chat-gui_header_js-jsupdate\"><div style=\"display: none\" id=\"msgStarted\">&nbsp;<\/div>");
         }
         <?php
@@ -121,7 +121,7 @@
                      $refreshusers = true;
                 }
                 $us[$message->userid] = $timenow - $message->timestamp;
-                echo "parent.msg.document.write('".addslashes($formatmessage->html)."\\n');\n";
+                echo "parent.msg.document.write('".addslashes_js($formatmessage->html)."\\n');\n";
              }
         }
 

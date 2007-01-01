@@ -203,7 +203,7 @@ function message_print_contacts() {
     echo '<br />';
 
     $autorefresh = '<p align="center" class="note">'.get_string('pagerefreshes', 'message', $CFG->message_contacts_refresh).'</p>';
-    $autorefresh = addslashes($autorefresh); // js escaping
+    $autorefresh = addslashes_js($autorefresh); // js escaping
 
     // gracefully degrade JS autorefresh
     echo '<script type="text/javascript">

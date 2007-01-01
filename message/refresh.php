@@ -40,7 +40,7 @@
     echo '  parent.messages.document.write("<html><head><title> <\/title>");'."\n";
     echo '  parent.messages.document.write("<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />");'."\n";
     echo '  parent.messages.document.write("<base target=\"_blank\" />");'."\n";
-    echo '  parent.messages.document.write("'.addslashes($stylesheetshtml).'");'."\n";
+    echo '  parent.messages.document.write("'.addslashes_js($stylesheetshtml).'");'."\n";
     echo '  parent.messages.document.write("<\/head><body class=\"message course-1\" id=\"message-messages\"><div style=\"display: none\" id=\"messagestarted\">&nbsp;<\/div>");'."\n";
     echo '}'."\n";
 
@@ -55,14 +55,11 @@
             $options = new object();
             $options->para = false;
             $options->newlines = true;
-            $printmessage = format_text($message->message, $message->format, $options, 0);
-            $printmessage = str_replace("\r", ' ', $printmessage);
-            $printmessage = str_replace("\n", ' ', $printmessage);
+            $printmessage = format_text($message->message, $message->format, $options);
             $printmessage = '<div class="message other"><span class="author">'.s($userfullname).'</span> '.
                 '<span class="time">['.$time.']</span>: '.
                 '<span class="content">'.$printmessage.'</span></div>';
-            $printmessage = addslashes($printmessage);                 // So Javascript can write it
-            $printmessage = str_replace('</', '<\/', $printmessage);   // XHTML compliance
+            $printmessage = addslashes_js($printmessage);  // So Javascript can write it
             echo "parent.messages.document.write('".$printmessage."');\n";
 
             /// Move the entry to the other table

@@ -383,7 +383,7 @@
 <!--
 document.write('<input type="button" value="<?php echo $buttontext ?>" onclick="javascript: <?php
                 if ($strconfirmstartattempt) {
-                    echo "if (confirm(\\'".addslashes($strconfirmstartattempt)."\\'))";
+                    echo "if (confirm(\\'".addslashes_js($strconfirmstartattempt)."\\'))";
                 }
 ?> window.open(\'<?php echo $attempturl ?>\', \'<?php echo $window ?>\', \'<?php echo $windowoptions ?>\'); " />');
 // -->

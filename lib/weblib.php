@@ -146,6 +146,7 @@ function addslashes_js($var) {
     if (is_string($var)) {
         $var = str_replace('\\', '\\\\', $var);
         $var = str_replace(array('\'', '"', "\n", "\r", "\0"), array('\\\'', '\\"', '\\n', '\\r', '\\0'), $var);
+        $var = str_replace('</', '<\/', $var);   // XHTML compliance
     } else if (is_array($var)) {
         $var = array_map('addslashes_js', $var);
     } else if (is_object($var)) {

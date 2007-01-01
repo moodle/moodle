@@ -65,16 +65,13 @@
         $options = NULL;
         $options->para = false;
         $options->newlines = true;
-        $message = format_text($message, $format, $options, 0);
+        $message = format_text($message, $format, $options);
 
-        $message = str_replace("\r", ' ', $message);
-        $message = str_replace("\n", ' ', $message);
         $time = userdate(time(), get_string('strftimedaytime'));
         $message = '<div class="message me"><span class="author">'.fullname($USER).'</span> '.
                    '<span class="time">['.$time.']</span>: '.
                    '<span class="content">'.$message.'</span></div>';
-        $message = addslashes($message);                 // So Javascript can write it
-        $message = str_replace('</', '<\/', $message);   // XHTML compliance
+        $message = addslashes_js($message);  // So Javascript can write it
 
     /// Then write it to our own message screen immediately
         echo "\n<script type=\"text/javascript\">\n<!--\n";
