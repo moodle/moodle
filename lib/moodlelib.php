@@ -2055,6 +2055,28 @@ function isloggedin() {
     return (!empty($USER->id));
 }
 
+/**
+ * Determines if a user is logged in as real guest user with username 'guest'.
+ * This function is similar to original isguest() in 1.6 and earlier.
+ * Current isguest() is deprecated - do not use it anymore.
+ *
+ * @param $user mixed user object or id, $USER if not specified
+ * @return bool true if user is the real guest user, false if not logged in or other user
+ */
+function isguestuser($user=NULL) {
+    global $USER;
+    if ($user === NULL) {
+        $user = $USER;
+    } else if (is_numeric($user)) {
+        $user = get_record('user', 'id', $user, '', '', '', '', 'id, username');
+    }
+
+    if (empty($user->id)) {
+        return false; // not logged in, can not be guest
+    }
+
+    return ($user->username == 'guest');
+}
 
 /**
  * Determines if the currently logged in user is in editing mode
