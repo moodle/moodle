@@ -276,28 +276,28 @@ function forum_print_big_search_form($course) {
     echo "</script>\n";
 
     echo '<form name="search" action="search.php" method="get">';
-    echo '<input type="hidden" value="'.$course->id.'" name="id" alt="">';
+    echo '<input type="hidden" value="'.$course->id.'" name="id" alt="" />';
     echo '<table cellpadding="10" class="searchbox" id="form">';
 
     echo '<tr>';
     echo '<td class="c0">'.get_string('searchwords', 'forum').':</td>';
-    echo '<td class="c1"><input type="text" size="35" name="words" value="'.s($words).'" alt=""></td>';
+    echo '<td class="c1"><input type="text" size="35" name="words" value="'.s($words).'" alt="" /></td>';
     echo '</tr>';
 
     echo '<tr>';
     echo '<td class="c0">'.get_string('searchphrase', 'forum').':</td>';
-    echo '<td class="c1"><input type="text" size="35" name="phrase" value="'.s($phrase).'" alt=""></td>';
+    echo '<td class="c1"><input type="text" size="35" name="phrase" value="'.s($phrase).'" alt="" /></td>';
     echo '</tr>';
 
     echo '<tr>';
     echo '<td class="c0">'.get_string('searchnotwords', 'forum').':</td>';
-    echo '<td class="c1"><input type="text" size="35" name="notwords" value="'.s($notwords).'" alt=""></td>';
+    echo '<td class="c1"><input type="text" size="35" name="notwords" value="'.s($notwords).'" alt="" /></td>';
     echo '</tr>';
 
     if ($CFG->dbtype == 'mysql' || $CFG->dbtype == 'postgres7') {
         echo '<tr>';
         echo '<td class="c0">'.get_string('searchfullwords', 'forum').':</td>';
-        echo '<td class="c1"><input type="text" size="35" name="fullwords" value="'.s($fullwords).'" alt=""></td>';
+        echo '<td class="c1"><input type="text" size="35" name="fullwords" value="'.s($fullwords).'" alt="" /></td>';
         echo '</tr>';
     }
 
@@ -348,17 +348,17 @@ function forum_print_big_search_form($course) {
 
     echo '<tr>';
     echo '<td class="c0">'.get_string('searchsubject', 'forum').':</td>';
-    echo '<td class="c1"><input type="text" size="35" name="subject" value="'.s($subject).'" alt=""></td>';
+    echo '<td class="c1"><input type="text" size="35" name="subject" value="'.s($subject).'" alt="" /></td>';
     echo '</tr>';
 
     echo '<tr>';
     echo '<td class="c0">'.get_string('searchuser', 'forum').':</td>';
-    echo '<td class="c1"><input type="text" size="35" name="user" value="'.s($user).'" alt=""></td>';
+    echo '<td class="c1"><input type="text" size="35" name="user" value="'.s($user).'" alt="" /></td>';
     echo '</tr>';
 
     echo '<tr>';
     echo '<td class="submit" colspan="2" align="center">';
-    echo '<input type="submit" value="'.get_string('searchforums', 'forum').'" alt=""></td>';
+    echo '<input type="submit" value="'.get_string('searchforums', 'forum').'" alt="" /></td>';
     echo '</tr>';
 
     echo '</table>';
