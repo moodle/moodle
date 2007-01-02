@@ -355,6 +355,7 @@
 
         // Get all the students
         if (!$users = workshop_get_students($workshop)) {
+            echo ('</table>');
             print_heading(get_string("nostudentsyet"));
             print_footer($course);
             exit;
