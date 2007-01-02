@@ -47,7 +47,7 @@ function generate_url() {
         preset_time = "recentupcoming";
     }
     
-    url = "<?php echo $CFG->wwwroot; ?>/calendar/export_execute.php?preset_what=" + preset_what + "&preset_time=" + preset_time + "&username=<?php echo $usernameencoded; ?>&authtoken=<?php echo $authtoken; ?>";
+    url = "<?php echo $CFG->wwwroot; ?>/calendar/export_execute.php?preset_what=" + preset_what + "&amp;preset_time=" + preset_time + "&amp;username=<?php echo $usernameencoded; ?>&amp;authtoken=<?php echo $authtoken; ?>";
     document.getElementById("url").innerText = url;
     document.getElementById("url").innerHTML = url; //Need this as well, for Firefox
     
