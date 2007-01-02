@@ -461,6 +461,18 @@ table.navbar {
   text-align:right;
 }
 
+#navmenu optgroup {
+  text-align:center;
+  padding-top:4px;
+}
+
+#navmenu option {
+  text-align:left;
+}
+
+#navmenu optgroup option {
+  padding:0px;
+}
 
 /***
  *** Footer

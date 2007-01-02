@@ -4150,12 +4150,12 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
                 has_capability('moodle/course:viewhiddensections', $context)) {
                 $thissection->summary = strip_tags(format_string($thissection->summary,true));
                 if ($course->format == 'weeks' or empty($thissection->summary)) {
-                    $menu[] = '-------------- '. $strsection ." ". $mod->section .' --------------';
+                    $menu[] = '--'.$strsection ." ". $mod->section;
                 } else {
                     if (strlen($thissection->summary) < ($width-3)) {
-                        $menu[] = '-- '.$thissection->summary;
+                        $menu[] = '--'.$thissection->summary;
                     } else {
-                        $menu[] = '-- '.substr($thissection->summary, 0, $width).'...';
+                        $menu[] = '--'.substr($thissection->summary, 0, $width).'...';
                     }
                 }
             }
