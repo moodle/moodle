@@ -956,10 +956,10 @@ function popup_form($common, $options, $formname, $selected='', $nothing='choose
                         ' method="get"'.
                         ' target="'.$CFG->framename.'"'.
                         ' name="'.$formname.'"'.
-                        ' id="id_'.$formname.'"'.
+                        ' id="'.$formname.'"'.
                         ' class="popupform">';
 
-    $output = '<select name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\'id_'.$formname.'\').jump.options[document.getElementById(\'id_'.$formname.'\').jump.selectedIndex].value;">'."\n";
+    $output = '<select name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\''.$formname.'\').jump.options[document.getElementById(\''.$formname.'\').jump.selectedIndex].value;">'."\n";
 
     if ($nothing != '') {
         $output .= "   <option value=\"javascript:void(0)\">$nothing</option>\n";
