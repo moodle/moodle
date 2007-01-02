@@ -1381,7 +1381,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     $straddactivity = get_string('addactivity');
     $straddresource = get_string('addresource');
 
-    $output  = '<div style="text-align: right">';
+    $output  = '<div class="section_add_menus" style="text-align: right">';
 
     if (!empty($resources)) {
         $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&amp;sesskey=".sesskey()."&amp;add=",

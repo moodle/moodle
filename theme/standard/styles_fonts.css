@@ -443,6 +443,10 @@ h2.headingblock {
   font-size:1.1em;
 }
 
+.section_add_menus optgroup {
+  font-weight:normal;
+  font-style: italic;
+}
 
 
 /***
