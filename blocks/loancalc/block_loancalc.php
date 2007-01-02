@@ -19,12 +19,12 @@ class block_loancalc extends block_base {
     function Next()
     {
         submitScreen("Next");
-        document.vbankform.submit();
+        document.getElementById("vbankform").submit();
     }
     function Back()
     {
         submitScreen("Back");
-        document.vbankform.submit();
+        document.getElementById("vbankform").submit();
     }
 
     function num_format(x) { // format numbers with two digits
@@ -48,7 +48,7 @@ class block_loancalc extends block_base {
 function comp(v) { // general entry point for all cases
 
     // convert all entry fields into variables
-    x = document.vbankform;
+    x = document.getElementById("vbankform");
     pv = parseFloat(x.LOANAMOUNT.value);
     lpp = parseFloat(x.LOANPAYPERIOD[x.LOANPAYPERIOD.selectedIndex].value);
     if (isNaN(pv) && (v != "pv"))
