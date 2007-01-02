@@ -31,8 +31,8 @@
 ?>
 
 function updateGroup() {
-    document.form1.groupid.value = document.form2.groups.value;
-    document.form3.groupid.value = document.form2.groups.value;
+    document.getElementById("form1").groupid.value = document.getElementById("form2").groups.value;
+    document.getElementById("form3").groupid.value = document.getElementById("form2").groups.value;
 }
 
 
@@ -42,11 +42,11 @@ function updateMembers(selectgroup) {
     username = group.username;
     userid = group.userid;
 
-    document.form3['members[]'].length = username.length;
+    document.getElementById("form3")['members[]'].length = username.length;
 
     for (i=0;i<username.length;i++) {
-        document.form3['members[]'].options[i].value = userid[i];
-        document.form3['members[]'].options[i].text  = username[i];
+        document.getElementById("form3")['members[]'].options[i].value = userid[i];
+        document.getElementById("form3")['members[]'].options[i].text  = username[i];
     }
 
     updateGroup();
@@ -119,7 +119,7 @@ function groupWindow(selectgroup) {
             <input type="submit" name="nonmembersrandom" value="<?php p($strgrouprandomassign) ?> -&gt;" />
           <br /> -->
             <input type="submit" name="nonmembersinfo" value="<?php p($strgroupinfopeople) ?>" 
-                   onclick="return userWindow(document.form1['nonmembers[]']);" />
+                   onclick="return userWindow(document.getElementById('form1')['nonmembers[]']);" />
         </form>
       </td>
       <td class="generalboxcontent">
@@ -128,7 +128,7 @@ function groupWindow(selectgroup) {
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
           <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>" />
           <input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
-          <select name="groups" size="15" id="groups" onChange="updateMembers(this)">
+          <select name="groups" size="15" id="groups" onchange="updateMembers(this)">
             <?php 
                 if (!empty($listgroups)) {
                     foreach ($listgroups as $id => $listgroup) {
@@ -143,7 +143,7 @@ function groupWindow(selectgroup) {
           </select>
         <br />
           <input type="submit" name="groupsinfo" value="<?php p($strgroupinfoedit) ?>" 
-                 onclick="return groupWindow(document.form2.groups);" />
+                 onclick="return groupWindow(document.getElementById('form2').groups);" />
         <br />
           <input type="submit" name="groupsremove" value="<?php p($strgroupremove) ?>" />
         <br />
@@ -172,7 +172,7 @@ function groupWindow(selectgroup) {
           </select>
         <br />
           <input type="submit" name="membersinfo" value="<?php p($strgroupinfomembers) ?>"
-                 onclick="return userWindow(document.form3['members[]']);" />
+                 onclick="return userWindow(document.getElementById('form3')['members[]']);" />
         <br />
           <input type="submit" name="membersremove" value="<?php p($strgroupremovemembers) ?>" 
                  onclick="updateGroup()" />
