@@ -262,7 +262,7 @@
                        $linkformat = '';
                    }
                    $image = "<img src=\"$CFG->modpixpath/" . $activity->content->modname . "/icon.gif\"" .
-                            "height=\"16\" width=\"16\" alt=\"" . $activity->content->modfullname . "\" />";
+                            " height=\"16\" width=\"16\" alt=\"" . $activity->content->modfullname . "\" />";
                    echo "<ul><h4>$image " . $activity->content->modfullname .
                         " <a href=\"$CFG->wwwroot/mod/" . $activity->content->modname . "/view.php?" .
                         "id=" . $activity->content->modid . "\" $linkformat>" .
