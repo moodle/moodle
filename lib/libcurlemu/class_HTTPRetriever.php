@@ -741,7 +741,7 @@ class HTTPRetriever {
 								// do not store expired cookies; if one exists, unset it
 								if ( isset($cookie['expires']) && ($cookie['expires']<time()) ) {
 									unset($this->response_cookies[ $name ][ $cookie['path'] ]);
-									return false;
+									continue;//moodlefix
 								}
 								
 								$this->response_cookies[ $name ][ $cookie['path'] ] = $cookie;

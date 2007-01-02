@@ -1,6 +1,33 @@
 <?php //$Id$
 
+require_once($CFG->libdir.'/libcurlemu/libcurlemu.inc.php'); // might be moved to setup.php later
+
 define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7'); //unique string constant
+
+/**
+ * Fetches content of file from Internet (using proxy if defined).
+ *
+ * @return mixed false if request failed or content of the file as string if ok.
+ */
+function download_file_content($url) {
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    if (!empty($CFG->proxyhost)) {
+        curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, true);
+        if (empty($CFG->proxyport)) {
+            curl_setopt($ch, CURLOPT_PROXY, $CFG->proxy);
+        } else {
+            curl_setopt($ch, CURLOPT_PROXY, $CFG->proxy.':'.$CFG->proxyport);
+        }
+        if(!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $CFG->proxyuser.':'.$CFG->proxypassword);
+        }
+    }
+    $result = curl_exec($ch);
+    curl_close($ch);
+    return $result;
+}
 
 /**
  * @return List of information about file types based on extensions. 

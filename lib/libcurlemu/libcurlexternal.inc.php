@@ -162,6 +162,7 @@ define('CURLOPT_SSLENGINE_DEFAULT',90);
 define('CURLOPT_DNS_USE_GLOBAL_CACHE',91);
 define('CURLOPT_DNS_CACHE_TIMEOUT',92);
 define('CURLOPT_PREQUOTE',10093); 
+define('CURLOPT_RETURNTRANSFER', 19913);//moodlefix
 
 define('CURLINFO_EFFECTIVE_URL',1);
 define('CURLINFO_HTTP_CODE',2);
@@ -198,9 +199,14 @@ function _curlopt_name($curlopt) {
 
 // Initialize a CURL emulation session
 function curl_init($url=false) {
+    if(!isset($GLOBALS["_CURLEXT_OPT"])) {//moodlefix
+        $GLOBALS["_CURLEXT_OPT"] = array();//moodlefix
+        $GLOBALS["_CURLEXT_OPT"]["index"] = 0;//moodlefix
+    }//moodlefix
 	$i = $GLOBALS["_CURLEXT_OPT"]["index"]++;
-	$GLOBALS["_CURLEXT_OPT"][$i] = array("url"=>$url);
-	
+	$GLOBALS["_CURLEXT_OPT"][$i] = array("url"=>$url, "verbose"=>false, "fail_on_error"=>false);//moodlefix
+	$GLOBALS["_CURLEXT_OPT"][$i]["args"] = array();//moodlefix
+    $GLOBALS["_CURLEXT_OPT"][$i]["settings"] = array();//moodlefix
 	return $i;
 }
 
@@ -208,9 +214,7 @@ function curl_init($url=false) {
 function curl_setopt($ch,$option,$value) {
 	
 	$opt = &$GLOBALS["_CURLEXT_OPT"][$ch];
-	if (!$opt["args"]) $opt["args"] = array();
 	$args = &$opt["args"];
-	if (!$opt["settings"]) $opt["settings"] = array();
 	$settings = &$opt["settings"];
 	
 	switch($option) {
@@ -467,17 +471,21 @@ function curl_exec($ch) {
 	// if the CURLOPT_NOBODY option was specified (to remove the body from the output),
 	// but an output file handle was set, we need to tell CURL to return the body so
 	// that we can write it to the output handle and strip it from the output
-	if ($opt["settings"]["head"] && $opt["output_handle"]) {
+	if (!empty($opt["settings"]["head"]) && $opt["output_handle"]) {//moodlefix
 		unset($opt["settings"]["head"]);
 		$strip_body = true;
-	}
+	} else {
+        $strip_body = false;
+    }
 	// if the CURLOPT_HEADER option was NOT specified, but a header file handle was
 	// specified, we again need to tell CURL to return the headers so we can write
 	// them, then strip them from the output
 	if (!isset($opt["settings"]["include"]) && isset($opt["header_handle"])) {
 		$opt["settings"]["include"] = true;
 		$strip_headers = true;
-	}
+	} else {
+        $strip_headers = false;//moodlefix
+    }
 
 	// build the CURL argument list
 	$arguments = "";
@@ -512,7 +520,7 @@ function curl_exec($ch) {
 	if ($ret) $opt["error"] = "CURL error #$ret";
 	
 	// die if CURLOPT_FAILONERROR is set and the HTTP result code is greater than 300
-	if ($opt["fail_on_error"]) {
+	if ($opt["fail_on_error"]) {//moodlefix
 		if (preg_match("/^HTTP\/1.[0-9]+ ([0-9]{3}) /",$output[0],$matches)) {
 			$resultcode = (int) $matches[1];
 			if ($resultcode>300) die;
@@ -581,7 +589,7 @@ function curl_close($ch) {
 		$settings = &$opt["settings"];
 		// if the user used CURLOPT_INFILE to specify a file to upload, remove the
 		// temporary file created for the CURL binary
-		if ($settings["upload-file"]["value"] && file_exists($settings["upload-file"]["value"])) unlink($settings["upload-file"]["value"]);
+		if (!empty($settings["upload-file"]["value"]) && file_exists($settings["upload-file"]["value"])) unlink($settings["upload-file"]["value"]);//moodlefix
 	}
 
 	unset($GLOBALS["_CURLEXT_OPT"][$ch]);

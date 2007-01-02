@@ -164,6 +164,7 @@ define('CURLOPT_SSLENGINE_DEFAULT',90);
 define('CURLOPT_DNS_USE_GLOBAL_CACHE',91);
 define('CURLOPT_DNS_CACHE_TIMEOUT',92);
 define('CURLOPT_PREQUOTE',10093); 
+define('CURLOPT_RETURNTRANSFER', 19913);//moodlefix
 
 define('CURLINFO_EFFECTIVE_URL',1);
 define('CURLINFO_HTTP_CODE',2);
@@ -199,11 +200,17 @@ function _curlopt_name($curlopt) {
 }
 
 // Initialize a CURL emulation session
-function curl_init() {
+function curl_init($url=false) {
+    if(!isset($GLOBALS["_CURLNAT_OPT"])) {//moodlefix
+        $GLOBALS["_CURLNAT_OPT"] = array();//moodlefix
+        $GLOBALS["_CURLNAT_OPT"]["index"] = 0;//moodlefix
+    }//moodlefix
 	$i = $GLOBALS["_CURLNAT_OPT"]["index"]++;
-	$GLOBALS["_CURLNAT_OPT"][$i] = array();
-	$GLOBALS["_CURLNAT_OPT"][$i]["http"] = &new HTTPRetriever();
+    $GLOBALS["_CURLNAT_OPT"][$i] = array("url"=>$url, "fail_on_error"=>false);//moodlefix
+	$GLOBALS["_CURLNAT_OPT"][$i]["http"] = &new HTTPRetriever(); 
 	$GLOBALS["_CURLNAT_OPT"][$i]["include_body"] = true;
+    $GLOBALS["_CURLNAT_OPT"][$i]["args"] = array();//moodlefix
+    $GLOBALS["_CURLNAT_OPT"][$i]["settings"] = array();//moodlefix
 	return $i;
 }
 
@@ -211,9 +218,7 @@ function curl_init() {
 function curl_setopt($ch,$option,$value) {
 	
 	$opt = &$GLOBALS["_CURLNAT_OPT"][$ch];
-	if (!$opt["args"]) $opt["args"] = array();
 	$args = &$opt["args"];
-	if (!$opt["settings"]) $opt["settings"] = array();
 	$settings = &$opt["settings"];
 	$http = &$opt["http"];
 	
@@ -337,16 +342,17 @@ function curl_exec($ch) {
 
 	$http = &$opt["http"];
 	$http->disable_curl = true; // avoid problems with recursion, since we *ARE* CURL
-	
+    $http->error = false;//moodlefix
+
 	// set time limits if requested
-	if ($opt["max-time"]) {
+	if (!empty($opt["max-time"])) {//moodlefix
 		$http->connect_timeout = $opt["max-time"];
 		$http->max_time = $opt["max-time"];
 	}
 	
-	if ($opt["post"]) {
+	if (!empty($opt["post"])) {//moodlefix
 		$res = $http->post($url,$opt["postdata"]);
-	} elseif ($opt["method"]) {
+	} elseif (!empty($opt["method"])) {
 		$res = $http->custom($opt["method"],$url,$opt["postdata"]);
 	} else {
 		$res = $http->get($url);
@@ -360,6 +366,10 @@ function curl_exec($ch) {
 	if ($opt["fail_on_error"]) {
 		if ($http->result_code>300) die;
 	}
+    
+    if ($res === false) {//moodlefix
+        return false;//moodlefix
+    }//moodlefix
 	
 	$opt["stats"] = $http->stats;
 
@@ -374,7 +384,7 @@ function curl_exec($ch) {
 	if (isset($opt["header_handle"])) {
 		fwrite($opt["header_handle"],$headers);
 	}
-	
+
 	$output = ($opt["include_headers"] ? $headers."\r\n" : "") . ($opt["include_body"] ? $http->response : "");
 	
 	// if a file handle was provided for output, write the output to it
