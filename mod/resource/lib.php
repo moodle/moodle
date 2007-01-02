@@ -629,16 +629,16 @@ function resource_is_url($path) {
     return false;
 }
 
-function resource_get_resource_types() {
-/// Returns a menu of current resource types, in standard order
-    global $resource_standard_order, $CFG;
+function resource_get_types() {
+    $types = array();
 
-    $resources = array();
-
-    /// Standard resource types
     $standardresources = array('text','html','file','directory');
     foreach ($standardresources as $resourcetype) {
-        $resources[$resourcetype] = get_string("resourcetype$resourcetype", 'resource');
+        $type = new object();
+        $type->modclass = MOD_CLASS_RESOURCE;
+        $type->type = "resource&amp;type=$resourcetype";
+        $type->typestr = get_string("resourcetype$resourcetype", 'resource');
+        $types[] = $type;
     }
 
     /// Drop-in extra resource types
@@ -647,11 +647,16 @@ function resource_get_resource_types() {
         if (!empty($CFG->{'resource_hide_'.$resourcetype})) {  // Not wanted
             continue;
         }
-        if (!in_array($resourcetype, $resources)) {
-            $resources[$resourcetype] = get_string("resourcetype$resourcetype", 'resource');
+        if (!in_array($resourcetype, $standardresources)) {
+            $type = new object();
+            $type->modclass = MOD_CLASS_RESOURCE;
+            $type->type = "resource&amp;type=$resourcetype";
+            $type->typestr = get_string("resourcetype$resourcetype", 'resource');
+            $types[] = $type;
         }
     }
-    return $resources;
+
+    return $types;
 }
 
 function resource_get_view_actions() {

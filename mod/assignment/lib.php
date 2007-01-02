@@ -2476,4 +2476,46 @@ function assignment_get_post_actions() {
     return array('upload');
 }
 
+function assignment_get_types() {
+    $types = array();
+
+    $type = new object();
+    $type->modclass = MOD_CLASS_ACTIVITY;
+    $type->type = "assignment_group_start";
+    $type->typestr = '--'.get_string('modulenameplural', 'assignment');
+    $types[] = $type;
+
+    $standardassignments = array('upload','online','uploadsingle','offline');
+    foreach ($standardassignments as $assignmenttype) {
+        $type = new object();
+        $type->modclass = MOD_CLASS_ACTIVITY;
+        $type->type = "assignment&amp;type=$assignmenttype";
+        $type->typestr = get_string("type$assignmenttype", 'assignment');
+        $types[] = $type;
+    }
+
+    /// Drop-in extra assignment types
+    $assignmenttypes = get_list_of_plugins('mod/assignment/type');
+    foreach ($assignmenttypes as $assignmenttype) {
+        if (!empty($CFG->{'assignment_hide_'.$assignmenttype})) {  // Not wanted
+            continue;
+        }
+        if (!in_array($assignmenttype, $standardassignments)) {
+            $type = new object();
+            $type->modclass = MOD_CLASS_ACTIVITY;
+            $type->type = "assignment&amp;type=$assignmenttype";
+            $type->typestr = get_string("type$assignmenttype", 'assignment');
+            $types[] = $type;
+        }
+    }
+
+    $type = new object();
+    $type->modclass = MOD_CLASS_ACTIVITY;
+    $type->type = "assignment_group_end";
+    $type->typestr = '--';
+    $types[] = $type;
+
+    return $types;
+}
+
 ?>

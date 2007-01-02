@@ -22,6 +22,9 @@ define('FRONTPAGECOURSELIMIT',    200);         // maximum number of courses dis
 define('EXCELROWS', 65535);
 define('FIRSTUSEDEXCELROW', 3);
 
+define('MOD_CLASS_ACTIVITY', 0);
+define('MOD_CLASS_RESOURCE', 1);
+
 
 function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0, $selecteddate="lastlogin",
                                     $mod="", $modid="activity/All", $modaction="", $selectedgroup="", $selectedsort="default") {
@@ -1135,9 +1138,6 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
             asort($modnamesused);
         }
     }
-
-    unset($modnames['resource']);
-    unset($modnames['label']);
 }
 
 
@@ -1342,33 +1342,49 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     }
 }
 
-
+/**
+ * Prints the menus to add activities and resources.
+ */
 function print_section_add_menus($course, $section, $modnames, $vertical=false, $return=false) {
-// Prints the menus to add activities and resources
+    global $CFG;
 
-    global $CFG, $USER;
-    static $straddactivity, $stractivities, $straddresource, $resources;
+    static $resources = false;
+    static $activities = false;
 
-    if (!isset($straddactivity)) {
-        $straddactivity = get_string('addactivity');
-        $straddresource = get_string('addresource');
+    if ($resources === false) { 
+        $resources = array();
+        $activities = array();
 
-        /// Standard resource types
-        require_once("$CFG->dirroot/mod/resource/lib.php");
-        $resourceraw = resource_get_resource_types();
+        foreach($modnames as $modname=>$modnamestr) {
+            if (!course_allowed_module($course, $modname)) {
+                continue;
+            }
 
-        foreach ($resourceraw as $type => $name) {
-            $resources["resource&amp;type=$type"] = $name;
-        }
-        if (course_allowed_module($course,'label')) {
-            $resources['label'] = get_string('resourcetypelabel', 'resource');
+            require_once("$CFG->dirroot/mod/$modname/lib.php");
+            $gettypesfunc =  $modname.'_get_types';
+            if (function_exists($gettypesfunc)) {
+                $types = $gettypesfunc();
+                foreach($types as $type) {
+                    if ($type->modclass == MOD_CLASS_RESOURCE) {
+                        $resources[$type->type] = $type->typestr;
+                    } else {
+                        $activities[$type->type] = $type->typestr;
+                    }
+                }
+            } else {
+                // all mods without type are considered activity
+                $activities[$modname] = $modnamestr;
+            }
         }
     }
 
+    $straddactivity = get_string('addactivity');
+    $straddresource = get_string('addresource');
+
     $output  = '<div style="text-align: right">';
-    if (course_allowed_module($course,'resource')) {
-        $resourceallowed = true;
-        $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&amp;sesskey=$USER->sesskey&amp;add=",
+
+    if (!empty($resources)) {
+        $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&amp;sesskey=".sesskey()."&amp;add=",
                               $resources, "ressection$section", "", $straddresource, 'resource/types', $straddresource, true);
     }
 
@@ -1376,20 +1392,11 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
         $output .= '<div>';
     }
 
-    // we need to loop through the forms and check to see if we can add them.
-    foreach ($modnames as $key=>$value) {
-        if (!course_allowed_module($course,$key))
-            unset($modnames[$key]);
+    if (!empty($activities)) {
+        $output .= ' ';
+        $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&amp;sesskey=".sesskey()."&amp;add=",
+                    $activities, "section$section", "", $straddactivity, 'mods', $straddactivity, true);
     }
-
-    // this is stupid but labels get put into resource, so if resource is hidden and label is not, we're in trouble.
-    if (course_allowed_module($course,'label') && empty($resourceallowed)) {
-        $modnames['label'] = get_string('modulename', 'label');
-    }
-
-    $output .= ' ';
-    $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&amp;sesskey=$USER->sesskey&amp;add=",
-                $modnames, "section$section", "", $straddactivity, 'mods', $straddactivity, true);
 
     if ($vertical) {
         $output .= '</div>';

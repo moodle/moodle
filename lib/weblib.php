@@ -966,9 +966,20 @@ function popup_form($common, $options, $formname, $selected='', $nothing='choose
     }
 
     $inoptgroup = false;
+
     foreach ($options as $value => $label) {
 
-        if (substr($label,0,2) == '--') { /// we are starting a new optgroup
+        if ($label == '--') { /// we are ending previous optgroup
+            /// Check to see if we already have a valid open optgroup
+            /// XHTML demands that there be at least 1 option within an optgroup
+            if ($inoptgroup and (count($optgr) > 1) ) {
+                $output .= implode('', $optgr);
+                $output .= '   </optgroup>';
+            }
+            $optgr = array();
+            $inoptgroup = false;
+            continue;
+        } else if (substr($label,0,2) == '--') { /// we are starting a new optgroup
 
             /// Check to see if we already have a valid open optgroup
             /// XHTML demands that there be at least 1 option within an optgroup

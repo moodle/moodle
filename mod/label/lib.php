@@ -88,4 +88,15 @@ function label_get_post_actions() {
     return array();
 }
 
+function label_get_types() {
+    $types = array();
+
+    $type = new object();
+    $type->modclass = MOD_CLASS_RESOURCE;
+    $type->type = "label";
+    $type->typestr = get_string('resourcetypelabel', 'resource');
+    $types[] = $type;
+
+    return $types;
+}
 ?>
