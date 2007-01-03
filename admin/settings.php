@@ -101,7 +101,7 @@ if (!empty($SITE->fullname)) {
     echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
     blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
     echo '</td>';
-    echo '<td id="middle-column">';
+    echo '<td id="middle-column"><a name="startofcontent"></a>';
 } else {
 
     print_header();
