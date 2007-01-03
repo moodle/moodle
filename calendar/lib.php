@@ -434,19 +434,19 @@ function calendar_add_event_metadata($event) {
 
     } else if($event->courseid == SITEID) {                              // Site event
         $event->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/site.gif" alt="" style="vertical-align: middle;" />';
-
+        $event->cssclass = 'event_global';
     } else if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {          // Course event
         calendar_get_course_cached($coursecache, $event->courseid);
         $event->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/course.gif" alt="" style="vertical-align: middle;" />';
         $event->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$event->courseid.'">'.$coursecache[$event->courseid]->fullname.'</a>';
-
+        $event->cssclass = 'event_course';
     } else if ($event->groupid) {                                    // Group event
         $event->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/group.gif" alt="" style="vertical-align: middle;" />';
-
+        $event->cssclass = 'event_group';
     } else if($event->userid) {                                      // User event
         $event->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/user.gif" alt="" style="vertical-align: middle;" />';
+        $event->cssclass = 'event_user';
     }
-
     return $event;
 }    
 
@@ -482,7 +482,7 @@ function calendar_print_event($event) {
 
     echo '</td></tr>';
     echo '<tr><td class="side">&nbsp;</td>';
-    echo '<td class="description">';
+    echo '<td class="description '.$event->cssclass.'">';
     echo format_text($event->description, FORMAT_HTML);
     if (calendar_edit_event_allowed($event)) {
         echo '<div class="commands">';
@@ -1184,8 +1184,8 @@ function calendar_edit_event_allowed($event) {
             return (has_capability('moodle/calendar:manageownentries', $sitecontext));
         }
     } else if ($event->groupid) {
-        $group = get_record('groups', 'id', $event->groupid);
-        if($group === false) {
+        //TODO:check.
+        if (! groups_group_exists($event->groupid)) {
             return false;
         } 
         
@@ -1193,7 +1193,7 @@ function calendar_edit_event_allowed($event) {
         // to edit group calendar too
         // there is no need to check membership, because if you have this capability
         // you will have a role in this group context
-        return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_GROUP, $group->id));  
+        return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_GROUP, $event->groupid));  
     } else if ($event->courseid) {
         return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $event->courseid)); 
     }

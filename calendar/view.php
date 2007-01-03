@@ -132,12 +132,13 @@
     echo calendar_overlib_html();
 
     // Layout the whole page as three big columns.
-    echo '<table id="calendar">';
+    echo '<table id="calendar" style="height:100%;">';
     echo '<tr>';
 
     // START: Main column
 
     echo '<td class="maincalendar">';
+    echo '<div class="heightcontainer">';
 
     switch($view) {
         case 'day':
@@ -150,16 +151,24 @@
             calendar_show_upcoming_events($courses, $groups, $users, get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS), get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS));
         break;
     }
-    
+
     //Link to calendar export page
-    echo '<p><a href="export.php">' . get_string('exportcalendar', 'calendar') . '</a></p>';
-    
+    echo '<div class="bottom">';
+    print_single_button('export.php', false, get_string('exportcalendar', 'calendar'));
+
     if (!empty($USER->id)) {
         $authtoken = sha1($USER->username . $USER->password);
         $usernameencoded = urlencode($USER->username);
-        echo "<p><a href=\"export_execute.php?preset_what=all&amp;preset_time=recentupcoming&amp;username=$usernameencoded&amp;authtoken=$authtoken\">" . get_string('quickdownloadcalendar', 'calendar') . '</a></p>';
+
+        echo "<a href=\"export_execute.php?preset_what=all&amp;preset_time=recentupcoming&amp;username=$usernameencoded&amp;authtoken=$authtoken\">"
+             .'<img src="'.$CFG->pixpath.'/i/ical.gif" height="14" width="36" '
+             .'alt="'.get_string('ical', 'calendar').'" '
+             .'title="'.get_string('quickdownloadcalendar', 'calendar').'" />'
+             .'</a>';
     }
 
+    echo '</div>';
+    echo '</div>';
     echo '</td>';
 
     // END: Main column
