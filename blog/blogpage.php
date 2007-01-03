@@ -185,7 +185,14 @@ class page_blog extends page_base {
             foreach ($params as $key=>$val) {
                 $paramstring .= '<input type="hidden" name="'.$key.'" value="'.s($val).'" />';
             }
-            $editformstring = '<form target="'.$CFG->framename.'" method="get" action="'.$this->url_get_path().'">'
+
+            if (empty($CFG->framename) or $CFG->framename=='_top') { 
+                $target = '';
+            } else {
+                $target = ' target="'.$CFG->framename.'"';
+            }
+
+            $editformstring = '<form'.$target.' method="get" action="'.$this->url_get_path().'">'
                              .$paramstring.'<input type="submit" value="'.$editingString.'" /></form>';
         }
 

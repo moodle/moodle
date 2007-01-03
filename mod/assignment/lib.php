@@ -77,11 +77,17 @@ class assignment_base {
             $this->strsubmissions = get_string('submissions', 'assignment');
             $this->strlastmodified = get_string('lastmodified');
 
-            if ($this->course->id != SITEID) {
-                $this->navigation = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/course/view.php?id={$this->course->id}\">{$this->course->shortname}</a> -> ".
-                                    "<a target=\"{$CFG->framename}\" href=\"index.php?id={$this->course->id}\">$this->strassignments</a> ->";
+            if (empty($CFG->framename) or $CFG->framename=='_top') { 
+                $target = '';
             } else {
-                $this->navigation = "<a target=\"{$CFG->framename}\" href=\"index.php?id={$this->course->id}\">$this->strassignments</a> ->";
+                $target = ' target="'.$CFG->framename.'"';
+            }
+
+            if ($this->course->id != SITEID) {
+                $this->navigation = "<a$target href=\"$CFG->wwwroot/course/view.php?id={$this->course->id}\">{$this->course->shortname}</a> -> ".
+                                    "<a$target href=\"index.php?id={$this->course->id}\">$this->strassignments</a> ->";
+            } else {
+                $this->navigation = "<a$target href=\"index.php?id={$this->course->id}\">$this->strassignments</a> ->";
             }
 
             $this->pagetitle = strip_tags($this->course->shortname.': '.$this->strassignment.': '.format_string($this->assignment->name,true));
@@ -144,7 +150,13 @@ class assignment_base {
         global $CFG;
 
         if ($subpage) {
-            $extranav = '<a target="'.$CFG->framename.'" href="view.php?id='.$this->cm->id.'">'.
+            if (empty($CFG->framename) or $CFG->framename=='_top') { 
+                $target = '';
+            } else {
+                $target = ' target="'.$CFG->framename.'"';
+            }
+
+            $extranav = '<a'.$target.' href="view.php?id='.$this->cm->id.'">'.
                           format_string($this->assignment->name,true).'</a> -> '.$subpage;
         } else {
             $extranav = ' '.format_string($this->assignment->name,true);
@@ -2189,11 +2201,10 @@ function assignment_count_real_submissions($assignment, $groupid=0) {
     if ($groupid) {     /// How many in a particular group?
         return count_records_sql("SELECT COUNT(DISTINCT g.userid, g.groupid)
                                      FROM {$CFG->prefix}assignment_submissions a,
-                                          {$CFG->prefix}groups_members g
+                                          ".groups_members_from_sql()."
                                     WHERE a.assignment = $assignment->id 
                                       AND a.timemodified > 0
-                                      AND g.groupid = '$groupid' 
-                                      AND a.userid = g.userid ");
+                                      AND ".groups_members_where_sql($groupid, 'a.userid'));
     } else {
         $cm = get_coursemodule_from_instance('assignment', $assignment->id);
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);

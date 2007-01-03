@@ -123,8 +123,13 @@
 
     admin_externalpage_print_header($adminroot);
 
-    
-    echo "<form target=\"{$CFG->framename}\" name=\"authmenu\" method=\"post\" action=\"auth.php\">";
+    if (empty($CFG->framename) or $CFG->framename=='_top') { 
+        $target = '';
+    } else {
+        $target = ' target="'.$CFG->framename.'"';
+    }
+
+    echo "<form$target name=\"authmenu\" method=\"post\" action=\"auth.php\">";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\" />";
     echo "<center><b>";
     print_string("chooseauthmethod","auth");

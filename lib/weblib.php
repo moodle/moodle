@@ -950,11 +950,17 @@ function popup_form($common, $options, $formid, $selected='', $nothing='choose',
         $nothing = $choose.'...';
     }
 
+    if (empty($CFG->framename) or $CFG->framename=='_top') { 
+        $target = '';
+    } else {
+        $target = ' target="'.$CFG->framename.'"';
+    }
+
     // changed reference to document.getElementById('id_abc') instead of document.abc
     // MDL-7861
     $startoutput = '<form action="'.$CFG->wwwroot.'/course/jumpto.php"'.
                         ' method="get"'.
-                        ' target="'.$CFG->framename.'"'.
+                        $target.
                         ' id="'.$formid.'"'.
                         ' class="popupform">';
 
@@ -2322,6 +2328,12 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
 function print_footer($course=NULL, $usercourse=NULL, $return=false) {
     global $USER, $CFG, $THEME;
 
+    if (empty($CFG->framename) or $CFG->framename=='_top') { 
+        $target = '';
+    } else {
+        $target = ' target="'.$CFG->framename.'"';
+    }
+
 /// Course links
     if ($course) {
         if (is_string($course) && $course == 'none') {          // Don't print any links etc
@@ -2335,13 +2347,13 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
                '<br /><img width="100" height="30" src="pix/moodlelogo.gif" border="0" alt="moodlelogo" /></a></div>';
             $home  = true;
         } else {
-            $homelink = '<div class="homelink"><a target="'.$CFG->framename.'" href="'.$CFG->wwwroot.
+            $homelink = '<div class="homelink"><a'.$target.' href="'.$CFG->wwwroot.
                         '/course/view.php?id='.$course->id.'">'.$course->shortname.'</a></div>';
             $home  = false;
         }
     } else {
         $course = get_site();  // Set course as site course by default
-        $homelink = '<div class="homelink"><a target="'.$CFG->framename.'" href="'.$CFG->wwwroot.'/">'.get_string('home').'</a></div>';
+        $homelink = '<div class="homelink"><a'.$target.'" href="'.$CFG->wwwroot.'/">'.get_string('home').'</a></div>';
         $home  = false;
     }
 
@@ -2648,10 +2660,16 @@ function user_login_string($course=NULL, $user=NULL) {
         $course = $SITE;
     }
 
+    if (empty($CFG->framename) or $CFG->framename=='_top') { 
+        $target = '';
+    } else {
+        $target = ' target="'.$CFG->framename.'"';
+    }
+
     if (isset($user->realuser)) {
         if ($realuser = get_record('user', 'id', $user->realuser)) {
             $fullname = fullname($realuser, true);
-            $realuserinfo = " [<a target=\"{$CFG->framename}\"
+            $realuserinfo = " [<a$target
             href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;return=1\">$fullname</a>] ";
         }
     } else {
@@ -2671,25 +2689,25 @@ function user_login_string($course=NULL, $user=NULL) {
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
         $fullname = fullname($user, true);
-        $username = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a>";
+        $username = "<a$target href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a>";
         if (isset($user->username) && $user->username == 'guest') {
             $loggedinas = $realuserinfo.get_string('loggedinasguest').
-                      " (<a target=\"{$CFG->framename}\" href=\"$wwwroot/login/index.php\">".get_string('login').'</a>)';
+                      " (<a$target href=\"$wwwroot/login/index.php\">".get_string('login').'</a>)';
         } else if (!empty($user->switchrole[$context->id])) {
             $rolename = '';
             if ($role = get_record('role', 'id', $user->switchrole[$context->id])) {
                 $rolename = ': '.format_string($role->name);
             }
             $loggedinas = get_string('loggedinas', 'moodle', $username).$rolename.
-                      " (<a target=\"{$CFG->framename}\"
+                      " (<a$target
                       href=\"$CFG->wwwroot/course/view.php?id=$course->id&amp;switchrole=0&amp;sesskey=".sesskey()."\">".get_string('switchrolereturn').'</a>)';
         } else {
             $loggedinas = $realuserinfo.get_string('loggedinas', 'moodle', $username).' '.
-                      " (<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/login/logout.php\">".get_string('logout').'</a>)';
+                      " (<a$target href=\"$CFG->wwwroot/login/logout.php\">".get_string('logout').'</a>)';
         }
     } else {
         $loggedinas = get_string('loggedinnot', 'moodle').
-                      " (<a target=\"{$CFG->framename}\" href=\"$wwwroot/login/index.php\">".get_string('login').'</a>)';
+                      " (<a$target href=\"$wwwroot/login/index.php\">".get_string('login').'</a>)';
     }
     return '<div class="logininfo">'.$loggedinas.'</div>';
 }
@@ -2754,6 +2772,12 @@ function print_navigation ($navigation, $separator=0, $return=false) {
         $separator = '<span class="sep">'. $separator .'</span>';
     }
 
+    if (empty($CFG->framename) or $CFG->framename=='_top') { 
+        $target = '';
+    } else {
+        $target = ' target="'.$CFG->framename.'"';
+    }
+
     if ($navigation) {
         //Accessibility: breadcrumb links now in a list, &raquo; replaced with a 'silent' character.
         $nav_text = get_string('youarehere','access');
@@ -2762,7 +2786,7 @@ function print_navigation ($navigation, $separator=0, $return=false) {
             $site->shortname = get_string('home');
         }
         $navigation = "<li>$separator ". str_replace('->', "</li>\n<li>$separator", $navigation) ."</li>\n";
-        $output .= '<li class="first"><a target="'. $CFG->framename .'" href="'. $CFG->wwwroot.((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID)) && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
+        $output .= '<li class="first"><a'. $target .' href="'. $CFG->wwwroot.((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID)) && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
                                                                        ? '/my' : '') .'/">'. $site->shortname ."</a></li>\n". $navigation;
         $output .= "</ul>\n";  
     }
@@ -3812,7 +3836,14 @@ function update_course_icon($courseid) {
             $string = get_string('turneditingon');
             $edit = '1';
         }
-        return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/view.php\">".
+
+        if (empty($CFG->framename) or $CFG->framename=='_top') { 
+            $target = '';
+        } else {
+            $target = ' target="'.$CFG->framename.'"';
+        }
+
+        return "<form$target method=\"get\" action=\"$CFG->wwwroot/course/view.php\">".
             "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
             "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
             "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />".
@@ -3879,7 +3910,14 @@ function update_mymoodle_icon() {
         $string = get_string('updatemymoodleon');
         $edit = '1';
     }
-    return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/my/index.php\">".
+
+    if (empty($CFG->framename) or $CFG->framename=='_top') { 
+        $target = '';
+    } else {
+        $target = ' target="'.$CFG->framename.'"';
+    }
+
+    return "<form$target method=\"get\" action=\"$CFG->wwwroot/my/index.php\">".
         "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
         "<input type=\"submit\" value=\"$string\" /></form>";
 }
@@ -3896,7 +3934,14 @@ function update_module_button($moduleid, $courseid, $string) {
 
     if (has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_MODULE, $moduleid))) {
         $string = get_string('updatethis', '', $string);
-        return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/mod.php\">".
+
+        if (empty($CFG->framename) or $CFG->framename=='_top') { 
+            $target = '';
+        } else {
+            $target = ' target="'.$CFG->framename.'"';
+        }
+
+        return "<form$target method=\"get\" action=\"$CFG->wwwroot/course/mod.php\">".
                "<input type=\"hidden\" name=\"update\" value=\"$moduleid\" />".
                "<input type=\"hidden\" name=\"return\" value=\"true\" />".
                "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />".
@@ -3926,7 +3971,14 @@ function update_category_button($categoryid) {
             $string = get_string('turneditingon');
             $edit = 'on';
         }
-        return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/category.php\">".
+
+        if (empty($CFG->framename) or $CFG->framename=='_top') { 
+            $target = '';
+        } else {
+            $target = ' target="'.$CFG->framename.'"';
+        }
+
+        return "<form$target method=\"get\" action=\"$CFG->wwwroot/course/category.php\">".
                "<input type=\"hidden\" name=\"id\" value=\"$categoryid\" />".
                "<input type=\"hidden\" name=\"categoryedit\" value=\"$edit\" />".
                "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />".
@@ -3952,7 +4004,14 @@ function update_categories_button() {
             $string = get_string('turneditingon');
             $categoryedit = 'on';
         }
-        return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/index.php\">".
+
+        if (empty($CFG->framename) or $CFG->framename=='_top') { 
+            $target = '';
+        } else {
+            $target = ' target="'.$CFG->framename.'"';
+        }
+
+        return "<form$target method=\"get\" action=\"$CFG->wwwroot/course/index.php\">".
                '<input type="hidden" name="categoryedit" value="'. $categoryedit .'" />'.
                '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />'.
                '<input type="submit" value="'. $string .'" /></form>';
@@ -3977,7 +4036,14 @@ function update_categories_search_button($search,$page,$perpage) {
             $string = get_string("turneditingon");
             $edit = "on";
         }
-        return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/search.php\">".
+
+        if (empty($CFG->framename) or $CFG->framename=='_top') { 
+            $target = '';
+        } else {
+            $target = ' target="'.$CFG->framename.'"';
+        }
+
+        return "<form$target method=\"get\" action=\"$CFG->wwwroot/course/search.php\">".
                "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
                "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />".
                "<input type=\"hidden\" name=\"search\" value=\"".s($search, true)."\" />".
@@ -4001,7 +4067,14 @@ function update_group_button($courseid, $groupid) {
 
     if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_GROUP, $groupid))) {
         $string = get_string('editgroupprofile');
-        return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/group.php\">".
+
+        if (empty($CFG->framename) or $CFG->framename=='_top') { 
+            $target = '';
+        } else {
+            $target = ' target="'.$CFG->framename.'"';
+        }
+
+        return "<form$target method=\"get\" action=\"$CFG->wwwroot/course/group.php\">".
                '<input type="hidden" name="id" value="'. $courseid .'" />'.
                '<input type="hidden" name="group" value="'. $groupid .'" />'.
                '<input type="hidden" name="edit" value="on" />'.
@@ -4029,7 +4102,14 @@ function update_groups_button($courseid) {
             $string = get_string('turneditingon');
             $edit = 'on';
         }
-        return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/groups.php\">".
+
+        if (empty($CFG->framename) or $CFG->framename=='_top') { 
+            $target = '';
+        } else {
+            $target = ' target="'.$CFG->framename.'"';
+        }
+
+        return "<form$target method=\"get\" action=\"$CFG->wwwroot/course/groups.php\">".
                "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
                "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
                "<input type=\"submit\" value=\"$string\" /></form>";
@@ -4194,10 +4274,16 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     }
     //Accessibility: added Alt text, replaced &gt; &lt; with 'silent' character and 'accesshide' text.
     check_theme_arrows();
-    
+
+    if (empty($CFG->framename) or $CFG->framename=='_top') { 
+        $target = '';
+    } else {
+        $target = ' target="'.$CFG->framename.'"';
+    }
+
     if ($selectmod and has_capability('moodle/site:viewreports', $context)) {
         $logstext = get_string('alllogs');
-        $logslink = '<a title="'.$logstext.'" target="'.$CFG->framename.'" href="'.
+        $logslink = '<a title="'.$logstext.'"'.$target.' href="'.
                     $CFG->wwwroot.'/course/report/log/index.php?chooselog=1&amp;user=0&amp;date=0&amp;id='.
                        $course->id.'&amp;modid='.$selectmod->cm.'">'.
                     '<img class="icon log" src="'.$CFG->pixpath.'/i/log.gif" alt="'.$logstext.'" /></a>';
@@ -4205,14 +4291,14 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     }
     if ($backmod) {     
         $backtext= get_string('activityprev', 'access');
-        $backmod = '<form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" target="'.$CFG->framename.'">'.
+        $backmod = '<form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php"'.$target.'>'.
                    '<input type="hidden" name="id" value="'.$backmod->cm.'" />'.
                    '<button type="submit" title="'.$backtext.'">'.$THEME->larrow.
                    '<span class="accesshide">'.$backtext.'</span></button></form>';
     }
     if ($nextmod) {    
         $nexttext= get_string('activitynext', 'access');
-        $nextmod = '<form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php" target="'.$CFG->framename.'">'.
+        $nextmod = '<form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php" '.$target.'>'.
                    '<input type="hidden" name="id" value="'.$nextmod->cm.'" />'.
                    '<button type="submit" title="'.$nexttext.'">'.$THEME->rarrow.
                    '<span class="accesshide">'.$nexttext.'</span></button></form>';

@@ -324,7 +324,7 @@ function forum_cron() {
             $groupmode = false;
             if (!empty($cm->id)) {
                 if ($groupmode = groupmode($course, $cm) and $discussion->groupid > 0) {   // Groups are being used
-                    if (!$group = get_record('groups', 'id', $discussion->groupid)) {   // Can't find group
+                    if (! groups_group_exists($discussion->groupid)) { // Can't find group //TODO:
                         continue;                                            // Be safe and don't send it to anyone
                     }
                 }
@@ -1650,8 +1650,8 @@ function forum_subscribed_users($course, $forum, $groupid=0, $cache=false) {
     }
 
     if ($groupid) {
-        $grouptables = ", {$CFG->prefix}groups_members g";
-        $groupselect = " AND g.groupid = '$groupid' AND u.id = g.userid";
+        $grouptables = ', '. groups_members_from_sql();
+        $groupselect = 'AND'.groups_members_where_sql($groupid, 'u.id');
     } else  {
         $grouptables = '';
         $groupselect = '';
@@ -3290,7 +3290,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
                     if (isset($groups[$discussion->groupid])) {
                         $group = $groups[$discussion->groupid];
                     } else {
-                        $group = $groups[$discussion->groupid] = get_record('groups', 'id', $discussion->groupid);
+                        $group = $groups[$discussion->groupid] = groups_get_group($discussion->groupid); //TODO:
                     }
                 } else {
                     $group = -1;
@@ -3673,7 +3673,14 @@ function forum_update_subscriptions_button($courseid, $forumid) {
         $string = get_string('turneditingon');
         $edit = "on";
     }
-    return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/subscribers.php\">".
+
+    if (empty($CFG->framename) or $CFG->framename=='_top') { 
+        $target = '';
+    } else {
+        $target = ' target="'.$CFG->framename.'"';
+    }
+
+    return "<form$target method=\"get\" action=\"$CFG->wwwroot/mod/forum/subscribers.php\">".
            "<input type=\"hidden\" name=\"id\" value=\"$forumid\" />".
            "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
            "<input type=\"submit\" value=\"$string\" /></form>";

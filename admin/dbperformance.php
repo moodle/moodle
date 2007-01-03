@@ -19,8 +19,14 @@
     $site = get_site();
 
     if (!empty($topframe)) {
+        if (empty($CFG->framename) or $CFG->framename=='_top') { 
+            $target = '';
+        } else {
+            $target = ' target="'.$CFG->framename.'"';
+        }
+
         print_header("$site->shortname: $strdatabaseperformance", "$site->fullname", 
-                     "<a target=\"$CFG->framename\" href=\"index.php\">$stradministration</a> -> Database performance");
+                     "<a$target href=\"index.php\">$stradministration</a> -> Database performance");
         exit;
     }
 

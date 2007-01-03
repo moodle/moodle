@@ -382,7 +382,12 @@ function display() {
         if ($inpopup) {
             print_header($pagetitle);
         } else {
-            print_header($pagetitle, $course->fullname, "$this->navigation <a title=\"$strdirectlink\" target=\"$CFG->framename\" href=\"$fullurl\"> ".format_string($resource->name,true)."</a>", "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "self"));
+            if (empty($CFG->framename) or $CFG->framename=='_top') { 
+                $target = '';
+            } else {
+                $target = ' target="'.$CFG->framename.'"';
+            }
+            print_header($pagetitle, $course->fullname, "$this->navigation <a$target title=\"$strdirectlink\" href=\"$fullurl\"> ".format_string($resource->name,true)."</a>", "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "self"));
 
         }
 
@@ -423,7 +428,7 @@ function display() {
             echo "<center><p>";
             echo '<object classid="CLSID:22D6f312-B0F6-11D0-94AB-0080C74C7E95"';
             echo '        codebase="http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=5,1,52,701" ';
-            echo '        standby="Loading Microsoft® Windows® Media Player components..." ';
+            echo '        standby="Loading Microsoftï¿½ Windowsï¿½ Media Player components..." ';
             echo '        id="msplayer" align="" type="application/x-oleobject">';
             echo "<param name=\"Filename\" value=\"$fullurl\">";
             echo '<param name="ShowControls" value="true" />';

@@ -47,6 +47,11 @@
 
             $contentlist = array();
 
+            if (empty($CFG->framename) or $CFG->framename=='_top') { 
+                $target = '';
+            } else {
+                $target = ' target="'.$CFG->framename.'"';
+            }
             foreach ($datacontents as $datacontent) {
                 $currentcontent = trim($datacontent->content);
                 $strippedcontent = strip_tags($currentcontent);
@@ -57,8 +62,7 @@
                                             '<a class="data autolink" title="'.
                                             $strippedcontent.'" href="'.
                                             $CFG->wwwroot.'/mod/data/view.php?d='. $datacontent->dataid .
-                                            '&amp;rid='. $datacontent->recordid .'" target="'.
-                                            $CFG->framename.'">',
+                                            '&amp;rid='. $datacontent->recordid .'"'.$target.'>',
                                             '</a>', false, true);
                 }
             } // End foreach

@@ -54,11 +54,16 @@
 
 /// Instantiate a resource_ims object and modify its navigation
     $resource_obj = new resource_ims ($cmid);
-    if ($resource_obj->course->id != SITEID) {
-        $resource_obj->navigation = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/course/view.php?id={$course->id}\">{$course->shortname}</a> -> ".
-                            "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/mod/resource/index.php?id={$course->id}\">$resource_obj->strresources</a> -> ";
+    if (empty($CFG->framename) or $CFG->framename=='_top') { 
+        $target = '';
     } else {
-        $resource_obj->navigation = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/mod/resource/index.php?id={$course->id}\">$resource_obj->strresources</a> -> ";
+        $target = ' target="'.$CFG->framename.'"';
+    }
+    if ($resource_obj->course->id != SITEID) {
+        $resource_obj->navigation = "<a$target href=\"$CFG->wwwroot/course/view.php?id={$course->id}\">{$course->shortname}</a> -> ".
+                                    "<a$target href=\"$CFG->wwwroot/mod/resource/index.php?id={$course->id}\">$resource_obj->strresources</a> -> ";
+    } else {
+        $resource_obj->navigation = "<a$target href=\"$CFG->wwwroot/mod/resource/index.php?id={$course->id}\">$resource_obj->strresources</a> -> ";
     }
 
 /// Print the header of the page

@@ -1255,7 +1255,13 @@ function calendar_preferences_button() {
         return '';
     }
 
-    return "<form target=\"$CFG->framename\" method=\"get\" ".
+    if (empty($CFG->framename) or $CFG->framename=='_top') { 
+        $target = '';
+    } else {
+        $target = ' target="'.$CFG->framename.'"';
+    }
+
+    return "<form$target method=\"get\" ".
            " action=\"$CFG->wwwroot/calendar/preferences.php\">".
            "<input type=\"submit\" value=\"".get_string("preferences", "calendar")." ...\" /></form>";
 }

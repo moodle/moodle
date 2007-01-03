@@ -242,9 +242,15 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
                 $pageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0);
             }
             if (!empty($pageid) and $pageid != LESSON_EOL) {
+                if (empty($CFG->framename) or $CFG->framename=='_top') { 
+                    $target = '';
+                } else {
+                    $target = ' target="'.$CFG->framename.'"';
+                }
+
                 $button =  '<table><tr><td>'.$button.
                            '</td><td>'.
-                           '<form target="'. $CFG->framename .'" method="get" action="'. $CFG->wwwroot .'/mod/lesson/lesson.php">'.
+                           '<form'.$target.' method="get" action="'. $CFG->wwwroot .'/mod/lesson/lesson.php">'.
                            '<input type="hidden" name="id" value="'. $cm->id .'" />'.
                            '<input type="hidden" name="action" value="editpage" />'.
                            '<input type="hidden" name="redirect" value="navigation" />'.

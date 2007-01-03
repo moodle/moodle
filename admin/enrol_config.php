@@ -44,7 +44,13 @@
 
     admin_externalpage_print_header($adminroot);
 
-    echo "<form target=\"{$CFG->framename}\" name=\"enrolmenu\" method=\"post\" action=\"enrol_config.php\">";
+    if (empty($CFG->framename) or $CFG->framename=='_top') { 
+        $target = '';
+    } else {
+        $target = ' target="'.$CFG->framename.'"';
+    }
+
+    echo "<form$target name=\"enrolmenu\" method=\"post\" action=\"enrol_config.php\">";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\">";
     echo "<div align=\"center\"><p><b>";
 
