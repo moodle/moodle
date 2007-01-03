@@ -858,6 +858,22 @@ a.skip-block, .skip-block {
   padding: 0px;
 }
 
+#calendar .maincalendar {
+    height: 100%;
+}
+
+#calendar .maincalendar .heightcontainer {
+    height: 100%;
+    position: relative;
+}
+
+#calendar .maincalendar .bottom {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    text-align: center;
+}
+
 #calendar .sidecalendar {
   width: 25%;
 }
