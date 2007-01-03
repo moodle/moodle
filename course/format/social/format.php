@@ -28,7 +28,7 @@
         echo '</td>';
     }
 
-    echo '<td id="middle-column">';
+    echo '<td id="middle-column"><a name="startofcontent"></a>';
     if ($forum = forum_get_course_forum($course->id, 'social')) {
         if (forum_is_forcesubscribed($forum->id)) {
             $subtext = '<div class="link">'.get_string('everyoneissubscribed', 'forum').'</div>';

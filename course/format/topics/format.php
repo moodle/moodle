@@ -76,7 +76,7 @@
     }
 
 /// Start main column
-    echo '<td id="middle-column">';
+    echo '<td id="middle-column"><a name="startofcontent"></a>';
 
     print_heading_block(get_string('topicoutline'), 'outline');
 

@@ -71,7 +71,7 @@ if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
 }
 
 /// Start main column
-echo '<td id="middle-column">';
+echo '<td id="middle-column"><a name="startofcontent"></a>';
 
 print_heading_block(get_string('lamsoutline','lams'), 'outline');
 

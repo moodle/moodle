@@ -1246,6 +1246,7 @@ $string['sizegb'] = 'GB';
 $string['sizekb'] = 'KB';
 $string['sizemb'] = 'MB';
 $string['skipped'] = 'Skipped';
+$string['skiptomaincontent'] = 'Skip forward to main content';
 $string['skypeid'] = 'Skype ID';
 $string['socialheadline'] = 'Social forum - latest topics';
 $string['someallowguest'] = 'Some courses may allow guest access';
