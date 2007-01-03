@@ -504,6 +504,24 @@ table.navbar {
   display: block;
 }
 
+#footer .validators {
+  margin-top:40px;
+  padding-top:5px;
+  border-top: 1px dotted gray;
+}
+
+#footer .validators ul {
+  margin:0px;
+  padding:0px;
+  list-style-type:none;
+}
+
+#footer .validators ul li {
+  display:inline;
+  margin-right:10px;
+  margin-left:10px;
+}
+
 /***
  *** Admin
  ***/

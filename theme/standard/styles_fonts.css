@@ -199,6 +199,9 @@ a.useredit, a:hover.useredit, .blink {
   font-size: 0.6em;
 }
 
+#footer .validators {
+  font-size: 0.6em;
+}
 
 /***
  *** Admin
