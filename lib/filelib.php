@@ -255,6 +255,12 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
     $lastmodified = $pathisstring ? time() : filemtime($path);
     $filesize     = $pathisstring ? strlen($path) : filesize($path);
 
+    if ($mimetype=='application/pdf') {
+        //Adobe Reader XSS prevention - please note that it prevents opening of pdfs in browser
+        $mimetype = 'application/x-forcedownload';
+        $forcedownload = true;
+    }
+    
     //IE compatibiltiy HACK!
     if (ini_get('zlib.output_compression')) {
         ini_set('zlib.output_compression', 'Off');
