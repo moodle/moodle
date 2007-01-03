@@ -11,10 +11,10 @@
 
 /// Load IMS needed JavaScript
 /// The dummy LMS API hack to stop some SCORM packages giving errors.
-    echo "<script language=\"JavaScript\" type=\"text/javascript\" src=\"$CFG->wwwroot/mod/resource/type/ims/dummyapi.js\"></script>\n";
+    echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/mod/resource/type/ims/dummyapi.js\"></script>\n";
 /// The resize iframe script
-    echo "    <script language=\"JavaScript\" type=\"text/javascript\" src=\"$CFG->wwwroot/mod/resource/type/ims/resize.js\"></script>\n";
-    echo "    <script language=\"JavaScript\" type=\"text/javascript\">
+    echo "    <script type=\"text/javascript\" src=\"$CFG->wwwroot/mod/resource/type/ims/resize.js\"></script>\n";
+    echo "    <script type=\"text/javascript\">
         window.onresize = function() {
             resizeiframe($jsarg);
         };

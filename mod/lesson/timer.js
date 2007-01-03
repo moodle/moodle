@@ -8,11 +8,11 @@
 // for the lesson module in moodle.
 //
 //    Below is the code that is used to call this page.
-//    echo "<script language=\"javascript\">\n";
+//    echo "<script type=\"text/javascript\">\n";
 //        echo "var starttime = ". $timer->starttime . ";\n";
 //        echo "var servertime = ". time() . ";\n";
 //        echo "var testlength = ". $lesson->maxtime * 60 .";\n";
-//        echo "document.write('<SCRIPT LANGUAGE=\"JavaScript\" SRC=\"liveclock_lite.js\"><\/SCRIPT>');\n";
+//        echo "document.write('<script type=\"text/javascript\" src=\"liveclock_lite.js\"><\/script>');\n";
 //        echo "window.onload = function () { show_clock(); }";
 //    echo "</script>\n";
 //

@@ -270,7 +270,7 @@ function forum_print_big_search_form($course) {
 
     print_simple_box_start("center");
 
-    echo "<script type=\"text/javascript\" language=\"javascript\">\n";
+    echo "<script type=\"text/javascript\">\n";
     echo "var timefromitems = ['fromday','frommonth','fromyear','fromhour', 'fromminute'];\n";
     echo "var timetoitems = ['today','tomonth','toyear','tohour','tominute'];\n";
     echo "</script>\n";

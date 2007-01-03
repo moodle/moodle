@@ -112,7 +112,7 @@ class jsportal {
                 $blocksoutput .= ',';
             }
         }
-        $output .= "<script language='javascript'>\n";
+        $output .= "<script type=\"text/javascript\">\n";
         $output .= " 	main.portal.id = ".$courseid.";\n";
         $output .= "    main.portal.blocks = new Array(".$blocksoutput.");\n";
         $output .= "    main.portal.strings['wwwroot']='".$CFG->wwwroot."';\n";

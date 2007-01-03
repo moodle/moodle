@@ -460,7 +460,7 @@ function scorm_sequecingrule_implement($scormid,$scoidchild, $userid)
                     if ($sequencingrule->exitconditionruleaction=='exit')
                     {
                     //fwrite($ft,"\n >>>>> Xu ly Sequencing thanh cong -- Thuc hien su kien exit \n");
-                    echo "<script language='JavaScript'>";
+                    echo "<script type=\"text/javascript\">";
                     echo "alert('Thuc hien sequen. Do Trang thai ".$scoparent->identifier." la hoan thanh. Tien hanh EXIT');";
                     echo "</script>";
                     $sequencingResult->rule = 'exit';
@@ -469,7 +469,7 @@ function scorm_sequecingrule_implement($scormid,$scoidchild, $userid)
                     if ($sequencingrule->preconditionruleaction=='disabled')
                     {
                     //fwrite($ft,"\n >>>>> Xu ly Sequencing thanh cong -- Thuc hien su kien disable \n");
-                    echo "<script language='JavaScript'>";
+                    echo "<script type=\"text/javascript\">";
                     echo "alert('Thuc hien sequen. Do Trang thai ".$scoparent->identifier." la hoan thanh. Tien hanh Disable');";
                     echo "</script>";                    
                     $sequencingResult->rule = 'pre';

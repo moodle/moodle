@@ -268,7 +268,7 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
         $url = '/mod/lesson/mediafile.php?id='.$cm->id;
         $name = 'lessonmediafile';
         $options = 'menubar=0,location=0,left=5,top=5,scrollbars,resizable,width='. $lesson->mediawidth .',height='. $lesson->mediaheight;
-        $meta = "\n<script language=\"javascript\" type=\"text/javascript\">";
+        $meta = "\n<script type=\"text/javascript\">";
         $meta .= "\n<!--\n";
         $meta .= "     openpopup('$url', '$name', '$options', 0);";
         $meta .= "\n-->\n";

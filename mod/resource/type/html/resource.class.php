@@ -129,7 +129,7 @@ function display() {
                         "", "", true, update_module_button($cm->id, $course->id, $this->strresource), 
                         navmenu($course, $cm));
 
-                echo "\n<script language=\"javascript\" type=\"text/javascript\">";
+                echo "\n<script type=\"text/javascript\">";
                 echo "\n<!--\n";
                 echo "openpopup('/mod/resource/view.php?inpopup=true&id={$cm->id}','resource{$resource->id}','{$resource->popup}');\n";
                 echo "\n-->\n";

@@ -1,5 +1,5 @@
 <attach event="ondocumentready" handler="parseStylesheets" />
-<script language="JScript">
+<script type="text/javascript">
 /**
  *    PSUEDOS - V1.21.041022 - hover & active
  *    ---------------------------------------------

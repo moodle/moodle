@@ -49,7 +49,7 @@
         <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <title>coursefiles</title>
-        <script language="javscript" type="text/javascript">
+        <script type="text/javascript">
         <!--
         function set_value(params) {
             /// function's argument is an object containing necessary values
