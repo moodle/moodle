@@ -101,26 +101,32 @@ function sid_process_url($url) {
 */
 function sid_start_ob(){
     global $CFG;
-    //don't attach sess id for google
-    if (!empty($CFG->opentogoogle)) {
-        if (empty($_SESSION['USER'])) {
-            if (!empty($_SERVER['HTTP_USER_AGENT'])) {
-                if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== false ) {
-                    $CFG->usesid=false;
-                    return;
-                }
-                if (strpos($_SERVER['HTTP_USER_AGENT'], 'google.com') !== false ) {
-                    $CFG->usesid=false;
-                    return;
-                }
+    //don't attach sess id for bots
+
+    if (!empty($_SERVER['HTTP_USER_AGENT'])) {
+        if (!empty($CFG->opentogoogle)) {
+            if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== false ) {
+                @ini_set('session.use_trans_sid', '0'); // try and turn off trans_sid
+                $CFG->usesid=false;
+                return;
+            }
+            if (strpos($_SERVER['HTTP_USER_AGENT'], 'google.com') !== false ) {
+                @ini_set('session.use_trans_sid', '0'); // try and turn off trans_sid
+                $CFG->usesid=false;
+                return;
             }
         }
+        if (strpos($_SERVER['HTTP_USER_AGENT'], 'W3C_Validator') !== false ) {
+            @ini_set('session.use_trans_sid', '0'); // try and turn off trans_sid
+            $CFG->usesid=false;
+            return;
+        }
     }
-    @ini_set("session.use_trans_sid", "true"); // try and turn on trans_sid
-    if (ini_get("session.use_trans_sid")!=0 ){ 
+    @ini_set('session.use_trans_sid', '1'); // try and turn on trans_sid
+    if (ini_get('session.use_trans_sid')!=0 ){ 
         // use trans sid as its available
-        ini_set("url_rewriter.tags", "a=href,area=href,script=src,link=href," 
-            . "frame=src,form=fakeentry");
+        ini_set('url_rewriter.tags', 'a=href,area=href,script=src,link=href,' 
+            . 'frame=src,form=fakeentry');
         ob_start('sid_ob_rewrite_absolute');
     }else{
         //rewrite all links ourselves
