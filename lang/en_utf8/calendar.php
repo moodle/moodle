@@ -56,6 +56,7 @@ $string['globalevents'] = 'Global events';
 $string['gotocalendar'] = 'Go to calendar';
 $string['groupevents'] = 'Group events';
 $string['hidden'] = 'hidden';
+$string['ical'] = 'iCal';
 $string['iwanttoexport'] = 'Export';
 $string['manyevents'] = '$a events';
 $string['mon'] = 'Mon';
