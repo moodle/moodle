@@ -304,13 +304,13 @@ class question_category_object {
 
         $this->edittable->align["$category->id.name"] =  "left";
         $this->edittable->wrap["$category->id.name"] = "nowrap";
-        $row["$category->id.name"] = '<a ' . $linkcss . 'title="' . $this->str->edit. '" href="category.php?id=' . $this->course->id .
+        $row["$category->id.name"] = '<a ' . $linkcss . ' title="' . $this->str->edit. '" href="category.php?id=' . $this->course->id .
             '&amp;edit=' . $category->id . '&amp;sesskey='.$USER->sesskey.$pagelink.'"><img src="' . $this->pixpath . '/t/edit.gif" height="11" width="11" border="0"
             alt="' .$this->str->edit. '" /> ' . $fill . $category->name . '</a>';
 
         $this->edittable->align["$category->id.info"] =  "left";
         $this->edittable->wrap["$category->id.info"] = "nowrap";
-        $row["$category->id.info"] = '<a ' . $linkcss . 'title="' . $this->str->edit .'" href="category.php?id=' . $this->course->id .
+        $row["$category->id.info"] = '<a ' . $linkcss . ' title="' . $this->str->edit .'" href="category.php?id=' . $this->course->id .
             '&amp;edit=' . $category->id . '&amp;sesskey='.$USER->sesskey.$pagelink.'">' . $category->info . '</a>';
 
         $this->edittable->align["$category->id.qcount"] = "center";
