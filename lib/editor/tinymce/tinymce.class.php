@@ -244,8 +244,8 @@ class tinymce extends editorObject {
         }
 
         echo "\n";
-        echo '<script language="javascript" type="text/javascript">'."\n";
-        echo '<!--'."\n";
+        echo '<script type="text/javascript">'."\n";
+        echo '//<![CDATA['."\n";
         echo '  tinyMCE.init({'."\n";
 
         if ( !empty($conf) ) {
@@ -278,7 +278,7 @@ class tinymce extends editorObject {
         if ( $this->printdialogs ) {
             $this->__dialogs();
         }
-        echo '// done hiding -->'."\n";
+        echo '//]]>'."\n";
         echo '</script>'."\n";
 
     }

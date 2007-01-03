@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
     require_once($CFG->dirroot.'/mod/scorm/locallib.php');
     if (!isset($form->name)) {
         $form->name = '';
@@ -458,9 +458,11 @@
                         </tr>
                     </table>
                 </div>
-                <script language="javascript" type="text/javascript">
+                <script type="text/javascript">
+                //<![CDATA[
                     showhide('advancedsettings', true);
                     showhide('windowsettings', true);
+                //]]>
                 </script>
             </td>
         </tr>

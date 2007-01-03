@@ -16,9 +16,10 @@
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <title><?php print_string("insertimage","editor");?></title>
 
-<script language="javascript" type="text/javascript" src="popup.js"></script>
+<script type="text/javascript" src="popup.js"></script>
 
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
+//<![CDATA[
 var preview_window = null;
 
 function Init() {
@@ -116,6 +117,7 @@ function onPreview() {
   win.focus();
   return false;
 };
+//]]>
 </script>
 
 <style type="text/css">

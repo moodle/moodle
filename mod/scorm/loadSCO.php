@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
     require_once('../../config.php');
     require_once('locallib.php');
 
@@ -109,10 +109,10 @@
 <html>
     <head>
         <title>LoadSCO</title>
-        <script language="javascript" type="text/javascript">
-        <!--
+        <script type="text/javascript">
+        //<![CDATA[
             setTimeout('document.location = "<?php echo $result ?>";',2000);
-        -->
+        //]]>
         </script>
         <noscript>
             <meta http-equiv="refresh" content="2;url=<?php echo $result ?>" />

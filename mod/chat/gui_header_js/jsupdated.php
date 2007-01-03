@@ -153,7 +153,7 @@
             $num = 0;
         }
 
-        print '<script language="Javascript" type="text/javascript">' . "\n";
+        print '<script type="text/javascript">' . "\n";
         print "//<![CDATA[\n\n"; 
 
         $chat_newrow = ($chat_lastrow + $num) % 2;
@@ -211,7 +211,7 @@
 
     // here & should be written & :-D
     $refreshurl = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdated.php?chat_sid=$chat_sid&chat_lasttime=$chat_lasttime&chat_lastrow=$chat_newrow&chat_lastid=$chat_lastid"; 
-    print '<script language="Javascript" type="text/javascript">' . "\n";
+    print '<script type="text/javascript">' . "\n";
     print "//<![CDATA[ \n\n"; 
     print "location.href = '$refreshurl';\n";
     print "//]]>\n";

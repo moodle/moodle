@@ -58,7 +58,7 @@
 
     ob_start();
     ?>
-    <script language="JavaScript" type="text/javascript">
+    <script type="text/javascript">
     //<![CDATA[
     var timer = null
     var f = 1; //seconds

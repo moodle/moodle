@@ -25,7 +25,7 @@
 /// Popup a window if required and quit (usually from external links).
     if ($popup) {
         print_header();
-        echo '<script language="JavaScript" type="text/javascript">'."\n openpopup('/message/index.php', 'message', 'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0);\n</script>";
+        echo '<script type="text/javascript">'."\n//<![CDATA[\n openpopup('/message/index.php', 'message', 'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0);\n//]]>\n</script>";
         redirect("$CFG->wwwroot/");
         exit;
     }

@@ -60,8 +60,10 @@ $query .= '&HIVE_SESSION='.$SESSION->HIVE_SESSION;
     echo '<input type="hidden" name="HIVE_SEREF" value="'.$CFG->wwwroot.'/sso/hive/expired.php">';
     echo '<input type="hidden" name="HIVE_SESSION" value="'.$SESSION->HIVE_SESSION.'">';
     echo '</form>';
-    echo '<script language="javascript"/>';
+    echo '<script type="text/javascript"/>';
+    echo "\n//<![CDATA[\n";
     echo 'document.OPEN_HIVE_FORM.submit();';
+    echo "\n//]]>\n";
     echo '</script>';
 
     print_footer();

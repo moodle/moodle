@@ -14,8 +14,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title><?php print_string("insertlink","editor");?></title>
-  <script language="javascript" type="text/javascript" src="popup.js"></script>
-  <script language="javascript" type="text/javascript">
+  <script type="text/javascript" src="popup.js"></script>
+  <script type="text/javascript">
+//<![CDATA[
 function onTargetChanged() {
   var f = document.getElementById("f_other_target");
   if (this.value == "_other") {
@@ -120,6 +121,7 @@ function seturl() {
         f_url.value = txt;
     }
 }
+//]]>
 </script>
 <style type="text/css">
 html, body {

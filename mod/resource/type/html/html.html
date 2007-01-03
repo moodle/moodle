@@ -3,7 +3,8 @@
     <td align="right" nowrap="nowrap">
 
 
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
+//<![CDATA[
     function showhide (id, set) {
         divobj = document.getElementById(id);
         butobj = document.getElementById(id+'button');
@@ -28,6 +29,7 @@
             }
         }
     }
+//]]>
 </script>
 
 
@@ -63,9 +65,11 @@
 
     <td colspan="2">
         <script type="text/javascript">
+        //<![CDATA[
             var popupitems = [<?php echo $popupoptions; ?>];
             var blockitem = [<?php echo $blockoption; ?>];
             var allitems = [<?php echo $alloptions; ?>];
+        //]]>
         </script>
         <input type="radio" name="windowpopup" value="0" alt="<?php print_string('pagewindow', 'resource') ?>" <?php echo ($windowtype != 'popup') ? 'checked="checked"' : '' ?> 
         onclick="lockoptions('form', 'windowpopup[0]', blockitem);
@@ -109,9 +113,9 @@
         <?php p($strheight) ?><br />
         <?php
             if ($windowtype == "page") {
-                echo "<script type=\"text/javascript\">";
+                echo "<script type=\"text/javascript\">\n//<![CDATA[\n";
                 echo "lockoptions('form','windowpopup[1]', popupitems);";
-                echo "</script>";
+                echo "\n//]]>\n</script>";
             }
         ?>
         </blockquote>
@@ -123,8 +127,10 @@
     </div>
 
 
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
+//<![CDATA[
     showhide('windowsettings', true);
+//]]>
 </script>
 
 

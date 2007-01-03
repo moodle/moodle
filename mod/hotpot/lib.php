@@ -1674,7 +1674,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
         $this->html = preg_replace($search, '', $this->html);
     }
     function insert_script($src=HOTPOT_JS) {
-        $script = '<script src="'.$src.'" type="text/javascript" language="javascript"></script>'."\n";
+        $script = '<script src="'.$src.'" type="text/javascript"></script>'."\n";
         $this->html = preg_replace('|</head>|i', $script.'</head>', $this->html, 1);
     }
     function insert_submission_form($attemptid, $startblock, $endblock, $keep_contents=false) {
@@ -2365,8 +2365,8 @@ function hotpot_print_show_links($course, $location, $reference, $actions='', $s
     }
     $strenterafilename = get_string('enterafilename', 'hotpot');
     $html = <<<END_OF_SCRIPT
-<script type="text/javascript" language="javascript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
     function setLink(lnk) {
         var form = document.forms['form'];
         return setLinkAttribute(lnk, 'reference', form) && setLinkAttribute(lnk, 'location', form);
@@ -2424,7 +2424,7 @@ function hotpot_print_show_links($course, $location, $reference, $actions='', $s
         var i = s.lastIndexOf('/');
         return s.substring(0, i);
     }
-//-->
+//]]>
 </script>
 END_OF_SCRIPT;
 

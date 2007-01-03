@@ -10,10 +10,10 @@
             set_user_preference('resource_localpath', $pathname);
         }
         ?>
-        <script language="javascript" type="text/javascript">
-        <!--
+        <script type="text/javascript">
+        //<![CDATA[
         window.close();
-        -->
+        //]]>
         </script>
         <?php
         exit;
@@ -24,8 +24,8 @@
     print_simple_box(get_string('localfilepath', 'resource', $CFG->wwwroot.'/user/edit.php?course='.SITEID), 'center');
 
     ?>
-    <script language="javascript" type="text/javascript">
-    <!--
+    <script type="text/javascript">
+    //<![CDATA[
     function set_value(txt) {
         if (txt.indexOf('/') > -1) {
             txt = txt.substring(0,txt.lastIndexOf('/'));
@@ -35,7 +35,7 @@
         document.myform.pathname.value = txt;
         document.myform.submit();
     }
-    -->
+    //]]>
     </script>
     
     <br />

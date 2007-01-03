@@ -22,8 +22,8 @@
     print_header($title, $title);
     hotpot_print_show_links($params->course, $params->location, $params->reference);
 ?>
-<script type="text/javascript" language="javascript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
     // http://www.krikkit.net/howto_javascript_copy_clipboard.html
     function copy_contents(id) {
         if (id==null) {
@@ -39,7 +39,7 @@
         }
     }
     document.write('<span class="helplink"> &nbsp; <a href="javascript:copy_contents()"><?php print_string('copytoclipboard', 'hotpot') ?></A></span>');
--->
+//]]>
 </script>
 <?php
     print_simple_box_start("center", "96%");

@@ -397,8 +397,8 @@ function hotpot_showhide_button($id) {
 	$pref = '1';
 	$text = ($pref=='1' ? $hide : $show);
 return <<<SHOWHIDE_BUTTON
-<script language="javascript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 	function showhide (id, toggle) {
 		var show = true;
 		obj = document.getElementById(id+'pref');
@@ -428,19 +428,19 @@ return <<<SHOWHIDE_BUTTON
 		html += '</form>';
 		document.writeln(html);
 	}
-//-->
+//]]>
 </script>
 SHOWHIDE_BUTTON
 ;
 }
 function hotpot_showhide_set($id) {
 return <<<SHOWHIDE_SET
-<script language="javascript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 	if (showhide_allowed) {
 		showhide('$id');
 	}
-//-->
+//]]>
 </script>
 SHOWHIDE_SET
 ;

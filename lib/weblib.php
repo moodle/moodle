@@ -3720,7 +3720,7 @@ function use_html_editor($name='', $editorhidebuttons='', $id='') {
     if ($id === '') {
         $id = 'edit-'.$name;
     }
-    echo "\n".'<script language="javascript" type="text/javascript" defer="defer">'."\n";
+    echo "\n".'<script type="text/javascript" defer="defer">'."\n";
     echo '//<![CDATA['."\n";
     echo "$editor = new HTMLArea('$id');\n";
     echo "var config = $editor.config;\n";
@@ -5186,17 +5186,17 @@ function print_speller_code ($usehtmleditor=false, $return=false) {
     global $CFG;
     $str = '';
     
+    $str .= "\n".'<script type="text/javascript">'."\n";
+    $str .= '//<![CDATA['."\n";
     if(!$usehtmleditor) {
-        $str .= "\n".'<script language="javascript" type="text/javascript">'."\n";
         $str .= 'function openSpellChecker() {'."\n";
         $str .= "\tvar speller = new spellChecker();\n";
         $str .= "\tspeller.popUpUrl = \"" . $CFG->wwwroot ."/lib/speller/spellchecker.html\";\n";
         $str .= "\tspeller.spellCheckScript = \"". $CFG->wwwroot ."/lib/speller/server-scripts/spellchecker.php\";\n";
         $str .= "\tspeller.spellCheckAll();\n";
         $str .= '}'."\n";
-        $str .= '</script>'."\n";
     } else {
-        $str .= "\nfunction spellClickHandler(editor, buttonId) {\n";
+        $str .= "function spellClickHandler(editor, buttonId) {\n";
         $str .= "\teditor._textArea.value = editor.getHTML();\n";
         $str .= "\tvar speller = new spellChecker( editor._textArea );\n";
         $str .= "\tspeller.popUpUrl = \"" . $CFG->wwwroot ."/lib/speller/spellchecker.html\";\n";
@@ -5206,6 +5206,8 @@ function print_speller_code ($usehtmleditor=false, $return=false) {
         $str .= "\tspeller.openChecker();\n";
         $str .= '}'."\n";
     }
+    $str .= '//]]>'."\n";
+    $str .= '</script>'."\n";
     if ($return) {
         return $str;
     }

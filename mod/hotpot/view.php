@@ -255,7 +255,7 @@
         foreach ($feedback as $i=>$str) {
             $js .= 'FEEDBACK['.$i."] = $str;\n";
         }
-        $js = '<script type="text/javascript" language="javascript">'."\n//<![CDATA[\n"."FEEDBACK = new Array();\n".$js."//]]>\n</script>\n";
+        $js = '<script type="text/javascript">'."\n//<![CDATA[\n"."FEEDBACK = new Array();\n".$js."//]]>\n</script>\n";
         $hp->html = preg_replace('|</head>|i', "$js</head>", $hp->html, 1);
     }
     // insert hot-potatoes.js
@@ -411,7 +411,7 @@
                 default:
                     $iframe_id = 'hotpot_iframe';
                     $body_tags = " onload=\"set_iframe_height('$iframe_id')\"";
-                    $iframe_js = '<script src="iframe.js" type="text/javascript" language="javascript"></script>'."\n";
+                    $iframe_js = '<script src="iframe.js" type="text/javascript"></script>'."\n";
                     print_header(
                         $title, $heading, $navigation, 
                         "", $head.$styles.$scripts.$iframe_js, true, $button, 

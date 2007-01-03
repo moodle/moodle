@@ -4779,8 +4779,8 @@ class wsdl extends nusoap_base {
 		    a:visited   { color: #666666; font-weight: bold; }
 		    a:hover     { color: cc3300; font-weight: bold; }
 		</style>
-		<script language="JavaScript" type="text/javascript">
-		<!--
+		<script type="text/javascript">
+		//<![CDATA[
 		// POP-UP CAPTIONS...
 		function lib_bwcheck(){ //Browsercheck (needed)
 		    this.ver=navigator.appVersion
@@ -4823,7 +4823,7 @@ class wsdl extends nusoap_base {
 		function popout(){ // Hides message
 		    if(oDesc) oDesc.css.visibility = "hidden"
 		}
-		//-->
+		//]]>
 		</script>
 		</head>
 		<body>

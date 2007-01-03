@@ -13,12 +13,14 @@
 <head>
 <title><?php print_string("insertlink","editor");?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
+//<![CDATA[
 
 function onCancel() {
   window.close();
   return false;
-};
+}
+
 function checkvalue(elm,formname) {
     var el = document.getElementById(elm);
     if(!el.value) {
@@ -42,7 +44,7 @@ function submit_form(dothis) {
     window.fbrowser.document.dirform.submit();
     return false;
 }
-
+//]]>
 </script>
 <style type="text/css">
 html, body { background-color: rgb(212,208,200); }

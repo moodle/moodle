@@ -2,8 +2,8 @@
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 ?>
 
-<script language="javascript">
-<!--
+<script text="text/javascript">
+//<![CDATA[
 /// This Javascript clock provides a little countdown in the title bar
 
 var timerID = null;
@@ -63,5 +63,5 @@ function showtime() {
 document.onLoad = startclock();
 
 
-// -- End of JavaScript code -------------- -->
+//]]>
 </script>

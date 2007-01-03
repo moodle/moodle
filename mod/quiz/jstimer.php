@@ -6,8 +6,8 @@
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 ?>
 
-<script language="javascript" type="text/javascript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 var timesup = "<?php print_string("timesup","quiz");?>";
 var quizclose = <?php echo ($quiz->timeclose - time()) - $timerstartvalue; ?>; // in seconds
 var quizTimerValue = <?php echo $timerstartvalue; ?>; // in seconds
@@ -18,9 +18,9 @@ var ec_page_start = new Date().getTime();
 // @EC PF : client time when quiz should end
 var ec_quiz_finish = ec_page_start + <?php echo ($timerstartvalue * 1000); ?>;
 
-// -->
+//]]>
 </script>
-<script language="javascript" type="text/javascript" src="timer.js"></script>
+<script type="text/javascript" src="timer.js"></script>
 <div id="timer">
 <!--EDIT BELOW CODE TO YOUR OWN MENU-->
 <table class="generalbox" border="0" cellpadding="0" cellspacing="0" width="150">
@@ -43,8 +43,8 @@ var ec_quiz_finish = ec_page_start + <?php echo ($timerstartvalue * 1000); ?>;
 </table>
 <!--END OF EDIT-->
 </div>
-<script language="javascript" type="text/javascript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 
 var timerbox = xGetElementById('timer');
 var theTimer = xGetElementById('QuizTimer');
@@ -54,5 +54,5 @@ var old = theTop;
 movecounter(timerbox);
 
 document.onload = countdown_clock(theTimer);
-// -->
+//]]>
 </script>

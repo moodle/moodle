@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 /*                // Added by Pham Minh Duc
                 case 'IMSSS:SEQUENCING':
                     $parent = array_pop($parents);
@@ -534,8 +534,8 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     $result->toc .= "\t</ul>\n";
     if ($scorm->hidetoc == 0) {
         $result->toc .= '
-          <script language="javascript" type="text/javascript">
-          <!--
+          <script type="text/javascript">
+          //<![CDATA[
               function expandCollide(which,list,item) {
                   var nn=document.ids?true:false
                   var w3c=document.getElementById?true:false
@@ -552,7 +552,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                       new cookie("hide:SCORMitem" + item, 1, -1, "/").set();
                   }
               }
-          -->
+          //]]>
           </script>'."\n";
     }
     

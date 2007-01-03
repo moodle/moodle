@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
 require_once('../config.php');
 
 /// main switch for form processing to perform, add/delete etc
@@ -56,7 +56,7 @@ switch ($action) {
             }
 
             /// Write newly added tags back into window opener.
-            echo '<script language="JavaScript" type="text/javascript">
+            echo '<script type="text/javascript">
             var o = opener.document.createElement("option");
             o.innerHTML = "<option>'.$tag->text.'</option>";
             o.value = '.$tagid.';

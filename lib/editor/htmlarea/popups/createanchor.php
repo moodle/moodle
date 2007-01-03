@@ -7,9 +7,9 @@
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <title>Create anchor</title>
-<script language="javascript" type="text/javascript" src="popup.js"></script>
-<script language="javascript" type="text/javascript">
-<!--
+<script type="text/javascript" src="popup.js"></script>
+<script type="text/javascript">
+//<![CDATA[
 function Init() {
     __dlg_init();
 }
@@ -35,7 +35,7 @@ function onCancel() {
   __dlg_close(null);
   return false;
 };
-// -->
+//]]>
 </script>
 <style type="text/css">
 <!--
@@ -46,7 +46,7 @@ button { width: 70px; }
 border-bottom: 1px solid black; letter-spacing: 2px;
 }
 .note { font-size: 8pt; }
-// -->
+-->
 </style>
 </head>
 <body>

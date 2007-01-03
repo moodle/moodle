@@ -379,17 +379,17 @@
 
                 // TODO eliminate this nasty JavaScript that prints the button.
 ?>
-<script language="javascript" type="text/javascript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 document.write('<input type="button" value="<?php echo $buttontext ?>" onclick="javascript: <?php
                 if ($strconfirmstartattempt) {
                     echo "if (confirm(\\'".addslashes_js($strconfirmstartattempt)."\\'))";
                 }
 ?> window.open(\'<?php echo $attempturl ?>\', \'<?php echo $window ?>\', \'<?php echo $windowoptions ?>\'); " />');
-// -->
+//]]>
 </script>
 <noscript>
-    <strong><?php print_string('noscript', 'quiz'); ?></strong>
+    <?php print_heading(get_string('noscript', 'quiz')); ?>
 </noscript>
 <?php
             }

@@ -234,8 +234,8 @@ class htmlarea extends editorObject {
         }
 
         echo "\n";
-        echo '<script language="javascript" type="text/javascript" defer="defer">'."\n";
-        echo '<!--'."\n";
+        echo '<script type="text/javascript" defer="defer">'."\n";
+        echo '//<![CDATA['."\n";
         echo '    var config = new HTMLArea.Config();'."\n";
 
         foreach ( $conf as $key => $value ) {
@@ -298,7 +298,7 @@ class htmlarea extends editorObject {
         }
 
         echo '    HTMLArea.replaceAll(config);'."\n";
-        echo '// done hiding -->'."\n";
+        echo '//]]>'."\n";
         echo '</script>'."\n";
 
     }
@@ -340,15 +340,15 @@ class htmlarea extends editorObject {
     */
     function print_speller_code ($usehtmleditor=false) {
 
-        if(!$usehtmleditor) {
-            echo "\n".'<script language="javascript" type="text/javascript">'."\n";
+        echo "\n".'<script type="text/javascript">'."\n";
+        echo '//<![CDATA['."\n";
+        if (!$usehtmleditor) {
             echo 'function openSpellChecker() {'."\n";
             echo "\tvar speller = new spellChecker();\n";
             echo "\tspeller.popUpUrl = \"" . $this->cfg->wwwroot ."/lib/speller/spellchecker.html\";\n";
             echo "\tspeller.spellCheckScript = \"". $this->cfg->wwwroot ."/lib/speller/server-scripts/spellchecker.php\";\n";
             echo "\tspeller.spellCheckAll();\n";
             echo '}'."\n";
-            echo '</script>'."\n";
         } else {
             echo "\n\tfunction spellClickHandler(editor, buttonId) {\n";
             echo "\t\teditor._textArea.value = editor.getHTML();\n";
@@ -360,6 +360,8 @@ class htmlarea extends editorObject {
             echo "\t\tspeller.openChecker();\n\t";
             echo '}'."\n";
         }
+        echo '//]]>'."\n";
+        echo '</script>'."\n";
     }
 
 }

@@ -18,8 +18,8 @@
     $chooseparts = explode('.', $choose);
 
     ?>
-    <script language="javascript" type="text/javascript">
-    <!--
+    <script type="text/javascript">
+    //<![CDATA[
     function set_value(txt) {
         if (txt.indexOf('/') > -1) {
             path = txt.substring(txt.indexOf('/'),txt.length);
@@ -31,7 +31,7 @@
         opener.document.forms['<?php echo $chooseparts[0]."'].".$chooseparts[1] ?>.value = '<?php p(RESOURCE_LOCALPATH) ?>'+path;
         window.close();
     }
-    -->
+    //]]>
     </script>
     
     <br />

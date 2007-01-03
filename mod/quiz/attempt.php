@@ -470,13 +470,13 @@
     if($quiz->timelimit > 0) {
         // Make sure javascript is enabled for time limited quizzes
         ?>
-        <script language="javascript" type="text/javascript">
-        <!--
+        <script type="text/javascript">
+        //<![CDATA[
             document.write("<form name=\"responseform\" id=\"responseform\" method=\"post\" action=\"attempt.php\" autocomplete=\"off\">\n");
-        // -->
+        //]]>
         </script>
         <noscript>
-        <center><p><strong><?php print_string('noscript', 'quiz'); ?></strong></p></center>
+        <?php print_heading(get_string('noscript', 'quiz')); ?>
         </noscript>
         <?php
     } else {
@@ -490,7 +490,8 @@
     $numpages = quiz_number_of_pages($attempt->layout);
     if ($numpages > 1) {
         ?>
-        <script language="javascript" type="text/javascript">
+        <script type="text/javascript">
+        //<![CDATA[
         function navigate(page) {
             var ourForm = document.forms['responseform']; 
             ourForm.page.value=page;
@@ -499,6 +500,7 @@
             }
             ourForm.submit();
         }
+        //]]>
         </script>
         <?php
         echo '<input type="hidden" id="page" name="page" value="'.$page."\" />\n";

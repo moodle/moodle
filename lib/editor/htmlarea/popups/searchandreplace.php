@@ -7,9 +7,9 @@
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <title><?php print_string("searchandreplace","editor");?></title>
-<script language="javascript" type="text/javascript" src="popup.js"></script>
-<script language="javascript" type="text/javascript">
-<!--
+<script type="text/javascript" src="popup.js"></script>
+<script type="text/javascript">
+//<![CDATA[
 function _CloseOnEsc(ev) {
     ev || (ev = window.event) || (ev = editor._iframe.contentWindow.event);
     if (ev.keyCode == 27) {
@@ -65,7 +65,7 @@ function onCancel() {
   return false;
 };
 
--->
+//]]>
 </script>
 
 <style type="text/css">

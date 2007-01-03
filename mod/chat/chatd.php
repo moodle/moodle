@@ -247,8 +247,8 @@ class ChatDaemon {
 
         ob_start();
         echo '<html><head>';
-        echo '<script language="JavaScript">';
-        echo "<!-- //hide\n";
+        echo '<script text="text/javascript">';
+        echo "//<![CDATA[\n";
 
         echo 'function openpopup(url,name,options,fullscreen) {';
         echo 'fullurl = "'.$CFG->wwwroot.'" + url;';
@@ -259,7 +259,7 @@ class ChatDaemon {
         echo '}';
         echo 'windowobj.focus();';
         echo 'return false;';
-        echo "}\n-->\n";
+        echo "}\n//]]>\n";
         echo '</script></head><body style="font-face: serif;" bgcolor="#FFFFFF">';
 
         echo '<table style="width: 100%;"><tbody>';

@@ -2575,7 +2575,7 @@ function ewiki_binary($break=0) {
 
       if ($id) {
          echo<<<EOF
-<html><head><title>File/Picture Upload</title><script language="JavaScript" type="text/javascript"><!--
+<html><head><title>File/Picture Upload</title><script type="text/javascript"><!--
  opener.document.forms["ewiki"].elements["content"].value += "\\nUPLOADED PICTURE: [$id$title]\\n";
  window.setTimeout("self.close()", 5000);
 //--></script></head><body bgcolor="#440707" text="#FFFFFF">Your uploaded file was saved as<br /><big><b>

@@ -84,7 +84,8 @@ $QTYPES[$question->qtype]->print_question_form_end($question,
         'onclick="return determineMinAndMax();"',
         '<input type="hidden" name="wizardpage" value="question" />');
 ?>
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
+//<![CDATA[
 function determineMinAndMax() {
     // This client-side script will determine the values for min and max
     // based on the input for answer and acceptederror.
@@ -111,4 +112,5 @@ function determineMinAndMax() {
         }
     }
 }
+//]]>
 </script>

@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 
 class block_loancalc extends block_base {
 
@@ -14,7 +14,7 @@ class block_loancalc extends block_base {
         $calc = $CFG->pixpath.'/i/calc.gif';
         
         $this->content->text = '
-        <script language="JavaScript">
+        <script type="text/javascript">
         <![CDATA[
     function Next()
     {

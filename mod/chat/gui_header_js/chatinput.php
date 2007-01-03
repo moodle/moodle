@@ -27,7 +27,7 @@
 
     ob_start();
     ?>
-    <script language="JavaScript" type="text/javascript">
+    <script type="text/javascript">
     //<![CDATA[
     var waitFlag = false;
     function empty_field_and_submit() {

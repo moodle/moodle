@@ -82,7 +82,7 @@
     $bodytag .= '" ';
 
     // Javascript to insert the field tags into the textarea.
-    $meta = '<script language="JavaScript" type="text/javascript">'."\n";
+    $meta = '<script type="text/javascript">'."\n";
     $meta .= '//<![CDATA['."\n";
     $meta .= 'function insert_field_tags(selectlist) {';
     $meta .= '  if (typeof(currEditor) != \'undefined\' && currEditor._editMode == \'wysiwyg\') {';

@@ -80,25 +80,25 @@
             $chooseparts = explode('.', $choose);
             if (count($chooseparts)==2){
             ?>
-            <script language="javascript" type="text/javascript">
-            <!--
+            <script type="text/javascript">
+            //<![CDATA[
             function set_value(txt) {
                 opener.document.forms['<?php echo $chooseparts[0]."'].".$chooseparts[1] ?>.value = txt;
                 window.close();
             }
-            -->
+            //]]>
             </script>
 
             <?php
             } elseif (count($chooseparts)==1){
             ?>
-            <script language="javascript" type="text/javascript">
-            <!--
+            <script type="text/javascript">
+            //<![CDATA[
             function set_value(txt) {
                 opener.document.getElementById('<?php echo $chooseparts[0] ?>').value = txt;
                 window.close();
             }
-            -->
+            //]]>
             </script>
 
             <?php

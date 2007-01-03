@@ -30,13 +30,13 @@
     
 ?>
 
-<script language="javascript" type="text/javascript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
     opener.document.forms['form'].reference.value = '<?php echo addslashes($resource) ?>';
     opener.document.forms['form'].name.value = '<?php echo addslashes(urldecode($title)) ?>';
     opener.focus();
     window.close();
--->
+//]]>
 </script>
 
 

@@ -60,13 +60,13 @@
     if ($chatuser->version == 'header_js') {
         /// force msg referesh ASAP
         if ($CFG->chat_normal_updatemode == 'jsupdated') {  // See bug MDL-6791
-            echo '<script language="Javascript" type="text/javascript">'.
+            echo '<script type="text/javascript">'.
                  "//<![CDATA[ \n".
                  '  parent.input.enableForm();'.
                  "//]]> \n".
                  '</script>';
         } else {
-            echo '<script language="Javascript" type="text/javascript">'.
+            echo '<script type="text/javascript">'.
                  "//<![CDATA[ \n".
                  '  parent.jsupdate.location.href = parent.jsupdate.document.anchors[0].href;'.
                  '  parent.input.enableForm();'.

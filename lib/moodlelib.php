@@ -2611,11 +2611,11 @@ function get_complete_user_data($field, $value) {
         }
     }
 
-    if ($groups = get_records('groups_members', 'userid', $user->id)) {
-        foreach ($groups as $groupmember) {
-            $courseid = get_field('groups', 'courseid', 'id', $groupmember->groupid);
+    if ($groupids = groups_get_all_groups_for_user($user->id)) { //TODO:check.
+        foreach ($groupids as $groupid) {
+            $courseid = groups_get_course($groupid);
             //change this to 2D array so we can put multiple groups in a course
-            $user->groupmember[$courseid][] = $groupmember->groupid;
+            $user->groupmember[$courseid][] = $groupid;
         }
     }
 
@@ -2791,25 +2791,26 @@ function remove_course_contents($courseid, $showfeedback=true) {
         }
     }
 
-/// Delete any groups
-    if ($groups = get_records('groups', 'courseid', $course->id)) {
-        if (delete_records('groups', 'courseid', $course->id)) {
-            if ($showfeedback) {
-                notify($strdeleted .' groups');
-            }
-            foreach ($groups as $group) {
-                if (delete_records('groups_members', 'groupid', $group->id)) {
-                    if ($showfeedback) {
-                        notify($strdeleted .' groups_members');
-                    }
-                } else {
-                    $result = false;
+/// Delete any groups, removing members first. TODO: check.
+    if ($groupids = groups_get_groups($course->id)) {
+        foreach ($groupids as $groupid) {
+            if (groups_remove_all_group_members($groupid)) {
+                if ($showfeedback) {
+                    notify($strdeleted .' groups_members');
                 }
-                /// Delete any associated context for this group
-                delete_context(CONTEXT_GROUP, $group->id);
+            } else {
+                $result = false;
             }
-        } else {
-            $result = false;
+            /// Delete any associated context for this group ??
+            delete_context(CONTEXT_GROUP, $group->id);
+            
+            if (groups_delete_group($groupid)) {
+                if ($showfeedback) {
+                    notify($strdeleted .' groups');
+                }
+            } else {
+                $result = false;
+            }
         }
     }
 
@@ -2926,10 +2927,10 @@ function reset_course_userdata($data, $showfeedback=true) {
                 notify($strdeleted .' '.get_string('students'), 'notifysuccess');
             }
 
-            /// Delete group members (but keep the groups)
-            if ($groups = get_records('groups', 'courseid', $data->courseid)) {
-                foreach ($groups as $group) {
-                    if (delete_records('groups_members', 'groupid', $group->id)) {
+            /// Delete group members (but keep the groups) TODO:check.
+            if ($groupids = groups_get_groups($data->courseid)) {
+                foreach ($groupids as $groupid) {
+                    if (groups_remove_all_group_members($groupid)) {
                         if ($showfeedback) {
                             notify($strdeleted .' groups_members', 'notifysuccess');
                         }
@@ -2951,9 +2952,9 @@ function reset_course_userdata($data, $showfeedback=true) {
     }
 
     if (!empty($data->reset_groups)) {
-        if ($groups = get_records('groups', 'courseid', $data->courseid)) {
-            foreach ($groups as $group) {
-                if (delete_records('groups', 'id', $group->id)) {
+        if ($groupids = groups_get_groups($data->courseid)) {
+            foreach ($groupids as $groupid) {
+                if (groups_delete_group($groupid)) {
                     if ($showfeedback) {
                         notify($strdeleted .' groups', 'notifysuccess');
                     }
@@ -2992,284 +2993,16 @@ function reset_course_userdata($data, $showfeedback=true) {
 }
 
 
-/// GROUPS /////////////////////////////////////////////////////////
+require_once($CFG->dirroot.'/group/lib.php');
+/*TODO: functions moved to /group/lib/legacylib.php
 
+ismember
+add_user_to_group
+mygroupid
+groupmode
+set_current_group
+... */
 
-/**
- * Determines if the user a member of the given group
- *
- * @uses $USER
- * @param int $groupid The group to check the membership of
- * @param int $userid The user to check against the group
- * @return bool
- */
-function ismember($groupid, $userid=0) {
-    global $USER;
-
-    if (!$groupid) {   // No point doing further checks
-        return false;
-    }
-    //if groupid is supplied in array format
-    if (!$userid) {
-        if (empty($USER->groupmember)) {
-            return false;
-        }
-        //changed too for multiple groups
-        foreach ($USER->groupmember as $courseid => $mgroupid) {
-            //need to loop one more time...
-            if (is_array($mgroupid)) {
-                foreach ($mgroupid as $index => $mygroupid) {
-                    if ($mygroupid == $groupid) {
-                        return true;
-                    }
-                }
-            } else if ($mgroupid == $groupid) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    if (is_array($groupid)){
-        foreach ($groupid as $index => $val){
-            if (record_exists('groups_members', 'groupid', $val, 'userid', $userid)){
-                return true;
-            }
-        }
-    }
-    else {
-        return record_exists('groups_members', 'groupid', $groupid, 'userid', $userid);
-    }
-    return false;
-
-    //else group id is in single format
-
-    //return record_exists('groups_members', 'groupid', $groupid, 'userid', $userid);
-}
-
-/**
- * Add a user to a group, return true upon success or if user already a group member
- *
- * @param int $groupid  The group id to add user to
- * @param int $userid   The user id to add to the group
- * @return bool
- */
-function add_user_to_group ($groupid, $userid) {
-    if (ismember($groupid, $userid)) return true;
-    $record->groupid = $groupid;
-    $record->userid = $userid;
-    $record->timeadded = time();
-    return (insert_record('groups_members', $record) !== false);
-}
-
-
-/**
- * Get the group ID of the current user in the given course
- *
- * @uses $USER
- * @param int $courseid The course being examined - relates to id field in 'course' table.
- * @return int
- */
-function mygroupid($courseid) {
-    global $USER;
-    if (empty($USER->groupmember[$courseid])) {
-        return 0;
-    } else {
-        //this is an array of ids >.<
-        return $USER->groupmember[$courseid];
-    }
-}
-
-/**
- * For a given course, and possibly course module, determine
- * what the current default groupmode is:
- * NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS
- *
- * @param course $course A {@link $COURSE} object
- * @param object $cm A course module object
- * @return int A group mode (NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS)
- */
-function groupmode($course, $cm=null) {
-
-    if ($cm and !$course->groupmodeforce) {
-        return $cm->groupmode;
-    }
-    return $course->groupmode;
-}
-
-
-/**
- * Sets the current group in the session variable
- *
- * @uses $SESSION
- * @param int $courseid The course being examined - relates to id field in 'course' table.
- * @param int $groupid The group being examined.
- * @return int Current group id which was set by this function
- */
-function set_current_group($courseid, $groupid) {
-    global $SESSION;
-
-    return $SESSION->currentgroup[$courseid] = $groupid;
-}
-
-
-/**
- * Gets the current group for the current user as an id or an object
- *
- * @uses $USER
- * @uses $SESSION
- * @param int $courseid The course being examined - relates to id field in 'course' table.
- * @param bool $full If true, the return value is a full record object. If false, just the id of the record.
- */
-function get_current_group($courseid, $full=false) {
-    global $SESSION, $USER;
-
-    if (!isset($SESSION->currentgroup[$courseid])) {
-        if (empty($USER->groupmember[$courseid]) or has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $courseid))) {
-
-            return 0;
-        } else {
-            //trying to add a hack >.<, always first select the first one in list
-            $SESSION->currentgroup[$courseid] = $USER->groupmember[$courseid][0];
-        }
-    }
-
-    if ($full) {
-        return get_record('groups', 'id', $SESSION->currentgroup[$courseid]);
-    } else {
-        return $SESSION->currentgroup[$courseid];
-    }
-}
-
-/**
- * A combination function to make it easier for modules
- * to set up groups.
- *
- * It will use a given "groupid" parameter and try to use
- * that to reset the current group for the user.
- *
- * @uses VISIBLEGROUPS
- * @param course $course A {@link $COURSE} object
- * @param int $groupmode Either NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS
- * @param int $groupid Will try to use this optional parameter to
- *            reset the current group for the user
- * @return int|false Returns the current group id or false if error.
- */
-function get_and_set_current_group($course, $groupmode, $groupid=-1) {
-
-    if (!$groupmode) {   // Groups don't even apply
-        return false;
-    }
-
-    $currentgroupid = get_current_group($course->id);
-
-    if ($groupid < 0) {  // No change was specified
-        return $currentgroupid;
-    }
-
-    if ($groupid) {      // Try to change the current group to this groupid
-        if ($group = get_record('groups', 'id', $groupid, 'courseid', $course->id)) { // Exists
-            if (has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id))) {          // Sets current default group
-                $currentgroupid = set_current_group($course->id, $group->id);
-
-            } else if ($groupmode == VISIBLEGROUPS) {
-                  // All groups are visible
-                //if (ismember($group->id)){
-                    $currentgroupid = set_current_group($course->id, $group->id);//set this since he might post
-                /*)}else {
-                    $currentgroupid = $group->id;*/
-            } else if ($groupmode == SEPARATEGROUPS) { // student in separate groups switching
-                if (ismember($group->id)){//check if is a member
-                    $currentgroupid = set_current_group($course->id, $group->id); //might need to set_current_group?
-                }
-                else {
-                    echo ($group->id);
-                    notify('you do not belong to this group!',error);
-                }
-            }
-        }
-    } else {             // When groupid = 0 it means show ALL groups
-        //this is changed, non editting teacher needs access to group 0 as well, for viewing work in visible groups (need to set current group for multiple pages)
-        if (has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id)) AND ($groupmode == VISIBLEGROUPS)) {          // Sets current default group
-            $currentgroupid = set_current_group($course->id, 0);
-
-        } else if ($groupmode == VISIBLEGROUPS) {  // All groups are visible
-            $currentgroupid = 0;
-        }
-    }
-
-    return $currentgroupid;
-}
-
-
-/**
- * A big combination function to make it easier for modules
- * to set up groups.
- *
- * Terminates if the current user shouldn't be looking at this group
- * Otherwise returns the current group if there is one
- * Otherwise returns false if groups aren't relevant
- *
- * @uses SEPARATEGROUPS
- * @uses VISIBLEGROUPS
- * @param course $course A {@link $COURSE} object
- * @param int $groupmode Either NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS
- * @param string $urlroot ?
- * @return int|false
- */
-function setup_and_print_groups($course, $groupmode, $urlroot) {
-
-    global $USER, $SESSION; //needs his id, need to hack his groups in session
-
-    $changegroup = optional_param('group', -1, PARAM_INT);
-
-    $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
-    if ($currentgroup === false) {
-        return false;
-    }
-
-    if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id)) and !$currentgroup) {
-        //we are in separate groups and the current group is group 0, as last set.
-        //this can mean that either, this guy has no group
-        //or, this guy just came from a visible all forum, and he left when he set his current group to 0 (show all)
-
-        //for the second situation, we need to perform the trick and get him a group.
-        $courseid = $course->id;
-        if (!empty($USER->groupmember[$courseid])){
-            $currentgroup = get_and_set_current_group($course, $groupmode, $USER->groupmember[$courseid][0]);
-        }
-        else {//else he has no group in this course
-            print_heading(get_string('notingroup'));
-            print_footer($course);
-            exit;
-        }
-    }
-
-    if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id)))) {
-        if ($groups = get_records_menu('groups', 'courseid', $course->id, 'name ASC', 'id,name')) {
-            echo '<div align="center">';
-            print_group_menu($groups, $groupmode, $currentgroup, $urlroot);
-            echo '</div>';
-        }
-    }//added code here to allow non-editting teacher to swap in-between his own groups
-    //added code for students in separategrous to swtich groups
-    else if ($groupmode == SEPARATEGROUPS and has_capability('moodle/course:view', get_context_instance(CONTEXT_COURSE, $course->id))) {
-        $validgroups = array();
-        //get all the groups this guy is in in this course
-        if ($p = user_group($course->id,$USER->id)){
-            //extract the name and id for the group
-            foreach ($p as $index => $object){
-                $validgroups[$object->id] = $object->name;
-            }
-            echo '<div align="center">';
-            //print them in the menu
-            print_group_menu($validgroups, $groupmode, $currentgroup, $urlroot,0);
-            echo '</div>';
-        }
-    }
-
-    return $currentgroup;
-}
 
 function generate_email_processing_address($modid,$modargs) {
     global $CFG;
@@ -6451,7 +6184,8 @@ function message_popup_window() {
                 if (get_user_preferences('message_showmessagewindow', 1) == 1) {
                     if (count_records_select('message', 'useridto = \''.$USER->id.'\' AND timecreated > \''.$USER->message_lastpopup.'\'')) {
                         $USER->message_lastpopup = time();
-                        return '<script language="JavaScript" type="text/javascript">'."\n openpopup('/message/index.php', 'message', 'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0);\n</script>";
+                        return '<script type="text/javascript">'."\n//<![CDATA[\n openpopup('/message/index.php', 'message',
+                        'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0);\n//]]>\n</script>";
                     }
                 }
             }

@@ -5,13 +5,13 @@
 if (!empty($popup)) {
 ?>
 
-<script language="javascript" type="text/javascript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 
 document.write('<input type="button" value="<?php print_string('closewindow') ?>" '+
                'onclick="javascript: window.opener.location.href=\'view.php?id=<?php echo $cm->id ?>\'; '+
                'window.close();" />');
-// -->
+//]]>
 </script>
 <noscript>
 <?php print_string('closewindow'); ?>

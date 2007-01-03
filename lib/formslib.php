@@ -1126,7 +1126,7 @@ function validate_' . $this->_formName . '(frm) {
     }
 
     function getLockOptionEndScript(){
-        $js = '<script type="text/javascript" language="javascript">'."\n";
+        $js = '<script type="text/javascript">'."\n";
         $js .= '//<![CDATA['."\n";
         $js .= "var ".$this->_formName."items= {";
         foreach ($this->_dependencies as $dependentOn => $elements){

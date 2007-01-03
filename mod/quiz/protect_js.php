@@ -20,7 +20,7 @@
 
 <style media="print">body {display:none}</style>
 
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 //<![CDATA[
 
 var message = "<?php print_string('functiondisabled'); ?>";

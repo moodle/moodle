@@ -67,8 +67,8 @@ form { padding: 0px; margin: 0px; }
 font-size: small; }
 // -->
 </style>
-<script language="javascript" type="text/javascript" src="popup.js"></script>
-<script language="javascript" type="text/javascript">
+<script type="text/javascript" src="popup.js"></script>
+<script type="text/javascript">
 //<![CDATA[
 function Init() {
   __dlg_init();
@@ -122,7 +122,7 @@ function cancel() {
       <tr valign="top">
         <td>
 
-       <script language="javascript" type="text/javascript">
+       <script type="text/javascript">
        //<![CDATA[
        document.write(tab(7,32))
        //]]>
