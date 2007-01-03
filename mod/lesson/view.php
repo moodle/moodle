@@ -323,7 +323,6 @@
             }
         }
     }
-    
     if ($pageid != LESSON_EOL) {
         /// This is the code updates the lessontime for a timed test
         if ($startlastseen = optional_param('startlastseen', '', PARAM_ALPHA)) {  /// this deletes old records  not totally sure if this is necessary anymore
@@ -539,6 +538,7 @@
             $options = new stdClass;
             $options->para = false; // no <p></p>
             $options->noclean = true;
+            // echo "qtype is $page->qtype"; // debug
             switch ($page->qtype) {
                 case LESSON_SHORTANSWER :
                 case LESSON_NUMERICAL :
@@ -549,7 +549,7 @@
                     }       
                     echo '<tr><td align="center"><label for="answer">'.get_string('youranswer', 'lesson').'</label>'.
                         ": <input type=\"text\" id=\"answer\" name=\"answer\" size=\"50\" maxlength=\"200\" $value />\n";
-                    echo '</table>';
+                    echo '</td></tr></table>';
                     print_simple_box_end();
                     lesson_print_submit_link(get_string('pleaseenteryouranswerinthebox', 'lesson'), 'answerform');
                     break;
@@ -630,14 +630,15 @@
                             $responses[] = trim($answer->response);
                         }
                     }
-                    shuffle($responses);
-                    $responses = array_unique($responses);
                     
                     $responseoptions = array();
-                    foreach ($responses as $response) {
-                        $responseoptions[htmlspecialchars(trim($response))] = $response;
+                    if (!empty($responses)) {
+                        shuffle($responses);
+                        $responses = array_unique($responses);                     
+                        foreach ($responses as $response) {
+                            $responseoptions[htmlspecialchars(trim($response))] = $response;
+                        }
                     }
-                    
                     if (isset($USER->modattempts[$lesson->id])) {
                         $useranswers = explode(',', $attempt->useranswer);
                         $t = 0;
@@ -662,12 +663,11 @@
                             } 
                         }
                     }
-                    echo '</table></table>';
+                    echo '</table></td></tr></table>';
                     print_simple_box_end();
                     lesson_print_submit_link(get_string('pleasematchtheabovepairs', 'lesson'), 'answerform');
                     break;
-                case LESSON_BRANCHTABLE :
-                    echo '</form>';
+                case LESSON_BRANCHTABLE :                  
                     $options = new stdClass;
                     $options->para = false;
                     $buttons = array('next' => array(), 'prev' => array(), 'other' => array());
@@ -733,12 +733,16 @@
                     } else {
                         $value = "";
                     }
-                    echo '<tr><td align="center" valign="top" nowrap><label for="answer">'.get_string("youranswer", "lesson").'</label>:</td><td>'.
+                    echo '<tr><td align="center" valign="top" nowrap="nowrap"><label for="answer">'.get_string("youranswer", "lesson").'</label>:</td><td>'.
                          '<textarea id="answer" name="answer" rows="15" cols="60">'.$value."</textarea>\n";
                     echo '</td></tr></table>';
                     print_simple_box_end();
                     lesson_print_submit_link(get_string('pleaseenteryouranswerinthebox', 'lesson'), 'answerform');
                     break;
+                default: // close the tags MDL-7861
+                    echo ('</table>');
+                    print_simple_box_end();
+                break;
             }
             echo "</form>\n"; 
         } else {

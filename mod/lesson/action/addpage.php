@@ -138,7 +138,7 @@
                     echo "</td></tr>\n";
                 }
                 if ($i == 2) {
-                    echo "<tr><td><B>".get_string("correctanswerjump", "lesson").":</b> \n";
+                    echo "<tr><td><b>".get_string("correctanswerjump", "lesson").":</b> \n";
                     choose_from_menu($jump, "jumpto[$i]", LESSON_NEXTPAGE, "");
                     helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                     if($lesson->custom) {
@@ -146,7 +146,7 @@
                     }
                     echo "</td></tr>\n";
                 } elseif ($i == 3) {
-                    echo "<tr><td><B>".get_string("wronganswerjump", "lesson").":</b> \n";
+                    echo "<tr><td><b>".get_string("wronganswerjump", "lesson").":</b> \n";
                     choose_from_menu($jump, "jumpto[$i]", 0, "");
                     helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                     if($lesson->custom) {
