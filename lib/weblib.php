@@ -2353,7 +2353,7 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
         }
     } else {
         $course = get_site();  // Set course as site course by default
-        $homelink = '<div class="homelink"><a'.$target.'" href="'.$CFG->wwwroot.'/">'.get_string('home').'</a></div>';
+        $homelink = '<div class="homelink"><a'.$target.' href="'.$CFG->wwwroot.'/">'.get_string('home').'</a></div>';
         $home  = false;
     }
 
