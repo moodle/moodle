@@ -73,12 +73,14 @@ function inserttext(text) {
 }
 <?php if (!empty($focus)) {
     if(($pos = strpos($focus, '.')) !== false) {
+        //old style focus using form name - no allowed inXHTML Strict
         $topelement = substr($focus, 0, $pos);
+        echo "function setfocus() { if(document.$topelement) document.$focus.focus(); }\n";
+    } else {
+        //focus element with given id
+        echo "function setfocus() { if(el = document.getElementById('$focus')) el.focus(); }\n";
     }
-    else {
-        $topelement = $focus;
-    }
-    echo "function setfocus() { if(document.$topelement) document.$focus.focus(); }\n"; } ?>
+} ?>
 
 //]]>
 </script>

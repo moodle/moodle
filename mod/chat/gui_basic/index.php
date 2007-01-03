@@ -95,7 +95,7 @@
     }
 
 
-    print_header("$strchat: $course->shortname: ".format_string($chat->name,true)."$groupname");
+    print_header("$strchat: $course->shortname: ".format_string($chat->name,true)."$groupname", '', '', 'message');
 
     echo '<div id="mod-chat-gui_basic">';
     echo '<h1>'.get_string('participants').'</h1>';
@@ -115,17 +115,17 @@
     }
     echo '</ul></div>';
     echo '<div id="send">';
-    echo '<form name="editing" method="post" action="index.php">';
-    echo '<input type="hidden" name="id" value="'.$id.'" />';
-    echo '<input type="hidden" name="groupid" value="'.$groupid.'" />';
-    echo '<input type="hidden" name="last" value="'.time().'" />';
-    echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+    echo '<form id="editing" method="post" action="index.php">';
 
     $usehtmleditor = can_use_html_editor();
     echo '<h1><label for="message">'.get_string('sendmessage', 'message').'</label></h1>';
     echo '<div>';
     echo '<input type="text" id="message" name="message" value="'.s($refreshedmessage, true).'" size="60" />';
     echo '</div><div>';
+    echo '<input type="hidden" name="id" value="'.$id.'" />';
+    echo '<input type="hidden" name="groupid" value="'.$groupid.'" />';
+    echo '<input type="hidden" name="last" value="'.time().'" />';
+    echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     echo '<input type="submit" value="'.get_string('submit').'" />&nbsp;';
     echo '<input type="submit" name="refresh" value="'.get_string('refresh').'" />';
     echo '<input type="checkbox" name="newonly" id="newonly" '.($newonly?'checked="checked" ':'').'/><label for="newonly">'.get_string('newonlymsg', 'message').'</label>';

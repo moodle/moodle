@@ -256,9 +256,9 @@
     }
     
     if (!empty($frm->username)) {
-        $focus = "login.password";
+        $focus = "password";
     } else {
-        $focus = "login.username";
+        $focus = "username";
     }
     
     if (isset($CFG->auth_instructions)) {

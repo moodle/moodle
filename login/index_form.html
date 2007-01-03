@@ -22,7 +22,7 @@
         }
         ?><br /><?php formerr($errormsg) ?>
       </p>
-      <form action="index.php" method="post" name="login" id="login">
+      <form action="index.php" method="post" id="login">
         <table border="0" align="center">
         <tr>
           <td width="80%">
@@ -32,7 +32,7 @@
                   <label for="username"><?php print_string("username") ?></label>
                 </td>
                 <td class="c1">
-                  <input type="text" name="username" id="username" size="15" value="<?php p($frm->username) ?>" alt="<?php print_string("username") ?>" /> 
+                  <input type="text" name="username" id="username" size="15" value="<?php p($frm->username) ?>" /> 
                 </td>
               </tr>
               <tr class="password"> 
@@ -40,7 +40,7 @@
                   <label for="password"><?php print_string("password") ?></label>
                 </td>
                 <td class="c1">
-                  <input type="password" name="password" id="password" size="15" value="" alt="<?php print_string("password") ?>" />
+                  <input type="password" name="password" id="password" size="15" value="" />
                 </td>
               </tr>
             </table>
@@ -56,11 +56,13 @@
 <?php if ($CFG->guestloginbutton) {  ?>
       <hr width="80%" />
       <p><?php print_string("someallowguest") ?>:</p>
-        <form action="index.php" method="post" name="guestlogin">
+        <form action="index.php" method="post" id="guestlogin">
+         <div>
           <input type="hidden" name="username" value="guest" />
           <input type="hidden" name="password" value="guest" />
           <input type="hidden" name="testcookies" value="1" />
           <input type="submit" value="<?php print_string("loginguest") ?>" />
+         </div>
         </form>
 <?php } ?>
 
@@ -70,9 +72,11 @@
 ?>
       <hr width="80%" />
       <p><?php print_string("forgotten") ?></p> 
-        <form action="forgot_password.php" method="post" name="changepassword">
+        <form action="forgot_password.php" method="post" id="changepassword">
+         <div>
           <input type="hidden" name="sesskey" value="<?php echo $sesskey; ?>" />
           <input type="submit" value="<?php p($changebuttonname) ?>" />
+         </div>
         </form>
     </td>
 
@@ -83,8 +87,8 @@
                  print_string("loginsteps", "", "signup.php");
 ?>
                  <div align="center">
-                   <form action="signup.php" method="get" name="signup">
-                   <input type="submit" value="<?php print_string("startsignup") ?>" />
+                   <form action="signup.php" method="get" id="signup">
+                   <div><input type="submit" value="<?php print_string("startsignup") ?>" /></div>
                    </form>
                  </div>
 <?php            break;
@@ -99,7 +103,7 @@
                  if (!empty($CFG->auth_user_create) and function_exists('auth_user_create') ){
 ?>
                  <div align="center">
-                    <form action="signup.php" method="get" name="signup">
+                    <form action="signup.php" method="get" id="signup">
                     <input type="submit" value="<?php print_string("startsignup") ?>" />
                     </form>
                  </div>

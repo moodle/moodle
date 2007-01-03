@@ -120,7 +120,7 @@
     $userfullname = fullname($user);
     $mefullname   = fullname($USER);
 
-    print_header(get_string('discussion', 'message').': '.fullname($user));
+    print_header(get_string('discussion', 'message').': '.fullname($user), '', '', 'edit-message');
     echo '<div class="message-discussion-noframes">';
     echo '<div id="userinfo">';
     echo print_user_picture($user->id, SITEID, $user->picture, 48, true, true, 'userwindow');
@@ -155,12 +155,7 @@
     echo '</div>'; // class="userinfo"
 
     echo '<div id="send">';
-    echo '<form name="editing" method="post" action="discussion.php">';
-    echo '<input type="hidden" name="id" value="'.$user->id.'" />';
-    echo '<input type="hidden" name="start" value="'.$start.'" />';
-    echo '<input type="hidden" name="noframesjs" value="'.$noframesjs.'" />';
-    echo '<input type="hidden" name="last" value="'.time().'" />';
-    echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+    echo '<form id="editing" method="post" action="discussion.php">';
 
     $usehtmleditor = (can_use_html_editor() && get_user_preferences('message_usehtmleditor', 0));
     echo '<h1><label for="edit-message">'.get_string('sendmessage', 'message').'</label></h1>';
@@ -174,6 +169,11 @@
         echo '<input type="hidden" name="format" value="'.FORMAT_MOODLE.'" />';
     }
     echo '</div><div>';
+    echo '<input type="hidden" name="id" value="'.$user->id.'" />';
+    echo '<input type="hidden" name="start" value="'.$start.'" />';
+    echo '<input type="hidden" name="noframesjs" value="'.$noframesjs.'" />';
+    echo '<input type="hidden" name="last" value="'.time().'" />';
+    echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     echo '<input type="submit" value="'.get_string('sendmessage', 'message').'" />&nbsp;';
     echo '<input type="submit" name="refresh" value="'.get_string('refresh').'" />';
     echo '<input type="checkbox" name="newonly" id="newonly" '.($newonly?'checked="checked" ':'').'/><label for="newonly">'.get_string('newonlymsg', 'message').'</label>';
@@ -207,8 +207,6 @@
             }
 
             $printmessage = format_text($message->message, $message->format, $options, 0);
-            $printmessage = str_replace("\r", ' ', $printmessage);
-            $printmessage = str_replace("\n", ' ', $printmessage);
             $printmessage = '<div class="message other"><span class="author">'.$fullname.'</span> '.
                 '<span class="time">['.$time.']</span>: '.
                 '<span class="content">'.$printmessage.'</span></div>';
@@ -227,8 +225,6 @@
             $time = userdate($message->timecreated, get_string('strftimedaytime'));
 
             $printmessage = format_text($message->message, $message->format, $options, 0);
-            $printmessage = str_replace("\r", ' ', $printmessage);
-            $printmessage = str_replace("\n", ' ', $printmessage);
             $printmessage = '<div class="message other"><span class="author">'.$mefullname.'</span> '.
                 '<span class="time">['.$time.']</span>: '.
                 '<span class="content">'.$printmessage.'</span></div>';
@@ -247,8 +243,6 @@
             $time = userdate($message->timecreated, get_string('strftimedaytime'));
 
             $printmessage = format_text($message->message, $message->format, $options, 0);
-            $printmessage = str_replace("\r", ' ', $printmessage);
-            $printmessage = str_replace("\n", ' ', $printmessage);
             $printmessage = '<div class="message other"><span class="author">'.$userfullname.'</span> '.
                 '<span class="time">['.$time.']</span>: '.
                 '<span class="content">'.$printmessage.'</span></div>';
