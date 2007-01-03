@@ -2205,9 +2205,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     $output = ob_get_contents();
     ob_end_clean();
 
-    if (debugging(NULL, DEBUG_DEVELOPER)) {   // In developer debugging mode, convert page to XHTML strict
-        $output = debug_header($output);
-    }
+    $output = force_strict_header($output);
 
     if (!empty($CFG->messaging)) {
         $output .= message_popup_window();
@@ -2227,12 +2225,12 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
  *     See:  http://tracker.moodle.org/browse/MDL-7883
  * TODO:
  */
-function debug_header($output) {
+function force_strict_header($output) {
     global $CFG;
     $strict = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
     $xsl = '/lib/xhtml.xsl';
 
-    if (!headers_sent()) {
+    if (!headers_sent() && debugging(NULL, DEBUG_DEVELOPER)) {   // In developer debugging, the browser will barf
         $ctype = 'Content-Type: ';
         $prolog= "<?xml version='1.0' encoding='utf-8'?>\n";
 
@@ -2265,6 +2263,12 @@ function debug_header($output) {
             $output .= "__ TEST: XML well-formed error < __\n";
         }
     }
+
+    if (debugging()) {                                          // In any other debugging mode > NONE, strict is on
+        // Substitute document-type, s (PCRE_DOTALL)
+        $output = preg_replace('/(<!DOCTYPE.+?>)/s', $strict, $output);
+    }
+
     return $output;
 }
 
