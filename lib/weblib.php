@@ -2264,10 +2264,7 @@ function force_strict_header($output) {
         }
     }
 
-    if (debugging()) {                                          // In any other debugging mode > NONE, strict is on
-        // Substitute document-type, s (PCRE_DOTALL)
-        $output = preg_replace('/(<!DOCTYPE.+?>)/s', $strict, $output);
-    }
+    $output = preg_replace('/(<!DOCTYPE.+?>)/s', $strict, $output);   // Always change the DOCTYPE to Strict 1.0
 
     return $output;
 }
