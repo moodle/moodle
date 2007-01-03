@@ -33,8 +33,8 @@
     echo '<center><form action="timezone.php" method="get">';
     echo "$strusers ($strall): ";
     choose_from_menu ($timezones, "zone", 99, get_string("serverlocaltime"), "", "99");
-    echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
-    echo "<input type=\"submit\" value=\"$strsavechanges\">";
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
+    echo "<input type=\"submit\" value=\"$strsavechanges\" />";
     echo "</form></center>";
 
     print_footer();

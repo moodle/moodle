@@ -39,9 +39,9 @@
     if (file_exists($filename)) {   // We are in maintenance mode
         echo '<center>';
         echo '<form action="maintenance.php" method="post">';
-        echo '<input type="hidden" name="action" value="disable">';
-        echo '<input type="hidden" name="sesskey" value="'.sesskey().'">';
-        echo '<p><input type="submit" value="'.get_string('disable').'"></p>';
+        echo '<input type="hidden" name="action" value="disable" />';
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+        echo '<p><input type="submit" value="'.get_string('disable').'" /></p>';
         echo '</form>';
         echo '</center>';
     } else {                        // We are not in maintenance mode
@@ -49,9 +49,9 @@
 
         echo '<center>';
         echo '<form action="maintenance.php" method="post">';
-        echo '<input type="hidden" name="action" value="enable">';
-        echo '<input type="hidden" name="sesskey" value="'.sesskey().'">';
-        echo '<p><input type="submit" value="'.get_string('enable').'"></p>';
+        echo '<input type="hidden" name="action" value="enable" />';
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+        echo '<p><input type="submit" value="'.get_string('enable').'" /></p>';
         echo '<p>'.get_string('optionalmaintenancemessage', 'admin').':</p>';
         echo '<table><tr><td>';
         print_textarea($usehtmleditor, 20, 50, 600, 400, "text");
