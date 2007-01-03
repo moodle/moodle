@@ -964,7 +964,7 @@ function popup_form($common, $options, $formid, $selected='', $nothing='choose',
                         ' id="'.$formid.'"'.
                         ' class="popupform">';
 
-    $output = '<div><select name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\''.$formid.'\').jump.options[document.getElementById(\''.$form.'\').jump.selectedIndex].value;">'."\n";
+    $output = '<div><select name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\''.$formid.'\').jump.options[document.getElementById(\''.$formid.'\').jump.selectedIndex].value;">'."\n";
 
     if ($nothing != '') {
         $output .= "   <option value=\"javascript:void(0)\">$nothing</option>\n";
