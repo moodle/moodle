@@ -255,6 +255,15 @@ global $HTTPSPAGEREQUIRED;
     unset($originaldatabasedebug);
     error_reporting($CFG->debug);
 
+
+/// If we want to display Moodle errors, then try and set PHP errors to match
+    if (empty($CFG->debugdisplay)) {
+        @ini_set('display_errors', '0');
+        @ini_set('log_errors', '1');
+    } else {
+        @ini_set('display_errors', '1');
+    }
+
 /// Shared-Memory cache init -- will set $MCACHE
 /// $MCACHE is a global object that offers at least add(), set() and delete()
 /// with similar semantics to the memcached PHP API http://php.net/memcache
