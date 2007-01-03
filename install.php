@@ -576,7 +576,7 @@ if (isset($_GET['help'])) {
             <?php /// Exceptionaly, depending of the DB selected, we show some different text
                   /// from the standard one to show better instructions for each DB
                 if ($nextstage == DATABASE) {
-                    echo '<script language="JavaScript" type="text/javascript" defer="defer">window.onload=toggledbinfo;</script>';
+                    echo '<script type="text/javascript" defer="defer">window.onload=toggledbinfo;</script>';
                     echo '<div id="mysql" name="mysql">' . get_string('databasesettingssub_mysql', 'install') . '</div>';
 
                     echo '<div id="postgres7" name="postgres7">' . get_string('databasesettingssub_postgres7', 'install') . '</div>';
@@ -1193,7 +1193,7 @@ function css_styles() {
 function database_js() {
 ?>
 
-<script language="JavaScript" type="text/javascript" defer="defer">
+<script type="text/javascript" defer="defer">
 function toggledbinfo() {
     //Calculate selected value
     var showid = 'mysql';

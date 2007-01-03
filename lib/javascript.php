@@ -5,25 +5,25 @@
         die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
     }
 
-    if(!empty($CFG->aspellpath)) {      // Enable global access to spelling feature.
-        echo '<script language="JavaScript" type="text/javascript" src="'.$CFG->httpswwwroot.'/lib/speller/spellChecker.js"></script>'."\n";
+    if (!empty($CFG->aspellpath)) {      // Enable global access to spelling feature.
+        echo '<script type="text/javascript" src="'.$CFG->httpswwwroot.'/lib/speller/spellChecker.js"></script>'."\n";
     }
 
-    if ( !empty($CFG->editorsrc) ) {
+    if (!empty($CFG->editorsrc) ) {
         foreach ( $CFG->editorsrc as $scriptsource ) {
-            echo '<script language="javascript" type="text/javascript" src="'. $scriptsource .'"></script>'."\n";
+            echo '<script type="text/javascript" src="'. $scriptsource .'"></script>'."\n";
         }
     }
 
 ?>
 <!--<style type="text/css">/*<![CDATA[*/ body{behavior:url(<?php echo $CFG->httpswwwroot ?>/lib/csshover.htc);} /*]]>*/</style>-->
 
-<script language="JavaScript" type="text/javascript" src="<?php echo $CFG->httpswwwroot ?>/lib/javascript-static.js"></script>
-<script language="JavaScript" type="text/javascript" src="<?php echo $CFG->httpswwwroot ?>/lib/javascript-mod.php"></script>
-<script language="JavaScript" type="text/javascript" src="<?php echo $CFG->httpswwwroot ?>/lib/overlib.js"></script>
-<script language="JavaScript" type="text/javascript" src="<?php echo $CFG->httpswwwroot ?>/lib/cookies.js"></script>
+<script type="text/javascript" src="<?php echo $CFG->httpswwwroot ?>/lib/javascript-static.js"></script>
+<script type="text/javascript" src="<?php echo $CFG->httpswwwroot ?>/lib/javascript-mod.php"></script>
+<script type="text/javascript" src="<?php echo $CFG->httpswwwroot ?>/lib/overlib.js"></script>
+<script type="text/javascript" src="<?php echo $CFG->httpswwwroot ?>/lib/cookies.js"></script>
 
-<script language="JavaScript" type="text/javascript" defer="defer">
+<script type="text/javascript" defer="defer">
 
 //<![CDATA[
 
