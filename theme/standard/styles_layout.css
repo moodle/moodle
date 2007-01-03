@@ -281,6 +281,10 @@ form.popupform {
   overflow:hidden;
 }
 
+.groupmanagementtable td {
+  vertical-align: top;
+}
+
 /*Accessibility: text 'seen' by screen readers but not visual users. Fixed for RTL languages, example Farsi. */
 .accesshide {
   position:absolute;
