@@ -919,7 +919,7 @@ function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $retur
  * @uses $CFG
  * @param string $common  The URL up to the point of the variable that changes
  * @param array $options  Alist of value-label pairs for the popup list
- * @param string $formname Name must be unique on the page
+ * @param string $formid Id must be unique on the page (originaly $formname)
  * @param string $selected The option that is already selected
  * @param string $nothing The label for the "no choice" option
  * @param string $help The name of a help page if help is required
@@ -930,7 +930,7 @@ function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $retur
  * @return string If $return is true then the entire form is returned as a string.
  * @todo Finish documenting this function<br>
  */
-function popup_form($common, $options, $formname, $selected='', $nothing='choose', $help='', $helptext='', $return=false, $targetwindow='self') {
+function popup_form($common, $options, $formid, $selected='', $nothing='choose', $help='', $helptext='', $return=false, $targetwindow='self') {
 
     global $CFG;
     static $go, $choose;   /// Locally cached, in case there's lots on a page
@@ -955,11 +955,10 @@ function popup_form($common, $options, $formname, $selected='', $nothing='choose
     $startoutput = '<form action="'.$CFG->wwwroot.'/course/jumpto.php"'.
                         ' method="get"'.
                         ' target="'.$CFG->framename.'"'.
-                        ' name="'.$formname.'"'.
-                        ' id="'.$formname.'"'.
+                        ' id="'.$formid.'"'.
                         ' class="popupform">';
 
-    $output = '<select name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\''.$formname.'\').jump.options[document.getElementById(\''.$formname.'\').jump.selectedIndex].value;">'."\n";
+    $output = '<div><select name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\''.$formid.'\').jump.options[document.getElementById(\''.$form.'\').jump.selectedIndex].value;">'."\n";
 
     if ($nothing != '') {
         $output .= "   <option value=\"javascript:void(0)\">$nothing</option>\n";
@@ -1033,11 +1032,12 @@ function popup_form($common, $options, $formname, $selected='', $nothing='choose
 
     $output .= '</select>';
     $output .= '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    $output .= '<div id="noscript'.$formname.'" style="display: inline;">';
+    $output .= '</div>';
+    $output .= '<div id="noscript'.$formid.'" style="display: inline;">';
     $output .= '<input type="submit" value="'.$go.'" /></div>';
     $output .= '<script type="text/javascript">'.
                "\n//<![CDATA[\n".
-               'document.getElementById("noscript'.$formname.'").style.display = "none";'.
+               'document.getElementById("noscript'.$formid.'").style.display = "none";'.
                "\n//]]>\n".'</script>';
     $output .= '</form>' . "\n";
 
