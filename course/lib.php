@@ -1383,7 +1383,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
                 } else { // Normal activity
                 
-                    if ($USER->screenreader) {
+                    if (!empty($USER->screenreader)) {
                         $typestring = '('.get_string('modulename',$mod->modname).') ';
                     } else {
                         $typestring = '';

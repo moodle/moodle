@@ -200,7 +200,7 @@ class embedded_cloze_qtype extends default_questiontype {
         
         // adding an icon with alt to warn user this is a fill in the gap question
         // MDL-7497
-        if ($USER->screenreader) {
+        if (!empty($USER->screenreader)) {
             echo "<img src=\"$CFG->wwwroot/question/type/$question->qtype/icon.gif\" ".
                 "height=\"16\" width=\"16\" alt=\"".get_string('clozeaid','qtype_multichoice')."\" />  ";
         }
@@ -291,7 +291,7 @@ class embedded_cloze_qtype extends default_questiontype {
                 case 'numerical':
                     echo " <input $style $readonly $popup name=\"$inputname\"
                             type=\"text\" value=\"".s($response)."\" size=\"12\" /> ";
-                    if (!empty($feedback) && $USER->screenreader) {
+                    if (!empty($feedback) && !empty($USER->screenreader)) {
                         echo "<img src=\"$CFG->pixpath/i/feedback.gif\" alt=\"$feedback\" />";
                     }
                     echo $feedbackimg;
@@ -314,7 +314,7 @@ class embedded_cloze_qtype extends default_questiontype {
                     echo "<span $style><select $popup $readonly $style name=\"$inputname\">";
                     echo $outputoptions;
                     echo '</select></span>';
-                    if (!empty($feedback) && $USER->screenreader) {
+                    if (!empty($feedback) && !empty($USER->screenreader)) {
                         echo "<img src=\"$CFG->pixpath/i/feedback.gif\" alt=\"$feedback\" />";
                     }
                     echo $feedbackimg;

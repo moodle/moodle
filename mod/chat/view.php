@@ -106,7 +106,7 @@
         print_simple_box_start('center');
         // users with screenreader set, will only see 1 link, to the manual refresh page
         // for better accessibility
-        if ($USER->screenreader) {
+        if (!empty($USER->screenreader)) {
             $chattarget = "/mod/chat/gui_basic/index.php?id=$chat->id$groupparam";
         } else {
             $chattarget = "/mod/chat/gui_$CFG->chat_method/index.php?id=$chat->id$groupparam"; 
@@ -117,7 +117,7 @@
         print_simple_box_end();
         
         // if user is using screen reader, then there is no need to display this link again
-        if ($CFG->chat_method == 'header_js' && !$USER->screenreader) {
+        if ($CFG->chat_method == 'header_js' && empty($USER->screenreader)) {
             // show frame/js-less alternative
             print_simple_box_start('center');
             link_to_popup_window ("/mod/chat/gui_basic/index.php?id=$chat->id$groupparam",

@@ -333,7 +333,7 @@ function display() {
 
     /// Now check whether we need to display a frameset
 
-    if (empty($_GET['frameset']) and !$embedded and !$inpopup and $resource->options == "frame" and !$USER->screenreader) {
+    if (empty($_GET['frameset']) and !$embedded and !$inpopup and $resource->options == "frame" and empty($USER->screenreader)) {
         echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
         echo "<html dir=\"ltr\">\n";
         echo '<head>';
