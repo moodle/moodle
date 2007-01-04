@@ -3131,7 +3131,7 @@ function print_user_picture($userid, $courseid, $picture, $size=0, $return=false
         }
     } else {         // Print default user pictures (use theme version if available)
         $class .= " defaultuserpic";
-        $src =  "$CFG->pixpath/u/$file.png\"";
+        $src =  "$CFG->pixpath/u/$file.png";
     }
     if (!$alttext) {
         $imagealt = '';
@@ -3143,8 +3143,7 @@ function print_user_picture($userid, $courseid, $picture, $size=0, $return=false
         }
     }
 
-    $output .= "<img class=\"$class\" align=\"middle\" src=\"$src".
-                   " border=\"0\" width=\"$size\" height=\"$size\" alt=\"".s($imagealt)."\" />";
+    $output .= '<img class="'.$class.'" src="'.$src.'" alt="'.s($imagealt).'" />';
     if ($link) {
         $output .= '</a>';
     }
