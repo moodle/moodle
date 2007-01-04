@@ -199,12 +199,12 @@ if ($authsequence[0] == 'cas' and !empty($CFG->cas_enabled)) {
             if (method_exists($userauth, 'password_expire') and !empty($userauth->config->expiration) and $userauth->config->expiration == 1) {
                     $days2expire = $userauth->password_expire($USER->username);
                     if (intval($days2expire) > 0 && intval($days2expire) < intval($CFG->{$USER->auth.'_expiration_warning'})) {
-                        print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>"); 
+                        print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div style=\"text-align:right\">$langmenu</div>"); 
                         notice_yesno(get_string('auth_passwordwillexpire', 'auth', $days2expire), $passwordchangeurl, $urltogo); 
                         print_footer();
                         exit;
                     } elseif (intval($days2expire) < 0 ) {
-                        print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>"); 
+                        print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div style=\"text-align:right\">$langmenu</div>"); 
                         notice_yesno(get_string('auth_passwordisexpired', 'auth'), $passwordchangeurl, $urltogo);
                         print_footer();
                         exit;
@@ -281,7 +281,7 @@ if ($authsequence[0] == "email" or $authsequence[0] == "none" or !empty($CFG->au
     }
 
     print_header("$site->fullname: $loginsite", $site->fullname, $loginsite, $focus, 
-                 '', true, '<div class="langmenu" align="right">'.$langmenu.'</div>'); 
+                 '', true, '<div class="langmenu" style="text-align:right">'.$langmenu.'</div>'); 
 
     include("index_form.html");
 

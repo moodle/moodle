@@ -86,7 +86,7 @@
               case "email":
                  print_string("loginsteps", "", "signup.php");
 ?>
-                 <div align="center">
+                 <div style="text-align:center">
                    <form action="signup.php" method="get" id="signup">
                    <div><input type="submit" value="<?php print_string("startsignup") ?>" /></div>
                    </form>
@@ -105,9 +105,9 @@
                  $authplugin = get_auth_plugin($CFG->auth);
                  if (!empty($CFG->auth_user_create) and method_exists($authplugin, 'user_create') ){
 ?>
-                 <div align="center">
+                 <div style="text-align:center">
                     <form action="signup.php" method="get" id="signup">
-                    <input type="submit" value="<?php print_string("startsignup") ?>" />
+                    <div><input type="submit" value="<?php print_string("startsignup") ?>" /></div>
                     </form>
                  </div>
 <?php            }
@@ -117,3 +117,4 @@
 <?php } ?>
 </tr>
 </table>
+</div>
