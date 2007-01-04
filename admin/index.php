@@ -439,7 +439,7 @@
         $guest->lastname    = " ";
         $guest->email       = "root@localhost";
         $guest->description = addslashes(get_string("guestuserinfo"));
-        $guest->mnethostid   = $CFG->mnet_localhost_id;
+        $guest->mnethostid  = $CFG->mnet_localhost_id;
         $guest->confirmed   = 1;
         $guest->lang        = $CFG->lang;
         $guest->timemodified= time();

@@ -152,6 +152,7 @@ function mnet_sign_message($message) {
         </Signature>
         <object ID="XMLRPC-MSG">'.base64_encode($message).'</object>
         <wwwroot>'.$MNET->wwwroot.'</wwwroot>
+        <timestamp>'.time().'</timestamp>
     </signedMessage>';
     return $message;
 }
@@ -274,37 +275,48 @@ function mnet_generate_keypair($dn = null) {
     $break = strpos($host.'/' , '/');
     $host   = substr($host, 0, $break);
 
-    if ($result = get_record_select('course'," id ='1' ")) {
+    if ($result = get_record_select('course'," id ='".SITEID."' ")) {
         $organization = $result->fullname;
     } else {
         $organization = 'None';
     }
 
     $keypair = array();
-    // TODO: fix this with a redirect, form, etc.
+
+    $country  = 'NZ';
+    $province = 'Wellington';
+    $locality = 'Wellington';
+    $email    = $CFG->noreplyaddress;
+
+    if(!empty($USER->country)) {
+        $country  = $USER->country;
+    }
+    if(!empty($USER->city)) {
+        $province = $USER->city;
+        $locality = $USER->city;
+    }
+    if(!empty($USER->email)) {
+        $email    = $USER->email;
+    }
 
     if (is_null($dn)) {
         $dn = array(
-           "countryName" => 'NZ',
-           "stateOrProvinceName" => 'Wellington',
-           "localityName" => 'Wellington',
+           "countryName" => $country,
+           "stateOrProvinceName" => $province,
+           "localityName" => $locality,
            "organizationName" => $organization,
            "organizationalUnitName" => 'Moodle',
            "commonName" => $CFG->wwwroot,
-           "emailAddress" => $CFG->noreplyaddress
+           "emailAddress" => $email
         );
     }
 
     $new_key = openssl_pkey_new();
     $csr_rsc = openssl_csr_new($dn, $new_key, array('private_key_bits',2048));
     $selfSignedCert = openssl_csr_sign($csr_rsc, null, $new_key, 365);
-
-    // You'll want to keep your certificate signing request, so we'll
-    // export that to a property - csr_txt.
-    openssl_csr_export($csr_rsc, $csr_txt);
     unset($csr_rsc); // Free up the resource
 
-    // We export our self-signed certificate to a string as well.
+    // We export our self-signed certificate to a string.
     openssl_x509_export($selfSignedCert, $keypair['certificate']);
     openssl_x509_free($selfSignedCert);
 

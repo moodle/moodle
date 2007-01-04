@@ -22,8 +22,6 @@
         error('PHP Curl library is not installed');
     }
 
-    $keypair = unserialize($CFG->openssl);
-
     if (!isset($CFG->mnet_dispatcher_mode)) set_config('mnet_dispatcher_mode', 'off');
 
 /// If data submitted, process and store
