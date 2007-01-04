@@ -6,7 +6,7 @@
  *
  * @copyright &copy; 2006 The Open University
  * @author J.White AT open.ac.uk
- * @author N.D.Freear@open.ac.uk
+ * @author N.D.Freear AT open.ac.uk
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package groups
  */
@@ -96,15 +96,15 @@ function groups_create_database_tables() {
 
         $creategroupingstablesql = "CREATE TABLE `{$CFG->prefix}groups_groupings` (
                             `id` int(10) unsigned NOT NULL auto_increment,
-                            `name` varchar(254) collate latin1_general_ci NOT NULL default '',
-                            `description` text collate latin1_general_ci NOT NULL,
-                            `timecreated` int(10) unsigned NOT NULL default '0',
-                            `viewowngroup` binary(1) NOT NULL,
-                            `viewallgroupsmembers` binary(1) NOT NULL,
-                            `viewallgroupsactivities` binary(1) NOT NULL,
-                            `teachersgroupmark` binary(1) NOT NULL,
-                            `teachersgroupview` binary(1) NOT NULL,
-                            `teachersoverride` binary(1) NOT NULL,
+                            `name` varchar(254) collate latin1_general_ci NOT NULL,
+                            `description` text collate latin1_general_ci NOT NULL default '',
+                            `timecreated` int(10) unsigned NOT NULL default 0,
+                            `viewowngroup` binary(1) NOT NULL default 1,
+                            `viewallgroupsmembers` binary(1) NOT NULL default 0,
+                            `viewallgroupsactivities` binary(1) NOT NULL default 0,
+                            `teachersgroupmark` binary(1) NOT NULL default 0,
+                            `teachersgroupview` binary(1) NOT NULL default 0,
+                            `teachersoverride` binary(1) NOT NULL default 0,
                             PRIMARY KEY  (`id`),
                             UNIQUE KEY `id` (`id`)
                           ) ";
@@ -132,7 +132,7 @@ function groups_create_database_tables() {
 
         $creategroupstablesql = "CREATE TABLE {$CFG->prefix}groups_groups (
                             id SERIAL PRIMARY KEY,
-                            name varchar(255) NOT NULL default '',
+                            name varchar(255) NOT NULL,
                             description text NOT NULL default '',
                             enrolmentkey varchar(50) NOT NULL default '',
                             lang varchar(10) NOT NULL default 'en',
@@ -165,15 +165,15 @@ function groups_create_database_tables() {
                                       
         $creategroupingstablesql = "CREATE TABLE {$CFG->prefix}groups_groupings (
                             id SERIAL PRIMARY KEY,
-                            name varchar(254) NOT NULL default '',
-                            description text NOT NULL,
-                            timecreated integer NOT NULL default '0',
-                            viewowngroup integer NOT NULL,
-                            viewallgroupsmembers integer NOT NULL,
-                            viewallgroupsactivities integer NOT NULL,
-                            teachersgroupmark integer NOT NULL,
-                            teachersgroupview integer NOT NULL,
-                            teachersoverride integer NOT NULL
+                            name varchar(254) NOT NULL default,
+                            description text NOT NULL default '',
+                            timecreated integer NOT NULL default 0,
+                            viewowngroup integer NOT NULL default 1,
+                            viewallgroupsmembers integer NOT NULL default 0,
+                            viewallgroupsactivities integer NOT NULL default 0,
+                            teachersgroupmark integer NOT NULL default 0,
+                            teachersgroupview integer NOT NULL default 0,
+                            teachersoverride integer NOT NULL default 0
                           ) ";
 
         $creategroupingsgroupstablesql = "CREATE TABLE {$CFG->prefix}groups_groupings_groups (

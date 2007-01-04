@@ -356,6 +356,10 @@
     require_once("$CFG->dirroot/lib/locallib.php");
     upgrade_local_db("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
+/// Check for new groups and upgrade if necessary. TODO:
+    require_once("$CFG->dirroot/group/db/upgrade.php");
+    upgrade_group_db("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
+
 /// just make sure upgrade logging is properly terminated
     upgrade_log_finish();
 

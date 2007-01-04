@@ -129,7 +129,7 @@
             && has_capability('moodle/site:accessallgroups', $context))) {
         
         //the following query really needs to change
-        if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
+        if ($groups = groups_get_groups_names($course->id)) { //TODO:
             echo '<td>';
             print_group_menu($groups, $groupmode, $currentgroup, "$CFG->wwwroot/mod/forum/view.php?id=$cm->id");
             echo '</td>';

@@ -141,6 +141,14 @@ class get_db_directories extends XMLDBAction {
                 $XMLDB->dbdirs[$dbdir->path]->path_exists = file_exists($dbdir->path);  //Update status
             }
         }
+        
+    /// Now, groups
+        $dbdir->path = $CFG->dirroot . '/group/db';
+        if (!isset($XMLDB->dbdirs[$dbdir->path])) {
+            $XMLDB->dbdirs[$dbdir->path] = $dbdir;
+        }
+        $XMLDB->dbdirs[$dbdir->path]->path_exists = file_exists($dbdir->path);  //Update status
+        
     /// Sort by key
         ksort($XMLDB->dbdirs);
 

@@ -109,9 +109,9 @@
 
         case 'group':
             // group members
-            if ($records = get_records_select('groups_members', "groupid=".$formdata['reportgroupid'], '', 'id,userid')) {
-                foreach ($records as $record) {
-                    $users[$record->userid] = 1; // "1" signifies currently recognized participant
+            if ($memberids = groups_get_members($formdata['reportgroupid'])) { //TODO:check.
+                foreach ($memberids as $memberid) {
+                    $users[$memberid] = 1; // "1" signifies currently recognized participant
                 }
             }
             break;
@@ -456,9 +456,9 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
     );
 
     // groups
-    if ($groups = get_records_select('groups', "courseid='$course->id'", '', 'id,name')) {
-        foreach ($groups as $group) {
-            $menus['reportusers']["group$group->id"] = get_string('group').': '.$group->name;
+    if ($groups = groups_get_groups_names($course->id)) { //TODO:check.
+        foreach ($groups as $gid => $gname) {
+            $menus['reportusers']["group$gid"] = get_string('group').': '.$gname;
         }
     }
 

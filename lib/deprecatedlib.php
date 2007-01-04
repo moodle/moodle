@@ -749,9 +749,9 @@ function get_group_students($groupids, $sort='ul.timeaccess DESC') {
     if (is_array($groupids)){
         $groups = $groupids;
         // all groups must be from one course anyway...
-        $group = get_record('groups', 'id', array_shift($groups));
+        $group = groups_get_group(array_shift($groups));
     } else {
-        $group = get_record('groups', 'id', $groupids);
+        $group = groups_get_group($groupids);
     }
     if (!$group) {
         return NULL;

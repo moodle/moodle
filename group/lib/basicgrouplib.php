@@ -28,10 +28,10 @@ require_once($CFG->dirroot.'/group/db/dbbasicgrouplib.php');
  *****************************/
 
 /**
- * Gets a list of the group ids for a specified course id 
- * @param int $courseid The id of the course. 
- * @return array | false Returns an array of the userids or false if no records
- * or an error occurred. 
+ * Gets a list of the group IDs for a specified course.
+ * @param int $courseid The id of the course.
+ * @return array | false Returns an array of the group IDs or false if no records
+ * or an error occurred.
  */
 function groups_get_groups($courseid) {
 	$groupids = groups_db_get_groups($courseid);
@@ -50,6 +50,7 @@ function groups_get_groups($courseid) {
  */
 function groups_get_members($groupid, $membertype = false) {
 	$userids = groups_db_get_members($groupid);
+
     return $userids;
 }
 
@@ -64,6 +65,19 @@ function groups_get_members($groupid, $membertype = false) {
  */
 function groups_get_groups_for_user($userid, $courseid) {  
     $groupids = groups_db_get_groups_for_user($userid, $courseid);
+    return $groupids;
+}
+
+function groups_get_all_groups_for_user($userid) {
+    $groups = get_records('groups_members', 'userid', $userid);
+    if (! $groups) {
+        return false;
+    }
+    // Put the results into an array
+    $groupids = array();
+    foreach ($groups as $group) {
+        array_push($groupids, $group->id);    
+    }
     return $groupids;
 }
 
@@ -89,8 +103,8 @@ function groups_get_groups_for_current_user($courseid) {
  * @param int $groupid The id of the gruop
  * @return object The group settings object 
  */
-function groups_get_group_settings($groupid) {
-	return groups_db_get_group_settings($groupid);
+function groups_get_group_settings($groupid, $courseid=false) {
+	return groups_db_get_group_settings($groupid, $courseid);
 }
 
 /**
@@ -100,8 +114,8 @@ function groups_get_group_settings($groupid) {
  * @return string The path of the image for the group
  */
 function groups_get_group_image_path($groupid) {
-    $image = ''; //TODO: ??
-	return $CFG->dataroot.'/groups/'.$groupid.'/'.$image;
+    //TODO: groupid=1, /user/pixgroup.php/1/f1.jpg ??
+	return $CFG->wwwroot.'/pixgroup.php/'.$groupid.'/f1.jpg';
 }
 
 /**
@@ -111,7 +125,10 @@ function groups_get_group_image_path($groupid) {
  */
 function groups_get_group_name($groupid) {
 	$settings = groups_get_group_settings($groupid);
-	return $settings->name;
+	if ($settings) {
+        return $settings->name;
+    }
+    return false;
 }
 
 /**
@@ -168,8 +185,9 @@ function groups_group_exists($groupid) {
  * @return boolean True if the user is a member of the group, false otherwise
  */
  function groups_is_member($groupid, $userid) { 
-	$ismember = groups_db_is_member($groupid, $userid);
-	return $ismember;
+    $ismember = groups_db_is_member($groupid, $userid);
+    
+    return $ismember;
 }
 
 
@@ -254,7 +272,7 @@ function groups_create_group($courseid, $groupsettings = false) {
  * @return boolean True if info was added successfully, false otherwise. 
  */
 function groups_set_group_settings($groupid, $groupsettings) {	
-	return  groups_db_set_group_settings($groupid, $groupsettings);
+	return groups_db_set_group_settings($groupid, $groupsettings);
 }
 
 
@@ -277,7 +295,9 @@ function groups_add_member($groupid, $userid) {
     } else {
 		$useradded = groups_db_add_member($groupid, $userid);
     }
-
+    if ($useradded) {
+        $useradded = groups_db_set_group_modified($groupid);
+    }
 	return $useradded;
 }
 
@@ -294,10 +314,21 @@ function groups_add_member($groupid, $userid) {
  * See comment above on web service autoupdating. 
  */
 function groups_delete_group($groupid) {
-	$groupdeleted = groups_db_delete_group($groupid);
+    $groupdeleted = groups_db_delete_group($groupid);
 
     return $groupdeleted;
 }
+
+/*function groups_delete_groups($groupids) {
+    if (! $groupids) {
+        return false;
+    }
+    $success = true;
+    foreach ($groupids as $id) {
+        $success = $success && groups_db_delete_group($id);
+    }
+    return $success;
+}*/
 
 
 /**
@@ -308,7 +339,29 @@ function groups_delete_group($groupid) {
  * See comment above on web service autoupdating. 
  */
 function groups_remove_member($groupid, $userid) {
-	return  groups_db_remove_member($groupid, $userid);
+	$success = groups_db_remove_member($groupid, $userid);    
+    if ($success) {
+        $success = groups_db_set_group_modified($groupid);
+    }
+    return $success;
 }
+
+function groups_remove_all_members($groupid) {
+    if (! groups_group_exists($groupid)) {
+        //Woops, delete group last!
+        return false;
+    }
+    $userids = groups_get_members($groupid);
+    if (! $userids) {
+        return false;
+    }
+    $success = true;
+    foreach ($userids as $id) {
+        $success = $success && groups_db_remove_member($groupid, $id);
+    }
+    $success = $success && groups_db_set_group_modified($groupid);
+    return $success;
+}
+
 
 ?>

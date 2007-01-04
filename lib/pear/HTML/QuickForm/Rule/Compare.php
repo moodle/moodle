@@ -28,7 +28,7 @@ require_once 'HTML/QuickForm/Rule.php';
  * 
  * @access public
  * @package HTML_QuickForm
- * @version $Revision$
+ * @version $Revision: 1.1 $
  */
 class HTML_QuickForm_Rule_Compare extends HTML_QuickForm_Rule
 {

@@ -28,11 +28,7 @@ class quiz_report extends quiz_default_report {
             if (!$download) {
                 $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id&amp;mode=analysis");
             } else {
-                if (isset($_GET['group'])) {
-                    $changegroup = $_GET['group'];  /// 0 or higher
-                } else {
-                    $changegroup = -1;              /// This means no group change was specified
-                }
+                $changegroup = optional_param('group', -1, PARAM_INT);
 
                 $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);  
             }
@@ -85,7 +81,7 @@ class quiz_report extends quiz_default_report {
         $sql = 'SELECT  qa.* FROM '.$CFG->prefix.'user u '.
             'JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid ';
             if (!empty($currentgroup)) {
-                $sql .= ' JOIN '.$CFG->prefix.'groups_members gm ON u.id = gm.userid AND gm.groupid = '.$currentgroup;
+                $sql .= groups_members_join_sql($currentgroup);
             }
             $sql .= ' WHERE qa.quiz = '.$quiz->id.  // ULPGC ecastro
                 ' AND ( qa.sumgrades >= '.$scorelimit.' ) ';

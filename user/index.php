@@ -188,9 +188,9 @@
     }
 
     if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id)))) {
-        if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
+        if ($groups_names = groups_get_groups_names($course->id)) { //TODO:
             echo '<td class="left">';
-            print_group_menu($groups, $groupmode, $currentgroup, $baseurl);
+            print_group_menu($groups_names, $groupmode, $currentgroup, $baseurl);
             echo '</td>';
         }
     }
@@ -249,15 +249,15 @@
     echo '</td></tr></table>';
 
     if ($currentgroup and (!$isseparategroups or has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id)))) {    /// Display info about the group
-        if ($group = get_record('groups', 'id', $currentgroup)) {
+        if ($group = groups_get_group($currentgroup)) { //TODO:
             if (!empty($group->description) or (!empty($group->picture) and empty($group->hidepicture))) {
                 echo '<table class="groupinfobox"><tr><td class="left side picture">';
                 print_group_picture($group, $course->id, true, false, false);
                 echo '</td><td class="content">';
                 echo '<h3>'.$group->name;
                 if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
-                    echo '&nbsp;<a title="'.get_string('editgroupprofile').'" href="../course/groups.php?id='.$course->id.'&amp;group='.$group->id.'">';
-                    echo '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="'.get_string('editgroupprofile').'" border="0">';
+                    echo '&nbsp;<a title="'.get_string('editgroupprofile').'" href="'.groups_group_edit_url($course->id, $group->id).'">';
+                    echo '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="'.get_string('editgroupprofile').'" />';
                     echo '</a>';
                 }
                 echo '</h3>';

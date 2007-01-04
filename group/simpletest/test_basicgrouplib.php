@@ -5,7 +5,7 @@
  * /admin/report/simpletest/index.php?showpasses=1&showsearch=1&path=course%2Fgroups
  *
  * @copyright &copy; 2006 The Open University
- * @author N.D.Freear@open.ac.uk
+ * @author N.D.Freear AT open.ac.uk
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package groups
  *
@@ -24,6 +24,12 @@ class basicgrouplib_test extends UnitTestCase {
     var $userid  = 0;
     var $userid_2= 0;
     var $groupid = 0;
+
+    function __construct() {
+       parent::UnitTestCase();
+
+       groups_create_role();   
+    }
 
     function test_get_user() {
         $this->assertTrue($user = groups_get_user(2)); //Primary admin.
@@ -53,6 +59,7 @@ class basicgrouplib_test extends UnitTestCase {
         $groupinfo->name = 'Group '. $this->getLabel();  //'Temporary Group Name'
         $this->assertTrue(groups_set_group_settings($this->groupid, $groupinfo));
         $this->assertTrue($groupinfo->name == groups_get_group_name($this->groupid));
+        $this->assertTrue($this->courseid == groups_get_course($this->groupid));
     }
 
     function test_add_member() {

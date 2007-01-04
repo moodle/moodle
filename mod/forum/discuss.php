@@ -204,7 +204,7 @@
     echo '<table width="100%"><tr><td width="33%">';
 
     if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/site:accessallgroups', $modcontext))) {
-        if ($groups = get_records_menu('groups', 'courseid', $course->id, 'name ASC', 'id,name')) {
+        if ($groups = groups_get_groups_names($course->id)) { //TODO:
             print_group_menu($groups, $groupmode, $discussion->groupid, "view.php?id=$cm->id&amp;group=");
         }
     }

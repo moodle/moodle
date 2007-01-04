@@ -64,8 +64,8 @@
      **************************************/
     } else if ($filtertype == 'group' && $filterselect) {
 
-        $group = get_record('groups','id',$filterselect);
-        print_heading($group->name);
+        $group_name = groups_get_group_name($filterselect); //TODO:
+        print_heading($group_name);
 
         if ($CFG->bloglevel >= 2) {
 

@@ -77,7 +77,7 @@
 
     $currentgroup = get_current_group($course->id);
     if ($currentgroup and has_capability('mod/data:manageentries', $context)) {
-        $group = get_record("groups", "id", $currentgroup);
+        $group = groups_get_group($currentgroup, false);
         $groupname = " ($group->name)";
     } else {
         $groupname = "";

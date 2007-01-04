@@ -417,7 +417,7 @@ function wiki_get_default_entry(&$wiki, &$course, $userid=0, $groupid=0) {
             $groupid=$mygroupids[0];
         } else {
             // Whatever groups are in the course, pick one
-            $coursegroups=get_records('groups','courseid',$course->id,'','id,name');
+            $coursegroups = get_groups($course->id);
             if(!$coursegroups || count($coursegroups)==0) {
                 error("Can't access wiki in group mode when no groups are configured for the course"); 
             } 
@@ -473,7 +473,7 @@ function wiki_get_entry(&$wiki, &$course, $userid=0, $groupid=0) {
                     $groupid=$mygroupids[0];
                 } else {
                     // Whatever groups are in the course, pick one
-                    $coursegroups=get_records('groups','courseid',$course->id,'','id,name');
+                    $coursegroups = get_groups($course->id);
                     if(!$coursegroups || count($coursegroups)==0) {
                         error("Can't access wiki in group mode when no groups are configured for the course"); 
                     } 
@@ -1072,8 +1072,7 @@ function wiki_get_owner(&$wiki_entry) {
         $owner = fullname($user);
     }
     else if ($wiki_entry->groupid > 0) {
-        $group = get_record('groups', 'id', $wiki_entry->groupid);
-        $owner = $group->name;
+        $owner = groups_get_group_name($wiki_entry->groupid); //TODO:check.
     }
     else if ($wiki_entry->course > 0) {
         $course = get_record('course', 'id', $wiki_entry->course);

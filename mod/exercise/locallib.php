@@ -546,9 +546,9 @@ function exercise_get_student_submissions($exercise, $order = "time", $groupid =
             }
 
             return get_records_sql("SELECT s.*, AVG(a.grade) AS grade FROM 
-                    {$CFG->prefix}groups_members g, {$CFG->prefix}exercise_submissions s, 
+                    ".groups_members_from_sql().", {$CFG->prefix}exercise_submissions s, 
                     {$CFG->prefix}exercise_assessments a
-                    WHERE $select g.groupid = $groupid
+                    WHERE $select ". groups_members_where_sql($groupid)."
                     AND s.exerciseid = $exercise->id
                     AND a.submissionid = s.id
                     GROUP BY s.id
@@ -570,8 +570,8 @@ function exercise_get_student_submissions($exercise, $order = "time", $groupid =
     }
 
         return get_records_sql("SELECT s.* FROM  {$CFG->prefix}user n, 
-                {$CFG->prefix}groups_members g, {$CFG->prefix}exercise_submissions s
-                WHERE $select g.groupid = $groupid
+                ".groups_members_from_sql().", {$CFG->prefix}exercise_submissions s
+                WHERE $select ". groups_members_where_sql()."
                 AND s.exerciseid = $exercise->id
                 ORDER BY $order");
 
@@ -829,7 +829,7 @@ function exercise_list_submissions_for_admin($exercise) {
         }
         if (isset($table->data)) {
             if ($groupid) {
-                if (!$group = get_record("groups", "id", $groupid)) {
+                if (! groups_group_exists($groupid)) { //TODO:
                     error("List unassessed student submissions: group not found");
                 }
                 print_heading("$group->name ".get_string("studentassessments", "exercise", $course->student).
@@ -853,8 +853,8 @@ function exercise_list_submissions_for_admin($exercise) {
             if ($groupid) {
                 $stats = get_record_sql("SELECT COUNT(*) as count, AVG(gradinggrade) AS mean, 
                         STDDEV(gradinggrade) AS stddev, MIN(gradinggrade) AS min, MAX(gradinggrade) AS max 
-                        FROM {$CFG->prefix}groups_members g, {$CFG->prefix}exercise_assessments a 
-                        WHERE g.groupid = $groupid AND a.userid = g.userid AND a.timegraded > 0 
+                        FROM ".groups_members_from_sql().", {$CFG->prefix}exercise_assessments a 
+                        WHERE ".groups_members_where_sql($groupid, 'a.userid')." AND a.timegraded > 0 
                         AND a.exerciseid = $exercise->id");
             } else { // no group/all participants
                 $stats = get_record_sql("SELECT COUNT(*) as count, AVG(gradinggrade) AS mean, 
@@ -942,7 +942,7 @@ function exercise_list_submissions_for_admin($exercise) {
         }
         if (isset($table->data)) {
             if ($groupid) {
-                if (!$group = get_record("groups", "id", $groupid)) {
+                if (! groups_group_exists($groupid)) {
                     error("List unassessed student submissions: group not found");
                 }
                 print_heading("$group->name ".get_string("studentsubmissions", "exercise", $course->student).
@@ -970,9 +970,9 @@ function exercise_list_submissions_for_admin($exercise) {
             if ($groupid) {
                 $stats = get_record_sql("SELECT COUNT(*) as count, AVG(grade) AS mean, 
                         STDDEV(grade) AS stddev, MIN(grade) AS min, MAX(grade) AS max 
-                        FROM {$CFG->prefix}groups_members g, {$CFG->prefix}exercise_assessments a, 
+                        FROM ".groups_members_from_sql().", {$CFG->prefix}exercise_assessments a, 
                         {$CFG->prefix}exercise_submissions s
-                        WHERE g.groupid = $groupid AND s.userid = g.userid AND a.submissionid = s.id 
+                        WHERE ".groups_members_where_sql($groupid, 's.userid')." AND a.submissionid = s.id 
                         AND a.exerciseid = $exercise->id");
             } else { // no group/all participants
                 $stats = get_record_sql("SELECT COUNT(*) as count, AVG(grade) AS mean, 
@@ -1196,7 +1196,7 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
     // exercise_get_student_submissions is group aware
     $groupid = get_current_group($course->id);
     if ($groupid) {
-        if (!$group = get_record("groups", "id", $groupid)) {
+        if (! groups_group_exists($groupid)) {
             error("List unassessed student submissions: group not found");
         }
         print_heading(get_string("studentsubmissionsforassessment", "exercise", $group->name));

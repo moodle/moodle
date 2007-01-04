@@ -226,32 +226,6 @@ CREATE TABLE prefix_grade_preferences (
 
 CREATE UNIQUE INDEX prefix_grade_prefs_courseidpref_uk ON prefix_grade_preferences (courseid,preference);
 
-CREATE TABLE prefix_groups (
-   id SERIAL PRIMARY KEY,
-   courseid integer NOT NULL default '0',
-   name varchar(255) NOT NULL default '',
-   description text,
-   password varchar(50) NOT NULL default '',
-   lang varchar(10) NOT NULL default '',
-   theme varchar(50) NOT NULL default '',
-   picture integer NOT NULL default '0',
-   hidepicture integer NOT NULL default '0',
-   timecreated integer NOT NULL default '0',
-   timemodified integer NOT NULL default '0'
-);
-
-CREATE INDEX prefix_groups_idx ON prefix_groups (courseid);
-
-CREATE TABLE prefix_groups_members (
-   id SERIAL PRIMARY KEY,
-   groupid integer NOT NULL default '0',
-   userid integer NOT NULL default '0',
-   timeadded integer NOT NULL default '0'
-);
-
-CREATE INDEX prefix_groups_members_idx ON prefix_groups_members (groupid);
-CREATE INDEX prefix_groups_members_userid_idx ON prefix_groups_members (userid);
-
 CREATE TABLE prefix_log (
    id SERIAL PRIMARY KEY,
    time integer NOT NULL default '0',

@@ -386,7 +386,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $sincetime, $course
       return;
 
     foreach ($quizzes as $quiz) {
-        if (empty($groupid) || ismember($groupid, $quiz->userid)) {
+        if (empty($groupid) || groups_is_member($groupid, $quiz->userid)) {
 
           $tmpactivity = new Object;
 

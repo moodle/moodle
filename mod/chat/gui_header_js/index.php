@@ -32,7 +32,7 @@
 /// Check to see if groups are being used here
      if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
         if ($groupid = get_and_set_current_group($course, $groupmode, $groupid)) {
-            if (!$group = get_record('groups', 'id', $groupid)) {
+            if (! groups_group_exists($groupid)) {
                 error("That group (id $groupid) doesn't exist!");
             }
             $groupname = ': '.$group->name;

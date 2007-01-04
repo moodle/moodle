@@ -2,7 +2,7 @@
 /**
  * Functions to make changes to groups in the database i.e. functions that 
  * access tables:
- *     groups_courses_groups, groups_groups and groups_groups_users.
+ *     groups_courses_groups, groups and groups_members.
  *
  * @copyright &copy; 2006 The Open University
  * @author J.White AT open.ac.uk
@@ -10,7 +10,7 @@
  * @package groups
  */
 require_once($CFG->libdir.'/datalib.php');
-require_once($CFG->dirroot.'/group/lib/lib.php');
+require_once($CFG->dirroot.'/group/lib.php');
 
 
 /*******************************************************************************
@@ -73,7 +73,7 @@ function groups_db_get_members($groupid) {
     if (!$groupid) {
         $userids = false;
     } else {
-        $users = get_records('groups_groups_users', 'groupid ', $groupid, '', 
+        $users = get_records('groups_members', 'groupid ', $groupid, '', 
                              $fields='id, userid');
         if (!$users) {
         	$userids = false;
@@ -98,13 +98,13 @@ function groups_db_get_members($groupid) {
  */
 function groups_db_get_groups_for_user($userid, $courseid) {
     if (!$userid or !$courseid) {
-        $groupid = false;
+        $groupids = false;
     } else {  
         global $CFG;
         $table_prefix = $CFG->prefix;
         $sql = "SELECT g.id, userid 
-                FROM {$table_prefix}groups_groups_users AS gm 
-                INNER JOIN {$table_prefix}groups_groups AS g
+                FROM {$table_prefix}groups_members AS gm 
+                INNER JOIN {$table_prefix}groups AS g
                 ON gm.groupid = g.id
                 INNER JOIN {$table_prefix}groups_courses_groups AS cg
                 ON g.id = cg.groupid
@@ -131,19 +131,23 @@ function groups_db_get_groups_for_user($userid, $courseid) {
  * Get the group settings object for a group - this contains the following 
  * properties:
  * name, description, lang, theme, picture, hidepicture
- * @param int $groupid The id of the gruop
+ * @param int $groupid The id of the group
+ * @param $courseid Optionally add the course ID, for backwards compatibility.
  * @return object The group settings object 
  */
-function groups_db_get_group_settings($groupid) {
+function groups_db_get_group_settings($groupid, $courseid=false) {
    if (!$groupid) {
         $groupsettings = false;
     } else {
         global $CFG;
         $tableprefix = $CFG->prefix;
         $sql = "SELECT id, name, description, lang, theme, picture, hidepicture 
-                FROM {$tableprefix}groups_groups
+                FROM {$tableprefix}groups
                 WHERE id = $groupid";
         $groupsettings = get_record_sql($sql);
+        if ($courseid && $groupsettings) {
+            $groupsettings->courseid = $courseid;
+        }
     }
 
     return $groupsettings;	
@@ -188,7 +192,7 @@ function groups_db_group_exists($groupid) {
     if (!$groupid) {
         $exists = false;
     } else {
-        $exists = record_exists($table = 'groups_groups', 'id', $groupid);
+        $exists = record_exists($table = 'groups', 'id', $groupid);
     }
 
     return $exists;
@@ -205,7 +209,7 @@ function groups_db_is_member($groupid, $userid) {
     if (!$groupid or !$userid) {
         $ismember = false;
     } else {
-        $ismember = record_exists($table = 'groups_groups_users', 'groupid', 
+        $ismember = record_exists($table = 'groups_members', 'groupid', 
                                   $groupid, 'userid', $userid);
     }
     
@@ -253,7 +257,7 @@ function groups_db_create_group($courseid, $groupsettings = false) {
         $record->timecreated = time();
         $record->timemodified = time();
         //print_r($record);
-        $groupid = insert_record('groups_groups', $record);
+        $groupid = insert_record('groups', $record);
 
         if ($groupid != false) {
             $record2 = new Object();
@@ -289,7 +293,7 @@ function groups_db_add_member($groupid, $userid) {
 		$record->groupid = $groupid;
 		$record->userid = $userid;
 		$record->timeadded = time();
-		$useradded = insert_record($table = 'groups_groups_users', $record);
+		$useradded = insert_record($table = 'groups_members', $record);
 	}
 
 	return $useradded;
@@ -311,7 +315,7 @@ function groups_db_set_group_settings($groupid, $groupsettings) {
     	$record = $groupsettings;
         $record->id = $groupid;
         $record->timemodified = time();
-        $result = update_record('groups_groups', $record);
+        $result = update_record('groups', $record);
         if (!$result) {
             $success = false;
         }
@@ -336,7 +340,7 @@ function groups_db_remove_member($groupid, $userid) {
     if (!$userid or !$groupid) {
         $success = false;
     } else {
-        $results = delete_records('groups_groups_users', 
+        $results = delete_records('groups_members', 
                                   'groupid', $groupid, 'userid', $userid);
         // delete_records returns an array of the results from the sql call, 
         // not a boolean, so we have to set our return variable
@@ -392,7 +396,7 @@ function groups_db_delete_group($groupid) {
 		}
 
         // Delete the group itself
-        $results = delete_records($table = 'groups_groups', $field1 = 'id', 
+        $results = delete_records($table = 'groups', $field1 = 'id', 
                                   $value1 = $groupid);
         // delete_records returns an array of the results from the sql call, 
         // not a boolean, so we have to set our return variable
@@ -402,6 +406,59 @@ function groups_db_delete_group($groupid) {
     }
 
     return $success;
+}
+
+/**
+ * Internal function to set the time a group was modified.
+ */
+function groups_db_set_group_modified($groupid) {
+    return set_field('groups', 'timemodified', time(), 'id', $groupid);
+}
+
+
+/******************************************************************************
+ * Groups SQL clauses for modules and core.
+ */
+
+/**
+ * Returns the table in which group members are stored, with a prefix 'gm'.
+ * @return SQL string.
+ */
+function groups_members_from_sql() {
+    global $CFG;
+    return " {$CFG->prefix}groups_members gm ";
+}
+
+/**
+ * Returns a join testing user.id against member's user ID.
+ * Relies on 'user' table being included as 'user u'.
+ * Used in Quiz module reports.
+ * @param group ID, optional to include a test for this in the SQL.
+ * @return SQL string.
+ */
+function groups_members_join_sql($groupid=false) {    
+    $sql = ' JOIN '.groups_members_from_sql().' ON u.id = gm.userid ';
+    if ($groupid) {
+        $sql = "AND gm.groupid = '$groupid' ";
+    }
+    return $sql;
+    //return ' INNER JOIN '.$CFG->prefix.'role_assignments ra ON u.id=ra.userid'.
+    //       ' INNER JOIN '.$CFG->prefix.'context c ON ra.contextid=c.id AND c.contextlevel='.CONTEXT_GROUP.' AND c.instanceid='.$groupid;
+}
+
+/**
+ * Returns SQL for a WHERE clause testing the group ID.
+ * Optionally test the member's ID against another table's user ID column. 
+ * @param groupid
+ * @param userid_sql Optional user ID column selector, example "mdl_user.id", or false.
+ * @return SQL string.
+ */
+function groups_members_where_sql($groupid, $userid_sql=false) {
+    $sql = " gm.groupid = '$groupid' ";
+    if ($userid_sql) {
+        $sql .= "AND $userid_sql = gm.userid ";
+    }
+    return $sql;
 }
 
 ?>

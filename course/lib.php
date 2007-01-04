@@ -177,7 +177,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
         $groupmode =  groupmode($course);
 
         if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id)))) {
-            if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
+            if ($groups_names = groups_get_groups_names($course->id)) { //TODO:check.
             echo '<td><b>';
                 if ($groupmode == VISIBLEGROUPS) {
                     print_string('groupsvisible');
@@ -185,7 +185,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
                     print_string('groupsseparate');
                 }
                 echo ':</b></td><td>';
-                choose_from_menu($groups, "selectedgroup", $selectedgroup, get_string("allgroups"), "", "");
+                choose_from_menu($groups_names, "selectedgroup", $selectedgroup, get_string("allgroups"), "", "");
                 echo '</td>';
             }
         }
@@ -305,7 +305,7 @@ function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limit
 
     /// Getting all members of a group.
     if ($groupid and !$user) {
-        if ($gusers = get_records('groups_members', 'groupid', $groupid)) {
+        if ($gusers = groups_get_members($groupid)) { //TODO:check.
             $first = true;
             foreach($gusers as $guser) {
                 if ($first) {

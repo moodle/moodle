@@ -1,8 +1,12 @@
 <?php
 /**
- * Legacy groups functions - these were in moodlelib.php.
+ * Legacy groups functions - these were in moodlelib.php, datalib.php, weblib.php
  *
  * @@@ Don't look at this file - still tons to do! 
+ *
+ * TODO: For the moment these functions are in /lib/deprecatedlib.php
+ *   get_group_students
+ *   get_group_teachers
  *
  * @copyright &copy; 2006 The Open University
  * @author J.White AT open.ac.uk and others
@@ -18,10 +22,20 @@
  * This is needed to support upload of users into the database
  * @param int $courseid The id of the course
  * @param string $groupname
- * @return int $groupname
+ * @return int $groupid
  */
 function groups_get_group_by_name($courseid, $groupname) {
-	// TO DO                                 
+	//uploaduser.php, get_record("groups","courseid",$course[$i]->id,"name",$addgroup[$i])
+    $groupids = groups_db_get_groups($courseid);
+    if (! $groupids) {
+        return false;
+    }
+    foreach ($groupids as $id) {
+        if (groups_get_group_name($id) == $groupname) {
+            return $id;
+        }
+    }
+    return false;
 }
 
 /**
@@ -41,8 +55,8 @@ function get_groups($courseid, $userid=0) {
 	} else {
 		$groupids = groups_get_groups($courseid);
 	}
-	
-	return groups_groupids_to_groups($groupids);
+
+	return groups_groupids_to_groups($groupids, $courseid);
 }
 
 
@@ -110,68 +124,6 @@ function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='',
 
 
 
-/**
- * Returns an array of user objects
- *
- * @uses $CFG
- * @param int $groupid The group(s) in question.
- * @param string $sort How to sort the results
- * @return object (changed to groupids)
- */
-function get_group_students($groupids, $sort='u.lastaccess DESC') {
-
-    global $CFG;
-
-    if (is_array($groupids)){
-        $groups = $groupids;
-        $groupstr = '(m.groupid = '.array_shift($groups);
-        foreach ($groups as $index => $value){
-            $groupstr .= ' OR m.groupid = '.$value;
-        }
-        $groupstr .= ')';
-    }
-    else {
-        $groupstr = 'm.groupid = '.$groupids;
-    }
-
-    return get_records_sql("SELECT DISTINCT u.*
-                              FROM {$CFG->prefix}user u,
-                                   {$CFG->prefix}groups_members m,
-                                   {$CFG->prefix}groups g,
-                                   {$CFG->prefix}user_students s
-                             WHERE $groupstr
-                               AND m.userid = u.id
-                               AND m.groupid = g.id
-                               AND g.courseid = s.course
-                               AND s.userid = u.id
-                          ORDER BY $sort");
-}
-
-/**
- * Returns list of all the teachers who can access a group
- *
- * @uses $CFG
- * @param int $courseid The course in question.
- * @param int $groupid The group in question.
- * @return object
- */
-function get_group_teachers($courseid, $groupid) {
-/// Returns a list of all the teachers who can access a group
-    if ($teachers = get_course_teachers($courseid)) {
-        foreach ($teachers as $key => $teacher) {
-            if ($teacher->editall) {             // These can access anything
-                continue;
-            }
-            if (($teacher->authority > 0) and ismember($groupid, $teacher->id)) 
-            {  // Specific group teachers
-                continue;
-            }
-            unset($teachers[$key]);
-        }
-    }
-    return $teachers;
-}
-
 
 /**
  * Add a user to a group, return true upon success or if user already a group 
@@ -187,18 +139,17 @@ function add_user_to_group($groupid, $userid) {
 
 
 /**
- * Get the group ID of the current user in the given course
+ * Get the IDs for the user's groups in the given course.
  *
  * @uses $USER
- * @param int $courseid The course being examined - relates to id field in 
- * 'course' table.
- * @return array An array of the groupids that the user belongs to. 
+ * @param int $courseid The course being examined - the 'course' table id field.
+ * @return array An _array_ of groupids.
+ * (Was return $groupids[0] - consequences!)
  */
 function mygroupid($courseid) {
     global $USER;
-	// TODO: check whether needs to be groups or groupids. 
 	$groupids = groups_get_groups_for_user($USER->id, $courseid);
-   	return $groupids[0];
+   	return $groupids;
 }
 
 /**
@@ -207,12 +158,17 @@ function mygroupid($courseid) {
  */
 function groupmode($course, $cm=null) {
 
-    if ($cm and !$course->groupingid) {
+    if ($cm and !$course->groupmodeforce) {
+        return $cm->groupmode;
+    }
+    return $course->groupmode;
+    
+    /*if ($cm and !$course->groupingid) {
         //TODO: was $coursemodule
         return groups_has_groups_setup_for_instance($cm);
     } else {
     	return groups_has_groups_setup($course->id);
-    }
+    }*/
 }
 
 
@@ -245,15 +201,20 @@ function set_current_group($courseid, $groupid) {
  */
 function get_current_group($courseid, $full = false) {
     global $SESSION;
-    
+
+    $mygroupid = mygroupid($courseid);
+    if (is_array($mygroupid)) {
+        $mygroupid = array_shift($mygroupid);
+    }
+
     if (isset($SESSION->currentgroup[$courseid])) {
     	$currentgroup = $SESSION->currentgroup[$courseid];
     } else {
-    	$currentgroup = mygroupid($courseid);
+    	$currentgroup = $mygroupid;
     }
     
     if ($currentgroup) {
-    	$SESSION->currentgroup[$courseid] = mygroupid($courseid);
+    	$SESSION->currentgroup[$courseid] = $mygroupid;
     }
 
     if ($full) {
@@ -294,19 +255,19 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     if ($groupid) {      // Try to change the current group to this groupid
-        if ($group = get_record('groups', 'id', $groupid, 'courseid', $course->id)) { // Exists
+        if (groups_group_belongs_to_course($groupid, $course->id)) { // Exists  TODO:check.
             if (has_capability('moodle/site:accessallgroups', $context)) {  // Sets current default group
-                $currentgroupid = set_current_group($course->id, $group->id);
+                $currentgroupid = set_current_group($course->id, $groupid);
 
             } elseif ($groupmode == VISIBLEGROUPS) {
                   // All groups are visible
                 //if (ismember($group->id)){
-                    $currentgroupid = set_current_group($course->id, $group->id); //set this since he might post
+                    $currentgroupid = set_current_group($course->id, $groupid); //set this since he might post
                 /*)}else {
                     $currentgroupid = $group->id;*/
             } elseif ($groupmode == SEPARATEGROUPS) { // student in separate groups switching
                 if (ismember($group->id)) { //check if is a member
-                    $currentgroupid = set_current_group($course->id, $group->id); //might need to set_current_group?
+                    $currentgroupid = set_current_group($course->id, $groupid); //might need to set_current_group?
                 }
                 else {
                     echo($group->id);
@@ -362,11 +323,19 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
         groups_instance_print_grouping_selector();
     }//added code here to allow non-editting teacher to swap in-between his own groups
     //added code for students in separategrous to swtich groups
-    else if ($groupmode == SEPARATEGROUPS and (isteacher($course->id) or isstudent($course->id))) {
+    else if ($groupmode == SEPARATEGROUPS and has_capability('moodle/course:view', $context)) {
         groups_instance_print_group_selector();
     }
 
     return $currentgroup;
+}
+
+
+function groups_instance_print_grouping_selector() {
+    //TODO: ??
+}
+function groups_instance_print_group_selector() {
+    //TODO: ??
 }
 
 
@@ -392,6 +361,52 @@ function oldgroups_print_user_group_info($currentgroup, $isseparategroups, $cour
             }
         }
     }
+}
+
+/**
+ * Get the group object, including the course ID by default.
+ * @param groupid ID of the group.
+ * @param getcourse (default true), include the course ID in the return.
+ * @return group object, optionally including 'courseid'.
+ */
+function groups_get_group($groupid, $getcourse=true) {
+    $group = groups_db_get_group_settings($groupid);
+    if ($group && $getcourse) {
+        $group->courseid = groups_get_course($groupid);
+    }
+    return $group;
+}
+
+
+/**
+ * Get an array of groups, as id => name.
+ * Replaces, get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")
+ * (For /user/index.php)
+ */
+function groups_get_groups_names($courseid) {
+    $groupids = groups_db_get_groups($courseid);
+    if (! $groupids) {
+        return false;
+    }
+    $groups_names = array();
+    foreach ($groupids as $id) {
+        $groups_names[$id] = groups_get_group_name($id);
+    }
+//TODO: sort. SQL?
+    return $groups_names;
+}
+
+/**
+ * Get the groups that a number of users are in.
+ * (For block_quiz_results.php)
+ */
+function groups_get_groups_users($userids, $courseid) {
+    global $CFG;
+    $groups_users = get_records_sql(
+        'SELECT gm.userid, gm.groupid, g.name FROM '.$CFG->prefix.'groups g LEFT JOIN '.$CFG->prefix.'groups_members gm ON g.id = gm.groupid '.
+        'WHERE g.courseid = '.$courseid.' AND gm.userid IN ('.implode(',', $userids).')'
+        );
+    return $groups_users;
 }
 
 ?>

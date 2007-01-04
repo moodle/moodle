@@ -217,8 +217,8 @@ function survey_get_responses($surveyid, $groupid) {
     global $CFG;
 
     if ($groupid) {
-        $groupsdb = ", {$CFG->prefix}groups_members gm";
-        $groupsql = "AND gm.groupid = $groupid AND u.id = gm.userid";
+        $groupsdb = ', '. groups_members_from_sql();
+        $groupsql = 'AND'.groups_members_where_sql($groupid, 'u.id');
     } else {
         $groupsdb = "";
         $groupsql = "";

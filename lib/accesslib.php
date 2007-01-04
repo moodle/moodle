@@ -37,6 +37,7 @@ define('RISK_XSS',         0x0004);
 define('RISK_PERSONAL',    0x0008);
 define('RISK_SPAM',        0x0010);
 
+require_once($CFG->dirroot.'/group/lib.php');
 
 $context_cache    = array();    // Cache of all used context objects for performance (by level and instance)
 $context_cache_id = array();    // Index to above cache by id
@@ -442,8 +443,8 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
 
             case CONTEXT_GROUP:
                 // Find course.
-                $group = get_record('groups','id',$context->instanceid);
-                $courseinstance = get_context_instance(CONTEXT_COURSE, $group->courseid);
+                $courseid = groups_get_course($context->instanceid);
+                $courseinstance = get_context_instance(CONTEXT_COURSE, $courseid);
 
                 $parentcats = get_parent_cats($courseinstance, CONTEXT_COURSE);
                 foreach ($parentcats as $parentcat) {
@@ -601,8 +602,8 @@ function capability_search($capability, $context, $capabilities, $switchroleacti
         break;
 
         case CONTEXT_GROUP: // 1 to 1 to course
-            $group = get_record('groups','id',$context->instanceid);
-            $parentcontext = get_context_instance(CONTEXT_COURSE, $group->courseid);
+            $courseid = groups_get_course($context->instanceid);
+            $parentcontext = get_context_instance(CONTEXT_COURSE, $courseid);
             $permission = capability_search($capability, $parentcontext, $capabilities);
         break;
 
@@ -1150,10 +1151,10 @@ function capability_prohibits($capability, $context, $sum='', $array='') {
 
         case CONTEXT_GROUP:
             // 1 to 1 to course.
-            if (!$group = get_record('groups','id',$context->instanceid)) {
+            if (!$courseid = groups_get_course($context->instanceid)) {
                 return false;
             }
-            $parent = get_context_instance(CONTEXT_COURSE, $group->courseid);
+            $parent = get_context_instance(CONTEXT_COURSE, $courseid);
             return capability_prohibits($capability, $parent);
         break;
 
@@ -1528,7 +1529,8 @@ function validate_context($contextlevel, $instanceid) {
             return (boolean)count_records('course', 'id', $instanceid);
 
         case CONTEXT_GROUP:
-            return (boolean)count_records('groups', 'id', $instanceid);
+            //return (boolean)count_records('groups_groups', 'id', $instanceid); //TODO:DONOTCOMMIT:
+            return groups_group_exists($instanceid);
 
         case CONTEXT_MODULE:
             return (boolean)count_records('course_modules', 'id', $instanceid);
@@ -1858,7 +1860,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         return false;
     }
 
-    if ($groupid && !record_exists('groups', 'id', $groupid)) {
+    if ($groupid && !groups_group_exists($groupid)) {
         debugging('Group ID '.intval($groupid).' does not exist!');
         return false;
     }
@@ -2337,8 +2339,8 @@ function print_context_name($context) {
             break;
 
         case CONTEXT_GROUP: // 1 to 1 to course
-            if ($group = get_record('groups', 'id', $context->instanceid)) {
-                $name = get_string('group').': '.$group->name;
+            if ($name = groups_get_group_name($context->instanceid)) {
+                $name = get_string('group').': '. $name;
             }
             break;
 
@@ -2598,7 +2600,7 @@ function get_parent_contexts($context) {
         break;
 
         case CONTEXT_GROUP: // 1 to 1 to course
-            if (!$group = get_record('groups','id',$context->instanceid)) {
+            if (! $group = groups_get_group($context->instanceid)) {
                 return array();
             }
             if ($parent = get_context_instance(CONTEXT_COURSE, $group->courseid)) {

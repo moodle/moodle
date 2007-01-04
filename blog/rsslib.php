@@ -99,7 +99,8 @@
                 $info = $SITE->fullname;
                 break;
             case 'group':
-                $info = get_field('groups', 'name', 'id', $id);
+                $group = groups_get_group($id, false);
+                $info = $group->name; //TODO: get_field('groups', 'name', 'id', $id)
                 break;
             default:
                 $info = '';

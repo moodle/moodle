@@ -1,0 +1,182 @@
+<?php
+/**
+ * Add/remove members from group.
+ *
+ * @copyright &copy; 2006 The Open University
+ * @author N.D.Freear AT open.ac.uk
+ * @author J.White AT open.ac.uk 
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package groups
+ */
+require_once('../config.php');
+require_once('lib.php');
+require_once($CFG->libdir.'/moodlelib.php');
+
+$success = true;
+
+$courseid   = required_param('courseid', PARAM_INT);         
+$groupingid = required_param('grouping', PARAM_INT);
+$groupid    = required_param('group', PARAM_INT);
+
+// Get the course information so we can print the header and
+// check the course id is valid
+$course = groups_get_course_info($courseid);
+if (! $course) {
+    $success = false;
+    print_error('The course ID is invalid');
+}
+
+if ($success) {
+    // Make sure that the user has permissions to manage groups.
+    require_login($courseid);
+
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    if (! has_capability('moodle/course:managegroups', $context)) {
+        redirect();
+    }
+    
+    if ($frm = data_submitted() and confirm_sesskey()) { 
+
+        if (isset($frm->cancel)) {
+            redirect('index.php?id='. $courseid
+                .'&groupingid='. $groupingid .'&groupid='. $groupid);
+        }
+        elseif (isset($frm->add) and !empty($frm->addselect)) {
+
+            foreach ($frm->addselect as $userid) {
+                if (! $userid = clean_param($userid, PARAM_INT)) {
+                    continue;
+                }
+                //echo "Try user $userid, group $groupid<br>\n";
+                $success = groups_add_member($groupid, $userid);
+                if (! $success) {
+                    print_error('Failed to add user $userid to group.');
+                }
+            }
+        }
+        elseif (isset($frm->remove) and !empty($frm->removeselect)) {
+
+            foreach ($frm->removeselect as $userid) {
+                if (! $userid = clean_param($userid, PARAM_INT)) {
+                    continue;
+                }
+                $success = groups_remove_member($groupid, $userid);
+                if (! $success) {
+                    print_error('Failed to remove user $userid from group.');
+                }
+            }
+        }
+    }
+
+    // Print the page and form
+    $strgroups = get_string('groups');
+    $strparticipants = get_string('participants');
+
+    $groupname = groups_get_group_displayname($groupid);
+
+    print_header("$course->shortname: $strgroups", 
+                 "$course->fullname", 
+                 "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
+                 "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
+                 "-> $strgroups", '', '', true, '', user_login_string($course, $USER));
+
+    //require_once('assign-form.html');
+?>
+<div id="addmembersform">
+    <h3 class="main"><?php print_string('adduserstogroup', 'group'); echo " $groupname"; ?></h3>
+
+    <form name="assignform" id="assignform" method="post" action="">
+
+    <input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
+    <input type="hidden" name="courseid" value="<?php p($courseid); ?>" />
+    <input type="hidden" name="grouping" value="<?php echo $groupingid; ?>" />
+    <input type="hidden" name="group" value="<?php echo $groupid; ?>" />
+
+    <table summary="" align="center" cellpadding="5" cellspacing="0">
+    <tr>
+      <td valign="top">
+          <label for="removeselect"><?php print_string('existingusers', 'role'); //count($contextusers) ?></label>
+          <br />
+          <select name="removeselect[]" size="20" id="removeselect" multiple="multiple"
+                  onfocus="document.assignform.add.disabled=true;
+                           document.assignform.remove.disabled=false;
+                           document.assignform.addselect.selectedIndex=-1;">
+<?php
+    $userids = groups_get_members($groupid);
+    
+    if ($userids != false) {
+        // Put the groupings into a hash and sorts them
+        foreach ($userids as $userid) {
+            $listmembers[$userid] = groups_get_user_displayname($userid, $courseid);       
+        }
+        natcasesort($listmembers);
+
+        // Print out the HTML
+        foreach($listmembers as $id => $name) {
+            echo "<option value=\"$id\">$name</option>\n";
+        }
+    }
+?>
+          </select></td>
+      <td valign="top">
+<?php // Hidden assignment? ?>
+
+        <?php check_theme_arrows(); ?>
+        <p class="arrow_button">
+            <input name="add" id="add" type="submit" value="<?php echo '&nbsp;'.$THEME->larrow.' &nbsp; &nbsp; '.get_string('add'); ?>" title="<?php print_string('add'); ?>" />
+            <br />
+            <input name="remove" id="remove" type="submit" value="<?php echo '&nbsp; '.$THEME->rarrow.' &nbsp; &nbsp; '.get_string('remove'); ?>" title="<?php print_string('remove'); ?>" />
+        </p>
+      </td>
+      <td valign="top">
+          <label for="addselect"><?php print_string('potentialusers', 'role'); //$usercount ?></label>
+          <br />
+          <select name="addselect[]" size="20" id="addselect" multiple="multiple"
+                  onfocus="document.assignform.add.disabled=false;
+                           document.assignform.remove.disabled=true;
+                           document.assignform.removeselect.selectedIndex=-1;">
+    <?php
+    $showall = 0;
+    unset($userids);
+    if ($showall == 0 && $groupingid != GROUP_NOT_IN_GROUPING) {
+        $userids = groups_get_users_not_in_any_group_in_grouping($courseid, $groupingid, $groupid);
+    } else {
+        $userids = groups_get_users_not_in_group($courseid, $groupid);
+    }
+    
+    if ($userids != false) {
+        // Put the groupings into a hash and sorts them
+        foreach ($userids as $userid) {
+            $nonmembers[$userid] = groups_get_user_displayname($userid, $courseid);       
+        }
+        natcasesort($nonmembers);
+
+        // Print out the HTML
+        foreach($nonmembers as $id => $name) {
+            echo "<option value=\"$id\">$name</option>\n";
+        }
+    }
+    ?>
+         </select>
+         <br />
+         <?php //TODO: Search box 
+         
+              if (!empty($searchtext)) {
+                  echo '<input name="showall" id="showall" type="submit" value="'.$strshowall.'" />'."\n";
+              }
+         ?>
+       </td>
+    </tr>
+    <tr><td>
+        <input type="submit" name="cancel" value="<?php print_string('return', 'group'); ?>" />    
+    </td></tr>
+    </table>
+
+    </form>
+</div>
+
+<?php
+    print_footer($course);
+}
+
+?>

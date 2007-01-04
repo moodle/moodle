@@ -1,8 +1,8 @@
-<?php // $Id$
+<?php // $Id: tiny_mce_gzip.php,v 1.1 2006/03/04 15:57:32 julmis Exp $
 /**
- * $RCSfile$
- * $Revision$
- * $Date$
+ * $RCSfile: tiny_mce_gzip.php,v $
+ * $Revision: 1.1 $
+ * $Date: 2006/03/04 15:57:32 $
  *
  * @version 1.07
  * @author Moxiecode

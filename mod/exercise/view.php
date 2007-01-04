@@ -341,7 +341,7 @@
 
         /// Allow the teacher to change groups (for this session)
         if ($groupmode) {
-            if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
+            if ($groups = groups_get_groups_names($course->id)) { //TODO:
                 print_group_menu($groups, $groupmode, $currentgroup, "view.php?id=$cm->id");
             }
         }

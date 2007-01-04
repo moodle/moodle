@@ -84,7 +84,7 @@ switch ($filtertype) {
         if ($CFG->bloglevel < BLOG_GROUP_LEVEL) {
             error('Group blogs is not enabled');
         }
-        if (!$group = get_record('groups','id',$groupid)) {
+        if (! $group = groups_get_group($groupid)) { //TODO:check.
             error('Incorrect group id specified');
         }
         if (!$course = get_record('course', 'id', $group->courseid)) {

@@ -1,4 +1,18 @@
 <?php
+/**
+ * Language strings for new Moodle Groups (cvs:/group/) 
+ *
+ * @copyright &copy; 2006 The Open University
+ * @author J.White AT open.ac.uk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package groups
+ */
+
+$string['groupmember'] = 'Group Member';
+$string['groupmemberdesc'] = 'Standard role for a member of a group.';
+$string['notingrouping'] = '[Not in a grouping]';
+
+$string['errornotingrouping'] = 'Sorry, you can\'t create a group in $a';
 
 $string['groupings'] = 'Groupings';
 $string['grouping'] = 'Grouping';
@@ -22,7 +36,7 @@ $string['addexistinggroupstogrouping'] = 'Add existing groups to grouping';
 $string['addgroupstogrouping'] = 'Add groups to grouping';
 
 $string['removeselectedusers'] = 'Remove selected users';
-$string['adduserstogroup'] = 'Add users to group';
+$string['adduserstogroup'] = 'Add/remove users from group'; //'Add users to group';
 
 $string['groupingname'] = 'Grouping name';
 $string['defaultgroupingname'] = 'Grouping';
@@ -52,9 +66,9 @@ $string['displaygrouping'] = 'Display grouping';
 $string['addgroupstogrouping'] = 'Add groups to grouping';
 $string['showusersalreadyingroup'] = 'Show users already in a group in the grouping';
 
-$string ['save'] = 'Save';
+$string['save'] = 'Save';
 $string['cancel'] = 'Cancel';
-
+$string['return'] = 'Return';
 
 $string['groupfor'] = "for group";
 $string['groupinfo'] = 'Info about selected group';

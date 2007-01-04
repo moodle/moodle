@@ -83,7 +83,7 @@ class nusoap_base {
 	 * @var string
 	 * @access private
 	 */
-	var $revision = '$Revision$';
+	var $revision = '$Revision: 1.2 $';
     /**
      * Current error string (manipulated by getError/setError)
 	 *

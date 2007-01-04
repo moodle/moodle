@@ -157,10 +157,11 @@ function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions=''
     } else {
 
         if ($groupid) {
+//TODO:check. Remove group DB dependencies.
             return get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
                           FROM {$CFG->prefix}user u,
-                               {$CFG->prefix}groups_members g
-                          WHERE $select AND g.groupid = '$groupid' AND g.userid = u.id
+                               ".groups_members_from_sql()."
+                          WHERE $select AND ".groups_members_where_sql($groupid, 'u.id')."
                               AND ($fullname $LIKE '%$searchtext%' OR u.email $LIKE '%$searchtext%')
                               $except $order");
         } else {
@@ -375,7 +376,11 @@ function get_users_not_fully_set_up($cutofftime=2000000000) {
 }
 
 
-/**
+/** TODO: functions now in /group/lib/legacylib.php (3)
+get_groups
+get_group_users
+user_group
+
  * Returns an array of group objects that the user is a member of
  * in the given course.  If userid isn't specified, then return a
  * list of all groups in the course.
@@ -384,7 +389,7 @@ function get_users_not_fully_set_up($cutofftime=2000000000) {
  * @param int $courseid The id of the course in question.
  * @param int $userid The id of the user in question as found in the 'user' table 'id' field.
  * @return object
- */
+ *
 function get_groups($courseid, $userid=0) {
     global $CFG;
 
@@ -410,7 +415,7 @@ function get_groups($courseid, $userid=0) {
  * @param string $sort ?
  * @param string $exceptions ?
  * @return object
- */
+ *
 function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='', $fields='u.*') {
     global $CFG;
     if (!empty($exceptions)) {
@@ -441,7 +446,7 @@ function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='', $f
  * @param int $userid The id of the user as found in the 'user' table.
  * @param int $groupid The id of the group the user is in.
  * @return object
- */
+ *
 function user_group($courseid, $userid) {
     global $CFG;
 
@@ -453,7 +458,7 @@ function user_group($courseid, $userid) {
                                AND m.userid = '$userid'
                                ORDER BY name ASC");
 }
-
+*/
 
 
 

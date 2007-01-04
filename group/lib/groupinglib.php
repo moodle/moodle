@@ -12,6 +12,7 @@
 require_once($CFG->dirroot.'/group/lib/basicgrouplib.php');
 require_once($CFG->dirroot.'/group/db/dbgroupinglib.php');
 
+define('GROUP_NOT_IN_GROUPING', -1);
 
 /*****************************
         Access/List functions  
@@ -73,7 +74,7 @@ function groups_get_groups_for_user_in_grouping($userid, $groupingid) {
 }
 
 /**
- * Gets a list of the groups not a specified grouping
+ * Gets a list of the groups not in a specified grouping
  * @param int $groupingid The grouping specified
  * @return array An array of the group ids
  */
@@ -84,6 +85,33 @@ function groups_get_groups_not_in_grouping($groupingid, $courseid) {
         if (!groups_belongs_to_grouping($groupid, $groupingid)) {
             array_push($groupids, $groupid);
         }
+    }
+    return $groupids;
+}
+
+/**
+ * TODO: move to dbgroupinglib.php
+ */
+function groups_get_groups_not_in_any_grouping($courseid) {
+    global $CFG;
+/* SELECT g.id
+     FROM headmdl_groups AS g
+     WHERE g.id NOT IN 
+       (SELECT groupid FROM headmdl_groups_groupings_groups);
+*/
+    $sql = "SELECT g.id
+        FROM {$CFG->prefix}groups AS g
+        WHERE g.id NOT IN 
+        (SELECT groupid FROM {$CFG->prefix}groups_groupings_groups)";
+
+    $records = get_records_sql($sql);
+    $groupids = array();
+    if ($records) {
+        foreach ($records as $r) {
+            $groupids[] = $r->id;
+        }
+    } else {
+        return false;
     }
     return $groupids;
 }
@@ -101,19 +129,18 @@ function groups_get_users_not_in_any_group_in_grouping($courseid, $groupingid,
 	$users = get_course_users($courseid);
     $userids = groups_users_to_userids($users); 
     $nongroupmembers = array();
-    if ($userids) {
-	    foreach($userids as $userid) {
-	        if (!groups_is_member_of_some_group_in_grouping($userid, 
-	                                                        $groupingid)) {
-	        	// If a group has been specified don't include members of that 
-	        	// group
-	        	if ($groupid  and !groups_is_member($userid, $groupid)) {
-	            	array_push($nongroupmembers, $userid);
-	        	} else {
-	        		array_push($nongroupmembers, $userid);
-	        	}
-	    	}
-	    }
+    if (! $userids) {
+        return $nongroupmembers;
+    }
+    foreach($userids as $userid) {
+	    if (!groups_is_member_of_some_group_in_grouping($userid, $groupingid)) {
+	      	// If a group has been specified don't include members of that group
+	       	if ($groupid  and !groups_is_member($userid, $groupid)) {
+	           	array_push($nongroupmembers, $userid);
+	       	} else {
+	       		///array_push($nongroupmembers, $userid);
+	       	}
+        }
     }
     return $nongroupmembers;
 }
@@ -282,7 +309,10 @@ function groups_create_grouping($courseid, $groupingsettings = false) {
  * doesn't belong to the same course as the grouping. 
  */
 function groups_add_group_to_grouping($groupid, $groupingid) {
-	$belongstogrouping = groups_belongs_to_grouping($groupid, $groupingid);
+	if (GROUP_NOT_IN_GROUPING == $groupingid) {
+        return false;
+    }
+    $belongstogrouping = groups_belongs_to_grouping($groupid, $groupingid);
 	if (!groups_grouping_exists($groupingid)) {
 		$groupadded = false;
 	} elseif (!$belongstogrouping) {

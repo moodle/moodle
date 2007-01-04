@@ -548,13 +548,20 @@
             case 'group':
 
                 $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
+                        .groups_members_from_sql().', '.$CFG->prefix.'user u
+                        WHERE '.groups_members_where_sql($filterselect, 'p.userid').'
+                        AND u.id = p.userid
+                        AND u.deleted = 0
+                        AND '.$permissionsql;
+
+                        /*'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
                         .$CFG->prefix.'groups_members m, '.$CFG->prefix.'user u
                         WHERE p.userid = m.userid '.$tagquerysql.'
                         AND u.id = p.userid
                         AND m.groupid = '.$filterselect.'
                         AND u.deleted = 0
                         AND '.$permissionsql;
-
+                        */
             break;
 
             case 'user':

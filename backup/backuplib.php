@@ -1642,7 +1642,7 @@
         $status2 = true;
 
         //Get groups 
-        $groups = get_records("groups","courseid",$preferences->backup_course);
+        $groups = get_groups($preferences->backup_course); //TODO:check.
 
         //Pring groups header
         if ($groups) {
@@ -1692,7 +1692,7 @@
         $status = true;
 
         //Get groups_members
-        $groups_members = get_records("groups_members","groupid",$groupid);
+        $groups_members = groups_get_members($groupid); //TODO:check.
         
         //Pring groups_members header
         if ($groups_members) {
@@ -1869,8 +1869,8 @@
                 //Iterate
                 foreach ($list as $dir) {
                     //Look for dir like group in groups table
-                    $data = get_record ('groups', 'courseid', $preferences->backup_course,
-                                                  'id',$dir);
+                    $data = groups_group_belongs_to_course($dir, $preferences->backup_course);
+                    //TODO:check. get_record ('groups', 'courseid', $preferences->backup_course,'id',$dir);
                     //If exists, copy it
                     if ($data) {
                         $status = backup_copy_file($rootdir."/".$dir,

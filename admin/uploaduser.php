@@ -304,8 +304,8 @@ if ($um->preprocess_files() && confirm_sesskey()) {
                             if (!$course[$i]) {
                                 notify(get_string('coursegroupunknown','error',$addgroup[$i]));
                             } else {
-                                if ($group = get_record("groups","courseid",$course[$i]->id,"name",$addgroup[$i])) {
-                                    $groupid[$i] = $group->id;
+                                if ($groupid = groups_get_group_by_name($course[$i]->id, $addgroup[$i])) { //TODO:check.
+                                    $groupid[$i] = $groupid;
                                 } else {
                                     notify(get_string('groupunknown','error',$addgroup[$i]));
                                 }

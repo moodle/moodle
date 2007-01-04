@@ -3,7 +3,7 @@
  * Unit tests for new Moodle Groups - groupinglib.php
  *
  * @copyright &copy; 2006 The Open University
- * @author N.D.Freear@open.ac.uk
+ * @author N.D.Freear AT open.ac.uk
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package groups
  */

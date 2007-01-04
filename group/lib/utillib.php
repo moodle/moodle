@@ -106,6 +106,9 @@ function groups_get_group_displayname($groupid) {
  * @return string The display name of the grouping
  */
 function groups_get_grouping_displayname($groupingid) {
+    if (GROUP_NOT_IN_GROUPING == $groupingid) {
+        return get_string('notingrouping', 'group');
+    }    
 	$groupingsettings = groups_get_grouping_settings($groupingid);
     if ($groupingsettings) {	
         $groupingname = $groupingsettings->name;
@@ -152,8 +155,19 @@ function groups_groups_to_groupids($groups) {
 function groups_groupid_to_group($groupid) {
 }
 
-// @@@ TO DO 
-function groups_groupids_to_groups($groupids) {
+/**
+ * Given an array of group IDs get an array of group objects.
+ * TODO: quick and dirty. Replace with SQL?
+ */
+function groups_groupids_to_groups($groupids, $courseid=false) {
+    if (! $groupids) {
+        return false;
+    }
+    $groups = array();
+    foreach ($groupids as $id) {
+        $groups[] = groups_get_group_settings($id, $courseid);
+    }
+    return $groups;
 }
 
 
@@ -194,6 +208,70 @@ function groups_get_course($groupid) {
         return $course_group->courseid;
     }
     return false;
+}
+
+/**
+ * Return the address for the group settings page.
+ * (For /user/index.php etc.)
+ * @param $courseid
+ * @param $groupid
+ * @param $groupingid Optional grouping ID
+ * @param $html True for HTML pages, eg. on error. False for HTTP redirects.
+ * @param $param Extra parameters.
+ */
+function groups_group_edit_url($courseid, $groupid, $groupingid=false, $html=true, $param=false) {
+    global $CFG;
+    $html ? $sep = '&amp;' : $sep = '&';
+    $url = $CFG->wwwroot.'/group/group.php?courseid='.$courseid;
+    if ($groupid) {
+        $url .= $sep.'group='.$groupid;
+    }
+    if ($groupingid) {
+        $url .= $sep.'grouping='.$groupingid;
+    }
+    if ($param) {
+        $url .= $sep.$param;
+    }
+    return $url;
+}
+
+/** Internal use only. */
+function groups_grouping_edit_url($courseid, $groupingid=false, $html=true) {
+    global $CFG;
+    $html ? $sep = '&amp;' : $sep = '&';
+    $url = $CFG->wwwroot.'/group/grouping.php?courseid='.$courseid;
+    if ($groupingid) {
+        $url .= $sep.'grouping='.$groupingid;
+    }
+    return $url;
+}
+
+/** Internal use only. */
+function groups_members_add_url($courseid, $groupid, $groupingid=false, $html=true) {
+    global $CFG;
+    $html ? $sep = '&amp;' : $sep = '&';
+    $url = $CFG->wwwroot.'/group/assign.php?courseid='.$courseid.$sep.'group='.$groupid;
+    if ($groupingid) {
+        $url .= $sep.'grouping='.$groupingid;
+    }
+    return $url;
+}
+
+/**
+ * Return the address for the main group management page.
+ * (For admin block.)
+ */
+function groups_home_url($courseid, $groupid=false, $groupingid=false, $html=true) {
+    global $CFG;
+    $html ? $sep = '&amp;' : $sep = '&';
+    $url = $CFG->wwwroot.'/group/index.php?id='.$courseid;
+    if ($groupid) {
+        $url .= $sep.'group='.$groupid;
+    }
+    if ($groupingid) {
+        $url .= $sep.'grouping='.$groupingid;
+    }
+    return $url;
 }
 
 ?>

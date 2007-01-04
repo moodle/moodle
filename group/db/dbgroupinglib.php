@@ -24,12 +24,12 @@ require_once($CFG->libdir.'/datalib.php');
  */
 function groups_db_get_groupings($courseid) {
     if (!$courseid) {
-        $groupingid = false;
+        $groupingids = false;
     } else {
         $groupings = get_records('groups_courses_groupings', 'courseid ', 
                                  $courseid, '', $fields='id, groupingid');
 		if (!$groupings) {
-			$groupingsids = false;
+			$groupingids = false;
 		} else {
 	        // Put the results into an array
 	        $groupingids = array();
@@ -217,7 +217,7 @@ function groups_db_grouping_exists($groupingid) {
         $tableprefix = $CFG->prefix;
         $sql = "SELECT gm.id
         FROM {$tableprefix}groups_groupings_groups AS gg
-        INNER JOIN {$tableprefix}groups_groups_users AS gm
+        INNER JOIN {$tableprefix}groups_members AS gm
         ON gg.groupid = gm.groupid
         WHERE gm.userid = $userid AND gg.groupingid = $groupingid";
         $belongstogroup = record_exists_sql($sql);

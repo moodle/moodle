@@ -35,7 +35,7 @@
     if (isteacher($course->id)) {
         $currentgroup = get_current_group($course->id);
         if ($currentgroup and isteacheredit($course->id)) {
-            $group = get_record("groups", "id", $currentgroup);
+            $group = groups_get_group($currentgroup); //TODO:
             $groupname = " ($group->name)";
         } else {
             $groupname = "";

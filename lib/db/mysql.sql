@@ -366,45 +366,6 @@ CREATE TABLE `prefix_grade_preferences` (
 # --------------------------------------------------------
 
 #
-# Table structure for table `group`
-#
-
-CREATE TABLE `prefix_groups` (
-  `id` int(10) unsigned NOT NULL auto_increment,
-  `courseid` int(10) unsigned NOT NULL default '0',
-  `name` varchar(254) NOT NULL default '',
-  `description` text NOT NULL default '',
-  `password` varchar(50) NOT NULL default '',
-  `lang` varchar(10) NOT NULL default 'en',
-  `theme` varchar(50) NOT NULL default '',
-  `picture` int(10) unsigned NOT NULL default '0',
-  `hidepicture` int(2) unsigned NOT NULL default '0',
-  `timecreated` int(10) unsigned NOT NULL default '0',
-  `timemodified` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `id` (`id`),
-  KEY `courseid` (`courseid`)
-) TYPE=MyISAM COMMENT='Each record is a group in a course.';
-# --------------------------------------------------------
-
-#
-# Table structure for table `group_members`
-#
-
-CREATE TABLE `prefix_groups_members` (
-  `id` int(10) unsigned NOT NULL auto_increment,
-  `groupid` int(10) unsigned NOT NULL default '0',
-  `userid` int(10) unsigned NOT NULL default '0',
-  `timeadded` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `id` (`id`),
-  KEY `groupid` (`groupid`),
-  KEY `userid` (`userid`)
-) TYPE=MyISAM COMMENT='Lists memberships of users to groups';
-# --------------------------------------------------------
-
-
-#
 # Table structure for table `log`
 #
 

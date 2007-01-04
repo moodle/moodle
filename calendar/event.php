@@ -413,7 +413,7 @@
                 break;
                 case 'group':
                     $groupid = optional_param('groupid', 0, PARAM_INT);
-                    if(!($group = get_record('groups', 'id', $groupid) )) {
+                    if (! ($group = groups_get_group($groupid))) { //TODO:check.
                         calendar_get_allowed_types($allowed);
                         $eventtype = 'select';
                     }
@@ -604,14 +604,14 @@ function calendar_add_event_allowed($event) {
             return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $event->courseid));
 
         case 'group':
-            if (!$group = get_record('groups', 'id', $event->groupid)) {
+            if (! groups_group_exists($event->groupid)) { //TODO:check.
                 return false;
             } 
             // this is ok because if you have this capability at course level, you should be able 
             // to edit group calendar too
             // there is no need to check membership, because if you have this capability
             // you will have a role in this group context
-            return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_GROUP, $group->id));
+            return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_GROUP, $event->groupid));
 
         case 'user':
             if ($event->userid == $USER->id) {
