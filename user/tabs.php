@@ -96,7 +96,11 @@
         if (($mainadmin = get_admin()) === false) {
             $mainadmin->id = 0; /// Weird - no primary admin!
         }
-        if ((!empty($USER->id) and ($USER->id == $user->id) and !isguest()) or
+
+        if (is_mnet_remote_user($user)) {
+            // cannot edit remote users
+        }
+        else if ((!empty($USER->id) and ($USER->id == $user->id) and !isguest()) or
             (has_capability('moodle/user:editprofile', $personalcontext) and ($user->id != $mainadmin->id)) ) {
 
             if(empty($CFG->loginhttps)) {

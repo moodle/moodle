@@ -171,6 +171,12 @@
     $showroles = 1;
     include('tabs.php');
 
+    if (is_mnet_remote_user($user)) {
+        echo "<p class=\"errorboxcontent\">This profile is for a remote user from another Moodle system. <br>\n";
+        $remotehost = get_record('mnet_host', 'id', $user->mnethostid);
+        echo "Remote Moodle: <a href=\"{$remotehost->wwwroot}/user/edit.php\">{$remotehost->name}</a> (click here to edit your profile on the remote server) </p>\n";
+    }
+
     echo "<table width=\"80%\" align=\"center\" border=\"0\" cellspacing=\"0\" class=\"userinfobox\">";
     echo "<tr>";
     echo "<td width=\"100\" valign=\"top\" class=\"side\">";
@@ -332,7 +338,8 @@
     echo "</td></tr></table>";
 
     $internalpassword = false;
-    if (is_internal_auth($user->auth) or (!empty($CFG->{'auth_'.$user->auth.'_stdchangepassword'}))) {
+    $userauth = get_auth_plugin($user->auth);
+    if (method_exists($userauth, 'can_change_password') and $userauth->can_change_password()) {
         if (empty($CFG->loginhttps)) {
             $internalpassword = "$CFG->wwwroot/login/change_password.php";
         } else {
@@ -354,8 +361,8 @@
                 echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" />";
             }
             echo "</form></td>";
-        } else if ( strlen($CFG->{'auth_'.$user->auth.'_changepasswordurl'}) > 1 ) {
-            echo "<td nowrap=\"nowrap\"><form action=\"".$CFG->{'auth_'.$user->auth.'_changepasswordurl'}."\" method=\"get\">";
+        } elseif ( method_exists($userauth, 'change_password_url') and strlen($userauth->change_password_url())) {
+            echo "<td nowrap=\"nowrap\"><form action=\"".$userauth->change_password_url()."\" method=\"get\">";
             echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" />";
             echo "</form></td>";
         }

@@ -35,6 +35,11 @@
         require_login($course->id);
     }
 
+    // remote users cannot be edited
+    if (is_mnet_remote_user($user)) {
+        redirect($CFG->wwwroot . "/user/view.php?id=$id&course={$course->id}");
+    }
+
     if ($USER->id <> $user->id) {    // Current user editing someone else's profile
         if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) { // Current user can update user profiles
             if ($mainadmin = get_admin()) {        
@@ -59,11 +64,15 @@
     // load the relevant auth libraries
     if (!empty($user->auth)) { 
         $auth = $user->auth;
-        if (!file_exists("$CFG->dirroot/auth/$auth/lib.php")) {
-            trigger_error("Can't find auth module $auth , default to internal.");
-            $auth = "manual";    // Can't find auth module, default to internal
+        // TODO: spit dummy if $auth doesn't exist
+        if (! exists_auth_plugin($auth)) {
+            trigger_error("Can't find auth module '$auth', default to internal.");
+            $auth = "manual";
         }
-        require_once("$CFG->dirroot/auth/$auth/lib.php");
+        $authplugin = get_auth_plugin($auth);
+    }
+    else {
+        $authplugin = get_auth_plugin($CFG->auth);
     }
 
     
@@ -157,14 +166,13 @@
         // override locked values
         if (!has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {      
             $fields = get_user_fieldnames();
-            $authconfig = get_config( 'auth/' . $user->auth );
             foreach ($fields as $field) {
                 $configvariable = 'field_lock_' . $field;
-                if ( empty($authconfig->{$configvariable}) ) {
+                if ( empty($authplugin->config->{$configvariable}) ) {
                     continue; //no locking set
                 }
-                if ( $authconfig->{$configvariable} === 'locked'
-                     || ($authconfig->{$configvariable} === 'unlockedifempty' && !empty($user->$field)) ) {
+                if ( $authplugin->config->{$configvariable} === 'locked'
+                     or ($authplugin->config->{$configvariable} === 'unlockedifempty' and !empty($user->$field))) {
                     if (!empty( $user->$field)) {
                         $usernew->$field = addslashes($user->$field);
                     }
@@ -205,9 +213,10 @@
                 if (!empty($usernew->newpassword)) {
                     $usernew->password = hash_internal_user_password($usernew->newpassword);
                     // update external passwords
-                    if (!empty($CFG->{'auth_'. $user->auth.'_stdchangepassword'})) {
-                        if (function_exists('auth_user_update_password')){
-                            if (!auth_user_update_password($user->username, $usernew->newpassword)){
+                    // TODO: this was using $user->auth possibly overriding $authplugin above. Can we guarantee $user->auth being something valid?
+                    if ($authplugin->can_change_password()) {
+                        if (method_exists($authplugin, 'user_update_password')){
+                            if (!$authplugin->user_update_password($user->username, $usernew->newpassword)){
                                 error('Failed to update password on external auth: ' . $user->auth .
                                         '. See the server logs for more details.');
                             }
@@ -233,9 +242,9 @@
 
             $userold = get_record('user','id',$usernew->id);
             if (update_record("user", $usernew)) {
-                if (function_exists("auth_user_update")){
+                if (method_exists($authplugin, "user_update")){
                     // pass a true $userold here 
-                    if (!auth_user_update($userold, $usernew)) {
+                    if (! $authplugin->user_update($userold, $usernew)) {
                         // auth update failed, rollback for moodle
                         update_record("user", $userold);
                         error('Failed to update user data on external auth: '.$user->auth.
@@ -371,13 +380,11 @@
         echo '<script type="text/javascript">'."\n";
         echo '<!--'."\n";
 
-        $authconfig = get_config( 'auth/' . $user->auth );
-        
         foreach ($fields as $field) {
             $configvariable = 'field_lock_' . $field;
-            if (isset($authconfig->{$configvariable})) {
-                if ( $authconfig->{$configvariable} === 'locked'
-                    || ($authconfig->{$configvariable} === 'unlockedifempty' && !empty($user->$field)) ) {
+            if (isset($authplugin->config->{$configvariable})) {
+                if ( $authplugin->config->{$configvariable} === 'locked'
+                    or ($authplugin->config->{$configvariable} === 'unlockedifempty' and !empty($user->$field))) {
                    echo "eval('document.form.$field.disabled=true');\n";
                 }
             }
@@ -412,7 +419,7 @@ function find_form_errors(&$user, &$usernew, &$err, &$um) {
         if (empty($usernew->username)) {
             $err["username"] = get_string("missingusername");
 
-        } else if (record_exists("user", "username", $usernew->username) and $user->username == "changeme") {
+        } else if (record_exists("user", "username", $usernew->username, 'mnethostid', $CFG->mnet_localhost_id) and $user->username == "changeme") {
             $err["username"] = get_string("usernameexists");
 
         } else {
@@ -424,9 +431,10 @@ function find_form_errors(&$user, &$usernew, &$err, &$um) {
             }
         }
 
-        if (empty($usernew->newpassword) and empty($user->password) and is_internal_auth() )
+        // TODO: is_internal_auth() - what, the global auth? the user auth?
+        if (empty($usernew->newpassword) and empty($user->password) and is_internal_auth()) {
             $err["newpassword"] = get_string("missingpassword");
-
+        }
         if (($usernew->newpassword == "admin") or ($user->password == md5("admin") and empty($usernew->newpassword)) ) {
             $err["newpassword"] = get_string("unsafepassword");
         }

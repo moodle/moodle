@@ -28,9 +28,10 @@
 if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
     $theadmin = get_admin(); // returns false during install
     $adminself = (!empty($theadmin) and ($theadmin->id == $USER->id) and ($USER->id == $user->id));
+    $userauth = get_auth_plugin($user->auth);
     echo '<tr>';
     echo '<th>'.get_string('username').':</th>';
-    if ($adminself || is_internal_auth($user->auth) ){
+    if ($adminself or $userauth->is_internal()) {
         echo "<td><input type=\"text\" name=\"username\" size=\"20\" alt=\"".get_string("username")."\" value=\"";
         p($user->username);
         echo "\" />";
@@ -58,7 +59,7 @@ if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SI
         echo "</td></tr>\n";
     }
 
-    if ($adminself || is_internal_auth($user->auth) || (!empty($CFG->{'auth_'.$user->auth.'_stdchangepassword'}))) {
+    if ($adminself or $userauth->can_change_password()) {
         echo '<tr>';
         echo '<th>'.get_string('newpassword').':</th>';
         echo "<td><input type=\"text\" name=\"newpassword\" size=\"20\" alt=\"".get_string("newpassword")."\" value=\"";
@@ -73,7 +74,7 @@ if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SI
         }
         echo "</td>";
         echo "</tr>\n";
-        if (!$adminself && (!empty($CFG->{'auth_'.$user->auth.'_stdchangepassword'}) || is_internal_auth())){
+        if (!$adminself and $userauth->can_change_password()) {
              if (get_user_preferences('auth_forcepasswordchange', NULL, $user->id)) {
                  $checked = ' checked="checked" ';
              } else {
