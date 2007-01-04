@@ -937,8 +937,16 @@ $moodle_capabilities = array(
             'coursecreator' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
-    )
+    ),
 
+    'moodle/site:mnetlogintoremote' => array(
+        'riskbitmask' => RISK_PERSONAL | RISK_XSS,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'admin' => CAP_ALLOW
+        )
+    )
 );
 
 ?>
