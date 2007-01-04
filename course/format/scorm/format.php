@@ -25,7 +25,7 @@
     echo '<tr>';
 
     if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
-        echo '<td width="'.$preferred_width_left.'" id="left-column">';
+        echo '<td style="width:'.$preferred_width_left.'px" id="left-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
         echo '</td>';
     }
@@ -41,7 +41,7 @@
 
     // The right column
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
-        echo '<td width="'.$preferred_width_right.'" id="right-column">';
+        echo '<td style="width:'.$preferred_width_right.'px" id="right-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
         echo '</td>';
     }
