@@ -418,6 +418,10 @@ form#adminsettings div.htmlarea {
   text-align:right;
 }
 
+.headermenu fieldset{
+  border: 0;  
+}
+
 .navbar {
   width:auto;
   padding:3px 0.5em;
