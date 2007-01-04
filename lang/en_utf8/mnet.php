@@ -9,17 +9,17 @@ $string['hostsettings']                 = 'Host Settings';
 $string['mnetpeers']                    = 'Moodle Network Peers';
 $string['mnetservices']                 = 'Moodle Network Services';
 $string['trustedhosts']                 = 'Trusted Hosts';
-$string['trustedhostsexplain']          = 'Please enter a list of IP addresses or networks, one on each line. Some examples:<br>'.
-                                          'Your local host:<br>'.
-                                          '127.0.0.1<br>'.
-                                          'Your local host (with a network block):<br>'.
-                                          '127.0.0.1/32<br>'.
-                                          'Only the host with IP address 192.168.0.7:<br>'.
-                                          '192.168.0.7/32<br>'.
-                                          'Any host with an IP address between 192.168.0.1 and 192.168.0.255:<br>'.
-                                          '192.168.0.0/24<br>'.
-                                          'Any host whatsoever:<br>'.
-                                          '192.168.0.0/0<br>'.
+$string['trustedhostsexplain']          = 'Please enter a list of IP addresses or networks, one on each line. Some examples:<br />'.
+                                          'Your local host:<br />'.
+                                          '127.0.0.1<br />'.
+                                          'Your local host (with a network block):<br />'.
+                                          '127.0.0.1/32<br />'.
+                                          'Only the host with IP address 192.168.0.7:<br />'.
+                                          '192.168.0.7/32<br />'.
+                                          'Any host with an IP address between 192.168.0.1 and 192.168.0.255:<br />'.
+                                          '192.168.0.0/24<br />'.
+                                          'Any host whatsoever:<br />'.
+                                          '192.168.0.0/0<br />'.
                                           'Obviously the last example is not a recommended configuration.';
 
 $string['currentkey']                   = 'Current Public Key';
@@ -29,7 +29,7 @@ $string['expireyourkey']                = 'Delete This Key';
 $string['deletekeycheck']               = 'Are you absolutely sure you want to delete this key?';
 $string['expireyourkeyexplain']         = 'Moodle automatically rotates your keys every 28 days (by default) but you have the option to '.
                                           '<em>manually</em> expire this key at any time. This will only be useful if you believe this '.
-                                          'key has been compromised. A replacement will be immediately automatically generated.<br>'.
+                                          'key has been compromised. A replacement will be immediately automatically generated.<br />'.
                                           'Deleting this key will make it impossible for other Moodles to communicate with you, until you '.
                                           'manually contact each administrator and provide them with your new key.';
 $string['deleteoutoftime']              = 'Your 60-second window for deleting this key has expired. Please start again.'; 
@@ -50,7 +50,7 @@ $string['forbidden-transport']          = 'The transport method you are trying t
 
 $string['registerallhosts']             = 'Register all hosts';
 $string['registerallhostsexplain']      = 'You can choose to register all hosts that try to connect to you. This means that a record will appear in your hosts list for any '.
-                                          'Moodle site that connects to you and requests your public key.<br>'.
+                                          'Moodle site that connects to you and requests your public key.<br />'.
                                           'You have the option below to configure services for \'All Hosts\' and by enabling some services there, you are able to provide '.
                                           'services to any Moodle server indiscriminately.';
 
@@ -112,7 +112,7 @@ $string['moodle_home_help']             = 'The path to the homepage of Moodle on
 $string['hostnamehelp']                 = 'The fully-qualified domain name of the remote host, e.g. www.example.com';
 $string['idhelp']                       = 'This value is automatically assigned and cannot be changed';
 $string['invalidpubkey']                = 'The key is not a valid SSL key.';
-$string['nopubkey']                     = 'There was a problem retrieving the public key.<br>Maybe the host does not allow Moodle Networking or the key is invalid.';
+$string['nopubkey']                     = 'There was a problem retrieving the public key.<br />Maybe the host does not allow Moodle Networking or the key is invalid.';
 $string['last_connect_time_help']       = 'The time that you last connected to this host.';
 $string['last_transport_help']          = 'The transport that you used for the last connection to this host.';
 $string['transport_help']               = 'These options are reciprocal, so you can only force a remote host to use a signed SSL cert if your server also has a signed SSL cert.';
@@ -141,7 +141,7 @@ $string['notPEM']                       = 'This key is not in PEM format. It wil
 $string['notBASE64']                    = 'This string is not in Base64 Encoded format. It cannot be a valid key.';
 
 $string['usercannotchangepassword'] = 'You cannot change your password here since you are a remote user.';
-$string['userchangepasswordlink'] = '<br> You may be able to change your password at your <a href=\"$a->wwwroot/login/change_password.php\">$a->description</a> provider.';
+$string['userchangepasswordlink'] = '<br /> You may be able to change your password at your <a href=\"$a->wwwroot/login/change_password.php\">$a->description</a> provider.';
 
 $string['remotehost'] = 'Remote Hub';
 $string['allow'] = 'Allow';

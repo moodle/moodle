@@ -78,7 +78,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
         if (isset($form->public_key)) {
             $form->public_key = clean_param($form->public_key, PARAM_PEM);
             if (empty($form->public_key)) {
-                error(get_string("invalidpubkey", 'mnet'),'peers.php?step=update&hostid='.$mnet_peer->id);
+                error(get_string("invalidpubkey", 'mnet'),'peers.php?step=update&amp;hostid='.$mnet_peer->id);
                 exit;
             } else {
                 $oldkey = $mnet_peer->public_key;
@@ -86,7 +86,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
                 $mnet_peer->public_key_expires   = $mnet_peer->check_common_name($form->public_key);
                 if ($mnet_peer->public_key_expires == false) {
                     $mnet_peer->public_key == $oldkey;
-                    error(get_string("invalidpubkey", 'mnet'),'peers.php?step=update&hostid='.$mnet_peer->id);
+                    error(get_string("invalidpubkey", 'mnet'),'peers.php?step=update&amp;hostid='.$mnet_peer->id);
                     exit;
                 }
             }
@@ -95,7 +95,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
         // PREVENT DUPLICATE RECORDS ///////////////////////////////////////////
         if ('input' == $form->step) {
             if ( isset($mnet_peer->id) && $mnet_peer->id > 0 ) {
-                error(get_string("hostexists", 'mnet', $mnet_peer->id),'peers.php?step=update&hostid='.$mnet_peer->id);
+                error(get_string("hostexists", 'mnet', $mnet_peer->id),'peers.php?step=update&amp;hostid='.$mnet_peer->id);
             }
         }
 
@@ -104,7 +104,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
         } elseif ('commit' == $form->step) {
             $bool = $mnet_peer->commit();
             if ($bool) {
-                redirect('peers.php?step=update&hostid='.$mnet_peer->id, get_string('changessaved'));
+                redirect('peers.php?step=update&amp;hostid='.$mnet_peer->id, get_string('changessaved'));
             } else {
                 error('Invalid action parameter.', 'index.php');
             }

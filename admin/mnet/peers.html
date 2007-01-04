@@ -40,9 +40,9 @@ admin_externalpage_print_header($adminroot);
 
 ?>
     <tr>
-        <td class="cell c0"><a href="peers.php?step=update&hostid=<?php echo $host->id; ?>"><?php echo $host->name; ?></a></td>
-        <td class="cell c1"><a href="peers.php?step=update&hostid=<?php echo $host->id; ?>"><?php echo $host->wwwroot; ?></a></td>
-        <td class="cell c2" nowrap><?php if ($host->id != $CFG->mnet_all_hosts_id) echo $last_connect; ?></td>
+        <td class="cell c0"><a href="peers.php?step=update&amp;hostid=<?php echo $host->id; ?>"><?php echo $host->name; ?></a></td>
+        <td class="cell c1"><a href="peers.php?step=update&amp;hostid=<?php echo $host->id; ?>"><?php echo $host->wwwroot; ?></a></td>
+        <td class="cell c2" nowrap="nowrap"><?php if ($host->id != $CFG->mnet_all_hosts_id) echo $last_connect; ?></td>
         <td class="cell c3">
 <?php   if ($host->id != $CFG->mnet_all_hosts_id): ?>
             <form method="POST" action="delete.php">
@@ -69,7 +69,7 @@ admin_externalpage_print_header($adminroot);
     </tr>
     <tr>
         <td class="cell c0"></td>
-        <td class="cell c1"><input type="text" name="wwwroot" value=""></td>
+        <td class="cell c1"><input type="text" name="wwwroot" value="" /></td>
         <td class="cell c2"></td>
         <td class="cell c3"></td>
     </tr>

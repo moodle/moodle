@@ -86,7 +86,7 @@
             <td  class="generalboxcontent">
             <table cellpadding="9" cellspacing="0" >
                 <tr valign="top">
-                    <td colspan="2" class="header" cellpadding="0"><span><?php print_string('aboutyourhost', 'mnet'); ?></span></td>
+                    <td colspan="2" class="header" cellpadding="0"><?php print_string('aboutyourhost', 'mnet'); ?></td>
                 </tr>
                 <tr valign="top">
                     <td align="right">Public Key:</td>
@@ -111,13 +111,13 @@
             <td  class="generalboxcontent">
             <table cellpadding="9" cellspacing="0" >
                 <tr valign="top">
-                    <td colspan="2" class="header" cellpadding="0"><span><?php print_string('expireyourkey', 'mnet'); ?></span></td>
+                    <td colspan="2" class="header" cellpadding="0"><?php print_string('expireyourkey', 'mnet'); ?></td>
                 </tr>
                 <tr valign="top">
-                    <td colspan="2" cellpadding="0"><span><?php print_string('expireyourkeyexplain', 'mnet'); ?></span></td>
+                    <td colspan="2" cellpadding="0"><?php print_string('expireyourkeyexplain', 'mnet'); ?></td>
                 </tr>
                 <tr valign="top">
-                    <td align="left" width="10" nowrap><?php print_string('expireyourkey', 'mnet'); ?></td>
+                    <td align="left" width="10" nowrap="nowrap"><?php print_string('expireyourkey', 'mnet'); ?></td>
                     <td align="left"><input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
                         <input type="hidden" name="deleteKey" value="" />
                         <input type="submit" name="submit" value="<?php print_string('delete'); ?>" />
