@@ -1776,16 +1776,13 @@ function print_course($course, $width="100%") {
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
-    print_simple_box_start('center', $width, '', 5, 'coursebox');
-
     $linkcss = $course->visible ? '' : ' class="dimmed" ';
 
-    echo '<table width="100%">';
-    echo '<tr valign="top">';
-    echo '<td valign="top" width="50%" class="info">';
-    echo '<b><a title="'.get_string('entercourse').'"'.
+    echo '<div class="coursebox">';
+    echo '<div class="info">';
+    echo '<div class="name"><a title="'.get_string('entercourse').'"'.
          $linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.
-         $course->fullname.'</a></b><br />';   
+         $course->fullname.'</a></div>';   
     
     /// first find all roles that are supposed to be displayed
     if ($managerroles = get_config('', 'coursemanager')) {
@@ -1812,15 +1809,14 @@ function print_course($course, $width="100%") {
     $enrol = enrolment_factory::factory($course->enrol);
     echo $enrol->get_access_icons($course);
 
-    echo '</td><td valign="top" width="50%" class="summary">';
+    echo '</div><div class="summary">';
     $options = NULL;
     $options->noclean = true;
     $options->para = false;
     echo format_text($course->summary, FORMAT_MOODLE, $options,  $course->id);
-    echo "</td></tr>";
-    echo "</table>";
-
-    print_simple_box_end();
+    echo '</div>';
+    echo '</div>';
+    echo '<div class="clearer"></div>';
 }
 
 
