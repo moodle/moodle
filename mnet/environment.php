@@ -37,7 +37,7 @@ class mnet_environment {
             $hostobject = get_record('mnet_host','id', $CFG->mnet_localhost_id);
             if(is_object($hostobject)) {
                 $temparr = get_object_vars($hostobject);
-                foreach(get_object_vars($temparr) as $key => $value) {
+                foreach($temparr as $key => $value) {
                     $this->$key = $value;
                 }
                 unset($hostobject, $temparr);
@@ -82,7 +82,7 @@ class mnet_environment {
 
         if (!empty($keypair)) {
             // Explode/Implode is faster than Unserialize/Serialize
-            $this->keypair = explode('@@@@@@@@', $keypair);
+            list($this->keypair['certificate'], $this->keypair['keypair_PEM']) = explode('@@@@@@@@', $keypair);
         }
 
         if ($this->public_key_expires > time()) {
@@ -126,7 +126,7 @@ class mnet_environment {
             $details                  = openssl_x509_parse($this->public_key);
             $this->public_key_expires = $details['validTo_time_t'];
 
-            set_config('openssl', implode('@@@@@@@@', $this->keypair);
+            set_config('openssl', implode('@@@@@@@@', $this->keypair), 'mnet');
 
             update_record('mnet_host', $this);
         }
