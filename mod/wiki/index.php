@@ -58,10 +58,10 @@
     foreach ($wikis as $wiki) {
         if (!$wiki->visible) {
             //Show dimmed if the mod is hidden
-            $link = '<A class="dimmed" HREF="view.php?id='.$wiki->coursemodule.'">'.format_string($wiki->name,true).'</A>';
+            $link = '<a class="dimmed" href="view.php?id='.$wiki->coursemodule.'">'.format_string($wiki->name,true).'</a>';
         } else {
             //Show normal if the mod is visible
-            $link = '<A HREF="view.php?id='.$wiki->coursemodule.'">'.format_string($wiki->name,true).'</A>';
+            $link = '<a href="view.php?id='.$wiki->coursemodule.'">'.format_string($wiki->name,true).'</a>';
         }
 
         $timmod = '<span class="smallinfo">'.userdate($wiki->timemodified).'</span>';

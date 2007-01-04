@@ -1214,15 +1214,15 @@ function wiki_admin_setpageflags_list($pageflagstatus) {
     $cell_pagename="";
     $cell_flags="";
     if ($data["flags"] & EWIKI_DB_F_TEXT) {
-        $cell_pagename .= '<A HREF="' . EWIKI_SCRIPT . $id . '">';
+        $cell_pagename .= '<a href="' . EWIKI_SCRIPT . $id . '">';
     } else {
-        $cell_pagename .= '<A HREF="' . EWIKI_SCRIPT_BINARY . $id . '">';
+        $cell_pagename .= '<a href="' . EWIKI_SCRIPT_BINARY . $id . '">';
     }
-    $cell_pagename .= s($id) . '</A> / '.get_string("version","wiki").": ".$row["version"];
+    $cell_pagename .= s($id) . '</a> / '.get_string("version","wiki").": ".$row["version"];
 
     foreach ($FD as $n=>$str) {
-        $cell_flags .='<INPUT TYPE="checkbox" NAME="flags['. rawurlencode($id)
-            . '][' . $n . ']" VALUE="1" '
+        $cell_flags .='<input type="checkbox" name="flags['. rawurlencode($id)
+            . '][' . $n . ']" value="1" '
             . (($data["flags"] & $n) ? "CHECKED=\"checked\"" : "")
             . ' />'.$str. ' ';
     }
@@ -1350,15 +1350,15 @@ function wiki_admin_remove_list($listall="") {
   }
 
   foreach ($selected as $id => $reason) {
-    $table_checkbox='<INPUT TYPE="checkbox" VALUE="'.rawurlencode($id).'" NAME="pagestodelete[]" />';
+    $table_checkbox='<input type="checkbox" value="'.rawurlencode($id).'" name="pagestodelete[]" />';
 
     #-- link & id
     if (strpos($id, EWIKI_IDF_INTERNAL) === false) {
-        $table_page='<A HREF="' . ewiki_script("", $id) . '">';
+        $table_page='<a href="' . ewiki_script("", $id) . '">';
     } else {
-        $table_page='<A HREF="' . ewiki_script_binary("", $id) . '">';
+        $table_page='<a href="' . ewiki_script_binary("", $id) . '">';
     }
-    $table_page .= s($id) . '</A>';
+    $table_page .= s($id) . '</a>';
 
     #-- print reason
     $table_reason=$reason;

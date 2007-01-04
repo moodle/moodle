@@ -60,7 +60,7 @@
         $formstart = "";
     }
 
-    print_header($strtitle,$strtitle,"<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> <a href=\"index.php?id=$course->id\">".get_string("participants")."</a> -> ".$strtitle,$formstart);
+    print_header($strtitle,$strtitle,"<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> <a href=\"index.php?id=$course->id\">".get_string("participants")."</a> -> ".$strtitle,$formstart);
 
 
     if ($count) {

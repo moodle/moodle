@@ -29,7 +29,7 @@ print_heading(get_string('mnetsettings', 'mnet'));
                 </tr>
                 <tr valign="top">
                     <td width="80">
-                        <form method="POST" action="delete.php">
+                        <form method="post" action="delete.php">
                             <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
                             <input type="hidden" name="hostid" value="<?php echo $mnet_peer->id; ?>" />
                             <input type="hidden" name="step" value="delete" />
@@ -37,7 +37,7 @@ print_heading(get_string('mnetsettings', 'mnet'));
                         </form>
                     </td>
                     <td>
-                        <form method="GET" action="index.php">
+                        <form method="get" action="index.php">
                             <input type="submit" name="ignore" value="<?php print_string('cancel'); ?>"/>
                         </form>
                     </td>

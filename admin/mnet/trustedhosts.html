@@ -10,7 +10,7 @@ admin_externalpage_print_header($adminroot);
         <td class="cell c1" colspan="2"><?php print_string('trustedhostsexplain', 'mnet'); ?></td>
     </tr>
     <tr>
-        <td class="cell c1" colspan="2"><form  method="POST" action="trustedhosts.php">
+        <td class="cell c1" colspan="2"><form  method="post" action="trustedhosts.php">
             <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
             <textarea name="hostlist" cols="40" rows="20"><?php echo $trusted_hosts; ?></textarea><br />
             <input type="submit" value="<?php print_string('savechanges'); ?>" />
@@ -48,7 +48,7 @@ admin_externalpage_print_header($adminroot);
     endif;
 ?>
     <tr>
-        <td class="cell c1" colspan="2"><form  method="GET" action="trustedhosts.php">
+        <td class="cell c1" colspan="2"><form  method="get" action="trustedhosts.php">
             <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
             <input type="text" name="testipaddress" value="<?php echo $test_ip_address; ?>" />
             <input type="submit" value="<?php print_string('go'); ?>" />

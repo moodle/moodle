@@ -35,7 +35,7 @@ if (!isset($form->create_sequence_url)) {
 
 <form name="form" method="post" action="mod.php" onSubmit="disableSumbit(this);">
 <center>
-<span id="message"><P>Please wait .......</P></span>
+<span id="message"><p>Please wait .......</p></span>
 <table cellpadding="5">
 <tr valign=top>
 <td align=right><b><?php print_string("workspace", "lams") ?>:</b></td>
@@ -211,7 +211,7 @@ var req;
  * This function is to initialize elements' status and refresh workspace and sequence lists
  */
 function refreshLists(){
-    document.getElementById("message").innerHTML = "<P>Please wait .......</P>";
+    document.getElementById("message").innerHTML = "<p>Please wait .......</p>";
     disableSubmit(document.forms[0]);
     document.getElementById("create").disabled = true;
     document.getElementById("edit").disabled = true;

@@ -116,7 +116,7 @@
     }
 
     print_header_simple("$wiki_entry->pagename", "",
-                "<A HREF=\"index.php?id=$course->id\">$strwikis</A> -> <A HREF=\"view.php?id=$id\">".format_string($wiki->name,true)."</a> ->".
+                "<a href=\"index.php?id=$course->id\">$strwikis</a> -> <a href=\"view.php?id=$id\">".format_string($wiki->name,true)."</a> ->".
                 get_string("administration","wiki"),
                 $focus, "", true, update_module_button($cm->id, $course->id, $strwiki),
                 navmenu($course, $cm));

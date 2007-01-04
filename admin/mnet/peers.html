@@ -2,7 +2,7 @@
 admin_externalpage_print_header($adminroot);
 ?>
 <center>
-<form  method="POST" action="peers.php">
+<form  method="post" action="peers.php">
 <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
 <input type="hidden" name="updateregisterall" value="1" />
 <table cellspacing="0" cellpadding="5"  width="500" id="hosts" class="generaltable generalbox" >
@@ -45,7 +45,7 @@ admin_externalpage_print_header($adminroot);
         <td class="cell c2" nowrap="nowrap"><?php if ($host->id != $CFG->mnet_all_hosts_id) echo $last_connect; ?></td>
         <td class="cell c3">
 <?php   if ($host->id != $CFG->mnet_all_hosts_id): ?>
-            <form method="POST" action="delete.php">
+            <form method="post" action="delete.php">
                 <input type="hidden" name="hostid" value="<?php echo $host->id; ?>" />
                 <input type="hidden" name="step" value="verify" />
                 <input type="submit" name="submit" value="<?php print_string('delete'); ?>"/>

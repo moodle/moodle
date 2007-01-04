@@ -2,12 +2,12 @@
     // Make sure all variables are defined
 
 ?>
-<FORM ACTION="admin.php" METHOD="POST" ENCTYPE="multipart/form-data">
-<INPUT TYPE="HIDDEN" NAME="userid" VALUE="<?php print $userid; ?>" />
-<INPUT TYPE="HIDDEN" NAME="groupid" VALUE="<?php print $groupid ?>" />
-<INPUT TYPE="HIDDEN" NAME="action" VALUE="<?php print $action; ?>" />
-<INPUT TYPE="HIDDEN" NAME="id" VALUE="<?php print $cm->id ?>" />
-<INPUT TYPE="HIDDEN" NAME="wikipage" VALUE="<?php print $wikipage?>" />
+<form action="admin.php" method="post" enctype="multipart/form-data">
+<input type="hidden" name="userid" value="<?php print $userid; ?>" />
+<input type="hidden" name="groupid" value="<?php print $groupid ?>" />
+<input type="hidden" name="action" value="<?php print $action; ?>" />
+<input type="hidden" name="id" value="<?php print $cm->id ?>" />
+<input type="hidden" name="wikipage" value="<?php print $wikipage?>" />
 <?php
   $strip_table=wiki_admin_strip_list($form->pagestostrip, $form->version, $err);
   print_table($strip_table);
