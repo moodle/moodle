@@ -3,7 +3,7 @@ admin_externalpage_print_header($adminroot);
 ?>
 <center>
 <form method="post" action="index.php">
-    <table align="center"   class="generalbox" border="0" cellpadding="5" cellspacing="0">
+    <table align="center" width="635" class="generalbox" border="0" cellpadding="5" cellspacing="0">
         <tr>
             <td  class="generalboxcontent">
             <table cellpadding="9" cellspacing="0" >
@@ -19,7 +19,7 @@ admin_externalpage_print_header($adminroot);
                     <td><input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
                         <input type="radio" name="mode" value="off" <?php echo ("off" == $CFG->mnet_dispatcher_mode)? 'checked="true"' : '' ?> /> <?php print_string('off', 'mnet'); ?> <br />
                         <input type="radio" name="mode" value="strict" <?php echo ("strict" == $CFG->mnet_dispatcher_mode)? 'checked="true"' : '' ?> /> <?php print_string('on', 'mnet'); ?><br />
-                        <input type="submit" name="submit" value="submitNet" />
+                        <input type="submit" name="submit" value="<?php print_string('savechanges'); ?>" />
                     </td>
                 </tr>
             </table>
