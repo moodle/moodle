@@ -395,6 +395,8 @@
 
     if (!isset($USER->newadminuser)) {
         print_footer($course);
+    } else {
+        print_footer();
     }
 
     exit;

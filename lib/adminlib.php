@@ -169,6 +169,7 @@ function upgrade_plugins($type, $dir, $return) {
 
     if ($updated_plugins) {
         print_continue($return);
+        print_footer();
         die;
     }
 }
@@ -381,6 +382,7 @@ function upgrade_activity_modules($return) {
 
     if ($updated_modules) {
         print_continue($return);
+        print_footer();
         die;
     }
 }

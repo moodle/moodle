@@ -1,4 +1,4 @@
-<?php  //$Id: upgrade.php,v 1.2 2007/01/03 04:55:20 moodler Exp $
+<?php  //$Id$
 
 // This file keeps track of upgrades to 
 // groups
@@ -69,6 +69,7 @@ function upgrade_group_db($continueto) {
             notify(get_string('databasesuccess'), 'green');
             notify(get_string('databaseupgradegroups', '', $group_version), 'green');
             print_continue($continueto);
+            print_footer();
             exit;
         } else {
             error("Upgrade of group system failed! (Could not update version in config table)");
@@ -126,6 +127,7 @@ function upgrade_group_db($continueto) {
                 notify(get_string('databasesuccess'), 'green');
                 notify(get_string('databaseupgradegroups', '', $group_version), 'green');
                 print_continue($continueto);
+                print_footer();
                 exit;
             } else {
                 error("Upgrade of group system failed! (Could not update version in config table)");

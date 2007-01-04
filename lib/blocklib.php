@@ -1039,6 +1039,7 @@ function upgrade_blocks_db($continueto) {
                 notify(get_string('databasesuccess'), 'notifysuccess');
                 notify(get_string('databaseupgradeblocks', '', $blocks_version), 'notifysuccess');
                 print_continue($continueto);
+                print_footer();
                 exit;
             } else {
                 error('Upgrade of blocks system failed! (Could not update version in config table)');
@@ -1099,6 +1100,7 @@ function upgrade_blocks_db($continueto) {
                 notify(get_string('databasesuccess'), 'notifysuccess');
                 notify(get_string('databaseupgradeblocks', '', $blocks_version), 'notifysuccess');
                 print_continue($continueto);
+                print_footer();
                 exit;
             } else {
                 error('Upgrade of blocks system failed! (Could not update version in config table)');
@@ -1373,6 +1375,7 @@ function upgrade_blocks_plugins($continueto) {
 
     if (!empty($updated_blocks)) {
         print_continue($continueto);
+        print_footer();
         die;
     }
 }

@@ -351,6 +351,7 @@
                     notify(get_string("databasesuccess"), "green");
                     notify(get_string("databaseupgradebackups", "", $backup_version), "green");
                     print_continue($continueto);
+                    print_footer();
                     exit;
                 } else {
                     error("Upgrade of backup system failed! (Could not update version in config table)");
