@@ -130,7 +130,7 @@ function hotpot_remove_orphans($secondarytable, $secondarykeyfield, $primarytabl
 
     if ($records) {
         $keys = implode(',', array_keys($records));
-        print "removing orphan record(s) from {$CFG->prefix}$secondarytable<br>";
+        print "removing orphan record(s) from {$CFG->prefix}$secondarytable<br/>";
         $ok = $ok && execute_sql("DELETE FROM {$CFG->prefix}$secondarytable WHERE $secondarykeyfield IN ($keys)");
     }
 
@@ -418,7 +418,7 @@ function hotpot_update_to_v2_1() {
         if (hotpot_rm("$CFG->dirroot{$ds}$dir", false)) {
             print get_string('success');
         } else {
-            print "failed<br>Please remove '$CFG->dirroot{$ds}$dir' manually";
+            print "failed<br/>Please remove '$CFG->dirroot{$ds}$dir' manually";
         }
         print "<br />\n";
     }

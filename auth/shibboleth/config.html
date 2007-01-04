@@ -49,7 +49,7 @@
         <?php 
 
         if ($config->convert_data and $config->convert_data != '' and !is_readable($config->convert_data)) {
-              echo '<br><font color="red">';
+              echo '<br/><font color="red">';
               print_string("auth_shib_convert_data_warning", "auth");
               echo '</font>';
         }

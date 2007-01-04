@@ -234,9 +234,9 @@ class auth_plugin_mnet
             $remoteuser = (object) $mnetrequest->response;
         } else {
             foreach ($mnetrequest->error as $code => $errormessage) {
-                $message .= "ERROR $code:<br>$errormessage<br>";
+                $message .= "ERROR $code:<br/>$errormessage<br/>";
             }
-            error("RPC auth/mnet/user_authorise:<br>$message");
+            error("RPC auth/mnet/user_authorise:<br/>$message");
         }
 
         if (empty($remoteuser) or empty($remoteuser->username)) {

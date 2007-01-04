@@ -97,7 +97,7 @@
                 echo "<p align=\"center\">" . get_string("delete"). " " . get_string("category","glossary") . "<font size=\"3\">";
 
                 print_simple_box_start("center","40%", "#FFBBBB");
-                echo "<center><b>".format_text($category->name)."</b><br>";
+                echo "<center><b>".format_text($category->name)."</b><br/>";
 
                 $num_entries = count_records("glossary_entries_categories","categoryid",$category->id);
                 if ( $num_entries ) {

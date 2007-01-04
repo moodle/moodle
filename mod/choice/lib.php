@@ -432,7 +432,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 if ($choice->limitanswers && !$optionid==0) {
                     echo get_string("taken", "choice").":";
                     echo $countans;
-                    echo "<br>";
+                    echo "<br/>";
                     echo get_string("limit", "choice").":";
                     $choice_option = get_record("choice_options", "id", $optionid);
                     echo $choice_option->maxanswers;
@@ -527,7 +527,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 if ($choice->limitanswers && !$optionid==0) {
                     echo get_string("taken", "choice").":";
                     echo $column[$optionid];
-                    echo "<br>";
+                    echo "<br/>";
                     echo get_string("limit", "choice").":";
                     $choice_option = get_record("choice_options", "id", $optionid);
                     echo $choice_option->maxanswers;

@@ -1943,7 +1943,7 @@
 
         $status = zip_files($files, "$basedir/$name");
 
-        //echo "<br>Status: ".$status;                                     //Debug
+        //echo "<br/>Status: ".$status;                                     //Debug
         return $status;
 
     } 

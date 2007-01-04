@@ -105,13 +105,13 @@ function algebra2tex($algebra) {
     $cmd  = "cd $CFG->dirroot\\$CFG->algebrafilterdirwin & algebra2tex.pl x/2";
     $test = `$cmd`;
     if ($test != '\frac{x}{2}') {
-      echo "There is a problem with either Perl or the script algebra2tex.pl<br>";
+      echo "There is a problem with either Perl or the script algebra2tex.pl<br/>";
       $ecmd = $cmd . " 2>&1";
-      echo `$ecmd` . "<br>\n";
-      echo "The shell command<br>$cmd<br>returned status = $status<br>\n";
+      echo `$ecmd` . "<br/>\n";
+      echo "The shell command<br/>$cmd<br/>returned status = $status<br/>\n";
       $commandpath = "$CFG->dirroot\\$CFG->algebrafilterdirwin\\algebra2tex.pl";
       if (file_exists($commandpath)) {
-        echo "The file permissions of algebra2tex.pl are: " . decoct(fileperms($commandpath)) . "<br>";
+        echo "The file permissions of algebra2tex.pl are: " . decoct(fileperms($commandpath)) . "<br/>";
       }
       die;
     }
@@ -121,13 +121,13 @@ function algebra2tex($algebra) {
     $cmd  = "cd $CFG->dirroot/$CFG->algebrafilterdir; ./algebra2tex.pl x/2";
     $test = `$cmd`;
     if ($test != '\frac{x}{2}') {
-      echo "There is a problem with either Perl or the script algebra2tex.pl<br>";
+      echo "There is a problem with either Perl or the script algebra2tex.pl<br/>";
       $ecmd = $cmd . " 2>&1";
-      echo `$ecmd` . "<br>\n";
-      echo "The shell command<br>$cmd<br>returned status = $status<br>\n";
+      echo `$ecmd` . "<br/>\n";
+      echo "The shell command<br/>$cmd<br/>returned status = $status<br/>\n";
       $commandpath = "$CFG->dirroot/$CFG->algebrafilterdir/algebra2tex.pl";
       if (file_exists($commandpath)) {
-        echo "The file permissions of algebra2tex.pl are: " . decoct(fileperms($commandpath)) . "<br>";
+        echo "The file permissions of algebra2tex.pl are: " . decoct(fileperms($commandpath)) . "<br/>";
       }
       die;
     }

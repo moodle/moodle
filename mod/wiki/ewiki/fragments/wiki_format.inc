@@ -19,8 +19,8 @@ $ewiki_idf_url = array( "http://",
                         "file://" );
 
 // allowed wikinames
-//define( "EWIKI_CHARS_L", "a-zäöüß_µ¤$" );
-//define( "EWIKI_CHARS_U", "A-ZÄÖÜ" );
+//define( "EWIKI_CHARS_L", "a-zï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½$" );
+//define( "EWIKI_CHARS_U", "A-Zï¿½ï¿½ï¿½" );
 
 function wiki_format( $wiki_source,
                       $strip_slashes = true,
@@ -56,7 +56,7 @@ function wiki_format( $wiki_source,
   $syn_htmlentities = array( "&" => "&amp;",
                              ">" => "&gt;",
                              "<" => "&lt;",
-                             "%%%" => "<br>" );
+                             "%%%" => "<br/>" );
 
   $wm_list = array( "-" => array('ul type="square"', "", "li"),
                     "*" => array('ul type="circle"', "", "li"),
@@ -72,7 +72,7 @@ function wiki_format( $wiki_source,
                           // "###" => array("<big><b>", "</b></big>"),
                           "**" => array("<b>", "</b>"),
                           "##" => array("<big>", "</big>"),
-                          "µµ" => array("<small>", "</small>") );
+                          "ï¿½ï¿½" => array("<small>", "</small>") );
 
   $link_regex = "#(!?\[[^[\]\n]+\])|((?:!?[a-z]{2,6}://|mailto:)[^\s\[\]\'\"\)\,<]+)#";
 

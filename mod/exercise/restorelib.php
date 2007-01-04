@@ -69,11 +69,11 @@
             $exercise->maxbytes = backup_todb($info['MOD']['#']['MAXBYTES']['0']['#']); 
             $exercise->deadline = backup_todb($info['MOD']['#']['DEADLINE']['0']['#']);
             $date = usergetdate($exercise->deadline);
-            fwrite ($restorelog_file,"<br>The Exercise - ".$exercise->name." <br>");
+            fwrite ($restorelog_file,"<br/>The Exercise - ".$exercise->name." <br/>");
             fwrite ($restorelog_file,"The DEADLINE was  " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");            
             $exercise->deadline += $restore->course_startdateoffset;
             $date = usergetdate($exercise->deadline);
-            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the DEADLINE is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br>");         
+            fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;the DEADLINE is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br/>");         
             $exercise->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
             $exercise->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
             $exercise->gradinggrade = backup_todb($info['MOD']['#']['GRADINGGRADE']['0']['#']);

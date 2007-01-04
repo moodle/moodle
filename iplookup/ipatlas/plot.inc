@@ -92,7 +92,7 @@ if ($use_firewall) {
 
      $fp = fsockopen ($firewall_host, $firewall_port, $errno, $errstr, 30) or die("Could not open socket to proxy");
      if (!$fp) {
-       echo "$errstr ($errno)<br>\n";
+       echo "$errstr ($errno)<br/>\n";
      } else {
        fputs ($fp, "GET http://netgeo.caida.org/perl/netgeo.cgi?target=$ip HTTP/1.0\r\nHost: netgeo.caida.org\r\n\r\n") or die("Could not write to socket");
        while (!feof($fp)) {
@@ -106,7 +106,7 @@ if ($use_firewall) {
 
 $fp = fsockopen ("netgeo.caida.org", 80, $errno, $errstr, 30) or die("Could not open socket to caida.org");
 if (!$fp) {
-    echo "$errstr ($errno)<br>\n";
+    echo "$errstr ($errno)<br/>\n";
 } else {
     fputs ($fp, "GET /perl/netgeo.cgi?target=$ip HTTP/1.0\r\nHost: netgeo.caida.org\r\n\r\n") or die("Could not write to socket");
     while (!feof($fp)) {

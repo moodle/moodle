@@ -4001,14 +4001,14 @@ function current_charset($ignorecache = false) {
  *
  * Prints out a translated string using the return value from the {@link get_string()} function.
  *
- * Example usage of this function when the string is in the moodle.php file:<br>
+ * Example usage of this function when the string is in the moodle.php file:<br/>
  * <code>
  * echo '<strong>';
  * print_string('wordforstudent');
  * echo '</strong>';
  * </code>
  *
- * Example usage of this function when the string is not in the moodle.php file:<br>
+ * Example usage of this function when the string is not in the moodle.php file:<br/>
  * <code>
  * echo '<h1>';
  * print_string('typecourse', 'calendar');
@@ -4064,7 +4064,7 @@ function clean_getstring_data( $a ) {
  *
  * Example usage of this function involves finding the string you would
  * like a local equivalent of and using its identifier and module information
- * to retrive it.<br>
+ * to retrive it.<br/>
  * If you open moodle/lang/en/moodle.php and look near line 1031
  * you will find a string to prompt a user for their word for student
  * <code>

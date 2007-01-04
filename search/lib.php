@@ -104,7 +104,7 @@
     if (is_array($str) or is_object($str)) {
       print_r($str);
     } else if ($str) {
-      print $str."<br>";
+      print $str."<br/>";
     } //if
 
     exit(0);

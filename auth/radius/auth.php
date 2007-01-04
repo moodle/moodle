@@ -45,35 +45,35 @@ class auth_plugin_radius {
         require_once 'Auth/RADIUS.php';
         
         // Added by Clive on 7th May for test purposes
-        // printf("Username: $username <br>");
-        // printf("Password: $password <br>");
-        // printf("host: $this->config->host <br>");
-        // printf("nasport: $this->config->nasport <br>");
-        // printf("secret: $this->config->secret <br>");
+        // printf("Username: $username <br/>");
+        // printf("Password: $password <br/>");
+        // printf("host: $this->config->host <br/>");
+        // printf("nasport: $this->config->nasport <br/>");
+        // printf("secret: $this->config->secret <br/>");
         
         $rauth = new Auth_RADIUS_PAP($username, $password);
         $rauth->addServer($this->config->host, $this->config->nasport, $this->config->secret);
         
         if (!$rauth->start()) {
-            printf("Radius start: %s<br>\n", $rauth->getError());
+            printf("Radius start: %s<br/>\n", $rauth->getError());
             exit;
         }
         
         $result = $rauth->send();
         if (PEAR::isError($result)) {
-            printf("Radius send failed: %s<br>\n", $result->getMessage());
+            printf("Radius send failed: %s<br/>\n", $result->getMessage());
             exit;
         } else if ($result === true) {
-            // printf("Radius Auth succeeded<br>\n");
+            // printf("Radius Auth succeeded<br/>\n");
             return true;
         } else {
-            // printf("Radius Auth rejected<br>\n");
+            // printf("Radius Auth rejected<br/>\n");
             return false;
         }
         
         // get attributes, even if auth failed
         if (!$rauth->getAttributes()) {
-            printf("Radius getAttributes: %s<br>\n", $rauth->getError());
+            printf("Radius getAttributes: %s<br/>\n", $rauth->getError());
         } else {
             $rauth->dumpAttributes();
         }

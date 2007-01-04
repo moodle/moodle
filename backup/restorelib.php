@@ -6111,14 +6111,14 @@
         fwrite ($restorelog_file,"<head>");
         fwrite ($restorelog_file,$stylesheetshtml);        
         fwrite ($restorelog_file,"<title>".$course_header->course_shortname." Restored </title>");
-        fwrite ($restorelog_file,"</head><body><br><h1>The following changes were made during the Restoration of this Course.</h1><br><br>");
-        fwrite ($restorelog_file,"The Course ShortName is now - ".$course_header->course_shortname." The FullName is now - ".$course_header->course_fullname."<br><br>");
+        fwrite ($restorelog_file,"</head><body><br/><h1>The following changes were made during the Restoration of this Course.</h1><br/><br/>");
+        fwrite ($restorelog_file,"The Course ShortName is now - ".$course_header->course_shortname." The FullName is now - ".$course_header->course_fullname."<br/><br/>");
         $startdate = addslashes($course_header->course_startdate);
         $date = usergetdate($startdate);
         fwrite ($restorelog_file,"The Originating Courses Start Date was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
         $startdate += $restore->course_startdateoffset;
         $date = usergetdate($startdate);
-        fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;This Courses Start Date is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br><br>");
+        fwrite ($restorelog_file,"&nbsp;&nbsp;&nbsp;This Courses Start Date is now  " .$date['weekday'].",  ".$date['mday']." ".$date['month']." ".$date['year']."<br/><br/>");
 
         if ($status) {
             return $restorelog_file;
@@ -6139,8 +6139,8 @@
         $status = check_dir_exists($dest_dir, true, true);
         $restorelog_file = fopen("$dest_dir/restorelog.html","a");
         //Write the footer to close the logging file
-        fwrite ($restorelog_file,"<br>This file was written to directly by each modules restore process.");
-        fwrite ($restorelog_file,"<br><br>Log complete.</body></html>");
+        fwrite ($restorelog_file,"<br/>This file was written to directly by each modules restore process.");
+        fwrite ($restorelog_file,"<br/><br/>Log complete.</body></html>");
        
         if ($status) {
             return $restorelog_file;

@@ -73,16 +73,16 @@
                 $path = $dirpath.'/'.$filename;
                 if (is_dir($path) && file_exists("$path/imsmanifest.xml")) {
                     if ($all == 'force' || !file_exists("$path/moodle_inx.ser")) {
-                        echo "DEPLOYING $path<br>";
+                        echo "DEPLOYING $path<br/>";
                         ims_deploy_file($file.'/'.$filename, $all);
                     }
                 }
                 else if (is_dir($path)) {
-                    echo "DEPLOYING $path<br>";
+                    echo "DEPLOYING $path<br/>";
                     ims_deploy_folder($file.'/'.$filename, $all); 
                 }
                 else {
-                    echo "WONT DEPLOY $path<br>";
+                    echo "WONT DEPLOY $path<br/>";
                 }
             }
         }

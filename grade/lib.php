@@ -790,7 +790,7 @@ function grade_set_uncategorized() {
                                 if ($modgrades = $gradefunction($mod->instance)) {
                                     $itemcount++;
                                     //modgrades contains student information with associated grade
-                                    //echo "<b>modname: $mod->modname id: $mod->id course: $mod->course</b><br>";
+                                    //echo "<b>modname: $mod->modname id: $mod->id course: $mod->course</b><br/>";
                                     // get instance name from db.
                                     $instance = get_record($mod->modname, 'id', $mod->instance);
                                     // see if the item is already in the category table and if it is call category select with the id so it is selected

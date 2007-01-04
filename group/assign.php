@@ -47,7 +47,7 @@ if ($success) {
                 if (! $userid = clean_param($userid, PARAM_INT)) {
                     continue;
                 }
-                //echo "Try user $userid, group $groupid<br>\n";
+                //echo "Try user $userid, group $groupid<br/>\n";
                 $success = groups_add_member($groupid, $userid);
                 if (! $success) {
                     print_error('Failed to add user $userid to group.');

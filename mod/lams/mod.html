@@ -291,19 +291,19 @@ function processStateChange() {
                 "<p>Select an existing sequence or create a new sequence.</p>";
         }else if(req.status == 504){//gateway timeout. probabaly LAMS server is not available.
             document.getElementById("message").innerHTML =
-                '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">It seems the LAMS server is not available!<BR> Please contact your administrator.</h4></td></tr></table>';
+                '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">It seems the LAMS server is not available!<br/> Please contact your administrator.</h4></td></tr></table>';
         }else if(req.status == 401){//AuthenticationException thrown by LAMS server.
             document.getElementById("message").innerHTML =
-                '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">This moodle server is not authenticated by LAMS!<BR> Please contact your administrator.</h4></td></tr></table>';
+                '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">This moodle server is not authenticated by LAMS!<br/> Please contact your administrator.</h4></td></tr></table>';
         }else if(req.status == 502){//Unknow exception thrown by LAMS server
             document.getElementById("message").innerHTML =
                 '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">An unexpected error returned from LAMS server:'+req.responseText+'! Please contact your administrator.</h4></td></tr></table>';
         }else if(req.status == 417){//ServerNotFound exception thrown by LAMS server
             document.getElementById("message").innerHTML =
-                '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">This moodle server has not registered in LAMS!<BR> Please contact your administrator.</h4></td></tr></table>';
+                '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">This moodle server has not registered in LAMS!<br/> Please contact your administrator.</h4></td></tr></table>';
         }else if(req.status == 402){//All LAMS module settings have not not been set up
             document.getElementById("message").innerHTML =
-                '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">All the LAMS module settings have not been set up!<BR> Please contact your administrator.</h4></td></tr></table>';
+                '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">All the LAMS module settings have not been set up!<br/> Please contact your administrator.</h4></td></tr></table>';
         }else{//this error should come from moodle server itself
             document.getElementById("message").innerHTML =
                 '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">It should be a moodle server error:'+req.status + ' ' + req.statusText+'! Please contact your administrator.</h4></td></tr></table>';

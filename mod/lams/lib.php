@@ -22,7 +22,7 @@ function lams_update_instance($lams) {
 /// Given an object containing all the necessary data,
 /// (defined by the form in mod.html) this function
 /// will update an existing instance with new data.
-    //echo "enter lams_update_instance<BR>";
+    //echo "enter lams_update_instance<br/>";
   $lams->timemodified = time();
   $lams->id = $lams->instance;
   lams_delete_lesson($USER->username,$lams->learning_session_id);
@@ -31,13 +31,13 @@ function lams_update_instance($lams) {
         return false;
     }
     # May have to add extra stuff in here #
-  //echo $lams->id."<BR>";
-    //echo $lams->sequence."<BR>";
-    //echo $lams->course."<BR>";
-    //echo $lams->name."<BR>";
-    //echo $lams->introduction."<BR>";
-    //echo $lams->learning_session_id."<BR>";
-    //echo "exit lams_update_instance<BR>";
+  //echo $lams->id."<br/>";
+    //echo $lams->sequence."<br/>";
+    //echo $lams->course."<br/>";
+    //echo $lams->name."<br/>";
+    //echo $lams->introduction."<br/>";
+    //echo $lams->learning_session_id."<br/>";
+    //echo "exit lams_update_instance<br/>";
   return update_record("lams", $lams);
 }
 
@@ -203,17 +203,17 @@ function lams_get_sequences($username,$courseid) {
  * @return int lesson id
  */
 function lams_get_lesson($username,$ldid,$courseid,$title,$desc,$type) {
-    //echo "enter lams_get_lesson<BR>";
+    //echo "enter lams_get_lesson<br/>";
     global $CFG,$USER;
     if(!isset($CFG->lams_serverid)||!isset($CFG->lams_serverkey))
     {
-        //echo "serverid or serverkey is not set<BR>";
+        //echo "serverid or serverkey is not set<br/>";
         return NULL;
     }
     $relativeurl="/services/LearningSessionService?wsdl";
     $s = lams_get_soap_client($relativeurl);
     if(is_null($s)){
-        //echo "soap client is null<BR>";
+        //echo "soap client is null<br/>";
         return NULL;
     }
     $datetime =    date("F d,Y g:i a");
@@ -226,8 +226,8 @@ function lams_get_lesson($username,$ldid,$courseid,$title,$desc,$type) {
     //echo $hashvalue;
     $parameters = array($CFG->lams_serverid,$datetime,$hashvalue,$username,$ldid,$courseid,$title,$desc,$type);
     $result = $s->call('createLearningSession',$parameters);
-    //echo "result:".$result."<BR>";
-    //echo "exit lams_get_lesson<BR>";
+    //echo "result:".$result."<br/>";
+    //echo "exit lams_get_lesson<br/>";
     if($s->getError()){
         $result = $s->getError();
     }
@@ -243,7 +243,7 @@ function lams_get_lesson($username,$ldid,$courseid,$title,$desc,$type) {
  * @return true or false
  */
 function lams_delete_lesson($username,$lsid) {
-    //echo "enter lams_get_lesson<BR>";
+    //echo "enter lams_get_lesson<br/>";
     global $CFG,$USER;
     if(!isset($CFG->lams_serverid)||!isset($CFG->lams_serverkey))
     {
@@ -281,7 +281,7 @@ function lams_delete_lesson($username,$lsid) {
  /*
 function lams_get_class($courseid) {
     global $CFG,$USER;
-    //echo "enter lams_get_class"."<BR>";
+    //echo "enter lams_get_class"."<br/>";
     $orgId = lams_get_organisation();
     if(empty($orgId)){
         return NULL;
@@ -301,14 +301,14 @@ function lams_get_class($courseid) {
       $result = $s->call('createClass',$parameters);
       //echo "<xmp/>".$s->request."</xmp>";
       //echo "<xmp/>".$s->response."</xmp>";
-      //echo "result:".$result."<BR>";
+      //echo "result:".$result."<br/>";
        $lams_course->course = $courseid;
        $lams_course->classid = $result;
         insert_record("lams_course",$lams_course);
-        //echo "exit lams_get_class"."<BR>";
+        //echo "exit lams_get_class"."<br/>";
          return $result;
   }else{
-      //echo "exit lams_get_class"."<BR>";
+      //echo "exit lams_get_class"."<br/>";
       return $lams_course->classid;
   }
 }
@@ -322,7 +322,7 @@ function lams_get_class($courseid) {
  /*
 function lams_get_organisation() {
     global $CFG,$USER;
-    //echo "enter lams_get_organisaiton"."<BR>";
+    //echo "enter lams_get_organisaiton"."<br/>";
     if(!isset($CFG->lams_serverid)||!isset($CFG->lams_serverkey))
     {
         return NULL;
@@ -341,11 +341,11 @@ function lams_get_organisation() {
       //echo "<xmp/>".$s->request."</xmp>";
       //echo "<xmp/>".$s->response."</xmp>";
       set_config("lams_orgid",$result);
-      //echo "result:".$result."<BR>";
-      //echo "exit lams_get_organisaiton"."<BR>";
+      //echo "result:".$result."<br/>";
+      //echo "exit lams_get_organisaiton"."<br/>";
       return $result;
     }else{
-        //echo "exit lams_get_organisaiton"."<BR>";
+        //echo "exit lams_get_organisaiton"."<br/>";
         return $CFG->lams_orgid;
     }
 }
@@ -364,7 +364,7 @@ function lams_get_organisation() {
  /*
 function lams_get_user($username,$courseid) {
     global $CFG,$USER;
-    //echo "enter lams_get_user"."<BR>";
+    //echo "enter lams_get_user"."<br/>";
     if(!isset($CFG->lams_serverid)||!isset($CFG->lams_serverkey))
     {
         return NULL;
@@ -397,11 +397,11 @@ function lams_get_user($username,$courseid) {
       $lams_user->username = $username;
       $lams_user->login = $result;
       insert_record("lams_user",$lams_user);
-      //echo "result:".$result."<BR>";
-      //echo "exit lams_get_user"."<BR>";
+      //echo "result:".$result."<br/>";
+      //echo "exit lams_get_user"."<br/>";
       return $result;
     }else{
-        //echo "exit lams_get_user"."<BR>";
+        //echo "exit lams_get_user"."<br/>";
         return $lams_user->login;
     }
 }
@@ -432,7 +432,7 @@ function lams_get_user_roles($userid=0, $courseid){
             $roles .= "|"."learner";
         }
     }
-    //echo $roles."<BR>";
+    //echo $roles."<br/>";
     return $roles;
 }
 */

@@ -194,7 +194,7 @@
                 if (!defined('RESTORE_SILENTLY')) {
                     echo ".";
                     if (($i+1) % 200 == 0) {
-                        echo "<br>";
+                        echo "<br/>";
                     }
                 }
                 backup_flush(300);
@@ -324,7 +324,7 @@
                     if (!defined('RESTORE_SILENTLY')) {
                         echo ".";
                         if (($i+1) % 200 == 0) {
-                            echo "<br>";
+                            echo "<br/>";
                         }
                     }
                     backup_flush(300);
@@ -392,7 +392,7 @@
                     if (!defined('RESTORE_SILENTLY')) {
                         echo ".";
                         if (($i+1) % 1000 == 0) {
-                            echo "<br>";
+                            echo "<br/>";
                         }
                     }
                     backup_flush(300);
@@ -445,7 +445,7 @@
                     if (!defined('RESTORE_SILENTLY')) {
                         echo ".";
                         if (($i+1) % 1000 == 0) {
-                            echo "<br>";
+                            echo "<br/>";
                         }
                     }
                     backup_flush(300);
@@ -504,7 +504,7 @@
                     if (!defined('RESTORE_SILENTLY')) {
                         echo ".";
                         if (($i+1) % 1000 == 0) {
-                            echo "<br>";
+                            echo "<br/>";
                         }
                     }
                     backup_flush(300);
@@ -554,7 +554,7 @@
                     if (!defined('RESTORE_SILENTLY')) {
                         echo ".";
                         if (($i+1) % 1000 == 0) {
-                            echo "<br>";
+                            echo "<br/>";
                         }
                     }
                     backup_flush(300);
@@ -609,7 +609,7 @@
                     if (!defined('RESTORE_SILENTLY')) {
                         echo ".";
                         if (($i+1) % 1000 == 0) {
-                            echo "<br>";
+                            echo "<br/>";
                         }
                     }
                     backup_flush(300);
@@ -689,7 +689,7 @@
                     if (!defined('RESTORE_SILENTLY')) {
                         echo ".";
                         if (($i+1) % 1000 == 0) {
-                            echo "<br>";
+                            echo "<br/>";
                         }
                     }
                     backup_flush(300);
@@ -884,7 +884,7 @@
             break;
         default:
             if (!defined('RESTORE_SILENTLY')) {
-                echo "action (".$log->module."-".$log->action.") unknown. Not restored<br>";                 //Debug
+                echo "action (".$log->module."-".$log->action.") unknown. Not restored<br/>";                 //Debug
             }
             break;
         }

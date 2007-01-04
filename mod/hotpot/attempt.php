@@ -576,7 +576,7 @@ function hotpot_set_attempt_details(&$attempt) {
         $attempt->details = '<?xml version="1.0"?><hpjsresult><fields>'.$attempt->details.'</fields></hpjsresult>';
     }
 
-//  print "forcing status to in progress ..<br>\n";
+//  print "forcing status to in progress ..<br/>\n";
 //  $attempt->status = HOTPOT_STATUS_INPROGRESS;
 }
 

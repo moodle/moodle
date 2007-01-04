@@ -90,7 +90,7 @@
   //now blocks...
   //
 
-  mtrace("<br><a href='../index.php'>Back to query page</a> or <a href='../indexersplash.php'>Start indexing</a>.");
+  mtrace("<br/><a href='../index.php'>Back to query page</a> or <a href='../indexersplash.php'>Start indexing</a>.");
   mtrace('</pre>');
 
 ?>

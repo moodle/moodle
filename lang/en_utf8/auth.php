@@ -148,7 +148,7 @@ $string['auth_radiusnasport'] = 'Port to use to connect';
 $string['auth_radiussecret'] = 'Shared secret';
 
 // Shibboleth plugin
-$string['auth_shibbolethdescription'] = 'Using this method users are created and authenticated using <a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>.<br>Be sure to read the <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> for Shibboleth on how to set up your Moodle with Shibboleth';
+$string['auth_shibbolethdescription'] = 'Using this method users are created and authenticated using <a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>.<br/>Be sure to read the <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> for Shibboleth on how to set up your Moodle with Shibboleth';
 $string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_shibboleth_login'] = 'Shibboleth Login';
 $string['auth_shibboleth_manual_login'] = 'Manual Login';

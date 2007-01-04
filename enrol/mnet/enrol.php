@@ -436,9 +436,9 @@ class enrolment_plugin_mnet {
             return $courses;
         } else {
             foreach ($mnetrequest->error as $code => $errormessage) {
-                $message .= "ERROR $code:<br>$errormessage<br>";
+                $message .= "ERROR $code:<br/>$errormessage<br/>";
             }
-            error("RPC enrol/mnet/available_courses:<br>$message");
+            error("RPC enrol/mnet/available_courses:<br/>$message");
         }
         return false;
     }

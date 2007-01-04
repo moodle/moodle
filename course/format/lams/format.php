@@ -115,7 +115,7 @@ if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
             '<td class="activity forum">'.
             '<table align="center" width="100%"  class="noticebox" border="0" cellpadding="15" cellspacing="0">'.
             '<tr><td bgcolor="#FFAAAA" class="noticeboxcontent">'.
-            '<h3   class="main">All the LAMS module settings have not been set up!<BR> Please contact your administrator.</h3>'.
+            '<h3   class="main">All the LAMS module settings have not been set up!<br/> Please contact your administrator.</h3>'.
             '</td></tr></table>'.                                        
             '</td>'.
             '</tr>'.

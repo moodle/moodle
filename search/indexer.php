@@ -161,7 +161,7 @@
   //now blocks...
   //
 
-  mtrace(".<br><a href='index.php'>Back to query page</a>.");
+  mtrace(".<br/><a href='index.php'>Back to query page</a>.");
   mtrace('</pre>');
 
   //finished, turn busy flag off
