@@ -68,7 +68,7 @@ class MoodleQuickForm_choosecoursefile extends MoodleQuickForm_group
         $this->_elements[0] =& MoodleQuickForm::createElement('text', 'value', '');
         $this->_elements[1] =& MoodleQuickForm::createElement('button', 'popup', get_string('chooseafile', 'resource') .' ...');
 
-        $button=$this->_elements[1];
+        $button =& $this->_elements[1];
 
         if ($this->_options['courseid']!==null){
             $courseid=$this->_options['courseid'];
@@ -86,6 +86,7 @@ class MoodleQuickForm_choosecoursefile extends MoodleQuickForm_group
 
         $buttonattributes = array('title'=>get_string("chooseafile", "resource"),
                   'onclick'=>"return openpopup('$url', '".$button->getName()."', '$options', $fullscreen);");
+
         $button->updateAttributes($buttonattributes);
     }
     /**
@@ -139,5 +140,6 @@ class MoodleQuickForm_choosecoursefile extends MoodleQuickForm_group
         return parent::onQuickFormEvent($event, $arg, $caller);
 
     } // end func onQuickFormEvent
+
 }
 ?>
