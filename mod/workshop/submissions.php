@@ -440,6 +440,7 @@
             }
             print_continue("view.php?id=$cm->id");
         } else {
+            echo '</div>'; // close <div id='page'>
             redirect("view.php?id=$cm->id#sid=$submission->id");
         }
     }

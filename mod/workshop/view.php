@@ -121,7 +121,7 @@
                 echo "<td align=\"center\">$grade</td>";
                 echo "<td align=\"center\">".number_format($gradinggrade + $grade, 1)."</td></tr>\n";
             }
-            echo "</table><br clear=\"all\" />\n";
+            echo "</table></center><br clear=\"all\" />\n";
             workshop_print_key($workshop);
         } else {
             print_heading(get_string('nowork', 'workshop'));

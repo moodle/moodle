@@ -1273,6 +1273,7 @@
 
         // show grade if grading strategy is not zero
         if ($workshop->gradingstrategy) {
+            echo "</div>"; // MDL-7861, this is from <div id=page>
             redirect($returnto, get_string("thegradeis", "workshop").": ".
                     number_format($grade * $workshop->grade / 100, 2).
                     " (".get_string("maximumgrade")." ".number_format($workshop->grade).")");
@@ -1280,6 +1281,7 @@
         else {
             redirect($returnto);
         }
+        
     }
 
 
@@ -1359,7 +1361,6 @@
     else {
         error("Fatal Error: Unknown Action: ".$action."\n");
     }
-
     print_footer($course);
 
 ?>
