@@ -2436,13 +2436,11 @@ function forum_print_rating_menu($postid, $userid, $scale) {
 function forum_print_mode_form($id, $mode, $forumtype='') {
     global $FORUM_LAYOUT_MODES;
 
-    echo "<div align=\"center\">";
     if ($forumtype == 'single') {
         popup_form("view.php?f=$id&amp;mode=", $FORUM_LAYOUT_MODES, "mode", $mode, "");
     } else {
         popup_form("discuss.php?d=$id&amp;mode=", $FORUM_LAYOUT_MODES, "mode", $mode, "");
     }
-    echo "</div>\n";
 }
 
 function forum_search_form($course, $search='') {

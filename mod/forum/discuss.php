@@ -201,7 +201,7 @@
 
 /// Print the controls across the top
 
-    echo '<table width="100%"><tr><td width="33%">';
+    echo '<table width="100%"><tr><td>';
 
     if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/site:accessallgroups', $modcontext))) {
         if ($groups = groups_get_groups_names($course->id)) { //TODO:
@@ -209,9 +209,9 @@
         }
     }
 
-    echo "</td><td width=\"33%\">";
+    echo "</td><td>";
     forum_print_mode_form($discussion->id, $displaymode);
-    echo "</td><td width=\"33%\">";
+    echo "</td><td>";
 
     if ($forum->type != 'single'
                 && has_capability('mod/forum:movediscussions', $modcontext)) {
