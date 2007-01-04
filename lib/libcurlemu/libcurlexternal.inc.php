@@ -57,7 +57,7 @@ if (!defined("CURL_PATH")) define("CURL_PATH","/usr/bin/curl");
 //   - if CURLEXT_MISSING_IGNORE was defined, then implement the CURL functions anyway (even
 //     though they won't work without the CURL binary installed)
 //   - otherwise, raise a fatal error and halt the script
-if (!is_executable(CURL_PATH)) {
+if (!function_exists('is_executable') or !is_executable(CURL_PATH)) {//moodlefix
 	
  	if (defined("CURLEXT_MISSING_ABORT") && CURLEXT_MISSING_ABORT) {
  		return;
