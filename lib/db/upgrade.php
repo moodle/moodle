@@ -131,6 +131,330 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
+    // Move the auth plugin settings into the config_plugin table
+    if ($oldversion < 2007010300) {
+        $authplugins = get_list_of_plugins('auth');
+        foreach ($CFG as $k => $v) {
+            if (strpos($k, 'auth_') !== 0) {
+                continue;
+            }
+            $authsetting = substr($k, 5);
+            foreach ($authplugins as $auth) {
+                if (strpos($authsetting, $auth) !== 0) {
+                    continue;
+                }
+                $setting = substr($authsetting, strlen($auth));
+                if (set_config($setting, $v, "auth/$auth")) {
+                    delete_records('config', 'name', $k);
+                    unset($CFG->{$k});
+                }
+                break; // don't check the rest of the auth plugin names
+            }
+        }
+    }
+
+    if ($oldversion < 2007010301) {
+        //
+        // Core MNET tables
+        //
+        $table = new XMLDBTable('mnet_host');
+        $table->comment = 'Information about the local and remote hosts for RPC';
+        // fields
+        $f = $table->addFieldInfo('id',                 XMLDB_TYPE_INTEGER,  '10', false,
+                                  XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $f->comment = 'Unique Host ID';
+        $f = $table->addFieldInfo('deleted',            XMLDB_TYPE_INTEGER,  '1', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, null, null, null, 0);
+        $f = $table->addFieldInfo('wwwroot',            XMLDB_TYPE_CHAR,   '255', null,
+                                  XMLDB_NOTNULL, null, null, null, '');
+        $f = $table->addFieldInfo('ip_address',         XMLDB_TYPE_CHAR,    '39', null,
+                                  XMLDB_NOTNULL, null, null, null, '');
+        $f = $table->addFieldInfo('name',               XMLDB_TYPE_CHAR,    '80', null,
+                                  XMLDB_NOTNULL, null, null, null, '');
+        $f = $table->addFieldInfo('public_key',         XMLDB_TYPE_TEXT, null, null,
+                                  XMLDB_NOTNULL, null, null, null, null);
+        $f = $table->addFieldInfo('public_key_expires', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, null, null, null, 0);
+        $f = $table->addFieldInfo('transport',          XMLDB_TYPE_INTEGER,  '2', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, null, null, null, 0);
+        $f = $table->addFieldInfo('portno',             XMLDB_TYPE_INTEGER,  '2', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, null, null, null, 0);
+        $f = $table->addFieldInfo('last_connect_time',  XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, null, null, null, 0);
+        $f = $table->addFieldInfo('last_log_id',  XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, null, null, null, 0);
+        // PK and indexes 
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        // Create the table
+        $result = $result && create_table($table);
+
+        $table = new XMLDBTable('mnet_host2service');
+        $table->comment = 'Information about the services for a given host';
+        // fields
+        $f = $table->addFieldInfo('id',        XMLDB_TYPE_INTEGER,  '10', false,
+                                  XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $f = $table->addFieldInfo('hostid',    XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('serviceid', XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('publish', XMLDB_TYPE_INTEGER,  '1', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('subscribe', XMLDB_TYPE_INTEGER,  '1', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        // PK and indexes
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addIndexInfo('hostid_serviceid', XMLDB_INDEX_UNIQUE, array('hostid', 'serviceid'));
+        // Create the table
+        $result = $result && create_table($table);
+
+        $table = new XMLDBTable('mnet_log');
+        $table->comment = 'Store session data from users migrating to other sites';
+        // fields
+        $f = $table->addFieldInfo('id',        XMLDB_TYPE_INTEGER,  '10', false,
+                                  XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $f = $table->addFieldInfo('hostid',    XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('remoteid',    XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('time',    XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('userid',    XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('ip',    XMLDB_TYPE_CHAR,  '15', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('course',    XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('coursename',    XMLDB_TYPE_CHAR,  '40', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('module',    XMLDB_TYPE_CHAR,  '20', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('cmid',    XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('action',    XMLDB_TYPE_CHAR,  '40', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('url',    XMLDB_TYPE_CHAR,  '100', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('info',    XMLDB_TYPE_CHAR,  '255', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        // PK and indexes
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addIndexInfo('host_user_course', XMLDB_INDEX_NOTUNIQUE, array('hostid', 'userid', 'course'));
+        // Create the table
+        $result = $result && create_table($table);
+
+
+        $table = new XMLDBTable('mnet_rpc');
+        $table->comment = 'Functions or methods that we may publish or subscribe to';
+        // fields
+        $f = $table->addFieldInfo('id',        XMLDB_TYPE_INTEGER,  '10', false,
+                                  XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $f = $table->addFieldInfo('function_name',    XMLDB_TYPE_CHAR,  '40', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('xmlrpc_path',    XMLDB_TYPE_CHAR,  '80', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('parent_type',    XMLDB_TYPE_CHAR,  '6', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('parent',    XMLDB_TYPE_CHAR,  '20', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('enabled', XMLDB_TYPE_INTEGER,  '1', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('help',    XMLDB_TYPE_TEXT,  'medium', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('profile',    XMLDB_TYPE_TEXT,  'medium', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        // PK and indexes
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addIndexInfo('enabled_xpath', XMLDB_INDEX_NOTUNIQUE, array('enabled', 'xmlrpc_path'));
+        // Create the table
+        $result = $result && create_table($table);
+
+        $table = new XMLDBTable('mnet_service');
+        $table->comment = 'A service is a group of functions';
+        // fields
+        $f = $table->addFieldInfo('id',        XMLDB_TYPE_INTEGER,  '10', false,
+                                  XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $f = $table->addFieldInfo('name',    XMLDB_TYPE_CHAR,  '40', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('description',    XMLDB_TYPE_CHAR,  '40', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('apiversion',    XMLDB_TYPE_CHAR,  '10', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('offer',    XMLDB_TYPE_INTEGER,  '1', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        // PK and indexes
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        // Create the table
+        $result = $result && create_table($table);
+
+        $table = new XMLDBTable('mnet_service2rpc');
+        // fields
+        $f = $table->addFieldInfo('id',        XMLDB_TYPE_INTEGER,  '10', false,
+                                  XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $f = $table->addFieldInfo('serviceid', XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('rpcid',    XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        // PK and indexes
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addIndexInfo('unique', XMLDB_INDEX_UNIQUE, array('rpcid', 'serviceid'));
+        // Create the table
+        $result = $result && create_table($table);
+
+        //
+        // Prime MNET configuration entries -- will be needed later by auth/mnet 
+        //
+        include_once $CFG->dirroot . '/mnet/lib.php';
+        $env = new mnet_environment();
+        $env->init();
+        unset($env);
+
+        // add mnethostid to user-        
+        $table = new XMLDBTable('user');
+        $field = new XMLDBField('mnethostid');
+        $field->setType(XMLDB_TYPE_INTEGER);
+        $field->setLength(10);
+        $field->setNotNull(true);
+        $field->setSequence(null);
+        $field->setEnum(null);
+        $field->setDefault('0');
+        $field->setPrevious("deleted");
+        $field->setNext("username");
+        $result = $result && add_field($table, $field);
+
+        // The default mnethostid is zero... we need to update this for all
+        // users of the local IdP service.
+        set_field('user', 
+                  'mnethostid', $CFG->mnet_localhost_id, 
+                  'mnethostid', '0');
+
+
+        $index = new XMLDBIndex('username');
+        $index->setUnique(true);
+        $index->setFields(array('username'));
+        drop_index($table, $index);
+        $index->setFields(array('mnethostid', 'username'));
+        $result = $result && add_index($table, $index);
+
+        unset($table, $field, $index);        
+
+        /**
+         ** auth/mnet tables
+         **/
+        $table = new XMLDBTable('mnet_session');
+        $table->comment='Store session data from users migrating to other sites';
+        // fields
+        $f = $table->addFieldInfo('id',         XMLDB_TYPE_INTEGER,  '10', false,
+                                  XMLDB_NOTNULL,XMLDB_SEQUENCE, null, null, null);
+        $f = $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('username',   XMLDB_TYPE_CHAR,  '100', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('token',      XMLDB_TYPE_CHAR,  '40', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('mnethostid', XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('useragent',  XMLDB_TYPE_CHAR,  '40', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('confirm_timeout', XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('session_id',   XMLDB_TYPE_CHAR,  '40', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('expires', XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        // PK and indexes
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addIndexInfo('token', XMLDB_INDEX_NOTUNIQUE, array('token'));
+        // Create the table
+        $result = $result && create_table($table);
+
+
+        $table = new XMLDBTable('mnet_sso_access_control');
+        $table->comment = 'Users by host permitted (or not) to login from a remote provider';
+        $f = $table->addFieldInfo('id',         XMLDB_TYPE_INTEGER,  '10', false,
+                                  XMLDB_NOTNULL,XMLDB_SEQUENCE, null, null, null);
+        $f = $table->addFieldInfo('username',   XMLDB_TYPE_CHAR,  '100', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('mnet_host_id', XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('access',  XMLDB_TYPE_CHAR,  '20', null,
+                                  XMLDB_NOTNULL, NULL, null, null, 'allow');
+        // PK and indexes
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addIndexInfo('mnethostid_username', XMLDB_INDEX_UNIQUE, array('mnet_host_id', 'username'));
+        // Create the table
+        $result = $result && create_table($table);
+
+        /**
+         ** enrol/mnet tables
+         **/
+        $table = new XMLDBTable('mnet_enrol_course');
+        $table->comment = 'Information about courses on remote hosts';
+        $f = $table->addFieldInfo('id',         XMLDB_TYPE_INTEGER,  '10', false,
+                                  XMLDB_NOTNULL,XMLDB_SEQUENCE, null, null, null);
+        $f = $table->addFieldInfo('hostid', XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('remoteid', XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                          XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('cat_id', XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('cat_name',  XMLDB_TYPE_CHAR,  '255', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('cat_description',  XMLDB_TYPE_TEXT,  'medium', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('sortorder', XMLDB_TYPE_INTEGER,  '4', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('fullname',  XMLDB_TYPE_CHAR,  '254', null,
+                                  XMLDB_NOTNULL, NULL, null, null, '');
+        $f = $table->addFieldInfo('shortname',  XMLDB_TYPE_CHAR,  '15', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('idnumber',  XMLDB_TYPE_CHAR,  '100', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('summary',  XMLDB_TYPE_TEXT,  'medium', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('startdate', XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('cost',  XMLDB_TYPE_CHAR,  '10', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('currency',  XMLDB_TYPE_CHAR,  '3', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('defaultroleid', XMLDB_TYPE_INTEGER,  '4', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('defaultrolename',  XMLDB_TYPE_CHAR,  '255', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        // PK and indexes
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addIndexInfo('hostid_remoteid', XMLDB_INDEX_UNIQUE, array('hostid', 'remoteid'));
+        // Create the table
+        $result = $result && create_table($table);
+
+
+        $table = new XMLDBTable('mnet_enrol_assignments');
+
+        $table->comment = 'Information about enrolments on courses on remote hosts';
+        $f = $table->addFieldInfo('id',         XMLDB_TYPE_INTEGER,  '10', false,
+                                  XMLDB_NOTNULL,XMLDB_SEQUENCE, null, null, null);
+        $f = $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('hostid', XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0); 
+        $f = $table->addFieldInfo('courseid', XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('rolename',  XMLDB_TYPE_CHAR,  '255', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('enroltime', XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
+        $f = $table->addFieldInfo('enroltype',  XMLDB_TYPE_CHAR,  '20', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+
+        // PK and indexes
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addIndexInfo('hostid_courseid', XMLDB_INDEX_NOTUNIQUE, array('hostid', 'courseid'));
+        $table->addIndexInfo('userid', XMLDB_INDEX_UNIQUE, array('userid'));
+        // Create the table
+        $result = $result && create_table($table);
+
+    }
+
     return $result;
 
 }
