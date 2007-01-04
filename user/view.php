@@ -172,7 +172,7 @@
     include('tabs.php');
 
     if (is_mnet_remote_user($user)) {
-        echo "<p class=\"errorboxcontent\">This profile is for a remote user from another Moodle system. <br>\n";
+        echo "<p class=\"errorboxcontent\">This profile is for a remote user from another Moodle system. <br />\n";
         $remotehost = get_record('mnet_host', 'id', $user->mnethostid);
         echo "Remote Moodle: <a href=\"{$remotehost->wwwroot}/user/edit.php\">{$remotehost->name}</a> (click here to edit your profile on the remote server) </p>\n";
     }
