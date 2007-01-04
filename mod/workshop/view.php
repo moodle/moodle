@@ -286,7 +286,7 @@
         print_heading(get_string("submitexampleassignment", "workshop").":");
         workshop_print_upload_form($workshop);
 
-        print_heading("<a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\">".get_string("cancel")."</a>");
+        print_heading("<a $CFG->frametarget href=\"view.php?id=$cm->id\">".get_string("cancel")."</a>");
     }
 
 

@@ -382,12 +382,7 @@ function display() {
         if ($inpopup) {
             print_header($pagetitle);
         } else {
-            if (empty($CFG->framename) or $CFG->framename=='_top') { 
-                $target = '';
-            } else {
-                $target = ' target="'.$CFG->framename.'"';
-            }
-            print_header($pagetitle, $course->fullname, "$this->navigation <a$target title=\"$strdirectlink\" href=\"$fullurl\"> ".format_string($resource->name,true)."</a>", "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "self"));
+            print_header($pagetitle, $course->fullname, "$this->navigation <a $CFG->frametarget title=\"$strdirectlink\" href=\"$fullurl\"> ".format_string($resource->name,true)."</a>", "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "self"));
 
         }
 

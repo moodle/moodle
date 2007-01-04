@@ -89,26 +89,20 @@
 
     $currentlang = current_language();
 
-    if (empty($CFG->framename) or $CFG->framename=='_top') { 
-        $target = '';
-    } else {
-        $target = ' target="'.$CFG->framename.'"';
-    }
-
     switch ($mode) {
         case "missing":
             // Missing array keys are not bugs here but missing strings
             error_reporting(E_ALL ^ E_NOTICE);
             $navigation = "<a href=\"lang.php\">$strlanguage</a> -> $strmissingstrings";
             $title = $strmissingstrings;
-            $button = '<form'.$target.' method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
+            $button = '<form '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
                       '<input type="hidden" name="mode" value="compare" />'.
                       '<input type="submit" value="'.$streditstrings.'" /></form>';
             break;
         case "compare":
             $navigation = "<a href=\"lang.php\">$strlanguage</a> -> $streditstrings";
             $title = $streditstrings;
-            $button = '<form '.$target.' method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
+            $button = '<form  '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
                       '<input type="hidden" name="mode" value="missing" />'.
                       '<input type="submit" value="'.$strmissingstrings.'" /></form>';
             break;
@@ -352,7 +346,7 @@
         echo '</strong> ';
         helpbutton('langswitchstorage', $strfilestoredinhelp, 'moodle');
         
-        echo '<form'.$target.' method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
+        echo '<form '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
              '<input type="hidden" name="mode" value="compare" />'.
              '<input type="hidden" name="currentfile" value="'.$currentfile.'" />'.
              '<input type="hidden" name="uselocal" value="'.(1 - $uselocal % 2).'" />'.

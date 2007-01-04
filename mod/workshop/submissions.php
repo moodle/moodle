@@ -90,7 +90,7 @@
         echo "<input type=\"submit\" value=\"".get_string("amendtitle", "workshop")."\" />\n";
         echo "</center></form>\n";
 
-        print_heading("<a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id#sid=$submission->id\">".get_string("cancel")."</a>");
+        print_heading("<a $CFG->frametarget href=\"view.php?id=$cm->id#sid=$submission->id\">".get_string("cancel")."</a>");
     }
 
 

@@ -77,17 +77,11 @@ class assignment_base {
             $this->strsubmissions = get_string('submissions', 'assignment');
             $this->strlastmodified = get_string('lastmodified');
 
-            if (empty($CFG->framename) or $CFG->framename=='_top') { 
-                $target = '';
-            } else {
-                $target = ' target="'.$CFG->framename.'"';
-            }
-
             if ($this->course->id != SITEID) {
-                $this->navigation = "<a$target href=\"$CFG->wwwroot/course/view.php?id={$this->course->id}\">{$this->course->shortname}</a> -> ".
-                                    "<a$target href=\"index.php?id={$this->course->id}\">$this->strassignments</a> ->";
+                $this->navigation = "<a $CFG->frametarget href=\"$CFG->wwwroot/course/view.php?id={$this->course->id}\">{$this->course->shortname}</a> -> ".
+                                    "<a $CFG->frametarget href=\"index.php?id={$this->course->id}\">$this->strassignments</a> ->";
             } else {
-                $this->navigation = "<a$target href=\"index.php?id={$this->course->id}\">$this->strassignments</a> ->";
+                $this->navigation = "<a $CFG->frametarget href=\"index.php?id={$this->course->id}\">$this->strassignments</a> ->";
             }
 
             $this->pagetitle = strip_tags($this->course->shortname.': '.$this->strassignment.': '.format_string($this->assignment->name,true));
@@ -150,13 +144,7 @@ class assignment_base {
         global $CFG;
 
         if ($subpage) {
-            if (empty($CFG->framename) or $CFG->framename=='_top') { 
-                $target = '';
-            } else {
-                $target = ' target="'.$CFG->framename.'"';
-            }
-
-            $extranav = '<a'.$target.' href="view.php?id='.$this->cm->id.'">'.
+            $extranav = '<a '.$CFG->frametarget.' href="view.php?id='.$this->cm->id.'">'.
                           format_string($this->assignment->name,true).'</a> -> '.$subpage;
         } else {
             $extranav = ' '.format_string($this->assignment->name,true);

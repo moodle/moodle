@@ -32,12 +32,6 @@
 
             $resourcelist = array();
 
-            if (empty($CFG->framename) or $CFG->framename=='_top') { 
-                $target = '';
-            } else {
-                $target = ' target="'.$CFG->framename.'"';
-            }
-
             foreach ($resources as $resource) {
                 $currentname = trim($resource->name);
                 $strippedname = strip_tags($currentname);
@@ -45,7 +39,7 @@
                 if (!empty($strippedname)) {
                     $resourcelist[] = new filterobject($currentname,
                             '<a class="resource autolink" title="'.$strippedname.'" href="'.
-                             $CFG->wwwroot.'/mod/resource/view.php?r='.$resource->id.'"'.$target.'>', 
+                             $CFG->wwwroot.'/mod/resource/view.php?r='.$resource->id.'" '.$CFG->frametarget.'>', 
                              '</a>', false, true);
                 }
             }

@@ -3674,13 +3674,7 @@ function forum_update_subscriptions_button($courseid, $forumid) {
         $edit = "on";
     }
 
-    if (empty($CFG->framename) or $CFG->framename=='_top') { 
-        $target = '';
-    } else {
-        $target = ' target="'.$CFG->framename.'"';
-    }
-
-    return "<form$target method=\"get\" action=\"$CFG->wwwroot/mod/forum/subscribers.php\">".
+    return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/mod/forum/subscribers.php\">".
            "<input type=\"hidden\" name=\"id\" value=\"$forumid\" />".
            "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
            "<input type=\"submit\" value=\"$string\" /></form>";

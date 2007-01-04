@@ -43,16 +43,16 @@
     $strscorm  = get_string("modulename", "scorm");
 
     if ($course->id != SITEID) { 
-        $navigation = "<a target=\"{$CFG->framename}\" href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
+        $navigation = "<a $CFG->frametarget href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
         if ($scorms = get_all_instances_in_course('scorm', $course)) {
             // The module SCORM activity with the least id is the course  
             $firstscorm = current($scorms);
             if (!(($course->format == 'scorm') && ($firstscorm->id == $scorm->id))) {
-                $navigation .= "<a target=\"{$CFG->framename}\" href=\"index.php?id=$course->id\">$strscorms</a> ->";
+                $navigation .= "<a $CFG->frametarget href=\"index.php?id=$course->id\">$strscorms</a> ->";
             }       
         }
     } else {
-        $navigation = "<a target=\"{$CFG->framename}\" href=\"index.php?id=$course->id\">$strscorms</a> ->";
+        $navigation = "<a $CFG->frametarget href=\"index.php?id=$course->id\">$strscorms</a> ->";
     }
 
     $pagetitle = strip_tags($course->shortname.': '.format_string($scorm->name));
@@ -67,7 +67,7 @@
     // Print the page header
     //
     print_header($pagetitle, "$course->fullname",
-                 "$navigation <a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>",
+                 "$navigation <a $CFG->frametarget href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>",
                  '', '', true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
 
     if (empty($cm->visible) and !has_capability('moodle/course:manageactivities', $context)) {
@@ -77,7 +77,7 @@
     if (has_capability('moodle/course:manageactivities', $context)) {
         $trackedusers = get_record('scorm_scoes_track', 'scormid', $scorm->id, '', '', '', '', 'count(distinct(userid)) as c');
         if ($trackedusers->c > 0) {
-            echo "<div class=\"reportlink\"><a target=\"{$CFG->framename}\" href=\"report.php?id=$cm->id\"> ".get_string('viewallreports','scorm',$trackedusers->c).'</a></div>';
+            echo "<div class=\"reportlink\"><a $CFG->frametarget href=\"report.php?id=$cm->id\"> ".get_string('viewallreports','scorm',$trackedusers->c).'</a></div>';
         } else {
             echo '<div class="reportlink">'.get_string('noreports','scorm').'</div>';
         }

@@ -29,12 +29,6 @@
                 //Sort modinfo by name length
                 usort($modinfo,'comparemodulenamesbylength');
 
-                if (empty($CFG->framename) or $CFG->framename=='_top') { 
-                    $target = '';
-                } else {
-                    $target = ' target="'.$CFG->framename.'"';
-                }
-
                 foreach ($modinfo as $activity) {
                     //Exclude labels and hidden items
                     if ($activity->mod != "label" && $activity->visible) {
@@ -42,7 +36,7 @@
                         /// Avoid empty or unlinkable activity names
                         if (!empty($title)) {
                             $title = str_replace('"', "'", $title);
-                            $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/$activity->mod/view.php?id=$activity->cm\"$target>";
+                            $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/$activity->mod/view.php?id=$activity->cm\" $CFG->frametarget>";
                             $currentname = urldecode($activity->name);
                             if ($currentname = trim($currentname)) {
                                 $activitylist[] = new filterobject($currentname, $href_tag_begin, '</a>', false, true);

@@ -46,23 +46,23 @@
     $strpopup = get_string('popup','scorm');
 
     if ($course->id != SITEID) {
-        $navigation = "<a target=\"{$CFG->framename}\" href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
+        $navigation = "<a $CFG->frametarget href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
         if ($scorms = get_all_instances_in_course('scorm', $course)) {
             // The module SCORM/AICC activity with the first id is the course  
             $firstscorm = current($scorms);
             if (!(($course->format == 'scorm') && ($firstscorm->id == $scorm->id))) {
-                $navigation .= "<a target=\"{$CFG->framename}\" href=\"index.php?id=$course->id\">$strscorms</a> ->";
+                $navigation .= "<a $CFG->frametarget href=\"index.php?id=$course->id\">$strscorms</a> ->";
             }
         }
     } else {
-        $navigation = "<a target=\"{$CFG->framename}\" href=\"index.php?id=$course->id\">$strscorms</a> ->";
+        $navigation = "<a $CFG->frametarget href=\"index.php?id=$course->id\">$strscorms</a> ->";
     }
 
     $pagetitle = strip_tags("$course->shortname: ".format_string($scorm->name));
 
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE,$course->id))) {
         print_header($pagetitle, "$course->fullname",
-                 "$navigation <a target='{$CFG->framename}' href='view.php?id=$cm->id'>".format_string($scorm->name,true)."</a>",
+                 "$navigation <a $CFG->frametarget href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>",
                  '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false);
         notice(get_string("activityiscurrentlyhidden"));
     }
@@ -126,7 +126,7 @@
     }
     $exitlink = '(<a href="'.$CFG->wwwroot.'/course/view.php?id='.$cm->course.'">'.get_string('exit','scorm').'</a>)&nbsp;';
     print_header($pagetitle, "$course->fullname",
-                 "$navigation <a target='{$CFG->framename}' href='view.php?id=$cm->id'>".format_string($scorm->name,true)."</a>",
+                 "$navigation <a $CFG->frametarget href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>",
                  '', '', true, $exitlink.update_module_button($cm->id, $course->id, $strscorm), '', false, $bodyscript);
     if ($sco->scormtype == 'sco') {
 ?>

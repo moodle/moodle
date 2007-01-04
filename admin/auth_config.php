@@ -61,13 +61,8 @@ asort($options);
 // output configuration form
 admin_externalpage_print_header($adminroot);
 
-if (empty($CFG->framename) or $CFG->framename=='_top') { 
-    $target = '';
-} else {
-    $target = ' target="'.$CFG->framename.'"';
-}
 // choose an authentication method
-echo "<form$target name=\"authmenu\" method=\"post\" action=\"auth_config.php\">\n";
+echo "<form $CFG->frametarget name=\"authmenu\" method=\"post\" action=\"auth_config.php\">\n";
 echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\">\n";
 echo "<div align=\"center\"><p><b>\n";
 echo get_string('chooseauthmethod').': ';

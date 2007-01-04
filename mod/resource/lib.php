@@ -113,17 +113,11 @@ function resource_base($cmid=0) {
         $this->strresource  = get_string("modulename", "resource");
         $this->strresources = get_string("modulenameplural", "resource");
 
-        if (empty($CFG->framename) or $CFG->framename=='_top') { 
-            $target = '';
-        } else {
-            $target = ' target="'.$CFG->framename.'"';
-        }
-
         if ($this->course->id != SITEID) {
-            $this->navigation = "<a$target href=\"$CFG->wwwroot/course/view.php?id={$this->course->id}\">{$this->course->shortname}</a> -> ".
-                                "<a$target href=\"index.php?id={$this->course->id}\">$this->strresources</a> ->";
+            $this->navigation = "<a $CFG->frametarget href=\"$CFG->wwwroot/course/view.php?id={$this->course->id}\">{$this->course->shortname}</a> -> ".
+                                "<a $CFG->frametarget href=\"index.php?id={$this->course->id}\">$this->strresources</a> ->";
         } else {
-            $this->navigation = "<a$target href=\"index.php?id={$this->course->id}\">$this->strresources</a> ->";
+            $this->navigation = "<a $CFG->frametarget href=\"index.php?id={$this->course->id}\">$this->strresources</a> ->";
         }
 
         if (!$this->cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $this->cm->id))) {

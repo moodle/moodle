@@ -123,7 +123,7 @@
         // show assessment and allow changes
         workshop_print_assessment($workshop, $assessment, true, $allowcomments, $redirect);
 
-        print_heading("<a target=\"{$CFG->framename}\" href=\"$redirect\">".get_string("cancel")."</a>");
+        print_heading("<a $CFG->frametarget href=\"$redirect\">".get_string("cancel")."</a>");
         print_footer($course);
         exit;
     }

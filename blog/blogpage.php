@@ -186,13 +186,7 @@ class page_blog extends page_base {
                 $paramstring .= '<input type="hidden" name="'.$key.'" value="'.s($val).'" />';
             }
 
-            if (empty($CFG->framename) or $CFG->framename=='_top') { 
-                $target = '';
-            } else {
-                $target = ' target="'.$CFG->framename.'"';
-            }
-
-            $editformstring = '<form'.$target.' method="get" action="'.$this->url_get_path().'">'
+            $editformstring = '<form '.$CFG->frametarget.' method="get" action="'.$this->url_get_path().'">'
                              .$paramstring.'<input type="submit" value="'.$editingString.'" /></form>';
         }
 
