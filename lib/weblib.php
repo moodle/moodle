@@ -5632,5 +5632,19 @@ function disable_debugging() {
     $CFG->debug = $CFG->debug | 0x80000000; // switch the sign bit in integer number ;-)
 }
 
+
+/** 
+ *  Returns string to add a frame attribute, if required
+ */
+function frametarget() {
+    global $CFG;
+
+    if (empty($CFG->framename) or ($CFG->framename == '_top')) {
+        return '';
+    } else {
+        return ' target="'.$CFG->framename.'" ';
+    }
+}
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
