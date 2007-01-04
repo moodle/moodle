@@ -564,8 +564,8 @@ function link_to_popup_window ($url, $name='popup', $linkname='click here',
         $url = substr($url, strlen($CFG->wwwroot));
     }
 
-    $link = '<a target="'. $name .'" title="'. s($title) .'" href="'. $CFG->wwwroot . $url .'" '.
-           "onclick=\"return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>";
+    $link = '<a title="'. s($title) .'" href="'. $CFG->wwwroot . $url .'" '.
+           "onclick=\"this.target='$name'; return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>";
     if ($return) {
         return $link;
     } else {
@@ -2812,7 +2812,7 @@ function print_navigation ($navigation, $separator=0, $return=false) {
  * @param int $size The size to set the font for text display.
  */
 function print_headline($text, $size=2, $return=false) {
-    $output = print_heading($text, 'left', $size, true);
+    $output = print_heading($text, '', $size, true);
     if ($return) {
         return $output;
     } else {
@@ -2948,20 +2948,23 @@ function print_simple_box_start($align='', $width='', $color='', $padding=5, $cl
 
     $output = '';
 
-    if ($color) {
-        $color = 'bgcolor="'. $color .'"';
-    }
+    $tableclasses = $class;
+
     if ($align) {
-        $align = 'align="'. $align .'"';
+        $tableclasses .= ' boxalign'.$align;    // Implement alignment using a class
     }
     if ($width) {
-        $width = 'width="'. $width .'"';
+        $width = ' style="width:'.$width.'"';
     }
     if ($id) {
-        $id = 'id="'. $id .'"';
+        $id = 'id="'.$id.'"';
     }
-    $output .= "<table $align $width $id class=\"$class\" border=\"0\" cellpadding=\"$padding\" cellspacing=\"0\">".
-         "<tr><td $color class=\"$class"."content\">";
+    if ($color) {
+        $color = ' style="background:'.$color.'"';
+    }
+
+    $output .= '<table'.$width.' '.$id.' class="'.$tableclasses.'">'.
+               '<tr><td'.$color.' class="'.$class.'content">';
 
     if ($return) {
         return $output;
