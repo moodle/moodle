@@ -32,13 +32,13 @@ class block_search_forums extends block_base {
         $button = (isset($CFG->block_search_button)) ? $CFG->block_search_button : get_string('go');
         
         $this->content->text  = '<div class="searchform">';
-        $this->content->text .= '<form name="search" action="'.$CFG->wwwroot.'/mod/forum/search.php" style="display:inline">';
+        $this->content->text .= '<form name="search" action="'.$CFG->wwwroot.'/mod/forum/search.php" style="display:inline"><div>';
         $this->content->text .= '<input name="id" type="hidden" value="'.$this->instance->pageid.'" />';  // course
         $this->content->text .= '<input name="search" type="text" size="16" />';
         $this->content->text .= '<button type="submit" title="'.get_string('search').'">'.$button.'</button><br />'; 
         $this->content->text .= '<a href="'.$CFG->wwwroot.'/mod/forum/search.php?id='.$this->instance->pageid.'">'.$advancedsearch.'</a>';
         $this->content->text .= helpbutton('search', $advancedsearch, 'moodle', true, false, '', true);
-        $this->content->text .= '</form></div>';
+        $this->content->text .= '</div></form></div>';
 
         return $this->content;
     }

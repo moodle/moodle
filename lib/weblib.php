@@ -958,13 +958,18 @@ function popup_form($common, $options, $formid, $selected='', $nothing='choose',
 
     // changed reference to document.getElementById('id_abc') instead of document.abc
     // MDL-7861
-    $startoutput = '<form action="'.$CFG->wwwroot.'/course/jumpto.php"'.
+    $output = '<form action="'.$CFG->wwwroot.'/course/jumpto.php"'.
                         ' method="get"'.
                         $target.
                         ' id="'.$formid.'"'.
                         ' class="popupform">';
+    if ($help) {
+        $button = helpbutton($help, $helptext, 'moodle', true, false, '', true);
+    } else {
+        $button = '';
+    }
 
-    $output = '<div><select name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\''.$formid.'\').jump.options[document.getElementById(\''.$formid.'\').jump.selectedIndex].value;">'."\n";
+    $output .= '<div>'.$button.'<select name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\''.$formid.'\').jump.options[document.getElementById(\''.$formid.'\').jump.selectedIndex].value;">'."\n";
 
     if ($nothing != '') {
         $output .= "   <option value=\"javascript:void(0)\">$nothing</option>\n";
@@ -1047,16 +1052,10 @@ function popup_form($common, $options, $formid, $selected='', $nothing='choose',
                "\n//]]>\n".'</script>';
     $output .= '</form>' . "\n";
 
-    if ($help) {
-        $button = helpbutton($help, $helptext, 'moodle', true, false, '', true);
-    } else {
-        $button = '';
-    }
-
     if ($return) {
-        return $startoutput.$button.$output;
+        return $output;
     } else {
-        echo $startoutput.$button.$output;
+        echo $output;
     }
 }
 
@@ -3851,11 +3850,11 @@ function update_course_icon($courseid) {
             $target = ' target="'.$CFG->framename.'"';
         }
 
-        return "<form$target method=\"get\" action=\"$CFG->wwwroot/course/view.php\">".
+        return "<form$target method=\"get\" action=\"$CFG->wwwroot/course/view.php\"><div>".
             "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
             "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
             "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />".
-            "<input type=\"submit\" value=\"$string\" /></form>";
+            "<input type=\"submit\" value=\"$string\" /></div></form>";
     }
 }
 

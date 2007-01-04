@@ -1187,6 +1187,15 @@ span.current {
   list-style: none;
 }
 
+.section_add_menus {
+  text-align:right;
+}
+
+.section_add_menus .horizontal div {
+  display:inline;
+}
+
+
 /*#course-view ul.section li.activity ul li,
 #site-index ul.section li.activity ul li {
   list-style: disc;
