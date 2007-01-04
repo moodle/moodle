@@ -1623,7 +1623,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
                 redirect($wwwroot .'/login/change_password.php');
             }
         } elseif($userauth->change_password_url()) {
-            redirect($userauth->change_password_url();
+            redirect($userauth->change_password_url());
         } else {
             error('You cannot proceed without changing your password.
                    However there is no available page for changing it.
