@@ -103,7 +103,7 @@ class block_course_list extends block_list {
         $sql = "SELECT c.remoteid, c.shortname, c.fullname, c.hostid
                 FROM   {$CFG->prefix}mnet_enrol_course c
                 JOIN   {$CFG->prefix}mnet_enrol_assignments a ON c.id=a.courseid
-                WHERE  a.studentid={$USER->id}";
+                WHERE  a.userid={$USER->id}";
         if ($courses = get_records_sql($sql)) {
             $icon  = "<img src=\"$CFG->pixpath/i/mnethost.png\"".
                 " height=\"16\" width=\"16\" alt=\"".get_string("course")."\" />";
