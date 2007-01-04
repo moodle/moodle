@@ -456,6 +456,9 @@
     function fetch_entries($postid='', $fetchlimit=10, $fetchstart='', $filtertype='', $filterselect='', $tagid='', $tag ='', $sort='lastmodified DESC', $limit=true) {
 
         global $CFG, $USER;
+        
+        /// the post table will be used for other things too
+        $typesql = ' AND p.module = "blog" ';    
 
         /// set the tag id for searching
         if ($tagid) {
@@ -527,7 +530,7 @@
                         .$CFG->prefix.'user u
                         WHERE p.userid = u.id '.$tagquerysql.'
                         AND u.deleted = 0
-                        AND '.$permissionsql;
+                        AND '.$permissionsql.$typesql;
 
             break;
 
@@ -541,7 +544,7 @@
                         AND ra.contextid '.get_related_contexts_string($context).'
                         AND u.id = p.userid
                         AND u.deleted = 0
-                        AND '.$permissionsql;
+                        AND '.$permissionsql.$typesql;
 
             break;
 
@@ -552,7 +555,7 @@
                         WHERE '.groups_members_where_sql($filterselect, 'p.userid').'
                         AND u.id = p.userid
                         AND u.deleted = 0
-                        AND '.$permissionsql;
+                        AND '.$permissionsql.$typesql;
 
                         /*'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
                         .$CFG->prefix.'groups_members m, '.$CFG->prefix.'user u
@@ -560,6 +563,7 @@
                         AND u.id = p.userid
                         AND m.groupid = '.$filterselect.'
                         AND u.deleted = 0
+                        AND '.$permissionsql.$typesql;
                         AND '.$permissionsql;
                         */
             break;
@@ -571,7 +575,7 @@
                         WHERE p.userid = u.id '.$tagquerysql.'
                         AND u.id = '.$filterselect.'
                         AND u.deleted = 0
-                        AND '.$permissionsql;
+                        AND '.$permissionsql.$typesql;
             break;
         }
 
