@@ -1,0 +1,94 @@
+
+<form name="assignform" id="assignform" method="post" action="">
+<input type="hidden" name="previoussearch" value="<?php p($previoussearch) ?>" />
+<input type="hidden" name="courseid" value="<?php p($courseid) ?>" />
+<input type="hidden" name="host" value="<?php p($mnethost->id) ?>" />
+<input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
+  <table align="center" border="0" cellpadding="5" cellspacing="0">
+    <tr>
+      <td valign="top">
+          <?php print_string('existingusers', 'role', count($enrolledusers)); ?>
+      </td>
+      <td></td>
+      <td valign="top">
+          <?php print_string('potentialusers', 'role', $usercount); ?>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">
+          <select name="removeselect[]" size="20" id="removeselect" multiple
+                  onFocus="document.assignform.add.disabled=true;
+                           document.assignform.remove.disabled=false;
+                           document.assignform.addselect.selectedIndex=-1;" />
+          <?php
+              foreach ($enrolledusers as $enrolleduser) {
+                  $fullname = fullname($enrolleduser, true);
+                  echo "<option value=\"$enrolleduser->id\">".$fullname.", ".$enrolleduser->email."</option>\n";
+              }
+          ?>
+
+          </select></td>
+      <td valign="top">
+        <br />
+        <input name="add" type="submit" id="add" value="&larr;" />
+        <br />
+        <input name="remove" type="submit" id="remove" value="&rarr;" />
+        <br />
+      </td>
+      <td valign="top">
+          <select name="addselect[]" size="20" id="addselect" multiple
+                  onFocus="document.assignform.add.disabled=false;
+                           document.assignform.remove.disabled=true;
+                           document.assignform.removeselect.selectedIndex=-1;">
+          <?php
+
+              if (!empty($searchtext)) {
+                  echo "<optgroup label=\"$strsearchresults (" . $availableusers->_numOfRows . ")\">\n";
+                  while (! $availableusers->EOF) {
+                      $user = $availableusers->FetchObj();
+                      if (!isset($enrolledusers[$user->id])) {
+                          $fullname = fullname($user, true);
+                          echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
+                      }
+                      $availableusers->MoveNext();
+                  }
+                  echo "</optgroup>\n";
+
+              } else {
+                  if ($usercount > MAX_USERS_PER_PAGE) {
+                      echo '<optgroup label="'.get_string('toomanytoshow').'"><option></option></optgroup>'."\n"
+                          .'<optgroup label="'.get_string('trysearching').'"><option></option></optgroup>'."\n";
+                  } else {
+                      while (! $availableusers->EOF) {
+                          $user = $availableusers->FetchObj();
+                          if (!isset($enrolledusers[$user->id])) {
+                              $fullname = fullname($user, true);
+                              echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
+                          }
+                          $availableusers->MoveNext();
+                      }
+                  }
+              }
+          ?>
+         </select>
+         <br />
+         <input type="text" name="searchtext" size="30" value="<?php p($searchtext, true) ?>"
+                  onFocus ="document.assignform.add.disabled=true;
+                            document.assignform.remove.disabled=true;
+                            document.assignform.removeselect.selectedIndex=-1;
+                            document.assignform.addselect.selectedIndex=-1;"
+                  onkeydown = "var keyCode = event.which ? event.which : event.keyCode;
+                               if (keyCode == 13) {
+                                    document.assignform.previoussearch.value=1;
+                                    document.assignform.submit();
+                               } " />
+         <input name="search" id="search" type="submit" value="<?php p($strsearch) ?>" />
+         <?php
+              if (!empty($searchusers)) {
+                  echo '<input name="showall" id="showall" type="submit" value="'.$strshowall.'" />'."\n";
+              }
+         ?>
+       </td>
+    </tr>
+  </table>
+</form>
