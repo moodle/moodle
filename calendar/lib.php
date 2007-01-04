@@ -426,25 +426,25 @@ function calendar_add_event_metadata($event) {
         $eventtype = get_string($event->eventtype, $event->modulename);
         $icon = $CFG->modpixpath.'/'.$event->modulename.'/icon.gif';
 
-        $event->icon = '<img height="16" width="16" src="'.$icon.'" alt="" title="'.$modulename.'" style="vertical-align: middle;" />';
+        $event->icon = '<img height="16" width="16" src="'.$icon.'" alt="'.$eventtype.'" title="'.$modulename.'" style="vertical-align: middle;" />';
         $event->referer = '<a href="'.$CFG->wwwroot.'/mod/'.$event->modulename.'/view.php?id='.$module->id.'">'.$event->name.'</a>';
         $event->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$module->course.'">'.$coursecache[$module->course]->fullname.'</a>';
         $event->cmid = $module->id;
 
 
     } else if($event->courseid == SITEID) {                              // Site event
-        $event->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/site.gif" alt="" style="vertical-align: middle;" />';
+        $event->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/site.gif" alt="'.get_string('globalevent', 'calendar').'" style="vertical-align: middle;" />';
         $event->cssclass = 'event_global';
     } else if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {          // Course event
         calendar_get_course_cached($coursecache, $event->courseid);
-        $event->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/course.gif" alt="" style="vertical-align: middle;" />';
+        $event->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/course.gif" alt="'.get_string('courseevent', 'calendar').'" style="vertical-align: middle;" />';
         $event->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$event->courseid.'">'.$coursecache[$event->courseid]->fullname.'</a>';
         $event->cssclass = 'event_course';
     } else if ($event->groupid) {                                    // Group event
-        $event->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/group.gif" alt="" style="vertical-align: middle;" />';
+        $event->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/group.gif" alt="'.get_string('groupevent', 'calendar').'" style="vertical-align: middle;" />';
         $event->cssclass = 'event_group';
     } else if($event->userid) {                                      // User event
-        $event->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/user.gif" alt="" style="vertical-align: middle;" />';
+        $event->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/user.gif" alt="'.get_string('userevent', 'calendar').'" style="vertical-align: middle;" />';
         $event->cssclass = 'event_user';
     }
     return $event;
