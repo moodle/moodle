@@ -456,6 +456,33 @@ function xmldb_main_upgrade($oldversion=0) {
 
     }
 
+    if ($result && $oldversion < 2007010404) {
+
+        /// Define field shortname to be added to user_info_field
+        $table = new XMLDBTable('user_info_field');
+        $field = new XMLDBField('shortname');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, 'shortname', 'id');
+
+        /// Launch add field shortname
+        $result = $result && add_field($table, $field);
+
+        /// Changing type of field name on table user_info_field to text
+        $table = new XMLDBTable('user_info_field');
+        $field = new XMLDBField('name');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'big', null, XMLDB_NOTNULL, null, null, null, null, 'shortname');
+
+        /// Launch change of type for field name
+        $result = $result && change_field_type($table, $field);
+
+        /// For existing fields use 'name' as the 'shortname' entry
+        if ($fields = get_records_select('user_info_field', 1, '', 'id, name')) {
+            foreach ($fields as $field) {
+                $field->shortname = clean_param($field->name, PARAM_ALPHANUM);
+                $result && update_record('user_info_field', $field);
+            }
+        }
+    }
+
     return $result;
 
 }
