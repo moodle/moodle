@@ -1,17 +1,26 @@
-<table width="90%" border="0" cellpadding="5" align="center" class="loginbox">
+<?php
+if ($show_instructions) {
+    $mainwidth = '90%';
+    $leftwidth = '50%';
+} else {
+    $mainwidth = '40%';
+    $leftwidth = '100%';
+}
+?>
+<table width="<?php echo $mainwidth ?>" border="0" cellpadding="5" style="margin-left:auto;margin-right:auto" class="loginbox" summary="">
 <?php if ($show_instructions) { ?>
   <tr>
-    <th width="50%" class="header left" scope="col">
+    <th style="width:50%" class="header left" scope="col">
       <?php  print_string("returningtosite") ?>
     </th>
-    <th width="50%" class="header right" scope="col">
+    <th style="width:50%" class="header right" scope="col">
       <?php  print_string("firsttime") ?>
     </th>
   </tr>
 <?php } ?>
   <tr>
-    <td width="50%" align="center" valign="top" class="content left">
-      <p><?php print_string("loginusing") ?>:
+    <td style="width:<?php echo $leftwidth ?>" valign="top" class="content left">
+      <div style="text-align:center"><?php print_string("loginusing") ?>:
         <?php
         if (empty($CFG->usesid))
         {
@@ -20,15 +29,15 @@
             echo ")";
             helpbutton("cookies", get_string("cookiesenabled"));
         }
-        ?><br /><?php formerr($errormsg) ?>
-      </p>
+        ?><div><?php formerr($errormsg) ?></div>
+      </div>
       <form action="index.php" method="post" id="login">
-        <table border="0" align="center">
+        <table border="0" style="margin-left:auto;margin-right:auto" summary="">
         <tr>
-          <td width="80%">
-            <table align="center" class="loginform">
+          <td style="width:80%">
+            <table style="margin-left:auto;margin-right:auto" class="loginform" summary="">
               <tr class="username"> 
-                <td align="right" class="c0">
+                <td style="text-align:right" class="c0">
                   <label for="username"><?php print_string("username") ?></label>
                 </td>
                 <td class="c1">
@@ -36,7 +45,7 @@
                 </td>
               </tr>
               <tr class="password"> 
-                <td align="right" class="c0">
+                <td style="text-align:right" class="c0">
                   <label for="password"><?php print_string("password") ?></label>
                 </td>
                 <td class="c1">
@@ -45,7 +54,7 @@
               </tr>
             </table>
           </td>
-          <td width="20%">
+          <td style="width:20%">
             <input type="submit" value="<?php print_string("login") ?>" />
             <input type="hidden" name="testcookies" value="1" />
           </td>
@@ -54,8 +63,8 @@
       </form>
 
 <?php if ($CFG->guestloginbutton) {  ?>
-      <hr width="80%" />
-      <p><?php print_string("someallowguest") ?>:</p>
+      <hr style="width:80%" />
+      <div style="text-align:center"><?php print_string("someallowguest") ?>:
         <form action="index.php" method="post" id="guestlogin">
          <div>
           <input type="hidden" name="username" value="guest" />
@@ -64,24 +73,26 @@
           <input type="submit" value="<?php print_string("loginguest") ?>" />
          </div>
         </form>
+      </div>
 <?php } ?>
 
 <?php
     $changebuttonname = get_string("passwordrecovery");
     $sesskey = sesskey();
 ?>
-      <hr width="80%" />
-      <p><?php print_string("forgotten") ?></p> 
+      <hr style="width:80%" />
+      <div style="text-align:center"><?php print_string("forgotten") ?> 
         <form action="forgot_password.php" method="post" id="changepassword">
          <div>
           <input type="hidden" name="sesskey" value="<?php echo $sesskey; ?>" />
           <input type="submit" value="<?php p($changebuttonname) ?>" />
          </div>
         </form>
+      </div>
     </td>
 
 <?php if ($show_instructions) { ?>
-    <td width="50%" valign="top" class="content right">
+    <td style="width:50%" valign="top" class="content right">
 <?php     switch ($authsequence[0]) {
               case "email":
                  print_string("loginsteps", "", "signup.php");
@@ -117,4 +128,3 @@
 <?php } ?>
 </tr>
 </table>
-</div>

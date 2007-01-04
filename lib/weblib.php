@@ -1062,7 +1062,7 @@ function popup_form($common, $options, $formid, $selected='', $nothing='choose',
 function formerr($error) {
 
     if (!empty($error)) {
-        echo '<font color="#ff0000">'. $error .'</font>';
+        echo '<span class="error">'. $error .'</span>';
     }
 }
 
