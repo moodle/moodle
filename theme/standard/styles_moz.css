@@ -81,8 +81,8 @@
 }
 
 .categorybox, .categoryboxcontent, 
-.coursebox, .courseboxcontent {
-  -moz-border-radius:20px;
+.coursebox {
+  -moz-border-radius:10px;
 }
 
 
