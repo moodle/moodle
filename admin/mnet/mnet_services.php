@@ -74,9 +74,11 @@
             $id_list .= ', '.$CFG->mnet_all_hosts_id;
         }
 
+        $concat = sql_concat('COALESCE(h2s.id,0) ', ' \'-\' ', ' svc.id');
+
         $query = "
             SELECT DISTINCT
-                h2s.id,
+                $concat as id,
                 svc.id as serviceid,
                 svc.name,
                 svc.offer,
