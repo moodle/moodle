@@ -56,7 +56,7 @@ for ($i=1; $i<=365; $i++) {
 }
 
 print_heading(get_string('extendenrol'));
-echo "<form method=\"post\" action=\"extendenrol.php\" name=\"form\">\n";
+echo "<form method=\"post\" action=\"extendenrol.php\">\n";
 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
 echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
 $table->head  = array (get_string('fullname'), get_string('enrolmentstart'), get_string('enrolmentend'), get_string('extendperiod'));

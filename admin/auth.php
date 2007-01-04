@@ -216,7 +216,7 @@ foreach ($displayauths as $auth => $name) {
 admin_externalpage_print_header($adminroot);
 print_simple_box(get_string('configauthenticationplugins', 'admin'), 'center', '700');
 
-echo "<form $CFG->frametarget name=\"authmenu\" method=\"post\" action=\"auth.php\">";
+echo "<form $CFG->frametarget id=\"authmenu\" method=\"post\" action=\"auth.php\">";
 echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\">";
 print_table($table);
 

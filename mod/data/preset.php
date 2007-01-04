@@ -319,7 +319,7 @@ echo '<tr><td><label for="fromfile">'.$strfromfile.'</label>';
 helpbutton('importfromfile', '', 'data');
 echo '</td><td>';
 
-echo '<form name="uploadpreset" method="post" action="preset.php">';
+echo '<form id="uploadpreset" method="post" action="preset.php">';
 echo '<input type="hidden" name="d" value="'.$data->id.'" />';
 echo '<input type="hidden" name="action" value="importzip" />';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
@@ -333,7 +333,7 @@ echo '<tr valign="top"><td><label>'.$strusestandard.'</label>';
 helpbutton('usepreset', '', 'data');
 echo '</td><td>';
 
-echo '<form name="presets" method="post" action="preset.php" >';
+echo '<form id="presets" method="post" action="preset.php" >';
 echo '<input type="hidden" name="d" value="'.$data->id.'" />';
 echo '<input type="hidden" name="action" value="importpreset" />';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';

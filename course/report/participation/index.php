@@ -328,7 +328,7 @@ function checknos() {
 //]]>
 </script>
 ';
-        echo '<form action="'.$CFG->wwwroot.'/user/action_redir.php" method="post" name="studentsform" onSubmit="return checksubmit(this);">';
+        echo '<form action="'.$CFG->wwwroot.'/user/action_redir.php" method="post" id="studentsform" onSubmit="return checksubmit(this);">';
         echo '<input type="hidden" name="id" value="'.$id.'" />';
         echo '<input type="hidden" name="returnto" value="'.$_SERVER['REQUEST_URI'].'" />';
         echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';

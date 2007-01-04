@@ -292,7 +292,7 @@
             // Expects the following to be set: $attemptid, $answer, $user, $page, $attempt
 
             echo '<div class="grade">
-                  <form name="essaygrade" method="post" action="'.$CFG->wwwroot.'/mod/lesson/essay.php">
+                  <form id="essaygrade" method="post" action="'.$CFG->wwwroot.'/mod/lesson/essay.php">
                   <input type="hidden" name="id" value="'.$cm->id.'" />
                   <input type="hidden" name="mode" value="update" />
                   <input type="hidden" name="attemptid" value="'.$attemptid.'" />

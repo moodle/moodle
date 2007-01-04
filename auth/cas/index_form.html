@@ -15,12 +15,12 @@
         (<?php print_string("cookiesenabled");?>) 
          <?php helpbutton("cookies", get_string("cookiesenabled"))?><br /><?php formerr($errormsg) ?>
       </p>
-      <form action="index.php" method="post" name="login" id="login">
+      <form action="index.php" method="post" id="login">
         <table border="0" align="center" style="font-size: small">
         <tr>
           <td width="100%">
-            <input type="hidden" name="username" value="cas" />
-            <input type="hidden" name="password" value="cas" />
+            <input type="hidden" name="username" id="username" value="cas" />
+            <input type="hidden" name="password" id="password" value="cas" />
             <input type="submit" value="<?php print_string("auth_cas_logincas", "auth") ?>" />
           </td>
         </tr>
@@ -29,7 +29,7 @@
 <?php if ($CFG->guestloginbutton) {  ?>
       <hr width="80%" />
       <p><?php print_string("someallowguest") ?>:</p>
-        <form action="index.php" method="post" name="guestlogin">
+        <form action="index.php" method="post" id="guestlogin">
           <input type="hidden" name="username" value="guest" />
           <input type="hidden" name="password" value="guest" />
           <input type="submit" value="<?php print_string("loginguest") ?>" />
@@ -42,7 +42,7 @@
 ?>
       <hr width="80%" />
       <p><?php print_string("forgotten") ?></p> 
-        <form action="<?php p($changepassword) ?>" method="get" name="changepassword">
+        <form action="<?php p($changepassword) ?>" method="get" id="changepassword">
           <input type="submit" value="<?php p($changebuttonname) ?>" />
         </form>
 <?php } ?>
@@ -56,7 +56,7 @@
                  print_string("loginsteps", "", "signup.php");
 ?>
                  <div align="center">
-                   <form action="signup.php" method="get" name="signup">
+                   <form action="signup.php" method="get" id="signup">
                    <input type="submit" value="<?php print_string("startsignup") ?>" />
                    </form>
                  </div>
@@ -71,7 +71,7 @@
 ?>
 
                  <div align="center">
-                    <form action="signup.php" method="get" name="signup">
+                    <form action="signup.php" method="get" id="signup">
                     <input type="submit" value="<?php print_string("startsignup") ?>" />
                     </form>
                  </div>

@@ -394,7 +394,7 @@
          }
          echo "<hr noshade=\"noshade\" size=\"1\" />";
          echo "<center>";
-         echo "<form action=\"report.php\" method=\"post\" name=\"form\">";
+         echo "<form action=\"report.php\" method=\"post\">";
          echo "<h3>$strnotes:</h3>";
          echo "<blockquote>";
          echo "<textarea name=\"notes\" rows=\"10\" cols=\"60\">";

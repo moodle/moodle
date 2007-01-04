@@ -3146,7 +3146,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
             && $course->id != SITEID)) {
 
         echo '<div class="singlebutton forumaddnew">';
-        echo "<form name=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
+        echo "<form id=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
         echo "<input type=\"hidden\" name=\"forum\" value=\"$forum->id\" />";
         echo '<input type="submit" value="';
         echo ($forum->type == 'news') ? get_string('addanewtopic', 'forum')
@@ -3352,7 +3352,7 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
             $ratings->allow = $canrate;
 
             if ($ratings->allow) {
-                echo '<form name="form" method="post" action="rate.php">';
+                echo '<form id="form" method="post" action="rate.php">';
                 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
                 echo '<input type="hidden" name="forumid" value="'.$forum->id.'" />';
             }

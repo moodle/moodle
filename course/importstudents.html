@@ -1,5 +1,5 @@
 
-<form name="studentform" id="studentform" method="post" action="importstudents.php">
+<form id="studentform" method="post" action="importstudents.php">
 <input type="hidden" name="previoussearch" value="<?php echo $previoussearch ?>" />
 <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
 <input type="hidden" name="id" value="<?php echo $id?>" />
@@ -9,9 +9,9 @@
           <label for="removeselect"><?php echo count($alreadycourses) . " ". $stralreadycourses ?></label>
           <br />
           <select name="removeselect[]" size="20" id="removeselect" multiple
-                  onFocus="document.studentform.add.disabled=true;
-                           document.studentform.remove.disabled=false;
-                           document.studentform.addselect.selectedIndex=-1;">
+                  onFocus="getElementById('studentform').add.disabled=true;
+                           getElementById('studentform').remove.disabled=false;
+                           getElementById('studentform').addselect.selectedIndex=-1;">
           <?php 
             foreach ($alreadycourses as $course) {
                 echo "<option value=\"$course->id\">".course_format_name($course,60)."</option>\n";
@@ -30,9 +30,9 @@
           <label for="addselect"><?php echo $numcourses . " " . $strpotentialcourses ?></label>
           <br />
           <select name="addselect[]" size="20" id="addselect" multiple
-                  onFocus="document.studentform.add.disabled=false;
-                           document.studentform.remove.disabled=true;
-                           document.studentform.removeselect.selectedIndex=-1;">
+                  onFocus="getElementById('studentform').add.disabled=false;
+                           getElementById('studentform').remove.disabled=true;
+                           getElementById('studentform').removeselect.selectedIndex=-1;">
           <?php
   
               if (!empty($searchcourses)) {
@@ -58,14 +58,14 @@
          <br />
          <label for="searchtext" class="accesshide"><?php p($strsearch) ?></label>
          <input type="text" name="searchtext" id="searchtext" size="30" value="<?php p($searchtext, true) ?>" 
-                  onFocus ="document.studentform.add.disabled=true;
-                            document.studentform.remove.disabled=true;
-                            document.studentform.removeselect.selectedIndex=-1;
-                            document.studentform.addselect.selectedIndex=-1;"
+                  onFocus ="getElementById('studentform').add.disabled=true;
+                            getElementById('studentform').remove.disabled=true;
+                            getElementById('studentform').removeselect.selectedIndex=-1;
+                            getElementById('studentform').addselect.selectedIndex=-1;"
                   onkeydown = "var keyCode = event.which ? event.which : event.keyCode;
                                if (keyCode == 13) {
-                                    document.studentform.previoussearch.value=1;
-                                    document.studentform.submit();
+                                    getElementById('studentform').previoussearch.value=1;
+                                    getElementById('studentform').submit();
                                } " />
          <input name="search" id="search" type="submit" value="<?php p($strsearch) ?>" />
          <?php

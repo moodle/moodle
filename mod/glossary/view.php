@@ -328,7 +328,7 @@
                 $ratings->allow = true;
             }
 
-            echo "<form name=\"form\" method=\"post\" action=\"rate.php\">";
+            echo "<form method=\"post\" action=\"rate.php\">";
             echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
         }
 

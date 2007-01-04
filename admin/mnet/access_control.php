@@ -171,7 +171,7 @@ print_simple_box_start('center','90%','','20');
 
 ?>
  <div class="mnetaddtoaclform"> 
-  <form name="mnetaddtoacl" method="post">
+  <form id="mnetaddtoacl" method="post">
     <input type="hidden" name="sesskey" value="<?php echo $sesskey; ?>">
 <?php
 

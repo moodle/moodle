@@ -5,7 +5,7 @@
     $strprohibit = get_string('prohibit','role');
 ?>
 
-<form name="overrideform" action="override.php" method="post">
+<form id="overrideform" action="override.php" method="post">
     <input type="hidden" name="contextid" value="<?php p($contextid) ?>" />
     <input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
     <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />

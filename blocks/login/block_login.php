@@ -42,7 +42,7 @@ class block_login extends block_base {
 
         if (empty($USER->loggedin) or isguest()) {   // Show the block
 
-            $this->content->text .= "\n".'<form class="loginform" name="login" method="post" action="'.$wwwroot.'/login/index.php">';
+            $this->content->text .= "\n".'<form class="loginform" id="login" method="post" action="'.$wwwroot.'/login/index.php">';
 
             $this->content->text .= '<div class="c1"><label for="login_username">'.get_string('username').'</label>: ';
             $this->content->text .= '<input type="text" name="username" id="login_username" value="'.$username.'" /></div>';

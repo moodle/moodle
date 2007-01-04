@@ -13,7 +13,7 @@
       <p align="center"><?php if (! empty($this->errormsg)) {formerr($this->errormsg);} ?></p>
 
 
-      <form name="form" method="post" action="enrol.php">
+      <form method="post" action="enrol.php">
         <table align="center" width="100%">
           <tr>
             <td align="right"><?php print_string("enrolmentkey") ?>:</td>
@@ -41,7 +41,7 @@
     if ($course->guest and !isguest()) {
       print_simple_box_start('center');
 ?>
-      <form name="form" method="post" action="enrol.php">
+      <form method="post" action="enrol.php">
         <table align="center" cellpadding="20">
             <tr>
               <td><?php print_string('allowguests') ?>:&nbsp; </td>

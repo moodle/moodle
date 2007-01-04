@@ -534,7 +534,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
  ?>
             <div class='center'>
                 <?php print_string('organizations','scorm') ?>
-                <form name='changeorg' method='post' action='<?php echo $action ?>'>
+                <form id='changeorg' method='post' action='<?php echo $action ?>'>
                     <?php choose_from_menu($orgs, 'organization', "$organization", '','submit()') ?>
                 </form>
             </div>
@@ -561,7 +561,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
     print_simple_box_end();
 ?>
             <div class="center">
-                <form name="theform" method="post" action="<?php echo $CFG->wwwroot ?>/mod/scorm/player.php?id=<?php echo $cm->id ?>"<?php echo $scorm->popup == 1?' target="newwin"':'' ?>>
+                <form id="theform" method="post" action="<?php echo $CFG->wwwroot ?>/mod/scorm/player.php?id=<?php echo $cm->id ?>"<?php echo $scorm->popup == 1?' target="newwin"':'' ?>>
               <?php
                   if ($scorm->hidebrowse == 0) {
                       print_string("mode","scorm");

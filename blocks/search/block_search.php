@@ -50,7 +50,7 @@
         
         //basic search form
         $this->content->text =
-            '<form name="query" method="get" action="'. $CFG->wwwroot .'/search/query.php"><div>'
+            '<form id="searchquery" method="get" action="'. $CFG->wwwroot .'/search/query.php"><div>'
           . '<label for="block_search_q">'. $label .'</label>'
           . '<input id="block_search_q" type="text" name="query_string" length="50" />'
           . '<input type="submit" value="'.$button.'" />'

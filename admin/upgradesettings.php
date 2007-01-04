@@ -58,7 +58,7 @@ admin_externalpage_print_header($adminroot);
 
 print_simple_box(get_string('upgradesettingsintro','admin'),'','100%','',5,'generalbox','');
 
-echo '<form action="upgradesettings.php" method="post" name="adminsettings" id="adminsettings">';
+echo '<form action="upgradesettings.php" method="post" id="adminsettings">';
 echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
 echo '<fieldset>';
 echo '<div class="clearer"><!-- --></div>';

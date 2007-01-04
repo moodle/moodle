@@ -80,7 +80,7 @@ function groupWindow(selectgroup) {
 //]]>
 </script>
 
-        <form id="rolesform1" name="rolesform1" action="groups.php" method="get">
+        <form id="rolesform1" action="groups.php" method="get">
         <input type="hidden" name="id" value="<?php echo $courseid ?>" />
         <div align="center"><?php echo get_string('currentrole', 'role') ?>: 
             <?php choose_from_menu ($roleoptions, 'roleid', $roleid, '', 'document.getElementById(\'rolesform1\').submit()') ?>
@@ -90,7 +90,7 @@ function groupWindow(selectgroup) {
     <tr align="center" valign="top">
       <td class="generalboxcontent">
         <label for="nonmembers"><?php p($strmemberincourse) ?></label>
-        <form name="form1" id="form1" method="post" action="groups.php">
+        <form id="form1" method="post" action="groups.php">
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
           <input type="hidden" name="groupid" value="<?php p($selectedgroup) ?>" />
           <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>" />
@@ -124,7 +124,7 @@ function groupWindow(selectgroup) {
       </td>
       <td class="generalboxcontent">
         <label for="groups"><?php p($strgroups) ?></label>
-        <form name="form2" id="form2" method="post" action="groups.php">
+        <form id="form2" method="post" action="groups.php">
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
           <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>" />
           <input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
@@ -156,7 +156,7 @@ function groupWindow(selectgroup) {
 
       <td class="generalboxcontent">
         <label for="members"><?php p($strgroupmembersselected) ?></label>
-        <form name="form3" id="form3" method="post" action="groups.php">
+        <form id="form3" method="post" action="groups.php">
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
           <input type="hidden" name="groupid" value="<?php p($selectedgroup) ?>" />
           <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>" />

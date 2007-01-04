@@ -98,7 +98,7 @@ class edit_key extends XMLDBAction {
         $origstructure =& $dbdir->xml_file->getStructure();
 
     /// Add the main form
-        $o = '<form name="form" id="form" action="index.php" method="post">';
+        $o = '<form id="form" action="index.php" method="post">';
         $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
         $o.= '    <input type="hidden" name ="table" value="' . $tableparam .'" />';
         $o.= '    <input type="hidden" name ="key" value="' . $keyparam .'" />';

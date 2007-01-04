@@ -54,7 +54,7 @@ The feature will also reset the start date of the course if necessary.
 
     print_simple_box(get_string('resetinfo'), 'center', '60%');
 
-    echo '<form name="reset" action="reset.php" method="POST">';
+    echo '<form id="reset" action="reset.php" method="POST">';
 
     print_heading(get_string('course'), 'left', 3);
 

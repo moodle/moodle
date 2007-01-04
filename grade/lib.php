@@ -2376,7 +2376,7 @@ function grade_display_grade_weights() {
     
     $categories = get_records('grade_category', 'courseid', $course->id);
     if ($categories) {
-        echo  '<form name="grade_weights" action="./index.php" method="post">';
+        echo  '<form id="grade_weights" action="./index.php" method="post">';
         echo  '<table border="0" cellspacing="2" cellpadding="5" align="center" class="generalbox">';
         echo  '<tr><th colspan="5" class="header" scope="col">'.get_string('setweights','grades');
         helpbutton('weight', get_string('gradeweighthelp','grades'), 'grade');
@@ -2449,7 +2449,7 @@ function grade_set_categories() {
     echo  '<td align="center" class="generaltableheader">'.get_string('maxgrade','grades').'</td>';
     echo  '<td align="center" class="generaltableheader">'.get_string('curveto','grades').'</td>';
     echo  '<td align="center" class="generaltableheader">'.get_string('extracredit','grades').'</td></tr>';
-    echo  '<form name="set_categories" method="post" action="./index.php" >';
+    echo  '<form id="set_categories" method="post" action="./index.php" >';
     echo  '<input type="hidden" name="action" value="assign_categories" />';
     echo  '<input type="hidden" name="id" value="'.$course->id.'" />';
     echo  '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
@@ -2634,7 +2634,7 @@ function grade_add_category_form() {
     /// just a simple text box with submit
     global $course;
     global $USER;
-    echo  '<form name="new_category">';
+    echo  '<form id="new_category">';
     echo  get_string('addcategory','grades').':<input type="text" name="name" size="20" />';
     echo  '<input type="hidden" name="id" value="'.$course->id.'" />';
     echo  '<input type="hidden" name="action" value="insert_category" />';
@@ -2647,7 +2647,7 @@ function grade_delete_category_form() {
     // outputs a form to delete a category
     global $course;
     global $USER;
-    echo  '<form name="delete_category">';
+    echo  '<form id="delete_category">';
     echo  get_string('deletecategory','grades').': <select name="category_id">';
     grade_category_select();
     echo  '</select><input type="hidden" name="id" value="'.$course->id.'" />';
@@ -2733,7 +2733,7 @@ function grade_display_grade_preferences($course, $preferences) {
     print_single_button('index.php', $buttonoptions, $buttonlabel, 'post');
     echo '<br /></center>';
 
-    echo  '<form name="set_grade_preferences" method="post" action="./index.php">';
+    echo  '<form id="set_grade_preferences" method="post" action="./index.php">';
     echo  '<input type="hidden" name="action" value="set_grade_preferences" />';
     echo  '<input type="hidden" name="id" value="'.$course->id.'" />';
     echo  '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
@@ -2882,7 +2882,7 @@ function grade_display_letter_grades() {
         $letters[10]->courseid = $course->id;
     }
 
-    echo '<form name="grade_letter"><input type="hidden" name="id" value="'.$course->id.'" />';
+    echo '<form id="grade_letter"><input type="hidden" name="id" value="'.$course->id.'" />';
     echo '<table border="0" cellspacing="2" cellpadding="5" align="center" class="generalbox"><tr>';
     echo '<th colspan="3" class="header" scope="col">'.get_string('setgradeletters','grades');
     helpbutton('letter', get_string('gradeletterhelp','grades'), 'grade');

@@ -239,7 +239,7 @@
         }
         // print it all out !
         if (has_capability('mod/lesson:edit', $context)) {
-            echo  "<form id=\"theform\" name=\"theform\" method=\"post\" action=\"report.php\">\n
+            echo  "<form id=\"theform\" method=\"post\" action=\"report.php\">\n
                    <input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n
                    <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n
                    <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";

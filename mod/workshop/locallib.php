@@ -2048,7 +2048,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
     // now print the grading form with the grading grade if any
     // FORM is needed for Mozilla browsers, else radio bttons are not checked
         ?>
-    <form name="assessmentform" method="post" action="assessments.php">
+    <form id="assessmentform" method="post" action="assessments.php">
     <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
     <input type="hidden" name="aid" value="<?php echo $assessment->id ?>" />
     <input type="hidden" name="action" value="updateassessment" />

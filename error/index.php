@@ -23,15 +23,15 @@
     $httpreferer = empty($_SERVER['HTTP_REFERER']) ? '' : $_SERVER['HTTP_REFERER'];
     $requesturi  = empty($_SERVER['REQUEST_URI'])  ? '' : $_SERVER['REQUEST_URI'];
     
-    print_header($site->fullname .':Error', $site->fullname .': Error 404', '', 'form.text');
+    print_header($site->fullname .':Error', $site->fullname .': Error 404', '', 'text');
     print_simple_box('<p align="center">'. get_string('pagenotexist', 'error'). '<br />'.s($requesturi).'</p>', 'center');
   
 ?>
   
   <center>
   <p><?php echo get_string('pleasereport', 'error'); ?>
-  <p><form action="<?php echo $CFG->wwwroot ?>/error/index.php" name="form" method="post">
-     <textarea rows="3" cols="50" name="text"></textarea><br />
+  <p><form action="<?php echo $CFG->wwwroot ?>/error/index.php" method="post">
+     <textarea rows="3" cols="50" name="text" id="text"></textarea><br />
      <input type="hidden" name="referer" value="<?php p($httpreferer) ?>">
      <input type="hidden" name="requested" value="<?php p($requesturi) ?>">
      <input type="submit" value="<?php echo get_string('sendmessage', 'error'); ?>">

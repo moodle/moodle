@@ -47,7 +47,7 @@
 
     print_simple_box_start("center", "");
 
-    echo "<form name=\"form\" action=\"http://moodle.org/register/\" method=\"post\">\n";
+    echo "<form id=\"form\" action=\"http://moodle.org/register/\" method=\"post\">\n";
     echo "<table cellpadding=\"9\" border=\"0\">\n";
     echo "<tr valign=\"top\">\n";
     echo "<td align=\"center\" colspan=\"2\">".get_string("location")."</td>\n";

@@ -1,7 +1,7 @@
 <table style="margin: auto;">
   <tr>
     <td>
-      <form method="get" action="event.php" name="delete">
+      <form method="get" action="event.php" id="delete">
       <p>
       &nbsp;
       <input type="submit" value=" <?php print_string('delete') ?> " />
@@ -18,7 +18,7 @@
     </td>
     <?php if($repeatcount > 1) { ?>
     <td>
-      <form method="get" action="event.php" name="delete">
+      <form method="get" action="event.php" id="delete">
       <p>
       &nbsp;
       <input type="submit" value=" <?php print_string('deleteall') ?> " />
@@ -35,7 +35,7 @@
     </td>
     <?php } ?>
     <td>
-      <form method="get" action="view.php" name="cancel">
+      <form method="get" action="view.php" id="cancel">
       <p>
       &nbsp;
       <input type="submit" value=" <?php print_string('cancel') ?> ">

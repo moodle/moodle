@@ -103,7 +103,7 @@
 //  Start the survey form
     add_to_log($course->id, "survey", "view form", "view.php?id=$cm->id", $survey->id, $cm->id);
 
-    echo "<form name=\"form\" method=\"post\" action=\"save.php\">";
+    echo "<form method=\"post\" action=\"save.php\">";
     echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />";
 
     print_simple_box(format_text($survey->intro), 'center', '70%', '', 5, 'generalbox', 'intro');

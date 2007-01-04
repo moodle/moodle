@@ -89,7 +89,7 @@
           has_capability('mod/choice:choose', $context) ) {
     // They haven't made their choice yet or updates allowed and choice is open
 
-        echo '<form name="form" method="post" action="view.php">';        
+        echo '<form id="form" method="post" action="view.php">';        
 
         choice_show_form($choice, $USER, $cm);
         

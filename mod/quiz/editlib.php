@@ -313,14 +313,14 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
     echo "</form>\n";
 
 /// Form to choose to show pagebreaks and to repaginate quiz
-    echo '<form method="post" action="edit.php" name="showbreaks">';
+    echo '<form method="post" action="edit.php" id="showbreaks">';
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     echo '<input type="hidden" name="showbreaks" value="0" />';
     echo '<input type="checkbox" name="showbreaks" value="1"';
     if ($showbreaks) {
         echo ' checked="checked"';
     }
-    echo ' onchange="document.showbreaks.submit(); return true;" />';
+    echo ' onchange="getElementById(\'showbreaks\').submit(); return true;" />';
     print_string('showbreaks', 'quiz');
 
     if ($showbreaks) {
@@ -339,7 +339,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
     if ($reordertool) {
         echo ' checked="checked"';
     }
-    echo ' onchange="document.showbreaks.submit(); return true;" />';
+    echo ' onchange="getElementById(\'showbreaks\').submit(); return true;" />';
     print_string('reordertool', 'quiz');
     echo ' ';
     helpbutton('reorderingtool', get_string('reorderingtool', 'quiz'), 'quiz');

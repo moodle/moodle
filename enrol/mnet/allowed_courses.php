@@ -111,7 +111,7 @@ print_simple_box_start('center','90%','','20');
 
 ?>
  <div class="allowedcoursesdiv"> 
-  <form name="allowedcoursesform" method="post">
+  <form id="allowedcoursesform" method="post">
     <input type="hidden" name="sesskey" value="<?php echo $sesskey; ?>">
 <?php
 
@@ -135,9 +135,9 @@ if (count($categories) < 1) {
     <tr>
       <td valign="top">
           <select name="removecategories[]" size="20" id="removecategories" multiple
-                  onFocus="document.allowedcoursesform.addcategory.disabled=true;
-                           document.allowedcoursesform.removecategory.disabled=false;
-                           document.allowedcoursesform.addcategories.selectedIndex=-1;" />
+                  onFocus="getElementById('allowedcoursesform').addcategory.disabled=true;
+                           getElementById('allowedcoursesform').removecategory.disabled=false;
+                           getElementById('allowedcoursesform').addcategories.selectedIndex=-1;" />
           <?php
               foreach ($allowedcategories as $category) {
                   echo "<option value=\"$category->id\"> $category->name </option>\n";
@@ -156,9 +156,9 @@ if (count($categories) < 1) {
 
       <td valign="top">
           <select name="addcategories[]" size="20" id="addcategories" multiple
-                  onFocus="document.allowedcoursesform.addcategory.disabled=false;
-                           document.allowedcoursesform.removecategory.disabled=true;
-                           document.allowedcoursesform.removecategories.selectedIndex=-1;">
+                  onFocus="getElementById('allowedcoursesform').addcategory.disabled=false;
+                           getElementById('allowedcoursesform').removecategory.disabled=true;
+                           getElementById('allowedcoursesform').removecategories.selectedIndex=-1;">
           <?php
             foreach ($potentialcategories as $category) {
                 echo "<option value=\"$category->id\"> $category->name </option>\n";
@@ -192,9 +192,9 @@ if (count($courses) < 1) {
     <tr>
       <td valign="top">
           <select name="removecourses[]" size="20" id="removecourses" multiple
-                  onFocus="document.allowedcoursesform.addcourse.disabled=true;
-                           document.allowedcoursesform.removecourse.disabled=false;
-                           document.allowedcoursesform.addcourses.selectedIndex=-1;" />
+                  onFocus="getElementById('allowedcoursesform').addcourse.disabled=true;
+                           getElementById('allowedcoursesform').removecourse.disabled=false;
+                           getElementById('allowedcoursesform').addcourses.selectedIndex=-1;" />
           <?php
               foreach ($allowedcourses as $course) {
                   echo "<option value=\"$course->id\"> $course->shortname </option>\n";
@@ -213,9 +213,9 @@ if (count($courses) < 1) {
 
       <td valign="top">
           <select name="addcourses[]" size="20" id="addcourses" multiple
-                  onFocus="document.allowedcoursesform.addcourse.disabled=false;
-                           document.allowedcoursesform.removecourse.disabled=true;
-                           document.allowedcoursesform.removecourses.selectedIndex=-1;">
+                  onFocus="getElementById('allowedcoursesform').addcourse.disabled=false;
+                           getElementById('allowedcoursesform').removecourse.disabled=true;
+                           getElementById('allowedcoursesform').removecourses.selectedIndex=-1;">
           <?php
             foreach ($potentialcourses as $course) {
                 echo "<option value=\"$course->id\"> $course->shortname </option>\n";

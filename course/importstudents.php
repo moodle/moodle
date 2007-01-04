@@ -46,7 +46,7 @@
     print_header("$course->shortname: $strassigncourses",
                  "$site->fullname",
                  "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strassigncourses",
-                 "studentform.searchtext");
+                 "searchtext");
 
 
 /// Print a help notice about the need to use this page

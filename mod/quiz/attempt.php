@@ -140,7 +140,7 @@
             }
             echo "<br />\n";
 
-            echo "<form name=\"passwordform\" method=\"post\" action=\"attempt.php?id=$cm->id\" autocomplete=\"off\">\n";
+            echo "<form id=\"passwordform\" method=\"post\" action=\"attempt.php?id=$cm->id\" autocomplete=\"off\">\n";
             print_simple_box_start("center");
 
             echo "<div align=\"center\">\n";
@@ -472,7 +472,7 @@
         ?>
         <script type="text/javascript">
         //<![CDATA[
-            document.write("<form name=\"responseform\" id=\"responseform\" method=\"post\" action=\"attempt.php\" autocomplete=\"off\">\n");
+            document.write("<form id=\"responseform\" method=\"post\" action=\"attempt.php\" autocomplete=\"off\">\n");
         //]]>
         </script>
         <noscript>
@@ -480,7 +480,7 @@
         </noscript>
         <?php
     } else {
-        echo "<form name=\"responseform\" id=\"responseform\" method=\"post\" action=\"attempt.php\" autocomplete=\"off\">\n";
+        echo "<form id=\"responseform\" method=\"post\" action=\"attempt.php\" autocomplete=\"off\">\n";
     }
 
     // Add a hidden field with the quiz id
@@ -493,7 +493,7 @@
         <script type="text/javascript">
         //<![CDATA[
         function navigate(page) {
-            var ourForm = document.forms['responseform']; 
+            var ourForm = getElementById('responseform'); 
             ourForm.page.value=page;
             if (ourForm.onsubmit) {
                 ourForm.onsubmit();

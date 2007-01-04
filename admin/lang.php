@@ -401,7 +401,7 @@
             @include("$langdir/$currentfile");
 
             if ($editable) {
-                echo "<form name=\"$currentfile\" action=\"lang.php\" method=\"post\">";
+                echo "<form id=\"$currentfile\" action=\"lang.php\" method=\"post\">";
             }
             echo "<table summary=\"\" width=\"100%\" cellpadding=\"2\" cellspacing=\"3\" border=\"0\" class=\"generalbox\">";
             $linescounter = 0;

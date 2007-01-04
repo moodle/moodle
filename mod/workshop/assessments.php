@@ -93,7 +93,7 @@
             error("Submission not found");
         }
         ?>
-        <form name="commentform" action="assessments.php" method="post">
+        <form id="commentform" action="assessments.php" method="post">
         <input type="hidden" name="action" value="insertcomment" />
         <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
         <input type="hidden" name="aid" value="<?php echo $aid ?>" />

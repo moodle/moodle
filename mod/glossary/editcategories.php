@@ -106,7 +106,7 @@
                 echo "<p>";
                 print_string("areyousuredelete","glossary");
 ?>
-                <form name="form" method="post" action="editcategories.php">
+                <form id="form" method="post" action="editcategories.php">
 
                 <input type="hidden" name="id"          value="<?php p($cm->id) ?>" />
                 <input type="hidden" name="action"      value="delete" />
@@ -173,7 +173,7 @@
 
 <div align="center">
 
-<form name="theform" method="post" action="editcategories.php">
+<form method="post" action="editcategories.php">
 <table width="40%" class="generalbox" cellpadding="5">
         <tr>
           <td width="90%" align="center"><b>

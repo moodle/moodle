@@ -153,7 +153,7 @@
             }
         } else { // slightly more sophisticated
 
-            echo "<form name=\"movecourses\" action=\"search.php\" method=\"post\">";
+            echo "<form id=\"movecourses\" action=\"search.php\" method=\"post\">";
             echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
             echo "<input type=\"hidden\" name=\"search\" value=\"".s($search, true)."\">";
             echo "<input type=\"hidden\" name=\"page\" value=\"$page\">";
@@ -237,7 +237,7 @@
             echo "<br />";
             echo "<input type=\"button\" onclick=\"checkall()\" value=\"$strselectall\" />\n";
             echo "<input type=\"button\" onclick=\"uncheckall()\" value=\"$strdeselectall\" />\n";
-            choose_from_menu ($displaylist, "moveto", "", get_string("moveselectedcoursesto"), "javascript:document.movecourses.submit()");
+            choose_from_menu ($displaylist, "moveto", "", get_string("moveselectedcoursesto"), "javascript: getElementById('movecourses').submit()");
             echo "</td></tr>";
             echo "</table>";
 

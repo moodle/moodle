@@ -87,7 +87,7 @@
 
     echo '<body class="message course-1" id="message-send">';
     echo '<center>';
-    echo '<form name="editing" method="post" action="send.php">';
+    echo '<form id="editing" method="post" action="send.php">';
     echo '<input type="hidden" name="id" value="'.$user->id.'" />';
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
 

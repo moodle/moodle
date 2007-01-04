@@ -307,7 +307,7 @@
                 html_header($course, $wdir, "form.name");
                 echo "<p>$strrenamefileto:</p>";
                 echo "<table><tr><td>";
-                echo "<form action=\"index.php\" method=\"post\" name=\"form\">";
+                echo "<form action=\"index.php\" method=\"post\">";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
@@ -348,7 +348,7 @@
                 html_header($course, $wdir, "form.name");
                 echo "<p>$strcreatefolder:</p>";
                 echo "<table><tr><td>";
-                echo "<form action=\"index.php\" method=\"post\" name=\"form\">";
+                echo "<form action=\"index.php\" method=\"post\">";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
@@ -395,7 +395,7 @@
                 print_heading("$streditfile");
 
                 echo "<table><tr><td colspan=\"2\">";
-                echo "<form action=\"index.php\" method=\"post\" name=\"form\">";
+                echo "<form action=\"index.php\" method=\"post\">";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
@@ -453,7 +453,7 @@
                     echo "<br />";
                     echo "<p align=\"center\">".get_string("whattocallzip")."</p>";
                     echo "<table><tr><td>";
-                    echo "<form action=\"index.php\" method=\"post\" name=\"form\">";
+                    echo "<form action=\"index.php\" method=\"post\">";
                     echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                     echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                     echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
@@ -694,7 +694,7 @@ function displaydir ($wdir) {
     $strfile   = get_string("file");
 
 
-    echo "<form action=\"index.php\" method=\"post\" name=\"dirform\">";
+    echo "<form action=\"index.php\" method=\"post\" id=\"dirform\">";
     echo '<input type="hidden" name="choose" value="'.$choose.'" />';
     echo "<hr width=\"640\" align=\"center\" noshade=\"noshade\" size=\"1\" />";
     echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\" width=\"640\" class=\"files\">";

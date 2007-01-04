@@ -1,5 +1,5 @@
 
-<form name="subscriberform" id="subscriberform" method="post" action="subscribers.php">
+<form id="subscriberform" method="post" action="subscribers.php">
 <input type="hidden" name="previoussearch" value="<?php echo $previoussearch ?>" />
 <input type="hidden" name="id" value="<?php echo $id?>" />
   <table align="center" border="0" cellpadding="5" cellspacing="0">
@@ -15,9 +15,9 @@
     <tr>
       <td valign="top">
           <select name="removeselect[]" size="20" id="removeselect" multiple
-                  onFocus="document.subscriberform.add.disabled=true;
-                           document.subscriberform.remove.disabled=false;
-                           document.subscriberform.addselect.selectedIndex=-1;">
+                  onFocus="getElementById('subscriberform').add.disabled=true;
+                           getElementById('subscriberform').remove.disabled=false;
+                           getElementById('subscriberform').addselect.selectedIndex=-1;">
           <?php 
               foreach ($subscribers as $subscriber) {
                   $fullname = fullname($subscriber, true);
@@ -35,9 +35,9 @@
       </td>
       <td valign="top">
           <select name="addselect[]" size="20" id="addselect" multiple
-                  onFocus="document.subscriberform.add.disabled=false;
-                           document.subscriberform.remove.disabled=true;
-                           document.subscriberform.removeselect.selectedIndex=-1;">
+                  onFocus="getElementById('subscriberform').add.disabled=false;
+                           getElementById('subscriberform').remove.disabled=true;
+                           getElementById('subscriberform').removeselect.selectedIndex=-1;">
           <?php
               if (!empty($searchusers)) {
                   echo "<optgroup label=\"$strsearchresults (" . count($searchusers) . ")\">\n";
@@ -57,14 +57,14 @@
          </select>
          <br />
          <input type="text" name="searchtext" size="30" value="<?php echo $searchtext ?>" 
-                  onFocus ="document.subscriberform.add.disabled=true;
-                            document.subscriberform.remove.disabled=true;
-                            document.subscriberform.removeselect.selectedIndex=-1;
-                            document.subscriberform.addselect.selectedIndex=-1;"
+                  onFocus ="getElementById('subscriberform').add.disabled=true;
+                            getElementById('subscriberform').remove.disabled=true;
+                            getElementById('subscriberform').removeselect.selectedIndex=-1;
+                            getElementById('subscriberform').addselect.selectedIndex=-1;"
                   onkeydown = "var keyCode = event.which ? event.which : event.keyCode;
                                if (keyCode == 13) {
-                                    document.subscriberform.previoussearch.value=1;
-                                    document.subscriberform.submit();
+                                    getElementById('subscriberform').previoussearch.value=1;
+                                    getElementById('subscriberform').submit();
                                } " />
          <input name="search" id="search" type="submit" value="<?php p($strsearch) ?>" />
          <?php

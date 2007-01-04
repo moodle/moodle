@@ -66,7 +66,7 @@
     $yes = get_string("yes");
     $no  = get_string("no");
 
-    echo '<form method="post" action="formats.php" name="form">';
+    echo '<form method="post" action="formats.php" id="form">';
     echo '<table width="90%" align="center" class="generalbox">';
     ?>
     <tr>

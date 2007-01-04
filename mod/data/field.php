@@ -299,7 +299,7 @@
 
         if ($fields = get_records('data_fields','dataid',$data->id)) {
             echo '<div class="sortdefault" align="center">';
-            echo '<form name="sortdefault" action="'.$CFG->wwwroot.'/mod/data/field.php" method="get">';
+            echo '<form id="sortdefault" action="'.$CFG->wwwroot.'/mod/data/field.php" method="get">';
             echo '<input type="hidden" name="d" value="'.$data->id.'" />';
             echo '<input type="hidden" name="mode" value="sort" />';
             echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';

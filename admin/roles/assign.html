@@ -1,4 +1,4 @@
-<form name="assignform" id="assignform" method="post" action="">
+<form id="assignform" method="post" action="">
 <input type="hidden" name="previoussearch" value="<?php p($previoussearch) ?>" />
 <input type="hidden" name="userid" value="<?php p($userid) ?>" />
 <input type="hidden" name="courseid" value="<?php p($courseid) ?>" />
@@ -11,9 +11,9 @@
           <label for="removeselect"><?php print_string('existingusers', 'role', count($contextusers)); ?></label>
           <br />
           <select name="removeselect[]" size="20" id="removeselect" multiple="multiple"
-                  onfocus="document.assignform.add.disabled=true;
-                           document.assignform.remove.disabled=false;
-                           document.assignform.addselect.selectedIndex=-1;">
+                  onfocus="getElementById('assignform').add.disabled=true;
+                           getElementById('assignform').remove.disabled=false;
+                           getElementById('assignform').addselect.selectedIndex=-1;">
           <?php
               foreach ($contextusers as $contextuser) {
                   $fullname = fullname($contextuser, true);
@@ -44,9 +44,9 @@
           <label for="addselect"><?php print_string('potentialusers', 'role', $usercount); ?></label>
           <br />
           <select name="addselect[]" size="20" id="addselect" multiple="multiple"
-                  onfocus="document.assignform.add.disabled=false;
-                           document.assignform.remove.disabled=true;
-                           document.assignform.removeselect.selectedIndex=-1;">
+                  onfocus="getElementById('assignform').add.disabled=false;
+                           getElementById('assignform').remove.disabled=true;
+                           getElementById('assignform').removeselect.selectedIndex=-1;">
           <?php
 
               if (!empty($searchtext)) {
@@ -81,14 +81,14 @@
          <br />
          <label for="searchtext" class="accesshide"><?php p($strsearch) ?></label>
          <input type="text" name="searchtext" id="searchtext" size="30" value="<?php p($searchtext, true) ?>"
-                  onfocus ="document.assignform.add.disabled=true;
-                            document.assignform.remove.disabled=true;
-                            document.assignform.removeselect.selectedIndex=-1;
-                            document.assignform.addselect.selectedIndex=-1;"
+                  onfocus ="getElementById('assignform').add.disabled=true;
+                            getElementById('assignform').remove.disabled=true;
+                            getElementById('assignform').removeselect.selectedIndex=-1;
+                            getElementById('assignform').addselect.selectedIndex=-1;"
                   onkeydown = "var keyCode = event.which ? event.which : event.keyCode;
                                if (keyCode == 13) {
-                                    document.assignform.previoussearch.value=1;
-                                    document.assignform.submit();
+                                    getElementById('assignform').previoussearch.value=1;
+                                    getElementById('assignform').submit();
                                } " />
          <input name="search" id="search" type="submit" value="<?php p($strsearch) ?>" />
          <?php

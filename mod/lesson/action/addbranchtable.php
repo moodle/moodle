@@ -36,7 +36,7 @@
     // give teacher a blank proforma
     print_heading_with_help(get_string("addabranchtable", "lesson"), "overview", "lesson");
     ?>
-    <form name="form" method="post" action="lesson.php">
+    <form id="form" method="post" action="lesson.php">
     <input type="hidden" name="id" value="<?PHP echo $cm->id ?>" />
     <input type="hidden" name="action" value="insertpage" />
     <input type="hidden" name="pageid" value="<?PHP echo $pageid ?>" />

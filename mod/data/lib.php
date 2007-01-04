@@ -178,7 +178,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
         }
         print_simple_box_start('center','80%');
 
-        echo '<form name="editfield" action="'.$CFG->wwwroot.'/mod/data/field.php" method="post">'."\n";
+        echo '<form id="editfield" action="'.$CFG->wwwroot.'/mod/data/field.php" method="post">'."\n";
         echo '<input type="hidden" name="d" value="'.$this->data->id.'" />'."\n";
         if (empty($this->field->id)) {
             echo '<input type="hidden" name="mode" value="add" />'."\n";
@@ -912,7 +912,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
  ************************************************************************/
 function data_print_preference_form($data, $perpage, $search, $sort='', $order='ASC'){
     echo '<br /><div class="datapreferences" align="center">';
-    echo '<form name="options" action="view.php" method="get">';
+    echo '<form id="options" action="view.php" method="get">';
     echo '<input type="hidden" name="d" value="'.$data->id.'" />';
     echo '<label for="pref_perpage">'.get_string('pagesize','data').'</label> ';
     $pagesizes = array(2=>2,3=>3,4=>4,5=>5,6=>6,7=>7,8=>8,9=>9,10=>10,15=>15,
@@ -963,7 +963,7 @@ function data_print_ratings($data, $record) {
             $ratingsmenuused = false;
 
             echo '<div class="ratings" align="center">';
-            echo '<form name="form" method="post" action="rate.php">';
+            echo '<form id="form" method="post" action="rate.php">';
 
             if (has_capability('mod/data:rate', $context) and !data_isowner($record->id)) {
                 data_print_ratings_mean($record->id, $ratingsscale, has_capability('mod/data:viewrating', $context));

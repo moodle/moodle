@@ -78,7 +78,7 @@
 
     $bodytag = 'onload="';
     $bodytag .= 'if (typeof('.$editorobj.') != \'undefined\') { currEditor = '.$editorobj.'; } ';
-    $bodytag .= 'currTextarea = document.tempform.template;';
+    $bodytag .= 'currTextarea = getElementById(\'tempform\').template;';
     $bodytag .= '" ';
 
     // Javascript to insert the field tags into the textarea.
@@ -169,7 +169,7 @@
     }
 
 
-    echo '<form name="tempform" action="templates.php?d='.$data->id.'&amp;mode='.$mode.'" method="post">';
+    echo '<form id="tempform" action="templates.php?d='.$data->id.'&amp;mode='.$mode.'" method="post">';
     echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
     // Print button to autogen all forms, if all templates are empty
 

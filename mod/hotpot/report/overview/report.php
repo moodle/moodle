@@ -114,15 +114,15 @@ class hotpot_report extends hotpot_default_report {
 		if ($options['reportformat']=='htm' && has_capability('mod/hotpot:viewreport',get_context_instance(CONTEXT_COURSE, $course->id))) {
 			$strdeletecheck = get_string('deleteattemptcheck','quiz');
 			$table->start = $this->deleteform_javascript();
-			$table->start .= '<form method="post" action="report.php" name="deleteform" onsubmit="'."return deletecheck('".$strdeletecheck."', 'selection')".'">'."\n";
+			$table->start .= '<form method="post" action="report.php" id="deleteform" onsubmit="'."return deletecheck('".$strdeletecheck."', 'selection')".'">'."\n";
 			$table->start .= '<input type="hidden" name="del" value="selection">'."\n";
 			$table->start .= '<input type="hidden" name="id" value="'.$cm->id.'">'."\n";
 			$table->finish = '<center>'."\n";
 			$table->finish .= '<input type="submit" value="'.get_string("deleteselected").'">&nbsp;'."\n";
 			if ($abandoned) {
-				$table->finish .= '<input type=button value="'.get_string('deleteabandoned', 'hotpot').'" onClick="if(deletecheck('."'".addslashes(get_string('deleteabandonedcheck', 'hotpot', $abandoned))."', 'abandoned', true".'))document.deleteform.submit();">'."\n";
+				$table->finish .= '<input type=button value="'.get_string('deleteabandoned', 'hotpot').'" onClick="if(deletecheck('."'".addslashes(get_string('deleteabandonedcheck', 'hotpot', $abandoned))."', 'abandoned', true".')) getElementById(\'deleteform\').submit();">'."\n";
 			}
-			$table->finish .= '<input type=button value="'.get_string("deleteall").'" onClick="if(deletecheck('."'".addslashes($strdeletecheck)."', 'all', true".'))document.deleteform.submit();">'."\n";
+			$table->finish .= '<input type=button value="'.get_string("deleteall").'" onClick="if(deletecheck('."'".addslashes($strdeletecheck)."', 'all', true".'))getElementById(\'deleteform\').submit();">'."\n";
 			$table->finish .= '</center>'."\n";
 			$table->finish .= '</form>'."\n";
 		}
@@ -136,7 +136,7 @@ class hotpot_report extends hotpot_default_report {
 function deletecheck(p, v, x) {
 	var r = false; // result
 	// get length of form elements
-	var f = document.deleteform;
+	var f = getElementById('deleteform');
 	var l = f ? f.elements.length : 0;
 	// count selected items, if necessary
 	if (!x) {

@@ -246,7 +246,7 @@
             print_simple_box_start('center','60%');
             echo '<table summary="" width="100%">';
             echo '<tr><td align="center" valign="top">';
-            echo '<form name="uninstallform" action="langimport.php?mode=4" method="post">';
+            echo '<form id="uninstallform" action="langimport.php?mode=4" method="post">';
             echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
             unset($CFG->langlist);   // ignore admin's langlist
             $installedlangs = get_list_of_languages();
@@ -261,7 +261,7 @@
             echo '</select>';
             echo '<br /><input type="submit" value="'.get_string('uninstall','admin').'" />';
             echo '</form>';
-            echo '<form name="updateform" action="langimport.php?mode=5" method="post">';
+            echo '<form id="updateform" action="langimport.php?mode=5" method="post">';
             echo '<br /><input type="submit" value="'.get_string('updatelangs','admin').'" />';
             echo '</form>';
 
@@ -275,7 +275,7 @@
 
             /// if this language pack is not already installed, then we allow installation
 
-            echo '<form name="installform" method="post" action="langimport.php?mode=2">';
+            echo '<form id="installform" method="post" action="langimport.php?mode=2">';
             echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
             echo '<label for="pack">'.get_string('availablelangs','admin')."</label><br />\n";
             if ($remote) {

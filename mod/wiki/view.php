@@ -300,7 +300,7 @@
         }
         echo '<tr><td colspan="2">';
 
-        echo '<form name="otherwikis" action="'.$CFG->wwwroot.'/mod/wiki/view.php">';
+        echo '<form id="otherwikis" action="'.$CFG->wwwroot.'/mod/wiki/view.php">';
         echo '<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>';
         echo '<td class="sideblockheading">&nbsp;'
             .$WIKI_TYPES[$wiki->wtype].' '
@@ -309,7 +309,7 @@
 
         echo '<td class="sideblockheading" align="right">'
             .get_string('otherwikis', 'wiki').':&nbsp;&nbsp;';
-        $script = 'self.location=document.otherwikis.wikiselect.options[document.otherwikis.wikiselect.selectedIndex].value';
+        $script = 'self.location=getElementById(\'otherwikis\').wikiselect.options[getElementById(\'otherwikis\').wikiselect.selectedIndex].value';
         choose_from_menu($wiki_list, "wikiselect", $selected, "choose", $script);
         echo '</td>';
         echo '</tr></table>';

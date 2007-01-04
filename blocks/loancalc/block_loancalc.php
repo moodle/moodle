@@ -153,7 +153,7 @@ function comp(v) { // general entry point for all cases
 <title></title>
 
 <h1></h1>
-<form method="post" id="vbankform" name="vbankform">
+<form method="post" id="vbankform">
             <table>
                 <tr>
                     <td colspan="2">'.get_string('amountofloan','block_loancalc').'</td>

@@ -169,7 +169,7 @@ $langdir/$currentfile")."</font></p>";
         echo "<td align=\"center\">\n";
 
         if ($editable) {
-            echo "<form name=\"$currentfile\" action=\"langdoc.php\" method=\"post\">";
+            echo "<form id=\"$currentfile\" action=\"langdoc.php\" method=\"post\">";
             echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
             echo '<input type="hidden" name="currentfile" value="'.$currentfile.'" />';
 

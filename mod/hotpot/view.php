@@ -75,7 +75,7 @@
                 print_simple_box_end();
                 print "<br />\n";
             }
-            print '<form name="passwordform" method="post" action="view.php?id='.$cm->id.'">'."\n";
+            print '<form id="passwordform" method="post" action="view.php?id='.$cm->id.'">'."\n";
             print_simple_box_start($boxalign, $boxwidth);
             print '<div align="center">';
             print get_string('requirepasswordmessage', 'quiz').'<br /><br />';

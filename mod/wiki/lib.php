@@ -1087,7 +1087,7 @@ function wiki_get_owner(&$wiki_entry) {
 function wiki_print_search_form($cmid, $search="", $userid, $groupid, $return=false) {
     global $CFG;
     # TODO: Add Group and User !!!
-    $output = "<form name=\"search\" action=\"$CFG->wwwroot/mod/wiki/view.php\">";
+    $output = "<form id=\"search\" action=\"$CFG->wwwroot/mod/wiki/view.php\">";
     $output .= "<font size=\"-1\">";
     $output .= "<input value=\"".get_string("searchwiki", "wiki").":\" type=\"submit\" />";
     $output .= "<input name=\"id\" type=\"hidden\" value=\"$cmid\" />";

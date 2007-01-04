@@ -114,7 +114,7 @@ class edit_sentence extends XMLDBAction {
             $values = $statement->getValuesFromInsertSentence($sentence);
 
         /// Add the main form
-            $o = '<form name="form" id="form" action="index.php" method="post">';
+            $o = '<form id="form" action="index.php" method="post">';
             $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
             $o.= '    <input type="hidden" name ="statement" value="' . $statementparam .'" />';
             $o.= '    <input type="hidden" name ="sentence" value="' . $sentenceparam .'" />';

@@ -34,10 +34,10 @@
         if(waitFlag) return false;
         waitFlag = true;
         var input_chat_message = document.getElementById('input_chat_message');
-        document.sendForm.chat_message.value = input_chat_message.value;
+        getElementById('sendForm').chat_message.value = input_chat_message.value;
         input_chat_message.value = '';
         input_chat_message.className = 'wait';
-        document.sendForm.submit();
+        getElementById('sendForm').submit();
         enableForm();
         return false;
     }
@@ -54,16 +54,16 @@
     <?php
 
     $meta = ob_get_clean();
-    print_header('', '', '', 'inputForm.chat_message', $meta, false);
+    print_header('', '', '', 'input_chat_message', $meta, false);
 
 ?>
-    <form action="../empty.php" method="post" target="empty" name="inputForm"
+    <form action="../empty.php" method="post" target="empty" id="inputForm"
           onsubmit="return empty_field_and_submit()">
         &gt;&gt;<input type="text" id="input_chat_message" name="chat_message" size="60" value="" />
         <?php helpbutton('chatting', get_string('helpchatting', 'chat'), 'chat', true, false); ?>
     </form>
 
-    <form action="insert.php" method="post" target="empty" name="sendForm">
+    <form action="insert.php" method="post" target="empty" id="sendForm">
         <input type="hidden" name="chat_sid" value="<?php echo $chat_sid ?>" />
         <input type="hidden" name="chat_message" />
     </form>

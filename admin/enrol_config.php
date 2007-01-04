@@ -44,17 +44,8 @@
 
     admin_externalpage_print_header($adminroot);
 
-    echo "<form $CFG->frametarget name=\"enrolmenu\" method=\"post\" action=\"enrol_config.php\">";
+    echo "<form $CFG->frametarget id=\"enrolmenu\" method=\"post\" action=\"enrol_config.php\">";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\">";
-    echo "<div align=\"center\"><p><b>";
-
-
-/// Choose an enrolment method
-    echo get_string('chooseenrolmethod').': ';
-    choose_from_menu ($options, "enrol", $enrol, "",
-                      "document.location='enrol_config.php?enrol='+document.enrolmenu.enrol.options[document.enrolmenu.enrol.selectedIndex].value", "");
-
-    echo "</b></p></div>";
 
 /// Print current enrolment type description
     print_simple_box_start("center", "80%");

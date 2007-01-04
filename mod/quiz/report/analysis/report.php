@@ -357,7 +357,7 @@ class quiz_report extends quiz_default_report {
     function print_options_form($quiz, $cm, $attempts, $lowlimit=0, $pagesize=10) {
         global $CFG, $USER;
         echo '<div class="controls">';
-        echo '<form id="options" name="options" action="report.php" method="post">';
+        echo '<form id="options" action="report.php" method="post">';
         echo '<p class="quiz-report-options">'.get_string('analysisoptions', 'quiz').': </p>';
         echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
         echo '<input type="hidden" name="q" value="'.$quiz->id.'" />';

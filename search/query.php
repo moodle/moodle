@@ -150,7 +150,7 @@
   }
 ?>
 
-<form name="query" method="get" action="query.php">
+<form id="query" method="get" action="query.php">
   <?php if (!$advanced) { ?>
     <input type="text" name="query_string" length="50" value="<?php print stripslashes(htmlentities($query_string)) ?>" />
     &nbsp;<input type="submit" value="Search" /> &nbsp;

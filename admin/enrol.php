@@ -52,7 +52,7 @@
 
     print_simple_box(get_string('configenrolmentplugins', 'admin'), 'center', '700');
 
-    echo "<form $CFG->frametarget name=\"enrolmenu\" method=\"post\" action=\"enrol.php\">";
+    echo "<form $CFG->frametarget id=\"enrolmenu\" method=\"post\" action=\"enrol.php\">";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\" />";
 
     $table = new stdClass();

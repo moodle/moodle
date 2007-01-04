@@ -86,7 +86,7 @@
     print_heading_with_help($strimportppt, "importppt", "lesson");
 
     print_simple_box_start("center");
-    echo "<form name=\"theform\" enctype=\"multipart/form-data\" method=\"post\">";
+    echo "<form id=\"theform\" enctype=\"multipart/form-data\" method=\"post\">";
     echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
     echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />\n";
     echo "<table cellpadding=\"5\">";

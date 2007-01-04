@@ -280,7 +280,7 @@
 /// Print form for creating new categories
     if (has_capability('moodle/category:create', $context)) {
         echo "<center>";
-        echo "<form name=\"addform\" action=\"index.php\" method=\"post\">";
+        echo "<form id=\"addform\" action=\"index.php\" method=\"post\">";
         echo "<input type=\"text\" size=\"30\" alt=\"$straddnewcategory\" name=\"addcategory\" />";
         echo "<input type=\"submit\" value=\"$straddnewcategory\" />";
         echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";

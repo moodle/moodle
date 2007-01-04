@@ -385,7 +385,7 @@
             if (isset($authplugin->config->{$configvariable})) {
                 if ( $authplugin->config->{$configvariable} === 'locked'
                     or ($authplugin->config->{$configvariable} === 'unlockedifempty' and !empty($user->$field))) {
-                   echo "eval('document.form.$field.disabled=true');\n";
+                   echo "eval('getElementById('editform').$field.disabled=true');\n";
                 }
             }
         }

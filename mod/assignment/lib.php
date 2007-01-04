@@ -885,7 +885,7 @@ class assignment_base {
         print_user_picture($teacher->id, $this->course->id, $teacher->picture);
         echo '</td>';
         echo '<td class="content">';
-        echo '<form name="submitform" action="submissions.php" method="post">';
+        echo '<form id="submitform" action="submissions.php" method="post">';
         echo '<input type="hidden" name="offset" value="'.++$offset.'">';
         echo '<input type="hidden" name="userid" value="'.$userid.'" />';
         echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
@@ -1186,7 +1186,7 @@ class assignment_base {
         
         /// Print quickgrade form around the table
         if ($quickgrade){
-            echo '<form action="submissions.php" name="fastg" method="post">';
+            echo '<form action="submissions.php" id="fastg" method="post">';
             echo '<input type="hidden" name="id" value="'.$this->cm->id.'">';
             echo '<input type="hidden" name="mode" value="fastgrade">';
             echo '<input type="hidden" name="page" value="'.$page.'">';
@@ -1203,7 +1203,7 @@ class assignment_base {
         
         /// Mini form for setting user preference
         echo '<br />';
-        echo '<form name="options" action="submissions.php?id='.$this->cm->id.'" method="post">';
+        echo '<form id="options" action="submissions.php?id='.$this->cm->id.'" method="post">';
         echo '<input type="hidden" id="updatepref" name="updatepref" value="1" />';
         echo '<table id="optiontable" align="center">';
         echo '<tr align="right"><td>';

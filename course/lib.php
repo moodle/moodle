@@ -1864,19 +1864,19 @@ function print_course_search($value="", $return=false, $format="plain") {
     $strsearchcourses= get_string("searchcourses");
 
     if ($format == 'plain') {
-        $output  = '<form name="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
+        $output  = '<form id="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
         $output .= '<center><p align="center" class="coursesearchbox">';
         $output .= '<input type="text" size="30" name="search" alt="'.s($strsearchcourses).'" value="'.s($value, true).'" />';
         $output .= '<input type="submit" value="'.s($strsearchcourses).'" />';
         $output .= '</p></center></form>';
     } else if ($format == 'short') {
-        $output  = '<form name="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
+        $output  = '<form id="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
         $output .= '<center><p align="center" class="coursesearchbox">';
         $output .= '<input type="text" size="12" name="search" alt="'.s($strsearchcourses).'" value="'.s($value, true).'" />';
         $output .= '<input type="submit" value="'.s($strsearchcourses).'" />';
         $output .= '</p></center></form>';
     } else if ($format == 'navbar') {
-        $output  = '<form name="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
+        $output  = '<form id="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
         $output .= '<table border="0" cellpadding="0" cellspacing="0"><tr><td nowrap="nowrap">';
         $output .= '<input type="text" size="20" name="search" alt="'.s($strsearchcourses).'" value="'.s($value, true).'" />';
         $output .= '<input type="submit" value="'.s($strsearchcourses).'" />';

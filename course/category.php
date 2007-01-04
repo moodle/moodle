@@ -274,7 +274,7 @@
         $strrequireskey     = get_string("requireskey");
 
 
-        echo '<form name="movecourses" action="category.php" method="post">';
+        echo '<form id="movecourses" action="category.php" method="post">';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<table align="center" border="0" cellspacing="2" cellpadding="4" class="generalbox"><tr>';
         echo '<th scope="col">'.$strcourses.'</th>';
@@ -402,7 +402,7 @@
             echo '<tr><td colspan="3" align="right">';
             echo '<br />';
             unset($displaylist[$category->id]);
-            choose_from_menu ($displaylist, "moveto", "", get_string("moveselectedcoursesto"), "javascript:document.movecourses.submit()");
+            choose_from_menu ($displaylist, "moveto", "", get_string("moveselectedcoursesto"), "javascript: getElementById('movecourses').submit()");
             echo '<input type="hidden" name="id" value="'.$category->id.'" />';
             echo '</td></tr>';
         }
@@ -430,7 +430,7 @@
 
     if (has_capability('moodle/category:update', $context)) {           /// Print form to rename the category
         $strrename= get_string('rename');
-        echo '<form name="renameform" action="category.php" method="post">';
+        echo '<form id="renameform" action="category.php" method="post">';
         echo '<input type="hidden" name="id" value="'.$category->id.'" />';
         echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
         echo '<input type="text" size="30" name="rename" value="'.s($category->name).'" alt="'.$strrename.'" />';

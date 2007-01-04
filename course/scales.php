@@ -177,7 +177,7 @@
             $scale->scale = $form->scalescale;
             $scale->description = $form->description;
         }
-        echo "<form method=\"post\" action=\"scales.php\" name=\"form$scale->id\">";
+        echo "<form method=\"post\" action=\"scales.php\" id=\"form$scale->id\">";
         echo "<table cellpadding=\"9\" cellspacing=\"0\" align=\"center\" class=\"generalbox\">";
         echo "<tr valign=\"top\">";
         if (!empty($errors[$scale->id]->name)) {

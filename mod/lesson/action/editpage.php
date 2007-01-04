@@ -53,7 +53,7 @@
     }
     // give teacher a proforma
     ?>
-    <form name="editpage" method="post" action="lesson.php">
+    <form id="editpage" method="post" action="lesson.php">
     <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
     <input type="hidden" name="action" value="updatepage" />
     <input type="hidden" name="pageid" value="<?php echo $pageid ?>" />
@@ -68,7 +68,7 @@
                 echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br />";
                 lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype, 
                                   "lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id",
-                                  "document.editpage.redisplay.value=1;document.editpage.submit();");
+                                  "getElementById('editpage').redisplay.value=1;getElementById('editpage').submit();");
                 echo "<p><b><label for=\"qoption\">".get_string('multianswer', 'lesson').":</label></b> \n";
                 if ($page->qoption) {
                     echo "<input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\" checked=\"checked\" />";
@@ -83,7 +83,7 @@
                 echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br />";
                 lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype, 
                                   "lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id",
-                                  "document.editpage.redisplay.value=1;document.editpage.submit();");
+                                  "getElementById('editpage').redisplay.value=1;getElementById('editpage').submit();");
                 echo "<p><b><label for=\"qoption\">".get_string('casesensitive', 'lesson').":</label></b> \n";
                 if ($page->qoption) {
                     echo "<input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\" checked=\"checked\" />";
@@ -101,7 +101,7 @@
                 echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br />";
                 lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype, 
                                   "lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id",
-                                  "document.editpage.redisplay.value=1;document.editpage.submit();");
+                                  "getElementById('editpage').redisplay.value=1;getElementById('editpage').submit();");
                 break;
         }
     ?>
@@ -473,7 +473,7 @@
     ?>
     </table><br />
     <input type="button" value="<?php print_string("redisplaypage", "lesson") ?>" 
-        onClick="document.editpage.redisplay.value=1;document.editpage.submit();" />
+        onClick="getElementById('editpage').redisplay.value=1;getElementById('editpage').submit();" />
     <input type="submit" value="<?php  print_string("savepage", "lesson") ?>" />
     <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
     </center>

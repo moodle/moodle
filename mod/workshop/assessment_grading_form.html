@@ -3,7 +3,7 @@
         $assessment->teachercomment = '';
     }
 ?>
-<form name="gradingform" action="assessments.php" method="post">
+<form id="gradingform" action="assessments.php" method="post">
   <input type="hidden" name="action" value="updategrading" />
   <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
   <input type="hidden" name="redirect" value="<?php echo $redirect ?>" />

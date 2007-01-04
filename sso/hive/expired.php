@@ -12,7 +12,7 @@
     print_header();
     notify('Your session has expired. Please log in again.'); 
 ?>
-      <form action="login.php" method="post" name="login" id="login">
+      <form action="login.php" method="post" id="login">
         <table border="0" align="center">
         <tr>
           <td width="80%">

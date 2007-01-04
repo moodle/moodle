@@ -62,12 +62,8 @@ asort($options);
 admin_externalpage_print_header($adminroot);
 
 // choose an authentication method
-echo "<form $CFG->frametarget name=\"authmenu\" method=\"post\" action=\"auth_config.php\">\n";
+echo "<form $CFG->frametarget id=\"authmenu\" method=\"post\" action=\"auth_config.php\">\n";
 echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\">\n";
-echo "<div align=\"center\"><p><b>\n";
-echo get_string('chooseauthmethod').': ';
-choose_from_menu ($options, "auth", $auth, '', "document.location='auth_config.php?sesskey=$USER->sesskey&auth='+document.authmenu.auth.options[document.authmenu.auth.selectedIndex].value", '');
-echo "</b></p></div>\n\n";
 
 // auth plugin description
 print_simple_box_start('center', '80%');
@@ -118,10 +114,18 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
     foreach ($user_fields as $field) {
 
         // Define some vars we'll work with
-        optional_variable($pluginconfig->{"field_map_$field"}, '');
-        optional_variable($pluginconfig->{"field_updatelocal_$field"}, '');
-        optional_variable($pluginconfig->{"field_updateremote_$field"}, '');
-        optional_variable($pluginconfig->{"field_lock_$field"}, '');
+        if (isset($pluginconfig->{"field_map_$field"})) {
+            $pluginconfig->{"field_map_$field"} = '';
+        }
+        if (isset($pluginconfig->{"field_updatelocal_$field"})) {
+            $pluginconfig->{"field_updatelocal_$field"} = '';
+        }
+        if (isset($pluginconfig->{"field_updateremote_$field"})) {
+            $pluginconfig->{"field_updateremote_$field"} = '';
+        }
+        if (isset($pluginconfig->{"field_lock_$field"})) {
+            $pluginconfig->{"field_lock_$field"} = '';
+        }
 
         // define the fieldname we display to the  user
         $fieldname = $field;
