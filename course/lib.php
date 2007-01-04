@@ -260,6 +260,96 @@ function make_log_url($module, $url) {
 }
 
 
+function build_mnet_logs_array($hostid, $course, $user=0, $date=0, $order="l.time ASC", $limitfrom='', $limitnum='',
+                   $modname="", $modid=0, $modaction="", $groupid=0) {
+
+    global $CFG;
+
+    // It is assumed that $date is the GMT time of midnight for that day,
+    // and so the next 86400 seconds worth of logs are printed.
+
+    /// Setup for group handling.
+    
+    // TODO: I don't understand group/context/etc. enough to be able to do 
+    // something interesting with it here
+    // What is the context of a remote course?
+    
+    /// If the group mode is separate, and this user does not have editing privileges,
+    /// then only the user's group can be viewed.
+    //if ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
+    //    $groupid = get_current_group($course->id);
+    //}
+    /// If this course doesn't have groups, no groupid can be specified.
+    //else if (!$course->groupmode) {
+    //    $groupid = 0;
+    //}
+    $groupid = 0;
+
+    $joins = array();
+
+    $qry = "
+            SELECT
+                l.*,
+                u.firstname, 
+                u.lastname, 
+                u.picture
+            FROM
+                {$CFG->prefix}mnet_log l
+            LEFT JOIN  
+                {$CFG->prefix}user u
+            ON 
+                l.userid = u.id
+            WHERE
+                ";
+
+    $where .= "l.hostid = '$hostid'";
+
+    // TODO: Is 1 really a magic number referring to the sitename?
+    if ($course != 1 || $modid != 0) {
+        $where .= " AND\n                l.course='$course'";
+    }
+
+    if ($modname) {
+        $where .= " AND\n                l.module = '$modname'";
+    }
+
+    if ('site_errors' === $modid) {
+        $where .= " AND\n                ( l.action='error' OR l.action='infected' )";
+    } else if ($modid) {
+        //TODO: This assumes that modids are the same across sites... probably 
+        //not true
+        $where .= " AND\n                l.cmid = '$modid'";
+    }
+
+    if ($modaction) {
+        $firstletter = substr($modaction, 0, 1);
+        if (ctype_alpha($firstletter)) {
+            $where .= " AND\n                lower(l.action) LIKE '%" . strtolower($modaction) . "%'";
+        } else if ($firstletter == '-') {
+            $where .= " AND\n                lower(l.action) NOT LIKE '%" . strtolower(substr($modaction, 1)) . "%'";
+        }
+    }
+
+    if ($user) {
+        $where .= " AND\n                l.userid = '$user'";
+    }
+
+    if ($date) {
+        $enddate = $date + 86400;
+        $where .= " AND\n                l.time > '$date' AND l.time < '$enddate'";
+    }
+
+    $result = array();
+    $result['totalcount'] = count_records_sql("SELECT COUNT(*) FROM {$CFG->prefix}mnet_log l WHERE $where");
+    if(!empty($result['totalcount'])) {
+        $where .= "\n            ORDER BY\n                $order";
+        $result['logs'] = get_records_sql($qry.$where, $limitfrom, $limitnum);
+    } else {
+        $result['logs'] = array();
+    }
+    return $result;
+}
+
 function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limitfrom='', $limitnum='',
                    $modname="", $modid=0, $modaction="", $groupid=0) {
 
@@ -443,6 +533,113 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         echo "</td>\n";
         echo "<td class=\"r$row c4\" nowrap=\"nowrap\">\n";
         link_to_popup_window( make_log_url($log->module,$log->url), 'fromloglive',"$log->module $log->action", 400, 600);
+        echo "</td>\n";;
+        echo "<td class=\"r$row c5\" nowrap=\"nowrap\">{$log->info}</td>\n";
+        echo "</tr>\n";
+    }
+    echo "</table>\n";
+
+    print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&amp;");
+}
+
+
+function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100,
+                   $url="", $modname="", $modid=0, $modaction="", $groupid=0) {
+    
+    global $CFG;
+    
+    if (!$logs = build_mnet_logs_array($hostid, $course, $user, $date, $order, $page*$perpage, $perpage,
+                       $modname, $modid, $modaction, $groupid)) {
+        notify("No logs found!");
+        print_footer($course);
+        exit;
+    }
+    
+    if ($course->id == SITEID) {
+        $courses[0] = '';
+        if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname,c.visible')) {
+            foreach ($ccc as $cc) {
+                $courses[$cc->id] = $cc->shortname;
+            }
+        }
+    }
+    
+    $totalcount = $logs['totalcount'];
+    $count=0;
+    $ldcache = array();
+    $tt = getdate(time());
+    $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
+
+    $strftimedatetime = get_string("strftimedatetime");
+
+    echo "<p align=\"center\">\n";
+    print_string("displayingrecords", "", $totalcount);
+    echo "</p>\n";
+
+    print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&amp;");
+
+    echo "<table class=\"logtable\" border=\"0\" align=\"center\" cellpadding=\"3\" cellspacing=\"0\">\n";
+    echo "<tr>";
+    if ($course->id == SITEID) {
+        echo "<th class=\"c0 header\">".get_string('course')."</th>\n";
+    }
+    echo "<th class=\"c1 header\">".get_string('time')."</th>\n";
+    echo "<th class=\"c2 header\">".get_string('ip_address')."</th>\n";
+    echo "<th class=\"c3 header\">".get_string('fullname')."</th>\n";
+    echo "<th class=\"c4 header\">".get_string('action')."</th>\n";
+    echo "<th class=\"c5 header\">".get_string('info')."</th>\n";
+    echo "</tr>\n";
+
+    if (empty($logs['logs'])) {
+        echo "</table>\n";
+        return;
+    }
+
+    $row = 1;
+    foreach ($logs['logs'] as $log) {
+        
+        $log->info = $log->coursename;
+        $row = ($row + 1) % 2;
+
+        if (isset($ldcache[$log->module][$log->action])) {
+            $ld = $ldcache[$log->module][$log->action];
+        } else {
+            $ld = get_record('log_display', 'module', $log->module, 'action', $log->action);
+            $ldcache[$log->module][$log->action] = $ld;
+        }
+        if (0 && $ld && !empty($log->info)) {
+            // ugly hack to make sure fullname is shown correctly
+            if (($ld->mtable == 'user') and ($ld->field == sql_concat('firstname', "' '" , 'lastname'))) {
+                $log->info = fullname(get_record($ld->mtable, 'id', $log->info), true);
+            } else {
+                $log->info = get_field($ld->mtable, $ld->field, 'id', $log->info);
+            }
+        }
+
+        //Filter log->info 
+        $log->info = format_string($log->info);
+
+        $log->url  = strip_tags(urldecode($log->url));   // Some XSS protection
+        $log->info = strip_tags(urldecode($log->info));  // Some XSS protection
+        $log->url  = str_replace('&', '&amp;', $log->url); /// XHTML compatibility
+
+        echo '<tr class="r'.$row.'">';
+        if ($course->id == SITEID) {
+            echo "<td class=\"r$row c0\" nowrap=\"nowrap\">\n";
+            echo "    <a href=\"{$CFG->wwwroot}/course/view.php?id={$log->course}\">".$courses[$log->course]."</a>\n";
+            echo "</td>\n";
+        }
+        echo "<td class=\"r$row c1\" nowrap=\"nowrap\" align=\"right\">".userdate($log->time, '%a').
+             ' '.userdate($log->time, $strftimedatetime)."</td>\n";
+        echo "<td class=\"r$row c2\" nowrap=\"nowrap\">\n";
+        link_to_popup_window("/iplookup/index.php?ip=$log->ip&amp;user=$log->userid", 'iplookup',$log->ip, 400, 700);
+        echo "</td>\n";
+        $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
+        echo "<td class=\"r$row c3\" nowrap=\"nowrap\">\n";
+        echo "    <a href=\"$CFG->wwwroot/user/view.php?id={$log->userid}\">$fullname</a>\n";
+        echo "</td>\n";
+        echo "<td class=\"r$row c4\" nowrap=\"nowrap\">\n";
+        echo $log->action .': '.$log->module;
         echo "</td>\n";;
         echo "<td class=\"r$row c5\" nowrap=\"nowrap\">{$log->info}</td>\n";
         echo "</tr>\n";

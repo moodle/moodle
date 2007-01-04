@@ -6,7 +6,18 @@
     require_once('lib.php');
     require_once($CFG->libdir.'/adminlib.php');
 
-    $id          = required_param('id', PARAM_INT);// Course ID
+    $id          = optional_param('id', PARAM_INT);// Course ID
+    
+    $host_course = optional_param('host_course', PARAM_PATH);// Course ID
+    
+    list($hostid, $id) = explode('/', $host_course);
+    
+    $course_stub       = get_record('mnet_log', 'hostid', $hostid, 'course', $id);
+    $course->id        = $id;
+    $course->shortname = $course_stub->coursename;
+    $course->fullname  = $course_stub->coursename;
+    
+    
     $group       = optional_param('group', -1, PARAM_INT); // Group to display
     $user        = optional_param('user', 0, PARAM_INT); // User to display
     $date        = optional_param('date', 0, PARAM_FILE); // Date to display - number or some string
@@ -22,10 +33,12 @@
 
     require_login();
 
-    if (! $course = get_record('course', 'id', $id) ) {
-        error('That\'s an invalid course id');
+    if ($hostid == $CFG->mnet_localhost_id) {
+        if (!$course = get_record('course', 'id', $id) ) {
+            error('That\'s an invalid course id'.$id);
+        }
     }
-    
+
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
     require_capability('moodle/site:viewreports', $context);
@@ -51,10 +64,10 @@
         if ($date) {
             $dateinfo = userdate($date, get_string('strftimedaydate'));
         }
-        
+
         switch ($logformat) {
             case 'showashtml':
-                if ($course->id == SITEID) {
+                if ($hostid != $CFG->mnet_localhost_id || $course->id == SITEID) {
                     $adminroot = admin_get_root();
                     admin_externalpage_setup('reportlog', $adminroot);
                     admin_externalpage_print_header($adminroot);
@@ -67,11 +80,15 @@
                 }
 
                 print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
-                print_log_selector_form($course, $user, $date, $modname, $modid, $modaction, $group, $showcourses, $showusers, $logformat);
+                print_mnet_log_selector_form($hostid, $course, $user, $date, $modname, $modid, $modaction, $group, $showcourses, $showusers, $logformat);
                 
-                print_log($course, $user, $date, 'l.time DESC', $page, $perpage, 
-                        "index.php?id=$course->id&amp;chooselog=1&amp;user=$user&amp;date=$date&amp;modid=$modid&amp;modaction=$modaction&amp;group=$group", 
-                        $modname, $modid, $modaction, $group);
+                if($hostid == $CFG->mnet_localhost_id) {
+                    print_log($course, $user, $date, 'l.time DESC', $page, $perpage, 
+                            "index.php?id=$course->id&amp;chooselog=1&amp;user=$user&amp;date=$date&amp;modid=$modid&amp;modaction=$modaction&amp;group=$group", 
+                            $modname, $modid, $modaction, $group);
+                } else {
+                    print_mnet_log($hostid, $id, $user, $date, 'l.time DESC', $page, $perpage, "", $modname, $modid, $modaction, $group);
+                }
                 break;
             case 'downloadascsv':
                 if (!print_log_csv($course, $user, $date, 'l.time DESC', $modname,
@@ -98,7 +115,7 @@
 
 
     } else {
-        if ($course->id == SITEID) {
+        if ($hostid != $CFG->mnet_localhost_id || $course->id == SITEID) {
                     $adminroot = admin_get_root();
                     admin_externalpage_setup('reportlog', $adminroot);
                     admin_externalpage_print_header($adminroot);
@@ -122,7 +139,7 @@
 
     }
 
-    if ($course->id == SITEID) {
+    if ($hostid != $CFG->mnet_localhost_id || $course->id == SITEID) {
         admin_externalpage_print_footer($adminroot);
     } else {
         print_footer($course);
