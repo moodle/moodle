@@ -37,7 +37,7 @@ class block_admin_tree extends block_base {
             $this->tempcontent .= "&nbsp;&nbsp;&nbsp;";
         }
         $this->tempcontent .= '<a href="javascript:toggle(\'vh_span' . $this->spancounter . '\');">';
-        $this->tempcontent .= '<span id="vh_span' . $this->spancounter . 'indicator"><img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" border="0" alt="'.$strfolderopened.'" /></span> ';
+        $this->tempcontent .= '<span id="vh_span' . $this->spancounter . 'indicator"><img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" alt="'.$strfolderopened.'" /></span> ';
         $this->tempcontent .= $visiblename . '</a><br /><span id="vh_span' . $this->spancounter . '">' . "\n";
         $this->currentdepth++;
         $this->spancounter++;
@@ -53,7 +53,7 @@ class block_admin_tree extends block_base {
         for ($i = 0; $i < $this->currentdepth; $i++) {
             $this->tempcontent .= "&nbsp;&nbsp;&nbsp;";
         }
-        $this->tempcontent .= '<a class="'.$class.'" href="'.$link.'"><img src="'.$icon.'" border="0" alt="" />'.
+        $this->tempcontent .= '<a class="'.$class.'" href="'.$link.'"><img src="'.$icon.'" alt="" />'.
                                $visiblename.'</a><br />'."\n";
     }
 
@@ -144,11 +144,11 @@ class block_admin_tree extends block_base {
             $this->content->text .= 'function toggle(spanid) {' . "\n";
             $this->content->text .= '  if (getspan(spanid).innerHTML == "") {' . "\n";
             $this->content->text .= '    getspan(spanid).innerHTML = vh_content[spanid];' . "\n";
-            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" border="0" alt="'.$strfolderopened.'" />\';' . "\n";
+            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" alt="'.$strfolderopened.'" />\';' . "\n";
             $this->content->text .= '  } else {' . "\n";
             $this->content->text .= '    vh_content[spanid] = getspan(spanid).innerHTML;' . "\n";
             $this->content->text .= '    getspan(spanid).innerHTML = "";' . "\n";
-            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/closed.gif" border="0" alt="'.$strfolderclosed.'" />\';' . "\n";
+            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/closed.gif" alt="'.$strfolderclosed.'" />\';' . "\n";
             $this->content->text .= '  }' . "\n";
             $this->content->text .= '}' . "\n";
 
@@ -156,13 +156,13 @@ class block_admin_tree extends block_base {
             $this->content->text .= '  if (getspan(spanid).innerHTML !== "") {' . "\n";
             $this->content->text .= '    vh_content[spanid] = getspan(spanid).innerHTML;' . "\n";
             $this->content->text .= '    getspan(spanid).innerHTML = "";' . "\n";
-            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/closed.gif" border="0" alt="'.$strfolderclosed.'" />\';' . "\n";
+            $this->content->text .= '    getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/closed.gif" alt="'.$strfolderclosed.'" />\';' . "\n";
             $this->content->text .= '  }' . "\n";
             $this->content->text .= '}' . "\n";
 
             $this->content->text .= 'function expand(spanid) {' . "\n";
             $this->content->text .= '  getspan(spanid).innerHTML = vh_content[spanid];' . "\n";
-            $this->content->text .= '  getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" border="0" alt="'.$strfolderopened.'" />\';' . "\n";
+            $this->content->text .= '  getspan(spanid + "indicator").innerHTML = \'<img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" alt="'.$strfolderopened.'" />\';' . "\n";
             $this->content->text .= '}' . "\n";
 
             $this->content->text .= 'function expandall() {' . "\n";
