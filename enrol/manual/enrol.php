@@ -357,12 +357,11 @@ function get_access_icons($course) {
 
     if (!empty($course->guest)) {
         $str .= '<a title="'.$strallowguests.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
-        $str .= '<img vspace="4" alt="'.$strallowguests.'" height="16" width="16" border="0" '.
-                'src="'.$CFG->pixpath.'/i/guest.gif" /></a>&nbsp;&nbsp;';
+        $str .= '<img class="accessicon" alt="'.$strallowguests.'" src="'.$CFG->pixpath.'/i/guest.gif" /></a>&nbsp;&nbsp;';
     }
     if (!empty($course->password)) {
         $str .= '<a title="'.$strrequireskey.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
-        $str .= '<img vspace="4" alt="'.$strrequireskey.'" height="16" width="16" border="0" src="'.$CFG->pixpath.'/i/key.gif" /></a>';
+        $str .= '<img class="accessicon" alt="'.$strrequireskey.'" src="'.$CFG->pixpath.'/i/key.gif" /></a>';
     }
 
     return $str;
