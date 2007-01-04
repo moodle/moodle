@@ -15,6 +15,7 @@ class mnet_environment {
     var $last_connect_time  = 0;
     var $last_log_id        = 0;
     var $keypair            = array();
+    var $deleted            = 0;
 
     function mnet_environment() {
         return true;
@@ -25,38 +26,29 @@ class mnet_environment {
 
         // Bootstrap the object data on first load.
         if (empty($CFG->mnet_localhost_id) ) {
-            $this->get_keypair();
 
-            $hostobject                     = new stdClass();
-            $hostobject->wwwroot            = $CFG->wwwroot;
-            $hostobject->ip_address         = $_SERVER['SERVER_ADDR'];
-            $hostobject->public_key         = $this->keypair['certificate'];
-            $hostobject->public_key_expires = '';
-            $hostobject->last_connect_time  = '0';
-            $hostobject->last_log_id        = '0';
-            $hostobject->deleted            = 0;
-
-            $this->id = insert_record('mnet_host',$hostobject, true);
-
-            $temparr = (array)get_object_vars($hostobject);
-
-            foreach($temparr as $key => $value) {
-                $this->$key = $value;
-            }
-
-            unset($temparr, $hostobject);
+            $this->wwwroot    = $CFG->wwwroot;
+            $this->ip_address = $_SERVER['SERVER_ADDR'];
+            $this->id         = insert_record('mnet_host', $this, true);
 
             set_config('mnet_localhost_id', $this->id);
-            $CFG->mnet_localhost_id = $this->id;
+            $this->get_keypair();
         } else {
             $hostobject = get_record('mnet_host','id', $CFG->mnet_localhost_id);
-            $temparr = (array)get_object_vars($hostobject);
-
-            foreach($temparr as $key => $value) {
-                $this->$key = $value;
+            if(is_object($hostobject)) {
+                $temparr = get_object_vars($hostobject);
+                foreach(get_object_vars($temparr) as $key => $value) {
+                    $this->$key = $value;
+                }
+                unset($hostobject, $temparr);
+            } else {
+                return false;
             }
 
-            unset($temparr, $hostobject);
+            // Unless this is an install/upgrade, generate the SSL keys.
+            if(empty($this->public_key)) {
+                $this->get_keypair();
+            }
         }
 
         // We need to set up a record that represents 'all hosts'. Any rights
@@ -87,6 +79,11 @@ class mnet_environment {
             $this->keypair['publickey']  = openssl_pkey_get_public($this->keypair['certificate']);
         } else {
             $this->keypair = mnet_generate_keypair();
+            $this->public_key         = $this->keypair['certificate'];
+            $details                  = openssl_x509_parse($this->public_key);
+            $this->public_key_expires = $details['validTo_time_t'];
+
+            update_record('mnet_host', $this);
         }
         return true;
     }
