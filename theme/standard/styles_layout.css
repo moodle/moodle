@@ -420,6 +420,7 @@ form#adminsettings div.htmlarea {
 
 .headermenu fieldset{
   border: 0;  
+  padding:0;
 }
 
 .navbar {
@@ -1318,21 +1319,37 @@ body#course-view .headingblock {
 }
 
 .coursebox {
-  margin-bottom: 8px;
+  margin-bottom: 20px;
   width: 100%;
 }
 
+.coursebox .summary {
+  display:inline;
+  float: right;
+  text-align:left;
+  width: 48%;
+  padding:5px;
+}
+
+.coursebox .info {
+  display:inline;
+  float: left;
+  text-align:left;
+  width: 48%;
+  padding:5px;
+}
+
 .categoryboxcontent,
-.courseboxcontent {
+.coursebox {
   border-width:1px;
   border-style:solid;
 }
 
-.courseboxcontent .cost {
+.coursebox .cost {
   padding-top: 20px;
 }
 
-.courseboxcontent ul.teachers li {
+.coursebox ul.teachers li {
   list-style-type:none;
   padding:0;
   margin:0;
@@ -1516,11 +1533,11 @@ body#message-messages {
  *** MyMoodle
  ***/
 
-.my .courseboxcontent .overview .info {
+.my .coursebox .overview .info {
   margin-left:20px;
 }
 
-.my .courseboxcontent .overview {
+.my .coursebox .overview {
   margin-bottom:10px;
 }
 
@@ -2002,6 +2019,10 @@ body#mod-forum-search .introcontent {
   text-align:center;
 }
 
+.forumsearch fieldset {
+  border: 0;  
+  padding: 0px;
+}
 
 /***
  *** Modules: Glossary
