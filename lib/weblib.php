@@ -2695,6 +2695,9 @@ function user_login_string($course=NULL, $user=NULL) {
 
         $fullname = fullname($user, true);
         $username = "<a$target href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a>";
+        if (is_mnet_remote_user($user) and $idprovider = get_record('mnet_host', 'id', $user->mnethostid)) {
+            $username .= " from <a$target href=\"{$idprovider->wwwroot}\">{$idprovider->name}</a>";
+        }
         if (isset($user->username) && $user->username == 'guest') {
             $loggedinas = $realuserinfo.get_string('loggedinasguest').
                       " (<a$target href=\"$wwwroot/login/index.php\">".get_string('login').'</a>)';

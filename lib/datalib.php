@@ -273,7 +273,7 @@ function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sor
  */
 
 function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperpage=0,
-                           $search='', $firstinitial='', $lastinitial='') {
+                           $search='', $firstinitial='', $lastinitial='', $remotewhere='') {
 
     global $CFG;
 
@@ -295,12 +295,14 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
         $select .= ' AND lastname '. $LIKE .' \''. $lastinitial .'%\' ';
     }
 
+    $select .= $remotewhere;
+
     if ($sort) {
         $sort = ' ORDER BY '. $sort .' '. $dir;
     }
 
 /// warning: will return UNCONFIRMED USERS
-    return get_records_sql("SELECT id, username, email, firstname, lastname, city, country, lastaccess, confirmed
+    return get_records_sql("SELECT id, username, email, firstname, lastname, city, country, lastaccess, confirmed, mnethostid
                               FROM {$CFG->prefix}user
                              WHERE $select $sort", $page, $recordsperpage);
 

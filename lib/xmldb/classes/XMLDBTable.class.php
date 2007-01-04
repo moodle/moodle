@@ -85,6 +85,8 @@ class XMLDBTable extends XMLDBObject {
         $this->calculateHash(true);
     /// We have one new field, so the table has changed
         $this->setChanged(true);
+
+        return $field;
     }
 
     /**
@@ -705,6 +707,8 @@ class XMLDBTable extends XMLDBObject {
         $field = new XMLDBField($name);
         $field->setAttributes($type, $precision, $unsigned, $notnull, $sequence, $enum, $enumvalues, $default);
         $this->addField($field, $previous);
+
+        return $field;
     }
 
     /**

@@ -217,6 +217,17 @@ define('PARAM_SAFEDIR',  0x4000);
  */
 define('PARAM_SEQUENCE',  0x8000);
 
+/**
+ * PARAM_PEM - Privacy Enhanced Mail format
+ */
+define('PARAM_PEM',      0x10000);
+
+/**
+ * PARAM_BASE64 - Base 64 encoded format
+ */
+define('PARAM_BASE64',   0x20000);
+
+
 /// Page types ///
 /**
  * PAGE_COURSE_VIEW is a definition of a page type. For more information on the page class see moodle/lib/pagelib.php.
@@ -243,6 +254,7 @@ define ('BLOG_GROUP_LEVEL', 2);
 define ('BLOG_COURSE_LEVEL', 3);
 define ('BLOG_SITE_LEVEL', 4);
 define ('BLOG_GLOBAL_LEVEL', 5);
+
 
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
@@ -482,7 +494,54 @@ function clean_param($param, $type) {
                 }
             }
             return $param;
+        case PARAM_PEM:
+            $param = trim($param);
+            // PEM formatted strings may contain letters/numbers and the symbols
+            // forward slash: /
+            // plus sign:     +
+            // equal sign:    =
+            // , surrounded by BEGIN and END CERTIFICATE prefix and suffixes
+            if (preg_match('/^-----BEGIN CERTIFICATE-----([\s\w\/\+=]+)-----END CERTIFICATE-----$/', trim($param), $matches)) {
+                list($wholething, $body) = $matches;
+                unset($wholething, $matches);
+                $b64 = clean_param($body, PARAM_BASE64);
+                if (!empty($b64)) {
+                    return "-----BEGIN CERTIFICATE-----\n$b64\n-----END CERTIFICATE-----\n";
+                } else {
+                    return '';
+                }
+            }
+            return '';
+        case PARAM_BASE64:
+            if (!empty($param)) {
+                // PEM formatted strings may contain letters/numbers and the symbols
+                // forward slash: /
+                // plus sign:     +
+                // equal sign:    =
+                error_log("Called with " . $param);
+                if (0 >= preg_match('/^([\s\w\/\+=]+)$/', trim($param))) {
+                    return '';
+                }
+                $lines = preg_split('/[\s]+/', $param, -1, PREG_SPLIT_NO_EMPTY);
+                // Each line of base64 encoded data must be 64 characters in
+                // length, except for the last line which may be less than (or
+                // equal to) 64 characters long.
+                for ($i=0, $j=count($lines); $i < $j; $i++) {
+                    if ($i + 1 == $j) {
+                        if (64 < strlen($lines[$i])) {
+                            return '';
+                        }
+                        continue;
+                    }
 
+                    if (64 != strlen($lines[$i])) {
+                        return '';
+                    }
+                }
+                return implode("\n",$lines);
+            } else {
+                return '';
+            }
         default:                 // throw error, switched parameters in optional_param or another serious problem
             error("Unknown parameter type: $type");
     }
@@ -1553,8 +1612,9 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
     }
 
 /// check whether the user should be changing password
+    $userauth = get_auth_plugin($USER->auth);
     if (!empty($USER->preference['auth_forcepasswordchange'])){
-        if (is_internal_auth() || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
+        if ($userauth->can_change_password()) {
             $SESSION->wantsurl = $FULLME;
             if (empty($CFG->loginhttps)) {
                 redirect($CFG->wwwroot .'/login/change_password.php');
@@ -1562,8 +1622,8 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
                 $wwwroot = str_replace('http:','https:', $CFG->wwwroot);
                 redirect($wwwroot .'/login/change_password.php');
             }
-        } elseif($CFG->changepassword) {
-            redirect($CFG->changepassword);
+        } elseif($userauth->change_password_url()) {
+            redirect($userauth->change_password_url();
         } else {
             error('You cannot proceed without changing your password.
                    However there is no available page for changing it.
@@ -1731,6 +1791,10 @@ function require_logout() {
         if ($USER->auth == 'cas' && !empty($CFG->cas_enabled)) {
             require($CFG->dirroot.'/auth/cas/logout.php');
         }
+        
+        require($CFG->dirroot.'/auth/mnet/auth.php');
+        $authplugin = new auth_plugin_mnet();
+        $authplugin->logout();
     }
 
     if (ini_get_bool("register_globals") and check_php_version("4.3.0")) {
@@ -2208,6 +2272,72 @@ function get_moodle_cookie() {
 }
 
 /**
+ * Returns whether a given authentication plugin exists.
+ *
+ * @uses $CFG
+ * @param string $auth Form of authentication to check for. Defaults to the
+ *        global setting in {@link $CFG}.
+ * @return boolean Whether the plugin is available.
+ */
+function exists_auth_plugin($auth='') {
+    global $CFG;
+    
+    // use the global default if not specified
+    if ($auth == '') {
+        $auth = $CFG->auth;
+    }
+    if (file_exists("{$CFG->dirroot}/auth/$auth/auth.php")) {
+        return is_readable("{$CFG->dirroot}/auth/$auth/auth.php");
+    }
+    return false;
+}
+
+/**
+ * Checks if a given plugin is in the list of enabled authentication plugins.
+ * 
+ * @param string $auth Authentication plugin.
+ * @return boolean Whether the plugin is enabled.
+ */
+function is_enabled_auth($auth='') {
+    global $CFG;
+
+    // use the global default if not specified
+    if ($auth == '') {
+        $auth = $CFG->auth;
+    }
+    return in_array($auth, explode(',', $CFG->auth_plugins_enabled));
+}
+
+/**
+ * Returns an authentication plugin instance.
+ *
+ * @uses $CFG
+ * @param string $auth Form of authentication required. Defaults to the
+ *        global setting in {@link $CFG}.
+ * @return object An instance of the required authentication plugin.
+ */
+function get_auth_plugin($auth = '') {
+    global $CFG;
+    
+    // use the global default if not specified
+    if ($auth == '') {
+        $auth = $CFG->auth;
+    }
+
+    // TODO: plugin enabled?
+    
+    // check the plugin exists first
+    if (! exists_auth_plugin($auth)) {
+        error("Authentication plugin '$auth' not found.");
+    }
+    
+    // return auth plugin instance
+    require_once "{$CFG->dirroot}/auth/$auth/auth.php";
+    $class = "auth_plugin_$auth";
+    return new $class;
+}
+
+/**
  * Returns true if an internal authentication method is being used.
  * if method not specified then, global default is assumed
  *
@@ -2217,16 +2347,8 @@ function get_moodle_cookie() {
  * @todo Outline auth types and provide code example
  */
 function is_internal_auth($auth='') {
-/// Returns true if an internal authentication method is being used.
-/// If auth not specified then global default is assumed
-
-    global $CFG;
-
-    if (empty($auth)) {
-        $auth = $CFG->auth;
-    }
-
-    return ($auth == "email" || $auth == "none" || $auth == "manual");
+    $authplugin = get_auth_plugin($auth); // throws error if bad $auth
+    return $authplugin->is_internal();
 }
 
 /**
@@ -2262,8 +2384,10 @@ function create_user_record($username, $password, $auth='') {
     //just in case check text case
     $username = trim(moodle_strtolower($username));
 
-    if (function_exists('auth_get_userinfo')) {
-        if ($newinfo = auth_get_userinfo($username)) {
+    $authplugin = get_auth_plugin($auth);
+
+    if (method_exists($authplugin, 'get_userinfo')) {
+        if ($newinfo = $authplugin->get_userinfo($username)) {
             $newinfo = truncate_userinfo($newinfo);
             foreach ($newinfo as $key => $value){
                 $newuser->$key = addslashes(stripslashes($value)); // Just in case
@@ -2284,6 +2408,7 @@ function create_user_record($username, $password, $auth='') {
     $newuser->confirmed = 1;
     $newuser->lastip = getremoteaddr();
     $newuser->timemodified = time();
+    $newuser->mnethostid = $CFG->mnet_localhost_id;
 
     if (insert_record('user', $newuser)) {
          $user = get_complete_user_data('username', $newuser->username);
@@ -2302,23 +2427,21 @@ function create_user_record($username, $password, $auth='') {
  * @param string $username New user's username to add to record
  * @return user A {@link $USER} object
  */
-function update_user_record($username) {
-    global $CFG;
-
-    if (function_exists('auth_get_userinfo')) {
+function update_user_record($username, $authplugin) {
+    if (method_exists($authplugin, 'get_userinfo')) {
         $username = trim(moodle_strtolower($username)); /// just in case check text case
 
         $oldinfo = get_record('user', 'username', $username, '','','','', 'username, auth');
-        $authconfig = get_config('auth/' . $oldinfo->auth);
+        $userauth = get_auth_plugin($oldinfo->auth);
 
-        if ($newinfo = auth_get_userinfo($username)) {
+        if ($newinfo = $authplugin->get_userinfo($username)) {
             $newinfo = truncate_userinfo($newinfo);
             foreach ($newinfo as $key => $value){
                 $confkey = 'field_updatelocal_' . $key;
-                if (!empty($authconfig->$confkey) && $authconfig->$confkey === 'onlogin') {
+                if (!empty($userauth->config->$confkey) and $userauth->config->$confkey === 'onlogin') {
                     $value = addslashes(stripslashes($value));   // Just in case
                     set_field('user', $key, $value, 'username', $username)
-                        || error_log("Error updating $key for $username");
+                        or error_log("Error updating $key for $username");
                 }
             }
         }
@@ -2395,63 +2518,67 @@ function authenticate_user_login($username, $password) {
 
     global $CFG;
 
-    // First try to find the user in the database
+    // default to manual if global auth is undefined or broken
+    if (empty($CFG->auth_plugins_enabled)) {
+        $CFG->auth_plugins_enabled = empty($CFG->auth) ? 'manual' : $CFG->auth;
+    }
+    // if blank, set default auth to first enabled auth plugin
+    if (empty($CFG->auth)) {
+        $auths = explode(',', $CFG->auth_plugins_enabled);
+        $CFG->auth = $auths[0];
+    }
 
+    // if user not found, use site auth
     if (!$user = get_complete_user_data('username', $username)) {
+        $user = new object();
         $user->id = 0;     // Not a user
-        $user->auth = $CFG->auth;
+        $auth = $CFG->auth_plugins_enabled;
     }
 
     // Sort out the authentication method we are using.
-
-    if (empty($CFG->auth)) {
-        $CFG->auth = 'manual';     // Default authentication module
-    }
-
     if (empty($user->auth)) {      // For some reason it isn't set yet
         $primadmin = get_admin();
         if (!empty($user->id) && (($user->id==$primadmin->id) || isguest($user->id))) {
-            $auth = 'manual';    // Always assume these guys are internal
-        } else {
-            $auth = $CFG->auth;  // Normal users default to site method
+            $auth = 'manual';    // always assume these guys are internal
         }
-        // update user record from external DB
-        if ($user->auth != 'manual' && $user->auth != 'email') {
-            $user = update_user_record($username);
+        else {
+            $auth = $CFG->auth_plugins_enabled; // default to site method
         }
     } else {
         $auth = $user->auth;
     }
 
-    if (detect_munged_arguments($auth, 0)) {   // For safety on the next require
-        return false;
-    }
+    // walk each authentication plugin, in order
+    $auths = explode(',', $auth);
+    foreach ($auths as $auth) {
+        $authplugin = get_auth_plugin($auth);
 
-    if (!file_exists($CFG->dirroot .'/auth/'. $auth .'/lib.php')) {
-        $auth = 'manual';    // Can't find auth module, default to internal
-    }
+        // on auth fail, log and fall through to the next plugin
+        if (!$authplugin->user_login($username, $password)) {
+            add_to_log(0, 'login', 'error', 'index.php', $username);
+            error_log("[client {$_SERVER['REMOTE_ADDR']}]  $CFG->wwwroot  Auth=$auth  Failed Login:  $username  {$_SERVER['HTTP_USER_AGENT']}");
+            continue;
+        }
 
-    require_once($CFG->dirroot .'/auth/'. $auth .'/lib.php');
-
-    if (auth_user_login($username, $password)) {  // Successful authentication
+        // successful authentication
         if ($user->id) {                          // User already exists in database
             if (empty($user->auth)) {             // For some reason auth isn't set yet
                 set_field('user', 'auth', $auth, 'username', $username);
             }
             update_internal_user_password($user, $password);
-            if (!is_internal_auth()) {            // update user record from external DB
-                $user = update_user_record($username);
+            if (!$authplugin->is_internal()) {            // update user record from external DB
+                $user = update_user_record($username, get_auth_plugin($user->auth));
             }
         } else {
             $user = create_user_record($username, $password, $auth);
         }
-        // fix for MDL-6928    
-        if (function_exists('auth_iscreator')) {                    
+        // fix for MDL-6928
+        if (method_exists($authplugin, 'iscreator')) {
             $sitecontext = get_context_instance(CONTEXT_SYSTEM);
             if ($creatorroles = get_roles_with_capability('moodle/legacy:coursecreator', CAP_ALLOW)) {
                 $creatorrole = array_shift($creatorroles); // We can only use one, let's use the first one
                 // Check if the user is a creator
-                if (auth_iscreator($username)) { // Following calls will not create duplicates
+                if ($authplugin->iscreator($username)) { // Following calls will not create duplicates
                     role_assign($creatorrole->id, $user->id, 0, $sitecontext->id, 0, 0, 0, $auth);
                 } else {
                     role_unassign($creatorrole->id, $user->id, 0, $sitecontext->id);
@@ -2471,11 +2598,12 @@ function authenticate_user_login($username, $password) {
 
         return $user;
 
-    } else {
-        add_to_log(0, 'login', 'error', 'index.php', $username);
-        error_log('[client '.$_SERVER['REMOTE_ADDR']."]  $CFG->wwwroot  Failed Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
-        return false;
-    }
+    } 
+    
+    // failed if all the plugins have failed
+    add_to_log(0, 'login', 'error', 'index.php', $username);
+    error_log('[client '.$_SERVER['REMOTE_ADDR']."]  $CFG->wwwroot  Failed Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+    return false;
 }
 
 /**
@@ -2549,21 +2677,14 @@ function hash_internal_user_password($password) {
 function update_internal_user_password(&$user, $password, $storeindb=true) {
     global $CFG;
 
-    if (!empty($CFG->{$user->auth.'_preventpassindb'})) {
+    $authplugin = get_auth_plugin($user->auth);
+    if (!empty($authplugin->config->preventpassindb) /*|| $storeindb === false */) {
         $hashedpassword = 'not cached';
     } else {
         $hashedpassword = hash_internal_user_password($password);
     }
 
-    if ($user->password != $hashedpassword) {
-        if ($storeindb) {
-            if (!set_field('user', 'password',  $hashedpassword, 'username', $user->username)) {
-                return false;
-            }
-        }
-        $user->password = $hashedpassword;
-    }
-    return true;
+    return set_field('user', 'password',  $hashedpassword, 'username', $user->username);
 }
 
 /**
@@ -3277,27 +3398,17 @@ function reset_password_and_mail($user) {
     $from = get_admin();
 
     $external = false;
-    if (!is_internal_auth($user->auth)) {
-        include_once($CFG->dirroot . '/auth/' . $user->auth . '/lib.php');
-        if (empty($CFG->{'auth_'.$user->auth.'_stdchangepassword'})
-            || !function_exists('auth_user_update_password')) {
-            trigger_error("Attempt to reset user password for user $user->username with Auth $user->auth.");
-            return false;
-        } else {
-            $external = true;
-        }
+    
+    $userauth = get_auth_plugin($user->auth);
+    if (!$userauth->can_change_password()) {
+        trigger_error("Attempt to reset user password for user $user->username with Auth $user->auth.");
+        return false;
     }
 
     $newpassword = generate_password();
 
-    if ($external) {
-        if (!auth_user_update_password($user->username, $newpassword)) {
-            error("Could not set user password!");
-        }
-    } else {
-        if (! set_field("user", "password", md5($newpassword), "id", $user->id) ) {
-            error("Could not set user password!");
-        }
+    if (!$userauth->user_update_password($user->username, $newpassword)) {
+        error("Could not set user password!");
     }
 
     $a->firstname = $user->firstname;
@@ -5831,14 +5942,8 @@ function zip_files ($originalfiles, $destination) {
             $filestozip .= " ";
         }
         //Construct the command
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $separator = ' &';
-            $command= substr($CFG->dataroot, 0, 2).$separator; // change to drive with moodledata
-        } else {
-            $separator = ' ;';
-            $command= '';
-        }
-        $command .= 'cd '.escapeshellarg($origpath).$separator.
+        $separator = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? ' &' : ' ;';
+        $command = 'cd '.escapeshellarg($origpath).$separator.
                     escapeshellarg($CFG->zip).' -r '.
                     escapeshellarg(cleardoubleslashes("$destpath/$destfilename")).' '.$filestozip;
         //All converted to backslashes in WIN
@@ -6462,6 +6567,41 @@ function loadeditor($args) {
     return editorObject::loadeditor($args);
 }
 
+/**
+ * Returns whether or not the user object is a remote MNET user. This function
+ * is in moodlelib because it does not rely on loading any of the MNET code.
+ *
+ * @param object $user A valid user object
+ * @return bool        True if the user is from a remote Moodle.
+ */
+function is_mnet_remote_user($user) {
+    global $CFG;
+
+    if (!isset($CFG->mnet_localhost_id)) {
+        include_once $CFG->dirroot . '/mnet/lib.php';
+        $env = new mnet_environment();
+        $env->init();
+        unset($env);
+    }
+
+    return ($user->mnethostid != $CFG->mnet_localhost_id);
+}
+
+/**
+ * Checks if a given plugin is in the list of enabled enrolment plugins.
+ * 
+ * @param string $auth Enrolment plugin.
+ * @return boolean Whether the plugin is enabled.
+ */
+function is_enabled_enrol($enrol='') {
+    global $CFG;
+
+    // use the global default if not specified
+    if ($enrol == '') {
+        $enrol = $CFG->enrol;
+    }
+    return in_array($enrol, explode(',', $CFG->enrol_plugins_enabled));
+}
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
