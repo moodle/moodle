@@ -119,4 +119,8 @@ $string['user:viewusergrades'] = 'View user grades';
 $string['viewrole'] = 'View role details';
 $string['xuserswiththerole'] = 'Users with the role \"$a->role\": $a->number';
 
+// MNET
+$string['site:mnetlogintoremote'] = 'Roam to a remote Moodle';
+$string['site:mnetloginfromremote'] = 'Login from a remote Moodle';
+
 ?>

@@ -1508,4 +1508,6 @@ $string['yourself'] = 'yourself';
 $string['yourteacher'] = 'your $a';
 $string['zippingbackup'] = 'Zipping backup';
 
+$string['authenticationplugins'] = 'Authentication Plugins';
+$string['chooseauthmethod'] = 'Choose authentication plugin';
 ?>
