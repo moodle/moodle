@@ -269,7 +269,7 @@ function mnet_get_keypair() {
  * @return  string      The signature over that text
  */
 function mnet_generate_keypair($dn = null) {
-    global $CFG;
+    global $CFG, $USER;
     $host = strtolower($CFG->wwwroot);
     $host = ereg_replace("^http(s)?://",'',$host);
     $break = strpos($host.'/' , '/');
