@@ -66,7 +66,10 @@ class auth_plugin_pam {
         
         // just for testing and debugging
         // error_reporting(E_ALL);
-        if (pam_auth($username, $password, &$errormessage)) {
+
+        // call_time_pass_reference of errormessage is deprecated - throws warnings in multiauth
+        //if (pam_auth($username, $password, &$errormessage)) {
+        if (pam_auth($username, $password)) {
             return true;
         }
         else {
