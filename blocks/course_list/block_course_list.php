@@ -51,6 +51,7 @@ class block_course_list extends block_list {
                 $this->title = get_string('mycourses');
                 $this->content->footer = "<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
                 if ($this->content->items) { // make sure we don't return an empty list
+                    $this->get_remote_courses();
                     return $this->content;
                 }
             }
@@ -79,19 +80,46 @@ class block_course_list extends block_list {
                         $this->content->icons[]=$icon;
                     }
                     $this->content->footer = "<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
+                    $this->get_remote_courses();
                 } else {
-                    $this->content->items = array();
-                    $this->content->icons = array();
-                    $this->content->footer = get_string('nocoursesyet').'<br /><br />';
-                    if (has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $category->id))) {
-                        $this->content->footer .= '<a href="'.$CFG->wwwroot.'/course/edit.php?category='.$category->id.'">'.get_string("addnewcourse").'</a>...';
+                    if ($this->get_remote_courses()) {
+                        $this->content->items = array();
+                        $this->content->icons = array();
+                        $this->content->footer = get_string('nocoursesyet').'<br /><br />';
+                        if (has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $category->id))) {
+                            $this->content->footer .= '<a href="'.$CFG->wwwroot.'/course/edit.php?category='.$category->id.'">'.get_string("addnewcourse").'</a>...';
+                        }
                     }
                 }
                 $this->title = get_string('courses');
             }
         }
+
         return $this->content;
     }
+
+    function get_remote_courses() {
+        global $THEME, $CFG, $USER;
+        $sql = "SELECT c.remoteid, c.shortname, c.fullname, c.hostid
+                FROM   {$CFG->prefix}mnet_enrol_course c
+                JOIN   {$CFG->prefix}mnet_enrol_assignments a ON c.id=a.courseid
+                WHERE  a.studentid={$USER->id}";
+        if ($courses = get_records_sql($sql)) {
+            $icon  = "<img src=\"$CFG->pixpath/i/mnethost.png\"".
+                " height=\"16\" width=\"16\" alt=\"".get_string("course")."\" />";
+            $this->content->items[] = 'Remote Courses';
+            $this->content->icons[] = '';
+            foreach ($courses as $course) {
+                $this->content->items[]="<a title=\"$course->shortname\" ".
+                               "href=\"{$CFG->wwwroot}/auth/mnet/jump.php?hostid={$course->hostid}&amp;wantsurl=/course/view.php?id={$course->remoteid}\">$course->fullname</a>";
+                $this->content->icons[]=$icon;
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }
+
 }
 
 ?>
