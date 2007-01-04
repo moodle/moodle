@@ -1792,9 +1792,11 @@ function require_logout() {
             require($CFG->dirroot.'/auth/cas/logout.php');
         }
         
-        require($CFG->dirroot.'/auth/mnet/auth.php');
-        $authplugin = new auth_plugin_mnet();
-        $authplugin->logout();
+        if (extension_loaded('openssl')) {
+            require($CFG->dirroot.'/auth/mnet/auth.php');
+            $authplugin = new auth_plugin_mnet();
+            $authplugin->logout();
+        }
     }
 
     if (ini_get_bool("register_globals") and check_php_version("4.3.0")) {
