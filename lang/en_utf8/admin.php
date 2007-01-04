@@ -360,6 +360,7 @@ $string['notifications'] = 'Notifications';
 $string['notifyloginfailures'] = 'Email login failures to';
 $string['notifyloginthreshold'] = 'Threshold for email notifications';
 $string['notloggedinroleid'] = 'Role for visitors';
+$string['opensslrecommended'] = 'Installing the optional OpenSSL library is highly recommended -- it enables Moodle Networking functionality.';
 $string['opentogoogle'] = 'Open to Google';
 $string['optionalmaintenancemessage'] = 'Optional maintenance messsage';
 $string['order1'] = 'First';

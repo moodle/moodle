@@ -107,6 +107,11 @@
           <ON_CHECK message="curlrecommended" />
         </FEEDBACK>
       </PHP_EXTENSION>
+      <PHP_EXTENSION name="openssl" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="opensslrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
     </PHP_EXTENSIONS>
   </MOODLE>
 </COMPATIBILITY_MATRIX>
