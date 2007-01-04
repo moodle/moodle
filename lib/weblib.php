@@ -137,8 +137,8 @@ function p($var, $strip=false) {
 
 /**
  * Does proper javascript quoting.
- * Do not use addslashes anymore, because it does not work when magic_quotes_sybase is enabled. 
- * 
+ * Do not use addslashes anymore, because it does not work when magic_quotes_sybase is enabled.
+ *
  * @param mixed value
  * @return mixed quoted result
  */
@@ -184,7 +184,7 @@ function get_referer() {
     if (isset($_SERVER['HTTP_REFERER'])) {
         return strip_querystring($_SERVER['HTTP_REFERER']);
     } else {
-        return '';        
+        return '';
     }
 }
 
@@ -1368,14 +1368,14 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         if ($oldcacheitem) {                               // See bug 4677 for discussion
             $newcacheitem->id = $oldcacheitem->id;
             @update_record('cache_text', $newcacheitem);   // Update existing record in the cache table
-                                                           // It's unlikely that the cron cache cleaner could have 
+                                                           // It's unlikely that the cron cache cleaner could have
                                                            // deleted this entry in the meantime, as it allows
                                                            // some extra time to cover these cases.
         } else {
             @insert_record('cache_text', $newcacheitem);   // Insert a new record in the cache table
                                                            // Again, it's possible that another user has caused this
-                                                           // record to be created already in the time that it took 
-                                                           // to traverse this function.  That's OK too, as the 
+                                                           // record to be created already in the time that it took
+                                                           // to traverse this function.  That's OK too, as the
                                                            // call above handles duplicate entries, and eventually
                                                            // the cron cleaner will delete them.
         }
@@ -1556,14 +1556,14 @@ function trusttext_present($text) {
  * Please be carefull not to use stripslashes on data from database
  * or twice stripslashes when processing data recieved from user.
  *
- * @param string $text text that may contain TRUSTTEXT marker 
+ * @param string $text text that may contain TRUSTTEXT marker
  * @return text without any TRUSTTEXT marker
  */
 function trusttext_strip($text) {
     global $CFG;
 
     while (true) { //removing nested TRUSTTEXT
-        $orig = $text; 
+        $orig = $text;
         $text = str_replace(TRUSTTEXT, '', $text);
         if (strcmp($orig, $text) === 0) {
             return $text;
@@ -2154,7 +2154,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     }
     @header('Accept-Ranges: none');
 
-    if (empty($usexml)) {       
+    if (empty($usexml)) {
         $direction =  ' xmlns="http://www.w3.org/1999/xhtml"'. $direction;  // See debug_header
     } else {
         $currentlanguage = current_language();
@@ -2245,7 +2245,7 @@ function force_strict_header($output) {
         $ctype = 'Content-Type: ';
         $prolog= "<?xml version='1.0' encoding='utf-8'?>\n";
 
-        if (isset($_SERVER['HTTP_ACCEPT']) 
+        if (isset($_SERVER['HTTP_ACCEPT'])
             && false !== strpos($_SERVER['HTTP_ACCEPT'], 'application/xhtml+xml')) {
             //|| false !== strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') //Safari "Entity 'copy' not defined".
             // Firefox et al.
@@ -2302,7 +2302,7 @@ function force_strict_header($output) {
 function print_header_simple($title='', $heading='', $navigation='', $focus='', $meta='',
                        $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='', $return=false) {
 
-    global $COURSE, $CFG;   
+    global $COURSE, $CFG;
 
     $shortname ='';
     if ($COURSE->id != SITEID) {
@@ -2690,7 +2690,7 @@ function user_login_string($course=NULL, $user=NULL) {
     if (empty($course->id)) {
         // $course->id is not defined during installation
         return '';
-    } else if (isset($user->id) and $user->id) { 
+    } else if (isset($user->id) and $user->id) {
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
         $fullname = fullname($user, true);
@@ -2725,13 +2725,13 @@ function user_login_string($course=NULL, $user=NULL) {
  * If not it applies sensible defaults.
  *
  * Accessibility: right and left arrow Unicode characters for breadcrumb, calendar,
- * search forum block, etc. Important: these are 'silent' in a screen-reader 
+ * search forum block, etc. Important: these are 'silent' in a screen-reader
  * (unlike &gt; &raquo;), and must be accompanied by text.
  * @uses $THEME
  */
 function check_theme_arrows() {
     global $THEME;
-    
+
     if (!isset($THEME->rarrow) and !isset($THEME->larrow)) {
         // Default, looks good in Win XP/IE 6, Win/Firefox 1.5, Win/Netscape 8...
         // Also OK in Win 9x/2K/IE 5.x
@@ -2771,7 +2771,7 @@ function check_theme_arrows() {
 function print_navigation ($navigation, $separator=0, $return=false) {
     global $CFG, $THEME;
     $output = '';
-    
+
     check_theme_arrows();
     if (0 === $separator) {
         $separator = $THEME->rarrow;
@@ -2796,7 +2796,7 @@ function print_navigation ($navigation, $separator=0, $return=false) {
         $navigation = "<li>$separator ". str_replace('->', "</li>\n<li>$separator", $navigation) ."</li>\n";
         $output .= '<li class="first"><a'. $target .' href="'. $CFG->wwwroot.((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID)) && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
                                                                        ? '/my' : '') .'/">'. $site->shortname ."</a></li>\n". $navigation;
-        $output .= "</ul>\n";  
+        $output .= "</ul>\n";
     }
 
     if ($return) {
@@ -2916,7 +2916,7 @@ function print_continue($link, $return=false) {
  * See, {@link print_simple_box_start}.
  *
  * @param string $align string, alignment of the box, not the text (default center, left, right).
- * @param string $width string, width of the box, including units %, for example '100%'. 
+ * @param string $width string, width of the box, including units %, for example '100%'.
  * @param string $color string, background colour of the box, for example '#eee'.
  * @param int $padding integer, padding in pixels, specified without units.
  * @param string $class string, space-separated class names.
@@ -3138,7 +3138,7 @@ function print_user_picture($userid, $courseid, $picture, $size=0, $return=false
             $imagealt = $user->imagealt;
         } else {
             $imagealt = get_string('pictureof','',fullname($user));
-        }    
+        }
     }
 
     $output .= "<img class=\"$class\" align=\"middle\" src=\"$src".
@@ -3666,11 +3666,11 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
     $mincols = 65;
     $minrows = 10;
     $str = '';
-    
+
     if ($id === '') {
         $id = 'edit-'.$name;
     }
-    
+
     if ( empty($CFG->editorsrc) ) { // for backward compatibility.
         if (empty($courseid)) {
             if (!empty($course->id)) {  // search for it in global context
@@ -3684,7 +3684,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
 
         if ($usehtmleditor) {
             if (!empty($courseid) and has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $courseid))) {
-                // needed for course file area browsing in image insert plugin 
+                // needed for course file area browsing in image insert plugin
                 $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
                 $CFG->wwwroot .'/lib/editor/htmlarea/htmlarea.php?id='. $courseid .'"></script>'."\n" : '';
             } else {
@@ -3714,7 +3714,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         $str .= s($value);
     }
     $str .= '</textarea>'."\n";
-    
+
 	if ($usehtmleditor) {
 		$str .= editorshortcutshelpbutton();
 	}
@@ -3770,9 +3770,9 @@ function use_html_editor($name='', $editorhidebuttons='', $id='') {
 
 function print_editor_config($editorhidebuttons='', $return=false) {
     global $CFG;
-    
+
     $str = "config.pageStyle = \"body {";
-    
+
     if (!(empty($CFG->editorbackgroundcolor))) {
         $str .= " background-color: $CFG->editorbackgroundcolor;";
     }
@@ -3790,7 +3790,7 @@ function print_editor_config($editorhidebuttons='', $return=false) {
     $str .= (empty($CFG->editorkillword)) ? "false":"true";
     $str .= ';'."\n";
     $str .= 'config.fontname = {'."\n";
-    
+
     $fontlist = isset($CFG->editorfontlist) ? explode(';', $CFG->editorfontlist) : array();
     $i = 1;                     // Counter is used to get rid of the last comma.
 
@@ -3816,7 +3816,7 @@ function print_editor_config($editorhidebuttons='', $return=false) {
     if (!empty($CFG->editorspelling) && !empty($CFG->aspellpath)) {
         $str .= print_speller_code($usehtmleditor=true, true);
     }
-            
+
     if ($return) {
         return $str;
     }
@@ -3881,7 +3881,7 @@ function switchroles_form($courseid) {
             if (!$roles = get_assignable_roles($context)) {
                 return '';   // Nothing to show!
             }
-            return popup_form($CFG->wwwroot.'/course/view.php?id='.$courseid.'&amp;sesskey='.sesskey().'&amp;switchrole=', 
+            return popup_form($CFG->wwwroot.'/course/view.php?id='.$courseid.'&amp;sesskey='.sesskey().'&amp;switchrole=',
                               $roles, 'switchrole', '', get_string('switchroleto'), 'switchrole', '', true);
         } else {
             return '';
@@ -3892,7 +3892,7 @@ function switchroles_form($courseid) {
         $options['sesskey'] = sesskey();
         $options['switchrole'] = 0;
 
-        return print_single_button($CFG->wwwroot.'/course/view.php', $options,  
+        return print_single_button($CFG->wwwroot.'/course/view.php', $options,
                                    get_string('switchrolereturn'), 'post', '_self', true);
     }
 }
@@ -4235,7 +4235,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
         if ($mod->section > 0 and $section <> $mod->section) {
             $thissection = $sections[$mod->section];
 
-            if ($thissection->visible or !$course->hiddensections or 
+            if ($thissection->visible or !$course->hiddensections or
                 has_capability('moodle/course:viewhiddensections', $context)) {
                 $thissection->summary = strip_tags(format_string($thissection->summary,true));
                 if ($course->format == 'weeks' or empty($thissection->summary)) {
@@ -4253,7 +4253,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
         $section = $mod->section;
 
         //Only add visible or teacher mods to jumpmenu
-        if ($mod->visible or has_capability('moodle/course:viewhiddenactivities', 
+        if ($mod->visible or has_capability('moodle/course:viewhiddenactivities',
                                              get_context_instance(CONTEXT_MODULE, $mod->cm))) {
             $url = $mod->mod .'/view.php?id='. $mod->cm;
             if ($flag) { // the current mod is the "next" mod
@@ -4297,14 +4297,14 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
                     '<img class="icon log" src="'.$CFG->pixpath.'/i/log.gif" alt="'.$logstext.'" /></a>';
 
     }
-    if ($backmod) {     
+    if ($backmod) {
         $backtext= get_string('activityprev', 'access');
         $backmod = '<form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php"'.$target.'><fieldset>'.
                    '<input type="hidden" name="id" value="'.$backmod->cm.'" />'.
                    '<button type="submit" title="'.$backtext.'">'.$THEME->larrow.
                    '<span class="accesshide">'.$backtext.'</span></button></fieldset></form>';
     }
-    if ($nextmod) {    
+    if ($nextmod) {
         $nexttext= get_string('activitynext', 'access');
         $nextmod = '<form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php" '.$target.'><fieldset>'.
                    '<input type="hidden" name="id" value="'.$nextmod->cm.'" />'.
@@ -4360,7 +4360,7 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
         if ($mod->section >= 0 and $section <> $mod->section) {
             $thissection = $sections[$mod->section];
 
-            if ($thissection->visible or !$course->hiddensections or 
+            if ($thissection->visible or !$course->hiddensections or
                       has_capability('moodle/course:viewhiddensections', $coursecontext)) {
                 $thissection->summary = strip_tags(format_string($thissection->summary,true));
                 if (!empty($doneheading)) {
@@ -4420,7 +4420,7 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
  * @param string $month  fieldname
  * @param string $year  fieldname
  * @param int $currenttime A default timestamp in GMT
- * @param boolean $return 
+ * @param boolean $return
  */
 function print_date_selector($day, $month, $year, $currenttime=0, $return=false) {
 
@@ -4451,7 +4451,7 @@ function print_date_selector($day, $month, $year, $currenttime=0, $return=false)
  * @param string ? $minute  fieldname
  * @param $currenttime A default timestamp in GMT
  * @param int $step minute spacing
- * @param boolean $return 
+ * @param boolean $return
  */
 function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=false) {
 
@@ -4478,9 +4478,9 @@ function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=fa
  *
  * @uses $CFG
  * @param int $timelimit default
- * @param string $unit 
- * @param string $name 
- * @param boolean $return 
+ * @param string $unit
+ * @param string $name
+ * @param boolean $return
  */
 function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit', $return=false) {
 
@@ -4637,10 +4637,10 @@ function error ($message, $link='', $adminroot='') {
         }
     }
     print_continue($link);
-    
+
     if ($adminroot) {
         admin_externalpage_print_footer($adminroot);
-    } else { 
+    } else {
         print_footer();
     }
     for ($i=0;$i<512;$i++) {  // Padding to help IE work with 404
@@ -4684,7 +4684,76 @@ function print_error ($errorcode, $module='', $link='', $a=NULL) {
                  get_string('moreinformation').'</a></p>';
     error($message, $link);
 }
+function editorhelpbutton(){
+    global $CFG, $SESSION;
+    $items = func_get_args();
+    $i = 1;
+    $urlparams = array();
+    $titles = array();
+    foreach ($items as $item){
+        if (is_array($item)){
+            $urlparams[] = "keyword$i=".urlencode($item[0]);
+            $urlparams[] = "title$i=".urlencode($item[1]);
+            if (isset($item[2])){
+                $urlparams[] = "module$i=".urlencode($item[2]);
+            }
+            $titles[] = trim($item[1], ". \t");
+        }elseif (is_string($item)){
+            $urlparams[] = "button$i=".urlencode($item);
+            switch ($item){
+                case 'reading' :
+                    $titles[] = get_string("helpreading");
+                    break;
+                case 'writing' :
+                    $titles[] = get_string("helpwriting");
+                    break;
+                case 'questions' :
+                    $titles[] = get_string("helpquestions");
+                    break;
+                case 'emoticons' :
+                    $SESSION->inserttextform = 'mod-forum-post';
+                    $SESSION->inserttextfield = 'message';
 
+                    $titles[] = get_string("helpemoticons");
+                    break;
+                case 'richtext' :
+                    $titles[] = get_string("helprichtext");
+                    break;
+                default :
+                    error('Unknown help topic '.$item);
+            }
+        }
+        $i++;
+    }
+    if (count($titles)>1){
+        //join last two items with an 'and'
+        $a = new object();
+        $a->one = $titles[count($titles) - 2];
+        $a->two = $titles[count($titles) - 1];
+        $titles[count($titles) - 2] = get_string('and', '', $a);
+        unset($titles[count($titles) - 1]);
+    }
+    $alttag = join (', ', $titles);
+
+    $paramstring = join('&', $urlparams);
+    $linkobject = '<img alt="'.$alttag.'" src="'.$CFG->pixpath .'/help.gif" />';
+    return link_to_popup_window(s("/lib/form/editorhelp.php?".$paramstring), $alttag, $linkobject, 400, 500, $alttag, 'none', true);
+}
+/*    $helptext = '<ul><li>';
+    $helptext .= helpbutton("reading", get_string("helpreading"), "moodle", true, false, '', true);
+    $helptext .= "</li><li>";
+    $helptext .= helpbutton("writing", get_string("helpwriting"), "moodle", true, false, '', true);
+    $helptext .= "</li><li>";
+    $helptext .= helpbutton("questions", get_string("helpquestions"), "moodle", true, false, '', true);
+    $helptext .= "</li><li>";
+    if ($usehtmleditor) {
+       $helptext .= helpbutton("richtext", get_string("helprichtext"), "moodle", true, false, '', true);
+    } else {
+       $helptext .= emoticonhelpbutton("theform", "message", true);
+    }
+    $helptext .= "</li></ul>";
+    return helpbutton('', get_string('editorhelp'), 'moodle', true, false, $helptext, true);
+}*/
 
 /**
  * Print a help button.
@@ -4721,14 +4790,14 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
     // Accessibility: prefix the alt text/title with 'Help with', strip distracting dots '...'
     // PLEASE DO NOT CHANGE. ('...' is VERY distracting for non-visual users)
     $tooltip = get_string('helpprefix2', '', trim($title, ". \t"));
-    
+
     $linkobject = '';
 
     if ($image) {
         if ($linktext) {
             // MDL-7469 If text link is displayed with help icon, change to alt to "help with this".
             $linkobject .= $title.'&nbsp;';
-            $tooltip = get_string('helpwiththis');  
+            $tooltip = get_string('helpwiththis');
         }
         if ($imagetext) {
             $linkobject .= $imagetext;
@@ -4747,7 +4816,7 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
         $url = '/help.php?module='. $module .'&amp;file='. $page .'.html&amp;forcelang='.$forcelang;
     }
 
-    $link = '<span class="helplink">'. 
+    $link = '<span class="helplink">'.
             link_to_popup_window ($url, 'popup', $linkobject, 400, 500, $tooltip, 'none', true).
             '</span>';
 
@@ -4768,7 +4837,7 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
  * @param string $field ?
  * @todo Finish documenting this function
  */
-function emoticonhelpbutton($form, $field) {
+function emoticonhelpbutton($form, $field, $return = false) {
 
     global $CFG, $SESSION;
 
@@ -4776,8 +4845,12 @@ function emoticonhelpbutton($form, $field) {
     $SESSION->inserttextfield = $field;
     $imagetext = '<img src="' . $CFG->pixpath . '/s/smiley.gif" border="0" align="middle" width="15" height="15" alt=""
     class="emoticon" style="margin-left:3px; padding-right:1px;" />';
-
-    helpbutton('emoticons', get_string('helpemoticons'), 'moodle', true, true, '', false, $imagetext);
+    $help = helpbutton('emoticons', get_string('helpemoticons'), 'moodle', true, true, '', true, $imagetext);
+    if (!$return){
+        echo $help;
+    } else {
+        return $help;
+    }
 }
 
 /**
@@ -4820,13 +4893,13 @@ function notice ($message, $link='', $course=NULL, $adminroot='') {
     echo '<br />';
     print_simple_box($message, 'center', '50%', '', '20', 'generalbox', 'notice');
     print_continue($link);
-    
+
     // xhtml strict fix, need to make sure it's the right footer
     if ($adminroot) {
         admin_externalpage_print_footer($adminroot);
         exit;
     }
-    
+
     if (empty($course)) {
         print_footer($SITE);
     } else {
@@ -4888,16 +4961,16 @@ function redirect($url, $message='', $delay=-1) {
     $tmpstr = clean_text('<a href="'.$encodedurl.'" />'); //clean encoded URL
     $encodedurl = substr($tmpstr, 9, strlen($tmpstr)-13);
     $url = html_entity_decode($encodedurl);
-    $surl = addslashes($url); 
+    $surl = addslashes($url);
 
 /// when no message and header printed yet, try to redirect
     if (empty($message) and !defined('HEADER_PRINTED')) {
-        
+
         // Technically, HTTP/1.1 requires Location: header to contain
-        // the absolute path. (In practice browsers accept relative 
+        // the absolute path. (In practice browsers accept relative
         // paths - but still, might as well do it properly.)
-        // This code turns relative into absolute. 
-        if (!preg_match('|^[a-z]+:|', $url)) { 
+        // This code turns relative into absolute.
+        if (!preg_match('|^[a-z]+:|', $url)) {
             // Get host name http://www.wherever.com
             $hostpart = preg_replace('|^(.*?[^:/])/.*$|', '$1', $CFG->wwwroot);
             if (preg_match('|^/|', $url)) {
@@ -4939,7 +5012,7 @@ function redirect($url, $message='', $delay=-1) {
     echo '<p>'. $message .'</p>';
     echo '<p>( <a href="'. $encodedurl .'">'. get_string('continue') .'</a> )</p>';
     echo '</center>';
-// it might be better not to set timeout the same for both types of redirect, so that we can be sure which one wins 
+// it might be better not to set timeout the same for both types of redirect, so that we can be sure which one wins
 ?>
 <script type="text/javascript">
 <!--
@@ -4973,7 +5046,7 @@ function notify($message, $style='notifyproblem', $align='center', $return=false
     $message = clean_text($message);
 
     $output = '<div class="'.$style.'" align="'. $align .'">'. $message .'</div>'."<br />\n";
-    
+
     if ($return) {
         return $output;
     }
@@ -5164,7 +5237,7 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
 
     if (! empty($heading)) {
         $heading = $skip_link . $heading;
-    } 
+    }
     /*else { //ELSE: I think a single link on a page, "Skip block 4" is too confusing - don't print.
         echo $skip_link;
     }*/

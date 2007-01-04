@@ -29,8 +29,10 @@ class MoodleQuickForm_file extends HTML_QuickForm_file{
         }
         //we do this to to return html instead of printing it
         //without having to specify it in every call to make a button.
-        $defaultargs=array('', '', 'moodle', true, false, '', true);
-        $helpbuttonargs=$helpbuttonargs + $defaultargs ;
+        if ('helpbutton' == $function){
+            $defaultargs=array('', '', 'moodle', true, false, '', true);
+            $helpbuttonargs=$helpbuttonargs + $defaultargs ;
+        }
         $this->_helpbutton=call_user_func_array($function, $helpbuttonargs);
     }
     /**
@@ -56,6 +58,6 @@ class MoodleQuickForm_file extends HTML_QuickForm_file{
         }
         return parent::onQuickFormEvent($event, $arg, $caller);
     } // end func onQuickFormEvent
-    
+
 }
 ?>

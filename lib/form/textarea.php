@@ -9,6 +9,12 @@ require_once('HTML/QuickForm/textarea.php');
  */
 class MoodleQuickForm_textarea extends HTML_QuickForm_textarea{
     /**
+     * Need to store id of form as we may need it for helpbutton
+     *
+     * @var string
+     */
+    var $_formid = '';
+    /**
      * html for help button, if empty then no help
      *
      * @var string
@@ -29,8 +35,15 @@ class MoodleQuickForm_textarea extends HTML_QuickForm_textarea{
         }
         //we do this to to return html instead of printing it
         //without having to specify it in every call to make a button.
-        $defaultargs=array('', '', 'moodle', true, false, '', true);
-        $helpbuttonargs=$helpbuttonargs + $defaultargs ;
+        if ('helpbutton' == $function){
+            $defaultargs=array('', '', 'moodle', true, false, '', true);
+            $helpbuttonargs=$helpbuttonargs + $defaultargs ;
+        } elseif ('editorhelpbutton' == $function){
+            if (in_array('emoticons', $helpbuttonargs)){
+                $SESSION->inserttextform = $this->_formid;
+                $SESSION->inserttextfield = 'id_'.$this->getAttribute('id');
+            }
+        }
         $this->_helpbutton=call_user_func_array($function, $helpbuttonargs);
     }
     /**
@@ -42,5 +55,24 @@ class MoodleQuickForm_textarea extends HTML_QuickForm_textarea{
     function getHelpButton(){
         return $this->_helpbutton;
     }
+    /**
+     * Called by HTML_QuickForm whenever form event is made on this element
+     *
+     * @param     string    $event  Name of event
+     * @param     mixed     $arg    event arguments
+     * @param     object    $caller calling object
+     * @since     1.0
+     * @access    public
+     * @return    void
+     */
+    function onQuickFormEvent($event, $arg, &$caller)
+    {
+        switch ($event) {
+            case 'createElement':
+                $this->_formid = $caller->getAttribute('id');
+                break;
+        }
+        return parent::onQuickFormEvent($event, $arg, $caller);
+    } // end func onQuickFormEvent
 }
 ?>
