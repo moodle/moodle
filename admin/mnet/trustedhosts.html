@@ -1,0 +1,61 @@
+<?php
+admin_externalpage_print_header($adminroot);
+?>
+<center>
+<table cellspacing="0" cellpadding="5"  width="500" id="hosts" class="generaltable generalbox" >
+    <tr>
+        <th class="header c0" nowrap="nowrap" colspan="2"><?php print_string('trustedhosts', 'mnet'); ?></th>
+    </tr>
+    <tr>
+        <td class="cell c1" colspan="2"><?php print_string('trustedhostsexplain', 'mnet'); ?></td>
+    </tr>
+    <tr>
+        <td class="cell c1" colspan="2"><form  method="POST" action="trustedhosts.php">
+            <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
+            <textarea name="hostlist" cols="40" rows="20"><?php echo $trusted_hosts; ?></textarea><br />
+            <input type="submit" value="<?php print_string('savechanges'); ?>" />
+            </form>
+        </td>
+    </tr>
+</table>
+<table cellspacing="0" cellpadding="5"  width="500" id="hosts" class="generaltable generalbox" >
+    <tr>
+        <th class="header c0" nowrap="nowrap" colspan="2"><?php print_string('testtrustedhosts', 'mnet'); ?></th>
+    </tr>
+<?php 
+    if (!empty($test_ip_address)):
+?>
+    <tr>
+        <td class="cell c1" colspan="2">
+            <?php
+                if ($in_range) {
+                    print_string('is_in_range',  'mnet', $test_ip_address);
+                    echo '<br>';
+                    print_string('validated_by', 'mnet', $validated_by);
+                } else {
+                    print_string('not_in_range',  'mnet', $test_ip_address);
+                }
+            ?>
+        </td>
+    </tr>
+<?php
+    else:
+?>
+    <tr>
+        <td class="cell c1" colspan="2"><?php print_string('testtrustedhostsexplain', 'mnet'); ?></td>
+    </tr>
+<?php
+    endif;
+?>
+    <tr>
+        <td class="cell c1" colspan="2"><form  method="GET" action="trustedhosts.php">
+            <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
+            <input type="text" name="testipaddress" value="<?php echo $test_ip_address; ?>" />
+            <input type="submit" value="<?php print_string('go'); ?>" />
+            </form>
+        </td>
+    </tr>
+</table>
+<?php
+admin_externalpage_print_footer($adminroot);
+?>

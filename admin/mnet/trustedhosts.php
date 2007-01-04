@@ -1,0 +1,62 @@
+<?php
+    // Allows the admin to configure services for remote hosts
+
+    require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+    require_once($CFG->libdir.'/adminlib.php');
+    include_once($CFG->dirroot.'/mnet/lib.php');
+
+    require_login();
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('trustedhosts', $adminroot);
+
+    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+
+    require_capability('moodle/site:config', $context, $USER->id, true, "nopermissions");
+
+    if (!$site = get_site()) {
+        error('Site isn\'t defined!');
+    }
+
+    $trusted_hosts = '';//array();
+    $old_trusted_hosts = get_config('mnet', 'mnet_trusted_hosts');
+
+    $test_ip_address = optional_param('testipaddress', NULL, PARAM_HOST);
+    $in_range = false;
+    if (!empty($test_ip_address)) {
+        foreach(explode(',', $old_trusted_hosts->value) as $host) {
+            list($network, $mask) = explode('/', $host.'/');
+            if (empty($network)) continue;
+            if (strlen($mask) == 0) $mask = 32;
+            
+            if (ip_in_range($test_ip_address, $network, $mask)) {
+                $in_range = true;
+                $validated_by = $network.'/'.$mask;
+                break;
+            }
+        }
+    }
+
+    /// If data submitted, process and store
+    if (($form = data_submitted()) && confirm_sesskey()) {
+        echo 'a';
+        $hostlist = preg_split("/[\s,]+/", $form->hostlist);
+        foreach($hostlist as $host) {
+            list($address, $mask) = explode('/', $host.'/');
+            if (empty($address)) continue;
+            if (strlen($mask) == 0) $mask = 32;
+            $trusted_hosts .= trim($address).'/'.trim($mask)."\n";
+            unset($address, $mask);
+        }
+        set_config('mnet_trusted_hosts', str_replace("\n", ',', $trusted_hosts), 'mnet');
+    } elseif (!empty($old_trusted_hosts->value)) {
+        foreach(explode(',', $old_trusted_hosts->value) as $host) {
+            list($address, $mask) = explode('/', $host.'/');
+            if (empty($address)) continue;
+            if (strlen($mask) == 0) $mask = 32;
+            $trusted_hosts .= trim($address).'/'.trim($mask)."\n";
+            unset($address, $mask);
+        }
+    }
+
+    include('./trustedhosts.html');
+?>
