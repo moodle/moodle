@@ -174,9 +174,13 @@ class mnet_xmlrpc_client {
         curl_setopt($ch, CURLOPT_POSTFIELDS, $rq);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: text/xml charset=UTF-8"));
 
+        $timestamp_send    = time();
         $this->rawresponse = curl_exec($ch);
+        $timestamp_receive = time();
+
         if ($this->rawresponse == false) {
             $this->error[] = array(curl_errno($ch), curl_error($ch));
+            return false;
         }
 
         $crypt_parser = new mnet_encxml_parser();
@@ -209,6 +213,32 @@ class mnet_xmlrpc_client {
         } else {
             $crypt_parser->free_resource();
             return false;
+        }
+
+        // Margin of error is the time it took the request to complete.
+        $margin_of_error  = $timestamp_receive - $timestamp_send;
+
+        // Guess the time gap between sending the request and the remote machine
+        // executing the time() function. Marginally better than nothing.
+        $hysteresis       = ($margin_of_error) / 2;
+
+        $remote_timestamp = $sig_parser->remote_timestamp - $hysteresis;
+        $time_offset      = $remote_timestamp - $timestamp_send;
+        if ($time_offset > 0) {
+            $result = get_field('config_plugins', 'value', 'plugin', 'mnet', 'name', 'drift_threshold');
+            if(empty($result)) {
+                // We decided 15 seconds was a pretty good arbitrary threshold
+                // for time-drift between servers, but you can customize this in
+                // the config_plugins table. It's not advised though.
+                set_config('drift_threshold', 15, 'mnet');
+                $threshold = 15;
+            } else {
+                $threshold = $result;
+            }
+            if ($time_offset > $threshold) {
+                $this->error[] = 'Time gap with '.$mnet_peer->name.' ('.$time_offset.' seconds) is greater than the permitted maximum of '.$threshold.' seconds';
+                return false;
+            }
         }
 
         $this->xmlrpcresponse = base64_decode($sig_parser->data_object);

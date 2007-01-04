@@ -35,6 +35,7 @@ class mnet_encxml_parser {
 
         $this->tag_number        = 0; // Just a unique ID for each tag
         $this->digest            = '';
+        $this->remote_timestamp  = '';
         $this->remote_wwwroot    = '';
         $this->signature         = '';
         $this->data_object       = '';
@@ -130,6 +131,9 @@ class mnet_encxml_parser {
             case 'RETRIEVALMETHOD':
                 $this->key_URI = $attrs['URI'];
                 break;
+            case 'TIMESTAMP':
+                $handler = 'parse_timestamp';
+                break;
             case 'WWWROOT':
                 $handler = 'parse_wwwroot';
                 break;
@@ -141,6 +145,18 @@ class mnet_encxml_parser {
                 break;
         }
         xml_set_character_data_handler($this->parser, $handler);
+        return true;
+    }
+
+    /**
+     * Add the next chunk of character data to the remote_timestamp string
+     *
+     * @param   mixed   $parser The XML parser
+     * @param   string  $data   The content of the current tag (1024 byte chunk)
+     * @return  bool            True
+     */
+    function parse_timestamp($parser, $data) {
+        $this->remote_timestamp .= $data;
         return true;
     }
 
