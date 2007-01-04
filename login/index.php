@@ -1,5 +1,6 @@
 <?php // $Id$
 
+
     require_once("../config.php");
 
     $loginguest  = optional_param('loginguest', 0, PARAM_BOOL); // determines whether visitors are logged in as guest automatically
@@ -39,7 +40,15 @@
 
 /// Load alternative login screens if necessary
 
-    if ($CFG->auth == 'cas' && !empty($CFG->cas_enabled)) {
+
+// check if auth config broken (old config --> multi config)
+if (empty($CFG->auth_plugins_enabled) and ! empty($CFG->auth)) {
+    set_config('auth_plugins_enabled', $CFG->auth);
+}
+$authsequence = explode(',', $CFG->auth_plugins_enabled); // auths, in sequence
+
+// Load alternative login screens if necessary
+if ($authsequence[0] == 'cas' and !empty($CFG->cas_enabled)) {
         require($CFG->dirroot.'/auth/cas/login.php');
     }
 
@@ -141,17 +150,15 @@
             update_user_login_times();
             set_moodle_cookie($USER->username);
             set_login_session_preferences();
-        
-        
+
             //Select password change url
-            if (is_internal_auth($USER->auth) || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
+            $userauth = get_auth_plugin($USER->auth);
+            if ($userauth->can_change_password()) {
                 $passwordchangeurl=$CFG->wwwroot.'/login/change_password.php';
-            } elseif($CFG->changepassword) {
-                $passwordchangeurl=$CFG->changepassword;
             } else {
-                $passwordchangeurl = '';
+                $passwordchangeurl = $userauth->change_password_url();
             }
-            
+
             // check whether the user should be changing password
             if (get_user_preferences('auth_forcepasswordchange', false) || $frm->password == 'changeme'){
                 if ($passwordchangeurl != '') {
@@ -189,9 +196,8 @@
 
             // check if user password has expired
             // Currently supported only for ldap-authentication module
-            if (isset($CFG->ldap_expiration) && $CFG->ldap_expiration == 1 ) {
-                if (function_exists('auth_password_expire')){
-                    $days2expire = auth_password_expire($USER->username);
+            if (method_exists($userauth, 'password_expire') and !empty($userauth->config->expiration) and $userauth->config->expiration == 1) {
+                    $days2expire = $userauth->password_expire($USER->username);
                     if (intval($days2expire) > 0 && intval($days2expire) < intval($CFG->{$USER->auth.'_expiration_warning'})) {
                         print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>"); 
                         notice_yesno(get_string('auth_passwordwillexpire', 'auth', $days2expire), $passwordchangeurl, $urltogo); 
@@ -203,7 +209,6 @@
                         print_footer();
                         exit;
                     }    
-                }
             }
 
             reset_login_count();
@@ -217,6 +222,11 @@
         } else {
             if (empty($errormsg)) {
                 $errormsg = get_string("invalidlogin");
+            }
+
+            // TODO: if the user failed to authenticate, check if the username corresponds to a remote mnet user
+            if ($users = get_records('user', 'username', $frm->username)) {
+                $errormsg .= "<br>If you are a Moodle Network remote user and can <a href=\"mnet_email.php?u=$frm->username\">confirm your email address here</a>, you can be redirected to your login page.<br>";
             }
         }
     }
@@ -250,7 +260,7 @@
         set_moodle_cookie('nobody');   // To help search for cookies
     }
     
-    if (empty($frm->username) && $CFG->auth != 'shibboleth') {  // See bug 5184
+if (empty($frm->username) && $authsequence[0] != 'shibboleth') {  // See bug 5184
         $frm->username = get_moodle_cookie() === 'nobody' ? '' : get_moodle_cookie();
         $frm->password = "";
     }
@@ -264,7 +274,7 @@
     if (isset($CFG->auth_instructions)) {
         $CFG->auth_instructions = trim($CFG->auth_instructions);
     }
-    if ($CFG->auth == "email" or $CFG->auth == "none" or !empty($CFG->auth_instructions)) {
+if ($authsequence[0] == "email" or $authsequence[0] == "none" or !empty($CFG->auth_instructions)) {
         $show_instructions = true;
     } else {
         $show_instructions = false;

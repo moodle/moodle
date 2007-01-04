@@ -3,8 +3,15 @@
 
     require_once("../config.php");
 
+    if ($USER->mnethostid != $CFG->mnet_localhost_id) {
+        $host = get_record('mnet_host', 'id', $USER->mnethostid);
+        $wwwroot = $host->wwwroot;
+    } else {
+        $wwwroot = $CFG->wwwroot;
+    }
+
     require_logout();
 
-    redirect("$CFG->wwwroot/");
+    redirect("$wwwroot/");
 
 ?>

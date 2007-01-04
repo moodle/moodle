@@ -1,7 +1,6 @@
 <?php // $Id$
 
     require_once("../config.php");
-    require_once("../auth/$CFG->auth/lib.php");
 
     $data = optional_param('data', '', PARAM_CLEAN);  // Formatted as:  secret/username
 
@@ -19,36 +18,30 @@
             $username   = $s;
         }
 
-        $user = get_complete_user_data('username', $username );
+        $authplugin = get_auth_plugin('email');
+        $confirmed = $authplugin->user_confirm($username, $usersecret);
 
-        if (!empty($user)) {
-
-            if ($user->confirmed) {
+        if ($confirmed == AUTH_CONFIRM_ALREADY) {
+                $user = get_complete_user_data('username', $username);
                 print_header(get_string("alreadyconfirmed"), get_string("alreadyconfirmed"), "", "");
                 echo "<center><h3>".get_string("thanks").", ". fullname($user) . "</h3>\n";
                 echo "<h4>".get_string("alreadyconfirmed")."</h4>\n";
                 echo "<h3> -> <a href=\"$CFG->wwwroot/course/\">".get_string("courses")."</a></h3></center>\n";
                 print_footer();
                 exit;
-            }
-
-            if ($user->secret == $usersecret) {   // They have provided the secret key to get in
-
-                if (!set_field("user", "confirmed", 1, "id", $user->id)) {
-                    error("Could not confirm this user!");
-                }
-                if (!set_field("user", "firstaccess", time(), "id", $user->id)) {
-                    error("Could not set this user's first access date!");
-                }
-                if (isset($CFG->auth_user_create) and $CFG->auth_user_create==1 and function_exists('auth_user_activate') ) {
-                    if (!auth_user_activate($user->username)) {
-                         error("Could not activate this user!");
+        }
+        if ($confirmed == AUTH_CONFIRM_OK) {
+                // Activate new user if necessary
+                $authplugin = get_auth_plugin($CFG->auth);
+                if (isset($CFG->auth_user_create) and $CFG->auth_user_create == 1 and method_exists($authplugin, 'user_activate') ) {
+                    if (!$authplugin->user_activate($username)) {
+                        error('Could not activate this user!');
                     }
                 }
 
                 // The user has confirmed successfully, let's log them in
-                
-                if (!$USER = get_complete_user_data('username', $user->username)) {
+
+                if (!$USER = get_complete_user_data('username', $username)) {
                     error("Something serious is wrong with the database");
                 }
 
@@ -59,17 +52,15 @@
                     unset($SESSION->wantsurl);
                     redirect("$goto");
                 }
- 
+
                 print_header(get_string("confirmed"), get_string("confirmed"), "", "");
                 echo "<center><h3>".get_string("thanks").", ". fullname($USER) . "</h3>\n";
                 echo "<h4>".get_string("confirmed")."</h4>\n";
                 echo "<h3> -> <a href=\"$CFG->wwwroot/course/\">".get_string("courses")."</a></h3></center>\n";
                 print_footer();
                 exit;
-
-            } else {
+        } else {
                 error("Invalid confirmation data");
-            }
         }
     } else {
         error(get_string("errorwhenconfirming"));

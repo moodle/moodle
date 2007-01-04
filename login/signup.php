@@ -1,13 +1,14 @@
 <?php  // $Id$
 
     require_once('../config.php');
-    require_once("../auth/$CFG->auth/lib.php");
     require_once('signup_form.php');
 
     //HTTPS is potentially required in this page
     httpsrequired();
 
-    if ($CFG->auth != 'email' and (empty($CFG->auth_user_create) or !(function_exists('auth_user_create'))) ) {
+    $authplugin = get_auth_plugin($CFG->auth);
+
+    if ($CFG->auth != 'email' and (empty($CFG->auth_user_create) or !(method_exists($authplugin, 'user_create'))) ) {
         error("Sorry, you may not use this page.");
     }
 
@@ -22,12 +23,13 @@
         $user->confirmed   = 0;
         $user->lang        = current_language();
         $user->firstaccess = time();
+        $user->mnethostid  = $CFG->mnet_localhost_id;
         $user->secret      = random_string(15);
         $user->auth        = $CFG->auth;
 
-        if (!empty($CFG->auth_user_create) and function_exists('auth_user_create') ){
-            if (! auth_user_exists($user->username)) {
-                if (! auth_user_create($user, $plainpass)) {
+        if (!empty($CFG->auth_user_create) and method_exists($authplugin, 'user_create') ){
+            if (! $authplugin->user_exists($user->username)) {
+                if (! $authplugin->user_create($user, $plainpass)) {
                     error("Could not add user to authentication module!");
                 }
             } else {
@@ -35,20 +37,10 @@
             }
         }
 
-        if (! ($user->id = insert_record('user', $user))) {
-            error("Could not add your record to the database!");
-        }
-
-        if (! send_confirmation_email($user)) {
-            error("Tried to send you an email but failed!");
-        }
-
-        $emailconfirm = get_string("emailconfirm");
-        print_header($emailconfirm, $emailconfirm, $emailconfirm);
-        notice(get_string("emailconfirmsent", "", $user->email), "$CFG->wwwroot/index.php");
+        $authplugin = get_auth_plugin($CFG->auth);
+        $signedup = $authplugin->user_signup($user, $notify=true);
         exit;
     }
-
 
     $newaccount = get_string('newaccount');
     $login      = get_string('login');

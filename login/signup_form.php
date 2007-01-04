@@ -64,8 +64,9 @@ class login_signup_form_1 extends moodleform {
 		global $CFG;
 		$errors = array();
 
+        $authplugin = get_auth_plugin($CFG->auth);
 
-		if (record_exists('user', 'username', $data['username'])){
+		if (record_exists('user', 'username', $data['username'], 'mnethostid', $CFG->mnet_localhost_id))){
 			$errors['username'] = get_string('usernameexists');
 		} else {
 			if (empty($CFG->extendedusernamechars)) {
@@ -75,8 +76,8 @@ class login_signup_form_1 extends moodleform {
 				}
 			}
 		}
-		if (isset($CFG->auth_user_create) and $CFG->auth_user_create==1 and function_exists('auth_user_exists') ){
-			if (auth_user_exists($data['username'])) {
+		if (isset($CFG->auth_user_create) and $CFG->auth_user_create==1 and method_exists($authplugin, 'user_exists')){
+			if ($authplugin->user_exists($user->username)) {
 				$errors['username'] = get_string('usernameexists');
 			}
 		}

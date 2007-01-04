@@ -46,15 +46,9 @@ if (isloggedin() && !isguest()) {
     redirect($CFG->wwwroot.'/index.php', $strloginalready, 5);
 }
 
-// changepassword link replaced by individual auth setting
+// instantiate default auth
 $auth = $CFG->auth; // the 'default' authentication method
-if (!empty($CFG->changepassword)) {
-    if (empty($CFG->{'auth_'.$auth.'_changepasswordurl'})) {
-       set_config('auth_'.$auth.'_changepasswordurl', $CFG->changepassword);
-    }
-    set_config('changepassword', '');
-}
-
+$defaultauth = get_auth_plugin($auth);
 
 $mform = new login_forgot_password_form();
 
@@ -114,8 +108,8 @@ if ($action == 'find' and $param = $mform->data_submitted()) {
             $errors[] = $strconfirmednot;
         } else {
             // what to do depends on the authentication method
-            $authmethod = $user->auth;
-            if (is_internal_auth($authmethod) or !empty($CFG->{'auth_'.$authmethod.'_stdchangepassword'})) {
+            $userauth = get_auth_plugin($user->auth);
+            if ($userauth->is_internal() or $userauth->can_change_password()) {
                 // handle internal authentication
 
                 // set 'secret' string
@@ -137,14 +131,13 @@ if ($action == 'find' and $param = $mform->data_submitted()) {
                 // if help text defined then we are going to display another page
                 $strextmessage = '';
                 $continue = false;
-                if (!empty($CFG->{'auth_'.$authmethod.'_changepasswordhelp'})) {
-                    $strextmessage = $CFG->{'auth_'.$authmethod.'_changepasswordhelp'}.'<br /><br />';
+                if (!empty($userauth->config->changepasswordhelp)) {
+                    $txt->extmessage = $userauth->config->changepasswordhelp .'<br /><br />';
                 }
                 // if url defined then add that to the message (with a standard message)
-                if (!empty($CFG->{'auth_'.$authmethod.'_changepasswordurl'})) {
+                if (method_exists($userauth, 'change_password_url') and $userauth->change_password_url()) {
                     $strextmessage .= $strpasswordextlink . '<br /><br />';
-                    $link = $CFG->{'auth_'.$authmethod.'_changepasswordurl'};
-                    $strextmessage .= "<a href=\"$link\">$link</a>";
+                    $txt->extmessage .= '<a href="' . $userauth->change_password_url() . '">' . $userauth->change_password_url() . '</a>';
                 }
                 // if nothing to display, just do message that we can't help
                 if (empty($strextmessage)) {
@@ -281,4 +274,3 @@ $mform->display();
 print_footer();
 
 ?>
-

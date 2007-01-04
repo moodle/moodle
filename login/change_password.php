@@ -14,6 +14,14 @@
         error('No such course!');
     }
 
+    if (is_mnet_remote_user($USER)) {
+        $message = get_string('usercannotchangepassword', 'mnet');
+        if ($idprovider = get_record('mnet_host', 'id', $USER->mnethostid)) {
+            $message .= get_string('userchangepasswordlink', 'mnet', $idprovider);
+        }
+        error($message);
+    }
+
     // require proper login; guest can not change passwords anymore!
     // TODO: add change password capability so that we can prevent participants to change password
     if (empty($USER->id) or $USER->username=='guest' or has_capability('moodle/legacy:guest', $sitecontext, $USER->id, false)) {
@@ -46,28 +54,23 @@
             $user = get_complete_user_data('username', $data->username);
         }
 
-        if (is_internal_auth($user->auth)){
-            if (!update_internal_user_password($user, $data->newpassword1)) {
+        // load the appropriate auth plugin
+        $userauth = get_auth_plugin($user->auth);
+        if ($userauth->can_change_password()){
+            if ($userauth->user_update_password($user, $data->newpassword1)) {
+                // hash the $user->password field (without local db update)
+                update_internal_user_password($user, $frm->newpassword1, false);
+            } else {
                 error('Could not set the new password');
             }
         } else { // external users
-            // the relevant auth libs should be loaded already
-            // as part of form validation in function authenticate_user_login()
-            // check that we allow changes through moodle
-            if (!empty($CFG->{'auth_'. $user->auth.'_stdchangepassword'})) {
-                if (function_exists('auth_user_update_password')){
-                    // note that we pass cleartext password
-                    if (auth_user_update_password($user->username, $data->newpassword1)){
-                        update_internal_user_password($user, $data->newpassword1, false);
-                    } else {
-                        error('Could not set the new password');
-                    }
-                } else {
-                    error('The authentication module is misconfigured (missing auth_user_update_password)');
-                }
-            } else {
-                error('You cannot change your password this way.');
+            $message = 'You cannot change your password this way.';
+            if (method_exists($userauth, 'change_password_url') and $userauth->change_password_url()) {
+                $message .= '<br /><br />' . get_string('passwordextlink')
+                    .  '<br /><br />' . '<a href="' . $userauth->change_password_url() . '">'
+                    .  $userauth->change_password_url() . '</a>';            error('You cannot change your password this way.');
             }
+            error($message);
         }
 
         // register success changing password
