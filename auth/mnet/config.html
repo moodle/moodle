@@ -1,0 +1,61 @@
+<?php
+
+// set to defaults if undefined
+if (!isset($config->rpc_negotiation_timeout)) {
+    $config->host = '30';
+}
+if (!isset ($config->auto_add_remote_users)) {
+    $config->auto_add_remote_users = '0';
+}
+
+$yesno = array(get_string('no'), get_string('yes'));
+
+?>
+<table cellspacing="0" cellpadding="5" border="0" align="center">
+
+<tr valign="top" class="required">
+    <td align="right"> rpc_negotiation_timeout: </td>
+    <td>
+        <input name="rpc_negotiation_timeout" type="text" size="5" value="<?php echo $config->rpc_negotiation_timeout ?>" />
+        <?php
+
+        if (isset($err['rpc_negotiation_timeout'])) {
+            formerr($err['rpc_negotiation_timeout']);
+        }
+
+        ?>
+    </td>
+    <td>
+        <?php
+
+        print_string('auth_mnet_rpc_negotiation_timeout', 'auth');
+
+        ?>
+    </td>
+</tr>
+
+<tr valign="top" class="required">
+    <td align="right"> auto_add_remote_users: </td>
+    <td>
+        <?php
+
+        choose_from_menu($yesno, 'auto_add_remote_users', $config->auto_add_remote_users, '');
+
+        ?>
+    </td>
+    <td>
+        <?php
+
+        print_string('auth_mnet_auto_add_remote_users', 'auth');
+
+        ?>
+    </td>
+</tr>
+
+<?php 
+
+// global $user_fields;
+// print_auth_lock_options('mnet', $user_fields, get_string('auth_fieldlocks_help', 'auth'), false, false);
+
+?>
+</table>

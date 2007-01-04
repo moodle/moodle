@@ -1,0 +1,1014 @@
+<?php
+
+/**
+ * @author Martin Dougiamas
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package moodle multiauth
+ *
+ * Authentication Plugin: Moodle Network Authentication
+ *
+ * Multiple host authentication support for Moodle Network.
+ *
+ * 2006-11-01  File created.
+ */
+
+// This page cannot be called directly
+if (!isset($CFG)) {
+    exit;
+}
+
+/**
+ * Moodle Network authentication plugin.
+ */
+class auth_plugin_mnet
+{
+
+    /**
+     * The configuration details for the plugin.
+     */
+    var $config;
+
+    /**
+     * Constructor.
+     */
+    function auth_plugin_mnet() {
+        $this->config = get_config('auth/mnet');
+    }
+
+    /**
+     * Provides the allowed RPC services from this class as an array.
+     * @return array  Allowed RPC services.
+     */
+    function mnet_publishes() {
+
+        $sso_idp = array();
+        $sso_idp['name']        = 'sso_idp'; // Name & Description go in lang file
+        $sso_idp['apiversion']  = 1;
+        $sso_idp['methods']     = array('user_authorise','keepalive_server', 'kill_children', 'refresh_log', 'fetch_user_image', 'fetch_theme_info');
+
+        $sso_sp = array();
+        $sso_sp['name']         = 'sso_sp'; // Name & Description go in lang file
+        $sso_sp['apiversion']   = 1;
+        $sso_sp['methods']      = array('keepalive_client','kill_child');
+
+        return array($sso_idp, $sso_sp);
+    }
+
+    /**
+     * This function is normally used to determine if the username and password
+     * are correct for local logins. Always returns false, as local users do not
+     * need to login over mnet xmlrpc.
+     *
+     * @param string $username The username
+     * @param string $password The password
+     * @returns bool Authentication success or failure.
+     */
+    function user_login($username, $password) {
+        return false; // error("Remote MNET users cannot login locally.");
+    }
+
+    /**
+     * Return user data for the provided token, compare with user_agent string.
+     *
+     * @param  string $token    The unique ID provided by remotehost.
+     * @param  string $UA       User Agent string.
+     * @return array  $userdata Array of user info for remote host
+     */
+    function user_authorise($token, $useragent) {
+        global $CFG;
+        global $MNET;
+        require_once $CFG->dirroot . '/mnet/xmlrpc/server.php';
+
+        $mnet_session = get_record('mnet_session', 'token', $token, 'useragent', $useragent);
+        if (empty($mnet_session)) {
+            echo mnet_server_fault(1, get_string('authfail_nosessionexists', 'mnet'));
+            exit;
+        }
+
+        // check session confirm timeout
+        if ($mnet_session->confirm_timeout < time()) {
+            echo mnet_server_fault(2, get_string('authfail_sessiontimedout', 'mnet'));
+            exit;
+        }
+
+        // session okay, try getting the user
+        if (!$user = get_complete_user_data('id', $mnet_session->userid)) {
+            echo mnet_server_fault(3, get_string('authfail_usermismatch', 'mnet'));
+            exit;
+        }
+
+        $userdata = array();
+        $userdata['username']                = $user->username;
+        $userdata['email']                   = $user->email;
+        $userdata['auth']                    = 'mnet';
+        $userdata['confirmed']               = $user->confirmed;
+        $userdata['deleted']                 = $user->deleted;
+        $userdata['firstname']               = $user->firstname;
+        $userdata['lastname']                = $user->lastname;
+        $userdata['city']                    = $user->city;
+        $userdata['country']                 = $user->country;
+        $userdata['lang']                    = $user->lang;
+        $userdata['timezone']                = $user->timezone;
+        $userdata['description']             = $user->description;
+        $userdata['mailformat']              = $user->mailformat;
+        $userdata['maildigest']              = $user->maildigest;
+        $userdata['maildisplay']             = $user->maildisplay;
+        $userdata['htmleditor']              = $user->htmleditor;
+        $userdata['wwwroot']                 = $MNET->wwwroot;
+        $userdata['session.gc_maxlifetime']  = ini_get('session.gc_maxlifetime');
+        $userdata['picture']                 = $user->picture;
+        if (!empty($user->picture)) {
+            $imagefile = "{$CFG->dataroot}/users/{$user->id}/f1.jpg";
+            if (file_exists($imagefile)) {
+                $userdata['imagehash'] = sha1(file_get_contents($imagefile));
+            }
+        }
+        return $userdata;
+    }
+
+    /**
+     * Generate a random string for use as an RPC session token.
+     */
+    function generate_token() {
+        return sha1(str_shuffle('' . mt_rand() . time()));
+    }
+
+    /**
+     * Starts an RPC jump session and returns the jump redirect URL.
+     */
+    function start_jump_session($mnethostid, $wantsurl) {
+        global $CFG;
+        global $USER;
+        global $MNET;
+        require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
+
+        // check remote login permissions
+        if (! has_capability('moodle/site:mnetlogintoremote', get_context_instance(CONTEXT_SYSTEM, SITEID))
+                or is_mnet_remote_user($USER)
+                or $USER->username == 'guest'
+                or empty($USER->id)) {
+            error(get_string('notpermittedtojump', 'mnet'));
+        }
+
+        // check for SSO publish permission first
+        if ($this->has_service($mnethostid, 'sso_sp') == false) {
+            error(get_string('hostnotconfiguredforsso', 'mnet'));
+        }
+
+        // set RPC timeout to 30 seconds if not configured
+        // TODO: Is this needed/useful/problematic?
+        if (empty($this->config->rpc_negotiation_timeout)) {
+            set_config('rpc_negotiation_timeout', '30', 'auth/mnet');
+        }
+
+        // get the host info
+        $mnet_peer = new mnet_peer();
+        $mnet_peer->set_id($mnethostid);
+
+        // set up the session
+        $mnet_session = get_record('mnet_session', 'userid', $USER->id, 'mnethostid', $mnethostid, 'useragent', sha1($_SERVER['HTTP_USER_AGENT']));
+        if ($mnet_session == false) {
+            $mnet_session = new object();
+            $mnet_session->mnethostid = $mnethostid;
+            $mnet_session->userid = $USER->id;
+            $mnet_session->username = $USER->username;
+            $mnet_session->useragent = sha1($_SERVER['HTTP_USER_AGENT']);
+            $mnet_session->token = $this->generate_token();
+            $mnet_session->confirm_timeout = time() + $this->config->rpc_negotiation_timeout;
+            $mnet_session->expires = time() + (integer)ini_get('session.gc_maxlifetime');
+            $mnet_session->session_id = session_id();
+            if (! $mnet_session->id = insert_record('mnet_session', $mnet_session)) {
+                error(get_string('databaseerror', 'mnet'));
+            }
+        } else {
+            $mnet_session->useragent = sha1($_SERVER['HTTP_USER_AGENT']);
+            $mnet_session->token = $this->generate_token();
+            $mnet_session->confirm_timeout = time() + $this->config->rpc_negotiation_timeout;
+            $mnet_session->expires = time() + (integer)ini_get('session.gc_maxlifetime');
+            $mnet_session->session_id = session_id();
+            if (false == update_record('mnet_session', $mnet_session)) {
+                error(get_string('databaseerror', 'mnet'));
+            }
+        }
+
+        // construct the redirection URL
+        //$transport = mnet_get_protocol($mnet_peer->transport);
+        $wantsurl = urlencode($wantsurl);
+        $url = "{$mnet_peer->wwwroot}/auth/mnet/land.php?token={$mnet_session->token}&idp={$MNET->wwwroot}&wantsurl={$wantsurl}";
+
+        return $url;
+    }
+
+    /**
+     * This function confirms the remote (ID provider) host's mnet session
+     * by communicating the token and UA over the XMLRPC transport layer, and
+     * returns the local user record on success.
+     *
+     *   @param string $token           The random session token.
+     *   @param string $remotewwwroot   The ID provider wwwroot.
+     *   @returns array The local user record.
+     */
+    function confirm_mnet_session($token, $remotewwwroot) {
+        global $CFG, $MNET;
+        require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
+
+        // verify the remote host is configured locally before attempting RPC call
+        if (! $remotehost = get_record('mnet_host', 'wwwroot', $remotewwwroot)) {
+            error(get_string('notpermittedtoland', 'mnet'));
+        }
+
+        // get the originating (ID provider) host info
+        $remotepeer = new mnet_peer();
+        $remotepeer->set_wwwroot($remotewwwroot);
+
+        // set up the RPC request
+        $mnetrequest = new mnet_xmlrpc_client();
+        $mnetrequest->set_method('auth/mnet/auth.php/user_authorise');
+
+        // set $token and $useragent parameters
+        $mnetrequest->add_param($token);
+        $mnetrequest->add_param(sha1($_SERVER['HTTP_USER_AGENT']));
+
+        // Thunderbirds are go! Do RPC call and store response
+        if ($mnetrequest->send($remotepeer) === true) {
+            $remoteuser = (object) $mnetrequest->response;
+        } else {
+            foreach ($mnetrequest->error as $code => $errormessage) {
+                $message .= "ERROR $code:<br>$errormessage<br>";
+            }
+            error("RPC auth/mnet/user_authorise:<br>$message");
+        }
+
+        if (empty($remoteuser) or empty($remoteuser->username)) {
+            error(get_string('unknownerror', 'mnet'));
+        }
+
+        // get the local record for the remote user
+        $localuser = get_record('user', 'username', $remoteuser->username, 'mnethostid', $remotehost->id);
+
+        // add the remote user to the database if necessary, and if allowed
+        // TODO: refactor into a separate function
+        if (! $localuser->id) {
+            if (empty($this->config->auto_add_remote_users)) {
+                error(get_string('nolocaluser', 'mnet'));
+            }
+            $remoteuser->mnethostid = $remotehost->id;
+            if (! insert_record('user', $remoteuser)) {
+                error(get_string('databaseerror', 'mnet'));
+            }
+            if (! $localuser = get_record('user', 'username', $remoteuser->username, 'mnethostid', $remotehost->id)) {
+                error(get_string('nolocaluser', 'mnet'));
+            }
+        }
+
+        // check sso access control list for permission first
+        if (!$this->can_login_remotely($localuser->username, $remotehost->id)) {
+            error("Username '$localuser->username' is not permitted to login from '$remotehost->name'.");
+        }
+
+        $session_gc_maxlifetime = 1440;
+
+        // update the local user record with remote user data
+        foreach ((array) $remoteuser as $key => $val) {
+            if ($key == 'session.gc_maxlifetime') {
+                $session_gc_maxlifetime = $val;
+                continue;
+            }
+
+            // TODO: fetch image if it has changed
+            if ($key == 'imagehash') {
+                $dirname = "{$CFG->dataroot}/users/{$localuser->id}";
+                $filename = "$dirname/f1.jpg";
+
+                $localhash = '';
+                if (file_exists($filename)) {
+                    $localhash = sha1(file_get_contents($filename));
+                } elseif (!file_exists($dirname)) {
+                    mkdir($dirname);
+                }
+
+                if ($localhash != $val) {
+                    // fetch image from remote host
+                    $fetchrequest = new mnet_xmlrpc_client();
+                    $fetchrequest->set_method('auth/mnet/auth.php/fetch_user_image');
+                    $fetchrequest->add_param($localuser->username);
+                    if ($fetchrequest->send($remotepeer) === true) {
+                        if (strlen($fetchrequest->response['f1']) > 0) {
+                            $imagecontents = base64_decode($fetchrequest->response['f1']);
+                            file_put_contents($filename, $imagecontents);
+                        }
+                        if (strlen($fetchrequest->response['f2']) > 0) {
+                            $imagecontents = base64_decode($fetchrequest->response['f2']);
+                            file_put_contents($dirname.'/f2.jpg', $imagecontents);
+                        }
+                    }
+                }
+            }
+
+            $localuser->{$key} = $val;
+        }
+
+        $localuser->mnethostid = $remotepeer->id;
+
+        $bool = update_record('user', $localuser);
+        if (!$bool) {
+            //TODO: Jonathan to clean up mess:
+            exit("updating user failed in mnet/auth/confirm_mnet_session ");
+        }
+
+        // set up the session
+        $mnet_session = get_record('mnet_session', 'userid', $localuser->id, 'mnethostid', $remotepeer->id, 'useragent', sha1($_SERVER['HTTP_USER_AGENT']));
+        if ($mnet_session == false) {
+            $mnet_session = new object();
+            $mnet_session->mnethostid = $remotepeer->id;
+            $mnet_session->userid = $localuser->id;
+            $mnet_session->username = $localuser->username;
+            $mnet_session->useragent = sha1($_SERVER['HTTP_USER_AGENT']);
+            $mnet_session->token = ''; //Not needed on the SP side
+            $mnet_session->confirm_timeout = time();
+            $mnet_session->expires = time() + (integer)$session_gc_maxlifetime;
+            $mnet_session->session_id = session_id();
+            if (! $mnet_session->id = insert_record('mnet_session', $mnet_session)) {
+                error(get_string('databaseerror', 'mnet'));
+            }
+        } else {
+            $mnet_session->expires = time() + (integer)$session_gc_maxlifetime;
+            update_record('mnet_session', $mnet_session);
+        }
+
+        return $localuser;
+    }
+
+    /**
+     * Returns true if this authentication plugin is 'internal'.
+     *
+     * @returns bool
+     */
+    function is_internal() {
+        return false;
+    }
+
+    /**
+     * Returns true if this authentication plugin can change the user's
+     * password.
+     *
+     * @returns bool
+     */
+    function can_change_password() {
+        return false;
+    }
+
+    /**
+     * Returns the URL for changing the user's pw, or false if the default can
+     * be used.
+     *
+     * @returns bool
+     */
+    function change_password_url() {
+        return false;
+    }
+
+    /**
+     * Prints a form for configuring this authentication plugin.
+     *
+     * This function is called from admin/auth.php, and outputs a full page with
+     * a form for configuring this plugin.
+     *
+     * @param array $page An object containing all the data for this page.
+     */
+    function config_form($config, $err) {
+        include "config.html";
+    }
+
+    /**
+     * Processes and stores configuration data for this authentication plugin.
+     */
+    function process_config($config) {
+        // set to defaults if undefined
+        if (!isset ($config->rpc_negotiation_timeout)) {
+            $config->host = '30';
+        }
+        if (!isset ($config->auto_add_remote_users)) {
+            $config->auto_add_remote_users = '0';
+        }
+
+        // save settings
+        set_config('rpc_negotiation_timeout', $config->rpc_negotiation_timeout, 'auth/mnet');
+        set_config('auto_add_remote_users',   $config->auto_add_remote_users,   'auth/mnet');
+
+        return true;
+    }
+
+    /**
+     * Poll the IdP server to let it know that a user it has authenticated is still
+     * online
+     *
+     * @return  void
+     */
+    function keepalive_client() {
+        global $CFG;
+        $cutoff = time() - 300; // TODO - find out what the remote server's session
+                                // cutoff is, and preempt that
+
+        $sql = "
+            select
+                id,
+                username,
+                mnethostid
+            from
+                {$CFG->prefix}user
+            where
+                lastaccess > '$cutoff' AND
+                mnethostid != '{$CFG->mnet_localhost_id}'
+            order by
+                mnethostid";
+
+        $immigrants = get_records_sql($sql);
+
+        if ($immigrants == false) {
+            return true;
+        }
+
+        $usersArray = array();
+        foreach($immigrants as $immigrant) {
+            $usersArray[$immigrant->mnethostid][] = $immigrant->username;
+        }
+
+        require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
+        foreach($usersArray as $mnethostid => $users) {
+            $mnet_peer = new mnet_peer();
+            $mnet_peer->set_id($mnethostid);
+
+            $mnet_request = new mnet_xmlrpc_client();
+            $mnet_request->set_method('auth/mnet/auth.php/keepalive_server');
+
+            // set $token and $useragent parameters
+            $mnet_request->add_param($users);
+
+            if ($mnet_request->send($mnet_peer) === true) {
+                if (!isset($mnet_request->response['code'])) {
+                    debugging("Server side error has occured on host $mnethostid");
+                    continue;
+                } elseif ($mnet_request->response['code'] > 0) {
+                    debugging($mnet_request->response['message']);
+                }
+                
+                if (!isset($mnet_request->response['last log id'])) {
+                    debugging("Server side error has occured on host $mnethostid\nNo log ID was received.");
+                    continue;
+                }
+            } else {
+                debugging("Server side error has occured on host $mnethostid: " . 
+                          join("\n", $mnet_request->error));
+            }
+
+            $query = "SELECT
+                          l.id as remoteid,
+                          l.time,
+                          l.userid,
+                          l.ip,
+                          l.course,
+                          l.module,
+                          l.cmid,
+                          l.action,
+                          l.url,
+                          l.info,
+                          c.fullname as coursename,
+                          c.modinfo as modinfo,
+                          u.username
+                      FROM
+                          {$CFG->prefix}user u,
+                          {$CFG->prefix}log l,
+                          {$CFG->prefix}course c
+                      WHERE
+                          l.userid = u.id AND
+                          u.mnethostid = '$mnethostid' AND
+                          l.id > '".$mnet_request->response['last log id']."' AND
+                          c.id = l.course
+                      ORDER BY
+                          remoteid ASC";
+
+            $results = get_records_sql($query);
+
+            if (false == $results) continue;
+
+            $param = array();
+
+            foreach($results as $result) {
+                if (!empty($result->modinfo) && !empty($result->cmid)) {
+                    $modinfo = unserialize($result->modinfo);
+                    unset($result->modinfo);
+                    $modulearray = array();
+                    foreach($modinfo as $module) {
+                        $modulearray[$module->cm] = urldecode($module->name);
+                    }
+                    $result->resource_name = $modulearray[$result->cmid];
+                } else {
+                    $result->resource_name = '';
+                }
+
+                $param[] = array (
+                                    'remoteid'      => $result->remoteid,
+                                    'time'          => $result->time,
+                                    'userid'        => $result->userid,
+                                    'ip'            => $result->ip,
+                                    'course'        => $result->course,
+                                    'coursename'    => $result->coursename,
+                                    'module'        => $result->module,
+                                    'cmid'          => $result->cmid,
+                                    'action'        => $result->action,
+                                    'url'           => $result->url,
+                                    'info'          => $result->info,
+                                    'resource_name' => $result->resource_name,
+                                    'username'      => $result->username
+                                 );
+            }
+
+            unset($result);
+
+            $mnet_request = new mnet_xmlrpc_client();
+            $mnet_request->set_method('auth/mnet/auth.php/refresh_log');
+
+            // set $token and $useragent parameters
+            $mnet_request->add_param($param);
+
+            if ($mnet_request->send($mnet_peer) === true) {
+                if ($mnet_request->response['code'] > 0) {
+                    debugging($mnet_request->response['message']);
+                }
+            } else {
+                debugging("Server side error has occured on host $mnet_peer->ip: " .join("\n", $mnet_request->error));
+            }
+        }
+    }
+
+    /**
+     * Receives an array of log entries from an SP and adds them to the mnet_log
+     * table
+     *
+     * @param   array   $array      An array of usernames
+     * @return  string              "All ok" or an error message
+     */
+    function refresh_log($array) {
+        global $CFG, $MNET_REMOTE_CLIENT;
+
+        // We don't want to output anything to the client machine
+        $start = ob_start();
+
+        $returnString = '';
+        begin_sql();
+        $useridarray = array();
+
+        foreach($array as $logEntry) {
+            $logEntryObj = (object)$logEntry;
+            $logEntryObj->hostid = $MNET_REMOTE_CLIENT->id;
+
+            if (isset($useridarray[$logEntryObj->username])) {
+                $logEntryObj->userid = $useridarray[$logEntryObj->username];
+            } else {
+                $logEntryObj->userid = get_field('user','id','username',$logEntryObj->username);
+                if ($logEntryObj->userid == false) {
+                    $logEntryObj->userid = 0;
+                }
+                $useridarray[$logEntryObj->username] = $logEntryObj->userid;
+            }
+
+            unset($logEntryObj->username);
+
+            $insertok = insert_record('mnet_log', $logEntryObj, false);
+
+            if ($insertok) {
+                $MNET_REMOTE_CLIENT->last_log_id = $logEntryObj->remoteid;
+            } else {
+                $returnString .= 'Record with id '.$logEntryObj->remoteid." failed to insert.\n";
+            }
+        }
+        $MNET_REMOTE_CLIENT->commit();
+        commit_sql();
+
+        $end = ob_end_clean();
+
+        if (empty($returnString)) return array('code' => 0, 'message' => 'All ok');
+        return array('code' => 1, 'message' => $returnString);
+    }
+
+    /**
+     * Receives an array of usernames from a remote machine and prods their
+     * sessions to keep them alive
+     *
+     * @param   array   $array      An array of usernames
+     * @return  string              "All ok" or an error message
+     */
+    function keepalive_server($array) {
+        global $MNET_REMOTE_CLIENT, $CFG;
+
+        $CFG->usesid = true;
+        // Addslashes to all usernames, so we can build the query string real
+        // simply with 'implode'
+        $array = array_map('addslashes', $array);
+
+        // We don't want to output anything to the client machine
+        $start = ob_start();
+
+        // We'll get session records in batches of 30
+        $superArray = array_chunk($array, 30);
+
+        $returnString = '';
+
+        foreach($superArray as $subArray) {
+            $subArray = array_values($subArray);
+            $instring = "('".implode("', '",$subArray)."')";
+            $query = "select id, session_id, username from {$CFG->prefix}mnet_session where username in $instring";
+            $results = get_records_sql($query);
+
+            if ($results == false) {
+                // We seem to have a username that breaks our query:
+                // TODO: Handle this error appropriately
+                $returnString .= "We failed to refresh the session for the following usernames: \n".implode("\n", $subArray)."\n\n";
+            } else {
+                // TODO: This process of killing and re-starting the session
+                // will cause PHP to forget any custom session_set_save_handler
+                // stuff. Subsequent attempts to prod existing sessions will
+                // fail, because PHP will look in wherever the default place
+                // may be (files?) and probably create a new session with the
+                // right session ID in that location. If it doesn't have write-
+                // access to that location, then it will fail... not sure how
+                // apparent that will be.
+                // There is no way to capture what the custom session handler
+                // is and then reset it on each pass - I checked that out
+                // already.
+                $sesscache = clone($_SESSION);
+                $sessidcache = session_id();
+                session_write_close();
+                unset($_SESSION);
+
+                $uc = ini_get('session.use_cookies');
+                ini_set('session.use_cookies', false);
+                foreach($results as $emigrant) {
+
+                    unset($_SESSION);
+                    session_name('MoodleSession'.$CFG->sessioncookie);
+                    session_id($emigrant->session_id);
+                    session_start();
+                    session_write_close();
+                }
+
+                ini_set('session.use_cookies', $uc);
+                session_name('MoodleSession'.$CFG->sessioncookie);
+                session_id($sessidcache);
+                session_start();
+                $_SESSION = clone($sesscache);
+                session_write_close();
+            }
+        }
+
+        $end = ob_end_clean();
+
+        if (empty($returnString)) return array('code' => 0, 'message' => 'All ok', 'last log id' => $MNET_REMOTE_CLIENT->last_log_id);
+        return array('code' => 1, 'message' => $returnString, 'last log id' => $MNET_REMOTE_CLIENT->last_log_id);
+    }
+
+    /**
+     * Cron function will be called automatically by cron.php every 5 minutes
+     *
+     * @return void
+     */
+    function cron() {
+        $this->keepalive_client();
+    }
+
+    /**
+     * Cleanup any remote mnet_sessions, kill the local mnet_session data
+     *
+     * This is called by require_logout in moodlelib
+     *
+     * @return   void
+     */
+    function logout() {
+        global $MNET, $CFG, $USER;
+        require_once $CFG->dirroot.'/mnet/xmlrpc/client.php';
+
+        // If the user is local to this Moodle:
+        if ($USER->mnethostid == $MNET->id) {
+            $this->kill_children($USER->username, sha1($_SERVER['HTTP_USER_AGENT']));
+
+        // Else the user has hit 'logout' at a Service Provider Moodle:
+        } else {
+            $this->kill_parent($USER->username, sha1($_SERVER['HTTP_USER_AGENT']));
+
+        }
+    }
+
+    /**
+     * The SP uses this function to kill the session on the parent IdP
+     *
+     * @param   string  $username       Username for session to kill
+     * @param   string  $useragent      SHA1 hash of user agent to look for
+     * @return  string                  A plaintext report of what has happened
+     */
+    function kill_parent($username, $useragent) {
+        global $CFG, $USER;
+        require_once $CFG->dirroot.'/mnet/xmlrpc/client.php';
+        $sql = "
+            select
+                *
+            from
+                {$CFG->prefix}mnet_session s
+            where
+                s.username   = '$username' AND
+                s.useragent  = '$useragent' AND
+                s.mnethostid = '{$USER->mnethostid}'";
+
+        $mnetsessions = get_records_sql($sql);
+
+        $ignore = delete_records('mnet_session', 'username', $username, 'useragent', $useragent, 'mnethostid', $USER->mnethostid);
+
+        if (false != $mnetsessions) {
+            $mnet_peer = new mnet_peer();
+            $mnet_peer->set_id($USER->mnethostid);
+
+            $mnet_request = new mnet_xmlrpc_client();
+            $mnet_request->set_method('auth/mnet/auth.php/kill_children');
+
+            // set $token and $useragent parameters
+            $mnet_request->add_param($username);
+            $mnet_request->add_param($useragent);
+            if ($mnet_request->send($mnet_peer) === false) {
+                debugging(join("\n", $mnet_request->error));
+                return false; 
+            }
+        }
+
+        $_SESSION = array();
+        return true;
+    }
+
+    /**
+     * The IdP uses this function to kill child sessions on other hosts
+     *
+     * @param   string  $username       Username for session to kill
+     * @param   string  $useragent      SHA1 hash of user agent to look for
+     * @return  string                  A plaintext report of what has happened
+     */
+    function kill_children($username, $useragent) {
+        global $CFG, $USER, $MNET_REMOTE_CLIENT;
+        require_once $CFG->dirroot.'/mnet/xmlrpc/client.php';
+
+        $userid = get_field('user', 'id', 'mnethostid', $CFG->mnet_localhost_id, 'username', $username);
+
+        $returnstring = '';
+        $sql = "
+            select
+                *
+            from
+                {$CFG->prefix}mnet_session s
+            where
+                s.userid     = '{$userid}' AND
+                s.useragent  = '{$useragent}'";
+
+        // If we are being executed from a remote machine (client) we don't have
+        // to kill the moodle session on that machine.
+        if (isset($MNET_REMOTE_CLIENT) && isset($MNET_REMOTE_CLIENT->id)) {
+            $excludeid = $MNET_REMOTE_CLIENT->id;
+        } else {
+            $excludeid = -1;
+        }
+
+        $mnetsessions = get_records_sql($sql);
+
+        if (false == $mnetsessions) {
+            $returnstring .= "Could find no remote sessions\n$sql\n";
+            $mnetsessions = array();
+        }
+
+        foreach($mnetsessions as $mnetsession) {
+            $returnstring .=  "Deleting session\n";
+
+            if ($mnetsession->mnethostid == $excludeid) continue;
+
+            $mnet_peer = new mnet_peer();
+            $mnet_peer->set_id($mnetsession->mnethostid);
+
+            $mnet_request = new mnet_xmlrpc_client();
+            $mnet_request->set_method('auth/mnet/auth.php/kill_child');
+
+            // set $token and $useragent parameters
+            $mnet_request->add_param($username);
+            $mnet_request->add_param($useragent);
+            if ($mnet_request->send($mnet_peer) === false) {
+                debugging("Server side error has occured on host $mnethostid: " . 
+                          join("\n", $mnet_request->error));
+            }
+        }
+
+        $ignore = delete_records('mnet_session', 'useragent', $useragent, 'userid', $userid);
+
+        if (isset($MNET_REMOTE_CLIENT) && isset($MNET_REMOTE_CLIENT->id)) {
+            $start = ob_start();
+
+            $uc = ini_get('session.use_cookies');
+            ini_set('session.use_cookies', false);
+            $sesscache = clone($_SESSION);
+            $sessidcache = session_id();
+            session_write_close();
+            unset($_SESSION);
+
+
+            session_id($mnetsession->session_id);
+            session_start();
+            session_unregister("USER");
+            session_unregister("SESSION");
+            unset($_SESSION);
+            $_SESSION = array();
+            session_write_close();
+
+
+            ini_set('session.use_cookies', $uc);
+            session_name('MoodleSession'.$CFG->sessioncookie);
+            session_id($sessidcache);
+            session_start();
+            $_SESSION = clone($sesscache);
+            session_write_close();
+
+            $end = ob_end_clean();
+        } else {
+            $_SESSION = array();
+        }
+        return $returnstring;
+    }
+
+    /**
+     * TODO:Untested When the IdP requests that child sessions are terminated,
+     * this function will be called on each of the child hosts. The machine that
+     * calls the function (over xmlrpc) provides us with the mnethostid we need.
+     *
+     * @param   string  $username       Username for session to kill
+     * @param   string  $useragent      SHA1 hash of user agent to look for
+     * @return  bool                    True on success
+     */
+    function kill_child($username, $useragent) {
+        global $CFG, $MNET_REMOTE_CLIENT;
+        $session = get_record('mnet_session', 'username', $username, 'mnethostid', $MNET_REMOTE_CLIENT->id, 'useragent', $useragent);
+        if (false != $session) {
+            $start = ob_start();
+
+            $uc = ini_get('session.use_cookies');
+            ini_set('session.use_cookies', false);
+            $sesscache = clone($_SESSION);
+            $sessidcache = session_id();
+            session_write_close();
+            unset($_SESSION);
+
+
+            session_id($session->session_id);
+            session_start();
+            session_unregister("USER");
+            session_unregister("SESSION");
+            unset($_SESSION);
+            $_SESSION = array();
+            session_write_close();
+
+
+            ini_set('session.use_cookies', $uc);
+            session_name('MoodleSession'.$CFG->sessioncookie);
+            session_id($sessidcache);
+            session_start();
+            $_SESSION = clone($sesscache);
+            session_write_close();
+
+            $end = ob_end_clean();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * To delete a host, we must delete all current sessions that users from
+     * that host are currently engaged in.
+     *
+     * @param   string  $sessionidarray   An array of session hashes
+     * @return  bool                      True on success
+     */
+    function end_local_sessions(&$sessionArray) {
+        global $CFG;
+        if (is_array($sessionArray)) {
+            $start = ob_start();
+
+            $uc = ini_get('session.use_cookies');
+            ini_set('session.use_cookies', false);
+            $sesscache = clone($_SESSION);
+            $sessidcache = session_id();
+            session_write_close();
+            unset($_SESSION);
+
+            while($session = array_pop($sessionArray)) {
+                session_id($session->session_id);
+                session_start();
+                session_unregister("USER");
+                session_unregister("SESSION");
+                unset($_SESSION);
+                $_SESSION = array();
+                session_write_close();
+            }
+
+            ini_set('session.use_cookies', $uc);
+            session_name('MoodleSession'.$CFG->sessioncookie);
+            session_id($sessidcache);
+            session_start();
+            $_SESSION = clone($sesscache);
+
+            $end = ob_end_clean();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns the user's image as a base64 encoded string.
+     *
+     * @param int $userid The id of the user
+     * @return string     The encoded image
+     */
+    function fetch_user_image($username) {
+        global $CFG;
+
+        if ($user = get_record('user', 'username', $username, 'mnethostid', $CFG->mnet_localhost_id)) {
+            $filename1 = "{$CFG->dataroot}/users/{$user->id}/f1.jpg";
+            $filename2 = "{$CFG->dataroot}/users/{$user->id}/f2.jpg";
+            $return = array();
+            if (file_exists($filename1)) {
+                $return['f1'] = base64_encode(file_get_contents($filename1));
+            }
+            if (file_exists($filename2)) {
+                $return['f2'] = base64_encode(file_get_contents($filename2));
+            }
+            return $return;
+        }
+        return false;
+    }
+
+    /**
+     * Returns the theme information and logo url as strings.
+     *
+     * @return string     The theme info
+     */
+    function fetch_theme_info() {
+        global $CFG;
+
+        $themename = "$CFG->theme";
+        $logourl   = "$CFG->wwwroot/theme/$CFG->theme/images/logo.jpg";
+
+        $return['themename'] = $themename;
+        $return['logourl'] = $logourl;
+        return $return;
+    }
+
+    /**
+     * Determines if an MNET host is providing the nominated service.
+     *
+     * @param int    $mnethostid   The id of the remote host
+     * @param string $servicename  The name of the service
+     * @return bool                Whether the service is available on the remote host
+     */
+    function has_service($mnethostid, $servicename) {
+        global $CFG;
+
+        $sql = "
+            SELECT
+                svc.id as serviceid,
+                svc.name,
+                svc.description,
+                svc.offer,
+                svc.apiversion,
+                h2s.id as h2s_id
+            FROM
+                {$CFG->prefix}mnet_service svc,
+                {$CFG->prefix}mnet_host2service h2s
+            WHERE
+                h2s.hostid = '$mnethostid' AND
+                h2s.serviceid = svc.id AND
+                svc.name = '$servicename' AND
+                h2s.subscribe = '1'";
+
+        return get_records_sql($sql);
+    }
+
+    /**
+     * Checks the MNET access control table to see if the username/mnethost
+     * is permitted to login to this moodle.
+     *
+     * @param string $username   The username
+     * @param int    $mnethostid The id of the remote mnethost
+     * @return bool              Whether the user can login from the remote host
+     */
+    function can_login_remotely($username, $mnethostid) {
+        $access = 'allow';
+        $aclrecord = get_record('mnet_sso_access_control', 'username', $username, 'mnet_host_id', $mnethostid);
+        if (!empty($aclrecord)) {
+            $access = $aclrecord->access;
+        }
+        return $access == 'allow';
+    }
+}
+
+?>
