@@ -1,61 +1,87 @@
-<?PHP  // $Id: config.html
+<?php
 
-if ((!include_once('Auth/RADIUS.php')) or (!class_exists(Auth_RADIUS_PAP))) { // Is Auth/RADIUS really there?
+// TODO: this generates broken file errors, needs safer test -JH
+
+// Is Auth/RADIUS really there?
+if ((!include_once('Auth/RADIUS.php')) or (!class_exists(Auth_RADIUS_PAP))) {
     print '<p align="center"><font color="red"><strong>Warning: The Auth_RADIUS module does not seem to be present. Please ensure it is installed and enabled.</strong></font></p>';
 } 
-   if (!isset($config->auth_radiushost)) {
-        $config->auth_radiushost = "127.0.0.1";
-    }
-    if (!isset($config->auth_radiusnasport)) {
-        $config->auth_radiusport = "0";
-    }
-    if (!isset($config->auth_radiussecret)) {
-        $config->auth_radiussecret = "";
-    }
+
+// set to defaults if undefined
+if (!isset($config->host)) {
+    $config->host = '127.0.0.1';
+}
+if (!isset($config->nasport)) {
+    $config->nasport = '1812';
+}
+if (!isset($config->secret)) {
+    $config->secret = '';
+}
+if (!isset($config->changepasswordurl)) {
+    $config->changepasswordurl = '';
+}
+
 ?>
-<tr valign="top" >
-        <td align="right"><P>auth_radiushost:</td>
-        <td>
-        <input name="auth_radiushost" type="text" size="30" value="<?php echo $config->auth_radiushost?>">
-        <?php  if (isset($err["auth_radiushost"]))
-        formerr($err["auth_radiushost"]); ?>
+<table cellspacing="0" cellpadding="5" border="0" align="center">
+
+<tr valign="top">
+    <td align="right"> host: </td>
+    <td>
+        <input name="host" type="text" size="30" value="<?php echo $config->host ?>">
+        <?php
+
+        if (isset($err['host'])) {
+            formerr($err['host']);
+        }
+
+        ?>
         </td>
-    <td>
-    <?php  print_string("auth_radiushost","auth") ?>
-     </td>
-</TR>
+    <td><?php print_string('auth_radiushost', 'auth') ?></td>
+</tr>
 
-<TR valign="top" >
-        <td align="right"><P>auth_radiusnasport:</td>
-        <td>
-    <input name="auth_radiusport" type="text" size="6" value="<?php echo $config->auth_radiusport ?>">
-    <?php  if (isset($err["auth_radiusnasport"])) formerr($err["auth_radiusnasport"]); ?>
-    </td>
+<tr valign="top">
+    <td align="right"> nasport: </td>
     <td>
-    <?php  print_string("auth_radiusnasport","auth") ?>
+        <input name="nasport" type="text" size="6" value="<?php echo $config->nasport ?>">
+        <?php
+        
+        if (isset($err['nasport'])) {
+            formerr($err['nasport']);
+        }
+        
+        ?>
     </td>
-</TR>
+    <td><?php print_string('auth_radiusnasport', 'auth') ?></td>
+</tr>
 
-<TR valign="top" >
-        <td align="right"><P>auth_radiussecret:</td>
-        <td>
-    <input name="auth_radiussecret" type="text" size="6" value="<?php echo $config->auth_radiussecret ?>">
-    <?php  if (isset($err["auth_radiussecret"])) formerr($err["auth_radiussecret"]); ?>     </td>
+<tr valign="top" >
+    <td align="right"> secret: </td>
     <td>
-    <?php  print_string("auth_radiussecret","auth") ?>
+        <input name="secret" type="text" size="6" value="<?php echo $config->secret ?>">
+        <?php
+        
+        if (isset($err['secret'])) {
+            formerr($err['secret']);
+        }
+        
+        ?>
     </td>
-</TR>
+    <td><?php print_string('auth_radiussecret', 'auth') ?></td>
+</tr>
 
-<TR valign="top">
-        <td align="right"><P><?php  print_string("instructions", "auth")
-?>:</td>
-        <td>
-    <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php
-p($config->auth_instructions) ?></textarea>
-    </td>
+<tr valign="top">
+    <td align="right"> changepasswordurl: </td>
     <td>
-    <?php  print_string("authinstructions","auth") ?>
-    <?php  helpbutton("text", get_string("helptext")) ?>
-    </td>
-</TR>
+        <input name="changepasswordurl" type="text" value="<?php echo $config->changepasswordurl ?>" />
+        <?php
 
+        if (isset($err['changepasswordurl'])) {
+            formerr($err['changepasswordurl']);
+        }
+
+        ?>
+    </td>
+    <td><?php print_string('changepasswordhelp', 'auth') ?></td>
+</tr>
+
+</table>

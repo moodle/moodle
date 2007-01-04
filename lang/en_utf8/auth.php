@@ -1,28 +1,33 @@
-<?PHP // $Id$ 
-      // auth.php - created with Moodle 1.7 beta + (2006101003)
+<?php // $Id$ 
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
 $string['alternatelogin'] = 'If you enter a URL here, it will be used as the login page for this site. The page should contain a form which has the action property set to <strong>\'$a\'</strong> and return fields <strong>username</strong> and <strong>password</strong>.<br />Be careful not to enter an incorrect URL as you may lock yourself out of this site.<br />Leave this setting blank to use the default login page.';
 $string['alternateloginurl'] = 'Alternate Login URL';
-$string['auth_cas_baseuri'] = 'URI of the server (nothing if no baseUri)<br />For example, if the CAS server responds to host.domaine.fr/CAS/ then<br />cas_baseuri = CAS/';
-$string['auth_cas_create_user'] = 'Turn this on if you want to insert CAS-authenticated users in Moodle database. If not then only users who already exist in the Moodle database can log in.';
-$string['auth_cas_enabled'] = 'Turn this on if you want to use CAS authentication.';
-$string['auth_cas_hostname'] = 'Hostname of the CAS server <br />eg: host.domain.fr';
-$string['auth_cas_invalidcaslogin'] = 'Sorry, your login has failed - you could not be authorised';
-$string['auth_cas_language'] = 'Selected language';
+
+// CAS plugin
 $string['auth_cas_logincas'] = 'Secure connection access';
-$string['auth_cas_port'] = 'Port of the CAS server';
+$string['auth_cas_invalidcaslogin'] = 'Sorry, your login has failed - you could not be authorised';
 $string['auth_cas_server_settings'] = 'CAS server configuration';
-$string['auth_cas_text'] = 'Secure connection';
-$string['auth_cas_version'] = 'Version of CAS';
-$string['auth_casdescription'] = 'This method uses a CAS server (Central Authentication Service) to authenticate users in a Single Sign On environment (SSO). You can also use a simple LDAP authentication. If the given username and password are valid according to CAS, Moodle creates a new user entry in its database, taking user attributes from LDAP if required. On following logins only the username and password are checked.';
 $string['auth_castitle'] = 'Use a CAS server (SSO)';
-$string['auth_changepasswordhelp'] = 'Change password help';
-$string['auth_changepasswordhelp_expl'] = 'Display lost password help to users who have lost their $a password. This will be displayed either as well as or instead of the <strong>Change Password URL</strong> or Internal Moodle password change.';
+$string['auth_cas_hostname'] = 'Hostname of the CAS server <br />eg: host.domain.fr';
+$string['auth_cas_baseuri'] = 'URI of the server (nothing if no baseUri)<br />For example, if the CAS server responds to host.domaine.fr/CAS/ then<br />cas_baseuri = CAS/';
+$string['auth_cas_port'] = 'Port of the CAS server';
+$string['auth_cas_version'] = 'Version of CAS';
+$string['auth_cas_language'] = 'Selected language';
+$string['auth_casdescription'] = 'This method uses a CAS server (Central Authentication Service) to authenticate users in a Single Sign On environment (SSO). You can also use a simple LDAP authentication. If the given username and password are valid according to CAS, Moodle creates a new user entry in its database, taking user attributes from LDAP if required. On following logins only the username and password are checked.';
+$string['auth_cas_enabled'] = 'Turn this on if you want to use CAS authentication.';
+$string['auth_cas_text'] = 'Secure connection';
+$string['auth_cas_create_user'] = 'Turn this on if you want to insert CAS-authenticated users in Moodle database. If not then only users who already exist in the Moodle database can log in.';
+
 $string['auth_changepasswordurl'] = 'Change password URL';
 $string['auth_changepasswordurl_expl'] = 'Specify the url to send users who have lost their $a password. Set <strong>Use standard Change Password page</strong> to <strong>No</strong>.';
+$string['auth_changepasswordhelp'] = 'Change password help';
+$string['auth_changepasswordhelp_expl'] = 'Display lost password help to users who have lost their $a password. This will be displayed either as well as or instead of the <strong>Change Password URL</strong> or Internal Moodle password change.';
 $string['auth_common_settings'] = 'Common settings';
 $string['auth_data_mapping'] = 'Data mapping';
+
+// Database plugin
 $string['auth_dbdescription'] = 'This method uses an external database table to check whether a given username and password is valid.  If the account is a new one, then information from other fields may also be copied across into Moodle.';
 $string['auth_dbextrafields'] = 'These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <b>external database fields</b> that you specify here. <p>If you leave these blank, then defaults will be used.</p><p>In either case, the user will be able to edit all of these fields after they log in.</p>';
 $string['auth_dbfieldpass'] = 'Name of the field containing passwords';
@@ -35,8 +40,12 @@ $string['auth_dbtable'] = 'Name of the table in the database';
 $string['auth_dbtitle'] = 'Use an external database';
 $string['auth_dbtype'] = 'The database type (See the <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb documentation</a> for details)';
 $string['auth_dbuser'] = 'Username with read access to the database';
+
+// Email plugin
 $string['auth_emaildescription'] = 'Email confirmation is the default authentication method.  When the user signs up, choosing their own new username and password, a confirmation email is sent to the user\'s email address.  This email contains a secure link to a page where the user can confirm their account. Future logins just check the username and password against the stored values in the Moodle database.';
-$string['auth_emailtitle'] = 'Email-based authentication';
+$string['auth_emailtitle'] = 'Email-based self-registration';
+
+// FirstClass plugin
 $string['auth_fccreators'] = 'List of groups whose members are allowed to create new courses. Separate multiple groups with \';\'. Names must be spelled exactly as on FirstClass server. System is case-sensitive.';
 $string['auth_fcdescription'] = 'This method uses a FisrtClass server to check whether a given username and password is valid.';
 $string['auth_fcfppport'] = 'Server port (3333 is the most common)';
@@ -44,6 +53,8 @@ $string['auth_fchost'] = 'The FirstClass server address. Use the IP number or DN
 $string['auth_fcpasswd'] = 'Password for the account above.';
 $string['auth_fctitle'] = 'Use a FirstClass server';
 $string['auth_fcuserid'] = 'Userid for FirstClass account with privilege \'Subadministrator\' set.';
+
+// Fieldlocks
 $string['auth_fieldlock'] = 'Lock value';
 $string['auth_fieldlock_expl'] = '<p><b>Lock value:</b> If enabled, will prevent Moodle users and admins from editing the field directly. Use this option if you are maintaining this data in the external auth system. </p>';
 $string['auth_fieldlocks'] = 'Lock user fields';
@@ -53,11 +64,13 @@ $string['auth_imaphost'] = 'The IMAP server address. Use the IP number, not DNS 
 $string['auth_imapport'] = 'IMAP server port number. Usually this is 143 or 993.';
 $string['auth_imaptitle'] = 'Use an IMAP server';
 $string['auth_imaptype'] = 'The IMAP server type.  IMAP servers can have different types of authentication and negotiation.';
+
+// LDAP plugin
 $string['auth_ldap_bind_dn'] = 'If you want to use bind-user to search users, specify it here. Something like \'cn=ldapuser,ou=public,o=org\'';
 $string['auth_ldap_bind_pw'] = 'Password for bind-user.';
 $string['auth_ldap_bind_settings'] = 'Bind settings';
 $string['auth_ldap_contexts'] = 'List of contexts where users are located. Separate different contexts with \';\'. For example: \'ou=users,o=org; ou=others,o=org\'';
-$string['auth_ldap_create_context'] = 'If you enable user creation with email confirmation, specify the context where users are created. This context should be different from other users to prevent security issues. You don\'t need to add this context to ldap_context-variable, Moodle will search for users from this context automatically.<br /><b>Note!</b> You have to modify function auth_user_create() in file auth/ldap/lib.php to make user creation work';
+$string['auth_ldap_create_context'] = 'If you enable user creation with email confirmation, specify the context where users are created. This context should be different from other users to prevent security issues. You don\'t need to add this context to ldap_context-variable, Moodle will search for users from this context automatically.<br /><b>Note!</b> You have to modify the method user_create() in file auth/ldap/auth.php to make user creation work';
 $string['auth_ldap_creators'] = 'List of groups whose members are allowed to create new courses. Separate multiple groups with \';\'. Usually something like \'cn=teachers,ou=staff,o=myorg\'';
 $string['auth_ldap_expiration_desc'] = 'Select No to disable expired password checking or LDAP to read passwordexpiration time directly from LDAP';
 $string['auth_ldap_expiration_warning_desc'] = 'Number of days before password expiration warning is issued.';
@@ -89,42 +102,69 @@ $string['auth_ldapdescription'] = 'This method provides authentication against a
                                   password are checked.';
 $string['auth_ldapextrafields'] = 'These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <b>LDAP fields</b> that you specify here. <p>If you leave these fields blank, then nothing will be transferred from LDAP and Moodle defaults will be used instead.</p><p>In either case, the user will be able to edit all of these fields after they log in.</p>';
 $string['auth_ldaptitle'] = 'Use an LDAP server';
+
+// Manual plugin
 $string['auth_manualdescription'] = 'This method removes any way for users to create their own accounts.  All accounts must be manually created by the admin user.';
 $string['auth_manualtitle'] = 'Manual accounts only';
+
+// MNET plugin
+$string['auth_mnettitle'] = 'Moodle Network authentication';
+$string['auth_mnetdescription'] = 'Users are authenticated according to the web of trust defined in your Moodle Network settings.';
+$string['auth_mnet_rpc_negotiation_timeout'] = 'The timeout in seconds for authentication over the XMLRPC transport.';
+$string['auth_mnet_auto_add_remote_users'] = 'When set to Yes, a local user record is auto-created when a remote user logs in for the first time.';
+
 $string['auth_multiplehosts'] = 'Multiple hosts OR addresses can be specified (eg host1.com;host2.com;host3.com) or (eg xxx.xxx.xxx.xxx;xxx.xxx.xxx.xxx)';
+
+// NNTP plugin
 $string['auth_nntpdescription'] = 'This method uses an NNTP server to check whether a given username and password is valid.';
 $string['auth_nntphost'] = 'The NNTP server address. Use the IP number, not DNS name.';
 $string['auth_nntpport'] = 'Server port (119 is the most common)';
 $string['auth_nntptitle'] = 'Use an NNTP server';
+
+// None plugin
 $string['auth_nonedescription'] = 'Users can sign in and create valid accounts immediately, with no authentication against an external server and no confirmation via email.  Be careful using this option - think of the security and administration problems this could cause.';
 $string['auth_nonetitle'] = 'No authentication';
+
+// PAM plugin
 $string['auth_pamdescription'] = 'This method uses PAM to access the native usernames on this server. You have to install <a href=\"http://www.math.ohio-state.edu/~ccunning/pam_auth/\" target=\"_blank\">PHP4 PAM Authentication</a> in order to use this module.';
 $string['auth_pamtitle'] = 'PAM (Pluggable Authentication Modules)';
+
 $string['auth_passwordisexpired'] = 'Your password is expired. Do you want change your password now?';
 $string['auth_passwordwillexpire'] = 'Your password will expire in $a days. Do you want change your password now?';
+
+// POP3 plugin
 $string['auth_pop3description'] = 'This method uses a POP3 server to check whether a given username and password is valid.';
 $string['auth_pop3host'] = 'The POP3 server address. Use the IP number, not DNS name.';
 $string['auth_pop3mailbox'] = 'Name of the mailbox to attempt a connection with.  (usually INBOX)';
 $string['auth_pop3port'] = 'Server port (110 is the most common, 995 is common for SSL)';
 $string['auth_pop3title'] = 'Use a POP3 server';
 $string['auth_pop3type'] = 'Server type. If your server uses certificate security, choose pop3cert.';
+
+// RADIUS plugin
+$string['auth_radiustitle'] = 'Use a RADIUS server';
 $string['auth_radiusdescription'] = 'This method uses a <a href=\"http://en.wikipedia.org/wiki/RADIUS\" target=\"_blank\">RADIUS</a> server to check whether a given username and password is valid.';
 $string['auth_radiushost'] = 'Address of the RADIUS server';
 $string['auth_radiusnasport'] = 'Port to use to connect';
 $string['auth_radiussecret'] = 'Shared secret';
-$string['auth_radiustitle'] = 'Use a RADIUS server';
-$string['auth_shib_convert_data'] = 'Data modification API';
-$string['auth_shib_convert_data_description'] = 'You can use this API to further modify the data provided by Shibboleth. Read the <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> for further instructions.';
-$string['auth_shib_convert_data_warning'] = 'The file does not exist or is not readable by the webserver process!';
-$string['auth_shib_instructions'] = 'Use the <a href=\"$a\">Shibboleth login</a> to get access via Shibboleth, if your institution supports it.<br />Otherwise, use the normal login form shown here.';
-$string['auth_shib_instructions_help'] = 'Here you should provide custom instructions for your users to explain Shibboleth.  It will be shown on the login page in the instructions section. The instructions must include a link to \"<b>$a</b>\" that users click when they want to log in.';
+
+// Shibboleth plugin
+$string['auth_shibbolethdescription'] = 'Using this method users are created and authenticated using <a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>.<br>Be sure to read the <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> for Shibboleth on how to set up your Moodle with Shibboleth';
+$string['auth_shibbolethtitle'] = 'Shibboleth';
+$string['auth_shibboleth_login'] = 'Shibboleth Login';
+$string['auth_shibboleth_manual_login'] = 'Manual Login';
 $string['auth_shib_only'] = 'Shibboleth only';
 $string['auth_shib_only_description'] = 'Check this option if a Shibboleth authentication shall be enforced';
 $string['auth_shib_username_description'] = 'Name of the webserver Shibboleth environment variable that shall be used as Moodle username';
-$string['auth_shibboleth_login'] = 'Shibboleth Login';
-$string['auth_shibboleth_manual_login'] = 'Manual Login';
-$string['auth_shibbolethdescription'] = 'Using this method users are created and authenticated using <a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>.<br>Be sure to read the <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> for Shibboleth on how to set up your Moodle with Shibboleth';
-$string['auth_shibbolethtitle'] = 'Shibboleth';
+$string['auth_shib_instructions'] = 'Use the <a href=\"$a\">Shibboleth login</a> to get access via Shibboleth, if your institution supports it.<br />Otherwise, use the normal login form shown here.';
+$string['auth_shib_convert_data'] = 'Data modification API';
+$string['auth_shib_convert_data_description'] = 'You can use this API to further modify the data provided by Shibboleth. Read the <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> for further instructions.';
+$string['auth_shib_instructions_help'] = 'Here you should provide custom instructions for your users to explain Shibboleth.  It will be shown on the login page in the instructions section. The instructions must include a link to \"<b>$a</b>\" that users click when they want to log in.';
+$string['auth_shib_convert_data_warning'] = 'The file does not exist or is not readable by the webserver process!';
+
+$string['shib_not_set_up_error'] = 'Shibboleth authentication doesn\'t seem to be set up correctly because no Shibboleth environment variables are present for this page. Please consult the <a href=\"README.txt\">README</a> for further instructions on how to set up Shibboleth authentication or contact the webmaster of this Moodle installation.';
+$string['shib_no_attributes_error'] = 'You seem to be Shibboleth authenticated but Moodle didn\'t receive any user attributes. Please check that your Identity Provider releases the necessary attributes ($a) to the Service Provider Moodle is running on or inform the webmaster of this server.';
+$string['shib_not_all_attributes_error'] = 'Moodle needs certain Shibboleth attributes which are not present in your case. The attributes are: $a<br />Please contact the webmaster of this server or your Identity Provider.';
+
 $string['auth_updatelocal'] = 'Update local';
 $string['auth_updatelocal_expl'] = '<p><b>Update local:</b> If enabled, the field will be updated (from external auth) every time the user logs in or there is a user synchronization. Fields set to update locally should be locked.</p>';
 $string['auth_updateremote'] = 'Update external';
@@ -139,29 +179,28 @@ $string['changepassword'] = 'Change password URL';
 $string['changepasswordhelp'] = 'Here you can specify a location at which your users can recover or change their username/password if they\'ve forgotten it.  This will be provided to users as a button on the login page and their user page.  if you leave this blank the button will not be printed.';
 $string['chooseauthmethod'] = 'Choose an authentication method';
 $string['createpasswordifneeded'] = 'Create password if needed';
+$string['infilefield'] = 'Field required in file';
 $string['forcechangepassword'] = 'Force change password';
 $string['forcechangepassword_help'] = 'Force users to change password on their next login to Moodle.';
 $string['forcechangepasswordfirst_help'] = 'Force users to change password on their first login to Moodle.';
 $string['guestloginbutton'] = 'Guest login button';
-$string['infilefield'] = 'Field required in file';
 $string['instructions'] = 'Instructions';
 $string['internal'] = 'Internal';
-$string['locked'] = 'Locked';
 $string['md5'] = 'MD5 encryption';
 $string['passwordhandling'] = 'Password field handling';
 $string['plaintext'] = 'Plain text';
-$string['shib_no_attributes_error'] = 'You seem to be Shibboleth authenticated but Moodle didn\'t receive any user attributes. Please check that your Identity Provider releases the necessary attributes ($a) to the Service Provider Moodle is running on or inform the webmaster of this server.';
-$string['shib_not_all_attributes_error'] = 'Moodle needs certain Shibboleth attributes which are not present in your case. The attributes are: $a<br />Please contact the webmaster of this server or your Identity Provider.';
-$string['shib_not_set_up_error'] = 'Shibboleth authentication doesn\'t seem to be set up correctly because no Shibboleth environment variables are present for this page. Please consult the <a href=\"README.txt\">README</a> for further instructions on how to set up Shibboleth authentication or contact the webmaster of this Moodle installation.';
+$string['selfregistration'] = 'Self registration';
+$string['selfregistration_help'] = 'Choose which auth plugin will handle user self-registration.';
 $string['showguestlogin'] = 'You can hide or show the guest login button on the login page.';
 $string['stdchangepassword'] = 'Use standard Change Password Page';
 $string['stdchangepassword_expl'] = 'If the external authentication system allows password changes through Moodle, switch this to Yes. This setting overrides \'Change Password URL\'.';
 $string['stdchangepassword_explldap'] = 'NOTE: It is recommended that you use LDAP over an SSL encrypted tunnel (ldaps://) if the LDAP server is remote.';
+$string['update_oncreate'] = 'On creation';
+$string['update_onlogin']  = 'On every login';
+$string['update_onupdate']  = 'On update';
+$string['update_never']    = 'Never';
 $string['unlocked'] = 'Unlocked';
 $string['unlockedifempty'] = 'Unlocked if empty';
-$string['update_never'] = 'Never';
-$string['update_oncreate'] = 'On creation';
-$string['update_onlogin'] = 'On every login';
-$string['update_onupdate'] = 'On update';
+$string['locked'] = 'Locked';
 
 ?>

@@ -1,3 +1,11 @@
 <!-- No config needed -->
 <div align="center"><?php print_string('none'); ?></div>
-<?php print_auth_lock_options($auth, $user_fields, get_string('auth_fieldlocks_help', 'auth'), false, false); ?>
+
+<table cellspacing="0" cellpadding="5" border="0" align="center">
+<?php 
+
+global $user_fields;
+print_auth_lock_options('none', $user_fields, get_string('auth_fieldlocks_help', 'auth'), false, false);
+
+?>
+</table>

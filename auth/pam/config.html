@@ -1,10 +1,11 @@
-<tr valign="top"> 
-  <td align="right"><p><?php  print_string("instructions", "auth") ?>:</p></td>
-  <td><textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
-  </td>
-  <td> 
-    <?php  print_string("authinstructions","auth") ?>
-    <?php  helpbutton("text", get_string("helptext")) ?>
-  </td>
-</tr>
-<?php print_auth_lock_options($auth, $user_fields, get_string('auth_fieldlocks_help', 'auth'), false, false); ?>
+<!-- No config needed -->
+<div align="center"><?php print_string('none'); ?></div>
+
+<table cellspacing="0" cellpadding="5" border="0" align="center">
+<?php 
+
+global $user_fields;
+print_auth_lock_options('pam', $user_fields, get_string('auth_fieldlocks_help', 'auth'), false, false);
+
+?>
+</table>

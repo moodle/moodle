@@ -24,6 +24,8 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
     }
 
     $loginsite = get_string("loginsite");
+    $casauth = get_auth_plugin('cas');
+    $ldapauth = get_auth_plugin('ldap');
 
 
     $frm = false;
@@ -59,9 +61,8 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
             $user = false;    /// Can't log in as guest if guest button is disabled
             $frm = false;
         } else if (!$user) {
-            if ($CFG->auth == "cas" && $frm->username != 'guest'){ /// Cas SSO case
-               require_once($CFG->dirroot.'/auth/cas/lib.php');
-               $user = cas_authenticate_user_login($frm->username, $frm->password);
+            if ($CFG->auth == "cas" && $frm->username != 'guest') { /// Cas SSO case
+               $user = $casauth->authenticate_user_login($frm->username, $frm->password);
             }else{
                $user = authenticate_user_login($frm->username, $frm->password);
             }
@@ -101,18 +102,19 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
             $SESSION->justloggedin = true;
 
             // Restore the calendar filters, if saved
-            if(intval(get_user_preferences('calendar_persistflt', 0))) {
+            if (intval(get_user_preferences('calendar_persistflt', 0))) {
                 include_once($CFG->dirroot.'/calendar/lib.php');
                 calendar_set_filters_status(get_user_preferences('calendar_savedflt', 0xff));
             }
 
             //Select password change url
-            if (is_internal_auth() || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
+            $userauth = get_auth_plugin($USER->auth);
+            if (method_exists($userauth, 'can_change_password') and $userauth->can_change_password()) {
                 $passwordchangeurl=$CFG->wwwroot.'/login/change_password.php';
             } 
 
             // check whether the user should be changing password
-            if (get_user_preferences('auth_forcepasswordchange', false)){
+            if (get_user_preferences('auth_forcepasswordchange', false)) {
                 if (isset($passwordchangeurl)) {
                     redirect($passwordchangeurl);
                 } else {
@@ -140,9 +142,8 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
             // check if user password has expired
             // Currently supported only for ldap-authentication module
-            if (isset($CFG->ldap_expiration) && $CFG->ldap_expiration == 1 ) {
-                if (function_exists('auth_password_expire')){
-                    $days2expire = auth_password_expire($USER->username);
+            if ($ldapauth->config->expiration == 1) {
+                    $days2expire = $ldapauth->password_expire($USER->username);
                     if (intval($days2expire) > 0 && intval($days2expire) < intval($CFG->{$USER->auth.'_expiration_warning'})) {
                         print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>"); 
                         notice_yesno(get_string('auth_passwordwillexpire', 'auth', $days2expire), $passwordchangeurl, $urltogo); 
@@ -153,8 +154,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
                         notice_yesno(get_string('auth_passwordisexpired', 'auth'), $passwordchangeurl, $urltogo);
                         print_footer();
                         exit;
-                    }    
-                }
+                    }
             }
 
             reset_login_count();
@@ -166,8 +166,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
             exit;
     
         } else {
-          if ($CFG->auth == "cas" ){ /// CAS error login
-            require_once($CFG->dirroot.'/auth/cas/lib.php');
+          if ($CFG->auth == "cas" ) { /// CAS error login
             $errormsg = get_string("invalidcaslogin");
             phpCAS::logout("$CFG->wwwroot/auth/cas/forbidden.php");
           }else{
@@ -175,8 +174,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
           }
         }
     }
-    require_once($CFG->dirroot.'/auth/cas/lib.php');
-    $user=cas_automatic_authenticate($user);
+    $user = $casauth->automatic_authenticate($user);
     if ($user) {
         if (! $user->confirmed ) {       // they never confirmed via email 
             print_header(get_string("mustconfirm"), get_string("mustconfirm") ); 
@@ -210,18 +208,19 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
         $SESSION->justloggedin = true;
 
         // Restore the calendar filters, if saved
-        if(intval(get_user_preferences('calendar_persistflt', 0))) {
+        if (intval(get_user_preferences('calendar_persistflt', 0))) {
             include_once($CFG->dirroot.'/calendar/lib.php');
             calendar_set_filters_status(get_user_preferences('calendar_savedflt', 0xff));
         }
 
         //Select password change url
-        if (is_internal_auth() || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
+        $userauth = get_auth_plugin($USER->auth);
+        if (method_exists($userauth, 'can_change_password') and $userauth->can_change_password()) {
             $passwordchangeurl=$CFG->wwwroot.'/login/change_password.php';
         }
 
         // check whether the user should be changing password
-        if (get_user_preferences('auth_forcepasswordchange', false)){
+        if (get_user_preferences('auth_forcepasswordchange', false)) {
             if (isset($passwordchangeurl)) {
                 redirect($passwordchangeurl);
             } else {
@@ -249,9 +248,8 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
         // check if user password has expired
         // Currently supported only for ldap-authentication module
-        if (isset($CFG->ldap_expiration) && $CFG->ldap_expiration == 1 ) {
-            if (function_exists('auth_password_expire')){
-                $days2expire = auth_password_expire($USER->username);
+        if ($ldapauth->config->expiration == 1) {
+                $days2expire = $ldapauth->password_expire($USER->username);
                 if (intval($days2expire) > 0 && intval($days2expire) < intval($CFG->{$USER->auth.'_expiration_warning'})) {
                     print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>"); 
                     notice_yesno(get_string('auth_passwordwillexpire', 'auth', $days2expire), $passwordchangeurl, $urltogo); 
@@ -262,8 +260,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
                     notice_yesno(get_string('auth_passwordisexpired', 'auth'), $passwordchangeurl, $urltogo);
                     print_footer();
                     exit;
-                }    
-            }
+                }
         }
 
         reset_login_count();
@@ -274,7 +271,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
         exit;
     } else {
-       if(!$CFG->guestloginbutton){
+       if (!$CFG->guestloginbutton) {
            $errormsg = get_string("invalidcaslogin");
            phpCAS::logout("$CFG->wwwroot/auth/cas/forbidden.php");
        }

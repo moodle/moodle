@@ -1,54 +1,65 @@
 <?php
-    if (!isset($config->auth_dbhost)) {
-        $config->auth_dbhost = "localhost";
+
+    // set to defaults if undefined
+    if (!isset($config->host)) {
+        $config->host = "localhost";
     }
-    if (!isset($config->auth_dbtype)) {
-        $config->auth_dbtype = "mysql";
+    if (!isset($config->type)) {
+        $config->type = "mysql";
     }
-    if (!isset($config->auth_dbname)) {
-        $config->auth_dbname = "";
+    if (!isset($config->name)) {
+        $config->name = "";
     }
-    if (!isset($config->auth_dbuser)) {
-        $config->auth_dbuser = "";
+    if (!isset($config->user)) {
+        $config->user = "";
     }
-    if (!isset($config->auth_dbpass)) {
-        $config->auth_dbpass = "";
+    if (!isset($config->pass)) {
+        $config->pass = "";
     }
-    if (!isset($config->auth_dbtable)) {
-        $config->auth_dbtable = "";
+    if (!isset($config->table)) {
+        $config->table = "";
     }
-    if (!isset($config->auth_dbfielduser)) {
-        $config->auth_dbfielduser = "";
+    if (!isset($config->fielduser)) {
+        $config->fielduser = "";
     }
-    if (!isset($config->auth_dbfieldpass)) {
-        $config->auth_dbfieldpass = "";
+    if (!isset($config->fieldpass)) {
+        $config->fieldpass = "";
     }
-    if (!isset($config->auth_dbpasstype)) {
-        $config->auth_dbpasstype = "plaintext";
+    if (!isset($config->passtype)) {
+        $config->passtype = "plaintext";
+    }
+    if (!isset($config->changepasswordurl)) {
+        $config->changepasswordurl = '';
     }
 
     $pluginconfig = get_config('auth/db');
+
 ?>
+<table cellspacing="0" cellpadding="5" border="0" align="center">
 
 <tr valign="top" class="required">
-    <td align="right">auth_dbhost:</td>
+    <td align="right"> host: </td>
     <td>
-        <input name="auth_dbhost" type="text" size="30" value="<?php echo $config->auth_dbhost?>" />
-    <?php  if (isset($err["auth_dbhost"])) formerr($err["auth_dbhost"]); ?>
+        <input name="host" type="text" size="30" value="<?php echo $config->host?>" />
+        <?php
+
+        if (isset($err["host"])) {
+            formerr($err["host"]);
+        }
+        
+        ?>
     </td>
-    <td>
-    <?php  print_string("auth_dbhost","auth") ?>
-    </td>
+    <td><?php print_string("auth_dbhost", "auth") ?></td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right">auth_dbtype:</td>
+    <td align="right"> type: </td>
     <td>
     <?php  $dbtypes = array("access","ado_access", "ado", "ado_mssql", "borland_ibase", "csv", "db2", "fbsql", "firebird", "ibase", "informix72", "informix", "mssql", "mssql_n", "mysql", "mysqlt", "oci805", "oci8", "oci8po", "odbc", "odbc_mssql", "odbc_oracle", "oracle", "postgres64", "postgres7", "postgres", "proxy", "sqlanywhere", "sybase", "vfp");
        foreach ($dbtypes as $dbtype) {
            $dboptions[$dbtype] = $dbtype;
        }
-       choose_from_menu($dboptions, "auth_dbtype", $config->auth_dbtype, "");
+       choose_from_menu($dboptions, "type", $config->type, "");
     ?>
       
     </td>
@@ -58,97 +69,130 @@
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right">auth_dbname:</td>
+    <td align="right"> name: </td>
     <td>
-    <input name="auth_dbname" type="text" size="30" value="<?php echo $config->auth_dbname?>" />
-    <?php  if (isset($err["auth_dbname"]))formerr($err["auth_dbname"]); ?>
+        <input name="name" type="text" size="30" value="<?php echo $config->name?>" />
+        <?php
+
+        if (isset($err["name"])) {
+            formerr($err["name"]);
+        }
+        
+        ?>
+    </td>
+    <td><?php print_string("auth_dbname", "auth") ?></td>
+</tr>
+
+<tr valign="top" class="required">
+    <td align="right"> user: </td>
+    <td>
+        <input name="user" type="text" size="30" value="<?php echo $config->user?>" />
+        <?php
+
+        if (isset($err["user"])) {
+            formerr($err["user"]);
+        }
+
+        ?>
+    </td>
+    <td><?php print_string("auth_dbuser", "auth") ?></td>
+</tr>
+
+<tr valign="top" class="required">
+    <td align="right"> pass: </td>
+    <td>
+        <input name="pass" type="text" size="30" value="<?php echo $config->pass?>" />
+        <?php
+
+        if (isset($err["pass"])) {
+            formerr($err["pass"]);
+        }
+
+        ?>
     </td>
     <td>
-    <?php  print_string("auth_dbname","auth") ?>
+    <?php print_string("auth_dbpass", "auth") ?>
     </td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right">auth_dbuser:</td>
+    <td align="right"> table: </td>
     <td>
-    <input name="auth_dbuser" type="text" size="30" value="<?php echo $config->auth_dbuser?>" />
-    <?php  if (isset($err["auth_dbuser"])) formerr($err["auth_dbuser"]); ?>
+        <input name="table" type="text" size="30" value="<?php echo $config->table?>" />
+        <?php
+
+        if (isset($err["table"])) {
+            formerr($err["table"]);
+        }
+
+        ?>
     </td>
-    <td>
-    <?php  print_string("auth_dbuser","auth") ?>
-    </td>
+    <td><?php print_string("auth_dbtable", "auth") ?></td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right">auth_dbpass:</td>
+    <td align="right"> fielduser: </td>
     <td>
-    <input name="auth_dbpass" type="text" size="30" value="<?php echo $config->auth_dbpass?>" />
-    <?php  if (isset($err["auth_dbpass"])) formerr($err["auth_dbpass"]); ?>
+        <input name="fielduser" type="text" size="30" value="<?php echo $config->fielduser?>" />
+        <?php
+
+        if (isset($err["fielduser"])) {
+            formerr($err["fielduser"]);
+        }
+
+        ?>
     </td>
-    <td>
-    <?php  print_string("auth_dbpass","auth") ?>
-    </td>
+    <td><?php print_string("auth_dbfielduser", "auth") ?></td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right">auth_dbtable:</td>
+    <td align="right"> fieldpass: </td>
     <td>
-    <input name="auth_dbtable" type="text" size="30" value="<?php echo $config->auth_dbtable?>" />
-    <?php  if (isset($err["auth_dbtable"])) formerr($err["auth_dbtable"]); ?>
+        <input name="fieldpass" type="text" size="30" value="<?php echo $config->fieldpass?>" />
+        <?php
+
+        if (isset($err["fieldpass"])) {
+            formerr($err["fieldpass"]);
+        }
+
+        ?>
     </td>
-    <td>
-    <?php  print_string("auth_dbtable","auth") ?>
-    </td>
+    <td><?php print_string("auth_dbfieldpass", "auth") ?></td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right">auth_dbfielduser:</td>
+    <td align="right"> passtype: </td>
     <td>
-    <input name="auth_dbfielduser" type="text" size="30" value="<?php echo $config->auth_dbfielduser?>" />
-    <?php  if (isset($err["auth_dbfielduser"])) formerr($err["auth_dbfielduser"]); ?>
-    </td>
-    <td>
-    <?php  print_string("auth_dbfielduser","auth") ?>
-    </td>
-</tr>
+        <?php  
 
-<tr valign="top" class="required">
-    <td align="right">auth_dbfieldpass:</td>
-    <td>
-    <input name="auth_dbfieldpass" type="text" size="30" value="<?php echo $config->auth_dbfieldpass?>" />
-    <?php  if (isset($err["auth_dbfieldpass"])) formerr($err["auth_dbfieldpass"]); ?>
-    </td>
-    <td>
-    <?php  print_string("auth_dbfieldpass","auth") ?>
-    </td>
-</tr>
+        $passtype["plaintext"] = get_string("plaintext", "auth");
+        $passtype["md5"]       = get_string("md5", "auth");
+        $passtype["internal"]  = get_string("internal", "auth");
+        choose_from_menu($passtype, "passtype", $config->passtype, "");
 
-<tr valign="top" class="required">
-    <td align="right">auth_dbpasstype:</td>
-    <td>
-    <?php  
-       $passtype["plaintext"] = get_string("plaintext", "auth");
-       $passtype["md5"]       = get_string("md5", "auth");
-       $passtype["internal"]  = get_string("internal", "auth");
-       
-       choose_from_menu($passtype, "auth_dbpasstype", $config->auth_dbpasstype, "");
-    ?>
-      
+        ?>
     </td>
-    <td>
-    <?php  print_string("auth_dbpasstype","auth") ?>
-    </td>
+    <td><?php print_string("auth_dbpasstype", "auth") ?></td>
 </tr>
-
-<?php print_auth_lock_options($auth, $user_fields, get_string("auth_dbextrafields","auth"), true, false);  ?>
 
 <tr valign="top">
-    <td align="right"><?php  print_string("instructions", "auth") ?>:</td>
+    <td align="right"> changepasswordurl: </td>
     <td>
-    <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
+        <input name="changepasswordurl" type="text" value="<?php echo $config->changepasswordurl ?>" />
+        <?php
+
+        if (isset($err['changepasswordurl'])) {
+            formerr($err['changepasswordurl']);
+        }
+
+        ?>
     </td>
-    <td>
-    <?php  print_string("authinstructions","auth") ?>
-    <?php  helpbutton("text", get_string("helptext")) ?>
-    </td>
+    <td><?php print_string('changepasswordhelp', 'auth') ?></td>
 </tr>
+<?php 
+
+global $user_fields;
+print_auth_lock_options('db', $user_fields, get_string('auth_dbextrafields', 'auth'), true, false);
+
+?>
+</table>

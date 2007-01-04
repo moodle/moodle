@@ -5,7 +5,7 @@
     require('lib.php');
 
     if (isloggedin() && $USER->username != 'guest') {      // Nothing to do
-        if (isset($SESSION->wantsurl) and (strpos($SESSION->wantsurl, $CFG->wwwroot) === 0)){
+        if (isset($SESSION->wantsurl) and (strpos($SESSION->wantsurl, $CFG->wwwroot) === 0)) {
             $urltogo = $SESSION->wantsurl;    /// Because it's an address in this site
             unset($SESSION->wantsurl);
 
@@ -20,14 +20,14 @@
     $pluginconfig   = get_config('auth/shibboleth');
 
     // Check whether Shibboleth is configured properly
-    if (empty($pluginconfig->shib_user_attribute)) {
+    if (empty($pluginconfig->user_attribute)) {
         error(get_string( 'shib_not_set_up_error', 'auth'));
      }
 
 /// If we can find the Shibboleth attribute, save it in session and return to main login page
-    if (!empty($_SERVER[$pluginconfig->shib_user_attribute])) {    // Shibboleth auto-login
-        $frm->username = $_SERVER[$pluginconfig->shib_user_attribute];
-        $frm->password = substr(base64_encode($_SERVER[$pluginconfig->shib_user_attribute]),0,8);
+    if (!empty($_SERVER[$pluginconfig->user_attribute])) {    // Shibboleth auto-login
+        $frm->username = $_SERVER[$pluginconfig->user_attribute];
+        $frm->password = substr(base64_encode($_SERVER[$pluginconfig->user_attribute]),0,8);
         // The random password consists of the first 8 letters of the base 64 encoded user ID
         // This password is never used unless the user account is converted to manual 
 
@@ -72,8 +72,8 @@
     
     // If we can find any (user independent) Shibboleth attributes but no user 
     // attributes we probably didn't receive any user attributes
-    elseif (!empty($_SERVER['HTTP_SHIB_APPLICATION_ID'])){
-        error(get_string( 'shib_no_attributes_error', 'auth' , '\''.$pluginconfig->shib_user_attribute.'\', \''.$pluginconfig->field_map_firstname.'\', \''.$pluginconfig->field_map_lastname.'\' and \''.$pluginconfig->field_map_email.'\''));
+    elseif (!empty($_SERVER['HTTP_SHIB_APPLICATION_ID'])) {
+        error(get_string( 'shib_no_attributes_error', 'auth' , '\''.$pluginconfig->user_attribute.'\', \''.$pluginconfig->field_map_firstname.'\', \''.$pluginconfig->field_map_lastname.'\' and \''.$pluginconfig->field_map_email.'\''));
     } else {
          error(get_string( 'shib_not_set_up_error', 'auth'));
     }

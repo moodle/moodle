@@ -1,60 +1,94 @@
 <?php
-    if (!isset($config->auth_imaphost)) {
-        $config->auth_imaphost = "127.0.0.1";
-    }
-    if (!isset($config->auth_imaptype)) {
-        $config->auth_imaptype = "imap";
-    }
-    if (!isset($config->auth_imapport)) {
-        $config->auth_imapport = "143";
-    }
+
+// set to defaults if undefined
+if (!isset($config->host)) {
+    $config->host = '127.0.0.1';
+}
+if (!isset($config->type)) {
+    $config->type = 'imap';
+}
+if (!isset($config->port)) {
+    $config->port = '143';
+}
+if (!isset($config->changepasswordurl)) {
+    $config->changepasswordurl = '';
+}
+
 ?>
+<table cellspacing="0" cellpadding="5" border="0" align="center">
+
 <tr valign="top" class="required">
-    <td align="right">auth_imaphost:</td>
+    <td align="right"> host: </td>
     <td>
-        <input name="auth_imaphost" type="text" size="30" value="<?php echo $config->auth_imaphost?>" />
-    <?php  if (isset($err["auth_imaphost"])) formerr($err["auth_imaphost"]); ?>
+        <input name="host" type="text" size="30" value="<?php echo $config->host ?>" />
+        <?php
+
+        if (isset($err['host'])) {
+            formerr($err['host']);
+        }
+
+        ?>
     </td>
     <td>
-    <?php  print_string("auth_imaphost","auth") ?> 
-    <?php  print_string("auth_multiplehosts","auth") ?>
+        <?php
+
+        print_string('auth_imaphost', 'auth');
+        print_string('auth_multiplehosts', 'auth');
+
+        ?>
     </td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right">auth_imaptype:</td>
+    <td align="right"> type: </td>
     <td>
-    <?php  $imaptypes = array("imap","imapssl", "imapcert", "imaptls");
-       foreach($imaptypes as $imaptype) {
-           $imapoptions[$imaptype] = $imaptype;
-       }
-       choose_from_menu($imapoptions, "auth_imaptype", $config->auth_imaptype, "");
-    ?>
+        <?php
+
+        $imaptypes = array('imap', 'imapssl', 'imapcert', 'imaptls');
+        foreach ($imaptypes as $imaptype) {
+            $imapoptions[$imaptype] = $imaptype;
+        }
+        choose_from_menu($imapoptions, 'type', $config->type, '');
+
+        ?>
     </td>
-    <td>
-    <?php  print_string("auth_imaptype","auth") ?>
-    </td>
+    <td><?php print_string('auth_imaptype', 'auth') ?></td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right">auth_imapport:</td>
+    <td align="right"> port: </td>
     <td>
-    <input name="auth_imapport" type="text" size="6" value="<?php echo $config->auth_imapport?>" />
-    <?php  if (isset($err["auth_imapport"])) formerr($err["auth_imapport"]); ?>
+        <input name="port" type="text" size="6" value="<?php echo $config->port ?>" />
+        <?php
+
+        if (isset($err['port'])) {
+            formerr($err['port']);
+        }
+
+        ?>
     </td>
-    <td>
-    <?php  print_string("auth_imapport","auth") ?>
-    </td>
+    <td><?php print_string('auth_imapport', 'auth') ?></td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><?php  print_string("instructions", "auth") ?>:</td>
+    <td align="right"> changepasswordurl: </td>
     <td>
-    <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
+        <input name="changepasswordurl" type="text" value="<?php echo $config->changepasswordurl ?>" />
+        <?php
+
+        if (isset($err['changepasswordurl'])) {
+            formerr($err['changepasswordurl']);
+        }
+
+        ?>
     </td>
-    <td>
-    <?php  print_string("authinstructions","auth") ?>
-    <?php  helpbutton("text", get_string("helptext")) ?>
-    </td>
+    <td><?php print_string('changepasswordhelp', 'auth') ?></td>
 </tr>
-<?php print_auth_lock_options($auth, $user_fields, get_string('auth_fieldlocks_help', 'auth'), false, false); ?>
+
+<?php 
+
+global $user_fields;
+print_auth_lock_options('imap', $user_fields, get_string('auth_fieldlocks_help', 'auth'), false, false);
+
+?>
+</table>

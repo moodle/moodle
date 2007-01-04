@@ -21,7 +21,7 @@
  */
 
 
-if(!empty($_SERVER['GATEWAY_INTERFACE'])){
+if (!empty($_SERVER['GATEWAY_INTERFACE'])) {
     error_log("should not be called from apache!");
     exit;
 }
@@ -31,9 +31,10 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php'); // global moodl
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->dirroot.'/lib/blocklib.php');
 require_once($CFG->dirroot.'/mod/resource/lib.php');
-require_once($CFG->dirroot.'/auth/db/lib.php');
+require_once($CFG->dirroot.'/lib/moodlelib.php');
 require_once($CFG->dirroot.'/mod/forum/lib.php');
 $CFG->debug=10;
-auth_sync_users(true  );
+$dbauth = get_auth_plugin('db');
+$dbauth->sync_users(true);
 
 ?>

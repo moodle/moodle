@@ -1,58 +1,83 @@
 <?php
-    // Set default values
-    $pluginconfig   = get_config('auth/shibboleth');
 
-    if (!isset($config->auth_instructions) or empty($pluginconfig->shib_user_attribute)) {
+    global $CFG;
+
+    // Set to defaults if undefined
+    if (!isset($config->auth_instructions) or empty($config->user_attribute)) {
         $config->auth_instructions = get_string('auth_shib_instructions', 'auth', $CFG->wwwroot.'/auth/shibboleth/index.php');
     }
+    if (!isset ($config->user_attribute)) {
+        $config->user_attribute = '';
+    }
+    if (!isset ($config->convert_data)) {
+        $config->convert_data = '';
+    }
+    if (!isset($config->changepasswordurl)) {
+        $config->changepasswordurl = '';
+    }
 
-    if (!isset ($pluginconfig->user_attribute)) {
-        $pluginconfig->user_attribute = '';
-    }
-    if (!isset ($pluginconfig->convert_data)) {
-        $pluginconfig->convert_data = '';
-    }
 ?>
-<tr>
-    <td colspan="3" align="left">
-      <p>
-        <?php  print_string("auth_shib_username_description", "auth") ?>
-      </p>
-    </td>
-</tr>
+<table cellspacing="0" cellpadding="5" border="0" align="center">
+
 <tr valign="top" class="required">
-    <td align="right"><?php  print_string("username") ?>:</td>
+    <td align="right"><?php print_string("username") ?>:</td>
     <td>
-    <input name="pluginconfig_shib_user_attribute" type="text" size="30" value="<?php echo $pluginconfig->shib_user_attribute ?>">
+        <input name="user_attribute" type="text" size="30" value="<?php echo $config->user_attribute ?>">
     </td>
-    <td></td>
+    <td><?php print_string("auth_shib_username_description", "auth") ?></td>
+</tr>
+
+<tr valign="top">
+    <td align="right"><?php print_string("instructions", "auth") ?>:</td>
+    <td>
+        <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php p($config->auth_instructions) ?></textarea> 
+    </td>
+    <td>
+        <?php
+
+        print_string("auth_shib_instructions_help", "auth", htmlspecialchars($CFG->wwwroot.'/auth/shibboleth/index.php'));
+        helpbutton("text", get_string("helptext"));
+
+        ?>
     </td>
 </tr>
 
-<?php print_auth_lock_options($auth, $user_fields, '<!-- empty help -->', true, false);  ?>
+<tr valign="top">
+    <td align="right"><?php print_string("auth_shib_convert_data", "auth") ?>:</td>
+    <td>
+        <input name="convert_data" type="text" size="30" value="<?php echo $config->convert_data?>"> 
+        <?php 
 
-<tr valign="top">
-    <td align="right"><?php  print_string("instructions", "auth") ?>:</td>
-    <td>
-    <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
-    </td>
-    <td>
-    <?php  print_string("auth_shib_instructions_help","auth", htmlspecialchars($CFG->wwwroot.'/auth/shibboleth/index.php')) ?>
-    <?php  helpbutton("text", get_string("helptext")) ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><?php  print_string("auth_shib_convert_data", "auth") ?>:</td>
-    <td>
-    <input name="pluginconfig_convert_data" type="text" size="30" value="<?php echo $pluginconfig->convert_data?>"> 
-    <?php 
-          if ($pluginconfig->convert_data && $pluginconfig->convert_data != '' && !is_readable($pluginconfig->convert_data)){
+        if ($config->convert_data and $config->convert_data != '' and !is_readable($config->convert_data)) {
               echo '<br><font color="red">';
               print_string("auth_shib_convert_data_warning", "auth");
               echo '</font>';
-          }
-    ?>
+        }
+
+        ?>
     </td>
-    <td><?php  print_string("auth_shib_convert_data_description", "auth") ?></td>
-    </td>
+    <td><?php print_string("auth_shib_convert_data_description", "auth") ?></td>
 </tr>
+
+<tr valign="top">
+    <td align="right"> changepasswordurl: </td>
+    <td>
+        <input name="changepasswordurl" type="text" value="<?php echo $config->changepasswordurl ?>" />
+        <?php
+
+        if (isset($err['changepasswordurl'])) {
+            formerr($err['changepasswordurl']);
+        }
+
+        ?>
+    </td>
+    <td><?php print_string('changepasswordhelp', 'auth') ?></td>
+</tr>
+
+<?php 
+
+global $user_fields;
+print_auth_lock_options('shibboleth', $user_fields, '<!-- empty help -->', true, false);
+
+?>
+</table>

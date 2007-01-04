@@ -1,75 +1,112 @@
-<?php  // $Id$
-    if (!isset($config->auth_pop3host)) {
-        $config->auth_pop3host = "127.0.0.1";
-    }
-    if (!isset($config->auth_pop3type)) {
-        $config->auth_pop3type = "pop3notls";
-    }
-    if (!isset($config->auth_pop3port)) {
-        $config->auth_pop3port = "110";
-    }
-    if (!isset($config->auth_pop3mailbox)) {
-        $config->auth_pop3mailbox = "INBOX";
-    }
+<?php
+
+// set to defaults if undefined
+if (!isset($config->host)) {
+    $config->host = '127.0.0.1';
+}
+if (!isset($config->type)) {
+    $config->type = 'pop3notls';
+}
+if (!isset($config->port)) {
+    $config->port = '110';
+}
+if (!isset($config->mailbox)) {
+    $config->mailbox = 'INBOX';
+}
+if (!isset($config->changepasswordurl)) {
+    $config->changepasswordurl = '';
+}
+
 ?>
+<table cellspacing="0" cellpadding="5" border="0" align="center">
+
 <tr valign="top" class="required">
-    <td align="right">auth_pop3host:</td>
+    <td align="right"> host: </td>
     <td>
-        <input name="auth_pop3host" type="text" size="30" value="<?php echo $config->auth_pop3host?>" />
-    <?php  if (isset($err["auth_pop3host"])) formerr($err["auth_pop3host"]); ?>
+        <input name="host" type="text" size="30" value="<?php echo $config->host ?>" />
+        <?php
+
+        if (isset($err['host'])) {
+            formerr($err['host']);
+        }
+
+        ?>
     </td>
     <td>
-    <?php  print_string("auth_pop3host","auth") ?>
-    <?php  print_string("auth_multiplehosts","auth") ?>
+        <?php
+        
+        print_string('auth_pop3host', 'auth');
+        print_string('auth_multiplehosts', 'auth');
+        
+        ?>
     </td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right">auth_pop3type:</td>
+    <td align="right"> type: </td>
     <td>
-    <?php  $pop3types = array("pop3","pop3cert", "pop3notls");
-       foreach($pop3types as $pop3type) {
-           $pop3options[$pop3type] = $pop3type;
-       }
-       choose_from_menu($pop3options, "auth_pop3type", $config->auth_pop3type, "");
-    ?>
+        <?php
+
+        $pop3types = array('pop3', 'pop3cert', 'pop3notls');
+        foreach ($pop3types as $pop3type) {
+            $pop3options[$pop3type] = $pop3type;
+        }
+        choose_from_menu($pop3options, 'type', $config->type, '');
+
+        ?>
     </td>
-<td>
-    <?php  print_string("auth_pop3type","auth") ?>
-    </td>
+    <td><?php print_string('auth_pop3type', 'auth') ?></td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right">auth_pop3port:</td>
+    <td align="right"> port: </td>
     <td>
-    <input name="auth_pop3port" type="text" size="6" value="<?php echo $config->auth_pop3port?>" />
-    <?php  if (isset($err["auth_pop3port"])) formerr($err["auth_pop3port"]); ?>
+        <input name="port" type="text" size="6" value="<?php echo $config->port ?>" />
+        <?php
+
+        if (isset($err['port'])) {
+            formerr($err['port']);
+        }
+
+        ?>
     </td>
-    <td>
-    <?php  print_string("auth_pop3port","auth") ?>
-    </td>
+    <td><?php print_string('auth_pop3port', 'auth') ?></td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right">auth_pop3mailbox:</td>
+    <td align="right"> mailbox: </td>
     <td>
-    <input name="auth_pop3mailbox" type="text" size="6" value="<?php echo $config->auth_pop3mailbox?>" />
-    <?php  if (isset($err["auth_pop3mailbox"])) formerr($err["auth_pop3mailbox"]); ?>
+        <input name="mailbox" type="text" size="6" value="<?php echo $config->mailbox ?>" />
+        <?php
+
+        if (isset($err['mailbox'])) {
+            formerr($err['mailbox']);
+        }
+
+        ?>
     </td>
-    <td>
-    <?php  print_string("auth_pop3mailbox","auth") ?>
-    </td>
+    <td><?php print_string('auth_pop3mailbox', 'auth') ?></td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><?php  print_string("instructions", "auth") ?>:</td>
+    <td align="right"> changepasswordurl: </td>
     <td>
-    <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
+        <input name="changepasswordurl" type="text" value="<?php echo $config->changepasswordurl ?>" />
+        <?php
+
+        if (isset($err['changepasswordurl'])) {
+            formerr($err['changepasswordurl']);
+        }
+
+        ?>
     </td>
-    <td>
-    <?php  print_string("authinstructions","auth") ?>
-    <?php  helpbutton("text", get_string("helptext")) ?>
-    </td>
+    <td><?php print_string('changepasswordhelp', 'auth') ?></td>
 </tr>
 
-<?php print_auth_lock_options($auth, $user_fields, get_string('auth_fieldlocks_help', 'auth'), false, false); ?>
+<?php 
+
+global $user_fields;
+print_auth_lock_options('pop3', $user_fields, get_string('auth_fieldlocks_help', 'auth'), false, false);
+
+?>
+</table>

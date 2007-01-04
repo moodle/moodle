@@ -65,11 +65,9 @@
                  print_string("loginstepsnone");
                  break;
                default:
+                 $authplugin = get_auth_plugin($CFG->auth);
                  echo format_text($CFG->auth_instructions);
-                 if (!function_exists('auth_user_login')) {
-                    require_once("../auth/$CFG->auth/lib.php");
-                 }
-                 if (!empty($CFG->auth_user_create) and function_exists('auth_user_create') ){
+                 if (!empty($authplugin->config->user_create) and method_exists($authplugin, 'user_create')) {
 ?>
 
                  <div align="center">

@@ -132,7 +132,7 @@ Example 2: The country, city and street are provided in one Shibboleth attribute
 
 If you want to use this hook you have to be a skilled PHP programmer. It is 
 strongly recommended that you take a look at the file 
-moodle/auth/shibboleth/lib.php, especially the function 'auth_get_userinfo' 
+moodle/auth/shibboleth/auth.php, especially the function 'get_userinfo' 
 where this file is included. 
 The context of the file is the same as within this login function. So you
 can directly edit the object $result.
