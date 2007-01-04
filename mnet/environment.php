@@ -120,17 +120,21 @@ class mnet_environment {
             set_config('openssl_history', serialize($openssl_history), 'mnet');
 
             // 3. Generate fresh keys
-            $this->keypair = array();
-            $this->keypair = mnet_generate_keypair();
-            $this->public_key         = $this->keypair['certificate'];
-            $details                  = openssl_x509_parse($this->public_key);
-            $this->public_key_expires = $details['validTo_time_t'];
-
-            set_config('openssl', implode('@@@@@@@@', $this->keypair), 'mnet');
-
-            update_record('mnet_host', $this);
+            $this->replace_keys();
         }
         return true;
+    }
+
+    function replace_keys() {
+        $this->keypair = array();
+        $this->keypair = mnet_generate_keypair();
+        $this->public_key         = $this->keypair['certificate'];
+        $details                  = openssl_x509_parse($this->public_key);
+        $this->public_key_expires = $details['validTo_time_t'];
+
+        set_config('openssl', implode('@@@@@@@@', $this->keypair), 'mnet');
+
+        update_record('mnet_host', $this);
     }
 
     function get_private_key() {

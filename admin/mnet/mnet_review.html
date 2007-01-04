@@ -23,7 +23,7 @@ print_simple_box_start("center", "");
 <input type="hidden" name="step" value="commit" />
 <input type="hidden" name="last_connect_time" value="<?php echo $mnet_peer->last_connect_time; ?>" />
 <input type="hidden" name="id" value="<?php echo isset($mnet_peer->id)?  $mnet_peer->id : '0' ; ?>" />
-<table cellpadding="9" cellspacing="0" >
+<table cellpadding="9" cellspacing="0" width="635">
 
 <tr>
     <td align="right" valign="top" nowrap><?php print_string('site'); ?>:</td>
@@ -43,47 +43,43 @@ if (empty($mnet_peer->public_key)) $mnet_peer->public_key = '';
         helpbutton("publickey", get_string('publickey', 'mnet'), "mnet", true, true);
     ?></td>
 <?php
+
+
+
 if (isset($mnet_peer->deleted) && $mnet_peer->deleted > 0) {
     $key = mnet_get_public_key($mnet_peer->wwwroot);
     $mnet_peer->public_key = clean_param($key, PARAM_PEM);
-?>
-    <td valign="top">
-    <?php 
-    if (empty($mnet_peer->public_key)) {
-        notice(get_string('invalidpubkey', 'mnet'));
-    }
-    ?>
-    <textarea rows="17" cols="65" name="public_key" style="font-size: 8px;"><?php echo $mnet_peer->public_key; ?></textarea></td>
-</tr>
-<?php
-} else {
-?>
-    <td valign="top">
-    <?php 
-    if (empty($mnet_peer->public_key)) {
-        p(get_string('invalidpubkey', 'mnet'));
-    }
-    ?>
-    <pre style="font-size: 8px;">
-    <?php echo $mnet_peer->public_key; ?>
-    </pre></td>
-</tr>
-<?php
 }
+?>
+    <td valign="top">
+        <?php 
+        if (empty($mnet_peer->public_key)) {
+            print_string('nopubkey', 'mnet');
+        }
+        ?><br>
+        <textarea rows="17" cols="65" name="public_key" style="font-size: 8px;"><?php echo $mnet_peer->public_key; ?></textarea>
+    </td>
+</tr>
+<?php
 
+if(!empty($currentkey)):
+?>
+    <tr>
+        <td align="right" valign="top" nowrap></td>
+        <td valign="top"><?php print_string('keymismatch', 'mnet'); ?></td>
+    </tr>
+    <tr>
+        <td align="right" valign="top" nowrap><?php print_string('currentkey', 'mnet'); ?>:</td>
+        <td valign="top"><pre style="font-size: 8px;"><?php echo $currentkey;?></pre></td>
+    </tr>
+<?php
+endif;
 
 if (isset($mnet_peer->id) && $mnet_peer->id > 0):
 ?>
     <tr>
         <td align="right" valign="top" nowrap><?php print_string('last_connect_time', 'mnet'); ?>:</td>
         <td valign="top"><?php echo ($mnet_peer->last_connect_time == 0)? get_string('never','mnet') : date('H:i:s d/m/Y',$mnet_peer->last_connect_time);?></td>
-    </tr>
-<?php
-if (isset($mnet_peer->transport) && $mnet_peer->transport > 0):
-?>
-    <tr>
-        <td align="right" valign="top" nowrap><?php print_string('current_transport', 'mnet'); ?>:</td>
-        <td valign="top"><?php echo mnet_get_transport_name($mnet_peer->transport);?></td>
     </tr>
 <?php
 endif;
@@ -98,8 +94,6 @@ if (isset($mnet_peer->deleted) && $mnet_peer->deleted > 0):
         </td>
     </tr>
 <?php
-endif;
-
 endif;
 
 if (isset($mnet_peer->ip_address) && '' != $mnet_peer->ip_address):
@@ -119,9 +113,8 @@ endif;
     <td></td>
     <td><input type="submit" value="<?php print_string("savechanges"); ?>" /></td>
 </tr>
+</table>
 <?php
-
-echo '    </table>';
 print_simple_box_end();
 admin_externalpage_print_footer($adminroot);
 ?>

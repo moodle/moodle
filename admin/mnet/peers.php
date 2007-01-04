@@ -56,10 +56,11 @@ if (($form = data_submitted()) && confirm_sesskey()) {
             $mnet_peer->set_id($form->id);
         } else {
             // PARAM_URL requires a genuine TLD (I think) This breaks my testing
-            $temp_wwwroot = $form->wwwroot; //clean_param($form->wwwroot, PARAM_URL);
+            $temp_wwwroot = clean_param($form->wwwroot, PARAM_URL);
             if ($temp_wwwroot !== $form->wwwroot) {
-                trigger_error("We now parse the wwwroot with PARAM_URL");
-                error('Invalid URL parameter.', 'peers.php');
+                trigger_error("We now parse the wwwroot with PARAM_URL. Your URL will need to have a valid TLD, etc.");
+                error(get_string("invalidurl", 'mnet'),'peers.php');
+                exit;
             }
             unset($temp_wwwroot);
             $mnet_peer->bootstrap($form->wwwroot);
@@ -77,24 +78,27 @@ if (($form = data_submitted()) && confirm_sesskey()) {
         if (isset($form->public_key)) {
             $form->public_key = clean_param($form->public_key, PARAM_PEM);
             if (empty($form->public_key)) {
-                // Public key was not in a correct format
+                error(get_string("invalidpubkey", 'mnet'),'peers.php?step=update&hostid='.$mnet_peer->id);
+                exit;
             } else {
                 $oldkey = $mnet_peer->public_key;
                 $mnet_peer->public_key = $form->public_key;
                 $mnet_peer->public_key_expires   = $mnet_peer->check_common_name($form->public_key);
                 if ($mnet_peer->public_key_expires == false) {
                     $mnet_peer->public_key == $oldkey;
+                    error(get_string("invalidpubkey", 'mnet'),'peers.php?step=update&hostid='.$mnet_peer->id);
+                    exit;
                 }
             }
         }
-    
+
         // PREVENT DUPLICATE RECORDS ///////////////////////////////////////////
         if ('input' == $form->step) {
             if ( isset($mnet_peer->id) && $mnet_peer->id > 0 ) {
-                error(get_string("hostexists ".$mnet_peer->id, 'mnet', $mnet_peer->id),'peers.php?step=update&hostid='.$mnet_peer->id);
+                error(get_string("hostexists", 'mnet', $mnet_peer->id),'peers.php?step=update&hostid='.$mnet_peer->id);
             }
         }
-    
+
         if ('input' == $form->step) {
             include('./mnet_review.html');
         } elseif ('commit' == $form->step) {
@@ -109,6 +113,8 @@ if (($form = data_submitted()) && confirm_sesskey()) {
 } elseif (is_int($hostid)) {
     $mnet_peer = new mnet_peer();
     $mnet_peer->set_id($hostid);
+    $currentkey = mnet_get_public_key($mnet_peer->wwwroot);
+    if($currentkey == $mnet_peer->public_key) unset($currentkey);
     $form = new stdClass();
     if ($hostid != $CFG->mnet_all_hosts_id) {
         include('./mnet_review.html');
