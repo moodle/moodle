@@ -96,7 +96,7 @@
 ?>
 
 
-<table id="layout-table">
+<table id="layout-table" summary="">
   <tr>
   <?php
 
@@ -233,7 +233,7 @@
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing || has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
         if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-            echo '<div align="center">'.update_course_icon($SITE->id).'</div>';
+            echo '<div style="text-align:center">'.update_course_icon($SITE->id).'</div>';
             echo '<br />';
         }
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
