@@ -33,14 +33,14 @@ class mnet_encxml_parser {
         xml_set_element_handler($this->parser, "start_element", "end_element");
         xml_set_character_data_handler($this->parser, "discard_data");
 
-        $this->tag_number      = 0; // Just a unique ID for each tag
-        $this->digest         = '';
-        $this->remote_wwwroot  = '';
-        $this->signature      = '';
-        $this->data_object     = '';
-        $this->key_URI         = '';
+        $this->tag_number        = 0; // Just a unique ID for each tag
+        $this->digest            = '';
+        $this->remote_wwwroot    = '';
+        $this->signature         = '';
+        $this->data_object       = '';
+        $this->key_URI           = '';
         $this->payload_encrypted = false;
-        $this->cipher         = array();
+        $this->cipher            = array();
         return true;
     }
 
