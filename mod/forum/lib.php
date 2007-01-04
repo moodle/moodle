@@ -2448,14 +2448,16 @@ function forum_print_mode_form($id, $mode, $forumtype='') {
 function forum_search_form($course, $search='') {
     global $CFG;
 
-    $output  = '<table border="0" cellpadding="0" cellspacing="0"><tr><td nowrap="nowrap">';
-    $output .= '<form name="search" action="'.$CFG->wwwroot.'/mod/forum/search.php" style="display:inline">';
+    $output  = '<div class="forumsearch">';
+    $output .= '<form action="'.$CFG->wwwroot.'/mod/forum/search.php" style="display:inline">';
+    $output .= '<fieldset>';
     $output .= helpbutton('search', get_string('search'), 'moodle', true, false, '', true);
     $output .= '<input name="search" type="text" size="18" value="'.$search.'" alt="search" />';
     $output .= '<input value="'.get_string('searchforums', 'forum').'" type="submit" />';
     $output .= '<input name="id" type="hidden" value="'.$course->id.'" />';
+    $output .= '</fieldset>';
     $output .= '</form>';
-    $output .= '</td></tr></table>';
+    $output .= '</div>';
 
     return $output;
 }
