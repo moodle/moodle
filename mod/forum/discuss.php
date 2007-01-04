@@ -201,7 +201,7 @@
 
 /// Print the controls across the top
 
-    echo '<table width="100%"><tr><td>';
+    echo '<table width="100%" class="discussioncontrols"><tr><td>';
 
     if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/site:accessallgroups', $modcontext))) {
         if ($groups = groups_get_groups_names($course->id)) { //TODO:

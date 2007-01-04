@@ -2012,6 +2012,11 @@ body#mod-forum-search .introcontent {
   margin-left: 5px;
 }
 
+#mod-forum-discuss .discussioncontrols td {
+  width: 33%;
+  text-align:center;
+}
+
 #email .unsubscribelink {
   margin-top:20px;
   border-width: 0px 1px 0px 0px;
