@@ -14,6 +14,29 @@
     $search       = trim(optional_param('search', '', PARAM_RAW));
     $lastinitial  = optional_param('lastinitial', '', PARAM_CLEAN);  // only show students with this last initial
     $firstinitial = optional_param('firstinitial', '', PARAM_CLEAN); // only show students with this first initial
+    $ru           = optional_param('ru', '2', PARAM_INT);            // show remote users
+    $lu           = optional_param('lu', '2', PARAM_INT);            // show local users
+    $acl          = optional_param('acl', '0', PARAM_INT);           // id of user to tweak mnet ACL (requires $access)
+
+    // Determine which users we are looking at (local, remote, or both). Start with both.
+    if (!isset($_SESSION['admin-user-remoteusers'])) {
+        $_SESSION['admin-user-remoteusers'] = 1;
+        $_SESSION['admin-user-localusers']  = 1;
+    }
+    if ($ru == 0 or $ru == 1) {
+        $_SESSION['admin-user-remoteusers'] = $ru;
+    }
+    if ($lu == 0 or $lu == 1) {
+         $_SESSION['admin-user-localusers'] = $lu;
+    }
+    $remoteusers = $_SESSION['admin-user-remoteusers'];
+    $localusers  = $_SESSION['admin-user-localusers'];
+
+    // if neither remote nor local, set to sensible local only
+    if (!$remoteusers and !$localusers) {
+        $_SESSION['admin-user-localusers'] = 1;
+        $localusers = 1;
+    }
 
     if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID)) {  // Should never happen
         redirect('index.php');
@@ -28,6 +51,7 @@
         $user->password     = hash_internal_user_password('admin');
         $user->email        = 'root@localhost';
         $user->confirmed    = 1;
+        $user->mnethostid   = $CFG->mnet_localhost_id;
         $user->lang         = $CFG->lang;
         $user->maildisplay  = 1;
         $user->timemodified = time();
@@ -105,6 +129,7 @@
             $user->lang         = $CFG->lang;
             $user->confirmed    = 1;
             $user->timemodified = time();
+            $user->mnethostid   = $CFG->mnet_localhost_id;
 
             if (! $user->id = insert_record('user', $user)) {
                 error('Could not start a new user!');
@@ -182,6 +207,40 @@
                     notify(get_string('deletednot', '', fullname($user, true)));
                 }
             }
+        } else if ($acl and confirm_sesskey()) {
+            if (!has_capability('moodle/user:delete', $sitecontext)) {
+                // TODO: this should be under a separate capability
+                error('You are not permitted to modify the MNET access control list.');
+            }
+            if (!$user = get_record('user', 'id', $acl)) {
+                error("No such user.");
+            }
+            if (!is_mnet_remote_user($user)) {
+                error('Users in the MNET access control list must be remote MNET users.');
+            }
+            $access = strtolower(required_param('access', PARAM_ALPHA));
+            if ($access != 'allow' and $access != 'deny') {
+                error('Invalid access parameter.');
+            }
+            $aclrecord = get_record('mnet_sso_access_control', 'username', $user->username, 'mnet_host_id', $user->mnethostid);
+            if (empty($aclrecord)) {
+                $aclrecord = new object();
+                $aclrecord->mnet_host_id = $user->mnethostid;
+                $aclrecord->username = $user->username;
+                $aclrecord->access = $access;
+                if (!insert_record('mnet_sso_access_control', $aclrecord)) {
+                    error("Database error - Couldn't modify the MNET access control list.");
+                }
+            } else {
+                $aclrecord->access = $access;
+                if (!update_record('mnet_sso_access_control', $aclrecord)) {
+                    error("Database error - Couldn't modify the MNET access control list.");
+                }
+            }
+            $mnethosts = get_records('mnet_host', '', '', 'id', 'id,wwwroot,name');
+            notify("MNET access control list updated: username '$user->username' from host '"
+                    . $mnethosts[$user->mnethostid]->name
+                    . "' access now set to '$access'.");
         }
 
         // Carry on with the user listing
@@ -213,8 +272,21 @@
         if ($sort == "name") {
             $sort = "firstname";
         }
-
-        $users = get_users_listing($sort, $dir, $page*$perpage, $perpage, $search, $firstinitial, $lastinitial);
+        
+        // tell the query which users we are looking at (local, remote, or both)
+        $remotewhere = '';
+        if ($localusers) {
+            $remotewhere .= " and mnethostid = {$CFG->mnet_localhost_id} ";
+        }
+        if ($remoteusers) {
+            if ($localusers) {
+                $remotewhere = ''; // more efficient SQL
+            } else {
+                $remotewhere .= " and mnethostid <> {$CFG->mnet_localhost_id} ";
+            }
+        }
+        
+        $users = get_users_listing($sort, $dir, $page*$perpage, $perpage, $search, $firstinitial, $lastinitial, $remotewhere);
         $usercount = get_users(false);
         $usersearchcount = get_users(false, $search, true, "", "", $firstinitial, $lastinitial);
 
@@ -294,6 +366,9 @@
         } else {
 
             $countries = get_list_of_countries();
+            if (empty($mnethosts)) {
+                $mnethosts = get_records('mnet_host', '', '', 'id', 'id,wwwroot,name');
+            }
 
             foreach ($users as $key => $user) {
                 if (!empty($user->country)) {
@@ -329,7 +404,7 @@
                     }
                 }
 
-                if (has_capability('moodle/user:update', $sitecontext)) {
+                if (has_capability('moodle/user:update', $sitecontext) and ! is_mnet_remote_user($user)) {
                     $editbutton = "<a href=\"../user/edit.php?id=$user->id&amp;course=$site->id\">$stredit</a>";
                     if ($user->confirmed == 0) {
                         $confirmbutton = "<a href=\"user.php?confirmuser=$user->id&amp;sesskey=$USER->sesskey\">" . get_string('confirm') . "</a>";
@@ -343,6 +418,27 @@
                     } else {
                         $confirmbutton = "";
                     }
+                }
+
+                // for remote users, shuffle columns around and display MNET stuff
+                if (is_mnet_remote_user($user)) {
+                    $access = 'allow';
+                    if ($acl = get_record('mnet_sso_access_control', 'username', $user->username, 'mnet_host_id', $user->mnethostid)) {
+                        $access = $acl->access;
+                    }
+                    $changeaccessto = ($access == 'deny' ? 'allow' : 'deny');
+                    // delete button in confirm column - remote users should already be confirmed
+                    // TODO: no delete for remote users, for now. new userid, delete flag, unique on username/host...
+                    $confirmbutton = "";
+                    // ACL in delete column
+                    $deletebutton = ucfirst($access);
+                    if (has_capability('moodle/user:delete', $sitecontext)) {
+                        // TODO: this should be under a separate capability
+                        $deletebutton .= " (<a href=\"?acl={$user->id}&amp;access=$changeaccessto&amp;sesskey={$USER->sesskey}\">"
+                                . ucfirst($changeaccessto) . " access</a>)";
+                    }
+                    // mnet info in edit column
+                    $editbutton = $mnethosts[$user->mnethostid]->name;
                 }
 
                 if ($user->lastaccess) {
@@ -362,6 +458,19 @@
                                     $confirmbutton);
             }
         }
+
+        echo "<p style=\"text-align:center\">";
+        if ($remoteusers == 1) {
+            echo "<a href=\"?ru=0\">Hide remote users</a> | ";
+        } else {
+            echo "<a href=\"?ru=1\">Show remote users</a> | ";
+        }
+        if ($localusers == 1) {
+            echo "<a href=\"?lu=0\">Hide local users</a>";
+        } else {
+            echo "<a href=\"?lu=1\">Show local users</a>";
+        }
+        echo "</p>";
 
         echo "<table class=\"searchbox\" align=\"center\" cellpadding=\"10\"><tr><td>";
         echo "<form action=\"user.php\" method=\"get\">";

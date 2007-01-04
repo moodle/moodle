@@ -1,337 +1,284 @@
-<?PHP  // $Id$
-       // config.php - allows admin to edit all configuration variables
+<?php
 
-    require_once('../config.php');
+/**
+ * Allows admin to edit all auth plugin settings.
+ *
+ * JH: copied and Hax0rd from admin/enrol.php and admin/filters.php
+ *
+ */
 
-    require_once($CFG->libdir.'/adminlib.php');
+require_once dirname(dirname(__FILE__)) . '/config.php';
+require_once $CFG->libdir . '/tablelib.php';
+require_once($CFG->libdir.'/adminlib.php');
 
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('userauthentication', $adminroot);
+$adminroot = admin_get_root();
+admin_externalpage_setup('userauthentication', $adminroot);
 
-    $auth = optional_param('auth', '', PARAM_SAFEDIR);
+// get currently installed and enabled auth plugins
+$authsavailable = get_list_of_plugins('auth');
+if (empty($CFG->auth_plugins_enabled)) {
+    set_config('auth_plugins_enabled', $CFG->auth);
+    $CFG->auth_plugins_enabled = $CFG->auth;
+}
+$authsenabled = explode(',', $CFG->auth_plugins_enabled);
 
+// save form
+if ($form = data_submitted()) {
 
-    $focus = '';
+    if (!confirm_sesskey()) {
+        error(get_string('confirmsesskeybad', 'error'));
+    }
 
-/// If data submitted, then process and store.
+    if (! isset($form->guestloginbutton)) {
+        $form->guestloginbutton = 1;
+    }
+    if (empty($form->alternateloginurl)) {
+        $form->alternateloginurl = '';
+    }
+    if (empty($form->register)) {
+        $form->register = 'manual';
+    }
+    set_config('guestloginbutton', $form->guestloginbutton);
+    set_config('alternateloginurl', $form->alternateloginurl);
+    set_config('auth', $form->register);
 
-    if ($config = data_submitted()) {
+    // add $CFG->auth to auth_plugins_enabled list
+    if (!array_search($form->register, $authsenabled)) {
+        $authsenabled[] = $form->register;
+        $authsenabled = array_unique($authsenabled);
+        set_config('auth_plugins_enabled', implode(',', $authsenabled));
+    }
+}
 
-        if (!confirm_sesskey()) {
-            error(get_string('confirmsesskeybad', 'error'));
+// grab GET/POST parameters
+$params = new object();
+$params->action    = optional_param('action', '', PARAM_ACTION);
+$params->auth      = optional_param('auth', $CFG->auth, PARAM_ALPHANUM);
+
+////////////////////////////////////////////////////////////////////////////////
+// process actions
+
+switch ($params->action) {
+
+    case 'disable':
+        // remove from enabled list 
+        $key = array_search($params->auth, $authsenabled);
+        if ($key !== false and $params->auth != $CFG->auth) {
+            unset($authsenabled[$key]);
+            set_config('auth_plugins_enabled', implode(',', $authsenabled));
         }
-
-        $config = (array)$config;
-
-        // extract and sanitize the auth key explicitly
-        $modules = get_list_of_plugins("auth");
-        if (in_array($config['auth'], $modules)) {
-            $auth = $config['auth'];
-        } else {
-            notify("Error defining the authentication method");
+        break;
+        
+    case 'enable':
+        // check auth plugin is valid first
+        if (!exists_auth_plugin($params->auth)) {
+            error("Authentication plugin '{$params->auth}' is not installed.", $url);
         }
-
-        // load the auth plugin library
-        require_once("{$CFG->dirroot}/auth/$auth/lib.php");
-
-        $err = array();
-        if (function_exists('auth_validate_form')) {
-            auth_validate_form($config, $err);
+        // add to enabled list
+        if (!array_search($params->auth, $authsenabled)) {
+            $authsenabled[] = $params->auth;
+            $authsenabled = array_unique($authsenabled);
+            set_config('auth_plugins_enabled', implode(',', $authsenabled));
         }
-
-        if (count($err) == 0) {
-            foreach ($config as $name => $value) {
-                if (preg_match('/^pluginconfig_(.+?)$/', $name, $matches)) {
-                    $plugin = "auth/$auth";
-                    $name   = $matches[1];
-                    if (! set_config($name, $value, $plugin)) {
-                        notify("Problem saving config $name as $value for plugin $plugin");
-                    }
-                } else { // normal handling for
-                    if (! set_config($name, $value)) {
-                        notify("Problem saving config $name as $value");
-                    }
-                }
-            }
-            redirect("auth.php?sesskey=$USER->sesskey", get_string("changessaved"), 1);
-            exit;
-
-        } else {
-            foreach ($err as $key => $value) {
-                $focus = "form.$key";
-            }
+        break;
+        
+    case 'down':
+        $key = array_search($params->auth, $authsenabled);
+        // check auth plugin is valid
+        if ($key === false) {
+            error("Authentication plugin '{$params->auth}' is not enabled.", $url);
         }
-    }
-
-/// Otherwise fill and print the form.
-
-    if (empty($config)) {
-        $config = $CFG;
-    }
-
-    $modules = get_list_of_plugins("auth");
-    $options = array();
-    foreach ($modules as $module) {
-        $options[$module] = get_string("auth_$module"."title", "auth");
-    }
-    asort($options);
-    if (!empty($auth) && in_array($auth, $modules)) {
-    } else {
-        $auth = $config->auth;
-    }
-
-    // changepassword link replaced by individual auth setting
-    if (!empty($config->changepassword)) {
-        if (empty($config->{'auth_'.$auth.'_changepasswordurl'})) {
-            $config->{'auth_'.$auth.'_changepasswordurl'} = $config->changepassword;
+        // move down the list
+        if ($key < (count($authsenabled) - 1)) {
+            $fsave = $authsenabled[$key];
+            $authsenabled[$key] = $authsenabled[$key + 1];
+            $authsenabled[$key + 1] = $fsave;
+            set_config('auth_plugins_enabled', implode(',', $authsenabled));
         }
-        set_config('changepassword','');
+        break;
+        
+    case 'up':
+        $key = array_search($params->auth, $authsenabled);
+        // check auth is valid
+        if ($key === false) {
+            error("Authentication plugin '{$params->auth}' is not enabled.", $url);
+        }
+        // move up the list
+        if ($key >= 1) {
+            $fsave = $authsenabled[$key];
+            $authsenabled[$key] = $authsenabled[$key - 1];
+            $authsenabled[$key - 1] = $fsave;
+            set_config('auth_plugins_enabled', implode(',', $authsenabled));
+        }
+        break;
+        
+    case 'save':
+        // save settings
+        set_config('auth_plugins_enabled', implode(',', $authsenabled));
+        set_config('auth', $authsenabled[0]);
+        redirect("auth.php?sesskey=$USER->sesskey", get_string('changessaved'), 1);
+        break;
+
+    default:
+        break;
+}
+
+// display strings
+$txt = get_strings(array('authenticationplugins', 'users', 'administration',
+                         'settings', 'edit', 'name', 'enable', 'disable',
+                         'up', 'down', 'none'));
+$txt->updown = "$txt->up/$txt->down";
+
+// construct the display array, with enabled auth plugins at the top, in order
+$displayauths = array();
+$registrationauths = array();
+$registrationauths['manual'] = $txt->disable;
+foreach ($authsenabled as $auth) {
+    $displayauths[$auth] = get_string("auth_{$auth}title", 'auth');
+    $authplugin = get_auth_plugin($auth);
+    if (method_exists($authplugin, 'user_signup')) {
+        $registrationauths[$auth] = get_string("auth_{$auth}title", 'auth');
+    }    
+}
+foreach ($authsavailable as $auth) {
+    if (!array_key_exists($auth, $displayauths)) {
+        $displayauths[$auth] = get_string("auth_{$auth}title", 'auth');
+    }
+    $authplugin = get_auth_plugin($auth);
+    if (method_exists($authplugin, 'user_signup')) {
+        $registrationauths[$auth] = get_string("auth_{$auth}title", 'auth');
+    }    
+}
+
+// build the display table
+$table = new flexible_table('auth_admin_table');
+$table->define_columns(array('name', 'enable', 'order', 'settings'));
+$table->column_style('enable', 'text-align', 'center');
+$table->column_style('order', 'text-align', 'center');
+$table->column_style('settings', 'text-align', 'center');
+$table->define_headers(array($txt->name, $txt->enable, $txt->updown, $txt->settings));
+$table->define_baseurl("{$CFG->wwwroot}/{$CFG->admin}/auth.php");
+$table->set_attribute('id', 'blocks');
+$table->set_attribute('class', 'flexible generaltable generalbox');
+$table->set_attribute('style', 'margin:auto;');
+$table->set_attribute('cellpadding', '5');
+$table->setup();
+
+// iterate through auth plugins and add to the display table
+$updowncount = 1;
+$authcount = count($authsenabled);
+$url = "auth.php?sesskey=" . sesskey();
+foreach ($displayauths as $auth => $name) {
+    // hide/show link
+    if (in_array($auth, $authsenabled)) {
+        $hideshow = "<a href=\"$url&amp;action=disable&amp;auth=$auth\">";
+        $hideshow .= "<img src=\"{$CFG->pixpath}/i/hide.gif\" height=\"16\" width=\"16\" alt=\"disable\" /></a>";
+        // $hideshow = "<a href=\"$url&amp;action=disable&amp;auth=$auth\"><input type=\"checkbox\" checked></a>";
+        $enabled = true;
+        $displayname = "<span>$name</span>";
+    }
+    else {
+        $hideshow = "<a href=\"$url&amp;action=enable&amp;auth=$auth\">";
+        $hideshow .= "<img src=\"{$CFG->pixpath}/i/show.gif\" height=\"16\" width=\"16\" alt=\"enable\" /></a>";
+        // $hideshow = "<a href=\"$url&amp;action=enable&amp;auth=$auth\"><input type=\"checkbox\"></a>";
+        $enabled = false;
+        $displayname = "<span class=\"dimmed_text\">$name</span>";
     }
 
-    $auth = clean_param($auth,PARAM_SAFEDIR);
-    require_once("$CFG->dirroot/auth/$auth/lib.php"); //just to make sure that current authentication functions are loaded
-    if (! isset($config->guestloginbutton)) {
-        $config->guestloginbutton = 1;
+    // up/down link (only if auth is enabled)
+    $updown = '';
+    if ($enabled) {
+        if ($updowncount > 1) {
+            $updown .= "<a href=\"$url&amp;action=up&amp;auth=$auth\">";
+            $updown .= "<img src=\"{$CFG->pixpath}/t/up.gif\" alt=\"up\" /></a>&nbsp;";
+        }
+        else {
+            $updown .= "<img src=\"{$CFG->pixpath}/spacer.gif\" height=\"16\" width=\"16\" alt=\"\" />&nbsp;";
+        }
+        if ($updowncount < $authcount) {
+            $updown .= "<a href=\"$url&amp;action=down&amp;auth=$auth\">";
+            $updown .= "<img src=\"{$CFG->pixpath}/t/down.gif\" alt=\"down\" /></a>";
+        }
+        else {
+            $updown .= "<img src=\"{$CFG->pixpath}/spacer.gif\" height=\"16\" width=\"16\" alt=\"\" />";
+        }
+        ++ $updowncount;
     }
-    if (! isset($config->alternateloginurl)) {
-        $config->alternateloginurl = '';
-    }
-    if (! isset($config->auth_instructions)) {
-        $config->auth_instructions = "";
-    }
-    if (! isset($config->changepassword)) {
-        $config->changepassword = "";
-    }
-    if (! isset($config->{'auth_'.$auth.'_changepasswordurl'})) {
-        $config->{'auth_'.$auth.'_changepasswordurl'} = '';
-    }
-    if (! isset($config->{'auth_'.$auth.'_changepasswordhelp'})) {
-        $config->{'auth_'.$auth.'_changepasswordhelp'} = '';
-    }
-    $user_fields = array("firstname", "lastname", "email", "phone1", "phone2", "department", "address", "city", "country", "description", "idnumber", "lang");
+    
+    // settings link
+    $settings = "<a href=\"auth_config.php?sesskey={$USER->sesskey}&amp;auth=$auth\">{$txt->settings}</a>";
 
-    $guestoptions[0] = get_string("hide");
-    $guestoptions[1] = get_string("show");
+    // add a row to the table
+    $table->add_data(array($displayname, $hideshow, $updown, $settings));
+}
 
-    $createoptions[0] = get_string("no");
-    $createoptions[1] = get_string("yes");
+// output form
+admin_externalpage_print_header($adminroot);
+print_simple_box(get_string('configauthenticationplugins', 'admin'), 'center', '700');
 
-    $strauthentication        = get_string("authentication");
-    $strauthenticationoptions = get_string("authenticationoptions","auth");
-    $strsettings = get_string("settings");
-    $strusers = get_string("users");
+if (empty($CFG->framename) or $CFG->framename=='_top') { 
+    $target = '';
+} else {
+    $target = ' target="'.$CFG->framename.'"';
+}
+echo "<form$target name=\"authmenu\" method=\"post\" action=\"auth.php\">";
+echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\">";
+print_table($table);
 
-    admin_externalpage_print_header($adminroot);
+////////////////////////////////////////////////////////////////////////////////
 
-    if (empty($CFG->framename) or $CFG->framename=='_top') { 
-        $target = '';
-    } else {
-        $target = ' target="'.$CFG->framename.'"';
-    }
+$guestoptions[0] = get_string("hide");
+$guestoptions[1] = get_string("show");
 
-    echo "<form$target name=\"authmenu\" method=\"post\" action=\"auth.php\">";
-    echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\" />";
-    echo "<center><b>";
-    print_string("chooseauthmethod","auth");
-    echo "</b></center>";
-    echo '&nbsp;&nbsp;';
+echo '<hr>';
+print_heading(get_string('auth_common_settings', 'auth'));
+echo '<table cellspacing="0" cellpadding="5" border="0" align="center">';
 
-    choose_from_menu ($options, "auth", $auth, "","document.location='auth.php?sesskey=$USER->sesskey&amp;auth='+document.authmenu.auth.options[document.authmenu.auth.selectedIndex].value", "");
+// User self registration
+echo "<tr valign=\"top\">\n";
+echo "<td align=\"right\" nowrap=\"nowrap\">\n";
+print_string("selfregistration", "auth");
+echo ":</td>\n";
+echo "<td>\n";
+choose_from_menu($registrationauths, "register", $CFG->auth, "");
+echo "</td>\n";
+echo "<td>\n";
+print_string("selfregistration_help", "auth");
+echo "</td></tr>\n";
 
-    //echo "</b></center><br />";
-    echo "<br />";
-    print_simple_box_start("center", "100%");
-    print_heading($options[$auth]);
-
-    print_simple_box_start("center", "60%", '', 5, 'informationbox');
-    print_string("auth_$auth"."description", "auth");
-    print_simple_box_end();
-
-    echo "<hr />";
-
-    print_heading($strsettings);
-
-    echo "<table border=\"0\" width=\"100%\" cellpadding=\"4\">";
-
-    require_once("$CFG->dirroot/auth/$auth/config.html");
-    $CFG->pagepath = 'auth/' . $auth;
-
-    echo '<tr><td colspan="3">';
-    print_heading(get_string('auth_common_settings', 'auth'));
-    echo '</td></tr>';
-
-    if ($auth != "email" and $auth != "none" and $auth != "manual") {
-        // display box for URL to change password. NB now on a per-method basis (multiple auth)
-        echo "<tr valign=\"top\">";
-        echo "<td align=\"right\" nowrap=\"nowrap\">";
-        print_string("changepassword", "auth");
-        echo ":</td>";
-        echo "<td>";
-        $passurl = $config->{'auth_'.$auth.'_changepasswordurl'};
-        echo "<input type=\"text\" name=\"auth_{$auth}_changepasswordurl\" size=\"40\" value=\"$passurl\" />";
-        echo "</td>";
-        echo "<td>";
-        print_string("auth_changepasswordurl_expl","auth",$auth);
-        echo "</td></tr>";
-
-        // display textbox for lost password help. NB now on a per-method basis (multiple auth)
-        echo "<tr valign=\"top\">";
-        echo "<td align=\"right\" nowrap=\"nowrap\">";
-        print_string("auth_changepasswordhelp", "auth");
-        echo ":</td>";
-        echo "<td>";
-        $passhelp = $config->{'auth_'.$auth.'_changepasswordhelp'};
-        echo "<textarea name=\"auth_{$auth}_changepasswordhelp\" cols=\"30\" rows=\"10\" wrap=\"virtual\">";
-        echo $passhelp;
-        echo "</textarea>\n";
-        echo "</td>";
-        echo "<td>";
-        print_string("auth_changepasswordhelp_expl","auth",$auth);
-        echo "</td></tr>";
-
-    }
-
-    echo "<tr valign=\"top\">";
-    echo "<td align=\"right\" nowrap=\"nowrap\">";
-    print_string("guestloginbutton", "auth");
-    echo ":</td>";
-    echo "<td>";
-    choose_from_menu($guestoptions, "guestloginbutton", $config->guestloginbutton, "");
-    echo "</td>";
-    echo "<td>";
-    print_string("showguestlogin","auth");
-    echo "</td></tr>";
-
-    if (function_exists('auth_user_create')){
-        echo "<tr valign=\"top\">";
-        echo "<td align=\"right\" nowrap=\"nowrap\">";
-        print_string("auth_user_create", "auth");
-        echo ":</td>";
-        echo "<td>";
-        choose_from_menu($createoptions, "auth_user_create", $config->auth_user_create, "");
-        echo "</td>";
-        echo "<td>";
-        print_string("auth_user_creation","auth");
-        echo "</td></tr>";
-    }
-
+// Login as guest button enabled
+echo "<tr valign=\"top\">\n";
+echo "<td align=\"right\" nowrap=\"nowrap\">\n";
+print_string("guestloginbutton", "auth");
+echo ":</td>\n";
+echo "<td>\n";
+choose_from_menu($guestoptions, "guestloginbutton", $CFG->guestloginbutton, "");
+echo "</td>\n";
+echo "<td>\n";
+print_string("showguestlogin","auth");
+echo "</td></tr>\n";
 
 /// An alternate url for the login form. It means we can use login forms that are integrated
 /// into non-moodle pages
-    echo '<tr valign="top">';
-    echo '<td algin="right" nowrap="nowrap">';
-    print_string('alternateloginurl', 'auth');
-    echo '</td>';
-    echo '<td>';
-    echo '<input type="text" size="40" name="alternateloginurl" alt="'.get_string('alternateloginurl', 'auth').'" value="'.$config->alternateloginurl.'" />';
-    echo '</td>';
-    echo '<td>';
-    print_string('alternatelogin', 'auth', htmlspecialchars($CFG->wwwroot.'/login/index.php'));
-    echo '</td>';
-    echo '</tr>';
+echo "<tr valign=\"top\">\n";
+echo "<td algin=\"right\" nowrap=\"nowrap\">\n";
+print_string('alternateloginurl', 'auth');
+echo "</td>\n";
+echo "<td>\n";
+echo '<input type="text" size="40" name="alternateloginurl" alt="'.get_string('alternateloginurl', 'auth').'" value="'.$CFG->alternateloginurl."\" />\n";
+echo "</td>\n";
+echo "<td>\n";
+print_string('alternatelogin', 'auth', htmlspecialchars($CFG->wwwroot.'/login/index.php'));
+echo "</td>\n";
+echo "</tr>\n";
+
+echo "</table>\n";
+
+////////////////////////////////////////////////////////////////////////////////
 
 
-    echo '</table>';
-    echo '<p align="center"><input type="submit" value="'.get_string('savechanges').'" /></p>';
-    
-    print_simple_box_end();
-    
-    echo '</form>';   
-
-    admin_externalpage_print_footer($adminroot);
-    exit;
-
-/// Functions /////////////////////////////////////////////////////////////////
-
-//
-// Good enough for most auth plugins
-// but some may want a custom one if they are offering
-// other options
-// Note: pluginconfig_ fields have special handling.
-function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts, $updateopts) {
-
-    echo '<tr><td colspan="3">';
-    if ($retrieveopts) {
-        print_heading(get_string('auth_data_mapping', 'auth'));
-    } else {
-        print_heading(get_string('auth_fieldlocks', 'auth'));
-    }
-    echo '</td></tr>';
-
-    $lockoptions = array ('unlocked'        => get_string('unlocked', 'auth'),
-                          'unlockedifempty' => get_string('unlockedifempty', 'auth'),
-                          'locked'          => get_string('locked', 'auth'));
-    $updatelocaloptions = array('oncreate'  => get_string('update_oncreate', 'auth'),
-                                'onlogin'   => get_string('update_onlogin', 'auth'));
-    $updateextoptions = array('0'  => get_string('update_never', 'auth'),
-                              '1'   => get_string('update_onupdate', 'auth'));
-
-    $pluginconfig = get_config("auth/$auth");
-
-    // helptext is on a field with rowspan
-    if (empty($helptext)) {
-                $helptext = '&nbsp;';
-    }
-
-    foreach ($user_fields as $field) {
-
-        // Define some vars we'll work with
-        if(empty($pluginconfig->{"field_map_$field"})) {
-            $pluginconfig->{"field_map_$field"} = '';
-        }
-        if(empty($pluginconfig->{"field_updatelocal_$field"})) {
-            $pluginconfig->{"field_updatelocal_$field"} = '';
-        }
-        if (empty($pluginconfig->{"field_updateremote_$field"})) {
-            $pluginconfig->{"field_updateremote_$field"} = '';
-        }
-        if (empty($pluginconfig->{"field_lock_$field"})) {
-            $pluginconfig->{"field_lock_$field"} = '';
-        }
-
-        // define the fieldname we display to the  user
-        $fieldname = $field;
-        if ($fieldname === 'lang') {
-            $fieldname = get_string('language');
-        } elseif (preg_match('/^(.+?)(\d+)$/', $fieldname, $matches)) {
-            $fieldname =  get_string($matches[1]) . ' ' . $matches[2];
-        } else {
-            $fieldname = get_string($fieldname);
-        }
-
-        echo '<tr valign="top"><td align="right">';
-        echo $fieldname;
-        echo '</td><td>';
-
-        if ($retrieveopts) {
-            $varname = 'field_map_' . $field;
-
-            echo "<input name=\"pluginconfig_{$varname}\" type=\"text\" size=\"30\" value=\"{$pluginconfig->$varname}\">";
-            echo '<div align="right">';
-            echo  get_string('auth_updatelocal', 'auth') . '&nbsp;&nbsp;';
-            choose_from_menu($updatelocaloptions, "pluginconfig_field_updatelocal_{$field}", $pluginconfig->{"field_updatelocal_$field"}, "");
-            echo '<br />';
-            if ($updateopts) {
-                echo  get_string('auth_updateremote', 'auth') . '&nbsp;&nbsp;';
-                 '&nbsp;&nbsp;';
-                choose_from_menu($updateextoptions, "pluginconfig_field_updateremote_{$field}", $pluginconfig->{"field_updateremote_$field"}, "");
-                echo '<br />';
-
-
-            }
-            echo  get_string('auth_fieldlock', 'auth') . '&nbsp;&nbsp;';
-            choose_from_menu($lockoptions, "pluginconfig_field_lock_{$field}", $pluginconfig->{"field_lock_$field"}, "");
-            echo '</div>';
-        } else {
-            choose_from_menu($lockoptions, "pluginconfig_field_lock_{$field}", $pluginconfig->{"field_lock_$field"}, "");
-        }
-        echo '</td>';
-        if (!empty($helptext)) {
-            echo '<td rowspan="' . count($user_fields) . '">' . $helptext . '</td>';
-            $helptext = '';
-        }
-        echo '</tr>';
-    }
-}
+echo '<center><input type="submit" value="'.get_string('savechanges').'"></center>';
+echo '</form>';
+admin_externalpage_print_footer($adminroot);
 
 ?>

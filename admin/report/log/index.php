@@ -16,7 +16,7 @@
 
     print_heading(get_string('chooselogs') .':');
 
-    print_log_selector_form($course);
+    print_mnet_log_selector_form($CFG->mnet_localhost_id, $course);
 
     echo '<br />';
     print_heading(get_string('chooselivelogs') .':');

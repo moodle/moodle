@@ -187,6 +187,7 @@
                                                    'filter_multilang_converted' => 1));
 
             notify($strdatabasesuccess, "green");
+            require_once $CFG->dirroot.'/mnet/lib.php';
         } else {
             error("Error: Main databases NOT set up successfully");
         }
@@ -360,6 +361,11 @@
     require_once("$CFG->dirroot/group/db/upgrade.php");
     upgrade_group_db("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
+/// Check for changes to RPC functions
+    require_once($CFG->dirroot.'/admin/mnet/adminlib.php');
+    upgrade_RPC_functions("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
+
+
 /// just make sure upgrade logging is properly terminated
     upgrade_log_finish();
 
@@ -433,6 +439,7 @@
         $guest->lastname    = " ";
         $guest->email       = "root@localhost";
         $guest->description = addslashes(get_string("guestuserinfo"));
+        $guest->mnethostid   = $CFG->mnet_localhost_id;
         $guest->confirmed   = 1;
         $guest->lang        = $CFG->lang;
         $guest->timemodified= time();

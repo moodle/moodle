@@ -236,7 +236,7 @@ if ($um->preprocess_files() && confirm_sesskey()) {
                     // an old record instead
                     if ($allowrenames && !empty($user->oldusername) ) {
                         $user->oldusername = moodle_strtolower($user->oldusername);
-                        if ($olduser = get_record('user','username',$user->oldusername)) {
+                        if ($olduser = get_record('user', 'username', $user->oldusername, 'mnethostid', $CFG->mnet_localhost_id)) {
                             if (set_field('user', 'username', $user->username, 'username', $user->oldusername)) {
                                 notify(get_string('userrenamed', 'admin') . " : $user->oldusername $user->username");
                                 $renames++;
@@ -252,7 +252,7 @@ if ($um->preprocess_files() && confirm_sesskey()) {
                         }
                     }
 
-                    if ($olduser = get_record("user","username",$username)) {
+                    if ($olduser = get_record("user", "username", $username, "mnethostid", $CFG->mnet_localhost_id)) {
                         if ($updateaccounts) {
                             // Record is being updated
                             $user->id = $olduser->id;

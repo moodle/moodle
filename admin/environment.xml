@@ -102,6 +102,11 @@
           <ON_CHECK message="mbstringrecommended" />
         </FEEDBACK>
       </PHP_EXTENSION>
+      <PHP_EXTENSION name="curl" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="curlrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
     </PHP_EXTENSIONS>
   </MOODLE>
 </COMPATIBILITY_MATRIX>

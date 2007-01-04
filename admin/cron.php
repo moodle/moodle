@@ -304,6 +304,23 @@
         unset($enrol);
     }
 
+/// Run the auth cron, if any
+    if (!($auths = explode(',', $CFG->auth_plugins_enabled))) {
+        $auths = array($user->auth);
+    }
+    mtrace("Running auth crons if required...");
+    foreach ($auths as $auth) {
+        $authplugin = get_auth_plugin($auth);
+        if (method_exists($authplugin, 'cron')) {
+            mtrace("Running cron for auth/$auth...");
+            $authplugin->cron();
+            if (!empty($authplugin->log)) {
+                mtrace($authplugin->log);
+            }
+        }
+        unset($authplugin);
+    }
+
     if (!empty($CFG->enablestats) and empty($CFG->disablestatsprocessing)) {
 
         // check we're not before our runtime
