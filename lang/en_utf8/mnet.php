@@ -22,6 +22,22 @@ $string['trustedhostsexplain']          = 'Please enter a list of IP addresses o
                                           '192.168.0.0/0<br>'.
                                           'Obviously the last example is not a recommended configuration.';
 
+$string['currentkey']                   = 'Current Public Key';
+$string['keymismatch']                  = 'The public key you are holding for this host is different from the public key it is currently publishing.';
+$string['invalidurl']                   = 'Invalid URL parameter.';
+$string['expireyourkey']                = 'Delete This Key';
+$string['deletekeycheck']               = 'Are you absolutely sure you want to delete this key?';
+$string['expireyourkeyexplain']         = 'Moodle automatically rotates your keys every 28 days (by default) but you have the option to '.
+                                          '<em>manually</em> expire this key at any time. This will only be useful if you believe this '.
+                                          'key has been compromised. A replacement will be immediately automatically generated.<br>'.
+                                          'Deleting this key will make it impossible for other Moodles to communicate with you, until you '.
+                                          'manually contact each administrator and provide them with your new key.';
+$string['deleteoutoftime']              = 'Your 60-second window for deleting this key has expired. Please start again.'; 
+$string['deletewrongkeyvalue']          = 'An error has occurred. If you were not trying to delete your server\'s SSL key, it is possible '.
+                                          'you have been the subject of a malicious attack. No action has been taken.';
+
+$string['keydeleted']                   = 'Your key has been successfully deleted and replaced.';
+
 $string['is_in_range']                  = 'The IP address &nbsp;<code>$a</code>&nbsp; represents a valid trusted host.';
 $string['validated_by']                 = 'It is validated by the network: &nbsp;<code>$a</code>';
 $string['not_in_range']                 = 'The IP address &nbsp;<code>$a</code>&nbsp; does not represent a valid trusted host.';
@@ -95,7 +111,8 @@ $string['reviewhostservices']           = 'Review Host Services';
 $string['moodle_home_help']             = 'The path to the homepage of Moodle on the remote host, e.g. /moodle/.';
 $string['hostnamehelp']                 = 'The fully-qualified domain name of the remote host, e.g. www.example.com';
 $string['idhelp']                       = 'This value is automatically assigned and cannot be changed';
-$string['invalidpubkey']                = 'There was a problem retrieving the public key. Maybe the host does not allow Moodle Networking or the key is invalid.';
+$string['invalidpubkey']                = 'The key is not a valid SSL key.';
+$string['nopubkey']                     = 'There was a problem retrieving the public key.<br>Maybe the host does not allow Moodle Networking or the key is invalid.';
 $string['last_connect_time_help']       = 'The time that you last connected to this host.';
 $string['last_transport_help']          = 'The transport that you used for the last connection to this host.';
 $string['transport_help']               = 'These options are reciprocal, so you can only force a remote host to use a signed SSL cert if your server also has a signed SSL cert.';
