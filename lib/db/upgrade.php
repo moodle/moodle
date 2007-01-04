@@ -171,7 +171,7 @@ function xmldb_main_upgrade($oldversion=0) {
                                   XMLDB_NOTNULL, null, null, null, '');
         $f = $table->addFieldInfo('name',               XMLDB_TYPE_CHAR,    '80', null,
                                   XMLDB_NOTNULL, null, null, null, '');
-        $f = $table->addFieldInfo('public_key',         XMLDB_TYPE_TEXT, null, null,
+        $f = $table->addFieldInfo('public_key',         XMLDB_TYPE_TEXT, 'medium', null,
                                   XMLDB_NOTNULL, null, null, null, null);
         $f = $table->addFieldInfo('public_key_expires', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
                                   XMLDB_NOTNULL, null, null, null, 0);
@@ -287,6 +287,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && create_table($table);
 
         $table = new XMLDBTable('mnet_service2rpc');
+        $table->comment = 'Group functions or methods under a service';
         // fields
         $f = $table->addFieldInfo('id',        XMLDB_TYPE_INTEGER,  '10', false,
                                   XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
@@ -363,7 +364,7 @@ function xmldb_main_upgrade($oldversion=0) {
                                   XMLDB_NOTNULL, NULL, null, null, 0);
         // PK and indexes
         $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->addIndexInfo('token', XMLDB_INDEX_NOTUNIQUE, array('token'));
+        $table->addIndexInfo('token', XMLDB_INDEX_UNIQUE, array('token'));
         // Create the table
         $result = $result && create_table($table);
 
@@ -449,7 +450,7 @@ function xmldb_main_upgrade($oldversion=0) {
         // PK and indexes
         $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->addIndexInfo('hostid_courseid', XMLDB_INDEX_NOTUNIQUE, array('hostid', 'courseid'));
-        $table->addIndexInfo('userid', XMLDB_INDEX_UNIQUE, array('userid'));
+        $table->addIndexInfo('userid', XMLDB_INDEX_NOTUNIQUE, array('userid'));
         // Create the table
         $result = $result && create_table($table);
 
