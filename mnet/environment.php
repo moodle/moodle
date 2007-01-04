@@ -72,16 +72,61 @@ class mnet_environment {
     }
 
     function get_keypair() {
+        // We don't generate keys on install/upgrade because we want the USER
+        // record to have an email address, city and country already.
+        if (!empty($_SESSION['upgraderunning'])) return true;
         if (!empty($this->keypair)) return true;
-        if ($result = get_record_select('config', " name = 'openssl'")) {
-            $this->keypair               = unserialize($result->value);
+
+        $this->keypair = array();
+        $keypair = get_field('config_plugins', 'value', 'plugin', 'mnet', 'name', 'openssl');
+
+        if (!empty($keypair)) {
+            // Explode/Implode is faster than Unserialize/Serialize
+            $this->keypair = explode('@@@@@@@@', $keypair);
+        }
+
+        if ($this->public_key_expires > time()) {
             $this->keypair['privatekey'] = openssl_pkey_get_private($this->keypair['keypair_PEM']);
             $this->keypair['publickey']  = openssl_pkey_get_public($this->keypair['certificate']);
         } else {
+            // Key generation/rotation
+
+            // 1. Archive the current key (if there is one).
+            $result = get_field('config_plugins', 'value', 'plugin', 'mnet', 'name', 'openssl_history');
+            if(empty($result)) {
+                set_config('openssl_history', serialize(array()), 'mnet');
+                $openssl_history = array();
+            } else {
+                $openssl_history = unserialize($result);
+            }
+
+            if(count($this->keypair)) {
+                $this->keypair['expires'] = $this->public_key_expires;
+                array_unshift($openssl_history, $this->keypair);
+            }
+
+            // 2. How many old keys do we want to keep? Use array_slice to get 
+            // rid of any we don't want
+            $openssl_generations = get_field('config_plugins', 'value', 'plugin', 'mnet', 'name', 'openssl_generations');
+            if(empty($openssl_generations)) {
+                set_config('openssl_generations', 3, 'mnet');
+                $openssl_generations = 3;
+            }
+
+            if(count($openssl_history) > $openssl_generations) {
+                $openssl_history = array_slice($openssl_history, 0, $openssl_generations);
+            }
+
+            set_config('openssl_history', serialize($openssl_history), 'mnet');
+
+            // 3. Generate fresh keys
+            $this->keypair = array();
             $this->keypair = mnet_generate_keypair();
             $this->public_key         = $this->keypair['certificate'];
             $details                  = openssl_x509_parse($this->public_key);
             $this->public_key_expires = $details['validTo_time_t'];
+
+            set_config('openssl', implode('@@@@@@@@', $this->keypair);
 
             update_record('mnet_host', $this);
         }

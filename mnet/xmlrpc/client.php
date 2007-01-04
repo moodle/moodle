@@ -217,7 +217,23 @@ class mnet_xmlrpc_client {
 
         // xmlrpc errors are pushed onto the $this->error stack
         if (isset($this->response['faultCode'])) {
-            $this->error[] = $this->response['faultCode'] . " : " . $this->response['faultString'];
+            // The faultCode 7025 means we tried to connect with an old SSL key
+            // The faultString is the new key - let's save it and try again
+            // The re_key attribute stops us from getting into a loop
+            if($this->response['faultCode'] == 7025 && empty($mnet_peer->re_key)) {
+                $record                     = new stdClass();
+                $record->id                 = $mnet_peer->id;
+                $record->public_key         = $this->response['faultString'];
+                $details                    = openssl_x509_parse($record->public_key);
+                $record->public_key_expires = $details['validTo_time_t'];
+                update_record('mnet_host', $record);
+                $mnet_peer2 = new mnet_peer();
+                $mnet_peer2->set_id($record->id);
+                $mnet_peer2->re_key = true;
+                $this->send($mnet_peer2);
+            } else {
+                $this->error[] = $this->response['faultCode'] . " : " . $this->response['faultString'];
+            }
         }
         return empty($this->error);
     }

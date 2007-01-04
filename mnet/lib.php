@@ -245,8 +245,8 @@ function mnet_get_keypair() {
     global $CFG;
     static $keypair = null;
     if (!is_null($keypair)) return $keypair;
-    if ($result = get_record_select('config', " name = 'openssl'")) {
-        $keypair               = unserialize($result->value);
+    if ($result = get_field('config_plugins', 'value', 'plugin', 'mnet', 'name', 'openssl')) {
+        $keypair               = explode('@@@@@@@@', $keypair);
         $keypair['privatekey'] = openssl_pkey_get_private($keypair['keypair_PEM']);
         $keypair['publickey']  = openssl_pkey_get_public($keypair['certificate']);
         return $keypair;
@@ -268,7 +268,7 @@ function mnet_get_keypair() {
  * @param   array  $dn  The distinguished name of the server
  * @return  string      The signature over that text
  */
-function mnet_generate_keypair($dn = null) {
+function mnet_generate_keypair($dn = null, $days=28) {
     global $CFG, $USER;
     $host = strtolower($CFG->wwwroot);
     $host = ereg_replace("^http(s)?://",'',$host);
@@ -313,7 +313,7 @@ function mnet_generate_keypair($dn = null) {
 
     $new_key = openssl_pkey_new();
     $csr_rsc = openssl_csr_new($dn, $new_key, array('private_key_bits',2048));
-    $selfSignedCert = openssl_csr_sign($csr_rsc, null, $new_key, 365);
+    $selfSignedCert = openssl_csr_sign($csr_rsc, null, $new_key, $days);
     unset($csr_rsc); // Free up the resource
 
     // We export our self-signed certificate to a string.
@@ -325,19 +325,6 @@ function mnet_generate_keypair($dn = null) {
     $export = openssl_pkey_export($new_key, $keypair['keypair_PEM'] /* , $passphrase */);
     openssl_pkey_free($new_key);
     unset($new_key); // Free up the resource
-
-    $record = new stdClass();
-    $record->name = 'openssl';
-    // Normally we would just serialize the object, but that's not
-    // working, nor behaving as the docs suggest it should. Casting the
-    // object to an array and serializing the array works fine.
-    $record->value = serialize($keypair);
-
-    insert_record('config', $record);
-    // unset $record
-
-    $keypair['privatekey'] = openssl_pkey_get_private($keypair['keypair_PEM']);
-    $keypair['publickey']  = openssl_pkey_get_public($keypair['certificate']);
 
     return $keypair;
 }

@@ -123,7 +123,7 @@ function mnet_server_strip_wrappers($HTTP_RAW_POST_DATA) {
 
         if ($crypt_parser->payload_encrypted) {
 
-            $key  = array_pop($crypt_parser->cipher);
+            $key  = array_pop($crypt_parser->cipher);  // This key is Symmetric
             $data = array_pop($crypt_parser->cipher);
 
             $crypt_parser->free_resource();
@@ -133,6 +133,24 @@ function mnet_server_strip_wrappers($HTTP_RAW_POST_DATA) {
 
             //                                          &$payload
             $isOpen = openssl_open(base64_decode($data), $payload, base64_decode($key), $MNET->get_private_key());
+
+            if (!$isOpen) {
+                // Decryption failed... let's try our archived keys
+                $result = get_config('mnet', 'openssl_history');
+                if(empty($result)) {
+                    set_config('openssl_history', serialize(array()), 'mnet');
+                    $result = get_config('mnet', 'openssl_history');
+                }
+                $openssl_history = unserialize($result->value);
+                foreach($openssl_history as $keyset) {
+                    $keyresource = openssl_pkey_get_private($keyset['keypair_PEM']);
+                    $isOpen      = openssl_open(base64_decode($data), $payload, base64_decode($key), $keyresource);
+                    if ($isOpen) {
+                        // It's an older code, sir, but it checks out
+                        exit(mnet_server_fault(7025, $MNET->public_key));
+                    }
+                }
+            }
 
             if (!$isOpen) {
                 exit(mnet_server_fault(7023, 'encryption-invalid'));
@@ -653,7 +671,7 @@ function mnet_server_invoke_method($includefile, $methodname, $method, $payload,
 }
 
 function mnet_keyswap($function, $params) {
-    global $CFG;
+    global $CFG, $MNET;
     $return = array();
 
     if (!empty($CFG->mnet_register_allhosts)) {
@@ -663,7 +681,6 @@ function mnet_keyswap($function, $params) {
             $mnet_peer->commit();
         }
     }
-    $keypair = mnet_get_keypair();
-    return $keypair['certificate'];
+    return $MNET->public_key;
 }
 ?>

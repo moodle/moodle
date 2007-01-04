@@ -205,7 +205,13 @@ class mnet_peer {
         return false;
     }
 
-    // PRIVATE METHOD
+    /**
+     * Several methods can be used to get an 'mnet_host' record. They all then
+     * send it to this private method to populate this object's attributes.
+     * 
+     * @param   object  $hostinfo   A database record from the mnet_host table
+     * @return  void
+     */
     function populate($hostinfo) {
         $this->id                   = $hostinfo->id;
         $this->wwwroot              = $hostinfo->wwwroot;
