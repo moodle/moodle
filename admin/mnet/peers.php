@@ -22,6 +22,10 @@ if (!function_exists('curl_init') ) {
     error('PHP Curl library is not installed');
 }
 
+if (!extension_loaded('openssl')) {
+    error(get_string('requiresopenssl', 'mnet'));
+}
+
 /// Initialize variables.
 
 // Step must be one of:

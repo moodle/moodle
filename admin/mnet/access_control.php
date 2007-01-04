@@ -14,6 +14,11 @@ $action       = trim(strtolower(optional_param('action', '', PARAM_ALPHA)));
 
 require_login();
 $adminroot = admin_get_root();
+
+if (!extension_loaded('openssl')) {
+    error(get_string('requiresopenssl', 'mnet'));
+}
+
 admin_externalpage_setup('ssoaccesscontrol', $adminroot);
 admin_externalpage_print_header($adminroot);
 

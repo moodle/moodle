@@ -17,6 +17,10 @@
         error('Site isn\'t defined!');
     }
 
+    if (!extension_loaded('openssl')) {
+        error(get_string('requiresopenssl', 'mnet'));
+    }
+
     $trusted_hosts = '';//array();
     $old_trusted_hosts = get_config('mnet', 'mnet_trusted_hosts');
 

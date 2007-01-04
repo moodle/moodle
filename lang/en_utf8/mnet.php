@@ -2,6 +2,7 @@
 $string['description']                  = 'Description';
 $string['mnet']                         = 'Moodle Networking';
 $string['net']                          = 'Networking';
+$string['requiresopenssl']              = 'Networking requires the OpenSSL extension';
 $string['yourhost']                     = 'Your Host';
 $string['yourpeers']                    = 'Your Peers';
 $string['settings']                     = 'Settings';

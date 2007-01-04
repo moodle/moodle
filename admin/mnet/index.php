@@ -22,6 +22,10 @@
         error('PHP Curl library is not installed');
     }
 
+    if (!extension_loaded('openssl')) {
+        error(get_string('requiresopenssl', 'mnet'));
+    }
+
     if (!isset($CFG->mnet_dispatcher_mode)) set_config('mnet_dispatcher_mode', 'off');
 
 /// If data submitted, process and store
