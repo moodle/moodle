@@ -53,6 +53,42 @@ $string['databasesettingssub'] = '<b>Uri:</b> mysql o postgres7<br />
        <b>Tagagamit:</b> ang iyong bansag para sa datosan<br />
        <b>Kontrasenyas:</b> ang iyong kontrasenyas ng datosan<br />
        <b>Unlapi ng mga Teybol:</b> opsiyonal na unlapi na gagamitin sa lahat ng pangalan ng teybol';
+$string['databasesettingssub_mssql'] = '<b>Uri:</b> SQL*Server (hindi UTF-8) <b><font color=\"red\">Eksperimental! (hindi dapat gamitin sa produksiyon)</font></b><br />
+       <b>Host:</b> eg localhost o db.isp.com<br />
+       <b>Pangalan:</b> pangalan ng datosan, eg moodle<br />
+       <b>Tagagamit:</b> ang iyong bansag para sa datosan<br />
+       <b>Kontrasenyas:</b> ang iyong kontrasenyas ng datosan<br />
+       <b>Unlapi ng mga Teybol:</b> unlapi na gagamitin sa lahat ng pangalan ng teybol (kinakailangan)';
+$string['databasesettingssub_mssql_n'] = '<b>Uri:</b> SQL*Server (gumagana ang UTF-8)<br />
+       <b>Host:</b> eg localhost o db.isp.com<br />
+       <b>Pangalan:</b> pangalan ng datosan, eg moodle<br />
+       <b>Tagagamit:</b> ang iyong bansag para sa datosan<br />
+       <b>Kontrasenyas:</b> ang iyong kontrasenyas ng datosan<br />
+       <b>Unlapi ng mga Teybol:</b> unlapi na gagamitin sa lahat ng pangalan ng teybol (kinakailangan)';
+$string['databasesettingssub_mysql'] = '<b>Uri:</b> MySQL<br />
+       <b>Host:</b> eg localhost o db.isp.com<br />
+       <b>Pangalan:</b> pangalan ng datosan, eg moodle<br />
+       <b>Tagagamit:</b> ang iyong bansag para sa datosan<br />
+       <b>Kontrasenyas:</b> ang iyong kontrasenyas ng datosan<br />
+       <b>Unlapi ng mga Teybol:</b> unlapi na gagamitin sa lahat ng pangalan ng teybol (opsiyonal)';
+$string['databasesettingssub_oci8po'] = '<b>Uri:</b> Oracle<br />
+       <b>Host:</b> hindi ginagamit, dapat ay iwang blangko<br />
+       <b>Pangalan:</b> ibinigay na pangalan ng koneksiyong tnsnames.ora<br />
+       <b>Tagagamit:</b> ang iyong bansag para sa datosan<br />
+       <b>Kontrasenyas:</b> ang iyong kontrasenyas ng datosan<br />
+       <b>Unlapi ng mga Teybol:</b> unlapi na gagamitin sa lahat ng pangalan ng teybol (kinakailangan, 2cc. max)';
+$string['databasesettingssub_odbc_mssql'] = '<b>Uri:</b> SQL*Server (sa pamamgitan ng ODBC) <b><font color=\"red\">Eksperimental! (huwag gamitin sa produksiyon)</font></b><br />
+       <b>Host:</b> ibinigay na pangalan ng DSN sa OBDC control panel<br />
+       <b>Pangalan:</b> pangalan ng datosan, eg moodle<br />
+       <b>Tagagamit:</b> ang iyong bansag para sa datosan<br />
+       <b>Kontrasenyas:</b> ang iyong kontrasenyas ng datosan<br />
+       <b>Unlapi ng mga Teybol:</b> unlapi na gagamitin sa lahat ng pangalan ng teybol (kinakailangan)';
+$string['databasesettingssub_postgres7'] = '<b>Uri:</b> PostgreSQL<br />
+       <b>Host:</b> eg localhost o db.isp.com<br />
+       <b>Pangalan:</b> pangalan ng datosan, eg moodle<br />
+       <b>Tagagamit:</b> ang iyong bansag para sa datosan<br />
+       <b>Kontrasenyas:</b> ang iyong kontrasenyas ng datosan<br />
+       <b>Unlapi ng mga Teybol:</b> unlapi na gagamitin sa lahat ng pangalan ng teybol (kinakailangan)';
 $string['dataroot'] = 'Bugsok ng Datos';
 $string['datarooterror'] = 'Hindi matagpuan o malikha ang \'Bugsok ng Datos\' na ibinigay mo.  Alin sa dalawa, iwasto mo ang landas o lumikha ng bugsok nang mano-mano.';
 $string['dbconnectionerror'] = 'Hindi kami makakonekta sa ibinigay mong datosan.  Pakitsek ang kaayusan ng iyong datosan.';
@@ -60,6 +96,9 @@ $string['dbcreationerror'] = 'Nagka-error sa paglikha ng datosan.  Hindi malikha
 $string['dbprefix'] = 'Unlapi ng mga teybol';
 $string['dbtype'] = 'Uri';
 $string['dbwrongencoding'] = 'Ang piniling datosan ay gumagana alinsunod sa hindi iminumungkahing encoding ($a).  Mas makabubuti na gamitin ang isa sa mga inencode sa Unicode (UTF-8) na datosan.  Magkagayunman, maaari mong lagpasan ang pagsubok na ito sa pamamagitan ng pagpili sa tsek ng \"Lagpasan ang Pagsubok ng DB Encoding\" sa ibaba, pero maaari kang makaranas ng mga problema sa hinaharap.';
+$string['dbwronghostserver'] = 'Kailangan mong sundin ang mga patakaran ng \"Host\" tulad ng ipinaliwanag sa itaas.';
+$string['dbwrongnlslang'] = 'Kailangang gamitin ng pangkapaligirang baryabol na NLS_LANG sa inyong web server ang AL32UTF8 charset.  Tingnan ang dokumentasyon ng PHP hinggil sa kung paano aayusin ang katangiang OCI8.';
+$string['dbwrongprefix'] = 'Kailangan mong sundin ang mga patakaran ng \"Tables Prefix\" tulad ng ipinaliwanag sa itaas.';
 $string['directorysettingshead'] = 'Pakikumpirma ang mga lokasyon ng iluluklok na Moodle';
 $string['directorysettingssub'] = '<b>Web Address:</b>
 Ibigay ang buong web address kung saan papasukin ang Moodle.
@@ -145,13 +184,19 @@ $string['memorylimithelp'] = '<p>Ang memory limit ng PHP para sa server mo ay ka
 </ol>';
 $string['missingrequiredfield'] = 'May ilang nawawalang pitak na kailangan';
 $string['moodledocslink'] = 'Mga Dokyu ng Moodle para sa pahinang ito';
+$string['mssql_n'] = 'SQL*Server na may UTF-8 support (mssql_n)';
+$string['mssqlextensionisnotpresentinphp'] = 'Ang PHP ay hindi wastong naisaayos na may MSSQL extension para magawa nitong makipag-ugnayan sa SQL*Server.  Pakisuri po ang inyong sakong php.ini o muli ikompayl ang PHP.';
 $string['mysql416bypassed'] = 'Magkagayuman, kung TANGING iso-8859-1 (latin) na wika ang ginagamit ng site mo, maaari mong ipagpatuloy ang kasalukuyan mong nakaluklok na MySQL 4.1.12 (o mas bago).';
 $string['mysql416required'] = 'Ang MySQL 4.1.16 ang minimum na bersiyong kinakailangan ng Moodle 1.6 upang matiyak na lahat ng datos ay makukumberte sa UTF-8, sa hinaharap.';
 $string['mysqlextensionisnotpresentinphp'] = 'Hindi isinaayos ang PHP na may MySQL extension para magawa nitong makipag-usap sa MySQL.  Pakitsek ang iyong sakong php.ini o muling ikompayl ang PHP.';
 $string['name'] = 'Pangalan';
 $string['next'] = 'Susunod';
+$string['ociextensionisnotpresentinphp'] = 'Ang PHP ay hindi wastong naisaayos na may OCI8 extension para magawa nitong makipag-ugnayan sa Oracle.  Pakisuri po ang inyong sakong php.ini o muli ikompayl ang PHP.';
+$string['odbc_mssql'] = 'SQL*Server sa pamamagitan ng ODBC (odbc_mssql)';
+$string['odbcextensionisnotpresentinphp'] = 'Ang PHP ay hindi wastong naisaayos na may ODBC extension para magawa nitong makipag-ugnayan sa SQL*Server.  Pakisuri po ang inyong sakong php.ini o muli ikompayl ang PHP.';
 $string['pass'] = 'Pasado';
 $string['password'] = 'Kontrasenyas';
+$string['pgsqlextensionisnotpresentinphp'] = 'Ang PHP ay hindi wastong naisaayos na may PGSQL extension para magawa nitong makipag-ugnayan sa PostgreSQL.  Pakisuri po ang inyong sakong php.ini o muli ikompayl ang PHP.';
 $string['php50restricted'] = 'Ang PHP 5.0.x ay maraming problema, itaas po ang bersiyon sa 5.1.x o ibaba sa 4.3.x o 4.4.x';
 $string['phpversion'] = 'Bersiyon ng PHP';
 $string['phpversionerror'] = 'Ang pinakamababang bersiyon ng PHP na puwedeng gamitin ay 4.3.0 o 5.1.0 (ang 5.0.x ay maraming problema)';
