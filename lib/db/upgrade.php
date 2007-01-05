@@ -19,7 +19,7 @@
 
 function xmldb_main_upgrade($oldversion=0) {
 
-    global $CFG, $THEME, $db;
+    global $CFG, $THEME, $USER, $db;
 
     $result = true;
 
@@ -384,6 +384,10 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addIndexInfo('mnethostid_username', XMLDB_INDEX_UNIQUE, array('mnet_host_id', 'username'));
         // Create the table
         $result = $result && create_table($table);
+
+        if (empty($USER->mnet_host_id)) {
+            $USER->mnet_host_id = 1;    // Something for the current user to prevent warnings
+        }
 
         /**
          ** enrol/mnet tables
