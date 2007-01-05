@@ -330,21 +330,23 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
     //get all the fields for that database
     if ($fields = get_records('data_fields', 'dataid', $data->id, 'id')) {
 
-        $str = '<div align="center">';
+        $str = '<div style="text-align:center">';
         $str .= '<table cellpadding="5">';
 
         foreach ($fields as $field) {
 
             $str .= '<tr><td valign="top" align="right">';
-            if ($template == 'addtemplate') {
-                $str .= '<label';
-                if (!in_array($field->type, array('picture', 'checkbox', 'date', 'latlong', 'radiobutton'))) {
-                    $str .= ' for="[['.$field->name.'#id]]"';
-                }
-                $str .= '>'.$field->name.'</label>';
-            } else {
+            // Yu: commenting this out, the id was wrong and will fix later
+            //if ($template == 'addtemplate') {
+                //$str .= '<label';
+                //if (!in_array($field->type, array('picture', 'checkbox', 'date', 'latlong', 'radiobutton'))) {
+                //    $str .= ' for="[['.$field->name.'#id]]"';
+                //}
+                //$str .= '>'.$field->name.'</label>';
+                
+            //} else {
                 $str .= $field->name.': ';
-            }
+            //}
             $str .= '</td>';
 
             $str .='<td>';
@@ -911,7 +913,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
  * output null                                                          *
  ************************************************************************/
 function data_print_preference_form($data, $perpage, $search, $sort='', $order='ASC'){
-    echo '<br /><div class="datapreferences" align="center">';
+    echo '<br /><div class="datapreferences" style="text-align:center">';
     echo '<form id="options" action="view.php" method="get">';
     echo '<input type="hidden" name="d" value="'.$data->id.'" />';
     echo '<label for="pref_perpage">'.get_string('pagesize','data').'</label> ';
@@ -962,7 +964,7 @@ function data_print_ratings($data, $record) {
         if ($ratingsscale = make_grades_menu($data->scale)) {
             $ratingsmenuused = false;
 
-            echo '<div class="ratings" align="center">';
+            echo '<div class="ratings" style="text-align:center">';
             echo '<form id="form" method="post" action="rate.php">';
 
             if (has_capability('mod/data:rate', $context) and !data_isowner($record->id)) {
@@ -1106,7 +1108,7 @@ function data_print_comments($data, $record, $page=0, $mform=false) {
     $editor = optional_param('addcomment', 0, PARAM_BOOL);
 
     if (!$mform and !$editor) {
-        echo '<div class="newcomment" align="center">';
+        echo '<div class="newcomment" style="text-align:center">';
         echo '<a href="view.php?d='.$data->id.'&amp;page='.$page.'&amp;mode=single&amp;addcomment=1">'.get_string('addcomment', 'data').'</a>';
         echo '</div>';
     } else {
@@ -1115,7 +1117,7 @@ function data_print_comments($data, $record, $page=0, $mform=false) {
             $mform = new mod_data_comment_form('comment.php');
             $mform->set_defaults(array('mode'=>'add', 'page'=>$page, 'rid'=>$record->id));
         }
-        echo '<div class="newcomment" align="center">';
+        echo '<div class="newcomment" style="text-align:center">';
         $mform->display();
         echo '</div>';
     }
