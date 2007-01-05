@@ -9,10 +9,11 @@ class user_edit_form extends moodleform {
     function definition () {
         global $USER, $CFG;
 
-        $mform    =& $this->_form;
-        $renderer =& $mform->defaultRenderer();
-        $user     = $this->_customdata['user'];
-        $course   = $this->_customdata['course'];
+        $mform      =& $this->_form;
+        $renderer   =& $mform->defaultRenderer();
+        $user       = $this->_customdata['user'];
+        $course     = $this->_customdata['course'];
+        $authplugin = $this->_customdata['authplugin'];
 
         $systemcontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
         $userupdate    = has_capability('moodle/user:update', $systemcontext);
@@ -290,6 +291,19 @@ class user_edit_form extends moodleform {
         /// override the defaults with the user settings
         $this->set_defaults($user);
 
+
+        /// disable fields that are locked by auth plugins
+        if ($userupdate) {
+            $fields = get_user_fieldnames();
+
+            foreach ($fields as $field) {
+                $configvariable = 'field_lock_' . $field;
+                if (isset($authplugin->config->{$configvariable})) {
+                    $mform->disabledIf($field, ( $authplugin->config->{$configvariable} === 'locked' or ($authplugin->config->{$configvariable} === 'unlockedifempty' and !empty($user->$field))), true);
+                }
+            }
+        }
+
         
         /// Next the customisable categories
         if ($categories = get_records_select('user_info_category', '1', 'sortorder ASC')) {
@@ -309,7 +323,6 @@ class user_edit_form extends moodleform {
                 } /// End of $fields if
             } /// End of $categories foreach
         } /// End of $categories if
-
 
         $this->add_action_buttons(false, get_string('updatemyprofile'));
 

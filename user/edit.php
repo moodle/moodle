@@ -76,7 +76,7 @@
     }
 
 
-    $userform = new user_edit_form('edit.php', compact('user','course'));
+    $userform = new user_edit_form('edit.php', compact('user','course','authplugin'));
     $userform->set_upload_manager(new upload_manager('imagefile',false,false,null,false,0,true,true));
 
 /// If data submitted, then process and store.
@@ -338,27 +338,6 @@
     }
 
     $userform->display();
-
-    if (!has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {      /// Lock all the locked fields using Javascript
-        $fields = get_user_fieldnames();
-
-        echo '<script type="text/javascript">'."\n";
-        echo '<!--'."\n";
-
-        foreach ($fields as $field) {
-            $configvariable = 'field_lock_' . $field;
-            if (isset($authplugin->config->{$configvariable})) {
-                if ( $authplugin->config->{$configvariable} === 'locked'
-                    or ($authplugin->config->{$configvariable} === 'unlockedifempty' and !empty($user->$field))) {
-                   echo "eval('getElementById('editform').$field.disabled=true');\n";
-                }
-            }
-        }
-
-        echo '-->'."\n";
-        echo '</script>'."\n";
-    }
-
 
     if (!isset($USER->newadminuser)) {
         print_footer($course);
