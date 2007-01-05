@@ -439,6 +439,10 @@ form#adminsettings div.htmlarea {
   border-style:solid;
 }
 
+.navbar .langmenu {
+  text-align:right;
+}
+
 table.navbar {
   width: 100%;
 }
