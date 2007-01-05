@@ -1318,7 +1318,8 @@ body#course-user .section h2 {
   margin:0;
 }
 
-#site-index .subscribelink {
+#site-index .subscribelink,
+#course-view .subscribelink {
   text-align:right;
 }
 

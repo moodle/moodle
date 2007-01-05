@@ -30,17 +30,14 @@
 
     echo '<td id="middle-column"><a name="startofcontent"></a>';
     if ($forum = forum_get_course_forum($course->id, 'social')) {
+        print_heading_block(get_string('socialheadline'));
         if (forum_is_forcesubscribed($forum->id)) {
-            $subtext = '<div class="link">'.get_string('everyoneissubscribed', 'forum').'</div>';
+            echo '<div class="subscribelink">'.get_string('everyoneissubscribed', 'forum').'</div>';
         } else if (forum_is_subscribed($USER->id, $forum->id)) {
-            $subtext = '<div class="link"><a href="../mod/forum/subscribe.php?id='.$forum->id.'">'.get_string('unsubscribe', 'forum').'</a></div>';
+            echo '<div class="subscribelink"><a href="../mod/forum/subscribe.php?id='.$forum->id.'">'.get_string('unsubscribe', 'forum').'</a></div>';
         } else {
-            $subtext = '<div class="link"><a href="../mod/forum/subscribe.php?id='.$forum->id.'">'.get_string('subscribe', 'forum').'</a></div>';
+            echo '<div class="subscribelink"><a href="../mod/forum/subscribe.php?id='.$forum->id.'">'.get_string('subscribe', 'forum').'</a></div>';
         }
-        $headertext = '<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr>'.
-                      '<td><div class="title">'.get_string('socialheadline').'</div></td>'.
-                      '<td>'.$subtext.'</td></tr></table>';
-        print_heading_block($headertext);
 
         forum_print_latest_discussions($course, $forum, 10, 'plain', '', false);
 

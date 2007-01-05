@@ -124,7 +124,8 @@ h4 {
   font-weight: bold;
 }
 
-#site-index .subscribelink {
+#site-index .subscribelink,
+#course-view .subscribelink {
   font-size: 0.8em;
 }
 
