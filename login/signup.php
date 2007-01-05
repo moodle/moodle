@@ -52,7 +52,7 @@
         $langs    = get_list_of_languages();
         $langmenu = popup_form ("$CFG->wwwroot/login/signup.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
     }
-    print_header($newaccount, $newaccount, "<a href=\"index.php\">$login</a> -> $newaccount", $mform_signup->focus(), "", true, "<div align=\"right\">$langmenu</div>");
+    print_header($newaccount, $newaccount, "<a href=\"index.php\">$login</a> -> $newaccount", $mform_signup->focus(), "", true, "<div class=\"langmenu\">$langmenu</div>");
 
     $mform_signup->display();
     print_footer();
