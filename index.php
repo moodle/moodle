@@ -177,15 +177,12 @@
                         } else {
                             $subtext = get_string('subscribe', 'forum');
                         }
-                        $headertext = '<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr>'.
-                            '<td><div class="title">'.$newsforum->name.'</div></td>'.
-                            '<td><div class="link"><a href="mod/forum/subscribe.php?id='.$newsforum->id.'">'.$subtext.'</a></div></td>'.
-                            '</tr></table>';
+                        print_heading_block($newsforum->name);
+                        echo '<div class="subscribelink"><a href="mod/forum/subscribe.php?id='.$newsforum->id.'">'.$subtext.'</a></div>';
                     } else {
-                        $headertext = $newsforum->name;
+                        print_heading_block($newsforum->name);
                     }
 
-                    print_heading_block($headertext);
                     forum_print_latest_discussions($SITE, $newsforum, $SITE->newsitems, 'plain', 'p.modified DESC');
                 }
             break;

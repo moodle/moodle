@@ -124,8 +124,8 @@ h4 {
   font-weight: bold;
 }
 
-.headingblock .link {
-  font-size: 0.9em;
+#site-index .subscribelink {
+  font-size: 0.8em;
 }
 
 .files .file {
