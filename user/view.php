@@ -353,7 +353,7 @@
     if ($currentuser and !isguest()) {
         if ($internalpassword ) {
             echo "<td nowrap=\"nowrap\"><form action=\"$internalpassword\" method=\"get\">";
-            echo "<fieldset>";
+            echo "<fieldset class='invisiblefieldset'>";
             echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
             if (!empty($USER->realuser)) {
                 // changing of password when "Logged in as" is not allowed
@@ -365,7 +365,7 @@
             echo "</form></td>";
         } elseif ( method_exists($userauth, 'change_password_url') and strlen($userauth->change_password_url())) {
             echo "<td nowrap=\"nowrap\"><form action=\"".$userauth->change_password_url()."\" method=\"get\">";
-            echo "<fieldset>";
+            echo "<fieldset class='invisiblefieldset'>";
             echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" />";
             echo "</fieldset>";
             echo "</form></td>";
@@ -382,7 +382,7 @@
              get_user_roles($coursecontext, $user->id)) ) {                          // This user has roles
 
             echo '<td nowrap="nowrap"><form action="../course/unenrol.php" method="get">';
-            echo "<fieldset>";
+            echo "<fieldset class='invisiblefieldset'>";
             echo '<input type="hidden" name="id" value="'.$course->id.'" />';
             echo '<input type="hidden" name="user" value="'.$user->id.'" />';
             echo '<input type="submit" value="'.get_string('unenrolme', '', $course->shortname).'" />';
@@ -393,7 +393,7 @@
 
     if ($USER->id != $user->id  && has_capability('moodle/user:loginas', $coursecontext))  {
         echo '<td nowrap="nowrap"><form action="'.$CFG->wwwroot.'/course/loginas.php" method="get">';
-        echo "<fieldset>";
+        echo "<fieldset class='invisiblefieldset'>";
         echo '<input type="hidden" name="id" value="'.$course->id.'" />';
         echo '<input type="hidden" name="user" value="'.$user->id.'" />';
         echo '<input type="submit" value="'.get_string('loginas').'" />';
@@ -409,13 +409,13 @@
                 $messagebuttonname = get_string("messages", "message");
             }
             echo "<td nowrap=\"nowrap\"><form target=\"message\" action=\"../message/index.php\" method=\"get\">";
-            echo "<fieldset>";
+            echo "<fieldset class='invisiblefieldset'>";
             echo "<input type=\"submit\" value=\"$messagebuttonname\" onclick=\"return openpopup('/message/index.php', 'message', 'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0);\" />";
             echo "</fieldset>";
             echo "</form></td>";
         } else {
             echo "<td nowrap=\"nowrap\"><form target=\"message_$user->id\" action=\"../message/discussion.php\" method=\"get\">";
-            echo "<fieldset>";
+            echo "<fieldset class='invisiblefieldset'>";
             echo "<input type=\"hidden\" name=\"id\" value=\"$user->id\" />";
             echo "<input type=\"submit\" value=\"".get_string("sendmessage", "message")."\" onclick=\"return openpopup('/message/discussion.php?id=$user->id', 'message_$user->id', 'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0);\" />";
             echo "</fieldset>";
@@ -425,7 +425,7 @@
     // Authorize.net: User Payments
     if ($course->enrol == 'authorize' || (empty($course->enrol) && $CFG->enrol == 'authorize')) {
         echo "<td nowrap=\"nowrap\"><form action=\"../enrol/authorize/index.php\" method=\"get\">";
-        echo "<fieldset>";
+        echo "<fieldset class='invisiblefieldset'>";
         echo "<input type=\"hidden\" name=\"course\" value=\"$course->id\" />";
         echo "<input type=\"hidden\" name=\"user\" value=\"$user->id\" />";
         echo "<input type=\"submit\" value=\"".get_string('payments')."\" />";

@@ -3909,10 +3909,11 @@ function update_module_button($moduleid, $courseid, $string) {
         $string = get_string('updatethis', '', $string);
 
         return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/course/mod.php\">".
+               "<fieldset class='invisiblefieldset'>".
                "<input type=\"hidden\" name=\"update\" value=\"$moduleid\" />".
                "<input type=\"hidden\" name=\"return\" value=\"true\" />".
                "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />".
-               "<input type=\"submit\" value=\"$string\" /></form>";
+               "<input type=\"submit\" value=\"$string\" /></fieldset></form>";
     } else {
         return '';
     }
@@ -4847,7 +4848,7 @@ function notice_yesno ($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno
     $linkno = clean_text($linkno);
 
     print_simple_box_start('center', '60%', '', 5, 'generalbox', 'notice');
-    echo '<p align="center">'. $message .'</p>';
+    echo '<p style="text-align:center">'. $message .'</p>';
     echo '<table align="center" cellpadding="20"><tr><td>';
     print_single_button($linkyes, $optionsyes, get_string('yes'), $methodyes, $CFG->framename);
     echo '</td><td>';

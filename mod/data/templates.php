@@ -156,7 +156,7 @@
             add_to_log($course->id, 'data', 'templates saved', "templates.php?id=$cm->id&amp;d=$data->id", $data->id, $cm->id);
         }
     } else {
-        echo '<div class="littleintro" align="center">'.get_string('header'.$mode,'data').'</div>';
+        echo '<div class="littleintro" style="text-align:center">'.get_string('header'.$mode,'data').'</div>';
     }
 
 /// If everything is empty then generate some defaults
@@ -170,6 +170,7 @@
 
 
     echo '<form id="tempform" action="templates.php?d='.$data->id.'&amp;mode='.$mode.'" method="post">';
+    echo '<fieldset class="invisiblefieldset">';
     echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
     // Print button to autogen all forms, if all templates are empty
 
@@ -187,7 +188,7 @@
         echo '<tr>';
         echo '<td>&nbsp;</td>';
         echo '<td>';
-        echo '<div align="center"><label for="edit-listtemplateheader">'.get_string('header','data').'</label></div>';
+        echo '<div style="text-align:center"><label for="edit-listtemplateheader">'.get_string('header','data').'</label></div>';
         print_textarea($usehtmleditor, 10, 72, 0, 0, 'listtemplateheader', $data->listtemplateheader);
         echo '</td>';
         echo '</tr>';
@@ -256,9 +257,9 @@
 
     echo '<td>';
     if ($mode == 'listtemplate'){
-        echo '<div align="center"><label for="edit-template">'.get_string('multientry','data').'</label></div>';
+        echo '<div style="text-align:center"><label for="edit-template">'.get_string('multientry','data').'</label></div>';
     } else {
-        echo '<div align="center"><label for="edit-template">'.get_string($mode,'data').'</label></div>';
+        echo '<div style="text-align:center"><label for="edit-template">'.get_string($mode,'data').'</label></div>';
     }
 
     print_textarea($usehtmleditor, 20, 72, 0, 0, 'template', $data->{$mode});
@@ -269,7 +270,7 @@
         echo '<tr>';
         echo '<td>&nbsp;</td>';
         echo '<td>';
-        echo '<div align="center"><label for="edit-listtemplatefooter">'.get_string('footer','data').'</label></div>';
+        echo '<div style="text-align:center"><label for="edit-listtemplatefooter">'.get_string('footer','data').'</label></div>';
         print_textarea($usehtmleditor, 10, 72, 0, 0, 'listtemplatefooter', $data->listtemplatefooter);
         echo '</td>';
         echo '</tr>';
@@ -277,19 +278,20 @@
         echo '<tr>';
         echo '<td>&nbsp;</td>';
         echo '<td>';
-        echo '<div align="center"><label for="edit-rsstitletemplate">'.get_string('rsstitletemplate','data').'</label></div>';
+        echo '<div style="text-align:center"><label for="edit-rsstitletemplate">'.get_string('rsstitletemplate','data').'</label></div>';
         print_textarea($usehtmleditor, 10, 72, 0, 0, 'rsstitletemplate', $data->rsstitletemplate);
         echo '</td>';
         echo '</tr>';
     }
 
-    echo '<tr><td align="center" colspan="2">';
+    echo '<tr><td style="text-align:center" colspan="2">';
     echo '<input type="submit" value="'.get_string('savetemplate','data').'" />&nbsp;';
 
     echo '</td></tr></table>';
 
 
     print_simple_box_end();
+    echo '</fieldset>';
     echo '</form>';
     if ($usehtmleditor) {
         use_html_editor('template');

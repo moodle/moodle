@@ -307,7 +307,7 @@
             print_heading(get_string('uploadrecords', 'data'), '', 3);
 
             $maxuploadsize = get_max_upload_file_size();
-            echo '<div align="center">';
+            echo '<div style="text-align:center">';
             echo '<form enctype="multipart/form-data" action="import.php" method="post">';
             echo '<input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'">';
             echo '<input name="d" value="'.$data->id.'" type="hidden" />';
@@ -332,7 +332,7 @@
             echo '</div>';
             print_simple_box_end();
         } else {
-            echo '<div align="center">';
+            echo '<div style="text-align:center">';
             echo '<a href="edit.php?d='.$data->id.'&amp;import=1">'.get_string('uploadrecords', 'data').'</a>';
             echo '</div>';
         }
