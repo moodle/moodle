@@ -184,7 +184,7 @@ switch ($action) {
             error("Invalid request");
         }
 
-        echo '<div align="center">';
+        echo '<div style="text-align:center">';
         $file = data_presets_export($course, $cm, $data);
         echo get_string('exportedtozip', 'data')."<br />";
         $perminantfile = $CFG->dataroot."/$course->id/moddata/data/$data->id/preset.zip";
@@ -210,14 +210,15 @@ switch ($action) {
         $strwarning = get_string('presetinfo', 'data');
         $strname = get_string('shortname');
 
-        echo '<div align="center">';
+        echo '<div style="text-align:center">';
         echo '<p>'.$strwarning.'</p>';
         echo '<form action="preset.php" method="post">';
+        echo '<fieldset class="invisiblefieldset">';
         echo '<label for="shorname">'.$strname.'</label> <input type="text" id="shorname" name="name" value="'.$data->name.'" />';
         echo '<input type="hidden" name="action" value="save2" />';
         echo '<input type="hidden" name="d" value="'.$data->id.'" />';
         echo '<input type="hidden" name="sesskey" value="'.$sesskey.'" />';
-        echo '<input type="submit" value="'.$strcontinue.'" /></form></div>';
+        echo '<input type="submit" value="'.$strcontinue.'" /></fieldset></form></div>';
         print_footer($course);
         exit;
         break;
@@ -236,20 +237,22 @@ switch ($action) {
         if (is_directory_a_preset("$CFG->dataroot/data/preset/$USER->id/$name")) {
             notify("Preset already exists: Pick another name or overwrite");
 
-            echo '<div align="center">';
+            echo '<div style="text-align:center">';
             echo '<form action="preset.php" method="post">';
+            echo '<fieldset class="invisiblefieldset">';
             echo '<label for="shorname">'.$strname.'</label> <input type="textbox" name="name" value="'.$name.'" />';
             echo '<input type="hidden" name="action" value="save2" />';
             echo '<input type="hidden" name="d" value="'.$data->id.'" />';
             echo '<input type="hidden" name="sesskey" value="'.$sesskey.'" />';
-            echo '<input type="submit" value="'.$strcontinue.'" /></form>';
+            echo '<input type="submit" value="'.$strcontinue.'" /></fieldset></form>';
 
             echo '<form action="preset.php" method="post">';
+            echo '<fieldset class="invisiblefieldset">';
             echo '<input type="hidden" name="name" value="'.$name.'" />';
             echo '<input type="hidden" name="action" value="save3" />';
             echo '<input type="hidden" name="d" value="'.$data->id.'" />';
             echo '<input type="hidden" name="sesskey" value="'.$sesskey.'" />';
-            echo '<input type="submit" value="'.$stroverwrite.'" /></form>';
+            echo '<input type="submit" value="'.$stroverwrite.'" /><fieldset></form>';
             echo '</div>';
             print_footer($course);
             exit;
@@ -288,7 +291,7 @@ $strsaveaspreset   = get_string('saveaspreset', 'data');
 $strsave           = get_string('save', 'data');
 $strdelete         = get_string('delete');
 
-echo '<div align="center">';
+echo '<div style="text-align:center">';
 echo '<table class="presets" cellpadding="5">';
 echo '<tr><td valign="top" colspan="2" align="center"><h3>'.$strexport.'</h3></td></tr>';
 
@@ -320,12 +323,13 @@ helpbutton('importfromfile', '', 'data');
 echo '</td><td>';
 
 echo '<form id="uploadpreset" method="post" action="preset.php">';
+echo '<fieldset class="invisiblefieldset">';
 echo '<input type="hidden" name="d" value="'.$data->id.'" />';
 echo '<input type="hidden" name="action" value="importzip" />';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 echo '<input name="file" size="20" value="" id="fromfile" type="text" /><input name="coursefiles" value="'.$strchooseorupload.'" onclick="return openpopup('."'/files/index.php?id=2&amp;choose=uploadpreset.file', 'coursefiles', 'menubar=0,location=0,scrollbars,resizable,width=750,height=500', 0".');" type="button" />';
 echo '<input type="submit" value="'.$strimport.'" />';
-echo '</form>';
+echo '</fieldset></form>';
 echo '</td></tr>';
 
 
@@ -334,6 +338,7 @@ helpbutton('usepreset', '', 'data');
 echo '</td><td>';
 
 echo '<form id="presets" method="post" action="preset.php" >';
+echo '<fieldset class="invisiblefieldset">';
 echo '<input type="hidden" name="d" value="'.$data->id.'" />';
 echo '<input type="hidden" name="action" value="importpreset" />';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
@@ -364,7 +369,7 @@ foreach ($presets as $id => $preset) {
 }
 echo '<br />';
 echo '<input type="submit" value="'.$strchoose.'" />';
-echo '</form>';
+echo '</fieldset></form>';
 echo '</td></tr>';
 echo '</table>';
 echo '</div>';
@@ -585,7 +590,8 @@ class PresetImporter {
 
         list($settings, $newfields,  $currentfields) = $this->get_settings();
 
-        echo '<div align="center"><form action="preset.php" method="post">';
+        echo '<div style="text-align:center"><form action="preset.php" method="post">';
+        echo '<fieldset class="invisiblefieldset">';
         echo '<input type="hidden" name="action" value="finishimport" />';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<input type="hidden" name="d" value="'.$this->data->id.'" />';
@@ -625,7 +631,7 @@ class PresetImporter {
         else if (empty($newfields)) {
             error("New preset has no defined fields!");
         }
-        echo '<input type="submit" value="'.$strcontinue.'" /></form></div>';
+        echo '<input type="submit" value="'.$strcontinue.'" /></fieldset></form></div>';
 
     }
 

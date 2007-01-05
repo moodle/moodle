@@ -2974,13 +2974,15 @@ function print_simple_box_end($return=false) {
 function print_single_button($link, $options, $label='OK', $method='get', $target='_self', $return=false) {
     $output = '';
     $output .= '<div class="singlebutton">';
-    $output .= '<form action="'. $link .'" method="'. $method .'" target="'.$target.'">';
+    // taking target out, will need to add later target="'.$target.'"
+    $output .= '<form action="'. $link .'" method="'. $method .'">';
+    $output .= '<fieldset class="invisiblefieldset">';
     if ($options) {
         foreach ($options as $name => $value) {
             $output .= '<input type="hidden" name="'. $name .'" value="'. $value .'" />';
         }
     }
-    $output .= '<input type="submit" value="'. $label .'" /></form></div>';
+    $output .= '<input type="submit" value="'. $label .'" /></fieldset></form></div>';
 
     if ($return) {
         return $output;
