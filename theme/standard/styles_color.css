@@ -107,7 +107,7 @@ table.formtable tbody th {
   color:#000044;
 }
 
-.required {
+#admin-auth_config .required {
   background-color:#DDDDDD;
 }
 
