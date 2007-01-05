@@ -75,6 +75,7 @@ class mnet_environment {
         // We don't generate keys on install/upgrade because we want the USER
         // record to have an email address, city and country already.
         if (!empty($_SESSION['upgraderunning'])) return true;
+        if (!extension_loaded("openssl")) return true;
         if (!empty($this->keypair)) return true;
 
         $this->keypair = array();
@@ -86,8 +87,8 @@ class mnet_environment {
         }
 
         if ($this->public_key_expires > time()) {
-            $this->keypair['privatekey'] = openssl_pkey_get_private($this->keypair['keypair_PEM']);
-            $this->keypair['publickey']  = openssl_pkey_get_public($this->keypair['certificate']);
+            $this->keypair['privatekey'] = XYZopenssl_pkey_get_private($this->keypair['keypair_PEM']);
+            $this->keypair['publickey']  = XYZopenssl_pkey_get_public($this->keypair['certificate']);
         } else {
             // Key generation/rotation
 
@@ -129,7 +130,7 @@ class mnet_environment {
         $this->keypair = array();
         $this->keypair = mnet_generate_keypair();
         $this->public_key         = $this->keypair['certificate'];
-        $details                  = openssl_x509_parse($this->public_key);
+        $details                  = XYZopenssl_x509_parse($this->public_key);
         $this->public_key_expires = $details['validTo_time_t'];
 
         set_config('openssl', implode('@@@@@@@@', $this->keypair), 'mnet');
@@ -140,14 +141,14 @@ class mnet_environment {
     function get_private_key() {
         if (empty($this->keypair)) $this->get_keypair();
         if (isset($this->keypair['privatekey'])) return $this->keypair['privatekey'];
-        $this->keypair['privatekey'] = openssl_pkey_get_private($this->keypair['keypair_PEM']);
+        $this->keypair['privatekey'] = XYZopenssl_pkey_get_private($this->keypair['keypair_PEM']);
         return $this->keypair['privatekey'];
     }
 
     function get_public_key() {
         if (!isset($this->keypair)) $this->get_keypair();
         if (isset($this->keypair['publickey'])) return $this->keypair['publickey'];
-        $this->keypair['publickey'] = openssl_pkey_get_public($this->keypair['certificate']);
+        $this->keypair['publickey'] = XYZopenssl_pkey_get_public($this->keypair['certificate']);
         return $this->keypair['publickey'];
     }
 
@@ -156,7 +157,7 @@ class mnet_environment {
      * signs the hash.
      */
     function sign_message($message) {
-        $bool = openssl_sign($message, $signature, $this->get_private_key());
+        $bool = XYZopenssl_sign($message, $signature, $this->get_private_key());
         return $signature;
     }
 }
