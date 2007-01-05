@@ -1542,6 +1542,7 @@ function question_categorylist($categoryid) {
  * @return mixed category object or null if fails
  */
 function create_category_path( $catpath, $delimiter='/', $courseid=0 ) {
+	$catpath = clean_param( $catpath,PARAM_PATH ); 
     $catnames = explode( $delimiter, $catpath );
     $parent = 0;
     $category = null;
