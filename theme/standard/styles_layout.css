@@ -141,6 +141,11 @@ img.grouppicture,
 .generalbox#intro {
 }
 
+.boxaligncenter {
+  margin-left:auto;
+  margin-right:auto;
+}
+
 .noticebox {
   border-width:1px;
   border-style:solid;

@@ -2924,23 +2924,22 @@ function print_simple_box_start($align='', $width='', $color='', $padding=5, $cl
 
     $output = '';
 
-    $tableclasses = $class;
+    $divclasses = $class.' '.$class.'content';
 
     if ($align) {
-        $tableclasses .= ' boxalign'.$align;    // Implement alignment using a class
+        $divclasses .= ' boxalign'.$align;    // Implement alignment using a class
     }
     if ($width) {
         $width = ' style="width:'.$width.'"';
     }
     if ($id) {
-        $id = 'id="'.$id.'"';
+        $id = ' id="'.$id.'"';
     }
     if ($color) {
         $color = ' style="background:'.$color.'"';
     }
 
-    $output .= '<table'.$width.' '.$id.' class="'.$tableclasses.'">'.
-               '<tr><td'.$color.' class="'.$class.'content">';
+    $output .= '<div'.$color.$width.$id.' class="'.$divclasses.'">';
 
     if ($return) {
         return $output;
@@ -2953,7 +2952,7 @@ function print_simple_box_start($align='', $width='', $color='', $padding=5, $cl
  * Print the end portion of a standard themed box.
  */
 function print_simple_box_end($return=false) {
-    $output = '</td></tr></table>';
+    $output = '</div>';
     if ($return) {
         return $output;
     } else {
