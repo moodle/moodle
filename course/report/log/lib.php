@@ -76,7 +76,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
     // Get all the hosts that we SSO with
     $sql = "SELECT DISTINCT 
                 h.id, 
-                h.name
+                h.name,
                 s.name as servicename
             FROM 
                 {$CFG->prefix}mnet_host h
