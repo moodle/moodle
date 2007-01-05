@@ -627,6 +627,7 @@ body#grade-index .grades .r1 {
  ***/
 
 .loginbox .content,
+.loginbox .content .subcontent,
 .loginbox .twocolumns .divider {
   border-color:#DDDDDD;
 }

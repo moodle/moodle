@@ -7,10 +7,10 @@ if ($show_instructions) {
 ?>
 <div class="loginbox"><div class="content">
   <div class="<?php echo $columns ?>">
-    <div class="pane left">
+    <div class="loginpanel">
      <div class="divider">
       <div class="header"><h2><?php print_string("returningtosite") ?></h2></div>
-      <div class="subcontent">
+      <div class="subcontent loginsub">
         <div class="desc">
           <?php
             print_string("loginusing");
@@ -31,12 +31,12 @@ if ($show_instructions) {
         <form action="index.php" method="post" id="login">
           <div class="loginform">
             <div class="form-label"><label for="username"><?php print_string("username") ?></label></div>
-            <div class="form-item">
+            <div class="form-input">
               <input type="text" name="username" id="username" size="15" value="<?php p($frm->username) ?>" /> 
             </div>
             <div class="clearer"><!-- --></div>
             <div class="form-label"><label for="password"><?php print_string("password") ?></label></div>
-            <div class="form-item">
+            <div class="form-input">
               <input type="password" name="password" id="password" size="15" value="" />
               <input type="submit" value="<?php print_string("login") ?>" />
               <input type="hidden" name="testcookies" value="1" />
@@ -47,7 +47,7 @@ if ($show_instructions) {
       </div>
 
 <?php if ($CFG->guestloginbutton) {  ?>
-      <div class="subcontent">
+      <div class="subcontent guestsub">
         <?php print_string("someallowguest") ?>
         <form action="index.php" method="post" id="guestlogin">
           <div class="guestform">
@@ -60,7 +60,7 @@ if ($show_instructions) {
       </div>
 <?php } ?>
 
-      <div class="subcontent">
+      <div class="subcontent forgotsub">
         <?php print_string("forgotten") ?> 
         <form action="forgot_password.php" method="post" id="changepassword">
           <div class="forgottenform">
@@ -72,7 +72,7 @@ if ($show_instructions) {
      </div>
     </div>
 <?php if ($show_instructions) { ?>
-    <div class="pane right">
+    <div class="signuppanel">
       <div class="header"><h2><?php print_string("firsttime") ?></h2></div>
       <div class="subcontent">
 <?php     switch ($authsequence[0]) {

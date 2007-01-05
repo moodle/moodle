@@ -461,7 +461,10 @@ table.minicalendar {
 .loginbox {
   background-color:#F9FAFA
 }
-.loginbox .content {
+
+.loginbox .content,
+.loginbox .content .subcontent,
+.loginbox .twocolumns .divider {
   border-color:#DDD
 }
 

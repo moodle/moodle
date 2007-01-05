@@ -541,8 +541,13 @@ body#grade-index .grades .r1 {
  *** Login
  ***/
 
-.loginbox .content {
+.loginbox .content,
+.loginbox .content .subcontent,
+.loginbox .twocolumns .divider {
   border-color:#9999FF;
+}
+
+.loginbox .content {
   background-color: #FFFFFF;
 }
 

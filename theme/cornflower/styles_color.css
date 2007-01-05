@@ -446,7 +446,9 @@ body#course-user .section {
  *** Login
  ***/
 
-.loginbox .content {
+.loginbox .content,
+.loginbox .content .subcontent,
+.loginbox .twocolumns .divider {
   border-color:#739FC4;
 }
 
