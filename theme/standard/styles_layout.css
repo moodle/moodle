@@ -1442,24 +1442,40 @@ body#grade-index .grades .weighted {
 
 .loginbox {
   margin-top:15px;
+  margin-bottom:15px;
 }
 
 .loginbox .content {
   border:1px solid;
-  width:90%;
-  margin-left:5%;
+  width:50%;
+  margin-left:25%;
   overflow:hidden;
 }
 
-.loginbox .content .header h2 {
+.loginbox .twocolumns .content {
+  width:90%;
+  margin-left:5%;
+}
+
+.loginbox .content .header h2,
+.loginbox .content .subcontent {
   margin:5px;
   padding:10px;
   text-align:center;
 }
 
-.loginbox .content .subcontent {
-  margin:5px;
-  padding:10px;
+.loginbox .content .loginpanel .subcontent {
+  text-align:center;
+}
+
+.loginbox .content .loginpanel .desc {
+  margin:0px;
+  padding:0px;
+  margin-bottom:5px;
+}
+
+.loginbox .content .signuppanel .subcontent {
+  text-align:left;
 }
 
 .loginbox .content .loginsub {
@@ -1467,22 +1483,12 @@ body#grade-index .grades .weighted {
   margin-right:0%;
 }
 
-.loginbox .content .guestsub {
-  border-top:1px solid;
-  margin-top:1.5em;
-  margin-left:12%;
-  margin-right:12%;
-}
-
+.loginbox .content .guestsub,
 .loginbox .content .forgotsub {
   border-top:1px solid;
-  margin-top:1.5em;
   margin-left:12%;
   margin-right:12%;
-}
-
-.loginbox .content .loginpanel .subcontent {
-  text-align:center;
+  margin-bottom:5px;
 }
 
 .loginbox .content .loginform {
@@ -1506,6 +1512,7 @@ body#grade-index .grades .weighted {
 }
 
 .loginbox .content .signupform {
+  margin-top:1em;
   text-align:center;
 }
 

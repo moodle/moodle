@@ -5,8 +5,8 @@ if ($show_instructions) {
     $columns = 'onecolumn';
 }
 ?>
-<div class="loginbox"><div class="content">
-  <div class="<?php echo $columns ?>">
+<div class="loginbox"><div class="<?php echo $columns ?>">
+  <div class="content">
     <div class="loginpanel">
      <div class="divider">
       <div class="header"><h2><?php print_string("returningtosite") ?></h2></div>
@@ -32,7 +32,7 @@ if ($show_instructions) {
           <div class="loginform">
             <div class="form-label"><label for="username"><?php print_string("username") ?></label></div>
             <div class="form-input">
-              <input type="text" name="username" id="username" size="15" value="<?php p($frm->username) ?>" /> 
+              <input type="text" name="username" id="username" size="15" value="<?php p($frm->username) ?>" />
             </div>
             <div class="clearer"><!-- --></div>
             <div class="form-label"><label for="password"><?php print_string("password") ?></label></div>
@@ -48,7 +48,9 @@ if ($show_instructions) {
 
 <?php if ($CFG->guestloginbutton) {  ?>
       <div class="subcontent guestsub">
-        <?php print_string("someallowguest") ?>
+        <div class="desc">
+          <?php print_string("someallowguest") ?>
+        </div>
         <form action="index.php" method="post" id="guestlogin">
           <div class="guestform">
             <input type="hidden" name="username" value="guest" />
@@ -61,9 +63,11 @@ if ($show_instructions) {
 <?php } ?>
 
       <div class="subcontent forgotsub">
-        <?php print_string("forgotten") ?> 
+        <div class="desc">
+          <?php print_string("forgotten") ?>
+        </div>
         <form action="forgot_password.php" method="post" id="changepassword">
-          <div class="forgottenform">
+          <div class="forgotform">
             <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
             <input type="submit" value="<?php print_string("passwordrecovery") ?>" />
           </div>
