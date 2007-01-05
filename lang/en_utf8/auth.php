@@ -5,6 +5,9 @@
 $string['alternatelogin'] = 'If you enter a URL here, it will be used as the login page for this site. The page should contain a form which has the action property set to <strong>\'$a\'</strong> and return fields <strong>username</strong> and <strong>password</strong>.<br />Be careful not to enter an incorrect URL as you may lock yourself out of this site.<br />Leave this setting blank to use the default login page.';
 $string['alternateloginurl'] = 'Alternate Login URL';
 
+$string['pluginnotenabled'] = 'Authentication plugin \'$a\' is not enabled.';
+$string['pluginnotinstalled'] = 'Authentication plugin \'$a\' is not installed.';
+
 // CAS plugin
 $string['auth_cas_logincas'] = 'Secure connection access';
 $string['auth_cas_invalidcaslogin'] = 'Sorry, your login has failed - you could not be authorised';

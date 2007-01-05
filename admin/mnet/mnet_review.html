@@ -89,8 +89,8 @@ if (isset($mnet_peer->deleted) && $mnet_peer->deleted > 0):
     <tr>
         <td align="right" valign="top" nowrap><?php print_string('deleted'); ?>:</td>
         <td valign="top">
-            <input type="radio" name="deleted" value="0" <?php echo ("off" == $CFG->mnet_dispatcher_mode)? 'checked="true"' : '' ?> /> No - select this option to re-enable this server. <br />
-            <input type="radio" name="deleted" value="1" <?php echo ("strict" == $CFG->mnet_dispatcher_mode)? 'checked="true"' : '' ?> /> Yes<br />
+            <input type="radio" name="deleted" value="0" checked="true" /> <?php print_string('reenableserver','mnet'); ?><br />
+            <input type="radio" name="deleted" value="1"  /> <?php print_string('yes'); ?><br />
         </td>
     </tr>
 <?php

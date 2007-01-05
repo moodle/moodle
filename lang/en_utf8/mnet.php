@@ -23,6 +23,29 @@ $string['trustedhostsexplain']          = 'Please enter a list of IP addresses o
                                           '192.168.0.0/0<br />'.
                                           'Obviously the last example is not a recommended configuration.';
 
+$string['nomodifyacl']                  = 'You are not permitted to modify the MNET access control list.';
+$string['recordnoexists']               = 'Record does not exist.';
+$string['enterausername']               = 'Please enter a username, or a list of usernames separated by commas.';
+$string['selectahost']                  = 'Please select a remote Moodle host.';
+$string['selectaccesslevel']            = 'Please select an access level from the list.';
+$string['noaclentries']                 = 'No entries in the SSO access control list';
+$string['deleteaserver']                = 'Deleting a Server';
+$string['nosite']                       = 'Could not find site-level course';
+$string['postrequired']                 = 'The delete function requires a POST request.';
+$string['hostdeleted']                  = 'Ok - host deleted';
+$string['reenableserver']               = 'No - select this option to re-enable this server.';
+$string['nocurl']                       = 'PHP Curl library is not installed';
+$string['publish']                      = 'Publish';
+$string['subscribe']                    = 'Subscribe';
+$string['failedaclwrite']               = 'Failed to write to the MNET access control list for user \'$a\'.';
+
+$string['receivedwarnings']             = 'The following warnings were received';
+$string['reallydeleteserver']           = 'Are you sure you want to delete the server';
+
+$string['deleteuserrecord']             = 'SSO ACL: delete record for user \'$a[0]\' from $a[1].';
+$string['invalidaccessparam']           = 'Invalid access parameter.';
+$string['invalidactionparam']           = 'Invalid action parameter.';
+$string['ssoacl']                       = 'SSO ACL: $a[0] user \'$a[1]\' from $a[2]';
 $string['currentkey']                   = 'Current Public Key';
 $string['keymismatch']                  = 'The public key you are holding for this host is different from the public key it is currently publishing.';
 $string['invalidurl']                   = 'Invalid URL parameter.';

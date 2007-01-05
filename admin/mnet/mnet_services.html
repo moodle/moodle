@@ -40,8 +40,8 @@ print_simple_box_start("center", "");
             echo $breakstring;
 ?>
     <input type="hidden" name="exists[<?php echo  $version['serviceid']; ?>]" value="1" />
-    <input type="checkbox" name="publish[<?php echo $version['serviceid']; ?>]" <?php echo (!empty($version['I_publish']))? 'checked ': '' ; ?>/> Publish <?php echo $versionstring; if (!empty($version['hostsubscribes'])) echo '<a href="#" title="'.get_string('issubscribed','mnet', $mnet_peer->name).'">&radic;</a> '; if (!empty($version['allhosts_publish'])) print_string("enabled_for_all",'mnet',!empty($version['I_publish']));  ?><br />
-    <input type="checkbox" name="subscribe[<?php echo $version['serviceid']; ?>]" <?php echo (!empty($version['I_subscribe']))? 'checked ': '' ; ?>/> Subscribe <?php echo $versionstring; if (!empty($version['hostpublishes'])) echo '<a href="#" title="'.get_string('ispublished','mnet', $mnet_peer->name).'">&radic;</a> '; if (!empty($version['allhosts_subscribe'])) print_string("enabled_for_all",'mnet',!empty($version['I_subscribe'])); ?><br />
+    <input type="checkbox" name="publish[<?php echo $version['serviceid']; ?>]" <?php echo (!empty($version['I_publish']))? 'checked ': '' ; ?>/><?php print_string('publish','mnet'); ?><?php echo $versionstring; if (!empty($version['hostsubscribes'])) echo '<a href="#" title="'.get_string('issubscribed','mnet', $mnet_peer->name).'">&radic;</a> '; if (!empty($version['allhosts_publish'])) print_string("enabled_for_all",'mnet',!empty($version['I_publish']));  ?><br />
+    <input type="checkbox" name="subscribe[<?php echo $version['serviceid']; ?>]" <?php echo (!empty($version['I_subscribe']))? 'checked ': '' ; ?>/><?php print_string('subscribe','mnet'); ?><?php echo $versionstring; if (!empty($version['hostpublishes'])) echo '<a href="#" title="'.get_string('ispublished','mnet', $mnet_peer->name).'">&radic;</a> '; if (!empty($version['allhosts_subscribe'])) print_string("enabled_for_all",'mnet',!empty($version['I_subscribe'])); ?><br />
 <?php
             $breakstring = '. . . . . . . . . . . . . . . . . . . . . . . . <br>';
         endforeach;

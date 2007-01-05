@@ -10,16 +10,12 @@
     $strmnetedithost   = get_string('reviewhostdetails', 'mnet');
     require_login();
 
-    if (!isadmin()) {
-        error('Only administrators can use this page!');
-    }
-
     $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
     
     require_capability('moodle/site:config', $context, $USER->id, true, "nopermissions");
 
     if (!$site = get_site()) {
-        error('Site isn\'t defined!');
+        error(get_string('nosite','mnet'));
     }
 
 /// Initialize variables.
@@ -32,7 +28,7 @@
     $warn = array();
 
     if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-        redirect('index.php', "The delete function requires a POST request.",7);
+        redirect('index.php', get_string('postrequired','mnet') ,7);
     }
 
     if ('verify' == $step) {
@@ -47,6 +43,6 @@
         $mnet_peer = new mnet_peer();
         $mnet_peer->set_id($hostid);
         $mnet_peer->delete();
-        redirect('peers.php', 'Ok - host deleted', 5);
+        redirect('peers.php', get_string('hostdeleted', 'mnet'), 5);
     }
 ?>

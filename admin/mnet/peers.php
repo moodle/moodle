@@ -15,11 +15,11 @@ $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 require_capability('moodle/site:config', $context, $USER->id, true, "nopermissions");
 
 if (!$site = get_site()) {
-    error('Site isn\'t defined!');
+    error(get_string('nosite','mnet'));
 }
 
 if (!function_exists('curl_init') ) {
-    error('PHP Curl library is not installed');
+    error(get_string('nocurl','mnet'));
 }
 
 if (!extension_loaded('openssl')) {

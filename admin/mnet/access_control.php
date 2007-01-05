@@ -39,20 +39,20 @@ if (!empty($action) and confirm_sesskey()) {
     
     // boot if insufficient permission
     if (!has_capability('moodle/user:delete', $sitecontext)) {
-        error('You are not permitted to modify the MNET access control list.');
+        error(get_string('nomodifyacl','mnet'));
     }
 
     // fetch the record in question
     $id = required_param('id', PARAM_INT);
     if (!$idrec = get_record('mnet_sso_access_control', 'id', $id)) {
-        error('Record does not exist.', '/admin/mnet/access_control.php');
+        error(get_string('recordnoexists','mnet'), '/admin/mnet/access_control.php');
     }
 
     switch ($action) {
 
         case "delete":
             delete_records('mnet_sso_access_control', 'id', $id);
-            notify("SSO ACL: delete record for user '{$idrec->username}' from {$mnethosts[$idrec->mnet_host_id]}.");
+            notify(get_string('deleteuserrecord', 'mnet', array($idrec->username, $mnethosts[$idrec->mnet_host_id])));
             break;
 
         case "acl":
@@ -60,16 +60,16 @@ if (!empty($action) and confirm_sesskey()) {
             // require the access parameter, and it must be 'allow' or 'deny'
             $access = trim(strtolower(required_param('access', PARAM_ALPHA)));
             if ($access != 'allow' and $access != 'deny') {
-                error('Invalid access parameter.', '/admin/mnet/access_control.php');
+                error(get_string('invalidaccessparam', 'mnet') , '/admin/mnet/access_control.php');
             }
 
             if (mnet_update_sso_access_control($idrec->username, $idrec->mnet_host_id, $access)) {
-                notify("SSO ACL: $access user '{$idrec->username}' from {$mnethosts[$idrec->mnet_host_id]}");
+                notify(get_string('ssoacl', 'mnet', array($access, $idrec->username, $mnethosts[$idrec->mnet_host_id])));
             }
             break;
 
         default:
-            error('Invalid action parameter.', '/admin/mnet/access_control.php');
+            error(get_string('invalidactionparam', 'mnet'), '/admin/mnet/access_control.php');
     }
     redirect('access_control.php', get_string('changessaved'));
 }
@@ -81,16 +81,16 @@ if ($form = data_submitted() and confirm_sesskey()) {
 
     // check permissions and verify form input
     if (!has_capability('moodle/user:delete', $sitecontext)) {
-        error('You are not permitted to modify the MNET access control list.', '/admin/mnet/access_control.php');
+        error(get_string('nomodifyacl','mnet'), '/admin/mnet/access_control.php');
     }
     if (empty($form->username)) {
-        $formerror['username'] = 'Please enter a username, or a list of usernames separated by commas.';
+        $formerror['username'] = get_string('enterausername','mnet');
     }
     if (empty($form->mnet_host_id)) {
-        $formerror['mnet_host_id'] = 'Please select a remote Moodle host.';
+        $formerror['mnet_host_id'] = get_string('selectahost','mnet');
     }
     if (empty($form->access)) {
-        $formerror['access'] = 'Please select an access level from the list.';
+        $formerror['access'] = get_string('selectaccesslevel','mnet'); ;
     }
 
     // process if there are no errors
@@ -136,7 +136,7 @@ $acl = get_records('mnet_sso_access_control', '', '', "$sort $dir", '*'); //, $p
 $aclcount = count_records('mnet_sso_access_control');
 
 if (!$acl) {
-    print_heading('No entries in the SSO access control list');
+    print_heading(get_string('noaclentries','mnet'));
     $table = NULL;
 } else {
     $table->head = $headings;

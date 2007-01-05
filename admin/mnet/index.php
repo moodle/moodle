@@ -15,11 +15,11 @@
     require_capability('moodle/site:config', $context, $USER->id, true, "nopermissions");
 
     if (!$site = get_site()) {
-        error('Site isn\'t defined!');
+        error(get_string('nosite','mnet'));
     }
 
     if (!function_exists('curl_init') ) {
-        error('PHP Curl library is not installed');
+        error(get_string('nocurl','mnet'));
     }
 
     if (!extension_loaded('openssl')) {
@@ -93,11 +93,11 @@
                     <td colspan="2" class="header" cellpadding="0"><?php print_string('aboutyourhost', 'mnet'); ?></td>
                 </tr>
                 <tr valign="top">
-                    <td align="right">Public Key:</td>
+                    <td align="right"><?php print_string('publickey', 'mnet'); ?>:</td>
                     <td><pre><?php echo $MNET->public_key; ?></pre></td>
                 </tr>
                 <tr valign="top">
-                    <td align="right">Networking:</td>
+                    <td align="right"><?php print_string('net', 'mnet'); ?>:</td>
                     <td><input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
                         <input type="radio" name="mode" value="off" <?php echo ("off" == $CFG->mnet_dispatcher_mode)? 'checked="true"' : '' ?> /> <?php print_string('off', 'mnet'); ?> <br />
                         <input type="radio" name="mode" value="strict" <?php echo ("strict" == $CFG->mnet_dispatcher_mode)? 'checked="true"' : '' ?> /> <?php print_string('on', 'mnet'); ?><br />

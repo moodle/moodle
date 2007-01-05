@@ -469,7 +469,7 @@ function mnet_update_sso_access_control($username, $mnet_host_id, $access) {
             add_to_log(SITEID, 'admin/mnet', 'update', 'admin/mnet/access_control.php',
                     "SSO ACL: $access user '$username' from {$mnethost->name}");
         } else {
-            error("Failed to write to the MNET access control list for user '$username'.");
+            error(get_string('failedaclwrite','mnet', $username));
             return false;
         }
     } else {
@@ -481,7 +481,7 @@ function mnet_update_sso_access_control($username, $mnet_host_id, $access) {
             add_to_log(SITEID, 'admin/mnet', 'add', 'admin/mnet/access_control.php',
                     "SSO ACL: $access user '$username' from {$mnethost->name}");
         } else {
-            error("Failed to write to the MNET access control list for user '$username'.");
+            error(get_string('failedaclwrite','mnet', $username));
             return false;
         }
     }

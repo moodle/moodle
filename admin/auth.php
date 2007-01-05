@@ -72,7 +72,7 @@ switch ($params->action) {
     case 'enable':
         // check auth plugin is valid first
         if (!exists_auth_plugin($params->auth)) {
-            error("Authentication plugin '{$params->auth}' is not installed.", $url);
+            error(get_string('pluginnotinstalled', 'auth', $params->auth), $url);
         }
         // add to enabled list
         if (!array_search($params->auth, $authsenabled)) {
@@ -86,7 +86,7 @@ switch ($params->action) {
         $key = array_search($params->auth, $authsenabled);
         // check auth plugin is valid
         if ($key === false) {
-            error("Authentication plugin '{$params->auth}' is not enabled.", $url);
+            error(get_string('pluginnotenabled', 'auth', $params->auth), $url);
         }
         // move down the list
         if ($key < (count($authsenabled) - 1)) {
@@ -101,7 +101,7 @@ switch ($params->action) {
         $key = array_search($params->auth, $authsenabled);
         // check auth is valid
         if ($key === false) {
-            error("Authentication plugin '{$params->auth}' is not enabled.", $url);
+            error(get_string('pluginnotenabled', 'auth', $params->auth), $url);
         }
         // move up the list
         if ($key >= 1) {

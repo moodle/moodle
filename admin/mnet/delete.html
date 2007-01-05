@@ -11,13 +11,13 @@ print_heading(get_string('mnetsettings', 'mnet'));
             <td  class="generalboxcontent">
             <table cellpadding="9" cellspacing="0" >
                 <tr valign="top">
-                    <td colspan="2" class="header" cellpadding="0"><span>Deleting a Server</span></td>
+                    <td colspan="2" class="header" cellpadding="0"><span><?php print_string('deleteaserver', 'mnet'); ?>Deleting a Server</span></td>
                 </tr>
                 <?php
                 if (count($warn) > 0):
                 ?>
                 <tr valign="top">
-                    <td align="right" colspan="2">The following warnings were received:<br />
+                    <td align="right" colspan="2"><?php print_string('receivedwarnings','mnet'); ?>:<br />
                     <?php foreach($warn as $warning) echo $warning .'<br />'; ?>
                     </td>
                 </tr>
@@ -25,7 +25,7 @@ print_heading(get_string('mnetsettings', 'mnet'));
                 endif;
                 ?>
                 <tr valign="top">
-                    <td colspan="2">Are you sure you want to delete the server: "<?php echo $mnet_peer->name; ?>"?</td>
+                    <td colspan="2"><?php print_string('reallydeleteserver','mnet'); ?>: "<?php echo $mnet_peer->name; ?>"?</td>
                 </tr>
                 <tr valign="top">
                     <td width="80">
