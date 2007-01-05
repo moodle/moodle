@@ -99,7 +99,7 @@
             unset($usernew->password);
         }
 
-        if (!empty($CFG->unicodedb) && $CFG->allowusermailcharset) {
+        if ($CFG->allowusermailcharset) {
             $usernew->mailcharset = clean_param($usernew->mailcharset, PARAM_CLEAN);
             if (!empty($usernew->mailcharset)) {
                 set_user_preference('mailcharset', $usernew->mailcharset, $user->id);
@@ -285,7 +285,7 @@
         } else {
             $userfullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
         }
-        if ($course->category) {
+        if ($course->id != SITEID) {
             print_header("$course->shortname: $streditmyprofile", "$course->fullname: $streditmyprofile",
                         "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>
                         -> <a href=\"index.php?id=$course->id\">$strparticipants</a>
