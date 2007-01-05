@@ -1,5 +1,5 @@
+
 <?php // $Id$
-//
 ///////////////////////////////////////////////////////////////
 // The GIFT import filter was designed as an easy to use method 
 // for teachers writing questions as a text file. It supports most
@@ -141,14 +141,17 @@ class qformat_gift extends qformat_default {
         $text = $this->escapedchar_pre($text);
 
         // Look for category modifier
-        if (ereg( '^\$CATEGORY: *([A-Za-z0-9/]+)[[:space:]]', $text, $matches)) {
-            $newcategory = $matches[1];
+        if (ereg( '^\$CATEGORY:', $text)) {
+            // $newcategory = $matches[1];
+            $newcategory = trim(substr( $text, 10 ));
 
             // build fake question to contain category
             $question->qtype = 'category';
             $question->category = $newcategory;
             return $question;
         }
+        
+        
 
         // QUESTION NAME parser
         if (substr($text, 0, 2) == "::") {
