@@ -19,6 +19,7 @@ class mod_quiz_mod_form extends moodleform_mod {
 
     	$mform->addElement('htmleditor', 'intro', get_string("introduction", "quiz"));
 		$mform->setType('intro', PARAM_RAW);
+        $mform->setHelpButton('intro', array('richtext', get_string('helprichtext')));
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'timinghdr', get_string('timing', 'form'));

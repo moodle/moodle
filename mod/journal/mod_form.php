@@ -18,6 +18,7 @@ class mod_journal_mod_form extends moodleform_mod {
     	$mform->addElement('htmleditor', 'intro', get_string('journalquestion', 'journal'));
 		$mform->setType('intro', PARAM_RAW);
 		$mform->addRule('intro', get_string('required'), 'required', null, 'client');
+        $mform->setHelpButton('intro', array('writing', 'questions', 'richtext'), false, 'editorhelpbutton');
 
         $mform->addElement('format', 'format', get_string('format'));
 

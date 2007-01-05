@@ -10,6 +10,7 @@ class mod_label_mod_form extends moodleform_mod {
 		$mform->addElement('htmleditor', 'content', get_string('labeltext', 'label'));
 		$mform->setType('content', PARAM_RAW);
 		$mform->addRule('content', get_string('required'), 'required', null, 'client');
+        $mform->setHelpButton('content', array('questions', 'richtext'), false, 'editorhelpbutton');
 
 		$this->standard_hidden_coursemodule_elements();
 

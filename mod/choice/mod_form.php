@@ -18,6 +18,7 @@ class mod_choice_mod_form extends moodleform_mod {
         $mform->addElement('htmleditor', 'text', get_string('choicetext', 'choice'));
 		$mform->setType('text', PARAM_RAW);
 		$mform->addRule('text', null, 'required', null, 'client');
+        $mform->setHelpButton('text', array('writing', 'questions', 'richtext'), false, 'editorhelpbutton');
 
         $mform->addElement('format', 'format', get_string('format'));
 

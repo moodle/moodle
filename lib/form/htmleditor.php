@@ -50,8 +50,11 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
             if ('editorhelpbutton' == $function){
                 $key = array_search('richtext', $helpbuttonargs);
                 if ($key !== FALSE){
-                    $helpbuttonargs[$key]='emoticons';
+                    array_splice($helpbuttonargs, $key, 1, array('text', 'emoticons'));
                 }
+            } elseif ('helpbutton' == $function && $helpbuttonargs[0] == 'richtext' && ((!isset($helpbuttonargs[2])) || $helpbuttonargs[2] == 'moodle')){
+                //replace single 'richtext' help button with text and emoticon button when htmleditor off.
+                return $this->setHelpButton(array('text', 'emoticons'), 'editorhelpbutton');
             }
         }
         return parent::setHelpButton($helpbuttonargs, $function);

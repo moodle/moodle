@@ -21,6 +21,9 @@ for ($i=1; ; $i++){
             case 'richtext' :
                 $topics[$i] = helplink('richtext', get_string('helprichtext'));
                 break;
+            case 'text' :
+                $topics[$i] = helplink('text', get_string('helptext'));
+                break;
             default :
                 error('Unknown help topic '.$item);
         }

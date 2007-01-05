@@ -921,6 +921,7 @@ class mod_assignment_upload_notes_form extends moodleform {
         // visible elements
         $mform->addElement('htmleditor', 'text', get_string('notes', 'assignment'), array('cols'=>85, 'rows'=>30));
         $mform->setType('text', PARAM_RAW); // to be cleaned before display
+        $mform->setHelpButton('text', array('reading', 'writing'), false, 'editorhelpbutton');
 
         // hidden params
         $mform->addElement('hidden', 'id', 0);

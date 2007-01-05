@@ -28,6 +28,7 @@ class MoodleQuickForm_textarea extends HTML_QuickForm_textarea{
      * @param string $function function name to call to get html
      */
     function setHelpButton($helpbuttonargs, $function='helpbutton'){
+        global $SESSION;
         if (!is_array($helpbuttonargs)){
             $helpbuttonargs=array($helpbuttonargs);
         }else{
@@ -41,7 +42,7 @@ class MoodleQuickForm_textarea extends HTML_QuickForm_textarea{
         } elseif ('editorhelpbutton' == $function){
             if (in_array('emoticons', $helpbuttonargs)){
                 $SESSION->inserttextform = $this->_formid;
-                $SESSION->inserttextfield = 'id_'.$this->getAttribute('id');
+                $SESSION->inserttextfield = $this->getAttribute('name');
             }
         }
         $this->_helpbutton=call_user_func_array($function, $helpbuttonargs);

@@ -4609,6 +4609,13 @@ function print_error ($errorcode, $module='', $link='', $a=NULL) {
                  get_string('moreinformation').'</a></p>';
     error($message, $link);
 }
+/**
+ * Returns a string of html with an image of a help icon linked to a help page on a number of help topics.
+ * Should be used only with htmleditor or textarea.
+ * @param mixed $helptopics variable amount of params accepted. Each param may be a string or an array of arguments for
+ *                  helpbutton.
+ * @return string
+ */
 function editorhelpbutton(){
     global $CFG, $SESSION;
     $items = func_get_args();
@@ -4636,13 +4643,13 @@ function editorhelpbutton(){
                     $titles[] = get_string("helpquestions");
                     break;
                 case 'emoticons' :
-                    $SESSION->inserttextform = 'mod-forum-post';
-                    $SESSION->inserttextfield = 'message';
-
                     $titles[] = get_string("helpemoticons");
                     break;
                 case 'richtext' :
-                    $titles[] = get_string("helprichtext");
+                    $titles[] = get_string('helprichtext');
+                    break;
+                case 'text' :
+                    $titles[] = get_string('helptext');
                     break;
                 default :
                     error('Unknown help topic '.$item);
@@ -4662,23 +4669,8 @@ function editorhelpbutton(){
 
     $paramstring = join('&', $urlparams);
     $linkobject = '<img alt="'.$alttag.'" src="'.$CFG->pixpath .'/help.gif" />';
-    return link_to_popup_window(s("/lib/form/editorhelp.php?".$paramstring), $alttag, $linkobject, 400, 500, $alttag, 'none', true);
+    return link_to_popup_window(s('/lib/form/editorhelp.php?'.$paramstring), $alttag, $linkobject, 400, 500, $alttag, 'none', true);
 }
-/*    $helptext = '<ul><li>';
-    $helptext .= helpbutton("reading", get_string("helpreading"), "moodle", true, false, '', true);
-    $helptext .= "</li><li>";
-    $helptext .= helpbutton("writing", get_string("helpwriting"), "moodle", true, false, '', true);
-    $helptext .= "</li><li>";
-    $helptext .= helpbutton("questions", get_string("helpquestions"), "moodle", true, false, '', true);
-    $helptext .= "</li><li>";
-    if ($usehtmleditor) {
-       $helptext .= helpbutton("richtext", get_string("helprichtext"), "moodle", true, false, '', true);
-    } else {
-       $helptext .= emoticonhelpbutton("theform", "message", true);
-    }
-    $helptext .= "</li></ul>";
-    return helpbutton('', get_string('editorhelp'), 'moodle', true, false, $helptext, true);
-}*/
 
 /**
  * Print a help button.
@@ -5277,7 +5269,7 @@ function print_side_block_end($attributes = array()) {
 function print_speller_code ($usehtmleditor=false, $return=false) {
     global $CFG;
     $str = '';
-    
+
     $str .= "\n".'<script type="text/javascript">'."\n";
     $str .= '//<![CDATA['."\n";
     if(!$usehtmleditor) {
@@ -5631,7 +5623,7 @@ function disable_debugging() {
 }
 
 
-/** 
+/**
  *  Returns string to add a frame attribute, if required
  */
 function frametarget() {

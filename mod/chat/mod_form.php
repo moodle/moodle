@@ -17,6 +17,7 @@ class mod_chat_mod_form extends moodleform_mod {
 
 		$mform->addElement('htmleditor', 'intro', get_string('chatintro', 'chat'));
 		$mform->setType('intro', PARAM_RAW);
+        $mform->setHelpButton('intro', array('writing', 'questions', 'richtext'), false, 'editorhelpbutton');
 		$mform->addRule('intro', get_string('required'), 'required', null, 'client');
 
         $mform->addElement('date_time_selector', 'chattime', get_string('chattime', 'chat'));

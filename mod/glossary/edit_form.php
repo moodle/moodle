@@ -24,6 +24,7 @@ class mod_glossary_entry_form extends moodleform {
 		$mform->addElement('htmleditor', 'definition', get_string('definition', 'glossary'), array('rows'=>20));
 		$mform->setType('definition', PARAM_RAW);
 		$mform->addRule('definition', null, 'required', null, 'client');
+        $mform->setHelpButton('definition', array('writing', 'richtext'), false, 'editorhelpbutton');
 
 		$mform->addElement('format');
 
