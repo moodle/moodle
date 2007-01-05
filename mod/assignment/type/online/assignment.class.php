@@ -100,9 +100,9 @@ class assignment_online extends assignment_base {
                 if ($submission) {
                     echo format_text($submission->data1, $submission->data2);
                 } else if (!has_capability('mod/assignment:submit', $context)) { //fix for #4604
-                    echo '<center>'. get_string('guestnosubmit', 'assignment').'</center>';
+                    echo '<div style="text-align:center">'. get_string('guestnosubmit', 'assignment').'</div>';
                 } else if ($this->isopen()){    //fix for #4206
-                    echo '<center>'.get_string('emptysubmission', 'assignment').'</center>';
+                    echo '<div style="text-align:center">'.get_string('emptysubmission', 'assignment').'</div>';
                 }
                 if ($editable) {
                     print_single_button('view.php', array('id'=>$this->cm->id, 'edit'=>'1'),

@@ -886,6 +886,7 @@ class assignment_base {
         echo '</td>';
         echo '<td class="content">';
         echo '<form id="submitform" action="submissions.php" method="post">';
+        echo '<fieldset class="invisiblefieldset">';
         echo '<input type="hidden" name="offset" value="'.++$offset.'">';
         echo '<input type="hidden" name="userid" value="'.$userid.'" />';
         echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
@@ -929,6 +930,7 @@ class assignment_base {
             echo '<input type="submit" name="next" value="'.get_string('next').'" onclick="setNext();" />';
         }
         echo '</div>';
+        echo '</fieldset>';
         echo '</form>';
 
         $customfeedback = $this->custom_feedbackform($submission, true);
@@ -1060,7 +1062,7 @@ class assignment_base {
         $table->set_attribute('id', 'attempts');
         $table->set_attribute('class', 'submissions');
         $table->set_attribute('width', '90%');
-        $table->set_attribute('align', 'center');
+        //$table->set_attribute('align', 'center');
             
         // Start working -- this is necessary as soon as the niceties are over
         $table->setup();
@@ -1187,16 +1189,18 @@ class assignment_base {
         /// Print quickgrade form around the table
         if ($quickgrade){
             echo '<form action="submissions.php" id="fastg" method="post">';
+            echo '<fieldset class="invisiblefieldset">';
             echo '<input type="hidden" name="id" value="'.$this->cm->id.'">';
             echo '<input type="hidden" name="mode" value="fastgrade">';
             echo '<input type="hidden" name="page" value="'.$page.'">';
-            echo '<p align="center"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></p>';
+            echo '<div style="text-align:center"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></div>';
         }
 
         $table->print_html();  /// Print the whole table
 
         if ($quickgrade){
-            echo '<p align="center"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></p>';
+            echo '<div style="text-align:center"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></div>';
+            echo '</fieldset>';
             echo '</form>';
         }
         /// End of fast grading form
@@ -1204,8 +1208,9 @@ class assignment_base {
         /// Mini form for setting user preference
         echo '<br />';
         echo '<form id="options" action="submissions.php?id='.$this->cm->id.'" method="post">';
+        echo '<fieldset class="invisiblefieldset">';
         echo '<input type="hidden" id="updatepref" name="updatepref" value="1" />';
-        echo '<table id="optiontable" align="center">';
+        echo '<table id="optiontable">';
         echo '<tr align="right"><td>';
         echo '<label for="perpage">'.get_string('pagesize','assignment').'</label>';
         echo ':</td>';
@@ -1229,6 +1234,7 @@ class assignment_base {
         echo '<td colspan="2" align="right">';
         echo '<input type="submit" value="'.get_string('savepreferences').'" />';
         echo '</td></tr></table>';
+        echo '</fieldset>';
         echo '</form>';
         ///End of mini form
         print_footer($this->course);

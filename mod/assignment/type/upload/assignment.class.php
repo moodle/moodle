@@ -147,16 +147,18 @@ class assignment_upload extends assignment_base {
         }
 
         if ($this->can_upload_file($submission)) {
-            echo '<center>';
+            echo '<div style="text-align:center">';
             echo '<form enctype="multipart/form-data" method="post" action="upload.php">';
+            echo '<fieldset class="invisiblefieldset">';
             echo "<p>$struploadafile ($strmaxsize)</p>";
             echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
             echo '<input type="hidden" name="action" value="uploadfile" />';
             require_once($CFG->libdir.'/uploadlib.php');
             upload_print_form_fragment(1,array('newfile'),null,false,null,0,$this->assignment->maxbytes,false);
             echo '<input type="submit" name="save" value="'.get_string('uploadthisfile').'" />';
+            echo '</fieldset>';
             echo '</form>';
-            echo '</center>';
+            echo '</div>';
             echo '<br />';
         }
 
@@ -173,9 +175,9 @@ class assignment_upload extends assignment_base {
         }
         if ($this->can_update_notes($submission)) {
             $options = array ('id'=>$this->cm->id, 'action'=>'editnotes');
-            echo '<center>';
+            echo '<div style="text-align:center">';
             print_single_button('upload.php', $options, get_string('edit'), 'post', '_self', false);
-            echo '</center>';
+            echo '</div>';
         }
     }
 
@@ -187,13 +189,15 @@ class assignment_upload extends assignment_base {
         if ($this->can_finalize($submission)) {
             //print final submit button
             print_heading(get_string('submitformarking','assignment'), '', 3);
-            echo '<center>';
+            echo '<div style="text-align:center">';
             echo '<form method="post" action="upload.php">';
+            echo '<fieldset class="invisiblefieldset">';
             echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
             echo '<input type="hidden" name="action" value="finalize" />';
             echo '<input type="submit" name="formarking" value="'.get_string('sendformarking', 'assignment').'" />';
+            echo '</fieldset>';
             echo '</form>';
-            echo '</center>';
+            echo '</div>';
         } else if ($this->is_finalized($submission)) {
             print_heading(get_string('submitedformarking','assignment'), '', 3);
         } else {
