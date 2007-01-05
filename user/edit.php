@@ -76,7 +76,7 @@
     }
 
 
-    $userform = new user_edit_form('edit2.php', compact('user','course'));
+    $userform = new user_edit_form('edit.php', compact('user','course'));
     $userform->set_upload_manager(new upload_manager('imagefile',false,false,null,false,0,true,true));
 
 /// If data submitted, then process and store.
