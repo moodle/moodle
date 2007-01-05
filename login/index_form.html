@@ -22,14 +22,18 @@ if ($show_instructions) {
     <td style="width:<?php echo $leftwidth ?>" valign="top" class="content left">
       <div style="text-align:center"><?php print_string("loginusing") ?>:
         <?php
-        if (empty($CFG->usesid))
-        {
+        if (empty($CFG->usesid)) {
             echo "<br />(";
             print_string("cookiesenabled");
             echo ")";
             helpbutton("cookies", get_string("cookiesenabled"));
         }
-        ?><div><?php formerr($errormsg) ?></div>
+        if (!empty($errormsg)) {
+            echo '<div>';
+            formerr($errormsg);
+            echo '</div>';
+        }
+        ?>
       </div>
       <form action="index.php" method="post" id="login">
         <table border="0" style="margin-left:auto;margin-right:auto" summary="">
