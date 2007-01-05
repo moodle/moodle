@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 
 // Allows the admin to control user logins from remote moodles.
 
@@ -15,12 +15,13 @@ $action       = trim(strtolower(optional_param('action', '', PARAM_ALPHA)));
 require_login();
 $adminroot = admin_get_root();
 
-if (!extension_loaded('openssl')) {
-    error(get_string('requiresopenssl', 'mnet'));
-}
 
 admin_externalpage_setup('ssoaccesscontrol', $adminroot);
 admin_externalpage_print_header($adminroot);
+
+if (!extension_loaded('openssl')) {
+    print_error('requiresopenssl', 'mnet', '', NULL, true);
+}
 
 $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 $sesskey = sesskey();

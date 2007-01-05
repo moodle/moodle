@@ -14,16 +14,19 @@ $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
 require_capability('moodle/site:config', $context, $USER->id, true, "nopermissions");
 
+if (!extension_loaded('openssl')) {
+    admin_externalpage_print_header($adminroot);
+    print_error('requiresopenssl', 'mnet', '', NULL, true);
+}
+
 if (!$site = get_site()) {
-    error(get_string('nosite','mnet'));
+    admin_externalpage_print_header($adminroot);
+    print_error('nosite', 'mnet', '', NULL, true);
 }
 
 if (!function_exists('curl_init') ) {
-    error(get_string('nocurl','mnet'));
-}
-
-if (!extension_loaded('openssl')) {
-    error(get_string('requiresopenssl', 'mnet'));
+    admin_externalpage_print_header($adminroot);
+    print_error('nocurl', 'mnet', '', NULL, true);
 }
 
 /// Initialize variables.

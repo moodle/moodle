@@ -13,12 +13,14 @@
 
     require_capability('moodle/site:config', $context, $USER->id, true, "nopermissions");
 
-    if (!$site = get_site()) {
-        error(get_string('nosite','mnet'));
-    }
-
     if (!extension_loaded('openssl')) {
-        error(get_string('requiresopenssl', 'mnet'));
+        admin_externalpage_print_header($adminroot);
+        print_error('requiresopenssl', 'mnet', '', NULL, true);
+    }
+    
+    if (!$site = get_site()) {
+        admin_externalpage_print_header($adminroot);
+        print_error('nosite', 'mnet', '', NULL, true);
     }
 
     $trusted_hosts = '';//array();
