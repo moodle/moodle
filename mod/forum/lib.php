@@ -2448,7 +2448,7 @@ function forum_search_form($course, $search='') {
 
     $output  = '<div class="forumsearch">';
     $output .= '<form action="'.$CFG->wwwroot.'/mod/forum/search.php" style="display:inline">';
-    $output .= '<fieldset>';
+    $output .= '<fieldset class="invisiblefieldset">';
     $output .= helpbutton('search', get_string('search'), 'moodle', true, false, '', true);
     $output .= '<input name="search" type="text" size="18" value="'.$search.'" alt="search" />';
     $output .= '<input value="'.get_string('searchforums', 'forum').'" type="submit" />';
