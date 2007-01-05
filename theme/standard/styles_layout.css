@@ -1452,6 +1452,11 @@ body#grade-index .grades .weighted {
   overflow:hidden;
 }
 
+.loginbox .content form {
+  margin:0px;
+  padding:0px;
+}
+
 .loginbox .twocolumns .content {
   width:90%;
   margin-left:5%;
