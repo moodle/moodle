@@ -293,6 +293,12 @@ form.popupform {
   font-weight:normal;
   font-size:1em;
 }
+
+.invisiblefieldset {
+  border: 0;  
+  padding: 0;
+}
+
 span.hide,
 div.hide {
   display:none;
@@ -416,11 +422,6 @@ form#adminsettings div.htmlarea {
 .headermenu {
   float:right;
   text-align:right;
-}
-
-.headermenu fieldset{
-  border: 0;  
-  padding:0;
 }
 
 .navbar {
@@ -2022,11 +2023,6 @@ body#mod-forum-search .introcontent {
   border-width: 0px 1px 0px 0px;
   border-style: solid;
   text-align:center;
-}
-
-.forumsearch fieldset {
-  border: 0;  
-  padding: 0px;
 }
 
 /***
