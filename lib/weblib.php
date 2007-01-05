@@ -624,18 +624,18 @@ function button_to_popup_window ($url, $name='popup', $linkname='click here',
 function close_window_button($name='closewindow', $return=false) {
     $output = '';
 
-    $output .= '<center>' . "\n";
+    $output .= '<div class="closewindow">' . "\n";
     $output .= '<script type="text/javascript">' . "\n";
-    $output .= '<!--' . "\n";
+    $output .= '//<![CDATA[' . "\n";
     $output .= "document.write('<form>');\n";
     $output .= "document.write('<input type=\"button\" onclick=\"self.close();\" value=\"".get_string("closewindow")."\" />');\n";
     $output .= "document.write('<\/form>');\n";
-    $output .= '-->' . "\n";
+    $output .= '//]]>' . "\n";
     $output .= '</script>' . "\n";
     $output .= '<noscript>' . "\n";
     $output .= get_string($name);
     $output .= '</noscript>' . "\n";
-    $output .= '</center>' . "\n";
+    $output .= '</div>' . "\n";
 
     if ($return) {
         return $output;
@@ -650,12 +650,12 @@ function close_window_button($name='closewindow', $return=false) {
 function close_window($delay=0) {
 ?>
 <script type="text/javascript">
-<!--
+//<![CDATA[
     function close_this_window() {
         self.close();
     }
     setTimeout("close_this_window()", <?php echo $delay * 1000 ?>);
--->
+//]]>
 </script>
 <noscript><center>
 <?php print_string('pleaseclose') ?>
@@ -4932,13 +4932,13 @@ function redirect($url, $message='', $delay=-1) {
 // it might be better not to set timeout the same for both types of redirect, so that we can be sure which one wins
 ?>
 <script type="text/javascript">
-<!--
+//<![CDATA[
 
   function redirect() {
       document.location.replace('<?php echo $surl ?>');
   }
   setTimeout("redirect()", <?php echo ($delay * 1000) ?>);
--->
+//]]>
 </script>
 <?php
     echo '</div> <!-- End content div -->';
@@ -5252,7 +5252,8 @@ function print_side_block_end($attributes = array()) {
 
     // IE workaround: if I do it THIS way, it works! WTF?
     if (!empty($CFG->allowuserblockhiding) && isset($attributes['id'])) {
-        echo '<script type="text/javascript"><!-- '."\n".'elementCookieHide("'.$attributes['id'].'"); '."\n".'--></script>';
+        echo '<script type="text/javascript">'."\n//<![CDATA[\n".'elementCookieHide("'.$attributes['id'].'"); '.
+             "\n//]]>\n".'</script>';
     }
 
 }
