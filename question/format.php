@@ -1,3 +1,4 @@
+
 <?php  // $Id$ 
 
 ////////////////////////////////////////////////////////////////////
@@ -230,8 +231,10 @@ class qformat_default {
     // Somewhere to specify question parameters that are not handled
     // by import but are required db fields.
     // This should not be overridden. 
+        global $CFG;
+        
         $question = new stdClass();
-        $question->shuffleanswers = 0; 
+        $question->shuffleanswers = $CFG->quiz_shuffleanswers; 
         $question->defaultgrade = 1;
         $question->image = "";
         $question->usecase = 0;
