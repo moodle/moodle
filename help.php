@@ -21,7 +21,7 @@ $forcelang = optional_param('forcelang', '', PARAM_SAFEDIR);
 
 // Start the output.
 print_header();
-print_simple_box_start('center', '96%');
+print_simple_box_start();
 
 // We look for the help to display in lots of different places, and
 // only display an error at the end if we can't find the help file
@@ -101,7 +101,7 @@ if (!$helpfound) {
 
 // End of page.
 close_window_button();
-echo '<p align="center"><a href="help.php?file=index.html">'. get_string('helpindex') .'</a></p>';
+echo '<p class="helpindex"><a href="help.php?file=index.html">'. get_string('helpindex') .'</a></p>';
 
 $CFG->docroot = '';   // We don't want a doc link here
 print_footer('none');
