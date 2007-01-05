@@ -4530,7 +4530,7 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
  * @param string $message The message to display to the user about the error.
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
  */
-function error ($message, $link='', $adminroot='') {
+function error ($message, $link='', $adminroot=false) {
 
     global $CFG, $SESSION;
     $message = clean_text($message);   // In case nasties are in here
@@ -4563,15 +4563,19 @@ function error ($message, $link='', $adminroot='') {
             $link = $CFG->wwwroot .'/';
         }
     }
-    print_continue($link);
 
     if ($adminroot) {
         admin_externalpage_print_footer($adminroot);
     } else {
+        print_continue($link);
         print_footer();
     }
     for ($i=0;$i<512;$i++) {  // Padding to help IE work with 404
         echo ' ';
+    }
+
+    if ($continue) {
+        return true;
     }
 
     die;
@@ -4585,8 +4589,9 @@ function error ($message, $link='', $adminroot='') {
  * @param string $errorcode The name of the string from error.php to print
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
  * @param object $a Extra words and phrases that might be required in the error string
+ * @param boolean $adminroot Is the page an admin settings page?
  */
-function print_error ($errorcode, $module='', $link='', $a=NULL) {
+function print_error ($errorcode, $module='', $link='', $a=NULL, $adminroot=false) {
 
     global $CFG;
 
@@ -4609,7 +4614,7 @@ function print_error ($errorcode, $module='', $link='', $a=NULL) {
                '<p class="errorcode">'.
                '<a href="'.$errordocroot.'/en/error/'.$modulelink.'/'.$errorcode.'">'.
                  get_string('moreinformation').'</a></p>';
-    error($message, $link);
+    error($message, $link, $adminroot);
 }
 /**
  * Returns a string of html with an image of a help icon linked to a help page on a number of help topics.
