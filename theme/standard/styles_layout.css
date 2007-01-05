@@ -1440,19 +1440,67 @@ body#grade-index .grades .weighted {
 }
 
 .loginbox .content {
-  border-width:1px;
-  border-style:solid;
-  padding:15px;
+  border:1px solid;
+  width:90%;
+  margin-left:5%;
+  overflow:hidden;
 }
 
-.loginform .c1,
-.logintable .c1 {
-  text-align: left;
+.loginbox .content .header h2 {
+  margin:5px;
+  padding:10px;
+  text-align:center;
 }
 
-.loginform .c1 input,
-.logintable .c1 input {
+.loginbox .content .subcontent {
+  margin:5px;
+  padding:10px;
+}
+
+.loginbox .content .left .subcontent {
+  text-align:center;
+}
+
+.loginbox .content .signupform {
+  text-align:center;
+}
+
+.loginbox .content .loginform {
+    text-align:left;
+}
+
+.loginbox .content .loginform .form-label {
+  float:left;
+  text-align:right;
+  width:40%;
+}
+
+.loginbox .content .loginform .form-item {
+  float:right;
+  width:59%;
+}
+
+.loginbox .content .loginform .form-item input {
   width: 6em;
+}
+
+
+.loginbox .twocolumns .divider {
+  border-right:1px solid;
+  margin-top:-2000px;padding-top:2000px;
+  margin-bottom:-2000px;padding-bottom:2000px;
+}
+
+.loginbox .twocolumns .left {
+  float:left;
+  width:50%;
+  margin-bottom:-2000px;padding-bottom:2000px;
+}
+
+.loginbox .twocolumns .right {
+  float:right;
+  width:50%;
+  margin-bottom:-2000px; padding-bottom:2000px;
 }
 
 .block_login .loginform div {

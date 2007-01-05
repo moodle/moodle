@@ -1,107 +1,85 @@
 <?php
 if ($show_instructions) {
-    $mainwidth = '90%';
-    $leftwidth = '50%';
+    $columns = 'twocolumns';
 } else {
-    $mainwidth = '40%';
-    $leftwidth = '100%';
+    $columns = 'onecolumn';
 }
 ?>
-<table width="<?php echo $mainwidth ?>" border="0" cellpadding="5" style="margin-left:auto;margin-right:auto" class="loginbox" summary="">
-<?php if ($show_instructions) { ?>
-  <tr>
-    <th style="width:50%" class="header left" scope="col">
-      <?php  print_string("returningtosite") ?>
-    </th>
-    <th style="width:50%" class="header right" scope="col">
-      <?php  print_string("firsttime") ?>
-    </th>
-  </tr>
-<?php } ?>
-  <tr>
-    <td style="width:<?php echo $leftwidth ?>" valign="top" class="content left">
-      <div style="text-align:center"><?php print_string("loginusing") ?>:
+<div class="loginbox"><div class="content">
+  <div class="<?php echo $columns ?>">
+    <div class="pane left">
+     <div class="divider">
+      <div class="header"><h2><?php print_string("returningtosite") ?></h2></div>
+      <div class="subcontent">
+        <div class="desc">
+          <?php
+            print_string("loginusing");
+            if (empty($CFG->usesid)) {
+                echo '<br/>';
+                echo '('.get_string("cookiesenabled").')';
+                helpbutton("cookies", get_string("cookiesenabled"));
+            }
+           ?>
+        </div>
         <?php
-        if (empty($CFG->usesid)) {
-            echo "<br />(";
-            print_string("cookiesenabled");
-            echo ")";
-            helpbutton("cookies", get_string("cookiesenabled"));
-        }
-        if (!empty($errormsg)) {
-            echo '<div>';
-            formerr($errormsg);
-            echo '</div>';
-        }
+          if (!empty($errormsg)) {
+              echo '<div class="loginerrors">';
+              formerr($errormsg);
+              echo '</div>';
+          }
         ?>
+        <form action="index.php" method="post" id="login">
+          <div class="loginform">
+            <div class="form-label"><label for="username"><?php print_string("username") ?></label></div>
+            <div class="form-item">
+              <input type="text" name="username" id="username" size="15" value="<?php p($frm->username) ?>" /> 
+            </div>
+            <div class="clearer"><!-- --></div>
+            <div class="form-label"><label for="password"><?php print_string("password") ?></label></div>
+            <div class="form-item">
+              <input type="password" name="password" id="password" size="15" value="" />
+              <input type="submit" value="<?php print_string("login") ?>" />
+              <input type="hidden" name="testcookies" value="1" />
+            </div>
+            <div class="clearer"><!-- --></div>
+          </div>
+        </form>
       </div>
-      <form action="index.php" method="post" id="login">
-        <table border="0" style="margin-left:auto;margin-right:auto" summary="">
-        <tr>
-          <td style="width:80%">
-            <table style="margin-left:auto;margin-right:auto" class="loginform" summary="">
-              <tr class="username"> 
-                <td style="text-align:right" class="c0">
-                  <label for="username"><?php print_string("username") ?></label>
-                </td>
-                <td class="c1">
-                  <input type="text" name="username" id="username" size="15" value="<?php p($frm->username) ?>" /> 
-                </td>
-              </tr>
-              <tr class="password"> 
-                <td style="text-align:right" class="c0">
-                  <label for="password"><?php print_string("password") ?></label>
-                </td>
-                <td class="c1">
-                  <input type="password" name="password" id="password" size="15" value="" />
-                </td>
-              </tr>
-            </table>
-          </td>
-          <td style="width:20%">
-            <input type="submit" value="<?php print_string("login") ?>" />
-            <input type="hidden" name="testcookies" value="1" />
-          </td>
-        </tr>
-        </table>
-      </form>
 
 <?php if ($CFG->guestloginbutton) {  ?>
-      <hr style="width:80%" />
-      <div style="text-align:center"><?php print_string("someallowguest") ?>:
+      <div class="subcontent">
+        <?php print_string("someallowguest") ?>
         <form action="index.php" method="post" id="guestlogin">
-         <div>
-          <input type="hidden" name="username" value="guest" />
-          <input type="hidden" name="password" value="guest" />
-          <input type="hidden" name="testcookies" value="1" />
-          <input type="submit" value="<?php print_string("loginguest") ?>" />
-         </div>
+          <div class="guestform">
+            <input type="hidden" name="username" value="guest" />
+            <input type="hidden" name="password" value="guest" />
+            <input type="hidden" name="testcookies" value="1" />
+            <input type="submit" value="<?php print_string("loginguest") ?>" />
+          </div>
         </form>
       </div>
 <?php } ?>
 
-<?php
-    $changebuttonname = get_string("passwordrecovery");
-    $sesskey = sesskey();
-?>
-      <hr style="width:80%" />
-      <div style="text-align:center"><?php print_string("forgotten") ?> 
+      <div class="subcontent">
+        <?php print_string("forgotten") ?> 
         <form action="forgot_password.php" method="post" id="changepassword">
-         <div>
-          <input type="hidden" name="sesskey" value="<?php echo $sesskey; ?>" />
-          <input type="submit" value="<?php p($changebuttonname) ?>" />
-         </div>
+          <div class="forgottenform">
+            <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
+            <input type="submit" value="<?php print_string("passwordrecovery") ?>" />
+          </div>
         </form>
       </div>
-    </td>
-
+     </div>
+    </div>
 <?php if ($show_instructions) { ?>
-    <td style="width:50%" valign="top" class="content right">
+    <div class="pane right">
+      <div class="header"><h2><?php print_string("firsttime") ?></h2></div>
+      <div class="subcontent">
 <?php     switch ($authsequence[0]) {
               case "email":
                  print_string("loginsteps", "", "signup.php");
 ?>
-                 <div style="text-align:center">
+                 <div class="signupform">
                    <form action="signup.php" method="get" id="signup">
                    <div><input type="submit" value="<?php print_string("startsignup") ?>" /></div>
                    </form>
@@ -120,7 +98,7 @@ if ($show_instructions) {
                  $authplugin = get_auth_plugin($CFG->auth);
                  if (!empty($CFG->auth_user_create) and method_exists($authplugin, 'user_create') ){
 ?>
-                 <div style="text-align:center">
+                 <div class="signupform">
                     <form action="signup.php" method="get" id="signup">
                     <div><input type="submit" value="<?php print_string("startsignup") ?>" /></div>
                     </form>
@@ -128,7 +106,9 @@ if ($show_instructions) {
 <?php            }
           }
 ?>
-    </td>
+      </div>
+    </div>
 <?php } ?>
-</tr>
-</table>
+    <div class="clearer"><!-- --></div>
+  </div>
+</div></div>
