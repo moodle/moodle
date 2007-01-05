@@ -288,7 +288,7 @@
     }
 
     echo $newtext;
-    echo '<div align="center"><input type="submit" name="saveandview" value="'.get_string('saveandview','data').'" />';
+    echo '<div style="text-align:center"><input type="submit" name="saveandview" value="'.get_string('saveandview','data').'" />';
     if ($rid) {
         echo '&nbsp;<input type="submit" name="cancel" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
     } else {
