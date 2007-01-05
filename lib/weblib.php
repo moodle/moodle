@@ -632,9 +632,9 @@ function close_window_button($name='closewindow', $return=false) {
     $output .= "document.write('<\/form>');\n";
     $output .= '//]]>' . "\n";
     $output .= '</script>' . "\n";
-    $output .= '<noscript>' . "\n";
+    $output .= '<noscript><p>' . "\n";
     $output .= get_string($name);
-    $output .= '</noscript>' . "\n";
+    $output .= '</p></noscript>' . "\n";
     $output .= '</div>' . "\n";
 
     if ($return) {
