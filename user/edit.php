@@ -2,7 +2,8 @@
 
     require_once("../config.php");
     require_once("$CFG->libdir/gdlib.php");
-    
+    require_once("$CFG->dirroot/user/edit_form.php");
+
     $id     = optional_param('id',     0,      PARAM_INT);   // user id
     $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
 
@@ -70,16 +71,17 @@
             $auth = "manual";
         }
         $authplugin = get_auth_plugin($auth);
-    }
-    else {
+    } else {
         $authplugin = get_auth_plugin($CFG->auth);
     }
 
-    
-/// If data submitted, then process and store.
 
-    if ($usernew = data_submitted()) {
-        
+    $userform = new user_edit_form('edit2.php', compact('user','course'));
+    $userform->set_upload_manager(new upload_manager('imagefile',false,false,null,false,0,true,true));
+
+/// If data submitted, then process and store.
+    if ($usernew = $userform->data_submitted()) {
+
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
         // if userid = x and name = changeme then we are adding 1
         // else we are editting one
@@ -97,23 +99,7 @@
             unset($usernew->password);
         }
 
-        // data cleanup 
-        // username is validated in find_form_errors
-        $usernew->country = clean_param($usernew->country, PARAM_ALPHA);
-        $usernew->lang    = clean_param($usernew->lang,    PARAM_FILE);
-        $usernew->url     = clean_param($usernew->url,     PARAM_URL);
-        $usernew->icq     = clean_param($usernew->icq,     PARAM_INT);
-        if (!$usernew->icq) {
-            $usernew->icq = '';
-        }
-        $usernew->skype   = clean_param($usernew->skype,   PARAM_CLEAN);
-        $usernew->yahoo   = clean_param($usernew->yahoo,   PARAM_CLEAN);
-        $usernew->aim   = clean_param($usernew->aim,   PARAM_CLEAN);
-        $usernew->msn   = clean_param($usernew->msn,   PARAM_CLEAN);
-        
-        $usernew->maildisplay   = clean_param($usernew->maildisplay,   PARAM_INT);
-        $usernew->mailformat    = clean_param($usernew->mailformat,    PARAM_INT);
-        if ($CFG->allowusermailcharset) {
+        if (!empty($CFG->unicodedb) && $CFG->allowusermailcharset) {
             $usernew->mailcharset = clean_param($usernew->mailcharset, PARAM_CLEAN);
             if (!empty($usernew->mailcharset)) {
                 set_user_preference('mailcharset', $usernew->mailcharset, $user->id);
@@ -123,25 +109,10 @@
         } else {
             unset_user_preference('mailcharset', $user->id);
         }
-        if (empty($CFG->enableajax)) {
-            unset($usernew->ajax);
-        }
-
-        $usernew->maildigest    = clean_param($usernew->maildigest,    PARAM_INT);
-        $usernew->autosubscribe = clean_param($usernew->autosubscribe, PARAM_INT);
-        if (!empty($CFG->htmleditor)) {
-            $usernew->htmleditor    = clean_param($usernew->htmleditor,    PARAM_INT);
-        }
-        else {
-            unset( $usernew->htmleditor );
-        }
-        $usernew->emailstop     = clean_param($usernew->emailstop,     PARAM_INT);
 
         if (isset($usernew->timezone)) {
             if ($CFG->forcetimezone != 99) { // Don't allow changing this in any way
                 unset($usernew->timezone);
-            } else { // Clean up the data a bit, just in case of injections
-                $usernew->timezone = clean_param($usernew->timezone, PARAM_PATH); //not a path, but it looks like it anyway
             }
         }
 
@@ -159,9 +130,6 @@
         if (!empty($_FILES) and !(empty($CFG->disableuserimages) or has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID)))) {
             error('Users can not update profile images!');
         }
-
-        require_once($CFG->dirroot.'/lib/uploadlib.php');
-        $um = new upload_manager('imagefile',false,false,null,false,0,true,true);
 
         // override locked values
         if (!has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {      
@@ -182,127 +150,126 @@
             unset($field);
             unset($configvariable);
         }
-        if (find_form_errors($user, $usernew, $err, $um)) {
-            if (empty($err['imagefile']) && $usernew->picture = save_profile_image($user->id, $um,'users')) {
-                set_field('user', 'picture', $usernew->picture, 'id', $user->id);  /// Note picture in DB
+
+        if (!$usernew->picture = save_profile_image($user->id, $userform->_upload_manager, 'users')) {
+            if (!empty($usernew->deletepicture)) {
+                set_field('user', 'picture', 0, 'id', $user->id);  /// Delete picture
+                $usernew->picture = 0;
             } else {
-                if (!empty($usernew->deletepicture)) {
-                    set_field('user', 'picture', 0, 'id', $user->id);  /// Delete picture
-                    $usernew->picture = 0;
-                }
+                $usernew->picture = $user->picture;
             }
+        }
 
-            $usernew->auth = $user->auth;
-            $user = $usernew;
+        $timenow = time();
 
-        } else {
-            $timenow = time();
-            
-            if (!$usernew->picture = save_profile_image($user->id,$um,'users')) {
-                if (!empty($usernew->deletepicture)) {
-                    set_field('user', 'picture', 0, 'id', $user->id);  /// Delete picture
-                    $usernew->picture = 0;
-                } else {
-                    $usernew->picture = $user->picture;
-                }
-            }
+        $usernew->timemodified = time();
 
-            $usernew->timemodified = time();
-
-            if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-                if (!empty($usernew->newpassword)) {
-                    $usernew->password = hash_internal_user_password($usernew->newpassword);
-                    // update external passwords
-                    // TODO: this was using $user->auth possibly overriding $authplugin above. Can we guarantee $user->auth being something valid?
-                    if ($authplugin->can_change_password()) {
-                        if (method_exists($authplugin, 'user_update_password')){
-                            if (!$authplugin->user_update_password($user->username, $usernew->newpassword)){
-                                error('Failed to update password on external auth: ' . $user->auth .
-                                        '. See the server logs for more details.');
-                            }
-                        } else {
-                            error('Your external authentication module is misconfigued!'); 
+        if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+            if (!empty($usernew->newpassword)) {
+                $usernew->password = hash_internal_user_password($usernew->newpassword);
+                // update external passwords
+                // TODO: this was using $user->auth possibly overriding $authplugin above. Can we guarantee $user->auth being something valid?
+                if ($authplugin->can_change_password()) {
+                    if (method_exists($authplugin, 'user_update_password')){
+                        if (!$authplugin->user_update_password($user->username, $usernew->newpassword)){
+                            error('Failed to update password on external auth: ' . $user->auth .
+                                    '. See the server logs for more details.');
                         }
-                    }
-                }
-                // store forcepasswordchange in user's preferences
-                if (!empty($usernew->forcepasswordchange)){
-                    set_user_preference('auth_forcepasswordchange', 1, $user->id);
-                } else {
-                    unset_user_preference('auth_forcepasswordchange', $user->id);
-                }
-            } else {
-                if (isset($usernew->newpassword)) {
-                    error("You can not change the password like that");
-                }
-            }
-            if ($usernew->url and !(substr($usernew->url, 0, 4) == "http")) {
-                $usernew->url = "http://".$usernew->url;
-            }
-
-            $userold = get_record('user','id',$usernew->id);
-            if (update_record("user", $usernew)) {
-                if (method_exists($authplugin, "user_update")){
-                    // pass a true $userold here 
-                    if (! $authplugin->user_update($userold, $usernew)) {
-                        // auth update failed, rollback for moodle
-                        update_record("user", $userold);
-                        error('Failed to update user data on external auth: '.$user->auth.
-                                            '. See the server logs for more details.');
-                    }
-                };
-
-                 if ($userold->email != $usernew->email) {
-                    set_bounce_count($usernew,true);
-                    set_send_count($usernew,true);
-                }
-
-                /// Update forum track preference.
-                if (($usernew->trackforums != $userold->trackforums) && !$usernew->trackforums) {
-                    require_once($CFG->dirroot.'/mod/forum/lib.php');
-                    forum_tp_delete_read_records($usernew->id);
-                }
-
-                add_to_log($course->id, "user", "update", "view.php?id=$user->id&course=$course->id", "");
-
-                if ($user->id == $USER->id) {
-                    // Copy data into $USER session variable
-                    $usernew = (array)$usernew;
-                    foreach ($usernew as $variable => $value) {
-                        $USER->$variable = stripslashes($value);
-                    }
-                    if (isset($USER->newadminuser)) {
-                        unset($USER->newadminuser);
-                        // redirect to admin/ to continue with installation
-                        redirect("$CFG->wwwroot/$CFG->admin/");
-                    }
-                    if (!empty($SESSION->wantsurl)) {  // User may have been forced to edit account, so let's 
-                                                       // send them to where they wanted to go originally
-                        $wantsurl = $SESSION->wantsurl;
-                        $SESSION->wantsurl = '';       // In case unset doesn't work as expected
-                        unset($SESSION->wantsurl);
-                        redirect($wantsurl);
                     } else {
-                        redirect("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id");
+                        error('Your external authentication module is misconfigued!'); 
                     }
+                }
+            }
+            // store forcepasswordchange in user's preferences
+            if (!empty($usernew->forcepasswordchange)){
+                set_user_preference('auth_forcepasswordchange', 1, $user->id);
+            } else {
+                unset_user_preference('auth_forcepasswordchange', $user->id);
+            }
+        } else {
+            if (isset($usernew->newpassword)) {
+                error("You can not change the password like that");
+            }
+        }
+
+        $userold = get_record('user','id',$usernew->id);
+        if (update_record("user", $usernew)) {
+            if (method_exists($authplugin, "user_update")){
+                // pass a true $userold here
+                if (! $authplugin->user_update($userold, $usernew)) {
+                    // auth update failed, rollback for moodle
+                    update_record("user", $userold);
+                    error('Failed to update user data on external auth: '.$user->auth.
+                            '. See the server logs for more details.');
+                }
+            };
+
+            if ($userold->email != $usernew->email) {
+                set_bounce_count($usernew,true);
+                set_send_count($usernew,true);
+            }
+
+            /// Update forum track preference.
+            if (($usernew->trackforums != $userold->trackforums) && !$usernew->trackforums) {
+                require_once($CFG->dirroot.'/mod/forum/lib.php');
+                forum_tp_delete_read_records($usernew->id);
+            }
+
+            /// Update the custom user fields
+            if ($categories = get_records_select('user_info_category', '1', 'sortorder ASC')) {
+                foreach ($categories as $category) {
+
+                    if ($fields = get_records_select('user_info_field', "categoryid=$category->id", 'sortorder ASC')) {
+                        foreach ($fields as $field) {
+
+                            require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
+                            $newfield = 'profile_field_'.$field->datatype;
+                            $formfield = new $newfield($field->id,$user->id);
+                            if (isset($usernew->{$formfield->fieldname})) {
+                                $formfield->save_data($usernew->{$formfield->fieldname});
+                            }
+
+                            unset($formfield);
+
+                        }
+                    } /// End of $fields if
+                } /// End of $categories foreach
+            } /// End of $categories if
+
+
+
+            add_to_log($course->id, "user", "update", "view.php?id=$user->id&course=$course->id", "");
+
+            if ($user->id == $USER->id) {
+                // Copy data into $USER session variable
+                $usernew = (array)$usernew;
+                foreach ($usernew as $variable => $value) {
+                    $USER->$variable = stripslashes($value);
+                }
+                if (isset($USER->newadminuser)) {
+                    unset($USER->newadminuser);
+                    // redirect to admin/ to continue with installation
+                    redirect("$CFG->wwwroot/$CFG->admin/");
+                }
+                if (!empty($SESSION->wantsurl)) {  // User may have been forced to edit account, so let's 
+                    // send them to where they wanted to go originally
+                    $wantsurl = $SESSION->wantsurl;
+                    $SESSION->wantsurl = '';       // In case unset doesn't work as expected
+                    unset($SESSION->wantsurl);
+                    redirect($wantsurl);
                 } else {
-                    redirect("$CFG->wwwroot/$CFG->admin/user.php");
+                    redirect("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id");
                 }
             } else {
-                error("Could not update the user record ($user->id)");
+                redirect("$CFG->wwwroot/$CFG->admin/user.php");
             }
+        } else {
+            error("Could not update the user record ($user->id)");
         }
     }
 
+
 /// Otherwise fill and print the form.
-
-    $usehtmleditor = can_use_html_editor();
-
-    //temporary hack to disable htmleditor in IE when loginhttps on and wwwroot starts with http://
-    //see bug #5534
-    if (!empty($CFG->loginhttps) and check_browser_version('MSIE', 5.5) and (strpos($CFG->wwwroot, 'http://') === 0)) {
-        $usehtmleditor = false;
-    }
 
     $streditmyprofile = get_string("editmyprofile");
     $strparticipants = get_string("participants");
@@ -318,7 +285,7 @@
         } else {
             $userfullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
         }
-        if ($course->id != SITEID) {
+        if ($course->category) {
             print_header("$course->shortname: $streditmyprofile", "$course->fullname: $streditmyprofile",
                         "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>
                         -> <a href=\"index.php?id=$course->id\">$strparticipants</a>
@@ -357,8 +324,6 @@
         include('tabs.php');
     }
 
-    print_simple_box_start("center");
-
     if (!empty($err)) {
         echo "<center>";
         notify(get_string("someerrorswerefound"));
@@ -372,7 +337,7 @@
         $teacheronly = '';
     }
 
-    include("edit.html");
+    $userform->display();
 
     if (!has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {      /// Lock all the locked fields using Javascript
         $fields = get_user_fieldnames();
@@ -394,96 +359,11 @@
         echo '</script>'."\n";
     }
 
-    print_simple_box_end();
-
-    if ($usehtmleditor) {
-        use_html_editor("description");
-    }
 
     if (!isset($USER->newadminuser)) {
         print_footer($course);
     } else {
         print_footer();
     }
-
-    exit;
-
-
-
-/// FUNCTIONS ////////////////////
-
-function find_form_errors(&$user, &$usernew, &$err, &$um) {
-    global $CFG;
-
-    if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-        if (empty($usernew->username)) {
-            $err["username"] = get_string("missingusername");
-
-        } else if (record_exists("user", "username", $usernew->username, 'mnethostid', $CFG->mnet_localhost_id) and $user->username == "changeme") {
-            $err["username"] = get_string("usernameexists");
-
-        } else {
-            if (empty($CFG->extendedusernamechars)) {
-                $string = eregi_replace("[^(-\.[:alnum:])]", "", $usernew->username);
-                if (strcmp($usernew->username, $string)) {
-                    $err["username"] = get_string("alphanumerical");
-                }
-            }
-        }
-
-        // TODO: is_internal_auth() - what, the global auth? the user auth?
-        if (empty($usernew->newpassword) and empty($user->password) and is_internal_auth()) {
-            $err["newpassword"] = get_string("missingpassword");
-        }
-        if (($usernew->newpassword == "admin") or ($user->password == md5("admin") and empty($usernew->newpassword)) ) {
-            $err["newpassword"] = get_string("unsafepassword");
-        }
-    }
-
-    if (empty($usernew->email))
-        $err["email"] = get_string("missingemail");
-
-    if (over_bounce_threshold($user) && $user->email == $usernew->email) 
-        $err['email'] = get_string('toomanybounces');
-
-    if (empty($usernew->description) and !has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID)))
-        $err["description"] = get_string("missingdescription");
-
-    if (empty($usernew->city))
-        $err["city"] = get_string("missingcity");
-
-    if (empty($usernew->firstname))
-        $err["firstname"] = get_string("missingfirstname");
-
-    if (empty($usernew->lastname))
-        $err["lastname"] = get_string("missinglastname");
-
-    if (empty($usernew->country))
-        $err["country"] = get_string("missingcountry");
-
-    if (! validate_email($usernew->email)) {
-        $err["email"] = get_string("invalidemail");
-
-    } else if ($otheruser = get_record("user", "email", $usernew->email)) {
-        if ($otheruser->id <> $user->id) {
-            $err["email"] = get_string("emailexists");
-        }
-    }
-
-    if (empty($err["email"]) and !has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-        if ($error = email_is_not_allowed($usernew->email)) {
-            $err["email"] = $error;
-        }
-    }
-
-    if (!$um->preprocess_files()) {
-        $err['imagefile'] = $um->notify;
-    }
-
-    $user->email = $usernew->email;
-
-    return count($err);
-}
-
 
 ?>
