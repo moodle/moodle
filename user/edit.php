@@ -43,7 +43,7 @@
 
     if ($USER->id <> $user->id) {    // Current user editing someone else's profile
         if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) { // Current user can update user profiles
-            if ($mainadmin = get_admin()) {        
+            if ($mainadmin = get_admin()) {
                 if ($user->id == $mainadmin->id) {  // Can't edit primary admin
                     print_error('adminprimarynoedit');
                 }
@@ -63,7 +63,7 @@
 
 
     // load the relevant auth libraries
-    if (!empty($user->auth)) { 
+    if (!empty($user->auth)) {
         $auth = $user->auth;
         // TODO: spit dummy if $auth doesn't exist
         if (! exists_auth_plugin($auth)) {
@@ -76,7 +76,7 @@
     }
 
 
-    $userform = new user_edit_form('edit.php', compact('user','course','authplugin'));
+    $userform = new user_edit_form(null, compact('user','course'));
     $userform->set_upload_manager(new upload_manager('imagefile',false,false,null,false,0,true,true));
 
 /// If data submitted, then process and store.
@@ -86,14 +86,14 @@
         // if userid = x and name = changeme then we are adding 1
         // else we are editting one
         $dummyuser = get_record('user','id', $id);
-    
+
         if ($dummyuser->username == 'changeme') {                                            // check for add user
             require_capability('moodle/user:create', $context);
         } else {
-            if ($USER->id <> $usernew->id and !has_capability('moodle/user:update', $context)) { // check for edit  
+            if ($USER->id <> $usernew->id and !has_capability('moodle/user:update', $context)) { // check for edit
                 print_error('onlyeditown');
-            }   
-        }   
+            }
+        }
 
         if (isset($usernew->password)) {
             unset($usernew->password);
@@ -132,7 +132,7 @@
         }
 
         // override locked values
-        if (!has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {      
+        if (!has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             $fields = get_user_fieldnames();
             foreach ($fields as $field) {
                 $configvariable = 'field_lock_' . $field;
@@ -176,7 +176,7 @@
                                     '. See the server logs for more details.');
                         }
                     } else {
-                        error('Your external authentication module is misconfigued!'); 
+                        error('Your external authentication module is misconfigued!');
                     }
                 }
             }
@@ -251,7 +251,7 @@
                     // redirect to admin/ to continue with installation
                     redirect("$CFG->wwwroot/$CFG->admin/");
                 }
-                if (!empty($SESSION->wantsurl)) {  // User may have been forced to edit account, so let's 
+                if (!empty($SESSION->wantsurl)) {  // User may have been forced to edit account, so let's
                     // send them to where they wanted to go originally
                     $wantsurl = $SESSION->wantsurl;
                     $SESSION->wantsurl = '';       // In case unset doesn't work as expected
