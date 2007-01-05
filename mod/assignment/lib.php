@@ -1190,9 +1190,9 @@ class assignment_base {
         if ($quickgrade){
             echo '<form action="submissions.php" id="fastg" method="post">';
             echo '<fieldset class="invisiblefieldset">';
-            echo '<input type="hidden" name="id" value="'.$this->cm->id.'">';
-            echo '<input type="hidden" name="mode" value="fastgrade">';
-            echo '<input type="hidden" name="page" value="'.$page.'">';
+            echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
+            echo '<input type="hidden" name="mode" value="fastgrade" />';
+            echo '<input type="hidden" name="page" value="'.$page.'" />';
             echo '<div style="text-align:center"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></div>';
         }
 
