@@ -23,6 +23,58 @@ class profile_field_base {
     var $field     = null; /// a copy of the field information
     var $fieldname = '';   /// form name of the field
 
+    /**
+     * Constructor method.
+     * @param   integer   id of the profile from the user_info_field table
+     * @param   integer   id of the user for whom we are displaying data
+     */
+    function profile_field_base($fieldid=0, $userid=0) {
+        global $USER;
+
+        /// Set the various properties for this class ///
+        
+        $this->fieldid = $fieldid;
+
+        /// If $userid is empty, assume the current user
+        $this->userid = (empty($userid)) ? $USER->id : $userid;
+
+        /// Set $field
+        if ( empty($fieldid) or (($field = get_record('user_info_field', 'id', $fieldid)) === false) ) {
+            $field = null;
+        }
+        $this->field = $field;
+
+        $this->set_data_type();
+        
+        /// If the child class hasn't implemented it's own set_data_type method
+        /// then we can get the type from the $field object if it exists
+        if (!empty($field) and ($this->datatype == 'unknown')) {
+            $this->datatype = $field->datatype;
+        }
+
+        if ($field) {
+            $this->fieldname = $field->shortname;
+        } else { /// we are creating a new profile field
+            $this->fieldname = 'new_'.$this->datatype;
+        }
+        
+        /// We can set $dataid from $fieldid and $userid (if it exists)
+        if (!empty($fieldid) and !empty($userid)) {
+            if (($dataid = get_field('user_info_data', 'id', 'fieldid', $fieldid, 'userid', $userid)) === false) {
+                $dataid = 0;
+            }
+        }
+        $this->dataid = $dataid;
+
+        /// End of setting the properties ///
+
+
+        /// Post setup processing
+        $this->init();
+
+    }
+
+
 
     /***** The following methods must be overwritten in the child classes *****/
 
@@ -57,7 +109,7 @@ class profile_field_base {
 
     /**
      * Print out the form field in the profile page
-     * @param  form  instance of the moodleform class
+     * @param   object   instance of the moodleform class
      * $return  boolean
      */
     function display_field (&$form) {
@@ -78,43 +130,39 @@ class profile_field_base {
         return true;
     }
 
-
-    /// Constructor function
-    function profile_field_base($fieldid=0, $userid=0, $dataid=0) {
-        global $USER;
-
-        /// If userid is empty, assume the current user
-        if (empty($userid)) $userid = $USER->id;
-
-        /// If dataid is not set we can set it from fieldid and userid
-        if (empty($dataid) and !empty($fieldid) and !empty($userid)) {
-            if (($dataid = get_field('user_info_data', 'id', 'fieldid', $fieldid, 'userid', $userid)) === false) {
-                $dataid = 0;
-            }
-        }
-
-        /// If the fieldid is set then we can automatically set the datatype
-        if (!empty($fieldid)) {
-            $field = get_record('user_info_field', 'id', $fieldid);
-            $datatype = $field->datatype;
-        } else {
-            $datatype = 'unknown';
-            $field = null;
-        }
-
-        $this->fieldid   = $fieldid;
-        $this->userid    = $userid;
-        $this->dataid    = $dataid;
-        $this->datatype  = $datatype;
-        $this->field     = $field;
-        $this->fieldname = $this->datatype.'_'.$this->field->id; /// hack to avoid using integers as the field name
-
-        /// Post setup processing
-        $this->init();
+    /**
+     * Locks (disables) the field if required in the form object
+     * @param   object   instance of the moodleform class
+     */
+    function display_field_lock (&$form) {
+        $form->disabledIf($this->fieldname, $this->_is_locked(), true);
     }
 
     /**
-     * A hook for child classes to perform any post-setup processes
+     * Sets the default data for the field in the form object
+     * @param   object   instance of the moodleform class
+     */
+    function display_field_default(&$form) {
+        if (!($default = get_field('user_info_data', 'data', 'userid', $this->userid, 'fieldid', $this->field->id))) {
+            $default = $this->field->defaultdata;
+        }
+        if (!empty($default)) {
+            $form->setDefault($this->fieldname, $default);
+        }
+    }
+
+    /**
+     * Sets the required flag for the field in the form object
+     * @param   object   instance of the moodleform class
+     */
+    function display_field_required(&$form) {
+        if ($this->_is_required()) {
+            $form->addRule($this->fieldname, get_string('required'), 'required', null, 'client');
+        }
+    }
+
+    /**
+     * Hook for child classes to perform any post-setup processes
      */
     function init() {
         /// do nothing - overwrite if necessary
@@ -122,11 +170,13 @@ class profile_field_base {
 
 
     /// Prints out the form for creating a new profile field
+    /// TODO: Part of the admin gui still to be written
     function edit_new_field () {
 
     }
 
     /// Removes a profile field and all data associated with it
+    /// TODO: Part of the admin gui still to be written
     function edit_remove_field () {
 
     }
@@ -184,23 +234,6 @@ class profile_field_base {
         return $data;
     }
     
-    function display_field_lock (&$form) {
-        $form->disabledIf($this->fieldname, $this->_is_locked(), true);
-    }
-
-    function display_field_default(&$form) {
-        if (!($default = get_field('user_info_data', 'data', 'userid', $this->userid, 'fieldid', $this->field->id))) {
-            $default = (empty($this->field->defaultdata)) ? '' : $this->field->defaultdata;
-        }
-        $form->setDefault($this->fieldname, $default);
-    }
-
-    function display_field_required(&$form) {
-        if ($this->_is_required()) {
-            $form->addRule($this->fieldname, get_string('required'), 'required', null, 'client');
-        }
-    }
-
     /***** The following methods should never be overwritten *****/
 
     /**
@@ -221,7 +254,7 @@ class profile_field_base {
     }
 
     /**
-     * Check if the current field is locked to the current user
+     * Check if the field is locked to the current user
      * @return  boolean
      */
     function _is_locked() {
@@ -230,7 +263,7 @@ class profile_field_base {
     }
 
     /**
-     * Check if the current field is required
+     * Check if the field is required
      * @return  boolean
      */
      function _is_required() {
