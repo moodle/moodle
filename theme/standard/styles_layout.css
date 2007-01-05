@@ -276,7 +276,7 @@ img.emoticon {
 }
 
 form.popupform {
-  display: inline;
+    display: inline;
 }
 
 .arrow_button {
@@ -303,8 +303,10 @@ form.popupform {
 }
 
 .invisiblefieldset {
-  border: 0;  
-  padding: 0;
+  display:inline;
+  border:0px;
+  padding:0px;
+  margin:0px;
 }
 
 span.hide,
