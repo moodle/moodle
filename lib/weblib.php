@@ -2925,21 +2925,25 @@ function print_simple_box_start($align='', $width='', $color='', $padding=5, $cl
     $output = '';
 
     $divclasses = $class.' '.$class.'content';
+    $divstyles  = '';
 
     if ($align) {
         $divclasses .= ' boxalign'.$align;    // Implement alignment using a class
     }
     if ($width) {
-        $width = ' style="width:'.$width.'"';
+        $divstyles  .= ' width:'.$width.';';
     }
     if ($id) {
         $id = ' id="'.$id.'"';
     }
     if ($color) {
-        $color = ' style="background:'.$color.'"';
+        $divstyles  .= ' background:'.$color.';';
+    }
+    if ($divstyles) {
+        $divstyles = ' style="'.$divstyles.'"';
     }
 
-    $output .= '<div'.$color.$width.$id.' class="'.$divclasses.'">';
+    $output .= '<div'.$id.$divstyles.' class="'.$divclasses.'">';
 
     if ($return) {
         return $output;
