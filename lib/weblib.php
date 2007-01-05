@@ -1037,13 +1037,13 @@ function popup_form($common, $options, $formid, $selected='', $nothing='choose',
 
     $output .= '</select>';
     $output .= '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    $output .= '</div>';
     $output .= '<div id="noscript'.$formid.'" style="display: inline;">';
     $output .= '<input type="submit" value="'.$go.'" /></div>';
     $output .= '<script type="text/javascript">'.
                "\n//<![CDATA[\n".
                'document.getElementById("noscript'.$formid.'").style.display = "none";'.
                "\n//]]>\n".'</script>';
+    $output .= '</div>';
     $output .= '</form>' . "\n";
 
     if ($return) {
