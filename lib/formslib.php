@@ -1473,5 +1473,6 @@ MoodleQuickForm::registerElementType('button', "$CFG->libdir/form/button.php", '
 MoodleQuickForm::registerElementType('choosecoursefile', "$CFG->libdir/form/choosecoursefile.php", 'MoodleQuickForm_choosecoursefile');
 MoodleQuickForm::registerElementType('header', "$CFG->libdir/form/header.php", 'MoodleQuickForm_header');
 MoodleQuickForm::registerElementType('submit', "$CFG->libdir/form/submit.php", 'MoodleQuickForm_submit');
+MoodleQuickForm::registerElementType('questioncategory', "$CFG->libdir/form/questioncategory.php", 'MoodleQuickForm_questioncategory');
 
 ?>
