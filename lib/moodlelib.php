@@ -6075,8 +6075,8 @@ function unzip_show_status ($list,$removepath) {
         $strsize = get_string("size");
         $strmodified = get_string("modified");
         $strstatus = get_string("status");
-        echo "<table cellpadding=\"4\" cellspacing=\"2\" border=\"0\" width=\"640\">";
-        echo "<tr><th class=\"header\" align=\"left\" scope=\"col\">$strname</th>";
+        echo "<table width=\"640\">";
+        echo "<tr><th class=\"header\" scope=\"col\">$strname</th>";
         echo "<th class=\"header\" align=\"right\" scope=\"col\">$strsize</th>";
         echo "<th class=\"header\" align=\"right\" scope=\"col\">$strmodified</th>";
         echo "<th class=\"header\" align=\"right\" scope=\"col\">$strstatus</th></tr>";

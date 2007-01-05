@@ -3039,10 +3039,10 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='',
         $output .= '<a href="'. $link .'">';
     }
     if (substr(strtolower($path), 0, 7) == 'http://') {
-        $output .= '<img border="0" '.$height . $width .' src="'. $path .'" />';
+        $output .= '<img style="height:'.$height.'px;width:'.$width.'px;" src="'. $path .'" />';
 
     } else if ($courseid) {
-        $output .= '<img border="0" '. $height . $width .' src="';
+        $output .= '<img style="height:'.$height.'px;width:'.$width.'px;" src="';
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
             $output .= $CFG->wwwroot .'/file.php/'. $courseid .'/'. $path;
         } else {
@@ -3300,10 +3300,10 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
     if ($group->picture) {  // Print custom group picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
             $output .= '<img class="grouppicture" align="middle" src="'.$CFG->wwwroot.'/user/pixgroup.php/'.$group->id.'/'.$file.'.jpg"'.
-                       ' border="0" width="'.$size.'" height="'.$size.'" alt="'.s(get_string('group').' '.$group->name).'" title="'.s($group->name).'"/>';
+                       ' style="width:'.$size.'px;height:'.$size.'px;" alt="'.s(get_string('group').' '.$group->name).'" title="'.s($group->name).'"/>';
         } else {
             $output .= '<img class="grouppicture" align="middle" src="'.$CFG->wwwroot.'/user/pixgroup.php?file=/'.$group->id.'/'.$file.'.jpg"'.
-                       ' border="0" width="'.$size.'" height="'.$size.'" alt="'.s(get_string('group').' '.$group->name).'" title="'.s($group->name).'"/>';
+                       ' style="width:'.$size.'px;height:'.$size.'px;" alt="'.s(get_string('group').' '.$group->name).'" title="'.s($group->name).'"/>';
         }
     }
     if ($link or has_capability('moodle/site:accessallgroups', $context)) {
@@ -3337,13 +3337,12 @@ function print_png($url, $sizex, $sizey, $return, $parameters='alt=""') {
 
     if ($recentIE) {  // work around the HORRIBLE bug IE has with alpha transparencies
         $output .= '<img src="'. $CFG->pixpath .'/spacer.gif" width="'. $sizex .'" height="'. $sizey .'"'.
-                   ' border="0" class="png" style="width: '. $sizex .'px; height: '. $sizey .'px; '.
+                   ' class="png" style="width: '. $sizex .'px; height: '. $sizey .'px; '.
                    ' filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='.
                    "'$url', sizingMethod='scale') ".
                    ' '. $parameters .' />';
     } else {
-        $output .= '<img src="'. $url .'" border="0" width="'. $sizex .'" height="'. $sizey .'" '.
-                   ' '. $parameters .' />';
+        $output .= '<img src="'. $url .'" style="width: '. $sizex .'px; height: '. $sizey .'px; '. $parameters .' />';
     }
 
     if ($return) {
@@ -3424,7 +3423,7 @@ function print_table($table, $return=false) {
 
     $tableid = empty($table->id) ? '' : 'id="'.$table->id.'"';
 
-    $output .= '<table width="'.$table->width.'" border="0" align="'.$table->tablealign.'" ';
+    $output .= '<table width="'.$table->width.'" align="'.$table->tablealign.'" ';
     $output .= " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\" class=\"$table->class\" $tableid>\n";
 
     $countcols = 0;
@@ -4326,7 +4325,7 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
             $class = 'activity '.$mod->mod;
             $class .= ($cmid == $mod->cm) ? ' selected' : '';
             $menu[] = '<li class="'.$class.'">'.
-                      '<img src="'.$CFG->modpixpath.'/'.$mod->mod.'/icon.gif" border="0" alt=""/>'.
+                      '<img src="'.$CFG->modpixpath.'/'.$mod->mod.'/icon.gif" alt="" />'.
                       '<a href="'.$CFG->wwwroot.'/mod/'.$url.'">'.$mod->name.'</a></li>';
             $previousmod = $mod;
         }
@@ -4766,8 +4765,7 @@ function emoticonhelpbutton($form, $field, $return = false) {
 
     $SESSION->inserttextform = $form;
     $SESSION->inserttextfield = $field;
-    $imagetext = '<img src="' . $CFG->pixpath . '/s/smiley.gif" border="0" align="middle" width="15" height="15" alt=""
-    class="emoticon" style="margin-left:3px; padding-right:1px;" />';
+    $imagetext = '<img src="' . $CFG->pixpath . '/s/smiley.gif" alt="" class="emoticon" style="margin-left:3px; padding-right:1px;width:15px;height:15px;" />';
     $help = helpbutton('emoticons', get_string('helpemoticons'), 'moodle', true, true, '', true, $imagetext);
     if (!$return){
         echo $help;
@@ -4785,7 +4783,7 @@ function emoticonhelpbutton($form, $field, $return = false) {
 function editorshortcutshelpbutton() {
 
     global $CFG;
-    $imagetext = '<img src="' . $CFG->wwwroot . '/lib/editor/htmlarea/images/kbhelp.gif" width="49" height="17" alt="'.
+    $imagetext = '<img src="' . $CFG->wwwroot . '/lib/editor/htmlarea/images/kbhelp.gif" alt="'.
 					get_string('editorshortcutkeys').'" style="width:49px; height:17px; margin:0;" />';
 
     return helpbutton('editorshortcuts', get_string('editorshortcutkeys'), 'moodle', true, false, '', true, $imagetext);

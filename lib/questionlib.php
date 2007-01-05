@@ -1184,7 +1184,7 @@ function print_question_icon($question, $editlink=true, $return = false) {
     global $QTYPES, $CFG;
 
     $namestr = get_string($question->qtype, 'quiz');
-    $html = '<img border="0" height="16" width="16" src="'.$CFG->wwwroot.'/question/type/'.
+    $html = '<img src="'.$CFG->wwwroot.'/question/type/'.
             $question->qtype.'/icon.gif" alt="'.
             $namestr.'" title="'.$namestr.'" />';
 
