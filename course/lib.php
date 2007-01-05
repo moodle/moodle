@@ -472,7 +472,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
 
     print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&amp;");
 
-    echo "<table class=\"logtable\" border=\"0\" align=\"center\" cellpadding=\"3\" cellspacing=\"0\">\n";
+    echo "<table class=\"logtable\" align=\"center\" cellpadding=\"3\" cellspacing=\"0\">\n";
     echo "<tr>";
     if ($course->id == SITEID) {
         echo "<th class=\"c0 header\" scope=\"col\">".get_string('course')."</th>\n";
@@ -578,7 +578,7 @@ function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC",
 
     print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&amp;");
 
-    echo "<table class=\"logtable\" border=\"0\" align=\"center\" cellpadding=\"3\" cellspacing=\"0\">\n";
+    echo "<table class=\"logtable\" align=\"center\" cellpadding=\"3\" cellspacing=\"0\">\n";
     echo "<tr>";
     if ($course->id == SITEID) {
         echo "<th class=\"c0 header\">".get_string('course')."</th>\n";
@@ -1650,12 +1650,12 @@ function print_category_info($category, $depth, $files = false) {
 
     $coursecount = count_records('course') <= FRONTPAGECOURSELIMIT;
     if ($files and $coursecount) {
-        $catimage = '<img src="'.$CFG->pixpath.'/i/course.gif" width="16" height="16" border="0" alt="" />';
+        $catimage = '<img src="'.$CFG->pixpath.'/i/course.gif" alt="" />';
     } else {
         $catimage = "&nbsp;";
     }
 
-    echo "\n\n".'<table border="0" cellpadding="3" cellspacing="0" width="100%">';
+    echo "\n\n".'<table class="categorylist">';
 
     if ($files and $coursecount) {
         $courses = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.guest,c.cost,c.currency');
@@ -1671,7 +1671,7 @@ function print_category_info($category, $depth, $files = false) {
         }
 
         echo '<td valign="top">'.$catimage.'</td>';
-        echo '<td valign="top" width="100%" class="category name">';
+        echo '<td valign="top" class="category name">';
         echo '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'.$category->name.'</a>';
         echo '</td>';
         echo '<td class="category info">&nbsp;</td>';
@@ -1680,28 +1680,28 @@ function print_category_info($category, $depth, $files = false) {
         if ($courses && !(isset($CFG->max_category_depth)&&($depth>=$CFG->max_category_depth-1))) {
             foreach ($courses as $course) {
                 $linkcss = $course->visible ? '' : ' class="dimmed" ';
-                echo '<tr><td valign="top" width="30">&nbsp;';
-                echo '</td><td valign="top" width="100%" class="course name">';
+                echo '<tr><td valign="top">&nbsp;';
+                echo '</td><td valign="top" class="course name">';
                 echo '<a '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->fullname.'</a>';
-                echo '</td><td align="right" valign="top" nowrap="nowrap" class="course info">';
+                echo '</td><td align="right" valign="top" class="course info">';
                 if ($course->guest ) {
                     echo '<a title="'.$strallowguests.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
-                    echo '<img hspace="1" alt="'.$strallowguests.'" height="16" width="16" border="0" src="'.$CFG->pixpath.'/i/guest.gif" /></a>';
+                    echo '<img alt="'.$strallowguests.'" src="'.$CFG->pixpath.'/i/guest.gif" /></a>';
                 } else {
-                    echo '<img alt="" height="16" width="18" border="0" src="'.$CFG->pixpath.'/spacer.gif" />';
+                    echo '<img alt="" style="width:18px;height:16px;" src="'.$CFG->pixpath.'/spacer.gif" />';
                 }
                 if ($course->password) {
                     echo '<a title="'.$strrequireskey.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
-                    echo '<img hspace="1" alt="'.$strrequireskey.'" height="16" width="16" border="0" src="'.$CFG->pixpath.'/i/key.gif" /></a>';
+                    echo '<img alt="'.$strrequireskey.'" src="'.$CFG->pixpath.'/i/key.gif" /></a>';
                 } else {
-                    echo '<img alt="" height="16" width="18" border="0" src="'.$CFG->pixpath.'/spacer.gif" />';
+                    echo '<img alt="" style="width:18px;height:16px;" src="'.$CFG->pixpath.'/spacer.gif" />';
                 }
                 if ($course->summary) {
                     link_to_popup_window ('/course/info.php?id='.$course->id, 'courseinfo',
-                                          '<img hspace="1" alt="'.$strsummary.'" height="16" width="16" border="0" src="'.$CFG->pixpath.'/i/info.gif" />',
+                                          '<img alt="'.$strsummary.'" src="'.$CFG->pixpath.'/i/info.gif" />',
                                            400, 500, $strsummary);
                 } else {
-                    echo '<img alt="" height="16" width="18" border="0" src="'.$CFG->pixpath.'/spacer.gif" />';
+                    echo '<img alt="" style="width:18px;height:16px;" src="'.$CFG->pixpath.'/spacer.gif" />';
                 }
                 echo '</td></tr>';
             }
@@ -1717,7 +1717,7 @@ function print_category_info($category, $depth, $files = false) {
             echo '</td>';
         }
 
-        echo '<td valign="top" width="100%" class="category name">';
+        echo '<td valign="top" class="category name">';
         echo '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'.$category->name.'</a>';
         echo '</td>';
         echo '<td valign="top" class="category number">';
@@ -1865,23 +1865,22 @@ function print_course_search($value="", $return=false, $format="plain") {
 
     if ($format == 'plain') {
         $output  = '<form id="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
-        $output .= '<center><p align="center" class="coursesearchbox">';
+        $output .= '<fieldset class="coursesearchbox invisiblefieldset">';
         $output .= '<input type="text" size="30" name="search" alt="'.s($strsearchcourses).'" value="'.s($value, true).'" />';
         $output .= '<input type="submit" value="'.s($strsearchcourses).'" />';
-        $output .= '</p></center></form>';
+        $output .= '</fieldset></form>';
     } else if ($format == 'short') {
         $output  = '<form id="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
-        $output .= '<center><p align="center" class="coursesearchbox">';
+        $output .= '<fieldset class="coursesearchbox invisiblefieldset">';
         $output .= '<input type="text" size="12" name="search" alt="'.s($strsearchcourses).'" value="'.s($value, true).'" />';
         $output .= '<input type="submit" value="'.s($strsearchcourses).'" />';
-        $output .= '</p></center></form>';
+        $output .= '</fieldset></form>';
     } else if ($format == 'navbar') {
-        $output  = '<form id="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
-        $output .= '<table border="0" cellpadding="0" cellspacing="0"><tr><td nowrap="nowrap">';
+        $output  = '<form id="coursesearchnavbar" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
+        $output .= '<fieldset class="coursesearchbox invisiblefieldset">';
         $output .= '<input type="text" size="20" name="search" alt="'.s($strsearchcourses).'" value="'.s($value, true).'" />';
         $output .= '<input type="submit" value="'.s($strsearchcourses).'" />';
-        $output .= '</td></tr></table>';
-        $output .= '</form>';
+        $output .= '</fieldset></form>';
     }
 
     if ($return) {

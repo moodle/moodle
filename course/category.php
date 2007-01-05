@@ -123,11 +123,9 @@
 
     make_categories_list($displaylist, $parentlist, "");
 
-    echo '<table align="center"><tr><td align="right">';
-    echo "<p>$strcategories:</p>";
-    echo "</td><td>";
-    popup_form("category.php?id=", $displaylist, "switchcategory", "$category->id", "", "", "", false);
-    echo "</td></tr></table><br />";
+    echo '<div class="categorypicker">';
+    popup_form('category.php?id=', $displaylist, 'switchcategory', $category->id, '', '', '', false, 'self', $strcategories.':');
+    echo '</div>';
 
 
 /// Editing functions
@@ -412,7 +410,6 @@
         echo '<br />';
     }
     
-    echo '<center>';
     if (has_capability('moodle/category:update', get_context_instance(CONTEXT_SYSTEM, SITEID)) and $numcourses > 1) {           /// Print button to re-sort courses by name
         unset($options);
         $options['id'] = $category->id;
@@ -440,8 +437,6 @@
     }
     
     print_course_search();
-    
-    echo "</center>";
     
     if ($adminediting) {
         admin_externalpage_print_footer($adminroot);

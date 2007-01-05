@@ -1354,6 +1354,11 @@ body#course-view .headingblock {
   border-style:solid;
 }
 
+.categorypicker {
+  text-align:center;
+  padding-bottom:10px;
+}
+
 .coursebox .cost {
   padding-top: 20px;
 }
@@ -1362,6 +1367,18 @@ body#course-view .headingblock {
   list-style-type:none;
   padding:0;
   margin:0;
+}
+
+#course-category #renameform {
+  text-align:center;
+}
+
+#course-category .singlebutton {
+  text-align:center;
+}
+
+#course-category #coursesearch {
+  text-align:center;
 }
 
 

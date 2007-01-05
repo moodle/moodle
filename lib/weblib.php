@@ -930,7 +930,8 @@ function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $retur
  * @return string If $return is true then the entire form is returned as a string.
  * @todo Finish documenting this function<br>
  */
-function popup_form($common, $options, $formid, $selected='', $nothing='choose', $help='', $helptext='', $return=false, $targetwindow='self') {
+function popup_form($common, $options, $formid, $selected='', $nothing='choose', $help='', $helptext='', $return=false,
+$targetwindow='self', $selectlabel='') {
 
     global $CFG;
     static $go, $choose;   /// Locally cached, in case there's lots on a page
@@ -963,7 +964,11 @@ function popup_form($common, $options, $formid, $selected='', $nothing='choose',
         $button = '';
     }
 
-    $output .= '<div>'.$button.'<select name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\''.$formid.'\').jump.options[document.getElementById(\''.$formid.'\').jump.selectedIndex].value;">'."\n";
+    if ($selectlabel) {
+        $selectlabel = '<label for="'.$formid.'_jump">'.$selectlabel.'</label>';
+    }
+
+    $output .= '<fieldset class="invisiblefieldset">'.$selectlabel.$button.'<select id="'.$formid.'_jump" name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\''.$formid.'\').jump.options[document.getElementById(\''.$formid.'\').jump.selectedIndex].value;">'."\n";
 
     if ($nothing != '') {
         $output .= "   <option value=\"javascript:void(0)\">$nothing</option>\n";
@@ -1043,7 +1048,7 @@ function popup_form($common, $options, $formid, $selected='', $nothing='choose',
                "\n//<![CDATA[\n".
                'document.getElementById("noscript'.$formid.'").style.display = "none";'.
                "\n//]]>\n".'</script>';
-    $output .= '</div>';
+    $output .= '</fieldset>';
     $output .= '</form>' . "\n";
 
     if ($return) {
