@@ -136,6 +136,7 @@ img.grouppicture,
   border-width:1px;
   border-style:solid;
   margin-bottom: 15px;
+  padding:10px;
 }
 
 .generalbox#intro {
@@ -149,6 +150,7 @@ img.grouppicture,
 .noticebox {
   border-width:1px;
   border-style:solid;
+  padding:10px;
 }
 
 .errorbox {
@@ -156,6 +158,7 @@ img.grouppicture,
   border-style:solid;
   margin: 1em 15%;
   width: 70%;
+  padding:10px;
 }
 
 .errorbox .title {
