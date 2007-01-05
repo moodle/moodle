@@ -156,7 +156,7 @@ class profile_field_base {
      * @param   object   instance of the moodleform class
      */
     function display_field_required(&$form) {
-        if ($this->_is_required()) {
+        if ( $this->_is_required() and !$this->_is_locked() ) {
             $form->addRule($this->fieldname, get_string('required'), 'required', null, 'client');
         }
     }
