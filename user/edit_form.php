@@ -95,20 +95,20 @@ class user_edit_form extends moodleform {
         $mform->setType('email', PARAM_MULTILANG);
         $mform->addRule('email', $strrequired, 'required', null, 'client');
 
-        unset($choices);
+        $choices = array();
         $choices["0"] = get_string("emaildisplayno");
         $choices["1"] = get_string("emaildisplayyes");
         $choices["2"] = get_string("emaildisplaycourse");
         $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
         $mform->setType('maildisplay', PARAM_INT);
 
-        unset($choices);
+        $choices = array();
         $choices["0"] = get_string("emailenable");
         $choices["1"] = get_string("emaildisable");
         $mform->addElement('select', 'emailstop', get_string('emailactive'), $choices);
         $mform->setType('emailstop', PARAM_INT);
         
-        unset($choices);
+        $choices = array();
         $choices["0"] = get_string("textformat");
         $choices["1"] = get_string("htmlformat");
         $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);
@@ -116,9 +116,8 @@ class user_edit_form extends moodleform {
 
         if (!empty($CFG->unicodedb) && !empty($CFG->allowusermailcharset)) {
             $mailcharset = get_user_preferences('mailcharset', '0', $user->id);
-            unset($choices);
-            unset($charsets);
-            $charset = get_list_of_charsets();
+            $choices = array();
+            $charsets = get_list_of_charsets();
             if (!empty($CFG->sitemailcharset)) {
                 $choices["0"] = get_string('site').' ('.$CFG->sitemailcharset.')';
             } else {
@@ -130,7 +129,7 @@ class user_edit_form extends moodleform {
             $mform->setDefault('mailcharset', $mailcharset);
         }
 
-        unset($choices);
+        $choices = array();
         $choices['0'] = get_string('emaildigestoff');
         $choices['1'] = get_string('emaildigestcomplete');
         $choices['2'] = get_string('emaildigestsubjects');
@@ -138,7 +137,7 @@ class user_edit_form extends moodleform {
         $mform->setType('maildigest', PARAM_INT);
         $mform->setDefault('maildigest', 0);
 
-        unset($choices);
+        $choices = array();
         $choices["1"] = get_string("autosubscribeyes");
         $choices["0"] = get_string("autosubscribeno");
         $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
@@ -146,7 +145,7 @@ class user_edit_form extends moodleform {
         $mform->setDefault('autosubscribe', 0);
 
         if (!empty($CFG->forum_trackreadposts)) {
-            unset($choices);
+            $choices = array();
             $choices["0"] = get_string("trackforumsno");
             $choices["1"] = get_string("trackforumsyes");
             $mform->addElement('select', 'trackforums', get_string('trackforums'), $choices);
@@ -155,7 +154,7 @@ class user_edit_form extends moodleform {
         }
 
         if ($CFG->htmleditor) {
-            unset($choices);
+            $choices = array();
             $choices["0"] = get_string("texteditor");
             $choices["1"] = get_string("htmleditor");
             $mform->addElement('select', 'htmleditor', get_string('textediting'), $choices);
@@ -163,7 +162,7 @@ class user_edit_form extends moodleform {
             $mform->setDefault('htmleditor', 1);
         }
         
-        unset($choices);
+        $choices = array();
         $choices["0"] = get_string("ajaxno");
         $choices["1"] = get_string("ajaxyes");
         $mform->addElement('select', 'ajax', get_string('ajaxuse'), $choices);
@@ -178,18 +177,21 @@ class user_edit_form extends moodleform {
         if (!$user->country and $CFG->country) {
             $user->country = $CFG->country;
         }
-        unset($choices);
         $choices = get_list_of_countries();
         $mform->addElement('select', 'country', get_string('selectacountry'), $choices);
         $mform->setType('country', PARAM_ALPHA);
         $mform->addRule('country', $strrequired, 'required', null, 'client');
 
-        unset($choices);
         $choices = get_list_of_timezones();
-        $mform->addElement('select', 'timezone', get_string('timezone'), $choices);
-        $mform->setType('timezone', PARAM_PATH);
+        $choices['99'] = get_string('serverlocaltime');
+        if ($CFG->forcetimezone != 99) {
+            $mform->addElement('static', 'forcedtimezone', get_string('timezone'), $choices[$CFG->forcetimezone]);
+        } else { 
+            $mform->addElement('select', 'timezone', get_string('timezone'), $choices);
+            $mform->setType('timezone', PARAM_PATH);
+        }
 
-        unset($choices);
+        $choices = array();
         if ($choices = get_list_of_languages()) {
             if (!$user->lang) {
                 $user->lang = $CFG->lang;
@@ -199,7 +201,7 @@ class user_edit_form extends moodleform {
         }
 
         if (!empty($CFG->allowuserthemes)) {
-            unset($choices);
+            $choices = array();
             $choices[''] = get_string('default');
             $choices += get_list_of_themes();
             $mform->addElement('select', 'theme', get_string('preferredtheme'), $choices);
@@ -213,7 +215,7 @@ class user_edit_form extends moodleform {
             $mform->addRule('description', $strrequired, 'required', null, 'client');
         }
         
-        unset($choices);
+        $choices = array();
         $choices["0"] = get_string("screenreaderno");
         $choices["1"] = get_string("screenreaderyes");
         $mform->addElement('select', 'screenreader', get_string('screenreaderuse'), $choices);

@@ -110,12 +110,6 @@
             unset_user_preference('mailcharset', $user->id);
         }
 
-        if (isset($usernew->timezone)) {
-            if ($CFG->forcetimezone != 99) { // Don't allow changing this in any way
-                unset($usernew->timezone);
-            }
-        }
-
         foreach ($usernew as $key => $data) {
             $usernew->$key = addslashes(clean_text(stripslashes(trim($usernew->$key)), FORMAT_MOODLE));
         }
