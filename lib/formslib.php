@@ -109,8 +109,7 @@ class moodleform {
             $action = strip_querystring(qualified_me());
         }
 
-        //strip '_form' from the end of class name to make form name attribute.
-        $this->_formname = preg_replace('/_form$/', '', get_class($this), 1);
+        $this->_formname = get_class($this); // '_form' suffix kept in order to prevent collisions of form id and other element
         $this->_customdata = $customdata;
         $this->_form =& new MoodleQuickForm($this->_formname, $method, $action, $target, $attributes);
         $this->set_upload_manager(new upload_manager());
