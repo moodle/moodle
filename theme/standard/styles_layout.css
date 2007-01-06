@@ -485,16 +485,30 @@ table.navbar {
   text-align:right;
 }
 
-#navmenu optgroup {
+.navigation ul {
+  margin:0px;
+  padding:0px;
+  list-style-type:none;
+}
+
+.navigation ul li form,
+.navigation ul li {
+  display:inline;
+  margin:0px;
+  padding:0px;
+  margin-left:2px;
+}
+
+.navigation optgroup {
   text-align:center;
   padding-top:4px;
 }
 
-#navmenu option {
+.navigation option {
   text-align:left;
 }
 
-#navmenu optgroup option {
+.navigation optgroup option {
   padding:0px;
 }
 

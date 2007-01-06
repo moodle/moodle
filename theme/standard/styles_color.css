@@ -206,15 +206,15 @@ table.formtable tbody th {
   color: #FFF;
 }
 
-#navmenu {
+.navigation select {
   background-color:#FFFFFF;
 }
 
-#navmenu optgroup {
+.navigation optgroup {
   background-color:#EEEEEE;
 }
 
-#navmenu optgroup option {
+.navigation optgroup option {
   background-color:#FFFFFF;
 }
 

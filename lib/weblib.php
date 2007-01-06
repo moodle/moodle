@@ -4222,32 +4222,32 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
 
     if ($selectmod and has_capability('moodle/site:viewreports', $context)) {
         $logstext = get_string('alllogs');
-        $logslink = '<a title="'.$logstext.'" '.$CFG->frametarget.' href="'.
+        $logslink = '<li><a title="'.$logstext.'" '.$CFG->frametarget.' href="'.
                     $CFG->wwwroot.'/course/report/log/index.php?chooselog=1&amp;user=0&amp;date=0&amp;id='.
                        $course->id.'&amp;modid='.$selectmod->cm.'">'.
-                    '<img class="icon log" src="'.$CFG->pixpath.'/i/log.gif" alt="'.$logstext.'" /></a>';
+                    '<img class="icon log" src="'.$CFG->pixpath.'/i/log.gif" alt="'.$logstext.'" /></a></li>';
 
     }
     if ($backmod) {
         $backtext= get_string('activityprev', 'access');
-        $backmod = '<form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.$CFG->frametarget.'><fieldset class="invisiblefieldset">'.
+        $backmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.$CFG->frametarget.'><fieldset class="invisiblefieldset">'.
                    '<input type="hidden" name="id" value="'.$backmod->cm.'" />'.
                    '<button type="submit" title="'.$backtext.'">'.$THEME->larrow.
-                   '<span class="accesshide">'.$backtext.'</span></button></fieldset></form>';
+                   '<span class="accesshide">'.$backtext.'</span></button></fieldset></form></li>';
     }
     if ($nextmod) {
         $nexttext= get_string('activitynext', 'access');
-        $nextmod = '<form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.$CFG->frametarget.'><fieldset
+        $nextmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.$CFG->frametarget.'><fieldset
         class="invisiblefieldset">'.
                    '<input type="hidden" name="id" value="'.$nextmod->cm.'" />'.
                    '<button type="submit" title="'.$nexttext.'">'.$THEME->rarrow.
-                   '<span class="accesshide">'.$nexttext.'</span></button></fieldset></form>';
+                   '<span class="accesshide">'.$nexttext.'</span></button></fieldset></form></li>';
     }
 
-    return "<table><tr>\n<td>".$logslink .'</td><td>'. $backmod .'</td><td>' .
-            popup_form($CFG->wwwroot .'/mod/', $menu, 'navmenu', $selected, $strjumpto,
-                       '', '', true, $targetwindow).
-            '</td><td>'. $nextmod ."</td>\n</tr></table>";
+    return '<div class="navigation"><ul>'.$logslink . $backmod .
+            '<li>'.popup_form($CFG->wwwroot .'/mod/', $menu, 'navmenupopup', $selected, $strjumpto,
+                       '', '', true, $targetwindow).'</li>'.
+            $nextmod . '</ul></div>';
 }
 
 /**
