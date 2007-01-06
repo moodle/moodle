@@ -26,6 +26,7 @@ function mimeinfo($element, $filename) {
         'dir'  => array ('type'=>'application/x-director', 'icon'=>'flash.gif'),
         'dxr'  => array ('type'=>'application/x-director', 'icon'=>'flash.gif'),
         'eps'  => array ('type'=>'application/postscript', 'icon'=>'pdf.gif'),
+        'fdf'  => array ('type'=>'application/pdf', 'icon'=>'pdf.gif'),
         'gif'  => array ('type'=>'image/gif', 'icon'=>'image.gif'),
         'gtar' => array ('type'=>'application/x-gtar', 'icon'=>'zip.gif'),
         'gz'   => array ('type'=>'application/g-zip', 'icon'=>'zip.gif'),
@@ -119,6 +120,9 @@ function mimeinfo($element, $filename) {
         'wav'  => array ('type'=>'audio/wav', 'icon'=>'audio.gif'),
         'wmv'  => array ('type'=>'video/x-ms-wmv', 'icon'=>'avi.gif'),
         'asf'  => array ('type'=>'video/x-ms-asf', 'icon'=>'avi.gif'),
+        'xdp'  => array ('type'=>'application/pdf', 'icon'=>'pdf.gif'),
+        'xfd'  => array ('type'=>'application/pdf', 'icon'=>'pdf.gif'),
+        'xfdf' => array ('type'=>'application/pdf', 'icon'=>'pdf.gif'),
         'xls'  => array ('type'=>'application/vnd.ms-excel', 'icon'=>'excel.gif'),
         'xml'  => array ('type'=>'application/xml', 'icon'=>'xml.gif'),
         'xsl'  => array ('type'=>'text/xml', 'icon'=>'xml.gif'),
@@ -143,10 +147,17 @@ function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstr
     $lastmodified = $pathisstring ? time() : filemtime($path);
     $filesize     = $pathisstring ? strlen($path) : filesize($path);
 
-    if ($mimetype=='application/pdf') {
-        //Adobe Reader XSS prevention - please note that it prevents opening of pdfs in browser
-        $mimetype = 'application/x-forcedownload';
-        $forcedownload = true;
+    //Adobe Acrobat Reader XSS prevention
+    if ($mimetype=='application/pdf' or mimeinfo('type', $filename)=='application/pdf') {
+        //please note that it prevents opening of pdfs in browser when http referer disabled
+        //or file linked from another site; browser caching of pdfs is now disabled too
+        if (empty($_SERVER['HTTP_REFERER']) or strpos($_SERVER['HTTP_REFERER'], $CFG->wwwroot)!==0) {
+            $mimetype = 'application/x-forcedownload';
+            $forcedownload = true;
+            $lifetime = 0;
+        } else {
+            $lifetime = 1; // >0 needed for byteserving    
+        }
     }
 
     //IE compatibiltiy HACK!
