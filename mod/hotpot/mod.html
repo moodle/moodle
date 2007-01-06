@@ -60,7 +60,7 @@ $text_source_options = array(
 //]]>
 </script>
 <center>
-<form name="form" method="post" action="mod.php">
+<form id="form" method="post" action="mod.php">
 <table cellpadding="5">
     <tr valign="top">
         <td align="right"><b><?php print_string("name") ?>:</b></td>
@@ -371,7 +371,7 @@ $text_source_options = array(
     // override the standard Moodle "setfocus" function, 
     // which gives a js error if the "name" field is hidden
     function setfocus() {
-    	var f = document.form;
+    	var f = getElementById('form');
     	if (f) {
     		if (canfocus(f, 'namesource')) {
     			f.namesource.focus();

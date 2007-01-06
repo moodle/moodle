@@ -205,7 +205,7 @@
     }
 </script>
 
-<form name="form" method="post" action="mod.php?goto=" onsubmit="return validate_scorm(document.form,document.form.reference.value,false)">
+<form id="form" method="post" action="mod.php?goto=" onsubmit="return validate_scorm(getElementById('form'),getElementById('form').reference.value,false)">
     <table cellpadding="5">
         <tr valign="top">
             <td align="right"><b><?php print_string('name') ?>:</b></td>
@@ -243,7 +243,7 @@
             <td align="right"><b><?php print_string('grademethod', 'scorm') ?>:</b></td>
             <td>
             <?php
-                choose_from_menu($SCORM_GRADE_METHOD, 'grademethod', (int) $form->grademethod, '','checkscormform(this,0,document.form.maxgrade);');
+                choose_from_menu($SCORM_GRADE_METHOD, 'grademethod', (int) $form->grademethod, '','checkscormform(this,0,getElementById(\'form\').maxgrade);');
                 helpbutton('grademethod', get_string('grademethod','scorm'), 'scorm');
             ?>
             </td>
@@ -272,7 +272,7 @@
                         $attempts[$i] = $i . ' ' . get_string('attempts','scorm');
                     }
                 }
-                choose_from_menu($attempts, 'maxattempt', (int) $form->maxattempt, get_string('nolimit','scorm'),'checkscormform(this,1,document.form.whatgrade);');
+                choose_from_menu($attempts, 'maxattempt', (int) $form->maxattempt, get_string('nolimit','scorm'),'checkscormform(this,1,getElementById(\'form\').whatgrade);');
                 helpbutton('maxattempt', get_string('maximumattempts','scorm'), 'scorm');
             ?>
             </td>

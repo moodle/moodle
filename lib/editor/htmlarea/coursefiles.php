@@ -331,7 +331,7 @@
                 html_header($course, $wdir, "form.name");
                 echo "<p>$strrenamefileto:";
                 echo "<table border=\"0\">\n<tr>\n<td>\n";
-                echo "<form action=\"coursefiles.php\" method=\"post\" name=\"form\">\n";
+                echo "<form action=\"coursefiles.php\" method=\"post\" id=\"form\">\n";
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />\n";
                 echo " <input type=\"hidden\" name=\"action\" value=\"rename\" />\n";
@@ -809,7 +809,7 @@ function displaydir ($wdir) {
                    "zip" => "$strcreateziparchive"
                );
     if (!empty($count)) {
-        choose_from_menu ($options, "action", "", "$strwithchosenfiles...", "javascript:document.dirform.submit()");
+        choose_from_menu ($options, "action", "", "$strwithchosenfiles...", "javascript:getElementById('dirform').submit()");
     }
     if (!empty($USER->fileop) and ($USER->fileop == "move") and ($USER->filesource <> $wdir)) {
         echo "<form action=\"coursefiles.php\" method=\"get\">\n";

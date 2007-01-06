@@ -225,7 +225,7 @@
  
     ?>
 
-    <form name="form" enctype="multipart/form-data" method="post" action="import.php">
+    <form id="form" enctype="multipart/form-data" method="post" action="import.php">
         <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
         <?php print_simple_box_start("center"); ?>
         <table cellpadding="5">

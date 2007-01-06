@@ -2138,17 +2138,17 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                 if ($allowchanges and workshop_is_teacher($workshop, $USER->id)) {
                     echo "<tr><td valign=\"top\" align=\"right\"><input type=\"button\" value=\"".
                         get_string("addcomment", "workshop")."\" 
-                        onclick=\"document.assessmentform.action.value='addstockcomment';
-                        document.assessmentform.elementno.value=$i;document.assessmentform.submit();\" /> \n";
+                        onclick=\"getElementById('assessmentform').action.value='addstockcomment';
+                        getElementById('assessmentform').elementno.value=$i;getElementById('assessmentform').submit();\" /> \n";
                     helpbutton("addcommenttobank", get_string("addcomment", "workshop"), "workshop");
                     echo "</td><td>\n";
                     if ($stockcomments = get_records_select("workshop_stockcomments", "workshopid = $workshop->id
                             AND elementno = $i", "id")) { // show comments in fixed order (oldest first)
                         foreach ($stockcomments as $stockcomment) {
-                            echo "<a onclick=\"document.assessmentform.feedback_$i.value+=' '+'".
+                            echo "<a onclick=\"getElementById('assessmentform').feedback_$i.value+=' '+'".
                                 addslashes($stockcomment->comments)."';\">&lt;&lt;$stockcomment->comments&gt;&gt;</a>\n";
                             if (workshop_is_teacheredit($workshop, $USER->id)) {
-                                echo " <a onclick=\"document.assessmentform.action.value='removestockcomment';document.assessmentform.stockcommentid.value=$stockcomment->id;document.assessmentform.submit();\"> <small><i>&lt;--".get_string("delete","workshop")."</i></small></a>\n";
+                                echo " <a onclick=\"getElementById('assessmentform').action.value='removestockcomment';getElementById('assessmentform').stockcommentid.value=$stockcomment->id;getElementById('assessmentform').submit();\"> <small><i>&lt;--".get_string("delete","workshop")."</i></small></a>\n";
                             }
                             echo "<br />\n";
                         }
@@ -2242,18 +2242,18 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                 if ($allowchanges and workshop_is_teacher($workshop, $USER->id)) {
                     echo "<tr><td valign=\"top\" align=\"right\"><input type=\"button\" value=\"".
                         get_string("addcomment", "workshop")."\" 
-                        onclick=\"document.assessmentform.action.value='addstockcomment';
-                        document.assessmentform.elementno.value=$i;document.assessmentform.submit();\" /> \n";
+                        onclick=\"getElementById('assessmentform').action.value='addstockcomment';
+                        getElementById('assessmentform').elementno.value=$i;getElementById('assessmentform').submit();\" /> \n";
                     helpbutton("addcommenttobank", get_string("addcomment", "workshop"), "workshop");
                     echo "</td><td>\n";
                     if ($stockcomments = get_records_select("workshop_stockcomments", "workshopid = $workshop->id
                             AND elementno = $i", "id")) { // get comments in a fixed order - oldest first
                         foreach ($stockcomments as $stockcomment) {
-                            echo "<a onclick=\"document.assessmentform.feedback_$i.value+=' '+'".
+                            echo "<a onclick=\"getElementById('assessmentform').feedback_$i.value+=' '+'".
                                 addslashes($stockcomment->comments).
                                 "';\">&lt;&lt;$stockcomment->comments&gt;&gt;</a>\n";
                             if (workshop_is_teacheredit($workshop, $USER->id)) {
-                                echo " <a onclick=\"document.assessmentform.action.value='removestockcomment';document.assessmentform.stockcommentid.value=$stockcomment->id;document.assessmentform.submit();\"> <small><i>&lt;--".get_string("delete","workshop")."</i></small></a>\n";
+                                echo " <a onclick=\"getElementById('assessmentform').action.value='removestockcomment';getElementById('assessmentform').stockcommentid.value=$stockcomment->id;getElementById('assessmentform').submit();\"> <small><i>&lt;--".get_string("delete","workshop")."</i></small></a>\n";
                             }
                             echo "<br />\n";
                         }
@@ -2347,18 +2347,18 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                 if ($allowchanges and workshop_is_teacher($workshop, $USER->id)) {
                     echo "<tr><td valign=\"top\" align=\"right\"><input type=\"button\" value=\"".
                         get_string("addcomment", "workshop")."\" 
-                        onclick=\"document.assessmentform.action.value='addstockcomment';
-                        document.assessmentform.elementno.value=$i;document.assessmentform.submit();\" /> \n";
+                        onclick=\"getElementById('assessmentform').action.value='addstockcomment';
+                        getElementById('assessmentform').elementno.value=$i;getElementById('assessmentform').submit();\" /> \n";
                     helpbutton("addcommenttobank", get_string("addcomment", "workshop"), "workshop");
                     echo "</td><td>\n";
                     if ($stockcomments = get_records_select("workshop_stockcomments", "workshopid = $workshop->id
                             AND elementno = $i", "id")) { // get comments in a fixed order - oldest first
                         foreach ($stockcomments as $stockcomment) {
-                            echo "<a onclick=\"document.assessmentform.feedback_$i.value+=' '+'".
+                            echo "<a onclick=\"getElementById('assessmentform').feedback_$i.value+=' '+'".
                                 addslashes($stockcomment->comments).
                                 "';\">&lt;&lt;$stockcomment->comments&gt;&gt;</a>\n";
                             if (workshop_is_teacheredit($workshop, $USER->id)) {
-                                echo " <a onclick=\"document.assessmentform.action.value='removestockcomment';document.assessmentform.stockcommentid.value=$stockcomment->id;document.assessmentform.submit();\"> <small><i>&lt;--".get_string("delete","workshop")."</i></small></a>\n";
+                                echo " <a onclick=\"getElementById('assessmentform').action.value='removestockcomment';getElementById('assessmentform').stockcommentid.value=$stockcomment->id;getElementById('assessmentform').submit();\"> <small><i>&lt;--".get_string("delete","workshop")."</i></small></a>\n";
                             }
                             echo "<br />\n";
                         }
@@ -2510,18 +2510,18 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                     if ($allowchanges and workshop_is_teacher($workshop, $USER->id)) {
                     echo "<tr><td valign=\"top\" align=\"right\"><input type=\"button\" value=\"".
                         get_string("addcomment", "workshop")."\" 
-                        onclick=\"document.assessmentform.action.value='addstockcomment';
-                        document.assessmentform.elementno.value=$i;document.assessmentform.submit();\" /> \n";
+                        onclick=\"getElementById('assessmentform').action.value='addstockcomment';
+                        getElementById('assessmentform').elementno.value=$i;getElementById('assessmentform').submit();\" /> \n";
                     helpbutton("addcommenttobank", get_string("addcomment", "workshop"), "workshop");
                     echo "</td><td>\n";
                         if ($stockcomments = get_records_select("workshop_stockcomments", "workshopid = $workshop->id
                                     AND elementno = $i", "id")) { // show comments in fixed (creation) order
                             foreach ($stockcomments as $stockcomment) {
-                                echo "<a onclick=\"document.assessmentform.feedback_$i.value+=' '+'".
+                                echo "<a onclick=\"getElementById('assessmentform').feedback_$i.value+=' '+'".
                                     addslashes($stockcomment->comments).
                                     "';\">&lt;&lt;$stockcomment->comments&gt;&gt;</a>\n";
                                 if (workshop_is_teacheredit($workshop, $USER->id)) {
-                                    echo " <a onclick=\"document.assessmentform.action.value='removestockcomment';document.assessmentform.stockcommentid.value=$stockcomment->id;document.assessmentform.submit();\"> <small><i>&lt;--".get_string("delete","workshop")."</i></small></a>\n";
+                                    echo " <a onclick=\"getElementById('assessmentform').action.value='removestockcomment';getElementById('assessmentform').stockcommentid.value=$stockcomment->id;getElementById('assessmentform').submit();\"> <small><i>&lt;--".get_string("delete","workshop")."</i></small></a>\n";
                                 }
                                 echo "<br />\n";
                             }
@@ -2571,17 +2571,17 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
     if ($allowchanges and workshop_is_teacher($workshop, $USER->id)) {
         echo "<tr><td valign=\"top\" align=\"right\"><input type=\"button\" value=\"".
             get_string("addcomment", "workshop")."\" 
-            onclick=\"document.assessmentform.action.value='addstockcomment';
-        document.assessmentform.elementno.value=99;document.assessmentform.submit();\" /> \n";
+            onclick=\"getElementById('assessmentform').action.value='addstockcomment';
+        getElementById('assessmentform').elementno.value=99;getElementById('assessmentform').submit();\" /> \n";
         helpbutton("addcommenttobank", get_string("addcomment", "workshop"), "workshop");
         echo "</td><td>\n";
         if ($stockcomments = get_records_select("workshop_stockcomments", "workshopid = $workshop->id
                     AND elementno = 99", "id")) { // show in the same order (oldest at the top)
             foreach ($stockcomments as $stockcomment) {
-                echo "<a onclick=\"document.assessmentform.generalcomment.value+=' '+'".
+                echo "<a onclick=\"getElementById('assessmentform').generalcomment.value+=' '+'".
                     addslashes($stockcomment->comments)."';\">&lt;&lt;$stockcomment->comments&gt;&gt;</a>\n";
                 if (workshop_is_teacheredit($workshop, $USER->id)) {
-                    echo " <a onclick=\"document.assessmentform.action.value='removestockcomment';document.assessmentform.stockcommentid.value=$stockcomment->id;document.assessmentform.submit();\"> <small><i>&lt;--".get_string("delete","workshop")."</i></small></a>\n";
+                    echo " <a onclick=\"getElementById('assessmentform').action.value='removestockcomment';getElementById('assessmentform').stockcommentid.value=$stockcomment->id;getElementById('assessmentform').submit();\"> <small><i>&lt;--".get_string("delete","workshop")."</i></small></a>\n";
                 }
                 echo "<br />\n";
             }
@@ -2630,9 +2630,9 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
         if (($submission->userid == $USER->id) and !$assessment->timeagreed and !$comments and $showcommentlinks and 
                 $submission->userid != $assessment->userid) {
             echo "<input type=\"button\" value=\"".get_string("agreetothisassessment", "workshop")."\" 
-                onclick=\"document.assessmentform.action.value='agreeassessment';document.assessmentform.submit();\" />\n";
+                onclick=\"getElementById('assessmentform').action.value='agreeassessment';getElementById('assessmentform').submit();\" />\n";
             echo "<input type=\"submit\" value=\"".get_string("disagreewiththisassessment", "workshop")."\"
-                onclick=\"document.assessmentform.action.value='addcomment';document.assessmentform.submit();\" />\n";
+                onclick=\"getElementById('assessmentform').action.value='addcomment';getElementById('assessmentform').submit();\" />\n";
         }
     }
     echo "</center>";

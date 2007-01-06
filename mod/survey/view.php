@@ -163,7 +163,7 @@ function checkform() {
 
     var error=false;
 
-    with (document.form) {
+    with (getElementById('form')) {
     <?php
        if (!empty($checklist)) {
            foreach ($checklist as $question => $default) {
@@ -176,7 +176,7 @@ function checkform() {
     if (error) {
         alert("<?php print_string("questionsnotanswered", "survey") ?>");
     } else {
-        document.form.submit();
+        getElementById('form').submit();
     }
 }
 

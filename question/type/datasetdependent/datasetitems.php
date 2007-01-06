@@ -249,7 +249,7 @@
 
 // Print the new-dataset table
     $addtable->data = array($addline);
-    echo "<form name=\"addform\" method=\"post\" action=\"question.php\">
+    echo "<form id=\"addform\" method=\"post\" action=\"question.php\">
             <input type=\"hidden\" name=\"regenerateddefid\" value=\"0\"/>
             <input type=\"hidden\" name=\"id\" value=\"$question->id\"/>
             <input type=\"hidden\" name=\"category\" value=\"$question->category\"/>

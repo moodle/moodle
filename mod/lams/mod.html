@@ -33,7 +33,7 @@ if (!isset($form->create_sequence_url)) {
 }
 ?>
 
-<form name="form" method="post" action="mod.php" onSubmit="disableSumbit(this);">
+<form id="form" method="post" action="mod.php" onSubmit="disableSumbit(this);">
 <center>
 <span id="message"><p>Please wait .......</p></span>
 <table cellpadding="5">
@@ -229,7 +229,7 @@ function refreshLists(){
     dol = new DynamicOptionList("workspace","sequence");
     dol.setFormName("form");
 
-    url = "../mod/lams/list.php?courseid="+document.form.course.value;
+    url = "../mod/lams/list.php?courseid="+getElementById('form').course.value;
     if (window.XMLHttpRequest) { // Non-IE browsers
         req = new XMLHttpRequest();
         req.onreadystatechange = processStateChange;

@@ -251,7 +251,7 @@
 
             if (!$correctpass) {
                 print_simple_box_start("center");
-                echo "<form name=\"password\" method=\"post\" action=\"view.php\">\n";
+                echo "<form id=\"password\" method=\"post\" action=\"view.php\">\n";
                 echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
                 echo "<table cellpadding=\"7px\">";
                 if (isset($_POST['userpassword'])) {

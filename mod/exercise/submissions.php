@@ -69,7 +69,7 @@
         $submission = get_record("exercise_submissions", "id", $sid);
         print_heading(get_string("amendtitle", "exercise"));
         ?>
-        <form name="amendtitleform" action="submissions.php" method="post">
+        <form id="amendtitleform" action="submissions.php" method="post">
         <input type="hidden" name="action" value="adminupdatetitle" />
         <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
         <input type="hidden" name="sid" value="<?php echo $sid ?>" />

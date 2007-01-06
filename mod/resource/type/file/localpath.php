@@ -32,20 +32,20 @@
         } else if (txt.indexOf('\\') > -1) {
             txt = txt.substring(0,txt.lastIndexOf('\\'));
         }
-        document.myform.pathname.value = txt;
-        document.myform.submit();
+        getElementById('myform').pathname.value = txt;
+        getElementById('myform').submit();
     }
     //]]>
     </script>
     
     <br />
     <div align="center" class="form">
-    <form name="myform" action="localpath.php" method="post">
+    <form id="myform" action="localpath.php" method="post">
     <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>">
     <input type="hidden" name="pathname" value="">
     <input type="file" size="60" name="myfile"><br />
     <input type="button" value="<?php print_string('localfileselect','resource') ?>" 
-           onClick="return set_value(document.myform.myfile.value)">
+           onClick="return set_value(getElementById('myform').myfile.value)">
     <input type="button" value="<?php print_string('cancel') ?>" 
            onClick="window.close()">
     </form>

@@ -944,7 +944,7 @@
                 if (!$highscores or $madeit) {
                     echo '<p>'.get_string("youmadehighscore", "lesson", $lesson->maxhighscores).
                          '</p><p>
-                          <form method="post" name="highscores" action="'.$CFG->wwwroot.'/mod/lesson/highscores.php">
+                          <form method="post" id="highscores" action="'.$CFG->wwwroot.'/mod/lesson/highscores.php">
                           <input type="hidden" name="mode" value="add" />
                           <input type="hidden" name="id" value="'.$cm->id.'" />
                           <input type="hidden" name="sesskey" value="'.sesskey().'" />

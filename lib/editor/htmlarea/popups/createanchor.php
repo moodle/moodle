@@ -51,7 +51,7 @@ border-bottom: 1px solid black; letter-spacing: 2px;
 </head>
 <body>
 <div class="title"><?php print_string("createanchor","editor");?></div>
-<form name="fie">
+<form id="fie">
 <table border="0" cellpadding="2" cellspacing="0">
 <tr>
     <td><?php print_string("anchorname","editor");?>: <input id="f_anc" name="anc" type="text" size="30" /></td>

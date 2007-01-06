@@ -1567,7 +1567,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
     // now print the grading form with the teacher's comments if any
     // FORM is needed for Mozilla browsers, else radio bttons are not checked
         ?>
-    <form name="assessmentform" method="post" action="assessments.php">
+    <form id="assessmentform" method="post" action="assessments.php">
     <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
     <input type="hidden" name="aid" value="<?php echo $assessment->id ?>" />
     <input type="hidden" name="action" value="updateassessment" />
@@ -2017,9 +2017,9 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
         if (isteacher($course->id)) { 
             // ...show two buttons...to resubmit or not to resubmit
             echo "<input type=\"button\" value=\"".get_string("studentnotallowed", "exercise", $course->student)."\" 
-                onclick=\"document.assessmentform.submit();\" />\n";
+                onclick=\"getElementById('assessmentform').submit();\" />\n";
             echo "<input type=\"button\" value=\"".get_string("studentallowedtoresubmit", "exercise", $course->student)."\" 
-                onclick=\"document.assessmentform.resubmit.value='1';document.assessmentform.submit();\" />\n";
+                onclick=\"getElementById('assessmentform').resubmit.value='1';getElementById('assessmentform').submit();\" />\n";
             }
         else {
             // ... show save button
@@ -2368,7 +2368,7 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
     echo "</td></tr></table></center><br clear=\"all\" />\n";
 
     ?>
-    <form name="assessmentform" method="post" action="assessments.php">
+    <form id="assessmentform" method="post" action="assessments.php">
     <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
     <input type="hidden" name="said" value="<?php echo $assessment->id ?>" />
     <input type="hidden" name="sid" value="<?php echo $submission->id ?>" />
@@ -2784,9 +2784,9 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
     // ...and close the table and show two buttons...to resubmit or not to resubmit
     echo "</table>\n";
     echo "<br /><input type=\"button\" value=\"".get_string("studentnotallowed", "exercise", $course->student)."\" 
-        onclick=\"document.assessmentform.submit();\" />\n";
+        onclick=\"getElementById('assessmentform').submit();\" />\n";
     echo "<input type=\"button\" value=\"".get_string("studentallowedtoresubmit", "exercise", $course->student)."\" 
-        onclick=\"document.assessmentform.resubmit.value='1';document.assessmentform.submit();\" />\n";
+        onclick=\"getElementById('assessmentform').resubmit.value='1';getElementById('assessmentform').submit();\" />\n";
     echo "</center></form>\n";
 }
 

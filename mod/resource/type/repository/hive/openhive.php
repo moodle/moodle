@@ -40,7 +40,7 @@ $query .= '&HIVE_SESSION='.$SESSION->HIVE_SESSION;
 /***********8
     notify('Opening HarvestRoad Hive. Please wait. Contacting '. $CFG->hivehost );
 
-    echo '<form name="OPEN_HIVE_FORM" action="'. $CFG->hiveprotocol .'://'. $CFG->hivehost .':'. $CFG->hiveport .''. $CFG->hivepath .'" method="post">';
+    echo '<form id="OPEN_HIVE_FORM" action="'. $CFG->hiveprotocol .'://'. $CFG->hivehost .':'. $CFG->hiveport .''. $CFG->hivepath .'" method="post">';
 
     echo '<input type="hidden" name="HISTORY" value="">';
     echo '<input type="hidden" name="hiveLanguage" value="en_AU">';
@@ -62,7 +62,7 @@ $query .= '&HIVE_SESSION='.$SESSION->HIVE_SESSION;
     echo '</form>';
     echo '<script type="text/javascript"/>';
     echo "\n//<![CDATA[\n";
-    echo 'document.OPEN_HIVE_FORM.submit();';
+    echo 'getElementById(\'OPEN_HIVE_FORM\').submit();';
     echo "\n//]]>\n";
     echo '</script>';
 

@@ -418,7 +418,7 @@
             error("Edit Comment: Submission not found");
             }
         ?>
-        <form name="gradingform" action="assessments.php" method="post">
+        <form id="gradingform" action="assessments.php" method="post">
         <input type="hidden" name="action" value="updatecomment" />
         <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
         <input type="hidden" name="cid" value="<?php echo $cid ?>" />
@@ -454,7 +454,7 @@
         // set up heading, form and table
         print_heading_with_help(get_string("editingassessmentelements", "workshop"), "elements", "workshop");
         ?>
-        <form name="form" method="post" action="assessments.php">
+        <form id="form" method="post" action="assessments.php">
         <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
         <input type="hidden" name="action" value="insertelements" />
         <center><table cellpadding="5" border="1">

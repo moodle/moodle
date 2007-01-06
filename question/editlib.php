@@ -169,7 +169,7 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
     echo "<input type=\"submit\" value=\"$streditcats\" />";
     echo "</form>";
     echo '</td></tr></table>';
-    echo '<form method="post" action="edit.php" name="displayoptions">';
+    echo '<form method="post" action="edit.php" id="displayoptions">';
     echo '<table><tr><td>';
     echo "<input type=\"hidden\" name=\"courseid\" value=\"{$course->id}\" />";
     echo '<input type="hidden" name="recurse" value="0" />';
@@ -177,7 +177,7 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
     if ($recurse) {
         echo ' checked="checked"';
     }
-    echo ' onchange="document.displayoptions.submit(); return true;" />';
+    echo ' onchange="getElementById(\'displayoptions\').submit(); return true;" />';
     print_string('recurse', 'quiz');
     // hide-feature
     echo '<br />';
@@ -186,7 +186,7 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
     if ($showhidden) {
         echo ' checked="checked"';
     }
-    echo ' onchange="document.displayoptions.submit(); return true;" />';
+    echo ' onchange="getElementById(\'displayoptions\').submit(); return true;" />';
     print_string('showhidden', 'quiz');
     echo '</td><noscript><td valign="center">';
     echo ' <input type="submit" value="'. get_string('go') .'" />';

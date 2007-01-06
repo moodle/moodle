@@ -102,13 +102,13 @@ form { margin-bottom: 1px; margin-top: 1px; }
   <td>
     <table border="0" cellpadding="2" cellspacing="0">
           <tr><td><?php print_string("selection","editor");?>: </td>
-          <td><form name="idelete" id="idelete">
+          <td><form id="idelete">
           <input name="btnDelete" type="submit" id="btnDelete" value="<?php print_string("delete","editor");?>" onclick="return submit_form('delete');" /></form></td>
-          <td><form name="imove" id="imove">
+          <td><form  id="imove">
           <input name="btnMove" type="submit" id="btnMove" value="<?php print_string("move","editor");?>" onclick="return submit_form('move');" /></form></td>
-          <td><form name="izip" id="izip">
+          <td><form id="izip">
           <input name="btnZip" type="submit" id="btnZip" value="<?php print_string("zip","editor");?>" onclick="return submit_form('zip');" /></form></td>
-          <td><form name="irename" id="irename" method="post" action="../coursefiles.php" target="fbrowser">
+          <td><form id="irename" method="post" action="../coursefiles.php" target="fbrowser">
           <input type="hidden" name="id" value="<?php print($course->id);?>" />
           <input type="hidden" name="wdir" value="" />
           <input type="hidden" name="file" value="" />
@@ -127,7 +127,7 @@ form { margin-bottom: 1px; margin-top: 1px; }
     <tr>
       <td height="22"><?php
       if(has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id))) { ?>
-          <form name="cfolder" id="cfolder" action="../coursefiles.php" method="post" target="fbrowser">
+          <form id="cfolder" action="../coursefiles.php" method="post" target="fbrowser">
           <input type="hidden" name="id" value="<?php print($course->id);?>" />
           <input type="hidden" name="wdir" value="" />
           <input type="hidden" name="action" value="mkdir" />
@@ -135,7 +135,7 @@ form { margin-bottom: 1px; margin-top: 1px; }
           <input name="name" type="text" id="foldername" size="35" />
           <input name="btnCfolder" type="submit" id="btnCfolder" value="<?php print_string("createfolder","editor");?>" onclick="return checkvalue('foldername','cfolder');" />
           </form>
-          <form action="../coursefiles.php?id=<?php print($course->id);?>" method="post" enctype="multipart/form-data" name="uploader" target="fbrowser" id="uploader">
+          <form action="../coursefiles.php?id=<?php print($course->id);?>" method="post" enctype="multipart/form-data" target="fbrowser" id="uploader">
           <input type="hidden" name="MAX_FILE_SIZE" value="<?php print($upload_max_filesize);?>" />
           <input type="hidden" name="id" VALUE="<?php print($course->id);?>" />
           <input type="hidden" name="wdir" value="" />

@@ -241,7 +241,7 @@
             error(get_string('notallowed', 'workshop'));
         }
         ?>
-        <form name="editform" enctype="multipart/form-data" action="submissions.php" method="post">
+        <form id="editform" enctype="multipart/form-data" action="submissions.php" method="post">
         <input type="hidden" name="action" value="updatesubmission" />
         <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
         <input type="hidden" name="sid" value="<?php echo $sid ?>" />
@@ -260,8 +260,8 @@
                 if ($files = get_directory_list($basedir)) {
                     echo "<tr><td><b>".get_string("attachments", "workshop").
                         "</b><div align=\"right\"><input type=\"button\" value=\"".get_string("removeallattachments",
-                        "workshop")."\" onclick=\"document.editform.action.value='removeattachments';
-                        document.editform.submit();\"/></div></td></tr>\n";
+                        "workshop")."\" onclick=\"getElementById('editform').action.value='removeattachments';
+                        getElementById('editform').submit();\"/></div></td></tr>\n";
                     $n = 1;
                     foreach ($files as $file) {
                         $icon = mimeinfo("icon", $file);

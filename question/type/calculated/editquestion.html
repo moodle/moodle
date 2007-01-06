@@ -89,7 +89,7 @@ $QTYPES[$question->qtype]->print_question_form_end($question,
 function determineMinAndMax() {
     // This client-side script will determine the values for min and max
     // based on the input for answer and acceptederror.
-    with(document.theform) {
+    with(getElementById('theform')) {
         if (formula0.value=='') {
             alert('<?php  print_string("missingformula","quiz") ?>');
             return false;
@@ -103,8 +103,8 @@ function determineMinAndMax() {
         } else if (isNaN(tolerance0.value)) {
             alert('<?php  print_string("tolerancemustbenumeric","quiz") ?>');
             return false;
-        } else if ('2' == document.theform['correctanswerformat[]'].value
-                && '0' == document.theform['correctanswerlength[]'].value) {
+        } else if ('2' == getElementById('theform')['correctanswerformat[]'].value
+                && '0' == getElementById('theform')['correctanswerlength[]'].value) {
             alert('<?php  print_string("zerosignificantfiguresnotallowed","quiz") ?>');
             return false;
         } else {

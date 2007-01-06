@@ -714,7 +714,7 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
     if ($nextstage != DOWNLOADLANG) {
         $needtoopenform = false;
 ?>
-        <form name="installform" method="post" action="<?php echo $formaction ?>">
+        <form id="installform" method="post" action="<?php echo $formaction ?>">
         <input type="hidden" name="stage" value="<?php echo $nextstage ?>" />
 
 <?php
@@ -916,7 +916,7 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
 <?php
     if ($needtoopenform) {
 ?>
-            <form name="installform" method="post" action="<?php echo $formaction ?>">
+            <form id="installform" method="post" action="<?php echo $formaction ?>">
             <input type="hidden" name="stage" value="<?php echo $nextstage ?>" />
 <?php
     }
@@ -1197,8 +1197,8 @@ function database_js() {
 function toggledbinfo() {
     //Calculate selected value
     var showid = 'mysql';
-    if (document.installform.dbtype.value) {
-        showid = document.installform.dbtype.value;
+    if (getElementById('installform').dbtype.value) {
+        showid = getElementById('installform').dbtype.value;
     }
     if (document.getElementById) {
         //Hide all the divs

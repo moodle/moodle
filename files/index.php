@@ -815,7 +815,7 @@ function displaydir ($wdir) {
                    "zip" => "$strcreateziparchive"
                );
     if (!empty($count)) {
-        choose_from_menu ($options, "action", "", "$strwithchosenfiles...", "javascript:document.dirform.submit()");
+        choose_from_menu ($options, "action", "", "$strwithchosenfiles...", "javascript:getElementById('dirform').submit()");
     }
     echo "</td></tr></table>";
     echo "</form>";

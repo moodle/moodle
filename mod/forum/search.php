@@ -275,7 +275,7 @@ function forum_print_big_search_form($course) {
     echo "var timetoitems = ['today','tomonth','toyear','tohour','tominute'];\n";
     echo "</script>\n";
 
-    echo '<form name="search" action="search.php" method="get">';
+    echo '<form id="searchform" action="search.php" method="get">';
     echo '<input type="hidden" value="'.$course->id.'" name="id" alt="" />';
     echo '<table cellpadding="10" class="searchbox" id="form">';
 
@@ -304,7 +304,7 @@ function forum_print_big_search_form($course) {
     echo '<tr>';
     echo '<td class="c0">'.get_string('searchdatefrom', 'forum').':</td>';
     echo '<td class="c1">';
-    echo '<input name="timefromrestrict" type="checkbox" value="1" alt="'.get_string('searchdatefrom', 'forum').'" onclick="return lockoptions(\'search\', \'timefromrestrict\', timefromitems)" /> ';
+    echo '<input name="timefromrestrict" type="checkbox" value="1" alt="'.get_string('searchdatefrom', 'forum').'" onclick="return lockoptions(\'searchform\', \'timefromrestrict\', timefromitems)" /> ';
     if (empty($dateto)) {
         $datefrom = make_timestamp(2000, 1, 1, 0, 0, 0);
     }
@@ -323,7 +323,7 @@ function forum_print_big_search_form($course) {
     echo '<tr>';
     echo '<td class="c0">'.get_string('searchdateto', 'forum').':</td>';
     echo '<td class="c1">';
-    echo '<input name="timetorestrict" type="checkbox" value="1" alt="'.get_string('searchdateto', 'forum').'" onclick="return lockoptions(\'search\', \'timetorestrict\', timetoitems)" /> ';
+    echo '<input name="timetorestrict" type="checkbox" value="1" alt="'.get_string('searchdateto', 'forum').'" onclick="return lockoptions(\'searchform\', \'timetorestrict\', timetoitems)" /> ';
     if (empty($dateto)) {
         $dateto = time()+3600;
     }
@@ -365,8 +365,8 @@ function forum_print_big_search_form($course) {
     echo '</form>';
 
     echo "<script type=\"text/javascript\">";
-    echo "lockoptions('search','timefromrestrict', timefromitems);";
-    echo "lockoptions('search','timetorestrict', timetoitems);";
+    echo "lockoptions('searchform','timefromrestrict', timefromitems);";
+    echo "lockoptions('searchform','timetorestrict', timetoitems);";
     echo "</script>\n";
 
     print_simple_box_end();

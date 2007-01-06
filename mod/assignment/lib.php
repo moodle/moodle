@@ -858,15 +858,15 @@ class assignment_base {
         
         echo '<script type="text/javascript">'."\n";
         echo 'function setNext(){'."\n";
-        echo 'document.submitform.mode.value=\'next\';'."\n";
-        echo 'document.submitform.userid.value="'.$nextid.'";'."\n";
+        echo 'getElementById(\'submitform\').mode.value=\'next\';'."\n";
+        echo 'getElementById(\'submitform\').userid.value="'.$nextid.'";'."\n";
         echo '}'."\n";
         
         echo 'function saveNext(){'."\n";
-        echo 'document.submitform.mode.value=\'saveandnext\';'."\n";
-        echo 'document.submitform.userid.value="'.$nextid.'";'."\n";
-        echo 'document.submitform.saveuserid.value="'.$userid.'";'."\n";
-        echo 'document.submitform.menuindex.value = document.submitform.grade.selectedIndex;'."\n";
+        echo 'getElementById(\'submitform\').mode.value=\'saveandnext\';'."\n";
+        echo 'getElementById(\'submitform\').userid.value="'.$nextid.'";'."\n";
+        echo 'getElementById(\'submitform\').saveuserid.value="'.$userid.'";'."\n";
+        echo 'getElementById(\'submitform\').menuindex.value = getElementById(\'submitform\').grade.selectedIndex;'."\n";
         echo '}'."\n";
             
         echo '</script>'."\n";
@@ -922,7 +922,7 @@ class assignment_base {
 
         ///Print Buttons in Single View
         echo '<div class="buttons" align="center">';
-        echo '<input type="submit" name="submit" value="'.get_string('savechanges').'" onclick = "document.submitform.menuindex.value = document.submitform.grade.selectedIndex" />';
+        echo '<input type="submit" name="submit" value="'.get_string('savechanges').'" onclick = "getElementById(\'submitform\').menuindex.value = getElementById(\'submitform\').grade.selectedIndex" />';
         echo '<input type="submit" name="cancel" value="'.get_string('cancel').'" />';
         //if there are more to be graded.
         if ($nextid) {
