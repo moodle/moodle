@@ -1359,6 +1359,9 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $html = str_replace('{help}', '', $html);
 
         }
+        if ($element->getType() == 'static') {
+            $html = preg_replace('|<label.*?</label>|i', '', $html); //xhtml compliance - no label for static content
+        }
         $this->_templates[$element->getName()] = $html;
         if (!is_null($element->getAttribute('id'))) {
             $id = $element->getAttribute('id');
