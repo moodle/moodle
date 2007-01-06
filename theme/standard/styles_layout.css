@@ -1838,7 +1838,8 @@ body#message-messages {
   border-collapse: separate;
 }
 
-.userinfobox .left {
+.userinfobox .left,
+.userinfobox .side {
   padding: 10px;
   width: 100px;
   vertical-align: top;
@@ -1887,6 +1888,14 @@ table.groupinfobox {
 
 body#user-index h2 {
   text-align: center;
+}
+
+#user-view .buttons {
+  text-align: center;
+}
+
+#user-view .buttons .form {
+  display: inline;
 }
 
 body#user-index #longtimenosee,

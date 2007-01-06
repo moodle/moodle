@@ -177,11 +177,11 @@
         echo "Remote Moodle: <a href=\"{$remotehost->wwwroot}/user/edit.php\">{$remotehost->name}</a> (click here to edit your profile on the remote server) </p>\n";
     }
 
-    echo "<table width=\"80%\" align=\"center\" border=\"0\" cellspacing=\"0\" class=\"userinfobox\">";
-    echo "<tr>";
-    echo "<td width=\"100\" valign=\"top\" class=\"side\">";
+    echo '<table width="80%" class="userinfobox" summary="">';
+    echo '<tr>';
+    echo '<td class="side">';
     print_user_picture($user->id, $course->id, $user->picture, true, false, false);
-    echo "</td><td width=\"100%\" class=\"content\">";
+    echo '</td><td class="content">';
 
     // Print the description
 
@@ -191,7 +191,7 @@
 
     // Print all the little details in a list
 
-    echo '<table border="0" cellpadding="0" cellspacing="0" class="list">';
+    echo '<table class="list">';
 
     if (($user->city or $user->country) and (!isset($hiddenfields['city']) or !isset($hiddenfields['country']))) {
         $location = '';
@@ -251,7 +251,7 @@
             }
             $emailswitch = "&nbsp;<a title=\"$switchclick\" ".
                            "href=\"view.php?id=$user->id&amp;course=$course->id&amp;$switchparam=1\">".
-                           "<img border=\"0\" width=\"11\" height=\"11\" src=\"$CFG->pixpath/t/$switchpix\" alt=\"$switchclick\" /></a>";
+                           "<img src=\"$CFG->pixpath/t/$switchpix\" alt=\"$switchclick\" /></a>";
 
         } else if ($currentuser) {         /// Can only re-enable an email this way
             if ($user->emailstop) {   // Include link that tells how to re-enable their email
@@ -272,16 +272,16 @@
     }
 
     if ($user->icq && !isset($hiddenfields['icqnumber'])) {
-        print_row(get_string('icqnumber').':',"<a href=\"http://web.icq.com/wwp?uin=$user->icq\">$user->icq <img src=\"http://web.icq.com/whitepages/online?icq=$user->icq&amp;img=5\" width=\"18\" height=\"18\" border=\"0\" alt=\"\" /></a>");
+        print_row(get_string('icqnumber').':',"<a href=\"http://web.icq.com/wwp?uin=$user->icq\">$user->icq <img src=\"http://web.icq.com/whitepages/online?icq=$user->icq&amp;img=5\" alt=\"\" /></a>");
     }
 
     if ($user->skype && !isset($hiddenfields['skypeid'])) {
         print_row(get_string('skypeid').':','<a href="callto:'.urlencode($user->skype).'">'.s($user->skype). 
             ' <img src="http://mystatus.skype.com/smallicon/'.urlencode($user->skype).'" alt="'.get_string('status').'" '.
-            ' height="16" width="16" /></a>');
+            ' /></a>');
     }
     if ($user->yahoo && !isset($hiddenfields['yahooid'])) {
-        print_row(get_string('yahooid').':', '<a href="http://edit.yahoo.com/config/send_webmesg?.target='.urlencode($user->yahoo).'&amp;.src=pg">'.s($user->yahoo)." <img border=0 src=\"http://opi.yahoo.com/online?u=".urlencode($user->yahoo)."&m=g&t=0\" width=\"12\" height=\"12\" alt=\"\"></a>");
+        print_row(get_string('yahooid').':', '<a href="http://edit.yahoo.com/config/send_webmesg?.target='.urlencode($user->yahoo).'&amp;.src=pg">'.s($user->yahoo)." <img src=\"http://opi.yahoo.com/online?u=".urlencode($user->yahoo)."&m=g&t=0\" alt=\"\"></a>");
     }
     if ($user->aim && !isset($hiddenfields['aimid'])) {
         print_row(get_string('aimid').':', '<a href="aim:goim?screenname='.s($user->aim).'">'.s($user->aim).'</a>');
@@ -348,11 +348,11 @@
     }
 
 //  Print other functions
-    echo '<div class="buttons"><table align="center"><tr>';
+    echo '<div class="buttons">';
 
     if ($currentuser and !isguest()) {
         if ($internalpassword ) {
-            echo "<td nowrap=\"nowrap\"><form action=\"$internalpassword\" method=\"get\">";
+            echo "<form action=\"$internalpassword\" method=\"get\">";
             echo "<fieldset class='invisiblefieldset'>";
             echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
             if (!empty($USER->realuser)) {
@@ -362,13 +362,13 @@
                 echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" />";
             }
             echo "</fieldset>";
-            echo "</form></td>";
+            echo "</form>";
         } elseif ( method_exists($userauth, 'change_password_url') and strlen($userauth->change_password_url())) {
-            echo "<td nowrap=\"nowrap\"><form action=\"".$userauth->change_password_url()."\" method=\"get\">";
+            echo "<form action=\"".$userauth->change_password_url()."\" method=\"get\">";
             echo "<fieldset class='invisiblefieldset'>";
             echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" />";
             echo "</fieldset>";
-            echo "</form></td>";
+            echo "</form>";
         }
     }
 
@@ -381,24 +381,24 @@
             (has_capability('moodle/role:assign', $coursecontext, NULL) &&           // I can assign roles
              get_user_roles($coursecontext, $user->id)) ) {                          // This user has roles
 
-            echo '<td nowrap="nowrap"><form action="../course/unenrol.php" method="get">';
+            echo '<form action="../course/unenrol.php" method="get">';
             echo "<fieldset class='invisiblefieldset'>";
             echo '<input type="hidden" name="id" value="'.$course->id.'" />';
             echo '<input type="hidden" name="user" value="'.$user->id.'" />';
             echo '<input type="submit" value="'.get_string('unenrolme', '', $course->shortname).'" />';
             echo "</fieldset>";
-            echo '</form></td>';
+            echo '</form>';
         }
     }
 
     if ($USER->id != $user->id  && has_capability('moodle/user:loginas', $coursecontext))  {
-        echo '<td nowrap="nowrap"><form action="'.$CFG->wwwroot.'/course/loginas.php" method="get">';
+        echo '<form action="'.$CFG->wwwroot.'/course/loginas.php" method="get">';
         echo "<fieldset class='invisiblefieldset'>";
         echo '<input type="hidden" name="id" value="'.$course->id.'" />';
         echo '<input type="hidden" name="user" value="'.$user->id.'" />';
         echo '<input type="submit" value="'.get_string('loginas').'" />';
         echo "</fieldset>";
-        echo '</form></td>';
+        echo '</form>';
     }
 
     if (!empty($CFG->messaging) and !isguest()) {
@@ -408,32 +408,31 @@
             } else {
                 $messagebuttonname = get_string("messages", "message");
             }
-            echo "<td nowrap=\"nowrap\"><form target=\"message\" action=\"../message/index.php\" method=\"get\">";
+            echo "<form onclick=\"this.target='message'\" action=\"../message/index.php\" method=\"get\">";
             echo "<fieldset class='invisiblefieldset'>";
             echo "<input type=\"submit\" value=\"$messagebuttonname\" onclick=\"return openpopup('/message/index.php', 'message', 'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0);\" />";
             echo "</fieldset>";
-            echo "</form></td>";
+            echo "</form>";
         } else {
-            echo "<td nowrap=\"nowrap\"><form target=\"message_$user->id\" action=\"../message/discussion.php\" method=\"get\">";
+            echo "<form onclick=\"this.target='message$user->id'\" action=\"../message/discussion.php\" method=\"get\">";
             echo "<fieldset class='invisiblefieldset'>";
             echo "<input type=\"hidden\" name=\"id\" value=\"$user->id\" />";
             echo "<input type=\"submit\" value=\"".get_string("sendmessage", "message")."\" onclick=\"return openpopup('/message/discussion.php?id=$user->id', 'message_$user->id', 'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0);\" />";
             echo "</fieldset>";
-            echo "</form></td>";
+            echo "</form>";
         }
     }
     // Authorize.net: User Payments
     if ($course->enrol == 'authorize' || (empty($course->enrol) && $CFG->enrol == 'authorize')) {
-        echo "<td nowrap=\"nowrap\"><form action=\"../enrol/authorize/index.php\" method=\"get\">";
+        echo "<form action=\"../enrol/authorize/index.php\" method=\"get\">";
         echo "<fieldset class='invisiblefieldset'>";
         echo "<input type=\"hidden\" name=\"course\" value=\"$course->id\" />";
         echo "<input type=\"hidden\" name=\"user\" value=\"$user->id\" />";
         echo "<input type=\"submit\" value=\"".get_string('payments')."\" />";
         echo "</fieldset>";
-        echo "</form></td>";
+        echo "</form>";
     }
-    echo "<td></td>";
-    echo "</tr></table></div>\n";
+    echo "</div>\n";
 
 /*
     if (debugging() && $USER->id == $user->id) {   // TEMPORARY in DEV!
@@ -448,7 +447,7 @@
 /// Functions ///////
 
 function print_row($left, $right) {
-    echo "\n<tr><td nowrap=\"nowrap\" align=\"right\" valign=\"top\" class=\"label c0\">$left</td><td align=\"left\" valign=\"top\" class=\"info c1\">$right</td></tr>\n";
+    echo "\n<tr><td class=\"label c0\">$left</td><td class=\"info c1\">$right</td></tr>\n";
 }
 
 ?>

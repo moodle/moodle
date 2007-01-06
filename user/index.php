@@ -423,9 +423,9 @@
         print_heading($heading, 'center', 3);
     } else {
         if ($matchcount < $totalcount) {
-            print_heading(get_string('allparticipants').': '.$matchcount.'/'.$totalcount, 'center', 3);
+            print_heading(get_string('allparticipants').': '.$matchcount.'/'.$totalcount, '', 3);
         } else {
-            print_heading(get_string('allparticipants').': '.$matchcount, 'center', 3);
+            print_heading(get_string('allparticipants').': '.$matchcount, '', 3);
         }
     }
 
@@ -458,7 +458,8 @@
         //]]>
         </script>
             ';
-        echo '<form action="action_redir.php" method="post" id="participantsform" onSubmit="return checksubmit(this);">';
+        echo '<form action="action_redir.php" method="post" id="participantsform" onsubmit="return checksubmit(this);">';
+        echo '<div>';
         echo '<input type="hidden" name="returnto" value="'.$_SERVER['REQUEST_URI'].'" />';
         echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     }
@@ -598,23 +599,25 @@
     }
 
     if ($bulkoperations) {
-        echo '<br /><div class="form-buttons" align="center">';
+        echo '<br /><div class="buttons">';
         echo '<input type="button" onclick="checkall()" value="'.get_string('selectall').'" /> ';
         echo '<input type="button" onclick="checknone()" value="'.get_string('deselectall').'" /> ';
         $displaylist['messageselect.php'] = get_string('messageselectadd');
         if ($course->enrolperiod) {
             $displaylist['extendenrol.php'] = get_string('extendenrol');
         }
-        choose_from_menu ($displaylist, "formaction", "", get_string("withselectedusers"), "if(checksubmit(this.form))this.form.submit();", "");
         helpbutton("participantswithselectedusers", get_string("withselectedusers"));
+        choose_from_menu ($displaylist, "formaction", "", get_string("withselectedusers"), "if(checksubmit(this.form))this.form.submit();", "");
         echo '<input type="hidden" name="id" value="'.$course->id.'" />';
         echo '<input type="submit" value="' . get_string('ok') . '" />';
-        echo '</div></form>';
+        echo '</div>';
+        echo '</div>';
+        echo '</form>';
     }
 
     if ($bulkoperations && $totalcount > ($perpage*3)) {
-        echo '<form action="index.php"><p align="center"><input type="hidden" name="id" value="'.$course->id.'" />'.get_string('search').':&nbsp;'."\n";
-        echo '<input type="text" name="search" value="'.$search.'" />&nbsp;<input type="submit" value="'.get_string('search').'" /></p></form>'."\n";
+        echo '<form action="index.php"><fieldset class="invisiblefieldset"><input type="hidden" name="id" value="'.$course->id.'" />'.get_string('search').':&nbsp;'."\n";
+        echo '<input type="text" name="search" value="'.$search.'" />&nbsp;<input type="submit" value="'.get_string('search').'" /></fieldset></form>'."\n";
     }
 
     if ($perpage == SHOW_ALL_PAGE_SIZE) {

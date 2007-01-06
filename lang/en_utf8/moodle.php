@@ -950,6 +950,7 @@ line at the top of your web browser window.
 Cheers from the \'$a->sitename\' administrator,
 $a->signoff';
 $string['newusers'] = 'New users';
+$string['newwindow'] = 'new window';
 $string['next'] = 'Next';
 $string['nextsection'] = 'Next section';
 $string['no'] = 'No';

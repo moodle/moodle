@@ -3111,9 +3111,9 @@ function print_user_picture($userid, $courseid, $picture, $size=0, $return=false
     $class = "userpicture";
     if ($picture) {  // Print custom user picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $src =  $CFG->wwwroot .'/user/pix.php/'. $userid .'/'. $file .'.jpg"';
+            $src =  $CFG->wwwroot .'/user/pix.php/'. $userid .'/'. $file .'.jpg';
         } else {
-            $src =  $CFG->wwwroot .'/user/pix.php?file=/'. $userid .'/'. $file .'.jpg"';
+            $src =  $CFG->wwwroot .'/user/pix.php?file=/'. $userid .'/'. $file .'.jpg';
         }
     } else {         // Print default user pictures (use theme version if available)
         $class .= " defaultuserpic";
@@ -4718,8 +4718,6 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
         $module = 'moodle';
     }
 
-    // Accessibility: prefix the alt text/title with 'Help with', strip distracting dots '...'
-    // PLEASE DO NOT CHANGE. ('...' is VERY distracting for non-visual users)
     $tooltip = get_string('helpprefix2', '', trim($title, ". \t"));
 
     $linkobject = '';
@@ -4739,6 +4737,8 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
     } else {
         $linkobject .= $tooltip;
     }
+
+    $tooltip .= ' ('.get_string('newwindow').')';   // Warn users about new window for Accessibility
 
     // fix for MDL-7734
     if ($text) {
