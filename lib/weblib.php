@@ -4581,10 +4581,6 @@ function error ($message, $link='', $adminroot=false) {
         echo ' ';
     }
 
-    if ($continue) {
-        return true;
-    }
-
     die;
 }
 
