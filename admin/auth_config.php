@@ -64,6 +64,7 @@ admin_externalpage_print_header($adminroot);
 // choose an authentication method
 echo "<form $CFG->frametarget id=\"authmenu\" method=\"post\" action=\"auth_config.php\">\n";
 echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\">\n";
+echo "<input type=\"hidden\" name=\"auth\" value=\"".$auth."\">\n";
 
 // auth plugin description
 print_simple_box_start('center', '80%');
@@ -105,7 +106,7 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
                               '1'   => get_string('update_onupdate', 'auth'));
     
     $pluginconfig = get_config("auth/$auth");
-    
+
     // helptext is on a field with rowspan
     if (empty($helptext)) {
                 $helptext = '&nbsp;';
@@ -114,16 +115,16 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
     foreach ($user_fields as $field) {
 
         // Define some vars we'll work with
-        if (isset($pluginconfig->{"field_map_$field"})) {
+        if (!isset($pluginconfig->{"field_map_$field"})) {
             $pluginconfig->{"field_map_$field"} = '';
         }
-        if (isset($pluginconfig->{"field_updatelocal_$field"})) {
+        if (!isset($pluginconfig->{"field_updatelocal_$field"})) {
             $pluginconfig->{"field_updatelocal_$field"} = '';
         }
-        if (isset($pluginconfig->{"field_updateremote_$field"})) {
+        if (!isset($pluginconfig->{"field_updateremote_$field"})) {
             $pluginconfig->{"field_updateremote_$field"} = '';
         }
-        if (isset($pluginconfig->{"field_lock_$field"})) {
+        if (!isset($pluginconfig->{"field_lock_$field"})) {
             $pluginconfig->{"field_lock_$field"} = '';
         }
 
