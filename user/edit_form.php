@@ -239,7 +239,9 @@ class user_edit_form extends moodleform {
         }
 
         
-        $this->add_action_buttons(false, get_string('updatemyprofile'));
+        //$this->add_action_buttons(false, get_string('updatemyprofile'));
+        $mform->addElement('submit', 'submitbutton1', get_string('updatemyprofile'));
+        $mform->closeHeaderBefore('submitbutton1');
 
 
         /// Moodle optional fields
@@ -324,7 +326,10 @@ class user_edit_form extends moodleform {
             } /// End of $categories foreach
         } /// End of $categories if
 
-        $this->add_action_buttons(false, get_string('updatemyprofile'));
+        //$this->add_action_buttons(false, get_string('updatemyprofile'));
+        $mform->addElement('submit', 'submitbutton2', get_string('updatemyprofile'));
+        $mform->closeHeaderBefore('submitbutton2');
+        
 
     } /// End of function
 
