@@ -60,6 +60,20 @@ define("ESSAY",         "essay");
 define("QUESTION_NUMANS", "10");
 
 /**
+ * Constant determines the number of answer boxes supplied in the editing
+ * form for multiple choice and similar question types to start with, with
+ * the option of adding QUESTION_NUMANS_ADD more answers.
+ */
+define("QUESTION_NUMANS_START", 3);
+
+/**
+ * Constant determines the number of answer boxes to add in the editing
+ * form for multiple choice and similar question types when the user presses
+ * 'add form fields button'.
+ */
+define("QUESTION_NUMANS_ADD", 3);
+
+/**
  * The options used when popping up a question preview window in Javascript.
  */
 define('QUESTION_PREVIEW_POPUP_OPTIONS', "'scrollbars=yes,resizable=yes,width=700,height=540'");
@@ -97,7 +111,7 @@ $QTYPE_MENU = array();
  * String in the format "'type1','type2'" that can be used in SQL clauses like
  * "WHERE q.type IN ($QTYPE_MANUAL)".
  */
-$QTYPE_MANUAL = ''; 
+$QTYPE_MANUAL = '';
 /**
  * String in the format "'type1','type2'" that can be used in SQL clauses like
  * "WHERE q.type NOT IN ($QTYPE_EXCLUDE_FROM_RANDOM)".
@@ -106,12 +120,12 @@ $QTYPE_EXCLUDE_FROM_RANDOM = '';
 
 /**
  * Add a new question type to the various global arrays above.
- * 
+ *
  * @param object $qtype An instance of the new question type class.
  */
 function question_register_questiontype($qtype) {
     global $QTYPES, $QTYPE_MENU, $QTYPE_MANUAL, $QTYPE_EXCLUDE_FROM_RANDOM;
-    
+
     $name = $qtype->name();
     $QTYPES[$name] = $qtype;
     $menuname = $qtype->menu_name();
@@ -135,7 +149,7 @@ function question_register_questiontype($qtype) {
 require_once("$CFG->dirroot/question/type/questiontype.php");
 
 // Load the questiontype.php file for each question type
-// These files in turn call question_register_questiontype() 
+// These files in turn call question_register_questiontype()
 // with a new instance of each qtype class.
 $qtypenames= get_list_of_plugins('question/type');
 foreach($qtypenames as $qtypename) {
@@ -226,7 +240,7 @@ function question_list_instances($questionid) {
 }
 
 
-/** 
+/**
  * Returns list of 'allowed' grades for grade selection
  * formatted suitably for dropdown box function
  * @return object ->gradeoptionsfull full array ->gradeoptions +ve only
@@ -315,14 +329,14 @@ function match_grade_options($gradeoptionsfull, $grade, $matchgrades='error') {
     }
     else {
         return false;
-    } 
+    }
 }
 
 /**
  * Tests whether a category is in use by any activity module
  *
  * @return boolean
- * @param integer $categoryid 
+ * @param integer $categoryid
  * @param boolean $recursive Whether to examine category children recursively
  */
 function question_category_isused($categoryid, $recursive = false) {
@@ -383,7 +397,7 @@ function delete_attempt($attemptid) {
  */
 function delete_question($questionid) {
     global $QTYPES;
-    
+
     // Do not delete a question if it is used by an activity module
     if (count(question_list_instances($questionid))) {
         return;
@@ -400,7 +414,7 @@ function delete_question($questionid) {
 
     if ($states = get_records('question_states', 'question', $questionid)) {
         $stateslist = implode(',', array_keys($states));
-    
+
         // delete questiontype-specific data
         foreach ($QTYPES as $qtype) {
             $qtype->delete_states($stateslist);
@@ -421,7 +435,7 @@ function delete_question($questionid) {
             }
         }
     }
-    
+
     // Finally delete the question record itself
     delete_records('question', 'id', $questionid);
 
@@ -543,9 +557,9 @@ function question_delete_course($course, $feedback=true) {
 
 /**
  * Private function to factor common code out of get_question_options().
- * 
+ *
  * @param object $question the question to tidy.
- * @return boolean true if successful, else false. 
+ * @return boolean true if successful, else false.
  */
 function _tidy_question(&$question) {
     global $QTYPES;
@@ -563,7 +577,7 @@ function _tidy_question(&$question) {
  *
  * Can be called either with an array of question objects or with a single
  * question object.
- * 
+ *
  * @param mixed $questions Either an array of question objects to be updated
  *         or just a single question object
  * @return bool Indicates success or failure.
@@ -843,7 +857,7 @@ function question_extract_responses($questions, $formdata, $defaultevent=QUESTIO
 
             // Update the state with the new response
             $actions[$quid]->responses[$key] = $response;
-            
+
             // Set the timestamp
             $actions[$quid]->timestamp = $time;
         }
@@ -941,7 +955,7 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
         $states = array_values($states);
 
         // Subtract the grade for the latest state from $attempt->sumgrades to get the
-        // sumgrades for the attempt without this question. 
+        // sumgrades for the attempt without this question.
         $attempt->sumgrades -= $states[count($states)-1]->grade;
 
         // Initialise the replaystate
@@ -992,7 +1006,7 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
             }
 
             $replaystate->id = $states[$j]->id;
-            $replaystate->changed = true; 
+            $replaystate->changed = true;
             $replaystate->update = true; // This will ensure that the existing database entry is updated rather than a new one created
             save_question_session($question, $replaystate);
         }
@@ -1047,10 +1061,10 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
     if (question_isgradingevent($action->event)) {
         $state->responses = $state->last_graded->responses;
     }
-    
+
     // Check for unchanged responses (exactly unchanged, not equivalent).
     // We also have to catch questions that the student has not yet attempted
-    $sameresponses = !$state->last_graded->event == QUESTION_EVENTOPEN && 
+    $sameresponses = !$state->last_graded->event == QUESTION_EVENTOPEN &&
             $QTYPES[$question->qtype]->compare_responses($question, $action, $state);
 
     // If the response has not been changed then we do not have to process it again
@@ -1084,8 +1098,8 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
 
     } else { // grading event
 
-        // Unless the attempt is closing, we want to work out if the current responses 
-        // (or equivalent responses) were already given in the last graded attempt. 
+        // Unless the attempt is closing, we want to work out if the current responses
+        // (or equivalent responses) were already given in the last graded attempt.
         if(QUESTION_EVENTCLOSE != $action->event && QUESTION_EVENTOPEN != $state->last_graded->event &&
                 $QTYPES[$question->qtype]->compare_responses($question, $state, $state->last_graded)) {
             $state->event = QUESTION_EVENTDUPLICATE;
@@ -1454,12 +1468,12 @@ function sort_categories_by_tree(&$categories, $id = 0, $level = 1) {
 
 /**
  * Private method, only for the use of add_indented_names().
- * 
+ *
  * Recursively adds an indentedname field to each category, starting with the category
- * with id $id, and dealing with that category and all its children, and 
+ * with id $id, and dealing with that category and all its children, and
  * return a new array, with those categories in the right order.
  *
- * @param array $categories an array of categories which has had childids 
+ * @param array $categories an array of categories which has had childids
  *          fields added by flatten_category_tree(). Passed by reference for
  *          performance only. It is not modfied.
  * @param int $id the category to start the indenting process from.
@@ -1467,39 +1481,39 @@ function sort_categories_by_tree(&$categories, $id = 0, $level = 1) {
  * @return array a new array of categories, in the right order for the tree.
  */
 function flatten_category_tree(&$categories, $id, $depth = 0) {
-    
+
     // Indent the name of this category.
     $newcategories = array();
     $newcategories[$id] = $categories[$id];
     $newcategories[$id]->indentedname = str_repeat('&nbsp;&nbsp;&nbsp;', $depth) . $categories[$id]->name;
-    
+
     // Recursively indent the children.
     foreach ($categories[$id]->childids as $childid) {
         $newcategories = $newcategories + flatten_category_tree($categories, $childid, $depth + 1);
     }
-    
+
     // Remove the childids array that were temporarily added.
     unset($newcategories[$id]->childids);
-    
+
     return $newcategories;
 }
 
 /**
  * Format categories into an indented list reflecting the tree structure.
- * 
+ *
  * @param array $categories An array of category objects, for example from the.
  * @return array The formatted list of categories.
  */
 function add_indented_names($categories) {
 
-    // Add an array to each category to hold the child category ids. This array will be removed 
+    // Add an array to each category to hold the child category ids. This array will be removed
     // again by flatten_category_tree(). It should not be used outside these two functions.
     foreach (array_keys($categories) as $id) {
         $categories[$id]->childids = array();
     }
 
     // Build the tree structure, and record which categories are top-level.
-    // We have to be careful, because the categories array may include published 
+    // We have to be careful, because the categories array may include published
     // categories from other courses, but not their parents.
     $toplevelcategoryids = array();
     foreach (array_keys($categories) as $id) {
@@ -1521,9 +1535,9 @@ function add_indented_names($categories) {
 
 /**
  * Output a select menu of question categories.
- * 
+ *
  * Categories from this course and (optionally) published categories from other courses
- * are included. Optionally, only categories the current user may edit can be included. 
+ * are included. Optionally, only categories the current user may edit can be included.
  *
  * @param integer $courseid the id of the course to get the categories for.
  * @param integer $published if true, include publised categories from other courses.
@@ -1532,7 +1546,7 @@ function add_indented_names($categories) {
  */
 function question_category_select_menu($courseid, $published = false, $only_editable = false, $selected = "") {
     global $CFG;
-    
+
     // get sql fragment for published
     $publishsql="";
     if ($published) {
@@ -1540,7 +1554,7 @@ function question_category_select_menu($courseid, $published = false, $only_edit
     }
 
     $categories = get_records_sql("
-            SELECT cat.*, c.shortname AS coursename 
+            SELECT cat.*, c.shortname AS coursename
             FROM {$CFG->prefix}question_categories cat, {$CFG->prefix}course c
             WHERE c.id = cat.course AND (cat.course = $courseid $publishsql)
             ORDER BY cat.parent, cat.sortorder, cat.name ASC");
@@ -1612,7 +1626,7 @@ function create_category_path( $catpath, $delimiter='/', $courseid=0 ) {
             $parent = $category->id;
         }
         else {
-            // create the new category        
+            // create the new category
             $category = new object;
             $category->course = $courseid;
             $category->name = $catname;
@@ -1639,7 +1653,7 @@ function create_category_path( $catpath, $delimiter='/', $courseid=0 ) {
 /**
  * Get list of available import or export formats
  * @param string $type 'import' if import list, otherwise export list assumed
- * @return array sorted list of import/export formats available 
+ * @return array sorted list of import/export formats available
 **/
 function get_import_export_formats( $type ) {
 

@@ -15,13 +15,13 @@ require_once($CFG->libdir . '/questionlib.php');
 
 /**
  * This is the base class for Moodle question types.
- * 
+ *
  * There are detailed comments on each method, explaining what the method is
  * for, and the circumstances under which you might need to override it.
- * 
+ *
  * Note: the questiontype API should NOT be considered stable yet. Very few
  * question tyeps have been produced yet, so we do not yet know all the places
- * where the current API is insufficient. I would rather learn from the 
+ * where the current API is insufficient. I would rather learn from the
  * experiences of the first few question type implementors, and improve the
  * interface to meet their needs, rather the freeze the API prematurely and
  * condem everyone to working round a clunky interface for ever afterwards.
@@ -33,7 +33,7 @@ class default_questiontype {
      *
      * The name returned should coincide with the name of the directory
      * in which this questiontype is located
-     * 
+     *
      * @return string the name of this question type.
      */
     function name() {
@@ -41,22 +41,22 @@ class default_questiontype {
     }
 
     /**
-     * The name this question should appear as in the create new question 
+     * The name this question should appear as in the create new question
      * dropdown.
-     * 
+     *
      * @return mixed the desired string, or false to hide this question type in the menu.
      */
     function menu_name() {
         $name = $this->name();
         $menu_name = get_string($name, 'qtype_' . $name);
         if ($menu_name[0] == '[') {
-            // Legacy behavior, if the string was not in the proper qtype_name 
+            // Legacy behavior, if the string was not in the proper qtype_name
             // language file, look it up in the quiz one.
             $menu_name = get_string($this->name(), 'quiz');
         }
         return $menu_name;
     }
-    
+
     /**
      * @return boolean true if this question can only be graded manually.
      */
@@ -80,19 +80,19 @@ class default_questiontype {
      * @param string $submiturl passed on to the constructor call.
      * @return object an instance of the form definition, or null if one could not be found.
      */
-    function create_editing_form($submiturl) {
+    function create_editing_form($submiturl, $question) {
         global $CFG;
         require_once("{$CFG->dirroot}/question/type/edit_question_form.php");
-        $definition_file = $CFG->dirroot.'/question/type/'.$this->name().'/edit_'.$this->name().'_question_form.php';
+        $definition_file = $CFG->dirroot.'/question/type/'.$this->name().'/edit_'.$this->name().'_form.php';
         if (!(is_readable($definition_file) && is_file($definition_file))) {
             return null;
         }
         require_once($definition_file);
-        $classname = 'edit_'.$this->name().'_question_form';
+        $classname = 'question_edit_'.$this->name().'_form';
         if (!class_exists($classname)) {
             return null;
         }
-        return new $classname($submiturl);
+        return new $classname($submiturl, $question);
     }
 
     /**
@@ -118,7 +118,7 @@ class default_questiontype {
     * @param object $form the form submitted by the teacher
     * @param object $course the course we are in
     * @return object On success, return the new question object. On failure,
-    *       return an object as follows. If the error object has an errors field, 
+    *       return an object as follows. If the error object has an errors field,
     *       display that as an error message. Otherwise, the editing form will be
     *       redisplayed with validation errors, from validation_errors field, which
     *       is itself an object, shown next to the form fields.
@@ -126,7 +126,7 @@ class default_questiontype {
     function save_question($question, $form, $course) {
         // This default implementation is suitable for most
         // question types.
-        
+
         // First, save the basic question itself
         $question->name               = trim($form->name);
         $question->questiontext       = trim($form->questiontext);
@@ -207,7 +207,7 @@ class default_questiontype {
 
         return $question;
     }
-    
+
     /**
     * Saves question-type specific options
     *
@@ -547,13 +547,13 @@ class default_questiontype {
         /* The default implementation should work for most question types
         provided the member functions it calls are overridden where required.
         The layout is determined by the template question.html */
-        
+
         global $CFG;
         $isgraded = question_state_is_graded($state->last_graded);
 
         // If this question is being shown in the context of a quiz
         // get the context so we can determine whether some extra links
-        // should be shown. (Don't show these links during question preview.) 
+        // should be shown. (Don't show these links during question preview.)
         $cm = get_coursemodule_from_instance('quiz', $cmoptions->id);
         if (!empty($cm->id)) {
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -562,7 +562,7 @@ class default_questiontype {
         } else {
             $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
         }
-        
+
         // For editing teachers print a link to an editing popup window
         $editlink = '';
         if ($context && has_capability('moodle/question:manage', $context)) {
@@ -584,10 +584,10 @@ class default_questiontype {
             }
             $grade .= $question->maxgrade;
         }
-        
+
         $comment = stripslashes($state->manualcomment);
         $commentlink = '';
-        
+
         if (isset($options->questioncommentlink) && $context && has_capability('mod/quiz:grade', $context)) {
             $strcomment = get_string('commentorgrade', 'quiz');
             $commentlink = '<div class="commentlink">'.link_to_popup_window ($options->questioncommentlink.'?attempt='.$state->attempt.'&amp;question='.$question->id,
@@ -636,7 +636,7 @@ class default_questiontype {
                                            get_string('time'),
                                            );
                 }
-                
+
                 foreach ($states as $st) {
                     $st->responses[''] = $st->answer;
                     $this->restore_session_and_responses($question, $st);
@@ -837,7 +837,7 @@ class default_questiontype {
     * summarizes the student's response in the given $state. This is used for
     * example in the response history table
     * @return string         The summary of the student response
-    * @param object $question 
+    * @param object $question
     * @param object $state   The state whose responses are to be summarized
     * @param int $length     The maximum length of the returned string
     */
@@ -895,7 +895,7 @@ class default_questiontype {
     *                          that it is safe to use.
     * @param object $teststate The state whose responses are to be
     *                          compared. The state will be of the same age or
-    *                          older than $state. If possible, the method should 
+    *                          older than $state. If possible, the method should
     *                          only use the field $teststate->responses, however
     *                          any field that is set up by restore_session_and_responses
     *                          can be used.
@@ -905,7 +905,7 @@ class default_questiontype {
         // arrays. The ordering of the arrays does not matter.
         // Question types may wish to override this (eg. to ignore trailing
         // white space or to make "7.0" and "7" compare equal).
-        
+
         return $state->responses === $teststate->responses;
     }
 
@@ -944,7 +944,7 @@ class default_questiontype {
     function grade_responses(&$question, &$state, $cmoptions) {
         // The default implementation uses the test_response method to
         // compare what the student entered against each of the possible
-        // answers stored in the question, and uses the grade from the 
+        // answers stored in the question, and uses the grade from the
         // first one that matches. It also sets the marks and penalty.
         // This should be good enought for most simple question types.
 
@@ -959,7 +959,7 @@ class default_questiontype {
         // Make sure we don't assign negative or too high marks.
         $state->raw_grade = min(max((float) $state->raw_grade,
                             0.0), 1.0) * $question->maxgrade;
-                            
+
         // Update the penalty.
         $state->penalty = $question->penalty * $question->maxgrade;
 
@@ -1050,7 +1050,7 @@ class default_questiontype {
         if (true) {
             return;
         }
-        
+
         // no need to display replacement options if the question is new
         if(empty($question->id)) {
             return true;
@@ -1118,10 +1118,10 @@ class default_questiontype {
     /**
      * Print the start of the question editing form, including the question category,
      * questionname, questiontext, image, defaultgrade, penalty and generalfeedback fields.
-     * 
+     *
      * Three of the fields, image, defaultgrade, penalty, are optional, and
-     * can be removed from the from using the $hidefields argument. 
-     * 
+     * can be removed from the from using the $hidefields argument.
+     *
      * @param object $question The question object that the form we are printing is for.
      * @param array $err Array of optional error messages to display by each field.
      *          Used when the form is being redisplayed after validation failed.
@@ -1134,7 +1134,7 @@ class default_questiontype {
         global $CFG;
 
         // If you edit this function, you also need to edit random/editquestion.html.
-        
+
         if (!in_array('image', $hidefields)) {
             make_upload_directory("$course->id");    // Just in case
             $coursefiles = get_directory_list("$CFG->dataroot/$course->id", $CFG->moddata);
@@ -1144,15 +1144,15 @@ class default_questiontype {
                 }
             }
         }
-        
+
         include('editquestionstart.html');
     }
-    
+
     /**
      * Print the end of the question editing form, including the submit, copy,
      * and cancel button, and the standard hidden fields like the sesskey and
      * the question type.
-     * 
+     *
      * @param object $question The question object that the form we are printing is for.
      * @param string $submitscript Extra attributes, for example 'onsubmit="myfunction"',
      *          that is added to the HTML of the submit button.
@@ -1161,15 +1161,15 @@ class default_questiontype {
      */
     function print_question_form_end($question, $submitscript = '', $hiddenfields = '') {
         global $USER;
-        
+
         // If you edit this function, you also need to edit random/editquestion.html.
 
         include('editquestionend.html');
     }
-    
+
     /**
      * Call format_text from weblib.php with the options appropriate to question types.
-     * 
+     *
      * @param string $text the text to format.
      * @param integer $text the type of text. Normally $question->questiontextformat.
      * @param object $cmoptions the context the string is being displayed in. Only $cmoptions->course is used.
@@ -1181,7 +1181,7 @@ class default_questiontype {
         $formatoptions->para = false;
         return format_text($text, $textformat, $formatoptions, $cmoptions->course);
     }
-    
+
 /// BACKUP FUNCTIONS ////////////////////////////
 
     /*
@@ -1214,7 +1214,7 @@ class default_questiontype {
     function restore_recode_answer($state, $restore) {
         // There is nothing to decode
         return $state->answer;
-    }    
+    }
 
     //This function restores the question_rqp_states
     function restore_state($state_id,$info,$restore) {

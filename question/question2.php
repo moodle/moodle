@@ -62,7 +62,7 @@ $coursecontext = get_context_instance(CONTEXT_COURSE, $category->course);
 require_capability('moodle/question:manage', $coursecontext);
 
 // Create the question editing form.
-$mform = $QTYPES[$question->qtype]->create_editing_form($submiturl);
+$mform = $QTYPES[$question->qtype]->create_editing_form($submiturl, $question, $category->course);
 if ($mform === null) {
     print_error('missingimportantcode', 'question', $returnurl, 'question editing form definition');
 }
@@ -76,12 +76,11 @@ if ($mform->is_cancelled()){
     }
     $question = $QTYPES[$qtype]->save_question($question, $data, $COURSE);
 
-    $strsaved = get_string('changessaved');
     if (optional_param('inpopup', 0, PARAM_BOOL)) {
-        notify($strsaved, '');
+        notify(get_string('changessaved'), '');
         close_window(3);
     } else {
-        redirect($SESSION->returnurl, $strsaved);
+        redirect($SESSION->returnurl);
     }
 } else {
     // Display the question editing form
@@ -95,6 +94,9 @@ if ($mform->is_cancelled()){
                 get_string("editquestions", "quiz").'</a> -> '.$streditingquestion;
     }
     print_header_simple($streditingquestion, '', $strediting);
+
+    print_heading_with_help(get_string("editing".$question->qtype, "quiz"), $question->qtype, "quiz");
+
     $mform->set_defaults($question);
     $mform->display();
     print_footer($COURSE);

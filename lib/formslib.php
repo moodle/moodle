@@ -446,11 +446,15 @@ class moodleform {
      * @param string $repeathiddenname name for hidden element storing no of repeats in this form
      * @param string $addfieldsname name for button to add more fields
      * @param int $addfieldsno how many fields to add at a time
-     * @param array $addstring array of params for get_string for name of button, $a is no of fields that
-     *                                  will be added.
+     * @param string $addstring name of button, {no} is replaced by no of blanks that will be added.
      * @return int no of repeats of element in this page
      */
-    function repeat_elements($elementobjs, $repeats, $options, $repeathiddenname, $addfieldsname, $addfieldsno=5, $addstring=array('addfields', 'form')){
+    function repeat_elements($elementobjs, $repeats, $options, $repeathiddenname, $addfieldsname, $addfieldsno=5, $addstring=null){
+        if ($addstring===null){
+            $addstring = get_string('addfields', 'form', $addfieldsno);
+        } else {
+            $addstring = str_ireplace('{no}', $addfieldsno, $addstring);
+        }
         $repeats = optional_param($repeathiddenname, $repeats, PARAM_INT);
         $addfields = optional_param($addfieldsname, '', PARAM_TEXT);
         if (!empty($addfields)){
@@ -463,12 +467,16 @@ class moodleform {
         $mform->setConstants(array($repeathiddenname=>$repeats));
         for ($i=0; $i<$repeats; $i++) {
             foreach ($elementobjs as $elementobj){
-                $elementclone=clone($elementobj);
+                $elementclone = clone($elementobj);
                 $name=$elementclone->getName();
                 $elementclone->setName($name."[$i]");
                 if (is_a($elementclone, 'HTML_QuickForm_header')){
                     $value=$elementclone->_text;
-                    $elementclone->setValue($value.' '.($i+1));
+                    $elementclone->setValue(str_replace('{no}', ($i+1), $value));
+
+                } else {
+                    $value=$elementclone->getLabel();
+                    $elementclone->setLabel(str_replace('{no}', ($i+1), $value));
 
                 }
                 $mform->addElement($elementclone);
@@ -503,7 +511,7 @@ class moodleform {
                 }
             }
         }
-        $mform->addElement('submit', $addfieldsname, get_string('addfields', 'form', $addfieldsno));
+        $mform->addElement('submit', $addfieldsname, $addstring);
 
         $mform->closeHeaderBefore($addfieldsname);
 
@@ -597,12 +605,14 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      */
     function MoodleQuickForm($formName, $method, $action, $target='', $attributes=null){
         global $CFG;
+        static $formcounter = 1;
 
         HTML_Common::HTML_Common($attributes);
         $target = empty($target) ? array() : array('target' => $target);
         $this->_formName = $formName;
         //no 'name' atttribute for form in xhtml strict :
-        $attributes = array('action'=>$action, 'method'=>$method, 'id'=>strtr($formName, '_', '-')) + $target;
+        $attributes = array('action'=>$action, 'method'=>$method, 'id'=>'mform'.$formcounter) + $target;
+        $formcounter++;
         $this->updateAttributes($attributes);
 
         //this is custom stuff for Moodle :
@@ -1127,7 +1137,7 @@ function validate_' . $this->_formName . '(frm) {
     function getLockOptionEndScript(){
         $js = '<script type="text/javascript">'."\n";
         $js .= '//<![CDATA['."\n";
-        $js .= "var ".$this->_formName."items= {";
+        $js .= "var ".$this->getAttribute('id')."items= {";
         foreach ($this->_dependencies as $dependentOn => $elements){
             $js .= "'$dependentOn'".' : {dependents :[';
             foreach ($elements as $element){

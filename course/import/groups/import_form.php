@@ -12,7 +12,7 @@ class course_import_groups_form extends moodleform {
 		$strimportgroups = get_string("importgroups");
 
         $this->set_upload_manager(new upload_manager('userfile', true, false, '', false, $maxuploadsize, true, true));
-        $this->set_max_file_size('', $maxuploadsize);
+        //$this->set_max_file_size('', $maxuploadsize);
 
         $mform->addElement('header', 'general', '');//fill in the data depending on page params
                                                     //later using set_defaults

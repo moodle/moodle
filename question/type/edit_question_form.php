@@ -16,6 +16,24 @@
  */
 class question_edit_form extends moodleform {
     /**
+     * Question object with options and answers already loaded by get_question_options
+     * Be careful how you use this it is needed sometimes to set up the structure of the
+     * form in definition_inner but data is always loaded into the form with set_defaults.
+     *
+     * @var object
+     */
+    var $question;
+    /**
+     * Course id
+     *
+     * @var integer
+     */
+    var $courseid;
+    function question_edit_form($submiturl, $question){
+        $this->question = $question;
+        parent::moodleform($submiturl);
+    }
+    /**
      * Build the form definition.
      *
      * This adds all the form files that the default question type supports.
@@ -23,38 +41,42 @@ class question_edit_form extends moodleform {
      * override this method and remove the ones you don't want with $mform->removeElement().
      */
     function definition() {
-        global $COURSE;
+        global $COURSE, $CFG;
 
         $qtype = $this->qtype();
         $langfile = "qtype_$qtype";
 
         $mform =& $this->_form;
-        $renderer =& $mform->defaultRenderer();
 
         // Standard fields at the start of the form.
-        $mform->addElement('header', 'formheader', get_string("editing$qtype", $langfile));
-        $mform->setHelpButton('formheader', array($qtype, get_string($qtype, $qtype), $qtype));
+        $mform->addElement('header', 'generalheader', get_string("general", 'form'));
 
-        $mform->addElement('questioncategory', 'category', get_string('category', 'quiz'),
+        /*$mform->addElement('questioncategory', 'category', get_string('category', 'quiz'),
                 array('courseid' => $COURSE->id, 'published' => true, 'only_editable' => true));
-
+*/
         $mform->addElement('text', 'name', get_string('questionname', 'quiz'),
                 array('size' => 50));
-        $mform->setType('name', PARAM_MULTILANG);
+        $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
 
         $mform->addElement('htmleditor', 'questiontext', get_string('questiontext', 'quiz'),
                 array('rows' => 15, 'course' => $COURSE->id));
         $mform->setType('questiontext', PARAM_RAW);
-        $mform->setHelpButton('questiontext', array('questiontext', get_string('questiontext', 'quiz'), 'quiz'));
+        $mform->setHelpButton('questiontext', array(array('questiontext', get_string('questiontext', 'quiz'), 'quiz'), 'richtext'), false, 'editorhelpbutton');
         $mform->addElement('format', 'questiontextformat', get_string('format'));
 
+        make_upload_directory("$COURSE->id");    // Just in case
+        $coursefiles = get_directory_list("$CFG->dataroot/$COURSE->id", $CFG->moddata);
+        foreach ($coursefiles as $filename) {
+            if (mimeinfo("icon", $filename) == "image.gif") {
+                $images["$filename"] = $filename;
+            }
+        }
         if (empty($images)) {
             $mform->addElement('static', 'image', get_string('imagedisplay', 'quiz'), get_string('noimagesyet'));
         } else {
             $images[''] = get_string('none');
             $mform->addElement('select', 'image', get_string('imagedisplay', 'quiz'), $images);
-            $mform->setType('image', PARAM_FILE);
         }
 
         $mform->addElement('text', 'defaultgrade', get_string('defaultgrade', 'quiz'),
@@ -89,15 +111,7 @@ class question_edit_form extends moodleform {
         $mform->addElement('hidden', 'versioning');
         $mform->setType('versioning', PARAM_BOOL);
 
-        $buttonarray = array();
-        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
-        if (!empty($id)) {
-            $buttonarray[] = &$mform->createElement('submit', 'makecopy', get_string('makecopy', 'quiz'));
-        }
-        $buttonarray[] = &$mform->createElement('reset', 'resetbutton', get_string('revert'));
-        $buttonarray[] = &$mform->createElement('cancel');
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-        $renderer->addStopFieldsetElements('buttonar');
+        $this->add_action_buttons();
     }
 
     /**
@@ -111,7 +125,12 @@ class question_edit_form extends moodleform {
 
     function set_defaults($question) {
         global $QTYPES;
-        $QTYPES[$question->qtype]->set_default_options($question);
+        if (!isset($question->id)){
+            $QTYPES[$question->qtype]->set_default_options($question);
+        }
+        if (empty($question->image)){
+            unset($question->image);
+        }
         parent::set_defaults($question);
     }
 

@@ -35,7 +35,7 @@ for ($i=1; ; $i++){
         $title = optional_param("title$i", '', PARAM_NOTAGS);
         $module = optional_param("module$i", 'moodle', PARAM_ALPHAEXT);
         $func[$i] = 'helpbutton';
-        $topics[$i] = array($keyword, $title, $module);
+        $topics[$i] = helplink($keyword, $title, $module);
     }
 
 }
