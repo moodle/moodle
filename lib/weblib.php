@@ -3915,7 +3915,7 @@ function update_module_button($moduleid, $courseid, $string) {
     if (has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_MODULE, $moduleid))) {
         $string = get_string('updatethis', '', $string);
 
-        return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/course/mod.php\">".
+        return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/course/mod.php\" onsubmit=\"this.target='{$CFG->framename}'; return true\">".//hack to allow edit on framed resources
                "<fieldset class='invisiblefieldset'>".
                "<input type=\"hidden\" name=\"update\" value=\"$moduleid\" />".
                "<input type=\"hidden\" name=\"return\" value=\"true\" />".

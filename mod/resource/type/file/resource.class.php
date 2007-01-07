@@ -217,6 +217,9 @@ function display() {
     $mimetype = mimeinfo("type", $resource->reference);
     $pagetitle = strip_tags($course->shortname.': '.format_string($resource->name));
 
+    $formatoptions = new object();
+    $formatoptions->noclean = true;
+
     if ($resource->options != "frame") {
         if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
             $resourcetype = "image";
@@ -328,18 +331,16 @@ function display() {
         echo '</script>';
 
         if (trim(strip_tags($resource->summary))) {
-            $formatoptions->noclean = true;
             print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions), "center");
         }
 
-        $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$cm->id}\" target=\"resource{$resource->id}\" onclick=\"return openpopup('/mod/resource/view.php?inpopup=true&amp;id={$cm->id}', 'resource{$resource->id}','{$resource->popup}');\">".format_string($resource->name,true)."</a>";
+        $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$cm->id}\" onclick=\"this.target='resource{$resource->id}'; return openpopup('/mod/resource/view.php?inpopup=true&amp;id={$cm->id}', 'resource{$resource->id}','{$resource->popup}');\">".format_string($resource->name,true)."</a>";
 
-        echo "<p>&nbsp;</p>";
-        echo '<p align="center">';
+        echo '<div class="popupnotice">';
         print_string('popupresource', 'resource');
         echo '<br />';
         print_string('popupresourcelink', 'resource', $link);
-        echo "</p>";
+        echo '</div>';
 
         print_footer($course);
         exit;
@@ -348,7 +349,7 @@ function display() {
 
     /// Now check whether we need to display a frameset
 
-    $frameset = optional_param( 'frameset','' );
+    $frameset = optional_param('frameset', '', PARAM_ALPHA);
     if (empty($frameset) and !$embedded and !$inpopup and ($resource->options == "frame") and empty($USER->screenreader)) {
         @header('Content-Type: text/html; charset=utf-8');
         echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
@@ -379,6 +380,7 @@ function display() {
     if (!empty( $frameset ) and ($frameset == "top") ) {
         print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
 
+        $options = new object();
         $options->para = false;
         echo '<div class="summary">'.format_text($resource->summary, FORMAT_HTML, $options).'</div>';
         if (!empty($localpath)) {  // Show some help
@@ -386,7 +388,7 @@ function display() {
             link_to_popup_window ('/mod/resource/type/file/localpath.php', get_string('localfile', 'resource'), get_string('localfilehelp','resource'), 400, 500, get_string('localfilehelp', 'resource'));
             echo '</div>';
         }
-        echo '</body></html>';
+        echo '</div></div></body></html>';
         exit;
     }
 
@@ -404,9 +406,9 @@ function display() {
         }
 
         if ($resourcetype == "image") {
-            echo "<center><p>";
+            echo '<div class="resourcecontent">';
             echo "<img title=\"".strip_tags(format_string($resource->name,true))."\" class=\"resourceimage\" src=\"$fullurl\" alt=\"\" />";
-            echo "</p></center>";
+            echo '</div>';
 
         } else if ($resourcetype == "mp3") {
             if (!empty($THEME->resource_mp3player_colors)) {
@@ -418,6 +420,7 @@ function display() {
             }
             $c .= '&volText='.get_string('vol', 'resource').'&panText='.get_string('pan','resource');
             $c = htmlentities($c);
+            echo '<div class="resourcecontent">';
             echo '<div class="mp3player" align="center">';
             echo '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
             echo '        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
@@ -434,10 +437,11 @@ function display() {
             echo '</embed>';
             echo '</object>';
             echo '</div>';
+            echo '</div>';
 
 
         } else if ($resourcetype == "mediaplayer") {
-            echo "<center><p>";
+            echo '<div class="resourcecontent">';
             echo '<object classid="CLSID:22D6f312-B0F6-11D0-94AB-0080C74C7E95"';
             echo '        codebase="http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=5,1,52,701" ';
             echo '        standby="Loading Microsoft� Windows� Media Player components..." ';
@@ -458,11 +462,11 @@ function display() {
             echo ' pluginspage="http://www.microsoft.com/Windows/Downloads/Contents/Products/MediaPlayer/">';
             echo '</embed>';
             echo '</object>';
-            echo "</p></center>";
+            echo '</div>';
 
         } else if ($resourcetype == "quicktime") {
 
-            echo "<center><p>";
+            echo '<div class="resourcecontent">';
             echo '<object classid="CLSID:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"';
             echo '        codebase="http://www.apple.com/qtactivex/qtplugin.cab" ';
             echo '        height="450" width="600"';
@@ -478,16 +482,15 @@ function display() {
             echo ' pluginspage="http://quicktime.apple.com/">';
             echo '</embed>';
             echo '</object>';
-            echo "</p></center>";
+            echo '</div>';
         }
 
         if (trim($resource->summary)) {
-            $formatoptions->noclean = true;
             print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center");
         }
 
         if ($inpopup) {
-            echo "<center><p>(<a href=\"$fullurl\">$strdirectlink</a>)</p></center>";
+            echo "<div class=\"popupnotice\">(<a href=\"$fullurl\">$strdirectlink</a>)</div>";
         } else {
             print_spacer(20,20);
             print_footer($course);
@@ -498,7 +501,7 @@ function display() {
             echo '<div align="right" class="helplink">';
             link_to_popup_window ('/mod/resource/type/file/localpath.php', get_string('localfile', 'resource'), get_string('localfilehelp','resource'), 400, 500, get_string('localfilehelp', 'resource'));
             echo '</div>';
-            echo "<center><p>(<a href=\"$fullurl\">$fullurl</a>)</p></center>";
+            echo "<div class=\"popupnotice\">(<a href=\"$fullurl\">$fullurl</a>)</div>";
         }
         redirect($fullurl);
     }

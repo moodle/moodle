@@ -775,6 +775,10 @@ body#mod-forum-index .generalbox .cell {
   font-size:0.8em;
 }
 
+.mod-resource .modified {
+  font-size:0.6em;
+}
+
 .ims-nav-dimmed,
 .ims-nav-button {
   font-size:0.8em;

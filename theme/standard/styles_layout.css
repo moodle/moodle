@@ -449,12 +449,16 @@ table.navbar {
   width: 100%;
 }
 
-.navbar .navbutton form {
+.navbar .navbutton {
+  margin-top: 3px;
   float: left;
 }
 
-.navbar .navbutton {
-  margin-top: 3px;
+.navbar .navbutton div,
+.navbar .navbutton form {
+  display:inline;
+  margin:0px;
+  padding:0px;
 }
 
 .navbar .breadcrumb {
@@ -2369,13 +2373,23 @@ body#mod-quiz-report .controls {
   text-align: center;
 }
 
-/* .navbutton form {
-  display: inline;
-  } */
-
 /***
  *** Modules: Resource
  ***/
+
+#mod-resource-view .resourcecontent {
+  text-align:center;
+  margin:20px;
+}
+
+.mod-resource .modified {
+  text-align:center;
+}
+
+.mod-resource .popupnotice {
+  text-align:center;
+  margin:40px;
+}
 
 .ims-nav-bar {
   position: relative;

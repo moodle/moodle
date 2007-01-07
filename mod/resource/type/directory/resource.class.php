@@ -20,24 +20,21 @@ function display() {
 
     require_once($CFG->libdir.'/filelib.php');
 
-    $subdir = optional_param( 'subdir','' ); 
+    $subdir = optional_param('subdir','', PARAM_PATH); 
+    $resource->reference = clean_param($resource->reference, PARAM_PATH);
+
+    $formatoptions = new object();
+    $formatoptions->noclean = true;
 
     add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
 
-
     if ($resource->reference) {
-        if (detect_munged_arguments($resource->reference, 0)) {
-            error("The filename contains illegal characters!");
-        }
         $relativepath = "{$course->id}/{$resource->reference}";
     } else {
         $relativepath = "{$course->id}";
     }
 
     if ($subdir) {
-        if (detect_munged_arguments($subdir, 0)) {
-            error("The value for 'subdir' contains illegal characters!");
-        }
         $relativepath = "$relativepath$subdir";
         if (stripos($relativepath, 'backupdata') !== FALSE or stripos($relativepath, $CFG->moddata) !== FALSE) {
             error("Access not allowed!");
@@ -64,18 +61,18 @@ function display() {
 
     $pagetitle = strip_tags($course->shortname.': '.format_string($resource->name));
 
+    $update = update_module_button($cm->id, $course->id, $this->strresource);
+    if (has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $course->id))) {
+        $options = array('id'=>$course->id, 'wdir'=>'/'.$resource->reference.$subdir);
+        $editfiles = print_single_button("$CFG->wwwroot/files/index.php", $options, get_string("editfiles"), 'get', '', true);
+        $update = $editfiles.$update;
+    }
     print_header($pagetitle, $course->fullname, "$this->navigation $subnav",
-            "", "", true, update_module_button($cm->id, $course->id, $this->strresource),
+            "", "", true, $update,
             navmenu($course, $cm));
 
-    if (has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $course->id))) {
-        echo "<div align=\"right\"><img src=\"$CFG->pixpath/i/files.gif\" height=\"16\" width=\"16\" alt=\"\" />&nbsp;".
-            "<a href=\"$CFG->wwwroot/files/index.php?id={$course->id}&amp;wdir=/{$resource->reference}$subdir\">".
-            get_string("editfiles")."...</a></div>";
-    }
 
     if (trim(strip_tags($resource->summary))) {
-        $formatoptions->noclean = true;
         print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center");
         print_spacer(10,10);
     }
@@ -98,7 +95,7 @@ function display() {
     $strfolder = get_string("folder");
     $strfile = get_string("file");
 
-    echo '<table cellpadding="4" cellspacing="1" class="files">';
+    echo '<table cellpadding="4" cellspacing="1" class="files" summary="">';
     echo "<tr><th class=\"header name\" scope=\"col\">$strname</th>".
          "<th align=\"right\" colspan=\"2\" class=\"header size\" scope=\"col\">$strsize</th>".
          "<th align=\"right\" class=\"header date\" scope=\"col\">$strmodified</th>".
@@ -122,20 +119,20 @@ function display() {
 
         if ($icon == 'folder.gif') {
             echo '<tr class="folder">';
-            echo '<td nowrap="nowrap" class="name">';
+            echo '<td class="name">';
             echo "<a href=\"view.php?id={$cm->id}&amp;subdir=$subdir/$file\">";
             echo "<img src=\"$CFG->pixpath/f/$icon\" width=\"16\" height=\"16\" alt=\"$strfolder\" />&nbsp;$file</a>";
         } else {
             echo '<tr class="file">';
-            echo '<td nowrap="nowrap" class="name">';
+            echo '<td class="name">';
             link_to_popup_window($relativeurl, "resourcedirectory{$resource->id}", "<img src=\"$CFG->pixpath/f/$icon\" width=\"16\" height=\"16\" alt=\"$strfile\" />&nbsp;$file", 450, 600, '');
         }
         echo '</td>';
         echo '<td>&nbsp;</td>';
-        echo '<td align="right" nowrap="nowrap" class="size">';
+        echo '<td align="right" class="size">';
         echo $filesize;
         echo '</td>';
-        echo '<td align="right" nowrap="nowrap" class="date">';
+        echo '<td align="right" class="date">';
         echo userdate(filemtime("$CFG->dataroot/$relativepath/$file"), $strftime);
         echo '</td>';
         echo '</tr>';

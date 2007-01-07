@@ -85,14 +85,14 @@ function update_instance($resource) {
 function display() {
     global $CFG;
 
+    $formatoptions = new object();
+    $formatoptions->noclean = true;
 
     /// Are we displaying the course blocks?
     if ($this->resource->options == 'showblocks') {
 
         parent::display_course_blocks_start();
 
-        $formatoptions->noclean = true;
-        
         if (trim(strip_tags($this->resource->summary))) {
             echo format_text($this->resource->summary, FORMAT_MOODLE, $formatoptions, $this->course->id);
         }
@@ -110,9 +110,7 @@ function display() {
         $resource = $this->resource; 
 
         $pagetitle = strip_tags($course->shortname.': '.format_string($resource->name));
-        $formatoptions->noclean = true;
-        $inpopup_param = optional_param( 'inpopup', '' );
-        $inpopup = !empty($inpopup_param);
+        $inpopup = optional_param('inpopup', '', PARAM_BOOL);
 
         if ($resource->popup) {
             if ($inpopup) {                    /// Popup only
@@ -129,23 +127,22 @@ function display() {
                         navmenu($course, $cm));
 
                 echo "\n<script type=\"text/javascript\">";
-                echo "\n<!--\n";
+                echo "\n//<![CDATA[\n";
                 echo "openpopup('/mod/resource/view.php?inpopup=true&id={$cm->id}','resource{$resource->id}','{$resource->popup}');\n";
-                echo "\n-->\n";
+                echo "\n//]]>\n";
                 echo '</script>';
 
                 if (trim(strip_tags($resource->summary))) {
                     print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center");
                 }
 
-                $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$cm->id}\" target=\"resource{$resource->id}\" onclick=\"return openpopup('/mod/resource/view.php?inpopup=true&amp;id={$cm->id}', 'resource{$resource->id}','{$resource->popup}');\">".format_string($resource->name,true)."</a>";
+                $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$cm->id}\" onclick=\"this.target='resource{$resource->id}'; return openpopup('/mod/resource/view.php?inpopup=true&amp;id={$cm->id}', 'resource{$resource->id}','{$resource->popup}');\">".format_string($resource->name,true)."</a>";
 
-                echo "<p>&nbsp;</p>";
-                echo '<p align="center">';
+                echo '<div class="popupnotice">';
                 print_string('popupresource', 'resource');
                 echo '<br />';
                 print_string('popupresourcelink', 'resource', $link);
-                echo "</p>";
+                echo '</div>';
 
                 print_footer($course);
             }
@@ -160,7 +157,7 @@ function display() {
                     "center", "", "", "20");
 
             $strlastmodified = get_string("lastmodified");
-            echo "<center><p><font size=\"1\">$strlastmodified: ".userdate($resource->timemodified)."</font></p></center>";
+            echo "<div class=\"modified\">$strlastmodified: ".userdate($resource->timemodified)."</div>";
 
             print_footer($course);
         }
