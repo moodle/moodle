@@ -1,4 +1,5 @@
 <?php
+require_once($CFG->dirroot.'/question/type/edit_question_form.php');
 /**
  * Defines the editing form for the thruefalse question type.
  *
@@ -11,23 +12,23 @@
 /**
  * truefalse editing form definition.
  */
-class edit_truefalse_question_form extends edit_question_form {
+class question_edit_truefalse_form extends question_edit_form {
     /**
      * Add question-type specific form fields.
-     * 
-     * @param object $mform the form being built. 
+     *
+     * @param object $mform the form being built.
      */
     function definition_inner(&$mform) {
         $mform->addElement('select', 'correctanswer', get_string('correctanswer', 'qtype_truefalse'),
                 array(0 => get_string('false', 'qtype_truefalse'), 1 => get_string('true', 'qtype_truefalse')));
-        
+
         $mform->addElement('htmleditor', 'feedbacktrue', get_string('feedbacktrue', 'qtype_truefalse'));
         $mform->setType('feedbacktrue', PARAM_RAW);
 
         $mform->addElement('htmleditor', 'feedbackfalse', get_string('feedbackfalse', 'qtype_truefalse'));
         $mform->setType('feedbackfalse', PARAM_RAW);
     }
-    
+
     function set_defaults($question) {
         if (!empty($question->options->trueanswer)) {
             $trueanswer = $question->options->answers[$question->options->trueanswer];
@@ -37,7 +38,7 @@ class edit_truefalse_question_form extends edit_question_form {
         }
         parent::set_defaults($question);
     }
-    
+
     function qtype() {
         return 'truefalse';
     }
