@@ -133,7 +133,7 @@ class qformat_hotpot extends qformat_default {
             $q = 0;
             while ($text = $xml->xml_value($tags, $exercise."[$q]")) {
                 // add next bit of text
-                $question->questiontext .= addslashes($text);
+                $question->questiontext .= $this->hotpot_prepare_str($text);
 
                 // check for a gap
                 $question_record = $exercise."['question-record'][$q]['#']";
@@ -165,9 +165,9 @@ class qformat_hotpot extends qformat_default {
                     // add answers
                     $a = 0;
                     while (($answer=$question_record."['answer'][$a]['#']") && $xml->xml_value($tags, $answer)) {
-                        $text = addslashes($xml->xml_value($tags,  $answer."['text'][0]['#']"));
+                        $text = $this->hotpot_prepare_str($xml->xml_value($tags,  $answer."['text'][0]['#']"));
                         $correct = $xml->xml_value($tags,  $answer."['correct'][0]['#']");
-                        $feedback = addslashes($xml->xml_value($tags,  $answer."['feedback'][0]['#']"));
+                        $feedback = $this->hotpot_prepare_str($xml->xml_value($tags,  $answer."['feedback'][0]['#']"));
                         if ($text) {
                             // set score (0=0%, 1=100%)
                             $fraction = empty($correct) ? 0 : 1;
@@ -226,8 +226,8 @@ class qformat_hotpot extends qformat_default {
                 $question->qtype = SHORTANSWER;
                 $question->name = $this->hotpot_get_title($xml, $x, true);
 
-                $question->questiontext = addslashes($text);
-                $question->answer = array(addslashes($answer));
+                $question->questiontext = $this->hotpot_prepare_str($text);
+                $question->answer = array($this->hotpot_prepare_str($answer));
                 $question->fraction = array(1);
                 $question->feedback = array('');
 
@@ -270,8 +270,8 @@ class qformat_hotpot extends qformat_default {
                 $right = $xml->xml_value($tags, $pair."['right-item'][0]['#']['text'][0]['#']");
                 if ($left && $right) {
                     $match_count++;
-                    $question->subquestions[$p] = addslashes($left);
-                    $question->subanswers[$p] = addslashes($right);
+                    $question->subquestions[$p] = $this->hotpot_prepare_str($left);
+                    $question->subanswers[$p] = $this->hotpot_prepare_str($right);
                 }
                 $p++;
             }
@@ -310,7 +310,7 @@ class qformat_hotpot extends qformat_default {
             $i = 0;
             $segments = array();
             while ($segment = $xml->xml_value($tags, $exercise."['main-order'][0]['#']['segment'][$i]['#']")) {
-                $segments[] = addslashes($segment);
+                $segments[] = $this->hotpot_prepare_str($segment);
                 $segment_count++;
                 $i++;
             }
@@ -328,7 +328,7 @@ class qformat_hotpot extends qformat_default {
                 $question->answer[$a] = $answer;
                 $question->fraction[$a] = 1;
                 $question->feedback[$a] = '';
-                $answer = addslashes($xml->xml_value($tags, $exercise."['alternate'][$a]['#']"));
+                $answer = $this->hotpot_prepare_str($xml->xml_value($tags, $exercise."['alternate'][$a]['#']"));
                 $a++;
             }
             $question->defaultgrade = $segment_count * $defaultgrade;
@@ -361,7 +361,7 @@ class qformat_hotpot extends qformat_default {
                 $question->name = $this->hotpot_get_title($xml, $q, true);
 
                 $text = $xml->xml_value($tags, $question_record."['question'][0]['#']");
-                $question->questiontext = addslashes($text);
+                $question->questiontext = $this->hotpot_prepare_str($text);
 
                 if ($xml->xml_value($tags, $question_record."['answers']")) {
                     // HP6 JQuiz
@@ -434,8 +434,8 @@ class qformat_hotpot extends qformat_default {
                         }
                     }
                     $question->fraction[] = $fraction;
-                    $question->feedback[] = addslashes($xml->xml_value($tags, $answer."['feedback'][0]['#']"));
-                    $question->answer[] = addslashes($xml->xml_value($tags, $answer."['text'][0]['#']"));
+                    $question->feedback[] = $this->hotpot_prepare_str($xml->xml_value($tags, $answer."['feedback'][0]['#']"));
+                    $question->answer[] = $this->hotpot_prepare_str($xml->xml_value($tags, $answer."['text'][0]['#']"));
                     $a++;
                 }
                 $questions[] = $question;
@@ -458,14 +458,14 @@ class qformat_hotpot extends qformat_default {
         if ($x || $flag) {
             $title .= ' ('.($x+1).')';
         }
-        return addslashes($title);
+        return $this->hotpot_prepare_str($title);
     }
     function hotpot_get_instructions(&$xml) {
         $text = $xml->xml_value('hotpot-config-file,instructions');
         if (empty($text)) {
             $text = "Hot Potatoes $xml->quiztype";
         }
-        return addslashes($text);
+        return $this->hotpot_prepare_str($text);
     }
     function hotpot_get_reading(&$xml) {
         $str = '';
@@ -478,6 +478,11 @@ class qformat_hotpot extends qformat_default {
                 $str .= "<P>$text</P>";
             }
         }
+        return $this->hotpot_prepare_str($str);
+    }
+    function hotpot_prepare_str($str) {
+		// convert html entities to unicode and add slashes
+        $str = preg_replace('/&#[x0-9A-F]+;/ie', "html_entity_decode('\\0',ENT_NOQUOTES,'UTF-8')", $str);
         return addslashes($str);
     }
 } // end class
