@@ -20,9 +20,11 @@ class question_edit_multichoice_form extends question_edit_form {
     function definition_inner(&$mform) {
         $menu = array(get_string('answersingleno', 'qtype_multichoice'), get_string('answersingleyes', 'qtype_multichoice'));
         $mform->addElement('select', 'single', get_string('answerhowmany', 'qtype_multichoice'), $menu);
+        $mform->setDefault('single', 1);
 
-        $mform->addElement('selectyesno', 'shuffleanswers', get_string('shuffleanswers', 'qtype_multichoice'));
+        $mform->addElement('advcheckbox', 'shuffleanswers', get_string('shuffleanswers', 'qtype_multichoice'), null, null, array(0,1));
         $mform->setHelpButton('shuffleanswers', array('multichoiceshuffle', get_string('shuffleanswers','qtype_multichoice'), 'quiz'));
+        $mform->setDefault('shuffleanswers', 1);
 
 /*        $mform->addElement('static', 'answersinstruct', get_string('choices', 'qtype_multichoice'), get_string('fillouttwochoices', 'qtype_multichoice'));
         $mform->closeHeaderBefore('answersinstruct');

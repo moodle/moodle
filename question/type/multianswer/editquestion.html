@@ -1,7 +1,0 @@
-<?php
-$QTYPES[$question->qtype]->print_question_form_start($question, array(), $course, $usehtmleditor,
-        array('defaultgrade'));
-$QTYPES[$question->qtype]->print_replacement_options($question, $course, $contextquiz);
-$QTYPES[$question->qtype]->print_question_form_end($question, '',
-        '<input type="hidden" name="defaultgrade" value="' . s($question->defaultgrade) . '" />');
-?>
