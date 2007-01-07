@@ -179,7 +179,7 @@ class block_admin_tree extends block_base {
 
             $this->content->text .= '//]]>' . "\n";
             $this->content->text .= '</script>' . "\n";
-            $this->content->text .= '<div style="text-align:left">' . "\n";
+            $this->content->text .= '<div class="admintree">' . "\n";
 
             $this->content->text .= $this->tempcontent;
 

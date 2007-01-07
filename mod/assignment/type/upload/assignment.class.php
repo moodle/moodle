@@ -42,9 +42,9 @@ class assignment_upload extends assignment_base {
             $this->view_feedback();
 
             if ($this->is_finalized($submission)) {
-                print_heading(get_string('submission', 'assignment'), 'center', 3);
+                print_heading(get_string('submission', 'assignment'), '', 3);
             } else {
-                print_heading(get_string('submissiondraft', 'assignment'), 'center', 3);
+                print_heading(get_string('submissiondraft', 'assignment'), '', 3);
             }
 
             if ($filecount and $submission) {
@@ -60,7 +60,7 @@ class assignment_upload extends assignment_base {
             $this->view_upload_form();
 
             if ($this->notes_allowed()) {
-                print_heading(get_string('notes', 'assignment'), 'center', 3);
+                print_heading(get_string('notes', 'assignment'), '', 3);
                 $this->view_notes();
             }
 
@@ -267,8 +267,7 @@ class assignment_upload extends assignment_base {
                     require_once($CFG->libdir.'/filelib.php');
                     $icon = mimeinfo('icon', $file);
                     $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
-                    $output .= '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.
-                            '<a href="'.$ffurl.'" >'.$file.'</a>&nbsp;';
+                    $output .= '<a href="'.$ffurl.'" ><img class="icon" src="'.$CFG->pixpath.'/f/'.$icon.'" alt="'.$icon.'" />'.$file.'</a>&nbsp;';
                 }
             }
         }
@@ -330,14 +329,13 @@ class assignment_upload extends assignment_base {
                         $ffurl   = "$CFG->wwwroot/file.php?file=/$filearea/$file";
 
 
-                        $output .= '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'
-                                  .'<a href="'.$ffurl.'" >'.$file.'</a>';
+                        $output .= '<a href="'.$ffurl.'" ><img class="icon" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.$file.'</a>';
 
                         if ($candelete) {
                             $delurl  = "$CFG->wwwroot/mod/assignment/delete.php?id={$this->cm->id}&amp;file=$file&amp;userid={$submission->userid}&amp;mode=$mode&amp;offset=$offset";
 
-                            $output .= '<a title="'.$strdelete.'" href="'.$delurl.'">&nbsp;'
-                                      .'<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.$strdelete.'" /></a> ';
+                            $output .= '<a href="'.$delurl.'">&nbsp;'
+                                      .'<img title="'.$strdelete.'" src="'.$CFG->pixpath.'/t/delete.gif" class="smallicon" alt="" /></a> ';
                         }
 
                         $output .= '<br />';
@@ -385,14 +383,13 @@ class assignment_upload extends assignment_base {
 
                     $ffurl   = "$CFG->wwwroot/file.php?file=/$filearea/$file";
 
-                    $output .= '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'
-                              .'<a href="'.$ffurl.'" >'.$file.'</a>';
+                    $output .= '<a href="'.$ffurl.'" ><img class="align" src="'.$CFG->pixpath.'/f/'.$icon.'" alt="'.$icon.'" />'.$file.'</a>';
 
                     if ($candelete) {
                         $delurl  = "$CFG->wwwroot/mod/assignment/delete.php?id={$this->cm->id}&amp;file=$file&amp;userid=$userid&amp;mode=$mode&amp;offset=$offset&amp;action=response";
 
-                        $output .= '<a title="'.$strdelete.'" href="'.$delurl.'">&nbsp;'
-                                  .'<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.$strdelete.'" /></a> ';
+                        $output .= '<a href="'.$delurl.'">&nbsp;'
+                                  .'<img title="'.$strdelete.'" src="'.$CFG->pixpath.'/t/delete.gif" class="smallicon" alt=""/></a> ';
                     }
 
                     $output .= '&nbsp;';
@@ -488,7 +485,7 @@ class assignment_upload extends assignment_base {
         /// show notes edit form
         $this->view_header(get_string('notes', 'assignment'));
 
-        print_heading(get_string('notes', 'assignment'), 'center');
+        print_heading(get_string('notes', 'assignment'), '');
 
         $mform->display();
 

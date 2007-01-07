@@ -689,7 +689,10 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
     }
 
     if ($id ==='') {
-        $id = 'menu'.str_replace('[]', '', $name); // name may end in [], which would make an invalid id. e.g. numeric question type editing form.
+        $id = 'menu'.$name;
+         // name may contaion [], which would make an invalid id. e.g. numeric question type editing form, assignment quickgrading
+        $id = str_replace('[', '', $id);
+        $id = str_replace(']', '', $id);
     }
 
     $output = '<select id="'.$id.'" name="'. $name .'" '. $attributes .'>' . "\n";

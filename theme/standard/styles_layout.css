@@ -728,6 +728,9 @@ body#admin-roles-manage table.generalbox {
   padding-top:10px;
 }
 
+.block_admin_tree .admintree {
+  text-align:left;
+}
 
 /***
  *** Blocks

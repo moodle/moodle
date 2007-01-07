@@ -1148,7 +1148,7 @@ class assignment_base {
                     }
                 ///Print Comment
                     if ($quickgrade){
-                        $comment = '<div id="com'.$auser->id.'"><textarea tabindex="'.$tabindex++.'" name="submissioncomment['.$auser->id.']" id="submissioncomment['.$auser->id.']">'.($auser->submissioncomment).'</textarea></div>';
+                        $comment = '<div id="com'.$auser->id.'"><textarea tabindex="'.$tabindex++.'" name="submissioncomment['.$auser->id.']" id="submissioncomment'.$auser->id.'" rows="2" cols="20">'.($auser->submissioncomment).'</textarea></div>';
                     } else {
                         $comment = '<div id="com'.$auser->id.'">'.shorten_text(strip_tags($auser->submissioncomment),15).'</div>';
                     }
@@ -1163,7 +1163,7 @@ class assignment_base {
                         $grade = '<div id="g'.$auser->id.'">-</div>';
                     }
                     if ($quickgrade){
-                        $comment = '<div id="com'.$auser->id.'"><textarea tabindex="'.$tabindex++.'" name="submissioncomment['.$auser->id.']" id="submissioncomment['.$auser->id.']">'.($auser->submissioncomment).'</textarea></div>';
+                        $comment = '<div id="com'.$auser->id.'"><textarea tabindex="'.$tabindex++.'" name="submissioncomment['.$auser->id.']" id="submissioncomment'.$auser->id.'" rows="2" cols="20">'.($auser->submissioncomment).'</textarea></div>';
                     } else {
                         $comment = '<div id="com'.$auser->id.'">&nbsp;</div>';
                     }
@@ -1193,6 +1193,7 @@ class assignment_base {
             echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
             echo '<input type="hidden" name="mode" value="fastgrade" />';
             echo '<input type="hidden" name="page" value="'.$page.'" />';
+            echo '</fieldset>';
             echo '<div style="text-align:center"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></div>';
         }
 
@@ -1200,7 +1201,6 @@ class assignment_base {
 
         if ($quickgrade){
             echo '<div style="text-align:center"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></div>';
-            echo '</fieldset>';
             echo '</form>';
         }
         /// End of fast grading form
