@@ -51,9 +51,9 @@ class question_edit_form extends moodleform {
         // Standard fields at the start of the form.
         $mform->addElement('header', 'generalheader', get_string("general", 'form'));
 
-        /*$mform->addElement('questioncategory', 'category', get_string('category', 'quiz'),
+        $mform->addElement('questioncategory', 'category', get_string('category', 'quiz'),
                 array('courseid' => $COURSE->id, 'published' => true, 'only_editable' => true));
-*/
+
         $mform->addElement('text', 'name', get_string('questionname', 'quiz'),
                 array('size' => 50));
         $mform->setType('name', PARAM_TEXT);
@@ -111,7 +111,14 @@ class question_edit_form extends moodleform {
         $mform->addElement('hidden', 'versioning');
         $mform->setType('versioning', PARAM_BOOL);
 
-        $this->add_action_buttons();
+        $buttonarray = array();
+        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
+        if (!empty($this->question->id)) {
+            $buttonarray[] = &$mform->createElement('submit', 'makecopy', get_string('makecopy', 'quiz'));
+        }
+        $buttonarray[] = &$mform->createElement('cancel');
+        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->closeHeaderBefore('buttonar');
     }
 
     /**

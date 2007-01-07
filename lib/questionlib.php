@@ -1577,6 +1577,42 @@ function question_category_select_menu($courseid, $published = false, $only_edit
 }
 
 /**
+ * Output an array of question categories.
+ *
+ * Categories from this course and (optionally) published categories from other courses
+ * are included. Optionally, only categories the current user may edit can be included.
+ *
+ * @param integer $courseid the id of the course to get the categories for.
+ * @param integer $published if true, include publised categories from other courses.
+ * @param integer $only_editable if true, exclude categories this user is not allowed to edit.
+ * @return array The list of categories.
+ */
+function question_category_options($courseid, $published = false, $only_editable = false) {
+    global $CFG;
+
+    // get sql fragment for published
+    $publishsql="";
+    if ($published) {
+        $publishsql = " OR publish = 1";
+    }
+
+    $categories = get_records_sql("
+            SELECT cat.*, c.shortname AS coursename
+            FROM {$CFG->prefix}question_categories cat, {$CFG->prefix}course c
+            WHERE c.id = cat.course AND (cat.course = $courseid $publishsql)
+            ORDER BY cat.parent, cat.sortorder, cat.name ASC");
+    $categoriesarray = array();
+    foreach ($categories as $category) {
+        $cid = $category->id;
+        $cname = question_category_coursename($category, $courseid);
+        if ((!$only_editable) || has_capability('moodle/question:managecategory', get_context_instance(CONTEXT_COURSE, $category->course))) {
+            $categoriesarray[$cid] = $cname;
+        }
+    }
+    return $categoriesarray;
+}
+
+/**
  * If the category is not from this course, and it is a published category,
  * then return the course category name with the course shortname appended in
  * brackets. Otherwise, just return the category name.
@@ -1617,7 +1653,7 @@ function question_categorylist($categoryid) {
  * @return mixed category object or null if fails
  */
 function create_category_path( $catpath, $delimiter='/', $courseid=0 ) {
-	$catpath = clean_param( $catpath,PARAM_PATH ); 
+	$catpath = clean_param( $catpath,PARAM_PATH );
     $catnames = explode( $delimiter, $catpath );
     $parent = 0;
     $category = null;
