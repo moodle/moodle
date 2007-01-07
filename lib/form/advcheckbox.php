@@ -1,224 +1,67 @@
 <?php
-// $Id$
-
-require_once "$CFG->libdir/form/HTML/QuickForm/checkbox.php";
+require_once('HTML/QuickForm/advcheckbox.php');
 
 /**
- * HTML class for an advanced checkbox type field
+ * HTML class for a advcheckbox type element
  *
- * Basically this fixes a problem that HTML has had
- * where checkboxes can only pass a single value (the
- * value of the checkbox when checked).  A value for when
- * the checkbox is not checked cannot be passed, and
- * furthermore the checkbox variable doesn't even exist if
- * the checkbox was submitted unchecked.
- *
- * It works by prepending a hidden field with the same name and
- * another "unchecked" value to the checkbox. If the checkbox is
- * checked, PHP overwrites the value of the hidden field with
- * its value.
- *
- * @author       Jason Rust <jrust@php.net>
- * @since        2.0
+ * @author       Jamie Pratt
  * @access       public
  */
-class MoodleQuickForm_advcheckbox extends MoodleQuickForm_checkbox
-{
-    // {{{ properties
-
+class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox{
     /**
-     * The values passed by the hidden elment
+     * html for help button, if empty then no help
      *
-     * @var array
-     * @access private
+     * @var string
      */
-    var $_values = null;
-
+    var $_helpbutton='';
     /**
-     * The default value
+     * set html for help button
      *
-     * @var boolean
-     * @access private
+     * @access   public
+     * @param array $help array of arguments to make a help button
+     * @param string $function function name to call to get html
      */
-    var $_currentValue = null;
-
-    // }}}
-    // {{{ constructor
-
-    /**
-     * Class constructor
-     *
-     * @param     string    $elementName    (optional)Input field name attribute
-     * @param     string    $elementLabel   (optional)Input field label
-     * @param     string    $text           (optional)Text to put after the checkbox
-     * @param     mixed     $attributes     (optional)Either a typical HTML attribute string
-     *                                      or an associative array
-     * @param     mixed     $values         (optional)Values to pass if checked or not checked
-     *
-     * @since     1.0
-     * @access    public
-     * @return    void
-     */
-    function MoodleQuickForm_advcheckbox($elementName=null, $elementLabel=null, $text=null, $attributes=null, $values=null)
-    {
-        $this->MoodleQuickForm_checkbox($elementName, $elementLabel, $text, $attributes);
-        $this->setValues($values);
-    } //end constructor
-
-    // }}}
-    // {{{ getPrivateName()
-
-
-
-    // {{{ setValues()
-
-    /**
-     * Sets the values used by the hidden element
-     *
-     * @param   mixed   $values The values, either a string or an array
-     *
-     * @access public
-     * @return void
-     */
-    function setValues($values)
-    {
-        if (empty($values)) {
-            // give it default checkbox behavior
-            $this->_values = array('', 1);
-        } elseif (is_scalar($values)) {
-            // if it's string, then assume the value to
-            // be passed is for when the element is checked
-            $this->_values = array('', $values);
-        } else {
-            $this->_values = $values;
+    function setHelpButton($helpbuttonargs, $function='helpbutton'){
+        if (!is_array($helpbuttonargs)){
+            $helpbuttonargs=array($helpbuttonargs);
+        }else{
+            $helpbuttonargs=$helpbuttonargs;
         }
-        $this->updateAttributes(array('value' => $this->_values[1]));
-        $this->setChecked($this->_currentValue == $this->_values[1]);
+        //we do this to to return html instead of printing it
+        //without having to specify it in every call to make a button.
+        if ('helpbutton' == $function){
+            $defaultargs=array('', '', 'moodle', true, false, '', true);
+            $helpbuttonargs=$helpbuttonargs + $defaultargs ;
+        }
+        $this->_helpbutton=call_user_func_array($function, $helpbuttonargs);
     }
-
-    // }}}
-    // {{{ setValue()
-
+    /**
+     * get html for help button
+     *
+     * @access   public
+     * @return  string html for help button
+     */
+    function getHelpButton(){
+        return $this->_helpbutton;
+    }
    /**
-    * Sets the element's value
+    * Automatically generates and assigns an 'id' attribute for the element.
     *
-    * @param    mixed   Element's value
-    * @access   public
-    */
-    function setValue($value)
-    {
-        $this->setChecked(isset($this->_values[1]) && $value == $this->_values[1]);
-        $this->_currentValue = $value;
-    }
-
-    // }}}
-    // {{{ getValue()
-
-   /**
-    * Returns the element's value
+    * Currently used to ensure that labels work on radio buttons and
+    * advcheckboxes. Per idea of Alexander Radivanovich.
+    * Overriden in moodleforms to remove qf_ prefix.
     *
-    * @access   public
-    * @return   mixed
+    * @access private
+    * @return void
     */
-    function getValue()
+    function _generateId()
     {
-        if (is_array($this->_values)) {
-            return $this->_values[$this->getChecked()? 1: 0];
-        } else {
-            return null;
+        static $idx = 1;
+
+        if (!$this->getAttribute('id')) {
+            $this->updateAttributes(array('id' => substr(md5(microtime() . $idx++), 0, 6)));
         }
-    }
+    } // end func _generateId
 
-    // }}}
-    // {{{ toHtml()
-
-    /**
-     * Returns the checkbox element in HTML
-     * and the additional hidden element in HTML
-     *
-     * @access    public
-     * @return    string
-     */
-    function toHtml()
-    {
-        if ($this->_flagFrozen) {
-            return parent::toHtml();
-        } else {
-            return '<input' . $this->_getAttrString(array(
-                        'type'  => 'hidden',
-                        'name'  => $this->getName(),
-                        'value' => $this->_values[0]
-                   )) . ' />' . parent::toHtml();
-
-        }
-    } //end func toHtml
-
-    // }}}
-    // {{{ getFrozenHtml()
-
-   /**
-    * Unlike checkbox, this has to append a hidden input in both
-    * checked and non-checked states
-    */
-    function getFrozenHtml()
-    {
-        return ($this->getChecked()? '<tt>[x]</tt>': '<tt>[ ]</tt>') .
-               $this->_getPersistantData();
-    }
-
-    // }}}
-    // {{{ onQuickFormEvent()
-
-    /**
-     * Called by MoodleQuickForm whenever form event is made on this element
-     *
-     * @param     string    $event  Name of event
-     * @param     mixed     $arg    event arguments
-     * @param     object    $caller calling object
-     * @since     1.0
-     * @access    public
-     * @return    void
-     */
-    function onQuickFormEvent($event, $arg, &$caller)
-    {
-        switch ($event) {
-            case 'updateValue':
-                // constant values override both default and submitted ones
-                // default values are overriden by submitted
-                $value = $this->_findValue($caller->_constantValues);
-                if (null === $value) {
-                    $value = $this->_findValue($caller->_submitValues);
-                    if (null === $value) {
-                        $value = $this->_findValue($caller->_defaultValues);
-                    }
-                }
-                if (null !== $value) {
-                    $this->setValue($value);
-                }
-                break;
-            default:
-                parent::onQuickFormEvent($event, $arg, $caller);
-        }
-        return true;
-    } // end func onQuickFormLoad
-
-    // }}}
-    // {{{ exportValue()
-
-   /**
-    * This element has a value even if it is not checked, thus we override
-    * checkbox's behaviour here
-    */
-    function exportValue(&$submitValues, $assoc)
-    {
-        $value = $this->_findValue($submitValues);
-        if (null === $value) {
-            $value = $this->getValue();
-        } elseif (is_array($this->_values) && ($value != $this->_values[0]) && ($value != $this->_values[1])) {
-            $value = null;
-        }
-        return $this->_prepareValue($value, $assoc);
-    }
-    // }}}
-} //end class MoodleQuickForm_advcheckbox
+}
 ?>
