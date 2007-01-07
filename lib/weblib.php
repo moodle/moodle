@@ -3401,7 +3401,7 @@ function print_table($table, $return=false) {
     if (isset($table->wrap)) {
         foreach ($table->wrap as $key => $ww) {
             if ($ww) {
-                $wrap[$key] = ' nowrap="nowrap" ';
+                $wrap[$key] = ' style="white-space:nowrap;" ';
             } else {
                 $wrap[$key] = '';
             }
@@ -3430,8 +3430,8 @@ function print_table($table, $return=false) {
 
     $tableid = empty($table->id) ? '' : 'id="'.$table->id.'"';
 
-    $output .= '<table width="'.$table->width.'" align="'.$table->tablealign.'" ';
-    $output .= " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\" class=\"$table->class\" $tableid>\n";
+    $output .= '<table width="'.$table->width.'" ';
+    $output .= " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\" class=\"$table->class boxalign$table->tablealign\" $tableid>\n";
 
     $countcols = 0;
 
@@ -3446,7 +3446,7 @@ function print_table($table, $return=false) {
             if (!isset($align[$key])) {
                 $align[$key] = '';
             }
-            $output .= '<th valign="top" '. $align[$key].$size[$key] .' nowrap="nowrap" class="header c'.$key.'" scope="col">'. $heading .'</th>';
+            $output .= '<th valign="top" '. $align[$key].$size[$key] .' style="white-space:nowrap;" class="header c'.$key.'" scope="col">'. $heading .'</th>';
         }
         $output .= '</tr>'."\n";
     }
@@ -3527,7 +3527,7 @@ function make_table($table) {
     if (isset($table->wrap)) {
         foreach ($table->wrap as $key => $ww) {
             if ($ww) {
-                $wrap[$key] = ' nowrap="nowrap" ';
+                $wrap[$key] = ' style="white-space:nowrap;" ';
             } else {
                 $wrap[$key] = '';
             }
@@ -3572,7 +3572,7 @@ function make_table($table) {
             if (!isset($align[$key])) {
                 $align[$key] = '';
             }
-            $output .= '<th valign="top" '. $align[$key].$size[$key] .' nowrap="nowrap" class="'. $table->class .'header" scope="col">'.$fontsize.$heading.'</th>';
+            $output .= '<th valign="top" '. $align[$key].$size[$key] .' style="white-space:nowrap;" class="'. $table->class .'header" scope="col">'.$fontsize.$heading.'</th>';
         }
         $output .= '</tr>'."\n";
     }
@@ -4091,7 +4091,7 @@ function print_group_menu($groups, $groupmode, $currentgroup, $urlroot, $showall
         $output .= get_string('groupsseparate');
     }
     $output .= ':';
-    $output .= '</td><td nowrap="nowrap" align="left">';
+    $output .= '</td><td style="white-space:nowrap;" align="left">';
     $output .= popup_form($urlroot.'&amp;group=', $groupsmenu, 'selectgroup', $currentgroup, '', '', '', true, 'self');
     $output .= '</td></tr></table>';
 
