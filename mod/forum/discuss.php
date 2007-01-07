@@ -236,7 +236,7 @@
                 }
             }
             if (!empty($forummenu)) {
-                echo "<div align=\"right\">";
+                echo "<div style=\"float:right;\">";
                 echo popup_form("$CFG->wwwroot/mod/forum/", $forummenu, "forummenu", "",
                                  get_string("movethisdiscussionto", "forum"), "", "", true);
                 echo "</div>";
