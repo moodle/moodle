@@ -2027,7 +2027,8 @@ body#user-index .rolesform {
  *** Modules: Data
  ***/
 .fieldadd,
-.sortdefault {
+.sortdefault,
+.defaulttemplate {
   text-align:center; 
 }
 
