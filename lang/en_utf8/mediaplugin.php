@@ -4,4 +4,8 @@
 
 $string['filtername'] = 'Multimedia Plugins';
 
+$string['flashanimation'] = 'Flash animation';
+$string['flashvideo'] = 'Flash video';
+$string['mp3audio'] = 'MP3 audio';
+
 ?>
