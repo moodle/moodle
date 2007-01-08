@@ -307,7 +307,7 @@
                     // Show the zoom boxes
                     if ($displaysection==$hotpot->section) {
                         $strshowall = get_string('showall'.$course->format);
-                        $printsection .= '<br /><a href="index.php?id='.$course->id.'&section=all" title="'.$strshowall.'"><img src="'.$CFG->pixpath.'/i/all.gif" height=25 width=16 border=0 alt="'.$strshowall.'"></a><br />';
+                        $printsection .= '<br /><a href="index.php?id='.$course->id.'&section=all" title="'.$strshowall.'"><img src="'.$CFG->pixpath.'/i/all.gif" style="height:25px; width:16px; border:0px" alt="'.$strshowall.'"></a><br />';
                     } else {
                         $strshowone = get_string('showonly'.preg_replace('|s$|', '', $course->format, 1), '', $hotpot->section);
                         $printsection .=  '<br /><a href="index.php?id='.$course->id.'&section='.$hotpot->section.'" title="'.$strshowone.'"><img src="'.$CFG->pixpath.'/i/one.gif" class="icon" alt="'.$strshowone.'"></a><br />';

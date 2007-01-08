@@ -27,10 +27,10 @@
              "title=\"$fullname\">";
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
             echo '<img src="'. $CFG->wwwroot .'/user/pix.php/'.$user->id.'/f1.jpg"'.
-                 ' border="0" width="100" height="100" alt="'.$fullname.'" />';
+                 ' style="border:0px; width:100px; height:100px" alt="'.$fullname.'" />';
         } else {
             echo '<img src="'. $CFG->wwwroot .'/user/pix.php?file=/'. $user->id .'/f1.jpg"'.
-                 ' border="0" width="100" height="100" alt="'.$fullname.'" />';
+                 ' style="border:0px; width:100px; height:100px" alt="'.$fullname.'" />';
         }
         echo "</a> \n";
     }
