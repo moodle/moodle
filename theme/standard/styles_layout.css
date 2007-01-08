@@ -1496,7 +1496,7 @@ body#grade-index .grades .weighted {
 .loginbox.twocolumns {
   width:90%;
   margin-left:5%;
-  background: #faa;
+  /* background: #faa; */
 }
 
 .loginbox h2,
@@ -1570,7 +1570,7 @@ body#grade-index .grades .weighted {
   border-right: 1px solid #000;
   margin-bottom:-2000px;
   padding-bottom:2000px;
-  background: #afa;
+  /* background: #afa; */
 }
 
 .loginbox.twocolumns .signuppanel {
