@@ -1562,16 +1562,10 @@ body#grade-index .grades .weighted {
   text-align:center;
 }
 
-/* .loginbox .twocolumns .divider { */
-  /* border-right:1px solid; */
-  /* margin-top:-2000px;padding-top:2000px; */
-  /* margin-bottom:-2000px;padding-bottom:2000px; */
-/* } */
-
 .loginbox.twocolumns .loginpanel {
   float:left;
   width:49.5%;
-  border-right: 1px solid #000;
+  border-right: 1px solid;
   margin-bottom:-2000px;
   padding-bottom:2000px;
   /* background: #afa; */

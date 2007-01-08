@@ -112,9 +112,9 @@ background-color:#E3DFD4;
  ***/
 
 
-.loginbox .content,
-.loginbox .content .subcontent,
-.loginbox .twocolumns .divider {
+.loginbox,
+.loginbox.twocolumns .loginpanel,
+.loginbox .subcontent {
   border-color:#C6BDA8;
 }
 

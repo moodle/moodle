@@ -157,7 +157,7 @@ table.files th,
 
 .results,
 .sideblock .content,
-.loginbox .content,
+.loginbox,
 .generalboxcontent,
 .informationboxcontent,
 .noticeboxcontent,
@@ -192,12 +192,13 @@ table.files,
     background-repeat:repeat-x repeat-y;
 }
 
-.loginbox .twocolumns .divider {
+
+.loginbox.twocolumns .loginpanel {
     border-right:1px solid #330000;
 }
 
-.loginbox .content .guestsub,
-.loginbox .content .forgotsub {
+.loginbox,
+.loginbox .subcontent {
       border-top:1px solid #FFCC99;
 }
 
