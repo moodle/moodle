@@ -462,12 +462,14 @@
     }
 
     if (!isguest()) {
-        echo '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top"><td align="right" class="subscription">';
+        print_box_start('subscription');
         echo '<span class="helplink">';
         echo '<a href="index.php?id='.$course->id.'&amp;subscribe=1">'.get_string('allsubscribe', 'forum').'</a>';
-        echo '<br />';
+        echo '</span><br /><span class="helplink">';
         echo '<a href="index.php?id='.$course->id.'&amp;subscribe=0">'.get_string('allunsubscribe', 'forum').'</a>';
-        echo '</span></td></tr></table>';
+        echo '</span>';
+        print_box_end();
+        print_box('&nbsp;', 'clearer');
     }
 
     if ($generalforums) {
