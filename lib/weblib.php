@@ -2562,11 +2562,25 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
         echo ' **************************************/'."\n\n";
 
 
-    /// Actually output all the files in order.
-        foreach ($files as $file) {
-            echo '/***** '.$file[1].' start *****/'."\n\n";
-            @include_once($file[0].'/'.$file[1]);
-            echo '/***** '.$file[1].' end *****/'."\n\n";
+        /// check if csscobstants is set
+        if (!empty($THEME->cssconstants)) {
+            require_once("$CFG->libdir/cssconstants.php");
+            /// Actually collect all the files in order.
+            $css = '';
+            foreach ($files as $file) {
+                $css .= '/***** '.$file[1].' start *****/'."\n\n";
+                $css .= file_get_contents($file[0].'/'.$file[1]);
+                $ccs .= '/***** '.$file[1].' end *****/'."\n\n";
+            }
+            /// replace css_constants with their values
+            echo replace_cssconstants($css);
+        } else {
+        /// Actually output all the files in order.
+            foreach ($files as $file) {
+                echo '/***** '.$file[1].' start *****/'."\n\n";
+                @include_once($file[0].'/'.$file[1]);
+                echo '/***** '.$file[1].' end *****/'."\n\n";
+            }
         }
     }
 
