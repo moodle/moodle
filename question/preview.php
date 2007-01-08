@@ -188,15 +188,16 @@
         echo "</p>\n";
     }
     $number = 1;
-    echo "<form method=\"post\" action=\"preview.php\" autocomplete=\"off\">\n";
+
+    print_question($questions[$id], $curstate, $number, $quiz, $options);
+    echo '<br />';
+
+
+    echo "<form method=\"post\" action=\"preview.php\">\n";
+    echo '<div class="controls">';
     echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
     echo "<input type=\"hidden\" name=\"quizid\" value=\"$quizid\" />\n";
     echo "<input type=\"hidden\" name=\"continue\" value=\"1\" />\n";
-
-    print_question($questions[$id], $curstate, $number, $quiz, $options);
-
-    echo '<br />';
-    echo '<div class="controls">';
 
     // Print the mark and finish attempt buttons
     echo '<input name="markall" type="submit" value="' . get_string('markall',
