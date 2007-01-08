@@ -2407,6 +2407,9 @@ body#mod-quiz-report table#attempts .picture {
 body#mod-quiz-report .controls {
   text-align: center;
 }
+body#question-preview .quemodname, body#question-preview .controls {
+  text-align: center;
+}
 
 /***
  *** Modules: Resource
