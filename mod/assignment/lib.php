@@ -1767,7 +1767,7 @@ function assignment_cron () {
                 continue;
             }
             
-            if (!has_capability('moodle/course:view', get_context_instance(CONTEXT_COURSE, $$submission->course))) {
+            if (!has_capability('moodle/course:view', get_context_instance(CONTEXT_COURSE, $submission->course))) {
                 echo fullname($user)." not an active participant in $course->shortname\n";
                 continue;
             }
