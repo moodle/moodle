@@ -2892,22 +2892,21 @@ function print_continue($link, $return=false) {
     }
 }
 
+
 /**
  * Print a message in a standard themed box.
- * See, {@link print_simple_box_start}.
+ * Replaces print_simple_box (see deprecatedlib.php)
  *
- * @param string $align string, alignment of the box, not the text (default center, left, right).
- * @param string $width string, width of the box, including units %, for example '100%'.
- * @param string $color string, background colour of the box, for example '#eee'.
- * @param int $padding integer, padding in pixels, specified without units.
- * @param string $class string, space-separated class names.
- * @todo Finish documenting this function
+ * @param string $message, the content of the box
+ * @param string $class, space-separated class names.
+ * @param string $id, space-separated id names.
+ * @param boolean $return, return as string or just print it
  */
-function print_simple_box($message, $align='', $width='', $color='', $padding=5, $class='generalbox', $id='', $return=false) {
-    $output = '';
-    $output .= print_simple_box_start($align, $width, $color, $padding, $class, $id, true);
+function print_box($message, $class='generalbox', $id='', $return=false) {
+
+    $output  = print_box_start($class, $id, true);
     $output .= stripslashes_safe($message);
-    $output .= print_simple_box_end(true);
+    $output .= print_box_end(true);
 
     if ($return) {
         return $output;
@@ -2916,40 +2915,24 @@ function print_simple_box($message, $align='', $width='', $color='', $padding=5,
     }
 }
 
-/**
- * Print the top portion of a standard themed box using a TABLE.  Yes, we know.
- * See bug 4943 for details on some accessibility work regarding this that didn't make it into 1.6.
+/* 
+ * Starts a box using divs
+ * Replaces print_simple_box_start (see deprecatedlib.php)
  *
- * @param string $align string, alignment of the box, not the text (default center, left, right).
- * @param string $width string, width of the box, including % units, for example '100%'.
- * @param string $color string, background colour of the box, for example '#eee'.
- * @param int $padding integer, padding in pixels, specified without units.
- * @param string $class string, space-separated class names.
+ * @param string $class, space-separated class names.
+ * @param string $id, space-separated id names.
+ * @param boolean $return, return as string or just print it
  */
-function print_simple_box_start($align='', $width='', $color='', $padding=5, $class='generalbox', $id='', $return=false) {
-
+function print_box_start($class='generalbox', $id='', $return=false) {
     $output = '';
 
     $divclasses = $class.' '.$class.'content';
-    $divstyles  = '';
 
-    if ($align) {
-        $divclasses .= ' boxalign'.$align;    // Implement alignment using a class
-    }
-    if ($width) {
-        $divstyles  .= ' width:'.$width.';';
-    }
     if ($id) {
         $id = ' id="'.$id.'"';
     }
-    if ($color) {
-        $divstyles  .= ' background:'.$color.';';
-    }
-    if ($divstyles) {
-        $divstyles = ' style="'.$divstyles.'"';
-    }
 
-    $output .= '<div'.$id.$divstyles.' class="'.$divclasses.'">';
+    $output .= '<div'.$id.' class="'.$divclasses.'">';
 
     if ($return) {
         return $output;
@@ -2958,10 +2941,14 @@ function print_simple_box_start($align='', $width='', $color='', $padding=5, $cl
     }
 }
 
-/**
- * Print the end portion of a standard themed box.
+
+/* 
+ * Simple function to end a box (see above)
+ * Replaces print_simple_box_end (see deprecatedlib.php)
+ *
+ * @param boolean $return, return as string or just print it
  */
-function print_simple_box_end($return=false) {
+function print_box_end($return=false) {
     $output = '</div>';
     if ($return) {
         return $output;
@@ -2999,6 +2986,7 @@ function print_single_button($link, $options, $label='OK', $method='get', $targe
         echo $output;
     }
 }
+
 
 /**
  * Print a spacer image with the option of including a line break.

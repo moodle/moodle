@@ -786,4 +786,99 @@ function get_group_teachers($courseid, $groupid) {
 }
 
 
+
+########### FROM weblib.php ##########################################################################
+
+
+/**
+ * Print a message in a standard themed box.
+ * This old function used to implement boxes using tables.  Now it uses a DIV, but the old 
+ * parameters remain.  If possible, $align, $width and $color should not be defined at all.
+ * Preferably just use print_box() in weblib.php
+ *
+ * @param string $align, alignment of the box, not the text (default center, left, right).
+ * @param string $width, width of the box, including units %, for example '100%'.
+ * @param string $color, background colour of the box, for example '#eee'.
+ * @param int $padding, padding in pixels, specified without units.
+ * @param string $class, space-separated class names.
+ * @param string $id, space-separated id names.
+ * @param boolean $return, return as string or just print it
+ */
+function print_simple_box($message, $align='', $width='', $color='', $padding=5, $class='generalbox', $id='', $return=false) {
+    $output = '';
+    $output .= print_simple_box_start($align, $width, $color, $padding, $class, $id, true);
+    $output .= stripslashes_safe($message);
+    $output .= print_simple_box_end(true);
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+
+
+/**
+ * This old function used to implement boxes using tables.  Now it uses a DIV, but the old 
+ * parameters remain.  If possible, $align, $width and $color should not be defined at all.
+ * Even better, please use print_box_start() in weblib.php
+ *
+ * @param string $align, alignment of the box, not the text (default center, left, right).   DEPRECATED
+ * @param string $width, width of the box, including % units, for example '100%'.            DEPRECATED
+ * @param string $color, background colour of the box, for example '#eee'.                   DEPRECATED
+ * @param int $padding, padding in pixels, specified without units.                          OBSOLETE
+ * @param string $class, space-separated class names.
+ * @param string $id, space-separated id names.
+ * @param boolean $return, return as string or just print it
+ */
+function print_simple_box_start($align='', $width='', $color='', $padding=5, $class='generalbox', $id='', $return=false) {
+
+    $output = '';
+
+    $divclasses = $class.' '.$class.'content';
+    $divstyles  = '';
+
+    if ($align) {
+        $divclasses .= ' boxalign'.$align;    // Implement alignment using a class
+    }
+    if ($width) {    // Hopefully we can eliminate these in calls to this function (inline styles are bad)
+        $divstyles  .= ' width:'.$width.';';
+    }
+    if ($color) {    // Hopefully we can eliminate these in calls to this function (inline styles are bad)
+        $divstyles  .= ' background:'.$color.';';
+    }
+    if ($divstyles) {
+        $divstyles = ' style="'.$divstyles.'"';
+    }
+
+    if ($id) {
+        $id = ' id="'.$id.'"';
+    }
+
+    $output .= '<div'.$id.$divstyles.' class="'.$divclasses.'">';
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+
+/**
+ * Print the end portion of a standard themed box.
+ * Preferably just use print_box_end() in weblib.php
+ */
+function print_simple_box_end($return=false) {
+    $output = '</div>';
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+
+
 ?>
