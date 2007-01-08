@@ -2160,6 +2160,19 @@ body#mod-forum-search .introcontent {
 .noticeboxcontent {
   text-align:center;
 }
+
+#mod-forum-view .forumcontrol .groupmenu {
+  float: left;
+  text-align:left;
+  white-space: nowrap;
+}
+
+#mod-forum-view .forumcontrol .subscription {
+  float: right;
+  text-align:right;
+  white-space: nowrap;
+}
+
 #mod-forum-view .unread {
   padding-left: 3px;
   padding-right: 3px;

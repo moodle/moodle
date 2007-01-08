@@ -117,7 +117,8 @@
         }
     }
 
-    echo '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top">';
+
+    print_box_start('forumcontrol');
 
     /// 2 ways to do this, 1. we can changed the setup_and_print_groups functions
     /// in moodlelib, taking in 1 more parameter, and tell the function when to
@@ -130,9 +131,9 @@
         
         //the following query really needs to change
         if ($groups = groups_get_groups_names($course->id)) { //TODO:
-            echo '<td>';
+            print_box_start('groupmenu');
             print_group_menu($groups, $groupmode, $currentgroup, "$CFG->wwwroot/mod/forum/view.php?id=$cm->id");
-            echo '</td>';
+            print_box_end(); // groupmenu
         }
     }
 
@@ -146,15 +147,16 @@
             foreach ($p as $index => $object){
                 $validgroups[$object->id] = $object->name;
             }
-            echo '<td>';
             /// Print them in the menu
+            print_box_start('groupmenu');
             print_group_menu($validgroups, $groupmode, $currentgroup, "view.php?id=$cm->id",0);
-            echo '</td>';
+            print_box_end(); // groupmenu
         }
     }
 
+    print_box_start('subscription');
+
     if (!empty($USER->id) && !has_capability('moodle/legacy:guest', $context, NULL, false)) {
-        echo '<td align="right" class="subscription">';
         $SESSION->fromdiscussion = "$FULLME";
         if (forum_is_forcesubscribed($forum->id)) {
             $streveryoneissubscribed = get_string('everyoneissubscribed', 'forum');
@@ -208,17 +210,16 @@
                 $trackedlink = '<a title="'.get_string('trackforum', 'forum').'" href="settracking.php?id='.
                                $forum->id.'&amp;returnpage=view.php">'.get_string('forumtrackednot', 'forum').'</a>';
             }
-            echo "<br />";
+            echo '<br />';
             echo "<span class=\"helplink\">$trackedlink</span>";
         }
 
-        echo '</td>';
     }
 
     /// If rss are activated at site and forum level and this forum has rss defined, show link
     if (isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
         $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds && $forum->rsstype and $forum->rssarticles) {
-        echo '</tr><tr><td align="right">';
+
         if ($forum->rsstype == 1) {
             $tooltiptext = get_string("rsssubscriberssdiscussions","forum",format_string($forum->name));
         } else {
@@ -229,11 +230,17 @@
         } else {
             $userid = $USER->id;
         }
+        print_box_start('rsslink');
         rss_print_link($course->id, $userid, "forum", $forum->id, $tooltiptext);
-        echo '</td>';
-    }
+        print_box_end(); // subscription
 
-    echo '</tr></table>';
+    }
+    print_box_end(); // subscription
+
+    print_box_end();  // forumcontrol
+
+    print_box('&nbsp;', 'clearer'); 
+
 
     if (!empty($forum->blockafter) && !empty($forum->blockperiod)) {
         $a->blockafter = $forum->blockafter;

@@ -4073,16 +4073,12 @@ function print_group_menu($groups, $groupmode, $currentgroup, $urlroot, $showall
         $groupsmenu[$key] = $groupname;
     }
 
-    $output .= '<table><tr><td align="right">';
     if ($groupmode == VISIBLEGROUPS) {
-        $output .= get_string('groupsvisible');
+        $grouplabel = get_string('groupsvisible').':';
     } else {
-        $output .= get_string('groupsseparate');
+        $grouplabel = get_string('groupsseparate').':';
     }
-    $output .= ':';
-    $output .= '</td><td style="white-space:nowrap;" align="left">';
-    $output .= popup_form($urlroot.'&amp;group=', $groupsmenu, 'selectgroup', $currentgroup, '', '', '', true, 'self');
-    $output .= '</td></tr></table>';
+    $output .= popup_form($urlroot.'&amp;group=', $groupsmenu, 'selectgroup', $currentgroup, '', '', '', true, 'self', $grouplabel);
 
     if ($return) {
         return $output;

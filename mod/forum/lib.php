@@ -377,11 +377,11 @@ function forum_cron() {
                                                      $posthtml, '', '', $CFG->forum_replytouser)) {
                         mtrace("Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id".
                              " ($userto->email) .. not trying again.");
-                        add_to_log($course->id, 'forum', 'mail error', "discuss.php?d=$discussion->id#$post->id",
+                        add_to_log($course->id, 'forum', 'mail error', "discuss.php?d=$discussion->id#p$post->id",
                                    substr(format_string($post->subject,true),0,30), $cm->id, $userto->id);
                         $errorcount++;
                     } else if ($mailresult === 'emailstop') {
-                        add_to_log($course->id, 'forum', 'mail blocked', "discuss.php?d=$discussion->id#$post->id",
+                        add_to_log($course->id, 'forum', 'mail blocked', "discuss.php?d=$discussion->id#p$post->id",
                                    substr(format_string($post->subject,true),0,30), $cm->id, $userto->id);
                     } else {
                         $mailcount++;
@@ -557,7 +557,7 @@ function forum_cron() {
                             $posttext .= "\n---------------------------------------------------------------------";
 
                             $by->name = "<a target=\"_blank\" href=\"$CFG->wwwroot/user/view.php?id=$userfrom->id&amp;course=$course->id\">$by->name</a>";
-                            $posthtml .= '<div><a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id.'#'.$post->id.'">'.format_string($post->subject,true).'</a> '.get_string("bynameondate", "forum", $by).'</div>';
+                            $posthtml .= '<div><a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id.'#p'.$post->id.'">'.format_string($post->subject,true).'</a> '.get_string("bynameondate", "forum", $by).'</div>';
 
                         } else {
                             // The full treatment
@@ -669,7 +669,7 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
     $posttext .= "\n---------------------------------------------------------------------\n";
     $posttext .= format_string($post->subject,true);
     if ($bare) {
-        $posttext .= " ($CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id#$post->id)";
+        $posttext .= " ($CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id#p$post->id)";
     }
     $posttext .= "\n".$strbynameondate."\n";
     $posttext .= "---------------------------------------------------------------------\n";
@@ -1838,7 +1838,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 /// Context link to post if required
     if ($link) {
         $output .= '<div class="link">';
-        $output .= '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#'.$post->id.'">'.
+        $output .= '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#p'.$post->id.'">'.
                      get_string('postincontext', 'forum').'</a>';
         $output .= '</div>';
     }
@@ -1874,7 +1874,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
             // just viewing, return
             return;
         }
-        echo '<a name="'.$post->id.'"></a>';
+        echo '<a id="p'.$post->id.'"></a>';
         echo '<table cellspacing="0" class="forumpost">';
         echo '<tr class="header"><td class="picture left">';
         //        print_user_picture($post->userid, $courseid, $post->picture);
@@ -1935,7 +1935,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         $read_style = '';
     }
 
-    echo '<a name="'.$post->id.'"></a>';
+    echo '<a id="p'.$post->id.'"></a>';
     echo '<table cellspacing="0" class="forumpost'.$read_style.'">';
 
     echo '<tr class="header"><td class="picture left">';
@@ -2021,7 +2021,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
                               $post->discussion.'&amp;parent='.$post->id.$mcmd.'">'.$mtxt.'</a>';
             } else {
                 $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.
-                              $post->discussion.$mcmd.'#'.$post->id.'">'.$mtxt.'</a>';
+                              $post->discussion.$mcmd.'#p'.$post->id.'">'.$mtxt.'</a>';
             }
         }
     }
@@ -2032,7 +2032,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
                           $post->discussion.'&amp;parent='.$post->parent.'">'.$strparent.'</a>';
         } else {
             $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.
-                          $post->discussion.'#'.$post->parent.'">'.$strparent.'</a>';
+                          $post->discussion.'#p'.$post->parent.'">'.$strparent.'</a>';
         }
     }
 
@@ -3638,7 +3638,7 @@ function forum_print_recent_mod_activity($activity, $course, $detail=false) {
              "height=\"16\" width=\"16\" alt=\"".strip_tags(format_string($activity->name,true))."\" />  ";
     }
     echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=" . $activity->content->discussion
-         . "#" . $activity->content->id . "\">";
+         . "#p" . $activity->content->id . "\">";
 
     echo format_string($activity->content->subject,true);
     echo "</a>$closeformat";
