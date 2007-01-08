@@ -78,7 +78,7 @@ class question_edit_multichoice_form extends question_edit_form {
             $default_values['shuffleanswers'] =  $question->options->shuffleanswers;
             $default_values['correctfeedback'] =  $question->options->correctfeedback;
             $default_values['partiallycorrectfeedback'] =  $question->options->partiallycorrectfeedback;
-            $default_values['overallincorrectfeedback'] =  $question->options->overallincorrectfeedback;
+            $default_values['incorrectfeedback'] =  $question->options->incorrectfeedback;
             $question = (object)((array)$question + $default_values);
         }
         parent::set_defaults($question);
@@ -92,18 +92,47 @@ class question_edit_multichoice_form extends question_edit_form {
         $errors = array();
         $answers = $data['answer'];
         $answercount = 0;
-        foreach ($answers as $answer){
+
+        $totalfraction = 0;
+        $maxfraction = -1;
+
+        foreach ($answers as $key => $answer){
+            //check no of choices
             $trimmedanswer = trim($answer);
             if (!empty($trimmedanswer)){
                 $answercount++;
             }
+            //check grades
+            if ($answer != '') {
+                if ($data['fraction'][$key] > 0) {
+                    $totalfraction += $data['fraction'][$key];
+                }
+                if ($data['fraction'][$key] > $maxfraction) {
+                    $maxfraction = $data['fraction'][$key];
+                }
+            }
         }
+
         if ($answercount==0){
             $errors['answer[0]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
             $errors['answer[1]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
         } elseif ($answercount==1){
             $errors['answer[1]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
 
+        }
+
+        /// Perform sanity checks on fractional grades
+        if ($data['single']) {
+            if ($maxfraction != 1) {
+                $maxfraction = $maxfraction * 100;
+                $errors['fraction[0]'] = get_string('errfractionsnomax', 'qtype_multichoice', $maxfraction);
+            }
+        } else {
+            $totalfraction = round($totalfraction,2);
+            if ($totalfraction != 1) {
+                $totalfraction = $totalfraction * 100;
+                $errors['fraction[0]'] = get_string('errfractionsaddwrong', 'qtype_multichoice', $totalfraction);
+            }
         }
         return $errors;
     }

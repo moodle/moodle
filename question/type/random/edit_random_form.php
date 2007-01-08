@@ -41,6 +41,9 @@ class question_edit_random_form extends question_edit_form {
         $mform->addElement('advcheckbox', 'questiontext', get_string("recurse", "quiz"), null, null, array(0, 1));
 
         // Standard fields at the end of the form.
+        $mform->addElement('hidden', 'questiontextformat', 0);
+        $mform->setType('questiontextformat', PARAM_INT);
+
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
@@ -55,9 +58,7 @@ class question_edit_random_form extends question_edit_form {
 
         $buttonarray = array();
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
-        if (!empty($this->question->id)) {
-            $buttonarray[] = &$mform->createElement('submit', 'makecopy', get_string('makecopy', 'quiz'));
-        }
+
         $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar');
