@@ -3347,6 +3347,7 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
 
     $ratings = NULL;
     $ratingsmenuused = false;
+    $ratingsformused = false;
     if ($forum->assessed and !empty($USER->id)) {
         if ($ratings->scale = make_grades_menu($forum->scale)) {
             $ratings->assesstimestart = $forum->assesstimestart;
@@ -3358,6 +3359,7 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
                 echo '<div class="ratingform">';
                 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
                 echo '<input type="hidden" name="forumid" value="'.$forum->id.'" />';
+                $ratingsformused = true;
             }
         }
     }
@@ -3408,15 +3410,18 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
             break;
     }
 
-    if ($ratingsmenuused) {
-        echo '<div class="ratingsubmit">';
-        echo '<input type="submit" value="'.get_string('sendinratings', 'forum').'" />';
-        if ($forum->scale < 0) {
-            if ($scale = get_record("scale", "id", abs($forum->scale))) {
-                print_scale_menu_helpbutton($course->id, $scale );
+    if ($ratingsformused) {
+        if ($ratingsmenuused) {
+            echo '<div class="ratingsubmit">';
+            echo '<input type="submit" value="'.get_string('sendinratings', 'forum').'" />';
+            if ($forum->scale < 0) {
+                if ($scale = get_record("scale", "id", abs($forum->scale))) {
+                    print_scale_menu_helpbutton($course->id, $scale );
+                }
             }
+            echo '</div>';
         }
-        echo '</div>';
+
         echo '</div>';
         echo '</form>';
     }
