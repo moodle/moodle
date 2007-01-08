@@ -658,6 +658,9 @@ function environment_check_database($version) {
 
 /// Now search the version we are using (depending of vendor)
     $current_vendor = $db->databaseType;
+    if ($current_vendor == 'mysqli') {  //Normalize a bit mysql
+        $current_vendor ='mysql';
+    }
     if ($current_vendor == 'postgres7') {  //Normalize a bit postgresql
         $current_vendor ='postgres';
     }
