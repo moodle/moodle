@@ -71,7 +71,6 @@ h6.main {
 
 .clearfix {
   min-width: 0;
-  overflow: hidden;
 }
 
 .clearfix:after {
@@ -291,22 +290,6 @@ form.popupform {
 
 .groupmanagementtable td {
   vertical-align: top;
-}
-
-img.icon {
-  vertical-align: middle;
-  margin-right: 4px;
-  width:16px;
-  height:16px;
-  border:0px;
-}
-
-img.iconsmall {
-  vertical-align: middle;
-  margin-right: 1px;
-  width:11px;
-  height:11px;
-  border:0px;
 }
 
 /*Accessibility: text 'seen' by screen readers but not visual users. Fixed for RTL languages, example Farsi. */
@@ -1482,100 +1465,102 @@ body#grade-index .grades .weighted {
 .loginbox {
   margin-top:15px;
   margin-bottom:15px;
-}
-
-.loginbox .content {
   border:1px solid;
   width:50%;
   margin-left:25%;
   overflow:hidden;
 }
 
-.loginbox .content form {
+.loginbox form {
   margin:0px;
   padding:0px;
 }
 
-.loginbox .twocolumns .content {
+.loginbox.twocolumns {
   width:90%;
   margin-left:5%;
+  background: #faa;
 }
 
-.loginbox .content .header h2,
-.loginbox .content .subcontent {
+.loginbox h2,
+.loginbox .subcontent {
   margin:5px;
   padding:10px;
   text-align:center;
 }
 
-.loginbox .content .loginpanel .subcontent {
+.loginbox .loginpanel .subcontent {
   text-align:center;
 }
 
-.loginbox .content .loginpanel .desc {
+.loginbox .loginpanel .desc {
   margin:0px;
   padding:0px;
   margin-bottom:5px;
 }
 
-.loginbox .content .signuppanel .subcontent {
+.loginbox .signuppanel .subcontent {
   text-align:left;
 }
 
-.loginbox .content .loginsub {
+.loginbox .loginsub {
   margin-left:0%;
   margin-right:0%;
 }
 
-.loginbox .content .guestsub,
-.loginbox .content .forgotsub {
+.loginbox .guestsub,
+.loginbox .forgotsub {
   border-top:1px solid;
   margin-left:12%;
   margin-right:12%;
   margin-bottom:5px;
 }
 
-.loginbox .content .loginform {
+.loginbox .loginform {
   margin-top:1em;
   text-align:left;
 }
 
-.loginbox .content .loginform .form-label {
+.loginbox .loginform .form-label {
   float:left;
   text-align:right;
   width:40%;
 }
 
-.loginbox .content .loginform .form-input {
+.loginbox .loginform .form-input {
   float:right;
   width:59%;
 }
 
-.loginbox .content .loginform .form-input input {
+.loginbox .loginform .form-input input {
   width: 6em;
 }
 
-.loginbox .content .signupform {
+.loginbox .signupform {
   margin-top:1em;
   text-align:center;
 }
 
-.loginbox .twocolumns .divider {
-  border-right:1px solid;
-  margin-top:-2000px;padding-top:2000px;
-  margin-bottom:-2000px;padding-bottom:2000px;
-}
+/* .loginbox .twocolumns .divider { */
+  /* border-right:1px solid; */
+  /* margin-top:-2000px;padding-top:2000px; */
+  /* margin-bottom:-2000px;padding-bottom:2000px; */
+/* } */
 
-.loginbox .twocolumns .loginpanel {
+.loginbox.twocolumns .loginpanel {
   float:left;
-  width:50%;
-  margin-bottom:-2000px;padding-bottom:2000px;
+  width:49.5%;
+  border-right: 1px solid #000;
+  margin-bottom:-2000px;
+  padding-bottom:2000px;
+  background: #afa;
 }
 
-.loginbox .twocolumns .signuppanel {
+.loginbox.twocolumns .signuppanel {
   float:right;
   width:50%;
-  margin-bottom:-2000px; padding-bottom:2000px;
+  margin-bottom:-2000px;
+  padding-bottom:2000px;
 }
 
 .block_login .loginform div {
@@ -2183,7 +2168,7 @@ body#mod-forum-search .introcontent {
   white-space: nowrap;
 }
 
-.mod-forum .subscription {
+#mod-forum-view .forumcontrol .subscription {
   float: right;
   text-align:right;
   white-space: nowrap;
@@ -2196,10 +2181,6 @@ body#mod-forum-search .introcontent {
 #mod-forum-discuss .forumpost.unread .content {
   border-style: solid;
   border-width: 2px;
-}
-#mod-forum-discuss .ratingsubmit {
-  padding:10px;
-  text-align:center;
 }
 #mod-forum-index .unread img,
 #mod-forum-view .unread img
@@ -2425,9 +2406,6 @@ body#mod-quiz-report table#attempts .picture {
   text-align: center !important;
 }
 body#mod-quiz-report .controls {
-  text-align: center;
-}
-body#question-preview .quemodname, body#question-preview .controls {
   text-align: center;
 }
 
