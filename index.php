@@ -99,13 +99,24 @@
 <table id="layout-table" summary="">
   <tr>
   <?php
-
+// uh-changes start
+    // $CFG->LayoutTable = array('left', 'middle', 'right');
+    // $CFG->LayoutTable = array('left', 'right', 'middle');
+    // $CFG->LayoutTable = array('middle', 'left', 'right');
+    $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
+    foreach ($lt as $column) {
+        switch ($column) {
+            case 'left':
+// uh-changes end
     if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
         echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
         echo '</td>';
     }
-
+// uh-changes start
+            break;
+            case 'middle':
+// uh-changes end
     echo '<td id="middle-column">';
 
 
@@ -225,7 +236,10 @@
     }
 
     echo '</td>';
-
+// uh-changes start
+            break;
+            case 'right':
+// uh-changes end
     // The right column
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing || has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
@@ -236,6 +250,11 @@
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
         echo '</td>';
     }
+// uh-changes start
+            break;
+        }
+    }
+// uh-changes end
 ?>
 
   </tr>

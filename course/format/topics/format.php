@@ -68,6 +68,12 @@
     echo '<table id="layout-table" cellspacing="0"><tr>';
 
 /// The left column ...
+// uh-changes start
+    $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
+    foreach ($lt as $column) {
+        switch ($column) {
+            case 'left':
+// uh-changes end
 
     if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
         echo '<td style="width:'.$preferred_width_left.'px" id="left-column">';
@@ -75,6 +81,10 @@
         echo '</td>';
     }
 
+// uh-changes start
+            break;
+            case 'middle':
+// uh-changes end
 /// Start main column
     echo '<td id="middle-column"><a name="startofcontent"></a>';
 
@@ -260,6 +270,10 @@
 
     echo '</td>';
 
+// uh-changes start
+            break;
+            case 'right':
+// uh-changes end
     // The right column
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
         echo '<td style="width:'.$preferred_width_right.'px" id="right-column">';
@@ -267,6 +281,11 @@
         echo '</td>';
     }
 
+// uh-changes start
+            break;
+        }
+    }
+// uh-changes end
     echo '</tr></table>';
     
 ?>
