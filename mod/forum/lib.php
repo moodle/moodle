@@ -2222,7 +2222,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
                     echo '</a>';
                     echo '<a title="'.$strmarkalldread.'" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?f='.
                          $forum->id.'&amp;d='.$post->discussion.'&amp;mark=read&amp;returnpage=view.php">' .
-                         '<img src="'.$CFG->pixpath.'/t/clear.gif" height="11" width="11" alt="'.$strmarkalldread.'" /></a>';
+                         '<img src="'.$CFG->pixpath.'/t/clear.gif" class="iconsmall" alt="'.$strmarkalldread.'" /></a>';
                     echo '</span>';
                 } else {
                     echo '<span class="read">';
@@ -2581,7 +2581,7 @@ function forum_print_attachments($post, $return=NULL) {
                 } else {
                     $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
                 }
-                $image = "<img border=\"0\" src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" alt=\"\" />";
+                $image = "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"\" />";
 
                 if ($return == "html") {
                     $output .= "<a href=\"$ffurl\">$image</a> ";
@@ -3234,7 +3234,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
                     echo '&nbsp;<a title="'.get_string('markallread', 'forum').
                          '" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?f='.
                          $forum->id.'&amp;mark=read&amp;returnpage=view.php">'.
-                         '<img src="'.$CFG->pixpath.'/t/clear.gif" height="11" width="11" border="0" alt="'.get_string('markallread', 'forum').'" /></a>';
+                         '<img src="'.$CFG->pixpath.'/t/clear.gif" class="iconsmall" alt="'.get_string('markallread', 'forum').'" /></a>';
                 }
                 echo '</th>';
             }
@@ -3638,7 +3638,7 @@ function forum_print_recent_mod_activity($activity, $course, $detail=false) {
 
     if ($detail) {
         echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
-             "height=\"16\" width=\"16\" alt=\"".strip_tags(format_string($activity->name,true))."\" />  ";
+             "class=\"icon\" alt=\"".strip_tags(format_string($activity->name,true))."\" />  ";
     }
     echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=" . $activity->content->discussion
          . "#p" . $activity->content->id . "\">";

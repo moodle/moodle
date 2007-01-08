@@ -74,7 +74,7 @@ class data_field_file extends data_field_base {
         if ($recordid and isset($content)){                     // Print icon
             require_once($CFG->libdir.'/filelib.php');
             $icon = mimeinfo('icon', $src);
-            $str .= '<img src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />&nbsp;'.
+            $str .= '<img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.
                     '<a href="'.$source.'/'.$src.'" >'.$name.'</a>';
         }
         return $str;

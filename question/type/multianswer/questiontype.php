@@ -202,7 +202,7 @@ class embedded_cloze_qtype extends default_questiontype {
         // MDL-7497
         if (!empty($USER->screenreader)) {
             echo "<img src=\"$CFG->wwwroot/question/type/$question->qtype/icon.gif\" ".
-                "height=\"16\" width=\"16\" alt=\"".get_string('clozeaid','qtype_multichoice')."\" />  ";
+                "class=\"icon\" alt=\"".get_string('clozeaid','qtype_multichoice')."\" />  ";
         }
         // For this question type, we better print the image on top:
         if ($image = get_question_image($question, $cmoptions->course)) {

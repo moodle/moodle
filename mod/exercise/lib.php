@@ -765,7 +765,7 @@ function exercise_print_submission_title($exercise, $submission) {
             } else {
                 $ffurl = "file.php?file=/$filearea/$file";
             }
-            return "<img src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" border=\"0\" alt=\"".get_string('file')."\" />".
+            return "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"".get_string('file')."\" />".
                 "&nbsp;<a target=\"uploadedfile\" href=\"$CFG->wwwroot/$ffurl\">$submission->title</a>";
         }
     }

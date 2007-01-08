@@ -96,7 +96,7 @@ function print_outline_row($mod, $instance, $result) {
 
     global $CFG;
 
-    $image = "<img src=\"$CFG->modpixpath/$mod->modname/icon.gif\" height=\"16\" width=\"16\" alt=\"$mod->modfullname\" />";
+    $image = "<img src=\"$CFG->modpixpath/$mod->modname/icon.gif\" class=\"icon\" alt=\"$mod->modfullname\" />";
 
     echo "<tr>";
     echo "<td valign=\"top\">$image</td>";

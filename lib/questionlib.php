@@ -884,26 +884,26 @@ function question_get_feedback_image($fraction, $selected=true) {
     if ($fraction >= 1.0) {
         if ($selected) {
             $feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_green_big.gif" '.
-                            'alt="'.get_string('correct', 'quiz').'" width="16" height="16" />';
+                            'alt="'.get_string('correct', 'quiz').'" class="icon" />';
         } else {
             $feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_green_small.gif" '.
-                            'alt="'.get_string('correct', 'quiz').'" width="16" height="16" />';
+                            'alt="'.get_string('correct', 'quiz').'" class="icon" />';
         }
     } else if ($fraction > 0.0 && $fraction < 1.0) {
         if ($selected) {
             $feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_amber_big.gif" '.
-                            'alt="'.get_string('partiallycorrect', 'quiz').'" width="16" height="16" />';
+                            'alt="'.get_string('partiallycorrect', 'quiz').'" class="icon" />';
         } else {
             $feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_amber_small.gif" '.
-                            'alt="'.get_string('partiallycorrect', 'quiz').'" width="16" height="16" />';
+                            'alt="'.get_string('partiallycorrect', 'quiz').'" class="icon" />';
         }
     } else {
         if ($selected) {
             $feedbackimg = '<img src="'.$CFG->pixpath.'/i/cross_red_big.gif" '.
-                            'alt="'.get_string('incorrect', 'quiz').'" width="16" height="16" />';
+                            'alt="'.get_string('incorrect', 'quiz').'" class="icon" />';
         } else {
             $feedbackimg = '<img src="'.$CFG->pixpath.'/i/cross_red_small.gif" '.
-                            'alt="'.get_string('incorrect', 'quiz').'" width="16" height="16" />';
+                            'alt="'.get_string('incorrect', 'quiz').'" class="icon" />';
         }
     }
     return $feedbackimg;

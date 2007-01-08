@@ -316,56 +316,56 @@
                 if (has_capability('moodle/course:update', $coursecontext)) {
                     echo '<a title="'.$strsettings.'" href="'.$CFG->wwwroot.'/course/edit.php?id='.
                          $acourse->id.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.$stredit.'" /></a> ';        }
+                         '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$stredit.'" /></a> ';        }
                 
                 // role assignment link     
                 if (has_capability('moodle/role:assign', $coursecontext)) { 
-                    echo'<a title="'.get_string('assignroles', 'role').'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$coursecontext->id.'"><img src="'.$CFG->pixpath.'/i/roles.gif" height="11" width="11" alt="'.get_string('assignroles', 'role').'" /></a>';
+                    echo'<a title="'.get_string('assignroles', 'role').'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$coursecontext->id.'"><img src="'.$CFG->pixpath.'/i/roles.gif" class="iconsmall" alt="'.get_string('assignroles', 'role').'" /></a>';
                 }                       
                          
                 if (has_capability('moodle/course:delete', $coursecontext)) {
                     echo '<a title="'.$strdelete.'" href="delete.php?id='.$acourse->id.'">'.
-                            '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.$strdelete.'" /></a> ';
+                            '<img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'.$strdelete.'" /></a> ';
                 }
 
                 if (has_capability('moodle/course:visibility', $coursecontext)) {
                     if (!empty($acourse->visible)) {
                         echo '<a title="'.$strhide.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                             '&amp;perpage='.$perpage.'&amp;hide='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
-                            '<img src="'.$CFG->pixpath.'/t/hide.gif" height="11" width="11" border="0" alt="'.$strhide.'" /></a> ';
+                            '<img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.$strhide.'" /></a> ';
                     } else {
                         echo '<a title="'.$strshow.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                             '&amp;perpage='.$perpage.'&amp;show='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
-                            '<img src="'.$CFG->pixpath.'/t/show.gif" height="11" width="11" border="0" alt="'.$strshow.'" /></a> ';
+                            '<img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.$strshow.'" /></a> ';
                     }
                 }
 
                 if (has_capability('moodle/site:backup', $coursecontext)) {
                     echo '<a title="'.$strbackup.'" href="../backup/backup.php?id='.$acourse->id.'">'.
-                            '<img src="'.$CFG->pixpath.'/t/backup.gif" height="11" width="11" border="0" alt="'.$strbackup.'" /></a> ';
+                            '<img src="'.$CFG->pixpath.'/t/backup.gif" class="iconsmall" alt="'.$strbackup.'" /></a> ';
                 }
                     
                 if (has_capability('moodle/site:restore', $coursecontext)) {
                     echo '<a title="'.$strrestore.'" href="../files/index.php?id='.$acourse->id.
                          '&amp;wdir=/backupdata">'.
-                         '<img src="'.$CFG->pixpath.'/t/restore.gif" height="11" width="11" border="0" alt="'.$strrestore.'" /></a> ';
+                         '<img src="'.$CFG->pixpath.'/t/restore.gif" class="iconsmall" alt="'.$strrestore.'" /></a> ';
                 }
 
                 if (has_capability('moodle/category:update', $context)) {
                     if ($up) {
                         echo '<a title="'.$strmoveup.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                              '&amp;perpage='.$perpage.'&amp;moveup='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
-                             '<img src="'.$CFG->pixpath.'/t/up.gif" height="11" width="11" border="0" alt="'.$strmoveup.'" /></a> ';
+                             '<img src="'.$CFG->pixpath.'/t/up.gif" class="iconsmall" alt="'.$strmoveup.'" /></a> ';
                     } else {
-                        echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /> ';
+                        echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> ';
                     }
 
                     if ($down) {
                         echo '<a title="'.$strmovedown.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                              '&amp;perpage='.$perpage.'&amp;movedown='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
-                             '<img src="'.$CFG->pixpath.'/t/down.gif" height="11" width="11" border="0" alt="'.$strmovedown.'" /></a> ';
+                             '<img src="'.$CFG->pixpath.'/t/down.gif" class="iconsmall" alt="'.$strmovedown.'" /></a> ';
                     } else {
-                        echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /> ';
+                        echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> ';
                     }
                     $abletomovecourses = true;
                 }
@@ -377,18 +377,18 @@
             } else {
                 echo '<td align="right">';
                 if (!empty($acourse->guest)) {
-                    echo '<a href="view.php?id='.$acourse->id.'"><img hspace="2" title="'.
-                         $strallowguests.'" alt="" height="16" width="16" border="0" src="'.
+                    echo '<a href="view.php?id='.$acourse->id.'"><img title="'.
+                         $strallowguests.'" alt="" class="icon" src="'.
                          $CFG->pixpath.'/i/user.gif" alt="'.$strallowguests.'" /></a>';
                 }
                 if (!empty($acourse->password)) {
-                    echo '<a href="view.php?id='.$acourse->id.'"><img hspace="2" title="'.
-                         $strrequireskey.'" alt="" height="16" width="16" border="0" src="'.
+                    echo '<a href="view.php?id='.$acourse->id.'"><img title="'.
+                         $strrequireskey.'" alt="" class="icon" src="'.
                          $CFG->pixpath.'/i/key.gif" alt="'.$strrequireskey.'" /></a>';
                 }
                 if (!empty($acourse->summary)) {
                     link_to_popup_window ("/course/info.php?id=$acourse->id", "courseinfo",
-                                          '<img hspace="2" alt="'.get_string('info').'" height="16" width="16" border="0" src="'.$CFG->pixpath.'/i/info.gif" />',
+                                          '<img alt="'.get_string('info').'" class="icon" src="'.$CFG->pixpath.'/i/info.gif" />',
                                            400, 500, $strsummary);
                 }
                 echo "</td>";

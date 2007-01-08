@@ -365,26 +365,26 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
 
         if (has_capability('moodle/category:delete', $context)) {
             echo "<a title=\"$str->delete\" href=\"index.php?delete=$category->id&amp;sesskey=$USER->sesskey\"><img".
-                 " src=\"$CFG->pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"$str->delete\" /></a> ";
+                 " src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"$str->delete\" /></a> ";
         }
         
         if (has_capability('moodle/category:visibility', $context)) {
             if (!empty($category->visible)) {
                 echo "<a title=\"$str->hide\" href=\"index.php?hide=$category->id&amp;sesskey=$USER->sesskey\"><img".
-                     " src=\"$CFG->pixpath/t/hide.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"$str->hide\" /></a> ";
+                     " src=\"$CFG->pixpath/t/hide.gif\" class=\"iconsmall\" alt=\"$str->hide\" /></a> ";
             } else {
                 echo "<a title=\"$str->show\" href=\"index.php?show=$category->id&amp;sesskey=$USER->sesskey\"><img".
-                     " src=\"$CFG->pixpath/t/show.gif\" height=\"11\" width=\"11\" border=\"0\"alt=\"$str->show\" /></a> ";
+                     " src=\"$CFG->pixpath/t/show.gif\" class=\"iconsmall\" alt=\"$str->show\" /></a> ";
             }
         }
 
         if ($up) {
             echo "<a title=\"$str->moveup\" href=\"index.php?moveup=$category->id&amp;sesskey=$USER->sesskey\"><img".
-                 " src=\"$CFG->pixpath/t/up.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"$str->moveup\" /></a> ";
+                 " src=\"$CFG->pixpath/t/up.gif\" class=\"iconsmall\" alt=\"$str->moveup\" /></a> ";
         }
         if ($down) {
             echo "<a title=\"$str->movedown\" href=\"index.php?movedown=$category->id&amp;sesskey=$USER->sesskey\"><img".
-                 " src=\"$CFG->pixpath/t/down.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"$str->movedown\" /></a> ";
+                 " src=\"$CFG->pixpath/t/down.gif\" class=\"iconsmall\" alt=\"$str->movedown\" /></a> ";
         }
         echo "</td>";
 

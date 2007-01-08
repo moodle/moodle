@@ -106,7 +106,7 @@ if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
     if (isediting($course->id)) {
         echo '<a title="'.$streditsummary.'" '.
             ' href="editsection.php?id='.$thissection->id.'"><img src="'.$CFG->pixpath.'/t/edit.gif" '.
-            ' height="11" width="11" border="0" alt="'.$streditsummary.'" /></a><br /><br />';
+            ' class="iconsmall" alt="'.$streditsummary.'" /></a><br /><br />';
     }
     echo '</div>';
     if(!isset($CFG->lams_serverurl)||!isset($CFG->lams_serverid)||!isset($CFG->lams_serverkey)){
@@ -123,7 +123,7 @@ if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
     }else{
         if(isediting($course->id)){//editing turned on. In this case
             echo '<table width="100%" class="section"><tr>';
-            echo '<td align="left"><img src="../mod/lams/icon.gif" height="11" width="11" boarder="1" alt="LAMS"/>&nbsp;LAMS course</td>';
+            echo '<td align="left"><img src="../mod/lams/icon.gif" class="iconsmall" boarder="1" alt="LAMS"/>&nbsp;LAMS course</td>';
 
             $datetime =    date("F d,Y g:i a");
             $plaintext = trim($datetime).trim($USER->username).trim($LAMSCONSTANTS->author_method).trim($CFG->lams_serverid).trim($CFG->lams_serverkey);
@@ -260,7 +260,7 @@ while ($section <= $course->numsections) {
 
             if (isediting($course->id)) {
                 echo ' <a title="'.$streditsummary.'" href="editsection.php?id='.$thissection->id.'">'.
-                    '<img src="'.$CFG->pixpath.'/t/edit.gif" border="0" height="11" width="11" alt="'.$streditsummary.'" /></a><br /><br />';
+                    '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$streditsummary.'" /></a><br /><br />';
             }
             echo '</div>';
 
@@ -301,12 +301,12 @@ while ($section <= $course->numsections) {
 
             if ($section > 1) {                       // Add a arrow to move section up
                 echo '<a href="view.php?id='.$course->id.'&amp;random='.rand(1,10000).'&amp;section='.$section.'&amp;move=-1&amp;sesskey='.$USER->sesskey.'#section-'.($section-1).'" title="'.$strmoveup.'">'.
-                    '<img src="'.$CFG->pixpath.'/t/up.gif" vspace="3" height="11" width="11" border="0" alt="'.$strmoveup.'" /></a><br />';
+                    '<img src="'.$CFG->pixpath.'/t/up.gif" vspace="3" class="iconsmall" alt="'.$strmoveup.'" /></a><br />';
             }
 
             if ($section < $course->numsections) {    // Add a arrow to move section down
                 echo '<a href="view.php?id='.$course->id.'&amp;random='.rand(1,10000).'&amp;section='.$section.'&amp;move=1&amp;sesskey='.$USER->sesskey.'#section-'.($section+1).'" title="'.$strmovedown.'">'.
-                    '<img src="'.$CFG->pixpath.'/t/down.gif" vspace="3" height="11" width="11" border="0" alt="'.$strmovedown.'" /></a><br />';
+                    '<img src="'.$CFG->pixpath.'/t/down.gif" vspace="3" class="iconsmall" alt="'.$strmovedown.'" /></a><br />';
             }
 
         }

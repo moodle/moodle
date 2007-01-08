@@ -108,7 +108,7 @@
             }
             //do not output raw html from request, quote html entities using s()!!
             $table->data[] = array(((!empty($course->password)) ? 
-                                    '<img hspace="1" alt="'.$strrequireskey.'" height="16" width="16" border="0" src="'.$CFG->pixpath.'/i/key.gif" />' : ''),
+                                    '<img hspace="1" alt="'.$strrequireskey.'" class="icon" src="'.$CFG->pixpath.'/i/key.gif" />' : ''),
                                    s($course->shortname),s($course->fullname),fullname($requester),
                                    s($course->summary),s($course->reason),
                                    '<a href="pending.php?approve='.$course->id.'&amp;sesskey='.sesskey().'">'.get_string('approve').'</a> | '

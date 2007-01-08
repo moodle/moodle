@@ -2723,7 +2723,7 @@ function workshop_print_assignment_info($workshop) {
     if (workshop_is_teacheredit($workshop) and $workshop->nelements) {
         echo " <a href=\"assessments.php?id=$cm->id&amp;action=editelements\">".
              "<img src=\"$CFG->pixpath/t/edit.gif\" ".
-             'height="11" width="11" border="0" alt="'.get_string('amendassessmentelements', 'workshop').'" /></a>';
+             'class="iconsmall" alt="'.get_string('amendassessmentelements', 'workshop').'" /></a>';
     }
     echo ")<br />";
     print_simple_box_end();
@@ -2863,8 +2863,7 @@ function workshop_print_submission($workshop, $submission) {
                         $ffurl = "file.php?file=/$filearea/$file";
                     }
                     echo "<tr><td><b>".get_string("attachment", "workshop")." $n:</b> \n";
-                    echo "<img src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" 
-                        border=\"0\" alt=\"".get_string('file')."\" />".
+                    echo "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"".get_string('file')."\" />".
                         "&nbsp;<a target=\"uploadedfile\" href=\"$CFG->wwwroot/$ffurl\">$file</a></td></tr>";
                     $n++;
                 }
@@ -2900,10 +2899,10 @@ function workshop_print_submission_assessments($workshop, $submission, $type) {
                         if (workshop_is_teacher($workshop, $USER->id)) {
                             $str .= ' <a title="'.get_string('reassess', 'workshop').
                                 "\" href=\"assess.php?id=$cm->id&amp;sid=$submission->id\"><img src=\"$CFG->pixpath/t/edit.gif\" ".
-                                ' height="11" width="11" border="0" alt="'.get_string('reassess', 'workshop').'" /></a>';
+                                ' class="iconsmall" alt="'.get_string('reassess', 'workshop').'" /></a>';
                             $str .= ' <a title="'.get_string('delete', 'workshop').
                                 "\" href=\"assessments.php?action=confirmdelete&amp;wid=$workshop->id&amp;aid=$assessment->id\"><img src=\"$CFG->pixpath/t/delete.gif\" ".
-                                ' height="11" width="11" border="0" alt="'.get_string('delete', 'workshop').'" /></a><br />';
+                                ' class="iconsmall" alt="'.get_string('delete', 'workshop').'" /></a><br />';
                        }
                     }
                 }

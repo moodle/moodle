@@ -51,7 +51,7 @@ class block_social_activities extends block_list {
         $editbuttons = '';
 
         if ($ismoving) {
-            $this->content->icons[] = '&nbsp;<img align="bottom" src="'.$CFG->pixpath.'/t/move.gif" height="11" width="11" alt="" />';
+            $this->content->icons[] = '&nbsp;<img align="bottom" src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" alt="" />';
             $this->content->items[] = $USER->activitycopyname.'&nbsp;(<a href="'.$CFG->wwwroot.'/course/mod.php?cancelcopy=true&amp;sesskey='.$USER->sesskey.'">'.$strcancel.'</a>)';
         }
 
@@ -104,7 +104,7 @@ class block_social_activities extends block_list {
                     } else {
                         $this->content->items[] = '<a title="'.$mod->modfullname.'" '.$linkcss.' '.$extra.
                             ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.$instancename.'</a>'.$editbuttons;
-                        $this->content->icons[] = '<img src="'.$icon.'" height="16" width="16" alt="'.$mod->modfullname.'" />';
+                        $this->content->icons[] = '<img src="'.$icon.'" class="icon" alt="'.$mod->modfullname.'" />';
                     }
                 }
             }

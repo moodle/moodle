@@ -55,8 +55,8 @@
 
                                     $image = "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\"".
                                              "   title=\"$mod->modfullname\">".
-                                             "<img border=\"0\" valign=\"middle\" src=\"../mod/$mod->modname/icon.gif\" ".
-                                             "height=\"16\" width=\"16\" alt=\"$mod->modfullname\" /></a>";
+                                             "<img valign=\"middle\" src=\"../mod/$mod->modname/icon.gif\" ".
+                                             "class=\"icon\" alt=\"$mod->modfullname\" /></a>";
                                     $columnhtml[] = "$image ".
                                                  "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
                                                  format_string($instance->name,true).

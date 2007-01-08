@@ -158,7 +158,7 @@
 
     foreach ($modulebyname as $modulename => $module) {
 
-        $icon = "<img src=\"$CFG->modpixpath/$module->name/icon.gif\" hspace=\"10\" height=\"16\" width=\"16\" border=\"0\" alt=\"\" />";
+        $icon = "<img src=\"$CFG->modpixpath/$module->name/icon.gif\" hspace=\"10\" class=\"icon\" alt=\"\" />";
 
         $delete = "<a href=\"modules.php?delete=$module->name&amp;sesskey=$USER->sesskey\">$strdelete</a>";
 
@@ -172,11 +172,11 @@
 
         if ($module->visible) {
             $visible = "<a href=\"modules.php?hide=$module->name&amp;sesskey=$USER->sesskey\" title=\"$strhide\">".
-                       "<img src=\"$CFG->pixpath/i/hide.gif\" align=\"middle\" height=\"16\" width=\"16\" border=\"0\" alt=\"$strhide\" /></a>";
+                       "<img src=\"$CFG->pixpath/i/hide.gif\" class=\"icon\" alt=\"$strhide\" /></a>";
             $class = "";
         } else {
             $visible = "<a href=\"modules.php?show=$module->name&amp;sesskey=$USER->sesskey\" title=\"$strshow\">".
-                       "<img src=\"$CFG->pixpath/i/show.gif\" align=\"middle\" height=\"16\" width=\"16\" border=\"0\" alt=\"$strshow\" /></a>";
+                       "<img src=\"$CFG->pixpath/i/show.gif\" class=\"icon\" alt=\"$strshow\" /></a>";
             $class = "class=\"dimmed_text\"";
         }
         if ($module->name == "forum") {

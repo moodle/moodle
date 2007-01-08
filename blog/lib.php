@@ -288,7 +288,7 @@
                     } else {
                         $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
                     }
-                    $image = "<img border=\"0\" src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" alt=\"\" />";
+                    $image = "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"\" />";
 
                     if ($return == "html") {
                         $output .= "<a href=\"$ffurl\">$image</a> ";

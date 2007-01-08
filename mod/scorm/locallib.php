@@ -489,7 +489,7 @@ function scorm_course_format_display($user,$course) {
                 $path = $CFG->wwwroot.'/course';
                 $headertext .= '<span class="commands">'.
                         '<a title="'.$strupdate.'" href="'.$path.'/mod.php?update='.$cm->id.'&amp;sesskey='.sesskey().'">'.
-                        '<img src="'.$CFG->pixpath.'/t/edit.gif" hspace="2" height="11" width="11" border="0" alt="'.$strupdate.'" /></a></span>';
+                        '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$strupdate.'" /></a></span>';
             }
             $headertext .= '</td>';
             // Display report link

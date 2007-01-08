@@ -310,7 +310,7 @@
                         $printsection .= '<br /><a href="index.php?id='.$course->id.'&section=all" title="'.$strshowall.'"><img src="'.$CFG->pixpath.'/i/all.gif" height=25 width=16 border=0 alt="'.$strshowall.'"></a><br />';
                     } else {
                         $strshowone = get_string('showonly'.preg_replace('|s$|', '', $course->format, 1), '', $hotpot->section);
-                        $printsection .=  '<br /><a href="index.php?id='.$course->id.'&section='.$hotpot->section.'" title="'.$strshowone.'"><img src="'.$CFG->pixpath.'/i/one.gif" height=16 width=16 border=0 alt="'.$strshowone.'"></a><br />';
+                        $printsection .=  '<br /><a href="index.php?id='.$course->id.'&section='.$hotpot->section.'" title="'.$strshowone.'"><img src="'.$CFG->pixpath.'/i/one.gif" class="icon" alt="'.$strshowone.'"></a><br />';
                     }
                 }
             }

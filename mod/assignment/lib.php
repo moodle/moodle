@@ -1484,7 +1484,7 @@ class assignment_base {
                         $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
                     }
                 
-                    $output .= '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.
+                    $output .= '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.
                             '<a href="'.$ffurl.'" >'.$file.'</a><br />';
                 }
             }
@@ -2108,7 +2108,7 @@ function assignment_print_recent_mod_activity($activity, $course, $detail=false)
 
     if ($detail) {
         echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
-             "height=16 width=16 alt=\"$activity->type\">  ";
+             "class=\"icon\" alt=\"$activity->type\">  ";
         echo "<a href=\"$CFG->wwwroot/mod/assignment/view.php?id=" . $activity->instance . "\">"
              . format_string($activity->name,true) . "</a> - ";
 

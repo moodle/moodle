@@ -336,10 +336,10 @@
                     $title = workshop_print_submission_title($workshop, $submission).
                         " <a href=\"submissions.php?action=editsubmission&amp;id=$cm->id&amp;sid=$submission->id\">".
                         "<img src=\"$CFG->pixpath/t/edit.gif\" ".
-                        'height="11" width="11" border="0" alt="'.get_string('edit').'" /></a>'.
+                        'class="iconsmall" alt="'.get_string('edit').'" /></a>'.
                         " <a href=\"submissions.php?action=confirmdelete&amp;id=$cm->id&amp;sid=$submission->id\">".
                         "<img src=\"$CFG->pixpath/t/delete.gif\" ".
-                        'height="11" width="11" border="0" alt="'.get_string('delete', 'workshop').'" /></a>';
+                        'class="iconsmall" alt="'.get_string('delete', 'workshop').'" /></a>';
                     $table->data[] = array($title, $teacherassessments,
                         workshop_print_submission_assessments($workshop, $submission, "student"));
                 }
@@ -391,10 +391,10 @@
                     $data[] = workshop_print_submission_title($workshop, $submission).
                         " <a href=\"submissions.php?action=adminamendtitle&amp;id=$cm->id&amp;sid=$submission->id\">".
                         "<img src=\"$CFG->pixpath/t/edit.gif\" ".
-                        'height="11" width="11" border="0" alt="'.get_string('amendtitle', 'workshop').'" /></a>'.
+                        'class="iconsmall" alt="'.get_string('amendtitle', 'workshop').'" /></a>'.
                         " <a href=\"submissions.php?action=confirmdelete&amp;id=$cm->id&amp;sid=$submission->id\">".
                         "<img src=\"$CFG->pixpath/t/delete.gif\" ".
-                        'height="11" width="11" border="0" alt="'.get_string('delete', 'workshop').'" /></a>';
+                        'class="iconsmall" alt="'.get_string('delete', 'workshop').'" /></a>';
                     $sortdata['title'] = $submission->title;
 
                     $data[] = userdate($submission->timecreated, get_string('datestr', 'workshop'));

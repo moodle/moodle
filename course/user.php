@@ -219,7 +219,7 @@
                                             $user_complete = $mod->modname."_user_complete";
                                             if (function_exists($user_complete)) {
                                                 $image = "<img src=\"../mod/$mod->modname/icon.gif\" ".
-                                                         "height=\"16\" width=\"16\" alt=\"$mod->modfullname\" />";
+                                                         "class=\"icon\" alt=\"$mod->modfullname\" />";
                                                 echo "<h4>$image $mod->modfullname: ".
                                                      "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
                                                      format_string($instance->name,true)."</a></h4>";
@@ -261,7 +261,7 @@
 function print_outline_row($mod, $instance, $result) {
     global $CFG;
 
-    $image = "<img src=\"$CFG->modpixpath/$mod->modname/icon.gif\" height=\"16\" width=\"16\" alt=\"$mod->modfullname\" />";
+    $image = "<img src=\"$CFG->modpixpath/$mod->modname/icon.gif\" class=\"icon\" alt=\"$mod->modfullname\" />";
 
     echo "<tr>";
     echo "<td valign=\"top\">$image</td>";

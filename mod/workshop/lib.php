@@ -1189,7 +1189,7 @@ function workshop_print_recent_mod_activity($activity, $course, $detail=false) {
 
     if ($detail) {
         echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
-            "height=\"16\" width=\"16\" alt=\"".strip_tags(format_string($activity->name,true))."\" />  ";
+            "class=\"icon\" alt=\"".strip_tags(format_string($activity->name,true))."\" />  ";
     }
     echo "<a href=\"$CFG->wwwroot/mod/workshop/view.php?" 
         . "#" . $activity->content->id . "\">".$activity->content->title;

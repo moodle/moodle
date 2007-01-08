@@ -429,7 +429,7 @@ function quiz_print_recent_mod_activity($activity, $course, $detail=false) {
 
     if ($detail) {
         echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
-             "height=\"16\" width=\"16\" alt=\"$activity->type\" />  ";
+             "class=\"icon\" alt=\"$activity->type\" />  ";
         echo "<a href=\"$CFG->wwwroot/mod/quiz/view.php?id=" . $activity->instance . "\">"
              . format_string($activity->name,true) . "</a> - ";
 

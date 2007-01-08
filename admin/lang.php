@@ -450,9 +450,9 @@
                     if (LANG_DISPLAY_MISSING_LINKS) {
                         $missingtarget = '<a name="missing'.$missingcounter.'"></a>';
                         $missingnext = '<a href="#missing'.($missingcounter+1).'">'.
-                        '<img src="' . $CFG->pixpath . '/t/down.gif" height="11" width="11" border="0" alt="'.$strnext.'" /></a>';
+                        '<img src="' . $CFG->pixpath . '/t/down.gif" class="iconsmall" alt="'.$strnext.'" /></a>';
                         $missingprev = '<a href="#missing'.($missingcounter-1).'">'.
-                        '<img src="' . $CFG->pixpath . '/t/up.gif" height="11" width="11" border="0" alt="'.$strprev.'" /></a>';
+                        '<img src="' . $CFG->pixpath . '/t/up.gif" class="iconsmall" alt="'.$strprev.'" /></a>';
                     } else {
                         $missingtarget = '';
                         $missingnext = '';

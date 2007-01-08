@@ -271,7 +271,7 @@
                             $ffurl = "file.php?file=/$filearea/$file";
                         }
                         echo "<tr><td>".get_string("attachment", "workshop")." $n: <img src=\"$CFG->pixpath/f/$icon\"
-                            height=\"16\" width=\"16\" border=\"0\" alt=\"".get_string('file')."\" />".
+                            class=\"icon\" alt=\"".get_string('file')."\" />".
                             "&nbsp;<a target=\"uploadedfile\" href=\"$CFG->wwwroot/$ffurl\">$file</a></td></tr>\n";
                     }
                 } else {

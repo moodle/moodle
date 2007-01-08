@@ -174,7 +174,7 @@ class assignment_online extends assignment_base {
             return '';
         }
         $output = '<div class="files">'.
-                  '<img align="middle" src="'.$CFG->pixpath.'/f/html.gif" height="16" width="16" alt="html" />'.
+                  '<img align="middle" src="'.$CFG->pixpath.'/f/html.gif" class="icon" alt="html" />'.
                   link_to_popup_window ('/mod/assignment/type/online/file.php?id='.$this->cm->id.'&amp;userid='.
                   $submission->userid, 'file'.$userid, shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15), 450, 580,
                   get_string('submission', 'assignment'), 'none', true).

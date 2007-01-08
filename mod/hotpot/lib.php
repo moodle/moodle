@@ -1084,7 +1084,7 @@ function hotpot_print_recent_mod_activity($activity, $course, $detail=false) {
     if ($detail) {
         // activity icon
         $src = "$CFG->modpixpath/$activity->type/icon.gif";
-        print '<img src="'.$src.'" height="16" width="16" alt="'.$activity->type.'" /> ';
+        print '<img src="'.$src.'" class="icon" alt="'.$activity->type.'" /> ';
 
         // link to activity
         $href = "$CFG->wwwroot/mod/hotpot/view.php?hp=$activity->instance";

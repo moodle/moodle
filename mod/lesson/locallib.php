@@ -481,16 +481,16 @@ function lesson_print_page_actions($cmid, $page, $printmove, $printaddpage = fal
     if (has_capability('mod/lesson:edit', $context)) {
         if ($printmove) {
             $actions[] = "<a title=\"".get_string('move')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;action=move&amp;pageid=$page->id\">
-                          <img src=\"$CFG->pixpath/t/move.gif\" height=\"11\" width=\"11\" alt=\"".get_string('move')."\" border=\"0\" /></a>\n";
+                          <img src=\"$CFG->pixpath/t/move.gif\" class=\"iconsmall\" alt=\"".get_string('move')."\" /></a>\n";
         }
         $actions[] = "<a title=\"".get_string('update')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;action=editpage&amp;pageid=$page->id\">
-                      <img src=\"$CFG->pixpath/t/edit.gif\" height=\"11\" width=\"11\" alt=\"".get_string('update')."\" border=\"0\" /></a>\n";
+                      <img src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"".get_string('update')."\" /></a>\n";
         
         $actions[] = "<a title=\"".get_string('preview')."\" href=\"$CFG->wwwroot/mod/lesson/view.php?id=$cmid&amp;pageid=$page->id\">
-                      <img src=\"$CFG->pixpath/t/preview.gif\" height=\"11\" width=\"11\" alt=\"".get_string('preview')."\" border=\"0\" /></a>\n";
+                      <img src=\"$CFG->pixpath/t/preview.gif\" class=\"iconsmall\" alt=\"".get_string('preview')."\" /></a>\n";
         
         $actions[] = "<a title=\"".get_string('delete')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;sesskey=".sesskey()."&amp;action=confirmdelete&amp;pageid=$page->id\">
-                      <img src=\"$CFG->pixpath/t/delete.gif\" height=\"11\" width=\"11\" alt=\"".get_string('delete')."\" border=\"0\" /></a>\n";
+                      <img src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"".get_string('delete')."\" /></a>\n";
         
         if ($printaddpage) {
             // Add page drop-down

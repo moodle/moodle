@@ -843,15 +843,15 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
         $patterns[]='##delete##';
         if (has_capability('mod/data:manageentries', $context) or data_isowner($record->id)) {
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/edit.php?d='
-                             .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>';
+                             .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>';
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='
-                             .$data->id.'&amp;delete='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>';
+                             .$data->id.'&amp;delete='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>';
         } else {
             $replacement[] = '';
             $replacement[] = '';
         }
         $patterns[]='##more##';
-        $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'"><img src="'.$CFG->pixpath.'/i/search.gif" height="11" width="11" alt="'.get_string('more', 'data').'" title="'.get_string('more', 'data').'" /></a>';
+        $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'"><img src="'.$CFG->pixpath.'/i/search.gif" class="iconsmall" alt="'.get_string('more', 'data').'" title="'.get_string('more', 'data').'" /></a>';
 
         $patterns[]='##moreurl##';
         $replacement[] = $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id;
@@ -862,7 +862,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
 
         $patterns[]='##approve##';
         if (has_capability('mod/data:approve', $context) && ($data->approval) && (!$record->approved)){
-            $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;approve='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/i/approve.gif" height="11" width="11" alt="'.get_string('approve').'" /></a>';
+            $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;approve='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/i/approve.gif" class="iconsmall" alt="'.get_string('approve').'" /></a>';
         } else {
             $replacement[] = '';
         }

@@ -25,7 +25,7 @@ class block_course_list extends block_list {
         $this->content->footer = '';
 
         $icon  = "<img src=\"$CFG->pixpath/i/course.gif\"".
-                 " height=\"16\" width=\"16\" alt=\"".get_string("course")."\" />";
+                 " class=\"icon\" alt=\"".get_string("course")."\" />";
        
         $adminseesall = true;
         if (isset($CFG->block_course_list_adminview)) {
@@ -106,7 +106,7 @@ class block_course_list extends block_list {
                 WHERE  a.userid={$USER->id}";
         if ($courses = get_records_sql($sql)) {
             $icon  = "<img src=\"$CFG->pixpath/i/mnethost.png\"".
-                " height=\"16\" width=\"16\" alt=\"".get_string("course")."\" />";
+                " class=\"icon\" alt=\"".get_string("course")."\" />";
             $this->content->items[] = 'Remote Courses';
             $this->content->icons[] = '';
             foreach ($courses as $course) {

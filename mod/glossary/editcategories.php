@@ -201,8 +201,8 @@
                </td>
                <td width="10%" align="center"><b>
                <?php
-                echo "<a href=\"editcategories.php?id=$cm->id&amp;action=delete&amp;mode=cat&amp;hook=$category->id\"><img  alt=\"" . get_string("delete") . "\"src=\"../../pix/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\" /></a> ";
-                echo "<a href=\"editcategories.php?id=$cm->id&amp;action=edit&amp;mode=cat&amp;hook=$category->id\"><img  alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" height=\"11\" width=\"11\" border=\"0\" /></a>";
+                echo "<a href=\"editcategories.php?id=$cm->id&amp;action=delete&amp;mode=cat&amp;hook=$category->id\"><img  alt=\"" . get_string("delete") . "\"src=\"../../pix/t/delete.gif\" class=\"iconsmall\" /></a> ";
+                echo "<a href=\"editcategories.php?id=$cm->id&amp;action=edit&amp;mode=cat&amp;hook=$category->id\"><img  alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" class=\"iconsmall\" /></a>";
                ?>
                </b></td>
              </tr>

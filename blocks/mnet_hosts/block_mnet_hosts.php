@@ -53,7 +53,7 @@ class block_mnet_hosts extends block_list {
         $this->content->footer = '';
 
         $icon  = "<img src=\"$CFG->pixpath/i/mnethost.png\"".
-            " height=\"16\" width=\"16\" alt=\"".get_string('server', 'block_mnet_hosts')."\" />";
+            " class=\"icon\" alt=\"".get_string('server', 'block_mnet_hosts')."\" />";
 
         foreach ($hosts as $host) {
             $this->content->icons[]=$icon;

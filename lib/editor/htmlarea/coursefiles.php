@@ -608,7 +608,7 @@ function printfilelist($filelist) {
 
     foreach ($filelist as $file) {
         if (is_dir($basedir.$file)) {
-            echo "<img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" alt=\"".get_string('folder')."\" /> $file<br />";
+            echo "<img src=\"$CFG->pixpath/f/folder.gif\" class=\"icon\" alt=\"".get_string('folder')."\" /> $file<br />";
             $subfilelist = array();
             $currdir = opendir($basedir.$file);
             while (false !== ($subfile = readdir($currdir))) {
@@ -620,7 +620,7 @@ function printfilelist($filelist) {
 
         } else {
             $icon = mimeinfo("icon", $file);
-            echo "<img src=\"$CFG->pixpath/f/$icon\"  height=\"16\" width=\"16\" alt=\"".get_string('file')."\" /> $file<br />";
+            echo "<img src=\"$CFG->pixpath/f/$icon\"  class=\"icon\" alt=\"".get_string('file')."\" /> $file<br />";
         }
     }
 }
@@ -727,7 +727,7 @@ function displaydir ($wdir) {
             if ($usecheckboxes) {
                 print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" onclick=\"return set_rename('$filesafe');\" />");
             }
-            print_cell("left", "<a href=\"coursefiles.php?id=$id&amp;wdir=$fileurl\" onclick=\"return reset_value();\"><img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" border=\"0\" alt=\"".get_string('folder')."\" /></a> <a href=\"coursefiles.php?id=$id&amp;wdir=$fileurl&amp;usecheckboxes=$usecheckboxes\" onclick=\"return reset_value();\">".htmlspecialchars($dir)."</a>");
+            print_cell("left", "<a href=\"coursefiles.php?id=$id&amp;wdir=$fileurl\" onclick=\"return reset_value();\"><img src=\"$CFG->pixpath/f/folder.gif\" class=\"icon\" alt=\"".get_string('folder')."\" /></a> <a href=\"coursefiles.php?id=$id&amp;wdir=$fileurl&amp;usecheckboxes=$usecheckboxes\" onclick=\"return reset_value();\">".htmlspecialchars($dir)."</a>");
             print_cell("right", "&nbsp;");
             print_cell("right", $filedate);
 
@@ -771,7 +771,7 @@ function displaydir ($wdir) {
                 $ffurl = "/file.php?file=/$id$fileurl";
             }
             link_to_popup_window ($ffurl, "display",
-                                  "<img src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" border=\"0\" align=\"middle\" alt=\"$strfile\" />",
+                                  "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"$strfile\" />",
                                   480, 640);
             $file_size = filesize($filename);
 

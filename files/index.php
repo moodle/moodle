@@ -621,7 +621,7 @@ function printfilelist($filelist) {
 
     foreach ($filelist as $file) {
         if (is_dir($basedir.'/'.$file)) {
-            echo "<img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" alt=\"$strfolder\" /> $file<br />";
+            echo "<img src=\"$CFG->pixpath/f/folder.gif\" class=\"icon\" alt=\"$strfolder\" /> $file<br />";
             $subfilelist = array();
             $currdir = opendir($basedir.'/'.$file);
             while (false !== ($subfile = readdir($currdir))) {
@@ -633,7 +633,7 @@ function printfilelist($filelist) {
 
         } else {
             $icon = mimeinfo("icon", $file);
-            echo "<img src=\"$CFG->pixpath/f/$icon\"  height=\"16\" width=\"16\" alt=\"$strfile\" /> $file<br />";
+            echo "<img src=\"$CFG->pixpath/f/$icon\"  class=\"icon\" alt=\"$strfile\" /> $file<br />";
         }
     }
 }
@@ -721,7 +721,7 @@ function displaydir ($wdir) {
                 $fileurl = rawurlencode(dirname($wdir));
                 print_cell();
                 // alt attribute intentionally empty to prevent repetition in screen reader
-                print_cell('left', '<a href="index.php?id='.$id.'&amp;wdir='.$fileurl.'&amp;choose='.$choose.'"><img src="'.$CFG->pixpath.'/f/parent.gif" height="16" width="16" alt="" />&nbsp;'.get_string('parentfolder').'</a>', 'name');
+                print_cell('left', '<a href="index.php?id='.$id.'&amp;wdir='.$fileurl.'&amp;choose='.$choose.'"><img src="'.$CFG->pixpath.'/f/parent.gif" class="icon" alt="" />&nbsp;'.get_string('parentfolder').'</a>', 'name');
                 print_cell();
                 print_cell();
                 print_cell();
@@ -734,7 +734,7 @@ function displaydir ($wdir) {
                 $filesize = display_size(get_directory_size("$fullpath/$dir"));
                 $filedate = userdate(filemtime($filename), "%d %b %Y, %I:%M %p");
                 print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" />", 'checkbox');
-                print_cell("left", "<a href=\"index.php?id=$id&amp;wdir=$fileurl&amp;choose=$choose\"><img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" border=\"0\" alt=\"$strfolder\" />&nbsp;".htmlspecialchars($dir)."</a>", 'name');
+                print_cell("left", "<a href=\"index.php?id=$id&amp;wdir=$fileurl&amp;choose=$choose\"><img src=\"$CFG->pixpath/f/folder.gif\" class=\"icon\" alt=\"$strfolder\" />&nbsp;".htmlspecialchars($dir)."</a>", 'name');
                 print_cell("right", $filesize, 'size');
                 print_cell("right", $filedate, 'date');
                 print_cell("right", "<a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$filesafe&amp;action=rename&amp;choose=$choose\">$strrename</a>", 'commands');
@@ -770,7 +770,7 @@ function displaydir ($wdir) {
                 $ffurl = str_replace('//', '/', "/file.php?file=/$id/$fileurl");
             }
             link_to_popup_window ($ffurl, "display",
-                                  "<img src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" border=\"0\" alt=\"$strfile\" />&nbsp;".htmlspecialchars($file),
+                                  "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"$strfile\" />&nbsp;".htmlspecialchars($file),
                                   480, 640);
             echo "</td>";
 

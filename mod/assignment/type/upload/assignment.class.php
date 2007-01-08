@@ -329,13 +329,13 @@ class assignment_upload extends assignment_base {
                         $ffurl   = "$CFG->wwwroot/file.php?file=/$filearea/$file";
 
 
-                        $output .= '<a href="'.$ffurl.'" ><img class="icon" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.$file.'</a>';
+                        $output .= '<a href="'.$ffurl.'" ><img class="icon" src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.$file.'</a>';
 
                         if ($candelete) {
                             $delurl  = "$CFG->wwwroot/mod/assignment/delete.php?id={$this->cm->id}&amp;file=$file&amp;userid={$submission->userid}&amp;mode=$mode&amp;offset=$offset";
 
                             $output .= '<a href="'.$delurl.'">&nbsp;'
-                                      .'<img title="'.$strdelete.'" src="'.$CFG->pixpath.'/t/delete.gif" class="smallicon" alt="" /></a> ';
+                                      .'<img title="'.$strdelete.'" src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="" /></a> ';
                         }
 
                         $output .= '<br />';
@@ -389,7 +389,7 @@ class assignment_upload extends assignment_base {
                         $delurl  = "$CFG->wwwroot/mod/assignment/delete.php?id={$this->cm->id}&amp;file=$file&amp;userid=$userid&amp;mode=$mode&amp;offset=$offset&amp;action=response";
 
                         $output .= '<a href="'.$delurl.'">&nbsp;'
-                                  .'<img title="'.$strdelete.'" src="'.$CFG->pixpath.'/t/delete.gif" class="smallicon" alt=""/></a> ';
+                                  .'<img title="'.$strdelete.'" src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt=""/></a> ';
                     }
 
                     $output .= '&nbsp;';

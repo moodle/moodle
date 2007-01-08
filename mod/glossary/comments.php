@@ -58,7 +58,7 @@
     print_heading(format_string(get_string('commentson','glossary')." <b>\"$entry->concept\"</b>"));
 
     if ($glossary->allowcomments || has_capability('mod/glossary:managecomments', $context)) {
-        print_heading("<a href=\"comment.php?action=add&amp;eid=$entry->id\">$straddcomment <img title=\"$straddcomment\" src=\"comment.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"$straddcomment\" /></a>");
+        print_heading("<a href=\"comment.php?action=add&amp;eid=$entry->id\">$straddcomment <img title=\"$straddcomment\" src=\"comment.gif\" class=\"iconsmall\" alt=\"$straddcomment\" /></a>");
     }
 
     if ($comments = get_records("glossary_comments","entryid",$entry->id,"timemodified ASC")) {

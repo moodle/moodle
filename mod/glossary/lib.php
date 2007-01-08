@@ -786,7 +786,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
 
     if (has_capability('mod/glossary:comment', $context)) {
         $output = true;
-        $return .= ' <a title="' . get_string('addcomment','glossary') . '" href="comment.php?action=add&amp;eid='.$entry->id.'"><img src="comment.gif" height="11" width="11" border="0" alt="'.get_string('addcomment','glossary').'" /></a>';
+        $return .= ' <a title="' . get_string('addcomment','glossary') . '" href="comment.php?action=add&amp;eid='.$entry->id.'"><img src="comment.gif" class="iconsmall" alt="'.get_string('addcomment','glossary').'" /></a>';
     }
 
 
@@ -796,7 +796,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
             $mainglossary = get_record('glossary','mainglossary',1,'course',$course->id);
             if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
                 $output = true;
-                $return .= ' <a title="'.get_string('exporttomainglossary','glossary') . '" href="exportentry.php?id='.$cm->id.'&amp;entry='.$entry->id.'&amp;mode='.$mode.'&amp;hook='.$hook.'"><img src="export.gif" height="11" width="11" border="0" alt="'.get_string('exporttomainglossary','glossary').'" /></a>';
+                $return .= ' <a title="'.get_string('exporttomainglossary','glossary') . '" href="exportentry.php?id='.$cm->id.'&amp;entry='.$entry->id.'&amp;mode='.$mode.'&amp;hook='.$hook.'"><img src="export.gif" class="iconsmall" alt="'.get_string('exporttomainglossary','glossary').'" /></a>';
             }
         }
 
@@ -814,9 +814,9 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
             $output = true;
             $return .= " <a title=\"" . get_string("delete") . "\" href=\"deleteentry.php?id=$cm->id&amp;mode=delete&amp;entry=$entry->id&amp;prevmode=$mode&amp;hook=$hook\"><img src=\"";
             $return .= $icon;
-            $return .= "\" height=\"11\" width=\"11\" border=\"0\" alt=\"" . get_string("delete") . "\" /></a> ";
+            $return .= "\" class=\"iconsmall\" alt=\"" . get_string("delete") . "\" /></a> ";
 
-            $return .= " <a title=\"" . get_string("edit") . "\" href=\"edit.php?id=$cm->id&amp;e=$entry->id&amp;mode=$mode&amp;hook=$hook\"><img src=\"$CFG->pixpath/t/edit.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"" . get_string("edit") . "\" /></a>";
+            $return .= " <a title=\"" . get_string("edit") . "\" href=\"edit.php?id=$cm->id&amp;e=$entry->id&amp;mode=$mode&amp;hook=$hook\"><img src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"" . get_string("edit") . "\" /></a>";
         } elseif ( $importedentry ) {
             $return .= " <font size=\"-1\">" . get_string("exportedentry","glossary") . "</font>";
         }
@@ -1177,7 +1177,7 @@ function glossary_print_attachments($entry, $return=NULL, $align="left") {
                 } else {
                     $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
                 }
-                $image = "<img border=\"0\" src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" alt=\"\" />";
+                $image = "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"\" />";
 
                 if ($return == "html") {
                     $output .= "<a href=\"$ffurl\">$image</a> ";
@@ -1444,7 +1444,7 @@ global $CFG;
              $neworder = '&amp;sortorder=asc';
              $newordertitle = $asc;
          }
-         $icon = " <img src=\"$sortorder.gif\" border=\"0\" width=\"16\" height=\"16\" alt=\"". get_string($sortorder)."\" />";
+         $icon = " <img src=\"$sortorder.gif\" class=\"icon\" alt=\"". get_string($sortorder)."\" />";
      } else {
          if ( $sortkey != 'CREATION' and $sortkey != 'UPDATE' and
                $sortkey != 'FIRSTNAME' and $sortkey != 'LASTNAME' ) {
@@ -1453,7 +1453,7 @@ global $CFG;
          } else {
              $newordertitle = $desc;
              $neworder = '&amp;sortorder=desc';
-             $icon = ' <img src="asc.gif" border="0" width="16" height="16" alt="" />';
+             $icon = ' <img src="asc.gif" border="0" class="icon" alt="" />';
          }
      }
      $ficon     = '';
@@ -1558,11 +1558,11 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     $ineditperiod = ((time() - $comment->timemodified <  $CFG->maxeditingtime) || $glossary->editalways);
     if ( ($glossary->allowcomments &&  $ineditperiod && $USER->id == $comment->userid)  || has_capability('mod/glossary:managecomments', $context)) {
         echo "<a href=\"comment.php?cid=$comment->id&amp;action=edit\"><img
-               alt=\"" . get_string("edit") . "\" src=\"$CFG->pixpath/t/edit.gif\" height=\"11\" width=\"11\" border=\"0\" /></a> ";
+               alt=\"" . get_string("edit") . "\" src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" /></a> ";
     }
     if ( ($glossary->allowcomments && $USER->id == $comment->userid) || has_capability('mod/glossary:managecomments', $context) ) {
         echo "<a href=\"comment.php?cid=$comment->id&amp;action=delete\"><img
-               alt=\"" . get_string("delete") . "\" src=\"$CFG->pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\" /></a>";
+               alt=\"" . get_string("delete") . "\" src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" /></a>";
     }
 
     echo '</div></td></tr>';

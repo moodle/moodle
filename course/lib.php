@@ -2148,13 +2148,13 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     if ($mod->visible) {
         $hideshow = '<a class="editing_hide" title="'.$str->hide.'" href="'.$path.'/mod.php?hide='.$mod->id.
                     '&amp;sesskey='.$sesskey.$section.'"><img'.
-                    ' src="'.$CFG->pixpath.'/t/hide.gif" hspace="2" height="11" width="11" '.
-                    ' border="0" alt="'.$str->hide.'" /></a>'."\n";
+                    ' src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" '.
+                    ' alt="'.$str->hide.'" /></a>'."\n";
     } else {
         $hideshow = '<a class="editing_show" title="'.$str->show.'" href="'.$path.'/mod.php?show='.$mod->id.
                     '&amp;sesskey='.$sesskey.$section.'"><img'.
-                    ' src="'.$CFG->pixpath.'/t/show.gif" hspace="2" height="11" width="11" '.
-                    ' border="0" alt="'.$str->show.'" /></a>'."\n";
+                    ' src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" '.
+                    ' alt="'.$str->show.'" /></a>'."\n";
     }
     if ($mod->groupmode !== false) {
         if ($mod->groupmode == SEPARATEGROUPS) {
@@ -2175,12 +2175,12 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
         }
         if ($mod->groupmodelink) {
             $groupmode = '<a class="'.$groupclass.'" title="'.$grouptitle.' ('.$str->clicktochange.')" href="'.$grouplink.'">'.
-                         '<img src="'.$groupimage.'" hspace="2" height="11" width="11" '.
-                         'border="0" alt="'.$grouptitle.'" /></a>';
+                         '<img src="'.$groupimage.'" class="iconsmall" '.
+                         'alt="'.$grouptitle.'" /></a>';
         } else {
             $groupmode = '<img title="'.$grouptitle.' ('.$str->forcedmode.')" '.
-                         ' src="'.$groupimage.'" hspace="2" height="11" width="11" '.
-                         'border="0" alt="'.$grouptitle.'" />';
+                         ' src="'.$groupimage.'" class="iconsmall" '.
+                         'alt="'.$grouptitle.'" />';
         }
     } else {
         $groupmode = "";
@@ -2189,41 +2189,41 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     if ($moveselect) {
         $move =     '<a class="editing_move" title="'.$str->move.'" href="'.$path.'/mod.php?copy='.$mod->id.
                     '&amp;sesskey='.$sesskey.$section.'"><img'.
-                    ' src="'.$CFG->pixpath.'/t/move.gif" hspace="2" height="11" width="11" '.
-                    ' border="0" alt="'.$str->move.'" /></a>'."\n";
+                    ' src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" '.
+                    ' alt="'.$str->move.'" /></a>'."\n";
     } else {
         $move =     '<a class="editing_moveup" title="'.$str->moveup.'" href="'.$path.'/mod.php?id='.$mod->id.
                     '&amp;move=-1&amp;sesskey='.$sesskey.$section.'"><img'.
-                    ' src="'.$CFG->pixpath.'/t/up.gif" hspace="2" height="11" width="11" '.
-                    ' border="0" alt="'.$str->moveup.'" /></a>'."\n".
+                    ' src="'.$CFG->pixpath.'/t/up.gif" class="iconsmall" '.
+                    ' alt="'.$str->moveup.'" /></a>'."\n".
                     '<a class="editing_movedown" title="'.$str->movedown.'" href="'.$path.'/mod.php?id='.$mod->id.
                     '&amp;move=1&amp;sesskey='.$sesskey.$section.'"><img'.
-                    ' src="'.$CFG->pixpath.'/t/down.gif" hspace="2" height="11" width="11" '.
-                    ' border="0" alt="'.$str->movedown.'" /></a>'."\n";
+                    ' src="'.$CFG->pixpath.'/t/down.gif" class="iconsmall" '.
+                    ' alt="'.$str->movedown.'" /></a>'."\n";
     }
 
     $leftright = "";
     if ($indent > 0) {
         $leftright .= '<a class="editing_moveleft" title="'.$str->moveleft.'" href="'.$path.'/mod.php?id='.$mod->id.
                       '&amp;indent=-1&amp;sesskey='.$sesskey.$section.'"><img'.
-                      ' src="'.$CFG->pixpath.'/t/left.gif" hspace="2" height="11" width="11" '.
-                      ' border="0" alt="'.$str->moveleft.'" /></a>'."\n";
+                      ' src="'.$CFG->pixpath.'/t/left.gif" class="iconsmall" '.
+                      ' alt="'.$str->moveleft.'" /></a>'."\n";
     }
     if ($indent >= 0) {
         $leftright .= '<a class="editing_moveright" title="'.$str->moveright.'" href="'.$path.'/mod.php?id='.$mod->id.
                       '&amp;indent=1&amp;sesskey='.$sesskey.$section.'"><img'.
-                      ' src="'.$CFG->pixpath.'/t/right.gif" hspace="2" height="11" width="11" '.
-                      ' border="0" alt="'.$str->moveright.'" /></a>'."\n";
+                      ' src="'.$CFG->pixpath.'/t/right.gif" class="iconsmall" '.
+                      ' alt="'.$str->moveright.'" /></a>'."\n";
     }
 
     return '<span class="commands">'."\n".$leftright.$move.
            '<a class="editing_update" title="'.$str->update.'" href="'.$path.'/mod.php?update='.$mod->id.
            '&amp;sesskey='.$sesskey.$section.'"><img'.
-           ' src="'.$CFG->pixpath.'/t/edit.gif" hspace="2" height="11" width="11" border="0" '.
+           ' src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" '.
            ' alt="'.$str->update.'" /></a>'."\n".
            '<a class="editing_delete" title="'.$str->delete.'" href="'.$path.'/mod.php?delete='.$mod->id.
            '&amp;sesskey='.$sesskey.$section.'"><img'.
-           ' src="'.$CFG->pixpath.'/t/delete.gif" hspace="2" height="11" width="11" border="0" '.
+           ' src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" '.
            ' alt="'.$str->delete.'" /></a>'."\n".$hideshow.$groupmode."\n".'</span>';
 }
 

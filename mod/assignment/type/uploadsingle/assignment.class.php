@@ -29,7 +29,7 @@ class assignment_uploadsingle extends assignment_base {
                     }
                     //died right here
                     //require_once($ffurl);                
-                    $output = '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.
+                    $output = '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.
                             '<a href="'.$ffurl.'" >'.$file.'</a><br />';
                 }
             }

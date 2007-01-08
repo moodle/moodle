@@ -35,11 +35,11 @@
     echo "<center>";
     if ($course->guest) {
         $strallowguests = get_string("allowguests");
-        echo "<p><font size=\"1\"><img align=\"middle\" alt=\"\" height=\"16\" width=\"16\" border=\"0\" src=\"$CFG->pixpath/i/guest.gif\" /></a>&nbsp;$strallowguests</font></p>";
+        echo "<p><font size=\"1\"><img align=\"middle\" alt=\"\" class=\"icon\" src=\"$CFG->pixpath/i/guest.gif\" /></a>&nbsp;$strallowguests</font></p>";
     }
     if ($course->password) {
         $strrequireskey = get_string("requireskey");
-        echo "<p><font size=\"1\"><img align=\"middle\" alt=\"\" height=\"16\" width=\"16\" border=\"0\" src=\"$CFG->pixpath/i/key.gif\" /></a>&nbsp;$strrequireskey</font></p>";
+        echo "<p><font size=\"1\"><img align=\"middle\" alt=\"\" class=\"icon\" src=\"$CFG->pixpath/i/key.gif\" /></a>&nbsp;$strrequireskey</font></p>";
     }
 
 

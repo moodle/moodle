@@ -121,11 +121,11 @@ function display() {
             echo '<tr class="folder">';
             echo '<td class="name">';
             echo "<a href=\"view.php?id={$cm->id}&amp;subdir=$subdir/$file\">";
-            echo "<img src=\"$CFG->pixpath/f/$icon\" width=\"16\" height=\"16\" alt=\"$strfolder\" />&nbsp;$file</a>";
+            echo "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"$strfolder\" />&nbsp;$file</a>";
         } else {
             echo '<tr class="file">';
             echo '<td class="name">';
-            link_to_popup_window($relativeurl, "resourcedirectory{$resource->id}", "<img src=\"$CFG->pixpath/f/$icon\" width=\"16\" height=\"16\" alt=\"$strfile\" />&nbsp;$file", 450, 600, '');
+            link_to_popup_window($relativeurl, "resourcedirectory{$resource->id}", "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"$strfile\" />&nbsp;$file", 450, 600, '');
         }
         echo '</td>';
         echo '<td>&nbsp;</td>';
