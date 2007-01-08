@@ -129,17 +129,19 @@
 
     echo '<table class="controls" cellspacing="0"><tr>';
 
-    //print my course menus
-    echo '<td class="left">';
-    print_string('mycourses');
-    echo ': ';
-    $mycourses = get_my_courses($USER->id);
-    foreach ($mycourses as $mycourse) {
-        $my_course[$mycourse->id] = $mycourse->shortname;
+    if ($mycourses = get_my_courses($USER->id)) {
+        //print my course menus
+        echo '<td class="left">';
+        print_string('mycourses');
+        echo ': ';
+        $my_course = array();
+        foreach ($mycourses as $mycourse) {
+            $my_course[$mycourse->id] = $mycourse->shortname;
+        }
+        //choose_from_menu($my_course, 'id', $course->id, '', 'courseform.submit()');
+        popup_form($CFG->wwwroot.'/user/index.php?id=',$my_course,'courseform',$course->id);
+        echo '</td>';
     }
-    //choose_from_menu($my_course, 'id', $course->id, '', 'courseform.submit()');
-    popup_form($CFG->wwwroot.'/user/index.php?id=',$my_course,'courseform',$course->id);
-    echo '</td>';
     
     if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
         if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
