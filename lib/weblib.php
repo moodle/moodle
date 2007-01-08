@@ -2898,13 +2898,13 @@ function print_continue($link, $return=false) {
  * Replaces print_simple_box (see deprecatedlib.php)
  *
  * @param string $message, the content of the box
- * @param string $classes, space-separated class names.
- * @param string $ids, space-separated id names.
+ * @param string $class, space-separated class names.
+ * @param string $id, space-separated id names.
  * @param boolean $return, return as string or just print it
  */
-function print_box($message, $classes='generalbox', $ids='', $return=false) {
+function print_box($message, $class='generalbox', $id='', $return=false) {
 
-    $output  = print_box_start($classes, $ids, true);
+    $output  = print_box_start($class, $id, true);
     $output .= stripslashes_safe($message);
     $output .= print_box_end(true);
 
@@ -2919,18 +2919,20 @@ function print_box($message, $classes='generalbox', $ids='', $return=false) {
  * Starts a box using divs
  * Replaces print_simple_box_start (see deprecatedlib.php)
  *
- * @param string $classes, space-separated class names.
- * @param string $ids, space-separated id names.
+ * @param string $class, space-separated class names.
+ * @param string $id, space-separated id names.
  * @param boolean $return, return as string or just print it
  */
-function print_box_start($classes='generalbox', $ids='', $return=false) {
+function print_box_start($class='generalbox', $id='', $return=false) {
     $output = '';
 
-    if ($ids) {
-        $ids = ' id="'.$ids.'"';
+    $divclasses = $class.' '.$class.'content';
+
+    if ($id) {
+        $id = ' id="'.$id.'"';
     }
 
-    $output .= '<div'.$ids.' class="'.$classes.'">';
+    $output .= '<div'.$id.' class="'.$divclasses.'">';
 
     if ($return) {
         return $output;
@@ -4933,9 +4935,7 @@ function redirect($url, $message='', $delay=-1) {
 //]]>
 </script>
 <?php
-    echo '</div> <!-- End content div -->';
-    echo '</body>';
-    echo '</html>';
+    print_footer();
     die;
 }
 

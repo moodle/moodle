@@ -2,13 +2,13 @@
 admin_externalpage_print_header($adminroot);
 
 $logurl = $CFG->wwwroot.
-          '/course/report/log/index.php?chooselog=1&showusers=1&showcourses=1&host_course='.$mnet_peer->id.
-          '%2F1&user='.'0'.
-          '&date=0'.
-          '&modid=&modaction=0&logformat=showashtml';
+          '/course/report/log/index.php?chooselog=1&amp;showusers=1&amp;showcourses=1&amp;host_course='.$mnet_peer->id.
+          '%2F1&amp;user='.'0'.
+          '&amp;date=0'.
+          '&amp;modid=&amp;modaction=0&amp;logformat=showashtml';
 
-$tabs[] = new tabobject('mnetdetails', 'peers.php?step=update&hostid='.$mnet_peer->id, $strmnetedithost, $strmnetedithost, false);
-$tabs[] = new tabobject('mnetservices', 'mnet_services.php?step=list&hostid='.$mnet_peer->id, $strmnetservices, $strmnetservices, false);
+$tabs[] = new tabobject('mnetdetails', 'peers.php?step=update&amp;hostid='.$mnet_peer->id, $strmnetedithost, $strmnetedithost, false);
+$tabs[] = new tabobject('mnetservices', 'mnet_services.php?step=list&amp;hostid='.$mnet_peer->id, $strmnetservices, $strmnetservices, false);
 if ($mnet_peer->id != $CFG->mnet_all_hosts_id) $tabs[] = new tabobject('mnetlog', $logurl, $strmnetlog, $strmnetlog, false);
 print_tabs(array($tabs), 'mnetservices');
 print_simple_box_start("center", "");
@@ -40,8 +40,8 @@ print_simple_box_start("center", "");
             echo $breakstring;
 ?>
     <input type="hidden" name="exists[<?php echo  $version['serviceid']; ?>]" value="1" />
-    <input type="checkbox" name="publish[<?php echo $version['serviceid']; ?>]" <?php echo (!empty($version['I_publish']))? 'checked ': '' ; ?>/><?php print_string('publish','mnet'); ?><?php echo $versionstring; if (!empty($version['hostsubscribes'])) echo '<a href="#" title="'.get_string('issubscribed','mnet', $mnet_peer->name).'">&radic;</a> '; if (!empty($version['allhosts_publish'])) print_string("enabled_for_all",'mnet',!empty($version['I_publish']));  ?><br />
-    <input type="checkbox" name="subscribe[<?php echo $version['serviceid']; ?>]" <?php echo (!empty($version['I_subscribe']))? 'checked ': '' ; ?>/><?php print_string('subscribe','mnet'); ?><?php echo $versionstring; if (!empty($version['hostpublishes'])) echo '<a href="#" title="'.get_string('ispublished','mnet', $mnet_peer->name).'">&radic;</a> '; if (!empty($version['allhosts_subscribe'])) print_string("enabled_for_all",'mnet',!empty($version['I_subscribe'])); ?><br />
+    <input type="checkbox" name="publish[<?php echo $version['serviceid']; ?>]" <?php echo (!empty($version['I_publish']))? 'checked="checked" ': '' ; ?>/><?php print_string('publish','mnet'); ?><?php echo $versionstring; if (!empty($version['hostsubscribes'])) echo '<a href="#" title="'.get_string('issubscribed','mnet', $mnet_peer->name).'">&radic;</a> '; if (!empty($version['allhosts_publish'])) print_string("enabled_for_all",'mnet',!empty($version['I_publish']));  ?><br />
+    <input type="checkbox" name="subscribe[<?php echo $version['serviceid']; ?>]" <?php echo (!empty($version['I_subscribe']))? 'checked="checked" ': '' ; ?>/><?php print_string('subscribe','mnet'); ?><?php echo $versionstring; if (!empty($version['hostpublishes'])) echo '<a href="#" title="'.get_string('ispublished','mnet', $mnet_peer->name).'">&radic;</a> '; if (!empty($version['allhosts_subscribe'])) print_string("enabled_for_all",'mnet',!empty($version['I_subscribe'])); ?><br />
 <?php
             $breakstring = '. . . . . . . . . . . . . . . . . . . . . . . . <br>';
         endforeach;
@@ -69,16 +69,9 @@ print_simple_box_start("center", "");
     <div id="formElements"><input type="hidden" name="outer" value="4" /></div>
     </td>
 </tr>
-<?php
-
-echo '
-    </table>
-';
-print_simple_box_end();
-print_simple_box_end();
-
-echo '
+</table>
 </form>
-';
+<?php
+print_simple_box_end();
 admin_externalpage_print_footer($adminroot);
 ?>

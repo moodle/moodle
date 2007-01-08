@@ -13,7 +13,7 @@ admin_externalpage_print_header($adminroot);
         <td class="cell c1" colspan="2"><?php print_string('registerallhostsexplain', 'mnet'); ?></td>
     </tr>
     <tr>
-        <td class="cell c1"><input type="checkbox" name="registerallhosts" <?php if (!empty($CFG->mnet_register_allhosts)) echo 'checked '; ?>/></td>
+        <td class="cell c1"><input type="checkbox" name="registerallhosts" <?php if (!empty($CFG->mnet_register_allhosts)) echo 'checked="checked" '; ?>/></td>
         <td class="cell c1"> <?php print_string('registerallhosts', 'mnet'); ?> </td>
     </tr>
     <tr>
