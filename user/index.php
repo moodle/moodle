@@ -43,6 +43,7 @@
     require_login($course->id);
 
 
+    $options = array();
     if ($roles = get_roles_used_in_context($context)) {
         foreach ($roles as $role) {
             $options[$role->id] = $role->name;
