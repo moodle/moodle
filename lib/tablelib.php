@@ -528,7 +528,12 @@ class flexible_table {
             }
             else {
                 // took out nowrap for accessibility, might need replacement
-                echo '<th class="header c'.$index.$this->column_class[$column].'" '.$this->make_styles_string($this->column_style[$column]).' scope="col" style="white-space:nowrap;">'.$this->headers[$index].$icon_sort.'<div class="commands">'.$icon_hide.'</div></th>';
+                 if (!is_array($this->column_style[$column])) {
+                    $usestyles = array('white-space:nowrap');
+                 } else {
+                    $usestyles = $this->column_style[$column]+array('white-space'=>'nowrap');
+                 }
+                echo '<th class="header c'.$index.$this->column_class[$column].'" '.$this->make_styles_string($usestyles).' scope="col">'.$this->headers[$index].$icon_sort.'<div class="commands">'.$icon_hide.'</div></th>';
             }
 
         }

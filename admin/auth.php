@@ -217,7 +217,7 @@ admin_externalpage_print_header($adminroot);
 print_simple_box(get_string('configauthenticationplugins', 'admin'), 'center', '700');
 
 echo "<form $CFG->frametarget id=\"authmenu\" method=\"post\" action=\"auth.php\">";
-echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\">";
+echo "<fieldset class=\"invisiblefieldset\"><input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\" /></fieldset>";
 print_table($table);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -225,7 +225,7 @@ print_table($table);
 $guestoptions[0] = get_string("hide");
 $guestoptions[1] = get_string("show");
 
-echo '<hr>';
+echo '<hr />';
 print_heading(get_string('auth_common_settings', 'auth'));
 echo '<table cellspacing="0" cellpadding="5" border="0" align="center">';
 
