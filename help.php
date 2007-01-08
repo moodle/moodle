@@ -34,6 +34,14 @@ if (!empty($file)) {
     // Get the list of parent languages.
     if (empty($forcelang)) {
         $langs = array(current_language(), get_string('parentlanguage'), 'en_utf8');  // Fallback
+        // _local language packs take precedence
+        $xlangs = array();
+        foreach ($langs as $lang) {
+            $xlangs[] = $lang . '_local';
+            $xlangs[] = $lang;
+        }
+        $langs = $xlangs;
+        unset($xlangs);
     } else {
         $langs = array($forcelang);
     }
