@@ -267,21 +267,18 @@
 
                     $table->data[] = array(
 
-
-
                     '<a href="field.php?mode=display&amp;d='.$data->id.
                     '&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.$field->field->name.'</a>',
-
 
                     $field->image().'&nbsp;'.get_string($field->type, 'data'),
 
                     shorten_text($field->field->description, 30),
 
                     '<a href="field.php?d='.$data->id.'&amp;mode=display&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.
-                    '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>'.
+                    '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>'.
                     '&nbsp;'.
                     '<a href="field.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.
-                    '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>'
+                    '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>'
 
                     );
                 }
@@ -290,7 +287,7 @@
         }
 
 
-        echo '<div class="fieldadd" align="center">';
+        echo '<div class="fieldadd">';
         echo get_string('newfield','data').': ';
         popup_form($CFG->wwwroot.'/mod/data/field.php?d='.$data->id.'&amp;mode=new&amp;sesskey='.
                 sesskey().'&amp;newtype=', $menufield, 'fieldform', '', 'choose');
@@ -298,8 +295,9 @@
         echo '</div>';
 
         if ($fields = get_records('data_fields','dataid',$data->id)) {
-            echo '<div class="sortdefault" align="center">';
+            echo '<div class="sortdefault">';
             echo '<form id="sortdefault" action="'.$CFG->wwwroot.'/mod/data/field.php" method="get">';
+            echo '<fieldset class="invisiblefieldset">';
             echo '<input type="hidden" name="d" value="'.$data->id.'" />';
             echo '<input type="hidden" name="mode" value="sort" />';
             echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
@@ -319,7 +317,7 @@
                              1 => get_string('descending', 'data'));
             choose_from_menu($options, 'defaultsortdir', $data->defaultsortdir, '');
             echo '<input type="submit" value="'.get_string('go').'" />';
-
+            echo '</fieldset>';
             echo '</form>';
             echo '</div>';
         }

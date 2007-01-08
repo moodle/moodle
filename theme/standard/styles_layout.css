@@ -2024,6 +2024,14 @@ body#user-index .rolesform {
  ***/
 
 /***
+ *** Modules: Data
+ ***/
+.fieldadd,
+.sortdefault {
+  text-align:center; 
+}
+
+/***
  *** Modules: Forum
  ***/
 
