@@ -1392,6 +1392,10 @@ body#course-view .headingblock {
   padding:5px;
 }
 
+.categorylist {
+  width:100%;
+}
+
 .categoryboxcontent,
 .coursebox {
   border-width:1px;
