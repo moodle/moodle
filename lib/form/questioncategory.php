@@ -28,7 +28,7 @@ class MoodleQuickForm_questioncategory extends MoodleQuickForm_select {
      * @access public
      * @return void
      */
-    function MoodleQuickForm_questioncategory($elementName = null, 
+    function MoodleQuickForm_questioncategory($elementName = null,
             $elementLabel = null, $attributes = null, $options = null) {
         HTML_QuickForm_element::HTML_QuickForm_element($elementName, $elementLabel, $attributes, null);
 
@@ -50,7 +50,7 @@ class MoodleQuickForm_questioncategory extends MoodleQuickForm_select {
             $this->_only_editable = false;
         }
     }
-    
+
     /**
      * Called by HTML_QuickForm whenever form event is made on this element
      *
