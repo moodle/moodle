@@ -532,7 +532,8 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
                        $modname, $modid, $modaction, $groupid)) {
         return false;
     }
-    
+
+    $courses = array();
     if ($course->id == SITEID) {
         $courses[0] = '';
         if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname')) {
@@ -540,6 +541,8 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
                 $courses[$cc->id] = $cc->shortname;
             }
         }
+    } else {
+        $courses[$course->id] = $course->shortname;
     }
     
     $count=0;
