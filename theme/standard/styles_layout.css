@@ -2181,6 +2181,10 @@ body#mod-forum-search .introcontent {
   border-style: solid;
   border-width: 2px;
 }
+#mod-forum-discuss .ratingsubmit {
+  padding:10px;
+  text-align:center;
+}
 #mod-forum-index .unread img,
 #mod-forum-view .unread img
 {

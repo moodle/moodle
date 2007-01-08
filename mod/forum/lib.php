@@ -3355,6 +3355,7 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
 
             if ($ratings->allow) {
                 echo '<form id="form" method="post" action="rate.php">';
+                echo '<div class="ratingform">';
                 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
                 echo '<input type="hidden" name="forumid" value="'.$forum->id.'" />';
             }
@@ -3408,14 +3409,16 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
     }
 
     if ($ratingsmenuused) {
-        echo "<center><input type=\"submit\" value=\"".get_string("sendinratings", "forum")."\" />";
+        echo '<div class="ratingsubmit">';
+        echo '<input type="submit" value="'.get_string('sendinratings', 'forum').'" />';
         if ($forum->scale < 0) {
             if ($scale = get_record("scale", "id", abs($forum->scale))) {
                 print_scale_menu_helpbutton($course->id, $scale );
             }
         }
-        echo "</center>";
-        echo "</form>";
+        echo '</div>';
+        echo '</div>';
+        echo '</form>';
     }
 }
 
