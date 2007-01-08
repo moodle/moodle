@@ -353,9 +353,9 @@ function survey_print_multi($question) {
     $stripreferthat = get_string("ipreferthat", "survey");
     $strifoundthat = get_string("ifoundthat", "survey");
     echo "<br />\n";
-    echo "<font size=\"4\"><b>$question->text</b></font><br />";
-
-    echo "<table align=\"center\" width=\"90%\" cellpadding=\"4\" cellspacing=\"1\" border=\"0\">";
+    echo "<span class='questiontext'><b>$question->text</b></span><br />";
+    echo "<div style=\"text-align:center\">";
+    echo "<table width=\"90%\" cellpadding=\"4\" cellspacing=\"1\" border=\"0\">";
 
     $options = explode( ",", $question->options);
     $numoptions = count($options);
@@ -374,7 +374,7 @@ function survey_print_multi($question) {
     }
 
     while (list ($key, $val) = each ($options)) {
-        echo "<td width=\"10%\" align=\"center\"><font size=\"1\">$val</font></td>\n";
+        echo "<td class=\"smalltextcell\"><span class='smalltext'>$val</span></td>\n";
     }
     echo "<td align=\"center\">&nbsp;</td></tr>\n";
 
@@ -390,37 +390,37 @@ function survey_print_multi($question) {
         echo "<tr class=\"$rowclass\">";
         if ($oneanswer) {
 
-            echo "<td width=\"10\" valign=\"top\"><b>$qnum</b></td>";
+            echo "<td class=\"qnumtopcell\"><b>$qnum</b></td>";
             echo "<td valign=\"top\">$q->text</td>";
             for ($i=1;$i<=$numoptions;$i++) {            
                 $screenreader = !empty($USER->screenreader)?"<label for=\"q$P$q->id".$i."\">".$options[$i-1]."</label><br/>":'';
-                echo "<td width=\"10%\" align=\"center\">".$screenreader."<input type=\"radio\" name=\"q$P$q->id\" id=\"q$P$q->id".$i."\" value=\"$i\" alt=\"$i\" /></td>";
+                echo "<td class=\"screenreadertext\">".$screenreader."<input type=\"radio\" name=\"q$P$q->id\" id=\"q$P$q->id".$i."\" value=\"$i\" alt=\"$i\" /></td>";
             }
             echo "<td bgcolor=\"white\"><input type=\"radio\" name=\"q$P$q->id\" value=\"0\" checked=\"checked\" alt=\"0\" /></td>";
             $checklist["q$P$q->id"] = $numoptions;
         
         } else { 
             // yu : fix for MDL-7501, possibly need to use user flag as this is quite ugly.
-            echo "<td width=\"10\" valign=\"middle\"><b>$qnum</b></td>";
+            echo "<td class=\"qnummiddlecell\"><b>$qnum</b></td>";
             $qnum++;
-            echo "<td width=\"10%\" nowrap=\"nowrap\"><font size=\"1\">$stripreferthat&nbsp;</font></td>";
-            echo "<td width=\"40%\" valign=\"middle\">$q->text</td>";
+            echo "<td class=\"preferthat\"><span class='smalltext'>$stripreferthat&nbsp;</span></td>";
+            echo "<td class=\"optioncell\">$q->text</td>";
             for ($i=1;$i<=$numoptions;$i++) {
                 $screenreader = !empty($USER->screenreader)?"<label for=\"qP$q->id".$i."\">".$options[$i-1]."</label><br/>":'';
-                echo "<td width=\"10%\" align=\"center\">".$screenreader."<input type=\"radio\" name=\"qP$q->id\" id=\"qP$q->id".$i."\" value=\"$i\" alt=\"$i\"/></td>";
+                echo "<td class=\"screenreadertext\">".$screenreader."<input type=\"radio\" name=\"qP$q->id\" id=\"qP$q->id".$i."\" value=\"$i\" alt=\"$i\"/></td>";
             }
             echo "<td><input type=\"radio\" name=\"qP$q->id\" value=\"0\" checked=\"checked\" alt=\"0\" /></td>";
             echo "</tr>";
 
             echo "<tr class=\"$rowclass\">";
-            echo "<td width=\"10\" valign=\"middle\"><b>$qnum</b></td>";
-            echo "<td width=\"10%\" nowrap=\"nowrap\"><font size=\"1\">$strifoundthat&nbsp;</font></td>";
-            echo "<td width=\"40%\" valign=\"middle\">$q->text</td>";
+            echo "<td class=\"qnumtopcell\"><b>$qnum</b></td>";
+            echo "<td class=\"foundthat\"><span class='smalltext'>$strifoundthat&nbsp;</span></td>";
+            echo "<td class=\"optioncell\">$q->text</td>";
             for ($i=1;$i<=$numoptions;$i++) {
                 $screenreader = !empty($USER->screenreader)?"<label for=\"q$q->id".$i."\">".$options[$i-1]."</label><br/>":'';
-                echo "<td width=\"10%\" align=\"center\">".$screenreader."<input type=\"radio\" name=\"q$q->id\" id=\"q$q->id".$i."\" value=\"$i\" alt=\"$i\" /></td>";
+                echo "<td class=\"screenreadertext\">".$screenreader."<input type=\"radio\" name=\"q$q->id\" id=\"q$q->id".$i."\" value=\"$i\" alt=\"$i\" /></td>";
             }
-            echo "<td width=\"5%\"><input type=\"radio\" name=\"q$q->id\" value=\"0\" checked=\"checked\" alt=\"0\" /></td>";
+            echo "<td class=\"buttoncell\"><input type=\"radio\" name=\"q$q->id\" value=\"0\" checked=\"checked\" alt=\"0\" /></td>";
             $checklist["qP$q->id"] = $numoptions;
             $checklist["q$q->id"] = $numoptions;            
         }
@@ -428,6 +428,7 @@ function survey_print_multi($question) {
         
     }
     echo "</table>";
+    echo "</div>";
 }
 
 
@@ -440,11 +441,11 @@ function survey_print_single($question) {
     $qnum++;
 
     echo "<br />\n";
-    echo "<table align=\"center\" width=\"90%\" cellpadding=\"4\" cellspacing=\"0\">\n";
+    echo "<table width=\"90%\" cellpadding=\"4\" cellspacing=\"0\">\n";
     echo "<tr class=\"$rowclass\">";
     echo "<td valign=\"top\"><b>$qnum</b></td>";
-    echo "<td width=\"50%\" valign=\"top\">$question->text</td>\n";
-    echo "<td width=\"50%\" valign=\"top\"><font size=\"+1\">\n";
+    echo "<td class=\"questioncell\">$question->text</td>\n";
+    echo "<td class=\"questioncell\"><span class='smalltext'>\n";
 
 
     if ($question->type == 0) {           // Plain text field
@@ -466,7 +467,7 @@ function survey_print_single($question) {
         notify("This question type not supported yet");
     }
 
-    echo "</font></td></tr></table>";
+    echo "</span></td></tr></table>";
 
 }
 
@@ -486,7 +487,7 @@ function survey_print_graph($url) {
         echo "(".get_string("gdneed").")";
 
     } else {
-        echo "<img height=\"$SURVEY_GHEIGHT\" width=\"$SURVEY_GWIDTH\" border=\"1\"".
+        echo "<img class='resultgraph' height=\"$SURVEY_GHEIGHT\" width=\"$SURVEY_GWIDTH\"".
              " src=\"$CFG->wwwroot/mod/survey/graph.php?$url\" alt=\"".get_string("surveygraph", "survey")."\" />";
     }
 }

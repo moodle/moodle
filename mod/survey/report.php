@@ -121,9 +121,9 @@
         print_heading($strsummary);
 
         if (survey_count_responses($survey->id, $currentgroup)) {
-            echo "<center><a href=\"report.php?action=scales&amp;id=$id\">";
+            echo "<div class='reportsummary'><a href=\"report.php?action=scales&amp;id=$id\">";
             survey_print_graph("id=$id&amp;group=$currentgroup&amp;type=overall.png");
-            echo "</a></center>";
+            echo "</a></div>";
         } else {
             notify(get_string("nobodyyet","survey"));
         }
@@ -154,7 +154,7 @@
                     if (!empty($virtualscales) && $question->type > 0) {  // Don't show non-virtual scales if virtual
                         continue;
                     }
-                    echo "<p align=\"center\"><a title=\"$strseemoredetail\" href=\"report.php?action=questions&amp;id=$id&amp;qid=$question->multi\">";
+                    echo "<p class=\"centerpara\"><a title=\"$strseemoredetail\" href=\"report.php?action=questions&amp;id=$id&amp;qid=$question->multi\">";
                     survey_print_graph("id=$id&amp;qid=$question->id&amp;group=$currentgroup&amp;type=multiquestion.png");
                     echo "</a></p><br />";
                 }
@@ -212,14 +212,14 @@
                     foreach ($subquestionorder as $key => $val) {
                         $subquestion = $subquestions[$val];
                         if ($subquestion->type > 0) {
-                            echo "<p align=\"center\">";
+                            echo "<p class=\"centerpara\">";
                             echo "<a title=\"$strseemoredetail\" href=\"report.php?action=question&amp;id=$id&amp;qid=$subquestion->id\">";
                             survey_print_graph("id=$id&amp;qid=$subquestion->id&amp;group=$currentgroup&amp;type=question.png");
                             echo "</a></p>";
                         }
                     }
                 } else if ($question->type > 0 ) {
-                    echo "<p align=\"center\">";
+                    echo "<p class=\"centerpara\">";
                     echo "<a title=\"$strseemoredetail\" href=\"report.php?action=question&amp;id=$id&amp;qid=$question->id\">";
                     survey_print_graph("id=$id&amp;qid=$question->id&amp;group=$currentgroup&amp;type=question.png");
                     echo "</a></p>";
@@ -234,7 +234,7 @@
                     if ($aaa = survey_get_user_answers($survey->id, $question->id, $currentgroup, "sa.time ASC")) {
                         foreach ($aaa as $a) {
                             $contents .= "<tr>";
-                            $contents .= '<td nowrap="nowrap" width="10%" valign="top">'.fullname($a).'</td>';
+                            $contents .= '<td class="fullnamecell">'.fullname($a).'</td>';
                             $contents .= '<td valign="top">'.$a->answer1.'</td>';
                             $contents .= "</tr>";
                         }
@@ -334,7 +334,7 @@
              }
          }
 
-         echo "<p align=\"center\">";
+         echo "<p <p class=\"centerpara\">";
          print_user_picture($user->id, $course->id, $user->picture, true);
          echo "</p>";
 
@@ -343,7 +343,7 @@
 
          if ($showscales) {
              // Print overall summary
-             echo "<p align=\"center\">";
+             echo "<p <p class=\"centerpara\">>";
              survey_print_graph("id=$id&amp;sid=$student&amp;type=student.png");
              echo "</p>";
 
@@ -363,7 +363,7 @@
                      if ($virtualscales && $question->type > 0) {  // Don't show non-virtual scales if virtual
                          continue;
                      }
-                     echo "<p align=\"center\">";
+                     echo "<p class=\"centerpara\">";
                      echo "<a title=\"$strseemoredetail\" href=\"report.php?action=questions&amp;id=$id&amp;qid=$question->multi\">";
                      survey_print_graph("id=$id&amp;qid=$question->id&amp;sid=$student&amp;type=studentmultiquestion.png");
                      echo "</a></p><br />";
@@ -393,7 +393,7 @@
             $notes = "";
          }
          echo "<hr noshade=\"noshade\" size=\"1\" />";
-         echo "<center>";
+         echo "<div class='studentreport'>";
          echo "<form action=\"report.php\" method=\"post\">";
          echo "<h3>$strnotes:</h3>";
          echo "<blockquote>";
@@ -407,7 +407,7 @@
          echo "<input type=\"submit\" value=\"".get_string("savechanges")."\" />";
          echo "</blockquote>";
          echo "</form>";
-         echo "</center>";
+         echo "</div>";
 
 
          break;
@@ -417,9 +417,9 @@
 
         require_capability('mod/survey:download', $context);
 
-        echo '<p align="center">'.get_string("downloadinfo", "survey").'</p>';
+        echo '<p class="centerpara">'.get_string("downloadinfo", "survey").'</p>';
 
-        echo '<center>';
+        echo '<div class="reportbuttons">';
         $optons = array();
         $options["id"] = "$cm->id";
         $options["group"] = $currentgroup;
@@ -432,7 +432,7 @@
 
         $options["type"] = "txt";
         print_single_button("download.php", $options, get_string("downloadtext"));
-        echo '</center>';
+        echo '</div>';
 
         break;
 

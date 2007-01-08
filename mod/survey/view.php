@@ -70,9 +70,9 @@
         if ($showscales) {
             print_heading(get_string("surveycompleted", "survey"));
             print_heading(get_string("peoplecompleted", "survey", $numusers));
-            echo "<center>";
+            echo '<div class="resultgraph">';
             survey_print_graph("id=$cm->id&amp;sid=$USER->id&amp;group=$currentgroup&amp;type=student.png");
-            echo "</center>";
+            echo '</div>';
 
         } else {
 
@@ -104,6 +104,7 @@
     add_to_log($course->id, "survey", "view form", "view.php?id=$cm->id", $survey->id, $cm->id);
 
     echo "<form method=\"post\" action=\"save.php\">";
+    echo '<div>';
     echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />";
 
     print_simple_box(format_text($survey->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
@@ -148,6 +149,7 @@
     }
 
     if (isguest()) {
+        echo '</div>';  
         echo "</form>";
         print_footer($course);
         exit;
@@ -155,10 +157,9 @@
 
 ?>
 
-<center>
 <br />
 <script type="text/javascript">
-<!-- // BEGIN
+<![CDATA[
 function checkform() {
 
     var error=false;
@@ -182,17 +183,19 @@ function checkform() {
 
 <?php echo "document.write('<input type=\"button\" value=\"".get_string("clicktocontinuecheck", "survey")."\" onClick=\"checkform()\" />');";  ?>
 
-// END -->
+// END -->    
+]]>
 </script>
 
 <noscript>
     <!-- Without Javascript, no checking is done -->
+    <div>
     <input type="submit" value="<?php  get_string("clicktocontinue", "survey") ?>" />
+    </div>
 </noscript>
 
-</center>
-
 <?php
+   echo '</div>';
    echo "</form>";
 
    print_footer($course);
