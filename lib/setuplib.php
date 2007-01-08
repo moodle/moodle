@@ -169,6 +169,7 @@ function setup_is_unicodedb() {
     }
     switch ($dbtype) {
         case 'mysql':
+        case 'mysqli':
             $rs = $db->Execute("SHOW VARIABLES LIKE 'character_set_database'");
             if ($rs && $rs->RecordCount() > 0) {
                 $records = $rs->GetAssoc(true);
