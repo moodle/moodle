@@ -76,9 +76,9 @@
         if (count($SESSION->emailto[$id])) {
             if ($preview) {
                 echo '<form method="post" action="messageselect.php" style="margin: 0 20px;">
-<input type="hidden" name="returnto" value="'.stripslashes($returnto).'">
-<input type="hidden" name="id" value="'.$id.'">
-<input type="hidden" name="format" value="'.$format.'">
+<input type="hidden" name="returnto" value="'.stripslashes($returnto).'" />
+<input type="hidden" name="id" value="'.$id.'" />
+<input type="hidden" name="format" value="'.$format.'" />
 ';
                 echo "<h3>".get_string('previewhtml')."</h3><div class=\"messagepreview\">\n".format_text(stripslashes($messagebody),$format)."\n</div>";
                 echo "\n<p align=\"center\"><input type=\"submit\" name=\"send\" value=\"Send\" /> <input type=\"submit\" name=\"edit\" value=\"Edit\" /></p>\n</form>";

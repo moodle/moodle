@@ -209,17 +209,17 @@
            target="inlineframe">
             <center>
              <input type="text" name="tex" size="50"
-                    value="f(x)=\Bigint_{-\infty}^x~e^{-t^2}dt">
+                    value="f(x)=\Bigint_{-\infty}^x~e^{-t^2}dt" />
             </center>
            <ol>
-           <li>First click on this button <input type="submit" name="ShowDB" value="Show DB Entry">
+           <li>First click on this button <input type="submit" name="ShowDB" value="Show DB Entry" />
                to see the cache_filters database entry for this expression.</li>
            <li>If the database entry looks corrupt, click on this button to delete it:
-               <input type="submit" name="DeleteDB" value="Delete DB Entry"></li>
-           <li>Then click on this button <input type="submit" name="ShowImage" value="Show Image">
+               <input type="submit" name="DeleteDB" value="Delete DB Entry" /></li>
+           <li>Then click on this button <input type="submit" name="ShowImage" value="Show Image" />
                to show a graphic image of the algebraic expression.</li>
            <li>Finally check your slash arguments setting
-               <input type="submit" name="SlashArguments" value="Check Slash Arguments"></li>
+               <input type="submit" name="SlashArguments" value="Check Slash Arguments" /></li>
            </ol>
           </form> <br /> <br />
        <center>

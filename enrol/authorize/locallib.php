@@ -71,7 +71,7 @@ function authorize_print_orders($courseid, $userid)
         popup_form($baseurl.'&amp;status='.$status.'&amp;course=',$popupcrs,'coursesmenu',$courseid,'','','',false);echo"</td>\n";
         if (has_capability('enrol/authorize:uploadcsv', get_context_instance(CONTEXT_USER, $USER->id))) {
             echo "<form method='get' action='uploadcsv.php'>";
-            echo "<td rowspan=2 align='right' valign='middle' width='50%'><input type='submit' value='".get_string('uploadcsv', 'enrol_authorize')."'></td>";
+            echo "<td rowspan=2 align='right' valign='middle' width='50%'><input type='submit' value='".get_string('uploadcsv', 'enrol_authorize')."' /></td>";
             echo "</form>";
         }
         else {
@@ -228,7 +228,7 @@ function authorize_print_order_details($orderno)
     }
 
     echo "<form action=\"index.php\" method=\"post\">\n";
-    echo "<input type=\"hidden\" name=\"order\" value=\"$orderno\">\n";
+    echo "<input type=\"hidden\" name=\"order\" value=\"$orderno\" />\n";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"" . sesskey() . "\" />";
 
     $settled = authorize_settled($order);
@@ -266,7 +266,7 @@ function authorize_print_order_details($orderno)
             $strcaptureyes = get_string('captureyes', 'enrol_authorize');
             $table->data[] = array("<b>$strs->confirm:</b>",
             "$strcaptureyes <br />
-            <input type='hidden' name='confirm' value='1'><input type='submit' name='". ORDER_CAPTURE ."' value='$authstrs->capture' />
+            <input type='hidden' name='confirm' value='1' /><input type='submit' name='". ORDER_CAPTURE ."' value='$authstrs->capture' />
             &nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
         }
         else {
@@ -328,8 +328,8 @@ function authorize_print_order_details($orderno)
                 $cbunenrol = print_checkbox('unenrol', '1', !empty($unenrol), '', '', '', true);
                 $table->data[] = array("<b>$authstrs->unenrolstudent</b>", $cbunenrol);
                 $table->data[] = array("<b>$strhowmuch</b>",
-                    "<input type='hidden' name='confirm' value='1'>
-                     <input type='text' size='5' name='amount' value='$amount'>
+                    "<input type='hidden' name='confirm' value='1' />
+                     <input type='text' size='5' name='amount' value='$amount' />
                      $strcanbecredit<br /><input type='submit' name='".ORDER_REFUND."' value='$authstrs->refund'>");
             }
             else {
@@ -371,8 +371,8 @@ function authorize_print_order_details($orderno)
             if (empty($confirm)) {
                 $strvoidyes = get_string('voidyes', 'enrol_authorize');
                 $table->data[] = array("<b>$strs->confirm:</b>",
-                    "$strvoidyes<br /><input type='hidden' name='".ORDER_VOID."' value='y'>
-                     <input type='hidden' name='confirm' value='1'>
+                    "$strvoidyes<br /><input type='hidden' name='".ORDER_VOID."' value='y' />
+                     <input type='hidden' name='confirm' value='1' />
                      <input type='submit' value='$authstrs->void'>
                      &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
             }
@@ -418,9 +418,9 @@ function authorize_print_order_details($orderno)
                     $cbunenrol = print_checkbox('unenrol', '1', !empty($unenrol), '', '', '', true);
                     $table->data[] = array("<b>$authstrs->unenrolstudent</b>", $cbunenrol);
                     $table->data[] = array("<b>$strs->confirm:</b>",
-                        "$strsubvoidyes<br /><input type='hidden' name='".ORDER_VOID."' value='y'>
-                         <input type='hidden' name='confirm' value='1'>
-                         <input type='hidden' name='suborder' value='$suborderno'>
+                        "$strsubvoidyes<br /><input type='hidden' name='".ORDER_VOID."' value='y' />
+                         <input type='hidden' name='confirm' value='1' />
+                         <input type='hidden' name='suborder' value='$suborderno' />
                          <input type='submit' value='$authstrs->void'>
                          &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
                 }
@@ -457,8 +457,8 @@ function authorize_print_order_details($orderno)
             $cbunenrol = print_checkbox('unenrol', '1', !empty($unenrol), '', '', '', true);
             $table->data[] = array("<b>$authstrs->unenrolstudent</b>", $cbunenrol);
             $table->data[] = array("<b>$strs->confirm:</b>",
-                "<input type='hidden' name='".ORDER_DELETE."' value='y'>
-                 <input type='hidden' name='confirm' value='1'>
+                "<input type='hidden' name='".ORDER_DELETE."' value='y' />
+                 <input type='hidden' name='confirm' value='1' />
                  <input type='submit' value='$authstrs->delete'>
                  &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
         }

@@ -45,7 +45,7 @@ function postWords() {
 		bodyDoc.write('<p>Spell check in progress...</p>');
 		bodyDoc.write('<form action="'+speller.spellCheckScript+'" method="post">');
 		for( var i = 0; i < speller.textInputs.length; i++ ) {
-			bodyDoc.write('<input type="hidden" name="textinputs[]" value="'+encodeForPost(speller.textInputs[i].value)+'">');
+			bodyDoc.write('<input type="hidden" name="textinputs[]" value="'+encodeForPost(speller.textInputs[i].value)+'" />');
 		}
 		bodyDoc.write('</form>');
 		bodyDoc.write('</body>');

@@ -124,7 +124,7 @@ print "</select><br /><br />";
 
 } else {
 
-  print "<input type=\"hidden\" name=\"seldrawmode\" value=\"0\">";
+  print "<input type=\"hidden\" name=\"seldrawmode\" value=\"0\" />";
 
 }
 
@@ -134,7 +134,7 @@ print "</select><br /><br />";
 <?php
 if($drawmode == "GD") {
 print '
-<input type="hidden" name="cssdot" value="reddot.gif">
+<input type="hidden" name="cssdot" value="reddot.gif" />
 
 <table><tr>
 
@@ -201,9 +201,9 @@ print "<option value=\"$filename\">$curdot";
 print "</select><br />";
 
 print '
-<input type="hidden" name="shape" value="Diamond">
-<input type="hidden" name="color" value="Red">
-<input type="hidden" name="size" value="3">
+<input type="hidden" name="shape" value="Diamond" />
+<input type="hidden" name="color" value="Red" />
+<input type="hidden" name="size" value="3" />
 ';
 
 }

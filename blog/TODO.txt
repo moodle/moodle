@@ -190,7 +190,7 @@ define('MAGPIE_CACHE_FRESH_ONLY', false); //should be exposed as an admin config
 //below is a section removed from edit.php.
 <?php
 if($CFG->blog_useweblog_rpc) {
-echo "<input type=checkbox name=weblogrpc value=\"1\">Send update notice to weblogs.com<br>(may cause longer load time)&nbsp;";
+echo "<input type=checkbox name=weblogrpc value=\"1\" />Send update notice to weblogs.com<br>(may cause longer load time)&nbsp;";
 }?>
 
 � DH - RSS - All rss/atom scripts should use a blogFilter with arguments passed in to be used in loading correct blogEntries. Either the news page or a new function in BlogFilter should build the cache filename. Create a new page that has full drop down menu options to select a specific feed type (filter news feeds by category, user, date to start with)

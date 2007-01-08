@@ -80,8 +80,8 @@
             print '<div align="center">';
             print get_string('requirepasswordmessage', 'quiz').'<br /><br />';
             print '<b>'.get_string('password').':</b> ';
-            print '<input name="hppassword" type="password" value=""> ';
-            print '<input type="submit" value="'.get_string("ok").'"> ';
+            print '<input name="hppassword" type="password" value="" /> ';
+            print '<input type="submit" value="'.get_string("ok").'" /> ';
             print "</div>\n";
             print_simple_box_end();
             print "</form>\n";

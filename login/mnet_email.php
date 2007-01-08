@@ -28,8 +28,8 @@ print_simple_box_start('center','50%','','20');
   <form method="post">
     <input type="hidden" name="sesskey" value="<?php echo $sesskey; ?>">
     <?php echo get_string('email') ?>:
-    <input type="text" name="email" size="" maxlength="100">
-    <input type="submit" value="Find Login">
+    <input type="text" name="email" size="" maxlength="100" />
+    <input type="submit" value="Find Login" />
   </form>
 <?php
 

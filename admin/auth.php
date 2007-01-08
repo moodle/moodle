@@ -173,14 +173,14 @@ foreach ($displayauths as $auth => $name) {
     if (in_array($auth, $authsenabled)) {
         $hideshow = "<a href=\"$url&amp;action=disable&amp;auth=$auth\">";
         $hideshow .= "<img src=\"{$CFG->pixpath}/i/hide.gif\" class=\"icon\" alt=\"disable\" /></a>";
-        // $hideshow = "<a href=\"$url&amp;action=disable&amp;auth=$auth\"><input type=\"checkbox\" checked></a>";
+        // $hideshow = "<a href=\"$url&amp;action=disable&amp;auth=$auth\"><input type=\"checkbox\" checked /></a>";
         $enabled = true;
         $displayname = "<span>$name</span>";
     }
     else {
         $hideshow = "<a href=\"$url&amp;action=enable&amp;auth=$auth\">";
         $hideshow .= "<img src=\"{$CFG->pixpath}/i/show.gif\" class=\"icon\" alt=\"enable\" /></a>";
-        // $hideshow = "<a href=\"$url&amp;action=enable&amp;auth=$auth\"><input type=\"checkbox\"></a>";
+        // $hideshow = "<a href=\"$url&amp;action=enable&amp;auth=$auth\"><input type=\"checkbox\" /></a>";
         $enabled = false;
         $displayname = "<span class=\"dimmed_text\">$name</span>";
     }
@@ -272,7 +272,7 @@ echo "</table>\n";
 ////////////////////////////////////////////////////////////////////////////////
 
 
-echo '<center><input type="submit" value="'.get_string('savechanges').'"></center>';
+echo '<center><input type="submit" value="'.get_string('savechanges').'" /></center>';
 echo '</form>';
 admin_externalpage_print_footer($adminroot);
 

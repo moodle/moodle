@@ -524,7 +524,7 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
         $value = $formdata[$name];
         print choose_from_menu($options, $name, $value, "", "", 0, true);
     };
-    print '<input type="submit" value="'.get_string('reportbutton', 'hotpot').'"></td></tr>';
+    print '<input type="submit" value="'.get_string('reportbutton', 'hotpot').'" /></td></tr>';
 
     $menus = array();
 

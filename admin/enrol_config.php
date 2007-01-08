@@ -59,7 +59,7 @@
 
     $enrolment->config_form($frm);
 
-    echo "<center><p><input type=\"submit\" value=\"".get_string("savechanges")."\"></p></center>\n";
+    echo "<center><p><input type=\"submit\" value=\"".get_string("savechanges")."\" /></p></center>\n";
     echo "</form>";
 
     print_simple_box_end();

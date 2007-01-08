@@ -144,7 +144,7 @@
                  <input type="hidden" name="mode" value="save" />
                  <input type="hidden" name="sesskey" value="'.sesskey().'" />';
 
-            echo get_string("entername", "lesson").": <input type=\"text\" name=\"name\" size=\"7\" maxlength=\"5\">\n<p>\n";
+            echo get_string("entername", "lesson").": <input type=\"text\" name=\"name\" size=\"7\" maxlength=\"5\" />\n<p>\n";
             lesson_print_submit_link(get_string("submitname", "lesson"), 'nickname');
             echo "</p>\n</form>\n</div>\n";
             print_simple_box_end();

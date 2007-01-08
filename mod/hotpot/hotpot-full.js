@@ -518,11 +518,11 @@ function QuizLogin(LoginPrompt) {
 		if (Login[0]) { // user name
 			var v = getCookie(self, 'UserName');
 			html += '<tr>'
-				+	'<th align="right" nowrap scope="row">' + MSG[0] + ' :</th>'
+				+	'<th align="right" nowrap="nowrap" scope="row">' + MSG[0] + ' :</th>'
 				+	'<td>'
 			;
 			if (typeof(Login[0])=='boolean') { // text box
-				html += '<input type=text name=UserName value="' + v + '">';
+				html += '<input type="text" name="UserName" value="' + v + '" />';
 			} else { // drop down menu of names
 				// pattern to match commas and white space
 				var comma = (window.RegExp) ? new RegExp('\\s*,\\s*') : ',';
@@ -530,7 +530,7 @@ function QuizLogin(LoginPrompt) {
 				if (typeof(Login[0])=='string') {
 					Login[0] = Login[0].split(comma);
 				}
-				html += '<select name=UserName size=1>'
+				html += '<select name="UserName" size="1">'
 					+ '<option value=""></option>'
 				;
 				for(var i=0; i<Login[0].length; i++) {
@@ -548,20 +548,20 @@ function QuizLogin(LoginPrompt) {
 		}
 		if (Login[1]) { // user ID
 			var v = getCookie(self, 'UserID');
-			html += '<tr><th align="right" nowrap scope="row">' + MSG[1] + ' :</th><td><input type=text name=UserID value="' + v + '"></td></tr>';
+			html += '<tr><th align="right" nowrap="nowrap" scope="row">' + MSG[1] + ' :</th><td><input type="text" name="UserID" value="' + v + '" /></td></tr>';
 		}
 		if (Login[2]) { // user email
 			var v = getCookie(self, 'UserEmail');
-			html += '<tr><th align="right" nowrap scope="row">' + MSG[2] +' :</th><td><input type=text name=UserEmail value="' + v + '"></td></tr>';
+			html += '<tr><th align="right" nowrap="nowrap" scope="row">' + MSG[2] +' :</th><td><input type="text" name="UserEmail" value="' + v + '" /></td></tr>';
 		}
 		if (Login[3]) { // quiz password
 			var v = getCookie(self, 'Password');
-			html += '<tr><th align="right" nowrap scope="row">' + MSG[3] + ' :</th><td><input type=password name=Password value="' + v + '"></td></tr>';
+			html += '<tr><th align="right" nowrap="nowrap" scope="row">' + MSG[3] + ' :</th><td><input type="password" name="Password" value="' + v + '" /></td></tr>';
 		}
 		if (Login[4]) { // cookie lifespan
 			var v = getCookie(self, 'CookieExpiry');
 			html += '<tr>'
-				+ 	'<th align="right" nowrap scope="row">' + MSG[4] + ' :</th>'
+				+ 	'<th align="right" nowrap="nowrap" scope="row">' + MSG[4] + ' :</th>'
 				+ 	'<td>'
 				+		'<select name="CookieExpiry" size=1>'
 				+ 			makeOption('session', v, MSG[7])
@@ -576,8 +576,8 @@ function QuizLogin(LoginPrompt) {
 		html += 	'<tr>'
 			+		'<th scope="row">&nbsp;</th>'
 			+		'<td nowrap>'
-			+			'<input type=submit value="' + MSG[5] + '"> '
-			+ 			'<input type=button value="' + MSG[6] + '" onClick="opener.goBack();self.close();">'
+			+			'<input type="submit" value="' + MSG[5] + '" /> '
+			+ 			'<input type="button" value="' + MSG[6] + '" onClick="opener.goBack();self.close();" />'
 			+		'</td>'
 			+	'</tr>'
 			+ '</table></form></body></html>'
@@ -856,7 +856,7 @@ function AddStudentDetailsToResultForm() {
 		sDetails += hpHiddenField('email', window.UserEmail);
 	}
 	if (sDetails && window.RegExp) {
-		// insert sDetails before '<input...Score...></input>'
+		// insert sDetails before '<input...Score... /></input>'
 		var r = new RegExp('<input[^>]*Score[^>]*><\\/input>', 'i');
 		var m = r.exec(ResultForm);
 		if (m) {
@@ -1928,7 +1928,7 @@ function hpHiddenField(name, value, comma, forceHTML) {
 		}
 		field = '<field><fieldname>' + name + '</fieldname><fielddata>' + value + '</fielddata></field>';
 	} else {
-		field = '<input type=hidden name="' + name + '" value="' + value + '">';
+		field = '<input type=hidden name="' + name + '" value="' + value + '" />';
 	}
 	return field;
 }
@@ -2121,7 +2121,7 @@ function hpFeedback() {
 			html += '</td></tr>'
 				+	'<tr><th valign="top" align="right" scope="row">' + FEEDBACK[9] + ':</th>'
 				+	'<td><TEXTAREA name="message" rows="10" cols="40"></TEXTAREA></td></tr>'
-				+	'<tr><td>&nbsp;</td><td><input type="submit" value="' + FEEDBACK[6] + '">'
+				+	'<tr><td>&nbsp;</td><td><input type="submit" value="' + FEEDBACK[6] + '" />'
 				+ 	hpHiddenField('realname', FEEDBACK[2], ',', true)
 				+ 	hpHiddenField('email', FEEDBACK[3], ',', true)
 				+ 	hpHiddenField('subject', document.title, ',', true)
@@ -2135,7 +2135,7 @@ function hpFeedback() {
 				var i_max = FEEDBACK[1].length;
 				if (i_max>1) { // several teachers
 					html += '<html><body>'
-						+ '<form action="' + FEEDBACK[0] + '" method="POST" onsubmit="this.action+=this.recipient.options[this.recipient.selectedIndex].value">'
+						+ '<form action="' + FEEDBACK[0] + '" method="post" onsubmit="this.action+=this.recipient.options[this.recipient.selectedIndex].value">'
 						+ '<table border="0">'
 						+ '<tr><th valign="top" align="right" scope="row">' + FEEDBACK[7] + ':</th><td>' + document.title + '</td></tr>'
 						+ '<tr><th valign="top" align="right" scope="row">' + FEEDBACK[8] + ': </th><td>'
@@ -2146,7 +2146,7 @@ function hpFeedback() {
 					}
 					html += '</select>';
 					html += '</td></tr>'
-						+	'<tr><td>&nbsp;</td><td><input type="submit" value="' + FEEDBACK[6] + '">'
+						+	'<tr><td>&nbsp;</td><td><input type="submit" value="' + FEEDBACK[6] + '" />'
 						+	'</td></tr></table></form></body></html>'
 					;
 				} else if (i_max==1) { // one teacher

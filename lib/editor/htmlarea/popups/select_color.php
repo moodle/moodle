@@ -70,7 +70,7 @@ function ValidateColor(string) {                // return valid color code
  <tr>
   <td style="background:buttonface" valign=center><div style="background-color: #000000; padding: 1; height: 21px; width: 50px"><div id="ColorPreview" style="height: 100%; width: 100%"></div></div></td>
   <td style="background:buttonface" valign=center><input type="text" name="ColorHex"
-    id="ColorHex" value="" size=15 style="font-size: 12px"></td>
+    id="ColorHex" value="" size=15 style="font-size: 12px" /></td>
   <td style="background:buttonface" width=100%></td>
  </tr>
 </table>

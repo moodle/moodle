@@ -33,10 +33,10 @@
 /// Print submit form
     $maxuploadsize = get_max_upload_file_size();
     echo '<center><form method="post" enctype="multipart/form-data" action="uploadcsv.php">
-          <input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'">
+          <input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'" />
           <input type="hidden" name="sesskey" value="'.$USER->sesskey.'">';
           upload_print_form_fragment(1, array('csvfile'), array(get_string('file')));
-    echo '<input type="submit" value="'.get_string('upload').'">';
+    echo '<input type="submit" value="'.get_string('upload').'" />';
     echo '</form></center><br />';
 
 /// Print footer

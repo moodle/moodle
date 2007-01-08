@@ -5,23 +5,23 @@
 <form method="post" action="module.php" id="form">
 <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>">
 
-<table cellpadding=9 cellspacing=0 >
-<tr valign=top>
-    <td colspan = 3 align=center><strong><?php print_string("glossaryleveldefaultsettings","glossary") ?></strong></td>
+<table cellpadding="9" cellspacing="0" >
+<tr valign="top">
+    <td colspan="3" align="center"><strong><?php print_string("glossaryleveldefaultsettings","glossary") ?></strong></td>
 </tr>
-<tr valign=top>
-    <td align=right>glossary_entbypage:</td>
+<tr valign="top">
+    <td align="right">glossary_entbypage:</td>
     <td>
-    <input name=glossary_entbypage type=text size=3 value="<?php p(isset($CFG->glossary_entbypage) ? $CFG->glossary_entbypage : 10) ?>" />
+    <input name="glossary_entbypage" type="text" size="3" value="<?php p(isset($CFG->glossary_entbypage) ? $CFG->glossary_entbypage : 10) ?>" />
     </td>
     <td>
     <?php print_string("entbypage", "glossary") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right>glossary_dupentries:</td>
+<tr valign="top">
+    <td align="right">glossary_dupentries:</td>
     <td>
-    <select size=1 name=glossary_dupentries>
+    <select size="1" name="glossary_dupentries">
 <?php 
     $yselected = "";
     $nselected = "";
@@ -31,18 +31,18 @@
         $nselected = " selected=\"selected\" ";
     }
 ?>
-    <option value=1 <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value=0 <?php p($nselected) ?>><?php p($no)?></option>
+    <option value="1" <?php p($yselected) ?>><?php p($yes)?></option>
+    <option value="0" <?php p($nselected) ?>><?php p($no)?></option>
     </select>
     </td>
     <td>
     <?php print_string("cnfallowdupentries", "glossary") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right>glossary_allowcomments:</td>
+<tr valign="top">
+    <td align="right">glossary_allowcomments:</td>
     <td>
-    <select size=1 name=glossary_allowcomments>
+    <select size="1" name="glossary_allowcomments">
 <?php 
     $yselected = "";
     $nselected = "";
@@ -52,18 +52,18 @@
         $nselected = " selected=\"selected\" ";
     }
 ?>
-    <option value=1 <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value=0 <?php p($nselected) ?>><?php p($no)?></option>
+    <option value="1" <?php p($yselected) ?>><?php p($yes)?></option>
+    <option value="0" <?php p($nselected) ?>><?php p($no)?></option>
     </select>
     </td>
     <td>
     <?php print_string("cnfallowcomments", "glossary") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right>glossary_linkbydefault:</td>
+<tr valign="top">
+    <td align="right">glossary_linkbydefault:</td>
     <td>
-    <select size=1 name=glossary_linkbydefault>
+    <select size="1" name="glossary_linkbydefault">
 <?php 
     $yselected = "";
     $nselected = "";
@@ -73,18 +73,18 @@
         $nselected = " selected=\"selected\" ";
     }
 ?>
-    <option value=1 <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value=0 <?php p($nselected) ?>><?php p($no)?></option>
+    <option value="1" <?php p($yselected) ?>><?php p($yes)?></option>
+    <option value="0" <?php p($nselected) ?>><?php p($no)?></option>
     </select>
     </td>
     <td>
     <?php print_string("cnflinkglossaries", "glossary") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right>glossary_defaultapproval:</td>
+<tr valign="top">
+    <td align="right">glossary_defaultapproval:</td>
     <td>
-    <select size=1 name=glossary_defaultapproval>
+    <select size="1" name="glossary_defaultapproval">
 <?php 
     $yselected = "";
     $nselected = "";
@@ -94,16 +94,16 @@
         $nselected = " selected=\"selected\" ";
     }
 ?>
-    <option value=1 <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value=0 <?php p($nselected) ?>><?php p($no)?></option>
+    <option value="1" <?php p($yselected) ?>><?php p($yes)?></option>
+    <option value="0" <?php p($nselected) ?>><?php p($no)?></option>
     </select>
     </td>
     <td>
     <?php print_string("cnfapprovalstatus", "glossary") ?>
     </td>
 </tr>
-<tr valign=top>
-        <td align=right>glossary_enablerssfeeds:</td>
+<tr valign="top">
+        <td align="right">glossary_enablerssfeeds:</td>
         <td>
     <?php
         if (!isset($CFG->enablerssfeeds) || $CFG->enablerssfeeds == 0) {
@@ -131,13 +131,13 @@
     ?>
     </td>
 </tr>
-<tr valign=top>
-    <td colspan = 3 align=center><strong><?php print_string("entryleveldefaultsettings","glossary") ?></strong></td>
+<tr valign="top">
+    <td colspan ="3" align="center"><strong><?php print_string("entryleveldefaultsettings","glossary") ?></strong></td>
 </tr>
-<tr valign=top>
-    <td align=right>glossary_linkentries:</td>
+<tr valign="top">
+    <td align="right">glossary_linkentries:</td>
     <td>
-    <select size=1 name=glossary_linkentries>
+    <select size="1" name="glossary_linkentries">
 <?php 
     $yselected = "";
     $nselected = "";
@@ -147,18 +147,18 @@
         $nselected = " selected=\"selected\" ";
     }
 ?>
-    <option value=1 <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value=0 <?php p($nselected) ?>><?php p($no)?></option>
+    <option value="1" <?php p($yselected) ?>><?php p($yes)?></option>
+    <option value="0" <?php p($nselected) ?>><?php p($no)?></option>
     </select>
     </td>
     <td>
     <?php print_string("cnflinkentry", "glossary") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right>glossary_casesensitive:</td>
+<tr valign="top">
+    <td align="right">glossary_casesensitive:</td>
     <td>
-    <select size=1 name=glossary_casesensitive>
+    <select size="1" name="glossary_casesensitive">
 <?php 
     $yselected = "";
     $nselected = "";
@@ -168,18 +168,18 @@
         $nselected = " selected=\"selected\" ";
     }
 ?>
-    <option value=1 <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value=0 <?php p($nselected) ?>><?php p($no)?></option>
+    <option value="1" <?php p($yselected) ?>><?php p($yes)?></option>
+    <option value="0" <?php p($nselected) ?>><?php p($no)?></option>
     </select>
     </td>
     <td>
     <?php print_string("cnfcasesensitive", "glossary") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right>glossary_fullmatch:</td>
+<tr valign="top">
+    <td align="right">glossary_fullmatch:</td>
     <td>
-    <select size=1 name=glossary_fullmatch>
+    <select size="1" name="glossary_fullmatch">
 <?php 
     $yselected = "";
     $nselected = "";
@@ -189,19 +189,19 @@
         $nselected = " selected=\"selected\" ";
     }
 ?>
-    <option value=1 <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value=0 <?php p($nselected) ?>><?php p($no)?></option>
+    <option value="1" <?php p($yselected) ?>><?php p($yes)?></option>
+    <option value="0" <?php p($nselected) ?>><?php p($no)?></option>
     </select>
     </td>
     <td>
     <?php print_string("cnffullmatch", "glossary") ?>
     </td>
 </tr>
-<tr valign=top>
-    <td colspan = 3 align=center><a name=formats><strong><?php print_string("displayformatssetup","glossary") ?></strong></td>
+<tr valign="top">
+    <td colspan ="3" align="center"><a name="formats"><strong><?php print_string("displayformatssetup","glossary") ?></strong></td>
 </tr>
 <tr>
-    <td colspan=3 align=center>
+    <td colspan="3" align="center">
 <?php
 
     //Update and get available formats
@@ -240,7 +240,7 @@
     </td>
 </tr>
 <tr>
-    <td colspan=3 align=center>
+    <td colspan="3" align="center">
         <input type="submit" value="<?php print_string("savechanges") ?>" /></td>
 </tr>
 </table>

@@ -74,8 +74,8 @@
           <form action="texed.php" method="get"
            target="inlineframe">
              <input type="text" name="formdata" size="50"
-                    value="\Large f(x)=\Bigint_{-\infty}^x~e^{-t^2}dt">
-             <input type="submit">
+                    value="\Large f(x)=\Bigint_{-\infty}^x~e^{-t^2}dt" />
+             <input type="submit" />
           </form> <br /> <br />
           <iframe name="inlineframe" align="middle" width="80%" height="100">
           &lt;p&gt;Something is wrong...&lt;/p&gt; 

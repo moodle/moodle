@@ -468,7 +468,7 @@
                     echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />\n";
                     echo " <input type=\"hidden\" name=\"action\" value=\"zip\" />\n";
                     echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />\n";
-                    echo " <INPUT TYPE=text name=name SIZE=35 value=\"new.zip\" />\n";
+                    echo " <INPUT type=\"text\" name=\"name\" size=\"35\" value=\"new.zip\" />\n";
                     echo " <input type=\"submit\" value=\"".get_string("createziparchive")."\" />";
                     echo "</form>\n";
                     echo "</td>\n<td>\n";

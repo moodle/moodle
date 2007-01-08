@@ -904,7 +904,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
                         $a++;
                     }
 
-                    $gap .= '<input type="text" id="Gap'.$q.'" onfocus="TrackFocus('.$q.')" onblur="LeaveGap()" class="GapBox" size="'.$gapsize.'"></input>';
+                    $gap .= '<input type="text" id="Gap'.$q.'" onfocus="TrackFocus('.$q.')" onblur="LeaveGap()" class="GapBox" size="'.$gapsize.'" /></input>';
                 }
                 if ($includeclues) {
                     $clue = $this->parent->xml_value($question_record, $question."['clue'][0]['#']");
@@ -1255,7 +1255,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
                     $question_type==HOTPOT_JQUIZ_HYBRID
                 ) {
                     $str .= '<div class="ShortAnswer" id="Q_'.$q.'_SA"><form method="post" action="" onsubmit="return false;"><div>';
-                    $str .= '<input type="text" id="Q_'.$q.'_Guess" onfocus="TrackFocus('."'".'Q_'.$q.'_Guess'."'".')" onblur="LeaveGap()" class="ShortAnswerBox" size="9"></input><br /><br />';
+                    $str .= '<input type="text" id="Q_'.$q.'_Guess" onfocus="TrackFocus('."'".'Q_'.$q.'_Guess'."'".')" onblur="LeaveGap()" class="ShortAnswerBox" size="9" /></input><br /><br />';
 
                     $caption = $this->v6_expand_CheckCaption();
                     $str .= $this->v6_expand_jquiz_button($caption, "CheckShortAnswer($q)");

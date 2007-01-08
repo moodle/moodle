@@ -26,7 +26,7 @@ class block_search_forums extends block_base {
 
         $advancedsearch = get_string('advancedsearch', 'block_search_forums');
 
-        //Accessibility: replaced <input value=">" type="submit"> with configurable text/'silent' character.
+        //Accessibility: replaced <input value=" />" type="submit"> with configurable text/'silent' character.
         check_theme_arrows();
         // Theme config, $CFG->block_search_button = $THEME->rarrow .'<span class="accesshide">'.get_string('search').'</span>';
         $button = (isset($CFG->block_search_button)) ? $CFG->block_search_button : get_string('go');

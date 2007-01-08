@@ -348,10 +348,10 @@ class quiz_report extends quiz_default_report {
         // Display the form with one part for each selected attempt
 
         echo '<form method="post" action="report.php">'.
-            '<input type="hidden" name="mode" value="grading">'.
+            '<input type="hidden" name="mode" value="grading" />'.
             '<input type="hidden" name="q" value="'.$quiz->id.'">'.
-            '<input type="hidden" name="sesskey" value="'.sesskey().'">'.
-            '<input type="hidden" name="action" value="viewquestion">'.
+            '<input type="hidden" name="sesskey" value="'.sesskey().'" />'.
+            '<input type="hidden" name="action" value="viewquestion" />'.
             '<input type="hidden" name="questionid" value="'.$question->id.'">';
 
         foreach ($attempts as $attempt) {
@@ -384,7 +384,7 @@ class quiz_report extends quiz_default_report {
 
             echo '</div>';
         }
-        echo '<div align="center"><input type="submit" value="'.get_string('savechanges').'"></div>'.
+        echo '<div align="center"><input type="submit" value="'.get_string('savechanges').'" /></div>'.
             '</form>';
 
         if ($usehtmleditor) {

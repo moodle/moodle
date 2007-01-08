@@ -181,7 +181,7 @@ echo get_string('username') . ":\n";
 if (!empty($formerror['username'])) {
     echo '<span class="error"> * </span>';
 }
-echo '<input type="text" name="username" size="20" maxlength="100">';
+echo '<input type="text" name="username" size="20" maxlength="100" />';
 
 // choose a remote host
 echo " " . get_string('remotehost', 'mnet') . ":\n";
@@ -200,7 +200,7 @@ $accessmenu['deny'] = get_string('deny', 'mnet');
 choose_from_menu($accessmenu, 'access');
 
 // submit button
-echo '<input type="submit" value="' . get_string('addtoacl', 'mnet') . '">';
+echo '<input type="submit" value="' . get_string('addtoacl', 'mnet') . '" />';
 echo "</form></div>\n";
 
 // print errors

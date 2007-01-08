@@ -115,14 +115,14 @@ class hotpot_report extends hotpot_default_report {
 			$strdeletecheck = get_string('deleteattemptcheck','quiz');
 			$table->start = $this->deleteform_javascript();
 			$table->start .= '<form method="post" action="report.php" id="deleteform" onsubmit="'."return deletecheck('".$strdeletecheck."', 'selection')".'">'."\n";
-			$table->start .= '<input type="hidden" name="del" value="selection">'."\n";
+			$table->start .= '<input type="hidden" name="del" value="selection" />'."\n";
 			$table->start .= '<input type="hidden" name="id" value="'.$cm->id.'">'."\n";
 			$table->finish = '<center>'."\n";
-			$table->finish .= '<input type="submit" value="'.get_string("deleteselected").'">&nbsp;'."\n";
+			$table->finish .= '<input type="submit" value="'.get_string("deleteselected").'" />&nbsp;'."\n";
 			if ($abandoned) {
-				$table->finish .= '<input type=button value="'.get_string('deleteabandoned', 'hotpot').'" onClick="if(deletecheck('."'".addslashes(get_string('deleteabandonedcheck', 'hotpot', $abandoned))."', 'abandoned', true".')) getElementById(\'deleteform\').submit();">'."\n";
+				$table->finish .= '<input type=button value="'.get_string('deleteabandoned', 'hotpot').'" onClick="if(deletecheck('."'".addslashes(get_string('deleteabandonedcheck', 'hotpot', $abandoned))."', 'abandoned', true".')) getElementById(\'deleteform\').submit();" />'."\n";
 			}
-			$table->finish .= '<input type=button value="'.get_string("deleteall").'" onClick="if(deletecheck('."'".addslashes($strdeletecheck)."', 'all', true".'))getElementById(\'deleteform\').submit();">'."\n";
+			$table->finish .= '<input type=button value="'.get_string("deleteall").'" onClick="if(deletecheck('."'".addslashes($strdeletecheck)."', 'all', true".'))getElementById(\'deleteform\').submit();" />'."\n";
 			$table->finish .= '</center>'."\n";
 			$table->finish .= '</form>'."\n";
 		}

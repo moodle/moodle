@@ -278,7 +278,7 @@
               <input type=\"hidden\" name=\"qtype\" value=\"$question->qtype\"/>
               <input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\"/>
               <input type=\"hidden\" name=\"wizardpage\" value=\"datasetitems\"/>
-              <input type=\"submit\" name=\"backtoquiz\" value=\"$strbacktoquiz\">
+              <input type=\"submit\" name=\"backtoquiz\" value=\"$strbacktoquiz\" />
               </form></center>\n";
     } else {
           notify( $strdataitemneed );

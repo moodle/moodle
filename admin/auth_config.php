@@ -64,7 +64,7 @@ admin_externalpage_print_header($adminroot);
 // choose an authentication method
 echo "<form $CFG->frametarget id=\"authmenu\" method=\"post\" action=\"auth_config.php\">\n";
 echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\">\n";
-echo "<input type=\"hidden\" name=\"auth\" value=\"".$auth."\">\n";
+echo "<input type=\"hidden\" name=\"auth\" value=\"".$auth."\" />\n";
 
 // auth plugin description
 print_simple_box_start('center', '80%');
@@ -75,7 +75,7 @@ print_simple_box_end();
 echo "<hr />\n";
 $authplugin->config_form($frm, $err);
 print_simple_box_end();
-echo '<center><p><input type="submit" value="' . get_string("savechanges") . "\"></p></center>\n";
+echo '<center><p><input type="submit" value="' . get_string("savechanges") . "\" /></p></center>\n";
 echo "</form>\n";
 
 admin_externalpage_print_footer($adminroot);

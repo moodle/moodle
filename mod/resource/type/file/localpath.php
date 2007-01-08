@@ -42,8 +42,8 @@
     <div align="center" class="form">
     <form id="myform" action="localpath.php" method="post">
     <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>">
-    <input type="hidden" name="pathname" value="">
-    <input type="file" size="60" name="myfile"><br />
+    <input type="hidden" name="pathname" value="" />
+    <input type="file" size="60" name="myfile" /><br />
     <input type="button" value="<?php print_string('localfileselect','resource') ?>" 
            onClick="return set_value(getElementById('myform').myfile.value)">
     <input type="button" value="<?php print_string('cancel') ?>" 

@@ -332,21 +332,21 @@ function slasharguments($texexp, $md5) {
            target="inlineframe">
             <center>
              <input type="text" name="algebra" size="50"
-                    value="sin(z)/(x^2+y^2)">
+                    value="sin(z)/(x^2+y^2)" />
             </center>
            <ol>
-           <li>First click on this button <input type="submit" name="ShowDB" value="Show DB Entry">
+           <li>First click on this button <input type="submit" name="ShowDB" value="Show DB Entry" />
                to see the cache_filters database entry for this expression.</li>
            <li>If the database entry looks corrupt, click on this button to delete it:
-               <input type="submit" name="DeleteDB" value="Delete DB Entry"></li>
-           <li>Now click on this button <input type="submit" name="TeXStage1" value="First Stage Tex Translation">.
+               <input type="submit" name="DeleteDB" value="Delete DB Entry" /></li>
+           <li>Now click on this button <input type="submit" name="TeXStage1" value="First Stage Tex Translation" />.
                A preliminary translation into TeX will appear in the box below.</li>
-           <li>Next click on this button <input type="submit" name="TeXStage2" value="Second Stage Tex Translation">.
+           <li>Next click on this button <input type="submit" name="TeXStage2" value="Second Stage Tex Translation" />.
                A more refined translation into TeX will appear in the box below.</li>
-           <li>Then click on this button <input type="submit" name="ShowImage" value="Show Image">
+           <li>Then click on this button <input type="submit" name="ShowImage" value="Show Image" />
                to show a graphic image of the algebraic expression.</li>
            <li>Finally check your slash arguments setting
-               <input type="submit" name="SlashArguments" value="Check Slash Arguments"></li>
+               <input type="submit" name="SlashArguments" value="Check Slash Arguments" /></li>
            </ol>
           </form> <br /> <br />
        <center>

@@ -62,8 +62,8 @@
    
     echo "<input type=\"hidden\" name=\"url\" value=\"$CFG->wwwroot\">\n";
     echo "<input type=\"hidden\" name=\"secret\" value=\"$CFG->siteidentifier\">\n";
-    echo "<input type=\"hidden\" name=\"host\" value=\"".$_SERVER["HTTP_HOST"]."\">\n";
-    echo "<input type=\"hidden\" name=\"lang\" value=\"".current_language()."\">\n";
+    echo "<input type=\"hidden\" name=\"host\" value=\"".$_SERVER["HTTP_HOST"]."\" />\n";
+    echo "<input type=\"hidden\" name=\"lang\" value=\"".current_language()."\" />\n";
     echo "</td></tr>\n";
 
     echo "<tr valign=\"top\">\n";
@@ -114,18 +114,18 @@
 
     $count = count_records('course')-1;
     echo get_string("courses").": ".$count;
-    echo "<input type=\"hidden\" name=\"courses\" value=\"$count\">\n";
+    echo "<input type=\"hidden\" name=\"courses\" value=\"$count\" />\n";
     echo '<br />';
 
     $count = count_records('user', 'deleted', 0);
     echo get_string("users").": ".$count;
-    echo "<input type=\"hidden\" name=\"users\" value=\"$count\">\n";
+    echo "<input type=\"hidden\" name=\"users\" value=\"$count\" />\n";
     echo '<br />';
 
     // total number of role assignments
     $count = count_records('role_assignments'); 
     echo get_string('roleassignments', 'role').": ".$count;
-    echo "<input type=\"hidden\" name=\"roleassignments\" value=\"$count\">\n";
+    echo "<input type=\"hidden\" name=\"roleassignments\" value=\"$count\" />\n";
     echo '<br />';
 
     // first find all distinct roles with mod/course:update
@@ -140,22 +140,22 @@
     
     $count = count_records_sql($sql);
     echo get_string("teachers").": ".$count;
-    echo "<input type=\"hidden\" name=\"courseupdaters\" value=\"$count\">\n";
+    echo "<input type=\"hidden\" name=\"courseupdaters\" value=\"$count\" />\n";
     echo '<br />';
 
     $count = count_records('forum_posts');
     echo get_string("posts", 'forum').": ".$count;
-    echo "<input type=\"hidden\" name=\"posts\" value=\"$count\">\n";
+    echo "<input type=\"hidden\" name=\"posts\" value=\"$count\" />\n";
     echo '<br />';
 
     $count = count_records('question');
     echo get_string("questions", 'quiz').": ".$count;
-    echo "<input type=\"hidden\" name=\"questions\" value=\"$count\">\n";
+    echo "<input type=\"hidden\" name=\"questions\" value=\"$count\" />\n";
     echo '<br />';
 
     $count = count_records('resource');
     echo get_string("modulenameplural", "resource").": ".$count;
-    echo "<input type=\"hidden\" name=\"resources\" value=\"$count\">\n";
+    echo "<input type=\"hidden\" name=\"resources\" value=\"$count\" />\n";
     echo '<br />';
 
     echo "</td>\n";
@@ -167,7 +167,7 @@
 
     echo "<tr valign=\"top\">\n";
     echo "<td align=\"right\">".get_string("administrator").":</td>\n";
-    echo "<td><input size=\"50\" type=\"text\" name=\"adminname\" value=\"".fullname($admin, true)."\"></td>\n";
+    echo "<td><input size=\"50\" type=\"text\" name=\"adminname\" value=\"".fullname($admin, true)."\" /></td>\n";
     echo "</tr>\n";
 
     echo "<tr valign=\"top\">\n";
@@ -187,7 +187,7 @@
 
     echo "<tr valign=\"top\">\n";
     echo "<td align=\"right\">&nbsp;</td>\n";
-    echo "<td><input type=\"submit\" value=\"".get_string("registrationsend")."\"></td>\n";
+    echo "<td><input type=\"submit\" value=\"".get_string("registrationsend")."\" /></td>\n";
     echo "</tr>\n";
 
 

@@ -125,7 +125,7 @@ print '
 <br /><br />
 <form method="GET" action="'.$PHP_SELF.'#map">
 <table width="100%"><tr><td nowrap align="left">
-'.t("IP/Hostname:").' <input value="'.$values["address"].'" type="text" size="30" name="address"><input type="Submit" value="'.t("Submit").'"></td><td align="right" width="100%">
+'.t("IP/Hostname:").' <input value="'.$values["address"].'" type="text" size="30" name="address" /><input type="Submit" value="'.t("Submit").'" /></td><td align="right" width="100%">
 [ <a href="ip-atlas_prefs.php?lastquery='?><?php  if(isset($HTTP_GET_VARS["address"])) { echo $HTTP_GET_VARS["address"]; } ?><?php  echo '">'.t("preferences").'</a> ]
 [ <a href="'."$PHP_SELF".'">'.t("locate me").'</a> ]
 </td></tr></table>

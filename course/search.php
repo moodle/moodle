@@ -155,9 +155,9 @@
 
             echo "<form id=\"movecourses\" action=\"search.php\" method=\"post\">";
             echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
-            echo "<input type=\"hidden\" name=\"search\" value=\"".s($search, true)."\">";
-            echo "<input type=\"hidden\" name=\"page\" value=\"$page\">";
-            echo "<input type=\"hidden\" name=\"perpage\" value=\"$perpage\">";
+            echo "<input type=\"hidden\" name=\"search\" value=\"".s($search, true)."\" />";
+            echo "<input type=\"hidden\" name=\"page\" value=\"$page\" />";
+            echo "<input type=\"hidden\" name=\"perpage\" value=\"$perpage\" />";
             echo "<table align=\"center\" border=0 cellspacing=2 cellpadding=4 class=\"generalbox\"><tr>";
             echo "<th scope=\"col\">$strcourses</th>";
             echo "<th scope=\"col\">$strcategory</th>";

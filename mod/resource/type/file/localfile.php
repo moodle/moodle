@@ -37,7 +37,7 @@
     <br />
     <div align="center" class="form">
     <form id="myform">
-    <input type="file" size="60" name="myfile"><br />
+    <input type="file" size="60" name="myfile" /><br />
     <input type="button" value="<?php print_string('localfileselect','resource') ?>" 
            onClick="return set_value(getElementById('myform').myfile.value)">
     <input type="button" value="<?php print_string('cancel') ?>" 

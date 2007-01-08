@@ -71,7 +71,7 @@ $text_source_options = array(
                     "return hotpot_lockoptions('form', 'namesource', namelockitems, nameoffvalues)"
                 );
             } else {
-                print '<input type="hidden" name="namesource" value="'.HOTPOT_TEXTSOURCE_SPECIFIC.'">';
+                print '<input type="hidden" name="namesource" value="'.HOTPOT_TEXTSOURCE_SPECIFIC.'" />';
             }
             print '<input type="text" name="name" size=40 value="'.$form->name.'">';
         ?></td>
@@ -102,7 +102,7 @@ $text_source_options = array(
                 choose_from_menu($text_source_options, "summarysource", "$form->summarysource", "");
                 print '<br />';
             } else {
-                print '<input type="hidden" name="summarysource" value="'.HOTPOT_TEXTSOURCE_SPECIFIC.'">';
+                print '<input type="hidden" name="summarysource" value="'.HOTPOT_TEXTSOURCE_SPECIFIC.'" />';
             }
             if (function_exists("print_textarea") && isset($usehtmleditor)) {
                 print_textarea($usehtmleditor, 10, 65, 680, 400, "summary", $form->summary);
@@ -342,7 +342,7 @@ $text_source_options = array(
                     );
                     choose_from_menu($options, "displaynext", "$form->displaynext", "");
                 } else {
-                    print '<input type="hidden" name="displaynext" value="'.HOTPOT_NO.'">'."\n";
+                    print '<input type="hidden" name="displaynext" value="'.HOTPOT_NO.'" />'."\n";
                 }
             ?>
 </table>
