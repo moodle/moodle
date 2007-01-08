@@ -386,7 +386,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && create_table($table);
 
         if (empty($USER->mnet_host_id)) {
-            $USER->mnet_host_id = 1;    // Something for the current user to prevent warnings
+            $USER->mnet_host_id = $CFG->mnet_localhost_id;    // Something for the current user to prevent warnings
         }
 
         /**
