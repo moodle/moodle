@@ -1968,6 +1968,16 @@ body#user-index .rolesform {
  *** Modules: Assignment
  ***/
 
+.userpicture,
+.picture user,
+.picture teacher {
+  width:35;
+  vertical-align:top;
+}
+.modform {
+  text-align:center;  
+}
+
 /***
  *** Modules: Chat
  ***/

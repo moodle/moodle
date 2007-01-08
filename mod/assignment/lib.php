@@ -875,7 +875,7 @@ class assignment_base {
         ///Start of teacher info row
 
         echo '<tr>';
-        echo '<td width="35" valign="top" class="picture teacher">';
+        echo '<td class="picture teacher">';
         if ($submission->teacher) {
             $teacher = get_record('user', 'id', $submission->teacher);
         } else {
@@ -887,7 +887,7 @@ class assignment_base {
         echo '<td class="content">';
         echo '<form id="submitform" action="submissions.php" method="post">';
         echo '<fieldset class="invisiblefieldset">';
-        echo '<input type="hidden" name="offset" value="'.++$offset.'">';
+        echo '<input type="hidden" name="offset" value="'.++$offset.'" />';
         echo '<input type="hidden" name="userid" value="'.$userid.'" />';
         echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
         echo '<input type="hidden" name="mode" value="grade" />';
@@ -921,7 +921,7 @@ class assignment_base {
         }
 
         ///Print Buttons in Single View
-        echo '<div class="buttons" align="center">';
+        echo '<div class="buttons">';
         echo '<input type="submit" name="submit" value="'.get_string('savechanges').'" onclick = "getElementById(\'submitform\').menuindex.value = getElementById(\'submitform\').grade.selectedIndex" />';
         echo '<input type="submit" name="cancel" value="'.get_string('cancel').'" />';
         //if there are more to be graded.
@@ -942,7 +942,7 @@ class assignment_base {
         
         ///End of teacher info row, Start of student info row
         echo '<tr>';
-        echo '<td width="35" valign="top" class="picture user">';
+        echo '<td class="picture user">';
         print_user_picture($user->id, $this->course->id, $user->picture);
         echo '</td>';
         echo '<td class="topic">';
@@ -2102,7 +2102,7 @@ function assignment_print_recent_mod_activity($activity, $course, $detail=false)
 
     echo '<table border="0" cellpadding="3" cellspacing="0">';
 
-    echo "<tr><td class=\"userpicture\" width=\"35\" valign=\"top\">";
+    echo "<tr><td class=\"userpicture\" valign=\"top\">";
     print_user_picture($activity->user->userid, $course, $activity->user->picture);
     echo "</td><td width=\"100%\"><font size=2>";
 

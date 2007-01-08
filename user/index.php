@@ -460,7 +460,8 @@
             ';
         echo '<form action="action_redir.php" method="post" id="participantsform" onsubmit="return checksubmit(this);">';
         echo '<div>';
-        echo '<input type="hidden" name="returnto" value="'.$_SERVER['REQUEST_URI'].'" />';
+        // added url encode for xhtml strict MDL-7861
+        echo '<input type="hidden" name="returnto" value="'.urlencode($_SERVER['REQUEST_URI']).'" />';
         echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     }
 
