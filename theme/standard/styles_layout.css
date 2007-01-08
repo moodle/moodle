@@ -292,6 +292,22 @@ form.popupform {
   vertical-align: top;
 }
 
+img.icon {      
+  vertical-align: middle;   
+  margin-right: 4px;    
+  width:16px;   
+  height:16px;      
+  border:0px;   
+}   
+    
+img.iconsmall {     
+  vertical-align: middle;   
+  margin-right: 1px;    
+  width:11px;   
+  height:11px;      
+  border:0px;   
+}
+
 /*Accessibility: text 'seen' by screen readers but not visual users. Fixed for RTL languages, example Farsi. */
 .accesshide {
   position:absolute;
@@ -2417,6 +2433,9 @@ body#mod-quiz-report table#attempts .picture {
 }
 body#mod-quiz-report .controls {
   text-align: center;
+}
+body#question-preview .quemodname, body#question-preview .controls {     
+  text-align: center;   
 }
 
 /***
