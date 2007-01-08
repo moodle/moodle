@@ -38,7 +38,7 @@ class description_qtype extends default_questiontype {
         $editlink = '';
         if (has_capability('moodle/question:manage', get_context_instance(CONTEXT_COURSE, $cmoptions->course))) {
             $stredit = get_string('edit');
-            $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" border="0" alt="'.$stredit.'" />';
+            $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="'.$stredit.'" />';
             $editlink = link_to_popup_window('/question/question.php?id='.$question->id, $stredit, $linktext, 450, 550, $stredit, '', true);
         }
 

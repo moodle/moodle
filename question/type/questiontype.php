@@ -567,7 +567,7 @@ class default_questiontype {
         $editlink = '';
         if ($context && has_capability('moodle/question:manage', $context)) {
             $stredit = get_string('edit');
-            $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" border="0" alt="'.$stredit.'" />';
+            $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="'.$stredit.'" />';
             $editlink = link_to_popup_window('/question/question.php?inpopup=1&amp;id='.$question->id, 'editquestion', $linktext, 450, 550, $stredit, '', true);
         }
 

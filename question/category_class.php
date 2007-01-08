@@ -305,7 +305,7 @@ class question_category_object {
         $this->edittable->align["$category->id.name"] =  "left";
         $this->edittable->wrap["$category->id.name"] = "nowrap";
         $row["$category->id.name"] = '<a ' . $linkcss . ' title="' . $this->str->edit. '" href="category.php?id=' . $this->course->id .
-            '&amp;edit=' . $category->id . '&amp;sesskey='.$USER->sesskey.$pagelink.'"><img src="' . $this->pixpath . '/t/edit.gif" height="11" width="11" border="0"
+            '&amp;edit=' . $category->id . '&amp;sesskey='.$USER->sesskey.$pagelink.'"><img src="' . $this->pixpath . '/t/edit.gif" height="11" width="11" 
             alt="' .$this->str->edit. '" /> ' . $fill . $category->name . '</a>';
 
         $this->edittable->align["$category->id.info"] =  "left";
@@ -320,17 +320,17 @@ class question_category_object {
         $this->edittable->wrap["$category->id.publish"] = "nowrap";
         if (!empty($category->publish)) {
               $row["$category->id.publish"] = '<a title="' . $this->str->hide . '" href="category.php?id=' . $this->course->id . '&amp;hide=' . $category->id .
-              '&amp;sesskey='.$USER->sesskey.$pagelink.'"><img src="' . $this->pixpath . '/t/hide.gif" height="11" width="11" border="0" alt="' .$this->str->hide. '" /></a> ';
+              '&amp;sesskey='.$USER->sesskey.$pagelink.'"><img src="' . $this->pixpath . '/t/hide.gif" height="11" width="11" alt="' .$this->str->hide. '" /></a> ';
         } else {
             $row["$category->id.publish"] = '<a title="' . $this->str->publish . '" href="category.php?id=' . $this->course->id . '&amp;publish=' . $category->id .
-                 '&amp;sesskey='.$USER->sesskey.$pagelink.'"><img src="' . $this->pixpath . '/t/show.gif" height="11" width="11" border="0" alt="' .$this->str->publish. '" /></a> ';
+                 '&amp;sesskey='.$USER->sesskey.$pagelink.'"><img src="' . $this->pixpath . '/t/show.gif" height="11" width="11" alt="' .$this->str->publish. '" /></a> ';
         }
 
         if ($category->id != $this->defaultcategory->id) {
             $this->edittable->align["$category->id.delete"] =  "center";
             $this->edittable->wrap["$category->id.delete"] = "nowrap";
             $row["$category->id.delete"] =  '<a title="' . $this->str->delete . '" href="category.php?id=' . $this->course->id .
-                    '&amp;delete=' . $category->id . '&amp;sesskey='.$USER->sesskey.$pagelink.'"><img src="' . $this->pixpath . '/t/delete.gif" height="11" width="11" border="0" alt="' .$this->str->delete. '" /></a> ';
+                    '&amp;delete=' . $category->id . '&amp;sesskey='.$USER->sesskey.$pagelink.'"><img src="' . $this->pixpath . '/t/delete.gif" height="11" width="11" alt="' .$this->str->delete. '" /></a> ';
         } else {
             $row["$category->id.delete"] = '';
         }
@@ -340,11 +340,11 @@ class question_category_object {
         $icons = '';
         if ($up) {
             $icons .= '<a title="' . $this->str->moveup .'" href="category.php?id=' . $this->course->id . '&amp;moveup=' . $category->id . '&amp;sesskey='.$USER->sesskey.$pagelink.'">
-                <img src="' . $this->pixpath . '/t/up.gif" height="11" width="11" border="0" alt="' . $this->str->moveup. '" /></a> ';
+                <img src="' . $this->pixpath . '/t/up.gif" height="11" width="11" alt="' . $this->str->moveup. '" /></a> ';
         }
         if ($down) {
             $icons .= '<a title="' . $this->str->movedown .'" href="category.php?id=' . $this->course->id . '&amp;movedown=' . $category->id . '&amp;sesskey='.$USER->sesskey.$pagelink.'">
-                 <img src="' . $this->pixpath . '/t/down.gif" height="11" width="11" border="0" alt="' .$this->str->movedown. '" /></a> ';
+                 <img src="' . $this->pixpath . '/t/down.gif" height="11" width="11" alt="' .$this->str->movedown. '" /></a> ';
         }
         $row["$category->id.order"]= $icons;
 

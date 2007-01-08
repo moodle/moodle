@@ -159,17 +159,21 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
     $strshow = get_string("show", "quiz");
     $streditcats = get_string("editcategories", "quiz");
 
-    echo "<table width=\"100%\"><tr><td width=\"20\" nowrap=\"nowrap\">";
-    echo "<b>$strcategory:</b>&nbsp;";
+    echo "<table style=\"width:100%;\"><tr><td style=\"width:20px; white-space:nowrap;\">";
+    echo "<strong>$strcategory:</strong>&nbsp;";
     echo "</td><td>";
     popup_form ("edit.php?courseid=$course->id&amp;cat=", $catmenu, "catmenu", $current, "", "", "", false, "self");
     echo "</td><td align=\"right\">";
     echo "<form method=\"get\" action=\"$CFG->wwwroot/question/category.php\">";
+    echo "<fieldset class='invisiblefieldset'>";
     echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
     echo "<input type=\"submit\" value=\"$streditcats\" />";
+    echo '</fieldset>';
     echo "</form>";
     echo '</td></tr></table>';
+
     echo '<form method="post" action="edit.php" id="displayoptions">';
+    echo "<fieldset class='invisiblefieldset'>";
     echo '<table><tr><td>';
     echo "<input type=\"hidden\" name=\"courseid\" value=\"{$course->id}\" />";
     echo '<input type="hidden" name="recurse" value="0" />';
@@ -188,9 +192,9 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
     }
     echo ' onchange="getElementById(\'displayoptions\').submit(); return true;" />';
     print_string('showhidden', 'quiz');
-    echo '</td><noscript><td valign="center">';
+    echo '</td><td valign="middle"><noscript>';
     echo ' <input type="submit" value="'. get_string('go') .'" />';
-    echo '</td></noscript></tr></table></form>';
+    echo '</noscript></td></tr></table></fieldset></form>';
 }
 
 
@@ -240,7 +244,7 @@ function question_list($course, $categoryid, $quizid=0,
     $strpreview = get_string("preview","quiz");
 
     if (!$categoryid) {
-        echo "<p align=\"center\"><b>";
+        echo "<p style=\"text-align:center;\"><b>";
         print_string("selectcategoryabove", "quiz");
         echo "</b></p>";
         if ($quizid) {
@@ -268,7 +272,7 @@ function question_list($course, $categoryid, $quizid=0,
         echo '<td valign="top" align="right">';
         popup_form ("$CFG->wwwroot/question/question.php?category=$category->id&amp;qtype=", $qtypemenu, "addquestion",
                     "", "choose", "", "", false, "self");
-        echo '</td><td width="10" valign="top" align="right">';
+        echo '</td><td style="width:10px;" valign="top" align="right">';
         helpbutton("questiontypes", $strcreatenewquestion, "quiz");
         echo '</td></tr>';
     }
@@ -278,7 +282,7 @@ function question_list($course, $categoryid, $quizid=0,
         echo '</td></tr>';
     }
 
-    echo '<tr><td colspan="3" align="right"><font size="2">';
+    echo '<tr><td colspan="3" align="right" style="font-size:0.8em;">';
     
     if (has_capability('moodle/question:import', $context)) {
         echo '<a href="'.$CFG->wwwroot.'/question/import.php?category='.$category->id.'">'.$strimportquestions.'</a>';
@@ -290,7 +294,7 @@ function question_list($course, $categoryid, $quizid=0,
         echo "<a href=\"$CFG->wwwroot/question/export.php?category={$category->id}&amp;courseid={$course->id}\">$strexportquestions</a>";
         helpbutton("export", $strexportquestions, "quiz");
     }  
-    echo '</font></td></tr>';
+    echo '</td></tr>';
 
     echo '</table>';
 
@@ -302,7 +306,7 @@ function question_list($course, $categoryid, $quizid=0,
     $showhidden = $showhidden ? '' : " AND hidden = '0'";
 
     if (!$totalnumber = count_records_select('question', "category IN ($categorylist) AND parent = '0' $showhidden")) {
-        echo "<p align=\"center\">";
+        echo "<p style=\"text-align:center;\">";
         print_string("noquestions", "quiz");
         echo "</p>";
         return;
@@ -313,7 +317,7 @@ function question_list($course, $categoryid, $quizid=0,
         $page = 0;
         if (!$questions = get_records_select('question', "category IN ($categorylist) AND parent = '0' $showhidden", $sortorder, '*', 0, $perpage)) {
             // There are no questions at all
-            echo "<p align=\"center\">";
+            echo "<p style=\"text-align:center;\">";
             print_string("noquestions", "quiz");
             echo "</p>";
             return;
@@ -330,41 +334,41 @@ function question_list($course, $categoryid, $quizid=0,
     print_simple_box_start('center', '100%', '#ffffff', 0);
     echo '<table id="categoryquestions" cellspacing="0"><tr>';
     $actionwidth = $canedit ? 95 : 70;
-    echo "<th width=\"$actionwidth\" nowrap=\"nowrap\" class=\"header\" scope=\"col\">$straction</th>";
+    echo "<th width=\"$actionwidth\" style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$straction</th>";
     
     $sortoptions = array('name, qtype ASC' => get_string("sortalpha", "quiz"),
                          'qtype, name ASC' => get_string("sorttypealpha", "quiz"),
                          'id ASC' => get_string("sortage", "quiz"));
     $orderselect  = choose_from_menu ($sortoptions, 'sortorder', $sortorder, false, 'this.form.submit();', '0', true);
     $orderselect .= '<noscript><input type="submit" value="'.get_string("sortsubmit", "quiz").'" /></noscript>';
-    echo "<th width=\"100%\" align=\"left\" nowrap=\"nowrap\" class=\"header\" scope=\"col\">$strquestionname $orderselect</th>
-    <th nowrap=\"nowrap\" class=\"header\" scope=\"col\">$strtype</th>";
+    echo "<th width=\"100%\" align=\"left\" style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$strquestionname $orderselect</th>
+    <th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$strtype</th>";
     echo "</tr>\n";
     foreach ($questions as $question) {
-        echo "<tr>\n<td nowrap=\"nowrap\">\n";
+        echo "<tr>\n<td style=\"white-space:nowrap;\">\n";
         
         // add to quiz
         if ($quizid && has_capability('mod/quiz:manage', $context)) {
             echo "<a title=\"$straddtoquiz\" href=\"edit.php?addquestion=$question->id&amp;quizid=$quizid&amp;sesskey=$USER->sesskey\"><img
-                  src=\"$CFG->pixpath/t/moveleft.gif\" border=\"0\" alt=\"$straddtoquiz\" /></a>&nbsp;";
+                  src=\"$CFG->pixpath/t/moveleft.gif\" alt=\"$straddtoquiz\" /></a>&nbsp;";
         }
         
         // preview
         echo "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/question/preview.php?id=$question->id&amp;quizid=$quizid','$strpreview', " .
                 QUESTION_PREVIEW_POPUP_OPTIONS . ", false)\"><img
-                src=\"$CFG->pixpath/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>&nbsp;";
+                src=\"$CFG->pixpath/t/preview.gif\" alt=\"$strpreview\" /></a>&nbsp;";
         
         // edit, hide, delete question, using question capabilities, not quiz capabilieies
         if (has_capability('moodle/question:manage', $context)) {
             echo "<a title=\"$stredit\" href=\"$CFG->wwwroot/question/question.php?id=$question->id\"><img
-                    src=\"$CFG->pixpath/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>&nbsp;";
+                    src=\"$CFG->pixpath/t/edit.gif\" alt=\"$stredit\" /></a>&nbsp;";
             // hide-feature
             if($question->hidden) {
                 echo "<a title=\"$strrestore\" href=\"edit.php?courseid=$course->id&amp;unhide=$question->id&amp;sesskey=$USER->sesskey\"><img
-                        src=\"$CFG->pixpath/t/restore.gif\" border=\"0\" alt=\"$strrestore\" /></a>";
+                        src=\"$CFG->pixpath/t/restore.gif\" alt=\"$strrestore\" /></a>";
             } else {
                 echo "<a title=\"$strdelete\" href=\"edit.php?courseid=$course->id&amp;deleteselected=$question->id&amp;q$question->id=1\"><img
-                        src=\"$CFG->pixpath/t/delete.gif\" border=\"0\" alt=\"$strdelete\" /></a>";
+                        src=\"$CFG->pixpath/t/delete.gif\" alt=\"$strdelete\" /></a>";
             }
         }
         echo "&nbsp;<input title=\"$strselect\" type=\"checkbox\" name=\"q$question->id\" value=\"1\" />";
