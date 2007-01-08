@@ -193,7 +193,7 @@
                 // checks whether user can update course settings
                 if (has_capability('moodle/course:update', $coursecontext)) {
                     echo "<a title=\"".get_string("settings")."\" href=\"$CFG->wwwroot/course/edit.php?id=$course->id\"><img".
-                        " src=\"$pixpath/t/edit.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"".get_string("settings")."\"></a> ";
+                        " src=\"$pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"".get_string("settings")."\"></a> ";
                 }
 
                 // checks whether user can do role assignment
@@ -205,30 +205,30 @@
                 // checks whether user can delete course
                 if (has_capability('moodle/course:delete', $coursecontext)) {  
                     echo "<a title=\"".get_string("delete")."\" href=\"delete.php?id=$course->id\"><img".
-                        " src=\"$pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"".get_string("delete")."\"></a> ";
+                        " src=\"$pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"".get_string("delete")."\"></a> ";
                 }  
 
                 // checks whether user can change visibility
                 if (has_capability('moodle/course:visibility', $coursecontext)) {
                     if (!empty($course->visible)) {
                         echo "<a title=\"".get_string("hide")."\" href=\"search.php?search=$encodedsearch&amp;perpage=$perpage&amp;page=$page&amp;hide=$course->id&amp;sesskey=$USER->sesskey\"><img".
-                            " src=\"$pixpath/t/hide.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"".get_string("hide")."\"></a> ";
+                            " src=\"$pixpath/t/hide.gif\" class=\"iconsmall\" alt=\"".get_string("hide")."\"></a> ";
                     } else {
                         echo "<a title=\"".get_string("show")."\" href=\"search.php?search=$encodedsearch&amp;perpage=$perpage&amp;page=$page&amp;show=$course->id&amp;sesskey=$USER->sesskey\"><img".
-                            " src=\"$pixpath/t/show.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"".get_string("show")."\"></a> ";
+                            " src=\"$pixpath/t/show.gif\" class=\"iconsmall\" alt=\"".get_string("show")."\"></a> ";
                     }
                 }              
 
                 // checks whether user can do site backup
                 if (has_capability('moodle/site:backup', $coursecontext)) {
                     echo "<a title=\"".get_string("backup")."\" href=\"../backup/backup.php?id=$course->id\"><img".
-                        " src=\"$pixpath/t/backup.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"".get_string("backup")."\"></a> ";
+                        " src=\"$pixpath/t/backup.gif\" class=\"iconsmall\" alt=\"".get_string("backup")."\"></a> ";
                 }
                 
                 // checks whether user can do restore
                 if (has_capability('moodle/site:restore', $coursecontext)) {
                     echo "<a title=\"".get_string("restore")."\" href=\"../files/index.php?id=$course->id&wdir=/backupdata\"><img".
-                        " src=\"$pixpath/t/restore.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"".get_string("restore")."\"></a> ";
+                        " src=\"$pixpath/t/restore.gif\" class=\"iconsmall\" alt=\"".get_string("restore")."\"></a> ";
                 }
 
                 echo "</td></tr>";

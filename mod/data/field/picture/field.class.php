@@ -104,11 +104,11 @@ class data_field_picture extends data_field_file {
                 $width = $this->field->param4 ? ' width="'.s($this->field->param4).'" ' : ' ';
                 $height = $this->field->param5 ? ' height="'.s($this->field->param5).'" ' : ' ';
                 $str = '<a href="view.php?d='.$this->field->dataid.'&amp;rid='.$recordid.'"><img '.
-                     $width.$height.' src="'.$thumbnailsource.'" alt="'.s($alt).'" title="'.s($title).'" border="0" /></a>';
+                     $width.$height.' src="'.$thumbnailsource.'" alt="'.s($alt).'" title="'.s($title).'" style="border:0px" /></a>';
             } else {
                 $width = $this->field->param1 ? ' width="'.s($this->field->param1).'" ':' ';
                 $height = $this->field->param2 ? ' height="'.s($this->field->param2).'" ':' ';
-                $str = '<a href="'.$source.'"><img '.$width.$height.' src="'.$source.'" alt="'.s($alt).'" title="'.s($title).'" border="0"/></a>';
+                $str = '<a href="'.$source.'"><img '.$width.$height.' src="'.$source.'" alt="'.s($alt).'" title="'.s($title).'" style="border:0px" /></a>';
             }
             return $str;
         }

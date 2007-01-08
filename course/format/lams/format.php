@@ -136,7 +136,7 @@ if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
                 '&'.$LAMSCONSTANTS->param_hash.'='.$hash.
                 '&'.$LAMSCONSTANTS->param_courseid.'='.$course->id;
             echo '<div style="text-align: right"><td align="right">';
-            //echo '<a target="popup" title="Open Author" href="../help.php?module=moodle&amp;file=resource/types.html"><span class="helplink"><img height="17" width="17" alt="Open Author" src="../pix/help.gif" /></span></a>';
+            //echo '<a target="popup" title="Open Author" href="../help.php?module=moodle&amp;file=resource/types.html"><span class="helplink"><img class="iconhelp" alt="Open Author" src="../pix/help.gif" /></span></a>';
             print_simple_box_start('right');
             echo '<a target="LAMS Author" title="LAMS Author" href="'.$author_url.'">'.get_string("openauthor", "lams").'</a>';
             print_simple_box_end();
@@ -152,7 +152,7 @@ if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
                 '&'.$LAMSCONSTANTS->param_hash.'='.$hash.
                 '&'.$LAMSCONSTANTS->param_courseid.'='.$course->id;
 
-            //echo '<a target="popup" title="Open Monitor" href="../help.php?module=moodle&amp;file=resource/types.html"><span class="helplink"><img height="17" width="17" alt="Open Monitor" src="../pix/help.gif" /></span></a>';                                                 
+            //echo '<a target="popup" title="Open Monitor" href="../help.php?module=moodle&amp;file=resource/types.html"><span class="helplink"><img class="iconhelp" alt="Open Monitor" src="../pix/help.gif" /></span></a>';                                                 
             print_simple_box_start('right');
             echo '<a target="LAMS Monitor" title="LAMS Monitor" href="'.$monitor_url.'">'.get_string("openmonitor", "lams").'</a>';
             print_simple_box_end();

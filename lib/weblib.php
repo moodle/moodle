@@ -4461,7 +4461,7 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true, $ret
     }
     $output .= choose_from_menu($grades, $name, $current, '', '', 0, true);
 
-    $linkobject = '<span class="helplink"><img height="17" width="17" alt="'.$strscales.'" src="'.$CFG->pixpath .'/help.gif" /></span>';
+    $linkobject = '<span class="helplink"><img class="iconhelp" alt="'.$strscales.'" src="'.$CFG->pixpath .'/help.gif" /></span>';
     $output .= link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true', 'ratingscales',
                                      $linkobject, 400, 500, $strscales, 'none', true);
 
@@ -4489,7 +4489,7 @@ function print_scale_menu($courseid, $name, $current, $return=false) {
     $strscales = get_string('scales');
     $output .= choose_from_menu(get_scales_menu($courseid), $name, $current, '', '', 0, true);
 
-    $linkobject = '<span class="helplink"><img height="17" width="17" alt="'.$strscales.'" src="'.$CFG->pixpath .'/help.gif" /></span>';
+    $linkobject = '<span class="helplink"><img class="iconhelp" alt="'.$strscales.'" src="'.$CFG->pixpath .'/help.gif" /></span>';
     $output .= link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true', 'ratingscales',
                                      $linkobject, 400, 500, $strscales, 'none', true);
     if ($return) {
@@ -4514,7 +4514,7 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
     $output = '';
     $strscales = get_string('scales');
 
-    $linkobject = '<span class="helplink"><img height="17" width="17" alt="'.$scale->name.'" src="'.$CFG->pixpath .'/help.gif" /></span>';
+    $linkobject = '<span class="helplink"><img class="iconhelp" alt="'.$scale->name.'" src="'.$CFG->pixpath .'/help.gif" /></span>';
     $output .= link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true&amp;scaleid='. $scale->id, 'ratingscale',
                                      $linkobject, 400, 500, $scale->name, 'none', true);
     if ($return) {
@@ -4675,7 +4675,7 @@ function editorhelpbutton(){
     $alttag = join (', ', $titles);
 
     $paramstring = join('&', $urlparams);
-    $linkobject = '<img alt="'.$alttag.'" src="'.$CFG->pixpath .'/help.gif" />';
+    $linkobject = '<img alt="'.$alttag.'" class="iconhelp" src="'.$CFG->pixpath .'/help.gif" />';
     return link_to_popup_window(s('/lib/form/editorhelp.php?'.$paramstring), $alttag, $linkobject, 400, 500, $alttag, 'none', true);
 }
 
@@ -4724,7 +4724,7 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
         if ($imagetext) {
             $linkobject .= $imagetext;
         } else {
-            $linkobject .= '<img alt="'.$tooltip.'" src="'.
+            $linkobject .= '<img class="iconhelp" alt="'.$tooltip.'" src="'.
                    	$CFG->pixpath .'/help.gif" />';
         }
     } else {
@@ -4786,7 +4786,7 @@ function editorshortcutshelpbutton() {
 
     global $CFG;
     $imagetext = '<img src="' . $CFG->wwwroot . '/lib/editor/htmlarea/images/kbhelp.gif" alt="'.
-					get_string('editorshortcutkeys').'" style="width:49px; height:17px; margin:0;" />';
+					get_string('editorshortcutkeys').'" class="iconkbhelp" />';
 
     return helpbutton('editorshortcuts', get_string('editorshortcutkeys'), 'moodle', true, false, '', true, $imagetext);
 }
@@ -5569,7 +5569,7 @@ function page_doc_link($text='', $iconpath='') {
     }
 
     // alt left blank intentionally to prevent repetition in screenreaders
-    $str .= '<img src="' .$iconpath. '" alt="" />' .$text. '</a>';
+    $str .= '<img class="iconhelp" src="' .$iconpath. '" alt="" />' .$text. '</a>';
 
     return $str;
 }

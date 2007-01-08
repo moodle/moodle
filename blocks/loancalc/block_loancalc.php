@@ -160,21 +160,21 @@ function comp(v) { // general entry point for all cases
                 </tr>
                 <tr>
                     <td><input name="LOANAMOUNT" id="LOANAMOUNT" size="17" /></td>
-                    <td><a href="JavaScript:comp(\'pv\');"><img src="'.$calc.'" alt="calculate" border="0" /></a></td>
+                    <td><a href="JavaScript:comp(\'pv\');"><img src="'.$calc.'" alt="calculate" /></a></td>
                 </tr>
                 <tr>
                     <td colspan="2">'.get_string('repaymentamount','block_loancalc').'</td>
                 </tr>
                 <tr>
                     <td><input name="LOANREPAYMENT" id="LOANREPAYMENT" size="17" /></td>
-                    <td><a href="JavaScript:comp(\'pmt\');"><img src="'.$calc.'" alt="calculate" border="0" /></a></td>
+                    <td><a href="JavaScript:comp(\'pmt\');"><img src="'.$calc.'" alt="calculate" /></a></td>
                 </tr>
                 <tr>
                     <td colspan="2">'.get_string('loanterm','block_loancalc').'</td>
                 </tr>
                 <tr>
                     <td><input name="LOANTERM" id="LOANTERM" size="17" /></td>
-                    <td><a href="JavaScript:comp(\'np\');"><img src="'.$calc.'" alt="calculate" border="0" /></a></td>
+                    <td><a href="JavaScript:comp(\'np\');"><img src="'.$calc.'" alt="calculate" /></a></td>
                 </tr>    
                 <tr>
                     <td colspan="2">'.get_string('interestrate','block_loancalc').'</td>

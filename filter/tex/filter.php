@@ -46,6 +46,7 @@ function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $a
 
     $output = "";
     $origtex = $tex;
+    $style = 'style="border:0px; vertical-align:'.$align.';';
     if ($tex) {
         $tex = str_replace('&','&amp;',$tex);
         $tex = str_replace('<','&lt;',$tex);
@@ -55,11 +56,12 @@ function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $a
         $title = "title=\"$tex\"";
     }
     if ($height) {
-        $height = "height=\"$height\"";
+        $style .= " height:{$height}px;";
     }
     if ($width) {
-        $width = "width=\"$width\"";
+        $style .= " width:{$width}px;";
     }
+    $style .= '"';
     if ($imagefile) {
         if (!file_exists("$CFG->dataroot/$CFG->texfilterdir/$imagefile") && has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
           $output .= "<a href=\"$CFG->wwwroot/$CFG->texfilterdir/texdebug.php\">";
@@ -70,13 +72,13 @@ function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $a
           $output .= urlencode($tex) . "', 'popup', 'menubar=0,location=0,scrollbars,";
           $output .= "resizable,width=300,height=240', 0);\">";
         }
-        $output .= "<img class=\"texrender\" border=\"0\" $title $height $width alt=\"".s($origtex)."\" src=\"";
+        $output .= "<img class=\"texrender\" $title alt=\"".s($origtex)."\" src=\"";
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
             $output .= "$CFG->wwwroot/$CFG->texfilterdir/pix.php/$imagefile";
         } else {
             $output .= "$CFG->wwwroot/$CFG->texfilterdir/pix.php?file=$imagefile";
         }
-        $output .= "\" style=\"vertical-align:$align\" />";
+        $output .= "\" $style />";
         $output .= "</a>";
     } else {
         $output .= "Error: must pass URL or course";

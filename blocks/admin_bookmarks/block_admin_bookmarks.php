@@ -20,7 +20,7 @@ class block_admin_bookmarks extends block_base {
     }
 
     function create_item($visiblename,$link,$icon) {
-        $this->tempcontent .= '<a href="' . $link . '"><img src="' . $icon . '" border="0" alt="" /> ' . $visiblename . '</a><br />' . "\n";
+        $this->tempcontent .= '<a href="' . $link . '"><img src="' . $icon . '" alt="" /> ' . $visiblename . '</a><br />' . "\n";
     }
 
     function get_content() {

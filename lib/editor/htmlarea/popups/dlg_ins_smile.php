@@ -84,8 +84,8 @@ function cancel() {
             $name = $fullnames[$image];
             $icon = $emoticons[$image];
             echo '<tr>';
-            echo "<td><img alt=\"$name\" border=\"0\" hspace=\"10\" src=\"$pixpath/$image.gif\" ".
-                 " onclick=\"insert('$pixpath/$image.gif','$name')\" width=\"15\" height=\"15\" /></td>";
+            echo "<td><img alt=\"$name\" class=\"icon\" src=\"$pixpath/$image.gif\" ".
+                 " onclick=\"insert('$pixpath/$image.gif','$name')\" /></td>";
             echo "<td>$name</td>";
             echo "<td class=\"smile\">$icon</td>";
             echo "</tr>";
@@ -103,8 +103,8 @@ function cancel() {
             $name = $fullnames[$image];
             $icon = $emoticons[$image];
             echo '<tr>';
-            echo "<td><img alt=\"$name\" border=\"0\" hspace=\"10\" src=\"$pixpath/$image.gif\" ".
-                 " onclick=\"insert('$pixpath/$image.gif','$name')\" width=\"15\" height=\"15\" /></td>";
+            echo "<td><img alt=\"$name\" class=\"icon\" src=\"$pixpath/$image.gif\" ".
+                 " onclick=\"insert('$pixpath/$image.gif','$name')\" /></td>";
             echo "<td>$name</td>";
             echo "<td class=\"smile\">$icon</td>";
             echo "</tr>";

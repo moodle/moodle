@@ -334,7 +334,7 @@ function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
 
    $info->id = $id;
    $info->size = $p_size;
-   $info->icon = ($p_icon ? '<img src="'.$p_icon.'" alt="['.$p_icon_t.']" align="left" width="14" height="14" border="0" /> ' : '');
+   $info->icon = ($p_icon ? '<img src="'.$p_icon.'" alt="['.$p_icon_t.']" class="icon" /> ' : '');
    $info->time = $p_time;
    $info->hits = $p_hits;
    $info->section = ($show_section ? ewiki_t('dwnl_section') . ": $p_section<br />" : '');

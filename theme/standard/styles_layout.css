@@ -294,18 +294,32 @@ form.popupform {
 }
 
 img.icon {      
-  vertical-align: middle;   
-  margin-right: 4px;    
+  vertical-align:middle;   
+  margin-right:4px;
   width:16px;   
   height:16px;      
   border:0px;   
 }   
     
 img.iconsmall {     
-  vertical-align: middle;   
-  margin-right: 1px;    
+  vertical-align:middle;   
+  margin-right:1px;
   width:11px;   
   height:11px;      
+  border:0px;   
+}
+
+img.iconhelp {     
+  vertical-align:middle;   
+  margin-right:4px;
+  width:17px;   
+  height:17px;      
+  border:0px;   
+}
+
+img.iconkbhelp {     
+  width:49px;   
+  height:17px;      
   border:0px;   
 }
 
