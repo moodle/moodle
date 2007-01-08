@@ -183,7 +183,7 @@
     print_heading($strpreview);
 
     if (!empty($quizid)) {
-        echo '<p align="center">'.get_string('modulename', 'quiz') . ': ';
+        echo '<p class="quemodname">'.get_string('modulename', 'quiz') . ': ';
         p($quiz->name);
         echo "</p>\n";
     }
@@ -196,7 +196,7 @@
     print_question($questions[$id], $curstate, $number, $quiz, $options);
 
     echo '<br />';
-    echo '<center>';
+    echo '<div class="controls">';
 
     // Print the mark and finish attempt buttons
     echo '<input name="markall" type="submit" value="' . get_string('markall',
@@ -221,7 +221,7 @@
     // Print the close window button
     echo '<input type="button" onclick="window.close()" value="' .
      get_string('closepreview', 'quiz') . "\" />";
-    echo '</center>';
+    echo '</div>';
     echo '</form>';
     print_footer();
 ?>
