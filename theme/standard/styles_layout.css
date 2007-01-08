@@ -2174,6 +2174,12 @@ body#mod-forum-search .introcontent {
   white-space: nowrap;
 }
 
+#mod-forum-index .subscription {
+  float: right;
+  text-align:right;
+  white-space: nowrap;
+}
+
 #mod-forum-view .unread {
   padding-left: 3px;
   padding-right: 3px;
