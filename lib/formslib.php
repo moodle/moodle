@@ -1369,9 +1369,6 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $html = str_replace('{help}', '', $html);
 
         }
-        if ($element->getType() == 'static') {
-            $html = preg_replace('/(<label.*?>)|(<\/label>)/i', '', $html); //xhtml compliance - no label for static content
-        }
         $this->_templates[$element->getName()] = $html;
         if (!is_null($element->getAttribute('id'))) {
             $id = $element->getAttribute('id');
@@ -1383,6 +1380,11 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $element->updateAttributes(array('id'=>'id_'.$id));
         }
         parent::renderElement($element, $required, $error);
+        if ($element->getType() == 'static' or $element->getType() == 'date_selector' or $element->getType() == 'date_time_selector') {
+             //xhtml compliance - remove 'for' attribute from label if element with id does not exist
+             //TODO: is there a better way to do it?
+            $this->_html = str_replace('<label for="id_'.$element->getName().'">', '<label>', $this->_html);
+        }
     }
 
     function finishForm(&$form){
