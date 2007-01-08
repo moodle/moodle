@@ -6,39 +6,43 @@
     background-color:#f6f7ee; /* active tab, tab hover, and content bgcolor */
 }
 
-.yui-navset-top .yui-nav .selected a {
-    border-bottom:0; /* no bottom border for active tab */
+.yui-navset .yui-nav li em { padding:.5em; } /* tab padding */
+
+/* defaults to orientation "top" */
+.yui-navset .yui-nav .selected a {
+    border-bottom-width:0; /* no bottom border for active tab */
     padding-bottom:1px; /* to match height of other tabs */
 }
 
-.yui-navset-top .yui-content {
+.yui-navset .yui-content {
     margin-top:-1px; /* for active tab overlap */
 }
 
+/* overrides for other orientations */
+
 .yui-navset-bottom .yui-nav .selected a {
-    border-top:0; /* no bottom border for active tab */
-    padding-top:1px; /* to match height of other tabs */
+    border-width:0 1px 1px; /* no top border for active tab */
+    padding:1px 0 0; /* to match height of other tabs */
 }
 
 .yui-navset-bottom .yui-content {
-    margin-bottom:-1px; /* for active tab overlap */
+    margin:0 0 -1px; /* for active tab overlap */
 }
 
 .yui-navset-left .yui-nav li.selected a {
-    border-right:0; /* no bottom border for active tab */
-    padding-right:1px; /* to match height of other tabs */
+    border-width:1px 0 1px 1px; /* no right border for active tab */
+    padding:0 1px 0 0; /* to match width of other tabs */
 }
 
 .yui-navset-left .yui-content {
-    margin-left:-1px; /* for active tab overlap */
+    margin:0 0 0 -1px; /* for active tab overlap */
 }
 
 .yui-navset-right .yui-nav li.selected a {
-    border-left:0; /* no bottom border for active tab */
-    padding-left:1px; /* to match height of other tabs */
+    border-width:1px 1px 1px 0; /* no left border for active tab */
+    padding:0 0 0 1px; /* to match width of other tabs */
 }
 
 .yui-navset-right .yui-content {
-    margin-right:-1px; /* for active tab overlap */
-    *margin-right:0; /* except IE */
+    margin:0 -1px 0 0; /* for active tab overlap */
 }

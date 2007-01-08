@@ -1,5 +1,8 @@
 Animation Release Notes
 
+*** version 0.12.1 ***
+* minified version no longer strips line breaks
+
 *** version 0.12.0 ***
 
 * added boolean finish argument to Anim.stop()

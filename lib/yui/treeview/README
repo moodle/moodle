@@ -1,5 +1,18 @@
 TreeView - Release Notes
 
+0.12.1
+
+  * Added custom events for expandComplete and collapseComplete.  These events are
+    needed in situations where the implementer needs to resize or reposition 
+    something based on the new offset.
+
+  * Added a "nowrap" property to Node, and set the default to false.  Specifies
+    whether or not the content area of the node should be allowed to wrap
+    naturally.
+
+  * Added additional HTML elements to preserve the tree presentation when constrained
+    by a parent element.
+
 0.12.0
 
   * TreeView now augments EventProvider, and has custom events for expand,

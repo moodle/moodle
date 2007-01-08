@@ -1,6 +1,14 @@
 
 YUI Library - Event - Release Notes
 
+0.12.1
+
+  * If an error is thrown during the browser-specific add/remove lister call,
+    addListener/removeListener will catch the error and return false.
+
+  * onAvailable array items are nulled out instead of deleted when completed to
+    get around an Opera issue introduced in a recent version of the browser.
+
 0.12.0
 
    * If the function argument is not provided to Event.removeListener, all

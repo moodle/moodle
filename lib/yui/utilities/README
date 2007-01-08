@@ -1,5 +1,9 @@
 utilities.js Release Notes
 
+*** version 0.12.1 ***
+
+  * Includes 0.12.1 revisions to all YUI utilities and includes yahoo.js.
+
 *** version 0.12.0 ***
 
 The utilities.js file rolls up all of the YUI utility components into a single

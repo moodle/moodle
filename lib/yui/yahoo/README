@@ -1,5 +1,8 @@
 YAHOO Global Namespace - Release Notes
 
+0.12.1
+  * No change
+
 0.12.0
 
    * Added YAHOO.augment, which copies all or part of the prototype of one

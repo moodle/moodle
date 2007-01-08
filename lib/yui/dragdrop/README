@@ -1,5 +1,15 @@
 Drag and Drop Release Notes
 
+0.12.1
+
+  * Added a STRICT_INTERSECT drag and drop interaction mode.  This alters the
+    behavior of DDM::getBestMatch.  INTERSECT mode first tests the cursor
+    location, and if it is over the target that target wins, otherwise it
+    tests the overlap of the elements.  STRICT_INTERSECT mode tests only 
+    the overlap, the largest overlap wins.
+
+  * getBestMatch will work for targeted elements that have no overlap.
+
 0.12.0
 
    * The logic to determine if a drag should be initiated has been isolated

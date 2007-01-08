@@ -1,6 +1,12 @@
 Dom Release Notes
 
-*** version .12.0 ***
+*** version 0.12.1 ***
+
+* getElementsByClassName no longer reverts to document when "root" not found
+* setXY no longer makes a second call to getXY unless noRetry is false
+* minified version no longer strips line breaks
+
+*** version 0.12.0 ***
 
 * fixed getXY for IE null parent
 * branching set/getStyle at load time instead of run time 

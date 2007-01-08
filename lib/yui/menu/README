@@ -222,3 +222,26 @@ Changes:
 
 * "hide" and "show" methods of statically positioned menus now toggle the their
   element's "display" style property between "block" and "none."
+  
+  
+*** version 0.12.1 ***
+
+Fixed the following bugs:
+-------------------------
+
+* Placed the call to the DOM "focus" method used by the MenuItem class inside 
+  a zero-second timeout to resolve a race condition between menu positioning 
+  and focusing of a menu item that resulted in the browser viewport 
+  scrolling unnecessarily.
+
+* Switched to JSMin for JavaScript compression to resolve issues with the 
+  minified version.  
+
+* Disabled menu item instances will no longer display a submenu if the item is 
+  clicked or moused over. 
+
+* Can no longer select more than one item in a menu if using the keyboard and 
+  mouse simultaneously.
+
+* Calling the "destory" method on a menu will now unregister all of the menu's 
+  submenus from the MenuManager.

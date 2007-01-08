@@ -1,5 +1,10 @@
 Slider - Release Notes
 
+0.12.1
+
+   * Removed unneccessary getXY calls that were contribuing to slower performance
+     in FireFox when the slider was deeply nested in the DOM.
+
 0.12.0
 
    * Added "slideStart", "slideEnd", and "change" custom events.  The abstract

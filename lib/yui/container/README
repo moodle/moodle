@@ -1,64 +1,63 @@
 Container Release Notes
 
-*** version 0.12.0 ***
+*** version 0.12.1 ***
 
 	All Classes
-	   - New documentation format implemented, and removed unnecessary
-	   prototype null references previously used for generating
-	   documentation
-	   - Modified the
+	   - "monitorresize" property now functions in situations where document.domain has been modified.
+	   - YAHOO.widget.Module.textResizeEvent now fires when the font size is changed (except for Opera, which uses "zoom" functionality that prevents this)
+	   - Event listeners attached to container elements are now properly purged on destroy using YAHOO.util.Event.purgeElement
+
+	Panel
+	   - Fixed issue where focus events were broken on the page when a modal Panel was created
+
+	Dialog
+	   - Fixed bug where hitting "enter" on a Dialog was forcing the default submission behavior of the form's action to execute
+	   - Dialog no longer tries to give focus to hidden form elements.
+	   - Replaced &nbsp; references in Panel with &#160; for XHTML compliance.
+	   - Fixed issue that was preventing Safari from successfully using the getData() function
+
+*** version 0.12 ***
+
+	All Classes
+	   - New documentation format implemented, and removed unnecessary prototype null references previously used for generating documentation
+	   - Modified the 
 
 	Config
-	   - Added 'undefined' check when reading initial properties for
-	   .reset()
+	   - Added 'undefined' check when reading initial properties for .reset() 
 	   - Fixed Firefox warning on .resetProperty()
-	   - Fixed issue preventing resetProperty() from resetting values
-	   correctly
+	   - Fixed issue preventing resetProperty() from resetting values correctly
 
 	Module
 	   - Removed unused "childNodesInDom" property
 
 	Overlay
 	   - Converted center() to use Dom utility
-	   - Fixed configVisible() to properly detect actual visible/hidden
-	   status in Internet Explorer, which reports "inherit" for all elements
-	   by default.
+	   - Fixed configVisible() to properly detect actual visible/hidden status in Internet Explorer, which reports "inherit" for all elements by default.
 	   - Updated onDomResize to properly reapply "context" property
-	   - Unified scroll/resize handlers so that they fire properly (when the
-	   event has completed) as opposed to constantly (as seen in Mozilla-
-	   based browsers)
-
+	   - Unified scroll/resize handlers so that they fire properly (when the event has completed) as opposed to constantly (as seen in Mozilla-based browsers)
+		
 	Panel
-	   - Modified modality mask to show before Panel is shown (prior to any
-	   animation)
-	   - Modified buildWrapper to eliminate cloning of the initial markup
-	   module, which fixes issues with select options not maintaining their
-	   default selections in IE
-	   - Modality mask is now z-indexed properly so that the mask z-index is
-	   always one less than the Panel z-index
-
+	   - Modified modality mask to show before Panel is shown (prior to any animation)
+	   - Modified buildWrapper to eliminate cloning of the initial markup module, which fixes issues with select options not maintaining their default selections in IE
+	   - Modality mask is now z-indexed properly so that the mask z-index is always one less than the Panel z-index
+		
 	Dialog
-	   - Fixed Connection to get "action" attribute using getAttribute, to
-	   allow for form fields named "action"
-	   - Added support for "GET" by retrieving the form "method" rather than
-	   always defaulting to "POST"
-
+	   - Fixed Connection to get "action" attribute using getAttribute, to allow for form fields named "action"
+	   - Added support for "GET" by retrieving the form "method" rather than always defaulting to "POST"
+		
 	KeyListener
-	   - Fixed to work properly with Safari 2.0 by matching against keyCode
-	   or charCode
+	   - Fixed to work properly with Safari 2.0 by matching against keyCode or charCode
 
 *** version 0.11.4 ***
-
-	- Panel: Modality mask is now properly removed from DOM on Panel
-	destroy.
-
+	
+	- Panel: Modality mask is now properly removed from DOM on Panel destroy.
+	
 *** version 0.11.3 ***
 
 	- Module: Fixed SSL warning issue in IE
 	- Overlay: Fixed memory leak related to iframe shim in IE
 	- Panel: No focusable elements under the mask can now be tabbed to
-	- Panel: Set Panel container overflow to hidden to fix scrolling issue
-	in Opera 9
+	- Panel: Set Panel container overflow to hidden to fix scrolling issue in Opera 9
 
 *** version 0.11.2 ***
 
@@ -71,45 +70,34 @@ Container Release Notes
 *** version 0.11.1 ***
 
 	- Tooltip: Removed incorrect logger statement
-	- Dialog: Corrected logic that was causing browser lockup in IE for
-	SimpleDialog
+	- Dialog: Corrected logic that was causing browser lockup in IE for SimpleDialog
 	- Dialog: Fixed "firstButtom" typo
 
 *** version 0.11.0 ***
 
 	- toString function added to all classes for easy logging
-	- YAHOO.extend is now being used for inheritance on all container
-	classes
+	- YAHOO.extend is now being used for inheritance on all container classes
 	- Module: monitorresize feature now works on all browsers
 	- Module: Fixed bug with image root and isSecure
 	- Overlay: Fixed bugs related to IFRAME shim positioning
 	- Overlay: center() now works in quirks mode
-	- Overlay: Overlay now has a custom destroy() method that also removes
-	the IFRAME shim
-	- OverlayManager: Fixed bug in the prototype that was preventing
-	multiple Managers on one page
+	- Overlay: Overlay now has a custom destroy() method that also removes the IFRAME shim
+	- OverlayManager: Fixed bug in the prototype that was preventing multiple Managers on one page
 	- OverlayManager: focusEvent now fires at all appropriate times
-	- Tooltip: context can now be specified as an array, so Tooltips can be
-	reused across multiple context elements
-	- Tooltip: preventoverlap now functions properly for large context
-	elements (i.e, images)
+	- Tooltip: context can now be specified as an array, so Tooltips can be reused across multiple context elements
+	- Tooltip: preventoverlap now functions properly for large context elements (i.e, images)
 	- Tooltip: fixed bugs regarding setTimeout
-	- Tooltip: added mousemove event to allow for more accurate Tooltip
-	positioning
-	- Panel: added dragEvent for monitoring all event handlers for drag and
-	drop
+	- Tooltip: added mousemove event to allow for more accurate Tooltip positioning
+	- Panel: added dragEvent for monitoring all event handlers for drag and drop
 	- Panel: modality mask is now resized on scroll
-	- Panel: KeyListeners are now properly destroyed when the Panel is
-	destroyed
+	- Panel: KeyListeners are now properly destroyed when the Panel is destroyed
 	- Panel: Header is now sized properly in quirks mode
 	- Dialog: Blinking cursor issue is fixed for Firefox
 	- Dialog: callback object for Connection is now public (this.callback)
-	- Dialog: onsuccess/onfailure properties removed (as a result of the
-	public callback object)
+	- Dialog: onsuccess/onfailure properties removed (as a result of the public callback object)
 	- Dialog: Dialog is now invisible by default
 	- Dialog: Buttons are now properly cleaned up on destroy
 
 *** version 0.10.0 ***
 
 * Initial release
-
