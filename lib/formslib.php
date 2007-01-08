@@ -469,7 +469,9 @@ class moodleform {
             foreach ($elementobjs as $elementobj){
                 $elementclone = clone($elementobj);
                 $name=$elementclone->getName();
-                $elementclone->setName($name."[$i]");
+                if (!empty($name)){
+                    $elementclone->setName($name."[$i]");
+                }
                 if (is_a($elementclone, 'HTML_QuickForm_header')){
                     $value=$elementclone->_text;
                     $elementclone->setValue(str_replace('{no}', ($i+1), $value));
@@ -1278,7 +1280,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         // switch next two lines for ol li containers for form items.
         //        $this->_elementTemplates=array('default'=>"\n\t\t<li class=\"fitem\"><label>{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"qfelement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></li>");
         $this->_elementTemplates = array('default'=>"\n\t\t<div class=\"fitem {advanced}<!-- BEGIN required --> required<!-- END required -->\"><span class=\"fitemtitle\"><label>{label}<!-- BEGIN required -->{req}<!-- END required -->{advancedimg}</label>{help}</span><div class=\"felement {type}<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\" id=\"id_error_{name}\">{error}</span><br /><!-- END error -->{element}</div></div>",
-        'fieldset'=>"\n\t\t<div class=\"fitem {advanced}<!-- BEGIN required --> required<!-- END required -->\"><span class=\"fitemtitle\"><label>{label}<!-- BEGIN required -->{req}<!-- END required -->{advancedimg}</label>{help}</span><fieldset class=\"felement {type}<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\" id=\"id_error_{name}\">{error}</span><br /><!-- END error -->{element}</fieldset></div>");
+        'fieldset'=>"\n\t\t<div class=\"fitem {advanced}<!-- BEGIN required --> required<!-- END required -->\"><span class=\"fitemtitle\"><div class=\"fgrouplabel\">{label}<!-- BEGIN required -->{req}<!-- END required -->{advancedimg}</div>{help}</span><fieldset class=\"felement {type}<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\" id=\"id_error_{name}\">{error}</span><br /><!-- END error -->{element}</fieldset></div>");
 
         parent::HTML_QuickForm_Renderer_Tableless();
     }
@@ -1341,6 +1343,19 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     }
 
     function renderElement(&$element, $required, $error){
+        //manipulate id of all elements before rendering
+        if (!is_null($element->getAttribute('id'))) {
+            $id = $element->getAttribute('id');
+        } else {
+            $id = $element->getName();
+        }
+        //strip qf_ prefix and replace '[' with '_' and strip ']'
+        $id = preg_replace(array('/^qf_|\]/', '/\[/'), array('', '_'), $id);
+        if (strpos($id, 'id_') !== 0){
+            $element->updateAttributes(array('id'=>'id_'.$id));
+        }
+
+        //adding stuff to place holders in template
         if (method_exists($element, 'getElementTemplateType')){
             $html = $this->_elementTemplates[$element->getElementTemplateType()];
         }else{
@@ -1369,22 +1384,10 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $html = str_replace('{help}', '', $html);
 
         }
+
         $this->_templates[$element->getName()] = $html;
-        if (!is_null($element->getAttribute('id'))) {
-            $id = $element->getAttribute('id');
-        } else {
-            $id = $element->getName();
-        }
-        $id = preg_replace('/^qf_/', '', $id, 1);
-        if (strpos($id, 'id_') !== 0){
-            $element->updateAttributes(array('id'=>'id_'.$id));
-        }
+
         parent::renderElement($element, $required, $error);
-        if ($element->getType() == 'static' or $element->getType() == 'date_selector' or $element->getType() == 'date_time_selector') {
-             //xhtml compliance - remove 'for' attribute from label if element with id does not exist
-             //TODO: is there a better way to do it?
-            $this->_html = str_replace('<label for="id_'.$element->getName().'">', '<label>', $this->_html);
-        }
     }
 
     function finishForm(&$form){

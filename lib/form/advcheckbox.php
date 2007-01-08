@@ -59,7 +59,7 @@ class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox{
         static $idx = 1;
 
         if (!$this->getAttribute('id')) {
-            $this->updateAttributes(array('id' => substr(md5(microtime() . $idx++), 0, 6)));
+            $this->updateAttributes(array('id' => 'id_'.substr(md5(microtime() . $idx++), 0, 6)));
         }
     } // end func _generateId
 
