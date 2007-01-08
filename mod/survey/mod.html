@@ -12,6 +12,7 @@
 ?>
 
 <form id="form" method="post" action="../mod/survey/details.php">
+<fieldset class="invisiblefieldset">
 <table cellpadding="5">
 <tr valign="top">
     <td align="right"><b><?php  print_string("surveyname", "survey") ?>:</b></td>
@@ -37,7 +38,7 @@
 </tr>
 <?php print_standard_coursemodule_settings($form); ?>
 </table>
-<center>
+<div class="centerpara">
 <input type="hidden" name="intro"   value="<?php p($form->intro) ?>" />
 <input type="hidden" name="course"     value="<?php p($form->course) ?>" />
 <input type="hidden" name="sesskey"    value="<?php p($form->sesskey) ?>" />
@@ -49,5 +50,6 @@
 <input type="hidden" name="mode"       value="<?php p($form->mode) ?>" />
 <input type="submit" value="<?php print_string("savechanges") ?>" />
 <input type="submit" name="cancel" value="<?php print_string("cancel") ?>" />
-</center>
+</div>
+</fieldset>
 </form>

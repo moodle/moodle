@@ -54,7 +54,9 @@
         " -> ".stripslashes_safe($lastform->name)." ($streditingasurvey)");
 
         if (!$lastform->name or !$lastform->template) {
-            error(get_string("filloutallfields"), $_SERVER["HTTP_REFERER"]);
+            // $_SERVER["HTTP_REFERER"] breaks xhtml, urlencode breaks continue button,
+            // removing $_SERVER["HTTP_REFERER"]
+            error(get_string("filloutallfields"));
         }
         $mform = new mod_survey_details_form($CFG->wwwroot.'/course/mod.php', array('lastform'=>stripslashes_safe($lastform)));
         $mform->display();

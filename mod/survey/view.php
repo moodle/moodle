@@ -159,7 +159,7 @@
 
 <br />
 <script type="text/javascript">
-<![CDATA[
+<!--
 function checkform() {
 
     var error=false;
@@ -184,7 +184,6 @@ function checkform() {
 <?php echo "document.write('<input type=\"button\" value=\"".get_string("clicktocontinuecheck", "survey")."\" onClick=\"checkform()\" />');";  ?>
 
 // END -->    
-]]>
 </script>
 
 <noscript>
