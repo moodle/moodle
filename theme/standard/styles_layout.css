@@ -71,6 +71,7 @@ h6.main {
 
 .clearfix {
   min-width: 0;
+  overflow: hidden;
 }
 
 .clearfix:after {
