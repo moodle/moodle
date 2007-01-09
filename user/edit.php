@@ -12,6 +12,8 @@
         $id = $USER->id;
     }
 
+    httpsrequired(); // HTTPS is potentially required in this page
+
     if (! $user = get_record("user", "id", $id)) {
         error("User ID was incorrect");
     }
