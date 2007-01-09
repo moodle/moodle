@@ -913,6 +913,21 @@ a.skip-block, .skip-block {
   padding-top:5px;
 }
 
+.block_messages .content {
+  text-align:left;
+  font-size:0.75em;
+  padding-top:5px;
+}
+
+.block_messages .content ul.list {
+  list-style-type:none;
+  margin:0px;
+  padding:0px;
+}
+
+.block_messages .content div.nomessage {
+  text-align:center;
+}
 
 /***
  *** Blogs
