@@ -640,6 +640,11 @@ body#admin-roles-manage table.generalbox {
   margin: auto;
 }
 
+body#admin-index .copyrightnotice {
+  margin: auto;
+  text-align: center;
+}
+
 #admin-report-simpletest-index .exception pre {
   padding: 8px;
 }
@@ -1434,6 +1439,10 @@ body#course-view .headingblock {
 .categorypicker {
   text-align:center;
   padding-bottom:10px;
+}
+
+.addcoursebutton {
+  text-align:center;
 }
 
 .coursebox .cost {

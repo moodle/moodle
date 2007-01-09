@@ -1762,7 +1762,7 @@ function print_courses($category, $width="100%", $hidesitecourse = false) {
         if (has_capability('moodle/course:create', $context)) {
             $options = array();
             $options['category'] = $category->id;
-            echo '<div class="addcoursebutton" align="center">';
+            echo '<div class="addcoursebutton">';
             print_single_button($CFG->wwwroot.'/course/edit.php', $options, get_string("addnewcourse"));
             echo '</div>';
         }
