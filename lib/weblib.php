@@ -4848,7 +4848,7 @@ function notice_yesno ($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno
 
     print_simple_box_start('center', '60%', '', 5, 'generalbox', 'notice');
     echo '<p style="text-align:center">'. $message .'</p>';
-    echo '<table align="center" cellpadding="20"><tr><td>';
+    echo '<table class="boxaligncenter" cellpadding="20"><tr><td>';
     print_single_button($linkyes, $optionsyes, get_string('yes'), $methodyes, $CFG->framename);
     echo '</td><td>';
     print_single_button($linkno, $optionsno, get_string('no'), $methodno, $CFG->framename);

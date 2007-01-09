@@ -70,7 +70,7 @@
             print_heading(get_string('nomessages', 'chat'));
 
         } else {
-            echo '<p align="center">'.userdate($start).' --> '. userdate($end).'</p>';
+            echo '<p class="boxaligncenter">'.userdate($start).' --> '. userdate($end).'</p>';
 
             print_simple_box_start('center');
             foreach ($messages as $message) {  // We are walking FORWARDS through messages
