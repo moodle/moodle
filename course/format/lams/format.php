@@ -285,28 +285,28 @@ while ($section <= $course->numsections) {
         if (isediting($course->id)) {
             if ($course->marker == $section) {  // Show the "light globe" on/off
                 echo '<a href="view.php?id='.$course->id.'&amp;marker=0&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strmarkedthistopic.'">'.
-                    '<img src="'.$CFG->pixpath.'/i/marked.gif" vspace="3" height="16" width="16" border="0" alt="'.$strmarkedthistopic.'" /></a><br />';
+                    '<img src="'.$CFG->pixpath.'/i/marked.gif" height="16" width="16" border="0" alt="'.$strmarkedthistopic.'" /></a><br />';
             } else {
                 echo '<a href="view.php?id='.$course->id.'&amp;marker='.$section.'&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strmarkthistopic.'">'.
-                    '<img src="'.$CFG->pixpath.'/i/marker.gif" vspace="3" height="16" width="16" border="0" alt="'.$strmarkthistopic.'" /></a><br />';
+                    '<img src="'.$CFG->pixpath.'/i/marker.gif" height="16" width="16" border="0" alt="'.$strmarkthistopic.'" /></a><br />';
             }
 
             if ($thissection->visible) {        // Show the hide/show eye
                 echo '<a href="view.php?id='.$course->id.'&amp;hide='.$section.'&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strtopichide.'">'.
-                    '<img src="'.$CFG->pixpath.'/i/hide.gif" vspace="3" height="16" width="16" border="0" alt="'.$strtopichide.'" /></a><br />';
+                    '<img src="'.$CFG->pixpath.'/i/hide.gif" height="16" width="16" border="0" alt="'.$strtopichide.'" /></a><br />';
             } else {
                 echo '<a href="view.php?id='.$course->id.'&amp;show='.$section.'&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strtopicshow.'">'.
-                    '<img src="'.$CFG->pixpath.'/i/show.gif" vspace="3" height="16" width="16" border="0" alt="'.$strtopicshow.'" /></a><br />';
+                    '<img src="'.$CFG->pixpath.'/i/show.gif" height="16" width="16" border="0" alt="'.$strtopicshow.'" /></a><br />';
             }
 
             if ($section > 1) {                       // Add a arrow to move section up
                 echo '<a href="view.php?id='.$course->id.'&amp;random='.rand(1,10000).'&amp;section='.$section.'&amp;move=-1&amp;sesskey='.$USER->sesskey.'#section-'.($section-1).'" title="'.$strmoveup.'">'.
-                    '<img src="'.$CFG->pixpath.'/t/up.gif" vspace="3" class="iconsmall" alt="'.$strmoveup.'" /></a><br />';
+                    '<img src="'.$CFG->pixpath.'/t/up.gif" class="iconsmall" alt="'.$strmoveup.'" /></a><br />';
             }
 
             if ($section < $course->numsections) {    // Add a arrow to move section down
                 echo '<a href="view.php?id='.$course->id.'&amp;random='.rand(1,10000).'&amp;section='.$section.'&amp;move=1&amp;sesskey='.$USER->sesskey.'#section-'.($section+1).'" title="'.$strmovedown.'">'.
-                    '<img src="'.$CFG->pixpath.'/t/down.gif" vspace="3" class="iconsmall" alt="'.$strmovedown.'" /></a><br />';
+                    '<img src="'.$CFG->pixpath.'/t/down.gif" class="iconsmall" alt="'.$strmovedown.'" /></a><br />';
             }
 
         }

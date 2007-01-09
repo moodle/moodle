@@ -224,19 +224,19 @@
             if (isediting($course->id)) {
                 if ($thissection->visible) {        // Show the hide/show eye
                     echo '<a href="view.php?id='.$course->id.'&amp;hide='.$section.'&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strweekhide.'">'.
-                         '<img src="'.$CFG->pixpath.'/i/hide.gif" vspace="3" class="icon hide" alt="'.$strweekhide.'" /></a><br />';
+                         '<img src="'.$CFG->pixpath.'/i/hide.gif" class="icon hide" alt="'.$strweekhide.'" /></a><br />';
                 } else {
                     echo '<a href="view.php?id='.$course->id.'&amp;show='.$section.'&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strweekshow.'">'.
-                         '<img src="'.$CFG->pixpath.'/i/show.gif" vspace="3" class="icon hide" alt="'.$strweekshow.'" /></a><br />';
+                         '<img src="'.$CFG->pixpath.'/i/show.gif" class="icon hide" alt="'.$strweekshow.'" /></a><br />';
                 }
                 if ($section > 1) {                       // Add a arrow to move section up
                     echo '<a href="view.php?id='.$course->id.'&amp;random='.rand(1,10000).'&amp;section='.$section.'&amp;move=-1&amp;sesskey='.$USER->sesskey.'#section-'.($section-1).'" title="'.$strmoveup.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/up.gif" vspace="3" class="icon up" alt="'.$strmoveup.'" /></a><br />';
+                         '<img src="'.$CFG->pixpath.'/t/up.gif" class="icon up" alt="'.$strmoveup.'" /></a><br />';
                 }
 
                 if ($section < $course->numsections) {    // Add a arrow to move section down
                     echo '<a href="view.php?id='.$course->id.'&amp;random='.rand(1,10000).'&amp;section='.$section.'&amp;move=1&amp;sesskey='.$USER->sesskey.'#section-'.($section+1).'" title="'.$strmovedown.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/down.gif" vspace="3" class="icon down" alt="'.$strmovedown.'" /></a><br />';
+                         '<img src="'.$CFG->pixpath.'/t/down.gif" class="icon down" alt="'.$strmovedown.'" /></a><br />';
                 }
             }
 
