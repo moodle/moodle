@@ -7,8 +7,8 @@ $string['yourhost']                     = 'Your Host';
 $string['yourpeers']                    = 'Your Peers';
 $string['settings']                     = 'Settings';
 $string['hostsettings']                 = 'Host Settings';
-$string['mnetpeers']                    = 'Moodle Network Peers';
-$string['mnetservices']                 = 'Moodle Network Services';
+$string['mnetpeers']                    = 'Moodle network peers';
+$string['mnetservices']                 = 'Moodle network services';
 $string['trustedhosts']                 = 'Trusted Hosts';
 $string['trustedhostsexplain']          = 'Please enter a list of IP addresses or networks, one on each line. Some examples:<br />'.
                                           'Your local host:<br />'.
@@ -66,7 +66,7 @@ $string['is_in_range']                  = 'The IP address &nbsp;<code>$a</code>&
 $string['validated_by']                 = 'It is validated by the network: &nbsp;<code>$a</code>';
 $string['not_in_range']                 = 'The IP address &nbsp;<code>$a</code>&nbsp; does not represent a valid trusted host.';
 
-$string['testtrustedhosts']             = 'Test an Address';
+$string['testtrustedhosts']             = 'Test an address';
 $string['testtrustedhostsexplain']      = 'Enter an IP address to see if it is a trusted host.';
 
 $string['forbidden-function']           = 'That function has not been enabled for RPC.';
@@ -91,7 +91,7 @@ $string['wrong-ip']                     = 'Your IP address does not match the ad
 
 $string['verifysignature-error']        = 'The signature verification failed. An error has occurred.';
 $string['verifysignature-invalid']      = 'The signature verification failed. It appears that this payload was not signed by you.';
-$string['mnetsettings']                 = 'Moodle Network Settings';
+$string['mnetsettings']                 = 'Moodle network settings';
 $string['mnetservices']                 = 'Services';
 $string['mnetlog']                      = 'Logs';
 
@@ -100,26 +100,26 @@ $string['ispublished']                  = 'The $a Moodle has enabled this servic
 $string['version']                      = 'version';
 $string['id']                           = 'ID';
 $string['hostname']                     = 'Hostname';
-$string['last_connect_time']            = 'Last Connect Time';
+$string['last_connect_time']            = 'Last connect time';
 $string['RPC_HTTPS_VERIFIED']           = 'HTTPS (signed)';
 $string['RPC_HTTPS_SELF_SIGNED']        = 'HTTPS (self-signed)';
 $string['RPC_HTTP_VERIFIED']            = 'HTTP (signed)';
 $string['RPC_HTTP_SELF_SIGNED']         = 'HTTP (self-signed)';
 $string['RPC_HTTP_PLAINTEXT']           = 'HTTP unencrypted';
-$string['remotehosts']                  = 'Remote Hosts';
-$string['permittedtransports']          = 'Permitted Transports';
-$string['current_transport']            = 'Current Transport';
+$string['remotehosts']                  = 'Remote hosts';
+$string['permittedtransports']          = 'Permitted transports';
+$string['current_transport']            = 'Current transport';
 $string['system']                       = 'System';
 $string['on']                           = 'On';
 $string['off']                          = 'Off';
 $string['strict']                       = 'Strict';
 $string['promiscuous']                  = 'Promiscuous';
-$string['aboutyourhost']                = 'About Your Server';
+$string['aboutyourhost']                = 'About your server';
 $string['invalidhost']                  = 'You must provide a valid host identifier';
 
-$string['moodleloc']                    = 'Moodle Location';
+$string['moodleloc']                    = 'Moodle location';
 $string['addnewhost']                   = 'Add a new host';
-$string['addhost']                      = 'Add Host';
+$string['addhost']                      = 'Add host';
 
 $string['never']                        = 'Never';
 $string['restore']                      = 'Restore';
@@ -158,7 +158,7 @@ $string['serviceswepublish']            = 'Services we publish to $a.';
 $string['serviceswesubscribeto']        = 'Services on $a that we subscribe to.';
 $string['nohostid']                     = 'This page requires a Host ID, which should be an integer.';
 
-$string['networksettings']              = 'Network Settings';
+$string['networksettings']              = 'Network settings';
 $string['helpnetworksettings']          = 'Configure inter-Moodle communication';
 $string['mnet_concatenate_strings']     = 'Concatenate (up to) 3 strings and return the result';
 $string['notPEM']                       = 'This key is not in PEM format. It will not work.';

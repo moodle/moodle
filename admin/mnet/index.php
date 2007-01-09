@@ -17,20 +17,25 @@
 
     if (!extension_loaded('openssl')) {
         admin_externalpage_print_header($adminroot);
+        set_config('mnet_dispatcher_mode', 'off');
         print_error('requiresopenssl', 'mnet', '', NULL, true);
     }
 
     if (!$site = get_site()) {
         admin_externalpage_print_header($adminroot);
+        set_config('mnet_dispatcher_mode', 'off');
         print_error('nosite', 'mnet', '', NULL, true);
     }
 
     if (!function_exists('curl_init') ) {
         admin_externalpage_print_header($adminroot);
+        set_config('mnet_dispatcher_mode', 'off');
         print_error('nocurl', 'mnet', '', NULL, true);
     }
 
-    if (!isset($CFG->mnet_dispatcher_mode)) set_config('mnet_dispatcher_mode', 'off');
+    if (!isset($CFG->mnet_dispatcher_mode)) {
+        set_config('mnet_dispatcher_mode', 'off');
+    }
 
 /// If data submitted, process and store
     if (($form = data_submitted()) && confirm_sesskey()) {
