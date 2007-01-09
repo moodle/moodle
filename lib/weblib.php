@@ -5178,9 +5178,9 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
             foreach ($list as $key => $string) {
                 echo '<li class="r'. $row .'">';
                 if ($icons) {
-                    echo '<span class="icon c0">'. $icons[$key] .'</span>';
+                    echo '<div class="icon column c0">'. $icons[$key] .'</div>';
                 }
-                echo '<span class="c1">'. $string .'</span>';
+                echo '<div class="column c1">'. $string .'</div>';
                 echo "</li>\n";
                 $row = $row ? 0:1;
             }

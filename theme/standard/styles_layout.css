@@ -784,30 +784,6 @@ a.skip-block, .skip-block {
   font-size:1px;
 }
 
-.sideblock li .icon img {
-  width:16px;
-  height:16px;
-}
-
-.list, .unlist, .inline-list {
-  list-style:none;
-  padding:0;
-  margin:0;
-}
-.inline-list li {
-  display:inline;
-}
-
-.sideblock .content h3,
-.sideblock .content h2 {
-  text-align: left;
-}
-/*.sideblock .content h3, ??*/
-.sideblock .content h2 {
-  margin:1.5em 0 0;
-  padding:0;
-}
-
 .sideblock {
   margin-bottom:1em;
   width: 100%;
@@ -847,20 +823,6 @@ a.skip-block, .skip-block {
   margin: 0px 2px;
 }
 
-.sideblock .content {
-  padding: 4px;
-  border-width: 1px;
-  border-style: solid;
-}
-
-.sideblock .content hr {
-  height:1px;
-  margin-top:4px;
-  margin-bottom:4px;
-  border:none;
-  border-top:1px solid;
-}
-
 #left-column .hidden .header,
 #right-column .hidden .header
 {
@@ -874,36 +836,70 @@ a.skip-block, .skip-block {
   display: none;
 }
 
-.sideblock .list {
-  width: 100%;
-}
-
-.sideblock .list .c0{
-  padding: 2px;
-}
-
-.sideblock .footer {
-  margin-bottom: 4px;
-  text-align:center;
-}
-
 .sideblock .header .icon.hide,
 .sideblock .header .icon.edit {
   margin-right: 6px;
+}
+
+.sideblock .content {
+  padding: 4px;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.sideblock .content h3,
+.sideblock .content h2 {
+  text-align: left;
+}
+/*.sideblock .content h3, ??*/
+.sideblock .content h2 {
+  margin:1.5em 0 0;
+  padding:0;
 }
 
 .sideblock .content .head {
   margin-top: 10px;
 }
 
-.sideblock .icon {
-  display: block;
-  float: left;
-  margin-right: 0.3em;
+.sideblock .content hr {
+  height:1px;
+  margin-top:4px;
+  margin-bottom:4px;
+  border:none;
+  border-top:1px solid;
 }
 
-.sideblock .list li {
-  clear: left;
+.sideblock div.column {
+  margin:0px;
+  margin-right:4px;
+  padding:0px;
+  display:inline;
+}
+
+.sideblock .content .c0 img.icon {
+  margin:0px;
+}
+
+.sideblock .content .list {
+  width: 100%;
+}
+
+.sideblock .content .list li {
+  clear: both;
+}
+
+.sideblock .content .list, .unlist, .inline-list {
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+.sideblock .content .inline-list li {
+  display:inline;
+}
+
+.sideblock .footer {
+  margin-bottom: 4px;
+  text-align:center;
 }
 
 .blockconfigtable {

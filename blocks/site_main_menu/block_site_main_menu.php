@@ -57,7 +57,7 @@ class block_site_main_menu extends block_list {
         $editbuttons = '';
 
         if ($ismoving) {
-            $this->content->icons[] = '&nbsp;<img align="bottom" src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" alt="" />';
+            $this->content->icons[] = '<img src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" alt="" />';
             $this->content->items[] = $USER->activitycopyname.'&nbsp;(<a href="'.$CFG->wwwroot.'/course/mod.php?cancelcopy=true&amp;sesskey='.$USER->sesskey.'">'.$strcancel.'</a>)';
         }
 
@@ -77,7 +77,7 @@ class block_site_main_menu extends block_list {
                     } else {
                         $mod->groupmode = false;
                     }
-                    $editbuttons = '<br />'.make_editing_buttons($mod, true, true);
+                    $editbuttons = '<div class="buttons">'.make_editing_buttons($mod, true, true).'</div>';
                 } else {
                     $editbuttons = '';
                 }
@@ -110,8 +110,8 @@ class block_site_main_menu extends block_list {
                     } else {
                         $this->content->items[] = '<a title="'.$mod->modfullname.'" '.$linkcss.' '.$extra.
                             ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.$instancename.'</a>'.$editbuttons;
-                        //Accessibility: incidental image - should be empty Alt text; removed unnecessary height/width. 
-                        $this->content->icons[] = '<img src="'.$icon.'" alt="" />';
+                        //Accessibility: incidental image - should be empty Alt text 
+                        $this->content->icons[] = '<img src="'.$icon.'" class="icon" alt="" />';
                     }
                 }
             }
