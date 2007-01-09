@@ -31,8 +31,7 @@
 
     echo "<hr />";
 
-    print ('<table align="center">'
-           . '</tr>');
+    print ('<table align="center">');
 
     foreach ($courses as $course) {
         print ('<tr>'
