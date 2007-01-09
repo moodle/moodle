@@ -2077,6 +2077,24 @@ body#user-index .rolesform {
 /***
  *** Modules: Choice
  ***/
+.button {
+  text-align:center;  
+}
+
+.attemptcell {
+  width:5px;
+  white-space: nowrap; 
+}
+
+.anonymous {
+  margin-left:auto;
+  margin-right:auto;  
+}
+
+.names {
+  margin-left:auto;
+  margin-right:auto;  
+}
 
 /***
  *** Modules: Data

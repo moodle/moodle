@@ -170,7 +170,7 @@ function choice_show_form($choice, $user, $cm) {
 
     switch ($choice->display) {
         case CHOICE_DISPLAY_HORIZONTAL:
-            echo "<table cellpadding=\"20\" cellspacing=\"20\" align=\"center\"><tr>";
+            echo "<table cellpadding=\"20\" cellspacing=\"20\" class=\"boxaligncenter\"><tr>";
 
             foreach ($cdisplay as $cd) {
                 echo "<td align=\"center\" valign=\"top\">";
@@ -188,7 +188,7 @@ function choice_show_form($choice, $user, $cm) {
 
         case CHOICE_DISPLAY_VERTICAL:
             $displayoptions->para = false;
-            echo "<table cellpadding=\"10\" cellspacing=\"10\" align=\"center\">";
+            echo "<table cellpadding=\"10\" cellspacing=\"10\" class=\"boxaligncenter\">";
             foreach ($cdisplay as $cd) {
                 echo "<tr><td align=\"left\">";
                 echo "<input type=\"radio\" name=\"answer\" value=\"".$cd->optionid."\" alt=\"".strip_tags(format_text($cd->text))."\"". $cd->checked.$cd->disabled." />";
@@ -220,14 +220,14 @@ function choice_show_form($choice, $user, $cm) {
         break;
     }
     //show save choice button
-    echo "<center>";
+    echo '<div class="button">';
     echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
     if (!isguest()) { //don't show save button if the logged in user is the guest user.
         echo "<input type=\"submit\" value=\"".get_string("savemychoice","choice")."\" />";
     } else {
         print_string('havetologin', 'choice');
     }
-    echo "</center>";
+    echo "</div>";
 }
 
 function choice_user_submit_response($formanswer, $choice, $userid, $courseid, $cm) {
@@ -362,14 +362,14 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 echo '<input type="hidden" name="mode" value="overview" />';
             }
 
-            echo "<table cellpadding=\"5\" cellspacing=\"10\" align=\"center\" class=\"results names\">";
+            echo "<table cellpadding=\"5\" cellspacing=\"10\" class=\"results names\">";
             echo "<tr>";
             $count = 0;
             foreach ($useranswer as $optionid => $userlist) {
                 if ($optionid) {
-                    echo "<th class=\"col$count header\" width=\"$tablewidth%\" scope=\"col\">";
+                    echo "<th class=\"col$count header\" style=\"width:$tablewidth%\" scope=\"col\">";
                 } else if ($choice->showunanswered) {
-                    echo "<th class=\"col$count header\" width=\"$tablewidth%\" scope=\"col\">";
+                    echo "<th class=\"col$count header\" style=\"width:$tablewidth%\" scope=\"col\">";
                 } else {
                     continue;
                 }
@@ -382,9 +382,9 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
             $count = 0;
             foreach ($useranswer as $optionid => $userlist) {
                 if ($optionid) {
-                    echo "<td class=\"col$count data\" width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\">";
+                    echo "<td class=\"col$count data\" style=\"width:$tablewidth%\" valign=\"top\" nowrap=\"nowrap\">";
                 } else if ($choice->showunanswered) {
-                    echo "<td class=\"col$count data\" width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\">";
+                    echo "<td class=\"col$count data\" style=\"width:$tablewidth%\" valign=\"top\" nowrap=\"nowrap\">";
                 } else {
                     continue;
                 }
@@ -397,7 +397,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                     if (!($optionid==0 && has_capability('mod/choice:readresponses', $context, $user->id))) { // make sure admins and hidden teachers are not shown in not answered yet column.
                         echo "<tr>";
                         if (has_capability('mod/choice:readresponses', $context) && $optionid!=0) {
-                            echo '<td width="5" nowrap="nowrap"><input type="checkbox" name="attemptid[]" value="'. $answers[$user->id]->id. '" /></td>';
+                            echo '<td class="attemptcell"><input type="checkbox" name="attemptid[]" value="'. $answers[$user->id]->id. '" /></td>';
                         }
                         echo "<td width=\"10\" nowrap=\"nowrap\" class=\"picture\">";
                         print_user_picture($user->id, $course->id, $user->picture);
@@ -467,14 +467,14 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
 
             $tablewidth = (int) (100.0 / count($useranswer));
 
-            echo "<table cellpadding=\"5\" cellspacing=\"0\" align=\"center\" class=\"results anonymous\">";
+            echo "<table cellpadding=\"5\" cellspacing=\"0\" class=\"results anonymous\">";
             echo "<tr>";
             $count = 0;
             foreach ($useranswer as $optionid => $userlist) {
                 if ($optionid) {
-                    echo "<th width=\"$tablewidth%\" class=\"col$count header\" scope=\"col\">";
+                    echo "<th style=\"width:$tablewidth%\" class=\"col$count header\" scope=\"col\">";
                 } else if ($choice->showunanswered) {
-                    echo "<th width=\"$tablewidth%\" class=\"col$count header\" scope=\"col\">";
+                    echo "<th style=\"width:$tablewidth%\" class=\"col$count header\" scope=\"col\">";
                 } else {
                     continue;
                 }
