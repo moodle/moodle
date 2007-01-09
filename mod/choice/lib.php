@@ -350,7 +350,6 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
         }
     }
     ksort($useranswer);
-
     switch ($forcepublish) {
         case CHOICE_PUBLISH_NAMES:
 
@@ -358,6 +357,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
             if (has_capability('mod/choice:readresponses', $context)) {
                 echo '<div id="tablecontainer">';
                 echo '<form id="attemptsform" method="post" action="'.$_SERVER['PHP_SELF'].'" onsubmit="var menu = document.getElementById(\'menuaction\'); return (menu.options[menu.selectedIndex].value == \'delete\' ? \''.addslashes(get_string('deleteattemptcheck','quiz')).'\' : true);">';
+                echo '<div>';
                 echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
                 echo '<input type="hidden" name="mode" value="overview" />';
             }
@@ -382,14 +382,17 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
             $count = 0;
             foreach ($useranswer as $optionid => $userlist) {
                 if ($optionid) {
-                    echo "<td class=\"col$count data\" style=\"width:$tablewidth%\" valign=\"top\" nowrap=\"nowrap\">";
+                    echo "<td class=\"col$count data\" style=\"width:$tablewidth%;\">";
                 } else if ($choice->showunanswered) {
-                    echo "<td class=\"col$count data\" style=\"width:$tablewidth%\" valign=\"top\" nowrap=\"nowrap\">";
+                    echo "<td class=\"col$count data\" style=\"width:$tablewidth%;\">";
                 } else {
                     continue;
                 }
 
-                echo "<table width=\"100%\">";
+                // added empty row so that when the next iteration is empty,
+                // we do not get <table></table> erro from w3c validator
+                // MDL-7861
+                echo "<table class=\"choiceresponse\"><tr><td></td></tr>";
                 foreach ($userlist as $user) {
                     // this needs to be fixed
                     // hide admin/editting teacher (users with editting privilages)
@@ -399,9 +402,9 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                         if (has_capability('mod/choice:readresponses', $context) && $optionid!=0) {
                             echo '<td class="attemptcell"><input type="checkbox" name="attemptid[]" value="'. $answers[$user->id]->id. '" /></td>';
                         }
-                        echo "<td width=\"10\" nowrap=\"nowrap\" class=\"picture\">";
+                        echo "<td class=\"picture\">";
                         print_user_picture($user->id, $course->id, $user->picture);
-                        echo "</td><td width=\"100%\" nowrap=\"nowrap\" class=\"fullname\">";
+                        echo "</td><td class=\"fullname\">";
                         echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">";
                         echo fullname($user, has_capability('moodle/site:viewfullnames', $context));
                         echo "</a>";
@@ -451,14 +454,15 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 $options = array('delete' => get_string('delete'));
                 echo choose_from_menu($options, 'action', '', get_string('withselected', 'quiz'), 'if(this.selectedIndex > 0) submitFormById(\'attemptsform\');', '', true);
                 echo '<noscript id="noscriptmenuaction" style="display: inline;">';
-                echo '<input type="submit" value="'.get_string('go').'" /></noscript>';
+                echo '<div>';
+                echo '<input type="submit" value="'.get_string('go').'" /></div></noscript>';
                 echo '<script type="text/javascript">'."\n<!--\n".'document.getElementById("noscriptmenuaction").style.display = "none";'."\n-->\n".'</script>';
                 echo '</td><td></td></tr>';
             }
 
             echo "</table>";
             if (has_capability('mod/choice:readresponses', $context)) {
-                echo "</form></div>";
+                echo "</div></form></div>";
             }
             break;
 
@@ -482,7 +486,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 echo "</th>";
                 $count++;
             }
-            echo "</tr><tr>";
+            echo "</tr>";
 
             $maxcolumn = 0;
             foreach ($useranswer as $optionid => $userlist) {
@@ -500,7 +504,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 }
             }
 
-            echo "</tr><tr>";
+            echo "<tr>";
             $count = 0;
             foreach ($useranswer as $optionid => $userlist) {
                 if (!$optionid and !$choice->showunanswered) {

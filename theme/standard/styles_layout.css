@@ -2086,14 +2086,35 @@ body#user-index .rolesform {
   white-space: nowrap; 
 }
 
-.anonymous {
+.anonymous,
+.names {
   margin-left:auto;
   margin-right:auto;  
 }
 
-.names {
+.downloadreport {
+  border:0px;
   margin-left:auto;
   margin-right:auto;  
+}
+
+.choiceresponse {
+  width:100%;  
+}
+.choiceresponse .picture {
+  width:10px;
+  white-space: nowrap;
+}
+
+.choiceresponse .fullname {
+  width:100%;
+  white-space: nowrap;
+}
+
+
+.results.data {
+  vertical-align:top;
+  white-space: nowrap;
 }
 
 /***

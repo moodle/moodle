@@ -248,7 +248,7 @@
    
    //now give links for downloading spreadsheets. 
     echo "<br />\n";
-    echo "<table border=\"0\" align=\"center\"><tr>\n";
+    echo "<table class=\"downloadreport\"><tr>\n";
     echo "<td>";
     $options = array();
     $options["id"] = "$cm->id";   
