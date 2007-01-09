@@ -389,7 +389,7 @@
             foreach ($enstring as $key => $envalue) {
                 $linescounter++ ;
                 if (LANG_SUBMIT_REPEAT &&  $editable && $linescounter % LANG_SUBMIT_REPEAT_EVERY == 0) {
-                    echo '<tr><td colspan="2">&nbsp;<td><br />';
+                    echo '<tr><td colspan="2">&nbsp;</td><td><br />';
                     echo '    <input type="submit" name="update" value="'.get_string('savechanges').': '.$currentfile.'" />';
                     echo '<br />&nbsp;</td></tr>';
                 }
