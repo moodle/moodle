@@ -92,7 +92,7 @@ if ($categories = get_records('course_categories', '', '', 'name', 'id, name')) 
         $potentialcategories = array();
         $explode_categories = explode(',', $CFG->enrol_mnet_allowed_categories);
         foreach($categories as $category) {
-            if(in_array($category->id, $explode_categories)) {
+            if (in_array($category->id, $explode_categories)) {
                 $allowedcategories[] = $category;
             } else {
                 $potentialcategories[] = $category;
@@ -109,7 +109,7 @@ if ($courses = get_records('course', '', '', 'shortname', 'id, shortname')) {
         $potentialcourses = array();
         $explode_courses = explode(',', $CFG->enrol_mnet_allowed_courses);
         foreach($courses as $course) {
-            if(in_array($course->id, $explode_courses)) {
+            if (in_array($course->id, $explode_courses)) {
                 $allowedcourses[] = $course;
             } else {
                 $potentialcourses[] = $course;
