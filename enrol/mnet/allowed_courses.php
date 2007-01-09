@@ -85,22 +85,36 @@ if ($form = data_submitted() and confirm_sesskey()) {
 // setup arrays for allowed categories and courses
 $categories = array();
 if ($categories = get_records('course_categories', '', '', 'name', 'id, name')) {
+    $allowedcategories = array();
     if (empty($CFG->enrol_mnet_allowed_categories)) {
-        $allowedcategories = array();
         $potentialcategories = $categories;
     } else {
-        $allowedcategories = array_intersect_key($categories, array_flip(explode(',', $CFG->enrol_mnet_allowed_categories)));
-        $potentialcategories = array_diff_key($categories, array_flip(explode(',', $CFG->enrol_mnet_allowed_categories)));
+        $potentialcategories = array();
+        $explode_categories = explode(',', $CFG->enrol_mnet_allowed_categories);
+        foreach($categories as $category) {
+            if(in_array($category->id, $explode_categories)) {
+                $allowedcategories[] = $category;
+            } else {
+                $potentialcategories[] = $category;
+            }
+        }
     }
 }
 $courses = array();
 if ($courses = get_records('course', '', '', 'shortname', 'id, shortname')) {
+    $allowedcourses = array();
     if (empty($CFG->enrol_mnet_allowed_courses)) {
-        $allowedcourses = array();
         $potentialcourses = $courses;
     } else {
-        $allowedcourses = array_intersect_key($courses, array_flip(explode(',', $CFG->enrol_mnet_allowed_courses)));
-        $potentialcourses = array_diff_key($courses, array_flip(explode(',', $CFG->enrol_mnet_allowed_courses)));
+        $potentialcourses = array();
+        $explode_courses = explode(',', $CFG->enrol_mnet_allowed_courses);
+        foreach($courses as $course) {
+            if(in_array($course->id, $explode_courses)) {
+                $allowedcourses[] = $course;
+            } else {
+                $potentialcourses[] = $course;
+            }
+        }
     }
 }
 
