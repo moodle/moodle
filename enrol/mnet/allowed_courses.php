@@ -112,7 +112,7 @@ print_simple_box_start('center','90%','','20');
 ?>
  <div class="allowedcoursesdiv"> 
   <form id="allowedcoursesform" method="post">
-    <input type="hidden" name="sesskey" value="<?php echo $sesskey; ?>">
+    <input type="hidden" name="sesskey" value="<?php echo $sesskey; ?>" />
 <?php
 
 // display course category selector
@@ -134,10 +134,10 @@ if (count($categories) < 1) {
 
     <tr>
       <td valign="top">
-          <select name="removecategories[]" size="20" id="removecategories" multiple
-                  onFocus="getElementById('allowedcoursesform').addcategory.disabled=true;
+          <select name="removecategories[]" size="20" id="removecategories" multiple="multiple"
+                  onfocus="getElementById('allowedcoursesform').addcategory.disabled=true;
                            getElementById('allowedcoursesform').removecategory.disabled=false;
-                           getElementById('allowedcoursesform').addcategories.selectedIndex=-1;" />
+                           getElementById('allowedcoursesform').addcategories.selectedIndex=-1;" >
           <?php
               foreach ($allowedcategories as $category) {
                   echo "<option value=\"$category->id\"> $category->name </option>\n";
@@ -155,7 +155,7 @@ if (count($categories) < 1) {
       </td>
 
       <td valign="top">
-          <select name="addcategories[]" size="20" id="addcategories" multiple
+          <select name="addcategories[]" size="20" id="addcategories" multiple="multiple"
                   onFocus="getElementById('allowedcoursesform').addcategory.disabled=false;
                            getElementById('allowedcoursesform').removecategory.disabled=true;
                            getElementById('allowedcoursesform').removecategories.selectedIndex=-1;">
@@ -191,10 +191,10 @@ if (count($courses) < 1) {
 
     <tr>
       <td valign="top">
-          <select name="removecourses[]" size="20" id="removecourses" multiple
+          <select name="removecourses[]" size="20" id="removecourses" multiple="multiple"
                   onFocus="getElementById('allowedcoursesform').addcourse.disabled=true;
                            getElementById('allowedcoursesform').removecourse.disabled=false;
-                           getElementById('allowedcoursesform').addcourses.selectedIndex=-1;" />
+                           getElementById('allowedcoursesform').addcourses.selectedIndex=-1;">
           <?php
               foreach ($allowedcourses as $course) {
                   echo "<option value=\"$course->id\"> $course->shortname </option>\n";
@@ -212,7 +212,7 @@ if (count($courses) < 1) {
       </td>
 
       <td valign="top">
-          <select name="addcourses[]" size="20" id="addcourses" multiple
+          <select name="addcourses[]" size="20" id="addcourses" multiple="multiple"
                   onFocus="getElementById('allowedcoursesform').addcourse.disabled=false;
                            getElementById('allowedcoursesform').removecourse.disabled=true;
                            getElementById('allowedcoursesform').removecourses.selectedIndex=-1;">
