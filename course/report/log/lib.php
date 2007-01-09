@@ -81,11 +81,11 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
             FROM 
                 {$CFG->prefix}mnet_host h
             LEFT OUTER JOIN 
-                {$CFG->prefix}mnet_rpc2host rh    ON 
-                (h.id=rh.host_id AND rh.subscribe!=0)
+                {$CFG->prefix}mnet_host2service hs    ON 
+                (h.id=hs.hostid AND hs.subscribe!=0)
             LEFT OUTER JOIN 
                 {$CFG->prefix}mnet_service2rpc sr ON 
-                sr.rpcid=rh.rpc_id
+                sr.serviceid=hs.serviceid
             LEFT OUTER JOIN 
                 {$CFG->prefix}mnet_service s      ON 
                 (sr.serviceid=s.id AND s.name='sso')";
