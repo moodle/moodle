@@ -278,10 +278,11 @@ function load_environment_xml() {
 
 /// First of all, take a look inside $CFG->dataroot/environment/environment.xml
     $file = $CFG->dataroot.'/environment/environment.xml';
-    if (!is_file($file) || !is_readable($file) || !$contents = file_get_contents($file)) {
+    $internalfile = $CFG->dirroot.'/'.$CFG->admin.'/environment.xml';
+    if (!is_file($file) || !is_readable($file) || filemtime($file) < filemtime($internalfile) || 
+        !$contents = file_get_contents($file)) {
     /// Fallback to fixed $CFG->admin/environment.xml
-        $file = $CFG->dirroot.'/'.$CFG->admin.'/environment.xml';
-        if (!is_file($file) || !is_readable($file) || !$contents = file_get_contents($file)) {
+        if (!is_file($internalfile) || !is_readable($internalfile) || !$contents = file_get_contents($internalfile)) {
             return false;
         }
     }
