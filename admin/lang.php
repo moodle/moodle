@@ -68,10 +68,10 @@
     $stredithelpdocs = get_string("edithelpdocs", 'admin');
     $strthislanguage = get_string("thislanguage");
     $strgotofirst = get_string('gotofirstmissing','admin');
-    $strfilestoredin = get_string('langstorein', 'admin');
-    $strfilestoredinhelp = get_string('langstoreinhelp', 'admin');
-    $strswitchlangdirbtn = get_string('langstoreswitch', 'admin');
-    $strchoosefiletoedit = get_string('langchoosefile', 'admin');
+    $strfilestoredin = get_string('filestoredin', 'admin');
+    $strfilestoredinhelp = get_string('filestoredinhelp', 'admin');
+    $strswitchlang = get_string('switchlang', 'admin');
+    $strchoosefiletoedit = get_string('choosefiletoedit', 'admin');
     $streditennotallowed = get_string('langnoeditenglish', 'admin');
     $strfilecreated = get_string('langfilecreated', 'admin');
     $strprev = get_string('previous');
@@ -108,21 +108,14 @@
     admin_externalpage_print_header($adminroot);
 
     if (!$mode) {
-        print_simple_box_start('center','80%');
-        echo '<div align="center">';
-        print_string('editlang','admin');
-        echo '<br />';
+        print_box_start();
         $currlang = current_language();
         $langs = get_list_of_languages();
-        echo "<b>$strcurrentlanguage:</b>";
-        echo '<br />';
-        echo popup_form ("$CFG->wwwroot/$CFG->admin/lang.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
-        $options["lang"] = $currentlang;
+        popup_form ("$CFG->wwwroot/$CFG->admin/lang.php?lang=", $langs, "chooselang", $currlang, "", "", "", false, 'self', $strcurrentlanguage.':');
         print_heading("<a href=\"lang.php?mode=missing\">$strmissingstrings</a>");
         print_heading("<a href=\"lang.php?mode=compare\">$streditstrings</a>");
         print_heading("<a href=\"langdoc.php\">$stredithelpdocs</a>");
-        echo '</div>';
-        print_simple_box_end();
+        print_box_end();
         admin_externalpage_print_footer($adminroot);
         exit;
     }
@@ -341,7 +334,7 @@
              '<input type="hidden" name="mode" value="compare" />'.
              '<input type="hidden" name="currentfile" value="'.$currentfile.'" />'.
              '<input type="hidden" name="uselocal" value="'.(1 - $uselocal % 2).'" />'.
-             '<input type="submit" value="'.$strswitchlangdirbtn.'" />'.
+             '<input type="submit" value="'.$strswitchlang.'" />'.
              '</form></center>';
         print_simple_box_end();
        
