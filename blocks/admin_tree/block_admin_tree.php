@@ -81,8 +81,6 @@ class block_admin_tree extends block_base {
 
                 $this->open_folder($content->visiblename);
 
-                unset($entries);
-
                 $entries = array_keys($content->children);
 
                 foreach ($entries as $entry) {
@@ -112,8 +110,6 @@ class block_admin_tree extends block_base {
 
         // we need to do this instead of $this->build_tree($adminroot) because the top-level folder
         // is redundant (and ideally ignored). (the top-level folder is "administration".)
-
-        unset($entries);
 
         $entries = array_keys($adminroot->children);
 

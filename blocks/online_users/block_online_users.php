@@ -84,7 +84,7 @@ class block_online_users extends block_base {
         //Calculate minutes
         $minutes  = floor($timetoshowusers/60);
 
-        $this->content->text = "<div class=\"message\">(".get_string("periodnminutes","block_online_users",$minutes).")</div>";
+        $this->content->text = "<div class=\"info\">(".get_string("periodnminutes","block_online_users",$minutes).")</div>";
 
         //Now, we have in users, the list of users to show
         //Because they are online
@@ -96,23 +96,24 @@ class block_online_users extends block_base {
                 $this->content->text .= '<li class="listentry">';
                 $timeago = format_time(time() - max($user->timeaccess, $user->lastaccess)); //bruno to calculate correctly on frontpage 
                 if ($user->username == 'guest') {
-                    $this->content->text .= print_user_picture($user->id, $COURSE->id, $user->picture, 16, true, false).' ';
-                    $this->content->text .= get_string('guestuser');
+                    $this->content->text .= '<div class="user">'.print_user_picture($user->id, $COURSE->id, $user->picture, 16, true, false, '', false);
+                    $this->content->text .= get_string('guestuser').'</div>';
 
                 } else {
-                    $this->content->text .= print_user_picture($user->id, $COURSE->id, $user->picture, 16, true).' ';
-                    $this->content->text .= '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$COURSE->id.'" title="'.$timeago.'">'.$user->fullname.'</a>';
+                    $this->content->text .= '<div class="user"><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$COURSE->id.'" title="'.$timeago.'">';
+                    $this->content->text .= print_user_picture($user->id, $COURSE->id, $user->picture, 16, true, false, '', false);
+                    $this->content->text .= $user->fullname.'</a></div>';
                 }
                 if (!empty($USER->id) and ($USER->id != $user->id) and !empty($CFG->messaging) and 
                     !isguest() and $user->username != 'guest') {  // Only when logged in and messaging active etc
-                    $this->content->text .= "\n".' <a title="'.get_string('messageselectadd').'" target="message_'.$user->id.'" href="'.$CFG->wwwroot.'/message/discussion.php?id='.$user->id.'" onclick="return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message_'.$user->id.'\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);">'
-                        .'<img class="messageicon" src="'.$CFG->pixpath.'/t/message.gif" alt="'. get_string('messageselectadd') .'" /></a>';
+                    $this->content->text .= '<div class="message"><a title="'.get_string('messageselectadd').'" href="'.$CFG->wwwroot.'/message/discussion.php?id='.$user->id.'" onclick="this.target=\'message_'.$user->id.'\';return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message_'.$user->id.'\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);">'
+                        .'<img class="iconsmall" src="'.$CFG->pixpath.'/t/message.gif" alt="'. get_string('messageselectadd') .'" /></a></div>';
                 }
                 $this->content->text .= "</li>\n";
             }
-            $this->content->text .= "</ul>\n";
+            $this->content->text .= '</ul><div class="clearer"><!-- --></div>';
         } else {
-            $this->content->text .= "<div class=\"message\">".get_string("none")."</div>";
+            $this->content->text .= "<div class=\"info\">".get_string("none")."</div>";
         }
 
         return $this->content;

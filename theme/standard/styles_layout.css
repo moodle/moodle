@@ -112,8 +112,7 @@ a img {
 }
 
 img.userpicture,
-img.grouppicture,
-.block_online_users .listentry img {
+img.grouppicture {
   border: 0 solid
 }
 
@@ -851,7 +850,7 @@ a.skip-block, .skip-block {
 .sideblock .content h2 {
   text-align: left;
 }
-/*.sideblock .content h3, ??*/
+
 .sideblock .content h2 {
   margin:1.5em 0 0;
   padding:0;
@@ -880,26 +879,40 @@ a.skip-block, .skip-block {
   margin:0px;
 }
 
-.sideblock .content .list {
-  width: 100%;
-}
-
-.sideblock .content .list li {
-  clear: both;
-}
-
 .sideblock .content .list, .unlist, .inline-list {
   list-style:none;
   padding:0;
   margin:0;
 }
+
+.sideblock .content .list {
+  width: 100%;
+  margin:0px;
+  padding:0px;
+}
+
 .sideblock .content .inline-list li {
   display:inline;
+}
+
+.sideblock .content ul.list li.listentry {
+  clear:both;
+}
+
+.sideblock .content div.info {
+  text-align:center;
 }
 
 .sideblock .footer {
   margin-bottom: 4px;
   text-align:center;
+  clear:both;
+}
+
+.sideblock img.userpicture {
+  width:16px;
+  height:16px;
+  margin-right:4px;
 }
 
 .blockconfigtable {
@@ -910,25 +923,22 @@ a.skip-block, .skip-block {
   margin-bottom: 0px;
 }
 
-.block_online_users .listentry {
-  padding-top:5px;
-}
-
 .block_messages .content {
   text-align:left;
   font-size:0.75em;
   padding-top:5px;
 }
 
-.block_messages .content ul.list {
-  list-style-type:none;
-  margin:0px;
-  padding:0px;
+.block_online_users .listentry div.user,
+.block_messages .listentry div.user {
+  float:left;
 }
 
-.block_messages .content div.nomessage {
-  text-align:center;
+.block_online_users .listentry div.message,
+.block_messages .listentry div.message {
+  float:right;
 }
+
 
 /***
  *** Blogs

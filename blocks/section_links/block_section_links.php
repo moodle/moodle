@@ -79,7 +79,7 @@ class block_section_links extends block_base {
             }
             $style = ($isvisible) ? '' : ' class="dimmed"';
             if ($i == $highlight) {
-                $text .= "<li><a href=\"$link$i\"$style><b>$i</b></a></li>\n";
+                $text .= "<li><a href=\"$link$i\"$style><strong>$i</strong></a></li>\n";
             } else {
                 $text .= "<li><a href=\"$link$i\"$style>$i</a></li>\n";
             }

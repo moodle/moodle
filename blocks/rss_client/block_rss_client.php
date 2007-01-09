@@ -105,7 +105,7 @@
                                           'id' => $this->courseid,
                                           'section' => 'rss'
                                           ));
-                $output .= '<div align="center"><a title="'. get_string('feedsaddedit', 'block_rss_client') .'" href="'. $script .'">'. get_string('feedsaddedit', 'block_rss_client') .'</a></div>';
+                $output .= '<div class="info"><a title="'. get_string('feedsaddedit', 'block_rss_client') .'" href="'. $script .'">'. get_string('feedsaddedit', 'block_rss_client') .'</a></div>';
             } else {
                 // This instance has not been configured yet - show configure link?
                 if (has_capability('block/rss_client:manageanyfeeds', $context)) {
@@ -117,7 +117,7 @@
                                           'id' => $this->courseid,
                                           'section' => 'rss'
                                           ));
-                    $output .= '<div align="center"><a title="'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'" href="'. $script.'">'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'</a></div>';
+                    $output .= '<div class="info"><a title="'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'" href="'. $script.'">'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'</a></div>';
                 }
             }
             //}
@@ -132,7 +132,7 @@
             foreach ($rssidarray as $rssid) {
                 $output .=  clean_text($this->get_rss_by_id($rssid, $display_description, $shownumentries, ($numids > 1) ? true : false), FORMAT_HTML);
                 if ($numids > 1 && $count != $numids -1 && !empty($rssfeedstring)) {
-                    $output .= '<hr width="80%" />';
+                    $output .= '<hr style="width=:80%" />';
                 }
                 $count ++;
             }

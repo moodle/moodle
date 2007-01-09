@@ -308,8 +308,8 @@ a.skip-block {
   font-size: 0.8em;
 }
 
-.block_online_users .listentry {
-  text-align:left;
+.block_messages .content .listentry,
+.block_online_users .content .listentry {
   font-size:0.75em
 }
 
