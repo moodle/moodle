@@ -252,7 +252,7 @@
     }
     else {
         $content = '';
-        $content2 = '<div align="center">'.get_string('nowikicreated', 'wiki').'</div>';
+        $content2 = '<div class="boxaligncenter">'.get_string('nowikicreated', 'wiki').'</div>';
         
     }
 
@@ -307,7 +307,7 @@
             .get_string('modulename', 'wiki')." ".get_string('for',"wiki")." "
             .wiki_get_owner($wiki_entry).':</td>';
 
-        echo '<td class="sideblockheading" align="right">'
+        echo '<td class="sideblockheading">'
             .get_string('otherwikis', 'wiki').':&nbsp;&nbsp;';
         $script = 'self.location=getElementById(\'otherwikis\').wikiselect.options[getElementById(\'otherwikis\').wikiselect.selectedIndex].value';
         choose_from_menu($wiki_list, "wikiselect", $selected, "choose", $script);
@@ -326,24 +326,24 @@
         echo '<tr>';
 
         /// Searchform
-        echo '<td align="center">';
+        echo '<td class="wikisearchform">';
         wiki_print_search_form($cm->id, $q, $userid, $groupid, false);
         echo '</td>';
 
         /// Internal Wikilinks
-        echo '<td align="center">';
+        echo '<td class="wikilinksblock">';
         wiki_print_wikilinks_block($cm->id,  $wiki->ewikiacceptbinary);
         echo '</td>';
 
         /// Administrative Links
         if($canedit) {
-          echo '<td align="center">';
+          echo '<td class="wikiadminactions">';
           wiki_print_administration_actions($wiki, $cm->id, $userid, $groupid, $ewiki_title, $wiki->htmlmode!=2, $course);
           echo '</td>';
         }
 
         /// Formatting Rules
-        echo '<td align="right">';
+        echo '<td class="howtowiki">';
         helpbutton('howtowiki', get_string('howtowiki', 'wiki'), 'wiki');
         echo '</td>';
 
@@ -399,7 +399,7 @@
     // Insert the link
     $linkdesc = get_string('reloadlinkdescription', 'wiki');
     $linktext = get_string('reloadlinktext', 'wiki');
-    echo "<div align='right' style='padding-bottom: 0.5em;'><a href='$me' title='$linkdesc'><input type='button' value='$linktext' /></a></div>";
+    echo "<div class='wikilinkright'><a href='$me' title='$linkdesc'><input type='button' value='$linktext' /></a></div>";
 
     print_simple_box_start('center', '100%', '', '20');
 
@@ -434,11 +434,13 @@
                 $sesskey=sesskey();
                 print "
 <form id='overridelock' method='post' action='overridelock.php'>
+  <fieldset class=\"invisiblefieldset\">
   <input type='hidden' name='sesskey' value='$sesskey' />
   <input type='hidden' name='id' value='$id' />
   <input type='hidden' name='page' value='$pageesc' />
   $stroverrideinfo
   <input type='submit' value='$stroverridebutton' />
+  </fieldset>
 </form>
 ";
             }
@@ -480,7 +482,7 @@ $strnojslockwarning
     }
     print $content2;
     print_simple_box_end();
-    echo "<br clear=\"all\" />";
+    echo "<br />";
 
 /// Finish the page
     echo '

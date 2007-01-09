@@ -1094,8 +1094,10 @@ function ewiki_page_search($id, &$data, $action) {
    if (! ($q = @$_REQUEST["q"])) {
 
       $o .= '<form action="' . ewiki_script("", $id) . '" method="post">';
+      $o .= '<fieldset class="invisiblefieldset">';
       $o .= '<input name="q" size="30" /><br /><br />';
       $o .= '<input type="submit" value="'.$id.'" />';
+      $o .= '</fieldset>';
       $o .= '</form>';
    }
    else {
@@ -1269,7 +1271,7 @@ function ewiki_page_info($id, &$data, $action) {
          }
 
    ##### BEGIN MOODLE ADDITION #####
-         $o .= '<tr class="page-'.$i.'"><td valign="top" align="right" nowrap="nowrap"><b>' .ewiki_t($i). ':</b></td>' .
+         $o .= '<tr class="page-'.$i.'"><td style="vertical-align:top;text-align:right;white-space: nowrap;"><b>' .ewiki_t($i). ':</b></td>' .
                '<td>' . $value . "</td></tr>\n";
    ##### END MOODLE ADDITION #####
 
@@ -1537,11 +1539,12 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
    $hidden_postdata["version"] = &$data["version"];
 
    #-- edit textarea/form
+   // deleted name="ewiki", can not find the reference, and it's breaking xhtml
    $o .= ewiki_t("EDIT_FORM_1")
        . '<form method="post" enctype="multipart/form-data" action="'
-       . ewiki_script("edit", $id) . '" name="ewiki"'
+       . ewiki_script("edit", $id) . '" '
        . ' accept-charset="'.EWIKI_CHARSET.'">' . "\n";
-
+   $o .= '<fieldset class="invisiblefieldset">';
    #-- additional POST vars
    foreach ($hidden_postdata as $name => $value) {
        $o .= '<input type="hidden" name="'.$name.'" value="'.$value.'" />'."\n";
@@ -1564,11 +1567,14 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
      }
      print_textarea($usehtmleditor, $rows, $cols, 680, 400, "content", $oldtext);
      echo '</td></tr></table>';
+
+     $o .= ob_get_contents();     
+     //yu: this is causing problem and i don't know where to put it   
      if ($usehtmleditor) {
-         use_html_editor("content");
+        use_html_editor("content");
      }
-     $o .= ob_get_contents();
-     ob_end_clean();
+     ob_end_clean();     
+
    } else {
    ##### END MOODLE ADDITION #####
 
@@ -1598,10 +1604,10 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
       $o .= $pf($id, $data, $action);
    }
 
-   $o .= "\n</form>\n";
+   $o .= "\n</fieldset></form>\n";
    //   . ewiki_t("EDIT_FORM_2");  // MOODLE DELETION
 
-   return('<div align="center" class="edit-box">'. $o .'</div>');
+   return('<div class="edit-box">'. $o .'</div>');
 }
 
 
@@ -1613,13 +1619,14 @@ function ewiki_page_edit_form_final_imgupload(&$o, &$id, &$data, &$action) {
       . '<form action='
       . '"'. ewiki_script_binary("", EWIKI_IDF_INTERNAL, "", "_UPLOAD=1") .'"'
       . ' method="post" enctype="multipart/form-data" target="_upload">'
+      . '<fieldset class="invisiblefieldset">'
       . '<input type="hidden" name="MAX_FILE_SIZE" value="'.EWIKI_IMAGE_MAXSIZE.'" />'
       . '<input type="file" name="'.EWIKI_UP_UPLOAD.'"'
       . (defined("EWIKI_IMAGE_ACCEPT") ? ' accept="'.EWIKI_IMAGE_ACCEPT.'" />' : " />")
       . '<input type="hidden" name="'.EWIKI_UP_BINARY.'" value="'.EWIKI_IDF_INTERNAL.'" />'
       . '&nbsp;&nbsp;&nbsp;'
       . '<input type="submit" value="'.ewiki_t("UPLOAD_PICTURE_BUTTON").'" />'
-      . '</form></div>'. "\n";
+      . '</fieldset></form></div>'. "\n";
   }
 }
 
@@ -1657,6 +1664,7 @@ function ewiki_control_links($id, &$data, $action) {
    if (@$data["forced_version"]) {
 
       $o .= '<form action="' . ewiki_script("edit", $id) . '" method="post">' .
+            '<fieldset class="invisiblefieldset">'.
             '<input type="hidden" name="edit" value="old" />' .
             '<input type="hidden" name="version" value="'.$data["forced_version"].'" />' .
             '<input type="submit" value="' . ewiki_t("OLDVERCOMEBACK") . '" /></form> ';

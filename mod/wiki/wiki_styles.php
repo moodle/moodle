@@ -84,6 +84,7 @@ h2.page.title {
 
 <!-- Defines the <div> used for the edit box -->
 .edit-box {
+  text-align:center;
 }
 
 <!-- Defines the <div> used for the image upload form -->

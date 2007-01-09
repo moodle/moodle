@@ -1088,14 +1088,16 @@ function wiki_print_search_form($cmid, $search="", $userid, $groupid, $return=fa
     global $CFG;
     # TODO: Add Group and User !!!
     $output = "<form id=\"search\" action=\"$CFG->wwwroot/mod/wiki/view.php\">";
-    $output .= "<font size=\"-1\">";
+    $output .="<fieldset class='invisiblefieldset'>";
+    $output .= "<span style='font-size:0.6em;'>";
     $output .= "<input value=\"".get_string("searchwiki", "wiki").":\" type=\"submit\" />";
     $output .= "<input name=\"id\" type=\"hidden\" value=\"$cmid\" />";
     $output = $output.($groupid?"<input name=\"groupid\" type=\"hidden\" value=\"$groupid\" />":"");
     $output = $output.($userid?"<input name=\"userid\" type=\"hidden\" value=\"$userid\" />":"");
     $output .= "<input name=\"q\" type=\"text\" size=\"20\" value=\"".s($search)."\" />".' ';
-    $output .= "</font>";
+    $output .= "</span>";
     $output .= "<input name=\"page\" type=\"hidden\" value=\"SearchPages\" />";
+    $output .= "</fieldset>";
     $output .= "</form>";
 
     if ($return) {

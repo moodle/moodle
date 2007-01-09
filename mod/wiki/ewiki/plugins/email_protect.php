@@ -122,6 +122,7 @@
 
              $html .= '<form action="' . $url .
                       '" method="POST" enctype="multipart/form-data" encoding="iso-8859-1">';
+             $html .= '<fieldset class="invisiblefieldset">';
              $html .= '<input type="hidden" name="'.EWIKI_UP_ENCEMAIL.'" value="' . $email . '" />';
              foreach (array_merge($_GET, $_POST) as $var=>$value) {
                 if (($var != "id") && ($var != EWIKI_UP_ENCEMAIL) && ($var != EWIKI_UP_NOSPAMBOT)) {
@@ -129,7 +130,7 @@
                 }
              }
              $html .= '<input type="checkbox" name="'.EWIKI_UP_NOSPAMBOT.'" value="true" /> ' . ewiki_t("PROTE4") . '<br /><br />';
-             $html .= '<input type="submit" name="go" /></form><br /><br />';
+             $html .= '<input type="submit" name="go" /></fieldset></form><br /><br />';
 
              if (EWIKI_FAKE_EMAIL_LOOP) {
                 $html .= "\n" . ewiki_t("PROTE7") . "<br />\n";

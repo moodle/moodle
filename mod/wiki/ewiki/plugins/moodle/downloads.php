@@ -105,6 +105,7 @@ function ewiki_page_fileupload($id, $data, $action, $def_sec="") {
             '<form action="' .
             ewiki_script( ($action!="view" ? $action : ""), $id).
           '" method="POST" enctype="multipart/form-data">' ;
+      $o. = '<fieldset class="invisiblefieldset">';
       require_once($CFG->dirroot.'/lib/uploadlib.php');
       $o .= upload_print_form_fragment(1,array(EWIKI_UP_UPLOAD),array(ewiki_t("file")),false,null,0,0,true);
       $o .= '<input type="submit" value="' . EWIKI_PAGE_UPLOAD . '" /><br /><br />'
@@ -126,7 +127,7 @@ function ewiki_page_fileupload($id, $data, $action, $def_sec="") {
 
       $o .= '<b>'.ewiki_t("UPL_NEWNAM").'</b><br /><input type="text" name="new_filename" size="20" /><br /><br />';
 
-      $o .= '</form></div>';
+      $o .= '</fieldset></form></div>';
 
    }
    elseif ($upload_file["size"] > EWIKI_UPLOAD_MAXSIZE) {

@@ -6,6 +6,7 @@
 
 ?>
 <form action="admin.php" method="post" enctype="multipart/form-data">
+<fieldset class="invisiblefieldset">
 <input type="hidden" name="userid" value="<?php print $userid; ?>" />
 <input type="hidden" name="groupid" value="<?php print $groupid ?>" />
 <input type="hidden" name="action" value="<?php print $action; ?>" />
@@ -29,4 +30,4 @@
   }
 ?>
   <input type="submit" name="proceed" value="<?php print get_string("removeselectedpages","wiki"); ?>" />
-</center></FORM>
+</center></field></form>

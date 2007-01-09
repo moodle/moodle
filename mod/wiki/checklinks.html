@@ -3,6 +3,7 @@
 
 ?>
 <form action="admin.php" method="post" enctype="multipart/form-data">
+<fieldset class="invisiblefieldset">
 <input type="hidden" name="userid" value="<?php print $userid; ?>" />
 <input type="hidden" name="groupid" value="<?php print $groupid ?>" />
 <input type="hidden" name="action" value="<?php print $action; ?>" />
@@ -13,4 +14,4 @@
   choose_from_menu($pagelist, "pagetocheck", $wikipage, "");
 ?>
   <input type="submit" name="proceed" value="<?php print get_string("checklinks","wiki"); ?>" />
-</center></FORM>
+</center></fieldset></form>

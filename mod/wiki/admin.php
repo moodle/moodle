@@ -269,6 +269,7 @@
         echo '<tr><td colspan="2">';
 
         echo '<form id="otherwikis" action="'.$CFG->wwwroot.'/mod/wiki/admin.php">';
+        echo '<fieldset class="invisiblefieldset">';
         echo '<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>';
         echo '<td class="sideblockheading">&nbsp;'
             .$WIKI_TYPES[$wiki->wtype].' '
@@ -288,7 +289,7 @@
         choose_from_menu($wiki_admin_list, "wikiselect", $selected, "choose", $script);
         echo '</td>';
         echo '</tr></table>';
-        echo '</form>';
+        echo '</fieldset></form>';
 
         echo '</td>';
         echo '</tr>';
