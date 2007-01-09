@@ -1179,6 +1179,12 @@ function css_styles() {
         padding: 20px;
         color: #ff0000;
     }
+    .invisiblefieldset {
+      display:inline;
+      border:0px;
+      padding:0px;
+      margin:0px;
+    }
     #mysql, #postgres7, #mssql, #mssql_n, #odbc_mssql, #oci8po {
         display: none;
     }
