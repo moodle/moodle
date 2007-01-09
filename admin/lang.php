@@ -67,13 +67,13 @@
     $streditstrings = get_string("editstrings", 'admin');
     $stredithelpdocs = get_string("edithelpdocs", 'admin');
     $strthislanguage = get_string("thislanguage");
-    $strgotofirst = get_string('gotofirstmissing','admin');
+    $strgotofirst = get_string('gotofirst','admin');
     $strfilestoredin = get_string('filestoredin', 'admin');
     $strfilestoredinhelp = get_string('filestoredinhelp', 'admin');
     $strswitchlang = get_string('switchlang', 'admin');
     $strchoosefiletoedit = get_string('choosefiletoedit', 'admin');
     $streditennotallowed = get_string('langnoeditenglish', 'admin');
-    $strfilecreated = get_string('langfilecreated', 'admin');
+    $strfilecreated = get_string('filecreated', 'admin');
     $strprev = get_string('previous');
     $strnext = get_string('next');
 
@@ -87,15 +87,17 @@
             $navigation = "<a href=\"lang.php\">$strlanguage</a> -> $strmissingstrings";
             $title = $strmissingstrings;
             $button = '<form '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
+                      '<fieldset class="invisiblefieldset">'.
                       '<input type="hidden" name="mode" value="compare" />'.
-                      '<input type="submit" value="'.$streditstrings.'" /></form>';
+                      '<input type="submit" value="'.$streditstrings.'" /></fieldset></form>';
             break;
         case "compare":
             $navigation = "<a href=\"lang.php\">$strlanguage</a> -> $streditstrings";
             $title = $streditstrings;
             $button = '<form  '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
+                      '<fieldset class="invisiblefieldset">'.
                       '<input type="hidden" name="mode" value="missing" />'.
-                      '<input type="submit" value="'.$strmissingstrings.'" /></form>';
+                      '<input type="submit" value="'.$strmissingstrings.'" /></fieldset></form>';
             break;
         default:
             $title = $strlanguage;
@@ -206,12 +208,7 @@
         }
   
         if ($m <> '') {
-            echo '<br />';
-            print_simple_box_start("center", "80%");
-            echo '<center><font size="2">';
-            echo $m;
-            echo '</font></center>';
-            print_simple_box_end();
+            print_box($m, 'filenames');
         }
         echo $o;
 
@@ -311,8 +308,7 @@
 
         print_heading_with_help($streditstrings, "langedit");
 
-        print_simple_box_start("center", "80%");
-        echo '<center><font size="2">';
+        print_box_start('generalbox editstrings');
         foreach ($stringfiles as $file) {
             if ($file == $currentfile) {
                 echo "<b>$file</b> &nbsp; ";
@@ -320,23 +316,22 @@
                 echo "<a href=\"lang.php?mode=compare&amp;currentfile=$file\">$file</a> &nbsp; ";
             }
         }
-        echo '</font></center>';
-        print_simple_box_end();
+        print_box_end();
 
 
-        print_simple_box_start("center", "80%");
-        echo '<center>'.$strfilestoredin.' <strong>';
+        print_box_start();
+        echo $strfilestoredin;
         echo $uselocal ? "{$currentlang}_local" : $currentlang;
-        echo '</strong> ';
         helpbutton('langswitchstorage', $strfilestoredinhelp, 'moodle');
         
         echo '<form '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
+             '<fieldset class="invisiblefieldset">'.
              '<input type="hidden" name="mode" value="compare" />'.
              '<input type="hidden" name="currentfile" value="'.$currentfile.'" />'.
              '<input type="hidden" name="uselocal" value="'.(1 - $uselocal % 2).'" />'.
              '<input type="submit" value="'.$strswitchlang.'" />'.
-             '</form></center>';
-        print_simple_box_end();
+             '</fieldset></form>';
+        print_box_end();
        
         if ($currentfile <> '') {
             $saveto = $uselocal ? $locallangdir : $langdir;
@@ -386,6 +381,7 @@
 
             if ($editable) {
                 echo "<form id=\"$currentfile\" action=\"lang.php\" method=\"post\">";
+                echo '<div>';
             }
             echo "<table summary=\"\" width=\"100%\" cellpadding=\"2\" cellspacing=\"3\" border=\"0\" class=\"generalbox\">";
             $linescounter = 0;
@@ -488,6 +484,7 @@
                 echo '</td></tr>';
             }
             echo '</tr></table>';
+            echo '</div>'; 
             echo '</form>'; 
 
         } else {
