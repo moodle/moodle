@@ -41,6 +41,7 @@
     <br />
     <div align="center" class="form">
     <form id="myform" action="localpath.php" method="post">
+    <fieldset class="invisiblefieldset">
     <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>">
     <input type="hidden" name="pathname" value="" />
     <input type="file" size="60" name="myfile" /><br />
@@ -49,6 +50,7 @@
     <input type="button" value="<?php print_string('cancel') ?>" 
            onClick="window.close()">
     </form>
+    </fieldset>
     </div>
 
     </body>
