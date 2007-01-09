@@ -115,15 +115,13 @@
         $CFG->debug = DEBUG_MINIMAL;
         error_reporting($CFG->debug);
         if (empty($agreelicence)) {
-            $strlicense = get_string("license");
+            $strlicense = get_string('license');
             print_header($strlicense, $strlicense, $strlicense, "", "", false, "&nbsp;", "&nbsp;");
             print_heading("<a href=\"http://moodle.org\">Moodle</a> - Modular Object-Oriented Dynamic Learning Environment");
-            print_heading(get_string("copyrightnotice"));
-            print_simple_box_start('center');
-            echo text_to_html(get_string("gpl"));
-            print_simple_box_end();
+            print_heading(get_string('copyrightnotice'));
+            print_box(text_to_html(get_string('gpl')), 'copyrightnotice');
             echo "<br />";
-            notice_yesno(get_string("doyouagree"), "index.php?agreelicence=true",
+            notice_yesno(get_string('doyouagree'), "index.php?agreelicence=true",
                                                    "http://docs.moodle.org/en/License");
             exit;
         }
