@@ -236,17 +236,16 @@
             }
 */
             if (!$remote) {
-                print_simple_box_start('center','60%');
-                echo '<div align="center">';
+                print_box_start();
                 print_string('remotelangnotavailable','admin',$CFG->dataroot.'/lang/');
-                echo '</div>';
-                print_simple_box_end();
+                print_box_end();
             }
 
-            print_simple_box_start('center','60%');
-            echo '<table summary="" width="100%">';
+            print_box_start();
+            echo '<table summary="">';
             echo '<tr><td align="center" valign="top">';
             echo '<form id="uninstallform" action="langimport.php?mode=4" method="post">';
+            echo '<fieldset class="invisiblefieldset">';
             echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
             unset($CFG->langlist);   // ignore admin's langlist
             $installedlangs = get_list_of_languages();
@@ -260,9 +259,12 @@
             }
             echo '</select>';
             echo '<br /><input type="submit" value="'.get_string('uninstall','admin').'" />';
+            echo '</fieldset>';
             echo '</form>';
             echo '<form id="updateform" action="langimport.php?mode=5" method="post">';
+            echo '<fieldset class="invisiblefieldset">';
             echo '<br /><input type="submit" value="'.get_string('updatelangs','admin').'" />';
+            echo '</fieldset>';
             echo '</form>';
 
             /// Display option to change site language
@@ -276,6 +278,7 @@
             /// if this language pack is not already installed, then we allow installation
 
             echo '<form id="installform" method="post" action="langimport.php?mode=2">';
+            echo '<fieldset class="invisiblefieldset">';
             echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
             echo '<label for="pack">'.get_string('availablelangs','admin')."</label><br />\n";
             if ($remote) {
@@ -303,6 +306,7 @@
                 echo '</select>';
                 echo '<br /><input type="submit" value="&larr; '.get_string('install','admin').'" />';
             }
+            echo '</fieldset>';
             echo '</form>';
 
             if ($empty) {

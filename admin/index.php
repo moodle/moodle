@@ -483,24 +483,20 @@
 
 /// Deprecated database! Warning!!
     if (!empty($CFG->migrated_to_new_db)) {
-        print_simple_box_start('center','60%');
-        print_string('dbmigrationdeprecateddb','admin');
-        print_simple_box_end();
+        print_box(print_string('dbmigrationdeprecateddb','admin'));
     }
 
 /// Check for any special upgrades that might need to be run
     if (!empty($CFG->upgrade)) {
-        print_simple_box(get_string("upgrade$CFG->upgrade", "admin",
-                                    "$CFG->wwwroot/$CFG->admin/upgrade$CFG->upgrade.php"), "center", '60%');
-        print_spacer(10,10);
+        print_box(get_string("upgrade$CFG->upgrade", "admin", "$CFG->wwwroot/$CFG->admin/upgrade$CFG->upgrade.php"));
     }
 
     if (ini_get_bool('register_globals') && !ini_get_bool('magic_quotes_gpc')) {
-        print_simple_box(get_string('globalsquoteswarning', 'admin'), 'center', '60%');
+        print_box(get_string('globalsquoteswarning', 'admin'));
     }
 
     if (is_dataroot_insecure()) {
-        print_simple_box(get_string('datarootsecuritywarning', 'admin', $CFG->dataroot), 'center', '60%');
+        print_box(get_string('datarootsecuritywarning', 'admin', $CFG->dataroot));
     }
 
 /// If no recently cron run
@@ -508,17 +504,17 @@
     if (time() - $lastcron > 3600 * 24) {
         $strinstallation = get_string('installation', 'install');
         $helpbutton = helpbutton('install', $strinstallation, 'moodle', true, false, '', true);
-        print_simple_box(get_string('cronwarning', 'admin')."&nbsp;".$helpbutton, 'center', '60%');
+        print_box(get_string('cronwarning', 'admin')."&nbsp;".$helpbutton);
     }
 
 /// Print multilang upgrade notice if needed
     if (empty($CFG->filter_multilang_converted)) {
-        print_simple_box(get_string('multilangupgradenotice', 'admin'), 'center', '60%');
+        print_box(get_string('multilangupgradenotice', 'admin'));
     }
 
 /// Alert if we are currently in maintenance mode
     if (file_exists($CFG->dataroot.'/1/maintenance.html')) {
-        print_simple_box(get_string('sitemaintenancewarning', 'admin') , 'center', '60%');
+        print_box(get_string('sitemaintenancewarning', 'admin'));
     }
 
 
@@ -528,12 +524,10 @@
     if (!isset($CFG->registered) || $CFG->registered < (time() - 3600*24*30*6)) {
         $options = array();
         $options['sesskey'] = $USER->sesskey;
-        print_simple_box_start('center','60%');
-        echo '<div align="center">';
+        print_box_start();
         print_string('pleaseregister', 'admin');
         print_single_button('register.php', $options, get_string('registration'));
-        echo '</div>';
-        print_simple_box_end();
+        print_box_end();
         $registrationbuttonshown = true;
     }
 
@@ -544,29 +538,26 @@
                      'Copyright &copy; 1999 onwards, Martin Dougiamas<br />'.
                      'and <a href="http://docs.moodle.org/en/Credits">many other contributors</a>.<br />'.
                      '<a href="http://docs.moodle.org/en/License">GNU Public License</a>';
-    echo '<p class="copyright">'.$copyrighttext.'</p>';
+    print_box($copyrighttext, 'copyright');
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     if (empty($registrationbuttonshown)) {
-        echo '<div align="center">';
         $options = array();
         $options['sesskey'] = $USER->sesskey;
         print_single_button('register.php', $options, get_string('registration'));
-        echo '</div>';
     }
 
 
     if (optional_param('dbmigrate')) {               // ??? Is this actually used?
-        print_simple_box_start('center','60%');
+        print_box_start();
         require_once($CFG->dirroot.'/'.$CFG->admin.'/utfdbmigrate.php');
         db_migrate2utf8();
-        print_simple_box_end();
+        print_box_end();
     }
 
 
     admin_externalpage_print_footer($adminroot);
-
 
 
 ?>
