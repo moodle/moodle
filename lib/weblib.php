@@ -933,8 +933,7 @@ function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $retur
  * @return string If $return is true then the entire form is returned as a string.
  * @todo Finish documenting this function<br>
  */
-function popup_form($common, $options, $formid, $selected='', $nothing='choose', $help='', $helptext='', $return=false,
-$targetwindow='self', $selectlabel='') {
+function popup_form($common, $options, $formid, $selected='', $nothing='choose', $help='', $helptext='', $return=false, $targetwindow='self', $selectlabel='') {
 
     global $CFG;
     static $go, $choose;   /// Locally cached, in case there's lots on a page
