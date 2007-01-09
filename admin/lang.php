@@ -77,15 +77,6 @@
     $strprev = get_string('previous');
     $strnext = get_string('next');
 
-    // FIXME / TODO
-    // remove following lines after adding string into proper english lang pack
-    $strgotofirst = 'go to first missing string';
-    $strfilestoredin = 'Save file into folder :';
-    $strfilestoredinhelp = 'Where the file will be stored';
-    $strswitchlangdirbtn = 'switch';
-    $strchoosefiletoedit = 'Choose file to edit from the box above';
-    $streditennotallowed = 'Language en_utf8 cannot be edited with this page - switch to local';
-    $strfilecreated = 'New file created';
 
     $currentlang = current_language();
 
@@ -560,7 +551,7 @@ function lang_save_file($path, $file, $strings, $local, $packstrings) {
             }
         }
     }
-    fwrite($f,"\n?>\n");
+    fwrite($f,"\n\?\>\n");
     fclose($f);
     return true;
 }
