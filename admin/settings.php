@@ -116,6 +116,7 @@ if ($statusmsg != '') {
 // ---------------------------------------------------------------------------------------------------------------
 
 echo '<form action="settings.php" method="post" id="adminsettings">';
+echo '<div class="settingsform">';
 echo '<input type="hidden" name="section" value="' . $PAGE->section . '" />';
 echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
 echo '<input type="hidden" name="return" value="' . $return . '" />';
@@ -125,6 +126,7 @@ echo $root->output_html();
 
 echo '<div class="form-buttons"><input class="form-submit" type="submit" value="' . get_string('savechanges','admin') . '" /></div>';
 
+echo '</div>';
 echo '</form>';
 
 if (!empty($SITE->fullname)) {
