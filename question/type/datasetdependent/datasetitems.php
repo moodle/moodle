@@ -250,12 +250,14 @@
 // Print the new-dataset table
     $addtable->data = array($addline);
     echo "<form id=\"addform\" method=\"post\" action=\"question.php\">
+            <fieldset class=\"invisiblefieldset\">
             <input type=\"hidden\" name=\"regenerateddefid\" value=\"0\"/>
             <input type=\"hidden\" name=\"id\" value=\"$question->id\"/>
             <input type=\"hidden\" name=\"category\" value=\"$question->category\"/>
             <input type=\"hidden\" name=\"qtype\" value=\"$question->qtype\"/>
             <input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\"/>
-            <input type=\"hidden\" name=\"wizardpage\" value=\"datasetitems\"/>";
+            <input type=\"hidden\" name=\"wizardpage\" value=\"datasetitems\"/>
+            </fieldset>";
     print_table($addtable);
     echo '</form>';
 
@@ -264,22 +266,27 @@
 // Print the existing-datasets table
     if (!empty($table->data)) {
         echo "<form method=\"post\" action=\"question.php\">
+            <fieldset class=\"invisiblefieldset\">
             <input type=\"hidden\" name=\"id\" value=\"$question->id\"/>
             <input type=\"hidden\" name=\"category\" value=\"$question->category\"/>
             <input type=\"hidden\" name=\"qtype\" value=\"$question->qtype\"/>
             <input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\"/>
-            <input type=\"hidden\" name=\"wizardpage\" value=\"datasetitems\"/>";
+            <input type=\"hidden\" name=\"wizardpage\" value=\"datasetitems\"/>
+            </fieldset>";
         print_table($table);
         echo '</form>';
 
-        echo "<center><br /><br /><form method=\"post\" action=\"question.php\">
+        echo "<div class=\"boxaligncenter\"><br /><br />
+              <form method=\"post\" action=\"question.php\">
+              <fieldset class=\"invisiblefieldset\">
               <input type=\"hidden\" name=\"id\" value=\"$question->id\"/>
               <input type=\"hidden\" name=\"category\" value=\"$question->category\"/>
               <input type=\"hidden\" name=\"qtype\" value=\"$question->qtype\"/>
               <input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\"/>
               <input type=\"hidden\" name=\"wizardpage\" value=\"datasetitems\"/>
               <input type=\"submit\" name=\"backtoquiz\" value=\"$strbacktoquiz\" />
-              </form></center>\n";
+              </fieldset>
+              </form></div>\n";
     } else {
           notify( $strdataitemneed );
     }

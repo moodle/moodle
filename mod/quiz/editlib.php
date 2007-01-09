@@ -148,7 +148,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
     $strpreview = get_string("preview", "quiz");
 
     if (!$quiz->questions) {
-        echo "<p align=\"center\">";
+        echo "<p class=\"quizquestionlistcontrols\">";
         print_string("noquestions", "quiz");
         echo "</p>";
         return 0;
@@ -159,7 +159,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
                                    {$CFG->prefix}question_categories c
                              WHERE q.id in ($quiz->questions)
                                AND q.category = c.id")) {
-        echo "<p align=\"center\">";
+        echo "<p class=\"quizquestionlistcontrols\">";
         print_string("noquestions", "quiz");
         echo "</p>";
         return 0;
@@ -176,11 +176,18 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
         $lastindex++;
     }
     echo "<form method=\"post\" action=\"edit.php\">";
+    echo '<fieldset class="invisiblefieldset">';
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
 
     print_simple_box_start('center', '100%', '#ffffff', 0);
-    echo "<table border=\"0\" cellpadding=\"2\" cellspacing=\"0\" width=\"100%\">\n";
-    echo "<tr><th colspan=\"3\" nowrap=\"nowrap\" class=\"header\" scope=\"col\">$strorder</th><th class=\"header\" scope=\"col\">#</th><th align=\"left\" width=\"100%\" nowrap=\"nowrap\" class=\"header\" scope=\"col\">$strquestionname</th><th nowrap=\"nowrap\" class=\"header\" scope=\"col\">$strtype</th><th nowrap=\"nowrap\" class=\"header\" scope=\"col\">$strgrade</th><th align=\"center\" width=\"60\" nowrap=\"nowrap\" class=\"header\" scope=\"col\">$straction</th></tr>\n";
+    echo "<table border=\"0\" cellpadding=\"2\" cellspacing=\"0\" style=\"width:100%;\">\n";
+    echo "<tr><th colspan=\"3\" style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$strorder</th>";
+    echo "<th class=\"header\" scope=\"col\">#</th>";
+    echo "<th align=\"left\" style=\"white-space:nowrap; width:100%\" class=\"header\" scope=\"col\">$strquestionname</th>";
+    echo "<th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$strtype</th>";
+    echo "<th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$strgrade</th>";
+    echo "<th align=\"center\" style=\"white-space:nowrap; width:60px;\" class=\"header\" scope=\"col\">$straction</th>";
+    echo "</tr>\n";
     foreach ($order as $i => $qnum) {
 
         if ($qnum and empty($questions[$qnum])) {
@@ -206,10 +213,11 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
         if ($qnum == 0) { // This is a page break
             if ($showbreaks) {
                 echo '<td colspan ="3">&nbsp;</td>';
-                echo '<td><table width="100%" style="line-height:11px; font-size:9px; margin: -5px -5px;"><tr>';
-                echo '<td><hr noshade="noshade" /></td>';
-                echo '<td width="50">Page break</td>';
-                echo '<td><hr noshade="noshade" /></td><td width="45">';
+                echo '<td><table style="width:100%; line-height:11px; font-size:9px; margin: -5px -5px;"><tr>';
+                echo '<td><hr /></td>';
+                echo '<td style="width:50px;">Page break</td>';
+                echo '<td><hr /></td>';
+                echo '<td style="width:45px;">';
                 if ($count > 1) {
                     echo "<a title=\"$strmoveup\" href=\"edit.php?up=$count&amp;quizid=$quiz->id&amp;sesskey=$USER->sesskey\"><img
                          src=\"$CFG->pixpath/t/up.gif\" class=\"iconsmall\" alt=\"$strmoveup\" /></a>";
@@ -270,7 +278,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
         $context = $quiz->id ? '&amp;contextquiz='.$quiz->id : '';
         $quiz_id = $quiz->id ? '&amp;quizid=' . $quiz->id : '';
         if ($question->qtype != 'random') {
-            echo "<a title=\"$strpreview\" href=\"javascript:void(0)\" onClick=\"openpopup('/question/preview.php?id=$qnum$quiz_id','questionpreview', " . 
+            echo "<a title=\"$strpreview\" href=\"javascript:void(0)\" onclick=\"openpopup('/question/preview.php?id=$qnum$quiz_id','questionpreview', " . 
                     QUESTION_PREVIEW_POPUP_OPTIONS . ", false)\">
                     <img src=\"$CFG->pixpath/t/preview.gif\" class=\"iconsmall\" alt=\"$strpreview\" /></a>";
         }
@@ -290,30 +298,32 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
 
     echo "<tr><td colspan=\"6\" align=\"right\">\n";
     print_string('total');
-    echo "</td>";
-    echo ": <td align=\"left\">\n";
-    echo "<b>$sumgrade</b>";
+    echo ": </td>";
+    echo "<td align=\"left\">\n";
+    echo "<strong>$sumgrade</strong>";
     echo "</td><td>&nbsp;\n</td></tr>\n";
 
     echo "<tr><td colspan=\"6\" align=\"right\">\n";
     print_string('maximumgrade');
-    echo "</td>";
-    echo ": <td align=\"left\">\n";
+    echo ": </td>";
+    echo "<td align=\"left\">\n";
     echo '<input type="text" name="maxgrade" size="2" tabindex="'.($qno+1)
      .'" value="'.$quiz->grade.'" />';
     echo '</td><td align="left">';
     helpbutton("maxgrade", get_string("maximumgrade"), "quiz");
     echo "</td></tr></table>\n";
 
-    echo '<div align="center"><input type="submit" value="'.get_string('savechanges').'" />';
+    echo '<div class="quizquestionlistcontrols"><input type="submit" value="'.get_string('savechanges').'" />';
     echo '<input type="hidden" name="savechanges" value="save" /></div>';
     echo '<input type="hidden" name="savequizid" value="'.$quiz->id.'" />'; // ugly hack to prevent modform session "mistakes"
 
     print_simple_box_end();
+    echo '</fieldset>';
     echo "</form>\n";
 
 /// Form to choose to show pagebreaks and to repaginate quiz
     echo '<form method="post" action="edit.php" id="showbreaks">';
+    echo '<fieldset class="invisiblefieldset">';
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     echo '<input type="hidden" name="showbreaks" value="0" />';
     echo '<input type="checkbox" name="showbreaks" value="1"';
@@ -344,7 +354,8 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
     echo ' ';
     helpbutton('reorderingtool', get_string('reorderingtool', 'quiz'), 'quiz');
     
-    echo '<div align="center"><input type="submit" name="repaginate" value="'. get_string('go') .'" /></div>';
+    echo '<div class="quizquestionlistcontrols"><input type="submit" name="repaginate" value="'. get_string('go') .'" /></div>';
+    echo '</fieldset>';
     echo '</form>';
 
     return $sumgrade;

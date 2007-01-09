@@ -187,10 +187,12 @@ class question_category_object {
 
         // wrap the table in a form and output it
         echo '<form action="category.php" method="post">';
+        echo '<fieldset class="invisiblefieldset">';
         echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
         echo '<input type="hidden" name="id" value="'. $this->course->id . '" />';
         echo '<input type="hidden" name="addcategory" value="true" />';
         print_table($this->newtable);
+        echo '</fieldset>';
         echo '</form>';
     }
 
@@ -381,9 +383,13 @@ class question_category_object {
             $this->output_edit_single_table($category,$page);
             echo '</td></tr></table>';
             echo '<p><div align="center"><form action="category.php" method="get">
+                <fieldset class="invisiblefieldset">
                 <input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />
                 <input type="hidden" name="id" value="' . $this->course->id . '" />
-                <input type="submit" value="' . $this->str->cancel . '" /></form></div></p>';
+                <input type="submit" value="' . $this->str->cancel . '" />
+                </fieldset>
+                </form>
+                </div></p>';
             print_footer($this->course);
             exit;
         } else {
@@ -440,11 +446,13 @@ class question_category_object {
 
         // wrap the table in a form and output it
         echo '<p><form action="category.php" method="post">';
+        echo '<fieldset class="invisiblefieldset">';
         echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
         echo '<input type="hidden" name="id" value="'. $this->course->id . '" />';
         echo '<input type="hidden" name="updateid" value="' . $category->id . '" />';
         echo "<input type=\"hidden\" name=\"page\" value=\"$page\" />";
         print_table($edittable);
+        echo '</fieldset>';
         echo '</form></p>';
     }
 
@@ -589,12 +597,14 @@ class question_category_object {
                 $categorystrings = $this->categorystrings;
                 unset ($categorystrings[$category->id]);
                 echo "<p><div align=\"center\"><form action=\"category.php\" method=\"get\">";
+                echo '<fieldset class="invisiblefieldset">';
                 echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
                 echo "<input type=\"hidden\" name=\"id\" value=\"{$this->course->id}\" />";
                 echo "<input type=\"hidden\" name=\"delete\" value=\"$category->id\" />";
                 choose_from_menu($categorystrings, "confirm", "", "");
                 echo "<input type=\"submit\" value=\"". get_string("categorymoveto", "quiz") . "\" />";
                 echo "<input type=\"submit\" name=\"cancel\" value=\"{$this->str->cancel}\" />";
+                echo '</fieldset>';
                 echo "</form></div></p>";
                 print_footer($this->course);
                 exit;

@@ -1,5 +1,5 @@
 <form id="theform" method="post" action="question.php">
-<center>
+<div class="boxaligncenter">
 <table cellpadding="5">
 <?php if (!empty($datasets)) { ?>
 <tr valign="top">
@@ -30,6 +30,6 @@
 <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
 <input type="hidden" name="wizardpage" value="datasetdefinitions" />
 <input type="submit"      value="<?php  print_string("savechanges") ?>" />
-</center>
+</div>
 </form>
 

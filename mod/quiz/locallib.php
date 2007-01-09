@@ -607,7 +607,7 @@ function quiz_get_question_review($quiz, $question) {
     $strpreview = get_string('previewquestion', 'quiz');
     $context = $quiz->id ? '&amp;contextquiz='.$quiz->id : '';
     $quiz_id = $quiz->id ? '&amp;quizid=' . $quiz->id : '';
-    return "<a title=\"$strpreview\" href=\"javascript:void(0)\" onClick=\"openpopup('/question/preview.php?id=$qnum$quiz_id','questionpreview', " .
+    return "<a title=\"$strpreview\" href=\"javascript:void(0)\" onclick=\"openpopup('/question/preview.php?id=$qnum$quiz_id','questionpreview', " .
             QUESTION_PREVIEW_POPUP_OPTIONS . ", false)\">
             <img src=\"../../pix/t/preview.gif\" class=\"iconsmall\" alt=\"$strpreview\" /></a>";
 }

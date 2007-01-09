@@ -269,8 +269,8 @@ class quiz_report extends quiz_default_report {
         }
 
         // grade all and "back" links
-        $links = "<center><a href=\"report.php?mode=grading&amp;action=grade&amp;q=$quiz->id&amp;questionid=$question->id&amp;gradeall=1\">".get_string('gradeall', 'quiz').'</a> | '.
-                "<a href=\"report.php?mode=grading&amp;q=$quiz->id&amp;action=viewquestions\">".get_string('backtoquestionlist', 'quiz').'</a></center>'.
+        $links = "<div class=\"boxaligncenter\"><a href=\"report.php?mode=grading&amp;action=grade&amp;q=$quiz->id&amp;questionid=$question->id&amp;gradeall=1\">".get_string('gradeall', 'quiz').'</a> | '.
+                "<a href=\"report.php?mode=grading&amp;q=$quiz->id&amp;action=viewquestions\">".get_string('backtoquestionlist', 'quiz').'</a></div>'.
 
         // print everything here
         print_heading($question->name);
@@ -348,6 +348,7 @@ class quiz_report extends quiz_default_report {
         // Display the form with one part for each selected attempt
 
         echo '<form method="post" action="report.php">'.
+            '<fieldset class="invisiblefieldset">'.
             '<input type="hidden" name="mode" value="grading" />'.
             '<input type="hidden" name="q" value="'.$quiz->id.'">'.
             '<input type="hidden" name="sesskey" value="'.sesskey().'" />'.
@@ -370,7 +371,7 @@ class quiz_report extends quiz_default_report {
             $options->readonly = 1;
 
             // print the user name, attempt count, the question, and some more hidden fields
-            echo '<div align="center" width="80%" style="padding:15px;">'.
+            echo '<div class="boxaligncenter" width="80%" style="padding:15px;">'.
                 fullname($attempt, true).': '.
                 get_string('attempt', 'quiz').$attempt->attempt;
 
@@ -384,7 +385,8 @@ class quiz_report extends quiz_default_report {
 
             echo '</div>';
         }
-        echo '<div align="center"><input type="submit" value="'.get_string('savechanges').'" /></div>'.
+        echo '<div class="boxaligncenter"><input type="submit" value="'.get_string('savechanges').'" /></div>'.
+            '</fieldset>'.
             '</form>';
 
         if ($usehtmleditor) {

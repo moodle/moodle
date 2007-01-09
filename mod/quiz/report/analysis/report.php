@@ -358,12 +358,13 @@ class quiz_report extends quiz_default_report {
         global $CFG, $USER;
         echo '<div class="controls">';
         echo '<form id="options" action="report.php" method="post">';
+        echo '<fieldset class="invisiblefieldset">';
         echo '<p class="quiz-report-options">'.get_string('analysisoptions', 'quiz').': </p>';
         echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
         echo '<input type="hidden" name="q" value="'.$quiz->id.'" />';
         echo '<input type="hidden" name="mode" value="analysis" />';
-        echo '<table id="analysis-options" align="center">';
-        echo '<tr align="left"><td><label for="attemptselection">'.get_string('attemptselection', 'quiz_analysis').'</label></td><td>';
+        echo '<table id="analysis-options" class="boxaligncenter">';
+        echo '<tr align="left"><td><label for="menuattemptselection">'.get_string('attemptselection', 'quiz_analysis').'</label></td><td>';
         $options = array ( QUIZ_ALLATTEMPTS     => get_string("attemptsall", 'quiz_analysis'),
                            QUIZ_HIGHESTATTEMPT => get_string("attemptshighest", 'quiz_analysis'),
                            QUIZ_FIRSTATTEMPT => get_string("attemptsfirst", 'quiz_analysis'),
@@ -382,11 +383,12 @@ class quiz_report extends quiz_default_report {
         echo '<input type="submit" value="'.get_string('go').'" />';
         helpbutton("analysisoptions", get_string("analysisoptions",'quiz_analysis'), 'quiz');
         echo '</td></tr></table>';
+        echo '</fieldset>';
         echo '</form>';
         echo '</div>';    
         echo "\n";
  
-        echo '<table align="center"><tr>';
+        echo '<table class="boxaligncenter"><tr>';
         $options = array();
         $options["id"] = "$cm->id";
         $options["q"] = "$quiz->id";

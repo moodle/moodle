@@ -215,9 +215,9 @@ class qformat_aon extends qformat_default {
         print_heading($info);
 
         $options['category'] = $this->category->id;
-        echo "<center>";
+        echo '<div class="boxaligncenter">';
         print_single_button("multiple.php", $options, get_string("randomcreate", "quiz"));
-        echo "</center>";
+        echo "</div>";
 
         return true;
     }

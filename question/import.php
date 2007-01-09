@@ -226,64 +226,66 @@
     ?>
 
     <form id="form" enctype="multipart/form-data" method="post" action="import.php">
-        <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
-        <?php print_simple_box_start("center"); ?>
-        <table cellpadding="5">
-            <tr>
-                <td align="right"><?php echo $txt->category; ?>:</td>
-                <td><?php choose_from_menu($catmenu, "category", $category->id, ""); ?>
-                    <?php echo $txt->fromfile; ?>
-                    <input name="catfromfile" type="checkbox" />
-                    <?php helpbutton('importcategory', $txt->importcategory, 'quiz'); ?></td>
-            </tr>
+        <fieldset class="invisiblefieldset">
+            <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
+            <?php print_simple_box_start("center"); ?>
+            <table cellpadding="5">
+                <tr>
+                    <td align="right"><?php echo $txt->category; ?>:</td>
+                    <td><?php choose_from_menu($catmenu, "category", $category->id, ""); ?>
+                        <?php echo $txt->fromfile; ?>
+                        <input name="catfromfile" type="checkbox" />
+                        <?php helpbutton('importcategory', $txt->importcategory, 'quiz'); ?></td>
+                </tr>
 
-            <tr>
-                <td align="right"><?php echo $txt->fileformat; ?>:</td>
-                <td><?php choose_from_menu($fileformatnames, "format", "gift", "");
-                    helpbutton("import", $txt->importquestions, "quiz"); ?></td>
-            </tr>
-            <tr>
-                <td align="right"><?php echo $txt->matchgrades; ?></td>
-                <td><?php choose_from_menu($matchgrades,'matchgrades',$txt->matchgradeserror,'' );
-                    helpbutton('matchgrades', $txt->matchgrades, 'quiz'); ?></td>
-            </tr>
-        </table>
-        <?php
-        print_simple_box_end();
+                <tr>
+                    <td align="right"><?php echo $txt->fileformat; ?>:</td>
+                    <td><?php choose_from_menu($fileformatnames, "format", "gift", "");
+                        helpbutton("import", $txt->importquestions, "quiz"); ?></td>
+                </tr>
+                <tr>
+                    <td align="right"><?php echo $txt->matchgrades; ?></td>
+                    <td><?php choose_from_menu($matchgrades,'matchgrades',$txt->matchgradeserror,'' );
+                        helpbutton('matchgrades', $txt->matchgrades, 'quiz'); ?></td>
+                </tr>
+            </table>
+            <?php
+            print_simple_box_end();
 
-        print_simple_box_start('center'); ?>
-        <?php echo $txt->importfileupload; ?>
-        <table cellpadding="5">
-            <tr>
-                <td align="right"><?php echo $txt->upload; ?>:</td>
-                <td><?php upload_print_form_fragment(1,array('newfile'),null,false,null,$course->maxbytes,0,false); ?></td>
-            </tr>
+            print_simple_box_start('center'); ?>
+            <?php echo $txt->importfileupload; ?>
+            <table cellpadding="5">
+                <tr>
+                    <td align="right"><?php echo $txt->upload; ?>:</td>
+                    <td><?php upload_print_form_fragment(1,array('newfile'),null,false,null,$course->maxbytes,0,false); ?></td>
+                </tr>
 
-            <tr>
-                <td>&nbsp;</td>
-                <td><input type="submit" name="save" value="<?php echo $txt->uploadthisfile; ?>" /></td>
-            </tr>
-        </table>
-        <?php
-        print_simple_box_end();
+                <tr>
+                    <td>&nbsp;</td>
+                    <td><input type="submit" name="save" value="<?php echo $txt->uploadthisfile; ?>" /></td>
+                </tr>
+            </table>
+            <?php
+            print_simple_box_end();
 
-        print_simple_box_start('center'); ?>
-        <?php echo $txt->importfilearea; ?>
-        <table cellpadding="5">
-            <tr>
-                <td align="right"><?php echo $txt->file; ?>:</td>
-                <td><input type="text" name="choosefile" size="50" /></td>
-            </tr>
+            print_simple_box_start('center'); ?>
+            <?php echo $txt->importfilearea; ?>
+            <table cellpadding="5">
+                <tr>
+                    <td align="right"><?php echo $txt->file; ?>:</td>
+                    <td><input type="text" name="choosefile" size="50" /></td>
+                </tr>
 
-            <tr>
-                <td>&nbsp;</td>
-                <td><?php  button_to_popup_window ("/files/index.php?id={$course->id}&amp;choose=form.choosefile", 
-                    "coursefiles", $txt->choosefile, 500, 750, $txt->choosefile); ?>
-                    <input type="submit" name="save" value="<?php echo $txt->importfromthisfile; ?>" /></td>
-            </tr>
-        </table>
-        <?php 
-        print_simple_box_end(); ?>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td><?php  button_to_popup_window ("/files/index.php?id={$course->id}&amp;choose=form.choosefile", 
+                        "coursefiles", $txt->choosefile, 500, 750, $txt->choosefile); ?>
+                        <input type="submit" name="save" value="<?php echo $txt->importfromthisfile; ?>" /></td>
+                </tr>
+            </table>
+            <?php 
+            print_simple_box_end(); ?>
+        </fieldset>
     </form>
 
     <?php

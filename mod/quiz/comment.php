@@ -70,8 +70,8 @@
         }
 
         notify(get_string('changessaved'));
-        echo '<center><input type="button" onclick="window.opener.location.reload(1); self.close();return false;" value="' .
-         get_string('closewindow') . "\" /></center>";
+        echo '<div class="boxaligncenter"><input type="button" onclick="window.opener.location.reload(1); self.close();return false;" value="' .
+         get_string('closewindow') . "\" /></div>";
          
         print_footer();
         exit;

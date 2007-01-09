@@ -500,6 +500,7 @@ class quiz_report extends quiz_default_report {
                 // Start form
                 echo '<div id="tablecontainer">';
                 echo '<form id="attemptsform" method="post" action="report.php" onsubmit="var menu = document.getElementById(\'menuaction\'); return (menu.options[menu.selectedIndex].value == \'delete\' ? confirm(\''.$strreallydel.'\') : true);">';
+                echo '<fieldset class="invisiblefieldset">';
                 echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
                 echo '<input type="hidden" name="mode" value="overview" />';
 
@@ -515,16 +516,17 @@ class quiz_report extends quiz_default_report {
                     echo '&nbsp;&nbsp;';
                     $options = array('delete' => get_string('delete'));
                     echo choose_from_menu($options, 'action', '', get_string('withselected', 'quiz'), 'if(this.selectedIndex > 0) submitFormById(\'attemptsform\');', '', true);
-                    echo '<noscript id="noscriptmenuaction" style="display: inline;">';
-                    echo '<input type="submit" value="'.get_string('go').'" /></noscript>';
+                    echo '<noscript id="noscriptmenuaction" style="display: inline;"><div>';
+                    echo '<input type="submit" value="'.get_string('go').'" /></div></noscript>';
                     echo '<script type="text/javascript">'."\n<!--\n".'document.getElementById("noscriptmenuaction").style.display = "none";'."\n-->\n".'</script>';
                     echo '</td></tr></table>';
                 }
                 // Close form
+                echo '</fieldset>';
                 echo '</form></div>';
                 
                 if (!empty($attempts)) {
-                    echo '<table align="center"><tr>';
+                    echo '<table class="boxaligncenter"><tr>';
                     $options = array();
                     $options["id"] = "$cm->id";
                     $options["q"] = "$quiz->id";
@@ -563,13 +565,14 @@ class quiz_report extends quiz_default_report {
         // Print display options
         echo '<div class="controls">';
         echo '<form id="options" action="report.php" method="post">';
+        echo '<fieldset class="invisiblefieldset">';
         echo '<p>'.get_string('displayoptions', 'quiz').': </p>';
         echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
         echo '<input type="hidden" name="q" value="'.$quiz->id.'" />';
         echo '<input type="hidden" name="mode" value="overview" />';
         echo '<input type="hidden" name="noattempts" value="0" />';
         echo '<input type="hidden" name="detailedmarks" value="0" />';
-        echo '<table id="overview-options" align="center">';
+        echo '<table id="overview-options" class="boxaligncenter">';
         echo '<tr align="left">';
         echo '<td><label for="pagesize">'.get_string('pagesize', 'quiz').'</label></td>';
         echo '<td><input type="text" id="pagesize" name="pagesize" size="1" value="'.$pagesize.'" /></td>';
@@ -590,6 +593,7 @@ class quiz_report extends quiz_default_report {
         echo '<tr><td colspan="2" align="center">';
         echo '<input type="submit" value="'.get_string('go').'" />';
         echo '</td></tr></table>';
+        echo '</fieldset>';
         echo '</form>';
         echo '</div>';
         echo "\n";

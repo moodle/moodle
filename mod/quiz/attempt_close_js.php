@@ -1,6 +1,6 @@
 <?php defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');?>
 
-<div align="center">
+<div class="boxaligncenter">
 <?php
 if (!empty($popup)) {
 ?>
@@ -14,7 +14,9 @@ document.write('<input type="button" value="<?php print_string('closewindow') ?>
 //]]>
 </script>
 <noscript>
+<div>
 <?php print_string('closewindow'); ?>
+</div>
 </noscript>
 
 <?php

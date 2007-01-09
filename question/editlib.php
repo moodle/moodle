@@ -192,9 +192,9 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
     }
     echo ' onchange="getElementById(\'displayoptions\').submit(); return true;" />';
     print_string('showhidden', 'quiz');
-    echo '</td><td valign="middle"><noscript>';
+    echo '</td><td valign="middle"><noscript><div>';
     echo ' <input type="submit" value="'. get_string('go') .'" />';
-    echo '</noscript></td></tr></table></fieldset></form>';
+    echo '</div></noscript></td></tr></table></fieldset></form>';
 }
 
 
@@ -259,7 +259,7 @@ function question_list($course, $categoryid, $quizid=0,
         notify("Category not found!");
         return;
     }
-    echo "<center>";
+    echo '<div class="boxaligncenter">';
     $formatoptions = new stdClass;
     $formatoptions->noclean = true;
     echo format_text($category->info, FORMAT_MOODLE, $formatoptions, $course->id);
@@ -298,7 +298,7 @@ function question_list($course, $categoryid, $quizid=0,
 
     echo '</table>';
 
-    echo '</center>';
+    echo '</div>';
 
     $categorylist = ($recurse) ? question_categorylist($category->id) : $category->id;
 
@@ -330,18 +330,19 @@ function question_list($course, $categoryid, $quizid=0,
     $canedit = has_capability('moodle/question:manage', $context);
 
     echo '<form method="post" action="edit.php?courseid='.$course->id.'">';
+    echo '<fieldset class="invisiblefieldset">';
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     print_simple_box_start('center', '100%', '#ffffff', 0);
     echo '<table id="categoryquestions" cellspacing="0"><tr>';
     $actionwidth = $canedit ? 95 : 70;
-    echo "<th width=\"$actionwidth\" style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$straction</th>";
+    echo "<th style=\"width:$actionwidth; white-space:nowrap;\" class=\"header\" scope=\"col\">$straction</th>";
     
     $sortoptions = array('name, qtype ASC' => get_string("sortalpha", "quiz"),
                          'qtype, name ASC' => get_string("sorttypealpha", "quiz"),
                          'id ASC' => get_string("sortage", "quiz"));
     $orderselect  = choose_from_menu ($sortoptions, 'sortorder', $sortorder, false, 'this.form.submit();', '0', true);
-    $orderselect .= '<noscript><input type="submit" value="'.get_string("sortsubmit", "quiz").'" /></noscript>';
-    echo "<th width=\"100%\" align=\"left\" style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$strquestionname $orderselect</th>
+    $orderselect .= '<noscript><div><input type="submit" value="'.get_string("sortsubmit", "quiz").'" /></div></noscript>';
+    echo "<th align=\"left\" style=\"width:100%; white-space:nowrap;\" class=\"header\" scope=\"col\">$strquestionname $orderselect</th>
     <th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$strtype</th>";
     echo "</tr>\n";
     foreach ($questions as $question) {
@@ -354,7 +355,7 @@ function question_list($course, $categoryid, $quizid=0,
         }
         
         // preview
-        echo "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/question/preview.php?id=$question->id&amp;quizid=$quizid','$strpreview', " .
+        echo "<a title=\"$strpreview\" href=\"javascript:void();\" onclick=\"openpopup('/question/preview.php?id=$question->id&amp;quizid=$quizid','$strpreview', " .
                 QUESTION_PREVIEW_POPUP_OPTIONS . ", false)\"><img
                 src=\"$CFG->pixpath/t/preview.gif\" alt=\"$strpreview\" /></a>&nbsp;";
         
@@ -426,8 +427,8 @@ function question_list($course, $categoryid, $quizid=0,
         echo ' <input type="submit" name="addrandom" value="'. get_string('add') .'" />';
         helpbutton('random', get_string('random', 'quiz'), 'quiz');
     }
-
-     echo "</form>\n";
+    echo '</fieldset>';
+    echo "</form>\n";
 }
 
 ?>

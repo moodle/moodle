@@ -158,10 +158,12 @@
 /// Print the table
     print_heading_with_help($stritemtypes, 'rqp', 'quiz');
     echo '<form action="types.php" method="post">';
+    echo '<fieldset class="invisiblefieldset">';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    echo '<center>';
+    echo '<div class="boxaligncenter">';
     $table->print_html();
-    echo '</center>';
+    echo '</div>';
+    echo '</fieldset>';
     echo '</form>';
 
 /// Finish the page

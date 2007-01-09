@@ -58,6 +58,7 @@ class qformat_coursetestmanager extends qformat_default {
             print_simple_box_start("center");
                 if ($hostname_access_error) { notify("couldn't connect to ODBC Socket Server on " . $hostname_access_error); }
             echo "<form method=\"post\" action=\"import.php\">";
+            echo '<fieldset class="invisiblefieldset">';
             echo "<table cellpadding=\"5\">";
 
         echo "<tr><td align=\"right\">";
@@ -79,6 +80,7 @@ class qformat_coursetestmanager extends qformat_default {
             echo " <input type=\"submit\" name=\"save\" value=\"Connect to Server\" />";
             echo "</td></tr>";
             echo "</table>";
+            echo '</fieldset>';
             echo "</form>";
             print_simple_box_end();
             print_footer($course);
@@ -120,6 +122,7 @@ class qformat_coursetestmanager extends qformat_default {
             print_heading_with_help($strimportquestions, "import", "quiz");
             print_simple_box_start("center");
             echo "<form method=\"post\" action=\"import.php\">";
+            echo '<fieldset class="invisiblefieldset">';
             echo "<table cellpadding=\"5\">";
         echo "<tr><td align=\"right\">";
             echo "Choose a category of questions to import:</td><td>";
@@ -138,6 +141,7 @@ class qformat_coursetestmanager extends qformat_default {
             echo " <input type=\"submit\" name=\"save\" value=\"Import Questions\" />";
             echo "</td></tr>";
             echo "</table>";
+            echo '</fieldset>';
             echo "</form>";
             print_simple_box_end();
             print_footer($course);

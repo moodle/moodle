@@ -314,9 +314,9 @@
         if (! $cm = get_coursemodule_from_instance("quiz", $modform->instance, $course->id)) {
             error("Course Module ID was incorrect");
         }
-        echo "<center>\n";
+        echo "<div class=\"attemptsnotice\">\n";
         echo "<a href=\"report.php?mode=overview&amp;id=$cm->id\">".get_string('numattempts', 'quiz', $a)."</a><br />".get_string("attemptsexist","quiz");
-        echo "</center><br/ >\n";
+        echo "</div><br />\n";
 
         $sumgrades = quiz_print_question_list($modform, false, $SESSION->quiz_showbreaks, $SESSION->quiz_reordertool);
         if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $modform->instance)) {
@@ -343,8 +343,8 @@
     $quiz = &$modform;
     include('tabs.php');
 
-    echo '<table border="0" width="100%" cellpadding="2" cellspacing="0">';
-    echo '<tr><td width="50%" valign="top">';
+    echo '<table border="0" style="width:100%" cellpadding="2" cellspacing="0">';
+    echo '<tr><td style="width:50%" valign="top">';
     print_simple_box_start("center", "100%");
 
     $sumgrades = quiz_print_question_list($modform, true, $SESSION->quiz_showbreaks, $SESSION->quiz_reordertool);
@@ -354,7 +354,7 @@
 
     print_simple_box_end();
 
-    echo '</td><td valign="top" width="50%">';
+    echo '</td><td style="width:50%" valign="top">';
 
     require($CFG->dirroot.'/question/showbank.php');
 

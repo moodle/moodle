@@ -63,7 +63,7 @@
         include('tabs.php');
     }
 
-    echo '<table align="center" border="0" cellpadding="2" cellspacing="0">';
+    echo '<table class="boxaligncenter" border="0" cellpadding="2" cellspacing="0">';
     echo '<tr><td valign="top">';
 
     include($CFG->dirroot.'/question/showbank.php');

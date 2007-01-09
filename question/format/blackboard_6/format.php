@@ -846,7 +846,7 @@ function process_matching($quest, &$questions) {
         }
         else {
             global $course, $CFG;
-            print '<table align="center" border="1">';
+            print '<table class="boxaligncenter" border="1">';
             print '<tr><td colspan="2" style="background-color:#FF8888;">This matching question is malformed. Please ensure there are no blank answers, no two questions have the same answer, and/or there are correct answers for each question. There must be at least as many subanswers as subquestions, and at least one subquestion.</td></tr>'; 
         
             print "<tr><td>Question:</td><td>".$quest->QUESTION_BLOCK->text;

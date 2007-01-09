@@ -30,13 +30,13 @@ class quiz_report extends quiz_default_report {
 
         // Print heading
         print_heading(get_string('regradingquiz', 'quiz', format_string($quiz->name)));
-        echo '<center>';
+        echo '<div class="boxaligncenter">';
         print_string('regradedisplayexplanation', 'quiz');
-        echo '<center>';
+        echo '</div>';
 
         // Loop through all questions and all attempts and regrade while printing progress info
         foreach ($questions as $question) {
-            echo '<b>'.get_string('regradingquestion', 'quiz', $question->name).'</b> '.get_string('attempts', 'quiz').": \n";
+            echo '<strong>'.get_string('regradingquestion', 'quiz', $question->name).'</strong> '.get_string('attempts', 'quiz').": \n";
             foreach ($attempts as $attempt) {
                 set_time_limit(30);
                 $changed = regrade_question_in_attempt($question, $attempt, $quiz, true);
@@ -47,7 +47,7 @@ class quiz_report extends quiz_default_report {
                     echo ' #'.$attempt->id;
                 }
             }
-            echo '<br/ >';
+            echo '<br />';
             // the following makes sure that the output is sent immediately.
             @flush();@ob_flush();
         }

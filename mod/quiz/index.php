@@ -24,9 +24,11 @@
     if (has_capability('moodle/question:manage', $coursecontext)) {
         $streditquestions =
                 "<form target=\"_parent\" method=\"get\" action=\"$CFG->wwwroot/question/edit.php\">
+                   <fieldset class=\"invisiblefieldset\">
                    <input type=\"hidden\" name=\"courseid\" value=\"$course->id\" />
                    <input type=\"submit\" value=\"".get_string("editquestions", "quiz")."\" />
-                </form>";
+                   </fieldset>
+                 </form>";
     }
     print_header_simple($strquizzes, '', $strquizzes,
                  '', '', true, $streditquestions, navmenu($course));

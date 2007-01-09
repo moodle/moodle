@@ -90,12 +90,14 @@
             print_simple_box(format_text($quiz->intro, FORMAT_MOODLE, $formatoptions), "center");
         }
 
+        echo '<div class="quizinfo">';
+
         // Print information about number of attempts and grading method.
         if ($quiz->attempts > 1) {
-            echo "<p align=\"center\">".get_string("attemptsallowed", "quiz").": $quiz->attempts</p>";
+            echo "<p>".get_string("attemptsallowed", "quiz").": $quiz->attempts</p>";
         }
         if ($quiz->attempts != 1) {
-            echo "<p align=\"center\">".get_string("grademethod", "quiz").": ".$QUIZ_GRADE_METHOD[$quiz->grademethod]."</p>";
+            echo "<p>".get_string("grademethod", "quiz").": ".$QUIZ_GRADE_METHOD[$quiz->grademethod]."</p>";
         }
 
         // Print information about timings.
@@ -103,14 +105,15 @@
         $available = ($quiz->timeopen < $timenow and ($timenow < $quiz->timeclose or !$quiz->timeclose));
         if ($available) {
             if ($quiz->timelimit) {
-                echo "<p align=\"center\">".get_string("quiztimelimit","quiz", format_time($quiz->timelimit * 60))."</p>";
+                echo "<p>".get_string("quiztimelimit","quiz", format_time($quiz->timelimit * 60))."</p>";
             }
             quiz_view_dates($quiz);
         } else if ($timenow < $quiz->timeopen) {
-            echo "<p align=\"center\">".get_string("quiznotavailable", "quiz", userdate($quiz->timeopen));
+            echo "<p>".get_string("quiznotavailable", "quiz", userdate($quiz->timeopen));
         } else {
-            echo "<p align=\"center\">".get_string("quizclosed", "quiz", userdate($quiz->timeclose));
+            echo "<p>".get_string("quizclosed", "quiz", userdate($quiz->timeclose));
         }
+        echo '</div>';
     } else {
         $available = false;
     }
@@ -296,7 +299,7 @@
             }
 
             if ($overallfeedback) {
-                echo '<p align="center">', quiz_feedback_for_grade($mygrade, $quiz->id), '</p>';
+                echo '<p class="quizgradefeedback">'.quiz_feedback_for_grade($mygrade, $quiz->id).'</p>';
             }
         }
 
@@ -307,7 +310,7 @@
 
         } else if ($available && $moreattempts) {
             echo "<br />";
-            echo "<div align=\"center\">";
+            echo "<div class=\"quizattempt\">";
 
             if ($unfinished) {
                 $buttontext = get_string('continueattemptquiz', 'quiz');
@@ -327,10 +330,10 @@
                     $lastattempttime = $lastattempt->timefinish;
                     if ($numattempts == 1 && $quiz->delay1 && $timenow <= $lastattempttime + $quiz->delay1) {
                         $tempunavailable = get_string('temporaryblocked', 'quiz') .
-                                ' <b>'. userdate($lastattempttime + $quiz->delay1). '<b>';
+                                ' <strong>'. userdate($lastattempttime + $quiz->delay1). '</strong>';
                     } else if ($numattempts > 1 && $quiz->delay2 && $timenow <= $lastattempttime +  $quiz->delay2) {
                         $tempunavailable = get_string('temporaryblocked', 'quiz') .
-                                ' <b>'. userdate($lastattempttime + $quiz->delay2). '<b>';
+                                ' <strong>'. userdate($lastattempttime + $quiz->delay2). '</strong>';
                     }
 
                     // If so, display a message and prevent the start button from appearing.
@@ -389,7 +392,9 @@ document.write('<input type="button" value="<?php echo $buttontext ?>" onclick="
 //]]>
 </script>
 <noscript>
+<div>
     <?php print_heading(get_string('noscript', 'quiz')); ?>
+</div>
 </noscript>
 <?php
             }

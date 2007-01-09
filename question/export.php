@@ -122,8 +122,8 @@
         else {
           $efile = "{$CFG->wwwroot}/file.php?file=/".$qformat->question_get_export_dir()."/$exportfilename".$file_ext."&forcedownload=1";
         }
-        echo "<p><center><a href=\"$efile\">$download_str</a></center></p>";
-        echo "<p><center><font size=\"-1\">$downloadextra_str</font></center></p>";
+        echo "<p><div class=\"boxaligncenter\"><a href=\"$efile\">$download_str</a></div></p>";
+        echo "<p><div class=\"boxaligncenter\"><font size=\"-1\">$downloadextra_str</font></div></p>";
 
         print_continue("edit.php?courseid=$course->id");
         print_footer($course);
@@ -144,6 +144,7 @@
 
     print_simple_box_start("center");
     echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"export.php\">\n";
+    echo '<fieldset class="invisiblefieldset">';
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"" . sesskey() . "\" />\n";
     echo "<table cellpadding=\"5\">\n";
 
@@ -178,6 +179,7 @@
     echo "</td></tr>\n";
 
     echo "</table>\n";
+    echo '</fieldset>';
     echo "</form>\n";
     print_simple_box_end();
 

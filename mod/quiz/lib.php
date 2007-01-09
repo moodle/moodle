@@ -425,7 +425,7 @@ function quiz_print_recent_mod_activity($activity, $course, $detail=false) {
 
     echo "<tr><td class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
     print_user_picture($activity->user->userid, $course, $activity->user->picture);
-    echo "</td><td width=\"100%\"><font size=\"2\">";
+    echo "</td><td style=\"width:100%;\"><font size=\"2\">";
 
     if ($detail) {
         echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".

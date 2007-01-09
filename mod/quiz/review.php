@@ -173,7 +173,7 @@
         $attemptlist = '';
         foreach ($attempts as $at) {
             $attemptlist .= ($at->id == $attempt->id)
-                ? '<b>'.$at->attempt.'</b>, '
+                ? '<strong>'.$at->attempt.'</strong>, '
                 : '<a href="review.php?attempt='.$at->id.($showall?'&amp;showall=true':'').'">'.$at->attempt.'</a>, ';
         }
         $table->data[] = array(get_string('attempts', 'quiz').':', trim($attemptlist, ' ,'));
@@ -212,9 +212,9 @@
         unset($buttonoptions);
         $buttonoptions['q'] = $quiz->id;
         $buttonoptions['forcenew'] = true;
-        echo '<center>';
+        echo '<div class="controls">';
         print_single_button($CFG->wwwroot.'/mod/quiz/attempt.php', $buttonoptions, get_string('startagain', 'quiz'));
-        echo '</center>';
+        echo '</div>';
     } else { // print number of the attempt
         print_heading(get_string('reviewofattempt', 'quiz', $attempt->attempt));
     }
@@ -229,9 +229,9 @@
     $numpages = quiz_number_of_pages($attempt->layout);
     if ($numpages > 1 and !$showall) {
         print_paging_bar($numpages, $page, 1, 'review.php?attempt='.$attempt->id.'&amp;');
-        echo '<center><a href="review.php?attempt='.$attempt->id.'&amp;showall=true">';
+        echo '<div class="controls"><a href="review.php?attempt='.$attempt->id.'&amp;showall=true">';
         print_string('showall', 'quiz');
-        echo '</a></center>';
+        echo '</a></div>';
     }
 
 /// Print all the questions
@@ -241,7 +241,7 @@
     foreach ($pagequestions as $i) {
         if (!isset($questions[$i])) {
             print_simple_box_start('center', '90%');
-            echo '<b><font size="+1">' . $number . '</font></b><br />';
+            echo '<strong><font size="+1">' . $number . '</font></strong><br />';
             notify(get_string('errormissingquestion', 'quiz', $i));
             print_simple_box_end();
             $number++; // Just guessing that the missing question would have lenght 1

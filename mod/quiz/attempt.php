@@ -140,10 +140,11 @@
             }
             echo "<br />\n";
 
-            echo "<form id=\"passwordform\" method=\"post\" action=\"attempt.php?id=$cm->id\" autocomplete=\"off\">\n";
+            echo "<form id=\"passwordform\" method=\"post\" action=\"attempt.php?id=$cm->id\" onclick=\"this.autocomplete='off'\">\n";
+            echo '<fieldset class="invisiblefieldset">';
             print_simple_box_start("center");
 
-            echo "<div align=\"center\">\n";
+            echo "<div class=\"boxaligncenter\">\n";
             print_string("requirepasswordmessage", "quiz");
             echo "<br /><br />\n";
             echo " <input name=\"quizpassword\" type=\"password\" value=\"\" alt=\"password\" />";
@@ -151,6 +152,7 @@
             echo "</div>\n";
 
             print_simple_box_end();
+            echo '</fieldset>';
             echo "</form>\n";
 
             if (empty($popup)) {
@@ -458,9 +460,9 @@
         unset($buttonoptions);
         $buttonoptions['q'] = $quiz->id;
         $buttonoptions['forcenew'] = true;
-        echo '<center>';
+        echo '<div class="boxaligncenter">';
         print_single_button($CFG->wwwroot.'/mod/quiz/attempt.php', $buttonoptions, get_string('startagain', 'quiz'));
-        echo '</center>';
+        echo '</div>';
         if ($quiz->popup) {
             notify(get_string('popupnotice', 'quiz'));
         }
@@ -472,18 +474,21 @@
         ?>
         <script type="text/javascript">
         //<![CDATA[
-            document.write("<form id=\"responseform\" method=\"post\" action=\"attempt.php\" autocomplete=\"off\">\n");
+            document.write("<form id=\"responseform\" method=\"post\" action=\"attempt.php\" onclick=\"this.autocomplete='off'\">\n");
         //]]>
         </script>
         <noscript>
+        <div>
         <?php print_heading(get_string('noscript', 'quiz')); ?>
+        </div>
         </noscript>
         <?php
     } else {
-        echo "<form id=\"responseform\" method=\"post\" action=\"attempt.php\" autocomplete=\"off\">\n";
+        echo "<form id=\"responseform\" method=\"post\" action=\"attempt.php\" onclick=\"this.autocomplete='off'\">\n";
     }
 
     // Add a hidden field with the quiz id
+    echo '<fieldset class="invisiblefieldset">';
     echo '<input type="hidden" name="q" value="' . s($quiz->id) . "\" />\n";
 
 /// Print the navigation panel if required
@@ -503,7 +508,7 @@
         //]]>
         </script>
         <?php
-        echo '<input type="hidden" id="page" name="page" value="'.$page."\" />\n";
+        echo '<input type="hidden" name="page" value="'.$page."\" />\n";
         quiz_print_navigation_panel($page, $numpages);
         echo "<br />\n";
     }
@@ -549,6 +554,7 @@
     }
 
     // Finish the form
+    echo '</fieldset>';
     echo "</form>\n";
 
 

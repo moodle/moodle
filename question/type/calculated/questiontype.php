@@ -336,7 +336,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                                                 ? 'decimals'
                                                 : 'significantfigures'), 'quiz', $i);
             }
-            return '<input type="submit" onClick="'
+            return '<input type="submit" onclick="'
                     . "getElementById('addform').regenerateddefid.value='$defid'; return true;"
                     .'" value="'. get_string('generatevalue', 'quiz') . '"/><br/>'
                     . '<input type="text" size="3" name="calcmin[]" '
