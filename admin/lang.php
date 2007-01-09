@@ -171,7 +171,7 @@
             } else {
                 $fileismissing = 1;
                 // notify(get_string("filemissing", "", "$langdir/$file"));
-                $o .= '<div class="notifyproblem" align="center">'.get_string("filemissing", "", "$langdir/$file").'</div><br />';
+                $o .= '<div class="notifyproblem">'.get_string("filemissing", "", "$langdir/$file").'</div><br />';
                 $string = array();
             }
 
@@ -247,7 +247,7 @@
             if (!lang_make_directory($langbase) ){
                 error('ERROR: Could not create base lang directory ' . $langbase);
             } else {
-                echo '<div class="notifysuccess" align="center">Created directory '.
+                echo '<div class="notifysuccess">Created directory '.
                                                      $langbase .'</div>'."<br />\n";
             }
         } 
@@ -255,17 +255,17 @@
             if (!lang_make_directory($langdir)) {
                 error('ERROR: Could not create directory '.$langdir);
             } else {
-                echo '<div class="notifysuccess" align="center">Created directory '.
+                echo '<div class="notifysuccess">Created directory '.
                                                      $langdir .'</div>'."<br />\n";
             }
         }
         if ($uselocal && !file_exists($locallangdir)) {
             if (!lang_make_directory($locallangdir)) {
-                echo '<div class="notifyproblem" align="center">ERROR: Could not create directory '.
+                echo '<div class="notifyproblem">ERROR: Could not create directory '.
                                      $locallangdir .'</div>'."<br />\n";
                 $uselocal = 0;
             } else {
-                echo '<div class="notifysuccess" align="center">Created directory '.
+                echo '<div class="notifysuccess">Created directory '.
                                                      $locallangdir .'</div>'."<br />\n";
             }
         }
@@ -338,14 +338,14 @@
             error_reporting(0);
             if (!file_exists("$saveto/$currentfile")) {
                 if (!@touch("$saveto/$currentfile")) {
-                    print_heading(get_string("filemissing", "", "$saveto/$currentfile"), "center", 4, "error");
+                    print_heading(get_string("filemissing", "", "$saveto/$currentfile"), '', 4, 'error');
                 } else {
-                    print_heading($strfilecreated, "center", 4, "notifysuccess");
+                    print_heading($strfilecreated, '', 4, 'notifysuccess');
                 }
             }
             if ($currentlang == "en_utf8" && !$uselocal) {
                 $editable = false;
-                print_heading($streditennotallowed, 'center', 4);
+                print_heading($streditennotallowed, '', 4);
             } elseif ($f = fopen("$saveto/$currentfile","r+")) {
                 $editable = true;
                 fclose($f);
@@ -355,9 +355,9 @@
             }
             error_reporting($CFG->debug);
             
-            print_heading("$currentfile", "center", 4);
+            print_heading("$currentfile", "", 4);
             if (LANG_DISPLAY_MISSING_LINKS && $editable) {
-                print_heading('<a href="#missing1">'.$strgotofirst.'</a>', "center", 4);
+                print_heading('<a href="#missing1">'.$strgotofirst.'</a>', "", 4);
             }
 
             unset($string);
@@ -383,7 +383,7 @@
                 echo "<form id=\"$currentfile\" action=\"lang.php\" method=\"post\">";
                 echo '<div>';
             }
-            echo "<table summary=\"\" width=\"100%\" cellpadding=\"2\" cellspacing=\"3\" border=\"0\" class=\"generalbox\">";
+            echo "<table summary=\"\" width=\"100%\" class=\"generalbox\">";
             $linescounter = 0;
             $missingcounter = 0;
             foreach ($enstring as $key => $envalue) {
@@ -399,8 +399,8 @@
                 $envalue = str_replace("\\","",$envalue);              // Delete all slashes
 
                 echo "\n\n".'<tr>';
-                echo '<td dir="ltr" lang="en" width="20%" nowrap="nowrap" valign="top">'.$key.'</td>'."\n";
-                echo '<td dir="ltr" lang="en" width="40%" valign="top">'.$envalue.'</td>'."\n";
+                echo '<td dir="ltr" lang="en">'.$key.'</td>'."\n";
+                echo '<td dir="ltr" lang="en">'.$envalue.'</td>'."\n";
 
                 // Missing array keys are not bugs here but missing strings
                 error_reporting(E_ALL ^ E_NOTICE);
@@ -450,7 +450,7 @@
                 }
 
                 if ($editable) {
-                    echo '<td width="40%" '.$cellcolour.' valign="top">'. $missingprev . $missingtarget."\n";
+                    echo '<td '.$cellcolour.' valign="top">'. $missingprev . $missingtarget."\n";
                     if (isset($string[$key])) {
                         $valuelen = strlen($value);
                     } else {
@@ -472,24 +472,25 @@
                     echo $missingnext . '</td>';
 
                 } else {
-                    echo '<td width="40%" bgcolor="'.$cellcolour.'" valign="top">'.$value.'</td>';
+                    echo '<td bgcolor="'.$cellcolour.'" valign="top">'.$value.'</td>';
                 }
+                echo '</tr>'."\n";
             }
             if ($editable) {
-                echo '<tr><td colspan="2">&nbsp;<td><br />';
+                echo '<tr><td colspan="2">&nbsp;</td><td><br />';
                 echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
                 echo '    <input type="hidden" name="currentfile" value="'.$currentfile.'" />';
                 echo '    <input type="hidden" name="mode" value="compare" />';
                 echo '    <input type="submit" name="update" value="'.get_string('savechanges').': '.$currentfile.'" />';
                 echo '</td></tr>';
             }
-            echo '</tr></table>';
+            echo '</table>';
             echo '</div>'; 
             echo '</form>'; 
 
         } else {
             // no $currentfile specified
-            print_heading($strchoosefiletoedit, "center", 4);
+            print_heading($strchoosefiletoedit, "", 4);
         }
     }
 
