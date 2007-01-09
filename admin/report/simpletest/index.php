@@ -91,6 +91,7 @@ if (!is_null($path)) {
 // Print the form for adjusting options.
 print_simple_box_start('center', '70%');
 echo '<form method="get" action="index.php">';
+echo '<fieldset class="invisiblefieldset">';
 print_heading($formheader);
 echo '<p>'; print_checkbox('showpasses', 1, $showpasses, get_string('showpasses', $langfile)); echo '</p>';
 echo '<p>'; print_checkbox('showsearch', 1, $showsearch, get_string('showsearch', $langfile)); echo '</p>';
@@ -100,6 +101,7 @@ echo '<p>';
     echo '<input type="text" id="path" name="path" value="', $displaypath, '" size="60" />';
 echo '</p>';
 echo '<input type="submit" value="' . get_string('runtests', $langfile) . '" />';
+echo '</fieldset>';
 echo '</form>';
 print_simple_box_end();
 
