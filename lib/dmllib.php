@@ -1780,9 +1780,10 @@ function execute_sql_arr($sqlarr, $continue=true, $feedback=true) {
 }
 
 /**
- * This function, called from setup.php includes all the configuration
- * needed to properly work agains any DB. It setups connection encoding
- * and some other variables.
+ * This internal function, called from setup.php, sets all the configuration
+ * needed to work properly against any DB. It setups connection encoding
+ * and some other variables. Also, ir defines the $CFG->dbfamily variable
+ * to handle conditional code better than using $CFG->dbtype directly.
  */
 function configure_dbconnection() {
 
@@ -1790,10 +1791,13 @@ function configure_dbconnection() {
 
     switch ($CFG->dbtype) {
         case 'mysql':
+        case 'mysqli':
             $db->Execute("SET NAMES 'utf8'");
+            $CFG->dbfamily='mysql';
             break;
         case 'postgres7':
             $db->Execute("SET NAMES 'utf8'");
+            $CFG->dbfamily='postgres';
             break;
         case 'mssql':
         case 'mssql_n':
@@ -1809,6 +1813,7 @@ function configure_dbconnection() {
         /// NOTE: Not 100% useful because GPC has been addslashed with the setting off
         ///       so IT'S MANDATORY TO CHANGE THIS UNDER php.ini or .htaccess for this DB
         ///       or to turn off magic_quotes to allow Moodle to do it properly
+            $CFG->dbfamily='mssql';
             break;
         case 'oci8po':
         /// No need to set charset. It must be specified by the NLS_LANG env. variable
@@ -1817,6 +1822,7 @@ function configure_dbconnection() {
         /// NOTE: Not 100% useful because GPC has been addslashed with the setting off
         ///       so IT'S MANDATORY TO ENABLE THIS UNDER php.ini or .htaccess for this DB
         ///       or to turn off magic_quotes to allow Moodle to do it properly
+            $CFG->dbfamily='oracle';
             break;
     }
 }
