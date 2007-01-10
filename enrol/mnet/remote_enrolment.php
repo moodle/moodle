@@ -19,7 +19,7 @@
      $course = get_record('mnet_enrol_course', 'id', $courseid, 'hostid', $mnethost->id);
 
     if (empty($mnethost) || empty($course)) {
-        error("Host or course not found");
+        print_error('hostcoursenotfound','mnet');
     }
 
     define("MAX_USERS_PER_PAGE", 5000);
@@ -51,14 +51,14 @@
                     continue;
                 }
                 if (! $enrolment->req_enrol_user($adduser, $course->id)) {
-                    $errors[] = "Could not add user with id $adduser to this role!";
+                    $errors[] = "Could not add user with id $adduser to course {$course->id}!";
                 }
             }
         } else if ($remove and !empty($frm->removeselect) and confirm_sesskey()) {
             foreach ($frm->removeselect as $removeuser) {
                 $removeuser = clean_param($removeuser, PARAM_INT);
                 if (! $enrolment->req_unenrol_user($removeuser, $course->id)) {
-                    $errors[] = "Could not remove user with id $removeuser from this role!";
+                    $errors[] = "Could not remove user with id $removeuser from course {$course->id}!";
                 }
             }
         } else if ($showall) {
@@ -118,7 +118,7 @@ admin_externalpage_print_header($adminroot);
 print_simple_box_start("center", "80%");
 
 print_simple_box_start("center", "60%", '', 5, 'informationbox');
-print "Enrolling in course " . s($course->shortname) . ' on host ' . s($mnethost->name) ."</p>";
+print_string('enrollingincourse', 'mnet', array(s($course->shortname), s($mnethost->name)));
 print_string("description", "enrol_mnet");
 print_simple_box_end();
 
@@ -140,7 +140,7 @@ echo "<hr />";
         }
 
 
-
+print_simple_box_end();
 admin_externalpage_print_footer($adminroot);
 
 ?>
