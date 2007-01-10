@@ -295,7 +295,9 @@ class moodleform {
         static $validated = null; // one validation is enough
         $mform =& $this->_form;
 
-        if ($validated === null) {
+        if ($this->no_submit_button_pressed()){
+            return false;
+        } elseif ($validated === null) {
             $internal_val = $mform->validate();
             $moodle_val = $this->validation($mform->exportValues(null, true));
             if ($moodle_val !== true) {
@@ -319,11 +321,7 @@ class moodleform {
             }
             $validated = ($internal_val and $moodle_val and $file_val);
         }
-        if ($this->no_submit_button_pressed()){
-            return false;
-        } else {
-            return $validated;
-        }
+        return $validated;
     }
 
     /**
@@ -506,7 +504,15 @@ class moodleform {
                             $mform->setHelpButton($realelementname, $params);
                             break;
                         case 'disabledif' :
-                            $mform->disabledIf($realelementname, $params[0], $params[1], $params[2]);
+                            $params = array_merge(array($realelementname), $params);
+                            call_user_func_array(array(&$mform, 'disabledIf'), $params);
+                            break;
+                        case 'rule' :
+                            if (is_string($params)){
+                                $params = array(null, $params, null, 'client');
+                            }
+                            $params = array_merge(array($realelementname), $params);
+                            call_user_func_array(array(&$mform, 'addRule'), $params);
                             break;
 
                     }
@@ -1279,8 +1285,10 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     function MoodleQuickForm_Renderer(){
         // switch next two lines for ol li containers for form items.
         //        $this->_elementTemplates=array('default'=>"\n\t\t<li class=\"fitem\"><label>{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"qfelement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></li>");
-        $this->_elementTemplates = array('default'=>"\n\t\t<div class=\"fitem {advanced}<!-- BEGIN required --> required<!-- END required -->\"><span class=\"fitemtitle\"><label>{label}<!-- BEGIN required -->{req}<!-- END required -->{advancedimg}</label>{help}</span><div class=\"felement {type}<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\" id=\"id_error_{name}\">{error}</span><br /><!-- END error -->{element}</div></div>",
-        'fieldset'=>"\n\t\t<div class=\"fitem {advanced}<!-- BEGIN required --> required<!-- END required -->\"><span class=\"fitemtitle\"><div class=\"fgrouplabel\">{label}<!-- BEGIN required -->{req}<!-- END required -->{advancedimg}</div>{help}</span><fieldset class=\"felement {type}<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\" id=\"id_error_{name}\">{error}</span><br /><!-- END error -->{element}</fieldset></div>");
+        $this->_elementTemplates = array(
+        'default'=>"\n\t\t<div class=\"fitem {advanced}<!-- BEGIN required --> required<!-- END required -->\"><span class=\"fitemtitle\"><label>{label}<!-- BEGIN required -->{req}<!-- END required -->{advancedimg}</label>{help}</span><div class=\"felement {type}<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></div>",
+        'fieldset'=>"\n\t\t<div class=\"fitem {advanced}<!-- BEGIN required --> required<!-- END required -->\"><span class=\"fitemtitle\"><div class=\"fgrouplabel\">{label}<!-- BEGIN required -->{req}<!-- END required -->{advancedimg}</div>{help}</span><fieldset class=\"felement {type}<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</fieldset></div>",
+        'static'=>"\n\t\t<div class=\"fitem {advanced}<!-- BEGIN required --> required<!-- END required -->\"><span class=\"fitemtitle\"><div class=\"fstaticlabel\">{label}<!-- BEGIN required -->{req}<!-- END required -->{advancedimg}</div>{help}</span><div class=\"felement {type}<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></div>");
 
         parent::HTML_QuickForm_Renderer_Tableless();
     }
@@ -1492,5 +1500,4 @@ MoodleQuickForm::registerElementType('header', "$CFG->libdir/form/header.php", '
 MoodleQuickForm::registerElementType('submit', "$CFG->libdir/form/submit.php", 'MoodleQuickForm_submit');
 MoodleQuickForm::registerElementType('questioncategory', "$CFG->libdir/form/questioncategory.php", 'MoodleQuickForm_questioncategory');
 MoodleQuickForm::registerElementType('advcheckbox', "$CFG->libdir/form/advcheckbox.php", 'MoodleQuickForm_advcheckbox');
-
 ?>

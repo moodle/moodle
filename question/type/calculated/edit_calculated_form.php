@@ -13,55 +13,80 @@
  */
 class question_edit_calculated_form extends question_edit_form {
     /**
+     * Handle to the question type for this question.
+     *
+     * @var question_calculated_qtype
+     */
+    var $qtypeobj;
+    /**
      * Add question-type specific form fields.
      *
-     * @param object $mform the form being built.
+     * @param MoodleQuickForm $mform the form being built.
      */
     function definition_inner(&$mform) {
-        $mform->addElement('text', 'answers[0]', get_string("correctanswerformula", "quiz"));
-        $mform->setType('answers[0]', PARAM_NOTAGS);
+        global $QTYPES;
+        $this->qtypeobj = $QTYPES['calculated'];
 
-        $mform->addElement('hidden', 'fraction[0]', '1.0');
-
-        $mform->addElement('text', 'tolerance[0]', get_string("tolerance", "quiz"));
-        $mform->setType('tolerance[0]', PARAM_NOTAGS);
-
-        $mform->addElement('select', 'shuffleanswers', get_string('shuffleanswers', 'qtype_calculated') );
-        $mform->setHelpButton('shuffleanswers', array('calculatedshuffle', get_string('shuffleanswers','qtype_calculated'), 'quiz'));
-
-/*      $mform->addElement('static', 'answersinstruct', get_string('choices', 'qtype_calculated'), get_string('fillouttwochoices', 'qtype_calculated'));
-        $mform->closeHeaderBefore('answersinstruct');
-*/
-        $creategrades = get_grade_options();
-        $gradeoptions = $creategrades->gradeoptionsfull;
+//------------------------------------------------------------------------------------------
         $repeated = array();
-        $repeated[] =& $mform->createElement('header', 'choicehdr', get_string('choiceno', 'qtype_calculated', '{no}'));
-        $repeated[] =& $mform->createElement('text', 'answer', get_string('answer', 'quiz'));
+        $repeated[] =& $mform->createElement('header', 'answerhdr', get_string('answerhdr', 'qtype_calculated', '{no}'));
+
+        $repeated[] =& $mform->createElement('text', 'answers', get_string('correctanswerformula', 'quiz'));
+        $repeatedoptions['answers']['type'] = PARAM_NOTAGS;
+
+        $creategrades = get_grade_options();
+        $gradeoptions = $creategrades->gradeoptions;
         $repeated[] =& $mform->createElement('select', 'fraction', get_string('grade'), $gradeoptions);
-        $repeated[] =& $mform->createElement('htmleditor', 'feedback', get_string('feedback', 'quiz'));
+        $repeatedoptions['fraction']['default'] = 0;
+
+        $repeated[] =& $mform->createElement('text', 'tolerance', get_string('tolerance', 'qtype_calculated'));
+        $repeatedoptions['tolerance']['type'] = PARAM_NUMBER;
+        $repeatedoptions['tolerance']['default'] = 0.01;
+        $repeated[] =& $mform->createElement('select', 'tolerancetype', get_string('tolerancetype', 'quiz'), $this->qtypeobj->tolerance_types());
+
+        $repeated[] =&  $mform->createElement('select', 'correctanswerlength', get_string('correctanswershows', 'qtype_calculated'), range(0, 9));
+        $repeatedoptions['correctanswerlength']['default'] = 2;
+
+        $answerlengthformats = array('1' => get_string('decimalformat', 'quiz'), '2' => get_string('significantfiguresformat', 'quiz'));
+        $repeated[] =&  $mform->createElement('select', 'correctanswerformat', get_string('correctanswershowsformat', 'qtype_calculated'), $answerlengthformats);
+
+        $repeated[] =&  $mform->createElement('htmleditor', 'feedback', get_string('feedback', 'quiz'));
+        $repeatedoptions['feedback']['type'] = PARAM_RAW;
 
         if (isset($this->question->options)){
-            $countanswers = count($this->question->options->answers);
+            $count = count($this->question->options->answers);
         } else {
-            $countanswers = 0;
+            $count = 0;
         }
-        $repeatsatstart = (QUESTION_NUMANS_START > ($countanswers + QUESTION_NUMANS_ADD))?
-                            QUESTION_NUMANS_START : ($countanswers + QUESTION_NUMANS_ADD);
+        $repeatsatstart = $count + 1;
+        $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', 1, get_string('addmoreanswerblanks', 'qtype_calculated'));
+
+//------------------------------------------------------------------------------------------
+        $repeated = array();
         $repeatedoptions = array();
-        $repeatedoptions['answer']['type'] = PARAM_TEXT;
-        $repeatedoptions['fraction']['default'] = 0;
-        $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', QUESTION_NUMANS_ADD, get_string('addmorechoiceblanks', 'qtype_calculated'));
+        $repeated[] =& $mform->createElement('header', 'unithdr', get_string('unithdr', 'qtype_numerical', '{no}'));
 
-        $mform->addElement('header', 'overallfeedbackhdr', get_string('overallfeedback', 'qtype_calculated'));
+        $repeated[] =& $mform->createElement('text', 'unit', get_string('unit', 'quiz'));
+        $repeatedoptions['unit']['type'] = PARAM_NOTAGS;
 
-        $mform->addElement('htmleditor', 'correctfeedback', get_string('correctfeedback', 'qtype_calculated'));
-        $mform->setType('correctfeedback', PARAM_RAW);
+        $repeated[] =& $mform->createElement('text', 'multiplier', get_string('multiplier', 'quiz'));
+        $repeatedoptions['multiplier']['type'] = PARAM_NUMBER;
 
-        $mform->addElement('htmleditor', 'partiallycorrectfeedback', get_string('partiallycorrectfeedback', 'qtype_calculated'));
-        $mform->setType('partiallycorrectfeedback', PARAM_RAW);
+        if (isset($this->question->options)){
+            $countunits = count($this->question->options->units);
+        } else {
+            $countunits = 0;
+        }
+        $repeatsatstart = $countunits + 1;
+        $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'nounits', 'addunits', 2, get_string('addmoreunitblanks', 'qtype_calculated', '{no}'));
 
-        $mform->addElement('htmleditor', 'incorrectfeedback', get_string('incorrectfeedback', 'qtype_calculated'));
-        $mform->setType('incorrectfeedback', PARAM_RAW);
+        $firstunit = $mform->getElement('multiplier[0]');
+        $firstunit->freeze();
+        $firstunit->setValue('1.0');
+        $firstunit->setPersistantFreeze(true);
+
+        //hidden elements
+        $mform->addElement('hidden', 'wizardpage', 'question');
 
     }
 
@@ -71,19 +96,29 @@ class question_edit_calculated_form extends question_edit_form {
             if (count($answers)) {
                 $key = 0;
                 foreach ($answers as $answer){
-                    $default_values['answer['.$key.']'] = $answer->answer;
-                    $default_values['fraction['.$key.']'] = $answer->fraction;
+                    $default_values['answers['.$key.']'] = $answers->answer;
+                    $default_values['fraction['.$key.']'] = $answers->fraction;
+                    $default_values['tolerance['.$key.']'] = $answers->tolerance;
+                    $default_values['correctanswerlength['.$key.']'] = $answers->correctanswerlength;
+                    $default_values['correctanswerformat['.$key.']'] = $answer->correctanswerformat;
                     $default_values['feedback['.$key.']'] = $answer->feedback;
                     $key++;
                 }
             }
-            $default_values['single'] =  $question->options->single;
-            $default_values['shuffleanswers'] =  $question->options->shuffleanswers;
-            $default_values['correctfeedback'] =  $question->options->correctfeedback;
-            $default_values['partiallycorrectfeedback'] =  $question->options->partiallycorrectfeedback;
-            $default_values['overallincorrectfeedback'] =  $question->options->overallincorrectfeedback;
-            $question = (object)((array)$question + $default_values);
-        }
+            $units  = array_values($question->options->units);
+            // make sure the default unit is at index 0
+            usort($units, create_function('$a, $b', // make sure the default unit is at index 0
+            'if (1.0 === (float)$a->multiplier) { return -1; } else '.
+            'if (1.0 === (float)$b->multiplier) { return 1; } else { return 0; }'));
+            if (count($units)) {
+                $key = 0;
+                foreach ($units as $unit){
+                    $default_values['unit['.$key.']'] = $unit->unit;
+                    $default_values['multiplier['.$key.']'] = $unit->multiplier;
+                    $key++;
+                }
+            }
+            $question = (object)((array)$question + $default_values);        }
         parent::set_defaults($question);
     }
 
@@ -93,21 +128,79 @@ class question_edit_calculated_form extends question_edit_form {
 
     function validation($data){
         $errors = array();
-        $answers = $data['answer'];
+        $answers = $data['answers'];
         $answercount = 0;
-        foreach ($answers as $answer){
+        //check grades
+        /*$totalfraction = 0;
+        $maxfraction = -1;*/
+
+        foreach ($answers as $key => $answer){
+            //check no of choices
             $trimmedanswer = trim($answer);
             if (!empty($trimmedanswer)){
+                $eqerror = qtype_calculated_find_formula_errors($trimmedanswer);
+                if (FALSE !== $eqerror){
+                    $errors['answers['.$key.']'] = $eqerror;
+                }
+                if ('2' == $data['correctanswerformat'][$key]
+                        && '0' == $data['correctanswerlength'][$key]) {
+                    $errors['correctanswerlength['.$key.']'] = get_string('zerosignificantfiguresnotallowed','quiz');
+                }
+                if (!is_numeric($data['tolerance'][$key])){
+                    $errors['tolerance['.$key.']'] = get_string('mustbenumeric', 'qtype_calculated');
+                }
+
                 $answercount++;
+            }
+            //check grades
+
+            //TODO how should grade checking work here??
+            /*if ($answer != '') {
+                if ($data['fraction'][$key] > 0) {
+                    $totalfraction += $data['fraction'][$key];
+                }
+                if ($data['fraction'][$key] > $maxfraction) {
+                    $maxfraction = $data['fraction'][$key];
+                }
+            }*/
+        }
+        //grade checking :
+        /// Perform sanity checks on fractional grades
+        /*if ( ) {
+            if ($maxfraction != 1) {
+                $maxfraction = $maxfraction * 100;
+                $errors['fraction[0]'] = get_string('errfractionsnomax', 'qtype_multichoice', $maxfraction);
+            }
+        } else {
+            $totalfraction = round($totalfraction,2);
+            if ($totalfraction != 1) {
+                $totalfraction = $totalfraction * 100;
+                $errors['fraction[0]'] = get_string('errfractionsaddwrong', 'qtype_multichoice', $totalfraction);
+            }
+        }*/
+        $units  = $data['unit'];
+        if (count($units)) {
+            foreach ($units as $key => $unit){
+                if (is_numeric($unit)){
+                    $errors['unit['.$key.']'] = get_string('mustnotbenumeric', 'qtype_calculated');
+                }
+                $trimmedunit = trim($unit);
+                $trimmedmultiplier = trim($data['multiplier'][$key]);
+                if (!empty($trimmedunit)){
+                    if (empty($trimmedmultiplier)){
+                        $errors['multiplier['.$key.']'] = get_string('youmustenteramultiplierhere', 'qtype_calculated');
+                    }
+                    if (!is_numeric($trimmedmultiplier)){
+                        $errors['multiplier['.$key.']'] = get_string('mustbenumeric', 'qtype_calculated');
+                    }
+
+                }
             }
         }
         if ($answercount==0){
-            $errors['answer[0]'] = get_string('notenoughanswers', 'qtype_calculated', 2);
-            $errors['answer[1]'] = get_string('notenoughanswers', 'qtype_calculated', 2);
-        } elseif ($answercount==1){
-            $errors['answer[1]'] = get_string('notenoughanswers', 'qtype_calculated', 2);
-
+            $errors['answers[0]'] = get_string('atleastoneanswer', 'qtype_calculated');
         }
+
         return $errors;
     }
 }

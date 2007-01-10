@@ -8,6 +8,7 @@ require_once("HTML/QuickForm/static.php");
  * @access       public
  */
 class MoodleQuickForm_static extends HTML_QuickForm_static{
+    var $_elementTemplateType='static';
     /**
      * html for help button, if empty then no help
      *
@@ -43,6 +44,10 @@ class MoodleQuickForm_static extends HTML_QuickForm_static{
      */
     function getHelpButton(){
         return $this->_helpbutton;
+    }
+
+    function getElementTemplateType(){
+        return $this->_elementTemplateType;
     }
 }
 ?>
