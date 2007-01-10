@@ -253,12 +253,9 @@ table.formtable tbody th {
  *** Admin
  ***/
 
-.admin .generalboxcontent {
-  background-color:#EEEEEE; 
-}
-
 .admin .generalbox {
   border-color:#BBBBBB; 
+  background-color:#EEEEEE; 
 }
 
 .admin .informationbox {

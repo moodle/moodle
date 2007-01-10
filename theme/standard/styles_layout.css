@@ -677,6 +677,38 @@ body#admin-index .copyrightnotice {
   padding-top: 0.75em;
 }
 
+#admin-lang .generalbox {
+  text-align:center;
+  margin:auto;
+  border-width: 1px;
+  border-style: solid;
+}
+
+#admin-langimport .generalbox {
+  text-align:center;
+  margin:auto;
+  border-width: 1px;
+  border-style: solid;
+}
+
+#admin-langimport .generalbox table {
+  text-align:center;
+  margin:auto;
+}
+
+#admin-index .generalbox {
+  text-align:center;
+  margin:auto;
+  border-width: 1px;
+  border-style: solid;
+  margin:20px;
+}
+
+#admin-index .singlebutton {
+  text-align:center;
+  margin:20px;
+}
+
 #adminsettings fieldset {
   margin-top: 1em;
   padding: 1em 0.5em;
