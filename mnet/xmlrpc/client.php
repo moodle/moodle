@@ -137,7 +137,10 @@ class mnet_xmlrpc_client {
             // Executing any system method is permitted.
 
         } else {
-
+            $id_list = $mnet_peer->id;
+            if (!empty($CFG->mnet_all_hosts_id)) {
+                $id_list .= ', '.$CFG->mnet_all_hosts_id;
+            }
             // Find methods that we subscribe to on this host
             $sql = "
                 SELECT
@@ -150,12 +153,12 @@ class mnet_xmlrpc_client {
                     r.xmlrpc_path = '{$this->method}' AND
                     s2r.rpcid = r.id AND
                     s2r.serviceid = h2s.serviceid AND
-                    h2s.subscribe = '1'";
+                    h2s.subscribe = '1' AND
+                    h2s.hostid in ({$id_list})";
 
             $permission = get_record_sql($sql);
             if ($permission == false) {
                 // TODO: Handle attempt to call not-permitted method
-                echo '<pre>'.$sql.'</pre>';
                 return false;
             }
 

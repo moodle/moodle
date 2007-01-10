@@ -41,8 +41,10 @@ class auth_plugin_cas {
      * @returns bool Authentication success or failure.
      */
     function user_login ($username, $password) {
-
-        // TODO: find how to get at LDAP funcs
+        if (! function_exists('ldap_connect')) {
+            print_error('auth_casnotinstalled','mnet');
+            return false;
+        }
         
         global $CFG;
 
@@ -82,7 +84,7 @@ class auth_plugin_cas {
             ldap_close($ldap_connection);
             if ($ldap_login) {
                if ($this->config->create_user=='0') {  //cas specific
-                  if (record_exists('user', 'username', $username)) {
+                  if (record_exists('user', 'username', $username, 'mnethostid', $CFG->mnet_localhost_id)) {
                     return true;
                   }else{
                     return false;
@@ -120,7 +122,7 @@ class auth_plugin_cas {
         phpCAS::setLang($this->config->language);
         phpCAS::forceAuthentication();
         if ($this->config->create_user == '0') {
-            if (record_exists('user', 'username', phpCAS::getUser())) {
+            if (record_exists('user', 'username', phpCAS::getUser(), 'mnethostid', $CFG->mnet_localhost_id)) {
                 // TODO::SOMEOTHER::
                 $user = authenticate_user_login(phpCAS::getUser(), 'cas');
             }
@@ -169,7 +171,7 @@ class auth_plugin_cas {
             }
             if ($cas_user_exist) {
                 if ($this->config->create_user == '0') {
-                    if (record_exists('user', 'username', phpCAS::getUser())) {
+                    if (record_exists('user', 'username', phpCAS::getUser(), 'mnethostid', $CFG->mnet_localhost_id)) {
                         // TODO::SOMEOTHER::
                         $user = authenticate_user_login(phpCAS::getUser(), 'cas');
                     }

@@ -2686,7 +2686,7 @@ function update_internal_user_password(&$user, $password, $storeindb=true) {
         $hashedpassword = hash_internal_user_password($password);
     }
 
-    return set_field('user', 'password',  $hashedpassword, 'username', $user->username);
+    return set_field('user', 'password',  $hashedpassword, 'id', $user->id);
 }
 
 /**
@@ -2700,7 +2700,7 @@ function update_internal_user_password(&$user, $password, $storeindb=true) {
  * @param string $value The value to match for $field.
  * @return user A {@link $USER} object.
  */
-function get_complete_user_data($field, $value) {
+function get_complete_user_data($field, $value, $mnethostid=null) {
 
     global $CFG;
 
@@ -2708,9 +2708,23 @@ function get_complete_user_data($field, $value) {
         return false;
     }
 
+/// Build the WHERE clause for an SQL query
+
+    $constraints = $field .' = \''. $value .'\' AND deleted <> \'1\'';
+
+    if (null === $mnethostid) {
+        $constraints .= ' AND auth != \'mnet\'';
+    } elseif (is_numeric($mnethostid)) {
+        $constraints .= ' AND mnethostid = \''.$mnethostid.'\'';
+    } else {
+        error_log('Call to get_complete_user_data for $field='.$field.', $value = '.$value.', with invalid $mnethostid: '. $mnethostid);
+        print_error('invalidhostlogin','mnet', $CFG->wwwroot.'/login/index.php');
+        exit;
+    }
+
 /// Get all the basic user data
 
-    if (! $user = get_record_select('user', $field .' = \''. $value .'\' AND deleted <> \'1\'')) {
+    if (! $user = get_record_select('user', $constraints)) {
         return false;
     }
 

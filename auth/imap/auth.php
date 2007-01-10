@@ -42,7 +42,8 @@ class auth_plugin_imap {
      */
     function user_login ($username, $password) {
         if (! function_exists('imap_open')) {
-            error("Cannot use IMAP authentication. The PHP IMAP module is not installed.");
+            print_error('auth_imapnotinstalled','mnet');
+            return false;
         }
         
         global $CFG;

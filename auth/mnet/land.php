@@ -26,7 +26,7 @@ $localuser = $mnetauth->confirm_mnet_session($token, $remotewwwroot);
 
 // log in
 $CFG->auth = 'mnet';
-$USER = get_complete_user_data('id', $localuser->id);
+$USER = get_complete_user_data('id', $localuser->id, $localuser->mnethostid);
 load_all_capabilities();
 
 // redirect

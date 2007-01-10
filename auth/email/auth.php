@@ -51,7 +51,8 @@ class auth_plugin_email {
      * @returns bool Authentication success or failure.
      */
     function user_login ($username, $password) {
-        if ($user = get_record('user', 'username', $username)) {
+        global $CFG;
+        if ($user = get_record('user', 'username', $username, 'mnethostid', $CFG->mnet_localhost_id)) {
             return validate_internal_user_password($user, $password);
         }
         return false;

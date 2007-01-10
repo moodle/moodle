@@ -46,6 +46,10 @@ class auth_plugin_ldap {
      * @returns bool Authentication success or failure.
      */
     function user_login($username, $password) {
+        if (! function_exists('ldap_bind')) {
+            print_error('auth_ldapnotinstalled','mnet');
+            return false;
+        }
 
         global $CFG;
 
@@ -329,6 +333,8 @@ class auth_plugin_ldap {
                 $user->guid=bin2hex($user->guid);
                 //add authentication source stamp 
                 $user->auth = AUTH_LDAP_NAME;
+                //add MNET host id
+                $user->mnethostid = $CFG->mnet_localhost_id;
                 $fresult[$user->username]=$user;
 
             }
@@ -517,7 +523,7 @@ class auth_plugin_ldap {
             foreach ($remove_users as $user) {
                 //following is copy pasted from admin/user.php
                 //maybe this should moved to function in lib/datalib.php
-                unset($updateuser);
+                $updateuser = new stdClass();
                 $updateuser->id = $user->id;
                 $updateuser->deleted = '1';
                 //$updateuser->username = "$user->username".time();  // Remember it just in case
@@ -617,7 +623,7 @@ class auth_plugin_ldap {
         if (!empty($add_users)) {
             print "User entries to add: ". count($add_users). "\n";
 
-            if ($creatorroles = get_roles_with_capability('moodle/legacy:coursecreator', CAP_ALLOW)) {
+            if ($roles = get_roles_with_capability('moodle/legacy:coursecreator', CAP_ALLOW)) {
                 $creatorrole = array_shift($roles);      // We can only use one, let's use the first one
             }
 
@@ -627,18 +633,19 @@ class auth_plugin_ldap {
                 //print $user->username . "\n";
                 
                 // prep a few params
-                $user->modified  = time();
-                $user->confirmed = 1;
-                $user->auth      = AUTH_LDAP_NAME;
+                $user->modified   = time();
+                $user->confirmed  = 1;
+                $user->auth       = AUTH_LDAP_NAME;
+                $user->mnethostid = $CFG->mnet_localhost_id;
                 
                 // insert it
                 $old_debug=$CFG->debug; 
                 $CFG->debug=10;
                 
                 // maybe the user has been deleted before
-                if ($old_user = get_record('user', 'idnumber', $user->idnumber, 'deleted', 1)) {
+                if ($old_user = get_record('user', 'idnumber', $user->idnumber, 'deleted', 1, 'mnethostid', $CFG->mnet_localhost_id)) {
                     $user->id = $old_user->id;
-                    set_field('user', 'deleted', 0, 'idnumber', $user->idnumber);
+                    set_field('user', 'deleted', 0, 'id', $user->id);
                     echo "Revived user $user->username with idnumber $user->idnumber id $user->id\n";
                 }
                 elseif ($id = insert_record('user',$user)) { // it is truly a new user
@@ -687,11 +694,14 @@ class auth_plugin_ldap {
         $username = trim(moodle_strtolower($username));
         
         // get the current user record
-        $user = get_record('user', 'username', $username);
+        $user = get_record('user', 'username', $username, 'mnethostid', $CFG->mnet_localhost_id);
         if (empty($user)) { // trouble
             error_log("Cannot update non-existent user: $username");
             die;
         }
+
+        // Protect the userid from being overwritten
+        $userid = $user->id;
 
         if (function_exists('auth_get_userinfo')) {
             if ($newinfo = auth_get_userinfo($username)) {
@@ -702,23 +712,21 @@ class auth_plugin_ldap {
                 }
                 
                 foreach ($updatekeys as $key) {
-                    unset($value);
                     if (isset($newinfo[$key])) {
-                        $value = $newinfo[$key];
-                        $value = addslashes(stripslashes($value)); // Just in case
+                        $value = addslashes(stripslashes($newinfo[$key]));
                     }
                     else {
                         $value = '';
                     }
                     if (!empty($this->config->{'field_updatelocal_' . $key})) { 
                            if ($user->{$key} != $value) { // only update if it's changed
-                               set_field('user', $key, $value, 'username', $username);
+                               set_field('user', $key, $value, 'id', $userid);
                            }
                     }
                 }
             }
         }
-        return get_record_select("user", "username = '$username' AND deleted <> '1'");
+        return get_record_select("user", "id = '$userid' AND deleted <> '1'");
     }
 
     function ldap_bulk_insert($users) {
@@ -952,13 +960,12 @@ class auth_plugin_ldap {
      * called when the user password is updated.
      * changes userpassword in external db
      *
-     * @param mixed $username    Username
-     * @param mixed $newpassword Plaintext password
-     * @param mixed $oldpassword Plaintext old password to bind ldap with
+     * @param  object  $user        User table object
+     * @param  mixed   $newpassword Plaintext password
+     * @param  mixed   $oldpassword Plaintext old password to bind ldap with
      * @return boolean result
      *
      */
-    // function user_update_password($username, $newpassword) {
     function user_update_password($user, $newpassword) {
     /// called when the user password is updated -- it assumes it is called by an admin
     /// or that you've otherwise checked the user's credentials

@@ -78,7 +78,7 @@ class auth_plugin_db {
             if ( $rs->RecordCount() ) {
                 // user exists exterally
                 // check username/password internally
-                if ($user = get_record('user', 'username', $username)) {
+                if ($user = get_record('user', 'username', $username, 'mnethostid', $CFG->mnet_localhost_id)) {
                     return validate_internal_user_password($user, $password);
                 }
             } else {
@@ -156,8 +156,9 @@ class auth_plugin_db {
 
     function user_update_password($username, $newpassword) {
 
+        global $CFG;
         if ($this->config->passtype === 'internal') {
-            return set_field('user', 'password', md5($newpassword), 'username', $username);
+            return set_field('user', 'password', md5($newpassword), 'username', $username, 'mnethostid', $CFG->mnet_localhost_id);
         } else {
             // we should have never been called!
             return false;
@@ -214,7 +215,7 @@ class auth_plugin_db {
             foreach ($remove_users as $user) {
                 //following is copy pasted from admin/user.php
                 //maybe this should moved to function in lib/datalib.php
-                unset($updateuser);
+                $updateuser = new stdClass();
                 $updateuser->id = $user->id;
                 $updateuser->deleted = "1";
                 $updateuser->timemodified = time();
@@ -301,17 +302,18 @@ class auth_plugin_db {
                 $user = $this->get_userinfo_asobj($user);
                 
                 // prep a few params
-                $user->username  = $username;
-                $user->modified  = time();
-                $user->confirmed = 1;
-                $user->auth      = 'db';
+                $user->username   = $username;
+                $user->modified   = time();
+                $user->confirmed  = 1;
+                $user->auth       = 'db';
+                $user->mnethostid = $CFG->mnet_localhost_id;
                 
                 // insert it
                 $old_debug=$CFG->debug; 
                 $CFG->debug=10;
                 
                 // maybe the user has been deleted before
-                if ($old_user = get_record('user', 'username', $user->username, 'deleted', 1)) {
+                if ($old_user = get_record('user', 'username', $user->username, 'deleted', 1, 'mnethostid', $user->mnethostid)) {
                     $user->id = $old_user->id;
                     set_field('user', 'deleted', 0, 'username', $user->username);
                     echo "Revived user $user->username id $user->id\n";
@@ -414,6 +416,7 @@ class auth_plugin_db {
      * values removed from DB won't be removed from moodle.
      */
      function db_update_user_record($username, $updatekeys=false) {
+        global $CFG;
 
         $pcfg = get_config('auth/db');
 
@@ -421,11 +424,14 @@ class auth_plugin_db {
         $username = trim(moodle_strtolower($username));
         
         // get the current user record
-        $user = get_record('user', 'username', $username);
+        $user = get_record('user', 'username', $username, 'mnethostid', $CFG->mnet_localhost_id);
         if (empty($user)) { // trouble
             error_log("Cannot update non-existent user: $username");
             die;
         }
+
+        // Ensure userid is not overwritten
+        $userid = $user->id;
 
         // TODO: this had a function_exists() - now we have a $this 
         if ($newinfo = $this->get_userinfo($username)) {
@@ -445,12 +451,12 @@ class auth_plugin_db {
                 }
                 if (!empty($this->config->{'field_updatelocal_' . $key})) { 
                         if ($user->{$key} != $value) { // only update if it's changed
-                            set_field('user', $key, $value, 'username', $username);
+                            set_field('user', $key, $value, 'id', $userid);
                         }
                 }
             }
         }
-        return get_record_select("user", "username = '$username' AND deleted <> '1'");
+        return get_record_select("user", "id = '$userid' AND deleted <> '1'");
     }
 
     // A chance to validate form data, and last chance to 
