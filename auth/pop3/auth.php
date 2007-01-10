@@ -42,7 +42,8 @@ class auth_plugin_pop3 {
      */
     function user_login($username, $password) {
         if (! function_exists('imap_open')) {
-            error("Cannot use POP3 authentication. The PHP IMAP module is not installed.");
+            print_error('auth_pop3notinstalled','auth');
+            exit;
         }
         
         global $CFG;
