@@ -1416,6 +1416,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         $name = $header->getName();
 
         $id = empty($name) ? '' : ' id="' . $name . '"';
+        $id = preg_replace(array('/\]/', '/\[/'), array('', '_'), $id);
         if (is_null($header->_text)) {
             $header_html = '';
         } elseif (!empty($name) && isset($this->_templates[$name])) {
