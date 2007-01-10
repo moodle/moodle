@@ -20,7 +20,7 @@
     
     if (!$site = get_site()) {
         admin_externalpage_print_header($adminroot);
-        print_error('nosite', 'mnet', '', NULL, true);
+        print_error('nosite', '', '', NULL, true);
     }
 
     $trusted_hosts = '';//array();

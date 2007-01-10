@@ -15,7 +15,7 @@
     require_capability('moodle/site:config', $context, $USER->id, true, "nopermissions");
 
     if (!$site = get_site()) {
-        error(get_string('nosite','mnet'));
+        print_error('nosite', '', '', NULL, true);
     }
 
 /// Initialize variables.

@@ -21,7 +21,7 @@ if (!extension_loaded('openssl')) {
 
 if (!$site = get_site()) {
     admin_externalpage_print_header($adminroot);
-    print_error('nosite', 'mnet', '', NULL, true);
+    print_error('nosite', '', '', NULL, true);
 }
 
 if (!function_exists('curl_init') ) {
