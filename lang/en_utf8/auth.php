@@ -120,6 +120,8 @@ $string['auth_mnettitle'] = 'Moodle Network authentication';
 $string['auth_mnetdescription'] = 'Users are authenticated according to the web of trust defined in your Moodle Network settings.';
 $string['auth_mnet_rpc_negotiation_timeout'] = 'The timeout in seconds for authentication over the XMLRPC transport.';
 $string['auth_mnet_auto_add_remote_users'] = 'When set to Yes, a local user record is auto-created when a remote user logs in for the first time.';
+$string['auto_add_remote_users'] = 'Auto add remote users';
+$string['rpc_negotiation_timeout'] = 'RPC negotiation timeout';
 
 $string['auth_multiplehosts'] = 'Multiple hosts OR addresses can be specified (eg host1.com;host2.com;host3.com) or (eg xxx.xxx.xxx.xxx;xxx.xxx.xxx.xxx)';
 

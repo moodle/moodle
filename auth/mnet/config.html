@@ -14,7 +14,7 @@ $yesno = array(get_string('no'), get_string('yes'));
 <table cellspacing="0" cellpadding="5" border="0" align="center">
 
 <tr valign="top" class="required">
-    <td align="right"> rpc_negotiation_timeout: </td>
+    <td align="right"><?php print_string('rpc_negotiation_timeout', 'auth'); ?>: </td>
     <td>
         <input name="rpc_negotiation_timeout" type="text" size="5" value="<?php echo $config->rpc_negotiation_timeout ?>" />
         <?php
@@ -35,7 +35,7 @@ $yesno = array(get_string('no'), get_string('yes'));
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"> auto_add_remote_users: </td>
+    <td align="right"><?php print_string('auto_add_remote_users', 'auth'); ?>: </td>
     <td>
         <?php
 
