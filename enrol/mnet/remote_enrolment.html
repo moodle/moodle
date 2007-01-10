@@ -1,5 +1,5 @@
 
-<form id="assignform" id="assignform" method="post" action="">
+<form id="assignform" method="post" action="">
 <input type="hidden" name="previoussearch" value="<?php p($previoussearch) ?>" />
 <input type="hidden" name="courseid" value="<?php p($courseid) ?>" />
 <input type="hidden" name="host" value="<?php p($mnethost->id) ?>" />
@@ -16,10 +16,10 @@
     </tr>
     <tr>
       <td valign="top">
-          <select name="removeselect[]" size="20" id="removeselect" multiple
-                  onFocus="getElementById('assignform').add.disabled=true;
+          <select name="removeselect[]" size="20" id="removeselect" multiple="multiple"
+                  onfocus="getElementById('assignform').add.disabled=true;
                            getElementById('assignform').remove.disabled=false;
-                           getElementById('assignform').addselect.selectedIndex=-1;" />
+                           getElementById('assignform').addselect.selectedIndex=-1;">
           <?php
               foreach ($enrolledusers as $enrolleduser) {
                   $fullname = fullname($enrolleduser, true);
@@ -36,8 +36,8 @@
         <br />
       </td>
       <td valign="top">
-          <select name="addselect[]" size="20" id="addselect" multiple
-                  onFocus="getElementById('assignform').add.disabled=false;
+          <select name="addselect[]" size="20" id="addselect" multiple="multiple"
+                  onfocus="getElementById('assignform').add.disabled=false;
                            getElementById('assignform').remove.disabled=true;
                            getElementById('assignform').removeselect.selectedIndex=-1;">
           <?php
@@ -73,7 +73,7 @@
          </select>
          <br />
          <input type="text" name="searchtext" size="30" value="<?php p($searchtext, true) ?>"
-                  onFocus ="getElementById('assignform').add.disabled=true;
+                  onfocus ="getElementById('assignform').add.disabled=true;
                             getElementById('assignform').remove.disabled=true;
                             getElementById('assignform').removeselect.selectedIndex=-1;
                             getElementById('assignform').addselect.selectedIndex=-1;"
