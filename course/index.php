@@ -46,9 +46,9 @@
             print_header("$site->shortname: $strcategories", $strcourses, 
                           $strcategories, "", "", true, update_categories_button());
             print_heading($strcategories);
-            print_simple_box_start("center", "50%", "#FFFFFF", 5, "categorybox");
+            print_box_start('categorybox');
             print_whole_category_list();
-            print_simple_box_end();
+            print_box_end();
             print_course_search();
         } else {
             $strfulllistofcourses = get_string("fulllistofcourses");
@@ -57,8 +57,6 @@
             print_courses(0, "80%");
         }
 
-        echo "<center>";
-        
         /// I am not sure this context in the next has_capability call is correct. 
         if (isloggedin() and !isguest() and !has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {  // Print link to request a new course
             print_single_button("request.php", NULL, get_string("courserequest"), "get");
@@ -69,7 +67,6 @@
         if (has_capability('moodle/site:approvecourse', get_context_instance(CONTEXT_SYSTEM, SITEID))  and !empty($CFG->enablecourserequests)) {
             print_single_button('pending.php',NULL, get_string('coursespending'),"get");
         }
-        echo "</center>";
         print_footer();
         exit;
     }
@@ -279,15 +276,15 @@
 
 /// Print form for creating new categories
     if (has_capability('moodle/category:create', $context)) {
-        echo "<center>";
+        echo '<div class="addcategory">';
         echo "<form id=\"addform\" action=\"index.php\" method=\"post\">";
+        echo '<fieldset class="invisiblefieldset">';
         echo "<input type=\"text\" size=\"30\" alt=\"$straddnewcategory\" name=\"addcategory\" />";
         echo "<input type=\"submit\" value=\"$straddnewcategory\" />";
         echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
+        echo "</fieldset>";
         echo "</form>";
-        echo "</center>";
-    
-        echo "<br />";
+        echo "</div>";
     }
 
 /// Print out the categories with all the knobs
@@ -303,7 +300,7 @@
     $displaylist[0] = get_string("top");
     make_categories_list($displaylist, $parentlist, "");
 
-    echo "<table align=\"center\" border=\"0\" cellspacing=\"2\" cellpadding=\"5\" class=\"generalbox\"><tr>";
+    echo "<table class=\"generalbox\"><tr>";
     echo "<th scope=\"col\">$strcategories</th>";
     echo "<th scope=\"col\">$strcourses</th>";
     echo "<th scope=\"col\">$stredit</th>";

@@ -3907,8 +3907,9 @@ function update_mymoodle_icon() {
     }
 
     return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/my/index.php\">".
-        "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
-        "<input type=\"submit\" value=\"$string\" /></form>";
+           "<fieldset class='invisiblefieldset'>".
+           "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
+           "<input type=\"submit\" value=\"$string\" /></frameset></form>";
 }
 
 /**
@@ -3957,10 +3958,11 @@ function update_category_button($categoryid) {
         }
 
         return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/course/category.php\">".
+               '<frameset class="invisibleframeset">'.
                "<input type=\"hidden\" name=\"id\" value=\"$categoryid\" />".
                "<input type=\"hidden\" name=\"categoryedit\" value=\"$edit\" />".
                "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />".
-               "<input type=\"submit\" value=\"$string\" /></form>";
+               "<input type=\"submit\" value=\"$string\" /></frameset></form>";
     }
 }
 
@@ -3984,9 +3986,10 @@ function update_categories_button() {
         }
 
         return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/course/index.php\">".
+               '<frameset class="invisibleframeset">'.
                '<input type="hidden" name="categoryedit" value="'. $categoryedit .'" />'.
                '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />'.
-               '<input type="submit" value="'. $string .'" /></form>';
+               '<input type="submit" value="'. $string .'" /></frameset></form>';
     }
 }
 
@@ -4010,12 +4013,13 @@ function update_categories_search_button($search,$page,$perpage) {
         }
 
         return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/course/search.php\">".
+               '<frameset class="invisibleframeset">'.
                "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
                "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />".
                "<input type=\"hidden\" name=\"search\" value=\"".s($search, true)."\" />".
                "<input type=\"hidden\" name=\"page\" value=\"$page\" />".
                "<input type=\"hidden\" name=\"perpage\" value=\"$perpage\" />".
-               "<input type=\"submit\" value=\"".s($string)."\" /></form>";
+               "<input type=\"submit\" value=\"".s($string)."\" /></frameset></form>";
     }
 }
 
@@ -4035,10 +4039,11 @@ function update_group_button($courseid, $groupid) {
         $string = get_string('editgroupprofile');
 
         return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/course/group.php\">".
+               '<frameset class="invisibleframeset">'.
                '<input type="hidden" name="id" value="'. $courseid .'" />'.
                '<input type="hidden" name="group" value="'. $groupid .'" />'.
                '<input type="hidden" name="edit" value="on" />'.
-               '<input type="submit" value="'. $string .'" /></form>';
+               '<input type="submit" value="'. $string .'" /></frameset></form>';
     }
 }
 
@@ -4064,9 +4069,10 @@ function update_groups_button($courseid) {
         }
 
         return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/course/groups.php\">".
+               '<frameset class="invisibleframeset">'.
                "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
                "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
-               "<input type=\"submit\" value=\"$string\" /></form>";
+               "<input type=\"submit\" value=\"$string\" /></frameset></form>";
     }
 }
 
