@@ -986,6 +986,7 @@ $string['noreplyname'] = 'Do not reply to this email';
 $string['noresults'] = 'No results';
 $string['normal'] = 'Normal';
 $string['normalfilter'] = 'Normal search';
+$string['nosite'] = 'Could not find site-level course';
 $string['nostatstodisplay'] = 'There is no available data to display, sorry.';
 $string['nostudentsfound'] = 'No $a found';
 $string['nostudentsingroup'] = 'There are no students in this group yet';

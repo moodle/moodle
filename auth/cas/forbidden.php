@@ -4,7 +4,7 @@
     require("../../config.php");
 
     if (!$site = get_site()) {
-        error("No site found!");
+        print_error('nosite', '', '', NULL, true);
     }
 
     $loginsite = get_string("loginsite");

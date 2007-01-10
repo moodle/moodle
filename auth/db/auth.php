@@ -70,8 +70,7 @@ class auth_plugin_db {
             $authdb->Close();
 
             if (!$rs) {
-                notify("Could not connect to the specified authentication database...");
-
+                print_error('auth_dbcantconnect','auth');
                 return false;
             }
         
@@ -101,7 +100,7 @@ class auth_plugin_db {
             $CFG->prefix = $prefix;
             
             if (!$rs) {
-                notify("Could not connect to the specified authentication database...");
+                print_error('auth_dbcantconnect','auth');
                 return false;
             }
         
@@ -209,7 +208,8 @@ class auth_plugin_db {
         $remove_users = get_records_sql($sql); 
 
         if (!empty($remove_users)) {
-            print "User entries to remove: ". count($remove_users) . "\n";
+            print_string('auth_dbuserstoremove','auth', count($remove_users));
+            echo "\n";
 
             begin_sql();
             foreach ($remove_users as $user) {
@@ -295,7 +295,8 @@ class auth_plugin_db {
         unset($usernames);
 
         if (!empty($add_users)) {
-            print "User entries to add: ". count($add_users). "\n";
+            print_string('auth_dbuserstoadd','auth',count($add_users));
+            echo "\n";
             begin_sql();
             foreach($add_users as $user) {
                 $username = $user;
@@ -316,9 +317,11 @@ class auth_plugin_db {
                 if ($old_user = get_record('user', 'username', $user->username, 'deleted', 1, 'mnethostid', $user->mnethostid)) {
                     $user->id = $old_user->id;
                     set_field('user', 'deleted', 0, 'username', $user->username);
-                    echo "Revived user $user->username id $user->id\n";
+                    print_string('auth_dbrevive','auth',array($user->username, $user->id));
+                    echo "\n";
                 } elseif ($id=insert_record ('user',$user)) { // it is truly a new user
-                    echo "inserted user $user->username id $id\n";
+                    print_string('auth_dbinsertuser','auth',array($user->username, $id));
+                    echo "\n";
                     $user->id = $id;
                     // if relevant, tag for password generation
                     if ($this->config->passtype === 'internal') {
@@ -326,7 +329,8 @@ class auth_plugin_db {
                         set_user_preference('create_password',          1, $id);
                     }
                 } else {
-                    echo "error inserting user $user->username \n";
+                    print_string('auth_dbinsertusererror', 'auth', $user->username);
+                    echo "\n";
                 }
                 $CFG->debug=$old_debug;                        
             }
@@ -346,7 +350,7 @@ class auth_plugin_db {
         $authdb->Close();
 
         if (!$rs) {
-            notify("Could not connect to the specified authentication database...");
+            print_error('auth_dbcantconnect','auth');
             return false;
         }
         
@@ -377,7 +381,7 @@ class auth_plugin_db {
         $authdb->Close();
 
         if (!$rs) {
-            notify("Could not connect to the specified authentication database...");
+            print_error('auth_dbcantconnect','auth');
             return false;
         }
         
@@ -427,6 +431,7 @@ class auth_plugin_db {
         $user = get_record('user', 'username', $username, 'mnethostid', $CFG->mnet_localhost_id);
         if (empty($user)) { // trouble
             error_log("Cannot update non-existent user: $username");
+            print_error('auth_dbusernotexist','auth',$username);
             die;
         }
 

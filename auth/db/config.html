@@ -38,7 +38,7 @@
 <table cellspacing="0" cellpadding="5" border="0" align="center">
 
 <tr valign="top" class="required">
-    <td align="right"> host: </td>
+    <td align="right"><?php print_string("auth_dbhost_key", "auth") ?>: </td>
     <td>
         <input name="host" type="text" size="30" value="<?php echo $config->host?>" />
         <?php
@@ -53,7 +53,7 @@
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"> type: </td>
+    <td align="right"><?php print_string("auth_dbtype_key", "auth") ?>: </td>
     <td>
     <?php  $dbtypes = array("access","ado_access", "ado", "ado_mssql", "borland_ibase", "csv", "db2", "fbsql", "firebird", "ibase", "informix72", "informix", "mssql", "mssql_n", "mysql", "mysqlt", "oci805", "oci8", "oci8po", "odbc", "odbc_mssql", "odbc_oracle", "oracle", "postgres64", "postgres7", "postgres", "proxy", "sqlanywhere", "sybase", "vfp");
        foreach ($dbtypes as $dbtype) {
@@ -69,7 +69,7 @@
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"> name: </td>
+    <td align="right"><?php print_string("auth_dbname_key", "auth") ?>: </td>
     <td>
         <input name="name" type="text" size="30" value="<?php echo $config->name?>" />
         <?php
@@ -84,7 +84,7 @@
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"> user: </td>
+    <td align="right"><?php print_string("auth_dbuser_key", "auth") ?>: </td>
     <td>
         <input name="user" type="text" size="30" value="<?php echo $config->user?>" />
         <?php
@@ -99,7 +99,7 @@
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"> pass: </td>
+    <td align="right"><?php print_string("auth_dbpass_key", "auth") ?>: </td>
     <td>
         <input name="pass" type="text" size="30" value="<?php echo $config->pass?>" />
         <?php
@@ -116,7 +116,7 @@
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"> table: </td>
+    <td align="right"><?php print_string("auth_dbtable_key", "auth") ?>: </td>
     <td>
         <input name="table" type="text" size="30" value="<?php echo $config->table?>" />
         <?php
@@ -131,7 +131,7 @@
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"> fielduser: </td>
+    <td align="right"><?php print_string("auth_dbfielduser_key", "auth") ?>: </td>
     <td>
         <input name="fielduser" type="text" size="30" value="<?php echo $config->fielduser?>" />
         <?php
@@ -146,7 +146,7 @@
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"> fieldpass: </td>
+    <td align="right"><?php print_string("auth_dbfieldpass_key", "auth") ?>: </td>
     <td>
         <input name="fieldpass" type="text" size="30" value="<?php echo $config->fieldpass?>" />
         <?php
@@ -161,7 +161,7 @@
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"> passtype: </td>
+    <td align="right"><?php print_string("auth_dbpasstype_key", "auth") ?>: </td>
     <td>
         <?php  
 
@@ -176,7 +176,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"> changepasswordurl: </td>
+    <td align="right"><?php print_string("auth_dbchangepasswordurl_key", "auth") ?>: </td>
     <td>
         <input name="changepasswordurl" type="text" value="<?php echo $config->changepasswordurl ?>" />
         <?php

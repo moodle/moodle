@@ -7,7 +7,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
     //Define variables used in page
     if (!$site = get_site()) {
-        error("No site found!");
+        print_error('nosite', '', '', NULL, true);
     }
 
     if (empty($CFG->langmenu)) {
@@ -118,9 +118,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
                 if (isset($passwordchangeurl)) {
                     redirect($passwordchangeurl);
                 } else {
-                    error("You cannot proceed without changing your password. 
-                           However there is no available page for changing it.
-                           Please contact your Moodle Administrator.");
+                    print_error('auth_cas_broken_password','auth');
                 }
             }
 
@@ -224,9 +222,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
             if (isset($passwordchangeurl)) {
                 redirect($passwordchangeurl);
             } else {
-                error("You cannot proceed without changing your password. 
-                       However there is no available page for changing it.
-                       Please contact your Moodle Administrator.");
+                print_error('auth_cas_broken_password','auth');
             }
         }
 

@@ -95,7 +95,7 @@ class auth_plugin_cas {
             }
         } else {
             ldap_close($ldap_connection);
-            error("LDAP part of CAS-module cannot connect to server: $CFG->ldap_host_url");
+            print_error('auth_cas_cantconnect', 'auth', $CFG->ldap_host_url);
         }
         return false;
     }

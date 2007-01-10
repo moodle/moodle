@@ -78,10 +78,10 @@ class auth_plugin_email {
      */
     function user_signup($user, $notify = true) {
         if (! ($user->id = insert_record('user', $user)) ) {
-            error('Could not add your record to the database!');
+            print_error('auth_emailnoinsert','auth');
         }
         if (! send_confirmation_email($user)) {
-            error('Tried to send you an email but failed!');
+            print_error('auth_emailnoemail','auth');
         }
 
         if ($notify) {

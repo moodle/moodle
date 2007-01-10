@@ -23,6 +23,21 @@ $string['auth_cas_enabled'] = 'Turn this on if you want to use CAS authenticatio
 $string['auth_cas_text'] = 'Secure connection';
 $string['auth_cas_create_user'] = 'Turn this on if you want to insert CAS-authenticated users in Moodle database. If not then only users who already exist in the Moodle database can log in.';
 $string['auth_casnotinstalled'] = 'Cannot use CAS authentication. The PHP LDAP module is not installed.';
+$string['auth_cas_cantconnect'] ='LDAP part of CAS-module cannot connect to server: $a';
+$string['auth_cas_use_cas'] ='Use CAS';
+$string['auth_cas_broken_password'] ='You cannot proceed without changing your password, however there is no available page for changing it. Please contact your Moodle Administrator.';
+
+
+$string['auth_cas_hostname_key'] ='Hostname';
+$string['auth_cas_changepasswordurl'] ='Password-change URL';
+$string['auth_cas_create_user_key'] ='Create user';
+$string['auth_cas_auth_user_create'] ='Create users externally';
+$string['auth_cas_language_key'] ='Language';
+$string['auth_cas_casversion'] ='Version';
+$string['auth_cas_port_key'] ='Port';
+$string['auth_cas_baseuri_key'] ='Base URI';
+
+
 
 $string['auth_changepasswordurl'] = 'Change password URL';
 $string['auth_changepasswordurl_expl'] = 'Specify the url to send users who have lost their $a password. Set <strong>Use standard Change Password page</strong> to <strong>No</strong>.';
@@ -39,15 +54,34 @@ $string['auth_dbfielduser'] = 'Name of the field containing usernames';
 $string['auth_dbhost'] = 'The computer hosting the database server.';
 $string['auth_dbname'] = 'Name of the database itself';
 $string['auth_dbpass'] = 'Password matching the above username';
-$string['auth_dbpasstype'] = '<p>Specify the format that the password field is using. MD5 encryption is useful for connecting to other common web applications like PostNuke.</p> <p>Use \'internal\' if you want to the external DB to manage usernames & email addresses, but Moodle to manage passwords. If you use \'internal\', you <i>must</i> provide a populated email address field in the external DB, and you must execute admin/cron.php regularly. Moodle will send an email to new users with a temporary password.</p>';
+$string['auth_dbpasstype'] = '<p>Specify the format that the password field is using. MD5 encryption is useful for connecting to other common web applications like PostNuke.</p> <p>Use \'internal\' if you want to the external DB to manage usernames &amp; email addresses, but Moodle to manage passwords. If you use \'internal\', you <i>must</i> provide a populated email address field in the external DB, and you must execute admin/cron.php regularly. Moodle will send an email to new users with a temporary password.</p>';
 $string['auth_dbtable'] = 'Name of the table in the database';
 $string['auth_dbtitle'] = 'Use an external database';
 $string['auth_dbtype'] = 'The database type (See the <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb documentation</a> for details)';
 $string['auth_dbuser'] = 'Username with read access to the database';
+$string['auth_dbcantconnect'] ='Could not connect to the specified authentication database...';
+$string['auth_dbuserstoadd'] = 'User entries to add: $a';
+$string['auth_dbrevive'] = 'Revived user $a[0] id $a[1]';
+$string['auth_dbinsertuser'] ='inserted user $a[0] id $a[1]';
+$string['auth_dbinsertusererror'] = 'error inserting user $a';
+$string['auth_dbuserstoremove'] = 'User entries to remove: $a';
+$string['auth_dbusernotexist'] = 'Cannot update non-existent user: $a';
+$string['auth_dbhost_key'] = 'Host';
+$string['auth_dbtype_key'] = 'Database';
+$string['auth_dbname_key'] = 'DB Name';
+$string['auth_dbuser_key'] = 'DB User';
+$string['auth_dbpass_key'] = 'Password';
+$string['auth_dbtable_key'] = 'Table';
+$string['auth_dbfielduser_key'] = 'Username field';
+$string['auth_dbfieldpass_key'] = 'Password field';
+$string['auth_dbpasstype_key'] = 'Password format';
+$string['auth_dbchangepasswordurl_key'] = 'Password-change URL';
 
 // Email plugin
 $string['auth_emaildescription'] = 'Email confirmation is the default authentication method.  When the user signs up, choosing their own new username and password, a confirmation email is sent to the user\'s email address.  This email contains a secure link to a page where the user can confirm their account. Future logins just check the username and password against the stored values in the Moodle database.';
 $string['auth_emailtitle'] = 'Email-based self-registration';
+$string['auth_emailnoinsert'] = 'Could not add your record to the database!';
+$string['auth_emailnoemail'] = 'Tried to send you an email but failed!';
 
 // FirstClass plugin
 $string['auth_fccreators'] = 'List of groups whose members are allowed to create new courses. Separate multiple groups with \';\'. Names must be spelled exactly as on FirstClass server. System is case-sensitive.';
@@ -57,6 +91,13 @@ $string['auth_fchost'] = 'The FirstClass server address. Use the IP number or DN
 $string['auth_fcpasswd'] = 'Password for the account above.';
 $string['auth_fctitle'] = 'Use a FirstClass server';
 $string['auth_fcuserid'] = 'Userid for FirstClass account with privilege \'Subadministrator\' set.';
+$string['auth_fchost_key'] = 'Host:';
+$string['auth_fcfppport_key'] = 'Port';
+$string['auth_fcuserid_key'] = 'User ID';
+$string['auth_fcpasswd_key'] = 'Password';
+$string['auth_fccreators_key'] = 'Creators';
+$string['auth_fcchangepasswordurl'] = 'Password-change URL';
+$string['auth_fcconnfail'] = 'Connection failed with Errno: $a[0] and Error String: $a[1]';
 
 // Fieldlocks
 $string['auth_fieldlock'] = 'Lock value';
@@ -81,7 +122,7 @@ $string['auth_ldap_create_context'] = 'If you enable user creation with email co
 $string['auth_ldap_creators'] = 'List of groups whose members are allowed to create new courses. Separate multiple groups with \';\'. Usually something like \'cn=teachers,ou=staff,o=myorg\'';
 $string['auth_ldap_expiration_desc'] = 'Select No to disable expired password checking or LDAP to read passwordexpiration time directly from LDAP';
 $string['auth_ldap_expiration_warning_desc'] = 'Number of days before password expiration warning is issued.';
-$string['auth_ldap_expireattr_desc'] = 'Optional: overrides ldap-attribute what stores password expiration time passwordExpirationTime';
+$string['auth_ldap_expireattr_desc'] = 'Optional: overrides ldap-attribute that stores password expiration time';
 $string['auth_ldap_graceattr_desc'] = 'Optional: Overrides  gracelogin attribute';
 $string['auth_ldap_gracelogins_desc'] = 'Enable LDAP gracelogin support. After password has expired user can login until gracelogin count is 0. Enabling this setting displays grace login message if password is exprired.';
 $string['auth_ldap_host_url'] = 'Specify LDAP host in URL-form like \'ldap://ldap.myorg.com/\' or \'ldaps://ldap.myorg.com/\' Separate multipleservers with \';\' to get failover support.';
@@ -107,6 +148,28 @@ $string['auth_ldapdescription'] = 'This method provides authentication against a
                                   wanted fields in Moodle.  For following logins only the username and 
 
                                   password are checked.';
+$string['auth_ldap_host_url_key'] = 'Host URL';
+$string['auth_ldap_version_key'] = 'Version';
+$string['auth_ldap_preventpassindb_key'] = 'Hide passwords';
+$string['auth_ldap_bind_dn_key'] = 'Distinguished Name';
+$string['auth_ldap_bind_pw_key'] = 'Password';
+$string['auth_ldap_user_type_key'] = 'User type';
+$string['auth_ldap_contexts_key'] = 'Contexts';
+$string['auth_ldap_search_sub_key'] = 'Search subcontexts';
+$string['auth_ldap_opt_deref_key'] = 'Dereference aliases';
+$string['auth_ldap_user_attribute_key'] = 'User attribute';
+$string['auth_ldap_memberattribute_key'] = 'Member attribute';
+$string['auth_ldap_objectclass_key'] = 'Object class';
+$string['auth_ldap_changepasswordurl_key'] = 'Password-change URL';
+$string['auth_ldap_expiration_key'] = 'Expiration';
+$string['auth_ldap_expiration_warning_key'] = 'Expiration warning';
+$string['auth_ldap_exprireattr_key'] = 'Expiration attribute';
+$string['auth_ldap_gracelogins_key'] = 'Grace logins';
+$string['auth_ldap_gracelogin_key'] = 'Grace login attribute';
+$string['auth_ldap_auth_user_create_key'] = 'Create users externally';
+$string['auth_ldap_create_context_key'] = 'Context for new users';
+$string['auth_ldap_creators_key'] = 'Creators';
+
 $string['auth_ldapextrafields'] = 'These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <b>LDAP fields</b> that you specify here. <p>If you leave these fields blank, then nothing will be transferred from LDAP and Moodle defaults will be used instead.</p><p>In either case, the user will be able to edit all of these fields after they log in.</p>';
 $string['auth_ldaptitle'] = 'Use an LDAP server';
 $string['auth_ldapnotinstalled'] = 'Cannot use LDAP authentication. The PHP LDAP module is not installed.';
