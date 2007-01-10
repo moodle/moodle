@@ -52,7 +52,7 @@
         $this->content->text =
             '<form id="searchquery" method="get" action="'. $CFG->wwwroot .'/search/query.php"><div>'
           . '<label for="block_search_q">'. $label .'</label>'
-          . '<input id="block_search_q" type="text" name="query_string" length="50" />'
+          . '<input id="block_search_q" type="text" name="query_string" />'
           . '<input type="submit" value="'.$button.'" />'
           . '</div></form>';
       } else {
