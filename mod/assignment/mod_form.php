@@ -31,11 +31,11 @@ class mod_assignment_mod_form extends moodleform_mod {
 
 //        $mform->addElement('static', 'statictype', get_string('assignmenttype', 'assignment'), get_string('type'.$type,'assignment'));
 
-        $mform->addElement('text', 'name', get_string('chatname', 'chat'));
+        $mform->addElement('text', 'name', get_string('assignmentname', 'assignment'));
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
 
-        $mform->addElement('htmleditor', 'description', get_string('chatintro', 'chat'));
+        $mform->addElement('htmleditor', 'description', get_string('description', 'assignment'));
         $mform->setType('description', PARAM_RAW);
         $mform->setHelpButton('description', array('writing', 'questions', 'richtext'), false, 'editorhelpbutton');
         $mform->addRule('description', get_string('required'), 'required', null, 'client');
