@@ -26,7 +26,7 @@
 ?>
 
 <tr valign="top">
-    <td align="right" nowrap="nowrap">
+    <td align="right" style="white-space:nowrap;">
 
 
 <script type="text/javascript">
@@ -108,7 +108,7 @@
 
     <div id="windowsettings">
 
-<table align="center">
+<table class="boxaligncenter">
 
 
 <tr valign="top">
@@ -124,7 +124,9 @@
         onclick="lockoptions('form', 'windowpopup[1]', popupitems);" />
         <b title="<?php print_string("pagedisplay", "resource") ?>"><?php print_string("pagewindow", "resource") ?></b>
         <blockquote>
+            <fieldset class="invisiblefieldset">
             <input type="hidden" name="framepage" value="1" />
+            </fieldset>
         </blockquote>
     </td>
 </tr>
@@ -136,6 +138,7 @@
         onclick="lockoptions('form', 'windowpopup[1]', popupitems);" />
         <b title="<?php p($strnewwindowopen) ?>"><?php p($strnewwindow) ?></b>
         <blockquote>
+        <fieldset class="invisiblefieldset">
         <?php
             foreach ($window as $name => $value) {
                 if ($name == "height" or $name == "width") {
@@ -166,6 +169,7 @@
                 echo "\n//]]>\n</script>";
             }
         ?>
+        </fieldset>
         </blockquote>
     </td>
 </tr>
@@ -189,7 +193,7 @@
 
     <div id="parametersettings">
 
-<table align="center">
+<table class="boxaligncenter">
 
 <?php
 

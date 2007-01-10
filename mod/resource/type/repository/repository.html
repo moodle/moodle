@@ -1,6 +1,6 @@
 
 <tr valign="top">
-    <td align="right" nowrap="nowrap">
+    <td align="right" style="white-space:nowrap;">
 
 
 <script type="text/javascript">
@@ -42,8 +42,8 @@
     </td>
     </tr>
     <tr valign="top">
-    <td align="right" nowrap="nowrap">
-    <img src="<?php echo $CFG->wwwroot.'/mod/resource/type/repository/hive/hp-footer-hive-powered.gif' ?>" align="top" alt="" />
+    <td align="right" style="white-space:nowrap;">
+    <img src="<?php echo $CFG->wwwroot.'/mod/resource/type/repository/hive/hp-footer-hive-powered.gif' ?>" style="valign:top;" alt="" />
     </td>
     <td>
     <?php
@@ -79,7 +79,7 @@
 
     <div id="windowsettings">
 
-<table align="center">
+<table style="boxaligncenter">
 
 
 <tr valign="top">
@@ -97,9 +97,11 @@
         return lockoptions('form', 'windowpopup[1]', popupitems);" />
         <b title="<?php print_string("pagedisplay", "resource") ?>"><?php print_string("pagewindow", "resource") ?></b>
         <blockquote>
+            <fieldset class="invisiblefieldset">
             <input type="hidden" name="hframepage" value="0" />
             <input type="checkbox" name="framepage" value="1" <?php echo ($form->options == "frame") ? "checked=\"checked\"" : "" ?> alt="<?php print_string('frameifpossible', 'resource') ?>" />
             <?php print_string("frameifpossible", "resource") ?>
+            </fieldset>
         </blockquote>
     </td>
 </tr>
@@ -112,6 +114,7 @@
         return lockoptions('form', 'windowpopup[1]', popupitems);" />
         <b title="<?php p($strnewwindowopen) ?>"><?php p($strnewwindow) ?></b>
         <blockquote>
+        <fieldset class="invisiblefieldset">
         <?php
             foreach ($window as $name => $value) {
                 if ($name == "height" or $name == "width") {
@@ -142,6 +145,7 @@
                 echo "\n//]]>\n</script>";
             }
         ?>
+        </fieldset>
         </blockquote>
     </td>
 </tr>
@@ -165,7 +169,7 @@
 
     <div id="parametersettings">
 
-<table align="center">
+<table class="boxaligncenter">
 
         <tr>
             <td align="center"><?php print_string("parameter", "resource") ?></td>
