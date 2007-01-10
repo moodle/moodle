@@ -62,7 +62,7 @@
 
 <form id="form" method="post" action="mod.php">
 <fieldset class="invisiblefieldset">
-<center>
+<div class="boxaligncenter">
 <table cellpadding="5">
 <tr valign="top">
     <td align="right"><b><?php  print_string('name') ?>:</b></td>
@@ -128,7 +128,7 @@
     <td align="right">
     <b> <?php print_string('wikilinkoptions', 'wiki') ?>:</b></td>
     <td>
-        <input type="checkbox" name="disablecamelcase" value="1" <?php echo $form->disablecamelcase?"CHECKED":""; ?> alt="<?php print_string('disablecamel', 'wiki') ?>" />
+        <input type="checkbox" name="disablecamelcase" value="1" <?php echo $form->disablecamelcase?"checked=\"checked\"":""; ?> alt="<?php print_string('disablecamel', 'wiki') ?>" />
         <?php print_string('disablecamel', 'wiki') ?><br />
         <?php helpbutton('wikilinkoptions', get_string('wikilinkoptions', 'wiki'), 'wiki') ?>
     </td>
@@ -139,18 +139,18 @@
     <b> <?php print_string('studentadminoptions', 'wiki') ?>:</b></td>
     <td>
         <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr>
-        <td width="50%">
-        <input type="checkbox" name="setpageflags" value="1" <?php echo $form->setpageflags?"CHECKED":""; ?> alt="<?php print_string('allowsetpage', 'wiki') ?>" />
+        <td style="width:50%">
+        <input type="checkbox" name="setpageflags" value="1" <?php echo $form->setpageflags?"checked=\"checked\"":""; ?> alt="<?php print_string('allowsetpage', 'wiki') ?>" />
         <?php print_string('allowsetpage', 'wiki') ?><br />
-        <input type="checkbox" name="strippages" value="1" <?php echo $form->strippages?"CHECKED":""; ?> alt="<?php print_string('allowstrippages', 'wiki') ?>" />
+        <input type="checkbox" name="strippages" value="1" <?php echo $form->strippages?"checked=\"checked\"":""; ?> alt="<?php print_string('allowstrippages', 'wiki') ?>" />
         <?php print_string('allowstrippages', 'wiki') ?><br />
         </td>
-        <td width="50%">
-        <input type="checkbox" name="removepages" value="1" <?php echo $form->removepages?"CHECKED":""; ?> alt="<?php print_string('allowremovepages', 'wiki') ?>" />
+        <td style="width:50%">
+        <input type="checkbox" name="removepages" value="1" <?php echo $form->removepages?"checked=\"checked\"":""; ?> alt="<?php print_string('allowremovepages', 'wiki') ?>" />
         <?php print_string('allowremovepages', 'wiki') ?>
         <?php helpbutton('studentadminoptions', get_string('studentadminoptions', 'wiki'), 'wiki') ?>
         <br />
-        <input type="checkbox" name="revertchanges" value="1" <?php echo $form->revertchanges?"CHECKED":""; ?> alt="<?php print_string('allowrevertchanges', 'wiki') ?>" />
+        <input type="checkbox" name="revertchanges" value="1" <?php echo $form->revertchanges?"checked=\"checked\"":""; ?> alt="<?php print_string('allowrevertchanges', 'wiki') ?>" />
         <?php print_string('allowrevertchanges', 'wiki') ?><br />
         </td>
         </tr></table>
@@ -183,7 +183,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right" nowrap="nowrap">
+    <td style="text-align:right;white-space:nowrap;">
         <b><?php echo get_string("initialcontent", "wiki") ?>:</b>
     </td>
     <td>
@@ -214,6 +214,6 @@
 <input type="hidden" name="id"            value="<?php  p($form->instance) ?>" />
 <input type="hidden" name="mode"          value="<?php  p($form->mode) ?>" />
 <input type="submit" value="<?php  print_string('savechanges') ?>" />
-</center>
+</div>
 </fieldset>
 </form>

@@ -2673,6 +2673,11 @@ wikiadminactions {
   text-align:right;
   padding-bottom: 0.5em;
 }
+
+.wikiexportbox{
+  margin-left:auto;
+  margin-right:auto;
+}
 /***
  *** Modules: Workshop
  ***/

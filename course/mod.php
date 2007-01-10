@@ -695,7 +695,7 @@
             $defaultformat = FORMAT_MOODLE;
         }
 
-        $icon = '<img class="icon" src="'.$CFG->modpixpath.'/'.$module->name.'/icon.gif" />';
+        $icon = '<img class="icon" src="'.$CFG->modpixpath.'/'.$module->name.'/icon.gif" alt="'.get_string('modulename',$module->name).'"/>';
 
         print_heading_with_help($pageheading, "mods", $module->name, $icon);
         print_simple_box_start('center', '', '', 5, 'generalbox', $module->name);

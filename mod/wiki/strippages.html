@@ -13,11 +13,11 @@
   $strip_table=wiki_admin_strip_list($form->pagestostrip, $form->version, $err);
   print_table($strip_table);
 ?>
-<center>
+<div class="boxaligncenter">
 <?php
   if(!count($strip_table->data)) {
     print get_string("nothingtostrip","wiki")."<br /><br />";
   }
 ?>
   <input type="submit" name="proceed" value="<?php print get_string("strippages","wiki"); ?>" />
-</center></fieldset></form>
+</div></fieldset></form>

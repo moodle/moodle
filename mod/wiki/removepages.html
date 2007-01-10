@@ -16,7 +16,7 @@
   $remove_table=wiki_admin_remove_list($form->listall);
   print_table($remove_table);
 ?>
-<center>
+<div class="boxaligncenter">
 <?php
   if(!count($remove_table->data)) {
     print get_string("nocandidatestoremove","wiki",get_string("listall","wiki"))."<br /><br />";
@@ -30,4 +30,4 @@
   }
 ?>
   <input type="submit" name="proceed" value="<?php print get_string("removeselectedpages","wiki"); ?>" />
-</center></field></form>
+</div></fieldset></form>

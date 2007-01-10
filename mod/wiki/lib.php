@@ -1225,7 +1225,7 @@ function wiki_admin_setpageflags_list($pageflagstatus) {
     foreach ($FD as $n=>$str) {
         $cell_flags .='<input type="checkbox" name="flags['. rawurlencode($id)
             . '][' . $n . ']" value="1" '
-            . (($data["flags"] & $n) ? "CHECKED=\"checked\"" : "")
+            . (($data["flags"] & $n) ? "checked=\"checked\"" : "")
             . ' />'.$str. ' ';
     }
     if($pageflagstatus) {
@@ -1408,7 +1408,7 @@ function wiki_admin_strip_list($pagestostrip="",$version="",$err="") {
         }
         $checked="";
         if($pagestostrip=="" || $pagestostrip[$i]) {
-          $checked=" CHECKED";
+          $checked=" checked=\"checked\"";
         }
         if($version=="") {
           $versiondefault="1-".($row["version"]-1);

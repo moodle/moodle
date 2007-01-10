@@ -16,32 +16,32 @@ if (!isset($form->changesfield)) {
 <input type="hidden" name="id" value="<?php print $cm->id ?>" />
 <input type="hidden" name="wikipage" value="<?php print $wikipage?>" />
 
-<center>
+<div class="boxaligncenter">
 <?php
 if($err->remark) {
   formerr($err->remark);
 }
 ?>
-<table cellpadding=5>
-<tr valign=top>
-    <td align=right><p><b><?php print_string('authorfieldpattern','wiki') ?>:</b></p></td>
+<table cellpadding="5">
+<tr valign="top">
+    <td align="right"><p><b><?php print_string('authorfieldpattern','wiki') ?>:</b></p></td>
     <td>
-        <input type="text" name="authorfieldpattern" size=30 value="<?php p($form->authorfieldpattern) ?>" />
+        <input type="text" name="authorfieldpattern" size="30" value="<?php p($form->authorfieldpattern) ?>" />
 <?php
         helpbutton('revertauthorfieldpattern', get_string('authorfieldpattern', 'wiki'), 'wiki');
         if (!empty($err->authorfieldpattern)) { formerr($err->authorfieldpattern); }
 ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p><b><?php print_string('changesfield','wiki') ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string('changesfield','wiki') ?>:</b></p></td>
     <td>
-        <input type="text" name="changesfield" size=30 value="<?php p($form->changesfield) ?>" />
+        <input type="text" name="changesfield" size="30" value="<?php p($form->changesfield) ?>" />
         <?php if (!empty($err->changesfield)) { formerr($err->changesfield); } ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p><b><?php print_string('howtooperate', 'wiki') ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string('howtooperate', 'wiki') ?>:</b></p></td>
     <td>
         <?php
         $operations=array( "lastonly" => get_string("revertlastonly","wiki"),
@@ -51,13 +51,13 @@ if($err->remark) {
         ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p><b><?php print_string('deleteversions','wiki') ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string('deleteversions','wiki') ?>:</b></p></td>
     <td>
-        <input type="text" name="deleteversions" size=2 value="<?php p($form->deleteversions) ?>" />
+        <input type="text" name="deleteversions" size="2" value="<?php p($form->deleteversions) ?>" />
         <?php if (!empty($err->deleteversions)) { formerr($err->deleteversions); } ?>
     </td>
 </tr>
 </table>
   <input type="submit" name="proceed" value="<?php print get_string("revertchanges","wiki"); ?>" />
-</center></fieldset></form>
+</div></fieldset></form>
