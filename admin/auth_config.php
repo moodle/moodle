@@ -63,7 +63,7 @@ admin_externalpage_print_header($adminroot);
 
 // choose an authentication method
 echo "<form $CFG->frametarget id=\"authmenu\" method=\"post\" action=\"auth_config.php\">\n";
-echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\">\n";
+echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\" />\n";
 echo "<input type=\"hidden\" name=\"auth\" value=\"".$auth."\" />\n";
 
 // auth plugin description
@@ -145,7 +145,7 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
         if ($retrieveopts) {
             $varname = 'field_map_' . $field;
 
-            echo "<input name=\"lockconfig_{$varname}\" type=\"text\" size=\"30\" value=\"{$pluginconfig->$varname}\">";
+            echo "<input name=\"lockconfig_{$varname}\" type=\"text\" size=\"30\" value=\"{$pluginconfig->$varname}\" />";
             echo '<div align="right">';
             echo  get_string('auth_updatelocal', 'auth') . '&nbsp;&nbsp;';
             choose_from_menu($updatelocaloptions, "lockconfig_field_updatelocal_{$field}", $pluginconfig->{"field_updatelocal_$field"}, "");
