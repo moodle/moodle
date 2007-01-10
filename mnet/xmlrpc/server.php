@@ -265,7 +265,7 @@ function mnet_server_fault($code, $text, $param = null) {
 function mnet_server_dummy_method($methodname, $argsarray, $functionname) {
     global $MNET_REMOTE_CLIENT;
     
-    if ($MNET_REMOTE_CLIENT->object_to_call == false) {
+    if (!is_object($MNET_REMOTE_CLIENT->object_to_call)) {
         return @call_user_func_array($functionname, $argsarray);
     } else {
         return @call_user_method_array($functionname, $MNET_REMOTE_CLIENT->object_to_call, $argsarray);
