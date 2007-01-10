@@ -1,15 +1,15 @@
 <?php
 admin_externalpage_print_header($adminroot);
 
-$tabs[] = new tabobject('mnetdetails', 'peers.php?step=update&hostid='.$mnet_peer->id, $strmnetedithost, $strmnetedithost, false);
-$tabs[] = new tabobject('mnetservices', 'mnet_services.php?step=list&hostid='.$mnet_peer->id, $strmnetservices, $strmnetservices, false);
+$tabs[] = new tabobject('mnetdetails', 'peers.php?step=update&amp;hostid='.$mnet_peer->id, $strmnetedithost, $strmnetedithost, false);
+$tabs[] = new tabobject('mnetservices', 'mnet_services.php?step=list&amp;hostid='.$mnet_peer->id, $strmnetservices, $strmnetservices, false);
 print_tabs(array($tabs), 'mnetdetails');
 
 print_simple_box_start("center", "");
 ?>
 <table cellpadding="9" cellspacing="0" >
 <tr>
-    <td align="right" valign="top" nowrap><?php print_string('site'); ?>:</td>
+    <td align="right" valign="top"><?php print_string('site'); ?>:</td>
     <td valign="top"><?php echo $mnet_peer->name; ?></td>
 </tr>
 <tr>
