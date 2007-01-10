@@ -17,7 +17,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package question
  *//** */
- 
+
     require_once(dirname(__FILE__) . '/../config.php');
     require_once('editlib.php'); // NOTE - is this correct? This is just about editing screens?
     require_once($CFG->libdir . '/filelib.php');
@@ -27,9 +27,9 @@
     $qtype = optional_param('qtype', '', PARAM_FILE);
     $category = optional_param('category', 0, PARAM_INT);
     $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
-    
+
     $CFG->pagepath = 'question/type/'.$qtype;
-    
+
 
     // rqp questions set the type to rqp_nn where nn is the rqp_type id
     if (substr($qtype, 0, 4) == 'rqp_') {
@@ -260,7 +260,7 @@
                 close_window(3);
             } else {
                 echo '</div>';
-                redirect($SESSION->returnurl, $strsaved);
+                redirect($SESSION->returnurl);
             }
         }
     }
