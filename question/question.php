@@ -96,17 +96,6 @@
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
     require_capability('moodle/question:manage', $coursecontext);
 
-    // TODO: remove restriction to quiz
-    $streditingquestion = get_string('editingquestion', 'quiz');
-    if (isset($SESSION->modform->instance)) {
-        $strediting = '<a href="'.$SESSION->returnurl.'">'.get_string('editingquiz', 'quiz').'</a> -> '.
-            $streditingquestion;
-    } else {
-        $strediting = '<a href="edit.php?courseid='.$course->id.'">'.
-            get_string("editquestions", "quiz").'</a> -> '.$streditingquestion;
-    }
-
-    print_header_simple($streditingquestion, '', $strediting);
 
     if ($form = data_submitted() and confirm_sesskey()) {
 
@@ -264,6 +253,17 @@
             }
         }
     }
+    // TODO: remove restriction to quiz
+    $streditingquestion = get_string('editingquestion', 'quiz');
+    if (isset($SESSION->modform->instance)) {
+        $strediting = '<a href="'.$SESSION->returnurl.'">'.get_string('editingquiz', 'quiz').'</a> -> '.
+            $streditingquestion;
+    } else {
+        $strediting = '<a href="edit.php?courseid='.$course->id.'">'.
+            get_string("editquestions", "quiz").'</a> -> '.$streditingquestion;
+    }
+
+    print_header_simple($streditingquestion, '', $strediting);
 
     // prepare the grades selector drop-down used by many question types
     $creategrades = get_grade_options();
