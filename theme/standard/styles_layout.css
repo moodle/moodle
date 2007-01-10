@@ -2717,3 +2717,11 @@ wikiadminactions {
 /***
  *** Modules: Workshop
  ***/
+.redfont {
+  color: red;
+}
+
+.workshopuploadform,
+.workshopkey {
+  text-align:center;  
+}

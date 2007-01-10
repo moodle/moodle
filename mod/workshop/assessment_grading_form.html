@@ -4,11 +4,12 @@
     }
 ?>
 <form id="gradingform" action="assessments.php" method="post">
+<fieldset class="invisiblefieldset">
   <input type="hidden" name="action" value="updategrading" />
   <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
   <input type="hidden" name="redirect" value="<?php echo $redirect ?>" />
   <input type="hidden" name="aid" value="<?php echo $aid ?>" />
-  <center>
+  <div class="boxaligncenter">
     <table cellpadding="5" border="1">
       <tr valign="top">
         <td align="right"><b><?php print_string("teacherscomment", "workshop") ?>:</b></td>
@@ -25,5 +26,6 @@
       </tr>
     </table>
     <input type="submit" value="<?php print_string("savemygrading", "workshop") ?>" />
-  </center>
+  </div>
+</fieldset>
 </form> 

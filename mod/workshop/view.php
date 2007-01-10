@@ -91,7 +91,7 @@
         // show the final grades as stored in the tables...
         if ($submissions = workshop_get_user_submissions($workshop, $USER)) { // any submissions from user?
             print_heading(get_string("displayoffinalgrades", "workshop"));
-            echo "<center><table border=\"1\" width=\"90%\"><tr>";
+            echo "<div class=\"boxaligncenter\"><table border=\"1\" width=\"90%\"><tr>";
             echo "<td><b>".get_string("submissions", "workshop")."</b></td>";
             if ($workshop->wtype) {
                 echo "<td align=\"center\"><b>".get_string("assessmentsdone", "workshop")."</b></td>";
@@ -121,7 +121,7 @@
                 echo "<td align=\"center\">$grade</td>";
                 echo "<td align=\"center\">".number_format($gradinggrade + $grade, 1)."</td></tr>\n";
             }
-            echo "</table></center><br clear=\"all\" />\n";
+            echo "</table></div><br clear=\"all\" />\n";
             workshop_print_key($workshop);
         } else {
             print_heading(get_string('nowork', 'workshop'));
@@ -528,7 +528,7 @@
         workshop_print_assignment_info($workshop);
         print_simple_box(format_text($workshop->description, $workshop->format), 'center', '70%', '', 5, 'generalbox', 'intro');
         if (isset($_SERVER["HTTP_REFERER"])) {
-            print_continue($_SERVER["HTTP_REFERER"]);
+            print_continue(htmlentities($_SERVER["HTTP_REFERER"]));
         } else {
             print_continue("$CFG->wwwroot/course/view.php?id=$cm->id");
         }

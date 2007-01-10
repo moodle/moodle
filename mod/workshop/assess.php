@@ -28,7 +28,7 @@
 
     if (!$redirect) {
         //seems not to work properly
-//        $redirect = urlencode($_SERVER["HTTP_REFERER"].'#sid='.$submission->id);
+        $redirect = htmlentities($_SERVER["HTTP_REFERER"].'#sid='.$submission->id);
     }
 
 
@@ -59,11 +59,12 @@
     /// top frame with the navigation bar and the assessment form
 
     if ($frameset == "top") {
-
+        // removed <base target="_parent" />
+        // because it does not validate MDL-7861
         print_header_simple(format_string($workshop->name), "",
                      "<a href=\"index.php?id=$course->id\">$strworkshops</a> ->
                       <a href=\"view.php?id=$cm->id\">".format_string($workshop->name,true)."</a> -> $strassess",
-                      "", '<base target="_parent" />', true);
+                      "", '', true);
 
         // there can be an assessment record (for teacher submissions), if there isn't...
         if (!$assessment = get_record("workshop_assessments", "submissionid", $submission->id, "userid",
@@ -129,8 +130,8 @@
     }
 
     /// print bottom frame with the submission
-
-    print_header('', '', '', '', '<base target="_parent" />');
+    // removed <base target="_parent" /> as it does not validate MDL-7861
+    print_header('', '', '', '', '');
     $title = '"'.$submission->title.'" ';
     if (workshop_is_teacher($workshop)) {
         $title .= ' '.get_string('by', 'workshop').' '.workshop_fullname($submission->userid, $course->id);
@@ -139,9 +140,9 @@
     workshop_print_submission($workshop, $submission);
 
     if (workshop_is_teacher($workshop)) {
-        echo '<br /><center><b>'.get_string('assessments', 'workshop').': </b><br />';
+        echo '<br /><div style="text-align:center"><b>'.get_string('assessments', 'workshop').': </b><br />';
         echo workshop_print_submission_assessments($workshop, $submission, "all");
-        echo '</center>';
+        echo '</div>';
     }
 
 

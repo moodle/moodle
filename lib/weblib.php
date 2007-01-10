@@ -2824,7 +2824,7 @@ function print_headline($text, $size=2, $return=false) {
  */
 function print_heading($text, $align='', $size=2, $class='main', $return=false) {
     if ($align) {
-        $align = ' align="'.$align.'"';
+        $align = ' style="text-align:'.$align.';"';
     }
     if ($class) {
         $class = ' class="'.$class.'"';
@@ -2891,10 +2891,14 @@ function print_continue($link, $return=false) {
     $output = '';
 
     if (!$link) {
+
         $link = $_SERVER['HTTP_REFERER'];
     }
 
     $output .= '<div class="continuebutton">';
+    // MDL-7861, referer string might not be xhtml strict
+    // e.g. &amp;
+    
     $output .= print_single_button($link, NULL, get_string('continue'), 'post', $CFG->framename, true);
     $output .= '</div>'."\n";
 
@@ -2982,7 +2986,7 @@ function print_single_button($link, $options, $label='OK', $method='get', $targe
     $output = '';
     $output .= '<div class="singlebutton">';
     // taking target out, will need to add later target="'.$target.'"
-    $output .= '<form action="'. $link .'" method="'. $method .'">';
+    $output .= '<form action="'. $link .'" method="'. $method .'">';   
     $output .= '<fieldset class="invisiblefieldset">';
     if ($options) {
         foreach ($options as $name => $value) {
@@ -3385,7 +3389,7 @@ function print_table($table, $return=false) {
     if (isset($table->align)) {
         foreach ($table->align as $key => $aa) {
             if ($aa) {
-                $align[$key] = ' align="'. $aa .'"';
+                $align[$key] = ' text-align:'. $aa.';';
             } else {
                 $align[$key] = '';
             }
@@ -3394,7 +3398,7 @@ function print_table($table, $return=false) {
     if (isset($table->size)) {
         foreach ($table->size as $key => $ss) {
             if ($ss) {
-                $size[$key] = ' width="'. $ss .'"';
+                $size[$key] = ' width:'. $ss .';';
             } else {
                 $size[$key] = '';
             }
@@ -3403,7 +3407,7 @@ function print_table($table, $return=false) {
     if (isset($table->wrap)) {
         foreach ($table->wrap as $key => $ww) {
             if ($ww) {
-                $wrap[$key] = ' style="white-space:nowrap;" ';
+                $wrap[$key] = ' white-space:nowrap;';
             } else {
                 $wrap[$key] = '';
             }
@@ -3448,7 +3452,10 @@ function print_table($table, $return=false) {
             if (!isset($align[$key])) {
                 $align[$key] = '';
             }
-            $output .= '<th valign="top" '. $align[$key].$size[$key] .' style="white-space:nowrap;" class="header c'.$key.'" scope="col">'. $heading .'</th>';
+            
+            $output .= '<th class="header c'.$key.'" scope="col">'. $heading .'</th>';
+            // commenting the following code out as <th style does not validate MDL-7861
+            //$output .= '<th sytle="vertical-align:top;'. $align[$key].$size[$key] .';white-space:nowrap;" class="header c'.$key.'" scope="col">'. $heading .'</th>';
         }
         $output .= '</tr>'."\n";
     }
@@ -3471,7 +3478,7 @@ function print_table($table, $return=false) {
                     if (!isset($wrap[$key])) {
                         $wrap[$key] = '';
                     }
-                    $output .= '<td '. $align[$key].$size[$key].$wrap[$key] .' class="cell c'.$key.'">'. $item .'</td>';
+                    $output .= '<td style="'. $align[$key].$size[$key].$wrap[$key] .'" class="cell c'.$key.'">'. $item .'</td>';
                 }
             }
             $output .= '</tr>'."\n";

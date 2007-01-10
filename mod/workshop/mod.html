@@ -93,7 +93,6 @@
 </tr>
 <tr valign="top">
     <td align="right"><b><?php  print_string("description", "workshop") ?>:</b><br />
-    <font size="1">
      <?php
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
         echo "<br />";
@@ -107,7 +106,6 @@
         }
       ?>
       <br />
-    </font>
     </td>
     <td>
     <?php
@@ -116,7 +114,7 @@
        if ($usehtmleditor) {
            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
        } else {
-           echo '<p align="right">';
+           echo '<p style="text-align:right">';
            helpbutton("textformat", get_string("formattexttype"));
            print_string("formattexttype");
            echo ':&nbsp;';
@@ -408,7 +406,7 @@
 <?php print_standard_coursemodule_settings($form); ?>
 </table>
 <br />
-<center>
+<div class="boxaligncenter">
 <input type="hidden" name="course"     value="<?php  p($form->course) ?>" />
 <input type="hidden" name="sesskey"    value="<?php  p($form->sesskey) ?>" />
 <input type="hidden" name="coursemodule"  value="<?php  p($form->coursemodule) ?>" />
@@ -419,7 +417,5 @@
 <input type="hidden" name="mode"       value="<?php  p($form->mode) ?>" />
 <input type="submit" value="<?php  print_string("savechanges") ?>" />
 <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
-
-
-</center>
+</div>
 </form>

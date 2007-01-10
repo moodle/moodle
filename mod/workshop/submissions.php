@@ -74,10 +74,11 @@
         print_heading(get_string("amendtitle", "workshop"));
         ?>
         <form id="amendtitleform" action="submissions.php" method="post">
+        <fieldset class="invisiblefieldset">
         <input type="hidden" name="action" value="adminupdatetitle" />
         <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
         <input type="hidden" name="sid" value="<?php echo $sid ?>" />
-        <center>
+        <div class="boxaligncenter">
         <table cellpadding="5" border="1">
         <?php
 
@@ -88,7 +89,7 @@
         echo "      <input type=\"text\" name=\"title\" size=\"60\" maxlength=\"100\" value=\"$submission->title\" />\n";
         echo "  </td></tr></table>\n";
         echo "<input type=\"submit\" value=\"".get_string("amendtitle", "workshop")."\" />\n";
-        echo "</center></form>\n";
+        echo "</div></fieldset></form>\n";
 
         print_heading("<a $CFG->frametarget href=\"view.php?id=$cm->id#sid=$submission->id\">".get_string("cancel")."</a>");
     }
@@ -242,10 +243,11 @@
         }
         ?>
         <form id="editform" enctype="multipart/form-data" action="submissions.php" method="post">
+        <fieldset class="invisiblefieldset">
         <input type="hidden" name="action" value="updatesubmission" />
         <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
         <input type="hidden" name="sid" value="<?php echo $sid ?>" />
-        <center>
+        <div class="boxaligncenter">
         <table cellpadding="5" border="1">
         <?php
         echo "<tr valign=\"top\"><td><b>". get_string("title", "workshop").":</b>\n";
@@ -259,7 +261,7 @@
             if ($basedir = workshop_file_area($workshop, $submission)) {
                 if ($files = get_directory_list($basedir)) {
                     echo "<tr><td><b>".get_string("attachments", "workshop").
-                        "</b><div align=\"right\"><input type=\"button\" value=\"".get_string("removeallattachments",
+                        "</b><div style=\"text-align:right;\"><input type=\"button\" value=\"".get_string("removeallattachments",
                         "workshop")."\" onclick=\"getElementById('editform').action.value='removeattachments';
                         getElementById('editform').submit();\"/></div></td></tr>\n";
                     $n = 1;
@@ -270,9 +272,11 @@
                         } else {
                             $ffurl = "file.php?file=/$filearea/$file";
                         }
+                        // removed target=\"uploadedfile\" 
+                        // as it does not validate MDL_7861
                         echo "<tr><td>".get_string("attachment", "workshop")." $n: <img src=\"$CFG->pixpath/f/$icon\"
                             class=\"icon\" alt=\"".get_string('file')."\" />".
-                            "&nbsp;<a target=\"uploadedfile\" href=\"$CFG->wwwroot/$ffurl\">$file</a></td></tr>\n";
+                            "&nbsp;<a href=\"$CFG->wwwroot/$ffurl\">$file</a></td></tr>\n";
                     }
                 } else {
                     echo "<tr><td><b>".get_string("noattachments", "workshop")."</b></td></tr>\n";
@@ -291,7 +295,7 @@
 
         echo "</table>\n";
         echo "<input type=\"submit\" value=\"".get_string("savemysubmission", "workshop")."\" />\n";
-        echo "</center></form>\n";
+        echo "</div></fieldset></form>\n";
     }
 
 
@@ -380,9 +384,9 @@
             $title .= get_string('by', 'workshop').' '.workshop_fullname($submission->userid, $course->id);
         }
         print_heading($title);
-        echo '<center>'.get_string('submitted', 'workshop').': '.userdate($submission->timecreated).'</center><br />';
+        echo '<div style="text-align:center">'.get_string('submitted', 'workshop').': '.userdate($submission->timecreated).'</div><br />';
         workshop_print_submission($workshop, $submission);
-        print_continue($_SERVER['HTTP_REFERER'].'#sid='.$submission->id);
+        print_continue(htmlentities($_SERVER['HTTP_REFERER'].'#sid='.$submission->id));
     }
 
 

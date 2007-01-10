@@ -871,8 +871,8 @@ function workshop_list_all_submissions($workshop, $user) {
         print_table($table);
         }
 
-    echo "<center><p><b>".get_string("studentsubmissions", "workshop", $course->student).
-        "</b></center><br />\n";
+    echo "<div style=\"text-align:center;\"><p><b>".get_string("studentsubmissions", "workshop", $course->student).
+        "</b></div><br />\n";
     unset($table);
     $table->head = array (get_string("title", "workshop"), get_string("action", "workshop"), 
                         get_string("comment", "workshop"));
@@ -1050,7 +1050,7 @@ function workshop_list_assessed_submissions($workshop, $user) {
         print_table($table);
     }
     else {
-        echo "<center>".get_string("noassessmentsdone", "workshop")."</center>\n";
+        echo "<div style=\"text-align:center;\">".get_string("noassessmentsdone", "workshop")."</div>\n";
     }
 }
 
@@ -1124,7 +1124,7 @@ function workshop_list_peer_assessments($workshop, $user) {
         print_table($table);
         }
     else {
-        echo "<center>".get_string("noassessmentsdone", "workshop")."</center>\n";
+        echo "<div style=\"text-align:center;\">".get_string("noassessmentsdone", "workshop")."</div>\n";
         }
     }
 
@@ -1170,8 +1170,8 @@ function workshop_list_self_assessments($workshop, $user) {
         }
     }
     if (isset($table->data)) {
-        echo "<p><center><b>".get_string("pleaseassessyoursubmissions", "workshop", $course->student).
-            "</b></center><br />\n";
+        echo "<p><div style=\"text-align:center;\"><b>".get_string("pleaseassessyoursubmissions", "workshop", $course->student).
+            "</b></div><br />\n";
         print_table($table);
     }
 }
@@ -1297,12 +1297,12 @@ function workshop_list_student_submissions($workshop, $user) {
         }
     
     if (isset($table->data)) {
-        echo "<p><center><b>".get_string("pleaseassessthesestudentsubmissions", "workshop", $course->student).
-            "</b></center><br />\n";
+        echo "<p><div style=\"text-align:center;\"><b>".get_string("pleaseassessthesestudentsubmissions", "workshop", $course->student).
+            "</b></div><br />\n";
         print_table($table);
         }
     else {
-        echo "<p><center><b>".get_string("nosubmissionsavailableforassessment", "workshop")."</b></center><br />\n";
+        echo "<p><div style=\"text-align:center;\"><b>".get_string("nosubmissionsavailableforassessment", "workshop")."</b></div><br />\n";
         }
     }
 
@@ -1466,7 +1466,7 @@ function workshop_list_submissions_for_admin($workshop, $order) {
                     number_format($stats->min* $workshop->gradinggrade / 100, 1));
             print_heading(get_string("gradinggrade", "workshop")." ".get_string("analysis", "workshop"));
             print_table($table);
-            echo "<p align=\"center\"><a href=\"assessments.php?id=$cm->id&amp;action=regradestudentassessments\">".
+            echo "<p style=\"text-align:center\"><a href=\"assessments.php?id=$cm->id&amp;action=regradestudentassessments\">".
                     get_string("regradestudentassessments", "workshop")."</a> ";
             helpbutton("regrading", get_string("regradestudentassessments", "workshop"), "workshop");
             echo "</p>\n";
@@ -1508,7 +1508,7 @@ function workshop_list_submissions_for_admin($workshop, $order) {
             }
             $datesubmitted = userdate($submission->timecreated);
             if ($submission->late) {
-                $datesubmitted = "<font color=\"red\">".$datesubmitted."</font>";
+                $datesubmitted = "<span class=\"redfont\">".$datesubmitted."</span>";
             }
             $action = "<a href=\"submissions.php?action=adminamendtitle&amp;id=$cm->id&amp;sid=$submission->id\">".
                 get_string("amendtitle", "workshop")."</a>";
@@ -1597,7 +1597,7 @@ function workshop_list_teacher_assessments_by_user($workshop, $user) {
         print_table($table);
         }
     else {
-        echo "<center>".get_string("noassessmentsdone", "workshop")."</center>\n";
+        echo "<div style=\"text-align:center;\">".get_string("noassessmentsdone", "workshop")."</div>\n";
         }
     }
 
@@ -1900,7 +1900,7 @@ function workshop_list_user_submissions($workshop, $user) {
             }
             $datesubmitted = userdate($submission->timecreated);
             if ($submission->late) {
-                $datesubmitted = "<font color=\"red\">".$datesubmitted."</font>";
+                $datesubmitted = "<span class=\"redfont\">".$datesubmitted."</span>";
             }
             $n = count_records_select("workshop_assessments", "submissionid = $submission->id AND
                     timecreated < ($timenow - $CFG->maxeditingtime)");
@@ -1957,8 +1957,10 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
             error ("Workshop_print_assessment: Submission record not found");
         }
         
+        // removed target=\"submission\" as it does not validate
+        // MDL-7861
         print_heading(get_string('assessmentof', 'workshop', 
-            "<a href=\"submissions.php?id=$cm->id&amp;action=showsubmission&amp;sid=$submission->id\" target=\"submission\">".
+            "<a href=\"submissions.php?id=$cm->id&amp;action=showsubmission&amp;sid=$submission->id\" >".
             $submission->title.'</a>'));
     }
     
@@ -1979,7 +1981,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
             $showgrades = true;
         }
         
-        echo "<center>\n";
+        echo "<div class=\"boxaligncenter\">\n";
     
         // see if this is a pre-filled assessment for a re-submission...
         if ($assessment->resubmission) {
@@ -2015,11 +2017,11 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                     // show links depending on who doing the viewing
                     $firstcomment = FALSE;
                     if (workshop_is_teacher($workshop, $USER->id) and ($comment->userid != $USER->id)) {
-                        echo "<p align=\"right\"><a href=\"assessments.php?action=addcomment&amp;id=$cm->id&amp;aid=$assessment->id\">".
+                        echo "<p style=\"text-align:right\"><a href=\"assessments.php?action=addcomment&amp;id=$cm->id&amp;aid=$assessment->id\">".
                             get_string("reply", "workshop")."</a></p>\n";
                     }
                     elseif (($comment->userid ==$USER->id) and (($timenow - $comment->timecreated) < $CFG->maxeditingtime)) {
-                        echo "<p align=\"right\"><a href=\"assessments.php?action=editcomment&amp;id=$cm->id&amp;cid=$comment->id\">".
+                        echo "<p style=\"text-align:right\"><a href=\"assessments.php?action=editcomment&amp;id=$cm->id&amp;cid=$comment->id\">".
                             get_string("edit", "workshop")."</a>\n";
                         if ($USER->id == $submission->userid) {
                             echo " | <a href=\"assessments.php?action=agreeassessment&amp;id=$cm->id&amp;aid=$assessment->id\">".
@@ -2029,7 +2031,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                     }
                     elseif (($comment->userid != $USER->id) and (($USER->id == $assessment->userid) or 
                         ($USER->id == $submission->userid))) {
-                        echo "<p align=\"right\"><a href=\"assessments.php?action=addcomment&amp;id=$cm->id&amp;aid=$assessment->id\">".
+                        echo "<p style=\"text-align:right\"><a href=\"assessments.php?action=addcomment&amp;id=$cm->id&amp;aid=$assessment->id\">".
                             get_string("reply", "workshop")."</a>\n";
                         if ($USER->id == $submission->userid) {
                             echo " | <a href=\"assessments.php?action=agreeassessment&amp;id=$cm->id&amp;aid=$assessment->id\">".
@@ -2042,31 +2044,32 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
             }
             echo '</table>';
         }
-        echo '</center>';
+        echo '</div>';
     }
         
     // now print the grading form with the grading grade if any
     // FORM is needed for Mozilla browsers, else radio bttons are not checked
         ?>
     <form id="assessmentform" method="post" action="assessments.php">
+    <div>
     <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
     <input type="hidden" name="aid" value="<?php echo $assessment->id ?>" />
     <input type="hidden" name="action" value="updateassessment" />
     <input type="hidden" name="returnto" value="<?php echo $returnto ?>" />
     <input type="hidden" name="elementno" value="" />
     <input type="hidden" name="stockcommentid" value="" />
-    <center>
-    <table cellpadding="2" border="1">
+    <div class="boxaligncenter">
+    <table cellpadding="2" border="1" class="boxaligncenter">
     <?php
     echo "<tr valign=\"top\">\n";
-    echo "  <td colspan=\"2\" class=\"workshopassessmentheading\"><center><b>";
+    echo "  <td colspan=\"2\" class=\"workshopassessmentheading\"><div style=\"text-align:center;\"><b>";
     if ($assessment and workshop_is_teacher($workshop)) {
         $user = get_record('user', 'id', $assessment->userid);
         print_string("assessmentby", "workshop", fullname($user));
     } else {
         print_string('assessment', 'workshop');
     }
-    echo '</b><br />'.userdate($assessment->timecreated)."</center></td>\n";
+    echo '</b><br />'.userdate($assessment->timecreated)."</div></td>\n";
     echo "</tr>\n";
     
     // only show the grade if grading strategy > 0 and the grade is positive
@@ -2169,8 +2172,8 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                 echo "<tr valign=\"top\">\n";
                 echo "  <td align=\"right\"><p><b>". get_string("element","workshop")." $iplus1:</b></p></td>\n";
                 echo "  <td>".format_text($elements[$i]->description);
-                echo "<p align=\"right\"><font size=\"1\">".get_string("weight", "workshop").": ".
-                    number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight], 2)."</font></p>\n";
+                echo "<p style=\"text-align:right\">".get_string("weight", "workshop").": ".
+                    number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight], 2)."</p>\n";
                 echo "</td></tr>\n";
                 if ($showgrades) {
                     echo "<tr valign=\"top\">\n";
@@ -2183,7 +2186,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                     switch ($SCALE->type) {
                         case 'radio' :
                                 // show selections highest first
-                                echo "<center><b>$SCALE->start</b>&nbsp;&nbsp;&nbsp;";
+                                echo "<div class=\"boxaligncenter\"><b>$SCALE->start</b>&nbsp;&nbsp;&nbsp;";
                                 for ($j = $SCALE->size - 1; $j >= 0 ; $j--) {
                                     $checked = false;
                                     if (isset($grades[$i]->grade)) { 
@@ -2203,7 +2206,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                                         echo " <input type=\"radio\" name=\"grade[$i]\" value=\"$j\" alt=\"$j\" /> &nbsp;&nbsp;&nbsp;\n";
                                         }
                                     }
-                                echo "&nbsp;&nbsp;&nbsp;<b>$SCALE->end</b></center>\n";
+                                echo "&nbsp;&nbsp;&nbsp;<b>$SCALE->end</b></div>\n";
                                 break;
                         case 'selection' :  
                                 unset($numbers);
@@ -2275,8 +2278,8 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                 echo "<tr valign=\"top\">\n";
                 echo "  <td align=\"right\"><p><b>". get_string("element","workshop")." $iplus1:</b></p></td>\n";
                 echo "  <td>".format_text($elements[$i]->description);
-                echo "<p align=\"right\"><font size=\"1\">".get_string("weight", "workshop").": ".
-                    number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight], 2)."</font>\n";
+                echo "<p style=\"text-align:right\">".get_string("weight", "workshop").": ".
+                    number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight], 2)."\n";
                 echo "</td></tr>\n";
                 echo "<tr valign=\"top\">\n";
                 echo "  <td align=\"right\"><p><b>". get_string("grade"). ":</b></p></td>\n";
@@ -2287,7 +2290,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                 switch ($SCALE->type) {
                     case 'radio' :
                             // show selections highest first
-                            echo "<center><b>$SCALE->start</b>&nbsp;&nbsp;&nbsp;";
+                            echo "<div class=\"boxaligncenter\"><b>$SCALE->start</b>&nbsp;&nbsp;&nbsp;";
                             for ($j = $SCALE->size - 1; $j >= 0 ; $j--) {
                                 $checked = false;
                                 if (isset($grades[$i]->grade)) { 
@@ -2307,7 +2310,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                                     echo " <input type=\"radio\" name=\"grade[$i]\" value=\"$j\" alt=\"$j\" /> &nbsp;&nbsp;&nbsp;\n";
                                     }
                                 }
-                            echo "&nbsp;&nbsp;&nbsp;<b>$SCALE->end</b></center>\n";
+                            echo "&nbsp;&nbsp;&nbsp;<b>$SCALE->end</b></div>\n";
                             break;
                     case 'selection' :  
                             unset($numbers);
@@ -2376,10 +2379,10 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
             // echo "<tr><td>".get_string("numberofnegativeitems", "workshop")."</td><td>$negativecount</td></tr>\n";
             // echo "<tr valign=\"top\">\n";
             // echo "   <td colspan=\"2\" class=\"workshopassessmentheading\">&nbsp;</td>\n";
-            echo "</table></center>\n";
+            echo "</table></div>\n";
             // now print the grade table
-            echo "<p><center><b>".get_string("gradetable","workshop")."</b></center>\n";
-            echo "<center><table cellpadding=\"5\" border=\"1\"><tr><td align=\"CENTER\">".
+            echo "<p><div style=\"text-align:center;\"><b>".get_string("gradetable","workshop")."</b></div>\n";
+            echo "<div class=\"boxaligncenter\"><table cellpadding=\"5\" border=\"1\"><tr><td align=\"CENTER\">".
                 get_string("numberofnegativeresponses", "workshop");
             echo "</td><td>". get_string("suggestedgrade", "workshop")."</td></tr>\n";
             for ($j = 100; $j >= 0; $j--) {
@@ -2393,8 +2396,8 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                     echo "<tr><td align=\"CENTER\">$i</td><td align=\"CENTER\">{$elements[$i]->maxscore}</td></tr>\n";
                     }
                 }
-            echo "</table></center>\n";
-            echo "<p><center><table cellpadding=\"5\" border=\"1\"><tr><td><b>".get_string("optionaladjustment", 
+            echo "</table></div>\n";
+            echo "<p><div class=\"boxaligncenter\"><table cellpadding=\"5\" border=\"1\"><tr><td><b>".get_string("optionaladjustment", 
                     "workshop")."</b></td><td>\n";
             unset($numbers);
             for ($j = 20; $j >= -20; $j--) {
@@ -2435,8 +2438,8 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                     }
                 echo "<td align=\"center\">{$elements[$i]->maxscore}</td></tr>\n";
                 }
-            echo "</table></center>\n";
-            echo "<p><center><table cellpadding=\"5\" border=\"1\"><tr><td><b>".get_string("optionaladjustment", 
+            echo "</table></div>\n";
+            echo "<p><div class=\"boxaligncenter\"><table cellpadding=\"5\" border=\"1\"><tr><td><b>".get_string("optionaladjustment", 
                     "workshop")."</b></td><td>\n";
             unset($numbers);
             for ($j = 20; $j >= -20; $j--) {
@@ -2458,8 +2461,8 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                 echo "<tr valign=\"top\">\n";
                 echo "<td align=\"right\"><b>".get_string("element", "workshop")." $iplus1:</b></td>\n";
                 echo "<td>".format_text($elements[$i]->description).
-                     "<p align=\"right\"><font size=\"1\">".get_string("weight", "workshop").": ".
-                    number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight], 2)."</font></td></tr>\n";
+                     "<p style=\"text-align:right\">".get_string("weight", "workshop").": ".
+                    number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight], 2)."</td></tr>\n";
                 echo "<tr valign=\"top\">\n";
                 echo "  <td class=\"workshopassessmentheading\" align=\"center\"><b>".get_string("select", "workshop").
                     "</b></td>\n";
@@ -2635,8 +2638,8 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                 onclick=\"getElementById('assessmentform').action.value='addcomment';getElementById('assessmentform').submit();\" />\n";
         }
     }
-    echo "</center>";
-    echo "</form>\n";
+    echo "</div>";
+    echo "</div></form>\n";
 }
 
 
@@ -2650,7 +2653,7 @@ function workshop_print_assessments_by_user_for_admin($workshop, $user) {
     if ($assessments = workshop_get_user_assessments_done($workshop, $user)) {
         foreach ($assessments as $assessment) {
             workshop_print_assessment($workshop, $assessment);
-            echo "<p align=\"right\">".
+            echo "<p style=\"text-align:right\">".
                 '<a href="viewassessment.php?&amp;id='.$cm->id.'&amp;stype=student&amp;aid='.$assessment->id.'">'.
                 get_string('assessthisassessment', 'workshop').'</a> | '.
                 "<a href=\"assessments.php?action=confirmdelete&amp;id=$cm->id&amp;aid=$assessment->id\">".
@@ -2672,9 +2675,9 @@ function workshop_print_assessments_for_admin($workshop, $submission) {
             if (!$user = get_record("user", "id", $assessment->userid)) {
                 error (" workshop_print_assessments_for_admin: unable to get user record");
                 }
-            echo "<p><center><b>".get_string("assessmentby", "workshop", fullname($user))."</b></center></p>\n";
+            echo "<p><div style=\"text-align:center;\"><b>".get_string("assessmentby", "workshop", fullname($user))."</b></div></p>\n";
             workshop_print_assessment($workshop, $assessment);
-            echo "<p align=\"right\"><a href=\"assessments.php?action=confirmdelete&amp;id=$cm->id&amp;aid=$assessment->id\">".
+            echo "<p style=\"text-align:right\"><a href=\"assessments.php?action=confirmdelete&amp;id=$cm->id&amp;aid=$assessment->id\">".
                 get_string("delete", "workshop")."</a></p><hr />\n";
             }
         }
@@ -2707,7 +2710,7 @@ function workshop_print_assignment_info($workshop) {
         if ($date) {
             $strdifference = format_time($date - time());
             if (($date - time()) < 0) {
-                $strdifference = "<font color=\"red\">$strdifference</font>";
+                $strdifference = "<span class=\"redfont\">$strdifference</span>";
             }
             $string .= '<b>'.get_string($type, 'workshop').'</b>: '.userdate($date)." ($strdifference)<br />";
         }
@@ -2734,7 +2737,7 @@ function workshop_print_assignment_info($workshop) {
 function workshop_print_difference($time) {
     if ($time < 0) {
         $timetext = get_string("late", "assignment", format_time($time));
-        return " (<font color=\"red\">$timetext</font>)";
+        return " (<span class=\"redfont\">$timetext</span>)";
     } else {
         $timetext = get_string("early", "assignment", format_time($time));
         return " ($timetext)";
@@ -2749,7 +2752,7 @@ function workshop_print_key($workshop) {
     if (!$course = get_record("course", "id", $workshop->course)) {
         error("Print key: course not found");
     }
-    echo "<div align=\"center\">\n";
+    echo "<div class=\"workshopkey\">\n";
     echo "<p><small>{} ".get_string("assessmentby", "workshop", $course->student).";&nbsp;&nbsp;\n";
     echo "[] ".get_string("assessmentby", "workshop", $course->teacher).";&nbsp;&nbsp;\n";
     echo "&lt;&gt; ".get_string("assessmentdropped", "workshop").";\n";
@@ -2863,8 +2866,10 @@ function workshop_print_submission($workshop, $submission) {
                         $ffurl = "file.php?file=/$filearea/$file";
                     }
                     echo "<tr><td><b>".get_string("attachment", "workshop")." $n:</b> \n";
+                    // removed target=\"uploadedfile\" as it does not validate
+                    // MDL-7861
                     echo "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"".get_string('file')."\" />".
-                        "&nbsp;<a target=\"uploadedfile\" href=\"$CFG->wwwroot/$ffurl\">$file</a></td></tr>";
+                        "&nbsp;<a href=\"$CFG->wwwroot/$ffurl\">$file</a></td></tr>";
                     $n++;
                 }
             }
@@ -2968,7 +2973,7 @@ function workshop_print_submission_title($workshop, $submission) {
 function workshop_print_time_to_deadline($time) {
     if ($time < 0) {
         $timetext = get_string("afterdeadline", "workshop", format_time($time));
-        return " (<font color=\"red\">$timetext</font>)";
+        return " (<span class=\"redfont\">$timetext</span>)";
     } else {
         $timetext = get_string("beforedeadline", "workshop", format_time($time));
         return " ($timetext)";
@@ -2988,8 +2993,9 @@ function workshop_print_upload_form($workshop) {
     }
     $usehtmleditor = can_use_html_editor();
 
-    echo "<div align=\"center\">";
+    echo "<div class=\"workshopuploadform\">";
     echo "<form enctype=\"multipart/form-data\" method=\"POST\" action=\"upload.php\">";
+    echo "<fieldset class=\"invisiblefieldset\">";
     echo " <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
     echo "<table celpadding=\"5\" border=\"1\" align=\"center\">\n";
     // now get the submission
@@ -3010,7 +3016,7 @@ function workshop_print_upload_form($workshop) {
     }
     echo "</td></tr></table>\n";
     echo " <input type=\"submit\" name=\"save\" value=\"".get_string("submitassignment","workshop")."\" />";
-    echo "</form>";
+    echo "</fieldset></form>";
     echo "</div>";
 }
 

@@ -97,7 +97,7 @@
         <input type="hidden" name="action" value="insertcomment" />
         <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
         <input type="hidden" name="aid" value="<?php echo $aid ?>" />
-        <center>
+        <div class="boxaligncenter">
         <table cellpadding="5" border="1">
         <?php
 
@@ -113,8 +113,8 @@
 
         echo "  </td></tr></table>\n";
         echo "<input type=\"submit\" value=\"".get_string("savemycomment", "workshop")."\" />\n";
-        echo "</center></form>\n";
-        echo "<center><b>".get_string("assessment", "workshop"). "</b></center>\n";
+        echo "</div></form>\n";
+        echo "<div style=\"text-align:center\"><b>".get_string("assessment", "workshop"). "</b></div>\n";
         workshop_print_assessment($workshop, $assessment);
     }
 
@@ -385,7 +385,7 @@
             }
         //save time of agreement
         set_field("workshop_assessments", "timeagreed", $timenow, "id", $assessment->id);
-        echo "<centre><b>".get_string("savedok", "workshop")."</b></center><br />\n";
+        echo "<div style=\"text-align:center\"><b>".get_string("savedok", "workshop")."</b></div><br />\n";
 
         add_to_log($course->id, "workshop", "agree", "viewassessment.php?id=$cm->id&amp;aid=$assessment->id", "$assessment->id");
         print_continue("view.php?id=$cm->id");
@@ -422,7 +422,7 @@
         <input type="hidden" name="action" value="updatecomment" />
         <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
         <input type="hidden" name="cid" value="<?php echo $cid ?>" />
-        <center>
+        <div class="boxaligncenter">
         <table cellpadding="5" border="1">
         <?php
 
@@ -437,7 +437,7 @@
         echo "      </textarea>\n";
         echo "  </td></tr></table>\n";
         echo "<input type=\"submit\" value=\"".get_string("savemycomment", "workshop")."\" />\n";
-        echo "</center></form>\n";
+        echo "</div></form>\n";
         workshop_print_assessment($workshop, $assessment);
         }
 
@@ -457,7 +457,7 @@
         <form id="form" method="post" action="assessments.php">
         <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
         <input type="hidden" name="action" value="insertelements" />
-        <center><table cellpadding="5" border="1">
+        <div class="boxaligncenter"><table cellpadding="5" border="1">
         <?php
 
         // get existing elements, if none set up appropriate default ones
@@ -538,9 +538,9 @@
                     echo "  <td colspan=\"2\" class=\"workshopassessmentheading\">&nbsp;</td>\n";
                     echo "</tr>\n";
                 }
-                echo "</center></table><br />\n";
-                echo "<center><b>".get_string("gradetable","workshop")."</b></center>\n";
-                echo "<center><table cellpadding=\"5\" border=\"1\"><tr><td align=\"CENTER\">".
+                echo "</div></table><br />\n";
+                echo "<div style=\"text-align:center\"><b>".get_string("gradetable","workshop")."</b></div>\n";
+                echo "<div class=\"boxaligncenter\"><table cellpadding=\"5\" border=\"1\"><tr><td align=\"CENTER\">".
                     get_string("numberofnegativeresponses", "workshop");
                 echo "</td><td>". get_string("suggestedgrade", "workshop")."</td></tr>\n";
                 for ($j = $workshop->grade; $j >= 0; $j--) {
@@ -555,7 +555,7 @@
                     choose_from_menu($numbers, "maxscore[$i]", $elements[$i]->maxscore, "");
                     echo "</td></tr>\n";
                 }
-                echo "</table></center>\n";
+                echo "</table></div>\n";
                 break;
 
             case 3: // criterion grading
@@ -619,7 +619,7 @@
         </table><br />
         <input type="submit" value="<?php  print_string("savechanges") ?>" />
         <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
-        </center>
+        </div>
         </form>
         <?php
     }
@@ -652,12 +652,12 @@
         }
         // get the teacher's assessment first
         if ($teachersassessment = workshop_get_submission_assessment($submission, $USER)) {
-            echo "<center><b>".get_string("teacherassessments", "workshop", $course->teacher)."</b></center>\n";
+            echo "<div style=\"text-align:center\"><b>".get_string("teacherassessments", "workshop", $course->teacher)."</b></div>\n";
             workshop_print_assessment($workshop, $teachersassessment);
         }
         // now the student's assessment (don't allow changes)
         $user = get_record("user", "id", $assessment->userid);
-        echo "<center><b>".get_string("assessmentby", "workshop", $user->firstname." ".$user->lastname)."</b></center>\n";
+        echo "<div style=\"text-align:center\"><b>".get_string("assessmentby", "workshop", $user->firstname." ".$user->lastname)."</b></div>\n";
         workshop_print_assessment($workshop, $assessment);
 
         include('assessment_grading_form.html');
@@ -1304,7 +1304,7 @@
             set_field("workshop_comments", "timecreated", $timenow, "id", $comment->id);
             // ..and kick to comment into life (probably not needed but just in case)
             set_field("workshop_comments", "mailed", 0, "id", $comment->id);
-            echo "<centre><b>".get_string("savedok", "workshop")."</b></center><br />\n";
+            echo "<centre><b>".get_string("savedok", "workshop")."</b></div><br />\n";
 
             add_to_log($course->id, "workshop", "comment",
                     "viewassessment.php?id=$cm->id&amp;aid=$assessment->id", "$comment->id");

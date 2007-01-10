@@ -61,7 +61,7 @@
                     $submitted = userdate($submission->timecreated);
                 }
                 else {
-                    $submitted = "<font color=\"red\">".userdate($submission->timecreated)."</font>";
+                    $submitted = "<span class=\"redfont\">".userdate($submission->timecreated)."</span>";
                 }
                 if (!$workshop->visible) {
                     //Show dimmed if the mod is hidden

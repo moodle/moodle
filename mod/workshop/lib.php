@@ -1644,7 +1644,7 @@ function workshop_grade_assessments($workshop, $verbose=false) {
                 }
             }
             if ($verbose) {
-                echo "<p align=\"center\">".get_string("numberofsubmissions", "workshop", count($num))."<br />\n";
+                echo "<p style=\"text-align:center\">".get_string("numberofsubmissions", "workshop", count($num))."<br />\n";
                 echo get_string("numberofassessmentsweighted", "workshop", $total)."</p>\n";
             }
 

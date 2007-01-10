@@ -26,7 +26,7 @@
     }
 
     if (!$redirect) {
-        $redirect = urlencode($_SERVER["HTTP_REFERER"].'#sid='.$submission->id);
+        $redirect = htmlentities($_SERVER["HTTP_REFERER"].'#sid='.$submission->id);
     }
 
     require_login($course->id, false, $cm);
@@ -59,10 +59,11 @@
 
     if ($frameset == "top") {
 
+        // removed <base target="_parent" /> as it does not validate
         print_header_simple(format_string($workshop->name), "",
                      "<a href=\"index.php?id=$course->id\">$strworkshops</a> ->
                       <a href=\"view.php?id=$cm->id\">".format_string($workshop->name,true)."</a> -> $strassess",
-                      "", '<base target="_parent" />', true);
+                      "", '', true);
 
         // show assessment but don't allow changes
         workshop_print_assessment($workshop, $assessment, false, $allowcomments);
@@ -77,8 +78,8 @@
     }
 
     /// print bottom frame with the submission
-
-    print_header('', '', '', '', '<base target="_parent" />');
+    // removed <base target="_parent" /> as it does not validate
+    print_header('', '', '', '', '');
     $title = '"'.$submission->title.'" ';
     if (workshop_is_teacher($workshop)) {
         $title .= ' '.get_string('by', 'workshop').' '.workshop_fullname($submission->userid, $course->id);
