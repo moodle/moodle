@@ -311,6 +311,10 @@ class assignment_base {
     }
 
 
+    function setup_elements(&$mform) {
+        
+    }
+
     /**
      * Print the setup form for the current assignment type
      *

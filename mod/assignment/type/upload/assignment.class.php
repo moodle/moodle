@@ -913,6 +913,44 @@ class assignment_upload extends assignment_base {
         return 0;
     }
 
+    function setup_elements(&$mform) {
+        global $CFG, $COURSE;
+
+        $ynoptions = array( 0 => get_string('no'), 1 => get_string('yes'));
+
+        $choices = get_max_upload_sizes($CFG->maxbytes, $COURSE->maxbytes);
+        $choices[1] = get_string('uploadnotallowed');
+        $choices[0] = get_string('courseuploadlimit') . ' ('.display_size($COURSE->maxbytes).')';
+        $mform->addElement('select', 'maxbytes', get_string('maximumsize', 'assignment'), $choices);
+        $mform->setDefault('maxbytes', $CFG->assignment_maxbytes);
+
+        $mform->addElement('select', 'resubmit', get_string("allowdeleting", "assignment"), $ynoptions);
+        $mform->setHelpButton('resubmit', array('allowdeleting', get_string('allowdeleting', 'assignment'), 'assignment'));
+        $mform->setDefault('resubmit', 1);
+
+        $options = array();
+        for($i = 1; $i <= 20; $i++) {
+            $options[$i] = $i;
+        }
+        $mform->addElement('select', 'var1', get_string("allowmaxfiles", "assignment"), $options);
+        $mform->setHelpButton('var1', array('allowmaxfiles', get_string('allowmaxfiles', 'assignment'), 'assignment'));
+        $mform->setDefault('var1', 3);
+
+        $mform->addElement('select', 'var2', get_string("allownotes", "assignment"), $ynoptions);
+        $mform->setHelpButton('var2', array('allownotes', get_string('allownotes', 'assignment'), 'assignment'));
+        $mform->setDefault('var2', 0);
+
+        $mform->addElement('select', 'var3', get_string("hideintro", "assignment"), $ynoptions);
+        $mform->setHelpButton('var3', array('hideintro', get_string('hideintro', 'assignment'), 'assignment'));
+        $mform->setDefault('var3', 0);
+
+        $mform->addElement('select', 'emailteachers', get_string("emailteachers", "assignment"), $ynoptions);
+        $mform->setHelpButton('emailteachers', array('emailteachers', get_string('emailteachers', 'assignment'), 'assignment'));
+        $mform->setDefault('emailteachers', 0);
+
+
+    }
+
 }
 
 class mod_assignment_upload_notes_form extends moodleform {

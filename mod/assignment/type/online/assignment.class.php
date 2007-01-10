@@ -238,6 +238,25 @@ class assignment_online extends assignment_base {
         }
     }
 
+    function setup_elements(&$mform) {
+        global $CFG, $COURSE;
+
+        $ynoptions = array( 0 => get_string('no'), 1 => get_string('yes'));
+
+        $mform->addElement('select', 'resubmit', get_string("allowresubmit", "assignment"), $ynoptions);
+        $mform->setHelpButton('resubmit', array('resubmit', get_string('allowresubmit', 'assignment'), 'assignment'));
+        $mform->setDefault('resubmit', 0);
+
+        $mform->addElement('select', 'emailteachers', get_string("emailteachers", "assignment"), $ynoptions);
+        $mform->setHelpButton('emailteachers', array('emailteachers', get_string('emailteachers', 'assignment'), 'assignment'));
+        $mform->setDefault('emailteachers', 0);
+
+        $mform->addElement('select', 'var1', get_string("commentinline", "assignment"), $ynoptions);
+        $mform->setHelpButton('var1', array('commentinline', get_string('commentinline', 'assignment'), 'assignment'));
+        $mform->setDefault('var1', 0);
+
+    }
+
 }
 
 class mod_assignment_online_edit_form extends moodleform {

@@ -158,8 +158,26 @@ class assignment_uploadsingle extends assignment_base {
         $this->view_footer();
     }
 
+    function setup_elements(&$mform) {
+        global $CFG, $COURSE;
 
+        $ynoptions = array( 0 => get_string('no'), 1 => get_string('yes'));
 
+        $mform->addElement('select', 'resubmit', get_string("allowresubmit", "assignment"), $ynoptions);
+        $mform->setHelpButton('resubmit', array('resubmit', get_string('allowresubmit', 'assignment'), 'assignment'));
+        $mform->setDefault('resubmit', 0);
+
+        $mform->addElement('select', 'emailteachers', get_string("emailteachers", "assignment"), $ynoptions);
+        $mform->setHelpButton('emailteachers', array('emailteachers', get_string('emailteachers', 'assignment'), 'assignment'));
+        $mform->setDefault('emailteachers', 0);
+
+        $choices = get_max_upload_sizes($CFG->maxbytes, $COURSE->maxbytes);
+        $choices[1] = get_string('uploadnotallowed');
+        $choices[0] = get_string('courseuploadlimit') . ' ('.display_size($COURSE->maxbytes).')';
+        $mform->addElement('select', 'maxbytes', get_string('maximumsize', 'assignment'), $choices);
+        $mform->setDefault('maxbytes', $CFG->assignment_maxbytes);
+
+    }
 
 }
 

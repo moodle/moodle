@@ -45,11 +45,12 @@
     if (!empty($add)){
         $modname=$add;
         if (file_exists("../mod/$modname/mod_form.php")) {
-            $id = required_param('id', PARAM_INT);
-            $section = required_param('section', PARAM_INT);
+            $id          = required_param('id', PARAM_INT);
+            $section     = required_param('section', PARAM_INT);
+            $type        = optional_param('type', '', PARAM_ALPHA);
             $returntomod = optional_param('return', 0, PARAM_BOOL);
 
-            redirect("modedit.php?add=$add&course=$id&section=$section&return=$returntomod");
+            redirect("modedit.php?add=$add&type=$type&course=$id&section=$section&return=$returntomod");
         }
     }elseif (!empty($update)){
         if (!$modname=get_field_sql("SELECT md.name
