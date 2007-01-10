@@ -140,7 +140,7 @@
                 if (debugging('', DEBUG_DEVELOPER)) {
                     $meta .= require_js(array('yui_logger'));
 
-                    $bodytags = 'onLoad = "javascript:
+                    $bodytags = 'onload = "javascript:
                     show_logger = function() {
                         var logreader = new YAHOO.widget.LogReader();
                         logreader.newestOnTop = false;
