@@ -55,10 +55,12 @@ class block_mnet_hosts extends block_list {
         $icon  = "<img src=\"$CFG->pixpath/i/mnethost.png\"".
             " class=\"icon\" alt=\"".get_string('server', 'block_mnet_hosts')."\" />";
 
-        foreach ($hosts as $host) {
-            $this->content->icons[]=$icon;
-            $this->content->items[]="<a title=\"" .s($host->name).
-                "\" href=\"{$CFG->wwwroot}/auth/mnet/jump.php?hostid={$host->id}\">" . s($host->name) ."</a>";
+        if ($hosts) {
+            foreach ($hosts as $host) {
+                $this->content->icons[]=$icon;
+                $this->content->items[]="<a title=\"" .s($host->name).
+                    "\" href=\"{$CFG->wwwroot}/auth/mnet/jump.php?hostid={$host->id}\">" . s($host->name) ."</a>";
+            }
         }
 
         return $this->content;
