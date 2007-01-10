@@ -23,6 +23,9 @@ $string['trustedhostsexplain']          = 'Please enter a list of IP addresses o
                                           '192.168.0.0/0<br />'.
                                           'Obviously the last example is not a recommended configuration.';
 
+$string['hostcoursenotfound']           = 'Host or course not found';
+$string['enrollingincourse']            = 'Enrolling in course $a[0] on host $a[1]<br />';
+
 $string['nomodifyacl']                  = 'You are not permitted to modify the MNET access control list.';
 $string['recordnoexists']               = 'Record does not exist.';
 $string['enterausername']               = 'Please enter a username, or a list of usernames separated by commas.';

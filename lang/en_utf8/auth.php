@@ -22,6 +22,7 @@ $string['auth_casdescription'] = 'This method uses a CAS server (Central Authent
 $string['auth_cas_enabled'] = 'Turn this on if you want to use CAS authentication.';
 $string['auth_cas_text'] = 'Secure connection';
 $string['auth_cas_create_user'] = 'Turn this on if you want to insert CAS-authenticated users in Moodle database. If not then only users who already exist in the Moodle database can log in.';
+$string['auth_casnotinstalled'] = 'Cannot use CAS authentication. The PHP LDAP module is not installed.';
 
 $string['auth_changepasswordurl'] = 'Change password URL';
 $string['auth_changepasswordurl_expl'] = 'Specify the url to send users who have lost their $a password. Set <strong>Use standard Change Password page</strong> to <strong>No</strong>.';
@@ -62,6 +63,9 @@ $string['auth_fieldlock'] = 'Lock value';
 $string['auth_fieldlock_expl'] = '<p><b>Lock value:</b> If enabled, will prevent Moodle users and admins from editing the field directly. Use this option if you are maintaining this data in the external auth system. </p>';
 $string['auth_fieldlocks'] = 'Lock user fields';
 $string['auth_fieldlocks_help'] = '<p>You can lock user data fields. This is useful for sites where the user data is maintained by the administrators manually by editing user records or uploading using the \'Upload users\' facility. If you are locking fields that are required by Moodle, make sure that you provide that data when creating user accounts or the accounts will be unusable.</p><p>Consider setting the lock mode to \'Unlocked if empty\' to avoid this problem.</p>';
+
+// IMAP plugin
+$string['auth_imapnotinstalled'] = 'Cannot use IMAP authentication. The PHP IMAP module is not installed.';
 $string['auth_imapdescription'] = 'This method uses an IMAP server to check whether a given username and password is valid.';
 $string['auth_imaphost'] = 'The IMAP server address. Use the IP number, not DNS name.';
 $string['auth_imapport'] = 'IMAP server port number. Usually this is 143 or 993.';
@@ -105,6 +109,7 @@ $string['auth_ldapdescription'] = 'This method provides authentication against a
                                   password are checked.';
 $string['auth_ldapextrafields'] = 'These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <b>LDAP fields</b> that you specify here. <p>If you leave these fields blank, then nothing will be transferred from LDAP and Moodle defaults will be used instead.</p><p>In either case, the user will be able to edit all of these fields after they log in.</p>';
 $string['auth_ldaptitle'] = 'Use an LDAP server';
+$string['auth_ldapnotinstalled'] = 'Cannot use LDAP authentication. The PHP LDAP module is not installed.';
 
 // Manual plugin
 $string['auth_manualdescription'] = 'This method removes any way for users to create their own accounts.  All accounts must be manually created by the admin user.';
@@ -123,6 +128,7 @@ $string['auth_nntpdescription'] = 'This method uses an NNTP server to check whet
 $string['auth_nntphost'] = 'The NNTP server address. Use the IP number, not DNS name.';
 $string['auth_nntpport'] = 'Server port (119 is the most common)';
 $string['auth_nntptitle'] = 'Use an NNTP server';
+$string['auth_nntpnotinstalled'] = 'Cannot use NNTP authentication. The PHP IMAP module is not installed.';
 
 // None plugin
 $string['auth_nonedescription'] = 'Users can sign in and create valid accounts immediately, with no authentication against an external server and no confirmation via email.  Be careful using this option - think of the security and administration problems this could cause.';
@@ -142,6 +148,7 @@ $string['auth_pop3mailbox'] = 'Name of the mailbox to attempt a connection with.
 $string['auth_pop3port'] = 'Server port (110 is the most common, 995 is common for SSL)';
 $string['auth_pop3title'] = 'Use a POP3 server';
 $string['auth_pop3type'] = 'Server type. If your server uses certificate security, choose pop3cert.';
+$string['auth_pop3notinstalled'] = 'Cannot use POP3 authentication. The PHP IMAP module is not installed.';
 
 // RADIUS plugin
 $string['auth_radiustitle'] = 'Use a RADIUS server';
