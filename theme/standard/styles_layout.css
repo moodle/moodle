@@ -1443,13 +1443,19 @@ body#course-view .headingblock {
   margin-bottom: 9px;
 }
 
+body#course-index #content {
+  padding:20px;
+}
+
 .coursebox {
-  margin-bottom: 20px;
   width: 100%;
+  float:left;
+  margin-bottom: 15px;
+  border-width:1px;
+  border-style:solid;
 }
 
 .coursebox .summary {
-  display:inline;
   float: right;
   text-align:left;
   width: 48%;
@@ -1457,7 +1463,6 @@ body#course-view .headingblock {
 }
 
 .coursebox .info {
-  display:inline;
   float: left;
   text-align:left;
   width: 48%;
@@ -1468,8 +1473,7 @@ body#course-view .headingblock {
   width:100%;
 }
 
-.categoryboxcontent,
-.coursebox {
+.categoryboxcontent {
   border-width:1px;
   border-style:solid;
 }
