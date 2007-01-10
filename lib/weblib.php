@@ -2199,6 +2199,10 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         $pageclass .= ' course-'.SITEID;
     }
 
+    if (!isloggedin()) {
+        $pageclass .= ' notloggedin';
+    }
+
     if (!empty($USER->editing)) {
         $pageclass .= ' editing';
     }
