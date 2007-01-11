@@ -95,8 +95,7 @@ if(has_capability('mod/lams:manage', $context)){
 }
 
 if ($lams->introduction) {
-    print_simple_box(format_text($lams->introduction), 'center', '70%', '', 5, 'generalbox', 'description');
-    echo '<br />';
+    print_box(format_text($lams->introduction), 'generalbox', 'intro');
 }
 
 

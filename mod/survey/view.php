@@ -76,7 +76,7 @@
 
         } else {
 
-            print_simple_box(format_text($survey->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
+            print_box(format_text($survey->intro), 'generalbox', 'intro');
             print_spacer(30);
 
             $questions = get_records_list("survey_questions", "id", $survey->questions);

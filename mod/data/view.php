@@ -192,7 +192,7 @@
     }
 
     if ($data->intro and empty($page) and empty($record) and $mode != 'single') {
-        print_simple_box(format_text($data->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
+        print_box(format_text($data->intro), 'generalbox', 'intro');
     }
 
 /// Check to see if groups are being used here

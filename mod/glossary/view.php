@@ -260,7 +260,7 @@
 
 /// Info box
     if ( $glossary->intro ) {
-        print_simple_box(format_text($glossary->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
+        print_box(format_text($glossary->intro), 'generalbox', 'intro');
     }
 
 /// Search box

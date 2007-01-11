@@ -52,7 +52,7 @@
     $journal->intro = trim($journal->intro);
 
     if (!empty($journal->intro)) {
-        print_simple_box( format_text($journal->intro,  $journal->introformat), 'center', '70%', '', 5, 'generalbox', 'intro');
+        print_box( format_text($journal->intro,  $journal->introformat), 5, 'generalbox', 'intro');
     }
 
     echo '<br />';

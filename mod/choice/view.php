@@ -67,7 +67,7 @@
     }
 
     if ($choice->text) {
-        print_simple_box(format_text($choice->text, $choice->format), 'center', '70%', '', 5, 'generalbox', 'intro');
+        print_box(format_text($choice->text, $choice->format), 'generalbox', 'intro');
     }
 
     //if user has already made a selection, and they are not allowed to update it, show their selected answer.

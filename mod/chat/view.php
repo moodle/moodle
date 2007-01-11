@@ -147,8 +147,7 @@
     }
 
     if ($chat->intro) {
-        print_simple_box(format_text($chat->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
-        echo '<br />';
+        print_box(format_text($chat->intro), 'generalbox', 'intro');
     }
 
     chat_delete_old_users();

@@ -700,7 +700,7 @@
     } else {
         $forum->intro = trim($forum->intro);
         if (!empty($forum->intro)) {
-            print_simple_box(format_text($forum->intro), 'center');
+            print_box(format_text($forum->intro), 'generalbox', 'intro');
         }
         if ($forum->type == 'qanda') {
             $heading = get_string('yournewquestion', 'forum');

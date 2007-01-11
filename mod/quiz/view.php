@@ -87,7 +87,7 @@
         // Print quiz description
         if (trim(strip_tags($quiz->intro))) {
             $formatoptions->noclean = true;
-            print_simple_box(format_text($quiz->intro, FORMAT_MOODLE, $formatoptions), "center");
+            print_box(format_text($quiz->intro, FORMAT_MOODLE, $formatoptions), 'generalbox', 'intro');
         }
 
         echo '<div class="quizinfo">';

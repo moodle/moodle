@@ -85,7 +85,7 @@
 
     // Print the main part of the page
     print_heading(format_string($scorm->name));
-    print_simple_box(format_text($scorm->summary), 'center', '70%', '', 5, 'generalbox', 'intro');
+    print_box(format_text($scorm->summary), 'generalbox', 'intro');
     scorm_view_display($USER, $scorm, 'view.php?id='.$cm->id, $cm);
     print_footer($course);
 ?>
