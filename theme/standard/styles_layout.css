@@ -71,7 +71,7 @@ h6.main {
 
 .clearfix {
   min-width: 0;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .clearfix:after {
@@ -2625,7 +2625,7 @@ body#mod-quiz-report table#attempts .picture {
 body#mod-quiz-report .controls {
   text-align: center;
 }
-<<<<<<< styles_layout.css
+/* <<<<<<< styles_layout.css */
 #mod-quiz-review #page .controls {
   text-align: center;
 }
@@ -2638,11 +2638,12 @@ body#mod-quiz-report .controls {
   text-align: center;
 }
 .quizquestionlistcontrols {
-    text-align: center;
-=======
+  text-align: center;
+}
+/* ======= */
 body#question-preview .quemodname, body#question-preview .controls {   
   text-align: center;   
->>>>>>> 1.333
+/* >>>>>>> 1.333 */
 }
 
 /***
