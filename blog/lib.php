@@ -458,7 +458,7 @@
         global $CFG, $USER;
         
         /// the post table will be used for other things too
-        $typesql = ' AND p.module = "blog" ';    
+        $typesql = " AND p.module = 'blog' ";    
 
         /// set the tag id for searching
         if ($tagid) {
