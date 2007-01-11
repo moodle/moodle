@@ -204,6 +204,9 @@ $string['auth_nntphost'] = 'The NNTP server address. Use the IP number, not DNS 
 $string['auth_nntpport'] = 'Server port (119 is the most common)';
 $string['auth_nntptitle'] = 'Use an NNTP server';
 $string['auth_nntpnotinstalled'] = 'Cannot use NNTP authentication. The PHP IMAP module is not installed.';
+$string['auth_nntpchangepasswordurl_key'] = 'Password-change URL';
+$string['auth_nntpport_key'] = 'Port';
+$string['auth_nntphost_key'] = 'Host';
 
 // None plugin
 $string['auth_nonedescription'] = 'Users can sign in and create valid accounts immediately, with no authentication against an external server and no confirmation via email.  Be careful using this option - think of the security and administration problems this could cause.';
@@ -224,6 +227,11 @@ $string['auth_pop3port'] = 'Server port (110 is the most common, 995 is common f
 $string['auth_pop3title'] = 'Use a POP3 server';
 $string['auth_pop3type'] = 'Server type. If your server uses certificate security, choose pop3cert.';
 $string['auth_pop3notinstalled'] = 'Cannot use POP3 authentication. The PHP IMAP module is not installed.';
+$string['auth_pop3changepasswordurl_key'] = 'Password-change URL';
+$string['auth_pop3mailbox_key'] = 'Mailbox';
+$string['auth_pop3port_key'] = 'Port';
+$string['auth_pop3type_key'] = 'Type';
+$string['auth_pop3host_key'] = 'Host';
 
 // RADIUS plugin
 $string['auth_radiustitle'] = 'Use a RADIUS server';
@@ -231,6 +239,10 @@ $string['auth_radiusdescription'] = 'This method uses a <a href=\"http://en.wiki
 $string['auth_radiushost'] = 'Address of the RADIUS server';
 $string['auth_radiusnasport'] = 'Port to use to connect';
 $string['auth_radiussecret'] = 'Shared secret';
+$string['auth_radiuschangepasswordurl_key'] = 'Password-change URL';
+$string['auth_radiusnasport_key'] = 'Port';
+$string['auth_radiushost_key'] = 'Host';
+$string['auth_radiussecret_key'] = 'Secret';
 
 // Shibboleth plugin
 $string['auth_shibbolethdescription'] = 'Using this method users are created and authenticated using <a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>.<br/>Be sure to read the <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> for Shibboleth on how to set up your Moodle with Shibboleth';
@@ -245,6 +257,7 @@ $string['auth_shib_convert_data'] = 'Data modification API';
 $string['auth_shib_convert_data_description'] = 'You can use this API to further modify the data provided by Shibboleth. Read the <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> for further instructions.';
 $string['auth_shib_instructions_help'] = 'Here you should provide custom instructions for your users to explain Shibboleth.  It will be shown on the login page in the instructions section. The instructions must include a link to \"<b>$a</b>\" that users click when they want to log in.';
 $string['auth_shib_convert_data_warning'] = 'The file does not exist or is not readable by the webserver process!';
+$string['auth_shib_changepasswordurl'] = 'Password-change URL';
 
 $string['shib_not_set_up_error'] = 'Shibboleth authentication doesn\'t seem to be set up correctly because no Shibboleth environment variables are present for this page. Please consult the <a href=\"README.txt\">README</a> for further instructions on how to set up Shibboleth authentication or contact the webmaster of this Moodle installation.';
 $string['shib_no_attributes_error'] = 'You seem to be Shibboleth authenticated but Moodle didn\'t receive any user attributes. Please check that your Identity Provider releases the necessary attributes ($a) to the Service Provider Moodle is running on or inform the webmaster of this server.';

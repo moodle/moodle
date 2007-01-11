@@ -25,9 +25,9 @@ if (!isset($config->changepasswordurl)) {
 <table cellspacing="0" cellpadding="5" border="0" align="center">
 
 <tr valign="top">
-    <td align="right"> host: </td>
+    <td align="right"><?php print_string('auth_radiushost_key', 'auth') ?>: </td>
     <td>
-        <input name="host" type="text" size="30" value="<?php echo $config->host ?>">
+        <input name="host" type="text" size="30" value="<?php echo $config->host ?>" />
         <?php
 
         if (isset($err['host'])) {
@@ -40,9 +40,9 @@ if (!isset($config->changepasswordurl)) {
 </tr>
 
 <tr valign="top">
-    <td align="right"> nasport: </td>
+    <td align="right"><?php print_string('auth_radiusnasport_key', 'auth') ?>: </td>
     <td>
-        <input name="nasport" type="text" size="6" value="<?php echo $config->nasport ?>">
+        <input name="nasport" type="text" size="6" value="<?php echo $config->nasport ?>" />
         <?php
         
         if (isset($err['nasport'])) {
@@ -55,22 +55,22 @@ if (!isset($config->changepasswordurl)) {
 </tr>
 
 <tr valign="top" >
-    <td align="right"> secret: </td>
+    <td align="right"><?php print_string('auth_radiussecret_key', 'auth') ?>: </td>
     <td>
-        <input name="secret" type="text" size="6" value="<?php echo $config->secret ?>">
+        <input name="secret" type="text" size="6" value="<?php echo $config->secret ?>" />
         <?php
         
         if (isset($err['secret'])) {
             formerr($err['secret']);
         }
-        
+
         ?>
     </td>
     <td><?php print_string('auth_radiussecret', 'auth') ?></td>
 </tr>
 
 <tr valign="top">
-    <td align="right"> changepasswordurl: </td>
+    <td align="right"><?php print_string('auth_radiuschangepasswordurl_key', 'auth') ?>: </td>
     <td>
         <input name="changepasswordurl" type="text" value="<?php echo $config->changepasswordurl ?>" />
         <?php
