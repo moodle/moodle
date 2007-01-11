@@ -1447,6 +1447,10 @@ body#course-index #content {
   padding:20px;
 }
 
+body#course-index .singlebutton {
+  text-align: center;
+}
+
 .coursebox {
   width: 100%;
   float:left;
