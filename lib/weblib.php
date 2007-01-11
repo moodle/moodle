@@ -5478,8 +5478,10 @@ function convert_tree_to_html($tree, $row=0) {
     foreach ($tree as $tab) {
         $str .= '<li>';
 
-        if ($tab->active || $tab->selected) { 
+        if ($tab->selected) { 
             $linkclass = ' class="selected"';
+        } else if ($tab->active) { 
+            $linkclass = ' class="active"';
         } else {
             $linkclass = '';
         }

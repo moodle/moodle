@@ -1930,15 +1930,20 @@ body#message-messages {
 
 .tabrow0 a:hover,
 .tabrow0 a:active,
-.tabrow0 a.selected:link,
-.tabrow0 a.selected:visited {
+.tabrow0 a.active:link,
+.tabrow0 a.active:visited {
   background:#ddd;
+}
+
+.tabrow0 a.active:link,
+.tabrow0 a.active:visited {
+  position:relative;
+  z-index:102;
 }
 
 .tabrow0 a.selected:link,
 .tabrow0 a.selected:visited {
-  position:relative;
-  z-index:102;
+  color:#000;
 }
 
 /*subnav*/
