@@ -109,16 +109,15 @@
         echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
 // uh-changes start
         if (!empty($THEME->roundcorners)) {
-            echo '<div class="bl clearfix">';
-            echo '<div class="br clearfix">';
-            echo '<div class="tl clearfix">';
-            echo '<div class="tr clearfix">';
+            echo '<div class="bt"><div></div></div>';
+            echo '<div class="i1"><div class="i2"><div class="i3">';
         }
 // uh-changes end
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
 // uh-changes start
         if (!empty($THEME->roundcorners)) {
-            echo '</div></div></div></div>';
+            echo '</div></div></div>';
+            echo '<div class="bb"><div></div></div>';
         }
 // uh-changes end
         echo '</td>';
@@ -131,10 +130,8 @@
 
 // uh-changes start
     if (!empty($THEME->roundcorners)) {
-        echo '<div class="bl clearfix">';
-        echo '<div class="br clearfix">';
-        echo '<div class="tl clearfix">';
-        echo '<div class="tr clearfix">';
+        echo '<div class="bt"><div></div></div>';
+        echo '<div class="i1"><div class="i2"><div class="i3">';
     }
 // uh-changes end
 
@@ -255,7 +252,8 @@
 
 // uh-changes start
     if (!empty($THEME->roundcorners)) {
-        echo '</div></div></div></div>';
+        echo '</div></div></div>';
+        echo '<div class="bb"><div></div></div>';
     }
 // uh-changes end
 
@@ -269,10 +267,8 @@
         echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
 // uh-changes start
         if (!empty($THEME->roundcorners)) {
-            echo '<div class="bl clearfix">';
-            echo '<div class="br clearfix">';
-            echo '<div class="tl clearfix">';
-            echo '<div class="tr clearfix">';
+            echo '<div class="bt"><div></div></div>';
+            echo '<div class="i1"><div class="i2"><div class="i3">';
         }
 // uh-changes end
         if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
@@ -282,7 +278,8 @@
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
 // uh-changes start
         if (!empty($THEME->roundcorners)) {
-            echo '</div></div></div></div>';
+            echo '</div></div></div>';
+            echo '<div class="bb"><div></div></div>';
         }
 // uh-changes end
         echo '</td>';
