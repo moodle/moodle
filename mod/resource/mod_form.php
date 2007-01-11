@@ -1,0 +1,55 @@
+<?php
+require_once ('moodleform_mod.php');
+
+class mod_resource_mod_form extends moodleform_mod {
+    var $_resinstance;
+
+    function definition() {
+        global $CFG;
+        $mform =& $this->_form;
+
+        // this hack is needed for different settings of each subtype
+        if (!empty($this->_instance)) {
+            if($res = get_record('resource', 'id', (int)$this->_instance)) {
+                $type = $res->type;
+            } else {
+                error('incorrect assignment');
+            }
+        } else {
+            $type = required_param('type', PARAM_ALPHA);
+        }
+        $mform->addElement('hidden', 'type', $type);
+        $mform->setDefault('type', $type);
+
+        require($CFG->dirroot.'/mod/resource/type/'.$type.'/resource.class.php');
+        $resclass = 'resource_'.$type;
+        $this->_resinstance = new $resclass();
+
+//-------------------------------------------------------------------------------
+        $mform->addElement('header', 'general', get_string('general', 'form'));
+
+//        $mform->addElement('static', 'statictype', get_string('assignmenttype', 'assignment'), get_string('type'.$type,'assignment'));
+
+        $mform->addElement('text', 'name', get_string('name'), array('size'=>'64'));
+        $mform->setType('name', PARAM_TEXT);
+        $mform->addRule('name', null, 'required', null, 'client');
+
+        $mform->addElement('htmleditor', 'summary', get_string('summary'));
+        $mform->setType('summary', PARAM_RAW);
+        $mform->setHelpButton('summary', array('summary', get_string('summary'), 'resource'));
+        $mform->addRule('summary', get_string('required'), 'required', null, 'client');
+
+        $mform->addElement('header', 'typedesc', get_string('resourcetype'.$type,'resource'));
+        $this->_resinstance->setup_elements($mform);
+
+        $this->standard_coursemodule_elements();
+
+        $this->add_action_buttons();
+    }
+
+    function defaults_preprocessing(&$default_values){
+        $this->_resinstance->setup_preprocessing($default_values);
+    }
+
+}
+?>

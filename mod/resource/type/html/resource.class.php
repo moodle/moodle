@@ -8,89 +8,45 @@ function resource_html($cmid=0) {
 }
 
 function add_instance($resource) {
-// Given an object containing all the necessary data, 
-// (defined by the form in mod.html) this function 
-// will create a new instance and return the id number 
-// of the new instance.
-
-    global $RESOURCE_WINDOW_OPTIONS;
-
-    $resource->timemodified = time();
-
-    if (isset($resource->windowpopup)) {
-        $optionlist = array();
-        foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
-            if (isset($resource->$option)) {
-                $optionlist[] = $option."=".$resource->$option;
-            }
-        }
-        $resource->popup = implode(',', $optionlist);
-
-    } else if (isset($resource->windowpage)) {
-        $resource->popup = "";
-    }
-
-    if (isset($resource->blockdisplay)) {
-        $resource->options = 'showblocks';
-    } else {
-        $resource->options = '';
-    }
-
-    if (isset($resource->parametersettingspref)) {
-        set_user_preference('resource_parametersettingspref', $resource->parametersettingspref);
-    }
-    if (isset($resource->windowsettingspref)) {
-        set_user_preference('resource_windowsettingspref', $resource->windowsettingspref);
-    }
-
-    return insert_record("resource", $resource);
+    $this->_postprocess($resource);
+    return parent::add_instance($resource);
 }
 
 
 function update_instance($resource) {
-// Given an object containing all the necessary data, 
-// (defined by the form in mod.html) this function 
-// will update an existing instance with new data.
-
-    global $RESOURCE_WINDOW_OPTIONS;
-
-    $resource->id = $resource->instance;
-    $resource->timemodified = time();
-
-    if (isset($resource->windowpopup)) {
-        $optionlist = array();
-        foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
-            if (isset($resource->$option)) {
-                $optionlist[] = $option."=".$resource->$option;
-            }
-        }
-        $resource->popup = implode(',', $optionlist);
-
-    } else if (isset($resource->windowpage)) {
-        $resource->popup = "";
-    }
-
-    if (isset($resource->blockdisplay)) {
-        $resource->options = 'showblocks';
-    } else {
-        $resource->options = '';
-    }
-
-    if (isset($resource->parametersettingspref)) {
-        set_user_preference('resource_parametersettingspref', $resource->parametersettingspref);
-    }
-    if (isset($resource->windowsettingspref)) {
-        set_user_preference('resource_windowsettingspref', $resource->windowsettingspref);
-    }
-
-    return update_record("resource", $resource);
+    $this->_postprocess($resource);
+    return parent::update_instance($resource);
 }
 
+function _postprocess(&$resource) {
+    global $RESOURCE_WINDOW_OPTIONS;
+    $alloptions = $RESOURCE_WINDOW_OPTIONS;
+
+    if ($resource->windowpopup) {
+        $optionlist = array();
+        foreach ($alloptions as $option) {
+            $optionlist[] = $option."=".$resource->$option;
+            unset($resource->$option);
+        }
+        $resource->popup = implode(',', $optionlist);
+        unset($resource->windowpopup);
+        $resource->options = '';
+
+    } else {
+        if ($resource->blockdisplay) {
+            $resource->options = 'showblocks';
+        } else {
+            $resource->options = '';
+        }
+        unset($resource->blockdisplay);
+        $resource->popup = '';
+    }
+}
 
 
 function display() {
     global $CFG;
-    
+
     $formatoptions = new object();
     $formatoptions->noclean = true;
 
@@ -109,9 +65,9 @@ function display() {
         parent::display();
 
         /// Set up some shorthand variables
-        $cm = $this->cm;     
+        $cm = $this->cm;
         $course = $this->course;
-        $resource = $this->resource; 
+        $resource = $this->resource;
 
         $pagetitle = strip_tags($course->shortname.': '.format_string($resource->name));
         $inpopup = optional_param('inpopup', '', PARAM_BOOL);
@@ -120,13 +76,13 @@ function display() {
             if ($inpopup) {                    /// Popup only
                 add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
                 print_header();
-                print_simple_box(format_text($resource->alltext, FORMAT_HTML, $formatoptions, $course->id), 
+                print_simple_box(format_text($resource->alltext, FORMAT_HTML, $formatoptions, $course->id),
                         "center", "", "", "20");
                 print_footer($course);
             } else {                           /// Make a page and a pop-up window
 
-                print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), 
-                        "", "", true, update_module_button($cm->id, $course->id, $this->strresource), 
+                print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name),
+                        "", "", true, update_module_button($cm->id, $course->id, $this->strresource),
                         navmenu($course, $cm));
 
                 echo "\n<script type=\"text/javascript\">";
@@ -153,7 +109,7 @@ function display() {
 
             add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
             print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name),
-                    "", "", true, update_module_button($cm->id, $course->id, $this->strresource), 
+                    "", "", true, update_module_button($cm->id, $course->id, $this->strresource),
                     navmenu($course, $cm));
 
             print_simple_box(format_text($resource->alltext, FORMAT_HTML, $formatoptions, $course->id), "center", "", "", "20");
@@ -168,74 +124,53 @@ function display() {
 
 }
 
-
-
-function setup($form) {
-    global $CFG, $usehtmleditor, $RESOURCE_WINDOW_OPTIONS;
-    
-    parent::setup($form);
-
-
-    $strfilename = get_string("filename", "resource");
-    $strnote     = get_string("note", "resource");
-    $strchooseafile = get_string("chooseafile", "resource");
-    $strnewwindow     = get_string("newwindow", "resource");
-    $strnewwindowopen = get_string("newwindowopen", "resource");
-    $strsearch        = get_string("searchweb", "resource");
-
-    foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
-        $stringname = "str$optionname";
-        $$stringname = get_string("new$optionname", "resource");
-        $window->$optionname = "";
-        $jsoption[] = "\"$optionname\"";
-    }
-    
-    $blockoption = "\"blockdisplay\"";
-    $popupoptions = implode(",", $jsoption);
-    $jsoption[] = $blockoption;
-    $alloptions = implode(",", $jsoption);
-
-    if ($form->instance) {     // Re-editing
-        if (!$form->popup) {
-            $windowtype = "page";   // No popup text => in page
-            foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
-                $defaultvalue = "resource_popup$optionname";
-                $window->$optionname = $CFG->$defaultvalue;
-            }
-        } else {
-            $windowtype = "popup";
-            $rawoptions = explode(',', $form->popup);
+function setup_preprocessing(&$defaults){
+    if (!empty($defaults['popup'])) {
+        $defaults['windowpopup'] = 1;
+        if (array_key_exists('popup', $defaults)) {
+            $rawoptions = explode(',', $defaults['popup']);
             foreach ($rawoptions as $rawoption) {
                 $option = explode('=', trim($rawoption));
-                $optionname = $option[0];
-                $optionvalue = $option[1];
-                if ($optionname == "height" or $optionname == "width") {
-                    $window->$optionname = $optionvalue;
-                } else if ($optionvalue) {
-                    $window->$optionname = 'checked="checked"';
-                }
+                $defaults[$option[0]] = $option[1];
             }
         }
     } else {
-        foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
-            $defaultvalue = "resource_popup$optionname";
-
-            if ($optionname == "height" or $optionname == "width") {
-                $window->$optionname = $CFG->$defaultvalue;
-            } else if ($CFG->$defaultvalue) {
-                $window->$optionname = 'checked="checked"';
-            }
-        }
-
-        $windowtype = ($CFG->resource_popup) ? 'popup' : 'page';
-        if (!isset($form->options)) {
-            $form->options = '';
+        $defaults['windowpopup'] = 0;
+        if (array_key_exists('options', $defaults)) {
+            $defaults['blockdisplay'] = ($defaults['options']=='showblocks');
         }
     }
+}
 
-    include("$CFG->dirroot/mod/resource/type/html/html.html");
+function setup_elements(&$mform) {
+    global $CFG, $RESOURCE_WINDOW_OPTIONS;
 
-    parent::setup_end();
+    $mform->addElement('htmleditor', 'alltext', get_string('fulltext', 'resource'), array('cols'=>85, 'rows'=>30));
+    $mform->setType('alltext', PARAM_RAW);
+    $mform->setHelpButton('alltext', array('reading', 'writing', 'richtext'), false, 'editorhelpbutton');
+    $mform->addRule('alltext', get_string('required'), 'required', null, 'client');
+
+    $mform->addElement('header', 'displaysettings', get_string('display', 'resource'));
+
+    $woptions = array(0 => get_string('pagewindow', 'resource'), 1 => get_string('newwindow', 'resource'));
+    $mform->addElement('select', 'windowpopup', get_string('display', 'resource'), $woptions);
+    $mform->setDefault('windowpopup', !empty($CFG->resource_popup));
+
+    $mform->addElement('checkbox', 'blockdisplay', get_string('showcourseblocks', 'resource'));
+    $mform->setDefault('blockdisplay', 0);
+//    $mform->disabledIf('blockdisplay', 'windowpopup', '', 0);
+
+    foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
+        if ($option == 'height' or $option == 'width') {
+            $mform->addElement('text', $option, get_string('new'.$option, 'resource'), array('size'=>'4'));
+            $mform->setDefault($option, $CFG->{'resource_popup'.$option});
+//            $mform->disabledIf($option, 'windowpopup', '', 1);
+        } else {
+            $mform->addElement('checkbox', $option, get_string('new'.$option, 'resource'));
+            $mform->setDefault($option, $CFG->{'resource_popup'.$option});
+//            $mform->disabledIf($option, 'windowpopup', '', 1);
+        }
+    }
 }
 
 

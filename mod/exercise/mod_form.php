@@ -11,7 +11,7 @@ class mod_exercise_mod_form extends moodleform_mod {
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
-        $mform->addElement('text', 'name', get_string('title', 'exercise'));
+        $mform->addElement('text', 'name', get_string('title', 'exercise'), array('size'=>'64'));
 		$mform->setType('name', PARAM_TEXT);
 		$mform->addRule('name', null, 'required', null, 'client');
 

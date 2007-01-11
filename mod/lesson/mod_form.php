@@ -20,7 +20,7 @@ class mod_lesson_mod_form extends moodleform_mod {
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
-        $mform->addElement('text', 'name', get_string('name'));
+        $mform->addElement('text', 'name', get_string('name'), array('size'=>'64'));
 		$mform->setType('name', PARAM_TEXT);
 		$mform->addRule('name', null, 'required', null, 'client');
 

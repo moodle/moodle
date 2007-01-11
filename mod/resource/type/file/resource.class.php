@@ -82,7 +82,7 @@ function set_parameters() {
     );
 
     if (!empty($USER->id)) {
-    
+
         $userparameters = array(
 
             'label1'          => array('langstr' => get_string('user'),
@@ -92,8 +92,6 @@ function set_parameters() {
                                        'value'   => $USER->id),
             'userusername'    => array('langstr' => get_string('username'),
                                        'value'   => $USER->username),
-            'userpassword'    => array('langstr' => get_string('password'),
-                                       'value'   => $USER->password),
             'useridnumber'    => array('langstr' => get_string('idnumber'),
                                        'value'   => $USER->idnumber),
             'userfirstname'   => array('langstr' => get_string('firstname'),
@@ -123,57 +121,61 @@ function set_parameters() {
             'userurl'         => array('langstr' => get_string('webpage'),
                                        'value'   => $USER->url)
          );
- 
-         $this->parameters = array_merge($userparameters, $this->parameters);
+
+         $this->parameters = $userparameters + $this->parameters;
     }
 }
 
-
-/**
-* Add new instance of file resource
-*
-* Create alltext field before calling base class function.
-*
-* @param    resource object
-*/
 function add_instance($resource) {
-    $optionlist = array();
-
-    for ($i = 0; $i < $this->maxparameters; $i++) {
-        $parametername = "parameter$i";
-        $parsename = "parse$i";
-        if (!empty($resource->$parsename) and $resource->$parametername != "-") {
-            $optionlist[] = $resource->$parametername."=".$resource->$parsename;
-        }
-    }
-
-    $resource->alltext = implode(',', $optionlist);
-
+    $this->_postprocess($resource);
     return parent::add_instance($resource);
 }
 
 
-/**
-* Update instance of file resource
-*
-* Create alltext field before calling base class function.
-*
-* @param    resource object
-*/
 function update_instance($resource) {
-    $optionlist = array();
+    $this->_postprocess($resource);
+/*    echo '<xmp>';
+    var_dump($_POST);
+    var_dump($resource);die;*/
+    return parent::update_instance($resource);
+}
 
+function _postprocess(&$resource) {
+    global $RESOURCE_WINDOW_OPTIONS;
+    $alloptions = $RESOURCE_WINDOW_OPTIONS;
+
+    if ($resource->windowpopup) {
+        $optionlist = array();
+        foreach ($alloptions as $option) {
+            $optionlist[] = $option."=".$resource->$option;
+            unset($resource->$option);
+        }
+        $resource->popup = implode(',', $optionlist);
+        unset($resource->windowpopup);
+        $resource->options = '';
+
+    } else {
+        if ($resource->framepage) {
+            $resource->options = 'frame';
+        } else {
+            $resource->options = '';
+        }
+        unset($resource->framepage);
+        $resource->popup = '';
+    }
+
+    $optionlist = array();
     for ($i = 0; $i < $this->maxparameters; $i++) {
         $parametername = "parameter$i";
         $parsename = "parse$i";
         if (!empty($resource->$parsename) and $resource->$parametername != "-") {
             $optionlist[] = $resource->$parametername."=".$resource->$parsename;
         }
+        unset($resource->$parsename);
+        unset($resource->$parametername);
     }
 
     $resource->alltext = implode(',', $optionlist);
-
-    return parent::update_instance($resource);
 }
 
 
@@ -252,14 +254,13 @@ function display() {
             $field = explode('=', $fieldstring);
             $querys[] = urlencode($field[1]).'='.urlencode($this->parameters[$field[0]]['value']);
         }
-        $querystring = implode('&', $querys);
+        $querystring = implode('&amp;', $querys);
     }
 
 
     /// Set up some variables
 
-    $inpopup_param = optional_param( 'inpopup','' );
-    $inpopup = !empty( $inpopup_param );
+    $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
 
     if (resource_is_url($resource->reference)) {
         $fullurl = $resource->reference;
@@ -268,7 +269,7 @@ function display() {
             if (empty($urlpieces['query'])) {
                 $fullurl .= '?'.$querystring;
             } else {
-                $fullurl .= '&'.$querystring;
+                $fullurl .= '&amp;'.$querystring;
             }
         }
 
@@ -294,7 +295,7 @@ function display() {
         } else {
             $relativeurl = "/file.php?file=/{$course->id}/{$resource->reference}";
             if ($querystring) {
-                $relativeurl .= '&'.$querystring;
+                $relativeurl .= '&amp;'.$querystring;
             }
         }
         $fullurl = "$CFG->wwwroot$relativeurl";
@@ -509,122 +510,120 @@ function display() {
 }
 
 
-
-/**
-* Setup a new file resource
-*
-* Display a form to create a new or edit an existing file resource
-*
-* @param    form                    object
-* @param    CFG                     global object
-* @param    usehtmleditor           global integer
-* @param    RESOURCE_WINDOW_OPTIONS global array
-*/
-function setup($form) {
-    global $CFG, $usehtmleditor, $RESOURCE_WINDOW_OPTIONS;
-
-    parent::setup($form);
-
-    $this->set_parameters(); // set the parameter array for the form
-
-
-    $strfilename = get_string("location");
-    $strnote     = get_string("note", "resource");
-    $strchooseafile = get_string("chooseafile", "resource");
-    $strnewwindow     = get_string("newwindow", "resource");
-    $strnewwindowopen = get_string("newwindowopen", "resource");
-    $strsearch        = get_string("searchweb", "resource");
-
-    foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
-        $stringname = "str$optionname";
-        $$stringname = get_string("new$optionname", "resource");
-        $window->$optionname = "";
-        $jsoption[] = "\"$optionname\"";
-    }
-
-    $frameoption = "\"framepage\"";
-    $popupoptions = implode(",", $jsoption);
-    $jsoption[] = $frameoption;
-    $alloptions = implode(",", $jsoption);
-
-
-
-    if ($form->instance) {     // Re-editing
-        if (!$form->popup) {
-            $windowtype = "page";   // No popup text => in page
-            foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
-                $defaultvalue = "resource_popup$optionname";
-                $window->$optionname = $CFG->$defaultvalue;
-            }
-        } else {
-            $windowtype = "popup";
-            $rawoptions = explode(',', $form->popup);
-            foreach ($rawoptions as $rawoption) {
-                $option = explode('=', trim($rawoption));
-                $optionname = $option[0];
-                $optionvalue = $option[1];
-                if ($optionname == 'height' or $optionname == 'width') {
-                    $window->$optionname = $optionvalue;
-                } else if ($optionvalue) {
-                    $window->$optionname = 'checked="checked"';
-                }
-            }
-        }
-    } else {
-        foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
-            $defaultvalue = "resource_popup$optionname";
-
-            if ($optionname == 'height' or $optionname == 'width') {
-                $window->$optionname = $CFG->$defaultvalue;
-            } else if ($CFG->$defaultvalue) {
-                $window->$optionname = 'checked="checked"';
-            }
-        }
-
-        $windowtype = ($CFG->resource_popup) ? 'popup' : 'page';
-        if (empty($form->options)) {
-            $form->options = 'frame';
-            $form->reference = $CFG->resource_defaulturl;
-        }
-    }
-    if (empty($form->reference)) {
-        $form->reference = $CFG->resource_defaulturl;
-    }
-
-
-/// set the 5 parameter defaults
-    $alltextfield = array();
-    for ($i = 0; $i < $this->maxparameters; $i++) {
-        $alltextfield[] = array('parameter' => '',
-                                'parse'     => '');
-    }
-    /// load up any stored parameters
-    if (!empty($form->alltext)) {
-        $parray = explode(',', $form->alltext);
-        foreach ($parray as $key => $fieldstring) {
-            $field = explode('=', $fieldstring);
-            $alltextfield[$key]['parameter'] = $field[0];
-            $alltextfield[$key]['parse'] = $field[1];
-        }
-    }
-
-
-    include("$CFG->dirroot/mod/resource/type/file/file.html");
-
-    parent::setup_end();
-}
-
 //backwards compatible with existing resources
 function set_encrypted_parameter() {
     global $CFG;
 
-    if (!empty($this->resource->reference) && file_exists($CFG->dirroot ."/mod/resource//type/file/externserverfile.php")) {
+    if (!empty($this->resource->reference) && file_exists($CFG->dirroot ."/mod/resource/type/file/externserverfile.php")) {
         include $CFG->dirroot ."/mod/resource/type/file/externserverfile.php";
         if (function_exists(extern_server_file)) {
             return extern_server_file($this->resource->reference);
         }
     }
     return md5($_SERVER['REMOTE_ADDR'].$CFG->resource_secretphrase);
+}
+
+function setup_preprocessing(&$defaults){
+    if (!empty($defaults['popup'])) {
+        $defaults['windowpopup'] = 1;
+        if (array_key_exists('popup', $defaults)) {
+            $rawoptions = explode(',', $defaults['popup']);
+            foreach ($rawoptions as $rawoption) {
+                $option = explode('=', trim($rawoption));
+                $defaults[$option[0]] = $option[1];
+            }
+        }
+    } else {
+        $defaults['windowpopup'] = 0;
+        if (array_key_exists('options', $defaults)) {
+            $defaults['framepage'] = ($defaults['options']=='frame');
+        }
+    }
+    /// load up any stored parameters
+    if (!empty($defaults['alltext'])) {
+        $parray = explode(',', $defaults['alltext']);
+        $i=0;
+        foreach ($parray as $rawpar) {
+            list($param, $varname) = explode('=', $rawpar);
+            $defaults["parse$i"] = $varname;
+            $defaults["parameter$i"] = $param;
+            $i++;
+        }
+    }
+}
+
+function setup_elements(&$mform) {
+    global $CFG, $RESOURCE_WINDOW_OPTIONS;
+
+    $this->set_parameters(); // set the parameter array for the form
+
+    $mform->addElement('choosecoursefile', 'reference', get_string('location'));
+    $mform->setDefault('reference', $CFG->resource_defaulturl);
+    $mform->addRule('name', null, 'required', null, 'client');
+
+    if (!empty($CFG->resource_websearch)) {
+        $searchbutton = $mform->addElement('button', 'searchbutton', get_string('searchweb', 'resource').'...');
+        $buttonattributes = array('title'=>get_string('localfilechoose', 'resource'), 'onclick'=>"return window.open('$CFG->resource_websearch', 'websearch', 'menubar=1,location=1,directories=1,toolbar=1,scrollbars,resizable,width=800,height=600');");
+        $searchbutton->updateAttributes($buttonattributes);
+    }
+
+    if (!empty($CFG->resource_allowlocalfiles)) {
+        $lfbutton = $mform->addElement('button', 'localfilesbutton', get_string('localfilechoose', 'resource').'...');
+        $options = 'menubar=0,location=0,scrollbars,resizable,width=600,height=400';
+        $url = '/mod/resource/type/file/localfile.php?choose=id_reference_value';
+        $buttonattributes = array('title'=>get_string('localfilechoose', 'resource'), 'onclick'=>"return openpopup('$url', '".$lfbutton->getName()."', '$options', 0);");
+        $lfbutton->updateAttributes($buttonattributes);
+    }
+
+    $mform->addElement('header', 'displaysettings', get_string('display', 'resource'));
+
+    $woptions = array(0 => get_string('pagewindow', 'resource'), 1 => get_string('newwindow', 'resource'));
+    $mform->addElement('select', 'windowpopup', get_string('display', 'resource'), $woptions);
+    $mform->setDefault('windowpopup', !empty($CFG->resource_popup));
+
+    $mform->addElement('checkbox', 'framepage', get_string('frameifpossible', 'resource'));
+    $mform->setDefault('framepage', 0);
+//    $mform->disabledIf('framepage', 'windowpopup', '', 0);
+
+    foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
+        if ($option == 'height' or $option == 'width') {
+            $mform->addElement('text', $option, get_string('new'.$option, 'resource'), array('size'=>'4'));
+            $mform->setDefault($option, $CFG->{'resource_popup'.$option});
+//            $mform->disabledIf($option, 'windowpopup', '', 1);
+        } else {
+            $mform->addElement('checkbox', $option, get_string('new'.$option, 'resource'));
+            $mform->setDefault($option, $CFG->{'resource_popup'.$option});
+//            $mform->disabledIf($option, 'windowpopup', '', 1);
+        }
+    }
+
+    $mform->addElement('header', 'parameters', get_string('parameters', 'resource'));
+
+    $options = array();
+    $options['-'] = get_string('chooseparameter', 'resource').'...';
+    $optgroup = '';
+    foreach ($this->parameters as $pname=>$param) {
+        if ($param['value']=='/optgroup') {
+            $optgroup = '';
+            continue;
+        }
+        if ($param['value']=='optgroup') {
+            $optgroup = $param['langstr'];
+            continue;
+        }
+        $options[$pname] = $optgroup.' - '.$param['langstr'];
+    }
+
+    for ($i = 0; $i < $this->maxparameters; $i++) {
+        $parametername = "parameter$i";
+        $parsename = "parse$i";
+        $group = array();
+        $group[] =& $mform->createElement('text', $parsename, '', array('size'=>'12'));//TODO: accessiblity
+        $group[] =& $mform->createElement('select', $parametername, '', $options);//TODO: accessiblity
+        $mform->addGroup($group, 'pargroup', get_string('variablename', 'resource').'='.get_string('parameter', 'resource'), ' ', false);
+
+        $mform->setDefault($parametername, '-');
+    }
 }
 
 }

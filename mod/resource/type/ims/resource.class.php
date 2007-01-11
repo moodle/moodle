@@ -40,7 +40,7 @@ require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->dirroot.'/mod/resource/type/ims/repository_config.php');
 
 /**
-* Extend the base resource class for ims resources 
+* Extend the base resource class for ims resources
 */
 class resource_ims extends resource_base {
 
@@ -56,14 +56,14 @@ class resource_ims extends resource_base {
         }
     /// set own attributes
         $this->parameters = $this->alltext2parameters($this->resource->alltext);
-        
+
     /// navigation menu forces other settings
         if ($this->parameters->navigationmenu) {
             $this->parameters->tableofcontents = 0;
             $this->parameters->navigationuparrow = 0;
             $this->parameters->skipsubmenus = 1;
         }
-        
+
     /// Is it in the repository material or not?
         if (isset($this->resource->reference)) {
             $file = $this->resource->reference;
@@ -80,7 +80,7 @@ class resource_ims extends resource_base {
     }
 
     /***
-    * This function converts parameters stored in the alltext field to the proper 
+    * This function converts parameters stored in the alltext field to the proper
     * this->parameters object storing the special configuration of this resource type
     */
     function alltext2parameters($alltext) {
@@ -142,7 +142,7 @@ class resource_ims extends resource_base {
     * 2 = Zip file doesn't exist
     * 3 = Package not deployed.
     * 4 = Package has changed since deployed.
-    * If the IMS CP is one from the central repository, then we instead check 
+    * If the IMS CP is one from the central repository, then we instead check
     * with the following codes:
     * 5 = Not deployed. Since repository is central must be admin to deploy so terminate
     */
@@ -152,12 +152,12 @@ class resource_ims extends resource_base {
         if ($this->isrepository) {
         /// Calculate the path were the IMS package must be deployed
             $deploydir = $CFG->repository . $file;
-    
+
         /// Confirm that the IMS package has been deployed. These files must exist if
         /// the package is deployed: moodle_index.ser and moodle_hash.ser
             if (!file_exists($deploydir.'/moodle_inx.ser')) {
                 return 5;    //Error
-            }               
+            }
         }
         else {
         /// Check for zip file type
@@ -165,24 +165,24 @@ class resource_ims extends resource_base {
             if ($mimetype != "application/zip") {
                 return 1;    //Error
             }
-    
+
         /// Check if the uploaded file exists
             if (!file_exists($CFG->dataroot.'/'.$course->id.'/'.$file)) {
                 return 2;    //Error
             }
-                        
+
         /// Calculate the path were the IMS package must be deployed
             $deploydir = $CFG->dataroot.'/'.$course->id.'/'.$CFG->moddata.'/resource/'.$resource->id;
-    
-    
+
+
         /// Confirm that the IMS package has been deployed. These files must exist if
         /// the package is deployed: moodle_index.ser and moodle_hash.ser
             if (!file_exists($deploydir.'/moodle_inx.ser') ||
                 !file_exists($deploydir.'/moodle_hash.ser')) {
                 return 3;    //Error
-            }           
-        
-        /// If teacheredit, make, hash check. It's the md5 of the name of the file 
+            }
+
+        /// If teacheredit, make, hash check. It's the md5 of the name of the file
         /// plus its size and modification date
         /// not sure if this capability is suitable
             if (has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))) {
@@ -196,7 +196,7 @@ class resource_ims extends resource_base {
         return 0;
     }
 
-    /*** This function will check that the ims package (zip file) uploaded 
+    /*** This function will check that the ims package (zip file) uploaded
     * isn't changed since it was deployed.
     */
     function checkpackagehash($file, $course, $resource) {
@@ -243,12 +243,7 @@ class resource_ims extends resource_base {
     * @param    resource object
     */
     function add_instance($resource) {
-
-    /// Load parameters to this->parameters
-        $this->parameters = $this->form2parameters($resource);
-    /// Save parameters into the alltext field
-        $resource->alltext = $this->parameters2alltext($this->parameters);
-
+        $this->_postprocess($resource);
         return parent::add_instance($resource);
     }
 
@@ -261,13 +256,30 @@ class resource_ims extends resource_base {
     * @param    resource object
     */
     function update_instance($resource) {
+        $this->_postprocess($resource);
+        return parent::update_instance($resource);
+    }
 
+    function _postprocess(&$resource) {
+        global $RESOURCE_WINDOW_OPTIONS;
+        $alloptions = $RESOURCE_WINDOW_OPTIONS;
+
+        if ($resource->windowpopup) {
+            $optionlist = array();
+            foreach ($alloptions as $option) {
+                $optionlist[] = $option."=".$resource->$option;
+                unset($resource->$option);
+            }
+            $resource->popup = implode(',', $optionlist);
+            unset($resource->windowpopup);
+
+        } else {
+            $resource->popup = '';
+        }
     /// Load parameters to this->parameters
         $this->parameters = $this->form2parameters($resource);
     /// Save parameters into the alltext field
         $resource->alltext = $this->parameters2alltext($this->parameters);
-
-        return parent::update_instance($resource);
     }
 
     /** Delete instance of IMS-CP resource
@@ -276,9 +288,9 @@ class resource_ims extends resource_base {
      * @param    resource object
      */
     function delete_instance($resource) {
-        
+
          global $CFG;
-        
+
     /// Delete moddata resource dir completely unless repository.
         if (!$this->isrepository) {
             $resource_dir = $CFG->dataroot.'/'.$resource->course.'/'.$CFG->moddata.'/resource/'.$resource->id;
@@ -301,7 +313,7 @@ class resource_ims extends resource_base {
      *
      * @param    CFG     global object
      */
-    function display() {       
+    function display() {
         global $CFG, $THEME, $USER;
 
         require_once($CFG->libdir.'/filelib.php');
@@ -326,6 +338,9 @@ class resource_ims extends resource_base {
         $resourcetype = '';
         $mimetype = mimeinfo("type", $resource->reference);
         $pagetitle = strip_tags($course->shortname.': '.format_string($resource->name));
+
+        $formatoptions = new object();
+        $formatoptions->noclean = true;
 
     /// Cache this per request
         static $items;
@@ -415,7 +430,6 @@ class resource_ims extends resource_base {
             echo '</script>';
 
             if (trim(strip_tags($resource->summary))) {
-                $formatoptions->noclean = true;
                 print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions), "center");
             }
 
@@ -449,7 +463,7 @@ class resource_ims extends resource_base {
             global $standard_javascript;
             $standard_javascript = $CFG->javascript;  // Save original javascript file
             $CFG->javascript = $CFG->dirroot.'/mod/resource/type/ims/javascript.php';  //Use our custom IMS javascript code
-            
+
         /// moodle header
             if ($resource->popup) {
                 //print_header($pagetitle, $course->fullname.' : '.$resource->name);
@@ -477,11 +491,11 @@ class resource_ims extends resource_base {
             exit;
         }
     }
-    
+
 /// Function print_ims prints nearly the whole page. Stupid name subject to change :-)
     function print_ims($cm, $course, $items, $resource, $page) {
         global $CFG;
-        
+
     /// Set the correct contentframe id based on $this->parameters->navigationmenu
         if (!empty($this->parameters->navigationmenu)) {
             $contentframe = 'ims-contentframe';
@@ -517,7 +531,7 @@ class resource_ims extends resource_base {
                 $page = 1;
                 if (!empty($this->parameters->skipsubmenus)) {
                     while (empty($items[$page]->href) && !empty($items[$page])) {
-                        $page++;    
+                        $page++;
                     }
                 }
             }
@@ -537,23 +551,23 @@ class resource_ims extends resource_base {
             }
         }
 
-    /// print navigation buttons if needed  
+    /// print navigation buttons if needed
         if (!empty($this->parameters->navigationbuttons)) {
             $this->print_nav($items, $resource, $page);
         }
-        
+
         echo '<div id="ims-containerdiv">';
-    /// adds side navigation bar if needed. must also adjust width of iframe to accomodate 
+    /// adds side navigation bar if needed. must also adjust width of iframe to accomodate
         if (!empty($this->parameters->navigationmenu)) {
             echo "<div id=\"ims-menudiv\">"; $this->print_navmenu($items, $resource, $page); echo "</div>";
         }
-        
+
     /// prints iframe filled with $fullurl
         echo "<iframe id=\"".$contentframe."\" name=\"".$contentframe."\" src=\"{$fullurl}\" title=\"".get_string('modulename','resource')."\">Your browser does not support inline frames or is currently configured not to display inline frames. Content can be viewed at {$fullurl}</iframe>"; //Content frame
         echo '</div>';
     }
 
-/// Prints TOC    
+/// Prints TOC
     function print_toc($items, $resource, $page) {
         $table = new stdClass;
         if (empty($page)) {
@@ -566,11 +580,11 @@ class resource_ims extends resource_base {
         print_table($table);
     }
 
-/// Prints side navigation menu. This is just the full TOC with no surround.    
+/// Prints side navigation menu. This is just the full TOC with no surround.
     function print_navmenu($items, $resource, $page=0) {
         echo ims_generate_toc ($items, $resource, 0, $page);
     }
-    
+
 /// Prints navigation bar at the top of the page.
     function print_nav($items, $resource, $page) {
         echo '<div class="ims-nav-bar" id="ims-nav-bar">';
@@ -584,96 +598,74 @@ class resource_ims extends resource_base {
         echo ims_get_toc_nav_button ($items, $this, $page);
     /// Footer
         echo '</div>';
-    }        
-        
+    }
 
-    /**
-    * Setup a new file resource
-    *
-    * Display a form to create a new or edit an existing file resource
-    *
-    * @param    form                    object
-    * @param    CFG                     global object
-    * @param    usehtmleditor           global integer
-    * @param    RESOURCE_WINDOW_OPTIONS global array
-    */
-    function setup($form) {
-        global $CFG, $usehtmleditor, $RESOURCE_WINDOW_OPTIONS;
 
-        parent::setup($form);
-
-        $strfilename = get_string("location");
-        $strnote     = get_string("note", "resource");
-        $strchooseafile = get_string("chooseafile", "resource");
-        $strnewwindow     = get_string("newwindow", "resource");
-        $strnewwindowopen = get_string("newwindowopen", "resource");
-        $strsearch        = get_string("searchweb", "resource");
-
-        foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
-            $stringname = "str$optionname";
-            $$stringname = get_string("new$optionname", "resource");
-            $window->$optionname = "";
-            $jsoption[] = "\"$optionname\"";
-        }
-
-        $frameoption = "\"framepage\"";
-        $popupoptions = implode(",", $jsoption);
-        $jsoption[] = $frameoption;
-        $alloptions = implode(",", $jsoption);
-
-        if ($form->instance) {     // Re-editing
-            if (!$form->popup) {
-                $windowtype = "page";   // No popup text => in page
-                foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
-                    $defaultvalue = "resource_popup$optionname";
-                    $window->$optionname = $CFG->$defaultvalue;
-                }
-            } else {
-                $windowtype = "popup";
-                $rawoptions = explode(',', $form->popup);
+    function setup_preprocessing(&$defaults){
+        if (!empty($defaults['popup'])) {
+            $defaults['windowpopup'] = 1;
+            if (array_key_exists('popup', $defaults)) {
+                $rawoptions = explode(',', $defaults['popup']);
                 foreach ($rawoptions as $rawoption) {
                     $option = explode('=', trim($rawoption));
-                    $optionname = $option[0];
-                    $optionvalue = $option[1];
-                    if ($optionname == 'height' or $optionname == 'width') {
-                        $window->$optionname = $optionvalue;
-                    } else if ($optionvalue) {
-                        $window->$optionname = 'checked="checked"';
-                    }
+                    $defaults[$option[0]] = $option[1];
                 }
             }
         } else {
-            foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
-                $defaultvalue = "resource_popup$optionname";
-    
-                if ($optionname == 'height' or $optionname == 'width') {
-                    $window->$optionname = $CFG->$defaultvalue;
-                } else if ($CFG->$defaultvalue) {
-                    $window->$optionname = 'checked="checked"';
-                }
-            }
-
-            $windowtype = ($CFG->resource_popup) ? 'popup' : 'page';
-            if (empty($form->options)) {
-                $form->options = 'frame';
-                $form->reference = $CFG->resource_defaulturl;
-            }
+            $defaults['windowpopup'] = 0;
         }
-        if (empty($form->reference)) {
-            $form->reference = $CFG->resource_defaulturl;
-        }
-
         //Converts the alltext to form fields
-        $parameters=$this->alltext2parameters($form->alltext);
-        $form->param_tableofcontents = $parameters->tableofcontents;
-        $form->param_navigationbuttons = $parameters->navigationbuttons;
-        $form->param_skipsubmenus = $parameters->skipsubmenus;
-        $form->param_navigationmenu = $parameters->navigationmenu;
-        $form->param_navigationupbutton = $parameters->navigationupbutton;
-        //Show the setup form
-        include("$CFG->dirroot/mod/resource/type/ims/ims.html");
+        if (!empty($defaults['alltext'])) {
+            $parameters = $this->alltext2parameters($defaults['alltext']);
+            $defaults['param_tableofcontents']    = $parameters->tableofcontents;
+            $defaults['param_navigationbuttons']  = $parameters->navigationbuttons;
+            $defaults['param_skipsubmenus']       = $parameters->skipsubmenus;
+            $defaults['param_navigationmenu']     = $parameters->navigationmenu;
+            $defaults['param_navigationupbutton'] = $parameters->navigationupbutton;
+        }
+    }
 
-        parent::setup_end();
+    function setup_elements(&$mform) {
+        global $CFG, $RESOURCE_WINDOW_OPTIONS;
+
+        $mform->addElement('choosecoursefile', 'reference', get_string('location'));
+        $mform->addRule('name', null, 'required', null, 'client');
+
+        $mform->addElement('header', 'displaysettings', get_string('display', 'resource'));
+
+        $woptions = array(0 => get_string('pagewindow', 'resource'), 1 => get_string('newwindow', 'resource'));
+        $mform->addElement('select', 'windowpopup', get_string('display', 'resource'), $woptions);
+        $mform->setDefault('windowpopup', !empty($CFG->resource_popup));
+
+        foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
+            if ($option == 'height' or $option == 'width') {
+                $mform->addElement('text', $option, get_string('new'.$option, 'resource'), array('size'=>'4'));
+                $mform->setDefault($option, $CFG->{'resource_popup'.$option});
+    //            $mform->disabledIf($option, 'windowpopup', '', 1);
+            } else {
+                $mform->addElement('checkbox', $option, get_string('new'.$option, 'resource'));
+                $mform->setDefault($option, $CFG->{'resource_popup'.$option});
+    //            $mform->disabledIf($option, 'windowpopup', '', 1);
+            }
+        }
+
+        $mform->addElement('header', 'parameters', get_string('parameters', 'resource'));
+
+        $mform->addElement('selectyesno', 'param_navigationmenu', get_string('navigationmenu', 'resource'));
+        $mform->setDefault('param_navigationmenu', 1);
+        $mform->addElement('selectyesno', 'param_tableofcontents', get_string('tableofcontents', 'resource'));
+    //            $mform->disabledIf($option, 'param_navigationmenu', '', 1);
+        $mform->setDefault('param_tableofcontents', 0);
+        $mform->addElement('selectyesno', 'param_navigationbuttons', get_string('navigationbuttons', 'resource'));
+        $mform->setDefault('param_navigationbuttons', 0);
+        $mform->addElement('selectyesno', 'param_skipsubmenus', get_string('skipsubmenus', 'resource'));
+        $mform->setDefault('param_skipsubmenus', 1);
+    //            $mform->disabledIf($option, 'param_navigationmenu', '', 1);
+        $mform->addElement('selectyesno', 'param_navigationupbutton', get_string('navigationup', 'resource'));
+        $mform->setDefault('param_navigationup', 1);
+    //            $mform->disabledIf($option, 'param_navigationmenu', '', 1);
+    //            $mform->disabledIf($option, 'param_navigationmenu', '', 0);//????????
+
     }
 
 } //End class
@@ -767,7 +759,7 @@ class resource_ims extends resource_base {
             }
         /// We are after page and inside it (level > endlevel)
             if ($item->id > $page && $item->level > $endlevel) {
-            /// Start Level 
+            /// Start Level
                 if ($item->level > $currlevel) {
                     $contents .= '<ol class="listlevel_'.$item->level.'">';
                     $openlielement = false;
@@ -828,7 +820,7 @@ class resource_ims extends resource_base {
         }
 
         if ($page >= 1 ) {  //0 and 1 pages haven't previous
-            $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\">$strprevious</a></span>"; 
+            $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\">$strprevious</a></span>";
         } else {
             $contents .= '<span class="ims-nav-dimmed">'.$strprevious.'</span>';
         }
@@ -846,7 +838,7 @@ class resource_ims extends resource_base {
         $resource = $resource_obj->resource;
 
         $contents = '';
-        
+
         $page++;
     /// Skips any menu pages since these are redundant with sidemenu.
         if (!empty($resource_obj->parameters->skipsubmenus)) {
@@ -854,7 +846,7 @@ class resource_ims extends resource_base {
                 $page++;
             }
         }
-        
+
         if (!empty($items[$page])) {  //If the next page exists
             $contents .= "<span class=\"ims-nav-button\"><a href=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;page={$page}&amp;frameset=ims\">$strnext</a></span>";
         } else {

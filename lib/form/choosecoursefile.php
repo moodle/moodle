@@ -65,7 +65,7 @@ class MoodleQuickForm_choosecoursefile extends MoodleQuickForm_group
         global $COURSE;
         $this->_elements = array();
 
-        $this->_elements[0] =& MoodleQuickForm::createElement('text', 'value', '');
+        $this->_elements[0] =& MoodleQuickForm::createElement('text', 'value', '', array('size'=>'48'));
         $this->_elements[1] =& MoodleQuickForm::createElement('button', 'popup', get_string('chooseafile', 'resource') .' ...');
 
         $button =& $this->_elements[1];

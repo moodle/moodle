@@ -39,45 +39,6 @@ function set_parameters() {
     $site = get_site();
 
     $this->parameters = array(
-
-            'label1'          => array('langstr' => get_string('user'),
-                                       'value'   => 'optgroup'),
-
-            'userid'          => array('langstr' => 'id',
-                                       'value'   => $USER->id),
-            'userusername'    => array('langstr' => get_string('username'),
-                                       'value'   => $USER->username),
-            'userpassword'    => array('langstr' => get_string('password'),
-                                       'value'   => $USER->password),
-            'useridnumber'    => array('langstr' => get_string('idnumber'),
-                                       'value'   => $USER->idnumber),
-            'userfirstname'   => array('langstr' => get_string('firstname'),
-                                       'value'   => $USER->firstname),
-            'userlastname'    => array('langstr' => get_string('lastname'),
-                                       'value'   => $USER->lastname),
-            'userfullname'    => array('langstr' => get_string('fullname'),
-                                       'value'   => fullname($USER)),
-            'useremail'       => array('langstr' => get_string('email'),
-                                       'value'   => $USER->email),
-            'usericq'         => array('langstr' => get_string('icqnumber'),
-                                       'value'   => $USER->icq),
-            'userphone1'      => array('langstr' => get_string('phone').' 1',
-                                       'value'   => $USER->phone1),
-            'userphone2'      => array('langstr' => get_string('phone').' 2',
-                                       'value'   => $USER->phone2),
-            'userinstitution' => array('langstr' => get_string('institution'),
-                                       'value'   => $USER->institution),
-            'userdepartment'  => array('langstr' => get_string('department'),
-                                       'value'   => $USER->department),
-            'useraddress'     => array('langstr' => get_string('address'),
-                                       'value'   => $USER->address),
-            'usercity'        => array('langstr' => get_string('city'),
-                                       'value'   => $USER->city),
-            'usertimezone'    => array('langstr' => get_string('timezone'),
-                                       'value'   => get_user_timezone_offset()),
-            'userurl'         => array('langstr' => get_string('webpage'),
-                                       'value'   => $USER->url),
-
             'label2'          => array('langstr' => "",
                                        'value'   =>'/optgroup'),
             'label3'          => array('langstr' => get_string('course'),
@@ -122,56 +83,104 @@ function set_parameters() {
 
             'label6'          => array('langstr' => "",
                                        'value'   =>'/optgroup')
-            );
+    );
 
+    if (!empty($USER->id)) {
+
+        $userparameters = array(
+
+            'label1'          => array('langstr' => get_string('user'),
+                                       'value'   => 'optgroup'),
+
+            'userid'          => array('langstr' => 'id',
+                                       'value'   => $USER->id),
+            'userusername'    => array('langstr' => get_string('username'),
+                                       'value'   => $USER->username),
+            'useridnumber'    => array('langstr' => get_string('idnumber'),
+                                       'value'   => $USER->idnumber),
+            'userfirstname'   => array('langstr' => get_string('firstname'),
+                                       'value'   => $USER->firstname),
+            'userlastname'    => array('langstr' => get_string('lastname'),
+                                       'value'   => $USER->lastname),
+            'userfullname'    => array('langstr' => get_string('fullname'),
+                                       'value'   => fullname($USER)),
+            'useremail'       => array('langstr' => get_string('email'),
+                                       'value'   => $USER->email),
+            'usericq'         => array('langstr' => get_string('icqnumber'),
+                                       'value'   => $USER->icq),
+            'userphone1'      => array('langstr' => get_string('phone').' 1',
+                                       'value'   => $USER->phone1),
+            'userphone2'      => array('langstr' => get_string('phone').' 2',
+                                       'value'   => $USER->phone2),
+            'userinstitution' => array('langstr' => get_string('institution'),
+                                       'value'   => $USER->institution),
+            'userdepartment'  => array('langstr' => get_string('department'),
+                                       'value'   => $USER->department),
+            'useraddress'     => array('langstr' => get_string('address'),
+                                       'value'   => $USER->address),
+            'usercity'        => array('langstr' => get_string('city'),
+                                       'value'   => $USER->city),
+            'usertimezone'    => array('langstr' => get_string('timezone'),
+                                       'value'   => get_user_timezone_offset()),
+            'userurl'         => array('langstr' => get_string('webpage'),
+                                       'value'   => $USER->url)
+         );
+
+         $this->parameters = $userparameters + $this->parameters;
+    }
 }
 
 
-/**
-* Add new instance of repository resource
-*
-* Create alltext field before calling base class function.
-*
-* @param    resource object
-*/
 function add_instance($resource) {
-    $optionlist = array();
-
-    for ($i = 0; $i < $this->maxparameters; $i++) {
-        $parametername = "parameter$i";
-        $parsename = "parse$i";
-        if (!empty($resource->$parsename) and $resource->$parametername != "-") {
-            $optionlist[] = $resource->$parametername."=".$resource->$parsename;
-        }
-    }
-
-    $resource->alltext = implode(',', $optionlist);
-
+    $this->_postprocess($resource);
     return parent::add_instance($resource);
 }
 
 
-/**
-* Update instance of repository resource
-*
-* Create alltext field before calling base class function.
-*
-* @param    resource object
-*/
 function update_instance($resource) {
-    $optionlist = array();
+    $this->_postprocess($resource);
+/*    echo '<xmp>';
+    var_dump($_POST);
+    var_dump($resource);die;*/
+    return parent::update_instance($resource);
+}
 
+function _postprocess(&$resource) {
+    global $RESOURCE_WINDOW_OPTIONS;
+    $alloptions = $RESOURCE_WINDOW_OPTIONS;
+
+    if ($resource->windowpopup) {
+        $optionlist = array();
+        foreach ($alloptions as $option) {
+            $optionlist[] = $option."=".$resource->$option;
+            unset($resource->$option);
+        }
+        $resource->popup = implode(',', $optionlist);
+        unset($resource->windowpopup);
+        $resource->options = '';
+
+    } else {
+        if ($resource->framepage) {
+            $resource->options = 'frame';
+        } else {
+            $resource->options = '';
+        }
+        unset($resource->framepage);
+        $resource->popup = '';
+    }
+
+    $optionlist = array();
     for ($i = 0; $i < $this->maxparameters; $i++) {
         $parametername = "parameter$i";
         $parsename = "parse$i";
         if (!empty($resource->$parsename) and $resource->$parametername != "-") {
             $optionlist[] = $resource->$parametername."=".$resource->$parsename;
         }
+        unset($resource->$parsename);
+        unset($resource->$parametername);
     }
 
     $resource->alltext = implode(',', $optionlist);
-
-    return parent::update_instance($resource);
 }
 
 
@@ -215,6 +224,9 @@ function display() {
     $mimetype = mimeinfo("type", $resource->reference);
     $pagetitle = strip_tags($course->shortname.': '.format_string($resource->name));
 
+    $formatoptions = new object();
+    $formatoptions->noclean = true;
+
     if ($resource->options != "frame") {
         if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
             $resourcetype = "image";
@@ -247,21 +259,21 @@ function display() {
             $field = explode('=', $fieldstring);
             $querys[] = urlencode($field[1]).'='.urlencode($this->parameters[$field[0]]['value']);
         }
-        $querystring = implode('&', $querys);
+        $querystring = implode('&amp;', $querys);
     }
 
 
     /// Set up some variables
 
-    $inpopup = !empty($_GET["inpopup"]);
-    
+    $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
+
        $fullurl =  $resource->reference. '&amp;HIVE_SESSION='.$SESSION->HIVE_SESSION;
     if (!empty($querystring)) {
         $urlpieces = parse_url($resource->reference);
         if (empty($urlpieces['query'])) {
             $fullurl .= '?'.$querystring;
         } else {
-            $fullurl .= '&'.$querystring;
+            $fullurl .= '&amp;'.$querystring;
         }
     }
 
@@ -333,7 +345,8 @@ function display() {
 
     /// Now check whether we need to display a frameset
 
-    if (empty($_GET['frameset']) and !$embedded and !$inpopup and $resource->options == "frame" and empty($USER->screenreader)) {
+    $frameset = optional_param('frameset', '', PARAM_ALPHA);
+    if (empty($frameset) and !$embedded and !$inpopup and $resource->options == "frame" and empty($USER->screenreader)) {
         echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
         echo "<html dir=\"ltr\">\n";
         echo '<head>';
@@ -359,11 +372,10 @@ function display() {
 
     /// If we are in a frameset, just print the top of it
 
-    if (!empty($_GET['frameset']) and $_GET['frameset'] == "top") {
+    if (!empty($frameset) and $frameset == "top") {
         print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
 
-        $options->para = false;
-        echo '<div class="summary">'.format_text($resource->summary, FORMAT_HTML, $options).'</div>';
+        echo '<div class="summary">'.format_text($resource->summary, FORMAT_HTML, $formatoptions).'</div>';
         if (!empty($localpath)) {  // Show some help
             echo '<div align="right" class="helplink">';
             link_to_popup_window ('/mod/resource/type/file/localpath.php', get_string('localfile', 'resource'), get_string('localfilehelp','resource'), 400, 500, get_string('localfilehelp', 'resource'));
@@ -489,122 +501,122 @@ function display() {
 }
 
 
-
-/**
-* Setup a new repository resource
-*
-* Display a form to create a new or edit an existing repository resource
-*
-* @param    form                    object
-* @param    CFG                     global object
-* @param    usehtmleditor           global integer
-* @param    RESOURCE_WINDOW_OPTIONS global array
-*/
-function setup($form) {
-    global $CFG, $usehtmleditor, $RESOURCE_WINDOW_OPTIONS;
-
-    parent::setup($form);
-
-    $this->set_parameters(); // set the parameter array for the form
-
-
-    $strfilename = get_string("location");
-    $strnote     = get_string("note", "resource");
-    $strchooseafile = get_string("chooseafile", "resource");
-    $strnewwindow     = get_string("newwindow", "resource");
-    $strnewwindowopen = get_string("newwindowopen", "resource");
-    $strsearch        = get_string("searchweb", "resource");
-
-    foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
-        $stringname = "str$optionname";
-        $$stringname = get_string("new$optionname", "resource");
-        $window->$optionname = "";
-        $jsoption[] = "\"$optionname\"";
-    }
-
-    $frameoption = "\"framepage\"";
-    $popupoptions = implode(",", $jsoption);
-    $jsoption[] = $frameoption;
-    $alloptions = implode(",", $jsoption);
-
-
-
-    if ($form->instance) {     // Re-editing
-        if (!$form->popup) {
-            $windowtype = "page";   // No popup text => in page
-            foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
-                $defaultvalue = "resource_popup$optionname";
-                $window->$optionname = $CFG->$defaultvalue;
-            }
-        } else {
-            $windowtype = "popup";
-            $rawoptions = explode(',', $form->popup);
-            foreach ($rawoptions as $rawoption) {
-                $option = explode('=', trim($rawoption));
-                $optionname = $option[0];
-                $optionvalue = $option[1];
-                if ($optionname == 'height' or $optionname == 'width') {
-                    $window->$optionname = $optionvalue;
-                } else if ($optionvalue) {
-                    $window->$optionname = 'checked="checked"';
-                }
-            }
-        }
-    } else {
-        foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
-            $defaultvalue = "resource_popup$optionname";
-
-            if ($optionname == 'height' or $optionname == 'width') {
-                $window->$optionname = $CFG->$defaultvalue;
-            } else if ($CFG->$defaultvalue) {
-                $window->$optionname = 'checked="checked"';
-            }
-        }
-
-        $windowtype = ($CFG->resource_popup) ? 'popup' : 'page';
-        if (empty($form->options)) {
-            $form->options = 'frame';
-            $form->reference = $CFG->resource_defaulturl;
-        }
-    }
-    if (empty($form->reference)) {
-        $form->reference = $CFG->resource_defaulturl;
-    }
-
-
-/// set the 5 parameter defaults
-    $alltextfield = array();
-    for ($i = 0; $i < $this->maxparameters; $i++) {
-        $alltextfield[] = array('parameter' => '',
-                                'parse'     => '');
-    }
-    /// load up any stored parameters
-    if (!empty($form->alltext)) {
-        $parray = explode(',', $form->alltext);
-        foreach ($parray as $key => $fieldstring) {
-            $field = explode('=', $fieldstring);
-            $alltextfield[$key]['parameter'] = $field[0];
-            $alltextfield[$key]['parse'] = $field[1];
-        }
-    }
-
-
-    include("$CFG->dirroot/mod/resource/type/repository/repository.html");
-
-    parent::setup_end();
-}
-
 //backwards compatible with existing resources
 function set_encrypted_parameter() {
     global $CFG;
 
-    if (!empty($this->resource->reference) && file_exists($CFG->dirroot ."/mod/resource//type/file/externserverfile.php")) {
+    if (!empty($this->resource->reference) && file_exists($CFG->dirroot ."/mod/resource/type/file/externserverfile.php")) {
         include $CFG->dirroot ."/mod/resource/type/file/externserverfile.php";
         if (function_exists(extern_server_file)) {
             return extern_server_file($this->resource->reference);
         }
     }
     return md5($_SERVER['REMOTE_ADDR'].$CFG->resource_secretphrase);
+}
+
+
+function setup_preprocessing(&$defaults){
+    if (!empty($defaults['popup'])) {
+        $defaults['windowpopup'] = 1;
+        if (array_key_exists('popup', $defaults)) {
+            $rawoptions = explode(',', $defaults['popup']);
+            foreach ($rawoptions as $rawoption) {
+                $option = explode('=', trim($rawoption));
+                $defaults[$option[0]] = $option[1];
+            }
+        }
+    } else {
+        $defaults['windowpopup'] = 0;
+        if (array_key_exists('options', $defaults)) {
+            $defaults['framepage'] = ($defaults['options']=='frame');
+        }
+    }
+    /// load up any stored parameters
+    if (!empty($defaults['alltext'])) {
+        $parray = explode(',', $defaults['alltext']);
+        $i=0;
+        foreach ($parray as $rawpar) {
+            list($param, $varname) = explode('=', $rawpar);
+            $defaults["parse$i"] = $varname;
+            $defaults["parameter$i"] = $param;
+            $i++;
+        }
+    }
+}
+
+function setup_elements(&$mform) {
+    global $CFG, $RESOURCE_WINDOW_OPTIONS;
+
+    $this->set_parameters(); // set the parameter array for the form
+
+    $mform->addElement('text', 'reference', get_string('location'), array('size'=>'48'));
+
+    $options = 'menubar,location,toolbar,scrollbars,resizable,width=750,height=500';
+
+    $button = $mform->addElement('button', 'browsebutton', 'Browse for content in hive...');
+    $url = '/mod/resource/type/repository/hive/openlitebrowse.php';
+    $buttonattributes = array('title'=>'Browse for content in hive', 'onclick'=>"return openpopup('$url', '".$button->getName()."', '$options', 0);");
+    $button->updateAttributes($buttonattributes);
+
+    $button = $mform->addElement('button', 'browsebutton', 'Search for content in Hive...');
+    $url = '/mod/resource/type/repository/hive/openlitesearch.php';
+    $buttonattributes = array('title'=>'Search for content in Hive', 'onclick'=>"return openpopup('$url', '".$button->getName()."', '$options', 0);");
+    $button->updateAttributes($buttonattributes);
+
+    $button = $mform->addElement('button', 'browsebutton', 'Add new item to Hive...');
+    $url = '/mod/resource/type/repository/hive/openlitepublish.php';
+    $buttonattributes = array('title'=>'Add new item to Hive', 'onclick'=>"return openpopup('$url', '".$button->getName()."', '$options', 0);");
+    $button->updateAttributes($buttonattributes);
+
+    $mform->addElement('header', 'displaysettings', get_string('display', 'resource'));
+
+    $woptions = array(0 => get_string('pagewindow', 'resource'), 1 => get_string('newwindow', 'resource'));
+    $mform->addElement('select', 'windowpopup', get_string('display', 'resource'), $woptions);
+    $mform->setDefault('windowpopup', !empty($CFG->resource_popup));
+
+    $mform->addElement('checkbox', 'framepage', get_string('frameifpossible', 'resource'));
+    $mform->setDefault('framepage', 0);
+//    $mform->disabledIf('framepage', 'windowpopup', '', 0);
+
+    foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
+        if ($option == 'height' or $option == 'width') {
+            $mform->addElement('text', $option, get_string('new'.$option, 'resource'), array('size'=>'4'));
+            $mform->setDefault($option, $CFG->{'resource_popup'.$option});
+//            $mform->disabledIf($option, 'windowpopup', '', 1);
+        } else {
+            $mform->addElement('checkbox', $option, get_string('new'.$option, 'resource'));
+            $mform->setDefault($option, $CFG->{'resource_popup'.$option});
+//            $mform->disabledIf($option, 'windowpopup', '', 1);
+        }
+    }
+
+    $mform->addElement('header', 'parameters', get_string('parameters', 'resource'));
+
+    $options = array();
+    $options['-'] = get_string('chooseparameter', 'resource').'...';
+    $optgroup = '';
+    foreach ($this->parameters as $pname=>$param) {
+        if ($param['value']=='/optgroup') {
+            $optgroup = '';
+            continue;
+        }
+        if ($param['value']=='optgroup') {
+            $optgroup = $param['langstr'];
+            continue;
+        }
+        $options[$pname] = $optgroup.' - '.$param['langstr'];
+    }
+
+    for ($i = 0; $i < $this->maxparameters; $i++) {
+        $parametername = "parameter$i";
+        $parsename = "parse$i";
+        $group = array();
+        $group[] =& $mform->createElement('text', $parsename, '', array('size'=>'12'));//TODO: accessiblity
+        $group[] =& $mform->createElement('select', $parametername, '', $options);//TODO: accessiblity
+        $mform->addGroup($group, 'pargroup', get_string('variablename', 'resource').'='.get_string('parameter', 'resource'), ' ', false);
+
+        $mform->setDefault($parametername, '-');
+    }
 }
 
 }

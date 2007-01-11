@@ -21,11 +21,11 @@ class mod_forum_post_form extends moodleform {
 
         $mform->addElement('header', 'general', '');//fill in the data depending on page params
                                                     //later using set_defaults
-		$mform->addElement('text', 'subject', get_string('subject', 'forum'), 'size="60"');
+		$mform->addElement('text', 'subject', get_string('subject', 'forum'), 'size="64"');
 		$mform->setType('subject', PARAM_TEXT);
 		$mform->addRule('subject', get_string('required'), 'required', null, 'client');
 
-		$mform->addElement('htmleditor', 'message', get_string('message', 'forum'));
+		$mform->addElement('htmleditor', 'message', get_string('message', 'forum'), array('cols'=>85, 'rows'=>30));
 		$mform->setType('message', PARAM_RAW);
 		$mform->addRule('message', get_string('required'), 'required', null, 'client');
         $mform->setHelpButton('message', array('reading', 'writing', 'questions', 'richtext'), false, 'editorhelpbutton');

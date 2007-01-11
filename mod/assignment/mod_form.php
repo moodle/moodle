@@ -31,7 +31,7 @@ class mod_assignment_mod_form extends moodleform_mod {
 
 //        $mform->addElement('static', 'statictype', get_string('assignmenttype', 'assignment'), get_string('type'.$type,'assignment'));
 
-        $mform->addElement('text', 'name', get_string('assignmentname', 'assignment'));
+        $mform->addElement('text', 'name', get_string('assignmentname', 'assignment'), array('size'=>'64'));
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
 
