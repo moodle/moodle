@@ -17,7 +17,6 @@ $adminroot = admin_get_root();
 
 
 admin_externalpage_setup('ssoaccesscontrol', $adminroot);
-admin_externalpage_print_header($adminroot);
 
 if (!extension_loaded('openssl')) {
     print_error('requiresopenssl', 'mnet', '', NULL, true);
@@ -53,7 +52,7 @@ if (!empty($action) and confirm_sesskey()) {
 
         case "delete":
             delete_records('mnet_sso_access_control', 'id', $id);
-            notify(get_string('deleteuserrecord', 'mnet', array($idrec->username, $mnethosts[$idrec->mnet_host_id])));
+            redirect('access_control.php', get_string('deleteuserrecord', 'mnet', array($idrec->username, $mnethosts[$idrec->mnet_host_id])));
             break;
 
         case "acl":
@@ -65,14 +64,17 @@ if (!empty($action) and confirm_sesskey()) {
             }
 
             if (mnet_update_sso_access_control($idrec->username, $idrec->mnet_host_id, $access)) {
-                notify(get_string('ssoacl', 'mnet', array($access, $idrec->username, $mnethosts[$idrec->mnet_host_id])));
+                if ($access == 'allow') {
+                    redirect('access_control.php', get_string('ssl_acl_allow','mnet', array($idrec->username, $mnethosts[$idrec->mnet_host_id])));
+                } elseif ($access == 'deny') {
+                    redirect('access_control.php', get_string('ssl_acl_deny','mnet', array($idrec->username, $mnethosts[$idrec->mnet_host_id])));
+                }
             }
             break;
 
         default:
-            error(get_string('invalidactionparam', 'mnet'), '/admin/mnet/access_control.php');
+            print_error('invalidactionparam', 'mnet', '/admin/mnet/access_control.php');
     }
-    redirect('access_control.php', get_string('changessaved'));
 }
 
 
@@ -104,15 +106,19 @@ if ($form = data_submitted() and confirm_sesskey()) {
             $username = trim(moodle_strtolower($username));
             if (!empty($username)) {
                 if (mnet_update_sso_access_control($username, $form->mnet_host_id, $form->access)) {
-                    notify("SSO ACL: $form->access user '$username' from {$mnethosts[$form->mnet_host_id]}");
+                    if ($form->access == 'allow') {
+                        redirect('access_control.php', get_string('ssl_acl_allow','mnet', array($username, $mnethosts[$form->mnet_host_id])));
+                    } elseif ($form->access == 'deny') {
+                        redirect('access_control.php', get_string('ssl_acl_deny','mnet', array($username, $mnethosts[$form->mnet_host_id])));
+                    }
                 }
             }
         }
-        redirect('access_control.php', get_string('changessaved'));
     }
+    exit;
 }
 
-
+admin_externalpage_print_header($adminroot);
 
 // output the ACL table
 $columns = array("username", "mnet_host_id", "access", "delete");
@@ -173,7 +179,7 @@ print_simple_box_start('center','90%','','20');
 ?>
  <div class="mnetaddtoaclform"> 
   <form id="mnetaddtoacl" method="post">
-    <input type="hidden" name="sesskey" value="<?php echo $sesskey; ?>">
+    <input type="hidden" name="sesskey" value="<?php echo $sesskey; ?>" />
 <?php
 
 // enter a username
