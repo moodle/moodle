@@ -2607,6 +2607,11 @@ function role_context_capabilities($roleid, $context, $cap='') {
  */
 function get_parent_contexts($context) {
 
+    static $pcontexts; // cache
+    if (isset($pcontexts[$context->id])) {
+        return ($pcontexts[$context->id]);  
+    }
+
     switch ($context->contextlevel) {
 
         case CONTEXT_SYSTEM: // no parent
@@ -2617,7 +2622,9 @@ function get_parent_contexts($context) {
             if (!$parent = get_context_instance(CONTEXT_SYSTEM)) {
                 return array();
             } else {
-                return array($parent->id);
+                $res = array($parent->id);
+                $pcontexts[$context->id] = $res;
+                return $res;
             }
         break;
 
@@ -2625,7 +2632,9 @@ function get_parent_contexts($context) {
             if (!$parent = get_context_instance(CONTEXT_SYSTEM)) {
                 return array();
             } else {
-                return array($parent->id);
+                $res = array($parent->id);
+                $pcontexts[$context->id] = $res;
+                return $res;
             }
         break;
 
@@ -2635,10 +2644,14 @@ function get_parent_contexts($context) {
             }
             if (!empty($coursecat->parent)) { // return parent value if exist
                 $parent = get_context_instance(CONTEXT_COURSECAT, $coursecat->parent);
-                return array_merge(array($parent->id), get_parent_contexts($parent));
+                $res = array_merge(array($parent->id), get_parent_contexts($parent));
+                $pcontexts[$context->id] = $res;
+                return $res;
             } else { // else return site value
                 $parent = get_context_instance(CONTEXT_SYSTEM);
-                return array($parent->id);
+                $res = array($parent->id);
+                $pcontexts[$context->id] = $res;
+                return $res;
             }
         break;
 
@@ -2648,11 +2661,14 @@ function get_parent_contexts($context) {
             }
             if ($course->id != SITEID) {
                 $parent = get_context_instance(CONTEXT_COURSECAT, $course->category);
-                return array_merge(array($parent->id), get_parent_contexts($parent));
+                $res = array_merge(array($parent->id), get_parent_contexts($parent));
+                return $res;
             } else {
                 // Yu: Separating site and site course context
                 $parent = get_context_instance(CONTEXT_SYSTEM);
-                return array($parent->id);
+                $res = array($parent->id);
+                $pcontexts[$context->id] = $res;
+                return $res;
             }
         break;
 
@@ -2661,7 +2677,9 @@ function get_parent_contexts($context) {
                 return array();
             }
             if ($parent = get_context_instance(CONTEXT_COURSE, $group->courseid)) {
-                return array_merge(array($parent->id), get_parent_contexts($parent));
+                $res = array_merge(array($parent->id), get_parent_contexts($parent));
+                $pcontexts[$context->id] = $res;
+                return $res;
             } else {
                 return array();
             }
@@ -2672,7 +2690,9 @@ function get_parent_contexts($context) {
                 return array();
             }
             if ($parent = get_context_instance(CONTEXT_COURSE, $cm->course)) {
-                return array_merge(array($parent->id), get_parent_contexts($parent));
+                $res = array_merge(array($parent->id), get_parent_contexts($parent));
+                $pcontexts[$context->id] = $res;
+                return $res;
             } else {
                 return array();
             }
@@ -2683,7 +2703,9 @@ function get_parent_contexts($context) {
                 return array();
             }
             if ($parent = get_context_instance(CONTEXT_COURSE, $block->pageid)) {
-                return array_merge(array($parent->id), get_parent_contexts($parent));
+                $res = array_merge(array($parent->id), get_parent_contexts($parent));
+                $pcontexts[$context->id] = $res;
+                return $res;
             } else {
                 return array();
             }
