@@ -65,7 +65,7 @@
 
     print_box_start();
     print_heading($strheading);
-    popup_form("$CFG->wwwroot/$CFG->admin/stickyblocks.php?pt=", $options, 'selecttype', $pt, 'choose', '', '', false, 'self', get_string('stickyblockspagetype','admin'));
+    popup_form("$CFG->wwwroot/$CFG->admin/stickyblocks.php?pt=", $options, 'selecttype', $pt, 'choose', '', '', false, 'self', get_string('stickyblockspagetype','admin').': ');
     echo '<p>'.get_string('stickyblocksduplicatenotice','admin').'</p>';
     print_box_end();
 
