@@ -96,7 +96,7 @@
         if (isediting($course->id)) {
             echo '<a title="'.$streditsummary.'" '.
                  ' href="editsection.php?id='.$thissection->id.'"><img src="'.$CFG->pixpath.'/t/edit.gif" '.
-                 'class="icon edit" alt="'.$streditsummary.'" /></a><br /><br />';
+                 'class="iconsmall edit" alt="'.$streditsummary.'" /></a><br /><br />';
         }
         echo '</div>';
         
@@ -198,7 +198,7 @@
 
                 if (isediting($course->id)) {
                     echo ' <a title="'.$streditsummary.'" href="editsection.php?id='.$thissection->id.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon edit" alt="'.$streditsummary.'" /></a><br /><br />';
+                         '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall edit" alt="'.$streditsummary.'" /></a><br /><br />';
                 }
                 echo '</div>';
 
@@ -231,12 +231,12 @@
                 }
                 if ($section > 1) {                       // Add a arrow to move section up
                     echo '<a href="view.php?id='.$course->id.'&amp;random='.rand(1,10000).'&amp;section='.$section.'&amp;move=-1&amp;sesskey='.$USER->sesskey.'#section-'.($section-1).'" title="'.$strmoveup.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/up.gif" class="icon up" alt="'.$strmoveup.'" /></a><br />';
+                         '<img src="'.$CFG->pixpath.'/t/up.gif" class="iconsmall up" alt="'.$strmoveup.'" /></a><br />';
                 }
 
                 if ($section < $course->numsections) {    // Add a arrow to move section down
                     echo '<a href="view.php?id='.$course->id.'&amp;random='.rand(1,10000).'&amp;section='.$section.'&amp;move=1&amp;sesskey='.$USER->sesskey.'#section-'.($section+1).'" title="'.$strmovedown.'">'.
-                         '<img src="'.$CFG->pixpath.'/t/down.gif" class="icon down" alt="'.$strmovedown.'" /></a><br />';
+                         '<img src="'.$CFG->pixpath.'/t/down.gif" class="iconsmall down" alt="'.$strmovedown.'" /></a><br />';
                 }
             }
 
