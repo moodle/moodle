@@ -5405,62 +5405,6 @@ class tabobject {
         $this->title = $title ? $title : $text;
         $this->linkedwhenselected = $linkedwhenselected;
     }
-
-
-    /// a method to look after the messy business of setting up a tab cell
-    /// with all the appropriate classes and things
-    function createtab ($selected=false, $inactive=false, $activetwo=false, $last=false) {
-        $str  = '';
-        $astr = '';
-        $cstr = '';
-
-    /// The text and anchor for this tab
-        if ($inactive || $activetwo || ($selected && !$this->linkedwhenselected)) {
-            $astr .= $this->text;
-        } else {
-            $astr .= '<a href="'.$this->link.'" title="'.$this->title.'">'.$this->text.'</a>';
-        }
-
-    /// There's an IE bug with background images in <a> tags
-    /// so we put a div around so that we can add a background image
-        $astr = '<div class="tablink">'.$astr.'</div>';
-
-    /// Set the class for inactive cells
-        if ($inactive) {
-            $cstr .= ' inactive';
-
-        /// Set the class for active cells in the second row
-            if ($activetwo) {
-                $cstr .= ' activetwo';
-            }
-
-    /// Set the class for the selected cell
-        } else if ($selected) {
-            $cstr .= ' selected';
-
-    /// Set the standard class for a cell
-        } else {
-            $cstr .= ' active';
-        }
-
-
-    /// Are we on the last tab in this row?
-        if ($last) {
-            $astr = '<div class="last">'.$astr.'</div>';
-        }
-
-    /// Lets set up the tab cell
-        $str .= '<td';
-        if (!empty($cstr)) {
-            $str .= ' class="'.ltrim($cstr).'"';
-        }
-        $str .= '>';
-        $str .= $astr;
-        $str .= '</td>';
-
-        return $str;
-    }
-
 }
 
 
@@ -5507,42 +5451,86 @@ function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $activetwo=NULL, $
         $activetwo = array();
     }
 
-/// A table to encapsulate the tabs
-    $str = '<table class="tabs" cellspacing="0">';
-    $str .= '<tr><td class="left side"></td><td>';
-
-    $rowcount = count($tabrows);
-/// Cycle through the tab rows
-    foreach ($tabrows as $row) {
-
-        $rowcount--;
-
-        $str .= '<table class="tabrow r'.$rowcount.'" cellspacing="0">';
-        $str .= '<tr>';
-
-        $numberoftabs = count($row);
-        $currenttab   = 0;
-        $cstr         = '';
-        $astr         = '';
-
-
-    /// Cycle through the tabs
-        foreach ($row as $tab) {
-            $currenttab++;
-
-            $str .= $tab->createtab( ($selected == $tab->id), (in_array($tab->id, $inactive)), (in_array($tab->id, $activetwo)), ($currenttab == $numberoftabs) );
-        }
-
-        $str .= '</tr>';
-        $str .= '</table>';
+/// Convert the tab rows into a tree that's easier to process
+    if (!$tree = convert_tabrows_to_tree($tabrows, $selected, $inactive, $activetwo)) {
+        return false;
     }
-    $str .= '</td><td class="right side"></td></tr>';
-    $str .= '</table>';
+
+/// Print out the current tree of tabs (this function is recursive)
+   
+    $output = convert_tree_to_html($tree);
+
+    $output = "\n\n".'<div class="tabtree">'.$output.'</div><div class="clearer"> </div>'."\n\n";
+
+/// We're done!
 
     if ($return) {
-        return $str;
+        return $output;
     }
-    echo $str;
+    echo $output;
+}
+
+
+function convert_tree_to_html($tree, $row=0) {
+
+    $str = "\n".'<ul class="tabrow'.$row.'">'."\n";
+
+    foreach ($tree as $tab) {
+        $str .= '<li>';
+
+        if ($tab->active || $tab->selected) { 
+            $linkclass = ' class="selected"';
+        } else {
+            $linkclass = '';
+        }
+
+        if ($tab->inactive || $tab->active || ($tab->selected && !$tab->linkedwhenselected)) {
+            $astr = '<a href="#" title="'.$tab->title.'"'.$linkclass.'>'.$tab->text.'</a>';
+        } else {
+            $astr = '<a href="'.$tab->link.'" title="'.$tab->title.'"'.$linkclass.'>'.$tab->text.'</a>';
+        }
+
+        $str .= '<div class="tablink">'.$astr.'</div>';
+
+        if (!empty($tab->subtree)) { 
+            $str .= convert_tree_to_html($tab->subtree, $row+1);
+        }
+
+        $str .= '</li>'."\n";
+    }
+    $str .= '</ul>'."\n";
+
+    return $str;
+}
+
+
+function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activetwo) {
+
+/// Work backwards through the rows (bottom to top) collecting the tree as we go.
+
+    $tabrows = array_reverse($tabrows);
+
+    $subtree = array();
+
+    foreach ($tabrows as $row) {
+        $tree = array();
+
+        foreach ($row as $tab) {
+            $tab->inactive = in_array($tab->id, $inactive);
+            $tab->active = in_array($tab->id, $activetwo);
+            $tab->selected = $tab->id == $selected;
+
+            if ($tab->active || $tab->selected) {
+                if ($subtree) {
+                    $tab->subtree = $subtree;
+                }
+            }
+            $tree[] = $tab;
+        }
+        $subtree = $tree;
+    }
+
+    return $tree;
 }
 
 

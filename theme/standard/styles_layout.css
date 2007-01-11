@@ -275,7 +275,7 @@ img.emoticon {
 }
 
 form.popupform {
-    display: inline;
+  display: inline;
 }
 
 .arrow_button {
@@ -292,33 +292,33 @@ form.popupform {
   vertical-align: top;
 }
 
-img.icon {      
+img.icon {
   vertical-align:middle;   
   margin-right:4px;
-  width:16px;   
-  height:16px;      
+  width:16px;
+  height:16px;
   border:0px;   
 }   
-    
-img.iconsmall {     
+
+img.iconsmall {
   vertical-align:middle;   
   margin-right:1px;
   width:11px;   
-  height:11px;      
+  height:11px;
   border:0px;   
 }
 
-img.iconhelp {     
+img.iconhelp {
   vertical-align:middle;   
   margin-right:4px;
   width:17px;   
-  height:17px;      
+  height:17px;
   border:0px;   
 }
 
-img.iconkbhelp {     
+img.iconkbhelp {
   width:49px;   
-  height:17px;      
+  height:17px;
   border:0px;   
 }
 
@@ -1010,19 +1010,19 @@ a.skip-block, .skip-block {
 }
 
 #calendar .maincalendar {
-    height: 100%;
+  height: 100%;
 }
 
 #calendar .maincalendar .heightcontainer {
-    height: 100%;
-    position: relative;
+  height: 100%;
+  position: relative;
 }
 
 #calendar .maincalendar .bottom {
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    text-align: center;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  text-align: center;
 }
 
 #calendar .sidecalendar {
@@ -1672,7 +1672,7 @@ body#grade-index .grades .weighted {
  ***/
 
 .message-discussion-noframes #userinfo .userpicture {
-	float:left;
+  float:left;
 }
 
 .message-discussion-noframes #userinfo .name h1 {
@@ -1706,7 +1706,7 @@ body#grade-index .grades .weighted {
 }
 
 .message-discussion-noframes #send h1 {
-	margin:0px;
+  margin:0px;
 }
 
 .message-discussion-noframes #messages {
@@ -1896,51 +1896,77 @@ body#message-messages {
  *** Tabs
  ***/
 
-.tabs {
-  width: auto;
-  margin-bottom: 15px;
-  border-collapse: collapse;
+.tabtree {
 }
 
-.tabs td {
-  padding: 0px;
-}
-
-.tabs .side {
-  width: 50%;
-  border-style: solid;
-  border-width: 0px 0px 1px 0px;
-}
-
-.tabrow {
-  border-collapse:collapse;
+.tabrow0 {
+  position:relative;
+  float:left;
   width:100%;
-  margin: 1px 0px 0px 0px;
+  padding:0 0 1.75em 1em;
+  margin:0;
+  list-style:none;
+  line-height:1em;
 }
 
-.tabrow td {
-  padding:0 0 0px 14px;
-  border-style: solid;
-  border-width: 0px 0px 1px 0px;
+.tabrow0 li {
+  float:left;
+  margin:0;
+  padding:0;
 }
 
-.tabrow th {
-  display:none;
-}
-.tabrow td .tablink {
+.tabrow0 a {
   display:block;
-  padding:10px 14px 4px 0px;
-  text-align:center;
-  white-space:nowrap;
+  color:#006;
   text-decoration:none;
-}
-.tabrow .last {
-  display:block;
-  padding:0px 1px 0px 0px;
+  /* font-weight:bold; */
+  background:#ddd;
+  margin:0;
+  padding:0.25em 1em;
+  border-left:1px solid #fff;
+  border-top:1px solid #fff;
+  border-right:1px solid #aaa;
 }
 
-.tabrow td.selected {
-  border-width: 0px;
+.tabrow0 a:hover,
+.tabrow0 a:active,
+.tabrow0 a.selected:link,
+.tabrow0 a.selected:visited {
+  background:#bbb;
+}
+
+.tabrow0 a.selected:link,
+.tabrow0 a.selected:visited {
+  position:relative;
+  z-index:102;
+}
+
+/*subnav*/
+.tabrow0 ul {
+  position:absolute;
+  left:0;
+  top:1.5em;
+  float:left;
+  background:#bbb;
+  width:100%;
+  margin:0;
+  padding:0.25em 0.25em 0.25em 1em;
+  list-style:none;
+  border-top:1px solid #fff;
+}
+
+.tabrow0 ul li {
+  float:left;
+  display:block;
+  margin-top:1px;
+}
+
+.tabrow0 ul a {
+  background:#bbb;
+  display:inline;
+  margin:0;
+  padding:0 1em;
+  border:0
 }
 
 
@@ -2552,7 +2578,7 @@ body#mod-quiz-report table#attempts .picture {
 body#mod-quiz-report .controls {
   text-align: center;
 }
-body#question-preview .quemodname, body#question-preview .controls {     
+body#question-preview .quemodname, body#question-preview .controls {   
   text-align: center;   
 }
 
