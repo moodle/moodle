@@ -54,9 +54,7 @@
     $yesno = array( get_string('no'), get_string('yes') );
     
 if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
-    print '<tr><td><p align="center"><font color="red"><strong>Warning:
-           The PHP LDAP module does not seem to be present. 
-           Please ensure it is installed and enabled.</strong></font></p></td></tr>';
+    notify(get_string('auth_ldap_noextension','auth'));
 }
     
 ?>

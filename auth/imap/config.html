@@ -18,7 +18,7 @@ if (!isset($config->changepasswordurl)) {
 <table cellspacing="0" cellpadding="5" border="0" align="center">
 
 <tr valign="top" class="required">
-    <td align="right"> host: </td>
+    <td align="right"><?php print_string('auth_imaphost_key', 'auth') ?>: </td>
     <td>
         <input name="host" type="text" size="30" value="<?php echo $config->host ?>" />
         <?php
@@ -40,7 +40,7 @@ if (!isset($config->changepasswordurl)) {
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"> type: </td>
+    <td align="right"><?php print_string('auth_imaptype_key', 'auth') ?>: </td>
     <td>
         <?php
 
@@ -56,7 +56,7 @@ if (!isset($config->changepasswordurl)) {
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"> port: </td>
+    <td align="right"><?php print_string('auth_imapport_key', 'auth') ?>: </td>
     <td>
         <input name="port" type="text" size="6" value="<?php echo $config->port ?>" />
         <?php
@@ -71,7 +71,7 @@ if (!isset($config->changepasswordurl)) {
 </tr>
 
 <tr valign="top">
-    <td align="right"> changepasswordurl: </td>
+    <td align="right"><?php print_string('auth_imapchangepasswordurl_key', 'auth') ?>: </td>
     <td>
         <input name="changepasswordurl" type="text" value="<?php echo $config->changepasswordurl ?>" />
         <?php

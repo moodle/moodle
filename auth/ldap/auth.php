@@ -82,7 +82,7 @@ class auth_plugin_ldap {
         }
         else {
             @ldap_close($ldapconnection);
-            error("LDAP-module cannot connect to server: $this->config->host_url");
+            print_error('auth_ldap_noconnect','auth',$this->config->host_url);
         }
         return false;
     }
@@ -249,7 +249,7 @@ class auth_plugin_ldap {
                 $newuser['userpassword']=$plainpass;
                 break;
             default:
-               error('auth: ldap user_create() does not support selected usertype:"'.$this->config->user_type.'" (..yet)');
+               print_error('auth_ldap_unsupportedusertype','auth',$this->config->user_type);
         }
         $uadd = $this->ldap_add($ldapconnection, "{$this->config->user_attribute}={$userobject->username},{$this->config->create_context}", $newuser);
         ldap_close($ldapconnection);
@@ -428,7 +428,7 @@ class auth_plugin_ldap {
 
         if (!$ldapconnection) {
             @ldap_close($ldapconnection);
-            notify("LDAP-module cannot connect to server: $CFG->ldap_host_url");
+            notify(get_string('auth_ldap_noconnect','auth',$this->config->host_url));
             return false;
         }
 
@@ -1224,7 +1224,7 @@ class auth_plugin_ldap {
                 $result = $time * DAYSECS; //The shadowExpire contains the number of DAYS between 01/01/1970 and the actual expiration date
                 break;
             default:  
-                error('config.user_type not defined or function ldap_expirationtime2unix does not support selected type!');
+                print_error('auth_ldap_usertypeundefined', 'auth');
         }
         return $result;
     }
@@ -1245,7 +1245,7 @@ class auth_plugin_ldap {
                 $result = $time ; //Already in correct format
                 break;
             default:  
-                error('config.user_type not defined or function ldap_unixi2expirationtime does not support selected type!');
+                print_error('auth_ldap_usertypeundefined2', 'auth');
         }        
         return $result;
 
@@ -1366,7 +1366,7 @@ class auth_plugin_ldap {
         }
 
         //If any of servers are alive we have already returned connection
-        error("LDAP-module cannot connect any LDAP servers : $debuginfo");
+        print_error('auth_ldap_noconnect_all','auth',$this->config->user_type);
         return false;
     }
 

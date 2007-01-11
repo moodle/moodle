@@ -112,6 +112,10 @@ $string['auth_imaphost'] = 'The IMAP server address. Use the IP number, not DNS 
 $string['auth_imapport'] = 'IMAP server port number. Usually this is 143 or 993.';
 $string['auth_imaptitle'] = 'Use an IMAP server';
 $string['auth_imaptype'] = 'The IMAP server type.  IMAP servers can have different types of authentication and negotiation.';
+$string['auth_imaptype_key'] = 'Type';
+$string['auth_imaphost_key'] = 'Host';
+$string['auth_imapport_key'] = 'Port';
+$string['auth_imapchangepasswordurl_key'] = 'Password-change URL';
 
 // LDAP plugin
 $string['auth_ldap_bind_dn'] = 'If you want to use bind-user to search users, specify it here. Something like \'cn=ldapuser,ou=public,o=org\'';
@@ -169,6 +173,12 @@ $string['auth_ldap_gracelogin_key'] = 'Grace login attribute';
 $string['auth_ldap_auth_user_create_key'] = 'Create users externally';
 $string['auth_ldap_create_context_key'] = 'Context for new users';
 $string['auth_ldap_creators_key'] = 'Creators';
+$string['auth_ldap_noconnect'] = 'LDAP-module cannot connect to server: $a';
+$string['auth_ldap_noconnect_all'] = 'LDAP-module cannot connect to any servers: $a';
+$string['auth_ldap_unsupportedusertype'] = 'auth: ldap user_create() does not support selected usertype:"$a" (..yet)';
+$string['auth_ldap_usertypeundefined'] = 'config.user_type not defined or function ldap_expirationtime2unix does not support selected type!';
+$string['auth_ldap_usertypeundefined2'] = 'config.user_type not defined or function ldap_unixi2expirationtime does not support selected type!';
+$string['auth_ldap_noextension'] = 'Warning: The PHP LDAP module does not seem to be present. Please ensure it is installed and enabled.';
 
 $string['auth_ldapextrafields'] = 'These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <b>LDAP fields</b> that you specify here. <p>If you leave these fields blank, then nothing will be transferred from LDAP and Moodle defaults will be used instead.</p><p>In either case, the user will be able to edit all of these fields after they log in.</p>';
 $string['auth_ldaptitle'] = 'Use an LDAP server';
