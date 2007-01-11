@@ -63,13 +63,11 @@
     }
 
 
-    print_simple_box_start('center');
+    print_box_start();
     print_heading($strheading);
-    echo '<div align="center">'.get_string('stickyblockspagetype','admin').': ';
-    popup_form("$CFG->wwwroot/$CFG->admin/stickyblocks.php?pt=", $options, 'selecttype', $pt);
-    echo '</div>';
+    popup_form("$CFG->wwwroot/$CFG->admin/stickyblocks.php?pt=", $options, 'selecttype', $pt, 'choose', '', '', false, 'self', get_string('stickyblockspagetype','admin'));
     echo '<p>'.get_string('stickyblocksduplicatenotice','admin').'</p>';
-    print_simple_box_end();
+    print_box_end();
 
 
     if (!empty($pt)) {

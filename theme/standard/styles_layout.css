@@ -633,17 +633,21 @@ body#admin-blocks table#incompatible th.c0 {
   text-align: left;
 }
 
-body#admin-blocks
-body#admin-config .confighelp {
+#admin-blocks
+#admin-config .confighelp {
   display: block;
   padding-bottom: 20px;
 }
 
-body#admin-roles-manage table.generalbox {
+#admin-roles-manage table.generalbox {
   margin: auto;
 }
 
-body#admin-index .copyrightnotice {
+#admin-stickyblocks .generalbox {
+  text-align:center;
+}
+
+#admin-index .copyrightnotice {
   margin: auto;
   text-align: center;
 }
