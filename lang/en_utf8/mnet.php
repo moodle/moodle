@@ -23,6 +23,10 @@ $string['trustedhostsexplain']          = 'Please enter a list of IP addresses o
                                           '192.168.0.0/0<br />'.
                                           'Obviously the last example is not a recommended configuration.';
 
+$string['hideremote']                   = 'Hide remote users';
+$string['showremote']                   = 'Show remote users';
+$string['hidelocal']                    = 'Hide local users';
+$string['showlocal']                    = 'Show local users';
 $string['hostcoursenotfound']           = 'Host or course not found';
 $string['enrollingincourse']            = 'Enrolling in course $a[0] on host $a[1]<br />';
 
@@ -48,7 +52,6 @@ $string['reallydeleteserver']           = 'Are you sure you want to delete the s
 $string['deleteuserrecord']             = 'SSO ACL: delete record for user \'$a[0]\' from $a[1].';
 $string['invalidaccessparam']           = 'Invalid access parameter.';
 $string['invalidactionparam']           = 'Invalid action parameter.';
-$string['ssoacl']                       = 'SSO ACL: $a[0] user \'$a[1]\' from $a[2]';
 $string['currentkey']                   = 'Current Public Key';
 $string['keymismatch']                  = 'The public key you are holding for this host is different from the public key it is currently publishing.';
 $string['invalidurl']                   = 'Invalid URL parameter.';
@@ -81,6 +84,9 @@ $string['registerallhostsexplain']      = 'You can choose to register all hosts 
                                           'You have the option below to configure services for \'All Hosts\' and by enabling some services there, you are able to provide '.
                                           'services to any Moodle server indiscriminately.';
 
+$string['mnet_session_prohibited']      = 'Users from your home server are not currently permitted to roam to $a.';
+$string['ssl_acl_allow']                = 'SSO ACL: Allow user $a[0] from $a[1]';
+$string['ssl_acl_deny']                = 'SSO ACL: Deny user $a[0] from $a[1]';
 $string['enabled_for_all']              = '(This service has been enabled for all hosts).';
 $string['nosuchfile']                   = 'The file/function $a does not exist.';
 $string['nosuchfunction']               = 'Unable to locate function, or function prohibited for RPC.';
