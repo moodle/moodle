@@ -23,12 +23,7 @@ class question_edit_form extends moodleform {
      * @var object
      */
     var $question;
-    /**
-     * Course id
-     *
-     * @var integer
-     */
-    var $courseid;
+
     function question_edit_form($submiturl, $question){
         $this->question = $question;
         parent::moodleform($submiturl);
@@ -51,7 +46,7 @@ class question_edit_form extends moodleform {
         // Standard fields at the start of the form.
         $mform->addElement('header', 'generalheader', get_string("general", 'form'));
 
-        $mform->addElement('questioncategory', 'category', get_string('category', 'quiz'),
+        $mform->addElement('questioncategory', 'category', get_string('category', 'quiz'), null,
                 array('courseid' => $COURSE->id, 'published' => true, 'only_editable' => true));
 
         $mform->addElement('text', 'name', get_string('questionname', 'quiz'),
@@ -82,6 +77,7 @@ class question_edit_form extends moodleform {
         $mform->addElement('text', 'defaultgrade', get_string('defaultgrade', 'quiz'),
                 array('size' => 3));
         $mform->setType('defaultgrade', PARAM_INT);
+        $mform->setDefault('defaultgrade', 1);
         $mform->addRule('defaultgrade', null, 'required', null, 'client');
 
         $mform->addElement('text', 'penalty', get_string('penaltyfactor', 'quiz'),
@@ -89,6 +85,7 @@ class question_edit_form extends moodleform {
         $mform->setType('penalty', PARAM_NUMBER);
         $mform->addRule('penalty', null, 'required', null, 'client');
         $mform->setHelpButton('penalty', array('penalty', get_string('penalty', 'quiz'), 'quiz'));
+        $mform->setDefault('penalty', 0.1);
 
         $mform->addElement('htmleditor', 'generalfeedback', get_string('generalfeedback', 'quiz'),
                 array('rows' => 10, 'course' => $COURSE->id));
@@ -132,9 +129,7 @@ class question_edit_form extends moodleform {
 
     function set_defaults($question) {
         global $QTYPES;
-        if (!isset($question->id)){
-            $QTYPES[$question->qtype]->set_default_options($question);
-        }
+        $QTYPES[$question->qtype]->set_default_options($question);
         if (empty($question->image)){
             unset($question->image);
         }

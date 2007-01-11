@@ -168,6 +168,39 @@ class question_dataset_dependent_questiontype extends default_questiontype {
         }
     }
 
+    // This gets called by question2.php after the standard question is saved
+    function &next_wizard_form($submiturl, $question, $wizard){
+        global $CFG, $SESSION;
+
+        // Catch invalid navigation & reloads
+        if (empty($question->id) && empty($SESSION->datasetdependent)) {
+            redirect('edit.php', 'The page you are loading has expired.', 3);
+        }
+        if (!isset($question->id)){
+            $question =& $SESSION->datasetdependent->questionform;
+        }
+
+        // See where we're coming from
+        switch($wizard) {
+            case 'question':
+                require("$CFG->dirroot/question/type/datasetdependent/datasetdefinitions_form.php");
+                $mform =& new question_dataset_dependent_definitions_form($submiturl, $question);
+                $mform->heading = print_heading_with_help(get_string("choosedatasetproperties", "quiz"), "questiondatasets", "quiz", '', true);
+                break;
+            case 'datasetdefinitions':
+            case 'datasetitems':
+                require("$CFG->dirroot/question/type/datasetdependent/datasetitems_form.php");
+                $mform =& new question_dataset_dependent_items_form($submiturl, $question);
+                $streditdatasets = get_string("editdatasets", "quiz");
+                $mform->heading  = print_heading_with_help($streditdatasets, 'questiondatasets', "quiz", '', true);
+                break;
+            default:
+                error('Incorrect or no wizard page specified!');
+                break;
+        }
+
+        return $mform;
+    }
     function save_question($question, &$form, $course) {
         // For dataset dependent questions a wizard is used for editing
         // questions. Therefore saving the question is delayed until

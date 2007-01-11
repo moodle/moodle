@@ -101,8 +101,6 @@ class default_questiontype {
      * @param $question
      */
     function set_default_options(&$question) {
-        $question->penalty = 0.1;
-        $question->defaultgrade = 1;
     }
 
     /**

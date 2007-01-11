@@ -25,9 +25,10 @@ class question_edit_calculated_form extends question_edit_form {
      */
     function definition_inner(&$mform) {
         global $QTYPES;
-        $this->qtypeobj = $QTYPES['calculated'];
+        $this->qtypeobj =& $QTYPES[$this->qtype()];
 
 //------------------------------------------------------------------------------------------
+/*      //not working now datasetdependent code cannot handle multiple answer formulas and not needed ??
         $repeated = array();
         $repeated[] =& $mform->createElement('header', 'answerhdr', get_string('answerhdr', 'qtype_calculated', '{no}'));
 
@@ -59,7 +60,38 @@ class question_edit_calculated_form extends question_edit_form {
             $count = 0;
         }
         $repeatsatstart = $count + 1;
-        $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', 1, get_string('addmoreanswerblanks', 'qtype_calculated'));
+        $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', 1, get_string('addmoreanswerblanks', 'qtype_calculated'));*/
+//------------------------------------------------------------------------------------------
+
+        $mform->addElement('header', 'answerhdr', get_string('answerhdr', 'qtype_calculated'));
+
+        $mform->addElement('text', 'answers[0]', get_string('correctanswerformula', 'quiz'));
+        $mform->setType('answers[0]', PARAM_NOTAGS);
+
+/*        $creategrades = get_grade_options();
+        $gradeoptions = $creategrades->gradeoptions;
+        $mform->addElement('select', 'fraction[0]', get_string('grade'), $gradeoptions);
+        $mform->setDefault('fraction[0]', 0);*/
+        $mform->addElement('hidden', 'fraction[0]', 1);
+        $mform->setConstants(array('fraction[0]'=>PARAM_INT));
+
+        $tolgrp = array();
+        $tolgrp[] =& $mform->createElement('text', 'tolerance[0]', get_string('tolerance', 'qtype_calculated'));
+        $mform->setType('tolerance[0]', PARAM_NUMBER);
+        $mform->setDefault('tolerance[0]', 0.01);
+        $tolgrp[] =& $mform->createElement('select', 'tolerancetype[0]', get_string('tolerancetype', 'quiz'), $this->qtypeobj->tolerance_types());
+        $mform->addGroup($tolgrp, 'tolgrp', get_string('tolerance', 'qtype_calculated'), null, false);
+
+        $anslengrp = array();
+        $anslengrp[] =&  $mform->createElement('select', 'correctanswerlength[0]', get_string('correctanswershows', 'qtype_calculated'), range(0, 9));
+        $mform->setDefault('correctanswerlength[0]', 2);
+
+        $answerlengthformats = array('1' => get_string('decimalformat', 'quiz'), '2' => get_string('significantfiguresformat', 'quiz'));
+        $anslengrp[] =&  $mform->createElement('select', 'correctanswerformat[0]', get_string('correctanswershowsformat', 'qtype_calculated'), $answerlengthformats);
+        $mform->addGroup($anslengrp, 'anslengrp', get_string('correctanswershows', 'qtype_calculated'), null, false);
+
+        $mform->addElement('htmleditor', 'feedback[0]', get_string('feedback', 'quiz'));
+        $mform->setType('feedback[0]', PARAM_RAW);
 
 //------------------------------------------------------------------------------------------
         $repeated = array();
@@ -87,6 +119,8 @@ class question_edit_calculated_form extends question_edit_form {
 
         //hidden elements
         $mform->addElement('hidden', 'wizardpage', 'question');
+        $mform->setType('wizardpage', PARAM_ALPHA);
+
 
     }
 
@@ -96,10 +130,10 @@ class question_edit_calculated_form extends question_edit_form {
             if (count($answers)) {
                 $key = 0;
                 foreach ($answers as $answer){
-                    $default_values['answers['.$key.']'] = $answers->answer;
-                    $default_values['fraction['.$key.']'] = $answers->fraction;
-                    $default_values['tolerance['.$key.']'] = $answers->tolerance;
-                    $default_values['correctanswerlength['.$key.']'] = $answers->correctanswerlength;
+                    $default_values['answers['.$key.']'] = $answer->answer;
+                    $default_values['fraction['.$key.']'] = $answer->fraction;
+                    $default_values['tolerance['.$key.']'] = $answer->tolerance;
+                    $default_values['correctanswerlength['.$key.']'] = $answer->correctanswerlength;
                     $default_values['correctanswerformat['.$key.']'] = $answer->correctanswerformat;
                     $default_values['feedback['.$key.']'] = $answer->feedback;
                     $key++;
@@ -118,7 +152,10 @@ class question_edit_calculated_form extends question_edit_form {
                     $key++;
                 }
             }
-            $question = (object)((array)$question + $default_values);        }
+            $default_values['submitbutton'] = get_string('nextpage', 'qtype_calculated');
+            $question = (object)((array)$question + $default_values);
+        }
+
         parent::set_defaults($question);
     }
 

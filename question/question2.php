@@ -24,6 +24,7 @@ if (!$returnurl && isset($SESSION->fromurl)) {
 $id = optional_param('id', 0, PARAM_INT); // question id
 $qtype = optional_param('qtype', '', PARAM_FILE);
 $categoryid = optional_param('category', 0, PARAM_INT);
+$wizard =  optional_param('wizard', '', PARAM_ALPHA);
 
 // Validate the URL parameters.
 if ($id = optional_param('id', 0, PARAM_INT)) {
@@ -31,12 +32,12 @@ if ($id = optional_param('id', 0, PARAM_INT)) {
         print_error('questiondoesnotexist', 'question', $returnurl);
     }
     get_question_options($question);
-    $submiturl = "question2.php?id=$id&returnurl=" . urlencode($returnurl);
+    $submiturl = "question2.php?id=$id&returnurl=" . urlencode($returnurl).'&wizard='.$wizard;
 } else if ($categoryid && $qtype) { // only for creating new questions
     $question = new stdClass;
     $question->category = $categoryid;
     $question->qtype = $qtype;
-    $submiturl = "question2.php?category=$categoryid&qtype=$qtype&returnurl=" . urlencode($returnurl);
+    $submiturl = "question2.php?category=$categoryid&qtype=$qtype&returnurl=" . urlencode($returnurl).'&wizard='.$wizard;
 } else {
     print_error('notenoughdatatoeditaquestion', 'question', $returnurl);
 }
@@ -62,10 +63,20 @@ $coursecontext = get_context_instance(CONTEXT_COURSE, $category->course);
 require_capability('moodle/question:manage', $coursecontext);
 
 // Create the question editing form.
-$mform = $QTYPES[$question->qtype]->create_editing_form($submiturl, $question, $category->course);
+if ($wizard!==''){
+    if (!method_exists($QTYPES[$question->qtype], 'next_wizard_form')){
+        print_error('missingimportantcode', 'question', $returnurl, 'wizard form definition');
+    } else {
+        $mform = $QTYPES[$question->qtype]->next_wizard_form($submiturl, $question, $wizard);
+    }
+} else {
+    $mform = $QTYPES[$question->qtype]->create_editing_form($submiturl, $question, $category->course);
+}
+
 if ($mform === null) {
     print_error('missingimportantcode', 'question', $returnurl, 'question editing form definition');
 }
+$mform->set_defaults($question);
 
 if ($mform->is_cancelled()){
     redirect($returnurl);
@@ -75,12 +86,16 @@ if ($mform->is_cancelled()){
         $question->hidden = 0; // Copies should not be hidden
     }
     $question = $QTYPES[$qtype]->save_question($question, $data, $COURSE);
-
-    if (optional_param('inpopup', 0, PARAM_BOOL)) {
-        notify(get_string('changessaved'), '');
-        close_window(3);
+    if ($QTYPES[$qtype]->finished_edit_wizard($question)){
+        if (optional_param('inpopup', 0, PARAM_BOOL)) {
+            notify(get_string('changessaved'), '');
+            close_window(3);
+        } else {
+            redirect($SESSION->returnurl);
+        }
+        die;
     } else {
-        redirect($SESSION->returnurl);
+        redirect($submiturl.'&wizard='.$data->wizardpage);
     }
 } else {
     // Display the question editing form
@@ -94,10 +109,11 @@ if ($mform->is_cancelled()){
                 get_string("editquestions", "quiz").'</a> -> '.$streditingquestion;
     }
     print_header_simple($streditingquestion, '', $strediting);
-
-    print_heading_with_help(get_string("editing".$question->qtype, "quiz"), $question->qtype, "quiz");
-
-    $mform->set_defaults($question);
+    if (isset($mform->heading)){
+        print $mform->heading;
+    } else {
+        print_heading_with_help(get_string("editing".$question->qtype, "quiz"), $question->qtype, "quiz");
+    }
     $mform->display();
     print_footer($COURSE);
 }

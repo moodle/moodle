@@ -238,7 +238,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             $answer->answer = $correctanswer->answer;
         }
         $numericalquestion->questiontext = parent::substitute_variables(
-         $numericalquestion->questiontext, $state->options->dataset);
+        $numericalquestion->questiontext, $state->options->dataset);
         $virtualqtype->print_question_formulation_and_controls($numericalquestion,
          $state, $cmoptions, $options);
     }
@@ -597,7 +597,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         }
         return $str;
     }
-    
+
 /// BACKUP FUNCTIONS ////////////////////////////
 
     /*
