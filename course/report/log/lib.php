@@ -73,22 +73,17 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
         }
     }
 
-    // Get all the hosts that we SSO with
-    $sql = "SELECT DISTINCT 
-                h.id, 
-                h.name,
-                s.name as servicename
-            FROM 
-                {$CFG->prefix}mnet_host h
-            LEFT OUTER JOIN 
-                {$CFG->prefix}mnet_host2service hs    ON 
-                (h.id=hs.hostid AND hs.subscribe!=0)
-            LEFT OUTER JOIN 
-                {$CFG->prefix}mnet_service2rpc sr ON 
-                sr.serviceid=hs.serviceid
-            LEFT OUTER JOIN 
-                {$CFG->prefix}mnet_service s      ON 
-                (sr.serviceid=s.id AND s.name='sso')";
+    // Get all the hosts that have log records
+    $sql = "select distinct
+                h.id,
+                h.name
+            from
+                {$CFG->prefix}mnet_host h,
+                {$CFG->prefix}mnet_log l
+            where
+                h.id = l.hostid
+            order by
+                h.name";
     $hosts = get_records_sql($sql);
 
     foreach($hosts as $host) {
