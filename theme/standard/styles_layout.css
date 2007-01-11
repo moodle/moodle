@@ -2046,12 +2046,13 @@ body#user-index h2 {
   text-align: center;
 }
 
-#user-view .buttons {
+#user-view .buttons,
+#user-index .buttons {
   text-align: center;
 }
 
-#user-view .buttons .form {
-  display: inline;
+#user-view .buttons form {
+  display:inline;
 }
 
 body#user-index #longtimenosee,
