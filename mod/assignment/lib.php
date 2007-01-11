@@ -2486,6 +2486,7 @@ function assignment_get_post_actions() {
 }
 
 function assignment_get_types() {
+    global $CFG;
     $types = array();
 
     $type = new object();
