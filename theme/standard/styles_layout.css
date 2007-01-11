@@ -139,6 +139,10 @@ img.grouppicture {
 }
 
 .generalbox#intro {
+  width:70%;
+  margin-left:auto;
+  margin-right:auto;
+  padding-bottom:15px;
 }
 
 .boxaligncenter {
