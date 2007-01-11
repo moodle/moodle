@@ -15,6 +15,10 @@
 require_once dirname(dirname(dirname(__FILE__))) . '/config.php';
 require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
+if (!$site = get_site()) {
+    print_error('mnet_session_prohibited', 'mnet', '', '');
+}
+
 // grab the GET params
 $token         = required_param('token',    PARAM_BASE64);
 $remotewwwroot = required_param('idp',      PARAM_URL);

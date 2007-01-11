@@ -233,14 +233,21 @@ class auth_plugin_mnet
         if ($mnetrequest->send($remotepeer) === true) {
             $remoteuser = (object) $mnetrequest->response;
         } else {
-            foreach ($mnetrequest->error as $code => $errormessage) {
+            foreach ($mnetrequest->error as $errormessage) {
+                list($code, $message) = array_map('trim',explode(':', $errormessage, 2));
+                if($code == 702) {
+                    $site = get_site();
+                    print_error('mnet_session_prohibited','mnet', $remotewwwroot, $site->fullname);
+                    exit;
+                }
                 $message .= "ERROR $code:<br/>$errormessage<br/>";
             }
             error("RPC auth/mnet/user_authorise:<br/>$message");
         }
 
         if (empty($remoteuser) or empty($remoteuser->username)) {
-            error(get_string('unknownerror', 'mnet'));
+            print_error('unknownerror', 'mnet');
+            exit;
         }
 
         // get the local record for the remote user
