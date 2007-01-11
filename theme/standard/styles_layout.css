@@ -2558,6 +2558,16 @@ body#mod-forum-search .introcontent {
 /***
  *** Modules: Lesson
  ***/
+#mod-lesson-lesson #page .addform {
+    text-align: center;
+}
+#mod-lesson-edit #page .label {
+    font-weight: bold;
+}
+#mod-lesson-edit #page .labelcorrect {
+    text-decoration: underline;
+    font-weight: bold;
+}
 
 
 /***
@@ -2568,7 +2578,16 @@ body#mod-forum-search .introcontent {
 #mod-quiz-attempt #page {
   text-align: center;
 }
-
+#mod-quiz-edit #page .controls,
+#mod-quiz-edit #page .attemptsnotice
+{
+  text-align: center;
+}
+body#question-preview .quemodname,
+body#question-preview .controls
+{     
+  text-align: center;
+}
 body#mod-quiz-report table#attempts,
 body#mod-quiz-report table#commands,
 body#mod-quiz-report table#itemanalysis
@@ -2606,8 +2625,24 @@ body#mod-quiz-report table#attempts .picture {
 body#mod-quiz-report .controls {
   text-align: center;
 }
+<<<<<<< styles_layout.css
+#mod-quiz-review #page .controls {
+  text-align: center;
+}
+#mod-quiz-view .quizinfo {
+  text-align: center;
+}
+#mod-quiz-view #page .quizgradefeedback,
+#mod-quiz-view #page .quizattempt
+{
+  text-align: center;
+}
+.quizquestionlistcontrols {
+    text-align: center;
+=======
 body#question-preview .quemodname, body#question-preview .controls {   
   text-align: center;   
+>>>>>>> 1.333
 }
 
 /***
