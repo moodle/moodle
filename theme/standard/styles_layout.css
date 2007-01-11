@@ -2001,6 +2001,11 @@ body#message-messages {
   vertical-align: top;
 }
 
+.userinfobox .userpicture {
+  width: 100px;
+  height: 100px;
+}
+
 .userinfobox .content {
   padding: 10px;
   vertical-align: top;
@@ -2020,6 +2025,11 @@ body#message-messages {
   padding-bottom: 20px;
 }
 
+.userinfobox td.label {
+  text-align:right;
+  white-space: nowrap; 
+  vertical-align: top;
+}
 
 table.userinfobox {
   width: 80%;
