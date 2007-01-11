@@ -2199,6 +2199,11 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         $pageclass .= ' course-'.SITEID;
     }
 
+    if (($pageid != 'site-index') && ($pageid != 'course-view') && 
+        ($pageid != 'admin-settings')) {
+        $pageclass .= ' nocoursepage';
+    }
+
     if (!isloggedin()) {
         $pageclass .= ' notloggedin';
     }
@@ -5221,7 +5226,7 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
  */
 function print_side_block_start($heading='', $attributes = array()) {
 
-    global $CFG;
+    global $CFG, $THEME;
 
     // If there are no special attributes, give a default CSS class
     if (empty($attributes) || !is_array($attributes)) {
@@ -5253,9 +5258,28 @@ function print_side_block_start($heading='', $attributes = array()) {
     }
 
     echo '<div '.$attrtext.'>';
+
     if ($heading) {
         //Accessibility: replaced <div> with H2; no, H2 more appropriate in moodleblock.class.php: _title_html.
-        echo '<div class="header">'.$heading.'</div>';
+        // echo '<div class="header">'.$heading.'</div>';
+        echo '<div class="header">';
+        if (!empty($THEME->roundcorners)) {
+            echo '<div class="bt"><div></div></div>';
+            echo '<div class="i1"><div class="i2"><div class="i3">';
+        }
+        echo $heading;
+        if (!empty($THEME->roundcorners)) {
+            echo '</div></div></div>';
+        }
+        echo '</div>';
+    } else {
+        if (!empty($THEME->roundcorners)) {
+            echo '<div class="bt"><div></div></div>';
+        }
+    }
+
+    if (!empty($THEME->roundcorners)) {
+        echo '<div class="i1"><div class="i2"><div class="i3">';
     }
     echo '<div class="content">';
 
@@ -5266,9 +5290,16 @@ function print_side_block_start($heading='', $attributes = array()) {
  * Print table ending tags for a side block box.
  */
 function print_side_block_end($attributes = array()) {
-    global $CFG;
+    global $CFG, $THEME;
 
-    echo '</div></div>';
+    echo '</div>';
+
+    if (!empty($THEME->roundcorners)) {
+        echo '</div></div></div>';
+        echo '<div class="bb"><div></div></div>';
+    }
+
+    echo '</div>';
 
     // IE workaround: if I do it THIS way, it works! WTF?
     if (!empty($CFG->allowuserblockhiding) && isset($attributes['id'])) {
