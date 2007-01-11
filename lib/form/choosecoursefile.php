@@ -75,7 +75,9 @@ class MoodleQuickForm_choosecoursefile extends MoodleQuickForm_group
         } else {
             $courseid=$COURSE->id;
         }
-        $url="/files/index.php?id=$courseid&choose=id_".$this->getElementName(0);
+        // first find out the text field id - this is a bit hacky, is there a better way?
+        $choose = 'id_'.str_replace(array('[', ']'), array('_', ''), $this->getElementName(0));
+        $url="/files/index.php?id=$courseid&choose=".$choose;
 
         if ($this->_options['options'] == 'none') {
             $options = 'menubar=0,location=0,scrollbars,resizable,width='. $this->_options['width'] .',height='. $this->_options['height'];
