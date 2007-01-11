@@ -1920,7 +1920,7 @@ body#message-messages {
   color:#006;
   text-decoration:none;
   /* font-weight:bold; */
-  background:#ddd;
+  background:#eee;
   margin:0;
   padding:0.25em 1em;
   border-left:1px solid #fff;
@@ -1932,7 +1932,7 @@ body#message-messages {
 .tabrow0 a:active,
 .tabrow0 a.selected:link,
 .tabrow0 a.selected:visited {
-  background:#bbb;
+  background:#ddd;
 }
 
 .tabrow0 a.selected:link,
@@ -1947,7 +1947,7 @@ body#message-messages {
   left:0;
   top:1.5em;
   float:left;
-  background:#bbb;
+  background:#ddd;
   width:100%;
   margin:0;
   padding:0.25em 0.25em 0.25em 1em;
@@ -1962,7 +1962,7 @@ body#message-messages {
 }
 
 .tabrow0 ul a {
-  background:#bbb;
+  background:#ddd;
   display:inline;
   margin:0;
   padding:0 1em;

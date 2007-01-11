@@ -5485,12 +5485,10 @@ function convert_tree_to_html($tree, $row=0) {
         }
 
         if ($tab->inactive || $tab->active || ($tab->selected && !$tab->linkedwhenselected)) {
-            $astr = '<a href="#" title="'.$tab->title.'"'.$linkclass.'>'.$tab->text.'</a>';
+            $str .= '<a href="#" title="'.$tab->title.'"'.$linkclass.'>'.$tab->text.'</a>';
         } else {
-            $astr = '<a href="'.$tab->link.'" title="'.$tab->title.'"'.$linkclass.'>'.$tab->text.'</a>';
+            $str .= '<a href="'.$tab->link.'" title="'.$tab->title.'"'.$linkclass.'>'.$tab->text.'</a>';
         }
-
-        $str .= '<div class="tablink">'.$astr.'</div>';
 
         if (!empty($tab->subtree)) { 
             $str .= convert_tree_to_html($tab->subtree, $row+1);
