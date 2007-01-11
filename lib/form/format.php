@@ -36,15 +36,18 @@ class MoodleQuickForm_format extends MoodleQuickForm_select{
             $elementLabel = get_string('format');
         }
         HTML_QuickForm_element::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
-        $this->_persistantFreeze = true;
         $this->_type = 'format';
 
         $this->_useHtmlEditor=$useHtmlEditor;
-        if ($this->_useHtmlEditor==null){
+        if ($this->_useHtmlEditor === null){
             $this->_useHtmlEditor=can_use_html_editor();
         }
+
+        $this->setPersistantFreeze($this->_useHtmlEditor);
         if ($this->_useHtmlEditor){
             $this->freeze();
+        } else {
+            $this->unfreeze();
         }
     } //end constructor
 
