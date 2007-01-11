@@ -44,21 +44,9 @@ class auth_plugin_db {
 
         global $CFG;
 
-        // This is a hack to workaround what seems to be a bug in ADOdb with accessing 
-        // two databases of the same kind ... it seems to get confused when trying to access
-        // the first database again, after having accessed the second.
-        // The following hack will make the database explicit which keeps it happy
-        // This seems to broke postgesql so ..
-
-        $prefix = $CFG->prefix.'';    // Remember it.  The '' is to prevent PHP5 reference.. see bug 3223
-
-        if ($CFG->dbtype != 'postgres7') {
-            $CFG->prefix = $CFG->dbname.$CFG->prefix;
-        }
-
-        // Connect to the external database
+        // Connect to the external database (forcing new connection)
         $authdb = &ADONewConnection($this->config->type); 
-        $authdb->PConnect($this->config->host, $this->config->user, $this->config->pass, $this->config->name); 
+        $authdb->Connect($this->config->host, $this->config->user, $this->config->pass, $this->config->name, true); 
         $authdb->SetFetchMode(ADODB_FETCH_ASSOC);
 
         if ($this->config->passtype === 'internal') { 
@@ -97,8 +85,6 @@ class auth_plugin_db {
                                   AND {$this->config->fieldpass} = '$password' ");
             $authdb->Close();
             
-            $CFG->prefix = $prefix;
-            
             if (!$rs) {
                 print_error('auth_dbcantconnect','auth');
                 return false;
@@ -122,9 +108,9 @@ class auth_plugin_db {
 
         global $CFG;
 
-        ADOLoadCode($this->config->type);          
-        $authdb = &ADONewConnection();         
-        $authdb->PConnect($this->config->host, $this->config->user, $this->config->pass, $this->config->name); 
+        // Connect to the external database (forcing new connection)
+        $authdb = &ADONewConnection($this->config->type);
+        $authdb->Connect($this->config->host, $this->config->user, $this->config->pass, $this->config->name, true); 
         $authdb->SetFetchMode(ADODB_FETCH_ASSOC);
 
         $fields = array("firstname", "lastname", "email", "phone1", "phone2", 
@@ -341,8 +327,10 @@ class auth_plugin_db {
     }
 
     function user_exists ($username) {
-        $authdb = &ADONewConnection($this->config->type); 
-        $authdb->PConnect($this->config->host, $this->config->user, $this->config->pass, $this->config->name); 
+
+        // Connect to the external database (forcing new connection)
+        $authdb = &ADONewConnection($this->config->type);
+        $authdb->Connect($this->config->host, $this->config->user, $this->config->pass, $this->config->name, true); 
         $authdb->SetFetchMode(ADODB_FETCH_ASSOC);
 
         $rs = $authdb->Execute("SELECT * FROM {$this->config->table} 
@@ -370,9 +358,10 @@ class auth_plugin_db {
 
 
     function get_userlist() {
-        // Connect to the external database
-        $authdb = &ADONewConnection($this->config->type); 
-        $authdb->PConnect($this->config->host,$this->config->user,$this->config->pass,$this->config->name); 
+
+        // Connect to the external database (forcing new connection)
+        $authdb = &ADONewConnection($this->config->type);
+        $authdb->Connect($this->config->host, $this->config->user, $this->config->pass, $this->config->name, true); 
         $authdb->SetFetchMode(ADODB_FETCH_ASSOC);
 
         // fetch userlist
