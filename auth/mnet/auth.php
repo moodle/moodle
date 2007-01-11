@@ -413,7 +413,7 @@ class auth_plugin_mnet
      * @return  void
      */
     function keepalive_client() {
-        global $CFG;
+        global $CFG, $MNET;
         $cutoff = time() - 300; // TODO - find out what the remote server's session
                                 // cutoff is, and preempt that
 
@@ -467,6 +467,7 @@ class auth_plugin_mnet
             } else {
                 debugging("Server side error has occured on host $mnethostid: " . 
                           join("\n", $mnet_request->error));
+                break;
             }
 
             $query = "SELECT
