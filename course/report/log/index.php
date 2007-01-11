@@ -6,17 +6,19 @@
     require_once('lib.php');
     require_once($CFG->libdir.'/adminlib.php');
 
-    $id          = optional_param('id', PARAM_INT);// Course ID
+    $id          = optional_param('id', 0, PARAM_INT);// Course ID
     
-    $host_course = optional_param('host_course', PARAM_PATH);// Course ID
+    $host_course = optional_param('host_course', '', PARAM_PATH);// Course ID
     
-    list($hostid, $id) = explode('/', $host_course);
-    
-    $course_stub       = get_record('mnet_log', 'hostid', $hostid, 'course', $id);
-    $course->id        = $id;
-    $course->shortname = $course_stub->coursename;
-    $course->fullname  = $course_stub->coursename;
-    
+    if (empty($host_course)) {
+        $hostid = $CFG->mnet_localhost_id;
+        if (empty($id)) {
+            $site = get_site();
+            $id = $site->id;
+        }
+    } else {
+        list($hostid, $id) = explode('/', $host_course);
+    }
     
     $group       = optional_param('group', -1, PARAM_INT); // Group to display
     $user        = optional_param('user', 0, PARAM_INT); // User to display
@@ -37,6 +39,11 @@
         if (!$course = get_record('course', 'id', $id) ) {
             error('That\'s an invalid course id'.$id);
         }
+    } else {
+        $course_stub       = array_pop(get_records_select('mnet_log', " hostid='$hostid' AND course='$id' ", '', '*', '', '1'));
+        $course->id        = $id;
+        $course->shortname = $course_stub->coursename;
+        $course->fullname  = $course_stub->coursename;
     }
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
