@@ -826,7 +826,7 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
      * please help test if this code is working / runs faster for you. please report bugs asap!
      * this code only affects overrides. Normal capabilities are not affected
      */
-    
+    $capflags = array(); // temporary flag
     /// 1) quick sql to get all roles assigned to this user
     if ($roles = get_records_sql("SELECT roleid, roleid
                                   FROM {$CFG->prefix}role_assignments
@@ -842,11 +842,25 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
                 /// 3) For each context, we find all parent contexts, and see if it's relevant
                 /// it is relevant if for this role, there's a role assignment in 1 parent context or more
                 foreach ($overrides as $loverride) {
+                    
+                    // setting up a flag here, if this flag is set to 0, we ignore
+                    // all capabilities at this contextid for this role, i.e. no need to search
+                    // moodle/role:asign, moodle/role:override at context 10 for role 2
+                    // if we know there's no valid parents for context 10, role 2 for any other 
+                    // capability override                 
+                    if (isset($capflags[$trole->roleid][$loverride->contextid]) && $capflags[$trole->roleid][$loverride->contextid] == 0) {
+                        continue;
+                    }
+                 
                     $lcontext = get_context_instance_by_id($loverride->contextid);               
                     // possible to do some caching in get_parent_contexts too
                     $lparents = get_parent_contexts($lcontext);      
                     $lparents[] = $lcontext->id; // add self
                     
+                    // initialize, if not set
+                    if(!isset($capflags[$trole->roleid][$loverride->contextid])) {
+                        $capflags[$trole->roleid][$loverride->contextid] = 0;
+                    }
                     /// we get all parent contexts, loop them
                     foreach ($lparents as $lparent) { 
                         
@@ -856,8 +870,8 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
                                                    WHERE ra.userid = $userid
                                                    AND ra.contextid = $lparent
                                                    AND ra.roleid = $trole->roleid                       
-                                                   $timesql")) {                                 
-                                                     
+                                                   $timesql")) {
+                                 
                             $llparent = get_context_instance_by_id($lparent);
                             $lloverride = get_context_instance_by_id($loverride->contextid);
                             
@@ -867,10 +881,13 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
                             $temprec->id2 = $lcontext->id;
                             $temprec->sum = $loverride->permission;
                             
+                            $capflags[$trole->roleid][$loverride->contextid]++; // positive value, hit
                             /// add to the array for processing
                             $capabilities[] = $temprec;
                         }                     
                     }
+                    // ($capflags[$trole->roleid][$loverride->contextid]) would still be 0 if no parent found
+                    // subsequent contextid can be skipped
                 }
             }
         }
@@ -2623,7 +2640,7 @@ function get_parent_contexts($context) {
                 return array();
             } else {
                 $res = array($parent->id);
-                $pcontexts[$context->id] = $res;
+                $pcontexts[$context->id] = $res;  
                 return $res;
             }
         break;
@@ -2633,7 +2650,7 @@ function get_parent_contexts($context) {
                 return array();
             } else {
                 $res = array($parent->id);
-                $pcontexts[$context->id] = $res;
+                $pcontexts[$context->id] = $res;  
                 return $res;
             }
         break;
