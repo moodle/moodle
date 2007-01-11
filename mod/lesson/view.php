@@ -36,7 +36,7 @@
             
             lesson_print_header($cm, $course, $lesson);
             print_simple_box_start('center');
-            echo '<div align="center">';
+            echo '<div style="text-align:center;">';
             echo '<p>'.$message.'</p>';
             echo '<div class="lessonbutton standardbutton" style="padding: 5px;"><a href="'.$CFG->wwwroot.'/course/view.php?id='. $course->id .'">'. get_string('returnto', 'lesson', format_string($course->fullname, true)) .'</a></div>';
             echo '</div>';
@@ -62,6 +62,7 @@
                 echo "<div class=\"password-form\">\n";
                 print_simple_box_start('center');
                 echo '<form id="password" method="post" action="'.$CFG->wwwroot.'/mod/lesson/view.php">' . "\n";
+                echo '<fieldset class="invisiblefieldset">';
                 echo '<input type="hidden" name="id" value="'. $cm->id .'" />' . "\n";
                 if (optional_param('userpassword', 0, PARAM_CLEAN)) {
                     notify(get_string('loginfail', 'lesson'));
@@ -141,7 +142,7 @@
                     echo '<p>';
                     print_simple_box_start('center');
                     print_string('completethefollowingconditions', 'lesson', $dependentlesson->name);
-                    echo '<p align="center">'.implode('<br />'.get_string('and', 'lesson').'<br />', $errors).'</p>';
+                    echo '<p style="text-align:center;">'.implode('<br />'.get_string('and', 'lesson').'<br />', $errors).'</p>';
                     print_simple_box_end();
                     echo '</p>';
                     print_footer($course);
@@ -250,13 +251,13 @@
             lesson_print_header($cm, $course, $lesson);
             if ($lesson->timed) {
                 if ($lesson->retake) {
-                    print_simple_box('<p align="center">'. get_string('leftduringtimed', 'lesson') .'</p>', 'center');
-                    echo '<div align="center" class="lessonbutton standardbutton">'.
+                    print_simple_box('<p style="text-align:center;">'. get_string('leftduringtimed', 'lesson') .'</p>', 'center');
+                    echo '<div style="text-align:center;" class="lessonbutton standardbutton">'.
                               '<a href="view.php?id='.$cm->id.'&amp;pageid='.$firstpageid.'&amp;startlastseen=no">'.
                                 get_string('continue', 'lesson').'</a></div>';
                 } else {
                     print_simple_box_start('center');
-                    echo '<div align="center">';
+                    echo '<div style="text-align:center;">';
                     echo get_string('leftduringtimednoretake', 'lesson');
                     echo '<br /><br /><div class="lessonbutton standardbutton"><a href="../../course/view.php?id='. $course->id .'">'. get_string('returntocourse', 'lesson') .'</a></div>';
                     echo '</div>';
@@ -264,10 +265,10 @@
                 }
                 
             } else {
-                print_simple_box("<p align=\"center\">".get_string('youhaveseen','lesson').'</p>',
+                print_simple_box("<p style=\"text-align:center;\">".get_string('youhaveseen','lesson').'</p>',
                         "center");
                 
-                echo '<div align="center">';
+                echo '<div style="text-align:center;">';
                 echo '<span class="lessonbutton standardbutton">'.
                         '<a href="view.php?id='.$cm->id.'&amp;pageid='.$lastpageseen.'&amp;startlastseen=yes">'.
                         get_string('yes').'</a></span>&nbsp;&nbsp;&nbsp;';
@@ -288,7 +289,7 @@
             if (!$lesson->retake) {
                 lesson_print_header($cm, $course, $lesson, 'view');
                 print_simple_box_start('center');
-                echo "<div align=\"center\">";
+                echo "<div style=\"text-align:center;\">";
                 echo get_string("noretake", "lesson");
                 echo "<br /><br /><div class=\"lessonbutton standardbutton\"><a href=\"../../course/view.php?id=$course->id\">".get_string('returntocourse', 'lesson').'</a></div>';
                 echo "</div>";
@@ -524,6 +525,7 @@
         // get the answers in a set order, the id order
         if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
             echo "<form id=\"answerform\" method =\"post\" action=\"lesson.php\">";
+            echo '<fieldset class="invisiblefieldset">';
             echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
             echo "<input type=\"hidden\" name=\"action\" value=\"continue\" />";
             echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />";
@@ -547,7 +549,7 @@
                     } else {
                         $value = "";
                     }       
-                    echo '<tr><td align="center"><label for="answer">'.get_string('youranswer', 'lesson').'</label>'.
+                    echo '<tr><td style="text-align:center;"><label for="answer">'.get_string('youranswer', 'lesson').'</label>'.
                         ": <input type=\"text\" id=\"answer\" name=\"answer\" size=\"50\" maxlength=\"200\" $value />\n";
                     echo '</td></tr></table>';
                     print_simple_box_end();
@@ -686,12 +688,14 @@
                         }
                         // Each button must have its own form inorder for it to work with JavaScript turned off
                         $button  = "<form id=\"answerform$i\" method=\"post\" action=\"$CFG->wwwroot/mod/lesson/lesson.php\">\n".
+                                   '<fieldset class="invisiblefieldset">';
                                    "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n".
                                    "<input type=\"hidden\" name=\"action\" value=\"continue\" />\n".
                                    "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />\n".
                                    "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n".
                                    "<input type=\"hidden\" name=\"jumpto\" value=\"$answer->jumpto\" />\n".
                                    lesson_print_submit_link(strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)), "answerform$i", '', $class, '', '', true).
+                                   '<fieldset>'.
                                    '</form>';
                         
                         $buttons[$type][] = $button;
@@ -733,7 +737,7 @@
                     } else {
                         $value = "";
                     }
-                    echo '<tr><td align="center" valign="top" nowrap="nowrap"><label for="answer">'.get_string("youranswer", "lesson").'</label>:</td><td>'.
+                    echo '<tr><td style="text-align:center;" valign="top" nowrap="nowrap"><label for="answer">'.get_string("youranswer", "lesson").'</label>:</td><td>'.
                          '<textarea id="answer" name="answer" rows="15" cols="60">'.$value."</textarea>\n";
                     echo '</td></tr></table>';
                     print_simple_box_end();
@@ -744,10 +748,12 @@
                     print_simple_box_end();
                 break;
             }
+            echo '</fieldset>';
             echo "</form>\n"; 
         } else {
             // a page without answers - find the next (logical) page
             echo "<form id=\"pageform\" method =\"post\" action=\"$CFG->wwwroot/mod/lesson/view.php\">\n";
+            echo '<fieldset class="invisiblefieldset">';
             echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
             if ($lesson->nextpagedefault) {
                 // in Flash Card mode...
@@ -795,6 +801,7 @@
             }
             echo "<input type=\"hidden\" name=\"pageid\" value=\"$newpageid\" />\n";
             lesson_print_submit_link(get_string('continue', 'lesson'), 'pageform');
+            echo '</fieldset>';
             echo "</form>\n";
         }
         
@@ -837,16 +844,16 @@
             
             if ($gradeinfo->attempts) {
                 if (!$lesson->custom) {
-                    echo "<p align=\"center\">".get_string("numberofpagesviewed", "lesson", $gradeinfo->nquestions).
+                    echo "<p style=\"text-align:center;\">".get_string("numberofpagesviewed", "lesson", $gradeinfo->nquestions).
                         "</p>\n";
                     if ($lesson->minquestions) {
                         if ($gradeinfo->nquestions < $lesson->minquestions) {
                             // print a warning and set nviewed to minquestions
-                            echo "<p align=\"center\">".get_string("youshouldview", "lesson", 
+                            echo "<p style=\"text-align:center;\">".get_string("youshouldview", "lesson", 
                                     $lesson->minquestions)."</p>\n";
                         }
                     }
-                    echo "<p align=\"center\">".get_string("numberofcorrectanswers", "lesson", $gradeinfo->earned).
+                    echo "<p style=\"text-align:center;\">".get_string("numberofcorrectanswers", "lesson", $gradeinfo->earned).
                         "</p>\n";
                 }
                 $a = new stdClass;
@@ -855,14 +862,14 @@
                 if ($gradeinfo->nmanual) {
                     $a->tempmaxgrade = $gradeinfo->total - $gradeinfo->manualpoints;
                     $a->essayquestions = $gradeinfo->nmanual;
-                    echo "<div align=\"center\">".get_string("displayscorewithessays", "lesson", $a)."</div>";
+                    echo "<div style=\"text-align:center;\">".get_string("displayscorewithessays", "lesson", $a)."</div>";
                 } else {
-                    echo "<div align=\"center\">".get_string("displayscorewithoutessays", "lesson", $a)."</div>";                        
+                    echo "<div style=\"text-align:center;\">".get_string("displayscorewithoutessays", "lesson", $a)."</div>";                        
                 }
                 $a = new stdClass;
                 $a->grade = number_format($gradeinfo->grade * $lesson->grade / 100, 1);
                 $a->total = $lesson->grade;
-                echo "<p align=\"center\">".get_string('yourcurrentgradeisoutof', 'lesson', $a)."</p>\n";
+                echo "<p style=\"text-align:center;\">".get_string('yourcurrentgradeisoutof', 'lesson', $a)."</p>\n";
                     
                 $grade->lessonid = $lesson->id;
                 $grade->userid = $USER->id;
@@ -909,7 +916,7 @@
             }   
         } else { 
             // display for teacher
-            echo "<p align=\"center\">".get_string("displayofgrade", "lesson")."</p>\n";
+            echo "<p style=\"text-align:center;\">".get_string("displayofgrade", "lesson")."</p>\n";
         }
         print_simple_box_end(); //End of Lesson button to Continue.
 
@@ -921,7 +928,7 @@
 
         // high scores code
         if ($lesson->highscores && !has_capability('mod/lesson:manage', $context) && !$lesson->practice) {
-            echo "<div align=\"center\"><br />";
+            echo "<div style=\"text-align:center;\"><br />";
             if ($grades = get_records_select("lesson_grades", "lessonid = $lesson->id", "completed")) {
                 $madeit = false;
                 if ($highscores = get_records_select("lesson_high_scores", "lessonid = $lesson->id")) {
@@ -943,14 +950,16 @@
                 }
                 if (!$highscores or $madeit) {
                     echo '<p>'.get_string("youmadehighscore", "lesson", $lesson->maxhighscores).
-                         '</p><p>
+                         '</p>
                           <form method="post" id="highscores" action="'.$CFG->wwwroot.'/mod/lesson/highscores.php">
+                          <fieldset class="invisiblefieldset">
                           <input type="hidden" name="mode" value="add" />
                           <input type="hidden" name="id" value="'.$cm->id.'" />
                           <input type="hidden" name="sesskey" value="'.sesskey().'" />
                           <p>';
                           lesson_print_submit_link(get_string('clicktopost', 'lesson'), 'highscores');
                     echo '</p>
+                          </fieldset>
                           </form>';
                 } else {
                     echo get_string("nothighscore", "lesson", $lesson->maxhighscores)."<br />";
@@ -974,24 +983,24 @@
             // sure that the student can leave the lesson via pushing the continue button.
             $lastattempt = end($attempts);
             $USER->modattempts[$lesson->id] = $lastattempt->pageid;
-            echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"view.php?id=$cm->id&amp;pageid=$pageid\">".get_string("reviewlesson", "lesson")."</a></div>\n"; 
+            echo "<div style=\"text-align:center; padding:5px;\" class=\"lessonbutton standardbutton\"><a href=\"view.php?id=$cm->id&amp;pageid=$pageid\">".get_string("reviewlesson", "lesson")."</a></div>\n"; 
         } elseif ($lesson->modattempts && has_capability('mod/lesson:manage', $context)) {
-            echo "<p align=\"center\">".get_string("modattemptsnoteacher", "lesson")."</p>";                
+            echo "<p style=\"text-align:center;\">".get_string("modattemptsnoteacher", "lesson")."</p>";                
         }
         
         if ($lesson->activitylink) {
             if ($module = get_record('course_modules', 'id', $lesson->activitylink)) {
                 if ($modname = get_field('modules', 'name', 'id', $module->module))
                     if ($instance = get_record($modname, 'id', $module->instance)) {
-                        echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\">".
+                        echo "<div style=\"text-align:center; padding:5px;\" class=\"lessonbutton standardbutton\">".
                                 "<a href=\"$CFG->wwwroot/mod/$modname/view.php?id=$lesson->activitylink\">".
                                 get_string('activitylinkname', 'lesson', $instance->name)."</a></div>\n";
                     }
             }
         }
 
-        echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">".get_string('returnto', 'lesson', format_string($course->fullname, true))."</a></div>\n";
-        echo "<div align=\"center\" style=\"padding: 5px;\" class=\"lessonbutton standardbutton\"><a href=\"$CFG->wwwroot/grade/index.php?id=$course->id\">".get_string('viewgrades', 'lesson')."</a></div>\n";
+        echo "<div style=\"text-align:center; padding:5px;\" class=\"lessonbutton standardbutton\"><a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">".get_string('returnto', 'lesson', format_string($course->fullname, true))."</a></div>\n";
+        echo "<div style=\"text-align:center; padding:5px;\" class=\"lessonbutton standardbutton\"><a href=\"$CFG->wwwroot/grade/index.php?id=$course->id\">".get_string('viewgrades', 'lesson')."</a></div>\n";
     }
 
 /// Finish the page

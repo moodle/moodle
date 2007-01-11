@@ -245,12 +245,15 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
                 $button =  '<table><tr><td>'.$button.
                            '</td><td>'.
                            '<form '.$CFG->frametarget.' method="get" action="'. $CFG->wwwroot .'/mod/lesson/lesson.php">'.
+                           '<fieldset class="invisiblefieldset">'.
                            '<input type="hidden" name="id" value="'. $cm->id .'" />'.
                            '<input type="hidden" name="action" value="editpage" />'.
                            '<input type="hidden" name="redirect" value="navigation" />'.
                            '<input type="hidden" name="pageid" value="'. $pageid .'" />'.
-                           '<input type="submit" value="'. get_string('editpagecontent', 'lesson') .'" /></form>
-                           </td></tr></table>';
+                           '<input type="submit" value="'. get_string('editpagecontent', 'lesson') .'" />'.
+                           '</fieldset>'.
+                           '</form>'.
+                           '</td></tr></table>';
             }
         }
     } else {
@@ -401,7 +404,7 @@ function lesson_print_messages() {
  **/
 function lesson_print_submit_link($name, $form, $align = 'center', $class='standardbutton', $title = '', $id = '', $return = false) {
     if (!empty($align)) {
-        $align = " align=\"$align\"";
+        $align = " style=\"text-align:$align\"";
     }
     if (!empty($id)) {
         $id = " id=\"$id\"";
@@ -1593,7 +1596,7 @@ function lesson_qtype_menu($qtypes, $selected="", $link="", $onclick="") {
     $tabrows = array();
 
     foreach ($qtypes as $qtype => $qtypename) {
-        $tabrows[] = new tabobject($qtype, "$link&amp;qtype=$qtype\" onClick=\"$onclick", $qtypename);
+        $tabrows[] = new tabobject($qtype, "$link&amp;qtype=$qtype\" onclick=\"$onclick", $qtypename);
     }
     $tabs[] = $tabrows;
     print_tabs($tabs, $selected);
@@ -1700,7 +1703,7 @@ function lesson_print_progress_bar($lesson, $course) {
     echo '<div class="progress_bar" align="center">';
     echo '<table class="progress_bar_table"><tr>';
     if ($progress != 0) {  // some browsers do not repsect the 0 width.
-        echo '<td width="'.$progress.'%" class="progress_bar_completed">';
+        echo '<td style="width:'.$progress.'%;" class="progress_bar_completed">';
         echo '</td>';
     }
     echo '<td class="progress_bar_todo">';

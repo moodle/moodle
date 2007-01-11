@@ -473,7 +473,7 @@
     ?>
     </table><br />
     <input type="button" value="<?php print_string("redisplaypage", "lesson") ?>" 
-        onClick="getElementById('editpage').redisplay.value=1;getElementById('editpage').submit();" />
+        onclick="getElementById('editpage').redisplay.value=1;getElementById('editpage').submit();" />
     <input type="submit" value="<?php  print_string("savepage", "lesson") ?>" />
     <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
     </center>

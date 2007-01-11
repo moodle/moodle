@@ -102,7 +102,7 @@
                 $pages[$singlepage->id] = $singlepage;
                 
             case 'full':
-                echo '<table align="center" cellpadding="5" border="0" width="80%">
+                echo '<table class="boxaligncenter" cellpadding="5" border="0" style="width:80%;">
                          <tr>
                              <td align="left">';
                 lesson_print_add_links($cm->id, $prevpageid);
@@ -113,7 +113,7 @@
                     $page = $pages[$pageid];
 
                     echo "<tr><td>\n";
-                    echo "<table width=\"100%\" border=\"1\" class=\"generalbox\"><tr><th colspan=\"2\" scope=\"col\">".format_string($page->title)."&nbsp;&nbsp;\n";
+                    echo "<table style=\"width:100%;\" border=\"1\" class=\"generalbox\"><tr><th colspan=\"2\" scope=\"col\">".format_string($page->title)."&nbsp;&nbsp;\n";
                     lesson_print_page_actions($cm->id, $page, $npages);
                     echo "</th></tr>\n";             
                     echo "<tr><td colspan=\"2\">\n";
@@ -123,7 +123,7 @@
                     echo "</td></tr>\n";
                     // get the answers in a set order, the id order
                     if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
-                        echo "<tr><td colspan=\"2\" align=\"center\"><b>\n";
+                        echo "<tr><td colspan=\"2\" align=\"center\"><strong>\n";
                         echo lesson_get_qtype_name($page->qtype);
                         switch ($page->qtype) {
                             case LESSON_SHORTANSWER :
@@ -140,7 +140,7 @@
                                 echo get_string("firstanswershould", "lesson");
                                 break;
                         }
-                        echo "</b></td></tr>\n";
+                        echo "</strong></td></tr>\n";
                         $i = 1;
                         $n = 0;
                         $options = new stdClass;
@@ -152,26 +152,26 @@
                                 case LESSON_TRUEFALSE:
                                 case LESSON_SHORTANSWER:
                                 case LESSON_NUMERICAL:
-                                    echo "<tr><td align=\"right\" valign=\"top\" width=\"20%\">\n";
+                                    echo "<tr><td align=\"right\" valign=\"top\" style=\"width:20%;\">\n";
                                     if ($lesson->custom) {
                                         // if the score is > 0, then it is correct
                                         if ($answer->score > 0) {
-                                            echo "<b><u>".get_string("answer", "lesson")." $i:</u></b> \n";
+                                            echo '<span class="labelcorrect">'.get_string("answer", "lesson")." $i</span>: \n";
                                         } else {
-                                            echo "<b>".get_string("answer", "lesson")." $i:</b> \n";
+                                            echo '<span class="label">'.get_string("answer", "lesson")." $i</span>: \n";
                                         }
                                     } else {
                                         if (lesson_iscorrect($page->id, $answer->jumpto)) {
                                             // underline correct answers
-                                            echo "<b><u>".get_string("answer", "lesson")." $i:</u></b> \n";
+                                            echo '<span class="correct">'.get_string("answer", "lesson")." $i</span>: \n";
                                         } else {
-                                            echo "<b>".get_string("answer", "lesson")." $i:</b> \n";
+                                            echo '<span class="labelcorrect">'.get_string("answer", "lesson")." $i</span>: \n";
                                         }
                                     }
-                                    echo "</td><td width=\"80%\">\n";
+                                    echo "</td><td style=\"width:80%;\">\n";
                                     echo format_text($answer->answer, FORMAT_MOODLE, $options);
                                     echo "</td></tr>\n";
-                                    echo "<tr><td align=\"right\" valign=\"top\"><b>".get_string("response", "lesson")." $i:</b> \n";
+                                    echo "<tr><td align=\"right\" valign=\"top\"><span class=\"label\">".get_string("response", "lesson")." $i</span>: \n";
                                     echo "</td><td>\n";
                                     echo format_text($answer->response, FORMAT_MOODLE, $options); 
                                     echo "</td></tr>\n";
@@ -180,12 +180,12 @@
                                     if ($n < 2) {
                                         if ($answer->answer != NULL) {
                                             if ($n == 0) {
-                                                echo "<tr><td align=\"right\" valign=\"top\"><b>".get_string("correctresponse", "lesson").":</b> \n";
+                                                echo "<tr><td align=\"right\" valign=\"top\"><span class=\"label\">".get_string("correctresponse", "lesson")."</span>: \n";
                                                 echo "</td><td>\n";
                                                 echo format_text($answer->answer, FORMAT_MOODLE, $options); 
                                                 echo "</td></tr>\n";
                                             } else {
-                                                echo "<tr><td align=\"right\" valign=\"top\"><b>".get_string("wrongresponse", "lesson").":</b> \n";
+                                                echo "<tr><td align=\"right\" valign=\"top\"><span class=\"label\">".get_string("wrongresponse", "lesson")."</span>: \n";
                                                 echo "</td><td>\n";
                                                 echo format_text($answer->answer, FORMAT_MOODLE, $options); 
                                                 echo "</td></tr>\n";
@@ -194,35 +194,35 @@
                                         $n++;
                                         $i--;
                                     } else {
-                                        echo "<tr><td align=\"right\" valign=\"top\" width=\"20%\">\n";
+                                        echo "<tr><td align=\"right\" valign=\"top\" style=\"width:20%;\">\n";
                                         if ($lesson->custom) {
                                             // if the score is > 0, then it is correct
                                             if ($answer->score > 0) {
-                                                echo "<b><u>".get_string("answer", "lesson")." $i:</u></b> \n";
+                                                echo '<span class="labelcorrect">'.get_string("answer", "lesson")." $i</span>: \n";
                                             } else {
-                                                echo "<b>".get_string("answer", "lesson")." $i:</b> \n";
+                                                echo '<span class="label">'.get_string("answer", "lesson")." $i</span>: \n";
                                             }
                                         } else {
                                             if (lesson_iscorrect($page->id, $answer->jumpto)) {
                                                 // underline correct answers
-                                                echo "<b><u>".get_string("answer", "lesson")." $i:</u></b> \n";
+                                                echo '<span class="labelcorrect">'.get_string("answer", "lesson")." $i</span>: \n";
                                             } else {
-                                                echo "<b>".get_string("answer", "lesson")." $i:</b> \n";
+                                                echo '<span class="label">'.get_string("answer", "lesson")." $i</span>: \n";
                                             }
                                         }
-                                        echo "</td><td width=\"80%\">\n";
+                                        echo "</td><td style=\"width:80%;\">\n";
                                         echo format_text($answer->answer, FORMAT_MOODLE, $options);
                                         echo "</td></tr>\n";
-                                        echo "<tr><td align=\"right\" valign=\"top\"><b>".get_string("matchesanswer", "lesson")." $i:</b> \n";
+                                        echo "<tr><td align=\"right\" valign=\"top\">'<span class=\"label\">'.".get_string("matchesanswer", "lesson")." $i</span>: \n";
                                         echo "</td><td>\n";
                                         echo format_text($answer->response, FORMAT_MOODLE, $options); 
                                         echo "</td></tr>\n";
                                     }
                                     break;
                                 case LESSON_BRANCHTABLE:
-                                    echo "<tr><td align=\"right\" valign=\"top\" width=\"20%\">\n";
-                                    echo "<b>".get_string("description", "lesson")." $i:</b> \n";
-                                    echo "</td><td width=\"80%\">\n";
+                                    echo "<tr><td align=\"right\" valign=\"top\" style=\"width:20%;\">\n";
+                                    echo '<span class="label">'.get_string("description", "lesson")." $i</span>: \n";
+                                    echo "</td><td style=\"width:80%;\">\n";
                                     echo format_text($answer->answer, FORMAT_MOODLE, $options);
                                     echo "</td></tr>\n";
                                     break;
@@ -231,18 +231,18 @@
                             $jumptitle = lesson_get_jump_name($answer->jumpto);
                             if ($page->qtype == LESSON_MATCHING) {
                                 if ($i == 1) {
-                                    echo "<tr><td align=\"right\" width=\"20%\"><b>".get_string("correctanswerscore", "lesson").":";
-                                    echo "</b></td><td width=\"80%\">\n";
+                                    echo "<tr><td align=\"right\" style=\"width:20%;\"><span class=\"label\">".get_string("correctanswerscore", "lesson");
+                                    echo "</span>: </td><td style=\"width:80%;\">\n";
                                     echo "$answer->score</td></tr>\n";
-                                    echo "<tr><td align=\"right\" width=\"20%\"><b>".get_string("correctanswerjump", "lesson").":";
-                                    echo "</b></td><td width=\"80%\">\n";
+                                    echo "<tr><td align=\"right\" style=\"width:20%;\"><span class=\"label\">".get_string("correctanswerjump", "lesson");
+                                    echo "</span>:</td><td style=\"width:80%;\">\n";
                                     echo "$jumptitle</td></tr>\n";
                                 } elseif ($i == 2) {
-                                    echo "<tr><td align=\"right\" width=\"20%\"><b>".get_string("wronganswerscore", "lesson").":";
-                                    echo "</b></td><td width=\"80%\">\n";
+                                    echo "<tr><td align=\"right\" style=\"width:20%;\"><span class=\"label\">".get_string("wronganswerscore", "lesson");
+                                    echo "</span>: </td><td style=\"width:80%;\">\n";
                                     echo "$answer->score</td></tr>\n";
-                                    echo "<tr><td align=\"right\" width=\"20%\"><b>".get_string("wronganswerjump", "lesson").":";
-                                    echo "</b></td><td width=\"80%\">\n";
+                                    echo "<tr><td align=\"right\" style=\"width:20%;\"><span class=\"label\">".get_string("wronganswerjump", "lesson");
+                                    echo "</span>: </td><td style=\"width:80%;\">\n";
                                     echo "$jumptitle</td></tr>\n";
                                 }
                             } else {
@@ -251,12 +251,12 @@
                                     $page->qtype != LESSON_ENDOFBRANCH and
                                     $page->qtype != LESSON_CLUSTER and 
                                     $page->qtype != LESSON_ENDOFCLUSTER) {
-                                    echo "<tr><td align=\"right\" width=\"20%\"><b>".get_string("score", "lesson")." $i:";
-                                    echo "</b></td><td width=\"80%\">\n";
+                                    echo "<tr><td align=\"right\" style=\"width:20%;\"><span class=\"label\">".get_string("score", "lesson")." $i";
+                                    echo "</span>: </td><td style=\"width:80%;\">\n";
                                     echo "$answer->score</td></tr>\n";
                                 }
-                                echo "<tr><td align=\"right\" width=\"20%\"><b>".get_string("jump", "lesson")." $i:";
-                                echo "</b></td><td width=\"80%\">\n";
+                                echo "<tr><td align=\"right\" style=\"width:20%;\"><span class=\"label\">".get_string("jump", "lesson")." $i";
+                                echo "</span>: </td><td style=\"width:80%;\">\n";
                                 echo "$jumptitle</td></tr>\n";
                             }
                             $i++;

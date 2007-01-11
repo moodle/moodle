@@ -46,12 +46,12 @@
     // give teacher a blank proforma
     print_heading_with_help(get_string("addaquestionpage", "lesson"), "overview", "lesson");
     ?>
-    <form id="form" method="post" action="lesson.php">
+    <form id="form" method="post" action="lesson.php" class="addform">
+    <fieldset class="invisiblefieldset">
     <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
     <input type="hidden" name="action" value="insertpage" />
     <input type="hidden" name="pageid" value="<?php echo $pageid ?>" />
     <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
-    <center>
       <?php
         echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
         echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br />";
@@ -70,10 +70,10 @@
             echo '</p>';
         }
     ?>
-    <table cellpadding="5" class="generalbox" border="1">
+    <table cellpadding="5" class="generalbox boxaligncenter" border="1">
     <tr valign="top">
     <td><b><label for="title"><?php print_string("pagetitle", "lesson"); ?>:</label></b><br />
-    <input type="text" id="title" name="title" size="80" maxsize="255" value="" /></td></tr>
+    <input type="text" id="title" name="title" size="80" value="" /></td></tr>
     <?php
     echo "<tr><td><b>";
     echo get_string("pagecontents", "lesson").":</b><br />\n";
@@ -193,5 +193,5 @@
     </table><br />
     <input type="submit" value="<?php  print_string("addaquestionpage", "lesson") ?>" />
     <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
-    </center>
+    </fieldset>
     </form>

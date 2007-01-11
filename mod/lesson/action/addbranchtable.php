@@ -36,28 +36,29 @@
     // give teacher a blank proforma
     print_heading_with_help(get_string("addabranchtable", "lesson"), "overview", "lesson");
     ?>
-    <form id="form" method="post" action="lesson.php">
+    <form id="form" method="post" action="lesson.php" class="addform">
+    <fieldset class="invisiblefieldset">
     <input type="hidden" name="id" value="<?PHP echo $cm->id ?>" />
     <input type="hidden" name="action" value="insertpage" />
     <input type="hidden" name="pageid" value="<?PHP echo $pageid ?>" />
     <input type="hidden" name="qtype" value="<?PHP echo LESSON_BRANCHTABLE ?>" />
     <input type="hidden" name="sesskey" value="<?PHP echo $USER->sesskey ?>" />
-    <center><table class="generalbox" cellpadding="5" border="1">
+    <table class="generalbox boxaligncenter" cellpadding="5" border="1">
     <tr valign="top">
     <td><b><label for="title"><?php print_string("pagetitle", "lesson"); ?>:</label></b><br />
-    <input type="text" id="title" name="title" size="80" maxsize="255" value="" /></td></tr>
+    <input type="text" id="title" name="title" size="80" value="" /></td></tr>
     <?php
-    echo "<tr><td><b>";
-    echo get_string("pagecontents", "lesson").":</b><br />\n";
+    echo "<tr><td><strong>";
+    echo get_string("pagecontents", "lesson").":</strong><br />\n";
     print_textarea($usehtmleditor, 25,70, 630, 400, "contents");
     use_html_editor("contents");
     echo "</td></tr>\n";
     echo "<tr><td>\n";
-    echo "<center><input name=\"layout\" type=\"checkbox\" value=\"1\" checked=\"checked\" />";
+    echo "<div class=\"boxaligncenter addform\"><input name=\"layout\" type=\"checkbox\" value=\"1\" checked=\"checked\" />";
     echo get_string("arrangebuttonshorizontally", "lesson")."\n";
     echo "<br /><input name=\"display\" type=\"checkbox\" value=\"1\" checked=\"checked\" />";
     echo get_string("displayinleftmenu", "lesson");
-    echo "</center>\n";
+    echo "</div>\n";
     echo "</td></tr>\n";
     for ($i = 0; $i < $lesson->maxanswers; $i++) {
         $iplus1 = $i + 1;
@@ -80,5 +81,5 @@
     </table><br />
     <input type="submit" value="<?php  print_string("addabranchtable", "lesson") ?>" />
     <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
-    </center>
+    </fieldset>
     </form>
