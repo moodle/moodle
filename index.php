@@ -100,9 +100,6 @@
   <tr>
   <?php
 // uh-changes start
-    // $CFG->LayoutTable = array('left', 'middle', 'right');
-    // $CFG->LayoutTable = array('left', 'right', 'middle');
-    // $CFG->LayoutTable = array('middle', 'left', 'right');
     $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
     foreach ($lt as $column) {
         switch ($column) {
@@ -110,7 +107,20 @@
 // uh-changes end
     if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
         echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
+// uh-changes start
+        if (!empty($THEME->roundcorners)) {
+            echo '<div class="bl clearfix">';
+            echo '<div class="br clearfix">';
+            echo '<div class="tl clearfix">';
+            echo '<div class="tr clearfix">';
+        }
+// uh-changes end
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+// uh-changes start
+        if (!empty($THEME->roundcorners)) {
+            echo '</div></div></div></div>';
+        }
+// uh-changes end
         echo '</td>';
     }
 // uh-changes start
@@ -119,6 +129,14 @@
 // uh-changes end
     echo '<td id="middle-column">';
 
+// uh-changes start
+    if (!empty($THEME->roundcorners)) {
+        echo '<div class="bl clearfix">';
+        echo '<div class="br clearfix">';
+        echo '<div class="tl clearfix">';
+        echo '<div class="tr clearfix">';
+    }
+// uh-changes end
 
 /// Print Section
     if ($SITE->numsections > 0) {
@@ -235,6 +253,12 @@
         echo '<br />';
     }
 
+// uh-changes start
+    if (!empty($THEME->roundcorners)) {
+        echo '</div></div></div></div>';
+    }
+// uh-changes end
+
     echo '</td>';
 // uh-changes start
             break;
@@ -243,11 +267,24 @@
     // The right column
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing || has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
+// uh-changes start
+        if (!empty($THEME->roundcorners)) {
+            echo '<div class="bl clearfix">';
+            echo '<div class="br clearfix">';
+            echo '<div class="tl clearfix">';
+            echo '<div class="tr clearfix">';
+        }
+// uh-changes end
         if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             echo '<div style="text-align:center">'.update_course_icon($SITE->id).'</div>';
             echo '<br />';
         }
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+// uh-changes start
+        if (!empty($THEME->roundcorners)) {
+            echo '</div></div></div></div>';
+        }
+// uh-changes end
         echo '</td>';
     }
 // uh-changes start
