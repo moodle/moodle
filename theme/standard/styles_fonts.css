@@ -594,11 +594,12 @@ body#grade-index .grades .header {
 /***
  *** Tabs
  ***/
-.tablink {
-  font-size:0.8em;
+.tabtree {
+  font-size:0.9em;
+  font-weight:bold;
 }
 
-.tablink a:hover {
+.tabtree a:hover {
   text-decoration: none;
 }
 
