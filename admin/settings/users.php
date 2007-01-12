@@ -43,6 +43,10 @@ $temp->add(new admin_setting_configselect('defaultcourseroleid', get_string('def
               get_string('configdefaultcourseroleid', 'admin'), $studentrole->id, $assignableroles));
 
 $temp->add(new admin_setting_configcheckbox('autologinguests', get_string('autologinguests', 'admin'), get_string('configautologinguests', 'admin'), 0));
+
+$temp->add(new admin_setting_configmultiselect('nonmetacoursesyncroleids', get_string('nonmetacoursesyncroleids', 'admin'),
+              get_string('confignonmetacoursesyncroleids', 'admin'), '', $assignableroles));
+
 //$temp->add(new admin_setting_configcheckbox('allusersaresitestudents', get_string('allusersaresitestudents', 'admin'), get_string('configallusersaresitestudents','admin'), 1));
 $temp->add(new admin_setting_configmultiselect('hiddenuserfields', get_string('hiddenuserfields', 'admin'),
            get_string('confighiddenuserfields', 'admin'), array(),

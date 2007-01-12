@@ -1990,6 +1990,13 @@ function sync_metacourse($course) {
         return false;
     }
 
+    // Get a list of roles that should not be synced.
+    if ($CFG->nonmetacoursesyncroleids) {
+        $roleexclusions = 'ra.roleid NOT IN (' . $CFG->nonmetacoursesyncroleids . ') AND';
+    } else { 
+        $roleexclusions = '';
+    }
+
     // Get the context of the metacourse.
     $context = get_context_instance(CONTEXT_COURSE, $course->id); // SITEID can not be a metacourse
 
@@ -2014,6 +2021,7 @@ function sync_metacourse($course) {
                 con.contextlevel = " . CONTEXT_COURSE . " AND
                 con.instanceid = cm.child_course AND
                 cm.parent_course = {$course->id} AND
+                $roleexclusions
                 NOT EXISTS (
                     SELECT 1 FROM
                         {$CFG->prefix}role_assignments ra2
@@ -2035,6 +2043,7 @@ function sync_metacourse($course) {
                 {$CFG->prefix}role_assignments ra
             WHERE
                 ra.contextid = {$context->id} AND
+                $roleexclusions
                 NOT EXISTS (
                     SELECT 1 FROM
                         {$CFG->prefix}role_assignments ra2,
