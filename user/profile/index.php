@@ -285,30 +285,30 @@ function profile_category_icons ($category) {
     $fieldcount    = count_records('user_info_field', 'categoryid', $category->id);
 
     /// Edit
-    $editstr .= '<a title="'.$str->edit.'" href="index.php?id='.$category->id.'&amp;action=editcategory&amp;sesskey='.$USER->sesskey.'"><img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.$str->edit.'" /></a> ';
+    $editstr .= '<a title="'.$str->edit.'" href="index.php?id='.$category->id.'&amp;action=editcategory&amp;sesskey='.$USER->sesskey.'"><img src="'.$CFG->pixpath.'/t/edit.gif" alt="'.$str->edit.'" class="iconsmall" /></a> ';
 
     /// Delete
     /// Can only delete the last category if there are no fields in it
     if ( ($categorycount > 1) or ($fieldcount == 0) ) {
         $editstr .= '<a title="'.$str->delete.'" href="index.php?id='.$category->id.'&amp;action=deletecategory&amp;sesskey='.$USER->sesskey;
         if ($fieldcount == 0) $editstr .= '&amp;confirm=1';
-        $editstr .= '"><img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.$str->delete.'" /></a> ';
+        $editstr .= '"><img src="'.$CFG->pixpath.'/t/delete.gif" alt="'.$str->delete.'" class="iconsmall" /></a> ';
     } else {
-        $editstr .= '<img src="'.$CFG->pixpath.'/spacer.gif" height="11" width="11" border="0" alt="" /> ';
+        $editstr .= '<img src="'.$CFG->pixpath.'/spacer.gif" alt="" class="iconsmall" /> ';
     }
 
     /// Move up
     if ($category->sortorder > 1) {
-        $editstr .= '<a title="'.$str->moveup.'" href="index.php?id='.$category->id.'&amp;action=movecategory&amp;dir=up&amp;sesskey='.$USER->sesskey.'"><img src="'.$CFG->pixpath.'/t/up.gif" height="11" width="11" border="0" alt="'.$str->moveup.'" /></a> ';
+        $editstr .= '<a title="'.$str->moveup.'" href="index.php?id='.$category->id.'&amp;action=movecategory&amp;dir=up&amp;sesskey='.$USER->sesskey.'"><img src="'.$CFG->pixpath.'/t/up.gif" alt="'.$str->moveup.'" class="iconsmall" /></a> ';
     } else {
-        $editstr .= '<img src="'.$CFG->pixpath.'/spacer.gif" height="11" width="11" border="0" alt="" /> ';
+        $editstr .= '<img src="'.$CFG->pixpath.'/spacer.gif" alt="" class="iconsmall" /> ';
     }
 
     /// Move down
     if ($category->sortorder < $categorycount) {
-        $editstr .= '<a title="'.$str->movedown.'" href="index.php?id='.$category->id.'&amp;action=movecategory&amp;dir=down&amp;sesskey='.$USER->sesskey.'"><img src="'.$CFG->pixpath.'/t/down.gif" height="11" width="11" border="0" alt="'.$str->movedown.'" /></a> ';
+        $editstr .= '<a title="'.$str->movedown.'" href="index.php?id='.$category->id.'&amp;action=movecategory&amp;dir=down&amp;sesskey='.$USER->sesskey.'"><img src="'.$CFG->pixpath.'/t/down.gif" alt="'.$str->movedown.'" class="iconsmall" /></a> ';
     } else {
-        $editstr .= '<img src="'.$CFG->pixpath.'/spacer.gif" height="11" width="11" border="0" alt="" /> ';
+        $editstr .= '<img src="'.$CFG->pixpath.'/spacer.gif" alt="" class="iconsmall" /> ';
     }
         
 
@@ -335,25 +335,25 @@ function profile_field_icons ($field) {
     $datacount  = count_records('user_info_data', 'fieldid', $field->id);
 
     /// Edit
-    $editstr .= '<a title="'.$str->edit.'" href="index.php?id='.$field->id.'&amp;action=editfield&amp;sesskey='.$USER->sesskey.'"><img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="'.$str->edit.'" /></a> ';
+    $editstr .= '<a title="'.$str->edit.'" href="index.php?id='.$field->id.'&amp;action=editfield&amp;sesskey='.$USER->sesskey.'"><img src="'.$CFG->pixpath.'/t/edit.gif" alt="'.$str->edit.'" class="iconsmall" /></a> ';
 
     /// Delete
     $editstr .= '<a title="'.$str->delete.'" href="index.php?id='.$field->id.'&amp;action=deletefield&amp;sesskey='.$USER->sesskey;
     if ($datacount == 0) $editstr .= '&amp;confirm=1'; /// Immediate delete if there is no user data
-    $editstr .= '"><img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.$str->delete.'" /></a> ';
+    $editstr .= '"><img src="'.$CFG->pixpath.'/t/delete.gif" alt="'.$str->delete.'" class="iconsmall" /></a> ';
 
     /// Move up
     if ($field->sortorder > 1) {
-        $editstr .= '<a title="'.$str->moveup.'" href="index.php?id='.$field->id.'&amp;action=movefield&amp;dir=up&amp;sesskey='.$USER->sesskey.'"><img src="'.$CFG->pixpath.'/t/up.gif" height="11" width="11" border="0" alt="'.$str->moveup.'" /></a> ';
+        $editstr .= '<a title="'.$str->moveup.'" href="index.php?id='.$field->id.'&amp;action=movefield&amp;dir=up&amp;sesskey='.$USER->sesskey.'"><img src="'.$CFG->pixpath.'/t/up.gif" alt="'.$str->moveup.'" class="iconsmall" /></a> ';
      } else {
-        $editstr .= '<img src="'.$CFG->pixpath.'/spacer.gif" height="11" width="11" border="0" alt="" /> ';
+        $editstr .= '<img src="'.$CFG->pixpath.'/spacer.gif" alt="" class="iconsmall" /> ';
     }
 
     /// Move down
     if ($field->sortorder < $fieldcount) {
-        $editstr .= '<a title="'.$str->movedown.'" href="index.php?id='.$field->id.'&amp;action=movefield&amp;dir=down&amp;sesskey='.$USER->sesskey.'"><img src="'.$CFG->pixpath.'/t/down.gif" height="11" width="11" border="0" alt="'.$str->movedown.'" /></a> ';
+        $editstr .= '<a title="'.$str->movedown.'" href="index.php?id='.$field->id.'&amp;action=movefield&amp;dir=down&amp;sesskey='.$USER->sesskey.'"><img src="'.$CFG->pixpath.'/t/down.gif" alt="'.$str->movedown.'" class="iconsmall" /></a> ';
     } else {
-        $editstr .= '<img src="'.$CFG->pixpath.'/spacer.gif" height="11" width="11" border="0" alt="" /> ';
+        $editstr .= '<img src="'.$CFG->pixpath.'/spacer.gif" alt="" class="iconsmall" /> ';
     }
 
     return $editstr;
