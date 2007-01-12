@@ -7,7 +7,7 @@ class profile_field_text extends profile_field_base {
         $size = (empty($this->field->param1)) ? '30' : $this->field->param1;
 
         /// Param 2 for text type is the maxlength of the field
-        $maxlength = (empty($this->field->param2)) ? '254' : $this->field->param2;
+        $maxlength = (empty($this->field->param2)) ? '2048' : $this->field->param2;
 
         /// Create the form field
         $form->addElement('text', $this->fieldname, $this->field->name, 'maxlength="'.$maxlength.'" size="'.$size.'" ');
@@ -17,6 +17,21 @@ class profile_field_text extends profile_field_base {
     function set_data_type() {
         $this->datatype = 'text';
     }
+
+    function edit_field_specific(&$form) {
+        /// Default data
+        $form->addElement('text', 'defaultdata', get_string('profiledefaultdata'), 'size="30"');
+        $form->setType('defaultdata', PARAM_MULTILANG);
+
+        /// Param 1 for text type is the size of the field
+        $form->addElement('text', 'param1', get_string('profilefieldsize'), 'size="6"');
+        $form->setType('param1', PARAM_INT);
+        
+        /// Param 2 for text type is the maxlength of the field
+        $form->addElement('text', 'param2', get_string('profilefieldmaxlength'), 'size="6"');
+        $form->setType('param2', PARAM_INT);
+    }
+
 }
 
 ?>
