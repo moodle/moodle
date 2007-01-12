@@ -1518,6 +1518,9 @@ class admin_setting_configmultiselect extends admin_setting_configselect {
     function output_html() {
         if ($this->get_setting() === NULL) {
           $currentsetting = $this->defaultsetting;
+          if (!$currentsetting) {
+              $currentsetting = array();
+          }
         } else {
           $currentsetting = $this->get_setting();
         }
