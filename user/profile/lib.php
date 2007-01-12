@@ -578,10 +578,14 @@ function profile_delete_category ($id) {
         /// Retrieve the next category down
         if (!($newcategory = get_record('user_info_category', 'sortorder', ($category->sortorder + 1))) ) {
 
-            /// We cannot find any other categories next to current one:
-            /// 1. The sortorder values are incongruous which means a bug somewhere
-            /// 2. We are the only category => cannot delete this category!
-            return false;
+            if (count_records('user_info_field', 'categoryid', $category->id) > 0) {
+
+                /// We cannot find any other categories next to current one so either:
+                /// 1. The sortorder values are incongruous which means a bug somewhere
+                /// 2. We are the only category but there are fields  => cannot delete this category!
+                
+                return false;
+            }
         }
     }
 
