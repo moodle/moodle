@@ -131,12 +131,15 @@ Horrek Moodlek berak memoria-muga ezartzea ahalbidetzen du.</li>
 </ol>';
 $string['missingrequiredfield'] = 'Beharrezko eremuren bat falta da.';
 $string['moodledocslink'] = 'Moodle Doc-ak orri honetarako';
+$string['mysql'] = 'MySQL (mysql)';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP ez da ongi ezarri MySQL luzapenarekin datu-basearekin komunikatzeko. Php.ini fitxategia aztertu edo PHP konpilatu, mesedez.';
 $string['name'] = 'Izena';
 $string['next'] = 'Hurrengoa';
+$string['oci8po'] = 'Oracle (oci8po)';
 $string['ok'] = 'Ongi';
 $string['pass'] = 'Zuzena';
 $string['password'] = 'Pasahitza';
+$string['php50restricted'] = 'PHP 5.0.x-k hainbat arazo ezagun ditu; mesedez, eguneratu 5.1.x bertsiora edo erabili 4.3.x edo 4.4.x bertsioak.';
 $string['phpversion'] = 'PHP bertsioa';
 $string['phpversionerror'] = 'PHP bertsioak 4.1.0 edo geroagokoa izan behar du';
 $string['phpversionhelp'] = '<p>Moodlek PHP 4.1.0 edo geroagoko bertsioa behar du.</p>
