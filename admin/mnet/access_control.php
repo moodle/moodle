@@ -18,6 +18,8 @@ $adminroot = admin_get_root();
 
 admin_externalpage_setup('ssoaccesscontrol', $adminroot);
 
+admin_externalpage_print_header($adminroot);
+
 if (!extension_loaded('openssl')) {
     print_error('requiresopenssl', 'mnet', '', NULL, true);
 }
@@ -118,7 +120,6 @@ if ($form = data_submitted() and confirm_sesskey()) {
     exit;
 }
 
-admin_externalpage_print_header($adminroot);
 
 // output the ACL table
 $columns = array("username", "mnet_host_id", "access", "delete");
