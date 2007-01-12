@@ -1491,10 +1491,21 @@ class admin_setting_configmultiselect extends admin_setting_configselect {
 
     function get_setting() {
         global $CFG;
-        return (isset($CFG->{$this->name}) ? explode(',', $CFG->{$this->name}) : NULL);;
+        if (isset($CFG->{$this->name})) {
+            if ($CFG->{$this->name}) {
+                return explode(',', $CFG->{$this->name});
+            } else {
+                return array();
+            }            
+        } else {
+            return NULL;
+        }
     }
 
     function write_setting($data) {
+        if (empty($data)) {
+            $data = array();
+        }
         foreach ($data as $datum) {
             if (! in_array($datum, array_keys($this->choices))) {
                 return get_string('errorsetting', 'admin') . $this->visiblename . '<br />';
