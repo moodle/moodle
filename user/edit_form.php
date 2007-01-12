@@ -168,7 +168,9 @@ class user_edit_form extends moodleform {
         $mform->addElement('select', 'ajax', get_string('ajaxuse'), $choices);
         $mform->setType('ajax', PARAM_INT);
         $mform->setDefault('ajax', 1);
-        $mform->disabledIf('ajax', empty($CFG->enableajax), true);
+        if (empty($CFG->enableajax)) {
+            $mform->freeze('ajax');
+        }
         
         $mform->addElement('text', 'city', get_string('city'), 'maxlength="100" size="25"');
         $mform->setType('city', PARAM_MULTILANG);
@@ -268,7 +270,9 @@ class user_edit_form extends moodleform {
         
         $mform->addElement('text', 'idnumber', get_string('idnumber'), 'maxlength="64" size="25"');
         $mform->setType('idnumber', PARAM_MULTILANG);
-        $mform->disabledIf('idnumber', (!$userupdate), true);
+        if (!$userupdate) {
+            $mform->freeze('idnumber');
+        }
 
         if ($userupdate) {
             $mform->addElement('text', 'institution', get_string('institution'), 'maxlength="40" size="25"');
@@ -280,19 +284,21 @@ class user_edit_form extends moodleform {
         
         $mform->addElement('text', 'phone1', get_string('phone'), 'maxlength="20" size="25"');
         $mform->setType('phone1', PARAM_CLEAN);
-        $mform->disabledIf('phone1', (!$userupdate), true);
+        if (!$userupdate) {
+            $mform->freeze('phone1');
+        }
         
         $mform->addElement('text', 'phone2', get_string('phone'), 'maxlength="20" size="25"');
         $mform->setType('phone2', PARAM_CLEAN);
-        $mform->disabledIf('phone2', (!$userupdate), true);
+        if (!$userupdate) {
+            $mform->freeze('phone2');
+        }
         
         $mform->addElement('text', 'address', get_string('address'), 'maxlength="70" size="25"');
         $mform->setType('address', PARAM_MULTILANG);
-        $mform->disabledIf('address', (!$userupdate), true);
-
-
-        /// override the defaults with the user settings
-        $this->set_defaults($user);
+        if (!$userupdate) {
+            $mform->freeze('address');
+        }
 
 
         /// disable fields that are locked by auth plugins

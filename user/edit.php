@@ -78,8 +78,9 @@
     }
 
 
-    $userform = new user_edit_form(null, compact('user','course', 'authplugin'));
+    $userform = new user_edit_form(null, compact('user','course','authplugin'));
     $userform->set_upload_manager(new upload_manager('imagefile',false,false,null,false,0,true,true));
+    $userform->set_defaults($user);
 
 /// If data submitted, then process and store.
     if ($usernew = $userform->data_submitted()) {
