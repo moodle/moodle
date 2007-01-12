@@ -13,7 +13,9 @@ define ('PROFILE_LOCKED_YES',      '1');
 define ('PROFILE_LOCKED_NO',       '0');
 
 
-
+/**
+ * Base class for the cusomisable profile fields.
+ */
 class profile_field_base {
 
     var $datatype  = '';   /// data type of this field
@@ -77,9 +79,7 @@ class profile_field_base {
     }
 
 
-
     /***** The following methods must be overwritten in the child classes *****/
-
 
     /**
      * Set the data type for this profile field
@@ -178,10 +178,10 @@ class profile_field_base {
      * @param   object   instance of the moodleform class
      */
     function edit_field (&$form) {
-        $form->addElement('header', 'commonsettings', get_string('common'));
+        $form->addElement('header', '_commonsettings', get_string('profilecommonsettings'));
         $this->edit_field_common($form);
         
-        $form->addElement('header', 'specificsettings', get_string('specific'));
+        $form->addElement('header', '_specificsettings', get_string('profilespecificsettings'));
         $this->edit_field_specific($form);
     }
 
@@ -221,7 +221,7 @@ class profile_field_base {
 
         unset($choices);
         $choices = profile_list_categories();
-        $form->addElement('select', 'categoryid', get_string('category'), $choices);
+        $form->addElement('select', 'categoryid', get_string('profilecategory'), $choices);
         $form->setType('categoryid', PARAM_INT);
     }
 
@@ -471,6 +471,86 @@ function profile_list_datatypes() {
 }
 
 /**
+ * Change the sortorder of a field
+ * @param   integer   id of the field
+ * @param   string    direction of move
+ * @return  boolean   success of operation
+ */
+function profile_move_field ($id, $move='down') {
+    /// Get the field object
+    if (!($field = get_record('user_info_field', 'id', $id))) {
+        return false;
+    }
+    /// Count the number of fields in this category
+    $fieldcount = count_records_select('user_info_field', 'categoryid='.$field->categoryid);
+
+    /// Calculate the new sortorder
+    if ( ($move == 'up') and ($field->sortorder > 1)) {
+        $neworder = $field->sortorder - 1;
+    } elseif ( ($move == 'down') and ($field->sortorder < $fieldcount)) {
+        $neworder = $field->sortorder + 1;
+    } else {
+        return false;
+    }
+
+    /// Retrieve the field object that is currently residing in the new position
+    if ($swapfield = get_record('user_info_field', 'categoryid', $field->categoryid, 'sortorder', $neworder)) {
+
+        /// Swap the sortorders
+        $swapfield->sortorder = $field->sortorder;
+        $field->sortorder     = $neworder;
+
+        /// Update the field records
+        if (update_record('user_info_field', $field) and update_record('user_info_field', $swapfield)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Change the sortorder of a category
+ * @param   integer   id of the category
+ * @param   string    direction of move
+ * @return  boolean   success of operation
+ */
+function profile_move_category ($id, $move='down') {
+    /// Get the category object
+    if (!($category = get_record('user_info_category', 'id', $id))) {
+        return false;
+    }
+
+    /// Count the number of categories
+    $categorycount = count_records_select('user_info_category', '1');
+
+    /// Calculate the new sortorder
+    if ( ($move == 'up') and ($category->sortorder > 1)) {
+        $neworder = $category->sortorder - 1;
+    } elseif ( ($move == 'down') and ($category->sortorder < $categorycount)) {
+        $neworder = $category->sortorder + 1;
+    } else {
+        return false;
+    }
+
+    /// Retrieve the category object that is currently residing in the new position
+    if ($swapcategory = get_record('user_info_category', 'sortorder', $neworder)) {
+
+        /// Swap the sortorders
+        $swapcategory->sortorder = $category->sortorder;
+        $category->sortorder     = $neworder;
+
+        /// Update the category records
+        if (update_record('user_info_category', $category) and update_record('user_info_category', $swapcategory)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+/**
  * Retrieve a list of categories and ids suitable for use in a form
  * @return   array
  */
@@ -482,11 +562,59 @@ function profile_list_categories() {
 }
 
 /**
+ * Delete a profile category
+ * @param   integer   id of the category to be deleted
+ * @return  boolean   success of operation
+ */
+function profile_delete_category ($id) {
+    /// Retrieve the category
+    if (!($category = get_record('user_info_category', 'id', $id))) {
+        return false;
+    }
+
+    /// Retrieve the next category up
+    if ( !($newcategory = get_record('user_info_category', 'sortorder', ($category->sortorder - 1))) ) {
+
+        /// Retrieve the next category down
+        if (!($newcategory = get_record('user_info_category', 'sortorder', ($category->sortorder + 1))) ) {
+
+            /// We cannot find any other categories next to current one:
+            /// 1. The sortorder values are incongruous which means a bug somewhere
+            /// 2. We are the only category => cannot delete this category!
+            return false;
+        }
+    }
+
+    /// Does the category contain any fields
+    if (count_records('user_info_field', 'categoryid', $category->id) > 0) {
+        /// Move fields to the new category
+        $sortorder = count_records('user_info_field', 'categoryid', $newcategory->id);
+
+        if ($fields = get_records('user_info_field', 'categoryid', $category->id)) {
+            foreach ($fields as $field) {
+                $sortorder++;
+                $field->sortorder = $sortorder;
+                $field->categoryid = $newcategory->id;
+                update_record('user_info_field', $field);
+            }
+        }
+    }
+
+    /// Finally we get to delete the category
+    if (delete_records('user_info_category', 'id', $category->id) !== false) {
+        profile_reorder_categories();
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
  * Reorder the profile fields within a given category starting
  * at the field at the given startorder
  * @param   integer   id of the category
  * @param   integer   starting order
- * $return  integer   number of fields reordered
+ * @return  integer   number of fields reordered
  */
 function profile_reorder_fields($categoryid, $startorder=1) {
     $count = 0;
@@ -496,6 +624,27 @@ function profile_reorder_fields($categoryid, $startorder=1) {
         foreach ($fields as $field) {
             $field->sortorder = $sortorder;
             update_record('user_info_field', $field);
+            $sortorder++;
+            $count++;
+        }
+    }
+    return $count;
+}
+
+/**
+ * Reorder the profile categoriess starting at the category
+ * at the given startorder
+ * @param   integer   starting order
+ * @return  integer   number of categories reordered
+ */
+function profile_reorder_categories($startorder=1) {
+    $count = 0;
+    $sortorder = $startorder;
+    
+    if ($categories = get_records_select('user_info_category', 'sortorder>='.$startorder, 'sortorder ASC')) {
+        foreach ($categories as $cat) {
+            $cat->sortorder = $sortorder;
+            update_record('user_info_category', $cat);
             $sortorder++;
             $count++;
         }
