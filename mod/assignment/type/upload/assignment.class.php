@@ -449,7 +449,7 @@ class assignment_upload extends assignment_base {
             $defaults->text = '';
         }
 
-        $mform->set_defaults($defaults);
+        $mform->set_data($defaults);
 
         if ($mform->is_cancelled()) {
             redirect('view.php?id='.$this->cm->id);
@@ -463,7 +463,7 @@ class assignment_upload extends assignment_base {
             die;
         }
 
-        if ($data = $mform->data_submitted() and $action == 'savenotes') {
+        if ($data = $mform->get_data() and $action == 'savenotes') {
             $submission = $this->get_submission($USER->id, true); // get or create submission
             $updated = new object();
             $updated->id           = $submission->id;

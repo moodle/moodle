@@ -56,13 +56,13 @@ class assignment_online extends assignment_base {
                 $defaults->format = $submission->data2;
             }
         }
-        $mform->set_defaults($defaults);
+        $mform->set_data($defaults);
 
         if ($mform->is_cancelled()) {
             redirect('view.php?id='.$this->cm->id);
         }
 
-        if ($data = $mform->data_submitted()) {      // No incoming data?
+        if ($data = $mform->get_data()) {      // No incoming data?
             if ($editable && $this->update_submission($data)) {
                 //TODO fix log actions - needs db upgrade
                 $submission = $this->get_submission();

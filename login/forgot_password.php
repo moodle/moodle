@@ -56,7 +56,7 @@ if ($mform->is_cancelled()) {
     redirect($CFG->httpswwwroot.'/login/index.php');
 }
 
-if ($action == 'find' and $param = $mform->data_submitted()) {
+if ($action == 'find' and $param = $mform->get_data()) {
 ///=====================
 /// find the user in the database and mail info
 ///=====================
@@ -265,7 +265,7 @@ if ($page == 'emailconfirm') {
 
 }
 
-if(!$mform->data_submitted()) {
+if(!$mform->get_data()) {
     echo $strforgotteninstruct;
     $mform->display();
 }

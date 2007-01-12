@@ -1117,7 +1117,7 @@ function data_print_comments($data, $record, $page=0, $mform=false) {
         if (!$mform) {
             require_once('comment_form.php');
             $mform = new mod_data_comment_form('comment.php');
-            $mform->set_defaults(array('mode'=>'add', 'page'=>$page, 'rid'=>$record->id));
+            $mform->set_data(array('mode'=>'add', 'page'=>$page, 'rid'=>$record->id));
         }
         echo '<div class="newcomment" style="text-align:center">';
         $mform->display();

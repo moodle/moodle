@@ -52,13 +52,13 @@ function glossary_comment_add() {
     }
 
     $mform = new mod_glossary_comment_form();
-    $mform->set_defaults(array('eid'=>$eid, 'action'=>'add'));
+    $mform->set_data(array('eid'=>$eid, 'action'=>'add'));
 
     if ($mform->is_cancelled()) {
         redirect("comments.php?id=$cm->id&amp;eid=$entry->id");
     }
 
-    if ($data = $mform->data_submitted()) {
+    if ($data = $mform->get_data()) {
         trusttext_after_edit($data->entrycomment, $context);
 
         $newcomment = new object();
@@ -176,9 +176,9 @@ function glossary_comment_edit() {
 
     $mform = new mod_glossary_comment_form();
     trusttext_prepare_edit($comment->entrycomment, $comment->format, can_use_html_editor(), $context);
-    $mform->set_defaults(array('cid'=>$cid, 'action'=>'edit', 'entrycomment'=>$comment->entrycomment, 'format'=>$comment->format));
+    $mform->set_data(array('cid'=>$cid, 'action'=>'edit', 'entrycomment'=>$comment->entrycomment, 'format'=>$comment->format));
 
-    if ($data = $mform->data_submitted()) {
+    if ($data = $mform->get_data()) {
         trusttext_after_edit($data->entrycomment, $context);
 
         $updatedcomment = new object();

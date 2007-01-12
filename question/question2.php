@@ -76,11 +76,11 @@ if ($wizard!==''){
 if ($mform === null) {
     print_error('missingimportantcode', 'question', $returnurl, 'question editing form definition');
 }
-$mform->set_defaults($question);
+$mform->set_data($question);
 
 if ($mform->is_cancelled()){
     redirect($returnurl);
-} else if ($data = $mform->data_submitted()){
+} else if ($data = $mform->get_data()){
     if (!empty($data->makecopy)) {
         $question->id = 0;  // causes a new question to be created.
         $question->hidden = 0; // Copies should not be hidden

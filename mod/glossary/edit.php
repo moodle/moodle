@@ -47,7 +47,7 @@ if ($mform->is_cancelled()){
         redirect("view.php?id=$cm->id");
     }
 
-} elseif ($fromform = $mform->data_submitted()) {
+} elseif ($fromform = $mform->get_data()) {
     trusttext_after_edit($fromform->definition, $context);
 
     if ( !isset($fromform->usedynalink) ) {
@@ -176,7 +176,7 @@ if ($mform->is_cancelled()){
         if ( $aliases = get_records_menu("glossary_alias", "entryid", $e, '', 'id, alias') ) {
             $toform->aliases = implode("\n", $aliases) . "\n";
         }
-        $mform->set_defaults($toform);
+        $mform->set_data($toform);
     }
 }
 

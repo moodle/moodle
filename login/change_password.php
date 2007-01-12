@@ -37,11 +37,11 @@
     }
 
     $mform = new login_change_password_form();
-    $mform->set_defaults(array('id'=>$course->id, 'username'=>$USER->username));
+    $mform->set_data(array('id'=>$course->id, 'username'=>$USER->username));
 
     if ($mform->is_cancelled()) {
         redirect($CFG->wwwroot.'/user/view.php?id='.$USER->id.'&amp;course='.$course->id);
-    } else if ($data = $mform->data_submitted()) {
+    } else if ($data = $mform->get_data()) {
 
         if (!has_capability('moodle/user:update', $sitecontext)) {
             //ignore submitted username - the same is done in form validation

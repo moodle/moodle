@@ -16,7 +16,7 @@
 
     if ($mform_signup->is_cancelled()) {
         redirect($CFG->httpswwwroot.'/login/index.php');
-    } else if ($user = $mform_signup->data_submitted()) {
+    } else if ($user = $mform_signup->get_data()) {
 
         $plainpass = $user->password;
         $user->password    = hash_internal_user_password($plainpass);

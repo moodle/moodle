@@ -30,7 +30,7 @@ class field_form extends moodleform {
         $formfield->edit_field($mform);
         
         /// override the defaults with the user settings
-        $this->set_defaults($field);
+        $this->set_data($field);
 
         $this->add_action_buttons(true);
 

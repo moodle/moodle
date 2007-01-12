@@ -47,7 +47,7 @@
 
 
     $mform = new mod_data_comment_form();
-    $mform->set_defaults(array('mode'=>$mode, 'page'=>$page, 'rid'=>$record->id, 'commentid'=>$commentid));
+    $mform->set_data(array('mode'=>$mode, 'page'=>$page, 'rid'=>$record->id, 'commentid'=>$commentid));
     if ($comment) {
         $format = $comment->format;
         $content = $comment->content;
@@ -58,7 +58,7 @@
             $content = format_text($content, $format, $options);
             $format = FORMAT_HTML;
         }
-        $mform->set_defaults(array('content'=>$content, 'format'=>$format));
+        $mform->set_data(array('content'=>$content, 'format'=>$format));
     }
 
 
@@ -68,7 +68,7 @@
 
     switch ($mode) {
         case 'add':
-            if (!$formadata = $mform->data_submitted()) {
+            if (!$formadata = $mform->get_data()) {
                 break; // something is wrong here, try again
             }
 
@@ -87,7 +87,7 @@
         break;
 
         case 'edit':    //print edit form
-            if (!$formadata = $mform->data_submitted()) {
+            if (!$formadata = $mform->get_data()) {
                 break; // something is wrong here, try again
             }
 

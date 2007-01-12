@@ -75,7 +75,7 @@ class enrolment_plugin_authorize
         else {
             require_once($CFG->dirroot.'/enrol/authorize/enrol_form.php');
             $frmenrol = new enrol_authorize_form();
-            if ($frmenrol->data_submitted()) {
+            if ($frmenrol->get_data()) {
                 $authorizeerror = '';
                 switch ($form->paymentmethod) {
                     case AN_METHOD_CC:

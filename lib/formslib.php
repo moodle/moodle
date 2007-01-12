@@ -232,7 +232,7 @@ class moodleform {
      * @param mixed $default_values object or array of default values
      * @param bool $slased true if magic quotes applied to data values
      */
-    function set_defaults($default_values, $slashed=false) {
+    function set_data($default_values, $slashed=false) {
         if (is_object($default_values)) {
             $default_values = (array)$default_values;
         }
@@ -348,7 +348,7 @@ class moodleform {
      * @param bool $slashed true means return data with addslashes applied
      * @return object submitted data; NULL if not valid or not submitted
      */
-    function data_submitted($slashed=true) {
+    function get_data($slashed=true) {
         $mform =& $this->_form;
 
         if ($this->is_submitted() and $this->is_validated()) {
@@ -406,7 +406,7 @@ class moodleform {
 
     /**
      * Dummy stub method - override if you need to setup the form depending on current
-     * values. This method is called after definition(), data submission and set_defaults().
+     * values. This method is called after definition(), data submission and set_data().
      * All form setup that is dependent on form values should go in here.
      */
     function definition_after_data(){
@@ -529,7 +529,7 @@ class moodleform {
      * Use this method to a cancel and submit button to the end of your form. Pass a param of false
      * if you don't want a cancel button in your form. If you have a cancel button make sure you
      * check for it being pressed using is_cancelled() and redirecting if it is true before trying to
-     * get data with data_submitted().
+     * get data with get_data().
      *
      * @param boolean $cancel whether to show cancel button, default true
      * @param boolean $revert whether to show revert button, default true
@@ -829,7 +829,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
 
     /**
      * Initializes a default form value. Used to specify the default for a new entry where
-     * no data is loaded in using moodleform::set_defaults()
+     * no data is loaded in using moodleform::set_data()
      *
      * @param     string   $elementname        element name
      * @param     mixed    $values             values for that element name

@@ -77,7 +77,7 @@ if ($blogeditform->is_cancelled()){
     no_submit_button_actions($blogeditform, $sitecontext);
 
 
-} else if ($fromform = $blogeditform->data_submitted()){
+} else if ($fromform = $blogeditform->get_data()){
     //save stuff in db
     switch ($action) {
         case 'add':
@@ -152,7 +152,7 @@ if (!$user = get_record('user', 'id', $userid)) {
 print_header("$SITE->shortname: $strblogs", $SITE->fullname,
                 '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'">'.fullname($user).'</a> ->
                 <a href="'.$CFG->wwwroot.'/blog/index.php?userid='.$userid.'">'.$strblogs.'</a> -> '.$strformheading,'','',true);
-$blogeditform->set_defaults($post);
+$blogeditform->set_data($post);
 $blogeditform->display();
 
 

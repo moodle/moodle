@@ -436,7 +436,7 @@
 
     $mform_post = new mod_forum_post_form('post.php', array('course'=>$course, 'coursecontext'=>$coursecontext, 'modcontext'=>$modcontext, 'forum'=>$forum, 'post'=>$post));
 
-    if ($fromform = $mform_post->data_submitted()) {
+    if ($fromform = $mform_post->get_data()) {
 
 
         if (!empty($course->lang)) {           // Override current language
@@ -726,7 +726,7 @@
                     (!empty($USER->autosubscribe));
 
 
-    $mform_post->set_defaults(array(    'general'=>$heading,
+    $mform_post->set_data(array(    'general'=>$heading,
                                         'subject'=>$post->subject,
                                         'message'=>$post->message,
                                         'subscribe'=>$subscribe?1:0,

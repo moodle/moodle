@@ -62,7 +62,7 @@ if (!empty($course)) {
     $editform = new course_edit_form('edit.php', compact('course', 'category'));
     // now override defaults if course already exists
     if (!empty($course)) {
-        $editform->set_defaults($course);
+        $editform->set_data($course);
     }
     if ($editform->is_cancelled()){
         if (empty($course)) {
@@ -71,7 +71,7 @@ if (!empty($course)) {
             redirect($CFG->wwwroot.'/course/view.php?id='.$course->id);
         }
 
-    } elseif ($data = $editform->data_submitted()) {
+    } elseif ($data = $editform->get_data()) {
 /// process data if submitted
 
         //preprocess data

@@ -115,7 +115,7 @@ if ( ($action == 'editcategory' )) {
         redirect($redirect);
         exit;
     } else {
-        if ($data = $categoryform->data_submitted()) {
+        if ($data = $categoryform->get_data()) {
             if ($data->id == 0) {
                 unset($data->id);
                 $data->sortorder = count_records_select('user_info_category', '1') + 1;
@@ -158,7 +158,7 @@ if ( ($action == 'editcategory' )) {
         redirect($redirect);
         exit;
     } else {
-        if ($data = $fieldform->data_submitted()) {
+        if ($data = $fieldform->get_data()) {
             require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
             $newfield = 'profile_field_'.$field->datatype;
             $formfield = new $newfield($field->id);

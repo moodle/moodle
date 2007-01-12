@@ -125,7 +125,7 @@
     $mformclassname = 'mod_'.$module->name.'_mod_form';
     $cousesection=isset($cw->section)?$cw->section:$section;
     $mform=& new $mformclassname($form->instance, $cousesection, ((isset($cm))?$cm:null));
-    $mform->set_defaults($form);
+    $mform->set_data($form);
 
     if ($mform->is_cancelled()) {
         if ($return && isset($cm)){
@@ -133,7 +133,7 @@
         } else {
             redirect("view.php?id=$course->id#section-".$cousesection);
         }
-    } elseif ($fromform=$mform->data_submitted()){
+    } elseif ($fromform=$mform->get_data()){
         if (empty($fromform->coursemodule)) { //add
             if (! $course = get_record("course", "id", $fromform->course)) {
                 error("This course doesn't exist");
