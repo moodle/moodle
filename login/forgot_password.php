@@ -137,7 +137,7 @@ if ($action == 'find' and $param = $mform->data_submitted()) {
                 // if url defined then add that to the message (with a standard message)
                 if (method_exists($userauth, 'change_password_url') and $userauth->change_password_url()) {
                     $strextmessage .= $strpasswordextlink . '<br /><br />';
-                    $txt->extmessage .= '<a href="' . $userauth->change_password_url() . '">' . $userauth->change_password_url() . '</a>';
+                    $strextmessage .= '<a href="' . $userauth->change_password_url() . '">' . $userauth->change_password_url() . '</a>';
                 }
                 // if nothing to display, just do message that we can't help
                 if (empty($strextmessage)) {
@@ -265,11 +265,11 @@ if ($page == 'emailconfirm') {
 
 }
 
-echo $strforgotteninstruct;
-
+if(!$mform->data_submitted()) {
+    echo $strforgotteninstruct;
+    $mform->display();
+}
 print_simple_box_end();
-
-$mform->display();
 
 print_footer();
 
