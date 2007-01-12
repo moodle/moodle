@@ -616,6 +616,10 @@ body#grade-index .grades .header {
   font-size: 0.7em;
 }
 
+.userinfobox td.label {
+  font-weight: bold;
+}
+
 body#user-index #longtimenosee {
   font-size: 0.8em;
 }
