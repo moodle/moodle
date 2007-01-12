@@ -685,7 +685,6 @@ function roles_context_cmp($contexta, $contextb) {
    return ($contexta->contextlevel < $contextb->contextlevel) ? -1 : 1;
 }
 
-
 /**
  * This function should be called immediately after a login, when $USER is set.
  * It will build an array of all the capabilities at each level
@@ -820,80 +819,8 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
             $rs->MoveNext();
         }
     }
-    
-    /** Yu:the following code is an attempt to speed up capabilities resolving during login
-     * this code has not been tested heavily, so the old working (but possibly slower code) is commented out
-     * please help test if this code is working / runs faster for you. please report bugs asap!
-     * this code only affects overrides. Normal capabilities are not affected
-     */
-    $capflags = array(); // temporary flag
-    /// 1) quick sql to get all roles assigned to this user
-    if ($roles = get_records_sql("SELECT roleid, roleid
-                                  FROM {$CFG->prefix}role_assignments
-                                  WHERE userid = $userid")) {
-        
-        /// 2) foreach role, pull out all the overrides attached in all contexts
-        foreach ($roles as $trole) {
-            if ($overrides = get_records_sql("SELECT * FROM {$CFG->prefix}role_capabilities rc
-                                            WHERE rc.roleid = $trole->roleid
-                                            AND rc.contextid != $siteinstance->id
-                                            $capsearch")) {
-                
-                /// 3) For each context, we find all parent contexts, and see if it's relevant
-                /// it is relevant if for this role, there's a role assignment in 1 parent context or more
-                foreach ($overrides as $loverride) {
-                    
-                    // setting up a flag here, if this flag is set to 0, we ignore
-                    // all capabilities at this contextid for this role, i.e. no need to search
-                    // moodle/role:asign, moodle/role:override at context 10 for role 2
-                    // if we know there's no valid parents for context 10, role 2 for any other 
-                    // capability override                 
-                    if (isset($capflags[$trole->roleid][$loverride->contextid]) && $capflags[$trole->roleid][$loverride->contextid] == 0) {
-                        continue;
-                    }
-                 
-                    $lcontext = get_context_instance_by_id($loverride->contextid);               
-                    // possible to do some caching in get_parent_contexts too
-                    $lparents = get_parent_contexts($lcontext);      
-                    $lparents[] = $lcontext->id; // add self
-                    
-                    // initialize, if not set
-                    if(!isset($capflags[$trole->roleid][$loverride->contextid])) {
-                        $capflags[$trole->roleid][$loverride->contextid] = 0;
-                    }
-                    /// we get all parent contexts, loop them
-                    foreach ($lparents as $lparent) { 
-                        
-                        /// if we can find a matching pair of contexts(override/assignment)
-                        /// it's possible to do some optimization here to use results obtained in 1)
-                        if ($rp = get_record_sql ("SELECT ra.id, ra.id FROM {$CFG->prefix}role_assignments ra
-                                                   WHERE ra.userid = $userid
-                                                   AND ra.contextid = $lparent
-                                                   AND ra.roleid = $trole->roleid                       
-                                                   $timesql")) {
-                                 
-                            $llparent = get_context_instance_by_id($lparent);
-                            $lloverride = get_context_instance_by_id($loverride->contextid);
-                            
-                            $temprec = new object();
-                            $temprec->capability = $loverride->capability;  
-                            $temprec->contextlevel = $llparent->contextlevel * 100 + $lloverride ->contextlevel;
-                            $temprec->id2 = $lcontext->id;
-                            $temprec->sum = $loverride->permission;
-                            
-                            $capflags[$trole->roleid][$loverride->contextid]++; // positive value, hit
-                            /// add to the array for processing
-                            $capabilities[] = $temprec;
-                        }                     
-                    }
-                    // ($capflags[$trole->roleid][$loverride->contextid]) would still be 0 if no parent found
-                    // subsequent contextid can be skipped
-                }
-            }
-        }
-    }
- 
-    /*  
+
+  
     // SQL for overrides
     // this is take out because we have no way of making sure c1 is indeed related to c2 (parent)
     // if we do not group by sum, it is possible to have multiple records of rc.capability, c1.id, c2.id, tuple having
@@ -946,7 +873,7 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
             $rs->MoveNext();
         }
     }
-    */
+   
     // this step sorts capabilities according to the contextlevel
     // it is very important because the order matters when we 
     // go through each capabilities later. (i.e. higher level contextlevel
