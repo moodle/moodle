@@ -146,11 +146,12 @@ class question_shortanswer_qtype extends default_questiontype {
         $inputname = ' name="'.$nameprefix.'" ';
 
         $feedback = '';
-        // Assume wrong answer first.
-        $class = question_get_feedback_class(0);
-        $feedbackimg = question_get_feedback_image(0);
+        $class = '';
+        $feedbackimg = '';
 
         if ($options->feedback) {
+            $class = question_get_feedback_class(0);
+            $feedbackimg = question_get_feedback_image(0);
             foreach($question->options->answers as $answer) {
 
                 if ($this->test_response($question, $state, $answer)) {
