@@ -232,31 +232,31 @@ if ( ($action == 'editcategory' )) {
            (count_records_select('user_info_field', '1') > 0) ) and
          ( $categories = get_records_select('user_info_category', '1', 'sortorder ASC')) ) {
         unset ($table);
-        $table->align = array('left', 'right');
+        $table->head = array(get_string('profilecategory','admin'),get_string('profilefield','admin'),get_string('edit'));
+        $table->align = array('left','left','right');
         $table->width = '95%';
         $table->data = array();
+
+        $firstflag = true;
         
         foreach ($categories as $category) {
 
-            $table->data[] = array($category->name, profile_category_icons($category));
-
-            unset($table2);
-            $table2->align = array('left', 'right');
-            $table2->width = '100%';
-            $table2->data  = array();
+            /// Add a divider between the categories
+            if (!$firstflag) {
+                $table->data[] = 'hr';
+            } else {
+                $firstflag = false;
+            }
+            
+            $table->data[] = array($category->name, '', profile_category_icons($category));
 
             if ($fields = get_records_select('user_info_field', "categoryid=$category->id", 'sortorder ASC')) {
                 foreach ($fields as $field) {
 
-                    $table2->data[] = array($field->shortname, profile_field_icons($field));
+                    $table->data[] = array('', $field->name, profile_field_icons($field));
 
                 } /// End of $fields foreach
             } /// End of $fields if
-
-            if (!empty($table2->data)) {
-                $table->data[] = array('',print_table($table2,true));
-            }
-
         } /// End of $categories foreach
         
         print_table($table);
@@ -269,7 +269,7 @@ if ( ($action == 'editcategory' )) {
 
 
     echo '<hr />';
-    echo '<center>';
+    echo '<div class="profileeditor">';
 
     /// Create a new field link
     $options = profile_list_datatypes();
@@ -279,7 +279,7 @@ if ( ($action == 'editcategory' )) {
     $options = array('action'=>'editcategory', 'id'=>'0');
     print_single_button('index.php',$options,get_string('profilecreatecategory', 'admin'));
 
-    echo '</center>';
+    echo '</div>';
 }
 
 admin_externalpage_print_footer($adminroot);
