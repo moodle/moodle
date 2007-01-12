@@ -37,8 +37,10 @@ if (!empty($file)) {
         // _local language packs take precedence
         $xlangs = array();
         foreach ($langs as $lang) {
-            $xlangs[] = $lang . '_local';
-            $xlangs[] = $lang;
+            if (!empty($lang)) {
+                $xlangs[] = $lang . '_local';
+                $xlangs[] = $lang;
+            }
         }
         $langs = $xlangs;
         unset($xlangs);
@@ -46,53 +48,59 @@ if (!empty($file)) {
         $langs = array($forcelang);
     }
 
+// Define possible locations for help file similar to locations for language strings
+// Note: Always retain module directory as before
+    $locations = array();
+    if ($module == 'moodle') {
+        $locations[$CFG->dataroot.'/lang/'] = $file;
+        $locations[$CFG->dirroot.'/lang/'] = $file;
+    } else {
+        $modfile = $module.'/'.$file;
+        $locations[$CFG->dataroot.'/lang/'] = $modfile;
+        $locations[$CFG->dirroot.'/lang/'] = $modfile;
+
+        if (strpos($module, 'block_') === 0) {  // It's a block help file
+            $block = substr($module, 6);
+            $locations[$CFG->dirroot .'/blocks/'.$block.'/lang/'] =  $block.'/'.$file;
+        } else if (strpos($module, 'report_') === 0) {  // It's a report help file
+            $report = substr($module, 7);
+            $locations[$CFG->dirroot .'/'.$CFG->admin.'/report/'.$report.'/lang/'] = $report.'/'.$file;
+            $locations[$CFG->dirroot .'/course/report/'.$report.'/lang/'] = $report.'/'.$file;
+        } else if (strpos($module, 'format_') === 0) {  // Course format
+            $format = substr($module,7);
+            $locations[$CFG->dirroot  .'/course/format/'.$format.'/lang/'] = $format.'/'.$file;
+        } else {                                // It's a normal activity
+            $locations[$CFG->dirroot .'/mod/'.$module.'/lang/'] = $module.'/'.$file;
+        }
+    }
+
     // Work through the possible languages, starting with the most specific.
-    foreach ($langs as $lang) {
-        if (empty($lang)) {
-            continue;
-        }
+    while (!$helpfound && (list(,$lang) = each($langs)) && !empty($lang)) {
 
-        // Work out which directory the help files live in.
-        if ($lang == 'en_utf8') {
-            $helpdir = $CFG->dirroot;
-        } else {
-            $helpdir = $CFG->dataroot;
-        }
-        $helpdir .= "/lang/$lang/help";
+        while (!$helpfound && (list($locationprefix,$locationsuffix) = each($locations))) {
+            $filepath = $locationprefix.$lang.'/help/'.$locationsuffix;
 
-        // Then which file in there we should be serving.
-        if ($module == 'moodle') {
-            $filepath = "$helpdir/$file";
-        } else {
-            $filepath = "$helpdir/$module/$file";
+            // Now, try to include the help text from this file, if we can.
+            if (file_exists_and_readable($filepath)) {
+                $helpfound = true;
+                @include($filepath);   // The actual helpfile
 
-            // If that does not exist, try a fallback into the module code folder.
-            if (!file_exists($filepath)) {
-                $filepath = "$CFG->dirroot/mod/$module/lang/$lang/help/$module/$file";
+                // Now, we process some special cases.
+                $helpdir = $locationprefix.$lang.'/help';
+                if ($module == 'moodle' and ($file == 'index.html' or $file == 'mods.html')) {
+                    include_help_for_each_module($file, $langs, $helpdir);
+                }
+
+                // The remaining horrible hardcoded special cases should be delegated to modules somehow.
+                if ($module == 'moodle' and ($file == 'resource/types.html')) {  // RESOURCES
+                    include_help_for_each_resource($file, $langs, $helpdir);
+                }
+                if ($module == 'moodle' and ($file == 'assignment/types.html')) {  // ASSIGNMENTS
+                    include_help_for_each_assignment_type();
+                }
             }
         }
-
-        // Now, try to include the help text from this file, if we can.
-        if (file_exists_and_readable($filepath)) {
-            $helpfound = true;
-            @include($filepath);   // The actual helpfile
-
-            // Now, we process some special cases.
-            if ($module == 'moodle' and ($file == 'index.html' or $file == 'mods.html')) {
-                include_help_for_each_module($file, $langs, $helpdir);
-            }
-
-            // The remaining horrible hardcoded special cases should be delegated to modules somehow.
-            if ($module == 'moodle' and ($file == 'resource/types.html')) {  // RESOURCES
-                include_help_for_each_resource($file, $langs, $helpdir);
-            }
-            if ($module == 'moodle' and ($file == 'assignment/types.html')) {  // ASSIGNMENTS
-                include_help_for_each_assignment_type();
-            }
-
-            // Having found some help, we break out of the loop over languages.
-            break;
-        }
+        reset($locations);
     }
 } else {
     // The help to display was given as an argument to this function.
@@ -161,7 +169,7 @@ function include_help_for_each_resource($file, $langs, $helpdir) {
     global $CFG;
 
     require_once($CFG->dirroot .'/mod/resource/lib.php');
-    $typelist = resource_get_resource_types();
+    $typelist = resource_get_types();
     $typelist['label'] = get_string('resourcetypelabel', 'resource');
 
     foreach ($typelist as $type => $name) {
