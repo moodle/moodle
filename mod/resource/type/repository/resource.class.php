@@ -576,17 +576,17 @@ function setup_elements(&$mform) {
 
     $mform->addElement('checkbox', 'framepage', get_string('frameifpossible', 'resource'));
     $mform->setDefault('framepage', 0);
-//    $mform->disabledIf('framepage', 'windowpopup', '', 0);
+    $mform->disabledIf('framepage', 'windowpopup', 'eq', 0);
 
     foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
         if ($option == 'height' or $option == 'width') {
             $mform->addElement('text', $option, get_string('new'.$option, 'resource'), array('size'=>'4'));
             $mform->setDefault($option, $CFG->{'resource_popup'.$option});
-//            $mform->disabledIf($option, 'windowpopup', '', 1);
+            $mform->disabledIf($option, 'windowpopup', 'eq', 1);
         } else {
             $mform->addElement('checkbox', $option, get_string('new'.$option, 'resource'));
             $mform->setDefault($option, $CFG->{'resource_popup'.$option});
-//            $mform->disabledIf($option, 'windowpopup', '', 1);
+            $mform->disabledIf($option, 'windowpopup', 'eq', 1);
         }
     }
 
