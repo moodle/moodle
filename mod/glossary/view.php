@@ -404,18 +404,18 @@
         }
     }
     if ( !$entriesshown ) {
-        print_simple_box('<center>' . get_string("noentries","glossary") . '</center>',"center","95%");
+        print_simple_box('<div style="text-align:center">' . get_string("noentries","glossary") . '</div>',"center","95%");
     }
 
 
     if ($ratingsmenuused) {
-        echo "<center><input type=\"submit\" value=\"".get_string("sendinratings", "glossary")."\" />";
+        echo "<div class=\"boxaligncenter\"><input type=\"submit\" value=\"".get_string("sendinratings", "glossary")."\" />";
         if ($glossary->scale < 0) {
             if ($scale = get_record("scale", "id", abs($glossary->scale))) {
                 print_scale_menu_helpbutton($course->id, $scale );
             }
         }
-        echo "</center>";
+        echo "</div>";
         echo "</form>";
     }
 

@@ -358,10 +358,10 @@
 
         // rejected entries
         if ($rejections) {
-            echo '<center><table border="0" width="70%">';
+            echo '<div class="boxaligncenter"><table border="0" width="70%">';
             echo '<tr><td align="center" colspan="2" width="100%"><strong>' . get_string("rejectionrpt","glossary") . '</strong></tr>';
             echo $rejections;
-            echo '</table></center><p><hr width="75%">';
+            echo '</div></center><p><hr width="75%">';
         }
     } else {
         notify("Error while trying to read the file.");

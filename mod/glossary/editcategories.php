@@ -85,7 +85,7 @@
                 delete_records("glossary_categories","id", $hook);
 
                 print_simple_box_start("center","40%", "#FFBBBB");
-                echo "<center>" . get_string("categorydeleted","glossary") ."</center>";
+                echo "<div style=\"text-align:center\">" . get_string("categorydeleted","glossary") ."</div>";
                 echo "</center>";
                 print_simple_box_end();
                 print_footer($course);
@@ -97,7 +97,7 @@
                 echo "<p align=\"center\">" . get_string("delete"). " " . get_string("category","glossary") . "<font size=\"3\">";
 
                 print_simple_box_start("center","40%", "#FFBBBB");
-                echo "<center><b>".format_text($category->name)."</b><br/>";
+                echo "<div class=\"boxaligncenter\"><b>".format_text($category->name)."</b><br/>";
 
                 $num_entries = count_records("glossary_entries_categories","categoryid",$category->id);
                 if ( $num_entries ) {
@@ -123,7 +123,7 @@
                 $options = array ("id" => $id);
                 print_single_button("editcategories.php", $options, get_string("no") );
                 echo "</td></tr></table>";
-                echo "</center>";
+                echo "</div>";
                 print_simple_box_end();
             }
         }
@@ -136,7 +136,7 @@
                 echo "<p align=\"center\">" . get_string("add"). " " . get_string("category","glossary") . "<font size=\"3\">";
 
                 print_simple_box_start("center","40%", "#FFBBBB");
-                echo "<center>" . get_string("duplicatedcategory","glossary") ."</center>";
+                echo "<div style=\"text-align:center\">" . get_string("duplicatedcategory","glossary") ."</div>";
                 echo "</center>";
                 print_simple_box_end();
 

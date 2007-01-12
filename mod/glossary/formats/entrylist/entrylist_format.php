@@ -26,9 +26,9 @@ function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode=''
         }
         echo '<br />';
     } else {
-        echo '<center>';
+        echo '<div style="text-align:center">';
         print_string('noentry', 'glossary');
-        echo '</center>';
+        echo '</div>';
     }
     echo '</td></tr>';
 

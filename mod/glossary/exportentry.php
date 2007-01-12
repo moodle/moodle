@@ -47,12 +47,12 @@
         $entry = get_record('glossary_entries', 'id', $entry);
 
         if ( !$confirm ) {
-            echo '<center>';
+            echo '<div class="boxaligncenter">';
             $areyousure = get_string('areyousureexport','glossary');
-            notice_yesno ('<center><h2>'.format_string($entry->concept).'</h2><p align="center">'.$areyousure.'<br /><b>'.format_string($mainglossary->name).'</b>?',
+            notice_yesno ('<h2>'.format_string($entry->concept).'</h2><p align="center">'.$areyousure.'<br /><b>'.format_string($mainglossary->name).'</b>?',
                 'exportentry.php?id='.$id.'&amp;mode='.$mode.'&amp;hook='.$hook.'&amp;entry='.$entry->id.'&amp;confirm=1',
                 'view.php?id='.$cm->id.'&amp;mode='.$mode.'&amp;hook='.$hook);
-
+            echo '</div>';
         } else {
             if ( ! $mainglossary->allowduplicatedentries ) {
                 $dupentry = get_record('glossary_entries','glossaryid', $mainglossary->id, 'lower(concept)',moodle_strtolower(addslashes($entry->concept)));

@@ -1264,7 +1264,7 @@ function glossary_print_tabbed_table_end() {
 
 function glossary_print_approval_menu($cm, $glossary,$mode, $hook, $sortkey = '', $sortorder = '') {
     if ($glossary->showalphabet) {
-        echo '<center>' . get_string("explainalphabet","glossary") . '</center><br />';
+        echo '<div style="text-align:center">' . get_string("explainalphabet","glossary") . '</div><br />';
     }
     glossary_print_special_links($cm, $glossary, $mode, $hook);
 
@@ -1276,21 +1276,21 @@ function glossary_print_approval_menu($cm, $glossary,$mode, $hook, $sortkey = ''
 }
 
 function glossary_print_addentry_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
-    echo '<center>' . get_string("explainaddentry","glossary") . '</center><br />';
+    echo '<div style="text-align:center">' . get_string("explainaddentry","glossary") . '</div><br />';
 }
 
 function glossary_print_import_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
-    echo '<center>' . get_string("explainimport","glossary") . '</center><br />';
+    echo '<div style="text-align:center">' . get_string("explainimport","glossary") . '</div><br />';
 }
 
 function glossary_print_export_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
-    echo '<center>' . get_string("explainexport","glossary") . '</center><br />';
+    echo '<div style="text-align:center">' . get_string("explainexport","glossary") . '</div><br />';
 }
 
 function glossary_print_alphabet_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
     if ( $mode != 'date' ) {
         if ($glossary->showalphabet) {
-            echo '<center>' . get_string("explainalphabet","glossary") . '</center><br />';
+            echo '<div style="text-align:center">' . get_string("explainalphabet","glossary") . '</div><br />';
         }
 
         glossary_print_special_links($cm, $glossary, $mode, $hook);
@@ -1305,7 +1305,7 @@ function glossary_print_alphabet_menu($cm, $glossary, $mode, $hook, $sortkey='',
 
 function glossary_print_author_menu($cm, $glossary,$mode, $hook, $sortkey = '', $sortorder = '') {
     if ($glossary->showalphabet) {
-        echo '<center>' . get_string("explainalphabet","glossary") . '</center><br />';
+        echo '<div style="text-align:center">' . get_string("explainalphabet","glossary") . '</div><br />';
     }
 
     glossary_print_sorting_links($cm, $mode, $sortkey,$sortorder);
@@ -1530,7 +1530,7 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     $strby = get_string('writtenby','glossary');
     $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
 
-    echo '<center>';
+    echo '<div class="boxaligncenter">';
     echo '<table class="glossarycomment" cellspacing="0">';
     echo '<tr valign="top">';
     echo '<tr><td class="left picture">';
@@ -1566,7 +1566,7 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     }
 
     echo '</div></td></tr>';
-    echo '</table></center>';
+    echo '</table></div>';
 
 }
 
@@ -1610,7 +1610,7 @@ function  glossary_print_entry_ratings($course, $entry, $ratings = NULL) {
 function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
     global $USER,$CFG;
 
-    echo '<center>';
+    echo '<div class="boxaligncenter">';
     echo '<table class="glossarypopup" cellspacing="0"><tr>';
     echo '<td>';
     if ( $entries ) {
@@ -1653,7 +1653,7 @@ function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
         }
     }
     echo '</td>';
-    echo '</tr></table></center>';
+    echo '</tr></table></div>';
 }
 
 function glossary_generate_export_file($glossary, $hook = "", $hook = 0) {
@@ -2002,7 +2002,7 @@ function glossary_get_paging_bar($totalcount, $page, $perpage, $baseurl, $maxpag
 
     //If there are results (more than 1 page)
     if ($totalcount > $perpage) {
-        $code .= "<center>";
+        $code .= "<div style=\"text-align:center\">";
         $code .= "<p>".get_string("page").":";
 
         $maxpage = (int)(($totalcount-1)/$perpage);
@@ -2097,7 +2097,7 @@ function glossary_get_paging_bar($totalcount, $page, $perpage, $baseurl, $maxpag
 
         //End html
         $code .= "</p>";
-        $code .= "</center>";
+        $code .= "</div>";
     }
 
     return $code;

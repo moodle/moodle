@@ -49,9 +49,9 @@
 
 /// original glossary entry
 
-    echo "<center>";
+    echo "<div class=\"boxaligncenter\">";
     glossary_print_entry($course, $cm, $glossary, $entry, "", "", false);
-    echo "</center>";
+    echo "</div>";
 
 /// comments
 
