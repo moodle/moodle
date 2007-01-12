@@ -470,7 +470,7 @@ function get_record_sql($sql, $expectmultiple=false, $nolimit=false) {
     /// DIRTY HACK to retrieve all the ' ' (1 space) fields converted back
     /// to '' (empty string) for Oracle. It's the only way to work with
     /// all those NOT NULL DEFAULT '' fields until we definetively delete them
-        if ($CFG->dbtype == 'oci8po') {
+        if ($CFG->dbfamily == 'oracle') {
             array_walk($rs->fields, 'onespace2empty');
         }
     /// End od DIRTY HACK
@@ -692,7 +692,7 @@ function recordset_to_array($rs) {
             foreach ($records as $key => $record) {
             /// Really DIRTY HACK for Oracle, but it's the only way to make it work
             /// until we got all those NOT NULL DEFAULT '' out from Moodle
-                if ($CFG->dbtype == 'oci8po') {
+                if ($CFG->dbfamily == 'oracle') {
                     array_walk($record, 'onespace2empty');
                 }
             /// End of DIRTY HACK
@@ -705,7 +705,7 @@ function recordset_to_array($rs) {
             foreach ($records as $key => $record) {
             /// Really DIRTY HACK for Oracle, but it's the only way to make it work
             /// until we got all those NOT NULL DEFAULT '' out from Moodle
-                if ($CFG->dbtype == 'oci8po') {
+                if ($CFG->dbfamily == 'oracle') {
                     array_walk($record, 'onespace2empty');
                 }
             /// End of DIRTY HACK
@@ -836,7 +836,7 @@ function recordset_to_menu($rs) {
         }
         /// Really DIRTY HACK for Oracle, but it's the only way to make it work
         /// until we got all those NOT NULL DEFAULT '' out from Moodle
-        if ($CFG->dbtype == 'oci8po') {
+        if ($CFG->dbfamily == 'oracle') {
             array_walk($menu, 'onespace2empty');
         }
         /// End of DIRTY HACK
@@ -963,7 +963,7 @@ function get_field_sql($sql) {
         /// DIRTY HACK to retrieve all the ' ' (1 space) fields converted back
         /// to '' (empty string) for Oracle. It's the only way to work with
         /// all those NOT NULL DEFAULT '' fields until we definetively delete them
-        if ($CFG->dbtype == 'oci8po') {
+        if ($CFG->dbfamily == 'oracle') {
             $value = reset($rs->fields);
             onespace2empty($value);
             return $value;
@@ -1012,7 +1012,7 @@ function get_fieldset_sql($sql) {
         /// DIRTY HACK to retrieve all the ' ' (1 space) fields converted back
         /// to '' (empty string) for Oracle. It's the only way to work with
         /// all those NOT NULL DEFAULT '' fields until we definetively delete them
-        if ($CFG->dbtype == 'oci8po') {
+        if ($CFG->dbfamily == 'oracle') {
             array_walk($results, 'onespace2empty');
         }
         /// End of DIRTY HACK
@@ -1094,7 +1094,7 @@ function set_field_select($table, $newfield, $newvalue, $select, $localcall = fa
     $dataobject = new StdClass;
     $dataobject->{$newfield} = $newvalue;
     // Oracle DIRTY HACK - 
-    if ($CFG->dbtype == 'oci8po') {
+    if ($CFG->dbfamily == 'oracle') {
         oracle_dirty_hack($table, $dataobject); // Convert object to the correct "empty" values for Oracle DB
         $newvalue = $dataobject->{$newfield};
     }
@@ -1103,8 +1103,7 @@ function set_field_select($table, $newfield, $newvalue, $select, $localcall = fa
 /// Under Oracle and MSSQL we have our own set field process
 /// If the field being updated is clob/blob, we use our alternate update here
 /// They will be updated later
-    if (($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'odbc_mssql' || $CFG->dbtype == 'mssql_n')
-      && !empty($select)) {
+    if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') && !empty($select)) {
     /// Detect lobs
         $foundclobs = array();
         $foundblobs = array();
@@ -1113,8 +1112,7 @@ function set_field_select($table, $newfield, $newvalue, $select, $localcall = fa
 
 /// Under Oracle and MSSQL, finally, Update all the Clobs and Blobs present in the record
 /// if we know we have some of them in the query
-    if (($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'odbc_mssql' || $CFG->dbtype == 'mssql_n')
-      && !empty($select) &&
+    if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') && !empty($select) &&
       (!empty($foundclobs) || !empty($foundblobs))) {
         if (!db_update_lobs($table, $select, $foundclobs, $foundblobs)) {
             return false; //Some error happened while updating LOBs
@@ -1244,14 +1242,14 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 /// The efficient and transaction-safe strategy is to
 /// move the sequence forward first, and make the insert
 /// with an explicit id.
-    if ( $CFG->dbtype === 'postgres7' && $returnid == true ) {
+    if ( $CFG->dbfamily === 'postgres' && $returnid == true ) {
         if ($nextval = (int)get_field_sql("SELECT NEXTVAL('{$CFG->prefix}{$table}_{$primarykey}_seq')")) {
             $dataobject->{$primarykey} = $nextval;
         }
     }
 
 /// Begin DIRTY HACK
-    if ($CFG->dbtype == 'oci8po') {
+    if ($CFG->dbfamily == 'oracle') {
         oracle_dirty_hack($table, $dataobject); // Convert object to the correct "empty" values for Oracle DB
     }
 /// End DIRTY HACK
@@ -1260,7 +1258,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 /// detect all the clob/blob fields and change their contents to @#CLOB#@ and @#BLOB#@
 /// saving them into $foundclobs and $foundblobs [$fieldname]->contents
 /// Same for mssql (only processing blobs - image fields)
-    if (($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'odbc_mssql' || $CFG->dbtype == 'mssql_n')) {
+    if ($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') {
         $foundclobs = array();
         $foundblobs = array();
         db_detect_lobs($table, $dataobject, $foundclobs, $foundblobs);
@@ -1271,7 +1269,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 /// explicit query to the sequence.
 /// Else, the pre-insert trigger will do the job, because the primary
 /// key isn't needed at all by the rest of PHP code
-    if ( $CFG->dbtype === 'oci8po' && ($returnid == true || !empty($foundclobs) || !empty($foundblobs))) {
+    if ($CFG->dbfamily === 'oracle' && ($returnid == true || !empty($foundclobs) || !empty($foundblobs))) {
     /// We need this here (move this function to dmlib?)
         include_once($CFG->libdir . '/ddllib.php');
         $xmldb_table = new XMLDBTable($table);
@@ -1295,17 +1293,15 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
 /// Under Oracle and MSSQL, replace all the '@#CLOB#@' and '@#BLOB#@' ocurrences to proper default values
 /// if we know we have some of them in the query
-    if (($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'odbc_mssql' || $CFG->dbtype == 'mssql_n') &&
+    if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') &&
       (!empty($foundclobs) || !empty($foundblobs))) {
     /// Initial configuration, based on DB
-        switch ($CFG->dbtype) {
-            case 'oci8po':
+        switch ($CFG->dbfamily) {
+            case 'oracle':
                 $clobdefault = 'empty_clob()'; //Value of empty default clobs for this DB
                 $blobdefault = 'empty_blob()'; //Value of empty default blobs for this DB
                 break;
             case 'mssql':
-            case 'odbc_mssql': 
-            case 'mssql_n':
                 $clobdefault = 'null'; //Value of empty default clobs for this DB (under mssql this won't be executed
                 $blobdefault = 'null'; //Value of empty default blobs for this DB
                 break;  
@@ -1326,7 +1322,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
 /// Under Oracle, finally, Update all the Clobs and Blobs present in the record
 /// if we know we have some of them in the query
-    if ($CFG->dbtype == 'oci8po' &&
+    if ($CFG->dbfamily == 'oracle' &&
       !empty($dataobject->{$primarykey}) && 
       (!empty($foundclobs) || !empty($foundblobs))) {
         if (!db_update_lobs($table, $dataobject->{$primarykey}, $foundclobs, $foundblobs)) {
@@ -1335,7 +1331,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
     }
 
 /// If a return ID is not needed then just return true now (but not in MSSQL DBs, where we may have some pending tasks)
-    if (!$returnid && !($CFG->dbtype == 'mssql' || $CFG->dbtype == 'odbc_mssql' || $CFG->dbtype == 'mssql_n')) {
+    if (!$returnid && $CFG->dbfamily != 'mssql') {
         return true;
     }
 
@@ -1350,9 +1346,9 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 /// to find the sequence.
     $id = $db->Insert_ID();
 
-/// Under MSSQL all the Blobs (IMAGE) present in the record
+/// Under MSSQL all the Clobs and Blobs (IMAGE) present in the record
 /// if we know we have some of them in the query
-    if (($CFG->dbtype == 'mssql' || $CFG->dbtype == 'odbc_mssql' || $CFG->dbtype == 'mssql_n') &&
+    if (($CFG->dbfamily == 'mssql') &&
       !empty($id) && 
       (!empty($foundclobs) || !empty($foundblobs))) {
         if (!db_update_lobs($table, $id, $foundclobs, $foundblobs)) {
@@ -1360,7 +1356,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
         }
     }
 
-    if ($CFG->dbtype === 'postgres7') {
+    if ($CFG->dbfamily === 'postgres') {
         // try to get the primary key based on id
         if ( ($rs = $db->Execute('SELECT '. $primarykey .' FROM '. $CFG->prefix . $table .' WHERE oid = '. $id))
              && ($rs->RecordCount() == 1) ) {
@@ -1410,7 +1406,7 @@ function update_record($table, $dataobject) {
     }
 
 /// Begin DIRTY HACK
-    if ($CFG->dbtype == 'oci8po') {
+    if ($CFG->dbfamily == 'oracle') {
         oracle_dirty_hack($table, $dataobject); // Convert object to the correct "empty" values for Oracle DB
     }
 /// End DIRTY HACK
@@ -1419,7 +1415,7 @@ function update_record($table, $dataobject) {
 /// detect all the clob/blob fields and delete them from the record being updated
 /// saving them into $foundclobs and $foundblobs [$fieldname]->contents
 /// They will be updated later
-    if (($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'odbc_mssql' || $CFG->dbtype == 'mssql_n')
+    if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql')
       && !empty($dataobject->id)) {
     /// Detect lobs
         $foundclobs = array();
@@ -1441,7 +1437,7 @@ function update_record($table, $dataobject) {
         if ($column->name <> 'id' and isset($data[$column->name]) ) {
             $ddd[$column->name] = $data[$column->name];
             // PostgreSQL bytea support
-            if ($CFG->dbtype == 'postgres7' && $column->type == 'bytea') {
+            if ($CFG->dbfamily == 'postgres' && $column->type == 'bytea') {
                 $ddd[$column->name] = $db->BlobEncode($ddd[$column->name]);
             }
         }
@@ -1475,9 +1471,9 @@ function update_record($table, $dataobject) {
 
 /// Under Oracle AND MSSQL, finally, Update all the Clobs and Blobs present in the record
 /// if we know we have some of them in the query
-    if (($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'odbc_mssql' || $CFG->dbtype == 'mssql_n')
-      && !empty($dataobject->id) && 
-      (!empty($foundclobs) || !empty($foundblobs))) {
+    if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') &&
+        !empty($dataobject->id) && 
+        (!empty($foundclobs) || !empty($foundblobs))) {
         if (!db_update_lobs($table, $dataobject->id, $foundclobs, $foundblobs)) {
             return false; //Some error happened while updating LOBs
         }
@@ -1503,8 +1499,8 @@ function sql_paging_limit($page, $recordsperpage) {
 
     debugging('Function sql_paging_limit() is deprecated. Replace it with the correct use of limitfrom, limitnum parameters', DEBUG_DEVELOPER);
 
-    switch ($CFG->dbtype) {
-        case 'postgres7':
+    switch ($CFG->dbfamily) {
+        case 'postgres':
              return 'LIMIT '. $recordsperpage .' OFFSET '. $page;
         default:
              return 'LIMIT '. $page .','. $recordsperpage;
@@ -1524,8 +1520,8 @@ function sql_paging_limit($page, $recordsperpage) {
 function sql_ilike() {
     global $CFG;
 
-    switch ($CFG->dbtype) {
-        case 'postgres7':
+    switch ($CFG->dbfamily) {
+        case 'postgres':
              return 'ILIKE';
         default:
              return 'LIKE';
@@ -1594,7 +1590,7 @@ function sql_concat_join($separator="' '", $elements=array()) {
 function sql_isnull($fieldname) {
     global $CFG;
 
-    switch ($CFG->dbtype) {
+    switch ($CFG->dbfamily) {
         case 'mysql':
              return $fieldname.' IS NULL';
         default:
@@ -1616,8 +1612,8 @@ function sql_isnull($fieldname) {
 function sql_as() {
     global $CFG, $db;
 
-    switch ($CFG->dbtype) {
-        case 'postgres7':
+    switch ($CFG->dbfamily) {
+        case 'postgres':
             return 'AS';
         default:
             return '';
@@ -1648,13 +1644,11 @@ function sql_order_by_text($fieldname, $numchars=32) {
 
     global $CFG;
 
-    switch ($CFG->dbtype) {
+    switch ($CFG->dbfamily) {
         case 'mssql':
-        case 'mssql_n':
-        case 'odbc_mssql':
             return 'CONVERT(varchar, ' . $fieldname . ', ' . $numchars . ')';
             break;
-        case 'oci8po':
+        case 'oracle':
             return 'dbms_lob.substr(' . $fieldname . ', ' . $numchars . ',1)';
             break;
         default:
@@ -1784,6 +1778,8 @@ function execute_sql_arr($sqlarr, $continue=true, $feedback=true) {
  * needed to work properly against any DB. It setups connection encoding
  * and some other variables. Also, ir defines the $CFG->dbfamily variable
  * to handle conditional code better than using $CFG->dbtype directly.
+ *
+ * This function must contain the init code needed for each dbtype supported.
  */
 function configure_dbconnection() {
 
@@ -1793,11 +1789,9 @@ function configure_dbconnection() {
         case 'mysql':
         case 'mysqli':
             $db->Execute("SET NAMES 'utf8'");
-            $CFG->dbfamily='mysql';
             break;
         case 'postgres7':
             $db->Execute("SET NAMES 'utf8'");
-            $CFG->dbfamily='postgres';
             break;
         case 'mssql':
         case 'mssql_n':
@@ -1813,7 +1807,6 @@ function configure_dbconnection() {
         /// NOTE: Not 100% useful because GPC has been addslashed with the setting off
         ///       so IT'S MANDATORY TO CHANGE THIS UNDER php.ini or .htaccess for this DB
         ///       or to turn off magic_quotes to allow Moodle to do it properly
-            $CFG->dbfamily='mssql';
             break;
         case 'oci8po':
         /// No need to set charset. It must be specified by the NLS_LANG env. variable
@@ -1822,6 +1815,39 @@ function configure_dbconnection() {
         /// NOTE: Not 100% useful because GPC has been addslashed with the setting off
         ///       so IT'S MANDATORY TO ENABLE THIS UNDER php.ini or .htaccess for this DB
         ///       or to turn off magic_quotes to allow Moodle to do it properly
+            break;
+    }
+/// Finally define dbfamily
+    set_dbfamily();
+}
+
+/**
+ * This internal function sets the proper value for $CFG->dbfamily based on $CFG->dbtype
+ * It's called by configure_dbconnection() and at install time. Shouldn't be used
+ * in other places. Code should rely on dbfamily to perform conditional execution
+ * instead of using dbtype directly. This allows quicker adoption of different
+ * drivers going against the same DB backend.
+ *
+ * This function must contain the init code needed for each dbtype supported.
+ */
+function set_dbfamily() {
+
+    global $CFG;
+
+    switch ($CFG->dbtype) {
+        case 'mysql':
+        case 'mysqli':
+            $CFG->dbfamily='mysql';
+            break;
+        case 'postgres7':
+            $CFG->dbfamily='postgres';
+            break;
+        case 'mssql':
+        case 'mssql_n':
+        case 'odbc_mssql':
+            $CFG->dbfamily='mssql';
+            break;
+        case 'oci8po':
             $CFG->dbfamily='oracle';
             break;
     }
@@ -1865,7 +1891,7 @@ function oracle_dirty_hack ($table, &$dataobject, $usecache = true) {
 /// empty strings to allow everything to work properly. DIRTY HACK.
 
 /// If the db isn't Oracle, return without modif
-    if ( $CFG->dbtype != 'oci8po') {
+    if ( $CFG->dbfamily != 'oracle') {
         return;
     }
 
@@ -1934,14 +1960,12 @@ function db_detect_lobs ($table, &$dataobject, &$clobs, &$blobs, $unset = false,
     $dataarray = (array)$dataobject; //Convert to array. It's supposed that PHP 4.3 doesn't iterate over objects
 
 /// Initial configuration, based on DB
-    switch ($CFG->dbtype) {
-        case 'oci8po':
+    switch ($CFG->dbfamily) {
+        case 'oracle':
             $clobdbtype = 'CLOB'; //Name of clobs for this DB
             $blobdbtype = 'BLOB'; //Name of blobs for this DB
             break;
         case 'mssql':
-        case 'odbc_mssql':
-        case 'mssql_n':
             $clobdbtype = 'NOTPROCESSES'; //Name of clobs for this DB (under mssql flavours we don't process CLOBS)
             $blobdbtype = 'IMAGE'; //Name of blobs for this DB
             break;
@@ -1968,7 +1992,7 @@ function db_detect_lobs ($table, &$dataobject, &$clobs, &$blobs, $unset = false,
     /// If the field is CLOB, update its value to '@#CLOB#@' and store it in the $clobs array
         if (strtoupper($columns[strtolower($fieldname)]->type) == $clobdbtype) { 
         /// Oracle optimization. CLOBs under 4000cc can be directly inserted (no need to apply 2-phases to them)
-            if ($db->dbtype = 'oci8po' && strlen($dataobject->$fieldname) < 4000) {
+            if ($CFG->dbfamily = 'oracle' && strlen($dataobject->$fieldname) < 4000) {
                 continue;
             }
             $clobs[$fieldname] = $dataobject->$fieldname;
@@ -2015,14 +2039,12 @@ function db_update_lobs ($table, $sqlcondition, &$clobs, &$blobs) {
     $status = true;
 
 /// Initial configuration, based on DB
-    switch ($CFG->dbtype) {
-        case 'oci8po':
+    switch ($CFG->dbfamily) {
+        case 'oracle':
             $clobdbtype = 'CLOB'; //Name of clobs for this DB
             $blobdbtype = 'BLOB'; //Name of blobs for this DB
             break;
         case 'mssql':
-        case 'odbc_mssql':
-        case 'mssql_n':
             $clobdbtype = 'NOTPROCESSES'; //Name of clobs for this DB (under mssql flavours we don't process CLOBS)
             $blobdbtype = 'IMAGE'; //Name of blobs for this DB
             break;
