@@ -14,7 +14,7 @@
 
     require_once('../../config.php');
     require_once($CFG->libdir.'/filelib.php');
-    
+
     $id = required_param('id', PARAM_INT);    // Course Module ID
     $printclose = optional_param('printclose', 0, PARAM_INT);
     
@@ -29,15 +29,20 @@
     if (! $lesson = get_record('lesson', 'id', $cm->instance)) {
         error('Course module is incorrect');
     }
-    
+
+    print_header($course->shortname);
+
     if ($printclose) {  // this is for framesets
         if ($lesson->mediaclose) {
-        echo '<center>
+        echo '<div class="lessonmediafilecontrol">
             <form>
+            <fieldset class="invisiblefieldset">
             <input type="button" onclick="top.close();" value="'.get_string("closewindow").'" />
+            </fieldset>
             </form>
-            </center>';
+            </div>';
         }
+        print_footer();
         exit();
     }
 
@@ -70,7 +75,7 @@
         }
         $c .= '&volText='.get_string('vol', 'resource').'&panText='.get_string('pan','resource');
         $c = htmlentities($c);
-        echo '<div class="mp3player" align="center">';
+        echo '<div class="mp3player" class="lessonmediafilecontrol">';
         echo '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
         echo '        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
         echo '        width="600" height="70" id="mp3player" align="">';
@@ -89,7 +94,7 @@
 
     } else if (substr($mimetype, 0, 10) == "video/x-ms") {   // It's a Media Player file
     
-        echo "<center><p>";
+        echo "<div class=\"lessonmediafilecontrol\"><p>";
         echo '<object classid="CLSID:22D6f312-B0F6-11D0-94AB-0080C74C7E95"';
         echo '        codebase="http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=5,1,52,701" ';
         echo '        standby="Loading Microsoft(R) Windows(R) Media Player components..." ';
@@ -110,11 +115,11 @@
         echo ' pluginspage="http://www.microsoft.com/Windows/Downloads/Contents/Products/MediaPlayer/">';
         echo '</embed>';
         echo '</object>';
-        echo "</p></center>";
+        echo "</p></div>";
 
     } else if ($mimetype == "video/quicktime") {   // It's a Quicktime file
     
-        echo "<center><p>";
+        echo "<div class=\"lessonmediafilecontrol\"><p>";
         echo '<object classid="CLSID:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"';
         echo '        codebase="http://www.apple.com/qtactivex/qtplugin.cab" ';
         echo '        height="450" width="600"';
@@ -130,7 +135,7 @@
         echo ' pluginspage="http://quicktime.apple.com/">';
         echo '</embed>';
         echo '</object>';
-        echo "</p></center>";
+        echo "</p></div>";
     
     //} else if ($mimetype == "application/x-shockwave-flash") {   // It's a flash file
     
@@ -150,28 +155,31 @@
 
     } else if (is_url($lesson->mediafile) or $mimetype == 'text/html' or $mimetype == 'text/plain') {
         // might be dangerous to handle all of these in the same fasion.  It is being set by a teacher though.
+        /*
         echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
         echo "<html dir=\"ltr\">\n";
         echo '<head>';
         echo '<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />';
         echo "<title>{$course->shortname}</title></head>\n";
+        */
         if ($lesson->mediaclose) {
             echo "<frameset rows=\"90%,*\">";
             echo "<frame src=\"$fullurl\" />";
-            echo "<frame src=\"mediafile.php?id=$cm->id&printclose=1\" />";
+            echo "<frame src=\"mediafile.php?id=$cm->id&amp;printclose=1\" />";
             echo "</frameset>";
         } else {
             echo "<frameset rows=\"100%\">";
             echo "<frame src=\"$fullurl\" />";
-            echo "</frameset>";        
+            echo "</frameset>";
         }
+        print_footer();
         exit();
 
     } else if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // Image
 
-        echo "<center><p>";
+        echo "<div class=\"lessonmediafilecontrol\"><p>";
         echo '<img class="lessonimage" src="'.s($fullurl).'" alt="" />';
-        echo "</p></center>";
+        echo "</p></div>";
 
     } else {  // Default
 
@@ -179,10 +187,10 @@
         $file = pathinfo($lesson->mediafile);
         $filename = basename($file['basename'], '.'.$file['extension']);
 
-        echo "<center><p>";
+        echo "<div class=\"lessonmediafilecontrol\"><p>";
         notify(get_string('clicktodownload', 'lesson'));
         echo "<a href=\"$fullurl\">".format_string($filename).'</a>';
-        echo "</p></center>";
+        echo "</p></div>";
         
     }
     
@@ -198,8 +206,10 @@
     }
 
     if ($lesson->mediaclose) {
-       echo '<p>';
+       echo '<div class="lessonmediafilecontrol">';
        close_window_button();
-       echo '</p>';
+       echo '</div>';
     }
+    
+    print_footer();
 ?>
