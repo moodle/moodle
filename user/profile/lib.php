@@ -463,7 +463,7 @@ function profile_list_datatypes() {
 
     if ($dirlist = get_directory_list($CFG->dirroot.'/user/profile/field', '', false, true, false)) {
         foreach ($dirlist as $type) {
-            $datatypes[$type] = $type;
+            $datatypes[$type] = get_string('profilefieldtype'.$type, 'admin');
         }
     }
     return $datatypes;
