@@ -1249,6 +1249,45 @@ function validate_' . $this->_formName . '(frm) {
     function _registerCancelButton($addfieldsname){
         $this->_cancelButtons[]=$addfieldsname;
     }
+    /**
+     * Displays elements without HTML input tags.
+     * This method is different to freeze() in that it makes sure no hidden
+     * elements are included in the form. And a 'hardFrozen' element's submitted value is
+     * ignored.
+     *
+     * @param    mixed   $elementList       array or string of element(s) to be frozen
+     * @since     1.0
+     * @access   public
+     * @throws   HTML_QuickForm_Error
+     */
+    function hardFreeze($elementList=null)
+    {
+        if (!isset($elementList)) {
+            $this->_freezeAll = true;
+            $elementList = array();
+        } else {
+            if (!is_array($elementList)) {
+                $elementList = preg_split('/[ ]*,[ ]*/', $elementList);
+            }
+            $elementList = array_flip($elementList);
+        }
+
+        foreach (array_keys($this->_elements) as $key) {
+            $name = $this->_elements[$key]->getName();
+            if ($this->_freezeAll || isset($elementList[$name])) {
+                $this->_elements[$key]->freeze();
+                $this->_elements[$key]->setPersistantFreeze(false);
+                unset($elementList[$name]);
+            }
+        }
+
+        if (!empty($elementList)) {
+            return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Nonexistant element(s): '" . implode("', '", array_keys($elementList)) . "' in HTML_QuickForm::freeze()", 'HTML_QuickForm_Error', true);
+        }
+        return true;
+    } // end func hardFreeze
+
+    // }}}
 }
 
 

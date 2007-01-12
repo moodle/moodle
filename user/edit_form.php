@@ -25,7 +25,7 @@ class user_edit_form extends moodleform {
         $mform->addElement('hidden', 'id', $user->id);
         $mform->addElement('hidden', 'course', $course->id);
 
-        
+
         /// Print the required moodle fields first
         $mform->addElement('header', 'moodle', $strrequired);
 
@@ -33,7 +33,7 @@ class user_edit_form extends moodleform {
             $theadmin = get_admin(); // returns false during install
             $adminself = (!empty($theadmin) and ($theadmin->id == $USER->id) and ($USER->id == $user->id));
             $userauth = get_auth_plugin($user->auth);
-        
+
             if ($adminself or $userauth->is_internal()) {
                 $mform->addElement('text', 'username', get_string('username'), 'size="20"');
                 $mform->setType('username', PARAM_MULTILANG);
@@ -42,7 +42,7 @@ class user_edit_form extends moodleform {
             } else {
                 $mform->addElement('hidden', 'username', $user->username);
             }
-            
+
             $modules = get_list_of_plugins("auth");
             $auth_options = array();
             foreach ($modules as $module) {
@@ -81,12 +81,12 @@ class user_edit_form extends moodleform {
             $mform->addElement('static','username_break', '','<hr />');
 
         }
- 
+
 
         $mform->addElement('text', 'firstname', get_string('firstname'), 'maxlength="100" size="30"');
         $mform->setType('firstname', PARAM_MULTILANG);
         $mform->addRule('firstname', $strrequired, 'required', null, 'client');
-        
+
         $mform->addElement('text', 'lastname', get_string('lastname'), 'maxlength="100" size="30"');
         $mform->setType('lastname', PARAM_MULTILANG);
         $mform->addRule('lastname', $strrequired, 'required', null, 'client');
@@ -107,7 +107,7 @@ class user_edit_form extends moodleform {
         $choices["1"] = get_string("emaildisable");
         $mform->addElement('select', 'emailstop', get_string('emailactive'), $choices);
         $mform->setType('emailstop', PARAM_INT);
-        
+
         $choices = array();
         $choices["0"] = get_string("textformat");
         $choices["1"] = get_string("htmlformat");
@@ -161,7 +161,7 @@ class user_edit_form extends moodleform {
             $mform->setType('htmleditor', PARAM_INT);
             $mform->setDefault('htmleditor', 1);
         }
-        
+
         $choices = array();
         $choices["0"] = get_string("ajaxno");
         $choices["1"] = get_string("ajaxyes");
@@ -169,9 +169,9 @@ class user_edit_form extends moodleform {
         $mform->setType('ajax', PARAM_INT);
         $mform->setDefault('ajax', 1);
         if (empty($CFG->enableajax)) {
-            $mform->freeze('ajax');
+            $mform->hardFreeze('ajax');
         }
-        
+
         $mform->addElement('text', 'city', get_string('city'), 'maxlength="100" size="25"');
         $mform->setType('city', PARAM_MULTILANG);
         $mform->addRule('city', $strrequired, 'required', null, 'client');
@@ -188,7 +188,7 @@ class user_edit_form extends moodleform {
         $choices['99'] = get_string('serverlocaltime');
         if ($CFG->forcetimezone != 99) {
             $mform->addElement('static', 'forcedtimezone', get_string('timezone'), $choices[$CFG->forcetimezone]);
-        } else { 
+        } else {
             $mform->addElement('select', 'timezone', get_string('timezone'), $choices);
             $mform->setType('timezone', PARAM_PATH);
         }
@@ -216,14 +216,14 @@ class user_edit_form extends moodleform {
         if (!$userupdate) {
             $mform->addRule('description', $strrequired, 'required', null, 'client');
         }
-        
+
         $choices = array();
         $choices["0"] = get_string("screenreaderno");
         $choices["1"] = get_string("screenreaderyes");
         $mform->addElement('select', 'screenreader', get_string('screenreaderuse'), $choices);
         $mform->setType('screenreader', PARAM_INT);
         $mform->setDefault('screenreader', 0);
-        
+
         $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes);
         if (!empty($CFG->gdversion) and $maxbytes and (empty($CFG->disableuserimages) or $userupdate)) {
 
@@ -239,10 +239,10 @@ class user_edit_form extends moodleform {
 
             $mform->addElement('text', 'imagealt', get_string('imagealt'), 'maxlength="100" size="30"');
             $mform->setType('imagealt', PARAM_MULTILANG);
-            
+
         }
 
-        
+
         $mform->addElement('submit', 'submitbutton1', get_string('updatemyprofile'));
         $mform->closeHeaderBefore('submitbutton1');
 
@@ -252,26 +252,26 @@ class user_edit_form extends moodleform {
 
         $mform->addElement('text', 'url', get_string('webpage'), 'maxlength="255" size="50"');
         $mform->setType('url', PARAM_URL);
-        
+
         $mform->addElement('text', 'icq', get_string('icqnumber'), 'maxlength="15" size="25"');
         $mform->setType('icq', PARAM_CLEAN);
-        
+
         $mform->addElement('text', 'skype', get_string('skypeid'), 'maxlength="50" size="25"');
         $mform->setType('skype', PARAM_CLEAN);
-        
+
         $mform->addElement('text', 'aim', get_string('aimid'), 'maxlength="50" size="25"');
         $mform->setType('aim', PARAM_CLEAN);
-        
+
         $mform->addElement('text', 'yahoo', get_string('yahooid'), 'maxlength="50" size="25"');
         $mform->setType('yahoo', PARAM_CLEAN);
-        
+
         $mform->addElement('text', 'msn', get_string('msnid'), 'maxlength="50" size="25"');
         $mform->setType('msn', PARAM_CLEAN);
-        
+
         $mform->addElement('text', 'idnumber', get_string('idnumber'), 'maxlength="64" size="25"');
         $mform->setType('idnumber', PARAM_MULTILANG);
         if (!$userupdate) {
-            $mform->freeze('idnumber');
+            $mform->hardFreeze('idnumber');
         }
 
         if ($userupdate) {
@@ -281,23 +281,23 @@ class user_edit_form extends moodleform {
             $mform->addElement('text', 'department', get_string('department'), 'maxlength="30" size="25"');
             $mform->setType('department', PARAM_MULTILANG);
         }
-        
+
         $mform->addElement('text', 'phone1', get_string('phone'), 'maxlength="20" size="25"');
         $mform->setType('phone1', PARAM_CLEAN);
         if (!$userupdate) {
-            $mform->freeze('phone1');
+            $mform->hardFreeze('phone1');
         }
-        
+
         $mform->addElement('text', 'phone2', get_string('phone'), 'maxlength="20" size="25"');
         $mform->setType('phone2', PARAM_CLEAN);
         if (!$userupdate) {
-            $mform->freeze('phone2');
+            $mform->hardFreeze('phone2');
         }
-        
+
         $mform->addElement('text', 'address', get_string('address'), 'maxlength="70" size="25"');
         $mform->setType('address', PARAM_MULTILANG);
         if (!$userupdate) {
-            $mform->freeze('address');
+            $mform->hardFreeze('address');
         }
 
 
@@ -309,16 +309,14 @@ class user_edit_form extends moodleform {
             foreach ($fields as $field) {
                 $configvariable = 'field_lock_' . $field;
                 if (isset($authplugin->config->{$configvariable}) and
-                     ( $authplugin->config->{$configvariable} === 'locked' or 
+                     ( $authplugin->config->{$configvariable} === 'locked' or
                        ( $authplugin->config->{$configvariable} === 'unlockedifempty' and !empty($user->$field)) ) ) {
                     $freezefields[] = $field;
                 }
             }
-            if (!empty($freezefields)) {
-                $mform->freeze($freezefields);
-            }
+            $mform->hardFreeze($freezefields);
         }
-        
+
         /// Next the customisable categories
         if ($categories = get_records_select('user_info_category', '1', 'sortorder ASC')) {
             foreach ($categories as $category) {
@@ -340,7 +338,7 @@ class user_edit_form extends moodleform {
 
         $mform->addElement('submit', 'submitbutton2', get_string('updatemyprofile'));
         $mform->closeHeaderBefore('submitbutton2');
-        
+
 
     } /// End of function
 
@@ -353,10 +351,10 @@ class user_edit_form extends moodleform {
     function validation ($usernew) {
         global $CFG;
 
-        $usernew = (object)$usernew; 
+        $usernew = (object)$usernew;
         $user    = $this->_customdata['user'];
         $err     = array();
-        
+
         if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             if (empty($usernew->username)) { /// We should never get this
                 //$err["username"] = get_string("missingusername");
