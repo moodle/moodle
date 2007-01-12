@@ -138,7 +138,7 @@ class profile_field_base {
      */
     function display_field_lock (&$form) {
         if ($this->_is_locked()) {
-            $form->freeze($this->fieldname);
+            $form->freeze($this->fieldname, false);
         }
     }
 
@@ -178,10 +178,10 @@ class profile_field_base {
      * @param   object   instance of the moodleform class
      */
     function edit_field (&$form) {
-        $form->addElement('header', '_commonsettings', get_string('profilecommonsettings'));
+        $form->addElement('header', '_commonsettings', get_string('profilecommonsettings', 'admin'));
         $this->edit_field_common($form);
         
-        $form->addElement('header', '_specificsettings', get_string('profilespecificsettings'));
+        $form->addElement('header', '_specificsettings', get_string('profilespecificsettings', 'admin'));
         $this->edit_field_specific($form);
     }
 
@@ -194,34 +194,34 @@ class profile_field_base {
 
         $strrequired = get_string('required');
         
-        $form->addElement('text', 'shortname', get_string('profileshortname'), 'maxlength="100" size="30"');
+        $form->addElement('text', 'shortname', get_string('profileshortname', 'admin'), 'maxlength="100" size="30"');
         $form->setType('shortname', PARAM_ALPHANUM);
         $form->addRule('shortname', $strrequired, 'required', null, 'client');
 
-        $form->addElement('text', 'name', get_string('profilename'), 'size="30"');
+        $form->addElement('text', 'name', get_string('profilename', 'admin'), 'size="30"');
         $form->setType('name', PARAM_MULTILANG);
         $form->addRule('name', $strrequired, 'required', null, 'client');
 
-        $form->addElement('htmleditor', 'description', get_string('profiledescription'));
+        $form->addElement('htmleditor', 'description', get_string('profiledescription', 'admin'));
         $form->setType('description', PARAM_MULTILANG);
         $form->setHelpButton('description', array('text', get_string('helptext')));
 
-        $form->addElement('selectyesno', 'required', get_string('profilerequired'));
+        $form->addElement('selectyesno', 'required', get_string('profilerequired', 'admin'));
         $form->setType('required', PARAM_BOOL);
 
-        $form->addElement('selectyesno', 'locked', get_string('profilelocked'));
+        $form->addElement('selectyesno', 'locked', get_string('profilelocked', 'admin'));
         $form->setType('locked', PARAM_BOOL);
 
         unset($choices);
-        $choices[0] = get_string('profilevisiblenone');
-        $choices[1] = get_string('profilevisibleprivate');
-        $choices[2] = get_string('profilevisibleall');
-        $form->addElement('select', 'visible', get_string('profilevisible'), $choices);
+        $choices[0] = get_string('profilevisiblenone', 'admin');
+        $choices[1] = get_string('profilevisibleprivate', 'admin');
+        $choices[2] = get_string('profilevisibleall', 'admin');
+        $form->addElement('select', 'visible', get_string('profilevisible', 'admin'), $choices);
         $form->setType('visible', PARAM_INT);
 
         unset($choices);
         $choices = profile_list_categories();
-        $form->addElement('select', 'categoryid', get_string('profilecategory'), $choices);
+        $form->addElement('select', 'categoryid', get_string('profilecategory', 'admin'), $choices);
         $form->setType('categoryid', PARAM_INT);
     }
 
@@ -265,7 +265,7 @@ class profile_field_base {
         /// Check the shortname is unique
         if (($field = get_record('user_info_field', 'shortname', $data->shortname)) and ($field->id <> $data->id)) {
         //if (record_exists_select('user_info_field', 'shortname='.$data->shortname.' AND id<>'.$data->id)) {
-            $err['shortname'] = get_string('profileshortnamenotunique');
+            $err['shortname'] = get_string('profileshortnamenotunique', 'admin');
         }
 
         /// No further checks necessary as the form class will take care of it
