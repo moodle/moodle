@@ -172,7 +172,7 @@ if ( ($action == 'editcategory' )) {
         } else {
 
             if ($id == 0) {
-                $strheading = get_string('profilecreatenewfield', 'admin');
+                $strheading = get_string('profilecreatenewfield', 'admin', $datatypes[$type]);
             } else {
                 $strheading = get_string('profileeditfield', 'admin', $field->name);
             }

@@ -41,6 +41,7 @@ class profile_field_menu extends profile_field_base {
     }
 
     function save_data_preprocess($data) {
+
         if (!isset($this->options[$data])) { /// validate_data should already have caught this
             return '';
         } else {
@@ -60,7 +61,9 @@ class profile_field_menu extends profile_field_base {
 
     function edit_validate_specific($data) {
         $err = array();
-        
+
+        $data->param1 = str_replace("\r", '', $data->param1);
+
         /// Check that we have at least 2 options
         if (($options = explode("\n", $data->param1)) === false) {
             $err['param1'] = get_string('profilemenunooptions', 'admin');
@@ -73,6 +76,13 @@ class profile_field_menu extends profile_field_base {
         }
         return $err;        
     }
+
+    function edit_save_preprocess($data) {
+        $data->param1 = str_replace("\r", '', $data->param1);
+        
+        return $data;
+    }
+        
 }
 
 ?>

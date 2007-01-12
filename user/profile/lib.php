@@ -218,6 +218,8 @@ class profile_field_base {
         $choices[2] = get_string('profilevisibleall', 'admin');
         $form->addElement('select', 'visible', get_string('profilevisible', 'admin'), $choices);
         $form->setType('visible', PARAM_INT);
+        $form->setDefault('visible', 2);
+        $form->setHelpButton('visible', array('profilevisible', get_string('profilevisible','admin')));
 
         unset($choices);
         $choices = profile_list_categories();
