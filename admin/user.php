@@ -18,24 +18,34 @@
     $lu           = optional_param('lu', '2', PARAM_INT);            // show local users
     $acl          = optional_param('acl', '0', PARAM_INT);           // id of user to tweak mnet ACL (requires $access)
 
-    // Determine which users we are looking at (local, remote, or both). Start with both.
-    if (!isset($_SESSION['admin-user-remoteusers'])) {
-        $_SESSION['admin-user-remoteusers'] = 1;
-        $_SESSION['admin-user-localusers']  = 1;
+    // Let's see if we have *any* mnet users. Just ask for a single record
+    $mnet_users = get_records_select('user', " auth='mnet' AND mnethostid != '{$CFG->mnet_localhost_id}' ", '', '*', '0', '1');
+    if(is_array($mnet_users) && count($mnet_users) > 0) {
+        $mnet_auth_users = true;
+    } else {
+        $mnet_auth_users = false;
     }
-    if ($ru == 0 or $ru == 1) {
-        $_SESSION['admin-user-remoteusers'] = $ru;
-    }
-    if ($lu == 0 or $lu == 1) {
-         $_SESSION['admin-user-localusers'] = $lu;
-    }
-    $remoteusers = $_SESSION['admin-user-remoteusers'];
-    $localusers  = $_SESSION['admin-user-localusers'];
-
-    // if neither remote nor local, set to sensible local only
-    if (!$remoteusers and !$localusers) {
-        $_SESSION['admin-user-localusers'] = 1;
-        $localusers = 1;
+    
+    if($mnet_auth_users) {
+        // Determine which users we are looking at (local, remote, or both). Start with both.
+        if (!isset($_SESSION['admin-user-remoteusers'])) {
+            $_SESSION['admin-user-remoteusers'] = 1;
+            $_SESSION['admin-user-localusers']  = 1;
+        }
+        if ($ru == 0 or $ru == 1) {
+            $_SESSION['admin-user-remoteusers'] = $ru;
+        }
+        if ($lu == 0 or $lu == 1) {
+             $_SESSION['admin-user-localusers'] = $lu;
+        }
+        $remoteusers = $_SESSION['admin-user-remoteusers'];
+        $localusers  = $_SESSION['admin-user-localusers'];
+    
+        // if neither remote nor local, set to sensible local only
+        if (!$remoteusers and !$localusers) {
+            $_SESSION['admin-user-localusers'] = 1;
+            $localusers = 1;
+        }
     }
 
     if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID)) {  // Should never happen
@@ -275,12 +285,9 @@
         
         // tell the query which users we are looking at (local, remote, or both)
         $remotewhere = '';
-        if ($localusers) {
-            $remotewhere .= " and mnethostid = {$CFG->mnet_localhost_id} ";
-        }
-        if ($remoteusers) {
+        if($mnet_auth_users && ($localusers XOR $remoteusers)) {
             if ($localusers) {
-                $remotewhere = ''; // more efficient SQL
+                $remotewhere .= " and mnethostid = {$CFG->mnet_localhost_id} ";
             } else {
                 $remotewhere .= " and mnethostid <> {$CFG->mnet_localhost_id} ";
             }
@@ -459,18 +466,24 @@
             }
         }
 
-        echo "<p style=\"text-align:center\">";
-        if ($remoteusers == 1) {
-            echo "<a href=\"?ru=0\">Hide remote users</a> | ";
-        } else {
-            echo "<a href=\"?ru=1\">Show remote users</a> | ";
+        if($mnet_auth_users) {
+            echo "<p style=\"text-align:center\">";
+            if ($localusers == 1 && $remoteusers == 1) {
+                echo '<a href="?lu=0">'.get_string('hidelocal','mnet').'</a> | ';
+            } elseif ($localusers == 0)  {
+                echo '<a href="?lu=1">'.get_string('showlocal','mnet').'</a> | ';
+            } else {
+                echo get_string('hidelocal','mnet').' | ';
+            }
+            if ($localusers == 1 && $remoteusers == 1) {
+                echo '<a href="?ru=0">'.get_string('hideremote','mnet').'</a>';
+            } elseif ($remoteusers == 0) {
+                echo '<a href="?ru=1">'.get_string('showremote','mnet').'</a>';
+            } else {
+                echo get_string('hideremote','mnet');
+            }
+            echo "</p>";
         }
-        if ($localusers == 1) {
-            echo "<a href=\"?lu=0\">Hide local users</a>";
-        } else {
-            echo "<a href=\"?lu=1\">Show local users</a>";
-        }
-        echo "</p>";
 
         echo "<table class=\"searchbox\" align=\"center\" cellpadding=\"10\"><tr><td>";
         echo "<form action=\"user.php\" method=\"get\">";
