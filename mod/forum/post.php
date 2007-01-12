@@ -559,7 +559,7 @@
                 print_header();
                 notice_yesno(get_string("deletesureplural", "forum", $replycount+1),
                              "post.php?delete=$delete&amp;confirm=$delete",
-                             $_SERVER["HTTP_REFERER"]);
+                             $CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#'.$post->id);
 
                 forum_print_post($post, $course->id, $ownpost=false, $reply=false, $link=false);
                 if (empty($post->edit)) {
@@ -574,7 +574,7 @@
                 print_header();
                 notice_yesno(get_string("deletesure", "forum", $replycount),
                              "post.php?delete=$delete&amp;confirm=$delete",
-                             $_SERVER["HTTP_REFERER"]);
+                             $CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#'.$post->id);
                 forum_print_post($post, $forum->course, $ownpost=false, $reply=false, $link=false);
             }
 
