@@ -787,7 +787,7 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
     global $CFG;
 
     //to allow case-insensitive search for postgesql
-    if ($CFG->dbtype == 'postgres7') {
+    if ($CFG->dbfamily == 'postgres') {
         $LIKE = 'ILIKE';
         $NOTLIKE = 'NOT ILIKE';   // case-insensitive
         $REGEXP = '~*';
@@ -806,7 +806,7 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
 
     /// Under Oracle and MSSQL, trim the + and - operators and perform
     /// simpler LIKE search
-        if ($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'mssql_n' || $CFG->dbtype == 'odbc_mssql') {
+        if ($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') {
             $searchterm = trim($searchterm, '+-');
         }
 
@@ -967,7 +967,7 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') 
             $n = $n + $catgap;             
             // if the new sequence overlaps the current sequence, lack of transactions
             // will stop us -- shift things aside for a moment...
-            if ($safe || ($n >= $min && $n+$count+1 < $min && $CFG->dbtype==='mysql')) {
+            if ($safe || ($n >= $min && $n+$count+1 < $min && $CFG->dbfamily==='mysql')) {
                 $shift = $max + $n + 1000;
                 execute_sql("UPDATE {$CFG->prefix}course 
                          SET sortorder=sortorder+$shift 
@@ -1546,29 +1546,6 @@ function count_login_failures($mode, $username, $lastlogin) {
  */
 function print_object($object) {
     echo '<pre>'.htmlspecialchars(print_r($object,true)).'</pre>';
-}
-
-
-/**
- * Checks for pg or mysql > 4
- */
-
-function check_db_compat() {
-    global $CFG,$db;
-    
-    if ($CFG->dbtype == 'postgres7') {
-        return true;
-    }
-    
-    if (!$rs = $db->Execute("SELECT version();")) {
-        return false;
-    }
-
-    if (intval($rs->fields[0]) <= 3) {
-        return false;
-    }
-
-    return true;
 }
 
 function course_parent_visible($course = null) {
