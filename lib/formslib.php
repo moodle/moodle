@@ -1170,34 +1170,39 @@ function validate_' . $this->_formName . '(frm) {
     }
 
     function getLockOptionEndScript(){
+
+        $iname = $this->getAttribute('id').'items';
         $js = '<script type="text/javascript">'."\n";
         $js .= '//<![CDATA['."\n";
-        $js .= "var ".$this->getAttribute('id')."items= {";
-        foreach ($this->_dependencies as $dependentOn => $elements){
-            $js .= "'$dependentOn'".' : {dependents :[';
-            foreach ($elements as $element){
-                $elementNames = $this->_getElNamesRecursive($element['dependent']);
-                foreach ($elementNames as $dependent){
-                    if ($dependent !=  $dependentOn) {
-                        $js.="'".$dependent."', ";
+        $js .= "var $iname = Array();\n";
+
+        foreach ($this->_dependencies as $dependentOn => $conditions){
+            $js .= "{$iname}['$dependentOn'] = Array();\n";
+            foreach ($conditions as $condition=>$values) {
+                $js .= "{$iname}['$dependentOn']['$condition'] = Array();\n";
+                foreach ($values as $value=>$dependents) {
+                    $js .= "{$iname}['$dependentOn']['$condition']['$value'] = Array();\n";
+                    $i = 0;
+                    foreach ($dependents as $dependent) {
+                        $elements = $this->_getElNamesRecursive($dependent);
+                        foreach($elements as $element) {
+                            if ($element == $dependentOn) {
+                                continue;
+                            }
+                            $js .= "{$iname}['$dependentOn']['$condition']['$value'][$i]='$element';\n";
+                            $i++;
+                        }
                     }
                 }
             }
-            $js=rtrim($js, ', ');
-            $js .= "],\n";
-            $js .= "condition : '{$element['condition']}',\n";
-            $js .= "value : '{$element['value']}'},\n";
-
-        };
-        $js=rtrim($js, ",\n");
-        $js .= '};'."\n";
+        }
         $js .="lockoptionsallsetup('".$this->getAttribute('id')."');\n";
         $js .='//]]>'."\n";
         $js .='</script>'."\n";
         return $js;
     }
 
-    function _getElNamesRecursive(&$element, $group=null){
+    function _getElNamesRecursive($element, $group=null){
         if ($group==null){
             $el = $this->getElement($element);
         } else {
@@ -1237,16 +1242,27 @@ function validate_' . $this->_formName . '(frm) {
      * @param string $condition the condition to check
      * @param mixed $value used in conjunction with condition.
      */
-    function disabledIf($elementName, $dependentOn, $condition = 'notchecked', $value=null){
-        $this->_dependencies[$dependentOn][] = array('dependent'=>$elementName,
-                                    'condition'=>$condition, 'value'=>$value);
+    function disabledIf($elementName, $dependentOn, $condition = 'notchecked', $value='1'){
+        if (!array_key_exists($dependentOn, $this->_dependencies)) {
+            $this->_dependencies[$dependentOn] = array();
+        }
+        if (!array_key_exists($condition, $this->_dependencies[$dependentOn])) {
+            $this->_dependencies[$dependentOn][$condition] = array();
+        }
+        if (!array_key_exists($value, $this->_dependencies[$dependentOn][$condition])) {
+            $this->_dependencies[$dependentOn][$condition][$value] = array();
+        }
+        $this->_dependencies[$dependentOn][$condition][$value][] = $elementName;
     }
+
     function registerNoSubmitButton($buttonname){
         $this->_noSubmitButtons[]=$buttonname;
     }
+
     function isNoSubmitButton($buttonname){
         return (array_search($buttonname, $this->_noSubmitButtons)!==FALSE);
     }
+
     function _registerCancelButton($addfieldsname){
         $this->_cancelButtons[]=$addfieldsname;
     }
