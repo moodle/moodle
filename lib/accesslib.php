@@ -706,6 +706,7 @@ function roles_context_cmp($contexta, $contextb) {
 function load_user_capability($capability='', $context = NULL, $userid='') {
 
     global $USER, $CFG;
+
     // this flag has not been set! 
     // (not clean install, or upgraded successfully to 1.7 and up)
     if (empty($CFG->rolesactive)) {
@@ -794,7 +795,7 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
                      $capsearch
                      $timesql
               GROUP BY
-                     rc.capability, c1.id
+                     rc.capability, c1.id, c1.contextlevel * 100
                      HAVING
                      SUM(rc.permission) != 0          
             
@@ -816,7 +817,7 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
                      $timesql
                      AND cr.c2 = c1.id
               GROUP BY
-                     rc.capability, id1, id2
+                     rc.capability, c1.id, c2.id, c1.contextlevel * 100 + c2.contextlevel
                      HAVING
                      SUM(rc.permission) != 0
               ORDER BY
