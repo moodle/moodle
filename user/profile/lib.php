@@ -63,6 +63,8 @@ class profile_field_base {
             if (($dataid = get_field('user_info_data', 'id', 'fieldid', $fieldid, 'userid', $userid)) === false) {
                 $dataid = 0;
             }
+        } else {
+            $dataid = 0;
         }
         $this->dataid = $dataid;
 
@@ -135,7 +137,9 @@ class profile_field_base {
      * @param   object   instance of the moodleform class
      */
     function display_field_lock (&$form) {
-        $form->disabledIf($this->fieldname, $this->_is_locked(), true);
+        if ($this->_is_locked()) {
+            $form->freeze($this->fieldname);
+        }
     }
 
     /**
@@ -169,16 +173,188 @@ class profile_field_base {
     }
 
 
-    /// Prints out the form for creating a new profile field
-    /// TODO: Part of the admin gui still to be written
-    function edit_new_field () {
-
+    /**
+     * Prints out the form snippet for creating or editing a profile field
+     * @param   object   instance of the moodleform class
+     */
+    function edit_field (&$form) {
+        $form->addElement('header', 'commonsettings', get_string('common'));
+        $this->edit_field_common($form);
+        
+        $form->addElement('header', 'specificsettings', get_string('specific'));
+        $this->edit_field_specific($form);
     }
 
-    /// Removes a profile field and all data associated with it
-    /// TODO: Part of the admin gui still to be written
-    function edit_remove_field () {
+    /**
+     * Prints out the form snippet for the part of creating or
+     * editing a profile field common to all data types
+     * @param   object   instance of the moodleform class
+     */
+    function edit_field_common (&$form) {
 
+        $strrequired = get_string('required');
+        
+        $form->addElement('text', 'shortname', get_string('profileshortname'), 'maxlength="100" size="30"');
+        $form->setType('shortname', PARAM_ALPHANUM);
+        $form->addRule('shortname', $strrequired, 'required', null, 'client');
+
+        $form->addElement('text', 'name', get_string('profilename'), 'size="30"');
+        $form->setType('name', PARAM_MULTILANG);
+        $form->addRule('name', $strrequired, 'required', null, 'client');
+
+        $form->addElement('htmleditor', 'description', get_string('profiledescription'));
+        $form->setType('description', PARAM_MULTILANG);
+        $form->setHelpButton('description', array('text', get_string('helptext')));
+
+        $form->addElement('selectyesno', 'required', get_string('profilerequired'));
+        $form->setType('required', PARAM_BOOL);
+
+        $form->addElement('selectyesno', 'locked', get_string('profilelocked'));
+        $form->setType('locked', PARAM_BOOL);
+
+        unset($choices);
+        $choices[0] = get_string('profilevisiblenone');
+        $choices[1] = get_string('profilevisibleprivate');
+        $choices[2] = get_string('profilevisibleall');
+        $form->addElement('select', 'visible', get_string('profilevisible'), $choices);
+        $form->setType('visible', PARAM_INT);
+
+        unset($choices);
+        $choices = profile_list_categories();
+        $form->addElement('select', 'categoryid', get_string('category'), $choices);
+        $form->setType('categoryid', PARAM_INT);
+    }
+
+    /**
+     * Prints out the form snippet for the part of creating or
+     * editing a profile field specific to the current data type
+     * @param   object   instance of the moodleform class
+     */
+    function edit_field_specific (&$form) {
+        /// do nothing - overwrite if necessary
+    }
+
+    /**
+     * Validate the data from the add/edit profile field form.
+     * Generally this method should not be overwritten by child
+     * classes.
+     * @param   object   data from the add/edit profile field form
+     * @return  array    associative array of error messages
+     */
+    function edit_validate ($data) {
+
+        $data = (object)$data;
+        $err = array();
+        
+        $err += $this->edit_validate_common($data);
+        $err += $this->edit_validate_specific($data);
+
+        return $err;
+    }
+
+    /**
+     * Validate the data from the add/edit profile field form
+     * that is common to all data types. Generally this method
+     * should not be overwritten by child classes.
+     * @param   object   data from the add/edit profile field form
+     * @return  array    associative array of error messages
+     */
+    function edit_validate_common ($data) {
+        $err = array();
+        
+        /// Check the shortname is unique
+        if (($field = get_record('user_info_field', 'shortname', $data->shortname)) and ($field->id <> $data->id)) {
+        //if (record_exists_select('user_info_field', 'shortname='.$data->shortname.' AND id<>'.$data->id)) {
+            $err['shortname'] = get_string('profileshortnamenotunique');
+        }
+
+        /// No further checks necessary as the form class will take care of it
+
+        return $err;
+    }
+
+    /**
+     * Validate the data from the add/edit profile field form
+     * that is specific to the current data type
+     * @param   object   data from the add/edit profile field form
+     * @return  array    associative array of error messages
+     */
+    function edit_validate_specific ($data) {
+        $err = array();
+        
+        /// do nothing - overwrite if necessary
+
+        return $err;
+    }
+
+    /**
+     * Add a new profile field or save changes to current field
+     * @param   object   data from the add/edit profile field form
+     * @return  boolean  status of the insert/update record
+     */
+    function edit_save ($data) {
+
+        /// check to see if the category has changed
+        if ( (isset($this->field->categoryid) and ($this->field->categoryid != $data->categoryid)) or ($data->id == 0)) {
+            /// Set the sortorder for the field in the new category
+            $data->sortorder = count_records_select('user_info_field', 'categoryid='.$data->categoryid) + 1;
+        }
+        
+        $data = $this->edit_save_preprocess($data); /// hook for child classes
+        
+        if ($data->id == 0) {
+            unset($data->id);
+            if ($success = insert_record('user_info_field', $data)) {
+                $data->id = $success;
+                $success = true;
+            } else {
+                $success = false;
+            }
+        } else {
+            $success = update_record('user_info_field', $data);
+        }
+
+        /// Store the new information in this objects properties
+        if ($success) {
+            if (isset($this->field->categoryid) and ($this->field->categoryid != $data->categoryid)) {
+                /// Change the sortorder of the other fields in the old category
+                profile_reorder_fields($this->field->categoryid, $this->field->sortorder);
+            }
+            
+            $this->field    = $data;
+            $this->fieldid  = $data->id;
+
+        }
+        return $success;
+    }
+
+    /**
+     * Preprocess data from the add/edit profile field form
+     * before it is saved. This method is a hook for the child
+     * classes to overwrite.
+     * @param   object   data from the add/edit profile field form
+     * @return  object   processed data object
+     */
+    function edit_save_preprocess ($data) {
+        /// do nothing - overwrite if necessary
+        return $data;
+    }
+    
+    /**
+     * Removes a profile field and all the user data associated with it
+     */
+    function edit_remove_field () {
+    
+        if (!empty($this->field->id)) {
+            /// Remove the record from the database
+            delete_records('user_info_field', 'id', $this->field->id);
+
+            /// Reorder the remaining fields in the same category
+            profile_reorder_fields($this->field->categoryid, $this->field->sortorder);
+
+            /// Remove any user data associated with this field
+            delete_records('user_info_data', 'fieldid', $this->field->id);
+       }
     }
 
     /**
@@ -272,5 +448,59 @@ class profile_field_base {
 
 
 } /// End of class definition
+
+
+/***** General purpose functions for customisable user profiles *****/
+
+/**
+ * Retrieve a list of all the available data types
+ * @return   array   a list of the datatypes suitable to use in a select statement
+ */
+function profile_list_datatypes() {
+    global $CFG;
+
+    $datatypes = array();
+
+    if ($dirlist = get_directory_list($CFG->dirroot.'/user/profile/field', '', false, true, false)) {
+        foreach ($dirlist as $type) {
+            $datatypes[$type] = $type;
+        }
+    }
+    return $datatypes;
+//    return get_directory_list($CFG->dirroot.'/user/profile/field', '', false, true, false);
+}
+
+/**
+ * Retrieve a list of categories and ids suitable for use in a form
+ * @return   array
+ */
+function profile_list_categories() {
+    if ( !($categories = get_records_select_menu('user_info_category', '1', 'sortorder ASC', 'id, name')) ) {
+        $categories = array();
+    }
+    return $categories;
+}
+
+/**
+ * Reorder the profile fields within a given category starting
+ * at the field at the given startorder
+ * @param   integer   id of the category
+ * @param   integer   starting order
+ * $return  integer   number of fields reordered
+ */
+function profile_reorder_fields($categoryid, $startorder=1) {
+    $count = 0;
+    $sortorder = $startorder;
+    
+    if ($fields = get_records_select('user_info_field', 'categoryid='.$categoryid.' AND sortorder>='.$startorder, 'sortorder ASC')) {
+        foreach ($fields as $field) {
+            $field->sortorder = $sortorder;
+            update_record('user_info_field', $field);
+            $sortorder++;
+            $count++;
+        }
+    }
+    return $count;
+}
 
 ?>
