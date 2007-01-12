@@ -20,8 +20,12 @@ $type     = optional_param('type', '', PARAM_ALPHANUM);
 
 $datatypes       = profile_list_datatypes();
 $redirect        = $CFG->wwwroot.'/user/profile/index.php';
-$strchangessaved = get_string('changessaved');
-$strcancelled    = get_string('cancelled');
+
+$strchangessaved    = get_string('changessaved');
+$strcancelled       = get_string('cancelled');
+$strdefaultcategory = get_string('profiledefaultcategory', 'admin');
+$strnofields        = get_string('profilenofieldsdefined', 'admin');
+$strcreatefield     = get_string('profilecreatefield', 'admin');
 
 
 /// Do we have any actions to perform before printing the header
@@ -101,11 +105,19 @@ switch ($action) {
 /// Print the header
 admin_externalpage_print_header($adminroot);
 
-print_heading(get_string('profilefields', 'admin'));
 
 
 /// Are we adding or editing a cateogory?
 if ( ($action == 'editcategory' )) {
+
+    if ($id == 0) {
+        $strheading = get_string('profilecreatenewcategory', 'admin');
+    } else {
+        $strheading = get_string('profileeditcategory', 'admin', $category->name);
+    }
+
+    print_heading($strheading);
+    
     require_once('index_category_form.php');
     $categoryform = new category_form(null, compact('category'));
     if ($categoryform->is_cancelled()) {
@@ -133,6 +145,15 @@ if ( ($action == 'editcategory' )) {
 
 /// Are we adding or editing a field?
 } elseif ( $action == 'editfield' ) {
+
+    if ($id == 0) {
+        $strheading = get_string('profilecreatenewfield', 'admin');
+    } else {
+        $strheading = get_string('profileeditfield', 'admin', $field->name);
+    }
+
+    print_heading($strheading);
+    
     require_once('index_field_form.php');
     $fieldform = new field_form(null, compact('field'));
     if ($fieldform->is_cancelled()) {
@@ -155,12 +176,18 @@ if ( ($action == 'editcategory' )) {
 
 /// Deleting a category that has fields in it, print confirm screen?
 } elseif ( ($action == 'deletecategory') and !$confirm ) {
+
+    print_heading('profiledeletecategory', 'admin');
+    
     $fieldcount = count_records('user_info_field', 'categoryid', $id);
     echo '<center>'.get_string('profileconfirmcategorydeletion', 'admin', $fieldcount).'<br /><a href="index.php?id='.$id.'&amp;action=deletecategory&amp;sesskey='.$USER->sesskey.'&amp;confirm=1">'.get_string('yes').' <a href="index.php">'.get_string('no').'</center>';
 
 
 /// Deleting a field that has user data, print confirm screen
 } elseif ( ($action == 'deletefield') and !$confirm ) {
+
+    print_heading('profiledeletefield', 'admin');
+
     $datacount = count_records('user_info_data', 'fieldid', $id);
     echo '<center>'.get_string('profileconfirmfielddeletion', 'admin', $datacount).'<br /><a href="index.php?id='.$id.'&amp;action=deletefield&amp;sesskey='.$USER->sesskey.'&amp;confirm=1">'.get_string('yes').' <a href="index.php">'.get_string('no').'</center>';
     
@@ -169,8 +196,20 @@ if ( ($action == 'editcategory' )) {
 /// Print the table of categories and fields
 } else {
 
-    if ($categories = get_records_select('user_info_category', '1', 'sortorder ASC')) {
+    /// Check that we have at least one category defined
+    if (count_records_select('user_info_category', '1') == 0) {
+        unset($defaultcategory);
+        $defaultcategory->name = $strdefaultcategory;
+        $defaultcategory->sortorder = 1;
+        insert_record('user_info_category', $defaultcategory);
+    }
 
+    print_heading(get_string('profilefields', 'admin'));
+
+    /// We only displaying if there are fields defined or there is a category with a name different to the default name
+    if ( ( (count_records_select('user_info_category', "name<>'$strdefaultcategory'") > 0) or
+           (count_records_select('user_info_field', '1') > 0) ) and
+         ( $categories = get_records_select('user_info_category', '1', 'sortorder ASC')) ) {
         unset ($table);
         $table->align = array('left', 'right');
         $table->width = '95%';
@@ -200,25 +239,20 @@ if ( ($action == 'editcategory' )) {
         } /// End of $categories foreach
         
         print_table($table);
-        
+
     } else {
-    
-        notify(get_string('profilenocategoriesdefined', 'admin'));
+
+        notify($strnofields);
         
     } /// End of $categories if
-    
-
 
 
     echo '<hr />';
     echo '<center>';
 
     /// Create a new field link
-    if ($categories) {
-        $options = profile_list_datatypes();
-        print_string('profilecreatefield', 'admin');
-        popup_form($CFG->wwwroot.'/user/profile/index.php?id=0&amp;action=editfield&amp;type=', $options, 'newfieldform');
-    }
+    $options = profile_list_datatypes();
+    popup_form($CFG->wwwroot.'/user/profile/index.php?id=0&amp;action=editfield&amp;type=', $options, 'newfieldform','','choose','','',false,'self',$strcreatefield);
 
 /// Create a new category link
     $options = array('action'=>'editcategory', 'id'=>'0');
