@@ -369,13 +369,6 @@ class course_edit_form extends moodleform {
 
 
 
-// now override defaults if course already exists
-        if (!empty($course)) {
-            $this->set_defaults($course);
-        }
-
-
-
     }
 
 

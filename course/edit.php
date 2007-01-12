@@ -60,6 +60,10 @@ if (!empty($course)) {
 
 /// first create the form
     $editform = new course_edit_form('edit.php', compact('course', 'category'));
+    // now override defaults if course already exists
+    if (!empty($course)) {
+        $editform->set_defaults($course);
+    }
     if ($editform->is_cancelled()){
         if (empty($course)) {
             redirect($CFG->wwwroot);
