@@ -64,11 +64,11 @@ class question_edit_random_form extends question_edit_form {
         $mform->closeHeaderBefore('buttonar');
     }
 
-    function set_defaults($question) {
+    function set_data($question) {
         if (empty($question->name)) {
             $question->name = get_string("random", "quiz");
         }
-        parent::set_defaults($question);
+        parent::set_data($question);
     }
 
     function qtype() {

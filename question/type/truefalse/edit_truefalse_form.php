@@ -29,14 +29,14 @@ class question_edit_truefalse_form extends question_edit_form {
         $mform->setType('feedbackfalse', PARAM_RAW);
     }
 
-    function set_defaults($question) {
+    function set_data($question) {
         if (!empty($question->options->trueanswer)) {
             $trueanswer = $question->options->answers[$question->options->trueanswer];
             $question->correctanswer = ($trueanswer->fraction != 0);
             $question->feedbacktrue = $trueanswer->feedback;
             $question->feedbackfalse = $question->options->answers[$question->options->falseanswer]->feedback;
         }
-        parent::set_defaults($question);
+        parent::set_data($question);
     }
 
     function qtype() {

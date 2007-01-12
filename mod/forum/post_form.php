@@ -20,7 +20,7 @@ class mod_forum_post_form extends moodleform {
         $this->set_upload_manager(new upload_manager('attachment', true, false, $course, false, $forum->maxbytes, true, true));
 
         $mform->addElement('header', 'general', '');//fill in the data depending on page params
-                                                    //later using set_defaults
+                                                    //later using set_data
 		$mform->addElement('text', 'subject', get_string('subject', 'forum'), 'size="64"');
 		$mform->setType('subject', PARAM_TEXT);
 		$mform->addRule('subject', get_string('required'), 'required', null, 'client');

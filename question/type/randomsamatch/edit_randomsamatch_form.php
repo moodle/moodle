@@ -31,7 +31,7 @@ class question_edit_randomsamatch_form extends question_edit_form {
         $mform->addElement('hidden', 'fraction', 0);
     }
 
-    function set_defaults($question) {
+    function set_data($question) {
         if (empty($question->name)) {
             $question->name =  get_string("randomsamatch", "quiz");
         }
@@ -39,7 +39,7 @@ class question_edit_randomsamatch_form extends question_edit_form {
         if (empty($question->questiontext)) {
             $question->questiontext =  get_string("randomsamatchintro", "quiz");
         }
-        parent::set_defaults($question);
+        parent::set_data($question);
     }
 
     function qtype() {

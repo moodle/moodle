@@ -15,7 +15,7 @@ class question_edit_multianswer_form extends question_edit_form {
 
     // No question-type specific form fields.
 
-    function set_defaults($question) {
+    function set_data($question) {
         if ($question->questiontext and $question->id and $question->qtype) {
 
             foreach ($question->options->questions as $key => $wrapped) {

@@ -62,7 +62,7 @@ class question_edit_multichoice_form extends question_edit_form {
 
     }
 
-    function set_defaults($question) {
+    function set_data($question) {
         if (isset($question->options)){
             $answers = $question->options->answers;
             if (count($answers)) {
@@ -81,7 +81,7 @@ class question_edit_multichoice_form extends question_edit_form {
             $default_values['incorrectfeedback'] =  $question->options->incorrectfeedback;
             $question = (object)((array)$question + $default_values);
         }
-        parent::set_defaults($question);
+        parent::set_data($question);
     }
 
     function qtype() {

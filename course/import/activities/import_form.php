@@ -12,7 +12,7 @@ class course_import_activities_form_1 extends moodleform {
 		$options = $this->_customdata['options'];
         $courseid = $this->_customdata['courseid'];
         $mform->addElement('header', 'general', '');//fill in the data depending on page params
-                                                    //later using set_defaults
+                                                    //later using set_data
 		$mform->addElement('select', 'fromcourse', $text, $options);
 
         // buttons
@@ -40,7 +40,7 @@ class course_import_activities_form_2 extends moodleform {
 		$courseid = $this->_customdata['courseid'];
 
         $mform->addElement('header', 'general', '');//fill in the data depending on page params
-                                                    //later using set_defaults
+                                                    //later using set_data
 		$mform->addElement('text', 'fromcoursesearch', get_string('searchcourses'));
 
         // buttons

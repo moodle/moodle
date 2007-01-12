@@ -18,7 +18,7 @@ class question_edit_form extends moodleform {
     /**
      * Question object with options and answers already loaded by get_question_options
      * Be careful how you use this it is needed sometimes to set up the structure of the
-     * form in definition_inner but data is always loaded into the form with set_defaults.
+     * form in definition_inner but data is always loaded into the form with set_data.
      *
      * @var object
      */
@@ -127,13 +127,13 @@ class question_edit_form extends moodleform {
         // By default, do nothing.
     }
 
-    function set_defaults($question) {
+    function set_data($question) {
         global $QTYPES;
         $QTYPES[$question->qtype]->set_default_options($question);
         if (empty($question->image)){
             unset($question->image);
         }
-        parent::set_defaults($question);
+        parent::set_data($question);
     }
 
     /**

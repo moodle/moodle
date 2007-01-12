@@ -24,11 +24,11 @@ class question_edit_essay_form extends question_edit_form {
         $mform->addElement('hidden', 'fraction', 0);
     }
 
-    function set_defaults($question) {
+    function set_data($question) {
         if (isset($question->options)){
             $question->feedback = $question->options->answer->feedback;
         }
-        parent::set_defaults($question);
+        parent::set_data($question);
     }
 
     function qtype() {

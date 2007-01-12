@@ -15,7 +15,7 @@ class course_import_groups_form extends moodleform {
         //$this->set_max_file_size('', $maxuploadsize);
 
         $mform->addElement('header', 'general', '');//fill in the data depending on page params
-                                                    //later using set_defaults
+                                                    //later using set_data
         // buttons
 
         $mform->addElement('hidden', 'sesskey');

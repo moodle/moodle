@@ -45,7 +45,7 @@ class question_edit_match_form extends question_edit_form {
 
     }
 
-    function set_defaults($question) {
+    function set_data($question) {
         if (isset($question->options)){
             $subquestions = $question->options->subquestions;
             if (count($subquestions)) {
@@ -59,7 +59,7 @@ class question_edit_match_form extends question_edit_form {
             $default_values['shuffleanswers'] =  $question->options->shuffleanswers;
             $question = (object)((array)$question + $default_values);
         }
-        parent::set_defaults($question);
+        parent::set_data($question);
     }
 
     function qtype() {
