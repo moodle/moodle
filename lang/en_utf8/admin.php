@@ -410,6 +410,7 @@ $string['profiledeletecategory'] = 'Deleting a category';
 $string['profiledescription'] = 'Description of the field';
 $string['profileeditcategory'] = 'Editing category: $a';
 $string['profileeditfield'] = 'Editing profile field: $a';
+$string['profilefield'] = 'Profile Field';
 $string['profilefields'] = 'User profile fields';
 $string['profilefieldsize'] = 'Display size';
 $string['profilefieldtypemenu'] = 'Menu of choices';
