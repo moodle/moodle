@@ -295,21 +295,18 @@ class user_edit_form extends moodleform {
             $mform->hardFreeze('address');
         }
 
-
         /// disable fields that are locked by auth plugins
-        if ($userupdate) {
-            $fields = get_user_fieldnames();
-            $freezefields = array();
-            foreach ($fields as $field) {
-                $configvariable = 'field_lock_' . $field;
-                if (isset($authplugin->config->{$configvariable}) and
-                     ( $authplugin->config->{$configvariable} === 'locked' or
-                       ( $authplugin->config->{$configvariable} === 'unlockedifempty' and !empty($user->$field)) ) ) {
-                    $freezefields[] = $field;
-                }
+        $fields = get_user_fieldnames();
+        $freezefields = array();
+        foreach ($fields as $field) {
+            $configvariable = 'field_lock_' . $field;
+            if (isset($authplugin->config->{$configvariable}) and
+                 ( $authplugin->config->{$configvariable} === 'locked' or
+                   ( $authplugin->config->{$configvariable} === 'unlockedifempty' and !empty($user->$field)) ) ) {
+                $freezefields[] = $field;
             }
-            $mform->hardFreeze($freezefields);
         }
+        $mform->hardFreeze($freezefields);
 
         /// Next the customisable categories
         if ($categories = get_records_select('user_info_category', '1', 'sortorder ASC')) {
