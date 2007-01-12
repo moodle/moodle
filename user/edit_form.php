@@ -17,12 +17,11 @@ class user_edit_form extends moodleform {
 
         $systemcontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
         $userupdate    = has_capability('moodle/user:update', $systemcontext);
-
         $strrequired = get_string('required');
 
 
         /// Add some extra hidden fields
-        $mform->addElement('hidden', 'id', $user->id);
+        $mform->addElement('hidden', 'id');
         $mform->addElement('hidden', 'course', $course->id);
 
 
@@ -40,7 +39,7 @@ class user_edit_form extends moodleform {
                 $mform->setDefault('username', '');
                 $mform->addRule('username', $strrequired, 'required', null, 'client');
             } else {
-                $mform->addElement('hidden', 'username', $user->username);
+                $mform->addElement('hidden', 'username');
             }
 
             $modules = get_list_of_plugins("auth");
@@ -61,9 +60,6 @@ class user_edit_form extends moodleform {
                 $newpasswordgrp[] = &MoodleQuickForm::createElement('static', 'newpasswordtext', '', '('.get_string('leavetokeep').')');
                 $mform->addGroup($newpasswordgrp, 'newpasswordgrp', get_string('newpassword'),' ',false);
                 $mform->setType('newpassword', PARAM_MULTILANG);
-                if (isset($user->newpassword)) {
-                    $mform->setDefault('newpassword', $user->newpassword);
-                }
 
                 if (!$adminself and $userauth->can_change_password()) {
                     if (get_user_preferences('auth_forcepasswordchange', NULL, $user->id)) {
@@ -176,13 +172,14 @@ class user_edit_form extends moodleform {
         $mform->setType('city', PARAM_MULTILANG);
         $mform->addRule('city', $strrequired, 'required', null, 'client');
 
-        if (!$user->country and $CFG->country) {
-            $user->country = $CFG->country;
-        }
+
         $choices = get_list_of_countries();
         $mform->addElement('select', 'country', get_string('selectacountry'), $choices);
         $mform->setType('country', PARAM_ALPHA);
         $mform->addRule('country', $strrequired, 'required', null, 'client');
+        if ($CFG->country) {
+            $mform->setDefault('country', $CFG->country);
+        }
 
         $choices = get_list_of_timezones();
         $choices['99'] = get_string('serverlocaltime');
@@ -195,11 +192,9 @@ class user_edit_form extends moodleform {
 
         $choices = array();
         if ($choices = get_list_of_languages()) {
-            if (!$user->lang) {
-                $user->lang = $CFG->lang;
-            }
             $mform->addElement('select', 'lang', get_string('preferredlanguage'), $choices);
             $mform->setType('lang', PARAM_FILE);
+            $mform->setDefault('lang', $CFG->lang);
         }
 
         if (!empty($CFG->allowuserthemes)) {
@@ -305,7 +300,6 @@ class user_edit_form extends moodleform {
         if ($userupdate) {
             $fields = get_user_fieldnames();
             $freezefields = array();
-
             foreach ($fields as $field) {
                 $configvariable = 'field_lock_' . $field;
                 if (isset($authplugin->config->{$configvariable}) and
@@ -321,9 +315,9 @@ class user_edit_form extends moodleform {
         if ($categories = get_records_select('user_info_category', '1', 'sortorder ASC')) {
             foreach ($categories as $category) {
                 if ($fields = get_records_select('user_info_field', "categoryid=$category->id", 'sortorder ASC')) {
-                
+
                     $mform->addElement('header', 'category_'.$category->id, $category->name);
-                    
+
                     foreach ($fields as $field) {
 
                         require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
