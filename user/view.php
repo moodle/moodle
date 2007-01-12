@@ -290,7 +290,8 @@
         print_row(get_string('msnid').':', s($user->msn));
     }
 
-    if ($mycourses = get_my_courses($user->id)) {
+    if ($mycourses = get_my_courses($user->id,'visible DESC,sortorder ASC', '*', false, 21)) {
+        $shown=0;
         $courselisting = '';
         foreach ($mycourses as $mycourse) {
             if ($mycourse->visible and $mycourse->category) {
@@ -300,6 +301,11 @@
                 else {
                     $courselisting .= "$mycourse->fullname, ";
                 }
+            }
+            $shown++;
+            if($shown==20) {
+                $courselisting.= "...";
+                break;
             }
         }
         print_row(get_string('courses').':', rtrim($courselisting,', '));
