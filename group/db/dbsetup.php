@@ -48,7 +48,7 @@ require_once($CFG->libdir.'/datalib.php');
 function groups_create_database_tables() {
 	global $CFG;
 
-    if ('mysql' == $CFG->dbtype) {
+    if ('mysql' == $CFG->dbfamily) {
 
         $createcoursegrouptablesql = "CREATE TABLE IF NOT EXISTS `{$CFG->prefix}groups_courses_groups` (
                             `id` int(10) unsigned NOT NULL auto_increment,

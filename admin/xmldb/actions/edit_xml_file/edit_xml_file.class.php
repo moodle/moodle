@@ -126,7 +126,7 @@ class edit_xml_file extends XMLDBAction {
             /// The new table button
                 $b .= '&nbsp;<a href="index.php?action=new_table&amp;postaction=edit_table&amp;table=changeme&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newtable'] . ']</a>';
             /// The new from MySQL button
-                if ($CFG->dbtype == 'mysql') {
+                if ($CFG->dbfamily == 'mysql') {
                     $b .= '&nbsp;<a href="index.php?action=new_table_from_mysql&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newtablefrommysql'] . ']</a>';
                 } else {
                     $b .= '&nbsp;[' . $this->str['newtablefrommysql'] . ']';

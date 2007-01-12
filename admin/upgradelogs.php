@@ -52,11 +52,7 @@
         $starttime = time();
         $sleeptime = 0;
 
-        if ($CFG->dbtype == "mysql") {
-            $LIKE = "LIKE";
-        } else {
-            $LIKE = "ILIKE";
-        }
+        $LIKE = sql_ilike();
 
         if ($cmcount > 10) {
             print_simple_box('This process may take a very long time ... please be patient and let it finish.',

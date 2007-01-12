@@ -52,11 +52,11 @@
         error("The PHP server variable 'file_uploads' is not turned On - $documentationlink");
     }
 
-    if (empty($CFG->prefix) && $CFG->dbtype != 'mysql') {  //Enforce prefixes for everybody but mysql
+    if (empty($CFG->prefix) && $CFG->family != 'mysql') {  //Enforce prefixes for everybody but mysql
         error('$CFG->prefix can\'t be empty for your target DB (' . $CFG->dbtype . ')');
     }
 
-    if ($CFG->dbtype == 'oci8po' && strlen($CFG->prefix) > 2) { //Max prefix length for Oracle is 2cc
+    if ($CFG->dbfamily == 'oracle' && strlen($CFG->prefix) > 2) { //Max prefix length for Oracle is 2cc
         error('$CFG->prefix maximum allowed length for Oracle DBs is 2cc.');
     }
 
