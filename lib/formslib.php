@@ -881,10 +881,36 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     }
 
     function exportValues($elementList= null, $addslashes=true){
-        $unfiltered=parent::exportValues($elementList);
+        $unfiltered = array();
+        if (null === $elementList) {
+            // iterate over all elements, calling their exportValue() methods
+            foreach (array_keys($this->_elements) as $key) {
+                if ($this->_elements[$key]->isFrozen() && !$this->_elements[$key]->_persistantFreeze){
+                    $value = $this->_elements[$key]->exportValue(array(), true);
+                } else {
+                    $value = $this->_elements[$key]->exportValue($this->_submitValues, true);
+                }
+
+                if (is_array($value)) {
+                    // This shit throws a bogus warning in PHP 4.3.x
+                    $unfiltered = HTML_QuickForm::arrayMerge($unfiltered, $value);
+                }
+            }
+        } else {
+            if (!is_array($elementList)) {
+                $elementList = array_map('trim', explode(',', $elementList));
+            }
+            foreach ($elementList as $elementName) {
+                $value = $this->exportValue($elementName);
+                if (PEAR::isError($value)) {
+                    return $value;
+                }
+                $unfiltered[$elementName] = $value;
+            }
+        }
 
         if ($addslashes){
-            return $this->_recursiveFilter('addslashes',$unfiltered);
+            return $this->_recursiveFilter('addslashes', $unfiltered);
         } else {
             return $unfiltered;
         }
