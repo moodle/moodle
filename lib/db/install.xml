@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20070104" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20070112" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -524,7 +524,7 @@
         <FIELD NAME="confirmed" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="auth" NEXT="policyagreed"/>
         <FIELD NAME="policyagreed" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="confirmed" NEXT="deleted"/>
         <FIELD NAME="deleted" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="policyagreed" NEXT="mnethostid"/>
-        <FIELD NAME="mnethostid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="false" SEQUENCE="false" ENUM="false" PREVIOUS="deleted" NEXT="username"/>
+        <FIELD NAME="mnethostid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="deleted" NEXT="username"/>
         <FIELD NAME="username" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="mnethostid" NEXT="password"/>
         <FIELD NAME="password" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="username" NEXT="idnumber"/>
         <FIELD NAME="idnumber" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="password" NEXT="firstname"/>
@@ -813,7 +813,7 @@
         <INDEX NAME="sortorder" UNIQUE="true" FIELDS="sortorder"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="context" COMMENT="one of these must be set" PREVIOUS="role" NEXT="capabilities">
+    <TABLE NAME="context" COMMENT="one of these must be set" PREVIOUS="role" NEXT="context_rel">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="contextlevel"/>
         <FIELD NAME="contextlevel" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="instanceid"/>
@@ -827,7 +827,20 @@
         <INDEX NAME="instanceid" UNIQUE="false" FIELDS="instanceid" PREVIOUS="contextlevel-instanceid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="capabilities" COMMENT="this defines all capabilities" PREVIOUS="context" NEXT="role_allow_assign">
+    <TABLE NAME="context_rel" COMMENT="context relations, c2 is a parent (or higher) of c1" PREVIOUS="context" NEXT="capabilities">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" NEXT="c1"/>
+        <FIELD NAME="c1" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="context 1, child context" PREVIOUS="id" NEXT="c2"/>
+        <FIELD NAME="c2" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="parent (or higher) context" PREVIOUS="c1"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="c1"/>
+        <KEY NAME="c1" TYPE="foreign" FIELDS="c1" REFTABLE="context" REFFIELDS="id" PREVIOUS="primary" NEXT="c2"/>
+        <KEY NAME="c2" TYPE="foreign" FIELDS="c2" REFTABLE="context" REFFIELDS="id" COMMENT="Default comment for the key, please edit me" PREVIOUS="c1" NEXT="c1c2"/>
+        <KEY NAME="c1c2" TYPE="unique" FIELDS="c1, c2" PREVIOUS="c2"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="capabilities" COMMENT="this defines all capabilities" PREVIOUS="context_rel" NEXT="role_allow_assign">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="captype"/>
@@ -981,43 +994,43 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="Unique remote-course ID" NEXT="hostid"/>
         <FIELD NAME="hostid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="remoteid"/>
-        <FIELD NAME="remoteid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Unique ID of course on its home server" ENUM="false" PREVIOUS="hostid" NEXT="cat_id"/>
+        <FIELD NAME="remoteid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Unique ID of course on its home server" PREVIOUS="hostid" NEXT="cat_id"/>
         <FIELD NAME="cat_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="remoteid" NEXT="cat_name"/>
         <FIELD NAME="cat_name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="cat_id" NEXT="cat_description"/>
         <FIELD NAME="cat_description" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="cat_name" NEXT="sortorder"/>
-        <FIELD NAME="sortorder" TYPE="int" LENGTH="4" UNSIGNED="true" NOTNULL="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="cat_description" NEXT="fullname"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="cat_description" NEXT="fullname"/>
         <FIELD NAME="fullname" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="sortorder" NEXT="shortname"/>
         <FIELD NAME="shortname" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="fullname" NEXT="idnumber"/>
         <FIELD NAME="idnumber" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="shortname" NEXT="summary"/>
         <FIELD NAME="summary" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="idnumber" NEXT="startdate"/>
-        <FIELD NAME="startdate" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="summary" NEXT="cost"/>
+        <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="summary" NEXT="cost"/>
         <FIELD NAME="cost" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="startdate" NEXT="currency"/>
         <FIELD NAME="currency" TYPE="char" LENGTH="3" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="cost" NEXT="defaultroleid"/>
-        <FIELD NAME="defaultroleid" TYPE="int" LENGTH="4" UNSIGNED="true" NOTNULL="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="currency" NEXT="defaultrolename"/>
+        <FIELD NAME="defaultroleid" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="currency" NEXT="defaultrolename"/>
         <FIELD NAME="defaultrolename" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="defaultroleid"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the mnet_course table"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="hostid_remoteid" UNIQUE="true" FIELDS="hostid, remoteid" />
+        <INDEX NAME="hostid_remoteid" UNIQUE="true" FIELDS="hostid, remoteid"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="mnet_enrol_assignments" COMMENT="Information about enrolments on courses on remote hosts" PREVIOUS="mnet_enrol_course" NEXT="mnet_host">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="Unique enrollment ID" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Unique ID of user on *this* server" ENUM="false" PREVIOUS="id" NEXT="hostid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Unique ID of user on *this* server" PREVIOUS="id" NEXT="hostid"/>
         <FIELD NAME="hostid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="courseid"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Unique ID of course on its home server" ENUM="false" PREVIOUS="hostid" NEXT="rolename"/>
-        <FIELD NAME="rolename" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="courseid"  NEXT="enroltime"/>
-        <FIELD NAME="enroltime" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="rolename" NEXT="enroltype"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Unique ID of course on its home server" PREVIOUS="hostid" NEXT="rolename"/>
+        <FIELD NAME="rolename" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="enroltime"/>
+        <FIELD NAME="enroltime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="rolename" NEXT="enroltype"/>
         <FIELD NAME="enroltype" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="enroltime"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the mnet_enrol_assignments table"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="hostid_courseid" UNIQUE="false" FIELDS="hostid,courseid" NEXT="userid"/>
+        <INDEX NAME="hostid_courseid" UNIQUE="false" FIELDS="hostid, courseid" NEXT="userid"/>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" PREVIOUS="hostid_courseid"/>
       </INDEXES>
     </TABLE>
@@ -1029,11 +1042,11 @@
         <FIELD NAME="ip_address" TYPE="char" LENGTH="39" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="wwwroot" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="80" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="ip_address" NEXT="public_key"/>
         <FIELD NAME="public_key" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="public_key_expires"/>
-        <FIELD NAME="public_key_expires" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="public_key" NEXT="transport"/>
-        <FIELD NAME="transport" TYPE="int" LENGTH="2" UNSIGNED="true" NOTNULL="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="public_key_expires" NEXT="portno"/>
-        <FIELD NAME="portno" TYPE="int" LENGTH="2" UNSIGNED="true" NOTNULL="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="transport" NEXT="last_connect_time"/>
-        <FIELD NAME="last_connect_time" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="portno" NEXT="last_log_id"/>
-        <FIELD NAME="last_log_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="last_connect_time"/>
+        <FIELD NAME="public_key_expires" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="public_key" NEXT="transport"/>
+        <FIELD NAME="transport" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="public_key_expires" NEXT="portno"/>
+        <FIELD NAME="portno" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="transport" NEXT="last_connect_time"/>
+        <FIELD NAME="last_connect_time" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="portno" NEXT="last_log_id"/>
+        <FIELD NAME="last_log_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="last_connect_time"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the mnet_host table"/>
@@ -1042,8 +1055,8 @@
     <TABLE NAME="mnet_host2service" COMMENT="Information about the services for a given host" PREVIOUS="mnet_host" NEXT="mnet_log">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" NEXT="hostid"/>
-        <FIELD NAME="hostid" TYPE="int" LENGTH="10" DEFAULT="0" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="serviceid"/>
-        <FIELD NAME="serviceid" TYPE="int" LENGTH="10" DEFAULT="0" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="hostid" NEXT="publish"/>
+        <FIELD NAME="hostid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="serviceid"/>
+        <FIELD NAME="serviceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="hostid" NEXT="publish"/>
         <FIELD NAME="publish" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="serviceid" NEXT="subscribe"/>
         <FIELD NAME="subscribe" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="publish"/>
       </FIELDS>
@@ -1051,13 +1064,13 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the mnet_host2service table"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="hostid_serviceid" UNIQUE="true" FIELDS="hostid,serviceid"/>
+        <INDEX NAME="hostid_serviceid" UNIQUE="true" FIELDS="hostid, serviceid"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="mnet_log" COMMENT="Store session data from users migrating to other sites" PREVIOUS="mnet_host2service" NEXT="mnet_rpc">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" NEXT="hostid"/>
-        <FIELD NAME="hostid" TYPE="int" LENGTH="10" DEFAULT="0" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Unique host ID" PREVIOUS="id" NEXT="remoteid"/>
+        <FIELD NAME="hostid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Unique host ID" PREVIOUS="id" NEXT="remoteid"/>
         <FIELD NAME="remoteid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="hostid" NEXT="time"/>
         <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="remoteid" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="time" NEXT="ip"/>
@@ -1084,7 +1097,7 @@
         <FIELD NAME="xmlrpc_path" TYPE="char" LENGTH="80" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="function_name" NEXT="parent_type"/>
         <FIELD NAME="parent_type" TYPE="char" LENGTH="6" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="xmlrpc_path" NEXT="parent"/>
         <FIELD NAME="parent" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="parent_type" NEXT="enabled"/>
-        <FIELD NAME="enabled" TYPE="int" LENGTH="1" UNSIGNED="true" NOTNULL="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="parent" NEXT="help"/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="parent" NEXT="help"/>
         <FIELD NAME="help" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="enabled" NEXT="profile"/>
         <FIELD NAME="profile" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Method signature" PREVIOUS="help"/>
       </FIELDS>
@@ -1092,16 +1105,16 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the mnet_rpc table"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="enabled_xmlrpcpath" UNIQUE="false" FIELDS="enabled,xmlrpc_path"/>
+        <INDEX NAME="enabled_xmlrpcpath" UNIQUE="false" FIELDS="enabled, xmlrpc_path"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="mnet_service" COMMENT="A service is a group of functions" PREVIOUS="mnet_rpc" NEXT="mnet_service2rpc">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="Unique Service ID" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" ENUM="false" NEXT="description" PREVIOUS="id"/>
-        <FIELD NAME="description" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" ENUM="false" NEXT="apiversion" PREVIOUS="name"/>
-        <FIELD NAME="apiversion" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" NEXT="offer" PREVIOUS="description"/>
-        <FIELD NAME="offer" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Do we even offer this service?" ENUM="false" PREVIOUS="apiversion"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="description"/>
+        <FIELD NAME="description" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="apiversion"/>
+        <FIELD NAME="apiversion" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="description" NEXT="offer"/>
+        <FIELD NAME="offer" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Do we even offer this service?" PREVIOUS="apiversion"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the mnet_service table"/>
@@ -1110,8 +1123,8 @@
     <TABLE NAME="mnet_service2rpc" COMMENT="Group functions or methods under a service" PREVIOUS="mnet_service" NEXT="mnet_session">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="Required ID field" NEXT="serviceid"/>
-        <FIELD NAME="serviceid" TYPE="int" LENGTH="10" DEFAULT="0" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Unique service ID" PREVIOUS="id" NEXT="rpcid"/>
-        <FIELD NAME="rpcid" TYPE="int" LENGTH="10" DEFAULT="0" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Unique Function ID" PREVIOUS="serviceid"/>
+        <FIELD NAME="serviceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Unique service ID" PREVIOUS="id" NEXT="rpcid"/>
+        <FIELD NAME="rpcid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Unique Function ID" PREVIOUS="serviceid"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the mnet_service2rpc table"/>
@@ -1123,14 +1136,14 @@
     <TABLE NAME="mnet_session" COMMENT="Store session data from users migrating to other sites" PREVIOUS="mnet_service2rpc" NEXT="mnet_sso_access_control">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="Required ID field" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" DEFAULT="0" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Unique user ID" PREVIOUS="id" NEXT="username"/>
-        <FIELD NAME="username" TYPE="char" LENGTH="100" DEFAULT="" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Unique username" PREVIOUS="userid" NEXT="token"/>
-        <FIELD NAME="token" TYPE="char" LENGTH="40" DEFAULT="" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Unique SHA1 Token" PREVIOUS="username" NEXT="mnethostid"/>
-        <FIELD NAME="mnethostid" TYPE="int" LENGTH="10" DEFAULT="0" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Unique remote host ID" PREVIOUS="token" NEXT="useragent"/>
-        <FIELD NAME="useragent" TYPE="char" LENGTH="40" DEFAULT="" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="SHA1 hash of User Agent" PREVIOUS="mnethostid" NEXT="confirm_timeout"/>
-        <FIELD NAME="confirm_timeout" TYPE="int" LENGTH="10" DEFAULT="0" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="UNIX timestamp for expiry of session" PREVIOUS="useragent" NEXT="session_id"/>
-        <FIELD NAME="session_id" TYPE="char" LENGTH="40" DEFAULT="" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="The PHP Session ID" PREVIOUS="confirm_timeout" NEXT="expires"/>
-        <FIELD NAME="expires" TYPE="int" LENGTH="10" DEFAULT="0" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Expire time of session on peer" PREVIOUS="session_id"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Unique user ID" PREVIOUS="id" NEXT="username"/>
+        <FIELD NAME="username" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="" SEQUENCE="false" ENUM="false" COMMENT="Unique username" PREVIOUS="userid" NEXT="token"/>
+        <FIELD NAME="token" TYPE="char" LENGTH="40" NOTNULL="true" DEFAULT="" SEQUENCE="false" ENUM="false" COMMENT="Unique SHA1 Token" PREVIOUS="username" NEXT="mnethostid"/>
+        <FIELD NAME="mnethostid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Unique remote host ID" PREVIOUS="token" NEXT="useragent"/>
+        <FIELD NAME="useragent" TYPE="char" LENGTH="40" NOTNULL="true" DEFAULT="" SEQUENCE="false" ENUM="false" COMMENT="SHA1 hash of User Agent" PREVIOUS="mnethostid" NEXT="confirm_timeout"/>
+        <FIELD NAME="confirm_timeout" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="UNIX timestamp for expiry of session" PREVIOUS="useragent" NEXT="session_id"/>
+        <FIELD NAME="session_id" TYPE="char" LENGTH="40" NOTNULL="true" DEFAULT="" SEQUENCE="false" ENUM="false" COMMENT="The PHP Session ID" PREVIOUS="confirm_timeout" NEXT="expires"/>
+        <FIELD NAME="expires" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Expire time of session on peer" PREVIOUS="session_id"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the mnet_session table"/>
@@ -1142,9 +1155,9 @@
     <TABLE NAME="mnet_sso_access_control" COMMENT="Users by host permitted (or not) to login from a remote provider" PREVIOUS="mnet_session">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="Required ID field" NEXT="username"/>
-        <FIELD NAME="username" TYPE="char" LENGTH="100" DEFAULT="" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Username" PREVIOUS="id" NEXT="mnet_host_id"/>
+        <FIELD NAME="username" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="" SEQUENCE="false" ENUM="false" COMMENT="Username" PREVIOUS="id" NEXT="mnet_host_id"/>
         <FIELD NAME="mnet_host_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="id of mnet host" PREVIOUS="username" NEXT="access"/>
-        <FIELD NAME="access" TYPE="char" LENGTH="20" DEFAULT="allow" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Whether or not this user/host can login" PREVIOUS="mnet_host_id"/>
+        <FIELD NAME="access" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="allow" SEQUENCE="false" ENUM="false" COMMENT="Whether or not this user/host can login" PREVIOUS="mnet_host_id"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the mnet_sso_access_control table"/>

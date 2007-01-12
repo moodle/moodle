@@ -487,6 +487,29 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
+    if ($result && $oldversion < 2007011200) {
+
+    /// Define table context_rel to be created
+        $table = new XMLDBTable('context_rel');
+
+    /// Adding fields to table context_rel
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('c1', XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null);
+        $table->addFieldInfo('c2', XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null);
+
+    /// Adding keys to table context_rel
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('c1', XMLDB_KEY_FOREIGN, array('c1'), 'context', array('id'));
+        $table->addKeyInfo('c2', XMLDB_KEY_FOREIGN, array('c2'), 'context', array('id'));
+        $table->addKeyInfo('c1c2', XMLDB_KEY_UNIQUE, array('c1', 'c2'));
+
+    /// Launch create table for context_rel
+        $result = $result && create_table($table);
+        
+        /// code here to fill the context_rel table
+        /// use get record set to iterate slower
+        build_context_rel();
+    }
     return $result;
 
 }

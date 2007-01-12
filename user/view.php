@@ -433,7 +433,7 @@
         echo "</form>";
     }
     echo "</div>\n";
-
+print_object($USER->capabilities);
 /*
     if (debugging() && $USER->id == $user->id) {   // TEMPORARY in DEV!
         echo '<hr />';
@@ -441,7 +441,7 @@
         print_object($USER);
     }
 */
-
+//print_object($USER->capabilities);
     print_footer($course);
 
 /// Functions ///////

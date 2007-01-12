@@ -745,7 +745,9 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
     } else { // else, we load everything
         if ($userroles = get_records('role_assignments','userid',$userid)) {
             foreach ($userroles as $userrole) {
-                $usercontexts[] = $userrole->contextid;
+                if (!in_array($userrole->contextid, $usercontexts)) {
+                    $usercontexts[] = $userrole->contextid;
+                }
             }
         }
     }
@@ -792,12 +794,34 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
                      $capsearch
                      $timesql
               GROUP BY
-                     rc.capability, (c1.contextlevel * 100), c1.id
+                     rc.capability, c1.id
                      HAVING
                      SUM(rc.permission) != 0          
+            
+              UNION ALL
+             
+              SELECT rc.capability, c1.id as id1, c2.id as id2, (c1.contextlevel * 100 + c2.contextlevel) AS aggrlevel,                    
+                     SUM(rc.permission) AS sum
+                     FROM
+                     {$CFG->prefix}role_assignments ra LEFT JOIN
+                     {$CFG->prefix}role_capabilities rc on ra.roleid = rc.roleid LEFT JOIN
+                     {$CFG->prefix}context c1 on ra.contextid = c1.id LEFT JOIN
+                     {$CFG->prefix}context c2 on rc.contextid = c2.id LEFT JOIN
+                     {$CFG->prefix}context_rel cr on cr.c1 = c2.id
+                     WHERE
+                     ra.userid=$userid AND
+                     $searchcontexts1
+                     rc.contextid != $siteinstance->id
+                     $capsearch
+                     $timesql
+                     AND cr.c2 = c1.id
+              GROUP BY
+                     rc.capability, id1, id2
+                     HAVING
+                     SUM(rc.permission) != 0
               ORDER BY
                      aggrlevel ASC";
-    
+
     if (!$rs = get_recordset_sql($SQL1)) {
         error("Query failed in load_user_capability.");
     }
@@ -819,12 +843,14 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
             $rs->MoveNext();
         }
     }
-
-  
+    
     // SQL for overrides
     // this is take out because we have no way of making sure c1 is indeed related to c2 (parent)
     // if we do not group by sum, it is possible to have multiple records of rc.capability, c1.id, c2.id, tuple having
     // different values, we can maually sum it when we go through the list
+    
+   /* 
+    
     $SQL2 = "SELECT rc.capability, c1.id as id1, c2.id as id2, (c1.contextlevel * 100 + c2.contextlevel) AS aggrlevel,
                      rc.permission AS sum
                      FROM
@@ -846,9 +872,9 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
                      rc.capability, (c1.contextlevel * 100 + c2.contextlevel), c1.id, c2.id, rc.permission
               ORDER BY
                      aggrlevel ASC
-            ";
+            ";*/
 
-
+/*
     if (!$rs = get_recordset_sql($SQL2)) {
         error("Query failed in load_user_capability.");
     }
@@ -867,19 +893,19 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
             }
             // for overrides, we have to make sure that context2 is a child of context1
             // otherwise the combination makes no sense
-            if (is_parent_context($temprecord->id1, $temprecord->id2)) {
+            //if (is_parent_context($temprecord->id1, $temprecord->id2)) {
                 $capabilities[] = $temprecord;
-            } // only write if relevant
+            //} // only write if relevant
             $rs->MoveNext();
         }
     }
-   
+
     // this step sorts capabilities according to the contextlevel
     // it is very important because the order matters when we 
     // go through each capabilities later. (i.e. higher level contextlevel
     // will override lower contextlevel settings
     usort($capabilities, 'roles_context_cmp');
-
+*/
     /* so up to this point we should have somethign like this
      * $capabilities[1]    ->contextlevel = 1000
                            ->module = SITEID
@@ -1078,28 +1104,39 @@ function check_enrolment_plugins(&$user) {
 function capability_prohibits($capability, $context, $sum='', $array='') {
     global $USER;
 
+    // caching, mainly to save unnecessary sqls
+    static $prohibits; //[capability][contextid]
+    if (isset($prohibits[$capability][$context->id])) {
+        return $prohibits[$capability][$context->id];
+    }
+    
     if (empty($context->id)) {
+        $prohibits[$capability][$context->id] = false;
         return false;
     }
 
     if (empty($capability)) {
+        $prohibits[$capability][$context->id] = false;
         return false;
     }
 
     if ($sum < (CAP_PROHIBIT/2)) {
         // If this capability is set to prohibit.
+        $prohibits[$capability][$context->id] = true;
         return true;
     }
 
     if (!empty($array)) {
         if (isset($array[$context->id][$capability])
                 && $array[$context->id][$capability] < (CAP_PROHIBIT/2)) {
+            $prohibits[$capability][$context->id] = true;
             return true;
         }
     } else {
         // Else if set in session.
         if (isset($USER->capabilities[$context->id][$capability])
                 && $USER->capabilities[$context->id][$capability] < (CAP_PROHIBIT/2)) {
+            $prohibits[$capability][$context->id] = true;
             return true;
         }
     }
@@ -1112,17 +1149,20 @@ function capability_prohibits($capability, $context, $sum='', $array='') {
 
         case CONTEXT_PERSONAL:
             $parent = get_context_instance(CONTEXT_SYSTEM);
-            return capability_prohibits($capability, $parent);
+            $prohibits[$capability][$context->id] = capability_prohibits($capability, $parent);
+            return $prohibits[$capability][$context->id];
         break;
 
         case CONTEXT_USER:
             $parent = get_context_instance(CONTEXT_SYSTEM);
-            return capability_prohibits($capability, $parent);
+            $prohibits[$capability][$context->id] = capability_prohibits($capability, $parent);
+            return $prohibits[$capability][$context->id];
         break;
 
         case CONTEXT_COURSECAT:
             // Coursecat -> coursecat or site.
             if (!$coursecat = get_record('course_categories','id',$context->instanceid)) {
+                $prohibits[$capability][$context->id] = false;
                 return false;
             }         
             if (!empty($coursecat->parent)) {
@@ -1132,13 +1172,15 @@ function capability_prohibits($capability, $context, $sum='', $array='') {
                 // Return site value.
                 $parent = get_context_instance(CONTEXT_SYSTEM);
             }
-            return capability_prohibits($capability, $parent);
+            $prohibits[$capability][$context->id] = capability_prohibits($capability, $parent);
+            return $prohibits[$capability][$context->id];
         break;
 
         case CONTEXT_COURSE:
             // 1 to 1 to course cat.
             // Find the course cat, and return its value.
             if (!$course = get_record('course','id',$context->instanceid)) {
+                $prohibits[$capability][$context->id] = false;
                 return false;
             }
             // Yu: Separating site and site course context
@@ -1147,34 +1189,41 @@ function capability_prohibits($capability, $context, $sum='', $array='') {
             } else {
                 $parent = get_context_instance(CONTEXT_COURSECAT, $course->category);
             }
-            return capability_prohibits($capability, $parent);
+            $prohibits[$capability][$context->id] = capability_prohibits($capability, $parent);
+            return $prohibits[$capability][$context->id];
         break;
 
         case CONTEXT_GROUP:
             // 1 to 1 to course.
             if (!$courseid = groups_get_course($context->instanceid)) {
+                $prohibits[$capability][$context->id] = false;
                 return false;
             }
             $parent = get_context_instance(CONTEXT_COURSE, $courseid);
-            return capability_prohibits($capability, $parent);
+            $prohibits[$capability][$context->id] = capability_prohibits($capability, $parent);
+            return $prohibits[$capability][$context->id];
         break;
 
         case CONTEXT_MODULE:
             // 1 to 1 to course.
             if (!$cm = get_record('course_modules','id',$context->instanceid)) {
+                $prohibits[$capability][$context->id] = false;
                 return false;
             }
             $parent = get_context_instance(CONTEXT_COURSE, $cm->course);
-            return capability_prohibits($capability, $parent);
+            $prohibits[$capability][$context->id] = capability_prohibits($capability, $parent);
+            return $prohibits[$capability][$context->id];
         break;
 
         case CONTEXT_BLOCK:
             // 1 to 1 to course.
             if (!$block = get_record('block_instance','id',$context->instanceid)) {
+                $prohibits[$capability][$context->id] = false;
                 return false;
             }
             $parent = get_context_instance(CONTEXT_COURSE, $block->pageid); // needs check
-            return capability_prohibits($capability, $parent);
+            $prohibits[$capability][$context->id] = capability_prohibits($capability, $parent);
+            return $prohibits[$capability][$context->id];
         break;
 
         default:
@@ -1476,7 +1525,10 @@ function create_context($contextlevel, $instanceid) {
         $context->contextlevel = $contextlevel;
         $context->instanceid = $instanceid;
         if ($id = insert_record('context',$context)) {
-            return get_record('context','id',$id);
+            // we need to populate context_rel for every new context inserted
+            $c = get_record('context','id',$id);
+            insert_context_rel ($c);           
+            return $c;
         } else {
             debugging('Error: could not insert new context level "'.s($contextlevel).'", instance "'.s($instanceid).'".');
             return NULL;
@@ -1495,10 +1547,12 @@ function create_context($contextlevel, $instanceid) {
  * @return true if properly deleted
  */
 function delete_context($contextlevel, $instanceid) {
-    if ($context = get_context_instance($contextlevel, $instanceid)) {
+    if ($context = get_context_instance($contextlevel, $instanceid)) {        
+        delete_records('context_rel', 'c2', $context->id); // might not be a parent
         return delete_records('context', 'id', $context->id) &&
                delete_records('role_assignments', 'contextid', $context->id) &&
-               delete_records('role_capabilities', 'contextid', $context->id);
+               delete_records('role_capabilities', 'contextid', $context->id) && 
+               delete_records('context_rel', 'c1', $context->id);
     }
     return true;
 }
@@ -3398,5 +3452,32 @@ function user_has_role_assignment($userid, $roleid, $contextid=0) {
     } else {
         return record_exists('role_assignments', 'userid', $userid, 'roleid', $roleid);
     }
+}
+
+// inserts all parental context and self into context_rel table
+function insert_context_rel($context) {
+    // removes old records  
+    delete_records('context_rel', 'c2', $context->id);
+    delete_records('context_rel', 'c1', $context->id);
+    // insert all parents
+    if ($parents = get_parent_contexts($context)) {
+        $parents[] = $context->id;
+        foreach ($parents as $parent) {
+            $rec = new object;
+            $rec ->c1 = $context->id;
+            $rec ->c2 = $parent;
+            insert_record('context_rel', $rec);
+        }
+    }  
+}
+
+// rebuild context_rel table without deleting
+function build_context_rel() {
+  
+    if ($contexts = get_records('context')) {
+        foreach ($contexts as $context) {
+            insert_context_rel($context);
+        }
+    } 
 }
 ?>
