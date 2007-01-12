@@ -80,7 +80,7 @@ switch ($action) {
                 exit;
             }
             $field->id = 0;
-            $field->datatype = $datatypes[$type];
+            $field->datatype = $type;
             $field->categoryid = 0;
         } elseif (!($field = get_record('user_info_field', 'id', $id))) {
             redirect($redirect);
@@ -102,26 +102,18 @@ switch ($action) {
 
 
 
-/// Print the header
-admin_externalpage_print_header($adminroot);
 
 
 
 /// Are we adding or editing a cateogory?
 if ( ($action == 'editcategory' )) {
 
-    if ($id == 0) {
-        $strheading = get_string('profilecreatenewcategory', 'admin');
-    } else {
-        $strheading = get_string('profileeditcategory', 'admin', $category->name);
-    }
-
-    print_heading($strheading);
-    
+   
     require_once('index_category_form.php');
     $categoryform = new category_form(null, compact('category'));
     if ($categoryform->is_cancelled()) {
-        redirect($redirect, $strcancelled);
+        redirect($redirect);
+        exit;
     } else {
         if ($data = $categoryform->data_submitted()) {
             if ($data->id == 0) {
@@ -137,27 +129,34 @@ if ( ($action == 'editcategory' )) {
                     exit;
                 }
             }
-            redirect($redirect, $strchangessaved);
+            redirect($redirect);
+            exit;
+            
         } else {
+        
+            if ($id == 0) {
+                $strheading = get_string('profilecreatenewcategory', 'admin');
+            } else {
+                $strheading = get_string('profileeditcategory', 'admin', $category->name);
+            }
+
+            /// Print the header
+            admin_externalpage_print_header($adminroot);
+            
+            print_heading($strheading);
+            
             $categoryform->display();
         }
     }
 
 /// Are we adding or editing a field?
 } elseif ( $action == 'editfield' ) {
-
-    if ($id == 0) {
-        $strheading = get_string('profilecreatenewfield', 'admin');
-    } else {
-        $strheading = get_string('profileeditfield', 'admin', $field->name);
-    }
-
-    print_heading($strheading);
-    
+   
     require_once('index_field_form.php');
     $fieldform = new field_form(null, compact('field'));
     if ($fieldform->is_cancelled()) {
-        redirect($redirect, $strcancelled);
+        redirect($redirect);
+        exit;
     } else {
         if ($data = $fieldform->data_submitted()) {
             require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
@@ -166,10 +165,23 @@ if ( ($action == 'editcategory' )) {
             if (!$formfield->edit_save($data)) {
                 error('There was an error updating the database');
             } else {
-                redirect($redirect, $strchangessaved);
+                redirect($redirect);
+                exit;
             }
 
         } else {
+
+            if ($id == 0) {
+                $strheading = get_string('profilecreatenewfield', 'admin');
+            } else {
+                $strheading = get_string('profileeditfield', 'admin', $field->name);
+            }
+
+            /// Print the header
+            admin_externalpage_print_header($adminroot);
+
+            print_heading($strheading);
+
             $fieldform->display();
         }
     }
@@ -177,14 +189,20 @@ if ( ($action == 'editcategory' )) {
 /// Deleting a category that has fields in it, print confirm screen?
 } elseif ( ($action == 'deletecategory') and !$confirm ) {
 
+    /// Print the header
+    admin_externalpage_print_header($adminroot);
+
     print_heading('profiledeletecategory', 'admin');
-    
+
     $fieldcount = count_records('user_info_field', 'categoryid', $id);
     echo '<center>'.get_string('profileconfirmcategorydeletion', 'admin', $fieldcount).'<br /><a href="index.php?id='.$id.'&amp;action=deletecategory&amp;sesskey='.$USER->sesskey.'&amp;confirm=1">'.get_string('yes').' <a href="index.php">'.get_string('no').'</center>';
 
 
 /// Deleting a field that has user data, print confirm screen
 } elseif ( ($action == 'deletefield') and !$confirm ) {
+
+    /// Print the header
+    admin_externalpage_print_header($adminroot);
 
     print_heading('profiledeletefield', 'admin');
 
@@ -196,6 +214,11 @@ if ( ($action == 'editcategory' )) {
 /// Print the table of categories and fields
 } else {
 
+    /// Print the header
+    admin_externalpage_print_header($adminroot);
+
+    print_heading(get_string('profilefields', 'admin'));
+
     /// Check that we have at least one category defined
     if (count_records_select('user_info_category', '1') == 0) {
         unset($defaultcategory);
@@ -203,8 +226,6 @@ if ( ($action == 'editcategory' )) {
         $defaultcategory->sortorder = 1;
         insert_record('user_info_category', $defaultcategory);
     }
-
-    print_heading(get_string('profilefields', 'admin'));
 
     /// We only displaying if there are fields defined or there is a category with a name different to the default name
     if ( ( (count_records_select('user_info_category', "name<>'$strdefaultcategory'") > 0) or
