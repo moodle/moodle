@@ -241,7 +241,6 @@ class user_edit_form extends moodleform {
         }
 
         
-        //$this->add_action_buttons(false, get_string('updatemyprofile'));
         $mform->addElement('submit', 'submitbutton1', get_string('updatemyprofile'));
         $mform->closeHeaderBefore('submitbutton1');
 
@@ -299,15 +298,20 @@ class user_edit_form extends moodleform {
         /// disable fields that are locked by auth plugins
         if ($userupdate) {
             $fields = get_user_fieldnames();
+            $freezefields = array();
 
             foreach ($fields as $field) {
                 $configvariable = 'field_lock_' . $field;
-                if (isset($authplugin->config->{$configvariable})) {
-                    $mform->disabledIf($field, ( $authplugin->config->{$configvariable} === 'locked' or ($authplugin->config->{$configvariable} === 'unlockedifempty' and !empty($user->$field))), true);
+                if (isset($authplugin->config->{$configvariable}) and
+                     ( $authplugin->config->{$configvariable} === 'locked' or 
+                       ( $authplugin->config->{$configvariable} === 'unlockedifempty' and !empty($user->$field)) ) ) {
+                    $freezefields[] = $field;
                 }
             }
+            if (!empty($freezefields)) {
+                $mform->freeze($freezefields);
+            }
         }
-
         
         /// Next the customisable categories
         if ($categories = get_records_select('user_info_category', '1', 'sortorder ASC')) {
@@ -328,7 +332,6 @@ class user_edit_form extends moodleform {
             } /// End of $categories foreach
         } /// End of $categories if
 
-        //$this->add_action_buttons(false, get_string('updatemyprofile'));
         $mform->addElement('submit', 'submitbutton2', get_string('updatemyprofile'));
         $mform->closeHeaderBefore('submitbutton2');
         
