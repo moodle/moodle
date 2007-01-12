@@ -176,6 +176,7 @@ $string['byname'] = 'by $a';
 $string['bypassed'] = 'Bypassed';
 $string['cachecontrols'] = 'Cache Controls';
 $string['cancel'] = 'Cancel';
+$string['cancelled'] = 'Cancelled';
 $string['categories'] = 'Course categories';
 $string['category'] = 'Category';
 $string['categoryadded'] = 'The category \'$a\' was added';
