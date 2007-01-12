@@ -577,6 +577,7 @@ function setup_elements(&$mform) {
     $mform->addElement('checkbox', 'framepage', get_string('frameifpossible', 'resource'));
     $mform->setDefault('framepage', 0);
     $mform->disabledIf('framepage', 'windowpopup', 'eq', 0);
+    $mform->setAdvanced('framepage');
 
     foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
         if ($option == 'height' or $option == 'width') {
@@ -588,6 +589,7 @@ function setup_elements(&$mform) {
             $mform->setDefault($option, $CFG->{'resource_popup'.$option});
             $mform->disabledIf($option, 'windowpopup', 'eq', 1);
         }
+        $mform->setAdvanced($option);
     }
 
     $mform->addElement('header', 'parameters', get_string('parameters', 'resource'));
@@ -613,7 +615,8 @@ function setup_elements(&$mform) {
         $group = array();
         $group[] =& $mform->createElement('text', $parsename, '', array('size'=>'12'));//TODO: accessiblity
         $group[] =& $mform->createElement('select', $parametername, '', $options);//TODO: accessiblity
-        $mform->addGroup($group, 'pargroup', get_string('variablename', 'resource').'='.get_string('parameter', 'resource'), ' ', false);
+        $mform->addGroup($group, 'pargroup'.$i, get_string('variablename', 'resource').'='.get_string('parameter', 'resource'), ' ', false);
+        $mform->setAdvanced('pargroup'.$i);
 
         $mform->setDefault($parametername, '-');
     }

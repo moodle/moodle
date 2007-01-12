@@ -647,24 +647,28 @@ class resource_ims extends resource_base {
                 $mform->setDefault($option, $CFG->{'resource_popup'.$option});
                 $mform->disabledIf($option, 'windowpopup', 'eq', 1);
             }
+            $mform->setAdvanced($option);
         }
 
         $mform->addElement('header', 'parameters', get_string('parameters', 'resource'));
 
         $mform->addElement('selectyesno', 'param_navigationmenu', get_string('navigationmenu', 'resource'));
         $mform->setDefault('param_navigationmenu', 1);
+
         $mform->addElement('selectyesno', 'param_tableofcontents', get_string('tableofcontents', 'resource'));
-        $mform->disabledIf($option, 'param_navigationmenu', 'eq', 1);
+        $mform->disabledIf('param_tableofcontents', 'param_navigationmenu', 'eq', 1);
         $mform->setDefault('param_tableofcontents', 0);
+
         $mform->addElement('selectyesno', 'param_navigationbuttons', get_string('navigationbuttons', 'resource'));
         $mform->setDefault('param_navigationbuttons', 0);
+
         $mform->addElement('selectyesno', 'param_skipsubmenus', get_string('skipsubmenus', 'resource'));
         $mform->setDefault('param_skipsubmenus', 1);
-        $mform->disabledIf($option, 'param_navigationmenu', 'eq', 1);
+        $mform->disabledIf('param_skipsubmenus', 'param_navigationmenu', 'eq', 1);
+        
         $mform->addElement('selectyesno', 'param_navigationupbutton', get_string('navigationup', 'resource'));
-        $mform->setDefault('param_navigationup', 1);
-        $mform->disabledIf($option, 'param_navigationmenu', 'eq', 1);
-        $mform->disabledIf($option, 'param_navigationmenu', 'eq', 0);//????????
+        $mform->setDefault('param_navigationupbutton', 1);
+        $mform->disabledIf('param_navigationupbutton', 'param_navigationmenu', 'eq', 1);
 
     }
 
