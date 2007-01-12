@@ -2568,6 +2568,11 @@ body#mod-forum-search .introcontent {
     text-decoration: underline;
     font-weight: bold;
 }
+.lessonmediafilecontrol {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
 
 
 /***
