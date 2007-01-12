@@ -1832,9 +1832,17 @@ function configure_dbconnection() {
  */
 function set_dbfamily() {
 
-    global $CFG;
+    global $CFG, $INSTALL;
 
-    switch ($CFG->dbtype) {
+    // Since this function is also used during installation process, i.e. during install.php before $CFG->dbtype is set.
+    // we need to get dbtype from the right variable 
+    if (!empty($INSTALL['dbtype'])) {
+        $dbtype = $INSTALL['dbtype'];
+    } else {
+        $dbtype = $CFG->dbtype;
+    }
+
+    switch ($dbtype) {
         case 'mysql':
         case 'mysqli':
             $CFG->dbfamily='mysql';
