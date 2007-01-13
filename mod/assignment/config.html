@@ -2,8 +2,8 @@
 <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
 
 <table cellpadding="9" cellspacing="0" >
-<tr valign=top>
-    <td align=right><p>assignment_maxbytes:</td>
+<tr valign="top">
+    <td align="right">assignment_maxbytes:</td>
     <td><?php
     $choices = get_max_upload_sizes($CFG->maxbytes);
     choose_from_menu ($choices, "assignment_maxbytes", $CFG->assignment_maxbytes, "");
@@ -15,7 +15,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><p>assignment_itemstocount:</td>
+    <td align="right">assignment_itemstocount:</td>
     <td><?php
     unset($options);
     $options[ASSIGNMENT_COUNT_WORDS] = trim(get_string('numwords', ''));

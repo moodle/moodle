@@ -54,14 +54,12 @@
     print_header("$strmodulename: $strconfiguration", $site->fullname,
                   "<a href=\"../../$CFG->admin/index.php\">$stradmin</a> -> ".
                   "<a href=\"../../$CFG->admin/configure.php\">$strconfiguration</a> -> ".
-                  "<a href=\"../../$CFG->admin/modules.php\">$strmanagemodules</a> -> <a href=\"../../$CFG->admin/module.php?module=glossary&sesskey=$USER->sesskey\">$strmodulename</a> -> $strdisplayformats");
+                  "<a href=\"../../$CFG->admin/modules.php\">$strmanagemodules</a> -> <a href=\"../../$CFG->admin/module.php?module=glossary&amp;sesskey=$USER->sesskey\">$strmodulename</a> -> $strdisplayformats");
 
     print_heading($strmodulename . ': ' . get_string("displayformats","glossary"));
 
-    echo '<table cellspacing="0" align="center" class="glossaryformatheader">';
-    echo '<tr><td align="center">';
-    echo get_string('configwarning','admin');
-    echo '</td></tr></table>';
+    print_simple_box("<center>".get_string("configwarning", 'admin')."</center>", "center", "60%");
+    echo "<br />";
 
     $yes = get_string("yes");
     $no  = get_string("no");
@@ -234,7 +232,7 @@
         </td>
     </tr>
     <tr valign="top">
-        <td align="right" width="20%"><p>Include Group Breaks:</td>
+        <td align="right" width="20%">Include Group Breaks:</td>
         <td>
         <select size="1" name="showgroup">
     <?php
@@ -246,8 +244,8 @@
             $nselected = " selected=\"selected\" ";
         }
     ?>
-        <option value="1" <?php p($yselected) ?>><?php p($yes)?></option>
-        <option value="0" <?php p($nselected) ?>><?php p($no)?></option>
+        <option value="1" <?php echo $yselected ?>><?php p($yes)?></option>
+        <option value="0" <?php echo $nselected ?>><?php p($no)?></option>
         </select>
         </td>
         <td width="60%">
@@ -262,8 +260,7 @@
     <input type="hidden" name="mode"    value="edit" />
     <?php
 
-    print_simple_box_end();
-    echo '</form>';
+    echo '</table></form>';
 
     print_footer();
 ?>

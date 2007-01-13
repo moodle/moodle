@@ -1,9 +1,9 @@
 <form method="post" action="module.php" id="form">
-<input type="hidden" name="sesskey" value="<?PHP print isset($USER->sesskey) ? $USER->sesskey : '' ?>">
+<input type="hidden" name="sesskey" value="<?PHP print isset($USER->sesskey) ? $USER->sesskey : '' ?>" />
 
 <table cellpadding="9" cellspacing="0">
     <tr valign="top">
-        <td align="right"><p>hotpot_showtimes:</td>
+        <td align="right">hotpot_showtimes:</td>
         <td><?PHP 
             unset($choices);
             $choices["0"] = get_string("no");
@@ -13,7 +13,7 @@
         <td><?PHP print_string("configshowtimes", "hotpot") ?></td>
     </tr>
     <tr valign="top">
-        <td align="right"><p>hotpot_excelencodings:</p></td>
+        <td align="right">hotpot_excelencodings:</td>
         <td><input name="hotpot_excelencodings" type="text" size="30" value="<?PHP p($CFG->hotpot_excelencodings) ?>" /></td>
         <td><?PHP print_string("configexcelencodings", "hotpot") ?></td>
     </tr>

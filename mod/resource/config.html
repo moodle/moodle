@@ -1,6 +1,7 @@
 <form method="post" action="module.php" id="form">
 <fieldset class="invisiblefieldset">
-<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>">
+<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
+</fieldset>
 
 <table cellpadding="9" cellspacing="0" >
 <tr valign="top">
@@ -54,20 +55,6 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right">resource_filterexternalpages:</td>
-    <td>
-    <?php
-        unset($choices);
-        $choices["0"] = get_string("no");
-        $choices["1"] = get_string("yes");
-        choose_from_menu ($choices, "resource_filterexternalpages", $CFG->resource_filterexternalpages, "");
-    ?>
-    </td>
-    <td>
-    <?php print_string("configfilterexternalpages", "resource") ?>
-    </td>
-</tr>
-<tr valign="top">
     <td align="right">resource_popup:</td>
     <td>
     <?php
@@ -87,7 +74,7 @@
           echo "<td align=\"right\">$defaultvalue:</td>";
           echo "<td>";
           if ($optionname == "height" or $optionname == "width") {
-              echo "<input name=$defaultvalue type=\"text\" size=\"5\" value=\"".$CFG->$defaultvalue."\" />";
+              echo "<input name=\"$defaultvalue\" type=\"text\" size=\"5\" value=\"".$CFG->$defaultvalue."\" />";
           } else {
               choose_from_menu ($choices, $defaultvalue, $CFG->$defaultvalue, "");
           }
@@ -98,34 +85,6 @@
           echo "</tr>";
       }
 ?>
-<tr valign="top">
-    <td align="right">resource_windowsettings:</td>
-    <td>
-    <?php
-        unset($choices);
-        $choices["0"] = get_string("hidesettings");
-        $choices["1"] = get_string("showsettings");
-        choose_from_menu ($choices, "resource_windowsettings", $CFG->resource_windowsettings, "");
-    ?>
-    </td>
-    <td>
-    <?php print_string("configwindowsettings", "resource") ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right">resource_parametersettings:</td>
-    <td>
-    <?php
-        unset($choices);
-        $choices["0"] = get_string("hidesettings");
-        $choices["1"] = get_string("showsettings");
-        choose_from_menu ($choices, "resource_parametersettings", $CFG->resource_parametersettings, "");
-    ?>
-    </td>
-    <td>
-    <?php print_string("configparametersettings", "resource") ?>
-    </td>
-</tr>
 <tr valign="top">
     <td align="right">resource_autofilerename:</td>
     <td>
@@ -160,5 +119,4 @@
 </tr>
 </table>
 
-</fieldset>
 </form>

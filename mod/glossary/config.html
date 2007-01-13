@@ -3,7 +3,7 @@
     $no  = get_string("no");
 ?>
 <form method="post" action="module.php" id="form">
-<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>">
+<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
 
 <table cellpadding="9" cellspacing="0" >
 <tr valign="top">
@@ -31,8 +31,8 @@
         $nselected = " selected=\"selected\" ";
     }
 ?>
-    <option value="1" <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value="0" <?php p($nselected) ?>><?php p($no)?></option>
+    <option value="1" <?php echo $yselected ?>><?php p($yes)?></option>
+    <option value="0" <?php echo $nselected ?>><?php p($no)?></option>
     </select>
     </td>
     <td>
@@ -52,8 +52,8 @@
         $nselected = " selected=\"selected\" ";
     }
 ?>
-    <option value="1" <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value="0" <?php p($nselected) ?>><?php p($no)?></option>
+    <option value="1" <?php echo $yselected ?>><?php p($yes)?></option>
+    <option value="0" <?php echo $nselected ?>><?php p($no)?></option>
     </select>
     </td>
     <td>
@@ -73,8 +73,8 @@
         $nselected = " selected=\"selected\" ";
     }
 ?>
-    <option value="1" <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value="0" <?php p($nselected) ?>><?php p($no)?></option>
+    <option value="1" <?php echo $yselected ?>><?php p($yes)?></option>
+    <option value="0" <?php echo $nselected ?>><?php p($no)?></option>
     </select>
     </td>
     <td>
@@ -94,8 +94,8 @@
         $nselected = " selected=\"selected\" ";
     }
 ?>
-    <option value="1" <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value="0" <?php p($nselected) ?>><?php p($no)?></option>
+    <option value="1" <?php echo $yselected ?>><?php p($yes)?></option>
+    <option value="0" <?php echo $nselected ?>><?php p($no)?></option>
     </select>
     </td>
     <td>
@@ -141,14 +141,14 @@
 <?php 
     $yselected = "";
     $nselected = "";
-    if ($CFG->glossary_linkentries) {
+    if (isset($CFG->glossary_linkentries) && $CFG->glossary_linkentries) {
         $yselected = " selected=\"selected\" ";
     } else {
         $nselected = " selected=\"selected\" ";
     }
 ?>
-    <option value="1" <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value="0" <?php p($nselected) ?>><?php p($no)?></option>
+    <option value="1" <?php echo $yselected ?>><?php p($yes)?></option>
+    <option value="0" <?php echo $nselected ?>><?php p($no)?></option>
     </select>
     </td>
     <td>
@@ -162,14 +162,14 @@
 <?php 
     $yselected = "";
     $nselected = "";
-    if ($CFG->glossary_casesensitive) {
+    if (isset($CFG->glossary_casesensitive) && $CFG->glossary_casesensitive) {
         $yselected = " selected=\"selected\" ";
     } else {
         $nselected = " selected=\"selected\" ";
     }
 ?>
-    <option value="1" <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value="0" <?php p($nselected) ?>><?php p($no)?></option>
+    <option value="1" <?php echo $yselected ?>><?php p($yes)?></option>
+    <option value="0" <?php echo $nselected ?>><?php p($no)?></option>
     </select>
     </td>
     <td>
@@ -183,14 +183,14 @@
 <?php 
     $yselected = "";
     $nselected = "";
-    if ($CFG->glossary_fullmatch) {
+    if (isset($CFG->glossary_fullmatch) && $CFG->glossary_fullmatch) {
         $yselected = " selected=\"selected\" ";
     } else {
         $nselected = " selected=\"selected\" ";
     }
 ?>
-    <option value="1" <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value="0" <?php p($nselected) ?>><?php p($no)?></option>
+    <option value="1" <?php echo $yselected ?>><?php p($yes)?></option>
+    <option value="0" <?php echo $nselected ?>><?php p($no)?></option>
     </select>
     </td>
     <td>
@@ -198,7 +198,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td colspan ="3" align="center"><a name="formats"><strong><?php print_string("displayformatssetup","glossary") ?></strong></td>
+    <td colspan ="3" align="center"><a name="formats"><strong><?php print_string("displayformatssetup","glossary") ?></strong></a></td>
 </tr>
 <tr>
     <td colspan="3" align="center">
@@ -220,7 +220,7 @@
         $recformat = get_record('glossary_formats','id',$formatid);
         echo '<tr>';
         echo '<td>' . $formatname . '</td>';
-        $eicon = "<a title=\"" . get_string("edit") . "\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&mode=edit\"><img class=\"iconsmall\" src=\"../pix/t/edit.gif\" alt=\"".get_string("edit")."\" /></a>";
+        $eicon = "<a title=\"" . get_string("edit") . "\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&amp;mode=edit\"><img class=\"iconsmall\" src=\"../pix/t/edit.gif\" alt=\"".get_string("edit")."\" /></a>";
         if ( $recformat->visible ) {
             $vtitle = get_string("hide");
             $vicon = "hide.gif";
@@ -228,7 +228,7 @@
             $vtitle = get_string("show");
             $vicon = "show.gif";
         }
-        $vicon = "<a title=\"" . $vtitle . "\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&mode=visible\"><img class=\"iconsmall\" src=\"../pix/t/" . $vicon . "\" alt=\"$vtitle\" /></a>";
+        $vicon = "<a title=\"" . $vtitle . "\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&amp;mode=visible\"><img class=\"iconsmall\" src=\"../pix/t/" . $vicon . "\" alt=\"$vtitle\" /></a>";
 
         echo '<td align="center" nowrap="nowrap">' . $eicon . '&nbsp;&nbsp;' . $vicon . '</td>';
         echo '</tr>';
