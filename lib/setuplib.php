@@ -160,17 +160,11 @@ function setup_is_unicodedb() {
 
     $unicodedb = false;
     
-    // Since this function is also used during installation process, i.e. during install.php before $CFG->dbtype is set.
-    // we need to get dbtype from the right variable 
-    if (!empty($INSTALL['dbtype'])) {
-        $dbtype = $INSTALL['dbtype'];
-    } else {
-        $dbtype = $CFG->dbtype;
-    }
+    // Calculate $CFG->dbfamily
+    $dbfamily = set_dbfamily();
 
-    switch ($dbtype) {
+    switch ($dbfamily) {
         case 'mysql':
-        case 'mysqli':
             $rs = $db->Execute("SHOW VARIABLES LIKE 'character_set_database'");
             if ($rs && $rs->RecordCount() > 0) {
                 $records = $rs->GetAssoc(true);
@@ -180,7 +174,7 @@ function setup_is_unicodedb() {
                 }
             }
             break;
-        case 'postgres7':
+        case 'postgres':
         /// Get PostgreSQL server_encoding value
             $rs = $db->Execute("SHOW server_encoding");
             if ($rs && $rs->RecordCount() > 0) {
@@ -191,12 +185,10 @@ function setup_is_unicodedb() {
             }
             break;
         case 'mssql':
-        case 'mssql_n':
-        case 'odbc_mssql':
         /// MSSQL only runs under UTF8 + the proper ODBTP driver (both for Unix and Win32)
             $unicodedb = true;
             break;
-        case 'oci8po':
+        case 'oracle':
         /// Get Oracle DB character set value
             $rs = $db->Execute("SELECT parameter, value FROM nls_database_parameters where parameter = 'NLS_CHARACTERSET'");
             if ($rs && $rs->RecordCount() > 0) {

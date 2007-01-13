@@ -740,7 +740,7 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
     /// Some differences in SQL syntax
     $LIKE = sql_ilike();
     $NOTLIKE = 'NOT ' . $LIKE;
-    if ($CFG->dbtype == "postgres7") {
+    if ($CFG->dbfamily == "postgres") {
         $REGEXP = "~*";
         $NOTREGEXP = "!~*";
     } else {
@@ -756,7 +756,7 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
         }
     /// Under Oracle and MSSQL, trim the + and - operators and perform
     /// simpler LIKE search
-        if ($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'mssql_n' || $CFG->dbtype == 'odbc_mssql') {
+        if ($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') {
             $searchterm = trim($searchterm, '+-');
         }
 

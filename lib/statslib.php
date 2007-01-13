@@ -563,7 +563,7 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
 
     // compatibility - if we're in postgres, cast to real for some reports.
     $real = '';
-    if ($CFG->dbtype == 'postgres7') {
+    if ($CFG->dbfamily == 'postgres') {
         $real = '::real';
     }
 

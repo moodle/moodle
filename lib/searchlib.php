@@ -316,7 +316,7 @@ function search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $
 
     $LIKE = sql_ilike();
     $NOTLIKE = 'NOT ' . $LIKE;
-    if ($CFG->dbtype == "postgres7") {
+    if ($CFG->dbfamily == "postgres") {
         $REGEXP = "~*";
         $NOTREGEXP = "!~*";
     } else {
@@ -340,7 +340,7 @@ function search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $
         $value = $parsetree[$i]->getValue();
 
     /// Under Oracle and MSSQL, transform TOKEN searches into STRING searches and trim +- chars
-        if ($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'mssql_n' || $CFG->dbtype == 'odbc_mssql') {
+        if ($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') {
             $value = trim($value, '+-');
             if ($type == TOKEN_EXACT) {
                 $type = TOKEN_STRING;

@@ -218,7 +218,7 @@ function load_test_data($tablename, $data, $localdb = null) {
             $maxid = $row[$idcol];
         }
     }
-    if ($CFG->dbtype == 'postgres7' && $idcol !== false) {
+    if ($CFG->dbfamily == 'postgres' && $idcol !== false) {
         $maxid += 1;
         _private_execute_sql("ALTER SEQUENCE {$tablename}_id_seq RESTART WITH $maxid;", $localdb);
     }
@@ -289,7 +289,7 @@ function remove_test_table($tablename, $db, $cascade = false) {
     global $CFG;
     _private_execute_sql('DROP TABLE ' . $tablename . ($cascade ? ' CASCADE' : '') . ';', $db);
     
-    if ($CFG->dbtype == 'postgres7') {
+    if ($CFG->dbfamily == 'postgres') {
         $rs = $db->Execute("SELECT relname FROM pg_class WHERE relname = '{$tablename}_id_seq' AND relkind = 'S';");
         if ($rs && $rs->RecordCount()) {
             _private_execute_sql("DROP SEQUENCE {$tablename}_id_seq;", $db);
@@ -329,7 +329,7 @@ function wipe_tables($prefix, $db) {
 function wipe_sequences($prefix, $db) {
     global $CFG;
 
-    if ($CFG->dbtype == 'postgres7') {
+    if ($CFG->dbfamily == 'postgres') {
         $sequences = $db->GetCol("SELECT relname FROM pg_class WHERE relname LIKE '$prefix%_id_seq' AND relkind = 'S';");
         if ($sequences) {
             foreach ($sequences as $sequence) {
