@@ -1,6 +1,7 @@
 <?PHP // $Id$
 
-$string['denotesreq'] = '$a denotes required field.';
+$string['somefieldsrequired'] = 'There are required fields in this form';
+$string['requiredfield'] = 'This is a required field';
 $string['err_alphanumeric']='You must enter only letters or numbers here.';
 $string['err_email']='You must enter a valid email address here.';
 $string['err_lettersonly']='You must enter only letters here.';

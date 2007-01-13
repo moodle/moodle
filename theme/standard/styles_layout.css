@@ -446,11 +446,14 @@ form#adminsettings div.htmlarea {
   padding-top: 5px;
 }
 
-form.mform .required img {
+form.mform .required img.req {
   display:none;
 }
 
 form.mform .required label {
+  color:#a00;
+}
+form.mform .fdescription.required {
   color:#a00;
 }
 

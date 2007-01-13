@@ -630,12 +630,10 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         }else {
             $this->updateAttributes(array('class'=>'mform'));
         }
-        $this->_reqHTML = '<img alt="'.get_string('requiredelement', 'form').'" src="'.FORM_REQIMAGEURL.'" />';
-        $this->_advancedHTML = '<img alt="'.get_string('advancedelement', 'form').'" src="'.FORM_ADVANCEDIMAGEURL.'" />';
-        $this->setRequiredNote(get_string('denotesreq', 'form',
-            helpbutton('requiredelement', get_string('requiredelement', 'form'),'moodle',
-                 true, false, '', true, '<img alt="'.get_string('requiredelement', 'form').'" src="'.
-            FORM_REQIMAGEURL.'" />')));
+        $this->_reqHTML = '<img class="req" alt="'.get_string('requiredelement', 'form').'" src="'.FORM_REQIMAGEURL.'" />';
+        $this->_advancedHTML = '<img class="adv" alt="'.get_string('advancedelement', 'form').'" src="'.FORM_ADVANCEDIMAGEURL.'" />';
+        $this->setRequiredNote(get_string('somefieldsrequired', 'form').
+            helpbutton('requiredelement', get_string('requiredelement', 'form'), 'moodle', true, false, '', true));
     }
 
     /**
@@ -1353,7 +1351,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     * @access   private
     */
     var $_requiredNoteTemplate =
-        "\n\t\t<div class=\"fdescription\">{requiredNote}</div>";
+        "\n\t\t<div class=\"fdescription required\">{requiredNote}</div>";
 
     var $_advancedElements = array();
 
