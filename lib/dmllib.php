@@ -1822,13 +1822,15 @@ function configure_dbconnection() {
 }
 
 /**
- * This internal function sets the proper value for $CFG->dbfamily based on $CFG->dbtype
+ * This internal function sets and returns the proper value for $CFG->dbfamily based on $CFG->dbtype
  * It's called by configure_dbconnection() and at install time. Shouldn't be used
  * in other places. Code should rely on dbfamily to perform conditional execution
  * instead of using dbtype directly. This allows quicker adoption of different
  * drivers going against the same DB backend.
  *
  * This function must contain the init code needed for each dbtype supported.
+ *
+ * return string dbfamily value (mysql, postgres, oracle, mssql)
  */
 function set_dbfamily() {
 
@@ -1859,6 +1861,8 @@ function set_dbfamily() {
             $CFG->dbfamily='oracle';
             break;
     }
+
+    return $CFG->dbfamily;
 }
 
 /**
