@@ -450,6 +450,10 @@ form.mform .required img.req {
   display:none;
 }
 
+#admin-register form.mform .fsubmit {
+  padding:20px;
+  text-align:center;
+}
 
 
 /***

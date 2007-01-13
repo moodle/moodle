@@ -40,77 +40,73 @@
     print_heading($strregistration);
 
     print_simple_box($strregistrationinfo, "center", "70%");
-    echo "<br />";
 
 
 /// Print the form
 
-    print_simple_box_start("center", "");
+    echo "<form id=\"mform1\" class=\"mform\" action=\"http://moodle.org/register/\" method=\"post\">\n";
+    echo '<fieldset id="registration">';
+    echo '<legend>Registration Information</legend>';
 
-    echo "<form id=\"form\" action=\"http://moodle.org/register/\" method=\"post\">\n";
-    echo "<table cellpadding=\"9\" border=\"0\">\n";
-    echo "<tr valign=\"top\">\n";
-    echo "<td align=\"center\" colspan=\"2\">".get_string("location")."</td>\n";
-    echo "</tr>\n";
-
-    echo "<tr valign=\"top\">\n";
-    echo "<td align=\"right\">Moodle URL:</td>\n";
-    echo "<td>$CFG->wwwroot</td>\n";
     echo "<!-- The following hidden variables are to help prevent fake entries being sent. -->\n";
     echo "<!-- Together they form a key.  If any of these change between updates then the entry  -->\n";
     echo "<!-- is flagged as a new entry and will be manually checked by the list maintainer -->\n";
-   
-    echo "<input type=\"hidden\" name=\"url\" value=\"$CFG->wwwroot\">\n";
-    echo "<input type=\"hidden\" name=\"secret\" value=\"$CFG->siteidentifier\">\n";
+    echo "<input type=\"hidden\" name=\"url\" value=\"$CFG->wwwroot\" />\n";
+    echo "<input type=\"hidden\" name=\"secret\" value=\"$CFG->siteidentifier\" />\n";
     echo "<input type=\"hidden\" name=\"host\" value=\"".$_SERVER["HTTP_HOST"]."\" />\n";
     echo "<input type=\"hidden\" name=\"lang\" value=\"".current_language()."\" />\n";
-    echo "</td></tr>\n";
 
-    echo "<tr valign=\"top\">\n";
-    echo "<td align=\"right\">".get_string("currentversion").":</td>\n";
-    echo "<td>$CFG->release ($CFG->version)</td>\n";
-    echo "<input type=\"hidden\" name=\"version\" value=\"$CFG->version\">\n";
-    echo "<input type=\"hidden\" name=\"release\" value=\"$CFG->release\">\n";
-    echo "</td></tr>\n";
+    echo "<input type=\"hidden\" name=\"version\" value=\"$CFG->version\" />\n";
+    echo "<input type=\"hidden\" name=\"release\" value=\"$CFG->release\" />\n";
 
-    echo "<tr valign=\"top\">\n";
-    echo "<td align=\"right\">".get_string("fullsitename").":</td>\n";
-    echo "<td><input size=\"50\" type=\"text\" name=\"sitename\" value=\"$site->fullname\"></td>\n";
-    echo "</tr>\n";
+    echo '<div class="fitem">';
+    echo '<div class="fitemtitle"><label>URL</label></div>';
+    echo '<div class="felement ftext">'.$CFG->wwwroot.'</div>';
+    echo '</div>';
+            
+    echo '<div class="fitem">';
+    echo '<div class="fitemtitle"><label>'.get_string("currentversion").'</label></div>';
+    echo '<div class="felement ftext">'."$CFG->release ($CFG->version)".'</div>';
+    echo '</div>';
+            
+    echo '<div class="fitem">';
+    echo '<div class="fitemtitle"><label for="sitename">'.get_string("fullsitename").'</label></div>';
+    echo '<div class="felement ftext">';
+    echo '<input size="50" id="sitename" type="text" name="sitename" value="'.$site->fullname.'" />';
+    echo '</div>';
+    echo '</div>';
 
-    echo "<tr valign=\"top\">\n";
-    echo "<td align=\"right\">".get_string("country").":</td>\n";
-    echo "<td>";
+    echo '<div class="fitem">';
+    echo '<div class="fitemtitle"><label for="menucountry">'.get_string("country").'</label></div>';
+    echo '<div class="felement ftext">';
     choose_from_menu (get_list_of_countries(), "country", $admin->country, get_string("selectacountry")."...", "", "");
-    echo "</td>\n";
-    echo "</tr>\n";
+    echo '</div>';
+    echo '</div>';
 
-    echo "<tr valign=\"top\">\n";
-    echo "<td align=\"right\"><a href=\"http://moodle.org/sites/?country=$admin->country\" title=\"".get_string("publicdirectorytitle")."\" target=_blank>".get_string("publicdirectory")."</a>:</td>\n";
-    echo "<td>";
+    echo '<div class="fitem">';
+    echo '<div class="fitemtitle"><label for="menupublic">'."<a href=\"http://moodle.org/sites/?country=$admin->country\" title=\"".get_string("publicdirectorytitle")."\">".get_string("publicdirectory")."</a>".'</label></div>';
+    echo '<div class="felement ftext">';
     $options[0] = get_string("publicdirectory0");
     $options[1] = get_string("publicdirectory1");
     $options[2] = get_string("publicdirectory2");
     choose_from_menu ($options, "public", "2", "", "", "");
     unset($options);
-    echo "</td>\n";
-    echo "</tr>\n";
+    echo '</div>';
+    echo '</div>';
 
-    echo "<tr valign=\"top\">\n";
-    echo "<td align=\"right\">".get_string("registrationcontact")."</a>:</td>\n";
-    echo "<td>\n";
+    echo '<div class="fitem">';
+    echo '<div class="fitemtitle"><label for="menucontact">'.get_string("registrationcontact").'</label></div>';
+    echo '<div class="felement ftext">';
     $options[0] = get_string("registrationcontactno");
     $options[1] = get_string("registrationcontactyes");
     choose_from_menu ($options, "contact", "1", "", "", "");
     unset($options);
-    echo "</td>\n";
-    echo "</tr>\n";
-
-    echo "<tr valign=\"top\">\n";
-    echo "<td align=\"right\">".get_string("statistics").":";
-    echo "<br />(".get_string("notpublic").')';
-    echo "</td>\n";
-    echo "<td>";
+    echo '</div>';
+    echo '</div>';
+            
+    echo '<div class="fitem">';
+    echo '<div class="fitemtitle"><label>'.get_string("statistics")."<br />(".get_string("notpublic").')'.'</label></div>';
+    echo '<div class="felement ftext">';
 
     $count = count_records('course')-1;
     echo get_string("courses").": ".$count;
@@ -156,47 +152,38 @@
     $count = count_records('resource');
     echo get_string("modulenameplural", "resource").": ".$count;
     echo "<input type=\"hidden\" name=\"resources\" value=\"$count\" />\n";
-    echo '<br />';
+    echo '</div>';
+    echo '</div>';
+            
+    echo '<div class="fitem">';
+    echo '<div class="fitemtitle"><label for="adminname">'.get_string("administrator").'</label></div>';
+    echo '<div class="felement ftext">';
+    echo "<input size=\"50\" type=\"text\" id=\"adminname\" name=\"adminname\" value=\"".fullname($admin, true)."\" />";
+    echo '</div>';
+    echo '</div>';
 
-    echo "</td>\n";
-    echo "</tr>\n";
+    echo '<div class="fitem">';
+    echo '<div class="fitemtitle"><label for="adminemail">'.get_string("email").'</label></div>';
+    echo '<div class="felement ftext">';
+    echo "<input size=\"50\" type=\"text\" id=\"adminemail\" name=\"adminemail\" value=\"$admin->email\" />";
+    echo '</div>';
+    echo '</div>';
 
-    echo "<tr valign=\"top\">\n";
-    echo "<td align=\"center\" colspan=\"2\"><hr size=\"1\" noshade>".get_string("administrator")."</td>\n";
-    echo "</tr>\n";
-
-    echo "<tr valign=\"top\">\n";
-    echo "<td align=\"right\">".get_string("administrator").":</td>\n";
-    echo "<td><input size=\"50\" type=\"text\" name=\"adminname\" value=\"".fullname($admin, true)."\" /></td>\n";
-    echo "</tr>\n";
-
-    echo "<tr valign=\"top\">\n";
-    echo "<td align=\"right\">".get_string("email").":</td>\n";
-    echo "<td><input size=\"50\" type=\"text\" name=\"adminemail\" value=\"$admin->email\"></td>\n";
-    echo "</tr>\n";
-
-    echo "<tr valign=\"top\">\n";
-    echo "<td align=\"right\">".get_string("registrationemail")."</a>:</td>\n";
-    echo "<td>\n";
+    echo '<div class="fitem">';
+    echo '<div class="fitemtitle"><label for="menumailme">'.get_string("registrationemail").'</label></div>';
+    echo '<div class="felement ftext">';
     $options[0] = get_string("registrationno");
     $options[1] = get_string("registrationyes");
     choose_from_menu ($options, "mailme", "1", "", "", "");
     unset($options);
-    echo "</td>\n";
-    echo "</tr>\n";
+    echo '</div>';
+    echo '</div>';
 
-    echo "<tr valign=\"top\">\n";
-    echo "<td align=\"right\">&nbsp;</td>\n";
-    echo "<td><input type=\"submit\" value=\"".get_string("registrationsend")."\" /></td>\n";
-    echo "</tr>\n";
+    echo '<div class="felement fsubmit"><input name="submitbutton" value="'.get_string('registrationsend').'" type="submit" id="id_submitbutton" /></div>';
 
+    echo "</fieldset>\n";
 
-    echo "</table>\n";
     echo "</form>\n";
-
-    print_simple_box_end();
-
-    echo "<br />\n";
 
     print_footer();
 
