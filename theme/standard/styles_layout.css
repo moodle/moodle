@@ -455,6 +455,19 @@ form.mform .required img.req {
   text-align:center;
 }
 
+div.phpinfo .center{
+  text-align: center;
+}
+
+div.phpinfo .center table { 
+  margin-left: auto; 
+  margin-right: auto; 
+  text-align: left;
+}
+
+div.phpinfo .center th {
+  text-align: center;
+}
 
 /***
  *** Header
