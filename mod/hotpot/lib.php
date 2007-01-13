@@ -1232,24 +1232,29 @@ function hotpot_scale_used ($hotpotid, $scaleid) {
 function hotpot_add_attempt($hotpotid) {
     global $db, $CFG, $USER;
 
+    // get start time of this attempt
+    $time = time();
+
     // set all previous "in progress" attempts at this quiz to "abandoned"
-    $db->Execute("
-        UPDATE
-            {$CFG->prefix}hotpot_attempts a
-        SET
-            a.timefinish = '".time()."',
-            a.status = '".HOTPOT_STATUS_ABANDONED."',
-        WHERE
-            a.hotpot='$hotpotid'
-            AND a.userid='$USER->id'
-            AND a.status='".HOTPOT_STATUS_INPROGRESS."'
-    ");
+    if ($attempts = get_records_select('hotpot_attempts', "hotpot='$hotpotid' AND userid='$USER->id' AND status='".HOTPOT_STATUS_INPROGRESS."'")) {
+        foreach ($attempts as $attempt) {
+            if ($attempt->timefinish==0) {
+                $attempt->timefinish = $time;
+            }
+            if ($attempt->clickreportid==0) {
+                $attempt->clickreportid = $attempt->id;
+            }
+            $attempt->status = HOTPOT_STATUS_ABANDONED;
+            update_record('hotpot_attempts', $attempt);
+        }
+    }    
 
     // create and add new attempt record
+    $attempt = new stdClass();
     $attempt->hotpot = $hotpotid;
     $attempt->userid = $USER->id;
     $attempt->attempt = hotpot_get_next_attempt($hotpotid);
-    $attempt->timestart = time();
+    $attempt->timestart = $time;
 
     return insert_record("hotpot_attempts", $attempt);
 }
