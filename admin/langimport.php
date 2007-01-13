@@ -297,7 +297,7 @@
                             echo '<option value="'.$alang[0].'">'.$alang[2].' ('.$shortlang.')</option>';
                         }
                     } else {    //print list in local format, and instruction to install
-                        echo '<tr><td>'.$alang[2].'</td><td><a href="http://download.moodle.org/lang16/'.$alang[0].'.zip">'.get_string('download','admin').'</a>';
+                        echo '<tr><td>'.$alang[2].'</td><td><a href="http://download.moodle.org/lang16/'.$alang[0].'.zip">'.get_string('download','admin').'</a></td></tr>';
                     }
                     $empty = 0;
                 }
