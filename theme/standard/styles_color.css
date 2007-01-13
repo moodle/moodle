@@ -699,46 +699,6 @@ table.message_search_results td {
  *** Tabs
  ***/
 
-.tablink a:link,
-.tablink a:visited {
-  color:#000066;
-}
-
-.selected .tablink a:link,
-.selected .tablink a:visited {
-  color:#000000;
-}
-.tabs .side,
-.tabrow td {
-  border-color: #AAAAAA;
-}
-.tabrow td {
-  background:url(pix/tab/left.gif) top left no-repeat;
-}
-.tabrow td .tablink {
-  background:url(pix/tab/right.gif) top right no-repeat;
-}
-.tabrow td:hover {
-  background-image:url(pix/tab/left_hover.gif);
-}
-.tabrow td:hover .tablink {
-  background-image:url(pix/tab/right_hover.gif);
-}
-.tabrow .last {
-  background: transparent url(pix/tab/right_end.gif) top right no-repeat;
-}
-.tabrow .selected {
-  background:url(pix/tab/left_active.gif) top left no-repeat;
-}
-.tabrow .selected .tablink {
-  background:url(pix/tab/right_active.gif) top right no-repeat;
-}
-.tabrow td.selected:hover {
-  background-image:url(pix/tab/left_active_hover.gif);
-}
-.tabrow td.selected:hover .tablink {
-  background-image:url(pix/tab/right_active_hover.gif);
-}
 
 
 /***

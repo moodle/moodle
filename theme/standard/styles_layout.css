@@ -1972,6 +1972,7 @@ body#message-messages {
 .tabrow0 a.selected:link,
 .tabrow0 a.selected:visited {
   color:#000;
+  background:#ddd;
 }
 
 /*subnav*/
