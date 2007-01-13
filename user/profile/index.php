@@ -231,35 +231,29 @@ if ( ($action == 'editcategory' )) {
     if ( ( (count_records_select('user_info_category', "name<>'$strdefaultcategory'") > 0) or
            (count_records_select('user_info_field', '1') > 0) ) and
          ( $categories = get_records_select('user_info_category', '1', 'sortorder ASC')) ) {
-        unset ($table);
-        $table->head = array(get_string('profilecategory','admin'),get_string('profilefield','admin'),get_string('edit'));
-        $table->align = array('left','left','right');
-        $table->width = '95%';
-        $table->data = array();
 
-        $firstflag = true;
         
         foreach ($categories as $category) {
 
-            /// Add a divider between the categories
-            if (!$firstflag) {
-                $table->data[] = 'hr';
-            } else {
-                $firstflag = false;
-            }
+        unset ($table);
+        $table->head  = array(get_string('profilefield','admin'),get_string('edit'));
+        $table->align = array('left','right');
+        $table->width = '95%';
+        $table->class = 'generaltable profilefield';
+        $table->data = array();
             
-            $table->data[] = array($category->name, '', profile_category_icons($category));
-
             if ($fields = get_records_select('user_info_field', "categoryid=$category->id", 'sortorder ASC')) {
                 foreach ($fields as $field) {
 
-                    $table->data[] = array('', $field->name, profile_field_icons($field));
+                    $table->data[] = array($field->name, profile_field_icons($field));
 
                 } /// End of $fields foreach
             } /// End of $fields if
-        } /// End of $categories foreach
         
+        print_heading($category->name.' '.profile_category_icons($category));
         print_table($table);
+        
+        } /// End of $categories foreach
 
     } else {
 
