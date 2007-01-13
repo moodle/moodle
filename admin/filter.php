@@ -94,7 +94,5 @@
     <?php
     print_simple_box_end();
 
-    print_simple_box_end();
-
     admin_externalpage_print_footer($adminroot);
 ?>

@@ -31,31 +31,31 @@
     </tr>
     <tr valign="top">
         <td align="right"><?php echo $txt->latexpreamble; ?></td>
-        <td><textarea type="text" name="filter_tex_latexpreamble" cols="60" rows="5"><?php echo "$CFG->filter_tex_latexpreamble"; ?></textarea></td>
+        <td><textarea type="text" name="filter_tex_latexpreamble" cols="60" rows="5"><?php p($CFG->filter_tex_latexpreamble); ?></textarea></td>
     </tr>
     <tr valign="top">
         <td align="right"><?php echo $txt->backgroundcolour; ?></td>
         <td><input type="text" name="filter_tex_latexbackground" 
-            value="<?php echo $CFG->filter_tex_latexbackground; ?>"></td>
+            value="<?php p($CFG->filter_tex_latexbackground) ?>" /></td>
     </tr>
     <tr valign="top">
         <td align="right"><?php echo $txt->density; ?></td>
         <td><input type="text" name="filter_tex_density"
-            value="<?php echo $CFG->filter_tex_density; ?>"></td>
+            value="<?php p($CFG->filter_tex_density); ?>" /></td>
     </tr>
     <tr valign="top">
         <td align="right"><?php echo $txt->pathlatex; ?></td>
         <td><input type="text" name="filter_tex_pathlatex" size="50"
-            value="<?php echo $CFG->filter_tex_pathlatex; ?>"</td>
+            value="<?php p($CFG->filter_tex_pathlatex); ?>" /></td>
     </tr>
     <tr valign="top">
         <td align="right"><?php echo $txt->pathdvips; ?></td>
         <td><input type="text" name="filter_tex_pathdvips" size="50"
-            value="<?php echo $CFG->filter_tex_pathdvips; ?>"</td>
+            value="<?php p($CFG->filter_tex_pathdvips); ?>" /></td>
     </tr>
     <tr valign="top">
         <td align="right"><?php echo $txt->pathconvert; ?></td>
         <td><input type="text" name="filter_tex_pathconvert" size="50"
-            value="<?php echo $CFG->filter_tex_pathconvert; ?>"</td>
+            value="<?php p($CFG->filter_tex_pathconvert); ?>" /></td>
     </tr>
 </table>
