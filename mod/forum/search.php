@@ -294,7 +294,7 @@ function forum_print_big_search_form($course) {
     echo '<td class="c1"><input type="text" size="35" name="notwords" value="'.s($notwords).'" alt="" /></td>';
     echo '</tr>';
 
-    if ($CFG->dbtype == 'mysql' || $CFG->dbtype == 'postgres7') {
+    if ($CFG->dbfamily == 'mysql' || $CFG->dbfamily == 'postgres') {
         echo '<tr>';
         echo '<td class="c0">'.get_string('searchfullwords', 'forum').':</td>';
         echo '<td class="c1"><input type="text" size="35" name="fullwords" value="'.s($fullwords).'" alt="" /></td>';

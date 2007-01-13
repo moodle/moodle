@@ -135,7 +135,7 @@
         case 'search': 
 
             /// Some differences in syntax for PostgreSQL
-            if ($CFG->dbtype == "postgres7") {
+            if ($CFG->dbfamily == "postgres") {
                 $REGEXP = "~*";
                 $NOTREGEXP = "!~*";
             } else {
@@ -163,7 +163,7 @@
 
             /// Under Oracle and MSSQL, trim the + and - operators and perform
             /// simpler LIKE search
-                if ($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'mssql_n' || $CFG->dbtype == 'odbc_mssql') {
+                if ($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') {
                     $searchterm = trim($searchterm, '+-');
                 }
 

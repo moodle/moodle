@@ -47,12 +47,13 @@ class data_field_number extends data_field_base {
     function get_sort_sql($fieldname) {
         global $CFG;
 
-        switch ($CFG->dbtype) {
+        switch ($CFG->dbfamily) {
             case 'mysql':   // string in an arithmetic operation is converted to a floating-point number
                 return '('.$fieldname.'+0.0)';
-
-            default:
+            case 'postgres': // cast for PG
                 return 'CAST('.$fieldname.' AS REAL)';
+            default: // the rest, just the field name. TODO: Analyse behaviour under MSSQL and Oracle
+                return $fieldname;
         }
     }
 

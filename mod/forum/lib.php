@@ -1278,7 +1278,7 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
     // Some differences SQL
     $LIKE = sql_ilike();
     $NOTLIKE = 'NOT ' . $LIKE;
-    if ($CFG->dbtype == 'postgres7') {
+    if ($CFG->dbfamily == 'postgres') {
         $REGEXP = '~*';
         $NOTREGEXP = '!~*';
     } else {
@@ -1584,8 +1584,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
     }
 
     //TODO: there must be a nice way to do this that keeps both postgres and mysql 3.2x happy but I can't find it right now.
-    if ($CFG->dbtype == 'postgres7' || $CFG->dbtype == 'mssql' ||
-        $CFG->dbtype == 'mssql_n' || $CFG->dbtype == 'odbc_mssql' || $CFG->dbtype == 'oci8po') {
+    if ($CFG->dbfamily == 'postgres' || $CFG->dbfamily == 'mssql' || $CFG->dbfamily == 'oracle') {
         return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
                                    u.firstname, u.lastname, u.email, u.picture $umfields
                               FROM {$CFG->prefix}forum_discussions d
@@ -1596,7 +1595,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
                                AND p.parent = 0
                                    $timelimit $groupselect $userselect
                           ORDER BY $forumsort", $limitfrom, $limitnum);
-    } else {
+    } else { // MySQL query. TODO: Check if this is needed (MySQL 4.1 should work with the above query)
         return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
                                    u.firstname, u.lastname, u.email, u.picture $umfields
                               FROM ({$CFG->prefix}forum_posts p,
@@ -4074,7 +4073,7 @@ function forum_tp_count_forum_read_records($userid, $forumid, $groupid=false) {
         $groupsel = ' AND (d.groupid = '.$groupid.' OR d.groupid = -1)';
     }
 
-    if ($CFG->dbtype === 'postgres7') {
+    if ($CFG->dbfamily === 'postgres' || $CFG->dbfamily === 'mssql' || $CFG->dbfamily === 'oracle') {
         // this query takes 20ms, vs several minutes for the one below
         $sql = " SELECT COUNT (DISTINCT u.id ) "
             .  " FROM ( "
@@ -4091,7 +4090,7 @@ function forum_tp_count_forum_read_records($userid, $forumid, $groupid=false) {
             .  "   WHERE d.forum = $forumid $groupsel "
             .  "         AND p.modified < $cutoffdate"
             .  ") u";
-   } else {
+   } else { // This is for MySQL. TODO: Check if the above works for MySQL 4.1
         $sql = 'SELECT COUNT(DISTINCT p.id) '.
             'FROM '.$CFG->prefix.'forum_posts p,'.$CFG->prefix.'forum_read r,'.$CFG->prefix.'forum_discussions d '.
             'WHERE d.forum = '.$forumid.$groupsel.' AND p.discussion = d.id AND '.

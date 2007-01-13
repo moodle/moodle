@@ -946,8 +946,8 @@ function glossary_search($course, $searchterms, $extended = 0, $glossary = NULL)
     }
 
     /// Some differences in syntax for entrygreSQL
-    switch ($CFG->dbtype) {
-    case 'postgres7':
+    switch ($CFG->dbfamily) {
+    case 'postgres':
         $LIKE = "ILIKE";   // case-insensitive
         $NOTLIKE = "NOT ILIKE";   // case-insensitive
         $REGEXP = "~*";
@@ -976,7 +976,7 @@ function glossary_search($course, $searchterms, $extended = 0, $glossary = NULL)
 
     /// Under Oracle and MSSQL, trim the + and - operators and perform
     /// simpler LIKE search
-        if ($CFG->dbtype == 'oci8po' || $CFG->dbtype == 'mssql' || $CFG->dbtype == 'mssql_n' || $CFG->dbtype == 'odbc_mssql') {
+        if ($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') {
             $searchterm = trim($searchterm, '+-');
         }
 
