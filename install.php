@@ -345,17 +345,16 @@ if ($INSTALL['stage'] == DATABASE) {
         } else {
         /// We have been able to connect properly, just test the database encoding now. 
         /// It must be Unicode for 1.8 installations.
-
             $encoding = '';
             switch ($INSTALL['dbtype']) {
                 case 'mysql':
-                ///Get MySQL character_set_database value
+                /// Get MySQL character_set_database value
                     $rs = $db->Execute("SHOW VARIABLES LIKE 'character_set_database'");
                     if ($rs && $rs->RecordCount() > 0) {
                         $records = $rs->GetAssoc(true);
                         $encoding = $records['character_set_database']['Value'];
-                        if (!strtoupper($encoding) == 'UTF8') {
-                            // Try to set the encoding now!
+                        if (strtoupper($encoding) != 'UTF8') {
+                        /// Try to set the encoding now!
                             if (! $db->Metatables()) {  // We have no tables so go ahead
                                 $db->Execute("ALTER DATABASE `".$INSTALL['dbname']."` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci");
                                 $rs = $db->Execute("SHOW VARIABLES LIKE 'character_set_database'");  // this works
@@ -1195,8 +1194,8 @@ function database_js() {
 function toggledbinfo() {
     //Calculate selected value
     var showid = 'mysql';
-    if (getElementById('installform').dbtype.value) {
-        showid = getElementById('installform').dbtype.value;
+    if (document.getElementById('installform').dbtype.value) {
+        showid = document.getElementById('installform').dbtype.value;
     }
     if (document.getElementById) {
         //Hide all the divs
