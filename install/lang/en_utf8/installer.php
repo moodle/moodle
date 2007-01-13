@@ -40,6 +40,7 @@ $string['configfilewritten'] = 'config.php has been successfully created';
 $string['configurationcompletehead'] = 'Configuration completed';
 $string['configurationcompletesub'] = 'Moodle made an attempt to save your configuration in a file in the root of your Moodle installation.';
 $string['continue'] = 'Continue';
+$string['curlrecommended'] = 'Installing the optional Curl library is highly recommended in order to enable Moodle Networking functionality.';
 $string['database'] = 'Database';
 $string['databasecreationsettingshead'] = 'Now you need to configure the database settings where most Moodle data
     will be stored.  This database will be created automatically by the installer
@@ -206,6 +207,7 @@ $string['ociextensionisnotpresentinphp'] = 'PHP has not been properly configured
 $string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
 $string['odbcextensionisnotpresentinphp'] = 'PHP has not been properly configured with the ODBC extension so that it can communicate with SQL*Server.  Please check your php.ini file or recompile PHP.';
 $string['ok'] = 'OK';
+$string['opensslrecommended'] = 'Installing the optional OpenSSL library is highly recommended -- it enables Moodle Networking functionality.';
 $string['pass'] = 'Pass';
 $string['password'] = 'Password';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the PGSQL extension so that it can communicate with PostgreSQL.  Please check your php.ini file or recompile PHP.';
