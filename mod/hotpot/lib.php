@@ -1153,30 +1153,12 @@ function hotpot_get_grades($hotpot, $user_ids='') {
             $grade = "ROUND(SUM(score)/COUNT(id) * $weighting, $precision) AS grade";
             break;
         case HOTPOT_GRADEMETHOD_FIRST:
-            if ($CFG->dbfamily=='postgres') {
-                $grade = "(CASE WHEN (score IS NULL) 
-                                THEN '' 
-                                ELSE TRIM(ROUND(score * $weighting, $precision)) 
-                           END)";
-            } else {
-                $grade = "IF(score IS NULL, 
-                             '', 
-                             ROUND(score * $weighting, $precision))";
-            }
+            $grade = "ROUND(score * $weighting, $precision)";
             $grade = sql_concat('timestart', "'_'", $grade);
             $grade = "MIN($grade) AS grade";
             break;
         case HOTPOT_GRADEMETHOD_LAST:
-            if ($CFG->dbfamily=='postgres') {
-                $grade = "(CASE WHEN (score IS NULL) 
-                                THEN '' 
-                                ELSE TRIM(ROUND(score * $weighting, $precision)) 
-                           END)";
-            } else {
-                $grade = "IF(score IS NULL, 
-                             '', 
-                             ROUND(score * $weighting, $precision))";
-            }
+            $grade = "ROUND(score * $weighting, $precision)";
             $grade = sql_concat('timestart', "'_'", $grade);
             $grade = "MAX($grade) AS grade";
             break;
@@ -1249,26 +1231,14 @@ function hotpot_scale_used ($hotpotid, $scaleid) {
 
 function hotpot_add_attempt($hotpotid) {
     global $db, $CFG, $USER;
-    $time = time();
-    switch (strtolower($CFG->dbfamily)) {
-        case 'mysql':
-            $timefinish = "IF(a.timefinish IS NULL, '$time', a.timefinish)";
-            $clickreportid = "IF(a.clickreportid IS NULL, a.id, a.clickreportid)";
-            break;
-        case 'postgres':
-            $timefinish = "WHEN(a.timefinish IS NULL) THEN '$time' ELSE a.timefinish";
-            $clickreportid = "WHEN(a.clickreportid IS NULL) THEN a.id ELSE a.clickreportid";
-            break;
-    }
 
     // set all previous "in progress" attempts at this quiz to "abandoned"
     $db->Execute("
         UPDATE
             {$CFG->prefix}hotpot_attempts a
         SET
-            a.timefinish = $timefinish,
+            a.timefinish = '".time()."',
             a.status = '".HOTPOT_STATUS_ABANDONED."',
-            a.clickreportid = $clickreportid
         WHERE
             a.hotpot='$hotpotid'
             AND a.userid='$USER->id'
