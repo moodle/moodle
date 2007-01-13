@@ -5,13 +5,13 @@
     <input name="block" type="hidden" value="<?php echo intval($_REQUEST['block']); ?>" />
     <select name="block_course_list_adminview">
      <option value="all" <?php if(isset($CFG->block_course_list_adminview)){ 
-     if($CFG->block_course_list_adminview == "all"){ p("selected");}
+     if($CFG->block_course_list_adminview == "all"){ echo "selected=\"selected\"";}
      }else{
-        p("selected");
+         echo "selected=\"selected\"";
      }?>     
      ><?php p(get_string('allcourses', 'block_course_list')) ?></option>
      <option value="own" <?php if(isset($CFG->block_course_list_adminview)){ 
-     if($CFG->block_course_list_adminview == "own"){ p("selected"); }
+         if($CFG->block_course_list_adminview == "own"){ echo "selected=\"selected\""; }
      }?>
      ><?php p(get_string('owncourses', 'block_course_list')) ?></option>
     </select>
