@@ -1822,50 +1822,6 @@ function configure_dbconnection() {
 }
 
 /**
- * This internal function sets and returns the proper value for $CFG->dbfamily based on $CFG->dbtype
- * It's called by configure_dbconnection() and at install time. Shouldn't be used
- * in other places. Code should rely on dbfamily to perform conditional execution
- * instead of using dbtype directly. This allows quicker adoption of different
- * drivers going against the same DB backend.
- *
- * This function must contain the init code needed for each dbtype supported.
- *
- * return string dbfamily value (mysql, postgres, oracle, mssql)
- */
-function set_dbfamily() {
-
-    global $CFG, $INSTALL;
-
-    // Since this function is also used during installation process, i.e. during install.php before $CFG->dbtype is set.
-    // we need to get dbtype from the right variable 
-    if (!empty($INSTALL['dbtype'])) {
-        $dbtype = $INSTALL['dbtype'];
-    } else {
-        $dbtype = $CFG->dbtype;
-    }
-
-    switch ($dbtype) {
-        case 'mysql':
-        case 'mysqli':
-            $CFG->dbfamily='mysql';
-            break;
-        case 'postgres7':
-            $CFG->dbfamily='postgres';
-            break;
-        case 'mssql':
-        case 'mssql_n':
-        case 'odbc_mssql':
-            $CFG->dbfamily='mssql';
-            break;
-        case 'oci8po':
-            $CFG->dbfamily='oracle';
-            break;
-    }
-
-    return $CFG->dbfamily;
-}
-
-/**
  * This function will handle all the records before being inserted/updated to DB for Oracle
  * installations. This is because the "special feature" of Oracle where the empty string is
  * equal to NULL and this presents a problem with all our currently NOT NULL default '' fields.
