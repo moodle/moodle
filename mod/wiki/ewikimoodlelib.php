@@ -181,8 +181,8 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
           e.g. array("flags","meta","lastmodified");
       */
       case "GETALL":
-         switch ($CFG->dbtype) {
-             case 'postgres7':
+         switch ($CFG->dbfamily) {
+             case 'postgres':
                  $sql= "SELECT pagename AS id, ".
                       implode(", ", $args) .
                       " FROM ". $CFG->prefix.EWIKI_DB_TABLE_NAME .
@@ -300,12 +300,11 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
 
 function anydb_escape_string($s) {
    global $CFG ;
-   $type = ($CFG->dbtype);
-   switch ($CFG->dbtype) {
+   switch ($CFG->dbfamily) {
         case 'mysql':
             $s = mysql_escape_string($s);
             break;
-        case 'postgres7':
+        case 'postgres':
             $s = pg_escape_string($s);
             break;
         default:

@@ -58,11 +58,11 @@
   function search_escape_string($str) {
     global $CFG;
 
-    switch ($CFG->dbtype) {
+    switch ($CFG->dbfamily) {
       case 'mysql':
         $s = mysql_real_escape_string($str);
         break;
-      case 'postgres7':
+      case 'postgres':
         $s = pg_escape_string($str);
         break;
       default:
