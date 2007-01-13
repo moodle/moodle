@@ -156,6 +156,13 @@ img.grouppicture {
   padding:10px;
 }
 
+#notice .buttons .singlebutton {
+  display:inline;
+}
+#notice .buttons form {
+  display:inline;
+}
+
 .errorbox {
   border-width:1px;
   border-style:solid;
@@ -437,6 +444,14 @@ form.mform div.error,form.mform fieldset.error {
 form#adminsettings div.htmlarea {
   clear: left;
   padding-top: 5px;
+}
+
+form.mform .required img {
+  display:none;
+}
+
+form.mform .required label {
+  color:#a00;
 }
 
 

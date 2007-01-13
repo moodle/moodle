@@ -31,8 +31,8 @@ require_once 'HTML/QuickForm/Renderer/Tableless.php';
 
 require_once $CFG->libdir.'/uploadlib.php';
 
-define('FORM_ADVANCEDIMAGEURL', $CFG->wwwroot.'/lib/form/adv.gif');
-define('FORM_REQIMAGEURL', $CFG->wwwroot.'/lib/form/req.gif');
+define('FORM_ADVANCEDIMAGEURL', $CFG->pixpath.'/adv.gif');
+define('FORM_REQIMAGEURL', $CFG->pixpath.'/req.gif');
 
 /**
  * Callback called when PEAR throws an error
@@ -1366,11 +1366,13 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
 
     function MoodleQuickForm_Renderer(){
         // switch next two lines for ol li containers for form items.
-        //        $this->_elementTemplates=array('default'=>"\n\t\t<li class=\"fitem\"><label>{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"qfelement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></li>");
+        //        $this->_elementTemplates=array('default'=>"\n\t\t".'<li class="fitem"><label>{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class="qfelement<!-- BEGIN error --> error<!-- END error --> {type}"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</div></li>');
         $this->_elementTemplates = array(
-        'default'=>"\n\t\t<div class=\"fitem {advanced}<!-- BEGIN required --> required<!-- END required -->\"><div class=\"fitemtitle\"><label>{label}<!-- BEGIN required -->{req}<!-- END required -->{advancedimg}</label>{help}</div><div class=\"felement {type}<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></div>",
-        'fieldset'=>"\n\t\t<div class=\"fitem {advanced}<!-- BEGIN required --> required<!-- END required -->\"><div class=\"fitemtitle\"><div class=\"fgrouplabel\">{label}<!-- BEGIN required -->{req}<!-- END required -->{advancedimg}</div>{help}</div><fieldset class=\"felement {type}<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</fieldset></div>",
-        'static'=>"\n\t\t<div class=\"fitem {advanced}<!-- BEGIN required --> required<!-- END required -->\"><div class=\"fitemtitle\"><div class=\"fstaticlabel\">{label}<!-- BEGIN required -->{req}<!-- END required -->{advancedimg}</div>{help}</div><div class=\"felement {type}<!-- BEGIN error --> error<!-- END error -->\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></div>");
+        'default'=>"\n\t\t".'<div class="fitem {advanced}<!-- BEGIN required --> required<!-- END required -->"><div class="fitemtitle"><label>{label}<!-- BEGIN required -->{req} <!-- END required -->{advancedimg}</label>{help}</div><div class="felement {type}<!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</div></div>',
+
+        'fieldset'=>"\n\t\t".'<div class="fitem {advanced}<!-- BEGIN required --> required<!-- END required -->"><div class="fitemtitle"><div class="fgrouplabel">{label}<!-- BEGIN required -->{req} <!-- END required -->{advancedimg}</div>{help}</div><fieldset class="felement {type}<!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</fieldset></div>',
+
+        'static'=>"\n\t\t".'<div class="fitem {advanced}<!-- BEGIN required --> required<!-- END required -->"><div class="fitemtitle"><div class="fstaticlabel">{label}<!-- BEGIN required -->{req} <!-- END required -->{advancedimg}</div>{help}</div><div class="felement {type}<!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</div></div>');
 
         parent::HTML_QuickForm_Renderer_Tableless();
     }
