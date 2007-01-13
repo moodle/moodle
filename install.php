@@ -662,7 +662,9 @@ if ($nextstage == SAVE) {
 
         echo "<hr />\n";
         echo "<div style=\"text-align: left\">\n";
-        print_object(s($str));
+        echo "<pre>\n";
+        print_r(s($str));
+        echo "</pre>\n";
         echo "</div>\n";
     }
 } else {
@@ -693,16 +695,6 @@ if ($nextstage == SAVE) {
 
 
 <?php 
-
-//==========================================================================//
-
-
-function print_object($object) {
-    echo "<pre>\n";
-    print_r($object);
-    echo "</pre>\n";
-}
-
 
 
 //==========================================================================//
