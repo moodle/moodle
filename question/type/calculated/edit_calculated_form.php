@@ -152,9 +152,11 @@ class question_edit_calculated_form extends question_edit_form {
                     $key++;
                 }
             }
-            $default_values['submitbutton'] = get_string('nextpage', 'qtype_calculated');
-            $question = (object)((array)$question + $default_values);
         }
+        $default_values['submitbutton'] = get_string('nextpage', 'qtype_calculated');
+        $default_values['makecopy'] = get_string('makecopynextpage', 'qtype_calculated');
+        $question = (object)((array)$question + $default_values);
+
 
         parent::set_data($question);
     }
@@ -174,11 +176,13 @@ class question_edit_calculated_form extends question_edit_form {
         foreach ($answers as $key => $answer){
             //check no of choices
             $trimmedanswer = trim($answer);
-            if (!empty($trimmedanswer)){
+            if (!empty($trimmedanswer)||$answercount==0){
                 $eqerror = qtype_calculated_find_formula_errors($trimmedanswer);
                 if (FALSE !== $eqerror){
                     $errors['answers['.$key.']'] = $eqerror;
                 }
+            }
+            if (!empty($trimmedanswer)){
                 if ('2' == $data['correctanswerformat'][$key]
                         && '0' == $data['correctanswerlength'][$key]) {
                     $errors['correctanswerlength['.$key.']'] = get_string('zerosignificantfiguresnotallowed','quiz');

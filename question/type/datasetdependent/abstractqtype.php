@@ -228,8 +228,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                         $SESSION->datasetdependent->definitionform = $form;
                     } else {
                         // Something went wrong, go back to the first page
-                        redirect("question.php?category={$question->category}" .
-                                 "&qtype={$question->qtype}");
+                        redirect("question.php?category={$question->category}" ."&qtype={$question->qtype}");
                     }
                 } else {
                     $this->save_dataset_definitions($form);
@@ -237,8 +236,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                 break;
             case 'datasetitems':
                 if (empty($form->id) && isset($form->addbutton)) {
-                    $question = parent::save_question($question,
-                     $SESSION->datasetdependent->questionform, $course);
+                    $question = parent::save_question($question, $SESSION->datasetdependent->questionform, $course);
                     $SESSION->datasetdependent->definitionform->id = $form->id = $question->id;
                     $this->save_dataset_definitions($SESSION->datasetdependent->definitionform);
                     unset($SESSION->datasetdependent);
