@@ -4834,8 +4834,7 @@ function notice ($message, $link='', $course=NULL, $adminroot='') {
         }
     }
 
-    echo '<br />';
-    print_simple_box($message, 'center', '50%', '', '20', 'generalbox', 'notice');
+    print_box($message, 'generalbox', 'notice');
     print_continue($link);
 
     // xhtml strict fix, need to make sure it's the right footer
@@ -4867,14 +4866,13 @@ function notice_yesno ($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno
     $linkyes = clean_text($linkyes);
     $linkno = clean_text($linkno);
 
-    print_simple_box_start('center', '60%', '', 5, 'generalbox', 'notice');
-    echo '<p style="text-align:center">'. $message .'</p>';
-    echo '<table class="boxaligncenter" cellpadding="20"><tr><td>';
+    print_box_start('generalbox', 'notice');
+    echo '<p>'. $message .'</p>';
+    echo '<div class="buttons">';
     print_single_button($linkyes, $optionsyes, get_string('yes'), $methodyes, $CFG->framename);
-    echo '</td><td>';
-    print_single_button($linkno, $optionsno, get_string('no'), $methodno, $CFG->framename);
-    echo '</td></tr></table>';
-    print_simple_box_end();
+    print_single_button($linkno,  $optionsno,  get_string('no'),  $methodno,  $CFG->framename);
+    echo '</div>';
+    print_box_end();
 }
 
 /**
