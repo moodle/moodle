@@ -170,25 +170,10 @@
         return get_users_by_capability(get_context_instance(CONTEXT_COURSE, $courseid), 'moodle/course:view');
     }
 
-    //Returns all users (every record in users table)
-
+    //Returns all users ids (every record in users table)
     function backup_get_all_users() {
 
-        global $CFG;
-
-        $result = false;
-
-        //Get users
-        $users = get_records_sql("SELECT DISTINCT id,id
-                                  FROM {$CFG->prefix}user");
-        //Add users
-        if ($users) {
-            foreach ($users as $user) {
-                $result[$user->id]->id = $user->id;
-            }
-        }
-
-        return $result;
+        return get_records('user', '', '', '', 'id, id'); 
     }
 
     //Calculate the number of log entries to backup
