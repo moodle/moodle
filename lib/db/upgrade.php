@@ -510,6 +510,20 @@ function xmldb_main_upgrade($oldversion=0) {
         /// use get record set to iterate slower
         build_context_rel();
     }
+
+    if ($result && $oldversion < 2007011501) {
+        if (!empty($CFG->enablerecordcache) && empty($CFG->rcache) && 
+            // Note: won't force-load these settings into CFG
+            // we don't need or want cache during the upgrade itself
+            empty($CFG->cachetype) && empty($CFG->intcachemax)) {
+            set_config('cachetype',   'internal');
+            set_config('rcache',      true);
+            set_config('intcachemax', $CFG->enablerecordcache);
+            unset_config('enablerecordcache');
+            unset($CFG->enablerecordcache);
+        }
+    }
+
     return $result;
 
 }

@@ -386,7 +386,7 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
     
     // Check to see whether this record is eligible for caching (fields=*, only condition is id)
     $docache = false;
-    if (!empty($CFG->rcache) && $field1=='id' && !$field2 && !$field3 && $fields=='*') {
+    if ($CFG->rcache === true && $field1=='id' && !$field2 && !$field3 && $fields=='*') {
         $docache = true;
         // If it's in the cache, return it
         $cached = rcache_getforfill($table, $value1);
@@ -1044,7 +1044,7 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
 
     // Clear record_cache based on the parameters passed
     // (individual record or whole table)
-    if (!empty($CFG->rcache)) {
+    if ($CFG->rcache === true) {
         if ($field1 == 'id') {
             rcache_unset($table, $value1);
         } else if ($field2 == 'id') {
@@ -1086,7 +1086,7 @@ function set_field_select($table, $newfield, $newvalue, $select, $localcall = fa
     
         // Clear record_cache based on the parameters passed
         // (individual record or whole table)
-        if (!empty($CFG->rcache)) {
+        if ($CFG->rcache === true) {
             rcache_unset_table($table);
         }
     }
@@ -1145,7 +1145,7 @@ function delete_records($table, $field1='', $value1='', $field2='', $value2='', 
 
     // Clear record_cache based on the parameters passed
     // (individual record or whole table)
-    if (!empty($CFG->rcache)) {
+    if ($CFG->rcache === true) {
         if ($field1 == 'id') {
             rcache_unset($table, $value1);
         } else if ($field2 == 'id') {
@@ -1179,7 +1179,7 @@ function delete_records_select($table, $select='') {
     global $CFG, $db;
 
     // Clear record_cache (whole table)
-    if (!empty($CFG->rcache)) {
+    if ($CFG->rcache === true) {
         rcache_unset_table($table);
     }
 
@@ -1393,7 +1393,7 @@ function update_record($table, $dataobject) {
     }
 
     // Remove this record from record cache since it will change
-    if (!empty($CFG->rcache)) {
+    if ($CFG->rcache === true) {
         rcache_unset($table, $dataobject->id);
     }
     
@@ -2080,7 +2080,7 @@ function db_update_lobs ($table, $sqlcondition, &$clobs, &$blobs) {
 function rcache_set($table, $id, $rec) {
     global $CFG, $MCACHE, $rcache;
 
-    if ($CFG->rcache === 'internal') {
+    if ($CFG->cachetype === 'internal') {
         $rcache->data[$table][$id] = $rec;
     } else {
         $key   = $table . '|' . $id;
@@ -2112,7 +2112,7 @@ function rcache_set($table, $id, $rec) {
 function rcache_unset($table, $id) {
     global $CFG, $MCACHE, $rcache;
 
-    if ($CFG->rcache === 'internal') {
+    if ($CFG->cachetype === 'internal') {
         if (isset($rcache->data[$table][$id])) {
             unset($rcache->data[$table][$id]);
         }
@@ -2142,7 +2142,7 @@ function rcache_unset($table, $id) {
 function rcache_get($table, $id) {
     global $CFG, $MCACHE, $rcache;
 
-    if ($CFG->rcache === 'internal') {
+    if ($CFG->cachetype === 'internal') {
         if (isset($rcache->data[$table][$id])) {
             $rcache->hits++;
             return $rcache->data[$table][$id];
@@ -2197,7 +2197,7 @@ function rcache_get($table, $id) {
 function rcache_getforfill($table, $id) {
     global $CFG, $MCACHE, $rcache;
 
-    if ($CFG->rcache === 'internal') {
+    if ($CFG->cachetype === 'internal') {
         return rcache_get($table, $id);
     }
 
@@ -2254,7 +2254,7 @@ function rcache_releaseforfill($table, $id) {
 function rcache_unset_table ($table) {
     global $CFG, $MCACHE, $rcache;
 
-    if ($CFG->rcache === 'internal') {
+    if ($CFG->cachetype === 'internal') {
         if (isset($rcache->data[$table])) {
             unset($rcache->data[$table]);
         }

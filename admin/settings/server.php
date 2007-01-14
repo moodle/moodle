@@ -175,7 +175,27 @@ $ADMIN->add('server', new admin_externalpage('phpinfo', get_string('phpinfo'), "
 
 // "performance" settingpage
 $temp = new admin_settingpage('performance', get_string('performance', 'admin'));
-$temp->add(new admin_setting_configtext('enablerecordcache', get_string('enablerecordcache', 'admin'), get_string('configenablerecordcache', 'admin'), 50));
+$temp->add(new admin_setting_configselect('cachetype', get_string('cachetype', 'admin'), 
+                                          get_string('configcachetype', 'admin'), false, 
+                                          array( '' => 'none', 
+                                                 'internal' => 'internal', 
+                                                 'memcached' => 'memcached', 
+                                                 'eaccelerator' => 'eaccelerator')));
+// NOTE: $CFG->rcache is forced to bool in lib/setup.php
+$temp->add(new admin_setting_configselect('rcache', get_string('rcache', 'admin'),
+                                          get_string('configrcache', 'admin'), false, 
+                                          array( '0' => 'false', 
+                                                 '1' => 'true')));
+$temp->add(new admin_setting_configtext('rcachettl', get_string('rcachettl', 'admin'),
+                                        get_string('configrcachettl', 'admin'), 10));
+$temp->add(new admin_setting_configtext('intcachemax', get_string('intcachemax', 'admin'),
+                                        get_string('configintcachemax', 'admin'), 10));
+$temp->add(new admin_setting_configtext('memcachedhosts', get_string('memcachedhosts', 'admin'),
+                                        get_string('configmemcachedhosts', 'admin'), ''));
+$temp->add(new admin_setting_configselect('memcachedpconn', get_string('memcachedpconn', 'admin'),
+                                          get_string('configmemcachedpconn', 'admin'), false, 
+                                          array( '0' => 'false', 
+                                                 '1' => 'true')));
 $ADMIN->add('server', $temp);
 
 if (file_exists("$CFG->dirroot/$CFG->admin/mysql/frame.php")) {

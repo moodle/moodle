@@ -207,6 +207,7 @@ global $HTTPSPAGEREQUIRED;
     configure_dbconnection();
 
 /// Load up any configuration from the config table
+    $CFG->rcache = false;
     $CFG = get_config();
 
 /// Turn on SQL logging if required
@@ -267,11 +268,25 @@ global $HTTPSPAGEREQUIRED;
 /// Shared-Memory cache init -- will set $MCACHE
 /// $MCACHE is a global object that offers at least add(), set() and delete()
 /// with similar semantics to the memcached PHP API http://php.net/memcache
-    if (!empty($CFG->memcached) && !empty($CFG->memcachedhosts)) {
-       init_memcached();
+    if (!empty($CFG->cachetype)) {
+        if ($CFG->cachetype === 'memcached' && !empty($CFG->memcachedhosts)) {
+            if (!init_memcached()) {
+                debugging("Error initialising memcached");
+            }
+        } elseif ($CFG->cachetype === 'eaccelerator') {
+            if (!init_eaccelerator()) {
+                debugging("Error initialising eaccelerator cache");
+            }
+        }
+    } else { // just make sure it is defined
+        $CFG->cachetype = '';
     }
-    if (!empty($CFG->eaccelerator)) {
-        init_eaccelerator();
+/// Ensure we define rcache - so we can later check for it
+/// with a really fast and unambiguous $CFG->rcache === false
+    if (empty($CFG->rcache)) {
+        $CFG->rcache = false;
+    } else {
+        $CFG->rcache = true;
     }
 
 /// Set a default enrolment configuration (see bug 1598)
