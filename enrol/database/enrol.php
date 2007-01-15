@@ -61,7 +61,7 @@ function setup_enrolments(&$user) {
             error_log('[ENROL_DB] Using config default for roles: '.$role->shortname);
         }*/
         
-        if ($rs = $enroldb->Execute("SELECT {$CFG->enrol_remotecoursefield}
+        if ($rs = $enroldb->Execute("SELECT {$CFG->enrol_remotecoursefield} as enrolremotecoursefield
                                        FROM {$CFG->enrol_dbtable}
                                       WHERE {$CFG->enrol_remoteuserfield} = " . $useridfield .
                                         (isset($remote_role_name, $remote_role_value) ? ' AND '.$remote_role_name.' = '.$remote_role_value : ''))) {
@@ -84,7 +84,7 @@ function setup_enrolments(&$user) {
 
                 $courselist = array();
                 while (!$rs->EOF) {         // Make a nice little array of courses to process
-                    $courselist[] = $rs->fields[0];
+                    $courselist[] = $rs->fields['enrolremotecoursefield'];
                     $rs->MoveNext();
                 }
                 $rs->Close();
