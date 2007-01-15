@@ -3755,7 +3755,7 @@ function use_html_editor($name='', $editorhidebuttons='', $id='') {
         $id = 'edit-'.$name;
     }
     echo "\n".'<script type="text/javascript" defer="defer">'."\n";
-    echo '//<![CDATA['."\n";
+    echo '//<![CDATA['."\n\n"; // Extra \n is to fix odd wiki problem, MDL-8185
     echo "$editor = new HTMLArea('$id');\n";
     echo "var config = $editor.config;\n";
 
