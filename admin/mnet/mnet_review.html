@@ -60,6 +60,18 @@ if (isset($mnet_peer->deleted) && $mnet_peer->deleted > 0) {
         <textarea rows="17" cols="65" name="public_key" style="font-size: 8px;"><?php echo $mnet_peer->public_key; ?></textarea>
     </td>
 </tr>
+<tr>
+    <td align="right" valign="top"><?php print_string('expires', 'mnet'); ?>:</td>
+    <td valign="top">
+<?php
+    if($mnet_peer->public_key_expires < time()) {
+        print_string('expired', 'mnet');
+        echo ' ';
+    }
+    echo userdate($mnet_peer->public_key_expires);
+?>
+    </td>
+</tr>
 <?php
 
 if(!empty($currentkey)):

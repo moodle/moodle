@@ -157,6 +157,7 @@ $string['https_self_signed_help']       = 'Permit connections using a self-signe
 $string['hostexists']                   = 'A record already exists for that host and Moodle deployment with ID $a.<br />Click on <em>Continue</em> to edit that record.';
 $string['publickey']                    = 'Public key';
 $string['expires']                      = 'Valid until';
+$string['expired']                      = 'This key expired on';
 $string['publickey_help']               = 'The public key is automatically obtained from the remote server.';
 $string['couldnotgetcert']              = 'No certificate found at <br />$a. <br />The host may be down or incorrectly configured.';
 $string['ipaddress']                    = 'IP address';
