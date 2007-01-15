@@ -90,6 +90,7 @@ class mnet_encxml_parser {
         $p = xml_parse($this->parser, $data);
 
         if (count($this->cipher) > 0) {
+            $this->cipher = array_values($this->cipher);
             $this->payload_encrypted = true;
         }
 
