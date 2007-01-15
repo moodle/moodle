@@ -208,19 +208,33 @@ function mnet_server_strip_wrappers($HTTP_RAW_POST_DATA) {
 }
 
 /**
- * Return the proper XML-RPC content to report an error.
+ * Return the proper XML-RPC content to report an error in the local language.
  *
  * @param  int    $code   The ID code of the error message
+ * @param  string $text   The array-key of the error message in the lang file
+ * @param  string $param  The $a param for the error message in the lang file
  * @return string $text   The text of the error message
  */
 function mnet_server_fault($code, $text, $param = null) {
+    global $MNET_REMOTE_CLIENT;
     if (!is_numeric($code)) {
         $code = 0;
     }
     $code = intval($code);
 
     $text = get_string($text, 'mnet', $param);
+    return mnet_server_fault_xml($code, $text);
+}
 
+/**
+ * Return the proper XML-RPC content to report an error.
+ *
+ * @param  int    $code   The ID code of the error message
+ * @param  string $text   The error message
+ * @return string $text   The XML text of the error message
+ */
+function mnet_server_fault_xml($code, $text) {
+    global $MNET_REMOTE_CLIENT;
     // Replace illegal XML chars - is this already in a lib somewhere?
     $text = str_replace(array('<','>','&','"',"'"), array('&lt;','&gt;','&amp;','&quot;','&apos;'), $text);
 
