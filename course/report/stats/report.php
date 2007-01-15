@@ -11,14 +11,17 @@
         }
     }
     
-
-    echo '<form action="index.php" method="post">'."\n"
-        .'<input type="hidden" name="mode" value="'.$mode.'" />'."\n";
+    // Ugly hack. This file may be included from admin or course reports.
+    // For admin reports, $adminroot is set. We basically use it to decide
+    // what kind of footer we need to print.
+    if (!isset($adminroot)) {
+        $adminroot = false;
+    }
 
     $reportoptions = stats_get_report_options($course->id, $mode);
     $timeoptions = report_stats_timeoptions($mode);
     if (empty($timeoptions)) {
-        error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/view.php?id='.$course->id);
+        error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/view.php?id='.$course->id, $adminroot);
     }
 
     $table->width = '*';
@@ -36,7 +39,7 @@
             .' ORDER BY r.sortorder';
         
         if (!$us = get_records_sql($sql)) {
-            error('Cannot enter detailed view: No users found for this course.');
+            error('Cannot enter detailed view: No users found for this course.', $adminroot);
         }
 
         foreach ($us as $u) {
@@ -62,13 +65,18 @@
                                '<input type="submit" value="'.get_string('view').'" />') ;
     }
 
+    echo '<form action="index.php" method="post">'."\n"
+        .'<fieldset class="invisiblefieldset">'."\n"
+        .'<input type="hidden" name="mode" value="'.$mode.'" />'."\n";
 
     print_table($table);
+
+    echo '</fieldset>';
     echo '</form>';
 
     if (!empty($report) && !empty($time)) {
         if ($report == STATS_REPORT_LOGINS && $course->id != SITEID) {
-            error("This type of report is only available for the site course");
+            error('This type of report is only available for the site course', $adminroot);
         }
         $timesql = 
         $param = stats_get_parameters($time,$report,$course->id,$mode);
