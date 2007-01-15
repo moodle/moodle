@@ -2596,9 +2596,9 @@ function admin_externalpage_print_header($adminroot) {
     if (!empty($SITE->fullname)) {
         $pageblocks = blocks_setup($PAGE);
 
-        $preferred_width_left = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
+        $preferred_width_left = bounded_number(BLOCK_L_MIN_WIDTH,
+                                               blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
                                                BLOCK_L_MAX_WIDTH);
-
         $PAGE->print_header();
         echo '<table id="layout-table"><tr>';
         echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
@@ -2608,7 +2608,6 @@ function admin_externalpage_print_header($adminroot) {
     } else {
         print_header();
     }
-
 }
 
 function admin_externalpage_print_footer($adminroot) {
@@ -2617,14 +2616,14 @@ function admin_externalpage_print_footer($adminroot) {
 
     if (!empty($SITE->fullname)) {
         $pageblocks = blocks_setup($PAGE);
-        $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
+        $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH,
+                                                blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
                                                 BLOCK_R_MAX_WIDTH);
         echo '</td>';
         echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
         echo '</td></tr></table>';
     }
-
     print_footer();
 }
 

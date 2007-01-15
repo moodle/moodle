@@ -46,13 +46,13 @@
     $timeoptions = stats_get_time_options($now,$lastweekend,$lastmonthend,$earliestday,$earliestweek,$earliestmonth);
 
     if (empty($timeoptions)) {
-        error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/view.php?id='.$course->id);
+        error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/view.php?id='.$course->id, $adminroot);
     }
 
     echo '<form action="index.php" method="post">'."\n";
+    echo '<fieldset class="invisiblefieldset">';
 
     $table->width = '*';
-
     $table->align = array('left','left','left','left','left','left');
     $table->data[] = array(get_string('statsreporttype'),choose_from_menu($reportoptions,'report',$report,'','','',true),
                            get_string('statstimeperiod'),choose_from_menu($timeoptions,'time',$time,'','','',true),
@@ -60,6 +60,7 @@
                            '<input type="submit" value="'.get_string('view').'" />') ;
 
     print_table($table);
+    echo '</fieldset>';
     echo '</form>';
 
     if (!empty($report) && !empty($time)) {
@@ -79,13 +80,13 @@
         $courses = get_records_sql($sql, 0, $numcourses);
 
         if (empty($courses)) {
-            notify(get_string('statsnodata'));
+            notify(get_string('statsnodata'));echo '</td></tr></table>';echo '<p>after notify</p>';
 
         } else {
             if (empty($CFG->gdversion)) {
-                echo '<div align="center">(' . get_string("gdneed") .')</div>';
+                echo '<div class="boxaligncenter">(' . get_string("gdneed") .')</div>';
             } else {
-                echo '<div align="center"><img alt="'.get_string('courseoverviewgraph').'" src="'.$CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/reportsgraph.php?time='.$time.'&report='.$report.'&numcourses='.$numcourses.'" /></div>';
+                echo '<div class="boxaligncenter"><img alt="'.get_string('courseoverviewgraph').'" src="'.$CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/reportsgraph.php?time='.$time.'&report='.$report.'&numcourses='.$numcourses.'" /></div>';
             }
 
             $table = new StdClass;
@@ -114,7 +115,6 @@
             print_table($table);
         }
     }
-
     admin_externalpage_print_footer($adminroot);
 
 ?>
