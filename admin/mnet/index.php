@@ -106,6 +106,10 @@
                     <td><pre><?php echo $MNET->public_key; ?></pre></td>
                 </tr>
                 <tr valign="top">
+                    <td align="right"><?php print_string('expires', 'mnet'); ?>:</td>
+                    <td><?php echo userdate($MNET->public_key_expires); ?></td>
+                </tr>
+                <tr valign="top">
                     <td align="right"><?php print_string('net', 'mnet'); ?>:</td>
                     <td><input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
                         <input type="radio" name="mode" value="off" <?php echo ("off" == $CFG->mnet_dispatcher_mode)? 'checked="true"' : '' ?> /> <?php print_string('off', 'mnet'); ?> <br />
