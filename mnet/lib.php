@@ -43,11 +43,9 @@ function mnet_get_hostname_from_uri($uri = null) {
  *
  * @param  string  $uri     The URI of a file on the remote computer, including
  *                          its http:// or https:// prefix
- * @param  bool    $verify  True if the SSL Cert must be signed by a trusted 3rd
- *                          party. [TODO! NOT IMPLEMENTED]
  * @return string           A PEM formatted SSL Certificate.
  */
-function mnet_get_public_key($uri, $verify=false) {
+function mnet_get_public_key($uri) {
     global $CFG;
     // The key may be cached in the mnet_set_public_key function...
     // check this first
