@@ -103,6 +103,7 @@ function upgrade_local_db($continueto) {
                 notify(get_string('databasesuccess'), 'notifysuccess');
                 notify(get_string('databaseupgradelocal', '', $local_version));
                 print_continue($continueto);
+                print_footer('none');
                 exit;
             } else {
                 error('Upgrade of local database customisations failed! (Could not update version in config table)');

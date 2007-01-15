@@ -69,7 +69,7 @@ function upgrade_group_db($continueto) {
             notify(get_string('databasesuccess'), 'green');
             notify(get_string('databaseupgradegroups', '', $group_version), 'green');
             print_continue($continueto);
-            print_footer();
+            print_footer('none');
             exit;
         } else {
             error("Upgrade of group system failed! (Could not update version in config table)");
@@ -127,7 +127,7 @@ function upgrade_group_db($continueto) {
                 notify(get_string('databasesuccess'), 'green');
                 notify(get_string('databaseupgradegroups', '', $group_version), 'green');
                 print_continue($continueto);
-                print_footer();
+                print_footer('none');
                 exit;
             } else {
                 error("Upgrade of group system failed! (Could not update version in config table)");

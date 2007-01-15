@@ -57,6 +57,7 @@ function upgrade_plugins($type, $dir, $return) {
 
         if (!empty($plugin->requires)) {
             if ($plugin->requires > $CFG->version) {
+                $info = new object();
                 $info->pluginname = $plug;
                 $info->pluginversion  = $plugin->version;
                 $info->currentmoodle = $CFG->version;
@@ -69,7 +70,6 @@ function upgrade_plugins($type, $dir, $return) {
                 upgrade_log_start();
                 notify(get_string('pluginrequirementsnotmet', 'error', $info));
                 $updated_plugins = true;
-                unset($info);
                 continue;
             }
         }
@@ -169,7 +169,7 @@ function upgrade_plugins($type, $dir, $return) {
 
     if ($updated_plugins) {
         print_continue($return);
-        print_footer();
+        print_footer('none');
         die;
     }
 }
@@ -227,6 +227,7 @@ function upgrade_activity_modules($return) {
 
         if (!empty($module->requires)) {
             if ($module->requires > $CFG->version) {
+                $info = new object();
                 $info->modulename = $mod;
                 $info->moduleversion  = $module->version;
                 $info->currentmoodle = $CFG->version;
@@ -239,7 +240,6 @@ function upgrade_activity_modules($return) {
                 upgrade_log_start();
                 notify(get_string('modulerequirementsnotmet', 'error', $info));
                 $updated_modules = true;
-                unset($info);
                 continue;
             }
         }
@@ -382,7 +382,7 @@ function upgrade_activity_modules($return) {
 
     if ($updated_modules) {
         print_continue($return);
-        print_footer();
+        print_footer('none');
         die;
     }
 }

@@ -190,6 +190,7 @@
             error("Error: Main databases NOT set up successfully");
         }
         print_continue('index.php');
+        print_footer('none');
         die;
     }
 
@@ -287,6 +288,7 @@
                         remove_dir($CFG->dataroot . '/cache', true); // flush cache
                         notify($strdatabasesuccess, "green");
                         print_continue("upgradesettings.php");
+                        print_footer('none');
                         exit;
                     } else {
                         notify("Upgrade failed!  (Could not update version in config table)");
