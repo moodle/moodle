@@ -46,5 +46,27 @@ class mnet_remote_client extends mnet_peer {
 
         return false;
     }
+
+    function refresh_key() {
+        // set up an RPC request
+        $mnetrequest = new mnet_xmlrpc_client();
+        // Use any method - listServices is pretty lightweight.
+        $mnetrequest->set_method('system/listServices');
+
+        // Do RPC call and store response
+        if ($mnetrequest->send($this) === true) {
+            // Ok - we actually don't care about the result
+            $temp = new mnet_peer();
+            $temp->set_id($this->id);
+            if($this->public_key != $temp->public_key) {
+                $newkey = param_clean($temp->public_key, PARAM_PEM);
+                if(!empty($newkey)) {
+                    $this->public_key = $newkey;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
 ?>

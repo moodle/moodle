@@ -121,6 +121,15 @@ function mnet_server_strip_wrappers($HTTP_RAW_POST_DATA) {
         $crypt_parser = new mnet_encxml_parser();
         $crypt_parser->parse($HTTP_RAW_POST_DATA);
 
+        // Make sure we know who we're talking to
+        $host_record_exists = $MNET_REMOTE_CLIENT->set_wwwroot($crypt_parser->remote_wwwroot);
+
+        if (false == $host_record_exists) {
+            exit(mnet_server_fault(7020, 'wrong-wwwroot', $crypt_parser->remote_wwwroot));
+        } elseif (isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] != $MNET_REMOTE_CLIENT->ip_address) {
+            exit(mnet_server_fault(7017, 'wrong-ip'));
+        }
+
         if ($crypt_parser->payload_encrypted) {
 
             $key  = array_pop($crypt_parser->cipher);  // This key is Symmetric
@@ -128,8 +137,8 @@ function mnet_server_strip_wrappers($HTTP_RAW_POST_DATA) {
 
             $crypt_parser->free_resource();
 
-            // Initialize payload var
-            $payload = '';
+            $payload          = '';    // Initialize payload var
+            $push_current_key = false; // True if we need to push a fresh key to the peer
 
             //                                          &$payload
             $isOpen = openssl_open(base64_decode($data), $payload, base64_decode($key), $MNET->get_private_key());
@@ -147,7 +156,7 @@ function mnet_server_strip_wrappers($HTTP_RAW_POST_DATA) {
                     $isOpen      = openssl_open(base64_decode($data), $payload, base64_decode($key), $keyresource);
                     if ($isOpen) {
                         // It's an older code, sir, but it checks out
-                        exit(mnet_server_fault(7025, $MNET->public_key));
+                        $push_current_key = true;
                     }
                 }
             }
@@ -170,12 +179,12 @@ function mnet_server_strip_wrappers($HTTP_RAW_POST_DATA) {
 
         unset($payload);
 
-        $host_record_exists = $MNET_REMOTE_CLIENT->set_wwwroot($sig_parser->remote_wwwroot);
-
-        if (false == $host_record_exists) {
-            exit(mnet_server_fault(7020, 'wrong-wwwroot', $sig_parser->remote_wwwroot));
-        } elseif (isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] != $MNET_REMOTE_CLIENT->ip_address) {
-            exit(mnet_server_fault(7017, 'wrong-ip'));
+        // if the peer used one of our public keys that have expired, we will
+        // return a signed/encrypted error message with our new public key 
+        if($push_current_key) {
+            // NOTE: Here, we use the 'mnet_server_fault_xml' to avoid
+            // get_string being called on our public_key
+            exit(mnet_server_fault_xml(7025, $MNET->public_key));
         }
 
         /**
@@ -194,7 +203,16 @@ function mnet_server_strip_wrappers($HTTP_RAW_POST_DATA) {
         if ($signature_verified == 1) {
             // Parse the XML
         } elseif ($signature_verified == 0) {
-            exit(mnet_server_fault(710, 'verifysignature-invalid'));
+            $currkey = mnet_get_public_key($MNET_REMOTE_CLIENT->wwwroot);
+            if($currkey != $certificate) {
+                // Has the server updated its certificate since our last 
+                // handshake?
+                if(!$MNET_REMOTE_CLIENT->refresh_key()) {
+                    exit(mnet_server_fault(7026, 'verifysignature-invalid'));
+                }
+            } else {
+                exit(mnet_server_fault(710, 'verifysignature-invalid'));
+            }
         } else {
             exit(mnet_server_fault(711, 'verifysignature-error'));
         }
