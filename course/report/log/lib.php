@@ -101,10 +101,10 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
             if (has_capability('moodle/site:viewreports', $sitecontext) && $showcourses) {
                 if ($ccc = get_records("course", "", "", "fullname","id,fullname,category")) {
                     foreach ($ccc as $cc) {
-                        if ($cc->category) {
-                            $courses["$hostid/$cc->id"] = "- $cc->fullname";
+                        if ($cc->id == SITEID) {
+                            $sites["$hostid/$cc->id"]   = $cc->fullname.' ('.get_string('site').')';
                         } else {
-                            $sites["$hostid/$cc->id"]   = "$cc->fullname Site";
+                            $courses["$hostid/$cc->id"] = $cc->fullname;
                         }
                     }
                 }
@@ -114,10 +114,10 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
                 $sql = "select distinct course, coursename from mdl_mnet_log where hostid = '$hostid'";
                 if ($ccc = get_records_sql($sql)) {
                     foreach ($ccc as $cc) {
-                        if (1 == $cc->course) {
-                            $sites["$hostid/$cc->course"]   = "$cc->coursename Site";
+                        if (1 == $cc->course) { // TODO: this might be wrong - site course may have another id
+                            $sites["$hostid/$cc->course"]   = $cc->coursename.' ('.get_string('site').')';
                         } else {
-                            $courses["$hostid/$cc->course"] = "- $cc->coursename";
+                            $courses["$hostid/$cc->course"] = $cc->coursename;
                         }
                     }
                 }
@@ -212,9 +212,8 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
         $selecteddate = $today;
     }
 
-    $cid = empty($course->id)? '1' : $course->id;
-    echo "<form class=\"mform\" action=\"$CFG->wwwroot/course/report/log/index.php\" method=\"get\">\n";
-    echo "<fieldset class=\"invisiblefieldset boxaligncenter\">\n";
+    echo "<form class=\"logselectform\" action=\"$CFG->wwwroot/course/report/log/index.php\" method=\"get\">\n";
+    echo "<div>\n";//invisible fieldset here breaks wrapping
     echo "<input type=\"hidden\" name=\"chooselog\" value=\"1\" />\n";
     echo "<input type=\"hidden\" name=\"showusers\" value=\"$showusers\" />\n";
     echo "<input type=\"hidden\" name=\"showcourses\" value=\"$showcourses\" />\n";
@@ -223,9 +222,10 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
         choose_from_menu_nested($dropdown, "host_course", $hostid.'/'.$cid, "");
     } else {
         $courses = array();
-        $courses[$course->id] = $course->fullname . ((empty($course->category)) ? ' (Site) ' : '');
+        $courses[$course->id] = $course->fullname . ((empty($course->category)) ? ' ('.get_string('site').') ' : '');
         choose_from_menu($courses,"id",$course->id,false);
         if (has_capability('moodle/site:viewreports', $sitecontext)) {
+            $a = new object();
             $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
                 ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showcourses=1&showusers=$showusers";
             print_string('logtoomanycourses','moodle',$a);
@@ -262,23 +262,17 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
         print_string('logtoomanyusers','moodle',$a);
     }
     choose_from_menu ($dates, "date", $selecteddate, get_string("alldays"));
-    echo '<br />';
     choose_from_menu ($activities, "modid", $selectedactivity, get_string("allactivities"), "", "");
     choose_from_menu ($actions, 'modaction', $modaction, get_string("allactions"));
     
     $logformats = array('showashtml' => get_string('displayonpage'),
                         'downloadascsv' => get_string('downloadtext'),
+                        'downloadasods' => get_string('downloadods'),
                         'downloadasexcel' => get_string('downloadexcel'));
-    /*
-    $logformats = array('showashtml' => get_string('displayonpage'),
-                        'downloadascsv' => get_string('downloadtext'),
-                        'downloadasexcel' => get_string('downloadexcel'),
-                        'downloadasooo' => get_string('downloadasooo'));
-    */
     choose_from_menu ($logformats, 'logformat', $logformat, false);
     echo '<input type="submit" value="'.get_string('gettheselogs').'" />';
-    echo '</fieldset>';
-    echo "</form>";
+    echo '</div>';
+    echo '</form>';
 }
 
 function print_log_selector_form($course, $selecteduser=0, $selecteddate='today',
@@ -433,8 +427,8 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         $selecteddate = $today;
     }
 
-    echo "<center>\n";
-    echo "<form action=\"$CFG->wwwroot/course/report/log/index.php\" method=\"get\">\n";
+    echo "<form class=\"logselectform\" action=\"$CFG->wwwroot/course/report/log/index.php\" method=\"get\">\n";
+    echo "<div>\n";
     echo "<input type=\"hidden\" name=\"chooselog\" value=\"1\" />\n";
     echo "<input type=\"hidden\" name=\"showusers\" value=\"$showusers\" />\n";
     echo "<input type=\"hidden\" name=\"showcourses\" value=\"$showcourses\" />\n";
@@ -443,9 +437,10 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     } else {
         //        echo '<input type="hidden" name="id" value="'.$course->id.'" />';
         $courses = array();
-        $courses[$course->id] = $course->fullname . (($course->id == SITEID) ? ' (Site) ' : '');
+        $courses[$course->id] = $course->fullname . (($course->id == SITEID) ? ' ('.get_string('site').') ' : '');
         choose_from_menu($courses,"id",$course->id,false);
         if (has_capability('moodle/site:viewreports', $sitecontext)) {
+            $a = new object();
             $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
                 ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showcourses=1&showusers=$showusers";
             print_string('logtoomanycourses','moodle',$a);
@@ -477,6 +472,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
             $users[0] = get_string('allparticipants');
         }
         choose_from_menu($users, 'user', $selecteduser, false);
+        $a = new object();
         $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
             ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showusers=1&showcourses=$showcourses";
         print_string('logtoomanyusers','moodle',$a);
@@ -491,8 +487,8 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
                         'downloadasexcel' => get_string('downloadexcel'));
     choose_from_menu ($logformats, 'logformat', $logformat, false);
     echo '<input type="submit" value="'.get_string('gettheselogs').'" />';
-    echo "</form>";
-    echo "</center>";
+    echo '</div>';
+    echo '</form>';
 }
 
 ?>

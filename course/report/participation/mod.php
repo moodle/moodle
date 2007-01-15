@@ -65,6 +65,10 @@
             $useroptions[$role->id] = $role->name;
         }
     }
+    $guestrole = get_guest_role();
+    if (empty($useroptions[$gusetrole->id])) {
+            $useroptions[$guestrole->id] = $guestrole->name;
+    }
     $actionoptions = array('' => $strallactions,
                            'view' => $strview,
                            'post' => $strpost,
@@ -72,27 +76,18 @@
     
     
     // print first controls.
-    echo '<form action="'.$CFG->wwwroot.'/course/report/participation/index.php" method="get">'."\n".
-        '<input type="hidden" name="id" value="'.$course->id.'" />'."\n".
-        '<table align="center" cellpadding="10"><tr>'."\n".
-        "<td>\n".
-        get_string('activitymodule').'&nbsp;';
+    echo '<form class="participationselectform" action="'.$CFG->wwwroot.'/course/report/participation/index.php" method="get"><div>'."\n".
+         '<input type="hidden" name="id" value="'.$course->id.'" />'."\n";
+    echo '<label for="menumoduleid">'.get_string('activitymodule').'</label>';
     choose_from_menu($modoptions,'moduleid',0);
-    echo "</td><td>\n".
-        get_string('lookback').'&nbsp;';
+    echo '<label for="menutimefrom">'.get_string('lookback').'</label>';
     choose_from_menu($timeoptions,'timefrom',0);
-    echo "</td><td>".
-        get_string('showonly').'&nbsp;';
+    echo '<label for="menuroleid">'.get_string('showonly').'</label>';
     choose_from_menu($useroptions,'roleid',0,'');
-    echo "</td><td>\n".
-        get_string('showactions'),'&nbsp;';
+    echo '<label for="menuaction">'.get_string('showactions').'</label>';
     choose_from_menu($actionoptions,'action',0,'');
-    echo '</td><td>';
     helpbutton('participationreport',get_string('participationreport'));
-    echo 
-        '<input type="submit" value="'.get_string('go').'" />'."\n".
-        "</td></tr></table>\n".
-        "</form>\n";
+    echo '<input type="submit" value="'.get_string('go').'" />'."\n</div></form>\n";
 
 
 ?>

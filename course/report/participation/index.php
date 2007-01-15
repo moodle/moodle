@@ -113,6 +113,10 @@
             $useroptions[$r->id] = $r->name;
         }
     }
+    $guestrole = get_guest_role();
+    if (empty($useroptions[$gusetrole->id])) {
+            $useroptions[$guestrole->id] = $guestrole->name;
+    }
     $actionoptions = array('' => $strallactions,
                            'view' => $strview,
                            'post' => $strpost,
@@ -120,29 +124,20 @@
     
     
     // print first controls.
-    echo '<form action="index.php" method="get">'."\n".
-        '<input type="hidden" name="id" value="'.$course->id.'" />'."\n".
-        '<input type="hidden" name="oldmod" value="'.$moduleid.'" />'."\n".
-        '<input type="hidden" name="instanceid" value="'.$instanceid.'" />'."\n".
-        '<table align="center" cellpadding="10"><tr>'."\n".
-        "<td>\n".
-        get_string('activitymodule').'&nbsp;';
+    echo '<form class="participationselectform" action="index.php" method="get"><div>'."\n".
+         '<input type="hidden" name="id" value="'.$course->id.'" />'."\n".
+         '<input type="hidden" name="oldmod" value="'.$moduleid.'" />'."\n".
+         '<input type="hidden" name="instanceid" value="'.$instanceid.'" />';
+    echo '<label for="menumoduleid">'.get_string('activitymodule').'</label>';
     choose_from_menu($modoptions,'moduleid',$moduleid);
-    echo "</td><td>\n".
-        get_string('lookback').'&nbsp;';
+    echo '<label for="menutimefrom">'.get_string('lookback').'</label>';
     choose_from_menu($timeoptions,'timefrom',$timefrom);
-    echo "</td><td>".
-        get_string('showonly').'&nbsp;';
+    echo '<label for="menuroleid">'.get_string('showonly').'</label>';
     choose_from_menu($useroptions,'roleid',$roleid,'');
-    echo "</td><td>\n".
-        get_string('showactions'),'&nbsp;';
+    echo '<label for="menuaction">'.get_string('showactions').'</label>';
     choose_from_menu($actionoptions,'action',$action,'');
-    echo '</td><td>';
     helpbutton('participationreport',get_string('participationreport'));
-    echo 
-        '<input type="submit" value="'.get_string('go').'" />'."\n".
-        "</td></tr></table>\n".
-        "</form>\n";
+    echo '<input type="submit" value="'.get_string('go').'" />'."\n</div></form>\n";
 
     if (empty($moduleid)) {
         notify(get_string('selectamodule'));

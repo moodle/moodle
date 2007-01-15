@@ -1551,6 +1551,46 @@ body#course-index .singlebutton {
 }
 
 
+#course-report #content {
+  padding-top:15px;
+  padding-bottom:15px;
+}
+
+#course-report p {
+  text-align:center;
+}
+
+#course-report .logselectform,
+#course-report .participationselectform,
+#course-report-log-index .logselectform,
+#course-report-participation-index .participationselectform {
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  margin-top:10px;
+  margin-bottom:10px;
+}
+
+#course-report .participationselectform label,
+#course-report-participation-index .participationselectform label {
+  margin-left:15px;
+  margin-right:5px;
+}
+
+#course-report-log-index .info {
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  margin:10px;
+}
+
+#course-report-log-index .logtable {
+  margin-left:auto;
+  margin-right:auto;
+}
+
+
+
 /***
  *** Doc
  ***/

@@ -5,8 +5,12 @@
     }
     
     if (!empty($CFG->enablestats)) {
-        echo '<p style="text-align:center;">';
+        echo '<p>';
         echo '<a href="'.$CFG->wwwroot.'/course/report/stats/index.php?course='.$course->id.'">'.get_string('stats').'</a>';
+        echo '</p>';
+    } else {
+        echo '<p>';
+        echo get_string('statsoff');
         echo '</p>';
     }
 ?>

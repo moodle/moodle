@@ -466,13 +466,13 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
 
     $strftimedatetime = get_string("strftimedatetime");
 
-    echo "<p align=\"center\">\n";
+    echo "<div class=\"info\">\n";
     print_string("displayingrecords", "", $totalcount);
-    echo "</p>\n";
+    echo "</div>\n";
 
     print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&amp;");
 
-    echo "<table class=\"logtable\" align=\"center\" cellpadding=\"3\" cellspacing=\"0\">\n";
+    echo "<table class=\"logtable\" cellpadding=\"3\" cellspacing=\"0\" summary=\"\">\n";
     echo "<tr>";
     if ($course->id == SITEID) {
         echo "<th class=\"c0 header\" scope=\"col\">".get_string('course')."</th>\n";
@@ -518,23 +518,23 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
 
         echo '<tr class="r'.$row.'">';
         if ($course->id == SITEID) {
-            echo "<td class=\"r$row c0\" nowrap=\"nowrap\">\n";
+            echo "<td class=\"r$row c0\">\n";
             echo "    <a href=\"{$CFG->wwwroot}/course/view.php?id={$log->course}\">".$courses[$log->course]."</a>\n";
             echo "</td>\n";
         }
-        echo "<td class=\"r$row c1\" nowrap=\"nowrap\" align=\"right\">".userdate($log->time, '%a').
+        echo "<td class=\"r$row c1\" align=\"right\">".userdate($log->time, '%a').
              ' '.userdate($log->time, $strftimedatetime)."</td>\n";
-        echo "<td class=\"r$row c2\" nowrap=\"nowrap\">\n";
+        echo "<td class=\"r$row c2\">\n";
         link_to_popup_window("/iplookup/index.php?ip=$log->ip&amp;user=$log->userid", 'iplookup',$log->ip, 400, 700);
         echo "</td>\n";
         $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
-        echo "<td class=\"r$row c3\" nowrap=\"nowrap\">\n";
+        echo "<td class=\"r$row c3\">\n";
         echo "    <a href=\"$CFG->wwwroot/user/view.php?id={$log->userid}&amp;course={$log->course}\">$fullname</a>\n";
         echo "</td>\n";
-        echo "<td class=\"r$row c4\" nowrap=\"nowrap\">\n";
+        echo "<td class=\"r$row c4\">\n";
         link_to_popup_window( make_log_url($log->module,$log->url), 'fromloglive',"$log->module $log->action", 400, 600);
         echo "</td>\n";;
-        echo "<td class=\"r$row c5\" nowrap=\"nowrap\">{$log->info}</td>\n";
+        echo "<td class=\"r$row c5\">{$log->info}</td>\n";
         echo "</tr>\n";
     }
     echo "</table>\n";
@@ -572,13 +572,13 @@ function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC",
 
     $strftimedatetime = get_string("strftimedatetime");
 
-    echo "<p align=\"center\">\n";
+    echo "<div class=\"info\">\n";
     print_string("displayingrecords", "", $totalcount);
-    echo "</p>\n";
+    echo "</div>\n";
 
     print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&amp;");
 
-    echo "<table class=\"logtable\" align=\"center\" cellpadding=\"3\" cellspacing=\"0\">\n";
+    echo "<table class=\"logtable\" cellpadding=\"3\" cellspacing=\"0\">\n";
     echo "<tr>";
     if ($course->id == SITEID) {
         echo "<th class=\"c0 header\">".get_string('course')."</th>\n";
@@ -625,23 +625,23 @@ function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC",
 
         echo '<tr class="r'.$row.'">';
         if ($course->id == SITEID) {
-            echo "<td class=\"r$row c0\" nowrap=\"nowrap\">\n";
+            echo "<td class=\"r$row c0\" >\n";
             echo "    <a href=\"{$CFG->wwwroot}/course/view.php?id={$log->course}\">".$courses[$log->course]."</a>\n";
             echo "</td>\n";
         }
-        echo "<td class=\"r$row c1\" nowrap=\"nowrap\" align=\"right\">".userdate($log->time, '%a').
+        echo "<td class=\"r$row c1\" align=\"right\">".userdate($log->time, '%a').
              ' '.userdate($log->time, $strftimedatetime)."</td>\n";
-        echo "<td class=\"r$row c2\" nowrap=\"nowrap\">\n";
+        echo "<td class=\"r$row c2\" >\n";
         link_to_popup_window("/iplookup/index.php?ip=$log->ip&amp;user=$log->userid", 'iplookup',$log->ip, 400, 700);
         echo "</td>\n";
         $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
-        echo "<td class=\"r$row c3\" nowrap=\"nowrap\">\n";
+        echo "<td class=\"r$row c3\" >\n";
         echo "    <a href=\"$CFG->wwwroot/user/view.php?id={$log->userid}\">$fullname</a>\n";
         echo "</td>\n";
-        echo "<td class=\"r$row c4\" nowrap=\"nowrap\">\n";
+        echo "<td class=\"r$row c4\">\n";
         echo $log->action .': '.$log->module;
         echo "</td>\n";;
-        echo "<td class=\"r$row c5\" nowrap=\"nowrap\">{$log->info}</td>\n";
+        echo "<td class=\"r$row c5\">{$log->info}</td>\n";
         echo "</tr>\n";
     }
     echo "</table>\n";

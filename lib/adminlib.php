@@ -2600,7 +2600,7 @@ function admin_externalpage_print_header($adminroot) {
                                                blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
                                                BLOCK_L_MAX_WIDTH);
         $PAGE->print_header();
-        echo '<table id="layout-table"><tr>';
+        echo '<table id="layout-table" summary=""><tr>';
         echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
         echo '</td>';
