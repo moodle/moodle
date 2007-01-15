@@ -98,7 +98,7 @@ echo '<p>'; print_checkbox('showsearch', 1, $showsearch, get_string('showsearch'
 echo '<p>'; print_checkbox('thorough', 1, $thorough, get_string('thorough', $langfile)); echo '</p>';
 echo '<p>';
     echo '<label for="path">', get_string('onlytest', $langfile), '</label> ';
-    echo '<input type="text" id="path" name="path" value="', $displaypath, '" size="60" />';
+    echo '<input type="text" id="path" name="path" value="', $displaypath, '" size="40" />';
 echo '</p>';
 echo '<input type="submit" value="' . get_string('runtests', $langfile) . '" />';
 echo '</fieldset>';
