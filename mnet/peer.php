@@ -25,7 +25,7 @@ class mnet_peer {
         return true;
     }
 
-    function bootstrap($wwwroot) {
+    function bootstrap($wwwroot, $pubkey = null) {
 
         if (substr($wwwroot, 0, -1) == '/') {
             $wwwroot = substr($wwwroot, 0, -1);
@@ -59,7 +59,11 @@ class mnet_peer {
             $this->wwwroot              = $wwwroot;
             $this->ip_address           = $ip_address;
             $this->deleted              = 0;
-            $this->public_key           = clean_param(mnet_get_public_key($this->wwwroot), PARAM_PEM);
+            if(empty($pubkey)) {
+                $this->public_key           = clean_param(mnet_get_public_key($this->wwwroot), PARAM_PEM);
+            } else {
+                $this->public_key           = clean_param($pubkey, PARAM_PEM);
+            }
             $this->public_key_expires   = $this->check_common_name($this->public_key);
             $this->last_connect_time    = 0;
             $this->last_log_id          = 0;

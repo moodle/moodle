@@ -670,17 +670,29 @@ function mnet_server_invoke_method($includefile, $methodname, $method, $payload,
     }
 }
 
+/**
+ * Accepts a public key from a new remote host and returns the public key for
+ * this host. If 'register all hosts' is turned on, it will bootstrap a record
+ * for the remote host in the mnet_host table (if it's not already there)
+ * 
+ * @param  string  $function      XML-RPC requires this but we don't... discard!
+ * @param  array   $params        Array of parameters
+ *                                $params[0] is the remote wwwroot
+ *                                $params[1] is the remote public key
+ * @return string                 The XML-RPC response
+ */
 function mnet_keyswap($function, $params) {
     global $CFG, $MNET;
     $return = array();
 
     if (!empty($CFG->mnet_register_allhosts)) {
         $mnet_peer = new mnet_peer();
-        $keyok = $mnet_peer->bootstrap($params[0]);
+        $keyok = $mnet_peer->bootstrap($params[0], $params[1]);
         if ($keyok) {
             $mnet_peer->commit();
         }
     }
     return $MNET->public_key;
 }
+
 ?>

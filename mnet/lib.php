@@ -46,7 +46,7 @@ function mnet_get_hostname_from_uri($uri = null) {
  * @return string           A PEM formatted SSL Certificate.
  */
 function mnet_get_public_key($uri) {
-    global $CFG;
+    global $CFG, $MNET;
     // The key may be cached in the mnet_set_public_key function...
     // check this first
     $key = mnet_set_public_key($uri);
@@ -54,7 +54,7 @@ function mnet_get_public_key($uri) {
         return $key;
     }
 
-    $rq = xmlrpc_encode_request('system/keyswap', $CFG->wwwroot);
+    $rq = xmlrpc_encode_request('system/keyswap', array($CFG->wwwroot, $MNET->public_key));
     $ch = curl_init($uri.'/mnet/xmlrpc/server.php');
 
     curl_setopt($ch, CURLOPT_TIMEOUT, 60);
