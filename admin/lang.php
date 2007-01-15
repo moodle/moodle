@@ -46,6 +46,7 @@
     define('LANG_DEFAULT_FILE', '');            // default file to translate. Empty allowed
     define('LANG_LINK_MISSING_STRINGS', 1);     // create links from "missing" page to "compare" page?
     define('LANG_DEFAULT_USELOCAL', 0);         // should *_utf8_local be used by default?
+    define('LANG_MISSING_TEXT_MAX_LEN', 60);    // maximum length of the missing text to display
 
     $mode        = optional_param('mode', '', PARAM_ALPHA);
     $currentfile = optional_param('currentfile', LANG_DEFAULT_FILE, PARAM_FILE);
@@ -198,6 +199,9 @@
                     } else {
                         $missinglinkstart = '';
                         $missinglinkend = '';
+                    }
+                    if (strlen($value) > LANG_MISSING_TEXT_MAX_LEN) {
+                        $value = substr($value, 0, LANG_MISSING_TEXT_MAX_LEN) . ' ...';
                     }
                     $o .= "$"."string['".$missinglinkstart.$key.$missinglinkend."'] = \"$value\";<br />";
                 }
