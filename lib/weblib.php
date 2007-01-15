@@ -1051,7 +1051,7 @@ function popup_form($common, $options, $formid, $selected='', $nothing='choose',
                'document.getElementById("noscript'.$formid.'").style.display = "none";'.
                "\n//]]>\n".'</script>';
     $output .= '</fieldset>';
-    $output .= '</form>' . "\n";
+    $output .= '</form>';
 
     if ($return) {
         return $output;
@@ -3847,11 +3847,13 @@ function update_course_icon($courseid) {
             $edit = '1';
         }
 
-        return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/course/view.php\"><div>".
-            "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
-            "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
-            "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />".
-            "<input type=\"submit\" value=\"$string\" /></div></form>";
+        return '<form '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/course/view.php">'.
+               '<fieldset class="invisiblefieldset">'.
+               '<input type="hidden" name="id" value="'.$courseid.'" />'.
+               '<input type="hidden" name="edit" value="'.$edit.'" />'.
+               '<input type="hidden" name="sesskey" value="'.sesskey().'" />'.
+               '<input type="submit" value="'.$string.'" />'.
+               '</fieldset></form>';
     }
 }
 
