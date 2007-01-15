@@ -96,8 +96,12 @@ function ewiki_html_tag_balancer(&$html) {
          #-- opening tag?
          elseif ($tname[0] != "/") {
 
+            #-- cdata
+            if($tname=='![cdata[') {
+                // LEAVE THE POOR THING ALONE!
+            }
             #-- standalone tag
-            if (in_array($tname, $html_standalone)) {
+            else if (in_array($tname, $html_standalone)) {
                $tattr = rtrim(rtrim($tattr, "/"));
                if (EWIKI_XHTML) {
                   $tattr .= " /";
