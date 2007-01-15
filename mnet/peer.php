@@ -27,6 +27,10 @@ class mnet_peer {
 
     function bootstrap($wwwroot) {
 
+        if (substr($wwwroot, 0, -1) == '/') {
+            $wwwroot = substr($wwwroot, 0, -1);
+        }
+
         if ( ! $this->set_wwwroot($wwwroot) ) {
             $hostname = mnet_get_hostname_from_uri($wwwroot);
 
@@ -50,10 +54,6 @@ class mnet_peer {
                 if ($count > 0) {
                     $this->name = $matches[1];
                 }
-            }
-
-            if (substr($wwwroot, 0, -1) == '/') {
-                $wwwroot = substr($wwwroot, 0, -1);
             }
 
             $this->wwwroot              = $wwwroot;
