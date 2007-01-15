@@ -121,13 +121,13 @@ class auth_plugin_db {
 
         foreach ($fields as $field) {
             if ($this->config->{'field_map_' . $field}) {
-                if ($rs = $authdb->Execute("SELECT " . $this->config->{'field_map_' . $field} . " FROM {$this->config->table}
+                if ($rs = $authdb->Execute("SELECT " . $this->config->{'field_map_' . $field} . " as myfield FROM {$this->config->table}
                                             WHERE {$this->config->fielduser} = '$username'")) {
                     if ( $rs->RecordCount() == 1 ) {
                         if (!empty($CFG->unicodedb)) {
-                            $result["$field"] = addslashes(stripslashes($rs->fields[0]));
+                            $result["$field"] = addslashes(stripslashes($rs->fields['myfield']));
                         } else {
-                            $result["$field"] = addslashes(stripslashes(utf8_decode($rs->fields[0])));
+                            $result["$field"] = addslashes(stripslashes(utf8_decode($rs->fields['myfield'])));
                         }
                     }
                 }
