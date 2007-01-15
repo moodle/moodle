@@ -546,7 +546,7 @@ function lang_save_file($path, $file, $strings, $local, $packstrings) {
             }
         }
     }
-    fwrite($f,"\n\?\>\n");
+    fwrite($f,"\n?>\n");
     fclose($f);
     return true;
 }
