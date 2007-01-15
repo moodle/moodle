@@ -68,7 +68,6 @@ class question_edit_match_form extends question_edit_form {
 
     function validation($data){
         $errors = array();
-        print_object($data);
         $answers = $data['subanswers'];
         $questions = $data['subquestions'];
         $questioncount = 0;
