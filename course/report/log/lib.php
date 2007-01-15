@@ -84,10 +84,11 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
                 h.id = l.hostid
             order by
                 h.name";
-    $hosts = get_records_sql($sql);
 
-    foreach($hosts as $host) {
-        $hostarray[$host->id] = $host->name;
+    if ($hosts = get_records_sql($sql)) {
+        foreach($hosts as $host) {
+            $hostarray[$host->id] = $host->name;
+        }
     }
 
     $hostarray[$CFG->mnet_localhost_id] = $SITE->fullname;
@@ -212,8 +213,8 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
     }
 
     $cid = empty($course->id)? '1' : $course->id;
-    echo "<center>\n";
-    echo "<form action=\"$CFG->wwwroot/course/report/log/index.php\" method=\"get\">\n";
+    echo "<form class=\"mform\" action=\"$CFG->wwwroot/course/report/log/index.php\" method=\"get\">\n";
+    echo "<fieldset class=\"invisiblefieldset boxaligncenter\">\n";
     echo "<input type=\"hidden\" name=\"chooselog\" value=\"1\" />\n";
     echo "<input type=\"hidden\" name=\"showusers\" value=\"$showusers\" />\n";
     echo "<input type=\"hidden\" name=\"showcourses\" value=\"$showcourses\" />\n";
@@ -261,6 +262,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
         print_string('logtoomanyusers','moodle',$a);
     }
     choose_from_menu ($dates, "date", $selecteddate, get_string("alldays"));
+    echo '<br />';
     choose_from_menu ($activities, "modid", $selectedactivity, get_string("allactivities"), "", "");
     choose_from_menu ($actions, 'modaction', $modaction, get_string("allactions"));
     
@@ -275,8 +277,8 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
     */
     choose_from_menu ($logformats, 'logformat', $logformat, false);
     echo '<input type="submit" value="'.get_string('gettheselogs').'" />';
+    echo '</fieldset>';
     echo "</form>";
-    echo "</center>";
 }
 
 function print_log_selector_form($course, $selecteduser=0, $selecteddate='today',
