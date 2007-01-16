@@ -621,6 +621,57 @@ function scorm_optionals_data($item, $standarddata) {
     return $result;
 }
 
+function scorm_is_leaf($sco) {
+    if (get_record('scorm_scoes','scorm',$sco->scorm,'parent',$sco->identifier)) {
+        return false;
+    }
+    return true;
+}
+
+function scorm_get_parent($sco) {
+    if ($sco->parent != '/') {
+        if ($parent = get_record('scorm_scoes','scorm',$sco->scorm,'identifier',$sco->parent)) {
+            return scorm_get_sco($parent->id);
+        }
+    }
+    return null;
+}
+
+function scorm_get_children($sco) {
+    if ($parent = get_records('scorm_scoes','scorm',$sco->scorm,'parent',$sco->identifier)) {
+        return $children;
+    }
+    return null;
+}
+
+function scorm_get_sibling($sco) {
+    if ($siblings = get_records('scorm_scoes','scorm',$sco->scorm,'parent',$sco->parent)) {
+        unset($siblings[$sco->id]);
+        if (!empty($siblings)) {
+            return $siblings;
+        }
+    }
+    return null;
+}
+
+function scorm_get_ancestors($sco) {
+    if ($sco->parent != '/') {
+        return array_push(scorm_get_ancestors(scorm_get_parent($sco)));
+    } else {
+        return $sco;
+    }
+}
+
+function scorm_find_common_ancestor($ancestors, $sco) {
+    $pos = scorm_array_search('identifier',$sco->parent,$ancestors); 
+    if ($sco->parent != '/') {
+        if ($pos === false) {
+            return scorm_find_common_ancestor($ancestors,scorm_get_parent($sco));
+        }
+    }
+    return $pos;
+}
+
 /* Usage
  Grab some XML data, either from a file, URL, etc. however you want. Assume storage in $strYourXML;
 
