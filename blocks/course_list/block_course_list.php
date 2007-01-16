@@ -99,23 +99,35 @@ class block_course_list extends block_list {
     }
 
     function get_remote_courses() {
-        global $THEME, $CFG, $USER;
-        $sql = "SELECT c.remoteid, c.shortname, c.fullname, c.hostid
-                FROM   {$CFG->prefix}mnet_enrol_course c
-                JOIN   {$CFG->prefix}mnet_enrol_assignments a ON c.id=a.courseid
-                WHERE  a.userid={$USER->id}";
-        if ($courses = get_records_sql($sql)) {
-            $icon  = "<img src=\"$CFG->pixpath/i/mnethost.png\"".
-                " class=\"icon\" alt=\"".get_string("course")."\" />";
-            $this->content->items[] = 'Remote Courses';
-            $this->content->icons[] = '';
-            foreach ($courses as $course) {
-                $this->content->items[]="<a title=\"$course->shortname\" ".
-                               "href=\"{$CFG->wwwroot}/auth/mnet/jump.php?hostid={$course->hostid}&amp;wantsurl=/course/view.php?id={$course->remoteid}\">$course->fullname</a>";
-                $this->content->icons[]=$icon;
+        global $THEME, $CFG, $USER, $SESSION;
+        $icon  = '<img src="'.$CFG->pixpath.'/i/mnethost.png" class="icon" alt="'.get_string('course').'" />';
+        if ($USER->mnethostid != $CFG->mnet_localhost_id) {
+            if (!empty($SESSION->mnet_foreign_host_array) && is_array($SESSION->mnet_foreign_host_array)) {
+                $this->content->items[] = get_string('remotemoodles','mnet'); 
+                $this->content->icons[] = '';
+                foreach($SESSION->mnet_foreign_host_array as $somehost) {
+                    $this->content->items[] = $somehost['count'].get_string('courseson','mnet').'<a title="'.$somehost['name'].'" href="'.$somehost['url'].'">'.$somehost['name'].'</a>';
+                    $this->content->icons[] = $icon;
+                }
+            } else {
+                return false;
             }
         } else {
-            return false;
+            $sql = "SELECT c.remoteid, c.shortname, c.fullname, c.hostid
+                    FROM   {$CFG->prefix}mnet_enrol_course c
+                    JOIN   {$CFG->prefix}mnet_enrol_assignments a ON c.id=a.courseid
+                    WHERE  a.userid={$USER->id}";
+            if ($courses = get_records_sql($sql)) {
+                $this->content->items[] = get_string('remotecourses','mnet');
+                $this->content->icons[] = '';
+                foreach ($courses as $course) {
+                    $this->content->items[]="<a title=\"$course->shortname\" ".
+                                   "href=\"{$CFG->wwwroot}/auth/mnet/jump.php?hostid={$course->hostid}&amp;wantsurl=/course/view.php?id={$course->remoteid}\">$course->fullname</a>";
+                    $this->content->icons[]=$icon;
+                }
+            } else {
+                return false;
+            }
         }
         return true;
     }

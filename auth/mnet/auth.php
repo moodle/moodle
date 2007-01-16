@@ -75,8 +75,7 @@ class auth_plugin_mnet
      * @return array  $userdata Array of user info for remote host
      */
     function user_authorise($token, $useragent) {
-        global $CFG;
-        global $MNET;
+        global $CFG, $MNET, $SITE, $MNET_REMOTE_CLIENT;
         require_once $CFG->dirroot . '/mnet/xmlrpc/server.php';
 
         $mnet_session = get_record('mnet_session', 'token', $token, 'useragent', $useragent);
@@ -123,6 +122,37 @@ class auth_plugin_mnet
                 $userdata['imagehash'] = sha1(file_get_contents($imagefile));
             }
         }
+
+        $userdata['myhosts'] = array();
+        if($courses = get_my_courses($user->id, 'id', 'id, visible')) {
+            $userdata['myhosts'][] = array('name'=> $SITE->shortname, 'url' => $CFG->wwwroot, 'count' => count($courses));
+        }
+
+        $sql = "
+                SELECT
+                    h.name as hostname,
+                    h.wwwroot,
+                    h.id as hostid,
+                    count(c.id) as count
+                FROM   
+                    {$CFG->prefix}mnet_enrol_course c,
+                    {$CFG->prefix}mnet_enrol_assignments a,
+                    {$CFG->prefix}mnet_host h
+                WHERE
+                    c.id      =  a.courseid   AND
+                    c.hostid  =  h.id         AND
+                    a.userid  = '{$user->id}' AND
+                    c.hostid != '{$MNET_REMOTE_CLIENT->id}'
+                GROUP BY
+                    h.name,
+                    h.id,
+                    h.wwwroot";
+        if ($courses = get_records_sql($sql)) {
+            foreach($courses as $course) {
+                $userdata['myhosts'][] = array('name'=> $course->hostname, 'url' => $CFG->wwwroot.'/auth/mnet/jump.php?hostid='.$course->hostid, 'count' => $course->count);
+            }
+        }
+
         return $userdata;
     }
 
@@ -209,7 +239,7 @@ class auth_plugin_mnet
      *   @returns array The local user record.
      */
     function confirm_mnet_session($token, $remotewwwroot) {
-        global $CFG, $MNET;
+        global $CFG, $MNET, $SESSION;
         require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
         // verify the remote host is configured locally before attempting RPC call
@@ -308,6 +338,19 @@ class auth_plugin_mnet
                             $imagecontents = base64_decode($fetchrequest->response['f2']);
                             file_put_contents($dirname.'/f2.jpg', $imagecontents);
                         }
+                    }
+                }
+            }
+
+            if($key == 'myhosts') {
+                $SESSION->mnet_foreign_host_array = array();
+                foreach($val as $somecourse) {
+                    $name  = clean_param($somecourse['name'], PARAM_ALPHANUM);
+                    $url   = clean_param($somecourse['url'], PARAM_URL);
+                    $count = clean_param($somecourse['count'], PARAM_INT);
+                    $url_is_local = stristr($url , $CFG->wwwroot);
+                    if (!empty($name) && !empty($count) && empty($url_is_local)) {
+                        $SESSION->mnet_foreign_host_array[] = array('name' => $name, 'url' => $url, 'count' => $count);
                     }
                 }
             }
