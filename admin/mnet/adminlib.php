@@ -8,8 +8,6 @@
  * @package mnet
  */
 
-include_once $CFG->dirroot.'/admin/mnet/MethodTable.php';
-error_reporting(E_ALL);
 /**
  * Parse a file to find out what functions/methods exist in it, and add entries
  * for the remote-call-enabled functions to the database.
@@ -73,49 +71,56 @@ function mnet_get_functions($type, $parentname) {
 
     if (!file_exists($filename)) return false;
 
-    $functions = (array)MethodTable::create($filename,false);
+    if (extension_loaded('tokenizer')) {
+        include_once $CFG->dirroot.'/admin/mnet/MethodTable.php';
+        $functions = (array)MethodTable::create($filename,false);
+    }
 
-    foreach($functions as $functionname => $details) {
-        if (array_key_exists($functionname, $methodServiceArray)) {
-            $dataobject->function_name = $functionname;
-            $dataobject->xmlrpc_path   = $type.'/'.$parentname.'/'.$docname.'/'.$functionname;
-            $dataobject->parent_type   = $type;
-            $dataobject->parent        = $parentname;
-            $dataobject->enabled       = '0';
-            $dataobject->help          = addslashes($details['description']);
-
+    foreach($methodServiceArray as $method => $servicearray) {
+        if (!empty($functions[$method])) {
+            $details = $functions[$method];
             $profile = $details['arguments'];
             if (!isset($details['returns'])) {
                 array_unshift($profile, array('type' => 'void', 'description' => 'No return value'));
             } else {
                 array_unshift($profile, $details['returns']);
             }
-            $dataobject->profile = serialize($profile);
+            $dataobject->profile       = serialize($profile);
+            $dataobject->help          = addslashes($details['description']);
+        } else {
+            $dataobject->profile       = serialize(array(array('type' => 'void', 'description' => 'No return value')));
+            $dataobject->help          = '';
+        }
 
-            if ($record_exists = get_record('mnet_rpc', 'xmlrpc_path', $dataobject->xmlrpc_path)) {
-                $dataobject->id      = $record_exists->id;
-                $dataobject->enabled = $record_exists->enabled;
-                update_record('mnet_rpc', $dataobject);
-            } else {
-                $dataobject->id = insert_record('mnet_rpc', $dataobject, true);
+        $dataobject->function_name = $method;
+        $dataobject->xmlrpc_path   = $type.'/'.$parentname.'/'.$docname.'/'.$method;
+        $dataobject->parent_type   = $type;
+        $dataobject->parent        = $parentname;
+        $dataobject->enabled       = '0';
+
+        if ($record_exists = get_record('mnet_rpc', 'xmlrpc_path', $dataobject->xmlrpc_path)) {
+            $dataobject->id      = $record_exists->id;
+            $dataobject->enabled = $record_exists->enabled;
+            update_record('mnet_rpc', $dataobject);
+        } else {
+            $dataobject->id = insert_record('mnet_rpc', $dataobject, true);
+        }
+
+        foreach($servicearray as $service) {
+            $serviceobj = get_record('mnet_service', 'name', $service['name']);
+            if (false == $serviceobj) {
+                $serviceobj = new stdClass();
+                $serviceobj->name        = $service['name'];
+                $serviceobj->apiversion  = $service['apiversion'];
+                $serviceobj->offer       = 1;
+                $serviceobj->id          = insert_record('mnet_service', $serviceobj, true);
             }
 
-            foreach($methodServiceArray[$functionname] as $service) {
-                $serviceobj = get_record('mnet_service', 'name', $service['name']);
-                if (false == $serviceobj) {
-                    $serviceobj = new stdClass();
-                    $serviceobj->name        = $service['name'];
-                    $serviceobj->apiversion  = $service['apiversion'];
-                    $serviceobj->offer       = 1;
-                    $serviceobj->id          = insert_record('mnet_service', $serviceobj, true);
-                }
-
-                if (false == get_record('mnet_service2rpc', 'rpcid', $dataobject->id, 'serviceid', $serviceobj->id)) {
-                    $obj = new stdClass();
-                    $obj->rpcid = $dataobject->id;
-                    $obj->serviceid = $serviceobj->id;
-                    insert_record('mnet_service2rpc', $obj, true);
-                }
+            if (false == get_record('mnet_service2rpc', 'rpcid', $dataobject->id, 'serviceid', $serviceobj->id)) {
+                $obj = new stdClass();
+                $obj->rpcid = $dataobject->id;
+                $obj->serviceid = $serviceobj->id;
+                insert_record('mnet_service2rpc', $obj, true);
             }
         }
     }
