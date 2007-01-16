@@ -50,8 +50,8 @@ class block_course_list extends block_list {
                 }
                 $this->title = get_string('mycourses');
                 $this->content->footer = "<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
+                $this->get_remote_courses();
                 if ($this->content->items) { // make sure we don't return an empty list
-                    $this->get_remote_courses();
                     return $this->content;
                 }
             }
