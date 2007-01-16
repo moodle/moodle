@@ -3106,12 +3106,12 @@ function grade_get_course_students($courseid) {
     } 
         
     $configvar = get_config('', 'gradebookroles');
-    if (empty($configvar->value)) {
+    if (empty($configvar)) {
         notify ('no roles defined in admin->appearance->graderoles');
         return false; // no roles to displayreturn false;  
     }
          
-    if ($rolestoget = explode(',', $configvar->value)) {
+    if ($rolestoget = explode(',', $configvar)) {
         foreach ($rolestoget as $crole) {
             if ($tempstudents = get_role_users($crole, $context, true)) {
                 foreach ($tempstudents as $tempuserid=>$tempstudent) {
