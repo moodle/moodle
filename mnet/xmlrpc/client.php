@@ -204,12 +204,13 @@ class mnet_xmlrpc_client {
 
             if (!$isOpen) {
                 // Decryption failed... let's try our archived keys
-                $result = get_config('mnet', 'openssl_history');
-                if(empty($result)) {
-                    set_config('openssl_history', serialize(array()), 'mnet');
-                    $result = get_config('mnet', 'openssl_history');
+                $openssl_history = get_config('mnet', 'openssl_history');
+                if(empty($openssl_history)) {
+                    $openssl_history = array();
+                    set_config('openssl_history', serialize($openssl_history), 'mnet');
+                } else {
+                    $openssl_history = unserialize($result);
                 }
-                $openssl_history = unserialize($result->value);
                 foreach($openssl_history as $keyset) {
                     $keyresource = openssl_pkey_get_private($keyset['keypair_PEM']);
                     $isOpen      = openssl_open(base64_decode($data), $payload, base64_decode($key), $keyresource);
@@ -247,15 +248,13 @@ class mnet_xmlrpc_client {
         $remote_timestamp = $sig_parser->remote_timestamp - $hysteresis;
         $time_offset      = $remote_timestamp - $timestamp_send;
         if ($time_offset > 0) {
-            $result = get_field('config_plugins', 'value', 'plugin', 'mnet', 'name', 'drift_threshold');
-            if(empty($result)) {
+            $threshold = get_config('mnet', 'drift_threshold');
+            if(empty($threshold)) {
                 // We decided 15 seconds was a pretty good arbitrary threshold
                 // for time-drift between servers, but you can customize this in
                 // the config_plugins table. It's not advised though.
                 set_config('drift_threshold', 15, 'mnet');
                 $threshold = 15;
-            } else {
-                $threshold = $result;
             }
             if ($time_offset > $threshold) {
                 $this->error[] = 'Time gap with '.$mnet_peer->name.' ('.$time_offset.' seconds) is greater than the permitted maximum of '.$threshold.' seconds';

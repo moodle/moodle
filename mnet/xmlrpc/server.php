@@ -145,12 +145,13 @@ function mnet_server_strip_wrappers($HTTP_RAW_POST_DATA) {
 
             if (!$isOpen) {
                 // Decryption failed... let's try our archived keys
-                $result = get_config('mnet', 'openssl_history');
-                if(empty($result)) {
-                    set_config('openssl_history', serialize(array()), 'mnet');
-                    $result = get_config('mnet', 'openssl_history');
+                $openssl_history = get_config('mnet', 'openssl_history');
+                if(empty($openssl_history)) {
+                    $openssl_history = array();
+                    set_config('openssl_history', serialize($openssl_history), 'mnet');
+                } else {
+                    $openssl_history = unserialize($result);
                 }
-                $openssl_history = unserialize($result->value);
                 foreach($openssl_history as $keyset) {
                     $keyresource = openssl_pkey_get_private($keyset['keypair_PEM']);
                     $isOpen      = openssl_open(base64_decode($data), $payload, base64_decode($key), $keyresource);

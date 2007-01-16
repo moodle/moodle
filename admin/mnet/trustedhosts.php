@@ -25,11 +25,16 @@
 
     $trusted_hosts = '';//array();
     $old_trusted_hosts = get_config('mnet', 'mnet_trusted_hosts');
+    if (!empty($old_trusted_hosts)) {
+        $old_trusted_hosts =  explode(',', $old_trusted_hosts);
+    } else {
+        $old_trusted_hosts = array();
+    }
 
     $test_ip_address = optional_param('testipaddress', NULL, PARAM_HOST);
     $in_range = false;
     if (!empty($test_ip_address)) {
-        foreach(explode(',', $old_trusted_hosts->value) as $host) {
+        foreach($old_trusted_hosts as $host) {
             list($network, $mask) = explode('/', $host.'/');
             if (empty($network)) continue;
             if (strlen($mask) == 0) $mask = 32;
@@ -54,8 +59,8 @@
             unset($address, $mask);
         }
         set_config('mnet_trusted_hosts', str_replace("\n", ',', $trusted_hosts), 'mnet');
-    } elseif (!empty($old_trusted_hosts->value)) {
-        foreach(explode(',', $old_trusted_hosts->value) as $host) {
+    } elseif (!empty($old_trusted_hosts)) {
+        foreach($old_trusted_hosts as $host) {
             list($address, $mask) = explode('/', $host.'/');
             if (empty($address)) continue;
             if (strlen($mask) == 0) $mask = 32;
