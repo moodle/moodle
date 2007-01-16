@@ -10,6 +10,7 @@
 // Based on default.php, included by ../import.php
 
 require_once ("$CFG->libdir/xmlize.php");
+require_once ("$CFG->libdir/tcpdf/html_entity_decode_php4.php");
 
 class qformat_blackboard extends qformat_default {
 
@@ -91,10 +92,17 @@ function process_tf($xml, &$questions) {
         $question->single = 1; // Only one answer is allowed
 
         $thisquestion = $tfquestions[$i];
+
+        // determine if the question is already escaped html
+        $ishtml = $thisquestion["#"]["BODY"][0]["#"]["FLAGS"][0]["#"]["ISHTML"][0]["@"]["value"];
+
         // put questiontext in question object
-        $question->questiontext = addslashes(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
+        if ($ishtml) {
+            $question->questiontext = html_entity_decode_php4(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
+        }
+        $question->questiontext = addslashes($question->questiontext);
         // put name in question object
-        $question->name = $question->questiontext;
+        $question->name = substr($question->questiontext, 0, 254);
 
         $choices = $thisquestion["#"]["ANSWER"];
 
@@ -136,27 +144,44 @@ function process_mc($xml, &$questions) {
         $question->single = 1; // Only one answer is allowed
 
         $thisquestion = $mcquestions[$i];
+
+        // determine if the question is already escaped html
+        $ishtml = $thisquestion["#"]["BODY"][0]["#"]["FLAGS"][0]["#"]["ISHTML"][0]["@"]["value"];
+
         // put questiontext in question object
-        $question->questiontext = addslashes(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
-        // put name of question in question object
-        $question->name = $question->questiontext;
+        if ($ishtml) {
+            $question->questiontext = html_entity_decode_php4(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
+        }
+        $question->questiontext = addslashes($question->questiontext);
+
+        // put name of question in question object, careful of length
+        $question->name = substr($question->questiontext, 0, 254);
 
         $choices = $thisquestion["#"]["ANSWER"];
         for ($j = 0; $j < sizeof ($choices); $j++) {
 
             $choice = trim($choices[$j]["#"]["TEXT"][0]["#"]);
             // put this choice in the question object.
-            $question->answer[$j] = addslashes($choice);
+            if ($ishtml) {
+                $question->answer[$j] = html_entity_decode_php4($choice);
+            }
+            $question->answer[$j] = addslashes($question->answer[$j]);
 
             $id = $choices[$j]["@"]["id"];
             $correct_answer_id = $thisquestion["#"]["GRADABLE"][0]["#"]["CORRECTANSWER"][0]["@"]["answer_id"];
             // if choice is the answer, give 100%, otherwise give 0%
             if (strcmp ($id, $correct_answer_id) == 0) {
                 $question->fraction[$j] = 1;
-                $question->feedback[$j] = addslashes(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
+                if ($ishtml) {
+                    $question->feedback[$j] = html_entity_decode_php4(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
+                }
+                $question->feedback[$j] = addslashes($question->feedback[$j]);
             } else {
                 $question->fraction[$j] = 0;
-                $question->feedback[$j] = addslashes(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
+                if ($ishtml) {
+                    $question->feedback[$j] = html_entity_decode_php4(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
+                }
+                $question->feedback[$j] = addslashes($question->feedback[$j]);
             }
         }
         $questions[] = $question;
@@ -185,10 +210,17 @@ function process_ma($xml, &$questions) {
         $question->image = ""; // No images with this format
 
         $thisquestion = $maquestions[$i];
+
+        // determine if the question is already escaped html
+        $ishtml = $thisquestion["#"]["BODY"][0]["#"]["FLAGS"][0]["#"]["ISHTML"][0]["@"]["value"];
+
         // put questiontext in question object
-        $question->questiontext = addslashes(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
+        if ($ishtml) {
+            $question->questiontext = html_entity_decode_php4(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
+        }
+        $question->questiontext = addslashes($question->questiontext);
         // put name of question in question object
-        $question->name = $question->questiontext;
+        $question->name = substr($question->questiontext, 0, 254);
 
         $choices = $thisquestion["#"]["ANSWER"];
         $correctanswers = $thisquestion["#"]["GRADABLE"][0]["#"]["CORRECTANSWER"];
@@ -243,10 +275,17 @@ function process_fib($xml, &$questions) {
         $question->usecase = 0; // Ignore case
 
         $thisquestion = $fibquestions[$i];
+
+        // determine if the question is already escaped html
+        $ishtml = $thisquestion["#"]["BODY"][0]["#"]["FLAGS"][0]["#"]["ISHTML"][0]["@"]["value"];
+
         // put questiontext in question object
-        $question->questiontext = addslashes(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
+        if ($ishtml) {
+            $question->questiontext = html_entity_decode_php4(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
+        }
+        $question->questiontext = addslashes($question->questiontext);
         // put name of question in question object
-        $question->name = $question->questiontext;
+        $question->name = substr($question->questiontext, 0, 254);
 
         $answer = trim($thisquestion["#"]["ANSWER"][0]["#"]["TEXT"][0]["#"]);
 
@@ -278,10 +317,17 @@ function process_matching($xml, &$questions) {
         $question->qtype = MATCH;
 
         $thisquestion = $matchquestions[$i];
+
+        // determine if the question is already escaped html
+        $ishtml = $thisquestion["#"]["BODY"][0]["#"]["FLAGS"][0]["#"]["ISHTML"][0]["@"]["value"];
+
         // put questiontext in question object
-        $question->questiontext = addslashes(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
+        if ($ishtml) {
+            $question->questiontext = html_entity_decode_php4(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
+        }
+        $question->questiontext = addslashes($question->questiontext);
         // put name of question in question object
-        $question->name = $question->questiontext;
+        $question->name = substr($question->questiontext, 0, 254);
 
         $choices = $thisquestion["#"]["CHOICE"];
         for ($j = 0; $j < sizeof ($choices); $j++) {
