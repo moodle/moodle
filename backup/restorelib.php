@@ -1451,7 +1451,9 @@
         //and create the necessary records (users, user_students, user_teachers
         //user_course_creators and user_admins
         if (!empty($info->users)) {
-            //For each user, take its info from backup_ids
+            // Grab mnethosts keyed by wwwroot, to map to id
+            $mnethosts = get_records('mnethost', '', '', 
+                                     'wwwroot', 'wwwroot, id');
             foreach ($info->users as $userid) {
                 $rec = backup_getid($restore->backup_unique_code,"user",$userid); 
                 $user = $rec->info;
@@ -1476,11 +1478,27 @@
                 //Has role teacher or student or needed
                 $is_course_user = ($is_teacher or $is_student or $is_needed);
 
+                //Calculate mnethostid
+                if (empty($user->mnethosturl) || $user->mnethosturl===$CFG->wwwroot) {
+                    $user->mnethostid = $CFG->mnet_localhost_id;
+                } else {
+                    // fast url-to-id lookups
+                    if (isset($mnethosts->{$user->mnethosturl})) {
+                        $user->mnethostid = $mnethosts->{$user->mnethosturl};
+                    } else { 
+                        // should not happen, as we check in restore_chech.php 
+                        // but handle the error if it does
+                        error("This backup file contains external Moodle Network Hosts that are not configured locally.");
+                    }
+                }
+                unset($user->mnethosturl);
+
                 //To store new ids created
                 $newid=null;
                 //check if it exists (by username) and get its id
                 $user_exists = true;
-                $user_data = get_record("user","username",addslashes($user->username));
+                $user_data = get_record("user","username",addslashes($user->username), 
+                                        'mnethostid', $user->mnethostid);
                 if (!$user_data) {
                     $user_exists = false;
                 } else {
