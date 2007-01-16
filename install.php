@@ -121,16 +121,16 @@ $CFG->running_installer = true;
 
 /// Include some moodle libraries
 
-require_once('./lib/adminlib.php');
-require_once('./lib/setuplib.php');
-require_once('./lib/moodlelib.php');
-require_once('./lib/weblib.php');
-require_once('./lib/deprecatedlib.php');
-require_once('./lib/adodb/adodb.inc.php');
-require_once('./lib/environmentlib.php');
-require_once('./lib/xmlize.php');
-require_once('./lib/componentlib.class.php');
-require_once('./version.php');
+require_once(dirname(__FILE__).'/lib/adminlib.php');
+require_once(dirname(__FILE__).'/lib/setuplib.php');
+require_once(dirname(__FILE__).'/lib/moodlelib.php');
+require_once(dirname(__FILE__).'/lib/weblib.php');
+require_once(dirname(__FILE__).'/lib/deprecatedlib.php');
+require_once(dirname(__FILE__).'/lib/adodb/adodb.inc.php');
+require_once(dirname(__FILE__).'/lib/environmentlib.php');
+require_once(dirname(__FILE__).'/lib/xmlize.php');
+require_once(dirname(__FILE__).'/lib/componentlib.class.php');
+require_once(dirname(__FILE__).'//version.php');
 
 /// Set version and release
 $INSTALL['version'] = $version;
