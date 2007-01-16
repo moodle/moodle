@@ -21,6 +21,10 @@ $string['group'] = 'Group';
 $string['groupsinselectedgrouping'] = 'Groups in selected grouping';
 $string['membersofselectedgroup'] = 'Members of selected group';
 
+$string['showgroupsingrouping'] = 'Show groups in grouping';
+$string['showmembersforgroup'] = 'Show members for group';
+$string['databaseupgradegroups'] = 'Groups version is now $a';
+
 $string['editgroupingsettings'] = 'Edit grouping settings';
 $string['editgroupingpermissions'] = 'Edit grouping permissions';
 $string['deletegrouping'] = 'Delete grouping';
