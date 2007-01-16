@@ -5,8 +5,8 @@
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
     $scoid = required_param('scoid', PARAM_INT);  // sco ID
-//    $attempt = required_param('attempt', PARAM_INT);  // attempt number
-    $attempt = $SESSION->scorm_attempt;
+    $attempt = required_param('attempt', PARAM_INT);  // attempt number
+//    $attempt = $SESSION->scorm_attempt;
 
 
     if (!empty($id)) {
@@ -37,12 +37,34 @@
 
     if (confirm_sesskey() && (!empty($scoid))) {
         $result = true;
+        $request = null;
         if (has_capability('mod/scorm:savetrack', get_context_instance(CONTEXT_MODULE,$cm->id))) {
             foreach ($_POST as $element => $value) {
+                $element = str_replace('__','.',$element);
                 if (substr($element,0,3) == 'cmi') {
-                    $element = str_replace('__','.',$element);
-                    $element = preg_replace('/_(\d+)/',".\$1",$element);
+                    $element = preg_replace('/N(\d+)/',".\$1",$element);
                     $result = scorm_insert_track($USER->id, $scorm->id, $scoid, $attempt, $element, $value) && $result;
+                }
+                if (substr($element,0,15) == 'adl.nav.request') {
+                    // SCORM 2004 Sequencing Request
+                    require_once('datamodels/scorm_13lib.php');
+
+                    $search = array('@continue@', '@previous@', '@\{target=(\S+)\}choice@', '@exit@', '@exitAll@', '@abandon@', '@abandonAll@');
+                    $replace = array('continue_', 'previous_', '\1', 'exit_', 'exitall_', 'abandon_', 'abandonall');
+                    $action = preg_replace($search, $replace, $value);
+
+                    if ($action != $value) {
+                        // Evaluating navigation request
+                        $valid = scorm_sequencing_overall ($scoid,$USER->id,$action);
+
+                        // Set valid request
+                        $search = array('@continue@', '@previous@', '@\{target=(\S+)\}choice@');
+                        $replace = array('true', 'true', 'true');
+                        $matched = preg_replace($search, $replace, $value);
+                        if ($matched == 'true') {
+                            $request = 'adl.nav.request_valid["'.$action.'"] = "'.$valid.'";';
+                        }
+                    }
                 }
             }
         }
@@ -50,6 +72,9 @@
             echo "true\n0";
         } else {
             echo "false\n101";
+        }
+        if ($request != null) {
+            echo "\n".$request;
         }
     }
 ?>
