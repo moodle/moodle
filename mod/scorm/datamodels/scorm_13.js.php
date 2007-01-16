@@ -1,18 +1,19 @@
 <?php
     if (isset($userdata->status)) {
-        if ($userdata->status == ''&& (!(($userdata->{'cmi.exit'} == 'suspend') || ($userdata->{'cmi.exit'} == 'logout'))&& !($userdata->{'adl.nav.request'} == 'suspendAll'))||($userdata->{'cmi.exit'} == 'normal')) {      //antes solo llegaba esta línea hasta el &&
+        //if ($userdata->status == ''&& (!(($userdata->{'cmi.exit'} == 'suspend') || ($userdata->{'cmi.exit'} == 'logout'))&& !($userdata->{'adl.nav.request'} == 'suspendAll'))||($userdata->{'cmi.exit'} == 'normal')) {      //antes solo llegaba esta línea hasta el &&
+        if (!isset($userdata->{'cmi.exit'}) || (($userdata->{'cmi.exit'} == 'time-out') || ($userdata->{'cmi.exit'} == 'normal'))) { 
                 $userdata->entry = 'ab-initio';
         } else {
-            if ((isset($userdata->{'cmi.exit'}) && (($userdata->{'cmi.exit'} == 'suspend') || ($userdata->{'cmi.exit'} == 'logout')))||(($userdata->{'adl.nav.request'} == 'suspendAll')&& isset($userdata->{'adl.nav.request'}) )) {
+            //if ((isset($userdata->{'cmi.exit'}) && (($userdata->{'cmi.exit'} == 'suspend') || ($userdata->{'cmi.exit'} == 'logout')))||(($userdata->{'adl.nav.request'} == 'suspendAll')&& isset($userdata->{'adl.nav.request'}) )) {
+            if (isset($userdata->{'cmi.exit'}) && (($userdata->{'cmi.exit'} == 'suspend') || ($userdata->{'cmi.exit'} == 'logout'))) {
                 $userdata->entry = 'resume';
             } else {
                 $userdata->entry = '';
             }
         }
     }
-    $userdata->threshold = '0.8';
 ?>
-    var cmi = new Object();
+//    var cmi = new Object(); // Used need to debug cmi content (if you uncomment this, you must comment the definition inside SCORMapi1_3)
 
 //
 // SCORM 1.3 API Implementation
@@ -133,7 +134,7 @@ function SCORMapi1_3() {
     //
     // Datamodel inizialization
     //
-//    var cmi = new Object();
+    var cmi = new Object();
         cmi.comments_from_learner = new Object();
         cmi.comments_from_learner._count = 0;
         cmi.comments_from_lms = new Object();
@@ -148,6 +149,7 @@ function SCORMapi1_3() {
     // Navigation Object
     var adl = new Object();
         adl.nav = new Object();
+        adl.nav.request_valid = new Array();
 
     for (element in datamodel) {
         if (element.match(/\.n\./) == null) {
@@ -235,11 +237,24 @@ function SCORMapi1_3() {
                 Initialized = false;
                 Terminated = true;
                 result = StoreData(cmi,true);
-                if (nav.event != '') {
-                    if (nav.event == 'continue') {
-                        setTimeout('top.nextSCO();',500);
-                    } else {
-                        setTimeout('top.prevSCO();',500);
+                if (adl.nav.request != '_none_') {
+                    switch (adl.nav.request) {
+                        case 'continue':
+                            setTimeout('top.nextSCO();',500);
+                        break;
+                        case 'previous':
+                            setTimeout('top.prevSCO();',500);
+                        break;
+                        case 'choice':
+                        break;
+                        case 'exit':
+                        break;
+                        case 'exitAll':
+                        break;
+                        case 'abandon':
+                        break;
+                        case 'abandonAll':
+                        break;
                     }
                 } else {
                     if (<?php echo $scorm->auto ?> == 1) {
@@ -272,22 +287,21 @@ function SCORMapi1_3() {
             if (element !="") {
                 expression = new RegExp(CMIIndex,'g');
                 elementmodel = element.replace(expression,'.n.');
-				
+
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'w') {
-					
+
                         element = element.replace(/\.(\d+)\./, ".N$1.");
-						element = element.replace(/\.(\d+)\./, ".N$1.");
+                        element = element.replace(/\.(\d+)\./, ".N$1.");
 
                         elementIndexes = element.split('.');
                         subelement = element.substr(0,3);
                         i = 1;
-						
+
                         while ((i < elementIndexes.length) && (typeof eval(subelement) != "undefined")) {
                             subelement += '.'+elementIndexes[i++];
-						
                         }
-						
+
                         if (subelement == element) {
 
                             if ((typeof eval(subelement) != "undefined") && (eval(subelement) != null)) {
@@ -367,10 +381,9 @@ function SCORMapi1_3() {
     function SetValue (element,value) {
         errorCode = "0";
         diagnostic = "";
-		if (element== 'cmi.interactions.0.learner_response' && value=='Dependency on cmi.interaction.n.type not established'){
-			
-			errorCode="408";
-		}
+        if (element== 'cmi.interactions.0.learner_response' && value=='Dependency on cmi.interaction.n.type not established'){
+            errorCode="408";
+        }
         if ((Initialized) && (!Terminated)) {
             if (element != "") {
                 expression = new RegExp(CMIIndex,'g');
@@ -381,7 +394,7 @@ function SCORMapi1_3() {
                         value = value+'';
                         matches = value.match(expression);
                         if ((matches != null) && ((matches.join('').length > 0) || (value.length == 0))) {
-						
+
                             //Create dynamic data model element
 
                             if (element != elementmodel) {
@@ -397,13 +410,13 @@ function SCORMapi1_3() {
                                         }
                                         parentelement = subelement+'.'+elementIndex;
                                         if (elementIndexes[i+1] > eval(parentelement+'._count')) {
-									
+
                                             errorCode = "351";
                                             diagnostic = "Data Model Element Collection Set Out Of Order";
                                         }
                                         subelement = subelement.concat('.'+elementIndex+'.N'+elementIndexes[i+1]);
                                         i++;
-										
+
                                         if (((typeof eval(subelement)) == "undefined") && (i < elementIndexes.length-2)) {
                                             errorCode="408";
                                         }
@@ -412,20 +425,20 @@ function SCORMapi1_3() {
                                     }
                                 }
 
-							
+
 
                                 if (errorCode == "0") {
-									
+
                                     element = subelement.concat('.'+elementIndexes[elementIndexes.length-1]);
                                     elemlen = element.length;
-									
+
                                     if (((typeof eval(subelement)) == "undefined") && (errorCode == "0")) {
                                         parentmodel = 'cmi.objectives';
                                         maxmodel = 'cmi.objectives.Nxxx.id';
                                         if (subelement.substr(0,parentmodel.length) == parentmodel) {
-										
+
                                              if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
-										
+
                                                 //This is a parentmodel.n.id element
                                                 if (!duplicatedID(parentmodel,value)) {
                                                     if (elementIndexes[elementIndexes.length-2] == eval(parentmodel+'._count')) {
@@ -447,8 +460,8 @@ function SCORMapi1_3() {
                                                     diagnostic = "Data Model Element ID Already Exists";
                                                 }
                                             } else {
-											
-											
+
+
                                                 if (typeof eval(subelement) == "undefined") {
                                                     errorCode="408";
                                                 } else {
@@ -459,42 +472,42 @@ function SCORMapi1_3() {
                                                 }
                                             }
                                         } else {
-											
 
-								
+
+
                                             parentmodel = 'cmi.interactions';
                                             maxmodel = 'cmi.interactions.Nxxx.id';
-											
+
                                             if (subelement.substr(0,parentmodel.length) == parentmodel) {
-											
+
                                                 if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
-												
+
                                                     //This is a parentmodel.n.id element
                                                     if (!duplicatedID(parentmodel,value)) {
-													
+
                                                         if (elementIndexes[elementIndexes.length-2] == eval(parentmodel+'._count')) {
-														
+
                                                             eval(parentmodel+'._count++;');
-															
+
                                                             eval(subelement+' = new Object();');
-															
+
                                                             subobject = eval(subelement);
                                                             subobject.objectives = new Object();
                                                             subobject.objectives._count = 0;
-															subobject.correct_responses = new Object();
+                                                            subobject.correct_responses = new Object();
                                                             subobject.correct_responses._count = 0;
-															
+
                                                             
                                                         } 
                                                     } else {
-												
+
                                                         errorCode="351";
                                                         diagnostic = "Data Model Element ID Already Exists";
                                                     }
                                                 } else {
-												
+
                                                     if (typeof eval(subelement) == "undefined") {
-													
+
                                                         errorCode="408";
                                                     } else {
                                                         maxmodel = 'cmi.interactions.Nxxx.type';
@@ -502,13 +515,13 @@ function SCORMapi1_3() {
                                                             subobject = eval(subelement);
                                                            //subobject.correct_responses = new Object();
                                                            //subobject.correct_responses._count = 0;
-														  subobject.learner_response = new Object();
+                                                           subobject.learner_response = new Object();
                                                         } 
                                                     }
                                                 }
                                             } else {
-											
-											
+
+
                                                 if (errorCode == "0") {
                                                     if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
                                                         eval(parentelement+'._count++;');
@@ -523,14 +536,14 @@ function SCORMapi1_3() {
                                          maxmodel = 'cmi.objectives.Nxxx.id';
                                          if (subelement.substr(0,parentmodel.length) == parentmodel) {
                                              if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) {
-												
+
                                                  if (eval(element) != value) {
                                                      errorCode = "351";
                                                      diagnostic = "Write Once Violation";
                                                  }
                                              }
                                          } else {
-										
+
                                              parentmodel = 'cmi.interactions';
                                              maxmodel = 'cmi.interactions.Nxxx.id';
                                              if (subelement.substr(0,parentmodel.length) == parentmodel) {
@@ -547,7 +560,7 @@ function SCORMapi1_3() {
                             }
                             //Store data
                             if (errorCode == "0") {
-							
+
                                 if ((typeof eval('datamodel["'+elementmodel+'"].range')) != "undefined") {
                                     range = eval('datamodel["'+elementmodel+'"].range');
                                     ranges = range.split('#');
@@ -593,9 +606,7 @@ function SCORMapi1_3() {
             } else {
                 errorCode = "351";
             }
-        }
-
-		else {
+        } else {
             if (Terminated) {
                 errorCode = "133";
             } else {
@@ -842,6 +853,7 @@ function SCORMapi1_3() {
     }
 
     function StoreData(data,storetotaltime) {
+        datastring = '';
         if (storetotaltime) {
             if (cmi.mode == 'normal') {
                 if (cmi.credit == 'credit') {
@@ -861,13 +873,14 @@ function SCORMapi1_3() {
                     }
                 }
             }
-            datastring = CollectData(data,'cmi');
             datastring += TotalTime();
-        } else {
-            datastring = CollectData(data,'cmi');
         }
+        datastring += CollectData(data,'cmi');
+        element = 'adl.nav.request';
+        navrequest = eval(element) != datamodel[element].defaultvalue ? '&'+underscore(element)+'='+escape(eval(element)) : '';
+        datastring += navrequest;
         datastring += '&attempt=<?php echo $attempt ?>';
-        datastring += '&scoid=<?php echo $sco->id ?>';
+        datastring += '&scoid=<?php echo $scoid ?>';
         <?php
             if (debugging('',DEBUG_DEVELOPER)) {
                 echo 'popupwin(datastring);';
@@ -875,7 +888,15 @@ function SCORMapi1_3() {
         ?>
         var myRequest = NewHttpReq();
         result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php p($USER->sesskey) ?>"+datastring);
+        <?php
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'popupwin(result);';
+            }
+        ?>
         results = result.split('\n');
+        if ((results.length > 2) && (navrequest != '')) {
+            eval(results[2]);
+        }
         errorCode = results[1];
         return results[0];
     }
