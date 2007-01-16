@@ -37,6 +37,11 @@ if (! isset($_SESSION['INSTALL'])) {
 
 $INSTALL = &$_SESSION['INSTALL'];   // Makes it easier to reference
 
+/// detect if install was attempted from diferent directory, if yes reset session to prevent errors,
+/// dirroot location now fixed in installer
+if (!empty($INSTALL['dirroot']) and $INSTALL['dirroot'] != dirname(__FILE__)) {
+    $_SESSION['INSTALL'] = array();
+}
 
 /// If it's our first time through this script then we need to set some default values
 
@@ -82,24 +87,26 @@ if (isset($_POST['stage'])) {
 
     /// Get the stage for which the form was set and the next stage we are going to
 
+    /// Store any posted data
+    foreach ($_POST as $setting=>$value) {
+        $INSTALL[$setting] = $value;
+    }
 
     if ( $goforward = (! empty( $_POST['next'] )) ) {
         $nextstage = $_POST['stage'] + 1;
     } else if (! empty( $_POST['prev'])) {
         $nextstage = $_POST['stage'] - 1;
+        $INSTALL['stage'] = $_POST['stage'] - 1;
     } else if (! empty( $_POST['same'] )) {
         $nextstage = $_POST['stage'];
     }
 
 
-    if ($nextstage < 0) $nextstage = WELCOME;
-    
-
-    /// Store any posted data
-    foreach ($_POST as $setting=>$value) {
-        $INSTALL[$setting] = $value;
+    if ($nextstage < 0) {
+        $nextstage = WELCOME;
     }
     
+
 } else {
 
     $goforward = true;
@@ -121,16 +128,16 @@ $CFG->running_installer = true;
 
 /// Include some moodle libraries
 
-require_once(dirname(__FILE__).'/lib/adminlib.php');
-require_once(dirname(__FILE__).'/lib/setuplib.php');
-require_once(dirname(__FILE__).'/lib/moodlelib.php');
-require_once(dirname(__FILE__).'/lib/weblib.php');
-require_once(dirname(__FILE__).'/lib/deprecatedlib.php');
-require_once(dirname(__FILE__).'/lib/adodb/adodb.inc.php');
-require_once(dirname(__FILE__).'/lib/environmentlib.php');
-require_once(dirname(__FILE__).'/lib/xmlize.php');
-require_once(dirname(__FILE__).'/lib/componentlib.class.php');
-require_once(dirname(__FILE__).'//version.php');
+require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir.'/setuplib.php');
+require_once($CFG->libdir.'/moodlelib.php');
+require_once($CFG->libdir.'/weblib.php');
+require_once($CFG->libdir.'/deprecatedlib.php');
+require_once($CFG->libdir.'/adodb/adodb.inc.php');
+require_once($CFG->libdir.'/environmentlib.php');
+require_once($CFG->libdir.'/xmlize.php');
+require_once($CFG->libdir.'/componentlib.class.php');
+require_once($CFG->dirroot.'/version.php');
 
 /// Set version and release
 $INSTALL['version'] = $version;
@@ -198,7 +205,7 @@ if (isset($_GET['help'])) {
 /// Are we in config download mode?
 
 if (isset($_GET['download'])) {
-    header("Content-Type: application/download\n"); 
+    header("Content-Type: application/x-forcedownload\n"); 
     header("Content-Disposition: attachment; filename=\"config.php\"");
     echo $INSTALL['config'];
     exit;
@@ -764,7 +771,7 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
             <tr>
                 <td class="td_left"><p><?php print_string('dirroot', 'install') ?></p></td>
                 <td class="td_right">
-                    <input type="text" size="40" name="dirrootform" value="<?php p($INSTALL['dirrootform'],true) ?>" />
+                    <input type="text" size="40" name="dirrootform" disabled="disabled" value="<?php p($INSTALL['dirrootform'],true) ?>" />
                 </td>
             </tr>
             <tr>
