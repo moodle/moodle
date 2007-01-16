@@ -52,7 +52,7 @@
         error("The PHP server variable 'file_uploads' is not turned On - $documentationlink");
     }
 
-    if (empty($CFG->prefix) && $CFG->family != 'mysql') {  //Enforce prefixes for everybody but mysql
+    if (empty($CFG->prefix) && $CFG->dbfamily != 'mysql') {  //Enforce prefixes for everybody but mysql
         error('$CFG->prefix can\'t be empty for your target DB (' . $CFG->dbtype . ')');
     }
 
