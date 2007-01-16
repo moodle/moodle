@@ -117,20 +117,34 @@ class auth_plugin_db {
                         "department", "address", "city", "country", "description", 
                         "idnumber", "lang");
 
-        $result = array();
 
+        //Array to map local fieldnames we want, to external fieldnames
+        $selectfields = array();
         foreach ($fields as $field) {
-            if ($this->config->{'field_map_' . $field}) {
-                if ($rs = $authdb->Execute("SELECT " . $this->config->{'field_map_' . $field} . " as myfield FROM {$this->config->table}
-                                            WHERE {$this->config->fielduser} = '$username'")) {
-                    if ( $rs->RecordCount() == 1 ) {
-                        if (!empty($CFG->unicodedb)) {
-                            $result["$field"] = addslashes(stripslashes($rs->fields['myfield']));
-                        } else {
-                            $result["$field"] = addslashes(stripslashes(utf8_decode($rs->fields['myfield'])));
-                        }
-                    }
-                }
+            if (!empty($this->config->{'field_map_' . $field})) {
+                $selectfields[$field] = $this->config->{'field_map_' . $field};
+            }
+        }
+        $result = array();
+        //If at least one field is mapped from external db, get that mapped data:
+        if ($selectfields) {
+            $select = '';
+            foreach ($selectfields as $localname=>$externalname) {
+                $select .= ", $externalname AS $localname";
+            }
+            $select = 'SELECT ' . substr($select,1);
+            $sql = $select .
+                " FROM {$this->config->table}" .
+                " WHERE {$this->config->fielduser} = '$username'";
+            if ($rs = $authdb->Execute($sql)) {
+                if ( $rs->RecordCount() == 1 ) {
+                    foreach ($selectfields as $localname=>$externalname) {
+                        if (empty($CFG->unicodedb)) {
+                            $rs->fields[$localname] = utf8_decode($rs->fields[$localname]);
+                         }
+                        $result[$localname] = addslashes(stripslashes($rs->fields[$localname]));
+                     }
+                 }
             }
         }
         $authdb->Close();
