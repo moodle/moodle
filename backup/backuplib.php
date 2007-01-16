@@ -1064,67 +1064,73 @@
 
         $status = true;
 
-        $users = get_records_sql("SELECT u.old_id, u.table_name,u.info
-                              FROM {$CFG->prefix}backup_ids u
-                              WHERE u.backup_code = '$preferences->backup_unique_code' AND
-                                    u.table_name = 'user'");
+        // Use a recordset to for the memory handling on to
+        // the DB and run faster
+        $users = get_recordset_sql("SELECT b.old_id, b.table_name, b.info,
+                                           u.*, m.wwwroot
+                                    FROM   {$CFG->prefix}backup_ids b
+                                      JOIN {$CFG->prefix}user       u ON b.old_id=u.id
+                                      JOIN {$CFG->prefix}mnet_host  m ON u.mnethostid=m.id
+                                    WHERE b.backup_code = '$preferences->backup_unique_code' AND
+                                          b.table_name = 'user'");
 
         //If we have users to backup
-        if ($users) {
+        if ($users && $users->RecordCount()) {
             //Begin Users tag
             fwrite ($bf,start_tag("USERS",2,true));
             $counter = 0;
             //With every user
-            foreach ($users as $user) {
-                //Get user data from table
-                $user_data = get_record("user","id",$user->old_id);
+            while ($user = $users->FetchNextObj()) {
                 //Begin User tag
                 fwrite ($bf,start_tag("USER",3,true));
                 //Output all user data
-                fwrite ($bf,full_tag("ID",4,false,$user_data->id));
-                fwrite ($bf,full_tag("AUTH",4,false,$user_data->auth));
-                fwrite ($bf,full_tag("CONFIRMED",4,false,$user_data->confirmed));
-                fwrite ($bf,full_tag("POLICYAGREED",4,false,$user_data->policyagreed));
-                fwrite ($bf,full_tag("DELETED",4,false,$user_data->deleted));
-                fwrite ($bf,full_tag("USERNAME",4,false,$user_data->username));
-                fwrite ($bf,full_tag("PASSWORD",4,false,$user_data->password));
-                fwrite ($bf,full_tag("IDNUMBER",4,false,$user_data->idnumber));
-                fwrite ($bf,full_tag("FIRSTNAME",4,false,$user_data->firstname));
-                fwrite ($bf,full_tag("LASTNAME",4,false,$user_data->lastname));
-                fwrite ($bf,full_tag("EMAIL",4,false,$user_data->email));
-                fwrite ($bf,full_tag("EMAILSTOP",4,false,$user_data->emailstop));
-                fwrite ($bf,full_tag("ICQ",4,false,$user_data->icq));
-                fwrite ($bf,full_tag("SKYPE",4,false,$user_data->skype));
-                fwrite ($bf,full_tag("YAHOO",4,false,$user_data->yahoo));
-                fwrite ($bf,full_tag("AIM",4,false,$user_data->aim));
-                fwrite ($bf,full_tag("MSN",4,false,$user_data->msn));
-                fwrite ($bf,full_tag("PHONE1",4,false,$user_data->phone1));
-                fwrite ($bf,full_tag("PHONE2",4,false,$user_data->phone2));
-                fwrite ($bf,full_tag("INSTITUTION",4,false,$user_data->institution));
-                fwrite ($bf,full_tag("DEPARTMENT",4,false,$user_data->department));
-                fwrite ($bf,full_tag("ADDRESS",4,false,$user_data->address));
-                fwrite ($bf,full_tag("CITY",4,false,$user_data->city));
-                fwrite ($bf,full_tag("COUNTRY",4,false,$user_data->country));
-                fwrite ($bf,full_tag("LANG",4,false,$user_data->lang));
-                fwrite ($bf,full_tag("THEME",4,false,$user_data->theme));
-                fwrite ($bf,full_tag("TIMEZONE",4,false,$user_data->timezone));
-                fwrite ($bf,full_tag("FIRSTACCESS",4,false,$user_data->firstaccess));
-                fwrite ($bf,full_tag("LASTACCESS",4,false,$user_data->lastaccess));
-                fwrite ($bf,full_tag("LASTLOGIN",4,false,$user_data->lastlogin));
-                fwrite ($bf,full_tag("CURRENTLOGIN",4,false,$user_data->currentlogin));
-                fwrite ($bf,full_tag("LASTIP",4,false,$user_data->lastip));
-                fwrite ($bf,full_tag("SECRET",4,false,$user_data->secret));
-                fwrite ($bf,full_tag("PICTURE",4,false,$user_data->picture));
-                fwrite ($bf,full_tag("URL",4,false,$user_data->url));
-                fwrite ($bf,full_tag("DESCRIPTION",4,false,$user_data->description));
-                fwrite ($bf,full_tag("MAILFORMAT",4,false,$user_data->mailformat));
-                fwrite ($bf,full_tag("MAILDIGEST",4,false,$user_data->maildigest));
-                fwrite ($bf,full_tag("MAILDISPLAY",4,false,$user_data->maildisplay));
-                fwrite ($bf,full_tag("HTMLEDITOR",4,false,$user_data->htmleditor));
-                fwrite ($bf,full_tag("AJAX",4,false,$user_data->ajax));
-                fwrite ($bf,full_tag("AUTOSUBSCRIBE",4,false,$user_data->autosubscribe));
-                fwrite ($bf,full_tag("TRACKFORUMS",4,false,$user_data->trackforums));
-                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$user_data->timemodified));
+                fwrite ($bf,full_tag("ID",4,false,$user->id));
+                fwrite ($bf,full_tag("AUTH",4,false,$user->auth));
+                fwrite ($bf,full_tag("CONFIRMED",4,false,$user->confirmed));
+                fwrite ($bf,full_tag("POLICYAGREED",4,false,$user->policyagreed));
+                fwrite ($bf,full_tag("DELETED",4,false,$user->deleted));
+                fwrite ($bf,full_tag("USERNAME",4,false,$user->username));
+                fwrite ($bf,full_tag("PASSWORD",4,false,$user->password));
+                fwrite ($bf,full_tag("IDNUMBER",4,false,$user->idnumber));
+                fwrite ($bf,full_tag("FIRSTNAME",4,false,$user->firstname));
+                fwrite ($bf,full_tag("LASTNAME",4,false,$user->lastname));
+                fwrite ($bf,full_tag("EMAIL",4,false,$user->email));
+                fwrite ($bf,full_tag("EMAILSTOP",4,false,$user->emailstop));
+                fwrite ($bf,full_tag("ICQ",4,false,$user->icq));
+                fwrite ($bf,full_tag("SKYPE",4,false,$user->skype));
+                fwrite ($bf,full_tag("YAHOO",4,false,$user->yahoo));
+                fwrite ($bf,full_tag("AIM",4,false,$user->aim));
+                fwrite ($bf,full_tag("MSN",4,false,$user->msn));
+                fwrite ($bf,full_tag("PHONE1",4,false,$user->phone1));
+                fwrite ($bf,full_tag("PHONE2",4,false,$user->phone2));
+                fwrite ($bf,full_tag("INSTITUTION",4,false,$user->institution));
+                fwrite ($bf,full_tag("DEPARTMENT",4,false,$user->department));
+                fwrite ($bf,full_tag("ADDRESS",4,false,$user->address));
+                fwrite ($bf,full_tag("CITY",4,false,$user->city));
+                fwrite ($bf,full_tag("COUNTRY",4,false,$user->country));
+                fwrite ($bf,full_tag("LANG",4,false,$user->lang));
+                fwrite ($bf,full_tag("THEME",4,false,$user->theme));
+                fwrite ($bf,full_tag("TIMEZONE",4,false,$user->timezone));
+                fwrite ($bf,full_tag("FIRSTACCESS",4,false,$user->firstaccess));
+                fwrite ($bf,full_tag("LASTACCESS",4,false,$user->lastaccess));
+                fwrite ($bf,full_tag("LASTLOGIN",4,false,$user->lastlogin));
+                fwrite ($bf,full_tag("CURRENTLOGIN",4,false,$user->currentlogin));
+                fwrite ($bf,full_tag("LASTIP",4,false,$user->lastip));
+                fwrite ($bf,full_tag("SECRET",4,false,$user->secret));
+                fwrite ($bf,full_tag("PICTURE",4,false,$user->picture));
+                fwrite ($bf,full_tag("URL",4,false,$user->url));
+                fwrite ($bf,full_tag("DESCRIPTION",4,false,$user->description));
+                fwrite ($bf,full_tag("MAILFORMAT",4,false,$user->mailformat));
+                fwrite ($bf,full_tag("MAILDIGEST",4,false,$user->maildigest));
+                fwrite ($bf,full_tag("MAILDISPLAY",4,false,$user->maildisplay));
+                fwrite ($bf,full_tag("HTMLEDITOR",4,false,$user->htmleditor));
+                fwrite ($bf,full_tag("AJAX",4,false,$user->ajax));
+                fwrite ($bf,full_tag("AUTOSUBSCRIBE",4,false,$user->autosubscribe));
+                fwrite ($bf,full_tag("TRACKFORUMS",4,false,$user->trackforums));
+                if ($user->mnethostid != $CFG->mnet_localhost_id) {
+                    fwrite ($bf,full_tag("MNETHOSTURL",4,false,$user->wwwroot));
+                }
+                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$user->timemodified));
 
                 /// write assign/override code for context_userid
 
