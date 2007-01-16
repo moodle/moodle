@@ -95,7 +95,7 @@
         $result = $CFG->repositorywebroot.substr($scorm->reference,1).'/'.$sco->launch;
     } else {
         if (basename($scorm->reference) == 'imsmanifest.xml') {
-            $basedir = dirname($scorm->reference);
+            $basedir = scorm_dirname($scorm->reference);
         } else {
             $basedir = 'moddata/scorm/'.$scorm->id;
         }
