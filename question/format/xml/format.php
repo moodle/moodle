@@ -1,3 +1,4 @@
+
 <?php // $Id$
 //
 ///////////////////////////////////////////////////////////////
@@ -98,6 +99,7 @@ class qformat_xml extends qformat_default {
      */
     function import_headers( $question ) {
         // this routine initialises the question object
+        $qo = $this->defaultquestion();
         $name = $this->import_text( $question['#']['name'][0]['#']['text'] );
         $qtext = $this->import_text( $question['#']['questiontext'][0]['#']['text'] );
         $qformat = $question['#']['questiontext'][0]['@']['format'];
@@ -114,9 +116,9 @@ class qformat_xml extends qformat_default {
         if (!empty($question['#']['defaultgrade'][0]['#'])) {
             $qo->defaultgrade = $question['#']['defaultgrade'][0]['#'];
         }
+        
         $penalty = $question['#']['penalty'][0]['#'];
 
-        $qo = $this->defaultquestion();
         $qo->name = $name;
         $qo->questiontext = $qtext;
         $qo->questiontextformat = $this->trans_format( $qformat );
