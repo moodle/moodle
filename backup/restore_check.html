@@ -265,6 +265,15 @@
             $hidden["file"]               =  $file;
             $hidden["id"]                 =  $id;
             print_string('longtimewarning','admin');
+
+            if ($restore->users && !empty($info->mnet_externalusers) 
+                && $info->mnet_externalusers === 'true') {
+                if ($info->original_wwwroot === $CFG->wwwroot) {
+                    print '<p>'.get_string('mnetrestore_extusers','admin').'</p>';
+                } else {
+                    print '<p>'. get_string('mnetrestore_extusers_mismatch','admin').'</p>';
+                }
+            }
             print_single_button("restore.php", $hidden, get_string("restorecoursenow"),"post");
             echo "</center>";
         } else {

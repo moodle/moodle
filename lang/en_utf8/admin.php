@@ -356,6 +356,8 @@ $string['memcachedhosts'] = 'memcached hosts';
 $string['memcachedpconn'] = 'memcached use persistent connections';
 $string['messaging'] = 'Enable messaging system';
 $string['misc'] = 'Miscellaneous';
+$string['mnetrestore_extusers'] = '<strong>Note:</strong> This backup file contains remote Moodle Network user accounts which will be restored as part of the process.';
+$string['mnetrestore_extusers_mismatch'] = '<strong>Note:</strong> This backup file apparently originates from a different Moodle installation and contains remote Moodle Network user accounts that may fail to restore. This operation is unsupported. If you are certain that it was created on this Moodle installation, or you can ensure that all the needed Moodle Network Hosts are configured, you may want to still try the restore.';
 $string['modulesecurity'] = 'Module security';
 $string['multilangforceold'] = 'Force old multilang syntax: &lt;span&gt; without the class=\"multilang\" and &lt;lang&gt;';
 $string['multilangupgrade'] = 'Multilang upgrade';

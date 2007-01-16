@@ -3459,6 +3459,9 @@
                         case "ORIGINAL_WWWROOT":
                             $this->info->original_wwwroot = $this->getContents();
                             break;
+                        case "MNET_EXTERNALUSERS":
+                            $this->info->mnet_externalusers = $this->getContents();
+                            break;
                     }
                 }
                 if ($this->tree[3] == "DETAILS") {
