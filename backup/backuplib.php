@@ -450,6 +450,15 @@
         } else {
             $zipmethod = 'internal';
         }
+        //Indicate if it includes external MNET users
+        $sql = "SELECT b.old_id
+                   FROM   {$CFG->prefix}backup_ids b
+                     JOIN {$CFG->prefix}user       u ON b.old_id=u.id
+                   WHERE b.backup_code = '$preferences->backup_unique_code' 
+                         AND b.table_name = 'user' AND u.mnethostid != '{$CFG->mnet_localhost_id}'";
+        if (record_exists_sql($sql)) {
+            fwrite ($bf,full_tag("MNET_REMOTEUSERS",2,false,'true'));
+        }
         fwrite ($bf,full_tag("ZIP_METHOD",2,false,$zipmethod));
         //Te includes tag
         fwrite ($bf,start_tag("DETAILS",2,true));
