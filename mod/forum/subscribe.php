@@ -18,14 +18,7 @@
     }
 
     if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-        
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        if (groupmode($course, $cm) and
-                    !has_capability('moodle/site:accessallgroups', $context)) {
-            if (!mygroupid($course->id)) {
-                error('Sorry, but you must be a group member to subscribe.');
-            }
-        }
     } else {
         $cm->id = 0;
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -40,6 +33,14 @@
         }
     } else {
         $user = $USER;
+    }
+
+    if (groupmode($course, $cm)
+                and !forum_is_subscribed($user->id, $forum->id)
+                and !has_capability('moodle/site:accessallgroups', $context)) {
+        if (!mygroupid($course->id)) {
+            error('Sorry, but you must be a group member to subscribe.');
+        }
     }
 
     require_login($course->id, false, $cm);
