@@ -601,6 +601,9 @@ function set_config($name, $value, $plugin=NULL) {
  * generating $CFG safely from the database without overwriting
  * existing values.
  *
+ * If called with 2 parameters it will return a $string single
+ * value or false of the value is not found.
+ *
  * @param string $plugin
  * @param string $name
  * @uses $CFG
@@ -613,9 +616,9 @@ function get_config($plugin=NULL, $name=NULL) {
 
     if (!empty($name)) { // the user is asking for a specific value
         if (!empty($plugin)) {
-            return get_record('config_plugins', 'plugin' , $plugin, 'name', $name);
+            return get_field('config_plugins', 'value', 'plugin' , $plugin, 'name', $name);
         } else {
-            return get_record('config', 'name', $name);
+            return get_field('config', 'value', 'name', $name);
         }
     }
 
