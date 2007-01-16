@@ -47,7 +47,7 @@ $string['gdversionhelp'] = '<p>Det lader til at din server ikke har GD installer
 
 <p>For at tilføje GD på unix skal PHP kompileres med \'--with-gd\" parameteret.</p>
 
-<p>Under windows er det normalt nok at udkommentere den linje i php.ini der referere til php_gd2.dll </p>';
+<p>Under windows er det normalt nok at udkommentere den linje i php.ini der referere til libgd.dll </p>';
 $string['help'] = 'Hjælp';
 $string['iconvrecommended'] = 'Det anbefales at installere/aktivere ICONV udvidelsen for at forbedre sitets hastighed, især hvis dit site understøtter sprog med ikke-latinske tegn.';
 $string['info'] = 'Information';
