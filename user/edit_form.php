@@ -19,6 +19,7 @@ class user_edit_form extends moodleform {
         $userupdate    = has_capability('moodle/user:update', $systemcontext);
         $strrequired = get_string('required');
 
+        $this->set_upload_manager(new upload_manager('imagefile',false,false,null,false,0,true,true));
 
         /// Add some extra hidden fields
         $mform->addElement('hidden', 'id');
@@ -59,7 +60,7 @@ class user_edit_form extends moodleform {
                 $newpasswordgrp[] = &MoodleQuickForm::createElement('text', 'newpassword', '', 'size="20"');
                 $newpasswordgrp[] = &MoodleQuickForm::createElement('static', 'newpasswordtext', '', '('.get_string('leavetokeep').')');
                 $mform->addGroup($newpasswordgrp, 'newpasswordgrp', get_string('newpassword'),' ',false);
-                $mform->setType('newpassword', PARAM_MULTILANG);
+                $mform->setType('newpassword', PARAM_RAW);
 
                 if (!$adminself and $userauth->can_change_password()) {
                     if (get_user_preferences('auth_forcepasswordchange', NULL, $user->id)) {
@@ -80,11 +81,11 @@ class user_edit_form extends moodleform {
 
 
         $mform->addElement('text', 'firstname', get_string('firstname'), 'maxlength="100" size="30"');
-        $mform->setType('firstname', PARAM_MULTILANG);
+        $mform->setType('firstname', PARAM_NOTAGS);
         $mform->addRule('firstname', $strrequired, 'required', null, 'client');
 
         $mform->addElement('text', 'lastname', get_string('lastname'), 'maxlength="100" size="30"');
-        $mform->setType('lastname', PARAM_MULTILANG);
+        $mform->setType('lastname', PARAM_NOTAGS);
         $mform->addRule('lastname', $strrequired, 'required', null, 'client');
 
         $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="30"');
@@ -174,10 +175,11 @@ class user_edit_form extends moodleform {
 
 
         $choices = get_list_of_countries();
+        $choices[0] = get_string('selectacountry').'...'; 
         $mform->addElement('select', 'country', get_string('selectacountry'), $choices);
         $mform->setType('country', PARAM_ALPHA);
         $mform->addRule('country', $strrequired, 'required', null, 'client');
-        if ($CFG->country) {
+        if (!empty($CFG->country)) {
             $mform->setDefault('country', $CFG->country);
         }
 
@@ -188,6 +190,7 @@ class user_edit_form extends moodleform {
         } else {
             $mform->addElement('select', 'timezone', get_string('timezone'), $choices);
             $mform->setType('timezone', PARAM_PATH);
+            $mform->setDefault('timezone', '99');
         }
 
         $choices = array();

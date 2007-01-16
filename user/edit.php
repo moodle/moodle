@@ -79,8 +79,14 @@
 
 
     $userform = new user_edit_form(null, compact('user','course','authplugin'));
-    $userform->set_upload_manager(new upload_manager('imagefile',false,false,null,false,0,true,true));
-    $userform->set_data($user);
+    if ($user->username == 'changeme') {
+        $changeme = new object();
+        $changeme->id = $user->id;
+        $changeme->auth = $user->auth;
+        $userform->set_data($changeme);
+    } else {
+        $userform->set_data($user);
+    }
 
 /// If data submitted, then process and store.
     if ($usernew = $userform->get_data()) {
@@ -116,9 +122,6 @@
         foreach ($usernew as $key => $data) {
             $usernew->$key = addslashes(clean_text(stripslashes(trim($usernew->$key)), FORMAT_MOODLE));
         }
-
-        $usernew->firstname = strip_tags($usernew->firstname);
-        $usernew->lastname  = strip_tags($usernew->lastname);
 
         if (isset($usernew->username)) {
             $usernew->username = moodle_strtolower($usernew->username);
