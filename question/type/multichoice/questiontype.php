@@ -340,12 +340,11 @@ class question_multichoice_qtype extends default_questiontype {
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {
+        $state->raw_grade = 0;
         if($question->options->single) {
             $response = reset($state->responses);
             if ($response) {
                 $state->raw_grade = $question->options->answers[$response]->fraction;
-            } else {
-                $state->raw_grade = 0;
             }
         } else {
             foreach ($state->responses as $response) {
@@ -354,10 +353,11 @@ class question_multichoice_qtype extends default_questiontype {
                 }
             }
         }
-                
+
         // Make sure we don't assign negative or too high marks
         $state->raw_grade = min(max((float) $state->raw_grade,
                             0.0), 1.0) * $question->maxgrade;
+
         // Apply the penalty for this attempt
         $state->penalty = $question->penalty * $question->maxgrade;
 
