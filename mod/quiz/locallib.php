@@ -575,11 +575,11 @@ function quiz_upgrade_states($attempt) {
     // Actually we only do this for states whose question is actually listed in $attempt->layout.
     // We do not do it for states associated to wrapped questions like for example the questions
     // used by a RANDOM question
-    $newest->attemptid = $attempt->uniqueid;
+    $session = new stdClass;
+    $session->attemptid = $attempt->uniqueid;
     $questionlist = quiz_questions_in_quiz($attempt->layout);
     if ($questionlist and $states = get_records_select('question_states', "attempt = '$attempt->uniqueid' AND question IN ($questionlist)")) {
         foreach ($states as $state) {
-            $session = new stdClass;
             $session->newgraded = $state->id;
             $session->newest = $state->id;
             $session->questionid = $state->question;
