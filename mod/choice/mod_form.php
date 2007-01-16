@@ -90,7 +90,7 @@ class mod_choice_mod_form extends moodleform_mod {
         $this->add_action_buttons();
 	}
 
-	function defaults_preprocessing(&$default_values){
+	function data_preprocessing(&$default_values){
         if (!empty($this->_instance) && ($options = get_records_menu('choice_options','choiceid', $this->_instance, 'id', 'id,text'))
 	           && ($options2 = get_records_menu('choice_options','choiceid', $this->_instance, 'id', 'id,maxanswers')) ) {
             $choiceids=array_keys($options);

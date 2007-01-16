@@ -279,7 +279,7 @@ class mod_lesson_mod_form extends moodleform_mod {
 
 
 
-	function defaults_preprocessing(&$default_values){
+	function data_preprocessing(&$default_values){
         if (isset($default_values['conditions'])) {
             $conditions = unserialize($default_values['conditions']);
             $default_values['timespent'] = $conditions->timespent;

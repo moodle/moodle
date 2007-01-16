@@ -36,13 +36,11 @@ class moodleform_mod extends moodleform {
         parent::moodleform('modedit.php');
     }
     /**
-     * Only available on moodleform_mod since defaults for forms cannot
-     * be calculated externally. You can use _customdata in here if necessary.
-     *
+     * Only available on moodleform_mod.
      *
      * @param array $default_values passed by reference
      */
-    function defaults_preprocessing(&$default_values){
+    function data_preprocessing(&$default_values){
     }
     /**
      * Load in existing data as form defaults. Usually new entry defaults are stored directly in

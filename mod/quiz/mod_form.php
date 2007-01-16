@@ -241,7 +241,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $this->add_action_buttons();
 	}
 
-	function defaults_preprocessing(&$default_values){
+	function data_preprocessing(&$default_values){
         if (count($this->_feedbacks)) {
             $key = 0;
             foreach ($this->_feedbacks as $feedback){

@@ -47,7 +47,7 @@ class mod_resource_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
-    function defaults_preprocessing(&$default_values){
+    function data_preprocessing(&$default_values){
         $this->_resinstance->setup_preprocessing($default_values);
     }
 

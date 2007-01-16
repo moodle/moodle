@@ -168,7 +168,7 @@ class mod_glossary_mod_form extends moodleform_mod {
 
 
 	}
-	function defaults_preprocessing($default_values){
+	function data_preprocessing($default_values){
         if (isset($default_values['assessed'])){
 	        $default_values['userating']=($default_values['assessed'])?true:false;
 	    }
