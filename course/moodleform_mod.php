@@ -53,7 +53,7 @@ class moodleform_mod extends moodleform {
         if (is_object($default_values)) {
             $default_values = (array)$default_values;
         }
-        $this->defaults_preprocessing($default_values);
+        $this->data_preprocessing($default_values);
         parent::set_data($default_values + $this->standard_coursemodule_elements_settings());//never slashed for moodleform_mod
     }
     /**
