@@ -5500,7 +5500,7 @@
         //Saving conversion id variables into backup_tables
         if ($restore->restoreto == 2) {
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("creatingnewcourse");
+                echo '<li>'.get_string('creatingnewcourse') . '</li>';
             }
             $oldidnumber = $course_header->course_idnumber;
             if (!$status = restore_create_new_course($restore,$course_header)) {
@@ -5521,7 +5521,7 @@
                     if (!empty($oldidnumber)) {
                         echo "<li>".get_string("nomoreidnumber","moodle",$oldidnumber)."</li>";
                     }
-                    echo "</ul></li>";
+                    echo "</ul>";
                     //Put the destination course_id
                 }
                 $restore->course_id = $course_header->course_id;
