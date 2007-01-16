@@ -190,35 +190,12 @@ function scorm_external_link($link) {
     return $result;
 }
 
-/**
-* Given a package directory, this function will check if the package is valid
-*
-* @param string $packagedir The package directory
-* @return mixed
-*/
-function scorm_validate($packagedir) {
-    $validation = new stdClass();
-    if (is_file($packagedir.'/imsmanifest.xml')) {
-        $validation->result = 'found';
-        $validation->pkgtype = 'SCORM';
+function scorm_dirname($location) {
+    if (scorm_external_link($location)) {
+        return substr($location,0,strrpos($location,'/'));
     } else {
-        if ($handle = opendir($packagedir)) {
-            while (($file = readdir($handle)) !== false) {
-                $ext = substr($file,strrpos($file,'.'));
-                if (strtolower($ext) == '.cst') {
-                    $validation->result = 'found';
-                    $validation->pkgtype = 'AICC';
-                    break;
-                }
-            }
-            closedir($handle);
-        }
-        if (!isset($validation->result)) {
-            $validation->result = 'nomanifest';
-            $validation->pkgtype = 'SCORM';
-        }
+        return dirname($location);
     }
-    return $validation;
 }
 
 /**
@@ -566,17 +543,9 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
                   if ($scorm->hidebrowse == 0) {
                       print_string("mode","scorm");
                       echo ': <input type="radio" id="b" name="mode" value="browse" /><label for="b">'.get_string('browse','scorm').'</label>'."\n";
-                      if ($incomplete === true) {
-                          echo '<input type="radio" id="n" name="mode" value="normal" checked="checked" /><label for="n">'.get_string('normal','scorm')."</label>\n";
-                      } else {
-                          echo '<input type="radio" id="r" name="mode" value="review" checked="checked" /><label for="r">'.get_string('review','scorm')."</label>\n";
-                      }
+                      echo '<input type="radio" id="n" name="mode" value="normal" checked="checked" /><label for="n">'.get_string('normal','scorm')."</label>\n";
                   } else {
-                      if ($incomplete === true) {
-                          echo '<input type="hidden" name="mode" value="normal" />'."\n";
-                      } else {
-                          echo '<input type="hidden" name="mode" value="review" />'."\n";
-                      }
+                      echo '<input type="hidden" name="mode" value="normal" />'."\n";
                   }
                   if (($incomplete === false) && (($result->attemptleft > 0)||($scorm->maxattempt == 0))) {
 ?>
@@ -597,16 +566,17 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
 
 function scorm_simple_play($scorm,$user) {
     $result = false;
-    $scoes = get_records_select('scorm_scoes','scorm='.$scorm->id.' AND launch<>""');
-    if (count($scoes) == 1) {
-        if ($scorm->skipview >= 1) {
-            $sco = current($scoes);
-            if (scorm_get_tracks($sco->id,$user->id) === false) {
-                header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id);
-                $result = true;
-            } else if ($scorm->skipview == 2) {
-                header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id);
-                $result = true;
+    if ($scoes = get_records_select('scorm_scoes','scorm='.$scorm->id.' AND launch<>""')) {
+        if (count($scoes) == 1) {
+            if ($scorm->skipview >= 1) {
+                $sco = current($scoes);
+                if (scorm_get_tracks($sco->id,$user->id) === false) {
+                    header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id);
+                    $result = true;
+                } else if ($scorm->skipview == 2) {
+                    header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id);
+                    $result = true;
+                }
             }
         }
     }
@@ -633,10 +603,189 @@ function scorm_parse($scorm) {
         if (basename($reference) != 'imsmanifest.xml') {
             $scorm->launch = scorm_parse_scorm($scorm->dir.'/'.$scorm->id,$scorm->id);
         } else {
-            $scorm->launch = scorm_parse_scorm(dirname($reference),$scorm->id);
+            $scorm->launch = scorm_parse_scorm(scorm_dirname($reference),$scorm->id);
         }
     }
     return $scorm->launch;
+}
+
+/**
+* Given a manifest path, this function will check if the manifest is valid
+*
+* @param string $manifest The manifest file
+* @return object
+*/
+function scorm_validate_manifest($manifest) {
+    $validation = new stdClass();
+    if (is_file($manifest)) {
+        $validation->result = 'found';
+    } else {
+        $validation->result = 'notfound';
+        $validation->launch = -1;
+    }
+    return $validation;
+}
+
+/**
+* Given a aicc package directory, this function will check if the course structure is valid
+*
+* @param string $packagedir The aicc package directory path
+* @return object
+*/
+function scorm_validate_aicc($packagedir) {
+    $validation = new stdClass();
+    $validation->result = 'notfound';
+    if (is_dir($packagedir)) {
+        if ($handle = opendir($packagedir)) {
+            while (($file = readdir($handle)) !== false) {
+                $ext = substr($file,strrpos($file,'.'));
+                if (strtolower($ext) == '.cst') {
+                    $validation->result = 'found';
+                    break;
+                }
+            }
+            closedir($handle);
+        }
+    }
+    if ($validation->result == 'notfound') {
+        $validation->launch = -1;
+    }
+    return $validation;
+}
+
+
+function scorm_validate($data) {
+    global $CFG;
+
+    $courseid = $data->course;                  // Course Module ID
+    $reference = $data->reference;              // Package path
+    $scormid = $data->instance;                 // scorm ID 
+
+    $validation = new stdClass();
+
+    if (!empty($courseid) && !empty($reference)) {
+        $validation->launch = 0;
+        $validation->errors = array();
+        $referencefield = $reference;
+        if (empty($reference)) {
+            $validation->launch = -1;
+            $validation->result = "packagefile";
+        } else if ($reference[0] == '#') {
+            require_once($repositoryconfigfile);
+            if ($CFG->repositoryactivate) {
+                $referencefield = $reference.'/imsmanfest.xml';
+                $reference = $CFG->repository.substr($reference,1).'/imsmanifest.xml';
+            } else {
+                $validation->launch = -1;
+                $validation->result = "packagefile";
+            }
+        } else if (substr($reference,0,7) != 'http://') {
+            $reference = $CFG->dataroot.'/'.$courseid.'/'.$reference;
+        }
+
+        if (!empty($scormid)) {  
+        //
+        // SCORM Update
+        //
+            if (($validation->launch != -1) && is_file($reference)) {
+                $fp = fopen($reference,"r");
+                $fstat = fstat($fp);
+                fclose($fp);
+                if ($scorm = get_record("scorm","id",$scormid)) {
+                    if ($scorm->reference[0] == '#') {
+                        require_once($repositoryconfigfile);
+                        if ($CFG->repositoryactivate) {
+                            $oldreference = $CFG->repository.substr($scorm->reference,1).'/imsmanifest.xml';
+                        } else {
+                            $oldreference = $scorm->reference;
+                        }
+                    } else if (substr($reference,0,7) != 'http://') {
+                        $oldreference = $CFG->dataroot.'/'.$courseid.'/'.$scorm->reference;
+                    }
+                    $validation->launch = $scorm->launch;
+                    if ((($scorm->timemodified < $fstat["mtime"]) && ($oldreference == $reference)) || ($oldreference != $reference)) {
+                        // This is a new or a modified package
+                        $validation->launch = 0;
+                    } else {
+                    // Old package already validated
+                        $validation->result = 'found';
+                        if (strpos($scorm->version,'AICC') !== false) {
+                            $validation->pkgtype = 'AICC';
+                        } else {
+                            $validation->pkgtype = 'SCORM';
+                        }
+                    }
+                } else {
+                    $validation->result = 'badinstance';
+                    $validation->launch = -1;
+                }
+            } else {
+                $validation->result = 'badreference';
+                $validation->launch = -1;
+            }
+        }
+        //$validation->launch = 0;
+        if ($validation->launch == 0) {
+        //
+        // Package must be validated
+        //
+            $ext = strtolower(substr(basename($reference),strrpos(basename($reference),'.')));
+            switch ($ext) {
+                case '.pif':
+                case '.zip':
+                // Create a temporary directory to unzip package and validate package
+                    $tempdir = '';
+                    $scormdir = '';
+                    if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
+                        if ($tempdir = scorm_datadir($scormdir)) {
+                            copy ("$reference", $tempdir."/".basename($reference));
+                            unzip_file($tempdir."/".basename($reference), $tempdir, false);
+                            unlink ($tempdir."/".basename($reference));
+                            if (is_file($tempdir.'/imsmanifest.xml')) {
+                                $validation = scorm_validate_manifest($tempdir.'/imsmanifest.xml');
+                                $validation->pkgtype = 'SCORM';
+                            } else {
+                                $validation = scorm_validate_aicc($tempdir);
+                                $validation->pkgtype = 'AICC';
+                            }
+                        } else {
+                            $validation->result = "packagedir";
+                        }
+                    } else {
+                        $validation->result = "datadir";
+                    }
+                break;
+                case '.xml':
+                    if (basename($reference) == 'imsmanifest.xml') {
+                        $validation = scorm_validate_manifest($reference);
+                    } else {
+                        $validation->result = "manifestfile";
+                    }
+                break;
+                default: 
+                    $validation->result = "packagefile";
+                break;
+            }
+            if (($validation->result != "regular") && ($validation->result != "found")) {
+                if (is_dir($tempdir)) {
+                // Delete files and temporary directory
+                    scorm_delete_files($tempdir);
+                }
+                $validation->launch = -1;
+            } else {
+                if ($ext == '.xml') {
+                    $validation->datadir = dirname($referencefield);
+                } else {
+                    $validation->datadir = substr($tempdir,strlen($scormdir));
+                }
+                $validation->launch = 0;
+            }
+        }
+    } else {
+        $validation->launch = -1;
+        $validation->result = 'badrequest';
+    }
+    return $validation;
 }
 
 ?>

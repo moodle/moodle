@@ -10,8 +10,33 @@
 * @return int
 */
 function scorm_add_instance($scorm) {
+    $validate = scorm_validate($scorm);
+
+    $errors = array();
+    if (($validate->result != "regular") && ($validate->result != "found")) {
+        $errors[] = $validate->result;
+        if (isset($validate->errors) && (count($validate->errors[0]) > 0)) {
+            foreach ($validate->errors as $error) {
+                $errors[] = $error;
+            }
+        }
+    } else {
+        $scorm->pkgtype = $validate->pkgtype;
+        $scorm->datadir = $validate->datadir;
+        $scorm->launch = $validate->launch;
+        $scorm->parse = 1;
+    }
+
     if(empty($scorm->datadir)) { //check to make sure scorm object is valid BEFORE entering it in the database.
-        error(get_string('badpackage', 'scorm'));
+        $errorstr = '';
+        if (!empty($errors)) {
+            foreach ($errors as $error) {
+                $errorstr .= get_string($error,'scorm').'<br />';
+            }
+            error($errorstr);
+        } else {
+            error(get_string('badpackage', 'scorm'));
+        }
     } else {
         global $CFG;
         $scorm->timemodified = time();
@@ -58,8 +83,30 @@ function scorm_add_instance($scorm) {
 * @return int
 */
 function scorm_update_instance($scorm) {
-
     global $CFG;
+
+    $validate = scorm_validate($scorm);
+
+    $errors = array();
+    if (($validate->result != "regular") && ($validate->result != "found")) {
+        $errorstr = get_string($validate->result,'scorm');
+        if (isset($validate->errors) && (count($validate->errors[0]) > 0)) {
+            foreach ($validate->errors as $error) {
+                $errorstr .= '<br />'.get_string($error,'scorm');
+            }
+        }
+        error($errorstr);
+        exit();
+    } else {
+        $scorm->pkgtype = $validate->pkgtype;
+        if ($validate->launch == 0) {
+            $scorm->launch = $validate->launch;
+            $scorm->datadir = $validate->datadir;
+            $scorm->parse = 1;
+        } else {
+            $scorm->parse = 0;
+        }
+    }
 
     $scorm->timemodified = time();
     $scorm->id = $scorm->instance;
@@ -85,14 +132,6 @@ function scorm_update_instance($scorm) {
             rename($scorm->dir.$scorm->datadir,$scorm->dir.'/'.$scorm->id);
         }
 
-/*          delete_records('scorm_sequencing_controlmode','scormid',$scorm->id);
-            delete_records('scorm_sequencing_rolluprules','scormid',$scorm->id);
-            delete_records('scorm_sequencing_rolluprule','scormid',$scorm->id);
-            delete_records('scorm_sequencing_rollupruleconditions','scormid',$scorm->id);
-            delete_records('scorm_sequencing_rolluprulecondition','scormid',$scorm->id);
-            delete_records('scorm_sequencing_ruleconditions','scormid',$scorm->id);
-            delete_records('scorm_sequencing_rulecondition','scormid',$scorm->id);
-*/
         $scorm->launch = scorm_parse($scorm);
     } else {
         $oldscorm = get_record('scorm','id',$scorm->id);
@@ -397,9 +436,8 @@ function scorm_get_post_actions() {
 
 function scorm_option2text($scorm) {
     global $SCORM_POPUP_OPTIONS;
-
     if (isset($scorm->popup)) {
-        if ($scorm->popup) {
+        if ($scorm->popup == 1) {
             $optionlist = array();
             foreach ($SCORM_POPUP_OPTIONS as $name => $option) {
                 if (isset($scorm->$name)) {
