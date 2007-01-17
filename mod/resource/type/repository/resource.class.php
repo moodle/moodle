@@ -47,8 +47,6 @@ function set_parameters() {
                                        'value'   => $USER->id),
             'userusername'    => array('langstr' => get_string('username'),
                                        'value'   => $USER->username),
-            'userpassword'    => array('langstr' => get_string('password'),
-                                       'value'   => $USER->password),
             'useridnumber'    => array('langstr' => get_string('idnumber'),
                                        'value'   => $USER->idnumber),
             'userfirstname'   => array('langstr' => get_string('firstname'),
@@ -423,7 +421,7 @@ function display() {
             echo "<center><p>";
             echo '<object classid="CLSID:22D6f312-B0F6-11D0-94AB-0080C74C7E95"';
             echo '        codebase="http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=5,1,52,701" ';
-            echo '        standby="Loading Microsoft® Windows® Media Player components..." ';
+            echo '        standby="Loading Microsoftï¿½ Windowsï¿½ Media Player components..." ';
             echo '        id="msplayer" align="" type="application/x-oleobject">';
             echo "<param name=\"Filename\" value=\"$fullurl\">";
             echo '<param name="ShowControls" value="true" />';
