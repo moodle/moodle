@@ -40,7 +40,9 @@ function scorm_add_instance($scorm) {
     } else {
         global $CFG;
         $scorm->timemodified = time();
-
+		if(substr($scorm->reference,0,7)== 'http://'){
+			$scorm->md5_result=md5_file($scorm->reference);
+		}
         $scorm = scorm_option2text($scorm);
         $scorm->width = str_replace('%','',$scorm->width);
         $scorm->height = str_replace('%','',$scorm->height);
@@ -110,7 +112,9 @@ function scorm_update_instance($scorm) {
 
     $scorm->timemodified = time();
     $scorm->id = $scorm->instance;
-
+	if(substr($scorm->reference,0,7)== 'http://'){
+			$scorm->md5_result=md5_file($scorm->reference);
+	}
     $scorm = scorm_option2text($scorm);
     $scorm->width = str_replace('%','',$scorm->width);
     $scorm->height = str_replace('%','',$scorm->height);

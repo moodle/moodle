@@ -687,9 +687,14 @@ function scorm_validate($data) {
         //
         // SCORM Update
         //
-            if (($validation->launch != -1) && is_file($reference)) {
+			if (($validation->launch != -1) && (is_file($reference) || (substr($reference,0,7) == 'http://'))){
                 $fp = fopen($reference,"r");
-                $fstat = fstat($fp);
+                if (substr($reference,0,7) != 'http://') {
+					$fstat = fstat($fp);
+				}
+				else if(substr($reference,0,7) == 'http://'){
+					$mdcheck=md5_file($reference);
+				}
                 fclose($fp);
                 if ($scorm = get_record("scorm","id",$scormid)) {
                     if ($scorm->reference[0] == '#') {
@@ -701,9 +706,11 @@ function scorm_validate($data) {
                         }
                     } else if (substr($reference,0,7) != 'http://') {
                         $oldreference = $CFG->dataroot.'/'.$courseid.'/'.$scorm->reference;
-                    }
+                    } else{
+						$oldreference = $scorm->reference;
+					}
                     $validation->launch = $scorm->launch;
-                    if ((($scorm->timemodified < $fstat["mtime"]) && ($oldreference == $reference)) || ($oldreference != $reference)) {
+                     if ((($scorm->timemodified < $fstat["mtime"]) && ($oldreference == $reference) && (substr($reference,0,7) != 'http://')) || ($oldreference != $reference) || ((substr($reference,0,7) == 'http://') && ($mdcheck != $scorm->md5_result)&& ($oldreference == $reference))) {
                         // This is a new or a modified package
                         $validation->launch = 0;
                     } else {
