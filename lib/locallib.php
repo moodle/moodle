@@ -101,7 +101,7 @@ function upgrade_local_db($continueto) {
             $db->debug=false;
             if (set_config('local_version', $local_version)) {
                 notify(get_string('databasesuccess'), 'notifysuccess');
-                notify(get_string('databaseupgradelocal', '', $local_version));
+                notify(get_string('databaseupgradelocal', '', $local_version), 'notifysuccess');
                 print_continue($continueto);
                 print_footer('none');
                 exit;
