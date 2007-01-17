@@ -92,8 +92,6 @@ function set_parameters() {
                                        'value'   => $USER->id),
             'userusername'    => array('langstr' => get_string('username'),
                                        'value'   => $USER->username),
-            'userpassword'    => array('langstr' => get_string('password'),
-                                       'value'   => $USER->password),
             'useridnumber'    => array('langstr' => get_string('idnumber'),
                                        'value'   => $USER->idnumber),
             'userfirstname'   => array('langstr' => get_string('firstname'),
