@@ -120,7 +120,29 @@ if ($form = data_submitted() and confirm_sesskey()) {
     exit;
 }
 
-
+// Explain
+print_box(get_string('ssoacldescr','mnet'));
+// Are the needed bits enabled?
+$warn = '';
+if (empty($CFG->mnet_mode) || $CFG->mnet_mode !== 'strict') {
+    $warn = '<p>' . get_string('mnetdisabled','mnet') .'</p>';
+}
+if (empty($CFG->auth_plugins_enabled)) {
+    $warn .= '<p>' .  get_string('authmnetdisabled','mnet').'</p>';
+} else {
+    $auths = explode(',', $CFG->auth_plugins_enabled);
+    if (!in_array('mnet', $auths)) {
+        $warn .= '<p>' .  get_string('authmnetdisabled','mnet').'</p>';
+    }
+    unset($auths);
+}
+if (get_config('auth/mnet', 'auto_add_remote_users') != true) {
+    $warn .= '<p>' .  get_string('authmnetautoadddisabled','mnet').'</p>';
+}
+if (!empty($warn)) {
+    $warn = '<p>' .  get_string('ssoaclneeds','mnet').'</p>' . $warn;
+    print_box($warn);
+}
 // output the ACL table
 $columns = array("username", "mnet_host_id", "access", "delete");
 $headings = array();

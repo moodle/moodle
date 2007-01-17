@@ -9,8 +9,15 @@ $string['settings']                     = 'Settings';
 $string['hostsettings']                 = 'Host Settings';
 $string['mnetpeers']                    = 'Moodle network peers';
 $string['mnetservices']                 = 'Moodle network services';
-$string['trustedhosts']                 = 'Trusted Hosts';
-$string['trustedhostsexplain']          = 'Please enter a list of IP addresses or networks, one on each line. Some examples:<br />'.
+$string['trustedhosts']                 = 'Trusted Hosts for XML-RPC';
+$string['trustedhostsexplain']          = '<p>The trusted hosts mechanism allows specific machines to
+                                           execute calls via XML-RPC to any part of the Moodle API. This
+                                           available for scripts to control Moodle behaviour and can be
+                                           a very dangerous option to enable. If in doubt, keep it off.</p>
+                                           <p>This is <strong>not</strong> needed for Moodle Networking.</p>
+                                           <p>To enable it, enter a list of IP addresses or networks, 
+                                           one on each line. 
+                                           Some examples:</p>'.
                                           'Your local host:<br />'.
                                           '127.0.0.1<br />'.
                                           'Your local host (with a network block):<br />'.
@@ -21,7 +28,7 @@ $string['trustedhostsexplain']          = 'Please enter a list of IP addresses o
                                           '192.168.0.0/24<br />'.
                                           'Any host whatsoever:<br />'.
                                           '192.168.0.0/0<br />'.
-                                          'Obviously the last example is not a recommended configuration.';
+                                          'Obviously the last example is <strong>not</strong> a recommended configuration.';
 $string['otherenrolledusers']           = 'Other enrolled users';
 $string['hideremote']                   = 'Hide remote users';
 $string['showremote']                   = 'Show remote users';
@@ -78,8 +85,9 @@ $string['testtrustedhostsexplain']      = 'Enter an IP address to see if it is a
 $string['forbidden-function']           = 'That function has not been enabled for RPC.';
 $string['forbidden-transport']          = 'The transport method you are trying to use is not permitted.';
 
-$string['registerallhosts']             = 'Register all hosts';
-$string['registerallhostsexplain']      = 'You can choose to register all hosts that try to connect to you. This means that a record will appear in your hosts list for any '.
+$string['registerallhosts']             = 'Register all hosts (<em>Hub mode</em>)';
+$string['registerallhostsexplain']      = 'You can choose to register all hosts that try to connect to you automatically. 
+                                           This means that a record will appear in your hosts list for any '.
                                           'Moodle site that connects to you and requests your public key.<br />'.
                                           'You have the option below to configure services for \'All Hosts\' and by enabling some services there, you are able to provide '.
                                           'services to any Moodle server indiscriminately.';
@@ -197,4 +205,9 @@ $string['authmnetdisabled'] = 'Moodle Networking authentication is disabled.';
 $string['unknownerror'] = 'Unknown error occurred during negotiation.';
 $string['nolocaluser'] = 'No local record exists for remote user.';
 $string['databaseerror'] = 'Could not write details to the database.';
+$string['ssoacldescr'] = 'Use this page to grant/deny access to specific users from remote Moodle Network hosts. This is functional when you are offering SSO services to remote users. To control your <em>local</em> users\' ability to roam to other Moodle Network hosts, use the roles system to grant them the <em>mnetcanroam</em> capability.';
+$string['ssoaclneeds'] = 'For this functionality to work, you must have Moodle Networking On, plus the Moodle Network authentication plugin enabled with auto-add users enabled .';
+$string['mnetdisabled'] = 'Moodle Network is <strong>disabled</strong>.';
+$string['authmnetdisabled'] = 'Moodle Networking <em>Authentication plugin</em>is <strong>disabled</strong>.';
+$string['authmnetautoadddisabled'] = '<em>Auto-add users</em> in Moodle Networking Authentication plugin is <strong>disabled</strong>.';
 ?>
