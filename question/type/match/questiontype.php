@@ -19,7 +19,7 @@ class question_match_qtype extends default_questiontype {
 
     function save_question_options($question) {
         $result = new stdClass;
-        
+
         if (!$oldsubquestions = get_records("question_match_sub", "question", $question->id, "id ASC")) {
             $oldsubquestions = array();
         }
@@ -186,7 +186,7 @@ class question_match_qtype extends default_questiontype {
             $ans = reset($subquestion->options->answers);
             $answertexts[$ans->id] = $ans->answer;
         }
-        
+
         // Serialize responses
         $responses = array();
         foreach ($subquestions as $key => $subquestion) {
@@ -239,7 +239,7 @@ class question_match_qtype extends default_questiontype {
         $answerids      = array();
         $responses      = &$state->responses;
 
-        // Prepare a list of answers, removing duplicates. 
+        // Prepare a list of answers, removing duplicates.
         foreach ($subquestions as $subquestion) {
             foreach ($subquestion->options->answers as $ans) {
                 $allanswers[$ans->id] = $ans->answer;
@@ -249,7 +249,7 @@ class question_match_qtype extends default_questiontype {
                 }
             }
         }
-        
+
         // Fix up the ids of any responses that point the the eliminated duplicates.
         foreach ($responses as $subquestionid => $ignored) {
             if ($responses[$subquestionid]) {
@@ -268,15 +268,15 @@ class question_match_qtype extends default_questiontype {
                 $question->questiontextformat, $cmoptions);
         $image = get_question_image($question, $cmoptions->course);
 
-        ///// Print the input controls //////
+        // Print the input controls
         foreach ($subquestions as $key => $subquestion) {
             if ($subquestion->questiontext) {
-                /// Subquestion text:
+                // Subquestion text:
                 $a = new stdClass;
                 $a->text = $this->format_text($subquestion->questiontext,
                         $question->questiontextformat, $cmoptions);
 
-                /// Drop-down list:
+                // Drop-down list:
                 $menuname = $nameprefix.$subquestion->id;
                 $response = isset($state->responses[$subquestion->id])
                             ? $state->responses[$subquestion->id] : '0';
@@ -284,24 +284,23 @@ class question_match_qtype extends default_questiontype {
                 $a->class = ' ';
                 $a->feedbackimg = ' ';
 
-                if ($options->readonly
-                            and $options->correct_responses
-                            and isset($correctanswers[$subquestion->id])
+                if ($options->readonly and $options->correct_responses) {
+                    if (isset($correctanswers[$subquestion->id])
                             and ($correctanswers[$subquestion->id] == $response)) {
+                        $correctresponse = 1;
+                    } else {
+                        $correctresponse = 0;
+                    }
 
-                    $correctresponse = 1;
-                } else {
-                    $correctresponse = 0;
-                }
-
-                if ($response) {
-                    $a->class = question_get_feedback_class($correctresponse);
-                    $a->feedbackimg = question_get_feedback_image($correctresponse);
+                    if ($options->correct_responses && $response) {
+                        $a->class = question_get_feedback_class($correctresponse);
+                        $a->feedbackimg = question_get_feedback_image($correctresponse);
+                    }
                 }
 
                 $a->control = choose_from_menu($answers, $menuname, $response, 'choose',
                                                '', 0, true, $options->readonly);
-    
+
                 // Neither the editing interface or the database allow to provide
                 // fedback for this question type.
                 // However (as was pointed out in bug bug 3294) the randomsamatch
@@ -328,7 +327,7 @@ class question_match_qtype extends default_questiontype {
             $ans = reset($subquestion->options->answers);
             $answertexts[$ans->id] = $ans->answer;
         }
-        
+
         // Add up the grades from each subquestion.
         $sumgrade = 0;
         $totalgrade = 0;
@@ -405,7 +404,7 @@ class question_match_qtype extends default_questiontype {
         // This should almost certainly be overridden
         return substr(implode(', ', $this->get_actual_response($question, $state)), 0, $length);
     }
-    
+
 /// BACKUP FUNCTIONS ////////////////////////////
 
     /*
