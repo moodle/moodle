@@ -90,29 +90,40 @@ function groups_get_groups_not_in_grouping($groupingid, $courseid) {
 }
 
 /**
+ * Gets a list of the groups not in any grouping, but in this course.
  * TODO: move to dbgroupinglib.php
+ * @param $courseid If null or false, returns groupids 'not in a grouping sitewide'.
+ * @return array An array of group IDs.
  */
 function groups_get_groups_not_in_any_grouping($courseid) {
     global $CFG;
-/* SELECT g.id
-     FROM headmdl_groups AS g
-     WHERE g.id NOT IN 
-       (SELECT groupid FROM headmdl_groups_groupings_groups);
-*/
-    $sql = "SELECT g.id
-        FROM {$CFG->prefix}groups AS g
+/*Was: $sql = "SELECT g.id FROM {$CFG->prefix}groups AS g
         WHERE g.id NOT IN 
         (SELECT groupid FROM {$CFG->prefix}groups_groupings_groups)";
+*/
+    $join = '';
+    $where= '';
+    if ($courseid) {
+        $join = "INNER JOIN {$CFG->prefix}groups_courses_groups AS cg ON g.id = cg.groupid";
+        $where= "AND cg.courseid = '$courseid'";
+    }
+    $sql = "SELECT g.id
+        FROM {$CFG->prefix}groups AS g
+        $join
+        WHERE g.id NOT IN 
+        (SELECT groupid FROM {$CFG->prefix}groups_groupings_groups)
+        $where";
 
     $records = get_records_sql($sql);
-    $groupids = array();
+    $groupids = groups_groups_to_groupids($records, $courseid);
+    /*$groupids = array();
     if ($records) {
         foreach ($records as $r) {
             $groupids[] = $r->id;
         }
     } else {
         return false;
-    }
+    }*/
     return $groupids;
 }
 

@@ -167,14 +167,15 @@ function transfer_group_db() {
             ///unset($group->password);
             ///unset($group->courseid);
             $status = (bool)$newgroupid = groups_create_group($group->courseid, $group);
+            debugging('Create group status: '.$status); //TODO: ?
             if ($members_r) {
                 foreach ($members_r as $member) {
                     if ($member->groupid == $group->id) {
-                        $status = groups_add_member($newgroupid, $member->userid);
+                        $status = (bool)$memberid = groups_add_member($newgroupid, $member->userid);
                     }
                 }
             }
-            echo 'Status: '.$status;
+            debugging('Add member status: '.$status);
         }
         ///$status = drop_table($t_groups);
         ///$status = drop_table(new XMLDBTable('groups_members_temp'));
