@@ -13,6 +13,11 @@ $string['groupmemberdesc'] = 'Standard role for a member of a group.';
 $string['notingrouping'] = '[Not in a grouping]';
 
 $string['errornotingrouping'] = 'Sorry, you can\'t create a group in $a';
+$string['errornotingroupingedit'] = 'Sorry, you can\'t edit grouping $a';
+$string['errorinvalidgrouping'] = 'Error, invalid grouping $a';
+$string['errorinvalidgroup'] = 'Error, invalid group $a';
+$string['erroreditgrouping'] = 'Error creating/updating grouping $a';
+$string['erroreditgroup'] = 'Error creating/updating grouping $a';
 
 $string['groupings'] = 'Groupings';
 $string['grouping'] = 'Grouping';

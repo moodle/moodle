@@ -126,25 +126,27 @@ function groups_get_grouping_displayname($groupingid) {
  * @return array The array of user ids, or false if an error occurred 
  */
 function groups_users_to_userids($users) {
-	if (!$users) {
-		$userids = false;
-	} else {	
-		$userids = array();
-		foreach($users as $user) {
-			array_push($userids, $user->id);
-		}
-	}
-	return $userids;
+    if (! $users) {
+        return false;
+    }
+    $userids = array();
+    foreach($users as $user) {
+        array_push($userids, $user->id);
+    }
+    return $userids;
 }
 
 /**
- * Takes an array of groups (i.e of objects) and converts it in the 
- * corresponding array of groupids. 
- * @param $groups array The array of group
- * @return array The array of group ids, or false if an error occurred 
+ * Takes an array of groups (i.e of objects) and converts it to the 
+ * corresponding array of group IDs. 
+ * @param $groups array The array of group-like objects, only the $group->id member is required. 
+ * @return array The array of group IDs, or false if an error occurred 
  */
 function groups_groups_to_groupids($groups) {
-	$groupids = array();
+	if (! $groups) {
+        return false;
+    }
+    $groupids = array();
 	foreach ($groups as $group) {
 		array_push($groupids, $group->id);
 	}
@@ -272,6 +274,39 @@ function groups_home_url($courseid, $groupid=false, $groupingid=false, $html=tru
         $url .= $sep.'grouping='.$groupingid;
     }
     return $url;
+}
+
+/**
+ * Returns the first button action with the given prefix, taken from
+ * POST or GET, otherwise returns false.
+ * See /lib/moodlelib.php function optional_param.
+ * @param $prefix 'act_' as in 'action'.
+ * @return string The action without the prefix, or false if no action found.
+ */
+function groups_param_action($prefix = 'act_') {
+    $action = false;
+//($_SERVER['QUERY_STRING'] && preg_match("/$prefix(.+?)=(.+)/", $_SERVER['QUERY_STRING'], $matches)) { //b_(.*?)[&;]{0,1}/
+
+    if ($_POST) {
+        $form_vars = $_POST;
+    }
+    elseif ($_GET) {
+        $form_vars = $_GET; 
+    }
+    if ($form_vars) {
+        foreach ($form_vars as $key => $value) {
+            if (preg_match("/$prefix(.+)/", $key, $matches)) {
+                $action = $matches[1];
+                break;
+            }
+        }
+    }
+    if ($action && !preg_match('/^\w+$/', $action)) {
+        $action = false;
+        error('Action had wrong type.');
+    }
+    ///if (debugging()) echo 'Debug: '.$action;
+    return $action;
 }
 
 ?>

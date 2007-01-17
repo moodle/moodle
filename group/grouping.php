@@ -25,7 +25,10 @@ $groupingsettings->description= optional_param('description', PARAM_ALPHANUM);
 $course = groups_get_course_info($courseid);
 if (! $course) {
     $success = false;
-    print_error('The course ID is invalid');
+    print_error('invalidcourse'); //'The course ID is invalid'
+}
+if (GROUP_NOT_IN_GROUPING == $groupingid) {
+    print_error('errornotingroupingedit', 'group', groups_home_url($courseid), get_string('notingrouping', 'group'));
 }
 
 if ($success) {
@@ -59,7 +62,7 @@ if ($success) {
                 redirect(groups_home_url($courseid, null, $groupingid, false));
             }
             else {
-                print_error('Error creating/updating grouping.');
+                print_error('erroreditgroup', 'group', groups_home_url($courseid));
             }
         }
     }
@@ -114,6 +117,20 @@ if ($success) {
 
 <p><label for="edit-description"><?php print_string('groupingdescription', 'group'); ?>&nbsp;</label></p>
 <p><?php print_textarea($usehtmleditor, 5, 45, 200, 400, 'description', $strdesc); ?></p>
+
+<?php /* TODO:
+<fieldset>
+  <legend><?php print_string('editgroupingpermissions', 'group'); ?></legend>
+  <ol class="unlist para">
+  <li><label><input type="checkbox" id="perm_viewowngroup" checked="checked" /> <?php print_string('viewowngroup', 'group'); ?></label></li>
+  <li><label><input type="checkbox" id="perm_viewallgroupsmembers" checked="checked" /> <?php print_string('viewallgroupsmembers', 'group'); ?></label></li>
+  <li><label><input type="checkbox" id="perm_viewallgroupsactivities" checked="checked" /> <?php print_string('viewallgroupsactivities', 'group'); ?></label></li>
+  <li><label><input type="checkbox" id="perm_teachersgroupmark" /> <?php print_string('teachersgroupmark', 'group'); ?></label></li>
+  <li><label><input type="checkbox" id="perm_teachersgroupview" /> <?php print_string('teachersgroupview', 'group'); ?></label></li>
+  <li><label><input type="checkbox" id="perm_teachersoverride"  /> <?php print_string('teachersoverride', 'group'); ?></label></li>
+  </ol>
+</fieldset>
+*/ ?>
 
 <p class="fitem">
   <label for="id_submit">&nbsp;</label>

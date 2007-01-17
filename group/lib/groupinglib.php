@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * A grouping is a set of groups that belong to a course. 
  * There may be any number of groupings for a course and a group may
@@ -155,6 +155,7 @@ function groups_get_users_not_in_any_group_in_grouping($courseid, $groupingid,
  */
 function groups_user_is_in_multiple_groups($userid, $groupingid) {
 	$inmultiplegroups = false;
+    //TODO: $courseid?
 	$groupids = groups_get_groups_for_user($courseid);
 	if ($groupids != false) {
 		$groupinggroupids = array();

@@ -32,7 +32,7 @@ $delete = optional_param('delete', false, PARAM_BOOL);
 $course = groups_get_course_info($courseid);
 if (! $course) {
     $success = false;
-    print_error('The course ID is invalid');
+    print_error('invalidcourse'); //'The course ID is invalid'
 }
 
 if ($success) {
@@ -83,7 +83,7 @@ if ($success) {
                 redirect(groups_home_url($courseid, $groupid, $groupingid, false));
             }
             else {
-                print_error('Error creating/updating group.');
+                print_error('erroreditgrouping', 'group', groups_home_url($courseid));
             }
         }
     }

@@ -73,7 +73,7 @@ function groups_get_all_groups_for_user($userid) {
     if (! $groups) {
         return false;
     }
-    // Put the results into an array
+    // Put the results into an array. TODO: check.
     $groupids = array();
     foreach ($groups as $group) {
         array_push($groupids, $group->id);    

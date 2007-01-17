@@ -43,20 +43,13 @@ function groups_db_get_user($userid) {
  * or an error returned
  */
  function groups_db_get_groups($courseid) {
-    if (!$courseid) {
+    if (! $courseid) {
         $groupid = false;
     } else {
         $groups = get_records('groups_courses_groups', 'courseid', $courseid, 
                               '', $fields='id, groupid');
         // Put the results into an array
-        $groupids = array();
-        if (!$groups) {
-        	$groupids = false;
-        } else {
-	        foreach ($groups as $group) {
-	            array_push($groupids, $group->groupid);
-	        }
-        }
+        $groupids = groups_groups_to_groupids($groups, $courseid);
     }
 
     return $groupids;
@@ -101,26 +94,16 @@ function groups_db_get_groups_for_user($userid, $courseid) {
         $groupids = false;
     } else {  
         global $CFG;
-        $table_prefix = $CFG->prefix;
         $sql = "SELECT g.id, userid 
-                FROM {$table_prefix}groups_members AS gm 
-                INNER JOIN {$table_prefix}groups AS g
+                FROM {$CFG->prefix}groups_members AS gm 
+                INNER JOIN {$CFG->prefix}groups AS g
                 ON gm.groupid = g.id
-                INNER JOIN {$table_prefix}groups_courses_groups AS cg
+                INNER JOIN {$CFG->prefix}groups_courses_groups AS cg
                 ON g.id = cg.groupid
                 WHERE cg.courseid  = $courseid AND gm.userid=$userid";
                 
         $groups = get_records_sql($sql);
-        
-        if (!$groups) {
-        	$groupids = false;
-        } else { 
-	        // Put the results into an array
-	        $groupids = array();
-	        foreach ($groups as $group) {
-	            array_push($groupids, $group->id);    
-	        }
-        }
+        $groupids = groups_groups_to_groupids($groups, $courseid);
     }
 	
     return $groupids;
@@ -140,9 +123,8 @@ function groups_db_get_group_settings($groupid, $courseid=false) {
         $groupsettings = false;
     } else {
         global $CFG;
-        $tableprefix = $CFG->prefix;
         $sql = "SELECT id, name, description, lang, theme, picture, hidepicture 
-                FROM {$tableprefix}groups
+                FROM {$CFG->prefix}groups
                 WHERE id = $groupid";
         $groupsettings = get_record_sql($sql);
         if ($courseid && $groupsettings) {
@@ -162,9 +144,10 @@ function groups_db_get_group_settings($groupid, $courseid=false) {
  * if an error occurred. 
  */
 function groups_db_users_in_common_group($userid1, $userid2) {
-	$havecommongroup = false;
-	$sql = "SELECT gm1.groupid, 1 FROM {$tableprefix}groups_members AS gm1 " .
-			"INNER JOIN {$tableprefix}groups_members AS gm2 " .
+	global $CFG;
+    $havecommongroup = false;
+	$sql = "SELECT gm1.groupid, 1 FROM {$CFG->prefix}groups_members AS gm1 " .
+			"INNER JOIN {$CFG->prefix}groups_members AS gm2 " .
 			"ON gm1.groupid =gm2.groupid" .
 			"WHERE gm1.userid = $userid1 AND gm2.userid = $userid2";
     $commongroups = get_record_sql($sql);

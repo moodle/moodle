@@ -19,32 +19,6 @@ $groupingid = optional_param('grouping', -1, PARAM_INT);
 $groupid    = optional_param('group', false, PARAM_INT);
 $userid     = optional_param('user', false, PARAM_INT);
 
-function groups_param_action($prefix = 'b_') {
-    $action = false;
-//($_SERVER['QUERY_STRING'] && preg_match("/$prefix(.+?)=(.+)/", $_SERVER['QUERY_STRING'], $matches)) { //b_(.*?)[&;]{0,1}/
-
-    if ($_POST) {
-        $form_vars = $_POST;
-    }
-    elseif ($_GET) {
-        $form_vars = $_GET; 
-    }
-    if ($form_vars) {
-        foreach ($form_vars as $key => $value) {
-            //echo "$key => $value<br />\n";
-            if (preg_match("/$prefix(.+)/", $key, $matches)) {
-                $action = $matches[1];
-                break;
-            }
-        }
-    }
-    if ($action && !preg_match('/^\w+$/', $action)) {
-        $action = false;
-        error('Action had wrong type.');
-    }
-    ///if (debugging()) echo 'Debug: '.$action;
-    return $action;
-}
 $action = groups_param_action();
 
 // Get the course information so we can print the header and
@@ -52,7 +26,7 @@ $action = groups_param_action();
 $course = groups_get_course_info($courseid);
 if (! $course) {
     $success = false;
-    print_error('The course ID is invalid');
+    print_error('invalidcourse'); //'The course ID is invalid'
 }
 
 if ($success) {
@@ -125,8 +99,8 @@ if ($success) {
                  "-> $strgroups", '', '', true, '', user_login_string($course, $USER));
 
     $usehtmleditor = false;
-
-//groups_sort_language_strings();
+    //TODO: eventually we'll implement all buttons, meantime hide the ones we haven't finised.
+    $shownotdone  = false;
 ?>
 <form name="groupeditform" id="groupeditform" action="index.php" method="post">
     <input type="hidden" name="id" value="<?php echo $courseid; ?>" />
@@ -170,13 +144,17 @@ if ($success) {
 ?>
                 </select>
 
-                <p><input type="submit" name="b_updategroups" id="updategroups" value="<?php print_string('showgroupsingrouping', 'group'); ?>" /></p>
-                <p><input type="submit" name="b_showgroupingsettingsform" id="showeditgroupingsettingsform" value="<?php print_string('editgroupingsettings', 'group'); ?>" /></p>
-                <p><input type="submit" disabled="disabled" name="b_showgroupingpermsform" id="showeditgroupingpermissionsform" value="<?php print_string('editgroupingpermissions', 'group'); ?>" /></p>
-                <p><input type="submit" disabled="disabled" name="b_deletegrouping" id="deletegrouping" value="<?php print_string('deletegrouping', 'group'); ?>" /></p>
-                <p><input type="submit" name="b_showcreategroupingform" id="showcreategroupingform" value="<?php print_string('creategrouping', 'group'); ?>" /></p>
-                <p><input type="submit" disabled="disabled" name="b_createautomaticgroupingform" id="showcreateautomaticgroupingform" value="<?php print_string('createautomaticgrouping', 'group'); ?>" /></p>
-                <p><input type="submit" name="b_printerfriendly" id="printerfriendly" value="<?php print_string('printerfriendly', 'group'); ?>" /></p>
+            <p><input type="submit" name="act_updategroups" id="updategroups" value="<?php print_string('showgroupsingrouping', 'group'); ?>" /></p>
+            <p><input type="submit" name="act_showgroupingsettingsform" id="showeditgroupingsettingsform" value="<?php print_string('editgroupingsettings', 'group'); ?>" /></p>
+<?php if ($shownotdone) { ?>
+            <p><input type="submit" disabled="disabled" name="act_showgroupingpermsform" id="showeditgroupingpermissionsform" value="<?php print_string('editgroupingpermissions', 'group'); ?>" /></p>
+            <p><input type="submit" disabled="disabled" name="act_deletegrouping" id="deletegrouping" value="<?php print_string('deletegrouping', 'group'); ?>" /></p>
+<?php } ?>
+            <p><input type="submit" name="act_showcreategroupingform" id="showcreategroupingform" value="<?php print_string('creategrouping', 'group'); ?>" /></p>
+<?php if ($shownotdone) { ?>
+            <p><input type="submit" disabled="disabled" name="act_createautomaticgroupingform" id="showcreateautomaticgroupingform" value="<?php print_string('createautomaticgrouping', 'group'); ?>" /></p>
+<?php } ?>
+            <p><input type="submit" name="act_printerfriendly" id="printerfriendly" value="<?php print_string('printerfriendly', 'group'); ?>" /></p>
             </td>
             <td>
                 <p><label for="groups"><?php print_string('groupsinselectedgrouping', 'group'); ?></label></p>
@@ -210,13 +188,16 @@ if ($success) {
 ?>                
                 </select>
 
-                <p><input type="submit" name="b_updatemembers" id="updatemembers" value="<?php print_string('showmembersforgroup', 'group'); ?>" /></p>
-                <p><input type="submit" name="b_showgroupsettingsform" id="showeditgroupsettingsform" value="<?php print_string('editgroupsettings', 'group'); ?>" /></p>
-                <p><input type="submit" name="b_deletegroup" onclick="onDeleteGroup()" id="deletegroup" value="<?php print_string('deleteselectedgroup', 'group'); ?>" /></p>
-                <p><input type="submit" disabled="disabled" name="b_removegroup" id="removegroup" value="<?php print_string('removegroupfromselectedgrouping', 'group'); ?>" /></p>
-                <p><input type="submit" name="b_showcreategroupform" id="showcreategroupform" value="<?php print_string('creategroupinselectedgrouping', 'group'); ?>" /></p>
-                <p><input type="submit" disabled="disabled" name="b_addgroupstogroupingsform" id="showaddgroupstogroupingform" value="<?php print_string('addexistinggroupstogrouping', 'group'); ?>" /></p>
-
+            <p><input type="submit" name="act_updatemembers" id="updatemembers" value="<?php print_string('showmembersforgroup', 'group'); ?>" /></p>
+            <p><input type="submit" name="act_showgroupsettingsform" id="showeditgroupsettingsform" value="<?php print_string('editgroupsettings', 'group'); ?>" /></p>
+            <p><input type="submit" name="act_deletegroup" onclick="onDeleteGroup()" id="deletegroup" value="<?php print_string('deleteselectedgroup', 'group'); ?>" /></p>
+<?php if ($shownotdone) { ?>
+            <p><input type="submit" disabled="disabled" name="act_removegroup" id="removegroup" value="<?php print_string('removegroupfromselectedgrouping', 'group'); ?>" /></p>
+<?php } ?>
+            <p><input type="submit" name="act_showcreategroupform" id="showcreategroupform" value="<?php print_string('creategroupinselectedgrouping', 'group'); ?>" /></p>
+<?php if ($shownotdone) { ?>
+            <p><input type="submit" disabled="disabled" name="act_addgroupstogroupingsform" id="showaddgroupstogroupingform" value="<?php print_string('addexistinggroupstogrouping', 'group'); ?>" /></p>
+<?php } ?>
             </td>
             <td>
                 <p><label for="members"><?php print_string('membersofselectedgroup', 'group'); ?></label></p>
@@ -239,9 +220,10 @@ if ($success) {
 ?>
                 </select>
 
-                <p><input type="submit" disabled="disabled" name="b_removemembers" id="removemembers" value="<?php print_string('removeselectedusers', 'group'); ?>"/></p>
-                <p><input type="submit" name="b_showaddmembersform" id="showaddmembersform" value="<?php print_string('adduserstogroup', 'group'); ?>" /></p>
-
+<?php if ($shownotdone) { ?>
+            <p><input type="submit" disabled="disabled" name="act_removemembers" id="removemembers" value="<?php print_string('removeselectedusers', 'group'); ?>"/></p>
+<?php } ?>
+            <p><input type="submit" name="act_showaddmembersform" id="showaddmembersform" value="<?php print_string('adduserstogroup', 'group'); ?>" /></p>
             </td>
         </tr>
     </table>

@@ -109,9 +109,8 @@ function groups_db_get_grouping_settings($groupingid) {
         $groupingsettings = false;
     } else {
         global $CFG;
-        $tableprefix = $CFG->prefix;
         $sql = "SELECT *
-                FROM {$tableprefix}groups_groupings
+                FROM {$CFG->prefix}groups_groupings
                 WHERE id = $groupingid";
         $groupingsettings = get_record_sql($sql);
     }
@@ -214,10 +213,9 @@ function groups_db_grouping_exists($groupingid) {
         $belongstogroup = false;
     } else {
         global $CFG;
-        $tableprefix = $CFG->prefix;
         $sql = "SELECT gm.id
-        FROM {$tableprefix}groups_groupings_groups AS gg
-        INNER JOIN {$tableprefix}groups_members AS gm
+        FROM {$CFG->prefix}groups_groupings_groups AS gg
+        INNER JOIN {$CFG->prefix}groups_members AS gm
         ON gg.groupid = gm.groupid
         WHERE gm.userid = $userid AND gg.groupingid = $groupingid";
         $belongstogroup = record_exists_sql($sql);
