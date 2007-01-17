@@ -312,10 +312,10 @@ class question_multichoice_qtype extends default_questiontype {
 
             if ($options->readonly) {
                 // Means we need to display answer correctness.
-                if ($chosen) {
-                    $a->class = question_get_feedback_class($answer->fraction);
+                if ($answer->fraction > 0) {
+                    $a->class = question_get_feedback_class(1);
                 }
-                $a->feedbackimg = question_get_feedback_image($answer->fraction, $chosen);
+                $a->feedbackimg = question_get_feedback_image($answer->fraction > 0 ? 1 : 0, $chosen);
             }
 
             // Print the answer text
