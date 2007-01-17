@@ -2,7 +2,7 @@
 <form id="assignform" method="post" action="">
 <input type="hidden" name="previoussearch" value="<?php p($previoussearch) ?>" />
 <input type="hidden" name="courseid" value="<?php p($courseid) ?>" />
-<input type="hidden" name="host" value="<?php p($mnethost->id) ?>" />
+<input type="hidden" name="host" value="<?php p($mnet_peer->id) ?>" />
 <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
   <table align="center" border="0" cellpadding="5" cellspacing="0">
     <tr>
@@ -11,7 +11,7 @@
       </td>
       <td></td>
       <td valign="top">
-          <?php print_string('potentialusers', 'role', $usercount); ?>
+          <?php print_string('potentialusers', 'role', $availableusers->_numOfRows); ?>
       </td>
     </tr>
     <tr>
@@ -21,10 +21,12 @@
                            getElementById('assignform').remove.disabled=false;
                            getElementById('assignform').addselect.selectedIndex=-1;">
           <?php
-              foreach ($enrolledusers as $enrolleduser) {
-                  $fullname = fullname($enrolleduser, true);
-                  echo "<option value=\"$enrolleduser->id\">".$fullname.", ".$enrolleduser->email."</option>\n";
-              }
+            foreach ($enrolledusers as $enrolleduser) {
+                if(!empty($enrolleduser->ismnetenrolment)) {
+                    $fullname = fullname($enrolleduser, true);
+                    echo "<option value=\"$enrolleduser->id\">".$fullname.", ".$enrolleduser->email."</option>\n";
+                }
+            }
           ?>
 
           </select></td>
@@ -55,16 +57,14 @@
                   echo "</optgroup>\n";
 
               } else {
-                  if ($usercount > MAX_USERS_PER_PAGE) {
+                  if ($availableusers->_numOfRows > MAX_USERS_PER_PAGE) {
                       echo '<optgroup label="'.get_string('toomanytoshow').'"><option></option></optgroup>'."\n"
                           .'<optgroup label="'.get_string('trysearching').'"><option></option></optgroup>'."\n";
                   } else {
                       while (! $availableusers->EOF) {
                           $user = $availableusers->FetchObj();
-                          if (!isset($enrolledusers[$user->id])) {
-                              $fullname = fullname($user, true);
-                              echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
-                          }
+                          $fullname = fullname($user, true);
+                          echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
                           $availableusers->MoveNext();
                       }
                   }
@@ -89,6 +89,19 @@
               }
          ?>
        </td>
+    </tr>
+    <tr>
+      <td valign="top"><?php print_string('otherenrolledusers', 'mnet'); ?>:<br />
+          <?php
+            foreach ($enrolledusers as $enrolleduser) {
+                if(empty($enrolleduser->ismnetenrolment)) {
+                    $fullname = fullname($enrolleduser, true);
+                    echo $fullname.', '.$enrolleduser->email."<br />\n";
+                }
+            }
+          ?></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
     </tr>
   </table>
 </form>

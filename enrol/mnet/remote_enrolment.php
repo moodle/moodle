@@ -4,6 +4,7 @@
 
     require_once(dirname(__FILE__) . "/../../config.php");
     require_once($CFG->libdir.'/adminlib.php');
+    include_once($CFG->dirroot.'/mnet/xmlrpc/client.php');
 
     $adminroot = admin_get_root();
     admin_externalpage_setup('enrolment', $adminroot);
@@ -12,13 +13,17 @@
     require_once("$CFG->dirroot/enrol/enrol.class.php");   /// Open the factory class
     $enrolment = enrolment_factory::factory('mnet');
 
-    $mnethost = required_param('host', PARAM_INT);
+    $mnethostid = required_param('host', PARAM_INT);
     $courseid = required_param('courseid', PARAM_INT);
 
-    $mnethost = get_record('mnet_host', 'id', $mnethost);
-     $course = get_record('mnet_enrol_course', 'id', $courseid, 'hostid', $mnethost->id);
+    $mnet_peer = new mnet_peer();
+    if (!$mnet_peer->set_id($mnethostid)) {
+        print_error('hostcoursenotfound','mnet');
+    }
 
-    if (empty($mnethost) || empty($course)) {
+    $course = get_record('mnet_enrol_course', 'id', $courseid, 'hostid', $mnet_peer->id);
+
+    if (empty($course)) {
         print_error('hostcoursenotfound','mnet');
     }
 
@@ -35,7 +40,7 @@
 
     $previoussearch = ($searchtext != '') or ($previoussearch) ? 1:0;
 
-    $baseurl = "remote_enrolment.php?courseid={$course->id}&amp;host={$mnethost->id}";
+    $baseurl = "remote_enrolment.php?courseid={$course->id}&amp;host={$mnet_peer->id}";
     if (!empty($userid)) {
         $baseurl .= '&amp;userid='.$userid;
     }
@@ -68,20 +73,62 @@
     }
 
 /// Prepare data for users / enrolled users panes
-    $sql = "SELECT u.id, u.firstname, u.lastname, u.email
-            FROM {$CFG->prefix}mnet_enrol_assignments a
-            JOIN {$CFG->prefix}user u ON a.userid=u.id
-            WHERE a.courseid={$courseid}
-            ORDER BY u.id";
+
+
+/// Create a new request object
+    $mnet_request = new mnet_xmlrpc_client();
+
+/// Pass it the path to the method that we want to execute
+    $mnet_request->set_method('enrol/mnet/enrol.php/user_enrolments');
+    $mnet_request->add_param($course->remoteid, 'int');
+    $mnet_request->send($mnet_peer);
+    $all_enrolled_users = $mnet_request->response;
+
+    unset($mnet_request);
+    
+    $select = '';
+    $all_enrolled_usernames = '';
+/// List all the users (homed on this server) who are enrolled on the course
+/// This will include mnet-enrolled users, and those who have enrolled 
+/// themselves, etc.
+    if (is_array($all_enrolled_users) && count($all_enrolled_users)) {
+        foreach($all_enrolled_users as $user) {
+            $all_enrolled_usernames .= "'{$user}', ";
+        }
+        $select = ' u.username IN (' .substr($all_enrolled_usernames, 0, -2) .') AND';
+    }
+
+/// Pseudocode for query - get records for all users that are enrolled in the 
+/// course, and if they were enrolled via mnet, ismnetenrolment will be > 0
+    $sql = "
+            SELECT
+                u.id,
+                u.firstname,
+                u.lastname,
+                u.email,
+                coalesce ( a.hostid , 0) as ismnetenrolment,
+                a.courseid
+            FROM
+                {$CFG->prefix}user u
+            LEFT JOIN
+                {$CFG->prefix}mnet_enrol_assignments a
+            ON
+                a.userid = u.id AND a.courseid={$courseid}
+            WHERE
+                $select 
+                u.deleted = 0 AND
+                u.confirmed = 1 AND
+                u.mnethostid = {$CFG->mnet_localhost_id}
+            ORDER BY
+                u.firstname ASC,
+                u.lastname ASC";
+
     if (!$enrolledusers = get_records_sql($sql)) {
         $enrolledusers = array();
     }
 
-    $select  = "username != 'guest' AND username != 'changeme' AND deleted = 0 AND confirmed = 1 AND mnethostid = {$CFG->mnet_localhost_id}";
-    
-    $usercount = count_records_select('user', $select) - count($enrolledusers);
-
     $searchtext = trim($searchtext);
+    $select = '';
 
     if ($searchtext !== '') {   // Search for a subset of remaining users
         $LIKE      = sql_ilike();
@@ -89,10 +136,19 @@
 
         $select  .= " AND ($FULLNAME $LIKE '%$searchtext%' OR email $LIKE '%$searchtext%') ";
     }
+
+    /**** start of NOT IN block ****/
+
+    $select .= " AND username NOT IN ('guest', 'changeme', ";
+    $select .= $all_enrolled_usernames;
+    $select = substr($select, 0, -2) .') ';
+
+    /**** end of NOT IN block ****/
+
     $availableusers = get_recordset_sql('SELECT id, firstname, lastname, email 
                                          FROM '.$CFG->prefix.'user 
-                                         WHERE '.$select.'
-                                         ORDER BY lastname ASC, firstname ASC');
+                                         WHERE deleted = 0 AND confirmed = 1 AND mnethostid = '.$CFG->mnet_localhost_id.' '.$select.'
+                                         ORDER BY lastname ASC, firstname ASC', 0, MAX_USERS_PER_PAGE);
 
 
 
@@ -118,7 +174,7 @@ admin_externalpage_print_header($adminroot);
 print_simple_box_start("center", "80%");
 
 print_simple_box_start("center", "60%", '', 5, 'informationbox');
-print_string('enrollingincourse', 'mnet', array(s($course->shortname), s($mnethost->name)));
+print_string('enrollingincourse', 'mnet', array(s($course->shortname), s($mnet_peer->name)));
 print_string("description", "enrol_mnet");
 print_simple_box_end();
 

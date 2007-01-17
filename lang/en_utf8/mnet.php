@@ -22,7 +22,7 @@ $string['trustedhostsexplain']          = 'Please enter a list of IP addresses o
                                           'Any host whatsoever:<br />'.
                                           '192.168.0.0/0<br />'.
                                           'Obviously the last example is not a recommended configuration.';
-
+$string['otherenrolledusers']           = 'Other enrolled users';
 $string['hideremote']                   = 'Hide remote users';
 $string['showremote']                   = 'Show remote users';
 $string['hidelocal']                    = 'Hide local users';

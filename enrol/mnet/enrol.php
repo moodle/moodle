@@ -235,14 +235,52 @@ class enrolment_plugin_mnet {
     }
 
     /**
-    * Does Foo
-    *
-    * @param string $username   The username
-    * @return array             Whether the user can login from the remote host
-    */
-    function user_enrolments() {
+     * Get a list of users from the client server who are enrolled in a course
+     *
+     * @param   int     $courseid   The Course ID
+     * @param   string  $roles      Comma-separated list of role shortnames
+     * @return  array               Array of usernames who are homed on the 
+     *                              client machine
+     */
+    function user_enrolments($courseid, $roles = '') {
+        global $MNET_REMOTE_CLIENT, $CFG;
 
-        return array();
+        if (! $course = get_record('course', 'id', $courseid) ) {
+            return 'no course';
+            //error("That's an invalid course id");
+        }
+
+        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+
+        $sql = "
+                SELECT
+                    u.id,
+                    u.username
+                FROM
+                    {$CFG->prefix}role_assignments a,
+                    {$CFG->prefix}user u
+                WHERE
+                    a.contextid = '{$context->id}' AND
+                    a.userid = u.id AND
+                    u.mnethostid = '{$MNET_REMOTE_CLIENT->id}'
+                    ";
+
+        if(!empty($roles)) {
+            // $default_role = get_default_course_role($course); ???
+            $sql .= " AND
+                    a.roleid in ('".str_replace(',',  "', '",  $roles)."')";
+        } 
+
+        $f = fopen('/tmp/sql.sql', 'w');
+        fwrite($f, $sql);
+
+        $enrolments = get_records_sql($sql);
+
+        $returnarray = array();
+        foreach($enrolments as $user) {
+            $returnarray[] = $user->username;
+        }
+        return $returnarray;
     }
 
     /**
