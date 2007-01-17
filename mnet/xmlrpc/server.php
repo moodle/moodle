@@ -150,7 +150,7 @@ function mnet_server_strip_wrappers($HTTP_RAW_POST_DATA) {
                     $openssl_history = array();
                     set_config('openssl_history', serialize($openssl_history), 'mnet');
                 } else {
-                    $openssl_history = unserialize($result);
+                    $openssl_history = unserialize($openssl_history);
                 }
                 foreach($openssl_history as $keyset) {
                     $keyresource = openssl_pkey_get_private($keyset['keypair_PEM']);
