@@ -44,8 +44,8 @@
     require_once($CFG->dirroot.'/course/lib.php');
     require_once($CFG->dirroot.'/calendar/lib.php');
 
-    $course = optional_param('course', 0);
-    $view = optional_param('view', 'upcoming');
+    $courseid = optional_param('course', 0, PARAM_INT);
+    $view = optional_param('view', 'upcoming', PARAM_ALPHA);
     $day  = optional_param('cal_d', 0, PARAM_INT);
     $mon  = optional_param('cal_m', 0, PARAM_INT);
     $yr   = optional_param('cal_y', 0, PARAM_INT);
@@ -54,7 +54,9 @@
         redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
     }
 
-    if ($CFG->forcelogin) {
+    if ($courseid) {
+        require_login($courseid);
+    } else if ($CFG->forcelogin) {
         require_login();
     }
 
@@ -87,8 +89,8 @@
     }
 
     // If a course has been supplied in the URL, change the filters to show that one
-    if (!empty($course)) {
-        if ($course = get_record('course', 'id', $course)) {
+    if (!empty($courseid)) {
+        if ($course = get_record('course', 'id', $courseid)) {
             if ($course->id == SITEID) {
                 // If coming from the home page, show all courses
                 $SESSION->cal_courses_shown = calendar_get_default_courses(true);
@@ -100,6 +102,8 @@
                 calendar_set_referring_course($SESSION->cal_courses_shown);
             }
         }
+    } else {
+        $course = null;
     }
 
     if (empty($USER->id) or isguest()) {
