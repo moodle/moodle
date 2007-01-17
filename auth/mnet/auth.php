@@ -427,6 +427,62 @@ class auth_plugin_mnet
      * @param array $page An object containing all the data for this page.
      */
     function config_form($config, $err) {
+        global $CFG;
+
+         $query = "
+            SELECT
+                h.id,
+                h.name as hostname,
+                h.wwwroot,
+                h2idp.publish as idppublish,
+                h2idp.subscribe as idpsubscribe,
+                idp.name as idpname,
+                h2sp.publish as sppublish,
+                h2sp.subscribe as spsubscribe,
+                sp.name as spname
+            FROM
+                {$CFG->prefix}mnet_host h
+            LEFT JOIN
+                {$CFG->prefix}mnet_host2service h2idp
+            ON
+               (h.id = h2idp.hostid AND
+               (h2idp.publish = 1 OR
+                h2idp.subscribe = 1))
+            INNER JOIN
+                {$CFG->prefix}mnet_service idp
+            ON
+               (h2idp.serviceid = idp.id AND
+                idp.name = 'sso_idp')
+            LEFT JOIN
+                {$CFG->prefix}mnet_host2service h2sp
+            ON
+               (h.id = h2sp.hostid AND
+               (h2sp.publish = 1 OR
+                h2sp.subscribe = 1))
+            INNER JOIN
+                {$CFG->prefix}mnet_service sp
+            ON
+               (h2sp.serviceid = sp.id AND
+                sp.name = 'sso_sp')
+            WHERE
+               ((h2idp.publish = 1 AND h2sp.subscribe = 1) OR
+               (h2sp.publish = 1 AND h2idp.subscribe = 1)) AND
+                h.id != {$CFG->mnet_localhost_id}
+            ORDER BY
+                h.name ASC";
+
+        $resultset = get_records_sql($query);
+        $id_providers       = array();
+        $service_providers  = array();
+        foreach($resultset as $hostservice) {
+            if(!empty($hostservice->idppublish) && !empty($hostservice->spsubscribe)) {
+                $service_providers[]= array('id' => $hostservice->id, 'name' => $hostservice->hostname, 'wwwroot' => $hostservice->wwwroot);
+            }
+            if(!empty($hostservice->idpsubscribe) && !empty($hostservice->sppublish)) {
+                $id_providers[]= array('id' => $hostservice->id, 'name' => $hostservice->hostname, 'wwwroot' => $hostservice->wwwroot);
+            }
+        }
+ 
         include "config.html";
     }
 
