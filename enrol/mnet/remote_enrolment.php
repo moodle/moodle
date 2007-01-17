@@ -79,7 +79,7 @@
     $mnet_request = new mnet_xmlrpc_client();
 
 /// Pass it the path to the method that we want to execute
-    $mnet_request->set_method('enrol/mnet/enrol.php/user_enrolments');
+    $mnet_request->set_method('enrol/mnet/enrol.php/course_enrolments');
     $mnet_request->add_param($course->remoteid, 'int');
     $mnet_request->send($mnet_peer);
     $all_enrolled_users = $mnet_request->response;
@@ -93,7 +93,7 @@
 /// themselves, etc.
     if (is_array($all_enrolled_users) && count($all_enrolled_users)) {
         foreach($all_enrolled_users as $user) {
-            $all_enrolled_usernames .= "'{$user}', ";
+            $all_enrolled_usernames .= "'{$user['username']}', ";
         }
         $select = ' u.username IN (' .substr($all_enrolled_usernames, 0, -2) .') AND';
     }

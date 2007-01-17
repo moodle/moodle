@@ -70,7 +70,7 @@ class enrolment_plugin_mnet {
         $enrol = array();
         $enrol['name']        = 'mnet_enrol'; // Name & Description go in lang file
         $enrol['apiversion']  = 1;
-        $enrol['methods']     = array('available_courses','user_enrolments', 'enrol_user', 'unenrol_user' );
+        $enrol['methods']     = array('available_courses','user_enrolments', 'enrol_user', 'unenrol_user', 'course_enrolments' );
 
         return array($enrol);
     }
@@ -235,6 +235,13 @@ class enrolment_plugin_mnet {
     }
 
     /**
+     * 
+     */
+    function user_enrolments($userid) {
+        return array();
+    }
+
+    /**
      * Get a list of users from the client server who are enrolled in a course
      *
      * @param   int     $courseid   The Course ID
@@ -242,7 +249,7 @@ class enrolment_plugin_mnet {
      * @return  array               Array of usernames who are homed on the 
      *                              client machine
      */
-    function user_enrolments($courseid, $roles = '') {
+    function course_enrolments($courseid, $roles = '') {
         global $MNET_REMOTE_CLIENT, $CFG;
 
         if (! $course = get_record('course', 'id', $courseid) ) {
@@ -255,7 +262,8 @@ class enrolment_plugin_mnet {
         $sql = "
                 SELECT
                     u.id,
-                    u.username
+                    u.username,
+                    a.enrol
                 FROM
                     {$CFG->prefix}role_assignments a,
                     {$CFG->prefix}user u
@@ -271,14 +279,11 @@ class enrolment_plugin_mnet {
                     a.roleid in ('".str_replace(',',  "', '",  $roles)."')";
         } 
 
-        $f = fopen('/tmp/sql.sql', 'w');
-        fwrite($f, $sql);
-
         $enrolments = get_records_sql($sql);
 
         $returnarray = array();
         foreach($enrolments as $user) {
-            $returnarray[] = $user->username;
+            $returnarray[] = array('username' => $user->username, 'enrol' => $user->enrol);
         }
         return $returnarray;
     }
