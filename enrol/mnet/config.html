@@ -4,6 +4,10 @@ if (empty($CFG->mnet_mode) || $CFG->mnet_mode !== 'strict') {
     print_box(get_string('mnetdisabled','mnet'));
 }
 
+$servercount = 0;
+if (is_array($mnethosts)) {
+    $servercount = count(array_keys($mnethosts));
+}
 ?>
 <table cellspacing="0" cellpadding="5" border="0" align="center">
 
@@ -13,7 +17,7 @@ if (empty($CFG->mnet_mode) || $CFG->mnet_mode !== 'strict') {
 <tr valign="top">
     <td align="left" colspan="3">
     <a href="<?php echo $CFG->wwwroot .'/enrol/mnet/remote_hosts.php?sesskey=' . sesskey(); ?>" >Manage Moodle Network Enrolments.</a><br/>
-    Servers configured: <?php echo count(array_keys($mnethosts)); ?>
+    Servers configured: <?php echo $servercount; ?>
 
     </td>
 </tr>

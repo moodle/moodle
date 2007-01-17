@@ -102,6 +102,7 @@ if ($categories = get_records('course_categories', '', '', 'name', 'id, name')) 
 }
 $courses = array();
 if ($courses = get_records('course', '', '', 'shortname', 'id, shortname')) {
+    unset($courses[SITEID]); // never list or offer the siteid
     $allowedcourses = array();
     if (empty($CFG->enrol_mnet_allowed_courses)) {
         $potentialcourses = $courses;
