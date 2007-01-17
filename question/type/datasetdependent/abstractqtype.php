@@ -146,11 +146,11 @@ class question_dataset_dependent_questiontype extends default_questiontype {
 
     // This gets called by editquestion.php after the standard question is saved
     function print_next_wizard_page(&$question, &$form, $course) {
-        global $CFG, $USER, $SESSION;
+        global $CFG, $USER, $SESSION, $COURSE;
 
         // Catch invalid navigation & reloads
         if (empty($question->id) && empty($SESSION->datasetdependent)) {
-            redirect('edit.php', 'The page you are loading has expired.', 3);
+            redirect('edit.php?courseid='.$COURSE->id, 'The page you are loading has expired.', 3);
         }
 
         // See where we're coming from
@@ -169,28 +169,28 @@ class question_dataset_dependent_questiontype extends default_questiontype {
     }
 
     // This gets called by question2.php after the standard question is saved
-    function &next_wizard_form($submiturl, $question, $wizard){
-        global $CFG, $SESSION;
+    function &next_wizard_form($submiturl, $question, $wizardnow){
+        global $CFG, $SESSION, $COURSE;
 
         // Catch invalid navigation & reloads
         if (empty($question->id) && empty($SESSION->datasetdependent)) {
-            redirect('edit.php', 'The page you are loading has expired.', 3);
+            redirect('edit.php?courseid='.$COURSE->id, 'The page you are loading has expired. Cannot get next wizard form.', 3);
         }
-        if (!isset($question->id)){
+        if (empty($question->id)){
             $question =& $SESSION->datasetdependent->questionform;
         }
 
         // See where we're coming from
-        switch($wizard) {
-            case 'question':
+        switch($wizardnow) {
+            case 'datasetdefinitions':
                 require("$CFG->dirroot/question/type/datasetdependent/datasetdefinitions_form.php");
-                $mform =& new question_dataset_dependent_definitions_form($submiturl, $question);
+                $mform =& new question_dataset_dependent_definitions_form("$submiturl?wizardnow=datasetdefinitions", $question);
                 $mform->heading = print_heading_with_help(get_string("choosedatasetproperties", "quiz"), "questiondatasets", "quiz", '', true);
                 break;
-            case 'datasetdefinitions':
             case 'datasetitems':
                 require("$CFG->dirroot/question/type/datasetdependent/datasetitems_form.php");
-                $mform =& new question_dataset_dependent_items_form($submiturl, $question);
+                $regenerate = optional_param('forceregeneration', 0, PARAM_BOOL);
+                $mform =& new question_dataset_dependent_items_form("$submiturl?wizardnow=datasetitems", $question, $regenerate);
                 $streditdatasets = get_string("editdatasets", "quiz");
                 $mform->heading  = print_heading_with_help($streditdatasets, 'questiondatasets', "quiz", '', true);
                 break;
@@ -201,21 +201,35 @@ class question_dataset_dependent_questiontype extends default_questiontype {
 
         return $mform;
     }
-    function save_question($question, &$form, $course) {
+    function save_question($question, $form, $course) {
         // For dataset dependent questions a wizard is used for editing
         // questions. Therefore saving the question is delayed until
         // we're through with the whole wizard.
         global $SESSION;
-        // $this->validate_form($form);
+        $wizardnow =  optional_param('wizardnow', '', PARAM_ALPHA);
+
 
         // We need to return a valid question object (incl. id) if we're in the
         // edit case. If it is a new question we don't necessarily need to
         // return a valid question object
 
         // See where we're coming from
-        switch($form->wizardpage) {
+        switch($wizardnow) {
+            case '' :
             case 'question': // coming from the first page, creating the second
                 if (empty($form->id)) {
+                    $form->options = new stdClass;
+                    $form->options->answers = array();
+                    foreach (array_keys($form->answers) as $i){
+                        $form->options->answers[$i] = new stdClass;
+                        $form->options->answers[$i]->answer = $form->answers[$i];
+                        $form->options->answers[$i]->tolerance = $form->tolerance[$i];
+                        $form->options->answers[$i]->tolerancetype = $form->tolerancetype[$i];
+                        $form->options->answers[$i]->correctanswerlength = $form->correctanswerlength[$i];
+                        $form->options->answers[$i]->correctanswerformat = $form->correctanswerformat[$i];
+                        $form->options->answers[$i]->feedback = $form->feedback[$i];
+                    }
+
                     $SESSION->datasetdependent = new stdClass;
                     $SESSION->datasetdependent->questionform = $form;
                 } else {
@@ -223,12 +237,12 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                 }
                 break;
             case 'datasetdefinitions':
-                if (empty($form->id)) {
+                if (empty($question->id)) {
                     if (isset($SESSION->datasetdependent->questionform)) {
                         $SESSION->datasetdependent->definitionform = $form;
                     } else {
                         // Something went wrong, go back to the first page
-                        redirect("question.php?category={$question->category}" ."&qtype={$question->qtype}");
+                        redirect("question2.php?category={$question->category}" ."&qtype={$question->qtype}");
                     }
                 } else {
                     $this->save_dataset_definitions($form);
@@ -241,6 +255,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                     $this->save_dataset_definitions($SESSION->datasetdependent->definitionform);
                     unset($SESSION->datasetdependent);
                 }
+                $this->save_dataset_items($question, $form);
                 break;
             default:
                 error('Incorrect or no wizard page specified!');
@@ -249,14 +264,19 @@ class question_dataset_dependent_questiontype extends default_questiontype {
         return $question;
     }
 
-    function get_dataset_definitions($form) {
+    function save_dataset_items($question, $fromform){
+        //overridden in child classes
+    }
+
+    function get_dataset_definitions($questionid, $newdatasets) {
+        //get the existing datasets for this question
         $datasetdefs = array();
-        if (!empty($form->id)) {
+        if (!empty($questionid)) {
             global $CFG;
             $sql = "SELECT i.*
                     FROM {$CFG->prefix}question_datasets d,
                          {$CFG->prefix}question_dataset_definitions i
-                    WHERE d.question = '$form->id'
+                    WHERE d.question = '$questionid'
                     AND   d.datasetdefinition = i.id
                    ";
             if ($records = get_records_sql($sql)) {
@@ -266,20 +286,20 @@ class question_dataset_dependent_questiontype extends default_questiontype {
             }
         }
 
-        $datasets = empty($form->dataset) ? $form->definition : $form->dataset;
-        foreach ($datasets as $dataset) {
+        foreach ($newdatasets as $dataset) {
             if (!$dataset) {
                 continue; // The no dataset case...
             }
 
             if (!isset($datasetdefs[$dataset])) {
+                //make new datasetdef
                 list($type, $category, $name) = explode('-', $dataset, 3);
                 $datasetdef = new stdClass;
                 $datasetdef->type = $type;
                 $datasetdef->name = $name;
                 $datasetdef->category  = $category;
                 $datasetdef->itemcount = 0;
-                $datasetdef->options   = '';
+                $datasetdef->options   = 'uniform:1.0:10.0:1';
                 $datasetdefs[$dataset] = clone($datasetdef);
             }
         }
@@ -288,7 +308,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
 
     function save_dataset_definitions($form) {
         // Save datasets
-        $datasetdefinitions = $this->get_dataset_definitions($form);
+        $datasetdefinitions = $this->get_dataset_definitions($form->id, $form->dataset);
         $tmpdatasets = array_flip($form->dataset);
         $defids = array_keys($datasetdefinitions);
         foreach ($defids as $defid) {

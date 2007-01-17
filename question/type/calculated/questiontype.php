@@ -216,8 +216,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         return true;
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $cmoptions,
-     $options) {
+    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
         // Substitute variables in questiontext before giving the data to the
         // virtual type for printing
         $virtualqtype = $this->get_virtual_qtype();
@@ -239,8 +238,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         }
         $numericalquestion->questiontext = parent::substitute_variables(
         $numericalquestion->questiontext, $state->options->dataset);
-        $virtualqtype->print_question_formulation_and_controls($numericalquestion,
-         $state, $cmoptions, $options);
+        $virtualqtype->print_question_formulation_and_controls($numericalquestion, $state, $cmoptions, $options);
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {
@@ -326,6 +324,40 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
     // Calcualted support generation of randomly distributed number data
         return true;
     }
+    function custom_generator_tools_part(&$mform, $idx, $j){
+
+        $minmaxgrp = array();
+        $minmaxgrp[] =& $mform->createElement('text', "calcmin[$idx]", get_string('calcmin', 'qtype_datasetdependent'), 'size="3"');
+        $minmaxgrp[] =& $mform->createElement('text', "calcmax[$idx]", get_string('calcmax', 'qtype_datasetdependent'), 'size="3"');
+        $mform->addGroup($minmaxgrp, 'minmaxgrp', get_string('minmax', 'qtype_datasetdependent'), ' - ', false);
+
+        $precisionoptions = range(0, 10);
+        $mform->addElement('select', "calclength[$idx]", get_string('calclength', 'qtype_datasetdependent'), $precisionoptions);
+
+        $distriboptions = array('uniform' => get_string('uniform', 'qtype_datasetdependent'), 'loguniform' => get_string('loguniform', 'qtype_datasetdependent'));
+        $mform->addElement('select', "calcdistribution[$idx]", get_string('calcdistribution', 'qtype_datasetdependent'), $distriboptions);
+
+
+        $mform->addElement('hidden', "definition[$j]");
+        $mform->addElement('hidden', "itemid[$j]");
+
+
+    }
+
+    function custom_generator_set_data($datasetdefs, $formdata){
+        $idx = 1;
+        foreach ($datasetdefs as $datasetdef){
+            if (ereg('^(uniform|loguniform):([^:]*):([^:]*):([0-9]*)$', $datasetdef->options, $regs)) {
+                $defid = "$datasetdef->type-$datasetdef->category-$datasetdef->name";
+                $formdata["calcdistribution[$idx]"] = $regs[1];
+                $formdata["calcmin[$idx]"] = $regs[2];
+                $formdata["calcmax[$idx]"] = $regs[3];
+                $formdata["calclength[$idx]"] = $regs[4];
+            }
+            $idx++;
+        }
+        return $formdata;
+    }
 
     function custom_generator_tools($datasetdef) {
         if (ereg('^(uniform|loguniform):([^:]*):([^:]*):([0-9]*)$',
@@ -355,6 +387,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         }
     }
 
+
     function update_dataset_options($datasetdefs, $form) {
         // Do we have informatin about new options???
         if (empty($form->definition) || empty($form->calcmin)
@@ -364,21 +397,22 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
 
         } else {
             // Looks like we just could have some new information here
-            foreach ($form->definition as $key => $defid) {
+            $uniquedefs = array_values(array_unique($form->definition));
+            foreach ($uniquedefs as $key => $defid) {
                 if (isset($datasetdefs[$defid])
-                        && is_numeric($form->calcmin[$key])
-                        && is_numeric($form->calcmax[$key])
-                        && is_numeric($form->calclength[$key])) {
-                    switch     ($form->calcdistribution[$key]) {
+                        && is_numeric($form->calcmin[$key+1])
+                        && is_numeric($form->calcmax[$key+1])
+                        && is_numeric($form->calclength[$key+1])) {
+                    switch     ($form->calcdistribution[$key+1]) {
                         case 'uniform': case 'loguniform':
                             $datasetdefs[$defid]->options =
-                                    $form->calcdistribution[$key] . ':'
-                                    . $form->calcmin[$key] . ':'
-                                    . $form->calcmax[$key] . ':'
-                                    . $form->calclength[$key];
+                                    $form->calcdistribution[$key+1] . ':'
+                                    . $form->calcmin[$key+1] . ':'
+                                    . $form->calcmax[$key+1] . ':'
+                                    . $form->calclength[$key+1];
                             break;
                         default:
-                            notify("Unexpected distribution $form->calcdistribution[$key]");
+                            notify("Unexpected distribution ".$form->calcdistribution[$key+1]);
                     }
                 }
             }
@@ -393,6 +427,79 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         return $datasetdefs;
     }
 
+    function save_dataset_items($question, $fromform){
+        if (empty($question->options)) {
+            $this->get_question_options($question);
+        }
+        //get the old datasets for this question
+        $datasetdefs = $this->get_dataset_definitions($question->id, array());
+        // Handle generator options...
+        $olddatasetdefs = fullclone($datasetdefs);
+        $datasetdefs = $this->update_dataset_options($datasetdefs, $fromform);
+        $maxnumber = -1;
+        foreach ($datasetdefs as $defid => $datasetdef) {
+            if (isset($datasetdef->id)
+             && $datasetdef->options != $olddatasetdefs[$defid]->options) {
+                // Save the new value for options
+                update_record('question_dataset_definitions', $datasetdef);
+
+            }
+            // Get maxnumber
+            if ($maxnumber == -1 || $datasetdef->itemcount < $maxnumber) {
+                $maxnumber = $datasetdef->itemcount;
+            }
+        }
+        // Handle adding and removing of dataset items
+        $i = 1;
+        foreach ($fromform->definition as $key => $defid) {
+            //if the delete button has not been pressed then skip the datasetitems
+            //in the 'add item' part of the form.
+            if ((!isset($fromform->addbutton)) && ($i > (count($datasetdefs)*$maxnumber))) {
+                break;
+            }
+            $addeditem = new stdClass();
+            $addeditem->definition = $datasetdefs[$defid]->id;
+            $addeditem->value = $fromform->number[$i];
+            $addeditem->itemnumber = ceil($i / count($datasetdefs));
+
+            if ($fromform->itemid[$i]) {
+                // Reuse any previously used record
+                $addeditem->id = $fromform->itemid[$i];
+                if (!update_record('question_dataset_items', $addeditem)) {
+                    error("Error: Unable to update dataset item");
+                }
+            } else {
+                if (!insert_record('question_dataset_items', $addeditem)) {
+                    error("Error: Unable to insert dataset item");
+                }
+            }
+
+            $i++;
+        }
+        if ($maxnumber < $addeditem->itemnumber){
+            $maxnumber = $addeditem->itemnumber;
+            foreach ($datasetdefs as $key => $newdef) {
+                if (isset($newdef->id) && $newdef->itemcount <= $maxnumber) {
+                    $newdef->itemcount = $maxnumber;
+                    // Save the new value for options
+                    update_record('question_dataset_definitions', $newdef);
+                }
+            }
+        }
+        if (isset($fromform->deletebutton))  {
+            // Simply decrease itemcount where == $maxnumber
+            foreach ($datasetdefs as $datasetdef) {
+                if ($datasetdef->itemcount == $maxnumber) {
+                    $datasetdef->itemcount--;
+                    if (!update_record('question_dataset_definitions',
+                                       $datasetdef)) {
+                         error("Error: Unable to update itemcount");
+                    }
+                }
+            }
+            --$maxnumber;
+        }
+    }
     function generate_dataset_item($options) {
         if (!ereg('^(uniform|loguniform):([^:]*):([^:]*):([0-9]*)$',
                 $options, $regs)) {
@@ -469,11 +576,9 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         global $SESSION;
         $strheader = '';
         $delimiter = '';
-        if (empty($question->id)) {
-            $answers = $SESSION->datasetdependent->questionform->answers;
-        } else {
-            $answers = $question->options->answers;
-        }
+
+        $answers = $question->options->answers;
+
         foreach ($answers as $answer) {
             if (is_string($answer)) {
                 $strheader .= $delimiter.$answer;
@@ -495,13 +600,17 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         }
 
         $answers = $question->options->answers;
-        $stranswers = get_string('answer', 'quiz');
+        $stranswers = '';
         $strmin = get_string('min', 'quiz');
         $strmax = get_string('max', 'quiz');
         $errors = '';
         $delimiter = ': ';
         $virtualqtype = $this->get_virtual_qtype();
         foreach ($answers as $answer) {
+            $formula = $answer->answer;
+            foreach ($data as $name => $value) {
+                $formula = str_replace('{'.$name.'}', $value, $formula);
+            }
             $calculated = qtype_calculated_calculate_answer(
                     $answer->answer, $data, $answer->tolerance,
                     $answer->tolerancetype, $answer->correctanswerlength,
@@ -516,12 +625,12 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                 $errors .= " -$calculated->answer";
                 $stranswers .= $delimiter;
             } else {
-                $stranswers .= $delimiter.$calculated->answer;
+                $stranswers .= $formula.' = '.$calculated->answer. '<br/>';
                 $strmin     .= $delimiter.$calculated->min;
                 $strmax     .= $delimiter.$calculated->max;
             }
         }
-        return "$stranswers<br/>$strmin<br/>$strmax<br/>$errors";
+        return "$stranswers$strmin<br/>$strmax<br/>$errors";
     }
 
     function tolerance_types() {

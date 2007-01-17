@@ -24,20 +24,18 @@ if (!$returnurl && isset($SESSION->fromurl)) {
 $id = optional_param('id', 0, PARAM_INT); // question id
 $qtype = optional_param('qtype', '', PARAM_FILE);
 $categoryid = optional_param('category', 0, PARAM_INT);
-$wizard =  optional_param('wizard', '', PARAM_ALPHA);
+$wizardnow =  optional_param('wizardnow', '', PARAM_ALPHA);
 
 // Validate the URL parameters.
-if ($id = optional_param('id', 0, PARAM_INT)) {
-    if (!$question = get_record("question", "id", $id)) {
+if ($id) {
+    if (!$question = get_record('question', 'id', $id)) {
         print_error('questiondoesnotexist', 'question', $returnurl);
     }
     get_question_options($question);
-    $submiturl = "question2.php?id=$id&returnurl=" . urlencode($returnurl).'&wizard='.$wizard;
 } else if ($categoryid && $qtype) { // only for creating new questions
     $question = new stdClass;
     $question->category = $categoryid;
     $question->qtype = $qtype;
-    $submiturl = "question2.php?category=$categoryid&qtype=$qtype&returnurl=" . urlencode($returnurl).'&wizard='.$wizard;
 } else {
     print_error('notenoughdatatoeditaquestion', 'question', $returnurl);
 }
@@ -63,30 +61,32 @@ $coursecontext = get_context_instance(CONTEXT_COURSE, $category->course);
 require_capability('moodle/question:manage', $coursecontext);
 
 // Create the question editing form.
-if ($wizard!==''){
+if ($wizardnow!==''){
     if (!method_exists($QTYPES[$question->qtype], 'next_wizard_form')){
         print_error('missingimportantcode', 'question', $returnurl, 'wizard form definition');
     } else {
-        $mform = $QTYPES[$question->qtype]->next_wizard_form($submiturl, $question, $wizard);
+        $mform = $QTYPES[$question->qtype]->next_wizard_form('question2.php', $question, $wizardnow);
     }
 } else {
-    $mform = $QTYPES[$question->qtype]->create_editing_form($submiturl, $question, $category->course);
+    $mform = $QTYPES[$question->qtype]->create_editing_form('question2.php', $question, $category->course);
 }
 
 if ($mform === null) {
     print_error('missingimportantcode', 'question', $returnurl, 'question editing form definition');
 }
-$mform->set_data($question);
+$toform = $question; // send the question object and a few more parameters to the form
+$toform->returnurl = $returnurl;
+$mform->set_data($toform);
 
 if ($mform->is_cancelled()){
     redirect($returnurl);
-} else if ($data = $mform->get_data()){
+} elseif ($data = $mform->get_data()){
     if (!empty($data->makecopy)) {
         $question->id = 0;  // causes a new question to be created.
         $question->hidden = 0; // Copies should not be hidden
     }
-    $question = $QTYPES[$qtype]->save_question($question, $data, $COURSE);
-    if ($QTYPES[$qtype]->finished_edit_wizard($question)){
+    $question = $QTYPES[$question->qtype]->save_question($question, $data, $COURSE, $wizardnow);
+    if ($QTYPES[$qtype]->finished_edit_wizard($data)){
         if (optional_param('inpopup', 0, PARAM_BOOL)) {
             notify(get_string('changessaved'), '');
             close_window(3);
@@ -95,7 +95,19 @@ if ($mform->is_cancelled()){
         }
         die;
     } else {
-        redirect($submiturl.'&wizard='.$data->wizardpage);
+        //useful for passing data to the next page which is not saved in the database
+        $queryappend = '';
+        if (isset($data->nextpageparam)){
+            foreach ($data->nextpageparam as $key => $param){
+                $queryappend .= "&".urlencode($key).'='.urlencode($param);
+            }
+        }
+        if ($question->id) {
+            $nexturl = "question2.php?id=$question->id&returnurl=" . urlencode($returnurl);
+        } else { // only for creating new questions
+            $nexturl = "question2.php?category=$question->category&qtype=$question->qtype&returnurl=".urlencode($returnurl);
+        }
+        redirect($nexturl.'&wizardnow='.$data->wizard.$queryappend, '', 20);
     }
 } else {
     // Display the question editing form

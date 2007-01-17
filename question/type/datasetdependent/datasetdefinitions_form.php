@@ -26,13 +26,21 @@ class question_dataset_dependent_definitions_form extends moodleform {
         parent::moodleform($submiturl);
     }
     function definition() {
+        global $SESSION;
         $mform =& $this->_form;
 
         $possibledatasets = $this->qtypeobj->find_dataset_names($this->question->questiontext);
         $mandatorydatasets = array();
-        foreach ($this->question->answers as $answer) {
-            $mandatorydatasets += $this->qtypeobj->find_dataset_names($answer);
+        if (isset($this->question->options->answers)){
+            foreach ($this->question->options->answers as $answer) {
+                $mandatorydatasets += $this->qtypeobj->find_dataset_names($answer->answer);
+            }
+        }else{
+            foreach ($SESSION->datasetdependent->questionform->answers as $answer){
+                $mandatorydatasets += $this->qtypeobj->find_dataset_names($answer);
+            }
         }
+
         $key = 0;
         $datasetmenus = array();
         foreach ($mandatorydatasets as $datasetname) {
@@ -58,10 +66,20 @@ class question_dataset_dependent_definitions_form extends moodleform {
                 $key++;
             }
         }
-        //hidden elements
-        $mform->addElement('hidden', 'wizardpage', 'datasetdefinitions');
-        $mform->setType('wizardpage', PARAM_ALPHA);
         $this->add_action_buttons(true, get_string('nextpage', 'qtype_calculated'));
+
+
+        //hidden elements
+        $mform->addElement('hidden', 'returnurl');
+        $mform->setType('returnurl', PARAM_URL);
+        $mform->addElement('hidden', 'qtype');
+        $mform->setType('qtype', PARAM_ALPHA);
+        $mform->addElement('hidden', 'category');
+        $mform->setType('category', PARAM_INT);
+        $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
+        $mform->addElement('hidden', 'wizard', 'datasetitems');
+        $mform->setType('wizard', PARAM_ALPHA);
     }
 
 }

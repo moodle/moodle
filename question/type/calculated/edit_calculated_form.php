@@ -118,8 +118,8 @@ class question_edit_calculated_form extends question_edit_form {
         $firstunit->setPersistantFreeze(true);
 
         //hidden elements
-        $mform->addElement('hidden', 'wizardpage', 'question');
-        $mform->setType('wizardpage', PARAM_ALPHA);
+        $mform->addElement('hidden', 'wizard', 'datasetdefinitions');
+        $mform->setType('wizard', PARAM_ALPHA);
 
 
     }

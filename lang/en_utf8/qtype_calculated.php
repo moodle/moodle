@@ -10,5 +10,6 @@ $string['mustbenumeric'] = 'You must enter a number here.';
 $string['mustnotbenumeric'] = 'This can\'t be a number.';
 $string['youmustenteramultiplierhere'] = 'You must enter a multiplier here.';
 $string['nextpage'] = 'Next Page';
+$string['nextitemtoadd'] = 'Next \'Item to Add\'';
 $string['makecopynextpage'] = 'Next Page (new question)';
 ?>

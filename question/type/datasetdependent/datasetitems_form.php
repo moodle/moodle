@@ -14,84 +14,204 @@ class question_dataset_dependent_items_form extends moodleform {
      * @var question_dataset_dependent_questiontype
      */
     var $qtypeobj;
+
+    var $datasetdefs;
+
+    var $maxnumber = -1;
+
+    var $regenerate;
+
+    var $noofitems;
     /**
      * Add question-type specific form fields.
      *
      * @param MoodleQuickForm $mform the form being built.
      */
-    function question_dataset_dependent_items_form($submiturl, $question){
-        global $QTYPES;
+    function question_dataset_dependent_items_form($submiturl, $question, $regenerate){
+        global $QTYPES, $SESSION, $CFG;
+        $this->regenerate = $regenerate;
         $this->question = $question;
         $this->qtypeobj =& $QTYPES[$this->question->qtype];
+        //get the dataset defintions for this question
+        if (empty($question->id)) {
+            $this->datasetdefs = $this->qtypeobj->get_dataset_definitions($question->id, $SESSION->datasetdependent->definitionform->dataset);
+        } else {
+            if (empty($question->options)) {
+                $this->get_question_options($question);
+            }
+            $this->datasetdefs = $this->qtypeobj->get_dataset_definitions($question->id, array());
+        }
+
+        foreach ($this->datasetdefs as $datasetdef) {
+
+            // Get maxnumber
+            if ($this->maxnumber == -1 || $datasetdef->itemcount < $this->maxnumber) {
+                $this->maxnumber = $datasetdef->itemcount;
+            }
+        }
+        foreach ($this->datasetdefs as $defid => $datasetdef) {
+            if (isset($datasetdef->id)) {
+                $this->datasetdefs[$defid]->items = get_records_sql( // Use number as key!!
+                        " SELECT itemnumber, definition, id, value
+                          FROM {$CFG->prefix}question_dataset_items
+                          WHERE definition = $datasetdef->id ");
+            }
+        }
         parent::moodleform($submiturl);
     }
     function definition() {
         $mform =& $this->_form;
+        $strquestionlabel = $this->qtypeobj->comment_header($this->question);
 
-        $repeated = array();
-        $repeatedoptions = array();
-        $repeated[] =& $mform->createElement('header', 'itemhdr', get_string('itemno', 'qtype_datasetdependent', '{no}'));
-        $params = array('a', 'b', 'c');
-        foreach ($params as $paramno => $param){
-            $idx = $paramno +1;
-            $repeated[] =& $mform->createElement('text', "number[$idx]", get_string('param', 'qtype_datasetdependent', $param));
-            $repeated[] =& $mform->createElement('hidden', "itemid[$idx]");
-            $repeated[] =& $mform->createElement('hidden', "definition[$idx]");
-
-            $repeatedoptions["number[$idx]"]['type'] = PARAM_NUMBER;
-            //$repeatedoptions["number[$idx]"]['rule'] = 'numeric';
-            $repeatedoptions["itemid[$idx]"]['type'] = PARAM_INT;
-            $repeatedoptions["definition[$idx]"]['type'] = PARAM_NOTAGS;
-        }
-
-        /*if (isset($this->question->options)){
-            $countanswers = count($this->question->options->answers);
+//------------------------------------------------------------------------------------------------------------------------------
+        if ($this->maxnumber != -1){
+            $this->noofitems = $this->maxnumber;
         } else {
-            $countanswers = 0;
+            $this->noofitems = 0;
         }
-        $repeatsatstart = (QUESTION_NUMANS_START > ($countanswers + QUESTION_NUMANS_ADD))?
-                            QUESTION_NUMANS_START : ($countanswers + QUESTION_NUMANS_ADD);
-        */
-        $repeatsatstart = 3;
-        $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'itemsno', 'itemsadd', 1, get_string('additem', 'qtype_datasetdependent'));
+        $j = 1;
+        for ($i=1; $i <= $this->noofitems; $i++){
+            $mform->addElement('header', 'itemhdr', get_string('itemno', 'qtype_datasetdependent', $i));
+            foreach ($this->datasetdefs as $defkey => $datasetdef){
+                $mform->addElement('text', "number[$j]", get_string('param', 'qtype_datasetdependent', $datasetdef->name));
+                $mform->setType("number[$j]", PARAM_NUMBER);
 
+                $mform->addElement('hidden', "itemid[$j]");
+
+                $mform->addElement('hidden', "definition[$j]");
+
+                $j++;
+            }
+            if ('' != $strquestionlabel){
+                $repeated[] =& $mform->addElement('static', "answercomment[$i]", $strquestionlabel);
+            }
+            if ($i == $this->noofitems) {//last item
+                $mform->addElement('submit', 'deletebutton', get_string('deletelastitem', 'qtype_datasetdependent'));
+
+            }
+        }
+        $mform->setType("itemid", PARAM_INT);
+        $mform->setType("definition", PARAM_NOTAGS);
+
+        $mform->addElement('submit', 'addbutton', get_string('additem', 'qtype_datasetdependent'));
+        $mform->closeHeaderBefore('addbutton');
+
+
+//------------------------------------------------------------------------------------------------------------------------------
+        $mform->addElement('header', 'additemhdr', get_string('itemtoadd', 'qtype_datasetdependent'));
+        $idx = 1;
+        foreach ($this->datasetdefs as $defkey => $datasetdef){
+            $mform->addElement('text', "number[$j]", get_string('param', 'qtype_datasetdependent', $datasetdef->name));
+            $this->qtypeobj->custom_generator_tools_part(&$mform, $idx, $j);
+            $idx++;
+            $j++;
+            $mform->addElement('static', "divider[$j]", '', '<hr />');
+
+        }
+
+        if ('' != $strquestionlabel){
+            $mform->addElement('static', 'answercomment['.($this->noofitems+1).']', $strquestionlabel);
+        }
+
+        $mform->closeHeaderBefore('forceregenerationgrp');
 
         if ($this->qtypeobj->supports_dataset_item_generation()){
             $radiogrp = array();
-            $radiogrp[] =& $mform->createElement('radio', "forceregeneration", 0, get_string('reuseifpossible', 'quiz'));
-            $radiogrp[] =& $mform->createElement('radio', "forceregeneration", 1, get_string('forceregeneration', 'quiz'));
-            $mform->addGroup($radiogrp, 'forceregenerationgrp', '', null, false);
+            $radiogrp[] =& $mform->createElement('radio', 'nextpageparam[forceregeneration]', null, get_string('reuseifpossible', 'qtype_datasetdependent'), 0);
+            $radiogrp[] =& $mform->createElement('radio', 'nextpageparam[forceregeneration]', null, get_string('forceregeneration', 'qtype_datasetdependent'), 1);
+            $mform->addGroup($radiogrp, 'forceregenerationgrp', get_string('nextitemtoadd', 'qtype_calculated'), null, false);
+            $mform->setDefault('nextpageparam[forceregeneration]', 0);
         }
 
-        $mform->addElement('header', 'additemhdr', get_string('itemtoadd', 'qtype_datasetdependent'));
-        foreach ($params as $paramno => $param){
-            $idx = $paramno +1;
-            $mform->addElement('text', "numbertoadd[$idx]", get_string('param', 'qtype_datasetdependent', $param));
+        $mform->addElement('submit', 'getnextbutton', get_string('getnextnow', 'qtype_datasetdependent'));
 
-            $minmaxgrp = array();
-            $minmaxgrp[] =& $mform->createElement('text', "calcmin[$idx]", get_string('calcmin', 'qtype_datasetdependent'), 'size="3"');
-            $minmaxgrp[] =& $mform->createElement('text', "calcmax[$idx]", get_string('calcmax', 'qtype_datasetdependent'), 'size="3"');
-            $mform->addGroup($minmaxgrp, 'minmaxgrp', get_string('minmax', 'qtype_datasetdependent'), ' - ', false);
+        //non standard name for button element needed so not using add_action_buttons
+        $buttonarray=array();
+        $buttonarray[] = &$mform->createElement('submit', 'backtoquiz', get_string('savechanges'));
+        $buttonarray[] = &$mform->createElement('cancel');
+        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
 
-            $precisionoptions = range(0, 10);
-            $mform->addElement('select', "calclength[$idx]", get_string('calclength', 'qtype_datasetdependent'), $precisionoptions);
-
-            $distriboptions = array('uniform' => get_string('uniform', 'qtype_datasetdependent'), 'loguniform' => get_string('loguniform', 'qtype_datasetdependent'));
-            $mform->addElement('select', "calcdistribution[$idx]", get_string('calcdistribution', 'qtype_datasetdependent'), $distriboptions);
-
-
-            $mform->addElement('submit', "generate[$idx]", get_string('generate', 'qtype_datasetdependent'));
-            $mform->addElement('hidden', "definition[$idx]");
-
-            $repeatedoptions["number[$idx]"]['type'] = PARAM_NUMBER;
-            //$repeatedoptions["number[$idx]"]['rule'] = 'numeric';
-            $repeatedoptions["itemid[$idx]"]['type'] = PARAM_INT;
-            $repeatedoptions["definition[$idx]"]['type'] = PARAM_NOTAGS;
-        }
-        $mform->addElement('hidden', 'wizardpage', 'datasetitems');
-        $mform->setType('wizardpage', PARAM_ALPHA);
-        $this->add_action_buttons(true);
+        //hidden elements
+        $mform->addElement('hidden', 'returnurl');
+        $mform->setType('returnurl', PARAM_URL);
+        $mform->addElement('hidden', 'qtype');
+        $mform->setType('qtype', PARAM_ALPHA);
+        $mform->addElement('hidden', 'category');
+        $mform->setType('category', PARAM_INT);
+        $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
+        $mform->addElement('hidden', 'wizard', 'datasetitems');
+        $mform->setType('wizard', PARAM_ALPHA);
     }
+
+    function set_data($question){
+        $formdata = array();
+
+        //fill out all data sets and also the fields for the next item to add.
+        $j = 1;
+        for ($itemnumber = 1; $itemnumber <= $this->noofitems; $itemnumber++){
+            $data = array();
+            foreach ($this->datasetdefs as $defid => $datasetdef){
+                if (isset($datasetdef->items[$itemnumber])){
+                    $formdata["number[$j]"] = $datasetdef->items[$itemnumber]->value;
+                    $formdata["definition[$j]"] = $defid;
+                    $formdata["itemid[$j]"] = $datasetdef->items[$itemnumber]->id;
+                    $data[$datasetdef->name] = $datasetdef->items[$itemnumber]->value;
+                }
+                $j++;
+            }
+            $formdata['answercomment['.$itemnumber.']'] = $this->qtypeobj->comment_on_datasetitems($this->question, $data, $itemnumber);
+        }
+
+        $formdata['nextpageparam[forceregeneration]'] = $this->regenerate;
+
+        $savej = $j;
+        $data = array(); // data for comment_on_datasetitems later
+        //dataset generation dafaults
+        if ($this->qtypeobj->supports_dataset_item_generation()) {
+            $itemnumber = $this->noofitems+1;
+            foreach ($this->datasetdefs as $defid => $datasetdef){
+                $formdata["number[$j]"] = $this->qtypeobj->generate_dataset_item($datasetdef->options);
+                $formdata["definition[$j]"] = $defid;
+                $formdata["itemid[$j]"] =
+                        isset($datasetdef->items[$itemnumber])?$datasetdef->items[$itemnumber]->id:0;
+                $data[$datasetdef->name] = $formdata["number[$j]"];
+                $j++;
+            }
+        }
+
+        //existing records override generated data depending on radio element
+        $j = $savej;
+        if (!$this->regenerate){
+            $idx = 1;
+            $itemnumber = $this->noofitems+1;
+            foreach ($this->datasetdefs as $defid => $datasetdef){
+                if (isset($datasetdef->items[$itemnumber])){
+                    $formdata["number[$j]"] = $datasetdef->items[$itemnumber]->value;
+                    $formdata["definition[$j]"] = $defid;
+                    $formdata["itemid[$j]"] = $datasetdef->items[$itemnumber]->id;
+                    $data[$datasetdef->name] = $datasetdef->items[$itemnumber]->value;
+                }
+                $j++;
+            }
+
+        }
+        //default answercomment will get ignored if answer element is not in the form.
+        $formdata['answercomment['.($this->noofitems+1).']'] = $this->qtypeobj->comment_on_datasetitems($this->question, $data, ($this->noofitems+1));
+
+        $formdata = $this->qtypeobj->custom_generator_set_data($this->datasetdefs, $formdata);
+
+        parent::set_data((object)($formdata + (array)$question));
+    }
+
+    function validation($data){
+        $errors = array();
+        if (isset($data['backtoquiz'])){
+            $errors['addbutton'] = get_string('youmustaddatleastoneitem', 'qtype_datasetdependent');
+        }
+        return $errors;
+    }
+
 
 }
 ?>
