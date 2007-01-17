@@ -200,6 +200,18 @@ function xmldb_scorm_upgrade($oldversion=0) {
         $result = $result && create_table($table);
     }
     
+	//Adding new field to table scorm
+	 if ($result && $oldversion < 2007011700) {
+
+    /// Define field format to be added to data_comments
+        $table = new XMLDBTable('scorm');
+        $field = new XMLDBField('md5_result');
+        $field->setAttributes(XMLDB_TYPE_TEXT, null , null, null, null, null, null, null, null);
+
+    /// Launch add field format
+        $result = $result && add_field($table, $field);
+
+    }
 
     return $result;
 }
