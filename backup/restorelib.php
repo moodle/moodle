@@ -1483,8 +1483,8 @@
                     $user->mnethostid = $CFG->mnet_localhost_id;
                 } else {
                     // fast url-to-id lookups
-                    if (isset($mnethosts->{$user->mnethosturl})) {
-                        $user->mnethostid = $mnethosts->{$user->mnethosturl};
+                    if (isset($mnethosts[$user->mnethosturl])) {
+                        $user->mnethostid = $mnethosts[$user->mnethosturl]->id;
                     } else { 
                         // should not happen, as we check in restore_chech.php 
                         // but handle the error if it does
