@@ -44,12 +44,17 @@ function groups_db_get_user($userid) {
  */
  function groups_db_get_groups($courseid) {
     if (! $courseid) {
-        $groupid = false;
-    } else {
-        $groups = get_records('groups_courses_groups', 'courseid', $courseid, 
-                              '', $fields='id, groupid');
-        // Put the results into an array
-        $groupids = groups_groups_to_groupids($groups, $courseid);
+        return false;
+    }
+    $records = get_records('groups_courses_groups', 'courseid', $courseid, 
+                           '', $fields='id, groupid');
+    if (! $records) {
+        return false;
+    }
+    // Put the results into an array, note these are NOT 'group' objects.
+    $groupids = array();
+    foreach ($records as $record) {
+        array_push($groupids, $record->groupid);
     }
 
     return $groupids;
@@ -103,7 +108,7 @@ function groups_db_get_groups_for_user($userid, $courseid) {
                 WHERE cg.courseid  = $courseid AND gm.userid=$userid";
                 
         $groups = get_records_sql($sql);
-        $groupids = groups_groups_to_groupids($groups, $courseid);
+        $groupids = groups_groups_to_groupids($groups);
     }
 	
     return $groupids;
