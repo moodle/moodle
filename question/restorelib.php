@@ -311,7 +311,8 @@
         global $CFG;
 
         $status = true;
-
+        $qtype = backup_todb($info['#']['QTYPE']['0']['#']);
+        
         //Get the answers array
         if (isset($info['#']['ANSWERS']['0']['#']['ANSWER'])) {
             $answers = $info['#']['ANSWERS']['0']['#']['ANSWER'];
@@ -332,6 +333,11 @@
                 $answer->answer = backup_todb($ans_info['#']['ANSWER_TEXT']['0']['#']);
                 $answer->fraction = backup_todb($ans_info['#']['FRACTION']['0']['#']);
                 $answer->feedback = backup_todb($ans_info['#']['FEEDBACK']['0']['#']);
+
+                // Update 'match everything' answers for numerical questions coming from old backup files.
+                if ($qtype == 'numerical' && $answer->answer == '') {
+                    $answer->answer = '*';
+                }
 
                 //The structure is equal to the db, so insert the question_answers
                 $newid = insert_record ("question_answers",$answer);
