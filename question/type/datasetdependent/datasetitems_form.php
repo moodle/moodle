@@ -206,7 +206,7 @@ class question_dataset_dependent_items_form extends moodleform {
 
     function validation($data){
         $errors = array();
-        if (isset($data['backtoquiz'])){
+        if (isset($data['backtoquiz']) && ($this->noofitems===0)){
             $errors['addbutton'] = get_string('youmustaddatleastoneitem', 'qtype_datasetdependent');
         }
         return $errors;

@@ -99,7 +99,7 @@ class question_multichoice_qtype extends default_questiontype {
             $update = false;
             $options = new stdClass;
             $options->question = $question->id;
-            
+
         }
         $options->answers = implode(",",$answers);
         $options->single = $question->single;
@@ -284,7 +284,7 @@ class question_multichoice_qtype extends default_questiontype {
             $qnumchar = chr(ord('a') + $key);
             $checked = '';
             $chosen = false;
-            
+
             if ($question->options->single) {
                 $type = 'type="radio"';
                 $name   = "name=\"{$question->name_prefix}\"";
@@ -327,21 +327,21 @@ class question_multichoice_qtype extends default_questiontype {
 
             $anss[] = clone($a);
         }
-        
+
         $feedback = '';
         if ($options->feedback) {
             if ($state->raw_grade >= $question->maxgrade/1.01) {
-                $feedback = $question->options->correctfeedback;                
+                $feedback = $question->options->correctfeedback;
             } else if ($state->raw_grade > 0) {
-                $feedback = $question->options->partiallycorrectfeedback;                
+                $feedback = $question->options->partiallycorrectfeedback;
             } else {
-                $feedback = $question->options->incorrectfeedback;                
+                $feedback = $question->options->incorrectfeedback;
             }
             $feedback = format_text($feedback,
                     $question->questiontextformat,
                     $formatoptions, $cmoptions->course);
         }
-        
+
         include("$CFG->dirroot/question/type/multichoice/display.html");
     }
 
@@ -385,7 +385,7 @@ class question_multichoice_qtype extends default_questiontype {
         }
         return $responses;
     }
-    
+
 /// BACKUP FUNCTIONS ////////////////////////////
 
     /*

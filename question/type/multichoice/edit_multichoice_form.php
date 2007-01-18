@@ -45,7 +45,7 @@ class question_edit_multichoice_form extends question_edit_form {
         $repeatsatstart = (QUESTION_NUMANS_START > ($countanswers + QUESTION_NUMANS_ADD))?
                             QUESTION_NUMANS_START : ($countanswers + QUESTION_NUMANS_ADD);
         $repeatedoptions = array();
-        $repeatedoptions['answer']['type'] = PARAM_TEXT;
+        $repeatedoptions['answer']['type'] = PARAM_NOTAGS;//text with no multilang support
         $repeatedoptions['fraction']['default'] = 0;
         $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', QUESTION_NUMANS_ADD, get_string('addmorechoiceblanks', 'qtype_multichoice'));
 

@@ -185,14 +185,11 @@ class question_dataset_dependent_questiontype extends default_questiontype {
             case 'datasetdefinitions':
                 require("$CFG->dirroot/question/type/datasetdependent/datasetdefinitions_form.php");
                 $mform =& new question_dataset_dependent_definitions_form("$submiturl?wizardnow=datasetdefinitions", $question);
-                $mform->heading = print_heading_with_help(get_string("choosedatasetproperties", "quiz"), "questiondatasets", "quiz", '', true);
                 break;
             case 'datasetitems':
                 require("$CFG->dirroot/question/type/datasetdependent/datasetitems_form.php");
                 $regenerate = optional_param('forceregeneration', 0, PARAM_BOOL);
                 $mform =& new question_dataset_dependent_items_form("$submiturl?wizardnow=datasetitems", $question, $regenerate);
-                $streditdatasets = get_string("editdatasets", "quiz");
-                $mform->heading  = print_heading_with_help($streditdatasets, 'questiondatasets', "quiz", '', true);
                 break;
             default:
                 error('Incorrect or no wizard page specified!');
@@ -201,6 +198,35 @@ class question_dataset_dependent_questiontype extends default_questiontype {
 
         return $mform;
     }
+
+    /**
+     * This method should be overriden if you want to include a special heading or some other
+     * html on a question editing page besides the question editing form.
+     *
+     * @param question_edit_form $mform a child of question_edit_form
+     * @param object $question
+     * @param string $wizardnow is '' for first page.
+     */
+    function display_question_editing_page(&$mform, $question, $wizardnow){
+        switch ($wizardnow){
+            case '':
+                //on first page default display is fine
+                parent::display_question_editing_page($mform, $question, $wizardnow);
+                return;
+                break;
+            case 'datasetdefinitions':
+                print_heading_with_help(get_string("choosedatasetproperties", "quiz"), "questiondatasets", "quiz");
+                break;
+            case 'datasetitems':
+                print_heading_with_help(get_string("editdatasets", "quiz"), 'questiondatasets', "quiz");
+                break;
+        }
+
+
+        $mform->display();
+
+    }
+
     function save_question($question, $form, $course) {
         // For dataset dependent questions a wizard is used for editing
         // questions. Therefore saving the question is delayed until

@@ -96,6 +96,22 @@ class default_questiontype {
     }
 
     /**
+     * This method should be overriden if you want to include a special heading or some other
+     * html on a question editing page besides the question editing form.
+     *
+     * @param question_edit_form $mform a child of question_edit_form
+     * @param object $question
+     * @param string $wizardnow is '' for first page.
+     */
+    function display_question_editing_page(&$mform, $question, $wizardnow){
+
+        print_heading_with_help(get_string("editing".$question->qtype, "quiz"), $question->qtype, "quiz");
+
+        $mform->display();
+
+    }
+
+    /**
      *
      *
      * @param $question

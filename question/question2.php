@@ -72,7 +72,7 @@ if ($wizardnow!==''){
 }
 
 if ($mform === null) {
-    print_error('missingimportantcode', 'question', $returnurl, 'question editing form definition');
+    print_error('missingimportantcode', 'question', $returnurl, 'question editing form definition for "'.$question->qtype.'"');
 }
 $toform = $question; // send the question object and a few more parameters to the form
 $toform->returnurl = $returnurl;
@@ -110,7 +110,7 @@ if ($mform->is_cancelled()){
         redirect($nexturl.'&wizardnow='.$data->wizard.$queryappend, '', 20);
     }
 } else {
-    // Display the question editing form
+
     $streditingquestion = get_string('editingquestion', 'question');
     if (isset($SESSION->modform->instance)) {
         // TODO: remove restriction to quiz
@@ -121,12 +121,11 @@ if ($mform->is_cancelled()){
                 get_string("editquestions", "quiz").'</a> -> '.$streditingquestion;
     }
     print_header_simple($streditingquestion, '', $strediting);
-    if (isset($mform->heading)){
-        print $mform->heading;
-    } else {
-        print_heading_with_help(get_string("editing".$question->qtype, "quiz"), $question->qtype, "quiz");
-    }
-    $mform->display();
-    print_footer($COURSE);
+
+    // Display a heading, question editing form and possibly some extra content needed for
+    // for this question type.
+    $QTYPES[$question->qtype]->display_question_editing_page(&$mform, $question, $wizardnow);
+
+    print_footer($course);
 }
 ?>

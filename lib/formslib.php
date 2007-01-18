@@ -466,7 +466,7 @@ class moodleform {
         for ($i=0; $i<$repeats; $i++) {
             foreach ($elementobjs as $elementobj){
                 $elementclone = clone($elementobj);
-                $name=$elementclone->getName();
+                $name = $elementclone->getName();
                 if (!empty($name)){
                     $elementclone->setName($name."[$i]");
                 }
@@ -479,6 +479,7 @@ class moodleform {
                     $elementclone->setLabel(str_replace('{no}', ($i+1), $value));
 
                 }
+
                 $mform->addElement($elementclone);
             }
         }
