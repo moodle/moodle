@@ -518,7 +518,6 @@ function clean_param($param, $type) {
                 // forward slash: /
                 // plus sign:     +
                 // equal sign:    =
-                error_log("Called with " . $param);
                 if (0 >= preg_match('/^([\s\w\/\+=]+)$/', trim($param))) {
                     return '';
                 }
@@ -538,6 +537,7 @@ function clean_param($param, $type) {
                         return '';
                     }
                 }
+error_log(2);
                 return implode("\n",$lines);
             } else {
                 return '';
