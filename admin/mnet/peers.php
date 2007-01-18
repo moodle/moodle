@@ -47,6 +47,10 @@ if (!isset($CFG->mnet_dispatcher_mode)) set_config('mnet_dispatcher_mode', 'off'
 /// If data submitted, process and store
 if (($form = data_submitted()) && confirm_sesskey()) {
 
+    if (!empty($form->wwwroot)) {
+        // ensure we remove trailing slashes
+        $form->wwwroot = preg_replace(':/$:', '', $form->wwwroot);
+    }
     if (!empty($form->updateregisterall)) {
         if (!empty($form->registerallhosts)) {
             set_config('mnet_register_allhosts',1);
@@ -93,7 +97,11 @@ if (($form = data_submitted()) && confirm_sesskey()) {
                 $mnet_peer->public_key_expires   = $mnet_peer->check_common_name($form->public_key);
                 if ($mnet_peer->public_key_expires == false) {
                     $mnet_peer->public_key == $oldkey;
-                    error(get_string("invalidpubkey", 'mnet'),'peers.php?step=update&amp;hostid='.$mnet_peer->id);
+                    $errmsg = '<br />';
+                    foreach ($mnet_peer->error as $err) {
+                        $errmsg .= $err['code'] . ': ' . $err['text'].'<br />';
+                    }
+                    error(get_string("invalidpubkey", 'mnet') . $errmsg ,'peers.php?step=update&amp;hostid='.$mnet_peer->id);
                     exit;
                 }
             }
