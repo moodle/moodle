@@ -1,7 +1,7 @@
 <?php
 admin_externalpage_print_header($adminroot);
 
-if (empty($CFG->mnet_mode) || $CFG->mnet_mode !== 'strict') {
+if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict') {
     print_box(get_string('mnetdisabled','mnet'));
 }
 ?>

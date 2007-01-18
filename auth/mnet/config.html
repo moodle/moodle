@@ -10,7 +10,7 @@ if (!isset ($config->auto_add_remote_users)) {
 
 $yesno = array(get_string('no'), get_string('yes'));
 
-if (empty($CFG->mnet_mode) || $CFG->mnet_mode !== 'strict') {
+if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict') {
     print_box(get_string('mnetdisabled','mnet'));
 }
 

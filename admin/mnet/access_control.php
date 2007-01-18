@@ -124,7 +124,7 @@ if ($form = data_submitted() and confirm_sesskey()) {
 print_box(get_string('ssoacldescr','mnet'));
 // Are the needed bits enabled?
 $warn = '';
-if (empty($CFG->mnet_mode) || $CFG->mnet_mode !== 'strict') {
+if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict') {
     $warn = '<p>' . get_string('mnetdisabled','mnet') .'</p>';
 }
 if (empty($CFG->auth_plugins_enabled)) {
