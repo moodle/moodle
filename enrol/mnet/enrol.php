@@ -324,8 +324,6 @@ class enrolment_plugin_mnet {
         $courses = $this->available_courses();
 
         if (!empty($courses[$courseid])) {
-            error_log("remote enrolling $courseid, $userrecord->id,");
-            //TODO: rewire enrol_into_course
             if (enrol_into_course($course, $userrecord, 'mnet')) {
                 return true;
             }
