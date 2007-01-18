@@ -73,7 +73,8 @@ if ($authsequence[0] == 'cas' and !empty($CFG->cas_enabled)) {
     } else {
         $currlang = current_language();
         $langs    = get_list_of_languages();
-        $langmenu = popup_form ("$CFG->httpswwwroot/login/index.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
+        $langlabel = '<span class="accesshide">'.get_string('language').':</span>';
+        $langmenu = popup_form ("$CFG->httpswwwroot/login/index.php?lang=", $langs, "chooselang", $currlang, "", "", "", true, 'self', $langlabel);
     }
 
     $loginsite = get_string("loginsite");
