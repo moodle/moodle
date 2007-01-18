@@ -50,6 +50,10 @@ if (!isset($CFG->scorm_framewidth)) {
     set_config('scorm_framewidth','100%');
 }
 
+if (!isset($CFG->scorm_updatetime)) {
+    set_config('scorm_updatetime','2');
+}
+
 if (!isset($CFG->scorm_advancedsettings)) {
     set_config('scorm_advancedsettings','0');
 }
@@ -687,15 +691,26 @@ function scorm_validate($data) {
         //
         // SCORM Update
         //
+            //if (($validation->launch != -1) && is_file($reference)) {
 			if (($validation->launch != -1) && (is_file($reference) || (substr($reference,0,7) == 'http://'))){
-                $fp = fopen($reference,"r");
+                
                 if (substr($reference,0,7) != 'http://') {
+					$fp = fopen($reference,"r");
 					$fstat = fstat($fp);
+					fclose($fp);
+					
 				}
 				else if(substr($reference,0,7) == 'http://'){
-					$mdcheck=md5_file($reference);
+					if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
+                        if ($tempdir = scorm_datadir($scormdir)) {
+                            copy ("$reference", $tempdir."/".basename($reference));
+							$mdcheck=md5_file($tempdir."/".basename($reference));
+							unlink ($tempdir."/".basename($reference));
+							rmdir($tempdir);
+						}
+					}
 				}
-                fclose($fp);
+                
                 if ($scorm = get_record("scorm","id",$scormid)) {
                     if ($scorm->reference[0] == '#') {
                         require_once($repositoryconfigfile);
