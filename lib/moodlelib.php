@@ -537,7 +537,6 @@ function clean_param($param, $type) {
                         return '';
                     }
                 }
-error_log(2);
                 return implode("\n",$lines);
             } else {
                 return '';
