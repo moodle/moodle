@@ -97,7 +97,7 @@
 ?>
 
 
-<table id="layout-table" summary="">
+<table id="layout-table" summary="layout">
   <tr>
   <?php
 // uh-changes start
