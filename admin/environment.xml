@@ -112,6 +112,11 @@
           <ON_CHECK message="opensslrecommended" />
         </FEEDBACK>
       </PHP_EXTENSION>
+      <PHP_EXTENSION name="tokenizer" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="tokenizerrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
     </PHP_EXTENSIONS>
   </MOODLE>
 </COMPATIBILITY_MATRIX>
