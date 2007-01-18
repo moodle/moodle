@@ -17,7 +17,7 @@ $string['errornotingroupingedit'] = 'Sorry, you can\'t edit grouping $a';
 $string['errorinvalidgrouping'] = 'Error, invalid grouping $a';
 $string['errorinvalidgroup'] = 'Error, invalid group $a';
 $string['erroreditgrouping'] = 'Error creating/updating grouping $a';
-$string['erroreditgroup'] = 'Error creating/updating grouping $a';
+$string['erroreditgroup'] = 'Error creating/updating group $a';
 
 $string['groupings'] = 'Groupings';
 $string['grouping'] = 'Grouping';
