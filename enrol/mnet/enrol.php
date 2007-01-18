@@ -394,7 +394,12 @@ class enrolment_plugin_mnet {
                 h2s.serviceid = s.id AND
                 s.name = 'mnet_enrol'";
 
-        return get_records_sql($sql);
+        $res = get_records_sql($sql);
+        if (is_array($res)) {
+            return $res;
+        } else {
+            return array();
+        }
     }
 
     /**
