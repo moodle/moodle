@@ -7,9 +7,9 @@
     include_once($CFG->dirroot.'/mnet/xmlrpc/client.php');
 
     $adminroot = admin_get_root();
-    admin_externalpage_setup('enrolment', $adminroot);
+    admin_externalpage_setup('mnetenrol', $adminroot);
+    $CFG->pagepath = 'admin/mnet';
 
-    $CFG->pagepath = 'enrol/mnet';
     require_once("$CFG->dirroot/enrol/enrol.class.php");   /// Open the factory class
     $enrolment = enrolment_factory::factory('mnet');
 
@@ -106,7 +106,7 @@
                 u.firstname,
                 u.lastname,
                 u.email,
-                coalesce ( a.hostid , 0) as ismnetenrolment,
+                COALESCE(a.hostid, 0) as ismnetenrolment,
                 a.courseid
             FROM
                 {$CFG->prefix}user u
@@ -181,7 +181,7 @@ print_simple_box_end();
 echo "<hr />";
 
         print_simple_box_start('center');
-        include('remote_enrolment.html');
+        include(dirname(__FILE__).'/enr_course_enrol.html');
         print_simple_box_end();
 
         if (!empty($errors)) {

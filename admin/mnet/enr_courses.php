@@ -6,9 +6,9 @@
     require_once($CFG->libdir.'/adminlib.php');
 
     $adminroot = admin_get_root();
-    admin_externalpage_setup('enrolment', $adminroot);
+    admin_externalpage_setup('mnetenrol', $adminroot);
+    $CFG->pagepath = 'admin/mnet';
 
-    $CFG->pagepath = 'enrol/mnet';
     require_once("$CFG->dirroot/enrol/enrol.class.php");   /// Open the factory class
     $enrolment = enrolment_factory::factory('mnet');
 
@@ -16,18 +16,11 @@
 
     $courses = $enrolment->fetch_remote_courses($mnethost);
 
-/// Print the page
-
-    /// get language strings
-    $str = get_strings(array('enrolmentplugins', 'configuration', 'users', 'administration'));
+    /// Print the page
 
     admin_externalpage_print_header($adminroot);
 
-    print_simple_box_start("center", "80%");
-
-    print_simple_box_start("center", "60%", '', 5, 'informationbox');
-    print_string("description", "enrol_mnet");
-    print_simple_box_end();
+    print_box(get_string("description", "enrol_mnet"));
 
     echo "<hr />";
 
@@ -35,7 +28,7 @@
 
     foreach ($courses as $course) {
         print ('<tr>'
-               . "<td colspan=\"2\"><a href=\"{$CFG->wwwroot}/enrol/mnet/remote_enrolment.php?host={$mnethost}&amp;courseid={$course->id}\">{$course->fullname}</a></td>"
+               . "<td colspan=\"2\"><a href=\"{$CFG->wwwroot}/admin/mnet/enr_course_enrol.php?host={$mnethost}&amp;courseid={$course->id}&amp;sesskey={$USER->sesskey}\">{$course->fullname}</a></td>"
                . '</tr><tr>'
                . "<td align=\"left\" valign=\"top\">{$course->shortname}<br />"
                . '</td>'
@@ -43,8 +36,6 @@
                . '</tr>');
     }
     print ('</table>');
-
-    print_simple_box_end();
 
     admin_externalpage_print_footer($adminroot);
 

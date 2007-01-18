@@ -6,58 +6,52 @@
     require_once($CFG->libdir.'/adminlib.php');
 
     $adminroot = admin_get_root();
-    admin_externalpage_setup('enrolment', $adminroot);
-
-    $CFG->pagepath = 'enrol/mnet';
+    admin_externalpage_setup('mnetenrol', $adminroot);
+    $CFG->pagepath = 'admin/mnet';
 
 
     require_once("$CFG->dirroot/enrol/enrol.class.php");   /// Open the factory class
 
     $enrolment = enrolment_factory::factory('mnet');
 
-/// If data submitted, then process and store.
-
-    if ($frm = data_submitted()) {
-
-    }
-
 /// Otherwise fill and print the form.
 
     /// get language strings
-    $str = get_strings(array('enrolmentplugins', 'configuration', 'users', 'administration'));
 
     admin_externalpage_print_header($adminroot);
 
-
-/// Print current enrolment type description
-    print_simple_box_start("center", "80%");
-    print_heading($options[$enrol]);
-
-    print_simple_box_start("center", "60%", '', 5, 'informationbox');
-    print_string("description", "enrol_$enrol");
-    print_simple_box_end();
+    print_box(get_string("remoteenrolhosts_desc", "mnet"));
 
     echo "<hr />";
 
+    if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict') {
+        print_box(get_string('mnetdisabled','mnet'));
+    }
+
     print ('<table align="center">'
            . '<tr>'
-           . '<th> Name </th>'
+           . '<th> Host </th>'
            . '<th> Enrolments </th>'
-           . '<th> Available Courses </th>'
-           . '<th> Activity </th>'
+           . '<th> Courses </th>'
+           . '<th> &nbsp; </th>'
            . '</tr>');
     $hosts = $enrolment->list_remote_servers();
     foreach ($hosts as $host) {
+        $coursesurl = "{$CFG->wwwroot}/admin/mnet/enr_courses.php?host={$host->id}&amp;sesskey={$USER->sesskey}";
+        $coursecount = get_field_sql("SELECT count(id) FROM {$CFG->prefix}mnet_enrol_course WHERE hostid={$host->id}");
+        if (empty($coursecount)) {
+            $coursecount = '?';
+        }
+        $enrolcount = get_field_sql("SELECT count(id) FROM {$CFG->prefix}mnet_enrol_assignments WHERE hostid={$host->id}");
+
         print ('<tr>'
-               . "<td><a href=\"{$CFG->wwwroot}/enrol/mnet/remote_courses.php?host={$host->id}\">{$host->name}</a></td>"
-               . '<td align="center" > - (View)  </td>'
-               . "<td align=\"center\" > - (<a href=\"{$CFG->wwwroot}/enrol/mnet/remote_courses.php?host={$host->id}\">Enrol</a>) </td>"
+               . "<td><a href=\"{$coursesurl}\">{$host->name}</a></td>"
+               . "<td align=\"center\" >$enrolcount</td>"
+               . "<td align=\"center\" ><a href=\"{$coursesurl}\">$coursecount - edit</a></td>"
                . '<td align="center" > <a href="">Logs</a> </td>'
                . '</tr>');
     }
     print ('</table>');
-
-    print_simple_box_end();
 
     admin_externalpage_print_footer($adminroot);
 
