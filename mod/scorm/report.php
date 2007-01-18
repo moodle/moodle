@@ -173,11 +173,10 @@
                         foreach ($scoes as $sco) {
                             if ($sco->launch!='') {
                                 $row = array();
+                                $score = '&nbsp;';
                                 if ($trackdata = scorm_get_tracks($sco->id,$user,$attempt)) {
                                     if ($trackdata->score_raw != '') {
                                         $score = $trackdata->score_raw;
-                                    } else {
-                                        $score = '&nbsp;';
                                     }
                                     if ($trackdata->status == '') {
                                         $trackdata->status = 'notattempted';
