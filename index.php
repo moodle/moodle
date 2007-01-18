@@ -78,7 +78,8 @@
     } else {
         $currlang = current_language();
         $langs = get_list_of_languages();
-        $langmenu = popup_form ($CFG->wwwroot .'/index.php?lang=', $langs, 'chooselang', $currlang, '', '', '', true);
+        $langlabel = '<span class="accesshide">'.get_string('language').':</span>';
+        $langmenu = popup_form($CFG->wwwroot .'/index.php?lang=', $langs, 'chooselang', $currlang, '', '', '', true, 'self', $langlabel);
     }
 
     $PAGE       = page_create_object(PAGE_COURSE_VIEW, SITEID);
