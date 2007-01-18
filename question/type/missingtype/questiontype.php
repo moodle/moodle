@@ -18,11 +18,11 @@ class question_missingtype_qtype extends default_questiontype {
     function name() {
         return 'missingtype';
     }
-    
+
     function menu_name() {
         return false;
     }
-    
+
     function is_usable_by_random() {
         return false;
     }
@@ -48,7 +48,7 @@ class question_missingtype_qtype extends default_questiontype {
             foreach ($answers as $answer) {
                 $a = new stdClass;
                 $a->text = format_text("$answer->answer", FORMAT_MOODLE, $formatoptions, $cmoptions->course);
-    
+
                 $anss[] = clone($a);
             }
         }
@@ -57,6 +57,14 @@ class question_missingtype_qtype extends default_questiontype {
 
     function grade_responses(&$question, &$state, $cmoptions) {
         return true;
+    }
+
+    function display_question_editing_page(&$mform, $question, $wizardnow){
+
+        print_heading(get_string('warningmissingtype', 'quiz'));
+
+        $mform->display();
+
     }
 }
 //// END OF CLASS ////
