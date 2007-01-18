@@ -332,7 +332,7 @@ function question_list($course, $categoryid, $quizid=0,
     echo '<form method="post" action="edit.php?courseid='.$course->id.'">';
     echo '<fieldset class="invisiblefieldset">';
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-    print_simple_box_start('center', '100%', '#ffffff', 0);
+    print_simple_box_start();
     echo '<table id="categoryquestions" cellspacing="0"><tr>';
     $actionwidth = $canedit ? 95 : 70;
     echo "<th style=\"width:$actionwidth; white-space:nowrap;\" class=\"header\" scope=\"col\">$straction</th>";

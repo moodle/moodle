@@ -179,7 +179,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
     echo '<fieldset class="invisiblefieldset">';
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
 
-    print_simple_box_start('center', '100%', '#ffffff', 0);
+    print_simple_box_start();
     echo "<table border=\"0\" cellpadding=\"2\" cellspacing=\"0\" style=\"width:100%;\">\n";
     echo "<tr><th colspan=\"3\" style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$strorder</th>";
     echo "<th class=\"header\" scope=\"col\">#</th>";

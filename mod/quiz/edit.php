@@ -345,7 +345,7 @@
 
     echo '<table border="0" style="width:100%" cellpadding="2" cellspacing="0">';
     echo '<tr><td style="width:50%" valign="top">';
-    print_simple_box_start("center", "100%");
+    print_simple_box_start();
 
     $sumgrades = quiz_print_question_list($modform, true, $SESSION->quiz_showbreaks, $SESSION->quiz_reordertool);
     if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $modform->instance)) {
