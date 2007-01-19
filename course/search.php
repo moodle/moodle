@@ -184,11 +184,7 @@
                 
                 echo "</td>";
                 echo "<td>";
-                if (empty($THEME->custompix)) {
-                    $pixpath = "$CFG->wwwroot/pix";
-                } else {
-                    $pixpath = "$CFG->themedir/$CFG->theme/pix";
-                }
+                $pixpath = $CFG->pixpath;
                 
                 // checks whether user can update course settings
                 if (has_capability('moodle/course:update', $coursecontext)) {
