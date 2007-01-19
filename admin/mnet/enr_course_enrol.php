@@ -151,14 +151,18 @@
             delete_record('mnet_enrol_assignments', 'id', $user->enrolid);
         }
     }
+    unset($enrolledusers);
 
-
+    // Read about our remote enrolments in 2 sets
+    // first, get the remote enrolments done via enrol/mnet      $mnetenrolledusers
+    // second, get the remote enrolments done with other plugins $remtenrolledusers
+    // NOTE: both arrays are keyed on the userid! 
     $sql = "
             SELECT
                 u.id,
                 u.firstname,
                 u.lastname,
-                u.email,
+                a.rolename,
                 a.enroltype,
                 a.courseid
             FROM
@@ -167,6 +171,7 @@
             WHERE
                 a.userid = u.id AND 
                 a.courseid={$courseid} AND
+                a.enroltype = 'mnet'   AND
                 u.deleted = 0 AND
                 u.confirmed = 1 AND
                 u.mnethostid = {$CFG->mnet_localhost_id}
@@ -174,18 +179,42 @@
                 u.firstname ASC,
                 u.lastname ASC";
 
-    if (!$enrolledusers = get_records_sql($sql)) {
-        $enrolledusers = array();
+    if (!$mnetenrolledusers = get_records_sql($sql)) {
+        $mnetenrolledusers = array();
+    }
+    $sql = "
+            SELECT
+                u.id,
+                u.firstname,
+                u.lastname,
+                a.rolename,
+                a.enroltype,
+                a.courseid
+            FROM
+                {$CFG->prefix}user u,
+                {$CFG->prefix}mnet_enrol_assignments a
+            WHERE
+                a.userid = u.id AND 
+                a.courseid={$courseid} AND
+                a.enroltype != 'mnet'  AND
+                u.deleted = 0 AND
+                u.confirmed = 1 AND
+                u.mnethostid = {$CFG->mnet_localhost_id}
+            ORDER BY
+                u.firstname ASC,
+                u.lastname ASC";
+
+    if (!$remtenrolledusers = get_records_sql($sql)) {
+        $remtenrolledusers = array();
     }
 
-    $excludeids = '  ';
-    foreach($enrolledusers as $user) {
-        $excludeids .= "$user->id, ";
-    }
-    $select = 'AND u.id NOT IN ( 0, ' .substr($excludeids, 0, -2) .') ';
+    $select = '';
+    $exclude = array_merge(array_keys($mnetenrolledusers), array_keys($remtenrolledusers));
+    $exclude[] = 0;
+    $select = 'AND u.username!=\'guest\' AND u.id NOT IN ('. join(',',$exclude) .') ';
+    unset($exclude);
 
     $searchtext = trim($searchtext);
-    $select = '';
 
     if ($searchtext !== '') {   // Search for a subset of remaining users
         $LIKE      = sql_ilike();
@@ -194,10 +223,14 @@
         $select  .= " AND ($FULLNAME $LIKE '%$searchtext%' OR email $LIKE '%$searchtext%') ";
     }
 
-    $availableusers = get_recordset_sql('SELECT id, firstname, lastname, email 
-                                         FROM '.$CFG->prefix.'user 
-                                         WHERE deleted = 0 AND confirmed = 1 AND mnethostid = '.$CFG->mnet_localhost_id.' '.$select.'
-                                         ORDER BY lastname ASC, firstname ASC', 0, MAX_USERS_PER_PAGE);
+    $sql = ('SELECT id, firstname, lastname, email 
+            FROM '.$CFG->prefix.'user u
+            WHERE deleted = 0 AND confirmed = 1 
+                  AND mnethostid = '.$CFG->mnet_localhost_id.' '
+            .$select
+            .'ORDER BY lastname ASC, firstname ASC');
+
+    $availableusers = get_recordset_sql($sql, 0, MAX_USERS_PER_PAGE);
 
 
 
@@ -220,32 +253,23 @@ $strsearchresults = get_string('searchresults');
 
 admin_externalpage_print_header($adminroot);
 
-print_simple_box_start("center", "80%");
-
-print_simple_box_start("center", "60%", '', 5, 'informationbox');
 print_string('enrollingincourse', 'mnet', array(s($course->shortname), s($mnet_peer->name)));
 print_string("description", "enrol_mnet");
-print_simple_box_end();
 
 echo "<hr />";
 
-        print_simple_box_start('center');
-        include(dirname(__FILE__).'/enr_course_enrol.html');
-        print_simple_box_end();
+include(dirname(__FILE__).'/enr_course_enrol.html');
 
-        if (!empty($errors)) {
-            $msg = '<p>';
-            foreach ($errors as $e) {
-                $msg .= $e.'<br />';
-            }
-            $msg .= '</p>';
-            print_simple_box_start('center');
-            notify($msg);
-            print_simple_box_end();
-        }
+if (!empty($errors)) {
+    $msg = '<p>';
+    foreach ($errors as $e) {
+        $msg .= $e.'<br />';
+    }
+    $msg .= '</p>';
+    notify($msg);
+}
 
 
-print_simple_box_end();
 admin_externalpage_print_footer($adminroot);
 
 ?>

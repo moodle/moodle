@@ -21,11 +21,9 @@
                            getElementById('assignform').remove.disabled=false;
                            getElementById('assignform').addselect.selectedIndex=-1;">
           <?php
-            foreach ($enrolledusers as $enrolleduser) {
-                if ($enrolleduser->enroltype == 'mnet') {
-                    $fullname = fullname($enrolleduser, true);
-                    echo "<option value=\"$enrolleduser->id\">".$fullname.", ".$enrolleduser->email."</option>\n";
-                }
+            foreach ($mnetenrolledusers as $enrolleduser) {
+                $fullname = fullname($enrolleduser, true);
+                echo "<option value=\"$enrolleduser->id\">".s($fullname)." (".s($enrolleduser->rolename).")</option>\n";
             }
           ?>
 
@@ -93,11 +91,9 @@
     <tr>
       <td valign="top"><?php print_string('otherenrolledusers', 'mnet'); ?>:<br />
           <?php
-            foreach ($enrolledusers as $enrolleduser) {
-                if ($enrolleduser->enroltype != 'mnet') {
-                    $fullname = fullname($enrolleduser, true);
-                    echo $fullname.', '.$enrolleduser->email."<br />\n";
-                }
+            foreach ($remtenrolledusers as $enrolleduser) {
+                $fullname = fullname($enrolleduser, true);
+                echo s($fullname) .', ('.s($enrolleduser->rolename) . ') '.s($enrolleduser->enroltype)."<br />\n";
             }
           ?></td>
       <td valign="top"></td>
