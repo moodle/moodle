@@ -110,7 +110,7 @@ class question_edit_numerical_form extends question_edit_form {
         $answercount = 0;
         foreach ($answers as $answer){
             $trimmedanswer = trim($answer);
-            if (!empty($trimmedanswer)){
+            if ($trimmedanswer!=''){
                 $answercount++;
             }
         }
