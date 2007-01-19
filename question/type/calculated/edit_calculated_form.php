@@ -176,13 +176,13 @@ class question_edit_calculated_form extends question_edit_form {
         foreach ($answers as $key => $answer){
             //check no of choices
             $trimmedanswer = trim($answer);
-            if (($trimmedanswer=='')||$answercount==0){
+            if (($trimmedanswer!='')||$answercount==0){
                 $eqerror = qtype_calculated_find_formula_errors($trimmedanswer);
                 if (FALSE !== $eqerror){
                     $errors['answers['.$key.']'] = $eqerror;
                 }
             }
-            if ($trimmedanswer==''){
+            if ($trimmedanswer!=''){
                 if ('2' == $data['correctanswerformat'][$key]
                         && '0' == $data['correctanswerlength'][$key]) {
                     $errors['correctanswerlength['.$key.']'] = get_string('zerosignificantfiguresnotallowed','quiz');
