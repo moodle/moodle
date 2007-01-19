@@ -22,7 +22,7 @@
                            getElementById('assignform').addselect.selectedIndex=-1;">
           <?php
             foreach ($enrolledusers as $enrolleduser) {
-                if(!empty($enrolleduser->ismnetenrolment)) {
+                if ($enrolleduser->enroltype == 'mnet') {
                     $fullname = fullname($enrolleduser, true);
                     echo "<option value=\"$enrolleduser->id\">".$fullname.", ".$enrolleduser->email."</option>\n";
                 }
@@ -94,7 +94,7 @@
       <td valign="top"><?php print_string('otherenrolledusers', 'mnet'); ?>:<br />
           <?php
             foreach ($enrolledusers as $enrolleduser) {
-                if(empty($enrolleduser->ismnetenrolment)) {
+                if ($enrolleduser->enroltype != 'mnet') {
                     $fullname = fullname($enrolleduser, true);
                     echo $fullname.', '.$enrolleduser->email."<br />\n";
                 }

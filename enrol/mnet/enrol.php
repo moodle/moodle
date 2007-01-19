@@ -263,12 +263,17 @@ class enrolment_plugin_mnet {
                 SELECT
                     u.id,
                     u.username,
-                    a.enrol
+                    a.enrol,
+                    a.timemodified,
+                    r.name,
+                    r.shortname
                 FROM
                     {$CFG->prefix}role_assignments a,
+                    {$CFG->prefix}role r,
                     {$CFG->prefix}user u
                 WHERE
                     a.contextid = '{$context->id}' AND
+                    a.roleid = r.id AND
                     a.userid = u.id AND
                     u.mnethostid = '{$MNET_REMOTE_CLIENT->id}'
                     ";
@@ -283,7 +288,10 @@ class enrolment_plugin_mnet {
 
         $returnarray = array();
         foreach($enrolments as $user) {
-            $returnarray[] = array('username' => $user->username, 'enrol' => $user->enrol);
+            $returnarray[$user->username] = array('enrol' => $user->enrol, 
+                                                  'timemodified' => $user->timemodified, 
+                                                  'shortname' => $user->shortname, 
+                                                  'name' => $user->name);
         }
         return $returnarray;
     }

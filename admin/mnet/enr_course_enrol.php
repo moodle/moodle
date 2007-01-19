@@ -88,25 +88,30 @@
     
     $select = '';
     $all_enrolled_usernames = '';
+    $timemodified = array();
 /// List all the users (homed on this server) who are enrolled on the course
 /// This will include mnet-enrolled users, and those who have enrolled 
 /// themselves, etc.
     if (is_array($all_enrolled_users) && count($all_enrolled_users)) {
-        foreach($all_enrolled_users as $user) {
-            $all_enrolled_usernames .= "'{$user['username']}', ";
+        foreach($all_enrolled_users as $username => $data) {
+            $all_enrolled_usernames .= "'$username', ";
         }
-        $select = ' u.username IN (' .substr($all_enrolled_usernames, 0, -2) .') AND';
+        $select = ' u.username IN (' .substr($all_enrolled_usernames, 0, -2) .') AND ';
+    } else {
+        $all_enrolled_users = array();
     }
 
-/// Pseudocode for query - get records for all users that are enrolled in the 
-/// course, and if they were enrolled via mnet, ismnetenrolment will be > 0
+/// Synch our mnet_enrol_assignments with remote server
     $sql = "
             SELECT
                 u.id,
                 u.firstname,
                 u.lastname,
+                u.username,
                 u.email,
-                COALESCE(a.hostid, 0) as ismnetenrolment,
+                a.enroltype,
+                a.id as enrolid,
+                COALESCE(a.hostid, 0) as wehaverecord,
                 a.courseid
             FROM
                 {$CFG->prefix}user u
@@ -127,6 +132,58 @@
         $enrolledusers = array();
     }
 
+    foreach($enrolledusers as $user) {
+
+        $dataobj = new stdClass();
+        $dataobj->userid    = $user->id;
+        $dataobj->hostid    = $mnet_peer->id;
+        $dataobj->courseid  = $courseid;
+        $dataobj->rolename  = $all_enrolled_users[$user->username]['name'];
+        $dataobj->enroltype = $all_enrolled_users[$user->username]['enrol'];
+
+        if ($user->wehaverecord == 0) {
+            $dataobj->enroltime = $all_enrolled_users[$user->username]['timemodified'];
+            $dataobj->id = insert_record('mnet_enrol_assignments', $dataobj);
+        } elseif (array_key_exists($user->username, $all_enrolled_users)) {
+            $dataobj->id    = $user->enrolid;
+            update_record('mnet_enrol_assignments', $dataobj);
+        } elseif (is_array($all_enrolled_users) && count($all_enrolled_users)) {
+            delete_record('mnet_enrol_assignments', 'id', $user->enrolid);
+        }
+    }
+
+
+    $sql = "
+            SELECT
+                u.id,
+                u.firstname,
+                u.lastname,
+                u.email,
+                a.enroltype,
+                a.courseid
+            FROM
+                {$CFG->prefix}user u,
+                {$CFG->prefix}mnet_enrol_assignments a
+            WHERE
+                a.userid = u.id AND 
+                a.courseid={$courseid} AND
+                u.deleted = 0 AND
+                u.confirmed = 1 AND
+                u.mnethostid = {$CFG->mnet_localhost_id}
+            ORDER BY
+                u.firstname ASC,
+                u.lastname ASC";
+
+    if (!$enrolledusers = get_records_sql($sql)) {
+        $enrolledusers = array();
+    }
+
+    $excludeids = '  ';
+    foreach($enrolledusers as $user) {
+        $excludeids .= "$user->id, ";
+    }
+    $select = 'AND u.id NOT IN ( 0, ' .substr($excludeids, 0, -2) .') ';
+
     $searchtext = trim($searchtext);
     $select = '';
 
@@ -136,14 +193,6 @@
 
         $select  .= " AND ($FULLNAME $LIKE '%$searchtext%' OR email $LIKE '%$searchtext%') ";
     }
-
-    /**** start of NOT IN block ****/
-
-    $select .= " AND username NOT IN ('guest', 'changeme', ";
-    $select .= $all_enrolled_usernames;
-    $select = substr($select, 0, -2) .') ';
-
-    /**** end of NOT IN block ****/
 
     $availableusers = get_recordset_sql('SELECT id, firstname, lastname, email 
                                          FROM '.$CFG->prefix.'user 
