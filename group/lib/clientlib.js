@@ -33,20 +33,23 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
                         groupsComboEl.removeChild(groupsComboEl.firstChild);
                     }
             	    if (o.responseText) {
-            	        var groups = eval('('+o.responseText+')');
+            	        var groups = eval("("+o.responseText+")");
 
             	        // Populate the groups combo box.
                         for (var i=0; i<groups.length; i++) {
                             var optionEl = document.createElement("option");
                             optionEl.setAttribute("value", groups[i].id);
                             optionEl.setAttribute("onclick",
-                                "membersCombo.refreshMembers("+groups[i].id+")");
+                                "membersCombo.refreshMembers("+groups[i].id+");");
                             optionEl.innerHTML = groups[i].name;
                             groupsComboEl.appendChild(optionEl);
                         }
             	    }
                 }
         	}
+        	// Remove the loader gif image.
+        	var groupsLabel = document.getElementById("groupslabel");
+        	groupsLabel.removeChild(document.getElementById("groupsloader"));
         }
     }
     
@@ -59,6 +62,9 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
  * When a grouping is selected, we need to update the groups.
  */
 UpdatableGroupsCombo.prototype.refreshGroups = function (groupingId) {
+    // Add the loader gif image.
+    createLoaderImg("groupsloader", "groupslabel", this.wwwRoot);
+    
     var sUrl = this.wwwRoot+"/group/index.php?id="+this.courseId+"&grouping="
                         +groupingId+"&act_ajax_getgroupsingrouping";
     YAHOO.util.Connect.asyncRequest('GET', sUrl, this.callback, null);
@@ -97,6 +103,9 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
             	    }
                 }
         	}
+        	// Remove the loader gif image.
+        	var membersLabel = document.getElementById("memberslabel");
+        	membersLabel.removeChild(document.getElementById("membersloader"));
         }
     }
     
@@ -109,10 +118,24 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
  * When a group is selected, we need to update the members.
  */
 UpdatableMembersCombo.prototype.refreshMembers = function (groupId) {
+    // Add the loader gif image.
+    createLoaderImg("membersloader", "memberslabel", this.wwwRoot);
+
     var sUrl = this.wwwRoot+"/group/index.php?id="+this.courseId+"&group="
                         +groupId+"&act_ajax_getmembersingroup";
     YAHOO.util.Connect.asyncRequest('GET', sUrl, this.callback, null);
 }
 
+
+
+function createLoaderImg(id, parentId, wwwRoot) {
+    var parent = document.getElementById(parentId);
+    var loadingImg = document.createElement("img");
+
+    loadingImg.setAttribute("src", wwwRoot+"/pix/i/ajaxloader.gif");
+    loadingImg.setAttribute("id", id);
+    loadingImg.setAttribute("alt", "Loading");
+    parent.appendChild(loadingImg);
+}
 
 

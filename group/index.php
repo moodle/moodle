@@ -164,7 +164,7 @@ if ($success) {
                 $select = ' selected="selected"';
                 $sel_groupingid = $id;
             }
-            echo "<option value=\"$id\"$select onclick=\"groupsCombo.refreshGroups($id)\" >$name</option>\n";
+            echo "<option value=\"$id\"$select onclick=\"groupsCombo.refreshGroups($id);\">$name</option>\n";
             $count++;
         }
     }
@@ -184,7 +184,7 @@ if ($success) {
             <p><input type="submit" name="act_printerfriendly" id="printerfriendly" value="<?php print_string('printerfriendly', 'group'); ?>" /></p>
             </td>
             <td>
-                <p><label for="groups"><?php print_string('groupsinselectedgrouping', 'group'); ?></label></p>
+                <p><label for="groups" id="groupslabel"><?php print_string('groupsinselectedgrouping', 'group'); ?></label></p>
                 <select name="group" id="groups" size="15" class="select">
 <?php //onchange="onGroupChange()"
     if (GROUP_NOT_IN_GROUPING == $sel_groupingid) {
@@ -227,7 +227,7 @@ if ($success) {
 <?php } ?>
             </td>
             <td>
-                <p><label for="members"><?php print_string('membersofselectedgroup', 'group'); ?></label></p>
+                <p><label for="members" id="memberslabel"><?php print_string('membersofselectedgroup', 'group'); ?></label></p>
                 <select name="user[]" id="members" size="15" multiple="multiple" class="select">
 <?php
     if (isset($sel_groupid)) {
@@ -263,7 +263,7 @@ if ($success) {
     echo '<script type="text/javascript" src="'.$CFG->wwwroot.'/lib/yui/connection/connection-min.js"></script>';
     echo '<script type="text/javascript" src="'.$CFG->wwwroot.'/group/lib/clientlib.js"></script>'."\n";
 
-    echo '<script type="text/javascript" defer="defer">'."\n";
+    echo '<script type="text/javascript">'."\n";
     echo '//<![CDATA['."\n";
     echo 'var groupsCombo = new UpdatableGroupsCombo("'.$CFG->wwwroot.'", '.$course->id.');'."\n";
     echo 'var membersCombo = new UpdatableMembersCombo("'.$CFG->wwwroot.'", '.$course->id.');'."\n";
