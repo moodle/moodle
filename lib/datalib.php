@@ -1016,9 +1016,12 @@ function get_my_remotecourses($userid=0) {
         $userid = $USER->id;
     }
 
-    $sql = "SELECT c.remoteid, c.shortname, c.fullname, c.hostid
+    $sql = "SELECT c.remoteid, c.shortname, c.fullname, 
+                   c.hostid, c.summary, c.cat_name,
+                   h.name AS hostname
             FROM   {$CFG->prefix}mnet_enrol_course c
             JOIN   {$CFG->prefix}mnet_enrol_assignments a ON c.id=a.courseid
+            JOIN   {$CFG->prefix}mnet_host h        ON c.hostid=h.id
             WHERE  a.userid={$userid}";
 
     return get_records_sql($sql);

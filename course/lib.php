@@ -1736,6 +1736,7 @@ function print_courses($category, $width="100%", $hidesitecourse = false) {
     global $CFG;
 
     if (empty($category)) {
+        error_log(1);
         $categories = get_categories(0);  // Parent = 0   ie top-level categories only
         if (count($categories) == 1) {
             $category   = array_shift($categories);
@@ -1745,6 +1746,7 @@ function print_courses($category, $width="100%", $hidesitecourse = false) {
         }
         unset($categories);
     } else {
+error_log(2);
         $categories = get_categories($category->id);  // sub categories
         $courses    = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.category,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher,c.cost,c.currency,c.enrol,c.guest');
     }
@@ -1767,6 +1769,9 @@ function print_courses($category, $width="100%", $hidesitecourse = false) {
             echo '</div>';
         }
     }
+
+
+
 }
 
 
@@ -1830,13 +1835,39 @@ function print_my_moodle() {
         error("It shouldn't be possible to see My Moodle without being logged in.");
     }
 
-    if ($courses = get_my_courses($USER->id)) {
-        foreach ($courses as $course) {
-            if ($course->id == SITEID) {
-                continue;
+    $courses  = get_my_courses($USER->id);
+    $rhosts   = array();
+    $rcourses = array();
+    if ($CFG->mnet_dispatcher_mode === 'strict') {
+        $rcourses = get_my_remotecourses($USER->id);
+        $rhosts   = get_my_remotehosts($USER->id);
+    }
+
+    if (!empty($courses) || !empty($rcourses) || !empty($rhosts)) {
+
+        if (!empty($courses)) {
+            foreach ($courses as $course) {
+                if ($course->id == SITEID) {
+                    continue;
+                }
+                print_course($course, "100%");
             }
-            print_course($course, "100%");
         }
+
+        // MNET
+        if (!empty($rcourses)) { 
+            // at the IDP, we know of all the remote courses
+            foreach ($rcourses as $course) {
+                print_remote_course($course, "100%");
+            }
+        } elseif (!empty($rhosts)) {
+            // non-IDP, we know of all the remote servers, but not courses
+            foreach ($rhosts as $host) {
+                // print_remote_host($host, "100%");
+            }
+        }
+        unset($course);
+        unset($host);
 
         if (count_records("course") > (count($courses) + 1) ) {  // Some courses not being displayed
             echo "<table width=\"100%\"><tr><td align=\"center\">";
@@ -1845,6 +1876,7 @@ function print_my_moodle() {
             print_single_button("$CFG->wwwroot/course/index.php", NULL, get_string("fulllistofcourses"), "get");
             echo "</td></tr></table>\n";
         }
+
     } else {
         if (count_records("course_categories") > 1) {
             print_simple_box_start("center", "100%", "#FFFFFF", 5, "categorybox");
@@ -1888,6 +1920,33 @@ function print_course_search($value="", $return=false, $format="plain") {
     }
     echo $output;
 }
+
+function print_remote_course($course, $width="100%") {
+
+    global $CFG, $USER;
+
+    $linkcss = '';
+
+    $url = "{$CFG->wwwroot}/auth/mnet/jump.php?hostid={$course->hostid}&amp;wantsurl=/course/view.php?id={$course->remoteid}";
+
+    echo '<div class="coursebox">';
+    echo '<div class="info">';
+    echo '<div class="name"><a title="'.get_string('entercourse').'"'.
+         $linkcss.' href="'.$url.'">'
+        . s($course->fullname) .'</a><br />'
+        . s($course->hostname) . ' : '
+        . s($course->cat_name) . ' : ' 
+        . s($course->shortname). '</div>';   
+    echo '</div><div class="summary">';
+    $options = NULL;
+    $options->noclean = true;
+    $options->para = false;
+    echo format_text($course->summary, FORMAT_MOODLE, $options);
+    echo '</div>';
+    echo '</div>';
+    echo '<div class="clearer"></div>';
+}
+
 
 /// MODULE FUNCTIONS /////////////////////////////////////////////////////////////////
 
