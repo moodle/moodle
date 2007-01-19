@@ -89,10 +89,10 @@ class enrolment_plugin_mnet {
 
             $query =
             "SELECT
-                co.id as remoteid,
-                ca.id as cat_id,
-                ca.name as cat_name,
-                ca.description as cat_description,
+                co.id          AS remoteid,
+                ca.id          AS cat_id,
+                ca.name        AS cat_name,
+                ca.description AS cat_description,
                 co.sortorder,
                 co.fullname,
                 co.shortname,
@@ -101,8 +101,8 @@ class enrolment_plugin_mnet {
                 co.startdate,
                 co.cost,
                 co.currency,
-                co.defaultrole as defaultroleid,
-                r.name
+                co.defaultrole AS defaultroleid,
+                r.name         AS defaultrolename 
             FROM
                 {$CFG->prefix}course_categories ca
             JOIN
@@ -141,8 +141,6 @@ class enrolment_plugin_mnet {
                 depth ASC
                 ";
             unset($cats);
-
-            error_log($query);
 
             $rs = get_records_sql($query);
 
@@ -188,8 +186,6 @@ class enrolment_plugin_mnet {
             ORDER BY
                 sortorder ASC
                 ";
-
-            error_log($query);
 
             return get_records_sql($query);
 
@@ -446,31 +442,38 @@ class enrolment_plugin_mnet {
                 $course = &$courses[$n];
 
                 // add/update cached data in mnet_enrol_courses
+                // sanitise data 
                 $course = (object)$course;
                 $course->remoteid        = (int)$course->remoteid;
                 $course->hostid          = $mnethostid;
-                $course->categoryid      = (int)$course->categoryid;
-                $course->categoryname    = addslashes($course->categoryname);
-                $course->description     = addslashes($course->description);
+                $course->cat_id          = (int)$course->cat_id;
                 $course->sortorder       = (int)$course->sortorder ;
-                $course->fullname        = addslashes($course->fullname);
-                $course->shortname       = addslashes($course->shortname);
-                $course->idnumber        = addslashes($course->idnumber);
-                $course->summary         = addslashes($course->summary);
                 $course->startdate       = (int)$course->startdate;
                 $course->cost            = (int)$course->cost;
-                $course->currency        = addslashes($course->currency);
                 $course->defaultroleid   = (int)$course->defaultroleid;
-                $course->defaultrolename = addslashes($course->defaultrolename);
+
+                // sanitise strings for DB NOTE - these are not sane
+                // for printing, so we'll use a different object
+                $dbcourse = clone($course);
+                $dbcourse->cat_name        = addslashes($dbcourse->cat_name);
+                $dbcourse->cat_description = addslashes($dbcourse->cat_description);
+                $dbcourse->fullname        = addslashes($dbcourse->fullname);
+                $dbcourse->shortname       = addslashes($dbcourse->shortname);
+                $dbcourse->idnumber        = addslashes($dbcourse->idnumber);
+                $dbcourse->summary         = addslashes($dbcourse->summary);
+                $dbcourse->currency        = addslashes($dbcourse->currency);
+                $dbcourse->defaultrolename = addslashes($dbcourse->defaultrolename);
 
                 // insert or update
                 if (empty($cachedcourses[$course->remoteid])) {
-                    $course->id = insert_record('mnet_enrol_course', $course);
+                    $course->id = insert_record('mnet_enrol_course', $dbcourse);
                 } else {
                     $course->id = $cachedcourses[$course->remoteid]->id;
                     $cachedcourses[$course->remoteid]->seen=true;
-                    update_record('mnet_enrol_course', $course);
+                    update_record('mnet_enrol_course', $dbcourse);
                 }
+                // free tmp obj
+                unset($dbcourse);
             }
 
             // prune stale data from cache
