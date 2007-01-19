@@ -24,14 +24,19 @@
 
     echo "<hr />";
 
-    print ('<table align="center">');
+    print ('<table align="center" >');
+
+    $icon  = "<img src=\"$CFG->pixpath/i/course.gif\"".
+    " class=\"icon\" alt=\"".get_string("course")."\" />";
 
     foreach ($courses as $course) {
+        $link = $CFG->wwwroot . '/admin/mnet/enr_course_enrol.php?'
+            . "host={$mnethost}&amp;courseid={$course->id}&amp;sesskey={$USER->sesskey}";
         print ('<tr>'
-               . "<td colspan=\"2\"><a href=\"{$CFG->wwwroot}/admin/mnet/enr_course_enrol.php?host={$mnethost}&amp;courseid={$course->id}&amp;sesskey={$USER->sesskey}\">{$course->fullname}</a></td>"
+               . "<td>$icon</td>"
+               . "<td ><a href=\"$link\">".s($course->shortname). '&nbsp;'.s($course->fullname). "</a></td>"
                . '</tr><tr>'
-               . "<td align=\"left\" valign=\"top\">{$course->shortname}<br />"
-               . '</td>'
+               . '<td></td>'
                . "<td align=\"left\" >{$course->summary}</td>"
                . '</tr>');
     }
