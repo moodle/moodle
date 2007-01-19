@@ -65,8 +65,10 @@ class block_course_list extends block_list {
                     $this->content->items[]="<a $linkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a>";
                     $this->content->icons[]=$icon;
                 }
-                $this->content->footer = "<a href=\"$CFG->wwwroot/course/\">".get_string("searchcourses")."</a>...<br />".
-                                         "<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
+                $this->content->icons[] = '';
+                $this->content->items[] = "&nbsp;&nbsp;&nbsp;<a href=\"$CFG->wwwroot/course/\">".get_string("searchcourses")."</a>...<br />";
+                $this->content->icons[] = '';
+                $this->content->items[] = "&nbsp;&nbsp;&nbsp;<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
                 $this->title = get_string('categories');
             } else {                          // Just print course names of single category
                 $category = array_shift($categories);
@@ -79,17 +81,18 @@ class block_course_list extends block_list {
                                    "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
                         $this->content->icons[]=$icon;
                     }
-                    $this->content->footer = "<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
+                    $this->content->icons[] = '';
+                    $this->content->items[] = "&nbsp;&nbsp;&nbsp;<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
                     $this->get_remote_courses();
                 } else {
-                    if ($this->get_remote_courses()) {
-                        $this->content->items = array();
-                        $this->content->icons = array();
-                        $this->content->footer = get_string('nocoursesyet').'<br /><br />';
-                        if (has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $category->id))) {
-                            $this->content->footer .= '<a href="'.$CFG->wwwroot.'/course/edit.php?category='.$category->id.'">'.get_string("addnewcourse").'</a>...';
-                        }
+                    
+                    $this->content->icons[] = '';
+                    $this->content->items[] = get_string('nocoursesyet');
+                    if (has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $category->id))) {
+                        $this->content->icons[] = '';    
+                        $this->content->items[] = '&nbsp;&nbsp;&nbsp;<a href="'.$CFG->wwwroot.'/course/edit.php?category='.$category->id.'">'.get_string("addnewcourse").'</a>...';
                     }
+                    $this->get_remote_courses();
                 }
                 $this->title = get_string('courses');
             }
