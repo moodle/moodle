@@ -1587,7 +1587,9 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
         if ($course->id == $courseorid) {
             $COURSE = clone($course);
         } else {
-            $COURSE = get_record('course', 'id', $courseorid);
+            if (!$COURSE = get_record('course', 'id', $courseorid)) {
+                error('Invalid course ID');
+            }
         }
     }
 
