@@ -1840,7 +1840,7 @@ function print_my_moodle() {
     $rcourses = array();
     if ($CFG->mnet_dispatcher_mode === 'strict') {
         $rcourses = get_my_remotecourses($USER->id);
-        $rhosts   = get_my_remotehosts($USER->id);
+        $rhosts   = get_my_remotehosts();
     }
 
     if (!empty($courses) || !empty($rcourses) || !empty($rhosts)) {
@@ -1863,7 +1863,7 @@ function print_my_moodle() {
         } elseif (!empty($rhosts)) {
             // non-IDP, we know of all the remote servers, but not courses
             foreach ($rhosts as $host) {
-                // print_remote_host($host, "100%");
+                print_remote_host($host, "100%");
             }
         }
         unset($course);
@@ -1929,7 +1929,7 @@ function print_remote_course($course, $width="100%") {
 
     $url = "{$CFG->wwwroot}/auth/mnet/jump.php?hostid={$course->hostid}&amp;wantsurl=/course/view.php?id={$course->remoteid}";
 
-    echo '<div class="coursebox">';
+    echo '<div class="coursebox remotecoursebox">';
     echo '<div class="info">';
     echo '<div class="name"><a title="'.get_string('entercourse').'"'.
          $linkcss.' href="'.$url.'">'
@@ -1942,6 +1942,24 @@ function print_remote_course($course, $width="100%") {
     $options->noclean = true;
     $options->para = false;
     echo format_text($course->summary, FORMAT_MOODLE, $options);
+    echo '</div>';
+    echo '</div>';
+    echo '<div class="clearer"></div>';
+}
+
+function print_remote_host($host, $width="100%") {
+
+    global $CFG, $USER;
+
+    $linkcss = '';
+
+    echo '<div class="coursebox">';
+    echo '<div class="info">';
+    echo '<div class="name">';
+    echo '<img src="'.$CFG->pixpath.'/i/mnethost.gif" class="icon" alt="'.get_string('course').'" />';
+    echo '<a title="'.s($host['name']).'" href="'.s($host['url']).'">'
+        . s($host['name']).'</a> - ';
+    echo $host['count'] . get_string('courses');
     echo '</div>';
     echo '</div>';
     echo '<div class="clearer"></div>';
