@@ -70,9 +70,9 @@ class mod_wiki_mod_form extends moodleform_mod {
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'optional', get_string('optional', 'form'));
-        $pagenameel = $mform->addElement('text', 'pagename', get_string('wikiname', 'wiki'));
+        $mform->addElement('text', 'pagename', get_string('wikiname', 'wiki'));
         if ($wikihasentries) {
-            $pagenameel->hardFreeze();
+            $mform->hardFreeze('pagename');
         }
         $mform->setHelpButton('pagename', array('wikiname', get_string('wikiname', 'wiki'), 'wiki'));
         $mform->setType('pagename', PARAM_NOTAGS);
