@@ -100,7 +100,7 @@ class block_course_list extends block_list {
 
     function get_remote_courses() {
         global $THEME, $CFG, $USER, $SESSION;
-        $icon  = '<img src="'.$CFG->pixpath.'/i/mnethost.png" class="icon" alt="'.get_string('course').'" />';
+        $icon  = '<img src="'.$CFG->pixpath.'/i/mnethost.gif" class="icon" alt="'.get_string('course').'" />';
         if ($USER->mnethostid != $CFG->mnet_localhost_id) {
             if (!empty($SESSION->mnet_foreign_host_array) && is_array($SESSION->mnet_foreign_host_array)) {
                 $this->content->items[] = get_string('remotemoodles','mnet'); 
