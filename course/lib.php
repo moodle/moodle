@@ -1959,7 +1959,7 @@ function print_remote_host($host, $width="100%") {
     echo '<img src="'.$CFG->pixpath.'/i/mnethost.gif" class="icon" alt="'.get_string('course').'" />';
     echo '<a title="'.s($host['name']).'" href="'.s($host['url']).'">'
         . s($host['name']).'</a> - ';
-    echo $host['count'] . get_string('courses');
+    echo $host['count'] . ' ' . get_string('courses');
     echo '</div>';
     echo '</div>';
     echo '<div class="clearer"></div>';
