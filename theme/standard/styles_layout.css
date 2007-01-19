@@ -304,33 +304,33 @@ form.popupform {
 }
 
 img.icon {
-  vertical-align:middle;   
+  vertical-align:middle;
   margin-right:4px;
   width:16px;
   height:16px;
-  border:0px;   
-}   
+  border:0px;
+}
 
 img.iconsmall {
-  vertical-align:middle;   
+  vertical-align:middle;
   margin-right:1px;
-  width:11px;   
+  width:11px;
   height:11px;
-  border:0px;   
+  border:0px;
 }
 
 img.iconhelp {
-  vertical-align:middle;   
+  vertical-align:middle;
   margin-right:4px;
-  width:17px;   
+  width:17px;
   height:17px;
-  border:0px;   
+  border:0px;
 }
 
 img.iconkbhelp {
-  width:49px;   
+  width:49px;
   height:17px;
-  border:0px;   
+  border:0px;
 }
 
 /*Accessibility: text 'seen' by screen readers but not visual users. Fixed for RTL languages, example Farsi. */
@@ -397,6 +397,11 @@ form.mform .fitemtitle {
   margin: 5px 0 0 10px;
   text-align: right;
 }
+
+form.mform .fitemtitle div{
+  display: inline;
+}
+
 div.fitem fieldset.fgroup label, div.fradio label,  div.fcheckbox label,
 fieldset.fdate_selector label {
   display:inline;
@@ -459,9 +464,9 @@ div.phpinfo .center{
   text-align: center;
 }
 
-div.phpinfo .center table { 
-  margin-left: auto; 
-  margin-right: auto; 
+div.phpinfo .center table {
+  margin-left: auto;
+  margin-right: auto;
   text-align: left;
 }
 
@@ -2108,7 +2113,7 @@ body#message-messages {
 
 .userinfobox td.label {
   text-align:right;
-  white-space: nowrap; 
+  white-space: nowrap;
   vertical-align: top;
 }
 
@@ -2202,7 +2207,7 @@ body#user-index .rolesform {
   vertical-align:top;
 }
 .modform {
-  text-align:center;  
+  text-align:center;
 }
 
 /***
@@ -2260,28 +2265,28 @@ body#user-index .rolesform {
  *** Modules: Choice
  ***/
 .button {
-  text-align:center;  
+  text-align:center;
 }
 
 .attemptcell {
   width:5px;
-  white-space: nowrap; 
+  white-space: nowrap;
 }
 
 .anonymous,
 .names {
   margin-left:auto;
-  margin-right:auto;  
+  margin-right:auto;
 }
 
 .downloadreport {
   border:0px;
   margin-left:auto;
-  margin-right:auto;  
+  margin-right:auto;
 }
 
 .choiceresponse {
-  width:100%;  
+  width:100%;
 }
 .choiceresponse .picture {
   width:10px;
@@ -2305,7 +2310,7 @@ body#user-index .rolesform {
 .fieldadd,
 .sortdefault,
 .defaulttemplate {
-  text-align:center; 
+  text-align:center;
 }
 
 /***
@@ -2667,7 +2672,7 @@ body#mod-forum-search .introcontent {
 }
 body#question-preview .quemodname,
 body#question-preview .controls
-{     
+{
   text-align: center;
 }
 body#mod-quiz-report table#attempts,
@@ -2723,8 +2728,8 @@ body#mod-quiz-report .controls {
   text-align: center;
 }
 /* ======= */
-body#question-preview .quemodname, body#question-preview .controls {   
-  text-align: center;   
+body#question-preview .quemodname, body#question-preview .controls {
+  text-align: center;
 /* >>>>>>> 1.333 */
 }
 
@@ -2807,11 +2812,11 @@ body#question-preview .quemodname, body#question-preview .controls {
 .reportsummary,
 .studentreport,
 .reportbuttons {
-  text-align:center;  
+  text-align:center;
 }
 
 .centerpara {
-  text-align:center;   
+  text-align:center;
 }
 
 .fullnamecell {
@@ -2834,9 +2839,9 @@ body#question-preview .quemodname, body#question-preview .controls {
   text-align:center;
 }
 
-.foundthat, 
+.foundthat,
 .preferthat {
-  width:10%; 
+  width:10%;
   white-space: nowrap;
 }
 
@@ -2852,29 +2857,29 @@ body#question-preview .quemodname, body#question-preview .controls {
 
 .optioncell {
   width:40%;
-  vertical-align:middle;  
+  vertical-align:middle;
 }
 
 .buttoncell {
-  width:5%;  
+  width:5%;
 }
 
 .questioncell {
   width:50%;
-  vertical-align:top;  
+  vertical-align:top;
 }
 /***
  *** Modules: Wiki
  ***/
 .sideblockheading,
 .howtowiki {
-  text-align:right;   
+  text-align:right;
 }
 
 .wikisearchform,
 .wikilinksblock,
 wikiadminactions {
-  text-align:center;  
+  text-align:center;
 }
 
 .wikilinkright{
@@ -2895,5 +2900,5 @@ wikiadminactions {
 
 .workshopuploadform,
 .workshopkey {
-  text-align:center;  
+  text-align:center;
 }
