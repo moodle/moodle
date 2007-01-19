@@ -392,9 +392,10 @@ class enrolment_plugin_mnet {
                 {$CFG->prefix}mnet_host2service h2s,
                 {$CFG->prefix}mnet_service s
             WHERE
-                h.id = h2s.hostid AND
-                h2s.serviceid = s.id AND
-                s.name = 'mnet_enrol'";
+                h.id          = h2s.hostid   AND
+                h2s.serviceid = s.id         AND
+                s.name        = 'mnet_enrol' AND
+                h2s.subscribe = 1";
 
         $res = get_records_sql($sql);
         if (is_array($res)) {
