@@ -343,14 +343,16 @@ class auth_plugin_mnet
             }
 
             if($key == 'myhosts') {
-                $SESSION->mnet_foreign_host_array = array();
+                $localuser->mnet_foreign_host_array = array();
                 foreach($val as $somecourse) {
                     $name  = clean_param($somecourse['name'], PARAM_ALPHANUM);
                     $url   = clean_param($somecourse['url'], PARAM_URL);
                     $count = clean_param($somecourse['count'], PARAM_INT);
                     $url_is_local = stristr($url , $CFG->wwwroot);
                     if (!empty($name) && !empty($count) && empty($url_is_local)) {
-                        $SESSION->mnet_foreign_host_array[] = array('name' => $name, 'url' => $url, 'count' => $count);
+                        $localuser->mnet_foreign_host_array[] = array('name'  => $name, 
+                                                                      'url'   => $url, 
+                                                                      'count' => $count);
                     }
                 }
             }

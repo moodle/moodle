@@ -102,7 +102,7 @@ class block_course_list extends block_list {
     }
 
     function get_remote_courses() {
-        global $THEME, $CFG, $USER, $SESSION;
+        global $THEME, $CFG, $USER;
         $icon  = '<img src="'.$CFG->pixpath.'/i/mnethost.gif" class="icon" alt="'.get_string('course').'" />';
 
         // only for logged in users!
@@ -111,10 +111,10 @@ class block_course_list extends block_list {
         }
 
         if ($USER->mnethostid != $CFG->mnet_localhost_id) {
-            if (!empty($SESSION->mnet_foreign_host_array) && is_array($SESSION->mnet_foreign_host_array)) {
+            if (!empty($USER->mnet_foreign_host_array) && is_array($USER->mnet_foreign_host_array)) {
                 $this->content->items[] = get_string('remotemoodles','mnet'); 
                 $this->content->icons[] = '';
-                foreach($SESSION->mnet_foreign_host_array as $somehost) {
+                foreach($USER->mnet_foreign_host_array as $somehost) {
                     $this->content->items[] = $somehost['count'].get_string('courseson','mnet').'<a title="'.$somehost['name'].'" href="'.$somehost['url'].'">'.$somehost['name'].'</a>';
                     $this->content->icons[] = $icon;
                 }

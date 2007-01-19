@@ -33,6 +33,10 @@ $CFG->auth = 'mnet';
 $USER = get_complete_user_data('id', $localuser->id, $localuser->mnethostid);
 load_all_capabilities();
 
+if (!empty($localuser->mnet_foreign_host_array)) {
+    $USER->mnet_foreign_host_array = $localuser->mnet_foreign_host_array;
+}
+
 // redirect
 redirect($CFG->wwwroot . $wantsurl);
 
