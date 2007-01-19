@@ -13,6 +13,11 @@ class block_mnet_hosts extends block_list {
     function get_content() {
         global $THEME, $CFG, $USER;
 
+        // only for logged in users!
+        if (!isloggedin() || isguest()) {
+            return false;
+        }
+
         // check for outgoing roaming permission first
         if (!has_capability('moodle/site:mnetlogintoremote', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             return '';
