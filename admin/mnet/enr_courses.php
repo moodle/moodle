@@ -5,6 +5,11 @@
     require_once(dirname(__FILE__) . "/../../config.php");
     require_once($CFG->libdir.'/adminlib.php');
 
+    if (!confirm_sesskey()) {
+        error(get_string('confirmsesskeybad', 'error'));
+    }
+
+
     $adminroot = admin_get_root();
     admin_externalpage_setup('mnetenrol', $adminroot);
     $CFG->pagepath = 'admin/mnet';

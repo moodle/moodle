@@ -6,6 +6,10 @@
     require_once($CFG->libdir.'/adminlib.php');
     include_once($CFG->dirroot.'/mnet/xmlrpc/client.php');
 
+    if (!confirm_sesskey()) {
+        error(get_string('confirmsesskeybad', 'error'));
+    }
+
     $adminroot = admin_get_root();
     admin_externalpage_setup('mnetenrol', $adminroot);
     $CFG->pagepath = 'admin/mnet';
