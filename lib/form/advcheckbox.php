@@ -4,7 +4,10 @@ require_once('HTML/QuickForm/advcheckbox.php');
 /**
  * HTML class for a advcheckbox type element
  *
- * @author       Jamie Pratt
+ * default behavior special for Moodle is to return '0' if not checked
+ * '1' for checked.
+ *
+ * * @author       Jamie Pratt
  * @access       public
  */
 class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox{
@@ -21,6 +24,29 @@ class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox{
      * @param array $help array of arguments to make a help button
      * @param string $function function name to call to get html
      */
+    /**
+     * Class constructor
+     *
+     * @param     string    $elementName    (optional)Input field name attribute
+     * @param     string    $elementLabel   (optional)Input field label
+     * @param     string    $text           (optional)Text to put after the checkbox
+     * @param     mixed     $attributes     (optional)Either a typical HTML attribute string
+     *                                      or an associative array
+     * @param     mixed     $values         (optional)Values to pass if checked or not checked
+     *
+     * @since     1.0
+     * @access    public
+     * @return    void
+     */
+    function HTML_QuickForm_advcheckbox($elementName=null, $elementLabel=null, $text=null, $attributes=null, $values=null)
+    {
+        if ($values === null){
+            $values = array(0, 1);
+        }
+        parent::HTML_QuickForm_advcheckbox($elementName, $elementLabel, $text, $attributes, $values);
+    } //end constructor
+
+
     function setHelpButton($helpbuttonargs, $function='helpbutton'){
         if (!is_array($helpbuttonargs)){
             $helpbuttonargs=array($helpbuttonargs);
