@@ -123,13 +123,12 @@ class qformat_blackboard_6 extends qformat_default {
     }
 
     function copy_file_to_course($filename) {
-        global $CFG;
-        global $course;
+        global $CFG, $COURSE;
         $filename = str_replace('\\','/',$filename);
         $fullpath = $this->temp_dir.'/res00001/'.$filename;
         $basename = basename($filename);
     
-        $copy_to = $CFG->dataroot.'/'.$course->id.'/bb_import';
+        $copy_to = $CFG->dataroot.'/'.$COURSE->id.'/bb_import';
         
         if ($this->check_dir_exists($copy_to,true)) {
             if(is_readable($fullpath)) {
@@ -347,7 +346,7 @@ function create_raw_question($quest) {
 }
 
 function process_block($cur_block, &$block) {
-    global $course, $CFG;
+    global $COURSE, $CFG;
 
     $cur_type = $cur_block['@']['class'];
     switch($cur_type) {
@@ -363,7 +362,7 @@ function process_block($cur_block, &$block) {
             if ($block->file != '') {
                 // if we have a file copy it to the course dir and adjust its name to be visible over the web.
                 $block->file = $this->copy_file_to_course($block->file);
-                $block->file = $CFG->wwwroot.'/file.php/'.$course->id.'/bb_import/'.basename($block->file);
+                $block->file = $CFG->wwwroot.'/file.php/'.$COURSE->id.'/bb_import/'.basename($block->file);
             }
             break;
         case 'Block':
@@ -845,7 +844,7 @@ function process_matching($quest, &$questions) {
             $questions[] = $question;   
         }
         else {
-            global $course, $CFG;
+            global $COURSE, $CFG;
             print '<table class="boxaligncenter" border="1">';
             print '<tr><td colspan="2" style="background-color:#FF8888;">This matching question is malformed. Please ensure there are no blank answers, no two questions have the same answer, and/or there are correct answers for each question. There must be at least as many subanswers as subquestions, and at least one subquestion.</td></tr>'; 
         
@@ -853,7 +852,7 @@ function process_matching($quest, &$questions) {
             if (isset($quest->QUESTION_BLOCK->file)) {
                 print '<br/><font color="red">There is a subfile contained in the zipfile that has been copied to course files: bb_import/'.basename($quest->QUESTION_BLOCK->file).'</font>';
                 if (preg_match('/(gif|jpg|jpeg|png)$/i', $quest->QUESTION_BLOCK->file)) {
-                    print '<img src="'.$CFG->wwwroot.'/file.php/'.$course->id.'/bb_import/'.basename($quest->QUESTION_BLOCK->file).'" />';
+                    print '<img src="'.$CFG->wwwroot.'/file.php/'.$COURSE->id.'/bb_import/'.basename($quest->QUESTION_BLOCK->file).'" />';
                 }
             }
             print "</td></tr>";

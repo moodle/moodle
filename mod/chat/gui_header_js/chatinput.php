@@ -12,13 +12,10 @@
     }
 
     //Get the course theme
-    $course = get_record('course','id',$chatuser->course,'','','','','id,theme');
-    //Set the global course if necessary
-    if (!empty($course->theme)) {
-        global $course;
-    }
+    $COURSE = get_record('course','id',$chatuser->course);
+
     //Get the user theme
-    $USER = get_record('user','id',$chatuser->userid,'','','','','id, theme');
+    $USER = get_record('user','id',$chatuser->userid);
 
     //Adjust the prefered theme (main, course, user)
     theme_setup();

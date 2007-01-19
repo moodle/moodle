@@ -155,8 +155,9 @@ function grade_get_users_by_group($course, $group) {
 
 function grade_get_formatted_grades() {
     global $CFG;
-    global $course;
+    global $COURSE;
     global $preferences;
+    $course = $COURSE;
     $i = 2; // index to differentiate activities with the same name MDL-6876
     $grades = grade_get_grades();
     if (isset($grades)) {

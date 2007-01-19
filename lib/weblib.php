@@ -2030,22 +2030,14 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     define('HEADER_PRINTED', 'true');
 
 
-    global $course, $COURSE;
+    global $COURSE;
     if (!empty($COURSE->lang)) {
         $CFG->courselang = $COURSE->lang;
-        moodle_setlocale();
-    } else if (!empty($course->lang)) { // ugly backwards compatibility hack
-        $CFG->courselang = $course->lang;
         moodle_setlocale();
     }
     if (!empty($COURSE->theme)) {
         if (!empty($CFG->allowcoursethemes)) {
             $CFG->coursetheme = $COURSE->theme;
-            theme_setup();
-        }
-    } else if (!empty($course->theme)) { // ugly backwards compatibility hack
-        if (!empty($CFG->allowcoursethemes)) {
-            $CFG->coursetheme = $course->theme;
             theme_setup();
         }
     }
@@ -2093,11 +2085,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         } else {
             $wwwroot = str_replace('http:','https:',$CFG->wwwroot);
         }
-        if (isset($course->id)) {
-            $menu = user_login_string($course);
-        } else {
-            $menu = user_login_string($SITE);
-        }
+        $menu = user_login_string($COURSE);
     }
 
     if (isset($SESSION->justloggedin)) {
@@ -2193,11 +2181,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     page_id_and_class($pageid, $pageclass);
 
-    if (isset($course->id)) {
-        $pageclass .= ' course-'.$course->id;
-    } else {
-        $pageclass .= ' course-'.SITEID;
-    }
+    $pageclass .= ' course-'.$COURSE->id;
 
     if (($pageid != 'site-index') && ($pageid != 'course-view') && 
         ($pageid != 'admin-settings')) {

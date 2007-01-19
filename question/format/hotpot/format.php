@@ -124,8 +124,8 @@ class qformat_hotpot extends qformat_default {
             if ($moodle_14) {
                 $question->answers = array();
             } else {
-                global $course; // set in mod/quiz/import.php
-                $question->course = $course->id;
+                global $COURSE; // initialized in questions/import.php
+                $question->course = $COURSE->id;
                 $question->options = new stdClass();
                 $question->options->questions = array(); // one for each gap
             }

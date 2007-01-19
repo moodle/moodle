@@ -248,7 +248,7 @@ function get_mimetype_description($mimetype,$capitalise=false) {
  * @param string $mimetype Include to specify the MIME type; leave blank to have it guess the type from $filename
  */
 function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='') {
-    global $CFG;
+    global $CFG, $COURSE;
 
     // Use given MIME type if specified, otherwise guess it using mimeinfo.
     // IE, Konqueror and Opera open html file directly in browser from web even when directed to save it to disk :-O
@@ -369,18 +369,12 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
             readfile_chunked($path);
         }
     } else {     // Try to put the file through filters
-        global $course;  // HACK!
-        if (!empty($course->id)) {
-            $courseid = $course->id;
-        } else {
-            $courseid = SITEID;
-        }
         if ($mimetype == 'text/html') {
             $options = new object();
             $options->noclean = true;
             $options->nocache = true; // temporary workaround for MDL-5136
             $text = $pathisstring ? $path : implode('', file($path));
-            $output = format_text($text, FORMAT_HTML, $options, $courseid);
+            $output = format_text($text, FORMAT_HTML, $options, $COURSE->id);
             if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
                 //cookieless mode - rewrite links
                 $output = sid_ob_rewrite($output);
@@ -392,10 +386,11 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
             echo $output;
         // only filter text if filter all files is selected
         } else if (($mimetype == 'text/plain') and ($filter == 1)) {
+            $options = new object();
             $options->newlines = false;
             $options->noclean = true;
             $text = htmlentities($pathisstring ? $path : implode('', file($path)));
-            $output = '<pre>'. format_text($text, FORMAT_MOODLE, $options, $courseid) .'</pre>';
+            $output = '<pre>'. format_text($text, FORMAT_MOODLE, $options, $COURSE->id) .'</pre>';
             if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
                 //cookieless mode - rewrite links
                 $output = sid_ob_rewrite($output);

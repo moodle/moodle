@@ -1583,7 +1583,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
     } else if (is_object($courseorid)) {
         $COURSE = clone($courseorid);
     } else {
-        global $course; // We use the global hack once here so it doesn't need to be used again
+        global $course; // used here only to prevent repeated fetching from DB
         if ($course->id == $courseorid) {
             $COURSE = clone($course);
         } else {
@@ -3202,14 +3202,13 @@ function moodle_process_email($modargs,$body) {
  */
 function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true, $replyto='', $replytoname='') {
 
-    global $CFG, $FULLME;
+    global $CFG, $FULLME, $COURSE;
 
-    global $course;                // This is a bit of an ugly hack to be gotten rid of later
-    if (!empty($course->lang)) {   // Course language is defined
-        $CFG->courselang = $course->lang;
+    if (!empty($COURSE->lang)) {   // Course language is defined
+        $CFG->courselang = $COURSE->lang;
     }
-    if (!empty($course->theme)) {   // Course theme is defined
-        $CFG->coursetheme = $course->theme;
+    if (!empty($COURSE->theme)) {   // Course theme is defined
+        $CFG->coursetheme = $COURSE->theme;
     }
 
     include_once($CFG->libdir .'/phpmailer/class.phpmailer.php');
@@ -4127,12 +4126,10 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
 
     global $CFG;
 
-    global $course, $COURSE;
+    global $COURSE;
     if (empty($CFG->courselang)) {
         if (!empty($COURSE->lang)) {
             $CFG->courselang = $COURSE->lang;
-        } else if (!empty($course->lang)) { // ugly backwards compatibility hack
-            $CFG->courselang = $course->lang;
         }
     }
 
