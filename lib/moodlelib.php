@@ -1569,21 +1569,26 @@ function confirm_sesskey($sesskey=NULL) {
  * @uses $FULLME
  * @uses SITEID
  * @uses $COURSE
- * @uses $MoodleSession
- * @param int $courseid id of the course
+ * @param mixed $courseorid id of the course or course object
  * @param bool $autologinguest
  * @param object $cm course module object
  */
-function require_login($courseid=0, $autologinguest=true, $cm=null) {
+function require_login($courseorid=0, $autologinguest=true, $cm=null) {
 
-    global $CFG, $SESSION, $USER, $COURSE, $FULLME, $MoodleSession;
+    global $CFG, $SESSION, $USER, $COURSE, $FULLME, $SITE;
 
-/// Redefine global $COURSE if we can
-    global $course;  // We use the global hack once here so it doesn't need to be used again
-    if (is_object($course) and !empty($course->id) and ($courseid == 0 || $course->id == $courseid)) {
-        $COURSE = clone($course);
-    } else if ($courseid) {
-        $COURSE = get_record('course', 'id', $courseid);
+/// Redefine global $COURSE if needed
+    if (empty($courseorid)) {
+        // keep previous value - usually $SITE
+    } else if (is_object($courseorid)) {
+        $COURSE = clone($courseorid);
+    } else {
+        global $course; // We use the global hack once here so it doesn't need to be used again
+        if ($course->id == $courseorid) {
+            $COURSE = clone($course);
+        } else {
+            $COURSE = get_record('course', 'id', $courseorid);
+        }
     }
 
     if (!empty($COURSE->lang)) {
@@ -1599,7 +1604,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
         }
         $USER = NULL;
         if ($autologinguest && !empty($CFG->autologinguests) and 
-            $courseid and ($courseid == SITEID or get_field('course','guest','id',$courseid)) ) {
+            $COURSE->id and ($COURSE->id == SITEID or $COURSE->guest) ) {
             $loginguest = '?loginguest=true';
         } else {
             $loginguest = '';
@@ -1664,37 +1669,24 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
         }
     }
 
-/// Next, check if the user can be in a particular course
-    if ($courseid) {
 
-    /// Sanity check on the courseid
-
-        if ($courseid == $COURSE->id) {     /// Pretty much always true but let's be sure
-            $course = $COURSE;
-        } else if (! $course = get_record('course', 'id', $courseid)) {
-            error('That course doesn\'t exist');
+    if ($COURSE->id == SITEID) {
+/// We can eliminate hidden site activities straight away
+        if (!empty($cm) && !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', 
+                                                      get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+            redirect($CFG->wwwroot, get_string('activityiscurrentlyhidden'));
         }
+        return;
 
-    /// We can eliminate hidden site activities straight away
-
-        if ($course->id == SITEID) {
-            if (!empty($cm) && !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', 
-                                                          get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-                redirect($CFG->wwwroot, get_string('activityiscurrentlyhidden'));
-            }
-            return;
-        }
-
- 
-    /// If the whole course is hidden from us then we can stop now
-
-        if (!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
+    } else { 
+/// Check if the user can be in a particular course
+        if (!$context = get_context_instance(CONTEXT_COURSE, $COURSE->id)) {
             print_error('nocontext');
         }
 
         if (empty($USER->switchrole[$context->id]) &&
-            !($course->visible && course_parent_visible($course)) &&
-               !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id)) ){
+            !($COURSE->visible && course_parent_visible($COURSE)) &&
+               !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $COURSE->id)) ){
             print_header_simple();
             notice(get_string('coursehidden'), $CFG->wwwroot .'/');
         }    
@@ -1702,7 +1694,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
     /// Non-guests who don't currently have access, check if they can be allowed in as a guest
 
         if ($USER->username != 'guest' and !has_capability('moodle/course:view', $context)) {
-            if ($course->guest == 1) {
+            if ($COURSE->guest == 1) {
                  // Temporarily assign them guest role for this context,
                  // if it fails user is asked to enrol
                  load_guest_role($context);
@@ -1712,12 +1704,12 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
     /// If the user is a guest then treat them according to the course policy about guests
 
         if (has_capability('moodle/legacy:guest', $context, NULL, false)) {
-            switch ($course->guest) {    /// Check course policy about guest access
+            switch ($COURSE->guest) {    /// Check course policy about guest access
 
                 case 1:    /// Guests always allowed 
                     if (!has_capability('moodle/course:view', $context)) {    // Prohibited by capability
                         print_header_simple();
-                        notice(get_string('guestsnotallowed', '', $course->fullname), "$CFG->wwwroot/login/index.php");
+                        notice(get_string('guestsnotallowed', '', $COURSE->fullname), "$CFG->wwwroot/login/index.php");
                     }
                     if (!empty($cm) and !$cm->visible) { // Not allowed to see module, send to course page
                         redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, 
@@ -1729,7 +1721,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
                     break;
 
                 case 2:    /// Guests allowed with key 
-                    if (!empty($USER->enrolkey[$course->id])) {   // Set by enrol/manual/enrol.php
+                    if (!empty($USER->enrolkey[$COURSE->id])) {   // Set by enrol/manual/enrol.php
                         return true;
                     }
                     //  otherwise drop through to logic below (--> enrol.php)
@@ -1738,11 +1730,11 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
                 default:    /// Guests not allowed
                     print_header_simple('', '', get_string('loggedinasguest'));
                     if (empty($USER->switchrole[$context->id])) {  // Normal guest
-                        notice(get_string('guestsnotallowed', '', $course->fullname), "$CFG->wwwroot/login/index.php");
+                        notice(get_string('guestsnotallowed', '', $COURSE->fullname), "$CFG->wwwroot/login/index.php");
                     } else {
-                        notify(get_string('guestsnotallowed', '', $course->fullname));
-                        echo '<div class="notifyproblem">'.switchroles_form($course->id).'</div>';
-                        print_footer($course);
+                        notify(get_string('guestsnotallowed', '', $COURSE->fullname));
+                        echo '<div class="notifyproblem">'.switchroles_form($COURSE->id).'</div>';
+                        print_footer($COURSE);
                         exit;
                     }
                     break;
@@ -1770,7 +1762,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
 
     /// Currently not enrolled in the course, so see if they want to enrol
         $SESSION->wantsurl = $FULLME;
-        redirect($CFG->wwwroot .'/course/enrol.php?id='. $courseid);
+        redirect($CFG->wwwroot .'/course/enrol.php?id='. $COURSE->id);
         die;
     }
 }
@@ -1822,17 +1814,20 @@ function require_logout() {
  * the forcelogin option is turned on.
  *
  * @uses $CFG
- * @param object $course The course object in question
+ * @param mixed $courseorid The course object or id in question
  * @param bool $autologinguest Allow autologin guests if that is wanted
  * @param object $cm Course activity module if known
  */
-function require_course_login($course, $autologinguest=true, $cm=null) {
+function require_course_login($courseorid, $autologinguest=true, $cm=null) {
     global $CFG;
     if (!empty($CFG->forcelogin)) {
-        require_login();
-    }
-    if ($course->id != SITEID) {
-        require_login($course->id, $autologinguest, $cm);
+        // login required for both SITE and courses
+        require_login($courseorid, $autologinguest, $cm);
+    } else if ((is_object($courseorid) and $courseorid->id == SITEID) or $courseorid == SITEID) {
+        //login for SITE not required
+    } else {
+        // course login always required
+        require_login($courseorid, $autologinguest, $cm);
     }
 }
 
