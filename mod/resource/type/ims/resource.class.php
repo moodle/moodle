@@ -641,11 +641,11 @@ class resource_ims extends resource_base {
             if ($option == 'height' or $option == 'width') {
                 $mform->addElement('text', $option, get_string('new'.$option, 'resource'), array('size'=>'4'));
                 $mform->setDefault($option, $CFG->{'resource_popup'.$option});
-                $mform->disabledIf($option, 'windowpopup', 'eq', 1);
+                $mform->disabledIf($option, 'windowpopup', 'eq', 0);
             } else {
                 $mform->addElement('checkbox', $option, get_string('new'.$option, 'resource'));
                 $mform->setDefault($option, $CFG->{'resource_popup'.$option});
-                $mform->disabledIf($option, 'windowpopup', 'eq', 1);
+                $mform->disabledIf($option, 'windowpopup', 'eq', 0);
             }
             $mform->setAdvanced($option);
         }

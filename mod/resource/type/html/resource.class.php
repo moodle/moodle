@@ -158,18 +158,18 @@ function setup_elements(&$mform) {
 
     $mform->addElement('checkbox', 'blockdisplay', get_string('showcourseblocks', 'resource'));
     $mform->setDefault('blockdisplay', 0);
-    $mform->disabledIf('blockdisplay', 'windowpopup', 'eq', '0');
+    $mform->disabledIf('blockdisplay', 'windowpopup', 'eq', '1');
     $mform->setAdvanced('blockdisplay');
 
     foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
         if ($option == 'height' or $option == 'width') {
             $mform->addElement('text', $option, get_string('new'.$option, 'resource'), array('size'=>'4'));
             $mform->setDefault($option, $CFG->{'resource_popup'.$option});
-            $mform->disabledIf($option, 'windowpopup', 'eq', '1');
+            $mform->disabledIf($option, 'windowpopup', 'eq', '0');
         } else {
             $mform->addElement('checkbox', $option, get_string('new'.$option, 'resource'));
             $mform->setDefault($option, $CFG->{'resource_popup'.$option});
-            $mform->disabledIf($option, 'windowpopup', 'eq', '1');
+            $mform->disabledIf($option, 'windowpopup', 'eq', '0');
         }
         $mform->setAdvanced($option);
     }
