@@ -1002,6 +1002,46 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') 
     return $n+1;
 }
 
+/**
+ * List of remote courses that a user has access to via MNET.
+ * Works only on the IDP
+ *
+ * @uses $CFG, $USER
+ * @return array {@link $COURSE} of course objects
+ */
+function get_my_remotecourses($userid=0) {
+    global $CFG, $USER;
+
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    $sql = "SELECT c.remoteid, c.shortname, c.fullname, c.hostid
+            FROM   {$CFG->prefix}mnet_enrol_course c
+            JOIN   {$CFG->prefix}mnet_enrol_assignments a ON c.id=a.courseid
+            WHERE  a.userid={$userid}";
+
+    return get_records_sql($sql);
+}
+
+/**
+ * List of remote hosts that a user has access to via MNET.
+ * Works on the SP
+ *
+ * @uses $CFG, $USER
+ * @return array of host objects
+ */
+function get_my_remotehosts() {
+    global $CFG, $USER;
+
+    if ($USER->mnethostid == $CFG->mnet_localhost_id) {
+        return false; // Return nothing on the IDP
+    }
+    if (!empty($USER->mnet_foreign_host_array) && is_array($USER->mnet_foreign_host_array)) {
+        return $USER->mnet_foreign_host_array;
+    }
+    return false;
+}
 
 /**
  * This function creates a default separated/connected scale

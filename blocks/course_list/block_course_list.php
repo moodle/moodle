@@ -110,35 +110,30 @@ class block_course_list extends block_list {
             return false;
         }
 
-        if ($USER->mnethostid != $CFG->mnet_localhost_id) {
-            if (!empty($USER->mnet_foreign_host_array) && is_array($USER->mnet_foreign_host_array)) {
-                $this->content->items[] = get_string('remotemoodles','mnet'); 
-                $this->content->icons[] = '';
-                foreach($USER->mnet_foreign_host_array as $somehost) {
-                    $this->content->items[] = $somehost['count'].get_string('courseson','mnet').'<a title="'.$somehost['name'].'" href="'.$somehost['url'].'">'.$somehost['name'].'</a>';
-                    $this->content->icons[] = $icon;
-                }
-            } else {
-                return false;
+        if ($courses = get_my_remotecourses()) {
+            $this->content->items[] = get_string('remotecourses','mnet');
+            $this->content->icons[] = '';
+            foreach ($courses as $course) {
+                $this->content->items[]="<a title=\"$course->shortname\" ".
+                    "href=\"{$CFG->wwwroot}/auth/mnet/jump.php?hostid={$course->hostid}&amp;wantsurl=/course/view.php?id={$course->remoteid}\">$course->fullname</a>";
+                $this->content->icons[]=$icon;
             }
-        } else {
-            $sql = "SELECT c.remoteid, c.shortname, c.fullname, c.hostid
-                    FROM   {$CFG->prefix}mnet_enrol_course c
-                    JOIN   {$CFG->prefix}mnet_enrol_assignments a ON c.id=a.courseid
-                    WHERE  a.userid={$USER->id}";
-            if ($courses = get_records_sql($sql)) {
-                $this->content->items[] = get_string('remotecourses','mnet');
-                $this->content->icons[] = '';
-                foreach ($courses as $course) {
-                    $this->content->items[]="<a title=\"$course->shortname\" ".
-                                   "href=\"{$CFG->wwwroot}/auth/mnet/jump.php?hostid={$course->hostid}&amp;wantsurl=/course/view.php?id={$course->remoteid}\">$course->fullname</a>";
-                    $this->content->icons[]=$icon;
-                }
-            } else {
-                return false;
-            }
+            // if we listed courses, we are done
+            return true;
         }
-        return true;
+
+        if ($hosts = get_my_remotehosts()) {
+            $this->content->items[] = get_string('remotemoodles','mnet'); 
+            $this->content->icons[] = '';
+            foreach($USER->mnet_foreign_host_array as $somehost) {
+                $this->content->items[] = $somehost['count'].get_string('courseson','mnet').'<a title="'.$somehost['name'].'" href="'.$somehost['url'].'">'.$somehost['name'].'</a>';
+                $this->content->icons[] = $icon;
+            }
+            // if we listed hosts, done
+            return true;
+        }
+
+        return false;
     }
 
 }
