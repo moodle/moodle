@@ -28,12 +28,12 @@
         print_box(get_string('mnetdisabled','mnet'));
     }
 
-    print ('<table align="center">'
+    print ('<table align="center" cellspacing="0" cellpadding="5"  width="500" id="hosts" class="generaltable generalbox" >'
            . '<tr>'
-           . '<th> Host </th>'
-           . '<th> Enrolments </th>'
-           . '<th> Courses </th>'
-           . '<th> &nbsp; </th>'
+           . '<th class="header c0"> '.get_string('host', 'mnet').' </th>'
+           . '<th class="header c1"> '.get_string('enrolments', 'mnet').' </th>'
+           . '<th class="header c2"> '.get_string('courses', 'mnet').' </th>'
+           . '<th class="header c3"> &nbsp; </th>'
            . '</tr>');
     $hosts = $enrolment->list_remote_servers();
     foreach ($hosts as $host) {
@@ -47,8 +47,8 @@
         print ('<tr>'
                . "<td><a href=\"{$coursesurl}\">{$host->name}</a></td>"
                . "<td align=\"center\" >$enrolcount</td>"
-               . "<td align=\"center\" ><a href=\"{$coursesurl}\">$coursecount - edit</a></td>"
-               . '<td align="center" > <a href="">Logs</a> </td>'
+               . "<td align=\"center\" ><a href=\"{$coursesurl}\">$coursecount - ".get_string('editenrolments', 'mnet')."</a></td>"
+               . '<td align="center" > <a href="">'.get_string('logs', 'mnet').'</a> </td>'
                . '</tr>');
     }
     print ('</table>');

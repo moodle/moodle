@@ -90,12 +90,15 @@
     </tr>
     <tr>
       <td valign="top"><?php print_string('otherenrolledusers', 'mnet'); ?>:<br />
+          <ul>
           <?php
             foreach ($remtenrolledusers as $enrolleduser) {
                 $fullname = fullname($enrolleduser, true);
-                echo s($fullname) .', ('.s($enrolleduser->rolename) . ') '.s($enrolleduser->enroltype)."<br />\n";
+                print '<li>'
+                    . s($fullname) . ' (' . s($enrolleduser->rolename) . ') '
+                    . s($enrolleduser->enroltype)."</li>\n";
             }
-          ?></td>
+          ?></ul></td>
       <td valign="top"></td>
       <td valign="top"></td>
     </tr>

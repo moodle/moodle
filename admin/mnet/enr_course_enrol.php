@@ -253,8 +253,10 @@ $strsearchresults = get_string('searchresults');
 
 admin_externalpage_print_header($adminroot);
 
-print_string('enrollingincourse', 'mnet', array(s($course->shortname), s($mnet_peer->name)));
-print_string("description", "enrol_mnet");
+print_box('<strong>' . s($mnet_peer->name) . ' : ' 
+          . s($course->shortname) .' '. s($course->fullname) 
+          . '</strong><br />'
+          . get_string("enrolcourseenrol_desc", "mnet"));
 
 echo "<hr />";
 

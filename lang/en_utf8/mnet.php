@@ -7,9 +7,9 @@ $string['yourhost']                     = 'Your Host';
 $string['yourpeers']                    = 'Your Peers';
 $string['settings']                     = 'Settings';
 $string['hostsettings']                 = 'Host Settings';
-$string['mnetpeers']                    = 'Moodle network peers';
+$string['mnetpeers']                    = 'Peers';
 $string['mnetservices']                 = 'Moodle network services';
-$string['trustedhosts']                 = 'Trusted Hosts for XML-RPC';
+$string['trustedhosts']                 = 'XML-RPC hosts';
 $string['trustedhostsexplain']          = '<p>The trusted hosts mechanism allows specific machines to
                                            execute calls via XML-RPC to any part of the Moodle API. This
                                            available for scripts to control Moodle behaviour and can be
@@ -210,4 +210,20 @@ $string['ssoaclneeds'] = 'For this functionality to work, you must have Moodle N
 $string['mnetdisabled'] = 'Moodle Network is <strong>disabled</strong>.';
 $string['authmnetdisabled'] = 'Moodle Networking <em>Authentication plugin</em>is <strong>disabled</strong>.';
 $string['authmnetautoadddisabled'] = '<em>Auto-add users</em> in Moodle Networking Authentication plugin is <strong>disabled</strong>.';
+$string['mnetenrol'] = 'Enrolments';
+$string['remoteenrolhosts_desc'] = 'Enrol and unenrol users from your Moodle installation
+                                    on Moodle Hosts that allow you to do so via the Moodle
+                                    Network enrolment plugin.';
+$string['host'] = 'host';
+$string['enrolments'] = 'enrolments';
+$string['editenrolments'] = 'enrol';
+$string['logs'] = 'logs';
+$string['courses'] = 'courses';
+
+$string['enrolcourses_desc'] = 'Courses offered for remote enrolment by this host.';
+$string['enrolcourseenrol_desc'] = 'Enrol/unenrol users from this course using Moodle Network enrolments. 
+                                    Note that users may have been enrolled in this course via other enrolment
+                                    methods if the remote hosts allows them. Such enrolments are listed under
+                                    <em>Other enrolled users</em>';
+$string['host'] = 'host';
 ?>

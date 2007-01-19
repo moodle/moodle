@@ -13,6 +13,7 @@
     $enrolment = enrolment_factory::factory('mnet');
 
     $mnethost = required_param('host', PARAM_INT);
+    $host = get_record('mnet_host', 'id', $mnethost);
 
     $courses = $enrolment->fetch_remote_courses($mnethost);
 
@@ -20,7 +21,8 @@
 
     admin_externalpage_print_header($adminroot);
 
-    print_box(get_string("description", "enrol_mnet"));
+    print_box('<strong>' . s($host->name) . ' </strong><br />'
+              . get_string("enrolcourses_desc", "mnet"));
 
     echo "<hr />";
 
@@ -34,7 +36,10 @@
             . "host={$mnethost}&amp;courseid={$course->id}&amp;sesskey={$USER->sesskey}";
         print ('<tr>'
                . "<td>$icon</td>"
-               . "<td ><a href=\"$link\">".s($course->shortname). '&nbsp;'.s($course->fullname). "</a></td>"
+               . "<td><a href=\"$link\">".s($course->fullname). "</a></td>"
+               . '</tr><tr>'
+               . '<td></td>'
+               . '<td>'.s($course->shortname). ' - ' .s($course->cat_name).'</td>'
                . '</tr><tr>'
                . '<td></td>'
                . "<td align=\"left\" >{$course->summary}</td>"
