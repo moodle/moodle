@@ -110,6 +110,7 @@ class user_edit_form extends moodleform {
         $choices["1"] = get_string("htmlformat");
         $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);
         $mform->setType('mailformat', PARAM_INT);
+        $mform->setAdvanced('mailformat');
 
         if (!empty($CFG->unicodedb) && !empty($CFG->allowusermailcharset)) {
             $mailcharset = get_user_preferences('mailcharset', '0', $user->id);
@@ -124,7 +125,9 @@ class user_edit_form extends moodleform {
             $mform->addElement('select', 'mailcharset', get_string('emailcharset'), $choices);
             $mform->setType('mailcharset', PARAM_CLEAN);
             $mform->setDefault('mailcharset', $mailcharset);
+            $mform->setAdvanced('mailcharset');
         }
+
 
         $choices = array();
         $choices['0'] = get_string('emaildigestoff');
@@ -133,6 +136,7 @@ class user_edit_form extends moodleform {
         $mform->addElement('select', 'maildigest', get_string('emaildigest'), $choices);
         $mform->setType('maildigest', PARAM_INT);
         $mform->setDefault('maildigest', 0);
+        $mform->setAdvanced('maildigest');
 
         $choices = array();
         $choices["1"] = get_string("autosubscribeyes");
@@ -140,6 +144,7 @@ class user_edit_form extends moodleform {
         $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
         $mform->setType('autosubscribe', PARAM_INT);
         $mform->setDefault('autosubscribe', 0);
+        $mform->setAdvanced('autosubscribe');
 
         if (!empty($CFG->forum_trackreadposts)) {
             $choices = array();
@@ -149,6 +154,7 @@ class user_edit_form extends moodleform {
             $mform->setType('trackforums', PARAM_INT);
             $mform->setDefault('trackforums', 0);
         }
+        $mform->setAdvanced('trackforums');
 
         if ($CFG->htmleditor) {
             $choices = array();
@@ -158,6 +164,7 @@ class user_edit_form extends moodleform {
             $mform->setType('htmleditor', PARAM_INT);
             $mform->setDefault('htmleditor', 1);
         }
+        $mform->setAdvanced('htmleditor');
 
         $choices = array();
         $choices["0"] = get_string("ajaxno");
@@ -168,6 +175,7 @@ class user_edit_form extends moodleform {
         if (empty($CFG->enableajax)) {
             $mform->hardFreeze('ajax');
         }
+        $mform->setAdvanced('ajax');
 
         $mform->addElement('text', 'city', get_string('city'), 'maxlength="100" size="25"');
         $mform->setType('city', PARAM_MULTILANG);
@@ -175,7 +183,7 @@ class user_edit_form extends moodleform {
 
 
         $choices = get_list_of_countries();
-        $choices[0] = get_string('selectacountry').'...'; 
+        $choices[0] = get_string('selectacountry').'...';
         $mform->addElement('select', 'country', get_string('selectacountry'), $choices);
         $mform->setType('country', PARAM_ALPHA);
         $mform->addRule('country', $strrequired, 'required', null, 'client');
@@ -206,6 +214,7 @@ class user_edit_form extends moodleform {
             $choices += get_list_of_themes();
             $mform->addElement('select', 'theme', get_string('preferredtheme'), $choices);
             $mform->setType('theme', PARAM_ALPHANUM);
+            $mform->setAdvanced('theme');
         }
 
         $mform->addElement('htmleditor', 'description', get_string('userdescription'));
@@ -221,6 +230,7 @@ class user_edit_form extends moodleform {
         $mform->addElement('select', 'screenreader', get_string('screenreaderuse'), $choices);
         $mform->setType('screenreader', PARAM_INT);
         $mform->setDefault('screenreader', 0);
+        $mform->setAdvanced('screenreader');
 
         $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes);
         if (!empty($CFG->gdversion) and $maxbytes and (empty($CFG->disableuserimages) or $userupdate)) {
@@ -246,7 +256,8 @@ class user_edit_form extends moodleform {
 
 
         /// Moodle optional fields
-        $mform->addElement('header', 'moodle_optional', get_string('followingoptional'));
+        $mform->addElement('header', 'moodle_optional', get_string('optional', 'form'));
+        $mform->setAdvanced('moodle_optional');
 
         $mform->addElement('text', 'url', get_string('webpage'), 'maxlength="255" size="50"');
         $mform->setType('url', PARAM_URL);
