@@ -244,7 +244,7 @@ class course_edit_form extends moodleform {
         $choices = array();
         $choices['0'] = get_string('no');
         $choices['1'] = get_string('yes');
-        $mform->addElement('select', 'expirynotify', get_string('expirynotify'), $choices);
+        $mform->addElement('select', 'expirynotify', get_string('notify'), $choices);
         $mform->setHelpButton('expirynotify', array('expirynotify', get_string('expirynotify')), true);
         $mform->setDefault('expirynotify', 0);
 
@@ -262,12 +262,12 @@ class course_edit_form extends moodleform {
         $mform->setDefault('expirythreshold', 10 * 86400);
 
 //--------------------------------------------------------------------------------
-        $mform->addElement('header','', get_string('groupmode'));
+        $mform->addElement('header','', get_string('groups', 'group'));
 
         $choices = array();
-        $choices[NOGROUPS] = get_string('groupsnone');
-        $choices[SEPARATEGROUPS] = get_string('groupsseparate');
-        $choices[VISIBLEGROUPS] = get_string('groupsvisible');
+        $choices[NOGROUPS] = get_string('no');
+        $choices[SEPARATEGROUPS] = get_string('separate');
+        $choices[VISIBLEGROUPS] = get_string('visible');
         $mform->addElement('select', 'groupmode', get_string('groupmode'), $choices);
         $mform->setHelpButton('groupmode', array('groupmode', get_string('groupmode')), true);
         $mform->setDefault('groupmode', 0);

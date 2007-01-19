@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // moodle.php - created with Moodle 1.7 beta + (2006101003)
 
 
@@ -1005,6 +1005,7 @@ $string['nothingtodisplay'] = 'Nothing to display';
 $string['noticenewerbackup'] = 'This backup file has been created with Moodle $a->backuprelease ($a->backupversion) and it\'s newer than your currently installed Moodle $a->serverrelease ($a->serverversion). This could cause some inconsistencies because backwards compatibility of backup files cannot be guaranteed.';
 $string['notifications'] = 'Notifications';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, User: $a->info';
+$string['notify'] = 'Notify';
 $string['notifyloginfailuresmessageend'] = 'You can view these logs at $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
 $string['notifyloginfailuresmessagestart'] = 'Here is a list of failed login attempts at $a since you were last notified';
 $string['notifyloginfailuressubject'] = '$a :: Failed logins notification';
@@ -1206,6 +1207,7 @@ $string['selectednowmove'] = '$a files selected for moving. Now go to the destin
 $string['selectnos'] = 'Select all \'no\'';
 $string['selectperiod'] = 'Select period';
 $string['senddetails'] = 'Send my details via email';
+$string['separate'] = 'Separate';
 $string['separateandconnected'] = 'Separate and Connected ways of knowing';
 $string['serverlocaltime'] = 'Server\'s local time';
 $string['settings'] = 'Settings';
