@@ -281,7 +281,9 @@
 
 
     print_header_simple($ewiki_title?$ewiki_title:format_string($wiki->name), "",
-                "<a href=\"index.php?id=$course->id\">$strwikis</a> -> <a href=\"view.php?id=$moodleID\">".format_string($wiki->name,true)."</a>".($ewiki_title?" -> $ewiki_title":""),
+                "<a href=\"index.php?id=$course->id\">$strwikis</a>".
+                    (($ewiki_title!=$wiki->name) ? " -> <a href=\"view.php?id=$moodleID\">".format_string($wiki->name,true)."</a>":"").
+                    ($ewiki_title?" -> $ewiki_title":""),
                 "", "", $cacheme, update_module_button($cm->id, $course->id, $strwiki),
                 navmenu($course, $cm));
 
