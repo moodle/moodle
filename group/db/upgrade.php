@@ -211,14 +211,24 @@ function xmldb_group_upgrade($oldversion=0) {
 
     $result = true;
 
-/// And upgrade begins here. For each one, you'll need one 
-/// block of code similar to the next one. Please, delete 
-/// this comment lines once this file start handling proper
-/// upgrade code.
+    if ($result && $oldversion < 2007012000) {
 
-/// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
-///     $result = result of "/lib/ddllib.php" function calls
-/// }
+    /// Changing nullability of field description on table groups to null
+        $table = new XMLDBTable('groups');
+        $field = new XMLDBField('description');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'name');
+
+    /// Launch change of nullability for field description
+        $result = $result && change_field_notnull($table, $field);
+
+    /// Changing nullability of field description on table groups_groupings to null
+        $table = new XMLDBTable('groups_groupings');
+        $field = new XMLDBField('description');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'name');
+
+    /// Launch change of nullability for field description
+        $result = $result && change_field_notnull($table, $field);
+    }
 
     return $result;
 }
