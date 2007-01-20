@@ -1234,7 +1234,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
                 replace_smilies($text);
             }
             if (!$options->noclean) {
-                $text = clean_text($text, $format);
+                $text = clean_text($text, FORMAT_HTML);
             }
             if ($options->filter) {
                 $text = filter_text($text, $courseid);
@@ -1242,7 +1242,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             break;
 
         case FORMAT_PLAIN:
-            $text = s($text);
+            $text = s($text); // cleans dangerous JS
             $text = rebuildnolinktag($text);
             $text = str_replace('  ', '&nbsp; ', $text);
             $text = nl2br($text);
@@ -1262,7 +1262,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
                 replace_smilies($text);
             }
             if (!$options->noclean) {
-                $text = clean_text($text, $format);
+                $text = clean_text($text, FORMAT_HTML);
             }
 
             if ($options->filter) {
@@ -1273,7 +1273,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         default:  // FORMAT_MOODLE or anything else
             $text = text_to_html($text, $options->smiley, $options->para, $options->newlines);
             if (!$options->noclean) {
-                $text = clean_text($text, $format);
+                $text = clean_text($text, FORMAT_HTML);
             }
 
             if ($options->filter) {
