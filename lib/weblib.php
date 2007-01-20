@@ -2883,9 +2883,13 @@ function print_continue($link, $return=false) {
 
     $output = '';
 
-    if (!$link) {
-
-        $link = $_SERVER['HTTP_REFERER'];
+    if ($link == '') {
+        if (!empty($_SERVER['HTTP_REFERER'])) {
+            $link = $_SERVER['HTTP_REFERER'];
+            $link = str_replace('&', '&amp;', $link); // make it valid XHTML 
+        } else {
+            $link = $CFG->wwwroot .'/';
+        }
     }
 
     $output .= '<div class="continuebutton">';
@@ -2925,7 +2929,7 @@ function print_box($message, $classes='generalbox', $ids='', $return=false) {
     }
 }
 
-/* 
+/**
  * Starts a box using divs
  * Replaces print_simple_box_start (see deprecatedlib.php)
  *
@@ -2950,7 +2954,7 @@ function print_box_start($classes='generalbox', $ids='', $return=false) {
 }
 
 
-/* 
+/**
  * Simple function to end a box (see above)
  * Replaces print_simple_box_end (see deprecatedlib.php)
  *
@@ -2979,14 +2983,14 @@ function print_single_button($link, $options, $label='OK', $method='get', $targe
     $output = '';
     $output .= '<div class="singlebutton">';
     // taking target out, will need to add later target="'.$target.'"
-    $output .= '<form action="'. $link .'" method="'. $method .'">';   
+    $output .= '<form action="'. s($link) .'" method="'. $method .'">';   
     $output .= '<fieldset class="invisiblefieldset">';
     if ($options) {
         foreach ($options as $name => $value) {
-            $output .= '<input type="hidden" name="'. $name .'" value="'. $value .'" />';
+            $output .= '<input type="hidden" name="'. $name .'" value="'. s($value) .'" />';
         }
     }
-    $output .= '<input type="submit" value="'. $label .'" /></fieldset></form></div>';
+    $output .= '<input type="submit" value="'. s($label) .'" /></fieldset></form></div>';
 
     if ($return) {
         return $output;
@@ -4810,15 +4814,6 @@ function notice ($message, $link='', $course=NULL, $adminroot='') {
     global $CFG, $SITE;
 
     $message = clean_text($message);
-    $link    = clean_text($link);
-
-    if (!$link) {
-        if (!empty($_SERVER['HTTP_REFERER'])) {
-            $link = $_SERVER['HTTP_REFERER'];
-        } else {
-            $link = $CFG->wwwroot .'/';
-        }
-    }
 
     print_box($message, 'generalbox', 'notice');
     print_continue($link);
