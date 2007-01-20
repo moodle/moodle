@@ -1779,7 +1779,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
  */
 function require_logout() {
 
-    global $USER, $CFG;
+    global $USER, $CFG, $SESSION;
 
     if (isset($USER) and isset($USER->id)) {
         add_to_log(SITEID, "user", "logout", "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
