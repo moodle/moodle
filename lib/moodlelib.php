@@ -1843,6 +1843,7 @@ function require_course_login($courseorid, $autologinguest=true, $cm=null) {
 function update_user_login_times() {
     global $USER;
 
+    $user = new object();
     $USER->lastlogin = $user->lastlogin = $USER->currentlogin;
     $USER->currentlogin = $user->lastaccess = $user->currentlogin = time();
 
@@ -2094,6 +2095,7 @@ function add_to_metacourse ($metacourseid, $courseid) {
     }
 
     if (!$record = get_record("course_meta","parent_course",$metacourseid,"child_course",$courseid)) {
+        $rec = new object();
         $rec->parent_course = $metacourseid;
         $rec->child_course = $courseid;
         if (!insert_record('course_meta',$rec)) {
@@ -3396,6 +3398,7 @@ function setnew_password_and_mail($user) {
         return false;
     }
 
+    $a = new object();
     $a->firstname   = $user->firstname;
     $a->sitename    = $site->fullname;
     $a->username    = $user->username;
@@ -3440,6 +3443,7 @@ function reset_password_and_mail($user) {
         error("Could not set user password!");
     }
 
+    $a = new object();
     $a->firstname = $user->firstname;
     $a->sitename = $site->fullname;
     $a->username = $user->username;
@@ -3470,6 +3474,7 @@ function reset_password_and_mail($user) {
     $site = get_site();
     $from = get_admin();
 
+    $data = new object();
     $data->firstname = fullname($user);
     $data->sitename = $site->fullname;
     $data->admin = fullname($from) .' ('. $from->email .')';
@@ -3501,6 +3506,7 @@ function send_password_change_confirmation_email($user) {
     $site = get_site();
     $from = get_admin();
 
+    $data = new object();
     $data->firstname = $user->firstname;
     $data->sitename = $site->fullname;
     $data->link = $CFG->httpswwwroot .'/login/forgot_password.php?p='. $user->secret .'&s='. $user->username;
@@ -3887,6 +3893,8 @@ function get_directory_size($rootdir, $excludefile='') {
     // do it this way if we can, it's much faster
     if (!empty($CFG->pathtodu) && is_executable(trim($CFG->pathtodu))) {
         $command = trim($CFG->pathtodu).' -sk --apparent-size '.escapeshellarg($rootdir);
+        $output = null;
+        $return = null;
         exec($command,$output,$return);
         if (is_array($output)) {
             return get_real_size(intval($output[0]).'k'); // we told it to return k.
@@ -4546,7 +4554,7 @@ function get_list_of_themes() {
         if (!file_exists("$CFG->themedir/$theme/config.php")) {   // bad folder
             continue;
         }
-        unset($THEME);    // Note this is not the global one!!  :-)
+        $THEME = new object();    // Note this is not the global one!!  :-)
         include("$CFG->themedir/$theme/config.php");
         if (!isset($THEME->sheets)) {   // Not a valid 1.5 theme
             continue;
@@ -4571,6 +4579,8 @@ function get_list_of_pixnames($lang = '') {
     if (empty($lang)) {
         $lang = current_language();
     }
+
+    $string = array();
 
     $path = $CFG->dirroot .'/lang/en_utf8/pix.php'; // always exists
 
@@ -4691,6 +4701,7 @@ function document_file($file, $include=true) {
     $langs = array(current_language(), get_string('parentlanguage'), 'en');
 
     foreach ($langs as $lang) {
+        $info = new object();
         $info->filepath = $CFG->dirroot .'/lang/'. $lang .'/docs/'. $file;
         $info->urlpath  = $CFG->wwwroot .'/lang/'. $lang .'/docs/'. $file;
 
@@ -5193,6 +5204,7 @@ function check_gd_version() {
 function moodle_needs_upgrading() {
     global $CFG;
 
+    $version = null;
     include_once($CFG->dirroot .'/version.php');  # defines $version and upgrades
     if ($CFG->version) {
         if ($version > $CFG->version) {
@@ -5201,7 +5213,7 @@ function moodle_needs_upgrading() {
         if ($mods = get_list_of_plugins('mod')) {
             foreach ($mods as $mod) {
                 $fullmod = $CFG->dirroot .'/mod/'. $mod;
-                unset($module);
+                $module = new object();
                 if (!is_readable($fullmod .'/version.php')) {
                     notify('Module "'. $mod .'" is not readable - check permissions');
                     continue;
@@ -5296,6 +5308,7 @@ function notify_login_failures() {
                 mtrace('Emailing '. $admin->username .' about '. count($logs) .' failed login attempts');
                 email_to_user($admin,get_admin(),$subject,$message);
             }
+            $conf = new object();
             $conf->name = 'lastnotifyfailure';
             $conf->value = time();
             if ($current = get_record('config', 'name', 'lastnotifyfailure')) {
@@ -6033,6 +6046,8 @@ function unzip_file ($zipfile, $destination = '', $showstatus = true) {
     //    -$zippath is the path where the zip file resides (dir)
     //    -$zipfilename is the name of the zip file (without path)
     //    -$destpath is the destination path where the zip file will uncompressed (dir)
+
+    $list = null;
 
     if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
 
