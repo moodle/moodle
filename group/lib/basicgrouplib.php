@@ -55,7 +55,8 @@ function groups_get_members($groupid, $membertype = false) {
 }
 
 /**
- * Return member records, for backup.
+ * Get the user ID and time added for each member of a group, for backup4.
+ * @return array An array of member records.
  */
 function groups_get_member_records($groupid) {
     if (!$groupid) {
@@ -81,6 +82,10 @@ function groups_get_groups_for_user($userid, $courseid) {
     return $groupids;
 }
 
+/**
+ * Get the groups to which a user belongs in any course on site.
+ * @return array | false An array of the group IDs, or false on error.
+ */
 function groups_get_all_groups_for_user($userid) {
     $groups = get_records('groups_members', 'userid', $userid);
     if (! $groups) {
@@ -358,7 +363,7 @@ function groups_restore_member($member) {
     } else {
         $useradded = groups_db_add_member($member->groupid, $member->userid, $member->timeadded);
     }
-    return true;
+    return $useradded;
 }
 
 
@@ -368,7 +373,7 @@ function groups_restore_member($member) {
 
 
 /**
- * Deletes a group best effort
+ * Delete a group best effort, first removing members and links with courses and groupings. 
  * @param int $groupid The group to delete
  * @return boolean True if deletion was successful, false otherwise
  * See comment above on web service autoupdating. 
@@ -379,20 +384,9 @@ function groups_delete_group($groupid) {
     return $groupdeleted;
 }
 
-/*function groups_delete_groups($groupids) {
-    if (! $groupids) {
-        return false;
-    }
-    $success = true;
-    foreach ($groupids as $id) {
-        $success = $success && groups_db_delete_group($id);
-    }
-    return $success;
-}*/
-
 
 /**
- * Deletes the specified user from the specified group
+ * Deletes the link between the specified user and group.
  * @param int $groupid The group to delete the user from
  * @param int $userid The user to delete
  * @return boolean True if deletion was successful, false otherwise
@@ -406,6 +400,11 @@ function groups_remove_member($groupid, $userid) {
     return $success;
 }
 
+/**
+ * Removes all users from the specified group.
+ * @param int $groupid The ID of the group.
+ * @return boolean True for success, false otherwise.
+ */
 function groups_remove_all_members($groupid) {
     if (! groups_group_exists($groupid)) {
         //Woops, delete group last!
@@ -422,6 +421,5 @@ function groups_remove_all_members($groupid) {
     $success = $success && groups_db_set_group_modified($groupid);
     return $success;
 }
-
 
 ?>

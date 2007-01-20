@@ -31,12 +31,6 @@ function groups_get_groupings($courseid) {
 
 
 function groups_get_grouping_records($courseid) {
-    /*$groupingids = groups_db_get_groupings($courseid);
-    if (! $groupingids) {
-        return false;
-    }
-    $groupings = groups_groupingids_to_groupings($groupingids);
-*/
     global $CFG;
     if (! $courseid) {
         return false;
@@ -50,7 +44,7 @@ function groups_get_grouping_records($courseid) {
 }
 
 /**
- * Gets a list of the groups in a specified grouping
+ * Gets a list of the group IDs in a specified grouping
  * @param int $groupingid The id of the grouping
  * @return array | false. An array of the ids of the groups, or false if there
  * are none or an error occurred.
@@ -59,6 +53,11 @@ function groups_get_groups_in_grouping($groupingid) {
     return groups_db_get_groups_in_grouping($groupingid);
 }
 
+/**
+ * Gets complete group-data for each group in a grouping.
+ * @param int $groupingid The ID of the grouping.
+ * @return array | false An array of group records, or false on error.
+ */
 function groups_get_groups_in_grouping_records($groupingid) {
     if (! $groupingid) {
         return false;
@@ -127,10 +126,7 @@ function groups_get_groups_not_in_grouping($groupingid, $courseid) {
  */
 function groups_get_groups_not_in_any_grouping($courseid) {
     global $CFG;
-/*Was: $sql = "SELECT g.id FROM {$CFG->prefix}groups AS g
-        WHERE g.id NOT IN 
-        (SELECT groupid FROM {$CFG->prefix}groups_groupings_groups)";
-*/
+
     $join = '';
     $where= '';
     if ($courseid) {
@@ -146,14 +142,7 @@ function groups_get_groups_not_in_any_grouping($courseid) {
 
     $records = get_records_sql($sql);
     $groupids = groups_groups_to_groupids($records, $courseid);
-    /*$groupids = array();
-    if ($records) {
-        foreach ($records as $r) {
-            $groupids[] = $r->id;
-        }
-    } else {
-        return false;
-    }*/
+
     return $groupids;
 }
 
@@ -418,7 +407,7 @@ function groups_set_grouping_for_coursemodule($groupingid, $coursemoduleid) {
  *****************************/
 
 /** 
- * Removes a specified group from a specified grouping. Note that this does 
+ * Removes a specified group from a grouping. Note that this does 
  * not delete the group. 
  * @param int $groupid The id of the group.
  * @param int $groupingid The id of the grouping
@@ -437,6 +426,27 @@ function groups_remove_group_from_grouping($groupid, $groupingid) {
 function groups_delete_grouping($groupingid) {
     return groups_db_delete_grouping($groupingid);
     
+}
+
+/**
+ * Delete all groupings from a course. Groups MUST be deleted first.
+ * TODO: If groups or groupings are to be shared between courses, think again!
+ * @param $courseid The course ID.
+ * @return boolean True if all deletes were successful, false otherwise.
+ */
+function groups_delete_all_groupings($courseid) {
+    if (! $courseid) {
+        return false;
+    }
+    $groupingids = groups_get_groupings($courseid);
+    if (! $groupingids) {
+        return true;
+    }
+    $success = true;
+    foreach ($groupingids as $gg_id) {
+        $success = $success && groups_db_delete_grouping($gg_id);
+    }
+    return $success;
 }
 
 ?>

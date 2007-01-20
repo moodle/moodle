@@ -2936,10 +2936,11 @@ function remove_course_contents($courseid, $showfeedback=true) {
         }
     }
 
-/// Delete any groups, removing members first. TODO: check.
+/// Delete any groups, removing members and grouping/course links first.
+    //TODO: If groups or groupings are to be shared between courses, think again!
     if ($groupids = groups_get_groups($course->id)) {
         foreach ($groupids as $groupid) {
-            if (groups_remove_all_group_members($groupid)) {
+            if (groups_remove_all_members($groupid)) {
                 if ($showfeedback) {
                     notify($strdeleted .' groups_members');
                 }
@@ -2947,7 +2948,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
                 $result = false;
             }
             /// Delete any associated context for this group ??
-            delete_context(CONTEXT_GROUP, $group->id);
+            delete_context(CONTEXT_GROUP, $groupid);
             
             if (groups_delete_group($groupid)) {
                 if ($showfeedback) {
@@ -2957,6 +2958,11 @@ function remove_course_contents($courseid, $showfeedback=true) {
                 $result = false;
             }
         }
+    }
+/// Delete any groupings.
+    $result = groups_delete_all_groupings($course->id);
+    if ($result && $showfeedback) {
+        notify($strdeleted .' groupings');
     }
 
 /// Delete all related records in other tables that may have a courseid

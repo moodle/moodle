@@ -356,7 +356,7 @@ function groups_db_remove_member($groupid, $userid) {
 
 
 /** 
- * Deletes a specified group
+ * Delete a specified group, first removing members and links with courses and groupings. 
  * @param int $groupid The group to delete
  * @return boolean True if deletion was successful, false otherwise
  */
@@ -365,8 +365,7 @@ function groups_db_delete_group($groupid) {
         $success = false;
     } else {
         $success = true;
-        // Get a list of the users for the group and delete them all from the 
-        // group
+        // Get a list of users for the group and remove them all.
 
         $userids = groups_db_get_members($groupid);
         if ($userids != false) {
@@ -378,7 +377,8 @@ function groups_db_delete_group($groupid) {
 	        }
         }
 
-        // Remove any groupings that the group belongs to     
+        // Remove any links with groupings to which the group belongs.
+        //TODO: dbgroupinglib also seems to delete these links - duplication?
 	    $groupingids = groups_get_groupings_for_group($groupid); 
  	    if ($groupingids != false) {
 		    foreach($groupingids as $groupingid) {
@@ -390,6 +390,7 @@ function groups_db_delete_group($groupid) {
 		    }
 	    }
 
+        // Remove links with courses.
 		$results = delete_records('groups_courses_groups', 'groupid', $groupid);
 		if ($results == false) {
 			$success = false;
