@@ -54,6 +54,19 @@ function groups_get_members($groupid, $membertype = false) {
     return $userids;
 }
 
+/**
+ * Return member records, for backup.
+ */
+function groups_get_member_records($groupid) {
+    if (!$groupid) {
+        return false;
+    }
+    $members = get_records('groups_members', 'groupid ', $groupid, '', 
+                          $fields='id, userid, timeadded');
+
+    return $members;
+}
+
 
 /**
  * Gets the groups to which a user belongs for a specified course. 
@@ -103,8 +116,8 @@ function groups_get_groups_for_current_user($courseid) {
  * @param int $groupid The id of the gruop
  * @return object The group settings object 
  */
-function groups_get_group_settings($groupid, $courseid=false) {
-	return groups_db_get_group_settings($groupid, $courseid);
+function groups_get_group_settings($groupid, $courseid=false, $alldata=false) {
+	return groups_db_get_group_settings($groupid, $courseid, $alldata);
 }
 
 /**
@@ -176,6 +189,28 @@ function groups_users_in_common_group($userid1, $userid2) {
  */
 function groups_group_exists($groupid) {
 	return groups_db_group_exists($groupid);
+}
+
+/**
+ * Determine if a course ID, group name and description match a group in the database.
+ *   For backup/restorelib.php
+ * @return mixed A group-like object with $group->id, or false.
+ */
+function groups_group_matches($courseid, $grp_name, $grp_description) {
+//$gro_db->id; $gro_db = get_record("groups","courseid",$restore->course_id,"name",$gro->name,"description",$gro->description);    
+    global $CFG;
+    $sql = "SELECT g.id, g.name, g.description
+        FROM {$CFG->prefix}groups AS g
+        INNER JOIN {$CFG->prefix}groups_courses_groups AS cg ON g.id = cg.groupid
+        WHERE g.name = '$grp_name'
+        AND g.description = '$grp_description'
+        AND cg.courseid = '$courseid'";
+    $records = get_records_sql($sql);
+    $group = false;
+    if ($records) {
+        $group = $records[0];
+    } 
+    return $group;
 }
 
 /**
@@ -263,6 +298,14 @@ function groups_create_group($courseid, $groupsettings = false) {
 	return groups_db_create_group($courseid, $groupsettings);
 }
 
+/**
+ * Restore a group for a specified course.
+ *   For backup/restorelib.php 
+ */
+function groups_restore_group($courseid, $groupsettings) {
+    return groups_db_create_group($courseid, $groupsettings, $copytime=true);
+}
+
 
 /**
  * Sets the information about a group
@@ -299,6 +342,23 @@ function groups_add_member($groupid, $userid) {
         $useradded = groups_db_set_group_modified($groupid);
     }
 	return $useradded;
+}
+
+/**
+ * Restore a user to the group specified in $member.
+ *   For backup/restorelib.php
+ * @param $member object Group member object.
+ */
+function groups_restore_member($member) {
+    $alreadymember = groups_is_member($member->groupid, $member->userid);
+    if (! groups_group_exists($member->groupid)) {
+        return false;
+    } elseif ($alreadymember) {
+        return true;
+    } else {
+        $useradded = groups_db_add_member($member->groupid, $member->userid, $member->timeadded);
+    }
+    return true;
 }
 
 

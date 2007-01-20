@@ -56,7 +56,7 @@ function get_groups($courseid, $userid=0) {
 		$groupids = groups_get_groups($courseid);
 	}
 
-	return groups_groupids_to_groups($groupids, $courseid);
+	return groups_groupids_to_groups($groupids, $courseid, $alldata=true);
 }
 
 

@@ -286,6 +286,16 @@
         return $info;
     }
 
+    //This function read the xml file and store its data from the groupings in
+    //backup_ids->info db (and grouping's id in $info)
+    function restore_read_xml_groupings ($restore,$xml_file) {
+
+        //We call the main read_xml function, with todo = GROUPINGS
+        $info = restore_read_xml ($xml_file,"GROUPINGS",$restore);
+
+        return $info;
+    }
+
     //This function read the xml file and store its data from the events (course) in
     //backup_ids->info db (and event's id in $info)
     function restore_read_xml_events ($restore,$xml_file) {
@@ -2140,10 +2150,15 @@
                         //print_object ($GLOBALS['traverse_array']);                                                  //Debug
                         //$GLOBALS['traverse_array']="";                                                              //Debug
                         //Now build the GROUP record structure
-                        $gro->courseid = backup_todb($info['GROUP']['#']['COURSEID']['0']['#']);
+                        $gro = new Object();
+                        ///$gro->courseid = backup_todb($info['GROUP']['#']['COURSEID']['0']['#']);
                         $gro->name = backup_todb($info['GROUP']['#']['NAME']['0']['#']);
                         $gro->description = backup_todb($info['GROUP']['#']['DESCRIPTION']['0']['#']);
-                        $gro->password = backup_todb($info['GROUP']['#']['PASSWORD']['0']['#']);
+                        if (isset($info['GROUP']['#']['ENROLMENTKEY']['0']['#'])) {
+                            $gro->enrolmentkey = backup_todb($info['GROUP']['#']['ENROLMENTKEY']['0']['#']);
+                        } else { //if (! isset($gro->enrolment)) {
+                            $gro->enrolmentkey = backup_todb($info['GROUP']['#']['PASSWORD']['0']['#']);
+                        }
                         $gro->lang = backup_todb($info['GROUP']['#']['LANG']['0']['#']);
                         $gro->theme = backup_todb($info['GROUP']['#']['THEME']['0']['#']);
                         $gro->picture = backup_todb($info['GROUP']['#']['PICTURE']['0']['#']);
@@ -2152,8 +2167,8 @@
                         $gro->timemodified = backup_todb($info['GROUP']['#']['TIMEMODIFIED']['0']['#']);
                 
                         //Now search if that group exists (by name and description field) in 
-                        //restore->course_id course 
-                        $gro_db = get_record("groups","courseid",$restore->course_id,"name",$gro->name,"description",$gro->description);
+                        //restore->course_id course
+                        $gro_db = groups_group_matches($restore->course_id, $gro->name, $gro->description); 
                         //If it doesn't exist, create
                         if (!$gro_db) {
                             $create_group = true;
@@ -2170,7 +2185,7 @@
                             }
 
                             //The structure is equal to the db, so insert the group
-                            $newid = insert_record ("groups",$gro);
+                            $newid = groups_restore_group($restore->course_id, $gro);
                         } else { 
                             //get current group id
                             $newid = $gro_db->id;
@@ -2216,6 +2231,7 @@
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
             //Now, build the GROUPS_MEMBERS record structure
+            $group_member = new Object();
             $group_member->groupid = $group_id;
             $group_member->userid = backup_todb($mem_info['#']['USERID']['0']['#']);
             $group_member->timeadded = backup_todb($mem_info['#']['TIMEADDED']['0']['#']);
@@ -2227,7 +2243,124 @@
             }
 
             //The structure is equal to the db, so insert the groups_members
-            $newid = insert_record ("groups_members",$group_member);
+            $newid = groups_restore_member($group_member);
+            //Do some output
+            if (($i+1) % 50 == 0) {
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br />";
+                    }
+                }
+                backup_flush(300);
+            }
+            
+            if (!$newid) {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
+    
+    //This function creates all the groupings
+    function restore_create_groupings($restore,$xml_file) {
+
+        global $CFG, $db;
+
+        $status = true;
+        $status2 = true;
+        //Check it exists
+        if (!file_exists($xml_file)) {
+            $status = false;
+        }
+        //Get info from xml
+        if ($status) {
+            //groupings will contain the old_id of every group
+            //in backup_ids->info will be the real info (serialized)
+            $groupings = restore_read_xml_groupings($restore,$xml_file);
+        }
+        //Now, if we have anything in groupings, we have to restore that grouping
+        if ($groupings) {
+            if ($groupings !== true) {
+                //Iterate over each group
+                foreach ($groupings as $grouping) {
+                    //Get record from backup_ids
+                    $data = backup_getid($restore->backup_unique_code,"groupings",$grouping->id);
+                    //Init variables
+                    $create_grouping = false;
+
+                    if ($data) {
+                        //Now get completed xmlized object
+                        $info = $data->info;
+                        //Now build the GROUPING record structure
+                        $gro = new Object();
+                        ///$gro->id = backup_todb($info['GROUPING']['#']['ID']['0']['#']);
+                        $gro->name = backup_todb($info['GROUPING']['#']['NAME']['0']['#']);
+                        $gro->description = backup_todb($info['GROUPING']['#']['DESCRIPTION']['0']['#']);
+                        $gro->timecreated = backup_todb($info['GROUPING']['#']['TIMECREATED']['0']['#']);
+                
+                        //Now search if that group exists (by name and description field) in 
+                        //restore->course_id course
+                        $gro_db = groups_grouping_matches($restore->course_id, $gro->name, $gro->description); 
+                        //If it doesn't exist, create
+                        if (!$gro_db) {
+                            $create_grouping = true;
+                        }
+                        //If we must create the group
+                        if ($create_grouping) {
+
+                            //The structure is equal to the db, so insert the grouping TODO: RESTORE.
+                            $newid = groups_create_grouping($restore->course_id, $gro);
+                        } else { 
+                            //get current group id
+                            $newid = $gro_db->id;
+                        }
+                        if ($newid) {
+                            //We have the newid, update backup_ids
+                            backup_putid($restore->backup_unique_code,"groupings",
+                                         $grouping->id, $newid);
+                        }
+                        //Now restore links from groupings to groups
+                        $status2 = restore_create_groupings_groups($newid,$info,$restore);
+                    }   
+                }
+                //(Now, restore grouping_files)
+            }
+        } else {
+            $status = false;
+        } 
+        return ($status && $status2);
+    }
+    
+    //This function restores the groups_members
+    function restore_create_groupings_groups($grouping_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get the members array
+        $members = $info['GROUPING']['#']['GROUPS']['0']['#']['GROUP'];
+
+        //Iterate over members
+        for($i = 0; $i < sizeof($members); $i++) {
+            $mem_info = $members[$i];
+            //Now, build the GROUPINGS_GROUPS record structure
+            $gro_member = new Object();
+            $gro_member->groupingid = $grouping_id;
+            $gro_member->groupid = backup_todb($mem_info['#']['GROUPID']['0']['#']);
+            $gro_member->timeadded = backup_todb($mem_info['#']['TIMEADDED']['0']['#']);
+
+            //We have to recode the userid field
+            ///$user = backup_getid($restore->backup_unique_code,"user",$group_member->userid);
+            $group = backup_getid($restore->backup_unique_code,"group",$gro_member->groupid);
+            if ($group) {
+                $gro_member->groupid = $group->new_id;
+            }
+
+            //The structure is equal to the db, so link the groups to the groupings. TODO: RESTORE.
+            $newid = groups_add_group_to_grouping($gro_member->groupid, $gro_member->groupingid);
             //Do some output
             if (($i+1) % 50 == 0) {
                 if (!defined('RESTORE_SILENTLY')) {
@@ -3325,6 +3458,33 @@
             //If we are under a GROUP tag under a GROUPS zone, accumule it
             if (isset($this->tree[4]) and isset($this->tree[3])) {
                 if (($this->tree[4] == "GROUP") and ($this->tree[3] == "GROUPS")) {
+                    if (!isset($this->temp)) {
+                        $this->temp = "";
+                    }
+                    $this->temp .= "<".$tagName.">";
+                }
+            }
+        }
+        
+        function startElementGroupings($parser, $tagName, $attrs) { //TODO:
+            //Refresh properties
+            $this->level++;
+            $this->tree[$this->level] = $tagName;
+
+            //if ($tagName == "GROUPING" && $this->tree[3] == "GROUPINGS") {                                 //Debug
+            //    echo "<P>GROUPING: ".strftime ("%X",time()),"-";                                        //Debug
+            //}                                                                                        //Debug
+
+            //Output something to avoid browser timeouts...
+            backup_flush();
+
+            //Check if we are into GROUPINGS zone
+            //if ($this->tree[3] == "GROUPINGS")                                                           //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
+
+            //If we are under a GROUPING tag under a GROUPINGS zone, accumule it
+            if (isset($this->tree[4]) and isset($this->tree[3])) {
+                if (($this->tree[4] == "GROUPING") and ($this->tree[3] == "GROUPINGS")) {
                     if (!isset($this->temp)) {
                         $this->temp = "";
                     }
@@ -4909,6 +5069,7 @@
                     $status = backup_putid($this->preferences->backup_unique_code,"groups",$group_id,
                                      null,$data);
                     //Create returning info
+                    $ret_info = new Object();
                     $ret_info->id = $group_id;
                     $this->info[] = $ret_info;
                     //Reset temp
@@ -4919,6 +5080,50 @@
             //Stop parsing if todo = GROUPS and tagName = GROUP (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "GROUPS" and $this->level == 3) {
+                $this->finished = true;
+            }
+
+            //Clear things
+            $this->tree[$this->level] = "";
+            $this->level--;
+            $this->content = "";
+
+        }
+
+        //This is the endTag handler we use where we are reading the groups zone (todo="GROUPINGS")
+        function endElementGroupings($parser, $tagName) { //TODO:
+            //Check if we are into GROUPS zone
+            if ($this->tree[3] == "GROUPINGS") {
+                //Acumulate data to info (content + close tag)
+                //Reconvert: strip htmlchars again and trim to generate xml data
+                if (!isset($this->temp)) {
+                    $this->temp = "";
+                }
+                $this->temp .= htmlspecialchars(trim($this->content))."</".$tagName.">";
+                //If we've finished a group, xmlize it an save to db
+                if (($this->level == 4) and ($tagName == "GROUPING")) {
+                    //Prepend XML standard header to info gathered
+                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                    //Call to xmlize for this portion of xml data (one GROUPING)
+                    $data = xmlize($xml_data,0);
+                    //Now, save data to db. We'll use it later
+                    //Get id and from data
+                    $grouping_id = $data["GROUPING"]["#"]["ID"]["0"]["#"];
+                    //Save to db
+                    $status = backup_putid($this->preferences->backup_unique_code,"groupings",$grouping_id,
+                                     null,$data);
+                    //Create returning info
+                    $ret_info = new Object();
+                    $ret_info->id = $grouping_id;
+                    $this->info[] = $ret_info;
+                    //Reset temp
+                    unset($this->temp);
+                }
+            }
+
+            //Stop parsing if todo = GROUPINGS and tagName = GROUPING (en of the tag, of course)
+            //Speed up a lot (avoid parse all)
+            if ($tagName == "GROUPINGS" and $this->level == 3) {
                 $this->finished = true;
             }
 
@@ -5170,6 +5375,9 @@
         } else if ($todo == "GROUPS") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementGroups", "endElementGroups");
+        } else if ($todo == "GROUPINGS") {
+            //Define handlers to that zone
+            xml_set_element_handler($xml_parser, "startElementGroupings", "endElementGroupings");
         } else if ($todo == "EVENTS") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementEvents", "endElementEvents");
@@ -5834,6 +6042,24 @@
                     notify("Could not restore groups!");
                 } else {
                     $errorstr = "Could not restore groups!";
+                    return false;
+                }
+            }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '</li>';
+            }
+        }
+
+        //Now create groupings as needed
+        if ($status) {
+            if (!defined('RESTORE_SILENTLY')) {
+                echo "<li>".get_string("creatinggroupings");
+            }
+            if (!$status = restore_create_groupings($restore,$xml_file)) {
+                if (!defined('RESTORE_SILENTLY')) {
+                    notify("Could not restore groupings!");
+                } else {
+                    $errorstr = "Could not restore groupings!";
                     return false;
                 }
             }

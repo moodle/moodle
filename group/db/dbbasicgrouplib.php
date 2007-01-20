@@ -123,12 +123,13 @@ function groups_db_get_groups_for_user($userid, $courseid) {
  * @param $courseid Optionally add the course ID, for backwards compatibility.
  * @return object The group settings object 
  */
-function groups_db_get_group_settings($groupid, $courseid=false) {
+function groups_db_get_group_settings($groupid, $courseid=false, $alldata=false) {
    if (!$groupid) {
         $groupsettings = false;
     } else {
         global $CFG;
-        $sql = "SELECT id, name, description, lang, theme, picture, hidepicture 
+        $select = ($alldata) ? '*' : 'id, name, description, lang, theme, picture, hidepicture';
+        $sql = "SELECT $select
                 FROM {$CFG->prefix}groups
                 WHERE id = $groupid";
         $groupsettings = get_record_sql($sql);
@@ -234,16 +235,19 @@ function groups_db_group_belongs_to_course($groupid, $courseid) {
  * @param int $courseid The course to create the group for
  * @return int The id of the group created or false if the create failed.
  */
-function groups_db_create_group($courseid, $groupsettings = false) {
+function groups_db_create_group($courseid, $groupsettings=false, $copytime=false) {
 	// Check we have a valid course id
     if (!$courseid) {
         $groupid = false; 
     } else {      
     	$groupsettings = groups_set_default_group_settings($groupsettings);
-    		
+
     	$record = $groupsettings;
-        $record->timecreated = time();
-        $record->timemodified = time();
+        if (! $copytime) {
+            $now = time();
+            $record->timecreated = $now;
+            $record->timemodified = $now;
+        }
         //print_r($record);
         $groupid = insert_record('groups', $record);
 
@@ -251,7 +255,11 @@ function groups_db_create_group($courseid, $groupsettings = false) {
             $record2 = new Object();
 	        $record2->courseid = $courseid;
 	        $record2->groupid = $groupid;
-	        $record2->timeadded = time();
+           if ($copytime) {
+                $record2->timeadded = $record->timemodified;
+            } else {
+                $record2->timeadded = $now;
+            }
 	        $groupadded = insert_record('groups_courses_groups', $record2);
 	        if (!$groupadded) {
 	        	$groupid = false;
@@ -268,7 +276,7 @@ function groups_db_create_group($courseid, $groupsettings = false) {
  * @param int $userid   The user id
  * @return boolean True if user added successfully, false otherwise. 
  */
-function groups_db_add_member($groupid, $userid) {
+function groups_db_add_member($groupid, $userid, $copytime=false) {
 	// Check that the user and group are valid
     if (!$userid or !$groupid or !groups_db_group_exists($groupid)) {
         $useradded = false;
@@ -280,7 +288,11 @@ function groups_db_add_member($groupid, $userid) {
         $record = new Object();
 		$record->groupid = $groupid;
 		$record->userid = $userid;
-		$record->timeadded = time();
+        if ($copytime) {
+            $record->timeadded = $copytime;
+        } else {
+		    $record->timeadded = time();
+        }
 		$useradded = insert_record($table = 'groups_members', $record);
 	}
 

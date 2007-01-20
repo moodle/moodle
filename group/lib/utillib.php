@@ -160,18 +160,32 @@ function groups_groupid_to_group($groupid) {
 /**
  * Given an array of group IDs get an array of group objects.
  * TODO: quick and dirty. Replace with SQL?
+ * @param $groupids Array of group IDs.
+ * @param $courseid Default false, or Course ID.
+ * @param $alldata Default false, or get complete record for group.
+ * @param array Array of group objects, with basic or all data.
  */
-function groups_groupids_to_groups($groupids, $courseid=false) {
+function groups_groupids_to_groups($groupids, $courseid=false, $alldata=false) {
     if (! $groupids) {
         return false;
     }
     $groups = array();
     foreach ($groupids as $id) {
-        $groups[] = groups_get_group_settings($id, $courseid);
+        $groups[] = groups_get_group_settings($id, $courseid, $alldata);
     }
     return $groups;
 }
 
+function groups_groupingids_to_groupings($groupingids) {
+    if (! $groupingids) {
+        return false;
+    }
+    $groupings = array();
+    foreach ($groupingids as $id) {
+        $groupings[] = groups_get_grouping_settings($id);
+    }
+    return $groupings;
+}
 
 /**
  * Gets the user object for a given userid. Can't find a function anywhere to 

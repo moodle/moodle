@@ -171,6 +171,14 @@
             }
         }
 
+        //Print groupings info
+        if ($status) {
+            echo "<li>".get_string("writinggroupingsinfo").'</li>';
+            if (!$status = backup_groupings_info($backup_file,$preferences)) {
+                notify("An error occurred while backing up groupings");
+            }
+        }
+
         //Print groups info
         if ($status) {
             echo "<li>".get_string("writinggroupsinfo").'</li>';

@@ -30,6 +30,25 @@ function groups_get_groupings($courseid) {
 }
 
 
+function groups_get_grouping_records($courseid) {
+    /*$groupingids = groups_db_get_groupings($courseid);
+    if (! $groupingids) {
+        return false;
+    }
+    $groupings = groups_groupingids_to_groupings($groupingids);
+*/
+    global $CFG;
+    if (! $courseid) {
+        return false;
+    }
+    $sql = "SELECT gg.*
+        FROM {$CFG->prefix}groups_groupings AS gg
+        INNER JOIN {$CFG->prefix}groups_courses_groupings AS cg ON gg.id = cg.groupingid
+        WHERE cg.courseid = '$courseid'";
+    $groupings = get_records_sql($sql);
+    return $groupings;
+}
+
 /**
  * Gets a list of the groups in a specified grouping
  * @param int $groupingid The id of the grouping
@@ -39,6 +58,17 @@ function groups_get_groupings($courseid) {
 function groups_get_groups_in_grouping($groupingid) {
     return groups_db_get_groups_in_grouping($groupingid);
 }
+
+function groups_get_groups_in_grouping_records($groupingid) {
+    if (! $groupingid) {
+        return false;
+    }
+    $grouping_groups = get_records('groups_groupings_groups', 'groupingid ', 
+                              $groupingid, '', $fields='id, groupid, timeadded');
+    
+    return $grouping_groups;
+}
+
 
 /** 
  * Gets the groupings that a group belongs to 
@@ -252,8 +282,29 @@ function groups_get_grouping_for_coursemodule($coursemoduleid) {
 function groups_grouping_exists($groupingid) {
 	return groups_db_grouping_exists($groupingid);
 }
- 
- /**
+
+/**
+ * Determine if a course ID, grouping name and description match a grouping in the database.
+ *   For backup/restorelib.php
+ * @return mixed A grouping-like object with $grouping->id, or false.
+ */
+function groups_grouping_matches($courseid, $gg_name, $gg_description) {
+    global $CFG;
+    $sql = "SELECT gg.id, gg.name, gg.description
+        FROM {$CFG->prefix}groups_groupings AS gg
+        INNER JOIN {$CFG->prefix}groups_courses_groupings AS cg ON gg.id = cg.groupingid
+        WHERE gg.name = '$gg_name'
+        AND gg.description = '$gg_description'
+        AND cg.courseid = '$courseid'";
+    $records = get_records_sql($sql);
+    $grouping = false;
+    if ($records) {
+        $grouping = $records[0];
+    } 
+    return $grouping;
+}
+
+/**
   * Determines if a group belongs to a specified grouping
   * @param int $groupid The id of the group
   * @param int $groupingid The id of the grouping

@@ -1635,7 +1635,7 @@
 
     //Backup groups info
     function backup_groups_info($bf,$preferences) {
-    
+
         global $CFG;
 
         $status = true;
@@ -1654,10 +1654,10 @@
                 fwrite ($bf,start_tag("GROUP",3,true));
                 //Output group contents
                 fwrite ($bf,full_tag("ID",4,false,$group->id));
-                fwrite ($bf,full_tag("COURSEID",4,false,$group->courseid));
+                ///fwrite ($bf,full_tag("COURSEID",4,false,$group->courseid));
                 fwrite ($bf,full_tag("NAME",4,false,$group->name));
                 fwrite ($bf,full_tag("DESCRIPTION",4,false,$group->description));
-                fwrite ($bf,full_tag("PASSWORD",4,false,$group->password));
+                fwrite ($bf,full_tag("ENROLMENTKEY",4,false,$group->enrolmentkey)); //TODO:
                 fwrite ($bf,full_tag("LANG",4,false,$group->lang));
                 fwrite ($bf,full_tag("THEME",4,false,$group->theme));
                 fwrite ($bf,full_tag("PICTURE",4,false,$group->picture));
@@ -1683,7 +1683,7 @@
         }
         return ($status && $status2);
     }
-
+    
     //Backup groups_members info
     function backup_groups_members_info($bf,$preferences,$groupid) {
   
@@ -1692,7 +1692,7 @@
         $status = true;
 
         //Get groups_members
-        $groups_members = groups_get_members($groupid); //TODO:check.
+        $groups_members = groups_get_member_records($groupid);
         
         //Pring groups_members header
         if ($groups_members) {
@@ -1710,6 +1710,74 @@
             }
             //End groups_members tag
             $status = fwrite ($bf,end_tag("MEMBERS",4,true));
+        }
+        return $status;
+    }
+
+    //Backup groupings info
+    function backup_groupings_info($bf,$preferences) {
+    
+        global $CFG;
+
+        $status = true;
+        $status2 = true;
+
+        //Get groups 
+        $groupings = groups_get_grouping_records($preferences->backup_course);
+
+        //Pring groups header
+        if ($groupings) {
+            //Pring groups header
+            fwrite ($bf,start_tag("GROUPINGS",2,true));
+            //Iterate
+            foreach ($groupings as $grouping) {
+                //Begin group tag
+                fwrite ($bf,start_tag("GROUPING",3,true));
+                //Output group contents
+                fwrite ($bf,full_tag("ID",4,false,$grouping->id));
+                fwrite ($bf,full_tag("NAME",4,false,$grouping->name));
+                fwrite ($bf,full_tag("DESCRIPTION",4,false,$grouping->description));
+                fwrite ($bf,full_tag("TIMECREATED",4,false,$grouping->timecreated));
+
+                $status2 = backup_groupids_info($bf,$preferences,$grouping->id);
+
+                //End group tag
+                fwrite ($bf,end_tag("GROUPING",3,true));
+            }
+            //End groups tag
+            $status = fwrite ($bf,end_tag("GROUPINGS",2,true));
+
+            //(Now save grouping_files)
+        }
+        return ($status && $status2);
+    }
+
+    //Backup groupings-groups info
+    function backup_groupids_info($bf,$preferences,$groupingid) {
+  
+        global $CFG;
+        
+        $status = true;
+
+        //Get groups_members
+        $grouping_groups = groups_get_groups_in_grouping_records($groupingid) ;
+        
+        //Pring groups_members header
+        if ($grouping_groups) {
+            //Pring groups_members header
+            fwrite ($bf,start_tag("GROUPS",4,true));
+            //Iterate
+            foreach ($grouping_groups as $group2) {
+                //Begin group tag
+                fwrite ($bf,start_tag("GROUP",5,true));
+                //Output group_member contents
+                fwrite ($bf,full_tag("GROUPID",6,false,$group2->groupid));
+                fwrite ($bf,full_tag("TIMEADDED",6,false,$group2->timeadded)); //TODO:
+                //End group tag
+                fwrite ($bf,end_tag("GROUP",5,true));
+            }
+            //End groups_members tag
+            $status = fwrite ($bf,end_tag("GROUPS",4,true));
         }
         return $status;
     }
