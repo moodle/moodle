@@ -481,7 +481,7 @@ class XMLDBmssql extends XMLDBgenerator {
             'cursor', 'database', 'dbcc', 'deallocate', 'declare', 'default', 'delete',
             'deny', 'desc', 'disk', 'distinct', 'distributed', 'double', 'drop', 'dummy',
             'dump', 'else', 'end', 'errlvl', 'errorexit', 'escape', 'except', 'exec',
-            'execute', 'exists', 'exit', 'fetch', 'file', 'fillfactor', 'floppy',
+            'execute', 'exists', 'exit', 'external', 'fetch', 'file', 'fillfactor', 'floppy',
             'for', 'foreign', 'freetext', 'freetexttable', 'from', 'full', 'function',
             'goto', 'grant', 'group', 'having', 'holdlock', 'identity', 'identitycol',
             'identity_insert', 'if', 'in', 'index', 'inner', 'insert', 'intersect', 'into',
