@@ -49,6 +49,20 @@ function xmldb_resource_upgrade($oldversion=0) {
         $result = $result && change_field_notnull($table, $field);
     }
 
+    if ($result && $oldversion < 2007012001) {
+
+        if ($CFG->dbfamily == 'mysql') { // Only needed under mysql. The rest are long texts since ages
+
+        /// Changing precision of field alltext on table resource to (medium)
+            $table = new XMLDBTable('resource');
+            $field = new XMLDBField('alltext');
+            $field->setAttributes(XMLDB_TYPE_TEXT, 'medium', null, XMLDB_NOTNULL, null, null, null, null, 'summary');
+
+        /// Launch change of precision for field alltext
+            $result = $result && change_field_precision($table, $field);
+        }
+    }
+
     return $result;
 }
 
