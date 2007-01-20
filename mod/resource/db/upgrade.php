@@ -38,6 +38,17 @@ function xmldb_resource_upgrade($oldversion=0) {
         //ignore result
     }
 
+    if ($result && $oldversion < 2007012000) {
+
+    /// Changing nullability of field summary on table resource to null
+        $table = new XMLDBTable('resource');
+        $field = new XMLDBField('summary');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'reference');
+
+    /// Launch change of nullability for field summary
+        $result = $result && change_field_notnull($table, $field);
+    }
+
     return $result;
 }
 

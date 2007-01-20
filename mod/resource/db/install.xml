@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/resource/db" VERSION="20060812" COMMENT="XMLDB file for Moodle mod/resource">
+<XMLDB PATH="mod/resource/db" VERSION="20070120" COMMENT="XMLDB file for Moodle mod/resource"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
   <TABLES>
     <TABLE NAME="resource" COMMENT="each record is one resource and its config data">
       <FIELDS>
@@ -8,7 +11,7 @@
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="course" NEXT="type"/>
         <FIELD NAME="type" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="reference"/>
         <FIELD NAME="reference" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="type" NEXT="summary"/>
-        <FIELD NAME="summary" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="reference" NEXT="alltext"/>
+        <FIELD NAME="summary" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="reference" NEXT="alltext"/>
         <FIELD NAME="alltext" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="summary" NEXT="popup"/>
         <FIELD NAME="popup" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="alltext" NEXT="options"/>
         <FIELD NAME="options" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="popup" NEXT="timemodified"/>
