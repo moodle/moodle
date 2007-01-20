@@ -427,7 +427,7 @@
                 echo "</td></tr></table>\n";
 
                 if ($usehtmleditor) {
-                    print_richedit_javascript("form", "text", "yes");
+                    use_html_editor("text");
                 }
 
 
