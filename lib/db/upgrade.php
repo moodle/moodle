@@ -524,6 +524,41 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
+    if ($result && $oldversion < 2007012100) {
+    /// Some old PG servers have user->firstname & user->lastname with 30cc. They must be 100cc.
+    /// Fixing that conditionally. MDL-7110
+        if ($CFG->dbfamily == 'postgres') {
+        /// Get Metadata from user table
+            $cols = array_change_key_case($db->MetaColumns($CFG->prefix . 'user'), CASE_LOWER);
+
+        /// Process user->firstname if needed
+            if ($col = $cols['firstname']) {
+                if ($col->max_length < 100) {
+                /// Changing precision of field firstname on table user to (100)
+                    $table = new XMLDBTable('user');
+                    $field = new XMLDBField('firstname');
+                    $field->setAttributes(XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, null, null, 'idnumber');
+
+                /// Launch change of precision for field firstname
+                    $result = $result && change_field_precision($table, $field);
+                }
+            }
+
+        /// Process user->lastname if needed
+            if ($col = $cols['lastname']) {
+                if ($col->max_length < 100) {
+                /// Changing precision of field lastname on table user to (100)
+                    $table = new XMLDBTable('user');
+                    $field = new XMLDBField('lastname');
+                    $field->setAttributes(XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, null, null, 'firstname');
+
+                /// Launch change of precision for field lastname
+                    $result = $result && change_field_precision($table, $field);
+                }
+            }
+        }
+    }
+
     return $result;
 
 }
