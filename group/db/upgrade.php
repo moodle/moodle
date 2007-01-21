@@ -230,6 +230,17 @@ function xmldb_group_upgrade($oldversion=0) {
         $result = $result && change_field_notnull($table, $field);
     }
 
+    if ($result && $oldversion < 2007012100) {
+
+    /// Changing precision of field lang on table groups to (30)
+        $table = new XMLDBTable('groups');
+        $field = new XMLDBField('lang');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, 'en', 'enrolmentkey');
+
+    /// Launch change of precision for field lang
+        $result = $result && change_field_precision($table, $field);
+    }
+
     return $result;
 }
 

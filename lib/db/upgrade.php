@@ -559,6 +559,25 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
+    if ($result && $oldversion < 2007012101) {
+
+    /// Changing precision of field lang on table course to (30)
+        $table = new XMLDBTable('course');
+        $field = new XMLDBField('lang');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, null, 'groupmodeforce');
+
+    /// Launch change of precision for field course->lang
+        $result = $result && change_field_precision($table, $field);
+
+    /// Changing precision of field lang on table user to (30)
+        $table = new XMLDBTable('user');
+        $field = new XMLDBField('lang');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, 'en', 'country');
+
+    /// Launch change of precision for field user->lang
+        $result = $result && change_field_precision($table, $field);
+    }
+
     return $result;
 
 }
