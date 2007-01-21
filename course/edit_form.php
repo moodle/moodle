@@ -114,34 +114,16 @@ class course_edit_form extends moodleform {
         $mform->setHelpButton('hiddensections', array('coursehiddensections', get_string('hiddensections')), true);
         $mform->setDefault('hiddensections', 0);
 
-        $newsitem = get_string('newsitem');
-        $newsitems = get_string('newsitems');
-        $options = array('0' => "0 $newsitems",
-                         '1' => "1 $newsitem",
-                         '2' => "2 $newsitems",
-                         '3' => "3 $newsitems",
-                         '4' => "4 $newsitems",
-                         '5' => "5 $newsitems",
-                         '6' => "6 $newsitems",
-                         '7' => "7 $newsitems",
-                         '8' => "8 $newsitems",
-                         '9' => "9 $newsitems",
-                        '10' => "10 $newsitems");
+        $options = range(0, 10);
         $mform->addElement('select', 'newsitems', get_string('newsitemsnumber'), $options);
         $mform->setHelpButton('newsitems', array('coursenewsitems', get_string('newsitemsnumber')), true);
         $mform->setDefault('newsitems', 5);
 
-        $choices = array();
-        $choices['0'] = get_string('no');
-        $choices['1'] = get_string('yes');
-        $mform->addElement('select', 'showgrades', get_string('showgrades'), $choices);
+        $mform->addElement('selectyesno', 'showgrades', get_string('showgrades'));
         $mform->setHelpButton('showgrades', array('coursegrades', get_string('grades')), true);
         $mform->setDefault('showgrades', 1);
 
-        $choices = array();
-        $choices['0'] = get_string('no');
-        $choices['1'] = get_string('yes');
-        $mform->addElement('select', 'showreports', get_string('showreports'), $choices);
+        $mform->addElement('selectyesno', 'showreports', get_string('showreports'));
         $mform->setHelpButton('showreports', array('coursereports', get_string('activityreport')), true);
         $mform->setDefault('showreports', 0);
 
@@ -365,10 +347,6 @@ class course_edit_form extends moodleform {
         $mform->addElement('hidden', 'teachers', get_string('defaultcourseteachers'));
         $mform->addElement('hidden', 'student', get_string('defaultcoursestudent'));
         $mform->addElement('hidden', 'students', get_string('defaultcoursestudents'));
-
-
-
-
     }
 
 
