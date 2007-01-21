@@ -4857,7 +4857,7 @@ function redirect($url, $message='', $delay=-1) {
 //]]>
 </script>
 <?php
-    print_footer();
+    print_footer('none');
     die;
 }
 
