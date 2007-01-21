@@ -38,7 +38,7 @@ class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox{
      * @access    public
      * @return    void
      */
-    function HTML_QuickForm_advcheckbox($elementName=null, $elementLabel=null, $text=null, $attributes=null, $values=null)
+    function MoodleQuickForm_advcheckbox($elementName=null, $elementLabel=null, $text=null, $attributes=null, $values=null)
     {
         if ($values === null){
             $values = array(0, 1);

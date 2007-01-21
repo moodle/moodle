@@ -46,7 +46,7 @@ class mod_wiki_mod_form extends moodleform_mod {
         $mform->setDefault('htmlmode', 2);
 		$mform->setAdvanced('htmlmode');
 
-        $mform->addElement('selectyesno', 'ewikiacceptbinary', get_string('ewikiprinttitle', 'wiki'));
+        $mform->addElement('selectyesno', 'ewikiacceptbinary', get_string('ewikiacceptbinary', 'wiki'));
         $mform->setDefault('ewikiacceptbinary', 0);
 		$mform->setHelpButton('ewikiacceptbinary', array('ewikiacceptbinary', get_string('ewikiacceptbinary', 'wiki'), 'wiki'));
 		$mform->setAdvanced('ewikiacceptbinary');

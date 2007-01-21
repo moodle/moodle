@@ -68,13 +68,6 @@ function wiki_add_instance($wiki) {
     /// Determine the pagename for this wiki and save.
     $wiki->pagename = wiki_page_name($wiki);
 
-    /// Check 'check boxes'. The variables won't be set at all of they were deselected.
-    $wiki->disablecamelcase = (isset($wiki->disablecamelcase)) ? 1 : 0;
-    $wiki->setpageflags = (isset($wiki->setpageflags)) ? 1 : 0;
-    $wiki->removepages = (isset($wiki->removepages)) ? 1 : 0;
-    $wiki->strippages = (isset($wiki->strippages)) ? 1 : 0;
-    $wiki->revertchanges = (isset($wiki->revertchanges)) ? 1 : 0;
-
     return insert_record("wiki", $wiki);
 }
 
@@ -86,13 +79,6 @@ function wiki_update_instance($wiki) {
 
     /// Determine the pagename for this wiki.
     $wiki->pagename = wiki_page_name($wiki);
-
-    /// Check 'check boxes'. The variables won't be set at all of they were deselected.
-    $wiki->disablecamelcase = (isset($wiki->disablecamelcase)) ? 1 : 0;
-    $wiki->setpageflags = (isset($wiki->setpageflags)) ? 1 : 0;
-    $wiki->removepages = (isset($wiki->removepages)) ? 1 : 0;
-    $wiki->strippages = (isset($wiki->strippages)) ? 1 : 0;
-    $wiki->revertchanges = (isset($wiki->revertchanges)) ? 1 : 0;
 
     $wiki->timemodified = time();
     $wiki->id = $wiki->instance;
@@ -239,7 +225,7 @@ function wiki_cron () {
 /// as sending out mail, toggling flags etc ...
 
     // Delete expired locks
-    $result=delete_records_select('wiki_locks','lockedseen < '.(time()-WIKI_LOCK_PERSISTENCE)); 
+    $result=delete_records_select('wiki_locks','lockedseen < '.(time()-WIKI_LOCK_PERSISTENCE));
 
     return $result;
 }
@@ -419,8 +405,8 @@ function wiki_get_default_entry(&$wiki, &$course, $userid=0, $groupid=0) {
             // Whatever groups are in the course, pick one
             $coursegroups = get_groups($course->id);
             if(!$coursegroups || count($coursegroups)==0) {
-                error("Can't access wiki in group mode when no groups are configured for the course"); 
-            } 
+                error("Can't access wiki in group mode when no groups are configured for the course");
+            }
             $unkeyed=array_values($coursegroups); // Make sure first item is index 0
             $groupid=$unkeyed[0]->id;
         }
@@ -475,13 +461,13 @@ function wiki_get_entry(&$wiki, &$course, $userid=0, $groupid=0) {
                     // Whatever groups are in the course, pick one
                     $coursegroups = get_groups($course->id);
                     if(!$coursegroups || count($coursegroups)==0) {
-                        error("Can't access wiki in group mode when no groups are configured for the course"); 
-                    } 
+                        error("Can't access wiki in group mode when no groups are configured for the course");
+                    }
                     $unkeyed=array_values($coursegroups); // Make sure first item is index 0
                     $groupid=$unkeyed[0]->id;
                 }
             }
-        
+
             //echo "groupid is in wiki_get_entry ".$groupid."<br />";
             /// If a specific group was requested, return it, if allowed.
             if ($groupid and wiki_user_can_access_group_wiki($wiki, $groupid, $course)) {
@@ -664,7 +650,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
     case 'group':
         /// If the user is an editing teacher, or a non-editing teacher not assigned to a group, show all group
         /// wikis, regardless of creation.
-        
+
         /// If user is a member of multiple groups, need to show current group etc?
 
         /// Get all the existing entries for this wiki.
@@ -845,7 +831,7 @@ function wiki_add_entry(&$wiki, &$course, $userid=0, $groupid=0) {
         $wiki_entry->groupid = $groupid;
         $wiki_entry->pagename = wiki_page_name($wiki);
         $wiki_entry->timemodified = time();
-        
+
         break;
 
     case 'teacher':
@@ -897,9 +883,9 @@ function wiki_can_add_entry(&$wiki, &$user, &$course, $userid=0, $groupid=0) {
     case 'group':
         /// If mode is 'nogroups', then all participants can add wikis.
         if (wiki_is_teacheredit($wiki, $user->id)) {
-            return true;  
+            return true;
         }
-        
+
         if (!$groupmode) {
             return (wiki_is_student($wiki, $user->id) or wiki_is_teacher($wiki, $user->id));
         }
@@ -1154,8 +1140,8 @@ function wiki_print_page_actions($cmid, $specialpages, $page, $action, $binary=f
 
 function wiki_print_administration_actions($wiki, $cmid, $userid, $groupid, $page, $noeditor, $course) {
 /// Displays actions which can be performed on the page
-    
-  /// Create the URL        
+
+  /// Create the URL
   $ewscript = 'admin.php?id='.$cmid;
   if (isset($userid) && $userid!=0) $ewscript .= '&amp;userid='.$userid;
   if (isset($groupid) && $groupid!=0) $ewscript .= '&amp;groupid='.$groupid;
@@ -1603,7 +1589,7 @@ function wiki_get_post_actions() {
  */
 function wiki_obtain_lock($wikiid,$pagename) {
 	global $USER;
-		
+
 	// Check for lock
     $alreadyownlock=false;
     if($lock=get_record('wiki_locks','pagename',$pagename,'wikiid', $wikiid)) {
@@ -1619,11 +1605,11 @@ function wiki_obtain_lock($wikiid,$pagename) {
             if(!delete_records('wiki_locks','pagename',$pagename,'wikiid', $wikiid)) {
                 error('Unable to delete lock record');
             }
-        } 
+        }
     }
-    
+
     // Add lock
-    if(!$alreadyownlock) { 
+    if(!$alreadyownlock) {
 		// Lock page
 		$newlock=new stdClass;
 		$newlock->lockedby=$USER->id;
@@ -1635,7 +1621,7 @@ function wiki_obtain_lock($wikiid,$pagename) {
 		    error('Unable to insert lock record');
 		}
     }
-    
+
     // Store lock information in session so we can clear it later
     if(!array_key_exists(SESSION_WIKI_LOCKS,$_SESSION)) {
     		$_SESSION[SESSION_WIKI_LOCKS]=array();
@@ -1653,21 +1639,21 @@ function wiki_obtain_lock($wikiid,$pagename) {
  * @param int $wikiid ID of wiki object.
  * @param string $pagename Name of page.
  */
-function wiki_release_lock($wikiid,$pagename) {	
+function wiki_release_lock($wikiid,$pagename) {
     if(!array_key_exists(SESSION_WIKI_LOCKS,$_SESSION)) {
     		// No locks at all in session
     		return;
     }
-    
+
     $key=$wikiid.'_'.$pagename;
-    
+
     if(array_key_exists($key,$_SESSION[SESSION_WIKI_LOCKS])) {
     		$lockid=$_SESSION[SESSION_WIKI_LOCKS][$key];
 	    unset($_SESSION[SESSION_WIKI_LOCKS][$key]);
         if(!delete_records('wiki_locks','id',$lockid)) {
             error("Unable to delete lock record.");
         }
-    }    
+    }
 }
 
 
