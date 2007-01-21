@@ -146,7 +146,7 @@ class moodleform {
         $names=null;
         while (!$names){
           $el = array_shift($elkeys);
-          $names=$form->_getElNamesRecursive($el);
+          $names = $form->_getElNamesRecursive($el);
         }
         $name=array_shift($names);
         $focus='forms[\''.$this->_form->getAttribute('id').'\'].elements[\''.$name.'\']';
@@ -1218,6 +1218,8 @@ function validate_' . $this->_formName . '(frm) {
             if ($group != null){
                 $elNames = array($group->getElementName($el->getName()));
             } elseif (is_a($el, 'HTML_QuickForm_header')) {
+                return null;
+            } elseif (is_a($el, 'HTML_QuickForm_hidden')) {
                 return null;
             } elseif (method_exists($el, 'getPrivateName')) {
                 return array($el->getPrivateName());
