@@ -63,6 +63,7 @@
     $table->data = array();
 
     $modules = get_list_of_plugins("enrol");
+    $enabledplugins = explode(',', $CFG->enrol_plugins_enabled);
     foreach ($modules as $module) {
 
         // skip if directory is empty
@@ -73,7 +74,7 @@
         $name = get_string("enrolname", "enrol_$module");
         $plugin = enrolment_factory::factory($module);
         $enable = '<input type="checkbox" name="enable[]" value="'.$module.'"';
-        if (stristr($CFG->enrol_plugins_enabled, $module) !== false) {
+        if (in_array($module, $enabledplugins)) {
             $enable .= ' checked="checked"';
         }
         if ($module == 'manual') {
