@@ -91,18 +91,17 @@ class question_edit_calculated_form extends question_edit_form {
         $mform->addGroup($anslengrp, 'anslengrp', get_string('correctanswershows', 'qtype_calculated'), null, false);
 
         $mform->addElement('htmleditor', 'feedback[0]', get_string('feedback', 'quiz'));
-        $mform->setType('feedback[0]', PARAM_RAW);
+        $mform->setType('feedback', PARAM_RAW);
 
 //------------------------------------------------------------------------------------------
         $repeated = array();
-        $repeatedoptions = array();
         $repeated[] =& $mform->createElement('header', 'unithdr', get_string('unithdr', 'qtype_numerical', '{no}'));
 
         $repeated[] =& $mform->createElement('text', 'unit', get_string('unit', 'quiz'));
-        $repeatedoptions['unit']['type'] = PARAM_NOTAGS;
+        $mform->setType('unit', PARAM_NOTAGS);
 
         $repeated[] =& $mform->createElement('text', 'multiplier', get_string('multiplier', 'quiz'));
-        $repeatedoptions['multiplier']['type'] = PARAM_NUMBER;
+        $mform->setType('multiplier', PARAM_NUMBER);
 
         if (isset($this->question->options)){
             $countunits = count($this->question->options->units);
@@ -110,7 +109,7 @@ class question_edit_calculated_form extends question_edit_form {
             $countunits = 0;
         }
         $repeatsatstart = $countunits + 1;
-        $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'nounits', 'addunits', 2, get_string('addmoreunitblanks', 'qtype_calculated', '{no}'));
+        $this->repeat_elements($repeated, $repeatsatstart, array(), 'nounits', 'addunits', 2, get_string('addmoreunitblanks', 'qtype_calculated', '{no}'));
 
         $firstunit = $mform->getElement('multiplier[0]');
         $firstunit->freeze();

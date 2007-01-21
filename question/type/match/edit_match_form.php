@@ -37,11 +37,10 @@ class question_edit_match_form extends question_edit_form {
         }
         $repeatsatstart = (QUESTION_NUMANS_START > ($countsubquestions + QUESTION_NUMANS_ADD))?
                             QUESTION_NUMANS_START : ($countsubquestions + QUESTION_NUMANS_ADD);
-        $repeatedoptions = array();
-        $repeatedoptions['subanswer']['type'] = PARAM_TEXT;
-        $repeatedoptions['subquestion']['type'] = PARAM_TEXT;
+        $mform->setType('subanswer', PARAM_TEXT);
+        $mform->setType('subquestion', PARAM_TEXT);
 
-        $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', QUESTION_NUMANS_ADD, get_string('addmoreqblanks', 'qtype_match'));
+        $this->repeat_elements($repeated, $repeatsatstart, array(), 'noanswers', 'addanswers', QUESTION_NUMANS_ADD, get_string('addmoreqblanks', 'qtype_match'));
 
     }
 

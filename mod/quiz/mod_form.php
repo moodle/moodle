@@ -221,17 +221,15 @@ class mod_quiz_mod_form extends moodleform_mod {
         }
         $numfeedbacks = max(count($this->_feedbacks) * 1.5, 5);
 
-        $repeateloptions = array();
-        $repeateloptions ['feedbacktext'] = array('type'=>PARAM_TEXT);
-        $repeateloptions ['feedbackboundaries'] = array('type'=>PARAM_TEXT);
+        $mform->setType('feedbacktext', PARAM_TEXT);
+        $mform->setType('feedbackboundaries', PARAM_NOTAGS);
 
         $nextel=$this->repeat_elements($repeatarray, $numfeedbacks-1,
-                    $repeateloptions, 'boundary_repeats', 'boundary_add_fields', 3);
+                    array(), 'boundary_repeats', 'boundary_add_fields', 3);
 
         //put some extra elements in before the button
         $insertEl = &MoodleQuickForm::createElement('text', "feedbacktext[$nextel]", get_string('feedback', 'quiz'));
         $mform->insertElementBefore($insertEl, 'boundary_add_fields');
-        $mform->setType("feedbacktext[$nextel]", PARAM_TEXT);
 
         $insertEl = &MoodleQuickForm::createElement('static', 'gradeboundarystatic2', get_string('gradeboundary', 'quiz'), '0%');
         $mform->insertElementBefore($insertEl, 'boundary_add_fields');

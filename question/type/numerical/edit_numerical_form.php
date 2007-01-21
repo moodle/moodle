@@ -27,16 +27,16 @@ class question_edit_numerical_form extends question_edit_form {
         $repeated[] =& $mform->createElement('header', 'answerhdr', get_string('answerno', 'qtype_numerical', '{no}'));
 
         $repeated[] =& $mform->createElement('text', 'answer', get_string('answer', 'quiz'));
-        $repeatedoptions['answer']['type'] = PARAM_NUMBER;
+        $mform->setType('answer', PARAM_NUMBER);
 
         $repeated[] =& $mform->createElement('text', 'tolerance', get_string('acceptederror', 'quiz'));
-        $repeatedoptions['tolerance']['type'] = PARAM_NUMBER;
+        $mform->setType('tolerance', PARAM_NUMBER);
 
         $repeated[] =& $mform->createElement('select', 'fraction', get_string('grade'), $gradeoptions);
         $repeatedoptions['fraction']['default'] = 0;
 
         $repeated[] =& $mform->createElement('htmleditor', 'feedback', get_string('feedback', 'quiz'));
-        $repeatedoptions['feedback']['type'] = PARAM_RAW;
+        $mform->setType('feedback', PARAM_RAW);
 
 
         if (isset($this->question->options)){
@@ -51,14 +51,13 @@ class question_edit_numerical_form extends question_edit_form {
 
 //------------------------------------------------------------------------------------------
         $repeated = array();
-        $repeatedoptions = array();
         $repeated[] =& $mform->createElement('header', 'unithdr', get_string('unithdr', 'qtype_numerical', '{no}'));
 
         $repeated[] =& $mform->createElement('text', 'unit', get_string('unit', 'quiz'));
-        $repeatedoptions['unit']['type'] = PARAM_NOTAGS;
+        $mform->setType('unit', PARAM_NOTAGS);
 
         $repeated[] =& $mform->createElement('text', 'multiplier', get_string('multiplier', 'quiz'));
-        $repeatedoptions['multiplier']['type'] = PARAM_NUMBER;
+        $mform->setType('multiplier', PARAM_NOTAGS);
 
         if (isset($this->question->options)){
             $countunits = count($this->question->options->units);
@@ -66,7 +65,7 @@ class question_edit_numerical_form extends question_edit_form {
             $countunits = 0;
         }
         $repeatsatstart = $countunits + 2;
-        $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'nounits', 'addunits', 2, get_string('addmoreunitblanks', 'qtype_numerical'));
+        $this->repeat_elements($repeated, $repeatsatstart, array(), 'nounits', 'addunits', 2, get_string('addmoreunitblanks', 'qtype_numerical'));
 
         $firstunit = $mform->getElement('multiplier[0]');
         $firstunit->freeze();

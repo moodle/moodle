@@ -498,9 +498,6 @@ class moodleform {
                         case 'default' :
                             $mform->setDefault($realelementname, $params);
                             break;
-                        case 'type' :
-                            $mform->setType($realelementname, $params);
-                            break;
                         case 'helpbutton' :
                             $mform->setHelpButton($realelementname, $params);
                             break;
@@ -613,7 +610,6 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * @access   public
      */
     function MoodleQuickForm($formName, $method, $action, $target='', $attributes=null){
-        global $CFG;
         static $formcounter = 1;
 
         HTML_Common::HTML_Common($attributes);
@@ -739,9 +735,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                 }
             }
             $renderer->setAdvancedElements($this->_advancedElements);
-            if (count($this->_advancedElements)){
 
-            }
         }
         parent::accept($renderer);
     }
@@ -803,7 +797,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             $this->_submitFiles = array();
         } else {
             if (1 == get_magic_quotes_gpc()) {
-                foreach ($files as $elname=>$file) {
+                foreach (array_keys($files) as $elname) {
                     // dangerous characters in filenames are cleaned later in upload_manager
                     $files[$elname]['name'] = stripslashes($files[$elname]['name']);
                 }
@@ -965,7 +959,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     {
         parent::addGroupRule($group, $arg1, $type, $format, $howmany, $validation, $reset);
         if (is_array($arg1)) {
-             foreach ($arg1 as $elementIndex => $rules) {
+             foreach ($arg1 as $rules) {
                 foreach ($rules as $rule) {
                     $validation = (isset($rule[3]) && 'client' == $rule[3])? 'client': 'server';
 
@@ -977,7 +971,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         } elseif (is_string($arg1)) {
 
             if ($validation == 'client') {
-                $this->updateAttributes(array('onsubmit' => 'try { var myValidator = validate_' . $formname . '; } catch(e) { return true; } return myValidator(this);'));
+                $this->updateAttributes(array('onsubmit' => 'try { var myValidator = validate_' . $this->_formName . '; } catch(e) { return true; } return myValidator(this);'));
             }
         }
     } // end func addGroupRule
@@ -1035,7 +1029,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                     } elseif ($dependent) {
                         $element   =  array();
                         $element[] =& $this->getElement($elementName);
-                        foreach ($rule['dependent'] as $idx => $elName) {
+                        foreach ($rule['dependent'] as $elName) {
                             $element[] =& $this->getElement($elName);
                         }
                     } else {

@@ -37,14 +37,14 @@ class mod_choice_mod_form extends moodleform_mod {
         }
 
         $repeateloptions = array();
-        $repeateloptions['limit'] = array(
-                                   'default'=>0,
-                                   'type'=>PARAM_INT,
-                                   'disabledif'=>array('limitanswers', 'eq', 0));
-        $repeateloptions['option'] = array(
-                                   'type'=>PARAM_TEXT,
-                                   'helpbutton'=>array('options', get_string('modulenameplural', 'choice'), 'choice'));
-        $repeateloptions['optionid'] = array('type'=>PARAM_INT);
+        $repeateloptions['limit']['default'] = 0;
+        $repeateloptions['limit']['disabledif'] = array('limitanswers', 'eq', 0);
+        $mform->setType('limit', PARAM_INT);
+
+        $repeateloptions['option']['helpbutton'] = array('options', get_string('modulenameplural', 'choice'), 'choice');
+        $mform->setType('option', PARAM_TEXT);
+
+        $mform->setType('optionid', PARAM_INT);
 
         $this->repeat_elements($repeatarray, $repeatno,
                     $repeateloptions, 'option_repeats', 'option_add_fields', 3);
