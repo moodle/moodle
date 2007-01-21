@@ -23,14 +23,16 @@ function xmldb_chat_upgrade($oldversion=0) {
 
     $result = true;
 
-/// And upgrade begins here. For each one, you'll need one 
-/// block of code similar to the next one. Please, delete 
-/// this comment lines once this file start handling proper
-/// upgrade code.
+    if ($result && $oldversion < 2007012100) {
 
-/// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
-///     $result = result of "/lib/ddllib.php" function calls
-/// }
+    /// Changing precision of field lang on table chat_users to (30)
+        $table = new XMLDBTable('chat_users');
+        $field = new XMLDBField('lang');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, null, 'course');
+
+    /// Launch change of precision for field lang
+        $result = $result && change_field_precision($table, $field);
+    }
 
     return $result;
 }
