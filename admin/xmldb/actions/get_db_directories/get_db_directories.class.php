@@ -143,6 +143,7 @@ class get_db_directories extends XMLDBAction {
         }
         
     /// Now, groups
+        $dbdir = new stdClass;
         $dbdir->path = $CFG->dirroot . '/group/db';
         if (!isset($XMLDB->dbdirs[$dbdir->path])) {
             $XMLDB->dbdirs[$dbdir->path] = $dbdir;
