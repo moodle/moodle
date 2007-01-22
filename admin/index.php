@@ -97,6 +97,14 @@
         $CFG->version = "";
     }
 
+    if (is_readable("$CFG->dirroot/version.php")) {
+        include_once("$CFG->dirroot/version.php");              # defines $version
+    }
+
+    if (!$version or !$release) {
+        error('Main version.php was not readable or specified');# without version, stop
+    }
+
 /// Check if the main tables have been installed yet or not.
 
     if (! $tables = $db->Metatables() ) {    // No tables yet at all.
@@ -218,13 +226,6 @@
 /// Check version of Moodle code on disk compared with database
 /// and upgrade if possible.
 
-    if ( is_readable("$CFG->dirroot/version.php")) {
-        include_once("$CFG->dirroot/version.php");              # defines $version
-    }
-    if (!$version) {
-        error('Main version.php was not readable or specified');# without version, stop
-    }
-
     if (file_exists("$CFG->dirroot/lib/db/$CFG->dbtype.php")) {
         include_once("$CFG->dirroot/lib/db/$CFG->dbtype.php");  # defines old upgrades
     }
@@ -323,11 +324,14 @@
                         print_footer('none');
                         exit;
                     } else {
-                        notify("Upgrade failed!  (Could not update version in config table)");
+                        error('Upgrade failed!  (Could not update version in config table)');
                     }
             /// Main upgrade not success
                 } else {
-                    notify("Upgrade failed!  See /version.php");
+                    notify('Main Upgrade failed!  See lib/db/upgrade.php');
+                    print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1');
+                    print_footer('none');
+                    die;
                 }
                 upgrade_log_finish();
             }
@@ -346,7 +350,7 @@
 
     if ($release <> $CFG->release) {  // Update the release version
         if (!set_config("release", $release)) {
-            notify("ERROR: Could not update release version in database!!");
+            error("ERROR: Could not update release version in database!!");
         }
     }
 
