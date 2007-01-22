@@ -2815,9 +2815,7 @@ function print_continue($link, $return=false) {
     }
 
     $output .= '<div class="continuebutton">';
-    // MDL-7861, referer string might not be xhtml strict
-    // e.g. &amp;
-    
+
     $output .= print_single_button($link, NULL, get_string('continue'), 'post', $CFG->framename, true);
     $output .= '</div>'."\n";
 
