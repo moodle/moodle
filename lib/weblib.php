@@ -5529,13 +5529,19 @@ function debugging($message='', $level=DEBUG_NORMAL) {
 
     if ($CFG->debug >= $level) {
         if ($message) {
+            $caller = debug_backtrace();
+            $caller = $caller[0];
+            $from = " in $caller[file] on line $caller[line]";
+            if (isset($caller['function'])) {
+                $from .= " in $caller[function]()";
+            }
             if (!isset($CFG->debugdisplay)) {
                 $CFG->debugdisplay = ini_get('display_errors');
             }
             if ($CFG->debugdisplay) {
-                notify($message, 'notifytiny');
+                notify($message . $from, 'notifytiny');
             } else {
-                trigger_error($message, E_USER_NOTICE);
+                trigger_error($message . $from, E_USER_NOTICE);
             }
         }
         return true;
