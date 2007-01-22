@@ -683,6 +683,14 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
  */
 function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields='*', $doanything=false,$limit=0) {
 
+    global $USER;
+
+    if (!empty($USER->id) && ($USER->id == $userid)) {
+        if (!empty($USER->mycourses)) {
+            return $USER->mycourses;      // Just return the cached version
+        }
+    }
+
     $mycourses = array();
     
     // Fix fields to refer to the course table c

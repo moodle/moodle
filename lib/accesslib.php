@@ -1035,6 +1035,8 @@ function load_all_capabilities() {
         return;
     }
 
+    unset($USER->mycourses);        // Reset a cache used by get_my_courses
+
     load_user_capability();         // Load basic capabilities assigned to this user
 
     if ($USER->username == 'guest') {
