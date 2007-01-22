@@ -44,7 +44,9 @@ class auth_plugin_mnet
         $sso_idp = array();
         $sso_idp['name']        = 'sso_idp'; // Name & Description go in lang file
         $sso_idp['apiversion']  = 1;
-        $sso_idp['methods']     = array('user_authorise','keepalive_server', 'kill_children', 'refresh_log', 'fetch_user_image', 'fetch_theme_info');
+        $sso_idp['methods']     = array('user_authorise','keepalive_server', 'kill_children', 
+                                        'refresh_log', 'fetch_user_image', 'fetch_theme_info', 
+                                        'update_enrolments');
 
         $sso_sp = array();
         $sso_sp['name']         = 'sso_sp'; // Name & Description go in lang file
@@ -431,17 +433,59 @@ class auth_plugin_mnet
                     // coerce to array
                     $courses[$id] = (array)$courses[$id];
                 }
-                $mnetrequest->add_param($courses);
+            } else {
+                // if the array is empty, send it anyway
+                // we may be clearing out stale entries
+                $courses = array(); 
+            }
+            $mnetrequest->add_param($courses);
 
-                // Call 0800-RPC Now! -- we don't care too much if it fails
-                // as it's just informational.
-                if ($mnetrequest->send($remotepeer) === false) {
-                    // error_log(print_r($mnetrequest->error,1));
-                }
+            // Call 0800-RPC Now! -- we don't care too much if it fails
+            // as it's just informational.
+            if ($mnetrequest->send($remotepeer) === false) {
+                // error_log(print_r($mnetrequest->error,1));
             }
         }
 
         return $localuser;
+    }
+
+    /**
+     * Invoke this function _on_ the IDP to update it with enrolment info local to
+     * the SP right after calling user_authorise()
+     *
+     * Normally called by the SP after calling
+     *
+     *   @param string $username        The username
+     *   @param string $courses         Assoc array of courses following the structure of mnet_enrol_course
+     *   @returns bool
+     */
+    function update_enrolments($username, $courses) {
+        global $MNET_REMOTE_CLIENT;
+
+        if (empty($username) || !is_array($courses)) {
+            return false;
+        }
+        // make sure it is a user we have an in active session
+        // with that host...
+        $userid = get_field('mnet_session', 'userid', 
+                            'username', addslashes($username), 
+                            'mnethostid', (int)$MNET_REMOTE_CLIENT->id);
+        if (!$userid) {
+            return false;
+        }
+
+        if (empty($courses)) { // no courses? clear out quickly
+            delete_records('mnet_enrol_assignments', 
+                           'hostid', (int)$MNET_REMOTE_CLIENT->id,
+                           'userid', $userid);
+            return true;
+        }
+
+        // add/update courses && enrolment entries
+        // remove stale enrolments (but not the courses)
+        // TODO
+
     }
 
     /**
