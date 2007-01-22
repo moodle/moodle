@@ -13,7 +13,7 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
     this.wwwRoot = wwwRoot;
     this.courseId = courseId;
 
-    this.callback = {
+    this.connectCallback = {
         success: function(o) {
 
         	if (o.responseText !== undefined) {
@@ -33,7 +33,8 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
                         groupsComboEl.removeChild(groupsComboEl.firstChild);
                     }
             	    if (o.responseText) {
-            	        var groups = eval("("+o.responseText+")");
+            	        //var groups = eval("("+o.responseText+")");
+            	        var groups = eval(o.responseText);
 
             	        // Populate the groups combo box.
                         for (var i=0; i<groups.length; i++) {
@@ -48,11 +49,10 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
                 }
         	}
         	// Remove the loader gif image.
-        	var groupsLabel = document.getElementById("groupslabel");
-        	groupsLabel.removeChild(document.getElementById("groupsloader"));
+        	removeLoaderImgs("groupsloader", "groupslabel");
         }
-    }
-    
+    };
+
     // Hide the updategroups input since AJAX will take care of this.
     var updateGroupsButton = document.getElementById("updategroups");
     updateGroupsButton.setAttribute("style", "display:none;");
@@ -65,10 +65,9 @@ UpdatableGroupsCombo.prototype.refreshGroups = function (groupingId) {
     // Add the loader gif image.
     createLoaderImg("groupsloader", "groupslabel", this.wwwRoot);
     
-    var sUrl = this.wwwRoot+"/group/index.php?id="+this.courseId+"&grouping="
-                        +groupingId+"&act_ajax_getgroupsingrouping";
-    YAHOO.util.Connect.asyncRequest('GET', sUrl, this.callback, null);
-}
+    var sUrl = this.wwwRoot+"/group/index.php?id="+this.courseId+"&grouping="+groupingId+"&act_ajax_getgroupsingrouping";
+    YAHOO.util.Connect.asyncRequest('GET', sUrl, this.connectCallback, null);
+};
 
 
 
@@ -79,7 +78,7 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
     this.wwwRoot = wwwRoot;
     this.courseId = courseId;
 
-    this.callback = {
+    this.connectCallback = {
         success: function(o) {
 
         	if (o.responseText !== undefined) {
@@ -104,11 +103,10 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
                 }
         	}
         	// Remove the loader gif image.
-        	var membersLabel = document.getElementById("memberslabel");
-        	membersLabel.removeChild(document.getElementById("membersloader"));
+        	removeLoaderImgs("membersloader", "memberslabel");
         }
-    }
-    
+    };
+
     // Hide the updatemembers input since AJAX will take care of this.
     var updateMembersButton = document.getElementById("updatemembers");
     updateMembersButton.setAttribute("style", "display:none;");
@@ -121,21 +119,40 @@ UpdatableMembersCombo.prototype.refreshMembers = function (groupId) {
     // Add the loader gif image.
     createLoaderImg("membersloader", "memberslabel", this.wwwRoot);
 
-    var sUrl = this.wwwRoot+"/group/index.php?id="+this.courseId+"&group="
-                        +groupId+"&act_ajax_getmembersingroup";
-    YAHOO.util.Connect.asyncRequest('GET', sUrl, this.callback, null);
-}
+    var sUrl = this.wwwRoot+"/group/index.php?id="+this.courseId+"&group="+groupId+"&act_ajax_getmembersingroup";
+    YAHOO.util.Connect.asyncRequest("GET", sUrl, this.connectCallback, null);
+};
 
 
 
-function createLoaderImg(id, parentId, wwwRoot) {
-    var parent = document.getElementById(parentId);
+var createLoaderImg = function (elClass, parentId, wwwRoot) {
+    var parentEl = document.getElementById(parentId);
+    if (!parentEl) {
+        return false;
+    }
+    var loaders = YAHOO.util.Dom.getElementsByClassName(elClass, "img", parentEl);
+    if (loaders.length > 0) {
+        // A loader image exists already.
+        return false;
+    }
     var loadingImg = document.createElement("img");
 
     loadingImg.setAttribute("src", wwwRoot+"/pix/i/ajaxloader.gif");
-    loadingImg.setAttribute("id", id);
+    loadingImg.setAttribute("class", elClass);
     loadingImg.setAttribute("alt", "Loading");
-    parent.appendChild(loadingImg);
-}
+    parentEl.appendChild(loadingImg);
+
+    return true;
+};
 
 
+var removeLoaderImgs = function (elClass, parentId) {
+    var parentEl = document.getElementById(parentId);
+
+    if (parentEl) {
+        var loaders = YAHOO.util.Dom.getElementsByClassName(elClass, "img", parentEl);
+	    for (var i=0; i<loaders.length; i++) {
+	        parentEl.removeChild(loaders[i]);
+        }
+    }
+};

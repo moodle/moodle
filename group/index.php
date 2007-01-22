@@ -11,7 +11,7 @@
 require_once('../config.php');
 require_once('lib.php');
 require_once($CFG->libdir.'/moodlelib.php');
-//require_once($CFG->libdir.'/json/JSON.php');
+require_once($CFG->libdir.'/json/JSON.php');
 
 
 $success = true;
@@ -54,15 +54,16 @@ if ($success) {
             die;  // Client side JavaScript takes it from here.
 
         case 'ajax_getmembersingroup':
-            $memberids = groups_get_members($groupid);
             $members = array();
 
-            foreach ($memberids as $memberid) {
-                $member = groups_get_user($memberid);
-                array_push($members, $member);
+            if ($memberids = groups_get_members($groupid)) {
+                foreach ($memberids as $memberid) {
+                    $member = groups_get_user($memberid);
+                    array_push($members, $member);
+                }
+                $json = new Services_JSON();
+                echo $json->encode($members);
             }
-            $json = new Services_JSON();
-            echo $json->encode($members);
             die;  // Client side JavaScript takes it from here.
 
         case 'showgroupingsettingsform':
@@ -260,6 +261,7 @@ if ($success) {
 </form>
 <?php
     echo '<script type="text/javascript" src="'.$CFG->wwwroot.'/lib/yui/yahoo/yahoo-min.js"></script>';
+    echo '<script type="text/javascript" src="'.$CFG->wwwroot.'/lib/yui/dom/dom-min.js"></script>';
     echo '<script type="text/javascript" src="'.$CFG->wwwroot.'/lib/yui/connection/connection-min.js"></script>';
     echo '<script type="text/javascript" src="'.$CFG->wwwroot.'/group/lib/clientlib.js"></script>'."\n";
 
