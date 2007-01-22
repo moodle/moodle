@@ -2901,9 +2901,10 @@ function print_box_end($return=false) {
  */
 function print_single_button($link, $options, $label='OK', $method='get', $target='_self', $return=false) {
     $output = '';
+    $link = str_replace('"', '&quot;', $link); //basic XSS protection
     $output .= '<div class="singlebutton">';
     // taking target out, will need to add later target="'.$target.'"
-    $output .= '<form action="'. s($link) .'" method="'. $method .'">';   
+    $output .= '<form action="'. $link .'" method="'. $method .'">';   
     $output .= '<fieldset class="invisiblefieldset">';
     if ($options) {
         foreach ($options as $name => $value) {
