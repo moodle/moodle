@@ -6,10 +6,6 @@
     $id = optional_param('id', 0, PARAM_INT);    // Course Module ID
     $r  = optional_param('r', 0, PARAM_INT);  // Resource
 
-    if (!empty($CFG->forcelogin)) {
-        require_login();
-    }
-
     if ($r) {  // Two ways to specify the resource
         if (! $resource = get_record('resource', 'id', $r)) {
             error('Resource ID was incorrect');
@@ -30,6 +26,8 @@
     } else {
         error('No valid parameters!!');
     }
+
+    require_course_login($course, true, $cm);
 
     require ($CFG->dirroot.'/mod/resource/type/'.$resource->type.'/resource.class.php');
     $resourceclass = 'resource_'.$resource->type;

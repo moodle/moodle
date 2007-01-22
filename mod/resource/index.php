@@ -4,13 +4,11 @@
 
     $id = required_param( 'id', PARAM_INT ); // course
 
-    if (!empty($CFG->forcelogin)) {
-        require_login();
-    }
-
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID is incorrect");
     }
+
+    require_course_login($course, true);
 
     if ($course->id != SITEID) {
         require_login($course->id);

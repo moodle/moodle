@@ -90,8 +90,7 @@ var $resource;
 */
 function resource_base($cmid=0) {
 
-    global $CFG;
-    global $course;   // Ugly hack, needed for course language ugly hack
+    global $CFG, $COURSE;
 
     if ($cmid) {
         if (! $this->cm = get_coursemodule_from_id('resource', $cmid)) {
@@ -101,10 +100,6 @@ function resource_base($cmid=0) {
         if (! $this->course = get_record("course", "id", $this->cm->course)) {
             error("Course is misconfigured");
         }
-
-        $course = $this->course;  // Make it a global so we can see it later
-
-        require_course_login($this->course, true, $this->cm);
 
         if (! $this->resource = get_record("resource", "id", $this->cm->instance)) {
             error("Resource ID was incorrect");
@@ -125,6 +120,8 @@ function resource_base($cmid=0) {
             print_header($pagetitle, $this->course->fullname, "$this->navigation $this->strresource", "", "", true, '', navmenu($this->course, $this->cm));
             notice(get_string("activityiscurrentlyhidden"), "$CFG->wwwroot/course/view.php?id={$this->course->id}");
         }
+    } else {
+        $this->course = $COURSE;
     }
 }
 
@@ -209,94 +206,14 @@ function display_course_blocks_end() {
 }
 
 
-function setup(&$form) {
-    global $CFG, $usehtmleditor;
-
-    if (! empty($form->course)) {
-        if (! $this->course = get_record("course", "id", $form->course)) {
-            error("Course is misconfigured");
-        }
-    }
-
-    if (empty($form->name)) {
-        $form->name = "";
-    }
-    if (empty($form->type)) {
-        $form->type = "";
-    }
-    if (empty($form->summary)) {
-        $form->summary = "";
-    }
-    if (empty($form->reference)) {
-        $form->reference = "";
-    }
-    if (empty($form->alltext)) {
-        $form->alltext = "";
-    }
-    if (empty($form->options)) {
-        $form->options = "";
-    }
-    $nohtmleditorneeded = true;
-
-    print_heading_with_help(get_string("resourcetype$form->type", 'resource'), $form->type, 'resource/type');
-
-    include("$CFG->dirroot/mod/resource/type/common.html");
-}
-
-
-function setup_end() {
-    global $CFG;
-
-    include("$CFG->dirroot/mod/resource/type/common_end.html");
-}
-
-
 function add_instance($resource) {
 // Given an object containing all the necessary data,
 // (defined by the form in mod.html) this function
 // will create a new instance and return the id number
 // of the new instance.
 
-    global $RESOURCE_WINDOW_OPTIONS;
-
     $resource->timemodified = time();
 
-    if (isset($resource->windowpopup)) {
-        if ($resource->windowpopup) {
-            $optionlist = array();
-            foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
-                if (isset($resource->$option)) {
-                    $optionlist[] = $option."=".$resource->$option;
-                }
-            }
-            $resource->popup = implode(',', $optionlist);
-            $resource->options = "";
-        } else {
-            if (isset($resource->framepage)) {
-                $resource->options = "frame";
-            } else {
-                $resource->options = "";
-            }
-            $resource->popup = "";
-        }
-    }
-
-    if (isset($resource->parametersettingspref)) {
-        set_user_preference('resource_parametersettingspref', $resource->parametersettingspref);
-    }
-    if (isset($resource->windowsettingspref)) {
-        set_user_preference('resource_windowsettingspref', $resource->windowsettingspref);
-    }
-    
-    // fix for MDL-7300
-    if (!isset($resource->alltext)) { 
-        $resource->alltext = '';  
-    }
-
-    if (!isset($resource->popup)) {
-        $resource->popup = '';  
-    }    
-        
     return insert_record("resource", $resource);
 }
 
@@ -306,37 +223,8 @@ function update_instance($resource) {
 // (defined by the form in mod.html) this function
 // will update an existing instance with new data.
 
-    global $RESOURCE_WINDOW_OPTIONS;
-
     $resource->id = $resource->instance;
     $resource->timemodified = time();
-
-    if (isset($resource->windowpopup)) {
-        if ($resource->windowpopup) {
-            $optionlist = array();
-            foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
-                if (isset($resource->$option)) {
-                    $optionlist[] = $option."=".$resource->$option;
-                }
-            }
-            $resource->popup = implode(',', $optionlist);
-            $resource->options = "";
-        } else {
-            if (isset($resource->framepage)) {
-                $resource->options = "frame";
-            } else {
-                $resource->options = "";
-            }
-            $resource->popup = "";
-        }
-    }
-
-    if (isset($resource->parametersettingspref)) {
-        set_user_preference('resource_parametersettingspref', $resource->parametersettingspref);
-    }
-    if (isset($resource->windowsettingspref)) {
-        set_user_preference('resource_windowsettingspref', $resource->windowsettingspref);
-    }
 
     return update_record("resource", $resource);
 }
@@ -356,7 +244,13 @@ function delete_instance($resource) {
     return $result;
 }
 
+function setup_elements(&$mform) {
+    //override to add your own options
+}
 
+function setup_preprocessing(&$default_values){
+    //override to add your own options
+}
 
 } /// end of class definition
 
@@ -410,6 +304,7 @@ function resource_user_outline($course, $user, $mod, $resource) {
         $numviews = count($logs);
         $lastlog = array_pop($logs);
 
+        $result = new object();
         $result->info = get_string("numviews", "", $numviews);
         $result->time = $lastlog->time;
 
@@ -630,6 +525,8 @@ function resource_is_url($path) {
 }
 
 function resource_get_types() {
+    global $CFG;
+
     $types = array();
 
     $standardresources = array('text','html','file','directory');
