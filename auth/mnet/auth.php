@@ -274,11 +274,14 @@ class auth_plugin_mnet
             }
             error("RPC auth/mnet/user_authorise:<br/>$message");
         }
+        unset($mnetrequest);
 
         if (empty($remoteuser) or empty($remoteuser->username)) {
             print_error('unknownerror', 'mnet');
             exit;
         }
+
+        $firsttime = false;
 
         // get the local record for the remote user
         $localuser = get_record('user', 'username', $remoteuser->username, 'mnethostid', $remotehost->id);
@@ -293,6 +296,7 @@ class auth_plugin_mnet
             if (! insert_record('user', $remoteuser)) {
                 error(get_string('databaseerror', 'mnet'));
             }
+            $firsttime = true;
             if (! $localuser = get_record('user', 'username', $remoteuser->username, 'mnethostid', $remotehost->id)) {
                 error(get_string('nolocaluser', 'mnet'));
             }
@@ -344,10 +348,10 @@ class auth_plugin_mnet
 
             if($key == 'myhosts') {
                 $localuser->mnet_foreign_host_array = array();
-                foreach($val as $somecourse) {
-                    $name  = clean_param($somecourse['name'], PARAM_ALPHANUM);
-                    $url   = clean_param($somecourse['url'], PARAM_URL);
-                    $count = clean_param($somecourse['count'], PARAM_INT);
+                foreach($val as $rhost) {
+                    $name  = clean_param($rhost['name'], PARAM_ALPHANUM);
+                    $url   = clean_param($rhost['url'], PARAM_URL);
+                    $count = clean_param($rhost['count'], PARAM_INT);
                     $url_is_local = stristr($url , $CFG->wwwroot);
                     if (!empty($name) && !empty($count) && empty($url_is_local)) {
                         $localuser->mnet_foreign_host_array[] = array('name'  => $name, 
@@ -364,8 +368,9 @@ class auth_plugin_mnet
 
         $bool = update_record('user', $localuser);
         if (!$bool) {
-            //TODO: Jonathan to clean up mess:
-            exit("updating user failed in mnet/auth/confirm_mnet_session ");
+            // TODO: Jonathan to clean up mess
+            // Actually, this should never happen (modulo race conditions) - ML
+            error("updating user failed in mnet/auth/confirm_mnet_session ");
         }
 
         // set up the session
@@ -386,6 +391,54 @@ class auth_plugin_mnet
         } else {
             $mnet_session->expires = time() + (integer)$session_gc_maxlifetime;
             update_record('mnet_session', $mnet_session);
+        }
+
+        if (!$firsttime) {
+            // repeat customer! let the IDP know about enrolments
+            // we have for this user. 
+            // set up the RPC request
+            $mnetrequest = new mnet_xmlrpc_client();
+            $mnetrequest->set_method('auth/mnet/auth.php/update_enrolments');
+
+            // pass username and an assoc array of "my courses"
+            // with info so that the IDP can maintain mnet_enrol_assignments
+            $mnetrequest->add_param($remoteuser->username);
+            $fields = 'id, category, sortorder, fullname, shortname, idnumber, summary, 
+                       startdate, cost, currency, defaultrole, visible';
+            $courses = get_my_courses($localuser->id, 'visible DESC,sortorder ASC', $fields);
+            if (is_array($courses) && !empty($courses)) {
+                // Second request to do the JOINs that we'd have done
+                // inside get_my_courses() if we had been allowed
+                $sql = "SELECT c.id, 
+                               cc.name AS cat_name, cc.description AS cat_description,
+                               r.shortname as defaultrolename
+                        FROM {$CFG->prefix}course c
+                          JOIN {$CFG->prefix}course_categories cc ON c.category = cc.id
+                          LEFT OUTER JOIN {$CFG->prefix}role r  ON c.defaultrole = r.id
+                        WHERE c.id IN (" . join(',',array_keys($courses)) . ')';
+                $extra = get_records_sql($sql);
+
+                $keys = array_keys($courses);
+                $defaultrolename = get_field('role', 'shortname', 'id', $CFG->defaultcourseroleid);
+                foreach ($keys AS $id) {
+                    $courses[$id]->cat_name        = $extra[$id]->cat_name;
+                    $courses[$id]->cat_description = $extra[$id]->cat_description;
+                    if (!empty($extra[$id]->defaultrolename)) {
+                        $courses[$id]->defaultrolename = $extra[$id]->defaultrolename;
+                    } else {
+                        $courses[$id]->defaultrolename = $defaultrolename;
+                    }
+                    // coerce to array
+                    $courses[$id] = (array)$courses[$id];
+                }
+                $mnetrequest->add_param($courses);
+
+                // Call 0800-RPC Now! -- we don't care too much if it fails
+                // as it's just informational.
+                if ($mnetrequest->send($remotepeer) === false) {
+                    // error_log(print_r($mnetrequest->error,1));
+                }
+            }
         }
 
         return $localuser;
