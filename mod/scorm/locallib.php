@@ -666,6 +666,7 @@ function scorm_validate($data) {
     $scormid = $data->instance;                 // scorm ID 
 
     $validation = new stdClass();
+	$fstat=array("mtime"=>0);
 
     if (!empty($courseid) && !empty($reference)) {
         $validation->launch = 0;
