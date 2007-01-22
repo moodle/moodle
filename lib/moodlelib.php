@@ -6626,7 +6626,7 @@ function is_mnet_remote_user($user) {
         unset($env);
     }
 
-    return ($user->mnethostid != $CFG->mnet_localhost_id);
+    return (!empty($user->mnethostid) && $user->mnethostid != $CFG->mnet_localhost_id);
 }
 
 /**
