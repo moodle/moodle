@@ -1736,7 +1736,6 @@ function print_courses($category, $width="100%", $hidesitecourse = false) {
     global $CFG;
 
     if (empty($category)) {
-        error_log(1);
         $categories = get_categories(0);  // Parent = 0   ie top-level categories only
         if (count($categories) == 1) {
             $category   = array_shift($categories);
@@ -1746,7 +1745,6 @@ function print_courses($category, $width="100%", $hidesitecourse = false) {
         }
         unset($categories);
     } else {
-error_log(2);
         $categories = get_categories($category->id);  // sub categories
         $courses    = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.category,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher,c.cost,c.currency,c.enrol,c.guest');
     }
