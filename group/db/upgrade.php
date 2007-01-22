@@ -241,6 +241,90 @@ function xmldb_group_upgrade($oldversion=0) {
         $result = $result && change_field_precision($table, $field);
     }
 
+    /// Adding all the missing FK + Unique indexes (XMLDB will create the underlying indexes)
+    if ($result && $oldversion < 2007012200) {
+
+    /// Define index groupid-courseid (unique) to be added to groups_members
+        $table = new XMLDBTable('groups_members');
+        $index = new XMLDBIndex('groupid-courseid');
+        $index->setAttributes(XMLDB_INDEX_UNIQUE, array('groupid', 'userid'));
+
+    /// Launch add index groupid-courseid
+        $result = $result && add_index($table, $index);
+
+    /// Define key courseid (foreign) to be added to groups_courses_groups
+        $table = new XMLDBTable('groups_courses_groups');
+        $key = new XMLDBKey('courseid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+
+    /// Launch add key courseid
+        $result = $result && add_key($table, $key);
+
+    /// Define key groupid (foreign) to be added to groups_courses_groups
+        $table = new XMLDBTable('groups_courses_groups');
+        $key = new XMLDBKey('groupid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('groupid'), 'groups', array('id'));
+
+    /// Launch add key groupid
+        $result = $result && add_key($table, $key);
+
+    /// Define index courseid-groupid (unique) to be added to groups_courses_groups
+        $table = new XMLDBTable('groups_courses_groups');
+        $index = new XMLDBIndex('courseid-groupid');
+        $index->setAttributes(XMLDB_INDEX_UNIQUE, array('courseid', 'groupid'));
+
+    /// Launch add index courseid-groupid
+        $result = $result && add_index($table, $index);
+
+    /// Define key courseid (foreign) to be added to groups_courses_groupings
+        $table = new XMLDBTable('groups_courses_groupings');
+        $key = new XMLDBKey('courseid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+
+    /// Launch add key courseid
+        $result = $result && add_key($table, $key);
+
+    /// Define key groupingid (foreign) to be added to groups_courses_groupings
+        $table = new XMLDBTable('groups_courses_groupings');
+        $key = new XMLDBKey('groupingid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('groupingid'), 'groups_groupings', array('id'));
+
+    /// Launch add key groupingid
+        $result = $result && add_key($table, $key);
+
+    /// Define index courseid-groupingid (unique) to be added to groups_courses_groupings
+        $table = new XMLDBTable('groups_courses_groupings');
+        $index = new XMLDBIndex('courseid-groupingid');
+        $index->setAttributes(XMLDB_INDEX_UNIQUE, array('courseid', 'groupingid'));
+
+    /// Launch add index courseid-groupingid
+        $result = $result && add_index($table, $index);
+
+    /// Define key groupingid (foreign) to be added to groups_groupings_groups
+        $table = new XMLDBTable('groups_groupings_groups');
+        $key = new XMLDBKey('groupingid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('groupingid'), 'groups_groupings', array('id'));
+
+    /// Launch add key groupingid
+        $result = $result && add_key($table, $key);
+
+    /// Define key groupid (foreign) to be added to groups_groupings_groups
+        $table = new XMLDBTable('groups_groupings_groups');
+        $key = new XMLDBKey('groupid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('groupid'), 'groups', array('id'));
+
+    /// Launch add key groupid
+        $result = $result && add_key($table, $key);
+
+    /// Define index groupingid-groupid (unique) to be added to groups_groupings_groups
+        $table = new XMLDBTable('groups_groupings_groups');
+        $index = new XMLDBIndex('groupingid-groupid');
+        $index->setAttributes(XMLDB_INDEX_UNIQUE, array('groupingid', 'groupid'));
+
+    /// Launch add index groupingid-groupid
+        $result = $result && add_index($table, $index);
+    }
+
     return $result;
 }
 

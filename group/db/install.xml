@@ -4,7 +4,7 @@
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="groups" COMMENT="Each record represents a group." NEXT="groups_members">
+    <TABLE NAME="groups" COMMENT="Each record represents a group." NEXT="groups_groupings">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Short human readable unique name for the group." PREVIOUS="id" NEXT="description"/>
@@ -21,22 +21,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for groups"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="groups_members" COMMENT="Link a user to a group." PREVIOUS="groups" NEXT="groups_groupings">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="groupid"/>
-        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="groupid" NEXT="timeadded"/>
-        <FIELD NAME="timeadded" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for groups_members"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="groupid" UNIQUE="false" FIELDS="groupid" NEXT="userid"/>
-        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" PREVIOUS="groupid"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="groups_groupings" COMMENT="A grouping is a collection of groups." PREVIOUS="groups_members" NEXT="groups_courses_groups">
+    <TABLE NAME="groups_groupings" COMMENT="A grouping is a collection of groups." PREVIOUS="groups" NEXT="groups_members">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Short human readable unique name for group." PREVIOUS="id" NEXT="description"/>
@@ -54,15 +39,36 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for groups_groupings"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="groups_courses_groups" COMMENT="Link a group to a course (or the site)." PREVIOUS="groups_groupings" NEXT="groups_courses_groupings">
+    <TABLE NAME="groups_members" COMMENT="Link a user to a group." PREVIOUS="groups_groupings" NEXT="groups_courses_groups">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="groupid"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="groupid" NEXT="timeadded"/>
+        <FIELD NAME="timeadded" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for groups_members" NEXT="groupid"/>
+        <KEY NAME="groupid" TYPE="foreign" FIELDS="groupid" REFTABLE="groups" REFFIELDS="id" PREVIOUS="primary" NEXT="userid"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="groupid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="groupid-courseid" UNIQUE="true" FIELDS="groupid, userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="groups_courses_groups" COMMENT="Link a group to a course (or the site)." PREVIOUS="groups_members" NEXT="groups_courses_groupings">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="groupid"/>
         <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Default comment for the field, please edit me" PREVIOUS="courseid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for groups_courses_groups"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for groups_courses_groups" NEXT="courseid"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="primary" NEXT="groupid"/>
+        <KEY NAME="groupid" TYPE="foreign" FIELDS="groupid" REFTABLE="groups" REFFIELDS="id" PREVIOUS="courseid"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid-groupid" UNIQUE="true" FIELDS="courseid, groupid"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="groups_courses_groupings" COMMENT="Link a grouping to a course (or the site)." PREVIOUS="groups_courses_groups" NEXT="groups_groupings_groups">
       <FIELDS>
@@ -71,8 +77,13 @@
         <FIELD NAME="groupingid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="courseid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for groups_courses_groupings"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for groups_courses_groupings" NEXT="courseid"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="primary" NEXT="groupingid"/>
+        <KEY NAME="groupingid" TYPE="foreign" FIELDS="groupingid" REFTABLE="groups_groupings" REFFIELDS="id" PREVIOUS="courseid"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid-groupingid" UNIQUE="true" FIELDS="courseid, groupingid"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="groups_groupings_groups" COMMENT="Link a group to a grouping." PREVIOUS="groups_courses_groupings">
       <FIELDS>
@@ -82,8 +93,13 @@
         <FIELD NAME="timeadded" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="groupid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for groups_groupings_groups"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for groups_groupings_groups" NEXT="groupingid"/>
+        <KEY NAME="groupingid" TYPE="foreign" FIELDS="groupingid" REFTABLE="groups_groupings" REFFIELDS="id" PREVIOUS="primary" NEXT="groupid"/>
+        <KEY NAME="groupid" TYPE="foreign" FIELDS="groupid" REFTABLE="groups" REFFIELDS="id" PREVIOUS="groupingid"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="groupingid-groupid" UNIQUE="true" FIELDS="groupingid, groupid"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
   <STATEMENTS>
