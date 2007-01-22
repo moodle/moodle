@@ -655,7 +655,7 @@ function qtype_multianswer_extract_question($text) {
 
 
     // Undo the automatic addslashes, because we want to analyze the text - we need to remember this later and addslashes again!
-    $text = stripslashes($text);
+    $text = stripslashes_safe($text);
 
     // We need to allow entities (e.g. &#1085;) in answers. This is difficulty,
     // because the '#' character is used as delimiter between answer and
@@ -675,7 +675,7 @@ function qtype_multianswer_extract_question($text) {
 
     // Handle the entity encoded ampersand in entities (e.g. &amp;lt; -> &lt;)
     $text = preg_replace('/&amp;(.{2,9}?;)/', '&${1}', $text);
-    $text = stripslashes($text);
+    $text = stripslashes_safe($text);
 
 ////////////////////////////////////////
 //// Start of the actual function
