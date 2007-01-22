@@ -775,6 +775,10 @@ ORDER BY $sort");
         }
     }
 
+    if (!empty($USER->id) && ($USER->id == $userid)) {
+        $USER->mycourses = $mycourses;
+    }
+
     return $mycourses;
 }
 
