@@ -31,8 +31,7 @@ function upgrade_group_db($continueto) {
 
         $strdatabaseupgrades = get_string('databaseupgrades');
         print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '', 
-                '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
-                false, "&nbsp;", "&nbsp;");
+                upgrade_get_javascript(), false, "&nbsp;", "&nbsp;");
 
         upgrade_log_start();
         print_heading('group');
@@ -90,8 +89,7 @@ function upgrade_group_db($continueto) {
 
     if ($group_version > $CFG->group_version) {       // Upgrade tables
         $strdatabaseupgrades = get_string('databaseupgrades');
-        print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '',
-                 '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>');
+        print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '', upgrade_get_javascript());
 
         upgrade_log_start();
         print_heading('group');

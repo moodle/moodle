@@ -27,7 +27,9 @@
 
     $id             = optional_param('id', '', PARAM_ALPHANUM);
     $confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
-    $agreelicence = optional_param('agreelicence',0, PARAM_BOOL);
+    $confirmrelease = optional_param('confirmrelease', 0, PARAM_BOOL);
+    $agreelicense   = optional_param('agreelicense', 0, PARAM_BOOL);
+    $autopilot      = optional_param('autopilot', 0, PARAM_BOOL);
     $ignoreupgradewarning = optional_param('ignoreupgradewarning', 0, PARAM_BOOL);
 
 /// check upgrade status first
@@ -35,6 +37,11 @@
         $_SESSION['upgraderunning'] = 0;
     }
     upgrade_check_running("Upgrade already running in this session, please wait!<br />Click on the exclamation marks to ignore this warning (<a href=\"index.php?ignoreupgradewarning=1\">!!!</a>).", 10);
+
+/// set install/upgrade autocontinue session flag
+    if ($autopilot) {
+        $_SESSION['installautopilot'] = $autopilot;
+    }
 
 /// Check some PHP server settings
 
@@ -107,29 +114,42 @@
             }
         }
     }
-
-    $linktoscrolltoerrors = '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>';
     if (! $maintables) {
     /// hide errors from headers in case debug enabled in config.php
         $origdebug = $CFG->debug;
         $CFG->debug = DEBUG_MINIMAL;
         error_reporting($CFG->debug);
-        if (empty($agreelicence)) {
+        if (empty($agreelicense)) {
             $strlicense = get_string('license');
             print_header($strlicense, $strlicense, $strlicense, "", "", false, "&nbsp;", "&nbsp;");
             print_heading("<a href=\"http://moodle.org\">Moodle</a> - Modular Object-Oriented Dynamic Learning Environment");
             print_heading(get_string('copyrightnotice'));
             print_box(text_to_html(get_string('gpl')), 'copyrightnotice');
             echo "<br />";
-            notice_yesno(get_string('doyouagree'), "index.php?agreelicence=true",
+            notice_yesno(get_string('doyouagree'), "index.php?agreelicense=1",
                                                    "http://docs.moodle.org/en/License");
             exit;
+        }
+        if (empty($confirmrelease)) {
+            $strcurrentrelease = get_string("currentrelease");
+            print_header($strcurrentrelease, $strcurrentrelease, $strcurrentrelease, "", "", false, "&nbsp;", "&nbsp;");
+            print_heading("Moodle $release");
+            print_box(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'));
+            echo '<form action="index.php"><fieldset class="invisiblefieldset">';
+            echo '<input type="hidden" name="agreelicense" value="1" />';
+            echo '<input type="hidden" name="confirmrelease" value="1" />';
+            echo '</fieldset>';
+            echo '<div class="continuebutton"><input name="autopilot" id="autopilot" type="checkbox" value="1" /><label for="autopilot">'.get_string('unattendedoperation', 'admin').'</label>';
+            echo '<br /><br /><input type="submit" value="'.get_string('continue').'" /></div>';
+            echo '</form>';
+            print_footer('none');
+            die;
         }
 
         $strdatabasesetup    = get_string("databasesetup");
         $strdatabasesuccess  = get_string("databasesuccess");
         print_header($strdatabasesetup, $strdatabasesetup, $strdatabasesetup,
-                        "", $linktoscrolltoerrors, false, "&nbsp;", "&nbsp;");
+                        "", upgrade_get_javascript(), false, "&nbsp;", "&nbsp;");
     /// return to original debugging level
         $CFG->debug = $origdebug;
         error_reporting($CFG->debug);
@@ -238,18 +258,30 @@
             }
 
             if (empty($confirmupgrade)) {
-
-
                 print_header($strdatabasechecking, $stradministration, $strdatabasechecking,
                         "", "", false, "&nbsp;", "&nbsp;");
 
-                notice_yesno(get_string('upgradesure', 'admin', $a->newversion), 'index.php?confirmupgrade=yes', 'index.php');
+                notice_yesno(get_string('upgradesure', 'admin', $a->newversion), 'index.php?confirmupgrade=1', 'index.php');
                 exit;
 
+            } else if (empty($confirmrelease)){
+                $strcurrentrelease = get_string("currentrelease");
+                print_header($strcurrentrelease, $strcurrentrelease, $strcurrentrelease, "", "", false, "&nbsp;", "&nbsp;");
+                print_heading("Moodle $release");
+                print_box(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'));
+                echo '<form action="index.php"><fieldset class="invisiblefieldset">';
+                echo '<input type="hidden" name="confirmupgrade" value="1" />';
+                echo '<input type="hidden" name="confirmrelease" value="1" />';
+                echo '</fieldset>';
+                echo '<div class="continuebutton"><input name="autopilot" id="autopilot" type="checkbox" value="0" /><label for="autopilot">'.get_string('unattendedoperation', 'admin').'</label>';
+                echo '<br /><br /><input type="submit" value="'.get_string('continue').'" /></div>';
+                echo '</form>';
+                print_footer('none');
+                die;
             } else {
                 $strdatabasesuccess  = get_string("databasesuccess");
                 print_header($strdatabasechecking, $stradministration, $strdatabasechecking,
-                        "", $linktoscrolltoerrors, false, "&nbsp;", "&nbsp;");
+                        "", upgrade_get_javascript(), false, "&nbsp;", "&nbsp;");
 
             /// return to original debugging level
                 $CFG->debug = $origdebug;
@@ -313,13 +345,9 @@
 /// Updated human-readable release version if necessary
 
     if ($release <> $CFG->release) {  // Update the release version
-        $strcurrentrelease = get_string("currentrelease");
-        print_header($strcurrentrelease, $strcurrentrelease, $strcurrentrelease, "", "", false, "&nbsp;", "&nbsp;");
-        print_heading("Moodle $release");
         if (!set_config("release", $release)) {
             notify("ERROR: Could not update release version in database!!");
         }
-        notice(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'), 'index.php', 'none');
     }
 
 /// Find and check all main modules and load them up or upgrade them if necessary
@@ -368,6 +396,8 @@
 
 /// just make sure upgrade logging is properly terminated
     upgrade_log_finish();
+
+    unset($_SESSION['installautopilot']);
 
 /// Set up the blank site - to be customized later at the end of install.
     if (! $site = get_site()) {

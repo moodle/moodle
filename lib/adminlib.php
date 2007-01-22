@@ -64,8 +64,7 @@ function upgrade_plugins($type, $dir, $return) {
                 $info->requiremoodle = $plugin->requires;
                 if (!$updated_plugins) {
                     print_header($strpluginsetup, $strpluginsetup, $strpluginsetup, '',
-                        '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
-                        false, '&nbsp;', '&nbsp;');
+                        upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
                 }
                 upgrade_log_start();
                 notify(get_string('pluginrequirementsnotmet', 'error', $info));
@@ -87,8 +86,7 @@ function upgrade_plugins($type, $dir, $return) {
         } else if ($CFG->$pluginversion < $plugin->version) {
             if (!$updated_plugins) {
                 print_header($strpluginsetup, $strpluginsetup, $strpluginsetup, '',
-                        '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
-                        false, '&nbsp;', '&nbsp;');
+                        upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
             }
             $updated_plugins = true;
             upgrade_log_start();
@@ -234,8 +232,7 @@ function upgrade_activity_modules($return) {
                 $info->requiremoodle = $module->requires;
                 if (!$updated_modules) {
                     print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '',
-                            '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
-                            false, '&nbsp;', '&nbsp;');
+                            upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
                 }
                 upgrade_log_start();
                 notify(get_string('modulerequirementsnotmet', 'error', $info));
@@ -258,8 +255,7 @@ function upgrade_activity_modules($return) {
                 }
                 if (!$updated_modules) {
                     print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '',
-                            '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
-                            false, '&nbsp;', '&nbsp;');
+                            upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
                 }
                 upgrade_log_start();
                 print_heading($module->name .' module needs upgrading');
@@ -318,8 +314,7 @@ function upgrade_activity_modules($return) {
         } else {    // module not installed yet, so install it
             if (!$updated_modules) {
                 print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '',
-                        '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
-                        false, '&nbsp;', '&nbsp;');
+                        upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
             }
             upgrade_log_start();
             print_heading($module->name);
@@ -474,6 +469,18 @@ function print_progress($done, $total, $updatetime=5, $sleeptime=1, $donetext=''
     }
 }
 
+function upgrade_get_javascript() {
+    global $CFG;
+
+    if (!empty($_SESSION['installautopilot'])) {
+        $linktoscrolltoerrors = '<script type="text/javascript">var installautopilot = true;</script>'."\n";
+    } else {
+        $linktoscrolltoerrors = '<script type="text/javascript">var installautopilot = false;</script>'."\n";
+    }
+    $linktoscrolltoerrors .= '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>';
+
+    return $linktoscrolltoerrors;
+}
 ////////////////////////////////////////////////
 /// upgrade logging functions
 ////////////////////////////////////////////////

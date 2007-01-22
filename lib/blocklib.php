@@ -1017,8 +1017,7 @@ function upgrade_blocks_db($continueto) {
     if (empty($CFG->blocks_version)) {                  // Blocks have never been installed.
         $strdatabaseupgrades = get_string('databaseupgrades');
         print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '', 
-                '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
-                false, '&nbsp;', '&nbsp;');
+                upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
 
         upgrade_log_start();
         print_heading('blocks');
@@ -1063,8 +1062,7 @@ function upgrade_blocks_db($continueto) {
 
     if ($blocks_version > $CFG->blocks_version) {       // Upgrade tables
         $strdatabaseupgrades = get_string('databaseupgrades');
-        print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '',
-                '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>');
+        print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '', upgrade_get_javascript());
 
         upgrade_log_start();
         print_heading('blocks');
@@ -1230,8 +1228,7 @@ function upgrade_blocks_plugins($continueto) {
                 if (empty($updated_blocks)) {
                     $strblocksetup    = get_string('blocksetup');
                     print_header($strblocksetup, $strblocksetup, $strblocksetup, '', 
-                            '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
-                            false, '&nbsp;', '&nbsp;');
+                            upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
                 }
                 $updated_blocks = true;
                 upgrade_log_start();
@@ -1303,8 +1300,7 @@ function upgrade_blocks_plugins($continueto) {
             if (empty($updated_blocks)) {
                 $strblocksetup    = get_string('blocksetup');
                 print_header($strblocksetup, $strblocksetup, $strblocksetup, '', 
-                        '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>',
-                        false, '&nbsp;', '&nbsp;');
+                        upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
             }
             $updated_blocks = true;
             upgrade_log_start();

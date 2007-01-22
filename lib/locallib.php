@@ -90,8 +90,7 @@ function upgrade_local_db($continueto) {
 
     if ($local_version > $CFG->local_version) { // upgrade! 
         $strdatabaseupgrades = get_string('databaseupgrades');
-        print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '',
-                 '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>');
+        print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '', upgrade_get_javascript());
         
         upgrade_log_start();
         require_once ($CFG->dirroot .'/local/db/upgrade.php');

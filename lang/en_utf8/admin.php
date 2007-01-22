@@ -517,6 +517,7 @@ $string['timezoneforced'] = 'This is forced by the site administrator';
 $string['timezoneisforcedto'] = 'Force all users to use';
 $string['timezonenotforced'] = 'Users can choose their own timezone';
 $string['tokenizerrecommended'] = 'Installing the optional PHP Tokenizer extension is recommended -- it improves Moodle Networking functionality.';
+$string['unattendedoperation'] = 'Unattended operation';
 $string['unbookmarkthispage'] = 'unbookmark this page';
 $string['unicodeupgradenotice'] = 'In Moodle 1.6 we have migrated all languages to Unicode.  To complete the upgrade for this site, you need to convert all the data in your database to Unicode (UTF-8) using our migration script.  <a href=\"utfdbmigrate.php\">Click here to run the migration script now</a>!';
 $string['unicoderecommended'] = 'Storing all your data in Unicode (UTF-8) is recommended. New installations should be performed into databases that have their default character set as Unicode.  If you are upgrading, you should perform the UTF-8 migration process (see the Admin page).';
