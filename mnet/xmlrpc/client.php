@@ -141,6 +141,10 @@ class mnet_xmlrpc_client {
             if (!empty($CFG->mnet_all_hosts_id)) {
                 $id_list .= ', '.$CFG->mnet_all_hosts_id;
             }
+
+            /*** TODO: Review MartinL notes - This is bogus AFAICT,
+             *** because we cannot be certain that the remote
+             *** host has the same plugins or modules we do
             // Find methods that we subscribe to on this host
             $sql = "
                 SELECT
@@ -161,6 +165,7 @@ class mnet_xmlrpc_client {
                 // TODO: Handle attempt to call not-permitted method
                 return false;
             }
+            *** END_OF_TODO */
 
         }
         $this->requesttext = xmlrpc_encode_request($this->method, $this->params);
