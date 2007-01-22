@@ -27,32 +27,33 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
                     }
                 }
 
-        	    if (groupsComboEl) {
-        	        // Clear the groups combo box.
-                    while (groupsComboEl.firstChild) {
-                        groupsComboEl.removeChild(groupsComboEl.firstChild);
-                    }
-            	    if (o.responseText) {
-            	        //var groups = eval("("+o.responseText+")");
-            	        var groups = eval(o.responseText);
+        	    if (groupsComboEl && o.responseText) {
+        	        //var groups = eval("("+o.responseText+")");
+        	        var groups = eval(o.responseText);
 
-            	        // Populate the groups combo box.
-                        for (var i=0; i<groups.length; i++) {
-                            var optionEl = document.createElement("option");
-                            optionEl.setAttribute("value", groups[i].id);
-                            optionEl.setAttribute("onclick",
-                                "membersCombo.refreshMembers("+groups[i].id+");");
-                            optionEl.innerHTML = groups[i].name;
-                            groupsComboEl.appendChild(optionEl);
-                        }
-            	    }
+        	        // Populate the groups combo box.
+                    for (var i=0; i<groups.length; i++) {
+                        var optionEl = document.createElement("option");
+                        optionEl.setAttribute("value", groups[i].id);
+                        optionEl.innerHTML = groups[i].name;
+                        groupsComboEl.appendChild(optionEl);
+                    }
                 }
         	}
         	// Remove the loader gif image.
         	removeLoaderImgs("groupsloader", "groupslabel");
+        },
+
+        failure: function(o) {
+            removeLoaderImgs("membersloader", "memberslabel");
         }
     };
 
+    // Add onchange event to groups combo box.
+    groupsComboEl = document.getElementById("groups");
+    if (groupsComboEl) {
+        groupsComboEl.setAttribute("onchange", "membersCombo.refreshMembers(this.options[this.selectedIndex].value);");
+    }
     // Hide the updategroups input since AJAX will take care of this.
     var updateGroupsButton = document.getElementById("updategroups");
     updateGroupsButton.setAttribute("style", "display:none;");
@@ -64,7 +65,15 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
 UpdatableGroupsCombo.prototype.refreshGroups = function (groupingId) {
     // Add the loader gif image.
     createLoaderImg("groupsloader", "groupslabel", this.wwwRoot);
-    
+
+    // Clear the groups combo box.
+    var selectEl = document.getElementById("groups");
+    if (selectEl) {
+        while (selectEl.firstChild) {
+            selectEl.removeChild(selectEl.firstChild);
+        }
+    }
+
     var sUrl = this.wwwRoot+"/group/index.php?id="+this.courseId+"&grouping="+groupingId+"&act_ajax_getgroupsingrouping";
     YAHOO.util.Connect.asyncRequest('GET', sUrl, this.connectCallback, null);
 };
@@ -84,26 +93,24 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
         	if (o.responseText !== undefined) {
                 var selectEl = document.getElementById("members");
 
-        	    if (selectEl) {
-        	        // Clear the members combo box.
-                    while (selectEl.firstChild) {
-                        selectEl.removeChild(selectEl.firstChild);
-                    }
-            	    if (o.responseText) {
-            	        var members = eval('('+o.responseText+')');
+        	    if (selectEl && o.responseText) {
+        	        var members = eval('('+o.responseText+')');
 
-            	        // Populate the members combo box.
-                        for (var i=0; i<members.length; i++) {
-                            var optionEl = document.createElement("option");
-                            optionEl.setAttribute("value", members[i].id);
-                            optionEl.innerHTML = members[i].firstname+" "+members[i].lastname;
-                            selectEl.appendChild(optionEl);
-                        }
-            	    }
+        	        // Populate the members combo box.
+                    for (var i=0; i<members.length; i++) {
+                        var optionEl = document.createElement("option");
+                        optionEl.setAttribute("value", members[i].id);
+                        optionEl.innerHTML = members[i].firstname+" "+members[i].lastname;
+                        selectEl.appendChild(optionEl);
+                    }
                 }
         	}
         	// Remove the loader gif image.
         	removeLoaderImgs("membersloader", "memberslabel");
+        },
+
+        failure: function(o) {
+            removeLoaderImgs("membersloader", "memberslabel");
         }
     };
 
@@ -118,6 +125,14 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
 UpdatableMembersCombo.prototype.refreshMembers = function (groupId) {
     // Add the loader gif image.
     createLoaderImg("membersloader", "memberslabel", this.wwwRoot);
+
+    // Clear the members combo box.
+    var selectEl = document.getElementById("members");
+    if (selectEl) {
+        while (selectEl.firstChild) {
+            selectEl.removeChild(selectEl.firstChild);
+        }
+    }
 
     var sUrl = this.wwwRoot+"/group/index.php?id="+this.courseId+"&group="+groupId+"&act_ajax_getmembersingroup";
     YAHOO.util.Connect.asyncRequest("GET", sUrl, this.connectCallback, null);

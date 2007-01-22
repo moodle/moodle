@@ -143,9 +143,9 @@ if ($success) {
         <tr>
             <td class="generalboxcontent">
                 <p><label for="groupings"><?php print_string('groupings', 'group'); ?></label></p>
-                <select name="grouping" id="groupings" size="15" class="select">
+                <select name="grouping" id="groupings" size="15" class="select"
+                        onchange="groupsCombo.refreshGroups(this.options[this.selectedIndex].value);">
 <?php
-//onchange="onGroupingChange()"
 
     $groupingids = groups_get_groupings($courseid);
     $groupingids[] = GROUP_NOT_IN_GROUPING;
@@ -165,7 +165,7 @@ if ($success) {
                 $select = ' selected="selected"';
                 $sel_groupingid = $id;
             }
-            echo "<option value=\"$id\"$select onclick=\"groupsCombo.refreshGroups($id);\">$name</option>\n";
+            echo "<option value=\"$id\"$select>$name</option>\n";
             $count++;
         }
     }
