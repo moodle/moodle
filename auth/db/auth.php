@@ -470,7 +470,7 @@ class auth_plugin_db {
     // A chance to validate form data, and last chance to 
     // do stuff before it is inserted in config_plugin
     function validate_form(&$form, &$err) {
-        if ($form['passtype'] === 'internal') {
+        if ($form->passtype === 'internal') {
             $this->config->changepasswordurl = '';
             set_config('changepasswordurl', '', 'auth/db');
         }
