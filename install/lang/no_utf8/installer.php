@@ -108,6 +108,7 @@ $string['previous'] = 'Forrige';
 $string['remotedownloadnotallowed'] = 'Nedlasting av komponenter til din tjenermaskin er ikke tillatt (allow_url_fopen er satt til ulovlig). <br /> <br />Du må laste ned
 <a href=\"$a->url\">$a->url</a>-filen manuelt, kopiere den til \"$a->dest\" på tjeneren og pakke den ut der.';
 $string['report'] = 'Rapport';
+$string['restricted'] = 'Begrenset';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle may have trouble with safe mode on';
 $string['sessionautostart'] = 'Session Auto Start';
