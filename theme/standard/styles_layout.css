@@ -328,6 +328,10 @@ form.popupform {
   vertical-align: top;
 }
 
+.groupmanagementtable select {
+  width:200px;
+}
+
 img.icon {
   vertical-align:middle;
   margin-right:4px;
