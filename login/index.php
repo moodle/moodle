@@ -226,8 +226,9 @@ if ($authsequence[0] == 'cas' and !empty($CFG->cas_enabled)) {
             }
 
             // TODO: if the user failed to authenticate, check if the username corresponds to a remote mnet user
-            if ($users = get_records('user', 'username', $frm->username)) {
-                $errormsg .= "<br/>If you are a Moodle Network remote user and can <a href=\"mnet_email.php?u=$frm->username\">confirm your email address here</a>, you can be redirected to your login page.<br/>";
+            if ( $CFG->mnet_dispatcher_mode === 'strict'
+                 && is_enabled_auth('mnet')) {
+                $errormsg .= get_string('loginlinkmnetuser', 'mnet', "mnet_email.php?u=$frm->username");
             }
         }
     }

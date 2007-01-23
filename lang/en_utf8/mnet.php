@@ -226,4 +226,6 @@ $string['enrolcourseenrol_desc'] = 'Enrol/unenrol users from this course using M
                                     methods if the remote hosts allows them. Such enrolments are listed under
                                     <em>Other enrolled users</em>';
 $string['host'] = 'host';
+$string['loginlinkmnetuser'] = '<br/>If you are a Moodle Network remote user and can <a href=\"$a\">confirm your email address here</a>, you can be redirected to your login page.<br />';
+
 ?>
