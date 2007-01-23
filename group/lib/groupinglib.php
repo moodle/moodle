@@ -54,9 +54,9 @@ function groups_get_groups_in_grouping($groupingid) {
 }
 
 /**
- * Gets complete group-data for each group in a grouping.
+ * Gets data linking a grouping to each group it contains.
  * @param int $groupingid The ID of the grouping.
- * @return array | false An array of group records, or false on error.
+ * @return array | false An array of grouping-group records, or false on error.
  */
 function groups_get_groups_in_grouping_records($groupingid) {
     if (! $groupingid) {
