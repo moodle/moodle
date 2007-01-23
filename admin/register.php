@@ -26,7 +26,7 @@
     }
 
     if (empty($CFG->siteidentifier)) {    // Unique site identification code
-        set_config('siteidentifier', random_string(32));
+        set_config('siteidentifier', random_string(32).$_SERVER['HTTP_HOST']);
     }
 
 
