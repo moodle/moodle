@@ -183,7 +183,7 @@ class user_edit_form extends moodleform {
 
 
         $choices = get_list_of_countries();
-        $choices[0] = get_string('selectacountry').'...';
+        $choices= array(''=>get_string('selectacountry').'...') + $choices;
         $mform->addElement('select', 'country', get_string('selectacountry'), $choices);
         $mform->setType('country', PARAM_ALPHA);
         $mform->addRule('country', $strrequired, 'required', null, 'client');
