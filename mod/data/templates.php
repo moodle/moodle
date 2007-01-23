@@ -73,8 +73,12 @@
     
     // For the javascript for inserting template tags: initialise the default textarea to
     // 'edit_template' - it is always present in all different possible views.
+
+    $editorobj = 'editor_'.md5('template');
+
     $bodytag = 'onload="';
-    $bodytag .= 'if (typeof(edit_template) != \'undefined\') { currEditor = edit_template; } ';
+    $bodytag .= 'if (typeof('.$editorobj.') != \'undefined\') { currEditor = '.$editorobj.'; } ';
+    //$bodytag .= 'currTextarea = document.getElementById(\'tempform\').template;';
     $bodytag .= 'currTextarea = document.tempform.template;';
     $bodytag .= '" ';
     
@@ -235,7 +239,7 @@
     print_simple_box_end();
     echo '</form>';
     if ($usehtmleditor) {
-        use_html_editor('template');        
+        use_html_editor('template');
         if ($mode == 'listtemplate'){
             use_html_editor('listtemplateheader');
             use_html_editor('listtemplatefooter');
