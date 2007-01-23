@@ -152,7 +152,7 @@ function groups_db_get_group_settings($groupid, $courseid=false, $alldata=false)
 function groups_db_users_in_common_group($userid1, $userid2) {
 	global $CFG;
     $havecommongroup = false;
-	$sql = "SELECT gm1.groupid, 1 FROM {$CFG->prefix}groups_membersgm1 " .
+	$sql = "SELECT gm1.groupid, 1 FROM {$CFG->prefix}groups_members gm1 " .
 			"INNER JOIN {$CFG->prefix}groups_members gm2 " .
 			"ON gm1.groupid = gm2.groupid" .
 			"WHERE gm1.userid = '$userid1' AND gm2.userid = '$userid2'";
