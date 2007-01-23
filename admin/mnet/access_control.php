@@ -60,15 +60,15 @@ if (!empty($action) and confirm_sesskey()) {
         case "acl":
         
             // require the access parameter, and it must be 'allow' or 'deny'
-            $access = trim(strtolower(required_param('access', PARAM_ALPHA)));
-            if ($access != 'allow' and $access != 'deny') {
+            $accessctrl = trim(strtolower(required_param('accessctrl', PARAM_ALPHA)));
+            if ($accessctrl != 'allow' and $accessctrl != 'deny') {
                 error(get_string('invalidaccessparam', 'mnet') , '/admin/mnet/access_control.php');
             }
 
-            if (mnet_update_sso_access_control($idrec->username, $idrec->mnet_host_id, $access)) {
-                if ($access == 'allow') {
+            if (mnet_update_sso_access_control($idrec->username, $idrec->mnet_host_id, $accessctrl)) {
+                if ($accessctrl == 'allow') {
                     redirect('access_control.php', get_string('ssl_acl_allow','mnet', array($idrec->username, $mnethosts[$idrec->mnet_host_id])));
-                } elseif ($access == 'deny') {
+                } elseif ($accessctrl == 'deny') {
                     redirect('access_control.php', get_string('ssl_acl_deny','mnet', array($idrec->username, $mnethosts[$idrec->mnet_host_id])));
                 }
             }
@@ -94,8 +94,8 @@ if ($form = data_submitted() and confirm_sesskey()) {
     if (empty($form->mnet_host_id)) {
         $formerror['mnet_host_id'] = get_string('selectahost','mnet');
     }
-    if (empty($form->access)) {
-        $formerror['access'] = get_string('selectaccesslevel','mnet'); ;
+    if (empty($form->accessctrl)) {
+        $formerror['accessctrl'] = get_string('selectaccesslevel','mnet'); ;
     }
 
     // process if there are no errors
@@ -107,10 +107,10 @@ if ($form = data_submitted() and confirm_sesskey()) {
         foreach ($usernames as $username) {
             $username = trim(moodle_strtolower($username));
             if (!empty($username)) {
-                if (mnet_update_sso_access_control($username, $form->mnet_host_id, $form->access)) {
-                    if ($form->access == 'allow') {
+                if (mnet_update_sso_access_control($username, $form->mnet_host_id, $form->accessctrl)) {
+                    if ($form->accessctrl == 'allow') {
                         redirect('access_control.php', get_string('ssl_acl_allow','mnet', array($username, $mnethosts[$form->mnet_host_id])));
-                    } elseif ($form->access == 'deny') {
+                    } elseif ($form->accessctrl == 'deny') {
                         redirect('access_control.php', get_string('ssl_acl_deny','mnet', array($username, $mnethosts[$form->mnet_host_id])));
                     }
                 }
@@ -173,13 +173,13 @@ if (!$acl) {
     $table->align = array('left', 'left', 'center');
     $table->width = "95%";
     foreach ($acl as $aclrecord) {
-        if ($aclrecord->access == 'allow') {
+        if ($aclrecord->accessctrl == 'allow') {
             $accesscolumn = get_string('allow', 'mnet')
-                . " (<a href=\"?id={$aclrecord->id}&amp;action=acl&amp;access=deny&amp;sesskey={$USER->sesskey}\">"
+                . " (<a href=\"?id={$aclrecord->id}&amp;action=acl&amp;accessctrl=deny&amp;sesskey={$USER->sesskey}\">"
                 . get_string('deny', 'mnet') . "</a>)";
         } else {
             $accesscolumn = get_string('deny', 'mnet')
-                . " (<a href=\"?id={$aclrecord->id}&amp;action=acl&amp;access=allow&amp;sesskey={$USER->sesskey}\">"
+                . " (<a href=\"?id={$aclrecord->id}&amp;action=acl&amp;accessctrl=allow&amp;sesskey={$USER->sesskey}\">"
                 . get_string('allow', 'mnet') . "</a>)";
         }
         $deletecolumn = "<a href=\"?id={$aclrecord->id}&amp;action=delete&amp;sesskey={$USER->sesskey}\">"
@@ -221,12 +221,12 @@ choose_from_menu($mnethosts, 'mnet_host_id');
 
 // choose an access level
 echo " " . get_string('accesslevel', 'mnet') . ":\n";
-if (!empty($formerror['access'])) {
+if (!empty($formerror['accessctrl'])) {
     echo '<span class="error"> * </span>';
 }
 $accessmenu['allow'] = get_string('allow', 'mnet');
 $accessmenu['deny'] = get_string('deny', 'mnet');
-choose_from_menu($accessmenu, 'access');
+choose_from_menu($accessmenu, 'accessctrl');
 
 // submit button
 echo '<input type="submit" value="' . get_string('addtoacl', 'mnet') . '" />';

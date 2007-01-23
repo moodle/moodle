@@ -228,8 +228,8 @@
             if (!is_mnet_remote_user($user)) {
                 error('Users in the MNET access control list must be remote MNET users.');
             }
-            $access = strtolower(required_param('access', PARAM_ALPHA));
-            if ($access != 'allow' and $access != 'deny') {
+            $accessctrl = strtolower(required_param('accessctrl', PARAM_ALPHA));
+            if ($accessctrl != 'allow' and $accessctrl != 'deny') {
                 error('Invalid access parameter.');
             }
             $aclrecord = get_record('mnet_sso_access_control', 'username', $user->username, 'mnet_host_id', $user->mnethostid);
@@ -237,12 +237,12 @@
                 $aclrecord = new object();
                 $aclrecord->mnet_host_id = $user->mnethostid;
                 $aclrecord->username = $user->username;
-                $aclrecord->access = $access;
+                $aclrecord->accessctrl = $accessctrl;
                 if (!insert_record('mnet_sso_access_control', $aclrecord)) {
                     error("Database error - Couldn't modify the MNET access control list.");
                 }
             } else {
-                $aclrecord->access = $access;
+                $aclrecord->accessctrl = $accessctrl;
                 if (!update_record('mnet_sso_access_control', $aclrecord)) {
                     error("Database error - Couldn't modify the MNET access control list.");
                 }
@@ -250,7 +250,7 @@
             $mnethosts = get_records('mnet_host', '', '', 'id', 'id,wwwroot,name');
             notify("MNET access control list updated: username '$user->username' from host '"
                     . $mnethosts[$user->mnethostid]->name
-                    . "' access now set to '$access'.");
+                    . "' access now set to '$accessctrl'.");
         }
 
         // Carry on with the user listing
@@ -429,20 +429,20 @@
 
                 // for remote users, shuffle columns around and display MNET stuff
                 if (is_mnet_remote_user($user)) {
-                    $access = 'allow';
+                    $accessctrl = 'allow';
                     if ($acl = get_record('mnet_sso_access_control', 'username', $user->username, 'mnet_host_id', $user->mnethostid)) {
-                        $access = $acl->access;
+                        $accessctrl = $acl->accessctrl;
                     }
-                    $changeaccessto = ($access == 'deny' ? 'allow' : 'deny');
+                    $changeaccessto = ($accessctrl == 'deny' ? 'allow' : 'deny');
                     // delete button in confirm column - remote users should already be confirmed
                     // TODO: no delete for remote users, for now. new userid, delete flag, unique on username/host...
                     $confirmbutton = "";
                     // ACL in delete column
-                    $deletebutton = ucfirst($access);
+                    $deletebutton = get_string($accessctrl, 'mnet');
                     if (has_capability('moodle/user:delete', $sitecontext)) {
                         // TODO: this should be under a separate capability
-                        $deletebutton .= " (<a href=\"?acl={$user->id}&amp;access=$changeaccessto&amp;sesskey={$USER->sesskey}\">"
-                                . ucfirst($changeaccessto) . " access</a>)";
+                        $deletebutton .= " (<a href=\"?acl={$user->id}&amp;accessctrl=$changeaccessto&amp;sesskey={$USER->sesskey}\">"
+                                . get_string($changeaccessto, 'mnet') . " access</a>)";
                     }
                     // mnet info in edit column
                     $editbutton = $mnethosts[$user->mnethostid]->name;

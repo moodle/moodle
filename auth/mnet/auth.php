@@ -1307,12 +1307,12 @@ class auth_plugin_mnet
      * @return bool              Whether the user can login from the remote host
      */
     function can_login_remotely($username, $mnethostid) {
-        $access = 'allow';
+        $accessctrl = 'allow';
         $aclrecord = get_record('mnet_sso_access_control', 'username', $username, 'mnet_host_id', $mnethostid);
         if (!empty($aclrecord)) {
-            $access = $aclrecord->access;
+            $accessctrl = $aclrecord->accessctrl;
         }
-        return $access == 'allow';
+        return $accessctrl == 'allow';
     }
 }
 

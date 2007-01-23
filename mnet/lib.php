@@ -461,11 +461,11 @@ function mnet_permit_rpc_call($includefile, $functionname, $class=false) {
     return RPC_OK;
 }
 
-function mnet_update_sso_access_control($username, $mnet_host_id, $access) {
+function mnet_update_sso_access_control($username, $mnet_host_id, $accessctrl) {
     $mnethost = get_record('mnet_host', 'id', $mnet_host_id);
     if ($aclrecord = get_record('mnet_sso_access_control', 'username', $username, 'mnet_host_id', $mnet_host_id)) {
         // update
-        $aclrecord->access = $access;
+        $aclrecord->accessctrl = $accessctrl;
         if (update_record('mnet_sso_access_control', $aclrecord)) {
             add_to_log(SITEID, 'admin/mnet', 'update', 'admin/mnet/access_control.php',
                     "SSO ACL: $access user '$username' from {$mnethost->name}");
@@ -476,7 +476,7 @@ function mnet_update_sso_access_control($username, $mnet_host_id, $access) {
     } else {
         // insert
         $aclrecord->username = $username;
-        $aclrecord->access = $access;
+        $aclrecord->accessctrl = $accessctrl;
         $aclrecord->mnet_host_id = $mnet_host_id;
         if ($id = insert_record('mnet_sso_access_control', $aclrecord)) {
             add_to_log(SITEID, 'admin/mnet', 'add', 'admin/mnet/access_control.php',
