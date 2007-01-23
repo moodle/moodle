@@ -427,8 +427,8 @@ class auth_plugin_mnet
                         unset($courses[$id]);
                         continue;
                     }
-                    $courses[$id]->cat_id          = $extra[$id]->category;
-                    $courses[$id]->defaultroleid   = $extra[$id]->defaultrole;
+                    $courses[$id]->cat_id          = $courses[$id]->category;
+                    $courses[$id]->defaultroleid   = $courses[$id]->defaultrole;
                     unset($courses[$id]->category);
                     unset($courses[$id]->defaultrole);
                     unset($courses[$id]->visible);
