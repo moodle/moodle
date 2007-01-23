@@ -750,6 +750,7 @@ $string['lastname'] = 'Surname';
 $string['lastyear'] = 'Last year';
 $string['latestlanguagepack'] = 'Check for latest language pack on moodle.org';
 $string['latestnews'] = 'Latest News';
+$string['layouttable'] = 'Layout table';
 $string['leavetokeep'] = 'Leave blank to keep current password';
 $string['license'] = 'GPL License';
 $string['liketologin'] = 'Would you like to log in now with a full user account?';

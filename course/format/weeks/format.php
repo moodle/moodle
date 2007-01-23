@@ -51,7 +51,7 @@
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 /// Layout the whole page as three big columns.
-    echo '<table id="layout-table" cellspacing="0"><tr>';
+    echo '<table id="layout-table" cellspacing="0" summary="'.get_string('layouttable').'"><tr>';
 
 /// The left column ...
 
@@ -66,7 +66,7 @@
 
     print_heading_block(get_string('weeklyoutline'), 'outline');
 
-    echo '<table class="weeks" width="100%">';
+    echo '<table class="weeks" width="100%" summary="'.get_string('layouttable').'">';
 
 /// If currently moving a file then show the current clipboard
     if (ismoving($course->id)) {

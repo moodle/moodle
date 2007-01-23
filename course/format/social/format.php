@@ -19,7 +19,7 @@
     $strgroupmy = get_string('groupmy');
     $editing    = $PAGE->user_is_editing();
 
-    echo '<table id="layout-table" cellspacing="0">';
+    echo '<table id="layout-table" cellspacing="0" summary="'.get_string('layouttable').'">';
     echo '<tr>';
 
     if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {

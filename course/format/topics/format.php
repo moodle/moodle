@@ -65,7 +65,7 @@
 
 
 /// Layout the whole page as three big columns.
-    echo '<table id="layout-table" cellspacing="0"><tr>';
+    echo '<table id="layout-table" cellspacing="0" summary="'.get_string('layouttable').'"><tr>';
 
 /// The left column ...
 // uh-changes start
@@ -109,7 +109,7 @@
 
     print_heading_block(get_string('topicoutline'), 'outline');
 
-    echo '<table class="topics" width="100%">';
+    echo '<table class="topics" width="100%" summary="'.get_string('layouttable').'">';
 
 /// If currently moving a file then show the current clipboard
     if (ismoving($course->id)) {
