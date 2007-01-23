@@ -306,7 +306,7 @@ class auth_plugin_mnet
 
         // check sso access control list for permission first
         if (!$this->can_login_remotely($localuser->username, $remotehost->id)) {
-            error("Username '$localuser->username' is not permitted to login from '$remotehost->name'.");
+            print_error('sso_mnet_login_refused', 'mnet', '', array($localuser->username, $remotehost->name));
         }
 
         $session_gc_maxlifetime = 1440;
@@ -423,6 +423,16 @@ class auth_plugin_mnet
                 $keys = array_keys($courses);
                 $defaultrolename = get_field('role', 'shortname', 'id', $CFG->defaultcourseroleid);
                 foreach ($keys AS $id) {
+                    if ($courses[$id]->visible == 0) {
+                        unset($courses[$id]);
+                        continue;
+                    }
+                    $courses[$id]->cat_id          = $extra[$id]->category;
+                    $courses[$id]->defaultroleid   = $extra[$id]->defaultrole;
+                    unset($courses[$id]->category);
+                    unset($courses[$id]->defaultrole);
+                    unset($courses[$id]->visible);
+
                     $courses[$id]->cat_name        = $extra[$id]->cat_name;
                     $courses[$id]->cat_description = $extra[$id]->cat_description;
                     if (!empty($extra[$id]->defaultrolename)) {
@@ -461,7 +471,7 @@ class auth_plugin_mnet
      *   @returns bool
      */
     function update_enrolments($username, $courses) {
-        global $MNET_REMOTE_CLIENT;
+        global $MNET_REMOTE_CLIENT, $CFG;
 
         if (empty($username) || !is_array($courses)) {
             return false;
@@ -482,10 +492,99 @@ class auth_plugin_mnet
             return true;
         }
 
-        // add/update courses && enrolment entries
-        // remove stale enrolments (but not the courses)
-        // TODO
+        // IMPORTANT: Ask for remoteid as the first element in the query, so
+        // that the array that comes back is indexed on the same field as the
+        // array that we have received from the remote client
+        $sql = '
+                SELECT
+                    c.remoteid,
+                    c.id,
+                    c.cat_id,
+                    c.cat_name,
+                    c.cat_description,
+                    c.sortorder,
+                    c.fullname,
+                    c.shortname,
+                    c.idnumber,
+                    c.summary,
+                    c.startdate,
+                    c.cost,
+                    c.currency,
+                    c.defaultroleid,
+                    c.defaultrolename,
+                    a.id as assignmentid
+                FROM
+                    '.$CFG->prefix.'mnet_enrol_course c
+                LEFT JOIN
+                    '.$CFG->prefix.'mnet_enrol_assignments a
+                ON
+                   (a.courseid = c.id AND
+                    a.hostid   = c.hostid AND
+                    a.userid = \''.$userid.'\')
+                WHERE
+                    c.hostid = \''.(int)$MNET_REMOTE_CLIENT->id.'\'';
 
+        $currentcourses = get_records_sql($sql);
+
+        $local_courseid_array = array();
+        foreach($courses as $course) {
+
+            $course['remoteid'] = $course['id'];
+            $course['hostid']   =  (int)$MNET_REMOTE_CLIENT->id;
+            $userisregd         = false;
+
+            // First up - do we have a record for this course?
+            if (!array_key_exists($course['remoteid'], $currentcourses)) {
+                // No record - we must create it
+                $course['id']  =  insert_record('mnet_enrol_course', (object)$course);
+                $currentcourse = (object)$course;
+            } else {
+                // Pointer to current course:
+                $currentcourse =& $currentcourses[$course['remoteid']];
+                // We have a record - is it up-to-date?
+                $course['id'] = $currentcourse->id;
+
+                $saveflag = false;
+
+                foreach($course as $key => $value) {
+                    if ($currentcourse->$key != $value) {
+                        $saveflag = true;
+                        $currentcourse->$key = $value;
+                    }
+                }
+
+                if ($saveflag) {
+                    update_record('mnet_enrol_course', $currentcourse);
+                }
+                
+                if (isset($currentcourse->assignmentid) && is_numeric($currentcourse->assignmentid)) {
+                    $userisregd = true;
+                }
+            }
+
+            // By this point, we should always have a $dataObj->id
+            $local_courseid_array[] = $course['id'];
+
+            // Do we have a record for this assignment?
+            if ($userisregd) {
+                // Yes - we know about this one already
+                // We don't want to do updates because the new data is probably
+                // 'less complete' than the data we have.
+            } else {
+                // No - create a record
+                $assignObj = new stdClass();
+                $assignObj->userid    = $userid;
+                $assignObj->hostid    = (int)$MNET_REMOTE_CLIENT->id;
+                $assignObj->courseid  = $course['id'];
+                $assignObj->rolename  = $course['defaultrolename'];
+                $assignObj->id = insert_record('mnet_enrol_assignments', $assignObj);
+            }
+        }
+
+        // Clean up courses that the user is no longer enrolled in.
+        $local_courseid_string = implode(', ', $local_courseid_array);
+        $whereclause = " userid = '$userid' AND hostid = '{$MNET_REMOTE_CLIENT->id}' AND courseid NOT IN ($local_courseid_string)";
+        delete_records_select('mnet_enrol_assignments', $whereclause);
     }
 
     /**

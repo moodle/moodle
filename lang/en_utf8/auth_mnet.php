@@ -10,4 +10,5 @@ $string['sso_sp_description']          = 'Publish  this service to allow authent
                                          '<ul><li><em>Dependency</em>: You must also <strong>subscribe</strong> to the SSO (Identity Provider) service on $a.</li></ul><br />'.
                                          'Subscribe to this service to allow your users to roam to the $a Moodle site without having to re-login there. '.
                                          '<ul><li><em>Dependency</em>: You must also <strong>publish</strong> the SSO (Identity Provider) service to $a.</li></ul><br />';
+$string['sso_mnet_login_refused']      = 'Username $a[0] is not permitted to login from $a[1].';
 ?>

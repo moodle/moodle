@@ -253,7 +253,7 @@ function mnet_server_fault($code, $text, $param = null) {
  * @return string $text   The XML text of the error message
  */
 function mnet_server_fault_xml($code, $text) {
-    global $MNET_REMOTE_CLIENT;
+    global $MNET_REMOTE_CLIENT, $CFG;
     // Replace illegal XML chars - is this already in a lib somewhere?
     $text = str_replace(array('<','>','&','"',"'"), array('&lt;','&gt;','&amp;','&quot;','&apos;'), $text);
 
@@ -274,6 +274,12 @@ function mnet_server_fault_xml($code, $text) {
          </value>
       </fault>
    </methodResponse>');
+
+    if (!empty($CFG->mnet_rpcdebug)) {
+        trigger_error("XMLRPC Error Response");
+        trigger_error(print_r($return,1));
+    }
+
     return $return;
 }
 
