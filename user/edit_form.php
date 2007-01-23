@@ -319,7 +319,7 @@ class user_edit_form extends moodleform {
         $mform->hardFreeze($freezefields);
 
         /// Next the customisable categories
-        if ($categories = get_records_select('user_info_category', '1', 'sortorder ASC')) {
+        if ($categories = get_records_select('user_info_category', '', 'sortorder ASC')) {
             foreach ($categories as $category) {
                 if ($fields = get_records_select('user_info_field', "categoryid=$category->id", 'sortorder ASC')) {
 
@@ -395,7 +395,7 @@ class user_edit_form extends moodleform {
 
         /// And now we validate the custom data fields
 
-        if ($categories = get_records_select('user_info_category', '1', 'sortorder ASC')) {
+        if ($categories = get_records_select('user_info_category', '', 'sortorder ASC')) {
             foreach ($categories as $category) {
 
                 if ($fields = get_records_select('user_info_field', "categoryid=$category->id", 'sortorder ASC')) {

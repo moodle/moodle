@@ -216,7 +216,7 @@
             }
 
             /// Update the custom user fields
-            if ($categories = get_records_select('user_info_category', '1', 'sortorder ASC')) {
+            if ($categories = get_records_select('user_info_category', '', 'sortorder ASC')) {
                 foreach ($categories as $category) {
 
                     if ($fields = get_records_select('user_info_field', "categoryid=$category->id", 'sortorder ASC')) {
