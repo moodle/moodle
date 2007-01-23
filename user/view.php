@@ -439,15 +439,13 @@
         echo "</form>";
     }
     echo "</div>\n";
-print_object($USER->capabilities);
-/*
-    if (debugging() && $USER->id == $user->id) {   // TEMPORARY in DEV!
+
+    if ($CFG->debugdisplay && debugging('', DEBUG_DEVELOPER) && $USER->id == $user->id) {  // Show user object
         echo '<hr />';
         print_heading('DEBUG MODE:  User session variables');
         print_object($USER);
     }
-*/
-//print_object($USER->capabilities);
+
     print_footer($course);
 
 /// Functions ///////
