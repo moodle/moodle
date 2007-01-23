@@ -461,7 +461,7 @@
 
 /// Define the unique site ID code if it isn't already
     if (empty($CFG->siteidentifier)) {    // Unique site identification code
-        set_config('siteidentifier', random_string(32));
+        set_config('siteidentifier', random_string(32).$_SERVER['HTTP_HOST']);
     }
 
 /// Check if the guest user exists.  If not, create one.
