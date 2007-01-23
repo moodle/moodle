@@ -2864,7 +2864,7 @@ function print_box_start($classes='generalbox', $ids='', $return=false) {
         $ids = ' id="'.$ids.'"';
     }
 
-    $output .= '<div'.$ids.' class="'.$classes.'">';
+    $output .= '<div'.$ids.' class="box '.$classes.'">';
 
     if ($return) {
         return $output;

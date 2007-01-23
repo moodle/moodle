@@ -836,14 +836,25 @@ function print_simple_box_start($align='', $width='', $color='', $padding=5, $cl
 
     $output = '';
 
-    $divclasses = $class.' '.$class.'content';
+    $divclasses = 'box '.$class.' '.$class.'content';
     $divstyles  = '';
 
     if ($align) {
         $divclasses .= ' boxalign'.$align;    // Implement alignment using a class
     }
     if ($width) {    // Hopefully we can eliminate these in calls to this function (inline styles are bad)
-        $divstyles  .= ' width:'.$width.';';
+        if (substr($width, -1, 1) == '%') {    // Width is a % value
+            $width = (int) substr($width, 0, -1);    // Extract just the number
+            if ($width < 40) {
+                $divclasses .= ' boxwidthnarrow';    // Approx 30% depending on theme
+            } else if ($width > 60) {
+                $divclasses .= ' boxwidthwide';      // Approx 80% depending on theme
+            } else {
+                $divclasses .= ' boxwidthnormal';    // Approx 50% depending on theme
+            }
+        } else {
+            $divstyles  .= ' width:'.$width.';';     // Last resort
+        }
     }
     if ($color) {    // Hopefully we can eliminate these in calls to this function (inline styles are bad)
         $divstyles  .= ' background:'.$color.';';
