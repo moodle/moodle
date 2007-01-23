@@ -142,9 +142,11 @@ class mnet_xmlrpc_client {
                 $id_list .= ', '.$CFG->mnet_all_hosts_id;
             }
 
-            /*** TODO: Review MartinL notes - This is bogus AFAICT,
-             *** because we cannot be certain that the remote
-             *** host has the same plugins or modules we do
+            // At this point, we don't care if the remote host implements the 
+            // method we're trying to call. We just want to know that:
+            // 1. The method belongs to some service, as far as OUR host knows
+            // 2. We are allowed to subscribe to that service on this mnet_peer
+
             // Find methods that we subscribe to on this host
             $sql = "
                 SELECT
@@ -162,10 +164,13 @@ class mnet_xmlrpc_client {
 
             $permission = get_record_sql($sql);
             if ($permission == false) {
-                // TODO: Handle attempt to call not-permitted method
+                global $USER;
+                $this->error[] = array(7, 'User with ID '. $USER->id .
+                                          ' attempted to call unauthorised method '.
+                                          $this->method.' on host '.
+                                          $mnet_peer->wwwroot);
                 return false;
             }
-            *** END_OF_TODO */
 
         }
         $this->requesttext = xmlrpc_encode_request($this->method, $this->params);
