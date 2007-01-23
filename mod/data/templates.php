@@ -78,7 +78,7 @@
 
     $bodytag = 'onload="';
     $bodytag .= 'if (typeof('.$editorobj.') != \'undefined\') { currEditor = '.$editorobj.'; } ';
-    $bodytag .= 'currTextarea = getElementById(\'tempform\').template;';
+    $bodytag .= 'currTextarea = document.getElementById(\'tempform\').template;';
     $bodytag .= '" ';
 
     // Javascript to insert the field tags into the textarea.
