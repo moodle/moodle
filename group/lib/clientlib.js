@@ -14,8 +14,8 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
     this.courseId = courseId;
 
     this.connectCallback = {
-        success: function(o) {
 
+        success: function(o) {
         	if (o.responseText !== undefined) {
                 var groupsComboEl = document.getElementById("groups");
                 var membersComboEl = document.getElementById("members");
@@ -28,8 +28,7 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
                 }
 
         	    if (groupsComboEl && o.responseText) {
-        	        //var groups = eval("("+o.responseText+")");
-        	        var groups = eval(o.responseText);
+        	        var groups = eval("("+o.responseText+")");
 
         	        // Populate the groups combo box.
                     for (var i=0; i<groups.length; i++) {
@@ -46,14 +45,22 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
 
         failure: function(o) {
             removeLoaderImgs("membersloader", "memberslabel");
+            this.currentTransId = null;
         }
+
     };
 
     // Add onchange event to groups combo box.
+    // Okay, this is not working in IE. The onchange is never fired...
+    // I'm hard coding the onchange in ../index.php. Not ideal, but it works
+    // then. vyshane AT moodle DOT com.
+    /*
     groupsComboEl = document.getElementById("groups");
     if (groupsComboEl) {
         groupsComboEl.setAttribute("onchange", "membersCombo.refreshMembers(this.options[this.selectedIndex].value);");
     }
+    */
+
     // Hide the updategroups input since AJAX will take care of this.
     var updateGroupsButton = document.getElementById("updategroups");
     updateGroupsButton.setAttribute("style", "display:none;");
@@ -94,7 +101,7 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
                 var selectEl = document.getElementById("members");
 
         	    if (selectEl && o.responseText) {
-        	        var members = eval('('+o.responseText+')');
+        	        var members = eval("("+o.responseText+")");
 
         	        // Populate the members combo box.
                     for (var i=0; i<members.length; i++) {
@@ -112,6 +119,7 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
         failure: function(o) {
             removeLoaderImgs("membersloader", "memberslabel");
         }
+
     };
 
     // Hide the updatemembers input since AJAX will take care of this.
@@ -145,9 +153,8 @@ var createLoaderImg = function (elClass, parentId, wwwRoot) {
     if (!parentEl) {
         return false;
     }
-    var loaders = YAHOO.util.Dom.getElementsByClassName(elClass, "img", parentEl);
-    if (loaders.length > 0) {
-        // A loader image exists already.
+    if (document.getElementById("loaderImg")) {
+        // A loader image already exists.
         return false;
     }
     var loadingImg = document.createElement("img");
@@ -155,6 +162,7 @@ var createLoaderImg = function (elClass, parentId, wwwRoot) {
     loadingImg.setAttribute("src", wwwRoot+"/pix/i/ajaxloader.gif");
     loadingImg.setAttribute("class", elClass);
     loadingImg.setAttribute("alt", "Loading");
+    loadingImg.setAttribute("id", "loaderImg");
     parentEl.appendChild(loadingImg);
 
     return true;
@@ -163,11 +171,8 @@ var createLoaderImg = function (elClass, parentId, wwwRoot) {
 
 var removeLoaderImgs = function (elClass, parentId) {
     var parentEl = document.getElementById(parentId);
-
     if (parentEl) {
-        var loaders = YAHOO.util.Dom.getElementsByClassName(elClass, "img", parentEl);
-	    for (var i=0; i<loaders.length; i++) {
-	        parentEl.removeChild(loaders[i]);
-        }
+        var loader = document.getElementById("loaderImg");
+        parentEl.removeChild(loader);
     }
 };

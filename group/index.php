@@ -16,7 +16,7 @@ require_once($CFG->libdir.'/json/JSON.php');
 
 $success = true;
  
-$courseid   = required_param('id', PARAM_INT);         
+$courseid   = required_param('id', PARAM_INT);
 $groupingid = optional_param('grouping', -1, PARAM_INT);
 $groupid    = optional_param('group', false, PARAM_INT);
 $userid     = optional_param('user', false, PARAM_INT);
@@ -186,8 +186,8 @@ if ($success) {
             </td>
             <td>
                 <p><label for="groups" id="groupslabel"><?php print_string('groupsinselectedgrouping', 'group'); ?></label></p>
-                <select name="group" id="groups" size="15" class="select">
-<?php //onchange="onGroupChange()"
+                <select name="group" id="groups" size="15" class="select" onchange="membersCombo.refreshMembers(this.options[this.selectedIndex].value);">
+<?php
     if (GROUP_NOT_IN_GROUPING == $sel_groupingid) {
         $groupids = groups_get_groups_not_in_any_grouping($courseid); //$sel_groupingid
     } else {
