@@ -524,7 +524,7 @@ function profile_move_category ($id, $move='down') {
     }
 
     /// Count the number of categories
-    $categorycount = count_records_select('user_info_category', '1');
+    $categorycount = count_records('user_info_category');
 
     /// Calculate the new sortorder
     if ( ($move == 'up') and ($category->sortorder > 1)) {
@@ -557,7 +557,7 @@ function profile_move_category ($id, $move='down') {
  * @return   array
  */
 function profile_list_categories() {
-    if ( !($categories = get_records_select_menu('user_info_category', '1', 'sortorder ASC', 'id, name')) ) {
+    if ( !($categories = get_records_select_menu('user_info_category', '', 'sortorder ASC', 'id, name')) ) {
         $categories = array();
     }
     return $categories;

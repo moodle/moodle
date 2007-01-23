@@ -47,7 +47,7 @@ switch ($action) {
         break;
     case 'deletecategory':
         if ($confirm and confirm_sesskey()) {
-            $categorycount = count_records_select('user_info_category', '1');
+            $categorycount = count_records('user_info_category');
             $fieldcount    = count_records('user_info_field', 'categoryid', $id);
 
             /// Can only delete the last category if there are no fields in it
@@ -118,7 +118,7 @@ if ( ($action == 'editcategory' )) {
         if ($data = $categoryform->get_data()) {
             if ($data->id == 0) {
                 unset($data->id);
-                $data->sortorder = count_records_select('user_info_category', '1') + 1;
+                $data->sortorder = count_records('user_info_category') + 1;
                 if (!insert_record('user_info_category', $data, false)) {
                     error('There was a problem adding the record to the database');
                     exit;
@@ -220,7 +220,7 @@ if ( ($action == 'editcategory' )) {
     print_heading(get_string('profilefields', 'admin'));
 
     /// Check that we have at least one category defined
-    if (count_records_select('user_info_category', '1') == 0) {
+    if (count_records('user_info_category') == 0) {
         unset($defaultcategory);
         $defaultcategory->name = $strdefaultcategory;
         $defaultcategory->sortorder = 1;
@@ -229,8 +229,8 @@ if ( ($action == 'editcategory' )) {
 
     /// We only displaying if there are fields defined or there is a category with a name different to the default name
     if ( ( (count_records_select('user_info_category', "name<>'$strdefaultcategory'") > 0) or
-           (count_records_select('user_info_field', '1') > 0) ) and
-         ( $categories = get_records_select('user_info_category', '1', 'sortorder ASC')) ) {
+           (count_records('user_info_field') > 0) ) and
+         ( $categories = get_records_select('user_info_category', '', 'sortorder ASC')) ) {
 
         
         foreach ($categories as $category) {
@@ -296,7 +296,7 @@ function profile_category_icons ($category) {
     $str->edit     = get_string("edit");
 
     $editstr = '';
-    $categorycount = count_records_select('user_info_category', '1');
+    $categorycount = count_records('user_info_category');
     $fieldcount    = count_records('user_info_field', 'categoryid', $category->id);
 
     /// Edit
