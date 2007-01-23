@@ -93,8 +93,6 @@ class block_section_links extends block_base {
             }
         }
 
-        $this->content = New stdClass;
-        $this->content->footer = '';
         $this->content->text = $text;
         return $this->content;
     }
