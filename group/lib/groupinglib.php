@@ -36,8 +36,8 @@ function groups_get_grouping_records($courseid) {
         return false;
     }
     $sql = "SELECT gg.*
-        FROM {$CFG->prefix}groups_groupings AS gg
-        INNER JOIN {$CFG->prefix}groups_courses_groupings AS cg ON gg.id = cg.groupingid
+        FROM {$CFG->prefix}groups_groupings gg
+        INNER JOIN {$CFG->prefix}groups_courses_groupings cg ON gg.id = cg.groupingid
         WHERE cg.courseid = '$courseid'";
     $groupings = get_records_sql($sql);
     return $groupings;
@@ -130,11 +130,11 @@ function groups_get_groups_not_in_any_grouping($courseid) {
     $join = '';
     $where= '';
     if ($courseid) {
-        $join = "INNER JOIN {$CFG->prefix}groups_courses_groups AS cg ON g.id = cg.groupid";
+        $join = "INNER JOIN {$CFG->prefix}groups_courses_groups cg ON g.id = cg.groupid";
         $where= "AND cg.courseid = '$courseid'";
     }
     $sql = "SELECT g.id
-        FROM {$CFG->prefix}groups AS g
+        FROM {$CFG->prefix}groups g
         $join
         WHERE g.id NOT IN 
         (SELECT groupid FROM {$CFG->prefix}groups_groupings_groups)
@@ -280,8 +280,8 @@ function groups_grouping_exists($groupingid) {
 function groups_grouping_matches($courseid, $gg_name, $gg_description) {
     global $CFG;
     $sql = "SELECT gg.id, gg.name, gg.description
-        FROM {$CFG->prefix}groups_groupings AS gg
-        INNER JOIN {$CFG->prefix}groups_courses_groupings AS cg ON gg.id = cg.groupingid
+        FROM {$CFG->prefix}groups_groupings gg
+        INNER JOIN {$CFG->prefix}groups_courses_groupings cg ON gg.id = cg.groupingid
         WHERE gg.name = '$gg_name'
         AND gg.description = '$gg_description'
         AND cg.courseid = '$courseid'";

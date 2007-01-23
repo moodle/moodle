@@ -214,10 +214,10 @@ function groups_db_grouping_exists($groupingid) {
     } else {
         global $CFG;
         $sql = "SELECT gm.id
-        FROM {$CFG->prefix}groups_groupings_groups AS gg
-        INNER JOIN {$CFG->prefix}groups_members AS gm
+        FROM {$CFG->prefix}groups_groupings_groups gg
+        INNER JOIN {$CFG->prefix}groups_members gm
         ON gg.groupid = gm.groupid
-        WHERE gm.userid = $userid AND gg.groupingid = $groupingid";
+        WHERE gm.userid = '$userid' AND gg.groupingid = '$groupingid'";
         $belongstogroup = record_exists_sql($sql);
     }
     return $belongstogroup;

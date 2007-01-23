@@ -196,27 +196,16 @@ function groups_group_exists($groupid) {
 	return groups_db_group_exists($groupid);
 }
 
+
 /**
  * Determine if a course ID, group name and description match a group in the database.
  *   For backup/restorelib.php
  * @return mixed A group-like object with $group->id, or false.
  */
 function groups_group_matches($courseid, $grp_name, $grp_description) {
-//$gro_db->id; $gro_db = get_record("groups","courseid",$restore->course_id,"name",$gro->name,"description",$gro->description);    
-    global $CFG;
-    $sql = "SELECT g.id, g.name, g.description
-        FROM {$CFG->prefix}groups AS g
-        INNER JOIN {$CFG->prefix}groups_courses_groups AS cg ON g.id = cg.groupid
-        WHERE g.name = '$grp_name'
-        AND g.description = '$grp_description'
-        AND cg.courseid = '$courseid'";
-    $records = get_records_sql($sql);
-    $group = false;
-    if ($records) {
-        $group = $records[0];
-    } 
-    return $group;
+    return groups_db_group_matches($courseid, $grp_name, $grp_description);
 }
+
 
 /**
  * Determines if a specified user is a member of a specified group

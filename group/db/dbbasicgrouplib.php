@@ -99,13 +99,13 @@ function groups_db_get_groups_for_user($userid, $courseid) {
         $groupids = false;
     } else {  
         global $CFG;
-        $sql = "SELECT g.id, userid 
-                FROM {$CFG->prefix}groups_members AS gm 
-                INNER JOIN {$CFG->prefix}groups AS g
+        $sql = "SELECT g.id, gm.userid 
+                FROM {$CFG->prefix}groups_members gm 
+                INNER JOIN {$CFG->prefix}groups g
                 ON gm.groupid = g.id
-                INNER JOIN {$CFG->prefix}groups_courses_groups AS cg
+                INNER JOIN {$CFG->prefix}groups_courses_groups cg
                 ON g.id = cg.groupid
-                WHERE cg.courseid  = $courseid AND gm.userid=$userid";
+                WHERE cg.courseid  = '$courseid' AND gm.userid = '$userid'";
                 
         $groups = get_records_sql($sql);
         $groupids = groups_groups_to_groupids($groups);
@@ -152,10 +152,10 @@ function groups_db_get_group_settings($groupid, $courseid=false, $alldata=false)
 function groups_db_users_in_common_group($userid1, $userid2) {
 	global $CFG;
     $havecommongroup = false;
-	$sql = "SELECT gm1.groupid, 1 FROM {$CFG->prefix}groups_members AS gm1 " .
-			"INNER JOIN {$CFG->prefix}groups_members AS gm2 " .
-			"ON gm1.groupid =gm2.groupid" .
-			"WHERE gm1.userid = $userid1 AND gm2.userid = $userid2";
+	$sql = "SELECT gm1.groupid, 1 FROM {$CFG->prefix}groups_membersgm1 " .
+			"INNER JOIN {$CFG->prefix}groups_members gm2 " .
+			"ON gm1.groupid = gm2.groupid" .
+			"WHERE gm1.userid = '$userid1' AND gm2.userid = '$userid2'";
     $commongroups = get_record_sql($sql);
     if ($commongroups) {
     	$havecommongroup = true;
@@ -185,6 +185,29 @@ function groups_db_group_exists($groupid) {
     }
 
     return $exists;
+}
+
+
+/**
+ * Determine if a course ID, group name and description match a group in the database.
+ *   For backup/restorelib.php
+ * @return mixed A group-like object with $group->id, or false.
+ */
+function groups_db_group_matches($courseid, $grp_name, $grp_description) {
+//$gro_db->id; $gro_db = get_record("groups","courseid",$restore->course_id,"name",$gro->name,"description",$gro->description);    
+    global $CFG;
+    $sql = "SELECT g.id, g.name, g.description
+        FROM {$CFG->prefix}groups g
+        INNER JOIN {$CFG->prefix}groups_courses_groups cg ON g.id = cg.groupid
+        WHERE g.name = '$grp_name'
+        AND g.description = '$grp_description'
+        AND cg.courseid = '$courseid'";
+    $records = get_records_sql($sql);
+    $group = false;
+    if ($records) {
+        $group = $records[0];
+    } 
+    return $group;
 }
 
 
