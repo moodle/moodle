@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/scorm/db" VERSION="20061209" COMMENT="XMLDB file for Moodle mod/scorm"
+<XMLDB PATH="mod/scorm/db" VERSION="20070124" COMMENT="XMLDB file for Moodle mod/scorm"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -9,15 +9,17 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="course" NEXT="reference"/>
-        <FIELD NAME="reference" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="version"/>
-        <FIELD NAME="version" TYPE="char" LENGTH="9" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="reference" NEXT="maxgrade"/>
+        <FIELD NAME="reference" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="summary"/>
+        <FIELD NAME="summary" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="reference" NEXT="version"/>
+        <FIELD NAME="version" TYPE="char" LENGTH="9" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="summary" NEXT="maxgrade"/>
         <FIELD NAME="maxgrade" TYPE="float" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="version" NEXT="grademethod"/>
         <FIELD NAME="grademethod" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="maxgrade" NEXT="maxattempt"/>
-        <FIELD NAME="maxattempt" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="grademethod" NEXT="launch"/>
-        <FIELD NAME="launch" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="maxattempt" NEXT="skipview"/>
-        <FIELD NAME="skipview" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="launch" NEXT="summary"/>
-        <FIELD NAME="summary" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="skipview" NEXT="hidebrowse"/>
-        <FIELD NAME="hidebrowse" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="summary" NEXT="hidetoc"/>
+        <FIELD NAME="maxattempt" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="grademethod" NEXT="updatefreq"/>
+        <FIELD NAME="updatefreq" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Define when the package must be automatically update" PREVIOUS="maxattempt" NEXT="md5hash"/>
+        <FIELD NAME="md5hash" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="MD5 Hash of package file" PREVIOUS="updatefreq" NEXT="launch"/>
+        <FIELD NAME="launch" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="md5hash" NEXT="skipview"/>
+        <FIELD NAME="skipview" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="launch" NEXT="hidebrowse"/>
+        <FIELD NAME="hidebrowse" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="skipview" NEXT="hidetoc"/>
         <FIELD NAME="hidetoc" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="hidebrowse" NEXT="hidenav"/>
         <FIELD NAME="hidenav" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="hidetoc" NEXT="auto"/>
         <FIELD NAME="auto" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="hidenav" NEXT="popup"/>
