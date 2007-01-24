@@ -1,6 +1,7 @@
 <?php  // $Id$
 
 /// Constants and settings for module scorm
+require_once('lib.php');
 define('SCO_ALL', 0);
 define('SCO_DATA', 1);
 define('SCO_ONLY', 2);
@@ -500,7 +501,10 @@ function scorm_course_format_display($user,$course) {
 
 function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
     global $CFG;
-
+    if($scorm->external=='2'){
+		$scorm->instance=$scorm->id;
+		scorm_update_instance($scorm);
+	}
     $organization = optional_param('organization', '', PARAM_INT);
 
     print_simple_box_start('center',$boxwidth);
@@ -667,8 +671,8 @@ function scorm_validate($data) {
 
     $validation = new stdClass();
 	$fstat=array("mtime"=>0);
-
-    if (!empty($courseid) && !empty($reference)) {
+    
+	if (!empty($courseid) && !empty($reference)) {
         $validation->launch = 0;
         $validation->errors = array();
         $referencefield = $reference;
