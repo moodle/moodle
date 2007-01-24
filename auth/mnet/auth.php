@@ -986,7 +986,17 @@ class auth_plugin_mnet
      * @return void
      */
     function cron() {
+
+        // run the keepalive client
         $this->keepalive_client();
+
+        // admin/cron.php should have run srand for us
+        $random100 = rand(0,100);
+        if ($random100 < 10) {     // Approximately 10% of the time.
+            // nuke olden sessions
+            $longtime = $timenow - (1 * 3600 * 24);
+            delete_records_select('mnet_session', "expires < $timenow");
+        }
     }
 
     /**
@@ -1033,7 +1043,10 @@ class auth_plugin_mnet
 
         $mnetsessions = get_records_sql($sql);
 
-        $ignore = delete_records('mnet_session', 'username', $username, 'useragent', $useragent, 'mnethostid', $USER->mnethostid);
+        $ignore = delete_records('mnet_session', 
+                                 'username', $username, 
+                                 'useragent', $useragent, 
+                                 'mnethostid', $USER->mnethostid);
 
         if (false != $mnetsessions) {
             $mnet_peer = new mnet_peer();
@@ -1113,7 +1126,9 @@ class auth_plugin_mnet
             }
         }
 
-        $ignore = delete_records('mnet_session', 'useragent', $useragent, 'userid', $userid);
+        $ignore = delete_records('mnet_session', 
+                                 'useragent', $useragent, 
+                                 'userid',    $userid);
 
         if (isset($MNET_REMOTE_CLIENT) && isset($MNET_REMOTE_CLIENT->id)) {
             $start = ob_start();
