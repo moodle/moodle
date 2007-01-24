@@ -198,7 +198,10 @@ class auth_plugin_mnet
         $mnet_peer->set_id($mnethostid);
 
         // set up the session
-        $mnet_session = get_record('mnet_session', 'userid', $USER->id, 'mnethostid', $mnethostid, 'useragent', sha1($_SERVER['HTTP_USER_AGENT']));
+        $mnet_session = get_record('mnet_session', 
+                                   'userid',     $USER->id, 
+                                   'mnethostid', $mnethostid, 
+                                   'useragent',  sha1($_SERVER['HTTP_USER_AGENT']));
         if ($mnet_session == false) {
             $mnet_session = new object();
             $mnet_session->mnethostid = $mnethostid;
@@ -376,14 +379,18 @@ class auth_plugin_mnet
         }
 
         // set up the session
-        $mnet_session = get_record('mnet_session', 'userid', $localuser->id, 'mnethostid', $remotepeer->id, 'useragent', sha1($_SERVER['HTTP_USER_AGENT']));
+        $mnet_session = get_record('mnet_session', 
+                                   'userid',     $localuser->id, 
+                                   'mnethostid', $remotepeer->id, 
+                                   'useragent',  sha1($_SERVER['HTTP_USER_AGENT']));
         if ($mnet_session == false) {
             $mnet_session = new object();
             $mnet_session->mnethostid = $remotepeer->id;
             $mnet_session->userid = $localuser->id;
             $mnet_session->username = $localuser->username;
             $mnet_session->useragent = sha1($_SERVER['HTTP_USER_AGENT']);
-            $mnet_session->token = ''; //Not needed on the SP side
+            $mnet_session->token = $token; // Needed to support simultaneous sessions
+                                           // and preserving DB rec uniqueness
             $mnet_session->confirm_timeout = time();
             $mnet_session->expires = time() + (integer)$session_gc_maxlifetime;
             $mnet_session->session_id = session_id();
