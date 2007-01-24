@@ -1836,7 +1836,7 @@ function print_my_moodle() {
     $courses  = get_my_courses($USER->id);
     $rhosts   = array();
     $rcourses = array();
-    if ($CFG->mnet_dispatcher_mode === 'strict') {
+    if (!empty($CFG->mnet_dispatcher_mode) && $CFG->mnet_dispatcher_mode==='strict') {
         $rcourses = get_my_remotecourses($USER->id);
         $rhosts   = get_my_remotehosts();
     }

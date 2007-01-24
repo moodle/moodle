@@ -24,6 +24,10 @@ class mnet_environment {
     function init() {
         global $CFG;
 
+        if (empty($CFG->mnet_dispatcher_mode)) {
+            set_config('mnet_dispatcher_mode', 'off');
+        }
+
         // Bootstrap the object data on first load.
         if (empty($CFG->mnet_localhost_id) ) {
 
