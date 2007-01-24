@@ -1,7 +1,11 @@
 <?php  // $Id$
 
 /// Constants and settings for module scorm
-require_once('lib.php');
+define('UPDATE_NEVER', '0');
+define('UPDATE_ONCHANGE', '1');
+define('UPDATE_EVERYDAY', '2');
+define('UPDATE_EVERYTIME', '3');
+
 define('SCO_ALL', 0);
 define('SCO_DATA', 1);
 define('SCO_ONLY', 2);
@@ -124,7 +128,7 @@ function scorm_scandir($directory) {
 * @param string $strpath The scorm data directory
 * @return string/boolean
 */
-function scorm_datadir($strPath)
+function scorm_tempdir($strPath)
 {
     global $CFG;
 
@@ -200,6 +204,14 @@ function scorm_dirname($location) {
         return substr($location,0,strrpos($location,'/'));
     } else {
         return dirname($location);
+    }
+}
+
+function scorm_basename($location) {
+    if (scorm_external_link($location)) {
+        return substr($location,strrpos($location,'/')+1);
+    } else {
+        return basename($location);
     }
 }
 
@@ -626,10 +638,10 @@ function scorm_parse($scorm) {
 function scorm_validate_manifest($manifest) {
     $validation = new stdClass();
     if (is_file($manifest)) {
-        $validation->result = 'found';
+        $validation->result = true;
     } else {
-        $validation->result = 'notfound';
-        $validation->launch = -1;
+        $validation->result = false;
+        $validation->errors['reference'] = get_string('nomanifest','scorm');
     }
     return $validation;
 }
@@ -642,21 +654,21 @@ function scorm_validate_manifest($manifest) {
 */
 function scorm_validate_aicc($packagedir) {
     $validation = new stdClass();
-    $validation->result = 'notfound';
+    $validation->result = false;
     if (is_dir($packagedir)) {
         if ($handle = opendir($packagedir)) {
             while (($file = readdir($handle)) !== false) {
                 $ext = substr($file,strrpos($file,'.'));
                 if (strtolower($ext) == '.cst') {
-                    $validation->result = 'found';
+                    $validation->result = true;
                     break;
                 }
             }
             closedir($handle);
         }
     }
-    if ($validation->result == 'notfound') {
-        $validation->launch = -1;
+    if ($validation->result == false) {
+        $validation->errors['reference'] = get_string('nomanifest','scorm');
     }
     return $validation;
 }
@@ -665,30 +677,135 @@ function scorm_validate_aicc($packagedir) {
 function scorm_validate($data) {
     global $CFG;
 
+    $validation = new stdClass();
+    $validation->errors = array();
+
+    if (!isset($data['course']) || empty($data['course'])) {
+        $validation->errors['reference'] = get_string('missingparam','scorm');
+        $validation->result = false;
+        return $validation;
+    }
+    $courseid = $data['course'];                  // Course Module ID
+
+    if (!isset($data['reference']) || empty($data['reference'])) {
+        $validation->errors['reference'] = get_string('packagefile','scorm');
+        $validation->result = false;
+        return $validation;
+    }
+    $reference = $data['reference'];              // Package/manifest path/location
+
+    $scormid = $data['instance'];                 // scorm ID 
+    $scorm = new stdClass();
+    if (!empty($scormid)) {
+        if (!$scorm = get_record("scorm","id",$scormid)) {
+            $validation->errors['reference'] = get_string('missingparam','scorm');
+            $validation->result = false;
+            return $validation;
+        }
+    }
+
+    if ($reference[0] == '#') {
+        require_once($repositoryconfigfile);
+        if ($CFG->repositoryactivate) {
+            $reference = $CFG->repository.substr($reference,1).'/imsmanifest.xml';
+        } else {
+            $validation->errors['reference'] = get_string('badpackage','scorm');
+            $validation->result = false;
+            return $validation;
+        }
+    } else if (!scorm_external_link($reference)) {
+        $reference = $CFG->dataroot.'/'.$courseid.'/'.$reference;
+    }
+
+    // Create a temporary directory to unzip package or copy manifest and validate package
+    $tempdir = '';
+    $scormdir = '';
+    if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
+        if ($tempdir = scorm_tempdir($scormdir)) {
+            $localreference = $tempdir."/".scorm_basename($reference);
+            copy ("$reference", $localreference);
+            if (!is_file($localreference)) {
+                $validation->errors['reference'] = get_string('badpackage','scorm');
+                $validation->result = false;
+            } else {
+                $ext = strtolower(substr(basename($localreference),strrpos(basename($localreference),'.')));
+                switch ($ext) {
+                    case '.pif':
+                    case '.zip':
+                        if (!unzip_file($localreference, $tempdir, false)) {
+                            $validation->errors['reference'] = get_string('unziperror','scorm');
+                            $validation->result = false;
+                        } else {
+                            unlink ($localreference);
+                            if (is_file($tempdir.'/imsmanifest.xml')) {
+                                $validation = scorm_validate_manifest($tempdir.'/imsmanifest.xml');
+                                $validation->pkgtype = 'SCORM';
+                            } else {
+                                $validation = scorm_validate_aicc($tempdir);
+                                if (($validation->result == 'regular') || ($validation->result == 'found')) {
+                                    $validation->pkgtype = 'AICC';
+                                } else {
+                                    $validation->errors['reference'] = get_string('nomanifest','scorm');
+                                    $validation->result = false;
+                                }
+                            }
+                        }
+                    break;
+                    case '.xml':
+                        if (basename($localreference) == 'imsmanifest.xml') {
+                            $validation = scorm_validate_manifest($localreference);
+                        } else {
+                            $validation->errors['reference'] = get_string('nomanifest','scorm');
+                            $validation->result = false;
+                        }
+                    break;
+                    default: 
+                        $validation->errors['reference'] = get_string('badpackage','scorm');
+                        $validation->result = false;
+                    break;
+                }
+            }
+            if (is_dir($tempdir)) {
+            // Delete files and temporary directory
+                scorm_delete_files($tempdir);
+            }
+        } else {
+            $validation->errors['reference'] = get_string('packagedir','scorm');
+            $validation->result = false;
+        }
+    } else {
+        $validation->errors['reference'] = get_string('datadir','scorm');
+        $validation->result = false;
+    }
+    return $validation;
+}
+
+function scorm_check_package($data) {
+    global $CFG;
+
     $courseid = $data->course;                  // Course Module ID
     $reference = $data->reference;              // Package path
     $scormid = $data->instance;                 // scorm ID 
 
     $validation = new stdClass();
 	$fstat=array("mtime"=>0);
-    
-	if (!empty($courseid) && !empty($reference)) {
+
+    if (!empty($courseid) && !empty($reference)) {
+        $externalpackage = scorm_external_link($reference);
+
         $validation->launch = 0;
-        $validation->errors = array();
         $referencefield = $reference;
         if (empty($reference)) {
-            $validation->launch = -1;
-            $validation->result = "packagefile";
+            $validation = null;
         } else if ($reference[0] == '#') {
             require_once($repositoryconfigfile);
             if ($CFG->repositoryactivate) {
                 $referencefield = $reference.'/imsmanfest.xml';
                 $reference = $CFG->repository.substr($reference,1).'/imsmanifest.xml';
             } else {
-                $validation->launch = -1;
-                $validation->result = "packagefile";
+                $validation = null;
             }
-        } else if (substr($reference,0,7) != 'http://') {
+        } else if (!$externalpackage) {
             $reference = $CFG->dataroot.'/'.$courseid.'/'.$reference;
         }
 
@@ -697,24 +814,19 @@ function scorm_validate($data) {
         // SCORM Update
         //
             //if (($validation->launch != -1) && is_file($reference)) {
-			if (($validation->launch != -1) && (is_file($reference) || (substr($reference,0,7) == 'http://'))){
+            if ((!empty($validation)) && (is_file($reference) || $externalpackage)){
                 
-                if (substr($reference,0,7) != 'http://') {
-					$fp = fopen($reference,"r");
-					$fstat = fstat($fp);
-					fclose($fp);
-					
-				}
-				else if(substr($reference,0,7) == 'http://'){
-					if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
-                        if ($tempdir = scorm_datadir($scormdir)) {
+                if (!$externalpackage) {
+                    $mdcheck = md5_file($reference);
+                } else if ($externalpackage){
+                    if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
+                        if ($tempdir = scorm_tempdir($scormdir)) {
                             copy ("$reference", $tempdir."/".basename($reference));
-							$mdcheck=md5_file($tempdir."/".basename($reference));
-							unlink ($tempdir."/".basename($reference));
-							rmdir($tempdir);
-						}
-					}
-				}
+                            $mdcheck = md5_file($tempdir."/".basename($reference));
+                            scorm_delete_files($tempdir);
+                        }
+                    }
+                }
                 
                 if ($scorm = get_record("scorm","id",$scormid)) {
                     if ($scorm->reference[0] == '#') {
@@ -724,18 +836,17 @@ function scorm_validate($data) {
                         } else {
                             $oldreference = $scorm->reference;
                         }
-                    } else if (substr($reference,0,7) != 'http://') {
+                    } else if (!scorm_external_link($scorm->reference)) {
                         $oldreference = $CFG->dataroot.'/'.$courseid.'/'.$scorm->reference;
-                    } else{
-						$oldreference = $scorm->reference;
-					}
+                    } else {
+                        $oldreference = $scorm->reference;
+                    }
                     $validation->launch = $scorm->launch;
-                     if ((($scorm->timemodified < $fstat["mtime"]) && ($oldreference == $reference) && (substr($reference,0,7) != 'http://')) || ($oldreference != $reference) || ((substr($reference,0,7) == 'http://') && ($mdcheck != $scorm->md5_result)&& ($oldreference == $reference))) {
+                    if ((($oldreference == $reference) && ($mdcheck != $scorm->md5hash)) || ($oldreference != $reference)) {
                         // This is a new or a modified package
                         $validation->launch = 0;
                     } else {
                     // Old package already validated
-                        $validation->result = 'found';
                         if (strpos($scorm->version,'AICC') !== false) {
                             $validation->pkgtype = 'AICC';
                         } else {
@@ -743,28 +854,26 @@ function scorm_validate($data) {
                         }
                     }
                 } else {
-                    $validation->result = 'badinstance';
-                    $validation->launch = -1;
+                    $validation = null;
                 }
             } else {
-                $validation->result = 'badreference';
-                $validation->launch = -1;
+                $validation = null;
             }
         }
         //$validation->launch = 0;
-        if ($validation->launch == 0) {
+        if (($validation != null) && ($validation->launch == 0)) {
         //
         // Package must be validated
         //
             $ext = strtolower(substr(basename($reference),strrpos(basename($reference),'.')));
+            $tempdir = '';
             switch ($ext) {
                 case '.pif':
                 case '.zip':
                 // Create a temporary directory to unzip package and validate package
-                    $tempdir = '';
                     $scormdir = '';
                     if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
-                        if ($tempdir = scorm_datadir($scormdir)) {
+                        if ($tempdir = scorm_tempdir($scormdir)) {
                             copy ("$reference", $tempdir."/".basename($reference));
                             unzip_file($tempdir."/".basename($reference), $tempdir, false);
                             unlink ($tempdir."/".basename($reference));
@@ -776,31 +885,39 @@ function scorm_validate($data) {
                                 $validation->pkgtype = 'AICC';
                             }
                         } else {
-                            $validation->result = "packagedir";
+                            $validation = null;
                         }
                     } else {
-                        $validation->result = "datadir";
+                        $validation = null;
                     }
                 break;
                 case '.xml':
                     if (basename($reference) == 'imsmanifest.xml') {
-                        $validation = scorm_validate_manifest($reference);
+                        if ($externalpackage) {
+                            if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
+                                if ($tempdir = scorm_tempdir($scormdir)) {
+                                    copy ("$reference", $tempdir."/".basename($reference));
+                                    $validation = scorm_validate_manifest($tempdir.'/'.$reference);
+                                }
+                            }
+                        } else {
+                            $validation = scorm_validate_manifest($CFG->datadir.'/'.$course->id.'/'.$reference);
+                        }
                     } else {
-                        $validation->result = "manifestfile";
+                        $validation = null;
                     }
                 break;
                 default: 
-                    $validation->result = "packagefile";
+                    $validation = null;
                 break;
             }
-            if (($validation->result != "regular") && ($validation->result != "found")) {
+            if ($validation == null) {
                 if (is_dir($tempdir)) {
                 // Delete files and temporary directory
                     scorm_delete_files($tempdir);
                 }
-                $validation->launch = -1;
             } else {
-                if ($ext == '.xml') {
+                if (($ext == '.xml') && (!$externalpackage)){
                     $validation->datadir = dirname($referencefield);
                 } else {
                     $validation->datadir = substr($tempdir,strlen($scormdir));
@@ -809,8 +926,7 @@ function scorm_validate($data) {
             }
         }
     } else {
-        $validation->launch = -1;
-        $validation->result = 'badrequest';
+        $validation = null;
     }
     return $validation;
 }

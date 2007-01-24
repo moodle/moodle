@@ -11,39 +11,24 @@
 */
 require_once('locallib.php');
 function scorm_add_instance($scorm) {
-    $validate = scorm_validate($scorm);
+    global $CFG;
 
-    $errors = array();
-    if (($validate->result != "regular") && ($validate->result != "found")) {
-        $errors[] = $validate->result;
-        if (isset($validate->errors) && (count($validate->errors[0]) > 0)) {
-            foreach ($validate->errors as $error) {
-                $errors[] = $error;
-            }
-        }
-    } else {
-        $scorm->pkgtype = $validate->pkgtype;
-        $scorm->datadir = $validate->datadir;
-        $scorm->launch = $validate->launch;
+    require_once('locallib.php');
+
+    if (($packagedata = scorm_check_package($scorm)) != null) {
+        $scorm->pkgtype = $packagedata->pkgtype;
+        $scorm->datadir = $packagedata->datadir;
+        $scorm->launch = $packagedata->launch;
         $scorm->parse = 1;
-    }
 
-    if(empty($scorm->datadir)) { //check to make sure scorm object is valid BEFORE entering it in the database.
-        $errorstr = '';
-        if (!empty($errors)) {
-            foreach ($errors as $error) {
-                $errorstr .= get_string($error,'scorm').'<br />';
-            }
-            error($errorstr);
-        } else {
-            error(get_string('badpackage', 'scorm'));
-        }
-    } else {
-        global $CFG;
         $scorm->timemodified = time();
-		if(substr($scorm->reference,0,7)== 'http://'){
-			$scorm->md5_result=md5_file($scorm->reference);
-		}
+        if (!scorm_external_link($scorm->reference)) {
+            $scorm->md5hash = md5_file($CFG->dataroot.'/'.$scorm->course.'/'.$scorm->reference);
+        } else {
+            $scorm->dir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
+            $scorm->md5hash = md5_file($scorm->dir.$scorm->datadir.'/'.basename($scorm->reference));
+        }
+
         $scorm = scorm_option2text($scorm);
         $scorm->width = str_replace('%','',$scorm->width);
         $scorm->height = str_replace('%','',$scorm->height);
@@ -67,13 +52,14 @@ function scorm_add_instance($scorm) {
 
         // Parse scorm manifest
         if ($scorm->parse == 1) {
-            require_once('locallib.php');
             $scorm->id = $id;
             $scorm->launch = scorm_parse($scorm);
             set_field('scorm','launch',$scorm->launch,'id',$scorm->id);
         }
 
         return $id;
+    } else {
+        error(get_string('badpackage','scorm'));
     }
 }
 
@@ -88,24 +74,21 @@ function scorm_add_instance($scorm) {
 function scorm_update_instance($scorm) {
     global $CFG;
 
-    $validate = scorm_validate($scorm);
+    require_once('locallib.php');
 
-    $errors = array();
-    if (($validate->result != "regular") && ($validate->result != "found")) {
-        $errorstr = get_string($validate->result,'scorm');
-        if (isset($validate->errors) && (count($validate->errors[0]) > 0)) {
-            foreach ($validate->errors as $error) {
-                $errorstr .= '<br />'.get_string($error,'scorm');
-            }
-        }
-        error($errorstr);
-        exit();
-    } else {
-        $scorm->pkgtype = $validate->pkgtype;
-        if ($validate->launch == 0) {
-            $scorm->launch = $validate->launch;
-            $scorm->datadir = $validate->datadir;
+    if (($packagedata = scorm_check_package($scorm)) != null) {
+        $scorm->pkgtype = $packagedata->pkgtype;
+        if ($packagedata->launch == 0) {
+            $scorm->launch = $packagedata->launch;
+            $scorm->datadir = $packagedata->datadir;
             $scorm->parse = 1;
+            if (!scorm_external_link($scorm->reference)) {
+                $scorm->md5hash = md5_file($CFG->dataroot.'/'.$scorm->course.'/'.$scorm->reference);
+            } else {
+                $scorm->dir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
+                $scorm->md5hash = md5_file($scorm->dir.$scorm->datadir.'/'.basename($scorm->reference));
+            }
+            mtrace($scorm->md5hash);
         } else {
             $scorm->parse = 0;
         }
@@ -113,11 +96,7 @@ function scorm_update_instance($scorm) {
 
     $scorm->timemodified = time();
     $scorm->id = $scorm->instance;
-	if(substr($scorm->reference,0,7)== 'http://'){
-			$scorm->md5_result=md5_file($scorm->reference);
-			mtrace($scorm->md5_result);
 
-	}
     $scorm = scorm_option2text($scorm);
     $scorm->width = str_replace('%','',$scorm->width);
     $scorm->height = str_replace('%','',$scorm->height);
@@ -129,7 +108,6 @@ function scorm_update_instance($scorm) {
 
     // Check if scorm manifest needs to be reparsed
     if ($scorm->parse == 1) {
-        require_once('locallib.php');
         $scorm->dir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
         if (is_dir($scorm->dir.'/'.$scorm->id)) {
             scorm_delete_files($scorm->dir.'/'.$scorm->id);
@@ -397,28 +375,33 @@ function scorm_print_recent_activity(&$logs, $isteacher=false) {
 function scorm_cron () {
 
     global $CFG;
-		$sitetimezone = $CFG->timezone;
-  /// Now see if there are any digest mails waiting to be sent, and if we should send them
+
+    require_once('locallib.php');
+
+    $sitetimezone = $CFG->timezone;
+    /// Now see if there are any digest mails waiting to be sent, and if we should send them
     if (!isset($CFG->scorm_updatetimelast)) {    // To catch the first time
         set_config('scorm_updatetimelast', 0);
     }
 
-	$timenow = time();
+    $timenow = time();
     $updatetime = usergetmidnight($timenow, $sitetimezone) + ($CFG->scorm_updatetime * 3600);
-	if ($CFG->scorm_updatetimelast < $updatetime and $timenow > $updatetime) {
-		
+
+    if ($CFG->scorm_updatetimelast < $updatetime and $timenow > $updatetime) {
+
         set_config('scorm_updatetimelast', $timenow);
 
         mtrace('Updating scorm packages which require daily update');//"estamos actualizando"
 
-        $scormsupdate = get_records_select("scorm","external=1");
-        if(!empty($scormsupdate)) {
-           foreach($scormsupdate as $scormupdate) {
-			   $scormupdate->instance = $scormupdate->id;	   
-			   $scormupinst = scorm_update_instance($scormupdate);
-			   }
-		}
-	 }
+        $scormsupdate = get_records('scorm','updatefreq',UPDATE_EVERYDAY);
+        if (!empty($scormsupdate)) {
+            foreach($scormsupdate as $scormupdate) {
+                $scormupdate->instance = $scormupdate->id;
+                $id = scorm_update_instance($scormupdate);
+            }
+        }
+    }
+
     return true;
 }
 

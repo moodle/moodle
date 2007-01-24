@@ -168,14 +168,15 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->setDefault('auto', 0);
         $mform->setAdvanced('auto');
 
-// Update external packages timing
+// Update packages timing
         $options = array();
-        $options[0]=get_string('onchanges','scorm');
-        $options[1]=get_string('everyday','scorm');
-        $options[2]=get_string('everytime','scorm');
-        $mform->addElement('select', 'external', get_string('external', 'scorm'), $options);
-        $mform->setDefault('external', 0);
-        $mform->setAdvanced('external');
+        $options[0]=get_string('never','scorm');
+        $options[1]=get_string('onchanges','scorm');
+        $options[2]=get_string('everyday','scorm');
+        $options[3]=get_string('everytime','scorm');
+        $mform->addElement('select', 'updatefreq', get_string('updatefreq', 'scorm'), $options);
+        $mform->setDefault('updatefreq', 0);
+        $mform->setAdvanced('updatefreq');
 
 //-------------------------------------------------------------------------------
 // Hidden Settings
@@ -229,6 +230,16 @@ class mod_scorm_mod_form extends moodleform_mod {
         }
         if (isset($default_values['instance'])) {
             $default_values['datadir'] = $default_values['instance'];
+        }
+    }
+
+    function validation($data) {
+        $validate = scorm_validate($data);
+
+        if ($validate->result) {
+            return true;
+        } else {
+            return $validate->errors;
         }
     }
 
