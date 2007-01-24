@@ -24,6 +24,21 @@ $userid     = optional_param('user', false, PARAM_INT);
 $action = groups_param_action();
 
 
+if ($groupid) {
+    $groupingsforgroup = groups_get_groupings_for_group($groupid);
+    if ($groupingsforgroup) {
+        // NOTE
+        //   We currently assume that a group can only belong to one grouping.
+        // FIXME
+        //   The UI will have to be fixed if we want to support more than one
+        //   groupings per group in the future.
+        //
+        // vy-shane AT moodle DOT com
+        $groupingid = array_shift($groupingsforgroup);
+    }
+}
+
+
 // Get the course information so we can print the header and
 // check the course id is valid
 $course = groups_get_course_info($courseid);
@@ -194,7 +209,7 @@ if ($success) {
         $groupids = groups_get_groups_in_grouping($sel_groupingid);
     }
     if ($groupids) {
-        // Put the groupings into a hash and sort them
+        // Put the groups into a hash and sort them
         foreach($groupids as $id) {
             $listgroups[$id] = groups_get_group_displayname($id);
         }

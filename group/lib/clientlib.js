@@ -62,8 +62,7 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
     */
 
     // Hide the updategroups input since AJAX will take care of this.
-    var updateGroupsButton = document.getElementById("updategroups");
-    updateGroupsButton.setAttribute("style", "display:none;");
+    YAHOO.util.Dom.setStyle("updategroups", "display", "none");
 }
 
 /**
@@ -123,8 +122,7 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
     };
 
     // Hide the updatemembers input since AJAX will take care of this.
-    var updateMembersButton = document.getElementById("updatemembers");
-    updateMembersButton.setAttribute("style", "display:none;");
+    YAHOO.util.Dom.setStyle("updatemembers", "display", "none");
 }
 
 /**
