@@ -223,28 +223,24 @@ function xmldb_scorm_upgrade($oldversion=0) {
         $table = new XMLDBTable('scorm');
         $field = new XMLDBField('external');
 
-    /// Launch drop field external
-        $result = $result && drop_field($table, $field);
-
-        $field = new XMLDBField('updatefreq');
         $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'maxattempt');
 
-    /// Launch add field updatefreq
-        $result = $result && add_field($table, $field);
+    /// Launch rename field updatefreq
+        $result = $result && rename_field($table, $field, 'updatefreq');
 
+    /// Rename field md5_result on table scorm to md5hash
         $field = new XMLDBField('md5_result');
+        if (field_exists($table, $field)) {
+            $field->setAttributes(XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, null, null, null, 'updatefreq');
 
-    /// Launch drop field md5_result 
-        $result = $result && drop_field($table, $field);
-
-
-    /// Define field md5hash to be added to scorm
-        $field = new XMLDBField('md5hash');
-        $field->setAttributes(XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, null, null, null, 'updatefreq');
-
-    /// Launch add field md5hash
-        $result = $result && add_field($table, $field);
-
+        /// Launch rename field md5hash
+            $result = $result && rename_field($table, $field, 'md5hash');
+        } else {
+            $field = new XMLDBField('md5hash');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, null, null, '', 'updatefreq');
+            
+            $result = $result && add_field($table, $field);
+        }
     }
 
     return $result;
