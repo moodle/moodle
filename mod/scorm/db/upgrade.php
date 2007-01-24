@@ -223,10 +223,17 @@ function xmldb_scorm_upgrade($oldversion=0) {
         $table = new XMLDBTable('scorm');
         $field = new XMLDBField('external');
 
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'maxattempt');
+        if (field_exists($table, $field)) {
+            $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'maxattempt');
 
-    /// Launch rename field updatefreq
-        $result = $result && rename_field($table, $field, 'updatefreq');
+         /// Launch rename field updatefreq
+            $result = $result && rename_field($table, $field, 'updatefreq');
+        } else {
+            $field = new XMLDBField('updatefreq');
+            $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'maxattempt');
+
+            $result = $result && add_field($table, $field);
+        }
 
     /// Rename field md5_result on table scorm to md5hash
         $field = new XMLDBField('md5_result');
