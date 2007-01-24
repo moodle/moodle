@@ -9,6 +9,7 @@
 * @param mixed $scorm Form data
 * @return int
 */
+require_once('locallib.php');
 function scorm_add_instance($scorm) {
     $validate = scorm_validate($scorm);
 
@@ -114,6 +115,8 @@ function scorm_update_instance($scorm) {
     $scorm->id = $scorm->instance;
 	if(substr($scorm->reference,0,7)== 'http://'){
 			$scorm->md5_result=md5_file($scorm->reference);
+			mtrace($scorm->md5_result);
+
 	}
     $scorm = scorm_option2text($scorm);
     $scorm->width = str_replace('%','',$scorm->width);
@@ -394,7 +397,28 @@ function scorm_print_recent_activity(&$logs, $isteacher=false) {
 function scorm_cron () {
 
     global $CFG;
+		$sitetimezone = $CFG->timezone;
+  /// Now see if there are any digest mails waiting to be sent, and if we should send them
+    if (!isset($CFG->scorm_updatetimelast)) {    // To catch the first time
+        set_config('scorm_updatetimelast', 0);
+    }
 
+	$timenow = time();
+    $updatetime = usergetmidnight($timenow, $sitetimezone) + ($CFG->scorm_updatetime * 3600);
+	if ($CFG->scorm_updatetimelast < $updatetime and $timenow > $updatetime) {
+		
+        set_config('scorm_updatetimelast', $timenow);
+
+        mtrace('Updating scorm packages which require daily update');//"estamos actualizando"
+
+        $scormsupdate = get_records_select("scorm","external=1");
+        if(!empty($scormsupdate)) {
+           foreach($scormsupdate as $scormupdate) {
+			   $scormupdate->instance = $scormupdate->id;	   
+			   $scormupinst = scorm_update_instance($scormupdate);
+			   }
+		}
+	 }
     return true;
 }
 
