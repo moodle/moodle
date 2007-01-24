@@ -202,6 +202,7 @@ function mnet_server_strip_wrappers($HTTP_RAW_POST_DATA) {
         // Does the signature match the data and the public cert?
         $signature_verified = openssl_verify($payload, base64_decode($sig_parser->signature), $certificate);
         if ($signature_verified == 1) {
+            $MNET_REMOTE_CLIENT->touch();
             // Parse the XML
         } elseif ($signature_verified == 0) {
             $currkey = mnet_get_public_key($MNET_REMOTE_CLIENT->wwwroot);

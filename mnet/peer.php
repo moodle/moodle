@@ -165,6 +165,11 @@ class mnet_peer {
         }
     }
 
+    function touch() {
+        $this->last_connect_time = time();
+        $this->commit();
+    }
+
     function set_name($newname) {
         if (is_string($newname) && strlen($newname <= 80)) {
             $this->name = $newname;
