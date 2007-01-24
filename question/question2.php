@@ -117,7 +117,7 @@ if ($mform->is_cancelled()){
         $strediting = '<a href="' . $returnurl . '">' . get_string('editingquiz', 'quiz') . '</a> -> '.
                 $streditingquestion;
     } else {
-        $strediting = '<a href="edit.php?courseid='.$course->id.'">'.
+        $strediting = '<a href="edit.php?courseid='.$category->course.'">'.
                 get_string("editquestions", "quiz").'</a> -> '.$streditingquestion;
     }
     print_header_simple($streditingquestion, '', $strediting);
@@ -126,6 +126,6 @@ if ($mform->is_cancelled()){
     // for this question type.
     $QTYPES[$question->qtype]->display_question_editing_page(&$mform, $question, $wizardnow);
 
-    print_footer($course);
+    print_footer($COURSE);
 }
 ?>
