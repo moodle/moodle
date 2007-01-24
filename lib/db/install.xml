@@ -1084,7 +1084,7 @@
         <FIELD NAME="info" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="url"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the mnet_session table"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the mnet_log table"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="hostid_userid_course" UNIQUE="false" FIELDS="hostid, userid, course"/>
