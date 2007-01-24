@@ -583,6 +583,7 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Rename field access on table mnet_sso_access_control to accessctrl
         $table = new XMLDBTable('mnet_sso_access_control');
         $field = new XMLDBField('access');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'allow', 'mnet_host_id');
 
     /// Launch rename field accessctrl
         $result = $result && rename_field($table, $field, 'accessctrl');
