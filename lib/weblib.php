@@ -1981,6 +1981,35 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     }
     $meta = $stylesheetshtml.$meta;
 
+        
+/// Add the meta page from the themes if any were requested
+
+    $metapage = '';
+
+    if (!isset($THEME->standardmetainclude) || $THEME->standardmetainclude) {
+        ob_start();
+        include_once($CFG->dirroot.'/theme/standard/meta.php');
+        $metapage .= ob_get_contents();
+        ob_end_clean();
+    }
+
+    if ($THEME->parent && (!isset($THEME->parentmetainclude) || $THEME->parentmetainclude)) {
+        ob_start();
+        include_once($CFG->dirroot.'/theme/'.$THEME->parent.'/meta.php');
+        $metapage .= ob_get_contents();
+        ob_end_clean();
+    }
+
+    if (!isset($THEME->metainclude) || $THEME->metainclude) {
+        ob_start();
+        include_once($CFG->dirroot.'/theme/'.current_theme().'/meta.php');
+        $metapage .= ob_get_contents();
+        ob_end_clean();
+    }
+
+    $meta = $meta."\n".$metapage;
+
+
 
     if ($navigation == 'home') {
         $home = true;

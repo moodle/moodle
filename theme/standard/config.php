@@ -88,6 +88,28 @@ $THEME->courseformatsheets = true;
 /// their own default styles.
 
 
+$THEME->metainclude = false;
+
+/// When this is enabled (or not set!) then Moodle will try 
+/// to include a file meta.php from this theme into the 
+/// <head></head> part of the page.
+
+
+$THEME->standardmetainclude = true;
+
+
+/// When this is enabled (or not set!) then Moodle will try 
+/// to include a file meta.php from the standard theme into the 
+/// <head></head> part of the page.
+
+
+$THEME->parentmetainclude = false;
+
+/// When this is enabled (or not set!) then Moodle will try 
+/// to include a file meta.php from the parent theme into the 
+/// <head></head> part of the page.
+
+
 $THEME->navmenuwidth = 50;
 
 /// You can use this to control the cutoff point for strings 
