@@ -418,6 +418,7 @@ class view_table_php extends XMLDBAction {
         $result .= '    /// Rename field ' . $field->getName() . ' on table ' . $table->getName() . ' to NEWNAMEGOESHERE'. XMLDB_LINEFEED;
         $result .= '        $table = new XMLDBTable(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
         $result .= '        $field = new XMLDBField(' . "'" . $field->getName() . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $field->setAttributes(' . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
 
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
