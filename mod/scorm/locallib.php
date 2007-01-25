@@ -513,10 +513,12 @@ function scorm_course_format_display($user,$course) {
 
 function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
     global $CFG;
-    if($scorm->external=='2'){
-		$scorm->instance=$scorm->id;
-		scorm_update_instance($scorm);
-	}
+
+    if ($scorm->updatefreq == UPDATE_EVERYTIME){
+        $scorm->instance = $scorm->id;
+        scorm_update_instance($scorm);
+    }
+
     $organization = optional_param('organization', '', PARAM_INT);
 
     print_simple_box_start('center',$boxwidth);
@@ -781,7 +783,7 @@ function scorm_validate($data) {
 }
 
 function scorm_check_package($data) {
-    global $CFG;
+    global $CFG, $COURSE;
 
     $courseid = $data->course;                  // Course Module ID
     $reference = $data->reference;              // Package path
@@ -897,12 +899,17 @@ function scorm_check_package($data) {
                             if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
                                 if ($tempdir = scorm_tempdir($scormdir)) {
                                     copy ("$reference", $tempdir."/".basename($reference));
-                                    $validation = scorm_validate_manifest($tempdir.'/'.$reference);
+                                    if (is_file($tempdir."/".basename($reference))) {
+                                        $validation = scorm_validate_manifest($tempdir.'/'.basename($reference));
+                                    } else {
+                                        $validation = null;
+                                    }
                                 }
                             }
                         } else {
-                            $validation = scorm_validate_manifest($CFG->datadir.'/'.$course->id.'/'.$reference);
+                            $validation = scorm_validate_manifest($CFG->dataroot.'/'.$COURSE->id.'/'.$reference);
                         }
+                        $validation->pkgtype = 'SCORM';
                     } else {
                         $validation = null;
                     }
@@ -917,7 +924,7 @@ function scorm_check_package($data) {
                     scorm_delete_files($tempdir);
                 }
             } else {
-                if (($ext == '.xml') && (!$externalpackage)){
+                if (($ext == '.xml') && (!$externalpackage)) {
                     $validation->datadir = dirname($referencefield);
                 } else {
                     $validation->datadir = substr($tempdir,strlen($scormdir));
