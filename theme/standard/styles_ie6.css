@@ -12,10 +12,11 @@
 
 .tabrow0 LI.first {
     margin-left: -4px;
+    margin-right: 0;
 }
 
 .tabrow0 A {
-    padding: 0 0 0 1em;
+    padding: 0 0 0 14px;
 }
 
 .tabrow0 A span {
@@ -23,5 +24,5 @@
 }
 
 .tabrow0 UL {
-   top: 2.4em; 
+   top: 2.1em; 
 }
