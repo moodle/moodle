@@ -318,26 +318,10 @@ class user_edit_form extends moodleform {
         }
         $mform->hardFreeze($freezefields);
 
-        /// Next the customisable categories
-        if ($categories = get_records_select('user_info_category', '', 'sortorder ASC')) {
-            foreach ($categories as $category) {
-                if ($fields = get_records_select('user_info_field', "categoryid=$category->id", 'sortorder ASC')) {
+        /// Next the customisable profile fields
+        profile_print_custom_fields($mform, $user->id);
 
-                    $mform->addElement('header', 'category_'.$category->id, $category->name);
-
-                    foreach ($fields as $field) {
-
-                        require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-                        $newfield = 'profile_field_'.$field->datatype;
-                        $formfield = new $newfield($field->id,$user->id);
-                        $formfield->display_field($mform);
-                        unset($formfield);
-
-                    }
-                } /// End of $fields if
-            } /// End of $categories foreach
-        } /// End of $categories if
-
+        
         $this->add_action_buttons(false, get_string('updatemyprofile'));
 
     } /// End of function
