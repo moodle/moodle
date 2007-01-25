@@ -736,7 +736,7 @@ function set_user_preference($name, $value, $otheruser=NULL) {
 
     if ($preference = get_record('user_preferences', 'userid', $userid, 'name', $name)) {
         if (set_field('user_preferences', 'value', $value, 'id', $preference->id)) {
-            if (empty($otheruser) and !empty($USER)) {
+            if ($userid == $USER->id) {
                 $USER->preference[$name] = $value;
             }
             return true;
@@ -749,7 +749,7 @@ function set_user_preference($name, $value, $otheruser=NULL) {
         $preference->name   = $name;
         $preference->value  = (string)$value;
         if (insert_record('user_preferences', $preference)) {
-            if (empty($otheruser) and !empty($USER)) {
+            if ($userid == $USER->id) {
                 $USER->preference[$name] = $value;
             }
             return true;
