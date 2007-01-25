@@ -1994,17 +1994,21 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     }
 
     if ($THEME->parent && (!isset($THEME->parentmetainclude) || $THEME->parentmetainclude)) {
-        ob_start();
-        include_once($CFG->dirroot.'/theme/'.$THEME->parent.'/meta.php');
-        $metapage .= ob_get_contents();
-        ob_end_clean();
+        if (file_exists($CFG->dirroot.'/theme/'.$THEME->parent.'/meta.php')) {
+            ob_start();
+            include_once($CFG->dirroot.'/theme/'.$THEME->parent.'/meta.php');
+            $metapage .= ob_get_contents();
+            ob_end_clean();
+        }
     }
 
     if (!isset($THEME->metainclude) || $THEME->metainclude) {
-        ob_start();
-        include_once($CFG->dirroot.'/theme/'.current_theme().'/meta.php');
-        $metapage .= ob_get_contents();
-        ob_end_clean();
+        if (file_exists($CFG->dirroot.'/theme/'.current_theme().'/meta.php')) {
+            ob_start();
+            include_once($CFG->dirroot.'/theme/'.current_theme().'/meta.php');
+            $metapage .= ob_get_contents();
+            ob_end_clean();
+        }
     }
 
     $meta = $meta."\n".$metapage;
@@ -5422,25 +5426,39 @@ function convert_tree_to_html($tree, $row=0) {
 
     $str = "\n".'<ul class="tabrow'.$row.'">'."\n";
 
+    $first = true;
+    $count = count($tree);
+
     foreach ($tree as $tab) {
-        $str .= '<li>';
+        $count--;   // countdown to zero
+
+        if ($first) {
+            $str .= '<li class="first">';
+            $first = false;
+        } else if ($count == 0) {
+            $str .= '<li class="last">';
+        } else {   
+            $str .= '<li>';
+        }
 
         if ($tab->selected) { 
-            $linkclass = ' class="selected"';
+            $linkclass = ' class="here selected"';
         } else if ($tab->active) { 
-            $linkclass = ' class="active"';
+            $linkclass = ' class="here active"';
         } else {
             $linkclass = '';
         }
 
         if ($tab->inactive || $tab->active || ($tab->selected && !$tab->linkedwhenselected)) {
-            $str .= '<a href="#" title="'.$tab->title.'"'.$linkclass.'>'.$tab->text.'</a>';
+            $str .= '<a href="#" title="'.$tab->title.'"'.$linkclass.'><span>'.$tab->text.'</span></a>';
         } else {
-            $str .= '<a href="'.$tab->link.'" title="'.$tab->title.'"'.$linkclass.'>'.$tab->text.'</a>';
+            $str .= '<a href="'.$tab->link.'" title="'.$tab->title.'"'.$linkclass.'><span>'.$tab->text.'</span></a>';
         }
 
         if (!empty($tab->subtree)) { 
             $str .= convert_tree_to_html($tab->subtree, $row+1);
+        } else if ($tab->selected) {
+            $str .= '<ul class="tabrow'.($row+1).' empty"> <li/> </ul>'."\n";
         }
 
         $str .= '</li>'."\n";
