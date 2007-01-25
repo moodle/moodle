@@ -225,7 +225,7 @@ function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sor
     $LIKE      = sql_ilike();
     $fullname  = sql_fullname();
 
-    $select = 'username <> \'guest\' AND username <> \'changeme\' AND deleted = 0';
+    $select = 'username <> \'guest\' AND deleted = 0';
 
     if (!empty($search)){
         $search = trim($search);
@@ -280,7 +280,7 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
     $LIKE      = sql_ilike();
     $fullname  = sql_fullname();
 
-    $select = "deleted <> '1' AND username <> 'changeme'";
+    $select = "deleted <> '1'";
 
     if (!empty($search)) {
         $search = trim($search);
@@ -321,8 +321,7 @@ function get_users_confirmed() {
                               FROM {$CFG->prefix}user
                              WHERE confirmed = 1
                                AND deleted = 0
-                               AND username <> 'guest'
-                               AND username <> 'changeme'");
+                               AND username <> 'guest'");
 }
 
 

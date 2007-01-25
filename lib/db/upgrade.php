@@ -589,6 +589,10 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && rename_field($table, $field, 'accessctrl');
     }
 
+    if ($result && $oldversion < 2007012500) {
+        execute_sql("DELETE FROM {$CFG->prefix}user WHERE username='changeme'; ", true);
+    }
+
     return $result;
 
 }

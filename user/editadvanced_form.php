@@ -50,34 +50,78 @@ class user_editadvanced_form extends moodleform {
         global $USER, $CFG;
 
         $mform =& $this->_form;
-        $user = get_record('user', 'id', $mform->getElementValue('id'));
+        $userid = $mform->getElementValue('id');
+        $user = get_record('user', 'id', $userid);
 
-        if ($user) {
-
-            // user can not change own auth method
-            if ($user->id == $USER->id) {
-                $mform->hardFreeze('auth');
-                $mform->hardFreeze('preference_auth_forcepasswordchange');
-            }
+        // user can not change own auth method
+        if ($userid == $USER->id) {
+            $mform->hardFreeze('auth');
+            $mform->hardFreeze('preference_auth_forcepasswordchange');
         }
 
         // admin must choose some password and supply correct email
         if (!empty($USER->newadminuser)) {
             $mform->addRule('newpassword', get_string('required'), 'required', null, 'client');
 
-            $email = $mform->getElement('email');
-            if ($email->getValue() == 'root@localhost') {
-                $email->setValue('');
+            $email_el = $mform->getElement('email');
+            if ($email_el->getValue() == 'root@localhost') {
+                $email_el->setValue('');
             }
         }
 
+        // require password for new users
+        if ($userid == -1) {
+            $mform->addRule('newpassword', get_string('required'), 'required', null, 'client');
+        }
+
+        // print picture
         if (!empty($CFG->gdversion)) {
-            $image = $mform->getElement('currentpicture');
-            if ($user) {
-                $image->setValue(print_user_picture($user->id, SITEID, $user->picture, 64, true, false, '', true));
+            $image_el = $mform->getElement('currentpicture');
+            if ($user and $user->picture) {
+                $image_el->setValue(print_user_picture($user->id, SITEID, $user->picture, 64, true, false, '', true));
             } else {
-                $image->setValue(print_user_picture(0, SITEID, 0, 64, true, false, '', true));
+                $image_el->setValue(get_string('none'));
             }
+        }
+    }
+
+    function validation ($usernew) {
+        global $CFG;
+
+        $usernew = (object)$usernew;
+        $user    = get_record('user', 'id', $usernew->id);
+        $err     = array();
+
+        if (!$user or $user->username !== $usernew->username) {
+            //check new username does not exist
+            if (record_exists('user', 'username', $usernew->username, 'mnethostid', $CFG->mnet_localhost_id)) {
+                $err['username'] = get_string('usernameexists');
+            }
+            //check allowed characters
+            if ($usernew->username !== moodle_strtolower($usernew->username)) {
+                $err['username'] = get_string('usernamelowercase');
+            } else {
+                if (empty($CFG->extendedusernamechars)) {
+                    $string = eregi_replace("[^(-\.[:alnum:])]", '', $usernew->username);
+                    if ($usernew->username !== $string) {
+                        $err['username'] = get_string('alphanumerical');
+                    }
+                }
+            }
+        }
+
+        if (!$user or $user->email !== $usernew->email) {
+            if (!validate_email($usernew->email)) {
+                $err['email'] = get_string('invalidemail');
+            } else if (record_exists('user', 'email', $usernew->email, 'mnethostid', $CFG->mnet_localhost_id)) {
+                $err['email'] = get_string('emailexists');
+            }
+        }
+
+        if (count($err) == 0){
+            return true;
+        } else {
+            return $err;
         }
     }
 

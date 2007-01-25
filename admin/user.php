@@ -301,7 +301,7 @@
         $table->align = array ("left", "left", "left", "left", "left", "center", "center", "center");
         $table->width = "95%";
         foreach ($users as $user) {
-            if ($user->username == 'changeme' or $user->username == 'guest') {
+            if ($user->username == 'guest') {
                 continue; // do not dispaly dummy new user and guest here
             }
 

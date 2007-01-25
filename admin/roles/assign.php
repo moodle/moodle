@@ -203,7 +203,7 @@
             $contextusers = array();
         }
 
-        $select  = "username <> 'guest' AND username <> 'changeme' AND deleted = 0 AND confirmed = 1";
+        $select  = "username <> 'guest' AND deleted = 0 AND confirmed = 1";
     
         $usercount = count_records_select('user', $select) - count($contextusers);
 

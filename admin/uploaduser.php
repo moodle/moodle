@@ -227,12 +227,6 @@ if ($um->preprocess_files() && confirm_sesskey()) {
                         }
                     }
 
-                    if ($user->username === 'changeme') {
-                        notify(get_string('invaliduserchangeme', 'admin'));
-                        $userserrors++;
-                        continue;
-                    }
-
                     // before insert/update, check whether we should be updating
                     // an old record instead
                     if ($allowrenames && !empty($user->oldusername) ) {

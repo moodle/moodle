@@ -79,14 +79,7 @@
 
 
     $userform = new user_edit_form(null, compact('user','course','authplugin'));
-    if ($user->username == 'changeme') {
-        $changeme = new object();
-        $changeme->id = $user->id;
-        $changeme->auth = $user->auth;
-        $userform->set_data($changeme);
-    } else {
-        $userform->set_data($user);
-    }
+    $userform->set_data($user);
 
 /// If data submitted, then process and store.
     if ($usernew = $userform->get_data()) {
