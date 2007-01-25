@@ -878,7 +878,9 @@ function scorm_check_package($data) {
                         if ($tempdir = scorm_tempdir($scormdir)) {
                             copy ("$reference", $tempdir."/".basename($reference));
                             unzip_file($tempdir."/".basename($reference), $tempdir, false);
-                            unlink ($tempdir."/".basename($reference));
+                            if (!$externalpackage) {
+                                unlink ($tempdir."/".basename($reference));
+                            }
                             if (is_file($tempdir.'/imsmanifest.xml')) {
                                 $validation = scorm_validate_manifest($tempdir.'/imsmanifest.xml');
                                 $validation->pkgtype = 'SCORM';
