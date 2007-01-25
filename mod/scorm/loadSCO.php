@@ -6,6 +6,8 @@
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
     $scoid = required_param('scoid', PARAM_INT);     // sco ID
 
+    $delayseconds = 2;  // Delay time before sco launch, used to give time to browser to define API
+
     if (!empty($id)) {
         if (! $cm = get_coursemodule_from_id('scorm', $id)) {
             error('Course Module ID was incorrect');
@@ -89,20 +91,28 @@
     }
     
     if (scorm_external_link($sco->launch)) {
+        // Remote learning activity
         $result = $launcher;
     } else if ($scorm->reference[0] == '#') {
+        // Repository
         require_once($repositoryconfigfile);
         $result = $CFG->repositorywebroot.substr($scorm->reference,1).'/'.$sco->launch;
     } else {
-        if (basename($scorm->reference) == 'imsmanifest.xml') {
-            $basedir = scorm_dirname($scorm->reference);
+        if ((basename($scorm->reference) == 'imsmanifest.xml') && scorm_external_link($scorm->reference)) {
+            // Remote manifest
+            $result = dirname($scorm->reference).'/'.$launcher;
         } else {
-            $basedir = 'moddata/scorm/'.$scorm->id;
-        }
-        if ($CFG->slasharguments) {
-            $result = $CFG->wwwroot.'/file.php/'.$scorm->course.'/'.$basedir.'/'.$launcher;
-        } else {
-            $result = $CFG->wwwroot.'/file.php?file=/'.$scorm->course.'/'.$basedir.'/'.$launcher;
+            // Moodle internal package/manifest or remote (auto-imported) package
+            if (basename($scorm->reference) == 'imsmanifest.xml') {
+                $basedir = dirname($scorm->reference);
+            } else {
+                $basedir = $CFG->moddata.'/scorm/'.$scorm->id;
+            }
+            if ($CFG->slasharguments) {
+                $result = $CFG->wwwroot.'/file.php/'.$scorm->course.'/'.$basedir.'/'.$launcher;
+            } else {
+                $result = $CFG->wwwroot.'/file.php?file=/'.$scorm->course.'/'.$basedir.'/'.$launcher;
+            }
         }
     }
 ?>
@@ -111,11 +121,11 @@
         <title>LoadSCO</title>
         <script type="text/javascript">
         //<![CDATA[
-            setTimeout('document.location = "<?php echo $result ?>";',2000);
+            setTimeout('document.location = "<?php echo $result ?>";',<?php echo $delayseconds ?>000);
         //]]>
         </script>
         <noscript>
-            <meta http-equiv="refresh" content="2;url=<?php echo $result ?>" />
+            <meta http-equiv="refresh" content="<?php echo $delayseconds ?>;url=<?php echo $result ?>" />
         </noscript> 
     </head>
     <body>

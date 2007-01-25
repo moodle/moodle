@@ -44,7 +44,7 @@ function scorm_add_instance($scorm) {
 
         $id = insert_record('scorm', $scorm);
 
-        if ((basename($scorm->reference) != 'imsmanifest.xml') && ($scorm->reference[0] != '#')) {
+        if (scorm_external_link($scorm->reference) || ((basename($scorm->reference) != 'imsmanifest.xml') && ($scorm->reference[0] != '#'))) {
             // Rename temp scorm dir to scorm id
             $scorm->dir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
             rename($scorm->dir.$scorm->datadir,$scorm->dir.'/'.$id);
@@ -113,7 +113,7 @@ function scorm_update_instance($scorm) {
             scorm_delete_files($scorm->dir.'/'.$scorm->id);
         }
         if (isset($scorm->datadir) && ($scorm->datadir != $scorm->id) && 
-           (basename($scorm->reference) != 'imsmanifest.xml') && ($scorm->reference[0] != '#')) {
+           (scorm_external_link($scorm->reference) || ((basename($scorm->reference) != 'imsmanifest.xml') && ($scorm->reference[0] != '#')))) {
             rename($scorm->dir.$scorm->datadir,$scorm->dir.'/'.$scorm->id);
         }
 
