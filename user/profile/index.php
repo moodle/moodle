@@ -110,7 +110,8 @@ if ( ($action == 'editcategory' )) {
 
    
     require_once('index_category_form.php');
-    $categoryform = new category_form(null, compact('category'));
+    $categoryform = new category_form(null);
+    $categoryform->set_data($category);
     if ($categoryform->is_cancelled()) {
         redirect($redirect);
         exit;
@@ -153,7 +154,8 @@ if ( ($action == 'editcategory' )) {
 } elseif ( $action == 'editfield' ) {
    
     require_once('index_field_form.php');
-    $fieldform = new field_form(null, compact('field'));
+    $fieldform = new field_form(null, $field->datatype);
+    $fieldform->set_data($field);
     if ($fieldform->is_cancelled()) {
         redirect($redirect);
         exit;

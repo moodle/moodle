@@ -212,7 +212,7 @@ class profile_field_base {
         $form->addElement('selectyesno', 'locked', get_string('profilelocked', 'admin'));
         $form->setType('locked', PARAM_BOOL);
 
-        unset($choices);
+        $choices = array();
         $choices[0] = get_string('profilevisiblenone', 'admin');
         $choices[1] = get_string('profilevisibleprivate', 'admin');
         $choices[2] = get_string('profilevisibleall', 'admin');
@@ -221,7 +221,7 @@ class profile_field_base {
         $form->setDefault('visible', 2);
         $form->setHelpButton('visible', array('profilevisible', get_string('profilevisible','admin')));
 
-        unset($choices);
+        $choices = array();
         $choices = profile_list_categories();
         $form->addElement('select', 'categoryid', get_string('profilecategory', 'admin'), $choices);
         $form->setType('categoryid', PARAM_INT);

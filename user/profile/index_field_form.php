@@ -8,29 +8,26 @@ class field_form extends moodleform {
     function definition () {
         global $USER, $CFG;
 
-        $mform      =& $this->_form;
-        $renderer   =& $mform->defaultRenderer();
-        $field       = $this->_customdata['field'];
+        $mform     =& $this->_form;
+        $fieldtype = $this->_customdata;
         
         $strrequired = get_string('required');
 
         /// Add some extra hidden fields
-        $mform->addElement('hidden', 'id', $field->id);
+        $mform->addElement('hidden', 'id');
         $mform->addElement('hidden', 'action', 'editfield');
-        $mform->addElement('hidden', 'type', $field->datatype);
-        $mform->addElement('hidden', 'oldcategory', $field->categoryid);
-        $mform->addElement('hidden', 'datatype', $field->datatype);
-        $mform->addElement('hidden', 'sesskey', $USER->sesskey);
+        $mform->addElement('hidden', 'type', $fieldtype);
+        $mform->addElement('hidden', 'oldcategory');
+        $mform->addElement('hidden', 'datatype');
+        $mform->addElement('hidden', 'sesskey');
         
 
         /// Everything else is dependant on the data type
-        require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-        $newfield = 'profile_field_'.$field->datatype;
-        $formfield = new $newfield($field->id);
+        require_once($CFG->dirroot.'/user/profile/field/'.$fieldtype.'/field.class.php');
+        $newfield = 'profile_field_'.$fieldtype;
+        $formfield = new $newfield();
         $formfield->edit_field($mform);
         
-        /// override the defaults with the user settings
-        $this->set_data($field);
 
         $this->add_action_buttons(true);
 
@@ -47,12 +44,12 @@ class field_form extends moodleform {
         global $CFG;
 
         $data  = (object)$data;
-        $field = $this->_customdata['field'];
+        $fieldtype = $this->_customdata;
         
         /// Everything else is dependant on the data type
-        require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-        $newfield = 'profile_field_'.$field->datatype;
-        $formfield = new $newfield($field->id);
+        require_once($CFG->dirroot.'/user/profile/field/'.$fieldtype.'/field.class.php');
+        $newfield = 'profile_field_'.$fieldtype;
+        $formfield = new $newfield();
         $err = $formfield->edit_validate($data);
 
         if (count($err) == 0){

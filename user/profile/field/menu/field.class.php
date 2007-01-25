@@ -4,7 +4,9 @@ class profile_field_menu extends profile_field_base {
 
     function init() {
         /// Param 1 for menu type is the options
-        if (($options = explode("\n", $this->field->param1)) === false) {
+        if (empty($this->field->param1)) {
+            $options = array();
+        } else if (($options = explode("\n", $this->field->param1)) === false) {
             $options = array();
         }
         $this->options = $options;
