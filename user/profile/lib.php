@@ -455,6 +455,38 @@ class profile_field_base {
 /***** General purpose functions for customisable user profiles *****/
 
 /**
+ * Print out the customisable categories and fields for a users profile
+ * @param  object   instance of the moodleform class
+ * @param  integer  id of the user
+ * @return  nothing
+ */
+function profile_print_custom_fields(&$form, $userid=0) {
+    global $USER, $CFG;
+    
+    if ($userid == 0) $userid = $USER->id;
+
+    if ($categories = get_records_select('user_info_category', '', 'sortorder ASC')) {
+        foreach ($categories as $category) {
+            if ($fields = get_records_select('user_info_field', "categoryid=$category->id", 'sortorder ASC')) {
+
+                $form->addElement('header', 'category_'.$category->id, $category->name);
+
+                foreach ($fields as $field) {
+
+                    require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
+                    $newfield = 'profile_field_'.$field->datatype;
+                    $formfield = new $newfield($field->id,$user->id);
+                    $formfield->display_field($form);
+                    unset($formfield);
+
+                }
+            } /// End of $fields if
+        } /// End of $categories foreach
+    } /// End of $categories if
+}
+
+
+/**
  * Retrieve a list of all the available data types
  * @return   array   a list of the datatypes suitable to use in a select statement
  */
