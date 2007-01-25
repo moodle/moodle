@@ -2018,85 +2018,126 @@ body#message-messages {
  *** Tabs
  ***/
 
+
+/*globalnav*/
 .tabtree {
+    position:relative;
 }
 
 .tabrow0 {
-  position:relative;
-  float:left;
-  width:100%;
-  padding:0 0 1.75em 1em;
-  margin:0;
-  list-style:none;
-  line-height:1em;
+    text-align: center;
+	width:100%;
+	padding:0 0 1.75em 0;
+	margin:0;
+	list-style:none;
+	line-height:1.8em;
 }
 
-.tabrow0 li {
-  float:left;
-  margin:0;
-  padding:0;
+.tabrow0 LI {
+    display: inline;
+    margin: 0 -4px 0 0;
+	padding: 0;
 }
 
-.tabrow0 a {
-  display:block;
-  color:#006;
-  text-decoration:none;
-  /* font-weight:bold; */
-  background:#eee;
-  margin:0;
-  padding:0.25em 1em;
-  border-left:1px solid #fff;
-  border-top:1px solid #fff;
-  border-right:1px solid #aaa;
+.tabrow0 A span {
+	padding: 10px 14px 4px 0;
+    background: transparent url(pix/tab/right.gif) no-repeat right top;
 }
 
-.tabrow0 a:hover,
-.tabrow0 a:active,
-.tabrow0 a.active:link,
-.tabrow0 a.active:visited {
-  background:#ddd;
+.tabrow0 .last span {
+    background: transparent url(pix/tab/right_last.gif) no-repeat right top;
 }
 
-.tabrow0 a.active:link,
-.tabrow0 a.active:visited {
-  position:relative;
-  z-index:102;
+.tabrow0 A {
+	text-decoration: none;
+	/* font-weight: bold; */
+	background: transparent url(pix/tab/left.gif) no-repeat left top;
+	margin: 0;
+	padding: 10px 0 4px 14px;
 }
 
-.tabrow0 a.selected:link,
-.tabrow0 a.selected:visited {
-  color:#000;
-  background:#ddd;
+.tabrow0 A:hover, .tabrow0 A:active, .tabrow0 A.here:link, .tabrow0 A.here:visited {
+	/* background:#ddd; */
+}
+
+.tabrow0 A:hover {
+	background-image: url(pix/tab/left_hover.gif);
+}
+
+.tabrow0 A.here:hover {
+	background-image: url(pix/tab/left.gif);
+}
+
+.tabrow0 A:hover span {
+	background-image: url(pix/tab/right_hover.gif);
+}
+
+.tabrow0 A.here:hover span {
+	background-image: url(pix/tab/right.gif);
+}
+
+.tabrow0 A.here {
+    color:#444;
+}
+
+.tabrow0 A.here:link, .tabrow0 A.here:visited {
+	position:relative;
+	z-index:102;
 }
 
 /*subnav*/
-.tabrow0 ul {
-  position:absolute;
-  left:0;
-  top:1.5em;
-  float:left;
-  background:#ddd;
-  width:100%;
-  margin:0;
-  padding:0.25em 0.25em 0.25em 1em;
-  list-style:none;
-  border-top:1px solid #fff;
+.tabrow0 .empty {
+    height: 1px;
+    overflow: hidden;
+    padding: 0;
 }
 
-.tabrow0 ul li {
-  float:left;
-  display:block;
-  margin-top:1px;
+.tabrow0 UL {
+	position:absolute;
+	left:0;
+	top:1.8em;
+	width:100%;
+	margin:0;
+	padding:0.25em 0;
+	list-style:none;
+	border-top: 1px solid #aaa;
+    line-height: normal;
+    background: transparent url(pix/tab/tabrow1.gif) repeat-x center left;
+    font-size: 95%;
 }
 
-.tabrow0 ul a {
-  background:#ddd;
-  display:inline;
-  margin:0;
-  padding:0 1em;
-  border:0
+.tabrow0 UL LI {
+	display:inline;
+	margin-top:1px;
+    background-image: none;
 }
 
+.tabrow0 UL A {
+    background-image: none;
+	color:#00c;
+	margin:0;
+	padding:0 1em;
+	border:0
+}
+
+.tabrow0 UL A span { 
+	padding: 0;
+    background-image: none;
+}
+
+.tabrow0 UL .last span,
+.tabrow0 UL A:hover, .tabrow0 UL A:hover span,
+.tabrow0 UL A.here:hover, .tabrow0 UL A.here:hover span {
+    background-image: none;
+}
+
+.tabrow0 UL A:hover, .tabrow0 UL A:active, .tabrow0 UL A.here:link, .tabrow0 UL A.here:visited {
+	color:#444;
+}
+
+.tabtree span {
+    font-size:0.1;
+}
 
 /***
  *** User

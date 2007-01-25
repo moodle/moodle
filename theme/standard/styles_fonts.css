@@ -594,14 +594,6 @@ body#grade-index .grades .header {
 /***
  *** Tabs
  ***/
-.tabtree {
-  font-size:0.9em;
-  font-weight:bold;
-}
-
-.tabtree a:hover {
-  text-decoration: none;
-}
 
 
 /***

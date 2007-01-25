@@ -19,14 +19,3 @@ div.header {
     background-position:top;    
     background-repeat:repeat-x;     
 }
-
-.tabrow0 li a {
-    background-image:url(gradient.jpg);     
-    background-position:top;    
-    background-repeat:repeat-x;     
-}
-
-.tabrow1 li a {
-    background-image:none !important;
-}
-
