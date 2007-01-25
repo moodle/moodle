@@ -1267,6 +1267,8 @@ function validate_' . $this->_formName . '(frm) {
      * elements are included in the form. And a 'hardFrozen' element's submitted value is
      * ignored.
      *
+     * This function also removes all previously defined rules.
+     *
      * @param    mixed   $elementList       array or string of element(s) to be frozen
      * @since     1.0
      * @access   public
@@ -1290,6 +1292,14 @@ function validate_' . $this->_formName . '(frm) {
                 $this->_elements[$key]->freeze();
                 $this->_elements[$key]->setPersistantFreeze(false);
                 unset($elementList[$name]);
+
+                // remove all rules
+                $this->_rules[$name] = array();
+                // if field is required, remove the rule
+                $unset = array_search($name, $this->_required);
+                if ($unset !== false) {
+                    unset($this->_required[$unset]);
+                }
             }
         }
 
