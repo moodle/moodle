@@ -1,22 +1,20 @@
 <?php //$Id$
 
 require_once($CFG->dirroot.'/lib/formslib.php');
-require_once($CFG->dirroot.'/user/profile/lib.php');
 
 class user_editadvanced_form extends moodleform {
 
     // Define the form
     function definition () {
-        global $USER, $CFG;
+        global $USER, $CFG, $COURSE;
 
         $mform =& $this->_form;
-        $course = $this->_customdata;
         $this->set_upload_manager(new upload_manager('imagefile', false, false, null, false, 0, true, true, false));
         $strrequired = get_string('required');
 
         /// Add some extra hidden fields
         $mform->addElement('hidden', 'id');
-        $mform->addElement('hidden', 'course', $course->id);
+        $mform->addElement('hidden', 'course', $COURSE->id);
 
         /// Print the required moodle fields first
         $mform->addElement('header', 'moodle', $strrequired);

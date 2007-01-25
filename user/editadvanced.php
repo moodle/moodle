@@ -4,6 +4,7 @@
     require_once($CFG->libdir.'/gdlib.php');
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->dirroot.'/user/editadvanced_form.php');
+    require_once($CFG->dirroot.'/user/profile/lib.php');
 
     $id     = optional_param('id', $USER->id, PARAM_INT);    // user id; -1 if creating new user
     $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
@@ -52,20 +53,26 @@
     //TODO: Load the custom profile fields
 
     //create form
-    $userform = new user_editadvanced_form(null, $course);
+    $userform = new user_editadvanced_form();
     $userform->set_data($user);
 
     if ($usernew = $userform->get_data()) {
         add_to_log($course->id, 'user', 'update', "view.php?id=$user->id&course=$course->id", '');
 
-        $authplugin = get_auth_plugin($CFG->auth);
+        if (empty($usernew->auth)) {
+            //user editing self
+            $authplugin = get_auth_plugin($user->auth);
+            unset($usernew->auth);
+        } else {
+            $authplugin = get_auth_plugin($usernew->auth);
+        }
 
         $usernew->timemodified = time();
 
         if ($usernew->id == -1) {
             unset($usernew->id);
             $usernew->mnethostid = $CFG->mnet_localhost_id; // always local user
-            $usernew->confirmed = 1;
+            $usernew->confirmed  = 1;
             if (!$usernew->id = insert_record('user', $usernew)) {
                 error('Error creating user record');
             }
@@ -109,21 +116,23 @@
         }
 
         //update user picture
-        if ($usernew->deletepicture) {
-            //TODO - delete the files
-            set_field('user', 'picture', 0, 'id', $usernew->id);
-        } else if ($usernew->picture = save_profile_image($usernew->id, $userform->get_um(), 'users')) {
-            set_field('user', 'picture', 1, 'id', $usernew->id);
+        if (!empty($CFG->gdversion)) {
+            if ($usernew->deletepicture) {
+                //TODO - delete the files
+                set_field('user', 'picture', 0, 'id', $usernew->id);
+            } else if ($usernew->picture = save_profile_image($usernew->id, $userform->get_um(), 'users')) {
+                set_field('user', 'picture', 1, 'id', $usernew->id);
+            }
         }
 
         // update mail bounces
-        if ($user->email != $usernew->email) {
+        if ($user->email !== $usernew->email) {
             set_bounce_count($usernew,true);
             set_send_count($usernew,true);
         }
 
         /// Update forum track preference.
-        if (($usernew->trackforums != $user->trackforums) && !$usernew->trackforums) {
+        if (($usernew->trackforums != $user->trackforums) and !$usernew->trackforums) {
             require_once($CFG->dirroot.'/mod/forum/lib.php');
             forum_tp_delete_read_records($usernew->id);
         }
@@ -168,9 +177,9 @@
         echo '<br />';
     } else {
         $streditmyprofile = get_string('editmyprofile');
-        $strparticipants = get_string('participants');
-        $strnewuser = get_string('newuser');
-        $userfullname = fullname($user, true);
+        $strparticipants  = get_string('participants');
+        $strnewuser       = get_string('newuser');
+        $userfullname     = fullname($user, true);
         if ($course->id != SITEID) {
             print_header("$course->shortname: $streditmyprofile", "$course->fullname: $streditmyprofile",
                          "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>
