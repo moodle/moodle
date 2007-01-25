@@ -1,3 +1,7 @@
+/*
+ * These styles are ONLY included for IE 7 (via meta.php)
+ */
+
 .tabrow0 A {
     display: inline-block;
     padding-top: 8px;
