@@ -486,7 +486,7 @@
 
 /// Set up the admin user
     if (empty($CFG->rolesactive)) {
-        redirect('user.php');
+        create_admin_user();
     }
 
 /// Check for valid admin user

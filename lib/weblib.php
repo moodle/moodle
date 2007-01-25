@@ -3070,9 +3070,8 @@ function print_user_picture($userid, $courseid, $picture, $size=0, $return=false
         $class .= " defaultuserpic";
         $src =  "$CFG->pixpath/u/$file.png";
     }
-    if (!$alttext) {
-        $imagealt = '';
-    } else if ($user = get_record('user','id',$userid)) {
+    $imagealt = '';
+    if ($alttext and $user = get_record('user','id',$userid)) {
         if (!empty($user->imagealt)) {
             $imagealt = $user->imagealt;
         } else {

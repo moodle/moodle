@@ -93,23 +93,24 @@
 
     /// Can only edit profile if it belongs to user or current user is admin and not editing primary admin
 
-        if (($mainadmin = get_admin()) === false) {
-            $mainadmin->id = 0; /// Weird - no primary admin!
-        }
+        $mainadmin = get_admin();
 
         if (is_mnet_remote_user($user)) {
             // cannot edit remote users
         }
         else if ((!empty($USER->id) and ($USER->id == $user->id) and !isguest()) or
-            (has_capability('moodle/user:editprofile', $personalcontext) and ($user->id != $mainadmin->id)) ) {
+            (has_capability('moodle/user:update', $sitecontext) and ($user->id != $mainadmin->id)) ) {
 
             if(empty($CFG->loginhttps)) {
                 $wwwroot = $CFG->wwwroot;
             } else {
                 $wwwroot = str_replace('http:','https:',$CFG->wwwroot);
             }
-
-            $toprow[] = new tabobject('editprofile', $wwwroot.'/user/edit.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmyprofile'));
+            if (has_capability('moodle/user:update', $sitecontext) and ($user->id==$USER->id or $user->id != $mainadmin->id)) {
+                $toprow[] = new tabobject('editprofile', $wwwroot.'/user/editadvanced.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmyprofile'));
+            } else {
+                $toprow[] = new tabobject('editprofile', $wwwroot.'/user/edit.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmyprofile'));
+            }
         }
 
     /// Everyone can see posts for this user

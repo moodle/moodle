@@ -481,6 +481,55 @@ function upgrade_get_javascript() {
 
     return $linktoscrolltoerrors;
 }
+
+function create_admin_user() {
+    global $CFG, $USER;
+
+    if (empty($CFG->rolesactive)) {   // No admin user yet.
+
+        $user = new object();
+        $user->auth         = 'manual';
+        $user->firstname    = get_string('admin');
+        $user->lastname     = get_string('user');
+        $user->username     = 'admin';
+        $user->password     = hash_internal_user_password('admin');
+        $user->email        = 'root@localhost';
+        $user->confirmed    = 1;
+        $user->mnethostid   = $CFG->mnet_localhost_id;
+        $user->lang         = $CFG->lang;
+        $user->maildisplay  = 1;
+        $user->timemodified = time();
+
+        if (!$user->id = insert_record('user', $user)) {
+            error('SERIOUS ERROR: Could not create admin user record !!!');
+        }
+
+        if (!$user = get_record('user', 'id', $user->id)) {   // Double check.
+            error('User ID was incorrect (can\'t find it)');
+        }
+
+        // Assign the default admin roles to the new user.
+        if (!$adminroles = get_roles_with_capability('moodle/legacy:admin', CAP_ALLOW)) {
+            error('No admin role could be found');
+        }
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        foreach ($adminroles as $adminrole) {
+            role_assign($adminrole->id, $user->id, 0, $sitecontext->id);
+        }
+
+        set_config('rolesactive', 1);
+
+        // Log the user in.
+        $USER = get_complete_user_data('username', 'admin');
+        $USER->newadminuser = 1;
+        load_all_capabilities();
+
+        redirect("$CFG->wwwroot/user/editadvanced.php?id=$user->id");  // Edit thyself
+    } else {
+        error('Can not create admin!');
+    }
+}
+
 ////////////////////////////////////////////////
 /// upgrade logging functions
 ////////////////////////////////////////////////

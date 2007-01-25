@@ -9,7 +9,7 @@ $ADMIN->add('users', new admin_externalpage('userauthentication', get_string('au
 // stuff under the "accounts" subcategory
 $ADMIN->add('users', new admin_category('accounts', get_string('accounts', 'admin')));
 $ADMIN->add('accounts', new admin_externalpage('editusers', get_string('userlist','admin'), "$CFG->wwwroot/$CFG->admin/user.php", array('moodle/user:update', 'moodle/user:delete')));
-$ADMIN->add('accounts', new admin_externalpage('addnewuser', get_string('addnewuser'), "$CFG->wwwroot/$CFG->admin/user.php?newuser=true", 'moodle/user:create'));
+$ADMIN->add('accounts', new admin_externalpage('addnewuser', get_string('addnewuser'), "$CFG->wwwroot/user/editadvanced.php?id=-1", 'moodle/user:create'));
 $ADMIN->add('accounts', new admin_externalpage('uploadusers', get_string('uploadusers'), "$CFG->wwwroot/$CFG->admin/uploaduser.php", 'moodle/site:uploadusers'));
 $ADMIN->add('accounts', new admin_externalpage('profilefields', get_string('profilefields','admin'), "$CFG->wwwroot/user/profile/index.php", 'moodle/user:update'));
 
