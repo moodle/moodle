@@ -18,6 +18,7 @@ if (empty($currentaction) || $currentaction == 'configblock') {
 include('config_instance_tabs.php');
 
 if ($currentaction == 'configblock') {
+print_box_start();
 ?>
 <table cellpadding="9" cellspacing="0" class="blockconfigtable">
 <tr valign="top">
@@ -163,16 +164,17 @@ if ($currentaction == 'configblock') {
 </tr>
 </table>
 <?php
+    print_box_end();
 } else {
     global $act, $url, $rssid, $preferredtitle, $shared;
 
     print '</form>';   // Closes off page form
 
-    print '<table cellpadding="9" cellspacing="0" class="blockconfigtable">';
-    print '<tr valign="top"><td>';
     $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
+
+    print_box_start();
     rss_display_feeds($id, $USER->id, '', $context);
     rss_print_form($act, $url, $rssid, $preferredtitle, $shared, $id, $context);
-    print '</td></tr></table>';
+    print_box_end();
 }
 ?>
