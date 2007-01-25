@@ -92,6 +92,12 @@
 
         //TODO: Save the custom profile fields
 
+        // Override old $USER session variable
+        $usernew = (array)get_record('user', 'id', $newuser->id); // reload from db
+        foreach ($usernew as $variable => $value) {
+            $USER->$variable = $value;
+        }
+
         redirect("$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id");
     }
 
