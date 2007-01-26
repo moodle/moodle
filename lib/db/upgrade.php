@@ -114,12 +114,12 @@ function xmldb_main_upgrade($oldversion=0) {
     if ($oldversion < 2006120300) {    /// Delete guest course section settings
         // following code can be executed repeatedly, such as when upgrading from 1.7.x - it is ok
         if ($guest = get_record('user', 'username', 'guest')) {
-            execute_sql("DELETE FROM {$CFG->prefix}course_display where userid=$guest->id ;", true);
+            execute_sql("DELETE FROM {$CFG->prefix}course_display where userid=$guest->id", true);
         }
     }
 
     if ($oldversion < 2006120400) {    /// Remove secureforms config setting
-        execute_sql("DELETE FROM {$CFG->prefix}config where name='secureforms' ;", true);
+        execute_sql("DELETE FROM {$CFG->prefix}config where name='secureforms'", true);
     }
     
     if ($oldversion < 2006120700) { // add moodle/user:viewdetails to all roles!
@@ -590,7 +590,7 @@ function xmldb_main_upgrade($oldversion=0) {
     }
 
     if ($result && $oldversion < 2007012500) {
-        execute_sql("DELETE FROM {$CFG->prefix}user WHERE username='changeme'; ", true);
+        execute_sql("DELETE FROM {$CFG->prefix}user WHERE username='changeme'", true);
     }
 
     return $result;
