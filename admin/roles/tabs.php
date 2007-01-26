@@ -130,7 +130,6 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything ex
             $overridableroles = get_overridable_roles($context);
         }
 
-        $inactive[] = 'roles';
         if (!empty($assignableroles)) {
             $secondrow[] = new tabobject('assign',
                                          $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id,
@@ -147,14 +146,14 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything ex
                                true);
         }
 
-        if ($tabsmode == 'override') {
-            $currenttab = 'override';
-        } elseif ($tabsmode == 'assign') {
-            $currenttab = 'assign';
-        }
+        $inactive[] = 'roles';
+        $activetwo = array('roles');
+        $currenttab = $tabsmode;
 
     } else {
         $inactive[] = '';
+        $activetwo = array();
+        $currenttab = 'roles';
     }
 
     if (!empty($secondrow)) {
@@ -163,7 +162,7 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything ex
         $tabs = array($toprow);
     }
 
-    print_tabs($tabs, $currenttab, $inactive);
+    print_tabs($tabs, $currenttab, $inactive, $activetwo);
 }
 
 ?>
