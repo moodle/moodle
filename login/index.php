@@ -141,8 +141,10 @@
             update_user_login_times();
             set_moodle_cookie($USER->username);
             set_login_session_preferences();
-        
-        
+
+            /// This is what lets the user do anything on the site :-)
+            load_all_capabilities();
+
             //Select password change url
             if (is_internal_auth($USER->auth) || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
                 $passwordchangeurl=$CFG->wwwroot.'/login/change_password.php';
@@ -207,8 +209,6 @@
             }
 
             reset_login_count();
-
-            load_all_capabilities();     /// This is what lets the user do anything on the site  :-)
 
             redirect($urltogo);
 
