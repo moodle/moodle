@@ -19,15 +19,11 @@
         $userid   = (integer)$args[0];
         $image    = $args[1];
         $pathname = $CFG->dataroot.'/users/'.$userid.'/'.$image;
-    } else {
-        $image    = 'f1.png';
-        $pathname = $CFG->dirroot.'/pix/u/f1.png';
+        if (file_exists($pathname) and !is_dir($pathname)) {
+            send_file($pathname, $image);
+        }
     }
 
-    if (file_exists($pathname) and !is_dir($pathname)) {
-        send_file($pathname, $image);
-    } else {
-        header('HTTP/1.0 404 not found');
-        error(get_string('filenotfound', 'error')); //this is not displayed on IIS??
-    }
+    // picture was deleted - use default instead
+    redirect($CFG->pixpath.'/u/f1.png');
 ?>
