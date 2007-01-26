@@ -134,6 +134,7 @@ class mod_quiz_mod_form extends moodleform_mod {
 		$mform->addElement('select', 'decimalpoints', get_string("decimaldigits", "quiz"), $options);
 		$mform->setHelpButton('decimalpoints', array("decimalpoints", get_string("decimaldigits","quiz"), "quiz"));
 		$mform->setAdvanced('decimalpoints', $CFG->quiz_fix_decimalpoints);
+        $mform->setDefault('decimalpoints', $CFG->quiz_decimalpoints);
 
 		$mform->addElement('hidden', 'grade', $CFG->quiz_maximumgrade);
 
