@@ -9,12 +9,12 @@ class profile_define_text extends profile_define_base {
 
         /// Param 1 for text type is the size of the field
         $form->addElement('text', 'param1', get_string('profilefieldsize', 'admin'), 'size="6"');
-        $form->setDefault('param1', 50);
+        $form->setDefault('param1', 30);
         $form->setType('param1', PARAM_INT);
 
         /// Param 2 for text type is the maxlength of the field
         $form->addElement('text', 'param2', get_string('profilefieldmaxlength', 'admin'), 'size="6"');
-        $form->setDefault('param2', 100);
+        $form->setDefault('param2', 2048);
         $form->setType('param2', PARAM_INT);
     }
 

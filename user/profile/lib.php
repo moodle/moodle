@@ -50,15 +50,15 @@ class profile_field_base {
      * @param   object   instance of the moodleform class
      * $return  boolean
      */
-    function display_field(&$form) {
+    function display_field(&$mform) {
 
         if ($this->field->visible != PROFILE_VISIBLE_NONE
           or has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
 
-            $this->display_field_add($form);
-            $this->display_field_set_default($form);
-            $this->display_field_set_required($form);
-            $this->display_field_set_locked($form);
+            $this->display_field_add($mform);
+            $this->display_field_set_default($mform);
+            $this->display_field_set_required($mform);
+            $this->display_field_set_locked($mform);
         }
     }
 
@@ -97,7 +97,7 @@ class profile_field_base {
      * Adds the profile field to the moodle form class
      * @param  form  instance of the moodleform class
      */
-    function display_field_add(&$form) {
+    function display_field_add(&$mform) {
         error('This abstract method must be overriden');
     }
 
@@ -121,9 +121,9 @@ class profile_field_base {
      * Sets the default data for the field in the form object
      * @param   object   instance of the moodleform class
      */
-    function display_field_set_default(&$form) {
+    function display_field_set_default(&$mform) {
         if (!empty($default)) {
-            $form->setDefault($this->inputname, $this->field->defaultdata);
+            $mform->setDefault($this->inputname, $this->field->defaultdata);
         }
     }
 
@@ -131,9 +131,9 @@ class profile_field_base {
      * Sets the required flag for the field in the form object
      * @param   object   instance of the moodleform class
      */
-    function display_field_set_required(&$form) {
+    function display_field_set_required(&$mform) {
         if ($this->field->required and !has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-            $form->addRule($this->inputname, get_string('required'), 'required', null, 'client');
+            $mform->addRule($this->inputname, get_string('required'), 'required', null, 'client');
         }
     }
 
@@ -141,9 +141,9 @@ class profile_field_base {
      * HardFreeze the field if locked.
      * @param   object   instance of the moodleform class
      */
-    function display_field_set_locked(&$form) {
+    function display_field_set_locked(&$mform) {
         if ($this->field->locked and !has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-            $form->hardFreeze($this->inputname);
+            $mform->hardFreeze($this->inputname);
         }
     }
 
@@ -178,18 +178,18 @@ function profile_load_data(&$user) {
  * Print out the customisable categories and fields for a users profile
  * @param  object   instance of the moodleform class
  */
-function profile_definition(&$form) {
+function profile_definition(&$mform) {
     global $CFG;
 
     if ($categories = get_records_select('user_info_category', '', 'sortorder ASC')) {
         foreach ($categories as $category) {
             if ($fields = get_records_select('user_info_field', "categoryid=$category->id", 'sortorder ASC')) {
-                $form->addElement('header', 'category_'.$category->id, format_string($category->name));
+                $mform->addElement('header', 'category_'.$category->id, format_string($category->name));
                 foreach ($fields as $field) {
                     require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
                     $newfield = 'profile_field_'.$field->datatype;
                     $formfield = new $newfield($field->id);
-                    $formfield->display_field($form);
+                    $formfield->display_field($mform);
 
                 }
             }

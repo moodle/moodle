@@ -33,7 +33,6 @@ class profile_define_base {
 
         $form->addElement('htmleditor', 'description', get_string('profiledescription', 'admin'));
         $form->setHelpButton('description', array('text', get_string('helptext')));
-        $form->setType('description', PARAM_MULTILANG);
 
         $form->addElement('selectyesno', 'required', get_string('profilerequired', 'admin'));
 
@@ -280,7 +279,7 @@ function profile_delete_field($id) {
  * @param   string    direction of move
  * @return  boolean   success of operation
  */
-function profile_move_field ($id, $move) {
+function profile_move_field($id, $move) {
     /// Get the field object
     if (!$field = get_record('user_info_field', 'id', $id, '', '', '', '', 'id, sortorder, categoryid')) {
         return false;
@@ -318,7 +317,7 @@ function profile_move_field ($id, $move) {
  * @param   string    direction of move
  * @return  boolean   success of operation
  */
-function profile_move_category ($id, $move) {
+function profile_move_category($id, $move) {
     /// Get the category object
     if (!($category = get_record('user_info_category', 'id', $id, '', '', '', '', 'id, sortorder'))) {
         return false;

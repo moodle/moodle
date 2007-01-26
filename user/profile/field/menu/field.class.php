@@ -16,15 +16,15 @@ class profile_field_menu extends profile_field_base {
 
     }
 
-    function display_field_add(&$form) {
+    function display_field_add(&$mform) {
         /// Create the form field
-        $form->addElement('select', $this->inputname, format_string($this->field->name), $this->options);
+        $mform->addElement('select', $this->inputname, format_string($this->field->name), $this->options);
     }
 
     /// Override base class method
-    function display_field_default(&$form) {
+    function display_field_default(&$mform) {
         $defaultkey = (int)array_search($field->defaultdata, $this->options);
-        $form->setDefault($this->inputname, $defaultkey);
+        $mform->setDefault($this->inputname, $defaultkey);
     }
 }
 
