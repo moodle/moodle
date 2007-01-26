@@ -69,6 +69,7 @@
             $authplugin = get_auth_plugin($usernew->auth);
         }
 
+        $usernew->username     = trim($usernew->username);
         $usernew->timemodified = time();
 
         if ($usernew->id == -1) {

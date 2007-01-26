@@ -93,10 +93,15 @@ class user_editadvanced_form extends moodleform {
         global $CFG;
 
         $usernew = (object)$usernew;
-        $user    = get_record('user', 'id', $usernew->id);
-        $err     = array();
+        $usernew->username = trim($usernew->username);
 
-        if (!$user or $user->username !== $usernew->username) {
+        $user = get_record('user', 'id', $usernew->id);
+        $err = array();
+
+        if (empty($usernew->username)) {
+            //might be only whitespace
+            $err['username'] = get_string('required');
+        } else if (!$user or $user->username !== $usernew->username) {
             //check new username does not exist
             if (record_exists('user', 'username', $usernew->username, 'mnethostid', $CFG->mnet_localhost_id)) {
                 $err['username'] = get_string('usernameexists');
