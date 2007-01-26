@@ -234,7 +234,7 @@ function useredit_shared_definition(&$mform) {
     $mform->setType('msn', PARAM_CLEAN);
 
     $mform->addElement('text', 'idnumber', get_string('idnumber'), 'maxlength="64" size="25"');
-    $mform->setType('idnumber', PARAM_RAW);
+    $mform->setType('idnumber', PARAM_CLEAN);
 
     $mform->addElement('text', 'institution', get_string('institution'), 'maxlength="40" size="25"');
     $mform->setType('institution', PARAM_MULTILANG);
