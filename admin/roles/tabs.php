@@ -153,7 +153,6 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything ex
     } else {
         $inactive[] = '';
         $activetwo = array();
-        $currenttab = 'roles';
     }
 
     if (!empty($secondrow)) {
