@@ -20,7 +20,7 @@
     $choices['1'] = get_string('emaildisplayyes');
     $choices['2'] = get_string('emaildisplaycourse');
     $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
-    $mform->setDefault('emaildisplay', 2);
+    $mform->setDefault('maildisplay', 2);
 
     $choices = array();
     $choices['0'] = get_string('emailenable');
@@ -60,7 +60,7 @@
     $choices['1'] = get_string('autosubscribeyes');
     $choices['0'] = get_string('autosubscribeno');
     $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
-    $mform->setDefault('autosubscribe', 0);
+    $mform->setDefault('autosubscribe', 1);
     $mform->setAdvanced('autosubscribe');
 
     if (!empty($CFG->forum_trackreadposts)) {
