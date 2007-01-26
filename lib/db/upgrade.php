@@ -479,7 +479,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && change_field_type($table, $field);
 
         /// For existing fields use 'name' as the 'shortname' entry
-        if ($fields = get_records_select('user_info_field', 1, '', 'id, name')) {
+        if ($fields = get_records_select('user_info_field', '', '', 'id, name')) {
             foreach ($fields as $field) {
                 $field->shortname = clean_param($field->name, PARAM_ALPHANUM);
                 $result && update_record('user_info_field', $field);
