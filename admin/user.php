@@ -297,6 +297,12 @@
         }
 
         $mainadmin = get_admin();
+        if(empty($CFG->loginhttps)) {
+            $securewwwroot = $CFG->wwwroot;
+        } else {
+            $securewwwroot = str_replace('http:','https:',$CFG->wwwroot);
+        }
+
         $table->head = array ("$firstname / $lastname", $email, $city, $country, $lastaccess, "", "", "");
         $table->align = array ("left", "left", "left", "left", "left", "center", "center", "center");
         $table->width = "95%";
@@ -316,7 +322,7 @@
             }
 
             if (has_capability('moodle/user:update', $sitecontext) and ($user->id==$USER->id or $user->id != $mainadmin->id) and !is_mnet_remote_user($user)) {
-                $editbutton = "<a href=\"../user/editadvanced.php?id=$user->id&amp;course=$site->id\">$stredit</a>";
+                $editbutton = "<a href=\"$securewwwroot/user/editadvanced.php?id=$user->id&amp;course=$site->id\">$stredit</a>";
                 if ($user->confirmed == 0) {
                     $confirmbutton = "<a href=\"user.php?confirmuser=$user->id&amp;sesskey=$USER->sesskey\">" . get_string('confirm') . "</a>";
                 } else {
