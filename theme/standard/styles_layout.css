@@ -2048,6 +2048,10 @@ body#message-messages {
     background: transparent url(pix/tab/right_last.gif) no-repeat right top;
 }
 
+.tabrow1 li a span {
+    background: none !important;
+}
+
 .tabrow0 A {
 	text-decoration: none;
 	/* font-weight: bold; */
