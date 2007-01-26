@@ -184,7 +184,7 @@ function profile_definition(&$form) {
     if ($categories = get_records_select('user_info_category', '', 'sortorder ASC')) {
         foreach ($categories as $category) {
             if ($fields = get_records_select('user_info_field', "categoryid=$category->id", 'sortorder ASC')) {
-                $form->addElement('header', 'category_'.$category->id, $category->name);
+                $form->addElement('header', 'category_'.$category->id, format_string($category->name));
                 foreach ($fields as $field) {
                     require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
                     $newfield = 'profile_field_'.$field->datatype;
