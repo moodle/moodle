@@ -5361,14 +5361,14 @@ class tabobject {
 
 
 /**
- * Returns a string containing a table with tabs inside and formatted with
- * CSS styles.
+ * Returns a string containing a nested list, suitable for formatting into tabs with CSS.
  *
  * @param array $tabrows An array of rows where each row is an array of tab objects
- * @param string $selected  The id of the selected tab
- * @param array $inactive  Ids of inactive tabs
+ * @param string $selected  The id of the selected tab (whatever row it's on)
+ * @param array  $inactive  An array of ids of inactive tabs that are not selectable.
+ * @param array  $activated An array of ids of other tabs that are currently activated
 **/
-function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $activetwo=NULL, $return=false) {
+function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $activated=NULL, $return=false) {
     global $CFG;
 
 /// Bring the row with the selected tab to the front
@@ -5397,13 +5397,13 @@ function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $activetwo=NULL, $
         $inactive = array();
     }
 
-/// $activetwo must be an array
-    if (!is_array($activetwo)) {
-        $activetwo = array();
+/// $activated must be an array
+    if (!is_array($activated)) {
+        $activated = array();
     }
 
 /// Convert the tab rows into a tree that's easier to process
-    if (!$tree = convert_tabrows_to_tree($tabrows, $selected, $inactive, $activetwo)) {
+    if (!$tree = convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated)) {
         return false;
     }
 
@@ -5472,7 +5472,7 @@ function convert_tree_to_html($tree, $row=0) {
 }
 
 
-function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activetwo) {
+function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
 
 /// Work backwards through the rows (bottom to top) collecting the tree as we go.
 
@@ -5485,7 +5485,7 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activetwo) {
 
         foreach ($row as $tab) {
             $tab->inactive = in_array($tab->id, $inactive);
-            $tab->active = in_array($tab->id, $activetwo);
+            $tab->active = in_array($tab->id, $activated);
             $tab->selected = $tab->id == $selected;
 
             if ($tab->active || $tab->selected) {
