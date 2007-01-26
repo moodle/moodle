@@ -4,6 +4,7 @@
     require_once($CFG->libdir.'/gdlib.php');
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->dirroot.'/user/editadvanced_form.php');
+    require_once($CFG->dirroot.'/user/editlib.php');
     require_once($CFG->dirroot.'/user/profile/lib.php');
 
     $id     = optional_param('id', $USER->id, PARAM_INT);    // user id; -1 if creating new user
@@ -44,13 +45,9 @@
         print_error('guestnoeditprofileother');
     }
 
-    //load preferences
-    if (!empty($user->id) and $preferences = get_user_preferences(null, null, $user->id)) {
-        foreach($preferences as $name=>$value) {
-            $user->{'preference_'.$name} = $value;
-        }
-    }
-    
+    //load user preferences
+    useredit_load_preferences($user);
+
     //Load custom profile fields data
     profile_load_data($user);
 
@@ -64,7 +61,7 @@
         if (empty($usernew->auth)) {
             //user editing self
             $authplugin = get_auth_plugin($user->auth);
-            unset($usernew->auth);
+            unset($usernew->auth); //can not change/remove
         } else {
             $authplugin = get_auth_plugin($usernew->auth);
         }
@@ -73,7 +70,7 @@
         $usernew->timemodified = time();
 
         if ($usernew->id == -1) {
-            //TODO check out that it makes sense to create account with this auth plugin and what to do with the password
+            //TODO check out if it makes sense to create account with this auth plugin and what to do with the password
             unset($usernew->id);
             $usernew->mnethostid = $CFG->mnet_localhost_id; // always local user
             $usernew->confirmed  = 1;
@@ -110,37 +107,19 @@
             }
         }
 
-
         //update preferences
-        $ua = (array)$usernew;
-        foreach($ua as $key=>$value) {
-            if (strpos($key, 'preference_') === 0) {
-                $name = substr($key, strlen('preference_'));
-                set_user_preference($name, $value, $usernew->id);
-            }
-        }
+        useredit_update_user_preference($usernew);
 
         //update user picture
         if (!empty($CFG->gdversion)) {
-            if ($usernew->deletepicture) {
-                //TODO - delete the files
-                set_field('user', 'picture', 0, 'id', $usernew->id);
-            } else if ($usernew->picture = save_profile_image($usernew->id, $userform->get_um(), 'users')) {
-                set_field('user', 'picture', 1, 'id', $usernew->id);
-            }
+            useredit_update_picture($usernew, $userform);
         }
 
         // update mail bounces
-        if ($user->email !== $usernew->email) {
-            set_bounce_count($usernew,true);
-            set_send_count($usernew,true);
-        }
+        useredit_update_bounces($user, $usernew);
 
-        /// Update forum track preference.
-        if (($usernew->trackforums != $user->trackforums) and !$usernew->trackforums) {
-            require_once($CFG->dirroot.'/mod/forum/lib.php');
-            forum_tp_delete_read_records($usernew->id);
-        }
+        /// update forum track preference
+        useredit_update_trackforums($user, $usernew);
 
         // save custom profile fields data
         profile_save_data($usernew);
@@ -155,7 +134,7 @@
                 unset($USER->newadminuser);
                 // redirect to admin/ to continue with installation
                 redirect("$CFG->wwwroot/$CFG->admin/");
-            } else { 
+            } else {
                 redirect("$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id");
             }
         } else {

@@ -1,8 +1,60 @@
 <?php  //$Id$
 
-    if (!defined('MOODLE_INTERNAL')) {
-        die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+
+function useredit_load_preferences(&$user) {
+    if (!empty($user->id) and $preferences = get_user_preferences(null, null, $user->id)) {
+        foreach($preferences as $name=>$value) {
+            $user->{'preference_'.$name} = $value;
+        }
     }
+}
+
+function useredit_update_user_preference($usernew) {
+    $ua = (array)$usernew;
+    foreach($ua as $key=>$value) {
+        if (strpos($key, 'preference_') === 0) {
+            $name = substr($key, strlen('preference_'));
+            set_user_preference($name, $value, $usernew->id);
+        }
+    }
+}
+
+function useredit_update_picture(&$usernew, &$userform) {
+    if (isset($usernew->deletepicture) and $usernew->deletepicture) {
+        //TODO - delete the file
+        set_field('user', 'picture', 0, 'id', $usernew->id);
+    } else if ($usernew->picture = save_profile_image($usernew->id, $userform->get_um(), 'users')) {
+        set_field('user', 'picture', 1, 'id', $usernew->id);
+    }
+}
+
+function useredit_update_bounces($user, $usernew) {
+    if (!isset($usernew->email)) {
+        //locked field
+        return;
+    }
+    if ($user->email !== $usernew->email) {
+        set_bounce_count($usernew,true);
+        set_send_count($usernew,true);
+    }
+}
+
+function useredit_update_trackforums($user, $usernew) {
+    global $CFG;
+    if (!isset($usernew->trackforums)) {
+        //locked field
+        return;
+    }
+    if (($usernew->trackforums != $user->trackforums) and !$usernew->trackforums) {
+        require_once($CFG->dirroot.'/mod/forum/lib.php');
+        forum_tp_delete_read_records($usernew->id);
+    }
+}
+
+function useredit_shared_definition(&$mform) {
+    global $CFG;
+
+    $strrequired = get_string('required');
 
     $mform->addElement('text', 'firstname', get_string('firstname'), 'maxlength="100" size="30"');
     $mform->addRule('firstname', $strrequired, 'required', null, 'client');
@@ -195,6 +247,6 @@
 
     $mform->addElement('text', 'address', get_string('address'), 'maxlength="70" size="25"');
     $mform->setType('address', PARAM_MULTILANG);
-
+}
 
 ?>

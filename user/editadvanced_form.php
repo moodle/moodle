@@ -39,7 +39,8 @@ class user_editadvanced_form extends moodleform {
         $mform->addElement('checkbox', 'preference_auth_forcepasswordchange', get_string('forcepasswordchange'));
         //TODO: add missing help - user will be forced to change password
 
-        require('edit_form_common.php');
+        /// shared fields
+        useredit_shared_definition($mform);
 
         /// Next the customisable profile fields
         profile_definition($mform);

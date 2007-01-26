@@ -19,7 +19,8 @@ class user_edit_form extends moodleform {
         /// Print the required moodle fields first
         $mform->addElement('header', 'moodle', $strrequired);
 
-        require('edit_form_common.php');
+        /// shared fields
+        useredit_shared_definition($mform);
 
         /// extra settigs
         $mform->addRule('description', $strrequired, 'required', null, 'client');
@@ -91,7 +92,7 @@ class user_edit_form extends moodleform {
         } else if (($usernew->email !== $user->email) and record_exists('user', 'email', $usernew->email, 'mnethostid', $CFG->mnet_localhost_id)) {
             $err['email'] = get_string('emailexists');
         }
-        
+
         if ($usernew->email === $user->email and over_bounce_threshold($user)) {
             $err['email'] = get_string('toomanybounces');
         }

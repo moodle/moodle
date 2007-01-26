@@ -3,6 +3,7 @@
     require_once('../config.php');
     require_once($CFG->libdir.'/gdlib.php');
     require_once($CFG->dirroot.'/user/edit_form.php');
+    require_once($CFG->dirroot.'/user/editlib.php');
     require_once($CFG->dirroot.'/user/profile/lib.php');
 
     $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
@@ -26,13 +27,11 @@
         redirect($CFG->wwwroot . "/user/view.php?course={$course->id}");
     }
 
-    //load preferences
-    if (!empty($user->id) and $preferences = get_user_preferences(null, null, $user->id)) {
-        foreach($preferences as $name=>$value) {
-            $user->{'preference_'.$name} = $value;
-        }
-    }
-    //TODO: Load the custom profile fields
+    //load user preferences
+    useredit_load_preferences($user);
+
+    //Load custom profile fields data
+    profile_load_data($user);
 
     //create form
     $userform = new user_edit_form();
@@ -60,37 +59,21 @@
         }
 
         //update preferences
-        $ua = (array)$usernew;
-        foreach($ua as $key=>$value) {
-            if (strpos($key, 'preference_') === 0) {
-                $name = substr($key, strlen('preference_'));
-                set_user_preference($name, $value, $usernew->id);
-            }
-        }
+        useredit_update_user_preference($usernew);
 
+        //update user picture
         if (!empty($CFG->gdversion) and empty($CFG->disableuserimages)) {
-             //update user picture
-            if ($usernew->deletepicture) {
-                //TODO - delete the files
-                set_field('user', 'picture', 0, 'id', $usernew->id);
-            } else if ($usernew->picture = save_profile_image($usernew->id, $userform->get_um(), 'users')) {
-                set_field('user', 'picture', 1, 'id', $usernew->id);
-            }
+            useredit_update_picture($usernew, $userform);
         }
 
         // update mail bounces
-        if ($user->email !== $usernew->email) {
-            set_bounce_count($usernew,true);
-            set_send_count($usernew,true);
-        }
+        useredit_update_bounces($user, $usernew);
 
-        /// Update forum track preference.
-        if (($usernew->trackforums != $user->trackforums) and !$usernew->trackforums) {
-            require_once($CFG->dirroot.'/mod/forum/lib.php');
-            forum_tp_delete_read_records($usernew->id);
-        }
+        /// update forum track preference
+        useredit_update_trackforums($user, $usernew);
 
-        //TODO: Save the custom profile fields
+        // save custom profile fields data
+        profile_save_data($usernew);
 
         // Override old $USER session variable
         $usernew = (array)get_record('user', 'id', $newuser->id); // reload from db
