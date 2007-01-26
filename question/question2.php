@@ -124,7 +124,7 @@ if ($mform->is_cancelled()){
 
     // Display a heading, question editing form and possibly some extra content needed for
     // for this question type.
-    $QTYPES[$question->qtype]->display_question_editing_page(&$mform, $question, $wizardnow);
+    $QTYPES[$question->qtype]->display_question_editing_page($mform, $question, $wizardnow);
 
     print_footer($COURSE);
 }
