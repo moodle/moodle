@@ -8,7 +8,7 @@ class profile_define_menu extends profile_define_base {
         $form->setType('param1', PARAM_MULTILANG);
 
         /// Default data
-        $form->addElement('text', 'defaultdata', get_string('profiledefaultdata', 'admin'), 'size="30"');
+        $form->addElement('text', 'defaultdata', get_string('profiledefaultdata', 'admin'), 'size="50"');
         $form->setType('defaultdata', PARAM_MULTILANG);
     }
 

@@ -23,11 +23,11 @@ class profile_define_base {
 
         $strrequired = get_string('required');
 
-        $form->addElement('text', 'shortname', get_string('profileshortname', 'admin'), 'maxlength="100" size="30"');
+        $form->addElement('text', 'shortname', get_string('profileshortname', 'admin'), 'maxlength="100" size="25"');
         $form->addRule('shortname', $strrequired, 'required', null, 'client');
         $form->setType('shortname', PARAM_ALPHANUM);
 
-        $form->addElement('text', 'name', get_string('profilename', 'admin'), 'size="30"');
+        $form->addElement('text', 'name', get_string('profilename', 'admin'), 'size="50"');
         $form->addRule('name', $strrequired, 'required', null, 'client');
         $form->setType('name', PARAM_MULTILANG);
 
@@ -92,9 +92,12 @@ class profile_define_base {
     function define_validate_common($data) {
         $err = array();
 
+        /// Check the shortname was not truncated by cleaning
+        if (empty($data->shortname)) {
+            $err['shortname'] = get_string('required');
+
         /// Check the shortname is unique
-        if (($field = get_record('user_info_field', 'shortname', $data->shortname)) and ($field->id <> $data->id)) {
-        //if (record_exists_select('user_info_field', 'shortname='.$data->shortname.' AND id<>'.$data->id)) {
+        } else if (($field = get_record('user_info_field', 'shortname', $data->shortname)) and ($field->id <> $data->id)) {
             $err['shortname'] = get_string('profileshortnamenotunique', 'admin');
         }
 

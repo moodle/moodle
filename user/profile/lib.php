@@ -72,7 +72,7 @@ class profile_field_base {
         $usernew = $this->save_data_preprocess($usernew);
 
         if (!isset($usernew->{$this->inputname})) {
-            // field not present in form, probably locked and incisible - skip it!
+            // field not present in form, probably locked and invisible - skip it
             return;
         }
 
