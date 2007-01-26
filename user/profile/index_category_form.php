@@ -1,6 +1,6 @@
 <?php //$Id$
 
-require_once("$CFG->dirroot/lib/formslib.php");
+require_once($CFG->dirroot.'/lib/formslib.php');
 
 class category_form extends moodleform {
 
@@ -9,7 +9,7 @@ class category_form extends moodleform {
         global $USER, $CFG;
 
         $mform =& $this->_form;
-        
+
         $strrequired = get_string('required');
 
         /// Add some extra hidden fields
@@ -19,9 +19,8 @@ class category_form extends moodleform {
         $mform->addElement('text', 'name', get_string('profilecategoryname', 'admin'), 'maxlength="255" size="30"');
         $mform->setType('name', PARAM_MULTILANG);
         $mform->addRule('name', $strrequired, 'required', null, 'client');
-        
-        $this->add_action_buttons(true);
 
+        $this->add_action_buttons(true);
 
     } /// End of function
 
@@ -31,8 +30,8 @@ class category_form extends moodleform {
 
         $data  = (object)$data;
         $err = array();
-        
-        $category = get_record('user_info_category', 'id', $data->id); 
+
+        $category = get_record('user_info_category', 'id', $data->id);
 
         /// Check the name is unique
         if ($category and ($category->name !== $data->name) and (record_exists('user_info_category', 'name', $data->name))) {

@@ -5,7 +5,7 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 class user_editadvanced_form extends moodleform {
 
     // Define the form
-    function definition () {
+    function definition() {
         global $USER, $CFG, $COURSE;
 
         $mform =& $this->_form;
@@ -40,6 +40,9 @@ class user_editadvanced_form extends moodleform {
         //TODO: add missing help - user will be forced to change password
 
         require('edit_form_common.php');
+
+        /// Next the customisable profile fields
+        profile_definition($mform);
 
         $this->add_action_buttons(false, get_string('updatemyprofile'));
     }
@@ -81,9 +84,12 @@ class user_editadvanced_form extends moodleform {
                 $image_el->setValue(get_string('none'));
             }
         }
+
+        /// Next the customisable profile fields
+        profile_definition_after_data($mform);
     }
 
-    function validation ($usernew) {
+    function validation($usernew) {
         global $CFG;
 
         $usernew = (object)$usernew;
@@ -115,6 +121,9 @@ class user_editadvanced_form extends moodleform {
                 $err['email'] = get_string('emailexists');
             }
         }
+
+        /// Next the customisable profile fields
+        $err += profile_validation($usernew);
 
         if (count($err) == 0){
             return true;

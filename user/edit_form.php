@@ -29,6 +29,9 @@ class user_edit_form extends moodleform {
             $mform->removeElement('imagealt');
         }
 
+        /// Next the customisable profile fields
+        profile_definition($mform);
+
         $this->add_action_buttons(false, get_string('updatemyprofile'));
     }
 
@@ -69,7 +72,9 @@ class user_edit_form extends moodleform {
             }
             $mform->hardFreeze($freezefields);
         }
-        /// TODO: add locking
+
+        /// Next the customisable profile fields
+        profile_definition_after_data($mform);
 
     }
 
@@ -90,6 +95,9 @@ class user_edit_form extends moodleform {
         if ($usernew->email === $user->email and over_bounce_threshold($user)) {
             $err['email'] = get_string('toomanybounces');
         }
+
+        /// Next the customisable profile fields
+        $err += profile_validation($usernew);
 
         if (count($err) == 0){
             return true;

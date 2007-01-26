@@ -50,7 +50,9 @@
             $user->{'preference_'.$name} = $value;
         }
     }
-    //TODO: Load the custom profile fields
+    
+    //Load custom profile fields data
+    profile_load_data($user);
 
     //create form
     $userform = new user_editadvanced_form();
@@ -70,41 +72,43 @@
         $usernew->timemodified = time();
 
         if ($usernew->id == -1) {
+            //TODO check out that it makes sense to create account with this auth plugin and what to do with the password
             unset($usernew->id);
             $usernew->mnethostid = $CFG->mnet_localhost_id; // always local user
             $usernew->confirmed  = 1;
+            $usernew->password = hash_internal_user_password($usernew->newpassword);
             if (!$usernew->id = insert_record('user', $usernew)) {
                 error('Error creating user record');
             }
         } else {
-            if (update_record('user', $usernew)) {
-                if (method_exists($authplugin, 'user_update')){
-                    // pass a true $userold here
-                    if (! $authplugin->user_update($user, $userform->get_data(false))) {
-                        // auth update failed, rollback for moodle
-                        update_record('user', addslashes_object($user));
-                        error('Failed to update user data on external auth: '.$usernew->auth.
-                                '. See the server logs for more details.');
-                    }
-                };
-            } else {
+            if (!update_record('user', $usernew)) {
                 error('Error updating user record');
             }
-        }
+            if (method_exists($authplugin, 'user_update')){
+                // pass a true $userold here
+                if (! $authplugin->user_update($user, $userform->get_data(false))) {
+                    // auth update failed, rollback for moodle
+                    update_record('user', addslashes_object($user));
+                    error('Failed to update user data on external auth: '.$usernew->auth.
+                            '. See the server logs for more details.');
+                }
+            };
 
-        //set new password if specified
-        if (!empty($usernew->newpassword)) {
-            if ($authplugin->can_change_password()) {
-                if (method_exists($authplugin, 'user_update_password')){
-                    if (!$authplugin->user_update_password($user->username, $usernew->newpassword)){
-                        error('Failed to update password on external auth: ' . $usernew->auth .
-                                '. See the server logs for more details.');
+            //set new password if specified
+            if (!empty($usernew->newpassword)) {
+                if ($authplugin->can_change_password()) {
+                    if (method_exists($authplugin, 'user_update_password')){
+                        if (!$authplugin->user_update_password($user->username, $usernew->newpassword)){
+                            error('Failed to update password on external auth: ' . $usernew->auth .
+                                    '. See the server logs for more details.');
+                        }
+                    } else {
+                        error('Your external authentication module is misconfigued!');
                     }
-                } else {
-                    error('Your external authentication module is misconfigued!');
                 }
             }
         }
+
 
         //update preferences
         $ua = (array)$usernew;
@@ -137,7 +141,8 @@
             forum_tp_delete_read_records($usernew->id);
         }
 
-        //TODO: Save the custom profile fields
+        // save custom profile fields data
+        profile_save_data($usernew);
 
         if ($user->id == $USER->id) {
             // Override old $USER session variable
