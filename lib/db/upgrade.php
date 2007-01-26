@@ -58,7 +58,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     if ($oldversion < 2006101008) {  /// Delete guest course section settings
         if ($guest = get_record('user', 'username', 'guest')) {
-            execute_sql("DELETE FROM {$CFG->prefix}course_display where userid=$guest->id ;", true);
+            execute_sql("DELETE FROM {$CFG->prefix}course_display where userid=$guest->id", true);
         }
     }
     
