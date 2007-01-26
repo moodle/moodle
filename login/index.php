@@ -152,6 +152,9 @@ if ($authsequence[0] == 'cas' and !empty($CFG->cas_enabled)) {
             set_moodle_cookie($USER->username);
             set_login_session_preferences();
 
+            /// This is what lets the user do anything on the site :-)
+            load_all_capabilities();
+
             //Select password change url
             $userauth = get_auth_plugin($USER->auth);
             if ($userauth->can_change_password()) {
@@ -213,8 +216,6 @@ if ($authsequence[0] == 'cas' and !empty($CFG->cas_enabled)) {
             }
 
             reset_login_count();
-
-            load_all_capabilities();     /// This is what lets the user do anything on the site  :-)
 
             redirect($urltogo);
 
