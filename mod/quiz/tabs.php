@@ -28,7 +28,8 @@
     $tabs = array();
     $row  = array();
     $inactive = array();
-    
+    $activated = array();
+
     if (has_capability('mod/quiz:view', $context)) {
         $row[] = new tabobject('info', "$CFG->wwwroot/mod/quiz/view.php?q=$quiz->id", get_string('info', 'quiz'));
     }
@@ -50,6 +51,8 @@
 
     if ($currenttab == 'reports' and isset($mode)) {
         $inactive[] = 'reports';
+        $activated[] = 'reports';
+        
         $allreports = get_list_of_plugins("mod/quiz/report");
         $reportlist = array ('overview', 'regrade', 'grading', 'analysis');   // Standard reports we want to show first
 
@@ -73,6 +76,7 @@
 
     if ($currenttab == 'edit' and isset($mode)) {
         $inactive[] = 'edit';
+        $activated[] = 'edit';
 
         $row  = array();
         $currenttab = $mode;
@@ -102,6 +106,6 @@
         $tabs[] = $row;
     }
 
-    print_tabs($tabs, $currenttab, $inactive);
+    print_tabs($tabs, $currenttab, $inactive, $activated);
 
 ?>
