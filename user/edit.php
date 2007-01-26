@@ -13,6 +13,7 @@
     }
 
     require_login($course->id);
+    httpsrequired();
 
     if (isguest()) { //TODO: add proper capability to edit own profile and change password too
         print_error('guestnoeditprofile');
