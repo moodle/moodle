@@ -1622,6 +1622,22 @@ function sql_as() {
 }
 
 /**
+ * Returns the empty string char used by every supported DB. To be used when
+ * we are searching for that values in our queries. Only Oracle uses this
+ * for now (will be out, once we migrate to proper NULLs if that days arrives)
+ */
+function sql_empty() {
+    global $CFG;
+
+    switch ($CFG->dbtype) {
+        case 'oci8po':
+            return ' '; //Only Oracle uses 1 white-space
+        default:
+            return '';
+    }
+}
+
+/**
  * Returns the proper substr() function for each DB
  * Relies on ADOdb $db->substr property
  */
@@ -1631,6 +1647,19 @@ function sql_substr() {
 
     return $db->substr;
 }
+
+/**
+ * Returns the SQL text to be used to compare one TEXT (clob) column with
+ * one varchar column, because some RDBMS doesn't support such direct
+ * comparisons.
+ * @param string fieldname the name of the TEXT field we need to order by
+ * @param string number of chars to use for the ordering (defaults to 32)
+ * @return string the piece of SQL code to be used in your statement.
+ */
+function sql_compare_text($fieldname, $numchars=32) {
+    return sql_order_by_text($fieldname, $numchars);
+}
+
 
 /**
  * Returns the SQL text to be used to order by one TEXT (clob) column, because
