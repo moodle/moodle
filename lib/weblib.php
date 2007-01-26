@@ -5432,7 +5432,10 @@ function convert_tree_to_html($tree, $row=0) {
     foreach ($tree as $tab) {
         $count--;   // countdown to zero
 
-        if ($first) {
+        if ($first && ($count == 0)) {   // Just one in the row
+            $str .= '<li class="first last">';
+            $first = false;
+        } else if ($first) {
             $str .= '<li class="first">';
             $first = false;
         } else if ($count == 0) {
