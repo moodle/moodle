@@ -199,6 +199,7 @@ $string['ociextensionisnotpresentinphp'] = 'PHP, Oracle ile iletişim kurabilmek
 $string['odbc_mssql'] = 'SQL*Server ODBC üzerinden (odbc_mssql)';
 $string['odbcextensionisnotpresentinphp'] = 'PHP, SQL*Server ile iletişim kurabilmek için odbc uzantısı düzgün bir şekilde yapılandırılmamış. Lütfen php.ini dosyasını kontrol edin veya PHP\'yi tekrar derleyin.';
 $string['ok'] = 'Tamam';
+$string['opensslrecommended'] = 'OpenSSL kütüphanesinin kurulması şiddetle tavsiye edilir. Bu, Moodle Ağının işlevsel çalışmasını mümkün kılar.';
 $string['pass'] = 'Geçti';
 $string['password'] = 'Şifre';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP, PostgreSQL ile iletişim kurabilmek için pgsql uzantısı düzgün bir şekilde yapılandırılmamış. Lütfen php.ini dosyasını kontrol edin veya PHP\'yi tekrar derleyin.';
