@@ -937,12 +937,12 @@ class XMLDBgenerator {
             }
         /// Now iterate until not used name is found, incrementing the counter
             while (in_array($newnamewithsuffix, $used_names) || $this->isNameInUse($newnamewithsuffix, $suffix)) {
+                $counter++;
                 $newname = substr($name, 0, strlen($newname)-1) . $counter;
                 $newnamewithsuffix = $newname;
                 if ($suffix) {
                     $newnamewithsuffix = $newnamewithsuffix . '_' . $suffix;
                 }
-                $counter++;
             }
             $namewithsuffix = $newnamewithsuffix;
         }
