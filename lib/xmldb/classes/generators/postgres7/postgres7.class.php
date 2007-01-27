@@ -470,6 +470,43 @@ function getSequenceFromDB($xmldb_table) {
 }
 
     /**
+     * Given one object name and it's type (pk, uk, fk, ck, ix, uix, seq, trg)
+     * return if such name is currently in use (true) or no (false)
+     * (invoked from getNameForObject()
+     */
+    function isNameInUse($object_name, $type) {
+        switch($type) {
+            case 'ix':
+            case 'uix':
+            case 'seq':
+                if ($check = get_records_sql("SELECT relname 
+                                              FROM pg_class 
+                                              WHERE lower(relname) = '" . strtolower($object_name) . "'")) {
+                    return true;
+                }
+                break;
+            case 'pk':
+            case 'uk':
+            case 'fk':
+            case 'ck':
+                if ($check = get_records_sql("SELECT conname 
+                                              FROM pg_constraint
+                                              WHERE lower(conname) = '" . strtolower($object_name) . "'")) {
+                    return true;
+                }
+                break;
+            case 'trg':
+                if ($check = get_records_sql("SELECT tgname 
+                                              FROM pg_trigger
+                                              WHERE lower(tgname) = '" . strtolower($object_name) . "'")) {
+                    return true;
+                }
+                break;
+        }
+        return false; //No name in use found
+    }
+
+    /**
      * Returns an array of reserved words (lowercase) for this DB
      */
     function getReservedWords() {
