@@ -7,7 +7,7 @@ class block_calendar_month extends block_base {
     }
 
     function preferred_width() {
-        return 200;
+        return 210;
     }
 
     function get_content() {
