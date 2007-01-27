@@ -40,7 +40,7 @@ class block_login extends block_base {
         $this->content->footer = '';
         $this->content->text = '';
 
-        if (empty($USER->loggedin) or isguest()) {   // Show the block
+        if (!isloggedin() or isguestuser()) {   // Show the block
 
             $this->content->text .= "\n".'<form class="loginform" id="login" method="post" action="'.$wwwroot.'/login/index.php">';
 

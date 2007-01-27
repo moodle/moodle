@@ -1627,27 +1627,29 @@ function course_setup($courseorid=0) {
  */
 function require_login($courseorid=0, $autologinguest=true, $cm=null) {
 
-    global $CFG, $SESSION, $USER, $COURSE, $FULLME, $SITE;
+    global $CFG, $SESSION, $USER, $COURSE, $FULLME;
 
+/// setup global $COURSE, themes, language and locale
     course_setup($courseorid);
 
 /// If the user is not even logged in yet then make sure they are
-    if (! (isset($USER->loggedin) and $USER->confirmed and ($USER->site == $CFG->wwwroot)) ) {
+    if (!isloggedin()) {
+        //NOTE: $USER->site check was obsoleted by session test cookie,
+        //      $USER->confirmed test is in login/index.php
         $SESSION->wantsurl = $FULLME;
         if (!empty($_SERVER['HTTP_REFERER'])) {
             $SESSION->fromurl  = $_SERVER['HTTP_REFERER'];
         }
-        $USER = NULL;
         if ($autologinguest and !empty($CFG->autologinguests) and ($COURSE->id == SITEID or $COURSE->guest) ) {
             $loginguest = '?loginguest=true';
         } else {
             $loginguest = '';
         }
-        if (empty($CFG->loginhttps)) {
+        if (empty($CFG->loginhttps) or $autologinguest) { //do not require https for guest logins
             redirect($CFG->wwwroot .'/login/index.php'. $loginguest);
         } else {
             $wwwroot = str_replace('http:','https:', $CFG->wwwroot);
-            redirect($wwwroot .'/login/index.php'. $loginguest);
+            redirect($wwwroot .'/login/index.php');
         }
         exit;
     }
@@ -1663,7 +1665,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
                 $wwwroot = str_replace('http:','https:', $CFG->wwwroot);
                 redirect($wwwroot .'/login/change_password.php');
             }
-        } elseif($userauth->change_password_url()) {
+        } else if($userauth->change_password_url()) {
             redirect($userauth->change_password_url());
         } else {
             error('You cannot proceed without changing your password.
@@ -1671,6 +1673,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
                    Please contact your Moodle Administrator.');
         }
     }
+
 /// Check that the user account is properly set up
     if (user_not_fully_set_up($USER)) {
         $SESSION->wantsurl = $FULLME;
@@ -2535,9 +2538,7 @@ function guest_user() {
     global $CFG;
 
     if ($newuser = get_record('user', 'username', 'guest')) {
-        $newuser->loggedin = true;
         $newuser->confirmed = 1;
-        $newuser->site = $CFG->wwwroot;
         $newuser->lang = $CFG->lang;
         $newuser->lastip = getremoteaddr();
     }
@@ -2808,8 +2809,6 @@ function get_complete_user_data($field, $value, $mnethostid=null) {
         $user->lastname   = ' ';
     }
 
-    $user->loggedin = true;
-    $user->site     = $CFG->wwwroot; // for added security, store the site in the session
     $user->sesskey  = random_string(10);
     $user->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
 
