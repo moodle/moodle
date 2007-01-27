@@ -1,16 +1,15 @@
 <?php // $Id$ preview for insert image dialog
 
-    include('../../../../config.php');
+    require("../../../../config.php");
 
-    $id       = required_param('id', PARAM_INT);
+    $id = optional_param('id', SITEID, PARAM_INT);
     $imageurl = required_param('imageurl', PARAM_RAW);
 
-    if (! $course = get_record('course', 'id', $id) ) {
-        error("That's an invalid course id");
-    }
+    require_login($id);
+    require_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id));
 
-    require_login($course->id);
-    require_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $course->id));
+    @header('Content-Type: text/html; charset=utf-8');
+
 
     $imagetag = clean_text('<img src="'.htmlSpecialChars(stripslashes_safe($imageurl)).'" alt="" />');
 
@@ -19,7 +18,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-<title>Preview</title>
+<title><?php echo get_string('preview') ?></title>
 <style type="text/css">
  body { margin: 2px; }
 </style>

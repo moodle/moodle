@@ -30,8 +30,7 @@
         error("That's an invalid course id");
     }
 
-    require_login($course->id);
-
+    require_login($course);
     require_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id));
 
     function html_footer() {
@@ -50,7 +49,9 @@
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <title>coursefiles</title>
         <script type="text/javascript">
-        <!--
+//<![CDATA[
+
+
         function set_value(params) {
             /// function's argument is an object containing necessary values
             /// to export parent window (url,isize,itype,iwidth,iheight, imodified)
@@ -118,9 +119,8 @@
         }
 
         function set_rename(strfile) {
-            if(window.parent.document.irename != null) {
-                window.parent.document.irename.file.value = strfile;
-            }
+            var upper = window.parent.document;
+            upper.getElementById('irename').value = strfile;
             return true;
         }
 
@@ -138,11 +138,8 @@
                     }
                 }
             }
+            upper.getElementById('irename').value = 'xx';
 
-            var ren = upper.getElementById('irename');
-            if(ren != null) {
-                upper.irename.file.value = "";
-            }
             var prev = window.parent.ipreview;
             if(prev != null) {
                 prev.location.replace('about:blank');
@@ -151,13 +148,12 @@
             if(uploader != null) {
                 uploader.reset();
             }
-            set_dir('<?php print(!empty($_REQUEST['wdir'])) ? $_REQUEST['wdir'] : "";?>');
+            set_dir('<?php print($wdir);?>');
             return true;
         }
-        -->
+//]]>
         </script>
         <style type="text/css">
-        <!--
         body {
             background-color: white;
             margin-top: 2px;
@@ -169,11 +165,17 @@
             font-size: 11px;
         }
         select {
-        position: absolute;
-        top: -20px;
-        left: 0px;
+            position: absolute;
+            top: -20px;
+            left: 0px;
         }
-        -->
+        img.icon {
+          vertical-align:middle;
+          margin-right:4px;
+          width:16px;
+          height:16px;
+          border:0px;
+        }
         </style>
         </head>
         <body onload="reset_value();">
@@ -190,17 +192,9 @@
 //  End of configuration and access control
 
 
-    if (!$wdir) {
-        $wdir="/";
+    if ($wdir == '') {
+        $wdir='/';
     }
-
-    if (($wdir != '/' and detect_munged_arguments($wdir, 0))
-      or ($file != '' and detect_munged_arguments($file, 0))) {
-        $message = "Error: Directories can not contain \"..\"";
-        $wdir = "/";
-        $action = "";
-    }
-
 
     switch ($action) {
 
@@ -316,10 +310,9 @@
             if (!empty($name) and confirm_sesskey()) {
                 html_header($course, $wdir);
                 $name    = clean_filename($name);
-                $oldname = clean_filename($oldname);
                 if (file_exists($basedir.$wdir."/".$name)) {
                     echo "Error: $name already exists!";
-                } else if (!rename($basedir.$wdir."/".$oldname, $basedir.$wdir."/".$name)) {
+                } else if (!@rename($basedir.$wdir."/".$oldname, $basedir.$wdir."/".$name)) {
                     echo "Error: could not rename $oldname to $name";
                 }
                 displaydir($wdir);
@@ -336,7 +329,7 @@
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />\n";
                 echo " <input type=\"hidden\" name=\"action\" value=\"rename\" />\n";
                 echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />\n";
-                echo " <input type=\"hidden\" name=oldname value=\"$file\" />\n";
+                echo " <input type=\"hidden\" name=\"oldname\" value=\"$file\" />\n";
                 echo " <input type=\"text\" name=\"name\" size=\"35\" value=\"$file\" />\n";
                 echo " <input type=\"submit\" value=\"$strrename\" />\n";
                 echo "</form>\n";
@@ -718,14 +711,13 @@ function displaydir ($wdir) {
             $count++;
 
             $filename = $fullpath."/".$dir;
-            $fileurl  = rawurlencode($wdir."/".$dir);
-            $filesafe = rawurlencode($dir);
+            $fileurl  = $wdir."/".$dir;
             $filedate = userdate(filemtime($filename), "%d %b %Y, %I:%M %p");
 
             echo "<tr>";
 
             if ($usecheckboxes) {
-                print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" onclick=\"return set_rename('$filesafe');\" />");
+                print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" onclick=\"return set_rename('$dir');\" />");
             }
             print_cell("left", "<a href=\"coursefiles.php?id=$id&amp;wdir=$fileurl\" onclick=\"return reset_value();\"><img src=\"$CFG->pixpath/f/folder.gif\" class=\"icon\" alt=\"".get_string('folder')."\" /></a> <a href=\"coursefiles.php?id=$id&amp;wdir=$fileurl&amp;usecheckboxes=$usecheckboxes\" onclick=\"return reset_value();\">".htmlspecialchars($dir)."</a>");
             print_cell("right", "&nbsp;");
@@ -746,8 +738,6 @@ function displaydir ($wdir) {
             $count++;
             $filename    = $fullpath."/".$file;
             $fileurl     = "$wdir/$file";
-            $filesafe    = rawurlencode($file);
-            $fileurlsafe = rawurlencode($fileurl);
             $filedate    = userdate(filemtime($filename), "%d %b %Y, %I:%M %p");
 
             $dimensions = get_image_size($filename);
@@ -762,7 +752,7 @@ function displaydir ($wdir) {
             echo "<tr>\n";
 
             if ($usecheckboxes) {
-                print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" onclick=\"return set_rename('$filesafe');\" />");
+                print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" onclick=\";return set_rename('$file');\" />");
             }
             echo "<td align=\"left\" nowrap=\"nowrap\">";
             if ($CFG->slasharguments) {

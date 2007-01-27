@@ -2,8 +2,10 @@
     include("../../../config.php");
 	require_once($CFG->dirroot.'/lib/languages.php');
 
-    $id            = optional_param('id', 0, PARAM_INT);
-    $httpsrequired = optional_param('httpsrequired', 0, PARAM_BOOL);//flag indicating editor on page with required https
+    $id            = optional_param('id', SITEID, PARAM_INT);
+    $httpsrequired = optional_param('httpsrequired', 0, PARAM_BOOL); //flag indicating editor on page with required https
+
+    require_course_login($id);
 
     $lastmodified = filemtime("htmlarea.php");
     $lifetime = 1800;
@@ -1650,7 +1652,7 @@ HTMLArea.prototype._insertTable = function() {
     var sel = this._getSelection();
     var range = this._createRange(sel);
     var editor = this;  // for nested functions
-    this._popupDialog("insert_table.php", function(param) {
+    this._popupDialog("insert_table.php?id=<?php echo $id; ?>", function(param) {
         if (!param) {   // user must have pressed Cancel
             return false;
         }
@@ -1709,7 +1711,7 @@ HTMLArea.prototype._insertSmile = function() {
     var sel = this._getSelection();
     var range = this._createRange(sel);
     var editor = this;  // for nested functions
-    this._popupDialog("dlg_ins_smile.php", function(imgString) {
+    this._popupDialog("dlg_ins_smile.php?id=<?php echo $id; ?>", function(imgString) {
         if(!imgString) {
             return false;
         }
@@ -1726,7 +1728,7 @@ HTMLArea.prototype._insertChar = function() {
     var sel = this._getSelection();
     var range = this._createRange(sel);
     var editor = this;  // for nested functions
-    this._popupDialog("dlg_ins_char.php", function(sChar) {
+    this._popupDialog("dlg_ins_char.php?id=<?php echo $id; ?>", function(sChar) {
         if(!sChar) {
             return false;
         }
@@ -1758,7 +1760,7 @@ HTMLArea.prototype._createanchor = function () {
         alert("<?php print_string("alertnoselectedtext","editor");?>");
         return false;
     }
-    this._popupDialog("createanchor.php", function(objAn) {
+    this._popupDialog("createanchor.php?id=<?php echo $id; ?>", function(objAn) {
         if(!objAn) {
             return false;
         }
@@ -1816,7 +1818,7 @@ HTMLArea.prototype._searchReplace = function() {
     };
 
     //Call Search And Replace popup window
-    editor._popupDialog( "searchandreplace.php", function( entity ) {
+    editor._popupDialog( "searchandreplace.php?id=<?php echo $id; ?>", function( entity ) {
         if ( !entity ) {
             //user must have pressed Cancel
             return false;
@@ -1997,7 +1999,7 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
         case "hilitecolor":
         (HTMLArea.is_ie) && (cmdID = "backcolor");
         case "forecolor":
-        	this._popupDialog("select_color.php", function(color) {
+        	this._popupDialog("select_color.php?id=<?php echo $id; ?>", function(color) {
 	            if (color) { // selection not canceled
 	                editor._doc.execCommand(cmdID, false, "#" + color);
 	            }

@@ -1,11 +1,10 @@
 <?php // $Id$
-    include("../../../../config.php");
-    $id = optional_param('id', 0, PARAM_INT);
+    require("../../../../config.php");
 
-    if ( function_exists('ob_gzhandler') ) {
-        ob_start("ob_gzhandler");
-    }
+    $id = optional_param('id', SITEID, PARAM_INT);
 
+    require_course_login($id);
+    @header('Content-Type: text/html; charset=utf-8');
 ?>
 <html>
 <head><title><?php print_string("fullscreen","editor");?></title>

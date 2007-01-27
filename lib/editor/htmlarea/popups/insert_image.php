@@ -1,12 +1,13 @@
 <?php // $Id$
 
-    include("../../../../config.php");
+    require("../../../../config.php");
 
-    $id = required_param('id', PARAM_INT);
+    $id = optional_param('id', SITEID, PARAM_INT);
 
-    if (!$course = get_record("course", "id", $id)) {
-        $course->fullname = "";   // Just to keep display happy, though browsing may fail
-    }
+    require_login($id);
+    require_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id));
+
+    @header('Content-Type: text/html; charset=utf-8');
 
     $upload_max_filesize = get_max_upload_file_size($CFG->maxbytes);
 
@@ -35,7 +36,7 @@ function Init() {
       document.getElementById("f_horiz").value = param["f_horiz"] != -1 ? param["f_horiz"] : 0;
       document.getElementById("f_width").value = param["f_width"];
       document.getElementById("f_height").value = param["f_height"];
-      window.ipreview.location.replace('preview.php?id='+ <?php print($course->id);?> +'&imageurl='+ param.f_url);
+      window.ipreview.location.replace('preview.php?id='+ <?php print($id);?> +'&imageurl='+ param.f_url);
   }
   document.getElementById("f_url").focus();
 };
@@ -262,13 +263,10 @@ form { margin-bottom: 0px; margin-top: 0px; }
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
       <td width="55%" valign="top"><?php
-      if(has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id))) {
           print_string("filebrowser","editor");
           echo "<br />";
-          echo "<iframe id=\"ibrowser\" name=\"ibrowser\" src=\"{$CFG->wwwroot}/lib/editor/htmlarea/coursefiles.php?usecheckboxes=1&id={$course->id}\" style=\"width: 100%; height: 200px;\"></iframe>";
-      } else {
-          print "<br />";
-      }?>
+          echo "<iframe id=\"ibrowser\" name=\"ibrowser\" src=\"{$CFG->wwwroot}/lib/editor/htmlarea/coursefiles.php?usecheckboxes=1&id=$id\" style=\"width: 100%; height: 200px;\"></iframe>";
+      ?>
       </td>
       <td width="45%" valign="top"><?php print_string("preview","editor");?>:<br />
       <iframe id="ipreview" name="ipreview" src="about:blank" style="width: 100%; height: 200px;"></iframe>
@@ -287,10 +285,10 @@ form { margin-bottom: 0px; margin-top: 0px; }
           <input name="btnMove" type="submit" id="btnMove" value="<?php print_string("move","editor");?>" onclick="return submit_form('move');" /></td>
           <td><form id="izip">
           <input name="btnZip" type="submit" id="btnZip" value="<?php print_string("zip","editor");?>" onclick="return submit_form('zip');" /></form></td>
-          <td><form id="irename" method="post" action="../coursefiles.php" target="ibrowser">
-          <input type="hidden" name="id" value="<?php print($course->id);?>" />
+          <td><form method="post" action="../coursefiles.php" target="ibrowser">
+          <input type="hidden" name="id" value="<?php print($id);?>" />
           <input type="hidden" name="wdir" value="" />
-          <input type="hidden" name="file" value="" />
+          <input type="hidden" id="irename" name="file" value="" />
           <input type="hidden" name="action" value="rename" />
           <input type="hidden" name="sesskey" value="<?php p($USER->sesskey) ?>" />
           <input name="btnRename" type="submit" id="btnRename" value="<?php print_string("rename","editor");?>" /></form></td>
@@ -313,10 +311,9 @@ form { margin-bottom: 0px; margin-top: 0px; }
       </fieldset></td>
     </tr>
     <tr>
-      <td height="22"><?php
-      if(has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id))) { ?>
+      <td height="22">
           <form id="cfolder" action="../coursefiles.php" method="post" target="ibrowser">
-          <input type="hidden" name="id" value="<?php print($course->id);?>" />
+          <input type="hidden" name="id" value="<?php print($id);?>" />
           <input type="hidden" name="wdir" value="" />
           <input type="hidden" name="action" value="mkdir" />
           <input type="hidden" name="sesskey" value="<?php p($USER->sesskey) ?>" />
@@ -324,20 +321,16 @@ form { margin-bottom: 0px; margin-top: 0px; }
           <input name="btnCfolder" type="submit" id="btnCfolder" value="<?php print_string("createfolder","editor");?>" onclick="return checkvalue('foldername','cfolder');" />
           </form>
           <div class="space"></div>
-          <form action="../coursefiles.php?id=<?php print($course->id);?>" method="post" enctype="multipart/form-data" target="ibrowser" id="uploader">
+          <form action="../coursefiles.php?id=<?php print($id);?>" method="post" enctype="multipart/form-data" target="ibrowser" id="uploader">
           <input type="hidden" name="MAX_FILE_SIZE" value="<?php print($upload_max_filesize);?>" />
-          <input type="hidden" name="id" VALUE="<?php print($course->id);?>" />
+          <input type="hidden" name="id" VALUE="<?php print($id);?>" />
           <input type="hidden" name="wdir" value="" />
           <input type="hidden" name="action" value="upload" />
           <input type="hidden" name="sesskey" value="<?php p($USER->sesskey) ?>" />
           <input type="file" name="userfile" id="userfile" size="35" />
           <input name="save" type="submit" id="save" onclick="return checkvalue('userfile','uploader');" value="<?php print_string("upload","editor");?>" />
           </form>
-          <?php
-          } else {
-              print "";
-          } ?>
-          </td>
+      </td>
     </tr>
   </table>
   <p>&nbsp;</p>

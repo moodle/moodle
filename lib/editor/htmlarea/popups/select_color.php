@@ -1,5 +1,10 @@
 <?php
-include("../../../../config.php");
+    require("../../../../config.php");
+
+    $id = optional_param('id', SITEID, PARAM_INT);
+
+    require_course_login($id);
+    @header('Content-Type: text/html; charset=utf-8');
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

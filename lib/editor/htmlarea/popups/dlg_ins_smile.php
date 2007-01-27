@@ -6,7 +6,13 @@
 ##
 #################################################################################
 
-    include('../../../../config.php');
+    require("../../../../config.php");
+
+    $id = optional_param('id', SITEID, PARAM_INT);
+
+    require_course_login($id);
+    @header('Content-Type: text/html; charset=utf-8');
+
     $pixpath = "$CFG->pixpath/s";
 
     $fullnames = get_list_of_pixnames();

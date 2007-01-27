@@ -1,11 +1,10 @@
 <?php // $Id$
-    include("../../../../config.php");
+    require("../../../../config.php");
 
-    $id = required_param('id', PARAM_INT);
+    $id = optional_param('id', SITEID, PARAM_INT);
 
-    if (!$course = get_record("course", "id", $id)) {
-        $course->fullname = "";   // Just to keep display happy, though browsing may fail
-    }
+    require_course_login($id);
+    @header('Content-Type: text/html; charset=utf-8');
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -89,7 +88,7 @@ form { margin-bottom: 1px; margin-top: 1px; }
 
         <div class="space"></div>
         <?php print(has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id)))?
-        "<iframe id=\"fbrowser\" name=\"fbrowser\" src=\"../coursefiles.php?id=".$course->id."\" width=\"420\" height=\"180\"></iframe>":
+        "<iframe id=\"fbrowser\" name=\"fbrowser\" src=\"../coursefiles.php?id=".$id."\" width=\"420\" height=\"180\"></iframe>":
         ""; ?>
         <p>
         </p>
@@ -109,7 +108,7 @@ form { margin-bottom: 1px; margin-top: 1px; }
           <td><form id="izip">
           <input name="btnZip" type="submit" id="btnZip" value="<?php print_string("zip","editor");?>" onclick="return submit_form('zip');" /></form></td>
           <td><form id="irename" method="post" action="../coursefiles.php" target="fbrowser">
-          <input type="hidden" name="id" value="<?php print($course->id);?>" />
+          <input type="hidden" name="id" value="<?php print($id);?>" />
           <input type="hidden" name="wdir" value="" />
           <input type="hidden" name="file" value="" />
           <input type="hidden" name="action" value="rename" />
@@ -128,16 +127,16 @@ form { margin-bottom: 1px; margin-top: 1px; }
       <td height="22"><?php
       if(has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id))) { ?>
           <form id="cfolder" action="../coursefiles.php" method="post" target="fbrowser">
-          <input type="hidden" name="id" value="<?php print($course->id);?>" />
+          <input type="hidden" name="id" value="<?php print($id);?>" />
           <input type="hidden" name="wdir" value="" />
           <input type="hidden" name="action" value="mkdir" />
           <input type="hidden" name="sesskey" value="<?php p($USER->sesskey) ?>" />
           <input name="name" type="text" id="foldername" size="35" />
           <input name="btnCfolder" type="submit" id="btnCfolder" value="<?php print_string("createfolder","editor");?>" onclick="return checkvalue('foldername','cfolder');" />
           </form>
-          <form action="../coursefiles.php?id=<?php print($course->id);?>" method="post" enctype="multipart/form-data" target="fbrowser" id="uploader">
+          <form action="../coursefiles.php?id=<?php print($id);?>" method="post" enctype="multipart/form-data" target="fbrowser" id="uploader">
           <input type="hidden" name="MAX_FILE_SIZE" value="<?php print($upload_max_filesize);?>" />
-          <input type="hidden" name="id" VALUE="<?php print($course->id);?>" />
+          <input type="hidden" name="id" VALUE="<?php print($id);?>" />
           <input type="hidden" name="wdir" value="" />
           <input type="hidden" name="action" value="upload" />
           <input type="hidden" name="sesskey" value="<?php p($USER->sesskey) ?>" />
