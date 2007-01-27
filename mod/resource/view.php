@@ -27,6 +27,10 @@
         error('No valid parameters!!');
     }
 
+    if (! $course = get_record('course', 'id', $cm->course)) {
+        error('Incorrect course id');
+    }
+
     require_course_login($course, true, $cm);
 
     require ($CFG->dirroot.'/mod/resource/type/'.$resource->type.'/resource.class.php');
