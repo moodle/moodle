@@ -1075,7 +1075,7 @@ class XMLDBgenerator {
     }
 
     /**
-     * Given one object name and it's type (pk, uk, fk, ix, uix, seq, trg)
+     * Given one object name and it's type (pk, uk, fk, ck, ix, uix, seq, trg)
      * return if such name is currently in use (true) or no (false)
      * (invoked from getNameForObject()
      * Only some DB have this implemented
