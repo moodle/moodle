@@ -642,6 +642,13 @@ function rename_table($table, $newname, $continue=true, $feedback=true) {
         return true; //Table doesn't exist, nothing to do
     }
 
+/// Check new table doesn't exist
+    $check = new XMLDBTable($newname);
+    if (table_exists($check)) {
+        debugging('Table ' . $check->getName() . ' already exists. Rename skipped', DEBUG_DEVELOPER);
+        return true; //Table exists, nothing to do
+    }
+
 /// Check newname isn't empty
     if (!$newname) {
         debugging('New name for table ' . $index->getName() . ' is empty! Rename skipped', DEBUG_DEVELOPER);
