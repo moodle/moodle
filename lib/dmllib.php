@@ -72,8 +72,13 @@ function execute_sql($command, $feedback=true) {
         $command = trim($command);
     /// If the trailing ; is there, fix and warn!
         if (substr($command, strlen($command)-1, 1) == ';') {
-            $command = trim($command, ';');
-            debugging('Warning. Avoid to end your SQL commands with a trailing ";".', DEBUG_DEVELOPER);
+        /// One noticeable exception, Oracle PL/SQL blocks require ending in ";"
+            if ($db->family == 'oracle' && substr($command, -4) == 'END;') {
+                /// Nothing to fix/warn. The command is one PL/SQL block, so it's ok.
+            } else {
+                $command = trim($command, ';');
+                debugging('Warning. Avoid to end your SQL commands with a trailing ";".', DEBUG_DEVELOPER);
+            }
         }
     }
 
