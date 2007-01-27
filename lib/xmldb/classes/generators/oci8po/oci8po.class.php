@@ -528,6 +528,37 @@ class XMLDBoci8po extends XMLDBgenerator {
     }
 
     /**
+     * Given one object name and it's type (pk, uk, fk, ck, ix, uix, seq, trg)
+     * return if such name is currently in use (true) or no (false)
+     * (invoked from getNameForObject()
+     */
+    function isNameInUse($object_name, $type) {
+        switch($type) {
+            case 'ix':
+            case 'uix':
+            case 'seq':
+            case 'trg':
+                if ($check = get_records_sql("SELECT object_name 
+                                              FROM user_objects 
+                                              WHERE lower(object_name) = '" . strtolower($object_name) . "'")) {
+                    return true;
+                }
+                break;
+            case 'pk':
+            case 'uk':
+            case 'fk':
+            case 'ck':
+                if ($check = get_records_sql("SELECT constraint_name 
+                                              FROM user_constraints
+                                              WHERE lower(constraint_name) = '" . strtolower($object_name) . "'")) {
+                    return true;
+                }
+                break;
+        }
+        return false; //No name in use found
+    }
+
+    /**
      * Returns an array of reserved words (lowercase) for this DB
      */
     function getReservedWords() {
