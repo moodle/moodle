@@ -19,3 +19,11 @@
 .tabrow0 UL {
    top: 2.1em; 
 }
+
+.sideblock {
+    overflow: hidden;
+}
+
+.sideblock .content {
+    word-wrap: break-word;
+}
