@@ -1547,6 +1547,58 @@ function confirm_sesskey($sesskey=NULL) {
     return ($USER->sesskey === $sesskey);
 }
 
+/**
+ * Setup all global $CFG course variables, set locale and also 
+ * @param mixed $courseorid id of the course or course object
+ */
+function course_setup($courseorid=0) {
+    global $COURSE, $HTTPSPAGEREQUIRED, $CFG;
+
+/// Redefine global $COURSE if needed
+    if (empty($courseorid)) {
+        // no change in global $COURSE - for backwards compatibiltiy
+        // if require_rogin() used after require_login($courseid); 
+    } else if (is_object($courseorid)) {
+        $COURSE = clone($courseorid);
+    } else {
+        global $course; // used here only to prevent repeated fetching from DB - may be removed later
+        if ($course->id == $courseorid) {
+            $COURSE = clone($course);
+        } else {
+            if (!$COURSE = get_record('course', 'id', $courseorid)) {
+                error('Invalid course ID');
+            }
+        }
+    }
+
+/// set locale - we should use $COURSE->lang directly in the future
+/// $CFG->courselang is now used in cron and chat to override current language and locale
+    if ($COURSE->id == SITEID or empty($COURSE->lang)) {
+        unset($CFG->courselang);
+    } else {
+        $CFG->courselang = $COURSE->lang;
+    }
+    moodle_setlocale();
+
+/// setup themes - $COURSE->theme should be used instead of $CFG->coursetheme soon 
+    if ($COURSE->id == SITEID or empty($CFG->allowcoursethemes) or empty($COURSE->theme)) {
+        unset($CFG->coursetheme);
+    } else {
+        $CFG->coursetheme = $COURSE->theme;
+    }
+    theme_setup();
+
+/// We have to change some URLs in styles if we are in a $HTTPSPAGEREQUIRED page
+/// in case theme changed after call to httpsrequired();
+    if (!empty($HTTPSPAGEREQUIRED)) {
+        $CFG->themewww = str_replace('http:', 'https:', $CFG->themewww);
+        $CFG->pixpath = str_replace('http:', 'https:', $CFG->pixpath);
+        $CFG->modpixpath = str_replace('http:', 'https:', $CFG->modpixpath);
+        foreach ($CFG->stylesheets as $key => $stylesheet) {
+            $CFG->stylesheets[$key] = str_replace('http:', 'https:', $stylesheet);
+        }
+    }
+}
 
 /**
  * This function checks that the current user is logged in and has the
@@ -1577,26 +1629,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
 
     global $CFG, $SESSION, $USER, $COURSE, $FULLME, $SITE;
 
-/// Redefine global $COURSE if needed
-    if (empty($courseorid)) {
-        // keep previous value - usually $SITE
-    } else if (is_object($courseorid)) {
-        $COURSE = clone($courseorid);
-    } else {
-        global $course; // used here only to prevent repeated fetching from DB
-        if ($course->id == $courseorid) {
-            $COURSE = clone($course);
-        } else {
-            if (!$COURSE = get_record('course', 'id', $courseorid)) {
-                error('Invalid course ID');
-            }
-        }
-    }
-
-    if (!empty($COURSE->lang)) {
-        $CFG->courselang = $COURSE->lang;
-        moodle_setlocale();
-    }
+    course_setup($courseorid);
 
 /// If the user is not even logged in yet then make sure they are
     if (! (isset($USER->loggedin) and $USER->confirmed and ($USER->site == $CFG->wwwroot)) ) {
@@ -1605,8 +1638,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
             $SESSION->fromurl  = $_SERVER['HTTP_REFERER'];
         }
         $USER = NULL;
-        if ($autologinguest && !empty($CFG->autologinguests) and 
-            $COURSE->id and ($COURSE->id == SITEID or $COURSE->guest) ) {
+        if ($autologinguest and !empty($CFG->autologinguests) and ($COURSE->id == SITEID or $COURSE->guest) ) {
             $loginguest = '?loginguest=true';
         } else {
             $loginguest = '';
@@ -3210,14 +3242,7 @@ function moodle_process_email($modargs,$body) {
  */
 function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true, $replyto='', $replytoname='') {
 
-    global $CFG, $FULLME, $COURSE;
-
-    if (!empty($COURSE->lang)) {   // Course language is defined
-        $CFG->courselang = $COURSE->lang;
-    }
-    if (!empty($COURSE->theme)) {   // Course theme is defined
-        $CFG->coursetheme = $COURSE->theme;
-    }
+    global $CFG, $FULLME;
 
     include_once($CFG->libdir .'/phpmailer/class.phpmailer.php');
 
@@ -4139,13 +4164,6 @@ or
 function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
 
     global $CFG;
-
-    global $COURSE;
-    if (empty($CFG->courselang)) {
-        if (!empty($COURSE->lang)) {
-            $CFG->courselang = $COURSE->lang;
-        }
-    }
 
 /// originally these special strings were stored in moodle.php now we are only in langconfig.php
     $langconfigstrs = array('alphabet', 'backupnameformat', 'firstdayofweek', 'locale', 
@@ -5856,6 +5874,14 @@ function httpsrequired() {
         $HTTPSPAGEREQUIRED = true;
         $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
         $CFG->httpsthemewww = str_replace('http:', 'https:', $CFG->themewww);
+
+        // change theme paths to pictures
+        $CFG->themewww = str_replace('http:', 'https:', $CFG->themewww);
+        $CFG->pixpath = str_replace('http:', 'https:', $CFG->pixpath);
+        $CFG->modpixpath = str_replace('http:', 'https:', $CFG->modpixpath);
+        foreach ($CFG->stylesheets as $key => $stylesheet) {
+            $CFG->stylesheets[$key] = str_replace('http:', 'https:', $stylesheet);
+        }
     } else {
         $CFG->httpswwwroot = $CFG->wwwroot;
         $CFG->httpsthemewww = $CFG->themewww;
@@ -6517,6 +6543,8 @@ function check_dir_exists($dir, $create=false, $recursive=false) {
 
 function report_session_error() {
     global $CFG, $FULLME;
+
+    theme_setup();  // Sets up theme global variables
     if (empty($CFG->lang)) {
         $CFG->lang = "en";
     }

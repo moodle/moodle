@@ -2,7 +2,8 @@
     include("../../../config.php");
 	require_once($CFG->dirroot.'/lib/languages.php');
 
-    $id = optional_param('id', 0, PARAM_INT);
+    $id            = optional_param('id', 0, PARAM_INT);
+    $httpsrequired = optional_param('httpsrequired', 0, PARAM_BOOL);//flag indicating editor on page with required https
 
     $lastmodified = filemtime("htmlarea.php");
     $lifetime = 1800;
@@ -24,6 +25,14 @@
 
     if (empty($lang)) {
         $lang = "en";
+    }
+
+    if ($httpsrequired) {
+        // this is an ugly hack to allow partial operation of editor on pages that require https when loginhttps enabled
+        // please note that some popups still show nonsecurre items and fullscreen may not function properly in IE
+        $url = preg_replace('|https?://[^/]+|', '', $CFG->wwwroot).'/lib/editor/htmlarea/';
+    } else {
+        $url = $CFG->wwwroot.'/lib/editor/htmlarea/';
     }
 
     $strheading = get_string("heading", "editor");
@@ -52,7 +61,7 @@ if (typeof _editor_url == "string") {
     _editor_url = _editor_url.replace(/\x2f*$/, '/');
 } else {
     //alert("WARNING: _editor_url is not set!  You should set this variable to the editor files path; it should preferably be an absolute path, like in '/htmlarea', but it can be relative if you prefer.  Further we will try to load the editor files correctly but we'll probably fail.");
-    _editor_url = '<?php print ($CFG->wwwroot); ?>/lib/editor/htmlarea/';
+    _editor_url = '<?php echo $url; ?>';// we need relative path to site root for editor in pages wit hrequired https
 }
 
 // make sure we have a language
@@ -698,12 +707,7 @@ HTMLArea.prototype.generate = function () {
     // create the IFRAME
     var iframe = document.createElement("iframe");
 
-    if (HTMLArea.is_ie) {  // http://moodle.org/mod/forum/discuss.php?d=8555
-        // tricky! set src to local url to turn off SSL security alert
-        iframe.src = _editor_url + this.config.popupURL+"blank.html";
-    } else {
-        iframe.src = "about:blank";
-    }
+    iframe.src = "about:blank";
 
     iframe.className = "iframe";
 

@@ -540,8 +540,6 @@ global $HTTPSPAGEREQUIRED;
         $CFG->theme = 'standardwhite';
     }
 
-    theme_setup();  // Sets up theme global variables
-
 /// now do a session test to prevent random user switching - observed on some PHP/Apache combinations,
 /// disable checks when working in cookieless mode
     if (empty($CFG->usesid) || !empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
@@ -577,8 +575,8 @@ global $HTTPSPAGEREQUIRED;
         }
     }
 
-    // set default locale - might be changed again later in require_login()
-    moodle_setlocale();
+    // set default locale and themes - might be changed again later from require_login()
+    course_setup();
 
     if (!empty($CFG->opentogoogle)) {
         if (empty($USER->id)) {  // Ignore anyone logged in

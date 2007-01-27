@@ -5,10 +5,10 @@
 
     $id = optional_param('id', SITEID, PARAM_INT);
 
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-
     //HTTPS is potentially required in this page
     httpsrequired();
+
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
     if (!$course = get_record('course', 'id', $id)) {
         error('No such course!');

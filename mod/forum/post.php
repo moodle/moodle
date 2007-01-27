@@ -238,19 +238,17 @@
         }
         if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $forum->course)) {
             error('Could not get the course module for the forum instance.');
-        } else {
-            $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         }
+        if (!$course = get_record('course', 'id', $forum->course)) {
+            error('Incorrect course');
+        }
+
+        require_login($course, false, $cm);
+        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+
         if ( !(($post->userid == $USER->id && has_capability('mod/forum:deleteownpost', $modcontext))
                     || has_capability('mod/forum:deleteanypost', $modcontext)) ) {
             error("You can't delete this post!");
-        }
-        if (!empty($forum->course)) {
-            if ($course = get_record('course', 'id', $forum->course)) {
-                if (!empty($course->lang)) {
-                    $CFG->courselang = $course->lang;
-                }
-            }
         }
 
 
@@ -439,9 +437,7 @@
     if ($fromform = $mform_post->get_data()) {
 
 
-        if (!empty($course->lang)) {           // Override current language
-            $CFG->courselang = $course->lang;
-        }
+        require_login($course, false, $cm);
 
         if (empty($SESSION->fromurl)) {
             $errordestination = "$CFG->wwwroot/mod/forum/view.php?f=$forum->id";

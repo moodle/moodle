@@ -6,6 +6,8 @@
     require_once($CFG->dirroot.'/user/editlib.php');
     require_once($CFG->dirroot.'/user/profile/lib.php');
 
+    httpsrequired();
+
     $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
 
     if (!$course = get_record('course', 'id', $course)) {
@@ -13,7 +15,6 @@
     }
 
     require_login($course->id);
-    httpsrequired();
 
     if (isguest()) { //TODO: add proper capability to edit own profile and change password too
         print_error('guestnoeditprofile');
@@ -77,7 +78,7 @@
         profile_save_data($usernew);
 
         // Override old $USER session variable
-        $usernew = (array)get_record('user', 'id', $newuser->id); // reload from db
+        $usernew = (array)get_record('user', 'id', $usernew->id); // reload from db
         foreach ($usernew as $variable => $value) {
             $USER->$variable = $value;
         }

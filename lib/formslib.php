@@ -31,9 +31,6 @@ require_once 'HTML/QuickForm/Renderer/Tableless.php';
 
 require_once $CFG->libdir.'/uploadlib.php';
 
-define('FORM_ADVANCEDIMAGEURL', $CFG->pixpath.'/adv.gif');
-define('FORM_REQIMAGEURL', $CFG->pixpath.'/req.gif');
-
 /**
  * Callback called when PEAR throws an error
  *
@@ -610,6 +607,8 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * @access   public
      */
     function MoodleQuickForm($formName, $method, $action, $target='', $attributes=null){
+        global $CFG;
+
         static $formcounter = 1;
 
         HTML_Common::HTML_Common($attributes);
@@ -627,8 +626,8 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         }else {
             $this->updateAttributes(array('class'=>'mform'));
         }
-        $this->_reqHTML = '<img class="req" alt="'.get_string('requiredelement', 'form').'" src="'.FORM_REQIMAGEURL.'" />';
-        $this->_advancedHTML = '<img class="adv" alt="'.get_string('advancedelement', 'form').'" src="'.FORM_ADVANCEDIMAGEURL.'" />';
+        $this->_reqHTML = '<img class="req" alt="'.get_string('requiredelement', 'form').'" src="'.$CFG->pixpath.'/req.gif'.'" />';
+        $this->_advancedHTML = '<img class="adv" alt="'.get_string('advancedelement', 'form').'" src="'.$CFG->pixpath.'/adv.gif'.'" />';
         $this->setRequiredNote(get_string('somefieldsrequired', 'form').
             helpbutton('requiredelement', get_string('requiredelement', 'form'), 'moodle', true, false, '', true));
     }

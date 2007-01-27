@@ -27,10 +27,6 @@ var $maxparameters = 5;
 function set_parameters() {
     global $USER, $CFG;
 
-    if (! empty($this->course->lang)) {
-        $CFG->courselang = $this->course->lang;
-    }
-
     $site = get_site();
 
 

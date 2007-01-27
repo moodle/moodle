@@ -7,6 +7,8 @@
     require_once($CFG->dirroot.'/user/editlib.php');
     require_once($CFG->dirroot.'/user/profile/lib.php');
 
+    httpsrequired();
+
     $id     = optional_param('id', $USER->id, PARAM_INT);    // user id; -1 if creating new user
     $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
 
@@ -14,7 +16,6 @@
         error('Course ID was incorrect');
     }
     require_login($course->id);
-    httpsrequired(); // HTTPS is potentially required in this page because there are passwords
 
     if ($id == -1) {
         // creating new user
@@ -126,7 +127,7 @@
 
         if ($user->id == $USER->id) {
             // Override old $USER session variable
-            $usernew = (array)get_record('user', 'id', $newuser->id); // reload from db
+            $usernew = (array)get_record('user', 'id', $usernew->id); // reload from db
             foreach ($usernew as $variable => $value) {
                 $USER->$variable = $value;
             }

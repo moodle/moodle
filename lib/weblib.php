@@ -1163,7 +1163,7 @@ function format_text_menu() {
  */
 function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL) {
 
-    global $CFG, $course;
+    global $CFG, $COURSE;
 
     if ($text === '') {
         return ''; // no need to do any filters and cleaning
@@ -1193,9 +1193,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
     }
 
     if (empty($courseid)) {
-        if (!empty($course->id)) {         // An ugly hack for better compatibility
-            $courseid = $course->id;
-        }
+        $courseid = $COURSE->id;
     }
 
     if (!empty($CFG->cachetext) and empty($options->nocache)) {
@@ -1356,9 +1354,7 @@ function format_string ($string, $striplinks = false, $courseid=NULL ) {
     }
 
     if (empty($courseid)) {
-        if (!empty($COURSE->id)) {         // An ugly hack for better compatibility
-            $courseid = $COURSE->id;       // (copied from format_text)
-        }
+        $courseid = $COURSE->id;       // (copied from format_text)
     }
 
     if (!empty($CFG->filterall)) {
@@ -1432,7 +1428,11 @@ function format_text_email($text, $format) {
  * @todo Finish documenting this function
  */
 function filter_text($text, $courseid=NULL) {
-    global $CFG;
+    global $CFG, $COURSE;
+
+    if (empty($courseid)) {
+        $courseid = $COURSE->id;       // (copied from format_text)
+    }
 
     require_once($CFG->libdir.'/filterlib.php');
     if (!empty($CFG->textfilters)) {
@@ -1942,7 +1942,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
                        $meta='', $cache=true, $button='&nbsp;', $menu='',
                        $usexml=false, $bodytags='', $return=false) {
 
-    global $USER, $CFG, $THEME, $SESSION, $ME, $SITE, $HTTPSPAGEREQUIRED;
+    global $USER, $CFG, $THEME, $SESSION, $ME, $SITE, $COURSE;
 
 /// This makes sure that the header is never repeated twice on a page
     if (defined('HEADER_PRINTED')) {
@@ -1951,28 +1951,6 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     }
     define('HEADER_PRINTED', 'true');
 
-
-    global $COURSE;
-    if (!empty($COURSE->lang)) {
-        $CFG->courselang = $COURSE->lang;
-        moodle_setlocale();
-    }
-    if (!empty($COURSE->theme)) {
-        if (!empty($CFG->allowcoursethemes)) {
-            $CFG->coursetheme = $COURSE->theme;
-            theme_setup();
-        }
-    }
-
-/// We have to change some URLs in styles if we are in a $HTTPSPAGEREQUIRED page
-    if (!empty($HTTPSPAGEREQUIRED)) {
-        $CFG->themewww = str_replace('http:', 'https:', $CFG->themewww);
-        $CFG->pixpath = str_replace('http:', 'https:', $CFG->pixpath);
-        $CFG->modpixpath = str_replace('http:', 'https:', $CFG->modpixpath);
-        foreach ($CFG->stylesheets as $key => $stylesheet) {
-            $CFG->stylesheets[$key] = str_replace('http:', 'https:', $stylesheet);
-        }
-    }
 
 /// Add the required stylesheets
     $stylesheetshtml = '';
@@ -2277,7 +2255,7 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
  * @todo Finish documenting this function
  */
 function print_footer($course=NULL, $usercourse=NULL, $return=false) {
-    global $USER, $CFG, $THEME;
+    global $USER, $CFG, $THEME, $COURSE;
 
 /// Course links
     if ($course) {
@@ -2360,7 +2338,7 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
  * @return string
  */
 function current_theme() {
-    global $CFG, $USER, $SESSION, $course;
+    global $CFG, $USER, $SESSION;
 
     if (!empty($CFG->pagetheme)) {  // Page theme is for special page-only themes set by code
         return $CFG->pagetheme;
@@ -3603,8 +3581,8 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
 /// $width and height are legacy fields and no longer used as pixels like they used to be.
 /// However, you can set them to zero to override the mincols and minrows values below.
 
-    global $CFG, $course;
-    static $scriptcount; // For loading the htmlarea script only once.
+    global $CFG, $COURSE, $HTTPSPAGEREQUIRED;
+    static $scriptcount = 0; // For loading the htmlarea script only once.
 
     $mincols = 65;
     $minrows = 10;
@@ -3616,26 +3594,23 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
 
     if ( empty($CFG->editorsrc) ) { // for backward compatibility.
         if (empty($courseid)) {
-            if (!empty($course->id)) {  // search for it in global context
-                $courseid = $course->id;
-            }
-        }
-
-        if (empty($scriptcount)) {
-            $scriptcount = 0;
+            $courseid = $COURSE->id;
         }
 
         if ($usehtmleditor) {
             if (!empty($courseid) and has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $courseid))) {
+                $httpsrequired = empty($HTTPSPAGEREQUIRED) ? '' : '&httpsrequired=1';  
                 // needed for course file area browsing in image insert plugin
                 $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
-                $CFG->wwwroot .'/lib/editor/htmlarea/htmlarea.php?id='. $courseid .'"></script>'."\n" : '';
+                        $CFG->httpswwwroot .'/lib/editor/htmlarea/htmlarea.php?id='.$courseid.$httpsrequired.'"></script>'."\n" : '';
             } else {
+                $httpsrequired = empty($HTTPSPAGEREQUIRED) ? '' : '?httpsrequired=1';  
                 $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
-                $CFG->wwwroot .'/lib/editor/htmlarea/htmlarea.php"></script>'."\n" : '';
+                         $CFG->httpswwwroot .'/lib/editor/htmlarea/htmlarea.php'.$httpsrequired.'"></script>'."\n" : '';
+                    
             }
             $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
-            $CFG->wwwroot .'/lib/editor/htmlarea/lang/en.php"></script>'."\n" : '';
+                    $CFG->httpswwwroot .'/lib/editor/htmlarea/lang/en.php"></script>'."\n" : '';
             $scriptcount++;
 
             if ($height) {    // Usually with legacy calls
@@ -4737,7 +4712,7 @@ function emoticonhelpbutton($form, $field, $return = false) {
 function editorshortcutshelpbutton() {
 
     global $CFG;
-    $imagetext = '<img src="' . $CFG->wwwroot . '/lib/editor/htmlarea/images/kbhelp.gif" alt="'.
+    $imagetext = '<img src="' . $CFG->httpswwwroot . '/lib/editor/htmlarea/images/kbhelp.gif" alt="'.
 					get_string('editorshortcutkeys').'" class="iconkbhelp" />';
 
     return helpbutton('editorshortcuts', get_string('editorshortcutkeys'), 'moodle', true, false, '', true, $imagetext);
@@ -5537,7 +5512,7 @@ function page_doc_link($text='', $iconpath='') {
     $str = '<a href="' .$CFG->docroot. '/' .$lang. '/' .$path. '"' .$target. '>';
 
     if (empty($iconpath)) {
-        $iconpath = $CFG->wwwroot . '/pix/docs.gif';
+        $iconpath = $CFG->httpswwwroot . '/pix/docs.gif';
     }
 
     // alt left blank intentionally to prevent repetition in screenreaders
