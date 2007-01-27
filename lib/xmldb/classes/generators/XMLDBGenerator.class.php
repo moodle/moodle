@@ -921,8 +921,8 @@ class XMLDBgenerator {
             $namewithsuffix = $namewithsuffix . '_' . $suffix;
         }
 
-    /// If the calculated name is in the cache, let's modify if
-        if (in_array($namewithsuffix, $used_names)) {
+    /// If the calculated name is in the cache, or if we detect it by introspecting the DB let's modify if
+        if (in_array($namewithsuffix, $used_names) || $this->isNameInUse($namewithsuffix, $suffix)) {
             $counter = 2;
         /// If have free space, we add 2
             if (strlen($namewithsuffix) < $this->names_max_length) {
@@ -936,7 +936,7 @@ class XMLDBgenerator {
                 $newnamewithsuffix = $newnamewithsuffix . '_' . $suffix;
             }
         /// Now iterate until not used name is found, incrementing the counter
-            while (in_array($newnamewithsuffix, $used_names)) {
+            while (in_array($newnamewithsuffix, $used_names) || $this->isNameInUse($newnamewithsuffix, $suffix)) {
                 $newname = substr($name, 0, strlen($newname)-1) . $counter;
                 $newnamewithsuffix = $newname;
                 if ($suffix) {
@@ -1072,6 +1072,17 @@ class XMLDBgenerator {
      */
     function getSequenceFromDB($xmldb_table) {
         return false;
+    }
+
+    /**
+     * Given one object name and it's type (pk, uk, fk, ix, uix, seq, trg)
+     * return if such name is currently in use (true) or no (false)
+     * (invoked from getNameForObject()
+     * Only some DB have this implemented
+     */
+    function isNameInUse($object_name, $type) {
+        return false; //For generators not implementing introspecion, 
+                      //we always return with the name being free to be used
     }
 
 
