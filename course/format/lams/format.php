@@ -10,11 +10,23 @@ require_once($CFG->dirroot.'/lib/weblib.php');
 $topic = optional_param('topic', -1, PARAM_INT);
 
 // Bounds for block widths
-define('BLOCK_L_MIN_WIDTH', 100);
-define('BLOCK_L_MAX_WIDTH', 210);
-define('BLOCK_R_MIN_WIDTH', 100);
-define('BLOCK_R_MAX_WIDTH', 210);
+// define('BLOCK_L_MIN_WIDTH', 100);
+// define('BLOCK_L_MAX_WIDTH', 210);
+// define('BLOCK_R_MIN_WIDTH', 100);
+// define('BLOCK_R_MAX_WIDTH', 210);
 
+// Bounds for block widths
+// more flexible for theme designers taken from theme config.php
+$lmin = (empty($THEME->block_l_min_width)) ? 100 : $THEME->block_l_min_width;
+$lmax = (empty($THEME->block_l_max_width)) ? 210 : $THEME->block_l_max_width;
+$rmin = (empty($THEME->block_r_min_width)) ? 100 : $THEME->block_r_min_width;
+$rmax = (empty($THEME->block_r_max_width)) ? 210 : $THEME->block_r_max_width;
+
+define('BLOCK_L_MIN_WIDTH', $lmin);
+define('BLOCK_L_MAX_WIDTH', $lmax);
+define('BLOCK_R_MIN_WIDTH', $rmin);
+define('BLOCK_R_MAX_WIDTH', $rmax);
+  
 $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),  
                                         BLOCK_L_MAX_WIDTH);
 $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 
