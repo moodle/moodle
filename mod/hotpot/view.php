@@ -47,7 +47,9 @@
     if ($course->category) {
         $navigation = '<a'.$target.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> -> '.$navigation;
     }
-    $button = update_module_button($cm->id, $course->id, get_string("modulename", "hotpot").'" style="font-size:0.75em;');
+    $button = update_module_button($cm->id, $course->id, get_string("modulename", "hotpot"));
+    $button = '<div style="font-size:0.75em;">'.$button.'</div>';
+
     $loggedinas = '<span class="logininfo">'.user_login_string($course, $USER).'</span>';
     $time = time();
     $hppassword = optional_param('hppassword', '');
