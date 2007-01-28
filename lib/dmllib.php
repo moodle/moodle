@@ -743,7 +743,23 @@ function recordset_to_array($rs) {
  */
 function rs_fetch_record(&$rs) {
 
+    global $CFG;
+
     $rec = $rs->FetchObj(); //Retrieve record as object without advance the pointer
+
+    if ($rs->EOF) { //FetchObj requires manual checking of EOF to detect if it's the last record
+        $rec = false;
+    } else {
+    /// DIRTY HACK to retrieve all the ' ' (1 space) fields converted back
+    /// to '' (empty string) for Oracle. It's the only way to work with
+    /// all those NOT NULL DEFAULT '' fields until we definetively delete them
+        if ($CFG->dbfamily == 'oracle') {
+            $recarr = (array)$rec; /// Cast to array
+            array_walk($recarr, 'onespace2empty');
+            $rec = (object)$recarr;/// Cast back to object
+        }
+    /// End DIRTY HACK
+    }
 
     return $rec;
 }
@@ -775,7 +791,22 @@ function rs_next_record(&$rs) {
  */
 function rs_fetch_next_record(&$rs) {
 
-    $rec = $rs->FetchNextObj(); //Retrieve record as object without advance the pointer
+    global $CFG;
+
+    $rec = false;
+    $recarr = $rs->FetchRow(); //Retrieve record as object without advance the pointer. It's quicker that FetchNextObj()
+
+    if ($recarr) {
+    /// DIRTY HACK to retrieve all the ' ' (1 space) fields converted back
+    /// to '' (empty string) for Oracle. It's the only way to work with
+    /// all those NOT NULL DEFAULT '' fields until we definetively delete them
+        if ($CFG->dbfamily == 'oracle') {
+            array_walk($recarr, 'onespace2empty');
+        }
+    /// End DIRTY HACK
+    /// Cast array to object
+        $rec = (object)$recarr;
+    }
 
     return $rec;
 }
