@@ -882,8 +882,11 @@ class XMLDBgenerator {
     }
 
     /**
-     * Given three strings (table name, list of fields (comma separated) and suffix), create the proper object name
-     * quoting it if necessary
+     * Given three strings (table name, list of fields (comma separated) and suffix), 
+     * create the proper object name quoting it if necessary.
+     * 
+     * IMPORTANT: This function must be used to calculate names of objects to be created, 
+     *            never to guess names of existing objects!
      */
     function getNameForObject($tablename, $fields, $suffix='') {
 
