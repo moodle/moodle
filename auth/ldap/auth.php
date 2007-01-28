@@ -954,7 +954,7 @@ class auth_plugin_ldap {
 
     }
 
-    /*
+    /**
      * changes userpassword in external db
      *
      * called when the user password is updated.
@@ -962,7 +962,6 @@ class auth_plugin_ldap {
      *
      * @param  object  $user        User table object
      * @param  mixed   $newpassword Plaintext password
-     * @param  mixed   $oldpassword Plaintext old password to bind ldap with
      * @return boolean result
      *
      */

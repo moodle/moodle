@@ -177,8 +177,10 @@ change_password_url()
    Returns the URL for changing the users' passwords, or false if the default
    URL can be used.
 
-user_update_password($username, $newpassword)
-   Updates the user's password.
+user_update_password($user, $newpassword)
+   Updates the user's password. In previous versions of Moodle, the function
+   auth_user_update_password accepted a username as the first parameter. The
+   revised function expects a user object.
 
 config_form()
    Displays the configuration form for the auth plugin, for use in the admin

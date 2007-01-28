@@ -153,6 +153,13 @@ class auth_plugin_db {
     }
 
 
+    /**
+     * Change a user's password
+     *
+     * @param  object  $user         The user to update
+     * @param  string  $newpassword  The new password
+     * @return bool                  True on success
+     */
     function user_update_password($user, $newpassword) {
 
         global $CFG;

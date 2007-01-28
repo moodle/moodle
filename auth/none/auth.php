@@ -51,13 +51,13 @@ class auth_plugin_none {
         return false;
     }
 
-    /*
+    /**
      * Updates the user's password.
      *
      * called when the user password is updated.
      *
-     * @param mixed $username    Username
-     * @param mixed $newpassword Plaintext password
+     * @param  object  $user        User
+     * @param  string  $newpassword Plaintext password
      * @return boolean result
      *
      */
