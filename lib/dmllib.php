@@ -735,6 +735,63 @@ function recordset_to_array($rs) {
 }
 
 /**
+ * This function is used to get the current record from the recordset. It
+ * doesn't advance the recordset position. You'll need to do that by 
+ * using the rs_next_record($recordset) function.
+ * @param ADORecordSet the recordset to fetch current record from
+ * @return ADOFetchObj the object containing the fetched information
+ */
+function rs_fetch_record(&$rs) {
+
+    $rec = $rs->FetchObj(); //Retrieve record as object without advance the pointer
+
+    return $rec;
+}
+
+/**
+ * This function is used to advance the pointer of the recordset
+ * to its next position/record.
+ * @param ADORecordSet the recordset to be moved to the next record
+ * @return boolean true if the movement was successful and false if not (end of recordset)
+ */
+function rs_next_record(&$rs) {
+
+    return $rs->MoveNext(); //Move the pointer to the next record
+}
+
+/**
+ * This function is used to get the current record from the recordset. It
+ * doesn advance the recordset position.
+ * This is the prefered way to iterate over recordsets with code blocks like this:
+ *
+ * $rs = get_recordset('SELECT .....');
+ * while ($rec = rs_fetch_next_record($rs)) {
+ *     /// Perform actions with the $rec record here
+ * }
+ * rs_close($rs); /// Close the recordset if not used anymore. Saves memory (optional but recommended).
+ *
+ * @param ADORecordSet the recordset to fetch current record from
+ * @return mixed ADOFetchObj the object containing the fetched information or boolean false if no record (end of recordset)
+ */
+function rs_fetch_next_record(&$rs) {
+
+    $rec = $rs->FetchNextObj(); //Retrieve record as object without advance the pointer
+
+    return $rec;
+}
+
+/**
+ * This function closes the recordset, freeing all the memory and associated resources.
+ * Note that, once closed, the recordset must not be used anymore along the request.
+ * Saves memory (optional but recommended).
+ * @param ADORecordSet the recordset to be closed
+ */
+function rs_close(&$rs) {
+
+    $rs->Close();
+}
+
+/**
  * This function is used to convert all the Oracle 1-space defaults to the empty string
  * like a really DIRTY HACK to allow it to work better until all those NOT NULL DEFAULT ''
  * fields will be out from Moodle.
