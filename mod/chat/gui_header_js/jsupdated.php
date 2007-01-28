@@ -61,6 +61,9 @@
         chat_delete_old_users();
     }
 
+/// Select encoding
+    $encoding = current_charset();
+
     //
     // Time to send headers, and lay out the basic JS updater page
     //
@@ -68,7 +71,7 @@
     header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
     header('Cache-Control: no-cache, must-revalidate');
     header('Pragma: no-cache');
-    header('Content-Type: text/html');
+    header('Content-Type: text/html; charset='.$encoding);
 
     /// required stylesheets
     $stylesheetshtml = '';
