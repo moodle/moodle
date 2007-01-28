@@ -153,11 +153,11 @@ class auth_plugin_db {
     }
 
 
-    function user_update_password($username, $newpassword) {
+    function user_update_password($user, $newpassword) {
 
         global $CFG;
         if ($this->config->passtype === 'internal') {
-            return set_field('user', 'password', md5($newpassword), 'username', $username, 'mnethostid', $CFG->mnet_localhost_id);
+            return set_field('user', 'password', md5($newpassword), 'id', $user->id, 'mnethostid', $CFG->mnet_localhost_id);
         } else {
             // we should have never been called!
             return false;

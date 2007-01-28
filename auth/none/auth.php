@@ -61,8 +61,8 @@ class auth_plugin_none {
      * @return boolean result
      *
      */
-    function user_update_password($username, $newpassword) {
-        $user = get_complete_user_data('username', $username);
+    function user_update_password($user, $newpassword) {
+        $user = get_complete_user_data('id', $user->id);
         return update_internal_user_password($user, $newpassword);
     }
 

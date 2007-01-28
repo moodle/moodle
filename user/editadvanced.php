@@ -97,7 +97,7 @@
             if (!empty($usernew->newpassword)) {
                 if ($authplugin->can_change_password()) {
                     if (method_exists($authplugin, 'user_update_password')){
-                        if (!$authplugin->user_update_password($user->username, $usernew->newpassword)){
+                        if (!$authplugin->user_update_password($usernew, $usernew->newpassword)){
                             error('Failed to update password on external auth: ' . $usernew->auth .
                                     '. See the server logs for more details.');
                         }
