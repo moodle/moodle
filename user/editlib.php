@@ -96,7 +96,7 @@ function useredit_shared_definition(&$mform) {
         if (!empty($CFG->sitemailcharset)) {
             $choices['0'] = get_string('site').' ('.$CFG->sitemailcharset.')';
         } else {
-            $choices['0'] = get_string('site').' ('.current_charset().')';
+            $choices['0'] = get_string('site').' (UTF-8)';
         }
         $choices = array_merge($choices, $charsets);
         $mform->addElement('select', 'preference_mailcharset', get_string('emailcharset'), $choices);

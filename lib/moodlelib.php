@@ -1548,11 +1548,13 @@ function confirm_sesskey($sesskey=NULL) {
 }
 
 /**
- * Setup all global $CFG course variables, set locale and also 
+ * Setup all global $CFG course variables, set locale and also themes
+ * This function can be used on pages that do not require login instead of require_login()
+ *
  * @param mixed $courseorid id of the course or course object
  */
 function course_setup($courseorid=0) {
-    global $COURSE, $HTTPSPAGEREQUIRED, $CFG;
+    global $COURSE, $CFG, $SITE, $USER;
 
 /// Redefine global $COURSE if needed
     if (empty($courseorid)) {
@@ -1562,7 +1564,9 @@ function course_setup($courseorid=0) {
         $COURSE = clone($courseorid);
     } else {
         global $course; // used here only to prevent repeated fetching from DB - may be removed later
-        if ($course->id == $courseorid) {
+        if (!empty($course->id) and $course->id == SITEID) {
+            $COURSE = clone($SITE);
+        } else if (!empty($course->id) and $course->id == $courseorid) {
             $COURSE = clone($course);
         } else {
             if (!$COURSE = get_record('course', 'id', $courseorid)) {
@@ -1571,33 +1575,10 @@ function course_setup($courseorid=0) {
         }
     }
 
-/// set locale - we should use $COURSE->lang directly in the future
-/// $CFG->courselang is now used in cron and chat to override current language and locale
-    if ($COURSE->id == SITEID or empty($COURSE->lang)) {
-        unset($CFG->courselang);
-    } else {
-        $CFG->courselang = $COURSE->lang;
-    }
+/// set locale and themes
     moodle_setlocale();
-
-/// setup themes - $COURSE->theme should be used instead of $CFG->coursetheme soon 
-    if ($COURSE->id == SITEID or empty($CFG->allowcoursethemes) or empty($COURSE->theme)) {
-        unset($CFG->coursetheme);
-    } else {
-        $CFG->coursetheme = $COURSE->theme;
-    }
     theme_setup();
 
-/// We have to change some URLs in styles if we are in a $HTTPSPAGEREQUIRED page
-/// in case theme changed after call to httpsrequired();
-    if (!empty($HTTPSPAGEREQUIRED)) {
-        $CFG->themewww = str_replace('http:', 'https:', $CFG->themewww);
-        $CFG->pixpath = str_replace('http:', 'https:', $CFG->pixpath);
-        $CFG->modpixpath = str_replace('http:', 'https:', $CFG->modpixpath);
-        foreach ($CFG->stylesheets as $key => $stylesheet) {
-            $CFG->stylesheets[$key] = str_replace('http:', 'https:', $stylesheet);
-        }
-    }
 }
 
 /**
@@ -4024,15 +4005,15 @@ function clean_filename($string) {
  * @return string
  */
 function current_language() {
-    global $CFG, $USER, $SESSION;
+    global $CFG, $USER, $SESSION, $COURSE;
 
-    if (!empty($CFG->courselang)) {    // Course language can override all other settings for this page
-        $return = $CFG->courselang;
+    if (!empty($OURSE->lang)) {    // Course language can override all other settings for this page
+        $return = $OURSE->lang;
 
     } else if (!empty($SESSION->lang)) {    // Session language can override other settings
         $return = $SESSION->lang;
 
-    } else if (!empty($USER->lang)) {    // User language can override site language
+    } else if (!empty($USER->lang)) { 
         $return = $USER->lang;
 
     } else {
@@ -4044,15 +4025,6 @@ function current_language() {
     }
 
     return $return;
-}
-
-/* Obsoleted function - returns the code of the current charset - originally depended on the selected language pack.
- *
- * @param $ignorecache not used anymore
- * @return string always returns 'UTF-8'
- */
-function current_charset($ignorecache = false) {
-    return 'UTF-8';
 }
 
 /**
@@ -5874,13 +5846,9 @@ function httpsrequired() {
         $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
         $CFG->httpsthemewww = str_replace('http:', 'https:', $CFG->themewww);
 
-        // change theme paths to pictures
-        $CFG->themewww = str_replace('http:', 'https:', $CFG->themewww);
-        $CFG->pixpath = str_replace('http:', 'https:', $CFG->pixpath);
-        $CFG->modpixpath = str_replace('http:', 'https:', $CFG->modpixpath);
-        foreach ($CFG->stylesheets as $key => $stylesheet) {
-            $CFG->stylesheets[$key] = str_replace('http:', 'https:', $stylesheet);
-        }
+        // change theme URLs to https
+        theme_setup();
+
     } else {
         $CFG->httpswwwroot = $CFG->wwwroot;
         $CFG->httpsthemewww = $CFG->themewww;
@@ -6543,11 +6511,13 @@ function check_dir_exists($dir, $create=false, $recursive=false) {
 function report_session_error() {
     global $CFG, $FULLME;
 
-    theme_setup();  // Sets up theme global variables
     if (empty($CFG->lang)) {
         $CFG->lang = "en";
     }
+    // Set up default theme and locale
+    theme_setup();
     moodle_setlocale();
+
     //clear session cookies
     setcookie('MoodleSession'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath);
     setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath);

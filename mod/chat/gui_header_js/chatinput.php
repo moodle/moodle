@@ -11,16 +11,11 @@
         error('Not logged in!');
     }
 
-    //Get the course theme
-    $COURSE = get_record('course','id',$chatuser->course);
-
     //Get the user theme
-    $USER = get_record('user','id',$chatuser->userid);
+    $USER = get_record('user', 'id', $chatuser->userid);
 
-    //Adjust the prefered theme (main, course, user)
-    theme_setup();
-
-    chat_force_language($chatuser->lang);
+    //Setup course, lang and theme
+    course_setup($chatuser->course);
 
     ob_start();
     ?>
@@ -31,10 +26,10 @@
         if(waitFlag) return false;
         waitFlag = true;
         var input_chat_message = document.getElementById('input_chat_message');
-        getElementById('sendForm').chat_message.value = input_chat_message.value;
+        document.getElementById('sendForm').chat_message.value = input_chat_message.value;
         input_chat_message.value = '';
         input_chat_message.className = 'wait';
-        getElementById('sendForm').submit();
+        document.getElementById('sendForm').submit();
         enableForm();
         return false;
     }

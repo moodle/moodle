@@ -17,7 +17,11 @@
 /// from the command line.
 
     define('FULLME', 'cron');
-    
+
+
+/// Do not set moodle cookie because we do not need it here, it is better to emulate session
+    $nomoodlecookie = true;
+
 /// The current directory in PHP version 4.3.0 and above isn't necessarily the
 /// directory of the script when run from the command line. The require_once()
 /// would fail, so we'll have to chdir()
@@ -29,6 +33,10 @@
     require_once(dirname(__FILE__) . '/../config.php');
     require_once($CFG->libdir.'/adminlib.php');
 
+/// extra safety
+    @session_write_close();
+
+/// check if execution allowed
     if (isset($_SERVER['REMOTE_ADDR'])) { // if the script is accessed via the web.
         if (!empty($CFG->cronclionly)) { 
             // This script can only be run via the cli.
@@ -46,28 +54,16 @@
         }
     }
 
-    if (!$alreadyadmin = has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-        unset($_SESSION['USER']);
-        unset($USER);
-        unset($_SESSION['SESSION']);
-        unset($SESSION);
-        $USER = get_admin();      /// Temporarily, to provide environment for this script
-        // we need to override the admin timezone to the moodle timezone!
-        $USER->timezone = $CFG->timezone;
-    }
 
-    //unset test cookie, user must login again anyway
-    setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, '/');
+/// emulate normal session
+    $SESSION = new object();
+    $USER = get_admin();      /// Temporarily, to provide environment for this script
 
-/// switch to site language and locale
-    if (!empty($CFG->courselang)) {
-        unset ($CFG->courselang);
-    }
-    if (!empty($SESSION->lang)) {
-        unset ($SESSION->lang);
-    }
+/// ignore admins timezone, language and locale - use site deafult instead!
+    $USER->timezone = $CFG->timezone;
     $USER->lang = '';
-    moodle_setlocale();
+    $USER->theme = '';
+    course_setup(SITEID);
 
 /// send mime type and encoding
     if (check_browser_version('MSIE')) {
@@ -78,6 +74,9 @@
         //send proper plaintext header
         @header('Content-Type: text/plain; charset=utf-8');
     }
+
+/// no more headers and buffers
+    while(@ob_end_flush());
 
 /// Start output log
 

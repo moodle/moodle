@@ -8,10 +8,15 @@ if (empty($THEME->chameleonenabled)) {
     die('CHAMELEON_ERROR Editing this theme has been disabled');
 }
 
+$id = optional_param('id', SITEID, PARAM_INT);
+if (!$course = get_record('course', 'id', $id)) {
+    error('Incorrect course id');
+}
 
-$chameleon_id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
-if ($chameleon_id != 0 && !empty($CFG->allowcoursethemes) && !empty($THEME->chameleonteachereditenabled)) {
-    if (!has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $chameleon_id))) {
+course_setup($course); // we should not require login here
+
+if ($id != SITEID and !empty($CFG->allowcoursethemes) and !empty($course->theme) and !empty($THEME->chameleonteachereditenabled)) {
+    if (!has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $id))) {
         die('CHAMELEON_ERROR Either you are not logged in or you are not allowed to edit this theme');
     }
 } else if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {

@@ -912,6 +912,16 @@ function detect_munged_arguments($string, $allowdots=1) {
     return false;
 }
 
+/** Deprecated function - returns the code of the current charset - originally depended on the selected language pack.
+ *
+ * @param $ignorecache not used anymore
+ * @return string always returns 'UTF-8'
+ */
+function current_charset($ignorecache = false) {
+    return 'UTF-8';
+}
+
+
 /////////////////////////////////////////////////////////////
 /// Old functions not used anymore - candidates for removal
 /////////////////////////////////////////////////////////////

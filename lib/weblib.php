@@ -2338,18 +2338,18 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
  * @return string
  */
 function current_theme() {
-    global $CFG, $USER, $SESSION;
+    global $CFG, $USER, $SESSION, $COURSE;
 
     if (!empty($CFG->pagetheme)) {  // Page theme is for special page-only themes set by code
         return $CFG->pagetheme;
 
-    } else if (!empty($CFG->coursetheme) and !empty($CFG->allowcoursethemes)) {  // Course themes override others
-        return $CFG->coursetheme;
+    } else if (!empty($CFG->allowcoursethemes) and !empty($COURSE->theme)) {  // Course themes override others
+        return $COURSE->theme;
 
     } else if (!empty($SESSION->theme)) {    // Session theme can override other settings
         return $SESSION->theme;
 
-    } else if (!empty($USER->theme) and !empty($CFG->allowuserthemes)) {    // User theme can override site theme
+    } else if (!empty($CFG->allowuserthemes) and !empty($USER->theme)) {    // User theme can override site theme
         return $USER->theme;
 
     } else {
@@ -2516,7 +2516,7 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
 function theme_setup($theme = '', $params=NULL) {
 /// Sets up global variables related to themes
 
-    global $CFG, $THEME, $SESSION, $USER;
+    global $CFG, $THEME, $SESSION, $USER, $HTTPSPAGEREQUIRED;
 
     if (empty($theme)) {
         $theme = current_theme();
@@ -2573,6 +2573,16 @@ function theme_setup($theme = '', $params=NULL) {
         $CFG->stylesheets[] = $CFG->themewww.'/'.$THEME->parent.'/styles.php'.$paramstring;
     }
     $CFG->stylesheets[] = $CFG->themewww.'/'.$theme.'/styles.php'.$paramstring;
+
+/// We have to change some URLs in styles if we are in a $HTTPSPAGEREQUIRED page
+    if (!empty($HTTPSPAGEREQUIRED)) {
+        $CFG->themewww = str_replace('http:', 'https:', $CFG->themewww);
+        $CFG->pixpath = str_replace('http:', 'https:', $CFG->pixpath);
+        $CFG->modpixpath = str_replace('http:', 'https:', $CFG->modpixpath);
+        foreach ($CFG->stylesheets as $key => $stylesheet) {
+            $CFG->stylesheets[$key] = str_replace('http:', 'https:', $stylesheet);
+        }
+    }
 
 }
 

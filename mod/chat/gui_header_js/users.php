@@ -12,21 +12,19 @@
         error('Not logged in!');
     }
 
-    //Get the course theme
-    $course = get_record('course','id',$chatuser->course,'','','','','id,theme');
-    //Set the course theme if necessary
-    if (!empty($course->theme)) {
-        if (!empty($CFG->allowcoursethemes)) {
-            $CFG->coursetheme = $course->theme;
-        }
+    //Get the minimal course
+    if (!$course = get_record('course','id',$chatuser->course,'','','','','id,theme,lang')) {
+        error('incorrect course id');
     }
-    //Get the user theme
-    $USER = get_record('user','id',$chatuser->userid,'','','','','id, theme');
 
-    //Adjust the prefered theme (main, course, user)
-    theme_setup();
+    //Get the user theme and enough info to be used in chat_format_message() which passes it along to
+    if (!$USER = get_record('user','id',$chatuser->userid,'','','','','id, lang, theme, username, timezone')) {
+        error('User does not exist!');
+    }
+    $USER->description = '';
 
-    chat_force_language($chatuser->lang);
+    //Setup course, lang and theme
+    course_setup($course);
 
     $courseid = $chatuser->course;
 

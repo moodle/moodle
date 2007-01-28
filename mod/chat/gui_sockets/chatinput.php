@@ -11,7 +11,11 @@
         error('Not logged in!');
     }
 
-    chat_force_language($chatuser->lang);
+    //Get the user theme
+    $USER = get_record('user', 'id', $chatuser->userid);
+
+    //Setup course, lang and theme
+    course_setup($chatuser->course);
 
     ob_start();
     ?>

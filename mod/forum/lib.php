@@ -230,9 +230,7 @@ function forum_cron() {
         $strforums = get_string('forums', 'forum');
     }
 
-    if (!empty($USER->id)) { // Remember real USER account if necessary
-        $realuser = $USER;
-    }
+    $realuser = clone($USER);
 
     /// Posts older than 2 days will not be mailed.  This is to avoid the problem where
     /// cron has not been running for a long time, and then suddenly people are flooded
@@ -301,12 +299,6 @@ function forum_cron() {
             );
 
 
-            if (!empty($course->lang)) {
-                $CFG->courselang = $course->lang;
-            } else {
-                unset($CFG->courselang);
-            }
-
             // Get coursemodule record (and cache these)
 
             if (!empty($cachecm[$forum->id])) {
@@ -366,8 +358,8 @@ function forum_cron() {
 
                     /// Override the language and timezone of the "current" user, so that
                     /// mail is customised for the receiver.
-                    $USER->lang     = $userto->lang;
-                    $USER->timezone = $userto->timezone;
+                    $USER = $userto;
+                    course_setup($course);
 
                     $postsubject = "$course->shortname: ".format_string($post->subject,true);
                     $posttext = forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto);
@@ -405,15 +397,7 @@ function forum_cron() {
         }
     }
 
-    unset($CFG->courselang);
-
-    if (!empty($realuser)) {   // Restore real USER timezone if necessary
-        $sitetimezone = $realuser->timezone;
-        $USER->lang   = $realuser->lang;
-    } else {
-        $sitetimezone = $CFG->timezone;
-        $USER->lang   = $CFG->lang;
-    }
+    $sitetimezone = $CFG->timezone;
 
     /// Now see if there are any digest mails waiting to be sent, and if we should send them
 
@@ -470,8 +454,8 @@ function forum_cron() {
 
                 /// Override the language and timezone of the "current" user, so that
                 /// mail is customised for the receiver.
-                $USER->lang     = $userto->lang;
-                $USER->timezone = $userto->timezone;
+                $USER = $userto;
+                course_setup(SITEID);
 
 
                 $postsubject = get_string('digestmailsubject', 'forum', $site->shortname);
@@ -504,6 +488,9 @@ function forum_cron() {
                         mtrace("Could not find course $forum->course");
                         continue;
                     }
+
+                    //override language
+                    course_setup($course);
 
                     $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
                     $canreply = forum_user_can_post($forum, $userto);
@@ -618,9 +605,8 @@ function forum_cron() {
         mtrace(get_string('digestsentusers', 'forum', $usermailcount));
     }
 
-    if (!empty($realuser)) {   // Restore real USER if necessary
-        $USER = $realuser;
-    }
+    $USER = $realuser;
+    course_setup(SITEID); // reset cron user language, theme and timezone settings
 
     if (!empty($CFG->forum_lastreadclean)) {
         $timenow = time();
@@ -1660,7 +1646,7 @@ function forum_subscribed_users($course, $forum, $groupid=0, $cache=false) {
         $results = get_course_users($course->id);     // Otherwise get everyone in the course
     } else {
         $results = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest, u.emailstop,
-                                   u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.timezone, u.lang, u.trackforums
+                                   u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.timezone, u.theme, u.lang, u.trackforums
                               FROM {$CFG->prefix}user u,
                                    {$CFG->prefix}forum_subscriptions s $grouptables
                              WHERE s.forum = '$forum->id'

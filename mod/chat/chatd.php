@@ -228,7 +228,7 @@ class ChatDaemon {
         static $str;
 
         $info = &$this->sets_info[$sessionid];
-        chat_force_language($info['lang']);
+        course_setup($info['course'], $info['user']);
 
         $timenow = time();
 
@@ -501,6 +501,7 @@ class ChatDaemon {
         $this->sets_info[$sessionid] = array(
             'lastinfocommit' => 0,
             'lastmessageindex' => 0,
+            'course'    => $course,
             'courseid'  => $course->id,
             'chatuser'  => $chatuser,
             'chatid'    => $chat->id,
@@ -706,7 +707,7 @@ class ChatDaemon {
             {
 
                 // Simply give them the message
-                chat_force_language($info['lang']);
+                course_setup($info['course'], $info['user']);
                 $output = chat_format_message_manually($message, $info['courseid'], $sender, $info['user']);
                 $this->trace('Delivering message "'.$output->text.'" to '.$this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL]);
 

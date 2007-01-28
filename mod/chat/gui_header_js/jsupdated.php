@@ -35,25 +35,20 @@
         error('Not logged in!');
     }
 
-    //Get the course theme
-    $course = get_record('course','id',$chatuser->course,'','','','','id,theme');
-    //Set the course theme if necessary
-    if (!empty($course->theme)) {
-        if (!empty($CFG->allowcoursethemes)) {
-            $CFG->coursetheme = $course->theme;
-        }
+    //Get the minimal course
+    if (!$course = get_record('course','id',$chatuser->course,'','','','','id,theme,lang')) {
+        error('incorrect course id');
     }
+
     //Get the user theme and enough info to be used in chat_format_message() which passes it along to
     // chat_format_message_manually() -- and only id and timezone are used.
-    if (!$USER = get_record('user','id',$chatuser->userid,'','','','','id, theme, username, timezone')) {
+    if (!$USER = get_record('user','id',$chatuser->userid,'','','','','id, lang, theme, username, timezone')) {
         error('User does not exist!');
     }
     $USER->description = '';
 
-    //Adjust the prefered theme (main, course, user)
-    theme_setup();
-
-    chat_force_language($chatuser->lang);
+    //Setup course, lang and theme
+    course_setup($course);
 
     // force deleting of timed out users if there is a silence in room or just entering
     if ((time() - $chat_lasttime) > $CFG->chat_old_ping) {

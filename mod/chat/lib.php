@@ -311,18 +311,6 @@ function chat_refresh_events($courseid = 0) {
     return true;
 }
 
-function chat_force_language($lang) {
-/// This function prepares moodle to operate in given language
-/// usable when $nomoodlecookie = true;
-/// BEWARE: there must be no $course, $USER or $SESSION
-    global $CFG;
-
-    if(!empty($CFG->courselang)) {
-        unset($CFG->courselang);
-    }
-    $CFG->lang = $lang;
-    moodle_setlocale();
-}
 
 //////////////////////////////////////////////////////////////////////
 /// Functions that require some SQL
