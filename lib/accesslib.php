@@ -47,7 +47,7 @@ $context_cache_id = array();    // Index to above cache by id
  * Loads the capabilities for the default guest role to the current user in a specific context
  * @return object
  */
-function load_guest_role($context=NULL) {
+function load_guest_role($context=NULL, $mergewith=NULL) {
     global $USER;
 
     static $guestrole;
@@ -73,12 +73,20 @@ function load_guest_role($context=NULL) {
     if ($capabilities = get_records_select('role_capabilities',
                                            "roleid = $guestrole->id AND contextid = $sitecontext->id")) {
         foreach ($capabilities as $capability) {
-            $USER->capabilities[$context->id][$capability->capability] = $capability->permission;
+            if ($mergewith === NULL) {
+                $USER->capabilities[$context->id][$capability->capability] = $capability->permission;
+            } else {
+                $mergewith[$context->id][$capability->capability] = $capability->permission;
+            }
         }
-        has_capability('clearcache');
     }
 
-    return true;
+    if ($mergewith === NULL) {
+        has_capability('clearcache');
+        return true;
+    } else {
+        return $mergewith;
+    }
 }
 
 /**
@@ -115,7 +123,7 @@ function load_notloggedin_role() {
  * Load default not logged in role capabilities when user is not logged in
  * @return bool
  */
-function load_defaultuser_role() {
+function load_defaultuser_role($return=false) {
     global $CFG, $USER;
 
     if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM)) {
@@ -130,9 +138,14 @@ function load_defaultuser_role() {
         }
     }
 
+    if ($return) {
+        $defcaps = array();
+    }
+
     if ($capabilities = get_records_select('role_capabilities',
                                      "roleid = $CFG->defaultuserroleid AND contextid = $sitecontext->id AND permission <> 0")) {
         // Find out if this default role is a guest role, for the hack below                                        
+
         $defaultisguestrole=false;
         foreach ($capabilities as $capability) {
             if($capability->capability=='moodle/legacy:guest') {
@@ -144,21 +157,28 @@ function load_defaultuser_role() {
             // otherwise this user could get confused with a REAL guest. Also don't copy
             // course:view, which is a hack that's necessary because guest roles are 
             // not really handled properly (see MDL-7513)
-            if($defaultisguestrole && $USER->username!='guest' &&
+            if($defaultisguestrole &&
                 ($capability->capability=='moodle/legacy:guest' || 
                     $capability->capability=='moodle/course:view')) {
                 continue;
             }
-            
-            // Don't overwrite capabilities from real role...
-            if (!isset($USER->capabilities[$sitecontext->id][$capability->capability])) {
-                $USER->capabilities[$sitecontext->id][$capability->capability] = $capability->permission;
+            if ($return) {
+                $defcaps[$sitecontext->id][$capability->capability] = $capability->permission;
+            } else {
+                // Don't overwrite capabilities from real role...
+                if (!isset($USER->capabilities[$sitecontext->id][$capability->capability])) {
+                    $USER->capabilities[$sitecontext->id][$capability->capability] = $capability->permission;
+                }
             }
         }
-        has_capability('clearcache');
     }
 
-    return true;
+    if ($return) {
+        return $defcaps;
+    } else {
+        has_capability('clearcache');
+        return true;
+    }
 }
 
 
@@ -348,31 +368,57 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
     }
 
 /// Check and return cache in case we've processed this one before.
-
-    $cachekey = $capability.'_'.$context->id.'_'.intval($userid).'_'.intval($doanything);
+    $requsteduser = empty($userid) ? $USER->id : $userid; // find out the requested user id, $USER->id might have been changed
+    $cachekey = $capability.'_'.$context->id.'_'.intval($requsteduser).'_'.intval($doanything);
 
     if (isset($capcache[$cachekey])) {
         return $capcache[$cachekey];
     }
 
-/// Set up user's default roles
-    if (empty($userid) && empty($USER->capabilities)) {   // Real user, first time here
-        if (isloggedin()) {
-            load_defaultuser_role();    // All users get this by default
-        } else {
-            load_notloggedin_role();    // others get this by default
-        }
-    }
 
 /// Load up the capabilities list or item as necessary
-    if ($userid && (($USER === NULL) or ($userid != $USER->id))) {
-        if (empty($USER->id) or ($userid != $USER->id)) {
-            $capabilities = load_user_capability($capability, $context, $userid);  // expensive
-        } else { //$USER->id == $userid
-            $capabilities = empty($USER->capabilities) ? NULL : $USER->capabilities;
+    if ($userid) {
+        if (empty($USER->id) or ($userid != $USER->id) or empty($USER->capabilities)) {
+            // this is expensive
+            $capabilities = load_user_capability($capability, $context, $userid);
+
+            static $guestuserid = false; // cached guest user id
+            if (!$guestuserid) {
+                $guestuserid = get_field('user', 'id', 'username', 'guest');
+            }
+
+            if ($userid == $guestuserid) {
+                //this might be cached too, but should not needed
+                $capabilities = load_guest_role($context, $capabilities);
+
+            } else {
+                static $defcaps = false; //cached default user caps - this might help cron
+                if (empty($capcache) or !$defcaps) { //first run or capcache was reset
+                    $defcaps = load_defaultuser_role(true);
+                }
+                foreach($defcaps as $contextid=>$caps) {//apply only extra caps defined for default user
+                    foreach($caps as $cap=>$permission) {
+                        if (!isset($capabilities[$contextid][$cap])) {
+                            $capabilities[$contextid][$cap] = $permission;
+                        }
+                    }
+                }
+            }
+        } else { //$USER->id == $userid and capabilities already present
+            $capabilities = $USER->capabilities;
         }
+       
     } else { // no userid
-        $capabilities = empty($USER->capabilities) ? NULL : $USER->capabilities;
+        if (empty($USER->capabilities)) {
+            if (empty($USER->id)) {
+                //not logged in user first time here
+                load_notloggedin_role();
+            } else {
+                // 'Simulated' user first time here - load_all_capabilities() not called from login/index.php
+                load_all_capabilities(); // expensive - but we have to do it once anyway
+            }
+        }
+        $capabilities = $USER->capabilities;
         $userid = $USER->id;
     }
 
@@ -686,7 +732,6 @@ function roles_context_cmp($contexta, $contextb) {
 }
 
 /**
- * This function should be called immediately after a login, when $USER is set.
  * It will build an array of all the capabilities at each level
  * i.e. site/metacourse/course_category/course/moduleinstance
  * Note we should only load capabilities if they are explicitly assigned already,

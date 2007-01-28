@@ -464,7 +464,7 @@ global $HTTPSPAGEREQUIRED;
         unset($_GET['MoodleSession'.$CFG->sessioncookie]);
         unset($_POST['MoodleSession'.$CFG->sessioncookie]);
     }
-    //compatibility hack for Moodle Cron, cookies not deleted, but set to "deleted"
+    //compatibility hack for Moodle Cron, cookies not deleted, but set to "deleted" - should not be needed with $nomoodlecookie in cron.php now 
     if (!empty($_COOKIE['MoodleSession'.$CFG->sessioncookie]) && $_COOKIE['MoodleSession'.$CFG->sessioncookie] == "deleted") {
         unset($_COOKIE['MoodleSession'.$CFG->sessioncookie]);
     }
@@ -476,7 +476,7 @@ global $HTTPSPAGEREQUIRED;
         sid_start_ob();
     }
 
-    if (!isset($nomoodlecookie)) {
+    if (empty($nomoodlecookie)) {
         session_name('MoodleSession'.$CFG->sessioncookie);
         @session_start();
         if (! isset($_SESSION['SESSION'])) {
@@ -499,8 +499,9 @@ global $HTTPSPAGEREQUIRED;
         }
     }
     else {
-        $SESSION = NULL;
-        $USER    = NULL;
+        $SESSION  = NULL;
+        $USER     = new object();
+        $USER->id = 0; // user not logged in when session disabled
     }
 
     if (defined('FULLME')) {     // Usually in command-line scripts like admin/cron.php
