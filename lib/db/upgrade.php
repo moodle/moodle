@@ -166,11 +166,11 @@ function xmldb_main_upgrade($oldversion=0) {
         $f = $table->addFieldInfo('deleted',            XMLDB_TYPE_INTEGER,  '1', XMLDB_UNSIGNED,
                                   XMLDB_NOTNULL, null, null, null, 0);
         $f = $table->addFieldInfo('wwwroot',            XMLDB_TYPE_CHAR,   '255', null,
-                                  XMLDB_NOTNULL, null, null, null, '');
+                                  XMLDB_NOTNULL, null, null, null, null);
         $f = $table->addFieldInfo('ip_address',         XMLDB_TYPE_CHAR,    '39', null,
-                                  XMLDB_NOTNULL, null, null, null, '');
+                                  XMLDB_NOTNULL, null, null, null, null);
         $f = $table->addFieldInfo('name',               XMLDB_TYPE_CHAR,    '80', null,
-                                  XMLDB_NOTNULL, null, null, null, '');
+                                  XMLDB_NOTNULL, null, null, null, null);
         $f = $table->addFieldInfo('public_key',         XMLDB_TYPE_TEXT, 'medium', null,
                                   XMLDB_NOTNULL, null, null, null, null);
         $f = $table->addFieldInfo('public_key_expires', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
@@ -409,7 +409,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $f = $table->addFieldInfo('sortorder', XMLDB_TYPE_INTEGER,  '4', XMLDB_UNSIGNED,
                                   XMLDB_NOTNULL, NULL, null, null, 0);
         $f = $table->addFieldInfo('fullname',  XMLDB_TYPE_CHAR,  '254', null,
-                                  XMLDB_NOTNULL, NULL, null, null, '');
+                                  XMLDB_NOTNULL, NULL, null, null, null);
         $f = $table->addFieldInfo('shortname',  XMLDB_TYPE_CHAR,  '15', null,
                                   XMLDB_NOTNULL, NULL, null, null, null);
         $f = $table->addFieldInfo('idnumber',  XMLDB_TYPE_CHAR,  '100', null,
