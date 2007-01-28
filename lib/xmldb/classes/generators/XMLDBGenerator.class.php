@@ -668,7 +668,7 @@ class XMLDBgenerator {
 
         $rename = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->rename_column_sql);
         $rename = str_replace('OLDFIELDNAME', $this->getEncQuoted($xmldb_field->getName()), $rename);
-        $rename = str_replace('NEWFIELDNAME', $this->getEncQuoted($newname)), $rename);
+        $rename = str_replace('NEWFIELDNAME', $this->getEncQuoted($newname), $rename);
 
         $results[] = $rename;
 
