@@ -465,6 +465,37 @@ class XMLDBmssql extends XMLDBgenerator {
     }
 
     /**
+     * Given one object name and it's type (pk, uk, fk, ck, ix, uix, seq, trg)
+     * return if such name is currently in use (true) or no (false)
+     * (invoked from getNameForObject()
+     */
+    function isNameInUse($object_name, $type) {
+        switch($type) {
+            case 'seq':
+            case 'trg':
+            case 'pk':
+            case 'uk':
+            case 'fk':
+            case 'ck':
+                if ($check = get_records_sql("SELECT name 
+                                              FROM sysobjects 
+                                              WHERE lower(name) = '" . strtolower($object_name) . "'")) {
+                    return true;
+                }
+                break;
+            case 'ix':
+            case 'uix':
+                if ($check = get_records_sql("SELECT name 
+                                              FROM sysindexes
+                                              WHERE lower(name) = '" . strtolower($object_name) . "'")) {
+                    return true;
+                }
+                break;
+        }
+        return false; //No name in use found
+    }
+
+    /**
      * Returns an array of reserved words (lowercase) for this DB
      */
     function getReservedWords() {
