@@ -176,11 +176,11 @@ class XMLDBoci8po extends XMLDBgenerator {
      */
     function getDropSequenceSQL ($xmldb_table, $xmldb_field, $include_trigger=false) {
 
-        $sequence_name = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'seq');
+        $sequence_name = $this->getSequenceFromDB($xmldb_table);
 
         $sequence = "DROP SEQUENCE " . $sequence_name;
 
-        $trigger_name = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'trg');
+        $trigger_name = $this->getTriggerFromDB($xmldb_table);
 
         $trigger = "DROP TRIGGER " . $trigger_name;
 
@@ -241,13 +241,13 @@ class XMLDBoci8po extends XMLDBgenerator {
 
         $xmldb_field = new XMLDBField('id'); // Fields having sequences should be exclusively, id.
 
-        $oldseqname = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'seq');
+        $oldseqname = $this->getSequenceFromDB($xmldb_table);
         $newseqname = $this->getNameForObject($newname, $xmldb_field->getName(), 'seq');
 
     /// Rename de sequence
         $results[] = 'RENAME ' . $oldseqname . ' TO ' . $newseqname;
 
-        $oldtriggername = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'trg');
+        $oldtriggername = $this->getTriggerFromDB($xmldb_table);
         $newtriggername = $this->getNameForObject($newname, $xmldb_field->getName(), 'trg');
 
     /// Drop old trigger
@@ -525,6 +525,25 @@ class XMLDBoci8po extends XMLDBgenerator {
         }
 
         return $sequencename;
+    }
+
+    /**
+     * Given one XMLDBTable returns one string with the trigger
+     * in the table (fetched from DB)
+     * If no trigger is found, returns false
+     */
+    function getTriggerFromDB($xmldb_table) {
+
+        $tablename = strtoupper($this->getTableName($xmldb_table));
+        $triggername = false;
+
+        if ($trigger = get_record_sql("SELECT trigger_name, trigger_body
+                                         FROM user_triggers
+                                        WHERE table_name = '{$tablename}'")) {
+            $triggername = $trigger->trigger_name;
+        }
+
+        return $triggername;
     }
 
     /**
