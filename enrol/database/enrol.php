@@ -83,11 +83,10 @@ function setup_enrolments(&$user) {
             if ($rs->RecordCount() > 0) {   // We found some courses
 
                 $courselist = array();
-                while (!$rs->EOF) {         // Make a nice little array of courses to process
-                    $courselist[] = $rs->fields['enrolremotecoursefield'];
-                    $rs->MoveNext();
+                while ($fields_obj = rs_fetch_next_record($rs)) {         // Make a nice little array of courses to process
+                    $courselist[] = $fields_obj->enrolremotecoursefield;
                 }
-                $rs->Close();
+                rs_close($rs);
 
                 foreach ($courselist as $coursefield) {   /// Check the list of courses against existing
                     if ($course = get_record('course', $CFG->enrol_localcoursefield, $coursefield)) {
