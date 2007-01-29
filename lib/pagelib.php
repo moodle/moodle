@@ -295,7 +295,7 @@ class page_base {
 
     // is this  page always editable, regardless of anything else?
     function edit_always() {
-        return (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM, SITEID)) &&  defined('ADMIN_STICKYBLOCKS'));
+        return (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM)) &&  defined('ADMIN_STICKYBLOCKS'));
     }
 }
 
@@ -347,7 +347,7 @@ class page_course extends page_base {
     // This is also about editting of blocks BUT mainly activities in course page layout, see
     // update_course_icon() - it must use the same capability
     function user_allowed_editing() {
-        if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM, SITEID)) && defined('ADMIN_STICKYBLOCKS')) {
+        if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM)) && defined('ADMIN_STICKYBLOCKS')) {
             return true;
         }
         return has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $this->id));
@@ -355,7 +355,7 @@ class page_course extends page_base {
 
     // Is the user actually editing this course page or "sticky page" right now?
     function user_is_editing() {
-        if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM, SITEID)) && defined('ADMIN_STICKYBLOCKS')) {
+        if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM)) && defined('ADMIN_STICKYBLOCKS')) {
             //always in edit mode on sticky page
             return true;
         }

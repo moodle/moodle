@@ -125,8 +125,6 @@ $temp->add(new admin_setting_configtext('proxyhost', get_string('proxyhost', 'ad
 $temp->add(new admin_setting_configtext('proxyport', get_string('proxyport', 'admin'), get_string('configproxyport', 'admin'), 0, PARAM_INT));
 $ADMIN->add('server', $temp);
 
-$ADMIN->add('server', new admin_externalpage('sitefiles', get_string('sitefiles'), $CFG->wwwroot . '/files/index.php?id=' . SITEID));
-
 $ADMIN->add('server', new admin_externalpage('maintenancemode', get_string('sitemaintenancemode', 'admin'), "$CFG->wwwroot/$CFG->admin/maintenance.php"));
 
 

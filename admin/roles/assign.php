@@ -114,6 +114,13 @@
         $adminroot = admin_get_root();
         admin_externalpage_setup('assignroles', $adminroot);
         admin_externalpage_print_header($adminroot);
+    } else if ($context->contextlevel==CONTEXT_COURSE and $context->instanceid == SITEID) {
+        $adminroot = admin_get_root();
+        admin_externalpage_setup('frontpageroles', $adminroot);
+        admin_externalpage_print_header($adminroot);
+        $currenttab = '';
+        $tabsmode = 'assign';
+        include_once('tabs.php');
     } else {
         $currenttab = '';
         $tabsmode = 'assign';
@@ -192,7 +199,11 @@
         }
     }
 
-    print_heading_with_help(get_string('assignroles', 'role'), 'assignroles');
+    if ($context->contextlevel==CONTEXT_COURSE and $context->instanceid == SITEID) {
+        print_heading_with_help(get_string('frontpageroles', 'admin'), 'assignroles');
+    } else {
+        print_heading_with_help(get_string('assignroles', 'role'), 'assignroles');
+    }
 
     if ($roleid) {        /// prints a form to swap roles
 
@@ -269,7 +280,7 @@
         print_table($table);
     }
 
-    if ($context->contextlevel == CONTEXT_SYSTEM) {
+    if ($context->contextlevel == CONTEXT_SYSTEM or ($context->contextlevel==CONTEXT_COURSE and $context->instanceid == SITEID)) {
         admin_externalpage_print_footer($adminroot);
     } else {
         print_footer($course);

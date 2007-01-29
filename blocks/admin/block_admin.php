@@ -64,7 +64,7 @@ class block_admin extends block_list {
 
     /// Assign roles to the course
 
-        if (has_capability('moodle/role:assign', $context)) { 
+        if (has_capability('moodle/role:assign', $context) && ($course->id!==SITEID)) { 
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">'.get_string('assignroles', 'role').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/roles.gif" class="icon" alt="" />';         
             
@@ -94,13 +94,13 @@ class block_admin extends block_list {
 
     /// Backup this course
 
-        if (has_capability('moodle/site:backup', $context)) { 
+        if (has_capability('moodle/site:backup', $context)&& ($course->id!==SITEID)) { 
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/backup/backup.php?id='.$this->instance->pageid.'">'.get_string('backup').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/backup.gif" class="icon" alt="" />';
         }
             
     /// Restore to this course
-        if (has_capability('moodle/site:restore', $context)) {
+        if (has_capability('moodle/site:restore', $context) && ($course->id!==SITEID)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/files/index.php?id='.$this->instance->pageid.'&amp;wdir=/backupdata">'.get_string('restore').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" class="icon" alt="" />';
         }

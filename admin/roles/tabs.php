@@ -27,11 +27,13 @@ if ($currenttab != 'update') {
             break;
 
         case CONTEXT_COURSE:
-            $streditcoursesettings = get_string("editcoursesettings");
-
-            $course = get_record('course', 'id', $context->instanceid);
-            print_header($streditcoursesettings, "$course->fullname",
-                    "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $straction");
+            if ($context->instanceid != SITEID) {
+                $streditcoursesettings = get_string("editcoursesettings");
+    
+                $course = get_record('course', 'id', $context->instanceid);
+                print_header($streditcoursesettings, "$course->fullname",
+                        "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $straction");
+            }                        
             break;
 
         case CONTEXT_GROUP:

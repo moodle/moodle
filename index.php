@@ -49,7 +49,7 @@
     }
 
     if ($CFG->rolesactive) { // if already using roles system
-        if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
             if (moodle_needs_upgrading()) {
                 redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
             }
@@ -216,10 +216,10 @@
 
             case FRONTPAGECOURSELIST:
 
-                if (isloggedin() and !has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID)) and !isguest() and empty($CFG->disablemycourses)) {
+                if (isloggedin() and !has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)) and !isguest() and empty($CFG->disablemycourses)) {
                     print_heading_block(get_string('mycourses'));
                     print_my_moodle();
-                } else if ((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID)) and !isguest()) or (count_records('course') <= FRONTPAGECOURSELIMIT)) {
+                } else if ((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)) and !isguest()) or (count_records('course') <= FRONTPAGECOURSELIMIT)) {
                     // admin should not see list of courses when there are too many of them
                     print_heading_block(get_string('availablecourses'));
                     print_courses(0, '100%', true);
@@ -264,7 +264,7 @@
             case 'right':
 // uh-changes end
     // The right column
-    if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing || has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing || has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, SITEID))) {
         echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
 // uh-changes start
         if (!empty($THEME->roundcorners)) {
@@ -272,7 +272,7 @@
             echo '<div class="i1"><div class="i2"><div class="i3">';
         }
 // uh-changes end
-        if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if (has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, SITEID))) {
             echo '<div style="text-align:center">'.update_course_icon($SITE->id).'</div>';
             echo '<br />';
         }

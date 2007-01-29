@@ -25,6 +25,7 @@ $ADMIN->add('modules', new admin_externalpage('managefilters', get_string('manag
 
 $ADMIN->add('root', new admin_category('security', get_string('security','admin')));
 $ADMIN->add('root', new admin_category('appearance', get_string('appearance','admin')));
+$ADMIN->add('root', new admin_category('frontpage', get_string('frontpage','admin')));
 $ADMIN->add('root', new admin_category('server', get_string('server','admin')));
 $ADMIN->add('root', new admin_category('mnet', get_string('net','mnet')));
 

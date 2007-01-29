@@ -9,6 +9,7 @@
 
     require('../config.php');
     require($CFG->libdir.'/filelib.php');
+    require($CFG->libdir.'/adminlib.php');
 
     $id      = required_param('id', PARAM_INT);
     $file    = optional_param('file', '', PARAM_PATH);
@@ -33,26 +34,26 @@
         error("That's an invalid course id");
     }
 
-    require_login($course->id);
+    require_login($course);
 
     require_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $course->id));
 
     function html_footer() {
-        global $course, $choose;
+        global $course, $choose, $adminroot;
 
         echo '</td></tr></table>';
 
-        print_footer($course);
+        if ($course->id == SITEID) {
+                admin_externalpage_print_footer($adminroot);
+        } else {
+            print_footer($course);
+        }
     }
 
     function html_header($course, $wdir, $formfield=""){
         global $CFG, $ME, $choose;
 
-        if (! $site = get_site()) {
-            error("Invalid site!");
-        }
-
-        if ($course->id == $site->id) {
+        if ($course->id == SITEID) {
             $strfiles = get_string("sitefiles");
         } else {
             $strfiles = get_string("files");
@@ -107,18 +108,26 @@
             $fullnav = str_replace('->', '&raquo;', "$course->shortname -> $fullnav");
             echo '<div id="nav-bar">'.$fullnav.'</div>';
 
-            if ($course->id == $site->id) {
+            if ($course->id == SITEID and $wdir != "/backupdata") {
                 print_heading(get_string("publicsitefileswarning"), "center", 2);
             }
 
         } else {
 
-            if ($course->id == $site->id) {
-                print_header("$course->shortname: $strfiles", "$course->fullname",
-                             "<a href=\"../$CFG->admin/index.php\">".get_string("administration").
-                             "</a> -> $fullnav", $formfield);
+            if ($course->id == SITEID) {
 
-                print_heading(get_string("publicsitefileswarning"), "center", 2);
+                if ($wdir == "/backupdata") {
+                    $adminroot = admin_get_root();
+                    admin_externalpage_setup('frontpagerestore', $adminroot);
+                    admin_externalpage_print_header($adminroot);
+                } else {
+                    $adminroot = admin_get_root();
+                    admin_externalpage_setup('sitefiles', $adminroot);
+                    admin_externalpage_print_header($adminroot);
+
+                    print_heading(get_string("publicsitefileswarning"), "center", 2);
+                    
+                }
 
             } else {
                 print_header("$course->shortname: $strfiles", "$course->fullname",

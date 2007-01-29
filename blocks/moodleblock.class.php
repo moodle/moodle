@@ -309,12 +309,7 @@ class block_base {
         
         switch ($this->instance->pagetype) {
             case 'course-view':
-                if ($this->instance->pageid == SITEID) {
-                      $context = get_context_instance(CONTEXT_SYSTEM, $this->instance->pageid);
-                } else {
-                    $context = get_context_instance(CONTEXT_COURSE, $this->instance->pageid);
-                }
-                
+                $context = get_context_instance(CONTEXT_COURSE, $this->instance->pageid);
                 if (!has_capability('moodle/site:manageblocks', $context)) {
                     return null;
                 }

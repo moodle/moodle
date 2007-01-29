@@ -135,6 +135,14 @@
         $showroles = 1;
         $currenttab = 'override';
         include_once($CFG->dirroot.'/user/tabs.php');
+    } else if ($context->contextlevel==CONTEXT_COURSE and $context->instanceid == SITEID) {
+        require_once($CFG->libdir.'/adminlib.php');
+        $adminroot = admin_get_root();
+        admin_externalpage_setup('frontpageroles', $adminroot);
+        admin_externalpage_print_header($adminroot);
+        $currenttab = '';
+        $tabsmode = 'override';
+        include_once('tabs.php');
     } else {
         $currenttab = '';
         $tabsmode = 'override';
@@ -199,6 +207,10 @@
         print_table($table);
     }
 
-    print_footer($course);
+    if ($context->contextlevel == CONTEXT_SYSTEM or ($context->contextlevel==CONTEXT_COURSE and $context->instanceid == SITEID)) {
+        admin_externalpage_print_footer($adminroot);
+    } else {
+        print_footer($course);
+    }
 
 ?>

@@ -512,7 +512,7 @@ function create_admin_user() {
         if (!$adminroles = get_roles_with_capability('moodle/legacy:admin', CAP_ALLOW)) {
             error('No admin role could be found');
         }
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
         foreach ($adminroles as $adminrole) {
             role_assign($adminrole->id, $user->id, 0, $sitecontext->id);
         }
@@ -1114,6 +1114,11 @@ class admin_externalpage extends part_of_admin_tree {
     var $req_capability;
 
     /**
+     * @var object The context in which capability/permission should be checked, default is site context.
+     */
+    var $context;
+
+    /**
      * @var bool hidden in admin tree block.
      */
     var $hidden;
@@ -1126,7 +1131,7 @@ class admin_externalpage extends part_of_admin_tree {
      * @param string $url The external URL that we should link to when someone requests this external page.
      * @param mixed $req_capability The role capability/permission a user must have to access this external page. Defaults to 'moodle/site:config'.
      */
-    function admin_externalpage($name, $visiblename, $url, $req_capability = 'moodle/site:config', $hidden=false) {
+    function admin_externalpage($name, $visiblename, $url, $req_capability = 'moodle/site:config', $hidden=false, $context=false) {
         $this->name = $name;
         $this->visiblename = $visiblename;
         $this->url = $url;
@@ -1136,6 +1141,7 @@ class admin_externalpage extends part_of_admin_tree {
             $this->req_capability = array($req_capability);
         }
         $this->hidden = $hidden;
+        $this->context = $context;
     }
 
     /**
@@ -1180,7 +1186,7 @@ class admin_externalpage extends part_of_admin_tree {
         if (!get_site()) {
             return true; // no access check before site is fully set up
         }
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $context = empty($this->context) ? get_context_instance(CONTEXT_SYSTEM) : $this->context;
         foreach($this->req_capability as $cap) {
             if (has_capability($cap, $context)) {
                 return true;
@@ -1228,6 +1234,11 @@ class admin_settingpage extends part_of_admin_tree {
     var $req_capability;
 
     /**
+     * @var object The context in which capability/permission should be checked, default is site context.
+     */
+    var $context;
+
+    /**
      * @var bool hidden in admin tree block.
      */
     var $hidden;
@@ -1253,7 +1264,7 @@ class admin_settingpage extends part_of_admin_tree {
     }
 
     // see admin_externalpage
-    function admin_settingpage($name, $visiblename, $req_capability = 'moodle/site:config', $hidden=false) {
+    function admin_settingpage($name, $visiblename, $req_capability = 'moodle/site:config', $hidden=false, $context=false) {
         global $CFG;
         $this->settings = new stdClass();
         $this->name = $name;
@@ -1264,6 +1275,7 @@ class admin_settingpage extends part_of_admin_tree {
             $this->req_capability = array($req_capability);
         }
         $this->hidden = false;
+        $this->context = $context;
     }
 
     // not the same as add for admin_category. adds an admin_setting to this admin_settingpage. settings appear (on the settingpage) in the order in which they're added
@@ -1283,7 +1295,7 @@ class admin_settingpage extends part_of_admin_tree {
         if (!get_site()) {
             return true; // no access check before site is fully set up
         }
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $context = empty($this->context) ? get_context_instance(CONTEXT_SYSTEM) : $this->context;
         foreach($this->req_capability as $cap) {
             if (has_capability($cap, $context)) {
                 return true;
