@@ -426,9 +426,11 @@ $xml_file  = $CFG->dataroot."/temp/backup/".$backup_unique_code."/moodle.xml";
 $info = restore_read_xml_info($xml_file);
 
 if ($course->id == SITEID) {
-    $siterolesarray = get_assignable_roles (get_context_instance(CONTEXT_SYSTEM, SITEID), "shortname");  
+    $siterolesarray = get_assignable_roles (get_context_instance(CONTEXT_SYSTEM, SITEID), "shortname");
+    $siterolesnamearray = get_assignable_roles (get_context_instance(CONTEXT_SYSTEM, SITEID), "name");  
 } else {
     $siterolesarray = get_assignable_roles (get_context_instance(CONTEXT_COURSE, $course->id), "shortname");
+    $siterolesnamearray = get_assignable_roles (get_context_instance(CONTEXT_COURSE, $course->id), "name");
 }
 
 echo ('<table width="100%" class="restore-form-instances">');
@@ -479,10 +481,13 @@ if ($info->backup_moodle_version < 2006092801) {
     $roles = restore_read_xml_roles($xml_file);
     
     if (!empty($roles->roles)) { // possible to have course with no roles
+        foreach ($siterolesarray as $siteroleid=>$siteroleshortname) {
+            $siteroleschoicearray[$siteroleid] = $siterolesnamearray[$siteroleid]." (". $siterolesarray[$siteroleid].")";
+        }
 
         foreach ($roles->roles as $roleid=>$role) {
             echo ('<tr><td align="right">');
-            echo $role->shortname;
+            echo $role->name." (".($role->shortname).")";
             echo ('</td><td align="left">');
     
             // see if any short name match
@@ -494,7 +499,7 @@ if ($info->backup_moodle_version < 2006092801) {
                 }  
             }
     
-            choose_from_menu ($siterolesarray, "roles_".$roleid, $matchrole, 'new role', '', '0');
+            choose_from_menu ($siteroleschoicearray, "roles_".$roleid, $matchrole, 'new role', '', '0');
             echo ('</td></tr>'); 
         }
     }
