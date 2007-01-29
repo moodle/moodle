@@ -100,7 +100,7 @@ class jsportal {
      * Prints the JavaScript code needed to set up AJAX for the course.
      */
     function print_javascript($courseid, $return=false) {
-        global $CFG;
+        global $CFG, $USER;
 
         $blocksoutput = $output = '';
         for ($i=0; $i<count($this->blocks); $i++) {
@@ -128,6 +128,7 @@ class jsportal {
         $output .= "    main.portal.strings['deletecheck']='".get_string('deletecheck','','_var_')."';\n";
         $output .= "    main.portal.strings['resource']='".get_string('resource')."';\n";
         $output .= "    main.portal.strings['activity']='".get_string('activity')."';\n";
+        $output .= "    main.portal.strings['sesskey']='".$USER->sesskey."';\n";
         $output .= "    onloadobj.load();\n";
         $output .= "    main.process_blocks();\n";
         $output .= "</script>";
