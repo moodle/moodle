@@ -44,13 +44,11 @@
 
               if (!empty($searchtext)) {
                   echo "<optgroup label=\"$strsearchresults (" . $availableusers->_numOfRows . ")\">\n";
-                  while (! $availableusers->EOF) {
-                      $user = $availableusers->FetchObj();
+                  while ($user = rs_fetch_next_record($availableusers)) {
                       if (!isset($enrolledusers[$user->id])) {
                           $fullname = fullname($user, true);
                           echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
                       }
-                      $availableusers->MoveNext();
                   }
                   echo "</optgroup>\n";
 
@@ -59,11 +57,9 @@
                       echo '<optgroup label="'.get_string('toomanytoshow').'"><option></option></optgroup>'."\n"
                           .'<optgroup label="'.get_string('trysearching').'"><option></option></optgroup>'."\n";
                   } else {
-                      while (! $availableusers->EOF) {
-                          $user = $availableusers->FetchObj();
+                      while ($user = rs_fetch_next_record($availableusers)) {
                           $fullname = fullname($user, true);
                           echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
-                          $availableusers->MoveNext();
                       }
                   }
               }
