@@ -2082,7 +2082,7 @@ function db_detect_lobs ($table, &$dataobject, &$clobs, &$blobs, $unset = false,
     /// If the field is CLOB, update its value to '@#CLOB#@' and store it in the $clobs array
         if (strtoupper($columns[strtolower($fieldname)]->type) == $clobdbtype) { 
         /// Oracle optimization. CLOBs under 4000cc can be directly inserted (no need to apply 2-phases to them)
-            if ($db->dbtype == 'oci8po' && strlen($dataobject->$fieldname) < 4000) {
+            if ($CFG->dbtype == 'oci8po' && strlen($dataobject->$fieldname) < 4000) {
                 continue;
             }
             $clobs[$fieldname] = $dataobject->$fieldname;
