@@ -139,7 +139,7 @@
         case 'add':
             print_simple_box_start('center');
             echo '<div align="center">
-                 <form id="nickname" method ="post" action="'.$CFG->wwwroot.'/mod/lesson/highscores.php">
+                 <form id="nickname" method ="post" action="'.$CFG->wwwroot.'/mod/lesson/highscores.php" autocomplete="off">
                  <input type="hidden" name="id" value="'.$cm->id.'" />
                  <input type="hidden" name="mode" value="save" />
                  <input type="hidden" name="sesskey" value="'.sesskey().'" />';
