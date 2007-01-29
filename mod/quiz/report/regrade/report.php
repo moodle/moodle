@@ -32,7 +32,7 @@ class quiz_report extends quiz_default_report {
         print_heading(get_string('regradingquiz', 'quiz', format_string($quiz->name)));
         echo '<center>';
         print_string('regradedisplayexplanation', 'quiz');
-        echo '<center>';
+        echo '</center>';
 
         // Loop through all questions and all attempts and regrade while printing progress info
         foreach ($questions as $question) {
