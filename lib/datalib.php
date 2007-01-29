@@ -678,9 +678,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields='*'
     $rs = get_recordset('course', '', '', $sort, $fields);
 
     if ($rs && $rs->RecordCount() > 0) {
-        while (!$rs->EOF) {
-            $course = (object)$rs->fields;
-
+        while ($course = rs_fetch_next_record($rs)) {
             if ($course->id != SITEID) {
                 // users with moodle/course:view are considered course participants
                 // the course needs to be visible, or user must have moodle/course:viewhiddencourses 
@@ -692,8 +690,6 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields='*'
                     $mycourses[$course->id] = $course;
                 }
             }
-
-            $rs->MoveNext();
         }
     }
 
