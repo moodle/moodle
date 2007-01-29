@@ -193,10 +193,9 @@ function sync_enrolments($role = null) {
 
     begin_sql();
     $extcourses = array();
-    while (!$rs->EOF) { // there are more course records
-        $extcourse = $rs->Fields($CFG->enrol_remotecoursefield);
+    while ($extcourse_obj = rs_fetch_next_record($rs)) { // there are more course records
+        $extcourse = $extcourse_obj->{$CFG->enrol_remotecoursefield};
         array_push($extcourses, $extcourse);
-        $rs->MoveNext(); // prep the next record
 
         print "course $extcourse\n";
 
@@ -255,11 +254,10 @@ function sync_enrolments($role = null) {
         }
 
         // slurp results into an array
-        while (!$crs->EOF) {
-            array_push($extenrolments,$crs->Fields($CFG->enrol_remoteuserfield));
-            $crs->MoveNext(); 
+        while ($crs_obj = rs_fetch_next_record($crs)) {
+            array_push($extenrolments, $crs_obj->{$CFG->enrol_remoteuserfield});
         }
-        $crs->Close(); // release the handle
+        rs_close($crs); // release the handle
 
         //
         // prune enrolments
@@ -318,9 +316,10 @@ function sync_enrolments($role = null) {
                 trigger_error('weird! no user record entry?');
                 continue;
             }
-            $userid      = $ers->Fields('userid');
-            $enrolmentid = $ers->Fields('enrolmentid');
-            unset($ers); // release the handle
+            $user_obj = rs_fetch_record($ers);
+            $userid      = $user_obj->userid;
+            $enrolmentid = $user_obj->enrolmentid;
+            rs_close($ers); // release the handle
 
             if ($enrolmentid) { // already enrolled - skip
                 continue;
@@ -334,6 +333,7 @@ function sync_enrolments($role = null) {
 
         } // end foreach member
     } // end while course records
+    rs_close($rs); //Close the main course recordset
 
     //
     // prune enrolments to courses that are no longer in ext auth
@@ -364,19 +364,18 @@ function sync_enrolments($role = null) {
         return false;
     }
     if ( $ers->RecordCount() > 0 ) {             
-        while (!$ers->EOF) {
-            $roleid     = $ers->Fields('roleid');
-            $user       = $ers->Fields('userid');
-            $contextid  = $ers->Fields('contextid');
-            $ers->MoveNext(); 
+        while ($user_obj = rs_fetch_next_record($ers)) {
+            $roleid     = $user_obj->roleid;
+            $user       = $user_obj->userid;
+            $contextid  = $user_obj->contextid;
             if (role_unassign($roleid, $user, 0, $contextid)){
                 print "Unassigned role {$roleid} from user $user in context $contextid\n";
             } else {
                 print "Failed unassign role {$roleid} from user $user in context $contextid\n";
             }
         }
+        rs_close($ers); // release the handle
     }
-    unset($ers); // release the handle
     commit_sql();
     
     // we are done now, a bit of housekeeping
