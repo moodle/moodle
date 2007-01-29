@@ -66,7 +66,7 @@
                 lesson_print_header($cm, $course, $lesson);
                 echo "<div class=\"password-form\">\n";
                 print_simple_box_start('center');
-                echo '<form name="password" method="post" action="'.$CFG->wwwroot.'/mod/lesson/view.php">' . "\n";
+                echo '<form name="password" method="post" action="'.$CFG->wwwroot.'/mod/lesson/view.php" autocomplete="off">' . "\n";
                 echo '<input type="hidden" name="id" value="'. $cm->id .'" />' . "\n";
                 if (optional_param('userpassword', 0, PARAM_CLEAN)) {
                     notify(get_string('loginfail', 'lesson'));
@@ -537,7 +537,7 @@
         
         // get the answers in a set order, the id order
         if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
-            echo "<form name=\"answerform\" method =\"post\" action=\"lesson.php\">";
+            echo "<form name=\"answerform\" method =\"post\" action=\"lesson.php\" autocomplete=\"off\">";
             echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
             echo "<input type=\"hidden\" name=\"action\" value=\"continue\" />";
             echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />";
