@@ -5260,16 +5260,18 @@ function notify_login_failures() {
 
     if ($notifyipsrs) {
         $ipstr = '';
-        while ($row = $notifyipsrs->FetchRow()) {
-            $ipstr .= "'". $row['ip'] ."',";
+        while ($row = rs_fetch_next_record($notifyipsrs)) {
+            $ipstr .= "'". $row->ip ."',";
         }
+        rs_close($notifyipsrs);
         $ipstr = substr($ipstr,0,strlen($ipstr)-1);
     }
     if ($notifyusersrs) {
         $userstr = '';
-        while ($row = $notifyusersrs->FetchRow()) {
-            $userstr .= "'". $row['info'] ."',";
+        while ($row = rs_fetch_next_record($notifyusersrs)) {
+            $userstr .= "'". $row->info ."',";
         }
+        rs_close($notifyusersrs);
         $userstr = substr($userstr,0,strlen($userstr)-1);
     }
 
