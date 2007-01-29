@@ -4417,7 +4417,7 @@ function forum_delete_userdata($data, $showfeedback=true) {
         }
     }
     if (!empty($data->reset_forum_single)) {
-        $select = "$sql AND f.type = 'single' and fp.parent > 0 )";
+        $select = "$sql AND f.type = 'single' ) AND parent <> 0";
         if (execute_sql($select, false) and $showfeedback) {
             notify($strreset.': '.get_string('singleforum','forum'), 'notifysuccess');
         }
