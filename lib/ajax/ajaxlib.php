@@ -115,6 +115,12 @@ class jsportal {
         $output .= "<script language='javascript'>\n";
         $output .= " 	main.portal.id = ".$courseid.";\n";
         $output .= "    main.portal.blocks = new Array(".$blocksoutput.");\n";
+        $output .= "    main.portal.sesskey = \"".$USER->sesskey."\";\n";
+        if (check_browser_version('MSIE')) {
+            $output .= "    main.portal.clientIsIE = true;\n";
+        } else {
+            $output .= "    main.portal.clientIsIE = false;\n";
+        }
         $output .= "    main.portal.strings['wwwroot']='".$CFG->wwwroot."';\n";
         $output .= "    main.portal.strings['pixpath']='".$CFG->pixpath."';\n";
         $output .= "    main.portal.strings['move']='".get_string('move')."';\n";
@@ -128,7 +134,6 @@ class jsportal {
         $output .= "    main.portal.strings['deletecheck']='".get_string('deletecheck','','_var_')."';\n";
         $output .= "    main.portal.strings['resource']='".get_string('resource')."';\n";
         $output .= "    main.portal.strings['activity']='".get_string('activity')."';\n";
-        $output .= "    main.portal.strings['sesskey']='".$USER->sesskey."';\n";
         $output .= "    onloadobj.load();\n";
         $output .= "    main.process_blocks();\n";
         $output .= "</script>";
