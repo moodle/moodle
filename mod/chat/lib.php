@@ -371,7 +371,7 @@ function chat_get_latest_message($chatid, $groupid=0) {
         return false;
     }
     if ($rs->RecordCount() == 1) {
-        return (object)$rs->fields;
+        return rs_fetch_record($rs);
     } else {
         return false;                 // Found no records
     }
