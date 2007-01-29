@@ -106,12 +106,14 @@ function auth_get_userinfo($username){
             if ($rs = $authdb->Execute("SELECT ".$pcfg["field_map_$field"]." as myfield FROM $CFG->auth_dbtable
                                         WHERE $CFG->auth_dbfielduser = '$username'")) {
                 if ( $rs->RecordCount() == 1 ) {
+                    $fields_obj = rs_fetch_record($rs);
                     if (!empty($CFG->unicodedb)) {
-                        $result["$field"] = addslashes(stripslashes($rs->fields['myfield']));
+                        $result["$field"] = addslashes(stripslashes($fields_obj->myfield));
                     } else {
-                        $result["$field"] = addslashes(stripslashes(utf8_decode($rs->fields['myfield'])));
+                        $result["$field"] = addslashes(stripslashes(utf8_decode($fields_obj->myfield)));
                     }
                 }
+                rs_close($rs);
             }
         }
     }
