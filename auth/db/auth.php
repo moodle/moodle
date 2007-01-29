@@ -138,13 +138,15 @@ class auth_plugin_db {
                 " WHERE {$this->config->fielduser} = '$username'";
             if ($rs = $authdb->Execute($sql)) {
                 if ( $rs->RecordCount() == 1 ) {
+                    $fields_obj = rs_fetch_record($rs);
                     foreach ($selectfields as $localname=>$externalname) {
                         if (empty($CFG->unicodedb)) {
-                            $rs->fields[$localname] = utf8_decode($rs->fields[$localname]);
+                            $fields_obj->{$localname} = utf8_decode($fields_obj->{$localname});
                          }
-                        $result[$localname] = addslashes(stripslashes($rs->fields[$localname]));
+                        $result[$localname] = addslashes(stripslashes($fields_obj->{$localname}));
                      }
                  }
+                 rs_close($rs);
             }
         }
         $authdb->Close();
