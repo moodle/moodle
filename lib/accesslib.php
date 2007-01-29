@@ -1231,13 +1231,12 @@ function moodle_install_roles() {
 
     if (in_array($CFG->prefix.'user_admins', $dbtables)) {
         if ($rs = get_recordset_sql('SELECT * from '.$CFG->prefix.'user_admins ORDER BY ID ASC')) {
-            while (! $rs->EOF) {
-                $admin = $rs->FetchObj();
+            while ($admin = rs_fetch_next_record($rs)) {
                 role_assign($adminrole, $admin->userid, 0, $systemcontext->id);
                 $progresscount++;
                 print_progress($progresscount, $totalcount, 5, 1, 'Processing role assignments');
-                $rs->MoveNext();
             }
+            rs_close($rs);
         }
     } else {
         // This is a fresh install.
@@ -1247,13 +1246,12 @@ function moodle_install_roles() {
 /// Upgrade course creators.
     if (in_array($CFG->prefix.'user_coursecreators', $dbtables)) {
         if ($rs = get_recordset('user_coursecreators')) {
-            while (! $rs->EOF) {
-                $coursecreator = $rs->FetchObj();
+            while ($coursecreator = rs_fetch_next_record($rs)) {
                 role_assign($coursecreatorrole, $coursecreator->userid, 0, $systemcontext->id);
                 $progresscount++;
                 print_progress($progresscount, $totalcount, 5, 1, 'Processing role assignments');
-                $rs->MoveNext();
             }
+            rs_close($rs);
         }
     }
 
@@ -1261,12 +1259,10 @@ function moodle_install_roles() {
 /// Upgrade editting teachers and non-editting teachers.
     if (in_array($CFG->prefix.'user_teachers', $dbtables)) {
         if ($rs = get_recordset('user_teachers')) {
-            while (! $rs->EOF) {
-                $teacher = $rs->FetchObj();
+            while ($teacher = rs_fetch_next_record($rs)) {
                 // ignore site level teacher assignments
                 if ($teacher->course == SITEID) {
                     $progresscount++;
-                    $rs->MoveNext();
                     continue;  
                 }
                 // populate the user_lastaccess table
@@ -1285,9 +1281,8 @@ function moodle_install_roles() {
                 }
                 $progresscount++;
                 print_progress($progresscount, $totalcount, 5, 1, 'Processing role assignments');
-
-                $rs->MoveNext();
             }
+            rs_close($rs);
         }
     }
 
@@ -1295,8 +1290,7 @@ function moodle_install_roles() {
 /// Upgrade students.
     if (in_array($CFG->prefix.'user_students', $dbtables)) {
         if ($rs = get_recordset('user_students')) {
-            while (! $rs->EOF) {
-                $student = $rs->FetchObj();
+            while ($student = rs_fetch_next_record($rs)) {
 
                 // populate the user_lastaccess table
                 $access = new object;
@@ -1310,9 +1304,8 @@ function moodle_install_roles() {
                 role_assign($studentrole, $student->userid, 0, $coursecontext->id);
                 $progresscount++;
                 print_progress($progresscount, $totalcount, 5, 1, 'Processing role assignments');
-
-                $rs->MoveNext();
             }
+            rs_close($rs);
         }
     }
 
