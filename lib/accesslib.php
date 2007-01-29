@@ -873,8 +873,8 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
     }
 
     if ($rs && $rs->RecordCount() > 0) {
-        while (!$rs->EOF) {
-            $array = $rs->fields;
+        while ($caprec = rs_fetch_next_record($rs)) {
+            $array = (array)$caprec;
             $temprecord = new object;
 
             foreach ($array as $key=>$val) {
@@ -884,12 +884,11 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
                     $temprecord->{$key} = $val;
                 }
             }
-            
             $capabilities[] = $temprecord;
-            $rs->MoveNext();
         }
+        rs_close($rs);
     }
-    
+
     // SQL for overrides
     // this is take out because we have no way of making sure c1 is indeed related to c2 (parent)
     // if we do not group by sum, it is possible to have multiple records of rc.capability, c1.id, c2.id, tuple having
@@ -926,8 +925,8 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
     }
 
     if ($rs && $rs->RecordCount() > 0) {
-        while (!$rs->EOF) {
-            $array = $rs->fields;
+        while ($caprec = rs_fetch_next_record($rs)) {
+            $array = (array)$caprec;
             $temprecord = new object;
 
             foreach ($array as $key=>$val) {
@@ -942,8 +941,8 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
             //if (is_parent_context($temprecord->id1, $temprecord->id2)) {
                 $capabilities[] = $temprecord;
             //} // only write if relevant
-            $rs->MoveNext();
         }
+        rs_close($rs);
     }
 
     // this step sorts capabilities according to the contextlevel
