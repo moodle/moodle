@@ -95,9 +95,6 @@
             error("Could not unsubscribe you from that forum", $_SERVER["HTTP_REFERER"]);
         }
 
-    } else if (has_capability('moodle/legacy:guest', $context, $user->id, false)) { // Guests can not subscribe
-        error("Guests can not subscribe to forums", $_SERVER["HTTP_REFERER"]);
-
     } else {  // subscribe
         if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE &&
                     !has_capability('mod/forum:managesubscriptions', $context)) {
