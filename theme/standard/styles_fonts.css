@@ -480,7 +480,7 @@ body#grade-index .grades .header {
  *** Login
  ***/
 
-#login-index .content {
+#login-index #content {
   font-size: 0.85em;
 }
 
