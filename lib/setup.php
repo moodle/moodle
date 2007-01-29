@@ -207,7 +207,7 @@ global $HTTPSPAGEREQUIRED;
     configure_dbconnection();
 
 /// Load up any configuration from the config table
-    $CFG->rcache = false;
+    unset($CFG->rcache);
     $CFG = get_config();
 
 /// Turn on SQL logging if required
