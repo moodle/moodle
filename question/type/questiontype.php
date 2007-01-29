@@ -271,8 +271,7 @@ class default_questiontype {
             $question->options = new object;
         }
         // The default implementation attaches all answers for this question
-        $question->options->answers = get_records('question_answers', 'question',
-         $question->id);
+        $question->options->answers = get_records('question_answers', 'question', $question->id, 'id ASC');
         return true;
     }
 

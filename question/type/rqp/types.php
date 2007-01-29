@@ -136,7 +136,7 @@
 
     if ($types) {
         foreach ($types as $type) {
-            if (!$servers = get_records('question_rqp_servers', 'typeid', $type->id)) {
+            if (!$servers = get_records('question_rqp_servers', 'typeid', $type->id, 'id ASC')) {
                 delete_records('question_rqp_types', 'id', $type->id);
             } else {
                 foreach ($servers as $server) {

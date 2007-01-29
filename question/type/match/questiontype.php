@@ -13,7 +13,7 @@ class question_match_qtype extends default_questiontype {
 
     function get_question_options(&$question) {
         $question->options = get_record('question_match', 'question', $question->id);
-        $question->options->subquestions = get_records("question_match_sub", "question", $question->id, "id ASC" );
+        $question->options->subquestions = get_records('question_match_sub', 'question', $question->id, 'id ASC');
         return true;
     }
 
@@ -110,8 +110,7 @@ class question_match_qtype extends default_questiontype {
     }
 
     function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
-        if (!$state->options->subquestions = get_records('question_match_sub',
-                'question', $question->id)) {
+        if (!$state->options->subquestions = get_records('question_match_sub', 'question', $question->id, 'id ASC')) {
             notify('Error: Missing subquestions!');
             return false;
         }
@@ -147,8 +146,7 @@ class question_match_qtype extends default_questiontype {
         $responses = array_map(create_function('$val',
          'return explode("-", $val);'), $responses);
 
-        if (!$questions = get_records('question_match_sub',
-         'question', $question->id)) {
+        if (!$questions = get_records('question_match_sub', 'question', $question->id, 'id ASC')) {
            notify('Error: Missing subquestions!');
            return false;
         }
@@ -416,7 +414,7 @@ class question_match_qtype extends default_questiontype {
 
         $status = true;
 
-        $matchs = get_records("question_match_sub","question",$question,"id");
+        $matchs = get_records('question_match_sub', 'question', $question, 'id ASC');
         //If there are matchs
         if ($matchs) {
             $status = fwrite ($bf,start_tag("MATCHS",6,true));

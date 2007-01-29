@@ -60,7 +60,8 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                     c.correctanswerlength, c.id AS calcid
                FROM {$CFG->prefix}question_answers a,
                     {$CFG->prefix}question_calculated c
-              WHERE c.question = $question->id AND a.id = c.answer")) {
+              WHERE c.question = $question->id AND a.id = c.answer
+           ORDER BY a.id ASC")) {
             $oldanswers = array();
         }
 

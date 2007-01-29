@@ -28,7 +28,7 @@ class embedded_cloze_qtype extends default_questiontype {
             return false;
         }
 
-        $wrappedquestions = get_records_list('question', 'id', $sequence);
+        $wrappedquestions = get_records_list('question', 'id', $sequence, 'id ASC');
 
         // We want an array with question ids as index and the positions as values
         $sequence = array_flip(explode(',', $sequence));
