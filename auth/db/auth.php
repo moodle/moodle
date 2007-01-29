@@ -397,8 +397,8 @@ class auth_plugin_db {
         
         if ( $rs->RecordCount() ) {
             $userlist = array();
-            while ($rec = $rs->FetchRow()) {
-                array_push($userlist, $rec['username']);
+            while ($rec = rs_fetch_next_record($rs)) {
+                array_push($userlist, $rec->username);
             }
             return $userlist;
         } else {
