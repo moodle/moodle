@@ -115,6 +115,12 @@ class jsportal {
         $output .= "<script type=\"text/javascript\">\n";
         $output .= " 	main.portal.id = ".$courseid.";\n";
         $output .= "    main.portal.blocks = new Array(".$blocksoutput.");\n";
+        $output .= "    main.portal.sesskey = \"".$USER->sesskey."\";\n";
+        if (check_browser_version('MSIE')) {
+            $output .= "    main.portal.clientIsIE = true;\n";
+        } else {
+            $output .= "    main.portal.clientIsIE = false;\n";
+        }
         $output .= "    main.portal.strings['wwwroot']='".$CFG->wwwroot."';\n";
         $output .= "    main.portal.strings['pixpath']='".$CFG->pixpath."';\n";
         $output .= "    main.portal.strings['move']='".get_string('move')."';\n";
