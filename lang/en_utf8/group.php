@@ -19,6 +19,8 @@ $string['errorinvalidgroup'] = 'Error, invalid group $a';
 $string['erroreditgrouping'] = 'Error creating/updating grouping $a';
 $string['erroreditgroup'] = 'Error creating/updating group $a';
 
+$string['upgradeconfirm'] = 'Sorry, groups tables created in Moodle 1.8 dev have to be deleted for this upgrade. Do you want to continue?';
+
 $string['groupings'] = 'Groupings';
 $string['grouping'] = 'Grouping';
 $string['groups'] = 'Groups';

@@ -278,7 +278,7 @@ function groups_db_create_group($courseid, $groupsettings=false, $copytime=false
             $record2 = new Object();
 	        $record2->courseid = $courseid;
 	        $record2->groupid = $groupid;
-           if ($copytime) {
+            if ($copytime) {
                 $record2->timeadded = $record->timemodified;
             } else {
                 $record2->timeadded = $now;
@@ -290,6 +290,38 @@ function groups_db_create_group($courseid, $groupsettings=false, $copytime=false
         }
     }
     return $groupid;
+}
+
+/** 
+ * Upgrades a group for a specified course. To preserve the group ID we do a raw insert.
+ * @param int $courseid The course to create the group for
+ * @return int The id of the group created or false if the insert failed.
+ */
+function groups_db_upgrade_group($courseid, $group) {
+    global $CFG;
+    // Check we have a valid course id
+    if (!$courseid || !$group || !isset($group->id)) {
+        return false; 
+    }
+
+    $r = addslashes_object($group);
+    $sql = "INSERT INTO {$CFG->prefix}groups
+        (id,name,description, enrolmentkey,lang,theme,picture,hidepicture, timecreated,timemodified)
+        VALUES ('$r->id','$r->name','$r->description', '$r->enrolmentkey','$r->lang',
+        '$r->theme','$r->picture','$r->hidepicture', '$r->timecreated','$r->timemodified')";
+
+    if ($result = execute_sql($sql)) {
+        $record2 = new Object();
+        $record2->courseid = $courseid;
+        $record2->groupid = $group->id;
+        $record2->timeadded = $group->timemodified;
+
+        $groupadded = insert_record('groups_courses_groups', $record2);
+        if (! $groupadded) {
+            $groupid = false;
+        }
+    }
+    return $group->id;
 }
 
 

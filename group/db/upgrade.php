@@ -26,8 +26,8 @@ function upgrade_group_db($continueto) {
     $group_version = '';  // Get code versions
     require_once ("$CFG->dirroot/group/version.php");
 
-    if (empty($CFG->group_version)) {  // New groups have never been installed...
-        $status = false;
+    if (empty($CFG->group_version)) {  // New 1.8 groups have never been installed...
+        $status = true;
 
         $strdatabaseupgrades = get_string('databaseupgrades');
         print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '', 
@@ -39,25 +39,25 @@ function upgrade_group_db($continueto) {
 
         //TODO: for testing, revert to 'old' groups.
         if (! get_config('group_version')) {
-            $status = revert_group_db();
+            $status = $status && groups_revert_db();
         }
 
         //... But Moodle is already installed.
         if (table_exists($t_groups = new XMLDBTable('groups'))) {
-            $status = rename_table($t_groups, 'groups_temp');
-            $status = rename_table(new XMLDBTable('groups_members'), 'groups_members_temp');
+            $status = $status && rename_table($t_groups, 'groups_temp');
+            $status = $status && rename_table(new XMLDBTable('groups_members'), 'groups_members_temp');
         }
 
     /// Both old .sql files and new install.xml are supported
     /// but we prioritize install.xml (XMLDB) if present
 
         if (file_exists($CFG->dirroot . '/group/db/install.xml')) {
-            $status = install_from_xmldb_file($CFG->dirroot . '/group/db/install.xml'); //New method
+            $status = $status && install_from_xmldb_file($CFG->dirroot . '/group/db/install.xml'); //New method
         } else if (file_exists($CFG->dirroot . '/group/db/' . $CFG->dbtype . '.sql')) {
-            $status = modify_database($CFG->dirroot . '/group/db/' . $CFG->dbtype . '.sql'); //Old method
+            $status = $status && modify_database($CFG->dirroot . '/group/db/' . $CFG->dbtype . '.sql'); //Old method
         }
 
-        $status = transfer_group_db();
+        $status = $status && groups_transfer_db();
 
         $db->debug = false;
     
@@ -146,13 +146,15 @@ function upgrade_group_db($continueto) {
     }
 }
 
-
-function transfer_group_db() {
+/**
+ * Transfer data from old 1.7 to new 1.8 groups tables.
+ */
+function groups_transfer_db() {
     $status = true;
     
     if (table_exists($t_groups = new XMLDBTable('groups_temp'))) {
-        $status = (bool)$groups_r = get_records('groups_temp');
-        $status = (bool)$members_r= get_records('groups_members_temp');
+        $status = $status &&(bool)$groups_r = get_records('groups_temp');
+        $status = $status &&(bool)$members_r= get_records('groups_members_temp');
 
         if (! $groups_r) {
             return $status;
@@ -164,48 +166,128 @@ function transfer_group_db() {
             $group->enrolmentkey = $group->password;
             ///unset($group->password);
             ///unset($group->courseid);
-            $status = (bool)$newgroupid = groups_create_group($group->courseid, $group);
-            debugging('Create group status: '.$status); //TODO: ?
+            $status = $status &&(bool)$newgroupid = groups_db_upgrade_group($group->courseid, $group);
             if ($members_r) {
                 foreach ($members_r as $member) {
                     if ($member->groupid == $group->id) {
-                        $status = (bool)$memberid = groups_add_member($newgroupid, $member->userid);
+                        $status = $status &&(bool)$memberid = groups_add_member($newgroupid, $member->userid);
                     }
                 }
             }
-            debugging('Add member status: '.$status);
         }
-        ///$status = drop_table($t_groups);
-        ///$status = drop_table(new XMLDBTable('groups_members_temp'));
+        ///$status = $status && drop_table($t_groups);
+        ///$status = $status && drop_table(new XMLDBTable('groups_members_temp'));
+    } else {
+        return false;
     }
     return $status;
 }
 
 
-/**
- * For testing, it's useful to be able to revert to 'old' groups.
- */
-function revert_group_db() {
-    $status = false;
-    //$status = (bool)$rs = delete_records('config', 'name', 'group_version');
-    if (!get_config('group_version') && table_exists(new XMLDBTable('groups_groupings'))) { //debugging()
-        $status = drop_table(new XMLDBTable('groups'));
-        $status = drop_table(new XMLDBTable('groups_members'));
-        $status = drop_table(new XMLDBTable('groups_groupings'));
-        $status = drop_table(new XMLDBTable('groups_courses_groups'));
-        $status = drop_table(new XMLDBTable('groups_courses_groupings'));
-        $status = drop_table(new XMLDBTable('groups_groupings_groups'));
+function groups_drop_keys_indexes_db() {
+    $result = true;
+    /// Define index groupid-courseid (unique) to be added to groups_members
+        $table = new XMLDBTable('groups_members');
+        $index = new XMLDBIndex('groupid-courseid');
+        $index->setAttributes(XMLDB_INDEX_UNIQUE, array('groupid', 'userid'));
 
-        $status = rename_table(new XMLDBTable('groups_temp'), 'groups');
-        $status = rename_table(new XMLDBTable('groups_members_temp'), 'groups_members');
+    /// Launch add index groupid-courseid
+        $result = $result && drop_index($table, $index);
+
+    /// Define key courseid (foreign) to be added to groups_courses_groups
+        $table = new XMLDBTable('groups_courses_groups');
+        $key = new XMLDBKey('courseid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+
+    /// Launch add key courseid
+        $result = $result && drop_key($table, $key);
+
+    /// Define key groupid (foreign) to be added to groups_courses_groups
+        $key = new XMLDBKey('groupid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('groupid'), 'groups', array('id'));
+
+    /// Launch add key groupid
+        $result = $result && drop_key($table, $key);
+
+    /// Define index courseid-groupid (unique) to be added to groups_courses_groups
+        $index = new XMLDBIndex('courseid-groupid');
+        $index->setAttributes(XMLDB_INDEX_UNIQUE, array('courseid', 'groupid'));
+
+    /// Launch add index courseid-groupid
+        $result = $result && drop_index($table, $index);
+
+    /// Define key courseid (foreign) to be added to groups_courses_groupings
+        $table = new XMLDBTable('groups_courses_groupings');
+        $key = new XMLDBKey('courseid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+
+    /// Launch add key courseid
+        $result = $result && drop_key($table, $key);
+
+    /// Define key groupingid (foreign) to be added to groups_courses_groupings
+        $key = new XMLDBKey('groupingid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('groupingid'), 'groups_groupings', array('id'));
+
+    /// Launch add key groupingid
+        $result = $result && drop_key($table, $key);
+
+    /// Define index courseid-groupingid (unique) to be added to groups_courses_groupings
+        $index = new XMLDBIndex('courseid-groupingid');
+        $index->setAttributes(XMLDB_INDEX_UNIQUE, array('courseid', 'groupingid'));
+
+    /// Launch add index courseid-groupingid
+        $result = $result && drop_index($table, $index);
+
+    /// Define key groupingid (foreign) to be added to groups_groupings_groups
+        $table = new XMLDBTable('groups_groupings_groups');
+        $key = new XMLDBKey('groupingid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('groupingid'), 'groups_groupings', array('id'));
+
+    /// Launch add key groupingid
+        $result = $result && drop_key($table, $key);
+
+    /// Define key groupid (foreign) to be added to groups_groupings_groups
+        $key = new XMLDBKey('groupid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('groupid'), 'groups', array('id'));
+
+    /// Launch add key groupid
+        $result = $result && drop_key($table, $key);
+
+    /// Define index groupingid-groupid (unique) to be added to groups_groupings_groups
+        $index = new XMLDBIndex('groupingid-groupid');
+        $index->setAttributes(XMLDB_INDEX_UNIQUE, array('groupingid', 'groupid'));
+
+    /// Launch add index groupingid-groupid
+        $result = $result && drop_index($table, $index);
+
+    return $result;
+}
+
+/**
+ * Drop 'new' 1.8 groups tables for 200701240 upgrade below.
+ * (Also, for testing it's useful to be able to revert to 'old' groups.)
+ */
+function groups_revert_db($renametemp=true) {
+    $status = true;
+    ///$status = (bool)$rs = delete_records('config', 'name', 'group_version');
+    if (table_exists(new XMLDBTable('groups_groupings'))) {
+
+        $tables = array('', '_members', '_groupings', '_courses_groups', '_courses_groupings', '_groupings_groups');
+        foreach ($tables as $t_name) {
+            $status = $status && drop_table(new XMLDBTable('groups'.$t_name));
+        }
+
+        if ($renametemp) {
+            $status = $status && rename_table(new XMLDBTable('groups_temp'), 'groups');
+            $status = $status && rename_table(new XMLDBTable('groups_members_temp'), 'groups_members');
+        }
     }
     return $status;
 }
 
 
 function xmldb_group_upgrade($oldversion=0) {
-
-    //global $CFG, $THEME, $db;
+    global $CFG; //, $THEME, $db;
 
     $result = true;
 
@@ -321,6 +403,30 @@ function xmldb_group_upgrade($oldversion=0) {
 
     /// Launch add index groupingid-groupid
         $result = $result && add_index($table, $index);
+    }
+
+    if ($result && $oldversion < 2007012400) {
+        if( table_exists(new XMLDBTable('groups_temp'))
+            && file_exists($CFG->dirroot.'/group/db/install.xml') ) {
+
+            $groupupgrade = optional_param('confirmgroupupgrade', 0, PARAM_BOOL);
+            if (empty($groupupgrade)) {
+                notice_yesno(get_string('upgradeconfirm', 'group'), 'index.php?confirmgroupupgrade=yes', 'index.php');
+                //$feedback = false;
+                print_footer();
+                exit;
+            } //ELSE
+            /// Need to drop foreign keys/indexes added in last upgrade, drop 'new' tables, then start again!!
+            $result = $result && groups_drop_keys_indexes_db();
+            $result = $result && groups_revert_db($renametemp=false);
+            $result = $result && install_from_xmldb_file($CFG->dirroot.'/group/db/install.xml');
+            $result = $result && groups_transfer_db();
+
+            ///$result = $result && groups_rename_db2($suffix='_temp_18');
+        }
+        else {
+            error('Upgrade 2007012400 of groups failed! (Could not update version in config table)');
+        }
     }
 
     return $result;
