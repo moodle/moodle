@@ -266,9 +266,9 @@ function process_fib($xml, &$questions) {
     else {
         return;
     }
+    
 
     for ($i = 0; $i < sizeof ($fibquestions); $i++) {
-
         $question = $this->defaultquestion();
 
         $question->qtype = SHORTANSWER;
@@ -291,11 +291,23 @@ function process_fib($xml, &$questions) {
 
         $question->answer[] = addslashes($answer);
         $question->fraction[] = 1;
-        $question->feedback[0] = addslashes(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
-        $question->feedback[1] = addslashes(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
+        $question->feedback = array();
+
+        if (is_array( $thisquestion['#']['GRADABLE'][0]['#'] )) {
+            $question->feedback[0] = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
+        }
+        else {
+            $question->feedback[0] = '';
+        }      
+        if (is_array( $thisquestion["#"]["GRADABLE"][0]["#"] )) {
+            $question->feedback[1] = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
+        }
+        else {
+            $question->feedback[1] = '';
+        }        
          
         $questions[] = $question;
-      }
+      } 
 }
 
 //----------------------------------------
