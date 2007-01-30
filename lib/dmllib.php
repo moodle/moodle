@@ -400,7 +400,7 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
     
     // Check to see whether this record is eligible for caching (fields=*, only condition is id)
     $docache = false;
-    if ($CFG->rcache === true && $field1=='id' && !$field2 && !$field3 && $fields=='*') {
+    if (!empty($CFG->rcache) && $CFG->rcache === true && $field1=='id' && !$field2 && !$field3 && $fields=='*') {
         $docache = true;
         // If it's in the cache, return it
         $cached = rcache_getforfill($table, $value1);
