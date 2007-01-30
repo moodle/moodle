@@ -66,7 +66,7 @@ class question_dataset_dependent_definitions_form extends moodleform {
                 $key++;
             }
         }
-        $this->add_action_buttons(true, get_string('nextpage', 'qtype_calculated'));
+        $this->add_action_buttons(false, get_string('nextpage', 'qtype_calculated'));
 
 
         //hidden elements

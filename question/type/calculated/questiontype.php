@@ -331,16 +331,14 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         $minmaxgrp[] =& $mform->createElement('text', "calcmin[$idx]", get_string('calcmin', 'qtype_datasetdependent'), 'size="3"');
         $minmaxgrp[] =& $mform->createElement('text', "calcmax[$idx]", get_string('calcmax', 'qtype_datasetdependent'), 'size="3"');
         $mform->addGroup($minmaxgrp, 'minmaxgrp', get_string('minmax', 'qtype_datasetdependent'), ' - ', false);
+        $mform->setType('calcmin', PARAM_NUMBER);
+        $mform->setType('calcmax', PARAM_NUMBER);
 
         $precisionoptions = range(0, 10);
         $mform->addElement('select', "calclength[$idx]", get_string('calclength', 'qtype_datasetdependent'), $precisionoptions);
 
         $distriboptions = array('uniform' => get_string('uniform', 'qtype_datasetdependent'), 'loguniform' => get_string('loguniform', 'qtype_datasetdependent'));
         $mform->addElement('select', "calcdistribution[$idx]", get_string('calcdistribution', 'qtype_datasetdependent'), $distriboptions);
-
-
-        $mform->addElement('hidden', "definition[$j]");
-        $mform->addElement('hidden', "itemid[$j]");
 
 
     }
@@ -394,7 +392,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         if (empty($form->definition) || empty($form->calcmin)
                 || empty($form->calcmax) || empty($form->calclength)
                 || empty($form->calcdistribution)) {
-            // I gues not:
+            // I guess not
 
         } else {
             // Looks like we just could have some new information here
@@ -452,6 +450,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         }
         // Handle adding and removing of dataset items
         $i = 1;
+        ksort($fromform->definition);
         foreach ($fromform->definition as $key => $defid) {
             //if the delete button has not been pressed then skip the datasetitems
             //in the 'add item' part of the form.
