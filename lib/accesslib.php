@@ -225,7 +225,7 @@ function get_parent_cats($context, $type) {
         break;
         
         // a course always fall into a category, unless it's a site course
-        // this happens when SITEID = $course->id
+        // this happens when SITEID == $course->id
         // in this case the parent of the course is site context
         case CONTEXT_COURSE:
             if (!$course = get_record('course', 'id', $context->instanceid)) {
@@ -953,13 +953,13 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
 */
     /* so up to this point we should have somethign like this
      * $capabilities[1]    ->contextlevel = 1000
-                           ->module = SITEID
+                           ->module = 0 // changed from SITEID in 1.8 (??)
                            ->capability = do_anything
                            ->id = 1 (id is the context id)
                            ->sum = 0
 
      * $capabilities[2]     ->contextlevel = 1000
-                            ->module = SITEID
+                            ->module = 0 // changed from SITEID in 1.8 (??)
                             ->capability = post_messages
                             ->id = 1
                             ->sum = -9000
@@ -1562,6 +1562,10 @@ function create_context($contextlevel, $instanceid) {
             debugging('Error: Invalid context creation request for level "'.s($contextlevel).'", instance "'.s($instanceid).'".');
             return NULL;
         }
+        if ($contextlevel == CONTEXT_SYSTEM) {
+            return create_system_context();
+            
+        }
         $context = new object();
         $context->contextlevel = $contextlevel;
         $context->instanceid = $instanceid;
@@ -1580,6 +1584,30 @@ function create_context($contextlevel, $instanceid) {
     }
 }
 
+/*
+ * This hacky function is needed because we can not change system context instanceid using normal upgrade routine.
+ */
+function create_system_context() {
+    if ($context = get_record('context', 'contextlevel', CONTEXT_SYSTEM, 'instanceid', SITEID)) {
+        // we are going to change instanceid of system context to 0 now
+        $context->instanceid = 0;
+        update_record('context', $context);
+        //context rel not affected
+        return $context;
+
+    } else {
+        $context = new object();
+        $context->contextlevel = CONTEXT_SYSTEM;
+        $context->instanceid = 0;
+        if ($context->id = insert_record('context',$context)) {
+            // we need not to populate context_rel for system context
+            return $context;
+        } else {
+            debugging('Can not create system context');
+            return NULL;
+        }
+    }
+}
 /**
  * Create a new context record for use by all roles-related stuff
  * @param $level
@@ -1607,7 +1635,7 @@ function validate_context($contextlevel, $instanceid) {
     switch ($contextlevel) {
 
         case CONTEXT_SYSTEM:
-            return ($instanceid == SITEID);
+            return ($instanceid == 0);
 
         case CONTEXT_PERSONAL:
             return (boolean)count_records('user', 'id', $instanceid);
@@ -1645,17 +1673,12 @@ function validate_context($contextlevel, $instanceid) {
  * @param $level
  * @param $instance
  */
-function get_context_instance($contextlevel=NULL, $instance=SITEID) {
+function get_context_instance($contextlevel=NULL, $instance=0) {
 
     global $context_cache, $context_cache_id, $CONTEXT;
     static $allowed_contexts = array(CONTEXT_SYSTEM, CONTEXT_PERSONAL, CONTEXT_USER, CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_GROUP, CONTEXT_MODULE, CONTEXT_BLOCK);
 
-    // This is really a systen context
-    // Yu: Separating site and site course context
-    /*
-    if ($contextlevel == CONTEXT_COURSE && $instance == SITEID) {
-        $contextlevel = CONTEXT_SYSTEM;
-    }*/
+    // Yu: Separating site and site course context - removed CONTEXT_COURSE override when SITEID
 
 /// If no level is supplied then return the current global context if there is one
     if (empty($contextlevel)) {
@@ -1665,6 +1688,11 @@ function get_context_instance($contextlevel=NULL, $instance=SITEID) {
         } else {
             return $CONTEXT;
         }
+    }
+
+/// Backwards compatibility with obsoleted (CONTEXT_SYSTEM, SITEID)
+    if ($contextlevel == CONTEXT_SYSTEM) {
+        $instance = 0;
     }
 
 /// check allowed context levels
