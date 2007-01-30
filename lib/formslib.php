@@ -1349,7 +1349,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     * @var      string
     * @access   private
     */
-    var $_closeFieldsetTemplate = "\n\t\t</fieldset>";
+    var $_closeFieldsetTemplate = "\n\t\t<div class=\"clearer\">&nbsp;</div>\n\t\t</fieldset>";
 
    /**
     * Required Note template string
