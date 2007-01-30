@@ -121,6 +121,7 @@ function presave_process( $content ) {
   $xp .= "  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
   $xp .= "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n";
   $xp .= "<head>\n";
+  $xp .= "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\" />\n";
   $xp .= "<title>Moodle Quiz XHTML Export</title>\n";
   $xp .= $css;
   $xp .= "</head>\n";
