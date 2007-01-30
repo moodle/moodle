@@ -777,7 +777,7 @@ function rs_next_record(&$rs) {
 
 /**
  * This function is used to get the current record from the recordset. It
- * doesn advance the recordset position.
+ * does advance the recordset position.
  * This is the prefered way to iterate over recordsets with code blocks like this:
  *
  * $rs = get_recordset('SELECT .....');
