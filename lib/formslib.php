@@ -1345,11 +1345,18 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
        "\n\t\t<legend>{header}</legend>\n\t\t<div class=\"advancedbutton\">{advancedimg}{button}</div>\n\t\t";
 
    /**
+    * Template used when opening a fieldset
+    * @var      string
+    * @access   private
+    */
+    var $_openFieldsetTemplate = "\n\t<fieldset class=\"clearfix\" {id}>";
+
+    /**
     * Template used when closing a fieldset
     * @var      string
     * @access   private
     */
-    var $_closeFieldsetTemplate = "\n\t\t<div class=\"clearer\">&nbsp;</div>\n\t\t</fieldset>";
+    var $_closeFieldsetTemplate = "\n\t\t</fieldset>";
 
    /**
     * Required Note template string
