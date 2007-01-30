@@ -1841,8 +1841,8 @@ function require_course_login($courseorid, $autologinguest=true, $cm=null) {
     if (!empty($CFG->forcelogin)) {
         // login required for both SITE and courses
         require_login($courseorid, $autologinguest, $cm);
-    } elseif ((is_object($courseorid) and $courseorid->id == SITEID)
-          or (is_int($courseorid) and $courseorid == SITEID)) {
+    } else if ((is_object($courseorid) and $courseorid->id == SITEID)
+          or (!is_object($courseorid) and $courseorid == SITEID)) {
         //login for SITE not required
     } else {
         // course login always required
