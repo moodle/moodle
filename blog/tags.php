@@ -20,6 +20,7 @@ $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
 $error = '';
 
+$script = '';
 switch ($action) {
     /// Adding an official tag from submitted value
     case 'addofficial':
@@ -56,11 +57,13 @@ switch ($action) {
             }
 
             /// Write newly added tags back into window opener.
-            echo '<script type="text/javascript">
+            $script = '<script type="text/javascript">
+//<![CDATA[
             var o = opener.document.createElement("option");
             o.innerHTML = "<option>'.$tag->text.'</option>";
             o.value = '.$tagid.';
             opener.document.entry[\'otags[]\'].insertBefore(o, null);
+//]]>
             </script>';
         }
 
@@ -105,7 +108,8 @@ switch ($action) {
                 }
 
                 /// Remove parent window option via javascript.
-                echo '<script>
+                $script = '<script>
+//<![CDATA[
                 var i=0;
                 while (i < window.opener.document.entry[\'otags[]\'].length) {
                     if (window.opener.document.entry[\'otags[]\'].options[i].value == '.$tagid.') {
@@ -121,7 +125,7 @@ switch ($action) {
                     }
                     i++;
                 }
-
+//]]>
                 </script>';
             }
 
@@ -135,7 +139,7 @@ switch ($action) {
 
 
 /// Print the table.
-print_header();
+print_header (get_string('tagmanagement'), '', '', '', $script);
 include_once('tags.html');
 print_footer();
 
