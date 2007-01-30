@@ -3,8 +3,12 @@
 // This file defines everything related to frontpage
 
 if (get_site()) { //do not use during installation
-
-$frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
+    $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
+    $frontpagecontextid = $frontpagecontext->id; 
+} else {
+    $frontpagecontext = NULL;
+    $frontpagecontextid = 0; 
+}
 
 // "frontpage" settingpage
 $temp = new admin_settingpage('frontpagesettings', get_string('frontpagesettings','admin'), 'moodle/course:update', false, $frontpagecontext);
@@ -30,7 +34,7 @@ $temp->add(new admin_setting_configtext('coursesperpage', get_string('coursesper
 $temp->add(new admin_setting_configcheckbox('allowvisiblecoursesinhiddencategories', get_string('allowvisiblecoursesinhiddencategories', 'admin'), get_string('configvisiblecourses', 'admin'), 0));
 $ADMIN->add('frontpage', $temp);
 
-$ADMIN->add('frontpage', new admin_externalpage('frontpageroles', get_string('frontpageroles', 'admin'), "$CFG->wwwroot/$CFG->admin/roles/assign.php?contextid=" . $frontpagecontext->id, 'moodle/role:assign', false, $frontpagecontext));
+$ADMIN->add('frontpage', new admin_externalpage('frontpageroles', get_string('frontpageroles', 'admin'), "$CFG->wwwroot/$CFG->admin/roles/assign.php?contextid=" . $frontpagecontextid, 'moodle/role:assign', false, $frontpagecontext));
 
 $ADMIN->add('frontpage', new admin_externalpage('frontpagebackup', get_string('frontpagebackup', 'admin'), $CFG->wwwroot.'/backup/backup.php?id='.SITEID, 'moodle/site:backup', false, $frontpagecontext));
 
@@ -38,5 +42,4 @@ $ADMIN->add('frontpage', new admin_externalpage('frontpagerestore', get_string('
 
 $ADMIN->add('frontpage', new admin_externalpage('sitefiles', get_string('sitefiles'), $CFG->wwwroot . '/files/index.php?id=' . SITEID, 'moodle/course:managefiles', false, $frontpagecontext));
 
-}
 ?>

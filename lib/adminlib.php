@@ -1131,7 +1131,7 @@ class admin_externalpage extends part_of_admin_tree {
      * @param string $url The external URL that we should link to when someone requests this external page.
      * @param mixed $req_capability The role capability/permission a user must have to access this external page. Defaults to 'moodle/site:config'.
      */
-    function admin_externalpage($name, $visiblename, $url, $req_capability = 'moodle/site:config', $hidden=false, $context=false) {
+    function admin_externalpage($name, $visiblename, $url, $req_capability = 'moodle/site:config', $hidden=false, $context=NULL) {
         $this->name = $name;
         $this->visiblename = $visiblename;
         $this->url = $url;
@@ -1264,7 +1264,7 @@ class admin_settingpage extends part_of_admin_tree {
     }
 
     // see admin_externalpage
-    function admin_settingpage($name, $visiblename, $req_capability = 'moodle/site:config', $hidden=false, $context=false) {
+    function admin_settingpage($name, $visiblename, $req_capability = 'moodle/site:config', $hidden=false, $context=NULL) {
         global $CFG;
         $this->settings = new stdClass();
         $this->name = $name;
