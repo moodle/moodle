@@ -17,7 +17,7 @@
 }
 
 .tabrow0 UL {
-   top: 2.1em; 
+   top: 2.1em;
 }
 
 .sideblock {
@@ -26,4 +26,9 @@
 
 .sideblock .content {
     word-wrap: break-word;
+}
+
+/*fix for misalignment of text fields in ie */
+form.mform input {
+  margin-left: -10px;
 }
