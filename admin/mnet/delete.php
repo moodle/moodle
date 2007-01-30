@@ -10,7 +10,7 @@
     $strmnetedithost   = get_string('reviewhostdetails', 'mnet');
     require_login();
 
-    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $context = get_context_instance(CONTEXT_SYSTEM);
     
     require_capability('moodle/site:config', $context, $USER->id, true, "nopermissions");
 

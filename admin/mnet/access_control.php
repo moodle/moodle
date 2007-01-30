@@ -24,7 +24,7 @@ if (!extension_loaded('openssl')) {
     print_error('requiresopenssl', 'mnet', '', NULL, true);
 }
 
-$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+$sitecontext = get_context_instance(CONTEXT_SYSTEM);
 $sesskey = sesskey();
 $formerror = array();
 

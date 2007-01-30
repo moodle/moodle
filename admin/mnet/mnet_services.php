@@ -9,7 +9,7 @@
     $adminroot = admin_get_root();
     admin_externalpage_setup('mnetpeers', $adminroot);
 
-    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $context = get_context_instance(CONTEXT_SYSTEM);
 
     require_capability('moodle/site:config', $context, $USER->id, true, "nopermissions");
 
