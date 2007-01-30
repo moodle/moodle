@@ -406,9 +406,7 @@ function xmldb_group_upgrade($oldversion=0) {
     }
 
     if ($result && $oldversion < 2007012400) {
-        if( table_exists(new XMLDBTable('groups_temp'))
-            && file_exists($CFG->dirroot.'/group/db/install.xml') ) {
-
+        if (table_exists(new XMLDBTable('groups_temp')) && file_exists($CFG->dirroot.'/group/db/install.xml')) {
             $groupupgrade = optional_param('confirmgroupupgrade', 0, PARAM_BOOL);
             if (empty($groupupgrade)) {
                 notice_yesno(get_string('upgradeconfirm', 'group'), 'index.php?confirmgroupupgrade=yes', 'index.php');
@@ -423,9 +421,6 @@ function xmldb_group_upgrade($oldversion=0) {
             $result = $result && groups_transfer_db();
 
             ///$result = $result && groups_rename_db2($suffix='_temp_18');
-        }
-        else {
-            error('Upgrade 2007012400 of groups failed! (Could not update version in config table)');
         }
     }
 
