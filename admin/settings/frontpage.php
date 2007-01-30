@@ -2,6 +2,8 @@
 
 // This file defines everything related to frontpage
 
+if (get_site()) { //do not use during installation
+
 $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
 
 // "frontpage" settingpage
@@ -35,4 +37,6 @@ $ADMIN->add('frontpage', new admin_externalpage('frontpagebackup', get_string('f
 $ADMIN->add('frontpage', new admin_externalpage('frontpagerestore', get_string('frontpagerestore', 'admin'), $CFG->wwwroot.'/files/index.php?id='.SITEID.'&amp;wdir=/backupdata', 'moodle/site:restore', false, $frontpagecontext));
 
 $ADMIN->add('frontpage', new admin_externalpage('sitefiles', get_string('sitefiles'), $CFG->wwwroot . '/files/index.php?id=' . SITEID, 'moodle/course:managefiles', false, $frontpagecontext));
+
+}
 ?>
