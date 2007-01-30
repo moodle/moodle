@@ -1195,11 +1195,9 @@ function question_apply_penalty_and_timelimit(&$question, &$state, $attempt, $cm
 * @param boolean $return   If true the functions returns the link as a string
 */
 function print_question_icon($question, $editlink=true, $return = false) {
-// returns a question icon
-
     global $QTYPES, $CFG;
 
-    $namestr = get_string($question->qtype, 'quiz');
+    $namestr = $QTYPES[$question->qtype]->menu_name();
     $html = '<img src="'.$CFG->wwwroot.'/question/type/'.
             $question->qtype.'/icon.gif" alt="'.
             $namestr.'" title="'.$namestr.'" />';
