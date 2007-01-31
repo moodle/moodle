@@ -1578,7 +1578,7 @@ class admin_setting_courselist_frontpage extends admin_setting_configselect {
                          FRONTPAGECATEGORYNAMES => get_string('frontpagecategorynames'),
                          FRONTPAGECATEGORYCOMBO => get_string('frontpagecategorycombo'),
                          ''                     => get_string('none'));
-        if (count_records("course") > FRONTPAGECOURSELIMIT) {
+        if (!$loggedin and count_records("course") > FRONTPAGECOURSELIMIT) {
             unset($choices[FRONTPAGECOURSELIST]);
         }
         $defaults = FRONTPAGECOURSELIST.',,,';
