@@ -1337,6 +1337,8 @@ function moodle_install_roles() {
                                       addslashes(get_string('defaultcoursestudentdescription')), 'moodle/legacy:student');
     $guestrole          = create_role(addslashes(get_string('guest')), 'guest',
                                       addslashes(get_string('guestdescription')), 'moodle/legacy:guest');
+    $userrole           = create_role(addslashes(get_string('authenticateduser')), 'user',
+                                      addslashes(get_string('authenticateduserdescription')), 'moodle/legacy:user');
     
 /// Now is the correct moment to install capabilities - after creation of legacy roles, but before assigning of roles
 
@@ -1480,6 +1482,7 @@ function moodle_install_roles() {
     allow_override($adminrole, $editteacherrole);
     allow_override($adminrole, $studentrole);
     allow_override($adminrole, $guestrole);
+    allow_override($adminrole, $userrole);
 
 
 /// Delete the old user tables when we are done

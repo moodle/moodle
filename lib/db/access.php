@@ -47,6 +47,11 @@ $moodle_capabilities = array(
         'contextlevel' => CONTEXT_SYSTEM
     ),
 
+    'moodle/legacy:user' => array(
+
+        'captype' => 'legacy',
+        'contextlevel' => CONTEXT_SYSTEM
+    ),
 
     'moodle/legacy:student' => array(
 
@@ -664,6 +669,7 @@ $moodle_capabilities = array(
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
             'guest' => CAP_ALLOW,
+            'user' => CAP_ALLOW,
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
@@ -679,11 +685,7 @@ $moodle_capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
-            'guest' => CAP_ALLOW, // needed for default role that allows everybody to post blog entries
-            'student' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
+            'user' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
     ),
@@ -735,11 +737,7 @@ $moodle_capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
-            'guest' => CAP_ALLOW, // needed for default role that allows everybody to add user entries
-            'student' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
+            'user' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
     ),

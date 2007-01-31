@@ -38,12 +38,23 @@ if ($studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW
 } else {
     $studentrole->id = 0;
 }
+if ($userroles = get_roles_with_capability('moodle/legacy:user', CAP_ALLOW)) {
+    $userrole = array_shift($userroles);   /// Take the first one
+} else {
+    $userrole->id = 0;
+}
 $assignableroles  = get_assignable_roles($context);
+$allroles = array();
+if ($roles = get_all_roles()) {
+    foreach ($roles as $role) {
+        $allroles[$role->id] = strip_tags(format_string($role->name, true));
+    }
+}
 
 $temp->add(new admin_setting_configselect('notloggedinroleid', get_string('notloggedinroleid', 'admin'),
               get_string('confignotloggedinroleid', 'admin'), $guestrole->id, $assignableroles ));
 $temp->add(new admin_setting_configselect('defaultuserroleid', get_string('defaultuserroleid', 'admin'),
-              get_string('configdefaultuserroleid', 'admin'), $guestrole->id, $assignableroles));
+              get_string('configdefaultuserroleid', 'admin'), $userrole->id, $allroles));
 $temp->add(new admin_setting_configselect('defaultcourseroleid', get_string('defaultcourseroleid', 'admin'),
               get_string('configdefaultcourseroleid', 'admin'), $studentrole->id, $assignableroles));
 
