@@ -23,14 +23,15 @@ function xmldb_lesson_upgrade($oldversion=0) {
 
     $result = true;
 
-/// And upgrade begins here. For each one, you'll need one 
-/// block of code similar to the next one. Please, delete 
-/// this comment lines once this file start handling proper
-/// upgrade code.
+    if ($result && $oldversion < 2006091802) {
 
-/// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
-///     $result = result of "/lib/ddllib.php" function calls
-/// }
+    /// Changing nullability of field response on table lesson_answers to null
+        $table = new XMLDBTable('lesson_answers');
+        $field = new XMLDBField('response');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'answer');
+
+    /// Launch change of nullability for field response
+        $result = $result && change_field_notnull($table, $field);
 
     return $result;
 }
