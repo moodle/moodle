@@ -4074,7 +4074,7 @@ function current_language() {
         $return = $CFG->lang;
     }
 
-    if ($return == 'en') {
+    if (!empty($CFG->unicodedb) and $return == 'en') {
         $return = 'en_utf8';
     }
 
