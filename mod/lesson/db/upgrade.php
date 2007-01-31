@@ -32,6 +32,7 @@ function xmldb_lesson_upgrade($oldversion=0) {
 
     /// Launch change of nullability for field response
         $result = $result && change_field_notnull($table, $field);
+    }
 
     return $result;
 }
