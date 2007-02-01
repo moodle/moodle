@@ -42,6 +42,12 @@
         $i++;
     }
 
+    // do not delete these default system roles
+    $defaultroles = array();
+    $defaultroles[] = $CFG->notloggedinroleid;
+    $defaultroles[] = $CFG->guestroleid;
+    $defaultroles[] = $CFG->defaultuserroleid;
+    $defaultroles[] = $CFG->defaultcourseroleid;
 
 /// form processing, editing a role, adding a role, deleting a role etc.
     switch ($action) {
@@ -183,6 +189,9 @@
             break;
 
         case 'delete':
+            if (in_array($roleid, $defaultroles)) {
+                error('This role is used as one of the default system roles, it can not be deleted'); 
+            }
             if ($confirm and data_submitted() and confirm_sesskey()) {
                 if (!delete_role($roleid)) {
                     error('Could not delete role with ID '.$roleid);
@@ -384,8 +393,12 @@
             $row[2] = s($role->shortname);
             $row[3] = '<a title="'.$stredit.'" href="manage.php?action=edit&amp;roleid='.$role->id.'">'.
                          '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$stredit.'" /></a> ';
-            $row[3] .= '<a title="'.$strdelete.'" href="manage.php?action=delete&amp;roleid='.$role->id.'&amp;sesskey='.sesskey().'">'.
-                         '<img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'.$strdelete.'" /></a> ';
+            if (in_array($role->id, $defaultroles)) {
+                $row[3] .= '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> ';
+            } else {
+                $row[3] .= '<a title="'.$strdelete.'" href="manage.php?action=delete&amp;roleid='.$role->id.'&amp;sesskey='.sesskey().'">'.
+                             '<img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'.$strdelete.'" /></a> ';
+            }
             if ($role->sortorder != 0) {
                 $row[3] .= '<a title="'.$strmoveup.'" href="manage.php?action=moveup&amp;roleid='.$role->id.'&amp;sesskey='.sesskey().'">'.
                      '<img src="'.$CFG->pixpath.'/t/up.gif" class="iconsmall" alt="'.$strmoveup.'" /></a> ';
