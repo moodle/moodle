@@ -544,12 +544,12 @@ function capability_search($capability, $context, $capabilities, $switchroleacti
 
         case CONTEXT_PERSONAL:
             $parentcontext = get_context_instance(CONTEXT_SYSTEM);
-            $permission = capability_search($capability, $parentcontext, $capabilities);
+            $permission = capability_search($capability, $parentcontext, $capabilities, $switchroleactive);
         break;
 
         case CONTEXT_USER:
             $parentcontext = get_context_instance(CONTEXT_SYSTEM);
-            $permission = capability_search($capability, $parentcontext, $capabilities);
+            $permission = capability_search($capability, $parentcontext, $capabilities, $switchroleactive);
         break;
 
         case CONTEXT_COURSECAT: // Coursecat -> coursecat or site
@@ -559,7 +559,7 @@ function capability_search($capability, $context, $capabilities, $switchroleacti
             } else { // else return site value
                 $parentcontext = get_context_instance(CONTEXT_SYSTEM);
             }
-            $permission = capability_search($capability, $parentcontext, $capabilities);
+            $permission = capability_search($capability, $parentcontext, $capabilities, $switchroleactive);
         break;
 
         case CONTEXT_COURSE: // 1 to 1 to course cat
@@ -567,20 +567,20 @@ function capability_search($capability, $context, $capabilities, $switchroleacti
                 // find the course cat, and return its value
                 $course = get_record('course','id',$context->instanceid);
                 $parentcontext = get_context_instance(CONTEXT_COURSECAT, $course->category);
-                $permission = capability_search($capability, $parentcontext, $capabilities);
+                $permission = capability_search($capability, $parentcontext, $capabilities, $switchroleactive);
             }
         break;
 
         case CONTEXT_GROUP: // 1 to 1 to course
             $group = get_record('groups','id',$context->instanceid);
             $parentcontext = get_context_instance(CONTEXT_COURSE, $group->courseid);
-            $permission = capability_search($capability, $parentcontext, $capabilities);
+            $permission = capability_search($capability, $parentcontext, $capabilities, $switchroleactive);
         break;
 
         case CONTEXT_MODULE: // 1 to 1 to course
             $cm = get_record('course_modules','id',$context->instanceid);
             $parentcontext = get_context_instance(CONTEXT_COURSE, $cm->course);
-            $permission = capability_search($capability, $parentcontext, $capabilities);
+            $permission = capability_search($capability, $parentcontext, $capabilities, $switchroleactive);
         break;
 
         case CONTEXT_BLOCK: // not necessarily 1 to 1 to course
@@ -590,7 +590,7 @@ function capability_search($capability, $context, $capabilities, $switchroleacti
             } else {
                 $parentcontext = get_context_instance(CONTEXT_SYSTEM); 
             }           
-            $permission = capability_search($capability, $parentcontext, $capabilities);
+            $permission = capability_search($capability, $parentcontext, $capabilities, $switchroleactive);
         break;
 
         default:
