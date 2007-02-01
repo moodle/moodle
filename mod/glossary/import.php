@@ -60,7 +60,7 @@
 
 /// Tabbed browsing sections
     $tab = GLOSSARY_IMPORT_VIEW;
-    include("tabs.html");
+    include("tabs.php");
 
     if ( !$step ) {
         include("import.html");

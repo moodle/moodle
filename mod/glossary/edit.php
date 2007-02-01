@@ -204,7 +204,7 @@ echo '<br />';
 
 /// Tabbed browsing sections
 $tab = GLOSSARY_ADDENTRY_VIEW;
-include("tabs.html");
+include("tabs.php");
 
 if (!$e) {
     require_capability('mod/glossary:write', $context);
@@ -212,7 +212,6 @@ if (!$e) {
 
 $mform->display();
 
-echo '</center>'; //TODO remove center tag from here and tabs.html
 glossary_print_tabbed_table_end();
 
 

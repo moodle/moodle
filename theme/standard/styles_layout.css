@@ -2646,7 +2646,10 @@ body#mod-forum-search .introcontent {
 }
 
 .glossarydisplay {
-  width: 70%;
+  width: 80%;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
 }
 
 .glossarydisplay .tabs {

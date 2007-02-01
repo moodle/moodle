@@ -1205,61 +1205,8 @@ function glossary_print_attachments($entry, $return=NULL, $align="left") {
     return $imagereturn;
 }
 
-function glossary_print_tabbed_table_start($data, $currenttab, $tabsperrow=4) {
-
-$tabs                 = count($data);
-$tabwidth             = (int) (100 / $tabsperrow);
-
-$currentrow           = ( $currenttab - ( $currenttab % $tabsperrow) ) / $tabsperrow;
-
-$numrows              = (int) ( $tabs / $tabsperrow ) + 1;
-
-
-/// Following lines are to create a tab object so that
-/// we can use the new tab objects and functions
-$tabrows = array();
-$tabnumber = 0;
-$row = array();
-$inactive = array();
-foreach ($data as $tab) {
-    $row[] = new tabobject($tabnumber, $tab->link, $tab->caption);
-    if (empty($tab->link)) {
-        $inactive[] = $tabnumber;
-    }
-    $tabnumber++;
-    if (($tabnumber % $tabsperrow) == 0) {
-        $tabrows[] = $row;
-        unset($row);
-        $row = array();
-    }
-}
-//Add the last row! if it contains anything!
-if (!empty($row)) {
-    $tabrows[] = $row;
-}
-
-
-?>
-  <table cellspacing="0" class="glossarydisplay">
-    <tr>
-      <td width="100%">
-
-<?php print_tabs($tabrows, $currenttab, $inactive);
-
-?>
-      </td>
-    </tr>
-    <tr>
-      <td width="100%" class="entryboxheader"><hr /></td>
-    </tr>
-    <tr>
-      <td width="100%" class="entrybox">
-          <center>
-<?php
-}
-
 function glossary_print_tabbed_table_end() {
-     echo "</td></tr></table></center>";
+     echo "</div></div>";
 }
 
 function glossary_print_approval_menu($cm, $glossary,$mode, $hook, $sortkey = '', $sortorder = '') {

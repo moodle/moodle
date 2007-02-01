@@ -290,7 +290,7 @@
     echo '</form>';
     echo '<br />';
 
-    include("tabs.html");
+    include("tabs.php");
 
     include_once("sql.php");
 
@@ -426,7 +426,6 @@
         echo '</div>';
     }
     echo '<br />';
-    echo '</center>';
     glossary_print_tabbed_table_end();
 
 /// Finish the page

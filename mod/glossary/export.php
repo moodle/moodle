@@ -59,7 +59,7 @@
 
 /// Tabbed browsing sections
     $tab = GLOSSARY_EXPORT_VIEW;
-    include("tabs.html");
+    include("tabs.php");
 
     ?>
     <form action="exportfile.php" method="post">
@@ -73,7 +73,6 @@
     </form>
     <?php
 
-    echo '</center>';
     glossary_print_tabbed_table_end();
     print_footer();
 ?>
