@@ -48,7 +48,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
     $users = array();
 
     // If looking at a different host, we're interested in all our site users
-    if ($hostid == $CFG->mnet_localhost_id && $course->category) {
+    if ($hostid == $CFG->mnet_localhost_id && $course->id != SITEID) {
         if ($selectedgroup) {   // If using a group, only get users in that group.
             $courseusers = get_group_users($selectedgroup, 'u.lastname ASC', '', 'u.id, u.firstname, u.lastname, u.idnumber');
         } else {
