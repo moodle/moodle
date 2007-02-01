@@ -187,10 +187,25 @@ function load_defaultuser_role($return=false) {
  * @return object role
  */
 function get_guest_role() {
-    if ($roles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
-        return array_shift($roles);   // Pick the first one
+    global $CFG;
+
+    if (empty($CFG->guestroleid)) {
+        if ($roles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
+            $guestrole = array_shift($roles);   // Pick the first one
+            set_config('guestroleid', $guestrole->id);
+            return $guestrole;
+        } else {
+            debugging('Can not find any guest role!');
+            return false;
+        }
     } else {
-        return false;
+        if ($guestrole = get_record('role','id', $CFG->guestroleid)) {
+            return $guestrole;
+        } else {
+            //somebody is messing with guest roles, remove incorrect setting and try to find a new one
+            set_config('guestroleid', '');
+            return get_guest_role();
+        }
     }
 }
 

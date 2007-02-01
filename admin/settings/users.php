@@ -29,7 +29,7 @@ $ADMIN->add('roles', new admin_externalpage('assignroles', get_string('assignrol
 // "userpolicies" settingpage
 $temp = new admin_settingpage('userpolicies', get_string('userpolicies', 'admin'));
 
-$context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+$context = get_context_instance(CONTEXT_SYSTEM);
 if (!$guestrole = get_guest_role()) {
     $guestrole->id = 0;
 }
@@ -43,7 +43,9 @@ if ($userroles = get_roles_with_capability('moodle/legacy:user', CAP_ALLOW)) {
 } else {
     $userrole->id = 0;
 }
-$assignableroles  = get_assignable_roles($context);
+// we must not use assignable roles here:
+//   1/ unsetting roles as assignable for admin might bork the settings!
+//   2/ default user role should not be assignable anyway
 $allroles = array();
 if ($roles = get_all_roles()) {
     foreach ($roles as $role) {
@@ -52,16 +54,18 @@ if ($roles = get_all_roles()) {
 }
 
 $temp->add(new admin_setting_configselect('notloggedinroleid', get_string('notloggedinroleid', 'admin'),
-              get_string('confignotloggedinroleid', 'admin'), $guestrole->id, $assignableroles ));
+              get_string('confignotloggedinroleid', 'admin'), $guestrole->id, $allroles ));
+$temp->add(new admin_setting_configselect('guestroleid', get_string('guestroleid', 'admin'),
+              get_string('configguestroleid', 'admin'), $guestrole->id, $allroles));
 $temp->add(new admin_setting_configselect('defaultuserroleid', get_string('defaultuserroleid', 'admin'),
               get_string('configdefaultuserroleid', 'admin'), $userrole->id, $allroles));
 $temp->add(new admin_setting_configselect('defaultcourseroleid', get_string('defaultcourseroleid', 'admin'),
-              get_string('configdefaultcourseroleid', 'admin'), $studentrole->id, $assignableroles));
+              get_string('configdefaultcourseroleid', 'admin'), $studentrole->id, $allroles));
 
 $temp->add(new admin_setting_configcheckbox('autologinguests', get_string('autologinguests', 'admin'), get_string('configautologinguests', 'admin'), 0));
 
 $temp->add(new admin_setting_configmultiselect('nonmetacoursesyncroleids', get_string('nonmetacoursesyncroleids', 'admin'),
-              get_string('confignonmetacoursesyncroleids', 'admin'), array(), $assignableroles));
+              get_string('confignonmetacoursesyncroleids', 'admin'), array(), $allroles));
 
 //$temp->add(new admin_setting_configcheckbox('allusersaresitestudents', get_string('allusersaresitestudents', 'admin'), get_string('configallusersaresitestudents','admin'), 1));
 $temp->add(new admin_setting_configmultiselect('hiddenuserfields', get_string('hiddenuserfields', 'admin'),
