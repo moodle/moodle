@@ -2579,7 +2579,8 @@ class admin_setting_special_debugdisplay extends admin_setting_configcheckbox {
         $name = 'debugdisplay';
         $visiblename = get_string('debugdisplay', 'admin');
         $description = get_string('configdebugdisplay', 'admin');
-        parent::admin_setting_configcheckbox($name, $visiblename, $description, '');
+        $default = ini_get('display_errors');
+        parent::admin_setting_configcheckbox($name, $visiblename, $description, $default);
     }
 
     function write_setting($data) {
@@ -2594,7 +2595,7 @@ class admin_setting_special_debugdisplay extends admin_setting_configcheckbox {
     function output_html() {
 
         if ($this->get_setting() === NULL) {
-            $currentsetting = ini_get('display_error');
+            $currentsetting = $this->defaultsetting;
         } else {
             $currentsetting = $this->get_setting();
         }
