@@ -5469,9 +5469,9 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
         $tree = array();
 
         foreach ($row as $tab) {
-            $tab->inactive = in_array($tab->id, $inactive);
-            $tab->active = in_array($tab->id, $activated);
-            $tab->selected = $tab->id == $selected;
+            $tab->inactive = in_array((string)$tab->id, $inactive);
+            $tab->active = in_array((string)$tab->id, $activated);
+            $tab->selected = (string)$tab->id == $selected;
 
             if ($tab->active || $tab->selected) {
                 if ($subtree) {
