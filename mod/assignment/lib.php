@@ -831,10 +831,12 @@ class assignment_base {
             $users = get_course_users($course->id);
         }
 
-        $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture,'.
-                  's.id AS submissionid, s.grade, s.submissioncomment, s.timemodified, s.timemarked, ((s.timemarked > 0) AND (s.timemarked >= s.timemodified)) AS status ';
+        $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture,
+                          s.id AS submissionid, s.grade, s.submissioncomment, 
+                          s.timemodified, s.timemarked ';
         $sql = 'FROM '.$CFG->prefix.'user u '.
-               'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid AND s.assignment = '.$this->assignment->id.' '.
+               'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid 
+                                                                  AND s.assignment = '.$this->assignment->id.' '.
                'WHERE u.id IN ('.implode(',', array_keys($users)).') ';
                
         require_once($CFG->libdir.'/tablelib.php');
@@ -846,6 +848,8 @@ class assignment_base {
         $nextid = 0;
         if (($auser = get_records_sql($select.$sql.$sort, $offset+1, 1)) !== false) {
             $nextuser = array_shift($auser);
+        /// Calculate user status
+            $nextuser->status = ($nextuser->timemarked > 0) && ($nextuser->timemarked >= $nextuser->timemodified);
             $nextid = $nextuser->id;
         }
 
@@ -1092,9 +1096,12 @@ class assignment_base {
             $sort = ' ORDER BY '.$sort;
         }
 
-        $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture, s.id AS submissionid, s.grade, s.submissioncomment, s.timemodified, s.timemarked, ((s.timemarked > 0) AND (s.timemarked >= s.timemodified)) AS status ';
+        $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture, 
+                          s.id AS submissionid, s.grade, s.submissioncomment, 
+                          s.timemodified, s.timemarked ';
         $sql = 'FROM '.$CFG->prefix.'user u '.
-               'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid AND s.assignment = '.$this->assignment->id.' '.
+               'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid 
+                                                                  AND s.assignment = '.$this->assignment->id.' '.
                'WHERE '.$where.'u.id IN ('.implode(',', array_keys($users)).') ';
     
         $table->pagesize($perpage, count($users));
@@ -1109,6 +1116,8 @@ class assignment_base {
         if (($ausers = get_records_sql($select.$sql.$sort, $table->get_page_start(), $table->get_page_size())) !== false) {
             
             foreach ($ausers as $auser) {
+            /// Calculate user status
+                $auser->status = ($auser->timemarked > 0) && ($auser->timemarked >= $auser->timemodified);
                 $picture = print_user_picture($auser->id, $course->id, $auser->picture, false, true);
                 
                 if (empty($auser->submissionid)) {
@@ -1167,8 +1176,10 @@ class assignment_base {
                     }
                 }
 
-                if ($auser->status === NULL) {
+                if (empty($auser->status)) { /// Confirm we have exclusively 0 or 1
                     $auser->status = 0;
+                } else {
+                    $auser->status = 1;
                 }
 
                 $buttontext = ($auser->status == 1) ? $strupdate : $strgrade;
