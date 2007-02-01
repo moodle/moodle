@@ -133,7 +133,7 @@ class view_reserved_words extends XMLDBAction {
 
     /// The textarea showing all the reserved words
         $o.= '    <table id="formelements" align="center" cellpadding="5">';
-        $o.= '      <tr><td align="center">' . $this->str['listreservedwords'];
+        $o.= '      <tr><td align="center">' . $this->str['listreservedwords'].'</td></tr>';
         $o.= '      <tr><td><textarea cols="80" rows="32">';
         $o.= s(implode(', ', $reserved_words));
         $o.= '</textarea></td></tr>';
