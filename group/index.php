@@ -13,6 +13,11 @@ require_once('lib.php');
 require_once($CFG->libdir.'/moodlelib.php');
 require_once($CFG->libdir.'/json/JSON.php');
 
+require_js('yui_yahoo');
+require_js('yui_dom');
+require_js('yui_connection');
+require_js($CFG->wwwroot.'/group/lib/clientlib.js');
+
 
 $success = true;
  
@@ -275,11 +280,6 @@ if ($success) {
 </fieldset>
 </form>
 <?php
-    echo '<script type="text/javascript" src="'.$CFG->wwwroot.'/lib/yui/yahoo/yahoo-min.js"></script>';
-    echo '<script type="text/javascript" src="'.$CFG->wwwroot.'/lib/yui/dom/dom-min.js"></script>';
-    echo '<script type="text/javascript" src="'.$CFG->wwwroot.'/lib/yui/connection/connection-min.js"></script>';
-    echo '<script type="text/javascript" src="'.$CFG->wwwroot.'/group/lib/clientlib.js"></script>'."\n";
-
     echo '<script type="text/javascript">'."\n";
     echo '//<![CDATA['."\n";
     echo 'var groupsCombo = new UpdatableGroupsCombo("'.$CFG->wwwroot.'", '.$course->id.');'."\n";
