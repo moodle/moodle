@@ -247,6 +247,10 @@ body#admin-index .copyright {
   font-size: 0.7em;
 }
 
+#admin-lang .translator .strkey {
+  font-size: 0.75em;
+}
+
 
 /***
  *** Blocks

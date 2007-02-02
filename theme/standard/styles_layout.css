@@ -878,6 +878,12 @@ body#admin-blocks table#incompatible th.c0 {
   text-align:left;
 }
 
+#admin-lang .translator {
+  border-width: 1px;
+  border-style: solid;
+}
+
+
 /***
  *** Blocks
  ***/

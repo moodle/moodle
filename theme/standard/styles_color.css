@@ -331,6 +331,35 @@ table.flexible .r1 {
   background-color:#EEEEEE;
 }
 
+#admin-lang .translator {
+  border-color: #dddddd;
+}
+
+#admin-lang .translator tr.r0 {
+  background-color: #f0f0f0;
+}
+
+#admin-lang .translator tr.r1 {
+  background-color: #fafafa;
+}
+
+#admin-lang .translator .strkey {
+  color: #666666;
+}
+
+#admin-lang .translator .bothmissing {
+  background-color: #ef6868;
+}
+
+#admin-lang .translator .mastermissing {
+  background-color: #feff7f;
+}
+
+#admin-lang .translator .localdifferent {
+  background-color: #aaffaa;
+}
+
+
 /***
  *** Blocks
  ***/
