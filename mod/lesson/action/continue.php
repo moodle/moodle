@@ -64,7 +64,7 @@
                 $noanswer = true;
                 break;
             }
-            $useranswer = clean_param($useranswer, PARAM_CLEAN);
+            $useranswer = clean_param($useranswer, PARAM_RAW);
         
             if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
                 error("Continue: No answers found");
@@ -82,7 +82,7 @@
             $userresponse->response = "";
             $userresponse = addslashes(serialize($userresponse));
             
-            $studentanswer = $useranswer;
+            $studentanswer = s(stripslashes_safe($useranswer));
             break;
          case LESSON_SHORTANSWER :
             if (!$useranswer = $_POST['answer']) {

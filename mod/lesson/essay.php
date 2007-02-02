@@ -85,7 +85,7 @@
 
                 $essayinfo->graded = 1;
                 $essayinfo->score = clean_param($form->score, PARAM_INT);
-                $essayinfo->response = stripslashes_safe($form->response);
+                $essayinfo->response = stripslashes_safe(clean_param($form->response, PARAM_RAW));
                 $essayinfo->sent = 0;
                 if (!$lesson->custom && $essayinfo->score == 1) {
                     $attempt->correct = 1;
@@ -179,9 +179,9 @@
                     
                     // Set rest of the message values
                     $a->question = format_text($pages[$attempt->pageid]->contents, FORMAT_MOODLE, $options);
-                    $a->response = format_text(stripslashes($essayinfo->answer));
+                    $a->response = s(stripslashes_safe($essayinfo->answer));
                     $a->teacher  = $course->teacher;
-                    $a->comment  = format_text(stripslashes($essayinfo->response), FORMAT_MOODLE, $options);
+                    $a->comment  = s($essayinfo->response);
                     
                     
                     // Fetch message HTML and plain text formats
@@ -320,7 +320,7 @@
             $essayinfo = unserialize($attempt->useranswer);
             
             $table->head = array(get_string('studentresponse', 'lesson', fullname($user, true)));
-            $table->data[] = array(format_text(stripslashes($essayinfo->answer)));
+            $table->data[] = array(s(stripslashes_safe($essayinfo->answer)));
 
             print_table($table);
 
@@ -328,7 +328,7 @@
 
             // Now a response box and grade drop-down for grader
             $table->head = array(get_string('comments', 'lesson'));
-            $table->data[] = array(print_textarea(false, 15, 60, 0, 0, 'response', format_text($essayinfo->response, FORMAT_PLAIN, $options), $course->id, true));
+            $table->data[] = array(print_textarea(false, 15, 60, 0, 0, 'response', $essayinfo->response, $course->id, true));
             $options = array();
             if ($lesson->custom) {
                 for ($i=$answer->score; $i>=0; $i--) {
