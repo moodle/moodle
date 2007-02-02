@@ -4,72 +4,41 @@
     <?php echo $meta ?>
     <meta name="keywords" content="moodle, <?php echo $title ?> " />
     <title><?php echo $title ?></title>
-    <link rel="shortcut icon" href="<?php echo $CFG->themewww .'/'. current_theme()   ?>/favicon.ico" />
+    <link rel="shortcut icon" href="<?php echo $CFG->wwwroot.'/theme/'.current_theme() ?>/favicon.ico" />
     <?php include("$CFG->javascript"); ?>
 </head>
 
-<body background="<?php echo $CFG->httpsthemewww .'/'. current_theme() ?>/images/bg.gif"   <?php
+<body <?php
     echo " $bodytags";
     if ($focus) {
         echo " onload=\"setfocus()\"";
     }
     ?>>
-<table align="center" width="100%" border="2" cellpadding="0" cellspacing="0" bgcolor="#D0E2EE">
-<tr><td>    
+<div class="cornflowersurround">
 <div id="page">
 
-<?php if ($home) {  // This is what gets printed on the home page only  
+<?php if ($home) {  // home page ?>
+    <div id="header-home">
+        <div class="headermain"><img alt="" src="<?php echo $CFG->wwwroot.'/theme/'.current_theme() ?>/images/logo.jpg" width="457" height="112" /></div>
+        <div class="headermenu"><?php echo $menu ?></div>
+    </div>
+<?php } else if ($heading) {  // This is what gets printed on any other page with a heading 
 ?>
-
-<table width="100%"  cellpadding="0" cellspacing="0" border="0">
-
-    <tr>
-        <td>
-        <table background="<?php echo $CFG->httpsthemewww .'/'. current_theme() ?>/images/headerbg.jpg"   width="100%" height="112"  cellpadding="0" cellspacing="0" border="0">
-
-        <tr>
-
-        <td valign="top" class="headermain"><?php echo $heading ?></td>
-
-    
-
-      <td align="right" style="padding-right:5px" valign="top" class="headerhomemenu"><?php echo $menu ?></td>
-
-    </tr>
- </table></tr></td>
-  </table>
-<?php } else if ($heading) {  // This is what gets printed on any other page with a heading
- ?>
-
-   <table width="100%"  cellpadding="0" cellspacing="0" border="0">
-        <tr>
-        <td>
-
-<table background="<?php echo $CFG->httpsthemewww .'/'. current_theme() ?>/images/headerbg.jpg"   width="100%" height="112"  cellpadding="0" cellspacing="0" border="0">
-        <tr>
-        <td valign="top"><?php echo $heading ?></td>
-        <td align="right" sty class="headermain"le="padding-right:5px" valign="top" class="headerhomemenu"><?php echo $menu ?></td>
-    </tr>
-</table>
-        </tr>
-        </td>
-</table>
-
+    <div id="header-home">
+        <div class="headermain"><img alt="" src="<?php echo $CFG->wwwroot.'/theme/'.current_theme() ?>/images/logo.jpg" width="457" height="112" /></div>
+        <div class="headermenu"><?php echo $menu ?></div>
+    </div>
+    <div class="clearer"></div>
 <?php } ?>
-    <div class="clearer">&nbsp;</div>
+<?php //Accessibility: breadcrumb trail/navbar now a DIV, not a table.
+      if ($navigation) { // This is the navigation bar with breadcrumbs  ?>
+    <div class="navbar clearfix">
+        <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
+        <div class="navbutton"><?php echo $button; ?></div>
+    </div>   
+<?php } else if ($heading) { // If no navigation, but a heading, then print a line ?>
 
-<?php if ($navigation) { // This is the navigation table with breadcrumbs  ?>
-     <table border="0" cellpadding="3" cellspacing="0" width="100%">
-    <tr>
-      <td><?php print_navigation("$navigation"); ?></td>
-      <td align="right" width="20" valign="top"><?php echo $button; ?></td>
-    </tr>
-  </table>
-  <img src="<?php echo $CFG->httpswwwroot?>/pix/spacer.gif" alt="" height="5" width="1" /><br />
-
-<?php } else if ($heading) { // If no navigation, but a heading, then print a line  
-?>
-<?php } ?>
-    <div class="clearer">&nbsp;</div>
+<?php }  ?>
     <!-- END OF HEADER -->
+    <div class="clearer"></div>
     <div id="content">

@@ -777,3 +777,7 @@ body#mod-quiz-report table#attempts .r1 {
     text-decoration: underline;
     color: #ffffff;
 }
+
+.cornflowersurround {
+  background: #D0E2EE;
+}
