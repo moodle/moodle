@@ -322,6 +322,7 @@
         }
         print_box_end();
 
+        print_heading("<a href=\"lang.php?mode=missing\">$strmissingstrings</a>", "center", 4); // one-click way back
 
         print_box_start();
         echo $strfilestoredin;
@@ -387,13 +388,13 @@
                 echo "<form id=\"$currentfile\" action=\"lang.php\" method=\"post\">";
                 echo '<div>';
             }
-            echo "<table summary=\"\" width=\"100%\" class=\"generalbox\">";
+            echo "<table summary=\"\" width=\"100%\" class=\"translator\">";
             $linescounter = 0;
             $missingcounter = 0;
             foreach ($enstring as $key => $envalue) {
                 $linescounter++ ;
                 if (LANG_SUBMIT_REPEAT &&  $editable && $linescounter % LANG_SUBMIT_REPEAT_EVERY == 0) {
-                    echo '<tr><td colspan="2">&nbsp;</td><td><br />';
+                    echo '<tr><td>&nbsp;</td><td><br />';
                     echo '    <input type="submit" name="update" value="'.get_string('savechanges').': '.$currentfile.'" />';
                     echo '<br />&nbsp;</td></tr>';
                 }
@@ -402,9 +403,18 @@
                 $envalue = str_replace("%%","%",$envalue);
                 $envalue = str_replace("\\","",$envalue);              // Delete all slashes
 
-                echo "\n\n".'<tr>';
-                echo '<td dir="ltr" lang="en">'.$key.'</td>'."\n";
-                echo '<td dir="ltr" lang="en">'.$envalue.'</td>'."\n";
+                echo "\n\n".'<tr class="';
+                if ($linescounter % 2 == 0) {
+                    echo 'r0';
+                } else {
+                    echo 'r1';
+                }
+                echo '">';
+                echo '<td dir="ltr" lang="en">';
+                echo '<span class="stren">'.$envalue.'</span>';
+                echo '<br />'."\n";
+                echo '<span class="strkey">'.$key.'</span>';
+                echo '</td>'."\n";
 
                 // Missing array keys are not bugs here but missing strings
                 error_reporting(E_ALL ^ E_NOTICE);
@@ -426,9 +436,9 @@
                 // green #AAFFAA - translation present in both system and local but is different
                 if (!$value) {
                     if (!$value2) {
-                        $cellcolour = 'style="background-color: #ef6868"'; // TODO: replace by CSS class
+                        $cellcolour = 'class="bothmissing"';
                     } else {
-                        $cellcolour = 'style="background-color: #feff7f"'; // TODO: replace by CSS class
+                        $cellcolour = 'class="mastermissing"';
                     }
                     $missingcounter++;
                     if (LANG_DISPLAY_MISSING_LINKS) {
@@ -444,7 +454,7 @@
                     }
                 } else {
                     if ($value <> $value2 && $value2 <> '') {
-                        $cellcolour = 'style="background-color: #AAFFAA"'; // TODO: replace by CSS class
+                        $cellcolour = 'class="localdifferent"';
                     } else {
                         $cellcolour = '';
                     }
@@ -460,7 +470,7 @@
                     } else {
                         $valuelen = strlen($envalue);
                     }
-                    $cols=50;
+                    $cols=40;
                     if (strstr($value, "\r") or strstr($value, "\n") or $valuelen > $cols) {
                         $rows = ceil($valuelen / $cols);
                         echo '<textarea name="stringXXX'.lang_form_string_key($key).'" cols="'.$cols.'" rows="'.$rows.'">'.$value.'</textarea>'."\n";
@@ -481,7 +491,7 @@
                 echo '</tr>'."\n";
             }
             if ($editable) {
-                echo '<tr><td colspan="2">&nbsp;</td><td><br />';
+                echo '<tr><td>&nbsp;</td><td><br />';
                 echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
                 echo '    <input type="hidden" name="currentfile" value="'.$currentfile.'" />';
                 echo '    <input type="hidden" name="mode" value="compare" />';
