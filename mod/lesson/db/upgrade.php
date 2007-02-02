@@ -34,6 +34,17 @@ function xmldb_lesson_upgrade($oldversion=0) {
         $result = $result && change_field_notnull($table, $field);
     }
 
+    if ($result && $oldversion < 2006091803) {
+
+    /// Changing nullability of field useranswer on table lesson_attempts to null
+        $table = new XMLDBTable('lesson_attempts');
+        $field = new XMLDBField('useranswer');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'correct');
+
+    /// Launch change of nullability for field useranswer
+        $result = $result && change_field_notnull($table, $field);
+    }
+
     return $result;
 }
 
