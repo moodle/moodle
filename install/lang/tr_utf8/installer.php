@@ -35,6 +35,7 @@ $string['configfilewritten'] = 'config.php dosyası başarıyla oluşturuldu';
 $string['configurationcompletehead'] = 'Yapılandırma tamamlandı';
 $string['configurationcompletesub'] = 'Ana moodle dizine yapılandırma dosyasının kaydedilmesi için girişimde bulunuldu.';
 $string['continue'] = 'Devam';
+$string['curlrecommended'] = 'Moodle Ağının işlevsel bir şekilde çalışması için isteğe bağlı Curl kütüphanesinin kurulması şiddetle tavsiye edilir.';
 $string['database'] = 'Veritabanı';
 $string['databasecreationsettingshead'] = 'Şimdi, Moodle verilerinin saklanacağı veritabanını
 oluşturmanız gerekiyor. Bu veritabanı kurulum programı tarafından aşağıdaki ayarlara göre otomatik olarak oluşturulacak.';
