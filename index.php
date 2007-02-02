@@ -150,7 +150,7 @@
         }
 
         if (!empty($section->sequence) or !empty($section->summary) or $editing) {
-            print_simple_box_start('center', '100%', '', 5, 'sitetopic');
+            print_box_start('generalbox sitetopic');
 
             /// If currently moving a file then show the current clipboard
             if (ismoving($SITE->id)) {
@@ -177,7 +177,7 @@
             if ($editing) {
                 print_section_add_menus($SITE, $section->section, $modnames);
             }
-            print_simple_box_end();
+            print_box_end();
         }
     }
 
