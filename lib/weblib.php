@@ -41,6 +41,8 @@
 /// We are going to uses filterlib functions here
 require_once("$CFG->libdir/filterlib.php");
 
+require_once("$CFG->libdir/ajax/ajaxlib.php");
+
 /// Constants
 
 /// Define text formatting types ... eventually we can add Wiki, BBcode etc
@@ -1958,6 +1960,10 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />'."\n";
     }
     $meta = $stylesheetshtml.$meta;
+
+
+/// Add the required JavaScript Libraries
+    $meta .= "\n".require_js();
 
         
 /// Add the meta page from the themes if any were requested
