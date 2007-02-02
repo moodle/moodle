@@ -3794,7 +3794,7 @@ function switchroles_form($courseid) {
                 return '';   // Nothing to show!
             }
             return popup_form($CFG->wwwroot.'/course/view.php?id='.$courseid.'&amp;sesskey='.sesskey().'&amp;switchrole=',
-                              $roles, 'switchrole', '', get_string('switchroleto'), 'switchrole', '', true);
+                              $roles, 'switchrole', '', get_string('switchroleto'), 'switchrole', get_string('switchroleto'), true);
         } else {
             return '';
         }
