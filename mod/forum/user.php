@@ -67,10 +67,13 @@
     
     echo '<div class="user-content">';
     
-    
     if ($course->id == SITEID) {
-        // Search throughout the whole site.
-        $searchcourse = 0;
+        if (!empty($CFG->forceloginforprofiles) || isloggedin()) {
+            // Search throughout the whole site.
+            $searchcourse = 0;
+        } else {
+            $searchcourse = SITEID;
+        }
     } else {
         // Search only for posts the user made in this course.
         $searchcourse = $course->id;
