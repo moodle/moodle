@@ -2558,7 +2558,16 @@ function theme_setup($theme = '', $params=NULL) {
     }
 
 /// Set up image paths
-    if (empty($THEME->custompix)) {    // Could be set in the above file
+    if(isset($CFG->smartpix) && $CFG->smartpix==1) {
+        if($CFG->slasharguments) {        // Use this method if possible for better caching
+            $extra='';
+        } else {
+            $extra='?file=';
+        }
+        
+        $CFG->pixpath = $CFG->wwwroot. '/pix/smartpix.php'.$extra.'/'.$theme;
+        $CFG->modpixpath = $CFG->wwwroot .'/pix/smartpix.php'.$extra.'/'.$theme.'/mod';
+    } else if (empty($THEME->custompix)) {    // Could be set in the above file
         $CFG->pixpath = $CFG->wwwroot .'/pix';
         $CFG->modpixpath = $CFG->wwwroot .'/mod';
     } else {
