@@ -82,6 +82,9 @@ table.formtable tbody th {
 .r1 {  
 }
 /* notification messages (can be good or bad) */
+.breadcrumb .sep {
+  color: #DA3; 
+}
 .notifyproblem {
   color:#600
 }
@@ -223,7 +226,13 @@ body#admin-index .c0 {
   background-color:#FFDA9D;
   border-color:#FFB63B
 }
-
+#adminsettings fieldset span.form-shortname {
+  color: #aaa;
+}
+#adminsettings fieldset {
+  background-color: #f9fafa;
+  border-color: #DDD;
+}
 
 /***
  *** Blocks
