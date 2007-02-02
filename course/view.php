@@ -123,7 +123,6 @@
     // AJAX-capable course format?
     $CFG->useajax = false;
     $ajaxformatfile = $CFG->dirroot.'/course/format/'.$course->format.'/ajax.php';
-    $meta = '';
     $bodytags = '';
 
     if (file_exists($ajaxformatfile)) {
@@ -131,14 +130,18 @@
 
         if ($USER->editing && !empty($USER->ajax) && !empty($CFG->enableajax) && $CFG->ajaxcapable) {
 
-            if ($meta = require_js(array('yui_yahoo',
-                                         'yui_dom',
-                                         'yui_event',
-                                         'yui_dragdrop',
-                                         'yui_connection'))) {
-
+            if (ajaxenabled()) {
+                
+                require_js(array('yui_yahoo',
+                                 'yui_dom',
+                                 'yui_event',
+                                 'yui_dragdrop',
+                                 'yui_connection',
+                                 'ajaxcourse_blocks',
+                                 'ajaxcourse_sections'));
+                
                 if (debugging('', DEBUG_DEVELOPER)) {
-                    $meta .= require_js(array('yui_logger'));
+                    require_js(array('yui_logger'));
 
                     $bodytags = 'onload = "javascript:
                     show_logger = function() {
@@ -149,6 +152,7 @@
                     show_logger();
                     "';
                 }
+
                 // Okay, global variable alert. VERY UGLY. We need to create
                 // this object here before the <blockname>_print_block()
                 // function is called, since that function needs to set some
@@ -162,7 +166,7 @@
     $CFG->blocksdrag = $CFG->useajax;   // this will add a new class to the header so we can style differently
 
 
-    $PAGE->print_header(get_string('course').': %fullname%', NULL, $meta, $bodytags);
+    $PAGE->print_header(get_string('course').': %fullname%', NULL, '', $bodytags);
     // Course wrapper start.
     echo '<div class="course-content">';
 
@@ -195,19 +199,18 @@
     // Include the actual course format.
     require($CFG->dirroot .'/course/format/'. $course->format .'/format.php');
     // Content wrapper end.
-    echo '</div>';
+    echo "</div>\n\n";
 
 
     // Use AJAX?
     if ($CFG->useajax) {
         // At the bottom because we want to process sections and activities
-        // after the relevant html has been generated.
-        if ($jsincludes = require_js(array('ajaxcourse_blocks',
-                                           'ajaxcourse_sections',
-                                           'ajaxcourse'))) {
-            echo $jsincludes;
-            $COURSE->javascriptportal->print_javascript($course->id);
-        }
+        // after the relevant html has been generated. We're forced to do this
+        // because of the way in which lib/ajax/ajaxcourse.js is written.
+        echo '<script type="text/javascript" ';
+        echo "src=\"{$CFG->wwwroot}/lib/ajax/ajaxcourse.js\"></script>\n";
+
+        $COURSE->javascriptportal->print_javascript($course->id);
     }
 
 
