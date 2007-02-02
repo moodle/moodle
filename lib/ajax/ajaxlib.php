@@ -1,19 +1,72 @@
-<?php // Library functions for using AJAX with Moodle
+<?php
+/**
+ * Library functions for using AJAX with Moodle.
+ */
+
+
 
 /**
- * Print require statements for javascript libraries.
- * Takes in an array of either full paths or shortnames and it will translate
- * them to full paths.
- **/
-function require_js($list) {
+ * Used to include JavaScript libraries.
+ *
+ * When the $lib parameter is given, the function will add $lib to an
+ * internal list of libraries. When called without any parameters, it will
+ * return the html that is needed to load the JavaScript libraries in that
+ * list. Libraries that are included more than once will still only get loaded
+ * once, so this works like require_once() in PHP.
+ *
+ * @param $lib - string or array of strings
+ *               string(s) should be the shortname for the library or the
+ *               full path to the library file.
+ * @return string or false or nothing.
+ */
+function require_js($lib='') {
     global $CFG;
-    $output = '';
+    static $loadlibs = array();
 
     if (!ajaxenabled()) {
-        return;
+        return false;
     }
 
-    //list of shortname to filepath translations
+    if (!empty($lib)) {
+        // Add the lib to the list of libs to be loaded, if it isn't already
+        // in the list.
+        if (is_array($lib)) {
+            array_map('require_js', $lib);
+        } else {
+            $libpath = ajax_get_lib($lib);
+            if (array_search($libpath, $loadlibs) === false) {
+                array_push($loadlibs, $libpath);
+            }
+        }
+    } else {
+        // Return the html needed to load the JavaScript files defined in
+        // our list of libs to be loaded.
+        $output = '';
+
+        foreach ($loadlibs as $loadlib) {
+            $output .= '<script type="text/javascript" ';
+            $output .= " src=\"$loadlib\"></script>\n";
+            if ($loadlib == $CFG->wwwroot.'/lib/yui/logger/logger-min.js') {
+                // Special case, we need the CSS too.
+                $output .= '<link type="text/css" rel="stylesheet" ';
+                $output .= " href=\"{$CFG->wwwroot}/lib/yui/logger/assets/logger.css\" />\n";
+            }
+        }
+        return $output;
+    }
+}
+
+
+/**
+ * Get the path to a JavaScript library.
+ * @param $libname - the name of the library whose path we need.
+ * @return string
+ */
+function ajax_get_lib($libname) {
+
+    global $CFG;
+    $libpath = '';
+
     $translatelist = array(
             'yui_yahoo' => '/lib/yui/yahoo/yahoo-min.js',
 			'yui_animation' => '/lib/yui/animation/animation-min.js',
@@ -36,18 +89,18 @@ function require_js($list) {
             'ajaxcourse' => '/lib/ajax/ajaxcourse.js'
             );
 
-    for ($i=0; $i<count($list); $i++) {
-        if ($translatelist[$list[$i]]) {
-            $output .= "<script type='text/javascript' src='".$CFG->wwwroot.''.$translatelist[$list[$i]]."'></script>\n";
-            if ($translatelist[$list[$i]] == '/lib/yui/logger/logger-min.js') {
-                // Special case. We need the css.
-                $output .= "<link type='text/css' rel='stylesheet' href='{$CFG->wwwroot}/lib/yui/logger/assets/logger.css' />";
-            }
-        } else {
-            $output .= "<script type='text/javascript' src='".$CFG->wwwroot.''.$list[$i]."'></script>\n";
-        }
+    if (array_key_exists($libname, $translatelist)) {
+        $libpath = $CFG->wwwroot . $translatelist[$libname];
+    } else {
+        $libpath = $libname;
     }
-    return $output;
+
+    $testpath = str_replace($CFG->wwwroot, $CFG->dirroot, $libpath);
+    if (!file_exists($testpath)) {        
+        error('require_js: '.$libpath.' - file not found.');
+    }
+
+    return $libpath;
 }
 
 
