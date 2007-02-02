@@ -235,6 +235,11 @@ img.grouppicture {
   margin-left:3em;
 }
 
+#help .closewindow,
+#help .helpindex {
+  text-align: center;
+}
+
 .tabledivider {
   border-width:1px;
   border-style:solid;
@@ -326,6 +331,10 @@ form.popupform {
 
 .groupmanagementtable td {
   vertical-align: top;
+}
+
+.groupmanagementtable p {
+  text-align: center;
 }
 
 .groupmanagementtable select {
@@ -1556,6 +1565,10 @@ body#course-index .singlebutton {
 .categorypicker {
   text-align:center;
   padding-bottom:10px;
+}
+
+#coursesearch {
+  text-align:center;
 }
 
 .addcoursebutton {

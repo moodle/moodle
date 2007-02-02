@@ -229,18 +229,18 @@
             case FRONTPAGECATEGORYNAMES:
 
                 print_heading_block(get_string('categories'));
-                print_simple_box_start('center', '100%', '', 5, 'categorybox');
+                print_box_start('generalbox categorybox');
                 print_whole_category_list(NULL, NULL, NULL, -1, false);
-                print_simple_box_end();
+                print_box_end();
                 print_course_search('', false, 'short');
             break;
 
             case FRONTPAGECATEGORYCOMBO:
 
                 print_heading_block(get_string('categories'));
-                print_simple_box_start('center', '100%', '', 5, 'categorybox');
+                print_box_start('generalbox categorybox');
                 print_whole_category_list(NULL, NULL, NULL, -1, true);
-                print_simple_box_end();
+                print_box_end();
                 print_course_search('', false, 'short');
             break;
 
