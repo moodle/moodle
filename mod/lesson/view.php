@@ -742,7 +742,7 @@
                 case LESSON_ESSAY :
                     if (isset($USER->modattempts[$lesson->id])) {
                         $essayinfo = unserialize($attempt->useranswer);
-                        $value = $essayinfo->answer;
+                        $value = s(stripslashes_safe($essayinfo->answer));
                     } else {
                         $value = "";
                     }

@@ -732,7 +732,7 @@
                                 if ($essayinfo->response == NULL) {
                                     $answerdata->response = get_string("nocommentyet", "lesson");
                                 } else {
-                                    $answerdata->response = $essayinfo->response;
+                                    $answerdata->response = s($essayinfo->response);
                                 }
                                 if (isset($pagestats[$page->id])) {
                                     $percent = $pagestats[$page->id]->totalscore / $pagestats[$page->id]->total * 100;
@@ -765,7 +765,7 @@
                                 // dont think this should ever be reached....
                                 $avescore = get_string("nooneansweredthisquestion", "lesson");
                             }
-                            $answerdata->answers[] = array($essayinfo->answer, $avescore);
+                            $answerdata->answers[] = array(s(stripslashes_safe($essayinfo->answer)), $avescore);
                             break;
                         case LESSON_BRANCHTABLE :
                             $data = "<input type=\"button\" name=\"$answer->id\" value=\"".strip_tags(format_text($answer->answer, FORMAT_MOODLE,$formattextdefoptions))."\" disabled=\"disabled\"> ";
