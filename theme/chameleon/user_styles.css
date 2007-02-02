@@ -116,7 +116,6 @@ div.navbar {
   padding: 3px 0;
   background-color: #EEFFDD;
   margin-top: 5px;
-  clear: both;
   border-style: none;
 }
 div#footer {
@@ -278,6 +277,11 @@ td.courseboxcontent {
   background-color: #DCE7EC;
   border-color: #DCE7EC;
 }
+table.cal_popup_bg {
+  background-color: #F8F8F8;
+  color: #333333;
+  border-color: #EEFFDD;
+}
 div.sideblock div.calendar-controls span.current {
   text-align: center;
 }
@@ -335,11 +339,11 @@ div.sideblock div.header div.commands {
   height: 16px;
   background-color: #ffffff;
 }
-fieldset.adminsettings span.form-shortname {
+#adminsettings fieldset span.form-shortname {
   color: #cccccc;
   font-size: 90%;
 }
-fieldset.adminsettings {
+#adminsettings fieldset {
   background-color: #EEEEEE;
   border-width: 1px;
   border-style: solid;
@@ -347,4 +351,8 @@ fieldset.adminsettings {
 }
 form.mform div.textarea textarea {
   width: 35em;
+}
+div.sideblock div.commands a.roles img {
+  width: 11px;
+  height: 11px;
 }
