@@ -402,7 +402,8 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
                     $i = count($values);
                     break;
                 case 'jquiz':
-                    while ($this->parent->xml_value('data,questions,question-record', "[$i]['#']['question'][0]['#']")) {
+                    $tags = 'data,questions,question-record';
+                    while (($question="[$i]['#']") && $this->parent->xml_value($tags, $question)) {
                         $i++;
                     }
                     break;
@@ -1244,8 +1245,10 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
             $question_text = $this->parent->xml_value($tags, $question."['question'][0]['#']");
             $question_type = $this->parent->xml_value($tags, $question."['question-type'][0]['#']");
 
-            // check we have a question
-            if ($question_text && $question_type) {
+            $first_answer_text = $this->parent->xml_value($tags, $question."['answers'][0]['#']['answer'][0]['#']['text'][0]['#']");
+
+            // check we have a question (or at least one answer)
+            if (($question_text || $first_answer_text) && $question_type) {
 
                 $str .= '<li class="QuizQuestion" id="Q_'.$q.'" style="display: none;">';
                 $str .= '<p class="QuestionText">'.$question_text.'</p>';
