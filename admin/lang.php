@@ -1,38 +1,6 @@
 <?PHP // $Id$
     /**
     * Display the admin/language menu and process strings translation.
-    *
-    * CHANGES
-    *
-    * 2006/11/07 mudrd8mz
-    * Fixed bug MDL-7361. Thanks to Dan Poltawski for the patch proposal.
-    *
-    * 2006/06/08 mudrd8mz
-    * 1) Fixed bug 5745 reported by Harry Smith so now can edit en_utf8_local pack
-    * 2) More notification messages included
-    *
-    * 2006/05/30 mudrd8mz
-    * Merged with version by Mitsuhiro Yoshida - display icon links instead of text links
-    * (I have changed the position of arrow icons to not to be so close each other)
-    *
-    * 2006/05/19 mudrd8mz
-    * A lot of changes to support translation of *_utf8_local langugage packs. Needs testing
-    *
-    * 2006/05/16 mudrd8mz
-    * 1) LANG_DEFAULT_FILE can be now set. moodle.php used to be opened automatically.
-    *    As it was (and still is) one of the biggest files it usually took a long time to load the page
-    *    even if you just want to choose the file to translate.
-    * 2) added links from "missing" to "compare" mode page
-    * 3) english strings are now key-sorted in "missing" mode
-    * 4) list of files with missing strings is now displayed at the top of "missing" page
-    *
-    * 2006/05/14 mudrd8mz Improvements of lang.php,v 1.65 2006/04/10 22:15:57 stronk7 Exp 
-    *  1) "go to first missing string" link can be displayed (see LANG_DISPLAY_MISSING_LINKS)
-    *  2) "go to next missing" link can be displayed (see LANG_DISPLAY_MISSING_LINKS)
-    *  3) submit button may be repeated (see LANG_SUBMIT_REPEAT*)
-    *  4) added (empty) "summary" attribute for the <table>'s
-    *  5) added error_reporting(E_ALL ^ E_NOTICE); in "compare" mode (even in debug environment
-    *     we know that missing keys are missing strings here, not bugs ;-)
     */
 
     require_once('../config.php');
@@ -47,6 +15,7 @@
     define('LANG_LINK_MISSING_STRINGS', 1);     // create links from "missing" page to "compare" page?
     define('LANG_DEFAULT_USELOCAL', 0);         // should *_utf8_local be used by default?
     define('LANG_MISSING_TEXT_MAX_LEN', 60);    // maximum length of the missing text to display
+    define('LANG_KEEP_ORPHANS', 1);             // keep orphaned strings (i.e. strings w/o English reference)
 
     $mode        = optional_param('mode', '', PARAM_ALPHA);
     $currentfile = optional_param('currentfile', LANG_DEFAULT_FILE, PARAM_FILE);
@@ -529,6 +498,18 @@
  */ 
 function lang_save_file($path, $file, $strings, $local, $packstrings) {
     global $CFG, $USER;
+    if (LANG_KEEP_ORPHANS) {
+        // let us load the current content of the file
+        unset($string);
+        @include("$path/$file");
+        if (isset($string)) {
+            $orphans = $string;
+            unset($string);
+        } else {
+            $orphans = array();
+        }
+    }
+    // let us rewrite the file
     if (!$f = @fopen("$path/$file","w")) {
         return false;
     }
@@ -542,18 +523,20 @@ function lang_save_file($path, $file, $strings, $local, $packstrings) {
     ksort($strings);
     foreach ($strings as $key => $value) {
         @list($id, $stringname) = explode('XXX',$key);
-        if ($CFG->lang != "zh_hk" and $CFG->lang != "zh_tw") {  // Some MB languages include backslash bytes
-            $value = str_replace("\\","",$value);           // Delete all slashes
-        }
-        $value = str_replace("'", "\\'", $value);           // Add slashes for '
-        $value = str_replace('"', "\\\"", $value);          // Add slashes for "
-        $value = str_replace("%","%%",$value);              // Escape % characters
-        $value = str_replace("\r", "",$value);              // Remove linefeed characters
-        $value = trim($value);                              // Delete leading/trailing white space
+        $value = lang_fix_value_before_save($value);
         if ($id == "string" and $value != ""){
             if ((!$local) || (lang_fix_value_from_file($packstrings[$stringname]) <> lang_fix_value_from_file($value))) {
                 fwrite($f,"\$string['$stringname'] = '$value';\n");
+                if (LANG_KEEP_ORPHANS && isset($orphans[$stringname])) {
+                    unset($orphans[$stringname]);
+                }
             }
+        }
+    }
+    if (LANG_KEEP_ORPHANS) {
+        // let us add orphaned strings, i.e. already translated strings without the English referential source
+        foreach ($orphans as $key => $value) {
+            fwrite($f,"\$string['$key'] = '".lang_fix_value_before_save($value)."'; // ORPHANED\n");
         }
     }
     fwrite($f,"\n?>\n");
@@ -562,7 +545,11 @@ function lang_save_file($path, $file, $strings, $local, $packstrings) {
 }
 
 /**
- * Fix value of string to translate.
+ * Fix value of the translated string after it is load from the file.
+ *
+ * These modifications are typically necessary to work with the same string coming from two sources.
+ * We need to compare the content of these sources and we want to have e.g. "This string\r\n"
+ * to be the same as " This string\n". 
  *
  * @param string $value Original string from the file
  * @return string Fixed value
@@ -576,6 +563,26 @@ function lang_fix_value_from_file($value='') {
     $value = str_replace("<","&lt;",$value);
     $value = str_replace(">","&gt;",$value);
     $value = str_replace('"',"&quot;",$value);
+    return $value;
+}
+
+/**
+ * Fix value of the translated string before it is saved into the file
+ *
+ * @uses $CFG
+ * @param string $value Raw string to be saved into the lang pack
+ * @return string Fixed value
+ */
+function lang_fix_value_before_save($value='') {
+    global $CFG;
+    if ($CFG->lang != "zh_hk" and $CFG->lang != "zh_tw") {  // Some MB languages include backslash bytes
+        $value = str_replace("\\","",$value);           // Delete all slashes
+    }
+    $value = str_replace("'", "\\'", $value);           // Add slashes for '
+    $value = str_replace('"', "\\\"", $value);          // Add slashes for "
+    $value = str_replace("%","%%",$value);              // Escape % characters
+    $value = str_replace("\r", "",$value);              // Remove linefeed characters
+    $value = trim($value);                              // Delete leading/trailing white space
     return $value;
 }
 
@@ -598,15 +605,26 @@ function lang_make_directory($dir, $shownotices=true) {
     return $dir;
 }
 
-
-
-/// Following functions are required because '.' in form input names
-/// get replaced by '_' by PHP.
-
+/**
+ * Return the string key name for use in HTML form.
+ *
+ * Required because '.' in form input names get replaced by '_' by PHP.
+ *
+ * @param string $keyfromfile The key name containing '.'
+ * @return string The key name without '.'
+ */
 function lang_form_string_key($keyfromfile) {
     return str_replace('.', '##46#', $keyfromfile);  /// Derived from &#46, the ascii value for a period.
 }
 
+/**
+ * Return the string key name for use in file.
+ *
+ * Required because '.' in form input names get replaced by '_' by PHP.
+ *
+ * @param string $keyfromfile The key name without '.'
+ * @return string The key name containing '.'
+ */
 function lang_file_string_key($keyfromform) {
     return str_replace('##46#', '.', $keyfromform);
 }
