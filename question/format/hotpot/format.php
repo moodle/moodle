@@ -433,9 +433,12 @@ class qformat_hotpot extends qformat_default {
                             $fraction = 1;
                         }
                     }
-                    $question->fraction[] = $fraction;
-                    $question->feedback[] = $this->hotpot_prepare_str($xml->xml_value($tags, $answer."['feedback'][0]['#']"));
-                    $question->answer[] = $this->hotpot_prepare_str($xml->xml_value($tags, $answer."['text'][0]['#']"));
+                    $answertext = $this->hotpot_prepare_str($xml->xml_value($tags, $answer."['text'][0]['#']"));
+                    if ($answertext!='') {
+                        $question->answer[] = $answertext;
+                        $question->fraction[] = $fraction;
+                        $question->feedback[] = $this->hotpot_prepare_str($xml->xml_value($tags, $answer."['feedback'][0]['#']"));
+                    }
                     $a++;
                 }
                 $questions[] = $question;
