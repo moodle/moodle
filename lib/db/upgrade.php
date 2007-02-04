@@ -593,6 +593,19 @@ function xmldb_main_upgrade($oldversion=0) {
         execute_sql("DELETE FROM {$CFG->prefix}user WHERE username='changeme'", true);
     }
 
+    if ($result && $oldversion < 2007020400) {
+    /// Only for MySQL and PG, declare the user->ajax field as not null. MDL-8421.
+        if ($CFG->dbfamily == 'mysql' || $CFG->dbfamily == 'postgres') {
+        /// Changing nullability of field ajax on table user to not null
+            $table = new XMLDBTable('user');
+            $field = new XMLDBField('ajax');
+            $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '1', 'htmleditor');
+
+        /// Launch change of nullability for field ajax
+            $result = $result && change_field_notnull($table, $field);
+        }
+    }
+
     return $result;
 
 }
