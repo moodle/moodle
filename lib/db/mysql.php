@@ -2130,7 +2130,7 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2006082800) {
-        table_column('user', '', 'ajax', 'integer', '1', 'unsigned', '1', '', 'htmleditor');
+        table_column('user', '', 'ajax', 'integer', '1', 'unsigned', '1', 'not null', 'htmleditor');
     }
 
     if ($oldversion < 2006082900) {
