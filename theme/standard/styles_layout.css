@@ -1637,11 +1637,6 @@ body#course-index .singlebutton {
   margin:10px;
 }
 
-#course-report-log-index .logtable {
-  margin-left:auto;
-  margin-right:auto;
-}
-
 
 /***
  *** Group
@@ -2023,6 +2018,11 @@ body#message-messages {
  *** Logs
  ***/
 
+.logtable {
+  margin-left:auto;
+  margin-right:auto;
+}
+
 .logtable td,
 .logtable th {
   padding-left: 10px;
@@ -2031,6 +2031,13 @@ body#message-messages {
 
 .logtable th {
   text-align:left;
+}
+
+#course-user .info {
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  margin:10px;
 }
 
 /***
