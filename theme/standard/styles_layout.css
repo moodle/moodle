@@ -1533,7 +1533,25 @@ body#course-index #content {
   padding:20px;
 }
 
-body#course-index .singlebutton {
+body#course-index #middle-column .editcourse {
+  margin-left:auto;
+  margin-right:auto;
+  margin-top:20px;
+  margin-bottom:20px;
+}
+
+body#course-index #middle-column .editcourse th,
+body#course-index #middle-column .editcourse td {
+  padding-left:10px;
+  padding-right:10px;
+}
+
+body#course-index #middle-column .editcourse .count {
+  text-align:right;
+}
+
+body#course-index .singlebutton,
+body#course-index .addcategory {
   text-align: center;
 }
 
