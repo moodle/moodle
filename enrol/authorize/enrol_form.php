@@ -6,7 +6,6 @@ class enrol_authorize_form extends moodleform
 {
     function definition()
     {
-        global $course;
         global $CFG, $USER;
 
         $paymentmethodsenabled = get_list_of_payment_methods();
@@ -16,9 +15,10 @@ class enrol_authorize_form extends moodleform
         }
 
         $mform =& $this->_form;
+        $course = $this->_customdata['course'];
 
         $mform->addElement('header', '', '&nbsp;&nbsp;' . get_string('paymentrequired'), '');
-        if ($othermethodstr = other_method($paymentmethod)) {
+        if ($othermethodstr = $this->other_method_available($paymentmethod)) {
             $mform->addElement('static', '', '<div align="right">' . $othermethodstr . '&nbsp;&nbsp;</div>', '');
         }
 
@@ -216,31 +216,32 @@ class enrol_authorize_form extends moodleform
         return (empty($errors) ? true : $errors);
     }
 
+    function other_method_available($currentmethod)
+    {
+        $course = $this->_customdata['course'];
+
+        if ($currentmethod == AN_METHOD_CC) {
+            $otheravailable = in_array(AN_METHOD_ECHECK, get_list_of_payment_methods());
+            $url = 'enrol.php?id='.$course->id.'&amp;paymentmethod='.AN_METHOD_ECHECK;
+            $stringtofetch = 'usingecheckmethod';
+        }
+        else {
+            $otheravailable = in_array(AN_METHOD_CC, get_list_of_payment_methods());
+            $url = 'enrol.php?id='.$course->id.'&amp;paymentmethod='.AN_METHOD_CC;
+            $stringtofetch = 'usingccmethod';
+        }
+        if ($otheravailable) {
+            $a = new stdClass;
+            $a->url = $url;
+            return get_string($stringtofetch, "enrol_authorize", $a);
+        }
+        else {
+            return '';
+        }
+    }
+
 }
 
-function other_method($currentmethod)
-{
-    global $course;
-
-    if ($currentmethod == AN_METHOD_CC) {
-        $otheravailable = in_array(AN_METHOD_ECHECK, get_list_of_payment_methods());
-        $url = 'enrol.php?id='.$course->id.'&amp;paymentmethod='.AN_METHOD_ECHECK;
-        $stringtofetch = 'usingecheckmethod';
-    }
-    else {
-        $otheravailable = in_array(AN_METHOD_CC, get_list_of_payment_methods());
-        $url = 'enrol.php?id='.$course->id.'&amp;paymentmethod='.AN_METHOD_CC;
-        $stringtofetch = 'usingccmethod';
-    }
-    if ($otheravailable) {
-        $a = new stdClass;
-        $a->url = $url;
-        return get_string($stringtofetch, "enrol_authorize", $a);
-    }
-    else {
-    	return '';
-    }
-}
 
 function ABAVal($aba)
 {

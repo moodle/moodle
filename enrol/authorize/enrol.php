@@ -74,7 +74,7 @@ class enrolment_plugin_authorize
         }
         else {
             require_once($CFG->dirroot.'/enrol/authorize/enrol_form.php');
-            $frmenrol = new enrol_authorize_form();
+            $frmenrol = new enrol_authorize_form('enrol.php', compact('course'));
             if ($frmenrol->get_data()) {
                 $authorizeerror = '';
                 switch ($form->paymentmethod) {
