@@ -188,7 +188,7 @@ class enrol_authorize_form extends moodleform
             }
 
             $expdate = sprintf("%02d", intval($data['ccexpiremm'])) . $data['ccexpireyyyy'];
-            $validcc = $this->validade_cc($data['cc'], $data['cctype'], $expdate);
+            $validcc = $this->validate_cc($data['cc'], $data['cctype'], $expdate);
             if (!$validcc) {
                 if ($validcc === 0) {
                     $errors['ccexpiregrp'] = get_string('ccexpired', 'enrol_authorize');
@@ -204,7 +204,7 @@ class enrol_authorize_form extends moodleform
         }
         elseif (AN_METHOD_ECHECK == $data['paymentmethod'])
         {
-            if (!$this->validade_aba($data['abacode'])) {
+            if (!$this->validate_aba($data['abacode'])) {
                 $errors['abacode'] = get_string('invalidaba', 'enrol_authorize');
             }
 
@@ -240,7 +240,7 @@ class enrol_authorize_form extends moodleform
         }
     }
 
-    function validade_aba($aba)
+    function validate_aba($aba)
     {
         if (ereg("^[0-9]{9}$", $aba)) {
             $n = 0;
@@ -254,7 +254,7 @@ class enrol_authorize_form extends moodleform
         return false;
     }
 
-    function validade_cc($Num, $Name = "n/a", $Exp = "")
+    function validate_cc($Num, $Name = "n/a", $Exp = "")
     {
         // Check the expiration date first
         if (strlen($Exp))
