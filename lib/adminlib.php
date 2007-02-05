@@ -1691,7 +1691,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
 
         $record = new stdClass();
         $record->id = $this->id;
-        $record->{$this->name} = $data;
+        $record->{$this->name} = addslashes($data);
         $record->timemodified = time();
         return (update_record('course', $record) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');
     }
