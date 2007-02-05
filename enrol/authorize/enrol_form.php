@@ -6,7 +6,7 @@ class enrol_authorize_form extends moodleform
 {
     function definition()
     {
-        global $COURSE;
+        global $course;
         global $CFG, $USER;
 
         $paymentmethodsenabled = get_list_of_payment_methods();
@@ -22,7 +22,7 @@ class enrol_authorize_form extends moodleform
             $mform->addElement('static', '', '<div align="right">' . $othermethodstr . '&nbsp;&nbsp;</div>', '');
         }
 
-        $mform->addElement('hidden', 'id', $COURSE->id);
+        $mform->addElement('hidden', 'id', $course->id);
         $mform->setType('id', PARAM_INT);
 
         $mform->addElement('hidden', 'paymentmethod', $paymentmethod);
@@ -220,16 +220,16 @@ class enrol_authorize_form extends moodleform
 
 function other_method($currentmethod)
 {
-    global $COURSE;
+    global $course;
 
     if ($currentmethod == AN_METHOD_CC) {
         $otheravailable = in_array(AN_METHOD_ECHECK, get_list_of_payment_methods());
-        $url = 'enrol.php?id='.$COURSE->id.'&amp;paymentmethod='.AN_METHOD_ECHECK;
+        $url = 'enrol.php?id='.$course->id.'&amp;paymentmethod='.AN_METHOD_ECHECK;
         $stringtofetch = 'usingecheckmethod';
     }
     else {
         $otheravailable = in_array(AN_METHOD_CC, get_list_of_payment_methods());
-        $url = 'enrol.php?id='.$COURSE->id.'&amp;paymentmethod='.AN_METHOD_CC;
+        $url = 'enrol.php?id='.$course->id.'&amp;paymentmethod='.AN_METHOD_CC;
         $stringtofetch = 'usingccmethod';
     }
     if ($otheravailable) {
