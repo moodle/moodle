@@ -188,7 +188,7 @@ class enrol_authorize_form extends moodleform
             }
 
             $expdate = sprintf("%02d", intval($data['ccexpiremm'])) . $data['ccexpireyyyy'];
-            $validcc = CCVal($data['cc'], $data['cctype'], $expdate);
+            $validcc = $this->validade_cc($data['cc'], $data['cctype'], $expdate);
             if (!$validcc) {
                 if ($validcc === 0) {
                     $errors['ccexpiregrp'] = get_string('ccexpired', 'enrol_authorize');
@@ -204,7 +204,7 @@ class enrol_authorize_form extends moodleform
         }
         elseif (AN_METHOD_ECHECK == $data['paymentmethod'])
         {
-            if (!ABAVal($data['abacode'])) {
+            if (!$this->validade_aba($data['abacode'])) {
                 $errors['abacode'] = get_string('invalidaba', 'enrol_authorize');
             }
 
@@ -240,106 +240,104 @@ class enrol_authorize_form extends moodleform
         }
     }
 
-}
-
-
-function ABAVal($aba)
-{
-    if (ereg("^[0-9]{9}$", $aba)) {
-        $n = 0;
-        for($i = 0; $i < 9; $i += 3) {
-            $n += (substr($aba, $i, 1) * 3) + (substr($aba, $i + 1, 1) * 7) + (substr($aba, $i + 2, 1));
+    function validade_aba($aba)
+    {
+        if (ereg("^[0-9]{9}$", $aba)) {
+            $n = 0;
+            for($i = 0; $i < 9; $i += 3) {
+                $n += (substr($aba, $i, 1) * 3) + (substr($aba, $i + 1, 1) * 7) + (substr($aba, $i + 2, 1));
+            }
+            if ($n != 0 and $n % 10 == 0) {
+                return true;
+            }
         }
-        if ($n != 0 and $n % 10 == 0) {
-            return true;
+        return false;
+    }
+
+    function validade_cc($Num, $Name = "n/a", $Exp = "")
+    {
+        // Check the expiration date first
+        if (strlen($Exp))
+        {
+            $Month = substr($Exp, 0, 2);
+            $Year  = substr($Exp, -2);
+            $WorkDate = "$Month/01/$Year";
+            $WorkDate = strtotime($WorkDate);
+            $LastDay  = date("t", $WorkDate);
+            $Expires  = strtotime("$Month/$LastDay/$Year 11:59:59");
+            if ($Expires < time()) return 0;
         }
-    }
-    return false;
-}
 
-function CCVal($Num, $Name = "n/a", $Exp = "")
-{
-    // Check the expiration date first
-    if (strlen($Exp))
-    {
-        $Month = substr($Exp, 0, 2);
-        $Year  = substr($Exp, -2);
-        $WorkDate = "$Month/01/$Year";
-        $WorkDate = strtotime($WorkDate);
-        $LastDay  = date("t", $WorkDate);
-        $Expires  = strtotime("$Month/$LastDay/$Year 11:59:59");
-        if ($Expires < time()) return 0;
-    }
+        //  Innocent until proven guilty
+        $GoodCard = true;
 
-    //  Innocent until proven guilty
-    $GoodCard = true;
+        //  Get rid of any non-digits
+        $Num = ereg_replace("[^0-9]", "", $Num);
 
-    //  Get rid of any non-digits
-    $Num = ereg_replace("[^0-9]", "", $Num);
+        // Perform card-specific checks, if applicable
+        switch ($Name)
+        {
+            case "mcd" :
+                $GoodCard = ereg("^5[1-5].{14}$", $Num);
+                break;
 
-    // Perform card-specific checks, if applicable
-    switch ($Name)
-    {
-        case "mcd" :
-        $GoodCard = ereg("^5[1-5].{14}$", $Num);
-        break;
+            case "vis" :
+                $GoodCard = ereg("^4.{15}$|^4.{12}$", $Num);
+                break;
 
-        case "vis" :
-        $GoodCard = ereg("^4.{15}$|^4.{12}$", $Num);
-        break;
+            case "amx" :
+                $GoodCard = ereg("^3[47].{13}$", $Num);
+                break;
 
-        case "amx" :
-        $GoodCard = ereg("^3[47].{13}$", $Num);
-        break;
+            case "dsc" :
+                $GoodCard = ereg("^6011.{12}$", $Num);
+                break;
 
-        case "dsc" :
-        $GoodCard = ereg("^6011.{12}$", $Num);
-        break;
+            case "dnc" :
+                $GoodCard = ereg("^30[0-5].{11}$|^3[68].{12}$", $Num);
+                break;
 
-        case "dnc" :
-        $GoodCard = ereg("^30[0-5].{11}$|^3[68].{12}$", $Num);
-        break;
+            case "jcb" :
+                $GoodCard = ereg("^3.{15}$|^2131|1800.{11}$", $Num);
+                break;
 
-        case "jcb" :
-        $GoodCard = ereg("^3.{15}$|^2131|1800.{11}$", $Num);
-        break;
+            case "dlt" :
+                $GoodCard = ereg("^4.{15}$", $Num);
+                break;
 
-        case "dlt" :
-        $GoodCard = ereg("^4.{15}$", $Num);
-        break;
+            case "swi" :
+                $GoodCard = ereg("^[456].{15}$|^[456].{17,18}$", $Num);
+                break;
 
-        case "swi" :
-        $GoodCard = ereg("^[456].{15}$|^[456].{17,18}$", $Num);
-        break;
+            case "enr" :
+                $GoodCard = ereg("^2014.{11}$|^2149.{11}$", $Num);
+                break;
+        }
 
-        case "enr" :
-        $GoodCard = ereg("^2014.{11}$|^2149.{11}$", $Num);
-        break;
-    }
+        // The Luhn formula works right to left, so reverse the number.
+        $Num = strrev($Num);
+        $Total = 0;
 
-    // The Luhn formula works right to left, so reverse the number.
-    $Num = strrev($Num);
-    $Total = 0;
+        for ($x=0; $x < strlen($Num); $x++)
+        {
+            $digit = substr($Num, $x, 1);
 
-    for ($x=0; $x < strlen($Num); $x++)
-    {
-        $digit = substr($Num, $x, 1);
+            // If it's an odd digit, double it
+            if ($x/2 != floor($x/2)) {
+                $digit *= 2;
 
-        // If it's an odd digit, double it
-        if ($x/2 != floor($x/2)) {
-            $digit *= 2;
-
-            // If the result is two digits, add them
-            if (strlen($digit) == 2)
+                // If the result is two digits, add them
+                if (strlen($digit) == 2)
                 $digit = substr($digit, 0, 1) + substr($digit, 1, 1);
+            }
+            // Add the current digit, doubled and added if applicable, to the Total
+            $Total += $digit;
         }
-        // Add the current digit, doubled and added if applicable, to the Total
-        $Total += $digit;
+
+        // If it passed (or bypassed) the card-specific check and the Total is
+        // evenly divisible by 10, it's cool!
+        return ($GoodCard && $Total % 10 == 0);
     }
 
-    // If it passed (or bypassed) the card-specific check and the Total is
-    // evenly divisible by 10, it's cool!
-    return ($GoodCard && $Total % 10 == 0);
 }
-
 ?>
