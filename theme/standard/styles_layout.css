@@ -1591,7 +1591,8 @@ body#course-index .addcategory {
   padding-bottom:10px;
 }
 
-#coursesearch {
+#coursesearch,
+#coursesearch2 {
   text-align:center;
 }
 

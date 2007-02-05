@@ -1891,17 +1891,26 @@ function print_my_moodle() {
 function print_course_search($value="", $return=false, $format="plain") {
 
     global $CFG;
+    static $count = 0;
+
+    $count++;
+
+    $id = 'coursesearch';
+
+    if ($count > 1) {
+        $id .= $count;
+    }
 
     $strsearchcourses= get_string("searchcourses");
 
     if ($format == 'plain') {
-        $output  = '<form id="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
+        $output  = '<form id="'.$id.'" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
         $output .= '<fieldset class="coursesearchbox invisiblefieldset">';
         $output .= '<input type="text" size="30" name="search" alt="'.s($strsearchcourses).'" value="'.s($value, true).'" />';
         $output .= '<input type="submit" value="'.s($strsearchcourses).'" />';
         $output .= '</fieldset></form>';
     } else if ($format == 'short') {
-        $output  = '<form id="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
+        $output  = '<form id="'.$id.'" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
         $output .= '<fieldset class="coursesearchbox invisiblefieldset">';
         $output .= '<input type="text" size="12" name="search" alt="'.s($strsearchcourses).'" value="'.s($value, true).'" />';
         $output .= '<input type="submit" value="'.s($strsearchcourses).'" />';
