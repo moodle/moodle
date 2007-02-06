@@ -58,17 +58,41 @@
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 /// Layout the whole page as three big columns.
     echo '<table id="layout-table" cellspacing="0" summary="'.get_string('layouttable').'"><tr>';
-
+    $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
+    foreach ($lt as $column) {
+        switch ($column) {
+            case 'left':
+ 
 /// The left column ...
 
     if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
         echo '<td style="width:'.$preferred_width_left.'px" id="left-column">';
+
+        if (!empty($THEME->roundcorners)) {
+            echo '<div class="bt"><div></div></div>';
+            echo '<div class="i1"><div class="i2"><div class="i3">';
+        }
+        
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+
+        if (!empty($THEME->roundcorners)) {
+            echo '</div></div></div>';
+            echo '<div class="bb"><div></div></div>';
+        }
+
         echo '</td>';
     }
-
+            break;
+            case 'middle':
 /// Start main column
-    echo '<td id="middle-column"><a name="startofcontent"></a>';
+    echo '<td id="middle-column">';
+
+    if (!empty($THEME->roundcorners)) {
+       echo '<div class="bt"><div></div></div>';
+       echo '<div class="i1"><div class="i2"><div class="i3">';
+    }
+        
+    echo '<a name="startofcontent"></a>';
 
     print_heading_block(get_string('weeklyoutline'), 'outline');
 
@@ -262,15 +286,37 @@
         echo '</div>';
     }
 
+    if (!empty($THEME->roundcorners)) {
+        echo '</div></div></div>';
+        echo '<div class="bb"><div></div></div>';
+    }
+
     echo '</td>';
 
+            break;
+            case 'right':
     // The right column
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
         echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
+
+        if (!empty($THEME->roundcorners)) {
+            echo '<div class="bt"><div></div></div>';
+            echo '<div class="i1"><div class="i2"><div class="i3">';
+        }
+
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+
+        if (!empty($THEME->roundcorners)) {
+            echo '</div></div></div>';
+            echo '<div class="bb"><div></div></div>';
+        }
+
         echo '</td>';
     }
 
+            break;
+        }
+    }
     echo '</tr></table>';
 
 ?>
