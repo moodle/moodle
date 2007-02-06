@@ -141,7 +141,7 @@
 
 
     if ($chat->chattime and $chat->schedule) {  // A chat is scheduled
-        echo "<p align=\"center\">$strnextsession: ".userdate($chat->chattime).' ('.usertimezone($USER->timezone).')</p>';
+        echo "<p class=\"nextchatsession\">$strnextsession: ".userdate($chat->chattime).' ('.usertimezone($USER->timezone).')</p>';
     } else {
         echo '<br />';
     }
@@ -162,7 +162,7 @@
             echo '<tr><td width="35">';
             echo "<a href=\"$CFG->wwwroot/user/view.php?id=$chatuser->id&amp;course=$chat->course\">";
             print_user_picture($chatuser->id, 0, $chatuser->picture, false, false, false);
-            echo '</a></td><td valign="center">';
+            echo '</a></td><td style="vertical-align: middle">';
             echo '<p><font size="1">';
             echo fullname($chatuser).'<br />';
             echo "<font color=\"#888888\">$stridle: ".format_time($lastping)."</font>";

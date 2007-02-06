@@ -92,7 +92,7 @@
 
         if (has_capability('moodle/blog:create', $sitecontext)) {
             //the user's blog is enabled and they are viewing their own blog
-            $addlink = '<div align="center">';
+            $addlink = '<div class="addbloglink">';
             $addlink .= '<a href="'.$CFG->wwwroot .'/blog/edit.php?action=add'.'">'. get_string('addnewentry', 'blog').'</a>';
             $addlink .= '</div>';
             echo $addlink;
@@ -144,9 +144,9 @@
         global $USER, $CFG, $COURSE, $ME;
 
         $template['body'] = format_text($blogEntry->summary, $blogEntry->format);
-        $template['title'] = '<a name="'. $blogEntry->subject .'"></a>';
+        //$template['title'] = '<a name="'. $blogEntry->subject .'"></a>';
         //enclose the title in nolink tags so that moodle formatting doesn't autolink the text
-        $template['title'] .= '<span class="nolink">'.$blogEntry->subject.'</span>';
+        $template['title'] = '<span class="nolink">'.$blogEntry->subject.'</span>';
         $template['userid'] = $blogEntry->userid;
         $template['author'] = fullname(get_record('user','id',$blogEntry->userid));
         $template['lastmod'] = userdate($blogEntry->lastmodified);

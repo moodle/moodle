@@ -234,8 +234,8 @@
 
         /// In the .html file below we loop through these results and exclude any in $contextusers
 
-        echo '<div align="center">'.$strcurrentcontext.': '.print_context_name($context).'<br/>';
-        echo '<label for="jump">'.$strroletoassign.'</label>: ';
+        echo '<div style="text-align:center">'.$strcurrentcontext.': '.print_context_name($context).'<br/>';
+        echo '<label>'.$strroletoassign.'</label>: ';
         $assignableroles = array('0'=>get_string('listallroles', 'role').'...') + $assignableroles; 
         popup_form("$CFG->wwwroot/$CFG->admin/roles/assign.php?userid=$userid&amp;courseid=$courseid&amp;contextid=$contextid&amp;roleid=",
             $assignableroles, 'switchrole', $roleid, '');

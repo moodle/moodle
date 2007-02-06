@@ -1061,6 +1061,9 @@ a.skip-block, .skip-block {
 /***
  *** Blogs
  ***/
+.addbloglink {
+  text-align: center;  
+}
 
 .blogpost .audience {
   text-align: right;
@@ -2333,6 +2336,10 @@ body#user-index .rolesform {
  *** Modules: Chat
  ***/
 
+.nextchatsession {
+  text-align:center;  
+}
+
 #mod-chat-gui_header_js-jsupdate {
   margin:10px
 }
@@ -2989,6 +2996,10 @@ body#question-preview .quemodname, body#question-preview .controls {
 .questioncell {
   width:50%;
   vertical-align:top;
+}
+
+.whitecell {
+  background-color:white;  
 }
 /***
  *** Modules: Wiki

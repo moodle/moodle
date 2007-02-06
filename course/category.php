@@ -220,7 +220,7 @@
                 if ($firstentry) {
                     echo '<table align="center" border="0" cellspacing="2" cellpadding="4" class="generalbox">';
                     echo '<tr><th scope="col">'.get_string('subcategories').'</th></tr>';
-                    echo '<tr><td nowrap="nowrap">';
+                    echo '<tr><td style="white-space: nowrap">';
                     $firstentry = false;
                 }
                 $catlinkcss = $subcategory->visible ? "" : " class=\"dimmed\" ";

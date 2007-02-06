@@ -809,7 +809,7 @@ function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '',
 
     $htmlid = 'auto-cb'.sprintf('%04d', ++$idcounter);
     $output  = '<span class="checkbox '.$name."\">";
-    $output .= '<input name="'.$name.'" id="'.$htmlid.'" type="checkbox" value="'.$value.'" alt="'.$alt.'"'.$strchecked.' '.((!empty($script)) ? ' onClick="'.$script.'" ' : '').' />';
+    $output .= '<input name="'.$name.'" id="'.$htmlid.'" type="checkbox" value="'.$value.'" alt="'.$alt.'"'.$strchecked.' '.((!empty($script)) ? ' onclick="'.$script.'" ' : '').' />';
     if(!empty($label)) {
         $output .= ' <label for="'.$htmlid.'">'.$label.'</label>';
     }
@@ -4872,10 +4872,10 @@ function redirect($url, $message='', $delay=-1) {
         print_header('', '', '', '', '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />');
         $delay += 3; // double redirect prevention, it was sometimes breaking upgrades before 1.7
     }
-    echo '<center>';
+    echo '<div style="text-align:center">';
     echo '<p>'. $message .'</p>';
     echo '<p>( <a href="'. $encodedurl .'">'. get_string('continue') .'</a> )</p>';
-    echo '</center>';
+    echo '</div>';
 // it might be better not to set timeout the same for both types of redirect, so that we can be sure which one wins
 ?>
 <script type="text/javascript">

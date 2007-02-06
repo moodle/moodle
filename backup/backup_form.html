@@ -112,9 +112,8 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
 }
 -->
 </script>
-
 <form id="form1" method="post" action="backup.php">
-<table cellpadding="5">
+<table cellpadding="5" style="margin-left:auto;margin-right:auto;">
 <?php
     //Now, check modules and info and show posibilities
     if ($allmods = get_records("modules") ) {
@@ -319,8 +318,8 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
     //the temp-directory name and records in backup temp tables
 ?>
 </table>
-<br />
-<center>
+
+<div style="text-align:center;margin-left:auto;margin-right:auto">
 <input type="hidden" name="id"     value="<?php  p($id) ?>" />
 <input type="hidden" name="to"     value="<?php p($to) ?>" />
 <input type="hidden" name="backup_unique_code" value="<?php p($backup_unique_code); ?>" />
@@ -328,5 +327,5 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
 <input type="hidden" name="launch" value="check" />
 <input type="submit" value="<?php  print_string("continue") ?>" />
 <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
-</center>
+</div>
 </form>

@@ -91,7 +91,7 @@
 /// Start of main box
     print_simple_box_start('center');
 
-    echo "<center>".$stradminhelpenvironment."</center><br />";
+    echo "<div style=\"text-align:center\">".$stradminhelpenvironment."</div><br />";
 
 /// Get current Moodle version
     $current_version = $CFG->release;
@@ -121,7 +121,7 @@
     }
 
 /// Print form and popup menu
-    echo '<div align="center">'.$strmoodleversion.' ';
+    echo '<div style="text-align:center">'.$strmoodleversion.' ';
     popup_form("$CFG->wwwroot/$CFG->admin/environment.php?version=",
         $versions, 'selectversion', $version, '');
     echo '</div>';

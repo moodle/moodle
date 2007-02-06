@@ -37,18 +37,19 @@
 /// Print the appropriate form
 
     if (file_exists($filename)) {   // We are in maintenance mode
-        echo '<center>';
+        echo '<div style="margin-left:auto;margin-right:auto">';
         echo '<form action="maintenance.php" method="post">';
         echo '<input type="hidden" name="action" value="disable" />';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<p><input type="submit" value="'.get_string('disable').'" /></p>';
         echo '</form>';
-        echo '</center>';
+        echo '</div>';
     } else {                        // We are not in maintenance mode
         $usehtmleditor = can_use_html_editor();
 
-        echo '<center>';
+        echo '<div style="text-align:center;margin-left:auto;margin-right:auto">';
         echo '<form action="maintenance.php" method="post">';
+        echo '<div>';
         echo '<input type="hidden" name="action" value="enable" />';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<p><input type="submit" value="'.get_string('enable').'" /></p>';
@@ -56,8 +57,9 @@
         echo '<table><tr><td>';
         print_textarea($usehtmleditor, 20, 50, 600, 400, "text");
         echo '</td></tr></table>';
+        echo '</div>';
         echo '</form>';
-        echo '</center>';
+        echo '</div>';
 
         if ($usehtmleditor) { 
             use_html_editor();

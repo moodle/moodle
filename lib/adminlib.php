@@ -1546,7 +1546,7 @@ class admin_setting_configtime extends admin_setting {
             $return .= '<option value="' . $key . '"' . ($key == $currentsetting['m'] ? ' selected="selected"' : '') . '>' . $value . '</option>';
         }
         $return .= '</select></div>';
-        return format_admin_setting($this->name, $this->visiblename, $return, $this->description);
+        return format_admin_setting($this->name, $this->visiblename, $return, $this->description, false);
     }
 
 }
@@ -1712,7 +1712,7 @@ class admin_setting_courselist_frontpage extends admin_setting_configselect {
         }
         $return .= '</div>';
 
-        return format_admin_setting($this->name, $this->visiblename, $return, $this->description);
+        return format_admin_setting($this->name, $this->visiblename, $return, $this->description, false);
     }
 }
 
@@ -1808,7 +1808,7 @@ class admin_setting_special_frontpagedesc extends admin_setting {
 
         $return = print_textarea($CFG->adminusehtmleditor, 15, 60, 0, 0, 's_' . $this->name, $currentsetting, 0, true);
 
-        return format_admin_setting($this->name, $this->visiblename, $return, $this->description);
+        return format_admin_setting($this->name, $this->visiblename, $return, $this->description, false);
     }
 
     function get_setting() {
@@ -2760,16 +2760,26 @@ function apply_default_exception_settings($defaults) {
 
 }
 
-function format_admin_setting($name, $title='', $form='', $description='') {
-    return "\n".
+function format_admin_setting($name, $title='', $form='', $description='', $label=true) {
+    
+    // sometimes the id is not id_s_name, but id_s_name_m or something, and this does not validate
+    if ($label) {
+        $labelfor = 'for = "id_s_'.$name.'"'; 
+    } else {
+        $labelfor = '';  
+    }
+    
+    $str = "\n".
            '<div class="form-item" id="admin-'.$name.'">'."\n".
-           '<label for="id_s_'.$name.'">'.$title."\n".
+           '<label '.$labelfor.'>'.$title."\n".
            '   <span class="form-shortname">'.$name.'</span>'."\n".
            '</label>'."\n".
            $form."\n".
            '<div class="description">'.$description.'</div>'."\n".
            '</div>'.
            "\n\n";
+  
+    return $str;
 }
 
 /* 

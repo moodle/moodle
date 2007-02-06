@@ -1,11 +1,12 @@
 <form id="assignform" method="post" action="">
+<div>
 <input type="hidden" name="previoussearch" value="<?php p($previoussearch) ?>" />
 <input type="hidden" name="userid" value="<?php p($userid) ?>" />
 <input type="hidden" name="courseid" value="<?php p($courseid) ?>" />
 <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
 <input type="hidden" name="contextid" value="<?php p($contextid) ?>" />
 <input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
-  <table summary="" align="center" border="0" cellpadding="5" cellspacing="0">
+  <table summary="" style="margin-left:auto;margin-right:auto" border="0" cellpadding="5" cellspacing="0">
     <tr>
       <td valign="top">
           <label for="removeselect"><?php print_string('existingusers', 'role', count($contextusers)); ?></label>
@@ -14,6 +15,7 @@
                   onfocus="getElementById('assignform').add.disabled=true;
                            getElementById('assignform').remove.disabled=false;
                            getElementById('assignform').addselect.selectedIndex=-1;">
+          
           <?php
               foreach ($contextusers as $contextuser) {
                   $fullname = fullname($contextuser, true);
@@ -25,7 +27,7 @@
                   echo "<option value=\"$contextuser->id\">".$fullname.", ".$contextuser->email.$hidden."</option>\n";
               }
           ?>
-
+          <option/>
           </select></td>
       <td valign="top">
         <br />
@@ -95,6 +97,7 @@
        </td>
     </tr>
   </table>
+</div>
 </form>
 
 

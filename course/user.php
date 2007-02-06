@@ -265,7 +265,7 @@ function print_outline_row($mod, $instance, $result) {
 
     echo "<tr>";
     echo "<td valign=\"top\">$image</td>";
-    echo "<td valign=\"top\" width=\"300\">";
+    echo "<td valign=\"top\" style=\"width:300\">";
     echo "   <a title=\"$mod->modfullname\"";
     echo "   href=\"../mod/$mod->modname/view.php?id=$mod->id\">".format_string($instance->name,true)."</a></td>";
     echo "<td>&nbsp;&nbsp;&nbsp;</td>";
@@ -273,13 +273,13 @@ function print_outline_row($mod, $instance, $result) {
     if (isset($result->info)) {
         echo "$result->info";
     } else {
-        echo "<p align=\"center\">-</p>";
+        echo "<p style=\"text-align:center\">-</p>";
     }
     echo "</td>";
     echo "<td>&nbsp;&nbsp;&nbsp;</td>";
     if (!empty($result->time)) {
         $timeago = format_time(time() - $result->time);
-        echo "<td valign=\"top\" nowrap=\"nowrap\">".userdate($result->time)." ($timeago)</td>";
+        echo "<td valign=\"top\" style=\"white-space: nowrap\">".userdate($result->time)." ($timeago)</td>";
     }
     echo "</tr>";
 }

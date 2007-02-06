@@ -228,8 +228,8 @@ if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
 
 /// Start main column
 print '<!-- Begin page content -->' . "\n";
-print '<td width="*">';
+print '<td>';
 ?>
 <table width="100%">
 <tr>
-<td height="100%" valign="top">
+<td valign="top">

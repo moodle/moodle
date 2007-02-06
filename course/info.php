@@ -44,7 +44,7 @@
 
 
     if ($teachers = get_course_teachers($course->id)) {
-        echo "<table align=\"center\"><tr><td nowrap=\"nowrap\">";
+        echo "<table align=\"center\"><tr><td style=\"white-space: nowrap\">";
         echo "<p><font size=\"1\">\n";
         foreach ($teachers as $teacher) {
             if ($teacher->authority > 0) {
