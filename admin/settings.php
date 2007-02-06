@@ -87,6 +87,32 @@ if ($data = data_submitted()) {
 
 /// print header stuff ------------------------------------------------------------
 // header must be printed after the redirects and require_logout
+
+if (empty($SITE->fullname)) {
+    print_header();
+    print_simple_box(get_string('configintrosite', 'admin'), 'center', '50%');
+
+    if ($statusmsg != '') {
+        notify ($statusmsg);
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+
+    echo '<form action="settings.php" method="post" id="adminsettings">';
+    echo '<div class="settingsform">';
+    echo '<input type="hidden" name="section" value="' . $PAGE->section . '" />';
+    echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
+    echo '<input type="hidden" name="return" value="' . $return . '" />';
+    print_heading($root->visiblename);
+
+    echo $root->output_html();
+
+    echo '<div class="form-buttons"><input class="form-submit" type="submit" value="' . get_string('savechanges','admin') . '" /></div>';
+
+    echo '</div>';
+    echo '</form>';
+}
+
 if (!empty($SITE->fullname)) {
     $pageblocks = blocks_setup($PAGE);
 
@@ -98,42 +124,72 @@ if (!empty($SITE->fullname)) {
     $PAGE->print_header();
 
     echo '<table id="layout-table"><tr>';
+    $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
+    foreach ($lt as $column) {
+        switch ($column) {
+            case 'left':
     echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
+    if (!empty($THEME->roundcorners)) {
+        echo '<div class="bt"><div></div></div>';
+        echo '<div class="i1"><div class="i2"><div class="i3">';
+    }
     blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+    if (!empty($THEME->roundcorners)) {
+        echo '</div></div></div>';
+        echo '<div class="bb"><div></div></div>';
+    }
     echo '</td>';
-    echo '<td id="middle-column"><a name="startofcontent"></a>';
-} else {
+            break;
+            case 'middle':
+    echo '<td id="middle-column">';
+    if (!empty($THEME->roundcorners)) {
+        echo '<div class="bt"><div></div></div>';
+        echo '<div class="i1"><div class="i2"><div class="i3">';
+    }
+    echo '<a name="startofcontent"></a>';
 
-    print_header();
-    print_simple_box(get_string('configintrosite', 'admin'), 'center', '50%');
+    if ($statusmsg != '') {
+        notify ($statusmsg);
+    }
 
-}
+    // ---------------------------------------------------------------------------------------------------------------
 
-if ($statusmsg != '') {
-    notify ($statusmsg);
-}
+    echo '<form action="settings.php" method="post" id="adminsettings">';
+    echo '<div class="settingsform">';
+    echo '<input type="hidden" name="section" value="' . $PAGE->section . '" />';
+    echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
+    echo '<input type="hidden" name="return" value="' . $return . '" />';
+    print_heading($root->visiblename);
 
-// ---------------------------------------------------------------------------------------------------------------
+    echo $root->output_html();
 
-echo '<form action="settings.php" method="post" id="adminsettings">';
-echo '<div class="settingsform">';
-echo '<input type="hidden" name="section" value="' . $PAGE->section . '" />';
-echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
-echo '<input type="hidden" name="return" value="' . $return . '" />';
-print_heading($root->visiblename);
+    echo '<div class="form-buttons"><input class="form-submit" type="submit" value="' . get_string('savechanges','admin') . '" /></div>';
 
-echo $root->output_html();
+    echo '</div>';
+    echo '</form>';
 
-echo '<div class="form-buttons"><input class="form-submit" type="submit" value="' . get_string('savechanges','admin') . '" /></div>';
-
-echo '</div>';
-echo '</form>';
-
-if (!empty($SITE->fullname)) {
+    if (!empty($THEME->roundcorners)) {
+        echo '</div></div></div>';
+        echo '<div class="bb"><div></div></div>';
+    }
     echo '</td>';
+            break;
+            case 'right':
     echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';
+    if (!empty($THEME->roundcorners)) {
+        echo '<div class="bt"><div></div></div>';
+        echo '<div class="i1"><div class="i2"><div class="i3">';
+    }
     blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-    echo '</td></tr></table>';
+    if (!empty($THEME->roundcorners)) {
+        echo '</div></div></div>';
+        echo '<div class="bb"><div></div></div>';
+    }
+    echo '</td>';
+            break;
+        }
+    }
+    echo '</tr></table>';
 }
 
 if (!empty($CFG->adminusehtmleditor)) {
