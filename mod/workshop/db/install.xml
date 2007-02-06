@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/workshop/db" VERSION="20060911" COMMENT="XMLDB file for Moodle mod/workshop"
+<XMLDB PATH="mod/workshop/db" VERSION="20070206" COMMENT="XMLDB file for Moodle mod/workshop"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -139,7 +139,7 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for workshop_grades" NEXT="workshopid"/>
         <KEY NAME="workshopid" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary" NEXT="assessmentid"/>
-        <KEY NAME="assessmentid" TYPE="foreign" FIELDS="assessmentid" REFTABLE="workshop_assessements" REFFIELDS="id" PREVIOUS="workshopid"/>
+        <KEY NAME="assessmentid" TYPE="foreign" FIELDS="assessmentid" REFTABLE="workshop_assessments" REFFIELDS="id" PREVIOUS="workshopid"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="workshop_stockcomments" COMMENT="Info about the teacher comment bank" PREVIOUS="workshop_grades" NEXT="workshop_comments">
@@ -167,7 +167,7 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for workshop_comments" NEXT="workshopid"/>
         <KEY NAME="workshopid" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary" NEXT="assessmentid"/>
-        <KEY NAME="assessmentid" TYPE="foreign" FIELDS="assessmentid" REFTABLE="workshop_assessements" REFFIELDS="id" PREVIOUS="workshopid"/>
+        <KEY NAME="assessmentid" TYPE="foreign" FIELDS="assessmentid" REFTABLE="workshop_assessments" REFFIELDS="id" PREVIOUS="workshopid"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" NEXT="mailed"/>
