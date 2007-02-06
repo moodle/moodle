@@ -30,11 +30,17 @@
         die;
     }
 
-/// Bounds for block widths on this page
-    define('BLOCK_L_MIN_WIDTH', 160);
-    define('BLOCK_L_MAX_WIDTH', 210);
-    define('BLOCK_R_MIN_WIDTH', 160);
-    define('BLOCK_R_MAX_WIDTH', 210);
+    // Bounds for block widths
+    // more flexible for theme designers taken from theme config.php
+    $lmin = (empty($THEME->block_l_min_width)) ? 100 : $THEME->block_l_min_width;
+    $lmax = (empty($THEME->block_l_max_width)) ? 210 : $THEME->block_l_max_width;
+    $rmin = (empty($THEME->block_r_min_width)) ? 100 : $THEME->block_r_min_width;
+    $rmax = (empty($THEME->block_r_max_width)) ? 210 : $THEME->block_r_max_width;
+
+    define('BLOCK_L_MIN_WIDTH', $lmin);
+    define('BLOCK_L_MAX_WIDTH', $lmax);
+    define('BLOCK_R_MIN_WIDTH', $rmin);
+    define('BLOCK_R_MAX_WIDTH', $rmax);
 
     require_once('config.php');
     require_once($CFG->dirroot .'/course/lib.php');

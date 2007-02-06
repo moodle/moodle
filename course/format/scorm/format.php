@@ -7,12 +7,6 @@
     require_once($CFG->dirroot.'/mod/'.$module.'/locallib.php');
 
     // Bounds for block widths
-    // define('BLOCK_L_MIN_WIDTH', 100);
-    // define('BLOCK_L_MAX_WIDTH', 210);
-    // define('BLOCK_R_MIN_WIDTH', 100);
-    // define('BLOCK_R_MAX_WIDTH', 210);
-
-    // Bounds for block widths
     // more flexible for theme designers taken from theme config.php
     $lmin = (empty($THEME->block_l_min_width)) ? 100 : $THEME->block_l_min_width;
     $lmax = (empty($THEME->block_l_max_width)) ? 210 : $THEME->block_l_max_width;
