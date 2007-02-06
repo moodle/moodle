@@ -73,43 +73,33 @@
     echo '<table id="layout-table" cellspacing="0" summary="'.get_string('layouttable').'"><tr>';
 
 /// The left column ...
-// uh-changes start
     $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
     foreach ($lt as $column) {
         switch ($column) {
             case 'left':
-// uh-changes end
 
     if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
         echo '<td style="width:'.$preferred_width_left.'px" id="left-column">';
-// uh-changes start
         if (!empty($THEME->roundcorners)) {
             echo '<div class="bt"><div></div></div>';
             echo '<div class="i1"><div class="i2"><div class="i3">';
         }
-// uh-changes end
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-// uh-changes start
         if (!empty($THEME->roundcorners)) {
             echo '</div></div></div>';
             echo '<div class="bb"><div></div></div>';
         }
-// uh-changes end
         echo '</td>';
     }
 
-// uh-changes start
             break;
             case 'middle':
-// uh-changes end
 /// Start main column
     echo '<td id="middle-column">';
-// uh-changes start
     if (!empty($THEME->roundcorners)) {
         echo '<div class="bt"><div></div></div>';
         echo '<div class="i1"><div class="i2"><div class="i3">';
     }
-    // uh-changes end
     echo '<a name="startofcontent"></a>';
 
     print_heading_block(get_string('topicoutline'), 'outline');
@@ -291,42 +281,32 @@
         echo '</div>';
     }
 
-// uh-changes start
     if (!empty($THEME->roundcorners)) {
         echo '</div></div></div>';
         echo '<div class="bb"><div></div></div>';
     }
-// uh-changes end
     echo '</td>';
 
-// uh-changes start
             break;
             case 'right':
-// uh-changes end
     // The right column
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
         echo '<td style="width:'.$preferred_width_right.'px" id="right-column">';
-// uh-changes start
         if (!empty($THEME->roundcorners)) {
             echo '<div class="bt"><div></div></div>';
             echo '<div class="i1"><div class="i2"><div class="i3">';
         }
-// uh-changes end
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-// uh-changes start
         if (!empty($THEME->roundcorners)) {
             echo '</div></div></div>';
             echo '<div class="bb"><div></div></div>';
         }
-// uh-changes end
         echo '</td>';
     }
 
-// uh-changes start
             break;
         }
     }
-// uh-changes end
     echo '</tr></table>';
     
 ?>
