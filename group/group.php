@@ -34,6 +34,10 @@ if (! $course) {
     $success = false;
     print_error('invalidcourse'); //'The course ID is invalid'
 }
+if ($delete && !$groupid) {
+    $success = false;
+    print_error('errorinvalidgroup', 'group', groups_home_url($courseid));
+}
 
 if ($success) {
     // Make sure that the user has permissions to manage groups.
@@ -52,7 +56,11 @@ if ($success) {
             redirect(groups_home_url($courseid, $groupid, $groupingid, false));
         }
         elseif (isset($frm->confirmdelete)) {
-            ///TODO:
+            if ($success = groups_delete_group($groupid)) {
+                redirect(groups_home_url($courseid, null, $groupingid, false));
+            } else {
+                print_error('erroreditgroup', 'group', groups_home_url($courseid));
+            }
         }
         elseif (empty($frm->name)) {
             $err['name'] = get_string('missingname');
@@ -83,7 +91,7 @@ if ($success) {
                 redirect(groups_home_url($courseid, $groupid, $groupingid, false));
             }
             else {
-                print_error('erroreditgrouping', 'group', groups_home_url($courseid));
+                print_error('erroreditgroup', 'group', groups_home_url($courseid));
             }
         }
     }
@@ -94,7 +102,7 @@ if ($success) {
         // Form to edit existing group.
         $group = groups_get_group_settings($groupid);
         if (! $group) {
-            print_error('The group ID is invalid.');
+            print_error('errorinvalidgroup', 'group', groups_home_url($courseid));
         }
         $strname = s($group->name);
         $strdesc = s($group->description);
@@ -147,10 +155,10 @@ if ($success) {
         choose_from_menu_yesno('confirmdelete', false, '', true);*/
 ?>
 
-        <p>Are you sure you want to delete group '<?php p($strname) ?>'?</p>
+        <p><?php print_string('deletegroupconfirm', 'group', $strname); ?></p>
         <input type="hidden" name="delete" value="1" />
-        <input type="submit" name="confirmdelete" value="Yes" />
-        <input type="submit" name="cancel" value="<?php print_string('cancel', 'group'); ?>" />
+        <input type="submit" name="confirmdelete" value="<?php print_string('yes'); ?>" />
+        <input type="submit" name="cancel" value="<?php print_string('no'); ?>" />
 <?php
     } else {
 ?>

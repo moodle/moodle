@@ -20,6 +20,8 @@ $groupingid = optional_param('grouping', false, PARAM_INT);
 $groupingsettings->name       = optional_param('name', PARAM_ALPHANUM);
 $groupingsettings->description= optional_param('description', PARAM_ALPHANUM);
 
+$delete = optional_param('delete', false, PARAM_BOOL);
+
 // Get the course information so we can print the header and
 // check the course id is valid
 $course = groups_get_course_info($courseid);
@@ -47,6 +49,13 @@ if ($success) {
         if (isset($frm->cancel)) {
             redirect(groups_home_url($courseid, null, $groupingid, false));
         }
+        elseif (isset($frm->confirmdelete)) {
+            if ($success = groups_delete_grouping($groupingid)) {
+                redirect(groups_home_url($courseid));
+            } else {
+                print_error('erroreditgrouping', 'group', groups_home_url($courseid));
+            }
+        }
         elseif (empty($frm->name)) {
             $err['name'] = get_string('missingname');
         }
@@ -62,7 +71,7 @@ if ($success) {
                 redirect(groups_home_url($courseid, null, $groupingid, false));
             }
             else {
-                print_error('erroreditgroup', 'group', groups_home_url($courseid));
+                print_error('erroreditgrouping', 'group', groups_home_url($courseid));
             }
         }
     }
@@ -88,6 +97,9 @@ if ($success) {
     }
     $strgroups = get_string('groups');
     $strparticipants = get_string('participants');
+    if ($delete) {
+        $strheading = get_string('deletegrouping', 'group');
+    }
 
 /// Print the page and form
 
@@ -108,6 +120,18 @@ if ($success) {
     if ($groupingid) {
         echo '<input type="hidden" name="grouping" value="'. $groupingid .'" />';
     }
+
+    if ($delete) {
+        /*echo 'Are you sure you want to delete grouping X ?';
+        choose_from_menu_yesno('confirmdelete', false, '', true);*/
+?>
+
+        <p><?php print_string('deletegroupingconfirm', 'group', $strname); ?></p>
+        <input type="hidden" name="delete" value="1" />
+        <input type="submit" name="confirmdelete" value="<?php print_string('yes'); ?>" />
+        <input type="submit" name="cancel" value="<?php print_string('no'); ?>" />
+<?php
+    } else {
 ?>
 
 <div class="f-item">
@@ -139,6 +163,9 @@ if ($success) {
     <input type="submit" name="cancel" value="<?php print_string('cancel', 'group'); ?>" />
   </span>
 </p>
+
+<?php } //IF($delete) ?>
+
 <span class="clearer">&nbsp;</span>
 
 </form>

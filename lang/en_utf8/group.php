@@ -32,6 +32,9 @@ $string['showgroupsingrouping'] = 'Show groups in grouping';
 $string['showmembersforgroup'] = 'Show members for group';
 $string['databaseupgradegroups'] = 'Groups version is now $a';
 
+$string['deletegroupingconfirm'] = 'Are you sure you want to delete grouping \'$a\'? (Groups in the grouping are not deleted.)';
+$string['deletegroupconfirm'] = 'Are you sure you want to delete group \'$a\'?';
+
 $string['editgroupingsettings'] = 'Edit grouping settings';
 $string['editgroupingpermissions'] = 'Edit grouping permissions';
 $string['deletegrouping'] = 'Delete grouping';
