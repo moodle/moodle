@@ -507,6 +507,7 @@ $string['timelimitexeeded'] = 'Sorry! Quiz time limit exceeded!';
 $string['timestr'] = '%%H:%%M:%%S on %%d/%%m/%%y';
 $string['timesup'] = 'Time is up!';
 $string['timetaken'] = 'Time taken';
+$string['tofile'] = 'to file';
 $string['tolerance'] = 'Tolerance';
 $string['tolerancetype'] = 'Tolerance Type';
 $string['toomanyrandom'] = 'The number of random questions required is more than are still available in the category!';
