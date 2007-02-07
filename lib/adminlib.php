@@ -2660,7 +2660,7 @@ function admin_externalpage_setup($section, $adminroot) {
 
 function admin_externalpage_print_header($adminroot) {
 
-    global $CFG, $PAGE, $SITE;
+    global $CFG, $PAGE, $SITE, $THEME;
 
     if (!empty($SITE->fullname)) {
         $pageblocks = blocks_setup($PAGE);
@@ -2671,9 +2671,21 @@ function admin_externalpage_print_header($adminroot) {
         $PAGE->print_header();
         echo '<table id="layout-table" summary=""><tr>';
         echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
+        if (!empty($THEME->roundcorners)) {
+            echo '<div class="bt"><div></div></div>';
+            echo '<div class="i1"><div class="i2"><div class="i3">';
+        }
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+        if (!empty($THEME->roundcorners)) {
+            echo '</div></div></div>';
+            echo '<div class="bb"><div></div></div>';
+        }
         echo '</td>';
         echo '<td id="middle-column">';
+        if (!empty($THEME->roundcorners)) {
+            echo '<div class="bt"><div></div></div>';
+            echo '<div class="i1"><div class="i2"><div class="i3">';
+        }
     } else {
         print_header();
     }
@@ -2681,16 +2693,28 @@ function admin_externalpage_print_header($adminroot) {
 
 function admin_externalpage_print_footer($adminroot) {
 
-    global $CFG, $PAGE, $SITE;
+    global $CFG, $PAGE, $SITE, $THEME;
 
     if (!empty($SITE->fullname)) {
         $pageblocks = blocks_setup($PAGE);
         $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH,
                                                 blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
                                                 BLOCK_R_MAX_WIDTH);
+        if (!empty($THEME->roundcorners)) {
+            echo '</div></div></div>';
+            echo '<div class="bb"><div></div></div>';
+        }
         echo '</td>';
         echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';
+        if (!empty($THEME->roundcorners)) {
+            echo '<div class="bt"><div></div></div>';
+            echo '<div class="i1"><div class="i2"><div class="i3">';
+        }
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+        if (!empty($THEME->roundcorners)) {
+            echo '</div></div></div>';
+            echo '<div class="bb"><div></div></div>';
+        }
         echo '</td></tr></table>';
     }
     print_footer();
