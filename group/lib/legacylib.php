@@ -76,16 +76,14 @@ function user_group($courseid, $userid) {
 
 
 /**
- * Determines if the user a member of the given group
+ * Determines if the user is a member of the given group.
+ * TODO: replace all calls with 'groups_is_member'.
  *
- * @uses $USER
- * @param int $groupid The group to check the membership of
- * @param int $userid The user to check against the group
- * @return bool
+ * @param int $groupid The group to check for membership.
+ * @param int $userid The user to check against the group.
+ * @return boolean True if the user is a member, false otherwise.
  */
-function ismember($groupid, $userid=0) {
-	if (!$userid) {
-	}
+function ismember($groupid, $userid = null) {
 	return groups_is_member($groupid, $userid);
 }
 

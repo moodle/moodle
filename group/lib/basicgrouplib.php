@@ -208,12 +208,18 @@ function groups_group_matches($courseid, $grp_name, $grp_description) {
 
 
 /**
- * Determines if a specified user is a member of a specified group
- * @param int $groupid The group about which the request has been made
- * @param int $userid The user about which the request has been made
- * @return boolean True if the user is a member of the group, false otherwise
+ * Determines if the user is a member of the given group.
+ *
+ * @uses $USER If $userid is null, use the global object.
+ * @param int $groupid The group to check for membership.
+ * @param int $userid The user to check against the group.
+ * @return boolean True if the user is a member, false otherwise.
  */
- function groups_is_member($groupid, $userid) { 
+function groups_is_member($groupid, $userid = null) { 
+    if (! $userid) {
+        global $USER;
+        $userid = $USER->id;
+    }
     $ismember = groups_db_is_member($groupid, $userid);
     
     return $ismember;
