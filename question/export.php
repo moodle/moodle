@@ -189,9 +189,10 @@
                         </td>
                     </tr>
                     <tr>
-                        <td align="center" colspan="2">
+                        <td align="center" >
                             <input type="submit" name="save" value="<?php echo $txt->exportquestions; ?>" />
                         </td>
+                        <td>&nbsp;</td>
                     </tr>
                 </table>
         </fieldset>        
