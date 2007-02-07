@@ -10,7 +10,11 @@
  * TODO: separate those functions which form part of the API
  *       from the helper functions.
  *
+<<<<<<< questionlib.php
  * @version $Id$
+=======
+ * @version $Id$
+>>>>>>> 1.72.2.6
  * @author Martin Dougiamas and many others. This has recently been completely
  *         rewritten by Alex Smith, Julian Sedding and Gustav Delius as part of
  *         the Serving Mathematics project
@@ -1681,6 +1685,30 @@ function create_category_path( $catpath, $delimiter='/', $courseid=0 ) {
     return $category;
 }
 
+/**
+ * get the category as a path (e.g., tom/dick/harry)
+ * @param int id the id of the most nested catgory
+ * @param string delimiter the delimiter you want
+ * @return string the path
+ */
+function get_category_path( $id, $delimiter='/' ) {
+    $path = '';    
+    do {
+        if (!$category = get_record( 'question_categories','id',$id )) {
+            print_error( "Error reading category record - $id" );    
+        }
+        $name = $category->name;
+        $id = $category->parent;
+        if (!empty($path)) {
+            $path = "{$name}{$delimiter}{$path}";
+        }
+        else {
+            $path = $name;
+        }    
+    } while ($id != 0);        
+         
+    return $path;
+}
 
 //===========================
 // Import/Export Functions
