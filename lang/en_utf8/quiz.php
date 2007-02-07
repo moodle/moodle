@@ -1,6 +1,4 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.7 beta + (2006101003)
-
 
 $string['1day'] = '1 Day';
 $string['1hour'] = '1 Hour';
@@ -509,6 +507,7 @@ $string['timelimitexeeded'] = 'Sorry! Quiz time limit exceeded!';
 $string['timestr'] = '%%H:%%M:%%S on %%d/%%m/%%y';
 $string['timesup'] = 'Time is up!';
 $string['timetaken'] = 'Time taken';
+$string['tofile'] = 'to file';
 $string['tolerance'] = 'Tolerance';
 $string['tolerancetype'] = 'Tolerance Type';
 $string['toomanyrandom'] = 'The number of random questions required is more than are still available in the category!';
