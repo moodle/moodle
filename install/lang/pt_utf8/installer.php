@@ -36,7 +36,7 @@ $string['configfilewritten'] = 'O ficheiro config.php foi criado com sucesso';
 $string['configurationcompletehead'] = 'Configuração concluida';
 $string['configurationcompletesub'] = 'Configuração de substituições concluida';
 $string['continue'] = 'Continue';
-$string['database'] = 'Basde de dados';
+$string['database'] = 'Base de dados';
 $string['databasecreationsettingshead'] = 'Agora terá que configurar a base de dados onde a maior parte dos dados do Moodle serão armazenados. Essa base de dados será criada automáticamente pelo programa de instalação, usando a configuração no quadro seguinte.';
 $string['databasecreationsettingssub'] = '<b>Tipo:</b> o instalador selecciona inicialmente \"mysql\"<br />
 <b>Servidor:</b> nome do servidor; o instalador selecciona inicialmente \"localhost\"<br />
@@ -51,14 +51,53 @@ $string['databasesettingssub'] = '<b>Tipo:</b>mysql ou postgres7<br />
 <b>Utilizador:</b> para acceder à base de dados<br />
 <b>Contrasenha:</b> para acceder à base de dados<br />
 <p>Prefixo das tabelas:</b> um prefixo optativo para os nomes de todas as tabelas na base de dados';
+$string['databasesettingssub_mssql'] = '<b>Tipo:</b> SQL*Server (sem UTF-8) <b><font color=\"red\">Experimental! (não deverá ser usado em produção)</font></b><br />
+<b>Servidor:</b> por exemplo, localhost ou db.isp.com<br />
+<b>Nome:</b> nome da base de dados, por exemplo, moodle<br />
+<b>Utilizador:</b> para acceder à base de dados<br />
+<b>Contrasenha:</b> para acceder à base de dados<br />
+<p>Prefixo das tabelas:</b> um prefixo para os nomes de todas as tabelas na base de dados (obrigatório)';
+$string['databasesettingssub_mssql_n'] = '<b>Tipo:</b> SQL*Server (com UTF-8) <br />
+<b>Servidor:</b> por exemplo, localhost ou db.isp.com<br />
+<b>Nome:</b> nome da base de dados, por exemplo, moodle<br />
+<b>Utilizador:</b> para acceder à base de dados<br />
+<b>Contrasenha:</b> para acceder à base de dados<br />
+<p>Prefixo das tabelas:</b> um prefixo para os nomes de todas as tabelas na base de dados (obrigatório)';
+$string['databasesettingssub_mysql'] = '<b>Tipo:</b> MySQL<br />
+<b>Servidor:</b> por exemplo, localhost ou db.isp.com<br />
+<b>Nome:</b> nome da base de dados, por exemplo, moodle<br />
+<b>Utilizador:</b> para acceder à base de dados<br />
+<b>Contrasenha:</b> para acceder à base de dados<br />
+<p>Prefixo das tabelas:</b> um prefixo para os nomes de todas as tabelas na base de dados (optativo)';
+$string['databasesettingssub_oci8po'] = '<b>Tipo:</b> Oracle<br />
+<b>Servidor:</b> não se aplica; deverá ficar em branco<br />
+<b>Nome:</b> nome dado à logação tnsnames.ora<br />
+<b>Utilizador:</b> para acceder à base de dados<br />
+<b>Contrasenha:</b> para acceder à base de dados<br />
+<p>Prefixo das tabelas:</b> um prefixo para os nomes de todas as tabelas na base de dados (obrigatório; máx. 2 caracteres)';
+$string['databasesettingssub_odbc_mssql'] = '<b>Tipo:</b> SQL*Server (sobre ODBC) <b><font color=\"red\">Experimental! (não deverá ser usado em produção)</font></b><br />
+<b>Servidor:</b> nome do servidor DSN no painel de controlo do ODBC<br />
+<b>Nome:</b> nome da base de dados, por exemplo, moodle<br />
+<b>Utilizador:</b> para acceder à base de dados<br />
+<b>Contrasenha:</b> para acceder à base de dados<br />
+<p>Prefixo das tabelas:</b> um prefixo para os nomes de todas as tabelas na base de dados (obrigatório)';
+$string['databasesettingssub_postgres7'] = '<b>Tipo:</b> PostgreSQL<br />
+<b>Servidor:</b> por exemplo, localhost ou db.isp.com<br />
+<b>Nome:</b> nome da base de dados, por exemplo, moodle<br />
+<b>Utilizador:</b> para acceder à base de dados<br />
+<b>Contrasenha:</b> para acceder à base de dados<br />
+<p>Prefixo das tabelas:</b> um prefixo para os nomes de todas as tabelas na base de dados (obrigatório)';
 $string['dataroot'] = 'Directório de dados';
 $string['datarooterror'] = 'Não foi possível encontrar ou criar o directório de dados que indicou. Terá que tentar corrigir o caminho que indicou, ou criar o directório manualmente.';
 $string['dbconnectionerror'] = 'Não foi possível estabelecer a ligação à base de dados que indicou. Por favor verifique a configuração dessa base de dados.';
 $string['dbcreationerror'] = 'Erro na criação da base de dados. Não foi possível criar a base de com o nome e configurações que indicou.';
 $string['dbhost'] = 'Servidor anfitrão';
-$string['dbprefix'] = 'Prfixo das tabelas';
+$string['dbprefix'] = 'Prefixo das tabelas';
 $string['dbtype'] = 'Tipo';
 $string['dbwrongencoding'] = 'A base de dados seleccionada está a funcionar com uma codificação de caracteres não recomendada ($a). Seria melhor usar uma base de dados com codificação Unicode (UTF-8). De qualquer forma, poderá proceder com a base de dados que indicou, seleccionando \"Não testar codificação da Base de Dados\" aqui em baixo, mas poderá ter problemas no futuro.';
+$string['dbwronghostserver'] = 'Deverá usar \"Regras do Servidor\" como se explica acima.';
+$string['dbwrongnlslang'] = 'A variável de configuração NLS_LANG no seu servidor web deverá usar os caracteres AL32UTF8. Consulte como configurar correctamente o OCI8, na documentação do PHP.';
+$string['dbwrongprefix'] = 'Deverá usar \"Prefixo das Tabelas\" como se explica acima.';
 $string['directorysettingshead'] = 'Por favor confira as localizações para esta instalação do Moodle';
 $string['directorysettingssub'] = '<b>Endereço Web:</b>
 Indique o endereço web completo que será usado para aceder ao Moodle. Se o seu sítio pode ser acedido com vários URL diferentes, seleccione o que seja mais natural para os alunos que usarem o Moodle. Não inclua a barra (/) no fim do URL.
@@ -130,15 +169,24 @@ Isso permitirá que o próprio Moodle modifique o limite de memoria.</li>
 </ol>';
 $string['missingrequiredfield'] = 'Falta algum campo necessário';
 $string['moodledocslink'] = 'Documentação Moodle para esta página';
+$string['mssql'] = 'SQL*Server (mssql)';
+$string['mssql_n'] = 'SQL*Server com suporte UTF-8 (mssql_n)';
+$string['mssqlextensionisnotpresentinphp'] = 'O PHP não tem sido configurado correctamente com a extensão MSSQL, para que possa comunicar-se com o SQL*Server. Por favor confira o ficheiro php.ini ou recompile o PHP.';
+$string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'Contudo, se o seu sítio estiver a utilizar APENAS cartacteres iso-8859-1 (latin), poderá continuar a utilizar o seu já instalado MySQL 4.1.12 (ou superior).';
 $string['mysql416required'] = 'O MySQL 4.1.16 é a versão mínima requerida para o Moodle 1.6 para que se possa garantir que todos os dados poderão ser convertidos para UTF-8 no futuro.';
 $string['mysqlextensionisnotpresentinphp'] = 'Como o PHP não tem sido configurado conrrectamente com a extensão MySQL, não pode comunicar com MySQL. Por favor verifique o seu ficheiro php.ini ou recompile o PHP.';
 $string['name'] = 'Nome(s)';
 $string['next'] = 'Próximo';
+$string['oci8po'] = 'Oracle (oci8po)';
+$string['ociextensionisnotpresentinphp'] = 'O PHP não tem sido configurado correctamente com a extensão OCI8, para que possa comunicar-se com o Oracle. Por favor confira o ficheiro php.ini ou recompile o PHP.';
+$string['odbc_mssql'] = 'SQL*Server sobre ODBC (odbc_mssql)';
+$string['odbcextensionisnotpresentinphp'] = 'O PHP não tem sido configurado correctamente com a extensão ODBC, para que possa comunicar-se com o SQL*Server. Por favor confira o ficheiro php.ini ou recompile o PHP.';
 $string['ok'] = 'OK';
 $string['parentlanguage'] = '<< TRADUTORES: Se existir uma língua semelhante à sua, que poderá ser usada quando alguma frase não estiver traduzida no sue pacote linguístico, especifíque o código dessa língua aqui. Se deixar este espaço em branco, será usado o inglês. exemplo: nl >>';
 $string['pass'] = 'Passa';
 $string['password'] = 'Palavra chave';
+$string['pgsqlextensionisnotpresentinphp'] = 'O PHP não tem sido configurado correctamente com a extensão PGSQL, para que possa comunicar-se com o PostgreSQL. Por favor confira o ficheiro php.ini ou recompile o PHP.';
 $string['php50restricted'] = 'O PHP 5.0.x tem um certo número de problemas conhecidos, por favor faça o upgrade para o 5.1.x ou o downgrade para o 4.3.x ou 4.4.x';
 $string['phpversion'] = 'Versão do PHP';
 $string['phpversionerror'] = 'A versão do PHP deverá ser, pelo menos, 4.1.0';
@@ -146,6 +194,7 @@ $string['phpversionhelp'] = '<p>Moodle precisa da vesão 4.3.0 ou posterior do P
 <p>Actualmente está a utilizar a versão $a</p>
 <p>Deverá actualizar o PHP ou migrar para outro servidor com uma versão do PHP mais recente!</p>
 (No caso da versão 5.0.x, poderá regredir para uma versão 4.4.x)</p>';
+$string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Prévio';
 $string['remotedownloadnotallowed'] = 'O seu servidor não permite descarregar componentes  (a variável allow_url_fopen está desactivada).<br /><br />Terá que descarregar <a href=\"$a->url\">$a->url</a> manualmente, copia-lo para  \"$a->dest\" no seu servidor e descompacta-lo.';
 $string['report'] = 'Relatório';

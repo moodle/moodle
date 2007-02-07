@@ -37,6 +37,7 @@ $string['configfilewritten'] = 'Die Datei config.php wurde erfolgreich erstellt'
 $string['configurationcompletehead'] = 'Die Konfiguration ist abgeschlossen.';
 $string['configurationcompletesub'] = 'Moodle speichert Ihre Konfigurationseinstellungen nun im Hauptverzeichnis Ihrer Moodle-Installation.';
 $string['continue'] = 'Weiter';
+$string['curlrecommended'] = 'Die Installation der optionalen Bibliothek Curl wird empfohlen, um die Moodle-Netzwerkfunktionalität einzuschalten.';
 $string['database'] = 'Datenbank';
 $string['databasecreationsettingshead'] = 'Sie müssen Einstellungen für die Datenbank konfigurieren, in der die meisten Moodle-Daten abgelegt werden. Der Installationsprozess erstellt die Datenbanktabellen automatisch auf der Grundlage der Einstellungen.';
 $string['databasecreationsettingssub'] = '<b>Typ:</b> \"mysql\" vom Installer festgelegt<br />
