@@ -493,7 +493,7 @@ class enrolment_plugin_mnet {
 
             return $courses;
         } else {
-            foreach ($mnetrequest->error as $message) {
+            foreach ($mnetrequest->error as $errormessage) {
                 list($code, $errormessage) = array_map('trim',explode(':', $errormessage, 2));
                 $message .= "ERROR $code:<br/>$errormessage<br/>";
             }

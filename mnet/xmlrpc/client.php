@@ -235,6 +235,7 @@ class mnet_xmlrpc_client {
 
             if (!$isOpen) {
                 trigger_error("None of our keys could open the payload from host {$mnet_peer->wwwroot} with id {$mnet_peer->id}.");
+                $this->error[] = '3:No key match';
                 return false;
             }
 
@@ -242,10 +243,12 @@ class mnet_xmlrpc_client {
                 $sig_parser = new mnet_encxml_parser();
                 $sig_parser->parse($payload);
             } else {
+                $this->error[] = '2:Payload not signed: '.$payload;
                 return false;
             }
 
         } else {
+            $this->error[] = '1:Payload not encrypted ';
             $crypt_parser->free_resource();
             return false;
         }
