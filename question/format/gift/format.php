@@ -151,8 +151,6 @@ class qformat_gift extends qformat_default {
             return $question;
         }
         
-        
-
         // QUESTION NAME parser
         if (substr($text, 0, 2) == "::") {
             $text = substr($text, 2);
@@ -536,6 +534,10 @@ function writequestion( $question ) {
 
     // output depends on question type
     switch($question->qtype) {
+    case 'category':
+        // not a real question, used to insert category switch
+        $expout .= "\$CATEGORY: $question->category\n";    
+        break;
     case TRUEFALSE:
         $trueanswer = $question->options->answers[$question->options->trueanswer];
         $falseanswer = $question->options->answers[$question->options->falseanswer];

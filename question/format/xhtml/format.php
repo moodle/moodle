@@ -19,6 +19,11 @@ function writequestion( $question ) {
     // turns question into string
     // question reflects database fields for general question and specific to type
 
+    // if a category switch, just ignore
+    if ($question-qtype=='category') {
+        return '';
+    }
+
     // initial string;
     $expout = "";
     $id = $question->id;
@@ -39,25 +44,25 @@ function writequestion( $question ) {
     // selection depends on question type
     switch($question->qtype) {
     case TRUEFALSE:
-      $st_true = get_string( 'true','quiz' );
-      $st_false = get_string( 'false','quiz' );
-      $expout .= "<ul class=\"truefalse\">\n";
-      $expout .= "  <li><input name=\"quest_$id\" type=\"radio\" value=\"$st_true\" />$st_true</li>\n";
-      $expout .= "  <li><input name=\"quest_$id\" type=\"radio\" value=\"$st_false\" />$st_false</li>\n";
-      $expout .= "</ul>\n";
-      break;
+        $st_true = get_string( 'true','quiz' );
+        $st_false = get_string( 'false','quiz' );
+        $expout .= "<ul class=\"truefalse\">\n";
+        $expout .= "  <li><input name=\"quest_$id\" type=\"radio\" value=\"$st_true\" />$st_true</li>\n";
+        $expout .= "  <li><input name=\"quest_$id\" type=\"radio\" value=\"$st_false\" />$st_false</li>\n";
+        $expout .= "</ul>\n";
+        break;
     case MULTICHOICE:
-      $expout .= "<ul class=\"multichoice\">\n";
-      foreach($question->options->answers as $answer) {
-        $ans_text = $this->repchar( $answer->answer );
-        if ($question->options->single) {
-          $expout .= "  <li><input name=\"quest_$id\" type=\"radio\" value=\"$ans_text\" />$ans_text</li>\n";
+        $expout .= "<ul class=\"multichoice\">\n";
+        foreach($question->options->answers as $answer) {
+            $ans_text = $this->repchar( $answer->answer );
+            if ($question->options->single) {
+                $expout .= "  <li><input name=\"quest_$id\" type=\"radio\" value=\"$ans_text\" />$ans_text</li>\n";
+            }
+            else {
+                $expout .= "  <li><input name=\"quest_$id\" type=\"checkbox\" value=\"$ans_text\" />$ans_text</li>\n";
+            }
         }
-        else {
-          $expout .= "  <li><input name=\"quest_$id\" type=\"checkbox\" value=\"$ans_text\" />$ans_text</li>\n";
-        }
-      }
-      $expout .= "</ul>\n";
+        $expout .= "</ul>\n";
         break;
     case SHORTANSWER:
         $expout .= "<ul class=\"shortanswer\">\n";

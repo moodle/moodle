@@ -668,8 +668,16 @@ class qformat_xml extends qformat_default {
         $expout .= "\n\n<!-- question: $question->id  -->\n";
 
         // add opening tag
-        // generates specific header for Cloze type question
-        if ($question->qtype != MULTIANSWER) {
+        // generates specific header for Cloze and category type question
+        if ($question->qtype == 'category') {
+            $expout .= "  <question type=\"category\">\n";
+            $expout .= "    <category>\n";
+            $expout .= "        $question->category\n";
+            $expout .= "    </category>\n";
+            $expout .= "  </question>\n";
+            return $expout;
+        }    
+        elseif ($question->qtype != MULTIANSWER) {
             // for all question types except Close
             $question_type = $this->get_qtype( $question->qtype );
             $name_text = $this->writetext( $question->name );
@@ -711,6 +719,9 @@ class qformat_xml extends qformat_default {
 
         // output depends on question type
         switch($question->qtype) {
+        case 'category':
+            // not a qtype really - dummy used for category switching
+            break;    
         case TRUEFALSE:
             foreach ($question->options->answers as $answer) {
                 $fraction_pc = round( $answer->fraction * 100 );
