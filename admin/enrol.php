@@ -53,6 +53,7 @@
     print_simple_box(get_string('configenrolmentplugins', 'admin'), 'center', '700');
 
     echo "<form $CFG->frametarget id=\"enrolmenu\" method=\"post\" action=\"enrol.php\">";
+    echo "<div>";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\" />";
 
     $table = new stdClass();
@@ -97,7 +98,8 @@
 
     print_table($table);
 
-    echo "<center><input type=\"submit\" value=\"".get_string("savechanges")."\" /></center>\n";
+    echo "<div style=\"text-align:center\"><input type=\"submit\" value=\"".get_string("savechanges")."\" /></div>\n";
+    echo "</div>";
     echo "</form>";
 
     admin_externalpage_print_footer($adminroot);

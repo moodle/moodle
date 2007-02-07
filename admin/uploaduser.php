@@ -374,13 +374,13 @@ print_heading_with_help($struploadusers, 'uploadusers');
 $noyesoptions = array( get_string('no'), get_string('yes') );
 
 $maxuploadsize = get_max_upload_file_size();
-echo '<center>';
-echo '<form method="post" enctype="multipart/form-data" action="uploaduser.php">'.
+echo '<div style="text-align:center">';
+echo '<form method="post" enctype="multipart/form-data" action="uploaduser.php"><div>'.
 $strfile.'&nbsp;<input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'" />'.
 '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />'.
 '<input type="file" name="userfile" size="30" />';
 print_heading(get_string('settings'));
-echo '<table>';
+echo '<table style="margin-left:auto;margin-right:auto">';
 echo '<tr><td>' . get_string('passwordhandling', 'auth') . '</td><td>';
 $passwordopts = array( 0 => get_string('infilefield', 'auth'),
         1 => get_string('createpasswordifneeded', 'auth'),
@@ -397,8 +397,8 @@ choose_from_menu($noyesoptions, 'allowrenames', $allowrenames);
 echo '</td></tr>';
 echo '</table><br />';
 echo '<input type="submit" value="'.$struploadusers.'" />';
-echo '</form><br />';
-echo '</center>';
+echo '</div></form><br />';
+echo '</div>';
 
 admin_externalpage_print_footer($adminroot);
 

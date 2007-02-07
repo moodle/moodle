@@ -213,7 +213,7 @@
 
     /// Bar of first initials
 
-    echo "<center><p align=\"center\">";
+    echo "<p style=\"text-align:center\">";
     echo get_string("firstname")." : ";
     if ($firstinitial) {
         echo " <a href=\"user.php?sort=firstname&amp;dir=ASC&amp;".
@@ -249,7 +249,6 @@
         }
     }
     echo "</p>";
-    echo "</center>";
 
     print_paging_bar($usercount, $page, $perpage,
             "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=".urlencode(stripslashes($search))."&amp;");
@@ -395,14 +394,14 @@
         echo "</p>";
     }
 
-    echo "<table class=\"searchbox\" align=\"center\" cellpadding=\"10\"><tr><td>";
-    echo "<form action=\"user.php\" method=\"get\">";
+    echo "<table class=\"searchbox\" style=\"margin-left:auto;margin-right:auto\" cellpadding=\"10\"><tr><td>";
+    echo "<form action=\"user.php\" method=\"get\"><fieldset class=\"invisiblefieldset\">";
     echo "<input type=\"text\" name=\"search\" value=\"".s($search, true)."\" size=\"20\" />";
     echo "<input type=\"submit\" value=\"$strsearch\" />";
     if ($search) {
         echo "<input type=\"button\" onclick=\"document.location='user.php';\" value=\"$strshowallusers\" />";
     }
-    echo "</form>";
+    echo "</fieldset></form>";
     echo "</td></tr></table>";
 
     if (has_capability('moodle/user:create', $sitecontext)) {

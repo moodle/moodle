@@ -227,11 +227,11 @@ $guestoptions[1] = get_string("show");
 
 echo '<hr />';
 print_heading(get_string('auth_common_settings', 'auth'));
-echo '<table cellspacing="0" cellpadding="5" border="0" align="center">';
+echo '<table cellspacing="0" cellpadding="5" border="0" style="margin-left:auto;margin-right:auto">';
 
 // User self registration
 echo "<tr valign=\"top\">\n";
-echo "<td align=\"right\" nowrap=\"nowrap\">\n";
+echo "<td align=\"right\" style=\"white-space:nowrap\">\n";
 print_string("selfregistration", "auth");
 echo ":</td>\n";
 echo "<td>\n";
@@ -243,7 +243,7 @@ echo "</td></tr>\n";
 
 // Login as guest button enabled
 echo "<tr valign=\"top\">\n";
-echo "<td align=\"right\" nowrap=\"nowrap\">\n";
+echo "<td style=\"white-space:nowrap;text-align:right\">\n";
 print_string("guestloginbutton", "auth");
 echo ":</td>\n";
 echo "<td>\n";
@@ -256,7 +256,7 @@ echo "</td></tr>\n";
 /// An alternate url for the login form. It means we can use login forms that are integrated
 /// into non-moodle pages
 echo "<tr valign=\"top\">\n";
-echo "<td algin=\"right\" nowrap=\"nowrap\">\n";
+echo "<td algin=\"right\" style=\"white-space:nowrap\">\n";
 print_string('alternateloginurl', 'auth');
 echo "</td>\n";
 echo "<td>\n";
@@ -272,7 +272,7 @@ echo "</table>\n";
 ////////////////////////////////////////////////////////////////////////////////
 
 
-echo '<center><input type="submit" value="'.get_string('savechanges').'" /></center>';
+echo '<div style="text-align:center"><input type="submit" value="'.get_string('savechanges').'" /></div>';
 echo '</form>';
 admin_externalpage_print_footer($adminroot);
 

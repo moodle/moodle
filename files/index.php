@@ -137,7 +137,7 @@
         }
 
 
-        echo "<table border=\"0\" align=\"center\" cellspacing=\"3\" cellpadding=\"3\" width=\"640\">";
+        echo "<table border=\"0\" style=\"margin-left:auto;margin-right:auto\" cellspacing=\"3\" cellpadding=\"3\" width=\"640\">";
         echo "<tr>";
         echo "<td colspan=\"2\">";
 
@@ -197,7 +197,8 @@
                 $strcancel = get_string("cancel");
 
                 echo "<p>$struploadafile ($strmaxsize) --> <b>$wdir</b></p>";
-                echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"index.php\">";                
+                echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"index.php\">";
+                echo "<div>";             
                 echo "<table><tr><td colspan=\"2\">";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
@@ -214,6 +215,7 @@
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                 echo " <input type=\"submit\" value=\"$strcancel\" />";
+                echo "</div>";
                 echo "</form>";
             }
             html_footer();
@@ -317,6 +319,7 @@
                 echo "<p>$strrenamefileto:</p>";
                 echo "<table><tr><td>";
                 echo "<form action=\"index.php\" method=\"post\">";
+                echo "<fieldset class=\"invisiblefieldset\">";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
@@ -325,14 +328,17 @@
                 echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
                 echo " <input type=\"text\" name=\"name\" size=\"35\" value=\"$file\" />";
                 echo " <input type=\"submit\" value=\"$strrename\" />";
+                echo "</fieldset>";
                 echo "</form>";
                 echo "</td><td>";
                 echo "<form action=\"index.php\" method=\"get\">";
+                echo "<fieldset class=\"invisiblefieldset\">";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                 echo " <input type=\"submit\" value=\"$strcancel\" />";
+                echo "</fieldset>";
                 echo "</form>";
                 echo "</td></tr></table>";
             }
@@ -358,6 +364,7 @@
                 echo "<p>$strcreatefolder:</p>";
                 echo "<table><tr><td>";
                 echo "<form action=\"index.php\" method=\"post\">";
+                echo "<fieldset class=\"invisiblefieldset\">";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
@@ -365,14 +372,17 @@
                 echo " <input type=\"text\" name=\"name\" size=\"35\" />";
                 echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
                 echo " <input type=\"submit\" value=\"$strcreate\" />";
+                echo "</fieldset>";
                 echo "</form>";
                 echo "</td><td>";
                 echo "<form action=\"index.php\" method=\"get\">";
+                echo "<fieldset class=\"invisiblefieldset\">";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                 echo " <input type=\"submit\" value=\"$strcancel\" />";
+                echo "</fieldset>";
                 echo "</form>";
                 echo "</td></tr></table>";
             }
@@ -405,6 +415,7 @@
 
                 echo "<table><tr><td colspan=\"2\">";
                 echo "<form action=\"index.php\" method=\"post\">";
+                echo "<div>";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
@@ -414,14 +425,17 @@
                 print_textarea($usehtmleditor, 25, 80, 680, 400, "text", $contents);
                 echo "</td></tr><tr><td>";
                 echo " <input type=\"submit\" value=\"".get_string("savechanges")."\" />";
+                echo "</div>";
                 echo "</form>";
                 echo "</td><td>";
                 echo "<form action=\"index.php\" method=\"get\">";
+                echo "<fieldset class=\"invisiblefieldset\">";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                 echo " <input type=\"submit\" value=\"".get_string("cancel")."\" />";
+                echo "</fieldset>";
                 echo "</form>";
                 echo "</td></tr></table>";
 
@@ -463,6 +477,7 @@
                     echo "<p align=\"center\">".get_string("whattocallzip")."</p>";
                     echo "<table><tr><td>";
                     echo "<form action=\"index.php\" method=\"post\">";
+                    echo "<fieldset class=\"invisiblefieldset\">";
                     echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                     echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                     echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
@@ -470,14 +485,17 @@
                     echo " <input type=\"text\" name=\"name\" size=\"35\" value=\"new.zip\" />";
                     echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
                     echo " <input type=\"submit\" value=\"".get_string("createziparchive")."\" />";
+                    echo "<fieldset>";
                     echo "</form>";
                     echo "</td><td>";
                     echo "<form action=\"index.php\" method=\"get\">";
+                    echo "<fieldset class=\"invisiblefieldset\">";
                     echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                     echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                     echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                     echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                     echo " <input type=\"submit\" value=\"".get_string("cancel")."\" />";
+                    echo "</fieldset>";
                     echo "</form>";
                     echo "</td></tr></table>";
                 } else {
@@ -502,14 +520,16 @@
                     error(get_string("unzipfileserror","error"));
                 }
 
-                echo "<center><form action=\"index.php\" method=\"get\">";
+                echo "<div style=\"text-align:center\"><form action=\"index.php\" method=\"get\">";
+                echo "<fieldset class=\"invisiblefieldset\">";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                 echo " <input type=\"submit\" value=\"$strok\" />";
+                echo "</fieldset>";
                 echo "</form>";
-                echo "</center>";
+                echo "</div>";
             } else {
                 displaydir($wdir);
             }
@@ -551,11 +571,13 @@
                     echo "</table>";
                 }
                 echo "<br /><center><form action=\"index.php\" method=\"get\">";
+                echo "<fieldset class=\"invisiblefieldset\">";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                 echo " <input type=\"submit\" value=\"$strok\" />";
+                echo "</fieldset>";
                 echo "</form>";
                 echo "</center>";
             } else {
@@ -652,7 +674,7 @@ function print_cell($alignment='center', $text='&nbsp;', $class='') {
     if ($class) {
         $class = ' class="'.$class.'"';
     }
-    echo '<td align="'.$alignment.'" nowrap="nowrap"'.$class.'>'.$text.'</td>';
+    echo '<td align="'.$alignment.'" style="white-space:nowrap "'.$class.'>'.$text.'</td>';
 }
 
 function displaydir ($wdir) {
@@ -704,15 +726,17 @@ function displaydir ($wdir) {
 
 
     echo "<form action=\"index.php\" method=\"post\" id=\"dirform\">";
+    echo "<div>";
     echo '<input type="hidden" name="choose" value="'.$choose.'" />';
-    echo "<hr width=\"640\" align=\"center\" noshade=\"noshade\" size=\"1\" />";
+    // echo "<hr align=\"center\" noshade=\"noshade\" size=\"1\" />";
+    echo "<hr/>";
     echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\" width=\"640\" class=\"files\">";
     echo "<tr>";
-    echo "<th width=\"5\" scope=\"col\"></th>";
-    echo "<th align=\"left\" class=\"header name\" scope=\"col\">$strname</th>";
-    echo "<th align=\"right\" class=\"header size\" scope=\"col\">$strsize</th>";
-    echo "<th align=\"right\" class=\"header date\" scope=\"col\">$strmodified</th>";
-    echo "<th align=\"right\" class=\"header commands\" scope=\"col\">$straction</th>";
+    echo "<th scope=\"col\"></th>";
+    echo "<th class=\"header name\" scope=\"col\">$strname</th>";
+    echo "<th class=\"header size\" scope=\"col\">$strsize</th>";
+    echo "<th class=\"header date\" scope=\"col\">$strmodified</th>";
+    echo "<th class=\"header commands\" scope=\"col\">$straction</th>";
     echo "</tr>\n";
 
     if ($wdir != "/") {
@@ -772,7 +796,7 @@ function displaydir ($wdir) {
             echo "<tr class=\"file\">";
 
             print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" />", 'checkbox');
-            echo "<td align=\"left\" nowrap=\"nowrap\" class=\"name\">";
+            echo "<td align=\"left\" style=\"white-space:nowrap\" class=\"name\">";
             if ($CFG->slasharguments) {
                 $ffurl = str_replace('//', '/', "/file.php/$id/$fileurl");
             } else {
@@ -810,7 +834,8 @@ function displaydir ($wdir) {
         }
     }
     echo "</table>";
-    echo "<hr width=\"640\" align=\"center\" noshade=\"noshade\" size=\"1\" />";
+    echo "<hr />";
+    //echo "<hr width=\"640\" align=\"center\" noshade=\"noshade\" size=\"1\" />";
 
     echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\" width=\"640\">";
     echo "<tr><td>";
@@ -827,46 +852,56 @@ function displaydir ($wdir) {
         choose_from_menu ($options, "action", "", "$strwithchosenfiles...", "javascript:getElementById('dirform').submit()");
     }
     echo "</td></tr></table>";
+    echo "</div>";
     echo "</form>";
     echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\" width=\"640\"><tr>";
     echo "<td align=\"center\">";
     if (!empty($USER->fileop) and ($USER->fileop == "move") and ($USER->filesource <> $wdir)) {
         echo "<form action=\"index.php\" method=\"get\">";
+        echo "<fieldset class=\"invisiblefieldset\">";
         echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
         echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
         echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
         echo " <input type=\"hidden\" name=\"action\" value=\"paste\" />";
         echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
         echo " <input type=\"submit\" value=\"$strmovefilestohere\" />";
+        echo "</fieldset>";
         echo "</form>";
     }
     echo "</td>";
     echo "<td align=\"right\">";
         echo "<form action=\"index.php\" method=\"get\">";
+        echo "<fieldset class=\"invisiblefieldset\">";
         echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
         echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
         echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
         echo " <input type=\"hidden\" name=\"action\" value=\"makedir\" />";
         echo " <input type=\"submit\" value=\"$strmakeafolder\" />";
+        echo "</fieldset>";
         echo "</form>";
     echo "</td>";
     echo "<td align=\"right\">";
         echo "<form action=\"index.php\" method=\"get\">"; //dummy form - alignment only
+        echo "<fieldset class=\"invisiblefieldset\">";
         echo " <input type=\"button\" value=\"$strselectall\" onclick=\"checkall();\" />";
         echo " <input type=\"button\" value=\"$strselectnone\" onclick=\"uncheckall();\" />";
+        echo "</fieldset>";
         echo "</form>";
     echo "</td>";
     echo "<td align=\"right\">";
         echo "<form action=\"index.php\" method=\"get\">";
+        echo "<fieldset class=\"invisiblefieldset\">";
         echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
         echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
         echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
         echo " <input type=\"hidden\" name=\"action\" value=\"upload\" />";
         echo " <input type=\"submit\" value=\"$struploadafile\" />";
+        echo "</fieldset>";
         echo "</form>";
     echo "</td></tr>";
     echo "</table>";
-    echo "<hr width=\"640\" align=\"center\" noshade=\"noshade\" size=\"1\" />";
+    echo "<hr/>";
+    //echo "<hr width=\"640\" align=\"center\" noshade=\"noshade\" size=\"1\" />";
 
 }
 

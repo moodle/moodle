@@ -50,7 +50,7 @@
         }
     }
 
-              admin_externalpage_print_header('themeselector');
+    admin_externalpage_print_header('themeselector');
 
 
     print_heading($strthemes);
@@ -58,8 +58,12 @@
     $themes = get_list_of_plugins("theme");
     $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
-    echo "<table align=\"center\" cellpadding=\"7\" cellspacing=\"5\">";
-    echo "<tr class=\"generaltableheader\"><th scope=\"col\">$strtheme</th><th scope=\"col\">$strinfo</th></tr>";
+    echo "<table style=\"margin-left:auto;margin-right:auto;\" cellpadding=\"7\" cellspacing=\"5\">";
+    
+    if (!$USER->screenreader) {
+        echo "<tr class=\"generaltableheader\"><th scope=\"col\">$strtheme</th>";
+        echo "<th scope=\"col\">$strinfo</th></tr>";
+    }
     foreach ($themes as $theme) {
 
         unset($THEME);
@@ -88,15 +92,17 @@
         }
 
         echo "<tr>";
-        echo "<td align=\"center\">";
-
-        if ($screenshotpath) {
-            $screenshot = "<li><a target=\"$theme\" href=\"$theme/screenshot.jpg\">$strscreenshot</a></li>";
-            echo "<iframe name=\"$theme\" src=\"$screenshotpath\" height=\"200\" width=\"400\"></iframe></td>";
-        } else {
-            echo "<iframe name=\"$theme\" src=\"preview.php?preview=$theme\" height=\"200\" width=\"400\"></iframe></td>";
+             
+        // no point showing this if user is using screen reader
+        if (!$USER->screenreader) {
+            echo "<td align=\"center\">";
+            if ($screenshotpath) {
+                $screenshot = "<li><a target=\"$theme\" href=\"$theme/screenshot.jpg\">$strscreenshot</a></li>";
+                echo "<iframe name=\"$theme\" src=\"$screenshotpath\" height=\"200\" width=\"400\"></iframe></td>";
+            } else {
+                echo "<iframe name=\"$theme\" src=\"preview.php?preview=$theme\" height=\"200\" width=\"400\"></iframe></td>";
+            }
         }
-
 
         if ($CFG->theme == $theme) {
             echo '<td valign="top" style="border-style:solid; border-width:1px; border-color=#555555">';
@@ -109,14 +115,15 @@
         } else {
             echo '<p style="font-size:1.5em;font-style:bold;color:red;">'.$theme.' (Moodle 1.4)</p>';
         }
-
-        echo '<ul>';
-
+          
         if ($screenshot or $readme) {
-            echo "<li><a target=\"$theme\" href=\"preview.php?preview=$theme\">$strpreview</a></li>";
+            echo '<ul>';      
+            if (!$USER->screenreader) {
+                echo "<li><a target=\"$theme\" href=\"preview.php?preview=$theme\">$strpreview</a></li>";
+            }
+            echo $screenshot.$readme;
+            echo '</ul>';
         }
-        echo $screenshot.$readme;
-        echo '</ul>';
 
         $options = null;
         $options['choose'] = $theme;
