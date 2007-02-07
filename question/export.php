@@ -2,11 +2,7 @@
 /**
 * Export quiz questions into the given category
 *
-<<<<<<< export.php
 * @version $Id$
-=======
-* @version $Id$
->>>>>>> 1.22.2.2
 * @author Martin Dougiamas, Howard Miller, and many others.
 *         {@link http://moodle.org}
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
@@ -135,13 +131,8 @@
         else {
           $efile = "{$CFG->wwwroot}/file.php?file=/".$qformat->question_get_export_dir()."/$exportfilename".$file_ext."&forcedownload=1";
         }
-<<<<<<< export.php
-        echo "<p><div class=\"boxaligncenter\"><a href=\"$efile\">$download_str</a></div></p>";
-        echo "<p><div class=\"boxaligncenter\"><font size=\"-1\">$downloadextra_str</font></div></p>";
-=======
-        echo "</p><center><a href=\"$efile\">$txt->download</a></center></p>";
-        echo "</p><center><font size=\"-1\">$txt->downloadextra</font></center></p>";
->>>>>>> 1.22.2.2
+        echo "<p><div class=\"boxaligncenter\"><a href=\"$efile\">$txt->download</a></div></p>";
+        echo "<p><div class=\"boxaligncenter\"><font size=\"-1\">$txt->downloadextra</font></div></p>";
 
         print_continue("edit.php?courseid=$course->id");
         print_footer($course);
@@ -158,58 +149,12 @@
         $exportfilename = default_export_filename($course, $category);
     }
 
-<<<<<<< export.php
-    print_heading_with_help($strexportquestions, "export", "quiz");
-
-    print_simple_box_start("center");
-    echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"export.php\">\n";
-    echo '<fieldset class="invisiblefieldset">';
-    echo "<input type=\"hidden\" name=\"sesskey\" value=\"" . sesskey() . "\" />\n";
-    echo "<table cellpadding=\"5\">\n";
-
-    echo "<tr><td align=\"right\">\n";
-    print_string("category", "quiz");
-    echo ":</td><td>";
-    if (!$showcatmenu) { // category already specified
-        echo question_category_coursename($category);
-        echo " <input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
-    } else { // no category specified, let user choose
-        question_category_select_menu($course->id, true, false, $category->id);
-    }
-    //echo str_replace('&nbsp;', '', $category->name) . " ($categorycourse->shortname)";
-    echo "</td></tr>\n";
-
-    echo "<tr><td align=\"right\">";
-    print_string("fileformat", "quiz");
-    echo ":</td><td>";
-    choose_from_menu($fileformatnames, "format", "gift", "");
-    helpbutton("export", $strexportquestions, "quiz");
-    echo "</td></tr>\n";
-
-    echo "<tr><td align=\"right\">";
-    print_string("exportname", "quiz" );
-    echo ":</td><td>";
-    echo "<input type=\"text\" size=\"40\" name=\"exportfilename\" value=\"$exportfilename\" />";
-    echo "</td></tr>\n";
-
-    echo "<tr><td align=\"center\" colspan=\"2\">";
-    echo " <input type=\"hidden\" name=\"courseid\" value=\"$course->id\" />";
-    echo " <input type=\"submit\" name=\"save\" value=\"".get_string("exportquestions","quiz")."\" />";
-    echo "</td></tr>\n";
-=======
-    // DISPLAY MAIN PAGE
     print_heading_with_help($txt->exportquestions, 'export', 'quiz');
-    print_simple_box_start('center');
-    
+    print_simple_box_start('center');   
 ?>    
->>>>>>> 1.22.2.2
 
-<<<<<<< export.php
-    echo "</table>\n";
-    echo '</fieldset>';
-    echo "</form>\n";
-=======
     <form enctype="multipart/form-data" method="post" action="export.php">
+    <fieldset class="invisiblefieldset">
         <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
         <input type="hidden" name="courseid" value="<?php echo $course->id; ?>" />
             
@@ -249,13 +194,11 @@
                         </td>
                     </tr>
                 </table>
+        </fieldset>        
         </form>
     <?php
->>>>>>> 1.22.2.2
+    
     print_simple_box_end();
     print_footer($course);
 ?>
 
-<<<<<<< export.php
-?>=======
->>>>>>> 1.22.2.2
