@@ -1,4 +1,3 @@
-
 <?php  // $Id$ 
 
 ////////////////////////////////////////////////////////////////////
@@ -11,12 +10,13 @@
 
 class qformat_default {
 
-    // var $displayerrors = true;
+    var $displayerrors = true;
     var $category = NULL;
     var $course = NULL;
     var $filename = '';
     var $matchgrades = 'error';
     var $catfromfile = 0;
+    var $cattofile = 0;
     var $questionids = array();
 
 // functions to indicate import/export functionality
@@ -71,6 +71,14 @@ class qformat_default {
     function setCatfromfile( $catfromfile ) {
         $this->catfromfile = $catfromfile;
     }
+    
+    /**
+     * set cattofile
+     * @param bool cattofile exports categories within export file
+     */
+    function setCattofile( $cattofile ) {
+        $this->cattofile = $cattofile;
+    } 
 
 /// Importing functions
 
@@ -350,9 +358,15 @@ class qformat_default {
         // results are first written into string (and then to a file)
         // so create/initialize the string here
         $expout = "";
+        
+        // track which category questions are in
+        // if it changes we will record the category change in the output
+        // file if selected. 0 means that it will get printed before the 1st question
+        $trackcategory = 0;
 
         // iterate through questions
         foreach($questions as $question) {
+            
             // do not export hidden questions
             if (!empty($question->hidden)) {
                 continue;
@@ -362,26 +376,42 @@ class qformat_default {
             if ($question->qtype==RANDOM) {
                 continue;
             }
+            
+            // check if we need to record category change
+            if ($this->cattofile) {
+                if ($question->category != $trackcategory) {
+                    $trackcategory = $question->category;   
+                    $categoryname = get_category_path( $trackcategory );
+                    
+                    // create 'dummy' question for category export
+                    $dummyquestion = new object;
+                    $dummyquestion->qtype = 'category';
+                    $dummyquestion->category = $categoryname;
+                    $dummyquestion->name = "switch category to $categoryname";
+                    $dummyquestion->id = 0;
+                    $dummyquestion->questiontextformat = '';
+                    $expout .= $this->writequestion( $dummyquestion ) . "\n";
+                }       
+            }    
 
-        // export the question displaying message
-        $count++;
-        echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
-        $expout .= $this->writequestion( $question ) . "\n";
+            // export the question displaying message
+            $count++;
+            echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
+            $expout .= $this->writequestion( $question ) . "\n";
         }
 
         // final pre-process on exported data
         $expout = $this->presave_process( $expout );
-
+       
         // write file
         $filepath = $path."/".$this->filename . $this->export_file_extension();
         if (!$fh=fopen($filepath,"w")) {
             error( get_string('cannotopen','quiz',$filepath) );
         }
-        if (!fwrite($fh, $expout)) {
+        if (!fwrite($fh, $expout, strlen($expout) )) {
             error( get_string('cannotwrite','quiz',$filepath) );
         }
         fclose($fh);
-
         return true;
     }
 
