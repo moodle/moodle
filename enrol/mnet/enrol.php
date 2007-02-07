@@ -493,7 +493,8 @@ class enrolment_plugin_mnet {
 
             return $courses;
         } else {
-            foreach ($mnetrequest->error as $code => $errormessage) {
+            foreach ($mnetrequest->error as $message) {
+                list($code, $errormessage) = array_map('trim',explode(':', $errormessage, 2));
                 $message .= "ERROR $code:<br/>$errormessage<br/>";
             }
             error("RPC enrol/mnet/available_courses:<br/>$message");

@@ -165,10 +165,10 @@ class mnet_xmlrpc_client {
             $permission = get_record_sql($sql);
             if ($permission == false) {
                 global $USER;
-                $this->error[] = array(7, 'User with ID '. $USER->id .
-                                          ' attempted to call unauthorised method '.
-                                          $this->method.' on host '.
-                                          $mnet_peer->wwwroot);
+                $this->error[] = '7:User with ID '. $USER->id .
+                                 ' attempted to call unauthorised method '.
+                                 $this->method.' on host '.
+                                 $mnet_peer->wwwroot;
                 return false;
             }
 
@@ -192,7 +192,7 @@ class mnet_xmlrpc_client {
         $timestamp_receive = time();
 
         if ($this->rawresponse == false) {
-            $this->error[] = array(curl_errno($ch), curl_error($ch));
+            $this->error[] = curl_errno($ch) .':'. curl_error($ch);
             return false;
         }
 
@@ -269,7 +269,7 @@ class mnet_xmlrpc_client {
                 $threshold = 15;
             }
             if ($time_offset > $threshold) {
-                $this->error[] = 'Time gap with '.$mnet_peer->name.' ('.$time_offset.' seconds) is greater than the permitted maximum of '.$threshold.' seconds';
+                $this->error[] = '6:Time gap with '.$mnet_peer->name.' ('.$time_offset.' seconds) is greater than the permitted maximum of '.$threshold.' seconds';
                 return false;
             }
         }
