@@ -3,7 +3,7 @@
 //  Moves, adds, updates, duplicates or deletes modules in a course
 
     require("../config.php");
-    require("lib.php");
+    require_once("lib.php");
 
     require_login();
 
