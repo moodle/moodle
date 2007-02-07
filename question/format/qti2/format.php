@@ -103,25 +103,23 @@ class qformat_qti2 extends qformat_default {
         return $source; 
     } 
     
-    function importpreprocess($category) {
+    function importpreprocess() {
         global $CFG;
 
         error("Sorry, importing this format is not yet implemented!", 
             "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
     }
 
-    function exportpreprocess($category, $course, $lang = null) {
+    function exportpreprocess() {
         global $CFG;
         
         require_once("{$CFG->libdir}/smarty/Smarty.class.php");
         
         // assign the language for the export: by parameter, SESSION, USER, or the default of 'en'
-        if (is_null($lang)) {
-            $lang = current_language();
-        }
+        $lang = current_language();
         $this->lang = $lang;
         
-        return parent::exportpreprocess($category, $course);
+        return parent::exportpreprocess();
     }
     
     
@@ -232,16 +230,16 @@ function handle_questions_media(&$questions, $path, $courseid) {
  * @param string $filename the directory name which will hold the exported files
  * @return boolean - or errors out
  */    
-    function exportprocess($filename) {
+    function exportprocess() {
 
         global $CFG;
         $courseid = $this->course->id;
 
         // create a directory for the exports (if not already existing)
-        if (!$export_dir = make_upload_directory($this->question_get_export_dir().'/'.$filename)) {
+        if (!$export_dir = make_upload_directory($this->question_get_export_dir().'/'.$this->filename)) {
               error( get_string('cannotcreatepath','quiz',$export_dir) );
         }
-        $path = $CFG->dataroot.'/'.$this->question_get_export_dir().'/'.$filename;
+        $path = $CFG->dataroot.'/'.$this->question_get_export_dir().'/'.$this->filename;
 
         // get the questions (from database) in this category
         // $questions = get_records("question","category",$this->category->id);
