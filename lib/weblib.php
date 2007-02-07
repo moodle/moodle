@@ -2123,7 +2123,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     $pageclass .= ' course-'.$COURSE->id;
 
     if (($pageid != 'site-index') && ($pageid != 'course-view') && 
-        ($pageid != 'admin-settings')) {
+        (strstr($pageid, 'admin') === FALSE)) {
         $pageclass .= ' nocoursepage';
     }
 
