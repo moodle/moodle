@@ -2705,17 +2705,20 @@ function admin_externalpage_print_footer($adminroot) {
             echo '<div class="bb"><div></div></div>';
         }
         echo '</td>';
-        echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';
-        if (!empty($THEME->roundcorners)) {
-            echo '<div class="bt"><div></div></div>';
-            echo '<div class="i1"><div class="i2"><div class="i3">';
+        if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
+            echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';
+            if (!empty($THEME->roundcorners)) {
+                echo '<div class="bt"><div></div></div>';
+                echo '<div class="i1"><div class="i2"><div class="i3">';
+            }
+            blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+            if (!empty($THEME->roundcorners)) {
+                echo '</div></div></div>';
+                echo '<div class="bb"><div></div></div>';
+            }
+            echo '</td>';
         }
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-        if (!empty($THEME->roundcorners)) {
-            echo '</div></div></div>';
-            echo '<div class="bb"><div></div></div>';
-        }
-        echo '</td></tr></table>';
+        echo '</tr></table>';
     }
     print_footer();
 }
