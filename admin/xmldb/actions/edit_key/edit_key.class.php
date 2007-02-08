@@ -99,12 +99,13 @@ class edit_key extends XMLDBAction {
 
     /// Add the main form
         $o = '<form id="form" action="index.php" method="post">';
+        $o.= '<div>';
         $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
         $o.= '    <input type="hidden" name ="table" value="' . $tableparam .'" />';
         $o.= '    <input type="hidden" name ="key" value="' . $keyparam .'" />';
         $o.= '    <input type="hidden" name ="action" value="edit_key_save" />';
         $o.= '    <input type="hidden" name ="postaction" value="edit_table" />';
-        $o.= '    <table id="formelements" align="center">';
+        $o.= '    <table id="formelements" class="boxaligncenter">';
     /// XMLDB key name
     /// If the key has dependencies, we cannot change its name
         $disabled = '';
@@ -137,18 +138,18 @@ class edit_key extends XMLDBAction {
     /// Change button
         $o.= '      <tr valign="top"><td>&nbsp;</td><td colspan="2"><input type="submit" value="' .$this->str['change'] . '" /></td></tr>';
         $o.= '    </table>';
-        $o.= '</form>';
+        $o.= '</div></form>';
     /// Calculate the buttons
-        $b = ' <p align="center" class="buttons">';
+        $b = ' <p class="buttons">';
     /// The view original XML button
         if ($table->getKey($keyparam)) {
-            $b .= '&nbsp;<a href="index.php?action=view_key_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=original&amp;table=' . $tableparam . '&amp;key=' . $keyparam . '" target="_blank">[' . $this->str['vieworiginal'] . ']</a>';
+            $b .= '&nbsp;<a href="index.php?action=view_key_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=original&amp;table=' . $tableparam . '&amp;key=' . $keyparam . '">[' . $this->str['vieworiginal'] . ']</a>';
         } else {
             $b .= '&nbsp;[' . $this->str['vieworiginal'] . ']';
         }
     /// The view edited XML button
         if ($key->hasChanged()) {
-            $b .= '&nbsp;<a href="index.php?action=view_key_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=edited&amp;table=' . $tableparam . '&amp;key=' . $keyparam . '" target="_blank">[' . $this->str['viewedited'] . ']</a>';
+            $b .= '&nbsp;<a href="index.php?action=view_key_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=edited&amp;table=' . $tableparam . '&amp;key=' . $keyparam . '">[' . $this->str['viewedited'] . ']</a>';
         } else {
             $b .= '&nbsp;[' . $this->str['viewedited'] . ']';
         }

@@ -101,25 +101,26 @@ class edit_xml_file extends XMLDBAction {
                 $structure =& $editeddir->xml_file->getStructure();
             /// Add the main form
                 $o = '<form id="form" action="index.php" method="post">';
+                $o .= '<div>';
                 $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
                 $o.= '    <input type="hidden" name ="action" value="edit_xml_file_save" />';
                 $o.= '    <input type="hidden" name ="postaction" value="edit_xml_file" />';
                 $o.= '    <input type="hidden" name ="path" value="' . s($structure->getPath()) .'" />';
                 $o.= '    <input type="hidden" name ="version" value="' . s($structure->getVersion()) .'" />';
-                $o.= '    <table id="formelements" align="center">';
+                $o.= '    <table id="formelements" class="boxaligncenter">';
                 $o.= '      <tr valign="top"><td>Path:</td><td>' . s($structure->getPath()) . '</td></tr>';
                 $o.= '      <tr valign="top"><td>Version:</td><td>' . s($structure->getVersion()) . '</td></tr>';
                 $o.= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td><textarea name="comment" rows="3" cols="80" id="comment">' . $structure->getComment() . '</textarea></td></tr>';
                 $o.= '      <tr><td>&nbsp;</td><td><input type="submit" value="' .$this->str['change'] . '" /></td></tr>';
                 $o.= '    </table>';
-                $o.= '</form>';
+                $o.= '</div></form>';
             /// Calculate the buttons
-                $b = ' <p align="center" class="buttons">';
+                $b = ' <p class="centerpara buttons">';
             /// The view original XML button
-                $b .= '&nbsp;<a href="index.php?action=view_structure_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=original" target="_blank">[' . $this->str['vieworiginal'] . ']</a>';
+                $b .= '&nbsp;<a href="index.php?action=view_structure_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=original">[' . $this->str['vieworiginal'] . ']</a>';
             /// The view edited XML button
                 if ($structure->hasChanged()) {
-                    $b .= '&nbsp;<a href="index.php?action=view_structure_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=edited" target="_blank">[' . $this->str['viewedited'] . ']</a>';
+                    $b .= '&nbsp;<a href="index.php?action=view_structure_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=edited">[' . $this->str['viewedited'] . ']</a>';
                 } else {
                     $b .= '&nbsp;[' . $this->str['viewedited'] . ']';
                 }
@@ -136,7 +137,7 @@ class edit_xml_file extends XMLDBAction {
             /// The back to main menu button
                 $b .= '&nbsp;<a href="index.php?action=main_view#lastused">[' . $this->str['backtomainview'] . ']</a>';
                 $b .= '</p>';
-                $b .= ' <p align="center" class="buttons">';
+                $b .= ' <p class="centerpara buttons">';
             /// The view sql code button
                 $b .= '<a href="index.php?action=view_structure_sql&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' .$this->str['viewsqlcode'] . ']</a>';
             /// The view php code button
@@ -158,7 +159,7 @@ class edit_xml_file extends XMLDBAction {
                 $tables =& $structure->getTables();
                 if ($tables) {
                     $o .= '<h3 class="main">' . $this->str['tables'] . '</h3>';
-                    $o .= '<table id="listtables" border="0" align="center"  cellpadding="5" cellspacing="1" class="flexible">';
+                    $o .= '<table id="listtables" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
                     $row = 0;
                     foreach ($tables as $table) {
                     /// Calculate buttons
@@ -194,7 +195,7 @@ class edit_xml_file extends XMLDBAction {
                          }
                         $b .= '</td>';
                     /// Print table row
-                        $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_table_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;table=' . $table->getName() . '&amp;select=edited" target="_blank">' . $table->getName() . '</a>' . $b . '</tr>';
+                        $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_table_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;table=' . $table->getName() . '&amp;select=edited">' . $table->getName() . '</a>' . $b . '</tr>';
                         $row = ($row + 1) % 2;
                     }
                     $o .= '</table>';
@@ -203,7 +204,7 @@ class edit_xml_file extends XMLDBAction {
                 $statements =& $structure->getStatements();
                 if ($statements) {
                     $o .= '<h3 class="main">' . $this->str['statements'] . '</h3>';
-                    $o .= '<table id="liststatements" border="0" align="center"  cellpadding="5" cellspacing="1" class="flexible">';
+                    $o .= '<table id="liststatements" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
                     $row = 0;
                     foreach ($statements as $statement) {
                     /// Calculate buttons
@@ -229,7 +230,7 @@ class edit_xml_file extends XMLDBAction {
                         $b .= '<a href="index.php?action=delete_statement&amp;statement=' . $statement->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
                         $b .= '</td>';
                     /// Print statement row
-                        $o .= '<tr class="r' . $row . '"><td class="statement cell"><a href="index.php?action=view_statement_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;statement=' . $statement->getName() . '&amp;select=edited" target="_blank">' . $statement->getName() . '</a>' . $b . '</tr>';
+                        $o .= '<tr class="r' . $row . '"><td class="statement cell"><a href="index.php?action=view_statement_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;statement=' . $statement->getName() . '&amp;select=edited">' . $statement->getName() . '</a>' . $b . '</tr>';
                         $row = ($row + 1) % 2;
                     }
                     $o .= '</table>';

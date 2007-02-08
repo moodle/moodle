@@ -91,7 +91,7 @@ class view_structure_php extends XMLDBAction {
         $tableparam = optional_param('table', $defaulttable, PARAM_PATH);
 
     /// The back to edit xml button
-        $b = ' <p align="center" class="buttons">';
+        $b = ' <p class="centerpara buttons">';
         $b .= '<a href="index.php?action=edit_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a>';
         $b .= '</p>';
         $o = $b;
@@ -109,14 +109,15 @@ class view_structure_php extends XMLDBAction {
         }
     /// Now build the form
         $o.= '<form id="form" action="index.php" method="post">';
+        $o.='<div>';
         $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
         $o.= '    <input type="hidden" name ="action" value="view_structure_php" />';
-        $o.= '    <table id="formelements" align="center" cellpadding="5">';
+        $o.= '    <table id="formelements" class="boxaligncenter" cellpadding="5">';
         $o.= '      <tr><td><label for="action" accesskey="c">' . $this->str['selectaction'] .' </label>' . choose_from_menu($popcommands, 'command', $commandparam, '', '', 0, true) . '&nbsp;<label for="table" accesskey="t">' . $this->str['selecttable'] . ' </label>' .choose_from_menu($poptables, 'table', $tableparam, '', '', 0, true) . '</td></tr>';
         $o.= '      <tr><td colspan="2" align="center"><input type="submit" value="' .$this->str['view'] . '" /></td></tr>';
         $o.= '    </table>';
-        $o.= '</form>';
-        $o.= '    <table id="phpcode" align="center" cellpadding="5">';
+        $o.= '</div></form>';
+        $o.= '    <table id="phpcode" class="boxaligncenter" cellpadding="5">';
         $o.= '      <tr><td><textarea cols="80" rows="32">';
     /// Based on current params, call the needed function
         switch ($commandparam) {

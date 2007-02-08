@@ -72,17 +72,17 @@ class delete_field extends XMLDBAction {
 
     /// If  not confirmed, show confirmation box
         if (!$confirmed) {
-            $o = '<table align="center" width="60" class="generalbox" border="0" cellpadding="5" cellspacing="0" id="notice">';
+            $o = '<table width="60" class="generalbox" border="0" cellpadding="5" cellspacing="0" id="notice">';
             $o.= '  <tr><td class="generalboxcontent">';
-            $o.= '    <p align="center">' . $this->str['confirmdeletefield'] . '<br /><br />' . $fieldparam . '</p>';
-            $o.= '    <table align="center" cellpadding="20"><tr><td>';
+            $o.= '    <p class="centerpara">' . $this->str['confirmdeletefield'] . '<br /><br />' . $fieldparam . '</p>';
+            $o.= '    <table class="boxaligncenter" cellpadding="20"><tr><td>';
             $o.= '      <div class="singlebutton">';
-            $o.= '        <form action="index.php?action=delete_field&amp;confirmed=yes&amp;postaction=edit_table&amp;field=' . $fieldparam . '&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '" method="post">';
-            $o.= '          <input type="submit" value="'. $this->str['yes'] .'" /></form></div>';
+            $o.= '        <form action="index.php?action=delete_field&amp;confirmed=yes&amp;postaction=edit_table&amp;field=' . $fieldparam . '&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '" method="post"><fieldset class="invisiblefieldset">';
+            $o.= '          <input type="submit" value="'. $this->str['yes'] .'" /></fieldset></form></div>';
             $o.= '      </td><td>';
             $o.= '      <div class="singlebutton">';
-            $o.= '        <form action="index.php?action=edit_table&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '" method="post">';
-            $o.= '          <input type="submit" value="'. $this->str['no'] .'" /></form></div>';
+            $o.= '        <form action="index.php?action=edit_table&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '" method="post"><fieldset class="invisiblefieldset">';
+            $o.= '          <input type="submit" value="'. $this->str['no'] .'" /></div></form></fieldset>';
             $o.= '      </td></tr>';
             $o.= '    </table>';
             $o.= '  </td></tr>';

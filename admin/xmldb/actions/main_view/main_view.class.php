@@ -72,14 +72,14 @@ class main_view extends XMLDBAction {
         if (isset($SESSION->lastused)) {
             if ($lastused = $SESSION->lastused) {
             /// Print link
-                $o .= '<p align="center"><a href="#lastused">' . $this->str['gotolastused'] . '</a></p>';
+                $o .= '<p class="centerpara"><a href="#lastused">' . $this->str['gotolastused'] . '</a></p>';
             }
         } else {
             $lastused = NULL;
         }
 
     /// Calculate the buttons
-        $b = '<p align="center" class="buttons">';
+        $b = '<p class="centerpara buttons">';
     /// The reserved_words button
         $b .= '&nbsp;<a href="index.php?action=view_reserved_words">[' . $this->str['reservedwords'] . ']</a>';
     /// The test button
@@ -94,7 +94,7 @@ class main_view extends XMLDBAction {
         $result = $this->launch('get_db_directories');
     /// Display list of DB directories if everything is ok
         if ($result && !empty($XMLDB->dbdirs)) {
-            $o .= '<table id="listdirectories" border="0" align="center"  cellpadding="5" cellspacing="1" class="flexible">';
+            $o .= '<table id="listdirectories" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
             $row = 0;
             foreach ($XMLDB->dbdirs as $key => $dbdir) {
             /// Detect if this is the lastused dir
@@ -199,7 +199,7 @@ class main_view extends XMLDBAction {
                 if ($dbdir->path_exists &&
                     file_exists($key . '/install.xml') &&
                     is_readable($key . '/install.xml')) {
-                    $elementtext = '<a href="index.php?action=view_xml&amp;file=' . urlencode(str_replace($CFG->dirroot, '', $key) . '/install.xml') . '" target="_blank">' . $elementtext . '</a></td>';
+                    $elementtext = '<a href="index.php?action=view_xml&amp;file=' . urlencode(str_replace($CFG->dirroot, '', $key) . '/install.xml') . '">' . $elementtext . '</a></td>';
                 } else {
                     $elementtext = $elementtext . '</td>';
                 }

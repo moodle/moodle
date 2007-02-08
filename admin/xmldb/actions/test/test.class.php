@@ -67,7 +67,7 @@ class test extends XMLDBAction {
         $tests = array();
 
     /// The back to edit table button
-        $b = ' <p align="center" class="buttons">';
+        $b = ' <p class="centerpara buttons">';
         $b .= '<a href="index.php">[' . $this->str['back'] . ']</a>';
         $b .= '</p>';
         $o = $b;

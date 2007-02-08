@@ -104,7 +104,7 @@ class view_table_php extends XMLDBAction {
         $fieldkeyindexinitial = substr($origfieldkeyindexparam, 0, 1); //To know what we have selected
 
     /// The back to edit xml button
-        $b = ' <p align="center" class="buttons">';
+        $b = ' <p class="centerpara buttons">';
         $b .= '<a href="index.php?action=edit_table&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;table=' . $tableparam . '">[' . $this->str['back'] . ']</a>';
         $b .= '</p>';
         $o = $b;
@@ -159,16 +159,17 @@ class view_table_php extends XMLDBAction {
 
     /// Now build the form
         $o.= '<form id="form" action="index.php" method="post">';
+        $o.= '<div>';
         $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
         $o.= '    <input type="hidden" name ="table" value="' . s($tableparam) . '" />';
         $o.= '    <input type="hidden" name ="action" value="view_table_php" />';
-        $o.= '    <table id="formelements" align="center" cellpadding="5">';
+        $o.= '    <table id="formelements" class="boxaligncenter" cellpadding="5">';
         $o.= '      <tr><td><label for="action" accesskey="c">' . $this->str['selectaction'] .' </label>' . choose_from_menu($popcommands, 'command', $commandparam, '', '', 0, true) . '&nbsp;<label for="fieldkeyindex" accesskey="f">' . $this->str['selectfieldkeyindex'] . ' </label>' .choose_from_menu($popfields, 'fieldkeyindex', $origfieldkeyindexparam, '', '', 0, true) . '</td></tr>';
         $o.= '      <tr><td colspan="2" align="center"><input type="submit" value="' .$this->str['view'] . '" /></td></tr>';
         $o.= '    </table>';
-        $o.= '</form>';
+        $o.= '</div></form>';
 
-        $o.= '    <table id="phpcode" align="center" cellpadding="5">';
+        $o.= '    <table id="phpcode" class="boxaligncenter" cellpadding="5">';
         $o.= '      <tr><td><textarea cols="80" rows="32">';
     /// Check we have selected some field/key/index from the popup
         if ($fieldkeyindexparam == 'fieldshead' || $fieldkeyindexparam == 'keyshead' || $fieldkeyindexparam == 'indexeshead') {

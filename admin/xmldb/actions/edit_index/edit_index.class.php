@@ -99,12 +99,13 @@ class edit_index extends XMLDBAction {
 
     /// Add the main form
         $o = '<form id="form" action="index.php" method="post">';
+        $o.= '<div>';
         $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
         $o.= '    <input type="hidden" name ="table" value="' . $tableparam .'" />';
         $o.= '    <input type="hidden" name ="index" value="' . $indexparam .'" />';
         $o.= '    <input type="hidden" name ="action" value="edit_index_save" />';
         $o.= '    <input type="hidden" name ="postaction" value="edit_table" />';
-        $o.= '    <table id="formelements" align="center">';
+        $o.= '    <table id="formelements" class="boxaligncenter">';
     /// XMLDB index name
     /// If the index has dependencies, we cannot change its name
         $disabled = '';
@@ -125,18 +126,18 @@ class edit_index extends XMLDBAction {
     /// Change button
         $o.= '      <tr valign="top"><td>&nbsp;</td><td colspan="2"><input type="submit" value="' .$this->str['change'] . '" /></td></tr>';
         $o.= '    </table>';
-        $o.= '</form>';
+        $o.= '</div></form>';
     /// Calculate the buttons
-        $b = ' <p align="center" class="buttons">';
+        $b = ' <p class="buttons">';
     /// The view original XML button
         if ($table->getIndex($indexparam)) {
-            $b .= '&nbsp;<a href="index.php?action=view_index_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=original&amp;table=' . $tableparam . '&amp;index=' . $indexparam . '" target="_blank">[' . $this->str['vieworiginal'] . ']</a>';
+            $b .= '&nbsp;<a href="index.php?action=view_index_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=original&amp;table=' . $tableparam . '&amp;index=' . $indexparam . '">[' . $this->str['vieworiginal'] . ']</a>';
         } else {
             $b .= '&nbsp;[' . $this->str['vieworiginal'] . ']';
         }
     /// The view edited XML button
         if ($index->hasChanged()) {
-            $b .= '&nbsp;<a href="index.php?action=view_index_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=edited&amp;table=' . $tableparam . '&amp;index=' . $indexparam . '" target="_blank">[' . $this->str['viewedited'] . ']</a>';
+            $b .= '&nbsp;<a href="index.php?action=view_index_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=edited&amp;table=' . $tableparam . '&amp;index=' . $indexparam . '">[' . $this->str['viewedited'] . ']</a>';
         } else {
             $b .= '&nbsp;[' . $this->str['viewedited'] . ']';
         }

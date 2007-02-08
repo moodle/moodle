@@ -103,11 +103,12 @@ class edit_table extends XMLDBAction {
 
     /// Add the main form
         $o = '<form id="form" action="index.php" method="post">';
+        $o.= '<div>';        
         $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
         $o.= '    <input type="hidden" name ="table" value="' . $tableparam .'" />';
         $o.= '    <input type="hidden" name ="action" value="edit_table_save" />';
         $o.= '    <input type="hidden" name ="postaction" value="edit_table" />';
-        $o.= '    <table id="formelements" align="center">';
+        $o.= '    <table id="formelements" class="boxaligncenter">';
     /// If the table is being used, we cannot rename it
         if ($structure->getTableUses($table->getName())) {
             $o.= '      <tr valign="top"><td>Name:</td><td><input type="hidden" name ="name" value="' . s($table->getName()) . '" />' . s($table->getName()) .'</td></tr>';
@@ -117,18 +118,18 @@ class edit_table extends XMLDBAction {
         $o.= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td><textarea name="comment" rows="3" cols="80" id="comment">' . s($table->getComment()) . '</textarea></td></tr>';
         $o.= '      <tr valign="top"><td>&nbsp;</td><td><input type="submit" value="' .$this->str['change'] . '" /></td></tr>';
         $o.= '    </table>';
-        $o.= '</form>';
+        $o.= '</div></form>';
     /// Calculate the buttons
-        $b = ' <p align="center" class="buttons">';
+        $b = ' <p class="centerpara buttons">';
     /// The view original XML button
         if ($origstructure->getTable($tableparam)) {
-            $b .= '&nbsp;<a href="index.php?action=view_table_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=original&amp;table=' . $tableparam . '" target="_blank">[' . $this->str['vieworiginal'] . ']</a>';
+            $b .= '&nbsp;<a href="index.php?action=view_table_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=original&amp;table=' . $tableparam . '">[' . $this->str['vieworiginal'] . ']</a>';
         } else {
             $b .= '&nbsp;[' . $this->str['vieworiginal'] . ']';
         }
     /// The view edited XML button
         if ($table->hasChanged()) {
-            $b .= '&nbsp;<a href="index.php?action=view_table_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=edited&amp;table=' . $tableparam . '" target="_blank">[' . $this->str['viewedited'] . ']</a>';
+            $b .= '&nbsp;<a href="index.php?action=view_table_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=edited&amp;table=' . $tableparam . '">[' . $this->str['viewedited'] . ']</a>';
         } else {
             $b .= '&nbsp;[' . $this->str['viewedited'] . ']';
         }
@@ -141,7 +142,7 @@ class edit_table extends XMLDBAction {
     /// The back to edit xml file button
         $b .= '&nbsp;<a href="index.php?action=edit_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a>';
         $b .= '</p>';
-        $b .= ' <p align="center" class="buttons">';
+        $b .= ' <p class="centerpara buttons">';
     /// The view sql code button
         $b .= '<a href="index.php?action=view_table_sql&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' .$this->str['viewsqlcode'] . ']</a>';
     /// The view php code button
@@ -170,7 +171,7 @@ class edit_table extends XMLDBAction {
         $fields =& $table->getFields();
         if (!empty($fields)) {
             $o .= '<h3 class="main">' . $this->str['fields'] . '</h3>';
-            $o .= '<table id="listfields" border="0" align="center"  cellpadding="5" cellspacing="1" class="flexible">';
+            $o .= '<table id="listfields" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
             $row = 0;
             foreach ($fields as $field) {
             /// Calculate buttons
@@ -210,7 +211,7 @@ class edit_table extends XMLDBAction {
             /// The readable info
                 $r = '</td><td class="readableinfo cell">' . $field->readableInfo() . '</td>';
             /// Print table row
-            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_field_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;field=' . $field->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited" target="_blank">' . $field->getName() . '</a>' . $b . $r . '</tr>';
+            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_field_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;field=' . $field->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited">' . $field->getName() . '</a>' . $b . $r . '</tr>';
                 $row = ($row + 1) % 2;
             }
             $o .= '</table>';
@@ -219,7 +220,7 @@ class edit_table extends XMLDBAction {
         $keys =& $table->getKeys();
         if (!empty($keys)) {
             $o .= '<h3 class="main">' . $this->str['keys'] . '</h3>';
-            $o .= '<table id="listkeys" border="0" align="center"  cellpadding="5" cellspacing="1" class="flexible">';
+            $o .= '<table id="listkeys" border="0"  cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
             $row = 0;
             foreach ($keys as $key) {
             /// Calculate buttons
@@ -254,7 +255,7 @@ class edit_table extends XMLDBAction {
             /// The readable info
                 $r = '</td><td class="readableinfo cell">' . $key->readableInfo() . '</td>';
             /// Print table row
-            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_key_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;key=' . $key->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited" target="_blank">' . $key->getName() . '</a>' . $b . $r .'</tr>';
+            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_key_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;key=' . $key->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited">' . $key->getName() . '</a>' . $b . $r .'</tr>';
                 $row = ($row + 1) % 2;
             }
             $o .= '</table>';
@@ -263,7 +264,7 @@ class edit_table extends XMLDBAction {
         $indexes =& $table->getIndexes();
         if (!empty($indexes)) {
             $o .= '<h3 class="main">' . $this->str['indexes'] . '</h3>';
-            $o .= '<table id="listindexes" border="0" align="center"  cellpadding="5" cellspacing="1" class="flexible">';
+            $o .= '<table id="listindexes" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
             $row = 0;
             foreach ($indexes as $index) {
             /// Calculate buttons
@@ -290,7 +291,7 @@ class edit_table extends XMLDBAction {
             /// The readable info
                 $r = '</td><td class="readableinfo cell">' . $index->readableInfo() . '</td>';
             /// Print table row
-            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_index_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;index=' . $index->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited" target="_blank">' . $index->getName() . '</a>' . $b . $r .'</tr>';
+            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_index_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;index=' . $index->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited">' . $index->getName() . '</a>' . $b . $r .'</tr>';
                 $row = ($row + 1) % 2;
             }
             $o .= '</table>';

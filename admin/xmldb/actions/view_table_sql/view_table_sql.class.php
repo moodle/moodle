@@ -100,12 +100,12 @@ class view_table_sql extends XMLDBAction {
         }
 
         /// The back to edit table button
-        $b = ' <p align="center" class="buttons">';
+        $b = ' <p class="centerpara buttons">';
         $b .= '<a href="index.php?action=edit_table&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a>';
         $b .= '</p>';
         $o = $b;
 
-        $o.= '    <table id="formelements" align="center" cellpadding="5">';
+        $o.= '    <table id="formelements" class="boxaligncenter" cellpadding="5">';
         $o.= '      <tr><td align="center">' . $this->str['selectdb'];
 
     /// Show the popup of generators

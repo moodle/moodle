@@ -172,8 +172,9 @@ img.grouppicture {
   width: 80%
 }
 
-
-
+.centerpara {
+  text-align:center  
+}
 
 .noticebox {
   border-width:1px;

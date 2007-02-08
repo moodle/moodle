@@ -103,27 +103,28 @@ class edit_statement extends XMLDBAction {
 
     /// Add the main form
         $o = '<form id="form" action="index.php" method="post">';
+        $o.= '<div>';        
         $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
         $o.= '    <input type="hidden" name ="statement" value="' . $statementparam .'" />';
         $o.= '    <input type="hidden" name ="action" value="edit_statement_save" />';
         $o.= '    <input type="hidden" name ="postaction" value="edit_statement" />';
-        $o.= '    <table id="formelements" align="center">';
+        $o.= '    <table id="formelements" class="boxaligncenter">';
         $o.= '      <tr valign="top"><td>Name:</td><td><input type="hidden" name ="name" value="' . s($statement->getName()) . '" />' . s($statement->getName()) .'</td></tr>';
         $o.= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td><textarea name="comment" rows="3" cols="80" id="comment">' . s($statement->getComment()) . '</textarea></td></tr>';
         $o.= '      <tr valign="top"><td>&nbsp;</td><td><input type="submit" value="' .$this->str['change'] . '" /></td></tr>';
         $o.= '    </table>';
-        $o.= '</form>';
+        $o.= '</div></form>';
     /// Calculate the buttons
-        $b = ' <p align="center" class="buttons">';
+        $b = ' <p class="buttons">';
     /// The view original XML button
         if ($origstructure->getStatement($statementparam)) {
-            $b .= '&nbsp;<a href="index.php?action=view_statement_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=original&amp;statement=' . $statementparam . '" target="_blank">[' . $this->str['vieworiginal'] . ']</a>';
+            $b .= '&nbsp;<a href="index.php?action=view_statement_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=original&amp;statement=' . $statementparam . '">[' . $this->str['vieworiginal'] . ']</a>';
         } else {
             $b .= '&nbsp;[' . $this->str['vieworiginal'] . ']';
         }
     /// The view edited XML button
         if ($statement->hasChanged()) {
-            $b .= '&nbsp;<a href="index.php?action=view_statement_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=edited&amp;statement=' . $statementparam . '" target="_blank">[' . $this->str['viewedited'] . ']</a>';
+            $b .= '&nbsp;<a href="index.php?action=view_statement_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=edited&amp;statement=' . $statementparam . '">[' . $this->str['viewedited'] . ']</a>';
         } else {
             $b .= '&nbsp;[' . $this->str['viewedited'] . ']';
         }
@@ -141,7 +142,7 @@ class edit_statement extends XMLDBAction {
         $sentences =& $statement->getSentences();
         if (!empty($sentences)) {
             $o .= '<h3 class="main">' . $this->str['sentences'] . '</h3>';
-            $o .= '<table id="listfields" border="0" align="center"  cellpadding="5" cellspacing="1" class="flexible">';
+            $o .= '<table id="listfields" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
             $row = 0;
             foreach ($sentences as $key => $sentence) {
             /// Prepend some SQL

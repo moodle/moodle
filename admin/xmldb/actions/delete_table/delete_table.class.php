@@ -71,17 +71,17 @@ class delete_table extends XMLDBAction {
 
     /// If  not confirmed, show confirmation box
         if (!$confirmed) {
-            $o = '<table align="center" width="60" class="generalbox" border="0" cellpadding="5" cellspacing="0" id="notice">';
+            $o = '<table width="60" class="generalbox" border="0" cellpadding="5" cellspacing="0" id="notice">';
             $o.= '  <tr><td class="generalboxcontent">';
-            $o.= '    <p align="center">' . $this->str['confirmdeletetable'] . '<br /><br />' . $tableparam . '</p>';
-            $o.= '    <table align="center" cellpadding="20"><tr><td>';
+            $o.= '    <p class="centerpara">' . $this->str['confirmdeletetable'] . '<br /><br />' . $tableparam . '</p>';
+            $o.= '    <table class="boxaligncenter" cellpadding="20"><tr><td>';
             $o.= '      <div class="singlebutton">';
-            $o.= '        <form action="index.php?action=delete_table&amp;confirmed=yes&amp;postaction=edit_xml_file&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '" method="post">';
-            $o.= '          <input type="submit" value="'. $this->str['yes'] .'" /></form></div>';
+            $o.= '        <form action="index.php?action=delete_table&amp;confirmed=yes&amp;postaction=edit_xml_file&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '" method="post"><fieldset class="invisiblefieldset">';
+            $o.= '          <input type="submit" value="'. $this->str['yes'] .'" /></fieldset></form></div>';
             $o.= '      </td><td>';
             $o.= '      <div class="singlebutton">';
-            $o.= '        <form action="index.php?action=edit_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '" method="post">';
-            $o.= '          <input type="submit" value="'. $this->str['no'] .'" /></form></div>';
+            $o.= '        <form action="index.php?action=edit_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '" method="post"><fieldset class="invisiblefieldset">';
+            $o.= '          <input type="submit" value="'. $this->str['no'] .'" /></fieldset></form></div>';
             $o.= '      </td></tr>';
             $o.= '    </table>';
             $o.= '  </td></tr>';

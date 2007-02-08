@@ -115,12 +115,13 @@ class edit_sentence extends XMLDBAction {
 
         /// Add the main form
             $o = '<form id="form" action="index.php" method="post">';
+            $o.= '<div>';
             $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
             $o.= '    <input type="hidden" name ="statement" value="' . $statementparam .'" />';
             $o.= '    <input type="hidden" name ="sentence" value="' . $sentenceparam .'" />';
             $o.= '    <input type="hidden" name ="action" value="edit_sentence_save" />';
             $o.= '    <input type="hidden" name ="postaction" value="edit_statement" />';
-            $o.= '    <table id="formelements" align="center">';
+            $o.= '    <table id="formelements" class="boxaligncenter">';
         /// The fields box
             $o.= '    <tr><td>INSERT INTO ' . s($statement->getTable()) . '</td></tr>';
             $o.= '    <tr><td><textarea name="fields" rows="2" cols="70" id="fields">' . s(implode(', ', $fields)) . '</textarea></td></tr>';
@@ -130,9 +131,9 @@ class edit_sentence extends XMLDBAction {
         /// The submit button
             $o.= '      <tr valign="top"><td><input type="submit" value="' .$this->str['change'] . '" /></td></tr>';
             $o.= '    </table>';
-            $o.= '</form>';
+            $o.= '</div></form>';
         /// Calculate the buttons
-            $b = ' <p align="center" class="buttons">';
+            $b = ' <p class="buttons">';
         /// The back to edit statement button
             $b .= '&nbsp;<a href="index.php?action=edit_statement&amp;statement=' . urlencode($statementparam) . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a>';
             $b .= '</p>';
