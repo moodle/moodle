@@ -1,5 +1,121 @@
 Menu Release Notes
 
+*** version 0.12.1 ***
+
+Fixed the following bugs:
+-------------------------
+
+* Placed the call to the DOM "focus" method used by the MenuItem class inside 
+  a zero-second timeout to resolve a race condition between menu positioning 
+  and focusing of a menu item that resulted in the browser viewport 
+  scrolling unnecessarily.
+
+* Switched to JSMin for JavaScript compression to resolve issues with the 
+  minified version.  
+
+* Disabled menu item instances will no longer display a submenu if the item is 
+  clicked or moused over. 
+
+* Can no longer select more than one item in a menu if using the keyboard and 
+  mouse simultaneously.
+
+* Calling the "destory" method on a menu will now unregister all of the menu's 
+  submenus from the MenuManager.
+  
+  
+
+*** version 0.12 ***
+
+Added the following features:
+-----------------------------
+
+* Added the YAHOO.widget.MenuManager singleton class.
+
+* Added two new methods to YAHOO.widget.Menu:
+
+    * "addItems" - Adds an array of items to a menu.
+
+    * "getRoot" - Returns the root menu in a menu hierarchy.
+
+* Added two new events to YAHOO.widget.Menu:
+
+    * "itemAddedEvent" - Fires when an item is added to a menu.
+
+    * "itemRemovedEvent" - Fires when an item is removed from a menu.
+
+* Added two new properties to YAHOO.widget.Menu:
+
+    * "itemData" - Array of items to be added to the menu.
+
+    * "lazyLoad" - Boolean indicating if the menu's "lazy load" feature 
+      is enabled.
+
+* Added new configuration properties to YAHOO.widget.Menu:
+
+    * "hidedelay" - Hides the menu after the specified number of milliseconds.  
+
+    * "showdelay" - Shows the menu after the specified number of milliseconds.  
+
+    * "container" - The containing element the menu should be rendered into.  
+
+    * "clicktohide" - Boolean indicating if the menu will automatically be 
+      hidden if the user clicks outside of it.
+
+    * "autosubmenudisplay" - Boolean indicating if submenus are automatically 
+      made visible when the user mouses over the menu's items.
+
+* Added a "toString" method to YAHOO.widget.MenuItem, YAHOO.widget.MenuBarItem 
+  and YAHOO.widget.ContextMenuItem that returns the class name followed by the 
+  value of the item's "text" configuration property.
+
+
+Fixed the following bugs:
+-------------------------
+
+* Setting a YAHOO.widget.ContextMenu instance's "trigger" configuration 
+  property will remove all previous triggers before setting up the new ones.
+
+* "destroy" method of YAHOO.widget.ContextMenu cleans up all DOM event handlers.
+
+* Clicking on a menu item with a submenu no longer hides/collapses the 
+  entire menu.
+
+* Clicking an item's submenu indicator image no longer collapses the 
+  entire menu.
+  
+  
+Changes:
+--------
+
+* Deprecated the YAHOO.widget.MenuModule and YAHOO.widget.MenuModuleItem 
+  classes.  The Base classes are now YAHOO.widget.Menu and 
+  YAHOO.widget.MenuItem.
+
+* "addItem" and "insertItem" methods of YAHOO.widget.Menu now accept an 
+  object literal representing YAHOO.widget.MenuItem configuration properties.
+
+* "clearActiveItem" now takes an argument: flag indicating if the Menu 
+  instance's active item should be blurred.
+
+* Switched the default value of the "visible" configuration property for 
+  YAHOO.widget.Menu to "false."
+
+* Switched the default value of the "constraintoviewport" configuration 
+  property for YAHOO.widget.Menu to "true."
+
+* Overloaded the "submenu" configuration property for YAHOO.widget.MenuItem
+  so that it now can accept any of the following:
+
+    * YAHOO.widget.Menu instance
+    * Object literal representation of a menu
+    * Element id
+    * Element reference
+
+* "hide" and "show" methods of statically positioned menus now toggle the their
+  element's "display" style property between "block" and "none."
+
+
+
 *** version 0.10.0 ***
 
 * Initial release
@@ -32,6 +148,59 @@ Menu Release Notes
             -------------------
             Tools > Options > Context > 
                 Advanced... > Disable or replace context menus
+
+
+
+*** version 0.11.3 ***
+
+Added the following features:
+-----------------------------
+
+* Added a "target" configuration property to the MenuModuleItem object that
+  allows the user to specify the target of an item's anchor element.  Items 
+  that make use of the "target" configuration property will require the user 
+  to click exactly on the item's anchor element to navigate to the specified 
+  URL.
+
+* Items without a "url" property set will automatically hide their parent 
+  menu instance(s) when clicked.
+
+
+Fixed the following bugs:
+-------------------------
+
+* Items in a submenu should now navigate to their specified URL when clicked.
+
+* Removed MenuBar's use of "overflow:hidden."  This fixes an issue in Firefox
+  1.5 in which submenus of a Menubar instance cannot overlay other absolutely 
+  positioned elements on the page.
+
+* Submenus of a Menubar instance will now automatically have their iframe shim
+  enabled in IE<7.
+
+* Statically positioned Menubar and Menu instances will now render with the 
+  correct position and dimensions in Safari.
+
+* MenuModuleItem's "focus" method now checks to make sure that an item's 
+  "display" style property is not "none" before trying to set focus to its
+  anchor element.
+  
+* A ContextMenu instance will now hide all other ContextMenu instances before
+  displaying itself.
+
+* Removed the dead space in front of an item's submenu indicator image in IE.  
+  This space was causing an item's submenu to flicker when the user hovered 
+  over it.
+
+
+Changes:
+--------
+
+* Moved the DOM event handlers for every menu from the root DIV node of each 
+  instance to the document object.  This change reduces the number of DOM event 
+  handlers used by Menu to eight, improving the cleanup time required by the 
+  Event utility.
+
                 
 
 *** version 0.11.0 ***
@@ -73,8 +242,8 @@ Fixed the following bugs:
 * Users can now control or shift-click on MenuItem links
 
 
-Changes
--------
+Changes:
+--------
 * In the Menu stylesheet (menu.css), switched from using "first" class to
   "first-of-type" class
 

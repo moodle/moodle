@@ -1,6 +1,85 @@
 
 YUI Library - Event - Release Notes
 
+0.12.2
+
+  * Fixed a bug introduced in 0.12.1 release caused nested onAvailable
+    calls to fail.
+
+0.12.1
+
+  * If an error is thrown during the browser-specific add/remove lister call,
+    addListener/removeListener will catch the error and return false.
+
+  * onAvailable array items are nulled out instead of deleted when completed to
+    get around an Opera issue introduced in a recent version of the browser.
+
+0.12.0
+
+   * If the function argument is not provided to Event.removeListener, all
+     all listeners for the specified event type on the element will be removed.
+
+   * CustomEvent now has an optional parameter that defines the signature of
+     the listeners for this event.  Two signatures are supported:
+
+       YAHOO.util.CustomEvent.LIST:
+         param1: event name
+         param2: array of arguments provided to fire()
+         param3: <optional> the custom object supplied to subscribe()
+
+       YAHOO.util.CustomEvent.FLAT:
+         param1: the first argument provided to fire()
+         param2: <optional> the custom object supplied to subscribe()
+
+     The new flat signature makes it possible to provide a better API 
+     when using custom events, and it makes it possible to transparently 
+     wrap DOM events.
+   
+   * The parameters for overriding scope in both Event.addListener, and
+     CustomEvent.subscribe have been augmented.  In addition to the 
+     previous behavior where a true value would make the previous parameter
+     the execution scope, an object can be supplied instead.  If an object
+     is provided, that object becomes the scope obj.  This makes it possible 
+     to pass a both a custom object and adjust the scope to a different object.
+
+   * Added EventProvider, which is a wrapper for CustomEvent that makes it
+     possible to subscribe to events by name, whether or not the event has
+     been created.  This class was designed to be used with YAHOO.augment.
+     EventProvider custom events are created with the new FLAT listener
+     signature.
+
+   * CustomEvent subscribers can return false to stop the propagation of
+     the event.
+
+   * CustomEvents now have an onSubscribe custom event that can used to the
+     case where a subscriber subscribes to an one-time event that has already
+     happened.  Also provides a way for the implementer to defer initialization
+     logic until after the first subscription.
+
+   * Event.getCharCode now always returns keyCode if charCode is not available.
+
+   * Added Event.onContentReady, which is similar to onAvailable, but it also
+     checks simblings to try to determine when the element's children are
+     available.
+
+0.11.4
+
+   * Fixed a memory leak in IE6 that occurred when the utility was hosted in 
+     an iframe.
+
+   * Fixed an issue with Safari click listeners when listeners were removed.
+
+0.11.3
+
+   * The listener cache is now pruned when events are removed.  This fixes
+     a performance issue when adding many listeners, removing them, and
+     adding them again repeatedly.
+
+   * Safari click listeners will work correctly if a bound element is removed
+     from the DOM and a new element with the same ID is added.
+
+   * Removed the code that automatically unsubscribed custom event listeners.
+
 0.11.0
 
    * Added Event.purgeElement which will remove all listeners added via 
@@ -53,3 +132,4 @@ YUI Library - Event - Release Notes
    * Fixed browser detection for Opera installations reporting as IE.
 
    * It is now possible to remove and re-add legacy events (Safari click event).
+

@@ -1,5 +1,25 @@
 Animation Release Notes
 
+*** version 0.12.2 ***
+
+* raised AnimMgr.fps to 1000
+
+*** version 0.12.1 ***
+* minified version no longer strips line breaks
+
+*** version 0.12.0 ***
+
+* added boolean finish argument to Anim.stop()
+
+*** version 0.11.3 ***
+
+* no changes
+
+*** version 0.11.1 ***
+
+* changed "prototype" shorthand to "proto" (workaround firefox < 1.5 scoping
+bug)
+
 *** version 0.11.0 ***
 
 * ColorAnim subclass added
@@ -10,11 +30,12 @@ Animation Release Notes
 
 *** version 0.10.0 ***
 
-* Scroll now handles relative ("by") animation correctly 
+* Scroll now handles relative ("by") animation correctly
 
 * Now converts "auto" values of "from" to appropriate initial values
 
 *** version 0.9.0 ***
 
 * Initial release
+
 

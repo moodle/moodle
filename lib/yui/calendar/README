@@ -1,5 +1,59 @@
 Calendar Release Notes
 
+*** version 0.12.2 ***
+
+	- Corrected documentation for clearTime function to reflect the change from midnight to noon
+
+*** version 0.12.1 ***
+
+	- Calendar and CalendarGroup now automatically parse the argument passed to setMonth and setYear into an integer, eliminating potential concatenation bugs. 
+
+*** version 0.12 ***
+
+	- New documentation format implemented
+	- Calendar2up and Calendar_Core are now deprecated. Now, Calendar alone represents the single Calendar instance, and CalendarGroup represents an n-up instance, defaulting to 2up
+	- Added semantic style classes to Calendar elements to allow for custom styling solely using CSS.
+	- Remapped all configuration properties to use the Config object (familiar to those who use the Container collection of controls). Property names are the same as their previous counterparts, but wrapped into Calendar.cfg, allowing for runtime reconfiguration of most properties
+	- Added "title" property for setting the Calendar title
+	- Added "close" property for enabling and disabling the close icon
+	- Added "iframe" property for enabling an iframe shim in Internet Explorer 6 and below to fix the select bleed-through bug
+	- pageDate moved to property:  "pagedate"
+	- selectedDates moved to property:  "selected"
+	- minDate moved to property : "mindate", which accepts a JavaScript Date object like its predecessor, but also supports string dates
+	- maxDate moved to property : "maxdate", which accepts a JavaScript Date object like its predecessor, but also supports string dates
+	- Moved style declarations to initStyles function
+	- Optimized event handling in doSelectCell/doCellMouseOver/doCellMouseOut by only attaching the listener to the outer Calendar container, and only reacting to events on cells with the "selectable" CSS class.
+	- Added domEventMap field for applying DOM event listeners to cells containing specific class and tag combinations.
+	- Moved all cell DOM event attachment to applyListeners function
+	- Added getDateByCellId / getDateFieldsByCellId helper functions
+	- Corrected DateMath.getWeekNumber to comply with ISO week number handling
+	- Separated renderCellDefault style portions into styleCellDefault function for easy extension
+	- Deprecated onBeforeSelect. Created beforeSelectEvent which automatically subscribes to its deprecated predecessor.
+	- Deprecated onSelect. Created selectEvent, which automatically subscribes to its deprecated predecessor.
+	- Deprecated onBeforeDeselect. Created beforeSelectEvent which automatically subscribes to its deprecated predecessor.
+	- Deprecated onDeselect. Created beforeDeselectEvent, which automatically subscribes to its deprecated predecessor.
+	- Deprecated onChangePage. Created changePageEvent, which automatically subscribes to its deprecated predecessor.
+	- Deprecated onRender. Created renderEvent, which automatically subscribes to its deprecated predecessor.
+	- Deprecated onReset. Created resetEvent, which automatically subscribes to its deprecated predecessor.
+	- Deprecated onClear. Created clearEvent, which automatically subscribes to its deprecated predecessor.
+	- Corrected setMonth documentation to refer to 0-11 indexed months.
+	- Added show and hide methods to Calendar for setting the Calendar's display property.
+	- Optimized internal render classes to use innerHTML and string buffers 
+	- Removed wireCustomEvents function
+	- Removed wireDefaultEvents function
+	- Removed doNextMonth / doPreviousMonth
+	- Removed all buildShell (header, body, footer) functions, since the Calendar shell is now built dynamically on each render
+	- Wired all CalendarGroup events and configuration properties to be properly delegated to Calendar
+	- Augmented CalendarGroup with all built-in renderers, label functions, hide, show, and initStyles, creating API transparency between Calendar and CalendarGroup.
+	- Made all tagName, createElement, and entity references XHTML compliant
+	- Fixed Daylight Saving Time bug for Brazilian time zone
+
+*** version 0.11.3 ***
+
+	- Calendar_Core: Added arguments for selected/deselected dates to onSelect/onDeselect
+	- CalendarGroup: Fixed bug where selected dates passed to constructor were not represented in selectedDates
+	- Calendar2up: Now displays correctly in Opera 9
+
 *** version 0.11.0 ***
 
 	- DateMath: DateMath.add now properly adds weeks
@@ -21,4 +75,3 @@ Calendar Release Notes
 *** version 0.9.0 ***
 
 * Initial release
-

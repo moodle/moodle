@@ -1,10 +1,44 @@
-CSS Grids Release Notes
+YUI Library - Grids - Release Notes
 
-*** version 0.11.0 ***
+Version 0.12.1 - 0.12.2
 
-* Removed line #43 because it set an already-set value. 
-  Was: ".yui-t7  #main .yui-b{min-width:750px;}"
+  * No changes.
+
+Version 0.12.0
+
+  * Removed redundant "text-align:left" from nodes below #doc.
+
+  * Removed small-font treatment on #ft.
+
+  * Removed margin-bottom from #hd,#bd.
+
+  * Added two new #doc definitions (#doc2 and #doc3) that provide 
+    950px centered and 100% page width presets to supplement the 
+    original 750px centered page width.
+
+  * Made ".first" selectors more precise by binding to divs, to 
+    make it less likely that our .first definitions will impact 
+    nested content elements wishing to use this nomenclature.
+
+  * Fixed "nested yui-gc" bug.
+
+  * Fixed build-process whitespace bug with .yui-t2 and .yui-t5.
+
+  * Migrated .yui-t's technique to "negative margins" technique 
+    from "floated ems".
+
+  * The "negative margins" technique caused z-index issues, so 
+    position:relative was added to the secondary yui-b to enable 
+	correct z-index.
+
+  * Make optimization benefits from inheritence wins via code 
+    reorganizations.
+
+Version 0.11.0
+
+  * Removed line #43 because it set an already-set value.
+    Was: ".yui-t7  #main .yui-b{min-width:750px;}"
   
-*** version 0.10.0 ***
+Version 0.10.0
 
-* Initial release.
+  * Initial release.

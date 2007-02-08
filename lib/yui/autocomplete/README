@@ -1,5 +1,46 @@
 AutoComplete Release Notes
 
+*** version 0.12.2 ***
+
+* No changes.
+
+
+
+*** version 0.12.1 ***
+
+* No longer trigger typeAhead feature when user is backspacing on input text.
+
+
+
+*** version 0.12.0 ***
+
+* The following constants must be defined as static class properties and are no longer
+available as instance properties:
+
+YAHOO.widget.DataSource.ERROR_DATANULL
+YAHOO.widget.DataSource.ERROR_DATAPARSE
+YAHOO.widget.DS_XHR.TYPE_JSON
+YAHOO.widget.DS_XHR.TYPE_XML
+YAHOO.widget.DS_XHR.TYPE_FLAT
+YAHOO.widget.DS_XHR.ERROR_DATAXHR
+
+* The property minQueryLength now supports zero and negative number values for
+DS_JSFunction and DS_XHR objects, to enable null or empty string queries and to disable
+AutoComplete functionality altogether, respectively.
+
+* Enabling the alwaysShowContainer feature will no longer send containerExpandEvent or
+containerCollapseEvent.
+
+
+
+**** version 0.11.3 ***
+
+* The iFrameSrc property has been deprecated. Implementers no longer need to
+specify an https URL to avoid IE security warnings when working with sites over
+SSL.
+
+
+
 *** version 0.11.0 ***
 
 * The method getListIds() has been deprecated for getListItems(), which returns

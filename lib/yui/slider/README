@@ -1,5 +1,39 @@
 Slider - Release Notes
 
+0.12.2
+
+   * No change
+
+0.12.1
+
+   * Removed unneccessary getXY calls that were contribuing to slower performance
+     in FireFox when the slider was deeply nested in the DOM.
+
+0.12.0
+
+   * Added "slideStart", "slideEnd", and "change" custom events.  The abstract
+     methods these will eventually replace still work.
+
+   * The default animation duration is 0.2 seconds (reduced from 0.4 seconds),
+     and is configurable via the animationDuration property.
+
+   * Keyboard navigation is now built in.  The background needs a tabindex for
+     keyboard nav to work.  Keyboard nav can be disabled by setting enableKeys
+     to false.  The number of pixels the slider moves when the arrow keys
+     are pressed is controlled by keyIncrement, and defaults to 20.  Note, 
+     Safari support limited to background element types that support focus
+     in that browser. http://bugs.webkit.org/show_bug.cgi?id=7138
+
+   * Fixed broken doctype in examples/index.html
+
+   * Catching an unhandled script exception in FF that could occur when
+     attempting to focus the slider background while a text field without
+     autocomplete="false" has focus
+
+0.11.3
+
+   * No change
+
 0.11.0
 
    * When the thumb is clicked and dragged, the click position delta is properly

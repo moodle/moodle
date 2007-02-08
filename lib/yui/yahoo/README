@@ -1,10 +1,45 @@
-YAHOO Global Namespace - Release Notes
+YAHOO Global - Release Notes
+
+0.12.2
+
+  * No change
+
+0.12.1
+
+  * No change
+
+0.12.0
+
+   * Added YAHOO.augment, which copies all or part of the prototype of one
+     object to another.  
+
+   * YAHOO.namespace now can create multiple namespaces.
+
+   * Added an optional third parameter to YAHOO.extend: overrides.  It takes
+     an object literal of properties/methods to apply to the subclass
+     prototype, overriding the superclass if present.
+
+0.11.4
+
+   * Changed window.YAHOO = window.YAHOO || {} to 
+     if (typeof YAHOO == "undefined") YAHOO = {} because the previous statement
+     contributed to a memory leak in IE6 when the library was hosted in an 
+     iframe.
+
+0.11.3
+
+   * Changed var YAHOO = window.YAHOO || {} to window.YAHOO = window.YAHOO || {}.
+     This fixes an issue in IE where YAHOO would get overwritten if previously
+     defined via array notation (window["YAHOO"]).
 
 0.11.0
+
    * Added YAHOO.extend, which provides an easy way to assign the prototype,
      constructor, and superclass properties inheritance properties.  It also
      prevents the constructor of the superclass from being exectuted twice.
 
 0.10.0
+
    * Added YAHOO.log that provides a safe way to plumb logging statements in
      code that will work if the logging component isn't available.
+

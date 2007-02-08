@@ -1,23 +1,31 @@
 /*
 Copyright (c) 2006, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
-http://developer.yahoo.net/yui/license.txt
-Version 0.11.0
+http://developer.yahoo.com/yui/license.txt
+Version: 0.12.1
 */
+
 
 
 /* Menu styles */
 
 div.yuimenu {
 
-    z-index:1;
-    visibility:hidden;
     background-color:#f6f7ee;
     border:solid 1px #c4c4be;
     padding:1px;
     
 }
 
+/* Submenus are positioned absolute and hidden by default */
+
+div.yuimenu div.yuimenu,
+div.yuimenubar div.yuimenu {
+
+    position:absolute;
+    visibility:hidden;
+
+}
 
 /* MenuBar Styles */
 
@@ -28,12 +36,12 @@ div.yuimenubar {
 }
 
 /*
-    Application of "zoom:1" triggers "haslayout" in IE so that the module's
+    Applying a width triggers "haslayout" in IE so that the module's
     body clears its floated elements
 */
 div.yuimenubar div.bd {
 
-    zoom:1;
+    width:100%;
 
 }
 
@@ -90,7 +98,6 @@ div.yuimenubar ul {
     list-style-type:none;
     margin:0;
     padding:0;
-    overflow:hidden;
 
 }
 
@@ -263,7 +270,8 @@ div.yuimenu li.yuimenuitem img {
 
     height:8px;
     width:8px;
-    margin:0 -16px 0 10px;
+    margin:0 -16px 0 0;
+    padding-left:10px;
     border:0;
 
 }
@@ -279,10 +287,11 @@ div.yuimenu li.checked img.checked {
     height:8px;
     width:8px;
     margin:0;
+    padding:0;
     border:0;
     position:absolute;
     left:6px;
-    _left:-16px; /* Underscore hack b/c this is for IE 5.5 and IE 6 only */
+    _left:-16px; /* Underscore hack b/c this is for IE 6 only */
     top:.5em;
     
 }

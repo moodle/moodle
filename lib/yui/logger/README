@@ -1,6 +1,44 @@
 Logger Release Notes
 
+*** version 0.12.2 ***
+
+* No changes.
+
+
+
+**** version 0.12.1 ***
+
+* Fixed issues with setting LogReader's "bottom" property.
+
+
+
+*** version 0.12.0 ***
+
+* Added method formatMsg(oLogMsg) to support custom formatting of log messages
+for output to a LogReader.
+
+
+
+*** version 0.11.3 ***
+
+* The Logger static method enableFirebug() has been RENAMED to
+enableBrowserConsole().
+
+* The Logger static method disableFirebug() has been RENAMED to
+disableBrowserConsole().
+
+* By default, the Logger will not automatically output to Firebug or Safari's
+JavaScript console. To enable this feature, implementers should now explicitly
+call YAHOO.widget.Logger.enableBrowserConsole().
+
+* Implementers may now cap the size of the YAHOO.widget.Logger stack by setting
+the property YAHOO.widget.Logger.maxStackEntries.
+
+* Implementers may now control the number of items displayed in each console by
+setting the LogReader properties thresholdMax and thresholdMin.
+
+
+
 *** version 0.11.0 ***
 
 * Initial release
-

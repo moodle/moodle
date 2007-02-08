@@ -1,5 +1,52 @@
 TreeView - Release Notes
 
+0.12.2
+
+  * removeChildren will now work properly on the root node.
+
+0.12.1
+
+  * Added custom events for expandComplete and collapseComplete.  These events are
+    needed in situations where the implementer needs to resize or reposition 
+    something based on the new offset.
+
+  * Added a "nowrap" property to Node, and set the default to false.  Specifies
+    whether or not the content area of the node should be allowed to wrap
+    naturally.
+
+  * Added additional HTML elements to preserve the tree presentation when constrained
+    by a parent element.
+
+0.12.0
+
+  * TreeView now augments EventProvider, and has custom events for expand,
+    collapse, animStart, animComplete, and labelClick.  Existing implementations
+    using abstract methods for these events (if they exist) will still work.
+    New events can be plugged into the tree by the Node implementation.  For
+    example, TaskNode adds a checkClick event.  EventProvider makes it safe
+    to do this because implementing code can call subscribe() prior to the
+    event creation.
+
+  * YAHOO.util.Event is now a requirement for the widget
+
+  * TreeView::removeChildren no longer expands and collapses the node.
+
+  * Documented the moveComplete property
+
+  * createElement("DIV") changed to createElement("div")
+
+0.11.4
+
+   * Fixed a javascript error on the HTML node example page.
+
+0.11.3
+
+   * popNode now clears the tree, previousSibling, nextSibling, and parent
+     properties of the node that is being removed from the tree.
+
+   * Fixed the paths to the images in the tree.css file that is included in
+     build/assets.
+
 0.11.0
 
    * Added TreeView -> popNode, which differs from removeNode in that the

@@ -1,9 +1,21 @@
-CSS Reset Release Notes
+YUI Library - Reset - Release Notes
 
-*** version 0.11.0 ***
+Version 0.12.1 - 0.12.2
 
-* No changes.
+  * No changes.
 
-*** version 0.10.0 ***
+Version 0.12.0
 
-* Initial release
+  * Added: h1,h2,h3,h4,h5,h6{font-weight:normal;}
+
+  * Added: abbr,acronym {border:0;}
+  
+  * Added: textarea {padding:0;margin:0;}
+
+Version 0.11.0
+
+  * No changes.
+
+Version 0.10.0
+
+  * Initial release.

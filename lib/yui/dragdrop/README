@@ -1,5 +1,67 @@
 Drag and Drop Release Notes
 
+0.12.2
+
+  * No change
+
+0.12.1
+
+  * Added a STRICT_INTERSECT drag and drop interaction mode.  This alters the
+    behavior of DDM::getBestMatch.  INTERSECT mode first tests the cursor
+    location, and if it is over the target that target wins, otherwise it
+    tests the overlap of the elements.  STRICT_INTERSECT mode tests only 
+    the overlap, the largest overlap wins.
+
+  * getBestMatch will work for targeted elements that have no overlap.
+
+0.12.0
+
+   * The logic to determine if a drag should be initiated has been isolated
+     to the clickValidator method.  This method can be overridden to provide
+     custom valdiation logic.  For example, it is possible to specify hotspots
+     of any dimension or shape.  The provided example shows how to make only
+     a circular region in the middle of the element initiate a drag.
+
+   * Added a new drag and drop event: onInvalidDrop.  This is executed when
+     the dragged element in dropped in a location without a target.  Previously
+     this condition could only detected by implementing handlers for three 
+     other events.
+
+   * Now accepts an element reference in lieu of an id.  Ids will
+     be generated if the element does not have one.
+
+   * Fixed horizontal autoscroll when scrollTop is zero.
+
+   * Added hasOuterHandles property to bypass the isOverTarget check in the
+     mousedown validation routine.  Fixes setOuterHandleElId.
+
+0.11.4
+
+   * YAHOO.util.DragDropMgr.swapNode now handles adjacent nodes properly
+   
+   * Fixed missing variable declarations
+
+0.11.3
+ 
+   * Fixed a JavaScript error that would be generated when trying to implement
+     DDProxy using the default settings and a tiny element.
+
+   * Fixed an error that resulted when constraints were applied to DragDrop 
+     instances.
+
+0.11.2
+
+   * Drag and drop will no longer interfere with selecting text on elements
+     that are not involved in drag and drop.
+
+   * The shared drag and drop proxy element now resizes correctly when autoResize
+     is enabled.
+
+0.11.1
+
+   * Fixes an issue where the setXY cache could get out of sync if the element's
+     offsetParent is changed during onDragDrop.
+
 0.11.0
 
    * The Dom.util.setXY calculation for the initial placement of the dragged
@@ -32,7 +94,7 @@ Drag and Drop Release Notes
 
 0.10.0
 
-   * Improved the performance in intersect mode
+   * Improved the performance when in intersect mode
 
    * It was possible for the drag and drop initialization to be skipped
      for very slow loading pages.  This was fixed.

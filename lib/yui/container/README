@@ -1,5 +1,89 @@
 Container Release Notes
 
+*** version 0.12.2 ***
+
+	Module
+	   - Corrected issue where listener was not properly removed from resize monitor element when "monitorresize" is disabled
+
+	Panel
+	   - Fixed issue that would sometimes prevent select lists from working properly in Firefox
+	
+	Dialog
+	   - Fixed error that would occur when trying to create a Dialog where the first form element is set to "disabled"
+	   - Modified "close" property handler for Dialog/SimpleDialog to call "cancel" instead of "hide"
+
+*** version 0.12.1 ***
+
+	All Classes
+	   - "monitorresize" property now functions in situations where document.domain has been modified.
+	   - YAHOO.widget.Module.textResizeEvent now fires when the font size is changed (except for Opera, which uses "zoom" functionality that prevents this)
+	   - Event listeners attached to container elements are now properly purged on destroy using YAHOO.util.Event.purgeElement
+
+	Panel
+	   - Fixed issue where focus events were broken on the page when a modal Panel was created
+
+	Dialog
+	   - Fixed bug where hitting "enter" on a Dialog was forcing the default submission behavior of the form's action to execute
+	   - Dialog no longer tries to give focus to hidden form elements.
+	   - Replaced &nbsp; references in Panel with &#160; for XHTML compliance.
+	   - Fixed issue that was preventing Safari from successfully using the getData() function
+
+*** version 0.12 ***
+
+	All Classes
+	   - New documentation format implemented, and removed unnecessary prototype null references previously used for generating documentation
+
+	Config
+	   - Added 'undefined' check when reading initial properties for .reset() 
+	   - Fixed Firefox warning on .resetProperty()
+	   - Fixed issue preventing resetProperty() from resetting values correctly
+
+	Module
+	   - Removed unused "childNodesInDom" property
+
+	Overlay
+	   - Converted center() to use Dom utility
+	   - Fixed configVisible() to properly detect actual visible/hidden status in Internet Explorer, which reports "inherit" for all elements by default.
+	   - Updated onDomResize to properly reapply "context" property
+	   - Unified scroll/resize handlers so that they fire properly (when the event has completed) as opposed to constantly (as seen in Mozilla-based browsers)
+		
+	Panel
+	   - Modified modality mask to show before Panel is shown (prior to any animation)
+	   - Modified buildWrapper to eliminate cloning of the initial markup module, which fixes issues with select options not maintaining their default selections in IE
+	   - Modality mask is now z-indexed properly so that the mask z-index is always one less than the Panel z-index
+		
+	Dialog
+	   - Fixed Connection to get "action" attribute using getAttribute, to allow for form fields named "action"
+	   - Added support for "GET" by retrieving the form "method" rather than always defaulting to "POST"
+		
+	KeyListener
+	   - Fixed to work properly with Safari 2.0 by matching against keyCode or charCode
+
+*** version 0.11.4 ***
+	
+	- Panel: Modality mask is now properly removed from DOM on Panel destroy.
+	
+*** version 0.11.3 ***
+
+	- Module: Fixed SSL warning issue in IE
+	- Overlay: Fixed memory leak related to iframe shim in IE
+	- Panel: No focusable elements under the mask can now be tabbed to
+	- Panel: Set Panel container overflow to hidden to fix scrolling issue in Opera 9
+
+*** version 0.11.2 ***
+
+	- All: JsLint optimization
+	- Overlay: Fixed SSL issues with monitorresize property
+	- OverlayManager: Fixed z-index incrementing issues
+	- Dialog: Form elements called "name" will now function properly
+	- Dialog: Removed unnecessary scope:this reference
+
+*** version 0.11.1 ***
+
+	- Tooltip: Removed incorrect logger statement
+	- Dialog: Corrected logic that was causing browser lockup in IE for SimpleDialog
+	- Dialog: Fixed "firstButtom" typo
+
 *** version 0.11.0 ***
 
 	- toString function added to all classes for easy logging

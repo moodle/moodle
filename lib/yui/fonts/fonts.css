@@ -1,14 +1,6 @@
-/*
-Copyright (c) 2006, Yahoo! Inc. All rights reserved.
-Code licensed under the BSD License:
-http://developer.yahoo.net/yui/license.txt
-version: 0.11.0
-*/
-
 /**
- * 84.5% for !IE, keywords for IE
  * Percents could work for IE, but for backCompat purposes, we are using keywords.
- * x-small is for IE < 6 and IE6 quirks mode.
+ * x-small is for IE6/7 quirks mode.
  * 
  */
 body {font:13px arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small;}
