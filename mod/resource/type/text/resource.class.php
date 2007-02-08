@@ -114,7 +114,7 @@ function display() {
                     "", "", true, update_module_button($cm->id, $course->id, $this->strresource),
                     navmenu($course, $cm));
 
-            print_simple_box(format_text($resource->alltext, $resource->options, $formatoptions, $course->id),
+            print_simple_box(format_text($resource->alltext, $resource->reference, $formatoptions, $course->id),
                     "center", "", "", "20");
 
             $strlastmodified = get_string("lastmodified");
