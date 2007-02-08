@@ -2,7 +2,7 @@
 Copyright (c) 2006, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version 0.12.1
+Version 0.12
 */
 
 .yui-calcontainer {
@@ -78,7 +78,7 @@ version 0.12.1
 	top:2px;
 	bottom:0;
 	width:9px;
-	height:12px;
+	height:12px;   
 	left:2px;
 	z-index:1;
 }
@@ -90,7 +90,7 @@ version 0.12.1
 	top:2px;
 	bottom:0;
 	width:9px;
-	height:12px;
+	height:12px;  
 	right:2px;
 	z-index:1;
 }

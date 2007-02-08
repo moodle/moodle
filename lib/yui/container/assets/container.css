@@ -2,7 +2,7 @@
 Copyright (c) 2006, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version 0.12.1
+Version 0.11.0
 */
 
 .overlay {
@@ -39,7 +39,7 @@ version 0.12.1
 }
 
 .mask {
-    z-index:0;
+    z-index:0;   
     display:none;
     position:absolute;
     top:0;
@@ -196,14 +196,14 @@ version 0.12.1
 	font-weight:bold;
 }
 
-.button-group button:hover, .button-group button.hover {
+.button-group button:hover, .button-group button.hover { 
 	border:2px solid #90A029;
 	background-color:#EBF09E;
 	border-top-color:#FFF;
 	border-left-color:#FFF;
 }
 
-.button-group button:active {
+.button-group button:active { 
 	border:2px solid #E4E4E4;
 	background-color:#BBB;
 	border-top-color:#333;

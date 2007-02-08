@@ -1,5 +1,9 @@
 Animation Release Notes
 
+*** version 0.12.2 ***
+
+* raised AnimMgr.fps to 1000
+
 *** version 0.12.1 ***
 * minified version no longer strips line breaks
 

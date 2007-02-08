@@ -1,5 +1,9 @@
 TreeView - Release Notes
 
+0.12.2
+
+  * removeChildren will now work properly on the root node.
+
 0.12.1
 
   * Added custom events for expandComplete and collapseComplete.  These events are

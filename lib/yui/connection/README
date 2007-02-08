@@ -1,5 +1,10 @@
 Connection Manager Release Notes
 
+*** version 0.12.2 ***
+
+* The Opera/Connection Manager concurrent object condition, described in version
+0.12.0, no longer tests applies for Opera, version 9.10.
+
 *** version 0.12.1 ***
 
 * connection-debug.js corrected and synchronized with connection.js.  Code
@@ -138,6 +143,7 @@ and returns false if the connection object is no longer available.
 *** version 0.9.0 ***
 
 * Initial release
+
 
 
 

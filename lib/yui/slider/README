@@ -1,5 +1,9 @@
 Slider - Release Notes
 
+0.12.2
+
+   * No change
+
 0.12.1
 
    * Removed unneccessary getXY calls that were contribuing to slower performance

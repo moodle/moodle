@@ -1,5 +1,9 @@
 Drag and Drop Release Notes
 
+0.12.2
+
+  * No change
+
 0.12.1
 
   * Added a STRICT_INTERSECT drag and drop interaction mode.  This alters the

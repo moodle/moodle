@@ -1,9 +1,9 @@
 YUI Library - Grids - Release Notes
 
-Version 0.12.1
+Version 0.12.1 - 0.12.2
 
   * No changes.
-  
+
 Version 0.12.0
 
   * Removed redundant "text-align:left" from nodes below #doc.

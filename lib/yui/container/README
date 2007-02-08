@@ -1,5 +1,17 @@
 Container Release Notes
 
+*** version 0.12.2 ***
+
+	Module
+	   - Corrected issue where listener was not properly removed from resize monitor element when "monitorresize" is disabled
+
+	Panel
+	   - Fixed issue that would sometimes prevent select lists from working properly in Firefox
+	
+	Dialog
+	   - Fixed error that would occur when trying to create a Dialog where the first form element is set to "disabled"
+	   - Modified "close" property handler for Dialog/SimpleDialog to call "cancel" instead of "hide"
+
 *** version 0.12.1 ***
 
 	All Classes
@@ -20,7 +32,6 @@ Container Release Notes
 
 	All Classes
 	   - New documentation format implemented, and removed unnecessary prototype null references previously used for generating documentation
-	   - Modified the 
 
 	Config
 	   - Added 'undefined' check when reading initial properties for .reset() 

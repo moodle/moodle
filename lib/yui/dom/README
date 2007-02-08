@@ -1,5 +1,8 @@
 Dom Release Notes
 
+*** version 0.12.2 ***
+* no change
+
 *** version 0.12.1 ***
 
 * getElementsByClassName no longer reverts to document when "root" not found

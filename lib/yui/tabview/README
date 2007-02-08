@@ -1,3 +1,8 @@
+*** version 0.12.2 ***
+
+* var Tab is now private
+* fixed Element.configureAttribute
+
 *** version 0.12.1 ***
 
 * tabs.css renamed to tabview.css

@@ -1,6 +1,11 @@
 
 YUI Library - Event - Release Notes
 
+0.12.2
+
+  * Fixed a bug introduced in 0.12.1 release caused nested onAvailable
+    calls to fail.
+
 0.12.1
 
   * If an error is thrown during the browser-specific add/remove lister call,

@@ -1,5 +1,11 @@
 AutoComplete Release Notes
 
+*** version 0.12.2 ***
+
+* No changes.
+
+
+
 *** version 0.12.1 ***
 
 * No longer trigger typeAhead feature when user is backspacing on input text.

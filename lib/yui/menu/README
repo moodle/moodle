@@ -1,138 +1,29 @@
 Menu Release Notes
 
-*** version 0.10.0 ***
-
-* Initial release
-
-* Known issues:
-
-      * Some Firefox extensions disable the ability for JavaScript to prevent  
-        the display of the browser's default context menu.  These extensions
-        can cause the YUI ContextMenu to stop working.  If you encounter this 
-        problem, you can reset the context menu preference in Firefox back to 
-        the default by making sure the "Disable or replace context menus" 
-        preference is checked:
-
-            Mac Firefox 1.0: 
-            -------------------
-            Preferences > Web Features > 
-                Advanced... > Disable or replace context menus
-
-            Mac Firefox 1.5
-            -------------------
-            Preferences > Context > 
-                Advanced... > Disable or replace context menus
-
-            Windows Firefox 1.0
-            -------------------
-            Tools > Options > Web Features > 
-                Advanced... > Disable or replace context menus
-
-            Windows Firefox 1.5
-            -------------------
-            Tools > Options > Context > 
-                Advanced... > Disable or replace context menus
-                
-
-*** version 0.11.0 ***
-
-Added the following features:
------------------------------
-* Overloaded the "addItem" and "insertItem" methods of MenuModule to accept a 
-  string or a MenuModuleItem instance
-
-* Added the ability to define a MenuItem instance as being "checked"
-
-
-Fixed the following bugs:
--------------------------
-* Changing the path for the submenu indicator image of one MenuModuleItem 
-  subclass will no longer affect other subclasses
-
-* MenuItem instances built from existing markup without anchor tags will no 
-  longer trigger a JavaScript error when clicked
-
-* Modified the implementation of the "imageRoot" property for the 
-  MenuModuleItem class so that it is set to a secure/non-secure path when the
-  object is instantiated
-
-* Menu instances now resize in response to changes to the browser's font size
-
-* Modified the propagation of the MenuModule class's "submenualignment" 
-  configuration property so that it only applies to instances of the same type
-
-* Adjusted the specificity of the style rule that controls the position of a 
-  MenuItem instance's submenu indicator image to prevent it from wrapping in IE
-
-* Specified a width and height for submenu indicator images in the Menu 
-  stylesheet to ensure that Menu instances are always rendered at the correct 
-  width
-
-* Clicking a MenuItem instance will no longer trigger two HTTP GET requests
-
-* Users can now control or shift-click on MenuItem links
-
-
-Changes:
---------
-* In the Menu stylesheet (menu.css), switched from using "first" class to
-  "first-of-type" class
-
-* Changed case of MenuModuleItem class's "subMenuIndicator" property 
-  to "submenuIndicator"
-  
-
-*** version 0.11.3 ***
-
-Added the following features:
------------------------------
-
-* Added a "target" configuration property to the MenuModuleItem object that
-  allows the user to specify the target of an item's anchor element.  Items 
-  that make use of the "target" configuration property will require the user 
-  to click exactly on the item's anchor element to navigate to the specified 
-  URL.
-
-* Items without a "url" property set will automatically hide their parent 
-  menu instance(s) when clicked.
-
+*** version 0.12.1 ***
 
 Fixed the following bugs:
 -------------------------
 
-* Items in a submenu should now navigate to their specified URL when clicked.
+* Placed the call to the DOM "focus" method used by the MenuItem class inside 
+  a zero-second timeout to resolve a race condition between menu positioning 
+  and focusing of a menu item that resulted in the browser viewport 
+  scrolling unnecessarily.
 
-* Removed MenuBar's use of "overflow:hidden."  This fixes an issue in Firefox
-  1.5 in which submenus of a Menubar instance cannot overlay other absolutely 
-  positioned elements on the page.
+* Switched to JSMin for JavaScript compression to resolve issues with the 
+  minified version.  
 
-* Submenus of a Menubar instance will now automatically have their iframe shim
-  enabled in IE<7.
+* Disabled menu item instances will no longer display a submenu if the item is 
+  clicked or moused over. 
 
-* Statically positioned Menubar and Menu instances will now render with the 
-  correct position and dimensions in Safari.
+* Can no longer select more than one item in a menu if using the keyboard and 
+  mouse simultaneously.
 
-* MenuModuleItem's "focus" method now checks to make sure that an item's 
-  "display" style property is not "none" before trying to set focus to its
-  anchor element.
-  
-* A ContextMenu instance will now hide all other ContextMenu instances before
-  displaying itself.
-
-* Removed the dead space in front of an item's submenu indicator image in IE.  
-  This space was causing an item's submenu to flicker when the user hovered 
-  over it.
-
-
-Changes:
---------
-
-* Moved the DOM event handlers for every menu from the root DIV node of each 
-  instance to the document object.  This change reduces the number of DOM event 
-  handlers used by Menu to eight, improving the cleanup time required by the 
-  Event utility.
+* Calling the "destory" method on a menu will now unregister all of the menu's 
+  submenus from the MenuManager.
   
   
+
 *** version 0.12 ***
 
 Added the following features:
@@ -222,26 +113,139 @@ Changes:
 
 * "hide" and "show" methods of statically positioned menus now toggle the their
   element's "display" style property between "block" and "none."
-  
-  
-*** version 0.12.1 ***
+
+
+
+*** version 0.10.0 ***
+
+* Initial release
+
+* Known issues:
+
+      * Some Firefox extensions disable the ability for JavaScript to prevent  
+        the display of the browser's default context menu.  These extensions
+        can cause the YUI ContextMenu to stop working.  If you encounter this 
+        problem, you can reset the context menu preference in Firefox back to 
+        the default by making sure the "Disable or replace context menus" 
+        preference is checked:
+
+            Mac Firefox 1.0: 
+            -------------------
+            Preferences > Web Features > 
+                Advanced... > Disable or replace context menus
+
+            Mac Firefox 1.5
+            -------------------
+            Preferences > Context > 
+                Advanced... > Disable or replace context menus
+
+            Windows Firefox 1.0
+            -------------------
+            Tools > Options > Web Features > 
+                Advanced... > Disable or replace context menus
+
+            Windows Firefox 1.5
+            -------------------
+            Tools > Options > Context > 
+                Advanced... > Disable or replace context menus
+
+
+
+*** version 0.11.3 ***
+
+Added the following features:
+-----------------------------
+
+* Added a "target" configuration property to the MenuModuleItem object that
+  allows the user to specify the target of an item's anchor element.  Items 
+  that make use of the "target" configuration property will require the user 
+  to click exactly on the item's anchor element to navigate to the specified 
+  URL.
+
+* Items without a "url" property set will automatically hide their parent 
+  menu instance(s) when clicked.
+
 
 Fixed the following bugs:
 -------------------------
 
-* Placed the call to the DOM "focus" method used by the MenuItem class inside 
-  a zero-second timeout to resolve a race condition between menu positioning 
-  and focusing of a menu item that resulted in the browser viewport 
-  scrolling unnecessarily.
+* Items in a submenu should now navigate to their specified URL when clicked.
 
-* Switched to JSMin for JavaScript compression to resolve issues with the 
-  minified version.  
+* Removed MenuBar's use of "overflow:hidden."  This fixes an issue in Firefox
+  1.5 in which submenus of a Menubar instance cannot overlay other absolutely 
+  positioned elements on the page.
 
-* Disabled menu item instances will no longer display a submenu if the item is 
-  clicked or moused over. 
+* Submenus of a Menubar instance will now automatically have their iframe shim
+  enabled in IE<7.
 
-* Can no longer select more than one item in a menu if using the keyboard and 
-  mouse simultaneously.
+* Statically positioned Menubar and Menu instances will now render with the 
+  correct position and dimensions in Safari.
 
-* Calling the "destory" method on a menu will now unregister all of the menu's 
-  submenus from the MenuManager.
+* MenuModuleItem's "focus" method now checks to make sure that an item's 
+  "display" style property is not "none" before trying to set focus to its
+  anchor element.
+  
+* A ContextMenu instance will now hide all other ContextMenu instances before
+  displaying itself.
+
+* Removed the dead space in front of an item's submenu indicator image in IE.  
+  This space was causing an item's submenu to flicker when the user hovered 
+  over it.
+
+
+Changes:
+--------
+
+* Moved the DOM event handlers for every menu from the root DIV node of each 
+  instance to the document object.  This change reduces the number of DOM event 
+  handlers used by Menu to eight, improving the cleanup time required by the 
+  Event utility.
+
+                
+
+*** version 0.11.0 ***
+
+Added the following features:
+-----------------------------
+* Overloaded the "addItem" and "insertItem" methods of MenuModule to accept a 
+  string or a MenuModuleItem instance
+
+* Added the ability to define a MenuItem instance as being "checked"
+
+
+Fixed the following bugs:
+-------------------------
+* Changing the path for the submenu indicator image of one MenuModuleItem 
+  subclass will no longer affect other subclasses
+
+* MenuItem instances built from existing markup without anchor tags will no 
+  longer trigger a JavaScript error when clicked
+
+* Modified the implementation of the "imageRoot" property for the 
+  MenuModuleItem class so that it is set to a secure/non-secure path when the
+  object is instantiated
+
+* Menu instances now resize in response to changes to the browser's font size
+
+* Modified the propagation of the MenuModule class's "submenualignment" 
+  configuration property so that it only applies to instances of the same type
+
+* Adjusted the specificity of the style rule that controls the position of a 
+  MenuItem instance's submenu indicator image to prevent it from wrapping in IE
+
+* Specified a width and height for submenu indicator images in the Menu 
+  stylesheet to ensure that Menu instances are always rendered at the correct 
+  width
+
+* Clicking a MenuItem instance will no longer trigger two HTTP GET requests
+
+* Users can now control or shift-click on MenuItem links
+
+
+Changes:
+--------
+* In the Menu stylesheet (menu.css), switched from using "first" class to
+  "first-of-type" class
+
+* Changed case of MenuModuleItem class's "subMenuIndicator" property 
+  to "submenuIndicator"

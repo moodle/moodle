@@ -1,8 +1,16 @@
 yahoo-event-dom.js Release Notes
 
-*** version 0.12.1 ***
+*** NOTE ***
 
-  * Includes 0.12.1 revisions to yahoo.js, event.js, and dom.js.
+This document is not updated with each release.  Changes to
+the yahoo-dom-event.js source are noted in the README
+file for each component that comprises this aggregate:
+
+yahoo/README
+dom/README
+event/README
+
+************
 
 *** version 0.12.0 ***
 
