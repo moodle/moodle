@@ -396,7 +396,7 @@ function survey_print_multi($question) {
                 $screenreader = !empty($USER->screenreader)?"<label for=\"q$P$q->id".$i."\">".$options[$i-1]."</label><br/>":'';
                 echo "<td class=\"screenreadertext\">".$screenreader."<input type=\"radio\" name=\"q$P$q->id\" id=\"q$P$q->id".$i."\" value=\"$i\" alt=\"$i\" /></td>";
             }
-            echo "<td bgcolor=\"white\"><input type=\"radio\" name=\"q$P$q->id\" value=\"0\" checked=\"checked\" alt=\"0\" /></td>";
+            echo "<td class=\"whitecell\"><input type=\"radio\" name=\"q$P$q->id\" value=\"0\" checked=\"checked\" alt=\"0\" /></td>";
             $checklist["q$P$q->id"] = $numoptions;
         
         } else { 

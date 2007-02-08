@@ -109,7 +109,7 @@
             print_paging_bar($totalentries, $blogpage, $bloglimit, get_baseurl($filtertype, $filterselect), 'blogpage');
             
             if (!$count) {
-                print '<br /><center>'. get_string('noentriesyet', 'blog') .'</center><br />';
+                print '<br /><div style="text-align:center">'. get_string('noentriesyet', 'blog') .'</div><br />';
 
             }
                        
@@ -117,7 +117,7 @@
             return;
         }
 
-        $output = '<br /><center>'. get_string('noentriesyet', 'blog') .'</center><br />';
+        $output = '<br /><div style="text-align:center">'. get_string('noentriesyet', 'blog') .'</div><br />';
         
         print $output;       
 

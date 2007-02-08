@@ -256,7 +256,7 @@ echo "</td></tr>\n";
 /// An alternate url for the login form. It means we can use login forms that are integrated
 /// into non-moodle pages
 echo "<tr valign=\"top\">\n";
-echo "<td algin=\"right\" style=\"white-space:nowrap\">\n";
+echo "<td align=\"right\" style=\"white-space:nowrap\">\n";
 print_string('alternateloginurl', 'auth');
 echo "</td>\n";
 echo "<td>\n";
