@@ -2705,7 +2705,7 @@ function admin_externalpage_print_footer($adminroot) {
             echo '<div class="bb"><div></div></div>';
         }
         echo '</td>';
-        if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
+        if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT)) {
             echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';
             if (!empty($THEME->roundcorners)) {
                 echo '<div class="bt"><div></div></div>';
