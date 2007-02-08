@@ -808,6 +808,26 @@ function get_categories($parent='none', $sort='sortorder ASC') {
 
 
 /**
+ * Returns an array of category ids of all the subcategories for a given
+ * category.
+ * @param $catid - The id of the category whose subcategories we want to find.
+ * @return array of category ids.
+ */
+function get_all_subcategories($catid) {
+
+    $subcats = array();
+
+    if ($categories = get_records('course_categories', 'parent', $catid)) {
+        foreach ($categories as $cat) {
+            array_push($subcats, $cat->id);
+            $subcats = array_merge($subcats, get_all_subcategories($cat->id));
+        }
+    }
+    return $subcats;
+}
+
+
+/**
 * This recursive function makes sure that the courseorder is consecutive
 *
 * @param    type description
