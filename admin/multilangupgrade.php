@@ -45,7 +45,7 @@ $i = 0;
 $skiptables = array($CFG->prefix.'config');//, $CFG->prefix.'sessions2');
 
 foreach ($tables as $table) {
-    if (strpos($table, $CFG->prefix) !== 0
+    if (($CFG->prefix && strpos($table, $CFG->prefix) !== 0)
       or strpos($table, $CFG->prefix.'pma') === 0) { // Not our tables
         continue;
     }
