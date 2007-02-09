@@ -14,6 +14,8 @@
   *                   [273][moodle:blahblahblah] = 2
   */
 
+require_once $CFG->dirroot.'/lib/blocklib.php';
+
 // permission definitions
 define('CAP_INHERIT', 0);
 define('CAP_ALLOW', 1);
@@ -44,7 +46,8 @@ $context_cache_id = array();    // Index to above cache by id
 
 
 /**
- * Loads the capabilities for the default guest role to the current user in a specific context
+ * Loads the capabilities for the default guest role to the current user in a
+ * specific context.
  * @return object
  */
 function load_guest_role($context=NULL, $mergewith=NULL) {
@@ -70,13 +73,20 @@ function load_guest_role($context=NULL, $mergewith=NULL) {
         }
     }
 
-    if ($capabilities = get_records_select('role_capabilities',
-                                           "roleid = $guestrole->id AND contextid = $sitecontext->id")) {
-        foreach ($capabilities as $capability) {
-            if ($mergewith === NULL) {
-                $USER->capabilities[$context->id][$capability->capability] = $capability->permission;
-            } else {
-                $mergewith[$context->id][$capability->capability] = $capability->permission;
+    $searchcontexts = get_child_contexts($context);
+    array_push($searchcontexts, $context->id);
+
+    foreach ($searchcontexts as $scid) {
+        if ($capabilities = get_records_select('role_capabilities',
+                                               "roleid = $guestrole->id 
+                                               AND contextid = $scid")) {
+
+            foreach ($capabilities as $capability) {
+                if ($mergewith === NULL) {
+                    $USER->capabilities[$scid][$capability->capability] = $capability->permission;
+                } else {
+                    $mergewith[$scid][$capability->capability] = $capability->permission;
+                }
             }
         }
     }
@@ -2794,6 +2804,132 @@ function get_parent_contexts($context) {
             } else {
                 return array();
             }
+        break;
+
+        default:
+            error('This is an unknown context!');
+        return false;
+    }
+}
+
+
+/**
+ * Recursive function which, given a context, find all its children context ids.
+ * @param object $context.
+ * @return array of children context ids.
+ */
+function get_child_contexts($context) {
+
+    global $CFG;
+    $children = array();
+
+    switch ($context->contextlevel) {
+
+        case CONTEXT_BLOCK:
+            // No children.
+            return array();
+        break;
+
+        case CONTEXT_MODULE:
+            // No children.
+            return array();
+        break;
+
+        case CONTEXT_GROUP:
+            // No children.
+            return array();
+        break;
+
+        case CONTEXT_COURSE:
+            // Find all block instances for the course.
+            $page = new page_course;
+            $page->id = $context->instanceid;
+            $page->type = 'course-view';
+            if ($blocks = blocks_get_by_page_pinned($page)) {
+                foreach ($blocks['l'] as $leftblock) {
+                    if ($child = get_context_instance(CONTEXT_BLOCK, $leftblock->blockid)) {
+                        array_push($children, $child->id);
+                    }
+                }
+                foreach ($blocks['r'] as $rightblock) {
+                    if ($child = get_context_instance(CONTEXT_BLOCK, $rightblock->blockid)) {
+                        array_push($children, $child->id);
+                    }
+                }
+            }
+            // Find all module instances for the course.
+            if ($modules = get_records('course_modules', 'course', $context->instanceid)) {
+                foreach ($modules as $module) {
+                    if ($child = get_context_instance(CONTEXT_MODULE, $module->id)) {
+                        array_push($children, $child->id);
+                    }
+                }
+            }
+            // Find all group instances for the course.
+            if ($groups = get_records('groups', 'courseid', $context->instanceid)) {
+                foreach ($groups as $group) {
+                    if ($child = get_context_instance(CONTEXT_GROUP, $group->id)) {
+                        array_push($children, $child->id);
+                    }
+                }
+            }
+            return $children;
+        break;
+
+        case CONTEXT_COURSECAT:
+            // We need to get the contexts for:
+            //   1) The subcategories of the given category
+            //   2) The courses in the given category and all its subcategories
+            //   3) All the child contexts for these courses
+
+            $categories = get_all_subcategories($context->instanceid);
+
+            // Add the contexts for all the subcategories.
+            foreach ($categories as $catid) {
+                if ($catci = get_context_instance(CONTEXT_COURSECAT, $catid)) {
+                    array_push($children, $catci->id);
+                }
+            }
+
+            // Add the parent category as well so we can find the contexts
+            // for its courses.
+            array_unshift($categories, $context->instanceid);
+
+            foreach ($categories as $catid) {
+                // Find all courses for the category.
+                if ($courses = get_records('course', 'category', $catid)) {
+                    foreach ($courses as $course) {
+                        if ($courseci = get_context_instance(CONTEXT_COURSE, $course->id)) {
+                            array_push($children, $courseci->id);
+                            $children = array_merge($children, get_child_contexts($courseci));
+                        }
+                    }
+                }
+            }
+            return $children;
+        break;
+
+        case CONTEXT_USER:
+            // No children.
+            return array();
+        break;
+
+        case CONTEXT_PERSONAL:
+            // No children.
+            return array();
+        break;
+
+        case CONTEXT_SYSTEM:
+            // Just get all the contexts except for CONTEXT_SYSTEM level.
+            $sql = 'SELECT c.id '.
+                     'FROM '.$CFG->prefix.'context AS c '.
+                    'WHERE contextlevel != '.CONTEXT_SYSTEM;
+
+            $contexts = get_records_sql($sql);
+            foreach ($contexts as $cid) {
+                array_push($children, $cid->id);
+            }
+            return $children;
         break;
 
         default:
