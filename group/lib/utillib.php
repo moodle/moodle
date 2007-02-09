@@ -2,10 +2,11 @@
 /**
  * Utility functions for groups.
  *
- * Functions to get information about users and courses that we could do with 
- * that don't use any of the groups and that I can't find anywhere else!
+ * Functions we need independent of groups about users and courses.
+ * And groups utility/ user-interface functions.
  *
  * @copyright &copy; 2006 The Open University
+ * @author N.D.Freear AT open.ac.uk
  * @author J.White AT open.ac.uk
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package groups
@@ -24,74 +25,63 @@ require_once($CFG->libdir.'/moodlelib.php');
  * @param int $groupid The group specified
  * @return int The number of members of the group
  */
-function groups_get_no_group_members($groupid) {
-    $userids = groups_get_members($groupid);
-    if (!$userids) {
-    	$nomembers = 0;
-    } else {
-    	$nomembers = count($userids);
-    }
-
-    return $nomembers;
+function groups_count_group_members($groupid) {
+    return count_records('groups_members', 'groupid ', $groupid);
 }
 
 
 /**
  * Gets the number of groups in a specified grouping
  * @param int $groupingid The grouping specified
+ * @param int $courseid The related course.
  * @return int The number of groups in the grouping
  */
-function groups_get_no_groups_in_grouping($groupingid) {
-    $groupids = groups_get_groups_in_grouping($groupingid);
-    if (!$groupids) {
-    	$nogroups = 0;
+function groups_count_groups_in_grouping($groupingid, $courseid) {
+    if (GROUP_NOT_IN_GROUPING == $groupingid) {
+        $groupids = groups_get_groups_not_in_any_grouping($courseid);
+        return count($groupids);
     } else {
-    	$nogroups = count($groupids);
+        return count_records('groups_groupings_groups', 'groupingid ', $groupingid);
     }
-    return $nogroups;
 }
 
 
 /**
- * Returns the display name of a user. This is the full name which if the user 
- * is a teacher, is prefixed by if the teacher has edit permission and - 
- * otherwise.
- * @param int $userid The id of the user specified
- * @param boolean $teacher True if the user is a teacher, false otherwise
- * @return string The display name of the user 
+ * Returns the display name of a user - the full name of the user 
+ * prefixed by '#' for editing teachers and '-' for teachers.
+ * @param int $userid The ID of the user.
+ * @param int $courseid The ID of the related-course.
+ * @return string The display name of the user.
  */
 function groups_get_user_displayname($userid, $courseid) {
 	if ($courseid == false) {
-		$fullname = false; 
+		$fullname = false;
 	} else {
 		$user = groups_get_user($userid);
 	    $fullname = fullname($user, true);
+        //TODO: isteacher, isteacheredit.
 	    if (isteacher($courseid, $userid)) {
 	        if (isteacheredit($courseid, $userid)) {
 	            $prefix = '# ';
 	        } else {
 	             $prefix = '- ';
 	        }
-	        
 	        $fullname = $prefix.$fullname;
 	    }
 	}
-    
     return $fullname;
 }
 
 
 /**
- * Returns the display name of a group - this is the group name followed by the 
- * number of group members in brackets
- * @param int $groupid The groupid
+ * Returns the display name of a group - the group name followed by 
+ * the number of members in brackets.
+ * @param int $groupid The group ID.
  * @return string The display name of the group
  */
 function groups_get_group_displayname($groupid) {
-	$groupsettings = groups_get_group_settings($groupid);
-    if ($groupsettings) {
-        $groupname = $groupsettings->name;
-        $count = groups_get_no_group_members($groupid);
+	if ($groupname = groups_get_group_name($groupid)) {
+        $count = groups_count_group_members($groupid);
         return "$groupname ($count)"; 
     }
 	return false;
@@ -99,20 +89,15 @@ function groups_get_group_displayname($groupid) {
 
 
 /**
- * Returns the display name of a grouping - this is the grouping name followed 
- * by the number of groups in the
- * grouping in brackets
- * @param int $groupingid The grouping id
+ * Returns the display name of a grouping - the grouping name followed 
+ * by the number of groups in the grouping in brackets.
+ * @param int $groupingid The grouping ID.
+ * @param int $courseid The related course.
  * @return string The display name of the grouping
  */
-function groups_get_grouping_displayname($groupingid) {
-    if (GROUP_NOT_IN_GROUPING == $groupingid) {
-        return get_string('notingrouping', 'group');
-    }    
-	$groupingsettings = groups_get_grouping_settings($groupingid);
-    if ($groupingsettings) {	
-        $groupingname = $groupingsettings->name;
-        $count = groups_get_no_groups_in_grouping($groupingid);
+function groups_get_grouping_displayname($groupingid, $courseid) {
+    if ($groupingname = groups_get_grouping_name($groupingid)) {
+        $count = groups_count_groups_in_grouping($groupingid, $courseid);
         return "$groupingname ($count)";
     }
     return false;
@@ -121,9 +106,9 @@ function groups_get_grouping_displayname($groupingid) {
 
 /**
  * Takes an array of users (i.e of objects) and converts it in the corresponding 
- * array of userids. 
+ * array of user IDs. 
  * @param $users array The array of users
- * @return array The array of user ids, or false if an error occurred 
+ * @return array The array of user IDs, or false if an error occurred 
  */
 function groups_users_to_userids($users) {
     if (! $users) {
@@ -135,6 +120,27 @@ function groups_users_to_userids($users) {
     }
     return $userids;
 }
+
+/**
+ * Get an sorted array of user-id/display-name objects.
+ */
+function groups_userids_to_user_names($userids, $courseid) {
+    if (! $userids) {
+        return array();
+    }
+    $member_names = array();
+    foreach ($userids as $id) {
+        $user = new object;
+        $user->id = $id;
+        $user->name = groups_get_user_displayname($id, $courseid);
+        $member_names[] = $user;
+    }
+    if (! usort($member_names, 'groups_compare_name')) {
+        debug('Error usort [groups_compare_name].');
+    }
+    return $member_names;
+}
+
 
 /**
  * Takes an array of groups (i.e of objects) and converts it to the 
@@ -153,17 +159,14 @@ function groups_groups_to_groupids($groups) {
 	return $groupids;
 }
 
-// @@@ TO DO 
-function groups_groupid_to_group($groupid) {
-}
 
 /**
  * Given an array of group IDs get an array of group objects.
  * TODO: quick and dirty. Replace with SQL?
  * @param $groupids Array of group IDs.
- * @param $courseid Default false, or Course ID.
+ * @param $courseid Default false, or the course ID for backwards compatibility.
  * @param $alldata Default false, or get complete record for group.
- * @param array Array of group objects, with basic or all data.
+ * @return array Array of group objects, with basic or all data.
  */
 function groups_groupids_to_groups($groupids, $courseid=false, $alldata=false) {
     if (! $groupids) {
@@ -175,6 +178,53 @@ function groups_groupids_to_groups($groupids, $courseid=false, $alldata=false) {
     }
     return $groups;
 }
+
+
+/**
+ * Get a sorted array of group-id/display-name objects.
+ */
+function groups_groupids_to_group_names($groupids) {
+    if (! $groupids) {
+        return array();
+    }
+    $group_names = array();
+    foreach ($groupids as $id) {
+        $gname = new object;
+        $gname->id = $id;
+        $gname->name = groups_get_group_displayname($id);
+        $group_names[] = $gname;
+    }
+    if (! usort($group_names, 'groups_compare_name')) {
+        debug('Error usort [groups_compare_name].');
+    }
+    /*// Put the groups into a hash and sort them
+    foreach($groupids as $id) {
+        $listgroups[$id] = groups_get_group_displayname($id);
+    }
+    natcasesort($listgroups);
+
+    $group_names = array();
+    foreach ($listgroups as $id => $name) {
+        $gname = new object;
+        $gname->id = $id;
+        $gname->name = $name;
+        $group_names[] = $gname;
+    }*/
+    return $group_names;
+}
+
+
+/**
+ * Comparison function for 'usort' on objects with a name member.
+ * Equivalent to 'natcasesort'.
+ */
+function groups_compare_name($obj1, $obj2) {
+    if (!$obj1 || !$obj2 || !isset($obj1->name) || !isset($obj2->name)) {
+        debug('Error, groups_compare_name.');
+    }
+    return strcasecmp($obj1->name, $obj2->name);
+}
+
 
 function groups_groupingids_to_groupings($groupingids) {
     if (! $groupingids) {
@@ -189,8 +239,7 @@ function groups_groupingids_to_groupings($groupingids) {
 
 /**
  * Gets the user object for a given userid. Can't find a function anywhere to 
- * do this and we need this
- * for fullname()
+ * do this and we need this for fullname()
  * 
  * @param $userid int The userid
  * @return object The corresponding user object, or false if an error occurred
@@ -204,7 +253,7 @@ function groups_get_user($userid) {
  * Gets the course information object for a given course id  
  * @param $courseid int The course id
  * @return object The course info object, or false if an error occurred. 
- * @@@ TO DO - need to put the database bit into a db file 
+ * TODO: need to put the database bit into a db file 
  */
 function groups_get_course_info($courseid){
 	if (!$courseid) {

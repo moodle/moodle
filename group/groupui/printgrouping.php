@@ -10,14 +10,30 @@
 require_once('../../config.php');
 require_once('../lib.php');
 
+$success = true;
+
 $courseid   = required_param('courseid', PARAM_INT);
 $groupingid = required_param('groupingid', PARAM_INT);
 
+// Get the course information so we can print the header and
+// check the course id is valid
+$course = groups_get_course_info($courseid);
+if (! $course) {
+    $success = false;
+    print_error('invalidcourse');
+}
 
-require_login($courseid);
 
-// confirm_sesskey checks that this is a POST request	
-if (isteacheredit($courseid)) {
+if ($success) {
+    // Make sure that the user has permissions to manage groups.
+    require_login($courseid);
+
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    if (! has_capability('moodle/course:managegroups', $context)) {
+        redirect();
+    }
+
+    //( confirm_sesskey checks that this is a POST request.)	
 
 	// Print the page and form
 	$strgroups = get_string('groups');
@@ -28,43 +44,38 @@ if (isteacheredit($courseid)) {
 	             "-> <a href=\"$CFG->wwwroot/group/groupui/index.php?id=$courseid\">$strgroups</a>".
 	             "-> Display grouping", "", "", true, '', user_login_string($course, $USER));
 
-	$groupingsettings = groups_get_grouping_settings($groupingid);
-
-    if (! isset($groupingsettings->name)) {
+    $groupingname = groups_get_grouping_name($groupingid);
+    if (! $groupingname) {
         print_error('errorinvalidgrouping', 'group', groups_home_url($courseid));
     } else {
        // Print the name of the grouping
-	   $name = $groupingsettings->name;
-	   echo "<h1>$name</h1>\n";
+	   echo "<h1>$groupingname</h1>\n";
     }
 
-	// Get the groups and group members for the grouping
-	$groupids = groups_get_groups_in_grouping($groupingid);
+	// Get the groups and group members for the grouping.
+    if (GROUP_NOT_IN_GROUPING == $groupingid) {
+        $groupids = groups_get_groups_not_in_any_grouping($courseid);
+    } else {
+        $groupids = groups_get_groups_in_grouping($groupingid);
+    }
 
-	if ($groupids != false) {
+	if ($groupids) {
+		// Make sure the groups are in the right order
+		$group_names = groups_groupids_to_group_names($groupids);
+        
+        // Go through each group in turn and print the group name and then the members
+        foreach ($group_names as $group) {
 
-		// Make sure the groups are in the right order 
-		foreach($groupids as $groupid) {
-		    $listgroups[$groupid] = groups_get_group_displayname($groupid);  
-		}
-
-		natcasesort($listgroups);
-
-		// Go through each group in turn and print the group name and then the members	
-		foreach($listgroups as $groupid=>$groupname) {
-			echo "<h2>$groupname</h2>\n";
-			$userids = groups_get_members($groupid);
+			echo "<h2>{$group->name}</h2>\n";
+			$userids = groups_get_members($group->id);
 			if ($userids != false) {
 				// Make sure the users are in the right order
-				unset($listmembers);
-				foreach($userids as $userid) {
-			    	$listmembers[$userid] = groups_get_user_displayname($userid, $courseid);       
-				}
-				natcasesort($listmembers);
+				$user_names = groups_userids_to_user_names($userids, $courseid);
 
                 echo "<ol>\n";
-				foreach($listmembers as $userid=>$name) {
-				    echo "<li>$name</li>\n";
+                foreach ($user_names as $user) {
+
+				    echo "<li>{$user->name}</li>\n";
 				}
                 echo "</ol>\n";
 			}

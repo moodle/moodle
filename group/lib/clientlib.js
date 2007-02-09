@@ -106,7 +106,7 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
                     for (var i=0; i<members.length; i++) {
                         var optionEl = document.createElement("option");
                         optionEl.setAttribute("value", members[i].id);
-                        optionEl.innerHTML = members[i].firstname+" "+members[i].lastname;
+                        optionEl.innerHTML = members[i].name;
                         selectEl.appendChild(optionEl);
                     }
                 }

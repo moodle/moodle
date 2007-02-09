@@ -13,6 +13,7 @@ require_once($CFG->dirroot.'/group/lib/basicgrouplib.php');
 require_once($CFG->dirroot.'/group/db/dbgroupinglib.php');
 
 define('GROUP_NOT_IN_GROUPING', -1);
+define('GROUP_ANY_GROUPING', -2);
 
 /*****************************
         Access/List functions  
@@ -98,8 +99,44 @@ function groups_set_grouping_settings($groupingid, $groupingsettings) {
 	return groups_db_set_grouping_settings($groupingid, $groupingsettings);
 }
 
-// TO DO 
+
+/**
+ * Gets the name of a grouping with a specified ID
+ * @param int $groupid The grouping ID.
+ * @return string The name of the grouping.
+ */
+function groups_get_grouping_name($groupingid) {
+    if (GROUP_NOT_IN_GROUPING == $groupingid) {
+        return get_string('notingrouping', 'group');
+    }
+    elseif (GROUP_ANY_GROUPING == $groupingid) {
+        return get_string('anygrouping', 'group');
+    }
+    $settings = groups_get_grouping_settings($groupingid);
+    if ($settings && isset($settings->name)) {
+        return $settings->name;
+    }
+    return false;
+}
+
+
+/**
+ * Get array of group IDs for the user in a grouping.
+ * @param int $userid
+ * @param int $groupingid
+ * @return array If the user has groups an array of group IDs, else false.
+ */
 function groups_get_groups_for_user_in_grouping($userid, $groupingid) {
+    global $CFG;
+    $sql = "SELECT gg.groupid
+        FROM {$CFG->prefix}groups_groupings_groups gg
+        INNER JOIN {$CFG->prefix}groups_members gm ON gm.groupid = gg.groupid
+        WHERE gm.userid = '$userid'
+        AND gg.groupingid = '$groupingid'";
+    $records = get_records_sql($sql);
+
+//print_object($records);
+    return groups_groups_to_groupids($records); //TODO:check.
 }
 
 /**
@@ -249,13 +286,13 @@ function groups_set_default_grouping_settings($groupingsettings = null) {
 
 
 /**
- * Gets the grouping to use for a particular instance of a module in a course
+ * Gets the grouping ID to use for a particular instance of a module in a course
  * @param int $coursemoduleid The id of the instance of the module in the course
  * @return int The id of the grouping or false if there is no such id recorded 
  * or if an error occurred. 
  */
-function groups_get_grouping_for_coursemodule($coursemoduleid) {
-	return groups_db_get_grouping_for_coursemodule($coursemoduleid);
+function groups_get_grouping_for_coursemodule($coursemodule) {
+	return groups_db_get_grouping_for_coursemodule($coursemodule);
 }
 
 /*****************************

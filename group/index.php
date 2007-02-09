@@ -20,9 +20,9 @@ require_js($CFG->wwwroot.'/group/lib/clientlib.js');
 
 
 $success = true;
- 
+
 $courseid   = required_param('id', PARAM_INT);
-$groupingid = optional_param('grouping', -1, PARAM_INT);
+$groupingid = optional_param('grouping', GROUP_NOT_IN_GROUPING, PARAM_INT);
 $groupid    = optional_param('group', false, PARAM_INT);
 $userid     = optional_param('user', false, PARAM_INT);
 
@@ -68,21 +68,23 @@ if ($success) {
 
     switch ($action) {
         case 'ajax_getgroupsingrouping':
-            $groups = groups_groupids_to_groups(groups_get_groups_in_grouping($groupingid));
+            if (GROUP_NOT_IN_GROUPING == $groupingid) {
+                $groupids = groups_get_groups_not_in_any_grouping($courseid);
+            } else {
+                $groupids = groups_get_groups_in_grouping($groupingid);
+            }
+            $group_names = groups_groupids_to_group_names($groupids);
             $json = new Services_JSON();
-            echo $json->encode($groups);
+            echo $json->encode($group_names);
             die;  // Client side JavaScript takes it from here.
 
         case 'ajax_getmembersingroup':
             $members = array();
 
             if ($memberids = groups_get_members($groupid)) {
-                foreach ($memberids as $memberid) {
-                    $member = groups_get_user($memberid);
-                    array_push($members, $member);
-                }
+                $member_names = groups_userids_to_user_names($memberids, $courseid);
                 $json = new Services_JSON();
-                echo $json->encode($members);
+                echo $json->encode($member_names);
             }
             die;  // Client side JavaScript takes it from here.
 
@@ -173,7 +175,7 @@ if ($success) {
     if ($groupingids) {    
         // Put the groupings into a hash and sort them
         foreach($groupingids as $id) {
-            $listgroupings[$id] = groups_get_grouping_displayname($id);
+            $listgroupings[$id] = groups_get_grouping_displayname($id, $courseid);
         }
         natcasesort($listgroupings);
         
@@ -215,21 +217,17 @@ if ($success) {
     }
     if ($groupids) {
         // Put the groups into a hash and sort them
-        foreach($groupids as $id) {
-            $listgroups[$id] = groups_get_group_displayname($id);
-        }
-        
-        natcasesort($listgroups);
+        $group_names = groups_groupids_to_group_names($groupids);
         
         // Print out the HTML
         $count = 1;
-        foreach($listgroups as $id => $name) {
+        foreach ($group_names as $group) {
             $select = '';
-            if ($groupid == $id) { //|| $count <= 1) ??
+            if ($groupid == $group->id) { //|| $count <= 1) ??
                 $select = ' selected="selected"';
-                $sel_groupid = $id;
+                $sel_groupid = $group->id;
             }
-            echo "<option value=\"$id\"$select >$name</option>\n";
+            echo "<option value=\"{$group->id}\"$select>{$group->name}</option>\n";
             $count++;
         }
     }
@@ -254,15 +252,12 @@ if ($success) {
     if (isset($sel_groupid)) {
         $userids = groups_get_members($sel_groupid);
     }
-    if (isset($userids) && is_array($userids)) {       
+    if (isset($userids)) { //&& is_array($userids)        
         // Put the groupings into a hash and sort them
-        foreach($userids as $id) {
-            $listmembers[$id] = groups_get_user_displayname($id, $courseid);       
-        }
-        natcasesort($listmembers);
+        $user_names = groups_userids_to_user_names($userids);
 
-        foreach($listmembers as $id => $name) {
-            echo "<option value=\"$id\">$name</option>\n";
+        foreach ($user_names as $user) {
+            echo "<option value=\"{$user->id}\">{$user->name}</option>\n";
         }
     }
 ?>
