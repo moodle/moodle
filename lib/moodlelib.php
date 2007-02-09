@@ -2993,7 +2993,9 @@ function remove_course_contents($courseid, $showfeedback=true) {
         'grade_exceptions' => 'courseid',
         'grade_item' => 'courseid',
         'grade_letter' => 'courseid',
-        'grade_preferences' => 'courseid'
+        'grade_preferences' => 'courseid',
+        'backup_courses' => 'courseid', // Delete scheduled backup stuff
+        'backup_log' => 'courseid'
     );
     foreach ($tablestoclear as $table => $col) {
         if (delete_records($table, $col, $course->id)) {
