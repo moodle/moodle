@@ -2,8 +2,8 @@
 
 //  adds or updates modules in a course using new formslib
 
-    require("../config.php");
-    require("lib.php");
+    require_once("../config.php");
+    require_once("lib.php");
 
     require_login();
 
