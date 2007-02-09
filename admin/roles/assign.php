@@ -165,7 +165,7 @@
             $topleveladmin = false;
    
             // we only worry about this if the role has doanything capability at site level
-            if ($adminroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext)) {
+            if ($context->id == $sitecontext->id && $adminroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext)) {
                 foreach ($adminroles as $adminrole) {
                     if ($adminrole->id == $roleid) {
                         $topleveladmin = true;
