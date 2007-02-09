@@ -756,7 +756,11 @@
         error("You cannot reply to this post");
     }
     if (empty($parent) && !forum_user_can_post_discussion($forum, false, '', $edit)) {
-        error("You cannot start a new discussion in this forum");
+        if (!$edit) {
+            error("You cannot start a new discussion in this forum");
+        } else {
+            error("You cannot edit this post");
+        }
     }
 
     if ($forum->type == 'qanda' && !isteacher($forum->course) && !forum_user_has_posted($forum->id,$discussion->id,$USER->id)) {

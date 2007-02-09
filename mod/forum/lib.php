@@ -2724,11 +2724,11 @@ function forum_user_has_posted($forumid,$did,$userid) {
 
 function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode='', $edit=0) {
 // $forum is an object
-    global $USER, $SESSION;
+    global $CFG, $USER, $SESSION;
     if ($forum->type == "eachuser") {
-        if ($edit) { // fix for 5551, if 1 post per user, should allow edit, if poster is owner
+        if ($edit) {
             $post = get_record('forum_posts','id',$edit);
-            return ($post->userid == $USER->id); // editting your own post?
+            return ($post->userid == $USER->id || isadmin() && $CFG->admineditalways);
         } else {
             return (! forum_user_has_posted_discussion($forum->id, $USER->id));
         }
