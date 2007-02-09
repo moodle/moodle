@@ -85,23 +85,23 @@ if (!isset($frm->enrol_ldap_template)) {
 
 ?>
 
-<table cellspacing="0" cellpadding="5" border="0" align="center">
+<table cellspacing="0" cellpadding="5" border="0" class="boxaligncenter">
 <tr>
    <td colspan="2">
         <h4><?php print_string("enrol_ldap_server_settings", "enrol_ldap") ?> </h4>
    </td>
 </tr>
-<tr valign="top">
+<tr>
     <td align="right">enrol_ldap_host_url:</td>
     <td>
-        <input name="enrol_ldap_host_url" type="text" SIZE="30" value="<?php echo $frm->enrol_ldap_host_url?>">
+        <input name="enrol_ldap_host_url" type="text" size="30" value="<?php echo $frm->enrol_ldap_host_url?>" />
     <?php  if (isset($err["enrol_ldap_host_url"])) formerr($err["enrol_ldap_host_url"]); ?>
     </td>
     <td>
     <?php  print_string("enrol_ldap_host_url","enrol_ldap") ?>
     </td>
 </tr>
-<tr valign="top">
+<tr>
     <td align="right">enrol_ldap_version:</td>
     <td>
     <?php
@@ -116,27 +116,27 @@ if (!isset($frm->enrol_ldap_template)) {
     </td>
 </tr>
 
-<tr valign="top">
+<tr>
     <td align="right">enrol_ldap_bind_dn:</td>
     <td>
-    <input name="enrol_ldap_bind_dn" type="text" size="30" value="<?php echo $frm->enrol_ldap_bind_dn?>">
+    <input name="enrol_ldap_bind_dn" type="text" size="30" value="<?php echo $frm->enrol_ldap_bind_dn?>" />
     <?php  if (isset($err["enrol_ldap_bind_dn"])) formerr($err["ldap_bind_dn"]); ?>
     </td><td>
     <?php  print_string("enrol_ldap_bind_dn","enrol_ldap") ?>
     </td>
 </tr>
 
-<tr valign="top">
+<tr>
     <td align="right">ldap_bind_pw:</td>
     <td>
-    <input name="enrol_ldap_bind_pw" type="text" size="30" value="<?php echo $frm->enrol_ldap_bind_pw?>">
+    <input name="enrol_ldap_bind_pw" type="text" size="30" value="<?php echo $frm->enrol_ldap_bind_pw?>" />
     <?php  if (isset($err["enrol_ldap_bind_pw"])) formerr($err["enrol_ldap_bind_pw"]); ?>
     </td><td>
     <?php  print_string("enrol_ldap_bind_pw","enrol_ldap") ?>
     </td>
 </tr>
 
-<tr valign="top">
+<tr>
     <td align="right">ldap_search_sub:</td>
     <td>
 <?php
@@ -157,20 +157,20 @@ if (!isset($frm->enrol_ldap_template)) {
         <h4><?php print_string("enrol_ldap_student_settings", "enrol_ldap") ?> </h4>
    </td>
 </tr>
-<tr valign="top">
+<tr>
     <td align="right">enrol_ldap_student_contexts:</td>
     <td>
-    <input name="enrol_ldap_student_contexts" type="text" SIZE="30 "value="<?php echo $frm->enrol_ldap_student_contexts?>">
+    <input name="enrol_ldap_student_contexts" type="text" SIZE="30 "value="<?php echo $frm->enrol_ldap_student_contexts?>" />
     <?php  if (isset($err["enrol_ldap_student_contexts"])) formerr($err["enrol_ldap_student_contexts"]); ?>
     </td>
     <td>
     <?php  print_string("enrol_ldap_student_contexts","enrol_ldap") ?>
     </td>
 </tr>
-<tr valign="top">
+<tr>
         <td align="right">enrol_ldap_student_memberattribute:</td>
         <td>
-    <input name="enrol_ldap_student_memberattribute" type="text" size="30" value="<?php echo $frm->enrol_ldap_student_memberattribute?>">
+    <input name="enrol_ldap_student_memberattribute" type="text" size="30" value="<?php echo $frm->enrol_ldap_student_memberattribute?>" />
     <?php  if (isset($err["enrol_ldap_student_memberattribute"])) formerr($err["enrol_ldap_student_memberattribute"]); ?>
     </td><td>
     <?php  print_string("enrol_ldap_student_memberattribute","enrol_ldap") ?>
@@ -185,17 +185,17 @@ if (!isset($frm->enrol_ldap_template)) {
 <tr valign="top">
     <td align="right">enrol_ldap_teacher_contexts:</td>
     <td>
-    <input name="enrol_ldap_teacher_contexts" type="text" SIZE="30 "value="<?php echo $frm->enrol_ldap_teacher_contexts?>">
+    <input name="enrol_ldap_teacher_contexts" type="text" SIZE="30 "value="<?php echo $frm->enrol_ldap_teacher_contexts?>" />
     <?php  if (isset($err["enrol_ldap_teacher_contexts"])) formerr($err["enrol_ldap_teacher_contexts"]); ?>
     </td>
     <td>
     <?php  print_string("enrol_ldap_teacher_contexts","enrol_ldap") ?>
     </td>
 </tr>
-<tr valign="top">
+<tr>
         <td align="right">enrol_ldap_teacher_memberattribute:</td>
         <td>
-    <input name="enrol_ldap_teacher_memberattribute" type="text" size="30" value="<?php echo $frm->enrol_ldap_teacher_memberattribute?>">
+    <input name="enrol_ldap_teacher_memberattribute" type="text" size="30" value="<?php echo $frm->enrol_ldap_teacher_memberattribute?>" />
     <?php  if (isset($err["enrol_ldap_teacher_memberattribute"])) formerr($err["enrol_ldap_teacher_memberattribute"]); ?>
     </td><td>
     <?php  print_string("enrol_ldap_teacher_memberattribute","enrol_ldap") ?>
@@ -232,58 +232,58 @@ if (!isset($frm->enrol_ldap_template)) {
         <h4><?php print_string("enrol_ldap_course_settings", "enrol_ldap") ?> </h4>
    </td>
 </tr>
-<tr valign="top">
+<tr>
     <td align="right">enrol_ldap_objectclass:</td>
     <td>
-    <input name=enrol_ldap_objectclass type="text" size="30" value="<?php echo $frm->enrol_ldap_objectclass?>">
+    <input name="enrol_ldap_objectclass" type="text" size="30" value="<?php echo $frm->enrol_ldap_objectclass?>"/>
     <?php  if (isset($err["enrol_ldap_objectclass"])) formerr($err["enrol_ldap_objectclass"]); ?>
     </td>
     <td>
     <?php  print_string("enrol_ldap_objectclass","enrol_ldap") ?>
     </td>
 </tr>
-<tr valign="top">
+<tr>
         <td align="right">enrol_ldap_course_idnumber:</td>
         <td>
-    <input name="enrol_ldap_course_idnumber" type="text" size="30" value="<?php echo $frm->enrol_ldap_course_idnumber?>">
+    <input name="enrol_ldap_course_idnumber" type="text" size="30" value="<?php echo $frm->enrol_ldap_course_idnumber?>"/>
     <?php  if (isset($err["enrol_ldap_course_idnumber"])) formerr($err["enrol_ldap_course_idnumber"]); ?>
-    <div align="right">
+    <div style="text-align:right;margin-left:auto;margin-right:0">
     <?php  print_string("enrol_ldap_updatelocal", "enrol_ldap") ?>
     <select name="enrol_ldap_course_idnumber_updatelocal">
-        <option value="0" <?php echo ($frm->enrol_ldap_course_idnumber_updatelocal ? '' : 'selected="yes"') ?> >
+        <option value="0" <?php echo ($frm->enrol_ldap_course_idnumber_updatelocal ? '' : 'selected="selected"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($frm->enrol_ldap_course_idnumber_updatelocal ? 'selected="yes"' : '') ?> >
+        <option value="1" <?php echo ($frm->enrol_ldap_course_idnumber_updatelocal ? 'selected="selected"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br/>
     <?php  print_string("enrol_ldap_editlock", "enrol_ldap") ?>
     <select name="enrol_ldap_course_idnumber_editlock">
-        <option value="0" <?php echo ($frm->enrol_ldap_course_idnumber_editlock ? '' : 'selected="yes"') ?> >
+        <option value="0" <?php echo ($frm->enrol_ldap_course_idnumber_editlock ? '' : 'selected="selected"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($frm->enrol_ldap_course_idnumber_editlock ? 'selected="yes"' : '') ?> >
+        <option value="1" <?php echo ($frm->enrol_ldap_course_idnumber_editlock ? 'selected="selected"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select></div>  
     </td><td>
     <?php  print_string("enrol_ldap_course_idnumber","enrol_ldap") ?>
     </td>
 </tr>
-<tr valign="top">
+<tr>
         <td align="right">enrol_ldap_course_shortname:</td>
         <td>
-    <input name="enrol_ldap_course_shortname" type="text" size="30" value="<?php echo $frm->enrol_ldap_course_shortname?>">
+    <input name="enrol_ldap_course_shortname" type="text" size="30" value="<?php echo $frm->enrol_ldap_course_shortname?>"/>
     <?php  if (isset($err["enrol_ldap_course_shortname"])) formerr($err["enrol_ldap_course_shortname"]); ?>
-    <div align="right">
+    <div style="text-align:right;margin-left:auto;margin-right:0">
     <?php  print_string("enrol_ldap_updatelocal", "enrol_ldap") ?>
     <select name="enrol_ldap_course_shortname_updatelocal">
-        <option value="0" <?php echo ($frm->enrol_ldap_course_shortname_updatelocal ? '' : 'selected="yes"') ?> >
+        <option value="0" <?php echo ($frm->enrol_ldap_course_shortname_updatelocal ? '' : 'selected="selected"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($frm->enrol_ldap_course_shortname_updatelocal ? 'selected="yes"' : '') ?> >
+        <option value="1" <?php echo ($frm->enrol_ldap_course_shortname_updatelocal ? 'selected="selected"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br/>
     <?php  print_string("enrol_ldap_editlock", "enrol_ldap") ?>
     <select name="enrol_ldap_course_shortname_editlock">
-        <option value="0" <?php echo ($frm->enrol_ldap_course_shortname_editlock ? '' : 'selected="yes"') ?> >
+        <option value="0" <?php echo ($frm->enrol_ldap_course_shortname_editlock ? '' : 'selected="selected"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($frm->enrol_ldap_course_shortname_editlock ? 'selected="yes"' : '') ?> >
+        <option value="1" <?php echo ($frm->enrol_ldap_course_shortname_editlock ? 'selected="selected"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select></div>
     </td><td>
@@ -291,24 +291,24 @@ if (!isset($frm->enrol_ldap_template)) {
     </td>
 </tr>
 
-<tr valign="top">
+<tr>
         <td align="right">enrol_ldap_course_fullname:</td>
         <td>
-    <input name="enrol_ldap_course_fullname" type="text" size="30" value="<?php echo $frm->enrol_ldap_course_fullname ?>">
+    <input name="enrol_ldap_course_fullname" type="text" size="30" value="<?php echo $frm->enrol_ldap_course_fullname ?>"/>
     <?php  if (isset($err["enrol_ldap_course_fullname"])) formerr($err["enrol_ldap_course_fullname"]); ?>
-    <div align="right">
+    <div style="text-align:right;margin-left:auto;margin-right:0">
     <?php  print_string("enrol_ldap_updatelocal", "enrol_ldap") ?>
     <select name="enrol_ldap_course_fullname_updatelocal">
-        <option value="0" <?php echo ($frm->enrol_ldap_course_fullname_updatelocal ? '' : 'selected="yes"') ?> >
+        <option value="0" <?php echo ($frm->enrol_ldap_course_fullname_updatelocal ? '' : 'selected="selected"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($frm->enrol_ldap_course_fullname_updatelocal ? 'selected="yes"' : '') ?> >
+        <option value="1" <?php echo ($frm->enrol_ldap_course_fullname_updatelocal ? 'selected="selected"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br/>
     <?php  print_string("enrol_ldap_editlock", "enrol_ldap") ?>
     <select name="enrol_ldap_course_idnumber_editlock">
-        <option value="0" <?php echo ($frm->enrol_ldap_course_fullname_editlock ? '' : 'selected="yes"') ?> >
+        <option value="0" <?php echo ($frm->enrol_ldap_course_fullname_editlock ? '' : 'selected="selected"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($frm->enrol_ldap_course_fullname_editlock ? 'selected="yes"' : '') ?> >
+        <option value="1" <?php echo ($frm->enrol_ldap_course_fullname_editlock ? 'selected="selected"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select></div>
     </td><td>
@@ -316,24 +316,24 @@ if (!isset($frm->enrol_ldap_template)) {
     </td>
 </tr>
 
-<tr valign="top">
+<tr>
         <td align="right">enrol_ldap_course_summary:</td>
         <td>
-    <input name="enrol_ldap_course_summary" type="text" size="30" value="<?php echo $frm->enrol_ldap_course_summary?>">    
+    <input name="enrol_ldap_course_summary" type="text" size="30" value="<?php echo $frm->enrol_ldap_course_summary?>"/>    
     <?php  if (isset($err["enrol_ldap_course_summary"])) formerr($err["enrol_ldap_course_summary"]); ?>
-    <div align="right">
+    <div style="text-align:right;margin-left:auto;margin-right:0">
     <?php  print_string("enrol_ldap_updatelocal", "enrol_ldap") ?>
     <select name="enrol_ldap_course_summary_updatelocal">
-        <option value="0" <?php echo ($frm->enrol_ldap_course_summary_updatelocal ? '' : 'selected="yes"') ?> >
+        <option value="0" <?php echo ($frm->enrol_ldap_course_summary_updatelocal ? '' : 'selected="selected"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($frm->enrol_ldap_course_summary_updatelocal ? 'selected="yes"' : '') ?> >
+        <option value="1" <?php echo ($frm->enrol_ldap_course_summary_updatelocal ? 'selected="selected"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br/>
     <?php  print_string("enrol_ldap_editlock", "enrol_ldap") ?>
     <select name="enrol_ldap_course_summary_editlock">
-        <option value="0" <?php echo ($frm->enrol_ldap_course_summary_editlock ? '' : 'selected="yes"') ?> >
+        <option value="0" <?php echo ($frm->enrol_ldap_course_summary_editlock ? '' : 'selected="selected"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($frm->enrol_ldap_course_summary_editlock ? 'selected="yes"' : '') ?> >
+        <option value="1" <?php echo ($frm->enrol_ldap_course_summary_editlock ? 'selected="selected"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select></div>
     </td><td>
@@ -358,7 +358,7 @@ if (!isset($frm->enrol_ldap_template)) {
     <?php  print_string("enrol_ldap_autocreate","enrol_ldap") ?>
     </td>
 </tr>
-<tr valign="top">
+<tr>
         <td align="right">enrol_ldap_category:</td>
         <td>
     <?php
@@ -374,10 +374,10 @@ if (!isset($frm->enrol_ldap_template)) {
     </td>
 </tr>
 
-<tr valign="top">
+<tr>
         <td align="right">enrol_ldap_template:</td>
         <td>
-    <input name=enrol_ldap_template type="text" size="30" value="<?php echo $frm->enrol_ldap_template?>">
+    <input name="enrol_ldap_template" type="text" size="30" value="<?php echo $frm->enrol_ldap_template?>" />
     <?php  if (isset($err["enrol_ldap_template"])) formerr($err["enrol_ldap_template"]); ?>
     </td><td>
     <?php  print_string("enrol_ldap_template","enrol_ldap") ?>

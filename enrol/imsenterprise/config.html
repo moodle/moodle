@@ -1,9 +1,8 @@
-<table cellspacing="0" cellpadding="5" border="0" align="center">
+<table cellspacing="0" cellpadding="5" border="0" class="boxaligncenter">
 
 <tr>
-<th colspan="3" scope="col"><?php  print_string("basicsettings", "enrol_imsenterprise") ?></th>
+    <th colspan="3" scope="col"><?php  print_string("basicsettings", "enrol_imsenterprise") ?></th>
 </tr>
-
 
 <tr valign="top">
     <td align="right"><?php  print_string("location", "enrol_imsenterprise") ?>:</td>
@@ -19,10 +18,9 @@
     </td>
 </tr>
 
-
 <tr valign="top">
     <td align="right"><?php  print_string('mailadmins', 'enrol_imsenterprise') ?>:</td>
-    <td width="10">
+    <td style="width:10px">
         <input type="checkbox" value="1" name="enrol_mailadmins" <?php if ($frm->enrol_mailadmins) echo "checked=\"true\"" ?> />
     </td>
     <td>
@@ -74,8 +72,6 @@
     </td>
 </tr>
 
-
-
 <tr valign="top">
     <td align="right"><?php  print_string('sourcedidfallback', 'enrol_imsenterprise') ?>:</td>
     <td>
@@ -106,10 +102,7 @@ Photo processing is deactivated until we hear from Moodle dev forum about modifi
 <td colspan="3"><?php  print_string('imsrolesdescription', 'enrol_imsenterprise') ?></td>
 </tr>
 
-
-
 <?php
-
 
 $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 $assignableroles = get_assignable_roles($sitecontext);
@@ -134,7 +127,6 @@ foreach($this->imsroles as $imsrolenum=>$imsrolename){
 <?php
 } // End loop
 ?>
-
 
 <tr>
 <th colspan="3" scope="col"><?php  print_string("coursesettings", "enrol_imsenterprise") ?></th>
@@ -179,8 +171,6 @@ foreach($this->imsroles as $imsrolenum=>$imsrolename){
     <?php helpbutton('unenrol', 'More detail about this option', 'enrol/imsenterprise'); ?>
     </td>
 </tr>
-
-
 
 <tr>
 <th colspan="3" scope="col"><?php  print_string("miscsettings", "enrol_imsenterprise") ?></th>

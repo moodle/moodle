@@ -71,7 +71,7 @@ function authorize_print_orders($courseid, $userid)
         popup_form($baseurl.'&amp;status='.$status.'&amp;course=',$popupcrs,'coursesmenu',$courseid,'','','',false);echo"</td>\n";
         if (has_capability('enrol/authorize:uploadcsv', get_context_instance(CONTEXT_USER, $USER->id))) {
             echo "<form method='get' action='uploadcsv.php'>";
-            echo "<td rowspan=2 align='right' valign='middle' width='50%'><input type='submit' value='".get_string('uploadcsv', 'enrol_authorize')."' /></td>";
+            echo "<td rowspan=2 align='right' valign='middle' width='50%'><fieldset class=\"invisiblefieldset\"><input type='submit' value='".get_string('uploadcsv', 'enrol_authorize')."' /></fieldset></td>";
             echo "</form>";
         }
         else {
@@ -82,8 +82,8 @@ function authorize_print_orders($courseid, $userid)
         echo "<tr><td>$strs->search: </td>"; $searchmenu = array('id' => $authstrs->orderid, 'transid' => $authstrs->transid);
         echo "<form method='POST' action='index.php' autocomplete='off'>";
         echo "<td colspan=3>"; choose_from_menu($searchmenu, 'searchtype', $searchtype, '');
-        echo " = <input type='text' size='14' name='idortransid' value='' /> ";
-        echo "<input type='submit' value='$strs->search' /></td>";
+        echo " = <fieldset class=\"invisiblefieldset\"><input type='text' size='14' name='idortransid' value='' /> ";
+        echo "<input type='submit' value='$strs->search' /></fieldset></td>";
         echo "</form>";
         echo "</tr>";
         echo "</table>";
@@ -228,6 +228,7 @@ function authorize_print_order_details($orderno)
     }
 
     echo "<form action=\"index.php\" method=\"post\">\n";
+    echo "<div>";
     echo "<input type=\"hidden\" name=\"order\" value=\"$orderno\" />\n";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"" . sesskey() . "\" />";
 
@@ -540,6 +541,7 @@ function authorize_print_order_details($orderno)
             print_table($t2);
         }
     }
+    echo '</div>';
     echo '</form>';
 }
 

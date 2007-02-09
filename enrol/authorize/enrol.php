@@ -414,14 +414,16 @@ class enrolment_plugin_authorize
         if (empty($CFG->loginhttps) and substr($CFG->wwwroot, 0, 5) !== 'https') {
             $a = new stdClass;
             $a->url = "$CFG->wwwroot/$CFG->admin/settings.php?section=httpsecurity";
-            notice(get_string('adminconfighttps', 'enrol_authorize', $a));
+            notify(get_string('adminconfighttps', 'enrol_authorize', $a));
+            return; // notice breaks the form and xhtml later
         }
         elseif (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') {
             $wwwsroot = qualified_me();
             $wwwsroot = str_replace('http:', 'https:', $wwwsroot);
             $a = new stdClass;
             $a->url = $wwwsroot;
-            notice(get_string('adminconfighttpsgo', 'enrol_authorize', $a));
+            notify(get_string('adminconfighttpsgo', 'enrol_authorize', $a));
+            return; // notice breaks the form and xhtml later
         }
 
         if (!empty($frm->an_review)) {

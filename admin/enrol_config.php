@@ -45,6 +45,7 @@
     admin_externalpage_print_header($adminroot);
 
     echo "<form $CFG->frametarget id=\"enrolmenu\" method=\"post\" action=\"enrol_config.php\">";
+    echo "<div>";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\" />";
     echo "<input type=\"hidden\" name=\"enrol\" value=\"".$enrol."\" />";
 
@@ -60,11 +61,10 @@
 
     $enrolment->config_form($frm);
 
-    echo "<center><p><input type=\"submit\" value=\"".get_string("savechanges")."\" /></p></center>\n";
+    echo "<p class=\"centerpara\"><input type=\"submit\" value=\"".get_string("savechanges")."\" /></p>\n";
     print_simple_box_end();
+    echo "</div>";
     echo "</form>";
-
-
 
     admin_externalpage_print_footer($adminroot);
 

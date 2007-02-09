@@ -48,7 +48,7 @@ if (!isset($frm->acceptechecktypes)) {
 
 ?>
 
-<table cellspacing="0" cellpadding="5" border="0" align="center">
+<table cellspacing="0" cellpadding="5" border="0" class="boxaligncenter">
 
 <tr valign="top">
     <td colspan="2" align="right"><a href="../enrol/authorize/index.php"><?php print_string("paymentmanagement", "enrol_authorize") ?></a></td>
@@ -73,7 +73,7 @@ if (!isset($frm->acceptechecktypes)) {
 <tr valign="top">
     <td align="right">loginhttps:</td>
     <td><?php
-          echo (empty($CFG->loginhttps) ? "<font color=\"red\"><b>off</b></font>" : "<font color=\"green\">on</font>");
+          echo (empty($CFG->loginhttps) ? "<span style=\"color:red\"><b>off</b></span>" : "<font color=\"green\">on</font>");
           $a->url = "$CFG->wwwroot/$CFG->admin/settings.php?section=httpsecurity";
           echo '<br />'; print_string("logindesc", "enrol_authorize", $a);
         ?>
@@ -89,24 +89,24 @@ if (!isset($frm->acceptechecktypes)) {
 </tr>
 
 <tr valign="top">
-    <td align="right">an_login:<br /><?php echo (isset($mconfig->an_login)) ? '<font color=green>'.get_string('ok').'</font>' : ''; ?></td>
+    <td align="right">an_login:<br /><?php echo (isset($mconfig->an_login)) ? '<span style="color:green">'.get_string('ok').'</span>' : ''; ?></td>
     <td><?php print_string("anlogin", "enrol_authorize") ?><br /><input type="text" name="an_login" size="26" value="" /><sup>*</sup></td>
 </tr>
 
 <tr valign="top">
-    <td align="right">an_tran_key:<br /><?php echo (isset($mconfig->an_tran_key)) ? '<font color=green>'.get_string('ok').'</font>' : ''; ?></td>
+    <td align="right">an_tran_key:<br /><?php echo (isset($mconfig->an_tran_key)) ? '<span style="color:green">'.get_string('ok').'</span>' : ''; ?></td>
     <td><?php print_string("antrankey", "enrol_authorize") ?><br /><input type="text" name="an_tran_key" size="26" value="" /><sup>#1</sup></td>
 </tr>
 
 <tr valign="top">
-    <td align="right">an_password:<br /><?php echo (isset($mconfig->an_password)) ? '<font color=green>'.get_string('ok').'</font>' : ''; ?></td>
+    <td align="right">an_password:<br /><?php echo (isset($mconfig->an_password)) ? '<span style="color:green">'.get_string('ok').'</span>' : ''; ?></td>
     <td><?php print_string("anpassword", "enrol_authorize") ?><br /><input type="text" name="an_password" size="26" value="" /><sup>#2</sup></td>
 </tr>
 
 <tr valign="top">
     <td align="right">delete_current:</td>
     <td><?php print_checkbox('delete_current', '1', !empty($frm->delete_current)) ?> <br />
-        <?php print_string("deletecheck", "moodle", get_string('oldpassword')) ?><br /><hr size="1" width="100%" noshade /></td>
+        <?php print_string("deletecheck", "moodle", get_string('oldpassword')) ?><br /><hr /></td>
 </tr>
 
 <tr valign="top">
@@ -148,23 +148,27 @@ if (!isset($frm->acceptechecktypes)) {
     foreach ($allpaymentmethods as $key) {
         if ($key == AN_METHOD_CC) {
             print_checkbox('acceptmethods[]', AN_METHOD_CC, in_array(AN_METHOD_CC, $paymentmethodsenabled), get_string('method'.AN_METHOD_CC,'enrol_authorize'));
-            echo("<blockquote>");
+            echo("<ul>"); // blockquote breaks <span> and <br> tags 
             $acceptedccs = array_keys(get_list_of_creditcards());
             $allccs = get_list_of_creditcards(true);
             foreach ($allccs as $key => $val) {
-                print_checkbox('acceptccs[]', $key, in_array($key, $acceptedccs), $val); echo "<br />\n";
+                echo "<li>";
+                print_checkbox('acceptccs[]', $key, in_array($key, $acceptedccs), $val);
+                echo "</li>";
             }
-            echo("</blockquote>");
+            echo("</ul>");
         }
         elseif ($key == AN_METHOD_ECHECK) {
             print_checkbox('acceptmethods[]', AN_METHOD_ECHECK, in_array(AN_METHOD_ECHECK, $paymentmethodsenabled), get_string('method'.AN_METHOD_ECHECK,'enrol_authorize'));
-            echo("<blockquote>");
+            echo("<ul>"); // blockquote breaks <span> and <br> tags 
             $echecktypesenabled = get_list_of_bank_account_types();
             $allechecktypes = get_list_of_bank_account_types(true);
             foreach ($allechecktypes as $key) {
-                print_checkbox('acceptechecktypes[]', $key, in_array($key, $echecktypesenabled), get_string('echeck'.strtolower($key),'enrol_authorize')); echo "<br />\n";
+                echo "<li>";
+                print_checkbox('acceptechecktypes[]', $key, in_array($key, $echecktypesenabled), get_string('echeck'.strtolower($key),'enrol_authorize'));
+                echo "</li>";
             }
-            echo("</blockquote>");
+            echo("</ul>");
         }
     }
     ?><br /></td>

@@ -1,10 +1,10 @@
-<table cellspacing="0" cellpadding="5" border="0" align="center">
+<table cellspacing="0" cellpadding="5" border="0" class="boxaligncenter">
 <tr>
 <th colspan="2" scope="col">
     <?php print_string("server_settings", "enrol_database") ?>
 </th>
 </tr>
-<tr valign="top">
+<tr>
     <td align="right">enrol_dbtype:</td>
     <td>
     <?php  
@@ -24,7 +24,7 @@
     </td>
 </tr>
 
-<tr valign="top">
+<tr>
     <td align="right">enrol_dbhost:</td>
     <td>
     <?php 
@@ -39,7 +39,7 @@
     </td>
 </tr>
 
-<tr valign="top">
+<tr>
     <td align="right">enrol_dbuser:</td>
     <td>
         <input size="15" type="text" name="enrol_dbuser" value="<?php echo $frm->enrol_dbuser ?>" />
@@ -49,7 +49,7 @@
     </td>
 </tr>
 
-<tr valign="top">
+<tr>
     <td align="right">enrol_dbpass:</td>
     <td>
         <input size="15" type="text" name="enrol_dbpass" value="<?php echo $frm->enrol_dbpass ?>" />
@@ -59,7 +59,7 @@
     </td>
 </tr>
 
-<tr valign="top">
+<tr>
     <td align="right">enrol_dbname:</td>
     <td>
         <input size="15" type="text" name="enrol_dbname" value="<?php echo $frm->enrol_dbname ?>" />
@@ -69,7 +69,7 @@
     </td>
 </tr>
 
-<tr valign="top">
+<tr>
     <td align="right">enrol_dbtable:</td>
     <td>
         <input size="15" type="text" name="enrol_dbtable" value="<?php echo $frm->enrol_dbtable ?>" />
@@ -78,10 +78,12 @@
     <?php  print_string("dbtable","enrol_database") ?>
     </td>
 </tr>
-<th colspan="2" scope="col">
-    <?php print_string("field_mapping", "enrol_database") ?>
-</th>
-<tr valign="top">
+<tr>
+    <th colspan="2" scope="col">
+        <?php print_string("field_mapping", "enrol_database") ?>
+    </th>
+</tr>
+<tr>
     <td align="right">enrol_localcoursefield:</td>
     <td>
         <input size="15" type="text" name="enrol_localcoursefield" value="<?php echo $frm->enrol_localcoursefield ?>" />
@@ -91,7 +93,7 @@
     </td>
 </tr>
 
-<tr valign="top">
+<tr>
     <td align="right">enrol_localuserfield:</td>
     <td>
         <input size="15" type="text" name="enrol_localuserfield" value="<?php echo $frm->enrol_localuserfield ?>" />
@@ -101,7 +103,7 @@
     </td>
 </tr>
 
-<tr valign="top">
+<tr>
     <td align="right">enrol_db_localrolefield:</td>
     <td>
         <input size="15" type="text" name="enrol_db_localrolefield" value="<?php echo $frm->enrol_db_localrolefield ?>" />
@@ -111,7 +113,7 @@
     </td>
 </tr>
 
-<tr valign="top">
+<tr>
     <td align="right">enrol_remotecoursefield:</td>
     <td>
         <input size="15" type="text" name="enrol_remotecoursefield" value="<?php echo $frm->enrol_remotecoursefield ?>" />
@@ -121,7 +123,7 @@
     </td>
 </tr>
 
-<tr valign="top">
+<tr>
     <td align="right">enrol_remoteuserfield:</td>
     <td>
         <input size="15" type="text" name="enrol_remoteuserfield" value="<?php echo $frm->enrol_remoteuserfield ?>" />
@@ -131,7 +133,7 @@
     </td>
 </tr>
 
-<tr valign="top">
+<tr>
     <td align="right">enrol_db_remoterolefield:</td>
     <td>
         <input size="15" type="text" name="enrol_db_remoterolefield" value="<?php echo $frm->enrol_db_remoterolefield ?>" />
@@ -146,7 +148,7 @@
         <?php print_string('roles', 'role') ?>
    </th>
 </tr>
-<tr valign="top">
+<tr>
     <td align="right">enrol_db_defaultcourseroleid:</td>
     <td>
     <?php
@@ -168,7 +170,7 @@
         <?php print_string("enrol_database_autocreation_settings", "enrol_database") ?>
    </th>
 </tr>
-<tr valign="top">
+<tr>
     <td align="right">enrol_db_autocreate:</td>
     <td>
     <?php
@@ -180,7 +182,7 @@
     <?php  print_string("autocreate","enrol_database") ?>
     </td>
 </tr>
-<tr valign="top">
+<tr>
         <td align="right">enrol_db_category:</td>
         <td>
     <?php
@@ -196,18 +198,18 @@
     </td>
 </tr>
 
-<tr valign="top">
-        <td align="right">enrol_db_template:</td>
+<tr>
+    <td align="right">enrol_db_template:</td>
         <td>
-    <input name="enrol_db_template" type="text" size="30" value="<?php echo $frm->enrol_db_template?>">
+    <input name="enrol_db_template" type="text" size="30" value="<?php echo $frm->enrol_db_template?>" />
     <?php  if (isset($err["enrol_db_template"])) formerr($err["enrol_db_template"]); ?>
     </td><td>
     <?php  print_string("template","enrol_database") ?>
     </td>
 </tr>
-
-<td colspan="2">
-    <?php print_string("general_options", "enrol_database") ?>
-</td>
-
+<tr>
+    <td colspan="2">
+        <?php print_string("general_options", "enrol_database") ?>
+    </td>
+</tr>
 </table>

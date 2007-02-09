@@ -11,7 +11,7 @@ $string['createnewcourses'] = 'Create new (hidden) courses if not found in Moodl
 $string['createnewusers'] = 'Create user accounts for users not yet registered in Moodle';
 $string['cronfrequency'] = 'Frequency of processing';
 $string['deleteusers'] = 'Delete user accounts when specified in IMS data';
-$string['description'] = 'This method will repeatedly check for and process a specially-formatted text file in the location that you specify.  The file must follow the <a href=\'../help.php?module=enrol/imsenterprise&file=formatoverview.html\' target=\'_blank\'>IMS Enterprise specifications</a> containing person, group, and membership XML elements.';
+$string['description'] = 'This method will repeatedly check for and process a specially-formatted text file in the location that you specify.  The file must follow the <a href=\'../help.php?module=enrol/imsenterprise&amp;file=formatoverview.html\'>IMS Enterprise specifications</a> containing person, group, and membership XML elements.';
 $string['doitnow'] = 'perform an IMS Enterprise import right now';
 $string['enrolname'] = 'IMS Enterprise file';
 $string['filelockedmail'] = 'The text file you are using for IMS-file-based enrolments ($a) can not be deleted by the cron process.  This usually means the permissions are wrong on it.  Please fix the permissions so that Moodle can delete the file, otherwise it might be processed repeatedly.';
