@@ -47,7 +47,7 @@ class auth_plugin_ldap {
      */
     function user_login($username, $password) {
         if (! function_exists('ldap_bind')) {
-            print_error('auth_ldapnotinstalled','mnet');
+            print_error('auth_ldapnotinstalled','auth');
             return false;
         }
 
