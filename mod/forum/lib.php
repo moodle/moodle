@@ -1148,7 +1148,7 @@ function forum_get_readable_forums($userid, $courseid=0) {
 
     $readableforums = array();
     
-    foreach($courses as $course) {
+    foreach ($courses as $course) {
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         
         if (has_capability('moodle/course:viewhiddenactivities', $coursecontext)) {
@@ -1173,32 +1173,32 @@ function forum_get_readable_forums($userid, $courseid=0) {
                                 ORDER BY f.name ASC";
         
         if ($forums = get_records_sql($selectforums)) {
-            
+
             $group = user_group($course->id, $userid);
-            
+
             foreach ($forums as $forum) {
                 $forumcontext = get_context_instance(CONTEXT_MODULE, $forum->cmid);
-            
-                // Evaluate groupmode.
-                $cm = new object;
-                $cm->id = $forum->cmid;
-                $cm->groupmode = $forum->cmgroupmode;
-                $forum->cmgroupmode = groupmode($course, $cm);
-                
-                if ($forum->cmgroupmode == SEPARATEGROUPS
-                        && !has_capability('moodle/site:accessallgroups', $forumcontext)) {
-                    $forum->accessallgroups = false;
-                    $forum->accessgroup = $group->id;  // The user can only access
-                                                       // discussions for this group.
-                } else {
-                    $forum->accessallgroups = true;
-                }
 
                 if (has_capability('mod/forum:viewdiscussion', $forumcontext)) {
 
+                    // Evaluate groupmode.
+                    $cm = new object;
+                    $cm->id = $forum->cmid;
+                    $cm->groupmode = $forum->cmgroupmode;
+                    $forum->cmgroupmode = groupmode($course, $cm);
+
+                    if ($forum->cmgroupmode == SEPARATEGROUPS
+                            && !has_capability('moodle/site:accessallgroups', $forumcontext)) {
+                        $forum->accessallgroups = false;
+                        $forum->accessgroup = $group->id;  // The user can only access
+                                                           // discussions for this group.
+                    } else {
+                        $forum->accessallgroups = true;
+                    }
+
                     $forum->viewhiddentimedposts
                         = has_capability('mod/forum:viewhiddentimedposts', $forumcontext);
-                    
+
                     if ($forum->type == 'qanda'
                             && !has_capability('mod/forum:viewqandawithoutposting', $forumcontext)) {
 
@@ -3147,9 +3147,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 /// and the current user is a guest.
 
     // TODO: Add group mode in there, to test for visible group.
-    if (forum_user_can_post_discussion($forum, $currentgroup, $groupmode)
-            || (has_capability('moodle/legacy:guest', $context, NULL, false)
-            && $course->id != SITEID)) {
+    if (forum_user_can_post_discussion($forum, $currentgroup, $groupmode)) {
 
         echo '<div class="singlebutton forumaddnew">';
         echo "<form name=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
