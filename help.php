@@ -34,19 +34,21 @@ if (!empty($file)) {
     // Get the list of parent languages.
     if (empty($forcelang)) {
         $langs = array(current_language(), get_string('parentlanguage'), 'en_utf8');  // Fallback
-        // _local language packs take precedence
-        $xlangs = array();
-        foreach ($langs as $lang) {
-            if (!empty($lang)) {
-                $xlangs[] = $lang . '_local';
-                $xlangs[] = $lang;
-            }
-        }
-        $langs = $xlangs;
-        unset($xlangs);
     } else {
         $langs = array($forcelang);
     }
+    
+    // _local language packs take precedence with both forced language and non-forced language settings
+    $xlangs = array();
+    foreach ($langs as $lang) {
+        if (!empty($lang)) {
+            $xlangs[] = $lang . '_local';
+            $xlangs[] = $lang;
+        }
+    }
+    $langs = $xlangs;
+    unset($xlangs);
+
 
 // Define possible locations for help file similar to locations for language strings
 // Note: Always retain module directory as before
