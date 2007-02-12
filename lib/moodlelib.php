@@ -6647,5 +6647,37 @@ function is_enabled_enrol($enrol='') {
     return in_array($enrol, explode(',', $CFG->enrol_plugins_enabled));
 }
 
+/**
+ * This function will search for browser prefereed languages, setting Moodle
+ * to use the best one available if $SESSION->lang is undefined
+ */
+function setup_lang_from_browser() {
+
+    global $CFG, $SESSION;
+
+    if (!empty($SESSION->lang)) {                   // Lang is defined in session, nothing to do
+        return;
+    }
+
+    if (!isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) { // There isn't list of browser langs, nothing to do
+        return;
+    }
+
+/// Extract and clean langs from headers
+    $langs = strtolower(clean_param($_SERVER['HTTP_ACCEPT_LANGUAGE'], PARAM_CLEAN)); /// Get String with basic clean
+    $langs = explode(',', $langs); /// Convert to array
+    $langs = preg_replace('/([a-z]{2,3}).*/','$1_utf8', $langs); ///Convert to Moodle langs
+    $langs = array_unique($langs); /// Avoid duplicates
+
+/// Look for such langs under standard locations
+    foreach ($langs as $lang) {
+        if (file_exists($CFG->dataroot .'/lang/'. $lang) or file_exists($CFG->dirroot .'/lang/'. $lang)) {
+            $SESSION->lang = $lang; /// Lang exists, set it in session 
+            break; /// We have finished. Go out
+        }
+    }
+    return;
+}
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>

@@ -569,7 +569,11 @@ global $HTTPSPAGEREQUIRED;
             $SESSION->lang = $lang.'_utf8';
         }
     }
+
+    setup_lang_from_browser();
+
     unset($lang);
+
     if (empty($CFG->lang)) {
         if (empty($SESSION->lang)) {
             $CFG->lang = 'en_utf8';
