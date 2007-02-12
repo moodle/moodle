@@ -55,7 +55,7 @@ function authorize_print_orders($courseid, $userid)
     $sql .= "ORDER BY c.sortorder, c.fullname";
     if ($popupcrs = get_records_sql_menu($sql)) {
         $popupcrs = array($SITE->id => $SITE->fullname) + $popupcrs;
-        echo "<table border='0' width='100%' cellspacing=0 cellpadding=3 class='generaltable generalbox'>";
+        echo "<table border='0' width='100%' cellspacing='0' cellpadding='3' class='generaltable generalbox'>";
         echo "<tr>";
         echo "<td width='5%' valign='top'>$strs->status: </td><td width='10%'>";
         popup_form($baseurl.'&amp;course='.$courseid.'&amp;status=',$statusmenu,'statusmenu',$status,'','','',false);
@@ -71,7 +71,7 @@ function authorize_print_orders($courseid, $userid)
         popup_form($baseurl.'&amp;status='.$status.'&amp;course=',$popupcrs,'coursesmenu',$courseid,'','','',false);echo"</td>\n";
         if (has_capability('enrol/authorize:uploadcsv', get_context_instance(CONTEXT_USER, $USER->id))) {
             echo "<form method='get' action='uploadcsv.php'>";
-            echo "<td rowspan=2 align='right' valign='middle' width='50%'><fieldset class=\"invisiblefieldset\"><input type='submit' value='".get_string('uploadcsv', 'enrol_authorize')."' /></fieldset></td>";
+            echo "<td rowspan='2' align='right' valign='middle' width='50%'><fieldset class=\"invisiblefieldset\"><input type='submit' value='".get_string('uploadcsv', 'enrol_authorize')."' /></fieldset></td>";
             echo "</form>";
         }
         else {
@@ -81,7 +81,7 @@ function authorize_print_orders($courseid, $userid)
 
         echo "<tr><td>$strs->search: </td>"; $searchmenu = array('id' => $authstrs->orderid, 'transid' => $authstrs->transid);
         echo "<form method='POST' action='index.php' autocomplete='off'>";
-        echo "<td colspan=3>"; choose_from_menu($searchmenu, 'searchtype', $searchtype, '');
+        echo "<td colspan='3'>"; choose_from_menu($searchmenu, 'searchtype', $searchtype, '');
         echo " = <fieldset class=\"invisiblefieldset\"><input type='text' size='14' name='idortransid' value='' /> ";
         echo "<input type='submit' value='$strs->search' /></fieldset></td>";
         echo "</form>";
@@ -254,7 +254,7 @@ function authorize_print_order_details($orderno)
         $table->data[] = array("<b>$authstrs->settlementdate:</b>", $settled ?
                                userdate($order->settletime) : $authstrs->notsettled);
     }
-    $table->data[] = array("&nbsp;", "<hr size='1' noshade>\n");
+    $table->data[] = array("&nbsp;", "<hr size='1' />\n");
 
     if (!empty($cmdcapture) and confirm_sesskey()) { // CAPTURE
         if (!in_array(ORDER_CAPTURE, $status->actions)) {
@@ -286,7 +286,7 @@ function authorize_print_order_details($orderno)
                         redirect("index.php?order=$orderno");
                     }
                     else {
-                        $table->data[] = array("<b><font color=red>$strs->error:</font></b>",
+                        $table->data[] = array("<b><font color='red'>$strs->error:</font></b>",
                         "Error while trying to enrol ".fullname($user)." in '$course->shortname'");
                     }
                 }
@@ -331,7 +331,7 @@ function authorize_print_order_details($orderno)
                 $table->data[] = array("<b>$strhowmuch</b>",
                     "<input type='hidden' name='confirm' value='1' />
                      <input type='text' size='5' name='amount' value='$amount' />
-                     $strcanbecredit<br /><input type='submit' name='".ORDER_REFUND."' value='$authstrs->refund'>");
+                     $strcanbecredit<br /><input type='submit' name='".ORDER_REFUND."' value='$authstrs->refund' />");
             }
             else {
                 $extra->amount = $amount;
@@ -340,7 +340,7 @@ function authorize_print_order_details($orderno)
                 if (AN_APPROVED == $success || AN_REVIEW == $success) {
                     if (empty($CFG->an_test)) {
                         if (empty($extra->id)) {
-                            $table->data[] = array("<b><font color=red>$strs->error:</font></b>", 'insert record error');
+                            $table->data[] = array("<b><font color='red'>$strs->error:</font></b>", 'insert record error');
                         }
                         else {
                             if (!empty($unenrol)) {
@@ -355,7 +355,7 @@ function authorize_print_order_details($orderno)
                     }
                 }
                 else {
-                    $table->data[] = array("<b><font color=red>$strs->error:</font></b>", $message);
+                    $table->data[] = array("<b><font color='red'>$strs->error:</font></b>", $message);
                 }
             }
         }
@@ -374,7 +374,7 @@ function authorize_print_order_details($orderno)
                 $table->data[] = array("<b>$strs->confirm:</b>",
                     "$strvoidyes<br /><input type='hidden' name='".ORDER_VOID."' value='y' />
                      <input type='hidden' name='confirm' value='1' />
-                     <input type='submit' value='$authstrs->void'>
+                     <input type='submit' value='$authstrs->void' />
                      &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
             }
             else {
@@ -422,7 +422,7 @@ function authorize_print_order_details($orderno)
                         "$strsubvoidyes<br /><input type='hidden' name='".ORDER_VOID."' value='y' />
                          <input type='hidden' name='confirm' value='1' />
                          <input type='hidden' name='suborder' value='$suborderno' />
-                         <input type='submit' value='$authstrs->void'>
+                         <input type='submit' value='$authstrs->void' />
                          &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
                 }
                 else {
@@ -460,7 +460,7 @@ function authorize_print_order_details($orderno)
             $table->data[] = array("<b>$strs->confirm:</b>",
                 "<input type='hidden' name='".ORDER_DELETE."' value='y' />
                  <input type='hidden' name='confirm' value='1' />
-                 <input type='submit' value='$authstrs->delete'>
+                 <input type='submit' value='$authstrs->delete' />
                  &nbsp;&nbsp;&nbsp;&nbsp;<a href='index.php?order=$orderno'>$strs->no</a>");
         }
         else {
@@ -484,7 +484,7 @@ function authorize_print_order_details($orderno)
         }
         else {
             foreach ($status->actions as $value) {
-                $actions .= "<input type='submit' name='$value' value='{$authstrs->$value}'> ";
+                $actions .= "<input type='submit' name='$value' value='{$authstrs->$value}' /> ";
             }
         }
         $table->data[] = array("<b>$strs->action</b>", $actions);
