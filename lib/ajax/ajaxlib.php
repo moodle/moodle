@@ -4,7 +4,6 @@
  */
 
 
-
 /**
  * Used to include JavaScript libraries.
  *
@@ -17,44 +16,33 @@
  * @param $lib - string or array of strings
  *               string(s) should be the shortname for the library or the
  *               full path to the library file.
- *        $add - 1 to return the libraries in lib
- *               not already loaded.
  * @return string or false or nothing.
  */
-function require_js($lib='', $add = 0) {
+function require_js($lib='') {
     global $CFG;
     static $loadlibs = array();
 
     if (!ajaxenabled()) {
-        return false;
+        //return false;
     }
 
     if (!empty($lib)) {
         // Add the lib to the list of libs to be loaded, if it isn't already
         // in the list.
-        // if (is_array($lib)) {
-            // array_map('require_js', $lib);
-        // } else {
-        foreach ($lib as $lib1)  {
-            // $libpath = ajax_get_lib($lib);
-            $libpath = ajax_get_lib($lib1);
+        if (is_array($lib)) {
+            array_map('require_js', $lib);
+        } else {
+            $libpath = ajax_get_lib($lib);
             if (array_search($libpath, $loadlibs) === false) {
-                // array_push($loadlibs, $libpath);
-                // array_push($addedlibs, $libpath);
                 $loadlibs[] = $libpath;
-                $addedlibs[] = $libpath;
             }
         }
-    }
-    // } else {
-    if (empty($lib) || ((!empty($addedlibs)) && ($add != 0))) {
+    } else {
         // Return the html needed to load the JavaScript files defined in
         // our list of libs to be loaded.
         $output = '';
 
-        $thelibs = (!empty($addedlibs)) ? $addedlibs : $loadlibs;
-        // foreach ($loadlibs as $loadlib) {
-        foreach ($thelibs as $loadlib) {
+        foreach ($loadlibs as $loadlib) {
             $output .= '<script type="text/javascript" ';
             $output .= " src=\"$loadlib\"></script>\n";
             if ($loadlib == $CFG->wwwroot.'/lib/yui/logger/logger-min.js') {

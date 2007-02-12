@@ -1961,10 +1961,6 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     }
     $meta = $stylesheetshtml.$meta;
 
-
-/// Add the required JavaScript Libraries
-    $meta .= "\n".require_js();
-
         
 /// Add the meta page from the themes if any were requested
 
@@ -1997,6 +1993,9 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     $meta = $meta."\n".$metapage;
 
+
+/// Add the required JavaScript Libraries
+    $meta .= "\n".require_js();
 
 
     if ($navigation == 'home') {
