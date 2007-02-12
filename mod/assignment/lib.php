@@ -2387,6 +2387,7 @@ function assignment_upgrade_submodules() {
 }
 
 function assignment_print_overview($courses, &$htmlarray) {
+
     global $USER, $CFG;
 
     if (empty($courses) || !is_array($courses) || count($courses) == 0) {
@@ -2439,7 +2440,11 @@ function assignment_print_overview($courses, &$htmlarray) {
             $submissions = 0; // init
             if ($students = get_users_by_capability($context, 'mod/assignment:submit')) {
                 foreach ($students as $student) {
-                    if (get_record('assignment_submissions', 'assignment', $assignment->id, 'userid', $student->id)) {
+                    if (get_records_sql("SELECT id,id FROM {$CFG->prefix}assignment_submissions
+                                         WHERE assignment = $assignment->id AND
+                                               userid = $student->id AND
+                                               teacher = 0 AND
+                                               timemarked = 0")) {
                         $submissions++;  
                     }
                 }
