@@ -17,7 +17,7 @@ $string['admindirsettingsub'] = 'Muy pocos servidores web usan /admin como URL e
     de las páginas de administración de Moodle. Usted puede corregir esto renombrando el directorio admin 
     en su instalación, y poniendo aquí ese nuevo nombre. Por ejemplo: <br /> <br /><b>moodleadmin</b><br /> <br />
     Así se corregirán los enlaces admin en Moodle.';
-$string['bypassed'] = 'Evitado';
+$string['bypassed'] = 'Bypassed';
 $string['cannotcreatelangdir'] = 'No se puede crear el directorio lang.';
 $string['cannotcreatetempdir'] = 'No se puede crear el directorio temp.';
 $string['cannotdownloadcomponents'] = 'No se puede descargar componentes.';
@@ -27,10 +27,10 @@ $string['cannotsavemd5file'] = 'No se puede guardar el archivo md5.';
 $string['cannotsavezipfile'] = 'No se puede guardar el archivo ZIP.';
 $string['cannotunzipfile'] = 'No se puede descomprimir el archivo.';
 $string['caution'] = 'Precaución';
-$string['check'] = 'Revisar';
+$string['check'] = 'Check';
 $string['chooselanguagehead'] = 'Seleccionar idioma';
 $string['chooselanguagesub'] = 'Por favor, seleccione un idioma para el proceso de instalación.';
-$string['closewindow'] = 'Cerrar esta ventana';
+$string['closewindow'] = 'Close this window';
 $string['compatibilitysettingshead'] = 'Comprobando sus ajustes PHP...';
 $string['compatibilitysettingssub'] = 'Su servidor debería pasar todos estas comprobaciones para que Moodle pueda funcionar correctamente.';
 $string['componentisuptodate'] = 'El componente está actualizado.';
@@ -38,7 +38,7 @@ $string['configfilenotwritten'] = 'El script instalador no ha podido crear autom
 $string['configfilewritten'] = 'config.php se ha creado con éxito';
 $string['configurationcompletehead'] = 'Configuración completa';
 $string['configurationcompletesub'] = 'Moodle ha creado su fichero de configuración';
-$string['continue'] = 'Continuar';
+$string['continue'] = 'Continue';
 $string['database'] = 'Base de datos';
 $string['databasecreationsettingshead'] = 'Ahora necesita configurar los ajustes de la base de datos donde se almacenarán la mayoría de los datos de Moodle. El instalador creará la base de datos con los ajustes especificados más abajo.';
 $string['databasecreationsettingssub'] = '<b>Tipo:</b> el valor por defecto es \"mysql\"<br />
@@ -145,14 +145,14 @@ $string['gdversionhelp'] = '<p>Su servidor parece no tener el GD instalado.</p>
 <p>En un entorno Windows, puede editar php.ini y quitar los comentarios de la línea referida a php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Manejo Inseguro de Ajustes Globales';
 $string['globalsquoteserror'] = 'Fije sus ajustes PHP: deshabilite register_globals y/o habilite magic_quotes_gpc';
-$string['help'] = 'Ayuda';
+$string['help'] = 'Help';
 $string['iconvrecommended'] = 'La instalación de la librería opcional ICONV es muy recomendable para mejorar el rendimiento del sitio, especialmente si su sitio está soportando idiomas no latinos.';
-$string['info'] = 'Información';
+$string['info'] = 'Information';
 $string['installation'] = 'Instalación';
 $string['invalidmd5'] = 'md5 no válido';
 $string['langdownloaderror'] = 'El idioma \"$a\" no pudo ser instalado. El proceso de instalación continuará en inglés.';
 $string['langdownloadok'] = 'El idioma \"$a\" ha sido instalado correctamente. El proceso de instalación continuará en este idioma.';
-$string['language'] = 'Idioma';
+$string['language'] = 'Language';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Debe estar desactivado';
 $string['mbstringrecommended'] = 'La instalación de la librería opcional MBSTRING es muy recomendable para mejorar el rendimiento del sitio, especialmente si su sitio está soportando idiomas no latinos.';
@@ -175,7 +175,7 @@ a, digamos, 16M. Si no lo tiene, pida a su administrador que lo haga por usted.<
 (podrá ver los errores cuando mire las páginas) de modo que tendrá que eliminar el archivo .htaccess.</p></li>
 </ol>';
 $string['missingrequiredfield'] = 'Falta algún campo necesario';
-$string['moodledocslink'] = 'Moodle Docs para esta página';
+$string['moodledocslink'] = 'Moodle Docs for this page';
 $string['mssql'] = 'SQL*Server (mssql)';
 $string['mssql_n'] = 'SQL*Server con UTF-8 (mssql_n)';
 $string['mssqlextensionisnotpresentinphp'] = 'PHP no se ha configurado adecuadamente con la extensión MSSQL de modo que pueda comunicarse con el SQL*Server. Por favor, compruebe el archivo php.ini o vuelva a compilar PHP.';
@@ -183,15 +183,15 @@ $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'En cualquier caso, si su sitio únicamente está utilizando idiomas ISO-8859-1 (latin), puede continuar con su versión de MySQL actual (4.1.12 o superior).';
 $string['mysql416required'] = 'MySQL 4.1.16 es la versión mínima requerida para trabajar con Moodle 1.6 y garantizar que toda la información podrá ser convertida a UTF-8 en el futuro.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP no ha sido adecuadamente configurado con la extensión MySQL de modo que pueda comunicarse con MySQL. Por favor, compruebe el archivo php.ini o recompile PHP.';
-$string['name'] = 'Nombre';
-$string['next'] = 'Siguiente';
+$string['name'] = 'Name';
+$string['next'] = 'Next';
 $string['oci8po'] = 'Oracle (oci8po)';
 $string['ociextensionisnotpresentinphp'] = 'PHP no ha sido adecuadamente configurado con la extensión OCI8 de modo que pueda comunicarse con Oracle. Por favor, compruebe el archivo php.ini o vuelva a compilar PHP.';
 $string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
 $string['odbcextensionisnotpresentinphp'] = 'PHP no ha sido adecuadamente configurado con la extensión ODBC de modo que pueda comunicarse con SQL*Server. Por favor, compruebe el archivo php.ini o vuelva a compilar PHP.';
 $string['ok'] = 'OK';
 $string['pass'] = 'Correcto';
-$string['password'] = 'Contraseña';
+$string['password'] = 'Password';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP no ha sido adecuadamente configurado con la extensión PGSQL de modo que pueda comunicarse con PostgreSQL. Por favor, compruebe el archivo php.ini o vuelva a compilar PHP.';
 $string['php50restricted'] = 'PHP 5.0.x tiene varios problemas conocidos; por favor, actualícese a la versión 5.1.x o utilice las versiones 4.3.x o 4.4.x';
 $string['phpversion'] = 'Versión PHP';
@@ -200,21 +200,21 @@ $string['phpversionhelp'] = '<p>Moodle requiere una versión de PHP 4.1.0 o supe
 <p>Su versión es $a</p>
 <p>Debe actualizar PHP o acudir a otro servidor con una versión más reciente de PHP</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
-$string['previous'] = 'Anterior';
+$string['previous'] = 'Previous';
 $string['remotedownloadnotallowed'] = 'No está permitido descargar los componentes a su servidor (allow_url_fopen está deshabilitado).<br /><br />Debe descargar el archivo <a href=\"$a->url\">$a->url</a> manualmente, y copiarlo a \"$a->dest\"';
-$string['report'] = 'Informe';
-$string['restricted'] = 'Restringido';
+$string['report'] = 'Report';
+$string['restricted'] = 'Restricted';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle puede tener problemas con \'safe mode\' activado';
 $string['sessionautostart'] = 'Autocomienzo de sesión';
 $string['sessionautostarterror'] = 'Deb e estar desactivado';
 $string['skipdbencodingtest'] = 'Pasar por alto el test de decodificación de la BD';
-$string['status'] = 'Estado';
+$string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Español - Internacional';
 $string['unicoderecommended'] = 'Se recomienda almacenar todos los datos en Unicode (UTF-8). Las instalaciones nuevas deberían ejecutarse en bases de datos cuyo juego de caracteres por defecto fuera Unicode. Si está realizando una actualización, debería llevar a cabo el proceso de migración UTF-8 (vea al respecto la página de Administración).';
 $string['unicoderequired'] = 'Es necesario que almacene todos sus datos en formato Unicode (UTF-8). Las instalaciones nuevas deberían ejecutarse en bases de datos cuyo juego de caracteres por defecto fuera Unicode. Si está realizando una actualización, debería llevar a cabo el proceso de migración UTF-8 (vea al respecto la página de Administración).';
-$string['user'] = 'Usuario';
+$string['user'] = 'User';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'Si está viendo esta página es porque ha podido ejecutar el paquete
     <strong>$a->packname $a->packversion</strong> en su ordenador. !Enhorabuena!';
