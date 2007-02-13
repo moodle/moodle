@@ -2218,7 +2218,14 @@ function create_user_record($username, $password, $auth='') {
     $newuser->auth = (empty($auth)) ? $CFG->auth : $auth;
     $newuser->username = $username;
     update_internal_user_password($newuser, $password, false);
-    $newuser->lang = $CFG->lang;
+    
+    // fix for MDL-8480
+    // user CFG lang for user if $newuser->lang is empty
+    // or $user->lang is not an installed language
+    $sitelangs = array_keys(get_list_of_languages());
+    if (empty($newuser->lang) || !in_array($newuser->lang, $sitelangs)) {
+        $newuser -> lang = $CFG->lang;
+    }
     $newuser->confirmed = 1;
     $newuser->lastip = getremoteaddr();
     $newuser->timemodified = time();
