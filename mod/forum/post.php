@@ -673,9 +673,11 @@
         error("You cannot start a new discussion in this forum");
     }
 
-    if ($forum->type == 'qanda' && !has_capability('mod/forum:viewqandawithoutposting', $modcontext) &&
-                !forum_user_has_posted($forum->id, $discussion->id, $USER->id)) {
-        notify(get_string('qandanotify', 'forum'));
+    if ($forum->type == 'qanda'
+                && !has_capability('mod/forum:viewqandawithoutposting', $modcontext)
+                && !empty($discussion->id)
+                && !forum_user_has_posted($forum->id, $discussion->id, $USER->id)) {
+        notify(get_string('qandanotify','forum'));
     }
 
     forum_check_throttling($forum);
