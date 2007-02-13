@@ -2059,7 +2059,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         $direction = ' dir="ltr"';
     }
     //Accessibility: added the 'lang' attribute to $direction, used in theme <html> tag.
-    $language = str_replace('_utf8','',$CFG->lang);
+    $language = str_replace('_', '-', str_replace('_utf8', '', current_language()));
     $direction .= ' lang="'.$language.'" xml:lang="'.$language.'"';
 
     if ($cache) {  // Allow caching on "back" (but not on normal clicks)
