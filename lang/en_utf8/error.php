@@ -46,6 +46,7 @@ $string['modulerequirementsnotmet'] = 'Module \"$a->modulename\" ($a->modulevers
 $string['mustbeteacher'] = 'You must be a teacher to look at this page';
 $string['nocontext'] = 'Sorry, but that course is not a valid context';
 $string['noinstances'] = 'There are no instances of $a in this course!';
+$string['nologinas'] = 'You are not allowed to login as that user';
 $string['nonmeaningfulcontent'] = 'Non meaningful content';
 $string['noparticipatorycms'] = 'Sorry, but you have no participatory course modules to report on.';
 $string['nopermissions'] = 'Sorry, but you do not currently have permissions to do that ($a)';

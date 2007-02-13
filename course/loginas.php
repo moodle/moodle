@@ -53,6 +53,9 @@
         if (!has_capability('moodle/course:view', $context, $userid, false)) {
             error('This user is not in this course!');
         }
+        if (has_capability('moodle/site:doanything', $context, $userid, false)) {
+            print_error('nologinas');
+        }
     }
 
 /// User must have permissions

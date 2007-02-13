@@ -397,7 +397,8 @@
         }
     }
 
-    if ($USER->id != $user->id  && has_capability('moodle/user:loginas', $coursecontext))  {
+    if ($USER->id != $user->id  && has_capability('moodle/user:loginas', $coursecontext) &&
+                                 ! has_capability('moodle/site:doanything', $coursecontext, $user->id, false)) {
         echo '<form action="'.$CFG->wwwroot.'/course/loginas.php" method="get">';
         echo "<fieldset class='invisiblefieldset'>";
         echo '<input type="hidden" name="id" value="'.$course->id.'" />';
