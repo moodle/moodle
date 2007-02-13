@@ -156,10 +156,10 @@ function _postprocess(&$resource) {
         $resource->options = '';
 
     } else {
-        if ($resource->framepage) {
-            $resource->options = 'frame';
-        } else {
+        if (empty($resource->framepage)) {
             $resource->options = '';
+        } else {
+            $resource->options = 'frame';
         }
         unset($resource->framepage);
         $resource->popup = '';
