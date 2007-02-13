@@ -53,7 +53,9 @@
     echo '<td valign="top" id="middle-column">';
 
 /// The main overview in the middle of the page
-    $courses = get_my_courses($USER->id);
+    
+    // limits the number of courses showing up
+    $courses = get_my_courses($USER->id, 'visible DESC,sortorder ASC', '*', false, 21);
     $site = get_site();
     $course = $site; //just in case we need the old global $course hack
 
@@ -74,7 +76,11 @@
     } else {
         print_overview($courses);
     }
-
+    
+    // if more than 20 courses
+    if (count($courses) > 20) {
+        echo '<br />...';  
+    }
     
     echo '</td>';
 
