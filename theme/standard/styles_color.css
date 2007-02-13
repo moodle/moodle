@@ -64,6 +64,7 @@ img.grouppicture {
 
 body {
   background-color:#FAFAFA;
+  color:#000;
 }
 
 th.header,
@@ -77,7 +78,8 @@ div.header {
 }
 
 table.formtable tbody th {
-  background: none;
+  background-color: transparent;
+  background-image: none;
 }
 
 .highlight {
