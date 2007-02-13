@@ -33,10 +33,10 @@ function _postprocess(&$resource) {
         $resource->options = '';
 
     } else {
-        if ($resource->blockdisplay) {
-            $resource->options = 'showblocks';
-        } else {
+        if (empty($resource->blockdisplay)) {
             $resource->options = '';
+        } else {
+            $resource->options = 'showblocks';
         }
         unset($resource->blockdisplay);
         $resource->popup = '';
