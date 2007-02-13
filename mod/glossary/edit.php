@@ -33,8 +33,16 @@ if (! $glossary = get_record("glossary", "id", $cm->instance)) {
     error("Course module is incorrect");
 }
 
+
 if ($e) { // if entry is specified
-    require_capability('mod/glossary:manageentries', $context);
+    if (!$entry  = get_record("glossary_entries", "id", $e)) {
+        error("Incorrect entry id");
+    }
+    $ineditperiod = ((time() - $entry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
+    if (!has_capability('mod/glossary:manageentries', $context) and !($entry->userid == $USER->id and ($ineditperiod and has_capability('mod/glossary:write', $context)))) {
+        //expired edit time is the most probable cause here
+        error(get_string('erredittimeexpired', 'glossary'), "view.php?id=$cm->id&amp;mode=entry&amp;hook=$e");
+    }
 } else { // new entry
     require_capability('mod/glossary:write', $context);
 }
