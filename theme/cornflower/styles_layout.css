@@ -31,6 +31,12 @@
  *** Core
  ***/
 
+body {
+  margin:0px;
+  
+  }
+  
+  
 h1.main,
 h2.main,
 h3.main,
@@ -46,23 +52,23 @@ h6.main {
   margin-top: 8px;
 }
 
-
-#layout-table #middle-column
-
+#layout-table #middle-column,
 {
   vertical-align:top;
 }
 
 #layout-table #left-column
 {
-  vertical-align:top;
-  padding-left:5px;
-}
+ padding-left:5px;
+   vertical-align:top;
 
+  
+  }
 #layout-table #right-column {
-  vertical-align:top;
   padding-right:5px;
-}
+  vertical-align:top;
+
+  }
 
 
 #layout-table #middle-column {
