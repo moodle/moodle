@@ -1418,7 +1418,7 @@ class assignment_base {
             $strsubmitted  = get_string('submitted', 'assignment');
 
             foreach ($teachers as $teacher) {
-                unset($info);
+                $info = new object();
                 $info->username = fullname($user);
                 $info->assignment = format_string($this->assignment->name,true);
                 $info->url = $CFG->wwwroot.'/mod/assignment/submissions.php?id='.$this->cm->id;
@@ -1580,6 +1580,7 @@ class assignment_base {
     function user_outline($user) {
         if ($submission = $this->get_submission($user->id)) {
 
+            $result = new object();
             $result->info = get_string('grade').': '.$this->display_grade($submission->grade);
             $result->time = $submission->timemodified;
             return $result;
@@ -1757,6 +1758,10 @@ function assignment_cron () {
 
     if ($submissions = assignment_get_unmailed_submissions($starttime, $endtime)) {
 
+        $CFG->enablerecordcache = true;      // We want all the caching we can get
+
+        $realuser = clone($USER);
+
         foreach ($submissions as $key => $submission) {
             if (! set_field("assignment_submissions", "mailed", "1", "id", "$submission->id")) {
                 echo "Could not update the mailed field for id $submission->id.  Not mailed.\n";
@@ -1775,13 +1780,16 @@ function assignment_cron () {
                 continue;
             }
 
-            $USER->lang = $user->lang;
-
             if (! $course = get_record("course", "id", "$submission->course")) {
                 echo "Could not find course $submission->course\n";
                 continue;
             }
-            
+
+            /// Override the language and timezone of the "current" user, so that
+            /// mail is customised for the receiver.
+            $USER = $user;
+            course_setup($course);
+
             if (!has_capability('moodle/course:view', get_context_instance(CONTEXT_COURSE, $submission->course), $user->id)) {
                 echo fullname($user)." not an active participant in $course->shortname\n";
                 continue;
@@ -1804,7 +1812,7 @@ function assignment_cron () {
             $strassignments = get_string("modulenameplural", "assignment");
             $strassignment  = get_string("modulename", "assignment");
 
-            unset($assignmentinfo);
+            $assignmentinfo = new object();
             $assignmentinfo->teacher = fullname($teacher);
             $assignmentinfo->assignment = format_string($submission->name,true);
             $assignmentinfo->url = "$CFG->wwwroot/mod/assignment/view.php?id=$mod->id";
@@ -1831,6 +1839,10 @@ function assignment_cron () {
                 echo "Error: assignment cron: Could not send out mail for id $submission->id to user $user->id ($user->email)\n";
             }
         }
+
+        $USER = $realuser;
+        course_setup(SITEID); // reset cron user language, theme and timezone settings
+
     }
 
     return true;
@@ -1853,6 +1865,8 @@ function assignment_grades($assignmentid) {
 
     $grades = get_records_menu('assignment_submissions', 'assignment',
                                $assignment->id, '', 'userid,grade');
+
+    $return = new object();
 
     if ($assignment->grade > 0) {
         if ($grades) {
