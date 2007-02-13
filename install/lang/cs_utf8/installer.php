@@ -52,6 +52,12 @@ $string['databasesettingssub'] = '<b>Typ:</b> mysql nebo postgres7<br />
 <b>Uživatel:</b> uživatelské jméno účtu pro přístup k databázi<br />
 <b>Heslo:</b> heslo k tomuto účtu<br />
 <b>Předpona tabulek:</b> volitelná předpona, která se vloží před názvy všech tabulek (umožňuje používat jednu databázi pro více instalací Moodlu)';
+$string['databasesettingssub_mssql'] = '<b>Typ:</b> SQL*Server (bez UTF-8) <b><font color=\"red\">Jen pro experimentování! (není určeno pro produkční servery)</font></b><br />
+<b>Hostitel (Host):</b> např. localhost nebo db.naseskola.cz<br />
+<b>Název (Name):</b> název databáze, např. moodle<br />
+<b>Uživatel (User):</b> uživatel oprávněný pro práci s databází<br />
+<b>Heslo (Password):</b> heslo pro uživatele<br />
+<b>Předpona (Tables Prefix):</b> jednotná předpona názvů všech tabulek, např. mdl_ (mandatory)';
 $string['dataroot'] = 'Datový adresář';
 $string['datarooterror'] = 'Zadaný datový adresář se nepodařilo nalézt nebo vytvořit. Buď opravte zadanou cestu, nebo vytvořte adresář ručně.';
 $string['dbconnectionerror'] = 'Nepodařilo se připojit k databázi, kterou jste zadali. Zkontrolujte prosím nastavení databáze.';
