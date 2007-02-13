@@ -3178,7 +3178,8 @@ has_capability('moodle/course:viewhiddenuserfields', $context)) {
     if (has_capability('moodle/role:assign', $context, NULL)) {  // Includes admins
         $output .= '<a href="'. $CFG->wwwroot .'/course/unenrol.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->unenrol .'</a><br />';
     }
-    if ($USER->id != $user->id && has_capability('moodle/user:loginas', $context))  {
+    if ($USER->id != $user->id && has_capability('moodle/user:loginas', $context) &&
+                                ! has_capability('moodle/site:doanything', $context, $user->id, false)) {
         $output .= '<a href="'. $CFG->wwwroot .'/course/loginas.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->loginas .'</a><br />';
     }
     $output .= '<a href="'. $CFG->wwwroot .'/user/view.php?id='. $user->id .'&amp;course='. $course->id .'">'. $string->fullprofile .'...</a>';

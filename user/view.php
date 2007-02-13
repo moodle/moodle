@@ -372,7 +372,8 @@
         }
     }
 
-    if ($USER->id != $user->id  && has_capability('moodle/user:loginas', $coursecontext))  {
+    if ($USER->id != $user->id  && has_capability('moodle/user:loginas', $coursecontext) &&
+                                 ! has_capability('moodle/site:doanything', $coursecontext, $user->id, false)) {
         echo '<td nowrap="nowrap"><form action="'.$CFG->wwwroot.'/course/loginas.php" method="get">';
         echo '<input type="hidden" name="id" value="'.$course->id.'" />';
         echo '<input type="hidden" name="user" value="'.$user->id.'" />';
