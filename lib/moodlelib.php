@@ -586,7 +586,7 @@ function set_config($name, $value, $plugin=NULL) {
             $config = new object();
             $config->plugin = addslashes($plugin);
             $config->name   = $name;
-            $config->value  = $value;
+            $config->value  = addslashes($value);
             return insert_record('config_plugins', $config);
         }
     }
