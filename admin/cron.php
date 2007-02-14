@@ -62,6 +62,9 @@
         @header('Content-Type: text/plain; charset='.current_charset());
     }
 
+/// increase memory limit (PHP 5.2 does different calculation, we need more memory now)
+    @raise_memory_limit('128M');
+
 /// Start output log
 
     $timenow  = time();
@@ -235,7 +238,7 @@
         //Execute backup's cron
         //Perhaps a long time and memory could help in large sites
         @set_time_limit(0);
-        @raise_memory_limit("128M");
+        @raise_memory_limit("192M");
         if (function_exists('apache_child_terminate')) {
             // if we are running from Apache, give httpd a hint that 
             // it can recycle the process after it's done. Apache's 
