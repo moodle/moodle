@@ -29,7 +29,7 @@ class block_course_summary extends block_base {
         $this->content->text = format_text($COURSE->summary, FORMAT_HTML, $options);
         if(isediting($COURSE->id)) {
             if($COURSE->id == SITEID) {
-                $editpage = $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=frontpage';
+                $editpage = $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=frontpagesettings';
             } else {
                 $editpage = $CFG->wwwroot.'/course/edit.php?id='.$COURSE->id;
             }
