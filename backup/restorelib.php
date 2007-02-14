@@ -1464,6 +1464,9 @@
             // Grab mnethosts keyed by wwwroot, to map to id
             $mnethosts = get_records('mnethost', '', '', 
                                      'wwwroot', 'wwwroot, id');
+
+            $languages = get_list_of_languages();
+
             foreach ($info->users as $userid) {
                 $rec = backup_getid($restore->backup_unique_code,"user",$userid); 
                 $user = $rec->info;
@@ -1472,6 +1475,12 @@
                 if ($user->lang == 'ma_nt') {
                     $user->lang = 'mi_nt';
                 }
+
+
+                //If language does not exist here - use site default
+                if (!array_key_exists($user->lang, $languages)) {
+                    $user->lang = $CFG->lang;
+                } 
 
                 //Check if it's admin and coursecreator
                 $is_admin =         !empty($user->roles['admin']);
