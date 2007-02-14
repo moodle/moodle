@@ -249,7 +249,9 @@
         }
 
     } else if ($numcourses <= COURSE_MAX_SUMMARIES_PER_PAGE and !$page and !$creatorediting) {
+        print_box_start('courseboxes');
         print_courses($category);
+        print_box_end();
 
     } else {
         print_paging_bar($totalcount, $page, $perpage, "category.php?id=$category->id&amp;perpage=$perpage&");
