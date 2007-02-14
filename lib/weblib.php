@@ -2738,7 +2738,7 @@ function print_navigation ($navigation, $separator=0, $return=false) {
             $site->shortname = get_string('home');
         }
         $navigation = "<li>$separator ". str_replace('->', "</li>\n<li>$separator", $navigation) ."</li>\n";
-        $output .= '<li class="first"><a '.$CFG->frametarget.' href="'. $CFG->wwwroot.((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID)) && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
+        $output .= '<li class="first"><a '.$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'. $CFG->wwwroot.((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID)) && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
                                                                        ? '/my' : '') .'/">'. $site->shortname ."</a></li>\n". $navigation;
         $output .= "</ul>\n";
     }
