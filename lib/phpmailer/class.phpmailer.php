@@ -811,7 +811,45 @@ class PHPMailer
         if($this->Mailer != "mail")
             $result .= $this->HeaderLine("Subject", $this->EncodeHeader(trim($this->Subject)));
 
-        $result .= sprintf("Message-ID: <%s@%s>%s", $uniq_id, $this->ServerHostname(), $this->LE);
+        /**
+         * BEGIN original phpmailer code
+         * 
+         * Commented out is the original line we are replacing.
+         * Vy-Shane Sin Fat <vy-shane At moodle.com>, 14 Feb 2007.
+         */
+        //$result .= sprintf("Message-ID: <%s@%s>%s", $uniq_id, $this->ServerHostname(), $this->LE);
+        /**
+         * END original phpmailer code
+         */
+
+        /**
+         * BEGIN custom Moodle code
+         *
+         * This change is made necessary by MDL-3681. The Moodle forum module
+         * adds Message-ID as a custom header for each forum post mailout.
+         * This is used to help email clients display the messages in a
+         * threaded view. However, phpmailer also adds it's own Message-ID
+         * to every email that it sends. We want this to happen only if we
+         * haven't defined our own custom Message-ID for the email.
+         *
+         * Vy-Shane Sin Fat <vy-shane At moodle.com>, 14 Feb 2007.
+         */
+        $needmessageid = true;
+
+        for($i=0; $i<count($this->CustomHeader); $i++)
+        {
+            if (strtolower(trim($this->CustomHeader[$i][0])) == 'message-id') {
+                $needmessageid = false;
+                break;
+            }
+        }
+        if ($needmessageid) {
+            $result .= sprintf("Message-ID: <%s@%s>%s", $uniq_id, $this->ServerHostname(), $this->LE);
+        }
+        /**
+         * END custom Moodle code
+         */
+
         $result .= $this->HeaderLine("X-Priority", $this->Priority);
         $result .= $this->HeaderLine("X-Mailer", "PHPMailer [version " . $this->Version . "]");
         
