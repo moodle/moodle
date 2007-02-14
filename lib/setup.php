@@ -182,7 +182,7 @@ global $HTTPSPAGEREQUIRED;
     }
 
 /// Increase memory limits if possible
-    raise_memory_limit('64M');    // We should never NEED this much but just in case...
+    raise_memory_limit('96M');    // We should never NEED this much but just in case...
 
 /// Load up standard libraries
 

@@ -658,7 +658,7 @@
         }
         
         @ini_set("max_execution_time","3000");
-        raise_memory_limit("128M");
+        raise_memory_limit("196M");
             
         if (!$backup_unique_code = restore_precheck($destinationcourse,$pathtofile,$errorstr,true)) {
             mtrace($debuginfo.'Failed restore_precheck (error was '.$errorstr.')');
