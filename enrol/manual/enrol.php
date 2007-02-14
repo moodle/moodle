@@ -139,7 +139,7 @@ function check_entry($form, $course) {
 
     if (($form->password == $course->password) or ($groupid !== false) ) {
 
-        if ($USER->username == 'guest') { // only real user guest, do not use this for users with guest role
+        if (isguestuser()) { // only real user guest, do not use this for users with guest role
             $USER->enrolkey[$course->id] = true;
             add_to_log($course->id, 'course', 'guest', 'view.php?id='.$course->id, getremoteaddr());
 
@@ -271,7 +271,7 @@ function cron() {
 
         $strexpirynotify = get_string('expirynotify');
         foreach ($courses as $course) {
-            $a = new object;
+            $a = new object();
             $a->coursename = $course->shortname .'/'. $course->fullname;
             $a->threshold = $course->expirythreshold / 86400;
             $a->extendurl = $CFG->wwwroot . '/user/index.php?id=' . $course->id;
@@ -299,18 +299,18 @@ function cron() {
                     $teacher = get_admin();
                 }
 
-                $a->studentstr = fullname($user, true);
                 $a->teacherstr = fullname($teacher, true);
 
                 $strexpirynotifystudentsemail = get_string('expirynotifystudentsemail', '', $a);
 
                 foreach ($oldenrolments as $user) {       /// Email all users about to expire
+                    $a->studentstr = fullname($user, true);
                     if ($user->timeend < ($expiry - 86400)) {
                         $a->past[] = fullname($user) . " <$user->email>";
                     } else {
                         $a->current[] = fullname($user) . " <$user->email>";
                         if ($course->notifystudents) {     // Send this guy notice
-                            email_to_user($student, $teacher, $SITE->fullname .' '. $strexpirynotify, 
+                            email_to_user($user, $teacher, $SITE->fullname .' '. $strexpirynotify, 
                                           $strexpirynotifystudentsemail);
                         }
                     }

@@ -1,12 +1,15 @@
-<?php print_simple_box_start('center'); ?>
-     <p align="center">
-<?php
-    if ($teacher) {
-        $teachername = "<a href=\"../user/view.php?id=$teacher->id&course=".SITEID."\">".fullname($teacher)."</a>.";
-    } else {
-        $teachername = get_string('yourteacher', '', $course->teacher);
-    }
-    print_string('enrolmentkeyfrom', '', $teachername);
+<?php 
+
+    if ($course->password != '' and !(isguestuser() and !empty($USER->enrolkey[$course->id]))) {   // password
+    
+        print_box_start('generalbox centerpara');
+        echo '<p align="center">';
+        if ($teacher) {
+            $teachername = "<a href=\"../user/view.php?id=$teacher->id&course=".SITEID."\">".fullname($teacher)."</a>.";
+        } else {
+            $teachername = get_string('yourteacher', '', $course->teacher);
+        }
+        print_string('enrolmentkeyfrom', '', $teachername);
  ?>
       </p>
 
@@ -35,26 +38,19 @@
       </div>
 
 <?php 
-    print_simple_box_end();
+        print_box_end();
+    }
 
 
-    if ($course->guest and !isguest()) {
-      print_simple_box_start('center');
-?>
-      <form method="post" action="enrol.php">
-        <table align="center" cellpadding="20">
-            <tr>
-              <td><?php print_string('allowguests') ?>:&nbsp; </td>
-              <td>
-                <input name="id" value="<?php p($course->id) ?>" type="hidden">
-                <input name="loginasguest" value="yes" type="hidden" />
-                <input value="<?php print_string('loginguest') ?>" type="submit">
-              </td>
-            </tr>
-        </table>
-      </form>
-
-<?php 
-      print_simple_box_end(); 
+    if (isguestuser()) {
+        print_box_start('centerpara');
+        if (empty($CFG->loginhttps)) {
+            $loginurl = $CFG->wwwroot .'/login/index.php';
+        } else {
+            $wwwroot = str_replace('http:','https:', $CFG->wwwroot);
+            $loginurl = $wwwroot .'/login/index.php';
+        }
+        print_single_button($loginurl, null, get_string('login'));
+        print_box_end();
     }
 ?>

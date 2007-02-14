@@ -73,6 +73,31 @@ function load_guest_role($context=NULL, $mergewith=NULL) {
         }
     }
 
+    if ($context->id != $sitecontext->id) {
+        // first emulate the parent context capabilities merging into expected
+        $parcontexts = array_reverse(get_parent_contexts($context));
+        foreach ($parcontexts as $pcid) {
+            if ($capabilities = get_records_select('role_capabilities',
+                                                   "roleid = $guestrole->id 
+                                                   AND contextid = $pcid")) {
+    
+                foreach ($capabilities as $capability) {
+                    if ($mergewith === NULL) {
+                        if (!isset($USER->capabilities[$context->id][$capability->capability])) {
+                            $USER->capabilities[$context->id][$capability->capability] = 0;
+                        }
+                        $USER->capabilities[$context->id][$capability->capability] += $capability->permission;
+                    } else {
+                        if (!isset($mergewith[$context->id][$capability->capability])) {
+                            $mergewith[$context->id][$capability->capability] = 0;
+                        }
+                        $mergewith[$context->id][$capability->capability] += $capability->permission;
+                    }
+                }
+            }
+        }
+    }
+    
     $searchcontexts = get_child_contexts($context);
     array_push($searchcontexts, $context->id);
 
@@ -83,9 +108,15 @@ function load_guest_role($context=NULL, $mergewith=NULL) {
 
             foreach ($capabilities as $capability) {
                 if ($mergewith === NULL) {
-                    $USER->capabilities[$scid][$capability->capability] = $capability->permission;
+                    if (!isset($USER->capabilities[$scid][$capability->capability])) {
+                        $USER->capabilities[$scid][$capability->capability] = 0;
+                    }
+                    $USER->capabilities[$scid][$capability->capability] += $capability->permission;
                 } else {
-                    $mergewith[$scid][$capability->capability] = $capability->permission;
+                    if (!isset($mergewith[$scid][$capability->capability])) {
+                        $mergewith[$scid][$capability->capability] = 0;
+                    }
+                    $mergewith[$scid][$capability->capability] += $capability->permission;
                 }
             }
         }
@@ -2847,12 +2878,12 @@ function get_child_contexts($context) {
             $page->type = 'course-view';
             if ($blocks = blocks_get_by_page_pinned($page)) {
                 foreach ($blocks['l'] as $leftblock) {
-                    if ($child = get_context_instance(CONTEXT_BLOCK, $leftblock->blockid)) {
+                    if ($child = get_context_instance(CONTEXT_BLOCK, $leftblock->id)) {
                         array_push($children, $child->id);
                     }
                 }
                 foreach ($blocks['r'] as $rightblock) {
-                    if ($child = get_context_instance(CONTEXT_BLOCK, $rightblock->blockid)) {
+                    if ($child = get_context_instance(CONTEXT_BLOCK, $rightblock->id)) {
                         array_push($children, $child->id);
                     }
                 }
@@ -2866,9 +2897,9 @@ function get_child_contexts($context) {
                 }
             }
             // Find all group instances for the course.
-            if ($groups = get_records('groups', 'courseid', $context->instanceid)) {
-                foreach ($groups as $group) {
-                    if ($child = get_context_instance(CONTEXT_GROUP, $group->id)) {
+            if ($groupids = groups_get_groups($context->instanceid)) {
+                foreach ($groupids as $groupid) {
+                    if ($child = get_context_instance(CONTEXT_GROUP, $groupid)) {
                         array_push($children, $child->id);
                     }
                 }
