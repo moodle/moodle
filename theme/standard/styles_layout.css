@@ -1533,7 +1533,7 @@ body#course-view .headingblock {
   margin-bottom: 9px;
 }
 
-body#course-index #content {
+body#course-index .courseboxes {
   padding:20px;
 }
 
