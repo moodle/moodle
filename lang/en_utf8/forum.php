@@ -130,6 +130,7 @@ $string['namesocial'] = 'Social forum';
 $string['nameteacher'] = 'Teacher forum'; //depreciated after 1.7
 $string['newforumposts'] = 'New forum posts';
 $string['nodiscussions'] = 'There are no discussion topics yet in this forum';
+$string['nodiscussionsstartedby'] = 'No discussions started by this user';
 $string['noguestpost'] = 'Sorry, guests are not allowed to post.';
 $string['noguestsubscribe'] = 'Sorry, guests are not allowed to subscribe to receive forum postings by email.';
 $string['noguesttracking'] = 'Sorry, guests are not allowed to set tracking options.';
