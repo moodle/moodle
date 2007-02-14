@@ -62,7 +62,7 @@ if ($um->preprocess_files() && confirm_sesskey()) {
     // that we'll take longer, and that the process should be recycled soon
     // to free up memory.
     @set_time_limit(0);
-    @raise_memory_limit("196M");
+    @raise_memory_limit("192M");
     if (function_exists('apache_child_terminate')) {
         @apache_child_terminate();
     }

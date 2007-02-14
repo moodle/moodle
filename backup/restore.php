@@ -132,7 +132,7 @@
     
     //Adjust some php variables to the execution of this script
     @ini_set("max_execution_time","3000");
-    raise_memory_limit("196M");
+    raise_memory_limit("192M");
 
     //Call the form, depending the step we are
 
