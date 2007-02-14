@@ -121,7 +121,7 @@
         print_paging_bar($totalcount, $page, $perpage, 
                          "user.php?id=$user->id&amp;course=$course->id&amp;mode=$mode&amp;perpage=$perpage&amp;");
     } else {
-        print_heading(get_string('noposts', 'forum'));
+        print_heading(get_string('nodiscussionsstartedby', 'forum'));
     }
     echo '</div>';
     print_footer($course);
