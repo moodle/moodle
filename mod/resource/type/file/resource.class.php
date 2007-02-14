@@ -130,9 +130,6 @@ function add_instance($resource) {
 
 function update_instance($resource) {
     $this->_postprocess($resource);
-/*    echo '<xmp>';
-    var_dump($_POST);
-    var_dump($resource);die;*/
     return parent::update_instance($resource);
 }
 
@@ -240,7 +237,7 @@ function display() {
         }
     }
 
-
+    $isteamspeak = (stripos($resource->reference, 'teamspeak://') === 0);
 
 /// Form the parse string
     if (!empty($resource->alltext)) {
@@ -250,7 +247,11 @@ function display() {
             $field = explode('=', $fieldstring);
             $querys[] = urlencode($field[1]).'='.urlencode($this->parameters[$field[0]]['value']);
         }
-        $querystring = implode('&amp;', $querys);
+        if ($isteamspeak) {
+            $querystring = implode('?', $querys);
+        } else {
+            $querystring = implode('&amp;', $querys);
+        }
     }
 
 
@@ -262,7 +263,7 @@ function display() {
         $fullurl = $resource->reference;
         if (!empty($querystring)) {
             $urlpieces = parse_url($resource->reference);
-            if (empty($urlpieces['query'])) {
+            if (empty($urlpieces['query']) or $isteamspeak) {
                 $fullurl .= '?'.$querystring;
             } else {
                 $fullurl .= '&amp;'.$querystring;
