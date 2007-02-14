@@ -9,6 +9,6 @@
    $version = 2007021400;  // YYYYMMDD = date
                            //       XY = increments within a single day
 
-   $release = '1.8 Beta';    // Human-friendly version name
+   $release = '1.9 dev';    // Human-friendly version name
 
 ?>
