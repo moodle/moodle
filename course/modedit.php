@@ -11,8 +11,9 @@
     $update        = optional_param('update', 0, PARAM_INT);
     //return to course/view.php if false or mod/modname/view.php if true
     $return        = optional_param('return', 0, PARAM_BOOL);
+    $type          = optional_param('type', '', PARAM_ALPHANUM);
 
-    if (!empty($add)){
+    if (!empty($add)) {
         $section = required_param('section', PARAM_INT);
         $course = required_param('course', PARAM_INT);
 
@@ -57,7 +58,14 @@
         }
         $strnav = '';
 
-    }elseif (!empty($update)){
+        $CFG->pagepath = 'mod/'.$module->name;
+        if (!empty($type)) {
+            $CFG->pagepath .= '/'.$type;
+        } else {
+            $CFG->pagepath .= '/mod';
+        }
+
+    } else if (!empty($update)) {
         if (! $cm = get_record("course_modules", "id", $update)) {
             error("This course module doesn't exist");
         }
@@ -103,7 +111,13 @@
             $pageheading = get_string("updatinga", "moodle", $fullmodulename);
         }
         $strnav = "<a href=\"$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id\">".format_string($form->name,true)."</a> ->";
-    }else{
+        $CFG->pagepath = 'mod/'.$module->name;
+        if (!empty($type)) {
+            $CFG->pagepath .= '/'.$type;
+        } else {
+            $CFG->pagepath .= '/mod';
+        }
+    } else {
         error('Invalid operation.');
     }
 
@@ -111,7 +125,7 @@
     if (file_exists($modmoodleform)) {
         require_once($modmoodleform);
 
-    }else{
+    } else {
         error('No formslib form description file found for this activity.');
     }
 
@@ -133,7 +147,7 @@
         } else {
             redirect("view.php?id=$course->id#section-".$cousesection);
         }
-    } elseif ($fromform=$mform->get_data()){
+    } else if ($fromform=$mform->get_data()){
         if (empty($fromform->coursemodule)) { //add
             if (! $course = get_record("course", "id", $fromform->course)) {
                 error("This course doesn't exist");
@@ -194,7 +208,8 @@
             add_to_log($course->id, $fromform->modulename, "update",
                        "view.php?id=$fromform->coursemodule",
                        "$fromform->instance", $fromform->coursemodule);
-        }elseif (!empty($fromform->add)){
+
+        } else if (!empty($fromform->add)){
 
             if (!course_allowed_module($course,$fromform->modulename)) {
                 error("This module ($fromform->modulename) has been disabled for this particular course");
@@ -249,7 +264,7 @@
             add_to_log($course->id, $fromform->modulename, "add",
                        "view.php?id=$fromform->coursemodule",
                        "$fromform->instance", $fromform->coursemodule);
-        }else{
+        } else {
             error("Data submitted is invalid.");
         }
 
@@ -258,7 +273,7 @@
         redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$fromform->coursemodule");
         exit;
 
-    }else{
+    } else {
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         require_capability('moodle/course:manageactivities', $context);
 
