@@ -2834,7 +2834,7 @@ function get_component_string($component, $contextlevel) {
         break;
 
         case CONTEXT_BLOCK:
-            $string = get_string('blockname', 'block_'.$component.'.php');
+            $string = get_string('blockname', 'block_'.basename($component));
         break;
 
         default:
