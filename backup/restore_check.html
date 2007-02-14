@@ -26,6 +26,9 @@
         $restore->course_startdateoffset = $coursestartdatedateoffset; //change to restore
     } 
 
+    ///Enforce SESSION->course_header rewrite (PHP 4.x needed because assigns are by value) MDL-8298
+    $SESSION->course_header = $course_header;
+
     //If restore session info exists, but we are coming from the form
     //it has prioriry
     if (isset($restore) and !empty($fromform)) {
