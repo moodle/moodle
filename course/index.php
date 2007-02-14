@@ -54,7 +54,9 @@
             $strfulllistofcourses = get_string('fulllistofcourses');
             print_header("$site->shortname: $strfulllistofcourses", $strfulllistofcourses, $strfulllistofcourses,
                          '', '', true, update_categories_button());
+            print_box_start('courseboxes');
             print_courses(0, '80%');
+            print_box_end();
         }
 
         /// I am not sure this context in the next has_capability call is correct. 
