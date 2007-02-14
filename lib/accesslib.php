@@ -3550,12 +3550,7 @@ function count_role_users($roleid, $context, $parent=false) {
  * @param int $userid
  * @return array
  */
-function get_user_capability_course($capability, $userid='') {
-
-    global $USER;
-    if (!$userid) {
-        $userid = $USER->id;
-    }
+function get_user_capability_course($capability, $userid=NULL) {
 
     $usercourses = array();
     $courses = get_records_select('course', '', '', 'id, id');
