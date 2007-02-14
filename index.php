@@ -228,7 +228,7 @@
                 } else if ((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)) and !isguest()) or (count_records('course') <= FRONTPAGECOURSELIMIT)) {
                     // admin should not see list of courses when there are too many of them
                     print_heading_block(get_string('availablecourses'));
-                    print_courses(0, '100%', true);
+                    print_courses(0, true);
                 }
             break;
 

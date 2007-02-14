@@ -1731,7 +1731,7 @@ function print_category_info($category, $depth, $files = false) {
 }
 
 
-function print_courses($category, $width="100%", $hidesitecourse = false) {
+function print_courses($category, $hidesitecourse = false) {
 /// Category is 0 (for all courses) or an object
 
     global $CFG;
@@ -1755,7 +1755,7 @@ function print_courses($category, $width="100%", $hidesitecourse = false) {
             if ($hidesitecourse and ($course->id == SITEID)) {
                 continue;
             }
-            print_course($course, $width);
+            print_course($course);
         }
     } else {
         print_heading(get_string("nocoursesyet"));
@@ -1774,7 +1774,7 @@ function print_courses($category, $width="100%", $hidesitecourse = false) {
 }
 
 
-function print_course($course, $width="100%") {
+function print_course($course) {
 
     global $CFG, $USER;
 
@@ -1882,7 +1882,7 @@ function print_my_moodle() {
             print_whole_category_list();
             print_simple_box_end();
         } else {
-            print_courses(0, "100%");
+            print_courses(0);
         }
     }
 }

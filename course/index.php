@@ -55,7 +55,7 @@
             print_header("$site->shortname: $strfulllistofcourses", $strfulllistofcourses, $strfulllistofcourses,
                          '', '', true, update_categories_button());
             print_box_start('courseboxes');
-            print_courses(0, '80%');
+            print_courses(0);
             print_box_end();
         }
 

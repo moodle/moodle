@@ -249,7 +249,7 @@
         }
 
     } else if ($numcourses <= COURSE_MAX_SUMMARIES_PER_PAGE and !$page and !$creatorediting) {
-        print_courses($category, "80%");
+        print_courses($category);
 
     } else {
         print_paging_bar($totalcount, $page, $perpage, "category.php?id=$category->id&amp;perpage=$perpage&");
