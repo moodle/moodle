@@ -315,7 +315,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"><?php  print_string('auth_ldap_exprireattr_key','auth') ?>:</td>
+    <td align="right"><?php  print_string('auth_ldap_expireattr_key','auth') ?>:</td>
     <td>
     <input name="expireattr" type="text" size="30" value="<?php echo $config->expireattr?>" />
     <?php  if (isset($err['expireattr'])) formerr($err['expireattr']); 
