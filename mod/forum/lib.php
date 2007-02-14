@@ -2216,9 +2216,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
                     echo '</span>';
                 } else {
                     echo '<span class="read">';
-                    echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#unread">';
                     echo $post->unread;
-                    echo '</a>';
                     echo '</span>';
                 }
             } else {
