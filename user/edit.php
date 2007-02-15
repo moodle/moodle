@@ -17,13 +17,10 @@
     if ($course->id != SITEID) {
         require_login($course);
     } else if (!isloggedin()) {
-        // user might not be fully setup, do not use require login here!
-        if (empty($CFG->loginhttps)) {
-            redirect($CFG->wwwroot .'/login/index.php');
-        } else {
-            $wwwroot = str_replace('http:','https:', $CFG->wwwroot);
-            redirect($wwwroot .'/login/index.php');
+        if (empty($SESSION->wantsurl)) {
+            $SESSION->wantsurl = $CFG->httpswwwroot.'/edit/user.php';
         }
+        redirect($CFG->httpswwwroot.'/login/index.php');
     }
 
     if (isguestuser()) {
