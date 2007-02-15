@@ -270,13 +270,24 @@
                 print_header($strcurrentrelease, $strcurrentrelease, $strcurrentrelease, "", "", false, "&nbsp;", "&nbsp;");
                 print_heading("Moodle $release");
                 print_box(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'));
-                echo '<form action="index.php"><fieldset class="invisiblefieldset">';
-                echo '<input type="hidden" name="confirmupgrade" value="1" />';
-                echo '<input type="hidden" name="confirmrelease" value="1" />';
-                echo '</fieldset>';
-                echo '<div class="continuebutton"><input name="autopilot" id="autopilot" type="checkbox" value="0" /><label for="autopilot">'.get_string('unattendedoperation', 'admin').'</label>';
-                echo '<br /><br /><input type="submit" value="'.get_string('continue').'" /></div>';
-                echo '</form>';
+
+                require_once($CFG->libdir.'/environmentlib.php');
+                print_heading(get_string('environment', 'admin'));
+                if (!check_moodle_environment($release, $environment_results, true)) {
+                    notice_yesno(get_string('environmenterrorupgrade', 'admin'), 
+                                 'index.php?confirmupgrade=1&confirmrelease=1', 'index.php');
+                } else {
+                    notify(get_string('environmentok', 'admin'), 'notifysuccess');
+
+                    echo '<form action="index.php"><fieldset class="invisiblefieldset">';
+                    echo '<input type="hidden" name="confirmupgrade" value="1" />';
+                    echo '<input type="hidden" name="confirmrelease" value="1" />';
+                    echo '</fieldset>';
+                    echo '<div class="continuebutton"><input name="autopilot" id="autopilot" type="checkbox" value="0" /><label for="autopilot">'.get_string('unattendedoperation', 'admin').'</label>';
+                    echo '<br /><br /><input type="submit" value="'.get_string('continue').'" /></div>';
+                    echo '</form>';
+                }
+
                 print_footer('none');
                 die;
             } else {
