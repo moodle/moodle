@@ -911,7 +911,6 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  * @uses MINSECS
  * @uses HOURSECS
  * @uses DAYSECS
- * @uses WEEKSECS
  * @uses YEARSECS
  * @param int $totalsecs ?
  * @param array $str ?
@@ -932,15 +931,11 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
         $str->secs  = get_string('secs');
         $str->year  = get_string('year');
         $str->years = get_string('years');
-        $str->week  = get_string('week');
-        $str->weeks = get_string('weeks');
     }
 
 
     $years     = floor($totalsecs/YEARSECS);
     $remainder = $totalsecs - ($years*YEARSECS);
-    $weeks     = floor($remainder/WEEKSECS);
-    $remainder = $totalsecs - ($weeks*WEEKSECS);
     $days      = floor($remainder/DAYSECS);
     $remainder = $totalsecs - ($days*DAYSECS);
     $hours     = floor($remainder/HOURSECS);
@@ -952,25 +947,21 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
     $sm = ($mins == 1)  ? $str->min  : $str->mins;
     $sh = ($hours == 1) ? $str->hour : $str->hours;
     $sd = ($days == 1)  ? $str->day  : $str->days;
-    $sw = ($weeks == 1)  ? $str->week  : $str->weeks;
     $sy = ($years == 1)  ? $str->year  : $str->years;
 
     $oyears = '';
-    $oweeks = '';
     $odays = '';
     $ohours = '';
     $omins = '';
     $osecs = '';
 
     if ($years)  $oyears  = $years .' '. $sy;
-    if ($weeks)  $oweeks  = $weeks .' '. $sw;
     if ($days)  $odays  = $days .' '. $sd;
     if ($hours) $ohours = $hours .' '. $sh;
     if ($mins)  $omins  = $mins .' '. $sm;
     if ($secs)  $osecs  = $secs .' '. $ss;
 
-    if ($years)  return $oyears .' '. $oweeks;
-    if ($weeks)  return $oweeks .' '. $odays;
+    if ($years)  return $oyears .' '. $odays;
     if ($days)  return $odays .' '. $ohours;
     if ($hours) return $ohours .' '. $omins;
     if ($mins)  return $omins .' '. $osecs;
