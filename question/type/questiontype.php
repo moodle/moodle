@@ -752,7 +752,9 @@ class default_questiontype {
                     }
                     // print info about new penalty
                     // penalty is relevant only if the answer is not correct and further attempts are possible
-                    if (($state->last_graded->raw_grade < $question->maxgrade) and (QUESTION_EVENTCLOSEANDGRADE !== $state->event)) {
+                    if (($state->last_graded->raw_grade < $question->maxgrade / 1.01)
+                                and (QUESTION_EVENTCLOSEANDGRADE !== $state->event)) {
+
                         if ('' !== $state->last_graded->penalty && ((float)$state->last_graded->penalty) > 0.0) {
                             // A penalty was applied so display it
                             echo ' ';
