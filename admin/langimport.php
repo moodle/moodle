@@ -57,7 +57,7 @@
 
                         case INSTALLED:
                             @unlink($CFG->dataroot.'/cache/languages');
-                            redirect('langimport.php', get_string('langpackupdated','admin',$pack));
+                            redirect('langimport.php', get_string('langpackupdated','admin',$pack), -1, $adminroot);
                         break;
 
                         case UPTODATE:
