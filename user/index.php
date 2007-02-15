@@ -90,6 +90,8 @@
 
     $strnever = get_string('never');
 
+    $datestring->year  = get_string('year');
+    $datestring->years = get_string('years');
     $datestring->day   = get_string('day');
     $datestring->days  = get_string('days');
     $datestring->hour  = get_string('hour');
