@@ -11,6 +11,7 @@
 $string['groupmember'] = 'Group Member';
 $string['groupmemberdesc'] = 'Standard role for a member of a group.';
 $string['notingrouping'] = '[Not in a grouping]';
+$string['anygrouping'] = '[Any grouping]';
 
 $string['errornotingrouping'] = 'Sorry, you can\'t create a group in $a';
 $string['errornotingroupingedit'] = 'Sorry, you can\'t edit grouping $a';
@@ -18,15 +19,16 @@ $string['errorinvalidgrouping'] = 'Error, invalid grouping $a';
 $string['errorinvalidgroup'] = 'Error, invalid group $a';
 $string['erroreditgrouping'] = 'Error creating/updating grouping $a';
 $string['erroreditgroup'] = 'Error creating/updating group $a';
+$string['erroraddremoveuser'] = 'Error adding/removing user $a to group';
 
-$string['upgradeconfirm'] = 'Sorry, groups tables created in Moodle 1.8 dev have to be deleted for this upgrade. Do you want to continue?';
+$string['upgradeconfirm'] = 'Sorry, groups tables created in Moodle 1.8 DEV have to be deleted for this upgrade. Do you want to continue?';
 
 $string['groupings'] = 'Groupings';
 $string['grouping'] = 'Grouping';
 $string['groups'] = 'Groups';
 $string['group'] = 'Group';
-$string['groupsinselectedgrouping'] = 'Groups in selected grouping';
-$string['membersofselectedgroup'] = 'Members of selected group';
+$string['groupsinselectedgrouping'] = 'Groups in grouping';  //'selected'
+$string['membersofselectedgroup'] = 'Members of group';
 
 $string['showgroupsingrouping'] = 'Show groups in grouping';
 $string['showmembersforgroup'] = 'Show members for group';
@@ -40,17 +42,17 @@ $string['editgroupingpermissions'] = 'Edit grouping permissions';
 $string['deletegrouping'] = 'Delete grouping';
 $string['creategrouping'] = 'Create grouping';
 $string['createautomaticgrouping'] = 'Create automatic grouping';
-$string['printerfriendly'] = 'Printer-friendly display of grouping';
+$string['printerfriendly'] = 'Printer-friendly display';  //'of grouping'
 
 $string['editgroupsettings'] = 'Edit group settings';
 $string['deleteselectedgroup'] = 'Delete selected group';
-$string['removegroupfromselectedgrouping'] = 'Remove group from selected grouping';
-$string['creategroupinselectedgrouping'] = 'Create group in selected grouping';
+$string['removegroupfromselectedgrouping'] = 'Remove group from grouping';  //'selected'
+$string['creategroupinselectedgrouping'] = 'Create group in grouping';
 $string['addexistinggroupstogrouping'] = 'Add existing groups to grouping';
 $string['addgroupstogrouping'] = 'Add groups to grouping';
 
 $string['removeselectedusers'] = 'Remove selected users';
-$string['adduserstogroup'] = 'Add/remove users from group'; //'Add users to group';
+$string['adduserstogroup'] = 'Add/remove users';  //'from group'
 
 $string['groupingname'] = 'Grouping name';
 $string['defaultgroupingname'] = 'Grouping';

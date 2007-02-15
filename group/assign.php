@@ -23,7 +23,11 @@ $groupid    = required_param('group', PARAM_INT);
 $course = groups_get_course_info($courseid);
 if (! $course) {
     $success = false;
-    print_error('The course ID is invalid');
+    print_error('invalidcourse');
+}
+if (empty($groupid)) {
+    $success = false;
+    print_error('errorinvalidgroup', 'group', groups_home_url($courseid));
 }
 
 if ($success) {
@@ -47,10 +51,9 @@ if ($success) {
                 if (! $userid = clean_param($userid, PARAM_INT)) {
                     continue;
                 }
-                //echo "Try user $userid, group $groupid<br/>\n";
                 $success = groups_add_member($groupid, $userid);
                 if (! $success) {
-                    print_error('Failed to add user $userid to group.');
+                    print_error('erroraddremoveuser', 'group', groups_home_url($courseid));
                 }
             }
         }
@@ -62,7 +65,7 @@ if ($success) {
                 }
                 $success = groups_remove_member($groupid, $userid);
                 if (! $success) {
-                    print_error('Failed to remove user $userid from group.');
+                    print_error('erroraddremoveuser', 'group', groups_home_url($courseid));
                 }
             }
         }
@@ -80,7 +83,6 @@ if ($success) {
                  "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
                  "-> $strgroups", '', '', true, '', user_login_string($course, $USER));
 
-    //require_once('assign-form.html');
 ?>
 <div id="addmembersform">
     <h3 class="main"><?php print_string('adduserstogroup', 'group'); echo " $groupname"; ?></h3>
@@ -136,9 +138,10 @@ if ($success) {
                            document.assignform.remove.disabled=true;
                            document.assignform.removeselect.selectedIndex=-1;">
     <?php
-    $showall = 0;
+    //TODO: If no 'showall' button, then set true.
+    $showall = true;
     unset($userids);
-    if ($showall == 0 && $groupingid != GROUP_NOT_IN_GROUPING) {
+    if (!$showall && $groupingid != GROUP_NOT_IN_GROUPING) {
         $userids = groups_get_users_not_in_any_group_in_grouping($courseid, $groupingid, $groupid);
     } else {
         $userids = groups_get_users_not_in_group($courseid, $groupid);
@@ -159,11 +162,11 @@ if ($success) {
     ?>
          </select>
          <br />
-         <?php //TODO: Search box 
+         <?php //TODO: Search box?
          
-              if (!empty($searchtext)) {
-                  echo '<input name="showall" id="showall" type="submit" value="'.$strshowall.'" />'."\n";
-              }
+              /*if (!empty($searchtext)) {
+                  echo '<input name="showall" type="submit" value="'.get_string('showall').'" />'."\n";
+              }*/
          ?>
        </td>
     </tr>
