@@ -3,7 +3,7 @@
 
     require_once("../config.php");
 
-    if ($USER->mnethostid != $CFG->mnet_localhost_id) {
+    if (!empty($USER->mnethostid) and $USER->mnethostid != $CFG->mnet_localhost_id) {
         $host = get_record('mnet_host', 'id', $USER->mnethostid);
         $wwwroot = $host->wwwroot;
     } else {
