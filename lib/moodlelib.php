@@ -906,15 +906,16 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
 
 /**
  * Given an amount of time in seconds, returns string
- * formatted nicely as months, days, hours etc as needed
+ * formatted nicely as weeks, days, hours etc as needed
  *
  * @uses MINSECS
  * @uses HOURSECS
  * @uses DAYSECS
+ * @uses WEEKSECS
+ * @uses YEARSECS
  * @param int $totalsecs ?
  * @param array $str ?
  * @return string
- * @todo Finish documenting this function
  */
  function format_time($totalsecs, $str=NULL) {
 
@@ -929,11 +930,11 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
         $str->mins  = get_string('mins');
         $str->sec   = get_string('sec');
         $str->secs  = get_string('secs');
+        $str->year  = get_string('year');
+        $str->years = get_string('years');
+        $str->week  = get_string('week');
+        $str->weeks = get_string('weeks');
     }
-        $str->year  = 'year';
-        $str->years = 'years';
-        $str->week  = 'week';
-        $str->weeks = 'weeks';
 
 
     $years     = floor($totalsecs/YEARSECS);
