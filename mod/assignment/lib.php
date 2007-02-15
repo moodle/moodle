@@ -713,7 +713,7 @@ class assignment_base {
         $output .= '<script type="text/javascript">'."\n<!--\n";
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['submissioncomment'])) {
             if ($quickgrade){
-                $output.= 'opener.document.getElementById("submissioncomment['.$submission->userid.']").value="'
+                $output.= 'opener.document.getElementById("submissioncomment'.$submission->userid.'").value="'
                 .trim($submission->submissioncomment).'";'."\n";
              } else {
                 $output.= 'opener.document.getElementById("com'.$submission->userid.
@@ -724,8 +724,8 @@ class assignment_base {
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['grade'])) {
             //echo optional_param('menuindex');
             if ($quickgrade){
-                $output.= 'opener.document.getElementById("menumenu['.$submission->userid.
-                ']").selectedIndex="'.optional_param('menuindex', 0, PARAM_INT).'";'."\n";
+                $output.= 'opener.document.getElementById("menumenu'.$submission->userid.
+                '").selectedIndex="'.optional_param('menuindex', 0, PARAM_INT).'";'."\n";
             } else {
                 $output.= 'opener.document.getElementById("g'.$submission->userid.'").innerHTML="'.
                 $this->display_grade($submission->grade)."\";\n";
@@ -747,7 +747,7 @@ class assignment_base {
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['status'])) {
             $output.= 'opener.document.getElementById("up'.$submission->userid.'").className="s1";';
             $buttontext = get_string('update');
-            $button = link_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$submission->userid.'&amp;mode=single'.'&amp;offset='.optional_param('offset', '', PARAM_INT), 
+            $button = link_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$submission->userid.'&amp;mode=single'.'&amp;offset='.(optional_param('offset', '', PARAM_INT)-1), 
                       'grade'.$submission->userid, $buttontext, 450, 700, $buttontext, 'none', true, 'button'.$submission->userid);
             $output.= 'opener.document.getElementById("up'.$submission->userid.'").innerHTML="'.addslashes($button).'";';
         }        
@@ -812,7 +812,6 @@ class assignment_base {
         if (!$submission = $this->get_submission($user->id)) {
             $submission = $this->prepare_new_submission($userid);
         }
-
         if ($submission->timemodified > $submission->timemarked) {
             $subtype = 'assignmentnew';
         } else {
@@ -823,7 +822,7 @@ class assignment_base {
         $course     = $this->course;
         $assignment = $this->assignment;
         $cm         = $this->cm;
-    
+        $context    = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     /// Get all teachers and students
 
@@ -832,7 +831,8 @@ class assignment_base {
         if ($currentgroup) {
             $users = get_group_users($currentgroup);
         } else {
-            $users = get_course_users($course->id);
+            $users = get_users_by_capability($context, 'mod/assignment:submit', 'u.id, u.id', '',
+                                 '', '', '', '', false);
         }
 
         $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture,
@@ -853,7 +853,7 @@ class assignment_base {
         if (($auser = get_records_sql($select.$sql.$sort, $offset+1, 1)) !== false) {
             $nextuser = array_shift($auser);
         /// Calculate user status
-            $nextuser->status = ($nextuser->timemarked > 0) && ($nextuser->timemarked >= $nextuser->timemodified);
+            $nextuser->status = ($nextuser->timemarked > 0) && ($nextuser->timemarked >= $nextuser->timemodified);              
             $nextid = $nextuser->id;
         }
 
@@ -866,15 +866,15 @@ class assignment_base {
         
         echo '<script type="text/javascript">'."\n";
         echo 'function setNext(){'."\n";
-        echo 'getElementById(\'submitform\').mode.value=\'next\';'."\n";
-        echo 'getElementById(\'submitform\').userid.value="'.$nextid.'";'."\n";
+        echo 'document.getElementById(\'submitform\').mode.value=\'next\';'."\n";
+        echo 'document.getElementById(\'submitform\').userid.value="'.$nextid.'";'."\n";
         echo '}'."\n";
         
         echo 'function saveNext(){'."\n";
-        echo 'getElementById(\'submitform\').mode.value=\'saveandnext\';'."\n";
-        echo 'getElementById(\'submitform\').userid.value="'.$nextid.'";'."\n";
-        echo 'getElementById(\'submitform\').saveuserid.value="'.$userid.'";'."\n";
-        echo 'getElementById(\'submitform\').menuindex.value = getElementById(\'submitform\').grade.selectedIndex;'."\n";
+        echo 'document.getElementById(\'submitform\').mode.value=\'saveandnext\';'."\n";
+        echo 'document.getElementById(\'submitform\').userid.value="'.$nextid.'";'."\n";
+        echo 'document.getElementById(\'submitform\').saveuserid.value="'.$userid.'";'."\n";
+        echo 'document.getElementById(\'submitform\').menuindex.value = document.getElementById(\'submitform\').grade.selectedIndex;'."\n";
         echo '}'."\n";
             
         echo '</script>'."\n";
@@ -895,7 +895,7 @@ class assignment_base {
         echo '<td class="content">';
         echo '<form id="submitform" action="submissions.php" method="post">';
         echo '<fieldset class="invisiblefieldset">';
-        echo '<input type="hidden" name="offset" value="'.++$offset.'" />';
+        echo '<input type="hidden" name="offset" value="'.($offset+1).'" />';
         echo '<input type="hidden" name="userid" value="'.$userid.'" />';
         echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
         echo '<input type="hidden" name="mode" value="grade" />';
@@ -930,7 +930,7 @@ class assignment_base {
 
         ///Print Buttons in Single View
         echo '<div class="buttons">';
-        echo '<input type="submit" name="submit" value="'.get_string('savechanges').'" onclick = "getElementById(\'submitform\').menuindex.value = getElementById(\'submitform\').grade.selectedIndex" />';
+        echo '<input type="submit" name="submit" value="'.get_string('savechanges').'" onclick = "document.getElementById(\'submitform\').menuindex.value = document.getElementById(\'submitform\').grade.selectedIndex" />';
         echo '<input type="submit" name="cancel" value="'.get_string('cancel').'" />';
         //if there are more to be graded.
         if ($nextid) {
@@ -1294,7 +1294,7 @@ class assignment_base {
         unset($submission->data2);  // Don't need to update this.
 
         if (empty($submission->timemodified)) {   // eg for offline assignments
-            $submission->timemodified = time();
+            // $submission->timemodified = time();
         }
 
         if (! update_record('assignment_submissions', $submission)) {
@@ -1346,7 +1346,9 @@ class assignment_base {
         $submission = new Object; 
         $submission->assignment   = $this->assignment->id;
         $submission->userid       = $userid;
-        $submission->timecreated  = time();
+        //$submission->timecreated  = time(); 
+        $submission->timecreated = '';
+        // teachers should not be modifying modified date, except offline assignments
         $submission->timemodified = $submission->timecreated;
         $submission->numfiles     = 0;
         $submission->data1        = '';
