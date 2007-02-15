@@ -4809,7 +4809,7 @@ function notice_yesno ($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno
  *      the correct input) and then encode for where it's needed
  *      echo "<script type='text/javascript'>alert('Redirect $url');</script>";
  */
-function redirect($url, $message='', $delay=-1) {
+function redirect($url, $message='', $delay=-1, $adminroot = '') {
 
     global $CFG;
 
@@ -4888,7 +4888,12 @@ function redirect($url, $message='', $delay=-1) {
 //]]>
 </script>
 <?php
-    print_footer('none');
+    // fix for MDL-8517, admin pages redirections causes bad xhtml
+    if ($adminroot) {
+        admin_externalpage_print_footer($adminroot);  
+    } else {
+        print_footer('none');
+    }
     die;
 }
 
