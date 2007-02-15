@@ -14,12 +14,21 @@
         error('Course ID was incorrect');
     }
 
-    require_login($course->id);
-
-    if (isguest()) { //TODO: add proper capability to edit own profile and change password too
-        print_error('guestnoeditprofile');
+    if ($course->id != SITEID) {
+        require_login($course);
+    } else if (!isloggedin()) {
+        // user might not be fully setup, do not use require login here!
+        if (empty($CFG->loginhttps)) {
+            redirect($CFG->wwwroot .'/login/index.php');
+        } else {
+            $wwwroot = str_replace('http:','https:', $CFG->wwwroot);
+            redirect($wwwroot .'/login/index.php');
+        }
     }
 
+    if (isguestuser()) {
+        print_error('guestnoeditprofile');
+    }
     if (!$user = get_record('user', 'id', $USER->id)) {
         error('User ID was incorrect');
     }
