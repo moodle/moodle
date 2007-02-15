@@ -2069,7 +2069,7 @@ class admin_setting_special_backupsaveto extends admin_setting_configtext {
         $name = 'backup_sche_destination';
         $visiblename = get_string('saveto');
         $description = get_string('backupsavetohelp');
-        parent::admin_setting_configtext($name, $visiblename, $description, '', PARAM_PATH);
+        parent::admin_setting_configtext($name, $visiblename, $description, '');
     }
 
     function get_setting() {
@@ -2078,10 +2078,8 @@ class admin_setting_special_backupsaveto extends admin_setting_configtext {
     }
 
     function write_setting($data) {
-        $data = clean_param($data, PARAM_PATH);
-        if (!empty($data) and (substr($data,-1) == '/' or substr($data,-1) == '\\')) {
-            return get_string('pathslasherror') . '<br />';
-        } else if (!empty($data) and !is_dir($data)) {
+        $data = trim($data);
+        if (!empty($data) and !is_dir($data)) {
             return get_string('pathnotexists') . '<br />';
         }
         return (backup_set_config($this->name, $data) ? '' : get_string('errorsetting', 'admin') . $this->visiblename . '<br />');

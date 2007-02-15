@@ -7,10 +7,11 @@
     //Sets a name/value pair in backup_config table
     function backup_set_config($name, $value) {
         if (get_field("backup_config", "name", "name", $name)) {
-            return set_field("backup_config", "value", $value, "name", $name);
+            return set_field("backup_config", "value", addslashes($value), "name", $name);
         } else {
+            $config = new object();
             $config->name = $name;
-            $config->value = $value;
+            $config->value = addslashes($value);
             return insert_record("backup_config", $config);
         }
     }
