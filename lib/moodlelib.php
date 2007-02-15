@@ -60,6 +60,12 @@ define('VISIBLEGROUPS', 2);
 
 /// Date and time constants ///
 /**
+ * Time constant - the number of seconds in a year
+ */
+
+define('YEARSECS', 31536000);
+
+/**
  * Time constant - the number of seconds in a week
  */
 define('WEEKSECS', 604800);
@@ -900,15 +906,16 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
 
 /**
  * Given an amount of time in seconds, returns string
- * formatted nicely as months, days, hours etc as needed
+ * formatted nicely as weeks, days, hours etc as needed
  *
  * @uses MINSECS
  * @uses HOURSECS
  * @uses DAYSECS
+ * @uses WEEKSECS
+ * @uses YEARSECS
  * @param int $totalsecs ?
  * @param array $str ?
  * @return string
- * @todo Finish documenting this function
  */
  function format_time($totalsecs, $str=NULL) {
 
@@ -923,9 +930,18 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
         $str->mins  = get_string('mins');
         $str->sec   = get_string('sec');
         $str->secs  = get_string('secs');
+        $str->year  = get_string('year');
+        $str->years = get_string('years');
+        $str->week  = get_string('week');
+        $str->weeks = get_string('weeks');
     }
 
-    $days      = floor($totalsecs/DAYSECS);
+
+    $years     = floor($totalsecs/YEARSECS);
+    $remainder = $totalsecs - ($years*YEARSECS);
+    $weeks     = floor($remainder/WEEKSECS);
+    $remainder = $totalsecs - ($weeks*WEEKSECS);
+    $days      = floor($remainder/DAYSECS);
     $remainder = $totalsecs - ($days*DAYSECS);
     $hours     = floor($remainder/HOURSECS);
     $remainder = $remainder - ($hours*HOURSECS);
@@ -936,17 +952,25 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
     $sm = ($mins == 1)  ? $str->min  : $str->mins;
     $sh = ($hours == 1) ? $str->hour : $str->hours;
     $sd = ($days == 1)  ? $str->day  : $str->days;
+    $sw = ($weeks == 1)  ? $str->week  : $str->weeks;
+    $sy = ($years == 1)  ? $str->year  : $str->years;
 
+    $oyears = '';
+    $oweeks = '';
     $odays = '';
     $ohours = '';
     $omins = '';
     $osecs = '';
 
+    if ($years)  $oyears  = $years .' '. $sy;
+    if ($weeks)  $oweeks  = $weeks .' '. $sw;
     if ($days)  $odays  = $days .' '. $sd;
     if ($hours) $ohours = $hours .' '. $sh;
     if ($mins)  $omins  = $mins .' '. $sm;
     if ($secs)  $osecs  = $secs .' '. $ss;
 
+    if ($years)  return $oyears .' '. $oweeks;
+    if ($weeks)  return $oweeks .' '. $odays;
     if ($days)  return $odays .' '. $ohours;
     if ($hours) return $ohours .' '. $omins;
     if ($mins)  return $omins .' '. $osecs;
@@ -1635,9 +1659,9 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
         exit;
     }
 
-/// check whether the user should be changing password
+/// check whether the user should be changing password (but only if it is REALLY them)
     $userauth = get_auth_plugin($USER->auth);
-    if (!empty($USER->preference['auth_forcepasswordchange'])){
+    if (!empty($USER->preference['auth_forcepasswordchange']) && empty($USER->realuser)) {
         if ($userauth->can_change_password()) {
             $SESSION->wantsurl = $FULLME;
             if (empty($CFG->loginhttps)) {
