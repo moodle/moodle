@@ -27,6 +27,7 @@
 
     $id             = optional_param('id', '', PARAM_ALPHANUM);
     $confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
+    $confirmrelease = optional_param('confirmrelease', 0, PARAM_BOOL);
     $agreelicence = optional_param('agreelicence',0, PARAM_BOOL);
     $ignoreupgradewarning = optional_param('ignoreupgradewarning', 0, PARAM_BOOL);
 
@@ -224,11 +225,34 @@
 
             if (empty($confirmupgrade)) {
 
-
                 print_header($strdatabasechecking, $stradministration, $strdatabasechecking,
                         "", "", false, "&nbsp;", "&nbsp;");
 
                 notice_yesno(get_string('upgradesure', 'admin', $a->newversion), 'index.php?confirmupgrade=yes', 'index.php');
+                exit;
+
+            } else if (empty($confirmrelease)) {
+                $strcurrentrelease = get_string("currentrelease");
+                print_header($strcurrentrelease, $strcurrentrelease, $strcurrentrelease, "", "", false, "&nbsp;", "&nbsp;");
+                print_heading("Moodle $release");
+                print_simple_box(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'), 'center');
+
+                require_once($CFG->libdir.'/environmentlib.php');
+                print_heading(get_string('environment', 'admin'));
+                if (check_moodle_environment($release, $environment_results, true)) {
+                    notice_yesno(get_string('environmenterrorupgrade', 'admin'), 
+                                 'index.php?confirmupgrade=1&confirmrelease=1', 'index.php');
+                } else {
+                    notify(get_string('environmentok', 'admin'), 'notifysuccess');
+
+                    echo '<form action="index.php">';
+                    echo '<input type="hidden" name="confirmupgrade" value="1" />';
+                    echo '<input type="hidden" name="confirmrelease" value="1" />';
+                    echo '<div class="continuebutton"><input type="submit" value="'.get_string('continue').'" /></div>';
+                    echo '</form>';
+                }
+
+                print_footer('none');
                 exit;
 
             } else {
@@ -297,13 +321,9 @@
 /// Updated human-readable release version if necessary
 
     if ($release <> $CFG->release) {  // Update the release version
-        $strcurrentrelease = get_string("currentrelease");
-        print_header($strcurrentrelease, $strcurrentrelease, $strcurrentrelease, "", "", false, "&nbsp;", "&nbsp;");
-        print_heading("Moodle $release");
         if (!set_config("release", $release)) {
-            notify("ERROR: Could not update release version in database!!");
+            error("ERROR: Could not update release version in database!!");
         }
-        notice(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'), 'index.php', 'none');
     }
 
 /// Find and check all main modules and load them up or upgrade them if necessary
