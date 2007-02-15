@@ -177,7 +177,7 @@ if ($authsequence[0] == 'cas' and !empty($CFG->cas_enabled)) {
 
           /// Prepare redirection
             if (user_not_fully_set_up($USER)) {
-                $urltogo = $CFG->wwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.SITEID;
+                $urltogo = $CFG->wwwroot.'/user/edit.php';
                 // We don't delete $SESSION->wantsurl yet, so we get there later
 
             } else if (isset($SESSION->wantsurl) and (strpos($SESSION->wantsurl, $CFG->wwwroot) === 0)) {
