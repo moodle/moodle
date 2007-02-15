@@ -23,7 +23,7 @@
         redirect($CFG->httpswwwroot.'/login/index.php');
     }
 
-    if (isguestuser()) {
+    if (isguest()) { //TODO: add proper capability to edit own profile and change password too
         print_error('guestnoeditprofile');
     }
     if (!$user = get_record('user', 'id', $USER->id)) {
