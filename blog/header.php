@@ -214,12 +214,12 @@ require_once($CFG->dirroot .'/user/tabs.php');
 
 
 /// Layout the whole page as three big columns.
-print '<table border="0" cellpadding="3" cellspacing="0" width="100%">' . "\n";
+print '<table border="0" cellpadding="3" cellspacing="0" width="100%" id="layout-table">' . "\n";
 print '<tr valign="top">' . "\n";
 
 /// The left column ...
 if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
-    print '<td style="vertical-align: top; width: '. $preferred_width_left .'px;">' . "\n";
+    print '<td style="vertical-align: top; width: '. $preferred_width_left .'px;" id="left-column">' . "\n";
     print '<!-- Begin left side blocks -->' . "\n";
     blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
     print '<!-- End left side blocks -->' . "\n";
