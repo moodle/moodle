@@ -367,6 +367,35 @@ function stripslashes_recursive($var) {
 }
 
 /**
+ * Recursive implementation of addslashes()
+ *
+ * This function will allow you to add the slashes from a variable.
+ * If the variable is an array or object, slashes will be added
+ * to the items (or properties) it contains, even if they are arrays
+ * or objects themselves.
+ *
+ * @param mixed the variable to add slashes from
+ * @return mixed
+ */
+function addslashes_recursive($var) {
+    if(is_object($var)) {
+        $properties = get_object_vars($var);
+        foreach($properties as $property => $value) {
+            $var->$property = addslashes_recursive($value);
+        }
+    }
+    else if(is_array($var)) {
+        foreach($var as $property => $value) {
+            $var[$property] = addslashes_recursive($value);
+        }
+    }
+    else if(is_string($var)) {
+        $var = addslashes($var);
+    }
+    return $var;
+}
+
+/**
  * Given some normal text this function will break up any
  * long words to a given size by inserting the given character
  *
