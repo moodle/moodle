@@ -26,7 +26,6 @@
             error('Category ID was incorrect');
         }
         require_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $category->id));
-
     } else {
         error('Either course id or category must be specified');
     }
