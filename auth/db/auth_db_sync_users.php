@@ -2,9 +2,8 @@
 /** auth_db_sync_users.php
  *
  * This script is meant to be called from a system cronjob to
- * sync moodle user accounts with external database.
- *
- * It is required for internal password format.
+ * sync moodle user accounts with external database
+ * when using internal passwords (== passwords not defined in external database).
  *
  * Recommended cron entry:
  * # 5 minutes past 4am
@@ -23,8 +22,8 @@
  */
 
 
-if (!empty($_SERVER['GATEWAY_INTERFACE'])) {
-    error_log("should not be called from apache!");
+if (isset($_SERVER['REMOTE_ADDR'])) {
+    error_log("should not be called from web server!");
     exit;
 }
 
