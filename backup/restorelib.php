@@ -2229,6 +2229,10 @@
 
         $status = true;
 
+        if (! isset($info['GROUP']['#']['MEMBERS']['0']['#']['MEMBER'])) {
+            //OK, some groups have no members.
+            return $status;
+        }
         //Get the members array
         $members = $info['GROUP']['#']['MEMBERS']['0']['#']['MEMBER'];
 
@@ -6625,7 +6629,8 @@
         foreach ($assignments as $assignment) {
 
             $olduser = backup_getid($restore->backup_unique_code,"user",$assignment->userid);
-            if (!$olduser || $olduser->info == "notincourse") { // it's possible that user is not in the course
+            //Oh dear, $olduser... can be an object, $obj->string or bool!
+            if (!$olduser || (is_string($olduser->info) && $olduser->info == "notincourse")) { // it's possible that user is not in the course
                 continue;  
             }        
             $assignment->userid = $olduser->new_id; // new userid here
