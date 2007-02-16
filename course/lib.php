@@ -2523,4 +2523,35 @@ function get_section_name($format) {
 	return $sectionname;
 }
 
+/**
+ * Can the current user delete this course?
+ * @param int $courseid
+ * @return boolean
+ *
+ * Exception here to fix MDL-7796.
+ *
+ * FIXME
+ *   Course creators who can manage activities in the course
+ *   shoule be allowed to delete the course. We do it this
+ *   way because we need a quick fix to bring the functionality
+ *   in line with what we had pre-roles. We can't give the
+ *   default course creator role moodle/course:delete at
+ *   CONTEXT_SYSTEM level because this will allow them to
+ *   delete any course in the site. So we hard code this here
+ *   for now.
+ *
+ * @author vyshane AT gmail.com
+ */
+function can_delete_course($courseid) {
+
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+
+    return ( has_capability('moodle/course:delete', $context)
+             || (has_capability('moodle/legacy:coursecreator', $context)
+             && has_capability('moodle/course:manageactivities', $context)) );
+}
+
+
+
+
 ?>

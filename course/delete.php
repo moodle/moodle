@@ -8,7 +8,9 @@
 
     require_login();
 
-    require_capability('moodle/course:delete', get_context_instance(CONTEXT_SYSTEM, SITEID));
+    if (!can_delete_course($id)) {
+        error('You do not have the permission to delete this course.');
+    }
 
     if (!$site = get_site()) {
         error("Site not found!");
