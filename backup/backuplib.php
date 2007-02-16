@@ -213,9 +213,10 @@
                 //Extracts user id from file path
                 $tok = strtok($dir,"/");
                 if ($tok) {
-                   $userid = $tok;
+                    $userid = $tok;
                 } else {
-                   $tok = "";
+                    //We were getting $dir='0', so continue (WAS: $tok = "";)
+                    continue;
                 }
                 //Look it is a backupable user
                 $data = get_record ("backup_ids","backup_code","$backup_unique_code",

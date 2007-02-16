@@ -132,7 +132,7 @@
                 //Personalize the searchstring
                 $searchstring='/\$@(RESOURCEINDEX)\*('.$old_id.')@\$/';
                 //If it is a link to this course, update the link to its new location
-                if($rec->new_id) {
+                if (!empty($rec->new_id)) {
                     //Now replace it
                     $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/resource/index.php?id='.$rec->new_id,$result);
                 } else { 
@@ -157,7 +157,7 @@
                 //Personalize the searchstring
                 $searchstring='/\$@(RESOURCEVIEWBYID)\*('.$old_id.')@\$/';
                 //If it is a link to this course, update the link to its new location
-                if($rec->new_id) {
+                if (!empty($rec->new_id)) {
                     //Now replace it
                     $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/resource/view.php?id='.$rec->new_id,$result);
                 } else {
