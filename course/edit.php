@@ -40,7 +40,7 @@
                 $disable_meta = get_string('metaalreadyhasenrolments');
             }
         }
-    } else {  // Admin is creating a new course
+    } else {  // Creating a new course
 
         $context = get_context_instance(CONTEXT_COURSECAT, $category);
         // first check to see if user has site level course creation. 

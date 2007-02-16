@@ -303,7 +303,7 @@ function forum_cron() {
                        'Precedence: Bulk',
                        'List-Id: "'.$cleanforumname.'" <moodleforum'.$forum->id.'@'.$hostname.'>',
                        'List-Help: '.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id,
-                       'Message-Id: <moodlepost'.$post->id.'@'.$hostname.'>',
+                       'Message-ID: <moodlepost'.$post->id.'@'.$hostname.'>',
                        'In-Reply-To: <moodlepost'.$post->parent.'@'.$hostname.'>',
                        'References: <moodlepost'.$post->parent.'@'.$hostname.'>',
                        'X-Course-Id: '.$course->id,

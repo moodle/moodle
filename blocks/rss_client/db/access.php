@@ -40,7 +40,6 @@ $block_rss_client_capabilities = array(
         'legacy' => array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
     ),
@@ -51,7 +50,6 @@ $block_rss_client_capabilities = array(
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
             'editingteacher' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
     ),
@@ -63,7 +61,6 @@ $block_rss_client_capabilities = array(
         'legacy' => array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
     ),

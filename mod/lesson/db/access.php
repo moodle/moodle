@@ -14,7 +14,6 @@ $mod_lesson_capabilities = array(
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
             'editingteacher' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
     ),
@@ -26,7 +25,6 @@ $mod_lesson_capabilities = array(
         'legacy' => array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
     )

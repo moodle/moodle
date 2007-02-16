@@ -41,7 +41,6 @@ $mod_choice_capabilities = array(
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
     ),
@@ -53,7 +52,6 @@ $mod_choice_capabilities = array(
         'legacy' => array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
     ),
@@ -65,7 +63,6 @@ $mod_choice_capabilities = array(
         'legacy' => array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
     ),
@@ -77,7 +74,6 @@ $mod_choice_capabilities = array(
         'legacy' => array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
     )

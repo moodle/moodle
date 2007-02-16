@@ -325,7 +325,7 @@
                     echo'<a title="'.get_string('assignroles', 'role').'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$coursecontext->id.'"><img src="'.$CFG->pixpath.'/i/roles.gif" height="11" width="11" alt="'.get_string('assignroles', 'role').'" /></a>';
                 }                       
                          
-                if (has_capability('moodle/course:delete', $coursecontext)) {
+                if (can_delete_course($acourse->id)) {
                     echo '<a title="'.$strdelete.'" href="delete.php?id='.$acourse->id.'">'.
                             '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="'.$strdelete.'" /></a> ';
                 }
