@@ -449,7 +449,7 @@
             }
         } else {
         		// OK, the page is now locked to us. Put in the AJAX for keeping the lock
-            require_js(array('yui_yahoo','yui_connection'));
+            print require_js(array('yui_yahoo','yui_connection'));
             $strlockcancelled=get_string('lockcancelled','wiki');
             $strnojslockwarning=get_string('nojslockwarning','wiki');
             $intervalms=WIKI_LOCK_RECONFIRM*1000;
