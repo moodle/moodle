@@ -5525,7 +5525,7 @@
         if ($status){
             require_once("$CFG->dirroot/backup/bb/restore_bb.php");
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("checkingforbbexport");
+                echo "<li>".get_string("checkingforbbexport").'</li>';
             }
             $status = blackboard_convert($CFG->dataroot."/temp/backup/".$backup_unique_code);
         }
@@ -5566,7 +5566,7 @@
         
         if (!defined('RESTORE_SILENTLY')) {
             //End the main ul
-            echo "</li></ul>";
+            echo "</ul>\n";
             
             //End the main table
             echo "</td></tr>";
