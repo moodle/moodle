@@ -1,49 +1,42 @@
-<?PHP // $Id: book.php,v 1.1 2006/03/12 18:40:02 skodak Exp $
+<?PHP // $Id: book.php,v 1.2 2007/02/16 18:47:46 andreabix Exp $ 
+      // book.php - created with Moodle 1.7.1+ (2006101010)
 
-$string['modulename'] = 'Antologia';
-$string['modulenameplural'] = 'Antologie';
 
-$string['toc'] = 'Sommario';
-$string['tocwidth'] = 'Larghezza in pixel del Sommario per tutte le Antologie.';
-$string['faq'] = 'FAQ Modulo Antologia';
-
-$string['disableprinting'] = 'Escludi la stampa';
-$string['customtitles'] = 'Titoli personalizzati';
-
-$string['editingchapter'] = 'Modifica del capitolo';
+$string['addafter'] = 'Aggiungi un nuovo capitolo';
+$string['chapterscount'] = 'Capitoli';
 $string['chaptertitle'] = 'Titolo del Capitolo';
+$string['confchapterdelete'] = 'Sei sicuro di voler cancellare questo capitolo?';
+$string['confchapterdeleteall'] = 'Sei sicuro di voler cancellare questo capitolo e tutti i suoi paragrafi?';
 $string['content'] = 'Contenuto';
-$string['subchapter'] = 'Paragrafo';
-
+$string['customtitles'] = 'Titoli personalizzati';
+$string['disableprinting'] = 'Escludi la stampa';
+$string['doimport'] = 'Importa';
+$string['editingchapter'] = 'Modifica del capitolo';
+$string['faq'] = 'FAQ Modulo Libro';
+$string['fileordir'] = 'Scegli un file oppure un folder';
+$string['import'] = 'Importa';
+$string['importinfo'] = 'Importa un file HTML oppure una cartella.<br />I capitoli saranno ordinati alfabeticamente utilizzando i nomi dei file.';
+$string['importing'] = 'Importazione in corso';
+$string['importingchapters'] = 'Importazione dei capitoli';
+$string['maindirectory'] = 'Cartella principale';
+$string['modulename'] = 'Libro';
+$string['modulenameplural'] = 'Libri';
+$string['navexit'] = 'Chiudi';
+$string['navnext'] = 'Pagina successiva';
+$string['navprev'] = 'Pagina precedente';
 $string['numbering'] = 'Numerazione dei capitoli';
 $string['numbering0'] = 'Nessuna numerazione';
 $string['numbering1'] = 'Numeri';
 $string['numbering2'] = 'Elenco puntato';
 $string['numbering3'] = 'Elenco rientrato';
-
-$string['chapterscount'] = 'Capitoli';
-
-$string['addafter'] = 'Aggiungi un nuovo capitolo';
-$string['confchapterdelete'] = 'Sei sicuro di voler cancellare questo capitolo?';
-$string['confchapterdeleteall'] = 'Sei sicuro di voler cancellare questo capitolo e tutti i suoi paragrafi?';
-
 $string['printbook'] = 'Stampa tutto';
 $string['printchapter'] = 'Stampa questo capitolo';
 $string['printdate'] = 'Data';
 $string['printedby'] = 'Stampato da';
-$string['top'] = 'Ritorna su';
-
-$string['navprev'] = 'Pagina precedente';
-$string['navnext'] = 'Pagina successiva';
-$string['navexit'] = 'Chiudi';
-
-$string['importingchapters'] = 'Importazione dei capitoli';
-$string['import'] = 'Importa';
-$string['doimport'] = 'Importa';
-$string['importing'] = 'Importazione in corso';
 $string['relinking'] = 'Elaborazione dei collegamenti';
-$string['importinfo'] = 'Importa un file HTML oppure un folder.<br />I capitoli saranno ordinati alfabeticamante utilizzando i nomi dei file.';
-$string['maindirectory'] = 'Folder principale';
-$string['fileordir'] = 'Scegli un file oppure un folder';
+$string['subchapter'] = 'Paragrafo';
+$string['toc'] = 'Sommario';
+$string['tocwidth'] = 'Larghezza in pixel del Sommario per tutti i Libri.';
+$string['top'] = 'Ritorna su';
 
 ?>
