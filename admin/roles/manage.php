@@ -16,7 +16,9 @@
     $cancel      = optional_param('cancel', 0, PARAM_BOOL);
 
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-
+    
+    require_capability('moodle/role:manage', $sitecontext);
+    
     if ($cancel) {
         redirect('manage.php');
     }
