@@ -326,7 +326,7 @@
         }
 
         require_login($cm->course); // needed to setup proper $COURSE
-        $context = get_context_instance(CONTEXT_COURSE, $cm->course);
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         require_capability('moodle/course:activityvisibility', $context);
 
         set_coursemodule_visible($cm->id, 0);
@@ -379,7 +379,7 @@
         }
 
         require_login($cm->course); // needed to setup proper $COURSE
-        $context = get_context_instance(CONTEXT_COURSE, $cm->course);
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         require_capability('moodle/course:manageactivities', $context);
 
         set_coursemodule_groupmode($cm->id, $groupmode);

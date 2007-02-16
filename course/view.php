@@ -130,7 +130,7 @@
 
         if ($USER->editing && !empty($USER->ajax) && !empty($CFG->enableajax) && $CFG->ajaxcapable) {
 
-            if (ajaxenabled()) {
+            if (ajaxenabled() && has_capability('moodle/course:manageactivities', $context)) {
                 
                 require_js(array('yui_yahoo',
                                  'yui_dom',
@@ -203,7 +203,7 @@
 
 
     // Use AJAX?
-    if ($CFG->useajax) {
+    if ($CFG->useajax && has_capability('moodle/course:manageactivities', $context)) {
         // At the bottom because we want to process sections and activities
         // after the relevant html has been generated. We're forced to do this
         // because of the way in which lib/ajax/ajaxcourse.js is written.

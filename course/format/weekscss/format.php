@@ -124,7 +124,7 @@
         $summaryformatoptions->noclean = true;
         echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
 
-        if (isediting($course->id)) {
+        if (isediting($course->id) && has_capability('moodle/course:update', $course->id)) {
             echo '<p><a title="'.$streditsummary.'" '.
                  ' href="editsection.php?id='.$thissection->id.'"><img src="'.$CFG->pixpath.'/t/edit.gif" '.
                  ' class="icon edit" alt="'.$streditsummary.'" /></a></p>';
@@ -212,7 +212,7 @@
                      '<img src="'.$CFG->pixpath.'/i/one.gif" class="icon wkone" alt="'.$strshowonlyweek.'" /></a><br />';
             }
 
-            if (isediting($course->id)) {
+            if (isediting($course->id) && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
                 if ($thissection->visible) {        // Show the hide/show eye
                     echo '<a href="view.php?id='.$course->id.'&amp;hide='.$section.'&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strweekhide.'">'.
                          '<img src="'.$CFG->pixpath.'/i/hide.gif" class="icon hide" alt="'.$strweekhide.'" /></a><br />';
@@ -243,7 +243,7 @@
                 $summaryformatoptions->noclean = true;
                 echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
 
-                if (isediting($course->id)) {
+                if (isediting($course->id) && has_capability('moodle/course:update', $course->id)) {
                     echo ' <a title="'.$streditsummary.'" href="editsection.php?id='.$thissection->id.'">'.
                          '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon edit" alt="'.$streditsummary.'" /></a><br /><br />';
                 }

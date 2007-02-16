@@ -269,7 +269,6 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
     }
 
     $isediting = $page->user_is_editing();
-
     foreach($pageblocks[$position] as $instance) {
         
         // $instance may have ->rec and ->obj
@@ -337,7 +336,7 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
     } // End foreach
 
 
-    if ($page->blocks_default_position() == $position && $page->user_is_editing()) {
+    if ($page->blocks_default_position() == $position && $page->user_is_editing() && has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_COURSE, $COURSE->id))) {
         blocks_print_adminblock($page, $pageblocks);
     }
 }

@@ -305,7 +305,7 @@ class block_base {
         // context for site or course, i.e. participant list etc
         // check to see if user can edit site or course blocks.
         // blocks can appear on other pages such as mod and blog pages...
-        
+
         switch ($this->instance->pagetype) {
             case 'course-view':
                 if (!has_capability('moodle/site:manageblocks', $blockcontext)) {

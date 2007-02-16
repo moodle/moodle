@@ -75,7 +75,7 @@
         }
 
         require_login($course->id); // needed to setup proper $COURSE
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         require_capability('moodle/course:manageactivities', $context);
 
         if (! $module = get_record("modules", "id", $cm->module)) {
@@ -167,7 +167,12 @@
         }
 
         require_login($course->id); // needed to setup proper $COURSE
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        
+        if (!empty($fromform->coursemodule)) {
+            $context = get_context_instance(CONTEXT_MODULE, $fromform->coursemodule);
+        } else {
+            $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        }
         require_capability('moodle/course:manageactivities', $context);
 
         $fromform->course = $course->id;
@@ -274,9 +279,13 @@
         exit;
 
     } else {
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        if (!empty($cm->id)) {
+            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        } else {
+            $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        }
         require_capability('moodle/course:manageactivities', $context);
-
+        
         $streditinga = get_string("editinga", "moodle", $fullmodulename);
         $strmodulenameplural = get_string("modulenameplural", $module->name);
 

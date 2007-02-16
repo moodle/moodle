@@ -350,7 +350,27 @@ class page_course extends page_base {
         if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM)) && defined('ADMIN_STICKYBLOCKS')) {
             return true;
         }
-        return has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $this->id));
+        
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $this->id);
+        $capcheck = false;   
+        if (has_capability('moodle/course:manageactivities', $coursecontext) ||
+            has_capability('moodle/site:manageblocks', $coursecontext)) {
+            $capcheck = true;      
+        } else {
+            // loop through all child context, see if user has moodle/course:manageactivities or moodle/site:manageblocks  
+            if ($children = get_child_contexts($coursecontext)) {
+                foreach ($children as $child) {
+                    $childcontext = get_record('context', 'id', $child);
+                    if (has_capability('moodle/course:manageactivities', $childcontext) ||
+                        has_capability('moodle/site:manageblocks', $childcontext)) {
+                        $capcheck = true;
+                        break;
+                    }             
+                }          
+            }
+        }
+        
+    return $capcheck;
     }
 
     // Is the user actually editing this course page or "sticky page" right now?
