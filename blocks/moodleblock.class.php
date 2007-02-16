@@ -297,7 +297,6 @@ class block_base {
      * @todo complete documenting this function. Define $options.
      */
     function _add_edit_controls($options) {
-      
         global $CFG, $USER, $PAGE;
         
         // this is the context relevant to this particular block instance
@@ -309,8 +308,7 @@ class block_base {
         
         switch ($this->instance->pagetype) {
             case 'course-view':
-                $context = get_context_instance(CONTEXT_COURSE, $this->instance->pageid);
-                if (!has_capability('moodle/site:manageblocks', $context)) {
+                if (!has_capability('moodle/site:manageblocks', $blockcontext)) {
                     return null;
                 }
             break;
