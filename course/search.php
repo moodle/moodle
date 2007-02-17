@@ -243,7 +243,7 @@
 
         if ($perpage != 99999 && $totalcount > $perpage) {
             echo "<center><p>";
-            echo "<a href=\"search.php?search=$encoededsearch&perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
+            echo "<a href=\"search.php?search=$encodedsearch&perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
             echo "</p></center>";
         }
 
