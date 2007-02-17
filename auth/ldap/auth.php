@@ -409,18 +409,47 @@ class auth_plugin_ldap {
     /// $do_updates = 1 // will do pull in data updates from ldap if relevant
 
 
-        global $CFG ;
+        global $CFG;
+
+        $droptablesql = array(); /// sql commands to drop the table (because session scope could be a problem for
+                                 /// some persistent drivers like ODBTP (mssql) or if this function is invoked
+                                 /// from within a PHP application using persistent connections
 
         // configure a temp table 
         print "Configuring temp table\n";    
-        if (strtolower($CFG->dbfamily) === 'mysql') {
-            // help old mysql versions cope with large temp tables
-            execute_sql('SET SQL_BIG_TABLES=1', false); 
-            execute_sql('CREATE TEMPORARY TABLE ' . $CFG->prefix .'extuser (idnumber VARCHAR(64), PRIMARY KEY (idnumber)) TYPE=MyISAM',false); 
-        }
-        elseif (strtolower($CFG->dbfamily) === 'postgres') {
-            $bulk_insert_records = 1; // no support for multiple sets of values
-            execute_sql('CREATE TEMPORARY TABLE '.$CFG->prefix.'extuser (idnumber VARCHAR(64), PRIMARY KEY (idnumber))',false); 
+        switch (strtolower($CFG->dbfamily)) {
+            case 'mysql':
+                $temptable = $CFG->prefix . 'extuser';
+                $droptablesql[] = 'DROP TEMPORARY TABLE ' . $temptable; // sql command to drop the table (because session scope could be a problem)
+                execute_sql_arr($droptablesql, true, false); /// Drop temp table to avoid persistence problems later
+                echo "Creating temp table $temptable\n";
+                execute_sql('CREATE TEMPORARY TABLE ' . $temptable . ' (idnumber VARCHAR(64), PRIMARY KEY (idnumber)) TYPE=MyISAM', false); 
+                break;
+            case 'postgres':
+                $temptable = $CFG->prefix . 'extuser';
+                $droptablesql[] = 'DROP TABLE ' . $temptable; // sql command to drop the table (because session scope could be a problem)
+                execute_sql_arr($droptablesql, true, false); /// Drop temp table to avoid persistence problems later
+                echo "Creating temp table $temptable\n";
+                $bulk_insert_records = 1; // no support for multiple sets of values
+                execute_sql('CREATE TEMPORARY TABLE '. $temptable . ' (idnumber VARCHAR(64), PRIMARY KEY (idnumber))', false);
+                break;
+            case 'mssql':
+                $temptable = '#'.$CFG->prefix . 'extuser'; /// MSSQL temp tables begin with #
+                $droptablesql[] = 'DROP TABLE ' . $temptable; // sql command to drop the table (because session scope could be a problem)
+                execute_sql_arr($droptablesql, true, false); /// Drop temp table to avoid persistence problems later
+                echo "Creating temp table $temptable\n";
+                $bulk_insert_records = 1; // no support for multiple sets of values
+                execute_sql('CREATE TABLE ' . $temptable . ' (idnumber VARCHAR(64), PRIMARY KEY (idnumber))', false);
+                break;
+            case 'oracle':
+                $temptable = $CFG->prefix . 'extuser';
+                $droptablesql[] = 'TRUNCATE TABLE ' . $temptable; // oracle requires truncate before being able to drop a temp table
+                $droptablesql[] = 'DROP TABLE ' . $temptable; // sql command to drop the table (because session scope could be a problem)
+                execute_sql_arr($droptablesql, true, false); /// Drop temp table to avoid persistence problems later
+                echo "Creating temp table $temptable\n";
+                $bulk_insert_records = 1; // no support for multiple sets of values
+                execute_sql('CREATE GLOBAL TEMPORARY TABLE '.$temptable.' (idnumber VARCHAR(64), PRIMARY KEY (idnumber)) ON COMMIT PRESERVE ROWS', false);
+                break;
         }
 
         print "connecting to ldap\n";
@@ -476,7 +505,7 @@ class auth_plugin_ldap {
                     $count++;
                     array_push($fresult, $value);
                     if (count($fresult) >= $bulk_insert_records) {
-                        $this->ldap_bulk_insert($fresult);
+                        $this->ldap_bulk_insert($fresult, $temptable);
                         //print var_dump($fresult);
                         $fresult=array();
                     }         
@@ -486,7 +515,7 @@ class auth_plugin_ldap {
 
             // insert any remaining users and release mem
             if (count($fresult)) {
-                $this->ldap_bulk_insert($fresult);
+                $this->ldap_bulk_insert($fresult, $temptable);
                 $fresult=array();
             }
             commit_sql();
@@ -497,11 +526,13 @@ class auth_plugin_ldap {
         /// preserve our user database
         /// if the temp table is empty, it probably means that something went wrong, exit
         /// so as to avoid mass deletion of users; which is hard to undo
-        $count = get_record_sql('SELECT COUNT(idnumber) AS count, 1 FROM ' . $CFG->prefix .'extuser');
+        $count = get_record_sql('SELECT COUNT(idnumber) AS count, 1 FROM ' . $temptable);
         $count = $count->{'count'};
         if ($count < 1) {
             print "Did not get any users from LDAP -- error? -- exiting\n";
             exit;
+        } else {
+            print "Got $count records from LDAP\n";
         }
 
         ////
@@ -510,7 +541,7 @@ class auth_plugin_ldap {
         // find users in DB that aren't in ldap -- to be removed!
         // this is still not as scalable
         $sql = 'SELECT u.id, u.username 
-                FROM ' . $CFG->prefix .'user u LEFT JOIN ' . $CFG->prefix .'extuser e 
+                FROM ' . $CFG->prefix .'user u LEFT JOIN ' . $temptable . ' e 
                         ON u.idnumber = e.idnumber 
                 WHERE u.auth=\'' . AUTH_LDAP_NAME . '\' AND u.deleted=\'0\' AND e.idnumber IS NULL';
         //print($sql);            
@@ -542,7 +573,9 @@ class auth_plugin_ldap {
                 //copy pasted part ends
             }     
             commit_sql();
-        } 
+        } else {
+            print "No user entries to be removed\n";
+        }
         $remove_users = 0; // free mem!   
 
         ////
@@ -567,6 +600,8 @@ class auth_plugin_ldap {
             // print_r($all_keys); print_r($updatekeys);
             unset($all_keys); unset($key);
             
+        } else {
+            print "No updates to be done\n";
         }
         if ( $do_updates and !(empty($updatekeys)) ) { // run updates only if relevant
             $users = get_records_sql('SELECT u.username, u.id FROM ' . $CFG->prefix . 'user u WHERE u.deleted=0 and u.auth=\'' . AUTH_LDAP_NAME . '\'' );
@@ -606,7 +641,9 @@ class auth_plugin_ldap {
                     unset($users); // free mem
                 }
             }
-        } // end do updates
+        } else { // end do updates
+            print "No updates to be done\n";
+        }
         
         ////
         //// User Additions
@@ -615,7 +652,7 @@ class auth_plugin_ldap {
         // note that get_records_sql wants at least 2 fields returned,
         // and gives me a nifty object I don't want.
         $sql = 'SELECT e.idnumber,1 
-                FROM ' . $CFG->prefix .'extuser e  LEFT JOIN ' . $CFG->prefix .'user u
+                FROM ' . $temptable . ' e  LEFT JOIN ' . $CFG->prefix .'user u
                         ON e.idnumber = u.idnumber 
                 WHERE  u.id IS NULL OR (u.id IS NOT NULL AND u.deleted=1)';
         $add_users = get_records_sql($sql); // get rid of the fat        
@@ -674,6 +711,8 @@ class auth_plugin_ldap {
             }
             commit_sql();
             unset($add_users); // free mem
+        } else {
+            print "No users to be added\n";
         }
         return true;
     }
@@ -729,13 +768,13 @@ class auth_plugin_ldap {
         return get_record_select("user", "id = '$userid' AND deleted <> '1'");
     }
 
-    function ldap_bulk_insert($users) {
+
     // bulk insert in SQL's temp table
     // $users is an array of usernames
-        global $CFG;
-        
+    function ldap_bulk_insert($users, $temptable) {
+
         // bulk insert -- superfast with $bulk_insert_records
-        $sql = 'INSERT INTO '.$CFG->prefix.'extuser (idnumber) VALUES ';
+        $sql = 'INSERT INTO ' . $temptable . ' (idnumber) VALUES ';
         // make those values safe
         array_map('addslashes', $users);
         // join and quote the whole lot
