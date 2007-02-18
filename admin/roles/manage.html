@@ -12,11 +12,14 @@
             $submitlabel = get_string('savechanges');
     }
 
+    if ($action == 'view') {
 ?>
-
-<div align="right">
-<a href="manage.php?roleid=<?php p($roleid); ?>&amp;action=duplicate"><?php print_string('duplicaterole'); ?></a>
+<div class="duplicaterole">
+<a href="manage.php?roleid=<?php p($roleid); ?>&amp;action=duplicate"><?php print_string('duplicaterole', 'role'); ?></a>
 </div>
+<?php 
+    } 
+?>
 <form id="rolesform" action="manage.php" method="post">
 <input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
 <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
