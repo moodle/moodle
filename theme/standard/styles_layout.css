@@ -738,10 +738,18 @@ body#admin-blocks table#incompatible th.c0 {
   margin-top: 1em;
 }
 
+#admin-roles-manage .duplicaterole {
+  text-align: right;
+}
+
 #admin-roles-manage .singlebutton,
 #admin-roles-allowoverride .singlebutton,
 #admin-roles-allowassign .singlebutton {
   padding: 10px;
+  text-align:center;
+}
+
+#admin-roles-manage .selector {
   text-align:center;
 }
 

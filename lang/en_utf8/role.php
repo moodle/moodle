@@ -49,6 +49,7 @@ $string['currentrole'] = 'Current role';
 $string['defaultrole'] = 'Default role';
 $string['defineroles'] = 'Define roles';
 $string['deleterolesure'] = 'Are you sure that you want to delete role \"$a->name ($a->shortname)\"?</p><p>Currently this role is assigned to $a->count users.';
+$string['duplicaterole'] = 'Duplicate this role';
 $string['editrole'] = 'Edit role';
 $string['errorbadrolename'] = 'Incorrect role name';
 $string['errorbadroleshortname'] = 'Incorrect role name';

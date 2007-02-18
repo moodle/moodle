@@ -334,18 +334,15 @@
                 break;
         }
 
-        echo '<div align="center" class="selector">';
+        echo '<div class="selector">';
         if ($action == 'view') {
-            echo get_string('selectrole', 'role').': ';
-            echo '<form style="display:inline;" id="switchrole" action="manage.php" method="get">';
-            echo '<input type="hidden" name="action" value="view" />';
-            choose_from_menu ($roleoptions, 'roleid', $roleid, get_string('listallroles', 'role').'...', $script='switchrole.submit()');
-            echo '</form>';
-            echo '<form style="display:inline;" id="editrole" action="manage.php" method="get">';
-            echo '<input type="hidden" name="roleid" value="'.$roleid.'" />';
-            echo '<input type="hidden" name="action" value="edit" />';
-            echo '<input type="submit" value="'.get_string('edit').'" />';
-            echo '</form>';
+            popup_form('manage.php?action=view&amp;roleid=', $roleoptions, 'switchrole', $roleid, '', '', '', 
+                       false, 'self', get_string('selectrole', 'role').': ');
+
+            $options = array();
+            $options['roleid'] = $roleid;
+            $options['action'] = 'edit';
+            print_single_button('manage.php', $options, get_string('edit'));
         }
         echo '</div>';
 
