@@ -18,7 +18,7 @@ class question_edit_essay_form extends question_edit_form {
      * @param MoodleQuickForm $mform the form being built.
      */
     function definition_inner(&$mform) {
-        $mform->addElement('htmleditor', 'feedback', print_string("feedback", "quiz"));
+        $mform->addElement('htmleditor', 'feedback', get_string("feedback", "quiz"));
         $mform->setType('feedback', PARAM_RAW);
 
         $mform->addElement('hidden', 'fraction', 0);
