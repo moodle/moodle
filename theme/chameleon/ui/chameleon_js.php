@@ -40,7 +40,7 @@ String.prototype.trim = function() {
         
     var Config = {
         THEME_ROOT: '<?php echo $chameleon_theme_root; ?>',
-        REMOTE_URI: '<?php echo substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/')); ?>/css.php<?php echo (isset($_GET['id'])) ? '?id='.(int) $_GET['id'] : ''; ?>',
+        REMOTE_URI: '<?php echo substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/')); ?>/css.php<?php echo (isset($_GET['id'])) ? '?id='.(int) $_GET['id'] : '?dummy=1'; ?>',
         FONTS_LIST: ['verdana, arial, helvetica, sans-serif', '"trebuchet ms", verdana, sans-serif', 'georgia, "trebuchet ms", times, serif', 'Other'],
         FONT_WEIGHTS: ['normal', 'bold'],
         FONT_STYLES: ['normal', 'italic'],
