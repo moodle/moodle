@@ -115,6 +115,10 @@ class question_essay_qtype extends default_questiontype {
         return true;
     }
 
+    function display_question_editing_page(&$mform, $question, $wizardnow){
+        parent:: display_question_editing_page($mform, $question, $wizardnow);
+    }
+
     /**
      * Backup the extra information specific to an essay question - over and above
      * what is in the mdl_question table. 
