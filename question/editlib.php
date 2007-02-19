@@ -416,7 +416,10 @@ function question_list($course, $categoryid, $quizid=0,
 
     // add random question
     if ($quizid && has_capability('mod/quiz:manage', $context)) {
-        for ($i=1;$i<=10; $i++) {
+        for ($i = 1;$i <= min(10, $totalnumber); $i++) {
+            $randomcount[$i] = $i;
+        }
+        for ($i = 20;$i <= min(100, $totalnumber); $i += 10) {
             $randomcount[$i] = $i;
         }
         echo '<br />';
