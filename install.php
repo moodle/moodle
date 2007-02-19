@@ -644,7 +644,7 @@ if ($nextstage == SAVE) {
         echo "<td width=\"33.3%\">&nbsp;</td>\n";
         echo "<td width=\"33.3%\">&nbsp;</td>\n";
         echo "<td width=\"33.3%\" align=\"right\">\n";        
-        print_single_button("index.php", $options, get_string('continue')."  &raquo;");
+        print_single_button("index.php", $options, get_string('continue'));
         echo "</td>\n";
         echo "</tr>\n";
         echo "</table>\n";
@@ -661,7 +661,7 @@ if ($nextstage == SAVE) {
         print_single_button("install.php", $installoptions, get_string('download', 'install'));
         echo "</td>\n";
         echo "<td width=\"33.3%\" align=\"right\">\n";        
-        print_single_button("index.php", $options, get_string('continue')."  &raquo;");
+        print_single_button("index.php", $options, get_string('continue'));
         echo "</td>\n";
         echo "</tr>\n";
         echo "</table>\n";
