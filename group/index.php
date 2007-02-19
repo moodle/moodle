@@ -67,6 +67,9 @@ if ($success) {
 
 
     switch ($action) {
+        case false: //OK, display form.
+            break;
+
         case 'ajax_getgroupsingrouping':
             if (GROUP_NOT_IN_GROUPING == $groupingid) {
                 $groupids = groups_get_groups_not_in_any_grouping($courseid);
@@ -94,6 +97,7 @@ if ($success) {
         case 'showgroupingpermsform':
             break;
         case 'deletegrouping':
+            redirect(groups_grouping_edit_url($courseid, $groupingid, $html=false, $param='delete=1'));
             break;
         case 'showcreategroupingform':
             redirect(groups_grouping_edit_url($courseid, null, false));
@@ -106,7 +110,7 @@ if ($success) {
             redirect(groups_group_edit_url($courseid, $groupid, $groupingid, false));
             break;
         case 'deletegroup':
-            redirect(groups_group_edit_url($courseid, $groupid, $groupingid, false, 'delete=1'));
+            redirect(groups_group_edit_url($courseid, $groupid, $groupingid, $html=false, $param='delete=1'));
             break;
         case 'removegroup':
             break;
@@ -128,11 +132,13 @@ if ($success) {
             break;
         case 'updatemembers': //Currently reloading.
             break;
-        default:
-            //print_error('Unknown action.');
-            break;
-    }
 
+        default: //ERROR.
+            if (debugging()) {
+                error('Error, unknown button/action. Probably a user-interface bug!', groups_home_url($courseid));
+            break;
+        }
+    }
 
     // Print the page and form
     $strgroups = get_string('groups');
@@ -198,8 +204,8 @@ if ($success) {
             <p><input type="submit" name="act_showgroupingsettingsform" id="showeditgroupingsettingsform" value="<?php print_string('editgroupingsettings', 'group'); ?>" /></p>
 <?php if ($shownotdone) { ?>
             <p><input type="submit" disabled="disabled" name="act_showgroupingpermsform" id="showeditgroupingpermissionsform" value="<?php print_string('editgroupingpermissions', 'group'); ?>" /></p>
-            <p><input type="submit" disabled="disabled" name="act_deletegrouping" id="deletegrouping" value="<?php print_string('deletegrouping', 'group'); ?>" /></p>
 <?php } ?>
+            <p><input type="submit" name="act_deletegrouping" id="deletegrouping" value="<?php print_string('deletegrouping', 'group'); ?>" /></p>
             <p><input type="submit" name="act_showcreategroupingform" id="showcreategroupingform" value="<?php print_string('creategrouping', 'group'); ?>" /></p>
 <?php if ($shownotdone) { ?>
             <p><input type="submit" disabled="disabled" name="act_createautomaticgroupingform" id="showcreateautomaticgroupingform" value="<?php print_string('createautomaticgrouping', 'group'); ?>" /></p>
@@ -254,7 +260,7 @@ if ($success) {
     }
     if (isset($userids)) { //&& is_array($userids)        
         // Put the groupings into a hash and sort them
-        $user_names = groups_userids_to_user_names($userids);
+        $user_names = groups_userids_to_user_names($userids, $courseid);
 
         foreach ($user_names as $user) {
             echo "<option value=\"{$user->id}\">{$user->name}</option>\n";
@@ -271,7 +277,7 @@ if ($success) {
         </tr>
     </table>
 
-    <!--input type="hidden" name="rand" value="om" /-->
+    <?php //<input type="hidden" name="rand" value="om" /> ?>
 </fieldset>
 </form>
 <?php
