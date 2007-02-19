@@ -123,10 +123,6 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
         $message = "Check order->id!";
         return false;
     }
-    elseif ($action <= AN_ACTION_NONE or $action > AN_ACTION_VOID) {
-        $message = "Invalid action!";
-        return false;
-    }
 
     $poststring = $conststring;
 
