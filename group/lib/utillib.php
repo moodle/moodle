@@ -280,9 +280,10 @@ function groups_get_course($groupid) {
  * (For /user/index.php etc.)
  * @param $courseid
  * @param $groupid
- * @param $groupingid Optional grouping ID
- * @param $html True for HTML pages, eg. on error. False for HTTP redirects.
+ * @param $groupingid Default false, or optionally a grouping ID.
+ * @param $html Default true for HTML pages, eg. on error. False for HTTP redirects.
  * @param $param Extra parameters.
+ * @return string An absolute URL.
  */
 function groups_group_edit_url($courseid, $groupid, $groupingid=false, $html=true, $param=false) {
     global $CFG;
@@ -300,18 +301,35 @@ function groups_group_edit_url($courseid, $groupid, $groupingid=false, $html=tru
     return $url;
 }
 
-/** Internal use only. */
-function groups_grouping_edit_url($courseid, $groupingid=false, $html=true) {
+/** 
+ * Return the address for the grouping settings page - Internal group use only.
+ * @param $courseid
+ * @param $groupingid Default false, or optionally a grouping ID.
+ * @param $html Default true for HTML pages, eg. on error. False for HTTP redirects.
+ * @param $param Extra parameters.
+ * @return string An absolute URL.
+ */
+function groups_grouping_edit_url($courseid, $groupingid=false, $html=true, $param=false) {
     global $CFG;
     $html ? $sep = '&amp;' : $sep = '&';
     $url = $CFG->wwwroot.'/group/grouping.php?courseid='.$courseid;
     if ($groupingid) {
         $url .= $sep.'grouping='.$groupingid;
     }
+    if ($param) {
+        $url .= $sep.$param;
+    }
     return $url;
 }
 
-/** Internal use only. */
+/**
+ * Return the address for the add/remove users page - Internal group use only.
+ * @param $courseid
+ * @param $groupid
+ * @param $groupingid Default false, or optionally a grouping ID.
+ * @param $html Default true for HTML pages, eg. on error. False for HTTP redirects.
+ * @return string An absolute URL.
+ */
 function groups_members_add_url($courseid, $groupid, $groupingid=false, $html=true) {
     global $CFG;
     $html ? $sep = '&amp;' : $sep = '&';
@@ -323,8 +341,12 @@ function groups_members_add_url($courseid, $groupid, $groupingid=false, $html=tr
 }
 
 /**
- * Return the address for the main group management page.
- * (For admin block.)
+ * Return the address for the main group management page. (For admin block etc.)
+ * @param $courseid
+ * @param $groupid Default false, or optionally a group ID.
+ * @param $groupingid Default false, or optionally a grouping ID.
+ * @param $html Default true for HTML pages, eg. on error. False for HTTP redirects.
+ * @return string An absolute URL.
  */
 function groups_home_url($courseid, $groupid=false, $groupingid=false, $html=true) {
     global $CFG;
