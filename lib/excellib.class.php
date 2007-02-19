@@ -51,7 +51,7 @@ class MoodleExcelWorkbook {
     /// Internally, create one PEAR Spreadsheet_Excel_Writer_Workbook class
         $this->pear_excel_workbook = new Spreadsheet_Excel_Writer($filename);
     /// Prepare it to accept UTF-16LE data and to encode it properly
-        if (empty($CFG->excelisofiles) && empty($CFG->latinexcelexport)) { /// Only if don't want to use latin (win1252) stronger output
+        if (empty($CFG->latinexcelexport)) { /// Only if don't want to use latin (win1252) stronger output
             $this->pear_excel_workbook->setVersion(8);
             $this->latin_output = false;
         } else { /// We want latin (win1252) output
