@@ -88,12 +88,15 @@ function mediaplugin_filter($courseid, $text) {
     }
 
     if ($CFG->filter_mediaplugin_enable_flv) {
+
+        $replace = array();
+
         $search = array(
                 '/<a(.*?)href=\"([^<]+)\.flv\?d=([\d]{1,3}%?)x([\d]{1,3}%?)\"([^>]*)>(.*?)<\/a>/is',
                 '/<a(.*?)href=\"([^<]+)\.flv\"([^>]*)>(.*?)<\/a>/is'
                 );
-            
-        $replace[1] = '<script type="text/javascript">'."\n".
+
+        $replace[0] = '<script type="text/javascript">'."\n".
                       '//<![CDATA['."\n".
                       'var FO'.$count.' = { movie:"'.$CFG->wwwroot.'/filter/mediaplugin/flvplayer.swf?file=\\2.flv", '.
                       'width:"\\3", height:"\\4", majorversion:"6", build:"40", '.
@@ -142,7 +145,7 @@ function mediaplugin_filter($courseid, $text) {
 
         $replace  = '\\0<p class="mediaplugin wmv"><object classid="CLSID:22D6f312-B0F6-11D0-94AB-0080C74C7E95"';
         $replace .= ' codebase="http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=5,1,52,701" ';
-        $replace .= ' standby="Loading Microsoft® Windows® Media Player components..." ';
+        $replace .= ' standby="Loading Microsoftï¿½ Windowsï¿½ Media Player components..." ';
         $replace .= ' id="msplayer" type="application/x-oleobject">';
         $replace .= '<param name="Filename" value="\\2.wmv" />';
         $replace .= '<param name="ShowControls" value="true" />';
