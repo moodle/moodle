@@ -41,6 +41,7 @@ require_once 'Spreadsheet/Excel/Writer.php';
 class MoodleExcelWorkbook {
 
     var $pear_excel_workbook;
+    var $iso_88591_output;
 
     /* Constructs one Moodle Workbook.
      * @param string $filename The name of the file
@@ -50,7 +51,12 @@ class MoodleExcelWorkbook {
     /// Internally, create one PEAR Spreadsheet_Excel_Writer_Workbook class
         $this->pear_excel_workbook = new Spreadsheet_Excel_Writer($filename);
     /// Prepare it to accept UTF-16LE data and to encode it properly
-        $this->pear_excel_workbook->setVersion(8);
+        if (empty($CFG->excelisofiles)) { /// Only if don't want to use iso-8859-1 stronger output
+            $this->pear_excel_workbook->setVersion(8);
+            $this->iso_88591_output = false;
+        } else { /// We want iso-8859-1 output
+            $this->iso_88591_output = true;
+        }
     /// Choose our temporary directory - see MDL-7176, found by paulo.matos
         make_upload_directory('temp/excel', false);
         $this->pear_excel_workbook->setTempDir($CFG->dataroot.'/temp/excel');
@@ -61,7 +67,7 @@ class MoodleExcelWorkbook {
      */
     function &add_worksheet($name = '') {
     /// Create the Moodle Worksheet. Returns one pointer to it
-        $ws =& new MoodleExcelWorksheet ($name, $this->pear_excel_workbook);
+        $ws =& new MoodleExcelWorksheet ($name, $this->pear_excel_workbook, $this->iso_88591_output);
         return $ws;
     }
 
@@ -101,16 +107,21 @@ class MoodleExcelWorkbook {
 class MoodleExcelWorksheet {
 
     var $pear_excel_worksheet;
+    var $iso_88591_output;
 
     /* Constructs one Moodle Worksheet.
      * @param string $filename The name of the file
      * @param object $workbook The internal PEAR Workbook onject we are creating
      */
-    function MoodleExcelWorksheet($name, &$workbook) {
+    function MoodleExcelWorksheet($name, &$workbook, $iso_88591_output=false) {
+
     /// Internally, add one sheet to the workbook    
         $this->pear_excel_worksheet =& $workbook->addWorksheet($name);
+        $this->iso_88591_output = $iso_88591_output;
     /// Set encoding to UTF-16LE 
-        $this->pear_excel_worksheet->setInputEncoding('UTF-16LE');
+        if (!$this->iso_88591_output) { /// Only if don't want to use iso-8859-1 stronger output
+            $this->pear_excel_worksheet->setInputEncoding('UTF-16LE');
+        }
     }
 
     /* Write one string somewhere in the worksheet
@@ -125,7 +136,11 @@ class MoodleExcelWorksheet {
     /// Loading the textlib singleton instance. We are going to need it.
         $textlib = textlib_get_instance();
     /// Convert the text from its original encoding to UTF-16LE
-        $str = $textlib->convert($str, current_charset(), 'utf-16le');
+        if (!$this->iso_88591_output) { /// Only if don't want to use iso-8859-1 stronger output
+            $str = $textlib->convert($str, 'utf-8', 'utf-16le');
+        } else { /// else, convert to iso-8859-1
+            $str = $textlib->convert($str, 'utf-8', 'iso-8859-1');
+        }
     /// Add the string safely to the PEAR Worksheet
         $this->pear_excel_worksheet->writeString($row, $col, $str, $format);
     }
