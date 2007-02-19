@@ -395,7 +395,10 @@ function question_list($course, $categoryid, $quizid=0,
     echo "</td></tr></table>";
 
     if ($quizid) {
-        for ($i=1;$i<=10; $i++) {
+        for ($i = 1;$i <= min(10, $totalnumber); $i++) {
+            $randomcount[$i] = $i;
+        }
+        for ($i = 20;$i <= min(100, $totalnumber); $i += 10) {
             $randomcount[$i] = $i;
         }
         echo '<br />';
@@ -407,7 +410,7 @@ function question_list($course, $categoryid, $quizid=0,
         helpbutton('random', get_string('random', 'quiz'), 'quiz');
     }
 
-     echo "</form>\n";
+    echo "</form>\n";
 }
 
 ?>
