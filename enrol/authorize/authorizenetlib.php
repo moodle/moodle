@@ -140,11 +140,6 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
         }
     }
 
-    if ($action <= AN_ACTION_NONE or $action > AN_ACTION_VOID) {
-        $message = "Invalid action!";
-        return AN_RETURNZERO;
-    }
-
     $poststring = $conststring;
     $poststring .= '&x_method=' . $method;
 
