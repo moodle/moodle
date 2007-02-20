@@ -19,6 +19,9 @@ if (!$site = get_site()) {
     print_error('mnet_session_prohibited', 'mnet', '', '');
 }
 
+if (!is_enabled_auth('mnet')) {
+    error('mnet is disabled');
+}
 // grab the GET params
 $token         = required_param('token',    PARAM_BASE64);
 $remotewwwroot = required_param('idp',      PARAM_URL);
@@ -29,7 +32,6 @@ $mnetauth = get_auth_plugin('mnet');
 $localuser = $mnetauth->confirm_mnet_session($token, $remotewwwroot);
 
 // log in
-$CFG->auth = 'mnet';
 $USER = get_complete_user_data('id', $localuser->id, $localuser->mnethostid);
 load_all_capabilities();
 

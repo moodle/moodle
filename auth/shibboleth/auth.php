@@ -18,8 +18,9 @@
  * 2006-10-27  Upstream 1.7 changes merged in, added above credits from lib.php :-)
  */
 
-// This page cannot be called directly
-if (!isset($CFG)) exit;
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
 
 /**
  * Shibboleth authentication plugin.
@@ -44,7 +45,7 @@ class auth_plugin_shibboleth {
      *
      * @param string $username The username
      * @param string $password The password
-     * @returns bool Authentication success or failure.
+     * @return bool Authentication success or failure.
      */
     function user_login($username, $password) {
         // If we are in the shibboleth directory then we trust the server var
@@ -75,7 +76,7 @@ class auth_plugin_shibboleth {
 
         $result = array();
         $search_attribs = array();
-      
+
         foreach ($attrmap as $key=>$value) {
             if (!empty($CFG->unicodedb)) {
                 $result[$key] = $this->get_first_string($_SERVER[$value]);
@@ -86,17 +87,17 @@ class auth_plugin_shibboleth {
 
          // Provide an API to modify the information to fit the Moodle internal
         // data representation
-        if (   
-              $config->convert_data 
+        if (
+              $config->convert_data
               && $config->convert_data != ''
               && is_readable($config->convert_data)
             ) {
-            
+
             // Include a custom file outside the Moodle dir to
             // modify the variable $moodleattributes
             include($config->convert_data);
         }
-        
+
         return $result;
     }
 
@@ -106,8 +107,8 @@ class auth_plugin_shibboleth {
     function get_attributes() {
         $configarray = (array) $this->config;
 
-        $fields = array("firstname", "lastname", "email", "phone1", "phone2", 
-                        "department", "address", "city", "country", "description", 
+        $fields = array("firstname", "lastname", "email", "phone1", "phone2",
+                        "department", "address", "city", "country", "description",
                         "idnumber", "lang", "guid");
 
         $moodleattributes = array();
@@ -124,7 +125,7 @@ class auth_plugin_shibboleth {
     /**
      * Returns true if this authentication plugin is 'internal'.
      *
-     * @returns bool
+     * @return bool
      */
     function is_internal() {
         return false;
@@ -134,12 +135,12 @@ class auth_plugin_shibboleth {
      * Returns true if this authentication plugin can change the user's
      * password.
      *
-     * @returns bool
+     * @return bool
      */
     function can_change_password() {
         return false;
     }
-    
+
     /**
      * Prints a form for configuring this authentication plugin.
      *
@@ -148,7 +149,7 @@ class auth_plugin_shibboleth {
      *
      * @param array $page An object containing all the data for this page.
      */
-    function config_form($config, $err) {
+    function config_form($config, $err, $user_fields) {
         include "config.html";
     }
 

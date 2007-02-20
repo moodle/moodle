@@ -52,7 +52,7 @@
         unset($options);
         $options[1] = get_string('yes');
         choose_from_menu ($options, 'use_cas', $config->use_cas, get_string('no'), '', '');
-       
+
         ?>
     </td>
     <td><?php print_string('auth_cas_enabled', 'auth') ?></td>
@@ -63,11 +63,11 @@
     <td>
         <input name="hostname" type="text" size="30" value="<?php echo $config->hostname ?>" />
         <?php
-        
+
         if (isset($err['hostname'])) {
             formerr($err['hostname']);
-        }    
-        
+        }
+
         ?>
     </td>
     <td><?php print_string('auth_cas_hostname', 'auth') ?></td>
@@ -78,11 +78,11 @@
     <td>
         <input name="baseuri" type="text" size="30" value="<?php echo $config->baseuri ?>" />
         <?php
-        
+
         if (isset($err['baseuri'])) {
             formerr($err['baseuri']);
         }
-        
+
         ?>
     </td>
     <td><?php print_string('auth_cas_baseuri', 'auth') ?></td>
@@ -93,11 +93,11 @@
     <td>
         <input name="port" type="text" size="30" value="<?php echo $config->port ?>" />
         <?php
-        
+
         if (isset($err['port'])) {
             formerr($err['port']);
         }
-        
+
         ?>
     </td>
     <td><?php print_string('auth_cas_port', 'auth') ?></td>

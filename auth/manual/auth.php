@@ -11,8 +11,9 @@
  * 2006-08-28  File created.
  */
 
-// This page cannot be called directly
-if (!isset($CFG)) exit;
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
 
 /**
  * Manual authentication plugin.
@@ -38,9 +39,10 @@ class auth_plugin_manual
      * Returns true if the username and password work and false if they are
      * wrong or don't exist.
      *
-     * @param string $username The username
-     * @param string $password The password
-     * @returns bool Authentication success or failure.
+     * @param string $username The username (with system magic quotes)
+     * @param string $password The password (with system magic quotes)
+     *
+     * @return bool Authentication success or failure.
      */
     function user_login ($username, $password) {
         global $CFG;
@@ -55,8 +57,8 @@ class auth_plugin_manual
      *
      * called when the user password is updated.
      *
-     * @param  object  $user        User
-     * @param  string  $newpassword Plaintext password
+     * @param  object  $user        User table object  (with system magic quotes)
+     * @param  string   $newpassword Plaintext password (with system magic quotes)
      * @return boolean result
      *
      */
@@ -68,32 +70,32 @@ class auth_plugin_manual
     /**
      * Returns true if this authentication plugin is 'internal'.
      *
-     * @returns bool
+     * @return bool
      */
     function is_internal() {
         return true;
     }
-    
+
     /**
      * Returns true if this authentication plugin can change the user's
      * password.
      *
-     * @returns bool
+     * @return bool
      */
     function can_change_password() {
         return true;
     }
-    
+
     /**
      * Returns the URL for changing the user's pw, or false if the default can
      * be used.
      *
-     * @returns bool
+     * @return bool
      */
     function change_password_url() {
         return false;
     }
-    
+
     /**
      * Prints a form for configuring this authentication plugin.
      *
@@ -102,8 +104,8 @@ class auth_plugin_manual
      *
      * @param array $page An object containing all the data for this page.
      */
-    function config_form($config, $err) {
-        include "config.html";
+    function config_form($config, $err, $user_fields) {
+        include 'config.html';
     }
 
     /**
@@ -112,7 +114,7 @@ class auth_plugin_manual
     function process_config($config) {
         return true;
     }
-        
+
 }
 
 ?>

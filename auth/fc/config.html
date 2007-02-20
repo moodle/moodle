@@ -15,10 +15,10 @@
     }
     if (!isset($config->creators)) {
         $config->creators = "";
-    }    
+    }
     if (!isset($config->changepasswordurl)) {
         $config->changepasswordurl = '';
-    }   
+    }
     if (!isset($config->changepasswordurl)) {
         $config->changepasswordurl = '';
     }
@@ -95,9 +95,8 @@
     <td><?php print_string('changepasswordhelp', 'auth') ?></td>
 </tr>
 
-<?php 
+<?php
 
-global $user_fields;
 print_auth_lock_options('fc', $user_fields, get_string('auth_fieldlocks_help', 'auth'), false, false);
 
 ?>

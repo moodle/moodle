@@ -65,7 +65,7 @@ foreach($id_providers as $host):
     <td align="right"><?php echo $host['name']; ?>: </td>
     <td colspan="2"><?php echo $host['wwwroot']; ?> </td>
 </tr>
-<?php 
+<?php
 endforeach;
 ?>
 <tr valign="top" class="required">
@@ -78,10 +78,9 @@ foreach($service_providers as $host):
     <td align="right"><?php echo $host['name']; ?>: </td>
     <td colspan="2"><?php echo $host['wwwroot']; ?> </td>
 </tr>
-<?php 
+<?php
 endforeach;
 
-// global $user_fields;
 // print_auth_lock_options('mnet', $user_fields, get_string('auth_fieldlocks_help', 'auth'), false, false);
 
 ?>

@@ -2,8 +2,8 @@
 /** auth_db_sync_users.php
  *
  * This script is meant to be called from a system cronjob to
- * sync moodle user accounts with external database
- * when using internal passwords (== passwords not defined in external database).
+ * sync moodle user accounts with external database.
+ * It is required when using internal passwords (== passwords not defined in external database).
  *
  * Recommended cron entry:
  * # 5 minutes past 4am
@@ -32,10 +32,15 @@ $nomoodlecookie = true; // cookie not needed
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php'); // global moodle config file.
 
 require_once($CFG->libdir.'/blocklib.php');
-require_once($CFG->libdir.'/moodlelib.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->dirroot.'/mod/resource/lib.php');
 require_once($CFG->dirroot.'/mod/forum/lib.php');
+
+if (!is_enabled_auth('db')) {
+    echo "Plugin not enabled!";
+    die;
+}
+
 $dbauth = get_auth_plugin('db');
 $dbauth->sync_users(true);
 

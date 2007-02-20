@@ -30,7 +30,7 @@
 <tr valign="top">
     <td align="right"><?php print_string("instructions", "auth") ?>:</td>
     <td>
-        <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php p($config->auth_instructions) ?></textarea> 
+        <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php p($config->auth_instructions) ?></textarea>
     </td>
     <td>
         <?php
@@ -45,8 +45,8 @@
 <tr valign="top">
     <td align="right"><?php print_string("auth_shib_convert_data", "auth") ?>:</td>
     <td>
-        <input name="convert_data" type="text" size="30" value="<?php echo $config->convert_data?>"> 
-        <?php 
+        <input name="convert_data" type="text" size="30" value="<?php echo $config->convert_data?>">
+        <?php
 
         if ($config->convert_data and $config->convert_data != '' and !is_readable($config->convert_data)) {
               echo '<br/><font color="red">';
@@ -74,9 +74,8 @@
     <td><?php print_string('changepasswordhelp', 'auth') ?></td>
 </tr>
 
-<?php 
+<?php
 
-global $user_fields;
 print_auth_lock_options('shibboleth', $user_fields, '<!-- empty help -->', true, false);
 
 ?>

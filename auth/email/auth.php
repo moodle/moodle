@@ -12,8 +12,9 @@
  * 2006-08-28  File created.
  */
 
-// This page cannot be called directly
-if (!isset($CFG)) exit;
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
 
 /**
  * Error codes for user confirm
@@ -48,7 +49,7 @@ class auth_plugin_email {
      *
      * @param string $username The username
      * @param string $password The password
-     * @returns bool Authentication success or failure.
+     * @return bool Authentication success or failure.
      */
     function user_login ($username, $password) {
         global $CFG;
@@ -89,7 +90,7 @@ class auth_plugin_email {
             $emailconfirm = get_string('emailconfirm');
             print_header($emailconfirm, $emailconfirm, $emailconfirm);
             notice(get_string('emailconfirmsent', '', $user->email), "$CFG->wwwroot/index.php");
-        }        
+        }
     }
 
     /*
@@ -117,32 +118,32 @@ class auth_plugin_email {
     /**
      * Returns true if this authentication plugin is 'internal'.
      *
-     * @returns bool
+     * @return bool
      */
     function is_internal() {
         return true;
     }
-    
+
     /**
      * Returns true if this authentication plugin can change the user's
      * password.
      *
-     * @returns bool
+     * @return bool
      */
     function can_change_password() {
         return true;
     }
-    
+
     /**
      * Returns the URL for changing the user's pw, or false if the default can
      * be used.
      *
-     * @returns bool
+     * @return bool
      */
     function change_password_url() {
         return false;
     }
-    
+
     /**
      * Prints a form for configuring this authentication plugin.
      *
@@ -151,7 +152,7 @@ class auth_plugin_email {
      *
      * @param array $page An object containing all the data for this page.
      */
-    function config_form($config, $err) {
+    function config_form($config, $err, $user_fields) {
         include "config.html";
     }
 
@@ -161,7 +162,7 @@ class auth_plugin_email {
     function process_config($config) {
         return true;
     }
-        
+
 }
 
 ?>

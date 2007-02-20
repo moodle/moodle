@@ -12,8 +12,9 @@
  * 2006-08-31  File created.
  */
 
-// This page cannot be called directly
-if (!isset($CFG)) exit;
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
 
 /**
  * IMAP authentication plugin.
@@ -38,14 +39,14 @@ class auth_plugin_imap {
      *
      * @param string $username The username
      * @param string $password The password
-     * @returns bool Authentication success or failure.
+     * @return bool Authentication success or failure.
      */
     function user_login ($username, $password) {
         if (! function_exists('imap_open')) {
             print_error('auth_imapnotinstalled','mnet');
             return false;
         }
-        
+
         global $CFG;
         $hosts = split(';', $this->config->host);   // Could be multiple hosts
 
@@ -56,22 +57,22 @@ class auth_plugin_imap {
                 case 'imapssl':
                     $host = '{'.$host.":{$this->config->port}/imap/ssl}";
                 break;
-        
+
                 case 'imapcert':
                     $host = '{'.$host.":{$this->config->port}/imap/ssl/novalidate-cert}";
                 break;
-        
+
                 case 'imaptls':
                     $host = '{'.$host.":{$this->config->port}/imap/tls}";
                 break;
-        
+
                 default:
                     $host = '{'.$host.":{$this->config->port}/imap}";
             }
 
             error_reporting(0);
             $connection = imap_open($host, $username, $password, OP_HALFOPEN);
-            error_reporting($CFG->debug);   
+            error_reporting($CFG->debug);
 
             if ($connection) {
                 imap_close($connection);
@@ -85,7 +86,7 @@ class auth_plugin_imap {
     /**
      * Returns true if this authentication plugin is 'internal'.
      *
-     * @returns bool
+     * @return bool
      */
     function is_internal() {
         return false;
@@ -95,23 +96,23 @@ class auth_plugin_imap {
      * Returns true if this authentication plugin can change the user's
      * password.
      *
-     * @returns bool
+     * @return bool
      */
     function can_change_password() {
         return false;
     }
-    
+
     /**
      * Returns the URL for changing the user's pw, or false if the default can
      * be used.
      *
-     * @returns bool
+     * @return bool
      */
     function change_password_url() {
         return $CFG->changepasswordurl; // TODO: will this be global?
         //return $this->config->changepasswordurl;
     }
-    
+
     /**
      * Prints a form for configuring this authentication plugin.
      *
@@ -120,7 +121,7 @@ class auth_plugin_imap {
      *
      * @param array $page An object containing all the data for this page.
      */
-    function config_form($config, $err) {
+    function config_form($config, $err, $user_fields) {
         include "config.html";
     }
 
