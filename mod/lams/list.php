@@ -2,7 +2,8 @@
 
 /// send LAMS learning deisgn list as a string seperated by ":" to client
 
-include_once("lib.php");
+require_once("../../config.php");
+require_once("lib.php");
 
 $result = lams_get_sequences($USER->username,$courseid);
 if(is_string($result)){//some exception happened!
