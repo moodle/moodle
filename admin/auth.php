@@ -7,116 +7,127 @@
  *
  */
 
-require_once dirname(dirname(__FILE__)) . '/config.php';
-require_once $CFG->libdir . '/tablelib.php';
+require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir.'/tablelib.php');
 
 $adminroot = admin_get_root();
 admin_externalpage_setup('userauthentication', $adminroot);
 
+$action = optional_param('action', '', PARAM_ACTION);
+$auth   = optional_param('auth', '', PARAM_SAFEDIR);
+
 // get currently installed and enabled auth plugins
 $authsavailable = get_list_of_plugins('auth');
-if (empty($CFG->auth_plugins_enabled)) {
-    set_config('auth_plugins_enabled', $CFG->auth);
-    $CFG->auth_plugins_enabled = $CFG->auth;
-}
-$authsenabled = explode(',', $CFG->auth_plugins_enabled);
 
-// save form
-if ($form = data_submitted()) {
-
-    if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
-    }
-
-    if (! isset($form->guestloginbutton)) {
-        $form->guestloginbutton = 1;
-    }
-    if (empty($form->alternateloginurl)) {
-        $form->alternateloginurl = '';
-    }
-    if (empty($form->register)) {
-        $form->register = 'manual';
-    }
-    set_config('guestloginbutton', $form->guestloginbutton);
-    set_config('alternateloginurl', $form->alternateloginurl);
-    set_config('auth', $form->register);
-
-    // add $CFG->auth to auth_plugins_enabled list
-    if (!array_search($form->register, $authsenabled)) {
-        $authsenabled[] = $form->register;
-        $authsenabled = array_unique($authsenabled);
-        set_config('auth_plugins_enabled', implode(',', $authsenabled));
-    }
+//revert auth_plugins_enabled
+if (isset($CFG->auth_plugins_enabled)) {
+    set_config('auth', $CFG->auth_plugins_enabled);
+    delete_records('config', 'name', 'auth_plugins_enabled');
+    unset($CFG->auth_plugins_enabled);
 }
 
-// grab GET/POST parameters
-$params = new object();
-$params->action    = optional_param('action', '', PARAM_ACTION);
-$params->auth      = optional_param('auth', $CFG->auth, PARAM_ALPHANUM);
+if (empty($CFG->auth)) {
+    $authsenabled = array();
+} else {
+    $authsenabled = explode(',', $CFG->auth);
+    $authsenabled = array_unique($authsenabled);
+}
+
+$key = array_search('manual', $authsenabled);
+if ($key !== false) {
+    unset($authsenabled[$key]); // manual is always enabled anyway
+    set_config('auth', implode(',', $authsenabled));
+}
+
+if (!isset($CFG->registerauth)) {
+    set_config('registerauth', '');
+}
+
+if (!isset($CFG->auth_instructions)) {
+    set_config('auth_instructions', '');
+}
+
+if (!empty($auth) and !exists_auth_plugin($auth)) {
+    error(get_string('pluginnotinstalled', 'auth', $auth), $url);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // process actions
 
-switch ($params->action) {
+$status = '';
+
+switch ($action) {
+
+    case 'save':
+        if (data_submitted() and confirm_sesskey()) {
+
+            // save settings
+            set_config('guestloginbutton', required_param('guestloginbutton', PARAM_BOOL));
+            set_config('alternateloginurl', stripslashes(trim(required_param('alternateloginurl', PARAM_RAW))));
+            set_config('registerauth', required_param('register', PARAM_SAFEDIR));
+            set_config('auth_instructions', stripslashes(trim(required_param('auth_instructions', PARAM_RAW))));
+
+            // enable registerauth in $CFG->auth if needed
+            if (!empty($CFG->registerauth) and !in_array($CFG->registerauth, $authsenabled)) {
+                $authsenabled[] = $CFG->registerauth;
+                set_config('auth', implode(',', $authsenabled));
+            }
+            $status = get_string('changessaved');
+        }
+        break;
 
     case 'disable':
-        // remove from enabled list 
-        $key = array_search($params->auth, $authsenabled);
-        if ($key !== false and $params->auth != $CFG->auth) {
+        // remove from enabled list
+        $key = array_search($auth, $authsenabled);
+        if ($key !== false) {
             unset($authsenabled[$key]);
-            set_config('auth_plugins_enabled', implode(',', $authsenabled));
+            set_config('auth', implode(',', $authsenabled));
+        }
+
+        if ($auth == $CFG->registerauth) {
+            set_config('registerauth', '');
         }
         break;
-        
+
     case 'enable':
-        // check auth plugin is valid first
-        if (!exists_auth_plugin($params->auth)) {
-            error(get_string('pluginnotinstalled', 'auth', $params->auth), $url);
-        }
         // add to enabled list
-        if (!array_search($params->auth, $authsenabled)) {
-            $authsenabled[] = $params->auth;
+        if (!in_array($auth, $authsenabled)) {
+            $authsenabled[] = $auth;
             $authsenabled = array_unique($authsenabled);
-            set_config('auth_plugins_enabled', implode(',', $authsenabled));
+            set_config('auth', implode(',', $authsenabled));
         }
         break;
-        
+
     case 'down':
-        $key = array_search($params->auth, $authsenabled);
+        $key = array_search($auth, $authsenabled);
         // check auth plugin is valid
         if ($key === false) {
-            error(get_string('pluginnotenabled', 'auth', $params->auth), $url);
+            error(get_string('pluginnotenabled', 'auth', $auth), $url);
         }
         // move down the list
         if ($key < (count($authsenabled) - 1)) {
             $fsave = $authsenabled[$key];
             $authsenabled[$key] = $authsenabled[$key + 1];
             $authsenabled[$key + 1] = $fsave;
-            set_config('auth_plugins_enabled', implode(',', $authsenabled));
+            set_config('auth', implode(',', $authsenabled));
         }
         break;
-        
+
     case 'up':
-        $key = array_search($params->auth, $authsenabled);
+        $key = array_search($auth, $authsenabled);
         // check auth is valid
         if ($key === false) {
-            error(get_string('pluginnotenabled', 'auth', $params->auth), $url);
+            error(get_string('pluginnotenabled', 'auth', $auth), $url);
         }
         // move up the list
         if ($key >= 1) {
             $fsave = $authsenabled[$key];
             $authsenabled[$key] = $authsenabled[$key - 1];
             $authsenabled[$key - 1] = $fsave;
-            set_config('auth_plugins_enabled', implode(',', $authsenabled));
+            set_config('auth', implode(',', $authsenabled));
         }
-        break;
-        
-    case 'save':
-        // save settings
-        set_config('auth_plugins_enabled', implode(',', $authsenabled));
-        set_config('auth', $authsenabled[0]);
-        redirect("auth.php?sesskey=$USER->sesskey", get_string('changessaved'), 1);
         break;
 
     default:
@@ -132,22 +143,24 @@ $txt->updown = "$txt->up/$txt->down";
 // construct the display array, with enabled auth plugins at the top, in order
 $displayauths = array();
 $registrationauths = array();
-$registrationauths['manual'] = $txt->disable;
+$registrationauths[''] = $txt->disable;
 foreach ($authsenabled as $auth) {
-    $displayauths[$auth] = get_string("auth_{$auth}title", 'auth');
     $authplugin = get_auth_plugin($auth);
+    $displayauths[$auth] = get_string("auth_{$auth}title", 'auth');
     if (method_exists($authplugin, 'user_signup')) {
         $registrationauths[$auth] = get_string("auth_{$auth}title", 'auth');
-    }    
+    }
 }
+
 foreach ($authsavailable as $auth) {
-    if (!array_key_exists($auth, $displayauths)) {
-        $displayauths[$auth] = get_string("auth_{$auth}title", 'auth');
+    if (array_key_exists($auth, $displayauths)) {
+        continue; //already in the list
     }
     $authplugin = get_auth_plugin($auth);
+    $displayauths[$auth] = get_string("auth_{$auth}title", 'auth');
     if (method_exists($authplugin, 'user_signup')) {
         $registrationauths[$auth] = get_string("auth_{$auth}title", 'auth');
-    }    
+    }
 }
 
 // build the display table
@@ -164,11 +177,23 @@ $table->set_attribute('style', 'margin:auto;');
 $table->set_attribute('cellpadding', '5');
 $table->setup();
 
+//add always enabled plugins first
+$displayname = "<span>".$displayauths['manual']."</span>";
+$settings = "<a href=\"auth_config.php?sesskey={$USER->sesskey}&amp;auth=manual\">{$txt->settings}</a>";
+$table->add_data(array($displayname, '', '', $settings));
+$displayname = "<span>".$displayauths['nologin']."</span>";
+$settings = "<a href=\"auth_config.php?sesskey={$USER->sesskey}&amp;auth=nologin\">{$txt->settings}</a>";
+$table->add_data(array($displayname, '', '', $settings));
+
+
 // iterate through auth plugins and add to the display table
 $updowncount = 1;
 $authcount = count($authsenabled);
 $url = "auth.php?sesskey=" . sesskey();
 foreach ($displayauths as $auth => $name) {
+    if ($auth == 'manual' or $auth == 'nologin') {
+        continue;
+    }
     // hide/show link
     if (in_array($auth, $authsenabled)) {
         $hideshow = "<a href=\"$url&amp;action=disable&amp;auth=$auth\">";
@@ -204,7 +229,7 @@ foreach ($displayauths as $auth => $name) {
         }
         ++ $updowncount;
     }
-    
+
     // settings link
     $settings = "<a href=\"auth_config.php?sesskey={$USER->sesskey}&amp;auth=$auth\">{$txt->settings}</a>";
 
@@ -214,28 +239,38 @@ foreach ($displayauths as $auth => $name) {
 
 // output form
 admin_externalpage_print_header($adminroot);
+
+//print stus messages
+if ($status !== '') {
+    notify($status, 'notifysuccess');
+}
+
 print_simple_box(get_string('configauthenticationplugins', 'admin'), 'center', '700');
 
-echo "<form $CFG->frametarget id=\"authmenu\" method=\"post\" action=\"auth.php\">";
-echo "<fieldset class=\"invisiblefieldset\"><input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\" /></fieldset>";
 print_table($table);
 
 ////////////////////////////////////////////////////////////////////////////////
 
+$guestoptions = array();
 $guestoptions[0] = get_string("hide");
 $guestoptions[1] = get_string("show");
 
 echo '<hr />';
 print_heading(get_string('auth_common_settings', 'auth'));
+
+echo '<form '.$CFG->frametarget.' id="authmenu" method="post" action="auth.php">';
+echo '<fieldset class="invisiblefieldset"><input type="hidden" name="sesskey" value="'.sesskey().'" />';
+echo '<input type="hidden" name="action" value="save" /></fieldset>';
+
 echo '<table cellspacing="0" cellpadding="5" border="0" style="margin-left:auto;margin-right:auto">';
 
 // User self registration
 echo "<tr valign=\"top\">\n";
-echo "<td align=\"right\" style=\"white-space:nowrap\">\n";
+echo "<td align=\"right\" style=\"white-space:nowrap\">\n<label for=\"menuregister\">";
 print_string("selfregistration", "auth");
-echo ":</td>\n";
+echo "</label></td>\n";
 echo "<td>\n";
-choose_from_menu($registrationauths, "register", $CFG->auth, "");
+choose_from_menu($registrationauths, "register", $CFG->registerauth, "");
 echo "</td>\n";
 echo "<td>\n";
 print_string("selfregistration_help", "auth");
@@ -243,9 +278,9 @@ echo "</td></tr>\n";
 
 // Login as guest button enabled
 echo "<tr valign=\"top\">\n";
-echo "<td style=\"white-space:nowrap;text-align:right\">\n";
+echo "<td style=\"white-space:nowrap;text-align:right\">\n<label for=\"menuguestloginbutton\">";
 print_string("guestloginbutton", "auth");
-echo ":</td>\n";
+echo "</label></td>\n";
 echo "<td>\n";
 choose_from_menu($guestoptions, "guestloginbutton", $CFG->guestloginbutton, "");
 echo "</td>\n";
@@ -256,21 +291,32 @@ echo "</td></tr>\n";
 /// An alternate url for the login form. It means we can use login forms that are integrated
 /// into non-moodle pages
 echo "<tr valign=\"top\">\n";
-echo "<td align=\"right\" style=\"white-space:nowrap\">\n";
+echo "<td align=\"right\" style=\"white-space:nowrap\">\n<label for=\"alternateloginurl\">";
 print_string('alternateloginurl', 'auth');
-echo "</td>\n";
+echo "</label></td>\n";
 echo "<td>\n";
-echo '<input type="text" size="40" name="alternateloginurl" alt="'.get_string('alternateloginurl', 'auth').'" value="'.$CFG->alternateloginurl."\" />\n";
+echo '<input type="text" size="40" name="alternateloginurl" id="alternateloginurl" value="'.$CFG->alternateloginurl."\" />\n";
 echo "</td>\n";
 echo "<td>\n";
 print_string('alternatelogin', 'auth', htmlspecialchars($CFG->wwwroot.'/login/index.php'));
 echo "</td>\n";
 echo "</tr>\n";
 
+echo "<tr valign=\"top\">\n";
+echo "<td align=\"right\" style=\"white-space:nowrap\">\n<label for=\"auth_instructions\">";
+print_string('instructions', 'auth');
+echo "</label></td>\n";
+echo "<td>\n";
+echo '<textarea cols="30" rows="4" name="auth_instructions" id="auth_instructions">'.s($CFG->auth_instructions)."</textarea>\n";
+echo "</td>\n";
+echo "<td>\n";
+print_string('authinstructions', 'auth');
+echo "</td>\n";
+echo "</tr>\n";
+
 echo "</table>\n";
 
 ////////////////////////////////////////////////////////////////////////////////
-
 
 echo '<div style="text-align:center"><input type="submit" value="'.get_string('savechanges').'" /></div>';
 echo '</form>';

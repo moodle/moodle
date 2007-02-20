@@ -26,14 +26,15 @@ class block_login extends block_base {
             // in unencrypted connection...
             $wwwroot = str_replace("http://", "https://", $CFG->wwwroot);
         }
-
-        $authplugin = get_auth_plugin($CFG->auth);
-        if (method_exists($authplugin, 'user_signup')) {
-            $signup = $wwwroot . '/login/signup.php';
+        
+        if (!empty($CFG->registerauth)) {
+            $authplugin = get_auth_plugin($CFG->registerauth);
+            if (method_exists($authplugin, 'user_signup')) {
+                $signup = $wwwroot . '/login/signup.php';
+            }
         }
-        if ($authplugin->can_change_password()) {
-            $forgot = $wwwroot . '/login/forgot_password.php';
-        }
+        // TODO: now that we have multiauth it is hard to find out if there is a way to change password
+        $forgot = $wwwroot . '/login/forgot_password.php';
 
         $username = get_moodle_cookie() === 'nobody' ? '' : get_moodle_cookie();
 

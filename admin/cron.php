@@ -307,8 +307,10 @@
     }
 
 /// Run the auth cron, if any
-    if (!($auths = explode(',', $CFG->auth_plugins_enabled))) {
-        $auths = array($user->auth);
+    if (empty($CFG->auth)) {
+        $auths = array();
+    } else {
+        $auths = explode(',', $CFG->auth); // only for enabled ones (without manual and nologin)
     }
     mtrace("Running auth crons if required...");
     foreach ($auths as $auth) {

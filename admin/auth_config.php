@@ -2,13 +2,13 @@
 /**
  * Edit configuration for an individual auth plugin
  */
- 
+
 require_once '../config.php';
 require_once $CFG->libdir.'/adminlib.php';
 
 $adminroot = admin_get_root();
 admin_externalpage_setup('userauthentication', $adminroot);
-$auth = optional_param('auth', '', PARAM_SAFEDIR);
+$auth = required_param('auth', PARAM_SAFEDIR);
 $authplugin = get_auth_plugin($auth);
 $err = array();
 
@@ -33,19 +33,19 @@ if ($frm = data_submitted()) {
                 if (preg_match('/^lockconfig_(.+?)$/', $name, $matches)) {
                     $plugin = "auth/$auth";
                     $name   = $matches[1];
-                    if (!set_config($name, $value, $plugin)) {                        
-                        notify("Problem saving config $name as $value for plugin $plugin");
+                    if (!set_config($name, $value, $plugin)) {
+                        error("Problem saving config $name as $value for plugin $plugin");
                     }
                 }
             }
-            redirect("auth.php?sesskey=$USER->sesskey", get_string("changessaved"), 1);
+            redirect("auth.php?sesskey=$USER->sesskey");
             exit;
         }
     } else {
         foreach ($err as $key => $value) {
             $focus = "form.$key";
         }
-    }    
+    }
 } else {
     $frm = get_config("auth/$auth");
 }
@@ -73,7 +73,7 @@ print_simple_box_start('center', '60%', '', 5, 'informationbox');
 print_string("auth_{$auth}description", 'auth');
 print_simple_box_end();
 echo "<hr />\n";
-$authplugin->config_form($frm, $err);
+$authplugin->config_form($frm, $err, $user_fields);
 print_simple_box_end();
 echo '<center><p><input type="submit" value="' . get_string("savechanges") . "\" /></p></center>\n";
 echo "</form>\n";
@@ -86,7 +86,7 @@ exit;
 // Good enough for most auth plugins
 // but some may want a custom one if they are offering
 // other options
-// Note: lockconfig_ fields have special handling. 
+// Note: lockconfig_ fields have special handling.
 function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts, $updateopts) {
 
     echo '<tr><td colspan="3">';
@@ -104,7 +104,7 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
                                 'onlogin'   => get_string('update_onlogin', 'auth'));
     $updateextoptions = array('0'  => get_string('update_never', 'auth'),
                               '1'   => get_string('update_onupdate', 'auth'));
-    
+
     $pluginconfig = get_config("auth/$auth");
 
     // helptext is on a field with rowspan
@@ -138,30 +138,32 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
             $fieldname = get_string($fieldname);
         }
 
-        echo '<tr valign="top"><td align="right">';
-        echo $fieldname;
-        echo '</td><td>';
-
         if ($retrieveopts) {
             $varname = 'field_map_' . $field;
 
-            echo "<input name=\"lockconfig_{$varname}\" type=\"text\" size=\"30\" value=\"{$pluginconfig->$varname}\" />";
+            echo '<tr valign="top"><td align="right">';
+            echo '<label for="lockconfig_'.$varname.'">'.$fieldname.'</label>';
+            echo '</td><td>';
+
+            echo "<input id=\"lockconfig_{$varname}\" name=\"lockconfig_{$varname}\" type=\"text\" size=\"30\" value=\"{$pluginconfig->$varname}\" />";
             echo '<div align="right">';
-            echo  get_string('auth_updatelocal', 'auth') . '&nbsp;&nbsp;';
+            echo '<label for="menulockconfig_field_updatelocal_'.$field.'">'.get_string('auth_updatelocal', 'auth') . '</label>&nbsp;';
             choose_from_menu($updatelocaloptions, "lockconfig_field_updatelocal_{$field}", $pluginconfig->{"field_updatelocal_$field"}, "");
             echo '<br />';
             if ($updateopts) {
-                echo  get_string('auth_updateremote', 'auth') . '&nbsp;&nbsp;';
-                 '&nbsp;&nbsp;';
+                echo '<label for="menulockconfig_field_updateremote_'.$field.'">'.get_string('auth_updateremote', 'auth') . '</label>&nbsp;';
                 choose_from_menu($updateextoptions, "lockconfig_field_updateremote_{$field}", $pluginconfig->{"field_updateremote_$field"}, "");
                 echo '<br />';
 
 
             }
-            echo  get_string('auth_fieldlock', 'auth') . '&nbsp;&nbsp;';
+            echo '<label for="menulockconfig_field_lock_'.$field.'">'.get_string('auth_fieldlock', 'auth') . '</label>&nbsp;';
             choose_from_menu($lockoptions, "lockconfig_field_lock_{$field}", $pluginconfig->{"field_lock_$field"}, "");
             echo '</div>';
         } else {
+            echo '<tr valign="top"><td align="right">';
+            echo '<label for="menulockconfig_field_lock_'.$field.'">'.$fieldname.'</label>';
+            echo '</td><td>';
             choose_from_menu($lockoptions, "lockconfig_field_lock_{$field}", $pluginconfig->{"field_lock_$field"}, "");
         }
         echo '</td>';
