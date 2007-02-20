@@ -2106,6 +2106,10 @@ body#message-messages {
     background: transparent url(pix/tab/right.gif) no-repeat right top;
 }
 
+.tabrow0 A.here span {
+    background: transparent url(pix/tab/right_last.gif) no-repeat right top;
+}
+
 .tabrow0 .last span {
     background: transparent url(pix/tab/right_last.gif) no-repeat right top;
 }
@@ -2118,7 +2122,8 @@ body#message-messages {
 	text-decoration: none;
 	/* font-weight: bold; */
 	background: transparent url(pix/tab/left.gif) no-repeat left top;
-	margin: 0;
+	margin: 0 -1px 0 0;
+	/* margin: 0; */
 	padding: 10px 0 4px 14px;
 }
 
@@ -2139,7 +2144,7 @@ body#message-messages {
 }
 
 .tabrow0 A.here:hover span {
-	background-image: url(pix/tab/right.gif);
+	background-image: url(pix/tab/right_last.gif);
 }
 
 .tabrow0 A.here {
