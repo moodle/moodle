@@ -54,7 +54,7 @@ function mnet_get_public_key($uri) {
         return $key;
     }
 
-    $rq = xmlrpc_encode_request('system/keyswap', array($CFG->wwwroot, $MNET->public_key));
+    $rq = xmlrpc_encode_request('system/keyswap', array($CFG->wwwroot, $MNET->public_key), array("encoding" => "utf-8"));
     $ch = curl_init($uri.'/mnet/xmlrpc/server.php');
 
     curl_setopt($ch, CURLOPT_TIMEOUT, 60);

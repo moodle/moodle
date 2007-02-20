@@ -19,7 +19,7 @@ require_once $CFG->dirroot.'/mnet/lib.php';
 require_once $CFG->dirroot.'/mnet/remote_client.php';
 
 // Content type for output is not html:
-header('Content-type: text/xml');
+header('Content-type: text/xml; charset=utf-8');
 
 if (!empty($CFG->mnet_rpcdebug)) {
     trigger_error("HTTP_RAW_POST_DATA");
@@ -414,7 +414,7 @@ function mnet_server_dispatch($payload) {
             $method == 'system.keyswap'      ||
             $method == 'system/keyswap') {
 
-            $response = xmlrpc_server_call_method($xmlrpcserver, $payload, $MNET_REMOTE_CLIENT);
+            $response = xmlrpc_server_call_method($xmlrpcserver, $payload, $MNET_REMOTE_CLIENT, array("encoding" => "utf-8"));
             $response = mnet_server_prepare_response($response);
         } else {
             exit(mnet_server_fault(7018, 'nosuchfunction'));
@@ -704,7 +704,7 @@ function mnet_server_invoke_method($includefile, $methodname, $method, $payload,
     if (RPC_OK == $permission) {
         $xmlrpcserver = xmlrpc_server_create();
         $bool = xmlrpc_server_register_method($xmlrpcserver, $method, 'mnet_server_dummy_method');
-        $response = xmlrpc_server_call_method($xmlrpcserver, $payload, $methodname);
+        $response = xmlrpc_server_call_method($xmlrpcserver, $payload, $methodname, array("encoding" => "utf-8"));
         $bool = xmlrpc_server_destroy($xmlrpcserver);
         return $response;
     }
