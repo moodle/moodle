@@ -138,6 +138,9 @@ function xmldb_main_upgrade($oldversion=0) {
             if (strpos($k, 'auth_') !== 0) {
                 continue;
             }
+            if ($k == 'auth_instructions') {
+                continue; //keep as global auth option
+            }
             $authsetting = substr($k, 5);
             foreach ($authplugins as $auth) {
                 if (strpos($authsetting, $auth) !== 0) {

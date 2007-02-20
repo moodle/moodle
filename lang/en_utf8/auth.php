@@ -8,11 +8,32 @@ $string['alternateloginurl'] = 'Alternate Login URL';
 $string['pluginnotenabled'] = 'Authentication plugin \'$a\' is not enabled.';
 $string['pluginnotinstalled'] = 'Authentication plugin \'$a\' is not installed.';
 
+// syncronization
+$string['auth_sync_script'] ='Cron synchronization script';
+$string['auth_dbinsertuser'] ='Inserted user $a[0] id $a[1]';
+$string['auth_dbinsertusererror'] = 'Error inserting user $a';
+$string['auth_dbdeleteuser'] ='Deleted user $a[0] id $a[1]';
+$string['auth_dbdeleteusererror'] = 'Error deleting user $a';
+$string['auth_dbreviveduser'] ='Revived user $a[0] id $a[1]';
+$string['auth_dbrevivedusererror'] = 'Error reviving user $a';
+$string['auth_dbsuspenduser'] ='Suspended user $a[0] id $a[1]';
+$string['auth_dbsuspendusererror'] = 'Error suspending user $a';
+$string['auth_dbupdatinguser'] ='Updating user $a[0] id $a[1]';
+$string['auth_remove_user_key'] ='Removed ext user';
+$string['auth_remove_user'] ='Specify what to do with internal user account during mass synchronization when user was removed from external source. Only suspended users are automatically revived if they reappear in ext source.';
+$string['auth_remove_keep'] ='Keep internal';
+$string['auth_remove_suspend'] ='Suspend internal';
+$string['auth_remove_delete'] ='Full delete internal';
+
+// nologin plugin
+$string['auth_nologindescription'] = 'Auxiliary plugin that prevents user to login into system and also discards any mail send to user. Can be used to <em>suspend</em> user accounts.';
+$string['auth_nologintitle'] = 'No login';
+
 // CAS plugin
 $string['auth_cas_logincas'] = 'Secure connection access';
 $string['auth_cas_invalidcaslogin'] = 'Sorry, your login has failed - you could not be authorised';
 $string['auth_cas_server_settings'] = 'CAS server configuration';
-$string['auth_castitle'] = 'Use a CAS server (SSO)';
+$string['auth_castitle'] = 'CAS server (SSO)';
 $string['auth_cas_hostname'] = 'Hostname of the CAS server <br />eg: host.domain.fr';
 $string['auth_cas_baseuri'] = 'URI of the server (nothing if no baseUri)<br />For example, if the CAS server responds to host.domaine.fr/CAS/ then<br />cas_baseuri = CAS/';
 $string['auth_cas_port'] = 'Port of the CAS server';
@@ -27,7 +48,6 @@ $string['auth_cas_cantconnect'] ='LDAP part of CAS-module cannot connect to serv
 $string['auth_cas_use_cas'] ='Use CAS';
 $string['auth_cas_broken_password'] ='You cannot proceed without changing your password, however there is no available page for changing it. Please contact your Moodle Administrator.';
 
-
 $string['auth_cas_hostname_key'] ='Hostname';
 $string['auth_cas_changepasswordurl'] ='Password-change URL';
 $string['auth_cas_create_user_key'] ='Create user';
@@ -36,8 +56,6 @@ $string['auth_cas_language_key'] ='Language';
 $string['auth_cas_casversion'] ='Version';
 $string['auth_cas_port_key'] ='Port';
 $string['auth_cas_baseuri_key'] ='Base URI';
-
-
 
 $string['auth_changepasswordurl'] = 'Change password URL';
 $string['auth_changepasswordurl_expl'] = 'Specify the url to send users who have lost their $a password. Set <strong>Use standard Change Password page</strong> to <strong>No</strong>.';
@@ -61,11 +79,6 @@ $string['auth_dbtype'] = 'The database type (See the <a href=\"../lib/adodb/read
 $string['auth_dbuser'] = 'Username with read access to the database';
 $string['auth_dbcantconnect'] ='Could not connect to the specified authentication database...';
 $string['auth_dbuserstoadd'] = 'User entries to add: $a';
-$string['auth_dbrevive'] = 'Revived user $a[0] id $a[1]';
-$string['auth_dbinsertuser'] ='inserted user $a[0] id $a[1]';
-$string['auth_dbinsertusererror'] = 'error inserting user $a';
-$string['auth_dbdeleteuser'] ='deleted user $a[0] id $a[1]';
-$string['auth_dbdeleteusererror'] = 'error deleting user $a';
 $string['auth_dbuserstoremove'] = 'User entries to remove: $a';
 $string['auth_dbusernotexist'] = 'Cannot update non-existent user: $a';
 $string['auth_dbhost_key'] = 'Host';
@@ -99,7 +112,7 @@ $string['auth_fcdescription'] = 'This method uses a FisrtClass server to check w
 $string['auth_fcfppport'] = 'Server port (3333 is the most common)';
 $string['auth_fchost'] = 'The FirstClass server address. Use the IP number or DNS name.';
 $string['auth_fcpasswd'] = 'Password for the account above.';
-$string['auth_fctitle'] = 'Use a FirstClass server';
+$string['auth_fctitle'] = 'FirstClass server';
 $string['auth_fcuserid'] = 'Userid for FirstClass account with privilege \'Subadministrator\' set.';
 $string['auth_fchost_key'] = 'Host:';
 $string['auth_fcfppport_key'] = 'Port';
@@ -120,7 +133,7 @@ $string['auth_imapnotinstalled'] = 'Cannot use IMAP authentication. The PHP IMAP
 $string['auth_imapdescription'] = 'This method uses an IMAP server to check whether a given username and password is valid.';
 $string['auth_imaphost'] = 'The IMAP server address. Use the IP number, not DNS name.';
 $string['auth_imapport'] = 'IMAP server port number. Usually this is 143 or 993.';
-$string['auth_imaptitle'] = 'Use an IMAP server';
+$string['auth_imaptitle'] = 'IMAP server';
 $string['auth_imaptype'] = 'The IMAP server type.  IMAP servers can have different types of authentication and negotiation.';
 $string['auth_imaptype_key'] = 'Type';
 $string['auth_imaphost_key'] = 'Host';
@@ -140,6 +153,7 @@ $string['auth_ldap_expireattr_desc'] = 'Optional: overrides ldap-attribute that 
 $string['auth_ldap_graceattr_desc'] = 'Optional: Overrides  gracelogin attribute';
 $string['auth_ldap_gracelogins_desc'] = 'Enable LDAP gracelogin support. After password has expired user can login until gracelogin count is 0. Enabling this setting displays grace login message if password is exprired.';
 $string['auth_ldap_host_url'] = 'Specify LDAP host in URL-form like \'ldap://ldap.myorg.com/\' or \'ldaps://ldap.myorg.com/\' Separate multipleservers with \';\' to get failover support.';
+$string['auth_ldap_ldap_encoding'] = 'Specify encoding used by LDAP server. Most probably utf-8, MS AD v2 uses default platform encoding such as cp1252, cp1250, etc.';
 $string['auth_ldap_login_settings'] = 'Login settings';
 $string['auth_ldap_memberattribute'] = 'Optional: Overrides user member attribute, when users belongs to a group. Usually \'member\'';
 $string['auth_ldap_objectclass'] = 'Optional: Overrides objectClass used to name/search users on ldap_user_type. Usually you dont need to chage this.';
@@ -162,6 +176,7 @@ $string['auth_ldapdescription'] = 'This method provides authentication against a
                                   wanted fields in Moodle.  For following logins only the username and 
 
                                   password are checked.';
+$string['auth_ldap_ldap_encoding_key'] = 'LDAP encoding';
 $string['auth_ldap_host_url_key'] = 'Host URL';
 $string['auth_ldap_version_key'] = 'Version';
 $string['auth_ldap_preventpassindb_key'] = 'Hide passwords';
@@ -191,12 +206,12 @@ $string['auth_ldap_usertypeundefined2'] = 'config.user_type not defined or funct
 $string['auth_ldap_noextension'] = 'Warning: The PHP LDAP module does not seem to be present. Please ensure it is installed and enabled.';
 
 $string['auth_ldapextrafields'] = 'These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <b>LDAP fields</b> that you specify here. <p>If you leave these fields blank, then nothing will be transferred from LDAP and Moodle defaults will be used instead.</p><p>In either case, the user will be able to edit all of these fields after they log in.</p>';
-$string['auth_ldaptitle'] = 'Use an LDAP server';
+$string['auth_ldaptitle'] = 'LDAP server';
 $string['auth_ldapnotinstalled'] = 'Cannot use LDAP authentication. The PHP LDAP module is not installed.';
 
 // Manual plugin
 $string['auth_manualdescription'] = 'This method removes any way for users to create their own accounts.  All accounts must be manually created by the admin user.';
-$string['auth_manualtitle'] = 'Manual accounts only';
+$string['auth_manualtitle'] = 'Manual accounts';
 
 // MNET plugin
 $string['auth_mnettitle'] = 'Moodle Network authentication';
@@ -214,7 +229,7 @@ $string['auth_multiplehosts'] = 'Multiple hosts OR addresses can be specified (e
 $string['auth_nntpdescription'] = 'This method uses an NNTP server to check whether a given username and password is valid.';
 $string['auth_nntphost'] = 'The NNTP server address. Use the IP number, not DNS name.';
 $string['auth_nntpport'] = 'Server port (119 is the most common)';
-$string['auth_nntptitle'] = 'Use an NNTP server';
+$string['auth_nntptitle'] = 'NNTP server';
 $string['auth_nntpnotinstalled'] = 'Cannot use NNTP authentication. The PHP IMAP module is not installed.';
 $string['auth_nntpchangepasswordurl_key'] = 'Password-change URL';
 $string['auth_nntpport_key'] = 'Port';
@@ -236,7 +251,7 @@ $string['auth_pop3description'] = 'This method uses a POP3 server to check wheth
 $string['auth_pop3host'] = 'The POP3 server address. Use the IP number, not DNS name.';
 $string['auth_pop3mailbox'] = 'Name of the mailbox to attempt a connection with.  (usually INBOX)';
 $string['auth_pop3port'] = 'Server port (110 is the most common, 995 is common for SSL)';
-$string['auth_pop3title'] = 'Use a POP3 server';
+$string['auth_pop3title'] = 'POP3 server';
 $string['auth_pop3type'] = 'Server type. If your server uses certificate security, choose pop3cert.';
 $string['auth_pop3notinstalled'] = 'Cannot use POP3 authentication. The PHP IMAP module is not installed.';
 $string['auth_pop3changepasswordurl_key'] = 'Password-change URL';
@@ -246,7 +261,7 @@ $string['auth_pop3type_key'] = 'Type';
 $string['auth_pop3host_key'] = 'Host';
 
 // RADIUS plugin
-$string['auth_radiustitle'] = 'Use a RADIUS server';
+$string['auth_radiustitle'] = 'RADIUS server';
 $string['auth_radiusdescription'] = 'This method uses a <a href=\"http://en.wikipedia.org/wiki/RADIUS\" target=\"_blank\">RADIUS</a> server to check whether a given username and password is valid.';
 $string['auth_radiushost'] = 'Address of the RADIUS server';
 $string['auth_radiusnasport'] = 'Port to use to connect';
@@ -301,7 +316,7 @@ $string['passwordhandling'] = 'Password field handling';
 $string['plaintext'] = 'Plain text';
 $string['selfregistration'] = 'Self registration';
 $string['selfregistration_help'] = 'Choose which auth plugin will handle user self-registration.';
-$string['sha1'] = 'SHA1 hash';
+$string['sha1'] = 'SHA-1 hash';
 $string['showguestlogin'] = 'You can hide or show the guest login button on the login page.';
 $string['stdchangepassword'] = 'Use standard Change Password Page';
 $string['stdchangepassword_expl'] = 'If the external authentication system allows password changes through Moodle, switch this to Yes. This setting overrides \'Change Password URL\'.';
