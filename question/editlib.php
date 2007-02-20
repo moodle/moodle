@@ -130,7 +130,7 @@ function question_category_menu($courseid, $published=false) {
 /**
  * prints a form to choose categories
  */
-function question_category_form($course, $current, $recurse=1, $showhidden=false) {
+function question_category_form($course, $current, $recurse=1, $showhidden=false, $showquestiontext=false) {
     global $CFG;
 
 /// Make sure the default category exists for this course
@@ -159,7 +159,7 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
     $strshow = get_string("show", "quiz");
     $streditcats = get_string("editcategories", "quiz");
 
-    echo "<table style=\"width:100%;\"><tr><td style=\"width:20px; white-space:nowrap;\">";
+    echo "<table><tr><td style=\"white-space:nowrap;\">";
     echo "<strong>$strcategory:</strong>&nbsp;";
     echo "</td><td>";
     popup_form ("edit.php?courseid=$course->id&amp;cat=", $catmenu, "catmenu", $current, "", "", "", false, "self");
@@ -174,29 +174,28 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
 
     echo '<form method="post" action="edit.php" id="displayoptions">';
     echo "<fieldset class='invisiblefieldset'>";
-    echo '<table><tr><td>';
-    echo "<input type=\"hidden\" name=\"courseid\" value=\"{$course->id}\" />";
-    echo '<input type="hidden" name="recurse" value="0" />';
-    echo '<input type="checkbox" name="recurse" value="1"';
-    if ($recurse) {
-        echo ' checked="checked"';
-    }
-    echo ' onchange="getElementById(\'displayoptions\').submit(); return true;" />';
-    print_string('recurse', 'quiz');
-    // hide-feature
-    echo '<br />';
-    echo '<input type="hidden" name="showhidden" value="0" />';
-    echo '<input type="checkbox" name="showhidden"';
-    if ($showhidden) {
-        echo ' checked="checked"';
-    }
-    echo ' onchange="getElementById(\'displayoptions\').submit(); return true;" />';
-    print_string('showhidden', 'quiz');
-    echo '</td><td valign="middle"><noscript><div>';
-    echo ' <input type="submit" value="'. get_string('go') .'" />';
-    echo '</div></noscript></td></tr></table></fieldset></form>';
+    echo "<input type=\"hidden\" name=\"courseid\" value=\"{$course->id}\" />\n";
+    question_category_form_checkbox('recurse', $recurse);
+    question_category_form_checkbox('showhidden', $showhidden);
+    question_category_form_checkbox('showquestiontext', $showquestiontext);
+    echo '<noscript><div class="centerpara"><input type="submit" value="'. get_string('go') .'" />';
+    echo '</div></noscript></fieldset></form>';
 }
 
+/**
+ * Private funciton to help the preceeding function.
+ */
+function question_category_form_checkbox($name, $checked) {
+    echo '<div><input type="hidden" id="' . $name . '_off" name="' . $name . '" value="0" />';
+    echo '<input type="checkbox" id="' . $name . '_on" name="' . $name . '" value="1"';
+    if ($checked) {
+        echo ' checked="checked"';
+    }
+    echo ' onchange="getElementById(\'displayoptions\').submit(); return true;" />';
+    echo '<label for="' . $name . '_on">';
+    print_string($name, 'quiz');
+    echo "</label></div>\n";
+}
 
 /**
 * Prints the table of questions in a category with interactions
@@ -210,7 +209,8 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
 * @param boolean $showhidden   True if also hidden questions should be displayed
 */
 function question_list($course, $categoryid, $quizid=0,
- $recurse=1, $page=0, $perpage=100, $showhidden=false, $sortorder='qtype, name ASC') {
+        $recurse=1, $page=0, $perpage=100, $showhidden=false, $sortorder='qtype, name ASC',
+        $showquestiontext = false) {
     global $QTYPE_MENU, $USER, $CFG, $THEME;
     
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -272,7 +272,7 @@ function question_list($course, $categoryid, $quizid=0,
         echo '<td valign="top" align="right">';
         popup_form ("$CFG->wwwroot/question/question.php?category=$category->id&amp;qtype=", $qtypemenu, "addquestion",
                     "", "choose", "", "", false, "self");
-        echo '</td><td style="width:10px;" valign="top" align="right">';
+        echo '</td><td valign="top" align="right">';
         helpbutton("questiontypes", $strcreatenewquestion, "quiz");
         echo '</td></tr>';
     }
@@ -282,22 +282,7 @@ function question_list($course, $categoryid, $quizid=0,
         echo '</td></tr>';
     }
 
-    echo '<tr><td colspan="3" align="right" style="font-size:0.8em;">';
-    
-    if (has_capability('moodle/question:import', $context)) {
-        echo '<a href="'.$CFG->wwwroot.'/question/import.php?category='.$category->id.'">'.$strimportquestions.'</a>';
-        helpbutton("import", $strimportquestions, "quiz");
-        echo ' | ';
-    }
-    
-    if (has_capability('moodle/question:export', $context)) {
-        echo "<a href=\"$CFG->wwwroot/question/export.php?category={$category->id}&amp;courseid={$course->id}\">$strexportquestions</a>";
-        helpbutton("export", $strexportquestions, "quiz");
-    }  
-    echo '</td></tr>';
-
     echo '</table>';
-
     echo '</div>';
 
     $categorylist = ($recurse) ? question_categorylist($category->id) : $category->id;
@@ -330,23 +315,38 @@ function question_list($course, $categoryid, $quizid=0,
     $canedit = has_capability('moodle/question:manage', $context);
 
     echo '<form method="post" action="edit.php?courseid='.$course->id.'">';
-    echo '<fieldset class="invisiblefieldset">';
+    echo '<fieldset class="invisiblefieldset" style="display: block;">';
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     print_simple_box_start();
-    echo '<table id="categoryquestions" cellspacing="0"><tr>';
-    $actionwidth = $canedit ? 95 : 70;
-    echo "<th style=\"width:$actionwidth; white-space:nowrap;\" class=\"header\" scope=\"col\">$straction</th>";
+    echo '<table id="categoryquestions" style="width: 100%"><tr>';
+    echo "<th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$straction</th>";
     
     $sortoptions = array('name, qtype ASC' => get_string("sortalpha", "quiz"),
                          'qtype, name ASC' => get_string("sorttypealpha", "quiz"),
                          'id ASC' => get_string("sortage", "quiz"));
     $orderselect  = choose_from_menu ($sortoptions, 'sortorder', $sortorder, false, 'this.form.submit();', '0', true);
     $orderselect .= '<noscript><div><input type="submit" value="'.get_string("sortsubmit", "quiz").'" /></div></noscript>';
-    echo "<th align=\"left\" style=\"width:100%; white-space:nowrap;\" class=\"header\" scope=\"col\">$strquestionname $orderselect</th>
-    <th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$strtype</th>";
+    echo "<th style=\"white-space:nowrap; text-align: left;\" class=\"header\" scope=\"col\">$strquestionname $orderselect</th>
+    <th style=\"white-space:nowrap; text-align: right;\" class=\"header\" scope=\"col\">$strtype</th>";
     echo "</tr>\n";
     foreach ($questions as $question) {
-        echo "<tr>\n<td style=\"white-space:nowrap;\">\n";
+        $nameclass = '';
+        $textclass = '';
+        if ($question->hidden) {
+            $nameclass = 'dimmed_text';
+            $textclass = 'dimmed_text';
+        }
+        if ($showquestiontext) {
+            $nameclass .= ' header';
+        }
+        if ($nameclass) {
+            $nameclass = 'class="' . $nameclass . '"';
+        }
+        if ($textclass) {
+            $textclass = 'class="' . $textclass . '"';
+        }
+        
+        echo "<tr>\n<td style=\"white-space:nowrap;\" $nameclass>\n";
         
         // add to quiz
         if ($quizid && has_capability('mod/quiz:manage', $context)) {
@@ -375,27 +375,41 @@ function question_list($course, $categoryid, $quizid=0,
         echo "&nbsp;<input title=\"$strselect\" type=\"checkbox\" name=\"q$question->id\" value=\"1\" />";
         echo "</td>\n";
 
-        if ($question->hidden) {
-            echo '<td class="dimmed_text">'.$question->name."</td>\n";
-        } else {
-            echo "<td>".$question->name."</td>\n";
-        }
-        echo "<td align=\"center\">\n";
+        echo "<td $nameclass>" . $question->name . "</td>\n";
+        echo "<td $nameclass style='text-align: right'>\n";
         print_question_icon($question, $canedit);
         echo "</td>\n";
         echo "</tr>\n";
-    }
-    echo '<tr><td align="center" colspan="3">';
-    print_paging_bar($totalnumber, $page, $perpage, "edit.php?courseid={$course->id}&amp;perpage=$perpage&amp;");
-    if ($totalnumber > DEFAULT_QUESTIONS_PER_PAGE) {
-        if ($perpage == DEFAULT_QUESTIONS_PER_PAGE) {
-            echo '<a href="edit.php?courseid='.$course->id.'&amp;perpage=1000">'.get_string('showall', 'moodle', $totalnumber).'</a>';
-        } else {
-            echo '<a href="edit.php?courseid='.$course->id.'&amp;perpage=' . DEFAULT_QUESTIONS_PER_PAGE . '">'.get_string('showperpage', 'moodle', DEFAULT_QUESTIONS_PER_PAGE).'</a>';
+        if($showquestiontext){
+            echo '<tr><td colspan="3" ' . $textclass . '>';
+            $formatoptions = new stdClass;
+            $formatoptions->noclean = true;
+            $formatoptions->para = false;
+            echo format_text($question->questiontext, $question->questiontextformat,
+                    $formatoptions, $course->id);
+            echo "</td></tr>\n";
         }
     }
-    echo "</td></tr></table>\n";
+    echo "</table>\n";
     print_simple_box_end();
+
+    $paging = print_paging_bar($totalnumber, $page, $perpage,
+            "edit.php?courseid={$course->id}&amp;perpage=$perpage&amp;", 'page',
+            false, true);
+    if ($totalnumber > DEFAULT_QUESTIONS_PER_PAGE) {
+        if ($perpage == DEFAULT_QUESTIONS_PER_PAGE) {
+            $showall = '<a href="edit.php?courseid='.$course->id.'&amp;perpage=1000">'.get_string('showall', 'moodle', $totalnumber).'</a>';
+        } else {
+            $showall = '<a href="edit.php?courseid='.$course->id.'&amp;perpage=' . DEFAULT_QUESTIONS_PER_PAGE . '">'.get_string('showperpage', 'moodle', DEFAULT_QUESTIONS_PER_PAGE).'</a>';
+        }
+        if ($paging) {
+            $paging = substr($paging, 0, strrpos($paging, '</div>'));
+            $paging .= "<br />$showall</div>";
+        } else {
+            $paging = "<div class='paging'>$showall</div>"; 
+        }
+    }
+    echo $paging;
 
     echo '<table class="quiz-edit-selected"><tr><td colspan="2">';
     echo '<a href="javascript:select_all_in(\'TABLE\', null, \'categoryquestions\');">'.$strselectall.'</a> /'.

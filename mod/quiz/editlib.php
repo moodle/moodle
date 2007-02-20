@@ -176,17 +176,17 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
         $lastindex++;
     }
     echo "<form method=\"post\" action=\"edit.php\">";
-    echo '<fieldset class="invisiblefieldset">';
+    echo '<fieldset class="invisiblefieldset" style="display: block;">';
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
 
     print_simple_box_start();
-    echo "<table border=\"0\" cellpadding=\"2\" cellspacing=\"0\" style=\"width:100%;\">\n";
+    echo "<table style=\"width:100%;\">\n";
     echo "<tr><th colspan=\"3\" style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$strorder</th>";
     echo "<th class=\"header\" scope=\"col\">#</th>";
-    echo "<th align=\"left\" style=\"white-space:nowrap; width:100%\" class=\"header\" scope=\"col\">$strquestionname</th>";
+    echo "<th align=\"left\" style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$strquestionname</th>";
     echo "<th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$strtype</th>";
     echo "<th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$strgrade</th>";
-    echo "<th align=\"center\" style=\"white-space:nowrap; width:60px;\" class=\"header\" scope=\"col\">$straction</th>";
+    echo "<th align=\"center\" style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$straction</th>";
     echo "</tr>\n";
     foreach ($order as $i => $qnum) {
 

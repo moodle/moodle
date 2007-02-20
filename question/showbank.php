@@ -147,39 +147,45 @@
         $SESSION->questionpage = 0;
     }
 
-    if(isset($_REQUEST['recurse'])) {
-        $SESSION->questionrecurse = optional_param('recurse', 0, PARAM_BOOL);
-    }
-
-    if(isset($_REQUEST['showhidden'])) {
-        $SESSION->questionshowhidden = optional_param('showhidden', 0, PARAM_BOOL);
-    }
-
-/// all commands have been dealt with, now print the page
-
-if (empty($SESSION->questioncat) or !count_records_select("question_categories", "id = '{$SESSION->questioncat}' AND (course = '{$course->id}' OR publish = '1')")) {
-        $category = get_default_question_category($course->id);
+    if (empty($SESSION->questioncat) or !count_records_select("question_categories", "id = '{$SESSION->questioncat}' AND (course = '{$course->id}' OR publish = '1')")) {
+            $category = get_default_question_category($course->id);
         $SESSION->questioncat = $category->id;
+    }
+
+    if(($recurse = optional_param('recurse', -1, PARAM_BOOL)) != -1) {
+        $SESSION->questionrecurse = $recurse;
     }
     if (!isset($SESSION->questionrecurse)) {
         $SESSION->questionrecurse = 1;
     }
+
+    if(($showhidden = optional_param('showhidden', -1, PARAM_BOOL)) != -1) {
+        $SESSION->questionshowhidden = $showhidden;
+    }
     if (!isset($SESSION->questionshowhidden)) {
-        $SESSION->questionshowhidden = false;
+        $SESSION->questionshowhidden = 0;
+    }
+
+    if(($showquestiontext = optional_param('showquestiontext', -1, PARAM_BOOL)) != -1) {
+        $SESSION->questionshowquestiontext = $showquestiontext;
+    }
+    if (!isset($SESSION->questionshowquestiontext)) {
+        $SESSION->questionshowquestiontext = 0;
     }
 
     // starts with category selection form
     if (has_capability('moodle/question:managecategory', $context)) {
         print_simple_box_start();
-        question_category_form($course, $SESSION->questioncat, $SESSION->questionrecurse, $SESSION->questionshowhidden);
+        question_category_form($course, $SESSION->questioncat, $SESSION->questionrecurse,
+                $SESSION->questionshowhidden, $SESSION->questionshowquestiontext);
         print_simple_box_end();
-        
-        print_spacer(5,1);
     }
     
     // continues with list of questions
     print_simple_box_start();
-    question_list($course, $SESSION->questioncat, isset($modform->instance) ? $modform->instance : 0, $SESSION->questionrecurse, $page, $perpage, $SESSION->questionshowhidden, $sortorder);
+    question_list($course, $SESSION->questioncat, isset($modform->instance) ? $modform->instance : 0,
+            $SESSION->questionrecurse, $page, $perpage, $SESSION->questionshowhidden, $sortorder,
+            $SESSION->questionshowquestiontext);
     print_simple_box_end();
 
 ?>
