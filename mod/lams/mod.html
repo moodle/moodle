@@ -229,7 +229,7 @@ function refreshLists(){
     dol = new DynamicOptionList("workspace","sequence");
     dol.setFormName("form");
 
-    url = "../mod/lams/list.php?courseid="+getElementById('form').course.value;
+    url = "../mod/lams/list.php?courseid="+document.getElementById('form').course.value;
     if (window.XMLHttpRequest) { // Non-IE browsers
         req = new XMLHttpRequest();
         req.onreadystatechange = processStateChange;
