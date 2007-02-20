@@ -11,9 +11,6 @@ get_auth_plugin() that does the work for you:
 
    $ldapauth = get_auth_plugin('ldap');
 
-If an auth is not specified, get_auth_plugin() will return you the auth plugin
-defined in the $CFG->auth variable.
-
 Auth plugin classes are pretty basic. They contain the same functions that were
 previously in each plugin's lib.php file, but refactored to become class
 methods, and tweaked to reference the plugin's instantiated config to get at the
@@ -63,6 +60,7 @@ user_login($username, $password)
    This is the primary method that is used by the authenticate_user_login()
    function in moodlelib.php. This method should return a boolean indicating
    whether or not the username and password authenticate successfully.
+   Both parameter must have magic quotes applied.
 
 is_internal()
    Returns true if this authentication plugin is "internal" (which means that
@@ -79,9 +77,10 @@ change_password_url()
 Other Methods
 -----------------
 
-get_userinfo()
+get_userinfo($username)
    This method should return an array of fields from the authentication source
-   for the given username.
+   for the given username. Username parameter must have magic quotes applied.
+   The returned array does not have magic quotes applied.
 
 Upgrading from Moodle 1.7
 -----------------------------

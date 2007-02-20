@@ -5,7 +5,7 @@
 // Is Auth/RADIUS really there?
 if ((!include_once('Auth/RADIUS.php')) or (!class_exists(Auth_RADIUS_PAP))) {
     print '<p align="center"><font color="red"><strong>Warning: The Auth_RADIUS module does not seem to be present. Please ensure it is installed and enabled.</strong></font></p>';
-} 
+}
 
 // set to defaults if undefined
 if (!isset($config->host)) {
@@ -44,11 +44,11 @@ if (!isset($config->changepasswordurl)) {
     <td>
         <input name="nasport" type="text" size="6" value="<?php echo $config->nasport ?>" />
         <?php
-        
+
         if (isset($err['nasport'])) {
             formerr($err['nasport']);
         }
-        
+
         ?>
     </td>
     <td><?php print_string('auth_radiusnasport', 'auth') ?></td>
@@ -59,7 +59,7 @@ if (!isset($config->changepasswordurl)) {
     <td>
         <input name="secret" type="text" size="6" value="<?php echo $config->secret ?>" />
         <?php
-        
+
         if (isset($err['secret'])) {
             formerr($err['secret']);
         }

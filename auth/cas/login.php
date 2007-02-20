@@ -70,8 +70,8 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
         update_login_count();
 
         if ($user) {
-            if (! $user->confirmed ) {       // they never confirmed via email 
-                print_header(get_string("mustconfirm"), get_string("mustconfirm") ); 
+            if (! $user->confirmed ) {       // they never confirmed via email
+                print_header(get_string("mustconfirm"), get_string("mustconfirm") );
                 print_heading(get_string("mustconfirm"));
                 print_simple_box(get_string("emailconfirmsent", "", $user->email), "center");
                 print_footer();
@@ -91,7 +91,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
                 $USER->firstname  = get_string("guestuser");  // Name always in current language
                 $USER->lastname   = " ";
             }
-    
+
             if (!update_user_login_times()) {
                 error("Wierd error: could not update login records");
             }
@@ -111,7 +111,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
             $userauth = get_auth_plugin($USER->auth);
             if (method_exists($userauth, 'can_change_password') and $userauth->can_change_password()) {
                 $passwordchangeurl=$CFG->wwwroot.'/login/change_password.php';
-            } 
+            }
 
             // check whether the user should be changing password
             if (get_user_preferences('auth_forcepasswordchange', false)) {
@@ -122,7 +122,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
                 }
             }
 
-            
+
             add_to_log(SITEID, "user", "login", "view.php?id=$user->id&course=".SITEID, $user->id, 0, $user->id);
 
             if (user_not_fully_set_up($USER)) {
@@ -143,12 +143,12 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
             if ($ldapauth->config->expiration == 1) {
                     $days2expire = $ldapauth->password_expire($USER->username);
                     if (intval($days2expire) > 0 && intval($days2expire) < intval($CFG->{$USER->auth.'_expiration_warning'})) {
-                        print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>"); 
-                        notice_yesno(get_string('auth_passwordwillexpire', 'auth', $days2expire), $passwordchangeurl, $urltogo); 
+                        print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>");
+                        notice_yesno(get_string('auth_passwordwillexpire', 'auth', $days2expire), $passwordchangeurl, $urltogo);
                         print_footer();
                         exit;
                     } elseif (intval($days2expire) < 0 ) {
-                        print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>"); 
+                        print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>");
                         notice_yesno(get_string('auth_passwordisexpired', 'auth'), $passwordchangeurl, $urltogo);
                         print_footer();
                         exit;
@@ -162,7 +162,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
             redirect($urltogo);
 
             exit;
-    
+
         } else {
           if ($CFG->auth == "cas" ) { /// CAS error login
             $errormsg = get_string("invalidcaslogin");
@@ -174,8 +174,8 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
     }
     $user = $casauth->automatic_authenticate($user);
     if ($user) {
-        if (! $user->confirmed ) {       // they never confirmed via email 
-            print_header(get_string("mustconfirm"), get_string("mustconfirm") ); 
+        if (! $user->confirmed ) {       // they never confirmed via email
+            print_header(get_string("mustconfirm"), get_string("mustconfirm") );
             print_heading(get_string("mustconfirm"));
             print_simple_box(get_string("emailconfirmsent", "", $user->email), "center");
             print_footer();
@@ -226,7 +226,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
             }
         }
 
-        
+
         add_to_log(SITEID, "user", "login", "view.php?id=$user->id&course=".SITEID, $user->id, 0, $user->id);
 
         if (user_not_fully_set_up($USER)) {
@@ -247,12 +247,12 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
         if ($ldapauth->config->expiration == 1) {
                 $days2expire = $ldapauth->password_expire($USER->username);
                 if (intval($days2expire) > 0 && intval($days2expire) < intval($CFG->{$USER->auth.'_expiration_warning'})) {
-                    print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div class=\"langmenu\">$langmenu</div>"); 
-                    notice_yesno(get_string('auth_passwordwillexpire', 'auth', $days2expire), $passwordchangeurl, $urltogo); 
+                    print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div class=\"langmenu\">$langmenu</div>");
+                    notice_yesno(get_string('auth_passwordwillexpire', 'auth', $days2expire), $passwordchangeurl, $urltogo);
                     print_footer();
                     exit;
                 } elseif (intval($days2expire) < 0 ) {
-                    print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div class=\"langmenu\">$langmenu</div>"); 
+                    print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div class=\"langmenu\">$langmenu</div>");
                     notice_yesno(get_string('auth_passwordisexpired', 'auth'), $passwordchangeurl, $urltogo);
                     print_footer();
                     exit;
@@ -278,18 +278,18 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
     }
 
     if (empty($SESSION->wantsurl)) {
-        $SESSION->wantsurl = array_key_exists('HTTP_REFERER',$_SERVER) ? $_SERVER["HTTP_REFERER"] : $CFG->wwwroot.'/'; 
+        $SESSION->wantsurl = array_key_exists('HTTP_REFERER',$_SERVER) ? $_SERVER["HTTP_REFERER"] : $CFG->wwwroot.'/';
     }
 
-    if (get_moodle_cookie() == '') {   
+    if (get_moodle_cookie() == '') {
         set_moodle_cookie('nobody');   // To help search for cookies
     }
-    
+
     if (empty($frm->username)) {
         $frm->username = get_moodle_cookie() === 'nobody' ? '' : get_moodle_cookie();
         $frm->password = "";
     }
-    
+
     if (!empty($frm->username)) {
         $focus = "login.password";
     } else {
@@ -301,8 +301,8 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
     } else {
         $show_instructions = false;
     }
-    
-    print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>"); 
+
+    print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>");
     include($CFG->dirroot.'/auth/cas/index_form.html');
     print_footer();
 

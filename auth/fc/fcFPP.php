@@ -22,21 +22,21 @@
  */
 
 class fcFPP
-{    
+{
     var $_hostname;         // hostname of FirstClass server we are connection to
     var $_port;             // port on which fpp is running
     var $_conn = 0;         // socket we are connecting on
     var $_debug = FALSE;    // set to true to see some debug info
-    
+
     // class constructor
     function fcFPP($host="localhost", $port="3333")
     {
     $this->_hostname = $host;
     $this->_port = $port;
     $this->_user = "";
-    $this->_pwd = "";  
+    $this->_pwd = "";
     }
-    
+
     // open a connection to the FirstClass server
     function open()
     {
@@ -53,10 +53,10 @@ class fcFPP
         print_error('auth_fcconnfail','auth', array($errno, $errstr));
         return false;
     }
-    
+
     // We are connected
     if ($this->_debug) echo "connected!";
-    
+
     // Read connection message.
     $line = fgets ($conn);        //+0
     $line = fgets ($conn);        //new line
@@ -69,7 +69,7 @@ class fcFPP
 
     // close any open connections
     function close()
-    {        
+    {
     // get the current connection
     $conn = &$this->_conn;
 
@@ -84,8 +84,8 @@ class fcFPP
     }
     return;
     }
-    
-    
+
+
     // Authenticate to the FirstClass server
     function login($userid, $passwd)
     {
@@ -98,37 +98,37 @@ class fcFPP
         $line = fgets ($this->_conn);        //new line
         $line = fgets ($this->_conn);        //+0
         $line = fgets ($this->_conn);        //new line
-    
+
         # Send password
         fputs($this->_conn,"$passwd\r\n");
         $line = fgets ($this->_conn);        //new line
         $line = fgets ($this->_conn);        //+0
         $line = fgets ($this->_conn);        //+0 or message
-        
+
         if ($this->_debug) echo $line;
-        
+
         if (preg_match ("/^\+0/", $line)) {      //+0, user with subadmin privileges
             $this->_user = $userid;
-            $this->_pwd  = $passwd; 
-            return TRUE;        
+            $this->_pwd  = $passwd;
+            return TRUE;
         } elseif (strpos($line, 'You are not allowed')) { // Denied access but a valid user and password
                                                          // "Sorry. You are not allowed to login with the FPP interface"
             return TRUE;
         } else {                    //Invalid user or password
             return FALSE;
         }
-    
+
 
     }
     return FALSE;
     }
 
-    // Get the list of groups the user is a member of 
+    // Get the list of groups the user is a member of
     function getGroups($userid) {
-    
+
     $groups = array();
-    
-    // we must be logged in as a user with subadmin privileges 
+
+    // we must be logged in as a user with subadmin privileges
     if ($this->_conn AND $this->_user) {
         # Send BA-command to get groups
         fputs($this->_conn,"GET USER '" . $userid . "' 4 -1\r");
@@ -143,29 +143,29 @@ class fcFPP
         }
             if ($this->_debug) echo "getGroups:" . implode(",",$groups);
     }
-    
+
     return $groups;
     }
 
     // Check if the user is member of any of the groups.
     // Return the list of groups the user is member of.
     function isMemberOf($userid, $groups) {
-    
+
     $usergroups = array_map("strtolower",$this->getGroups($userid));
     $groups = array_map("strtolower",$groups);
-    
+
     $result = array_intersect($groups,$usergroups);
-    
+
         if ($this->_debug) echo "isMemberOf:" . implode(",",$result);
-    
+
     return $result;
 
     }
-    
+
     function getUserInfo($userid, $field) {
-    
+
     $userinfo = "";
-    
+
     if ($this->_conn AND $this->_user) {
         # Send BA-command to get data
         fputs($this->_conn,"GET USER '" . $userid . "' " . $field . "\r");
@@ -180,17 +180,17 @@ class fcFPP
         }
         if ($this->_debug) echo "getUserInfo:" . $userinfo;
     }
-      
+
     return str_replace('\r',' ',trim($userinfo,'"'));
 
     }
 
     function getResume($userid) {
-    
+
     $resume = "";
 
     $pattern = "/\[.+:.+\..+\]/";         // Remove references to pictures in resumes
-    
+
     if ($this->_conn AND $this->_user) {
         # Send BA-command to get data
         fputs($this->_conn,"GET RESUME '" . $userid . "' 6\r");
@@ -203,17 +203,17 @@ class fcFPP
             $resume .= preg_replace($pattern,"",str_replace('\r',"\n",trim($line,'6 ')));
         $line = trim(fgets ($this->_conn));
         //print $line;
-        
+
         }
         if ($this->_debug) echo "getResume:" . $resume;
     }
-      
+
     return $resume;
 
     }
-    
-    
+
+
 }
-   
+
 
 ?>

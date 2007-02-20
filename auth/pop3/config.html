@@ -34,10 +34,10 @@ if (!isset($config->changepasswordurl)) {
     </td>
     <td>
         <?php
-        
+
         print_string('auth_pop3host', 'auth');
         print_string('auth_multiplehosts', 'auth');
-        
+
         ?>
     </td>
 </tr>
@@ -103,9 +103,8 @@ if (!isset($config->changepasswordurl)) {
     <td><?php print_string('changepasswordhelp', 'auth') ?></td>
 </tr>
 
-<?php 
+<?php
 
-global $user_fields;
 print_auth_lock_options('pop3', $user_fields, get_string('auth_fieldlocks_help', 'auth'), false, false);
 
 ?>

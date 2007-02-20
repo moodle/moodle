@@ -19,16 +19,16 @@ if (!isset($config->changepasswordurl)) {
     <td>
         <input name="host" type="text" size="30" value="<?php echo $config->host ?>" />
         <?php
-        
+
         if (isset($err["host"])) {
             formerr($err["host"]);
         }
-        
+
         ?>
     </td>
     <td>
         <?php
-       
+
         print_string("auth_nntphost", "auth");
         print_string("auth_multiplehosts", "auth");
 
@@ -45,7 +45,7 @@ if (!isset($config->changepasswordurl)) {
         if (isset($err["port"])) {
             formerr($err["port"]);
         }
-        
+
         ?>
     </td>
     <td><?php print_string("auth_nntpport", "auth") ?></td>
@@ -66,9 +66,8 @@ if (!isset($config->changepasswordurl)) {
     <td><?php print_string('changepasswordhelp', 'auth') ?></td>
 </tr>
 
-<?php 
+<?php
 
-global $user_fields;
 print_auth_lock_options('nntp', $user_fields, get_string('auth_fieldlocks_help', 'auth'), false, false);
 
 ?>

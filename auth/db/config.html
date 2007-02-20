@@ -2,34 +2,34 @@
 
     // set to defaults if undefined
     if (!isset($config->host)) {
-        $config->host = "localhost";
+        $config->host = 'localhost';
     }
     if (!isset($config->type)) {
-        $config->type = "mysql";
+        $config->type = 'mysql';
     }
     if (!isset($config->sybasequoting)) {
         $config->sybasequoting = 0;
     }
     if (!isset($config->name)) {
-        $config->name = "";
+        $config->name = '';
     }
     if (!isset($config->user)) {
-        $config->user = "";
+        $config->user = '';
     }
     if (!isset($config->pass)) {
-        $config->pass = "";
+        $config->pass = '';
     }
     if (!isset($config->table)) {
-        $config->table = "";
+        $config->table = '';
     }
     if (!isset($config->fielduser)) {
-        $config->fielduser = "";
+        $config->fielduser = '';
     }
     if (!isset($config->fieldpass)) {
-        $config->fieldpass = "";
+        $config->fieldpass = '';
     }
     if (!isset($config->passtype)) {
-        $config->passtype = "plaintext";
+        $config->passtype = 'plaintext';
     }
     if (!isset($config->changepasswordurl)) {
         $config->changepasswordurl = '';
@@ -43,8 +43,11 @@
     if (!isset($config->setupsql)) {
         $config->setupsql = '';
     }
+    if (!isset($config->removeuser)) {
+        $config->removeuser = 0;
+    }
 
-    $pluginconfig = get_config('auth/db');
+    $yesno = array( get_string('no'), get_string('yes') );
 
 ?>
 <table cellspacing="0" cellpadding="5" border="0" align="center">
@@ -76,19 +79,14 @@
 
     </td>
     <td>
-    <?php  print_string("auth_dbtype","auth") ?>
+    <?php print_string("auth_dbtype","auth") ?>
     </td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"><label for="sybasequoting"><?php print_string("auth_dbsybasequoting", "auth") ?></label></td>
+    <td align="right"><label for="menusybasequoting"><?php print_string("auth_dbsybasequoting", "auth") ?></label></td>
     <td>
-        <select id="sybasequoting" name="sybasequoting">
-            <option value="0" <?php echo ($config->sybasequoting ? '' : 'selected="yes"') ?> >
-                <?php  print_string('no')  ?></option>
-            <option value="1" <?php echo ($config->sybasequoting ? 'selected="yes"' : '') ?> >
-                <?php  print_string('yes') ?></option>
-        </select>
+        <?php choose_from_menu($yesno, 'sybasequoting', $config->sybasequoting, ''); ?>
     </td>
     <td><?php print_string("auth_dbsybasequotinghelp", "auth") ?></td>
 </tr>
@@ -189,7 +187,7 @@
     <td align="right"><label for="menupasstype"><?php print_string("auth_dbpasstype_key", "auth") ?></label></td>
     <td>
         <?php
-
+        $passtype = array();
         $passtype["plaintext"] = get_string("plaintext", "auth");
         $passtype["md5"]       = get_string("md5", "auth");
         $passtype["sha1"]      = get_string("sha1", "auth");
@@ -225,14 +223,9 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><label for="debugauthdb"><?php print_string("auth_dbdebugauthdb", "auth") ?></label></td>
+    <td align="right"><label for="menudebugauthdb"><?php print_string("auth_dbdebugauthdb", "auth") ?></label></td>
     <td>
-        <select id="debugauthdb" name="debugauthdb">
-            <option value="0" <?php echo ($config->debugauthdb ? '' : 'selected="yes"') ?> >
-                <?php  print_string('no')  ?></option>
-            <option value="1" <?php echo ($config->debugauthdb ? 'selected="yes"' : '') ?> >
-                <?php  print_string('yes') ?></option>
-        </select>
+        <?php choose_from_menu($yesno, 'debugauthdb', $config->debugauthdb, ''); ?>
     </td>
     <td><?php print_string("auth_dbdebugauthdbhelp", "auth") ?></td>
 </tr>
@@ -251,10 +244,32 @@
     </td>
     <td><?php print_string('changepasswordhelp', 'auth') ?></td>
 </tr>
+
+<tr>
+   <td colspan="2">
+        <h4><?php print_string('auth_sync_script', 'auth') ?> </h4>
+   </td>
+</tr>
+
+<tr valign="top">
+    <td align="right"><label for="menuremoveuser"><?php print_string('auth_remove_user_key','auth') ?></label></td>
+    <td>
+    <?php
+       $deleteopt = array();
+       $deleteopt['0'] = get_string('auth_remove_keep','auth');
+       $deleteopt['1'] = get_string('auth_remove_suspend','auth');
+       $deleteopt['2'] = get_string('auth_remove_delete','auth');
+       choose_from_menu($deleteopt, 'removeuser', $config->removeuser, '');
+    ?>
+    </td>
+    <td>
+    <?php print_string('auth_remove_user','auth') ?>
+    </td>
+</tr>
+
 <?php
 
-global $user_fields;
-print_auth_lock_options('db', $user_fields, get_string('auth_dbextrafields', 'auth'), true, false);
+print_auth_lock_options('db', $user_fields, get_string('auth_dbextrafields', 'auth'), true, true);
 
 ?>
 </table>

@@ -9,7 +9,7 @@
  *
  * No authentication at all. This method approves everything!
  *
- * 2006-08-31  File created.
+ * 2007-02-18  File created.
  */
 
 if (!defined('MOODLE_INTERNAL')) {
@@ -19,52 +19,28 @@ if (!defined('MOODLE_INTERNAL')) {
 /**
  * Plugin for no authentication.
  */
-class auth_plugin_none {
+class auth_plugin_nologin {
 
-    /**
-     * The configuration details for the plugin.
-     */
-    var $config;
-
-    var $canchangepassword = true;
-    var $isinternal = true;
 
     /**
      * Constructor.
      */
-    function auth_plugin_none() {
-        $this->config = get_config('auth/none');
+    function auth_plugin_nologin() {
     }
 
     /**
-     * Returns true if the username and password work or don't exist and false
-     * if the user exists and the password is wrong.
+     * Do not allow any login
      *
-     * @param string $username The username
-     * @param string $password The password
-     * @return bool Authentication success or failure.
      */
     function user_login ($username, $password) {
-        global $CFG;
-        if ($user = get_record('user', 'username', $username, 'mnethostid', $CFG->mnet_localhost_id)) {
-            return validate_internal_user_password($user, $password);
-        }
         return false;
     }
 
     /**
-     * Updates the user's password.
-     *
-     * called when the user password is updated.
-     *
-     * @param  object  $user        User
-     * @param  string  $newpassword Plaintext password
-     * @return boolean result
-     *
+     * No password updates.
      */
     function user_update_password($user, $newpassword) {
-        $user = get_complete_user_data('id', $user->id);
-        return update_internal_user_password($user, $newpassword);
+        return false;
     }
 
     /**
@@ -73,7 +49,8 @@ class auth_plugin_none {
      * @return bool
      */
     function is_internal() {
-        return true;
+        //we do not know if it was internal or external originally
+        return false;
     }
 
     /**
@@ -83,7 +60,7 @@ class auth_plugin_none {
      * @return bool
      */
     function can_change_password() {
-        return true;
+        return false;
     }
 
     /**
@@ -105,7 +82,6 @@ class auth_plugin_none {
      * @param array $page An object containing all the data for this page.
      */
     function config_form($config, $err, $user_fields) {
-        include "config.html";
     }
 
     /**

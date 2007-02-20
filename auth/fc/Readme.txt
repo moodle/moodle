@@ -1,7 +1,7 @@
 Moodle - FirstClass authentication module
 -----------------------------------------
 This module uses the FirstClass Flexible Provisining Protocol (FPP) to communicate between the FirstClass server
-and the Moodle host. 
+and the Moodle host.
 
 Installation
 ------------
@@ -9,7 +9,7 @@ Installation
 1. Enable FPP on the FirstClass server
 FPP is not doumented in the FirstClass documentation and is not enable by default.
 To enable the protocol you need to edit the file \FCPO\Server\Netinfo. Open the file and insert the
-following lines.  
+following lines.
 
 // TCP port for Flexible Provisioning Protocol (FPP).
 TCPFPPPORT = 3333
@@ -23,7 +23,7 @@ Default account name is "fcMoodle".
 
 
 3. Check that the FPP protocoll is working by running a Telnet session. If everyting is working you
-should get a "+0" answer from the server. 
+should get a "+0" answer from the server.
 
 > telnet yourhost.domain.com 3333
 +0
@@ -47,7 +47,7 @@ Get user some_user_id 1201
 
 4. On the Moodle host go to the directory where you have installed Moodle.
 Open the folder "auth", where all other authentication modules are installed,
- and create a new directory with the name "fc". 
+ and create a new directory with the name "fc".
 
 Copy the files "config.html", "fcFPP.php" and "lib.php" to the "auth" directory.
 

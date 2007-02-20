@@ -1,9 +1,9 @@
 This directory contains authentication modules.
 
-Each of these modules describes a different way to 
-check that a user has provided a correct 
+Each of these modules describes a different way to
+check that a user has provided a correct
 
-   - username, and 
+   - username, and
    - password.
 
 Even when external forms of authentication are being used, Moodle still
@@ -22,18 +22,18 @@ part of the enabled plugin sequence).
 email - authentication by email  (DEFAULT METHOD)
 
     - user fills out form with email address
-    - email sent to user with link 
+    - email sent to user with link
     - user clicks on link in email to confirm
     - user account is created
     - user can log in
 
 
 none  - no authentication at all .. very insecure!!
-    
+
     - user logs in using ANY username and password
     - if the username doesn't already exist then
       a new account is created
-    - when user tries to access a course they 
+    - when user tries to access a course they
       are forced to set up their account details
 
 manual - internal authentication only
@@ -81,7 +81,7 @@ nntp  - Uses an external NNTP server
 
 
 db  - Uses an external database to check username/password
-    
+
     - user logs in using username and password
     - these are checked against an external database
     - if correct, user is logged in
@@ -203,14 +203,14 @@ AUTHENTICATION
 
 Basic fuctions to authenticate users with external db.
 
-Mandatory: 
+Mandatory:
 
     auth_plugin_foo()
 
     Constructor. At the least, it populates config member variable with settings
     from the Moodle database. It makes sense to put other startup code here.
 
-    user_login($username, $password) 
+    user_login($username, $password)
 
     Authenticate username, password with userdatabase.
 
@@ -225,7 +225,7 @@ Optional:
     Query other userinformation from database.
 
     Returns:
-    Userinformation in array ( name => value, .... 
+    Userinformation in array ( name => value, ....
     or false in case of error
 
 
@@ -251,9 +251,9 @@ USER CREATION
 
 Functions that enable usercreation, activation and deactivation
 from moodle to external database
-  
-  
-    user_exists ($username) 
+
+
+    user_exists ($username)
 
     Checks if given username exist on external db
 
@@ -261,7 +261,7 @@ from moodle to external database
     true if given usernname exist or false
 
 
-    user_create ($userobject,$plainpass) 
+    user_create ($userobject,$plainpass)
 
     Creates new user to external db. User should be created
     in inactive stage until confirmed by email.
@@ -270,7 +270,7 @@ from moodle to external database
     True on success otherwise false
 
 
-    user_activate ($username) 
+    user_activate ($username)
 
     activate new user after email-address is confirmed
 
@@ -295,13 +295,5 @@ USER INFORMATION AND SYNCRONIZATION
 
     Returns:
     All usernames in array or false on error.
-
-
-    get_users($filter='*') 
-
-    Get ALL USEROBJECTS FROM EXTERNAL DB.
-
-    Returns:
-    Array of all users as objects from external db
 
 

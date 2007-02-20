@@ -13,8 +13,9 @@
  * 2006-08-31  File created.
  */
 
-// This page cannot be called directly
-if (!isset($CFG)) exit;
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
 
 /**
  * RADIUS authentication plugin.
@@ -39,26 +40,26 @@ class auth_plugin_radius {
      *
      * @param string $username The username
      * @param string $password The password
-     * @returns bool Authentication success or failure.
+     * @return bool Authentication success or failure.
      */
     function user_login ($username, $password) {
         require_once 'Auth/RADIUS.php';
-        
+
         // Added by Clive on 7th May for test purposes
         // printf("Username: $username <br/>");
         // printf("Password: $password <br/>");
         // printf("host: $this->config->host <br/>");
         // printf("nasport: $this->config->nasport <br/>");
         // printf("secret: $this->config->secret <br/>");
-        
+
         $rauth = new Auth_RADIUS_PAP($username, $password);
         $rauth->addServer($this->config->host, $this->config->nasport, $this->config->secret);
-        
+
         if (!$rauth->start()) {
             printf("Radius start: %s<br/>\n", $rauth->getError());
             exit;
         }
-        
+
         $result = $rauth->send();
         if (PEAR::isError($result)) {
             printf("Radius send failed: %s<br/>\n", $result->getMessage());
@@ -70,21 +71,21 @@ class auth_plugin_radius {
             // printf("Radius Auth rejected<br/>\n");
             return false;
         }
-        
+
         // get attributes, even if auth failed
         if (!$rauth->getAttributes()) {
             printf("Radius getAttributes: %s<br/>\n", $rauth->getError());
         } else {
             $rauth->dumpAttributes();
         }
-        
+
         $rauth->close();
     }
 
     /**
      * Returns true if this authentication plugin is 'internal'.
      *
-     * @returns bool
+     * @return bool
      */
     function is_internal() {
         return false;
@@ -94,12 +95,12 @@ class auth_plugin_radius {
      * Returns true if this authentication plugin can change the user's
      * password.
      *
-     * @returns bool
+     * @return bool
      */
     function can_change_password() {
         return false;
     }
-    
+
     /**
      * Prints a form for configuring this authentication plugin.
      *
@@ -108,7 +109,7 @@ class auth_plugin_radius {
      *
      * @param array $page An object containing all the data for this page.
      */
-    function config_form($config, $err) {
+    function config_form($config, $err, $user_fields) {
         include "config.html";
     }
 

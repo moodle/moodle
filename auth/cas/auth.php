@@ -11,8 +11,9 @@
  * 2006-08-28  File created.
  */
 
-// This page cannot be called directly
-if (!isset($CFG)) exit;
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
 
 /**
  * CAS authentication plugin.
@@ -38,21 +39,21 @@ class auth_plugin_cas {
      *
      * @param string $username The username
      * @param string $password The password
-     * @returns bool Authentication success or failure.
+     * @return bool Authentication success or failure.
      */
     function user_login ($username, $password) {
         if (! function_exists('ldap_connect')) {
             print_error('auth_casnotinstalled','mnet');
             return false;
         }
-        
+
         global $CFG;
 
         // don't allow blank usernames or passwords
         if (!$username or !$password) {
             return false;
         }
-     
+
         // CAS specific
         if ($CFG->auth == "cas" and !empty($this->config->enabled)) {
             if ($this->config->create_user == '0') {
@@ -72,7 +73,7 @@ class auth_plugin_cas {
 
         if ($ldap_connection) {
             $ldap_user_dn = auth_ldap_find_userdn($ldap_connection, $username);
-          
+
             // if ldap_user_dn is empty, user does not exist
             if (!$ldap_user_dn) {
                 ldap_close($ldap_connection);
@@ -205,7 +206,7 @@ class auth_plugin_cas {
     /**
      * Returns true if this authentication plugin is 'internal'.
      *
-     * @returns bool
+     * @return bool
      */
     function is_internal() {
         return false;
@@ -215,7 +216,7 @@ class auth_plugin_cas {
      * Returns true if this authentication plugin can change the user's
      * password.
      *
-     * @returns bool
+     * @return bool
      */
     function can_change_password() {
         return false;
@@ -229,7 +230,7 @@ class auth_plugin_cas {
      *
      * @param array $page An object containing all the data for this page.
      */
-    function config_form($config, $err) {
+    function config_form($config, $err, $user_fields) {
         include 'config.html';
     }
 
@@ -237,7 +238,7 @@ class auth_plugin_cas {
      * Returns the URL for changing the user's pw, or false if the default can
      * be used.
      *
-     * @returns bool
+     * @return bool
      */
     function change_password_url() {
         return $this->config->changepasswordurl;
@@ -288,7 +289,7 @@ class auth_plugin_cas {
         set_config('changepasswordurl', $config->changepasswordurl, 'auth/cas');
 
         // save LDAP settings
-        // TODO: Do we want the CAS LDAP settings to be separate from the LDAP settings?
+        // TODO: settings must be separated now that we have multiauth!
         $ldapauth = get_auth_plugin('ldap');
         $ldapauth->process_config($config);
 

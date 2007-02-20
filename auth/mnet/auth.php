@@ -12,9 +12,8 @@
  * 2006-11-01  File created.
  */
 
-// This page cannot be called directly
-if (!isset($CFG)) {
-    exit;
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
 /**
@@ -44,8 +43,8 @@ class auth_plugin_mnet
         $sso_idp = array();
         $sso_idp['name']        = 'sso_idp'; // Name & Description go in lang file
         $sso_idp['apiversion']  = 1;
-        $sso_idp['methods']     = array('user_authorise','keepalive_server', 'kill_children', 
-                                        'refresh_log', 'fetch_user_image', 'fetch_theme_info', 
+        $sso_idp['methods']     = array('user_authorise','keepalive_server', 'kill_children',
+                                        'refresh_log', 'fetch_user_image', 'fetch_theme_info',
                                         'update_enrolments');
 
         $sso_sp = array();
@@ -63,7 +62,7 @@ class auth_plugin_mnet
      *
      * @param string $username The username
      * @param string $password The password
-     * @returns bool Authentication success or failure.
+     * @return bool Authentication success or failure.
      */
     function user_login($username, $password) {
         return false; // error("Remote MNET users cannot login locally.");
@@ -136,7 +135,7 @@ class auth_plugin_mnet
                     h.wwwroot,
                     h.id as hostid,
                     count(c.id) as count
-                FROM   
+                FROM
                     {$CFG->prefix}mnet_enrol_course c,
                     {$CFG->prefix}mnet_enrol_assignments a,
                     {$CFG->prefix}mnet_host h
@@ -198,9 +197,9 @@ class auth_plugin_mnet
         $mnet_peer->set_id($mnethostid);
 
         // set up the session
-        $mnet_session = get_record('mnet_session', 
-                                   'userid',     $USER->id, 
-                                   'mnethostid', $mnethostid, 
+        $mnet_session = get_record('mnet_session',
+                                   'userid',     $USER->id,
+                                   'mnethostid', $mnethostid,
                                    'useragent',  sha1($_SERVER['HTTP_USER_AGENT']));
         if ($mnet_session == false) {
             $mnet_session = new object();
@@ -241,7 +240,7 @@ class auth_plugin_mnet
      *
      *   @param string $token           The random session token.
      *   @param string $remotewwwroot   The ID provider wwwroot.
-     *   @returns array The local user record.
+     *   @return array The local user record.
      */
     function confirm_mnet_session($token, $remotewwwroot) {
         global $CFG, $MNET, $SESSION;
@@ -359,8 +358,8 @@ class auth_plugin_mnet
                     $count = clean_param($rhost['count'], PARAM_INT);
                     $url_is_local = stristr($url , $CFG->wwwroot);
                     if (!empty($name) && !empty($count) && empty($url_is_local)) {
-                        $localuser->mnet_foreign_host_array[] = array('name'  => $name, 
-                                                                      'url'   => $url, 
+                        $localuser->mnet_foreign_host_array[] = array('name'  => $name,
+                                                                      'url'   => $url,
                                                                       'count' => $count);
                     }
                 }
@@ -379,9 +378,9 @@ class auth_plugin_mnet
         }
 
         // set up the session
-        $mnet_session = get_record('mnet_session', 
-                                   'userid',     $localuser->id, 
-                                   'mnethostid', $remotepeer->id, 
+        $mnet_session = get_record('mnet_session',
+                                   'userid',     $localuser->id,
+                                   'mnethostid', $remotepeer->id,
                                    'useragent',  sha1($_SERVER['HTTP_USER_AGENT']));
         if ($mnet_session == false) {
             $mnet_session = new object();
@@ -404,7 +403,7 @@ class auth_plugin_mnet
 
         if (!$firsttime) {
             // repeat customer! let the IDP know about enrolments
-            // we have for this user. 
+            // we have for this user.
             // set up the RPC request
             $mnetrequest = new mnet_xmlrpc_client();
             $mnetrequest->set_method('auth/mnet/auth.php/update_enrolments');
@@ -412,13 +411,13 @@ class auth_plugin_mnet
             // pass username and an assoc array of "my courses"
             // with info so that the IDP can maintain mnet_enrol_assignments
             $mnetrequest->add_param($remoteuser->username);
-            $fields = 'id, category, sortorder, fullname, shortname, idnumber, summary, 
+            $fields = 'id, category, sortorder, fullname, shortname, idnumber, summary,
                        startdate, cost, currency, defaultrole, visible';
             $courses = get_my_courses($localuser->id, 'visible DESC,sortorder ASC', $fields);
             if (is_array($courses) && !empty($courses)) {
                 // Second request to do the JOINs that we'd have done
                 // inside get_my_courses() if we had been allowed
-                $sql = "SELECT c.id, 
+                $sql = "SELECT c.id,
                                cc.name AS cat_name, cc.description AS cat_description,
                                r.shortname as defaultrolename
                         FROM {$CFG->prefix}course c
@@ -453,7 +452,7 @@ class auth_plugin_mnet
             } else {
                 // if the array is empty, send it anyway
                 // we may be clearing out stale entries
-                $courses = array(); 
+                $courses = array();
             }
             $mnetrequest->add_param($courses);
 
@@ -475,7 +474,7 @@ class auth_plugin_mnet
      *
      *   @param string $username        The username
      *   @param string $courses         Assoc array of courses following the structure of mnet_enrol_course
-     *   @returns bool
+     *   @return bool
      */
     function update_enrolments($username, $courses) {
         global $MNET_REMOTE_CLIENT, $CFG;
@@ -485,15 +484,15 @@ class auth_plugin_mnet
         }
         // make sure it is a user we have an in active session
         // with that host...
-        $userid = get_field('mnet_session', 'userid', 
-                            'username', addslashes($username), 
+        $userid = get_field('mnet_session', 'userid',
+                            'username', addslashes($username),
                             'mnethostid', (int)$MNET_REMOTE_CLIENT->id);
         if (!$userid) {
             return false;
         }
 
         if (empty($courses)) { // no courses? clear out quickly
-            delete_records('mnet_enrol_assignments', 
+            delete_records('mnet_enrol_assignments',
                            'hostid', (int)$MNET_REMOTE_CLIENT->id,
                            'userid', $userid);
             return true;
@@ -563,7 +562,7 @@ class auth_plugin_mnet
                 if ($saveflag) {
                     update_record('mnet_enrol_course', $currentcourse);
                 }
-                
+
                 if (isset($currentcourse->assignmentid) && is_numeric($currentcourse->assignmentid)) {
                     $userisregd = true;
                 }
@@ -597,7 +596,7 @@ class auth_plugin_mnet
     /**
      * Returns true if this authentication plugin is 'internal'.
      *
-     * @returns bool
+     * @return bool
      */
     function is_internal() {
         return false;
@@ -607,7 +606,7 @@ class auth_plugin_mnet
      * Returns true if this authentication plugin can change the user's
      * password.
      *
-     * @returns bool
+     * @return bool
      */
     function can_change_password() {
         return false;
@@ -617,7 +616,7 @@ class auth_plugin_mnet
      * Returns the URL for changing the user's pw, or false if the default can
      * be used.
      *
-     * @returns bool
+     * @return bool
      */
     function change_password_url() {
         return false;
@@ -631,7 +630,7 @@ class auth_plugin_mnet
      *
      * @param array $page An object containing all the data for this page.
      */
-    function config_form($config, $err) {
+    function config_form($config, $err, $user_fields) {
         global $CFG;
 
          $query = "
@@ -687,7 +686,7 @@ class auth_plugin_mnet
                 $id_providers[]= array('id' => $hostservice->id, 'name' => $hostservice->hostname, 'wwwroot' => $hostservice->wwwroot);
             }
         }
- 
+
         include "config.html";
     }
 
@@ -763,13 +762,13 @@ class auth_plugin_mnet
                 } elseif ($mnet_request->response['code'] > 0) {
                     debugging($mnet_request->response['message']);
                 }
-                
+
                 if (!isset($mnet_request->response['last log id'])) {
                     debugging("Server side error has occured on host $mnethostid\nNo log ID was received.");
                     continue;
                 }
             } else {
-                debugging("Server side error has occured on host $mnethostid: " . 
+                debugging("Server side error has occured on host $mnethostid: " .
                           join("\n", $mnet_request->error));
                 break;
             }
@@ -1043,9 +1042,9 @@ class auth_plugin_mnet
 
         $mnetsessions = get_records_sql($sql);
 
-        $ignore = delete_records('mnet_session', 
-                                 'username', $username, 
-                                 'useragent', $useragent, 
+        $ignore = delete_records('mnet_session',
+                                 'username', $username,
+                                 'useragent', $useragent,
                                  'mnethostid', $USER->mnethostid);
 
         if (false != $mnetsessions) {
@@ -1060,7 +1059,7 @@ class auth_plugin_mnet
             $mnet_request->add_param($useragent);
             if ($mnet_request->send($mnet_peer) === false) {
                 debugging(join("\n", $mnet_request->error));
-                return false; 
+                return false;
             }
         }
 
@@ -1121,13 +1120,13 @@ class auth_plugin_mnet
             $mnet_request->add_param($username);
             $mnet_request->add_param($useragent);
             if ($mnet_request->send($mnet_peer) === false) {
-                debugging("Server side error has occured on host $mnethostid: " . 
+                debugging("Server side error has occured on host $mnethostid: " .
                           join("\n", $mnet_request->error));
             }
         }
 
-        $ignore = delete_records('mnet_session', 
-                                 'useragent', $useragent, 
+        $ignore = delete_records('mnet_session',
+                                 'useragent', $useragent,
                                  'userid',    $userid);
 
         if (isset($MNET_REMOTE_CLIENT) && isset($MNET_REMOTE_CLIENT->id)) {

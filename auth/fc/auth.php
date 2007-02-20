@@ -11,8 +11,9 @@
  * 2006-08-28  File created.
  */
 
-// This page cannot be called directly
-if (!isset($CFG)) exit;
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
 
 require_once 'fcFPP.php';
 
@@ -39,7 +40,7 @@ class auth_plugin_fc {
      *
      * @param string $username The username
      * @param string $password The password
-     * @returns bool Authentication success or failure.
+     * @return bool Authentication success or failure.
      */
     function user_login ($username, $password) {
         global $CFG;
@@ -57,7 +58,7 @@ class auth_plugin_fc {
             }
         }
         $fpp->close();
-    
+
         return $retval;
     }
 
@@ -82,13 +83,13 @@ class auth_plugin_fc {
         country               -
         lang                  -
         timezone              8030 (Not used yet. Need to figure out how FC codes timezones)
-        
+
         description           Get data from users resume. Pictures will be removed.
-        
+
         */
 
         $userinfo = array();
-    
+
         $fpp = new fcFPP($this->config->host, $this->config->port);
         if ($fpp->open()) {
             if ($fpp->login($this->config->userid, $this->config->passwd)) {
@@ -101,7 +102,7 @@ class auth_plugin_fc {
             }
         }
         $fpp->close();
-    
+
         foreach($userinfo as $key => $value) {
             if (!$value) {
                 unset($userinfo[$key]);
@@ -110,23 +111,23 @@ class auth_plugin_fc {
 
         return $userinfo;
     }
-    
+
     /**
      * Get users group membership from the FirstClass server user and check if
      * user is member of one of the groups of creators.
      */
     function iscreator($username = 0) {
         global $USER;
-    
+
         if (! $this->config->creators) {
             return false;
         }
         if (! $username) {
             $username = $USER->username;
         }
-    
+
         $fcgroups = array();
-    
+
         $fpp = new fcFPP($this->config->host, $this->config->port);
         if ($fpp->open()) {
             if ($fpp->login($this->config->userid, $this->config->passwd)) {
@@ -134,24 +135,24 @@ class auth_plugin_fc {
             }
         }
         $fpp->close();
-    
+
         if ((! $fcgroups)) {
             return false;
         }
-    
+
         $creators = explode(";", $this->config->creators);
-    
+
         foreach($creators as $creator) {
             If (in_array($creator, $fcgroups)) return true;
         }
-        
+
         return false;
     }
 
     /**
      * Returns true if this authentication plugin is 'internal'.
      *
-     * @returns bool
+     * @return bool
      */
     function is_internal() {
         return false;
@@ -161,7 +162,7 @@ class auth_plugin_fc {
      * Returns true if this authentication plugin can change the user's
      * password.
      *
-     * @returns bool
+     * @return bool
      */
     function can_change_password() {
         return false;
@@ -175,7 +176,7 @@ class auth_plugin_fc {
      *
      * @param array $page An object containing all the data for this page.
      */
-    function config_form($config, $err) {
+    function config_form($config, $err, $user_fields) {
         include "config.html";
     }
 
