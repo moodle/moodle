@@ -13,7 +13,6 @@
  * serverId and serverKey
  */
   include_once("../../config.php");
-    include_once($CFG->dirroot.'/lib/datalib.php');
 
     if(!isset($CFG->lams_serverid)||!isset($CFG->lams_serverkey))
     {

@@ -1,6 +1,6 @@
 <?php  /// LAMS constants
 
-unset($LAMSCONSTANTS);
+$LAMSCONSTANTS = new object();
 
 $LAMSCONSTANTS->login_request   = '/LoginRequest';
 $LAMSCONSTANTS->param_uid       = 'uid';
