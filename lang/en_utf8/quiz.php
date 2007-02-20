@@ -480,6 +480,7 @@ $string['showfeedback'] = 'After answering, show feedback?';
 $string['showhidden'] = 'Also show old questions';
 $string['shownoattempts'] = 'Show students with no attempts';
 $string['shownoattemptsonly'] = 'Show only students with no attempts';
+$string['showquestiontext'] = 'Show show question text in the question list';
 $string['showteacherattempts'] = 'Show teacher attempts';
 $string['shuffle'] = 'Shuffle';
 $string['shuffleanswers'] = 'Shuffle answers';
