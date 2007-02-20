@@ -156,6 +156,7 @@
         if (! $category = get_record('question_categories', 'id', $categoryid)) {
             error('Category ID is incorrect');
         }
+        $category->name = addslashes($category->name);
         // find existing random questions in this category
         $random = RANDOM;
         if ($existingquestions = get_records_select('question', "qtype = '$random' AND category = '$category->id'")) {
