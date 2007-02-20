@@ -76,37 +76,32 @@ if ($show_instructions) {
     <div class="signuppanel">
       <h2><?php print_string("firsttime") ?></h2>
       <div class="subcontent">
-<?php     switch ($authsequence[0]) {
-              case "email":
-                 print_string("loginsteps", "", "signup.php");
-?>
+<?php     if (is_enabled_auth('none')) { // instructions override the rest for security reasons 
+              print_string("loginstepsnone");
+          } else if ($CFG->registerauth == 'email') {
+              if (!empty($CFG->auth_instructions)) {
+                  echo format_text($CFG->auth_instructions);
+              } else {
+                  print_string("loginsteps", "", "signup.php");
+              } ?>
                  <div class="signupform">
                    <form action="signup.php" method="get" id="signup">
                    <div><input type="submit" value="<?php print_string("startsignup") ?>" /></div>
                    </form>
                  </div>
-<?php            break;
-
-               case "none":
-                 print_string("loginstepsnone");
-                 break;
-
-               default:
-                 echo format_text($CFG->auth_instructions);
-                 // TODO: if !function_exists(auth_user_login) then require_once /auth/$CFG->auth/lib.php
-                 // ..which implies that auth_user_login might have been floating
-                 // about in global namespace. grr
-                 $authplugin = get_auth_plugin($CFG->auth);
-                 if (!empty($CFG->auth_user_create) and method_exists($authplugin, 'user_create') ){
-?>
-                 <div class="signupform">
-                    <form action="signup.php" method="get" id="signup">
-                    <div><input type="submit" value="<?php print_string("startsignup") ?>" /></div>
-                    </form>
-                 </div>
-<?php            }
-          }
-?>
+<?php     } else if (!empty($CFG->registerauth)) {
+              echo format_text($CFG->auth_instructions);
+              $authplugin = get_auth_plugin($CFG->registerauth);
+              if (method_exists($authplugin, 'user_create')) { ?>
+                <div class="signupform">
+                  <form action="signup.php" method="get" id="signup">
+                  <div><input type="submit" value="<?php print_string("startsignup") ?>" /></div>
+                  </form>
+                </div>
+<?php         }
+          } else {
+              echo format_text($CFG->auth_instructions);
+          } ?>
       </div>
     </div>
 <?php } ?>

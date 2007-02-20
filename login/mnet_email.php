@@ -7,7 +7,7 @@ $username = required_param('u', PARAM_ALPHANUM);
 $sesskey = sesskey();
 
 // if you are logged in then you shouldn't be here
-if (isloggedin() and !isguest()) {
+if (isloggedin() and !isguestuser()) {
     redirect( $CFG->wwwroot.'/', get_string('loginalready'), 5);
 }
 

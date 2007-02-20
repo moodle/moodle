@@ -42,13 +42,9 @@ $page = ''; // page to display
 
 
 // if you are logged in then you shouldn't be here!
-if (isloggedin() && !isguest()) {
+if (isloggedin() && !isguestuser()) {
     redirect($CFG->wwwroot.'/index.php', $strloginalready, 5);
 }
-
-// instantiate default auth
-$auth = $CFG->auth; // the 'default' authentication method
-$defaultauth = get_auth_plugin($auth);
 
 $mform = new login_forgot_password_form();
 
