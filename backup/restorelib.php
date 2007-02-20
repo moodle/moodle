@@ -4696,7 +4696,7 @@
                             break;
                     }
                 }
-                if ($this->level == 6 && $this->tree[5]!="ROLE_ASSIGNMENTS" && $this->tree[5]!="ROLE_OVERRIDES") {
+                if ($this->level == 6 && $this->tree[5]!="ROLES_ASSIGNMENTS" && $this->tree[5]!="ROLES_OVERRIDES") {
                     switch ($tagName) {
                         case "ROLE":
                             //We've finalized a role, get it
@@ -4711,7 +4711,7 @@
                     }
                 }
                               
-                if ($this->level == 7 && $this->tree[5]!="ROLE_ASSIGNMENTS" && $this->tree[5]!="ROLE_OVERRIDES") {
+                if ($this->level == 7) {
                     switch ($tagName) {
                         case "TYPE":
                             $this->info->temprole->type = $this->getContents();
