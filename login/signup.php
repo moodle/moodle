@@ -3,14 +3,17 @@
     require_once('../config.php');
     require_once('signup_form.php');
 
-    //HTTPS is potentially required in this page
-    httpsrequired();
-
-    $authplugin = get_auth_plugin($CFG->auth);
-
-    if ($CFG->auth != 'email' and (empty($CFG->auth_user_create) or !(method_exists($authplugin, 'user_create'))) ) {
+    if (empty($CFG->registerauth)) {
         error("Sorry, you may not use this page.");
     }
+    $authplugin = get_auth_plugin($CFG->registerauth);
+
+    if (!method_exists($authplugin, 'user_create')) {
+        error("Sorry, you may not use this page.");
+    }
+
+    //HTTPS is potentially required in this page
+    httpsrequired();
 
     $mform_signup = new login_signup_form_1();
 
@@ -25,19 +28,17 @@
         $user->firstaccess = time();
         $user->mnethostid  = $CFG->mnet_localhost_id;
         $user->secret      = random_string(15);
-        $user->auth        = $CFG->auth;
+        $user->auth        = $CFG->registerauth;
 
-        if (!empty($CFG->auth_user_create) and method_exists($authplugin, 'user_create') ){
-            if (! $authplugin->user_exists($user->username)) {
-                if (! $authplugin->user_create($user, $plainpass)) {
-                    error("Could not add user to authentication module!");
-                }
-            } else {
-                error("User already exists on authentication database.");
+        if (! $authplugin->user_exists($user->username)) {
+            if (! $authplugin->user_create($user, $plainpass)) {
+                error("Could not add user to authentication module!");
             }
+        } else {
+            error("User already exists on authentication database.");
         }
 
-        $authplugin = get_auth_plugin($CFG->auth);
+        $authplugin = get_auth_plugin($CFG->registerauth);
         $signedup = $authplugin->user_signup($user, $notify=true);
         exit;
     }

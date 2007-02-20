@@ -7,6 +7,15 @@
     $p = optional_param('p', '', PARAM_ALPHANUM);     // Old parameter:  secret
     $s = optional_param('s', '', PARAM_CLEAN);        // Old parameter:  username
 
+    if (empty($CFG->registerauth)) {
+        error("Sorry, you may not use this page.");
+    }
+    $authplugin = get_auth_plugin($CFG->registerauth);
+
+    if (!method_exists($authplugin, 'user_create')) {
+        error("Sorry, you may not use this page.");
+    }
+
     if (!empty($data) || (!empty($p) && !empty($s))) {    
 
         if (!empty($data)) {
@@ -18,7 +27,7 @@
             $username   = $s;
         }
 
-        $authplugin = get_auth_plugin('email');
+        $authplugin = get_auth_plugin($CFG->registerauth);
         $confirmed = $authplugin->user_confirm($username, $usersecret);
 
         if ($confirmed == AUTH_CONFIRM_ALREADY) {
@@ -32,8 +41,8 @@
         }
         if ($confirmed == AUTH_CONFIRM_OK) {
                 // Activate new user if necessary
-                $authplugin = get_auth_plugin($CFG->auth);
-                if (isset($CFG->auth_user_create) and $CFG->auth_user_create == 1 and method_exists($authplugin, 'user_activate') ) {
+                $authplugin = get_auth_plugin($CFG->registerauth);
+                if (method_exists($authplugin, 'user_activate')) {
                     if (!$authplugin->user_activate($username)) {
                         error('Could not activate this user!');
                     }

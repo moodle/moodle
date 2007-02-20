@@ -58,8 +58,6 @@
         $userauth = get_auth_plugin($user->auth);
         if ($userauth->can_change_password()){
             if ($userauth->user_update_password($user, $data->newpassword1)) {
-                // hash the $user->password field (without local db update)
-                update_internal_user_password($user, $data->newpassword1, false);
             } else {
                 error('Could not set the new password');
             }

@@ -41,16 +41,20 @@
 /// Load alternative login screens if necessary
 
 
-// check if auth config broken (old config --> multi config)
-if (empty($CFG->auth_plugins_enabled) and ! empty($CFG->auth)) {
-    set_config('auth_plugins_enabled', $CFG->auth);
-}
-$authsequence = explode(',', $CFG->auth_plugins_enabled); // auths, in sequence
+$authsequence = explode(',', $CFG->auth); // auths, in sequence
 
 // Load alternative login screens if necessary
 if ($authsequence[0] == 'cas' and !empty($CFG->cas_enabled)) {
         require($CFG->dirroot.'/auth/cas/login.php');
     }
+
+if (!isset($CFG->registerauth)) {
+    set_config('registerauth', '');
+}
+
+if (!isset($CFG->auth_instructions)) {
+    set_config('auth_instructions', '');
+}
 
 //  See http://moodle.org/mod/forum/discuss.php?d=39918#187611
 //    if ($CFG->auth == 'shibboleth') {
@@ -114,7 +118,7 @@ if ($authsequence[0] == 'cas' and !empty($CFG->cas_enabled)) {
 
         $frm->username = trim(moodle_strtolower($frm->username));
 
-        if ($CFG->auth == 'none' && empty($CFG->extendedusernamechars)) {
+        if (is_enabled_auth('none') && empty($CFG->extendedusernamechars)) {
             $string = eregi_replace("[^(-\.[:alnum:])]", "", $frm->username);
             if (strcmp($frm->username, $string)) {
                 $errormsg = get_string('username').': '.get_string("alphanumerical");
@@ -264,7 +268,7 @@ if ($authsequence[0] == 'cas' and !empty($CFG->cas_enabled)) {
         set_moodle_cookie('nobody');   // To help search for cookies
     }
     
-if (empty($frm->username) && $authsequence[0] != 'shibboleth') {  // See bug 5184
+    if (empty($frm->username) && $authsequence[0] != 'shibboleth') {  // See bug 5184
         $frm->username = get_moodle_cookie() === 'nobody' ? '' : get_moodle_cookie();
         $frm->password = "";
     }
@@ -274,11 +278,8 @@ if (empty($frm->username) && $authsequence[0] != 'shibboleth') {  // See bug 518
     } else {
         $focus = "username";
     }
-    
-    if (isset($CFG->auth_instructions)) {
-        $CFG->auth_instructions = trim($CFG->auth_instructions);
-    }
-if ($authsequence[0] == "email" or $authsequence[0] == "none" or !empty($CFG->auth_instructions)) {
+
+    if (!empty($CFG->registerauth) or is_enabled_auth('none') or !empty($CFG->auth_instructions)) {
         $show_instructions = true;
     } else {
         $show_instructions = false;
