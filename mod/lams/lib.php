@@ -1,9 +1,10 @@
 <?PHP  // $Id$
 
 /// Library of functions and constants for module lams
+include_once('../../config.php');
 require_once($CFG->dirroot.'/lib/datalib.php');
 require_once($CFG->dirroot.'/lib/moodlelib.php');
-require_once($CFG->dirroot.'/lib/soap/nusoap.php');
+require_once($CFG->dirroot.'/lib/soaplib.php');
 
 
 function lams_add_instance($lams) {
