@@ -648,7 +648,7 @@ function process_person_tag($tagcontents){
             }else{
        
             // If they don't exist and they have a defined username, and $CFG->enrol_createnewusers == true, we create them.
-            $person->lang = $CFG->lang;
+            $person->lang = 'manual'; //TODO: this needs more work due tu multiauth changes 
             $person->auth = $CFG->auth;
             $person->confirmed = 1;
             $person->timemodified = time();

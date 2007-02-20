@@ -2323,13 +2323,9 @@ function get_moodle_cookie() {
  *        global setting in {@link $CFG}.
  * @return boolean Whether the plugin is available.
  */
-function exists_auth_plugin($auth='') {
+function exists_auth_plugin($auth) {
     global $CFG;
     
-    // use the global default if not specified
-    if ($auth == '') {
-        $auth = $CFG->auth;
-    }
     if (file_exists("{$CFG->dirroot}/auth/$auth/auth.php")) {
         return is_readable("{$CFG->dirroot}/auth/$auth/auth.php");
     }
@@ -2342,14 +2338,16 @@ function exists_auth_plugin($auth='') {
  * @param string $auth Authentication plugin.
  * @return boolean Whether the plugin is enabled.
  */
-function is_enabled_auth($auth='') {
+function is_enabled_auth($auth) {
     global $CFG;
 
-    // use the global default if not specified
-    if ($auth == '') {
-        $auth = $CFG->auth;
+    if (empty($auth)) {
+        return false;
+    } else if ($auth == 'manual') {
+        return true;
     }
-    return in_array($auth, explode(',', $CFG->auth_plugins_enabled));
+
+    return in_array($auth, explode(',', $CFG->auth));
 }
 
 /**
@@ -2363,12 +2361,10 @@ function is_enabled_auth($auth='') {
 function get_auth_plugin($auth = '') {
     global $CFG;
     
-    // use the global default if not specified
-    if ($auth == '') {
-        $auth = $CFG->auth;
+    // use the manual if not specified
+    if (empty($auth)) {
+        $auth = 'manual';
     }
-
-    // TODO: plugin enabled?
     
     // check the plugin exists first
     if (! exists_auth_plugin($auth)) {
@@ -2390,7 +2386,7 @@ function get_auth_plugin($auth = '') {
  * @return bool
  * @todo Outline auth types and provide code example
  */
-function is_internal_auth($auth='') {
+function is_internal_auth($auth) {
     $authplugin = get_auth_plugin($auth); // throws error if bad $auth
     return $authplugin->is_internal();
 }
@@ -2434,7 +2430,7 @@ function create_user_record($username, $password, $auth='') {
         if ($newinfo = $authplugin->get_userinfo($username)) {
             $newinfo = truncate_userinfo($newinfo);
             foreach ($newinfo as $key => $value){
-                $newuser->$key = addslashes(stripslashes($value)); // Just in case
+                $newuser->$key = addslashes($value);
             }
         }
     }
@@ -2445,9 +2441,8 @@ function create_user_record($username, $password, $auth='') {
         }
     }
 
-    $newuser->auth = (empty($auth)) ? $CFG->auth : $auth;
+    $newuser->auth = (empty($auth)) ? 'manual' : $auth;
     $newuser->username = $username;
-    update_internal_user_password($newuser, $password, false);
     
     // fix for MDL-8480
     // user CFG lang for user if $newuser->lang is empty
@@ -2462,11 +2457,12 @@ function create_user_record($username, $password, $auth='') {
     $newuser->mnethostid = $CFG->mnet_localhost_id;
 
     if (insert_record('user', $newuser)) {
-         $user = get_complete_user_data('username', $newuser->username);
-         if($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'}){
-             set_user_preference('auth_forcepasswordchange', 1, $user->id);
-         }
-         return $user;
+        $user = get_complete_user_data('username', $newuser->username);
+        if($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'}){
+            set_user_preference('auth_forcepasswordchange', 1, $user->id);
+        }
+        update_internal_user_password($user, $password);
+        return $user;
     }
     return false;
 }
@@ -2567,45 +2563,37 @@ function authenticate_user_login($username, $password) {
 
     global $CFG;
 
-    // default to manual if global auth is undefined or broken
-    if (empty($CFG->auth_plugins_enabled)) {
-        $CFG->auth_plugins_enabled = empty($CFG->auth) ? 'manual' : $CFG->auth;
-    }
-    // if blank, set default auth to first enabled auth plugin
     if (empty($CFG->auth)) {
-        $auths = explode(',', $CFG->auth_plugins_enabled);
-        $CFG->auth = $auths[0];
-    }
-
-    // if user not found, use site auth
-    if (!$user = get_complete_user_data('username', $username)) {
-        $user = new object();
-        $user->id = 0;     // Not a user
-        $auth = $CFG->auth_plugins_enabled;
-    }
-
-    // Sort out the authentication method we are using.
-    if (empty($user->auth)) {      // For some reason it isn't set yet
-        $primadmin = get_admin();
-        if (!empty($user->id) && (($user->id==$primadmin->id) || isguest($user->id))) {
-            $auth = 'manual';    // always assume these guys are internal
-        }
-        else {
-            $auth = $CFG->auth_plugins_enabled; // default to site method
-        }
+        $authsenabled = array('manual');
     } else {
-        $auth = $user->auth;
+        $authsenabled = explode(',', 'manual,'.$CFG->auth);
     }
 
-    // walk each authentication plugin, in order
-    $auths = explode(',', $auth);
+    if ($user = get_complete_user_data('username', $username)) {
+        $auth = empty($user->auth) ? 'manual' : $user->auth;  // use manual if auth not set
+        if ($auth=='nologin' or !is_enabled_auth($auth)) {
+            add_to_log(0, 'login', 'error', 'index.php', $username);
+            error_log('[client '.$_SERVER['REMOTE_ADDR']."]  $CFG->wwwroot  Disabled Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            return false;
+        }
+        if (!empty($user->deleted)) {
+            add_to_log(0, 'login', 'error', 'index.php', $username);
+            error_log('[client '.$_SERVER['REMOTE_ADDR']."]  $CFG->wwwroot  Deleted Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            return false;
+        }
+        $auths = array($auth);
+
+    } else {
+        $auths = $authsenabled;
+        $user = new object();
+        $user->id = 0;     // User does not exist
+    }
+
     foreach ($auths as $auth) {
         $authplugin = get_auth_plugin($auth);
 
-        // on auth fail, log and fall through to the next plugin
+        // on auth fail fall through to the next plugin
         if (!$authplugin->user_login($username, $password)) {
-            add_to_log(0, 'login', 'error', 'index.php', $username);
-            error_log("[client {$_SERVER['REMOTE_ADDR']}]  $CFG->wwwroot  Auth=$auth  Failed Login:  $username  {$_SERVER['HTTP_USER_AGENT']}");
             continue;
         }
 
@@ -2613,12 +2601,16 @@ function authenticate_user_login($username, $password) {
         if ($user->id) {                          // User already exists in database
             if (empty($user->auth)) {             // For some reason auth isn't set yet
                 set_field('user', 'auth', $auth, 'username', $username);
+                $user->auth = $auth;
             }
-            update_internal_user_password($user, $password);
+
+            update_internal_user_password($user, $password); // just in case salt or encoding were changed (magic quotes too one day)
+
             if (!$authplugin->is_internal()) {            // update user record from external DB
                 $user = update_user_record($username, get_auth_plugin($user->auth));
             }
         } else {
+            // if user not found, create him
             $user = create_user_record($username, $password, $auth);
         }
         // fix for MDL-6928
@@ -2723,11 +2715,11 @@ function hash_internal_user_password($password) {
  * @param bool store changes also in db, default true
  * @return true if hash changed
  */
-function update_internal_user_password(&$user, $password, $storeindb=true) {
+function update_internal_user_password(&$user, $password) {
     global $CFG;
 
     $authplugin = get_auth_plugin($user->auth);
-    if (!empty($authplugin->config->preventpassindb) /*|| $storeindb === false */) {
+    if (!empty($authplugin->config->preventpassindb)) {
         $hashedpassword = 'not cached';
     } else {
         $hashedpassword = hash_internal_user_password($password);
@@ -3256,6 +3248,11 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 
     if (empty($user)) {
         return false;
+    }
+
+    // skip mail to suspended users
+    if ($user->auth=='nologin') {
+        return true;
     }
 
     if (!empty($user->emailstop)) {
