@@ -104,12 +104,13 @@
             admin_externalpage_print_footer($adminroot);
             die;
         } else if (data_submitted() and !$user->deleted) {
+            //following code is also used in auth sync scripts
             $updateuser = new object();
-            $updateuser->id = $user->id;
-            $updateuser->deleted = 1;
-            $updateuser->username = addslashes("$user->email.".time());  // Remember it just in case
-            $updateuser->email = '';               // Clear this field to free it up
-            $updateuser->idnumber = '';               // Clear this field to free it up
+            $updateuser->id           = $user->id;
+            $updateuser->deleted      = 1;
+            $updateuser->username     = addslashes("$user->email.".time());  // Remember it just in case
+            $updateuser->email        = '';               // Clear this field to free it up
+            $updateuser->idnumber     = '';               // Clear this field to free it up
             $updateuser->timemodified = time();
             if (update_record('user', $updateuser)) {
                 // not sure if this is needed. unenrol_student($user->id);  // From all courses

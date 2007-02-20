@@ -127,15 +127,11 @@ $warn = '';
 if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict') {
     $warn = '<p>' . get_string('mnetdisabled','mnet') .'</p>';
 }
-if (empty($CFG->auth_plugins_enabled)) {
+
+if (!is_enabled_auth('mnet')) {
     $warn .= '<p>' .  get_string('authmnetdisabled','mnet').'</p>';
-} else {
-    $auths = explode(',', $CFG->auth_plugins_enabled);
-    if (!in_array('mnet', $auths)) {
-        $warn .= '<p>' .  get_string('authmnetdisabled','mnet').'</p>';
-    }
-    unset($auths);
 }
+
 if (get_config('auth/mnet', 'auto_add_remote_users') != true) {
     $warn .= '<p>' .  get_string('authmnetautoadddisabled','mnet').'</p>';
 }

@@ -1561,14 +1561,14 @@
 
                     //We need to analyse the AUTH field to recode it:
                     //   - if the field isn't set, we are in a pre 1.4 backup and we'll 
-                    //     use $CFG->auth
-                    //   - if the destination site has any kind of INTERNAL authentication, 
-                    //     then apply it to the new user.
-                    //   - if the destination site has any kind of EXTERNAL authentication, 
-                    //     then leave the original authentication of the user.
+                    //     use manual
 
-                    if ((! isset($user->auth)) || is_internal_auth($CFG->auth)) {
-                        $user->auth = $CFG->auth;
+                    if (empty($user->auth)) {
+                        if ($CFG->registerauth == 'email') {
+                            $user->auth = 'email';
+                        } else {
+                            $user->auth = 'manual';
+                        }
                     }
 
                     //We need to process the POLICYAGREED field to recalculate it:
@@ -6629,7 +6629,7 @@
         foreach ($assignments as $assignment) {
 
             $olduser = backup_getid($restore->backup_unique_code,"user",$assignment->userid);
-            //Oh dear, $olduser... can be an object, string or bool!
+            //Oh dear, $olduser... can be an object, $obj->string or bool!
             if (!$olduser || (is_string($olduser->info) && $olduser->info == "notincourse")) { // it's possible that user is not in the course
                 continue;  
             }        
