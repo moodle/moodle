@@ -484,6 +484,31 @@ If you continue to have difficulty, please contact the site administrator.</p>';
 $string['emailpasswordconfirmsent'] = 'An email should have been sent to your address at <b>$a</b>.
 <br />It contains easy instructions to confirm and complete this password change.
 If you continue to have difficulty, contact the site administrator.';
+$string['emailpasswordchangeinfo'] = 'Hi $a->firstname,
+
+Someone (probably you) has requested a new password for your
+account on \'$a->sitename\'.
+
+To change your password, please go to the following web address:
+
+$a->link
+
+In most mail programs, this should appear as a blue link
+which you can just click on.  If that doesn\'t work,
+then cut and paste the address into the address
+line at the top of your web browser window.
+
+If you need help, please contact the site administrator,
+$a->admin';
+$string['emailpasswordchangeinfofail'] = 'Hi $a->firstname,
+
+Someone (probably you) has requested a new password for your
+account on \'$a->sitename\'.
+
+Unfortunately passwords can not be reset on this site, 
+please contact the site administrator,
+$a->admin';
+$string['emailpasswordchangeinfosubject'] = '$a: Change password information';
 $string['emailpasswordsent'] = 'Thank you for confirming the change of password.
 An email containing your new password has been sent to your address at<br /><b>$a->email</b>.<br />
 The new password was automatically generated - you might like to
