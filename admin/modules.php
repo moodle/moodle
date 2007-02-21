@@ -23,6 +23,7 @@
     $strsettings = get_string("settings");
     $stractivities = get_string("activities");
     $stractivitymodule = get_string("activitymodule");
+    $strshowmodulecourse = get_string('showmodulecourse');
 
     admin_externalpage_print_header($adminroot);
 
@@ -170,6 +171,13 @@
         }
 
         $count = count_records("$module->name");
+        if ($count>0) {
+            $countlink = "<a href=\"{$CFG->wwwroot}/course/search.php?modulelist=$module->name" .
+                "&amp;sesskey={$USER->sesskey}\" title=\"$strshowmodulecourse\">$count</a>";
+        }
+        else {
+            $countlink = "$count";
+        }
 
         if ($module->visible) {
             $visible = "<a href=\"modules.php?hide=$module->name&amp;sesskey=$USER->sesskey\" title=\"$strhide\">".
@@ -185,7 +193,7 @@
             $visible = "";
             $class = "";
         }
-        $table->data[] = array ("<span $class>$icon $modulename</span>", $count, $module->version, $visible, $delete, $settings);
+        $table->data[] = array ("<span $class>$icon $modulename</span>", $countlink, $module->version, $visible, $delete, $settings);
     }
     print_table($table);
 

@@ -5,13 +5,15 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $search  = optional_param('search', '', PARAM_RAW);  // search words
-    $page    = optional_param('page', 0, PARAM_INT);     // which page to show
-    $perpage = optional_param('perpage', 10, PARAM_INT); // how many per page
-    $moveto  = optional_param('moveto', 0, PARAM_INT);   // move to category
-    $edit    = optional_param('edit', -1, PARAM_BOOL);
-    $hide    = optional_param('hide', 0, PARAM_INT);
-    $show    = optional_param('show', 0, PARAM_INT);
+    $search    = optional_param('search', '', PARAM_RAW);  // search words
+    $page      = optional_param('page', 0, PARAM_INT);     // which page to show
+    $perpage   = optional_param('perpage', 10, PARAM_INT); // how many per page
+    $moveto    = optional_param('moveto', 0, PARAM_INT);   // move to category
+    $edit      = optional_param('edit', -1, PARAM_BOOL);
+    $hide      = optional_param('hide', 0, PARAM_INT);
+    $show      = optional_param('show', 0, PARAM_INT);
+    $blocklist = optional_param('blocklist', 0, PARAM_INT);
+    $modulelist= optional_param('modulelist', '', PARAM_ALPHAEXT);
 
     $search = trim(strip_tags($search)); // trim & clean raw searched string
 
@@ -80,8 +82,9 @@
     $strselectall = get_string("selectall");
     $strdeselectall = get_string("deselectall");
     $stredit = get_string("edit");
+    $strfrontpage = get_string('frontpage', 'admin');
 
-    if (!$search) {
+    if (empty($search) and empty($blocklist) and empty($modulelist)) {
         print_header("$site->fullname : $strsearch", $site->fullname, 
                      "<a href=\"index.php\">$strcourses</a> -> $strsearch", "", "");
         print_simple_box_start("center");
@@ -112,8 +115,50 @@
         move_courses($courses, $data->moveto);
     }
 
-    $courses = get_courses_search($searchterms, "fullname ASC", 
-                                  $page*$perpage, $perpage, $totalcount);
+    // get list of courses containing blocks if required
+    if (!empty($blocklist) and confirm_sesskey()) {
+        $blockid = $blocklist;
+        if (!$blocks = get_records('block_instance', 'blockid', $blockid)) {
+            error( "Could not read data for blockid=$blockid" );
+        }
+
+        // run through blocks and get (unique) courses
+        $courses = array();
+        foreach ($blocks as $block) {
+            $courseid = $block->pageid;
+            if ($courseid==0) {
+                continue;
+            }
+            if (!$course = get_record('course', 'id', $courseid)) {
+                error( "Could not read data for courseid=$courseid" );
+            }
+            $courses[$courseid] = $course;
+        }
+    }
+    // get list of courses containing modules if required
+    elseif (!empty($modulelist) and confirm_sesskey()) {
+        $modulename = $modulelist;
+        if (!$modules = get_records($modulename)) {
+            error( "Could not read data for module=$modulename" );
+        }
+
+        // run through modules and get (unique) courses
+        $courses = array();
+        foreach ($modules as $module) {
+            $courseid = $module->course;
+            if ($courseid==0) {
+                continue;
+            }
+            if (!$course = get_record('course', 'id', $courseid)) {
+                error( "Could not read data for courseid=$courseid" );
+            }
+            $courses[$courseid] = $course;
+        }
+    }
+    else {
+        $courses = get_courses_search($searchterms, "fullname ASC", 
+            $page*$perpage, $perpage, $totalcount);
+    }
 
     $searchform = print_course_search($search, true, "navbar");
 
@@ -166,9 +211,23 @@
             foreach ($courses as $course) {    		    
                 
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-                
+
                 $course->fullname = highlight("$search", $course->fullname);
                 $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
+
+                // are we displaying the front page (courseid=1)?
+                if ($course->id == 1) {
+                    echo "<tr>";
+                    echo "<td><a href=\"$CFG->wwwroot\">$strfrontpage</a></td>";
+
+                    // can't do anything else with the front page
+                    echo "  <td>&nbsp;</td>"; // category place
+                    echo "  <td>&nbsp;</td>"; // select place
+                    echo "  <td>&nbsp;</td>"; // edit place
+                    echo "</tr>";
+                    continue;
+                }
+
                 echo "<tr>";
                 echo "<td><a $linkcss href=\"view.php?id=$course->id\">$course->fullname</a></td>";
                 echo "<td>".$displaylist[$course->category]."</td>";
