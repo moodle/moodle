@@ -6361,9 +6361,8 @@
             $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />'."\n";
         }
         ///Accessibility: added the 'lang' attribute to $direction, used in theme <html> tag.
-        $language = str_replace('_utf8','',$CFG->lang);
-        $languagehtml = '';
-        $languagehtml .= ' lang="'.$language.'" xml:lang="'.$language.'"';
+        $languagehtml = get_html_lang($dir=true);
+
         //Write the header in the new logging file
         fwrite ($restorelog_file,"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"");
         fwrite ($restorelog_file," \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">  ");
