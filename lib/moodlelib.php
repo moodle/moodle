@@ -1655,18 +1655,20 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
     if (!empty($USER->preference['auth_forcepasswordchange']) && empty($USER->realuser)) {
         if ($userauth->can_change_password()) {
             $SESSION->wantsurl = $FULLME;
-            if (empty($CFG->loginhttps)) {
-                redirect($CFG->wwwroot .'/login/change_password.php');
+            if (method_exists($userauth, 'change_password_url') and $userauth->change_password_url()) {
+                //use plugin custom url
+                redirect($userauth->change_password_url());
             } else {
-                $wwwroot = str_replace('http:','https:', $CFG->wwwroot);
-                redirect($wwwroot .'/login/change_password.php');
+                //use moodle internal method
+                if (empty($CFG->loginhttps)) {
+                    redirect($CFG->wwwroot .'/login/change_password.php');
+                } else {
+                    $wwwroot = str_replace('http:','https:', $CFG->wwwroot);
+                    redirect($wwwroot .'/login/change_password.php');
+                }
             }
-        } else if($userauth->change_password_url()) {
-            redirect($userauth->change_password_url());
         } else {
-            error('You cannot proceed without changing your password.
-                   However there is no available page for changing it.
-                   Please contact your Moodle Administrator.');
+            error(get_strin('nopasswordchangeforced', 'auth'));
         }
     }
 
@@ -2354,17 +2356,11 @@ function is_enabled_auth($auth) {
  * Returns an authentication plugin instance.
  *
  * @uses $CFG
- * @param string $auth Form of authentication required. Defaults to the
- *        global setting in {@link $CFG}.
+ * @param string $auth name of authentication plugin
  * @return object An instance of the required authentication plugin.
  */
-function get_auth_plugin($auth = '') {
+function get_auth_plugin($auth) {
     global $CFG;
-    
-    // use the manual if not specified
-    if (empty($auth)) {
-        $auth = 'manual';
-    }
     
     // check the plugin exists first
     if (! exists_auth_plugin($auth)) {
@@ -2384,7 +2380,6 @@ function get_auth_plugin($auth = '') {
  * @uses $CFG
  * @param string $auth Form of authentication required
  * @return bool
- * @todo Outline auth types and provide code example
  */
 function is_internal_auth($auth) {
     $authplugin = get_auth_plugin($auth); // throws error if bad $auth
@@ -3547,6 +3542,48 @@ function send_password_change_confirmation_email($user) {
 }
 
 /**
+ * send_password_change_info.
+ *
+ * @uses $CFG
+ * @param user $user A {@link $USER} object
+ * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
+ *          was blocked by user and "false" if there was another sort of error.
+ */
+function send_password_change_info($user) {
+
+    global $CFG;
+
+    $site = get_site();
+    $from = get_admin();
+
+    $data = new object();
+    $data->firstname = $user->firstname;
+    $data->sitename = $site->fullname;
+    $data->admin = fullname($from).' ('. $from->email .')';
+
+     $userauth = get_auth_plugin($user->auth);
+    if ($userauth->can_change_password() and method_exists($userauth, 'change_password_url') and $userauth->change_password_url()) {
+        // we have some external url for password cahnging
+        $data->link .= $userauth->change_password_url();
+
+    } else {
+        //no way to change password, sorry
+        $data->link = '';
+    }
+
+    if (!empty($data->link)) {
+        $message = get_string('emailpasswordchangeinfo', '', $data);
+        $subject = get_string('emailpasswordchangeinfosubject', '', $site->fullname);
+    } else {
+        $message = get_string('emailpasswordchangeinfofail', '', $data);
+        $subject = get_string('emailpasswordchangeinfosubject', '', $site->fullname);
+    }
+
+    return email_to_user($user, $from, $subject, $message);
+
+}
+
+/**
  * Check that an email is allowed.  It returns an error message if there
  * was a problem.
  *
@@ -4029,8 +4066,8 @@ function clean_filename($string) {
 function current_language() {
     global $CFG, $USER, $SESSION, $COURSE;
 
-    if (!empty($OURSE->lang)) {    // Course language can override all other settings for this page
-        $return = $OURSE->lang;
+    if ($COURSE->id != SITEID and !empty($COURSE->lang)) {    // Course language can override all other settings for this page
+        $return = $COURSE->lang;
 
     } else if (!empty($SESSION->lang)) {    // Session language can override other settings
         $return = $SESSION->lang;
