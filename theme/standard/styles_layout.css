@@ -682,9 +682,13 @@ body#admin-index .c1 {
   vertical-align: middle;
 }
 
-body#admin-blocks table.generaltable td.cell,
-body#admin-filters table.generaltable td.cell,
-body#admin-modules table.generaltable td.cell,
+body#admin-blocks table.generaltable th,
+body#admin-filters table.generaltable th,
+body#admin-modules table.generaltable th
+{
+  white-space: nowrap;
+}
+
 body#admin-modules .generaltablecell 
 {
   padding-top: 2px;
