@@ -185,7 +185,7 @@
     $table->define_headers(array($txt->name, $txt->hideshow, $txt->updown, $txt->settings));
     $table->define_baseurl("$CFG->wwwroot/$CFG->admin/filters.php");
     $table->set_attribute('id', 'filters');
-    $table->set_attribute('class', 'flexible generaltable generalbox');
+    $table->set_attribute('class', 'flexible generaltable generalbox boxaligncenter boxwidthwide');
     $table->setup();
 
     // iterate through filters adding to display table

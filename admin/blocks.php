@@ -166,7 +166,7 @@
     $table->define_headers(array($strname, $strcourses, $strversion, $strhide.'/'.$strshow, $strmultiple, $strdelete, $strsettings));
     $table->define_baseurl($CFG->wwwroot.'/'.$CFG->admin.'/blocks.php');
     $table->set_attribute('id', 'blocks');
-    $table->set_attribute('class', 'flexible generaltable generalbox');
+    $table->set_attribute('class', 'flexible generaltable generalbox boxaligncenter boxwidthwide');
     $table->setup();
 
     foreach ($blockbyname as $blockname => $blockid) {
