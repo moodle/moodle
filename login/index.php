@@ -162,9 +162,13 @@ if (!isset($CFG->auth_instructions)) {
             //Select password change url
             $userauth = get_auth_plugin($USER->auth);
             if ($userauth->can_change_password()) {
-                $passwordchangeurl=$CFG->wwwroot.'/login/change_password.php';
+                if (method_exists($userauth, 'change_password_url') and $userauth->change_password_url()) {
+                    $passwordchangeurl = $userauth->change_password_url();
+                } else {
+                    $passwordchangeurl = $CFG->httpswwwroot.'/login/change_password.php';
+                }
             } else {
-                $passwordchangeurl = $userauth->change_password_url();
+                $passwordchangeurl = '';
             }
 
             // check whether the user should be changing password
@@ -172,9 +176,7 @@ if (!isset($CFG->auth_instructions)) {
                 if ($passwordchangeurl != '') {
                     redirect($passwordchangeurl);
                 } else {
-                    error("You cannot proceed without changing your password. 
-                           However there is no available page for changing it.
-                           Please contact your Moodle Administrator.");
+                    error(get_strin('nopasswordchangeforced', 'auth'));
                 }
             }
 

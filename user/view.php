@@ -343,39 +343,36 @@
 
     echo "</td></tr></table>";
 
-    $internalpassword = false;
     $userauth = get_auth_plugin($user->auth);
-    if (method_exists($userauth, 'can_change_password') and $userauth->can_change_password()) {
-        if (empty($CFG->loginhttps)) {
-            $internalpassword = "$CFG->wwwroot/login/change_password.php";
+
+    $passwordchangeurl = false;
+    if ($userauth->can_change_password()) {
+        if (method_exists($userauth, 'change_password_url') and $userauth->change_password_url()) {
+            $passwordchangeurl = $userauth->change_password_url();
         } else {
-            $internalpassword = str_replace('http:','https:',$CFG->wwwroot.'/login/change_password.php');
+            if (empty($CFG->loginhttps)) {
+                $passwordchangeurl = "$CFG->wwwroot/login/change_password.php";
+            } else {
+                $passwordchangeurl = str_replace('http:', 'https:', $CFG->wwwroot.'/login/change_password.php');
+            }
         }
     }
 
 //  Print other functions
     echo '<div class="buttons">';
 
-    if ($currentuser and !isguest()) {
-        if ($internalpassword ) {
-            echo "<form action=\"$internalpassword\" method=\"get\">";
-            echo "<fieldset class='invisiblefieldset'>";
-            echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
-            if (!empty($USER->realuser)) {
-                // changing of password when "Logged in as" is not allowed
-                echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" disabled=\"disabled\" />";
-            } else {
-                echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" />";
-            }
-            echo "</fieldset>";
-            echo "</form>";
-        } elseif ( method_exists($userauth, 'change_password_url') and strlen($userauth->change_password_url())) {
-            echo "<form action=\"".$userauth->change_password_url()."\" method=\"get\">";
-            echo "<fieldset class='invisiblefieldset'>";
+    if ($currentuser and $passwordchangeurl and !isguest()) { //TODO: add proper capability for password changing
+        echo "<form action=\"$passwordchangeurl\" method=\"get\">";
+        echo "<fieldset class='invisiblefieldset'>";
+        echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
+        if (!empty($USER->realuser)) {
+            // changing of password when "Logged in as" is not allowed
+            echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" disabled=\"disabled\" />";
+        } else {
             echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" />";
-            echo "</fieldset>";
-            echo "</form>";
         }
+        echo "</fieldset>";
+        echo "</form>";
     }
 
     if ($course->id != SITEID && empty($course->metacourse)) {   // Mostly only useful at course level
