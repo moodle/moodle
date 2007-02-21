@@ -164,7 +164,8 @@
     $table->column_style('delete', 'text-align', 'center');
     $table->column_style('settings', 'text-align', 'center');
     $table->define_headers(array($stractivitymodule, $stractivities, $strversion, "$strhide/$strshow", $strdelete, $strsettings));
-    $table->define_baseurl($CFG->wwwroot.'/'.$CFG->admin.'/blocks.php');
+    $table->define_baseurl($CFG->wwwroot.'/'.$CFG->admin.'/modules.php');
+    $table->set_attribute('id', 'modules');
     $table->set_attribute('class', 'flexible generaltable generalbox');
     $table->set_attribute('style', 'margin:auto;');
     $table->set_attribute('cellpadding', '5');

@@ -187,7 +187,7 @@
     $table->column_style('settings', 'text-align', 'center');
     $table->define_headers(array($txt->name, $txt->hideshow, $txt->updown, $txt->settings));
     $table->define_baseurl("$CFG->wwwroot/$CFG->admin/filters.php");
-    $table->set_attribute('id', 'blocks');
+    $table->set_attribute('id', 'filters');
     $table->set_attribute('class', 'flexible generaltable generalbox');
     $table->set_attribute('style', 'margin:auto;');
     $table->set_attribute('cellpadding', '5');
