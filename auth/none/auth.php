@@ -87,13 +87,22 @@ class auth_plugin_none {
     }
 
     /**
-     * Returns the URL for changing the user's pw, or false if the default can
+     * Returns the URL for changing the user's pw, or empty if the default can
      * be used.
+     *
+     * @return string
+     */
+    function change_password_url() {
+        return '';
+    }
+
+    /**
+     * Returns true if plugin allows resetting of internal password.
      *
      * @return bool
      */
-    function change_password_url() {
-        return false;
+    function can_reset_password() {
+        return true;
     }
 
     /**

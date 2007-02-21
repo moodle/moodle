@@ -219,7 +219,7 @@ class auth_plugin_cas {
      * @return bool
      */
     function can_change_password() {
-        return false;
+        return !empty($this->config->changepasswordurl);
     }
 
     /**
@@ -235,10 +235,10 @@ class auth_plugin_cas {
     }
 
     /**
-     * Returns the URL for changing the user's pw, or false if the default can
+     * Returns the URL for changing the user's pw, or empty if the default can
      * be used.
      *
-     * @return bool
+     * @return string
      */
     function change_password_url() {
         return $this->config->changepasswordurl;

@@ -64,16 +64,6 @@ class auth_plugin_nologin {
     }
 
     /**
-     * Returns the URL for changing the user's pw, or false if the default can
-     * be used.
-     *
-     * @return bool
-     */
-    function change_password_url() {
-        return false;
-    }
-
-    /**
      * Prints a form for configuring this authentication plugin.
      *
      * This function is called from admin/auth.php, and outputs a full page with

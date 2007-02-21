@@ -38,8 +38,8 @@ class auth_plugin_radius {
      * Returns true if the username and password work and false if they are
      * wrong or don't exist.
      *
-     * @param string $username The username
-     * @param string $password The password
+     * @param string $username The username (with system magic quotes)
+     * @param string $password The password (with system magic quotes)
      * @return bool Authentication success or failure.
      */
     function user_login ($username, $password) {
@@ -52,7 +52,7 @@ class auth_plugin_radius {
         // printf("nasport: $this->config->nasport <br/>");
         // printf("secret: $this->config->secret <br/>");
 
-        $rauth = new Auth_RADIUS_PAP($username, $password);
+        $rauth = new Auth_RADIUS_PAP(stripslashes($username), stripslashes($password));
         $rauth->addServer($this->config->host, $this->config->nasport, $this->config->secret);
 
         if (!$rauth->start()) {
