@@ -2,10 +2,15 @@
       // Allows the admin to manage activity modules
 
     require_once('../config.php');
+    require_once('../course/lib.php');
     require_once($CFG->libdir.'/adminlib.php');
+    require_once($CFG->libdir.'/tablelib.php');
+
+    // defines
+    define('MODULE_TABLE','module_administration_table');
+
     $adminroot = admin_get_root();
     admin_externalpage_setup('managemodules', $adminroot);
-    require_once('../course/lib.php');
 
     $show    = optional_param('show', '', PARAM_SAFEDIR);
     $hide    = optional_param('hide', '', PARAM_SAFEDIR);
@@ -150,12 +155,20 @@
     ksort($modulebyname);
 
 /// Print the table of all modules
-
-    $table->head  = array ($stractivitymodule, $stractivities, $strversion, "$strhide/$strshow", $strdelete, $strsettings);
-    $table->align = array ("left", "right", "left", "center", "center", "center");
-    $table->wrap  = array ("nowrap", "", "", "", "","");
-    $table->size  = array ("100%", "10", "10", "10", "10","12");
-    $table->width = "100";
+    // construct the flexible table ready to display
+    $table = new flexible_table(MODULE_TABLE);
+    $table->define_columns(array('name', 'instances', 'version', 'hideshow', 'delete', 'settings'));
+    $table->column_style('instances', 'text-align', 'center');
+    $table->column_style('version', 'text-align', 'center');
+    $table->column_style('hideshow', 'text-align', 'center');
+    $table->column_style('delete', 'text-align', 'center');
+    $table->column_style('settings', 'text-align', 'center');
+    $table->define_headers(array($stractivitymodule, $stractivities, $strversion, "$strhide/$strshow", $strdelete, $strsettings));
+    $table->define_baseurl($CFG->wwwroot.'/'.$CFG->admin.'/blocks.php');
+    $table->set_attribute('class', 'flexible generaltable generalbox');
+    $table->set_attribute('style', 'margin:auto;');
+    $table->set_attribute('cellpadding', '5');
+    $table->setup();
 
     foreach ($modulebyname as $modulename => $module) {
 
@@ -186,18 +199,25 @@
         } else {
             $visible = "<a href=\"modules.php?show=$module->name&amp;sesskey=$USER->sesskey\" title=\"$strshow\">".
                        "<img src=\"$CFG->pixpath/i/show.gif\" class=\"icon\" alt=\"$strshow\" /></a>";
-            $class = "class=\"dimmed_text\"";
+            $class = " class=\"dimmed_text\"";
         }
         if ($module->name == "forum") {
             $delete = "";
             $visible = "";
             $class = "";
         }
-        $table->data[] = array ("<span $class>$icon $modulename</span>", $countlink, $module->version, $visible, $delete, $settings);
-    }
-    print_table($table);
 
-    echo "<br /><br />";
+        $table->add_data(array(
+            '<span'.$class.'>'.$icon.' '.$modulename.'</span>', 
+            $countlink, 
+            '<span'.$class.'>'.$module->version.'</span>', 
+            $visible, 
+            $delete, 
+            $settings
+        ));
+    }
+
+    $table->print_html();
 
     admin_externalpage_print_footer($adminroot);
 
