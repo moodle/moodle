@@ -22,9 +22,9 @@
         error($message);
     }
 
-    // require proper login; guest can not change passwords anymore!
+    // require proper login; guest can not change password
     // TODO: add change password capability so that we can prevent participants to change password
-    if (empty($USER->id) or $USER->username=='guest' or has_capability('moodle/legacy:guest', $sitecontext, $USER->id, false)) {
+    if (empty($USER->id) or isguestuser() or has_capability('moodle/legacy:guest', $sitecontext, $USER->id, false)) {
         if (empty($SESSION->wantsurl)) {
             $SESSION->wantsurl = $CFG->httpswwwroot.'/login/change_password.php';
         }
@@ -34,6 +34,18 @@
     // do not allow "Logged in as" users to change any passwords
     if (!empty($USER->realuser)) {
         error('Can not use this script when "Logged in as"!');
+    }
+
+    // load the appropriate auth plugin
+    $userauth = get_auth_plugin($USER->auth);
+
+    if (!$userauth->can_change_password()) {
+        error(get_string('nopasswordchange', 'auth'));
+    }
+
+    if (method_exists($userauth, 'change_password_url') and $userauth->change_password_url()) {
+        // this internal scrip not used
+        redirect($userauth->change_password_url());
     }
 
     $mform = new login_change_password_form();
@@ -52,23 +64,6 @@
             $user =& $USER;
         } else {
             $user = get_complete_user_data('username', $data->username);
-        }
-
-        // load the appropriate auth plugin
-        $userauth = get_auth_plugin($user->auth);
-        if ($userauth->can_change_password()){
-            if ($userauth->user_update_password($user, $data->newpassword1)) {
-            } else {
-                error('Could not set the new password');
-            }
-        } else { // external users
-            $message = 'You cannot change your password this way.';
-            if (method_exists($userauth, 'change_password_url') and $userauth->change_password_url()) {
-                $message .= '<br /><br />' . get_string('passwordextlink')
-                    .  '<br /><br />' . '<a href="' . $userauth->change_password_url() . '">'
-                    .  $userauth->change_password_url() . '</a>';            error('You cannot change your password this way.');
-            }
-            error($message);
         }
 
         // register success changing password
