@@ -609,6 +609,7 @@ class auth_plugin_mnet
      * @return bool
      */
     function can_change_password() {
+        //TODO: it should be able to redirect, right?
         return false;
     }
 
@@ -616,10 +617,10 @@ class auth_plugin_mnet
      * Returns the URL for changing the user's pw, or false if the default can
      * be used.
      *
-     * @return bool
+     * @return string
      */
     function change_password_url() {
-        return false;
+        return '';
     }
 
     /**

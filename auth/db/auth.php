@@ -591,17 +591,23 @@ class auth_plugin_db {
      * @return bool
      */
     function can_change_password() {
-        return ($this->config->passtype === 'internal');
+        return ($this->config->passtype == 'internal' or !empty($this->config->changepasswordurl));
     }
 
     /**
-     * Returns the URL for changing the user's pw, or false if the default can
+     * Returns the URL for changing the user's pw, or empty if the default can
      * be used.
      *
-     * @return bool
+     * @return string
      */
     function change_password_url() {
-        return $this->config->changepasswordurl;
+        if ($this->config->passtype == 'internal') {
+            // standard form
+            return '';
+        } else {
+            // use custom url
+            return $this->config->changepasswordurl;
+        }
     }
 
     /**

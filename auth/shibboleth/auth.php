@@ -43,8 +43,8 @@ class auth_plugin_shibboleth {
      * Returns true if the username and password work and false if they are
      * wrong or don't exist.
      *
-     * @param string $username The username
-     * @param string $password The password
+     * @param string $username The username (with system magic quotes)
+     * @param string $password The password (with system magic quotes)
      * @return bool Authentication success or failure.
      */
     function user_login($username, $password) {
@@ -78,11 +78,7 @@ class auth_plugin_shibboleth {
         $search_attribs = array();
 
         foreach ($attrmap as $key=>$value) {
-            if (!empty($CFG->unicodedb)) {
-                $result[$key] = $this->get_first_string($_SERVER[$value]);
-            } else {
-                $result[$key] = $this->get_first_string(utf8_decode($_SERVER[$value]));
-            }
+            $result[$key] = $this->get_first_string($_SERVER[$value]);
         }
 
          // Provide an API to modify the information to fit the Moodle internal

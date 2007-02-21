@@ -48,9 +48,12 @@ class auth_plugin_ldap {
             }
         }
         //hack prefix to objectclass
-        if ('objectClass=' != substr($this->config->objectclass, 0, 12)) {
-           $this->config->objectclass = 'objectClass='.$this->config->objectclass;
+        if (empty($this->config->objectclass)) {        // Can't send empty filter
+            $this->config->objectclass='objectClass=*';
+        } else if (strpos($this->config->objectclass, 'objectClass=') !== 0) {
+            $this->config->objectclass = 'objectClass='.$this->config->objectclass;
         }
+
     }
 
     /**
@@ -134,10 +137,6 @@ class auth_plugin_ldap {
         }
 
         $user_dn = $this->ldap_find_userdn($ldapconnection, $extusername);
-
-        if (empty($this->config->objectclass)) {        // Can't send empty filter
-            $this->config->objectclass="objectClass=*";
-        }
 
         if (!$user_info_result = ldap_read($ldapconnection, $user_dn, $this->config->objectclass, $search_attribs)) {
             return false; // error!
@@ -387,10 +386,6 @@ class auth_plugin_ldap {
         //// get user's list from ldap to sql in a scalable fashion
         ////
         // prepare some data we'll need
-        if (! empty($this->config->objectclass)) {
-            $this->config->objectclass="objectClass=*";
-        }
-
         $filter = "(&(".$this->config->user_attribute."=*)(".$this->config->objectclass."))";
 
         $contexts = explode(";",$this->config->contexts);
@@ -1500,11 +1495,11 @@ class auth_plugin_ldap {
      * @return bool
      */
     function can_change_password() {
-        return true;
+        return !empty($this->config->stdchangepassword) or !empty($this->config->changepasswordurl);
     }
 
     /**
-     * Returns the URL for changing the user's pw, or false if the default can
+     * Returns the URL for changing the user's pw, or empty if the default can
      * be used.
      *
      * @return string url
@@ -1513,7 +1508,7 @@ class auth_plugin_ldap {
         if (empty($this->config->stdchangepassword)) {
             return $this->config->changepasswordurl;
         } else {
-            return false;
+            return '';
         }
     }
 

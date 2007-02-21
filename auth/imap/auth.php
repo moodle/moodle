@@ -37,8 +37,8 @@ class auth_plugin_imap {
      * Returns true if the username and password work and false if they are
      * wrong or don't exist.
      *
-     * @param string $username The username
-     * @param string $password The password
+     * @param string $username The username (with system magic quotes)
+     * @param string $password The password (with system magic quotes)
      * @return bool Authentication success or failure.
      */
     function user_login ($username, $password) {
@@ -71,7 +71,7 @@ class auth_plugin_imap {
             }
 
             error_reporting(0);
-            $connection = imap_open($host, $username, $password, OP_HALFOPEN);
+            $connection = imap_open($host, stripslashes($username), stripslashes($password), OP_HALFOPEN);
             error_reporting($CFG->debug);
 
             if ($connection) {
@@ -99,18 +99,17 @@ class auth_plugin_imap {
      * @return bool
      */
     function can_change_password() {
-        return false;
+        return !empty($this->config->changepasswordurl);
     }
 
     /**
-     * Returns the URL for changing the user's pw, or false if the default can
+     * Returns the URL for changing the user's pw, or empty if the default can
      * be used.
      *
-     * @return bool
+     * @return string
      */
     function change_password_url() {
-        return $CFG->changepasswordurl; // TODO: will this be global?
-        //return $this->config->changepasswordurl;
+        return $this->config->changepasswordurl;
     }
 
     /**

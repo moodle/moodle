@@ -74,7 +74,7 @@ class auth_plugin_email {
         return update_internal_user_password($user, $newpassword);
     }
 
-    /*
+    /**
      * Sign up a new user ready for confirmation.
      */
     function user_signup($user, $notify = true) {
@@ -93,7 +93,7 @@ class auth_plugin_email {
         }
     }
 
-    /*
+    /**
      * Confirm the new user as registered.
      */
     function user_confirm($username, $confirmsecret) {
@@ -135,13 +135,22 @@ class auth_plugin_email {
     }
 
     /**
-     * Returns the URL for changing the user's pw, or false if the default can
+     * Returns the URL for changing the user's pw, or empty if the default can
      * be used.
+     *
+     * @return mixed
+     */
+    function change_password_url() {
+        return ''; // use dafult internal method
+    }
+
+    /**
+     * Returns true if plugin allows resetting of internal password.
      *
      * @return bool
      */
-    function change_password_url() {
-        return false;
+    function can_reset_password() {
+        return true;
     }
 
     /**
