@@ -1948,6 +1948,26 @@ function highlightfast($needle, $haystack) {
     return (join('', $parts));
 }
 
+/**
+ * Return a string containing lang, xml:lang and optionally 'dir' HTML attributes.
+ * Internationalisation, for print_header and backup/restorlib.
+ * @param $dir Default false.
+ * @return string Attributes.
+ */
+function get_html_lang($dir = false) {
+    $direction = '';
+    if ($dir) {
+        if (get_string('thisdirection') == 'rtl') {
+            $direction = ' dir="rtl"';
+        } else {
+            $direction = ' dir="ltr"';
+        }
+    }
+    //Accessibility: added the 'lang' attribute to $direction, used in theme <html> tag.
+    $language = str_replace('_', '-', str_replace('_utf8', '', current_language()));
+    return ($direction.' lang="'.$language.'" xml:lang="'.$language.'"'); 
+}
+
 
 /// STANDARD WEB PAGE PARTS ///////////////////////////////////////////////////
 
@@ -2082,14 +2102,8 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         @header('Content-type: text/html; charset=utf-8');
     }
 
-    if ( get_string('thisdirection') == 'rtl' ) {
-        $direction = ' dir="rtl"';
-    } else {
-        $direction = ' dir="ltr"';
-    }
     //Accessibility: added the 'lang' attribute to $direction, used in theme <html> tag.
-    $language = str_replace('_', '-', str_replace('_utf8', '', current_language()));
-    $direction .= ' lang="'.$language.'" xml:lang="'.$language.'"';
+    $direction = get_html_lang($dir=true);
 
     if ($cache) {  // Allow caching on "back" (but not on normal clicks)
         @header('Cache-Control: private, pre-check=0, post-check=0, max-age=0');
