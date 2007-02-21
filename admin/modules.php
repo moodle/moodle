@@ -158,17 +158,10 @@
     // construct the flexible table ready to display
     $table = new flexible_table(MODULE_TABLE);
     $table->define_columns(array('name', 'instances', 'version', 'hideshow', 'delete', 'settings'));
-    $table->column_style('instances', 'text-align', 'center');
-    $table->column_style('version', 'text-align', 'center');
-    $table->column_style('hideshow', 'text-align', 'center');
-    $table->column_style('delete', 'text-align', 'center');
-    $table->column_style('settings', 'text-align', 'center');
     $table->define_headers(array($stractivitymodule, $stractivities, $strversion, "$strhide/$strshow", $strdelete, $strsettings));
     $table->define_baseurl($CFG->wwwroot.'/'.$CFG->admin.'/modules.php');
     $table->set_attribute('id', 'modules');
     $table->set_attribute('class', 'flexible generaltable generalbox');
-    $table->set_attribute('style', 'margin:auto;');
-    $table->set_attribute('cellpadding', '5');
     $table->setup();
 
     foreach ($modulebyname as $modulename => $module) {

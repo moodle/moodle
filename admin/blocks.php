@@ -163,18 +163,10 @@
     $table = new flexible_table('admin-blocks-compatible');
 
     $table->define_columns(array('name', 'instances', 'version', 'hideshow', 'multiple', 'delete', 'settings'));
-    $table->column_style('instances', 'text-align', 'center');
-    $table->column_style('version', 'text-align', 'center');
-    $table->column_style('hideshow', 'text-align', 'center');
-    $table->column_style('multiple', 'text-align', 'center');
-    $table->column_style('delete', 'text-align', 'center');
-    $table->column_style('settings', 'text-align', 'center');
     $table->define_headers(array($strname, $strcourses, $strversion, $strhide.'/'.$strshow, $strmultiple, $strdelete, $strsettings));
     $table->define_baseurl($CFG->wwwroot.'/'.$CFG->admin.'/blocks.php');
     $table->set_attribute('id', 'blocks');
     $table->set_attribute('class', 'flexible generaltable generalbox');
-    $table->set_attribute('style', 'margin:auto;');
-    $table->set_attribute('cellpadding', '5');
     $table->setup();
 
     foreach ($blockbyname as $blockname => $blockid) {
