@@ -232,9 +232,8 @@
         $table->define_headers(array($strname, $strdelete));
         $table->define_baseurl($CFG->wwwroot.'/'.$CFG->admin.'/blocks.php');
 
-        $table->set_attribute('cellspacing', '0');
         $table->set_attribute('id', 'incompatible');
-        $table->set_attribute('class', 'generaltable generalbox');
+        $table->set_attribute('class', 'flexible generaltable generalbox boxaligncenter boxwidthwide');
 
         $table->setup();
 
