@@ -1019,6 +1019,7 @@ $string['notpublic'] = 'Not public!';
 $string['nousersmatching'] = 'No users matching \'$a\' were found';
 $string['nousersyet'] = 'There are no users yet';
 $string['now'] = 'now';
+$string['novalidcourses'] = 'No valid courses to be shown';
 $string['numattempts'] = '$a failed login attempt(s)';
 $string['numberweeks'] = 'Number of weeks/topics';
 $string['numdays'] = '$a days';

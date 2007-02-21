@@ -83,6 +83,7 @@
     $strdeselectall = get_string("deselectall");
     $stredit = get_string("edit");
     $strfrontpage = get_string('frontpage', 'admin');
+    $strnovalidcourses = get_string('novalidcourses');
 
     if (empty($search) and empty($blocklist) and empty($modulelist)) {
         print_header("$site->fullname : $strsearch", $site->fullname, 
@@ -311,7 +312,12 @@
         }
 
     } else {
-        print_heading(get_string("nocoursesfound", "", s($search, true)));
+        if (!empty($search)) {
+            print_heading(get_string("nocoursesfound", "", s($search, true)));
+        }
+        else {
+            print_heading( $strnovalidcourses );
+        }
     }
 
     echo "<br /><br />";
