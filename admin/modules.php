@@ -168,7 +168,7 @@
             $settings = "";
         }
 
-        $count = count_records("$module->name");
+        $count = count_records_select("$module->name",'course<>0');
 
         if ($module->visible) {
             $visible = "<a href=\"modules.php?hide=$module->name&amp;sesskey=$USER->sesskey\" title=\"$strhide\">".
