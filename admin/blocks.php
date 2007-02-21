@@ -17,7 +17,6 @@
     $delete   = optional_param('delete', 0, PARAM_INT);
     $multiple = optional_param('multiple', 0, PARAM_INT);
 
-
 /// Print headings
 
     $strmanageblocks = get_string('manageblocks');
@@ -29,6 +28,7 @@
     $strcourses = get_string('blockinstances', 'admin');
     $strname = get_string('name');
     $strmultiple = get_string('blockmultiple', 'admin');
+    $strshowblockcourse = get_string('showblockcourse');
 
     admin_externalpage_print_header($adminroot);
 
@@ -184,6 +184,13 @@
         }
 
         $count = count_records('block_instance', 'blockid', $blockid);
+        if ($count>0) {
+            $blocklist = "<a href=\"{$CFG->wwwroot}/course/search.php?blocklist=$blockid&amp;sesskey={$USER->sesskey}\" ";
+            $blocklist .= "title=\"$strshowblockcourse\" >$count</a>";
+        }
+        else {
+            $blocklist = "$count";
+        }
         $class = ''; // Nothing fancy, by default
 
         if ($blocks[$blockid]->visible) {
@@ -208,7 +215,7 @@
 
         $table->add_data(array(
             '<span'.$class.'>'.$blockobject->get_title().'</span>',
-            $count,
+            $blocklist,
             $blockobject->get_version(),
             $visible,
             $multiple,
