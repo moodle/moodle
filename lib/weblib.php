@@ -3811,7 +3811,9 @@ function update_course_icon($courseid) {
     global $CFG, $USER;
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
-    
+
+    $capcheck = false;      
+
     if (has_capability('moodle/course:manageactivities', $coursecontext) ||
         has_capability('moodle/site:manageblocks', $coursecontext)) {
         $capcheck = true;      
