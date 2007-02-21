@@ -157,7 +157,7 @@ if ($success) {
     print_heading($course->shortname.' '.$strgroups, 'center', 3);
 ?>
 <form id="groupeditform" action="index.php" method="post">
-    <fieldset class="invisiblefieldset">
+    <div>
     <input type="hidden" name="id" value="<?php echo $courseid; ?>" />
 
 <?php /*    
@@ -278,7 +278,7 @@ if ($success) {
     </table>
 
     <?php //<input type="hidden" name="rand" value="om" /> ?>
-</fieldset>
+</div>
 </form>
 <?php
     echo '<script type="text/javascript">'."\n";
