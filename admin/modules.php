@@ -170,7 +170,7 @@
             $settings = "";
         }
 
-        $count = count_records("$module->name");
+        $count = count_records_select("$module->name",'course<>0');
         if ($count>0) {
             $countlink = "<a href=\"{$CFG->wwwroot}/course/search.php?modulelist=$module->name" .
                 "&amp;sesskey={$USER->sesskey}\" title=\"$strshowmodulecourse\">$count</a>";
