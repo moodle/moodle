@@ -125,7 +125,6 @@
 
         // run through blocks and get (unique) courses
         $courses = array();
-        $totalcount = 0;
         foreach ($blocks as $block) {
             $courseid = $block->pageid;
             if ($courseid==0) {
@@ -135,8 +134,8 @@
                 error( "Could not read data for courseid=$courseid" );
             }
             $courses[$courseid] = $course;
-            $totalcount++;
         }
+        $totalcount = count( $courses );
     }
     // get list of courses containing modules if required
     elseif (!empty($modulelist) and confirm_sesskey()) {
@@ -147,7 +146,6 @@
 
         // run through modules and get (unique) courses
         $courses = array();
-        $totalcount = 0;
         foreach ($modules as $module) {
             $courseid = $module->course;
             if ($courseid==0) {
@@ -157,8 +155,8 @@
                 error( "Could not read data for courseid=$courseid" );
             }
             $courses[$courseid] = $course;
-            $totalcount++;
         }
+        $totalcount = count($courses);
     }
     else {
         $courses = get_courses_search($searchterms, "fullname ASC", 
