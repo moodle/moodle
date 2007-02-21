@@ -232,9 +232,11 @@ class qformat_xml extends qformat_default {
             } 
             if ($answertext == 'true') {
                 $qo->answer = ($answer['@']['fraction'] == 100);
+                $qo->correctanswer = $qo->answer;
                 $qo->feedbacktrue = $feedback;
             } else {
                 $qo->answer = ($answer['@']['fraction'] != 100);
+                $qo->correctanswer = $qo->answer;
                 $qo->feedbackfalse = $feedback;
             }
             $first = false;

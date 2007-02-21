@@ -363,8 +363,8 @@ class qformat_gift extends qformat_default {
                     $question->feedbacktrue = $feedback['wrong'];
                 }
 
-                //$question->defaultgrade = 1;
-                //$question->image = "";   // No images with this format
+                $question->correctanswer = $question->answer;
+
                 return $question;
                 break;
                 
