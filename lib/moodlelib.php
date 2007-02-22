@@ -3473,17 +3473,15 @@ function reset_password_and_mail($user) {
     $site  = get_site();
     $from = get_admin();
 
-    $external = false;
-    
     $userauth = get_auth_plugin($user->auth);
-    if (!$userauth->can_change_password()) {
+    if (!$userauth->can_reset_password()) {
         trigger_error("Attempt to reset user password for user $user->username with Auth $user->auth.");
         return false;
     }
 
     $newpassword = generate_password();
 
-    if (!$userauth->user_update_password($user->username, $newpassword)) {
+    if (!$userauth->user_update_password(addslashes_recursive($user), addslashes($newpassword))) {
         error("Could not set user password!");
     }
 

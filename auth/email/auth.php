@@ -64,8 +64,8 @@ class auth_plugin_email {
      *
      * called when the user password is updated.
      *
-     * @param  object  $user        User
-     * @param  string  $newpassword Plaintext password
+     * @param  object  $user        User table object  (with system magic quotes)
+     * @param  string  $newpassword Plaintext password (with system magic quotes)
      * @return boolean result
      *
      */

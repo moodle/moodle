@@ -190,8 +190,8 @@ class auth_plugin_db {
     /**
      * Change a user's password
      *
-     * @param  object  $user         The user to update
-     * @param  string  $newpassword  The new password
+     * @param  object  $user        User table object  (with system magic quotes)
+     * @param  string  $newpassword Plaintext password (with system magic quotes)
      *
      * @return bool                  True on success
      */
