@@ -124,20 +124,19 @@ function groups_db_get_grouping_settings($groupingid) {
  * @return int The id of the grouping or false if there is no such id recorded 
  * or if an error occurred. 
  */
-function groups_db_get_grouping_for_coursemodule($coursemoduleid) {
-	if (!$coursemoduleid) {
-		$groupingid = false;
-	} else {
-		$record = get_record('course_modules', 'id', $coursemoduleid, 'id, ' .
-				             'groupingid');
-		if (!$record) {
-			$groupingid = false;
-		} else {
-			$groupingid = $record->groupingid;
-		}
-	}
-	
-	return $groupingid;
+function groups_db_get_grouping_for_coursemodule($cm) {
+	if (is_object($cm) and isset($cm->course) and isset($cm->groupingid)) {
+        //Do NOT test cm->module!
+        return $cm->groupingid;
+    } elseif (is_numeric($cm)) {
+        // Treat param as the course module ID.
+        $coursemoduleid = $cm;
+        $record = get_record('course_modules', 'id', $coursemoduleid, 'id, groupingid');
+        if ($record and isset($record->groupingid)) {
+            return $record->groupingid;
+        }
+    }
+    return false;
 }
 
 

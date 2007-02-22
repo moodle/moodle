@@ -1,9 +1,5 @@
 <?php
-
-// @@@ TO DO Still tons to do here! Most of this isn't done or just copied
-// and pasted so far and needs to be sorted out. 
-
-/*******************************************************************************
+/**
  * modulelib.php
  * 
  * This file contains functions to be used by modules to support groups. More
@@ -12,10 +8,15 @@
  * 
  * For queries, suggestions for improvements etc. please post on the Groups 
  * forum on the moodle.org site.
- ******************************************************************************/
+ *
+ * @copyright &copy; 2006 The Open University
+ * @author J.White AT open.ac.uk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package groups
+ */ 
 
-/*******************************************************************************
- * Permission types
+/*
+ * (OLD) Permission types
  * 
  * There are six types of permission that a user can hold for a particular
  * group - 'student view', 'student contribute', 'teacher view', 
@@ -50,7 +51,7 @@
  * @name GROUPS_STUDENT_CONTRIBUTE 'student contribute' permission
  * @name GROUPS_TEACHER_VIEW 'teacher view' permission
  * @name GROUPS_TEACHER_CONTRIBUTE 'teacher contribute' permission
- ******************************************************************************/
+ */
 define('GROUPS_STUDENT', 1);
 define('GROUPS_TEACHER', 2);
 define('GROUPS_VIEW', 4);
@@ -147,31 +148,44 @@ function groups_m_get_selected_group($cmid, $permissiontype, $userid) {
 }
 	 
 /**
- * Gets an array of the groupids of all the groups that the specified user has
- * particular permission for in this particular instance of the module
+ * Gets an array of the group IDs of all groups for the user in this course module.
  * @uses $USER     
- * @param int $cmid The id of the module instance
- * @param int $permissiontype The permission type - see note on permission types 
- * above
- * @param int $userid The id of the user, defaults to the current user 
- * @return array An array of the group ids 
- */	
-function groups_m_get_groups_for_user($cmid, $permissiontype, $userid) {
-	$groupingid = groups_db_get_groupingid($cmid);
-	$groupids = groups_get_groups_in_grouping($groupingid);
-	if (!$groupids) {
-		$groupidsforuser = false;
-	} else {
-		$groupidsforuser = array();
-		foreach($groupids as $groupid) {
-			if (groups_m_has_permission($cmid, $groupid, $permissiontype, $userid) ) {
-				array_push($groupidsforuser, $groupid);
-			}
-		}
-	}
-	
-	return $groupidsforuser;
-}  
+ * @param object $cm The course-module object.
+ * @param int $userid The ID of the user.
+ * @return array An array of group IDs, or false. 
+ */
+function groups_m_get_groups_for_user($cm, $userid) {
+//echo 'User'; print_object($cm);
+    $groupingid = groups_get_grouping_for_coursemodule($cm);
+    if (!$groupingid) {
+        return false;
+    }
+    if (!isset($cm->course) || !groupmode($cm->course, $cm)) {
+        return false;
+    }
+    elseif (GROUP_ANY_GROUPING == $groupingid) {
+        return groups_get_groups_for_user($userid, $cm->course);
+    }
+    return groups_get_groups_for_user_in_grouping($userid, $groupingid);
+} 
+
+
+/**
+ * Get the ID of the first group for the global $USER in the course module.
+ * Replaces legacylib function 'mygroupid'.
+ * @uses $USER
+ * @param $cm A course module object.
+ * @return int A single group ID for this user.
+ */ 
+function groups_m_get_my_group($cm) {
+    global $USER;
+    $groupids = groups_m_get_groups_for_user($cm, $USER->id);
+    if (!$groupids || count($groupids) == 0) {
+        return 0;
+    }
+    return array_shift($groupids);
+}
+
 
 /**
  * Indicates if a specified user has a particular type of permission for a 
@@ -187,9 +201,17 @@ function groups_m_get_groups_for_user($cmid, $permissiontype, $userid) {
  * @return boolean True if the user has the specified permission type, false 
  * otherwise or if an error occurred. 
  */
- function groups_m_has_permission($cmid, $groupid, $permissiontype, $userid) {
-	$groupingid = groups_get_grouping_for_coursemodule($coursemoduleid);
-	$isstudent = isstudent($courseid, $userid);
+ function groups_m_has_permission($cm, $groupid, $permissiontype, $userid = null) {
+    if (!$userid) {
+        global $USER;
+        $userid = $USER->id;
+    }
+	$groupingid = groups_get_grouping_for_coursemodule($cm);
+	if (!$groupingid || !is_object($cm) || !isset($cm->course)) {
+        return false;
+    }
+    $courseid = $cm->course;
+    $isstudent = isstudent($courseid, $userid);
 	$isteacher = isteacher($courseid, $userid);
 	$groupmember = groups_is_member($groupid, $userid);
 	$memberofsomegroup = groups_is_member_of_some_group_in_grouping($userid, $groupingid);
@@ -264,7 +286,7 @@ function groups_m_get_members_with_permission($cmid, $groupid,
                                               $permissiontype) {
 	// Get all the users as $userid
 	$validuserids = array();	
-	foreach($userids as $userid) {
+	foreach($validuserids as $userid) {
 		$haspermission = groups_m_has_permission($cmid, $groupid, 
 										$permissiontype, $userid);
 		if ($haspermission) {
@@ -313,88 +335,7 @@ function groups_m_get_members($cmid, $groupid) {
 	} else {
 		// Check if each user is enrolled on the course @@@ TO DO 
 	}
-}
-
-/**
- * Indicates if a user is a member of a particular group. In general you should 
- * use groups_m_has_permission, however this function is provided for 
- * circumstances where this function isn't sufficient for some reason. 
- * @param int $groupid The id of the group
- * @param int $userid The id of the user 
- * @return boolean True if the user is a member of the group, false otherwise 
- */
-function groups_m_is_member($groupid, $userid) {
-	return groups_is_member($groupid, $userid);
-}
-
-/**
- * Determines if a user has a particular permission type for a particular group. Permissions
- * are set at grouping level and are set via the grouping settings. This is the function
- * to check, if somebody can't access something that you think they ought to be able to!
- * This is for the current user. What about for general user?
- * @param int $courseid The id of the course
- * @param int $groupid The id of the group
- * @param string $permissiontype The permission type: 'view', 'studentcontribute', 
- * 'teacherview', 'teachercontribute', 'viewmembers', 'contribute', 'all'
- */
-function groups_m_has_permission($courseid, $groupid, $permissiontype) {
-	$userid = $USER->id;
-	$groupingid = groups_get_grouping_for_coursemodule($coursemoduleid);
-	$isstudent = isstudent($courseid, $userid);
-	$isteacher = isteacher($courseid, $userid);
-	$groupmember = groups_is_member($groupid, $userid);
-	$memberofsomegroup = groups_is_member_of_some_group_in_grouping($userid, $groupingid);
-	
-	$groupingsettings = groups_get_grouping_settings($groupingid);
-	$viewowngroup = $groupingsettings->viewowngroup;
-	$viewallgroupsmembers = $groupingsettings->viewallgroupmembers;
-	$viewallgroupsactivities = $groupingsettings->viewallgroupsactivities;
-	$teachersgroupsmark = $groupingsettings->teachersgroupsmark;
-	$teachersgroupsview = $groupingsettings->teachersgroupsview;
-	$teachersgroupmark = $groupingsettings->teachersgroupmark;
-	$teachersgroupview = $groupingsettings->teachersgroupview;
-	$teachersoverride = $groupingsettings->teachersoverride;
-		
-	$permission = false;
-	
-	switch ($permissiontype) {
-		case 'view':
-			if (($isstudent and $groupmember) or 
-			    ($isteacher and $groupmember) or 
-			    ($isstudent and $viewallgroupsactivities) or 
-			    ($isteacher and !$teachersgroupview) or 
-			    ($isteacher and !$memberofsomegroup and $teachersoverride)) {
-				$permission = true;
-			} 
-			break;
-			
-		case 'studentcontribute':
-			if (($isstudent and $groupmember) or 
-			    ($isteacher and $groupmember) or 
-			    ($isteacher and !$memberofsomegroup and $teachersoverride)) {
-				$permission = true;
-			} 
-			break;
-		case 'teachermark':
-			if (($isteacher and $groupmember) or 
-				($isteacher and !$teachersgroupmark) or
-			    ($isteacher and !$memberofsomegroup and $teachersoverride)) {
-				$permission = true;
-			}  
-			break;
-		
-		case 'viewmembers':	
-			if (($isstudent and $groupmember and $viewowngroup) or 
-			    ($isstudent and $viewallgroupsmembers) or 
-				($isteacher and $groupmember) or 
-			    ($isteacher and !$teachersgroupview) or 
-			    ($isteacher and !$memberofsomegroup and $teachersoverride) or 
-			    $isteacheredit) {
-				$permission = true;
-			}  
-			break;
-	}
-	return $permission;	
+    return $memberids;
 }
 
 ?>

@@ -14,7 +14,7 @@ require_once($CFG->dirroot.'/group/lib/groupinglib.php');
 
 require_once($CFG->dirroot.'/group/lib/utillib.php');
 
-require_once($CFG->dirroot.'/group/lib/automaticgroupinglib.php');
+require_once($CFG->dirroot.'/group/lib/modulelib.php');
 
 require_once($CFG->dirroot.'/group/lib/legacylib.php');
 
