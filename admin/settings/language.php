@@ -11,7 +11,7 @@ $temp->add(new admin_setting_configcheckbox('langcache', get_string('langcache',
 $temp->add(new admin_setting_configtext('locale', get_string('localetext', 'admin'), get_string('configlocale', 'admin'), '', PARAM_FILE));
 
 // new CFG variable for excel encoding
-$temp->add(new admin_setting_configselect('latinexcelexport', get_string('latinexcelexport', 'admin'), get_string('configlatinexcelexport', 'admin'), 'Unicode', array('UTF-16LE'=>'Unicode','WIN-1252'=>'Latin')));
+$temp->add(new admin_setting_configselect('latinexcelexport', get_string('latinexcelexport', 'admin'), get_string('configlatinexcelexport', 'admin'), '0', array('0'=>'Unicode','1'=>'Latin')));
 
 
 $ADMIN->add('language', $temp);
