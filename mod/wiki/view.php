@@ -8,6 +8,7 @@
     require_once("lib.php");
     #require_once("$CFG->dirroot/course/lib.php"); // For side-blocks    
     require_once($CFG->libdir . '/ajax/ajaxlib.php');
+    require_js(array('yui_yahoo','yui_connection'));
 
     $ewiki_action = optional_param('ewiki_action', '', PARAM_ALPHA);     // Action on Wiki-Page
     $id           = optional_param('id', 0, PARAM_INT);                  // Course Module ID, or
@@ -448,8 +449,7 @@
 ";
             }
         } else {
-        		// OK, the page is now locked to us. Put in the AJAX for keeping the lock
-            print require_js(array('yui_yahoo','yui_connection'));
+       		// OK, the page is now locked to us. Put in the AJAX for keeping the lock
             $strlockcancelled=get_string('lockcancelled','wiki');
             $strnojslockwarning=get_string('nojslockwarning','wiki');
             $intervalms=WIKI_LOCK_RECONFIRM*1000;
@@ -469,14 +469,13 @@ function handleFailure(o) {
 }
 intervalID=setInterval(function() {
     YAHOO.util.Connect.asyncRequest('POST','confirmlock.php',
-        {success:handleResponse,failure:handleFailure},'lockid=$lockid');    
+        {success:handleResponse,failure:handleFailure},'lockid={$lock->id}');    
     },$intervalms);
 </script>
 <noscript><p>
 $strnojslockwarning
 </p></noscript>
 ";
-            
             // Print editor etc
             print $content;
         }
