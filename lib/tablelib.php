@@ -288,6 +288,19 @@ class flexible_table {
 
         $this->currpage = optional_param($this->request[TABLE_VAR_PAGE], 0);
         $this->setup = true;
+
+    /// Always introduce the "flexible" class for the table if not specified
+    /// No attributes, add flexible class
+        if (empty($this->attributes)) {
+            $this->attributes['class'] = 'flexible';
+    /// No classes, add flexible class
+        } else if (!isset($this->attributes['class'])) {
+            $this->attributes['class'] = 'flexible';
+    /// No flexible class in passed classes, add flexible class
+        } else if (!in_array('flexible', explode(' ', $this->attributes['class']))) {
+            $this->attributes['class'] = trim('flexible ' . $this->attributes['class']);
+        }
+
     }
 
     function get_sql_sort($uniqueid = NULL) {
