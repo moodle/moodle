@@ -166,15 +166,10 @@ foreach ($authsavailable as $auth) {
 // build the display table
 $table = new flexible_table('auth_admin_table');
 $table->define_columns(array('name', 'enable', 'order', 'settings'));
-$table->column_style('enable', 'text-align', 'center');
-$table->column_style('order', 'text-align', 'center');
-$table->column_style('settings', 'text-align', 'center');
 $table->define_headers(array($txt->name, $txt->enable, $txt->updown, $txt->settings));
 $table->define_baseurl("{$CFG->wwwroot}/{$CFG->admin}/auth.php");
 $table->set_attribute('id', 'blocks');
-$table->set_attribute('class', 'generaltable generalbox');
-$table->set_attribute('style', 'margin:auto;');
-$table->set_attribute('cellpadding', '5');
+$table->set_attribute('class', 'generaltable generalbox boxaligncenter boxwidthwide');
 $table->setup();
 
 //add always enabled plugins first
@@ -247,7 +242,7 @@ if ($status !== '') {
 
 print_simple_box(get_string('configauthenticationplugins', 'admin'), 'center', '700');
 
-print_table($table);
+$table->print_html();
 
 ////////////////////////////////////////////////////////////////////////////////
 
