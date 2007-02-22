@@ -1585,7 +1585,8 @@ function wiki_get_post_actions() {
  * @param string $pagename Name of page.
  * @return array Two-element array with a boolean true (if lock has been obtained)
  *   or false (if lock was held by somebody else). If lock was held by someone else,
- *   the values of the wiki_locks entry are held in the second element.
+ *   the values of the wiki_locks entry are held in the second element; if lock was
+ *   held by current user then the the second element has a member ->id only.
  */
 function wiki_obtain_lock($wikiid,$pagename) {
 	global $USER;
@@ -1627,7 +1628,9 @@ function wiki_obtain_lock($wikiid,$pagename) {
     		$_SESSION[SESSION_WIKI_LOCKS]=array();
     }
 	$_SESSION[SESSION_WIKI_LOCKS][$wikiid.'_'.$pagename]=$lockid;
-	return array(true,null);
+    $lockdata=new StdClass;
+    $lockdata->id=$lockid;
+    return array(true,$lockdata);
 }
 
 /**
