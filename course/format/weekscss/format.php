@@ -124,7 +124,7 @@
         $summaryformatoptions->noclean = true;
         echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
 
-        if (isediting($course->id) && has_capability('moodle/course:update', $course->id)) {
+        if (isediting($course->id) && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
             echo '<p><a title="'.$streditsummary.'" '.
                  ' href="editsection.php?id='.$thissection->id.'"><img src="'.$CFG->pixpath.'/t/edit.gif" '.
                  ' class="icon edit" alt="'.$streditsummary.'" /></a></p>';
@@ -243,7 +243,7 @@
                 $summaryformatoptions->noclean = true;
                 echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
 
-                if (isediting($course->id) && has_capability('moodle/course:update', $course->id)) {
+                if (isediting($course->id) && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
                     echo ' <a title="'.$streditsummary.'" href="editsection.php?id='.$thissection->id.'">'.
                          '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon edit" alt="'.$streditsummary.'" /></a><br /><br />';
                 }
