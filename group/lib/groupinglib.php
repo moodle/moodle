@@ -136,7 +136,7 @@ function groups_get_groups_for_user_in_grouping($userid, $groupingid) {
     $records = get_records_sql($sql);
 
 //print_object($records);
-    return groups_groups_to_groupids($records); //TODO:check.
+    return groups_groups_to_groupids($records);
 }
 
 /**

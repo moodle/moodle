@@ -18,7 +18,7 @@
  * @param int  $cmid The id of the module instance.
  * @return int The grouping id (or false if it is null or an error occurred)
  */
-function groups_db_m_get_groupingid($cmid) {
+function groups___db_m_get_groupingid($cmid) {
 	// @@@ Check nulls are turned into false
 	$query = get_record('course_modules', 'groupingid', $userid);
 	return $query;

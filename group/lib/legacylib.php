@@ -156,7 +156,7 @@ function mygroupid($courseid) {
  */
 function groupmode($course, $cm=null) {
 
-    if ($cm and !$course->groupmodeforce) {
+    if (is_object($cm) && isset($cm->groupmode) && !isset($course->groupmodeforce)) {
         return $cm->groupmode;
     }
     return $course->groupmode;

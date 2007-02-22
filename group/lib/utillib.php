@@ -40,6 +40,8 @@ function groups_count_groups_in_grouping($groupingid, $courseid) {
     if (GROUP_NOT_IN_GROUPING == $groupingid) {
         $groupids = groups_get_groups_not_in_any_grouping($courseid);
         return count($groupids);
+    } elseif (GROUP_ANY_GROUPING == $groupingid) {
+        return count_records('groups_courses_groups', 'courseid', $courseid);
     } else {
         return count_records('groups_groupings_groups', 'groupingid ', $groupingid);
     }
@@ -154,7 +156,12 @@ function groups_groups_to_groupids($groups) {
     }
     $groupids = array();
 	foreach ($groups as $group) {
-		array_push($groupids, $group->id);
+        if (isset($group->id)) {
+		    array_push($groupids, $group->id);
+        } else {
+            //Warn if there's no "groupid" member.
+            array_push($groupids, $group->groupid);
+        }
 	}
 	return $groupids;
 }
