@@ -294,6 +294,11 @@ table.formtable tbody .htmlarea th
   padding: 0;
 }
 
+.flexible th
+{
+  white-space: nowrap;
+}
+
 .paging {
   text-align: center;
   margin: 10px 0 10px 0;
