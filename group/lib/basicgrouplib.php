@@ -118,7 +118,7 @@ function groups_get_groups_for_current_user($courseid) {
  * Get the group settings object for a group - this contains the following 
  * properties:
  * name, description, lang, theme, picture, hidepicture
- * @param int $groupid The id of the gruop
+ * @param int $groupid The group ID.
  * @return object The group settings object 
  */
 function groups_get_group_settings($groupid, $courseid=false, $alldata=false) {
