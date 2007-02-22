@@ -161,7 +161,7 @@
     $table->define_headers(array($stractivitymodule, $stractivities, $strversion, "$strhide/$strshow", $strdelete, $strsettings));
     $table->define_baseurl($CFG->wwwroot.'/'.$CFG->admin.'/modules.php');
     $table->set_attribute('id', 'modules');
-    $table->set_attribute('class', 'flexible generaltable generalbox boxaligncenter boxwidthwide');
+    $table->set_attribute('class', 'generaltable generalbox boxaligncenter boxwidthwide');
     $table->setup();
 
     foreach ($modulebyname as $modulename => $module) {

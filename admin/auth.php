@@ -172,7 +172,7 @@ $table->column_style('settings', 'text-align', 'center');
 $table->define_headers(array($txt->name, $txt->enable, $txt->updown, $txt->settings));
 $table->define_baseurl("{$CFG->wwwroot}/{$CFG->admin}/auth.php");
 $table->set_attribute('id', 'blocks');
-$table->set_attribute('class', 'flexible generaltable generalbox');
+$table->set_attribute('class', 'generaltable generalbox');
 $table->set_attribute('style', 'margin:auto;');
 $table->set_attribute('cellpadding', '5');
 $table->setup();
