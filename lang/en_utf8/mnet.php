@@ -12,7 +12,7 @@ $string['mnetservices']                 = 'Moodle network services';
 $string['trustedhosts']                 = 'XML-RPC hosts';
 $string['trustedhostsexplain']          = '<p>The trusted hosts mechanism allows specific machines to
                                            execute calls via XML-RPC to any part of the Moodle API. This
-                                           available for scripts to control Moodle behaviour and can be
+                                           is available for scripts to control Moodle behaviour and can be
                                            a very dangerous option to enable. If in doubt, keep it off.</p>
                                            <p>This is <strong>not</strong> needed for Moodle Networking.</p>
                                            <p>To enable it, enter a list of IP addresses or networks, 
@@ -98,7 +98,8 @@ $string['ssl_acl_deny']                = 'SSO ACL: Deny user $a[0] from $a[1]';
 $string['enabled_for_all']              = '(This service has been enabled for all hosts).';
 $string['nosuchfile']                   = 'The file/function $a does not exist.';
 $string['nosuchfunction']               = 'Unable to locate function, or function prohibited for RPC.';
-$string['nosuchmodule']                 = 'The function was incorrectly addressed and could not be located.\nPlease use the mod/modulename/lib/functionname format.';
+$string['nosuchmodule']                 = 'The function was incorrectly addressed and could not be located. Please use the 
+mod/modulename/lib/functionname format.';
 $string['nosuchpublickey']              = 'Unable to obtain public key for signature verification.';
 $string['nosuchservice']                = 'The RPC service is not running on this host.';
 $string['nosuchtransport']              = 'No transport with that ID exists.';
