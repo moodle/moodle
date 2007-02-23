@@ -81,6 +81,9 @@ class load_xml_file extends XMLDBAction {
                     return false;
                 }
                 $xmldb_file = new XMLDBFile($dbdir->path . '/install.xml');
+            ///Set the XML DTD and schema
+                $xmldb_file->setDTD($CFG->dirroot . '/lib/xmldb/xmldb.dtd');
+                $xmldb_file->setSchema($CFG->dirroot . '/lib/xmldb/xmldb.xsd');
             /// Set dbdir as necessary
                 if ($xmldb_file->fileExists()) {
                     $dbdir->xml_exists = true;

@@ -29,6 +29,8 @@
 class XMLDBFile extends XMLDBObject {
 
     var $path;
+    var $schema;
+    var $dtd;
     var $xmldb_structure;
 
     /**
@@ -65,10 +67,72 @@ class XMLDBFile extends XMLDBObject {
     }
 
     /**
+     * This function will check/validate the XML file for correctness 
+     * Dinamically if will use the best available checker/validator
+     * (expat syntax checker or DOM schema validator
+     */
+    function validateXMLStructure() {
+
+    /// Going to perform complete DOM schema validation
+        if (extension_loaded('dom')) {
+        /// Let's capture errors
+            libxml_use_internal_errors(true);
+        /// Create and load XML file
+            $parser = new DOMDocument();
+            $parser->load($this->path);
+        /// Validate XML file against schema
+            if (!$parser->schemaValidate($this->schema)) {
+            /// Get errors
+                $errors = libxml_get_errors();
+            /// Create one structure to store errors
+                $structure = new XMLDBStructure($this->path);
+            /// Add errors to structure
+                $structure->errormsg = 'XML Error: ';
+                foreach ($errors as $error) {
+                    $structure->errormsg .= sprintf("%s at line %d. ", 
+                                                     trim($error->message, "\n\r\t ."),
+                                                     $error->line);
+                }
+            /// Add structure to file
+                $this->xmldb_structure = $structure;
+            /// Check has failed
+                return false;
+            }
+        }
+    /// Going to perform expat simple check (no validation)
+        else if (function_exists('xml_parser_create')) {
+            $parser = xml_parser_create();
+            if (!xml_parse($parser, file_get_contents($this->path))) {
+            /// Create one structure to store errors
+                $structure = new XMLDBStructure($this->path);
+            /// Add error to structure
+                $structure->errormsg = sprintf("XML Error: %s at line %d", 
+                         xml_error_string(xml_get_error_code($parser)),
+                         xml_get_current_line_number($parser));
+            /// Add structure to file
+                $this->xmldb_structure = $structure;
+            /// Check has failed
+                return false;
+            }
+        /// Free parser resources
+            xml_parser_free($parser);
+        }
+    /// Arriving here, something is really wrong because nor dom not expat are present
+        else {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Load and the XMLDB structure from file
      */
     function loadXMLStructure() {
         if ($this->fileExists()) {
+        /// Let's validate the XML file
+            if (!$this->validateXMLStructure()) {
+                return false;
+            }
         /// File exists, so let's process it
         /// Load everything to a big array
             $xmlarr = xmlize(file_get_contents($this->path));
@@ -92,6 +156,20 @@ class XMLDBFile extends XMLDBObject {
         $structure = new XMLDBStructure($this->path);
         $structure->arr2XMLDBStructure($xmlarr);
         return $structure;
+    }
+
+    /**
+     * This function sets the DTD of the XML file
+     */
+    function setDTD($path) {
+        $this->dtd = $path;
+    }
+
+    /**
+     * This function sets the schema of the XML file
+     */
+    function setSchema($path) {
+        $this->schema = $path;
     }
 
     /**
