@@ -44,8 +44,8 @@ class block_course_list extends block_list {
                         continue;
                     }
                     $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
-                    $this->content->items[]="<a $linkcss title=\"$course->shortname\" ".
-                               "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
+                    $this->content->items[]="<a $linkcss title=\"" . s($course->shortname) . "\" ".
+                               "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">" . s($course->fullname) . "</a>";
                     $this->content->icons[]=$icon;
                 }
                 $this->title = get_string('mycourses');
@@ -62,7 +62,7 @@ class block_course_list extends block_list {
             if (count($categories) > 1 || (count($categories) == 1 && count_records('course') > 200)) {     // Just print top level category links
                 foreach ($categories as $category) {
                     $linkcss = $category->visible ? "" : " class=\"dimmed\" ";
-                    $this->content->items[]="<a $linkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a>";
+                    $this->content->items[]="<a $linkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">" . s($category->name) . "</a>";
                     $this->content->icons[]=$icon;
                 }
                 $this->content->icons[] = '';
@@ -77,7 +77,7 @@ class block_course_list extends block_list {
                 if ($courses) {
                     foreach ($courses as $course) {
                         $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
-                        $this->content->items[]="<a $linkcss title=\"$course->shortname\" ".
+                        $this->content->items[]="<a $linkcss title=\"".s($course->shortname)."\" ".
                                    "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
                         $this->content->icons[]=$icon;
                     }

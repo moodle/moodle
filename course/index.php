@@ -106,9 +106,9 @@
             $newcategory->name = $form->addcategory;
             $newcategory->sortorder = 999;
             if (!insert_record('course_categories', $newcategory)) {
-                notify("Could not insert the new category '$newcategory->name'");
+                notify("Could not insert the new category '" . s($newcategory->name) . "'");
             } else {
-                notify(get_string('categoryadded', '', $newcategory->name));
+                notify(get_string('categoryadded', '', s($newcategory->name)));
             }
         }
     }
@@ -145,11 +145,11 @@
                 
                 /// Finally delete the category itself
                 if (delete_records('course_categories', 'id', $deletecat->id)) {
-                    notify(get_string('categorydeleted', '', $deletecat->name));
+                    notify(get_string('categorydeleted', '', s($deletecat->name)));
                 }
             }
             else {
-                $strdeletecategorycheck = get_string('deletecategorycheck','',$deletecat->name);
+                $strdeletecategorycheck = get_string('deletecategorycheck','', s($deletecat->name));
                 notice_yesno($strdeletecategorycheck,
                              "index.php?delete=$delete&amp;sure=".md5($deletecat->timemodified)."&amp;sesskey=$USER->sesskey",
                              "index.php?sesskey=$USER->sesskey");
@@ -353,7 +353,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
         $linkcss = $category->visible ? '' : ' class="dimmed" ';
         echo '<a '.$linkcss.' title="'.$str->edit.'" '.
              ' href="category.php?id='.$category->id.'&amp;categoryedit=on&amp;sesskey='.sesskey().'">'.
-             $category->name.'</a>';
+             s($category->name).'</a>';
         echo '</td>';
 
         echo '<td class="count">'.$category->coursecount.'</td>';

@@ -109,17 +109,25 @@ $ALLOWED_PROTOCOLS = array('http', 'https', 'ftp', 'news', 'mailto', 'rtsp', 'te
  *                true should be used to print data from forms and false for data from DB.
  * @return string
  */
-function s($var, $strip=false) {
+function s($var, $strip=false, $specialchars=true) {
 
     if ($var == '0') {  // for integer 0, boolean false, string '0'
         return '0';
     }
 
+    $newvar = $var;
+
     if ($strip) {
-        return preg_replace("/&amp;(#\d+);/i", "&$1;", htmlspecialchars(stripslashes_safe($var)));
-    } else {
-        return preg_replace("/&amp;(#\d+);/i", "&$1;", htmlspecialchars($var));
+        $newvar = stripslashes_safe($newvar);
     }
+
+    if ($specialchars) {
+        $newvar = htmlspecialchars($newvar);
+    }
+
+    // Any lonely ampersands left, convert them using negative lookahead
+    $newvar = preg_replace("/\&(?!amp;|gt;|lt;|quot;)([^&]*)/", "&amp;$1", $newvar);
+    return $newvar;
 }
 
 /**
@@ -141,6 +149,8 @@ function p($var, $strip=false) {
  * Does proper javascript quoting.
  * Do not use addslashes anymore, because it does not work when magic_quotes_sybase is enabled.
  *
+ * @deprecated
+ * @since 1.8 - 22/02/2007
  * @param mixed value
  * @return mixed quoted result
  */
@@ -2184,6 +2194,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
 
     ob_start();
+    $title = s($title); // fix for MDL-8582
     include($CFG->header);
     $output = ob_get_contents();
     ob_end_clean();
@@ -2278,10 +2289,10 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
 
     $shortname ='';
     if ($COURSE->id != SITEID) {
-        $shortname = '<a href="'.$CFG->wwwroot.'/course/view.php?id='. $COURSE->id .'">'. $COURSE->shortname .'</a> ->';
+        $shortname = '<a href="'.$CFG->wwwroot.'/course/view.php?id='. $COURSE->id .'">'. s($COURSE->shortname) .'</a> ->';
     }
 
-    $output = print_header($COURSE->shortname .': '. $title, $COURSE->fullname .' '. $heading, $shortname .' '. $navigation, $focus, $meta,
+    $output = print_header(s($COURSE->shortname) .': '. s($title), s($COURSE->fullname) .' '. s($heading), $shortname.' '. $navigation, $focus, $meta,
                            $cache, $button, $menu, $usexml, $bodytags, true);
 
     if ($return) {
@@ -2319,7 +2330,7 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
             $home  = true;
         } else {
             $homelink = '<div class="homelink"><a '.$CFG->frametarget.' href="'.$CFG->wwwroot.
-                        '/course/view.php?id='.$course->id.'">'.$course->shortname.'</a></div>';
+                        '/course/view.php?id='.$course->id.'">'.s($course->shortname).'</a></div>';
             $home  = false;
         }
     } else {
@@ -2780,9 +2791,10 @@ function print_navigation ($navigation, $separator=0, $return=false) {
         if (! $site = get_site()) {
             $site->shortname = get_string('home');
         }
-        $navigation = "<li>$separator ". str_replace('->', "</li>\n<li>$separator", $navigation) ."</li>\n";
+
+        $navigation = "<li>$separator ". str_replace('->', "</li>\n<li>$separator", s($navigation, false, false)) ."</li>\n";
         $output .= '<li class="first"><a '.$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'. $CFG->wwwroot.((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID)) && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
-                                                                       ? '/my' : '') .'/">'. $site->shortname ."</a></li>\n". $navigation;
+                                                                       ? '/my' : '') .'/">'. s($site->shortname) ."</a></li>\n". $navigation;
         $output .= "</ul>\n";
     }
 

@@ -1454,7 +1454,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
 
     // check to see if user can add menus
     if (!has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))) {
-        return false;  
+        return false;
     }
 
     static $resources = false;
@@ -1557,9 +1557,9 @@ function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
 
     if ($category) {
         if ($path) {
-            $path = $path.' / '.$category->name;
+            $path = $path.' / '.s($category->name);
         } else {
-            $path = $category->name;
+            $path = s($category->name);
         }
         $list[$category->id] = $path;
     } else {
@@ -2208,7 +2208,7 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     $modcontext = get_context_instance(CONTEXT_MODULE, $mod->id);
     // no permission to edit
     if (!has_capability('moodle/course:manageactivities', $modcontext)) {
-        return false;  
+        return false;
     }
 
     if (!isset($str)) {
@@ -2284,7 +2284,7 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     } else {
         $groupmode = "";
     }
-    
+
     if (has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $mod->course))) {
         if ($moveselect) {
             $move =     '<a class="editing_move" title="'.$str->move.'" href="'.$path.'/mod.php?copy='.$mod->id.
