@@ -45,7 +45,7 @@ function xmldb_lesson_upgrade($oldversion=0) {
         $result = $result && change_field_notnull($table, $field);
     }
 
-    if ($result && $oldversion < 2007020201) {
+    if ($result && $oldversion < 2006091804) {
 
     /// Changing nullability of field answer on table lesson_answers to null
         $table = new XMLDBTable('lesson_answers');
