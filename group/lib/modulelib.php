@@ -166,6 +166,9 @@ function groups_m_get_groups_for_user($cm, $userid) {
     elseif (GROUP_ANY_GROUPING == $groupingid) {
         return groups_get_groups_for_user($userid, $cm->course);
     }
+    elseif (GROUP_NOT_IN_GROUPING == $groupingid) {
+        return groups_get_groups_not_in_any_grouping($cm->course);
+    }
     return groups_get_groups_for_user_in_grouping($userid, $groupingid);
 } 
 
