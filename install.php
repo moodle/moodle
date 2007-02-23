@@ -1090,6 +1090,9 @@ function css_styles() {
         font-size: 10pt;
     }
     a { text-decoration: none; color: blue; }
+    a img {
+        border: none;
+    }
     .errormsg {
         color: red;
         font-weight: bold;
