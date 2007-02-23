@@ -17,6 +17,7 @@ require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->libdir . '/simpletestlib/simpletest.php');
 require_once($CFG->libdir . '/simpletestlib/unit_tester.php');
 require_once($CFG->libdir . '/simpletestlib/expectation.php');
+require_once($CFG->libdir . '/simpletestlib/reporter.php');
 
 /**
  * Recursively visit all the files in the source tree. Calls the callback

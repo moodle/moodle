@@ -1452,6 +1452,11 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 function print_section_add_menus($course, $section, $modnames, $vertical=false, $return=false) {
     global $CFG;
 
+    // check to see if user can add menus
+    if (!has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))) {
+        return false;
+    }
+
     static $resources = false;
     static $activities = false;
 
@@ -1552,9 +1557,9 @@ function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
 
     if ($category) {
         if ($path) {
-            $path = $path.' / '.$category->name;
+            $path = $path.' / '.s($category->name);
         } else {
-            $path = $category->name;
+            $path = s($category->name);
         }
         $list[$category->id] = $path;
     } else {
@@ -2200,6 +2205,12 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     static $str;
     static $sesskey;
 
+    $modcontext = get_context_instance(CONTEXT_MODULE, $mod->id);
+    // no permission to edit
+    if (!has_capability('moodle/course:manageactivities', $modcontext)) {
+        return false;
+    }
+
     if (!isset($str)) {
         $str->delete         = get_string("delete");
         $str->move           = get_string("move");
@@ -2272,20 +2283,22 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
         $groupmode = "";
     }
 
-    if ($moveselect) {
-        $move =     '<a class="editing_move" title="'.$str->move.'" href="'.$path.'/mod.php?copy='.$mod->id.
-                    '&amp;sesskey='.$sesskey.$section.'"><img'.
-                    ' src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" '.
-                    ' alt="'.$str->move.'" /></a>'."\n";
-    } else {
-        $move =     '<a class="editing_moveup" title="'.$str->moveup.'" href="'.$path.'/mod.php?id='.$mod->id.
-                    '&amp;move=-1&amp;sesskey='.$sesskey.$section.'"><img'.
-                    ' src="'.$CFG->pixpath.'/t/up.gif" class="iconsmall" '.
-                    ' alt="'.$str->moveup.'" /></a>'."\n".
-                    '<a class="editing_movedown" title="'.$str->movedown.'" href="'.$path.'/mod.php?id='.$mod->id.
-                    '&amp;move=1&amp;sesskey='.$sesskey.$section.'"><img'.
-                    ' src="'.$CFG->pixpath.'/t/down.gif" class="iconsmall" '.
-                    ' alt="'.$str->movedown.'" /></a>'."\n";
+    if (has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $mod->course))) {
+        if ($moveselect) {
+            $move =     '<a class="editing_move" title="'.$str->move.'" href="'.$path.'/mod.php?copy='.$mod->id.
+                        '&amp;sesskey='.$sesskey.$section.'"><img'.
+                        ' src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" '.
+                        ' alt="'.$str->move.'" /></a>'."\n";
+        } else {
+            $move =     '<a class="editing_moveup" title="'.$str->moveup.'" href="'.$path.'/mod.php?id='.$mod->id.
+                        '&amp;move=-1&amp;sesskey='.$sesskey.$section.'"><img'.
+                        ' src="'.$CFG->pixpath.'/t/up.gif" class="iconsmall" '.
+                        ' alt="'.$str->moveup.'" /></a>'."\n".
+                        '<a class="editing_movedown" title="'.$str->movedown.'" href="'.$path.'/mod.php?id='.$mod->id.
+                        '&amp;move=1&amp;sesskey='.$sesskey.$section.'"><img'.
+                        ' src="'.$CFG->pixpath.'/t/down.gif" class="iconsmall" '.
+                        ' alt="'.$str->movedown.'" /></a>'."\n";
+        }
     }
 
     $leftright = "";
