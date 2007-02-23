@@ -1676,7 +1676,7 @@ function print_category_info($category, $depth, $files = false) {
             echo '</td>';
         }
 
-        echo '<td valign="top">'.$catimage.'</td>';
+        echo '<td valign="top" class="category image">'.$catimage.'</td>';
         echo '<td valign="top" class="category name">';
         echo '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'.$category->name.'</a>';
         echo '</td>';

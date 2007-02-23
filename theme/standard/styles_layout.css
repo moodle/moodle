@@ -1618,7 +1618,13 @@ body#course-index .addcategory {
 }
 
 .categorylist {
-  width:100%;
+  width:90%;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.categorylist .category.image {
+  width:20px;
 }
 
 .categoryboxcontent {
