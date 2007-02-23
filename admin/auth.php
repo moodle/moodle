@@ -251,69 +251,58 @@ $guestoptions[0] = get_string("hide");
 $guestoptions[1] = get_string("show");
 
 echo '<hr />';
+
+echo '<form '.$CFG->frametarget.' id="adminsettings" method="post" action="auth.php">';
+echo '<div class="settingsform">';
 print_heading(get_string('auth_common_settings', 'auth'));
-
-echo '<form '.$CFG->frametarget.' id="authmenu" method="post" action="auth.php">';
-echo '<fieldset class="invisiblefieldset"><input type="hidden" name="sesskey" value="'.sesskey().'" />';
-echo '<input type="hidden" name="action" value="save" /></fieldset>';
-
-echo '<table cellspacing="0" cellpadding="5" border="0" style="margin-left:auto;margin-right:auto">';
+echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+echo '<input type="hidden" name="action" value="save" />';
+echo '<fieldset>';
+##echo '<table cellspacing="0" cellpadding="5" border="0" style="margin-left:auto;margin-right:auto">';
 
 // User self registration
-echo "<tr valign=\"top\">\n";
-echo "<td align=\"right\" style=\"white-space:nowrap\">\n<label for=\"menuregister\">";
-print_string("selfregistration", "auth");
-echo "</label></td>\n";
-echo "<td>\n";
+echo '<div class="form-item" id="admin-register">';
+echo '<label for = "menuregister">' . get_string("selfregistration", "auth");
+echo '<span class="form-shortname">register</span>';
+echo '</label>';
 choose_from_menu($registrationauths, "register", $CFG->registerauth, "");
-echo "</td>\n";
-echo "<td>\n";
-print_string("selfregistration_help", "auth");
-echo "</td></tr>\n";
+echo '<div class="description">' . get_string("selfregistration_help", "auth") . '</div>';
+echo '</div>';
 
 // Login as guest button enabled
-echo "<tr valign=\"top\">\n";
-echo "<td style=\"white-space:nowrap;text-align:right\">\n<label for=\"menuguestloginbutton\">";
-print_string("guestloginbutton", "auth");
-echo "</label></td>\n";
-echo "<td>\n";
+echo '<div class="form-item" id="admin-guestloginbutton">';
+echo '<label for = "menuguestloginbutton">' . get_string("guestloginbutton", "auth");
+echo '<span class="form-shortname">guestloginbutton</span>';
+echo '</label>';
 choose_from_menu($guestoptions, "guestloginbutton", $CFG->guestloginbutton, "");
-echo "</td>\n";
-echo "<td>\n";
-print_string("showguestlogin","auth");
-echo "</td></tr>\n";
+echo '<div class="description">' . get_string("showguestlogin", "auth") . '</div>';
+echo '</div>';
 
 /// An alternate url for the login form. It means we can use login forms that are integrated
 /// into non-moodle pages
-echo "<tr valign=\"top\">\n";
-echo "<td align=\"right\" style=\"white-space:nowrap\">\n<label for=\"alternateloginurl\">";
-print_string('alternateloginurl', 'auth');
-echo "</label></td>\n";
-echo "<td>\n";
-echo '<input type="text" size="40" name="alternateloginurl" id="alternateloginurl" value="'.$CFG->alternateloginurl."\" />\n";
-echo "</td>\n";
-echo "<td>\n";
-print_string('alternatelogin', 'auth', htmlspecialchars($CFG->wwwroot.'/login/index.php'));
-echo "</td>\n";
-echo "</tr>\n";
+echo '<div class="form-item" id="admin-alternateloginurl">';
+echo '<label for = "alternateloginurl">' . get_string("alternateloginurl", "auth");
+echo '<span class="form-shortname">alternateloginurl</span>';
+echo '</label>';
+echo '<input type="text" size="60" name="alternateloginurl" id="alternateloginurl" value="'.$CFG->alternateloginurl."\" />\n";
+echo '<div class="description">' . get_string("alternatelogin", "auth", htmlspecialchars($CFG->wwwroot.'/login/index.php')) . '</div>';
+echo '</div>';
 
-echo "<tr valign=\"top\">\n";
-echo "<td align=\"right\" style=\"white-space:nowrap\">\n<label for=\"auth_instructions\">";
-print_string('instructions', 'auth');
-echo "</label></td>\n";
-echo "<td>\n";
+/// Instructions about login/password
+/// to be showed to users
+echo '<div class="form-item" id="admin-auth_instructions">';
+echo '<label for = "auth_instructions">' . get_string("instructions", "auth");
+echo '<span class="form-shortname">auth_instructions</span>';
+echo '</label>';
 echo '<textarea cols="30" rows="4" name="auth_instructions" id="auth_instructions">'.s($CFG->auth_instructions)."</textarea>\n";
-echo "</td>\n";
-echo "<td>\n";
-print_string('authinstructions', 'auth');
-echo "</td>\n";
-echo "</tr>\n";
+echo '<div class="description">' . get_string("authinstructions", "auth") . '</div>';
+echo '</div>';
 
-echo "</table>\n";
+echo '</fieldset>';
 
 ////////////////////////////////////////////////////////////////////////////////
-
-echo '<div style="text-align:center"><input type="submit" value="'.get_string('savechanges').'" /></div>';
+echo '<div class="form-buttons"><input class="form-submit" type="submit" value="'.get_string('savechanges', 'admin').'" /></div>';
+echo '</div>';
 echo '</form>';
 admin_externalpage_print_footer($adminroot);
 
