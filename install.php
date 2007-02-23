@@ -127,6 +127,7 @@ $CFG->dataroot = $INSTALL['dataroot'];
 $CFG->admin = $INSTALL['admindirname'];
 $CFG->directorypermissions = 00777;
 $CFG->running_installer = true;
+$COURSE->id = 0;
 
 /// Include some moodle libraries
 
