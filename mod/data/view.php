@@ -407,6 +407,7 @@
             data_print_template('singletemplate', $records, $data, $search, $page);
         } else if ($search){
             notify(get_string('nomatch','data'));
+            data_print_show_all_form($data, $perpage, $sort, $order, $mode);  
         } else {
             notify(get_string('norecords','data'));
         }
@@ -446,7 +447,7 @@
     }
 
     if ($records || $search || $page) {
-        data_print_preference_form($data, $perpage, $search, $sort, $order);
+        data_print_preference_form($data, $perpage, $search, $sort, $order, $mode);
     }
 
 /// If we have blocks, then print the left side here
