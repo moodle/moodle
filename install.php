@@ -24,6 +24,8 @@ define ('REDIRECT',           8); /// 8. Redirect to index.php
 ///==========================================================================//
 
 
+/// This has to be defined to avoid a notice in current_language()
+define('SITEID', 0);
 
 /// Begin the session as we are holding all information in a session
 /// variable until the end.
