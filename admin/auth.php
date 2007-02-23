@@ -263,7 +263,7 @@ echo '<fieldset>';
 // User self registration
 echo '<div class="form-item" id="admin-register">';
 echo '<label for = "menuregister">' . get_string("selfregistration", "auth");
-echo '<span class="form-shortname">register</span>';
+echo '<span class="form-shortname">registerauth</span>';
 echo '</label>';
 choose_from_menu($registrationauths, "register", $CFG->registerauth, "");
 echo '<div class="description">' . get_string("selfregistration_help", "auth") . '</div>';
