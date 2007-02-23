@@ -23,6 +23,14 @@
     vertical-align: middle;
 }
 
+.mod-lesson .invisiblefieldset.fieldsetfix {
+    display: block;
+}
+
+.mod-lesson .invisiblefieldset.fieldsetfix tr {
+    text-align: left;
+}
+
 /***
  *** Style for view.php
  ***/

@@ -25,10 +25,7 @@
         $course = get_record('course', 'id', $lesson->course);
     }
 
-    $tabs     = array();
-    $row      = array();
-    $inactive = array();
-
+    $tabs = $row = $inactive = $activated = array();
 
 /// user attempt count for reports link hover (completed attempts - much faster)
     $counts           = new stdClass;
@@ -53,6 +50,7 @@
         case 'reportdetail':
         /// sub tabs for reports (overview and detail)
             $inactive[] = 'reports';
+            $activated[] = 'reports';
 
             $row    = array();
             $row[]  = new tabobject('reportoverview', "$CFG->wwwroot/mod/lesson/report.php?id=$cm->id&amp;action=reportoverview", get_string('overview', 'lesson'));
@@ -64,6 +62,7 @@
         case 'single':
         /// sub tabs for edit view (collapsed and expanded aka full)
             $inactive[] = 'edit';
+            $activated[] = 'edit';
             
             $row    = array();
             $row[]  = new tabobject('collapsed', "$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id&amp;mode=collapsed", get_string('collapsed', 'lesson'));
@@ -72,6 +71,6 @@
             break;
     }
 
-    print_tabs($tabs, $currenttab, $inactive);
+    print_tabs($tabs, $currenttab, $inactive, $activated);
 
 ?>

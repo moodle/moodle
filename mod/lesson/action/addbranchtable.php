@@ -37,7 +37,7 @@
     print_heading_with_help(get_string("addabranchtable", "lesson"), "overview", "lesson");
     ?>
     <form id="form" method="post" action="lesson.php" class="addform">
-    <fieldset class="invisiblefieldset">
+    <fieldset class="invisiblefieldset fieldsetfix">
     <input type="hidden" name="id" value="<?PHP echo $cm->id ?>" />
     <input type="hidden" name="action" value="insertpage" />
     <input type="hidden" name="pageid" value="<?PHP echo $pageid ?>" />
@@ -45,13 +45,15 @@
     <input type="hidden" name="sesskey" value="<?PHP echo $USER->sesskey ?>" />
     <table class="generalbox boxaligncenter" cellpadding="5" border="1">
     <tr valign="top">
-    <td><b><label for="title"><?php print_string("pagetitle", "lesson"); ?>:</label></b><br />
+    <td><strong><label for="title"><?php print_string("pagetitle", "lesson"); ?>:</label></strong><br />
     <input type="text" id="title" name="title" size="80" value="" /></td></tr>
     <?php
     echo "<tr><td><strong>";
     echo get_string("pagecontents", "lesson").":</strong><br />\n";
-    print_textarea($usehtmleditor, 25,70, 630, 400, "contents");
-    use_html_editor("contents");
+    print_textarea($usehtmleditor, 25,70, 0, 0, "contents");
+    if ($usehtmleditor) {
+        use_html_editor("contents");
+    }
     echo "</td></tr>\n";
     echo "<tr><td>\n";
     echo "<div class=\"boxaligncenter addform\"><input name=\"layout\" type=\"checkbox\" value=\"1\" checked=\"checked\" />";
@@ -62,10 +64,10 @@
     echo "</td></tr>\n";
     for ($i = 0; $i < $lesson->maxanswers; $i++) {
         $iplus1 = $i + 1;
-        echo "<tr><td><b>".get_string("description", "lesson")." $iplus1:</b><br />\n";
+        echo "<tr><td><strong>".get_string("description", "lesson")." $iplus1:</strong><br />\n";
         print_textarea(false, 10, 70, 630, 300, "answer[$i]");  // made the default set to off also removed use_html_editor(); line from down below, which made all textareas turn into html editors
         echo "</td></tr>\n";
-        echo "<tr><td><b>".get_string("jump", "lesson")." $iplus1:</b> \n";
+        echo "<tr><td><strong>".get_string("jump", "lesson")." $iplus1:</strong> \n";
         if ($i) {
             // answers 2, 3, 4... jumpto this page
             choose_from_menu($jump, "jumpto[$i]", 0, "");

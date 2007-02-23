@@ -52,7 +52,7 @@
                 get_string("addabranchtable", "lesson")."</a></td></tr><tr><td>".
                 "<a href=\"lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=0&amp;firstpage=1\">".
                 get_string("addaquestionpage", "lesson").
-                "</a></td></tr></table>\n", 'center');
+                "</a></td></tr></table>\n", 'center', '20%');
         }
     } else {
         // Set some standard variables

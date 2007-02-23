@@ -688,14 +688,14 @@
                         }
                         // Each button must have its own form inorder for it to work with JavaScript turned off
                         $button  = "<form id=\"answerform$i\" method=\"post\" action=\"$CFG->wwwroot/mod/lesson/lesson.php\">\n".
-                                   '<fieldset class="invisiblefieldset">';
+                                   '<fieldset class="invisiblefieldset">'.
                                    "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n".
                                    "<input type=\"hidden\" name=\"action\" value=\"continue\" />\n".
                                    "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />\n".
                                    "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n".
                                    "<input type=\"hidden\" name=\"jumpto\" value=\"$answer->jumpto\" />\n".
                                    lesson_print_submit_link(strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)), "answerform$i", '', $class, '', '', true).
-                                   '<fieldset>'.
+                                   '</fieldset>'.
                                    '</form>';
                         
                         $buttons[$type][] = $button;
@@ -722,11 +722,13 @@
                         echo '</div><!--end slideshow div-->';
                         echo $fullbuttonhtml;
                     } else {
-                        echo '<tr><td>';
+                        echo '<tr><td></td></tr></table>'; // ends the answers table
+                        // When buttons are horizontal and inside the table, the button then line wraps when clicked in FF.
+                        //  Seems like the border-collapse might be the problem?  Easiest fix is to move the buttons outside
+                        //  of the table.
                         print_simple_box_start('center');
                         echo $fullbuttonhtml;
                         print_simple_box_end();
-                        echo '</td></tr></table>'; // ends the answers table
                     }
                     
                     break;
