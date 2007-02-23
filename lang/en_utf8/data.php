@@ -203,6 +203,7 @@ $string['savetemplate'] = 'Save template';
 $string['sendinratings'] = 'Send in my latest ratings';
 $string['single'] = 'View single';
 $string['singletemplate'] = 'Single template';
+$string['showall'] = 'Show all entries';
 $string['teachersandstudents'] = '$a->teachers and $a->students';
 $string['templates'] = 'Templates';
 $string['templatesaved'] = 'Template saved';

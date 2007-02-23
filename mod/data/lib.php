@@ -904,6 +904,24 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
 }
 
 
+function data_print_show_all_form($data, $perpage, $sort, $order, $mode) {
+    echo '<div align="center">';
+    echo '<form id="options" action="view.php" method="get">';
+    echo '<fieldset class="invisiblefieldset">';
+    echo '<input type="hidden" name="d" value="'.$data->id.'" />';
+    echo '<input type="hidden" name="perpage" value="'.$perpage.'" />';
+    echo '<input type="hidden" name="search" value="" />'; // clear search
+    echo '<input type="hidden" name="sort" value="'.$sort.'" />';
+    echo '<input type="hidden" name="order" value="'.$order.'" />';    
+    echo '<input type="hidden" name="mode" value="'.$mode.'" />';   
+    echo '<input type="submit" value="'.get_string('showall','data').'" />';
+
+    echo '</fieldset>';
+    echo '</form>';
+    echo '</div>';      
+}
+
+
 /************************************************************************
  * function that takes in the current data, number of items per page,   *
  * a search string and prints a preference box in view.php              *
@@ -912,7 +930,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
  *       @param string $search                                          *
  * output null                                                          *
  ************************************************************************/
-function data_print_preference_form($data, $perpage, $search, $sort='', $order='ASC'){
+function data_print_preference_form($data, $perpage, $search, $sort='', $order='ASC', $mode='single'){
     echo '<br /><div class="datapreferences" style="text-align:center">';
     echo '<form id="options" action="view.php" method="get">';
     echo '<fieldset class="invisiblefieldset">';
@@ -949,6 +967,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '</select>';
     //print ASC or DESC
     echo '&nbsp;&nbsp;&nbsp;';
+    echo '<input type="hidden" name="mode" value="'.$mode.'" />';  
     echo '<input type="submit" value="'.get_string('savesettings','data').'" />';
     echo '</fieldset>';
     echo '</form>';
