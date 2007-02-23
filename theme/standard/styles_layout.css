@@ -208,6 +208,7 @@ img.grouppicture {
 .informationbox {
   border-width:1px;
   border-style:solid;
+  padding: 10px;
 }
 
 .feedbackbox {
