@@ -109,25 +109,17 @@ $ALLOWED_PROTOCOLS = array('http', 'https', 'ftp', 'news', 'mailto', 'rtsp', 'te
  *                true should be used to print data from forms and false for data from DB.
  * @return string
  */
-function s($var, $strip=false, $specialchars=true) {
+function s($var, $strip=false) {
 
     if ($var == '0') {  // for integer 0, boolean false, string '0'
         return '0';
     }
 
-    $newvar = $var;
-
     if ($strip) {
-        $newvar = stripslashes_safe($newvar);
+        return preg_replace("/&amp;(#\d+);/i", "&$1;", htmlspecialchars(stripslashes_safe($var)));
+    } else {
+        return preg_replace("/&amp;(#\d+);/i", "&$1;", htmlspecialchars($var));
     }
-
-    if ($specialchars) {
-        $newvar = htmlspecialchars($newvar);
-    }
-
-    // Any lonely ampersands left, convert them using negative lookahead
-    $newvar = preg_replace("/\&(?!amp;|gt;|lt;|quot;)([^&]*)/", "&amp;$1", $newvar);
-    return $newvar;
 }
 
 /**
@@ -1370,6 +1362,43 @@ function text_format_name( $key ) {
   return $value;
 }
 
+/**
+ * Prepare title for course, activity, post, ...
+ * This function is safe to use on untrusted content.
+ *
+ * @since 1.8
+ *
+ * @param string  $string     The string to be filtered (without magic quotes).
+ * @param boolean $plaintext  Convert string to plaintext, otherwise keep fancy html tags
+ * @param int     $courseid   Current course as filters can, potentially, use it
+ * @return string
+ */
+function format_title($string, $plaintext=true, $courseid=null) {
+    global $CFG;
+
+    if ($plaintext) {
+        /// use filters if required (mostly multilang) and convert to plain text
+        return s(format_string($string, true, $courseid));
+
+    } else {
+        /// tidy up common html validity problems and format the text, keep safe html 
+
+        // Any lonely ampersands present, convert them using negative lookahead - xhtml strict cleanup
+        $string = preg_replace("/\&(?![a-z]+;|#\d+;)([^&]*)/", "&amp;$1", $string);
+
+        // TODO: try to add some detection of lonely < and > and convert them to html entitites
+
+        // use filters if needed and cleam text
+        $options = new object();
+        $options->smiley = false;
+        $options->filter = !empty($CFG->filterall); 
+        $string = format_text($string, FORMAT_HTML, $options, $courseid);
+
+        //filters often produce links, we do not want these in titles
+        return preg_replace('/(<a[^>]+?>)(.+?)(<\/a>)/is','$2', $string);
+    }
+}
+
 /** Given a simple string, this function returns the string
  *  processed by enabled filters if $CFG->filterall is enabled
  *
@@ -1383,18 +1412,18 @@ function format_string ($string, $striplinks = false, $courseid=NULL ) {
     global $CFG, $COURSE;
 
     //We'll use a in-memory cache here to speed up repeated strings
-    static $strcache;
+    static $strcache = false;
+
+    if ($strcache === false) {
+        $strcache = array();
+    }
 
     //Calculate md5
-    $md5 = md5($string.'<+>'.$striplinks);
+    $md5 = md5($string.'<+>'.$striplinks.'<+>'.$courseid);
 
     //Fetch from cache if possible
     if(isset($strcache[$md5])) {
         return $strcache[$md5];
-    }
-
-    if (empty($courseid)) {
-        $courseid = $COURSE->id;       // (copied from format_text)
     }
 
     if (!empty($CFG->filterall)) {
