@@ -772,7 +772,7 @@
         lesson_set_message('('.get_string("maximumnumberofattemptsreached", "lesson").')');
     }
     
-    lesson_print_header($cm, $course, $lesson, 'navigation');
+    lesson_print_header($cm, $course, $lesson, 'view');
 
     include(dirname(__FILE__).'/continue.html');
 ?>
