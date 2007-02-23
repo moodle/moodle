@@ -77,7 +77,7 @@ class block_course_list extends block_list {
                 if ($courses) {
                     foreach ($courses as $course) {
                         $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
-                        $this->content->items[]="<a $linkcss title=\"$course->shortname\" ".
+                        $this->content->items[]="<a $linkcss title=\"".s($course->shortname)."\" ".
                                    "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
                         $this->content->icons[]=$icon;
                     }
