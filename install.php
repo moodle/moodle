@@ -66,7 +66,7 @@ if ( empty($INSTALL['language']) and empty($_POST['language']) ) {
 /// To be used by the Installer
     $INSTALL['wwwroot']         = '';
     $INSTALL['dirroot']         = dirname(__FILE__);
-    $INSTALL['dataroot']        = dirname(dirname(__FILE__)) . '/moodledata';
+    $INSTALL['dataroot']        = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'moodledata';
 
 /// To be configured in the Installer
     $INSTALL['wwwrootform']         = '';
