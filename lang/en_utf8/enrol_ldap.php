@@ -30,6 +30,7 @@ $string['enrol_ldap_bind_dn'] = 'If you want to use bind-user to search users,
                                  \'cn=ldapuser,ou=public,o=org\'';
 $string['enrol_ldap_bind_pw'] = 'Password for bind-user.';
 $string['enrol_ldap_category'] = 'The category for auto-created courses.';
+$string['enrol_ldap_contexts'] = 'LDAP contexts';
 $string['enrol_ldap_course_fullname'] = 'Optional: LDAP field to get the full name from.';
 $string['enrol_ldap_course_idnumber'] = 'Map to the unique identifier in LDAP, usually
                                          <em>cn</em> or <em>uid</em>. It is 
@@ -43,8 +44,10 @@ $string['enrol_ldap_general_options'] = 'General Options';
 $string['enrol_ldap_host_url'] = 'Specify LDAP host in URL-form like 
                                   \'ldap://ldap.myorg.com/\' 
                                   or \'ldaps://ldap.myorg.com/\'';
+$string['enrol_ldap_memberattribute'] = 'LDAP member attribute';
 $string['enrol_ldap_objectclass'] = 'objectClass used to search courses. Usually
                                      \'posixGroup\'.';
+$string['enrol_ldap_roles'] = 'Role mapping';
 $string['enrol_ldap_search_sub'] = 'Search group memberships from subcontexts.';
 $string['enrol_ldap_server_settings'] = 'LDAP Server Settings';
 $string['enrol_ldap_student_contexts'] = 'List of contexts where groups with student
