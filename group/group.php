@@ -18,6 +18,7 @@ $err = array();
 
 $courseid   = required_param('courseid', PARAM_INT);         
 $groupingid = optional_param('grouping', false, PARAM_INT);
+$newgrouping= optional_param('newgrouping', false, PARAM_INT);
 $groupid    = optional_param('group', false, PARAM_INT);
 
 $groupsettings->name       = optional_param('name', PARAM_ALPHANUM);
@@ -66,12 +67,19 @@ if ($success) {
             $err['name'] = get_string('missingname');
         }
         elseif (isset($frm->update)) {
-            if (GROUP_NOT_IN_GROUPING == $groupingid) {
-                print_error('errornotingrouping', 'group', groups_home_url($courseid), get_string('notingrouping', 'group'));
-            }
-            if (! $groupid) {
+            if (! $groupid) { //OK, new group.
+                if (GROUP_NOT_IN_GROUPING == $groupingid) {
+                    print_error('errornotingrouping', 'group', groups_home_url($courseid), get_string('notingrouping', 'group'));
+                }
                 $success = (bool)$groupid = groups_create_group($courseid); //$groupsettings);
                 $success = groups_add_group_to_grouping($groupid, $groupingid);
+            }
+            elseif ($groupingid != $newgrouping) { //OK, move group.
+                if (GROUP_NOT_IN_GROUPING == $newgrouping) {
+                    print_error('errornotingrouping', 'group', groups_home_url($courseid), get_string('notingrouping', 'group'));
+                }
+                $success = $success && groups_remove_group_from_grouping($groupid, $groupingid);
+                $success = $success && groups_add_group_to_grouping($groupid, $newgrouping);
             }
             if ($success) {
                 //require_once($CFG->dirroot.'/lib/uploadlib.php');
@@ -193,8 +201,38 @@ if ($success) {
      ?>&nbsp;</label></p>
     <p><?php upload_print_form_fragment(1, array('groupicon'), null,false,null,0,0,false); ?></p>
 <?php 
-    }  
+    }
+
+    if ($groupid) { //OK, editing - option to move grouping.
 ?>
+    <p><label for="groupings"><?php print_string('addgroupstogrouping', 'group'); ?></label></p>
+    <select name="newgrouping" id="groupings" class="select">
+<?php
+    $groupingids = groups_get_groupings($courseid);
+    if (GROUP_NOT_IN_GROUPING == $groupingid) {
+        $groupingids[] = GROUP_NOT_IN_GROUPING;
+    }
+    if ($groupingids) {    
+        // Put the groupings into a hash and sort them
+        foreach($groupingids as $id) {
+            $listgroupings[$id] = groups_get_grouping_displayname($id, $courseid);
+        }
+        natcasesort($listgroupings);
+        
+        // Print out the HTML
+        $count = 1;
+        foreach($listgroupings as $id => $name) {
+            $select = '';
+            if ($groupingid == $id) {
+                $select = ' selected="selected"';
+            }
+            echo "<option value=\"$id\"$select>$name</option>\n";
+            $count++;
+        }
+    }
+?>
+    </select>
+<?php } //IF($groupid) ?>
 
 <p class="fitem">
   <label for="id_submit">&nbsp;</label>

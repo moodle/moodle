@@ -48,8 +48,7 @@ $string['editgroupsettings'] = 'Edit group settings';
 $string['deleteselectedgroup'] = 'Delete selected group';
 $string['removegroupfromselectedgrouping'] = 'Remove group from grouping';  //'selected'
 $string['creategroupinselectedgrouping'] = 'Create group in grouping';
-$string['addexistinggroupstogrouping'] = 'Add existing groups to grouping';
-$string['addgroupstogrouping'] = 'Add groups to grouping';
+$string['addgroupstogrouping'] = 'Add group to grouping'; //'groupS'
 
 $string['removeselectedusers'] = 'Remove selected users';
 $string['adduserstogroup'] = 'Add/remove users';  //'from group'
@@ -79,7 +78,6 @@ $string['newpicture'] = 'New picture';
 $string['defaultgroupdescription'] = 'Default group description';
 
 $string['displaygrouping'] = 'Display grouping';
-$string['addgroupstogrouping'] = 'Add groups to grouping';
 $string['showusersalreadyingroup'] = 'Show users already in a group in the grouping';
 
 $string['save'] = 'Save';
