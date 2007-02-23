@@ -54,6 +54,7 @@
     // give teacher a proforma
     ?>
     <form id="editpage" method="post" action="lesson.php">
+    <fieldset class="invisiblefieldset fieldsetfix">
     <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
     <input type="hidden" name="action" value="updatepage" />
     <input type="hidden" name="pageid" value="<?php echo $pageid ?>" />
@@ -114,7 +115,9 @@
     echo "<tr><td><b>";
     echo get_string("pagecontents", "lesson").":</b><br />\n";
     print_textarea($usehtmleditor, 25, 70, 630, 400, "contents", $page->contents);
-    use_html_editor("contents"); // always the editor
+    if ($usehtmleditor) {
+        use_html_editor("contents");
+    }
     echo "</td></tr>\n";
     $n = 0;
     switch ($page->qtype) {
@@ -477,4 +480,5 @@
     <input type="submit" value="<?php  print_string("savepage", "lesson") ?>" />
     <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
     </center>
+    </fieldset>
     </form>

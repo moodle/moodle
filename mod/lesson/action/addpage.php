@@ -47,7 +47,7 @@
     print_heading_with_help(get_string("addaquestionpage", "lesson"), "overview", "lesson");
     ?>
     <form id="form" method="post" action="lesson.php" class="addform">
-    <fieldset class="invisiblefieldset">
+    <fieldset class="invisiblefieldset fieldsetfix">
     <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
     <input type="hidden" name="action" value="insertpage" />
     <input type="hidden" name="pageid" value="<?php echo $pageid ?>" />
@@ -78,7 +78,9 @@
     echo "<tr><td><b>";
     echo get_string("pagecontents", "lesson").":</b><br />\n";
     print_textarea($usehtmleditor, 25,70, 630, 400, "contents");
-    use_html_editor("contents");
+    if ($usehtmleditor) {
+        use_html_editor("contents");
+    }
     echo "</td></tr>\n";
     switch ($qtype) {
         case LESSON_TRUEFALSE :
