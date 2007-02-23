@@ -158,7 +158,8 @@
             print_heading($userfullname);
         }
     } else if (!empty($USER->newadminuser)) {
-        print_header();
+        $strprimaryadminsetup = get_string('primaryadminsetup');
+        print_header($strprimaryadminsetup, $strprimaryadminsetup);
         print_simple_box(get_string('configintroadmin', 'admin'), 'center', '50%');
         echo '<br />';
     } else {

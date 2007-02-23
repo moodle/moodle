@@ -1122,6 +1122,7 @@ $string['previewhtml'] = 'HTML Format Preview';
 $string['previeworchoose'] = 'Preview or choose a theme';
 $string['previous'] = 'Previous';
 $string['previoussection'] = 'Previous section';
+$string['primaryadminsetup'] = 'Setup administrator account';
 $string['profile'] = 'Profile';
 $string['publicdirectory'] = 'Public directory';
 $string['publicdirectory0'] = 'Please do not publish this site';
