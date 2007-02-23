@@ -149,7 +149,6 @@ function p($var, $strip=false) {
  * Does proper javascript quoting.
  * Do not use addslashes anymore, because it does not work when magic_quotes_sybase is enabled.
  *
- * @deprecated
  * @since 1.8 - 22/02/2007
  * @param mixed value
  * @return mixed quoted result
@@ -1959,8 +1958,8 @@ function highlightfast($needle, $haystack) {
 }
 
 /**
- * Return a string containing lang, xml:lang and optionally 'dir' HTML attributes.
- * Internationalisation, for print_header and backup/restorlib.
+ * Return a string containing 'lang', xml:lang and optionally 'dir' HTML attributes.
+ * Internationalisation, for print_header and backup/restorelib.
  * @param $dir Default false.
  * @return string Attributes.
  */
@@ -3823,7 +3822,9 @@ function update_course_icon($courseid) {
     global $CFG, $USER;
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
-    
+
+    $capcheck = false;      
+
     if (has_capability('moodle/course:manageactivities', $coursecontext) ||
         has_capability('moodle/site:manageblocks', $coursecontext)) {
         $capcheck = true;      
