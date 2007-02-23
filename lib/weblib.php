@@ -149,7 +149,6 @@ function p($var, $strip=false) {
  * Does proper javascript quoting.
  * Do not use addslashes anymore, because it does not work when magic_quotes_sybase is enabled.
  *
- * @deprecated
  * @since 1.8 - 22/02/2007
  * @param mixed value
  * @return mixed quoted result
