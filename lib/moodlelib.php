@@ -4064,7 +4064,7 @@ function clean_filename($string) {
 function current_language() {
     global $CFG, $USER, $SESSION, $COURSE;
 
-    if ($COURSE->id != SITEID and !empty($COURSE->lang)) {    // Course language can override all other settings for this page
+    if (!empty($COURSE->id) and $COURSE->id != SITEID and !empty($COURSE->lang)) {    // Course language can override all other settings for this page
         $return = $COURSE->lang;
 
     } else if (!empty($SESSION->lang)) {    // Session language can override other settings
