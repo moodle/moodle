@@ -89,7 +89,7 @@ if ($data = data_submitted()) {
 // header must be printed after the redirects and require_logout
 
 if (empty($SITE->fullname)) {
-    print_header();
+    print_header($root->visiblename, $root->visiblename);
     print_simple_box(get_string('configintrosite', 'admin'), 'center', '50%');
 
     if ($statusmsg != '') {
@@ -103,7 +103,6 @@ if (empty($SITE->fullname)) {
     echo '<input type="hidden" name="section" value="' . $PAGE->section . '" />';
     echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
     echo '<input type="hidden" name="return" value="' . $return . '" />';
-    print_heading($root->visiblename);
 
     echo $root->output_html();
 
