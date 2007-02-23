@@ -157,7 +157,7 @@ function groups_m_get_selected_group($cmid, $permissiontype, $userid) {
 function groups_m_get_groups_for_user($cm, $userid) {
 //echo 'User'; print_object($cm);
     $groupingid = groups_get_grouping_for_coursemodule($cm);
-    if (!$groupingid) {
+    if (!$groupingid || GROUP_NOT_IN_GROUPING == $groupingid) { //TODO: check.
         return false;
     }
     if (!isset($cm->course) || !groupmode($cm->course, $cm)) {

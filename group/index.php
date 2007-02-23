@@ -120,7 +120,7 @@ if ($success) {
             }
             redirect(groups_group_edit_url($courseid, null, $groupingid, false));
             break;
-        case 'addgroupstogroupingsform':
+        case 'addgroupstogroupingform':
             break;
         case 'updategroups': //Currently reloading.
             break;
@@ -176,7 +176,10 @@ if ($success) {
 <?php
 
     $groupingids = groups_get_groupings($courseid);
-    $groupingids[] = GROUP_NOT_IN_GROUPING;
+    if (groups_count_groups_in_grouping(GROUP_NOT_IN_GROUPING, $courseid) > 0) {
+        //NOTE, only show the pseudo-grouping if it has groups.
+        $groupingids[] = GROUP_NOT_IN_GROUPING;
+    }
 
     if ($groupingids) {    
         // Put the groupings into a hash and sort them
@@ -248,7 +251,7 @@ if ($success) {
 <?php } ?>
             <p><input type="submit" name="act_showcreategroupform" id="showcreategroupform" value="<?php print_string('creategroupinselectedgrouping', 'group'); ?>" /></p>
 <?php if ($shownotdone) { ?>
-            <p><input type="submit" disabled="disabled" name="act_addgroupstogroupingsform" id="showaddgroupstogroupingform" value="<?php print_string('addexistinggroupstogrouping', 'group'); ?>" /></p>
+            <p><input type="submit" disabled="disabled" name="act_addgroupstogroupingform" id="showaddgroupstogroupingform" value="<?php print_string('addgroupstogrouping', 'group'); ?>" /></p>
 <?php } ?>
             </td>
             <td>
