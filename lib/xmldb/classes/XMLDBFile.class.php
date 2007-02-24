@@ -80,10 +80,14 @@ class XMLDBFile extends XMLDBObject {
         /// Create and load XML file
             $parser = new DOMDocument();
             $parser->load($this->path);
-        /// Validate XML file against schema
-            if (!$parser->schemaValidate($this->schema)) {
-            /// Get errors
-                $errors = libxml_get_errors();
+        /// Only validate if we have a schema
+            if (!empty($this->schema) && file_exists($this->schema)) {
+                $parser->schemaValidate($this->schema);
+            }
+        /// Check for errors
+            $errors = libxml_get_errors();
+        /// Prepare errors
+            if (!empty($errors)) {
             /// Create one structure to store errors
                 $structure = new XMLDBStructure($this->path);
             /// Add errors to structure
