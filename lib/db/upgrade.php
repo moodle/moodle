@@ -133,6 +133,11 @@ function xmldb_main_upgrade($oldversion=0) {
 
     // Move the auth plugin settings into the config_plugin table
     if ($oldversion < 2007010300) {
+        if ($CFG->auth == 'email') {
+            set_config('registerauth', 'email');
+        } else {
+            set_config('registerauth', '');
+        }
         $authplugins = get_list_of_plugins('auth');
         foreach ($CFG as $k => $v) {
             if (strpos($k, 'auth_') !== 0) {

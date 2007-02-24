@@ -207,6 +207,7 @@
                                                    'enrol' => 'manual',
                                                    'enrol_plugins_enabled' => 'manual',
                                                    'guestloginbutton' => 1,
+                                                   'registerauth' => 'email',
                                                    'style' => 'default',
                                                    'template' => 'default',
                                                    'theme' => 'standardwhite',
