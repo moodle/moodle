@@ -428,7 +428,8 @@ class page_course extends page_base {
         if($this->id == SITEID) {
             return parent::get_format_name();
         }
-        return $this->body_id.'-'.$this->courserecord->format;
+        // This needs to reflect the path hierarchy under Moodle root.
+        return 'course-view-'.$this->courserecord->format;
     }
 
     // This should return a fully qualified path to the URL which is responsible for displaying us.
