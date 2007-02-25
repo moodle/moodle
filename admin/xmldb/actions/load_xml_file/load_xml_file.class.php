@@ -95,9 +95,7 @@ class load_xml_file extends XMLDBAction {
                 $loaded = $xmldb_file->loadXMLStructure();
                 if ($loaded && $xmldb_file->isLoaded()) {
                     $dbdir->xml_loaded = true;
-                    if (!empty($dbdir->filemtime)) {
-                        $dbdir->filemtime = filemtime($dbdir->path . '/install.xml'); 
-                    }
+                    $dbdir->filemtime = filemtime($dbdir->path . '/install.xml'); 
                 }
                 $dbdir->xml_file = $xmldb_file;
             } else {
