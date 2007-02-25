@@ -157,6 +157,13 @@ class main_view extends XMLDBAction {
                     !empty($dbdir->xml_loaded) &&
                     !empty($dbdir->xml_changed)) {
                     $b .= '<a href="index.php?action=save_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['save'] . ']</a>';
+                /// Check if the file has been manually edited while being modified in the editor
+                    if ($dbdir->filemtime != filemtime($key . '/install.xml')) {
+                    /// File manually modified. Add to errors.
+                        if ($structure =& $dbdir->xml_file->getStructure()) {
+                            $structure->errormsg = 'Warning: File locally modified while using the XMLDB Editor. Saving will overwrite local changes';
+                        }
+                    }
                 } else {
                     $b .= '[' . $this->str['save'] . ']';
                 }

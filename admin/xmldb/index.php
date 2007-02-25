@@ -127,7 +127,7 @@
 
     if ($xmldb_action->getDoesGenerate() != ACTION_GENERATE_XML) {
         if (debugging()) {
-            ///print_object($XMLDB);
+            print_object($XMLDB);
         }
     }
 
