@@ -368,13 +368,16 @@
                 return false;    //failed
             }
             fputs($proxy_fp, "GET $url HTTP/1.0\r\nHost: $CFG->proxyhost\r\n\r\n");
-            $i = 0;
-                while(!feof($proxy_fp)) {
+
+            $headers_done = false;
+            while(!feof($proxy_fp)) {
                 $string = fgets($proxy_fp, 1024);
-                if ($i > 11) {    //12 lines of info skipped
+                if(!$headers_done){
+                    // A new line indicates end of HTTP headers
+                    $headers_done = ("\r\n" == $string);
+                } else {
                     $availablelangs[] = split(',', $string);
                 }
-                $i++;
             }
             fclose($proxy_fp);
 
