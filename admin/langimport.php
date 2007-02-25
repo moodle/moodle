@@ -208,9 +208,9 @@
             }
 
             if ($updated) {
-                notice(get_string('langupdatecomplete','admin'), 'langimport.php');
+                notice(get_string('langupdatecomplete','admin'), 'langimport.php', NULL, $adminroot);
             } else {
-                notice(get_string('nolangupdateneeded','admin'), 'langimport.php');
+                notice(get_string('nolangupdateneeded','admin'), 'langimport.php', NULL, $adminroot);
             }
 
         break;
