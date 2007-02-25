@@ -1627,6 +1627,10 @@ body#course-index .addcategory {
   width:20px;
 }
 
+.categorylist .category.number {
+  text-align:right;
+}
+
 .categoryboxcontent {
   border-width:1px;
   border-style:solid;
