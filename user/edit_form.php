@@ -44,15 +44,15 @@ class user_edit_form extends moodleform {
 
         if ($user = get_record('user', 'id', $userid)) {
 
-        // print picture
-        if (!empty($CFG->gdversion)) {
-            $image_el = $mform->getElement('currentpicture');
-            if ($user and $user->picture) {
-                $image_el->setValue(print_user_picture($user->id, SITEID, $user->picture, 64, true, false, '', true));
-            } else {
-                $image_el->setValue(get_string('none'));
+            // print picture
+            if (!empty($CFG->gdversion)) {
+                $image_el = $mform->getElement('currentpicture');
+                if ($user and $user->picture) {
+                    $image_el->setValue(print_user_picture($user->id, SITEID, $user->picture, 64,true,false,'',true));
+                } else {
+                    $image_el->setValue(get_string('none'));
+                }
             }
-        }
 
             /// disable fields that are locked by auth plugins
             $fields = get_user_fieldnames();
