@@ -132,7 +132,7 @@ function stats_cron_daily () {
                 }
             }
 
-            $context = get_record('context','instanceid',$course->id,'contextlevel',CONTEXT_COURSE);
+            $context = get_context_instance(CONTEXT_COURSE, $course->id); 
             if (!$roles = get_roles_on_exact_context($context)) {
                 // no roles.. nothing to log.
                 continue;
@@ -954,7 +954,7 @@ function stats_get_report_options($courseid,$mode) {
     switch ($mode) {
     case STATS_MODE_GENERAL:
         $reportoptions[STATS_REPORT_ACTIVITY] = get_string('statsreport'.STATS_REPORT_ACTIVITY);
-        if ($courseid != SITEID && $context = get_record('context','instanceid',$courseid,'contextlevel',CONTEXT_COURSE)) {
+        if ($courseid != SITEID && $context = get_context_instance(CONTEXT_COURSE, $courseid)) {
             $sql = 'SELECT r.id,r.name FROM '.$CFG->prefix.'role r JOIN '.$CFG->prefix.'stats_daily s ON s.roleid = r.id WHERE s.courseid = '.$courseid;
             if ($roles = get_records_sql($sql)) {
                 foreach ($roles as $role) {
