@@ -3704,9 +3704,14 @@ function user_has_role_assignment($userid, $roleid, $contextid=0) {
 }
 
 // inserts all parental context and self into context_rel table
-function insert_context_rel($context) {
-    // removes old records  
-    delete_records('context_rel', 'c2', $context->id);
+/** @param object $context-context to be deleted
+ * @param bool deletechild - deltes child contexts dependencies
+ */
+function insert_context_rel($context, $deletechild=true) {
+    // removes all parents 
+    if ($deletechild) {
+        delete_records('context_rel', 'c2', $context->id);
+    }
     delete_records('context_rel', 'c1', $context->id);
     // insert all parents
     if ($parents = get_parent_contexts($context)) {
