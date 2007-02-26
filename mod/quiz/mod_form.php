@@ -23,10 +23,10 @@ class mod_quiz_mod_form extends moodleform_mod {
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'timinghdr', get_string('timing', 'form'));
-        $mform->addElement('date_selector', 'timeopen', get_string("quizopen", "quiz"), array('optional'=>true));
+        $mform->addElement('date_time_selector', 'timeopen', get_string("quizopen", "quiz"), array('optional'=>true));
 		$mform->setHelpButton('timeopen', array('timeopen', get_string('quizopens', 'quiz'), 'quiz'));
 
-        $mform->addElement('date_selector', 'timeclose', get_string("quizcloses", "quiz"), array('optional'=>true));
+        $mform->addElement('date_time_selector', 'timeclose', get_string("quizcloses", "quiz"), array('optional'=>true));
 		$mform->setHelpButton('timeclose', array('timeopen', get_string('quizcloses', 'quiz'), 'quiz'));
 
 
