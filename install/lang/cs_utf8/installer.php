@@ -144,6 +144,7 @@ $string['name'] = 'Název';
 $string['next'] = 'Další';
 $string['ok'] = 'OK';
 $string['opensslrecommended'] = 'Pro běh síťových funkcionalit (\"Moodle Networking\") je potřeba nainstalovat volitelnou knihovnu OpenSSL.';
+$string['parentlanguage'] = '<< Překladatelé: Pokud Váš jazyk má \"nadřazený\" jazyk\", který má Moodle používat v případech, kdy řetězce ve vašem jazykovém balíčku chybí, specifikujte jeho kód zde. Příklad: nl >>';
 $string['pass'] = 'V pořádku';
 $string['password'] = 'Heslo';
 $string['php50restricted'] = 'V PHP 5.0.x bylo nalezeno množství chyb; přejděte buď na vyšší verzi 5.1.x, nebo na nižší verzi 4.3.x či 4.4.x.';
