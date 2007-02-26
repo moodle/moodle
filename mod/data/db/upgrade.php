@@ -43,6 +43,16 @@ function xmldb_data_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field);
 
     }
+    
+    if ($result && $oldversion < 2007022600) {
+    /// Define field asearchtemplate to be added to data
+        $table = new XMLDBTable('data');
+        $field = new XMLDBField('asearchtemplate');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'jstemplate');
+
+    /// Launch add field asearchtemplate
+        $result = $result && add_field($table, $field);
+    }
 
     return $result;
 }

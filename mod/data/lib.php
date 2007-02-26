@@ -904,42 +904,44 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
 }
 
 
-function data_print_show_all_form($data, $perpage, $sort, $order, $mode) {
-    echo '<div align="center">';
-    echo '<form id="options" action="view.php" method="get">';
-    echo '<fieldset class="invisiblefieldset">';
-    echo '<input type="hidden" name="d" value="'.$data->id.'" />';
-    echo '<input type="hidden" name="perpage" value="'.$perpage.'" />';
-    echo '<input type="hidden" name="search" value="" />'; // clear search
-    echo '<input type="hidden" name="sort" value="'.$sort.'" />';
-    echo '<input type="hidden" name="order" value="'.$order.'" />';    
-    echo '<input type="hidden" name="mode" value="'.$mode.'" />';   
-    echo '<input type="submit" value="'.get_string('showall','data').'" />';
-
-    echo '</fieldset>';
-    echo '</form>';
-    echo '</div>';      
-}
-
-
 /************************************************************************
  * function that takes in the current data, number of items per page,   *
  * a search string and prints a preference box in view.php              *
+ *                                                                      *
+ * This preference box prints a searchable advanced search template if  *
+ *     a) A template is defined                                                                                        *
+ *  b) The advanced search checkbox is checked.                                                        *
+ *                                                                                                                                             *
  * input @param object $data                                            *
  *       @param int $perpage                                            *
  *       @param string $search                                          *
  * output null                                                          *
  ************************************************************************/
-function data_print_preference_form($data, $perpage, $search, $sort='', $order='ASC', $mode='single'){
-    echo '<br /><div class="datapreferences" style="text-align:center">';
+function data_print_preference_form($data, $perpage, $search, $sort='', $order='ASC', $search_array = '', $advanced = 0, $mode= ''){
+    global $CFG;
+    
+    $cm = get_coursemodule_from_instance('data', $data->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    echo '<br /><div class="datapreferences">';
     echo '<form id="options" action="view.php" method="get">';
-    echo '<fieldset class="invisiblefieldset">';
+    echo '<div>';
     echo '<input type="hidden" name="d" value="'.$data->id.'" />';
+    if ($mode =='asearch') {
+        $advanced = 1;
+        echo '<input type="hidden" name="mode" value="list" />';
+    }
     echo '<label for="pref_perpage">'.get_string('pagesize','data').'</label> ';
     $pagesizes = array(2=>2,3=>3,4=>4,5=>5,6=>6,7=>7,8=>8,9=>9,10=>10,15=>15,
                        20=>20,30=>30,40=>40,50=>50,100=>100,200=>200,300=>300,400=>400,500=>500,1000=>1000);
     choose_from_menu($pagesizes, 'perpage', $perpage, '', '', '0', false, false, 0, 'pref_perpage');
-    echo '&nbsp;&nbsp;&nbsp;<label for="pref_search">'.get_string('search').'</label> <input type="text" size="16" name="search" id= "pref_search" value="'.s($search).'" />';
+     echo '<div id="reg_search" style="display: ';
+    if ($advanced) {
+        echo 'none';
+    }
+    else {
+        echo 'inline';
+    }
+    echo ';" >&nbsp;&nbsp;&nbsp;<label for="pref_search">'.get_string('search').'</label> <input type="text" size="16" name="search" id= "pref_search" value="'.s($search).'" /></div>';
     echo '&nbsp;&nbsp;&nbsp;<label for="pref_sortby">'.get_string('sortby').'</label> ';
     //foreach field, print the option
     $fields = get_records('data_fields','dataid',$data->id, 'name');
@@ -965,13 +967,120 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
         echo '<option value="DESC">'.get_string('descending','data').'</option>';
     }
     echo '</select>';
-    //print ASC or DESC
-    echo '&nbsp;&nbsp;&nbsp;';
-    echo '<input type="hidden" name="mode" value="'.$mode.'" />';  
-    echo '<input type="submit" value="'.get_string('savesettings','data').'" />';
-    echo '</fieldset>';
-    echo '</form>';
+    
+    if ($advanced) {
+        $checked = ' checked="checked" ';
+    }
+    else {
+        $checked = '';
+    }
+    print '
+        
+        <script type="text/javascript">
+        //<![CDATA[
+        <!-- Start
+        // javascript for hiding/displaying advanced search form
+
+        function showHideAdvSearch(checked) {
+            var divs = document.getElementsByTagName(\'div\');
+            for(i=0;i<divs.length;i++) {
+                if(divs[i].id.match(\'data_adv_form\')) {
+                    if(checked) {
+                        divs[i].style.display = \'inline\';
+                    }
+                    else {
+                        divs[i].style.display = \'none\';
+                    }
+                }
+                else if (divs[i].id.match(\'reg_search\')) {
+                    if (!checked) {
+                        divs[i].style.display = \'inline\';
+                    }
+                    else {
+                        divs[i].style.display = \'none\';
+                    }
+                }
+            }
+        }
+        //  End -->
+        //]]>
+        </script>';
+        
+    echo '&nbsp;<input type="checkbox" name="advanced" value="1" '.$checked.' onchange="showHideAdvSearch(this.checked);" />'.get_string('advancedsearch', 'data');
+    echo '&nbsp;<input type="submit" value="'.get_string('savesettings','data').'" />';
+    
+    echo '<br />';
+    echo '<div class="dataadvancedsearch" id="data_adv_form" style="display: ;margin-left:auto;margin-right:auto';
+    if ($advanced) {
+        echo 'inline';
+    }
+    else {
+        echo 'none';
+    }
+    echo ';" >';
+
+    echo '<table class="boxaligncenter">';
+    
+    // print ASC or DESC
+    echo '<tr><td colspan="2">&nbsp;</td></tr>';
+    $i = 0;
+
+    // Determine if we are printing all fields for advanced search, or the template for advanced search
+    // If a template is not defined, use the deafault template and display all fields.
+    if(empty($data->asearchtemplate)) {
+        data_generate_default_template($data, 'asearchtemplate');
+    }
+
+    static $fields = NULL;
+    static $isteacher;
+    static $dataid = NULL;
+
+    if (empty($dataid)) {
+        $dataid = $data->id;
+    } else if ($dataid != $data->id) {
+        $fields = NULL;
+    }
+
+    if (empty($fields)) {
+        $fieldrecords = get_records('data_fields','dataid', $data->id);
+        foreach ($fieldrecords as $fieldrecord) {
+            $fields[]= data_get_field($fieldrecord, $data);
+        }
+
+        $isteacher = has_capability('mod/data:managetemplates', $context);
+    }
+
+    /// Replacing tags
+    $patterns = array();
+    $replacement = array();
+
+    /// Then we generate strings to replace for normal tags
+    foreach ($fields as $field) {
+        $patterns[]='/\[\['.$field->field->name.'\]\]/i';
+        $searchfield = data_get_field_from_id($field->field->id, $data); 
+        if (!empty($search_array[$field->field->id]->data)) {
+            $replacement[] = $searchfield->display_search_field($search_array[$field->field->id]->data);
+        } else {
+            $replacement[] = $searchfield->display_search_field();
+        }
+    }
+    
+    ///actual replacement of the tags
+    $newtext = preg_replace($patterns, $replacement, $data->asearchtemplate);
+    $options->para=false;
+    $options->noclean=true;
+    echo '<tr><td>';
+    echo format_text($newtext, FORMAT_HTML, $options);
+    echo '</td></tr>';
+
+    echo '<tr><td colspan="4" style="text-align: center;"><br/><input type="submit" value="'.get_string('savesettings','data').'" /><input type="reset" value="'.get_string('resetsettings','data').'" /></td></tr>';
+    echo '</table>';
     echo '</div>';
+    echo '</div>';
+    echo '</form>';
+    echo '</div>'; 
+
+    
 }
 
 function data_print_ratings($data, $record) {
@@ -980,8 +1089,7 @@ function data_print_ratings($data, $record) {
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    if ($data->assessed and !empty($USER->id)
-      and (has_capability('mod/data:rate', $context) or has_capability('mod/data:viewrating', $context) or data_isowner($record->id))) {
+    if ($data->assessed and !empty($USER->id) and (has_capability('mod/data:rate', $context) or has_capability('mod/data:viewrating', $context) or data_isowner($record->id))) {
         if ($ratingsscale = make_grades_menu($data->scale)) {
             $ratingsmenuused = false;
 

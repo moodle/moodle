@@ -114,7 +114,6 @@
     $currenttab = 'templates';
     include('tabs.php');
 
-
 /// Processing submitted data, i.e updating form.
     $resettemplate = false;
 
@@ -165,12 +164,13 @@
         data_generate_default_template($data, 'singletemplate');
         data_generate_default_template($data, 'listtemplate');
         data_generate_default_template($data, 'addtemplate');
+        data_generate_default_template($data, 'asearchtemplate');           //Template for advanced searches.
         data_generate_default_template($data, 'rsstemplate');
     }
 
 
     echo '<form id="tempform" action="templates.php?d='.$data->id.'&amp;mode='.$mode.'" method="post">';
-    echo '<fieldset class="invisiblefieldset">';
+    echo '<div>';
     echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
     // Print button to autogen all forms, if all templates are empty
 
@@ -225,7 +225,7 @@
         }
 
         // Print special tags. fix for MDL-7031
-        if ($mode != 'addtemplate') {
+        if ($mode != 'addtemplate' && $mode != 'asearchtemplate') {             //Don't print special tags when viewing the advanced search template and add template.
             echo '<optgroup label="'.get_string('buttons', 'data').'">';
             echo '<option value="##edit##">' .get_string('edit', 'data'). ' - ##edit##</option>';
             echo '<option value="##delete##">' .get_string('delete', 'data'). ' - ##delete##</option>';
@@ -291,7 +291,7 @@
 
 
     print_simple_box_end();
-    echo '</fieldset>';
+    echo '</div>';
     echo '</form>';
     if ($usehtmleditor) {
         use_html_editor('template');

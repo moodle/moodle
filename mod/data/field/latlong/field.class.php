@@ -63,7 +63,7 @@ class data_field_latlong extends data_field_base {
                 $long = $content->content1;
             }
         }
-
+        
         $str = '<div title="'.s($this->field->description).'">';
         $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
         $str .= '<table><tr><td align="right">';
@@ -74,6 +74,31 @@ class data_field_latlong extends data_field_base {
         $str .= '</div>';
 
         return $str;
+    }
+    
+    function display_search_field($value = '') {
+        global $CFG;
+        $lats = get_records_sql_menu('SELECT id, content from '.$CFG->prefix.'data_content WHERE fieldid='.$this->field->id.' GROUP BY content ORDER BY content');
+        $longs = get_records_sql_menu('SELECT id, content1 from '.$CFG->prefix.'data_content WHERE fieldid='.$this->field->id.' GROUP BY content ORDER BY content');
+        $options = array();
+        if(!empty($lats) && !empty($longs)) {
+            $options[''] = '';              //Make first index blank.
+            foreach($lats as $key => $temp) {
+                $options[$temp.','.$longs[$key]] = $temp.','.$longs[$key];
+            }
+        }
+       return choose_from_menu($options, 'f_'.$this->field->id, $value, 'choose', '', 0, true);
+    }
+    
+    function parse_search_field() {
+        return optional_param('f_'.$this->field->id, '', PARAM_NOTAGS);
+    }
+    
+    function generate_sql($tablealias, $value) {
+        $latlong[0] = '';
+        $latlong[1] = '';
+        $latlong = explode (',', $value, 2);
+        return " ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = '$latlong[0]' AND {$tablealias}.content1 = '$latlong[1]') "; 
     }
 
     function display_browse_field($recordid, $template) {

@@ -58,6 +58,18 @@ class data_field_url extends data_field_base {
         return $str;
     }
 
+    function display_search_field($value = '') {
+        return '<input type="text" size="16" name="f_'.$this->field->id.'" value="'.$value.'" />';   
+    }
+    
+    function parse_search_field() {
+        return optional_param('f_'.$this->field->id, '', PARAM_NOTAGS);
+    }
+    
+    function generate_sql($tablealias, $value) {
+        return " ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content LIKE '%{$value}%') "; 
+    }
+
     function display_browse_field($recordid, $template) {
         if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)){
             $url = empty($content->content)? '':$content->content;

@@ -35,7 +35,10 @@
     $row = array();
 
     $row[] = new tabobject('list', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id, get_string('list','data'), '', true);
-
+    
+    //Add an advanced search tab.
+    $row[] = new tabobject('asearch', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;mode=asearch', get_string('advancedsearch', 'data'), '', true);
+    
     if (isset($record)) {
         $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id, get_string('single','data'), '', true);
     } else {
@@ -52,6 +55,8 @@
                 $defaultemplate = 'listtemplate';
             } else if ($currenttab == 'add') {
                 $defaultemplate = 'addtemplate';
+                       } else if ($currenttab == 'asearch') {
+                               $defaultemplate = 'asearchtemplate';
             } else {
                 $defaultemplate = 'singletemplate';
             }
@@ -70,8 +75,9 @@
     * stolen code from quiz report
     *****************************/
     if ($currenttab == 'templates' and isset($mode)) {
+
         $inactive[] = 'templates';
-        $templatelist = array ('listtemplate', 'singletemplate', 'addtemplate', 'rsstemplate', 'csstemplate', 'jstemplate');
+        $templatelist = array ('listtemplate', 'asearchtemplate' , 'singletemplate', 'addtemplate', 'rsstemplate', 'csstemplate', 'jstemplate');
 
         $row  = array();
         $currenttab ='';
@@ -83,11 +89,13 @@
             }
         }
         $tabs[] = $row;
+        $activetwo = array('templates');
+    } else {
+        $activetwo = array();
     }
-
 
 /// Print out the tabs and continue!
 
-    print_tabs($tabs, $currenttab, $inactive);
+    print_tabs($tabs, $currenttab, $inactive, $activetwo);
 
 ?>

@@ -27,8 +27,9 @@
         <FIELD NAME="rsstemplate" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="addtemplate" NEXT="rsstitletemplate"/>
         <FIELD NAME="rsstitletemplate" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="rsstemplate" NEXT="csstemplate"/>
         <FIELD NAME="csstemplate" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="rsstitletemplate" NEXT="jstemplate"/>
-        <FIELD NAME="jstemplate" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="csstemplate" NEXT="approval"/>
-        <FIELD NAME="approval" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="jstemplate" NEXT="scale"/>
+        <FIELD NAME="jstemplate" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="csstemplate" NEXT="asearchtemplate"/>
+        <FIELD NAME="asearchtemplate" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="jstemplate" NEXT="approval"/>
+        <FIELD NAME="approval" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="asearchtemplate" NEXT="scale"/>
         <FIELD NAME="scale" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="approval" NEXT="assessed"/>
         <FIELD NAME="assessed" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="scale" NEXT="defaultsort"/>
         <FIELD NAME="defaultsort" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="assessed" NEXT="defaultsortdir"/>
