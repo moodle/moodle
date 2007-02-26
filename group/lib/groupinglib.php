@@ -65,7 +65,7 @@ function groups_get_groups_in_grouping_records($groupingid) {
     }
     $grouping_groups = get_records('groups_groupings_groups', 'groupingid ', 
                               $groupingid, '', $fields='id, groupid, timeadded');
-    
+
     return $grouping_groups;
 }
 
@@ -231,12 +231,10 @@ function groups_user_is_in_multiple_groups($userid, $groupingid) {
 				array_push($groupinggroupids, $groupid);
 			}
 		}
-		
 		if (count($groupinggroupids) > 1) {
 			$inmultiplegroups = true;
 		}
 	}
-	
 	return $inmultiplegroups;
 }
 
@@ -409,7 +407,7 @@ function groups_add_group_to_grouping($groupid, $groupingid) {
 	} else {
 		$groupadded = true;
 	}
-		
+	
     return $groupadded;  
 }
 
@@ -451,6 +449,10 @@ function groups_set_grouping_for_coursemodule($groupingid, $coursemoduleid) {
  * @return boolean True if the deletion was successful, false otherwise. 
  */
 function groups_remove_group_from_grouping($groupid, $groupingid) {
+    if (GROUP_NOT_IN_GROUPING == $groupingid) {
+        //Quietly ignore.
+        return true;
+    }
     return groups_db_remove_group_from_grouping($groupid, $groupingid);
 }
 
@@ -461,6 +463,9 @@ function groups_remove_group_from_grouping($groupid, $groupingid) {
  * @return boolean True if the deletion was successful, false otherwise.
  */ 
 function groups_delete_grouping($groupingid) {
+    if (GROUP_NOT_IN_GROUPING == $groupingid) {
+        return false;
+    }
     return groups_db_delete_grouping($groupingid);
     
 }
