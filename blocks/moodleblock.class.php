@@ -23,11 +23,6 @@ define('BLOCK_TYPE_LIST',    1);
 define('BLOCK_TYPE_TEXT',    2);
 
 /**
- * Block type of nuke. Compitibility with post nuke blocks. Basically treated as  BLOCK_TYPE_TEXT.
- */
-define('BLOCK_TYPE_NUKE',    3);
-
-/**
  * Class for describing a moodle block, all Moodle blocks derive from this class
  *
  * @author Jon Papaioannou
