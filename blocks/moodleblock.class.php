@@ -1,8 +1,7 @@
 <?php  // $Id$
 
 /**
- * This file contains the parent class for moodle blocks, block_base,
- * as well as the block_nuke subclass.
+ * This file contains the parent class for moodle blocks, block_base.
  *
  * @author Jon Papaioannou
  * @version  $Id$
@@ -43,7 +42,7 @@ class block_base {
     var $title         = NULL;
 
     /**
-     * The type of content that this block creates. Currently support options - BLOCK_TYPE_LIST, BLOCK_TYPE_TEXT, BLOCK_TYPE_NUKE
+     * The type of content that this block creates. Currently support options - BLOCK_TYPE_LIST, BLOCK_TYPE_TEXT
      * @var int $content_type
      */
     var $content_type  = BLOCK_TYPE_TEXT;
@@ -398,7 +397,7 @@ class block_base {
             $errors[] = 'title_not_set';
             $correct = false;
         }
-        if (!in_array($this->get_content_type(), array(BLOCK_TYPE_LIST, BLOCK_TYPE_TEXT, BLOCK_TYPE_NUKE))) {
+        if (!in_array($this->get_content_type(), array(BLOCK_TYPE_LIST, BLOCK_TYPE_TEXT))) {
             $errors[] = 'invalid_content_type';
             $correct = false;
         }
