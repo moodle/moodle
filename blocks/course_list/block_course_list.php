@@ -49,7 +49,10 @@ class block_course_list extends block_list {
                     $this->content->icons[]=$icon;
                 }
                 $this->title = get_string('mycourses');
-                $this->content->footer = "<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
+            /// If we can update any course of the view all isn't hidden, show the view all courses link
+                if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM)) || empty($CFG->block_course_list_hideallcourseslink)) {
+                    $this->content->footer = "<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
+                }
                 $this->get_remote_courses();
                 if ($this->content->items) { // make sure we don't return an empty list
                     return $this->content;
@@ -67,8 +70,11 @@ class block_course_list extends block_list {
                 }
                 $this->content->icons[] = '';
                 $this->content->items[] = "&nbsp;&nbsp;&nbsp;<a href=\"$CFG->wwwroot/course/\">".get_string("searchcourses")."</a>...<br />";
-                $this->content->icons[] = '';
-                $this->content->items[] = "&nbsp;&nbsp;&nbsp;<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
+            /// If we can update any course of the view all isn't hidden, show the view all courses link
+                if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM)) || empty($CFG->block_course_list_hideallcourseslink)) {
+                    $this->content->icons[] = '';
+                    $this->content->items[] = "&nbsp;&nbsp;&nbsp;<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
+                }
                 $this->title = get_string('categories');
             } else {                          // Just print course names of single category
                 $category = array_shift($categories);
@@ -81,8 +87,11 @@ class block_course_list extends block_list {
                                    "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
                         $this->content->icons[]=$icon;
                     }
-                    $this->content->icons[] = '';
-                    $this->content->items[] = "&nbsp;&nbsp;&nbsp;<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
+                /// If we can update any course of the view all isn't hidden, show the view all courses link
+                    if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM)) || empty($CFG->block_course_list_hideallcourseslink)) {
+                        $this->content->icons[] = '';
+                        $this->content->items[] = "&nbsp;&nbsp;&nbsp;<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
+                    }
                     $this->get_remote_courses();
                 } else {
                     

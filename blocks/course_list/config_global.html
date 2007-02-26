@@ -20,6 +20,26 @@
     <?php print_string("configadminview", "block_course_list") ?>
     </td>
 </tr>
+<tr valign="top">
+    <td align="right">block_course_list_hideallcourseslink:</td>
+    <td>
+    <select name="block_course_list_hideallcourseslink">
+     <option value="1" <?php if(isset($CFG->block_course_list_allcourseslink)){ 
+     if($CFG->block_course_list_hideallcourseslink){ echo "selected=\"selected\"";}
+     }?>     
+     ><?php p(get_string('yes')) ?></option>
+     <option value="0" <?php if(isset($CFG->block_course_list_hideallcourseslink)){ 
+         if(!$CFG->block_course_list_hideallcourseslink){ echo "selected=\"selected\""; }
+     }else{
+         echo "selected=\"selected\"";
+     }?>
+     ><?php p(get_string('no')) ?></option>
+    </select>
+    </td>
+    <td>
+    <?php print_string("confighideallcourseslink", "block_course_list") ?>
+    </td>
+</tr>
 <tr>
     <td colspan="3" align="center">
     <input type="submit" value="<?php print_string("savechanges") ?>" /></td>
