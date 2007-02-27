@@ -164,7 +164,7 @@
                     $newgrpcoursecontext = get_context_instance(CONTEXT_COURSE, $newgroup->courseid);
                     
                     ///Users cannot upload groups in courses they cannot update.
-                    if (has_capability('moodle/course:update', $newgrpcoursecontext)){
+                    if (!has_capability('moodle/course:update', $newgrpcoursecontext)){
                         notify("$newgroup->name ".get_string('notaddedto').$newgroup->coursename.get_string('notinyourcapacity'));
                     }
                     
