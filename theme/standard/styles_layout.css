@@ -1026,7 +1026,14 @@ a.skip-block, .skip-block {
   margin:0px;
   margin-right:4px;
   padding:0px;
-  display:inline;
+}
+
+.sideblock div.column.c0 {
+  float: left;
+}
+
+.sideblock div.column.c1 {
+  display: inline;
 }
 
 .sideblock .content .c0 img.icon {
@@ -1041,12 +1048,14 @@ a.skip-block, .skip-block {
 
 .sideblock .content .list {
   width: 100%;
-  margin:0px;
-  padding:0px;
+}
+
+.sideblock .content .list li {
+  clear: left;
 }
 
 .sideblock .content .inline-list li {
-  display:inline;
+  display: inline;
 }
 
 .sideblock .content ul.list li.listentry {
