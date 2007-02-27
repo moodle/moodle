@@ -2,11 +2,11 @@
 
 require_once($CFG->libdir.'/formslib.php');
 
-class login_signup_form_1 extends moodleform {
+class login_signup_form extends moodleform {
 	function definition() {
 		global $USER, $CFG;
 
-		$mform    =& $this->_form;
+		$mform =& $this->_form;
 
 		$mform->addElement('header', '', get_string('createuserandpass'), '');
 
