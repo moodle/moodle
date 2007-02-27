@@ -832,6 +832,9 @@ function calendar_time_representation($time) {
         $langtimeformat = get_string('strftimetime');
     }
     $timeformat = get_user_preferences('calendar_timeformat');
+    if(empty($timeformat)){
+        $timeformat = get_config(NULL,'calendar_site_timeformat');
+    }
     // The ? is needed because the preference might be present, but empty
     return userdate($time, empty($timeformat) ? $langtimeformat : $timeformat);
 }
