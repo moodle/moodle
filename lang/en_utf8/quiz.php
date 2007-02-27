@@ -373,6 +373,7 @@ $string['questionno'] = 'Question $a';
 $string['questions'] = 'Questions';
 $string['questionsinclhidden'] = 'Questions (including hidden)';
 $string['questionsinuse'] = '(* Questions marked by an asterisk are already in use in some quizzes. These question will not be deleted from these quizzes but only from the category list.)';
+$string['questionsinthisquiz'] = 'Questions in this quiz';
 $string['questionsperpage'] = 'Questions per page';
 $string['questiontext'] = 'Question text';
 $string['questiontype'] = 'Question type $a';

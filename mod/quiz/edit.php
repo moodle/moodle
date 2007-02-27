@@ -307,7 +307,7 @@
         $quiz = &$modform;
         include('tabs.php');
 
-        print_simple_box_start("center");
+        print_box_start();
 
         $a->attemptnum = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0);
         $a->studentnum = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
@@ -324,7 +324,7 @@
             error('Failed to set sumgrades');
         }
 
-        print_simple_box_end();
+        print_box_end();
         print_footer($course);
         exit;
     }
@@ -346,14 +346,15 @@
 
     echo '<table border="0" style="width:100%" cellpadding="2" cellspacing="0">';
     echo '<tr><td style="width:50%" valign="top">';
-    print_simple_box_start();
+    print_box_start('generalbox quizquestions');
+    print_heading(get_string('questionsinthisquiz', 'quiz'), '', 2);
 
     $sumgrades = quiz_print_question_list($modform, true, $SESSION->quiz_showbreaks, $SESSION->quiz_reordertool);
     if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $modform->instance)) {
         error('Failed to set sumgrades');
     }
 
-    print_simple_box_end();
+    print_box_end();
 
     echo '</td><td style="width:50%" valign="top">';
 
