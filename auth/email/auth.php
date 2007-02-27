@@ -16,15 +16,6 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
-/**
- * Error codes for user confirm
- */
-define('AUTH_CONFIRM_FAIL', 0);
-define('AUTH_CONFIRM_OK', 1);
-define('AUTH_CONFIRM_ALREADY', 2);
-define('AUTH_CONFIRM_ERROR', 3);
-// TODO: instead of integers these could be the language keys?
-
 
 /**
  * Email authentication plugin.
@@ -76,8 +67,14 @@ class auth_plugin_email {
 
     /**
      * Sign up a new user ready for confirmation.
+     * Password is passed in plaintext.
+     *
+     * @param object $user new user object (with system magic quotes)
+     * @param boolean $notify print notice with link and terminate
      */
     function user_signup($user, $notify = true) {
+        $user->password = hash_internal_user_password($user->password);
+
         if (! ($user->id = insert_record('user', $user)) ) {
             print_error('auth_emailnoinsert','auth');
         }
@@ -90,11 +87,16 @@ class auth_plugin_email {
             $emailconfirm = get_string('emailconfirm');
             print_header($emailconfirm, $emailconfirm, $emailconfirm);
             notice(get_string('emailconfirmsent', '', $user->email), "$CFG->wwwroot/index.php");
+        } else {
+            return true;
         }
     }
 
     /**
      * Confirm the new user as registered.
+     *
+     * @param string $username (with system magic quotes)
+     * @param string $confirmsecret (with system magic quotes)
      */
     function user_confirm($username, $confirmsecret) {
         $user = get_complete_user_data('username', $username);
@@ -102,8 +104,11 @@ class auth_plugin_email {
         if (!empty($user)) {
             if ($user->confirmed) {
                 return AUTH_CONFIRM_ALREADY;
-            }
-            if ($user->secret == $confirmsecret) {   // They have provided the secret key to get in
+
+            } else if ($user->auth != 'email') {
+                return AUTH_CONFIRM_ERROR;
+
+            } else if ($user->secret == stripslashes($confirmsecret)) {   // They have provided the secret key to get in
                 if (!set_field("user", "confirmed", 1, "id", $user->id)) {
                     return AUTH_CONFIRM_FAIL;
                 }
@@ -112,6 +117,8 @@ class auth_plugin_email {
                 }
                 return AUTH_CONFIRM_OK;
             }
+        } else {
+            return AUTH_CONFIRM_ERROR;
         }
     }
 

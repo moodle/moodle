@@ -261,6 +261,14 @@ define ('BLOG_COURSE_LEVEL', 3);
 define ('BLOG_SITE_LEVEL', 4);
 define ('BLOG_GLOBAL_LEVEL', 5);
 
+/**
+ * Authentication - error codes for user confirm
+ */
+define('AUTH_CONFIRM_FAIL', 0);
+define('AUTH_CONFIRM_OK', 1);
+define('AUTH_CONFIRM_ALREADY', 2);
+define('AUTH_CONFIRM_ERROR', 3);
+
 
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////

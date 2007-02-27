@@ -12,11 +12,11 @@
     }
     $authplugin = get_auth_plugin($CFG->registerauth);
 
-    if (!method_exists($authplugin, 'user_create')) {
+    if (!method_exists($authplugin, 'user_confirm')) {
         error("Sorry, you may not use this page.");
     }
 
-    if (!empty($data) || (!empty($p) && !empty($s))) {    
+    if (!empty($data) || (!empty($p) && !empty($s))) {
 
         if (!empty($data)) {
             $dataelements = explode('/',$data);
@@ -27,49 +27,51 @@
             $username   = $s;
         }
 
-        $authplugin = get_auth_plugin($CFG->registerauth);
         $confirmed = $authplugin->user_confirm($username, $usersecret);
 
         if ($confirmed == AUTH_CONFIRM_ALREADY) {
-                $user = get_complete_user_data('username', $username);
-                print_header(get_string("alreadyconfirmed"), get_string("alreadyconfirmed"), "", "");
-                echo "<center><h3>".get_string("thanks").", ". fullname($user) . "</h3>\n";
-                echo "<h4>".get_string("alreadyconfirmed")."</h4>\n";
-                echo "<h3> -> <a href=\"$CFG->wwwroot/course/\">".get_string("courses")."</a></h3></center>\n";
-                print_footer();
-                exit;
-        }
-        if ($confirmed == AUTH_CONFIRM_OK) {
-                // Activate new user if necessary
-                $authplugin = get_auth_plugin($CFG->registerauth);
-                if (method_exists($authplugin, 'user_activate')) {
-                    if (!$authplugin->user_activate($username)) {
-                        error('Could not activate this user!');
-                    }
+            $user = get_complete_user_data('username', $username);
+            print_header(get_string("alreadyconfirmed"), get_string("alreadyconfirmed"), "", "");
+            print_box_start('generalbox centerpara boxwidthnormal boxaligncenter');
+            echo "<h3>".get_string("thanks").", ". fullname($user) . "</h3>\n";
+            echo "<p>".get_string("alreadyconfirmed")."</p>\n";
+            print_single_button("$CFG->wwwroot/course/", null, get_string('courses'));
+            print_box_end();
+            print_footer();
+            exit;
+
+        } else if ($confirmed == AUTH_CONFIRM_OK) {
+            // Activate new user if necessary
+            if (method_exists($authplugin, 'user_activate')) {
+                if (!$authplugin->user_activate($username)) {
+                    error('Could not activate this user!');
                 }
+            }
 
-                // The user has confirmed successfully, let's log them in
+            // The user has confirmed successfully, let's log them in
 
-                if (!$USER = get_complete_user_data('username', $username)) {
-                    error("Something serious is wrong with the database");
-                }
+            if (!$USER = get_complete_user_data('username', $username)) {
+                error("Something serious is wrong with the database");
+            }
 
-                set_moodle_cookie($USER->username);
+            set_moodle_cookie($USER->username);
 
-                if ( ! empty($SESSION->wantsurl) ) {   // Send them where they were going
-                    $goto = $SESSION->wantsurl;
-                    unset($SESSION->wantsurl);
-                    redirect("$goto");
-                }
+            if ( ! empty($SESSION->wantsurl) ) {   // Send them where they were going
+                $goto = $SESSION->wantsurl;
+                unset($SESSION->wantsurl);
+                redirect($goto);
+            }
 
-                print_header(get_string("confirmed"), get_string("confirmed"), "", "");
-                echo "<center><h3>".get_string("thanks").", ". fullname($USER) . "</h3>\n";
-                echo "<h4>".get_string("confirmed")."</h4>\n";
-                echo "<h3> -> <a href=\"$CFG->wwwroot/course/\">".get_string("courses")."</a></h3></center>\n";
-                print_footer();
-                exit;
+            print_header(get_string("confirmed"), get_string("confirmed"), "", "");
+            print_box_start('generalbox centerpara boxwidthnormal boxaligncenter');
+            echo "<h3>".get_string("thanks").", ". fullname($USER) . "</h3>\n";
+            echo "<p>".get_string("confirmed")."</p>\n";
+            print_single_button("$CFG->wwwroot/course/", null, get_string('courses'));
+            print_box_end();
+            print_footer();
+            exit;
         } else {
-                error("Invalid confirmation data");
+            error("Invalid confirmation data");
         }
     } else {
         error(get_string("errorwhenconfirming"));

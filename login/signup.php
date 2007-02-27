@@ -8,21 +8,19 @@
     }
     $authplugin = get_auth_plugin($CFG->registerauth);
 
-    if (!method_exists($authplugin, 'user_create')) {
+    if (!method_exists($authplugin, 'user_signup')) {
         error("Sorry, you may not use this page.");
     }
 
     //HTTPS is potentially required in this page
     httpsrequired();
 
-    $mform_signup = new login_signup_form_1();
+    $mform_signup = new login_signup_form();
 
     if ($mform_signup->is_cancelled()) {
         redirect($CFG->httpswwwroot.'/login/index.php');
-    } else if ($user = $mform_signup->get_data()) {
 
-        $plainpass = $user->password;
-        $user->password    = hash_internal_user_password($plainpass);
+    } else if ($user = $mform_signup->get_data()) {
         $user->confirmed   = 0;
         $user->lang        = current_language();
         $user->firstaccess = time();
@@ -30,17 +28,8 @@
         $user->secret      = random_string(15);
         $user->auth        = $CFG->registerauth;
 
-        if (! $authplugin->user_exists($user->username)) {
-            if (! $authplugin->user_create($user, $plainpass)) {
-                error("Could not add user to authentication module!");
-            }
-        } else {
-            error("User already exists on authentication database.");
-        }
-
-        $authplugin = get_auth_plugin($CFG->registerauth);
-        $signedup = $authplugin->user_signup($user, $notify=true);
-        exit;
+        $authplugin->user_signup($user, $notify=true); // prints notice and link to login/index.php
+        exit; //never reached
     }
 
     $newaccount = get_string('newaccount');
