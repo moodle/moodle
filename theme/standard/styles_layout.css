@@ -392,7 +392,7 @@ img.iconkbhelp {
 }
 
 .invisiblefieldset {
-  display:inline;
+  /* display:inline; */
   border:0px;
   padding:0px;
   margin:0px;
@@ -2043,7 +2043,8 @@ body#message-messages {
   width: 5%;
 }
 .que .answer {
-  float: right;
+  /* float: right; */
+  float: left;
   width: 83%;
   margin-bottom: 0.5em;
 }
@@ -2066,7 +2067,7 @@ body#message-messages {
 }
 .que .feedback {
   clear: both;
-  float: right;
+  /* float: right; */
   width: 83%;
   padding: 0 0 0.3em 0.3em;
   border: 1px solid;
