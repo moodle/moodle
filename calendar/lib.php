@@ -1105,10 +1105,11 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
     else {
         $courses = false;
     }
-   //BUG 6130 clean $courses array as SESSION has bad entries. 
-   foreach ($courses as $index => $value) {
-       if (empty($value)) unset($courses[$index]);
-   }
+    //BUG 6130 clean $courses array as SESSION has bad entries. 
+    // [pj] TODO: See if this has to do with my new change in get_default_courses and can be taken out
+    foreach ($courses as $index => $value) {
+        if (empty($value)) unset($courses[$index]);
+    }
 
     if($SESSION->cal_show_user || $ignorefilters) {
         // This doesn't work for arrays yet (maybe someday it will)
@@ -1230,11 +1231,10 @@ function calendar_get_default_courses($ignoreref = false) {
     }
     
     // find all course this student can view
-    if ($allcourses = get_my_courses($USER->id,'visible DESC,sortorder ASC', '*', true)) {
-        foreach ($allcourses as $courseid=>$acourse) {
-            $auth = '';
+    if ($allcourses = get_my_courses($USER->id, 'visible DESC, sortorder ASC', '*', true)) {
+        foreach ($allcourses as $courseid => $acourse) {
             $context = get_context_instance(CONTEXT_COURSE, $courseid);
-            // let's try to see if there is any direct assignments on tihs context
+            // let's try to see if there is any direct assignments on this context
             // one can have multiple assignments
             // just use anyone that has something, or else use empty string
             // i am not even sure enrolment type is needed here, seems like only the array keys are needed
@@ -1244,14 +1244,11 @@ function calendar_get_default_courses($ignoreref = false) {
                                                AND userid = $USER->id")) {
                 foreach ($roleassign as $rid => $rs) {
                     if (!empty($rs->enrol)) {                     
-                        $auth = $rs->enrol;
+                        $courses[$courseid] = $rs->enrol;
                         break;       
                     }
                 }
-            } else {
-                $auth = '';
-            }              
-            $courses[$courseid] = $auth;           
+            }
         }  
     }
     return $courses;
