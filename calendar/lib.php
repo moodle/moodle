@@ -1095,10 +1095,11 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
     else {
         $courses = false;
     }
-   //BUG 6130 clean $courses array as SESSION has bad entries. 
-   foreach ($courses as $index => $value) {
-       if (empty($value)) unset($courses[$index]);
-   }
+    //BUG 6130 clean $courses array as SESSION has bad entries. 
+    // [pj] TODO: See if this has to do with my new change in get_default_courses and can be taken out
+    foreach ($courses as $index => $value) {
+        if (empty($value)) unset($courses[$index]);
+    }
 
     if($SESSION->cal_show_user || $ignorefilters) {
         // This doesn't work for arrays yet (maybe someday it will)
@@ -1225,11 +1226,8 @@ function calendar_get_default_courses($ignoreref = false) {
             $context = get_context_instance(CONTEXT_COURSE, $courseid);
             // let's try to see if there is any direct assignments on tihs context
             if ($roleassign = get_record('role_assignments', 'contextid', $context->id, 'userid', $USER->id)) {
-                $auth = $roleassign->enrol;
-            } else {
-                $auth = '';
+                $courses[$courseid] = $roleassign->enrol;
             }              
-            $courses[$courseid] = $auth;           
         }  
     }
 
