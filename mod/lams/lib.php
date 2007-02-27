@@ -1,7 +1,13 @@
 <?PHP  // $Id$
 
 /// Library of functions and constants for module lams
-include_once('../../config.php');
+/// It's inusual to require config.php explicity in modules lib.php
+/// but LAMS seems to need it, so make it works under any situation. MDL-8078
+if (!empty($CFG->dirroot)) {
+    require_once($CFG->dirroot . '/config.php');
+} else {
+    require_once('../../config.php');
+}
 require_once($CFG->dirroot.'/lib/datalib.php');
 require_once($CFG->dirroot.'/lib/moodlelib.php');
 require_once($CFG->dirroot.'/lib/soaplib.php');
