@@ -9,14 +9,14 @@
 // Copyright (C) 2003-2004  Greek School Network            www.sch.gr     //
 //                                                                         //
 // Designed by:                                                            //
-//     Avgoustos Tsinakos (tsinakos@uom.gr)                                //
-//     Jon Papaioannou (pj@uom.gr)                                         //
+//     Avgoustos Tsinakos (tsinakos@teikav.edu.gr)                         //
+//     Jon Papaioannou (pj@moodle.org)                                     //
 //                                                                         //
 // Programming and development:                                            //
-//     Jon Papaioannou (pj@uom.gr)                                         //
+//     Jon Papaioannou (pj@moodle.org)                                     //
 //                                                                         //
 // For bugs, suggestions, etc contact:                                     //
-//     Jon Papaioannou (pj@uom.gr)                                         //
+//     Jon Papaioannou (pj@moodle.org)                                     //
 //                                                                         //
 // The current module was developed at the University of Macedonia         //
 // (www.uom.gr) under the funding of the Greek School Network (www.sch.gr) //
