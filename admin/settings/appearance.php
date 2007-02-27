@@ -14,10 +14,17 @@ $temp->add(new admin_setting_configcheckbox('tabselectedtofront', get_string('ta
 $ADMIN->add('themes', $temp);
 $ADMIN->add('themes', new admin_externalpage('themeselector', get_string('themeselector','admin'), $CFG->wwwroot . '/theme/index.php'));
 
+# for CALENDAR_TF_12 and CALENDAR_TF_24 ...
+require_once($CFG->dirroot . '/calendar/lib.php');
 
 // calendar
 $temp = new admin_settingpage('calendar', get_string('calendarsettings','admin'));
 $temp->add(new admin_setting_special_adminseesall());
+$temp->add(new admin_setting_configselect('calendar_site_timeformat', get_string('pref_timeformat', 'calendar'), get_string('explain_site_timeformat', 'calendar'), '0',
+array(  0              => get_string('default', 'calendar'),
+        CALENDAR_TF_12 => get_string('timeformat_12', 'calendar'),
+        CALENDAR_TF_24 => get_string('timeformat_24', 'calendar')
+    )));
 $temp->add(new admin_setting_configselect('calendar_startwday', get_string('configstartwday', 'admin'), get_string('helpstartofweek', 'admin'), 0, 
 array(
         0 => get_string('sunday', 'calendar'),

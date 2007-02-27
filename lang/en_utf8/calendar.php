@@ -46,6 +46,7 @@ $string['explain_maxevents'] = 'This sets the maximum number of upcoming events 
 $string['explain_persistflt'] = 'If this is enabled, then Moodle will remember your last event filter settings and automatically restore them each time you login.';
 $string['explain_startwday'] = 'Calendar weeks will be shown as starting on the day that you select here.';
 $string['explain_timeformat'] = 'You can choose to see times in either 12 or 24 hour format. If you choose \"default\", then the format will be automatically chosen according to the language you use in the site.';
+$string['explain_site_timeformat'] = 'You can choose to see times in either 12 or 24 hour format for the whole site. If you choose \"default\", then the format will be automatically chosen according to the language you use in the site. This setting can be overridden by user preferences.';
 $string['export'] = 'Export';
 $string['exportcalendar'] = 'Export calendar';
 $string['exportbutton'] = 'Export';
