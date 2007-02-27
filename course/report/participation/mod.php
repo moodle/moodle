@@ -66,7 +66,7 @@
         }
     }
     $guestrole = get_guest_role();
-    if (empty($useroptions[$gusetrole->id])) {
+    if (empty($useroptions[$guestrole->id])) { 
             $useroptions[$guestrole->id] = $guestrole->name;
     }
     $actionoptions = array('' => $strallactions,
