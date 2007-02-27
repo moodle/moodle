@@ -1994,6 +1994,9 @@ body#message-messages {
 /***
  *** Question
  ***/
+.questionbank h2 {
+  margin-top: 0;				
+}
 
 .que {
   width: 90%;
@@ -2142,18 +2145,18 @@ body#message-messages {
 	line-height:1.8em;
 }
 
-.tabrow0 LI {
+.tabrow0 li {
     display: inline;
     margin: 0 -4px 0 0;
 	padding: 0;
 }
 
-.tabrow0 A span {
+.tabrow0 a span {
 	padding: 10px 14px 4px 0;
     background: transparent url(pix/tab/right.gif) no-repeat right top;
 }
 
-.tabrow0 A.here span {
+.tabrow0 a.here span {
     background: transparent url(pix/tab/right_last.gif) no-repeat right top;
 }
 
@@ -2165,7 +2168,7 @@ body#message-messages {
     background: none !important;
 }
 
-.tabrow0 A {
+.tabrow0 a {
 	text-decoration: none;
 	/* font-weight: bold; */
 	background: transparent url(pix/tab/left.gif) no-repeat left top;
@@ -2174,31 +2177,31 @@ body#message-messages {
 	padding: 10px 0 4px 14px;
 }
 
-.tabrow0 A:hover, .tabrow0 A:active, .tabrow0 A.here:link, .tabrow0 A.here:visited {
+.tabrow0 a:hover, .tabrow0 a:active, .tabrow0 a.here:link, .tabrow0 a.here:visited {
 	/* background:#ddd; */
 }
 
-.tabrow0 A:hover {
+.tabrow0 a:hover {
 	background-image: url(pix/tab/left_hover.gif);
 }
 
-.tabrow0 A.here:hover {
+.tabrow0 a.here:hover {
 	background-image: url(pix/tab/left.gif);
 }
 
-.tabrow0 A:hover span {
+.tabrow0 a:hover span {
 	background-image: url(pix/tab/right_hover.gif);
 }
 
-.tabrow0 A.here:hover span {
+.tabrow0 a.here:hover span {
 	background-image: url(pix/tab/right_last.gif);
 }
 
-.tabrow0 A.here {
+.tabrow0 a.here {
     color:#444;
 }
 
-.tabrow0 A.here:link, .tabrow0 A.here:visited {
+.tabrow0 a.here:link, .tabrow0 a.here:visited {
 	position:relative;
 	z-index:102;
 }
@@ -2210,7 +2213,7 @@ body#message-messages {
     padding: 0;
 }
 
-.tabrow0 UL {
+.tabrow0 ul {
 	position:absolute;
 	left:0;
 	top:1.8em;
@@ -2224,13 +2227,13 @@ body#message-messages {
     font-size: 95%;
 }
 
-.tabrow0 UL LI {
+.tabrow0 ul li {
 	display:inline;
 	margin-top:1px;
     background-image: none;
 }
 
-.tabrow0 UL A {
+.tabrow0 ul a {
     background-image: none;
 	color:#00c;
 	margin:0;
@@ -2238,18 +2241,18 @@ body#message-messages {
 	border:0
 }
 
-.tabrow0 UL A span {
+.tabrow0 ul a span {
 	padding: 0;
     background-image: none;
 }
 
-.tabrow0 UL .last span,
-.tabrow0 UL A:hover, .tabrow0 UL A:hover span,
-.tabrow0 UL A.here:hover, .tabrow0 UL A.here:hover span {
+.tabrow0 ul .last span,
+.tabrow0 ul a:hover, .tabrow0 ul a:hover span,
+.tabrow0 ul a.here:hover, .tabrow0 ul a.here:hover span {
     background-image: none;
 }
 
-.tabrow0 UL A:hover, .tabrow0 UL A:active, .tabrow0 UL A.here:link, .tabrow0 UL A.here:visited {
+.tabrow0 ul a:hover, .tabrow0 ul a:active, .tabrow0 ul a.here:link, .tabrow0 ul a.here:visited {
 	color:#444;
 }
 
@@ -2866,6 +2869,12 @@ body#mod-forum-search .introcontent {
 #mod-quiz-edit #page .attemptsnotice
 {
   text-align: center;
+}
+#mod-quiz-edit .quizquestions h2 {
+  margin-top: 0;
+}
+#mod-quiz-edit #showbreaks {
+  margin-top: 0.7em;
 }
 body#question-preview .quemodname,
 body#question-preview .controls

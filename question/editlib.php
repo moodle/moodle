@@ -317,7 +317,7 @@ function question_list($course, $categoryid, $quizid=0,
     echo '<form method="post" action="edit.php?courseid='.$course->id.'">';
     echo '<fieldset class="invisiblefieldset" style="display: block;">';
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-    print_simple_box_start();
+
     echo '<table id="categoryquestions" style="width: 100%"><tr>';
     echo "<th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$straction</th>";
     
@@ -391,7 +391,6 @@ function question_list($course, $categoryid, $quizid=0,
         }
     }
     echo "</table>\n";
-    print_simple_box_end();
 
     $paging = print_paging_bar($totalnumber, $page, $perpage,
             "edit.php?courseid={$course->id}&amp;perpage=$perpage&amp;", 'page',

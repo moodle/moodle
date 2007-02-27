@@ -179,7 +179,6 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
     echo '<fieldset class="invisiblefieldset" style="display: block;">';
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
 
-    print_simple_box_start();
     echo "<table style=\"width:100%;\">\n";
     echo "<tr><th colspan=\"3\" style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$strorder</th>";
     echo "<th class=\"header\" scope=\"col\">#</th>";
@@ -317,7 +316,6 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
     echo '<input type="hidden" name="savechanges" value="save" /></div>';
     echo '<input type="hidden" name="savequizid" value="'.$quiz->id.'" />'; // ugly hack to prevent modform session "mistakes"
 
-    print_simple_box_end();
     echo '</fieldset>';
     echo "</form>\n";
 

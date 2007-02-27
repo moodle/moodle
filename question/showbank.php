@@ -174,18 +174,16 @@
     }
 
     // starts with category selection form
-    if (has_capability('moodle/question:managecategory', $context)) {
-        print_simple_box_start();
-        question_category_form($course, $SESSION->questioncat, $SESSION->questionrecurse,
-                $SESSION->questionshowhidden, $SESSION->questionshowquestiontext);
-        print_simple_box_end();
-    }
+    print_box_start('generalbox questionbank');
+    print_heading(get_string('questionbank', 'question'), '', 2);
+    question_category_form($course, $SESSION->questioncat, $SESSION->questionrecurse,
+            $SESSION->questionshowhidden, $SESSION->questionshowquestiontext);
     
     // continues with list of questions
-    print_simple_box_start();
     question_list($course, $SESSION->questioncat, isset($modform->instance) ? $modform->instance : 0,
             $SESSION->questionrecurse, $page, $perpage, $SESSION->questionshowhidden, $sortorder,
             $SESSION->questionshowquestiontext);
-    print_simple_box_end();
+
+    print_box_end();
 
 ?>
