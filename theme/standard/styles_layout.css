@@ -651,6 +651,20 @@ body#admin-roles-manage table.generalbox {
   padding-top:10px;
 }
 
+#adminsettings #admin-calendar_weekend table {
+  width: 100%;
+}
+
+#adminsettings #admin-calendar_weekend table td {
+  text-align: center;
+}
+
+#adminsettings #admin-calendar_weekend table td label {
+  width: 100%;
+  text-align: center;
+  float: none;
+}
+
 
 /***
  *** Blocks
