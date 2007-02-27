@@ -194,7 +194,7 @@ function mediaplugin_filter($courseid, $text) {
         $replace .= '<param name="controls" value="imagewindow" />';
         $replace .= '<param name="console" value="video" />';
         $replace .= '<param name="loop" value="true" />';
-        $replace .= '<embed src="\\2.rm" width=240" height="180" loop="true" type="audio/x-pn-realaudio-plugin" controls="imagewindow" console="video" autostart="true">';
+        $replace .= '<embed src="\\2.ram" width=240" height="180" loop="true" type="audio/x-pn-realaudio-plugin" controls="imagewindow" console="video" autostart="true">';
         $replace .= '</embed>';
         $replace .= '</object><br />';
 
@@ -203,7 +203,7 @@ function mediaplugin_filter($courseid, $text) {
         $replace .= '<param name="autostart" value="true" />';
         $replace .= '<param name="controls" value="ControlPanel" />';
         $replace .= '<param name="console" value="video" />';
-        $replace .= '<embed src="\\2.rm" width="240" height="30" controls="ControlPanel" type="audio/x-pn-realaudio-plugin" console="video" autostart="true">';
+        $replace .= '<embed src="\\2.ram" width="240" height="30" controls="ControlPanel" type="audio/x-pn-realaudio-plugin" console="video" autostart="true">';
         $replace .= '</embed>';
         $replace .= '</object></p>';
 
@@ -219,7 +219,7 @@ function mediaplugin_filter($courseid, $text) {
         $replace .= '<param name="controls" value="imagewindow" />';
         $replace .= '<param name="console" value="video" />';
         $replace .= '<param name="loop" value="true" />';
-        $replace .= '<embed src="\\2.rm" width=240" height="180" loop="true" type="audio/x-pn-realaudio-plugin" controls="imagewindow" console="video" autostart="true">';
+        $replace .= '<embed src="\\2.rpm" width=240" height="180" loop="true" type="audio/x-pn-realaudio-plugin" controls="imagewindow" console="video" autostart="true">';
         $replace .= '</embed>';
         $replace .= '</object><br />';
 
@@ -228,7 +228,7 @@ function mediaplugin_filter($courseid, $text) {
         $replace .= '<param name="autostart" value="true" />';
         $replace .= '<param name="controls" value="ControlPanel" />';
         $replace .= '<param name="console" value="video" />';
-        $replace .= '<embed src="\\2.rm" width="240" height="30" controls="ControlPanel" type="audio/x-pn-realaudio-plugin" console="video" autostart="true">';
+        $replace .= '<embed src="\\2.rpm" width="240" height="30" controls="ControlPanel" type="audio/x-pn-realaudio-plugin" console="video" autostart="true">';
         $replace .= '</embed>';
         $replace .= '</object></p>';
 
