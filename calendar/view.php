@@ -306,9 +306,15 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     list($d, $m, $y) = array($date['mday'], $date['mon'], $date['year']); // This is what we want to display
     $display->maxdays = calendar_days_in_month($m, $y);
 
-    // We 'll keep these values as GMT here, and offset them when the time comes to query the db
-    $display->tstart = gmmktime(0, 0, 0, $m, 1, $y); // This is GMT
-    $display->tend = gmmktime(23, 59, 59, $m, $display->maxdays, $y); // GMT
+    if (get_user_timezone_offset() < 99) {
+        // We 'll keep these values as GMT here, and offset them when the time comes to query the db
+        $display->tstart = gmmktime(0, 0, 0, $m, 1, $y); // This is GMT
+        $display->tend = gmmktime(23, 59, 59, $m, $display->maxdays, $y); // GMT
+    } else {
+        // no timezone info specified
+        $display->tstart = mktime(0, 0, 0, $m, 1, $y);
+        $display->tend = mktime(23, 59, 59, $m, $display->maxdays, $y);
+    }
 
     $startwday = gmdate('w', $display->tstart); // $display->tstart is already GMT, so don't use date(): messes with server's TZ
 
