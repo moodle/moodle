@@ -8,5 +8,6 @@ $string['notenoughdatatoeditaquestion'] = 'Neither a question id, nor a category
 $string['questionbank'] = 'Question bank';
 $string['questiondoesnotexist'] = 'This question does not exist';
 $string['unknownquestiontype'] = 'Unknown question type: $a.';
+$string['fractionsnomax'] = 'One of the answers should have a score of 100%% so it is possible to get full marks for this question.';
 
 ?>
