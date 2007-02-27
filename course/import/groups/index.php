@@ -158,13 +158,13 @@
                 //if courseid is set
                 if (isset($newgroup->courseid)){
                                                             
-                       $newgroup->timecreated = time();
+                    $newgroup->timecreated = time();
                     $linenum++;
                     $groupname = $newgroup->name;
                     $newgrpcoursecontext = get_context_instance(CONTEXT_COURSE, $newgroup->courseid);
                     
                     ///Users cannot upload groups in courses they cannot update.
-                    if (!has_capability('moodle/course:update', $newgrpcoursecontext)){
+                    if (!has_capability('moodle/course:managegroups', $newgrpcoursecontext)){
                         notify("$newgroup->name ".get_string('notaddedto').$newgroup->coursename.get_string('notinyourcapacity'));
                     } else {
                         if (get_record("groups","name",$groupname,"courseid",$newgroup->courseid) || !($newgroup->id = insert_record("groups", $newgroup))) {
