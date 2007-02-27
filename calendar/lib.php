@@ -242,7 +242,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
                     $popupicon = $CFG->pixpath.'/c/user.gif';
                     $popupalt  = '';
                 }
-                $popupcontent .= '<div><img height="16" width="16" src="'.$popupicon.'" style="vertical-align: middle; margin-right: 4px;" alt="'.$popupalt.'" /><a href="'.$dayhref.'">'.format_string($event->name,true).'</a></div>';
+                $popupcontent .= '<div><img height="16" width="16" src="'.$popupicon.'" style="vertical-align: middle; margin-right: 4px;" alt="'.$popupalt.'" /><a href="'.$dayhref.'#event_'.$event->id.'">'.format_string($event->name,true).'</a></div>';
             }
             
             //Accessibility: functionality moved to calendar_get_popup.
@@ -456,7 +456,7 @@ function calendar_print_event($event) {
     static $strftimetime;
 
     $event = calendar_add_event_metadata($event);
-    echo '<table class="event" cellspacing="0">';
+    echo '<a name="event_'.$event->id.'"></a><table class="event" cellspacing="0">';
     echo '<tr><td class="picture">';
     if (!empty($event->icon)) {
         echo $event->icon;
@@ -870,7 +870,7 @@ function calendar_get_sideblock_upcoming($events, $linkhref = NULL) {
             if(!empty($linkhref)) {
                 $ed = usergetdate($events[$i]->timestart);
                 $href = calendar_get_link_href(CALENDAR_URL.$linkhref, $ed['mday'], $ed['mon'], $ed['year']);
-                $content .= '<a href="'.$href.'">'.$events[$i]->name.'</a>';
+                $content .= '<a href="'.$href.'#event_'.$events[$i]->id.'">'.$events[$i]->name.'</a>';
             }
             else {
                 $content .= $events[$i]->name;
