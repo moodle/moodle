@@ -2,7 +2,7 @@
 
     require_once('../../../config.php');
     require_once($CFG->libdir.'/statslib.php');
-
+    
     define('DEFAULT_PAGE_SIZE', 20);
     define('SHOW_ALL_PAGE_SIZE', 5000);
     
@@ -114,7 +114,7 @@
         }
     }
     $guestrole = get_guest_role();
-    if (empty($useroptions[$gusetrole->id])) {
+    if (empty($useroptions[$guestrole->id])) {
             $useroptions[$guestrole->id] = $guestrole->name;
     }
     $actionoptions = array('' => $strallactions,
