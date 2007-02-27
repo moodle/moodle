@@ -189,20 +189,23 @@ function mediaplugin_filter($courseid, $text) {
     if ($CFG->filter_mediaplugin_enable_ram) {
         $search = '/<a(.*?)href=\"([^<]+)\.ram\"([^>]*)>(.*?)<\/a>/is';
 
-        $replace  = '\\0<p class="mediaplugin ram"><object width="240" height="180">';
+        $replace  = '\\0<p class="mediaplugin ram"><script type="text/javascript">//<![CDATA['."\n".
+        'document.write(\'<object width="240" height="180">';
         $replace .= '<param name="src" value="\\2.ram" />';
-        $replace .= '<param name="autostart" value="true" />';
+        $replace .= '<param name="autoStart" value="true" />';
         $replace .= '<param name="controls" value="imagewindow" />';
         $replace .= '<param name="console" value="video" />';
         $replace .= '<param name="loop" value="true" />';
-        $replace .= '</object><br />';
+        $replace .= '<embed src="\\2.ram" width=240" height="180" loop="true" type="audio/x-pn-realaudio-plugin" controls="imagewindow" console="video" autostart="true" />';
+        $replace .= '<\/object><br />';
 
-        $replace .= '<object width="320" height="30">';
+        $replace .= '<object width="240" height="30">';
         $replace .= '<param name="src" value="\\2.ram" />';
-        $replace .= '<param name="autostart" value="true" />';
+        $replace .= '<param name="autoStart" value="true" />';
         $replace .= '<param name="controls" value="ControlPanel" />';
         $replace .= '<param name="console" value="video" />';
-        $replace .= '</object></p>';
+        $replace .= '<embed src="\\2.ram" width="240" height="30" controls="ControlPanel" type="audio/x-pn-realaudio-plugin" console="video" autostart="true" />';
+        $replace .= '<\/object>\')'."\n".'//]]>'."\n".'</script></p>';
 
         $text = preg_replace($search, $replace, $text);
     }
@@ -210,20 +213,23 @@ function mediaplugin_filter($courseid, $text) {
     if ($CFG->filter_mediaplugin_enable_rpm) {
         $search = '/<a(.*?)href=\"([^<]+)\.rpm\"([^>]*)>(.*?)<\/a>/is';
 
-        $replace  = '\\0<p class="mediaplugin rpm"><object width="240" height="180">';
+        $replace  = '\\0<p class="mediaplugin rpm"><script type="text/javascript">//<![CDATA['."\n".
+        'document.write(\'<object width="240" height="180">';
         $replace .= '<param name="src" value="\\2.rpm" />';
         $replace .= '<param name="autostart" value="true" />';
         $replace .= '<param name="controls" value="imagewindow" />';
         $replace .= '<param name="console" value="video" />';
         $replace .= '<param name="loop" value="true" />';
+        $replace .= '<embed src="\\2.rpm" width=240" height="180" loop="true" type="audio/x-pn-realaudio-plugin" controls="imagewindow" console="video" autostart="true" />';
         $replace .= '</object><br />';
 
-        $replace .= '<object width="320" height="30">';
+        $replace .= '<object width="240" height="30">';
         $replace .= '<param name="src" value="\\2.rpm" />';
         $replace .= '<param name="autostart" value="true" />';
         $replace .= '<param name="controls" value="ControlPanel" />';
         $replace .= '<param name="console" value="video" />';
-        $replace .= '</object></p>';
+        $replace .= '<embed src="\\2.rpm" width="240" height="30" controls="ControlPanel" type="audio/x-pn-realaudio-plugin" console="video" autostart="true" />';
+        $replace .= '</object>\')'."\n".'//]]>'."\n".'</script></p>';
 
         $text = preg_replace($search, $replace, $text);
     }
@@ -231,24 +237,26 @@ function mediaplugin_filter($courseid, $text) {
     if ($CFG->filter_mediaplugin_enable_rm) {
         $search = '/<a(.*?)href=\"([^<]+)\.rm\"([^>]*)>(.*?)<\/a>/is';
 
-        $replace  = '\\0<p class="mediaplugin rm"><object width="240" height="180">';
+        $replace  = '\\0<p class="mediaplugin rm"><script type="text/javascript">//<![CDATA['."\n".
+        'document.write(\'<object width="240" height="180">';
         $replace .= '<param name="src" value="\\2.rm" />';
         $replace .= '<param name="autostart" value="true" />';
         $replace .= '<param name="controls" value="imagewindow" />';
         $replace .= '<param name="console" value="video" />';
         $replace .= '<param name="loop" value="true" />';
+        $replace .= '<embed src="\\2.rm" width=240" height="180" loop="true" type="audio/x-pn-realaudio-plugin" controls="imagewindow" console="video" autostart="true" />';
         $replace .= '</object><br />';
 
-        $replace .= '<object width="320" height="30">';
+        $replace .= '<object width="240" height="30">';
         $replace .= '<param name="src" value="\\2.rm" />';
         $replace .= '<param name="autostart" value="true" />';
         $replace .= '<param name="controls" value="ControlPanel" />';
         $replace .= '<param name="console" value="video" />';
-        $replace .= '</object></p>';
+        $replace .= '<embed src="\\2.rm" width="240" height="30" controls="ControlPanel" type="audio/x-pn-realaudio-plugin" console="video" autostart="true" />';
+        $replace .= '</object>\')'."\n".'//]]>'."\n".'</script></p>';
 
         $text = preg_replace($search, $replace, $text);
     }
-
 
     return $text;
 }
