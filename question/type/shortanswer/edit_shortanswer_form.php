@@ -67,14 +67,24 @@ class question_edit_shortanswer_form extends question_edit_form {
         $errors = array();
         $answers = $data['answer'];
         $answercount = 0;
-        foreach ($answers as $answer){
+        $maxgrade = false;
+        foreach ($answers as $key => $answer){
             $trimmedanswer = trim($answer);
             if (!empty($trimmedanswer)){
                 $answercount++;
             }
+            // Check grades
+            if ($answer != '') {
+                if ($data['fraction'][$key] == 1) {
+                    $maxgrade = true;
+                }
+            }
         }
         if ($answercount==0){
             $errors['answer[0]'] = get_string('notenoughanswers', 'quiz', 1);
+        }
+        if ($maxgrade == false) {
+            $errors['fraction[0]'] = get_string('fractionsnomax', 'question');
         }
         return $errors;
     }
