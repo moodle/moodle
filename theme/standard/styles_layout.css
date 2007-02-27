@@ -182,6 +182,12 @@ img.grouppicture {
   padding:10px;
 }
 
+#notice, box {
+  width: 60%;
+  margin-left:auto;
+  margin-right:auto;
+}
+
 #notice .buttons {
   text-align:center  
 }
