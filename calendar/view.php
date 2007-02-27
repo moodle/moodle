@@ -470,7 +470,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
         if(isset($eventsbyday[$day])) {
             echo '<ul class="events-new">';
             foreach($eventsbyday[$day] as $eventindex) {
-                echo '<li><a href="'.$dayhref.'">'.format_string($events[$eventindex]->name,true).'</a></li>';
+                echo '<li><a href="'.$dayhref.'#event_'.$events[$eventindex]->id.'">'.format_string($events[$eventindex]->name, true).'</a></li>';
             }
             echo '</ul>';
         }
