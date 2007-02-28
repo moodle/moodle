@@ -88,7 +88,6 @@
 </script>
 
 <form method="post" action="module.php" id="form">
-<fieldset class="invisiblefieldset">
 <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
 
 <!-- Table of default values -->
@@ -134,7 +133,7 @@
     </td>
   <td align="center">
     <input type="hidden" name="fix_timelimit" value="0" />
-    <input type="checkbox" name="fix_timelimit" value="1" <?php p($CFG->quiz_fix_timelimit ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_timelimit" value="1" <?php echo $CFG->quiz_fix_timelimit ? 'checked="checked"' : ''; ?> />
   </td>
 </tr>
 
@@ -154,7 +153,7 @@
     </td>
   <td align="center">
     <input type="hidden" name="fix_questionsperpage" value="0" />
-    <input type="checkbox" name="fix_questionsperpage" value="1" <?php p($CFG->quiz_fix_questionsperpage ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_questionsperpage" value="1" <?php echo $CFG->quiz_fix_questionsperpage ? 'checked="checked"' : ''; ?> />
   </td>
 </tr>
 
@@ -168,7 +167,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_shufflequestions" value="0" />
-    <input type="checkbox" name="fix_shufflequestions" value="1" <?php p($CFG->quiz_fix_shufflequestions ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_shufflequestions" value="1" <?php echo $CFG->quiz_fix_shufflequestions ? 'checked="checked"' : ''; ?> />
   </td>
 </tr>
 
@@ -182,7 +181,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_shuffleanswers" value="0" />
-    <input type="checkbox" name="fix_shuffleanswers" value="1" <?php p($CFG->quiz_fix_shuffleanswers ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_shuffleanswers" value="1" <?php echo $CFG->quiz_fix_shuffleanswers ? 'checked="checked"' : ''; ?> />
   </td>
 </tr>
 
@@ -202,7 +201,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_attempts" value="0" />
-    <input type="checkbox" name="fix_attempts" value="1" <?php p($CFG->quiz_fix_attempts ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_attempts" value="1" <?php echo $CFG->quiz_fix_attempts ? 'checked="checked"' : ''; ?> />
   </td>
 </tr>
 
@@ -216,7 +215,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_attemptonlast" value="0" />
-    <input type="checkbox" name="fix_attemptonlast" value="1" <?php p($CFG->quiz_fix_attemptonlast ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_attemptonlast" value="1" <?php echo $CFG->quiz_fix_attemptonlast ? 'checked="checked"' : ''; ?> />
   </td>
 </tr>
 
@@ -230,7 +229,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_grademethod" value="0" />
-    <input type="checkbox" name="fix_grademethod" value="1" <?php p($CFG->quiz_fix_grademethod ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_grademethod" value="1" <?php echo $CFG->quiz_fix_grademethod ? 'checked="checked"' : ''; ?> />
   </td>
 </tr>
 
@@ -244,7 +243,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_adaptive" value="0" />
-    <input type="checkbox" name="fix_adaptive" value="1" <?php p($CFG->quiz_fix_adaptive ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_adaptive" value="1" <?php echo $CFG->quiz_fix_adaptive ? 'checked="checked"' : ''; ?> />
   </td>
 </tr>
 
@@ -258,7 +257,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_penaltyscheme" value="0" />
-    <input type="checkbox" name="fix_penaltyscheme" value="1" <?php p($CFG->quiz_fix_penaltyscheme ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_penaltyscheme" value="1" <?php echo $CFG->quiz_fix_penaltyscheme ? 'checked="checked"' : ''; ?> />
   </td>
 </tr>
 
@@ -277,7 +276,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_decimalpoints" value="0" />
-    <input type="checkbox" name="fix_decimalpoints" value="1" <?php p($CFG->quiz_fix_decimalpoints ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_decimalpoints" value="1" <?php echo $CFG->quiz_fix_decimalpoints ? 'checked="checked"' : ''; ?> />
   </td>
 </tr>
 
@@ -286,7 +285,7 @@
   <?php include($CFG->dirroot . '/mod/quiz/reviewoptions.html'); ?>
   <td align="center">
     <input type="hidden" name="fix_review" value="0" />
-    <input type="checkbox" name="fix_review" value="1" <?php p($CFG->quiz_fix_review ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_review" value="1" <?php echo $CFG->quiz_fix_review ? 'checked="checked"' : ''; ?> />
   </td>
 </tr>
 
@@ -300,7 +299,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_popup" value="0" />
-    <input type="checkbox" name="fix_popup" value="1" <?php p($CFG->quiz_fix_popup ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_popup" value="1" <?php echo $CFG->quiz_fix_popup ? 'checked="checked"' : ''; ?> />
   </td>
 </tr>
 
@@ -314,7 +313,7 @@
     </td>
     <td align="center">
         <input type="hidden" name="fix_delay1" value="0" />
-        <input type="checkbox" name="fix_delay1" value="1" <?php p($CFG->quiz_fix_delay1 ? "checked" : "") ?> />
+        <input type="checkbox" name="fix_delay1" value="1" <?php echo $CFG->quiz_fix_delay1 ? 'checked="checked"' : ''; ?> />
     </td>
 </tr>
 
@@ -328,7 +327,7 @@
     </td>
     <td align="center">
          <input type="hidden" name="fix_delay2" value="0" />
-         <input type="checkbox" name="fix_delay2" value="1" <?php p($CFG->quiz_fix_delay2 ? "checked" : "") ?> />        
+         <input type="checkbox" name="fix_delay2" value="1" <?php echo $CFG->quiz_fix_delay2 ? 'checked="checked"' : ''; ?> />        
     </td>
 </tr>
 
@@ -340,7 +339,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_password" value="0" />
-    <input type="checkbox" name="fix_password" value="1" <?php p($CFG->quiz_fix_password ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_password" value="1" <?php echo $CFG->quiz_fix_password ? 'checked="checked"' : ''; ?> />
   </td>
 </tr>
 
@@ -352,7 +351,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_subnet" value="0" />
-    <input type="checkbox" name="fix_subnet" value="1" <?php p($CFG->quiz_fix_subnet ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_subnet" value="1" <?php echo $CFG->quiz_fix_subnet ? 'checked="checked"' : ''; ?> />
   </td>
 </tr>
 
@@ -373,7 +372,7 @@
 <!-- Can't hide this setting, it always shows up on edit.php
   <td align="center">
     <input type="hidden" name="fix_maximumgrade" value="0" />
-    <input type="checkbox" name="fix_maximumgrade" value="1" <?php p($CFG->quiz_fix_maximumgrade ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_maximumgrade" value="1" <?php echo $CFG->quiz_fix_maximumgrade ? 'checked="checked"' : ''; ?> />
   </td>
 -->
 </tr>
@@ -387,7 +386,6 @@
 
 </table>
 
-</fieldset>
 </form>
 
 <script type="text/javascript">
