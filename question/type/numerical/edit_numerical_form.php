@@ -105,17 +105,41 @@ class question_edit_numerical_form extends question_edit_form {
     }
     function validation($data){
         $errors = array();
-        $answers = $data['answer'];
+
+        // Check the answers.
         $answercount = 0;
-        foreach ($answers as $answer){
+        $maxgrade = false;
+        $answers = $data['answer'];
+        foreach ($answers as $key => $answer) {
             $trimmedanswer = trim($answer);
             if ($trimmedanswer!=''){
                 $answercount++;
+                if ($data['fraction'][$key] == 1) {
+                    $maxgrade = true;
+                }
             }
         }
         if ($answercount==0){
             $errors['answer[0]'] = get_string('notenoughanswers', 'qtype_numerical');
         }
+        if ($maxgrade == false) {
+            $errors['fraction[0]'] = get_string('fractionsnomax', 'question');
+        }
+
+        // Check units.
+        $alreadyseenunits = array();
+        foreach ($data['unit'] as $key => $unit) {
+            $trimmedunit = trim($unit);
+            if ($trimmedunit!='' && in_array($trimmedunit, $alreadyseenunits)) {
+                $errors["unit[$key]"] = get_string('errorrepeatedunit', 'qtype_numerical');
+                if (trim($data['multiplier'][$key]) == '') {
+                    $errors["multiplier[$key]"] = get_string('errornomultiplier', 'qtype_numerical');
+                }
+            } else {
+                $alreadyseenunits[] = $trimmedunit;
+            }
+        }
+
         return $errors;
     }
     function qtype() {
