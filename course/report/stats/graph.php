@@ -73,17 +73,17 @@
                 $graph->y_data['line3'][] = $stat->line3;
             }
         }
-        $graph->y_order = array('line1','line2');
-        if (!empty($param->line3)) {
-            $graph->y_order[] = 'line3';
-        }
+        $graph->y_order = array('line1');
         $graph->y_format['line1'] = array('colour' => $c[1],'line' => 'line','legend' => $param->line1);
         if (!empty($param->line2)) {
+            $graph->y_order[] = 'line2';
             $graph->y_format['line2'] = array('colour' => $c[2],'line' => 'line','legend' => $param->line2); 
         }
         if (!empty($param->line3)) {
+            $graph->y_order[] = 'line3';
             $graph->y_format['line3'] = array('colour' => $c[3],'line' => 'line','legend' => $param->line3); 
         }
+        $graph->y_tick_labels = false;
     } else {
         $data = array();
         $times = array();
