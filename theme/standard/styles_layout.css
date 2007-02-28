@@ -500,8 +500,8 @@ form#adminsettings div.htmlarea {
   padding-top: 5px;
 }
 
-form.mform .required img.req {
-  display:none;
+.mform label .req, .mform label .adv {
+  cursor: help;
 }
 
 #admin-register form.mform .fsubmit {
