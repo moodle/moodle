@@ -68,13 +68,10 @@ class question_edit_shortanswer_form extends question_edit_form {
         $answers = $data['answer'];
         $answercount = 0;
         $maxgrade = false;
-        foreach ($answers as $key => $answer){
+        foreach ($answers as $key => $answer) {
             $trimmedanswer = trim($answer);
             if (!empty($trimmedanswer)){
                 $answercount++;
-            }
-            // Check grades
-            if ($answer != '') {
                 if ($data['fraction'][$key] == 1) {
                     $maxgrade = true;
                 }
