@@ -427,7 +427,7 @@
         return $status;
     }
 
-    function question_restore_numerical_units ($old_question_id,$new_question_id,$info,$restore) {
+    function question_restore_numerical_units($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -447,17 +447,23 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //Now, build the question_numerical_UNITS record structure
-            $numerical_unit = new stdClass;
-            $numerical_unit->question = $new_question_id;
-            $numerical_unit->multiplier = backup_todb($nu_info['#']['MULTIPLIER']['0']['#']);
-            $numerical_unit->unit = backup_todb($nu_info['#']['UNIT']['0']['#']);
-
-            //The structure is equal to the db, so insert the question_numerical_units
-            $newid = insert_record ("question_numerical_units",$numerical_unit);
-
-            if (!$newid) {
-                $status = false;
+            // Check to see if this until already exists in the database, which it might, for 
+            // Historical reasons.
+            $unit = backup_todb($nu_info['#']['UNIT']['0']['#']);
+            if (!record_exists('question_numerical_units', 'question', $new_question_id, 'unit', $unit)) {
+                
+                //Now, build the question_numerical_UNITS record structure.
+                $numerical_unit = new stdClass;
+                $numerical_unit->question = $new_question_id;
+                $numerical_unit->multiplier = backup_todb($nu_info['#']['MULTIPLIER']['0']['#']);
+                $numerical_unit->unit = $unit;
+    
+                //The structure is equal to the db, so insert the question_numerical_units
+                $newid = insert_record("question_numerical_units", $numerical_unit);
+    
+                if (!$newid) {
+                    $status = false;
+                }
             }
         }
 
