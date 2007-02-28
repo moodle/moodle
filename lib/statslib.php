@@ -81,7 +81,9 @@ function stats_cron_daily () {
         $daily_modules = array();
         $mods = get_records("modules");
         foreach ($mods as $mod) {
-            require_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
+            // include_once() will only warn if a mod is missing
+            // as we don't want processing to stop on such minutiae (MDL-7385)
+            include_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
             $fname = $mod->name.'_get_daily_stats';
             if (function_exists($fname)) {
                 $daily_modules[$mod] = $fname;
