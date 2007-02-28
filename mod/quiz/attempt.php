@@ -488,7 +488,7 @@
     }
 
     // Add a hidden field with the quiz id
-    echo '<fieldset class="invisiblefieldset">';
+    echo '<div>';
     echo '<input type="hidden" name="q" value="' . s($quiz->id) . "\" />\n";
 
 /// Print the navigation panel if required
@@ -554,7 +554,7 @@
     }
 
     // Finish the form
-    echo '</fieldset>';
+    echo '</div>';
     echo "</form>\n";
 
 
