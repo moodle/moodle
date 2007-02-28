@@ -43,7 +43,7 @@
     $options = array();
     foreach ($taught_courses as $tcourse) {
         if ($tcourse->id != $course->id && $tcourse->id != SITEID){
-            $options[$tcourse->id] = $tcourse->fullname;
+            $options[$tcourse->id] = format_string($tcourse->fullname);
         }
     }
 
@@ -63,7 +63,7 @@
 
     foreach ($cat_courses as $ccourse) {
         if ($ccourse->id != $course->id && $ccourse->id != SITEID) {
-            $options[$ccourse->id] = $ccourse->fullname;
+            $options[$ccourse->id] = format_string($ccourse->fullname);
         }
     }
     $cat = get_record("course_categories","id",$course->category);
@@ -85,7 +85,7 @@
             $table->data[] = array('<b>'.get_string('searchresults').'</b>','','');
             foreach ($courses as $scourse) {
                 if ($course->id != $scourse->id) {
-                    $table->data[] = array('',$scourse->fullname,
+                    $table->data[] = array('',format_string($scourse->fullname),
                                            '<a href="'.$CFG->wwwroot.'/course/import/activities/index.php?id='.$course->id.'&amp;fromcourse='.$scourse->id.'">'.get_string('usethiscourse').'</a>');
                 }
             }
