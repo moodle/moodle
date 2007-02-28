@@ -34,25 +34,29 @@ $text_source_options = array(
 
     function hotpot_lockoptions(form, master, subitems, offvalues) {
         var disabled = false;
-        var obj = eval("document."+form+"."+master);
-        if (obj) {
-            var v = '';
-            if (obj.type=='select-one') {
-                var v = obj.options[obj.selectedIndex].value;
-                for (i=0; i<offvalues.length; i++) {
-                    if (v==offvalues[i]) {
+        var Frm = document.forms[form];
+        if (Frm) {
+            var obj = Frm.elements[master];
+            if (obj) {
+                var v = '';
+                if (obj.type=='select-one') {
+                    var v = obj.options[obj.selectedIndex].value;
+                    for (i=0; i<offvalues.length; i++) {
+                        if (v==offvalues[i]) {
+                            disabled = true;
+                        }
+                    }
+                } else if (obj.type=='checkbox') {
+                    if (obj.checked==false) {
                         disabled = true;
                     }
                 }
-            } else if (obj.type=='checkbox') {
-                if (obj.checked==false) {
-                    disabled = true;
-                }
             }
-        }
-        if (document.getElementById) {
             for (i=0; i<subitems.length; i++) {
-                eval("document."+form+"."+subitems[i]+".disabled="+disabled);
+                var obj = Frm.elements[subitems[i]];
+                if (obj) {
+                    obj.disabled = disabled;
+                }
             }
         }
         return(true);
@@ -371,17 +375,17 @@ $text_source_options = array(
     // override the standard Moodle "setfocus" function, 
     // which gives a js error if the "name" field is hidden
     function setfocus() {
-    	var f = getElementById('form');
-    	if (f) {
-    		if (canfocus(f, 'namesource')) {
-    			f.namesource.focus();
-    		} else if (canfocus(f, 'name')) {
-    			f.name.focus();
+    	var Frm = document.getElementById('form');
+    	if (Frm) {
+    		if (canfocus(Frm, 'namesource')) {
+    			Frm.namesource.focus();
+    		} else if (canfocus(Frm, 'name')) {
+    			Frm.name.focus();
     		}
     	}
     }
-    function canfocus(f, name) {
-    	var obj = eval('f.'+name);
+    function canfocus(Frm, name) {
+    	var obj = eval('Frm.' + name);
     	return (obj==null || obj.type=='hidden' || obj.focus==null || (obj.style && obj.style.display=='none')) ? false : true;
     }
 //-->
