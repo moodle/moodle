@@ -46,7 +46,7 @@ function online_assignment_cleanup($output=false) {
 
 
     /// get a list of all courses on this site
-    $courses = get_courses();
+    $courses = get_records('course');
 
     /// cycle through each course
     foreach ($courses as $course) {
