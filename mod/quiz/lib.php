@@ -457,7 +457,8 @@ function quiz_print_recent_mod_activity($activity, $course, $detail=false) {
 
 /**
  * Pre-process the quiz options form data, making any necessary adjustments.
- *
+ * Called by add/update instance in this file, and the save code in admin/module.php.
+ * 
  * @param object $quiz The variables set on the form.
  */
 function quiz_process_options(&$quiz) {
@@ -485,55 +486,56 @@ function quiz_process_options(&$quiz) {
     $quiz->timelimit = round($quiz->timelimit);
 
     // Quiz feedback
-
-    // Clean up the boundary text.
-    for ($i = 0; $i < count($quiz->feedbacktext); $i += 1) {
-        if (empty($quiz->feedbacktext[$i])) {
-            $quiz->feedbacktext[$i] = '';
-        } else {
-            $quiz->feedbacktext[$i] = trim($quiz->feedbacktext[$i]);
-        }
-    }
-
-    // Check the boundary value is a number or a percentage, and in range.
-    $i = 0;
-    while (!empty($quiz->feedbackboundaries[$i])) {
-        $boundary = trim($quiz->feedbackboundaries[$i]);
-        if (!is_numeric($boundary)) {
-            if (strlen($boundary) > 0 && $boundary[strlen($boundary) - 1] == '%') {
-                $boundary = trim(substr($boundary, 0, -1));
-                if (is_numeric($boundary)) {
-                    $boundary = $boundary * $quiz->grade / 100.0;
-                } else {
-                    return get_string('feedbackerrorboundaryformat', 'quiz', $i + 1);
-                }
+    if (isset($quiz->feedbacktext)) {
+        // Clean up the boundary text.
+        for ($i = 0; $i < count($quiz->feedbacktext); $i += 1) {
+            if (empty($quiz->feedbacktext[$i])) {
+                $quiz->feedbacktext[$i] = '';
+            } else {
+                $quiz->feedbacktext[$i] = trim($quiz->feedbacktext[$i]);
             }
         }
-        if ($boundary <= 0 || $boundary >= $quiz->grade) {
-            return get_string('feedbackerrorboundaryoutofrange', 'quiz', $i + 1);
+    
+        // Check the boundary value is a number or a percentage, and in range.
+        $i = 0;
+        while (!empty($quiz->feedbackboundaries[$i])) {
+            $boundary = trim($quiz->feedbackboundaries[$i]);
+            if (!is_numeric($boundary)) {
+                if (strlen($boundary) > 0 && $boundary[strlen($boundary) - 1] == '%') {
+                    $boundary = trim(substr($boundary, 0, -1));
+                    if (is_numeric($boundary)) {
+                        $boundary = $boundary * $quiz->grade / 100.0;
+                    } else {
+                        return get_string('feedbackerrorboundaryformat', 'quiz', $i + 1);
+                    }
+                }
+            }
+            if ($boundary <= 0 || $boundary >= $quiz->grade) {
+                return get_string('feedbackerrorboundaryoutofrange', 'quiz', $i + 1);
+            }
+            if ($i > 0 && $boundary >= $quiz->feedbackboundaries[$i - 1]) {
+                return get_string('feedbackerrororder', 'quiz', $i + 1);
+            }
+            $quiz->feedbackboundaries[$i] = $boundary;
+            $i += 1;
         }
-        if ($i > 0 && $boundary >= $quiz->feedbackboundaries[$i - 1]) {
-            return get_string('feedbackerrororder', 'quiz', $i + 1);
+        $numboundaries = $i;
+    
+        // Check there is nothing in the remaining unused fields.
+        for ($i = $numboundaries; $i < count($quiz->feedbackboundaries); $i += 1) {
+            if (!empty($quiz->feedbackboundaries[$i]) && trim($quiz->feedbackboundaries[$i]) != '') {
+                return get_string('feedbackerrorjunkinboundary', 'quiz', $i + 1);
+            }
         }
-        $quiz->feedbackboundaries[$i] = $boundary;
-        $i += 1;
+        for ($i = $numboundaries + 1; $i < count($quiz->feedbacktext); $i += 1) {
+            if (!empty($quiz->feedbacktext[$i]) && trim($quiz->feedbacktext[$i]) != '') {
+                return get_string('feedbackerrorjunkinfeedback', 'quiz', $i + 1);
+            }
+        }
+        $quiz->feedbackboundaries[-1] = $quiz->grade + 1; // Needs to be bigger than $quiz->grade because of '<' test in quiz_feedback_for_grade().
+        $quiz->feedbackboundaries[$numboundaries] = 0;
+        $quiz->feedbackboundarycount = $numboundaries;
     }
-    $numboundaries = $i;
-
-    // Check there is nothing in the remaining unused fields.
-    for ($i = $numboundaries; $i < count($quiz->feedbackboundaries); $i += 1) {
-        if (!empty($quiz->feedbackboundaries[$i]) && trim($quiz->feedbackboundaries[$i]) != '') {
-            return get_string('feedbackerrorjunkinboundary', 'quiz', $i + 1);
-        }
-    }
-    for ($i = $numboundaries + 1; $i < count($quiz->feedbacktext); $i += 1) {
-        if (!empty($quiz->feedbacktext[$i]) && trim($quiz->feedbacktext[$i]) != '') {
-            return get_string('feedbackerrorjunkinfeedback', 'quiz', $i + 1);
-        }
-    }
-    $quiz->feedbackboundaries[-1] = $quiz->grade + 1; // Needs to be bigger than $quiz->grade because of '<' test in quiz_feedback_for_grade().
-    $quiz->feedbackboundaries[$numboundaries] = 0;
-    $quiz->feedbackboundarycount = $numboundaries;
 
     // Settings that get combined to go into the optionflags column.
     $quiz->optionflags = 0;
