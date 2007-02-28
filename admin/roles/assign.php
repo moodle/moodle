@@ -103,7 +103,7 @@
 
         /// site header
         } else {
-            print_header("$course->fullname: $fullname", "$course->fullname",
+            print_header("$course->fullname: $fullname", $course->fullname,
                         "<a href=\"$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid\">$fullname</a> -> $straction", "", "", true, "&nbsp;", navmenu($course));
         }
 

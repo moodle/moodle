@@ -283,9 +283,9 @@ function sync_enrolments($role = null) {
         if ($to_prune) {
             foreach ($to_prune as $role_assignment) {
                 if (role_unassign($role->id, $role_assignment->userid, 0, $role_assignment->contextid)){
-                    print "Unassigned {$role->shortname} assignment #{$role_assignment->id} for course {$course->id} ({$course->shortname}); user {$role_assignment->userid}\n";
+                    print "Unassigned {$role->shortname} assignment #{$role_assignment->id} for course {$course->id} (" . format_string($course->shortname) . "); user {$role_assignment->userid}\n";
                 } else {
-                    print "Failed to unassign {$role->shortname} assignment #{$role_assignment->id} for course {$course->id} ({$course->shortname}); user {$role_assignment->userid}\n";
+                    print "Failed to unassign {$role->shortname} assignment #{$role_assignment->id} for course {$course->id} (" . format_string($course->shortname) . "); user {$role_assignment->userid}\n";
                 }
             }
         }
@@ -325,9 +325,9 @@ function sync_enrolments($role = null) {
             }
             
             if (role_assign($role->id, $userid, 0, $context->id, 0, 0, 0, 'database')){
-                print "Assigned role {$role->shortname} to user {$userid} in course {$course->id} ({$course->shortname})\n";
+                print "Assigned role {$role->shortname} to user {$userid} in course {$course->id} (" . format_string($course->shortname) . ")\n";
             } else {
-                print "Failed to assign role {$role->shortname} to user {$userid} in course {$course->id} ({$course->shortname})\n";
+                print "Failed to assign role {$role->shortname} to user {$userid} in course {$course->id} (" . format_string($course->shortname) . ")\n";
             }
 
         } // end foreach member

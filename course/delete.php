@@ -37,7 +37,8 @@
                      "<a href=\"category.php?id=$course->category\">$category->name</a> -> ".
                      "$strdeletecheck");
 
-        notice_yesno("$strdeletecoursecheck<br /><br />$course->fullname ($course->shortname)", 
+        notice_yesno("$strdeletecoursecheck<br /><br />" . format_string($course->fullname) . 
+                     " (" . format_string($course->shortname) . ")", 
                      "delete.php?id=$course->id&amp;delete=".md5($course->timemodified)."&amp;sesskey=$USER->sesskey", 
                      "category.php?id=$course->category");
 
@@ -57,7 +58,7 @@
 
     add_to_log(SITEID, "course", "delete", "view.php?id=$course->id", "$course->fullname (ID $course->id)");
 
-    $strdeletingcourse = get_string("deletingcourse", "", $course->shortname);
+    $strdeletingcourse = get_string("deletingcourse", "", format_string($course->shortname));
 
     print_header("$site->shortname: $strdeletingcourse", $site->fullname, 
                  "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> ".
@@ -70,7 +71,7 @@
     delete_course($course->id);
     fix_course_sortorder(); //update course count in catagories
 
-    print_heading( get_string("deletedcourse", "", $course->shortname) );
+    print_heading( get_string("deletedcourse", "", format_string($course->shortname)) );
 
     print_continue("category.php?id=$course->category");
 

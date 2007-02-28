@@ -1410,7 +1410,10 @@ function format_title($string, $plaintext=true, $courseid=null) {
 function format_string ($string, $striplinks = false, $courseid=NULL ) {
 
     global $CFG, $COURSE;
-
+    
+    // First replace all ampersands not followed html entity code
+    $string = preg_replace("/\&(?![a-z0-9]{1,8};)/", "&amp;", $string);
+    
     //We'll use a in-memory cache here to speed up repeated strings
     static $strcache = false;
 
@@ -1436,7 +1439,8 @@ function format_string ($string, $striplinks = false, $courseid=NULL ) {
 
     //Store to cache
     $strcache[$md5] = $string;
-
+       
+        
     return $string;
 }
 
@@ -2032,7 +2036,9 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
                        $usexml=false, $bodytags='', $return=false) {
 
     global $USER, $CFG, $THEME, $SESSION, $ME, $SITE, $COURSE;
-
+    
+    $heading = format_string($heading); // Fix for MDL-8582
+    
 /// This makes sure that the header is never repeated twice on a page
     if (defined('HEADER_PRINTED')) {
         debugging('print_header() was called more than once - this should not happen.  Please check the code for this page closely. Note: error() and redirect() are now safe to call after print_header().');
@@ -2222,7 +2228,8 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
 
     ob_start();
-    $title = s($title); // fix for MDL-8582
+
+    $title = format_string($title); // fix for MDL-8582
     include($CFG->header);
     $output = ob_get_contents();
     ob_end_clean();
@@ -2317,10 +2324,10 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
 
     $shortname ='';
     if ($COURSE->id != SITEID) {
-        $shortname = '<a href="'.$CFG->wwwroot.'/course/view.php?id='. $COURSE->id .'">'. s($COURSE->shortname) .'</a> ->';
+        $shortname = '<a href="'.$CFG->wwwroot.'/course/view.php?id='. $COURSE->id .'">'. $COURSE->shortname .'</a> ->';
     }
 
-    $output = print_header(s($COURSE->shortname) .': '. s($title), s($COURSE->fullname) .' '. s($heading), $shortname.' '. $navigation, $focus, $meta,
+    $output = print_header($COURSE->shortname .': '. $title, $COURSE->fullname .' '. $heading, $shortname.' '. $navigation, $focus, $meta,
                            $cache, $button, $menu, $usexml, $bodytags, true);
 
     if ($return) {
@@ -2358,7 +2365,7 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
             $home  = true;
         } else {
             $homelink = '<div class="homelink"><a '.$CFG->frametarget.' href="'.$CFG->wwwroot.
-                        '/course/view.php?id='.$course->id.'">'.s($course->shortname).'</a></div>';
+                        '/course/view.php?id='.$course->id.'">'.format_string($course->shortname).'</a></div>';
             $home  = false;
         }
     } else {
@@ -2813,16 +2820,47 @@ function print_navigation ($navigation, $separator=0, $return=false) {
     }
 
     if ($navigation) {
+        
+        if (!is_array($navigation)) {
+            $ar = explode('->', $navigation);
+            $navigation = array();
+            
+            foreach ($ar as $a) {
+                if (strpos($a, '</a>') === false) {
+                    $navigation[trim(format_string($a))] = '';
+                } else {
+                    if (preg_match('/<a.*href="([^"]*)">(.*)<\/a>/', $a, $matches)) {                  
+                        $navigation[trim(format_string($matches[2]))] = $matches[1];
+                    }
+                }
+            }
+        }
+
+        if (! $site = get_site()) {
+            $site = new object();
+            $site->shortname = get_string('home');
+        }
+        
         //Accessibility: breadcrumb links now in a list, &raquo; replaced with a 'silent' character.
         $nav_text = get_string('youarehere','access');
         $output .= '<h2 class="accesshide">'.$nav_text."</h2><ul>\n";
-        if (! $site = get_site()) {
-            $site->shortname = get_string('home');
-        }
-
-        $navigation = "<li>$separator ". str_replace('->', "</li>\n<li>$separator", $navigation) ."</li>\n";
-        $output .= '<li class="first"><a '.$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'. $CFG->wwwroot.((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID)) && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
-                                                                       ? '/my' : '') .'/">'. $site->shortname ."</a></li>\n". $navigation;
+        
+        $output .= '<li class="first"><a '.$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'
+               .$CFG->wwwroot.((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))
+                                 && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
+                                 ? '/my' : '') .'/">'. format_string($site->shortname) ."</a></li>\n";
+        
+        
+        foreach ($navigation as $title=>$url) {
+            $title = strip_tags(format_string($title));
+            if (empty($url)) {
+                $output .= '<li class="first">'."$separator $title</li>\n";
+            } else {
+                $output .= '<li class="first">' . $separator  . ' <a '.$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'
+                           .$url.'">'."$title</a></li>\n";
+            }
+        }    
+        
         $output .= "</ul>\n";
     }
 

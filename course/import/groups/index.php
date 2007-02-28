@@ -40,7 +40,7 @@
 
 /// Print the header
 
-    print_header("$course->shortname: $strimportgroups", "$course->fullname", 
+    print_header("$course->shortname: $strimportgroups", $course->fullname, 
                  "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ".
                  "-> <a href=\"$CFG->wwwroot/course/import.php?id=$course->id\">".get_string('import')."</a> ".
                  "-> $strimportgroups");

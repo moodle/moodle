@@ -168,21 +168,21 @@
                 $teacher = get_teacher($course->id);
 
                 if (!empty($CFG->enrol_mailstudents)) {
-                    $a->coursename = "$course->fullname";
+                    $a->coursename = $course->fullname;
                     $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
                     email_to_user($user, $teacher, get_string("enrolmentnew", '', $course->shortname),
                                   get_string('welcometocoursetext', '', $a));
                 }
 
                 if (!empty($CFG->enrol_mailteachers)) {
-                    $a->course = "$course->fullname";
+                    $a->course = $course->fullname;
                     $a->user = fullname($user);
                     email_to_user($teacher, $user, get_string("enrolmentnew", '', $course->shortname),
                                   get_string('enrolmentnewuser', '', $a));
                 }
 
                 if (!empty($CFG->enrol_mailadmins)) {
-                    $a->course = "$course->fullname";
+                    $a->course = $course->fullname;
                     $a->user = fullname($user);
                     $admins = get_admins();
                     foreach ($admins as $admin) {

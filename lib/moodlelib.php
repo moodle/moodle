@@ -1752,7 +1752,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
                 case 1:    /// Guests always allowed 
                     if (!has_capability('moodle/course:view', $context)) {    // Prohibited by capability
                         print_header_simple();
-                        notice(get_string('guestsnotallowed', '', $COURSE->fullname), "$CFG->wwwroot/login/index.php");
+                        notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), "$CFG->wwwroot/login/index.php");
                     }
                     if (!empty($cm) and !$cm->visible) { // Not allowed to see module, send to course page
                         redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, 
@@ -1773,9 +1773,9 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
                 default:    /// Guests not allowed
                     print_header_simple('', '', get_string('loggedinasguest'));
                     if (empty($USER->switchrole[$context->id])) {  // Normal guest
-                        notice(get_string('guestsnotallowed', '', $COURSE->fullname), "$CFG->wwwroot/login/index.php");
+                        notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), "$CFG->wwwroot/login/index.php");
                     } else {
-                        notify(get_string('guestsnotallowed', '', $COURSE->fullname));
+                        notify(get_string('guestsnotallowed', '', format_string($COURSE->fullname)));
                         echo '<div class="notifyproblem">'.switchroles_form($COURSE->id).'</div>';
                         print_footer($COURSE);
                         exit;
@@ -3663,7 +3663,7 @@ function email_welcome_message_to_user($course, $user=NULL) {
     }
 
     if (!empty($course->welcomemessage)) {
-        $subject = get_string('welcometocourse', '', $course->fullname);
+        $subject = get_string('welcometocourse', '', format_string($course->fullname));
 
         $a->coursename = $course->fullname;
         $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id";

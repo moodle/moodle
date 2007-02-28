@@ -126,7 +126,7 @@
                       <a href=\"index.php?id=$course->id\">$strparticipants</a> -> $fullname",
                       "", "", true, "&nbsp;", navmenu($course));
     } else {
-        print_header("$course->fullname: $strpersonalprofile: $fullname", "$course->fullname",
+        print_header("$course->fullname: $strpersonalprofile: $fullname", $course->fullname,
                      "$fullname", "", "", true, "&nbsp;", navmenu($course));
     }
 
@@ -296,10 +296,11 @@
         foreach ($mycourses as $mycourse) {
             if ($mycourse->visible and $mycourse->category) {
                 if ($mycourse->id != $course->id){
-                    $courselisting .= "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$mycourse->id\">$mycourse->fullname</a>, ";
+                    $courselisting .= "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$mycourse->id\">"
+                        . format_string($mycourse->fullname) . "</a>, ";
                 }
                 else {
-                    $courselisting .= "$mycourse->fullname, ";
+                    $courselisting .= format_string($mycourse->fullname) . ", ";
                 }
             }
             $shown++;

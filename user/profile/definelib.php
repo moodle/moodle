@@ -414,7 +414,7 @@ function profile_edit_category($id, $redirect, $adminroot) {
         if (empty($id)) {
             $strheading = get_string('profilecreatenewcategory', 'admin');
         } else {
-            $strheading = get_string('profileeditcategory', 'admin', $category->name);
+            $strheading = get_string('profileeditcategory', 'admin', format_string($category->name));
         }
 
         /// Print the page

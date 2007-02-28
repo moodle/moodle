@@ -43,7 +43,7 @@
         require_login($course->id);
     }
 
-    print_header("$course->shortname: ".format_string($glossary->name), "$course->fullname",
+    print_header("$course->shortname: ".format_string($glossary->name), $course->fullname,
         "$navigation <a href=\"index.php?id=$course->id\">$strglossaries</a> -> ".format_string($glossary->name),
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));

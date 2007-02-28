@@ -78,7 +78,7 @@ if ($success) {
     $groupname = groups_get_group_displayname($groupid);
 
     print_header("$course->shortname: $strgroups", 
-                 "$course->fullname", 
+                 $course->fullname, 
                  "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
                  "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
                  "-> $strgroups", '', '', true, '', user_login_string($course, $USER));

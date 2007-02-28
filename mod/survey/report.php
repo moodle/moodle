@@ -65,7 +65,7 @@
                        <a href=\"view.php?id=$cm->id\">".format_string($survey->name,true)."</a> -> ";
     }
 
-    print_header("$course->shortname: ".format_string($survey->name), "$course->fullname", "$navigation $strreport",
+    print_header("$course->shortname: ".format_string($survey->name), $course->fullname, "$navigation $strreport",
                  "", "", true,
                  update_module_button($cm->id, $course->id, $strsurvey), navmenu($course, $cm));
 

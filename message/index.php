@@ -51,10 +51,10 @@
 
 /// Header on this page
     if ($tab == 'contacts') {
-        print_header(get_string('messages', 'message').' - '.$SITE->fullname, '', '', '', 
+        print_header(get_string('messages', 'message').' - '.format_string($SITE->fullname), '', '', '', 
                 '<meta http-equiv="refresh" content="'. $CFG->message_contacts_refresh .'; url=index.php" />');
     } else {
-        print_header(get_string('messages', 'message').' - '.$SITE->fullname);
+        print_header(get_string('messages', 'message').' - '.format_string($SITE->fullname));
     }
 
     echo '<table cellspacing="2" cellpadding="2" border="0" align="center" width="95%">';

@@ -10,7 +10,7 @@
     $loginsite = get_string("loginsite");
     $errormsg = get_string("auth_cas_invalidcaslogin", "auth");
 
-    print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite);
+    print_header("$site->fullname: $loginsite", $site->fullname, $loginsite);
     include("forbidden.html");
     print_footer();
     exit;

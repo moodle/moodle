@@ -40,7 +40,7 @@ while(!feof($fd)) {
     
     $user = get_record("user","id",$log->userid);
     $course = get_record("course","id",$log->course);
-    $subject = get_string('virusfoundsubject','moodle',$site->fullname);
+    $subject = get_string('virusfoundsubject','moodle',format_string($site->fullname));
     $a->date = userdate($log->time);
 
     $a->action = $action;
@@ -78,7 +78,7 @@ function notify_admins_unknown($file,$a) {
     global $site;
 
     $admins = get_admins();
-    $subject = get_string('virusfoundsubject','moodle',$site->fullname);
+    $subject = get_string('virusfoundsubject','moodle',format_string($site->fullname));
     $body = get_string('virusfoundlateradminnolog','moodle',$a);
     foreach ($admins as $admin) {
         email_to_user($admin,$admin,$subject,$body);

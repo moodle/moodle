@@ -105,7 +105,7 @@
         //        $scales_site_uses = site_scale_used($scale->id,$courses);
         $scalemenu = make_menu_from_list($scale->scale);
 
-        print_header("$course->shortname: $strscales", "$course->fullname",
+        print_header("$course->shortname: $strscales", $course->fullname,
                  "$course->shortname -> $strscales -> $scale->name", "", "", true, "&nbsp;", "&nbsp;");
 
         close_window_button();
@@ -164,7 +164,7 @@
         }
 
         //Print out the headers
-        print_header("$course->shortname: $strscales", "$course->fullname",
+        print_header("$course->shortname: $strscales", $course->fullname,
                  "<a href=\"view.php?id=$course->id\">$course->shortname</a>".
                  " -> <a href=\"scales.php?id=$course->id\">$strscales</a>".
                  " -> ".get_string("editinga","",$strscale), $focus);
@@ -372,7 +372,7 @@
 
 /// Print out the main page
 
-    print_header("$course->shortname: $strscales", "$course->fullname", 
+    print_header("$course->shortname: $strscales", $course->fullname, 
                  "<a href=\"view.php?id=$course->id\">$course->shortname</a> 
                   -> $strscales");
 

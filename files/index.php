@@ -130,7 +130,7 @@
                 }
 
             } else {
-                print_header("$course->shortname: $strfiles", "$course->fullname",
+                print_header("$course->shortname: $strfiles", $course->fullname,
                              "<a href=\"../course/view.php?id=$course->id\">$course->shortname".
                              "</a> -> $fullnav", $formfield);
             }

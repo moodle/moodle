@@ -139,7 +139,7 @@ if ($success) {
 /// Print the page and form
 
     print_header("$course->shortname: ". $strheading,
-                 "$course->fullname", 
+                 $course->fullname, 
                  "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
                  "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
                  "-> $strgroups", '', '', true, '', user_login_string($course, $USER));

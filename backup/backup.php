@@ -78,7 +78,7 @@
             print_heading(get_string("choosecourse"));
             print_simple_box_start("center");
             foreach ($courses as $course) {
-                echo '<a href="backup.php?id='.$course->id.'">'.s($course->fullname).' ('.s($course->shortname).')</a><br />'."\n";
+                echo '<a href="backup.php?id='.$course->id.'">'.format_string($course->fullname).' ('.format_string($course->shortname).')</a><br />'."\n";
             }
             print_simple_box_end();
         } else {
@@ -106,7 +106,7 @@
     }
 
     //Print form     
-    print_heading("$strcoursebackup: $course->fullname ($course->shortname)");
+    print_heading(format_string("$strcoursebackup: $course->fullname ($course->shortname)"));
     print_simple_box_start("center");
 
     //Adjust some php variables to the execution of this script

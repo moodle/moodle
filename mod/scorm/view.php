@@ -66,7 +66,7 @@
     //
     // Print the page header
     //
-    print_header($pagetitle, "$course->fullname",
+    print_header($pagetitle, $course->fullname,
                  "$navigation <a $CFG->frametarget href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>",
                  '', '', true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
 

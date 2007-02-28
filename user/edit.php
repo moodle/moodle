@@ -104,7 +104,7 @@
                       -> <a href=\"view.php?id=$user->id&amp;course=$course->id\">$userfullname</a>
                       -> $streditmyprofile", "");
     } else {
-        print_header("$course->shortname: $streditmyprofile", "$course->fullname",
+        print_header("$course->shortname: $streditmyprofile", $course->fullname,
                      "<a href=\"view.php?id=$user->id&amp;course=$course->id\">$userfullname</a>
                       -> $streditmyprofile", "");
     }

@@ -16,8 +16,8 @@ if ($_ENV['RECIPIENT'] == $CFG->noreplyaddress) {
     }
     
     $site = get_site();
-    $subject = get_string('noreplybouncesubject','moodle',$site->fullname);
-    $body = get_string('noreplybouncemessage','moodle',$site->fullname)."\n\n";
+    $subject = get_string('noreplybouncesubject','moodle',format_string($site->fullname));
+    $body = get_string('noreplybouncemessage','moodle',format_string($site->fullname))."\n\n";
     
     $fd = fopen('php://stdin','r');
     if ($fd) {

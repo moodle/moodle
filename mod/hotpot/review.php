@@ -50,8 +50,8 @@
     $strmodulenameplural = get_string("modulenameplural", "hotpot");
     $strmodulename  = get_string("modulename", "hotpot");
     // print header
-    $title = "$course->shortname: $hotpot->name";
-    $heading = "$course->fullname";
+    $title = format_string($course->shortname) . ": $hotpot->name";
+    $heading = $course->fullname;
     $navigation = "<a href=\"index.php?id=$course->id\">$strmodulenameplural</a> -> ".get_string("review", "quiz");
     if ($course->id != SITEID) {
         $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> $navigation";

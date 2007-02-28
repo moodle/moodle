@@ -61,7 +61,7 @@
     $strgroupmemberssee = get_string('groupmemberssee');
     $strparticipants = get_string('participants');
 
-    print_header("$course->shortname: $strgroups", "$course->fullname", 
+    print_header("$course->shortname: $strgroups",  $course->fullname, 
                  "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ".
                  "-> <a href=\"$CFG->wwwroot/user/index.php?id=$course->id\">$strparticipants</a> ".
                  "-> $strgroups", "", "", true, '', user_login_string($course, $USER));

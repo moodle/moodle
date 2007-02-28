@@ -145,8 +145,8 @@
 
     $site = get_record("course","id",1);
     echo '<p align="right"><font size="-1">' . userdate(time()) . '</font></p>';
-    echo get_string("site") . ': <strong>' . $site->fullname . '</strong><br />';
-    echo get_string("course") . ': <strong>' . $course->fullname . ' ('. $course->shortname . ')</strong><br />';
+    echo get_string("site") . ': <strong>' . format_string($site->fullname) . '</strong><br />';
+    echo get_string("course") . ': <strong>' . format_string($course->fullname) . ' ('. format_string($course->shortname) . ')</strong><br />';
     echo get_string("modulename","glossary") . ': <strong>' . format_string($glossary->name, true) . '</strong>';
     if ( $allentries ) {
         foreach ($allentries as $entry) {

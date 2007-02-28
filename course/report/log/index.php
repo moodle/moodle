@@ -86,7 +86,7 @@
                                   <a href=\"index.php?id=$course->id\">$strlogs</a> -> $userinfo, $dateinfo", '');
                 }
 
-                print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
+                print_heading(format_string($course->fullname) . ": $userinfo, $dateinfo (".usertimezone().")");
                 print_mnet_log_selector_form($hostid, $course, $user, $date, $modname, $modid, $modaction, $group, $showcourses, $showusers, $logformat);
                 
                 if($hostid == $CFG->mnet_localhost_id) {

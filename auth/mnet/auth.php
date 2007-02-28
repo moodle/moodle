@@ -271,7 +271,7 @@ class auth_plugin_mnet
                 list($code, $message) = array_map('trim',explode(':', $errormessage, 2));
                 if($code == 702) {
                     $site = get_site();
-                    print_error('mnet_session_prohibited','mnet', $remotewwwroot, $site->fullname);
+                    print_error('mnet_session_prohibited','mnet', $remotewwwroot, format_string($site->fullname));
                     exit;
                 }
                 $message .= "ERROR $code:<br/>$errormessage<br/>";

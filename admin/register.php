@@ -34,7 +34,7 @@
     $strregistration = get_string("registration");
     $strregistrationinfo = get_string("registrationinfo");
 
-    print_header("$site->shortname: $strregistration", "$site->fullname", 
+    print_header("$site->shortname: $strregistration", $site->fullname, 
                  "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> $strregistration");
 
     print_heading($strregistration);

@@ -27,15 +27,15 @@
 
     $courses = get_records("course");
     foreach ($courses as $course) {
-        echo "Start course ".$course->fullname;
+        echo "Start course ". format_string($course->fullname);
         $preferences = schedule_backup_course_configure($course);
         if ($preferences && $status) {
             $status = schedule_backup_course_execute($preferences);
         }
         if ($status && $preferences) {
-            echo "End course ".$course->fullname." OK\n\n";
+            echo "End course ". format_string($course->fullname)." OK\n\n";
         } else {
-            echo "End course ".$course->fullname." FAIL\n\n";
+            echo "End course ". format_string($course->fullname)." FAIL\n\n";
         }
     }
 ?>

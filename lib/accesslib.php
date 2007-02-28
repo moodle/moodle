@@ -2511,13 +2511,13 @@ function print_context_name($context) {
 
         case CONTEXT_COURSECAT: // Coursecat -> coursecat or site
             if ($category = get_record('course_categories', 'id', $context->instanceid)) {
-                $name = get_string('category').': '.$category->name;
+                $name = get_string('category').': '. format_string($category->name);
             }
             break;
 
         case CONTEXT_COURSE: // 1 to 1 to course cat
             if ($course = get_record('course', 'id', $context->instanceid)) {
-                $name = get_string('course').': '.$course->fullname;
+                $name = get_string('course').': '. format_string($course->fullname);
             }
             break;
 

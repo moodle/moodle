@@ -123,7 +123,7 @@ foreach ($categories as $category) {
         }
     }
 
-    print_heading($category->name.' '.profile_category_icons($category));
+    print_heading(format_string($category->name) .' '.profile_category_icons($category));
     if (count($table->data)) {
         print_table($table);
     } else {

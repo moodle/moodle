@@ -145,7 +145,7 @@ if ($success) {
     $strparticipants = get_string('participants');
 
     print_header("$course->shortname: $strgroups home", //TODO: home
-                 "$course->fullname", 
+                 $course->fullname, 
                  "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
                  "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
                  "-> $strgroups", '', '', true, '', user_login_string($course, $USER));
@@ -154,7 +154,7 @@ if ($success) {
     //TODO: eventually we'll implement all buttons, meantime hide the ones we haven't finised.
     $shownotdone  = false;
     
-    print_heading($course->shortname.' '.$strgroups, 'center', 3);
+    print_heading(format_string($course->shortname) .' '.$strgroups, 'center', 3);
 ?>
 <form id="groupeditform" action="index.php" method="post">
     <div>

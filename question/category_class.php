@@ -427,7 +427,7 @@ class question_category_object {
 
         $edittable->align['category'] =  "left";
         $edittable->wrap['category'] = "nowrap";
-        $row['category'] = '<input type="text" name="updatename" value="' . $category->name . '" size="15" />';
+        $row['category'] = '<input type="text" name="updatename" value="' . format_string($category->name) . '" size="15" />';
 
         $edittable->align['info'] =  "left";
         $edittable->wrap['info'] = "nowrap";
@@ -583,7 +583,7 @@ class question_category_object {
                 error("No such category $destcategoryid!", "category.php?id={$this->course->id}");
             }
             if (! set_field('question', 'category', $destcategoryid, 'category', $deletecat)) {
-                error("Error while moving questions from category '$category->name' to '$category2->name'", "category.php?id={$this->course->id}");
+                error("Error while moving questions from category '" . format_string($category->name) . "' to '$category2->name'", "category.php?id={$this->course->id}");
             }
 
         } else {
@@ -622,7 +622,7 @@ class question_category_object {
 
         /// Finally delete the category itself
         if (delete_records("question_categories", "id", $category->id)) {
-            notify(get_string("categorydeleted", "quiz", $category->name), 'notifysuccess');
+            notify(get_string("categorydeleted", "quiz", format_string($category->name)), 'notifysuccess');
         }
     }
 

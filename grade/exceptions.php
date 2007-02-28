@@ -16,7 +16,7 @@
 
     $group = get_current_group($course->id);
     
-    print_header("$course->shortname: ".get_string('grades'), "$course->fullname", grade_nav($course, $action));
+    print_header("$course->shortname: ".get_string('grades'), $course->fullname, grade_nav($course, $action));
 
     grade_preferences_menu($action, $course, $group);
 

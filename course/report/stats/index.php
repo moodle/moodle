@@ -54,11 +54,11 @@
 
     $menu = report_stats_mode_menu($course, $mode, $time, "$CFG->wwwroot/course/report/stats/index.php");
 
-    $crumb = "<a href=\"../../view.php?id=$course->id\">$course->shortname</a> ->
+    $crumb = "<a href=\"../../view.php?id=$course->id\">" . format_string($course->shortname) . "</a> ->
               <a href=\"../../report.php?id=$course->id\">$strreports</a> ->
               $strstats";
 
-    print_header("$course->shortname: $strstats", "$course->fullname", 
+    print_header("$course->shortname: $strstats", $course->fullname, 
                   $crumb, '', '', true, '&nbsp;', $menu);
     
     

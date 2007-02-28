@@ -495,7 +495,7 @@ function question_delete_course($course, $feedback=true) {
                     if (!isset($course->shortname)) {
                         $course->shortname = 'id=' . $course->id;
                     }
-                    $concat->name = get_string('savedfromdeletedcourse', 'quiz', $course->shortname);
+                    $concat->name = get_string('savedfromdeletedcourse', 'quiz', format_string($course->shortname));
                     $concat->info = $concat->name;
                     $concat->publish = 1;
                     $concat->stamp = make_unique_id_code();

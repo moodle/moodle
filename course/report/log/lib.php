@@ -335,7 +335,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         if ($ccc = get_records("course", "", "", "fullname","id,fullname,category")) {
             foreach ($ccc as $cc) {
                 if ($cc->category) {
-                    $courses["$cc->id"] = "$cc->fullname";
+                    $courses["$cc->id"] = $cc->fullname;
                 } else {
                     $courses["$cc->id"] = " $cc->fullname (Site)";
                 }

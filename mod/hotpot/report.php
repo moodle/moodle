@@ -398,8 +398,8 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
     $strmodulenameplural = get_string("modulenameplural", "hotpot");
     $strmodulename  = get_string("modulename", "hotpot");
 
-    $title = "$course->shortname: $hotpot->name";
-    $heading = "$course->fullname";
+    $title = format_string($course->shortname) . ": $hotpot->name";
+    $heading = $course->fullname;
 
     $navigation = "<a href=index.php?id=$course->id>$strmodulenameplural</a> -> ";
     $navigation .= "<a href=\"view.php?id=$cm->id\">$hotpot->name</a> -> ";

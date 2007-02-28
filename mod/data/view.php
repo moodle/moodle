@@ -222,7 +222,7 @@
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
         $rsspath = rss_get_url($course->id, $USER->id, 'data', $data->id);
         $meta .= '<link rel="alternate" type="application/rss+xml" ';
-        $meta .= 'title ="'.$course->shortname.': %fullname%" href="'.$rsspath.'" />';
+        $meta .= 'title ="'. format_string($course->shortname) .': %fullname%" href="'.$rsspath.'" />';
     }
     if ($data->csstemplate) {
         $meta .= '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/data/css.php?d='.$data->id.'" /> ';

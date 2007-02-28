@@ -258,7 +258,7 @@ $strsearchresults = get_string('searchresults');
 admin_externalpage_print_header($adminroot);
 
 print_box('<strong>' . s($mnet_peer->name) . ' : ' 
-          . s($course->shortname) .' '. s($course->fullname) 
+          . format_string($course->shortname) .' '. format_string($course->fullname) 
           . '</strong><br />'
           . get_string("enrolcourseenrol_desc", "mnet"));
 
