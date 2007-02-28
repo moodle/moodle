@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/quiz/db" VERSION="20060920" COMMENT="XMLDB file for Moodle mod/quiz"
+<XMLDB PATH="mod/quiz/db" VERSION="20070228" COMMENT="XMLDB file for Moodle mod/quiz"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -114,6 +114,9 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for question_numerical_units" NEXT="question"/>
         <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="question-unit" UNIQUE="true" FIELDS="question, unit" COMMENT="Unique index to ensure that only one unit with a particular name is created for each question."/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="question_attempts" COMMENT="Student attempts. This table gets extended by the modules" PREVIOUS="question_numerical_units" NEXT="question_states">
       <FIELDS>
