@@ -25,8 +25,9 @@ class question_edit_essay_form extends question_edit_form {
     }
 
     function set_data($question) {
-        if (isset($question->options)){
-            $question->feedback = $question->options->answer->feedback;
+        if (isset($question->options) && isset($question->options->answers)) {
+            $answer = reset($question->options->answers);
+            $question->feedback = $answer->feedback;
         }
         parent::set_data($question);
     }
@@ -34,7 +35,5 @@ class question_edit_essay_form extends question_edit_form {
     function qtype() {
         return 'essay';
     }
-
-
 }
 ?>
