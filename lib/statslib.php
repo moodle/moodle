@@ -1100,7 +1100,7 @@ function stats_check_uptodate($courseid=0) {
 // copied from usergetmidnight, but we ignore dst
 function stats_getmidnight($date, $timezone=99) {
     $timezone = get_user_timezone_offset($timezone);
-    $userdate = stats_getdate($date, $timezone);
+    $userdate = getdate($date);
     return make_timestamp($userdate['year'], $userdate['mon'], $userdate['mday'], 0, 0, 0, $timezone,false ); // ignore dst for this.
 }
 
