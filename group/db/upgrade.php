@@ -157,7 +157,14 @@ function groups_transfer_db() {
         $status = $status &&(bool)$members_r= get_records('groups_members_temp');
 
         if (! $groups_r) {
-            return $status;
+            if (! $members_r) {
+                /*
+                 * I think this might occur when group table is empty -- ohmori.
+                 */
+                return true;
+            } else {
+                return $status;
+            }
         }
         foreach ($groups_r as $group) {
             if (debugging()) {
@@ -276,6 +283,7 @@ function groups_revert_db($renametemp=true) {
         foreach ($tables as $t_name) {
             $status = $status && drop_table(new XMLDBTable('groups'.$t_name));
         }
+        $status = $status && (bool)delete_records('log_display', 'module', 'group');
 
         if ($renametemp) {
             $status = $status && rename_table(new XMLDBTable('groups_temp'), 'groups');
@@ -287,7 +295,7 @@ function groups_revert_db($renametemp=true) {
 
 
 function xmldb_group_upgrade($oldversion=0) {
-    global $CFG; //, $THEME, $db;
+    global $CFG;
 
     $result = true;
 
@@ -410,7 +418,12 @@ function xmldb_group_upgrade($oldversion=0) {
             $groupupgrade = optional_param('confirmgroupupgrade', 0, PARAM_BOOL);
             if (empty($groupupgrade)) {
                 notice_yesno(get_string('upgradeconfirm', 'group'), 'index.php?confirmgroupupgrade=yes', 'index.php');
-                //$feedback = false;
+                /*
+                 * This hack might be necessary for notice_yesno(). I think notice_yesno()
+                 * should be changed to take account of upgrading process. -- ohmori
+                 * (Resetting the SESSION variable below makes 1.8 DEV to 1.8 Beta upgrades fail. Oh dear! -- nick)
+                 */
+                ///$_SESSION['upgraderunning'] = 0;
                 print_footer();
                 exit;
             } //ELSE
@@ -419,8 +432,6 @@ function xmldb_group_upgrade($oldversion=0) {
             $result = $result && groups_revert_db($renametemp=false);
             $result = $result && install_from_xmldb_file($CFG->dirroot.'/group/db/install.xml');
             $result = $result && groups_transfer_db();
-
-            ///$result = $result && groups_rename_db2($suffix='_temp_18');
         }
     }
 
