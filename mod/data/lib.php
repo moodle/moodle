@@ -909,9 +909,9 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
  * a search string and prints a preference box in view.php              *
  *                                                                      *
  * This preference box prints a searchable advanced search template if  *
- *     a) A template is defined                                                                                        *
- *  b) The advanced search checkbox is checked.                                                        *
- *                                                                                                                                             *
+ *     a) A template is defined                                         *
+ *  b) The advanced search checkbox is checked.                         *
+ *                                                                      *
  * input @param object $data                                            *
  *       @param int $perpage                                            *
  *       @param string $search                                          *
@@ -967,7 +967,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
         echo '<option value="DESC">'.get_string('descending','data').'</option>';
     }
     echo '</select>';
-    
+
     if ($advanced) {
         $checked = ' checked="checked" ';
     }
@@ -975,7 +975,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
         $checked = '';
     }
     print '
-        
+            
         <script type="text/javascript">
         //<![CDATA[
         <!-- Start
@@ -1005,20 +1005,19 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
         //  End -->
         //]]>
         </script>';
-        
     echo '&nbsp;<input type="checkbox" name="advanced" value="1" '.$checked.' onchange="showHideAdvSearch(this.checked);" />'.get_string('advancedsearch', 'data');
     echo '&nbsp;<input type="submit" value="'.get_string('savesettings','data').'" />';
     
     echo '<br />';
-    echo '<div class="dataadvancedsearch" id="data_adv_form" style="display: ;margin-left:auto;margin-right:auto';
+    echo '<div class="dataadvancedsearch" id="data_adv_form" style="display: ';
+    
     if ($advanced) {
         echo 'inline';
     }
     else {
         echo 'none';
     }
-    echo ';" >';
-
+    echo ';margin-left:auto;margin-right:auto;" >';
     echo '<table class="boxaligncenter">';
     
     // print ASC or DESC
