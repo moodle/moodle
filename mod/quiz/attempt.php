@@ -108,7 +108,7 @@
     }
 
 /// Check availability
-    if (isguest()) {
+    if (isguestuser()) {
         print_heading(get_string('guestsno', 'quiz'));
         if (empty($popup)) {
             print_footer($course);

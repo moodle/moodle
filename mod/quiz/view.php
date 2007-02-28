@@ -137,7 +137,7 @@
     //
     // So for courses that allow guest access, it is good to offer people an easy
     // way to log in at this point if they have got this far before logging in.
-    if (isguest()) {
+    if (isguestuser()) {
         $loginurl = $CFG->wwwroot.'/login/index.php';
         if (!empty($CFG->loginhttps)) {
             $loginurl = str_replace('http:','https:', $loginurl);
