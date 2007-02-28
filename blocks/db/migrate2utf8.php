@@ -15,8 +15,13 @@ function migrate2utf8_block_instance_configdata($recordid){
             $fromenc = $globallang;
         } else {
             $sitelang   = $CFG->lang;
-            $courselang = get_course_lang($blockinstance->pageid);  //Non existing!
-            $userlang   = get_main_teacher_lang($blockinstance->pageid); //N.E.!!
+            if ($blockinstance->pagetype == 'course-view') {
+                $courselang = get_course_lang($blockinstance->pageid);  //Non existing!
+                $userlang   = get_main_teacher_lang($blockinstance->pageid); //N.E.!!
+            } else {
+                $courselang = false;
+                $userlang = false;
+            }
 
             $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
         }
@@ -42,8 +47,13 @@ function migrate2utf8_block_instance_configdata($recordid){
             $fromenc = $globallang;
         } else {
             $sitelang   = $CFG->lang;
-            $courselang = get_course_lang($blockinstance->pageid);  //Non existing!
-            $userlang   = get_main_teacher_lang($blockinstance->pageid); //N.E.!!
+            if ($blockinstance->pagetype == 'course-view') {
+                $courselang = get_course_lang($blockinstance->pageid);  //Non existing!
+                $userlang   = get_main_teacher_lang($blockinstance->pageid); //N.E.!!
+            } else {
+                $courselang = false;
+                $userlang = false;
+            }
 
             $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
         }
@@ -68,8 +78,13 @@ function migrate2utf8_block_instance_configdata($recordid){
             $fromenc = $globallang;
         } else {
             $sitelang   = $CFG->lang;
-            $courselang = get_course_lang($blockinstance->pageid);  //Non existing!
-            $userlang   = get_main_teacher_lang($blockinstance->pageid); //N.E.!!
+            if ($blockinstance->pagetype == 'course-view') {
+                $courselang = get_course_lang($blockinstance->pageid);  //Non existing!
+                $userlang   = get_main_teacher_lang($blockinstance->pageid); //N.E.!!
+            } else {
+                $courselang = false;
+                $userlang = false;
+            }
 
             $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
         }
@@ -110,10 +125,7 @@ global $CFG, $globallang;
             $fromenc = $globallang;
         } else {
             $sitelang   = $CFG->lang;
-            $courselang = get_course_lang($blockpinned->pageid);  //Non existing!
-            $userlang   = get_main_teacher_lang($blockpinned->pageid); //N.E.!!
-
-            $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+            $fromenc = get_original_encoding($sitelang, false, false);
         }
 
         $blah = unserialize(base64_decode($blockpinned->configdata));
@@ -137,10 +149,7 @@ global $CFG, $globallang;
             $fromenc = $globallang;
         } else {
             $sitelang   = $CFG->lang;
-            $courselang = get_course_lang($blockpinned->pageid);  //Non existing!
-            $userlang   = get_main_teacher_lang($blockpinned->pageid); //N.E.!!
-
-            $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+            $fromenc = get_original_encoding($sitelang, false, false);
         }
 
         $blah = unserialize(base64_decode($blockpinned->configdata));
@@ -163,10 +172,7 @@ global $CFG, $globallang;
             $fromenc = $globallang;
         } else {
             $sitelang   = $CFG->lang;
-            $courselang = get_course_lang($blockpinned->pageid);  //Non existing!
-            $userlang   = get_main_teacher_lang($blockpinned->pageid); //N.E.!!
-
-            $fromenc = get_original_encoding($sitelang, $courselang, $userlang);
+            $fromenc = get_original_encoding($sitelang, false, false);
         }
 
         $blah = unserialize(base64_decode($blockpinned->configdata));
