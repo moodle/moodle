@@ -5169,6 +5169,34 @@ function check_php_version($version='4.1.0') {
           }
           break;
 
+      case 'Opera':  /// Opera
+      
+          if (preg_match("/Opera\/([0-9\.]+)/i", $agent, $match)) {
+              if (version_compare($match[1], $version) >= 0) {
+                  return true;
+              }
+          }
+          break;
+      
+      case 'Safari':  /// Safari
+          // Look for AppleWebKit, excluding strings with OmniWeb, Shiira and SimbianOS
+          if (strpos($agent, 'OmniWeb')) { // Reject OmniWeb
+              return false;
+          } elseif (strpos($agent, 'Shiira')) { // Reject Shiira
+              return false;
+          } elseif (strpos($agent, 'SimbianOS')) { // Reject SimbianOS
+              return false;
+          } 
+          
+
+          if (preg_match("/AppleWebKit\/([0-9]+)/i", $agent, $match)) {
+              if (version_compare($match[1], $version) >= 0) {
+                  return true;
+              }
+          }
+
+          break;
+      
     }
 
     return false;
