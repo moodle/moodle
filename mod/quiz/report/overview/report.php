@@ -500,7 +500,7 @@ class quiz_report extends quiz_default_report {
                 // Start form
                 echo '<div id="tablecontainer">';
                 echo '<form id="attemptsform" method="post" action="report.php" onsubmit="var menu = document.getElementById(\'menuaction\'); return (menu.options[menu.selectedIndex].value == \'delete\' ? confirm(\''.$strreallydel.'\') : true);">';
-                echo '<fieldset class="invisiblefieldset">';
+                echo '<div>';
                 echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
                 echo '<input type="hidden" name="mode" value="overview" />';
 
@@ -522,7 +522,7 @@ class quiz_report extends quiz_default_report {
                     echo '</td></tr></table>';
                 }
                 // Close form
-                echo '</fieldset>';
+                echo '</div>';
                 echo '</form></div>';
                 
                 if (!empty($attempts)) {
