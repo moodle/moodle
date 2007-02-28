@@ -70,8 +70,7 @@ class question_edit_form extends moodleform {
         if (empty($images)) {
             $mform->addElement('static', 'image', get_string('imagedisplay', 'quiz'), get_string('noimagesyet'));
         } else {
-            $images[''] = get_string('none');
-            $mform->addElement('select', 'image', get_string('imagedisplay', 'quiz'), $images);
+            $mform->addElement('select', 'image', get_string('imagedisplay', 'quiz'), array_merge(array(''=>get_string('none')), $images));
         }
 
         $mform->addElement('text', 'defaultgrade', get_string('defaultgrade', 'quiz'),
