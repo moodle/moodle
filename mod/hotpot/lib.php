@@ -1683,7 +1683,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
             $replace .= '\\2';
         }
         if ($form_name) {
-            $replace = '<form action="'.$CFG->wwwroot.'/mod/hotpot/attempt.php" method="post" name="'.$form_name.'" '.$CFG->frametarget.'">'.$replace.'</form>';
+            $replace = '<form action="'.$CFG->wwwroot.'/mod/hotpot/attempt.php" method="post" name="'.$form_name.'"'.$CFG->frametarget.'>'.$replace.'</form>';
         }
         if ($center) {
             $replace = '<div style="margin-left:auto; margin-right:auto; text-align: center;">'.$replace.'</div>';
