@@ -5081,7 +5081,7 @@ function check_php_version($version='4.1.0') {
  * @uses $_SERVER
  * @param string $brand The browser identifier being tested
  * @param int $version The version of the browser
- * @return bool
+ * @return bool true if the given version is below that of the detected browser
  */
  function check_browser_version($brand='MSIE', $version=5.5) {
     if (empty($_SERVER['HTTP_USER_AGENT'])) {
@@ -5146,7 +5146,35 @@ function check_php_version($version='4.1.0') {
               return true;
           }
           break;
+          
+      case 'Opera':  /// Opera
+      
+          if (preg_match("/Opera\/([0-9\.]+)/i", $agent, $match)) {
+              if (version_compare($match[1], $version) >= 0) {
+                  return true;
+              }
+          }
+          break;
+      
+      case 'Safari':  /// Safari
+          // Look for AppleWebKit, excluding strings with OmniWeb, Shiira and SimbianOS
+          if (strpos($agent, 'OmniWeb')) { // Reject OmniWeb
+              return false;
+          } elseif (strpos($agent, 'Shiira')) { // Reject Shiira
+              return false;
+          } elseif (strpos($agent, 'SimbianOS')) { // Reject SimbianOS
+              return false;
+          } 
+          
 
+          if (preg_match("/AppleWebKit\/([0-9]+)/i", $agent, $match)) {
+              if (version_compare($match[1], $version) >= 0) {
+                  return true;
+              }
+          }
+
+          break;
+      
     }
 
     return false;
