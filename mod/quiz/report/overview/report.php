@@ -565,7 +565,7 @@ class quiz_report extends quiz_default_report {
         // Print display options
         echo '<div class="controls">';
         echo '<form id="options" action="report.php" method="post">';
-        echo '<fieldset class="invisiblefieldset">';
+        echo '<div>';
         echo '<p>'.get_string('displayoptions', 'quiz').': </p>';
         echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
         echo '<input type="hidden" name="q" value="'.$quiz->id.'" />';
@@ -593,7 +593,7 @@ class quiz_report extends quiz_default_report {
         echo '<tr><td colspan="2" align="center">';
         echo '<input type="submit" value="'.get_string('go').'" />';
         echo '</td></tr></table>';
-        echo '</fieldset>';
+        echo '</div>';
         echo '</form>';
         echo '</div>';
         echo "\n";
