@@ -149,10 +149,10 @@
         $returnto = forum_go_back_to("index.php?id=$course->id");
         if ($subscribe) {
             add_to_log($course->id, "forum", "subscribeall", "index.php?id=$course->id", $course->id);
-            redirect($returnto, get_string("nowallsubscribed", "forum", $course->shortname), 1);
+            redirect($returnto, get_string("nowallsubscribed", "forum", format_string($course->shortname)), 1);
         } else {
             add_to_log($course->id, "forum", "unsubscribeall", "index.php?id=$course->id", $course->id);
-            redirect($returnto, get_string("nowallunsubscribed", "forum", $course->shortname), 1);
+            redirect($returnto, get_string("nowallunsubscribed", "forum", format_string($course->shortname)), 1);
         }
     }
 
@@ -453,11 +453,11 @@
     /// Output the page
 
     if ($course->id != SITEID) {
-        print_header("$course->shortname: $strforums", "$course->fullname",
+        print_header("$course->shortname: $strforums", $course->fullname,
                     "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> $strforums",
                     "", "", true, $searchform, navmenu($course));
     } else {
-        print_header("$course->shortname: $strforums", "$course->fullname", "$strforums",
+        print_header("$course->shortname: $strforums", $course->fullname, "$strforums",
                     "", "", true, $searchform, navmenu($course));
     }
 

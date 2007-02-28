@@ -5762,7 +5762,7 @@
                     echo "<li>".get_string("usingexistingcourse"); 
                     echo "<ul>";
                     echo "<li>".get_string("from").": ".$course_header->course_fullname." (".$course_header->course_shortname.")".'</li>';
-                    echo "<li>".get_string("to").": ".$course->fullname." (".$course->shortname.")".'</li>';
+                    echo "<li>".get_string("to").": ". format_string($course->fullname) ." (".format_string($course->shortname).")".'</li>';
                     if (($restore->deleting)) {
                         echo "<li>".get_string("deletingexistingcoursedata").'</li>';
                     } else {

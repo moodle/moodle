@@ -29,12 +29,12 @@
     $strtodaylogs      = get_string("todaylogs");
     $strreports        = get_string("reports");
 
-    print_header("$course->shortname: $stractivityreport", "$course->fullname",
+    print_header("$course->shortname: $stractivityreport", $course->fullname,
                  "<a href=\"../../view.php?id=$course->id\">$course->shortname</a> ->
                   <a href=\"../../report.php?id=$course->id\">$strreports</a> ->
                   $stractivityreport");
 
-    print_heading("$course->fullname");
+    print_heading(format_string($course->fullname));
 
     echo "<table cellpadding=\"10\" align=\"center\"><tr>";
     echo "<td>$stractivityreport: </td>";

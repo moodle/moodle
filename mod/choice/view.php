@@ -122,7 +122,7 @@
             echo '<p align="center">'. get_string('noguestchoose', 'choice') .'</p>';
             echo '<div class="continuebutton">';
             print_single_button($CFG->wwwroot.'/course/enrol.php?id='.$course->id, NULL, 
-                                get_string('enrolme', '', $course->shortname), 'post', $CFG->framename);
+                                get_string('enrolme', '', format_string($course->shortname)), 'post', $CFG->framename);
             echo '</div>'."\n";
             print_simple_box_end();
 

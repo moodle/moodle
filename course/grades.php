@@ -31,7 +31,7 @@
 /// Get a list of all students
     if ($currentgroup) {
         if (!$students = get_group_students($currentgroup, "u.lastname ASC")) {
-            print_header("$course->shortname: $strgrades", "$course->fullname", 
+            print_header("$course->shortname: $strgrades", $course->fullname, 
                      "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
                       -> $strgrades");
             setup_and_print_groups($course, $groupmode, "grades.php?id=$course->id");
@@ -41,7 +41,7 @@
         }
     } else {
         if (!$students = get_course_students($course->id, "u.lastname ASC")) {
-            print_header("$course->shortname: $strgrades", "$course->fullname", 
+            print_header("$course->shortname: $strgrades", $course->fullname, 
                      "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
                       -> $strgrades");
             notice(get_string("nostudentsyet"), "$CFG->wwwroot/course/view.php?id=$course->id");
@@ -289,7 +289,7 @@
     
     } else {  // Just print the web page
 
-        print_header("$course->shortname: $strgrades", "$course->fullname", 
+        print_header("$course->shortname: $strgrades", $course->fullname, 
                      "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
                       -> $strgrades");
     

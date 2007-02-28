@@ -354,7 +354,7 @@ function display() {
         echo "<html dir=\"ltr\">\n";
         echo '<head>';
         echo '<meta http-equiv="content-type" content="text/html; charset=utf-8" />';
-        echo "<title>{$course->shortname}: ".strip_tags(format_string($resource->name,true))."</title></head>\n";
+        echo "<title>" . format_string($course->shortname) . ": ".strip_tags(format_string($resource->name,true))."</title></head>\n";
         echo "<frameset rows=\"$CFG->resource_framesize,*\">";
         echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;frameset=top\" title=\"".get_string('modulename','resource')."\"/>";
         if (!empty($localpath)) {  // Show it like this so we interpose some HTML

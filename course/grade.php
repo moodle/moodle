@@ -87,7 +87,7 @@
 
 /// OK, we have all the data, now present it to the user
 
-    print_header("$course->shortname: $strgrades", "$course->fullname", 
+    print_header("$course->shortname: $strgrades", $course->fullname, 
                  "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
                   -> $strgrades");
     

@@ -37,13 +37,13 @@
     $fullname        = fullname($user, has_capability('moodle/site:viewfullnames', $syscontext));
 
     if ($course->id != SITEID) {
-        print_header("$course->shortname: $fullname: $strmode", "$course->fullname",
+        print_header("$course->shortname: $fullname: $strmode", $course->fullname,
                  "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
                   <a href=\"$CFG->wwwroot/user/index.php?id=$course->id\">$strparticipants</a> ->
                   <a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a> -> 
                   $strforumposts -> $strmode");
     } else {
-        print_header("$course->shortname: $fullname: $strmode", "$course->fullname",
+        print_header("$course->shortname: $fullname: $strmode", $course->fullname,
                  "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a> -> 
                   $strforumposts -> $strmode");
     }

@@ -41,10 +41,10 @@
             . "host={$mnethost}&amp;courseid={$course->id}&amp;sesskey={$USER->sesskey}";
         print ('<tr>'
                . "<td>$icon</td>"
-               . "<td><a href=\"$link\">".s($course->fullname). "</a></td>"
+               . "<td><a href=\"$link\">".format_string($course->fullname). "</a></td>"
                . '</tr><tr>'
                . '<td></td>'
-               . '<td>'.s($course->shortname). ' - ' .s($course->cat_name).'</td>'
+               . '<td>'.format_string($course->shortname). ' - ' .format_string($course->cat_name).'</td>'
                . '</tr><tr>'
                . '<td></td>'
                . "<td align=\"left\" >{$course->summary}</td>"

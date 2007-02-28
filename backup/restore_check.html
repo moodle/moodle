@@ -222,7 +222,7 @@
                 } else {
                     $optdimmed = '';
                 }
-                echo "<a $optdimmed href=\"restore.php?course_id=$course->id&launch=check&id=$id&file=$file\">".s($course->fullname).' ('.s($course->shortname).')</a><br />'."\n";
+                echo "<a $optdimmed href=\"restore.php?course_id=$course->id&launch=check&id=$id&file=$file\">".format_string($course->fullname).' ('.format_string($course->shortname).')</a><br />'."\n";
             }
             print_simple_box_end();
         } else {

@@ -40,8 +40,8 @@
     // set nextpage (for error messages)
     $nextpage = "$CFG->wwwroot/course/view.php?id=$course->id";
     // header strings
-    $title = strip_tags($course->shortname.': '.$hotpot->name);
-    $heading = "$course->fullname";
+    $title = format_string($course->shortname.': '.$hotpot->name, true);
+    $heading = $course->fullname;
     $navigation = '<a '.$CFG->frametarget.' href="'.$CFG->wwwroot.'/mod/hotpot/index.php?id='.$course->id.'">'.get_string("modulenameplural", "hotpot")."</a> -> $hotpot->name";
     if ($course->id != SITEID) {
         $navigation = '<a '.$CFG->frametarget.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> -> '.$navigation;

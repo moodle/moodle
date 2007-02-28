@@ -258,7 +258,7 @@ class enrolment_plugin_authorize
                 $a->user = fullname($USER);
                 email_to_user($paymentmanager,
                               $USER,
-                              get_string("enrolmentnew", '', $course->shortname),
+                              get_string("enrolmentnew", '', format_string($course->shortname)),
                               get_string('enrolmentnewuser', '', $a));
             }
             if (!empty($CFG->enrol_mailadmins)) {
@@ -269,7 +269,7 @@ class enrolment_plugin_authorize
                 foreach ($admins as $admin) {
                     email_to_user($admin,
                                   $USER,
-                                  get_string("enrolmentnew", '', $course->shortname),
+                                  get_string("enrolmentnew", '', format_string($course->shortname)),
                                   get_string('enrolmentnewuser', '', $a));
                 }
             }

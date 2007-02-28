@@ -1726,7 +1726,7 @@ function forum_get_course_forum($courseid, $type) {
     $mod->instance = $forum->id;
     $mod->section = 0;
     if (! $mod->coursemodule = add_course_module($mod) ) {   // assumes course/lib.php is loaded
-        notify("Could not add a new course module to the course '$course->fullname'");
+        notify("Could not add a new course module to the course '" . format_string($course->fullname) . "'");
         return false;
     }
     if (! $sectionid = add_mod_to_section($mod) ) {   // assumes course/lib.php is loaded

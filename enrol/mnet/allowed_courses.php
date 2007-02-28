@@ -155,7 +155,7 @@ if (count($categories) < 1) {
                            getElementById('allowedcoursesform').addcategories.selectedIndex=-1;" >
           <?php
               foreach ($allowedcategories as $category) {
-                  echo "<option value=\"$category->id\"> $category->name </option>\n";
+                  echo "<option value=\"$category->id\"> " . format_string($category->name) . " </option>\n";
               }
           ?>
           </select>
@@ -176,7 +176,7 @@ if (count($categories) < 1) {
                            getElementById('allowedcoursesform').removecategories.selectedIndex=-1;">
           <?php
             foreach ($potentialcategories as $category) {
-                echo "<option value=\"$category->id\"> $category->name </option>\n";
+                echo "<option value=\"$category->id\"> " . format_string($category->name) . " </option>\n";
             }
         ?>
         </select>
@@ -212,7 +212,7 @@ if (count($courses) < 1) {
                            getElementById('allowedcoursesform').addcourses.selectedIndex=-1;">
           <?php
               foreach ($allowedcourses as $course) {
-                  echo "<option value=\"$course->id\"> $course->shortname </option>\n";
+                  echo "<option value=\"$course->id\"> " . format_string($course->shortname) . " </option>\n";
               }
           ?>
           </select>
@@ -233,7 +233,7 @@ if (count($courses) < 1) {
                            getElementById('allowedcoursesform').removecourses.selectedIndex=-1;">
           <?php
             foreach ($potentialcourses as $course) {
-                echo "<option value=\"$course->id\"> $course->shortname </option>\n";
+                echo "<option value=\"$course->id\"> " . format_string($course->shortname) . " </option>\n";
             }
         ?>
         </select>

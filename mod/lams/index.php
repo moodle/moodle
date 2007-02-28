@@ -28,7 +28,7 @@
         $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
     }
 
-    print_header("$course->shortname: $strlamss", "$course->fullname", "$navigation $strlamss", "", "", true, "", navmenu($course));
+    print_header("$course->shortname: $strlamss", $course->fullname, "$navigation $strlamss", "", "", true, "", navmenu($course));
 
 /// Get all the appropriate data
 

@@ -51,10 +51,10 @@
     $strallactions    = get_string('allactions');
     $strreports       = get_string('reports');
 
-    $strnav = "<a href=\"../../view.php?id=$course->id\">$course->shortname</a> -> 
+    $strnav = "<a href=\"../../view.php?id=$course->id\">" . format_string($course->shortname) . "</a> -> 
                <a href=\"../../report.php?id=$course->id\">$strreports</a> -> ". $strparticipation;
     
-    print_header("$course->shortname: $strparticipation", "$course->fullname",
+    print_header("$course->shortname: $strparticipation", $course->fullname,
                  "<a href=\"../../view.php?id=$course->id\">$course->shortname</a> ->
                   <a href=\"../../report.php?id=$course->id\">$strreports</a> ->
                   $strparticipation");

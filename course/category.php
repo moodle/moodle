@@ -225,7 +225,7 @@
                 }
                 $catlinkcss = $subcategory->visible ? "" : " class=\"dimmed\" ";
                 echo '<a '.$catlinkcss.' href="category.php?id='.$subcategory->id.'">'.
-                     $subcategory->name.'</a><br />';
+                     format_string($subcategory->name).'</a><br />';
             }
         }
         if (!$firstentry) {
@@ -312,7 +312,7 @@
 
             $linkcss = $acourse->visible ? "" : ' class="dimmed" ';
             echo '<tr>';
-            echo '<td><a '.$linkcss.' href="view.php?id='.$acourse->id.'">'.$acourse->fullname.'</a></td>';
+            echo '<td><a '.$linkcss.' href="view.php?id='.$acourse->id.'">'. format_string($acourse->fullname) .'</a></td>';
             if ($creatorediting) {
                 echo "<td>";
                 if (has_capability('moodle/course:update', $coursecontext)) {
@@ -432,7 +432,7 @@
         echo '<form id="renameform" action="category.php" method="post">';
         echo '<input type="hidden" name="id" value="'.$category->id.'" />';
         echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-        echo '<input type="text" size="30" name="rename" value="'.s($category->name).'" alt="'.$strrename.'" />';
+        echo '<input type="text" size="30" name="rename" value="'.format_string($category->name).'" alt="'.$strrename.'" />';
         echo '<input type="submit" value="'.$strrename.'" />';
         echo "</form>";
         echo "<br />";

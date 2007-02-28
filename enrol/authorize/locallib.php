@@ -242,7 +242,7 @@ function authorize_print_order_details($orderno)
     $table->data[] = array("<b>$authstrs->amount:</b>", "$order->currency $order->amount");
     if (empty($cmdcapture) and empty($cmdrefund) and empty($cmdvoid) and empty($cmddelete)) {
         $color = authorize_get_status_color($status->status);
-        $table->data[] = array("<b>$strs->course:</b>", $course->shortname);
+        $table->data[] = array("<b>$strs->course:</b>", format_string($course->shortname));
         $table->data[] = array("<b>$strs->status:</b>", "<font style='color:$color'>" . $authstrs->{$status->status} . "</font>");
         if ($order->paymentmethod == AN_METHOD_CC) {
             $table->data[] = array("<b>$authstrs->nameoncard:</b>", $order->ccname);
@@ -287,7 +287,7 @@ function authorize_print_order_details($orderno)
                     }
                     else {
                         $table->data[] = array("<b><font color='red'>$strs->error:</font></b>",
-                        "Error while trying to enrol ".fullname($user)." in '$course->shortname'");
+                        "Error while trying to enrol ".fullname($user)." in '" . format_string($course->shortname) . "'");
                     }
                 }
                 else {

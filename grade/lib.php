@@ -2362,7 +2362,8 @@ function grade_set_grade_weights() {
                 }
             }
             else {
-                echo  '<center><font color="red">'.get_string('nonumericweight','grades').$category->name.': "'.$submitted_category.'"</font></center><br />';
+                echo  '<center><font color="red">'.get_string('nonumericweight','grades').
+                        format_string($category->name) .': "'.$submitted_category.'"</font></center><br />';
             }
         }
     }
@@ -2403,7 +2404,7 @@ function grade_display_grade_weights() {
             if ($category->name == UNCATEGORISED) {
                 $category->name = get_string(UNCATEGORISED, 'grades');
             }
-            echo  '<tr><td align="center" class="generalboxcontent">'.$category->name.'</td>';
+            echo  '<tr><td align="center" class="generalboxcontent">'. format_string($category->name) .'</td>';
             echo  '<td align="center" class="generalboxcontent"><input type="text" size="5" name="'.$form_catname.'" value="'.$val.'" /></td>';
             echo  '<td align="center" class="generalboxcontent"><input type="text" size="5" name="drop_x_lowest'.$form_catname.'" value="'.$category->drop_x_lowest.'" /></td>';
             echo  '<td align="center" class="generalboxcontent"><input type="text" size="5" name="bonus_points'.$form_catname.'" value="'.$category->bonus_points.'" /></td>';
@@ -2701,10 +2702,10 @@ function grade_category_select($id_selected = 0) {
                 $category->name = get_string('uncategorised', 'grades');
             }
             if ($category->id == $id_selected) {
-                echo  '<option value="'.$category->id.'" selected="selected">'.$category->name.'</option>';
+                echo  '<option value="'.$category->id.'" selected="selected">'. format_string($category->name) .'</option>';
             }
             else {
-                echo  '<option value="'.$category->id.'">'.$category->name.'</option>';
+                echo  '<option value="'.$category->id.'">'. format_string($category->name) .'</option>';
             }
         }
     }

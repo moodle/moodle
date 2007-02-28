@@ -34,9 +34,9 @@
 
     // Print the header
 
-    $title = "$course->shortname: $strmodulenameplural";
-    $heading = "$course->fullname";
-    $navigation = "$strmodulenameplural";
+    $title = format_string($course->shortname) . ": $strmodulenameplural";
+    $heading = $course->fullname;
+    $navigation = $strmodulenameplural;
     if ($course->id != SITEID) {
         $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> $navigation";
     }

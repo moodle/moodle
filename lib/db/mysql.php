@@ -126,7 +126,7 @@ function main_upgrade($oldversion=0) {
                     $mod->instance = $news->id;
                     $mod->section = 0;
                     if (! $mod->coursemodule = add_course_module($mod) ) {
-                        notify("Could not add a new course module to the course '$course->fullname'");
+                        notify("Could not add a new course module to the course '" . format_string($course->fullname) . "'");
                         return false;
                     }
                     if (! $sectionid = add_mod_to_section($mod) ) {
@@ -144,7 +144,7 @@ function main_upgrade($oldversion=0) {
                     $mod->instance = $social->id;
                     $mod->section = 0;
                     if (! $mod->coursemodule = add_course_module($mod) ) {
-                        notify("Could not add a new course module to the course '$course->fullname'");
+                        notify("Could not add a new course module to the course '" . format_string($course->fullname) . "'");
                         return false;
                     }
                     if (! $sectionid = add_mod_to_section($mod) ) {
@@ -169,7 +169,7 @@ function main_upgrade($oldversion=0) {
                 $modinfo = serialize(get_array_of_activities($course->id));
 
                 if (!set_field("course", "modinfo", $modinfo, "id", $course->id)) {
-                    notify("Could not cache module information for course '$course->fullname'!");
+                    notify("Could not cache module information for course '" . format_string($course->fullname) . "'!");
                 }
             }
         }
@@ -199,7 +199,7 @@ function main_upgrade($oldversion=0) {
                 $modinfo = serialize(get_array_of_activities($course->id));
 
                 if (!set_field("course", "modinfo", $modinfo, "id", $course->id)) {
-                    notify("Could not cache module information for course '$course->fullname'!");
+                    notify("Could not cache module information for course '" . format_string($course->fullname) . "'!");
                 }
             }
         }
@@ -286,7 +286,7 @@ function main_upgrade($oldversion=0) {
                 $modinfo = serialize(get_array_of_activities($course->id));
 
                 if (!set_field("course", "modinfo", $modinfo, "id", $course->id)) {
-                    notify("Could not cache module information for course '$course->fullname'!");
+                    notify("Could not cache module information for course '" . format_string($course->fullname) . "'!");
                 }
             }
         }
@@ -506,7 +506,7 @@ function main_upgrade($oldversion=0) {
 
         if ($courses = get_records_select("course", "category > 0")) {
             foreach ($courses as $course) {
-                notify("Processing $course->fullname ...", "green");
+                notify("Processing " . format_string($course->fullname) . " ...", "green");
                 flush();
                 if ($users = get_records_select("user_teachers", "course = '$course->id'",
                                                 "id", "id, userid, timeaccess")) {

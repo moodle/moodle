@@ -36,7 +36,7 @@
         $navigation = '';
     }
 
-    print_header("$course->shortname: $strlessons", "$course->fullname", "$navigation $strlessons", "", "", true, "", navmenu($course));
+    print_header("$course->shortname: $strlessons", $course->fullname, "$navigation $strlessons", "", "", true, "", navmenu($course));
 
 /// Get all the appropriate data
 

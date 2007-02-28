@@ -10,7 +10,7 @@ if (!$site = get_site()) {
 /// get language strings
 $str = get_strings(array('enrolments', 'users', 'administration', 'settings'));
 
-print_header("$site->shortname: $str->enrolments", "$site->fullname",
+print_header("$site->shortname: $str->enrolments", $site->fullname,
               "<a href=\"../../$CFG->admin/index.php\">$str->administration</a> -> 
                $str->enrolments -> IMS import");
 

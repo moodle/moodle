@@ -38,7 +38,7 @@ if ($success) {
 	// Print the page and form
 	$strgroups = get_string('groups');
 	$strparticipants = get_string('participants');
-	print_header("$course->shortname: $strgroups", "$course->fullname", 
+	print_header("$course->shortname: $strgroups", $course->fullname, 
 	             "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
 	             "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
 	             "-> <a href=\"$CFG->wwwroot/group/groupui/index.php?id=$courseid\">$strgroups</a>".

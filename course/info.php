@@ -30,7 +30,7 @@
 
     print_header(get_string("summaryof", "", $course->fullname));
 
-    echo "<h3 align=\"center\">$course->fullname<br />($course->shortname)</h3>";
+    echo "<h3 align=\"center\">" . format_string($course->fullname) . "<br />(" . format_string($course->shortname) . ")</h3>";
 
     echo "<center>";
     if ($course->guest) {

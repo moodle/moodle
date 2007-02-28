@@ -143,12 +143,12 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
             if ($ldapauth->config->expiration == 1) {
                     $days2expire = $ldapauth->password_expire($USER->username);
                     if (intval($days2expire) > 0 && intval($days2expire) < intval($CFG->{$USER->auth.'_expiration_warning'})) {
-                        print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>");
+                        print_header("$site->fullname: $loginsite", $site->fullname, $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>");
                         notice_yesno(get_string('auth_passwordwillexpire', 'auth', $days2expire), $passwordchangeurl, $urltogo);
                         print_footer();
                         exit;
                     } elseif (intval($days2expire) < 0 ) {
-                        print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>");
+                        print_header("$site->fullname: $loginsite", $site->fullname, $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>");
                         notice_yesno(get_string('auth_passwordisexpired', 'auth'), $passwordchangeurl, $urltogo);
                         print_footer();
                         exit;
@@ -247,12 +247,12 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
         if ($ldapauth->config->expiration == 1) {
                 $days2expire = $ldapauth->password_expire($USER->username);
                 if (intval($days2expire) > 0 && intval($days2expire) < intval($CFG->{$USER->auth.'_expiration_warning'})) {
-                    print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div class=\"langmenu\">$langmenu</div>");
+                    print_header("$site->fullname: $loginsite", $site->fullname, $loginsite, $focus, "", true, "<div class=\"langmenu\">$langmenu</div>");
                     notice_yesno(get_string('auth_passwordwillexpire', 'auth', $days2expire), $passwordchangeurl, $urltogo);
                     print_footer();
                     exit;
                 } elseif (intval($days2expire) < 0 ) {
-                    print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div class=\"langmenu\">$langmenu</div>");
+                    print_header("$site->fullname: $loginsite", $site->fullname, $loginsite, $focus, "", true, "<div class=\"langmenu\">$langmenu</div>");
                     notice_yesno(get_string('auth_passwordisexpired', 'auth'), $passwordchangeurl, $urltogo);
                     print_footer();
                     exit;
@@ -302,7 +302,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
         $show_instructions = false;
     }
 
-    print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>");
+    print_header("$site->fullname: $loginsite", $site->fullname, $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>");
     include($CFG->dirroot.'/auth/cas/index_form.html');
     print_footer();
 

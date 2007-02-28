@@ -31,7 +31,7 @@
     if ($filtertype == 'site') {
 
         $site = get_site();
-        print_heading($site->fullname);
+        print_heading(format_string($site->fullname));
         
         if ($CFG->bloglevel >= 4) {
             if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
@@ -49,7 +49,7 @@
     } else if ($filtertype == 'course' && $filterselect) {
 
         $course = get_record('course','id',$filterselect);
-        print_heading($course->fullname);
+        print_heading(format_string($course->fullname));
 
         if ($CFG->bloglevel >= 3) {
 

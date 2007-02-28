@@ -44,7 +44,7 @@
     $strshowall = get_string("showall");
 
     print_header("$course->shortname: $strassigncourses",
-                 "$site->fullname",
+                 $site->fullname,
                  "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strassigncourses",
                  "searchtext");
 

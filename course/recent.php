@@ -44,15 +44,15 @@
             $dateinfo = userdate($date, get_string("strftimedaydate"));
 
         if ($course->id != SITEID) {
-            print_header("$course->shortname: $strrecentactivity", "$course->fullname",
+            print_header("$course->shortname: $strrecentactivity", $course->fullname,
                          "<a href=\"view.php?id=$course->id\">$course->shortname</a> ->
                           <a href=\"recent.php?id=$course->id\">$strrecentactivity</a> -> $userinfo, $dateinfo", "", $meta);
         } else {
-            print_header("$course->shortname: $strrecentactivity", "$course->fullname",
+            print_header("$course->shortname: $strrecentactivity", $course->fullname,
                          "<a href=\"recent.php?id=$course->id\">$strrecentactivity</a> -> $userinfo, $dateinfo", "", $meta);
         }
 
-        print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")", '', 3);
+        print_heading(format_string($course->fullname) . ": $userinfo, $dateinfo (".usertimezone().")", '', 3);
         $advancedfilter = 1;
         print_recent_selector_form($course, $advancedfilter, $user, $date, $modname, $modid, $modaction, $selectedgroup, $sortby);
 
@@ -69,10 +69,10 @@
         }
 
         if ($course->id != SITEID) {
-            print_header("$course->shortname: $strrecentactivity", "$course->fullname",
+            print_header("$course->shortname: $strrecentactivity", $course->fullname,
                      "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strrecentactivity", "", $meta);
         } else {
-            print_header("$course->shortname: $strrecentactivity", "$course->fullname",
+            print_header("$course->shortname: $strrecentactivity", $course->fullname,
                      "$strrecentactivity", "", $meta);
         }
 

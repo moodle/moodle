@@ -99,7 +99,7 @@ function online_assignment_cleanup($output=false) {
 
                         /// grab the section record
                         if (!($section = get_record('course_sections', 'id', $newsection))) {
-                            if ($output) echo 'Serious error: Cannot retrieve section: '.$newsection.' for course: '.$course->fullname.'<br />';
+                            if ($output) echo 'Serious error: Cannot retrieve section: '.$newsection.' for course: '. format_string($course->fullname) .'<br />';
                             continue;
                         }
 

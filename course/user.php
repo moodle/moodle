@@ -43,13 +43,13 @@
     $fullname          = fullname($user, true);
 
     if ($course->id != SITEID) {
-        print_header("$course->shortname: $stractivityreport ($mode)", "$course->fullname",
+        print_header("$course->shortname: $stractivityreport ($mode)", $course->fullname,
                  "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
                   <a href=\"../user/index.php?id=$course->id\">$strparticipants</a> ->
                   <a href=\"../user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a> -> 
                   $stractivityreport -> $strmode");
     } else {
-        print_header("$course->shortname: $stractivityreport ($mode)", "$course->fullname",
+        print_header("$course->shortname: $stractivityreport ($mode)", $course->fullname,
                  "<a href=\"../user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a> -> 
                   $stractivityreport -> $strmode");
     }

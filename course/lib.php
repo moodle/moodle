@@ -988,7 +988,7 @@ function print_overview($courses) {
         if (empty($course->visible)) {
             $linkcss = 'class="dimmed"';
         }
-        print_heading('<a title="'.$course->fullname.'" '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->fullname.'</a>');
+        print_heading('<a title="'. format_string($course->fullname).'" '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'. format_string($course->fullname).'</a>');
         if (array_key_exists($course->id,$htmlarray)) {
             foreach ($htmlarray[$course->id] as $modname => $html) {
                 echo $html;
@@ -1534,7 +1534,7 @@ function rebuild_course_cache($courseid=0) {
         foreach ($courses as $course) {
             $modinfo = serialize(get_array_of_activities($course->id));
             if (!set_field("course", "modinfo", $modinfo, "id", $course->id)) {
-                notify("Could not cache module information for course '$course->fullname'!");
+                notify("Could not cache module information for course '" . format_string($course->fullname) . "'!");
             }
         }
     }
@@ -1557,9 +1557,9 @@ function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
 
     if ($category) {
         if ($path) {
-            $path = $path.' / '.s($category->name);
+            $path = $path.' / '.format_string($category->name);
         } else {
-            $path = s($category->name);
+            $path = format_string($category->name);
         }
         $list[$category->id] = $path;
     } else {
@@ -1678,7 +1678,7 @@ function print_category_info($category, $depth, $files = false) {
 
         echo '<td valign="top" class="category image">'.$catimage.'</td>';
         echo '<td valign="top" class="category name">';
-        echo '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'.$category->name.'</a>';
+        echo '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'. format_string($category->name).'</a>';
         echo '</td>';
         echo '<td class="category info">&nbsp;</td>';
         echo '</tr>';
@@ -1688,7 +1688,7 @@ function print_category_info($category, $depth, $files = false) {
                 $linkcss = $course->visible ? '' : ' class="dimmed" ';
                 echo '<tr><td valign="top">&nbsp;';
                 echo '</td><td valign="top" class="course name">';
-                echo '<a '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->fullname.'</a>';
+                echo '<a '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'. format_string($course->fullname).'</a>';
                 echo '</td><td align="right" valign="top" class="course info">';
                 if ($course->guest ) {
                     echo '<a title="'.$strallowguests.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
@@ -1724,7 +1724,7 @@ function print_category_info($category, $depth, $files = false) {
         }
 
         echo '<td valign="top" class="category name">';
-        echo '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'.$category->name.'</a>';
+        echo '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'. format_string($category->name).'</a>';
         echo '</td>';
         echo '<td valign="top" class="category number">';
         if ($category->coursecount) {
@@ -1791,7 +1791,7 @@ function print_course($course) {
     echo '<div class="info">';
     echo '<div class="name"><a title="'.get_string('entercourse').'"'.
          $linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.
-         $course->fullname.'</a></div>';   
+         format_string($course->fullname).'</a></div>';   
     
     /// first find all roles that are supposed to be displayed
     if ($managerroles = get_config('', 'coursemanager')) {
@@ -1946,10 +1946,10 @@ function print_remote_course($course, $width="100%") {
     echo '<div class="info">';
     echo '<div class="name"><a title="'.get_string('entercourse').'"'.
          $linkcss.' href="'.$url.'">'
-        . s($course->fullname) .'</a><br />'
-        . s($course->hostname) . ' : '
-        . s($course->cat_name) . ' : ' 
-        . s($course->shortname). '</div>';   
+        .  format_string($course->fullname) .'</a><br />'
+        . format_string($course->hostname) . ' : '
+        . format_string($course->cat_name) . ' : ' 
+        . format_string($course->shortname). '</div>';   
     echo '</div><div class="summary">';
     $options = NULL;
     $options->noclean = true;
@@ -2332,7 +2332,7 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
  */
 function course_format_name ($course,$max=100) {
 
-    $str = $course->shortname.': '.$course->fullname;
+    $str = $course->shortname.': '. $course->fullname;
     if (strlen($str) <= $max) {
         return $str;
     }

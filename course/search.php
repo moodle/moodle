@@ -232,7 +232,7 @@
                 }
 
                 echo "<tr>";
-                echo "<td><a $linkcss href=\"view.php?id=$course->id\">$course->fullname</a></td>";
+                echo "<td><a $linkcss href=\"view.php?id=$course->id\">" . format_string($course->fullname) . "</a></td>";
                 echo "<td>".$displaylist[$course->category]."</td>";
                 echo "<td align=\"center\">";
                 

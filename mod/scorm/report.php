@@ -70,19 +70,19 @@
         $strname  = get_string('name');
         if (empty($b)) {
             if (empty($a)) {
-                print_header("$course->shortname: ".format_string($scorm->name), "$course->fullname",
+                print_header("$course->shortname: ".format_string($scorm->name), $course->fullname,
                              "$navigation <a href=\"index.php?id=$course->id\">$strscorms</a>
                               -> <a href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a> -> $strreport",
                              '', '', true);
             } else {
-                print_header("$course->shortname: ".format_string($scorm->name), "$course->fullname",
+                print_header("$course->shortname: ".format_string($scorm->name), $course->fullname,
                              "$navigation <a href=\"index.php?id=$course->id\">$strscorms</a>
                               -> <a href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>
                               -> <a href=\"report.php?id=$cm->id\">$strreport</a> -> $strattempt $attempt - ".fullname($userdata),
                              '', '', true);
             }
         } else {
-            print_header("$course->shortname: ".format_string($scorm->name), "$course->fullname",
+            print_header("$course->shortname: ".format_string($scorm->name), $course->fullname,
                      "$navigation <a href=\"index.php?id=$course->id\">$strscorms</a>
                       -> <a href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>
                       -> <a href=\"report.php?id=$cm->id\">$strreport</a>
