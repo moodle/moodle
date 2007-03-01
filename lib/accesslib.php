@@ -726,7 +726,7 @@ function capability_search($capability, $context, $capabilities, $switchroleacti
         break;
 
         default:
-            error ('This is an unknown context!');
+            error ('This is an unknown context (' . $context->contextlevel . ') in capability_search!');
         return false;
     }
 
@@ -2552,7 +2552,7 @@ function print_context_name($context) {
             break;
 
         default:
-            error ('This is an unknown context!');
+            error ('This is an unknown context (' . $context->contextlevel . ') in print_context_name!');
             return false;
 
     }
@@ -2838,7 +2838,7 @@ function get_parent_contexts($context) {
         break;
 
         default:
-            error('This is an unknown context!');
+            error('This is an unknown context (' . $context->contextlevel . ') in get_parent_contexts!');
         return false;
     }
 }
@@ -2964,7 +2964,7 @@ function get_child_contexts($context) {
         break;
 
         default:
-            error('This is an unknown context!');
+            error('This is an unknown context (' . $context->contextlevel . ') in get_child_contexts!');
         return false;
     }
 }
@@ -3096,7 +3096,7 @@ function get_component_string($component, $contextlevel) {
         break;
 
         default:
-            error ('This is an unknown context!');
+            error ('This is an unknown context $contextlevel (' . $contextlevel . ') in get_component_string!');
         return false;
 
     }
