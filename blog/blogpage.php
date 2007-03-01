@@ -186,8 +186,8 @@ class page_blog extends page_base {
                 $paramstring .= '<input type="hidden" name="'.$key.'" value="'.s($val).'" />';
             }
 
-            $editformstring = '<form '.$CFG->frametarget.' method="get" action="'.$this->url_get_path().'"><fieldset class="invisiblefieldset">'
-                             .$paramstring.'<input type="submit" value="'.$editingString.'" /></fieldset></form>';
+            $editformstring = '<form '.$CFG->frametarget.' method="get" action="'.$this->url_get_path().'"><div>'
+                             .$paramstring.'<input type="submit" value="'.$editingString.'" /></div></form>';
         }
 
         return $editformstring;
