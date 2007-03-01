@@ -160,7 +160,8 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
 </script>
 
 <form id="form1" method="post" action="restore.php">
-<table cellpadding="5">
+<div>
+<table cellpadding="5" class="boxaligncenter">
 <?php
 
     //First, course destination
@@ -291,23 +292,23 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
                         }
                     } else {
                         //Module isn't restorable
-                        echo "<input type=\"hidden\" name=\"$restore_var\" value=\"0\" />";
-                        echo "<input type=\"hidden\" name=\"$user_info_var\" value=\"0\" />";
+                        $nonrestmod .= "<input type=\"hidden\" name=\"$restore_var\" value=\"0\" />";
+                        $nonrestmod .= "<input type=\"hidden\" name=\"$user_info_var\" value=\"0\" />";
                     }
                 } else {
                     //Module isn't restorable
-                    echo "<input type=\"hidden\" name=\"$restore_var\" value=\"0\" />";
-                    echo "<input type=\"hidden\" name=\"$user_info_var\" value=\"0\" />";
+                    $nonrestmod .= "<input type=\"hidden\" name=\"$restore_var\" value=\"0\" />";
+                    $nonrestmod .= "<input type=\"hidden\" name=\"$user_info_var\" value=\"0\" />";
                 }
             } else {
                 //Module isn't restorable
-                echo "<input type=\"hidden\" name=\"$restore_var\" value=\"0\" />";
-                echo "<input type=\"hidden\" name=\"$user_info_var\" value=\"0\" />";
+                $nonrestmod .= "<input type=\"hidden\" name=\"$restore_var\" value=\"0\" />";
+                $nonrestmod .= "<input type=\"hidden\" name=\"$user_info_var\" value=\"0\" />";
             }
             $currentrow = ($currentrow + 1) % 2;
         }
         //Line
-        echo "<tr><td colspan=\"4\"><hr /></td></tr>";
+        echo "<tr><td colspan=\"4\">$nonrestmod<hr /></td></tr>";
 
         //Now print the Metacourse tr
         echo "<tr>";
@@ -415,7 +416,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo "</td></tr>";
     }
 ?>
-</td></tr></table>
+</table>
 
 <hr/>
 <?php
@@ -434,7 +435,7 @@ if ($course->id == SITEID) {
 }
 
 echo ('<table width="100%" class="restore-form-instances">');
-echo ('<tr><td align="right"><b>'.get_string('sourcerole').'</b></td><td align="left"><b>'.get_string('targetrole').'</b></td></tr>');
+echo ('<tr><td align="right" style="width:50%"><b>'.get_string('sourcerole').'</b></td><td align="left" style="width:50%"><b>'.get_string('targetrole').'</b></td></tr>');
 
 if ($info->backup_moodle_version < 2006092801) {
     // 1.6 and below backup
@@ -510,11 +511,12 @@ echo ('</table>'); // end of role mappings table
 
 ?>
 <br />
-<center>
+<div style="text-align:center">
 <input type="hidden" name="id"     value="<?php  p($id) ?>" />
 <input type="hidden" name="launch" value="check" />
 <input type="hidden" name="fromform" value="1" />
 <input type="submit" value="<?php  print_string("continue") ?>" />
 <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
-</center>
+</div>
+</div>
 </form>

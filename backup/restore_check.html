@@ -263,7 +263,7 @@
         if ($show_continue_button) {
             //Print the continue button to execute the restore NOW !!!!
             //All is prepared !!!
-            echo "<center>";
+            echo "<div style='text-align:center'>";
             $hidden["launch"]             = "execute";
             $hidden["file"]               =  $file;
             $hidden["id"]                 =  $id;
@@ -278,7 +278,7 @@
                 }
             }
             print_single_button("restore.php", $hidden, get_string("restorecoursenow"),"post");
-            echo "</center>";
+            echo "</div>";
         } else {
             //Show error
             error ("Something was wrong checking restore preferences");
