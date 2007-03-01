@@ -271,7 +271,7 @@
             if (($count = setfilelist($_POST)) and confirm_sesskey()) {
                 $USER->fileop     = $action;
                 $USER->filesource = $wdir;
-                echo "<p align=\"center\">";
+                echo "<p class=\"centerpara\">";
                 print_string("selectednowmove", "moodle", $count);
                 echo "</p>";
             }
