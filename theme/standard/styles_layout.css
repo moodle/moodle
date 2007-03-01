@@ -1726,6 +1726,9 @@ body#course-index .addcategory {
   margin:10px;
 }
 
+#content .coursebox .summary .category {
+  text-align:right;
+}
 
 /***
  *** Group
