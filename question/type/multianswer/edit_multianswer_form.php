@@ -14,9 +14,13 @@
 class question_edit_multianswer_form extends question_edit_form {
 
     // No question-type specific form fields.
-
+    function definition(){
+        parent::definition();
+        $mform =& $this->_form;
+        $mform->addRule('questiontext', null, 'required', null, 'client');
+    }
     function set_data($question) {
-        if ($question->questiontext and $question->id and $question->qtype) {
+        if (isset($question->id) and $question->id and $question->qtype and $question->questiontext) {
 
             foreach ($question->options->questions as $key => $wrapped) {
                 // The old way of restoring the definitions is kept to gradually
@@ -62,6 +66,19 @@ class question_edit_multianswer_form extends question_edit_form {
                 $question->questiontext = str_replace("{#$key}", $parsableanswerdef, $question->questiontext);
             }
         }
+        parent::set_data($question);
+    }
+
+    function validation($data){
+        //TODO would be nice to parse the question text here and output some error
+        //messages if there is a problem with the text.
+        $errors = array();
+        //extra check to make sure there is something in the htmlarea besides a <br />
+        $questiontext= trim(strip_tags($data['questiontext']));
+        if ($questiontext==''){
+            $errors['questiontext'] = get_string('err_required', 'form');
+        }
+        return $errors;
     }
 
     function qtype() {
