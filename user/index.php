@@ -619,8 +619,8 @@
     }
 
     if ($bulkoperations && $totalcount > ($perpage*3)) {
-        echo '<form action="index.php"><fieldset class="invisiblefieldset"><input type="hidden" name="id" value="'.$course->id.'" />'.get_string('search').':&nbsp;'."\n";
-        echo '<input type="text" name="search" value="'.$search.'" />&nbsp;<input type="submit" value="'.get_string('search').'" /></fieldset></form>'."\n";
+        echo '<form action="index.php"><div><input type="hidden" name="id" value="'.$course->id.'" />'.get_string('search').':&nbsp;'."\n";
+        echo '<input type="text" name="search" value="'.$search.'" />&nbsp;<input type="submit" value="'.get_string('search').'" /></div></form>'."\n";
     }
 
     if ($perpage == SHOW_ALL_PAGE_SIZE) {
