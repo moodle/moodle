@@ -245,13 +245,13 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
                 $button =  '<table><tr><td>'.$button.
                            '</td><td>'.
                            '<form '.$CFG->frametarget.' method="get" action="'. $CFG->wwwroot .'/mod/lesson/lesson.php">'.
-                           '<fieldset class="invisiblefieldset">'.
+                           '<div>'.
                            '<input type="hidden" name="id" value="'. $cm->id .'" />'.
                            '<input type="hidden" name="action" value="editpage" />'.
                            '<input type="hidden" name="redirect" value="navigation" />'.
                            '<input type="hidden" name="pageid" value="'. $pageid .'" />'.
                            '<input type="submit" value="'. get_string('editpagecontent', 'lesson') .'" />'.
-                           '</fieldset>'.
+                           '</div>'.
                            '</form>'.
                            '</td></tr></table>';
             }

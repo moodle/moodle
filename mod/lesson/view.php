@@ -73,7 +73,7 @@
                      '<span class="lessonbutton standardbutton"><a href="'.$CFG->wwwroot.'/course/view.php?id='. $course->id .'">'. get_string('cancel', 'lesson') .'</a></span> ';
 
                 lesson_print_submit_link(get_string('continue', 'lesson'), 'password', 'center', 'standardbutton submitbutton');
-                echo '</center>';
+                echo '</fieldset></form>';
                 print_simple_box_end();
                 echo "</div>\n";
                 print_footer($course);
@@ -688,14 +688,14 @@
                         }
                         // Each button must have its own form inorder for it to work with JavaScript turned off
                         $button  = "<form id=\"answerform$i\" method=\"post\" action=\"$CFG->wwwroot/mod/lesson/lesson.php\">\n".
-                                   '<fieldset class="invisiblefieldset">'.
+                                   '<div>'.
                                    "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n".
                                    "<input type=\"hidden\" name=\"action\" value=\"continue\" />\n".
                                    "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />\n".
                                    "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n".
                                    "<input type=\"hidden\" name=\"jumpto\" value=\"$answer->jumpto\" />\n".
                                    lesson_print_submit_link(strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)), "answerform$i", '', $class, '', '', true).
-                                   '</fieldset>'.
+                                   '</div>'.
                                    '</form>';
                         
                         $buttons[$type][] = $button;
@@ -755,7 +755,7 @@
         } else {
             // a page without answers - find the next (logical) page
             echo "<form id=\"pageform\" method =\"post\" action=\"$CFG->wwwroot/mod/lesson/view.php\">\n";
-            echo '<fieldset class="invisiblefieldset">';
+            echo '<div>';
             echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
             if ($lesson->nextpagedefault) {
                 // in Flash Card mode...
@@ -803,7 +803,7 @@
             }
             echo "<input type=\"hidden\" name=\"pageid\" value=\"$newpageid\" />\n";
             lesson_print_submit_link(get_string('continue', 'lesson'), 'pageform');
-            echo '</fieldset>';
+            echo '</div>';
             echo "</form>\n";
         }
         
@@ -954,14 +954,14 @@
                     echo '<p>'.get_string("youmadehighscore", "lesson", $lesson->maxhighscores).
                          '</p>
                           <form method="post" id="highscores" action="'.$CFG->wwwroot.'/mod/lesson/highscores.php">
-                          <fieldset class="invisiblefieldset">
+                          <div>
                           <input type="hidden" name="mode" value="add" />
                           <input type="hidden" name="id" value="'.$cm->id.'" />
                           <input type="hidden" name="sesskey" value="'.sesskey().'" />
                           <p>';
                           lesson_print_submit_link(get_string('clicktopost', 'lesson'), 'highscores');
                     echo '</p>
-                          </fieldset>
+                          </div>
                           </form>';
                 } else {
                     echo get_string("nothighscore", "lesson", $lesson->maxhighscores)."<br />";
