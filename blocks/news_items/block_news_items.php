@@ -79,21 +79,24 @@ class block_news_items extends block_base {
             $strftimerecent = get_string('strftimerecent');
             $strmore = get_string('more', 'forum');
 
+        /// Accessibility: markup as a list.
+            $text .= "\n<ul class='unlist'>\n";
             foreach ($discussions as $discussion) {
 
                 $discussion->subject = $discussion->name;
 
                 $discussion->subject = format_string($discussion->subject, true, $forum->course);
 
-                $text .= '<div class="post">'.
+                $text .= '<li class="post">'.
                          '<div class="head">'.
                          '<div class="date">'.userdate($discussion->modified, $strftimerecent).'</div>'.
                          '<div class="name">'.fullname($discussion).'</div></div>'.
                          '<div class="info">'.$discussion->subject.' '.
                          '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->discussion.'">'.
                          $strmore.'...</a></div>'.
-                         '</div>';
+                         "</li>\n";
             }
+            $text .= "</ul>\n";
 
             $this->content->text = $text;
 
