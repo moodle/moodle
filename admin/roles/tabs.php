@@ -104,7 +104,7 @@ if ($currenttab != 'update') {
             break;
 
         default:
-            error ('This is an unknown context!');
+            error ('This is an unknown context (' . $context->contextlevel . ') in admin/roles/tabs.php!');
             return false;
 
     }
