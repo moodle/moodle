@@ -34,9 +34,9 @@ class block_admin_tree extends block_base {
         $strfolderopened = s(get_string('folderopened'));
 
         for ($i = 0; $i < $this->currentdepth; $i++) {
-            $this->tempcontent .= "&nbsp;&nbsp;&nbsp;";
+            $this->tempcontent .= "&nbsp; &nbsp;";
         }
-        $this->tempcontent .= '<a href="javascript:toggle(\'vh_span' . $this->spancounter . '\');">';
+        $this->tempcontent .= '<a href="#" onclick="toggle(\'vh_span' . $this->spancounter . '\');return false">';
         $this->tempcontent .= '<span id="vh_span' . $this->spancounter . 'indicator"><img src="' . $CFG->wwwroot . '/blocks/admin_tree/open.gif" alt="'.$strfolderopened.'" /></span> ';
         $this->tempcontent .= $visiblename . '</a><br /><span id="vh_span' . $this->spancounter . '">' . "\n";
         $this->currentdepth++;
@@ -51,7 +51,7 @@ class block_admin_tree extends block_base {
     function create_item($visiblename,$link,$icon,$class) {
         global $CFG;
         for ($i = 0; $i < $this->currentdepth; $i++) {
-            $this->tempcontent .= "&nbsp;&nbsp;&nbsp;";
+            $this->tempcontent .= "&nbsp; &nbsp;";
         }
         $this->tempcontent .= '<a class="'.$class.'" href="'.$link.'"><img src="'.$icon.'" alt="" />'.
                                $visiblename.'</a><br />'."\n";
@@ -168,7 +168,7 @@ class block_admin_tree extends block_base {
             $this->content->text .= '}' . "\n";
 
             $this->content->text .= 'function collapseall() {' . "\n";
-            $this->content->text .= '  for (i = vh_numspans; i > 0; i=i-1 ) {' . "\n";
+            $this->content->text .= '  for (i = vh_numspans; i > 0; i--) {' . "\n";
             $this->content->text .= '    collapse("vh_span" + String(i));' . "\n";
             $this->content->text .= '  }' . "\n";
             $this->content->text .= '}' . "\n";
