@@ -380,12 +380,12 @@
                 echo '<td align="right">';
                 if (!empty($acourse->guest)) {
                     echo '<a href="view.php?id='.$acourse->id.'"><img title="'.
-                         $strallowguests.'" alt="" class="icon" src="'.
+                         $strallowguests.'" class="icon" src="'.
                          $CFG->pixpath.'/i/user.gif" alt="'.$strallowguests.'" /></a>';
                 }
                 if (!empty($acourse->password)) {
                     echo '<a href="view.php?id='.$acourse->id.'"><img title="'.
-                         $strrequireskey.'" alt="" class="icon" src="'.
+                         $strrequireskey.'" class="icon" src="'.
                          $CFG->pixpath.'/i/key.gif" alt="'.$strrequireskey.'" /></a>';
                 }
                 if (!empty($acourse->summary)) {
