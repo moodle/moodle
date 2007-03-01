@@ -522,15 +522,16 @@
                 if (!empty($message)) { // if we're printing stuff about the file upload
                     $timemessage = 4;
                 }
-                $message .= '<br />'.get_string("postadded", "forum", format_time($CFG->maxeditingtime));
-
+                
                 if ($subscribemessage = forum_post_subscription($fromform)) {
                     $timemessage = 4;
                 }
 
-                if (!empty($fromform->mailnow)) {
+                if ($fromform->mailnow) {
                     $message .= get_string("postmailnow", "forum");
                     $timemessage = 4;
+                } else {
+                    $message .= '<br />'.get_string("postadded", "forum", format_time($CFG->maxeditingtime));
                 }
 
                 if ($forum->type == 'single') {
@@ -574,12 +575,13 @@
                 if (!empty($message)) { // if we're printing stuff about the file upload
                     $timemessage = 4;
                 }
-                $message .= '<br />'.get_string("postadded", "forum", format_time($CFG->maxeditingtime));
-
+                
                 if ($fromform->mailnow) {
                     $message .= get_string("postmailnow", "forum");
                     $timemessage = 4;
-                }
+                } else {
+                    $message .= '<br />'.get_string("postadded", "forum", format_time($CFG->maxeditingtime));
+                }    
 
                 if ($subscribemessage = forum_post_subscription($discussion)) {
                     $timemessage = 4;
