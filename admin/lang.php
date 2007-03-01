@@ -57,17 +57,17 @@
             $navigation = "<a href=\"lang.php\">$strlanguage</a> -> $strmissingstrings";
             $title = $strmissingstrings;
             $button = '<form '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
-                      '<fieldset class="invisiblefieldset">'.
+                      '<div>'.
                       '<input type="hidden" name="mode" value="compare" />'.
-                      '<input type="submit" value="'.$streditstrings.'" /></fieldset></form>';
+                      '<input type="submit" value="'.$streditstrings.'" /></div></form>';
             break;
         case "compare":
             $navigation = "<a href=\"lang.php\">$strlanguage</a> -> $streditstrings";
             $title = $streditstrings;
             $button = '<form  '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
-                      '<fieldset class="invisiblefieldset">'.
+                      '<div>'.
                       '<input type="hidden" name="mode" value="missing" />'.
-                      '<input type="submit" value="'.$strmissingstrings.'" /></fieldset></form>';
+                      '<input type="submit" value="'.$strmissingstrings.'" /></div></form>';
             break;
         default:
             $title = $strlanguage;
@@ -299,12 +299,12 @@
         helpbutton('langswitchstorage', $strfilestoredinhelp, 'moodle');
         
         echo '<form '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
-             '<fieldset class="invisiblefieldset">'.
+             '<div>'.
              '<input type="hidden" name="mode" value="compare" />'.
              '<input type="hidden" name="currentfile" value="'.$currentfile.'" />'.
              '<input type="hidden" name="uselocal" value="'.(1 - $uselocal % 2).'" />'.
              '<input type="submit" value="'.$strswitchlang.'" />'.
-             '</fieldset></form>';
+             '</div></form>';
         print_box_end();
        
         if ($currentfile <> '') {
