@@ -247,12 +247,12 @@ switch ($action) {
             echo '<input type="submit" value="'.$strcontinue.'" /></fieldset></form>';
 
             echo '<form action="preset.php" method="post">';
-            echo '<fieldset class="invisiblefieldset">';
+            echo '<div>';
             echo '<input type="hidden" name="name" value="'.$name.'" />';
             echo '<input type="hidden" name="action" value="save3" />';
             echo '<input type="hidden" name="d" value="'.$data->id.'" />';
             echo '<input type="hidden" name="sesskey" value="'.$sesskey.'" />';
-            echo '<input type="submit" value="'.$stroverwrite.'" /><fieldset></form>';
+            echo '<input type="submit" value="'.$stroverwrite.'" /></div></form>';
             echo '</div>';
             print_footer($course);
             exit;
