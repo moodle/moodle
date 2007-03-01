@@ -28,16 +28,15 @@ function xmldb_quiz_upgrade($oldversion=0) {
 /// this comment lines once this file start handling proper
 /// upgrade code.
 
-/// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
-///     $result = result of "/lib/ddllib.php" function calls
-/// }
-
     if ($result && $oldversion < 2007022800) {
     /// Ensure that there are not existing duplicate entries in the database.
-        delete_records_select('question_numerical_units', "id > (SELECT MIN(iqnu.id)
+        $duplicateunits = get_records_select('question_numerical_units', "id > (SELECT MIN(iqnu.id)
                 FROM {$CFG->prefix}question_numerical_units iqnu
                 WHERE iqnu.question = {$CFG->prefix}question_numerical_units.question AND
-                        iqnu.unit = {$CFG->prefix}question_numerical_units.unit)");
+                        iqnu.unit = {$CFG->prefix}question_numerical_units.unit)", '', 'id');
+        if ($duplicateunits) {
+            delete_records_select('question_numerical_units', 'id IN (' . implode(',', array_keys($duplicateunits)) . ')');
+        }
 
     /// Define index question-unit (unique) to be added to question_numerical_units
         $table = new XMLDBTable('question_numerical_units');
