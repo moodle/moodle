@@ -1267,7 +1267,7 @@ function calendar_preferences_button() {
 
     return "<form $CFG->frametarget method=\"get\" ".
            " action=\"$CFG->wwwroot/calendar/preferences.php\">".
-           "<fieldset class=\"invisiblefieldset\"><input type=\"submit\" value=\"".get_string("preferences", "calendar")." ...\" /></fieldset></form>";
+           "<div><input type=\"submit\" value=\"".get_string("preferences", "calendar")." ...\" /></div></form>";
 }
 
 function calendar_format_event_time($event, $now, $morehref, $usecommonwords = true) {
