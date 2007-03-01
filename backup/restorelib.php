@@ -79,9 +79,11 @@
                 if (function_exists($function_name)) {
                     if (!defined('RESTORE_SILENTLY')) {
                         echo "<li>".get_string ("from")." ".get_string("modulenameplural",$name);
-                        echo '</li>';
                     }
                     $status = $function_name($restore);
+                    if (!defined('RESTORE_SILENTLY')) {
+                        echo '</li>';
+                    }
                 }
             }
         }
@@ -5607,13 +5609,13 @@
         //with some hidden fields
         if ($status) {
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<br /><center>";
+                echo "<br /><div style='text-align:center'>";
                 $hidden["backup_unique_code"] = $backup_unique_code;
                 $hidden["launch"]             = "form";
                 $hidden["file"]               =  $file;
                 $hidden["id"]                 =  $id;
                 print_single_button("restore.php", $hidden, get_string("continue"),"post");
-                echo "</center>";
+                echo "</div>";
             }
             else {
                 if (empty($noredirect)) {
@@ -5914,6 +5916,10 @@
                     } // no need to return false here, it's recoverable.
                 }
             }
+            
+            if (!defined('RESTORE_SILENTLY')) {
+                echo "</li>";
+            }
         }
         
         //Now create metacourse info
@@ -5921,7 +5927,7 @@
             //Only to new courses!
             if ($restore->restoreto == 2) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    echo "</li><li>".get_string("creatingmetacoursedata");
+                    echo "<li>".get_string("creatingmetacoursedata");
                 }
                 if (!$status = restore_create_metacourse($restore,$xml_file)) {
                     if (!defined('RESTORE_SILENTLY')) {
@@ -5988,7 +5994,7 @@
         //Now create course files as needed
         if ($status and ($restore->course_files)) {
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("copyingcoursefiles")."</li>";
+                echo "<li>".get_string("copyingcoursefiles");
             }
             if (!$status = restore_course_files($restore)) {
                 if (empty($status)) {
@@ -6006,6 +6012,9 @@
                     echo "<li>".get_string("filesfolders").": ".$status.'</li>';
                     echo "</ul>";
                 }       
+            }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo "</li>";
             }
         }
 
