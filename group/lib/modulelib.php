@@ -338,4 +338,92 @@ function groups_m_get_members($cmid, $groupid) {
     return $memberids;
 }
 
+/**
+ * Stores a current group in the user's session, if not already present.
+ *
+ * Current group applies to all modules in the current course that share 
+ * a grouping (or use no grouping).
+ *
+ * This function allows the user to change group if they want, but it
+ * checks they have permissions to access the new group and calls error()
+ * otherwise.
+ * @param object $cm Course-module object
+ * @param int $groupmode Group mode
+ * @param int $changegroup If specified, user wants to change to this group
+ * @return Group ID
+ */
+function groups_m_get_and_set_current($cm, $groupmode, $changegroup=-1) {
+    // Check group mode is turned on
+    if (!$groupmode) {
+        return false;
+    }
+
+    // Get current group and return it if no change requested
+    $currentgroupid = groups_m_get_current($cm);
+    if ($changegroup<0) {
+        return $currentgroupid;
+    }
+
+    // Check 'all groups' access
+    $context = get_context_instance(CONTEXT_COURSE, $cm->course);
+    $allgroups = has_capability('moodle/site:accessallgroups', $context);
+
+    // 0 is a special case for 'all groups'.
+    if ($changegroup==0) {
+        if ($groupmode!=VISIBLEGROUPS && !$allgroups) {
+            error('You do not have access to view all groups');
+        }
+    } else { // Normal group specified
+        // Check group is in the course...
+        if (!groups_group_belongs_to_course($changegroup, $cm->course)) {
+            error('Requested group is not in this course.');
+        }
+        // ...AND in the right grouping if required...
+        if ($cm->groupingid && !groups_belongs_to_grouping($changegroup, $cm->groupingid)) {
+            print_object($cm);
+            print_object(groups_get_group($changegroup));
+            error('Requested group is not in this grouping.');
+        }
+        // ...AND user has access to all groups, or it's in visible groups mode, or 
+        // user is a member.
+        if (!$allgroups &&
+          $groupmode != VISIBLEGROUPS && !groups_is_member($changegroup)) {
+        }
+    }
+    // OK, now remember this group in session
+    global $SESSION;
+    $SESSION->currentgroupinggroup[$cm->course][$cm->groupingid] = $changegroup;
+    return $changegroup;
+}
+
+/**
+ * Obtains the current group (see groups_m_get_and_set_current) either as an ID or object.
+ * @param object $cm Course-module object
+ * @param bool $full If true, returns group object rather than ID
+ * @return mixed Group ID (default) or object
+ */
+function groups_m_get_current($cm, $full=false) {
+    global $SESSION;
+    if (isset($SESSION->currentgroupinggroup[$cm->course][$cm->groupingid])) {
+        $currentgroup = $SESSION->currentgroupinggroup[$cm->course][$cm->groupingid];
+    } else {
+        global $USER;
+        if ($cm->groupingid) {
+            $mygroupids=groups_get_groups_for_user_in_grouping($USER->id, $cm->groupingid);
+        } else {
+            $mygroupids=groups_get_groups_for_user($USER->id, $cm->course);
+        }
+        if (!$mygroupids) {
+            return false;
+        }
+        $currentgroup = array_shift($mygroupids);
+        $SESSION->currentgroupinggroup[$cm->course][$cm->groupingid]=$currentgroup;
+    }
+    if ($full) {
+        return groups_groupid_to_group($currentgroup);
+    } else {
+        return $currentgroup;
+    }
+}
+
 ?>

@@ -189,8 +189,13 @@ function groups_groupids_to_groups($groupids, $courseid=false, $alldata=false) {
 
 /**
  * Get a sorted array of group-id/display-name objects.
+ * @param array $groupids Array of group IDs
+ * @param bool $justnames Return names only as values, not objects. Needed
+ *   for print_group_menu in weblib
+ * @return array If $justnames is set, returns an array of id=>name. Otherwise
+ *   returns an array without specific keys of objects containing id, name
  */
-function groups_groupids_to_group_names($groupids) {
+function groups_groupids_to_group_names($groupids, $justnames=false) {
     if (! $groupids) {
         return array();
     }
@@ -217,6 +222,15 @@ function groups_groupids_to_group_names($groupids) {
         $gname->name = $name;
         $group_names[] = $gname;
     }*/
+
+    if ($justnames) {
+        $namesonly = array();
+        foreach ($group_names as $id => $object) {
+            $namesonly[$object->id] = $object->name;
+        }
+        return $namesonly;
+    }
+
     return $group_names;
 }
 
