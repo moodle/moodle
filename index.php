@@ -54,7 +54,7 @@
                 redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
             }
         } else if (!empty($CFG->mymoodleredirect)) {    // Redirect logged-in users to My Moodle overview if required
-            if (isloggedin()) {
+            if (isloggedin() and !isguest()) {
                 redirect($CFG->wwwroot .'/my/index.php');
             }
         }
