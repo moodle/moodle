@@ -87,6 +87,33 @@ class ajaxlib_test extends UnitTestCase {
         
         $_SERVER['HTTP_USER_AGENT'] = $user_agents['MSIE']['5.5']['Windows 2000'];
         $this->assertFalse(ajaxenabled());
+        
+        // Test array of tested browsers
+        $tested_browsers = array('MSIE' => 6.0, 'Gecko' => 20061111);
+        $_SERVER['HTTP_USER_AGENT'] = $user_agents['Firefox']['2.0']['Windows XP'];
+        $this->assertTrue(ajaxenabled($tested_browsers));
+        
+        $_SERVER['HTTP_USER_AGENT'] = $user_agents['MSIE']['7.0']['Windows XP SP2'];
+        $this->assertTrue(ajaxenabled($tested_browsers));
+        
+        $_SERVER['HTTP_USER_AGENT'] = $user_agents['Safari']['2.0']['Mac OS X'];
+        $this->assertFalse(ajaxenabled($tested_browsers));
+        
+        $_SERVER['HTTP_USER_AGENT'] = $user_agents['Opera']['9.0']['Windows XP'];
+        $this->assertFalse(ajaxenabled($tested_browsers));
+        
+        $tested_browsers = array('Safari' => 412, 'Opera' => 9.0);
+        $_SERVER['HTTP_USER_AGENT'] = $user_agents['Firefox']['2.0']['Windows XP'];
+        $this->assertFalse(ajaxenabled($tested_browsers));
+        
+        $_SERVER['HTTP_USER_AGENT'] = $user_agents['MSIE']['7.0']['Windows XP SP2'];
+        $this->assertFalse(ajaxenabled($tested_browsers));
+        
+        $_SERVER['HTTP_USER_AGENT'] = $user_agents['Safari']['2.0']['Mac OS X'];
+        $this->assertTrue(ajaxenabled($tested_browsers));
+        
+        $_SERVER['HTTP_USER_AGENT'] = $user_agents['Opera']['9.0']['Windows XP'];
+        $this->assertTrue(ajaxenabled($tested_browsers));
     }
 }
 
