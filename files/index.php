@@ -332,13 +332,13 @@
                 echo "</form>";
                 echo "</td><td>";
                 echo "<form action=\"index.php\" method=\"get\">";
-                echo "<fieldset class=\"invisiblefieldset\">";
+                echo "<div>";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                 echo " <input type=\"submit\" value=\"$strcancel\" />";
-                echo "</fieldset>";
+                echo "</div>";
                 echo "</form>";
                 echo "</td></tr></table>";
             }
@@ -376,13 +376,13 @@
                 echo "</form>";
                 echo "</td><td>";
                 echo "<form action=\"index.php\" method=\"get\">";
-                echo "<fieldset class=\"invisiblefieldset\">";
+                echo "<div>";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                 echo " <input type=\"submit\" value=\"$strcancel\" />";
-                echo "</fieldset>";
+                echo "</div>";
                 echo "</form>";
                 echo "</td></tr></table>";
             }
@@ -429,13 +429,13 @@
                 echo "</form>";
                 echo "</td><td>";
                 echo "<form action=\"index.php\" method=\"get\">";
-                echo "<fieldset class=\"invisiblefieldset\">";
+                echo "<div>";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                 echo " <input type=\"submit\" value=\"".get_string("cancel")."\" />";
-                echo "</fieldset>";
+                echo "</div>";
                 echo "</form>";
                 echo "</td></tr></table>";
 
@@ -489,13 +489,13 @@
                     echo "</form>";
                     echo "</td><td>";
                     echo "<form action=\"index.php\" method=\"get\">";
-                    echo "<fieldset class=\"invisiblefieldset\">";
+                    echo "<div>";
                     echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                     echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                     echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                     echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                     echo " <input type=\"submit\" value=\"".get_string("cancel")."\" />";
-                    echo "</fieldset>";
+                    echo "</div>";
                     echo "</form>";
                     echo "</td></tr></table>";
                 } else {
@@ -521,13 +521,13 @@
                 }
 
                 echo "<div style=\"text-align:center\"><form action=\"index.php\" method=\"get\">";
-                echo "<fieldset class=\"invisiblefieldset\">";
+                echo "<div>";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                 echo " <input type=\"submit\" value=\"$strok\" />";
-                echo "</fieldset>";
+                echo "</div>";
                 echo "</form>";
                 echo "</div>";
             } else {
@@ -571,13 +571,13 @@
                     echo "</table>";
                 }
                 echo "<br /><center><form action=\"index.php\" method=\"get\">";
-                echo "<fieldset class=\"invisiblefieldset\">";
+                echo "<div>";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />";
                 echo " <input type=\"submit\" value=\"$strok\" />";
-                echo "</fieldset>";
+                echo "</div>";
                 echo "</form>";
                 echo "</center>";
             } else {
@@ -858,26 +858,26 @@ function displaydir ($wdir) {
     echo "<td align=\"center\">";
     if (!empty($USER->fileop) and ($USER->fileop == "move") and ($USER->filesource <> $wdir)) {
         echo "<form action=\"index.php\" method=\"get\">";
-        echo "<fieldset class=\"invisiblefieldset\">";
+        echo "<div>";
         echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
         echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
         echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
         echo " <input type=\"hidden\" name=\"action\" value=\"paste\" />";
         echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
         echo " <input type=\"submit\" value=\"$strmovefilestohere\" />";
-        echo "</fieldset>";
+        echo "</div>";
         echo "</form>";
     }
     echo "</td>";
     echo "<td align=\"right\">";
         echo "<form action=\"index.php\" method=\"get\">";
-        echo "<fieldset class=\"invisiblefieldset\">";
+        echo "<div>";
         echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
         echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
         echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
         echo " <input type=\"hidden\" name=\"action\" value=\"makedir\" />";
         echo " <input type=\"submit\" value=\"$strmakeafolder\" />";
-        echo "</fieldset>";
+        echo "</div>";
         echo "</form>";
     echo "</td>";
     echo "<td align=\"right\">";
@@ -890,13 +890,13 @@ function displaydir ($wdir) {
     echo "</td>";
     echo "<td align=\"right\">";
         echo "<form action=\"index.php\" method=\"get\">";
-        echo "<fieldset class=\"invisiblefieldset\">";
+        echo "<div>";
         echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
         echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
         echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
         echo " <input type=\"hidden\" name=\"action\" value=\"upload\" />";
         echo " <input type=\"submit\" value=\"$struploadafile\" />";
-        echo "</fieldset>";
+        echo "</div>";
         echo "</form>";
     echo "</td></tr>";
     echo "</table>";
