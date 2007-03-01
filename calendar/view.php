@@ -227,13 +227,13 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
     if (!isguest() && !empty($USER->id)) {
         $text.= '<div class="buttons">';
         $text.= '<form action="'.CALENDAR_URL.'event.php" method="get">';
-        $text.= '<fieldset class="invisiblefieldset">';
+        $text.= '<div>';
         $text.= '<input type="hidden" name="action" value="new" />';
         $text.= '<input type="hidden" name="cal_d" value="'.$d.'" />';
         $text.= '<input type="hidden" name="cal_m" value="'.$m.'" />';
         $text.= '<input type="hidden" name="cal_y" value="'.$y.'" />';
         $text.= '<input type="submit" value="'.get_string('newevent', 'calendar').'" />';
-        $text.= '</fieldset></form></div>';
+        $text.= '</div></form></div>';
     }
 
     $text .= get_string('dayview', 'calendar').': '.calendar_course_filter_selector($getvars);
@@ -357,12 +357,12 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     $text = '';
     if(!isguest() && !empty($USER->id)) {
         $text.= '<div class="buttons"><form action="'.CALENDAR_URL.'event.php" method="get">';
-        $text.= '<fieldset class="invisiblefieldset">';
+        $text.= '<div>';
         $text.= '<input type="hidden" name="action" value="new" />';
         $text.= '<input type="hidden" name="cal_m" value="'.$m.'" />';
         $text.= '<input type="hidden" name="cal_y" value="'.$y.'" />';
         $text.= '<input type="submit" value="'.get_string('newevent', 'calendar').'" />';
-        $text.= '</fieldset></form></div>';
+        $text.= '</div></form></div>';
     }
 
     $text .= get_string('detailedmonthview', 'calendar').': '.calendar_course_filter_selector($getvars);
@@ -553,14 +553,14 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
     if(!isguest() && !empty($USER->id)) {
         $text.= '<div class="buttons">';
         $text.= '<form action="'.CALENDAR_URL.'event.php" method="get">';
-        $text.= '<fieldset class="invisiblefieldset">';
+        $text.= '<div>';
         $text.= '<input type="hidden" name="action" value="new" />';
         /*
         $text.= '<input type="hidden" name="cal_m" value="'.$m.'" />';
         $text.= '<input type="hidden" name="cal_y" value="'.$y.'" />';
         */
         $text.= '<input type="submit" value="'.get_string('newevent', 'calendar').'" />';
-        $text.= '</fieldset></form></div>';
+        $text.= '</div></form></div>';
     }
 
     $text .= get_string('upcomingevents', 'calendar').': '.calendar_course_filter_selector('from=upcoming');
