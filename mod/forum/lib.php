@@ -3133,7 +3133,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 
         echo '<div class="singlebutton forumaddnew">';
         echo "<form id=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
-        echo '<fieldset class="invisiblefieldset">';
+        echo '<div>';
         echo "<input type=\"hidden\" name=\"forum\" value=\"$forum->id\" />";
         echo '<input type="submit" value="';
         echo ($forum->type == 'news') ? get_string('addanewtopic', 'forum')
@@ -3141,7 +3141,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
                ? get_string('addanewquestion','forum')
                : get_string('addanewdiscussion', 'forum'));
         echo '" />';
-        echo '</fieldset>';
+        echo '</div>';
         echo '</form>';
         echo "</div>\n";
     }
