@@ -1,9 +1,34 @@
-<?php
+<?php // $Id$
+
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.org                                            //
+//                                                                       //
+// Copyright (C) 1999-2004  Martin Dougiamas  http://dougiamas.com       //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+
 /**
  * Unit tests for (some of) ../moodlelib.php.
  *
  * @copyright &copy; 2006 The Open University
  * @author T.J.Hunt@open.ac.uk
+ * @author nicolas@moodle.com
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  */
@@ -16,30 +41,6 @@ require_once($CFG->libdir . '/simpletestlib.php');
 require_once($CFG->libdir . '/moodlelib.php');
 
 class moodlelib_test extends UnitTestCase {
-    
-    /**
-     * An array of possible user_agent strings
-     * 
-     * @var array possible user_agent strings
-     * @TODO Complete that list using http://www.pgts.com.au/pgtsj/pgtsj0208c.html
-     */
-    var $user_agents = array(
-        'MSIE' => array(
-            '6.0' => array('Windows XP SP2' => 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)'),
-            '7.0' => array('Windows XP SP2' => 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; YPC 3.0.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)')
-        ),  
-        'Firefox' => array(
-            '1.5' => array('Windows XP' => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; nl; rv:1.8) Gecko/20051107 Firefox/1.5'),
-            '2.0' => array('Windows XP' => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.1) Gecko/20061204 Firefox/2.0.0.1')
-        ),
-        'Safari' => array(
-            '2.0' => array('Mac OS X' => 'Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en) AppleWebKit/412 (KHTML, like Gecko) Safari/412'),
-            '312' => array('Mac OS X' => 'Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en-us) AppleWebKit/312.1 (KHTML, like Gecko) Safari/312')
-        ),
-        'Opera' => array(
-            '9.0' => array('Windows XP' => 'Opera/9.0 (Windows NT 5.1; U; en)')
-        )
-    );
     
     function setUp() {
     }
@@ -80,22 +81,25 @@ class moodlelib_test extends UnitTestCase {
      */
     function test_check_browser_version()
     {
-        $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Safari']['2.0']['Mac OS X'];
+        require_once($CFG->libdir . '/simpletest/fixtures/user_agents.php');
+        
+        $_SERVER['HTTP_USER_AGENT'] = $user_agents['Safari']['2.0']['Mac OS X'];
+        var_dump($_SERVER['HTTP_USER_AGENT']);
         $this->assertTrue(check_browser_version('Safari', '312'));
         $this->assertFalse(check_browser_version('Safari', '500'));
         
-        $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Opera']['9.0']['Windows XP'];
+        $_SERVER['HTTP_USER_AGENT'] = $user_agents['Opera']['9.0']['Windows XP'];
         $this->assertTrue(check_browser_version('Opera', '8.0'));
         $this->assertFalse(check_browser_version('Opera', '10.0'));
         
-        $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['MSIE']['6.0']['Windows XP SP2'];
+        $_SERVER['HTTP_USER_AGENT'] = $user_agents['MSIE']['6.0']['Windows XP SP2'];
         $this->assertTrue(check_browser_version('MSIE', '5.0'));
         $this->assertFalse(check_browser_version('MSIE', '7.0'));
         
-        $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Firefox']['2.0']['Windows XP'];
+        $_SERVER['HTTP_USER_AGENT'] = $user_agents['Firefox']['2.0']['Windows XP'];
         $this->assertTrue(check_browser_version('Firefox', '1.5'));
         $this->assertFalse(check_browser_version('Firefox', '3.0'));        
-    }    
+    }
 }
 
 ?>

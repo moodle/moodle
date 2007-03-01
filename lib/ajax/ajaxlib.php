@@ -109,10 +109,15 @@ function ajax_get_lib($libname) {
 function ajaxenabled() {
 
     global $CFG, $USER;
+    
+    $ie = check_browser_version('MSIE', 6.0);
+    $ff = check_browser_version('Gecko', 20051106);
+    $op = check_browser_version('Opera', 9.0);
+    $sa = check_browser_version('Safari', 412);
 
-    if (!check_browser_version('MSIE', 6.0)
-                && !check_browser_version('Gecko', 20051111)) {
-		// Gecko build 20051111 is what is in Firefox 1.5.
+    if (!$ie && !$ff && !$op && !$sa) {
+        /** @see http://en.wikipedia.org/wiki/User_agent */
+        // Gecko build 20051107 is what is in Firefox 1.5. 
         // We still have issues with AJAX in other browsers.
         return false;
     }
