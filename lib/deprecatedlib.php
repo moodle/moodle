@@ -361,7 +361,7 @@ function unenrol_student($userid, $courseid=0) {
             return false;
         }
         foreach($roles as $role) {
-            $status = role_unassign($role->id, $userid, 0, $context) and $status;
+            $status = role_unassign($role->id, $userid, 0, $context->id) and $status;
         }
     } else {
         // recursivelly unenroll student from all courses
