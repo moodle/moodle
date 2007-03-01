@@ -71,7 +71,7 @@ function authorize_print_orders($courseid, $userid)
         popup_form($baseurl.'&amp;status='.$status.'&amp;course=',$popupcrs,'coursesmenu',$courseid,'','','',false);echo"</td>\n";
         if (has_capability('enrol/authorize:uploadcsv', get_context_instance(CONTEXT_USER, $USER->id))) {
             echo "<form method='get' action='uploadcsv.php'>";
-            echo "<td rowspan='2' align='right' valign='middle' width='50%'><fieldset class=\"invisiblefieldset\"><input type='submit' value='".get_string('uploadcsv', 'enrol_authorize')."' /></fieldset></td>";
+            echo "<td rowspan='2' align='right' valign='middle' width='50%'><div><input type='submit' value='".get_string('uploadcsv', 'enrol_authorize')."' /></div></td>";
             echo "</form>";
         }
         else {
