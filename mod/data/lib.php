@@ -907,7 +907,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
 function data_print_show_all_form($data, $perpage, $sort, $order, $mode) {
     echo '<div align="center">';
     echo '<form id="options" action="view.php" method="get">';
-    echo '<fieldset class="invisiblefieldset">';
+    echo '<div>';
     echo '<input type="hidden" name="d" value="'.$data->id.'" />';
     echo '<input type="hidden" name="perpage" value="'.$perpage.'" />';
     echo '<input type="hidden" name="search" value="" />'; // clear search
@@ -916,7 +916,7 @@ function data_print_show_all_form($data, $perpage, $sort, $order, $mode) {
     echo '<input type="hidden" name="mode" value="'.$mode.'" />';   
     echo '<input type="submit" value="'.get_string('showall','data').'" />';
 
-    echo '</fieldset>';
+    echo '</div>';
     echo '</form>';
     echo '</div>';      
 }
