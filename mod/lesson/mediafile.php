@@ -36,9 +36,9 @@
         if ($lesson->mediaclose) {
         echo '<div class="lessonmediafilecontrol">
             <form>
-            <fieldset class="invisiblefieldset">
+            <div>
             <input type="button" onclick="top.close();" value="'.get_string("closewindow").'" />
-            </fieldset>
+            </div>
             </form>
             </div>';
         }
