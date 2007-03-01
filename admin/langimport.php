@@ -262,9 +262,9 @@
             echo '</fieldset>';
             echo '</form>';
             echo '<form id="updateform" action="langimport.php?mode=5" method="post">';
-            echo '<fieldset class="invisiblefieldset">';
+            echo '<div>';
             echo '<br /><input type="submit" value="'.get_string('updatelangs','admin').'" />';
-            echo '</fieldset>';
+            echo '</div>';
             echo '</form>';
 
             /// Display option to change site language
