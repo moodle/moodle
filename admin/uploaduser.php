@@ -131,10 +131,10 @@ if ($um->preprocess_files() && confirm_sesskey()) {
             // check for valid field names
             foreach ($header as $i => $h) {
                 $h = trim($h); $header[$i] = $h; // remove whitespace
-                if (!($required[$h] or $optionalDefaults[$h] or $optional[$h])) {
+                if (!(isset($required[$h]) or isset($optionalDefaults[$h]) or isset($optional[$h]))) {
                     error(get_string('invalidfieldname', 'error', $h), 'uploaduser.php?sesskey='.$USER->sesskey);
                 }
-                if ($required[$h]) {
+                if (isset($required[$h])) {
                     $required[$h] = 0;
                 }
             }
@@ -173,7 +173,7 @@ if ($um->preprocess_files() && confirm_sesskey()) {
                     // add fields to object $user
                     foreach ($record as $name => $value) {
                         // check for required values
-                        if ($required[$name] and !$value) {
+                        if (isset($required[$name]) and !$value) {
                             error(get_string('missingfield', 'error', $name). " ".
                                     get_string('erroronline', 'error', $linenum) .". ".
                                     get_string('processingstops', 'error'),
