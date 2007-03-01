@@ -355,7 +355,9 @@
                             . get_string($changeaccessto, 'mnet') . " access</a>)";
                 }
                 // mnet info in edit column
-                $editbutton = $mnethosts[$user->mnethostid]->name;
+                if (isset($mnethosts[$user->mnethostid])) {
+                    $editbutton = $mnethosts[$user->mnethostid]->name;
+                }
             }
 
             if ($user->lastaccess) {
