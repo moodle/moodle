@@ -192,7 +192,7 @@
             foreach ($courses as $course) {
                 $course->fullname = highlight("$search", $course->fullname);
                 $course->summary = highlight("$search", $course->summary);
-                $course->summary .= "<br /><p align=\"right\">";
+                $course->summary .= "<br /><p style=\"text-align:right\">";
                 $course->summary .= "$strcategory: <a href=\"category.php?id=$course->category\">";
                 $course->summary .= $displaylist[$course->category];
                 $course->summary .= "</a></p>";
@@ -206,7 +206,7 @@
             echo "<input type=\"hidden\" name=\"search\" value=\"".s($search, true)."\" />";
             echo "<input type=\"hidden\" name=\"page\" value=\"$page\" />";
             echo "<input type=\"hidden\" name=\"perpage\" value=\"$perpage\" />";
-            echo "<table align=\"center\" border=0 cellspacing=2 cellpadding=4 class=\"generalbox\"><tr>";
+            echo "<table style=\"text-align:center\" border=0 cellspacing=2 cellpadding=4 class=\"generalbox\"><tr>";
             echo "<th scope=\"col\">$strcourses</th>";
             echo "<th scope=\"col\">$strcategory</th>";
             echo "<th scope=\"col\">$strselect</th>";
@@ -234,7 +234,7 @@
                 echo "<tr>";
                 echo "<td><a $linkcss href=\"view.php?id=$course->id\">" . format_string($course->fullname) . "</a></td>";
                 echo "<td>".$displaylist[$course->category]."</td>";
-                echo "<td align=\"center\">";
+                echo "<td style=\"text-align:center\">";
                 
                 // this is ok since this will get inherited from course category context
                 // if it is set
@@ -291,7 +291,7 @@
 
                 echo "</td></tr>";
             }
-            echo "<tr><td colspan=\"4\" align=\"center\">";
+            echo "<tr><td colspan=\"4\" style=\"text-align:center\">";
             echo "<br />";
             echo "<input type=\"button\" onclick=\"checkall()\" value=\"$strselectall\" />\n";
             echo "<input type=\"button\" onclick=\"uncheckall()\" value=\"$strdeselectall\" />\n";
