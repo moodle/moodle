@@ -869,10 +869,12 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
     $mygroupid = mygroupid($course->id);
     $groupmode = array();   /// To cache group modes
 
+    $count = 0;
     foreach ($logs as $log) {
         //Get post info, I'll need it later
         if ($post = forum_get_post_from_log($log)) {
             //Create a temp valid module structure (course,id)
+            $tempmod = new object;
             $tempmod->course = $log->course;
             $tempmod->id = $post->forum;
             //Obtain the visible property from the instance
@@ -905,7 +907,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
             }
 
             if (! $heading) {
-                print_headline(get_string('newforumposts', 'forum').':');
+                print_headline(get_string('newforumposts', 'forum').':', 3);
                 $heading = true;
                 $content = true;
             }
@@ -913,7 +915,12 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
 
             $subjectclass = ($log->action == 'add discussion') ? ' bold' : '';
 
-            echo '<div class="head">'.
+            //Accessibility: markup as a list.
+            if ($count < 1) {
+                echo "\n<ul class='unlist'>\n";
+            }
+            $count++;
+            echo '<li><div class="head">'.
                    '<div class="date">'.$date.'</div>'.
                    '<div class="name">'.fullname($post, has_capability('moodle/site:viewfullnames', $coursecontext)).'</div>'.
                  '</div>';
@@ -921,9 +928,10 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
             echo '"<a href="'.$CFG->wwwroot.'/mod/forum/'.str_replace('&', '&amp;', $log->url).'">';
             $post->subject = break_up_long_words(format_string($post->subject,true));
             echo $post->subject;
-            echo '</a>"</div>';
+            echo "</a>\"</div></li>\n";
         }
     }
+    echo "</ul>\n";
     return $content;
 }
 

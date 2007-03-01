@@ -121,6 +121,8 @@ class block_blog_tags extends block_base {
             usort($etags, "blog_tags_sort");
 
         /// Finally we create the output
+        /// Accessibility: markup as a list.
+            $this->content->text .= "\n<ul class='inline-list'>\n";
             foreach ($etags as $tag) {
                 switch ($CFG->bloglevel) {
                     case BLOG_USER_LEVEL:
@@ -154,11 +156,12 @@ class block_blog_tags extends block_base {
                 }
 
                 $link = $CFG->wwwroot.'/blog/index.php?filtertype='.$filtertype.'&amp;filterselect='.$filterselect.'&amp;tagid='.$tag->id;
-                $this->content->text .= '<a href="'.$link.'" '.
+                $this->content->text .= '<li><a href="'.$link.'" '.
                                         'class="'.$tag->class.'" '.
                                         'title="'.get_string('numberofentries','blog',$tag->ct).'">'.
-                                        $tag->text.'</a> ';
+                                        $tag->text.'</a></li> ';
             }
+            $this->content->text .= "\n</ul>\n";
 
         }
         return $this->content;
