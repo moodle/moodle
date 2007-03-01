@@ -10,8 +10,9 @@
 */
 
     require_once("../config.php");
-    require_once( "editlib.php" );
-    require_once($CFG->dirroot.'/lib/uploadlib.php');
+    require_once("editlib.php" );
+    require_once($CFG->libdir . '/uploadlib.php');
+    require_once($CFG->libdir . '/questionlib.php');
 
     // get parameters
     $params = new stdClass;
