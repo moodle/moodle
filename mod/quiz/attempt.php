@@ -498,7 +498,7 @@
         <script type="text/javascript">
         //<![CDATA[
         function navigate(page) {
-            var ourForm = getElementById('responseform'); 
+            var ourForm = document.getElementById('responseform'); 
             ourForm.page.value=page;
             if (ourForm.onsubmit) {
                 ourForm.onsubmit();
