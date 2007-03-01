@@ -13,7 +13,7 @@ require_once($CFG->dirroot.'/group/lib/basicgrouplib.php');
 require_once($CFG->dirroot.'/group/db/dbgroupinglib.php');
 
 define('GROUP_NOT_IN_GROUPING', -1);
-define('GROUP_ANY_GROUPING', -2);
+define('GROUP_ANY_GROUPING',     0);
 
 /*****************************
         Access/List functions  
