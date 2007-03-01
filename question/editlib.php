@@ -94,40 +94,6 @@ function get_default_question_category($courseid) {
 }
 
 /**
- * Return a list of categories nicely formatted
- * @param int courseid id of course 
- * @param bool published true=include all published categories
- * @return array formatted category names
- */
-function question_category_menu($courseid, $published=false) {
-/// Returns the list of categories
-    $publish = "";
-    if ($published) {
-        $publish = "OR publish = '1'";
-    }
-
-    if (!has_capability('moodle/question:manage', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-        $categories = get_records_select("question_categories", "course = '$courseid' $publish", 'parent, sortorder, name ASC');
-    } else {
-        $categories = get_records_select("question_categories", '', 'parent, sortorder, name ASC');
-    }
-    if (!$categories) {
-        return false;
-    }
-    $categories = add_indented_names($categories);
-
-    foreach ($categories as $category) {
-       if ($catcourse = get_record("course", "id", $category->course)) {
-           if ($category->publish && ($category->course != $courseid)) {
-               $category->indentedname .= " ($catcourse->shortname)";
-           }
-           $catmenu[$category->id] = $category->indentedname;
-       }
-    }
-    return $catmenu;
-}
-
-/**
  * prints a form to choose categories
  */
 function question_category_form($course, $current, $recurse=1, $showhidden=false, $showquestiontext=false) {

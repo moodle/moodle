@@ -1545,35 +1545,13 @@ function add_indented_names($categories) {
  * @param integer $selected optionally, the id of a category to be selected by default in the dropdown.
  */
 function question_category_select_menu($courseid, $published = false, $only_editable = false, $selected = "") {
-    global $CFG;
-
-    // get sql fragment for published
-    $publishsql="";
-    if ($published) {
-        $publishsql = " OR publish = 1";
+    $categoriesarray = question_category_options($courseid, $published, $only_editable);
+    if ($selected) {
+        $nothing = '';
+    } else {
+        $nothing = 'choose';
     }
-
-    $categories = get_records_sql("
-            SELECT cat.*, c.shortname AS coursename
-            FROM {$CFG->prefix}question_categories cat, {$CFG->prefix}course c
-            WHERE c.id = cat.course AND (cat.course = $courseid $publishsql)
-            ORDER BY cat.parent, cat.sortorder, cat.name ASC");
-
-    $categories = add_indented_names($categories);
-
-    echo "<select name=\"category\">\n";
-    foreach ($categories as $category) {
-        $cid = $category->id;
-        $cname = question_category_coursename($category, $courseid);
-        $seltxt = "";
-        if ($cid==$selected) {
-            $seltxt = "selected=\"selected\"";
-        }
-        if ((!$only_editable) || has_capability('moodle/question:managecategory', get_context_instance(CONTEXT_COURSE, $category->course))) {
-            echo "    <option value=\"$cid\" $seltxt>$cname</option>\n";
-        }
-    }
-    echo "</select>\n";
+    choose_from_menu($categoriesarray, 'category', $selected, $nothing);
 }
 
 /**
@@ -1601,6 +1579,8 @@ function question_category_options($courseid, $published = false, $only_editable
             FROM {$CFG->prefix}question_categories cat, {$CFG->prefix}course c
             WHERE c.id = cat.course AND (cat.course = $courseid $publishsql)
             ORDER BY cat.parent, cat.sortorder, cat.name ASC");
+    $categories = add_indented_names($categories);
+
     $categoriesarray = array();
     foreach ($categories as $category) {
         $cid = $category->id;
