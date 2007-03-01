@@ -121,16 +121,21 @@
 
 
     // AJAX-capable course format?
-    $CFG->useajax = false;
+    $CFG->useajax = false; 
     $ajaxformatfile = $CFG->dirroot.'/course/format/'.$course->format.'/ajax.php';
     $bodytags = '';
 
-    if (file_exists($ajaxformatfile)) {
+    if (file_exists($ajaxformatfile)) {      // Needs to exist otherwise no AJAX by default
+
+        $CFG->ajaxcapable = false;           // May be overridden later by ajaxformatfile
+        $CFG->ajaxtestedbrowsers = array();  // May be overridden later by ajaxformatfile
+
         require_once($ajaxformatfile);
 
-        if ($USER->editing && !empty($USER->ajax) && !empty($CFG->enableajax) && $CFG->ajaxcapable) {
+        if (!empty($USER->editing) && $CFG->ajaxcapable && has_capability('moodle/course:manageactivities', $context)) {
+                                                             // Course-based switches
 
-            if (ajaxenabled() && has_capability('moodle/course:manageactivities', $context)) {
+            if (ajaxenabled($CFG->ajaxtestedbrowsers)) {     // Browser, user and site-based switches
                 
                 require_js(array('yui_yahoo',
                                  'yui_dom',
