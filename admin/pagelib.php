@@ -118,9 +118,9 @@ class page_admin extends page_base {
 
         if ($this->user_allowed_editing()) {
             $buttons = '<div><form '.$CFG->frametarget.' method="get" action="' . $this->url_get_path() . '">'.
-                       '<fieldset class="invisiblefieldset"><input type="hidden" name="adminedit" value="'.($this->user_is_editing()?'off':'on').'" />'.
+                       '<div><input type="hidden" name="adminedit" value="'.($this->user_is_editing()?'off':'on').'" />'.
                        '<input type="hidden" name="section" value="'.$this->section.'" />'.
-                       '<input type="submit" value="'.get_string($this->user_is_editing()?'blockseditoff':'blocksediton').'" /></fieldset></form></div>';
+                       '<input type="submit" value="'.get_string($this->user_is_editing()?'blockseditoff':'blocksediton').'" /></div></form></div>';
         } else {
             $buttons = '&nbsp;';
         }
