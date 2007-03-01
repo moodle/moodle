@@ -3061,13 +3061,13 @@ function print_single_button($link, $options, $label='OK', $method='get', $targe
     $output .= '<div class="singlebutton">';
     // taking target out, will need to add later target="'.$target.'"
     $output .= '<form action="'. $link .'" method="'. $method .'">';   
-    $output .= '<fieldset class="invisiblefieldset">';
+    $output .= '<div>';
     if ($options) {
         foreach ($options as $name => $value) {
             $output .= '<input type="hidden" name="'. $name .'" value="'. s($value) .'" />';
         }
     }
-    $output .= '<input type="submit" value="'. s($label) .'" /></fieldset></form></div>';
+    $output .= '<input type="submit" value="'. s($label) .'" /></div></form></div>';
 
     if ($return) {
         return $output;
@@ -3920,12 +3920,12 @@ function update_course_icon($courseid) {
         }
 
         return '<form '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/course/view.php">'.
-               '<fieldset class="invisiblefieldset">'.
+               '<div>'.
                '<input type="hidden" name="id" value="'.$courseid.'" />'.
                '<input type="hidden" name="edit" value="'.$edit.'" />'.
                '<input type="hidden" name="sesskey" value="'.sesskey().'" />'.
                '<input type="submit" value="'.$string.'" />'.
-               '</fieldset></form>';
+               '</div></form>';
     }
 }
 
@@ -3990,9 +3990,9 @@ function update_mymoodle_icon() {
     }
 
     return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/my/index.php\">".
-           "<fieldset class='invisiblefieldset'>".
+           "<div>".
            "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
-           "<input type=\"submit\" value=\"$string\" /></fieldset></form>";
+           "<input type=\"submit\" value=\"$string\" /></div></form>";
 }
 
 /**
@@ -4009,11 +4009,11 @@ function update_module_button($moduleid, $courseid, $string) {
         $string = get_string('updatethis', '', $string);
 
         return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/course/mod.php\" onsubmit=\"this.target='{$CFG->framename}'; return true\">".//hack to allow edit on framed resources
-               "<fieldset class='invisiblefieldset'>".
+               "<div>".
                "<input type=\"hidden\" name=\"update\" value=\"$moduleid\" />".
                "<input type=\"hidden\" name=\"return\" value=\"true\" />".
                "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />".
-               "<input type=\"submit\" value=\"$string\" /></fieldset></form>";
+               "<input type=\"submit\" value=\"$string\" /></div></form>";
     } else {
         return '';
     }
@@ -4041,11 +4041,11 @@ function update_category_button($categoryid) {
         }
 
         return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/course/category.php\">".
-               '<fieldset class="invisiblefieldset">'.
+               '<div>'.
                "<input type=\"hidden\" name=\"id\" value=\"$categoryid\" />".
                "<input type=\"hidden\" name=\"categoryedit\" value=\"$edit\" />".
                "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />".
-               "<input type=\"submit\" value=\"$string\" /></fieldset></form>";
+               "<input type=\"submit\" value=\"$string\" /></div></form>";
     }
 }
 
@@ -4069,10 +4069,10 @@ function update_categories_button() {
         }
 
         return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/course/index.php\">".
-               '<fieldset class="invisiblefieldset">'.
+               '<div>'.
                '<input type="hidden" name="categoryedit" value="'. $categoryedit .'" />'.
                '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />'.
-               '<input type="submit" value="'. $string .'" /></fieldset></form>';
+               '<input type="submit" value="'. $string .'" /></div></form>';
     }
 }
 
@@ -4096,13 +4096,13 @@ function update_categories_search_button($search,$page,$perpage) {
         }
 
         return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/course/search.php\">".
-               '<fieldset class="invisiblefieldset">'.
+               '<div>'.
                "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
                "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />".
                "<input type=\"hidden\" name=\"search\" value=\"".s($search, true)."\" />".
                "<input type=\"hidden\" name=\"page\" value=\"$page\" />".
                "<input type=\"hidden\" name=\"perpage\" value=\"$perpage\" />".
-               "<input type=\"submit\" value=\"".s($string)."\" /></fieldset></form>";
+               "<input type=\"submit\" value=\"".s($string)."\" /></div></form>";
     }
 }
 
@@ -4122,11 +4122,11 @@ function update_group_button($courseid, $groupid) {
         $string = get_string('editgroupprofile');
 
         return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/course/group.php\">".
-               '<fieldset class="invisiblefieldset">'.
+               '<div>'.
                '<input type="hidden" name="id" value="'. $courseid .'" />'.
                '<input type="hidden" name="group" value="'. $groupid .'" />'.
                '<input type="hidden" name="edit" value="on" />'.
-               '<input type="submit" value="'. $string .'" /></fieldset></form>';
+               '<input type="submit" value="'. $string .'" /></div></form>';
     }
 }
 
@@ -4152,10 +4152,10 @@ function update_groups_button($courseid) {
         }
 
         return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/course/groups.php\">".
-               '<fieldset class="invisiblefieldset">'.
+               '<div>'.
                "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
                "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
-               "<input type=\"submit\" value=\"$string\" /></fieldset></form>";
+               "<input type=\"submit\" value=\"$string\" /></div></form>";
     }
 }
 
@@ -4324,18 +4324,17 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     }
     if ($backmod) {
         $backtext= get_string('activityprev', 'access');
-        $backmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.$CFG->frametarget.'><fieldset class="invisiblefieldset">'.
+        $backmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.$CFG->frametarget.'><div>'.
                    '<input type="hidden" name="id" value="'.$backmod->cm.'" />'.
                    '<button type="submit" title="'.$backtext.'">'.$THEME->larrow.
-                   '<span class="accesshide">'.$backtext.'</span></button></fieldset></form></li>';
+                   '<span class="accesshide">'.$backtext.'</span></button></div></form></li>';
     }
     if ($nextmod) {
         $nexttext= get_string('activitynext', 'access');
-        $nextmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.$CFG->frametarget.'><fieldset
-        class="invisiblefieldset">'.
+        $nextmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.$CFG->frametarget.'><div>'.
                    '<input type="hidden" name="id" value="'.$nextmod->cm.'" />'.
                    '<button type="submit" title="'.$nexttext.'">'.$THEME->rarrow.
-                   '<span class="accesshide">'.$nexttext.'</span></button></fieldset></form></li>';
+                   '<span class="accesshide">'.$nexttext.'</span></button></div></form></li>';
     }
 
     return '<div class="navigation"><ul>'.$logslink . $backmod .
