@@ -561,9 +561,13 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     $options = new object();
     $options->para = false;
     $text = format_text($text, FORMAT_MOODLE, $options, $courseid);
+
     // And now check for special cases
+    $special = false;
+
     if (substr($text, 0, 5) == 'beep ') {
-        /// It's a beep!
+        /// It's a beep! 
+        $special = true;
         $beepwho = trim(substr($text, 5));
 
         if ($beepwho == 'all') {   // everyone
@@ -580,21 +584,15 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         } else {  //something is not caught?
             return false;
         }
-    } else if (substr($text, 0, 1) == ':') {              /// It's an MOO emote
-        $outinfo = $message->strtime;
-        $outmain = $sender->firstname.' '.substr($text, 1);
-
     } else if (substr($text, 0, 1) == '/') {     /// It's a user command
-
-        if (substr($text, 0, 4) == "/me ") {
+        if (trim(substr($text, 0, 4)) == '/me') {
+            $special = true;
             $outinfo = $message->strtime;
             $outmain = $sender->firstname.' '.substr($text, 4);
-        } else {
-            $outinfo = $message->strtime;
-            $outmain = $text;
         }
+    }
 
-    } else {                                          /// It's a normal message
+    if(!$special) {
         $outinfo = $message->strtime.' '.$sender->firstname;
         $outmain = $text;
     }
