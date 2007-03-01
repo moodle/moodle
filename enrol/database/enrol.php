@@ -108,8 +108,8 @@ function setup_enrolments(&$user) {
                         // already has this role in this context.  If it is, we
                         // skip to the next course.
                         foreach($existing as $key => $role_assignment) {
-                            if ($role_assignment->roleid = $role->id
-                             && $role_assignment->contextid = $context->id) {
+                            if ($role_assignment->roleid == $role->id
+                             && $role_assignment->contextid == $context->id) {
                                 unset($existing[$key]);
                                 //error_log('[ENROL_DB] User is already enroled in course '.$course->idnumber);
                                 continue 2;
