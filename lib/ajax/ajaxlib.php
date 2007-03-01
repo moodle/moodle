@@ -106,9 +106,22 @@ function ajax_get_lib($libname) {
 /**
  * Returns whether ajax is enabled/allowed or not.
  */
-function ajaxenabled() {
+function ajaxenabled($browsers = array()) {
 
     global $CFG, $USER;
+    
+    if (!empty($browsers)) {
+        $valid = false;
+        foreach ($browsers as $brand => $version) {
+            if (check_browser_version($brand, $version)) {
+                $valid = true;
+            }    
+        }
+        
+        if (!$valid) {
+            return false;
+        }
+    }
     
     $ie = check_browser_version('MSIE', 6.0);
     $ff = check_browser_version('Gecko', 20051106);
