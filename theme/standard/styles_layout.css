@@ -188,11 +188,18 @@ img.grouppicture {
   margin-right:auto;
 }
 
-#notice .buttons .singlebutton {
-  display:inline;
+#notice .buttons {
+  text-align:center  
 }
+
+#notice .buttons div,
 #notice .buttons form {
   display:inline;
+}
+
+#notice .singlebutton {
+  text-align:center;
+  padding: 5px;
 }
 
 .errorbox {
@@ -503,7 +510,7 @@ form#adminsettings div.htmlarea {
 }
 
 .mform label .req, .mform label .adv {
-  cursor: help;
+  cursor: help;    
 }
 
 #admin-register form.mform .fsubmit {
@@ -1071,7 +1078,7 @@ a.skip-block, .skip-block {
 }
 
 .sideblock .content .inline-list li {
-  display: inline;
+  display:inline;
 }
 
 .sideblock .content ul.list li.listentry {
@@ -2527,7 +2534,9 @@ body#user-index .rolesform {
 .defaulttemplate {
   text-align:center;
 }
-
+.datapreferences {
+    text-align:center;
+}
 /***
  *** Modules: Forum
  ***/
