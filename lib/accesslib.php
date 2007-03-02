@@ -3707,12 +3707,15 @@ function user_has_role_assignment($userid, $roleid, $contextid=0) {
 /** @param object $context-context to be deleted
  * @param bool deletechild - deltes child contexts dependencies
  */
-function insert_context_rel($context, $deletechild=true) {
+function insert_context_rel($context, $deletechild=true, $deleteparent=true) {
     // removes all parents 
     if ($deletechild) {
         delete_records('context_rel', 'c2', $context->id);
     }
-    delete_records('context_rel', 'c1', $context->id);
+    
+    if ($deleteparent) {
+        delete_records('context_rel', 'c1', $context->id);
+    }
     // insert all parents
     if ($parents = get_parent_contexts($context)) {
         $parents[] = $context->id;
@@ -3728,10 +3731,25 @@ function insert_context_rel($context, $deletechild=true) {
 // rebuild context_rel table without deleting
 function build_context_rel() {
   
+    global $db;
+    $savedb = $db->debug;
+  
+    // total number of records
+    $total = count_records('context');
+    // processed records
+    $done = 0;
+    print_progress($done, $total, 10, 0, 'Processing context relations');
+    $db->debug = false;
     if ($contexts = get_records('context')) {
         foreach ($contexts as $context) {
-            insert_context_rel($context);
+            // no need to delete because it's all empty
+            insert_context_rel($context, false, false);
+            $db->debug = true;
+            print_progress(++$done, $total, 10, 0, 'Processing context relations');
+            $db->debug = false;
         }
-    } 
+    }
+    
+    $db->debug = $savedb;
 }
 ?>
