@@ -2748,7 +2748,7 @@ function user_login_string($course=NULL, $user=NULL) {
                       href=\"$CFG->wwwroot/course/view.php?id=$course->id&amp;switchrole=0&amp;sesskey=".sesskey()."\">".get_string('switchrolereturn').'</a>)';
         } else {
             $loggedinas = $realuserinfo.get_string('loggedinas', 'moodle', $username).' '.
-                      " (<a $CFG->frametarget href=\"$CFG->wwwroot/login/logout.php\">".get_string('logout').'</a>)';
+                      " (<a $CFG->frametarget href=\"$CFG->wwwroot/login/logout.php?sesskey=".sesskey()."\">".get_string('logout').'</a>)';
         }
     } else {
         $loggedinas = get_string('loggedinnot', 'moodle').
