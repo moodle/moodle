@@ -348,6 +348,7 @@
                 fwrite ($bf,full_tag("NEWEST",$level + 2,false,$newest_state->newest));
                 fwrite ($bf,full_tag("NEWGRADED",$level + 2,false,$newest_state->newgraded));
                 fwrite ($bf,full_tag("SUMPENALTY",$level + 2,false,$newest_state->sumpenalty));
+                fwrite ($bf,full_tag("COMMENT",$level + 2,false,$newest_state->comment));
                 //End newest_state
                 $status = fwrite ($bf,end_tag("NEWEST_STATE",$level + 1,true));
             }
