@@ -32,9 +32,9 @@ var ec_quiz_finish = ec_page_start + <?php echo ($timerstartvalue * 1000); ?>;
     </tr>
     <tr>
         <td id="QuizTimer" class="generaltablecell" align="center" width="100%">
-        <form id="clock"><fieldset class="invisiblefieldset"><input onfocus="blur()" type="text" id="time"
+        <form id="clock"><div><input onfocus="blur()" type="text" id="time"
         style="background-color: transparent; border: none; width: 70%; font-family: sans-serif; font-size: 14pt; font-weight: bold; text-align: center;" />
-        </fieldset>
+        </div>
         </form>
         </td>
     </tr>
