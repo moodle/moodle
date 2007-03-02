@@ -2923,7 +2923,13 @@ function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=
     }
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    if (!has_capability('mod/forum:startdiscussion', $context)) {
+    if ($forum->type == 'news') {
+        $capname = 'mod/forum:addnews';
+    } else {
+        $capname = 'mod/forum:startdiscussion';
+    }
+
+    if (!has_capability($capname, $context)) {
         return false;
     }
 
@@ -2957,11 +2963,17 @@ function forum_user_can_post($forum, $user=NULL) {
     }
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    if (isset($user)) {
-        $canreply = has_capability('mod/forum:replypost', $context, $user->id, false)
+    if ($forum->type == 'news') {
+        $capname = 'mod/forum:replynews';
+    } else {
+        $capname = 'mod/forum:replypost';
+    }
+
+    if (!empty($user)) {
+        $canreply = has_capability($capname, $context, $user->id, false)
                 && !has_capability('moodle/legacy:guest', $context, $user->id, false);
     } else {
-        $canreply = has_capability('mod/forum:replypost', $context, NULL, false)
+        $canreply = has_capability($capname, $context, NULL, false)
                 && !has_capability('moodle/legacy:guest', $context, NULL, false);
     }
 
