@@ -1736,6 +1736,16 @@
 
         global $CFG,$preferences;
 
+        //Use one static variable to cache all the require_once calls that,
+        //under PHP5 seems to increase load too much, and we are requiring
+        //them here thousands of times (one per content). MDL-8700. 
+        //Once fixed by PHP, we'll delete this hack
+
+        static $includedfiles;
+        if (!isset($includedfiles)) {
+            $includedfiles = array();
+        }
+
         //Check if preferences is ok. If it isn't set, we are 
         //in a scheduled_backup to we are able to get a copy
         //from CFG->backup_preferences
@@ -1755,8 +1765,14 @@
         $result = str_replace($search,$replace,$content);
 
         foreach ($mypreferences->mods as $name => $info) {
+        /// We only include the corresponding backuplib.php if it hasn't been included before
+        /// This will save some load under PHP5. MDL-8700.
+        /// Once fixed by PHP, we'll delete this hack
+            if (!in_array($name, $includedfiles)) {
+                include_once("$CFG->dirroot/mod/$name/backuplib.php");
+                $includedfiles[] = $name;
+            }
             //Check if the xxxx_encode_content_links exists
-            include_once("$CFG->dirroot/mod/$name/backuplib.php");
             $function_name = $name."_encode_content_links";
             if (function_exists($function_name)) {
                 $result = $function_name($result,$mypreferences);
