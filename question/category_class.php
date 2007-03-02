@@ -383,11 +383,11 @@ class question_category_object {
             $this->output_edit_single_table($category,$page);
             echo '</td></tr></table>';
             echo '<p><div align="center"><form action="category.php" method="get">
-                <fieldset class="invisiblefieldset">
+                <div>
                 <input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />
                 <input type="hidden" name="id" value="' . $this->course->id . '" />
                 <input type="submit" value="' . $this->str->cancel . '" />
-                </fieldset>
+                </div>
                 </form>
                 </div></p>';
             print_footer($this->course);
