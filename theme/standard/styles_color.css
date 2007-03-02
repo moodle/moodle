@@ -759,6 +759,10 @@ table.message_search_results td {
     background: #dddddd;
 }
 
+#mod-chat-view #chatcurrentusers .idletime {
+  color: #888888;   
+}
+
 /***
  *** Modules: Choice
  ***/

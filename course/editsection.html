@@ -1,10 +1,9 @@
-<center>
 <form id="theform" method="post" action="editsection.php">
-<table cellpadding="5">
+<table summary="Summary of week" cellpadding="5" class="boxaligncenter">
 <tr valign="top">
     <td align="right"><p><b><?php print_string("summary") ?>:</b></p>
     <br />
-    <font size="1">
+    
      <?php helpbutton("summaries", get_string("helpsummaries"), "moodle", true, true);
         echo "<br />";
         if ($usehtmleditor) { 
@@ -14,15 +13,16 @@
         } 
      ?>
       <br />
-    </font>
+    
     </td>
     <td>
       <?php print_textarea($usehtmleditor, 25, 60, 660, 200, "summary", $form->summary); ?>
     </td>
 </tr>
 </table>
+<div>
 <input type="hidden" name="id" value="<?php echo $form->id ?>" />
 <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
 <input type="submit" value="<?php print_string("savechanges") ?>" />
+</div>
 </form>
-</center>

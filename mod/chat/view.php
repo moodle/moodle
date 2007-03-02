@@ -156,17 +156,17 @@
         $timenow = time();
         print_simple_box_start('center');
         print_heading($strcurrentusers);
-        echo '<table width="100%">';
+        echo '<table id="chatcurrentusers">';
         foreach ($chatusers as $chatuser) {
             $lastping = $timenow - $chatuser->lastmessageping;
-            echo '<tr><td width="35">';
+            echo '<tr><td class="chatuserimage">';
             echo "<a href=\"$CFG->wwwroot/user/view.php?id=$chatuser->id&amp;course=$chat->course\">";
             print_user_picture($chatuser->id, 0, $chatuser->picture, false, false, false);
-            echo '</a></td><td style="vertical-align: middle">';
-            echo '<p><font size="1">';
+            echo '</a></td><td class="chatuserdetails">';
+            echo '<p>';
             echo fullname($chatuser).'<br />';
-            echo "<font color=\"#888888\">$stridle: ".format_time($lastping)."</font>";
-            echo '</font></p>';
+            echo "<span class=\"idletime\">$stridle: ".format_time($lastping)."</span>";
+            echo '</p>';
             echo '</td></tr>';
         }
         echo '</table>';
