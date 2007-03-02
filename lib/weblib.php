@@ -3061,7 +3061,7 @@ function print_single_button($link, $options, $label='OK', $method='get', $targe
     $output .= '<div class="singlebutton">';
     // taking target out, will need to add later target="'.$target.'"
     $output .= '<form action="'. $link .'" method="'. $method .'">';   
-    $output .= '<div>';
+    $output .= '<fieldset class="invisiblefieldset">';
     if ($options) {
         foreach ($options as $name => $value) {
             $output .= '<input type="hidden" name="'. $name .'" value="'. s($value) .'" />';
@@ -4324,17 +4324,17 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     }
     if ($backmod) {
         $backtext= get_string('activityprev', 'access');
-        $backmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.$CFG->frametarget.'><div>'.
+        $backmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.$CFG->frametarget.'><fieldset class="invisiblefieldset">'.
                    '<input type="hidden" name="id" value="'.$backmod->cm.'" />'.
                    '<button type="submit" title="'.$backtext.'">'.$THEME->larrow.
-                   '<span class="accesshide">'.$backtext.'</span></button></div></form></li>';
+                   '<span class="accesshide">'.$backtext.'</span></button></fieldset></form></li>';
     }
     if ($nextmod) {
         $nexttext= get_string('activitynext', 'access');
-        $nextmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.$CFG->frametarget.'><div>'.
+        $nextmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.$CFG->frametarget.'><fieldset class="invisiblefieldset">'.
                    '<input type="hidden" name="id" value="'.$nextmod->cm.'" />'.
                    '<button type="submit" title="'.$nexttext.'">'.$THEME->rarrow.
-                   '<span class="accesshide">'.$nexttext.'</span></button></div></form></li>';
+                   '<span class="accesshide">'.$nexttext.'</span></button></fieldset></form></li>';
     }
 
     return '<div class="navigation"><ul>'.$logslink . $backmod .
