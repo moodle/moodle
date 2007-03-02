@@ -648,6 +648,9 @@ body#user-index #longtimenosee {
   font-size:0.6em;
 }
 
+#mod-chat-view #chatcurrentusers .chatuserdetails {
+  font-size: 0.6em;   
+}
 /***
  *** Modules: Choice
  ***/

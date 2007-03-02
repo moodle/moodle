@@ -2431,6 +2431,11 @@ body#user-index .rolesform {
   padding:0;
   margin-top:7px
 }
+
+#mod-chat-view #chatcurrentusers .chatuserdetails {
+   vertical-align: middle;   
+}
+
 .chat-event .picture,
 .chat-message .picture {
   width:40px;
