@@ -638,7 +638,7 @@ class enrolment_plugin_authorize
         }
         if (isset($SESSION->ccpaid)) {
             unset($SESSION->ccpaid);
-            redirect($CFG->wwwroot . '/login/logout.php');
+            redirect($CFG->wwwroot . '/login/logout.php?sesskey='.sesskey());
             return;
         }
     }

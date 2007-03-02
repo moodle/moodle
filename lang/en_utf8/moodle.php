@@ -746,6 +746,7 @@ $string['loginstepsnone'] = '<p>Hi!</p>
 $string['loginto'] = 'Login to $a';
 $string['loginusing'] = 'Login here using your username and password';
 $string['logout'] = 'Logout';
+$string['logoutconfirm'] = 'Do you really want to logout?';
 $string['logs'] = 'Logs';
 $string['logtoomanycourses'] = ' [ <a href=\"$a->url\">more</a> ] ';
 $string['logtoomanyusers'] = ' [ <a href=\"$a->url\">more</a> ] ';

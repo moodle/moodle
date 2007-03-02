@@ -2463,7 +2463,7 @@ function user_login_string($course=NULL, $user=NULL) {
                       " (<a target=\"{$CFG->framename}\" href=\"$wwwroot/login/index.php\">".get_string('login').'</a>)';
         } else {
             $loggedinas = $realuserinfo.get_string('loggedinas', 'moodle', $username).' '.$instudentview.
-                      " (<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/login/logout.php\">".get_string('logout').'</a>)';
+                      " (<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/login/logout.php?sesskey=".sesskey()."\">".get_string('logout').'</a>)';
         }
     } else {
         $loggedinas = get_string('loggedinnot', 'moodle').
