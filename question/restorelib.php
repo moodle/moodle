@@ -687,7 +687,7 @@
             $session->newest = backup_todb($res_info['#']['NEWEST']['0']['#']);
             $session->newgraded = backup_todb($res_info['#']['NEWGRADED']['0']['#']);
             $session->sumpenalty = backup_todb($res_info['#']['SUMPENALTY']['0']['#']);
-            $session->comment = backup_todb($res_info['#']['COMMENT']['0']['#']);
+            $session->manualcomment = backup_todb($res_info['#']['MANUALCOMMENT']['0']['#']);
 
             //We have to recode the question field
             $question = backup_getid($restore->backup_unique_code,"question",$session->questionid);
