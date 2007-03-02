@@ -190,7 +190,13 @@
                     (ismember($discussion->groupid) || $mygroupid == $discussion->groupid) );
         }
     } else {
-        if (!has_capability('mod/forum:replypost', $modcontext)) {
+        if ($forum->type == 'news') {
+            $capname = 'mod/forum:replynews';
+        } else {
+            $capname = 'mod/forum:replypost';
+        }
+
+        if (!has_capability($capname, $modcontext)) {
             $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
             if (!has_capability('moodle/legacy:guest', $coursecontext, NULL, false)) {  // User is a guest here!
                 $canreply = false;

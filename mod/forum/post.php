@@ -527,7 +527,7 @@
                     $timemessage = 4;
                 }
 
-                if ($fromform->mailnow) {
+                if (!empty($fromform->mailnow)) {
                     $message .= get_string("postmailnow", "forum");
                     $timemessage = 4;
                 } else {
