@@ -49,7 +49,7 @@ function prevent_double_paid($course)
     }
     if (isset($SESSION->ccpaid)) {
         unset($SESSION->ccpaid);
-        redirect($CFG->wwwroot . '/login/logout.php');
+        redirect($CFG->wwwroot . '/login/logout.php?sesskey='.sesskey());
         return;
     }
 }
