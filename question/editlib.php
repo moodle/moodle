@@ -131,10 +131,10 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
     popup_form ("edit.php?courseid=$course->id&amp;cat=", $catmenu, "catmenu", $current, "", "", "", false, "self");
     echo "</td><td align=\"right\">";
     echo "<form method=\"get\" action=\"$CFG->wwwroot/question/category.php\">";
-    echo "<fieldset class='invisiblefieldset'>";
+    echo "<div>";
     echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
     echo "<input type=\"submit\" value=\"$streditcats\" />";
-    echo '</fieldset>';
+    echo '</div>';
     echo "</form>";
     echo '</td></tr></table>';
 
