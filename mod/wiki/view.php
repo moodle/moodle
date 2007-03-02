@@ -438,13 +438,13 @@
                 $sesskey=sesskey();
                 print "
 <form id='overridelock' method='post' action='overridelock.php'>
-  <fieldset class=\"invisiblefieldset\">
+  <div>
   <input type='hidden' name='sesskey' value='$sesskey' />
   <input type='hidden' name='id' value='$id' />
   <input type='hidden' name='page' value='$pageesc' />
   $stroverrideinfo
   <input type='submit' value='$stroverridebutton' />
-  </fieldset>
+  </div>
 </form>
 ";
             }
