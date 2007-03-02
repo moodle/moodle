@@ -187,8 +187,8 @@
             echo "<a href=\"search.php?search=$encodedsearch&perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
             echo "</p></center>";
         }
-
-        if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        
+        if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
             foreach ($courses as $course) {
                 $course->fullname = highlight("$search", $course->fullname);
                 $course->summary = highlight("$search", $course->summary);
@@ -201,16 +201,16 @@
             }
         } else { // slightly more sophisticated
 
-            echo "<form id=\"movecourses\" action=\"search.php\" method=\"post\">";
-            echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
-            echo "<input type=\"hidden\" name=\"search\" value=\"".s($search, true)."\" />";
-            echo "<input type=\"hidden\" name=\"page\" value=\"$page\" />";
-            echo "<input type=\"hidden\" name=\"perpage\" value=\"$perpage\" />";
-            echo "<table border=0 cellspacing=2 cellpadding=4 class=\"generalbox\"><tr>";
-            echo "<th scope=\"col\">$strcourses</th>";
-            echo "<th scope=\"col\">$strcategory</th>";
-            echo "<th scope=\"col\">$strselect</th>";
-            echo "<th scope=\"col\">$stredit</th>";
+            echo "<form id=\"movecourses\" action=\"search.php\" method=\"post\">\n";
+            echo "<div><input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />\n";
+            echo "<input type=\"hidden\" name=\"search\" value=\"".s($search, true)."\" />\n";
+            echo "<input type=\"hidden\" name=\"page\" value=\"$page\" />\n";
+            echo "<input type=\"hidden\" name=\"perpage\" value=\"$perpage\" /></div>\n";
+            echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"4\" class=\"generalbox boxaligncenter\">\n<tr>\n";
+            echo "<th scope=\"col\">$strcourses</th>\n";
+            echo "<th scope=\"col\">$strcategory</th>\n";
+            echo "<th scope=\"col\">$strselect</th>\n";
+            echo "<th scope=\"col\">$stredit</th></tr>\n";
             foreach ($courses as $course) {    		    
                 
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -220,84 +220,85 @@
 
                 // are we displaying the front page (courseid=1)?
                 if ($course->id == 1) {
-                    echo "<tr>";
-                    echo "<td><a href=\"$CFG->wwwroot\">$strfrontpage</a></td>";
+                    echo "<tr>\n";
+                    echo "<td><a href=\"$CFG->wwwroot\">$strfrontpage</a></td>\n";
 
                     // can't do anything else with the front page
-                    echo "  <td>&nbsp;</td>"; // category place
-                    echo "  <td>&nbsp;</td>"; // select place
-                    echo "  <td>&nbsp;</td>"; // edit place
-                    echo "</tr>";
+                    echo "  <td>&nbsp;</td>\n"; // category place
+                    echo "  <td>&nbsp;</td>\n"; // select place
+                    echo "  <td>&nbsp;</td>\n"; // edit place
+                    echo "</tr>\n";
                     continue;
                 }
 
-                echo "<tr>";
-                echo "<td><a $linkcss href=\"view.php?id=$course->id\">" . format_string($course->fullname) . "</a></td>";
-                echo "<td>".$displaylist[$course->category]."</td>";
-                echo "<td>";
+                echo "<tr>\n";
+                echo "<td><a $linkcss href=\"view.php?id=$course->id\">" 
+                    . format_string($course->fullname) . "</a></td>\n";
+                echo "<td>".$displaylist[$course->category]."</td>\n";
+                echo "<td>\n";
                 
                 // this is ok since this will get inherited from course category context
                 // if it is set
                 if (has_capability('moodle/category:update', $coursecontext)) {
-                    echo "<input type=\"checkbox\" name=\"c$course->id\">";
+                    echo "<input type=\"checkbox\" name=\"c$course->id\" />\n";
                 } else {
-                    echo "<input type=\"checkbox\" name=\"c$course->id\" disabled=\"disabled\">";
+                    echo "<input type=\"checkbox\" name=\"c$course->id\" disabled=\"disabled\" />\n";
                 }
                 
-                echo "</td>";
-                echo "<td>";
+                echo "</td>\n";
+                echo "<td>\n";
                 $pixpath = $CFG->pixpath;
                 
                 // checks whether user can update course settings
                 if (has_capability('moodle/course:update', $coursecontext)) {
-                    echo "<a title=\"".get_string("settings")."\" href=\"$CFG->wwwroot/course/edit.php?id=$course->id\"><img".
-                        " src=\"$pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"".get_string("settings")."\"></a> ";
+                    echo "<a title=\"".get_string("settings")."\" href=\"$CFG->wwwroot/course/edit.php?id=$course->id\">\n<img".
+                        " src=\"$pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"".get_string("settings")."\" /></a>\n ";
                 }
 
                 // checks whether user can do role assignment
     		    if (has_capability('moodle/role:assign', $coursecontext)) {
                     echo'<a title="'.get_string('assignroles', 'role').'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$coursecontext->id.'">';
-    		        echo '<img src="'.$CFG->pixpath.'/i/roles.gif" class="iconsmall" alt="'.get_string('assignroles', 'role').'" /></a> ';
+    		        echo '<img src="'.$CFG->pixpath.'/i/roles.gif" class="iconsmall" alt="'.get_string('assignroles', 'role').'" /></a> ' . "\n";
     		    }                
 
                 // checks whether user can delete course
                 if (has_capability('moodle/course:delete', $coursecontext)) {  
-                    echo "<a title=\"".get_string("delete")."\" href=\"delete.php?id=$course->id\"><img".
-                        " src=\"$pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"".get_string("delete")."\"></a> ";
+                    echo "<a title=\"".get_string("delete")."\" href=\"delete.php?id=$course->id\">\n<img".
+                        " src=\"$pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"".get_string("delete")."\" /></a>\n ";
                 }  
 
                 // checks whether user can change visibility
                 if (has_capability('moodle/course:visibility', $coursecontext)) {
                     if (!empty($course->visible)) {
-                        echo "<a title=\"".get_string("hide")."\" href=\"search.php?search=$encodedsearch&amp;perpage=$perpage&amp;page=$page&amp;hide=$course->id&amp;sesskey=$USER->sesskey\"><img".
-                            " src=\"$pixpath/t/hide.gif\" class=\"iconsmall\" alt=\"".get_string("hide")."\"></a> ";
+                        echo "<a title=\"".get_string("hide")."\" href=\"search.php?search=$encodedsearch&amp;perpage=$perpage&amp;page=$page&amp;hide=$course->id&amp;sesskey=$USER->sesskey\">\n<img".
+                            " src=\"$pixpath/t/hide.gif\" class=\"iconsmall\" alt=\"".get_string("hide")."\" /></a>\n ";
                     } else {
-                        echo "<a title=\"".get_string("show")."\" href=\"search.php?search=$encodedsearch&amp;perpage=$perpage&amp;page=$page&amp;show=$course->id&amp;sesskey=$USER->sesskey\"><img".
-                            " src=\"$pixpath/t/show.gif\" class=\"iconsmall\" alt=\"".get_string("show")."\"></a> ";
+                        echo "<a title=\"".get_string("show")."\" href=\"search.php?search=$encodedsearch&amp;perpage=$perpage&amp;page=$page&amp;show=$course->id&amp;sesskey=$USER->sesskey\">\n<img".
+                            " src=\"$pixpath/t/show.gif\" class=\"iconsmall\" alt=\"".get_string("show")."\" /></a>\n ";
                     }
                 }              
 
                 // checks whether user can do site backup
                 if (has_capability('moodle/site:backup', $coursecontext)) {
-                    echo "<a title=\"".get_string("backup")."\" href=\"../backup/backup.php?id=$course->id\"><img".
-                        " src=\"$pixpath/t/backup.gif\" class=\"iconsmall\" alt=\"".get_string("backup")."\"></a> ";
+                    echo "<a title=\"".get_string("backup")."\" href=\"../backup/backup.php?id=$course->id\">\n<img".
+                        " src=\"$pixpath/t/backup.gif\" class=\"iconsmall\" alt=\"".get_string("backup")."\" /></a>\n ";
                 }
                 
                 // checks whether user can do restore
                 if (has_capability('moodle/site:restore', $coursecontext)) {
-                    echo "<a title=\"".get_string("restore")."\" href=\"../files/index.php?id=$course->id&wdir=/backupdata\"><img".
-                        " src=\"$pixpath/t/restore.gif\" class=\"iconsmall\" alt=\"".get_string("restore")."\"></a> ";
+                    echo "<a title=\"".get_string("restore")."\" href=\"../files/index.php?id=$course->id&amp;wdir=/backupdata\">\n<img".
+                        " src=\"$pixpath/t/restore.gif\" class=\"iconsmall\" alt=\"".get_string("restore")."\" /></a>\n ";
                 }
 
-                echo "</td></tr>";
+                echo "</td>\n</tr>\n";
             }
-            echo "<tr><td colspan=\"4\" style=\"text-align:center\">";
+            echo "<tr>\n<td colspan=\"4\" style=\"text-align:center\">\n";
             echo "<br />";
             echo "<input type=\"button\" onclick=\"checkall()\" value=\"$strselectall\" />\n";
             echo "<input type=\"button\" onclick=\"uncheckall()\" value=\"$strdeselectall\" />\n";
             choose_from_menu ($displaylist, "moveto", "", get_string("moveselectedcoursesto"), "javascript: getElementById('movecourses').submit()");
-            echo "</td></tr>";
-            echo "</table>";
+            echo "</td>\n</tr>\n";
+            echo "</table>\n</form>";
 
         }
 
