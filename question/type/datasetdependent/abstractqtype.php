@@ -27,7 +27,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
         // Find out how many datasets are available
         global $CFG;
         if(!$maxnumber = (int)get_field_sql(
-                            "SELECT MAX(a.itemcount)
+                            "SELECT MIN(a.itemcount)
                             FROM {$CFG->prefix}question_dataset_definitions a,
                                  {$CFG->prefix}question_datasets b
                             WHERE b.question = $question->id
