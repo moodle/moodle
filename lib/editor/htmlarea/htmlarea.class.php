@@ -337,9 +337,10 @@ class htmlarea extends editorObject {
     /**
     * Prints out needed code for spellchecking.
     * @param bool $usehtmleditor
+    * @todo Deprecated? see lib/weblib.php::print_speller_code()
+    * @see lib/weblib.php::print_speller_code()
     */
     function print_speller_code ($usehtmleditor=false) {
-
         echo "\n".'<script type="text/javascript">'."\n";
         echo '//<![CDATA['."\n";
         if (!$usehtmleditor) {
@@ -362,6 +363,7 @@ class htmlarea extends editorObject {
         }
         echo '//]]>'."\n";
         echo '</script>'."\n";
+        
     }
 
 }
