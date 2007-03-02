@@ -3059,7 +3059,7 @@ function print_single_button($link, $options, $label='OK', $method='get', $targe
     $output .= '<div class="singlebutton">';
     // taking target out, will need to add later target="'.$target.'"
     $output .= '<form action="'. $link .'" method="'. $method .'">';   
-    $output .= '<fieldset class="invisiblefieldset">';
+    $output .= '<div>';
     if ($options) {
         foreach ($options as $name => $value) {
             $output .= '<input type="hidden" name="'. $name .'" value="'. s($value) .'" />';

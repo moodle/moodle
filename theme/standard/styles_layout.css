@@ -192,11 +192,14 @@ img.grouppicture {
   text-align:center  
 }
 
-#notice .buttons .singlebutton {
-  display:inline;
-}
+#notice .buttons div,
 #notice .buttons form {
   display:inline;
+}
+
+#notice .singlebutton {
+  text-align:center;
+  padding: 5px;
 }
 
 .errorbox {
