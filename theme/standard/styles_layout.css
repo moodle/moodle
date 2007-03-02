@@ -182,7 +182,7 @@ img.grouppicture {
   padding:10px;
 }
 
-#notice, box {
+#notice.generalbox {
   width: 60%;
   margin-left:auto;
   margin-right:auto;
@@ -200,6 +200,7 @@ img.grouppicture {
 #notice .singlebutton {
   text-align:center;
   padding: 5px;
+  margin: 0px;
 }
 
 .errorbox {
@@ -821,15 +822,14 @@ body#admin-modules table.generaltable td.c0
   margin:auto;
 }
 
-#admin-index .generalbox {
+#admin-index .adminwarning {
   text-align:center;
-  margin:auto;
   border-width: 1px;
   border-style: solid;
   margin:20px;
 }
 
-#admin-index .singlebutton {
+#admin-index .adminwarning .singlebutton {
   text-align:center;
   margin:20px;
 }
@@ -3136,3 +3136,4 @@ wikiadminactions {
 .workshopkey {
   text-align:center;
 }
+

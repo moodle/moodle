@@ -136,13 +136,14 @@
             echo "<br />";
             notice_yesno(get_string('doyouagree'), "index.php?agreelicense=1",
                                                    "http://docs.moodle.org/en/License");
+            print_footer('none');
             exit;
         }
         if (empty($confirmrelease)) {
             $strcurrentrelease = get_string("currentrelease");
             print_header($strcurrentrelease, $strcurrentrelease, $strcurrentrelease, "", "", false, "&nbsp;", "&nbsp;");
             print_heading("Moodle $release");
-            print_box(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'));
+            print_box(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'), 'generalbox boxaligncenter boxwidthwide');
             echo '<form action="index.php"><div>';
             echo '<input type="hidden" name="agreelicense" value="1" />';
             echo '<input type="hidden" name="confirmrelease" value="1" />';
@@ -531,7 +532,7 @@
 
 /// Deprecated database! Warning!!
     if (!empty($CFG->migrated_to_new_db)) {
-        print_box(print_string('dbmigrationdeprecateddb','admin'));
+        print_box(print_string('dbmigrationdeprecateddb', 'admin'), 'generalbox adminwarning');
     }
 
 /// Check for any special upgrades that might need to be run
@@ -540,11 +541,11 @@
     }
 
     if (ini_get_bool('register_globals') && !ini_get_bool('magic_quotes_gpc')) {
-        print_box(get_string('globalsquoteswarning', 'admin'));
+        print_box(get_string('globalsquoteswarning', 'admin'), 'generalbox adminwarning');
     }
 
     if (is_dataroot_insecure()) {
-        print_box(get_string('datarootsecuritywarning', 'admin', $CFG->dataroot));
+        print_box(get_string('datarootsecuritywarning', 'admin', $CFG->dataroot), 'generalbox adminwarning');
     }
 
 /// If no recently cron run
@@ -552,17 +553,17 @@
     if (time() - $lastcron > 3600 * 24) {
         $strinstallation = get_string('installation', 'install');
         $helpbutton = helpbutton('install', $strinstallation, 'moodle', true, false, '', true);
-        print_box(get_string('cronwarning', 'admin')."&nbsp;".$helpbutton);
+        print_box(get_string('cronwarning', 'admin')."&nbsp;".$helpbutton, 'generalbox adminwarning');
     }
 
 /// Print multilang upgrade notice if needed
     if (empty($CFG->filter_multilang_converted)) {
-        print_box(get_string('multilangupgradenotice', 'admin'));
+        print_box(get_string('multilangupgradenotice', 'admin'), 'generalbox adminwarning');
     }
 
 /// Alert if we are currently in maintenance mode
     if (file_exists($CFG->dataroot.'/1/maintenance.html')) {
-        print_box(get_string('sitemaintenancewarning', 'admin'));
+        print_box(get_string('sitemaintenancewarning', 'admin'), 'generalbox adminwarning');
     }
 
 
@@ -572,7 +573,7 @@
     if (!isset($CFG->registered) || $CFG->registered < (time() - 3600*24*30*6)) {
         $options = array();
         $options['sesskey'] = $USER->sesskey;
-        print_box_start();
+        print_box_start('generalbox adminwarning');
         print_string('pleaseregister', 'admin');
         print_single_button('register.php', $options, get_string('registration'));
         print_box_end();
