@@ -54,6 +54,15 @@
         print_simple_box(get_string("restorefinished"),"center");
     } else {
         print_simple_box(get_string("importdatafinished"),"center");
+        $file = $CFG->dataroot . '/'
+            . $SESSION->import_preferences->backup_course
+            . '/backupdata/' . $SESSION->import_preferences->backup_name;
+        if (is_readable($file)) {
+            unlink($file);
+        }
+        else {
+            error_log("import course data: couldn't unlink $file");
+        }
         unset($SESSION->restore);
     }
     print_continue("$CFG->wwwroot/course/view.php?id=".$restore->course_id);
