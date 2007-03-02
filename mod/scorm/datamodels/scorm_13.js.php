@@ -567,7 +567,7 @@ function SCORMapi1_3() {
                                     value = value*1.0;
                                     if (value >= ranges[0]) {
                                         if ((ranges[1] == '*') || (value <= ranges[1])) {
-                                            eval(element+'="'+value+'";');
+                                            eval(element+'=value;');
                                             errorCode = "0";
                                             <?php 
                                                 if (debugging('',DEBUG_DEVELOPER)) {
@@ -582,7 +582,7 @@ function SCORMapi1_3() {
                                         errorCode = '407';
                                     }
                                 } else {
-                                    eval(element+'="'+value+'";');
+                                    eval(element+'=value;');
                                     errorCode = "0"; 
                                     <?php 
                                         if (debugging('',DEBUG_DEVELOPER)) {
@@ -823,7 +823,7 @@ function SCORMapi1_3() {
 
     function TotalTime() {
         total_time = AddTime(cmi.total_time, cmi.session_time);
-        return '&'+underscore('cmi.total_time')+'='+escape(total_time);
+        return '&'+underscore('cmi.total_time')+'='+encodeURIComponent(total_time);
     }
 
     function CollectData(data,parent) {
@@ -837,7 +837,7 @@ function SCORMapi1_3() {
                 elementmodel = element.replace(expression,'.n.');
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
-                        elementstring = '&'+underscore(element)+'='+escape(data[property]);
+                        elementstring = '&'+underscore(element)+'='+encodeURIComponent(data[property]);
                         if ((typeof eval('datamodel["'+elementmodel+'"].defaultvalue')) != "undefined") {
                             if (eval('datamodel["'+elementmodel+'"].defaultvalue') != data[property]) {
                                 datastring += elementstring;
@@ -877,7 +877,7 @@ function SCORMapi1_3() {
         }
         datastring += CollectData(data,'cmi');
         element = 'adl.nav.request';
-        navrequest = eval(element) != datamodel[element].defaultvalue ? '&'+underscore(element)+'='+escape(eval(element)) : '';
+        navrequest = eval(element) != datamodel[element].defaultvalue ? '&'+underscore(element)+'='+encodeURIComponent(eval(element)) : '';
         datastring += navrequest;
         datastring += '&attempt=<?php echo $attempt ?>';
         datastring += '&scoid=<?php echo $scoid ?>';
