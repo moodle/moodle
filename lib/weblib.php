@@ -3275,7 +3275,9 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
 function print_png($url, $sizex, $sizey, $return, $parameters='alt=""') {
     global $CFG;
     static $recentIE;
-
+    
+    $output = '';
+    
     if (!isset($recentIE)) {
         $recentIE = check_browser_version('MSIE', '5.0');
     }
