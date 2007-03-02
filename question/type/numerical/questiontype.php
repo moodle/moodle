@@ -351,13 +351,24 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                 /// Recalculate the tolerance and fall through
                 /// to the nominal case:
                 $tolerance = $answer->answer * $tolerance;
-                // Falls through to the nominal case -
-            case '2': case 'nominal':
-                $tolerance = abs($tolerance); // important - otherwise min and max are swapped
+                // Do not fall through to the nominal case because the tiny fraction is a factor of the answer
+                 $tolerance = abs($tolerance); // important - otherwise min and max are swapped
                 $max = $answer->answer + $tolerance;
                 $min = $answer->answer - $tolerance;
                 break;
-            case '3': case 'geometric':
+            case '2': case 'nominal':
+                $tolerance = abs($tolerance); // important - otherwise min and max are swapped
+                // $answer->tolerance 0 or something else
+                if ((float)$answer->tolerance == 0.0  &&  abs((float)$answer->answer) <= $tolerance ){
+                    $tolerance = (float) ("1.0e-".ini_get('precision')) * abs((float)$answer->answer) ; //tiny fraction 
+                } else if ((float)$answer->tolerance != 0.0 && abs((float)$answer->tolerance) < abs((float)$answer->answer) &&  abs((float)$answer->answer) <= $tolerance){
+                    $tolerance = (1+("1.0e-".ini_get('precision')) )* abs((float) $answer->tolerance) ;//tiny fraction 
+               }     
+               
+                $max = $answer->answer + $tolerance;
+                $min = $answer->answer - $tolerance;
+                break;
+           case '3': case 'geometric':
                 $quotient = 1 + abs($tolerance);
                 $max = $answer->answer * $quotient;
                 $min = $answer->answer / $quotient;
