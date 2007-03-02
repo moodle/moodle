@@ -2199,8 +2199,8 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     // Clean up the title
 
+    $title = strip_tags(format_string($title));    // fix for MDL-8582
     $title = str_replace('"', '&quot;', $title);
-    $title = strip_tags($title);
 
     // Create class and id for this page
 
@@ -2228,8 +2228,6 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
 
     ob_start();
-
-    $title = format_string($title); // fix for MDL-8582
     include($CFG->header);
     $output = ob_get_contents();
     ob_end_clean();
