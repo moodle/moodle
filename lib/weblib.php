@@ -3864,7 +3864,7 @@ function print_editor_config($editorhidebuttons='', $return=false) {
     }
 
     if (!empty($CFG->editorspelling) && !empty($CFG->aspellpath)) {
-        $str .= print_speller_code($usehtmleditor=true, true);
+        $str .= print_speller_code($CFG->htmleditor, true);
     }
 
     if ($return) {
@@ -5378,17 +5378,17 @@ function print_side_block_end($attributes = array()) {
 /**
  * Prints out code needed for spellchecking.
  * Original idea by Ludo (Marc Alier).
- *
+ *  
+ * Opening CDATA and <script> are output by weblib::use_html_editor()
  * @uses $CFG
- * @param boolean $usehtmleditor ?
- * @todo Finish documenting this function
+ * @param boolean $usehtmleditor Normally set by $CFG->htmleditor, can be overriden here
+ * @param boolean $return If false, echos the code instead of returning it
+ * @todo Find out if lib/editor/htmlarea/htmlarea.class.php::print_speller_code() is still used, and delete if not
  */
 function print_speller_code ($usehtmleditor=false, $return=false) {
     global $CFG;
     $str = '';
 
-    $str .= "\n".'<script type="text/javascript">'."\n";
-    $str .= '//<![CDATA['."\n";
     if(!$usehtmleditor) {
         $str .= 'function openSpellChecker() {'."\n";
         $str .= "\tvar speller = new spellChecker();\n";
@@ -5407,8 +5407,7 @@ function print_speller_code ($usehtmleditor=false, $return=false) {
         $str .= "\tspeller.openChecker();\n";
         $str .= '}'."\n";
     }
-    $str .= '//]]>'."\n";
-    $str .= '</script>'."\n";
+    
     if ($return) {
         return $str;
     }
