@@ -182,8 +182,10 @@ img.grouppicture {
   padding:10px;
 }
 
-#notice .buttons {
-  text-align:center  
+#notice, box {
+  width: 60%;
+  margin-left:auto;
+  margin-right:auto;
 }
 
 #notice .buttons .singlebutton {
