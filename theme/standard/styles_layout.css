@@ -340,6 +340,10 @@ form.popupform {
   display: inline;
 }
 
+form.popupform label {
+  margin-right: 0.5em;
+}
+
 .arrow_button {
   margin-top:3em;
 }

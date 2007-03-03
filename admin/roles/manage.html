@@ -21,33 +21,34 @@
     } 
 ?>
 <form id="rolesform" action="manage.php" method="post">
+<fieldset class="invisiblefieldset">
 <input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
 <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
 <input type="hidden" name="action" value="<?php if ($action != 'view') { echo p($action); } ?>" />
-
+</fieldset>
 <table cellpadding="9" cellspacing="0" align="center">
 <tr valign="top">
-    <td align="right"><?php print_string('name') ?>:</td>
+    <td align="right"><label for="name"><?php print_string('name') ?></label></td>
     <td><?php
     if ($action == 'view') {
         p($role->name);
     } else {
-        echo '<input type="text" name="name" maxlength="254" size="50" value="'.s($role->name).'" />';
+        echo '<input type="text" id="name" name="name" maxlength="254" size="50" value="'.s($role->name).'" />';
         if (isset($errors["name"])) formerr($errors["name"]);
     } ?></td>
 </tr>
 <tr valign="top">
-    <td align="right"><?php print_string('shortname') ?>:</td>
+    <td align="right"><label for="shortname"><?php print_string('shortname') ?></label></td>
     <td><?php
     if ($action == 'view') {
         p($role->shortname);
     } else {
-        echo '<input type="text" name="shortname" maxlength="20" size="15" value="'.s($role->shortname).'" />';
+        echo '<input type="text" id="shortname" name="shortname" maxlength="20" size="15" value="'.s($role->shortname).'" />';
         if (isset($errors["shortname"])) formerr($errors["shortname"]);
     } ?></td>
 </tr>
 <tr valign="top">
-    <td align="right"><?php print_string('description') ?>:</td>
+    <td align="right"><label for="edit-description"><?php print_string('description') ?></label></td>
     <td><?php
     if ($action == 'view') {
         p($role->description);
@@ -87,6 +88,27 @@ $component = '';
 $strrisks = s(get_string('risks', 'role'));
 $strcapabilities = s(get_string('capabilities', 'role'));
 
+// prepare legacy defaults
+$legacyroles = get_legacy_roles();
+
+$defaultcaps = false;
+foreach($legacyroles as $ltype=>$lcap) {
+    if (empty($errors)) {
+       // check the capability override for this cap, this role in this context
+        $localoverride = get_local_override($roleid, $sitecontext->id, $lcap);
+    } else {
+        $localoverride->permission = $role->{$lcap};
+    }
+    if (!empty($localoverride->permission) and $localoverride->permission == CAP_ALLOW) {
+        if ($defaultcaps !== false) {
+            //oh, several legacy caps selected!
+            $defaultcaps = false;
+            break;
+        }
+        $defaultcaps = get_default_capabilities($ltype);
+    }
+}
+
 foreach ($capabilities as $capability) {
     // prints a breaker if component or name or context level
     if ($capability->component != $component or $capability->contextlevel != $contextlevel) {
@@ -100,7 +122,6 @@ foreach ($capabilities as $capability) {
 
     if (empty($errors)) {
        // check the capability override for this cap, this role in this context
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
         $localoverride = get_local_override($roleid, $sitecontext->id, $capability->name);
     } else {
         $localoverride = new object();
@@ -142,14 +163,28 @@ foreach ($capabilities as $capability) {
     }
     $riskinfo .= '</td>';
 
+    if ($defaultcaps === false) {
+        $capclass = '';
+    } else {
+        $capclass = 'capdefault';
+    }
+    $isinherit  = (!isset($defaultcaps[$capability->name]) or $defaultcaps[$capability->name] == CAP_INHERIT) ? $capclass : '';
+    $isallow    = (isset($defaultcaps[$capability->name]) and $defaultcaps[$capability->name] == CAP_ALLOW) ? $capclass : '';
+    $isprevent  = (isset($defaultcaps[$capability->name]) and $defaultcaps[$capability->name] == CAP_PREVENT) ? $capclass : '';
+    $isprohibit = (isset($defaultcaps[$capability->name]) and $defaultcaps[$capability->name] == CAP_PROHIBIT) ? $capclass : '';
+       
     ?>
 
         <tr class="rolecap <?php echo $rowclasses; ?>">
         <td class="name"><span class="cap-desc"><a target="docspopup" href="<?php echo $CFG->docroot.'/'.$lang.'/'.$strcapabilities.'/'.$capability->name ?>"><?php echo get_capability_string($capability->name); ?></a><span class="cap-name"><?php echo $capability->name ?></span></span></td>
-        <td class="inherit"><input type="radio" title="<?php p($strinherit); ?>" name="<?php echo $capability->name; ?>" value="<?php echo CAP_INHERIT ?>" <?php if (!isset($localoverride->permission) || $localoverride->permission==CAP_INHERIT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
-        <td class="allow"><input type="radio" title="<?php p($strallow); ?>" name="<?php echo $capability->name; ?>" value="<?php echo CAP_ALLOW ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_ALLOW){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
-        <td class="prevent" ><input type="radio" title="<?php p($strprevent); ?>" name="<?php echo $capability->name; ?>" value="<?php echo CAP_PREVENT ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_PREVENT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
-        <td class="prohibit" ><input type="radio" title="<?php p($strprohibit); ?>" name="<?php echo $capability->name; ?>" value="<?php echo CAP_PROHIBIT ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_PROHIBIT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
+        <td class="inherit <?php echo $isinherit ?>">
+          <input type="radio" title="<?php p($strinherit); ?>" name="<?php echo $capability->name; ?>" value="<?php echo CAP_INHERIT ?>" <?php if (!isset($localoverride->permission) || $localoverride->permission==CAP_INHERIT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
+        <td class="allow <?php echo $isallow ?>">
+          <input type="radio" title="<?php p($strallow); ?>" name="<?php echo $capability->name; ?>" value="<?php echo CAP_ALLOW ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_ALLOW){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
+        <td class="prevent <?php echo $isprevent ?>" >
+          <input type="radio" title="<?php p($strprevent); ?>" name="<?php echo $capability->name; ?>" value="<?php echo CAP_PREVENT ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_PREVENT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
+        <td class="prohibit <?php echo $isprohibit ?>" >
+          <input type="radio" title="<?php p($strprohibit); ?>" name="<?php echo $capability->name; ?>" value="<?php echo CAP_PROHIBIT ?>" <?php if (isset($localoverride->permission) && $localoverride->permission==CAP_PROHIBIT){ echo 'checked="checked"'; }?> <?php echo $disabled; ?>/></td>
 
         <?php echo $riskinfo; ?>
 
