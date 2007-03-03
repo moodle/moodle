@@ -16,9 +16,9 @@
     $cancel      = optional_param('cancel', 0, PARAM_BOOL);
 
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-    
+
     require_capability('moodle/role:manage', $sitecontext);
-    
+
     if ($cancel) {
         redirect('manage.php');
     }
@@ -192,7 +192,7 @@
 
         case 'delete':
             if (in_array($roleid, $defaultroles)) {
-                error('This role is used as one of the default system roles, it can not be deleted'); 
+                error('This role is used as one of the default system roles, it can not be deleted');
             }
             if ($confirm and data_submitted() and confirm_sesskey()) {
                 if (!delete_role($roleid)) {
@@ -245,17 +245,38 @@
 
             redirect('manage.php');
             break;
+
         case 'duplicate':
+            if (!array_key_exists($roleid, $roles)) {
+                redirect('manage.php');
+            }
+
+            if ($confirm and data_submitted() and confirm_sesskey()) {
+                //ok - lets duplicate!
+            } else {
+                // show confirmation
+                admin_externalpage_print_header($adminroot);
+                $optionsyes = array('action'=>'duplicate', 'roleid'=>$roleid, 'sesskey'=>sesskey(), 'confirm'=>1);
+                $optionsno  = array('action'=>'view', 'roleid'=>$roleid);
+                $a = new object();
+                $a->id = $roleid;
+                $a->name = $roles[$roleid]->name;
+                $a->shortname = $roles[$roleid]->shortname;
+                notice_yesno(get_string('duplicaterolesure', 'role', $a), 'manage.php', 'manage.php', $optionsyes, $optionsno, 'post', 'get');
+                admin_externalpage_print_footer($adminroot);
+                die;
+            }
+
             // duplicate current role
             $sourcerole = get_record('role','id',$roleid);
-            
+
             $fullname = $sourcerole->name;
             $shortname = $sourcerole->shortname;
             $currentfullname = "";
             $currentshortname = "";
             $counter = 0;
-            
-            // find a name for the duplicated role  
+
+            // find a name for the duplicated role
             do {
                 if ($counter) {
                     $suffixfull = " ".get_string("copyasnoun")." ".$counter;
@@ -271,14 +292,57 @@
                 $courseshort = get_record("role","shortname",addslashes($currentshortname));
                 $counter++;
             } while ($coursefull || $courseshort);
-                
-            $description = 'duplicate of '.$fullname;    
+
+            $description = 'duplicate of '.$fullname;
             if ($newrole = create_role($currentfullname, $currentshortname, $description)) {
                 // dupilcate all the capabilities
                 role_cap_duplicate($sourcerole, $newrole);
-            }         
+            }
             redirect('manage.php');
             break;
+
+        case 'reset':
+            if (!array_key_exists($roleid, $roles)) {
+                redirect('manage.php');
+            }
+
+            if ($confirm and data_submitted() and confirm_sesskey()) {
+                $legacyroles = get_legacy_roles();
+
+                $defaultcaps = array();
+                foreach($legacyroles as $ltype=>$lcap) {
+                    $localoverride = get_local_override($roleid, $sitecontext->id, $lcap);
+                    if (!empty($localoverride->permission) and $localoverride->permission == CAP_ALLOW) {
+                        //choose first selected legacy capability
+                        $defaultcaps = get_default_capabilities($ltype);
+                        break;
+                    }
+                }
+
+                delete_records('role_capabilities', 'roleid', $roleid);
+                if (!empty($defaultcaps)) {
+                    foreach($defaultcaps as $cap=>$permission) {
+                        assign_capability($cap, $permission, $roleid, $sitecontext->id);
+                    }
+                }
+                redirect('manage.php?action=view&amp;roleid='.$roleid);
+
+            } else {
+                // show confirmation
+                admin_externalpage_print_header($adminroot);
+                $optionsyes = array('action'=>'reset', 'roleid'=>$roleid, 'sesskey'=>sesskey(), 'confirm'=>1);
+                $optionsno  = array('action'=>'view', 'roleid'=>$roleid);
+                $a = new object();
+                $a->id = $roleid;
+                $a->name = $roles[$roleid]->name;
+                $a->shortname = $roles[$roleid]->shortname;
+                notice_yesno(get_string('resetrolesure', 'role', $a), 'manage.php', 'manage.php', $optionsyes, $optionsno, 'post', 'get');
+                admin_externalpage_print_footer($adminroot);
+                die;
+            }
+
+            break;
+
         default:
             break;
     }
@@ -336,13 +400,21 @@
 
         echo '<div class="selector">';
         if ($action == 'view') {
-            popup_form('manage.php?action=view&amp;roleid=', $roleoptions, 'switchrole', $roleid, '', '', '', 
+            popup_form('manage.php?action=view&amp;roleid=', $roleoptions, 'switchrole', $roleid, '', '', '',
                        false, 'self', get_string('selectrole', 'role'));
+
+            echo '<div class="buttons">';
 
             $options = array();
             $options['roleid'] = $roleid;
             $options['action'] = 'edit';
             print_single_button('manage.php', $options, get_string('edit'));
+            $options['action'] = 'reset';
+            print_single_button('manage.php', $options, get_string('reset'));
+            $options['action'] = 'duplicate';
+            print_single_button('manage.php', $options, get_string('duplicaterole', 'role'));
+            print_single_button('manage.php', null, get_string('listallroles', 'role'));
+            echo '</div>';
         }
         echo '</div>';
 
@@ -467,12 +539,12 @@ function role_cap_duplicate($sourcerole, $targetrole) {
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);
     $caps = get_records_sql("SELECT * FROM {$CFG->prefix}role_capabilities
                              WHERE roleid = $sourcerole->id
-                             AND contextid = $systemcontext->id");                                           
+                             AND contextid = $systemcontext->id");
     // adding capabilities
     foreach ($caps as $cap) {
         unset($cap->id);
         $cap->roleid = $targetrole;
         insert_record('role_capabilities', $cap);
-    }  
+    }
 }
 ?>
