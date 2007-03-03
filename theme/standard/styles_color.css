@@ -981,6 +981,11 @@ body#mod-quiz-report table#attempts .r1 {
   border: 1px solid #cecece;
 }
 
+#admin-roles-manage .capdefault {
+  background-color:#dddddd;
+  border: 1px solid #cecece;
+}
+
 #admin-roles-manage .rolecap,
 #admin-roles-override .rolecap {
   border:none;

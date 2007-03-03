@@ -337,7 +337,7 @@
         echo '<div class="selector">';
         if ($action == 'view') {
             popup_form('manage.php?action=view&amp;roleid=', $roleoptions, 'switchrole', $roleid, '', '', '', 
-                       false, 'self', get_string('selectrole', 'role').': ');
+                       false, 'self', get_string('selectrole', 'role'));
 
             $options = array();
             $options['roleid'] = $roleid;

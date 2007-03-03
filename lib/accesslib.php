@@ -1551,6 +1551,21 @@ function moodle_install_roles() {
 }
 
 /**
+ * Returns array of all legacy roles.
+ */
+function get_legacy_roles() {
+    return array(
+        'guest'          => 'moodle/legacy:guest',
+        'user'           => 'moodle/legacy:user',
+        'student'        => 'moodle/legacy:student',
+        'teacher'        => 'moodle/legacy:teacher',
+        'editingteacher' => 'moodle/legacy:editingteacher',
+        'coursecreator'  => 'moodle/legacy:coursecreator',
+        'admin'          => 'moodle/legacy:admin'
+    );
+}
+
+/**
  * Assign the defaults found in this capabality definition to roles that have
  * the corresponding legacy capabilities assigned to them.
  * @param $legacyperms - an array in the format (example):
@@ -1564,19 +1579,17 @@ function moodle_install_roles() {
  */
 function assign_legacy_capabilities($capability, $legacyperms) {
 
+    $legacyroles = get_legacy_roles();
+
     foreach ($legacyperms as $type => $perm) {
 
         $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
-        // The legacy capabilities are:
-        //   'moodle/legacy:guest'
-        //   'moodle/legacy:student'
-        //   'moodle/legacy:teacher'
-        //   'moodle/legacy:editingteacher'
-        //   'moodle/legacy:coursecreator'
-        //   'moodle/legacy:admin'
+        if (!array_key_exists($type, $legacyroles)) {
+            error('Incorrect legacy role definition for type: '.$type);
+        }
 
-        if ($roles = get_roles_with_capability('moodle/legacy:'.$type, CAP_ALLOW)) {
+        if ($roles = get_roles_with_capability($legacyroles[$type], CAP_ALLOW)) {
             foreach ($roles as $role) {
                 // Assign a site level capability.
                 if (!assign_capability($capability, $perm, $role->id, $systemcontext->id)) {
@@ -2362,6 +2375,38 @@ function get_cached_capabilities($component='moodle') {
     return $storedcaps;
 }
 
+/**
+ * Returns default capabilities for given legacy role type.
+ *
+ * @param string legacy role name
+ * @return array
+ */
+function get_default_capabilities($legacyrole) {
+    if (!$allcaps = get_records('capabilities')) {
+        error('Error: no capabilitites defined!');
+    }
+    $alldefs = array();
+    $defaults = array();
+    $components = array();
+    foreach ($allcaps as $cap) {
+        if (!array_search($cap->component, $components)) {
+            $components[] = $cap->component;
+            $alldefs = array_merge($alldefs, load_capability_def($cap->component));
+        }
+    }
+    foreach($alldefs as $name=>$def) {
+        if (isset($def['legacy'][$legacyrole])) {
+            $defaults[$name] = $def['legacy'][$legacyrole];
+        }
+    }
+
+    //some exceptions
+    $defaults['moodle/legacy:'.$legacyrole] = CAP_ALLOW;
+    if ($legacyrole == 'admin') {
+        $defaults['moodle/site:doanything'] = CAP_ALLOW;
+    }
+    return $defaults;
+}
 
 /**
  * Updates the capabilities table with the component capability definitions.
