@@ -893,7 +893,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
 
         $patterns[]='/\#\#Approve\#\#/i';
         if ($isteacher && ($data->approval) && (!$record->approved)){
-            $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;approve='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/i/approve.gif" height="11" width="11" border="0" alt="'.get_string('approve').'" /></a>';
+            $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;approve='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->wwwroot.'/mod/glossary/check.gif" height="11" width="11" border="0" alt="'.get_string('approve').'" /></a>';
         } else {
             $replacement[] = '';
         }
