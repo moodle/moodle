@@ -1555,13 +1555,13 @@ function moodle_install_roles() {
  */
 function get_legacy_roles() {
     return array(
-        'guest'          => 'moodle/legacy:guest',
-        'user'           => 'moodle/legacy:user',
-        'student'        => 'moodle/legacy:student',
-        'teacher'        => 'moodle/legacy:teacher',
-        'editingteacher' => 'moodle/legacy:editingteacher',
+        'admin'          => 'moodle/legacy:admin',
         'coursecreator'  => 'moodle/legacy:coursecreator',
-        'admin'          => 'moodle/legacy:admin'
+        'editingteacher' => 'moodle/legacy:editingteacher',
+        'teacher'        => 'moodle/legacy:teacher',
+        'student'        => 'moodle/legacy:student',
+        'user'           => 'moodle/legacy:user',
+        'guest'          => 'moodle/legacy:guest'
     );
 }
 

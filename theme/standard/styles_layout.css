@@ -131,6 +131,11 @@ img.grouppicture {
   padding: 0;
 }
 
+.singlebutton form,
+.singlebutton div {
+  display:inline;
+}
+
 .generalbox {
   border-width:1px;
   border-style:solid;
@@ -775,14 +780,19 @@ body#admin-modules table.generaltable td.c0
   margin-top: 1em;
 }
 
-#admin-roles-manage .duplicaterole {
-  text-align: right;
+#admin-roles-manage .buttons {
+  margin: 20px;
+  text-align:center;
+}
+
+#admin-roles-manage .buttons .singlebutton {
+  display: inline;
 }
 
 #admin-roles-manage .singlebutton,
 #admin-roles-allowoverride .singlebutton,
 #admin-roles-allowassign .singlebutton {
-  padding: 10px;
+  padding: 5px;
   text-align:center;
 }
 

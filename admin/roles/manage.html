@@ -4,9 +4,6 @@
         case 'add':
             $submitlabel = get_string('addrole', 'role');
             break;
-        case 'view':
-            $submitlabel = get_string('listallroles', 'role');
-            break;
         case 'edit':
         default:
             $submitlabel = get_string('savechanges');
@@ -14,11 +11,8 @@
 
     if ($action == 'view') {
 ?>
-<div class="duplicaterole">
-<a href="manage.php?roleid=<?php p($roleid); ?>&amp;action=duplicate"><?php print_string('duplicaterole', 'role'); ?></a>
-</div>
-<?php 
-    } 
+<?php
+    }
 ?>
 <form id="rolesform" action="manage.php" method="post">
 <fieldset class="invisiblefieldset">
@@ -27,39 +21,44 @@
 <input type="hidden" name="action" value="<?php if ($action != 'view') { echo p($action); } ?>" />
 </fieldset>
 <table cellpadding="9" cellspacing="0" align="center">
-<tr valign="top">
-    <td align="right"><label for="name"><?php print_string('name') ?></label></td>
-    <td><?php
-    if ($action == 'view') {
-        p($role->name);
-    } else {
-        echo '<input type="text" id="name" name="name" maxlength="254" size="50" value="'.s($role->name).'" />';
-        if (isset($errors["name"])) formerr($errors["name"]);
-    } ?></td>
-</tr>
-<tr valign="top">
-    <td align="right"><label for="shortname"><?php print_string('shortname') ?></label></td>
-    <td><?php
-    if ($action == 'view') {
-        p($role->shortname);
-    } else {
-        echo '<input type="text" id="shortname" name="shortname" maxlength="20" size="15" value="'.s($role->shortname).'" />';
-        if (isset($errors["shortname"])) formerr($errors["shortname"]);
-    } ?></td>
-</tr>
-<tr valign="top">
-    <td align="right"><label for="edit-description"><?php print_string('description') ?></label></td>
-    <td><?php
-    if ($action == 'view') {
-        p($role->description);
-        $usehtmleditor = false;
-    } else {
-        print_textarea($usehtmleditor, 10, 50, 50, 10, 'description', $role->description);
-    } ?></td>
-</tr>
+<?php if ($action == 'view') { ?>
+    <tr valign="top">
+        <td align="right"><?php print_string('name') ?>:</td>
+        <td><?php p($role->name); ?></td>
+    </tr>
+    <tr valign="top">
+        <td align="right"><?php print_string('shortname') ?>:</td>
+        <td><?php p($role->shortname); ?></td>
+    </tr>
+    <tr valign="top">
+        <td align="right"><?php print_string('description') ?>:</td>
+        <td><?php p($role->description); $usehtmleditor = false; ?></td>
+    </tr>
+<?php } else { ?>
+    <tr valign="top">
+        <td align="right"><label for="name"><?php print_string('name') ?></label></td>
+        <td><?php
+            echo '<input type="text" id="name" name="name" maxlength="254" size="50" value="'.s($role->name).'" />';
+            if (isset($errors["name"])) formerr($errors["name"]);
+            ?></td>
+    </tr>
+    <tr valign="top">
+        <td align="right"><label for="shortname"><?php print_string('shortname') ?></label></td>
+        <td><?php
+            echo '<input type="text" id="shortname" name="shortname" maxlength="20" size="15" value="'.s($role->shortname).'" />';
+            if (isset($errors["shortname"])) formerr($errors["shortname"]);
+            ?></td>
+    </tr>
+    <tr valign="top">
+        <td align="right"><label for="edit-description"><?php print_string('description') ?></label></td>
+        <td><?php
+            print_textarea($usehtmleditor, 10, 50, 50, 10, 'description', $role->description);
+            ?></td>
+    </tr>
+<?php } ?>
 </table>
 
-<?php 
+<?php
     print_heading_with_help(get_string('permissions','role'), 'permissions');
 
     $strinherit = get_string('inherit','role');
@@ -172,7 +171,7 @@ foreach ($capabilities as $capability) {
     $isallow    = (isset($defaultcaps[$capability->name]) and $defaultcaps[$capability->name] == CAP_ALLOW) ? $capclass : '';
     $isprevent  = (isset($defaultcaps[$capability->name]) and $defaultcaps[$capability->name] == CAP_PREVENT) ? $capclass : '';
     $isprohibit = (isset($defaultcaps[$capability->name]) and $defaultcaps[$capability->name] == CAP_PROHIBIT) ? $capclass : '';
-       
+
     ?>
 
         <tr class="rolecap <?php echo $rowclasses; ?>">
@@ -193,11 +192,11 @@ foreach ($capabilities as $capability) {
 <?php } ?>
 </table>
 
-<div class="submit" align="center">
-<input type="submit" value="<?php p($submitlabel) ?>" />
 <?php if ($action != 'view') { ?>
+<div class="submit buttons">
+<input type="submit" value="<?php p($submitlabel) ?>" />
 <input type="submit" name="cancel" value="<?php print_string('cancel') ?>" />
-<?php } ?>
 </div>
+<?php } ?>
 
 </form>
