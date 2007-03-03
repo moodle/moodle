@@ -188,12 +188,12 @@
         echo "</p>\n";
     }
     $number = 1;
-
+    echo "<form method=\"post\" action=\"preview.php\">\n";
     print_question($questions[$id], $curstate, $number, $quiz, $options);
     echo '<br />';
 
 
-    echo "<form method=\"post\" action=\"preview.php\">\n";
+    
     echo '<div class="controls">';
     echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
     echo "<input type=\"hidden\" name=\"quizid\" value=\"$quizid\" />\n";
