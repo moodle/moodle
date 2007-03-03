@@ -114,7 +114,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
         // Insert all the new answers
         foreach ($question->answer as $key => $dataanswer) {
-            if ($dataanswer != '' || trim($question->feedback[$key])) {
+            if (!isset( $question->deleteanswer[$key] ) && !( trim($dataanswer) == 0 && $question->fraction[$key]== 0 &&trim($question->feedback[$key])=='')) { 
                 $answer = new stdClass;
                 $answer->question = $question->id;
                 if (trim($dataanswer) == '*') {
