@@ -151,12 +151,11 @@
             /// All student edits are marked unapproved by default
             $record = get_record('data_records','id',$rid);
 
-            if ($data->approval == 1 || has_capability('mod/data:approve', $context)) {
-                $record->approved = 1;
-            } else {
+            /// reset approved flag after student edit
+            if (!has_capability('mod/data:approve', $context)) {
                 $record->approved = 0;
             }
-
+            
             $record->groupid = $currentgroup;
             $record->timemodified = time();
             update_record('data_records',$record);
