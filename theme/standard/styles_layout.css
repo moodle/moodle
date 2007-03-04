@@ -2375,7 +2375,8 @@ body#user-index h2 {
   text-align: center;
 }
 
-#user-view .buttons form {
+#user-view .buttons form,
+#user-view .buttons form div {
   display:inline;
 }
 
