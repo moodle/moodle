@@ -3989,6 +3989,11 @@ function forum_check_throttling($forum) {
 function forum_delete_userdata($data, $showfeedback=true) {
     global $CFG;
 
+    if ($CFG->dbtype == 'postgres7') {
+        echo "Forum reset not yet supported for PostgreSQL";
+        return; 
+    }
+
     $sql = 'DELETE FROM '.$CFG->prefix.'forum_posts
                   USING '.$CFG->prefix.'forum_discussions fd, 
                         '.$CFG->prefix.'forum_posts fp, 
