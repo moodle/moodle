@@ -288,7 +288,7 @@ if (window.JQuiz==null) {
 	JQuiz[5] = false;	// show number of checks of incorrect answers (legacy field superceded by [12])
 	// HP6 v6 quizzes only
 	JQuiz[6] = false;	// show answer value (false) or A,B,C... index (true)
-	JQuiz[7] = true;	// show all students answers
+	JQuiz[7] = false;	// show all students answers
 	JQuiz[8] = true;	// show student's wrong answers
 	JQuiz[9] = true;	// show ignored answers (not relevant for multi-select questions)
 	JQuiz[10] = true;	// show score weightings
