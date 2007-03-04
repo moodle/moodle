@@ -1419,7 +1419,7 @@ function format_string ($string, $striplinks = false, $courseid=NULL ) {
     }
 
     //init course id
-    if ($courseid === NULL) {
+    if (empty($courseid)) {
         $courseid = $COURSE->id;
     }
 
