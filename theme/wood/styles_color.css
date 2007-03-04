@@ -69,6 +69,8 @@ a.autolink:visited {
 .tabrow0 a {
   border-color: #330000;
 }
+
+/* Normal tabs */
 .tabrow0 a {
   background:url(pix/tab/left.gif) top left no-repeat;
 }
@@ -78,6 +80,8 @@ a.autolink:visited {
 .tabrow0 .last a span {
   background: url(pix/tab/right_end.gif) top right no-repeat;
 }
+
+/* Normal tabs hover */
 .tabrow0 a:hover {
   background-image:url(pix/tab/left_hover.gif);
 }
@@ -87,31 +91,50 @@ a.autolink:visited {
 .tabrow0 .last a:hover span {
   background-image:url(pix/tab/right_hover.gif);
 }
-.tabrow0 a.here {
+
+/* Selected tabs */
+.tabrow0 .active a,
+.tabrow0 .selected a {
   background:url(pix/tab/left_active.gif) top left no-repeat;
 }
-.tabrow0 a.here span {
+.tabrow0 .active a span,
+.tabrow0 .selected a span {
   background:url(pix/tab/right_active.gif) top right no-repeat;
 }
-.tabrow0 a.here:hover {
+.tabrow0 .last .active a span,
+.tabrow0 .last .selected a span{
+  background:url(pix/tab/right_active.gif) top left no-repeat;
+}
+
+/* Selected tabs hover */
+.tabrow0 .active a:hover,
+.tabrow0 .selected a:hover {
   background:url(pix/tab/left_active.gif) top left no-repeat;
 }
-.tabrow0 a.here:hover span {
+.tabrow0 .active a:hover span,
+.tabrow0 .selected a:hover span {
   background:url(pix/tab/right_active.gif) top right no-repeat;
 }
+.tabrow0 .last .active a:hover span,
+.tabrow0 .last .selected a:hover span{
+  background:url(pix/tab/right_active.gif) top left no-repeat;
+}
+
 .tabrow1.empty {
-  height:0px;
+  border-top:solid 1px #FFCC99;
+  border-left:solid 1px #FFCC99;
+  border-bottom:solid 1px #330000;
+  border-right:solid 1px #330000;
+  height: 0px;
 }
 .tabrow2.empty {
   border:none;
   height:0px;
 }
+
 .tabrow0 ul a:visited,
 .tabrow0 ul a:link {
   color:#990000;
-}
-.tabrow0 ul a.here:hover {
-  text-decoration: none;
 }
 
 .breadcrumb .sep {
