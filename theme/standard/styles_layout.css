@@ -2179,6 +2179,7 @@ body#message-messages {
   margin:0;
   list-style:none;
   line-height:1.8em;
+  font-size: 84%;
 }
 
 .tabrow0 li {
@@ -2188,10 +2189,11 @@ body#message-messages {
 }
 
 .tabrow0 a span {
-  padding: 10px 14px 6px 0;
+  padding: 10px 14px 0.35em 0;
   background: transparent url(pix/tab/right.gif) no-repeat right top;
 }
 
+/*
 .tabrow0 a.here span {
   background: transparent url(pix/tab/right_last.gif) no-repeat right top;
 }
@@ -2199,6 +2201,7 @@ body#message-messages {
 .tabrow0 .last span {
   background: transparent url(pix/tab/right_last.gif) no-repeat right top;
 }
+*/
 
 .tabrow1 li a span {
   background: none !important;
@@ -2206,11 +2209,9 @@ body#message-messages {
 
 .tabrow0 a {
   text-decoration: none;
-  /* font-weight: bold; */
   background: transparent url(pix/tab/left.gif) no-repeat left top;
   margin: 0 -1px 0 0;
-  /* margin: 0; */
-  padding: 10px 0 4px 14px;
+  padding: 10px 0 0.35em 13px;
 }
 
 .tabrow0 a:hover, .tabrow0 a:active, .tabrow0 a.here:link, .tabrow0 a.here:visited {
@@ -2221,7 +2222,7 @@ body#message-messages {
   background-image: url(pix/tab/left_hover.gif);
 }
 
-.tabrow0 a.here:hover {
+.tabrow0 .here a:hover {
   background-image: url(pix/tab/left.gif);
 }
 
@@ -2229,15 +2230,15 @@ body#message-messages {
   background-image: url(pix/tab/right_hover.gif);
 }
 
-.tabrow0 a.here:hover span {
-  background-image: url(pix/tab/right_last.gif);
+.tabrow0 .here a:hover span {
+  background-image: url(pix/tab/right.gif);
 }
 
-.tabrow0 a.here {
+.tabrow0 .here a {
   color:#444;
 }
 
-.tabrow0 a.here:link, .tabrow0 a.here:visited {
+.tabrow0 .here a:link, .tabrow0 .here a:visited {
   position:relative;
   z-index:102;
 }
@@ -2249,18 +2250,19 @@ body#message-messages {
   padding: 0;
 }
 
+.tabrow0 div,
 .tabrow0 ul {
-  position:absolute;
-  left:0;
-  top:1.8em;
-  width:100%;
-  margin:0;
-  padding:0.25em 0;
-  list-style:none;
+  position: absolute;
+  left: 0;
+  top: 2.0em;
+  width: 100%;
+  margin: 0;
+  padding: 0.25em 0;
+  list-style: none;
   border-top: 1px solid #aaa;
   line-height: normal;
   background: transparent url(pix/tab/tabrow1.gif) repeat-x center left;
-  font-size: 95%;
+  font-size: 90%;
 }
 
 .tabrow0 ul li {
@@ -2283,26 +2285,18 @@ body#message-messages {
 }
 
 .tabrow0 ul .last span,
-.tabrow0 ul a:hover, .tabrow0 ul a:hover span,
-.tabrow0 ul a.here:hover, .tabrow0 ul a.here:hover span {
-  background-image: none;
+.tabrow0 ul li a:hover, .tabrow0 ul li a:hover span,
+.tabrow0 ul .here a:hover, .tabrow0 ul .here a:hover span {
+  background-image: none !important;
 }
 
-.tabrow0 ul a:hover, .tabrow0 ul a:active, .tabrow0 ul a.here:link, .tabrow0 ul a.here:visited {
+.tabrow0 ul a:hover, .tabrow0 ul a:active, .tabrow0 ul .here a:link, .tabrow0 ul .here a:visited {
   color:#444;
 }
 
-/* hmmm ... how can we shrink the tab fonts? 
-.tabtree .tabrow0 span {
-  font-size:0.9em;
+.tabrow0 ul div {
+    display: none;
 }
-
-.tabtree .tabrow1 span {
-  font-size:0.7em;
-}
-*/
-
-
 /***
  *** User
  ***/

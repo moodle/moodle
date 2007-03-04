@@ -7,24 +7,38 @@
 }
 
 .tabrow0 {
-    padding-top: 6px;
+    padding-top: 10px;
 }
 
-.tabrow0 LI.first {
+.tabrow0 li {
+    margin-left: 0;
+}
+
+.tabrow0 li.first {
     margin-left: -4px;
+    margin-right: -4px;
+}
+
+.tabrow0 li.last a {
     margin-right: 0;
 }
 
-.tabrow0 A {
-    padding: 0 0 0 14px;
+.tabrow0 li.onerow {
+    margin-right: 0;
 }
 
-.tabrow0 A span {
+.tabrow0 a {
+    padding: 0 0 0 13px;
+}
+
+.tabrow0 a span {
     padding: 12px 1em 4px 0;
 }
 
-.tabrow0 UL {
-   top: 2.1em;
+.tabrow0 div,
+.tabrow0 ul {
+   top: 2.7em;
+   padding: 0.2em 0;
 }
 
 /*fix for misalignment of text fields in ie */
