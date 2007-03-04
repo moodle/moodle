@@ -1410,24 +1410,29 @@ function format_title($string, $plaintext=true, $courseid=null) {
 function format_string ($string, $striplinks = false, $courseid=NULL ) {
 
     global $CFG, $COURSE;
-    
-    // First replace all ampersands not followed html entity code
-    $string = preg_replace("/\&(?![a-z0-9]{1,8};)/", "&amp;", $string);
-    
+
     //We'll use a in-memory cache here to speed up repeated strings
     static $strcache = false;
 
-    if ($strcache === false) {
+    if ($strcache === false or count($strcache) > 2000 ) { // this number might need some tuning to limit memory usage in cron
         $strcache = array();
     }
 
+    //init course id
+    if ($courseid === NULL) {
+        $courseid = $COURSE->id;
+    }
+
     //Calculate md5
-    $md5 = md5($string.'<+>'.$striplinks.'<+>'.$courseid);
+    $md5 = md5($string.'<+>'.$striplinks.'<+>'.$courseid.'<+>'.current_language());
 
     //Fetch from cache if possible
-    if(isset($strcache[$md5])) {
+    if (isset($strcache[$md5])) {
         return $strcache[$md5];
     }
+
+    // First replace all ampersands not followed html entity code
+    $string = preg_replace("/\&(?![a-z0-9]{1,8};)/", "&amp;", $string);
 
     if (!empty($CFG->filterall)) {
         $string = filter_text($string, $courseid);
