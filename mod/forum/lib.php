@@ -4043,6 +4043,13 @@ function forum_delete_userdata($data, $showfeedback=true) {
 // Called by course/reset.php
 
 function forum_reset_course_form($course) {
+    global $CFG;
+
+    if ($CFG->dbtype == 'postgres7') {
+        echo "Forum reset not yet supported for PostgreSQL";
+        return; 
+    }
+
     echo get_string('resetforums', 'forum'); echo ':<br />';
     print_checkbox('reset_forum_news', 1, true, get_string('namenews','forum'), '', '');  echo '<br />';
     print_checkbox('reset_forum_teacher', 1, true, get_string('nameteacher','forum'), '', '');  echo '<br />';
