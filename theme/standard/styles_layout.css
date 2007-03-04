@@ -520,7 +520,7 @@ form#adminsettings div.htmlarea {
 }
 
 .mform label .req, .mform label .adv {
-  cursor: help;    
+  cursor: help;  
 }
 
 #admin-register form.mform .fsubmit {
@@ -1760,7 +1760,7 @@ body#course-index .addcategory {
  *** Group
  ***/
 body#group-index #groupeditform {
-    text-align: center;
+  text-align: center;
 }
 
 
@@ -2030,7 +2030,7 @@ body#message-messages {
  *** Question
  ***/
 .questionbank h2 {
-  margin-top: 0;				
+  margin-top: 0;
 }
 
 .que {
@@ -2169,132 +2169,139 @@ body#message-messages {
 
 /*globalnav*/
 .tabtree {
-    position:relative;
+  position:relative;
 }
 
 .tabrow0 {
-    text-align: center;
-	width:100%;
-	padding:0 0 1.75em 0;
-	margin:0;
-	list-style:none;
-	line-height:1.8em;
+  text-align: center;
+  width:100%;
+  padding:0 0 1.75em 0;
+  margin:0;
+  list-style:none;
+  line-height:1.8em;
 }
 
 .tabrow0 li {
-    display: inline;
-    margin: 0 -4px 0 0;
-	padding: 0;
+  display: inline;
+  margin: 0 -4px 0 0;
+  padding: 0;
 }
 
 .tabrow0 a span {
-	padding: 10px 14px 4px 0;
-    background: transparent url(pix/tab/right.gif) no-repeat right top;
+  padding: 10px 14px 6px 0;
+  background: transparent url(pix/tab/right.gif) no-repeat right top;
 }
 
 .tabrow0 a.here span {
-    background: transparent url(pix/tab/right_last.gif) no-repeat right top;
+  background: transparent url(pix/tab/right_last.gif) no-repeat right top;
 }
 
 .tabrow0 .last span {
-    background: transparent url(pix/tab/right_last.gif) no-repeat right top;
+  background: transparent url(pix/tab/right_last.gif) no-repeat right top;
 }
 
 .tabrow1 li a span {
-    background: none !important;
+  background: none !important;
 }
 
 .tabrow0 a {
-	text-decoration: none;
-	/* font-weight: bold; */
-	background: transparent url(pix/tab/left.gif) no-repeat left top;
-	margin: 0 -1px 0 0;
-	/* margin: 0; */
-	padding: 10px 0 4px 14px;
+  text-decoration: none;
+  /* font-weight: bold; */
+  background: transparent url(pix/tab/left.gif) no-repeat left top;
+  margin: 0 -1px 0 0;
+  /* margin: 0; */
+  padding: 10px 0 4px 14px;
 }
 
 .tabrow0 a:hover, .tabrow0 a:active, .tabrow0 a.here:link, .tabrow0 a.here:visited {
-	/* background:#ddd; */
+  /* background:#ddd; */
 }
 
 .tabrow0 a:hover {
-	background-image: url(pix/tab/left_hover.gif);
+  background-image: url(pix/tab/left_hover.gif);
 }
 
 .tabrow0 a.here:hover {
-	background-image: url(pix/tab/left.gif);
+  background-image: url(pix/tab/left.gif);
 }
 
 .tabrow0 a:hover span {
-	background-image: url(pix/tab/right_hover.gif);
+  background-image: url(pix/tab/right_hover.gif);
 }
 
 .tabrow0 a.here:hover span {
-	background-image: url(pix/tab/right_last.gif);
+  background-image: url(pix/tab/right_last.gif);
 }
 
 .tabrow0 a.here {
-    color:#444;
+  color:#444;
 }
 
 .tabrow0 a.here:link, .tabrow0 a.here:visited {
-	position:relative;
-	z-index:102;
+  position:relative;
+  z-index:102;
 }
 
 /*subnav*/
 .tabrow0 .empty {
-    height: 1px;
-    overflow: hidden;
-    padding: 0;
+  height: 1px;
+  overflow: hidden;
+  padding: 0;
 }
 
 .tabrow0 ul {
-	position:absolute;
-	left:0;
-	top:1.8em;
-	width:100%;
-	margin:0;
-	padding:0.25em 0;
-	list-style:none;
-	border-top: 1px solid #aaa;
-    line-height: normal;
-    background: transparent url(pix/tab/tabrow1.gif) repeat-x center left;
-    font-size: 95%;
+  position:absolute;
+  left:0;
+  top:1.8em;
+  width:100%;
+  margin:0;
+  padding:0.25em 0;
+  list-style:none;
+  border-top: 1px solid #aaa;
+  line-height: normal;
+  background: transparent url(pix/tab/tabrow1.gif) repeat-x center left;
+  font-size: 95%;
 }
 
 .tabrow0 ul li {
-	display:inline;
-	margin-top:1px;
-    background-image: none;
+  display:inline;
+  margin-top:1px;
+  background-image: none;
 }
 
 .tabrow0 ul a {
-    background-image: none;
-	color:#00c;
-	margin:0;
-	padding:0 1em;
-	border:0
+  background-image: none;
+  color:#00c;
+  margin:0;
+  padding:0 1em;
+  border:0
 }
 
 .tabrow0 ul a span {
-	padding: 0;
-    background-image: none;
+  padding: 0;
+  background-image: none;
 }
 
 .tabrow0 ul .last span,
 .tabrow0 ul a:hover, .tabrow0 ul a:hover span,
 .tabrow0 ul a.here:hover, .tabrow0 ul a.here:hover span {
-    background-image: none;
+  background-image: none;
 }
 
 .tabrow0 ul a:hover, .tabrow0 ul a:active, .tabrow0 ul a.here:link, .tabrow0 ul a.here:visited {
-	color:#444;
+  color:#444;
 }
 
-/* .tabtree span { */
-    /* font-size:0.1; */
-/* } */
+/* hmmm ... how can we shrink the tab fonts? 
+.tabtree .tabrow0 span {
+  font-size:0.9em;
+}
+
+.tabtree .tabrow1 span {
+  font-size:0.7em;
+}
+*/
+
 
 /***
  *** User
@@ -2549,7 +2556,7 @@ body#user-index .rolesform {
   text-align:center;
 }
 .datapreferences {
-    text-align:center;
+  text-align:center;
 }
 /***
  *** Modules: Forum
@@ -2882,19 +2889,19 @@ body#mod-forum-search .introcontent {
  *** Modules: Lesson
  ***/
 #mod-lesson-lesson #page .addform {
-    text-align: center;
+  text-align: center;
 }
 #mod-lesson-edit #page .label {
-    font-weight: bold;
+  font-weight: bold;
 }
 #mod-lesson-edit #page .labelcorrect {
-    text-decoration: underline;
-    font-weight: bold;
+  text-decoration: underline;
+  font-weight: bold;
 }
 .lessonmediafilecontrol {
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 
