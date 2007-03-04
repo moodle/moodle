@@ -3384,10 +3384,10 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
     }
     if ($group->picture) {  // Print custom group picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $output .= '<img class="grouppicture" align="middle" src="'.$CFG->wwwroot.'/user/pixgroup.php/'.$group->id.'/'.$file.'.jpg"'.
+            $output .= '<img class="grouppicture" src="'.$CFG->wwwroot.'/user/pixgroup.php/'.$group->id.'/'.$file.'.jpg"'.
                        ' style="width:'.$size.'px;height:'.$size.'px;" alt="'.s(get_string('group').' '.$group->name).'" title="'.s($group->name).'"/>';
         } else {
-            $output .= '<img class="grouppicture" align="middle" src="'.$CFG->wwwroot.'/user/pixgroup.php?file=/'.$group->id.'/'.$file.'.jpg"'.
+            $output .= '<img class="grouppicture" src="'.$CFG->wwwroot.'/user/pixgroup.php?file=/'.$group->id.'/'.$file.'.jpg"'.
                        ' style="width:'.$size.'px;height:'.$size.'px;" alt="'.s(get_string('group').' '.$group->name).'" title="'.s($group->name).'"/>';
         }
     }
