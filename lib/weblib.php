@@ -5576,36 +5576,42 @@ function convert_tree_to_html($tree, $row=0) {
     foreach ($tree as $tab) {
         $count--;   // countdown to zero
 
+        $liclass = '';
+
         if ($first && ($count == 0)) {   // Just one in the row
-            $str .= '<li class="first last">';
+            $liclass = 'first last';
             $first = false;
         } else if ($first) {
-            $str .= '<li class="first">';
+            $liclass = 'first';
             $first = false;
         } else if ($count == 0) {
-            $str .= '<li class="last">';
-        } else {   
-            $str .= '<li>';
+            $liclass = 'last';
         }
 
-        if ($tab->selected) { 
-            $linkclass = ' class="here selected"';
-        } else if ($tab->active) { 
-            $linkclass = ' class="here active"';
-        } else {
-            $linkclass = '';
+        if ((empty($tab->subtree)) && (!empty($tab->selected))) {
+            $liclass .= (empty($liclass)) ? 'onerow' : ' onerow';
         }
 
         if ($tab->inactive || $tab->active || ($tab->selected && !$tab->linkedwhenselected)) {
-            $str .= '<a href="#" title="'.$tab->title.'"'.$linkclass.'><span>'.$tab->text.'</span></a>';
+            if ($tab->selected) { 
+                $liclass .= (empty($liclass)) ? 'here selected' : ' here selected';
+            } else if ($tab->active) { 
+                $liclass .= (empty($liclass)) ? 'here active' : ' here active';
+            }
+        }
+
+        $str .= (!empty($liclass)) ? '<li class="'.$liclass.'">' : '<li>';
+
+        if ($tab->inactive || $tab->active || ($tab->selected && !$tab->linkedwhenselected)) {
+            $str .= '<a href="#" title="'.$tab->title.'"><span>'.$tab->text.'</span></a>';
         } else {
-            $str .= '<a href="'.$tab->link.'" title="'.$tab->title.'"'.$linkclass.'><span>'.$tab->text.'</span></a>';
+            $str .= '<a href="'.$tab->link.'" title="'.$tab->title.'"><span>'.$tab->text.'</span></a>';
         }
 
         if (!empty($tab->subtree)) { 
             $str .= convert_tree_to_html($tab->subtree, $row+1);
         } else if ($tab->selected) {
-            $str .= '<ul class="tabrow'.($row+1).' empty"> <li/> </ul>'."\n";
+            $str .= '<div class="tabrow'.($row+1).' empty">&nbsp;</div>'."\n";
         }
 
         $str .= '</li>'."\n";
