@@ -98,7 +98,7 @@ function load_guest_role($context=NULL, $mergewith=NULL) {
         }
     }
     
-    $searchcontexts = get_child_contexts($context);
+    $searchcontexts = array();  // get_child_contexts($context);   SEE MDL-8385
     array_push($searchcontexts, $context->id);
 
     foreach ($searchcontexts as $scid) {
