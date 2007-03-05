@@ -66,7 +66,7 @@
                   '', '', true, "", navmenu($course, $cm));
         }
         notice_yesno(get_string('noguestpost', 'forum').'<br /><br />'.get_string('liketologin'),
-                     $wwwroot, $_SERVER['HTTP_REFERER']);
+                     $wwwroot, get_referer(false));
         print_footer($course);
         exit;
     }
