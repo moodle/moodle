@@ -82,7 +82,7 @@
     $groupmode = groupmode($course, $cm);
     $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
     
-    if ($groupmode and ($currentgroup === false) and
+    if ($groupmode == SEPARATEGROUPS && $course->groupmodeforce && ($currentgroup === false) &&
             !has_capability('moodle/site:accessallgroups', $context)) {
         notice(get_string('notingroup', 'forum'));
     }
