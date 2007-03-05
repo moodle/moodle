@@ -205,16 +205,6 @@ $moodle_capabilities = array(
         )
     ),
 
-    'moodle/site:viewparticipants' => array(
-
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'legacy' => array(
-            'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
-        )
-    ),
-
     'moodle/site:viewreports' => array(
 
         'riskbitmask' => RISK_PERSONAL,
