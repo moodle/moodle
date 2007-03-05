@@ -2914,7 +2914,7 @@ function forum_user_has_posted($forumid, $did, $userid) {
     return record_exists('forum_posts','discussion',$did,'userid',$userid);
 }
 
-function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode='') {
+function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=false) {
 // $forum is an object
     global $USER, $SESSION;
 
@@ -2933,7 +2933,7 @@ function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=
         return false;
     }
 
-    if ($forum->type == "eachuser") {
+    if ($forum->type == 'eachuser') {
         return (!forum_user_has_posted_discussion($forum->id, $USER->id));
     } else if ($currentgroup) {
         return (has_capability('moodle/site:accessallgroups', $context)
@@ -2997,9 +2997,9 @@ function forum_user_can_view_post($post, $course, $cm, $forum, $discussion, $use
 
 /// If it's a grouped discussion, make sure the user is a member
     if ($discussion->groupid > 0) {
-        if ($cm->groupmode == SEPARATEGROUPS) {
-            return ismember($discussion->groupid) ||
-                    has_capability('moodle/site:accessallgroups', $modcontext);
+        $groupmode = groupmode($course, $cm);
+        if ($groupmode == SEPARATEGROUPS) {
+            return ismember($discussion->groupid) || has_capability('moodle/site:accessallgroups', $modcontext);
         }
     }
     return true;
@@ -3126,19 +3126,16 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 /// First check the group stuff
 
     if ($groupmode == -1) {    /// We need to reconstruct groupmode because none was given
-        if ($cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-            $groupmode = groupmode($course, $cm);
-        } else {
-            $groupmode = SEPARATEGROUPS;
-        }
+        $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id);
+        $groupmode = groupmode($course, $cm);   // Works even if $cm is not valid
     }
 
     if ($currentgroup == -1) {    /// We need to reconstruct currentgroup because none was given
         $currentgroup = get_current_group($course->id);
     }
 
-    if (!$currentgroup and ($groupmode != SEPARATEGROUPS or
-                has_capability('moodle/site:accessallgroups', $context)) ) {
+    if (!$currentgroup and 
+       ($groupmode != SEPARATEGROUPS or has_capability('moodle/site:accessallgroups', $context)) ) {
         $visiblegroups = -1;
     } else {
         $visiblegroups = $currentgroup;
@@ -3148,7 +3145,6 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 /// button for it. We do not show the button if we are showing site news
 /// and the current user is a guest.
 
-    // TODO: Add group mode in there, to test for visible group.
     if (forum_user_can_post_discussion($forum, $currentgroup, $groupmode)) {
 
         echo '<div class="singlebutton forumaddnew">';
