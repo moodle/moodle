@@ -144,7 +144,7 @@
         }
 
         notice_yesno('<p>' . get_string('guestsno', 'quiz') . "</p>\n\n</p>" .
-                get_string('liketologin') . '</p>', $loginurl, $_SERVER['HTTP_REFERER']);
+                get_string('liketologin') . '</p>', $loginurl, get_referer(false));
     }
 
     if (has_capability('mod/quiz:attempt', $context)) {
