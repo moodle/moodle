@@ -40,10 +40,11 @@
     unset($contextid);
     unset($courseid);
 
-    require_login($course->id);
+    require_login($course);
 
-    if (!has_capability('moodle/course:viewparticipants', $context)
-            && !has_capability('moodle/site:viewparticipants', $context)) {
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+
+    if (!has_capability('moodle/course:viewparticipants', $context)) {
         print_error('nopermissions');
     }
 
@@ -53,7 +54,6 @@
         // We should exclude "admin" users (those with "doanything" at site level) because 
         // Otherwise they appear in every participant list
 
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
         $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext);
 
         foreach ($roles as $role) {
@@ -71,14 +71,6 @@
             redirect($CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id);
         } else {
             error ('No participants found for this course');
-        }
-    }
-
-    if ($course->id == SITEID) {
-        if (!has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-            print_header("$course->shortname: ".get_string('participants'), $course->fullname,
-                         get_string('participants'), "", "", true, "&nbsp;", navmenu($course));
-            notice(get_string('sitepartlist'));
         }
     }
 
@@ -120,7 +112,7 @@
     }
 
     $isseparategroups = ($course->groupmode == SEPARATEGROUPS and $course->groupmodeforce and
-                         !has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id)));
+                         !has_capability('moodle/site:accessallgroups', $context));
 
     if ($isseparategroups and (!$currentgroup) ) { 
         print_header("$course->shortname: ".get_string('participants'), $course->fullname,
@@ -146,7 +138,7 @@
     }
 
 
-    //setting up tags
+/// setting up tags
     if ($course->id == SITEID) {
         $filtertype = 'site';
     } else if ($course->id && !$currentgroup) {
@@ -163,7 +155,7 @@
 
 
 /// Get the hidden field list
-    if (has_capability('moodle/course:viewhiddenuserfields', get_context_instance(CONTEXT_COURSE, $course->id))) {
+    if (has_capability('moodle/course:viewhiddenuserfields', $context)) {
         $hiddenfields = array();  // teachers and admins are allowed to see everything
     } else {
         $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
@@ -177,19 +169,16 @@
 /// Print my course menus
     if ($mycourses = get_my_courses($USER->id)) {
         echo '<td class="left">';
-        print_string('mycourses');
-        echo ': ';
-
         $courselist = array();
         foreach ($mycourses as $mycourse) {
             $courselist[$mycourse->id] = $mycourse->shortname;
         }
         popup_form($CFG->wwwroot.'/user/index.php?roleid='.$roleid.'&amp;sifirst=&amp;silast=&amp;id=',
-                   $courselist, 'courseform',$course->id);
+                   $courselist, 'courseform', $course->id, '', '', '', false, 'self', get_string('mycourses'));
         echo '</td>';
     }
 
-    if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id)))) {
+    if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/site:accessallgroups', $context))) {
         if ($groups_names = groups_get_groups_names($course->id)) { //TODO:
             echo '<td class="left">';
             print_group_menu($groups_names, $groupmode, $currentgroup, $baseurl);
@@ -236,28 +225,26 @@
 
     if (count($timeoptions) > 1) {
         echo '<td class="left">';
-        echo get_string('usersnoaccesssince').': ';
         $baseurl = preg_replace('/&amp;accesssince='.$accesssince.'/','',$baseurl);
-        echo popup_form($baseurl.'&amp;accesssince=',$timeoptions,'timeoptions',$accesssince,'','','',true);
+        popup_form($baseurl.'&amp;accesssince=',$timeoptions,'timeoptions',$accesssince, '', '', '', false, 'self', get_string('usersnoaccesssince'));
         echo '</td>';
     }
 
 
     echo '<td class="right">';
-    echo get_string('userlist').': ';
     $formatmenu = array( '0' => get_string('detailedless'),
                          '1' => get_string('detailedmore'));
-    echo popup_form($baseurl.'&amp;mode=', $formatmenu, 'formatmenu', $fullmode, '', '', '', true);
+    popup_form($baseurl.'&amp;mode=', $formatmenu, 'formatmenu', $fullmode, '', '', '', false, 'self', get_string('userlist'));
     echo '</td></tr></table>';
 
-    if ($currentgroup and (!$isseparategroups or has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id)))) {    /// Display info about the group
+    if ($currentgroup and (!$isseparategroups or has_capability('moodle/site:accessallgroups', $context))) {    /// Display info about the group
         if ($group = groups_get_group($currentgroup)) { //TODO:
             if (!empty($group->description) or (!empty($group->picture) and empty($group->hidepicture))) {
                 echo '<table class="groupinfobox"><tr><td class="left side picture">';
                 print_group_picture($group, $course->id, true, false, false);
                 echo '</td><td class="content">';
                 echo '<h3>'.$group->name;
-                if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                if (has_capability('moodle/course:managegroups', $context)) {
                     echo '&nbsp;<a title="'.get_string('editgroupprofile').'" href="'.groups_group_edit_url($course->id, $group->id).'">';
                     echo '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="'.get_string('editgroupprofile').'" />';
                     echo '</a>';
@@ -324,7 +311,6 @@
     if ($usercontexts = get_parent_contexts($context)) {
         $listofcontexts = '('.implode(',', $usercontexts).')';
     } else {
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
         $listofcontexts = '('.$sitecontext->id.')'; // must be site
     }
     if ($roleid) {
@@ -462,8 +448,6 @@
             ';
         echo '<form action="action_redir.php" method="post" id="participantsform" onsubmit="return checksubmit(this);">';
         echo '<div>';
-        // added url encode for xhtml strict MDL-7861
-        echo '<input type="hidden" name="returnto" value="'.urlencode($_SERVER['REQUEST_URI']).'" />';
         echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     }
 
