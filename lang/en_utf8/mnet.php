@@ -37,6 +37,11 @@ $string['showlocal']                    = 'Show local users';
 $string['hostcoursenotfound']           = 'Host or course not found';
 $string['enrollingincourse']            = 'Enrolling in course $a[0] on host $a[1]<br />';
 
+$string['duplicate_usernames']          = 'We failed to create an index on the columns \"mnethostid\" and \"username\" in your user table.<br />'.
+                                          'This can occur when you have <a href=\"$a\" target=\"_blank\">duplicate usernames in your user table</a>.<br />'.
+                                          'Your upgrade should still complete successfully. Click on the link above, and instructions on fixing'.
+                                          ' this problem will appear in a new window. You can attend to that at the end of the upgrade.<br />';
+
 $string['nomodifyacl']                  = 'You are not permitted to modify the MNET access control list.';
 $string['recordnoexists']               = 'Record does not exist.';
 $string['enterausername']               = 'Please enter a username, or a list of usernames separated by commas.';
