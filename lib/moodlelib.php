@@ -703,20 +703,19 @@ function reload_user_preferences() {
 
     global $USER;
 
-    if(empty($USER) || empty($USER->id)) {
-        return false;
-    }
+    //reset preference
+    $USER->preference = array();
 
-    unset($USER->preference);
+    if (!isloggedin() or isguestuser()) {
+        // no pernament storage for not-logged-in user and guest
 
-    if ($preferences = get_records('user_preferences', 'userid', $USER->id)) {
+    } else if ($preferences = get_records('user_preferences', 'userid', $USER->id)) {
         foreach ($preferences as $preference) {
             $USER->preference[$preference->name] = $preference->value;
         }
-    } else {
-            //return empty preference array to hold new values
-            $USER->preference = array();
     }
+
+    return true;
 }
 
 /**
@@ -727,50 +726,60 @@ function reload_user_preferences() {
 
  * @param string $name The key to set as preference for the specified user
  * @param string $value The value to set forthe $name key in the specified user's record
- * @param int $userid A moodle user ID
+ * @param int $otheruserid A moodle user ID
  * @return bool
  */
-function set_user_preference($name, $value, $otheruser=NULL) {
+function set_user_preference($name, $value, $otheruserid=NULL) {
 
     global $USER;
 
-    if (empty($otheruser)){
-        if (!empty($USER) && !empty($USER->id)) {
-            $userid = $USER->id;
-        } else {
-            return false;
-        }
-    } else {
-        $userid = $otheruser;
+    if (!isset($USER->preference)) {
+        reload_user_preferences();
     }
 
     if (empty($name)) {
         return false;
     }
 
-    if ($preference = get_record('user_preferences', 'userid', $userid, 'name', $name)) {
-        if (set_field('user_preferences', 'value', $value, 'id', $preference->id)) {
-            if ($userid == $USER->id) {
-                $USER->preference[$name] = $value;
-            }
-            return true;
-        } else {
-            return false;
+    $nostore = false;
+
+    if (empty($otheruserid)){
+        if (!isloggedin() or isguestuser()) {
+            $nostore = true;
+        }
+        $userid = $USER->id;
+    } else {
+        if (isguestuser($otheruserid)) {
+            $nostore = true;
+        }
+        $userid = $otheruserid;
+    }
+
+    $return = true;
+    if ($nostore) {
+        // no pernament storage for not-logged-in user and guest
+
+    } else if ($preference = get_record('user_preferences', 'userid', $userid, 'name', addslashes($name))) {
+        if (!set_field('user_preferences', 'value', addslashes((string)$value), 'id', $preference->id)) {
+            $return = false;
         }
 
     } else {
+        $preference = new object();
         $preference->userid = $userid;
-        $preference->name   = $name;
-        $preference->value  = (string)$value;
-        if (insert_record('user_preferences', $preference)) {
-            if ($userid == $USER->id) {
-                $USER->preference[$name] = $value;
-            }
-            return true;
-        } else {
-            return false;
+        $preference->name   = addslashes($name);
+        $preference->value  = addslashes((string)$value);
+        if (!insert_record('user_preferences', $preference)) {
+            $return = false;
         }
     }
+
+    // update value in USER session if needed
+    if ($userid == $USER->id) {
+        $USER->preference[$name] = (string)$value;
+    }
+
+    return $return;
 }
 
 /**
@@ -778,59 +787,48 @@ function set_user_preference($name, $value, $otheruser=NULL) {
  * Optionally, can set a preference for a different user id
  * @uses $USER
  * @param string  $name The key to unset as preference for the specified user
- * @param int $userid A moodle user ID
- * @return bool
+ * @param int $otheruserid A moodle user ID
  */
-function unset_user_preference($name, $userid=NULL) {
+function unset_user_preference($name, $otheruserid=NULL) {
 
     global $USER;
 
-    if (empty($userid)){
-        if(!empty($USER) && !empty($USER->id)) {
-            $userid = $USER->id;
-        }
-        else {
-            return false;
-        }
+    if (!isset($USER->preference)) {
+        reload_user_preferences();
     }
 
-    //Delete the preference from $USER
-    if (isset($USER->preference[$name])) {
+    if (empty($otheruserid)){
+        $userid = $USER->id;
+    } else {
+        $userid = $otheruserid;
+    }
+
+    //Delete the preference from $USER if needed
+    if ($userid == $USER->id) {
         unset($USER->preference[$name]);
     }
 
     //Then from DB
-    return delete_records('user_preferences', 'userid', $userid, 'name', $name);
+    return delete_records('user_preferences', 'userid', $userid, 'name', addslashes($name));
 }
 
 
 /**
  * Sets a whole array of preferences for the current user
  * @param array $prefarray An array of key/value pairs to be set
- * @param int $userid A moodle user ID
+ * @param int $otheruserid A moodle user ID
  * @return bool
  */
-function set_user_preferences($prefarray, $userid=NULL) {
-
-    global $USER;
+function set_user_preferences($prefarray, $otheruserid=NULL) {
 
     if (!is_array($prefarray) or empty($prefarray)) {
         return false;
     }
 
-    if (empty($userid)){
-        if (!empty($USER) && !empty($USER->id)) {
-            $userid = NULL;  // Continue with the current user below
-        } else {
-            return false;    // No-one to set!
-        }
-    }
-
     $return = true;
     foreach ($prefarray as $name => $value) {
-        // The order is important; if the test for return is done first, then
-        // if one function call fails all the remaining ones will be "optimized away"
-        $return = set_user_preference($name, $value, $userid) and $return;
+        // The order is important; test for return is done first
+        $return = (set_user_preference($name, $value, $otheruserid) && $return);
     }
     return $return;
 }
@@ -844,36 +842,43 @@ function set_user_preferences($prefarray, $userid=NULL) {
  * otherwise NULL.
  * @param string $name Name of the key to use in finding a preference value
  * @param string $default Value to be returned if the $name key is not set in the user preferences
- * @param int $userid A moodle user ID
+ * @param int $otheruserid A moodle user ID
  * @uses $USER
  * @return string
  */
-function get_user_preferences($name=NULL, $default=NULL, $userid=NULL) {
-
+function get_user_preferences($name=NULL, $default=NULL, $otheruserid=NULL) {
     global $USER;
 
-    if (empty($userid)) {   // assume current user
-        if (empty($USER->preference)) {
-            return $default;              // Default value (or NULL)
-        }
-        if (empty($name)) {
-            return $USER->preference;     // Whole array
-        }
-        if (!isset($USER->preference[$name])) {
-            return $default;              // Default value (or NULL)
-        }
-        return $USER->preference[$name];  // The single value
+    if (!isset($USER->preference)) {
+        reload_user_preferences();
+    }
+
+    if (empty($otheruserid)){
+        $userid = $USER->id;
+    } else {
+        $userid = $otheruserid;
+    }
+
+    if ($userid == $USER->id) {
+        $preference = $USER->preference;
 
     } else {
-        $preference = get_records_menu('user_preferences', 'userid', $userid, 'name', 'name,value');
+        $preference = array();
+        if ($prefdata = get_records('user_preferences', 'userid', $userid)) {
+            foreach ($prefdata as $pref) {
+                $preference[$pref->name] = $pref->value;
+            }
+        }
+    }
 
-        if (empty($name)) {
-            return $preference;
-        }
-        if (!isset($preference[$name])) {
-            return $default;              // Default value (or NULL)
-        }
-        return $preference[$name];        // The single value
+    if (empty($name)) {
+        return $preference;            // All values
+
+    } else if (array_key_exists($name, $preference)) {
+        return $preference[$name];    // The single value
+
+    } else {
+        return $default;              // Default value (or NULL)
     }
 }
 
@@ -1660,7 +1665,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
 
 /// check whether the user should be changing password (but only if it is REALLY them)
     $userauth = get_auth_plugin($USER->auth);
-    if (!empty($USER->preference['auth_forcepasswordchange']) && empty($USER->realuser)) {
+    if (get_user_preferences('auth_forcepasswordchange') && empty($USER->realuser)) {
         if ($userauth->can_change_password()) {
             $SESSION->wantsurl = $FULLME;
             if (method_exists($userauth, 'change_password_url') and $userauth->change_password_url()) {
@@ -2800,11 +2805,7 @@ function get_complete_user_data($field, $value, $mnethostid=null) {
         }
     }
 
-    if ($preferences = get_records('user_preferences', 'userid', $user->id)) {
-        foreach ($preferences as $preference) {
-            $user->preference[$preference->name] = $preference->value;
-        }
-    }
+    $user->preference = get_user_preferences(null, null, $user->id);
 
     if ($lastaccesses = get_records('user_lastaccess', 'userid', $user->id)) {
         foreach ($lastaccesses as $lastaccess) {
@@ -4293,6 +4294,7 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
         }
     }
 
+
 /// First check all the normal locations for the string in the current language
     foreach ($locations as $location) {
         $locallangfile = $location.$lang.'_local'.'/'.$module.'.php';    //first, see if there's a local file
@@ -5111,7 +5113,7 @@ function check_php_version($version='4.1.0') {
  * @uses $_SERVER
  * @param string $brand The browser identifier being tested
  * @param int $version The version of the browser
- * @return bool
+ * @return bool true if the given version is below that of the detected browser
  */
  function check_browser_version($brand='MSIE', $version=5.5) {
     if (empty($_SERVER['HTTP_USER_AGENT'])) {
@@ -5194,8 +5196,7 @@ function check_php_version($version='4.1.0') {
               return false;
           } elseif (strpos($agent, 'SimbianOS')) { // Reject SimbianOS
               return false;
-          } 
-          
+          }
 
           if (preg_match("/AppleWebKit\/([0-9]+)/i", $agent, $match)) {
               if (version_compare($match[1], $version) >= 0) {
