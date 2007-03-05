@@ -85,6 +85,9 @@
                 $currenttab = $template;
             }
         }
+        if ($currenttab == '') {
+            $currenttab = $mode = 'singletemplate';
+        }
         $tabs[] = $row;
         $activetwo = array('templates');
     } else {
