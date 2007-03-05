@@ -69,20 +69,18 @@ function get_questions_category( $category, $noparent=false, $recurse=true ) {
 * @param integer $courseid  The id of the course whose default category is wanted
 */
 function get_default_question_category($courseid) {
-
-    if ($categories = get_records_select("question_categories", "course = '$courseid' AND parent = '0'", "id")) {
-        foreach ($categories as $category) {
-            return $category;   // Return the first one (lowest id)
-        }
+    // If it already exists, just return it.
+    if ($category = get_records_select("question_categories", "course = '$courseid' AND parent = '0'", 'id', '*', '', 1)) {
+        return reset($category);
     }
 
     // Otherwise, we need to make one
+    $category = new stdClass;
     $category->name = get_string("default", "quiz");
     $category->info = get_string("defaultinfo", "quiz");
     $category->course = $courseid;
     $category->parent = 0;
-    // TODO: Figure out why we use 999 below
-    $category->sortorder = 999;
+    $category->sortorder = 999; // By default, all categories get this number, and are sorted alphabetically.
     $category->publish = 0;
     $category->stamp = make_unique_id_code();
 
@@ -100,27 +98,11 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
     global $CFG;
 
 /// Make sure the default category exists for this course
-    if (!$categories = get_records("question_categories", "course", $course->id, "id ASC")) {
-        if (!$category = get_default_question_category($course->id)) {
-            notify("Error creating a default category!");
-        }
-    }
+    get_default_question_category($course->id);
 
 /// Get all the existing categories now
-    if (!$categories = get_records_select("question_categories", "course = '{$course->id}' OR publish = '1'", "parent, sortorder, name ASC")) {
-        notify("Could not find any question categories!");
-        return false;    // Something is really wrong
-    }
+    $catmenu = question_category_options($course->id, true);
 
-    $categories = add_indented_names( $categories );
-    foreach ($categories as $key => $category) {
-       if ($catcourse = get_record("course", "id", $category->course)) {
-           if ($category->publish && $category->course != $course->id) {
-               $category->indentedname .= " ($catcourse->shortname)";
-           }
-           $catmenu[$category->id] = $category->indentedname;
-       }
-    }
     $strcategory = get_string("category", "quiz");
     $strshow = get_string("show", "quiz");
     $streditcats = get_string("editcategories", "quiz");

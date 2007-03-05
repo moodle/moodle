@@ -1578,7 +1578,7 @@ function question_category_options($courseid, $published = false, $only_editable
             SELECT cat.*, c.shortname AS coursename
             FROM {$CFG->prefix}question_categories cat, {$CFG->prefix}course c
             WHERE c.id = cat.course AND (cat.course = $courseid $publishsql)
-            ORDER BY cat.parent, cat.sortorder, cat.name ASC");
+            ORDER BY (CASE WHEN cat.course = $courseid THEN 0 ELSE 1 END), cat.parent, cat.sortorder, cat.name ASC");
     $categories = add_indented_names($categories);
 
     $categoriesarray = array();
