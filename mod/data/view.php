@@ -458,7 +458,7 @@
             blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
             echo '</td>';
         }
-        echo '</table>';
+        echo '</tr></table>';
     }
 
     print_footer($course);
