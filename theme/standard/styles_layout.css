@@ -341,8 +341,9 @@ img.emoticon {
   height: 15px;
 }
 
-form.popupform {
-  display: inline;
+form.popupform,
+form.popupform div {
+    display: inline;
 }
 
 form.popupform label {

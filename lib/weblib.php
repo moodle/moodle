@@ -944,7 +944,7 @@ function popup_form($common, $options, $formid, $selected='', $nothing='choose',
         $selectlabel = '<label for="'.$formid.'_jump">'.$selectlabel.'</label>';
     }
 
-    $output .= '<fieldset class="invisiblefieldset">'.$selectlabel.$button.'<select id="'.$formid.'_jump" name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\''.$formid.'\').jump.options[document.getElementById(\''.$formid.'\').jump.selectedIndex].value;">'."\n";
+    $output .= '<div>'.$selectlabel.$button.'<select id="'.$formid.'_jump" name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\''.$formid.'\').jump.options[document.getElementById(\''.$formid.'\').jump.selectedIndex].value;">'."\n";
 
     if ($nothing != '') {
         $output .= "   <option value=\"javascript:void(0)\">$nothing</option>\n";
@@ -1024,7 +1024,7 @@ function popup_form($common, $options, $formid, $selected='', $nothing='choose',
                "\n//<![CDATA[\n".
                'document.getElementById("noscript'.$formid.'").style.display = "none";'.
                "\n//]]>\n".'</script>';
-    $output .= '</fieldset>';
+    $output .= '</div>';
     $output .= '</form>';
 
     if ($return) {
