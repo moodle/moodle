@@ -180,12 +180,16 @@ function addslashes_js($var) {
 }
 
 /**
- * Returns the URL of the HTTP_REFERER, less the querystring portion
+ * Returns the URL of the HTTP_REFERER, less the querystring portion if required
  * @return string
  */
-function get_referer() {
+function get_referer($stripquery=true) {
     if (isset($_SERVER['HTTP_REFERER'])) {
-        return strip_querystring($_SERVER['HTTP_REFERER']);
+        if ($stripquery) {
+            return strip_querystring($_SERVER['HTTP_REFERER']);
+        } else {
+            return $_SERVER['HTTP_REFERER'];
+        }
     } else {
         return '';
     }
