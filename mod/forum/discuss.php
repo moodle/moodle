@@ -169,7 +169,7 @@
     $groupmode = groupmode($course, $cm);
     
     
-    if ($groupmode && $course->groupmodeforce && !has_capability('moodle/site:accessallgroups', $modcontext)) {   
+    if ($groupmode && !has_capability('moodle/site:accessallgroups', $modcontext)) {   
         // Groups must be kept separate
         //change this to ismember
         $mygroupid = mygroupid($course->id); //only useful if 0, otherwise it's an array now

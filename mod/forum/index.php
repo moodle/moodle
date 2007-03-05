@@ -164,7 +164,7 @@
             $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
            
-           if (isset($forum->groupmode)) {
+            if (isset($forum->groupmode)) {
                 $groupmode = groupmode($course, $forum);  /// Can do this because forum->groupmode is defined
             } else {
                 $groupmode = NOGROUPS;
