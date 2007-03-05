@@ -65,6 +65,11 @@
 
     print_simple_box_start("center", "100%");
     echo filter_text(text_to_html($course->summary),$course->id);
+
+    require_once("$CFG->dirroot/enrol/enrol.class.php");
+    $enrol = enrolment_factory::factory($course->enrol);
+    echo $enrol->get_access_icons($course);
+
     print_simple_box_end();
 
     echo "<br />";
