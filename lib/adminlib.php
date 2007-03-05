@@ -2328,7 +2328,7 @@ class admin_setting_special_calendar_weekend extends admin_setting {
         $name = 'calendar_weekend';
         $visiblename = get_string('calendar_weekend', 'admin');
         $description = get_string('helpweekenddays', 'admin');
-        $default = 65; // Saturdays and Sundays
+        $default = array ('0', '6'); // Saturdays and Sundays
         parent::admin_setting($name, $visiblename, $description, $default);
     }
 
