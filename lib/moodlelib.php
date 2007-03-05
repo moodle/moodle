@@ -5156,7 +5156,7 @@ function check_php_version($version='4.1.0') {
               return true;
           }
           break;
-          
+
       case 'Opera':  /// Opera
       
           if (preg_match("/Opera\/([0-9\.]+)/i", $agent, $match)) {
@@ -5167,7 +5167,7 @@ function check_php_version($version='4.1.0') {
           break;
       
       case 'Safari':  /// Safari
-          
+          // Look for AppleWebKit, excluding strings with OmniWeb, Shiira and SimbianOS
           if (strpos($agent, 'OmniWeb')) { // Reject OmniWeb
               return false;
           } elseif (strpos($agent, 'Shiira')) { // Reject Shiira
