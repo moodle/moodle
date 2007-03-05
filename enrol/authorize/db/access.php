@@ -3,6 +3,7 @@
 $enrol_authorize_capabilities = array(
 
     'enrol/authorize:managepayments' => array(
+        'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(

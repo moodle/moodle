@@ -169,6 +169,8 @@ $mod_data_capabilities = array(
 
     'mod/data:manageuserpresets' => array(
 
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(

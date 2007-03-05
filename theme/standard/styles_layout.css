@@ -780,24 +780,35 @@ body#admin-modules table.generaltable td.c0
   margin-top: 1em;
 }
 
-#admin-roles-manage .buttons {
+#admin-roles-allowassign .buttons,
+#admin-roles-allowoverride .buttons,
+#admin-roles-manage .buttons,
+#admin-roles-override .buttons {
   margin: 20px;
   text-align:center;
 }
 
-#admin-roles-manage .buttons .singlebutton {
-  display: inline;
-}
-
-#admin-roles-manage .singlebutton,
-#admin-roles-allowoverride .singlebutton,
-#admin-roles-allowassign .singlebutton {
+#admin-roles-manage .buttons .singlebutton,
+#admin-roles-override .buttons .singlebutton {
+    display: inline;
   padding: 5px;
-  text-align:center;
 }
 
-#admin-roles-manage .selector {
-  text-align:center;
+#admin-roles-manage .selector,
+#admin-roles-override .selector {
+    text-align:center;
+}
+
+#admin-roles-manage table.roledesc,
+#admin-roles-override table.roledesc {
+  margin-left:auto;
+  margin-right:auto;
+}
+
+#admin-roles-manage table.rolecap,
+#admin-roles-override table.rolecap {
+  margin-left:auto;
+  margin-right:auto;
 }
 
 .rolecap .inherit,

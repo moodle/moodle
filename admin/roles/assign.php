@@ -19,7 +19,7 @@
     $timeend        = optional_param('timened', 0, PARAM_INT);
     $userid         = optional_param('userid', 0, PARAM_INT); // needed for user tabs
     $courseid       = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
-    
+
     $errors = array();
 
     $previoussearch = ($searchtext != '') or ($previoussearch) ? 1:0;
@@ -50,8 +50,10 @@
         }
     } else {
         $courseid = SITEID;
-        $course = get_site();
+        $course = clone($SITE);
     }
+
+    require_login($course);
 
     if ($context->contextlevel == CONTEXT_COURSE) {
         require_login($context->instanceid);
@@ -61,7 +63,10 @@
 
     require_capability('moodle/role:assign', $context);
 
-    $assignableroles = get_assignable_roles($context);
+/// needed for tabs.php
+    $overridableroles = get_overridable_roles($context);
+    $assignableroles  = get_assignable_roles($context);
+
 /// Get some language strings
 
     $strassignusers = get_string('assignusers', 'role');
@@ -163,7 +168,7 @@
 
             $sitecontext = get_context_instance(CONTEXT_SYSTEM);
             $topleveladmin = false;
-   
+
             // we only worry about this if the role has doanything capability at site level
             if ($context->id == $sitecontext->id && $adminroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext)) {
                 foreach ($adminroles as $adminrole) {
@@ -172,7 +177,7 @@
                     }
                 }
             }
-            
+
             foreach ($frm->removeselect as $removeuser) {
                 $removeuser = clean_param($removeuser, PARAM_INT);
 
@@ -215,7 +220,7 @@
         }
 
         $select  = "username <> 'guest' AND deleted = 0 AND confirmed = 1";
-    
+
         $usercount = count_records_select('user', $select) - count($contextusers);
 
         $searchtext = trim($searchtext);
@@ -227,18 +232,17 @@
             $select  .= " AND ($FULLNAME $LIKE '%$searchtext%' OR email $LIKE '%$searchtext%') ";
         }
 
-        $availableusers = get_recordset_sql('SELECT id, firstname, lastname, email 
-                                               FROM '.$CFG->prefix.'user 
+        $availableusers = get_recordset_sql('SELECT id, firstname, lastname, email
+                                               FROM '.$CFG->prefix.'user
                                               WHERE '.$select.'
                                             ORDER BY lastname ASC, firstname ASC');
 
         /// In the .html file below we loop through these results and exclude any in $contextusers
 
         echo '<div style="text-align:center">'.$strcurrentcontext.': '.print_context_name($context).'<br/>';
-        echo '<label>'.$strroletoassign.'</label>: ';
-        $assignableroles = array('0'=>get_string('listallroles', 'role').'...') + $assignableroles; 
+        $assignableroles = array('0'=>get_string('listallroles', 'role').'...') + $assignableroles;
         popup_form("$CFG->wwwroot/$CFG->admin/roles/assign.php?userid=$userid&amp;courseid=$courseid&amp;contextid=$contextid&amp;roleid=",
-            $assignableroles, 'switchrole', $roleid, '');
+            $assignableroles, 'switchrole', $roleid, '', '', '', false, 'self', $strroletoassign);
         echo '</div>';
 
         print_simple_box_start('center');

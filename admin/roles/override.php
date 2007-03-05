@@ -2,7 +2,7 @@
 
     require_once('../../config.php');
 
-    $contextid = required_param('contextid',PARAM_INT);    // context id
+    $contextid = required_param('contextid', PARAM_INT);   // context id
     $roleid    = optional_param('roleid', 0, PARAM_INT);   // requested role id
     $userid    = optional_param('userid', 0, PARAM_INT);   // needed for user tabs
     $courseid  = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
@@ -12,29 +12,34 @@
         error('Bad context ID');
     }
 
-    if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID)) {
+    if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM)) {
         error('No site ID');
     }
 
     if ($context->id == $sitecontext->id) {
-        error ('Can not override base role capabilities');
+        error('Can not override base role capabilities');
     }
 
-    require_capability('moodle/role:override', $context);   // Just to make sure
+    if (!has_capability('moodle/role:override', $context)) {
+        error('You do not have permission to change overrides in this context!');
+    }
 
     if ($courseid) {
         if (!$course = get_record('course', 'id', $courseid)) {
             error('Bad course ID');
         }
     } else {
-        $course = $SITE;
+        $course = clone($SITE);
+        $courseid = SITEID;
     }
+
+    require_login($course);
 
     $baseurl = 'override.php?contextid='.$context->id;
     if (!empty($userid)) {
         $baseurl .= '&amp;userid='.$userid;
     }
-    if (!empty($courseid)) {
+    if ($courseid != SITEID) {
         $baseurl .= '&amp;courseid='.$courseid;
     }
 
@@ -42,6 +47,9 @@
         redirect($baseurl);
     }
 
+/// needed for tabs.php
+    $overridableroles = get_overridable_roles($context);
+    $assignableroles  = get_assignable_roles($context);
 
 /// Get some language strings
 
@@ -53,6 +61,7 @@
     $strparticipants   = get_string('participants');
 
 /// Make sure this user can override that role
+
     if ($roleid) {
         if (!user_can_override($context, $roleid)) {
             error ('you can not override this role in this context');
@@ -64,18 +73,23 @@
         $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
     }
 
+/// get all cababilities
+    $capabilities = fetch_context_capabilities($context);
+
 /// Process incoming role override
     if ($data = data_submitted() and $roleid and confirm_sesskey()) {
         $allowed_values = array(CAP_INHERIT, CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT);
-        $capabilities = fetch_context_capabilities($context); // capabilities applicable in this context
 
         $localoverrides = get_records_select('role_capabilities', "roleid = $roleid AND contextid = $context->id",
                                              '', 'capability, permission, id');
 
         foreach ($capabilities as $cap) {
+
             if (!isset($data->{$cap->name})) {
+                //cap not specified in form
                 continue;
             }
+
             $capname = $cap->name;
             $value = clean_param($data->{$cap->name}, PARAM_INT);
             if (!in_array($value, $allowed_values)) {
@@ -151,15 +165,13 @@
 
     print_heading_with_help(get_string('overrides', 'role'), 'overrides');
 
-    $overridableroles = get_overridable_roles($context);
-
     if ($roleid) {
     /// prints a form to swap roles
-        echo '<div align="center">'.$strcurrentcontext.': '.print_context_name($context).'<br/>';
-        echo $strroletooverride.': ';
-        $overridableroles = array('0'=>get_string('listallroles', 'role').'...') + $overridableroles; 
+        echo '<div class="selector">';
+        echo $strcurrentcontext.': '.print_context_name($context).'<br/>';
+        $overridableroles = array('0'=>get_string('listallroles', 'role').'...') + $overridableroles;
         popup_form("$CFG->wwwroot/$CFG->admin/roles/override.php?userid=$userid&amp;courseid=$courseid&amp;contextid=$contextid&amp;roleid=",
-            $overridableroles, 'switchrole', $roleid, '');
+            $overridableroles, 'switchrole', $roleid, '', '', '', false, 'self', $strroletooverride);
         echo '</div>';
 
         $parentcontexts = get_parent_contexts($context);
@@ -177,11 +189,12 @@
 
         $lang = str_replace('_utf8', '', current_language());
 
-        // Get the capabilities overrideable in this context
-        if ($capabilities = fetch_context_capabilities($context)) {
+        if (!empty($capabilities)) {
+            // Print the capabilities overrideable in this context
             print_simple_box_start('center');
             include_once('override.html');
             print_simple_box_end();
+
         } else {
             notice(get_string('nocapabilitiesincontext', 'role'),
                     $CFG->wwwroot.'/'.$CFG->admin.'/roles/'.$baseurl);

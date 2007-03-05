@@ -46,6 +46,8 @@ $block_rss_client_capabilities = array(
 
     'block/rss_client:createsharedfeeds' => array(
 
+        'riskbitmask' => RISK_SPAM,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
@@ -66,6 +68,8 @@ $block_rss_client_capabilities = array(
     ),
 
     'block/rss_client:manageanyfeeds' => array(
+
+        'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,

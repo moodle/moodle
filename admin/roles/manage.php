@@ -15,7 +15,7 @@
     $confirm     = optional_param('confirm', 0, PARAM_BOOL);
     $cancel      = optional_param('cancel', 0, PARAM_BOOL);
 
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
     require_capability('moodle/role:manage', $sitecontext);
 
@@ -307,24 +307,7 @@
             }
 
             if ($confirm and data_submitted() and confirm_sesskey()) {
-                $legacyroles = get_legacy_roles();
-
-                $defaultcaps = array();
-                foreach($legacyroles as $ltype=>$lcap) {
-                    $localoverride = get_local_override($roleid, $sitecontext->id, $lcap);
-                    if (!empty($localoverride->permission) and $localoverride->permission == CAP_ALLOW) {
-                        //choose first selected legacy capability
-                        $defaultcaps = get_default_capabilities($ltype);
-                        break;
-                    }
-                }
-
-                delete_records('role_capabilities', 'roleid', $roleid);
-                if (!empty($defaultcaps)) {
-                    foreach($defaultcaps as $cap=>$permission) {
-                        assign_capability($cap, $permission, $roleid, $sitecontext->id);
-                    }
-                }
+                reset_role_capabilities($roleid);
                 redirect('manage.php?action=view&amp;roleid='.$roleid);
 
             } else {
@@ -490,7 +473,9 @@
 
         $options = new object();
         $options->action = 'add';
+        echo '<div class="buttons">';
         print_single_button('manage.php', $options, get_string('addrole', 'role'), 'get');
+        echo '</div>';
     }
 
     admin_externalpage_print_footer($adminroot);
