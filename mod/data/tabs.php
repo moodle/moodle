@@ -66,9 +66,7 @@
     }
 
     $tabs[] = $row;
-    /*****************************
-    * stolen code from quiz report
-    *****************************/
+
     if ($currenttab == 'templates' and isset($mode)) {
         $inactive[] = 'templates';
         $templatelist = array ('listtemplate', 'singletemplate', 'addtemplate', 'rsstemplate', 'csstemplate', 'jstemplate');
@@ -76,18 +74,19 @@
         $row  = array();
         $currenttab ='';
         foreach ($templatelist as $template) {
-            $row[] = new tabobject($template, "templates.php?d=$data->id&amp;mode=$template",
-                                    get_string($template, 'data'));
+            $row[] = new tabobject($template, "templates.php?d=$data->id&amp;mode=$template", get_string($template, 'data'));
             if ($template == $mode) {
                 $currenttab = $template;
             }
         }
         $tabs[] = $row;
+
+        $active[] = 'templates';
     }
 
 
 /// Print out the tabs and continue!
 
-    print_tabs($tabs, $currenttab, $inactive);
+    print_tabs($tabs, $currenttab, $inactive, $active);
 
 ?>

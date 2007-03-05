@@ -170,7 +170,7 @@
 
 
     echo '<form id="tempform" action="templates.php?d='.$data->id.'&amp;mode='.$mode.'" method="post">';
-    echo '<fieldset class="invisiblefieldset">';
+    echo '<div>';
     echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
     // Print button to autogen all forms, if all templates are empty
 
@@ -291,7 +291,7 @@
 
 
     print_simple_box_end();
-    echo '</fieldset>';
+    echo '</div>';
     echo '</form>';
     if ($usehtmleditor) {
         use_html_editor('template');

@@ -255,7 +255,7 @@
 
     //form goes here first in case add template is empty
     echo '<form enctype="multipart/form-data" action="edit.php" method="post">';
-    echo '<fieldset>';
+    echo '<div>';
     echo '<input name="d" value="'.$data->id.'" type="hidden" />';
     echo '<input name="rid" value="'.$rid.'" type="hidden" />';
     echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
@@ -295,7 +295,7 @@
     }
     echo '</div>';
     print_simple_box_end();
-    echo '</fieldset></form>';
+    echo '</div></form>';
 
 
 /// Upload records section. Only for teachers and the admin.
