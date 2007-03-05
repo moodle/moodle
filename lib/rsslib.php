@@ -542,23 +542,14 @@ onClick=\"window.open('http://feedvalidator.org/check.cgi?url='+getElementId('bl
 */
 function rss_add_enclosures($item){
 
+    global $CFG;
+
     $returnstring = '';
     $rss_text = $item->description;
     
     // list of media file extensions and their respective mime types
-    // could/should we put this to some more central place?
-    $mediafiletypes = array(
-        'mp3'  => 'audio/mpeg',
-        'm3u'  => 'audio/x-mpegurl',
-        'pls'  => 'audio/x-mpegurl',
-        'ogg'  => 'application/ogg',
-        'm4b'  => 'audio/x-m4b',
-        'mpeg' => 'video/mpg',
-        'mpg'  => 'video/mpg',
-        'mov'  => 'video/quicktime',
-        'avi'  => 'video/x-msvideo',
-        'wmv'  => 'video/x-msvideo'
-    );
+    include_once($CFG->libdir.'/filelib.php');
+    $mediafiletypes = get_mimetypes_array();
 
     // regular expression (hopefully) matching all links to media files
     $medialinkpattern = '@href\s*=\s*(\'|")(\S+(' . implode('|', array_keys($mediafiletypes)) . '))\1@Usie';
@@ -566,7 +557,7 @@ function rss_add_enclosures($item){
     // take into account attachments (e.g. from forum) - with these, we are able to know the file size
     if (isset($item->attachments) && is_array($item->attachments)) {
         foreach ($item->attachments as $attachment){
-            $type = $mediafiletypes[substr($attachment->url, strrpos($attachment->url, '.')+1)];
+            $type = $mediafiletypes[substr($attachment->url, strrpos($attachment->url, '.')+1)]['type'];
             $returnstring .= "\n<enclosure url=\"$attachment->url\" length=\"$attachment->length\" type=\"$type\" />\n";
         }
     }
@@ -578,7 +569,7 @@ function rss_add_enclosures($item){
     // loop over matches of regular expression 
     for ($i = 0; $i < count($matches[2]); $i++){
         $url = htmlspecialchars($matches[2][$i]);
-        $type = $mediafiletypes[strtolower($matches[3][$i])];               
+        $type = $mediafiletypes[strtolower($matches[3][$i])]['type'];               
 
         // the rss_*_tag functions can't deal with methods, unfortunately
         $returnstring .= "\n<enclosure url='$url' type='$type' />\n";
