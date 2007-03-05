@@ -113,7 +113,7 @@ a img {
 
 img.userpicture,
 img.grouppicture {
-  border: 0 solid
+  border: 0;
 }
 
 .notifyproblem {
@@ -1924,6 +1924,12 @@ body#grade-index .grades .weighted {
 /***
  *** Message
  ***/
+
+
+#message-user .userpicture {
+  width: 100px;
+  height: 100px;
+}
 
 .message-discussion-noframes #userinfo .userpicture {
   float:left;
