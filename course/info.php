@@ -71,6 +71,10 @@
         }
     }
 
+    require_once("$CFG->dirroot/enrol/enrol.class.php");
+    $enrol = enrolment_factory::factory($course->enrol);
+    echo $enrol->get_access_icons($course);
+
     print_box_end();
 
     echo "<br />";
