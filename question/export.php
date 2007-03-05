@@ -50,9 +50,7 @@
         }
     }
 
-    if (! $category = get_record("question_categories", "id", $categoryid)) {
-        $category = get_default_question_category($courseid);
-    }
+    $category = get_default_question_category($courseid);
 
     if (! $categorycourse = get_record("course", "id", $category->course)) {
         error( $txt->nocategory );
