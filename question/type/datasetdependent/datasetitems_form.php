@@ -68,6 +68,7 @@ class question_dataset_dependent_items_form extends moodleform {
             $this->noofitems = 0;
         }
 //------------------------------------------------------------------------------------------------------------------------------
+        $mform->addElement('submit', 'updatedatasets', get_string('Update the datasets parameters', 'qtype_datasetdependent'));
         $mform->addElement('header', 'additemhdr', get_string('itemtoadd', 'qtype_datasetdependent'));
         $idx = 1;
         $j = (($this->noofitems) * count($this->datasetdefs))+1;
