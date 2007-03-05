@@ -2011,6 +2011,7 @@ function get_html_lang($dir = false) {
     }
     //Accessibility: added the 'lang' attribute to $direction, used in theme <html> tag.
     $language = str_replace('_', '-', str_replace('_utf8', '', current_language()));
+    @header('Content-Language: '.$language);
     return ($direction.' lang="'.$language.'" xml:lang="'.$language.'"'); 
 }
 
