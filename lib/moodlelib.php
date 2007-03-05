@@ -4758,12 +4758,23 @@ function get_string($identifier, $module='', $a=NULL) {
         if (strpos($module, 'block_') === 0) {  // It's a block lang file
             $locations[] =  $CFG->dirroot .'/blocks/'.substr($module, 6).'/lang/';
         } else if (strpos($module, 'report_') === 0) {  // It's a report lang file
-            $locations[] =  $CFG->dirroot .'/admin/report/'.substr($module, 7).'/lang/';
+            $locations[] =  $CFG->dirroot .'/'.$CFG->admin.'/report/'.substr($module, 7).'/lang/';
             $locations[] =  $CFG->dirroot .'/course/report/'.substr($module, 7).'/lang/';
+        } else if (strpos($module, 'resource_') === 0) {  // It's a resource module file
+            $locations[] =  $CFG->dirroot .'/mod/resource/type/'.substr($module, 9).'/lang/';
+        } else if (strpos($module, 'assignment_') === 0) {  // It's an assignment module file
+            $locations[] =  $CFG->dirroot .'/mod/assignment/type/'.substr($module, 11).'/lang/';
+        } else if (strpos($module, 'enrol_') === 0) {  // It's an enrolment plugin
+            $locations[] =  $CFG->dirroot .'/enrol/'.substr($module, 6).'/lang/';
+        } else if (strpos($module, 'auth_') === 0) {  // It's an auth plugin
+            $locations[] =  $CFG->dirroot .'/auth/'.substr($module, 5).'/lang/';
+        } else if (strpos($module, 'format_') === 0) {  // Course format
+            $locations[] =  $CFG->dirroot  .'/course/format/'.substr($module,7).'/lang/';
         } else {                                // It's a normal activity
             $locations[] =  $CFG->dirroot .'/mod/'.$module.'/lang/';
         }
     }
+
 
 /// First check all the normal locations for the string in the current language
     foreach ($locations as $location) {
