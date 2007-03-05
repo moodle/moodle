@@ -151,12 +151,13 @@ function mygroupid($courseid) {
 }
 
 /**
- * This now returns either false or SEPARATEGROUPS. If you want VISIBLE GROUPS 
- * with legacy code, you'll need to upgrade. 
+ * Returns the current group mode for a given course or activity module
+ * 
+ * Could be false, SEPARATEGROUPS or VISIBLEGROUPS    (<-- Martin)
  */
 function groupmode($course, $cm=null) {
 
-    if (is_object($cm) && isset($cm->groupmode) && !isset($course->groupmodeforce)) {
+    if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
         return $cm->groupmode;
     }
     return $course->groupmode;

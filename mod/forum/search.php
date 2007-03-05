@@ -399,15 +399,16 @@ function forum_menu_list($course)  {
 
         foreach ($forums as $forum) {
             if ($cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
+                $context = get_context_instance(CONTEXT_MODULE, $cm->id);
                 if (!isset($forum->visible)) {
-                    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
                     if (!instance_is_visible("forum", $forum) &&
                             !has_capability('moodle/course:viewhiddenactivities', $context)) {
                         continue;
                     }
                 }
                 $groupmode = groupmode($course, $cm);   // Groups are being used
-                if (($groupmode == SEPARATEGROUPS) and ($currentgroup === false)) {
+                if ($groupmode == SEPARATEGROUPS && ($currentgroup === false) &&
+                                  !has_capability('moodle/site:accessallgroups', $context)) {
                     continue;
                 }
             }
