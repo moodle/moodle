@@ -79,21 +79,22 @@ function textlib_get_instance () {
 }
 
 /**
-* This class is used to manipulate strings under Moodle 1.6 an later. As
-* utf-8 text become mandatory a pool of safe functions under this encoding
-* become necessary. The name of the methods is exactly the
-* same than their PHP originals.
-* 
-* A big part of this class acts as a wrapper over the Typo3 charset library,
-* really a cool group of utilities to handle texts and encoding conversion.
-*
-* Take a look to its own copyright and license details.
-*/
+ * This class is used to manipulate strings under Moodle 1.6 an later. As
+ * utf-8 text become mandatory a pool of safe functions under this encoding
+ * become necessary. The name of the methods is exactly the
+ * same than their PHP originals.
+ * 
+ * A big part of this class acts as a wrapper over the Typo3 charset library,
+ * really a cool group of utilities to handle texts and encoding conversion.
+ *
+ * Take a look to its own copyright and license details.
+ */
 class textlib {
 
     var $typo3cs;
 
-    /* Standard constructor of the class. All it does is to instantiate
+    /**
+     * Standard constructor of the class. All it does is to instantiate
      * a new t3lib_cs object to have all their functions ready.
      *
      * Instead of istantiating a lot of objects of this class everytime
@@ -107,93 +108,122 @@ class textlib {
         $this->typo3cs = new t3lib_cs();
     }
 
-    /* Converts the text between different encodings. It will use iconv, mbstring
-    * or internal (typo3) methods to try such conversion. Returns false if fails.
-    */
+    /**
+     * Converts the text between different encodings. It will use iconv, mbstring
+     * or internal (typo3) methods to try such conversion. Returns false if fails.
+     */
     function convert($text, $fromCS, $toCS='utf-8') {
+    /// Normalize charsets
+        $fromCS = $this->typo3cs->parse_charset($fromCS);
+        $toCS   = $this->typo3cs->parse_charset($toCS);
     /// Avoid some notices from Typo3 code
         $oldlevel = error_reporting(E_PARSE);
     /// Call Typo3 conv() function. It will do all the work
-        $result = $this->typo3cs->conv($text, strtolower($fromCS), strtolower($toCS));
+        $result = $this->typo3cs->conv($text, $fromCS, $toCS);
     /// Restore original debug level
         error_reporting($oldlevel);
         return $result;
     }
 
-    /* Multibyte safe substr() function, uses mbstring if available. */
+    /**
+     * Multibyte safe substr() function, uses mbstring if available. 
+     */
     function substr($text, $start, $len=null, $charset='utf-8') {
+    /// Normalize charset
+        $charset = $this->typo3cs->parse_charset($charset);
     /// Avoid some notices from Typo3 code
         $oldlevel = error_reporting(E_PARSE);
     /// Call Typo3 substr() function. It will do all the work
-        $result = $this->typo3cs->substr(strtolower($charset),$text,$start,$len);
+        $result = $this->typo3cs->substr($charset,$text,$start,$len);
     /// Restore original debug level
         error_reporting($oldlevel);
         return $result;
     }
 
-    /* Multibyte safe strlen() function, uses mbstring if available. */
+    /**
+     * Multibyte safe strlen() function, uses mbstring if available. 
+     */
     function strlen($text, $charset='utf-8') {
+    /// Normalize charset
+        $charset = $this->typo3cs->parse_charset($charset);
     /// Avoid some notices from Typo3 code
         $oldlevel = error_reporting(E_PARSE);
     /// Call Typo3 strlen() function. It will do all the work
-        $result = $this->typo3cs->strlen(strtolower($charset),$text);
+        $result = $this->typo3cs->strlen($charset,$text);
     /// Restore original debug level
         error_reporting($oldlevel);
         return $result;
     }
 
-    /* Multibyte safe strtolower() function, uses mbstring if available. */
+    /**
+     * Multibyte safe strtolower() function, uses mbstring if available. 
+     */
     function strtolower($text, $charset='utf-8') {
+    /// Normalize charset
+        $charset = $this->typo3cs->parse_charset($charset);
     /// Avoid some notices from Typo3 code
         $oldlevel = error_reporting(E_PARSE);
     /// Call Typo3 conv_case() function. It will do all the work
-        $result = $this->typo3cs->conv_case(strtolower($charset),$text,'toLower');
+        $result = $this->typo3cs->conv_case($charset,$text,'toLower');
     /// Restore original debug level
         error_reporting($oldlevel);
         return $result;
     }
 
-    /* Multibyte safe strtoupper() function, uses mbstring if available. */
+    /**
+     * Multibyte safe strtoupper() function, uses mbstring if available. 
+     */
     function strtoupper($text, $charset='utf-8') {
+    /// Normalize charset
+        $charset = $this->typo3cs->parse_charset($charset);
     /// Avoid some notices from Typo3 code
         $oldlevel = error_reporting(E_PARSE);
     /// Call Typo3 conv_case() function. It will do all the work
-        $result = $this->typo3cs->conv_case(strtolower($charset),$text,'toUpper');
+        $result = $this->typo3cs->conv_case($charset,$text,'toUpper');
     /// Restore original debug level
         error_reporting($oldlevel);
         return $result;
     }
 
-    /* UTF-8 ONLY safe strpos() function, uses mbstring if available. */
+    /**
+     * UTF-8 ONLY safe strpos() function, uses mbstring if available. 
+     */
     function strpos($haystack,$needle,$offset=0) {
     /// Call Typo3 utf8_strpos() function. It will do all the work
         return $this->typo3cs->utf8_strpos($haystack,$needle,$offset);
     }
 
-    /* UTF-8 ONLY safe strrpos() function, uses mbstring if available. */
+    /**
+     * UTF-8 ONLY safe strrpos() function, uses mbstring if available. 
+     */
     function strrpos($haystack,$needle) {
     /// Call Typo3 utf8_strrpos() function. It will do all the work
         return $this->typo3cs->utf8_strrpos($haystack,$needle);
     }
 
-    /* Try to convert upper unicode characters to plain ascii,
-    *  the returned string may cantain unconverted unicode characters.
-    */
-
+    /**
+     * Try to convert upper unicode characters to plain ascii,
+     * the returned string may cantain unconverted unicode characters.
+     */
     function specialtoascii($text,$charset='utf-8') {
+    /// Normalize charset
+        $charset = $this->typo3cs->parse_charset($charset);
     /// Avoid some notices from Typo3 code
         $oldlevel = error_reporting(E_PARSE);
-        $result = $this->typo3cs->specCharsToASCII(strtolower($charset),$text);
+        $result = $this->typo3cs->specCharsToASCII($charset,$text);
     /// Restore original debug level
         error_reporting($oldlevel);
         return $result;
     }
 
-    /* Generate a correct base64 encoded header to be used in MIME mail messages.
+    /**
+     * Generate a correct base64 encoded header to be used in MIME mail messages.
      * This function seems to be 100% compliant with RFC1342. Credits go to:
      * paravoid (http://www.php.net/manual/en/function.mb-encode-mimeheader.php#60283).
      */
     function encode_mimeheader($text, $charset='utf-8') {
+    /// Normalize charset
+        $charset = $this->typo3cs->parse_charset($charset);
     /// If the text is pure ASCII, we don't need to encode it
         if ($this->convert($text, $charset, 'ascii') == $text) {
             return $text;
