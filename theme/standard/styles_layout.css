@@ -256,7 +256,7 @@ img.grouppicture {
   margin-left:3em;
 }
 
-#help .closewindow,
+.closewindow,
 #help .helpindex {
   text-align: center;
 }
@@ -1639,6 +1639,15 @@ body#course-index #middle-column .editcourse .count {
 body#course-index .singlebutton,
 body#course-index .addcategory {
   text-align: center;
+}
+
+body#course-info .generalbox.icons {
+  text-align: center;
+}
+
+body#course-info .generalbox.info {
+  margin-left:auto;
+  margin-right:auto;
 }
 
 .coursebox {

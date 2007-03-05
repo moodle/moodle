@@ -30,46 +30,53 @@
 
     print_header(get_string("summaryof", "", $course->fullname));
 
-    echo "<h3 align=\"center\">" . format_string($course->fullname) . "<br />(" . format_string($course->shortname) . ")</h3>";
+    print_heading(format_string($course->fullname) . '<br />(' . format_string($course->shortname) . ')');
 
-    echo "<center>";
-    if ($course->guest) {
-        $strallowguests = get_string("allowguests");
-        echo "<p><font size=\"1\"><img align=\"middle\" alt=\"\" class=\"icon\" src=\"$CFG->pixpath/i/guest.gif\" /></a>&nbsp;$strallowguests</font></p>";
-    }
-    if ($course->password) {
-        $strrequireskey = get_string("requireskey");
-        echo "<p><font size=\"1\"><img align=\"middle\" alt=\"\" class=\"icon\" src=\"$CFG->pixpath/i/key.gif\" /></a>&nbsp;$strrequireskey</font></p>";
-    }
-
-
-    if ($teachers = get_course_teachers($course->id)) {
-        echo "<table align=\"center\"><tr><td style=\"white-space: nowrap\">";
-        echo "<p><font size=\"1\">\n";
-        foreach ($teachers as $teacher) {
-            if ($teacher->authority > 0) {
-                if (!$teacher->role) {
-                    $teacher->role = $course->teacher;
-                }
-                echo "$teacher->role: ";
-                link_to_popup_window ("/user/view.php?id=$teacher->id&amp;course=$site->id", "opener", 
-                                      fullname($teacher), 400, 500, "$teacher->role", 
-                                      "");
-                echo "<br />";
-            }
+    if ($course->guest || $course->password) {
+        print_box_start('generalbox icons');
+        if ($course->guest) {
+            $strallowguests = get_string('allowguests');
+            echo "<div><img alt=\"\" class=\"icon guest\" src=\"$CFG->pixpath/i/guest.gif\" />&nbsp;$strallowguests</div>";
         }
-        echo "</font></p>";
-        echo "</td</tr></table>";
+        if ($course->password) {
+            $strrequireskey = get_string('requireskey');
+            echo "<div><img alt=\"\" class=\"icon key\" src=\"$CFG->pixpath/i/key.gif\" />&nbsp;$strrequireskey</div>";
+        }
+        print_box_end();
     }
-    echo "<br />";
 
-    print_simple_box_start("center", "100%");
+
+    print_box_start('generalbox info');
+
     echo filter_text(text_to_html($course->summary),$course->id);
-    print_simple_box_end();
+
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    if ($managerroles = get_config('', 'coursemanager')) {
+        $coursemanagerroles = split(',', $managerroles);
+        foreach ($coursemanagerroles as $roleid) {
+            $role = get_record('role','id',$roleid);
+            if ($users = get_role_users($roleid, $context, true, '', 'u.lastname ASC', true)) {
+                foreach ($users as $teacher) {
+                    $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', $context)); 
+                    $namesarray[] = format_string($role->name).': <a href="'.$CFG->wwwroot.'/user/view.php?id='.
+                                    $teacher->id.'&amp;course='.SITEID.'">'.$fullname.'</a>';
+                }
+            }          
+        }
+        
+        if (!empty($namesarray)) {
+            echo "<ul class=\"teachers\">\n<li>";
+            echo implode('</li><li>', $namesarray);
+            echo "</li></ul>";
+        }
+    }
+
+    print_box_end();
 
     echo "<br />";
 
     close_window_button();
 
-?>
+    print_footer();
 
+?>

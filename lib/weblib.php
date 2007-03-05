@@ -597,19 +597,14 @@ function button_to_popup_window ($url, $name='popup', $linkname='click here',
  * Prints a simple button to close a window
  */
 function close_window_button($name='closewindow', $return=false) {
+    global $CFG;
+
     $output = '';
 
     $output .= '<div class="closewindow">' . "\n";
-    $output .= '<script type="text/javascript">' . "\n";
-    $output .= '//<![CDATA[' . "\n";
-    $output .= "document.write('<form>');\n";
-    $output .= "document.write('<input type=\"button\" onclick=\"self.close();\" value=\"".get_string("closewindow")."\" />');\n";
-    $output .= "document.write('<\/form>');\n";
-    $output .= '//]]>' . "\n";
-    $output .= '</script>' . "\n";
-    $output .= '<noscript><p>' . "\n";
-    $output .= get_string($name);
-    $output .= '</p></noscript>' . "\n";
+    $output .= '<form action="'.$CFG->wwwroot.'"><div>';   // We don't use this
+    $output .= '<input type="button" onclick="self.close();" value="'.get_string($name).'" />';
+    $output .= '</div></form>';
     $output .= '</div>' . "\n";
 
     if ($return) {
