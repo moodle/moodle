@@ -6,11 +6,13 @@
 ?>
 
 <form id="overrideform" action="override.php" method="post">
+    <fieldset class="invisiblefieldset">
     <input type="hidden" name="contextid" value="<?php p($contextid) ?>" />
     <input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
     <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
     <input type="hidden" name="userid" value="<?php p($userid) ?>" />
     <input type="hidden" name="courseid" value="<?php p($courseid) ?>" />
+    </fieldset>
 
     <table class="rolecap">
         <tr>
@@ -62,31 +64,31 @@
             $riskinfo = '<td class="risk managetrust">';
             $rowclasses = '';
             if (RISK_MANAGETRUST & (int)$capability->riskbitmask) {
-                $riskinfo .= '<a target="docspopup" title="'.get_string('riskmanagetrust', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/'.$strrisks.'">';
+                $riskinfo .= '<a onclick="this.target=\'docspopup\'" title="'.get_string('riskmanagetrust', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/'.$strrisks.'">';
                 $riskinfo .= '<img src="'.$CFG->pixpath.'/i/risk_managetrust.gif" alt="'.get_string('riskmanagetrustshort', 'admin').'" /></a>';
                 $rowclasses .= ' riskmanagetrust';
             }
             $riskinfo .= '</td><td class="risk config">';
             if (RISK_CONFIG & (int)$capability->riskbitmask) {
-                $riskinfo .= '<a target="docspopup" title="'.get_string('riskconfig', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/'.$strrisks.'">';
+                $riskinfo .= '<a onclick="this.target=\'docspopup\'" title="'.get_string('riskconfig', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/'.$strrisks.'">';
                 $riskinfo .= '<img src="'.$CFG->pixpath.'/i/risk_config.gif" alt="'.get_string('riskconfigshort', 'admin').'" /></a>';
                 $rowclasses .= ' riskconfig';
             }
             $riskinfo .= '</td><td class="risk xss">';
             if (RISK_XSS & (int)$capability->riskbitmask) {
-                $riskinfo .= '<a target="docspopup" title="'.get_string('riskxss', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/'.$strrisks.'">';
+                $riskinfo .= '<a onclick="this.target=\'docspopup\'" title="'.get_string('riskxss', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/'.$strrisks.'">';
                 $riskinfo .= '<img src="'.$CFG->pixpath.'/i/risk_xss.gif" alt="'.get_string('riskxssshort', 'admin').'" /></a>';
                 $rowclasses .= ' riskxss';
             }
             $riskinfo .= '</td><td class="risk personal">';
             if (RISK_PERSONAL & (int)$capability->riskbitmask) {
-                $riskinfo .= '<a target="docspopup" title="'.get_string('riskpersonal', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/'.$strrisks.'">';
+                $riskinfo .= '<a onclick="this.target=\'docspopup\'" title="'.get_string('riskpersonal', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/'.$strrisks.'">';
                 $riskinfo .= '<img src="'.$CFG->pixpath.'/i/risk_personal.gif" alt="'.get_string('riskpersonalshort', 'admin').'" /></a>';
                 $rowclasses .= ' riskpersonal';
             }
             $riskinfo .= '</td><td class="risk spam">';
             if (RISK_SPAM & (int)$capability->riskbitmask) {
-                $riskinfo .= '<a target="docspopup" title="'.get_string('riskspam', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/'.$strrisks.'">';
+                $riskinfo .= '<a onclick="this.target=\'docspopup\'" title="'.get_string('riskspam', 'admin').'" href="'.$CFG->docroot.'/'.$lang.'/'.$strrisks.'">';
                 $riskinfo .= '<img src="'.$CFG->pixpath.'/i/risk_spam.gif" alt="'.get_string('riskspamshort', 'admin').'" /></a>';
                 $rowclasses .= ' riskspam';
             }
@@ -96,13 +98,7 @@
         ?>
 
         <tr class="rolecap <?php echo $rowclasses; ?>">
-             <td class="name">
-                 <span class="cap-desc">
-                    <a target="docspopup" href="<?php echo $CFG->docroot.'/'.$lang.'/'.$strcapabilities.'/'.$capability->name ?>">
-                    <?php echo get_capability_string($capability->name); ?></a>
-                 </span>
-                 <span class="cap-name"><?php echo $capability->name ?></span>
-             </td>
+             <td class="name"><span class="cap-desc"><a onclick="this.target='docspopup'" href="<?php echo $CFG->docroot.'/'.$lang.'/'.$strcapabilities.'/'.$capability->name ?>"><?php echo get_capability_string($capability->name); ?></a><span class="cap-name"><?php echo $capability->name ?></span></span></td>
 
              <td class="inherit">
              <input type="radio" title="<?php p($strinherit); ?>" name="<?php echo $capability->name; ?>" value="0"
@@ -136,8 +132,7 @@
 
         <?php } ?>
     </table>
-    <br />
-    <div align="center">
+    <div class="submit buttons">
         <input type="submit" value="<?php print_string('savechanges') ?>" />
         <input type="submit" name="cancel" value="<?php print_string('cancel') ?>" />
     </div>

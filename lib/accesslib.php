@@ -773,7 +773,7 @@ function is_parent_context($c1, $c2) {
 }
 
 
-/*
+/**
  * auxillary function for load_user_capabilities()
  * handler in usort() to sort contexts according to level
  * @param object contexta
@@ -1147,7 +1147,7 @@ function load_all_capabilities() {
 }
 
 
-/*
+/**
  * Check all the login enrolment information for the given user object
  * by querying the enrolment plugins
  */
@@ -1560,8 +1560,8 @@ function get_legacy_roles() {
         'editingteacher' => 'moodle/legacy:editingteacher',
         'teacher'        => 'moodle/legacy:teacher',
         'student'        => 'moodle/legacy:student',
-        'user'           => 'moodle/legacy:user',
-        'guest'          => 'moodle/legacy:guest'
+        'guest'          => 'moodle/legacy:guest',
+        'user'           => 'moodle/legacy:user'
     );
 }
 
@@ -1656,7 +1656,7 @@ function create_context($contextlevel, $instanceid) {
     }
 }
 
-/*
+/**
  * This hacky function is needed because we can not change system context instanceid using normal upgrade routine.
  */
 function create_system_context() {
@@ -2215,7 +2215,7 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0) {
     return $success;
 }
 
-/*
+/**
  * A convenience function to take care of the common case where you
  * just want to enrol someone using the default role into a course
  *
@@ -2389,7 +2389,7 @@ function get_default_capabilities($legacyrole) {
     $defaults = array();
     $components = array();
     foreach ($allcaps as $cap) {
-        if (!array_search($cap->component, $components)) {
+        if (!in_array($cap->component, $components)) {
             $components[] = $cap->component;
             $alldefs = array_merge($alldefs, load_capability_def($cap->component));
         }
@@ -2406,6 +2406,35 @@ function get_default_capabilities($legacyrole) {
         $defaults['moodle/site:doanything'] = CAP_ALLOW;
     }
     return $defaults;
+}
+
+/**
+ * Reset role capabilitites to default according to selected legacy capability.
+ * If several legacy caps selected, use the first from get_default_capabilities.
+ * If no legacy selected, removes all capabilities.
+ *
+ * @param int @roleid
+ */
+function reset_role_capabilities($roleid) {
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+    $legacyroles = get_legacy_roles();
+
+    $defaultcaps = array();
+    foreach($legacyroles as $ltype=>$lcap) {
+        $localoverride = get_local_override($roleid, $sitecontext->id, $lcap);
+        if (!empty($localoverride->permission) and $localoverride->permission == CAP_ALLOW) {
+            //choose first selected legacy capability
+            $defaultcaps = get_default_capabilities($ltype);
+            break;
+        }
+    }
+
+    delete_records('role_capabilities', 'roleid', $roleid);
+    if (!empty($defaultcaps)) {
+        foreach($defaultcaps as $cap=>$permission) {
+            assign_capability($cap, $permission, $roleid, $sitecontext->id);
+        }
+    }
 }
 
 /**
@@ -3355,7 +3384,7 @@ function get_assignable_roles ($context, $field="name") {
  * @param object $context
  * @return array
  */
-function get_overridable_roles ($context) {
+function get_overridable_roles($context) {
 
     $options = array();
 
@@ -3370,7 +3399,7 @@ function get_overridable_roles ($context) {
     return $options;
 }
 
-/*
+/**
  *  Returns a role object that is the default role for new enrolments
  *  in a given course
  *
@@ -3626,7 +3655,7 @@ function get_roles_on_exact_context($context) {
 
 }
 
-/*
+/**
  * Switches the current user to another role for the current session and only
  * in the given context.  If roleid is not valid (eg 0) or the current user
  * doesn't have permissions to be switching roles then the user's session
@@ -3724,7 +3753,8 @@ function get_roles_with_assignment_on_context($context) {
 
 
 
-/* find all user assignemnt of users for this role, on this context
+/**
+ * Find all user assignemnt of users for this role, on this context
  */
 function get_users_from_role_on_context($role, $context) {
 
@@ -3736,7 +3766,7 @@ function get_users_from_role_on_context($role, $context) {
                                   AND roleid = $role->id");
 }
 
-/* 
+/**
  * Simple function returning a boolean true if roles exist, otherwise false
  */
 function user_has_role_assignment($userid, $roleid, $contextid=0) {
@@ -3748,8 +3778,10 @@ function user_has_role_assignment($userid, $roleid, $contextid=0) {
     }
 }
 
-// inserts all parental context and self into context_rel table
-/** @param object $context-context to be deleted
+/** 
+ * Inserts all parental context and self into context_rel table
+ *
+ * @param object $context-context to be deleted
  * @param bool deletechild - deltes child contexts dependencies
  */
 function insert_context_rel($context, $deletechild=true, $deleteparent=true) {
@@ -3773,7 +3805,10 @@ function insert_context_rel($context, $deletechild=true, $deleteparent=true) {
     }  
 }
 
-// rebuild context_rel table without deleting
+
+/**
+ * rebuild context_rel table without deleting
+ */
 function build_context_rel() {
   
     global $db;

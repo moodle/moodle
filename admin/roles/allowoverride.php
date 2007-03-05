@@ -78,7 +78,7 @@
 
     echo '<form action="allowoverride.php" method="post">';
     print_table($table);
-    echo '<div class="singlebutton"><input type="submit" value="'.get_string('savechanges').'"/></div>';
+    echo '<div class="buttons"><input type="submit" value="'.get_string('savechanges').'"/></div>';
     echo '<input type="hidden" name="dummy" value="1" />'; // this is needed otherwise we do not know a form has been submitted
     echo '</form>';
 

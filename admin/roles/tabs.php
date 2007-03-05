@@ -1,6 +1,11 @@
 <?php // $Id$
 
 // Handles headers and tabs for the roles control at any level apart from SYSTEM level
+// We also assume that $currenttab, $assignableroles and $overridableroles are defined
+
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
 
 if ($currenttab != 'update') {
     switch ($context->contextlevel) {
@@ -29,11 +34,14 @@ if ($currenttab != 'update') {
         case CONTEXT_COURSE:
             if ($context->instanceid != SITEID) {
                 $streditcoursesettings = get_string("editcoursesettings");
-    
+
                 $course = get_record('course', 'id', $context->instanceid);
+
+                require_login($course);
+
                 print_header($streditcoursesettings, $course->fullname,
                         "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $straction");
-            }                        
+            }
             break;
 
         case CONTEXT_GROUP:
@@ -54,6 +62,8 @@ if ($currenttab != 'update') {
                 error("The required instance of this module doesn't exist");
             }
 
+            require_login($course);
+
             $strnav = "<a href=\"$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id\">$instance->name</a> ->";
             $fullmodulename = get_string("modulename", $module->name);
             $streditinga = get_string("editinga", "moodle", $fullmodulename);
@@ -65,7 +75,6 @@ if ($currenttab != 'update') {
                 $focuscursor = "form.name";
             }
 
-            $COURSE = $course;
             print_header_simple($streditinga, '',
                     "<a href=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</a> ->
                     $strnav <a href=\"$CFG->wwwroot/course/mod.php?update=$cm->id&amp;sesskey=".sesskey()."\">$streditinga</a> -> $straction", $focuscursor, "", false);
@@ -81,6 +90,9 @@ if ($currenttab != 'update') {
                     switch ($blockinstance->pagetype) {
                         case 'course-view':
                             if ($course = get_record('course', 'id', $blockinstance->pageid)) {
+
+                                require_login($course);
+
                                 if ($course->id != SITEID) {
                                     $navigation = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $navigation";
                                 }
@@ -123,14 +135,7 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything ex
     $toprow[] = new tabobject('roles', $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.
                                $context->id, get_string('roles'));
 
-    if (isset($tabsmode)) {
-
-        if (!isset($assignableroles)) {
-            $assignableroles = get_assignable_roles($context);
-        }
-        if (!isset($overridableroles)) {
-            $overridableroles = get_overridable_roles($context);
-        }
+    if (!empty($tabsmode)) {
 
         if (!empty($assignableroles)) {
             $secondrow[] = new tabobject('assign',
