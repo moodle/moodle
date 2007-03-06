@@ -324,10 +324,14 @@ function forum_cron() {
 
             $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);   // Cached already
 
+
             if ($users = forum_subscribed_users($course, $forum, 0, true)) {
+
+                mtrace('Found '.count($users).' subscribed users for forum '.$forum->id);
 
                 $mailcount=0;
                 $errorcount=0;
+
                 foreach ($users as $userto) {
                     if ($groupmode) {    // Look for a reason not to send this email
                         if (!empty($group->id)) {
@@ -341,6 +345,7 @@ function forum_cron() {
 
                     // make sure we're allowed to see it...
                     if (!forum_user_can_see_post($forum, $discussion, $post, $userto)) {
+                        mtrace('user '.$userto->id. ' can not see '.$post->id);
                         continue;
                     }
 
@@ -360,7 +365,9 @@ function forum_cron() {
                     /// mail is customised for the receiver.
                     $USER = $userto;
                     course_setup($course);
-                    
+
+                    mtrace('Sending post '.$post->id. ' to user '.$userto->id. '...', '');
+
                     $postsubject = "$course->shortname: ".format_string($post->subject,true);
                     $posttext = forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto);
                     $posthtml = forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $userto);
@@ -389,6 +396,8 @@ function forum_cron() {
                             }
                         }
                     }
+
+                    mtrace(' sent.');
                 }
 
                 mtrace(".... mailed to $mailcount users.");
@@ -691,7 +700,7 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
 
     $strforums = get_string('forums', 'forum');
     $canreply = forum_user_can_post($forum, $userto);
-    $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
+    $canunsubscribe = ! $forum->forcesubscribe;
 
     $posthtml = '<head>';
     foreach ($CFG->stylesheets as $stylesheet) {
@@ -2916,14 +2925,18 @@ function forum_user_has_posted($forumid, $did, $userid) {
     return record_exists('forum_posts','discussion',$did,'userid',$userid);
 }
 
-function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=false) {
+function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=false, $cm=NULL, $context=NULL) {
 // $forum is an object
     global $USER, $SESSION;
 
-    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-        error('Course Module ID was incorrect');
+    if (!$cm) {
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+            error('Course Module ID was incorrect');
+        }
     }
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if (!$context) {
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    }
 
     if ($forum->type == 'news') {
         $capname = 'mod/forum:addnews';
@@ -2958,12 +2971,16 @@ function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=
  * @param $forum - forum object
  * @param $user - user object
  */
-function forum_user_can_post($forum, $user=NULL) {
+function forum_user_can_post($forum, $user=NULL, $cm=NULL, $context=NULL) {
 
-    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-        error('Course Module ID was incorrect');
+    if (!$cm) {
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+            error('Course Module ID was incorrect');
+        }
     }
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if (!$context) {
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    }
 
     if ($forum->type == 'news') {
         $capname = 'mod/forum:replynews';
@@ -3128,7 +3145,6 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 /// First check the group stuff
 
     if ($groupmode == -1) {    /// We need to reconstruct groupmode because none was given
-        $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id);
         $groupmode = groupmode($course, $cm);   // Works even if $cm is not valid
     }
 
@@ -3147,7 +3163,8 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 /// button for it. We do not show the button if we are showing site news
 /// and the current user is a guest.
 
-    if (forum_user_can_post_discussion($forum, $currentgroup, $groupmode)) {
+    if (forum_user_can_post_discussion($forum, $currentgroup, $groupmode, $cm, $context) ||
+        ($forum->type != 'news' && has_capability('moodle/legacy:guest', $context, NULL, false)) ) {
 
         echo '<div class="singlebutton forumaddnew">';
         echo "<form id=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
