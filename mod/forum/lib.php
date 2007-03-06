@@ -360,10 +360,12 @@ function forum_cron() {
                     /// mail is customised for the receiver.
                     $USER = $userto;
                     course_setup($course);
-
+                    
                     $postsubject = "$course->shortname: ".format_string($post->subject,true);
                     $posttext = forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto);
                     $posthtml = forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $userto);
+
+                    unset($USER);
 
                     if (!$mailresult = email_to_user($userto, $userfrom, $postsubject, $posttext,
                                                      $posthtml, '', '', $CFG->forum_replytouser)) {
