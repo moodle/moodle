@@ -364,7 +364,9 @@ function forum_cron() {
                     $postsubject = "$course->shortname: ".format_string($post->subject,true);
                     $posttext = forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto);
                     $posthtml = forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $userto);
-
+                    
+                    unset($USER);
+                    
                     if (!$mailresult = email_to_user($userto, $userfrom, $postsubject, $posttext,
                                                      $posthtml, '', '', $CFG->forum_replytouser)) {
                         mtrace("Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id".
@@ -629,7 +631,7 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
         error('Course Module ID was incorrect');
     }
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext, $userto->id);
+    $viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext);
 
     $by = New stdClass;
     $by->name = fullname($userfrom, $viewfullnames);
@@ -869,12 +871,10 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
     $mygroupid = mygroupid($course->id);
     $groupmode = array();   /// To cache group modes
 
-    $count = 0;
     foreach ($logs as $log) {
         //Get post info, I'll need it later
         if ($post = forum_get_post_from_log($log)) {
             //Create a temp valid module structure (course,id)
-            $tempmod = new object;
             $tempmod->course = $log->course;
             $tempmod->id = $post->forum;
             //Obtain the visible property from the instance
@@ -907,7 +907,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
             }
 
             if (! $heading) {
-                print_headline(get_string('newforumposts', 'forum').':', 3);
+                print_headline(get_string('newforumposts', 'forum').':');
                 $heading = true;
                 $content = true;
             }
@@ -915,12 +915,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
 
             $subjectclass = ($log->action == 'add discussion') ? ' bold' : '';
 
-            //Accessibility: markup as a list.
-            if ($count < 1) {
-                echo "\n<ul class='unlist'>\n";
-            }
-            $count++;
-            echo '<li><div class="head">'.
+            echo '<div class="head">'.
                    '<div class="date">'.$date.'</div>'.
                    '<div class="name">'.fullname($post, has_capability('moodle/site:viewfullnames', $coursecontext)).'</div>'.
                  '</div>';
@@ -928,10 +923,9 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
             echo '"<a href="'.$CFG->wwwroot.'/mod/forum/'.str_replace('&', '&amp;', $log->url).'">';
             $post->subject = break_up_long_words(format_string($post->subject,true));
             echo $post->subject;
-            echo "</a>\"</div></li>\n";
+            echo '</a>"</div>';
         }
     }
-    echo "</ul>\n";
     return $content;
 }
 
@@ -1734,7 +1728,7 @@ function forum_get_course_forum($courseid, $type) {
     $mod->instance = $forum->id;
     $mod->section = 0;
     if (! $mod->coursemodule = add_course_module($mod) ) {   // assumes course/lib.php is loaded
-        notify("Could not add a new course module to the course '" . format_string($course->fullname) . "'");
+        notify("Could not add a new course module to the course '$course->fullname'");
         return false;
     }
     if (! $sectionid = add_mod_to_section($mod) ) {   // assumes course/lib.php is loaded
@@ -2914,7 +2908,7 @@ function forum_user_has_posted($forumid, $did, $userid) {
     return record_exists('forum_posts','discussion',$did,'userid',$userid);
 }
 
-function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=false) {
+function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode='') {
 // $forum is an object
     global $USER, $SESSION;
 
@@ -2923,17 +2917,11 @@ function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=
     }
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    if ($forum->type == 'news') {
-        $capname = 'mod/forum:addnews';
-    } else {
-        $capname = 'mod/forum:startdiscussion';
-    }
-
-    if (!has_capability($capname, $context)) {
+    if (!has_capability('mod/forum:startdiscussion', $context)) {
         return false;
     }
 
-    if ($forum->type == 'eachuser') {
+    if ($forum->type == "eachuser") {
         return (!forum_user_has_posted_discussion($forum->id, $USER->id));
     } else if ($currentgroup) {
         return (has_capability('moodle/site:accessallgroups', $context)
@@ -2963,17 +2951,11 @@ function forum_user_can_post($forum, $user=NULL) {
     }
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    if ($forum->type == 'news') {
-        $capname = 'mod/forum:replynews';
-    } else {
-        $capname = 'mod/forum:replypost';
-    }
-
-    if (!empty($user)) {
-        $canreply = has_capability($capname, $context, $user->id, false)
+    if (isset($user)) {
+        $canreply = has_capability('mod/forum:replypost', $context, $user->id, false)
                 && !has_capability('moodle/legacy:guest', $context, $user->id, false);
     } else {
-        $canreply = has_capability($capname, $context, NULL, false)
+        $canreply = has_capability('mod/forum:replypost', $context, NULL, false)
                 && !has_capability('moodle/legacy:guest', $context, NULL, false);
     }
 
@@ -2997,9 +2979,9 @@ function forum_user_can_view_post($post, $course, $cm, $forum, $discussion, $use
 
 /// If it's a grouped discussion, make sure the user is a member
     if ($discussion->groupid > 0) {
-        $groupmode = groupmode($course, $cm);
-        if ($groupmode == SEPARATEGROUPS) {
-            return ismember($discussion->groupid) || has_capability('moodle/site:accessallgroups', $modcontext);
+        if ($cm->groupmode == SEPARATEGROUPS) {
+            return ismember($discussion->groupid) ||
+                    has_capability('moodle/site:accessallgroups', $modcontext);
         }
     }
     return true;
@@ -3126,16 +3108,19 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 /// First check the group stuff
 
     if ($groupmode == -1) {    /// We need to reconstruct groupmode because none was given
-        $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id);
-        $groupmode = groupmode($course, $cm);   // Works even if $cm is not valid
+        if ($cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
+            $groupmode = groupmode($course, $cm);
+        } else {
+            $groupmode = SEPARATEGROUPS;
+        }
     }
 
     if ($currentgroup == -1) {    /// We need to reconstruct currentgroup because none was given
         $currentgroup = get_current_group($course->id);
     }
 
-    if (!$currentgroup and 
-       ($groupmode != SEPARATEGROUPS or has_capability('moodle/site:accessallgroups', $context)) ) {
+    if (!$currentgroup and ($groupmode != SEPARATEGROUPS or
+                has_capability('moodle/site:accessallgroups', $context)) ) {
         $visiblegroups = -1;
     } else {
         $visiblegroups = $currentgroup;
@@ -3145,11 +3130,12 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 /// button for it. We do not show the button if we are showing site news
 /// and the current user is a guest.
 
+    // TODO: Add group mode in there, to test for visible group.
     if (forum_user_can_post_discussion($forum, $currentgroup, $groupmode)) {
 
         echo '<div class="singlebutton forumaddnew">';
         echo "<form id=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
-        echo '<div>';
+        echo '<fieldset class="invisiblefieldset">';
         echo "<input type=\"hidden\" name=\"forum\" value=\"$forum->id\" />";
         echo '<input type="submit" value="';
         echo ($forum->type == 'news') ? get_string('addanewtopic', 'forum')
@@ -3157,7 +3143,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
                ? get_string('addanewquestion','forum')
                : get_string('addanewdiscussion', 'forum'));
         echo '" />';
-        echo '</div>';
+        echo '</fieldset>';
         echo '</form>';
         echo "</div>\n";
     }
