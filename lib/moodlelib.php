@@ -6776,9 +6776,10 @@ function is_enabled_enrol($enrol='') {
  */
 function setup_lang_from_browser() {
 
-    global $CFG, $SESSION;
+    global $CFG, $SESSION, $USER;
 
-    if (!empty($SESSION->lang)) {                   // Lang is defined in session, nothing to do
+    if (!empty($SESSION->lang) or !empty($USER->lang)) {
+        // Lang is defined in session or user profile, nothing to do
         return;
     }
 
@@ -6787,14 +6788,27 @@ function setup_lang_from_browser() {
     }
 
 /// Extract and clean langs from headers
-    $langs = strtolower(clean_param($_SERVER['HTTP_ACCEPT_LANGUAGE'], PARAM_SAFEDIR)); /// Get String with basic clean
-    $langs = str_replace('-', '_', $langs); // we are using underscores
-    $langs = explode(',', $langs); /// Convert to array
-    $langs = array_unique($langs); /// Avoid duplicates
+    $rawlangs = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+    $rawlangs = str_replace('-', '_', $rawlangs);         // we are using underscores
+    $rawlangs = explode(',', $rawlangs);                  // Convert to array
+    $langs = array();
+
+    $order = 1.0;
+    foreach ($rawlangs as $lang) {
+        if (strpos($lang, ';') === false) {
+            $langs[(string)$order] = $lang;
+            $order = $order-0.01;
+        } else {
+            $parts = explode(';', $lang);
+            $pos = strpos($parts[1], '=');
+            $langs[substr($parts[1], $pos+1)] = $parts[0];
+        }
+    }
+    krsort($langs, SORT_NUMERIC);
 
 /// Look for such langs under standard locations
     foreach ($langs as $lang) {
-        $lang = $lang.'_utf8';
+        $lang = clean_param($lang.'_utf8', PARAM_SAFEDIR); // clean it properly for include
         if (file_exists($CFG->dataroot .'/lang/'. $lang) or file_exists($CFG->dirroot .'/lang/'. $lang)) {
             $SESSION->lang = $lang; /// Lang exists, set it in session 
             break; /// We have finished. Go out
