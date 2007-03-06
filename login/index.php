@@ -144,6 +144,16 @@ if (!isset($CFG->auth_instructions)) {
 
         if ($user) {
 
+            // language setup
+            if ($user->username == 'guest') {
+                // no predefined language for guests - use existing session or default site lang
+                unset($user->lang);
+
+            } else if (!empty($user->lang)) {
+                // unset previous session language - use user preference instead
+                unset($SESSION->lang);
+            }
+
             if (empty($user->confirmed)) {       // This account was never confirmed
                 print_header(get_string("mustconfirm"), get_string("mustconfirm") ); 
                 print_heading(get_string("mustconfirm"));
