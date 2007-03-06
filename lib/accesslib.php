@@ -1628,10 +1628,10 @@ function assign_legacy_capabilities($capability, $legacyperms) {
  * @return boolean
  */
 function islegacy($capabilityname) {
-    if (strstr($capabilityname, 'legacy') === false) {
-        return false;
-    } else {
+    if (strpos($capabilityname, 'moodle/legacy') === 0) {
         return true;
+    } else {
+        return false;
     }
 }
 

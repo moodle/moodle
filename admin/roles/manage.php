@@ -57,6 +57,12 @@
             if ($data = data_submitted() and confirm_sesskey()) {
 
                 $shortname = moodle_strtolower(clean_param(clean_filename($shortname), PARAM_SAFEDIR)); // only lowercase safe ASCII characters
+                $legacytype = required_param('legacytype', PARAM_RAW);
+
+                $legacyroles = get_legacy_roles();
+                if (!array_key_exists($legacytype, $legacyroles)) {
+                    $legacytype = '';
+                }
 
                 if (empty($name)) {
                     $errors['name'] = get_string('errorbadrolename', 'role');
@@ -71,12 +77,19 @@
                 }
 
                 if (empty($errors)) {
-                    $newrole = create_role($name, $shortname, $description);
+                    $newroleid = create_role($name, $shortname, $description);
+
+                    // set proper legacy type
+                    if (!empty($legacytype)) {
+                        assign_capability($legacyroles[$legacytype], CAP_ALLOW, $newroleid, $sitecontext->id);
+                    }
+
                 } else {
                     $newrole = new object();
-                    $newrole->name = $name;
-                    $newrole->shortname = $shortname;
+                    $newrole->name        = $name;
+                    $newrole->shortname   = $shortname;
                     $newrole->description = $description;
+                    $newrole->legacytype  = $legacytype;
                 }
 
                 $allowed_values = array(CAP_INHERIT, CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT);
@@ -86,6 +99,12 @@
                     if (!isset($data->{$cap->name})) {
                         continue;
                     }
+
+                    // legacy caps have their own selector
+                    if (islegacy($data->{$cap->name})) {
+                        continue;
+                    }
+
                     $capname = $cap->name;
                     $value = clean_param($data->{$cap->name}, PARAM_INT);
                     if (!in_array($value, $allowed_values)) {
@@ -93,11 +112,12 @@
                     }
 
                     if (empty($errors)) {
-                        assign_capability($capname, $value, $newrole, $sitecontext->id);
+                        assign_capability($capname, $value, $newroleid, $sitecontext->id);
                     } else {
                         $newrole->$capname = $value;
                     }
                 }
+
                 if (empty($errors)) {
                     redirect('manage.php');
                 }
@@ -108,6 +128,12 @@
             if ($data = data_submitted() and confirm_sesskey()) {
 
                 $shortname = moodle_strtolower(clean_param(clean_filename($shortname), PARAM_SAFEDIR)); // only lowercase safe ASCII characters
+                $legacytype = required_param('legacytype', PARAM_RAW);
+
+                $legacyroles = get_legacy_roles();
+                if (!array_key_exists($legacytype, $legacyroles)) {
+                    $legacytype = '';
+                }
 
                 if (empty($name)) {
                     $errors['name'] = get_string('errorbadrolename', 'role');
@@ -128,9 +154,10 @@
                 }
                 if (!empty($errors)) {
                     $newrole = new object();
-                    $newrole->name = $name;
-                    $newrole->shortname = $shortname;
+                    $newrole->name        = $name;
+                    $newrole->shortname   = $shortname;
                     $newrole->description = $description;
+                    $newrole->legacytype  = $legacytype;
                 }
 
                 $allowed_values = array(CAP_INHERIT, CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT);
@@ -140,6 +167,12 @@
                     if (!isset($data->{$cap->name})) {
                         continue;
                     }
+
+                    // legacy caps have their own selector
+                    if (islegacy($data->{$cap->name}) === 0 ) {
+                        continue;
+                    }
+
                     $capname = $cap->name;
                     $value = clean_param($data->{$cap->name}, PARAM_INT);
                     if (!in_array($value, $allowed_values)) {
@@ -173,6 +206,7 @@
                             assign_capability($capname, $value, $roleid, $sitecontext->id);
                         }
                     }
+
                 }
 
                 if (empty($errors)) {
@@ -185,6 +219,16 @@
                     if (!update_record('role', $role)) {
                         error('Could not update role!');
                     }
+
+                    // set proper legacy type
+                    foreach($legacyroles as $ltype=>$lcap) {
+                        if ($ltype == $legacytype) {
+                            assign_capability($lcap, CAP_ALLOW, $roleid, $sitecontext->id);
+                        } else {
+                            unassign_capability($lcap, $roleid);
+                        } 
+                    }                    
+
                     redirect('manage.php');
                 }
             }
@@ -349,9 +393,10 @@
             $roleid = 0;
             if (empty($errors) or empty($newrole)) {
                 $role = new object();
-                $role->name='';
-                $role->shortname='';
-                $role->description='';
+                $role->name        = '';
+                $role->shortname   = '';
+                $role->description = '';
+                $role->legacytype  = '';
             } else {
                 $role = stripslashes_safe($newrole);
             }
@@ -361,6 +406,7 @@
             if(!$role = get_record('role', 'id', $roleid)) {
                 error('Incorrect role ID!');
             }
+            $role->legacytype = get_legacy_type($role->id);
         }
 
         foreach ($roles as $rolex) {

@@ -33,6 +33,12 @@
         $strcapabilities = s(get_string('capabilities', 'role'));
 
         foreach ($capabilities as $capability) {
+
+            // legacy caps should not be overriden - we must use proper capabilities if needed
+            if (islegacy($capability->name)) {
+                continue;
+            }
+
         // prints a breaker if component or name or context level
             if ($capability->component != $component or $capability->contextlevel != $contextlevel) {
                 echo ('<tr class="rolecapheading header"><td colspan="10" class="header"><strong>'.get_component_string($capability->component, $capability->contextlevel).'</strong></td></tr>');
@@ -59,7 +65,7 @@
                 $isprohibit = 0;
             }
 
-            $isdisabled = $isprohibit || islegacy($capability->name);
+            $isdisabled = $isprohibit;
 
             $riskinfo = '<td class="risk managetrust">';
             $rowclasses = '';

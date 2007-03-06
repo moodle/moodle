@@ -90,6 +90,10 @@
                 continue;
             }
 
+            if (islegacy($data->{$cap->name})) {
+                continue;
+            }
+
             $capname = $cap->name;
             $value = clean_param($data->{$cap->name}, PARAM_INT);
             if (!in_array($value, $allowed_values)) {
