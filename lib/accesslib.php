@@ -305,7 +305,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
     }
 
 /// Some sanity checks
-    if (debugging()) {
+    if (debugging('',DEBUG_DEVELOPER)) {
         if ($capability == 'debugcache') {
             print_object($capcache);
             return true;
