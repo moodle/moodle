@@ -34,26 +34,54 @@
         <td align="right"><?php print_string('description') ?>:</td>
         <td><?php p($role->description); $usehtmleditor = false; ?></td>
     </tr>
+    <tr valign="top">
+        <td align="right"><?php print_string('legacytype', 'role') ?>:</td>
+        <td><?php 
+                $usehtmleditor = false;
+                if (empty($role->legacytype)) {
+                    print_string('none');
+                } else {
+                    print_string('legacy:'.$role->legacytype, 'role');
+                }
+            ?>
+        </td>
+    </tr>
 <?php } else { ?>
     <tr valign="top">
         <td align="right"><label for="name"><?php print_string('name') ?></label></td>
         <td><?php
             echo '<input type="text" id="name" name="name" maxlength="254" size="50" value="'.s($role->name).'" />';
             if (isset($errors["name"])) formerr($errors["name"]);
-            ?></td>
+            ?>
+        </td>
     </tr>
     <tr valign="top">
         <td align="right"><label for="shortname"><?php print_string('shortname') ?></label></td>
         <td><?php
             echo '<input type="text" id="shortname" name="shortname" maxlength="20" size="15" value="'.s($role->shortname).'" />';
             if (isset($errors["shortname"])) formerr($errors["shortname"]);
-            ?></td>
+            ?>
+        </td>
     </tr>
     <tr valign="top">
         <td align="right"><label for="edit-description"><?php print_string('description') ?></label></td>
         <td><?php
             print_textarea($usehtmleditor, 10, 50, 50, 10, 'description', $role->description);
-            ?></td>
+            ?>
+        </td>
+    </tr>
+    <tr valign="top">
+        <td align="right"><label for="menulegacytype"><?php print_string('legacytype', 'role') ?></label></td>
+        <td><?php
+            $options = array();
+            $options[''] = get_string('none');
+            $legacyroles = get_legacy_roles();
+            foreach($legacyroles as $ltype=>$lcap) {
+                $options[$ltype] = get_string('legacy:'.$ltype, 'role');
+            }
+            choose_from_menu($options, 'legacytype', $role->legacytype, '');
+            ?>
+        </td>
     </tr>
 <?php } ?>
 </table>
@@ -88,27 +116,19 @@ $strrisks = s(get_string('risks', 'role'));
 $strcapabilities = s(get_string('capabilities', 'role'));
 
 // prepare legacy defaults
-$legacyroles = get_legacy_roles();
-
-$defaultcaps = false;
-foreach($legacyroles as $ltype=>$lcap) {
-    if (empty($errors)) {
-       // check the capability override for this cap, this role in this context
-        $localoverride = get_local_override($roleid, $sitecontext->id, $lcap);
-    } else {
-        $localoverride->permission = $role->{$lcap};
-    }
-    if (!empty($localoverride->permission) and $localoverride->permission == CAP_ALLOW) {
-        if ($defaultcaps !== false) {
-            //oh, several legacy caps selected!
-            $defaultcaps = false;
-            break;
-        }
-        $defaultcaps = get_default_capabilities($ltype);
-    }
+if (!empty($role->legacytype)) {
+    $defaultcaps = get_default_capabilities($role->legacytype);
+} else {
+    $defaultcaps = false;
 }
 
 foreach ($capabilities as $capability) {
+
+    //legacy caps have their own selector
+    if (strpos($capability->name, 'moodle/legacy:') === 0 ) {
+        continue;
+    }
+
     // prints a breaker if component or name or context level
     if ($capability->component != $component or $capability->contextlevel != $contextlevel) {
         echo ('<tr class="rolecapheading header"><td colspan="10" class="header"><strong>'.
@@ -162,15 +182,10 @@ foreach ($capabilities as $capability) {
     }
     $riskinfo .= '</td>';
 
-    if ($defaultcaps === false) {
-        $capclass = '';
-    } else {
-        $capclass = 'capdefault';
-    }
-    $isinherit  = (!isset($defaultcaps[$capability->name]) or $defaultcaps[$capability->name] == CAP_INHERIT) ? $capclass : '';
-    $isallow    = (isset($defaultcaps[$capability->name]) and $defaultcaps[$capability->name] == CAP_ALLOW) ? $capclass : '';
-    $isprevent  = (isset($defaultcaps[$capability->name]) and $defaultcaps[$capability->name] == CAP_PREVENT) ? $capclass : '';
-    $isprohibit = (isset($defaultcaps[$capability->name]) and $defaultcaps[$capability->name] == CAP_PROHIBIT) ? $capclass : '';
+    $isinherit  = (!isset($defaultcaps[$capability->name]) or $defaultcaps[$capability->name] == CAP_INHERIT) ? 'capdefault' : '';
+    $isallow    = (isset($defaultcaps[$capability->name]) and $defaultcaps[$capability->name] == CAP_ALLOW) ? 'capdefault' : '';
+    $isprevent  = (isset($defaultcaps[$capability->name]) and $defaultcaps[$capability->name] == CAP_PREVENT) ? 'capdefault' : '';
+    $isprohibit = (isset($defaultcaps[$capability->name]) and $defaultcaps[$capability->name] == CAP_PROHIBIT) ? 'capdefault' : '';
 
     ?>
 

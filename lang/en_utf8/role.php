@@ -65,6 +65,7 @@ $string['legacy:guest'] = 'LEGACY ROLE: Guest';
 $string['legacy:student'] = 'LEGACY ROLE: Student';
 $string['legacy:teacher'] = 'LEGACY ROLE: Teacher (non-editing)';
 $string['legacy:user'] = 'LEGACY ROLE: Authenticated user';
+$string['legacytype'] = 'Legacy role type';
 $string['listallroles'] = 'List all roles';
 $string['manageroles'] = 'Manage roles';
 $string['metaassignerror'] = 'Can not assign this role to user \"$a\" because Manage metacourse capability is needed.';
