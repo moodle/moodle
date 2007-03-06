@@ -277,7 +277,7 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
     } else { // When groupid = 0 it means show ALL groups
         // this is changed, non editting teacher needs access to group 0 as well,
         // for viewing work in visible groups (need to set current group for multiple pages)
-        if (has_capability('moodle/site:accessallgroups', $context) AND ($groupmode == VISIBLEGROUPS)) { // Sets current default group
+        if (has_capability('moodle/site:accessallgroups', $context)) { // Sets current default group
             $currentgroupid = set_current_group($course->id, 0);
 
         } elseif ($groupmode == VISIBLEGROUPS) {  // All groups are visible
