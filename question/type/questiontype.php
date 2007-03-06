@@ -1136,11 +1136,11 @@ class default_questiontype {
      * @param object $cmoptions the context the string is being displayed in. Only $cmoptions->course is used.
      * @return string the formatted text.
      */
-    function format_text($text, $textformat, $cmoptions) {
+    function format_text($text, $textformat, $cmoptions = NULL) {
         $formatoptions = new stdClass;
         $formatoptions->noclean = true;
         $formatoptions->para = false;
-        return format_text($text, $textformat, $formatoptions, $cmoptions->course);
+        return format_text($text, $textformat, $formatoptions, $cmoptions === NULL ? NULL : $cmoptions->course);
     }
     
 /// BACKUP FUNCTIONS ////////////////////////////

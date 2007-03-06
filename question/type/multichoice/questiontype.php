@@ -370,9 +370,12 @@ class question_multichoice_qtype extends default_questiontype {
     // ULPGC ecastro
     function get_actual_response($question, $state) {
         $answers = $question->options->answers;
+        $responses = array();
         if (!empty($state->responses)) {
             foreach ($state->responses as $aid =>$rid){
-                $responses[] = (!empty($answers[$rid]) ? $answers[$rid]->answer : '');
+                if (!empty($answers[$rid])) {
+                    $responses[] = $this->format_text($answers[$rid]->answer, $question->questiontextformat);
+                }
             }
         } else {
             $responses[] = '';
@@ -380,6 +383,10 @@ class question_multichoice_qtype extends default_questiontype {
         return $responses;
     }
     
+    function response_summary($question, $state, $length = 80) {
+        return implode(',', $this->get_actual_response($question, $state));
+    }
+
 /// BACKUP FUNCTIONS ////////////////////////////
 
     /*
