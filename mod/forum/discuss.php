@@ -98,11 +98,7 @@
     unset($SESSION->fromdiscussion);
 
     if ($mode) {
-        if (isguest()) {
-            $USER->preference['forum_displaymode'] = $mode;  // don't save it in database
-        } else {
-            set_user_preference('forum_displaymode', $mode);
-        }
+        set_user_preference('forum_displaymode', $mode);
     }
 
     $displaymode = get_user_preferences('forum_displaymode', $CFG->forum_displaymode);

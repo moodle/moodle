@@ -45,10 +45,10 @@ class login_change_password_form extends moodleform {
         $mform->setType('id', PARAM_INT);
 
         // buttons
-        if (empty($USER->preference['auth_forcepasswordchange'])) {
-            $this->add_action_buttons(true);
-        } else {
+        if (get_user_preferences('auth_forcepasswordchange')) {
             $this->add_action_buttons(false);
+        } else {
+            $this->add_action_buttons(true);
         }
     }
 

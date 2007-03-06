@@ -8,9 +8,9 @@ require_login();
 
 if ($section = optional_param('section', '', PARAM_ALPHAEXT) and confirm_sesskey()) {
 
-    if (isset($USER->preference['admin_bookmarks'])) {
+    if (get_user_preferences('admin_bookmarks')) {
 
-        $bookmarks = explode(',', $USER->preference['admin_bookmarks']);
+        $bookmarks = explode(',', get_user_preferences('admin_bookmarks'));
 
         $key = array_search($section, $bookmarks);
 
@@ -28,9 +28,9 @@ if ($section = optional_param('section', '', PARAM_ALPHAEXT) and confirm_sesskey
         if (is_a($temp, 'admin_externalpage')) {
             redirect($temp->url, get_string('bookmarkdeleted','admin'));
         } elseif (is_a($temp, 'admin_settingpage')) {
-            redirect($CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=' . $section, get_string('bookmarkdeleted','admin'), 1);
+            redirect($CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=' . $section);
         } else {
-            redirect($CFG->wwwroot, get_string('bookmarkdeleted', 'admin'),1);
+            redirect($CFG->wwwroot);
         }
         die;
 

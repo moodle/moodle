@@ -110,7 +110,7 @@
 
 
     print_header($strchangepassword, $strchangepassword, $navstr);
-    if (!empty($USER->preference['auth_forcepasswordchange'])) {
+    if (get_user_preferences('auth_forcepasswordchange')) {
         notify(get_string('forcepasswordchangenotice'));
     }
     $mform->display();
