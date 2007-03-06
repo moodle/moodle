@@ -739,9 +739,10 @@ function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$
     }
     if (!empty($options)) {
         foreach ($options as $section => $values) {
-            $output .= '   <optgroup label="'.$section.'">'."\n";
+            
+            $output .= '   <optgroup label="'. s(format_string($section)) .'">'."\n";
             foreach ($values as $value => $label) {
-                $output .= '   <option value="'. $value .'"';
+                $output .= '   <option value="'. format_string($value) .'"';
                 if ((string)$value == (string)$selected) {
                     $output .= ' selected="selected"';
                 }
@@ -976,7 +977,7 @@ function popup_form($common, $options, $formid, $selected='', $nothing='choose',
             unset($optgr);
             $optgr = array();
 
-            $optgr[]  = '   <optgroup label="'. substr($label,2) .'">';   // Plain labels
+            $optgr[]  = '   <optgroup label="'. s(format_string(substr($label,2))) .'">';   // Plain labels
 
             $inoptgroup = true; /// everything following will be in an optgroup
             continue;
@@ -1430,9 +1431,9 @@ function format_string ($string, $striplinks = false, $courseid=NULL ) {
         return $strcache[$md5];
     }
 
-    // First replace all ampersands not followed html entity code
+    // First replace all ampersands not followed by html entity code
     $string = preg_replace("/\&(?![a-z0-9]{1,8};)/", "&amp;", $string);
-
+    
     if (!empty($CFG->filterall)) {
         $string = filter_text($string, $courseid);
     }
