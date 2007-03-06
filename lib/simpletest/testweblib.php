@@ -28,6 +28,11 @@ class web_test extends UnitTestCase {
         $this->assertEqual(format_string("ANother & &&&&& Category"), "ANother &amp; &amp;&amp;&amp;&amp;&amp; Category");
         $this->assertEqual(format_string("ANother & &&&&& Category", true), "ANother &amp; &amp;&amp;&amp;&amp;&amp; Category");
         $this->assertEqual(format_string("Nick's Test Site & Other things", true), "Nick's Test Site &amp; Other things");
+        
     }    
+    
+    function test_s() {
+          $this->assertEqual(s("This Breaks \" Strict"), "This Breaks &quot; Strict"); 
+    }
 }
 ?>
