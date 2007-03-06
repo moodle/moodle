@@ -4250,7 +4250,6 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
     }
 
 /// Define the two or three major locations of language strings for this module
-
     $locations = array();
 
     if (!empty($extralocations)) {   // Calling code has a good idea where to look
@@ -4272,13 +4271,14 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
         $locations += array( $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
     }
 
-
+/// Add extra places to look for strings for particular plugin types.
     if ($module != 'moodle' && $module != 'langconfig') {
         if (strpos($module, 'block_') === 0) {  // It's a block lang file
             $locations[] =  $CFG->dirroot .'/blocks/'.substr($module, 6).'/lang/';
         } else if (strpos($module, 'report_') === 0) {  // It's a report lang file
             $locations[] =  $CFG->dirroot .'/'.$CFG->admin.'/report/'.substr($module, 7).'/lang/';
             $locations[] =  $CFG->dirroot .'/course/report/'.substr($module, 7).'/lang/';
+            $locations[] =  $CFG->dirroot .'/mod/quiz/report/'.substr($module, 7).'/lang/';
         } else if (strpos($module, 'resource_') === 0) {  // It's a resource module file
             $locations[] =  $CFG->dirroot .'/mod/resource/type/'.substr($module, 9).'/lang/';
         } else if (strpos($module, 'assignment_') === 0) {  // It's an assignment module file
@@ -4288,14 +4288,16 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
         } else if (strpos($module, 'auth_') === 0) {  // It's an auth plugin
             $locations[] =  $CFG->dirroot .'/auth/'.substr($module, 5).'/lang/';
         } else if (strpos($module, 'format_') === 0) {  // Course format
-            $locations[] =  $CFG->dirroot  .'/course/format/'.substr($module,7).'/lang/';
+            $locations[] =  $CFG->dirroot .'/course/format/'.substr($module,7).'/lang/';
+        } else if (strpos($module, 'qtype_') === 0) {  // It's a question type
+            $locations[] =  $CFG->dirroot .'/question/type/'.substr($module, 6).'/lang/';
         } else {                                // It's a normal activity
             $locations[] =  $CFG->dirroot .'/mod/'.$module.'/lang/';
         }
     }
 
-
 /// First check all the normal locations for the string in the current language
+    $resultstring = '';
     foreach ($locations as $location) {
         $locallangfile = $location.$lang.'_local'.'/'.$module.'.php';    //first, see if there's a local file
         if (file_exists($locallangfile)) {
