@@ -50,6 +50,12 @@
         redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
     }
 
+    // check if major upgrade needed - also present in login/index.php
+    if ((int)$CFG->version < 2006101100) { //1.7 or older
+        @require_logout();
+        redirect("$CFG->wwwroot/$CFG->admin/");
+    }
+
     if ($CFG->forcelogin) {
         require_login();
     }
