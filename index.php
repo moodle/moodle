@@ -112,41 +112,31 @@
 <table id="layout-table" summary="layout">
   <tr>
   <?php
-// uh-changes start
     $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
     foreach ($lt as $column) {
         switch ($column) {
             case 'left':
-// uh-changes end
     if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
         echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
-// uh-changes start
         if (!empty($THEME->roundcorners)) {
             echo '<div class="bt"><div></div></div>';
             echo '<div class="i1"><div class="i2"><div class="i3">';
         }
-// uh-changes end
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-// uh-changes start
         if (!empty($THEME->roundcorners)) {
             echo '</div></div></div>';
             echo '<div class="bb"><div></div></div>';
         }
-// uh-changes end
         echo '</td>';
     }
-// uh-changes start
             break;
             case 'middle':
-// uh-changes end
     echo '<td id="middle-column">';
 
-// uh-changes start
     if (!empty($THEME->roundcorners)) {
         echo '<div class="bt"><div></div></div>';
         echo '<div class="i1"><div class="i2"><div class="i3">';
     }
-// uh-changes end
 
 /// Print Section
     if ($SITE->numsections > 0) {
@@ -263,45 +253,35 @@
         echo '<br />';
     }
 
-// uh-changes start
     if (!empty($THEME->roundcorners)) {
         echo '</div></div></div>';
         echo '<div class="bb"><div></div></div>';
     }
-// uh-changes end
 
     echo '</td>';
-// uh-changes start
             break;
             case 'right':
-// uh-changes end
     // The right column
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing || has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, SITEID))) {
         echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
-// uh-changes start
         if (!empty($THEME->roundcorners)) {
             echo '<div class="bt"><div></div></div>';
             echo '<div class="i1"><div class="i2"><div class="i3">';
         }
-// uh-changes end
         if (has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, SITEID))) {
             echo '<div style="text-align:center">'.update_course_icon($SITE->id).'</div>';
             echo '<br />';
         }
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-// uh-changes start
         if (!empty($THEME->roundcorners)) {
             echo '</div></div></div>';
             echo '<div class="bb"><div></div></div>';
         }
-// uh-changes end
         echo '</td>';
     }
-// uh-changes start
             break;
         }
     }
-// uh-changes end
 ?>
 
   </tr>
