@@ -629,7 +629,7 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
         error('Course Module ID was incorrect');
     }
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext);
+    $viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext, $userto->id);
 
     $by = New stdClass;
     $by->name = fullname($userfrom, $viewfullnames);
