@@ -319,7 +319,13 @@
                 $a->id = $roleid;
                 $a->name = $roles[$roleid]->name;
                 $a->shortname = $roles[$roleid]->shortname;
-                notice_yesno(get_string('resetrolesure', 'role', $a), 'manage.php', 'manage.php', $optionsyes, $optionsno, 'post', 'get');
+                $a->legacytype = get_legacy_type($roleid);
+                if (empty($a->legacytype)) {
+                    $warning = get_string('resetrolesurenolegacy', 'role', $a);
+                } else {
+                    $warning = get_string('resetrolesure', 'role', $a);
+                }
+                notice_yesno($warning, 'manage.php', 'manage.php', $optionsyes, $optionsno, 'post', 'get');
                 admin_externalpage_print_footer($adminroot);
                 die;
             }
