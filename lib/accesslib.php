@@ -1565,6 +1565,26 @@ function get_legacy_roles() {
     );
 }
 
+function get_legacy_type($roleid) {
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+    $legacyroles = get_legacy_roles();
+
+    $result = '';
+    foreach($legacyroles as $ltype=>$lcap) {
+        $localoverride = get_local_override($roleid, $sitecontext->id, $lcap);
+        if (!empty($localoverride->permission) and $localoverride->permission == CAP_ALLOW) {
+            //choose first selected legacy capability - reset the rest
+            if (empty($result)) {
+                $result = $ltype;
+            } else {
+                delete_records('role_capabilities', 'roleid', $roleid, 'contextid', $sitecontext->id, 'capability', $lcap);
+            } 
+        }
+    }
+
+    return $result;
+}
+
 /**
  * Assign the defaults found in this capabality definition to roles that have
  * the corresponding legacy capabilities assigned to them.
