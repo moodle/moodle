@@ -1432,7 +1432,7 @@ function format_string ($string, $striplinks = false, $courseid=NULL ) {
     }
 
     // First replace all ampersands not followed by html entity code
-    $string = preg_replace("/\&(?![a-z0-9]{1,8};)/", "&amp;", $string);
+    $string = preg_replace("/\&(?![a-z0-9#]{1,8};)/", "&amp;", $string);
     
     if (!empty($CFG->filterall)) {
         $string = filter_text($string, $courseid);

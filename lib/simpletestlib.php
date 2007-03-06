@@ -18,6 +18,7 @@ require_once($CFG->libdir . '/simpletestlib/simpletest.php');
 require_once($CFG->libdir . '/simpletestlib/unit_tester.php');
 require_once($CFG->libdir . '/simpletestlib/expectation.php');
 require_once($CFG->libdir . '/simpletestlib/reporter.php');
+require_once($CFG->libdir . '/simpletestlib/web_tester.php');
 
 /**
  * Recursively visit all the files in the source tree. Calls the callback
