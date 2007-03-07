@@ -1743,9 +1743,10 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
 
         if ($USER->username != 'guest' and !has_capability('moodle/course:view', $context)) {
             if ($COURSE->guest == 1) {
-                 // Temporarily assign them guest role for this context,
-                 // if it fails user is asked to enrol
-                 load_guest_role($context);
+                 // Temporarily assign them guest role for this context, if it fails later user is asked to enrol
+                 has_capability('clearcache');   // Must clear cache
+                 $guestcaps = get_role_context_caps($CFG->guestroleid, $context);
+                 $USER->capabilities = merge_role_caps($USER->capabilities, $guestcaps);
             }
         }
 
