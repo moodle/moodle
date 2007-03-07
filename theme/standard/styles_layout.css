@@ -1141,6 +1141,10 @@ a.skip-block, .skip-block {
   padding-top:5px;
 }
 
+.block_recent_activitysideblock .h3 {
+  padding-top:5px;
+}
+
 .block_online_users .listentry div.user,
 .block_messages .listentry div.user {
   float:left;
@@ -1149,6 +1153,10 @@ a.skip-block, .skip-block {
 .block_online_users .listentry div.message,
 .block_messages .listentry div.message {
   float:right;
+}
+
+.block_course_list .footer {
+  margin-top: 5px;
 }
 
 
@@ -1935,7 +1943,7 @@ body#grade-index .grades .weighted {
 
 .block_login .loginform div {
   margin:0.3em 0.8em;
-  text-align:right;
+  text-align:left;
 }
 
 .block_login .btn input {
