@@ -1218,14 +1218,18 @@ function workshop_compare_assessments($workshop, $assessment1, $assessment2) {
         $maxscore[] = $element->maxscore;   // to renumber index 0,1,2...
         $weight[] = $WORKSHOP_EWEIGHTS[$element->weight];   // get real value and renumber index 0,1,2...
     }
+
+    $grades = array();
     for ($i = 0; $i < 2; $i++) {
         if ($i) {
             $rawgrades = get_records("workshop_grades", "assessmentid", $assessment1->id, "elementno ASC");
         } else {
             $rawgrades = get_records("workshop_grades", "assessmentid", $assessment2->id, "elementno ASC");
         }
-        foreach ($rawgrades as $grade) {
-            $grades[$i][] = $grade->grade;
+        if ($rawgrades) {
+            foreach ($rawgrades as $grade) {
+                $grades[$i][] = $grade->grade;
+            }
         }
     }
     $sumdiffs = 0;
