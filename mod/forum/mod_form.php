@@ -139,6 +139,7 @@ class mod_forum_mod_form extends moodleform_mod {
         //we want the form to display them if they are set.
         if ($typevalue[0]=='news'){
             $type->addOption(get_string('namenews', 'forum'), 'news');
+            $type->setHelpButton(array('forumtypenews', get_string('forumtypenews', 'forum'), 'forum'));
             $type->freeze();
             $type->setPersistantFreeze(true);
         }
