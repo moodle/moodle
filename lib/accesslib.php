@@ -1577,7 +1577,7 @@ function get_legacy_type($roleid) {
             if (empty($result)) {
                 $result = $ltype;
             } else {
-                delete_records('role_capabilities', 'roleid', $roleid, 'contextid', $sitecontext->id, 'capability', $lcap);
+                unassign_capability($lcap, $roleid);
             } 
         }
     }
