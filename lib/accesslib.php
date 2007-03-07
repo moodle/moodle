@@ -1471,10 +1471,17 @@ function moodle_install_roles() {
 
                 // assign the default student role
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $teacher->course); // needs cache
-                if ($teacher->editall) { // editting teacher
-                    role_assign($editteacherrole, $teacher->userid, 0, $coursecontext->id);
+                // hidden teacher
+                if ($teacher->authority == 0) {
+                    $hiddenteacher = 1;  
                 } else {
-                    role_assign($noneditteacherrole, $teacher->userid, 0, $coursecontext->id);
+                    $hiddenteacher = 0;  
+                }              
+                
+                if ($teacher->editall) { // editting teacher
+                    role_assign($editteacherrole, $teacher->userid, 0, $coursecontext->id, 0, 0, $hiddenteacher);
+                } else {
+                    role_assign($noneditteacherrole, $teacher->userid, 0, $coursecontext->id, 0, 0, $hiddenteacher);
                 }
                 $progresscount++;
                 print_progress($progresscount, $totalcount, 5, 1, 'Processing role assignments');
