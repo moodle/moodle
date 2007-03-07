@@ -385,7 +385,7 @@ function forum_cron() {
                         if (!empty($group->id)) {
                             if (!ismember($group->id, $userto->id)) {
                                 // no need because $USER = $userto?
-                                if (!has_capability('moodle/site:accessallgroups', $modcontext));
+                                if (!has_capability('moodle/site:accessallgroups', $modcontext)) {
                                 //if (!has_capability('moodle/site:accessallgroups', $modcontext, false, $userto->id)) {
                                     continue;
                                 }
