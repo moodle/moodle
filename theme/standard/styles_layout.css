@@ -1155,6 +1155,10 @@ a.skip-block, .skip-block {
   float:right;
 }
 
+.block_course_list .footer {
+  margin-top: 5px;
+}
+
 
 /***
  *** Blogs
@@ -1939,7 +1943,7 @@ body#grade-index .grades .weighted {
 
 .block_login .loginform div {
   margin:0.3em 0.8em;
-  text-align:right;
+  text-align:left;
 }
 
 .block_login .btn input {
