@@ -25,9 +25,12 @@
     }
 
     $syscontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-
-    require_course_login($course);
-
+    $usercontext   = get_context_instance(CONTEXT_USER, $id);
+    
+    // do not force parents to enrol
+    if (!get_record('role_assignments', 'userid', $USER->id, 'contextid', $usercontext->id)) {
+        require_course_login($course);
+    }
 
     add_to_log($course->id, "forum", "user report", "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode", "$user->id"); 
 
