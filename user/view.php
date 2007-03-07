@@ -29,10 +29,6 @@
        $currentuser = ($user->id == $USER->id);
     }
 
-    if (!empty($CFG->forcelogin) || $course->id != SITEID) {
-        require_login($course->id);
-    }
-
     if ($course->id == SITEID) {
         $coursecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);   // SYSTEM context
     } else {
@@ -40,8 +36,17 @@
     }
     $usercontext   = get_context_instance(CONTEXT_USER, $user->id);       // User context
     
+    if (!empty($CFG->forcelogin) || $course->id != SITEID) {
+        // do not force parents to enrol
+        if (!get_record('role_assignments', 'userid', $USER->id, 'contextid', $usercontext->id)) {
+            require_login($course->id);
+        }
+    }
+    
     // make sure user can view this student's profile
-    if ($USER->id != $user->id && !has_capability('moodle/user:viewdetails', $coursecontext) && !has_capability('moodle/user:viewdetails', $usercontext)) {
+    if ($USER->id != $user->id && 
+        (!has_capability('moodle/user:viewdetails', $coursecontext) && !has_capability('moodle/user:viewdetails', $usercontext))
+        && !has_capability('moodle/user:viewdetails', $usercontext)) {
         error('You can not view the profile of this user');
     }
 
@@ -132,7 +137,7 @@
 
 
     if (($course->id != SITEID) and ! isguest() ) {   // Need to have access to a course to see that info
-        if (!has_capability('moodle/course:view', $coursecontext)) {
+        if (!has_capability('moodle/course:view', $coursecontext, $user->id)) {
             print_heading(get_string('notenrolled', '', $fullname));
             print_footer($course);
             die;
