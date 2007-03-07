@@ -27,7 +27,7 @@
                    <div>
                    <input type=\"hidden\" name=\"courseid\" value=\"$course->id\" />
                    <input type=\"submit\" value=\"".get_string("editquestions", "quiz")."\" />
-                   </divt>
+                   </div>
                  </form>";
     }
     print_header_simple($strquizzes, '', $strquizzes,
