@@ -461,7 +461,7 @@ if ($INSTALL['stage'] == DOWNLOADLANG && $INSTALL['downloadlangpack']) {
             case ERROR:
                 if ($cd->get_error() == 'remotedownloadnotallowed') {
                     $a = new stdClass();
-                    $a->url = 'http://download.moodle.org/lang16/'.$pack.'zip';
+                    $a->url = 'http://download.moodle.org/lang16/'.$pack.'.zip';
                     $a->dest= $CFG->dataroot.'/lang';
                     $downloaderror = get_string($cd->get_error(), 'error', $a);
                 } else {
