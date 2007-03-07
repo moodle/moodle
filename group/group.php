@@ -21,10 +21,10 @@ $groupingid = optional_param('grouping', false, PARAM_INT);
 $newgrouping= optional_param('newgrouping', false, PARAM_INT);
 $groupid    = optional_param('group', false, PARAM_INT);
 
-$groupsettings->name       = optional_param('name', PARAM_ALPHANUM);
-$groupsettings->description= optional_param('description', PARAM_ALPHANUM);
-$groupsettings->enrolmentkey= optional_param('enrolmentkey', PARAM_ALPHANUM);
-$groupsettings->hidepicture= optional_param('hidepicture', PARAM_BOOL);
+$groupsettings->name       = optional_param('name', false, PARAM_ALPHANUM);
+$groupsettings->description= optional_param('description', '', PARAM_ALPHANUM);
+$groupsettings->enrolmentkey= optional_param('enrolmentkey', '', PARAM_ALPHANUM);
+$groupsettings->hidepicture= optional_param('hidepicture', true, PARAM_BOOL);
 
 $delete = optional_param('delete', false, PARAM_BOOL);
 
@@ -84,17 +84,19 @@ if ($success) {
             if ($success) {
                 //require_once($CFG->dirroot.'/lib/uploadlib.php');
 
-                $um = new upload_manager('imagefile',false,false,null,false,0,true,true);
+                $um = new upload_manager('imagefile',false,false,$course=null,false,$modbytes=0,$silent=false,$allownull=true);
                 if ($um->preprocess_files()) {
                     require_once("$CFG->libdir/gdlib.php");
-                
+
                     if (save_profile_image($groupid, $um, 'groups')) {
                         $groupsettings->picture = 1;
-                    } 
+                    }
+                } else {
+                    $success = false;
                 }
-
-                $success = (bool)groups_set_group_settings($groupid, $groupsettings);
             }
+            $success = $success && groups_set_group_settings($groupid, $groupsettings);
+
             if ($success) {
                 redirect(groups_home_url($courseid, $groupid, $groupingid, false));
             }
@@ -148,7 +150,7 @@ if ($success) {
 ?>
 <h3 class="main"><?php echo $strheading ?></h3>
 
-<form action="group.php" method="post" class="mform notmform" id="groupform">
+<form action="group.php" method="post" enctype="multipart/form-data" class="mform notmform" id="groupform">
 
 <input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
 <input type="hidden" name="courseid" value="<?php p($courseid); ?>" />
@@ -194,12 +196,12 @@ if ($success) {
              $options[1] = get_string('yes');
              choose_from_menu($options, 'hidepicture', isset($group)? $group->hidepicture: 1, '');?></p>
 
-    <p><label ><?php /* for="groupicon" */ print_string('newpicture', 'group');
+    <p><label ><?php /* for="imagefile" */ print_string('newpicture', 'group');
         helpbutton('picture', get_string('helppicture'));
         print_string('maxsize', '', display_size($maxbytes), 'group');
         if (isset($err['imagefile'])) formerr($err['imagefile']);
      ?>&nbsp;</label></p>
-    <p><?php upload_print_form_fragment(1, array('groupicon'), null,false,null,0,0,false); ?></p>
+    <p><?php upload_print_form_fragment(1, array('imagefile'), null,false,null,0,0,false); ?></p>
 <?php 
     }
 
