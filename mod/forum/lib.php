@@ -384,7 +384,9 @@ function forum_cron() {
                     if ($groupmode) {    // Look for a reason not to send this email
                         if (!empty($group->id)) {
                             if (!ismember($group->id, $userto->id)) {
-                                if (!has_capability('moodle/site:accessallgroups', $modcontext, false, $userto->id)) {
+                                // no need because $USER = $userto?
+                                if (!has_capability('moodle/site:accessallgroups', $modcontext));
+                                //if (!has_capability('moodle/site:accessallgroups', $modcontext, false, $userto->id)) {
                                     continue;
                                 }
                             }
@@ -392,7 +394,8 @@ function forum_cron() {
                     }
 
                     // make sure we're allowed to see it...
-                    if (!forum_user_can_see_post($forum, $discussion, $post, $userto)) {
+                    //if (!forum_user_can_see_post($forum, $discussion, $post, $userto)) {
+                    if (!forum_user_can_see_post($forum, $discussion, $post)) {
                         mtrace('user '.$userto->id. ' can not see '.$post->id);
                         continue;
                     }
@@ -687,7 +690,7 @@ function forum_cron() {
 }
 
 function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto, $bare = false) {
-    global $CFG;
+    global $CFG, $USER;
 
     if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
         error('Course Module ID was incorrect');
@@ -1814,7 +1817,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     // Given the data about a posting, builds up the HTML to display it and
     // returns the HTML in a string.  This is designed for sending via HTML email.
 
-    global $CFG;
+    global $CFG, $USER;
 
     static $formattedtext;        // Cached version of formatted text for a post
     static $formattedtextid;      // The ID number of the post
@@ -1847,7 +1850,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     }
     $output .= '<div class="subject">'.format_string($post->subject).'</div>';
 
-    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $modcontext, $touser->id));
+    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $modcontext));
     $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
     $by->date = userdate($post->modified, '', $touser->timezone);
     $output .= '<div class="author">'.get_string('bynameondate', 'forum', $by).'</div>';
