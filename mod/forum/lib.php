@@ -289,12 +289,13 @@ function forum_cron() {
             
             // caching subscribed users of each forum
             if (!isset($subscribedusers[$forum->id])) {
-                $subusers = forum_subscribed_users($course, $forum, 0, true);  
-                foreach ($subusers as $postuser) {
-                    // this user is subscribed to this forum
-                    $subscribedusers[$forum->id][] = $postuser->id;
-                    // this user is a user we have to process later
-                    $users[$postuser->id] = $postuser;  
+                if ($subusers = forum_subscribed_users($course, $forum, 0, true)) {
+                    foreach ($subusers as $postuser) {
+                        // this user is subscribed to this forum
+                        $subscribedusers[$forum->id][] = $postuser->id;
+                        // this user is a user we have to process later
+                        $users[$postuser->id] = $postuser;  
+                    }
                 }           
             }
             
@@ -353,7 +354,7 @@ function forum_cron() {
                     $forum = $postinfo[$pid]->forum;
                     $course = $postinfo[$pid]->course;    
                     
-                    if (!in_array($userto->id, $subscribedusers[$forum->id])) {
+                    if (empty($subscribedusers[$forum->id]) || !in_array($userto->id, $subscribedusers[$forum->id])) {
                         continue; // user does not subscribe to this forum  
                     }
                     
