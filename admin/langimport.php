@@ -44,10 +44,10 @@
                     $status = $cd->install(); //returns ERROR | UPTODATE | INSTALLED
                     switch ($status) {
 
-                        case ERROR:
+                        case ERROR: 
                             if ($cd->get_error() == 'remotedownloadnotallowed') {
                                 $a = new stdClass();
-                                $a->url = 'http://download.moodle.org/lang16/'.$pack.'zip';
+                                $a->url = 'http://download.moodle.org/lang16/'.$pack.'.zip';
                                 $a->dest= $CFG->dataroot.'/lang';
                                 error(get_string($cd->get_error(), 'error', $a));
                             } else {
@@ -185,7 +185,7 @@
                     case ERROR:
                         if ($cd->get_error() == 'remotedownloadnotallowed') {
                             $a = new stdClass();
-                            $a->url = 'http://download.moodle.org/lang16/'.$pack.'zip';
+                            $a->url = 'http://download.moodle.org/lang16/'.$pack.'.zip';
                             $a->dest= $CFG->dataroot.'/lang';
                             error(get_string($cd->get_error(), 'error', $a));
                         } else {
