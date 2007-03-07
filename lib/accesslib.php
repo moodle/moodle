@@ -45,88 +45,99 @@ $context_cache    = array();    // Cache of all used context objects for perform
 $context_cache_id = array();    // Index to above cache by id
 
 
+function get_role_context_caps($roleid, $context) {
+    //this is really slow!!!! - do not use above course context level!
+    $result = array();
+    $result[$context->id] = array();
+
+    // first emulate the parent context capabilities merging into context
+    $searchcontexts = array_reverse(get_parent_contexts($context));
+    array_push($searchcontexts, $context->id);
+    foreach ($searchcontexts as $cid) {
+        if ($capabilities = get_records_select('role_capabilities', "roleid = $roleid AND contextid = $cid")) {
+            foreach ($capabilities as $cap) {
+                if (!array_key_exists($cap->capability, $result[$context->id])) {
+                    $result[$context->id][$cap->capability] = 0;
+                }
+                $result[$context->id][$cap->capability] += $cap->permission;
+            }
+        }
+    }
+
+    // now go through the contexts bellow given context
+    $searchcontexts = get_child_contexts($context);
+    foreach ($searchcontexts as $cid) {
+        if ($capabilities = get_records_select('role_capabilities', "roleid = $roleid AND contextid = $cid")) {
+            foreach ($capabilities as $cap) {
+                if (!array_key_exists($cap->contextid, $result)) {
+                    $result[$cap->contextid] = array();
+                }
+                $result[$cap->contextid][$cap->capability] = $cap->permission;
+            }
+        }
+    }
+
+    return $result;
+}
+
+function get_role_caps($roleid) {
+    $result = array();
+    if ($capabilities = get_records_select('role_capabilities',"roleid = $roleid")) {
+        foreach ($capabilities as $cap) {
+            if (!array_key_exists($cap->contextid, $result)) {
+                $result[$cap->contextid] = array();
+            }
+            $result[$cap->contextid][$cap->capability] = $cap->permission;
+        }
+    }
+    return $result;
+}
+
+function merge_role_caps($caps, $mergecaps) {
+    if (empty($mergecaps)) {
+        return $caps;
+    }
+
+    if (empty($caps)) {
+        return $mergecaps;
+    }
+
+    foreach ($mergecaps as $contextid=>$capabilities) {
+        if (!array_key_exists($contextid, $caps)) {
+            $caps[$contextid] = array();
+        }
+        foreach ($capabilities as $capability=>$permission) {
+            if (!array_key_exists($capability, $caps[$contextid])) {
+                $caps[$contextid][$capability] = 0;
+            }
+            $caps[$contextid][$capability] += $permission;
+        }
+    }
+    return $caps;
+}
+
 /**
  * Loads the capabilities for the default guest role to the current user in a
  * specific context.
  * @return object
  */
-function load_guest_role($context=NULL, $mergewith=NULL) {
+function load_guest_role($return=false) {
     global $USER;
 
-    static $guestrole;
+    static $guestrole = false;
 
-    if (!isloggedin()) {
-        return false;
-    }
-
-    if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM)) {
-        return false;
-    }
-
-    if (empty($context)) {
-        $context = $sitecontext;
-    }
-
-    if (empty($guestrole)) {
+    if ($guestrole === false) {
         if (!$guestrole = get_guest_role()) {
             return false;
         }
     }
 
-    if ($context->id != $sitecontext->id) {
-        // first emulate the parent context capabilities merging into expected
-        $parcontexts = array_reverse(get_parent_contexts($context));
-        foreach ($parcontexts as $pcid) {
-            if ($capabilities = get_records_select('role_capabilities',
-                                                   "roleid = $guestrole->id 
-                                                   AND contextid = $pcid")) {
-    
-                foreach ($capabilities as $capability) {
-                    if ($mergewith === NULL) {
-                        if (!isset($USER->capabilities[$context->id][$capability->capability])) {
-                            $USER->capabilities[$context->id][$capability->capability] = 0;
-                        }
-                        $USER->capabilities[$context->id][$capability->capability] += $capability->permission;
-                    } else {
-                        if (!isset($mergewith[$context->id][$capability->capability])) {
-                            $mergewith[$context->id][$capability->capability] = 0;
-                        }
-                        $mergewith[$context->id][$capability->capability] += $capability->permission;
-                    }
-                }
-            }
-        }
-    }
-    
-    $searchcontexts = array();  // get_child_contexts($context);   SEE MDL-8385
-    array_push($searchcontexts, $context->id);
-
-    foreach ($searchcontexts as $scid) {
-        if ($capabilities = get_records_select('role_capabilities',
-                                               "roleid = $guestrole->id 
-                                               AND contextid = $scid")) {
-
-            foreach ($capabilities as $capability) {
-                if ($mergewith === NULL) {
-                    if (!isset($USER->capabilities[$scid][$capability->capability])) {
-                        $USER->capabilities[$scid][$capability->capability] = 0;
-                    }
-                    $USER->capabilities[$scid][$capability->capability] += $capability->permission;
-                } else {
-                    if (!isset($mergewith[$scid][$capability->capability])) {
-                        $mergewith[$scid][$capability->capability] = 0;
-                    }
-                    $mergewith[$scid][$capability->capability] += $capability->permission;
-                }
-            }
-        }
-    }
-
-    if ($mergewith === NULL) {
-        has_capability('clearcache');
-        return true;
+    if ($return) {
+        return get_role_caps($guestrole->id);
     } else {
-        return $mergewith;
+        has_capability('clearcache');
+        $USER->capabilities = get_role_caps($guestrole->id);
+        return true;
     }
 }
 
@@ -134,7 +145,7 @@ function load_guest_role($context=NULL, $mergewith=NULL) {
  * Load default not logged in role capabilities when user is not logged in
  * @return bool
  */
-function load_notloggedin_role() {
+function load_notloggedin_role($return=false) {
     global $CFG, $USER;
 
     if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM)) {
@@ -149,19 +160,17 @@ function load_notloggedin_role() {
         }
     }
 
-    if ($capabilities = get_records_select('role_capabilities',
-                                     "roleid = $CFG->notloggedinroleid AND contextid = $sitecontext->id")) {
-        foreach ($capabilities as $capability) {
-            $USER->capabilities[$sitecontext->id][$capability->capability] = $capability->permission;
-        }
+    if ($return) {
+        return get_role_caps($CFG->notloggedinroleid);
+    } else {
         has_capability('clearcache');
+        $USER->capabilities = get_role_caps($CFG->notloggedinroleid);
+        return true;
     }
-
-    return true;
 }
 
 /**
- * Load default not logged in role capabilities when user is not logged in
+ * Load default logged in role capabilities for all logged in users
  * @return bool
  */
 function load_defaultuser_role($return=false) {
@@ -179,45 +188,23 @@ function load_defaultuser_role($return=false) {
         }
     }
 
-    if ($return) {
-        $defcaps = array();
-    }
+    $capabilities = get_role_caps($CFG->defaultuserroleid);
 
-    if ($capabilities = get_records_select('role_capabilities',
-                                     "roleid = $CFG->defaultuserroleid AND contextid = $sitecontext->id AND permission <> 0")) {
-        // Find out if this default role is a guest role, for the hack below                                        
-
-        $defaultisguestrole=false;
-        foreach ($capabilities as $capability) {
-            if($capability->capability=='moodle/legacy:guest') {
-                $defaultisguestrole=true;
-            }
-        }                                        
-        foreach ($capabilities as $capability) {
-            // If the default role is a guest role, then don't copy legacy:guest,
-            // otherwise this user could get confused with a REAL guest. Also don't copy
-            // course:view, which is a hack that's necessary because guest roles are 
-            // not really handled properly (see MDL-7513)
-            if($defaultisguestrole &&
-                ($capability->capability=='moodle/legacy:guest' || 
-                    $capability->capability=='moodle/course:view')) {
-                continue;
-            }
-            if ($return) {
-                $defcaps[$sitecontext->id][$capability->capability] = $capability->permission;
-            } else {
-                // Don't overwrite capabilities from real role...
-                if (!isset($USER->capabilities[$sitecontext->id][$capability->capability])) {
-                    $USER->capabilities[$sitecontext->id][$capability->capability] = $capability->permission;
-                }
-            }
-        }
+    // fix the guest user heritage:
+    // If the default role is a guest role, then don't copy legacy:guest,
+    // otherwise this user could get confused with a REAL guest. Also don't copy
+    // course:view, which is a hack that's necessary because guest roles are 
+    // not really handled properly (see MDL-7513)
+    if (!empty($capabilities[$sitecontext->id]['moodle/legacy:guest'])) {
+        unset($capabilities[$sitecontext->id]['moodle/legacy:guest']);
+        unset($capabilities[$sitecontext->id]['moodle/course:view']);
     }
 
     if ($return) {
-        return $defcaps;
+        return $capabilities;
     } else {
         has_capability('clearcache');
+        $USER->capabilities = $capabilities;
         return true;
     }
 }
@@ -435,44 +422,38 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
 /// Load up the capabilities list or item as necessary
     if ($userid) {
         if (empty($USER->id) or ($userid != $USER->id) or empty($USER->capabilities)) {
-            // this is expensive
-            $capabilities = load_user_capability($capability, $context, $userid);
 
-            static $guestuserid = false; // cached guest user id
-            if (!$guestuserid) {
+            //caching - helps user switching in cron
+            static $guestuserid = false; // guest user id
+            static $guestcaps   = false; // guest caps
+            static $defcaps     = false; // default user caps - this might help cron
+
+            if ($guestuserid === false) {
                 $guestuserid = get_field('user', 'id', 'username', 'guest');
             }
 
             if ($userid == $guestuserid) {
-                //this might be cached too, but should not needed
-                $capabilities = load_guest_role($context, $capabilities);
+                if ($guestcaps === false) {
+                    $guestcaps = load_guest_role(true);
+                }
+                $capabilities = $guestcaps;
 
             } else {
-                static $defcaps = false; //cached default user caps - this might help cron
-                if (empty($capcache) or !$defcaps) { //first run or capcache was reset
+                // this is expensive!
+                $capabilities = load_user_capability($capability, $context, $userid);
+                if ($defcaps === false) {
                     $defcaps = load_defaultuser_role(true);
                 }
-                foreach($defcaps as $contextid=>$caps) {//apply only extra caps defined for default user
-                    foreach($caps as $cap=>$permission) {
-                        if (!isset($capabilities[$contextid][$cap])) {
-                            $capabilities[$contextid][$cap] = $permission;
-                        }
-                    }
-                }
+                $capabilities = merge_role_caps($capabilities, $defcaps);
             }
-        } else { //$USER->id == $userid and capabilities already present
+
+        } else { //$USER->id == $userid and needed capabilities already present
             $capabilities = $USER->capabilities;
         }
-       
+
     } else { // no userid
         if (empty($USER->capabilities)) {
-            if (empty($USER->id)) {
-                //not logged in user first time here
-                load_notloggedin_role();
-            } else {
-                // 'Simulated' user first time here - load_all_capabilities() not called from login/index.php
-                load_all_capabilities(); // expensive - but we have to do it once anyway
-            }
+            load_all_capabilities(); // expensive - but we have to do it once anyway
         }
         $capabilities = $USER->capabilities;
         $userid = $USER->id;
@@ -1117,25 +1098,37 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
 }
 
 
-/*
+/**
  *  A convenience function to completely load all the capabilities 
  *  for the current user.   This is what gets called from login, for example.
  */
 function load_all_capabilities() {
     global $USER;
 
-    if (empty($USER->username)) {
-        return;
-    }
+    //caching - helps user switching in cron
+    static $defcaps = false;
 
     unset($USER->mycourses);        // Reset a cache used by get_my_courses
 
-    load_user_capability();         // Load basic capabilities assigned to this user
-
-    if ($USER->username == 'guest') {
+    if (isguestuser()) {
         load_guest_role();          // All non-guest users get this by default
+
+    } else if (isloggedin()) {
+        if ($defcaps === false) {
+            $defcaps = load_defaultuser_role(true);
+        }
+
+        load_user_capability();
+
+        if (!empty($USER->capabilities)) {
+            $USER->capabilities = merge_role_caps($USER->capabilities, $defcaps);
+
+        } else {
+            $USER->capabilities = $defcaps;
+        }
+
     } else {
-        load_defaultuser_role();    // All non-guest users get this by default
+        load_notloggedin_role();
     }
 }
 
