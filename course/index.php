@@ -103,7 +103,7 @@
     if ($form = data_submitted() and confirm_sesskey() and has_capability('moodle/category:create', $context)) {
         if (!empty($form->addcategory)) {
             unset($newcategory);
-            $newcategory->name = $form->addcategory;
+            $newcategory->name = stripslashes_safe($form->addcategory);
             $newcategory->sortorder = 999;
             if (!insert_record('course_categories', $newcategory)) {
                 notify("Could not insert the new category '" . format_string($newcategory->name) . "'");
