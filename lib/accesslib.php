@@ -738,9 +738,7 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
         $capsearch ="";
     }
 
-/// Set up SQL fragments for timestart, timeend etc
     $now = time();
-    $timesql = "AND ((ra.timestart = 0 OR ra.timestart < $now) AND (ra.timeend = 0 OR ra.timeend > $now))";
 
 /// Then we use 1 giant SQL to bring out all relevant capabilities.
 /// The first part gets the capabilities of orginal role.
@@ -763,7 +761,6 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
                      $searchcontexts1
                      rc.contextid=$siteinstance->id
                      $capsearch
-                     $timesql
               GROUP BY
                      rc.capability, (c1.contextlevel * 100), c1.id
                      HAVING
@@ -810,7 +807,6 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
                      $searchcontexts1
                      rc.contextid != $siteinstance->id
                      $capsearch
-                     $timesql
 
               GROUP BY
                      rc.capability, (c1.contextlevel * 100 + c2.contextlevel), c1.id, c2.id, rc.permission

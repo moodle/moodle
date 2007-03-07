@@ -117,11 +117,25 @@
 
         }
     }
-    mtrace("Finished blocks");
+    mtrace('Finished blocks');
 
     if (!empty($CFG->langcache)) {
         mtrace('Updating languages cache');
         get_list_of_languages();
+    }
+
+    mtrace('Removing expired enrolments ...', '');     // See MDL-8785
+    $timenow = time();
+    if ($oldenrolments = get_records_select('role_assignments', "timeend > 0 AND timeend < '$timenow'")) {
+        mtrace(count($oldenrolments).' to delete');
+        foreach ($oldenrolments as $oldenrolment) {
+            if (role_unassign($oldenrolment->roleid, $oldenrolment->userid, 0, $oldenrolment->contextid)) {
+                mtrace("Deleted expired role assignment $oldenrolment->roleid for user $oldenrolment->userid from context $oldenrolment->contextid");
+            }
+        }
+        mtrace('Done');
+    } else {
+        mtrace('none found');
     }
 
 
