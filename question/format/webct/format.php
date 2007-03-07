@@ -116,7 +116,7 @@ class qformat_webct_modified_calculated_qtype extends question_calculated_qtype 
             }
             $datasetdef->itemcount = $item->itemnumber - 1;
 
-            // Retrieve ->options
+            //  Retrieve ->options
             if (is_numeric($datasetdata->min) && is_numeric($datasetdata->max)
                     && $datasetdata->min <= $datasetdata->max) {
                 if (is_numeric($datasetdata->dec)) {
@@ -246,6 +246,7 @@ class qformat_webct extends qformat_default {
     }
 
     function readquestions ($lines) {
+        global $QTYPES;
 
         $qtypecalculated = new qformat_webct_modified_calculated_qtype();
         $webctnumberregex =
@@ -262,7 +263,7 @@ class qformat_webct extends qformat_default {
         $nQuestionStartLine = 0;
         $bIsHTMLText = FALSE;
         $lines[] = ":EOF:";    // for an easiest processing of the last line
-        $question = $this->defaultquestion();
+       // $question = $this->defaultquestion();
 
         foreach ($lines as $line) {
             $nLineCounter++;
@@ -391,7 +392,7 @@ class qformat_webct extends qformat_default {
 
                             case CALCULATED:
                                 foreach ($question->answers as $answer) {
-                                    if ($formulaerror = quiz_qtype_calculated_find_formula_errors($answer->answer)) {
+                                    if ($formulaerror = qtype_calculated_find_formula_errors($answer->answer)) {
                                         $warnings[] = "'$question->name': ". $formulaerror;
                                         $QuestionOK = FALSE;
                                     }
@@ -417,6 +418,7 @@ class qformat_webct extends qformat_default {
 
             if (eregi("^:TYPE:MC:1(.*)",$line,$webct_options)) {
                 // Multiple Choice Question with only one good answer
+                $question = $this->defaultquestion();
                 $question->qtype = MULTICHOICE;
                 $question->single = 1;        // Only one answer is allowed
                 $ignore_rest_of_question = FALSE;
@@ -425,6 +427,7 @@ class qformat_webct extends qformat_default {
 
             if (eregi("^:TYPE:MC:N(.*)",$line,$webct_options)) {
                 // Multiple Choice Question with several good answers
+                $question = $this->defaultquestion();
                 $question->qtype = MULTICHOICE;
                 $question->single = 0;        // Many answers allowed
                 $ignore_rest_of_question = FALSE;
@@ -433,6 +436,7 @@ class qformat_webct extends qformat_default {
 
             if (eregi("^:TYPE:S",$line)) {
                 // Short Answer Question
+                $question = $this->defaultquestion();
                 $question->qtype = SHORTANSWER;
                 $question->usecase = 0;       // Ignore case
                 $ignore_rest_of_question = FALSE;
@@ -441,6 +445,7 @@ class qformat_webct extends qformat_default {
 
             if (eregi("^:TYPE:C",$line)) {
                 // Calculated Question
+                $question = $this->defaultquestion();
                 $question->qtype = CALCULATED;
                 $question->answers = array(); // No problem as they go as :FORMULA: from webct
                 $question->units = array();
@@ -457,6 +462,7 @@ class qformat_webct extends qformat_default {
 
             if (eregi("^:TYPE:M",$line)) {
                 // Match Question
+                $question = $this->defaultquestion();
                 $question->qtype = MATCH;
                 $ignore_rest_of_question = FALSE;         // match question processing is not debugged
                 continue;
@@ -503,7 +509,7 @@ class qformat_webct extends qformat_default {
             if (!isset($question)) {
                 continue;
             }
-            if (CALCULATED == $question->qtype && ereg(
+            if ('calculated' == $question->qtype && ereg(
                     "^:([[:lower:]].*|::.*)-(MIN|MAX|DEC|VAL([0-9]+))::?:?($webctnumberregex)", $line, $webct_options)) {
                 $datasetname = ereg_replace('^::', '', $webct_options[1]);
                 $datasetvalue = qformat_webct_convert_formula($webct_options[4]);
