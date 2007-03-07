@@ -869,10 +869,6 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
         $capsearch ="";
     }
 
-/// Set up SQL fragments for timestart, timeend etc
-    $now = time();
-    $timesql = "AND ((ra.timestart = 0 OR ra.timestart < $now) AND (ra.timeend = 0 OR ra.timeend > $now))";
-
 /// Then we use 1 giant SQL to bring out all relevant capabilities.
 /// The first part gets the capabilities of orginal role.
 /// The second part gets the capabilities of overriden roles.
@@ -894,7 +890,6 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
                      $searchcontexts1
                      rc.contextid=$siteinstance->id
                      $capsearch
-                     $timesql
               GROUP BY
                      rc.capability, c1.id, c1.contextlevel * 100
                      HAVING
@@ -915,7 +910,6 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
                      $searchcontexts1
                      rc.contextid != $siteinstance->id
                      $capsearch
-                     $timesql
                      AND cr.c2 = c1.id
               GROUP BY
                      rc.capability, c1.id, c2.id, c1.contextlevel * 100 + c2.contextlevel
@@ -967,7 +961,6 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
                      $searchcontexts1
                      rc.contextid != $siteinstance->id
                      $capsearch
-                     $timesql
 
               GROUP BY
                      rc.capability, (c1.contextlevel * 100 + c2.contextlevel), c1.id, c2.id, rc.permission
@@ -2115,7 +2108,9 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         $newra->userid = $userid;
         $newra->hidden = $hidden;
         $newra->enrol = $enrol;
-        $newra->timestart = $timestart;
+    /// Always round timestart downto 100 secs to help DBs to use their own caching algorithms 
+    /// by repeating queries with the same exact parameters in a 100 secs time window
+        $newra->timestart = round($timestart, -2);
         $newra->timeend = $timeend;
         $newra->timemodified = time();
         $newra->modifierid = empty($USER->id) ? 0 : $USER->id;
@@ -2127,7 +2122,9 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         $newra->id = $ra->id;
         $newra->hidden = $hidden;
         $newra->enrol = $enrol;
-        $newra->timestart = $timestart;
+    /// Always round timestart downto 100 secs to help DBs to use their own caching algorithms 
+    /// by repeating queries with the same exact parameters in a 100 secs time window
+        $newra->timestart = round($timestart, -2);
         $newra->timeend = $timeend;
         $newra->timemodified = time();
         $newra->modifierid = empty($USER->id) ? 0 : $USER->id;
