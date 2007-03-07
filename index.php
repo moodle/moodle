@@ -30,6 +30,14 @@
         die;
     }
 
+    require_once('config.php');
+    require_once($CFG->dirroot .'/course/lib.php');
+    require_once($CFG->dirroot .'/lib/blocklib.php');
+
+    if (empty($SITE)) {
+        redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
+    }
+
     // Bounds for block widths
     // more flexible for theme designers taken from theme config.php
     $lmin = (empty($THEME->block_l_min_width)) ? 100 : $THEME->block_l_min_width;
@@ -42,15 +50,7 @@
     define('BLOCK_R_MIN_WIDTH', $rmin);
     define('BLOCK_R_MAX_WIDTH', $rmax);
 
-    require_once('config.php');
-    require_once($CFG->dirroot .'/course/lib.php');
-    require_once($CFG->dirroot .'/lib/blocklib.php');
-
-    if (empty($SITE)) {
-        redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
-    }
-
-    // check if major upgrade needed - also present in login/index.php
+   // check if major upgrade needed - also present in login/index.php
     if ((int)$CFG->version < 2006101100) { //1.7 or older
         @require_logout();
         redirect("$CFG->wwwroot/$CFG->admin/");
