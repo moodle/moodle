@@ -62,6 +62,9 @@ class question_edit_calculated_form extends question_edit_form {
         $repeatsatstart = $count + 1;
         $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', 1, get_string('addmoreanswerblanks', 'qtype_calculated'));*/
 //------------------------------------------------------------------------------------------
+        $label = get_string("sharedwildcards", "qtype_datasetdependent");
+        $html2 = $this->qtypeobj->print_dataset_definitions_category($this->question);
+        $mform->insertElementBefore($mform->createElement('static','list',$label,$html2),'questiontext');
 
         $mform->addElement('header', 'answerhdr', get_string('answerhdr', 'qtype_calculated'));
 
@@ -73,7 +76,7 @@ class question_edit_calculated_form extends question_edit_form {
         $mform->addElement('select', 'fraction[0]', get_string('grade'), $gradeoptions);
         $mform->setDefault('fraction[0]', 0);*/
         $mform->addElement('hidden', 'fraction[0]', 1);
-        $mform->setConstants(array('fraction[0]'=>PARAM_INT));
+      //  $mform->setConstants(array('fraction[0]'=>PARAM_INT));
 
         $tolgrp = array();
         $tolgrp[] =& $mform->createElement('text', 'tolerance[0]', get_string('tolerance', 'qtype_calculated'));
@@ -170,8 +173,18 @@ class question_edit_calculated_form extends question_edit_form {
         $answercount = 0;
         //check grades
         /*$totalfraction = 0;
-        $maxfraction = -1;*/
-
+        $maxfraction = -1; */
+        $possibledatasets = $this->qtypeobj->find_dataset_names($data['questiontext']);
+        $mandatorydatasets = array();
+        foreach ($answers as $key => $answer){
+            $mandatorydatasets += $this->qtypeobj->find_dataset_names($data['questiontext']);
+        }      
+        if (count($possibledatasets) == 0 && count($mandatorydatasets )==0){
+            $errors['questiontext']=get_string('atleastonewildcard', 'qtype_datasetdependent');
+            foreach ($answers as $key => $answer){
+                $errors['answers['.$key.']'] = get_string('atleastonewildcard', 'qtype_datasetdependent');
+            }      
+        }  
         foreach ($answers as $key => $answer){
             //check no of choices
             $trimmedanswer = trim($answer);
