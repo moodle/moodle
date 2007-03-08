@@ -253,6 +253,11 @@ function forum_cron() {
     $subscribedusers = array();
     
     if ($posts = forum_get_unmailed_posts($starttime, $endtime)) {      
+        /// Mark them all now as being mailed.  It's unlikely but possible there
+        /// might be an error later so that a post is NOT actually mailed out,
+        /// but since mail isn't crucial, we can accept this risk.  Doing it now
+        /// prevents the risk of duplicated mails, which is a worse problem.
+
         if (!forum_mark_old_posts_as_mailed($endtime)) {
             mtrace('Errors occurred while trying to mark some posts as being mailed.');
             return false;  // Don't continue trying to mail them, in case we are in a cron loop
@@ -305,10 +310,6 @@ function forum_cron() {
     }
 
     if ($users) {
-        /// Mark them all now as being mailed.  It's unlikely but possible there
-        /// might be an error later so that a post is NOT actually mailed out,
-        /// but since mail isn't crucial, we can accept this risk.  Doing it now
-        /// prevents the risk of duplicated mails, which is a worse problem.
 
         @set_time_limit(0);   /// so that script does not get timed out when posting to many users
 
@@ -320,7 +321,7 @@ function forum_cron() {
             // set this so that the capabilities are cached
             $USER = $userto;
             
-            mtrace(get_string('processingpost', 'forum', $post->id), '');
+            mtrace('Processing user '.$userto->id);
 
             /// Check the consistency of the data first
 
@@ -418,13 +419,13 @@ function forum_cron() {
                     
                     course_setup($course);
 
-                    mtrace('Sending post '.$post->id. ' to user '.$userto->id. '...', '');
 
                     $postsubject = "$course->shortname: ".format_string($post->subject,true);
                     $posttext = forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto);
                     $posthtml = forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $userto);
 
-
+                    mtrace('Sending ', '');
+                    
                     if (!$mailresult = email_to_user($userto, $userfrom, $postsubject, $posttext,
                                                      $posthtml, '', '', $CFG->forum_replytouser)) {
                         mtrace("Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id".
@@ -448,7 +449,7 @@ function forum_cron() {
                         }
                     }
 
-                    mtrace(' sent.');
+                    mtrace('post '.$post->id. ': '.$post->subject);
                 }
             }
         }
@@ -457,7 +458,7 @@ function forum_cron() {
     if ($posts) {
         foreach ($posts as $post) {
             // this needs fixing, needs to be done after all posts are mailed
-            mtrace(".... mailed to ".$mailcount[$post->id]." users.");
+            mtrace($mailcount[$post->id]." users were sent post $post->id, '$post->subject'");
             if ($errorcount[$post->id]) {
                 set_field("forum_posts", "mailed", "2", "id", "$post->id");
             }   
@@ -688,6 +689,7 @@ function forum_cron() {
 
     return true;
 }
+
 
 function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto, $bare = false) {
     global $CFG, $USER;
