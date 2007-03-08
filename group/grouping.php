@@ -17,8 +17,8 @@ $success = true;
 $courseid   = required_param('courseid', PARAM_INT);         
 $groupingid = optional_param('grouping', false, PARAM_INT);
 
-$groupingsettings->name       = optional_param('name', PARAM_ALPHANUM);
-$groupingsettings->description= optional_param('description', PARAM_ALPHANUM);
+$groupingsettings->name       = optional_param('name', false, PARAM_TEXT);
+$groupingsettings->description= optional_param('description', '', PARAM_TEXT);
 
 $delete = optional_param('delete', false, PARAM_BOOL);
 
@@ -64,7 +64,7 @@ if ($success) {
             if ($groupingid) {
                 $success = (bool)groups_set_grouping_settings($groupingid, $groupingsettings);
             }
-            else {
+            else { //OK, new group.
                 $success = (bool)$groupingid = groups_create_grouping($courseid, $groupingsettings);
             }
             if ($success) {
@@ -135,7 +135,12 @@ if ($success) {
 ?>
 
 <div class="f-item">
-<p><label for="groupingname"><?php print_string('groupingname', 'group'); ?>&nbsp;</label></p>
+<p><label for="groupingname"><?php
+   print_string('groupingname', 'group'); 
+   if (isset($err['name'])) {
+       echo' ';
+       formerr($err['name']);
+   } ?>&nbsp; </label></p>
 <p><input id="groupingname" name="name" type="text" size="40" value="<?php echo $strname; ?>" /></p>
 </div>
 
