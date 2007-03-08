@@ -587,27 +587,19 @@ function scorm_simple_play($scorm,$user) {
    $result = false;
   
    $scoes = get_records_select('scorm_scoes','scorm='.$scorm->id.' AND launch<>\'\'');
-   echo 'EL COUNT VALE '.count($scoes);
-   foreach ($scoes as $sco){
-	   echo 'VEAMOS IDS'.$sco->id;
-   }
    
    if (count($scoes) == 1) {
-	   echo 'ENTRA AQUI EN EL ==1';
        if ($scorm->skipview >= 1) {
            $sco = current($scoes);
            if (scorm_get_tracks($sco->id,$user->id) === false) {
-				echo 'LLAMO PLAYER LOCAL 2';
-               header('Location: player.php?a='.$scorm->id.'&scoid= '.$sco->id);
+				header('Location: player.php?a='.$scorm->id.'&scoid= '.$sco->id);
                $result = true;
            } else if ($scorm->skipview == 2) {
-			   echo 'LLAMO PLAYER LOCAL 3';
                header('Location: player.php?a='.$scorm->id.'&scoid= '.$sco->id);
                $result = true;
            }
        }
    }
-   echo 'va al result';
    return $result;
 }
 /*

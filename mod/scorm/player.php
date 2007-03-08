@@ -14,10 +14,10 @@
     $mode = optional_param('mode', 'normal', PARAM_ALPHA); // navigation mode
     $currentorg = optional_param('currentorg', '', PARAM_RAW); // selected organization
     $newattempt = optional_param('newattempt', 'off', PARAM_ALPHA); // the user request to start a new attempt
-	echo 'SCOID'.$scoid;
+	
 	$scoid=$_GET['scoid'];
 	
-	echo 'SCOID'.$scoid;
+	
 	//$scoid=$_POST['scoid'];
 	//echo 'SCOID'.$scoid;
 	if ($sco1 = get_record("scorm_scoes", "id", $scoid,"parent",'/')) {
