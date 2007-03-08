@@ -21,9 +21,9 @@ $groupingid = optional_param('grouping', false, PARAM_INT);
 $newgrouping= optional_param('newgrouping', false, PARAM_INT);
 $groupid    = optional_param('group', false, PARAM_INT);
 
-$groupsettings->name       = optional_param('name', false, PARAM_ALPHANUM);
-$groupsettings->description= optional_param('description', '', PARAM_ALPHANUM);
-$groupsettings->enrolmentkey= optional_param('enrolmentkey', '', PARAM_ALPHANUM);
+$groupsettings->name       = optional_param('name', false, PARAM_TEXT);
+$groupsettings->description= optional_param('description', '', PARAM_TEXT);
+$groupsettings->enrolmentkey= optional_param('enrolmentkey', '', PARAM_TEXT);
 $groupsettings->hidepicture= optional_param('hidepicture', true, PARAM_BOOL);
 
 $delete = optional_param('delete', false, PARAM_BOOL);
