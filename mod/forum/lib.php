@@ -284,11 +284,13 @@ function forum_cron() {
                 continue;
             }
             
-            // caching this so we don't need sqls later
+            // Caching this environment info so we don't need to look them up later
+            // There is still a LOT of duplication here we could cut down on.     XXX TODO
+
             unset($pinfo);
-            $pinfo -> discussion = $discussion;
-            $pinfo -> forum = $forum;
-            $pinfo -> course = $course;
+            $pinfo->discussion = $discussion;
+            $pinfo->forum = $forum;
+            $pinfo->course = $course;
             
             $postinfo[$pid] = $pinfo;
             
@@ -309,155 +311,165 @@ function forum_cron() {
         }       
     }
 
-    if ($users) {
+    if ($users && $posts) {
 
         @set_time_limit(0);   /// so that script does not get timed out when posting to many users
 
         $urlinfo = parse_url($CFG->wwwroot);
         $hostname = $urlinfo['host'];
 
+        ksort($users);
+
         foreach ($users as $userto) {
             
-            // set this so that the capabilities are cached
+            // set this so that the capabilities are cached, and environment matches receiving user
             $USER = $userto;
             
             mtrace('Processing user '.$userto->id);
 
-            /// Check the consistency of the data first
+            /// we might want to add another layer - forums here (by checking array_keys($subscribedusers))
+            /// so that we can skip many posts
 
-            if (! $userfrom = get_record('user', 'id', $post->userid)) {
-                mtrace('Could not find user '.$post->userid);
-                continue;
-            }
+            foreach ($posts as $pid => $post) {
 
-            $cleanforumname = str_replace('"', "'", strip_tags($forum->name));
+                // Get info about the sending user    XXX TODO cache these and get needed fields only
 
-            $userfrom->customheaders = array (  // Headers to make emails easier to track
-                       'Precedence: Bulk',
-                       'List-Id: "'.$cleanforumname.'" <moodleforum'.$forum->id.'@'.$hostname.'>',
-                       'List-Help: '.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id,
-                       'Message-ID: <moodlepost'.$post->id.'@'.$hostname.'>',
-                       'In-Reply-To: <moodlepost'.$post->parent.'@'.$hostname.'>',
-                       'References: <moodlepost'.$post->parent.'@'.$hostname.'>',
-                       'X-Course-Id: '.$course->id,
-                       'X-Course-Name: '.strip_tags($course->fullname)
-            );
-
-
-            if ($posts) {
-
-                /// we might want to add another layer - forums here (by checking array_keys($subscribedusers))
-                /// so that we can skip many posts
-
-                foreach ($posts as $pid=>$post) {
-                                  
-                    $discussion = $postinfo[$pid]->discussion;
-                    $forum = $postinfo[$pid]->forum;
-                    $course = $postinfo[$pid]->course;    
-                    
-                    if (empty($subscribedusers[$forum->id]) || !in_array($userto->id, $subscribedusers[$forum->id])) {
-                        continue; // user does not subscribe to this forum  
-                    }
-                    
-                    if (!empty($cachecm[$forum->id])) {
-                        $cm = $cachecm[$forum->id];
-
-                    } else if ($cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-                        $cachecm[$forum->id] = $cm;
-
-                    } else {
-                        $cm = new object;
-                        $cm->id = 0;
-                        $cachecm[$forum->id] = $cm;
-                    }
-                    
-                    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);   // Cached already
-                    // Get coursemodule record (and cache these) 
-                    
-                    $groupmode = false;
-                    if (!empty($cm->id)) {
-                        if ($groupmode = groupmode($course, $cm) and $discussion->groupid > 0) {   // Groups are being used
-                            if (! groups_group_exists($discussion->groupid)) { // Can't find group //TODO:
-                                continue;                           // Be safe and don't send it to anyone
-                            }
-                        }
-                    }
-
-                    if ($groupmode) {    // Look for a reason not to send this email
-                        if (!empty($group->id)) {
-                            if (!ismember($group->id, $userto->id)) {
-                                // no need because $USER = $userto?
-                                if (!has_capability('moodle/site:accessallgroups', $modcontext)) {
-                                //if (!has_capability('moodle/site:accessallgroups', $modcontext, false, $userto->id)) {
-                                    continue;
-                                }
-                            }
-                        }
-                    }
-
-                    // make sure we're allowed to see it...
-                    //if (!forum_user_can_see_post($forum, $discussion, $post, $userto)) {
-                    if (!forum_user_can_see_post($forum, $discussion, $post)) {
-                        mtrace('user '.$userto->id. ' can not see '.$post->id);
-                        continue;
-                    }
-
-                    if ($userto->maildigest > 0) {
-                        // This user wants the mails to be in digest form
-                        $queue = New stdClass;
-                        $queue->userid = $userto->id;
-                        $queue->discussionid = $discussion->id;
-                        $queue->postid = $post->id;
-                        if (!insert_record('forum_queue', $queue)) {
-                            mtrace("Error: mod/forum/cron.php: Could not queue for digest mail for id $post->id to user $userto->id ($userto->email) .. not trying again.");
-                        }
-                        continue;
-                    }
-
-                    /// Override the language and timezone of the "current" user, so that
-                    /// mail is customised for the receiver.
-                    
-                    course_setup($course);
-
-
-                    $postsubject = "$course->shortname: ".format_string($post->subject,true);
-                    $posttext = forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto);
-                    $posthtml = forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $userto);
-
-                    mtrace('Sending ', '');
-                    
-                    if (!$mailresult = email_to_user($userto, $userfrom, $postsubject, $posttext,
-                                                     $posthtml, '', '', $CFG->forum_replytouser)) {
-                        mtrace("Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id".
-                             " ($userto->email) .. not trying again.");
-                        add_to_log($course->id, 'forum', 'mail error', "discuss.php?d=$discussion->id#p$post->id",
-                                   substr(format_string($post->subject,true),0,30), $cm->id, $userto->id);
-                        $errorcount[$post->id]++;
-                    } else if ($mailresult === 'emailstop') {
-                        add_to_log($course->id, 'forum', 'mail blocked', "discuss.php?d=$discussion->id#p$post->id",
-                                   substr(format_string($post->subject,true),0,30), $cm->id, $userto->id);
-                    } else {
-                        $mailcount[$post->id]++;
-
-                    /// Mark post as read if forum_usermarksread is set off
-                        if (!$CFG->forum_usermarksread && forum_tp_can_track_forums($forum, $userto) &&
-                            forum_tp_is_tracked($forum, $userto->id)) {
-                            if (!forum_tp_mark_post_read($userto->id, $post, $forum->id)) {
-                                mtrace("Error: mod/forum/cron.php: Could not mark post $post->id read for user $userto->id".
-                                     " while sending email.");
-                            }
-                        }
-                    }
-
-                    mtrace('post '.$post->id. ': '.$post->subject);
+                if (! $userfrom = get_record('user', 'id', $post->userid)) {
+                    mtrace('Could not find user '.$post->userid);
+                    continue;
                 }
+
+                // Set up the environment for the post, discussion, forum, course
+
+                $discussion = $postinfo[$pid]->discussion;
+                $forum = $postinfo[$pid]->forum;
+                $course = $postinfo[$pid]->course;    
+
+                course_setup($course);   // More environment
+
+
+                // Do some checks  to see if we can bail out now
+
+                if (empty($subscribedusers[$forum->id]) || !in_array($userto->id, $subscribedusers[$forum->id])) {
+                    continue; // user does not subscribe to this forum  
+                }
+                
+
+                // Get the coursemodule and context (cached)
+
+                if (!empty($cachecm[$forum->id])) {
+                    $cm = $cachecm[$forum->id];
+
+                } else if ($cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
+                    $cachecm[$forum->id] = $cm;
+
+                } else {
+                    $cm = new object;
+                    $cm->id = 0;
+                    $cachecm[$forum->id] = $cm;
+                }
+                
+                $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);   // Cached already
+                
+
+                // Make sure groups allow this user to see this email
+
+                $groupmode = false;
+                if (!empty($cm->id)) {
+                    if ($groupmode = groupmode($course, $cm) and $discussion->groupid > 0) {   // Groups are being used
+                        if (! groups_group_exists($discussion->groupid)) { // Can't find group //TODO:
+                            continue;                           // Be safe and don't send it to anyone
+                        }
+                    }
+                }
+
+                if ($groupmode) {    // Look for a reason not to send this email
+                    if (!empty($group->id)) {
+                        if (!ismember($group->id, $userto->id)) {
+                            if (!has_capability('moodle/site:accessallgroups', $modcontext)) {
+                                continue;
+                            }
+                        }
+                    }
+                }
+
+
+                // Make sure we're allowed to see it...
+                if (!forum_user_can_see_post($forum, $discussion, $post)) {
+                    mtrace('user '.$userto->id. ' can not see '.$post->id);
+                    continue;
+                }
+
+                // OK so we need to send the email.
+
+                // Does the user want this post in a digest?  If so postpone it for now.
+                if ($userto->maildigest > 0) {
+                    // This user wants the mails to be in digest form
+                    $queue = New stdClass;
+                    $queue->userid = $userto->id;
+                    $queue->discussionid = $discussion->id;
+                    $queue->postid = $post->id;
+                    if (!insert_record('forum_queue', $queue)) {
+                        mtrace("Error: mod/forum/cron.php: Could not queue for digest mail for id $post->id to user $userto->id ($userto->email) .. not trying again.");
+                    }
+                    continue;
+                }
+
+
+                // Prepare to actually send the post now, and build up the content
+
+                $cleanforumname = str_replace('"', "'", strip_tags($forum->name));
+
+                $userfrom->customheaders = array (  // Headers to make emails easier to track
+                           'Precedence: Bulk',
+                           'List-Id: "'.$cleanforumname.'" <moodleforum'.$forum->id.'@'.$hostname.'>',
+                           'List-Help: '.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id,
+                           'Message-ID: <moodlepost'.$post->id.'@'.$hostname.'>',
+                           'In-Reply-To: <moodlepost'.$post->parent.'@'.$hostname.'>',
+                           'References: <moodlepost'.$post->parent.'@'.$hostname.'>',
+                           'X-Course-Id: '.$course->id,
+                           'X-Course-Name: '.strip_tags($course->fullname)
+                );
+                             
+
+                $postsubject = "$course->shortname: ".format_string($post->subject,true);
+                $posttext = forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto);
+                $posthtml = forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $userto);
+
+                // Send the post now!
+
+                mtrace('Sending ', '');
+                
+                if (!$mailresult = email_to_user($userto, $userfrom, $postsubject, $posttext,
+                                                 $posthtml, '', '', $CFG->forum_replytouser)) {
+                    mtrace("Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id".
+                         " ($userto->email) .. not trying again.");
+                    add_to_log($course->id, 'forum', 'mail error', "discuss.php?d=$discussion->id#p$post->id",
+                               substr(format_string($post->subject,true),0,30), $cm->id, $userto->id);
+                    $errorcount[$post->id]++;
+                } else if ($mailresult === 'emailstop') {
+                    add_to_log($course->id, 'forum', 'mail blocked', "discuss.php?d=$discussion->id#p$post->id",
+                               substr(format_string($post->subject,true),0,30), $cm->id, $userto->id);
+                } else {
+                    $mailcount[$post->id]++;
+
+                /// Mark post as read if forum_usermarksread is set off
+                    if (!$CFG->forum_usermarksread && forum_tp_can_track_forums($forum, $userto) &&
+                        forum_tp_is_tracked($forum, $userto->id)) {
+                        if (!forum_tp_mark_post_read($userto->id, $post, $forum->id)) {
+                            mtrace("Error: mod/forum/cron.php: Could not mark post $post->id read for user $userto->id".
+                                 " while sending email.");
+                        }
+                    }
+                }
+
+                mtrace('post '.$post->id. ': '.$post->subject);
             }
         }
     }
 
     if ($posts) {
         foreach ($posts as $post) {
-            // this needs fixing, needs to be done after all posts are mailed
             mtrace($mailcount[$post->id]." users were sent post $post->id, '$post->subject'");
             if ($errorcount[$post->id]) {
                 set_field("forum_posts", "mailed", "2", "id", "$post->id");
