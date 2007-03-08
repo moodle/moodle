@@ -639,18 +639,25 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                      '3'  => get_string('geometric', 'quiz'));
     }
 
-    function dataset_options($form, $name, $renameabledatasets=false) {
+    function dataset_options($form, $name, $mandatory=true,$renameabledatasets=false) {
     // Takes datasets from the parent implementation but
     // filters options that are currently not accepted by calculated
     // It also determines a default selection...
-        list($options, $selected) = parent::dataset_options($form, $name);
+    //$renameabledatasets not implemented anmywhere 
+        list($options, $selected) = parent::dataset_options($form, $name,'','qtype_calculated');
+  //  list($options, $selected) = $this->dataset_optionsa($form, $name);
+
         foreach ($options as $key => $whatever) {
             if (!ereg('^'.LITERAL.'-', $key) && $key != '0') {
                 unset($options[$key]);
             }
         }
         if (!$selected) {
+            if ($mandatory){             
             $selected = LITERAL . "-0-$name"; // Default
+            }else {
+                $selected = "0"; // Default
+            }    
         }
         return array($options, $selected);
     }
@@ -706,6 +713,100 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         }
         return $str;
     }
+    
+    /**
+    * This function retrieve the item count of the available category shareable
+    * wild cards that is added as a comment displayed when a wild card with 
+    * the same name is displayed in datasetdefinitions_form.php
+    */ 
+    function get_dataset_definitions_category($form) {
+        global $CFG;
+        $datasetdefs = array();
+        $lnamemax = 30;
+        if (!empty($form->category)) {            
+            $sql = "SELECT i.*,d.*
+                    FROM {$CFG->prefix}question_datasets d,
+                         {$CFG->prefix}question_dataset_definitions i    
+                  WHERE i.id = d.datasetdefinition
+                    AND i.category = '$form->category'
+                    ;
+                   ";
+             if ($records = get_records_sql($sql)) {
+                   foreach ($records as $r) {
+                       if ( !isset ($datasetdefs["$r->name"])) $datasetdefs["$r->name"] = $r->itemcount;
+                    }
+                }
+        }  
+        return  $datasetdefs ;
+    }  
+
+    /**
+    * This function build a table showing the available category shareable
+    * wild cards, their name, their definition (Min, Max, Decimal) , the item count
+    * and the name of the question where they are used.
+    * This table is intended to be add before the question text to help the user use 
+    * these wild cards
+    */                          
+        
+    function print_dataset_definitions_category($form) {
+        global $CFG;
+        $datasetdefs = array();
+        $lnamemax = 22;
+        $namestr =get_string('name', 'quiz');
+        $minstr=get_string('min', 'quiz');
+        $maxstr=get_string('max', 'quiz');
+        $rangeofvaluestr=get_string('minmax','qtype_datasetdependent');
+        $questionusingstr = get_string('usedinquestion','qtype_calculated');
+        $wildcardstr =  get_string('wildcard', 'qtype_calculated');
+        $itemscountstr = get_string('itemscount','qtype_datasetdependent');
+       $text ='';
+        if (!empty($form->category)) {           
+            $sql = "SELECT i.*,d.*
+                    FROM {$CFG->prefix}question_datasets d,
+                         {$CFG->prefix}question_dataset_definitions i    
+                    WHERE i.id = d.datasetdefinition
+                    AND i.category = '$form->category'; 
+                    " ;
+            if ($records = get_records_sql($sql)) {
+                foreach ($records as $r) {
+                    $sql1 = "SELECT q.*
+                        FROM  {$CFG->prefix}question q                    
+                             WHERE q.id = $r->question                    
+                    ";                  
+                    if ( !isset ($datasetdefs["$r->type-$r->category-$r->name"])){
+                        $datasetdefs["$r->type-$r->category-$r->name"]= $r;
+                    }
+                    if ($questionb = get_records_sql($sql1)) {
+                        $datasetdefs["$r->type-$r->category-$r->name"]->questions[$r->question]->name =$questionb[$r->question]->name ;
+                    }
+                }
+            }
+        }
+        if (!empty ($datasetdefs)){
+            
+            $text ="<table width=\"100%\" border=\"1\"><tr><th  style=\"white-space:nowrap;\" class=\"header\" scope=\"col\" >$namestr</th><th   style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$rangeofvaluestr</th><th  style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$itemscountstr</th><th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$questionusingstr</th></tr>";  
+            foreach ($datasetdefs as $datasetdef){
+                list($distribution, $min, $max,$dec) = explode(':', $datasetdef->options, 4);
+                $text .="<tr><td valign=\"top\" align=\"center\"> $datasetdef->name </td><td align=\"center\" valign=\"top\"> $min <strong>-</strong> $max </td><td align=\"right\" valign=\"top\">$datasetdef->itemcount&nbsp;&nbsp;</td><td align=\"left\">";
+                foreach ($datasetdef->questions as $qu) {
+                    //limit the name length displayed
+                    if (!empty($qu->name)) {
+                        $qu->name = (strlen($qu->name) > $lnamemax) ?
+                        substr($qu->name, 0, $lnamemax).'...' : $qu->name;
+                    } else {
+                        $qu->name = '';
+                    }
+                    $text .=" &nbsp;&nbsp; $qu->name <br/>";  
+                }  
+                $text .="</td></tr>";
+            }
+            $text .="</table>";
+        }else{
+             $text .=get_string('no shareable wild card', 'qtype_calculated'); //"<b>NO SHAREABLE DATASETS IN THIS CATEGORY</b>";
+        }
+        return  $text ;
+    }    
+
 
 /// BACKUP FUNCTIONS ////////////////////////////
 
