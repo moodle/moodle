@@ -532,22 +532,36 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
             $orgidentifier = $sco->organization;
         }
     }
+
+/*
+ $orgidentifier = '';
+    if ($org = get_record('scorm_scoes','id',$organization)) {
+        if (($org->organization == '') && ($org->launch == '')) {
+            $orgidentifier = $org->identifier;
+        } else {
+            $orgidentifier = $org->organization;
+        }
+    }*/
+
     $scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));   // Just to be safe
     if (!file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'lib.php')) {
         $scorm->version = 'scorm_12';
     }
     require_once($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'lib.php');
+	
 
     $result = scorm_get_toc($user,$scorm,'structlist',$orgidentifier);
     $incomplete = $result->incomplete;
     echo $result->toc;
     print_simple_box_end();
+
 ?>
             <div class="center">
-                <form id="theform" method="post" action="<?php echo $CFG->wwwroot ?>/mod/scorm/player.php?id=<?php echo $cm->id ?>"<?php echo $scorm->popup == 1?' target="newwin"':'' ?>>
+               <form id="theform" method="post" action="<?php echo $CFG->wwwroot ?>/mod/scorm/player.php?scoid=<?php echo $sco->id ?>&id=<?php echo $cm->id ?>"<?php echo $scorm->popup == 1?' target="newwin"':'' ?>>
               <?php
                   if ($scorm->hidebrowse == 0) {
                       print_string('mode','scorm');
+					  echo '<input type="hidden" name="scoid" value="$sco->id" />'."\n";
                       echo ': <input type="radio" id="b" name="mode" value="browse" /><label for="b">'.get_string('browse','scorm').'</label>'."\n";
                       echo '<input type="radio" id="n" name="mode" value="normal" checked="checked" /><label for="n">'.get_string('normal','scorm')."</label>\n";
                   } else {
@@ -562,14 +576,41 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
                   }
               ?>
               <br />
-              <input type="hidden" name="scoid" />
+              <input type="hidden" name="scoid"/>
               <input type="hidden" name="currentorg" value="<?php echo $orgidentifier ?>" />
               <input type="submit" value="<?php print_string('entercourse','scorm') ?>" />
               </form>
           </div>
 <?php
 }
-
+function scorm_simple_play($scorm,$user) {
+   $result = false;
+  
+   $scoes = get_records_select('scorm_scoes','scorm='.$scorm->id.' AND launch<>\'\'');
+   echo 'EL COUNT VALE '.count($scoes);
+   foreach ($scoes as $sco){
+	   echo 'VEAMOS IDS'.$sco->id;
+   }
+   
+   if (count($scoes) == 1) {
+	   echo 'ENTRA AQUI EN EL ==1';
+       if ($scorm->skipview >= 1) {
+           $sco = current($scoes);
+           if (scorm_get_tracks($sco->id,$user->id) === false) {
+				echo 'LLAMO PLAYER LOCAL 2';
+               header('Location: player.php?a='.$scorm->id.'&scoid= '.$sco->id);
+               $result = true;
+           } else if ($scorm->skipview == 2) {
+			   echo 'LLAMO PLAYER LOCAL 3';
+               header('Location: player.php?a='.$scorm->id.'&scoid= '.$sco->id);
+               $result = true;
+           }
+       }
+   }
+   echo 'va al result';
+   return $result;
+}
+/*
 function scorm_simple_play($scorm,$user) {
     $result = false;
     if ($scoes = get_records_select('scorm_scoes','scorm='.$scorm->id.' AND launch<>""')) {
@@ -588,7 +629,7 @@ function scorm_simple_play($scorm,$user) {
     }
     return $result;
 }
-
+*/
 function scorm_parse($scorm) {
     global $CFG,$repositoryconfigfile;
     
