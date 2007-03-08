@@ -1464,7 +1464,7 @@
         //user_course_creators and user_admins
         if (!empty($info->users)) {
             // Grab mnethosts keyed by wwwroot, to map to id
-            $mnethosts = get_records('mnethost', '', '', 
+            $mnethosts = get_records('mnet_host', '', '', 
                                      'wwwroot', 'wwwroot, id');
 
             $languages = get_list_of_languages();
@@ -6281,7 +6281,6 @@
         /*******************************************************************************
          ************* Restore of Roles and Capabilities happens here ******************
          *******************************************************************************/
-        
         $status = restore_create_roles($restore, $xml_file);
         $status = restore_roles_settings($restore, $xml_file);
 
