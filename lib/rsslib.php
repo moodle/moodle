@@ -557,7 +557,12 @@ function rss_add_enclosures($item){
     // take into account attachments (e.g. from forum) - with these, we are able to know the file size
     if (isset($item->attachments) && is_array($item->attachments)) {
         foreach ($item->attachments as $attachment){
-            $type = $mediafiletypes[substr($attachment->url, strrpos($attachment->url, '.')+1)]['type'];
+            $extension = strtolower(substr($attachment->url, strrpos($attachment->url, '.')+1));
+            if (isset($mediafiletypes[$extension]['type'])) {
+                $type = $mediafiletypes[$extension]['type'];
+            } else {
+                $type = 'document/unknown';
+            }
             $returnstring .= "\n<enclosure url=\"$attachment->url\" length=\"$attachment->length\" type=\"$type\" />\n";
         }
     }
@@ -569,7 +574,12 @@ function rss_add_enclosures($item){
     // loop over matches of regular expression 
     for ($i = 0; $i < count($matches[2]); $i++){
         $url = htmlspecialchars($matches[2][$i]);
-        $type = $mediafiletypes[strtolower($matches[3][$i])]['type'];               
+        $extension = strtolower($matches[3][$i]);
+        if (isset($mediafiletypes[$extension]['type'])) {
+            $type = $mediafiletypes[$extension]['type'];
+        } else {
+            $type = 'document/unknown';
+        }
 
         // the rss_*_tag functions can't deal with methods, unfortunately
         $returnstring .= "\n<enclosure url='$url' type='$type' />\n";
