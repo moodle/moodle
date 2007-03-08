@@ -82,7 +82,7 @@ function stats_cron_daily () {
         $daily_modules = array();
         $mods = get_records("modules");
         foreach ($mods as $mod) {
-            require_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
+            include_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
             $fname = $mod->name.'_get_daily_stats';
             if (function_exists($fname)) {
                 $daily_modules[$mod] = $fname;
@@ -222,7 +222,7 @@ function stats_cron_weekly () {
         $weekly_modules = array();
         $mods = get_records("modules");
         foreach ($mods as $mod) {
-            require_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
+            include_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
             $fname = $mod->name.'_get_weekly_stats';
             if (function_exists($fname)) {
                 $weekly_modules[$mod] = $fname;
@@ -331,7 +331,7 @@ function stats_cron_monthly () {
         $monthly_modules = array();
         $mods = get_records("modules");
         foreach ($mods as $mod) {
-            require_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
+            include_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
             $fname = $mod->name.'_get_monthly_stats';
             if (function_exists($fname)) {
                 $monthly_modules[$mod] = $fname;
@@ -630,7 +630,7 @@ function stats_get_action_sql_in($str) {
     $function = 'stats_get_'.$str.'_actions';
     $actions = $function();
     foreach ($mods as $mod) {
-        require_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
+        include_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
         $function = $mod->name.'_get_'.$str.'_actions';
         if (function_exists($function)) {
             $actions = array_merge($actions,$function());
