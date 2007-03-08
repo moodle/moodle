@@ -1,5 +1,6 @@
 <?php  // $Id$
 
+
 ///////////////////////////////////////////////////////////////
 /// ABSTRACT SUPERCLASS FOR QUSTION TYPES THAT USE DATASETS ///
 ///////////////////////////////////////////////////////////////
@@ -596,10 +597,10 @@ class question_dataset_dependent_questiontype extends default_questiontype {
         return $datasetdefs;
     }
 
-    function dataset_options($form, $name) {
+    function dataset_options($form, $name,$prefix='',$langfile='quiz') {
 
         // First options - it is not a dataset...
-        $options['0'] = get_string('nodataset', 'quiz');
+        $options['0'] = get_string($prefix.'nodataset', $langfile);
 
         // Construct question local options
         global $CFG;
@@ -615,9 +616,9 @@ class question_dataset_dependent_questiontype extends default_questiontype {
             $key = "$type-0-$name";
             if ($currentdatasetdef->type == $type
                     and $currentdatasetdef->category == 0) {
-                $options[$key] = get_string("keptlocal$type", 'quiz');
+                $options[$key] = get_string($prefix."keptlocal$type", $langfile);
             } else {
-                $options[$key] = get_string("newlocal$type", 'quiz');
+                $options[$key] = get_string($prefix."newlocal$type", $langfile);
             }
         }
 
@@ -635,12 +636,12 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                     and $categorydef = $categorydatasetdefs[$type]) {
                 if ($currentdatasetdef->type == $type
                         and $currentdatasetdef->id == $categorydef->id) {
-                    $options[$key] = get_string("keptcategory$type", 'quiz');
+                    $options[$key] = get_string($prefix."keptcategory$type", $langfile);
                 } else {
-                    $options[$key] = get_string("existingcategory$type", 'quiz');
+                    $options[$key] = get_string($prefix."existingcategory$type", $langfile);
                 }
             } else {
-                $options[$key] = get_string("newcategory$type", 'quiz');
+                $options[$key] = get_string($prefix."newcategory$type", $langfile);
             }
         }
 
