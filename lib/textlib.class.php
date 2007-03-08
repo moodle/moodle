@@ -242,8 +242,14 @@ class textlib {
         $ratio = $this->strlen($text, $charset) / strlen($text);
     /// Base64 ratio
         $magic = $avglength = floor(3 * $length * $ratio / 4);
+    /// basic infinite loop protection
+        $maxiterations = strlen($text)*2;
+        $iteration = 0; 
     /// Iterate over the string in magic chunks
         for ($i=0; $i <= $this->strlen($text, $charset); $i+=$magic) {
+            if ($iteration++ > $maxiterations) {
+                return str_repeat('?', strlen($text)); // probably infinite loop, safer to use raw char length here 
+            } 
             $magic = $avglength;
             $offset = 0;
         /// Ensure the chunk fits in length, reduding magic if necessary
