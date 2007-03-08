@@ -173,7 +173,7 @@ class question_edit_calculated_form extends question_edit_form {
         $answercount = 0;
         //check grades
         /*$totalfraction = 0;
-        $maxfraction = -1;*/
+        $maxfraction = -1; */
         $possibledatasets = $this->qtypeobj->find_dataset_names($data['questiontext']);
         $mandatorydatasets = array();
         foreach ($answers as $key => $answer){
