@@ -372,8 +372,6 @@ function forum_cron() {
                     $posttext = forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto);
                     $posthtml = forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $userto);
 
-                    unset($USER);
-
                     if (!$mailresult = email_to_user($userto, $userfrom, $postsubject, $posttext,
                                                      $posthtml, '', '', $CFG->forum_replytouser)) {
                         mtrace("Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id".
