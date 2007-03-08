@@ -3381,7 +3381,11 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
             }
         }
     /// If it has changed, convert all the necessary strings
-        if ($mail->CharSet != $charset) {
+        $charset = strtolower($charset);
+        $charsets = get_list_of_charsets();
+        unset($charsets['UTF-8']);
+        $charsets = array_map('strtolower', $charsets);
+        if (in_array($charset, $charsets)) {
         /// Save the new mail charset
             $mail->CharSet = $charset;
         /// And convert some strings
@@ -4552,7 +4556,7 @@ function get_list_of_charsets() {
         'ISO-8859-1' => 'ISO-8859-1',
         'SHIFT-JIS'  => 'SHIFT-JIS',
         'GB2312'     => 'GB2312',
-        'GB18030'    => 'GB18030',
+        'GB18030'    => 'GB18030', // gb18030 not supported by typo and mbstring
         'UTF-8'      => 'UTF-8');
 
     asort($charsets);
