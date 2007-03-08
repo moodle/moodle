@@ -451,7 +451,6 @@ function forum_cron() {
                     mtrace(' sent.');
                 }
             }
-            unset ($USER);
         }
     }
 
