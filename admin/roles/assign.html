@@ -23,14 +23,28 @@
                            document.assignform.remove.disabled=false;
                            document.assignform.addselect.selectedIndex=-1;" />
           <?php
-              foreach ($contextusers as $contextuser) {
-                  $fullname = fullname($contextuser, true);
-                  echo "<option value=\"$contextuser->id\">".$fullname.", ".$contextuser->email."</option>\n";
-              }
+            $i = 0;
+            foreach ($contextusers as $contextuser) {
+                $fullname = fullname($contextuser, true);
+                if ($contextuser->hidden) {
+                    $hidden=' ('.get_string('hiddenassign').') ';
+                } else {
+                    $hidden="";
+                }
+                echo "<option value=\"$contextuser->id\">".$fullname.", ".$contextuser->email.$hidden."</option>\n";
+                $i++;    
+            }
+            if ($i==0) {
+                echo '<option/>'; // empty select breaks xhtml strict
+            }
           ?>
 
           </select></td>
       <td valign="top">
+        <label title="<?php print_string('hiddenassign') ?>">
+            <input type="checkbox" name="hidden" value="1" />
+            <img src="<?php echo $CFG->pixpath; ?>/t/hide.gif" alt="<?php print_string('hiddenassign') ?>" class="hide-show-image" />
+        </label>
         <br />
         <input name="add" type="submit" id="add" value="&larr;" />
         <br />
