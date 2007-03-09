@@ -3306,7 +3306,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 
     } else {
         $mail->IsSMTP();                               // use SMTP directly
-        if (debugging()) {
+        if (!empty($CFG->debugsmtp)) {
             echo '<pre>' . "\n";
             $mail->SMTPDebug = true;
         }
@@ -3426,10 +3426,17 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 
     if ($mail->Send()) {
         set_send_count($user);
+        $mail->IsSMTP();                               // use SMTP directly
+        if (!empty($CFG->debugsmtp)) {
+            echo '</pre>';
+        }
         return true;
     } else {
         mtrace('ERROR: '. $mail->ErrorInfo);
         add_to_log(SITEID, 'library', 'mailer', $FULLME, 'ERROR: '. $mail->ErrorInfo);
+        if (!empty($CFG->debugsmtp)) {
+            echo '</pre>';
+        }
         return false;
     }
 }

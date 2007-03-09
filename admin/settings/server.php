@@ -85,6 +85,7 @@ $ADMIN->add('server', $temp);
 $temp = new admin_settingpage('debugging', get_string('debugging', 'admin'));
 $temp->add(new admin_setting_special_debug());
 $temp->add(new admin_setting_special_debugdisplay());
+$temp->add(new admin_setting_configcheckbox('debugsmtp', get_string('debugsmtp', 'admin'), get_string('configdebugsmtp', 'admin'), 0));
 $temp->add(new admin_setting_special_perfdebug());
 $ADMIN->add('server', $temp);
 
