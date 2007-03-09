@@ -320,6 +320,16 @@ function search_generate_text_SQL($parsetree, $datafield, $metafield, $mainidfie
                                    $userfirstnamefield, $userlastnamefield, $timefield, $instancefield);
     }
 
+/// Some languages don't have "word separators" and MySQL FULLTEXT doesn't perform well with them, so
+/// switch to standard SQL search generation
+    if ($CFG->dbfamily == 'mysql') {
+        $nonseparatedlangs = array('ja_utf8', 'th_utf8', 'zh_cn_utf8', 'zh_tw_utf8');
+        if (in_array(current_language(), $nonseparatedlangs)) {
+            return search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $useridfield,
+                                       $userfirstnamefield, $userlastnamefield, $timefield, $instancefield);
+        }
+    }
+
 /// Here we'll acumulate non-textual tokens
     $non_text_tokens = array();
 
