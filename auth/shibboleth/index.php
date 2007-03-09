@@ -2,7 +2,6 @@
       // Designed to be redirected from moodle/login/index.php
 
     require('../../config.php');
-    require('lib.php');
 
     if (isloggedin() && $USER->username != 'guest') {      // Nothing to do
         if (isset($SESSION->wantsurl) and (strpos($SESSION->wantsurl, $CFG->wwwroot) === 0)) {
@@ -18,7 +17,8 @@
     }
 
     $pluginconfig   = get_config('auth/shibboleth');
-
+    $shibbolethauth = get_auth_plugin('shibboleth');
+    
     // Check whether Shibboleth is configured properly
     if (empty($pluginconfig->user_attribute)) {
         error(get_string( 'shib_not_set_up_error', 'auth'));
@@ -33,17 +33,22 @@
 
     /// Check if the user has actually submitted login data to us
 
-        if ($user = authenticate_user_login($frm->username, $frm->password)) {
-
-            // Let's get them all set up.
-            $USER = $user;
-
-            add_to_log(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
-
+        if ($shibbolethauth->user_login($frm->username, $frm->password)) {
+            
+            $USER = authenticate_user_login($frm->username, $frm->password);
+            
+            $USER->loggedin = true;
+            $USER->site     = $CFG->wwwroot; // for added security, store the site in the 
+            
             update_user_login_times();
             set_moodle_cookie($USER->username);
             set_login_session_preferences();
-
+            
+            unset($SESSION->lang);
+            $SESSION->justloggedin = true;
+            
+            add_to_log(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
+            
             if (user_not_fully_set_up($USER)) {
                 $urltogo = $CFG->wwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.SITEID;
                 // We don't delete $SESSION->wantsurl yet, so we get there later
@@ -67,6 +72,12 @@
             load_all_capabilities();     /// This is what lets the user do anything on the site  :-)
 
             redirect($urltogo);
+            
+            exit;
+        } 
+        
+        else {
+            // For some weird reason the Shibboleth user couldn't be authenticated
         }
     }
 

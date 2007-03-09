@@ -27,6 +27,12 @@
     <td><?php print_string("auth_shib_username_description", "auth") ?></td>
 </tr>
 
+<!-- 
+This is kind of obsolete because the login instructions are now centralized 
+On the other hand it would be great for Shibboleth to have seperate login 
+instructions
+-->
+<!--
 <tr valign="top">
     <td align="right"><?php print_string("instructions", "auth") ?>:</td>
     <td>
@@ -34,13 +40,14 @@
     </td>
     <td>
         <?php
-
+  
         print_string("auth_shib_instructions_help", "auth", htmlspecialchars($CFG->wwwroot.'/auth/shibboleth/index.php'));
         helpbutton("text", get_string("helptext"));
 
         ?>
     </td>
 </tr>
+-->
 
 <tr valign="top">
     <td align="right"><?php print_string("auth_shib_convert_data", "auth") ?>:</td>
@@ -58,6 +65,7 @@
     </td>
     <td><?php print_string("auth_shib_convert_data_description", "auth") ?></td>
 </tr>
+
 
 <tr valign="top">
     <td align="right"><?php print_string('auth_shib_changepasswordurl', 'auth') ?>: </td>
