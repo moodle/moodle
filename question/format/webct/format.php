@@ -246,7 +246,6 @@ class qformat_webct extends qformat_default {
     }
 
     function readquestions ($lines) {
-
         $qtypecalculated = new qformat_webct_modified_calculated_qtype();
         $webctnumberregex =
                 '[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)((e|E|\\*10\\*\\*)([+-]?[0-9]+|\\([+-]?[0-9]+\\)))?';
@@ -262,11 +261,11 @@ class qformat_webct extends qformat_default {
         $nQuestionStartLine = 0;
         $bIsHTMLText = FALSE;
         $lines[] = ":EOF:";    // for an easiest processing of the last line
-        $question = $this->defaultquestion();
+    //    $question = $this->defaultquestion();
 
         foreach ($lines as $line) {
             $nLineCounter++;
-
+            $line = iconv("Windows-1252","UTF-8",$line);
             // Processing multiples lines strings
 
             if (isset($questiontext) and is_string($questiontext)) {
@@ -391,7 +390,7 @@ class qformat_webct extends qformat_default {
 
                             case CALCULATED:
                                 foreach ($question->answers as $answer) {
-                                    if ($formulaerror = quiz_qtype_calculated_find_formula_errors($answer->answer)) {
+                                    if ($formulaerror =qtype_calculated_find_formula_errors($answer->answer)) {
                                         $warnings[] = "'$question->name': ". $formulaerror;
                                         $QuestionOK = FALSE;
                                     }
@@ -417,6 +416,7 @@ class qformat_webct extends qformat_default {
 
             if (eregi("^:TYPE:MC:1(.*)",$line,$webct_options)) {
                 // Multiple Choice Question with only one good answer
+                $question = $this->defaultquestion();
                 $question->qtype = MULTICHOICE;
                 $question->single = 1;        // Only one answer is allowed
                 $ignore_rest_of_question = FALSE;
@@ -425,6 +425,7 @@ class qformat_webct extends qformat_default {
 
             if (eregi("^:TYPE:MC:N(.*)",$line,$webct_options)) {
                 // Multiple Choice Question with several good answers
+                $question = $this->defaultquestion();
                 $question->qtype = MULTICHOICE;
                 $question->single = 0;        // Many answers allowed
                 $ignore_rest_of_question = FALSE;
@@ -433,6 +434,7 @@ class qformat_webct extends qformat_default {
 
             if (eregi("^:TYPE:S",$line)) {
                 // Short Answer Question
+                $question = $this->defaultquestion();
                 $question->qtype = SHORTANSWER;
                 $question->usecase = 0;       // Ignore case
                 $ignore_rest_of_question = FALSE;
@@ -441,7 +443,10 @@ class qformat_webct extends qformat_default {
 
             if (eregi("^:TYPE:C",$line)) {
                 // Calculated Question
-                $question->qtype = CALCULATED;
+                $warnings[] = get_string("calculatedquestion", "quiz", $nLineCounter);
+                unset($question);
+                $ignore_rest_of_question = TRUE;         // Question Type not handled by Moodle
+             /*   $question->qtype = CALCULATED;
                 $question->answers = array(); // No problem as they go as :FORMULA: from webct
                 $question->units = array();
                 $question->datasets = array();
@@ -451,12 +456,13 @@ class qformat_webct extends qformat_default {
                 $question->fraction = array('1.0');
 
                 $currentchoice = -1;
-                $ignore_rest_of_question = FALSE;
+                $ignore_rest_of_question = FALSE;*/
                 continue;
             }
 
             if (eregi("^:TYPE:M",$line)) {
                 // Match Question
+                $question = $this->defaultquestion();
                 $question->qtype = MATCH;
                 $ignore_rest_of_question = FALSE;         // match question processing is not debugged
                 continue;
@@ -465,6 +471,7 @@ class qformat_webct extends qformat_default {
             if (eregi("^:TYPE:P",$line)) {
                 // Paragraph Question
                 $warnings[] = get_string("paragraphquestion", "quiz", $nLineCounter);
+                unset($question);
                 $ignore_rest_of_question = TRUE;         // Question Type not handled by Moodle
                 continue;
             }
@@ -472,6 +479,7 @@ class qformat_webct extends qformat_default {
             if (eregi("^:TYPE:",$line)) {
                 // Unknow Question
                 $warnings[] = get_string("unknowntype", "quiz", $nLineCounter);
+                unset($question);
                 $ignore_rest_of_question = TRUE;         // Question Type not handled by Moodle
                 continue;
             }
@@ -502,8 +510,8 @@ class qformat_webct extends qformat_default {
             // if question isn't defined yet there is nothing to do here (avoid notices)
             if (!isset($question)) {
                 continue;
-            }
-            if (CALCULATED == $question->qtype && ereg(
+            } 
+            if (isset($question->qtype ) && CALCULATED == $question->qtype && ereg(
                     "^:([[:lower:]].*|::.*)-(MIN|MAX|DEC|VAL([0-9]+))::?:?($webctnumberregex)", $line, $webct_options)) {
                 $datasetname = ereg_replace('^::', '', $webct_options[1]);
                 $datasetvalue = qformat_webct_convert_formula($webct_options[4]);
@@ -586,20 +594,20 @@ class qformat_webct extends qformat_default {
                 continue;
             }
 
-            if (CALCULATED == $question->qtype && eregi('^:ANS-DEC:([1-9][0-9]*)', $line, $webct_options)) {
+            if (isset($question->qtype ) && CALCULATED == $question->qtype && eregi('^:ANS-DEC:([1-9][0-9]*)', $line, $webct_options)) {
                 // We can but hope that this always appear before the ANSTYPE property
                 $question->answers[$currentchoice]->correctanswerlength = $webct_options[1];
                 continue;
             }
 
-            if (CALCULATED == $question->qtype && eregi("^:TOL:($webctnumberregex)", $line, $webct_options)) {
+            if (isset($question->qtype )&& CALCULATED == $question->qtype && eregi("^:TOL:($webctnumberregex)", $line, $webct_options)) {
                 // We can but hope that this always appear before the TOL property
                 $question->answers[$currentchoice]->tolerance =
                         qformat_webct_convert_formula($webct_options[1]);
                 continue;
             }
 
-            if (CALCULATED == $question->qtype && eregi('^:TOLTYPE:percent', $line)) {
+            if (isset($question->qtype )&& CALCULATED == $question->qtype && eregi('^:TOLTYPE:percent', $line)) {
                 // Percentage case is handled as relative in Moodle:
                 $question->answers[$currentchoice]->tolerance /= 100;
                 $question->answers[$currentchoice]->tolerancetype = 1; // Relative
@@ -634,7 +642,7 @@ class qformat_webct extends qformat_default {
                 continue;
             }
 
-            if (CALCULATED == $question->qtype && eregi('^:ANSTYPE:dec', $line)) {
+            if (isset($question->qtype )&& CALCULATED == $question->qtype && eregi('^:ANSTYPE:dec', $line)) {
                 // Houston - we have a problem
                 // Moodle does not support this - we try something defensively by
                 // setting the correct answer length to 5, it shoud be enough for
