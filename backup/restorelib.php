@@ -6017,10 +6017,19 @@
         if (!empty($restore->rolesmapping)) {
             $rolemappings = $restore->rolesmapping;
         }
+        // $info->roles will be empty for backups pre 1.7
         if (isset($info->roles) && $info->roles) {
-            foreach ($info->roles as $oldroleid=>$roledata) {
             
-            /// first we check if the roles are in the mappings
+            foreach ($info->roles as $oldroleid=>$roledata) {
+                if (empty($restore->rolesmapping)) {                   
+                    // if this is empty altogether, we came from import or there's no roles used in course at all
+                    // in this case, write the same oldid as this is the same site
+                    // no need to do mapping
+                    $status = backup_putid($restore->backup_unique_code,"role",$oldroleid,
+                                     $oldroleid); // adding a new id                           
+                    continue;  // do not create additonal roles;
+                }
+            // first we check if the roles are in the mappings
             // if so, we just do a mapping i.e. update oldids table
                 if (isset($rolemappings[$oldroleid]) && $rolemappings[$oldroleid]) {
                     $status = backup_putid($restore->backup_unique_code,"role",$oldroleid,
@@ -6091,7 +6100,13 @@
         }
         $course = restore_read_xml_course_header($xmlfile);
         
-        if (!empty($course->roleassignments)) {
+        if (!isset($restore->rolesmapping)) {
+            $isimport = true; // course import from another course, or course with no role assignments
+        } else {
+            $isimport = false; // course restore with role assignments
+        }
+        
+        if (!empty($course->roleassignments) && !$isimport) {
             $courseassignments = $course->roleassignments;
 
             foreach ($courseassignments as $oldroleid => $courseassignment) {    
@@ -6102,7 +6117,7 @@
          * Restoring from course level overrides *
          *****************************************************/     
         
-        if (!empty($course->roleoverrides)) {
+        if (!empty($course->roleoverrides) && !$isimport) {
             $courseoverrides = $course->roleoverrides;
             foreach ($courseoverrides as $oldroleid => $courseoverride) {
                 // if not importing into exiting course, or creating new role, we are ok
@@ -6127,11 +6142,12 @@
         foreach ($secs as $section) {
             if (isset($section->mods)) {
                 foreach ($section->mods as $modid=>$mod) {
-                    if (isset($mod->roleassignments)) {
+                    if (isset($mod->roleassignments) && !$isimport) {
                         foreach ($mod->roleassignments as $oldroleid=>$modassignment) {
                             restore_write_roleassignments($restore, $modassignment->assignments, "course_modules", CONTEXT_MODULE, $modid, $oldroleid);                       
                         }  
                     } 
+                    // role overrides always applies, in import or backup/restore
                     if (isset($mod->roleoverrides)) {
                         foreach ($mod->roleoverrides as $oldroleid=>$modoverride) {
                             restore_write_roleoverrides($restore, $modoverride->overrides, "course_modules", CONTEXT_MODULE, $modid, $oldroleid);
@@ -6153,13 +6169,14 @@
             $blocks = restore_read_xml_blocks($xmlfile);
             if (isset($blocks->instances)) {
                 foreach ($blocks->instances as $instance) {
-                    if (isset($instance->roleassignments)) {
+                    if (isset($instance->roleassignments) && !$isimport) {
                         foreach ($instance->roleassignments as $oldroleid=>$blockassignment) {
                             restore_write_roleassignments($restore, $blockassignment->assignments, "block_instance", CONTEXT_BLOCK, $instance->id, $oldroleid);
                       
                         }
                     }
-                    if (isset($instance->roleoverrides)) {
+                    // likewise block overrides should always be restored like mods
+                    if (isset($instance->roleoverrides)) {                    
                         foreach ($instance->roleoverrides as $oldroleid=>$blockoverride) {
                             restore_write_roleoverrides($restore, $blockoverride->overrides, "block_instance", CONTEXT_BLOCK, $instance->id, $oldroleid);
                         }
@@ -6175,7 +6192,7 @@
             echo "<li>".get_string("creatinguserroles").'</li>';
         }
         $info = restore_read_xml_users($restore, $xmlfile);
-        if (!empty($info->users)) {
+        if (!empty($info->users) && !$isimport) { // no need to restore user assignments for imports (same course)
             //For each user, take its info from backup_ids
             foreach ($info->users as $userid) {
                 $rec = backup_getid($restore->backup_unique_code,"user",$userid);
