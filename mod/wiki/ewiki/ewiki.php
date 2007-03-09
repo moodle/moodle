@@ -1544,7 +1544,7 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
        . '<form method="post" enctype="multipart/form-data" action="'
        . ewiki_script("edit", $id) . '" '
        . ' accept-charset="'.EWIKI_CHARSET.'">' . "\n";
-   $o .= '<fieldset class="invisiblefieldset">';
+   $o .= '<div>';
    #-- additional POST vars
    foreach ($hidden_postdata as $name => $value) {
        $o .= '<input type="hidden" name="'.$name.'" value="'.$value.'" />'."\n";
@@ -1568,11 +1568,10 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
      print_textarea($usehtmleditor, $rows, $cols, 680, 400, "content", $oldtext);
      echo '</td></tr></table>';
 
-     $o .= ob_get_contents();     
-     //yu: this is causing problem and i don't know where to put it   
      if ($usehtmleditor) {
         use_html_editor("content");
      }
+     $o .= ob_get_contents();     
      ob_end_clean();     
 
    } else {
@@ -1604,7 +1603,7 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
       $o .= $pf($id, $data, $action);
    }
 
-   $o .= "\n</fieldset></form>\n";
+   $o .= "\n</div></form>\n";
    //   . ewiki_t("EDIT_FORM_2");  // MOODLE DELETION
 
    return('<div class="edit-box">'. $o .'</div>');
