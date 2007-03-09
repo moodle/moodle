@@ -339,8 +339,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $index->setFields(array('username'));
         drop_index($table, $index);
         $index->setFields(array('mnethostid', 'username'));
-        $empty_on_duplicate = add_index($table, $index);
-        if(empty($fail_on_duplicate)) {
+        if (!add_index($table, $index)) {
             notify(get_string('duplicate_usernames', 'mnet', 'http://docs.moodle.org/en/DuplicateUsernames'));
         }
 
