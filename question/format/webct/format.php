@@ -246,7 +246,6 @@ class qformat_webct extends qformat_default {
     }
 
     function readquestions ($lines) {
-
         $qtypecalculated = new qformat_webct_modified_calculated_qtype();
         $webctnumberregex =
                 '[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)((e|E|\\*10\\*\\*)([+-]?[0-9]+|\\([+-]?[0-9]+\\)))?';
@@ -263,7 +262,6 @@ class qformat_webct extends qformat_default {
         $bIsHTMLText = FALSE;
         $lines[] = ":EOF:";    // for an easiest processing of the last line
     //    $question = $this->defaultquestion();
-
 
         foreach ($lines as $line) {
             $nLineCounter++;
