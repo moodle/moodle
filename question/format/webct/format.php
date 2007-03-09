@@ -416,6 +416,7 @@ class qformat_webct extends qformat_default {
 
             if (eregi("^:TYPE:MC:1(.*)",$line,$webct_options)) {
                 // Multiple Choice Question with only one good answer
+                $question = $this->defaultquestion();
                 $question->qtype = MULTICHOICE;
                 $question->single = 1;        // Only one answer is allowed
                 $ignore_rest_of_question = FALSE;
@@ -424,6 +425,7 @@ class qformat_webct extends qformat_default {
 
             if (eregi("^:TYPE:MC:N(.*)",$line,$webct_options)) {
                 // Multiple Choice Question with several good answers
+                $question = $this->defaultquestion();
                 $question->qtype = MULTICHOICE;
                 $question->single = 0;        // Many answers allowed
                 $ignore_rest_of_question = FALSE;
@@ -432,6 +434,7 @@ class qformat_webct extends qformat_default {
 
             if (eregi("^:TYPE:S",$line)) {
                 // Short Answer Question
+                $question = $this->defaultquestion();
                 $question->qtype = SHORTANSWER;
                 $question->usecase = 0;       // Ignore case
                 $ignore_rest_of_question = FALSE;
@@ -459,6 +462,7 @@ class qformat_webct extends qformat_default {
 
             if (eregi("^:TYPE:M",$line)) {
                 // Match Question
+                $question = $this->defaultquestion();
                 $question->qtype = MATCH;
                 $ignore_rest_of_question = FALSE;         // match question processing is not debugged
                 continue;
