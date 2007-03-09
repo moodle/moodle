@@ -68,7 +68,7 @@ $string['databasesettingssub_mysql'] = '<strong>Type&nbsp;:</strong> MySQL<br />
 <strong>Nom&nbsp;:</strong> nom de la base de données, par exemple «&nbsp;moodle&nbsp;»<br />
 <strong>Utilisateur&nbsp;:</strong> le nom d\'utilisateur de la base de données<br />
 <strong>Mot de passe&nbsp;:</strong> le mot de passe de la base de données<br />
-<strong>Préfixe des tables&nbsp;:</strong> le mot de passe de la base de données';
+<strong>Préfixe des tables&nbsp;:</strong> le préfixe à utiliser pour les noms de toutes les tables (facultatif)';
 $string['databasesettingssub_oci8po'] = '<strong>Type&nbsp;:</strong> Oracle<br />
 <strong>Serveur hôte&nbsp;:</strong> n\'est pas utilisé, doit être laissé vide<br />
 <strong>Nom&nbsp;:</strong> given Nom of the tnsNoms.ora connection<br />
@@ -115,7 +115,7 @@ $string['environmenthead'] = 'Vérification de l\'environnement...';
 $string['environmentrecommendinstall'] = 'est recommandée&nbsp;; veuillez l\'installer ou l\'activer';
 $string['environmentrecommendversion'] = 'la version $a->needed est recommandée&nbsp;; vous utilisez actuellement la version $a->current';
 $string['environmentrequireinstall'] = 'est obligatoire&nbsp;; veuillez l\'installer ou l\'activer';
-$string['environmentrequireversion'] = 'la version $a->needed is requise&nbsp;; vous utilisez actuellement la version $a->current';
+$string['environmentrequireversion'] = 'la version $a->needed est requise&nbsp;; vous utilisez actuellement la version $a->current';
 $string['environmentsub'] = 'Les divers composants de votre système doivent satisfaire les exigences nécessaires à Moodle. Une vérification de votre environnement est en cours.';
 $string['environmentxmlerror'] = 'Erreur lors de la lecture des données d\'environnement ($a->error_code)';
 $string['error'] = 'Erreur';
