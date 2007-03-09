@@ -153,43 +153,32 @@ function groups_transfer_db() {
     $status = true;
     
     if (table_exists($t_groups = new XMLDBTable('groups_temp'))) {
-        $status = $status &&(bool)$groups_r = get_records('groups_temp');
-        $status = $status &&(bool)$members_r= get_records('groups_members_temp');
+        $groups_r = get_records('groups_temp');
+        $members_r = get_records('groups_members_temp');
 
-        if (! $groups_r) {
-            if (! $members_r) {
-                /*
-                 * I think this might occur when group table is empty -- ohmori.
-                 */
-                return true;
-            } else {
-                return $status;
-            }
+        if (!$groups_r) {
+            // No gropus to upgrade.
+            return true;
         }
         foreach ($groups_r as $group) {
             if (debugging()) {
                 print_object($group);
             }
             $group->enrolmentkey = $group->password;
-            ///unset($group->password);
-            ///unset($group->courseid);
-            $status = $status &&(bool)$newgroupid = groups_db_upgrade_group($group->courseid, $group);
+            $status = $status && ($newgroupid = groups_db_upgrade_group($group->courseid, $group));
             if ($members_r) {
                 foreach ($members_r as $member) {
                     if ($member->groupid == $group->id) {
-                        $status = $status &&(bool)$memberid = groups_add_member($newgroupid, $member->userid);
+                        $status = $status && groups_add_member($newgroupid, $member->userid);
                     }
                 }
             }
         }
-        ///$status = $status && drop_table($t_groups);
-        ///$status = $status && drop_table(new XMLDBTable('groups_members_temp'));
     } else {
-        return false;
+        $status = false;
     }
     return $status;
 }
-
 
 function groups_drop_keys_indexes_db() {
     $result = true;
