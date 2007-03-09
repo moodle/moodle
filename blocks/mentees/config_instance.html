@@ -1,0 +1,11 @@
+<table cellpadding="9" cellspacing="0">
+<tr valign="top">
+    <td align="right"><?php print_string('configtitle', 'block_mentees'); ?>:</td>
+    <td><input type="text" name="title" size="30" value="<?php echo isset($this->config->title)?p($this->config->title):''; ?>" /> (<?php print_string('leaveblanktohide', 'block_mentees'); ?>)</td>
+</tr>
+<tr>
+    <td colspan="3" align="center">
+    <input type="submit" value="<?php print_string('savechanges') ?>" /></td>
+</tr>
+</table>
+
