@@ -1,6 +1,7 @@
 <?php
 /**
  * @author Martin Dougiamas
+ * @author Lukas Haemmerle
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodle multiauth
  *
@@ -8,14 +9,15 @@
  *
  * Authentication using Shibboleth.
  *
- * 10.2004 SHIBBOLETH Authentication functions v.0.1
- * 05.2005 Various extensions and fixes by Lukas Haemmerle
- * 10.2005 Added better error messags
- * 05.2006 Added better handling of mutli-valued attributes
  * Distributed under GPL (c)Markus Hagman 2004-2006
  *
+ * 10.2004     SHIBBOLETH Authentication functions v.0.1
+ * 05.2005     Various extensions and fixes by Lukas Haemmerle
+ * 10.2005     Added better error messags
+ * 05.2006     Added better handling of mutli-valued attributes
  * 2006-08-28  File created, code imported from lib.php
  * 2006-10-27  Upstream 1.7 changes merged in, added above credits from lib.php :-)
+ * 2007-03-09  Fixed authentication but may need some other changes
  */
 
 if (!defined('MOODLE_INTERNAL')) {
@@ -48,9 +50,10 @@ class auth_plugin_shibboleth {
      * @return bool Authentication success or failure.
      */
     function user_login($username, $password) {
+        
         // If we are in the shibboleth directory then we trust the server var
-        if (!empty($_SERVER[$config->user_attribute])) {
-            return ($_SERVER[$config->user_attribute] == $username);
+        if (!empty($_SERVER[$this->config->user_attribute])) {
+            return ($_SERVER[$this->config->user_attribute] == $username);
         } else {
             // If we are not, the user has used the manual login and the login name is
             // unknown, so we return false.
@@ -58,18 +61,26 @@ class auth_plugin_shibboleth {
         }
     }
 
+
+    
+    /**
+     * Returns the user information for 'external' users. In this case the
+     * attributes provided by Shibboleth
+     *
+     * @return array $result Associative array of user data
+     */
     function get_userinfo($username) {
     // reads user information from shibboleth attributes and return it in array()
         global $CFG;
 
         // Check whether we have got all the essential attributes
         if (
-               empty($_SERVER[$config->user_attribute])
-            || empty($_SERVER[$config->field_map_firstname])
-            || empty($_SERVER[$config->field_map_lastname])
-            || empty($_SERVER[$config->field_map_email])
+               empty($_SERVER[$this->config->user_attribute])
+            || empty($_SERVER[$this->config->field_map_firstname])
+            || empty($_SERVER[$this->config->field_map_lastname])
+            || empty($_SERVER[$this->config->field_map_email])
             ) {
-            error(get_string( 'shib_not_all_attributes_error', 'auth' , "'".$config->user_attribute."' ('".$_SERVER[$config->user_attribute]."'), '".$config->field_map_firstname."' ('".$_SERVER[$config->field_map_firstname]."'), '".$config->field_map_lastname."' ('".$_SERVER[$config->field_map_lastname]."') and '".$config->field_map_email."' ('".$_SERVER[$config->field_map_email]."')"));
+            error(get_string( 'shib_not_all_attributes_error', 'auth' , "'".$this->config->user_attribute."' ('".$_SERVER[$this->config->user_attribute]."'), '".$this->config->field_map_firstname."' ('".$_SERVER[$this->config->field_map_firstname]."'), '".$this->config->field_map_lastname."' ('".$_SERVER[$this->config->field_map_lastname]."') and '".$this->config->field_map_email."' ('".$_SERVER[$this->config->field_map_email]."')"));
         }
 
         $attrmap = $this->get_attributes();
@@ -84,14 +95,14 @@ class auth_plugin_shibboleth {
          // Provide an API to modify the information to fit the Moodle internal
         // data representation
         if (
-              $config->convert_data
-              && $config->convert_data != ''
-              && is_readable($config->convert_data)
+              $this->config->convert_data
+              && $this->config->convert_data != ''
+              && is_readable($this->config->convert_data)
             ) {
 
             // Include a custom file outside the Moodle dir to
             // modify the variable $moodleattributes
-            include($config->convert_data);
+            include($this->config->convert_data);
         }
 
         return $result;
@@ -151,6 +162,9 @@ class auth_plugin_shibboleth {
 
     /**
      * Processes and stores configuration data for this authentication plugin.
+     *
+     *
+     * @param object $config Configuration object
      */
     function process_config($config) {
         // set to defaults if undefined
@@ -173,11 +187,18 @@ class auth_plugin_shibboleth {
         set_config('auth_instructions', $config->auth_instructions, 'auth/shibboleth');
         set_config('changepasswordurl', $config->changepasswordurl, 'auth/shibboleth');
 
+        // Check values and return false if something is wrong
+        if (!file_exists($config->convert_data) || !is_readable($config->convert_data)){
+            return false;
+        }
+
         return true;
     }
 
     /**
      * Cleans and returns first of potential many values (multi-valued attributes)
+     *
+     * @param string $string Possibly multi-valued attribute from Shibboleth
      */
     function get_first_string($string) {
         $list = split( ';', $string);
