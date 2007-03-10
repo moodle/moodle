@@ -54,7 +54,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
             } else {
                 $categorylist = $question->category;
             }
-            if ($catrandoms = get_records_select('question',
+            if ($catrandoms = get_records_select('quiz_questions',
                     "category IN ($categorylist)
                          AND parent = '0'
                          AND hidden = '0'
