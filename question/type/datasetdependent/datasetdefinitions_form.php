@@ -28,7 +28,7 @@ class question_dataset_dependent_definitions_form extends moodleform {
     function definition() {
         global $SESSION;
         $mform =& $this->_form;
-
+        $stringfile = 'qtype_'.$this->question->qtype ;
         $possibledatasets = $this->qtypeobj->find_dataset_names($this->question->questiontext);
         $mandatorydatasets = array();
         if (isset($this->question->options->answers)){
@@ -42,25 +42,44 @@ class question_dataset_dependent_definitions_form extends moodleform {
         }
 
         $key = 0;
+        $datadefscat= array();
+        $datadefscat  = $this->qtypeobj->get_dataset_definitions_category($this->question);
         $datasetmenus = array();
+        $label = "<div align=\"center\">".get_string('datasetrole', 'qtype_datasetdependent','numerical')."</div>";
+        $mform->addElement('html', $label);// explaining the role of datasets so other strings can be shortened 
+        $mform->addElement('header', 'mandatoryhdr', get_string('mandatoryhdr', $stringfile));
+        $labelsharedwildcard = get_string("sharedwildcard", "qtype_datasetdependent");
+
         foreach ($mandatorydatasets as $datasetname) {
             if (!isset($datasetmenus[$datasetname])) {
                 list($options, $selected) =
                         $this->qtypeobj->dataset_options($this->question, $datasetname);
                 unset($options['0']); // Mandatory...
-                $label = get_string("wildcard", "quiz"). " <strong>$datasetname</strong> ". get_string("substitutedby", "quiz");
+                $label = get_string("wildcard", "quiz"). " <strong>$datasetname</strong> ";
                 $mform->addElement('select', "dataset[$key]", $label, $options);
+             if (isset($datadefscat[$datasetname])){
+                  $mform->addElement('static', "there is a category", $labelsharedwildcard." <strong>$datasetname </strong>", get_string('dataitemdefined',"qtype_datasetdependent", $datadefscat[$datasetname]));
+            }
                 $mform->setDefault("dataset[$key]", $selected);
                 $datasetmenus[$datasetname]='';
                 $key++;
             }
         }
+                        $mform->addElement('header', 'possiblehdr', get_string('possiblehdr', $stringfile));
+              
+
         foreach ($possibledatasets as $datasetname) {
             if (!isset($datasetmenus[$datasetname])) {
                 list($options, $selected) =
-                        $this->qtypeobj->dataset_options($this->question, $datasetname);
-                $label = get_string("wildcard", "quiz"). " <strong>$datasetname</strong> ". get_string("substitutedby", "quiz");
+                        $this->qtypeobj->dataset_options($this->question, $datasetname,false);
+                $label = get_string("wildcard", "quiz"). " <strong>$datasetname</strong> ";
                 $mform->addElement('select', "dataset[$key]", $label, $options);
+                 //       $mform->addRule("dataset[$key]", null, 'required', null, 'client');
+             if (isset($datadefscat[$datasetname])){
+                  $mform->addElement('static', "there is a category", $labelsharedwildcard." <strong>$datasetname </strong>", get_string('dataitemdefined',"qtype_datasetdependent", $datadefscat[$datasetname]));
+            }
+ 
+              //   $selected ="0";   
                 $mform->setDefault("dataset[$key]", $selected);
                 $datasetmenus[$datasetname]='';
                 $key++;
@@ -80,6 +99,22 @@ class question_dataset_dependent_definitions_form extends moodleform {
         $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'wizard', 'datasetitems');
         $mform->setType('wizard', PARAM_ALPHA);
+    }
+    function validation($data){
+        $errors = array();
+        $datasets = $data['dataset'];
+        $countvalid = 0 ;
+        foreach ($datasets as $key => $dataset){
+            if ($dataset !="0") {
+                $countvalid++;
+            }
+        }
+        if (!$countvalid){
+            foreach ($datasets as $key => $dataset){
+                $errors['dataset['.$key.']'] = get_string('atleastonerealdataset', 'qtype_datasetdependent');
+            }
+       }
+        return $errors;
     }
 
 }
