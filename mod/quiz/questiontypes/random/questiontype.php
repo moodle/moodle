@@ -38,6 +38,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
         // 1. All questions that are explicitly assigned to the quiz
         // 2. All random questions
         // 3. All questions that are already chosen by an other random question
+        // 4. Deleted questions
         if (!isset($quiz->questionsinuse)) {
             $quiz->questionsinuse = $attempt->layout;
         }
@@ -53,14 +54,17 @@ class quiz_random_qtype extends quiz_default_questiontype {
             } else {
                 $categorylist = $question->category;
             }
-            $catrandoms = get_records_sql
-                    ("SELECT id,id FROM {$CFG->prefix}quiz_questions
-                       WHERE category IN ($categorylist)
+            if ($catrandoms = get_records_select('question',
+                    "category IN ($categorylist)
                          AND parent = '0'
+                         AND hidden = '0'
                          AND id NOT IN ($quiz->questionsinuse)
-                         AND qtype NOT IN ($excludedtypes)");
-            $this->catrandoms[$question->category][$question->questiontext] =
-                  draw_rand_array($catrandoms, count($catrandoms)); // from bug 1889
+                         AND qtype NOT IN ($excludedtypes)", '', 'id, id')) {
+                $this->catrandoms[$question->category][$question->questiontext] =
+                        draw_rand_array($catrandoms, count($catrandoms));
+            } else {
+                $this->catrandoms[$question->category][$question->questiontext] = array();
+            }
         }
 
         while ($wrappedquestion =
