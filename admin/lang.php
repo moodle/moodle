@@ -170,7 +170,7 @@
                         $missinglinkend = '';
                     }
                     if (strlen($value) > LANG_MISSING_TEXT_MAX_LEN) {
-                        $value = substr($value, 0, LANG_MISSING_TEXT_MAX_LEN) . ' ...';
+                        $value = lang_xhtml_save_substr($value, 0, LANG_MISSING_TEXT_MAX_LEN) . ' ...'; // MDL-8852
                     }
                     $o .= "$"."string['".$missinglinkstart.$key.$missinglinkend."'] = \"$value\";<br />";
                 }
@@ -627,6 +627,76 @@ function lang_form_string_key($keyfromfile) {
  */
 function lang_file_string_key($keyfromform) {
     return str_replace('##46#', '.', $keyfromform);
+}
+
+/**
+ * Return the substring of the string and take care of XHTML compliance.
+ *
+ * There was a problem with pure substr() which could possibly produce XHTML parsing error:
+ *  substr('Marks &amp; Spencer', 0, 9) -> 'Marks &am' ... is not XHTML compliance
+ * This function takes care of these cases. Fixes MDL-8852.
+ *
+ * Thanks to kovacsendre, the author of the function at http://php.net/substr
+ *
+ * @param string $str The original string
+ * @param int $start Start position in the $value string
+ * @param int $length Optional length of the returned substring
+ * @return string The substring as returned by substr() with XHTML compliance
+ * @todo Seems the function does not work with negative $start together with $length being set
+ */
+function lang_xhtml_save_substr($str, $start, $length = NULL) {
+    if ($length === 0) { 
+        //stop wasting our time ;)
+        return "";
+    }
+
+    //check if we can simply use the built-in functions
+    if (strpos($str, '&') === false) {
+        // No entities. Use built-in functions
+        if ($length === NULL) {
+            return substr($str, $start);
+        } else {
+            return substr($str, $start, $length);
+        }
+    }
+
+    // create our array of characters and html entities
+    $chars = preg_split('/(&[^;\s]+;)|/', $str, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE);
+    $html_length = count($chars);
+
+    // check if we can predict the return value and save some processing time, i.e.:
+    // input string was empty OR
+    // $start is longer than the input string OR
+    // all characters would be omitted
+    if (($html_length === 0) or ($start >= $html_length) or (isset($length) and ($length <= -$html_length))) {
+        return '';
+    }
+
+    //calculate start position
+    if ($start >= 0) {
+        $real_start = $chars[$start][1];
+    } else { 
+        //start'th character from the end of string
+        $start = max($start,-$html_length);
+        $real_start = $chars[$html_length+$start][1];
+    }
+
+    if (!isset($length)) {
+        // no $length argument passed, return all remaining characters
+        return substr($str, $real_start);
+    } elseif ($length > 0) { 
+        // copy $length chars
+        if ($start+$length >= $html_length) { 
+            // return all remaining characters
+            return substr($str, $real_start);
+        } else { 
+            //return $length characters
+            return substr($str, $real_start, $chars[max($start,0)+$length][1] - $real_start);
+        }
+    } else { 
+        //negative $length. Omit $length characters from end
+        return substr($str, $real_start, $chars[$html_length+$length][1] - $real_start);
+    }
 }
 
 
