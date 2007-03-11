@@ -223,36 +223,36 @@ function forum_cron() {
 /// out to all subscribers
 
     global $CFG, $USER;
-    static $strforums = NULL;
 
-    static $cachecm = array();
+    $CFG->enablerecordcache = true;      // We want all the caching we can get
 
-    if ($strforums === NULL) {
-        $strforums = get_string('forums', 'forum');
-    }
+    $cronuser = clone($USER);
+    $site = get_site();
 
-    $realuser = clone($USER);
+    // all users that are subscribed to any post that needs sending
+    $users = array();
+
+    // status arrays
+    $mailcount  = array();
+    $errorcount = array();
+
+    // caches
+    $discussions     = array();
+    $forums          = array();
+    $courses         = array();
+    $coursemodules   = array();
+    $postinfos       = array();
+    $subscribedusers = array();
+
 
     /// Posts older than 2 days will not be mailed.  This is to avoid the problem where
     /// cron has not been running for a long time, and then suddenly people are flooded
     /// with mail from the past few weeks or months
-
     $timenow   = time();
     $endtime   = $timenow - $CFG->maxeditingtime;
     $starttime = $endtime - 48 * 3600;   /// Two days earlier
 
-    $CFG->enablerecordcache = true;      // We want all the caching we can get
-   
-    // all users that are subscribed to any post that needs sending
-    $users = array();
-    
-    $mailcount=array();
-    $errorcount=array();
-    
-    $postsinfo = array();
-    $subscribedusers = array();
-    
-    if ($posts = forum_get_unmailed_posts($starttime, $endtime)) {      
+    if ($posts = forum_get_unmailed_posts($starttime, $endtime)) {
         /// Mark them all now as being mailed.  It's unlikely but possible there
         /// might be an error later so that a post is NOT actually mailed out,
         /// but since mail isn't crucial, we can accept this risk.  Doing it now
@@ -266,65 +266,81 @@ function forum_cron() {
         // checking post validity, and adding users to loop through later
         foreach ($posts as $pid => $post) {
 
-            if (! $discussion = get_record('forum_discussions', 'id', $post->discussion)) {
-                mtrace('Could not find discussion '.$post->discussion);
-                unset($posts[$pid]);
-                continue;
+            $discussionid = $post->discussion;
+            if (!isset($discussions[$discussionid])) {
+                if ($discussion = get_record('forum_discussions', 'id', $post->discussion)) {
+                    $discussions[$discussionid] = $discussion;
+                } else {
+                    mtrace('Could not find discussion '.$discussionid);
+                    unset($posts[$pid]);
+                    continue;
+                }
             }
-            
-            if (! $forum = get_record('forum', 'id', $discussion->forum)) {
-                mtrace('Could not find forum '.$discussion->forum);
-                unset($posts[$pid]);
-                continue;
+            $forumid = $discussions[$discussionid]->forum;
+            if (!isset($forums[$forumid])) {
+                if ($forum = get_record('forum', 'id', $forumid)) {
+                    $forums[$forumid] = $forum;
+                } else {
+                    mtrace('Could not find forum '.$forumid);
+                    unset($posts[$pid]);
+                    continue;
+                }
+            }
+            $courseid = $forums[$forumid]->course;
+            if (!isset($courses[$courseid])) {
+                if ($course = get_record('course', 'id', $courseid)) {
+                    $courses[$courseid] = $course;
+                } else {
+                    mtrace('Could not find course '.$courseid);
+                    unset($posts[$pid]);
+                    continue;
+                }
+            }
+            if (!isset($coursemodules[$forumid])) {
+                if ($cm = get_coursemodule_from_instance('forum', $forumid, $courseid)) {
+                    $coursemodules[$forumid] = $cm;
+                } else {
+                    mtrace('Could not course module for forum '.$forumid);
+                    unset($posts[$pid]);
+                    continue;
+                }
             }
 
-            if (! $course = get_record('course', 'id', $forum->course)) {
-                mtrace('Could not find course '.$forum->course);
-                unset($posts[$pid]);
-                continue;
-            }
-            
-            // Caching this environment info so we don't need to look them up later
-            // There is still a LOT of duplication here we could cut down on.     XXX TODO
 
-            unset($pinfo);
-            $pinfo->discussion = $discussion;
-            $pinfo->forum = $forum;
-            $pinfo->course = $course;
-            
-            $postinfo[$pid] = $pinfo;
-            
             // caching subscribed users of each forum
-            if (!isset($subscribedusers[$forum->id])) {
-                if ($subusers = forum_subscribed_users($course, $forum, 0, true)) {
+            if (!isset($subscribedusers[$forumid])) {
+                if ($subusers = forum_subscribed_users($courses[$courseid], $forums[$forumid], 0, true)) {
                     foreach ($subusers as $postuser) {
+                        // do not try to mail users with stopped email
+                        if ($postuser->emailstop) {
+                            add_to_log(SITEID, 'forum', 'mail blocked', '', '', 0, $postuser->id);
+                            continue;
+                        }
                         // this user is subscribed to this forum
-                        $subscribedusers[$forum->id][] = $postuser->id;
+                        $subscribedusers[$forumid][] = $postuser->id;
                         // this user is a user we have to process later
-                        $users[$postuser->id] = $postuser;  
+                        $users[$postuser->id] = $postuser;
                     }
-                }           
+                }
             }
-            
+
             $mailcount[$pid] = 0;
             $errorcount[$pid] = 0;
-        }       
+        }
     }
 
     if ($users && $posts) {
 
-        @set_time_limit(0);   /// so that script does not get timed out when posting to many users
-
         $urlinfo = parse_url($CFG->wwwroot);
         $hostname = $urlinfo['host'];
 
-        ksort($users);
-
         foreach ($users as $userto) {
-            
+
+            @set_time_limit(120); // terminate if processing of any account takes longer than 2 minutes
+
             // set this so that the capabilities are cached, and environment matches receiving user
             $USER = $userto;
-            
+
             mtrace('Processing user '.$userto->id);
 
             /// we might want to add another layer - forums here (by checking array_keys($subscribedusers))
@@ -332,48 +348,32 @@ function forum_cron() {
 
             foreach ($posts as $pid => $post) {
 
-                // Get info about the sending user    XXX TODO cache these and get needed fields only
-
-                if (! $userfrom = get_record('user', 'id', $post->userid)) {
+                // Get info about the sending user
+                if (array_key_exists($post->userid, $users)) { // we might know him/her already
+                    $userfrom = $users[$post->userid];
+                } else if (!$userfrom = get_record('user', 'id', $post->userid)) {
                     mtrace('Could not find user '.$post->userid);
                     continue;
                 }
 
                 // Set up the environment for the post, discussion, forum, course
-
-                $discussion = $postinfo[$pid]->discussion;
-                $forum = $postinfo[$pid]->forum;
-                $course = $postinfo[$pid]->course;    
-
-                course_setup($course);   // More environment
-
+                $discussion = $discussions[$post->discussion];
+                $forum      = $forums[$discussion->forum];
+                $course     = $courses[$forum->course];
+                $cm         = $coursemodules[$forum->id];
 
                 // Do some checks  to see if we can bail out now
-
                 if (empty($subscribedusers[$forum->id]) || !in_array($userto->id, $subscribedusers[$forum->id])) {
-                    continue; // user does not subscribe to this forum  
+                    continue; // user does not subscribe to this forum
                 }
-                
 
-                // Get the coursemodule and context (cached)
-
-                if (!empty($cachecm[$forum->id])) {
-                    $cm = $cachecm[$forum->id];
-
-                } else if ($cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-                    $cachecm[$forum->id] = $cm;
-
-                } else {
-                    $cm = new object;
-                    $cm->id = 0;
-                    $cachecm[$forum->id] = $cm;
-                }
-                
+                // Get the context (from cache)
                 $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);   // Cached already
-                
+
+                // setup global $COURSE properly - needed for roles and languages
+                course_setup($course);   // More environment
 
                 // Make sure groups allow this user to see this email
-
                 $groupmode = false;
                 if (!empty($cm->id)) {
                     if ($groupmode = groupmode($course, $cm) and $discussion->groupid > 0) {   // Groups are being used
@@ -405,10 +405,10 @@ function forum_cron() {
                 // Does the user want this post in a digest?  If so postpone it for now.
                 if ($userto->maildigest > 0) {
                     // This user wants the mails to be in digest form
-                    $queue = New stdClass;
-                    $queue->userid = $userto->id;
+                    $queue = new object();
+                    $queue->userid       = $userto->id;
                     $queue->discussionid = $discussion->id;
-                    $queue->postid = $post->id;
+                    $queue->postid       = $post->id;
                     if (!insert_record('forum_queue', $queue)) {
                         mtrace("Error: mod/forum/cron.php: Could not queue for digest mail for id $post->id to user $userto->id ($userto->email) .. not trying again.");
                     }
@@ -418,7 +418,7 @@ function forum_cron() {
 
                 // Prepare to actually send the post now, and build up the content
 
-                $cleanforumname = str_replace('"', "'", strip_tags($forum->name));
+                $cleanforumname = str_replace('"', "'", strip_tags(format_string($forum->name)));
 
                 $userfrom->customheaders = array (  // Headers to make emails easier to track
                            'Precedence: Bulk',
@@ -428,9 +428,9 @@ function forum_cron() {
                            'In-Reply-To: <moodlepost'.$post->parent.'@'.$hostname.'>',
                            'References: <moodlepost'.$post->parent.'@'.$hostname.'>',
                            'X-Course-Id: '.$course->id,
-                           'X-Course-Name: '.strip_tags($course->fullname)
+                           'X-Course-Name: '.format_string($course->fullname, true)
                 );
-                             
+
 
                 $postsubject = "$course->shortname: ".format_string($post->subject,true);
                 $posttext = forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto);
@@ -439,7 +439,7 @@ function forum_cron() {
                 // Send the post now!
 
                 mtrace('Sending ', '');
-                
+
                 if (!$mailresult = email_to_user($userto, $userfrom, $postsubject, $posttext,
                                                  $posthtml, '', '', $CFG->forum_replytouser)) {
                     mtrace("Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id".
@@ -448,8 +448,7 @@ function forum_cron() {
                                substr(format_string($post->subject,true),0,30), $cm->id, $userto->id);
                     $errorcount[$post->id]++;
                 } else if ($mailresult === 'emailstop') {
-                    add_to_log($course->id, 'forum', 'mail blocked', "discuss.php?d=$discussion->id#p$post->id",
-                               substr(format_string($post->subject,true),0,30), $cm->id, $userto->id);
+                    // should not be reached anymore - see check above
                 } else {
                     $mailcount[$post->id]++;
 
@@ -473,7 +472,7 @@ function forum_cron() {
             mtrace($mailcount[$post->id]." users were sent post $post->id, '$post->subject'");
             if ($errorcount[$post->id]) {
                 set_field("forum_posts", "mailed", "2", "id", "$post->id");
-            }   
+            }
         }
     }
 
@@ -494,39 +493,79 @@ function forum_cron() {
 
         mtrace('Sending forum digests: '.userdate($timenow, '', $sitetimezone));
 
-        $digestposts = get_records('forum_queue');
-        if(!empty($digestposts)) {
-
-            @set_time_limit(0);   /// so that script does not get timed out when posting to many users
+        if ($digestposts = get_records('forum_queue')) {
 
             // We have work to do
             $usermailcount = 0;
-            $site = get_site();
 
-            $users = array();
-            $posts = array();
-            $discussions = array();
+            //caches - reuse the those filled before too
             $discussionposts = array();
             $userdiscussions = array();
-            foreach($digestposts as $digestpost) {
-                if(!isset($users[$digestpost->userid])) {
-                    $users[$digestpost->userid] = get_record('user', 'id', $digestpost->userid);
+
+            foreach ($digestposts as $digestpost) {
+                if (!isset($users[$digestpost->userid])) {
+                    if ($user = get_record('user', 'id', $digestpost->userid)) {
+                        $users[$digestpost->userid] = $user;
+                    } else {
+                        continue;
+                    }
                 }
-                if(!isset($discussions[$digestpost->discussionid])) {
-                    $discussions[$digestpost->discussionid] = get_record('forum_discussions', 'id', $digestpost->discussionid);
+                $postuser = $users[$digestpost->userid];
+                if ($postuser->emailstop) {
+                    add_to_log(SITEID, 'forum', 'mail blocked', '', '', 0, $postuser->id);
+                    continue;
                 }
-                if(!isset($posts[$digestpost->postid])) {
-                    $posts[$digestpost->postid] = get_record('forum_posts', 'id', $digestpost->postid);
+
+                if (!isset($posts[$digestpost->postid])) {
+                    if ($post = get_record('forum_posts', 'id', $digestpost->postid)) {
+                        $posts[$digestpost->postid] = $post;
+                    } else {
+                        continue;
+                    }
+                }
+                $discussionid = $digestpost->discussionid;
+                if (!isset($discussions[$discussionid])) {
+                    if ($discussion = get_record('forum_discussions', 'id', $discussionid)) {
+                        $discussions[$discussionid] = $discussion;
+                    } else {
+                        continue;
+                    }
+                }
+                $forumid = $discussions[$discussionid]->forum;
+                if (!isset($forums[$forumid])) {
+                    if ($forum = get_record('forum', 'id', $forumid)) {
+                        $forums[$forumid] = $forum;
+                    } else {
+                        continue;
+                    }
+                }
+
+                $courseid = $forums[$forumid]->course;
+                if (!isset($courses[$courseid])) {
+                    if ($course = get_record('course', 'id', $courseid)) {
+                        $courses[$courseid] = $course;
+                    } else {
+                        continue;
+                    }
+                }
+
+                if (!isset($coursemodules[$forumid])) {
+                    if ($cm = get_coursemodule_from_instance('forum', $forumid, $courseid)) {
+                        $coursemodules[$forumid] = $cm;
+                    } else {
+                        continue;
+                    }
                 }
                 $userdiscussions[$digestpost->userid][$digestpost->discussionid] = $digestpost->discussionid;
                 $discussionposts[$digestpost->discussionid][$digestpost->postid] = $digestpost->postid;
             }
 
             // Data collected, start sending out emails to each user
+            foreach ($userdiscussions as $userid => $thesediscussions) {
 
-            foreach($userdiscussions as $userid => $thesediscussions) {
+                @set_time_limit(120); // terminate if processing of any account takes longer than 2 minutes
 
-                mtrace(get_string('processingdigest', 'forum', $userid),'... ');
+                mtrace(get_string('processingdigest', 'forum', $userid), '... ');
 
                 // First of all delete all the queue entries for this user
                 delete_records('forum_queue', 'userid', $userid);
@@ -537,10 +576,10 @@ function forum_cron() {
                 $USER = $userto;
                 course_setup(SITEID);
 
+                $postsubject = get_string('digestmailsubject', 'forum', format_string($site->shortname, true));
 
-                $postsubject = get_string('digestmailsubject', 'forum', $site->shortname);
-                $headerdata = New stdClass;
-                $headerdata->sitename = $site->fullname;
+                $headerdata = new object();
+                $headerdata->sitename = format_string($site->fullname, true);
                 $headerdata->userprefs = $CFG->wwwroot.'/user/edit.php?id='.$userid.'&amp;course='.$site->id;
 
                 $posttext = get_string('digestmailheader', 'forum', $headerdata)."\n\n";
@@ -553,25 +592,19 @@ function forum_cron() {
                 $posthtml .= "</head>\n<body>\n";
                 $posthtml .= '<p>'.get_string('digestmailheader', 'forum', $headerdata).'</p><br /><hr size="1" noshade="noshade" />';
 
-                foreach($thesediscussions as $discussionid) {
-                    $discussion = $discussions[$discussionid];
-                    if(empty($discussion)) {
-                        mtrace("Error: Could not find discussion $discussionid");
-                        continue;
-                    }
+                foreach ($thesediscussions as $discussionid) {
 
-                    if (! $forum = get_record("forum", "id", "$discussion->forum")) {
-                        mtrace("Could not find forum $discussion->forum");
-                        continue;
-                    }
-                    if (! $course = get_record("course", "id", "$forum->course")) {
-                        mtrace("Could not find course $forum->course");
-                        continue;
-                    }
+                    @set_time_limit(120);   /// to be reset for each post
+
+                    $discussion = $discussions[$discussionid];
+                    $forum      = $forums[$discussion->forum];
+                    $course     = $courses[$forum->course];
+                    $cm         = $coursemodules[$forum->id];
 
                     //override language
                     course_setup($course);
 
+                    $strforums = get_string('forums', 'forum');
                     $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
                     $canreply = forum_user_can_post($forum, $userto);
 
@@ -604,12 +637,12 @@ function forum_cron() {
                     $markread = array();
 
                     foreach ($postsarray as $postid) {
-                        if (! $post = get_record("forum_posts", "id", "$postid")) {
-                            mtrace("Error: Could not find post $postid");
-                            continue;
-                        }
-                        if (! $userfrom = get_record("user", "id", "$post->userid")) {
-                            mtrace("Error: Could not find user $post->userid");
+                        $post = $posts[$postid];
+
+                        if (array_key_exists($post->userid, $users)) { // we might know him/her already
+                            $userfrom = $users[$post->userid];
+                        } else if (!$userfrom = get_record('user', 'id', $post->userid)) {
+                            mtrace('Could not find user '.$post->userid);
                             continue;
                         }
 
@@ -617,7 +650,7 @@ function forum_cron() {
 
                         if ($userto->maildigest == 2) {
                             // Subjects only
-                            $by = New stdClass;
+                            $by = new object();
                             $by->name = fullname($userfrom);
                             $by->date = userdate($post->modified);
                             $posttext .= "\n".format_string($post->subject,true).' '.get_string("bynameondate", "forum", $by);
@@ -649,7 +682,7 @@ function forum_cron() {
                 }
                 $posthtml .= '</body>';
 
-                if($userto->mailformat != 1) {
+                if ($userto->mailformat != 1) {
                     // This user DOESN'T want to receive HTML
                     $posthtml = '';
                 }
@@ -660,7 +693,7 @@ function forum_cron() {
                     echo "Error: mod/forum/cron.php: Could not send out digest mail to user $userto->id ($userto->email)... not trying again.\n";
                     add_to_log($course->id, 'forum', 'mail digest error', '', '', $cm->id, $userto->id);
                 } else if ($mailresult === 'emailstop') {
-                    add_to_log($course->id, 'forum', 'mail digest blocked', '', '', $cm->id, $userto->id);
+                    // should not happen anymore - see check above
                 } else {
                     mtrace("success.");
                     $usermailcount++;
@@ -681,11 +714,11 @@ function forum_cron() {
         }
     }
 
-    if(!empty($usermailcount)) {
+    if (!empty($usermailcount)) {
         mtrace(get_string('digestsentusers', 'forum', $usermailcount));
     }
 
-    $USER = $realuser;
+    $USER = $cronuser;
     course_setup(SITEID); // reset cron user language, theme and timezone settings
 
     if (!empty($CFG->forum_lastreadclean)) {
