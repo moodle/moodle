@@ -53,7 +53,7 @@ class block_login extends block_base {
             $this->content->text .= '<table align="center" cellpadding="2" cellspacing="0" class="logintable">';
 
             $this->content->text .= '<tr><td class="c0 r0" align="right">'.get_string('username').':</td>';
-            $this->content->text .= '<td class="c1 r0"><input type="text" name="username" size="10" value="'.$username.'" /></td></tr>';
+            $this->content->text .= '<td class="c1 r0"><input type="text" name="username" size="10" value="'.s($username).'" /></td></tr>';
 
             $this->content->text .= '<tr><td class="c0 r1" align="right">'.get_string('password').':</td>';
             $this->content->text .= '<td class="c1 r1"><input type="password" name="password" size="10" value="" /></td></tr>';
