@@ -292,7 +292,7 @@ function isguest($userid=0) {
         return false;
     }
 
-    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
+    $context = get_context_instance(CONTEXT_SYSTEM);  
 
     return has_capability('moodle/legacy:guest', $context, $userid, false);
 }
