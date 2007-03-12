@@ -282,8 +282,18 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
     $navigation[$strlessons] = "$CFG->wwwroot/mod/lesson/index.php?id=$course->id";
     $navigation[$strname]    = '';
 
+    $urls = array();
+    foreach($navigation as $text => $href) {
+        if (empty($href)) {
+            $urls[] = $text;
+        } else {
+            $urls[] = '<a href="'.$href.'">'.$text.'</a>';
+        }
+    }
+    $breadcrumb = implode(' -> ', $urls);
+
 /// Print header, heading, tabs and messages
-    print_header("$course->shortname: $strname", $course->fullname, $navigation,
+    print_header("$course->shortname: $strname", $course->fullname, $breadcrumb,
                   '', $meta, true, $button, navmenu($course, $cm));
                   
     if (has_capability('mod/lesson:manage')) {
