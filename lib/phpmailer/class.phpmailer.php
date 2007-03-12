@@ -1155,7 +1155,7 @@ class PHPMailer
     /// Start Moodle Hack - if we are running under unicodedb, we'll try our own
     /// encode_header code that's multibyte-safe
         global $CFG;
-        if (!empty($CFG->unicodedb)) {
+        if (!empty($CFG->unicodedb) and $this->CharSet != 'GB18030') {
             $textlib = textlib_get_instance();
             return $textlib->encode_mimeheader($str, $this->CharSet);
         }
