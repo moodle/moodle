@@ -545,7 +545,7 @@
                 add_to_log($course->id, "forum", "add post",
                           "$discussionurl&amp;parent=$fromform->id", "$fromform->id", $cm->id);
 
-                redirect(forum_go_back_to("$discussionurl#$fromform->id"), $message.$subscribemessage, $timemessage);
+                redirect(forum_go_back_to("$discussionurl#p$fromform->id"), $message.$subscribemessage, $timemessage);
 
             } else {
                 error(get_string("couldnotadd", "forum"), $errordestination);
