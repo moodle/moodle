@@ -35,6 +35,14 @@ function require_js($lib='') {
             $libpath = ajax_get_lib($lib);
             if (array_search($libpath, $loadlibs) === false) {
                 $loadlibs[] = $libpath;
+                // If this is called after header, then we print it right away
+                // as otherwise nothing will ever happen!
+                if (defined('HEADER_PRINTED')) {
+                    $realloadlibs=$loadlibs;
+                    $loadlibs=array($libpath);
+                    print require_js();
+                    $loadlibs=$realloadlibs;
+                }             
             }
         }
     } else {
