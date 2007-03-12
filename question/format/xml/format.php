@@ -242,7 +242,7 @@ class qformat_xml extends qformat_default {
 
         if ($warning) {
             $a = new stdClass;
-            $a->questiontext = stripslashes($qo->questiontext);
+            $a->questiontext = $qo->questiontext;
             $a->answer = get_string($qo->answer ? 'true' : 'false', 'quiz');
             notify(get_string('truefalseimporterror', 'quiz', $a));
         }
@@ -340,15 +340,28 @@ class qformat_xml extends qformat_default {
         $qo->fraction = array();
         $qo->tolerance = array();
         foreach ($answers as $answer) {
-            $answertext = trim($answer['#'][0]);
+            // answer outside of <text> is deprecated
+            if (!empty( $answer['#']['text'] )) {
+                $answertext = $this->import_text( $answer['#']['text'] );
+            }
+            else {
+                $answertext = trim($answer['#'][0]);
+            }
             if ($answertext == '') {
                 $qo->answer[] = '*';
             } else {
                 $qo->answer[] = $answertext;
             }
             $qo->feedback[] = $this->import_text( $answer['#']['feedback'][0]['#']['text'] );
-            $qo->fraction[] = $answer['#']['fraction'][0]['#'];
             $qo->tolerance[] = $answer['#']['tolerance'][0]['#'];
+
+            // fraction as a tag is deprecated
+            if (!empty($answer['#']['fraction'][0]['#'])) {
+                $qo->fraction[] = $answer['#']['fraction'][0]['#'];
+            }
+            else {
+                $qo->fraction[] = $answer['@']['fraction'] / 100;
+            }
         }
 
         // get units array
@@ -411,8 +424,16 @@ class qformat_xml extends qformat_default {
         // get feedback
         $qo->feedback = $this->import_text( $question['#']['answer'][0]['#']['feedback'][0]['#']['text'] );        
 
-        // get fraction
-        $qo->fraction = $question['#']['answer'][0]['#']['fraction'][0]['#'];
+        // handle answer
+        $answer = $question['#']['answer'][0];
+
+        // get fraction - <fraction> tag is deprecated
+        if (!empty($answer['#']['fraction'][0]['#'])) {
+            $qo->fraction = $answer['#']['fraction'][0]['#'];
+        }
+        else {
+            $qo->fraction = $answer['@']['fraction'] / 100;
+        }
 
         return $qo;
     }
@@ -781,11 +802,14 @@ class qformat_xml extends qformat_default {
         case NUMERICAL:
             foreach ($question->options->answers as $answer) {
                 $tolerance = $answer->tolerance;
-                $expout .= "<answer>\n";
-                $expout .= "    {$answer->answer}\n";
+                $percent = 100 * $answer->fraction;
+                $expout .= "<answer fraction=\"$percent\">\n";
+                // <text> tags are an added feature, old filed won't have them
+                $expout .= "    <text>{$answer->answer}</text>\n";
                 $expout .= "    <tolerance>$tolerance</tolerance>\n";
                 $expout .= "    <feedback>".$this->writetext( $answer->feedback )."</feedback>\n";
-                $expout .= "    <fraction>{$answer->fraction}</fraction>\n";
+                // fraction tag is deprecated
+                // $expout .= "    <fraction>{$answer->fraction}</fraction>\n";
                 $expout .= "</answer>\n";
             }
 
@@ -823,9 +847,11 @@ class qformat_xml extends qformat_default {
         break;
         case ESSAY:
             foreach ($question->options->answers as $answer) {
-                $expout .= "<answer>\n";
+                $percent = 100 * $answer->fraction;
+                $expout .= "<answer fraction=\"$percent\">\n";
                 $expout .= "    <feedback>".$this->writetext( $answer->feedback )."</feedback>\n";
-                $expout .= "    <fraction>{$answer->fraction}</fraction>\n";
+                // fraction tag is deprecated
+                // $expout .= "    <fraction>{$answer->fraction}</fraction>\n";
                 $expout .= "</answer>\n";
             }
             
