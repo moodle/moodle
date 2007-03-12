@@ -1,5 +1,6 @@
 <?PHP // $Id$ 
 
+
 $string['1day'] = '1 Day';
 $string['1hour'] = '1 Hour';
 $string['2hours'] = '2 Hours';
