@@ -51,6 +51,13 @@ if (($form = data_submitted()) && confirm_sesskey()) {
         // ensure we remove trailing slashes
         $form->wwwroot = preg_replace(':/$:', '', $form->wwwroot);
     }
+
+    if(!function_exists('xmlrpc_encode_request')) {
+        trigger_error("You must have xml-rpc enabled in your PHP build to use this feature.");
+        error(get_string('xmlrpc-missing', 'mnet'),'peers.php');
+        exit;
+    }
+
     if (!empty($form->updateregisterall)) {
         if (!empty($form->registerallhosts)) {
             set_config('mnet_register_allhosts',1);
