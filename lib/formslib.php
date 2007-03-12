@@ -1118,7 +1118,13 @@ function validate_' . $this->_formName . '_' . $elementName . '(element) {
 }
 ';
             $validateJS .= '
-  ret = validate_' . $this->_formName . '_' . $elementName.'(frm.elements[\''.$elementName.'\']) && ret;';
+  ret = validate_' . $this->_formName . '_' . $elementName.'(frm.elements[\''.$elementName.'\']) && ret;
+  if (!ret && !first_focus) {
+    first_focus = true;
+    frm.elements[\''.$elementName.'\'].focus();
+  }
+';
+  
             // Fix for bug displaying errors for elements in a group
             //unset($element);
             //$element =& $this->getElement($elementName);
@@ -1136,9 +1142,9 @@ function validate_' . $this->_formName . '(frm) {
      return true;
   }
   var ret = true;
-
+    
   var frm = document.getElementById(\''. $this->_attributes['id'] .'\')
-
+  var first_focus = false;
 ' . $validateJS . ';
   return ret;
 }
