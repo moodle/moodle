@@ -3045,8 +3045,9 @@ function print_student_grade($user, $course) {
     $sections = get_all_sections($course->id); // Sort everything the same as the course
     
     // prints table
-    
-    echo ('<table align="center" class="grades"><tr><th scope="col">'.get_string('activity').'</th><th scope="col">'.get_string('yourgrade','grades').'</th><th scope="col">'.get_string('maxgrade','grades').'</th></tr>');
+
+    // flag for detecting whether to print table header or not
+    $nograde = 0;
     
     for ($i=0; $i<=$course->numsections; $i++) {
         if (isset($sections[$i])) {   // should always be true
@@ -3078,6 +3079,10 @@ function print_student_grade($user, $course) {
                                 }
                                 
                                 if ($maxgrade) { 
+                                    if (!$nograde) {
+                                         echo ('<table align="center" class="grades"><tr><th scope="col">'.get_string('activity').'</th><th scope="col">'.get_string('yourgrade','grades').'</th><th scope="col">'.get_string('maxgrade','grades').'</th></tr>');
+                                    }
+                                    $nograde++;                               
                                   
                                     $link_id = grade_get_module_link($course->id, $mod->instance, $mod->module);
                                     $link = $CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$link_id->id;
@@ -3085,7 +3090,8 @@ function print_student_grade($user, $course) {
                                     echo '<tr>';
                                     if (!empty($modgrades->grades[$user->id])) {
                                         $currentgrade = $modgrades->grades[$user->id];
-                                        echo "<td><a href='$link'>$mod->modfullname: ".format_string($instance->name,true)."</a></td><td>$currentgrade</td><td>$maxgrade</td>";            } else {
+                                        echo "<td><a href='$link'>$mod->modfullname: ".format_string($instance->name,true)."</a></td><td>$currentgrade</td><td>$maxgrade</td>";            
+                                    } else {
                                         echo "<td><a href='$link'>$mod->modfullname: ".format_string($instance->name,true)."</a></td><td>".get_string('nograde')."</td><td>$maxgrade</td>";                                        
                                     }
                                     echo '</tr>';                       
@@ -3097,7 +3103,10 @@ function print_student_grade($user, $course) {
             }
         }
     } // a new Moodle nesting record? ;-)
-    echo '</table>';
+    
+    if ($nograde) {
+        echo '</table>';
+    }
 }
 
 function grade_get_course_students($courseid) {
