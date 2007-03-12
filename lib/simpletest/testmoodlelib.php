@@ -123,6 +123,63 @@ class moodlelib_test extends UnitTestCase {
         $this->assertTrue(check_browser_version('Firefox', '1.5'));
         $this->assertFalse(check_browser_version('Firefox', '3.0'));        
     }
+    
+    function test_optional_param()
+    {
+        $_POST['username'] = 'post_user';   
+        $_GET['username'] = 'get_user';
+        $this->assertEqual(optional_param('username', 'default_user'), 'post_user');
+        
+        unset($_POST['username']);
+        $this->assertEqual(optional_param('username', 'default_user'), 'get_user');
+        
+        unset($_GET['username']);
+        $this->assertEqual(optional_param('username', 'default_user'), 'default_user');
+    }
+    
+    /**
+     * Used by {@link optional_param()} and {@link required_param()} to
+     * clean the variables and/or cast to specific types, based on
+     * an options field.
+     * <code>
+     * $course->format = clean_param($course->format, PARAM_ALPHA);
+     * $selectedgrade_item = clean_param($selectedgrade_item, PARAM_CLEAN);
+     * </code>
+     *
+     * @uses $CFG
+     * @uses PARAM_CLEAN
+     * @uses PARAM_INT
+     * @uses PARAM_INTEGER
+     * @uses PARAM_ALPHA
+     * @uses PARAM_ALPHANUM
+     * @uses PARAM_NOTAGS
+     * @uses PARAM_ALPHAEXT
+     * @uses PARAM_BOOL
+     * @uses PARAM_SAFEDIR
+     * @uses PARAM_CLEANFILE
+     * @uses PARAM_FILE
+     * @uses PARAM_PATH
+     * @uses PARAM_HOST
+     * @uses PARAM_URL
+     * @uses PARAM_LOCALURL
+     * @uses PARAM_CLEANHTML
+     * @uses PARAM_SEQUENCE
+     * @param mixed $param the variable we are cleaning
+     * @param int $type expected format of param after cleaning.
+     * @return mixed
+     */
+    function test_clean_param()
+    {
+        // Test unknown parameter type
+        
+        // Test Raw param
+        $this->assertEqual(clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_RAW), 
+            '#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)');
+        
+        $this->assertEqual(clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_CLEAN), 
+            '#()*#,9789\\\'\".,');
+        
+    }
 }
 
 ?>
