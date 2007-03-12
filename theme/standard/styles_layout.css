@@ -570,6 +570,13 @@ div.phpinfo .center th {
   text-align:right;
 }
 
+.navigation li,
+.navigation div,
+.navigation button,
+.navigation form {
+  display: inline;
+}
+
 .navbar {
   width:auto;
   padding:3px 0.5em;

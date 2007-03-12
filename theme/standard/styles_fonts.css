@@ -190,6 +190,10 @@ a.useredit, a:hover.useredit, .blink {
     'Lucida Sans Unicode','Lucida Grande','GNU Unifont',unifont,sans-serif;
 }
 
+.navigation button {
+  font-size: 80%;
+}
+
 /***
  *** Footer
  ***/
