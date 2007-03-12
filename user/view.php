@@ -44,8 +44,8 @@
     }
     
     // make sure user can view this student's profile
-    if ($USER->id != $user->id && 
-        (!has_capability('moodle/user:viewdetails', $coursecontext) && !has_capability('moodle/user:viewdetails', $usercontext))
+    if ($USER->id != $user->id 
+        && !has_capability('moodle/user:viewdetails', $coursecontext) 
         && !has_capability('moodle/user:viewdetails', $usercontext)) {
         error('You can not view the profile of this user');
     }
@@ -66,9 +66,8 @@
 /// If the user being shown is not ourselves, then make sure we are allowed to see them!
 
     if (!$currentuser) {
-
         if ($course->id == SITEID) {  // Reduce possibility of "browsing" userbase at site level
-            if ($CFG->forceloginforprofiles and !isteacherinanycourse() and !isteacherinanycourse($user->id)) {  // Teachers can browse and be browsed at site level. If not forceloginforprofiles, allow access (bug #4366)
+            if ($CFG->forceloginforprofiles and !isteacherinanycourse() and !isteacherinanycourse($user->id) and !has_capability('moodle/user:viewdetails', $usercontext)) {  // Teachers can browse and be browsed at site level. If not forceloginforprofiles, allow access (bug #4366)
                 print_header("$strpersonalprofile: ", "$strpersonalprofile: ",
                               "<a href=\"index.php?id=$course->id\">$strparticipants</a> -> $struser",
                               "", "", true, "&nbsp;", navmenu($course));
