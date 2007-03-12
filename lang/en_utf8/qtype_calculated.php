@@ -17,6 +17,7 @@ $string['newlocal1'] = 'will use a new private dataset';
 $string['nextitemtoadd'] = 'Next \'Item to Add\'';
 $string['nextpage'] = 'Next Page';
 $string['nodataset'] = 'nothing - it is not a wild card';
+$string['nosharedwildcard'] = 'No shared wild card in this category';
 $string['possiblehdr']='Possible wild cards present only in the question text';
 $string['tolerance'] = 'Tolerance &plusmn;';
 $string['usedinquestion']='Used in Question';
