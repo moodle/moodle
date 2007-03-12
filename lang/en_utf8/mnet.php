@@ -1,4 +1,5 @@
 <?PHP
+$string['xmlrpc-missing']               = 'You must have XML-RPC installed in your PHP build to be able to use this feature.';
 $string['description']                  = 'Description';
 $string['mnet']                         = 'Moodle Networking';
 $string['net']                          = 'Networking';
