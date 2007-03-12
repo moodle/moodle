@@ -1192,7 +1192,11 @@ class PHPMailer
 
     /// Start Moodle Hack - do our own multibyte-safe header encoding
         $textlib = textlib_get_instance();
-        return $textlib->encode_mimeheader($str, $this->CharSet);
+        $result = $textlib->encode_mimeheader($str, $this->CharSet);
+        if ($result !== false) {
+            return $result;
+        }
+        // try the old way that does not handle binary-safe line splitting in mime header
     /// End Moodle Hack
       $x = 0;
       

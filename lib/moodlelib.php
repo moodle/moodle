@@ -3274,7 +3274,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     $mail->Version = 'Moodle '. $CFG->version;           // mailer version
     $mail->PluginDir = $CFG->libdir .'/phpmailer/';      // plugin directory (eg smtp plugin)
 
-    $mail->CharSet = 'utf-8';
+    $mail->CharSet = 'UTF-8';
 
     if ($CFG->smtphosts == 'qmail') {
         $mail->IsQmail();                              // use Qmail system
@@ -3381,10 +3381,8 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
             }
         }
     /// If it has changed, convert all the necessary strings
-        $charset = strtolower($charset);
         $charsets = get_list_of_charsets();
         unset($charsets['UTF-8']);
-        $charsets = array_map('strtolower', $charsets);
         if (in_array($charset, $charsets)) {
         /// Save the new mail charset
             $mail->CharSet = $charset;
