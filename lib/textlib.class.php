@@ -189,11 +189,17 @@ class textlib {
         return $result;
     }
 
-    /* Generate a correct base64 encoded header to be used in MIME mail messages.
+    /**
+     * Generate a correct base64 encoded header to be used in MIME mail messages.
      * This function seems to be 100% compliant with RFC1342. Credits go to:
      * paravoid (http://www.php.net/manual/en/function.mb-encode-mimeheader.php#60283).
      */
     function encode_mimeheader($text, $charset='utf-8') {
+        if (empty($text)) {
+            return (string)$text;
+        }
+    /// Normalize charset
+        $charset = $this->typo3cs->parse_charset($charset);
     /// If the text is pure ASCII, we don't need to encode it
         if ($this->convert($text, $charset, 'ascii') == $text) {
             return $text;
@@ -209,11 +215,44 @@ class textlib {
     /// Max line length is 75 (including start and end)
         $length = 75 - strlen($start) - strlen($end);
     /// Multi-byte ratio
-        $ratio = $this->strlen($text, $charset) / strlen($text);
+        $multilength = $this->strlen($text, $charset);
+    /// Detect if strlen and friends supported
+        if ($multilength === false) {
+            if ($charset == 'GB18030' or $charset == 'gb18030') {
+                while (strlen($text)) {
+                    // try to encode first 22 chars - we expect most chars are two bytes long
+                    if (preg_match('/^(([\x00-\x7f])|([\x81-\xfe][\x40-\x7e])|([\x81-\xfe][\x80-\xfe])|([\x81-\xfe][\x30-\x39]..)){1,22}/m', $text, $matches)) {
+                        $chunk = $matches[0];
+                        $encchunk = base64_encode($chunk);
+                        if (strlen($encchunk) > $length) {
+                            // find first 11 chars - each char in 4 bytes - worst case scenario
+                            preg_match('/^(([\x00-\x7f])|([\x81-\xfe][\x40-\x7e])|([\x81-\xfe][\x80-\xfe])|([\x81-\xfe][\x30-\x39]..)){1,11}/m', $text, $matches);                            
+                            $chunk = $matches[0];
+                            $encchunk = base64_encode($chunk);
+                        }
+                        $text = substr($text, strlen($chunk));
+                        $encoded .= ' '.$start.$encchunk.$end.$linefeed;
+                    } else {
+                        break;
+                    }
+                }
+                $encoded = trim($encoded);
+                return $encoded; 
+            } else {
+                return false;
+            }
+        }
+        $ratio = $multilength / strlen($text);
     /// Base64 ratio
         $magic = $avglength = floor(3 * $length * $ratio / 4);
+    /// basic infinite loop protection
+        $maxiterations = strlen($text)*2;
+        $iteration = 0; 
     /// Iterate over the string in magic chunks
-        for ($i=0; $i <= $this->strlen($text, $charset); $i+=$magic) {
+        for ($i=0; $i <= $multilength; $i+=$magic) {
+            if ($iteration++ > $maxiterations) {
+                return false; // probably infinite loop 
+            } 
             $magic = $avglength;
             $offset = 0;
         /// Ensure the chunk fits in length, reduding magic if necessary
