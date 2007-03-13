@@ -356,7 +356,7 @@ function search_generate_text_SQL($parsetree, $datafield, $metafield, $mainidfie
                     $datasearch_clause .= '"' . $value . '" ';
             /// Simple word token, search for it as prefix
                 } else {
-                    $datasearch_clause .= $value . '* ';
+                    $datasearch_clause .= '+' . $value . '* ';
                 }
                 break;
             case TOKEN_EXACT:
@@ -369,7 +369,7 @@ function search_generate_text_SQL($parsetree, $datafield, $metafield, $mainidfie
                 break;
             case TOKEN_META:
             /// token in metafield, search for it as prefix
-                $metasearch_clause .= $value . '* ';
+                $metasearch_clause .= '+' . $value . '* ';
                 break;
             case TOKEN_USER:
             case TOKEN_USERID:
