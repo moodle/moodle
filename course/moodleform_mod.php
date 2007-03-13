@@ -63,7 +63,7 @@ class moodleform_mod extends moodleform {
      */
     function standard_coursemodule_elements($supportsgroups=true){
         $mform =& $this->_form;
-        $mform->addElement('header', '', get_string('modstandardels', 'form'));
+        $mform->addElement('header', 'modstandardelshdr', get_string('modstandardels', 'form'));
         if ($supportsgroups){
             $mform->addElement('modgroupmode', 'groupmode', get_string('groupmode'));
         }
