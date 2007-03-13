@@ -129,7 +129,7 @@ class qformat_default {
 
             $count++;
 
-            echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
+            echo "<hr /><p><b>$count</b>. ".$this->format_question_text($question)."</p>";
 
             // check for answer grades validity (must match fixed list of grades)
             if (!empty($question->fraction) and (is_array($question->fraction))) {
@@ -396,7 +396,7 @@ class qformat_default {
 
             // export the question displaying message
             $count++;
-            echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
+            echo "<hr /><p><b>$count</b>. ".$this->format_question_text($question)."</p>";
             $expout .= $this->writequestion( $question ) . "\n";
         }
 
@@ -438,6 +438,17 @@ class qformat_default {
         return $path;
     }
 
+    function format_question_text($question) {
+        $formatoptions = new stdClass;
+        $formatoptions->noclean = true;
+        $formatoptions->para = false;
+        if (empty($question->questiontextformat)) {
+            $format = FORMAT_MOODLE;
+        } else {
+            $format = $question->questiontextformat;
+        }
+        return format_text(stripslashes($question->questiontext), $format, $formatoptions);
+    }
 }
 
 ?>
