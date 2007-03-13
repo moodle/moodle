@@ -19,6 +19,7 @@ $string['browserepository'] = 'Browse repository';
 $string['chooseapacket'] = 'Choose or update a package';
 $string['completed'] = 'Completed';
 $string['confirmloosetracks'] = 'WARNING: The package seems to be changed or modified. If the package structure is changed, some users tracks may be lost during update process.';
+$string['contents'] = 'Contents';
 $string['coursepacket'] = 'Course package';
 $string['coursestruct'] = 'Course structure';
 $string['datadir'] = 'Filesystem Error: Can\'t create course data directory';

@@ -14,6 +14,15 @@
     $mode = optional_param('mode', 'normal', PARAM_ALPHA); // navigation mode
     $currentorg = optional_param('currentorg', '', PARAM_RAW); // selected organization
     $newattempt = optional_param('newattempt', 'off', PARAM_ALPHA); // the user request to start a new attempt
+	
+	$scoid=$_GET['scoid'];
+	
+	
+	//$scoid=$_POST['scoid'];
+	//echo 'SCOID'.$scoid;
+	if ($sco1 = get_record("scorm_scoes", "id", $scoid,"parent",'/')) {
+           $scoid++;
+    }
 
     if (!empty($id)) {
         if (! $cm = get_coursemodule_from_id('scorm', $id)) {
@@ -124,10 +133,9 @@
     if ($scorm->popup == 1) {
         $bodyscript = 'onunload="main.close();"';
     }
-    $exitlink = '(<a href="'.$CFG->wwwroot.'/course/view.php?id='.$cm->course.'">'.get_string('exit','scorm').'</a>)&nbsp;';
     print_header($pagetitle, "$course->fullname",
                  "$navigation <a target='{$CFG->framename}' href='view.php?id=$cm->id'>".format_string($scorm->name,true)."</a>",
-                 '', '', true, $exitlink.update_module_button($cm->id, $course->id, $strscorm), '', false, $bodyscript);
+                 '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false, $bodyscript);
     if ($sco->scormtype == 'sco') {
 ?>
     <script language="JavaScript" type="text/javascript" src="request.js"></script>
@@ -152,7 +160,7 @@
     if ($scorm->hidetoc == 0) {
 ?>
         <div id="tocbox" class="generalbox">
-            <div id="tochead" class="header"><?php print_string('coursestruct','scorm') ?></div>
+            <div id="tochead" class="header"><?php print_string('contents','scorm') ?></div>
             <div id="toctree">
             <?php echo $result->toc; ?>
             </div>
