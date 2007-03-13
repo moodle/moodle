@@ -178,7 +178,7 @@
          ->get_correct_responses($questions[$id], $curstate);
     }
 
-    $strpreview = get_string('preview', 'quiz').' '.s($questions[$id]->name);
+    $strpreview = get_string('preview', 'quiz').' '.format_string($questions[$id]->name);
     print_header($strpreview);
     print_heading($strpreview);
 

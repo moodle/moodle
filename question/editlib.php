@@ -323,7 +323,7 @@ function question_list($course, $categoryid, $quizid=0,
         echo "&nbsp;<input title=\"$strselect\" type=\"checkbox\" name=\"q$question->id\" value=\"1\" />";
         echo "</td>\n";
 
-        echo "<td $nameclass>" . $question->name . "</td>\n";
+        echo "<td $nameclass>" . format_string($question->name) . "</td>\n";
         echo "<td $nameclass style='text-align: right'>\n";
         print_question_icon($question, $canedit);
         echo "</td>\n";
