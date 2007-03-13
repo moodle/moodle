@@ -1913,14 +1913,7 @@
                 foreach ($info as $category) {
                     //Skip empty categories (some backups can contain them)
                     if (!empty($category->id)) {
-                        $catrestore = "restore_question_categories";
-                        if (function_exists($catrestore)) {
-                            //print_object ($category);                                                //Debug
-                            $status = $catrestore($category,$restore);
-                        } else {
-                            //Something was wrong. Function should exist.
-                            $status = false;
-                        }
+                        $status = restore_question_categories($category,$restore);
                     }
                 }
 
