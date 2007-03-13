@@ -133,10 +133,10 @@
     if ($scorm->popup == 1) {
         $bodyscript = 'onunload="main.close();"';
     }
-    $exitlink = '(<a href="'.$CFG->wwwroot.'/course/view.php?id='.$cm->course.'">'.get_string('exit','scorm').'</a>)&nbsp;';
+
     print_header($pagetitle, $course->fullname,
                  "$navigation <a $CFG->frametarget href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>",
-                 '', '', true, $exitlink.update_module_button($cm->id, $course->id, $strscorm), '', false, $bodyscript);
+                 '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false, $bodyscript);
     if ($sco->scormtype == 'sco') {
 ?>
     <script type="text/javascript" src="request.js"></script>
@@ -161,7 +161,7 @@
     if ($scorm->hidetoc == 0) {
 ?>
         <div id="tocbox" class="generalbox">
-            <div id="tochead" class="header"><?php print_string('coursestruct','scorm') ?></div>
+            <div id="tochead" class="header"><?php print_string('contents','scorm') ?></div>
             <div id="toctree">
             <?php echo $result->toc; ?>
             </div>
