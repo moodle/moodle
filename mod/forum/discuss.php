@@ -168,8 +168,7 @@
     }
     
     $groupmode = groupmode($course, $cm);  
-    if ($canreply = has_capability($capname, $modcontext)) { 
-    
+    if ($canreply = has_capability($capname, $modcontext)) {
          
         if ($groupmode && !has_capability('moodle/site:accessallgroups', $modcontext)) {   
             // Groups must be kept separate
@@ -192,6 +191,11 @@
                 $canreply = ( (empty($mygroupid) && $discussion->groupid == -1) ||
                     (ismember($discussion->groupid) || $mygroupid == $discussion->groupid) );
             }
+        }
+    } else { // allow guests to see the link
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        if (has_capability('moodle/legacy:guest', $coursecontext, NULL, false)) {  // User is a guest here!
+            $canreply = true;
         }
     }
 
