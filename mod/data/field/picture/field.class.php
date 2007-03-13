@@ -246,6 +246,12 @@ class data_field_picture extends data_field_file {
             } else {
                 $im1 = ImageCreate($thumbwidth,$thumbheight);
             }
+            
+            // Prevent alpha blending for PNG images
+            if ($image->type == 3) {
+                imagealphablending($im1, false);
+            }
+            
             $cx = $image->width  / 2;
             $cy = $image->height / 2;
 
@@ -255,12 +261,22 @@ class data_field_picture extends data_field_file {
 
             ImageCopyBicubic($im1, $im, 0, 0, $cx-$halfwidth, $cy-$halfheight,
                              $thumbwidth, $thumbheight, $halfwidth*2, $halfheight*2);
-
-            if (function_exists('ImageJpeg')) {
+            
+            // Save alpha transparency for PNG images
+            if ($image->type == 3) {
+                imagesavealpha($im1, true);
+            }
+            
+            if (function_exists('ImageJpeg') && $image->type != 3) {
                 @touch($thumbnaillocation);  // Helps in Safe mode
                 if (ImageJpeg($im1, $thumbnaillocation, 90)) {
                     @chmod($thumbnaillocation, 0666);
                 }
+            } elseif (function_exists('ImagePng') && $image->type == 3) {
+                @touch($thumbnaillocation);  // Helps in Safe mode
+                if (ImagePng($im1, $thumbnaillocation, 9)) {
+                    @chmod($thumbnaillocation, 0666);
+                } 
             }
 
         } else { // Try and remove the thumbnail - we don't want thumbnailing active
