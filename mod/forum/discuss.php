@@ -4,7 +4,7 @@
 //  If no post is given, displays all posts in a discussion
 
     require_once("../../config.php");
-    
+   
     $d      = required_param('d', PARAM_INT);                // Discussion ID
     $parent = optional_param('parent', 0, PARAM_INT);        // If set, then display this post and all children.
     $mode   = optional_param('mode', 0, PARAM_INT);          // If set, changes the layout of the thread
@@ -165,39 +165,33 @@
 /// If so, make sure the current person is allowed to see this discussion
 /// Also, if we know they should be able to reply, then explicitly set $canreply
 
-    $canreply = true;   /// By default, because guests etc will be asked to log in
-    $groupmode = groupmode($course, $cm);
-    
-    
-    if ($groupmode and !has_capability('moodle/site:accessallgroups', $modcontext)) {   // Groups must be kept separate
-        //change this to ismember
-        $mygroupid = mygroupid($course->id); //only useful if 0, otherwise it's an array now
-        if ($groupmode == SEPARATEGROUPS) {
-            require_login();
+    if ($canreply = has_capability('mod/forum:replypost', $modcontext)) {  /// Check capability first, if not allowed, no point checking further
 
-            if ((empty($mygroupid) and $discussion->groupid == -1) || (ismember($discussion->groupid) || $mygroupid == $discussion->groupid)) {
-                $canreply = true;
-            } elseif ($discussion->groupid == -1) {
-                $canreply = false;
-            } else {
-                print_heading("Sorry, you can't see this discussion because you are not in this group");
-                print_footer($course);
-                die;
-            }
+        // now check groups just in case user is not a member of group in which he can post
+        $groupmode = groupmode($course, $cm);
+    
+        if ($groupmode and !has_capability('moodle/site:accessallgroups', $modcontext)) {   // Groups must be kept separate
+            // change this to ismember
+            $mygroupid = mygroupid($course->id); //only useful if 0, otherwise it's an array now
+            if ($groupmode == SEPARATEGROUPS) {
+                require_login();
 
-        } else if ($groupmode == VISIBLEGROUPS) {
-            $canreply = ( (empty($mygroupid) && $discussion->groupid == -1) ||
-                    (ismember($discussion->groupid) || $mygroupid == $discussion->groupid) );
-        }
-    } else {
-        if (!has_capability('mod/forum:replypost', $modcontext)) {
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-            if (!has_capability('moodle/legacy:guest', $coursecontext, NULL, false)) {  // User is a guest here!
-                $canreply = false;
+                if ((empty($mygroupid) and $discussion->groupid == -1) || (ismember($discussion->groupid) || $mygroupid == $discussion->groupid)) {
+                // $canreply = true;
+                } elseif ($discussion->groupid == -1) {
+                    $canreply = false;
+                } else {
+                    print_heading("Sorry, you can't see this discussion because you are not in this group");
+                    print_footer($course);
+                    die;
+                }
+
+            } else if ($groupmode == VISIBLEGROUPS) {
+                $canreply = ( (empty($mygroupid) && $discussion->groupid == -1) ||
+                (ismember($discussion->groupid) || $mygroupid == $discussion->groupid));
             }
         }
     }
-
 
 /// Print the controls across the top
 
