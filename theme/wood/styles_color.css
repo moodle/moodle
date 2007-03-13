@@ -14,7 +14,8 @@
 #mod-forum-view table.forumheaderlist td,
 #mod-assignment-submissions table.submissions th,
 #mod-assignment-submissions table.submissions td,
-form.mform fieldset.hidden {
+form.mform fieldset.hidden,
+form.mform fieldset.hidden fieldset.fgroup {
     border:none;
     background:none;
 }
