@@ -42,8 +42,8 @@
             foreach ($_POST as $element => $value) {
                 $element = str_replace('__','.',$element);
                 if (substr($element,0,3) == 'cmi') {
-                    $element = preg_replace('/N(\d+)/',".\$1",$element);
-                    $result = scorm_insert_track($USER->id, $scorm->id, $scoid, $attempt, $element, $value) && $result;
+                    $netelement = preg_replace('/\.N(\d+)\./',"\.\$1\.",$element);
+                    $result = scorm_insert_track($USER->id, $scorm->id, $scoid, $attempt, $netelement, $value) && $result;
                 }
                 if (substr($element,0,15) == 'adl.nav.request') {
                     // SCORM 2004 Sequencing Request
