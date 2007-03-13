@@ -72,7 +72,6 @@ class qformat_xml extends qformat_default {
      */
     function import_text( $text ) {
         $data = $text[0]['#'];
-        $data = html_entity_decode( $data );
         return addslashes(trim( $data ));
     }
 
@@ -189,8 +188,8 @@ class qformat_xml extends qformat_default {
      * @return object question object
      */
     function import_multianswer( $questions ) {
-        $qo = qtype_multianswer_extract_question($this->import_text( 
-            $questions['#']['questiontext'][0]['#']['text'] ));
+        $questiontext = $questions['#']['questiontext'][0]['#']['text'];
+        $qo = qtype_multianswer_extract_question($this->import_text($questiontext));
 
         // 'header' parts particular to multianswer
         $qo->qtype = MULTIANSWER;
@@ -449,6 +448,7 @@ class qformat_xml extends qformat_default {
      * </question>
      */
     function import_category( $question ) {
+        $qo = new stdClass;
         $qo->qtype = 'category';
         $qo->category = $question['#']['category'][0]['#'];
         return $qo;
@@ -517,6 +517,7 @@ class qformat_xml extends qformat_default {
 
             // stick the result in the $questions array
             if ($qo) {
+                $qo->generalfeedback = '';
                 $questions[] = $qo;
             }
         }
