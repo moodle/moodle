@@ -165,7 +165,7 @@ function SCORMapi1_3() {
     foreach($userdata as $element => $value){
         if (substr($element,0,14) == 'cmi.objectives') {
             preg_match('/.(\d+)./',$element,$matches);
-            $element = preg_replace('/.(\d+)./',".N\$1.",$element);
+            $element = preg_replace('/\.(\d+)\./',"\.N\$1\.",$element);
             if ($matches[1] == $count) {
                 $count++;
                 $end = strpos($element,$matches[1])+strlen($matches[1]);
@@ -235,8 +235,8 @@ function SCORMapi1_3() {
                 Initialized = false;
                 Terminated = true;
                 result = StoreData(cmi,true);
-                if (nav.event != '') {
-                    if (nav.event == 'continue') {
+                if (adl.nav.request != '') {
+                    if (adl.nav.request == 'continue') {
                         setTimeout('top.nextSCO();',500);
                     } else {
                         setTimeout('top.prevSCO();',500);
