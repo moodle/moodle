@@ -371,9 +371,9 @@ function question_list($course, $categoryid, $quizid=0,
         echo "</td>\n";
 
         if ($question->hidden) {
-            echo '<td class="dimmed_text">'.$question->name."</td>\n";
+            echo '<td class="dimmed_text">'.format_string($question->name)."</td>\n";
         } else {
-            echo "<td>".$question->name."</td>\n";
+            echo "<td>".format_string($question->name)."</td>\n";
         }
         echo "<td align=\"center\">\n";
         print_question_icon($question, $canedit);
