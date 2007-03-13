@@ -164,11 +164,11 @@
 /// Check to see if groups are being used in this forum
 /// If so, make sure the current person is allowed to see this discussion
 /// Also, if we know they should be able to reply, then explicitly set $canreply
-
+    
+    $groupmode = groupmode($course, $cm);
     if ($canreply = has_capability('mod/forum:replypost', $modcontext)) {  /// Check capability first, if not allowed, no point checking further
 
-        // now check groups just in case user is not a member of group in which he can post
-        $groupmode = groupmode($course, $cm);
+        // now check groups just in case user is not a member of group in which he can post       
     
         if ($groupmode and !has_capability('moodle/site:accessallgroups', $modcontext)) {   // Groups must be kept separate
             // change this to ismember
