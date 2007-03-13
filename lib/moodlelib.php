@@ -1468,6 +1468,39 @@ function confirm_sesskey($sesskey=NULL) {
     return ($USER->sesskey === $sesskey);
 }
 
+/**
+ * Setup all global $CFG course variables, set locale and also themes
+ * This function can be used on pages that do not require login instead of require_login()
+ *
+ * @param mixed $courseorid id of the course or course object
+ */
+function course_setup($courseorid=0) {
+    global $COURSE, $CFG, $SITE, $USER;
+
+/// Redefine global $COURSE if needed
+    if (empty($courseorid)) {
+        // no change in global $COURSE - for backwards compatibiltiy
+        // if require_rogin() used after require_login($courseid); 
+    } else if (is_object($courseorid)) {
+        $COURSE = clone($courseorid);
+    } else {
+        global $course; // used here only to prevent repeated fetching from DB - may be removed later
+        if (!empty($course->id) and $course->id == SITEID) {
+            $COURSE = clone($SITE);
+        } else if (!empty($course->id) and $course->id == $courseorid) {
+            $COURSE = clone($course);
+        } else {
+            if (!$COURSE = get_record('course', 'id', $courseorid)) {
+                error('Invalid course ID');
+            }
+        }
+    }
+
+/// set locale and themes
+    moodle_setlocale();
+    theme_setup();
+
+}
 
 /**
  * This function checks that the current user is logged in and has the
