@@ -1253,7 +1253,7 @@ function forum_get_readable_forums($userid, $courseid=0) {
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 
-        if (has_capability('moodle/course:viewhiddenactivities', $coursecontext)) {
+        if (!has_capability('moodle/course:viewhiddenactivities', $coursecontext)) {
             $selecthidden = ' AND cm.visible = 1';
         } else {
             $selecthidden = '';
