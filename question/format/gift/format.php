@@ -100,11 +100,8 @@ class qformat_gift extends qformat_default {
     function check_answer_count( $min, $answers, $text ) {
         $countanswers = count($answers);
         if ($countanswers < $min) {
-            if ($this->displayerrors) {
-                $errormessage = get_string( 'importminerror', 'quiz' );
-                echo "<p>$text</p>\n"; 
-                echo "<p>$errormessage</p>\n"; 
-            }
+            $importminerror = get_string( 'importminerror', 'quiz' );
+            $this->error( $importminerror, $text );
             return false;
         }
 
@@ -125,7 +122,6 @@ class qformat_gift extends qformat_default {
         foreach ($lines as $key => $line) {
             $line = trim($line);
             if (substr($line, 0, 2) == "//") {
-                // echo "Commented line removed.<br />";
                 $lines[$key] = " ";
             }
         }
@@ -133,7 +129,6 @@ class qformat_gift extends qformat_default {
         $text = trim(implode(" ", $lines));
 
         if ($text == "") {
-            // echo "<p>Empty line.</p>";
             return false;
         }
 
@@ -172,17 +167,13 @@ class qformat_gift extends qformat_default {
         // FIND ANSWER section
         $answerstart = strpos($text, "{");
         if ($answerstart === false) {
-            if ($this->displayerrors) {
-                echo "<p>$text<p>Could not find a {";
-            }
+            $this->error( 'Could not find a {', $text );
             return false;
         }
 
         $answerfinish = strpos($text, "}");
         if ($answerfinish === false) {
-            if ($this->displayerrors) {
-                echo "<p>$text<p>Could not find a }";
-            }
+            $this->error( 'Could not find a }', $text );
             return false;
         }
 
@@ -255,9 +246,7 @@ class qformat_gift extends qformat_default {
         }
 
         if (!isset($question->qtype)) {
-            if ($this->displayerrors) {
-                echo "<p>$text<p>Question type not set.";
-                }
+            $this->error( 'Question type not set', $text );
             return false;
         }
 
@@ -329,10 +318,7 @@ class qformat_gift extends qformat_default {
                 foreach ($answers as $key => $answer) {
                     $answer = trim($answer);
                     if (strpos($answer, "->") === false) {
-                        if ($this->displayerrors) {
-                        echo "<p>$text<p>Error processing Matching question.<br />
-                            Improperly formatted answer: $answer";
-                        }
+                        $this->error('Improperly formatted Matching Question answer', $answer );
                         return false;
                         break 2;
                     }
@@ -343,8 +329,6 @@ class qformat_gift extends qformat_default {
 
                 }  // end foreach answer
     
-                //$question->defaultgrade = 1;
-                //$question->image = "";   // No images with this format
                 return $question;
                 break;
             
@@ -425,9 +409,7 @@ class qformat_gift extends qformat_default {
     
                 if (count($answers) == 0) {
                     // invalid question
-                    if ($this->displayerrors) {
-                        echo "<p>$text<p>No answers found in answertext (Numerical answer)";
-                    }
+                    $this->error( 'No answers found in Numerical answer', $text );
                     return false;
                     break;
                 }
@@ -461,11 +443,8 @@ class qformat_gift extends qformat_default {
                     }
     
                     if (!(is_numeric($ans) || $ans = '*') || !is_numeric($tol)) {
-                        if ($this->displayerrors) {
-                            $err = get_string( 'errornotnumbers' );
-                            echo "<p>$text</p><p>$err</p>
-                                <p>Answer: <u>$answer</u></p><p>Tolerance: <u>$tol</u></p> ";
-                        }
+                            $errornotnumbers = get_string( 'errornotnumbers' );
+                            $this->error( $errornotnumbers, $text );
                         return false;
                         break;
                     }
@@ -483,16 +462,11 @@ class qformat_gift extends qformat_default {
                     $question->tolerance[$key] = '';
                 }
 
-                //$question->defaultgrade = 1;
-                //$question->image = "";   // No images with this format
-                //$question->multiplier = array(); // no numeric multipliers with GIFT
                 return $question;
                 break;
 
                 default:
-                if ($this->displayerrors) {
-                    echo "<p>$text<p> No valid question type. Error in switch(question->qtype)";
-                }
+                    $this->error( 'No valid question detected', $text );
                 return false;
                 break;                
         

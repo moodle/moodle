@@ -22,6 +22,7 @@
     $courseid = optional_param('course', 0, PARAM_INT);
     $format = optional_param('format','',PARAM_FILE);
     $params->matchgrades = optional_param('matchgrades','',PARAM_ALPHA);
+    $params->stoponerror = optional_param('stoponerror', 0, PARAM_BOOL);
 
     // get display strings
     $txt = new stdClass();
@@ -46,6 +47,7 @@
     $txt->onlyteachersimport = get_string('onlyteachersimport','quiz');
     $txt->questions = get_string("questions", "quiz");
     $txt->quizzes = get_string('modulenameplural', 'quiz');
+    $txt->stoponerror = get_string('stoponerror', 'quiz');
     $txt->upload = get_string('upload');
     $txt->uploadproblem = get_string('uploadproblem');
     $txt->uploadthisfile = get_string('uploadthisfile');
@@ -163,18 +165,22 @@
             $qformat->setFilename( $importfile );
             $qformat->setMatchgrades( $params->matchgrades );
             $qformat->setCatfromfile( $catfromfile );
+            $qformat->setStoponerror( $params->stoponerror );
 
-            if (! $qformat->importpreprocess()) {             // Do anything before that we need to
+            // Do anything before that we need to
+            if (! $qformat->importpreprocess()) {             
                 error( $txt->importerror ,
                       "$CFG->wwwroot/question/import.php?courseid={$course->id}&amp;category=$category->id");
             }
 
-            if (! $qformat->importprocess() ) {     // Process the uploaded file
+            // Process the uploaded file
+            if (! $qformat->importprocess() ) {     
                 error( $txt->importerror ,
                       "$CFG->wwwroot/question/import.php?courseid={$course->id}&amp;category=$category->id");
             }
 
-            if (! $qformat->importpostprocess()) {                     // In case anything needs to be done after
+            // In case anything needs to be done after
+            if (! $qformat->importpostprocess()) {
                 error( $txt->importerror ,
                       "$CFG->wwwroot/question/import.php?courseid={$course->id}&amp;category=$category->id");
             }
@@ -217,13 +223,18 @@
 
                 <tr>
                     <td align="right"><?php echo $txt->fileformat; ?>:</td>
-                    <td><?php choose_from_menu($fileformatnames, "format", "gift", "");
-                        helpbutton("import", $txt->importquestions, "quiz"); ?></td>
+                    <td><?php choose_from_menu($fileformatnames, 'format', 'gift', '');
+                        helpbutton("import", $txt->importquestions, 'quiz'); ?></td>
                 </tr>
                 <tr>
                     <td align="right"><?php echo $txt->matchgrades; ?></td>
                     <td><?php choose_from_menu($matchgrades,'matchgrades',$txt->matchgradeserror,'' );
                         helpbutton('matchgrades', $txt->matchgrades, 'quiz'); ?></td>
+                </tr>
+                <tr>
+                    <td align="right"><?php echo $txt->stoponerror; ?></td>
+                    <td><input name="stoponerror" type="checkbox" checked="checked" />
+                    <?php helpbutton('stoponerror', $txt->stoponerror, 'quiz'); ?></td>
                 </tr>
             </table>
             <?php
