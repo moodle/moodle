@@ -2475,15 +2475,27 @@ function update_capabilities($component='moodle') {
     if ($cachedcaps) {
         foreach ($cachedcaps as $cachedcap) {
             array_push($storedcaps, $cachedcap->name);
-            // update risk bitmasks in existing capabilities if needed
+            // update risk bitmasks and context levels in existing capabilities if needed
             if (array_key_exists($cachedcap->name, $filecaps)) {
                 if (!array_key_exists('riskbitmask', $filecaps[$cachedcap->name])) {
                     $filecaps[$cachedcap->name]['riskbitmask'] = 0; // no risk if not specified
                 }
                 if ($cachedcap->riskbitmask != $filecaps[$cachedcap->name]['riskbitmask']) {
-                    $updatecap = new object;
+                    $updatecap = new object();
                     $updatecap->id = $cachedcap->id;
                     $updatecap->riskbitmask = $filecaps[$cachedcap->name]['riskbitmask'];
+                    if (!update_record('capabilities', $updatecap)) {
+                        return false;
+                    }
+                }
+
+                if (!array_key_exists('contextlevel', $filecaps[$cachedcap->name])) {
+                    $filecaps[$cachedcap->name]['contextlevel'] = 0; // no context level defined
+                }
+                if ($cachedcap->contextlevel != $filecaps[$cachedcap->name]['contextlevel']) {
+                    $updatecap = new object();
+                    $updatecap->id = $cachedcap->id;
+                    $updatecap->contextlevel = $filecaps[$cachedcap->name]['contextlevel'];
                     if (!update_record('capabilities', $updatecap)) {
                         return false;
                     }

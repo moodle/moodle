@@ -165,20 +165,19 @@ function create_course($data) {
         add_to_log(SITEID, "course", "new", "view.php?id=$course->id", "$data->fullname (ID $course->id)")        ;
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
-        if ($data->metacourse and has_capability('moodle/course:managemetacourse', $context)) { // Redirect users with metacourse capability to student import
+        // assign default role to creator if not already having permission to manage course assignments
+        if (!has_capability('moodle/course:view', $context) or !has_capability('moodle/role:assign', $context)) {
+            role_assign($CFG->creatornewroleid, $USER->id, 0, $context->id);
+        }        
+
+        if ($data->metacourse and has_capability('moodle/course:managemetacourse', $context)) {
+            // Redirect users with metacourse capability to student import
             redirect($CFG->wwwroot."/course/importstudents.php?id=$course->id");
 
-        } else if (has_capability('moodle/role:assign', $context)) { // Redirect users with assign capability to assign users to different roles
+        } else {
+            // Redirect to roles assignment
             redirect($CFG->wwwroot."/$CFG->admin/roles/assign.php?contextid=$context->id");
 
-        } else {         // Add current teacher and send to course
-            // find a role with legacy:edittingteacher
-            if ($teacherroles = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW, $context)) {
-                // assign the role to this user
-                $teachereditrole = array_shift($teacherroles);
-                role_assign($teachereditrole->id, $USER->id, 0, $context->id);
-            }
-            redirect($CFG->wwwroot."/course/view.php?id=$course->id");
         }
 
     } else {

@@ -43,6 +43,14 @@ if ($userroles = get_roles_with_capability('moodle/legacy:user', CAP_ALLOW)) {
 } else {
     $userrole->id = 0;
 }
+if (empty($CFG->creatornewroleid)) {
+    if ($teacherroles = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW, $context)) {
+        $teachereditrole = array_shift($teacherroles);
+        set_config('creatornewroleid', $teachereditrole->id);
+    } else {
+        set_config('creatornewroleid', 0);
+    }
+}
 // we must not use assignable roles here:
 //   1/ unsetting roles as assignable for admin might bork the settings!
 //   2/ default user role should not be assignable anyway
@@ -61,6 +69,8 @@ $temp->add(new admin_setting_configselect('defaultuserroleid', get_string('defau
               get_string('configdefaultuserroleid', 'admin'), $userrole->id, $allroles));
 $temp->add(new admin_setting_configselect('defaultcourseroleid', get_string('defaultcourseroleid', 'admin'),
               get_string('configdefaultcourseroleid', 'admin'), $studentrole->id, $allroles));
+$temp->add(new admin_setting_configselect('creatornewroleid', get_string('creatornewroleid', 'admin'),
+              get_string('configcreatornewroleid', 'admin'), $CFG->creatornewroleid, $allroles));
 
 $temp->add(new admin_setting_configcheckbox('autologinguests', get_string('autologinguests', 'admin'), get_string('configautologinguests', 'admin'), 0));
 
