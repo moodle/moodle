@@ -57,7 +57,10 @@ class block_admin_bookmarks extends block_base {
             $bookmarks = array();
         }
 
-        if (($section = (isset($PAGE->section) ? $PAGE->section : '')) && (in_array($section, $bookmarks))) {
+	if($PAGE->section == 'search'){
+	  // the search page can't be properly bookmarked at present
+	  $this->content->footer = '';
+	}elseif (($section = (isset($PAGE->section) ? $PAGE->section : '')) && (in_array($section, $bookmarks))) {
             $this->content->footer = '<a href="' . $CFG->wwwroot . '/blocks/admin_bookmarks/delete.php?section=' . $section . '&amp;sesskey='.sesskey().'">' . get_string('unbookmarkthispage','admin') . '</a>';
         } elseif ($section = (isset($PAGE->section) ? $PAGE->section : '')) {
             $this->content->footer = '<a href="' . $CFG->wwwroot . '/blocks/admin_bookmarks/create.php?section=' . $section . '&amp;sesskey='.sesskey().'">' . get_string('bookmarkthispage','admin') . '</a>';
