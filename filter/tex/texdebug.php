@@ -111,31 +111,31 @@
             }
             $commandpath = "";
             $cmd = "";
+            $texexp = escapeshellarg($texexp);
             switch (PHP_OS) {
                 case "Linux":
                     $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.linux";           
-                $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.linux\" -e \"$pathname\" ". escapeshellarg($texexp);
+                    $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.linux\" -e \"$pathname\" $texexp";
                 break;
                 case "WINNT":
-                    case "WIN32":
-                    case "Windows":
+                case "WIN32":
+                case "Windows":
                     $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.exe";
-                $texexp = str_replace('"','\"',$texexp);
-                $cmd = str_replace(' ','^ ',$commandpath);
-                $cmd .= " ++ -e  \"$pathname\" \"$texexp\"";
+                    $cmd = str_replace(' ','^ ',$commandpath);
+                    $cmd .= " ++ -e  \"$pathname\" $texexp";
                 break;
                 case "Darwin":
                     $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin";
-                $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" ". escapeshellarg($texexp);
+                    $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" $texexp";
                 break;
             }
             if (!$cmd) {
-              if (is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {   /// Use the custom binary
-                $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex";
-                $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname ". escapeshellarg($texexp);
-              } else {
-                error($error_message1);
-              }
+                if (is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {   /// Use the custom binary
+                    $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex";
+                    $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname $texexp";
+                } else {
+                    error($error_message1);
+                }
             }
             system($cmd, $status);
         }
