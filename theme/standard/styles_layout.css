@@ -2180,6 +2180,11 @@ body#message-messages {
   width: 88%;
 }
 
+.importerror {
+  margin-top: 10px;
+  border-bottom: 1px solid #555;
+}
+
 /***
  *** Logs
  ***/
