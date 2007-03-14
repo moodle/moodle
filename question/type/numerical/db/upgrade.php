@@ -27,7 +27,7 @@ function xmldb_qtype_numerical_upgrade($oldversion=0) {
     // from the empty string to *, to be like short answer questions.
     if ($result && $oldversion < 2006121500) {
         $result = set_field_select('question_answers', 'answer', '*',
-            sql_compare_text('answer') . " = '" . sql_empty() . "' AND question IN (SELECT id FROM {$CFG->prefix}question WHERE qtype = '" . NUMERICAL . "')");
+            sql_compare_text('answer') . " LIKE '" . sql_empty() . "' AND question IN (SELECT id FROM {$CFG->prefix}question WHERE qtype = '" . NUMERICAL . "')");
     }
 
     return $result;
