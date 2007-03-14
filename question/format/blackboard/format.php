@@ -120,6 +120,7 @@ function process_tf($xml, &$questions) {
             $question->feedbacktrue = addslashes(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
             $question->feedbackfalse = addslashes(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
         }
+        $question->correctanswer = $question->answer;
         $questions[] = $question;
       }
 }
