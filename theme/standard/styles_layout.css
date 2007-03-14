@@ -1963,7 +1963,8 @@ body#grade-index .grades .weighted {
  ***/
 
 
-#message-user .userpicture {
+#message-user .userpicture,
+#message-history .userpicture {
   width: 100px;
   height: 100px;
 }
