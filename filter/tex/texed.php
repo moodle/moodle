@@ -32,18 +32,19 @@
             make_upload_directory($CFG->teximagedir);
         }
         $pathname = "$CFG->dataroot/$CFG->teximagedir/$image";
+        $texexp = escapeshellarg($texexp);
+
         switch (PHP_OS) {
             case "Linux":
-                system("$CFG->dirroot/$CFG->texfilterdir/mimetex.linux -e $pathname -- ". escapeshellarg($texexp) );
+                system("$CFG->dirroot/$CFG->texfilterdir/mimetex.linux -e $pathname -- $texexp" );
             break;
             case "WINNT":
-                case "WIN32":
-                case "Windows":
-                $texexp = str_replace('"','\"',$texexp);
-            system("$CFG->dirroot/$CFG->texfilterdir/mimetex.exe -e  $pathname -- \"$texexp\"");
+            case "WIN32":
+            case "Windows":
+                system("$CFG->dirroot/$CFG->texfilterdir/mimetex.exe -e  $pathname -- $texexp");
             break;
             case "Darwin":
-                system("$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -e $pathname -- ". escapeshellarg($texexp) );
+                system("$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -e $pathname -- $texexp" );
             break;
         }
         if (file_exists($pathname)) {

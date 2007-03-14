@@ -163,11 +163,10 @@ function algebra_filter ($courseid, $text) {
            $algebra = str_replace('epsilon','zepslon',$algebra);
            $algebra = str_replace('upsilon','zupslon',$algebra);
            $algebra = preg_replace('!\r\n?!',' ',$algebra);
+           $algebra = escapeshellarg($algebra);
            if ( (PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows") ) {
-              $algebra = "\"". str_replace('"','\"',$algebra) . "\"";
               $cmd  = "cd $CFG->dirroot\\$CFG->algebrafilterdirwin & algebra2tex.pl $algebra";
            } else {      
-              $algebra = escapeshellarg($algebra);
               $cmd  = "cd $CFG->dirroot/$CFG->algebrafilterdir; ./algebra2tex.pl $algebra";
            }
            $texexp = `$cmd`;

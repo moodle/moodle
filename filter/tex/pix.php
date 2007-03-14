@@ -65,29 +65,29 @@
                 $texexp = str_replace('&gt;','>',$texexp);
                 $texexp = preg_replace('!\r\n?!',' ',$texexp);
                 $texexp = '\Large ' . $texexp;
+                $texexp = escapeshellarg($texexp);
 
                 if ((PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows")) {
-                    $texexp = str_replace('"','\"',$texexp);
                     $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.exe";
                     $cmd = str_replace(' ','^ ',$cmd);
-                    $cmd .= " ++ -e  \"$pathname\" -- \"$texexp\"";
+                    $cmd .= " ++ -e  \"$pathname\" -- $texexp";
                 } else if (is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {   /// Use the custom binary
 
-                    $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname -- ". escapeshellarg($texexp);
+                    $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname -- $texexp";
 
                 } else {                                                           /// Auto-detect the right TeX binary
                     switch (PHP_OS) {
 
                         case "Linux":
-                            $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.linux\" -e \"$pathname\" -- ". escapeshellarg($texexp);
+                            $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.linux\" -e \"$pathname\" -- $texexp";
                         break;
 
                         case "Darwin":
-                            $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" -- ". escapeshellarg($texexp);
+                            $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" -- $texexp";
                         break;
 
                         case "FreeBSD":
-                            $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.freebsd\" -e \"$pathname\" ". escapeshellarg($texexp);
+                            $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.freebsd\" -e \"$pathname\" $texexp";
                         break;
 
                         default:      /// Nothing was found, so tell them how to fix it.
