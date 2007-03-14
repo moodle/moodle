@@ -5654,7 +5654,7 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
         $subtree = $tree;
     }
 
-    return $tree;
+    return $subtree;
 }
 
 
