@@ -61,18 +61,24 @@ if (!empty($file)) {
         $locations[$CFG->dataroot.'/lang/'] = $modfile;
         $locations[$CFG->dirroot.'/lang/'] = $modfile;
 
-        if (strpos($module, 'block_') === 0) {  // It's a block help file
-            $block = substr($module, 6);
-            $locations[$CFG->dirroot .'/blocks/'.$block.'/lang/'] =  $block.'/'.$file;
-        } else if (strpos($module, 'report_') === 0) {  // It's a report help file
-            $report = substr($module, 7);
-            $locations[$CFG->dirroot .'/'.$CFG->admin.'/report/'.$report.'/lang/'] = $report.'/'.$file;
-            $locations[$CFG->dirroot .'/course/report/'.$report.'/lang/'] = $report.'/'.$file;
-        } else if (strpos($module, 'format_') === 0) {  // Course format
-            $format = substr($module,7);
-            $locations[$CFG->dirroot  .'/course/format/'.$format.'/lang/'] = $format.'/'.$file;
-        } else {                                // It's a normal activity
-            $locations[$CFG->dirroot .'/mod/'.$module.'/lang/'] = $module.'/'.$file;
+        $rules = places_to_search_for_lang_strings();
+        $exceptions = $rules['__exceptions'];
+        unset($rules['__exceptions']);
+        
+        if (!in_array($module, $exceptions)) {
+            $dividerpos = strpos($module, '_');
+            if ($dividerpos === false) {
+                $type = '';
+                $plugin = $module;
+            } else {
+                $type = substr($module, 0, $dividerpos + 1);
+                $plugin = substr($module, $dividerpos + 1);
+            }
+            if (!empty($rules[$type])) {
+                foreach ($rules[$type] as $location) {
+                    $locations[$CFG->dirroot . "/$location/$plugin/lang/"] = "$plugin/$file";
+                }
+            }
         }
     }
 

@@ -4177,6 +4177,28 @@ function clean_getstring_data( $a ) {
     }
 }
 
+/** 
+ * @return array places to look for lang strings based on the prefix to the 
+ * module name. For example qtype_ in question/type. Used by get_string and 
+ * help.php.
+ */
+function places_to_search_for_lang_strings() {
+    return array(
+        '__exceptions' => array('moodle', 'langconfig'),
+        'assignment_' => array('mod/assignment/type'),
+        'auth_' => array('auth'),
+        'block_' => array('blocks'),
+        'datafield_' => array('mod/data/field'),
+        'datapreset_' => array('mod/data/preset'),
+        'enrol_' => array('enrol'),
+        'format_' => array('course/format'),
+        'qtype_' => array('question/type'),
+        'report_' => array($CFG->admin.'/report', 'course/report', 'mod/quiz/report'),
+        'resource_' => array('mod/resource/type'),
+        '' => array('mod')
+    );
+}
+
 /**
  * Returns a localized string.
  *
@@ -4282,27 +4304,23 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
     }
 
 /// Add extra places to look for strings for particular plugin types.
-    if ($module != 'moodle' && $module != 'langconfig') {
-        if (strpos($module, 'block_') === 0) {  // It's a block lang file
-            $locations[] =  $CFG->dirroot .'/blocks/'.substr($module, 6).'/lang/';
-        } else if (strpos($module, 'report_') === 0) {  // It's a report lang file
-            $locations[] =  $CFG->dirroot .'/'.$CFG->admin.'/report/'.substr($module, 7).'/lang/';
-            $locations[] =  $CFG->dirroot .'/course/report/'.substr($module, 7).'/lang/';
-            $locations[] =  $CFG->dirroot .'/mod/quiz/report/'.substr($module, 7).'/lang/';
-        } else if (strpos($module, 'resource_') === 0) {  // It's a resource module file
-            $locations[] =  $CFG->dirroot .'/mod/resource/type/'.substr($module, 9).'/lang/';
-        } else if (strpos($module, 'assignment_') === 0) {  // It's an assignment module file
-            $locations[] =  $CFG->dirroot .'/mod/assignment/type/'.substr($module, 11).'/lang/';
-        } else if (strpos($module, 'enrol_') === 0) {  // It's an enrolment plugin
-            $locations[] =  $CFG->dirroot .'/enrol/'.substr($module, 6).'/lang/';
-        } else if (strpos($module, 'auth_') === 0) {  // It's an auth plugin
-            $locations[] =  $CFG->dirroot .'/auth/'.substr($module, 5).'/lang/';
-        } else if (strpos($module, 'format_') === 0) {  // Course format
-            $locations[] =  $CFG->dirroot .'/course/format/'.substr($module,7).'/lang/';
-        } else if (strpos($module, 'qtype_') === 0) {  // It's a question type
-            $locations[] =  $CFG->dirroot .'/question/type/'.substr($module, 6).'/lang/';
-        } else {                                // It's a normal activity
-            $locations[] =  $CFG->dirroot .'/mod/'.$module.'/lang/';
+    $rules = places_to_search_for_lang_strings();
+    $exceptions = $rules['__exceptions'];
+    unset($rules['__exceptions']);
+    
+    if (!in_array($module, $exceptions)) {
+        $dividerpos = strpos($module, '_');
+        if ($dividerpos === false) {
+            $type = '';
+            $plugin = $module;
+        } else {
+            $type = substr($module, 0, $dividerpos + 1);
+            $plugin = substr($module, $dividerpos + 1);
+        }
+        if (!empty($rules[$type])) {
+            foreach ($rules[$type] as $location) {
+                $locations[] = $CFG->dirroot . "/$location/$plugin/lang/";
+            }
         }
     }
 
