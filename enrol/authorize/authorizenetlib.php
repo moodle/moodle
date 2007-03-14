@@ -358,8 +358,6 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                 }
                 break;
             }
-            default:
-                return AN_RETURNZERO;
         }
     }
     else
