@@ -589,9 +589,9 @@ function setup_elements(&$mform) {
     $mform->addElement('select', 'windowpopup', get_string('display', 'resource'), $woptions);
     $mform->setDefault('windowpopup', !empty($CFG->resource_popup));
         
-    $mform->addElement('checkbox', 'framepage', get_string('frameifpossible', 'resource'));
+    $mform->addElement('checkbox', 'framepage', get_string('keepnavigationvisible', 'resource'));
     
-    $mform->setHelpButton('framepage', array('frameifpossible', get_string('frameifpossible', 'resource'), 'resource'));
+    $mform->setHelpButton('framepage', array('frameifpossible', get_string('keepnavigationvisible', 'resource'), 'resource'));
     $mform->setDefault('framepage', 0);
     $mform->disabledIf('framepage', 'windowpopup', 'eq', 1);
     $mform->setAdvanced('framepage');
