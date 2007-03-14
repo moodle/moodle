@@ -511,7 +511,7 @@ class qformat_xml extends qformat_default {
             }
             else {
                 $notsupported = get_string( 'xmltypeunsupported','quiz',$question_type );
-                echo "<p>$notsupported</p>";
+                $this->error( $notsupportted );
                 $qo = null;
             }
 
