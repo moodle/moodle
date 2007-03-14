@@ -440,12 +440,17 @@
 
             echo '<div class="buttons">';
 
+            $legacytype = get_legacy_type($roleid); 
             $options = array();
             $options['roleid'] = $roleid;
             $options['action'] = 'edit';
             print_single_button('manage.php', $options, get_string('edit'));
             $options['action'] = 'reset';
-            print_single_button('manage.php', $options, get_string('reset'));
+            if (empty($legacytype)) {
+                print_single_button('manage.php', $options, get_string('resetrolenolegacy', 'role'));
+            } else {
+                print_single_button('manage.php', $options, get_string('resetrole', 'role'));
+            }
             $options['action'] = 'duplicate';
             print_single_button('manage.php', $options, get_string('duplicaterole', 'role'));
             print_single_button('manage.php', null, get_string('listallroles', 'role'));
