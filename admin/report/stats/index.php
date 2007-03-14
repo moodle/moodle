@@ -30,7 +30,7 @@
     }
 
     if ($mode == STATS_MODE_RANKED) {
-        redirect($CFG->wwwroot.'/'.$CFG->admin.'/report/stats/index.php?time='.$time);
+        redirect($CFG->wwwroot.'/'.$CFG->admin.'/report/stats/index.php?time='.$time, '', 3, $adminroot);
     }
 
     if (!$course = get_record("course","id",$courseid)) {
@@ -46,7 +46,7 @@
     require_login();
 
     if (empty($CFG->enablestats)) {
-        redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=stats", get_string('mustenablestats', 'admin'));
+        redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=stats", get_string('mustenablestats', 'admin'), 3, $adminroot);
     }
 
     require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $course->id));

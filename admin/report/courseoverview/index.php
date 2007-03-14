@@ -17,7 +17,7 @@
     require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM, SITEID));  // needed?
 
     if (empty($CFG->enablestats)) {
-        redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=stats", get_string('mustenablestats', 'admin'));
+        redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=stats", get_string('mustenablestats', 'admin'), 3, $adminroot);
     }
 
 
