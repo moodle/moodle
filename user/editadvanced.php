@@ -19,20 +19,14 @@
 
     if ($id == -1) {
         // creating new user
-        require_capability('moodle/user:create', get_context_instance(CONTEXT_SYSTEM, SITEID));
+        require_capability('moodle/user:create', get_context_instance(CONTEXT_SYSTEM));
         $user = new object();
         $user->id = -1;
         $user->auth = 'manual';
         $user->confirmed = 1;
     } else {
         // editing existing user
-        
-        if (!has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))
-            && !has_capability('moodle/user:update', get_context_instance(CONTEXT_USER, $id))) {
-            error('nopermission');      
-        }
-        
-        
+        require_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM));
         if (!$user = get_record('user', 'id', $id)) {
             error('User ID was incorrect');
         }
@@ -144,17 +138,15 @@
             } else {
                 redirect("$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id");
             }
-        } elseif (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-            redirect("$CFG->wwwroot/$CFG->admin/user.php");
         } else {
-            redirect($CFG->wwwroot . "/user/view.php?id=$id&course={$course->id}");
+            redirect("$CFG->wwwroot/$CFG->admin/user.php");
         }
         //never reached
     }
 
 
 /// Display page header
-    if ($user->id == -1 or has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if ($user->id == -1 or ($user->id != $USER->id)) {
         $adminroot = admin_get_root();
         if ($user->id == -1) {
             admin_externalpage_setup('addnewuser', $adminroot);
@@ -166,7 +158,8 @@
             print_heading($userfullname);
         }
     } else if (!empty($USER->newadminuser)) {
-        print_header();
+        $strprimaryadminsetup = get_string('primaryadminsetup');
+        print_header($strprimaryadminsetup, $strprimaryadminsetup);
         print_simple_box(get_string('configintroadmin', 'admin'), 'center', '50%');
         echo '<br />';
     } else {
@@ -195,7 +188,7 @@
     $userform->display();
 
 /// and proper footer
-    if ($user->id == -1 or has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if ($user->id == -1 or ($user->id != $USER->id)) {
         admin_externalpage_print_footer($adminroot);
     } else if (!empty($USER->newadminuser)) {
         print_footer('none');

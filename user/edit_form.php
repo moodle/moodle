@@ -6,7 +6,7 @@ class user_edit_form extends moodleform {
 
     // Define the form
     function definition () {
-        global $USER, $CFG, $COURSE;
+        global $CFG, $COURSE;
 
         $mform =& $this->_form;
         $this->set_upload_manager(new upload_manager('imagefile', false, false, null, false, 0, true, true, false));
@@ -37,7 +37,7 @@ class user_edit_form extends moodleform {
     }
 
     function definition_after_data() {
-        global $USER, $CFG;
+        global $CFG;
 
         $mform =& $this->_form;
         $userid = $mform->getElementValue('id');
