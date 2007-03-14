@@ -99,14 +99,14 @@
             // cannot edit remote users
         }
         else if ((!empty($USER->id) and ($USER->id == $user->id) and !isguest()) or
-            (has_capability('moodle/user:update', $sitecontext) and ($user->id != $mainadmin->id)) ) {
+            ((has_capability('moodle/user:update', $sitecontext) || has_capability('moodle/user:update', $personalcontext)) and ($user->id != $mainadmin->id)) ) {
 
             if(empty($CFG->loginhttps)) {
                 $wwwroot = $CFG->wwwroot;
             } else {
                 $wwwroot = str_replace('http:','https:',$CFG->wwwroot);
             }
-            if (has_capability('moodle/user:update', $sitecontext) and ($user->id==$USER->id or $user->id != $mainadmin->id)) {
+            if ((has_capability('moodle/user:update', $sitecontext) || has_capability('moodle/user:update', $personalcontext))and ($user->id==$USER->id or $user->id != $mainadmin->id)) {
                 $toprow[] = new tabobject('editprofile', $wwwroot.'/user/editadvanced.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmyprofile'));
             } else {
                 $toprow[] = new tabobject('editprofile', $wwwroot.'/user/edit.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmyprofile'));
