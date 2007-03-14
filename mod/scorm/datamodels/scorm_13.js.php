@@ -166,8 +166,8 @@ function SCORMapi1_3() {
     $objectives = '';
     foreach($userdata as $element => $value){
         if (substr($element,0,14) == 'cmi.objectives') {
-            preg_match('/.(\d+)./',$element,$matches);
-            $element = preg_replace('/.(\d+)./',".N\$1.",$element);
+            preg_match('/\.(\d+)\./',$element,$matches);
+            $element = preg_replace('/\.(\d+)\./',".N\$1.",$element);
             if ($matches[1] == $count) {
                 $count++;
                 $end = strpos($element,$matches[1])+strlen($matches[1]);
