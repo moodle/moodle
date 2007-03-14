@@ -116,7 +116,8 @@ $moodle_capabilities = array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
-            'admin' => CAP_ALLOW
+            'admin' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW
         )
     ),
 
