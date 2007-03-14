@@ -87,7 +87,7 @@
 
         $toprow[] = new tabobject('profile', $CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id, get_string('profile'));
 
-        $sitecontext     = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
         $coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
         $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
 
@@ -95,22 +95,40 @@
 
         $mainadmin = get_admin();
 
+        if(empty($CFG->loginhttps)) {
+            $wwwroot = $CFG->wwwroot;
+        } else {
+            $wwwroot = str_replace('http:','https:',$CFG->wwwroot);
+        }
+
+        $edittype = 'none';
         if (is_mnet_remote_user($user)) {
             // cannot edit remote users
-        }
-        else if ((!empty($USER->id) and ($USER->id == $user->id) and !isguest()) or
-            ((has_capability('moodle/user:update', $sitecontext) || has_capability('moodle/user:update', $personalcontext)) and ($user->id != $mainadmin->id)) ) {
 
-            if(empty($CFG->loginhttps)) {
-                $wwwroot = $CFG->wwwroot;
+        } else if (isguest() or !isloggedin()) {
+            // can not edit guest like accounts - TODO: add capability to edit own profile
+            
+        } else if ($USER->id == $user->id) {
+            if (has_capability('moodle/user:update', $systemcontext)) {
+                $edittype = 'advanced';
             } else {
-                $wwwroot = str_replace('http:','https:',$CFG->wwwroot);
+                $edittype = 'normal';
             }
-            if ((has_capability('moodle/user:update', $sitecontext) || has_capability('moodle/user:update', $personalcontext))and ($user->id==$USER->id or $user->id != $mainadmin->id)) {
-                $toprow[] = new tabobject('editprofile', $wwwroot.'/user/editadvanced.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmyprofile'));
-            } else {
-                $toprow[] = new tabobject('editprofile', $wwwroot.'/user/edit.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmyprofile'));
+
+        } else if ($user->id != $mainadmin->id) {
+            //no editing of primary admin!
+            if (has_capability('moodle/user:update', $systemcontext)) {
+                $edittype = 'advanced';
+            } else if (has_capability('moodle/user:editprofile', $personalcontext)) {
+                //teachers, parents, etc.
+                $edittype = 'normal';
             }
+        }
+
+        if ($edittype == 'advanced') {
+            $toprow[] = new tabobject('editprofile', $wwwroot.'/user/editadvanced.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmyprofile'));
+        } else if ($edittype == 'normal') {
+            $toprow[] = new tabobject('editprofile', $wwwroot.'/user/edit.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmyprofile'));
         }
 
     /// Everyone can see posts for this user
@@ -137,9 +155,9 @@
         require_once($CFG->dirroot.'/blog/lib.php');
         if ($CFG->bloglevel >= BLOG_USER_LEVEL and // blogs must be enabled
             (has_capability('moodle/user:readuserblogs', $personalcontext) // can review posts (parents etc)
-            or has_capability('moodle/blog:manageentries', $sitecontext)     // entry manager can see all posts
-            or ($user->id == $USER->id and has_capability('moodle/blog:create', $sitecontext)) // viewing self
-            or (has_capability('moodle/blog:view', $sitecontext) or has_capability('moodle/blog:view', $coursecontext))
+            or has_capability('moodle/blog:manageentries', $systemcontext)     // entry manager can see all posts
+            or ($user->id == $USER->id and has_capability('moodle/blog:create', $systemcontext)) // viewing self
+            or (has_capability('moodle/blog:view', $systemcontext) or has_capability('moodle/blog:view', $coursecontext))
             ) // able to read blogs in site or course context
         ) { //end if
 

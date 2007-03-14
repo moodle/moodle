@@ -8,6 +8,7 @@
 
     httpsrequired();
 
+    $userid = optional_param('id', $USER->id, PARAM_INT);    // user id
     $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
 
     if (!$course = get_record('course', 'id', $course)) {
@@ -23,16 +24,33 @@
         redirect($CFG->httpswwwroot.'/login/index.php');
     }
 
-    if (isguest()) { //TODO: add proper capability to edit own profile and change password too
+    if (isguest()) { //TODO: add proper capability to edit own profile
         print_error('guestnoeditprofile');
     }
-    if (!$user = get_record('user', 'id', $USER->id)) {
+
+    if (!$user = get_record('user', 'id', $userid)) {
         error('User ID was incorrect');
     }
 
     // remote users cannot be edited
     if (is_mnet_remote_user($user)) {
         redirect($CFG->wwwroot . "/user/view.php?course={$course->id}");
+    }
+
+    // check access control
+    if ($user->id != $USER->id) {
+        // teachers, parents, etc.
+        $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
+        require_capability('moodle/user:editprofile', $personalcontext);
+        // no editing of guest user account
+        if (isguestuser($user->id)) {
+            print_error('guestnoeditprofileother');
+        }
+        // no editing of primary admin!
+        $mainadmin = get_admin();
+        if ($user->id == $mainadmin->id) {
+            print_error('adminprimarynoedit');
+        }
     }
 
     //load user preferences
@@ -83,13 +101,15 @@
         // save custom profile fields data
         profile_save_data($usernew);
 
-        // Override old $USER session variable
-        $usernew = (array)get_record('user', 'id', $usernew->id); // reload from db
-        foreach ($usernew as $variable => $value) {
-            $USER->$variable = $value;
+        if ($USER->id == $user->id) {
+            // Override old $USER session variable if needed
+            $usernew = (array)get_record('user', 'id', $user->id); // reload from db
+            foreach ($usernew as $variable => $value) {
+                $USER->$variable = $value;
+            }
         }
 
-        redirect("$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id");
+        redirect("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id");
     }
 
 
