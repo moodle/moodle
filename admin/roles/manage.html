@@ -125,7 +125,7 @@ if (!empty($role->legacytype)) {
 foreach ($capabilities as $capability) {
 
     //legacy caps have their own selector
-    if (strpos($capability->name, 'moodle/legacy:') === 0 ) {
+    if (islegacy($capability->name)) {
         continue;
     }
 
