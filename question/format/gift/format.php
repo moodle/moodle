@@ -167,13 +167,15 @@ class qformat_gift extends qformat_default {
         // FIND ANSWER section
         $answerstart = strpos($text, "{");
         if ($answerstart === false) {
-            $this->error( 'Could not find a {', $text );
+            $giftleftbraceerror = get_string( 'giftleftbraceerror', 'quiz' );
+            $this->error( $giftleftbraceerror, $text );
             return false;
         }
 
         $answerfinish = strpos($text, "}");
         if ($answerfinish === false) {
-            $this->error( 'Could not find a }', $text );
+            $giftrightbraceerror = get_string( 'giftrightbraceerror', 'quiz' );
+            $this->error( $giftrightbraceerror, $text );
             return false;
         }
 
@@ -246,7 +248,8 @@ class qformat_gift extends qformat_default {
         }
 
         if (!isset($question->qtype)) {
-            $this->error( 'Question type not set', $text );
+            $giftqtypenotset = get_string('giftqtypenotset','quiz');
+            $this->error( $giftqtypenotset, $text );
             return false;
         }
 
@@ -318,7 +321,8 @@ class qformat_gift extends qformat_default {
                 foreach ($answers as $key => $answer) {
                     $answer = trim($answer);
                     if (strpos($answer, "->") === false) {
-                        $this->error('Improperly formatted Matching Question answer', $answer );
+                        $giftmatchingformat = get_string('giftmatchingformat','quiz');
+                        $this->error($giftmatchingformat, $answer );
                         return false;
                         break 2;
                     }
@@ -409,7 +413,8 @@ class qformat_gift extends qformat_default {
     
                 if (count($answers) == 0) {
                     // invalid question
-                    $this->error( 'No answers found in Numerical answer', $text );
+                    $giftnonumericalanswers = get_string('giftnonumericalanswers','quiz');
+                    $this->error( $giftnonumericalanswers, $text );
                     return false;
                     break;
                 }
@@ -466,7 +471,8 @@ class qformat_gift extends qformat_default {
                 break;
 
                 default:
-                    $this->error( 'No valid question detected', $text );
+                    $giftnovalidquestion = get_string('giftnovalidquestion','quiz');
+                    $this->error( $giftnovalidquestion, $text );
                 return false;
                 break;                
         
