@@ -18,6 +18,8 @@ class qformat_default {
     var $catfromfile = 0;
     var $cattofile = 0;
     var $questionids = array();
+    var $importerrors = 0;
+    var $stoponerror = true;
 
 // functions to indicate import/export functionality
 // override to return true if implemented
@@ -80,10 +82,37 @@ class qformat_default {
         $this->cattofile = $cattofile;
     } 
 
-/// Importing functions
+    /**
+     * set stoponerror
+     * @param bool stoponerror stops database write if any errors reported
+     */
+    function setStoponerror( $stoponerror ) {
+        $this->stoponerror = $stoponerror;
+    }
+
+/***********************
+ * IMPORTING FUNCTIONS
+ ***********************/
+
+    /**
+     * Handle parsing error
+     */
+    function error( $message, $text='', $questionname='' ) {
+        echo "<div class=\"importerror\">\n";
+        echo "<strong>Error in question $questionname</strong>";
+        if (!empty($text)) {
+            $text = s($text);
+            echo "<blockquote>$text</blockquote>\n";
+        }
+        echo "<strong>$message</strong>\n";
+        echo "</div>";
+
+         $this->importerrors++;
+    }
 
     /**
      * Perform any required pre-processing
+     * @return boolean success
      */
     function importpreprocess() {
         return true;
@@ -92,8 +121,13 @@ class qformat_default {
     /**
      * Process the file
      * This method should not normally be overidden
+     * @return boolean success
      */
     function importprocess() {
+
+       // STAGE 1: Parse the file
+       notify( get_string('parsingquestions','quiz') );
+         
         if (! $lines = $this->readdata($this->filename)) {
             notify( get_string('cannotread','quiz') );
             return false;
@@ -104,7 +138,13 @@ class qformat_default {
             return false;
         }
 
+        // STAGE 2: Write data to database
         notify( get_string('importingquestions','quiz',count($questions)) );
+
+        // check for errors before we continue
+        if ($this->stoponerror and ($this->importerrors>0)) {
+            return false;
+        }
 
         // get list of valid answer grades
         $grades = get_grade_options();
@@ -184,10 +224,12 @@ class qformat_default {
         return true;
     }
 
-
+    /**
+     * Return complete file within an array, one item per line
+     * @param string filename name of file
+     * @return mixed contents array or false on failure
+     */
     function readdata($filename) {
-    /// Returns complete file with an array, one item per line
-
         if (is_readable($filename)) {
             $filearray = file($filename);
 
@@ -201,11 +243,19 @@ class qformat_default {
         return false;
     }
 
+    /**
+     * Parses an array of lines into an array of questions, 
+     * where each item is a question object as defined by 
+     * readquestion().   Questions are defined as anything 
+     * between blank lines.
+     *
+     * If your format does not use blank lines as a delimiter
+     * then you will need to override this method. Even then
+     * try to use readquestion for each question
+     * @param array lines array of lines from readdata
+     * @return array array of question objects
+     */
     function readquestions($lines) {
-    /// Parses an array of lines into an array of questions, 
-    /// where each item is a question object as defined by 
-    /// readquestion().   Questions are defined as anything 
-    /// between blank lines.
      
         $questions = array();
         $currentquestion = array();
@@ -234,11 +284,14 @@ class qformat_default {
     }
 
 
+    /**
+     * return an "empty" question
+     * Somewhere to specify question parameters that are not handled
+     * by import but are required db fields.
+     * This should not be overridden.
+     * @return object default question
+     */ 
     function defaultquestion() {
-    // returns an "empty" question
-    // Somewhere to specify question parameters that are not handled
-    // by import but are required db fields.
-    // This should not be overridden. 
         global $CFG;
         
         $question = new stdClass();
@@ -255,10 +308,17 @@ class qformat_default {
         return $question;
     }
 
+    /**
+     * Given the data known to define a question in 
+     * this format, this function converts it into a question 
+     * object suitable for processing and insertion into Moodle.
+     *
+     * If your format does not use blank lines to delimit questions
+     * (e.g. an XML format) you must override 'readquestions' too
+     * @param $lines mixed data that represents question
+     * @return object question object
+     */
     function readquestion($lines) {
-    /// Given an array of lines known to define a question in 
-    /// this format, this function converts it into a question 
-    /// object suitable for processing and insertion into Moodle.
 
         $formatnotimplemented = get_string( 'formatnotimplemented','quiz' );
         echo "<p>$formatnotimplemented</p>";
@@ -266,18 +326,21 @@ class qformat_default {
         return NULL;
     }
 
-
+    /**
+     * Override if any post-processing is required
+     * @return boolean success
+     */
     function importpostprocess() {
-    /// Does any post-processing that may be desired
-    /// Argument is a simple array of question ids that 
-    /// have just been added.
-
         return true;
     }
 
+    /**
+     * Import an image file encoded in base64 format
+     * @param string path path (in course data) to store picture
+     * @param string base64 encoded picture
+     * @return string filename (nb. collisions are handled)
+     */
     function importimagefile( $path, $base64 ) {
-    /// imports an image file encoded in base64 format
-    /// This should not be overridden.
         global $CFG;
 
         // all this to get the destination directory
@@ -308,34 +371,44 @@ class qformat_default {
         return $newfile;
     }
 
-//=================
-// Export functions
-//=================
+/*******************
+ * EXPORT FUNCTIONS
+ *******************/
 
+    /**
+     * Return the files extension appropriate for this type
+     * override if you don't want .txt
+     * @return string file extension
+     */
     function export_file_extension() {
-    /// return the files extension appropriate for this type
-    /// override if you don't want .txt
-  
         return ".txt";
     }
 
+    /**
+     * Do any pre-processing that may be required
+     * @param boolean success
+     */
     function exportpreprocess() {
-    /// Does any pre-processing that may be desired
-
         return true;
     }
 
+    /**
+     * Enable any processing to be done on the content
+     * just prior to the file being saved
+     * default is to do nothing
+     * @param string output text
+     * @param string processed output text
+     */
     function presave_process( $content ) {
-    /// enables any processing to be done on the content
-    /// just prior to the file being saved
-    /// default is to do nothing
- 
         return $content;
     }
 
+    /**
+     * Do the export
+     * For most types this should not need to be overrided
+     * @return boolean success
+     */
     function exportprocess() {
-    /// Exports a given category.  There's probably little need to change this
-
         global $CFG;
 
         // create a directory for the exports (if not already existing)
@@ -415,16 +488,22 @@ class qformat_default {
         return true;
     }
 
+    /**
+     * Do an post-processing that may be required
+     * @return boolean success
+     */
     function exportpostprocess() {
-    /// Does any post-processing that may be desired
-
         return true;
     }
 
+    /**
+     * convert a single question object into text output in the given
+     * format.
+     * This must be overriden
+     * @param object question question object
+     * @return mixed question export text or null if not implemented
+     */
     function writequestion($question) {
-    /// Turns a question object into textual output in the given format 
-    /// must be overidden
-
         // if not overidden, then this is an error.
         $formatnotimplemented = get_string( 'formatnotimplemented','quiz' );
         echo "<p>$formatnotimplemented</p>";
@@ -432,12 +511,20 @@ class qformat_default {
         return NULL;
     }
 
+    /**
+     * get directory into which export is going 
+     * @return string file path
+     */
     function question_get_export_dir() {
         $dirname = get_string("exportfilename","quiz");
         $path = $this->course->id.'/backupdata/'.$dirname; // backupdata is protected directory
         return $path;
     }
 
+    /**
+     * where question specifies a moodle (text) format this
+     * performs the conversion.
+     */
     function format_question_text($question) {
         $formatoptions = new stdClass;
         $formatoptions->noclean = true;
