@@ -233,6 +233,10 @@ function display() {
             $resourcetype = "quicktime";
             $embedded = true;
 
+        } else if ($mimetype == "application/x-shockwave-flash") {   // It's a Quicktime file
+            $resourcetype = "flash";
+            $embedded = true;
+
         } else if ($mimetype == "text/html") {    // It's a web page
             $resourcetype = "html";
         } 
@@ -405,7 +409,7 @@ function display() {
         }
 
         if ($resourcetype == "image") {
-            echo '<div class="resourcecontent">';
+            echo '<div class="resourcecontent resourceimg">';
             echo "<img title=\"".strip_tags(format_string($resource->name,true))."\" class=\"resourceimage\" src=\"$fullurl\" alt=\"\" />";
             echo '</div>';
 
@@ -419,7 +423,7 @@ function display() {
             }
             $c .= '&volText='.get_string('vol', 'resource').'&panText='.get_string('pan','resource');
             $c = htmlentities($c);
-            echo '<div class="resourcecontent">';
+            echo '<div class="resourcecontent resourcemp3">';
             echo '<div class="mp3player" align="center">';
             echo '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
             echo '        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
@@ -440,32 +444,19 @@ function display() {
 
 
         } else if ($resourcetype == "mediaplayer") {
-            echo '<div class="resourcecontent">';
-            
+            echo '<div class="resourcecontent resourcewmv">';
             echo '<object type="video/x-ms-wmv" data="' . $fullurl . '">';            
-// Old non-compliant code (but used to work with Opera/Safari)	  
-//	          echo '<object classid="CLSID:22D6f312-B0F6-11D0-94AB-0080C74C7E95"';
-//            echo '        codebase="http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=5,1,52,701" ';
-//            echo '        standby="Loading Microsoft� Windows� Media Player components..." ';
-//            echo '        id="msplayer" type="application/x-oleobject">';
             echo '<param name="controller" value="true" />';            
             echo '<param name="autostart" value="true" />';            
             echo "<param name=\"src\" value=\"$fullurl\" />"; 
             echo '<param name="scale" value="noScale" />';
-// Old non-compliant code            
-//            echo "\n<embed src=\"$fullurl\" name=\"msplayer\" type=\"$mimetype\" ";
-//            echo ' ShowControls="1" AutoRewind="1" AutoStart="1" Autosize="0" EnableContextMenu="1"';            
-//            echo ' TransparentAtStart="0" AnimationAtStart="0" ShowGotoBar="0" EnableFullScreenControls="1"';
-//            echo ' pluginspage="http://www.microsoft.com/Windows/Downloads/Contents/Products/MediaPlayer/">';
-//            echo '</embed>';
             echo "<a href=\"$fullurl\">$fullurl</a>";
             echo '</object>';
-            
             echo '</div>';
 
         } else if ($resourcetype == "quicktime") {
 
-            echo '<div class="resourcecontent">';
+            echo '<div class="resourcecontent resourceqt">';
             echo '<object classid="CLSID:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"';
             echo '        codebase="http://www.apple.com/qtactivex/qtplugin.cab" ';
             echo '        id="quicktime" type="application/x-oleobject">';
@@ -474,7 +465,6 @@ function display() {
             echo '<param name="loop" value="true" />';
             echo '<param name="controller" value="true" />';
             echo '<param name="scale" value="aspect" />';
-            // New compliant code
             echo '<!--[if !IE]>-->';
             echo "<object type=\"video/quicktime\" data=\"$fullurl\">";
             echo '<param name="controller" value="true" />';
@@ -483,16 +473,31 @@ function display() {
             echo '<param name="scale" value="aspect" />';
             echo '</object>';
             echo '<!--<![endif]-->';
-            
-// Old non-compliant code
-//            echo "\n<embed src=\"$fullurl\" name=\"quicktime\" type=\"$mimetype\" ";
-//            echo ' height="450" width="600" scale="aspect"';
-//            echo ' autoplay="true" controller="true" loop="true" ';
-//            echo ' pluginspage="http://quicktime.apple.com/">';
-//            echo '</embed>';
             echo '</object>';
             echo '</div>';
-        } 
+        }  else if ($resourcetype == "flash") {
+
+            echo '<div class="resourcecontent resourceswf">';
+            echo '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">';
+            echo "<param name=\"movie\" value=\"$fullurl\" />";
+            echo '<param name="autoplay" value="true" />';
+            echo '<param name="loop" value="true" />';
+            echo '<param name="controller" value="true" />';
+            echo '<param name="scale" value="aspect" />';
+            echo '<!--[if !IE]>-->';
+            echo "<object type=\"application/x-shockwave-flash\" data=\"$fullurl\">";
+            echo '<param name="controller" value="true" />';
+            echo '<param name="autoplay" value="true" />';
+            echo '<param name="loop" value="true" />';
+            echo '<param name="scale" value="aspect" />';
+            echo '<!--<![endif]-->';
+            echo '<p>Your browser does not support Embedded Flash</p>';
+            echo '<!--[if !IE]>-->';
+            echo '</object>';
+            echo '<!--<![endif]-->';
+            echo '</object>';
+            echo '</div>';
+        }
 
         if (trim($resource->summary)) {
             print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center");
