@@ -57,7 +57,7 @@ class block_admin_bookmarks extends block_base {
             $bookmarks = array();
         }
 
-	if($PAGE->section == 'search'){
+	if(isset($PAGE->section) and $PAGE->section == 'search'){
 	  // the search page can't be properly bookmarked at present
 	  $this->content->footer = '';
 	}elseif (($section = (isset($PAGE->section) ? $PAGE->section : '')) && (in_array($section, $bookmarks))) {
