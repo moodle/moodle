@@ -4973,6 +4973,13 @@ function redirect($url, $message='', $delay=-1, $adminroot = '') {
     $url = html_entity_decode($encodedurl);
     $surl = addslashes($url);
 
+/// At developer debug level. Don't redirect if errors have been printed on screen.
+    $errorprinted = false;
+    if (debugging('', DEBUG_DEVELOPER) && $CFG->debugdisplay && error_get_last()) {
+        $errorprinted = true;
+        $message = "<strong>Error output, so disabling automatic redirect.</strong></p><p>" . $message;
+    }
+
 /// when no message and header printed yet, try to redirect
     if (empty($message) and !defined('HEADER_PRINTED')) {
 
@@ -5015,14 +5022,15 @@ function redirect($url, $message='', $delay=-1, $adminroot = '') {
     }
     if (! defined('HEADER_PRINTED')) {
         // this type of redirect might not be working in some browsers - such as lynx :-(
-        print_header('', '', '', '', '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />');
+        print_header('', '', '', '', $errorprinted ? '' : ('<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />'));
         $delay += 3; // double redirect prevention, it was sometimes breaking upgrades before 1.7
     }
     echo '<div style="text-align:center">';
     echo '<p>'. $message .'</p>';
     echo '<p>( <a href="'. $encodedurl .'">'. get_string('continue') .'</a> )</p>';
     echo '</div>';
-// it might be better not to set timeout the same for both types of redirect, so that we can be sure which one wins
+
+    if (!$errorprinted) {
 ?>
 <script type="text/javascript">
 //<![CDATA[
@@ -5034,6 +5042,8 @@ function redirect($url, $message='', $delay=-1, $adminroot = '') {
 //]]>
 </script>
 <?php
+    }
+
     // fix for MDL-8517, admin pages redirections causes bad xhtml
     if ($adminroot) {
         admin_externalpage_print_footer($adminroot);  
@@ -5654,7 +5664,7 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
         $subtree = $tree;
     }
 
-    return $tree;
+    return $subtree;
 }
 
 
