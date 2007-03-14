@@ -589,7 +589,11 @@
         echo '<br /><div class="buttons">';
         echo '<input type="button" onclick="checkall()" value="'.get_string('selectall').'" /> ';
         echo '<input type="button" onclick="checknone()" value="'.get_string('deselectall').'" /> ';
-        $displaylist['messageselect.php'] = get_string('messageselectadd');
+        $displaylist = array();
+        // fix for MDL-8885, only show this if user has capability
+        if (has_capability('moodle/site:readallmessages', $context)) {
+            $displaylist['messageselect.php'] = get_string('messageselectadd');
+        }
         if ($course->enrolperiod) {
             $displaylist['extendenrol.php'] = get_string('extendenrol');
         }
