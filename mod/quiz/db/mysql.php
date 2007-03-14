@@ -546,7 +546,7 @@ function quiz_upgrade($oldversion) {
         // length of question determines question numbering. Currently all questions require one
         // question number except for DESCRIPTION questions.
         $success = $success && table_column('quiz_questions', '', 'length', 'integer', '10', 'unsigned', '1', 'not null', 'qtype');
-        $success = $success && execute_sql("UPDATE {$CFG->prefix}quiz_questions SET length = 0 WHERE qtype = ".DESCRIPTION);
+        $success = $success && execute_sql("UPDATE {$CFG->prefix}quiz_questions SET length = 0 WHERE qtype ='7'");
     }
 
     if ($success && $oldversion < 2005050408) {
@@ -887,7 +887,7 @@ function quiz_upgrade($oldversion) {
     if ($success && $oldversion < 2006021101) {
         // set defaultgrade field properly (probably not necessary, but better make sure)
         $success = $success && execute_sql("UPDATE {$CFG->prefix}quiz_questions SET defaultgrade = '1' WHERE defaultgrade = '0'", false);
-        $success = $success && execute_sql("UPDATE {$CFG->prefix}quiz_questions SET defaultgrade = '0' WHERE qtype = '".DESCRIPTION."'", false);
+        $success = $success && execute_sql("UPDATE {$CFG->prefix}quiz_questions SET defaultgrade = '0' WHERE qtype = '7'", false);
     }
 
     if ($success && $oldversion < 2006021103) {
