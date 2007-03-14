@@ -26,7 +26,13 @@
         $user->confirmed = 1;
     } else {
         // editing existing user
-        require_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID));
+        
+        if (!has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))
+            && !has_capability('moodle/user:update', get_context_instance(CONTEXT_USER, $id))) {
+            error('nopermission');      
+        }
+        
+        
         if (!$user = get_record('user', 'id', $id)) {
             error('User ID was incorrect');
         }
@@ -138,15 +144,17 @@
             } else {
                 redirect("$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id");
             }
-        } else {
+        } elseif (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             redirect("$CFG->wwwroot/$CFG->admin/user.php");
+        } else {
+            redirect($CFG->wwwroot . "/user/view.php?id=$id&course={$course->id}");
         }
         //never reached
     }
 
 
 /// Display page header
-    if ($user->id == -1 or ($user->id != $USER->id)) {
+    if ($user->id == -1 or has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         $adminroot = admin_get_root();
         if ($user->id == -1) {
             admin_externalpage_setup('addnewuser', $adminroot);
@@ -188,7 +196,7 @@
     $userform->display();
 
 /// and proper footer
-    if ($user->id == -1 or ($user->id != $USER->id)) {
+    if ($user->id == -1 or has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         admin_externalpage_print_footer($adminroot);
     } else if (!empty($USER->newadminuser)) {
         print_footer('none');
