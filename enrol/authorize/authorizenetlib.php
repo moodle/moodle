@@ -312,7 +312,6 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
                 }
                 break;
             }
-            default: return false;
         }
         return true;
     }
