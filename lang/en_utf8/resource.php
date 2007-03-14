@@ -48,6 +48,7 @@ $string['frameifpossible'] = 'Put resource in a frame to keep site navigation vi
 $string['fulltext'] = 'Full text';
 $string['htmlfragment'] = 'HTML fragment';
 $string['imspackageloaded'] = 'Package loaded';
+$string['keepnavigationvisible'] = 'Keep page navigation visible on the same page';
 $string['localfile'] = 'Local file';
 $string['localfilechoose'] = 'Choose a local file (CD-ROM)';
 $string['localfilehelp'] = 'Help displaying local files';
