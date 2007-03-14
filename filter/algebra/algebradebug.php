@@ -84,7 +84,7 @@
     }
 
 function algebra2tex($algebra) {
-  Global $CFG;
+  global $CFG;
   $algebra = str_replace('&lt;','<',$algebra);
   $algebra = str_replace('&gt;','>',$algebra);
   $algebra = str_replace('<>','#',$algebra);
@@ -99,9 +99,9 @@ function algebra2tex($algebra) {
   $algebra = str_replace('epsilon','zepslon',$algebra);
   $algebra = str_replace('upsilon','zupslon',$algebra);
   $algebra = preg_replace('!\r\n?!',' ',$algebra);
+  $algebra = escapeshellarg($algebra);
 
   if ( (PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows") ) {
-    $algebra = "\"". str_replace('"','\"',$algebra) . "\"";
     $cmd  = "cd $CFG->dirroot\\$CFG->algebrafilterdirwin & algebra2tex.pl x/2";
     $test = `$cmd`;
     if ($test != '\frac{x}{2}') {
@@ -117,7 +117,6 @@ function algebra2tex($algebra) {
     }
     $cmd  = "cd $CFG->dirroot\\$CFG->algebrafilterdirwin & algebra2tex.pl $algebra";
   } else {      
-    $algebra = escapeshellarg($algebra);
     $cmd  = "cd $CFG->dirroot/$CFG->algebrafilterdir; ./algebra2tex.pl x/2";
     $test = `$cmd`;
     if ($test != '\frac{x}{2}') {
@@ -206,66 +205,66 @@ function outputText($texexp) {
 }
 
 function tex2image($texexp, $md5, $return=false) {
-  global $CFG;
-  $error_message1 = "Your system is not configured to run mimeTeX. ";
-  $error_message1 .= "You need to download the appropriate<br /> executable ";
-  $error_message1 .= "from <a href=\"http://moodle.org/download/mimetex/\">";
-  $error_message1 .= "http://moodle.org/download/mimetex/</a>, or obtain the ";
-  $error_message1 .= "C source<br /> from <a href=\"http://www.forkosh.com/mimetex.zip\">";
-  $error_message1 .= "http://www.forkosh.com/mimetex.zip</a>, compile it and ";
-  $error_message1 .= "put the executable into your<br /> moodle/filter/tex/ directory. ";
-  $error_message1 .= "You also need to edit your moodle/filter/algebra/pix.php file<br />";
-  $error_message1 .= ' by adding the line<br /><pre>       case "' . PHP_OS . "\":\n";
-  $error_message1 .= "           \$cmd = \"\\\\\"\$CFG->dirroot/\$CFG->texfilterdir/";
-  $error_message1 .= 'mimetex.' . strtolower(PHP_OS) . "\\\\\" -e \\\\\"\$pathname\\\\\" \". escapeshellarg(\$texexp);";
-  $error_message1 .= "</pre>You also need to add this to your algebradebug.php file.";
+    global $CFG;
+    $error_message1 = "Your system is not configured to run mimeTeX. ";
+    $error_message1 .= "You need to download the appropriate<br /> executable ";
+    $error_message1 .= "from <a href=\"http://moodle.org/download/mimetex/\">";
+    $error_message1 .= "http://moodle.org/download/mimetex/</a>, or obtain the ";
+    $error_message1 .= "C source<br /> from <a href=\"http://www.forkosh.com/mimetex.zip\">";
+    $error_message1 .= "http://www.forkosh.com/mimetex.zip</a>, compile it and ";
+    $error_message1 .= "put the executable into your<br /> moodle/filter/tex/ directory. ";
+    $error_message1 .= "You also need to edit your moodle/filter/algebra/pix.php file<br />";
+    $error_message1 .= ' by adding the line<br /><pre>       case "' . PHP_OS . "\":\n";
+    $error_message1 .= "           \$cmd = \"\\\\\"\$CFG->dirroot/\$CFG->texfilterdir/";
+    $error_message1 .= 'mimetex.' . strtolower(PHP_OS) . "\\\\\" -e \\\\\"\$pathname\\\\\" \". escapeshellarg(\$texexp);";
+    $error_message1 .= "</pre>You also need to add this to your algebradebug.php file.";
 
-  if ($texexp) {
-       $texexp = '\Large ' . $texexp;
-       $lifetime = 86400;
-       $image  = $md5 . ".gif";
-       $filetype = 'image/gif';
-       if (!file_exists("$CFG->dataroot/$CFG->algebraimagedir")) {
-          make_upload_directory($CFG->algebraimagedir);
-       }
-       $pathname = "$CFG->dataroot/$CFG->algebraimagedir/$image";
-       if (file_exists($pathname)) {
-         unlink($pathname);
-       } 
-       $commandpath = "";
-       $cmd = "";
-         switch (PHP_OS) {
-       case "Linux":
-         $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.linux";
-         $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.linux\" -e \"$pathname\" ". escapeshellarg($texexp);
-       break;
-       case "WINNT":
-       case "WIN32":
-       case "Windows":
-         $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.exe";
-         $texexp = str_replace('"','\"',$texexp);
-         $cmd = str_replace(' ','^ ',$commandpath);
-         $cmd .= " ++ -e  \"$pathname\" \"$texexp\"";
-       break;
-       case "Darwin":
-         $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin";
-         $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" ". escapeshellarg($texexp);
-       break;
-       }
-       if (!$cmd) {
-         if (is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {   /// Use the custom binary
-           $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex";
-           $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname ". escapeshellarg($texexp);
-         } else {
-           error($error_message1);
-         }
-       }
-       system($cmd, $status);
-  }
-  if ($return) {
-           return $image;
-  }
-  if ($texexp && file_exists($pathname)) {
+    if ($texexp) {
+        $texexp = '\Large ' . $texexp;
+        $lifetime = 86400;
+        $image  = $md5 . ".gif";
+        $filetype = 'image/gif';
+        if (!file_exists("$CFG->dataroot/$CFG->algebraimagedir")) {
+            make_upload_directory($CFG->algebraimagedir);
+        }
+        $pathname = "$CFG->dataroot/$CFG->algebraimagedir/$image";
+        if (file_exists($pathname)) {
+            unlink($pathname);
+        } 
+        $commandpath = "";
+        $cmd = "";
+        $texexp = escapeshellarg($texexp);
+        switch (PHP_OS) {
+            case "Linux":
+                $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.linux";
+                $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.linux\" -e \"$pathname\" $texexp";
+            break;
+            case "WINNT":
+            case "WIN32":
+            case "Windows":
+                $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.exe";
+                $cmd = str_replace(' ','^ ',$commandpath);
+                $cmd .= " ++ -e  \"$pathname\" $texexp";
+            break;
+            case "Darwin":
+                $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin";
+                $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" $texexp";
+            break;
+        }
+        if (!$cmd) {
+            if (is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {   /// Use the custom binary
+                $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex";
+                $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname $texexp";
+            } else {
+                error($error_message1);
+            }
+        }
+        system($cmd, $status);
+    }
+    if ($return) {
+        return $image;
+    }
+    if ($texexp && file_exists($pathname)) {
            $lastmodified = filemtime($pathname);
            header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
            header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
@@ -275,7 +274,7 @@ function tex2image($texexp, $md5, $return=false) {
            header("Content-length: ".filesize($pathname));
            header("Content-type: $filetype");
            readfile("$pathname");
-   } else {
+    } else {
            $ecmd = "$cmd 2>&1";
            echo `$ecmd` . "<br />\n";
            echo "The shell command<br />$cmd<br />returned status = $status<br />\n";
@@ -301,7 +300,7 @@ function tex2image($texexp, $md5, $return=false) {
               echo "mimetex executable $commandpath not found!<br />";
            }
            echo "Image not found!";
-   }
+    }
 }
 
 function slasharguments($texexp, $md5) {
