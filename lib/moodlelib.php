@@ -4161,6 +4161,8 @@ function clean_getstring_data( $a ) {
  * help.php.
  */
 function places_to_search_for_lang_strings() {
+    global $CFG;
+
     return array(
         '__exceptions' => array('moodle', 'langconfig'),
         'assignment_' => array('mod/assignment/type'),
