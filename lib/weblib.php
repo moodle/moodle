@@ -4328,17 +4328,17 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     }
     if ($backmod) {
         $backtext= get_string('activityprev', 'access');
-        $backmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.$CFG->frametarget.'><fieldset class="invisiblefieldset">'.
+        $backmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.$CFG->frametarget.'><div>'.
                    '<input type="hidden" name="id" value="'.$backmod->cm.'" />'.
                    '<button type="submit" title="'.$backtext.'">'.$THEME->larrow.
-                   '<span class="accesshide">'.$backtext.'</span></button></fieldset></form></li>';
+                   '<span class="accesshide">'.$backtext.'</span></button></div></form></li>';
     }
     if ($nextmod) {
         $nexttext= get_string('activitynext', 'access');
-        $nextmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.$CFG->frametarget.'><fieldset class="invisiblefieldset">'.
+        $nextmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.$CFG->frametarget.'><div>'.
                    '<input type="hidden" name="id" value="'.$nextmod->cm.'" />'.
                    '<button type="submit" title="'.$nexttext.'">'.$THEME->rarrow.
-                   '<span class="accesshide">'.$nexttext.'</span></button></fieldset></form></li>';
+                   '<span class="accesshide">'.$nexttext.'</span></button></div></form></li>';
     }
 
     return '<div class="navigation"><ul>'.$logslink . $backmod .
