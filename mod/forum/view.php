@@ -159,14 +159,15 @@
     if (!empty($USER->id) && !has_capability('moodle/legacy:guest', $context, NULL, false)) {
         $SESSION->fromdiscussion = "$FULLME";
         if (forum_is_forcesubscribed($forum->id)) {
-            $streveryoneissubscribed = get_string('everyoneissubscribed', 'forum');
+            $streveryoneisnowsubscribed = get_string('everyoneisnowsubscribed', 'forum');
             $strallowchoice = get_string('allowchoice', 'forum');
-            helpbutton("subscription", $streveryoneissubscribed, "forum");
+            echo '<span class="helplink">' . get_string("forcessubscribe", 'forum') . '</span><br />';
+            helpbutton("subscription", $strallowchoice, "forum");
             echo '&nbsp;<span class="helplink">';
             if (has_capability('moodle/course:manageactivities', $context)) {
-                echo "<a title=\"$strallowchoice\" href=\"subscribe.php?id=$forum->id&amp;force=no\">$streveryoneissubscribed</a>";
+                echo "<a title=\"$strallowchoice\" href=\"subscribe.php?id=$forum->id&amp;force=no\">$strallowchoice</a>";
             } else {
-                echo $streveryoneissubscribed;
+                echo $streveryoneisnowsubscribed;
             }
             echo '</span>';
 
@@ -175,18 +176,18 @@
             echo $strsubscriptionsoff;
             helpbutton("subscription", $strsubscriptionsoff, "forum");
         } else {
-            $streveryonecanchoose = get_string("everyonecanchoose", "forum");
+            $streveryonecannowchoose = get_string("everyonecannowchoose", "forum");
             $strforcesubscribe = get_string("forcesubscribe", "forum");
             $strshowsubscribers = get_string("showsubscribers", "forum");
-
-            helpbutton("subscription", $streveryonecanchoose, "forum");
+            echo '<span class="helplink">' . get_string("allowsallsubscribe", 'forum') . '</span><br />';
+            helpbutton("subscription", $strforcesubscribe, "forum");
             echo '&nbsp;';
             if (has_capability('moodle/course:manageactivities', $context)) {
-                echo "<span class=\"helplink\"><a title=\"$strforcesubscribe\" href=\"subscribe.php?id=$forum->id&amp;force=yes\">$streveryonecanchoose</a></span>";
+                echo "<span class=\"helplink\"><a title=\"$strforcesubscribe\" href=\"subscribe.php?id=$forum->id&amp;force=yes\">$strforcesubscribe</a></span>";
                 echo "<br />";
                 echo "<span class=\"helplink\"><a href=\"subscribers.php?id=$forum->id\">$strshowsubscribers</a></span>";
             } else {
-                echo '<span class="helplink">'.$streveryonecanchoose.'</span>';
+                echo '<span class="helplink">'.$streveryonecannowchoose.'</span>';
             }
 
             if (forum_is_subscribed($USER->id, $forum->id)) {
