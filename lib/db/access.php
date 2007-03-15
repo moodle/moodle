@@ -516,7 +516,10 @@ $moodle_capabilities = array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
-            'admin' => CAP_ALLOW
+            'coursecreator' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW            
         )
     ),
 
@@ -771,17 +774,6 @@ $moodle_capabilities = array(
         'legacy' => array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
-        )
-    ),
-
-    'moodle/user:editprofile' => array(
-
-        'riskbitmask' => RISK_SPAM,
-
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
-        'legacy' => array(
             'admin' => CAP_ALLOW
         )
     ),
