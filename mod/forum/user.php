@@ -114,7 +114,7 @@
 
             $post->subject = $fullsubject;
 
-            $fulllink = "<a href=\"discuss.php?d=$post->discussion#$post->id\">".
+            $fulllink = "<a href=\"discuss.php?d=$post->discussion#p$post->id\">".
                          get_string("postincontext", "forum")."</a>";
 
             forum_print_post($post, $course->id, false, false, false, false, $fulllink);
