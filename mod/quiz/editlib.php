@@ -36,7 +36,7 @@ function quiz_delete_quiz_question($id, &$modform) {
     unset($questions[$id]);
     // If we deleted the question at the top and it was followed by
     // a page break then delete page break as well
-    if ($id == 0 and $questions[1] == 0) {
+    if ($id == 0 && count($questions) > 1 && $questions[1] == 0) {
         unset($questions[1]);
     }
     $modform->questions = implode(",", $questions);
