@@ -1444,7 +1444,12 @@ function format_string ($string, $striplinks = false, $courseid=NULL ) {
 
     //Store to cache
     $strcache[$md5] = $string;
-       
+    
+    if (!empty($CFG->filterall)) {
+        $CFG->formatstring = true; // new
+        $string = filter_text($string, $courseid);
+        unset($CFG->formatstring);
+    }
         
     return $string;
 }
@@ -2831,10 +2836,10 @@ function print_navigation ($navigation, $separator=0, $return=false) {
             
             foreach ($ar as $a) {
                 if (strpos($a, '</a>') === false) {
-                    $navigation[trim(format_string($a))] = '';
+                    $navigation[] = array('title' => trim(format_string($a)), 'url' => '');
                 } else {
                     if (preg_match('/<a.*href="([^"]*)">(.*)<\/a>/', $a, $matches)) {                  
-                        $navigation[trim(format_string($matches[2]))] = $matches[1];
+                        $navigation[] = array('title' => trim(format_string($matches[2])), 'url' => $matches[1]);
                     }
                 }
             }
@@ -2855,7 +2860,8 @@ function print_navigation ($navigation, $separator=0, $return=false) {
                                  ? '/my' : '') .'/">'. format_string($site->shortname) ."</a></li>\n";
         
         
-        foreach ($navigation as $title=>$url) {
+        foreach ($navigation as $navitem) {
+            extract($navitem);
             $title = strip_tags(format_string($title));
             if (empty($url)) {
                 $output .= '<li class="first">'."$separator $title</li>\n";
@@ -4328,17 +4334,17 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     }
     if ($backmod) {
         $backtext= get_string('activityprev', 'access');
-        $backmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.$CFG->frametarget.'><div>'.
+        $backmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.$CFG->frametarget.'><fieldset class="invisiblefieldset">'.
                    '<input type="hidden" name="id" value="'.$backmod->cm.'" />'.
                    '<button type="submit" title="'.$backtext.'">'.$THEME->larrow.
-                   '<span class="accesshide">'.$backtext.'</span></button></div></form></li>';
+                   '<span class="accesshide">'.$backtext.'</span></button></fieldset></form></li>';
     }
     if ($nextmod) {
         $nexttext= get_string('activitynext', 'access');
-        $nextmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.$CFG->frametarget.'><div>'.
+        $nextmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.$CFG->frametarget.'><fieldset class="invisiblefieldset">'.
                    '<input type="hidden" name="id" value="'.$nextmod->cm.'" />'.
                    '<button type="submit" title="'.$nexttext.'">'.$THEME->rarrow.
-                   '<span class="accesshide">'.$nexttext.'</span></button></div></form></li>';
+                   '<span class="accesshide">'.$nexttext.'</span></button></fieldset></form></li>';
     }
 
     return '<div class="navigation"><ul>'.$logslink . $backmod .
@@ -5654,7 +5660,7 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
         $subtree = $tree;
     }
 
-    return $subtree;
+    return $tree;
 }
 
 
