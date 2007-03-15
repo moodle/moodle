@@ -105,7 +105,7 @@ class embedded_cloze_qtype extends default_questiontype {
     }
 
     function save_question($authorizedquestion, $form, $course) {
-        $question = qtype_multianswer_extract_question ($form->questiontext);
+        $question = qtype_multianswer_extract_question($form->questiontext);
         if (isset($authorizedquestion->id)) {
             $question->id = $authorizedquestion->id;
         }
@@ -223,8 +223,11 @@ class embedded_cloze_qtype extends default_questiontype {
              ->get_correct_responses($wrapped, $state);
 
             $inputname = $nameprefix.$positionkey;
-            $response = isset($state->responses[$positionkey])
-                    ? stripslashes($state->responses[$positionkey]) : null;
+            if (isset($state->responses[$positionkey])) {
+                $response = $state->responses[$positionkey];
+            } else {
+                $response = null;
+            }
 
             // Determine feedback popup if any
             $popup = '';
@@ -586,15 +589,13 @@ define("ANSWER_ALTERNATIVE_FRACTION_REGEX",
        '=|%(-?[0-9]+)%');
 // for the syntax '(?<!' see http://www.perl.com/doc/manual/html/pod/perlre.html#item_C
 define("ANSWER_ALTERNATIVE_ANSWER_REGEX",
-        '.+?(?<!\\\\|&)(?=[~#}]|$)');
-        //'[^~#}]+');
+        '.+?(?<!\\\\|&|&amp;)(?=[~#}]|$)');
 define("ANSWER_ALTERNATIVE_FEEDBACK_REGEX",
         '.*?(?<!\\\\)(?=[~}]|$)');
-        //'[//^~}]*');
 define("ANSWER_ALTERNATIVE_REGEX",
-       '(' . ANSWER_ALTERNATIVE_FRACTION_REGEX .')?'
-       . '(' . ANSWER_ALTERNATIVE_ANSWER_REGEX . ')'
-       . '(#(' . ANSWER_ALTERNATIVE_FEEDBACK_REGEX .'))?');
+       '(' . ANSWER_ALTERNATIVE_FRACTION_REGEX .')?' .
+       '(' . ANSWER_ALTERNATIVE_ANSWER_REGEX . ')' .
+       '(#(' . ANSWER_ALTERNATIVE_FEEDBACK_REGEX .'))?');
 
 // Parenthesis positions for ANSWER_ALTERNATIVE_REGEX
 define("ANSWER_ALTERNATIVE_REGEX_PERCENTILE_FRACTION", 2);
@@ -635,41 +636,6 @@ define("ANSWER_REGEX_ALTERNATIVES", 6);
 
 function qtype_multianswer_extract_question($text) {
 
-////////////////////////////////////////////////
-//// Define some constants first. It is not the
-//// pattern commonly used in questiontypes.
-//// The reason is that it has been moved here from
-//// question/format/multianswer/format.php
-////////////////////////////////////////////////
-
-
-    // Undo the automatic addslashes, because we want to analyze the text - we need to remember this later and addslashes again!
-    $text = stripslashes_safe($text);
-
-    // We need to allow entities (e.g. &#1085;) in answers. This is difficulty,
-    // because the '#' character is used as delimiter between answer and
-    // feedback as well as inside entities. The HTML editor automatically
-    // replaces '&' with '&amp;', so we undo this to get back the entities we
-    // originally wanted. However, this code leaves all &amp; alone, if they
-    // are not followed by 2 to 9 characters and a final semicolon. This allows
-    // to have an answer end on '&' with the feedback (e.g. answer&amp;#feedback).
-    // When the plain text editor is used, the &amp; needs to be typed out
-    // explicitly in this case.
-    $text = preg_replace('/&amp;(#[0-9a-fx]{2,6}?);/', '&$1;', $text);
-
-    // REGULAR EXPRESSION CONSTANTS
-    // I do not know any way to make this easier
-    // Regexes are always awkard when defined but more comprehensible
-    // when used as constants in the executive code
-
-    // Handle the entity encoded ampersand in entities (e.g. &amp;lt; -> &lt;)
-    $text = preg_replace('/&amp;(.{2,9}?;)/', '&${1}', $text);
-    $text = stripslashes_safe($text);
-
-////////////////////////////////////////
-//// Start of the actual function
-////////////////////////////////////////
-
     $question = new stdClass;
     $question->qtype = 'multianswer';
     $question->questiontext = $text;
@@ -692,6 +658,9 @@ function qtype_multianswer_extract_question($text) {
         } else if(!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE])) {
             $wrapped->qtype = 'multichoice';
             $wrapped->single = 1;
+            $wrapped->correctfeedback = '';
+            $wrapped->partiallycorrectfeedback = '';
+            $wrapped->incorrectfeedback = '';
         } else {
             error("Cannot identify qtype $answerregs[2]");
             return false;
@@ -704,38 +673,34 @@ function qtype_multianswer_extract_question($text) {
         $wrapped->fraction = array();
         $wrapped->feedback = array();
         $wrapped->shuffleanswers = 1;
-        $wrapped->questiontext = addslashes($answerregs[0]); // here we don't want multianswer_escape, because this is editing time information
+        $wrapped->questiontext = $answerregs[0];
         $wrapped->questiontextformat = 0;
 
         $remainingalts = $answerregs[ANSWER_REGEX_ALTERNATIVES];
         while (preg_match('/~?'.ANSWER_ALTERNATIVE_REGEX.'/', $remainingalts, $altregs)) {
             if ('=' == $altregs[ANSWER_ALTERNATIVE_REGEX_FRACTION]) {
                 $wrapped->fraction[] = '1';
-            } else if ($percentile =
-             $altregs[ANSWER_ALTERNATIVE_REGEX_PERCENTILE_FRACTION]){
+            } else if ($percentile = $altregs[ANSWER_ALTERNATIVE_REGEX_PERCENTILE_FRACTION]){
                 $wrapped->fraction[] = .01 * $percentile;
             } else {
                 $wrapped->fraction[] = '0';
             }
-            $wrapped->feedback[] = multianswer_escape(
-             isset($altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK])
-             ? $altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK] : '');
+            if (isset($altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK])) {
+                $wrapped->feedback[] = $altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK];
+            } else {
+                $wrapped->feedback[] = '';
+            }
             if (!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_NUMERICAL])
-                    && ereg(NUMERICAL_ALTERNATIVE_REGEX,
-                            $altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER],
-                            $numregs) )
-            {
-                $wrapped->answer[] =
-                 multianswer_escape($numregs[NUMERICAL_CORRECT_ANSWER]);
+                    && ereg(NUMERICAL_ALTERNATIVE_REGEX, $altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER], $numregs)) {
+                $wrapped->answer[] = $numregs[NUMERICAL_CORRECT_ANSWER];
                 if ($numregs[NUMERICAL_ABS_ERROR_MARGIN]) {
                     $wrapped->tolerance[] =
-                     $numregs[NUMERICAL_ABS_ERROR_MARGIN];
+                    $numregs[NUMERICAL_ABS_ERROR_MARGIN];
                 } else {
                     $wrapped->tolerance[] = 0;
                 }
             } else { // Tolerance can stay undefined for non numerical questions
-                $wrapped->answer[] = multianswer_escape(
-                 $altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER]);
+                $wrapped->answer[] = $altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER];
             }
             $tmp = explode($altregs[0], $remainingalts, 2);
             $remainingalts = $tmp[1];
@@ -746,15 +711,7 @@ function qtype_multianswer_extract_question($text) {
         $question->questiontext = implode("{#$positionkey}",
                     explode($answerregs[0], $question->questiontext, 2));
     }
-    $question->questiontext = multianswer_escape($question->questiontext);
+    $question->questiontext = $question->questiontext;
     return $question;
 }
-
-function multianswer_escape($text) {
-    $text = str_replace("&amp;", "&", $text);
-    $text = str_replace('\#', '#', $text);
-    $text = html_entity_decode($text);
-    return addslashes($text);
-}
-
 ?>
