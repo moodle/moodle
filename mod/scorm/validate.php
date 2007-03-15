@@ -35,8 +35,8 @@ if (confirm_sesskey() && !empty($courseid)) {
         //
         // SCORM Update
         //
-        if (($launch != -1) && is_file($reference)) {
-            $fp = fopen($reference,"r");
+        if (($launch != -1) && ($fp = fopen($reference,"r"))) {
+            //$fp = fopen($reference,"r");
             $fstat = fstat($fp);
             fclose($fp);
             if ($scorm = get_record("scorm","id",$scormid)) {
