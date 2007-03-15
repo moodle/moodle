@@ -309,7 +309,7 @@
                 print_header();
                 notice_yesno(get_string("deletesureplural", "forum", $replycount+1),
                              "post.php?delete=$delete&amp;confirm=$delete",
-                             $CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#'.$post->id);
+                             $CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#p'.$post->id);
 
                 forum_print_post($post, $course->id, $ownpost=false, $reply=false, $link=false);
                 if (empty($post->edit)) {
@@ -324,7 +324,7 @@
                 print_header();
                 notice_yesno(get_string("deletesure", "forum", $replycount),
                              "post.php?delete=$delete&amp;confirm=$delete",
-                             $CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#'.$post->id);
+                             $CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#p'.$post->id);
                 forum_print_post($post, $forum->course, $ownpost=false, $reply=false, $link=false);
             }
 
@@ -502,7 +502,7 @@
                 // thread.
                 $discussionurl = "view.php?f=$forum->id";
             } else {
-                $discussionurl = "discuss.php?d=$discussion->id#$fromform->id";
+                $discussionurl = "discuss.php?d=$discussion->id#p$fromform->id";
             }
             add_to_log($course->id, "forum", "update post",
                     "$discussionurl&amp;parent=$fromform->id", "$fromform->id", $cm->id);
