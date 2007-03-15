@@ -1446,9 +1446,7 @@ function format_string ($string, $striplinks = false, $courseid=NULL ) {
     $strcache[$md5] = $string;
     
     if (!empty($CFG->filterall)) {
-        $CFG->formatstring = true; // new
-        $string = filter_text($string, $courseid);
-        unset($CFG->formatstring);
+        $string = filter_string($string, $courseid);
     }
         
     return $string;
@@ -1517,8 +1515,8 @@ function filter_text($text, $courseid=NULL) {
         $courseid = $COURSE->id;       // (copied from format_text)
     }
 
-    require_once($CFG->libdir.'/filterlib.php');
     if (!empty($CFG->textfilters)) {
+        require_once($CFG->libdir.'/filterlib.php');
         $textfilters = explode(',', $CFG->textfilters);
         foreach ($textfilters as $textfilter) {
             if (is_readable($CFG->dirroot .'/'. $textfilter .'/filter.php')) {
@@ -1536,6 +1534,62 @@ function filter_text($text, $courseid=NULL) {
     $text = str_replace('</nolink>', '', $text);
 
     return $text;
+}
+
+
+/**
+ * Given a string (short text) in HTML format, this function will pass it
+ * through any filters that have been defined in $CFG->stringfilters
+ * The variable defines a filepath to a file containing the
+ * filter function.  The file must contain a variable called
+ * $textfilter_function which contains the name of the function
+ * with $courseid and $text parameters
+ *
+ * @param string $string The text to be passed through format filters
+ * @param int $courseid The id of a course
+ * @return string
+ */
+function filter_string($string, $courseid=NULL) {
+    global $CFG, $COURSE;
+
+    if (empty($CFG->textfilters)) {             // All filters are disabled anyway so quit
+        return $string;
+    }
+
+    if (empty($courseid)) {
+        $courseid = $COURSE->id; 
+    }
+
+    require_once($CFG->libdir.'/filterlib.php');
+
+    if (isset($CFG->stringfilters)) {               // We have a predefined list to use, great!
+        if (empty($CFG->stringfilters)) {                    // but it's blank, so finish now
+            return $string;
+        }
+        $stringfilters = explode(',', $CFG->stringfilters);  // ..use the list we have
+
+    } else {                                        // Otherwise try to derive a list from textfilters
+        if (strpos($CFG->textfilters, 'filter/multilang')) {  // Multilang is here
+            $stringfilters = array('filter/multilang');       // Let's use just that
+            $CFG->stringfilters = 'filter/multilang';         // Save it for next time through
+        }
+    }
+
+    foreach ($stringfilters as $stringfilter) {
+        if (is_readable($CFG->dirroot .'/'. $stringfilter .'/filter.php')) {
+            include_once($CFG->dirroot .'/'. $stringfilter .'/filter.php');
+            $functionname = basename($stringfilter).'_filter';
+            if (function_exists($functionname)) {
+                $string = $functionname($courseid, $string);
+            }
+        }
+    }
+
+    /// <nolink> tags removed for XHTML compatibility
+    $string = str_replace('<nolink>', '', $string);
+    $string = str_replace('</nolink>', '', $string);
+
+    return $string;
 }
 
 /**
@@ -4334,17 +4388,17 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     }
     if ($backmod) {
         $backtext= get_string('activityprev', 'access');
-        $backmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.$CFG->frametarget.'><fieldset class="invisiblefieldset">'.
+        $backmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.$CFG->frametarget.'><div>'.
                    '<input type="hidden" name="id" value="'.$backmod->cm.'" />'.
                    '<button type="submit" title="'.$backtext.'">'.$THEME->larrow.
-                   '<span class="accesshide">'.$backtext.'</span></button></fieldset></form></li>';
+                   '<span class="accesshide">'.$backtext.'</span></button></div></form></li>';
     }
     if ($nextmod) {
         $nexttext= get_string('activitynext', 'access');
-        $nextmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.$CFG->frametarget.'><fieldset class="invisiblefieldset">'.
+        $nextmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.$CFG->frametarget.'><div>'.
                    '<input type="hidden" name="id" value="'.$nextmod->cm.'" />'.
                    '<button type="submit" title="'.$nexttext.'">'.$THEME->rarrow.
-                   '<span class="accesshide">'.$nexttext.'</span></button></fieldset></form></li>';
+                   '<span class="accesshide">'.$nexttext.'</span></button></div></form></li>';
     }
 
     return '<div class="navigation"><ul>'.$logslink . $backmod .
