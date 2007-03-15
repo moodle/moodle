@@ -75,7 +75,7 @@ switch ($filtertype) {
         $courseid = $course->id;
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         require_login($course->id);
-        if (!has_capability('moodle/blog:view', $sitecontext)) {
+        if (!has_capability('moodle/blog:view', $coursecontext)) {
             error('You do not have the required permissions to view blogs in this course');
         }
     break;
@@ -115,7 +115,7 @@ switch ($filtertype) {
         if ($USER->id == $filterselect) {
             if (!has_capability('moodle/blog:create', $sitecontext)
               and !has_capability('moodle/blog:view', $sitecontext)) {
-                error('You do not have your own a blog, sorry.');
+                error('You do not have your own blog, sorry.');
             }
         } else {
             $personalcontext = get_context_instance(CONTEXT_USER, $filterselect);
