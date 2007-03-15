@@ -613,7 +613,7 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
-    if ($result && $oldversion < 2007021401) {
+    if (!empty($CFG->rolesactive) && $result && $oldversion < 2007021401) {
     /// create default logged in user role if not present - upgrade rom 1.7.x
         if (empty($CFG->defaultuserroleid) or $CFG->defaultuserroleid == $CFG->guestroleid) {
             if (!get_records('role', 'shortname', 'user')) {
