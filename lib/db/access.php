@@ -715,6 +715,17 @@ $moodle_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
+    
+    'moodle/user:editprofile' => array( 	 
+	  	 
+	    'riskbitmask' => RISK_SPAM, 	 
+	  	 
+	    'captype' => 'read', 	 
+	    'contextlevel' => CONTEXT_USER, 	 
+	    'legacy' => array( 	 
+	       'admin' => CAP_ALLOW 	 
+	    ) 	 
+	),
 
     // The next 3 might make no sense for some roles, e.g teacher, etc.
     // since the next level up is site. These are more for the parent role
