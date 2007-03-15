@@ -327,9 +327,15 @@
         if (has_capability('moodle/blog:manageentries', $sitecontext)) {
             return true; // can manage all posts
         }
-
+        
+        // coming for 1 post, make sure it's not a draft
         if ($blogEntry and $blogEntry->publishstate == 'draft') {
             return false;  // can not view draft of others
+        }
+        
+        // coming for 1 post, make sure user is logged in, if not a public blog
+        if ($blogEntry && $blogEntry->publishstate != 'public' && !isloggedin()) {
+            return false;  
         }
 
         switch ($CFG->bloglevel) {
@@ -411,7 +417,7 @@
 
             if ($post = get_record('post', 'id', $postid)) {
 
-                if (blog_user_can_view_user_post($post->userid)) {
+                if (blog_user_can_view_user_post($post->userid, $post)) {
 
                     if ($user = get_record('user', 'id', $post->userid)) {
                         $post->email = $user->email;
