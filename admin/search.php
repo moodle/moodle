@@ -112,6 +112,11 @@ function search_settings(&$node, $query) {
 function search_settings_html(&$node, $query) {
 
     global $CFG;
+
+    if ($query == ''){
+        return '';
+    }
+
     if (is_a($node, 'admin_category')) {
         $entries = array_keys($node->children);
         $return = '';
