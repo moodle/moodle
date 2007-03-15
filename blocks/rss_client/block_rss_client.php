@@ -231,6 +231,7 @@
                 if ($item['link'] == '') {
                     $item['link'] = $item['guid'];
                 }
+                $item['title'] = s($item['title']);
 
                 $item['link'] = str_replace('&', '&amp;', $item['link']);
 
@@ -276,10 +277,10 @@
          $textlib = textlib_get_instance();
 
          if ($textlib->strlen($title) <= $max) {
-             return $title;
+             return s($title);
          }
          else {
-             return $textlib->substr($title,0,$max-3).'...';
+             return s($textlib->substr($title,0,$max-3).'...');
          }
      }
 }
