@@ -114,6 +114,8 @@ class test extends XMLDBAction {
         $table->addIndexInfo('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
         $table->addIndexInfo('rsstype', XMLDB_INDEX_UNIQUE, array('rsstype'));
 
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
     /// Get SQL code and execute it
         $test = new stdClass;
         $test->sql = $table->getCreateTableSQL($CFG->dbtype, $CFG->prefix, true);
@@ -275,7 +277,7 @@ class test extends XMLDBAction {
         /// Get SQL code and execute it
             $test = new stdClass;
             $field = new XMLDBField('grade');
-            $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'test');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, "test'n drop");
 
             $test->sql = $table->getAlterFieldSQL($CFG->dbtype, $CFG->prefix, $field, true);
             $test->status = change_field_type($table, $field, false, false);
