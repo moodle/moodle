@@ -264,7 +264,7 @@
                     $printedelements[]=$element;
                     $row = array();
                     $row[] = get_string($key,'scorm');
-                    $row[] = $trackdata->$element;
+                    $row[] = s($trackdata->$element);
                     $table->data[] = $row;
                 }
             }
@@ -299,7 +299,7 @@
                 $row = array();
                 foreach ($elements as $element) {
                     if (isset($trackdata->$element)) {
-                        $row[] = $trackdata->$element;
+                        $row[] = s($trackdata->$element);
                         $printedelements[]=$element;
                     } else {
                         $row[] = '&nbsp;';
@@ -344,7 +344,7 @@
                 $row = array();
                 foreach ($elements as $element) {
                     if (isset($trackdata->$element)) {
-                        $row[] = $trackdata->$element;
+                        $row[] = s($trackdata->$element);
                         $printedelements[]=$element;
                     } else {
                         $row[] = '&nbsp;';
