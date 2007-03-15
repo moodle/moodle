@@ -116,7 +116,8 @@ class page_admin extends page_base {
         $this->init_full($section); // we're trusting that init_full() has already been called by now; it should have.
                                     // if not, print_header() has to be called with a $section parameter
 
-        if ($this->user_allowed_editing()) {
+	// The search page currently doesn't handle block editing 
+        if ($this->section != 'search' and $this->user_allowed_editing()) {
             $buttons = '<div><form '.$CFG->frametarget.' method="get" action="' . $this->url_get_path() . '">'.
                        '<div><input type="hidden" name="adminedit" value="'.($this->user_is_editing()?'off':'on').'" />'.
                        '<input type="hidden" name="section" value="'.$this->section.'" />'.
