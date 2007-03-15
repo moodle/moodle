@@ -501,7 +501,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
 
     print_simple_box_start('center',$boxwidth);
 ?>
-        <div class="structurehead"><?php print_string('coursestruct','scorm') ?></div>
+        <div class="structurehead"><?php print_string('contents','scorm') ?></div>
 <?php
     if (empty($organization)) {
         $organization = $scorm->launch;
