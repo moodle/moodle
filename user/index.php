@@ -171,7 +171,7 @@
         echo '<td class="left">';
         $courselist = array();
         foreach ($mycourses as $mycourse) {
-            $courselist[$mycourse->id] = $mycourse->shortname;
+            $courselist[$mycourse->id] = format_string($mycourse->shortname);
         }
         popup_form($CFG->wwwroot.'/user/index.php?roleid='.$roleid.'&amp;sifirst=&amp;silast=&amp;id=',
                    $courselist, 'courseform', $course->id, '', '', '', false, 'self', get_string('mycourses'));
