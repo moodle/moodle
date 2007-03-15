@@ -117,11 +117,14 @@ class page_admin extends page_base {
                                     // if not, print_header() has to be called with a $section parameter
 
 	// The search page currently doesn't handle block editing 
-        if ($this->section != 'search' and $this->user_allowed_editing()) {
+        if ($this->user_allowed_editing()) {
             $buttons = '<div><form '.$CFG->frametarget.' method="get" action="' . $this->url_get_path() . '">'.
                        '<div><input type="hidden" name="adminedit" value="'.($this->user_is_editing()?'off':'on').'" />'.
-                       '<input type="hidden" name="section" value="'.$this->section.'" />'.
-                       '<input type="submit" value="'.get_string($this->user_is_editing()?'blockseditoff':'blocksediton').'" /></div></form></div>';
+                       '<input type="hidden" name="section" value="'.$this->section.'" />';
+            if(isset($CFG->adminsearchquery)){
+                $buttons.='<input type="hidden" name="query" value="'.$CFG->adminsearchquery.'" />';
+            }
+            $buttons.='<input type="submit" value="'.get_string($this->user_is_editing()?'blockseditoff':'blocksediton').'" /></div></form></div>';
         } else {
             $buttons = '&nbsp;';
         }
