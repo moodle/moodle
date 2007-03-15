@@ -251,12 +251,13 @@ function xmldb_scorm_upgrade($oldversion=0) {
     }
 
     if ($result && $oldversion < 2007031300) {
-        $tracks = get_records('scorm_scoes_track');
-        foreach ($tracks as $track) {
-            $element = preg_replace('/\.N(\d+)\./',".\$1.",$track->element);
-            if ($track->element != $element) {
-                $track->element = $element;
-                update_record('scorm_scoes_track',$track);
+        if ($tracks = get_records('scorm_scoes_track')) {
+            foreach ($tracks as $track) {
+                $element = preg_replace('/\.N(\d+)\./',".\$1.",$track->element);
+                if ($track->element != $element) {
+                    $track->element = $element;
+                    update_record('scorm_scoes_track',$track);
+                }
             }
         }
     }
