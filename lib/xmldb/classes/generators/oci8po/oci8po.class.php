@@ -198,7 +198,7 @@ class XMLDBoci8po extends XMLDBgenerator {
     function getCommentSQL ($xmldb_table) {
 
         $comment = "COMMENT ON TABLE " . $this->getTableName($xmldb_table);
-        $comment.= " IS '" . substr($xmldb_table->getComment(), 0, 250) . "'";
+        $comment.= " IS '" . addslashes(substr($xmldb_table->getComment(), 0, 250)) . "'";
 
         return array($comment);
     }
