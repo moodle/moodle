@@ -42,12 +42,12 @@
             foreach ($_POST as $element => $value) {
                 $element = str_replace('__','.',$element);
                 if (substr($element,0,3) == 'cmi') {
-                    $element = preg_replace('/N(\d+)/',".\$1",$element);
-                    $result = scorm_insert_track($USER->id, $scorm->id, $scoid, $attempt, $element, $value) && $result;
+                    $netelement = preg_replace('/\.N(\d+)\./',"\.\$1\.",$element);
+                    $result = scorm_insert_track($USER->id, $scorm->id, $scoid, $attempt, $netelement, $value) && $result;
                 }
                 if (substr($element,0,15) == 'adl.nav.request') {
                     // SCORM 2004 Sequencing Request
-                    require_once('datamodels/scorm_13lib.php');
+                    require_once('datamodels/sequencinglib.php');
 
                     $search = array('@continue@', '@previous@', '@\{target=(\S+)\}choice@', '@exit@', '@exitAll@', '@abandon@', '@abandonAll@');
                     $replace = array('continue_', 'previous_', '\1', 'exit_', 'exitall_', 'abandon_', 'abandonall');
@@ -55,7 +55,8 @@
 
                     if ($action != $value) {
                         // Evaluating navigation request
-                        $valid = scorm_sequencing_overall ($scoid,$USER->id,$action);
+                        //$valid = scorm_sequencing_overall ($scoid,$USER->id,$action);
+                        $valid = 'true';
 
                         // Set valid request
                         $search = array('@continue@', '@previous@', '@\{target=(\S+)\}choice@');
