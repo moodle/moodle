@@ -214,8 +214,8 @@ function display() {
 
     $formatoptions = new object();
     $formatoptions->noclean = true;
-
-    if ($resource->options != "frame") {
+    
+    if ($resource->options == "frame") { // TODO nicolasconnault 14-03-07: This option should be renamed "embed"
         
         if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
             $resourcetype = "image";
@@ -233,8 +233,12 @@ function display() {
             $resourcetype = "quicktime";
             $embedded = true;
 
-        } else if ($mimetype == "application/x-shockwave-flash") {   // It's a Quicktime file
+        } else if ($mimetype == "application/x-shockwave-flash") {   // It's a Flash file
             $resourcetype = "flash";
+            $embedded = true;
+
+        } else if ($mimetype == "video/mpeg") {   // It's a Mpeg file
+            $resourcetype = "mpeg";
             $embedded = true;
 
         } else if ($mimetype == "text/html") {    // It's a web page
@@ -419,29 +423,35 @@ function display() {
             } else {
                 $c = 'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.
                      'iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&'.
-                     'font=Arial&fontColour=3333FF&buffer=10&waitForPlay=no&autoPlay=yes';
+                     'font=Arial&fontColour=FF33FF&buffer=10&waitForPlay=no&autoPlay=yes';
             }
             $c .= '&volText='.get_string('vol', 'resource').'&panText='.get_string('pan','resource');
             $c = htmlentities($c);
             echo '<div class="resourcecontent resourcemp3">';
-            echo '<div class="mp3player" align="center">';
-            echo '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
-            echo '        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
-            echo '        width="600" height="70" id="mp3player" align="">';
+            echo '<div class="mp3player">';
+            echo '<object classid="clsid:D27CDb6E-AE6D-11cf-96b8-444553540000" ';
+            echo '        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" ';
+            echo '        width="600" height="70" id="mp3player">';
             echo '<param name="movie" value="'.$CFG->wwwroot.'/lib/mp3player/mp3player.swf?src='.$fullurl.'">';
             echo '<param name="quality" value="high">';
-            echo '<param name="bgcolor" value="#333333">';
+            echo '<param name="bgcolor" value="#333333">'; 
             echo '<param name="flashvars" value="'.$c.'&amp;" />';
-            echo '<embed src="'.$CFG->wwwroot.'/lib/mp3player/mp3player.swf?src='.$fullurl.'" ';
-            echo ' quality="high" bgcolor="#333333" width="600" height="70" name="mp3player" ';
-            echo ' type="application/x-shockwave-flash" ';
-            echo ' flashvars="'.$c.'&amp;" ';
-            echo ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
-            echo '</embed>';
+            echo '<!--[if !IE]>-->';
+            echo "<object type=\"audio/mpeg\" data=\"$fullurl\" width=\"600\" height=\"70\">";
+            echo "<param name=\"src\" value=\"$fullurl\" />";
+            echo '<param name="quality" value="high" />';
+            echo '<param name="bgcolor" value="#333333" />';
+            echo '<param name="flashvars" value="'.$c.'&amp;" />';
+            echo '<param name="autoplay" value="true" />';
+            echo '<param name="autoStart" value="0" />';
+            echo '<!--<![endif]-->';
+            echo '<a href="' . $fullurl . '">' . $fullurl . '</a>';
+            echo '<!--[if !IE]>-->';
+            echo '</object>';
+            echo '<!--<![endif]-->';
             echo '</object>';
             echo '</div>';
-            echo '</div>';
-
+            echo '</div>'; 
 
         } else if ($resourcetype == "mediaplayer") {
             echo '<div class="resourcecontent resourcewmv">';
@@ -454,25 +464,58 @@ function display() {
             echo '</object>';
             echo '</div>';
 
-        } else if ($resourcetype == "quicktime") {
+        } else if ($resourcetype == "mpeg") {
+            echo '<div class="resourcecontent resourcempeg">';
+            echo '<object classid="CLSID:22d6f312-b0f6-11d0-94ab-0080c74c7e95"
+                          codebase="http://activex.microsoft.com/activex/controls/mplayer/en/nsm p2inf.cab#Version=5,1,52,701"
+                          type="application/x-oleobject">';
+            echo "<param name=\"fileName\" value=\"$fullurl\" />";
+            echo '<param name="autoStart" value="true" />';
+            echo '<param name="animationatStart" value="true" />';
+            echo '<param name="transparentatStart" value="true" />';
+            echo '<param name="showControls" value="true" />';
+            echo '<param name="Volume" value="-450" />';
+            echo '<!--[if !IE]>-->';
+            echo '<object type="video/mpeg" data="' . $fullurl . '">';            
+            echo '<param name="controller" value="true" />';            
+            echo '<param name="autostart" value="true" />';            
+            echo "<param name=\"src\" value=\"$fullurl\" />"; 
+            echo "<a href=\"$fullurl\">$fullurl</a>";
+            echo '<!--<![endif]-->';
+            echo '<a href="' . $fullurl . '">' . $fullurl . '</a>';
+            echo '<!--[if !IE]>-->';
+            echo '</object>';
+            echo '<!--<![endif]-->';
+            echo '</object>';
+            echo '</div>';
 
+        } else if ($resourcetype == "quicktime") {
+            echo '<style type="text/css">';
+            echo '/* class to hide nested objects in IE */';
+            echo '/* hides the second object from all versions of IE */';
+            echo '* html object.hiddenObjectForIE { display: none; }';
+            echo '/* display the second object only for IE5 Mac */';
+            echo '/* IE Mac \*//*/';
+            echo '* html object.hiddenObjectForIE { display: inline; }';
+            echo '/**/';
+            echo '</style>';
             echo '<div class="resourcecontent resourceqt">';
-            echo '<object classid="CLSID:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"';
-            echo '        codebase="http://www.apple.com/qtactivex/qtplugin.cab" ';
-            echo '        id="quicktime" type="application/x-oleobject">';
+            
+            echo '<object classid="clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"';
+            echo '        codebase="http://www.apple.com/qtactivex/qtplugin.cab">';
             echo "<param name=\"src\" value=\"$fullurl\" />";
             echo '<param name="autoplay" value="true" />';
             echo '<param name="loop" value="true" />';
             echo '<param name="controller" value="true" />';
             echo '<param name="scale" value="aspect" />';
-            echo '<!--[if !IE]>-->';
-            echo "<object type=\"video/quicktime\" data=\"$fullurl\">";
+            
+            echo "<object class=\"hiddenObjectForIE\" type=\"video/quicktime\" data=\"$fullurl\">";
             echo '<param name="controller" value="true" />';
             echo '<param name="autoplay" value="true" />';
             echo '<param name="loop" value="true" />';
             echo '<param name="scale" value="aspect" />';
             echo '</object>';
-            echo '<!--<![endif]-->';
+            echo '<a href="' . $fullurl . '">' . $fullurl . '</a>';
             echo '</object>';
             echo '</div>';
         }  else if ($resourcetype == "flash") {
@@ -491,7 +534,7 @@ function display() {
             echo '<param name="loop" value="true" />';
             echo '<param name="scale" value="aspect" />';
             echo '<!--<![endif]-->';
-            echo '<p>Your browser does not support Embedded Flash</p>';
+            echo '<a href="' . $fullurl . '">' . $fullurl . '</a>';
             echo '<!--[if !IE]>-->';
             echo '</object>';
             echo '<!--<![endif]-->';
