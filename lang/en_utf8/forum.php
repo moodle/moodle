@@ -169,7 +169,9 @@ $string['parentofthispost'] = 'Parent of this post';
 $string['parent'] = 'Show parent';
 $string['postadded'] = '<p>Your post was successfully added.</p> <p>You have $a to edit it if you want to make any changes.</p>';
 $string['postincontext'] = 'See this post in context';
-$string['postmailinfo'] = "This is a copy of a message posted on the $a website.\n\nTo add your reply via the website, click on this link:";
+$string['postmailinfo'] = 'This is a copy of a message posted on the $a website.
+
+To add your reply via the website, click on this link:';
 $string['postmailnow'] = '<p>This post will be mailed out immediately to all forum subscribers.</p>';
 $string['postrating1'] = 'Mostly Separate Knowing';
 $string['postrating2'] = 'Separate and Connected';
