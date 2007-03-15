@@ -238,7 +238,7 @@ class XMLDBmysql extends XMLDBGenerator {
 
         if ($xmldb_table->getComment()) {
             $comment .= 'ALTER TABLE ' . $this->getTableName($xmldb_table);
-            $comment .= " COMMENT='" . substr($xmldb_table->getComment(), 0, 60) . "'";
+            $comment .= " COMMENT='" . addslashes(substr($xmldb_table->getComment(), 0, 60)) . "'";
         }
         return array($comment);
     }
