@@ -578,7 +578,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
               <br />
               <input type="hidden" name="scoid"/>
               <input type="hidden" name="currentorg" value="<?php echo $orgidentifier ?>" />
-              <input type="submit" value="<?php print_string('entercourse','scorm') ?>" />
+              <input type="submit" value="<?php print_string('enter','scorm') ?>" />
               </form>
           </div>
 <?php
