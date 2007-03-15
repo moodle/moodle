@@ -203,11 +203,14 @@ class XMLDBmysql extends XMLDBGenerator {
 
         $results = array();  //Array where all the sentences will be stored
 
+    /// Need a clone of xmldb_field to perform the change leaving original unmodified
+        $xmldb_field_clone = clone($xmldb_field);
+
     /// Change the name of the field to perform the change
-        $xmldb_field->setName($xmldb_field->getName() . ' ' . $newname);
+        $xmldb_field_clone->setName($xmldb_field_clone->getName() . ' ' . $newname);
 
         $results[] = 'ALTER TABLE ' . $this->getTableName($xmldb_table) . ' CHANGE ' .
-                     $this->getFieldSQL($xmldb_field);
+                     $this->getFieldSQL($xmldb_field_clone);
 
         return $results;
     }
