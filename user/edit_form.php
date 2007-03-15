@@ -46,7 +46,7 @@ class user_edit_form extends moodleform {
 
             // print picture
             if (!empty($CFG->gdversion)) {
-                $image_el = $mform->getElement('currentpicture');
+                $image_el =& $mform->getElement('currentpicture');
                 if ($user and $user->picture) {
                     $image_el->setValue(print_user_picture($user->id, SITEID, $user->picture, 64,true,false,'',true));
                 } else {

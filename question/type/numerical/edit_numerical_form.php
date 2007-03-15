@@ -67,7 +67,7 @@ class question_edit_numerical_form extends question_edit_form {
         $repeatsatstart = $countunits + 2;
         $this->repeat_elements($repeated, $repeatsatstart, array(), 'nounits', 'addunits', 2, get_string('addmoreunitblanks', 'qtype_numerical'));
 
-        $firstunit = $mform->getElement('multiplier[0]');
+        $firstunit =& $mform->getElement('multiplier[0]');
         $firstunit->freeze();
         $firstunit->setValue('1.0');
         $firstunit->setPersistantFreeze(true);

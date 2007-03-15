@@ -114,7 +114,7 @@ class question_edit_calculated_form extends question_edit_form {
         $repeatsatstart = $countunits + 1;
         $this->repeat_elements($repeated, $repeatsatstart, array(), 'nounits', 'addunits', 2, get_string('addmoreunitblanks', 'qtype_calculated', '{no}'));
 
-        $firstunit = $mform->getElement('multiplier[0]');
+        $firstunit =& $mform->getElement('multiplier[0]');
         $firstunit->freeze();
         $firstunit->setValue('1.0');
         $firstunit->setPersistantFreeze(true);

@@ -65,7 +65,7 @@ class user_editadvanced_form extends moodleform {
         if (!empty($USER->newadminuser)) {
             $mform->addRule('newpassword', get_string('required'), 'required', null, 'client');
 
-            $email_el = $mform->getElement('email');
+            $email_el =& $mform->getElement('email');
             if ($email_el->getValue() == 'root@localhost') {
                 $email_el->setValue('');
             }
@@ -78,7 +78,7 @@ class user_editadvanced_form extends moodleform {
 
         // print picture
         if (!empty($CFG->gdversion)) {
-            $image_el = $mform->getElement('currentpicture');
+            $image_el =& $mform->getElement('currentpicture');
             if ($user and $user->picture) {
                 $image_el->setValue(print_user_picture($user->id, SITEID, $user->picture, 64, true, false, '', true));
             } else {
