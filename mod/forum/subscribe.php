@@ -73,15 +73,15 @@
     if ($force and has_capability('mod/forum:managesubscriptions', $context)) {
         if (forum_is_forcesubscribed($forum->id)) {
             forum_forcesubscribe($forum->id, 0);
-            redirect($returnto, get_string("everyonecanchoose", "forum"), 1);
+            redirect($returnto, get_string("everyonecannowchoose", "forum"), 1);
         } else {
             forum_forcesubscribe($forum->id, 1);
-            redirect($returnto, get_string("everyoneissubscribed", "forum"), 1);
+            redirect($returnto, get_string("everyoneisnowsubscribed", "forum"), 1);
         }
     }
 
     if (forum_is_forcesubscribed($forum->id)) {
-        redirect($returnto, get_string("everyoneissubscribed", "forum"), 1);
+        redirect($returnto, get_string("everyoneisnowsubscribed", "forum"), 1);
     }
 
     $info->name  = fullname($user);
