@@ -102,9 +102,9 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
                 if ($ccc = get_records("course", "", "", "fullname","id,fullname,category")) {
                     foreach ($ccc as $cc) {
                         if ($cc->id == SITEID) {
-                            $sites["$hostid/$cc->id"]   = $cc->fullname.' ('.get_string('site').')';
+                            $sites["$hostid/$cc->id"]   = format_string($cc->fullname).' ('.get_string('site').')';
                         } else {
-                            $courses["$hostid/$cc->id"] = $cc->fullname;
+                            $courses["$hostid/$cc->id"] = format_string($cc->fullname);
                         }
                     }
                 }
@@ -335,9 +335,9 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         if ($ccc = get_records("course", "", "", "fullname","id,fullname,category")) {
             foreach ($ccc as $cc) {
                 if ($cc->category) {
-                    $courses["$cc->id"] = $cc->fullname;
+                    $courses["$cc->id"] = format_string($cc->fullname);
                 } else {
-                    $courses["$cc->id"] = " $cc->fullname (Site)";
+                    $courses["$cc->id"] = format_string($cc->fullname) . ' (Site)';
                 }
             }
         }
