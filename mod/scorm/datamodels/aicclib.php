@@ -408,9 +408,9 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                     if ($play && empty($scoid)) {
                         $scoid = $sco->id;
                     }
+                    $incomplete = true;
                     if ($sco->scormtype == 'sco') {
                         $statusicon = '<img src="'.$scormpixdir.'/notattempted.gif" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
-                        $incomplete = true;
                     } else {
                         $statusicon = '<img src="'.$scormpixdir.'/asset.gif" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
                     }
