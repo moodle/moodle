@@ -267,7 +267,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                     if ($sco->scormtype == 'sco') {
                         $statusicon = '<img src="'.$scormpixdir.'/'.$usertrack->status.'.gif" alt="'.$strstatus.'" title="'.$strstatus.'" />';
                     } else {
-                        $statusicon = '<img src="'.$scormpixdir.'/assetc.gif" alt="'.get_string('assetlauched','scorm').'" title="'.get_string('assetlaunched','scorm').'" />';
+                        $statusicon = '<img src="'.$scormpixdir.'/assetc.gif" alt="'.get_string('assetlaunched','scorm').'" title="'.get_string('assetlaunched','scorm').'" />';
                     }
                     
                     if (($usertrack->status == 'notattempted') || ($usertrack->status == 'incomplete') || ($usertrack->status == 'browsed')) {
