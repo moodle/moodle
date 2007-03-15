@@ -3,21 +3,21 @@ require_once ('moodleform_mod.php');
 
 class mod_choice_mod_form extends moodleform_mod {
 
-	function definition() {
-	    global $CHOICE_SHOWRESULTS, $CHOICE_PUBLISH, $CHOICE_DISPLAY;
+    function definition() {
+        global $CHOICE_SHOWRESULTS, $CHOICE_PUBLISH, $CHOICE_DISPLAY;
 
-		$mform    =& $this->_form;
+        $mform    =& $this->_form;
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         $mform->addElement('text', 'name', get_string('choicename', 'choice'), array('size'=>'64'));
-		$mform->setType('name', PARAM_TEXT);
-		$mform->addRule('name', null, 'required', null, 'client');
+        $mform->setType('name', PARAM_TEXT);
+        $mform->addRule('name', null, 'required', null, 'client');
 
         $mform->addElement('htmleditor', 'text', get_string('choicetext', 'choice'));
-		$mform->setType('text', PARAM_RAW);
-		$mform->addRule('text', null, 'required', null, 'client');
+        $mform->setType('text', PARAM_RAW);
+        $mform->addRule('text', null, 'required', null, 'client');
         $mform->setHelpButton('text', array('writing', 'questions', 'richtext'), false, 'editorhelpbutton');
 
         $mform->addElement('format', 'format', get_string('format'));
@@ -28,6 +28,13 @@ class mod_choice_mod_form extends moodleform_mod {
         $repeatarray[] = &MoodleQuickForm::createElement('text', 'option', get_string('choice','choice'));
         $repeatarray[] = &MoodleQuickForm::createElement('text', 'limit', get_string('limit','choice'));
         $repeatarray[] = &MoodleQuickForm::createElement('hidden', 'optionid', 0);
+
+        $menuoptions=array();
+        $menuoptions[0] = get_string('disable');
+        $menuoptions[1] = get_string('enable');
+        $mform->addElement('header', 'timerestricthdr', get_string('limit', 'choice'));
+        $mform->addElement('select', 'limitanswers', get_string('limitanswers', 'choice'), $menuoptions);
+        $mform->setHelpButton('limitanswers', array('limit', get_string('limit', 'choice'), 'choice'));
 
         if ($this->_instance){
             $repeatno=count_records('choice_options', 'choiceid', $this->_instance);
@@ -51,19 +58,14 @@ class mod_choice_mod_form extends moodleform_mod {
 
 
 
-        $menuoptions=array();
-        $menuoptions[0] = get_string('disable');
-        $menuoptions[1] = get_string('enable');
-        $mform->addElement('select', 'limitanswers', get_string('limitanswers', 'choice'), $menuoptions);
-		$mform->setHelpButton('limitanswers', array('limit', get_string('limit', 'choice'), 'choice'));
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'timerestricthdr', get_string('timerestrict', 'choice'));
         $mform->addElement('checkbox', 'timerestrict', get_string('timerestrict', 'choice'));
-		$mform->setHelpButton('timerestrict', array("timerestrict", get_string("timerestrict","choice"), "choice"));
+        $mform->setHelpButton('timerestrict', array("timerestrict", get_string("timerestrict","choice"), "choice"));
 
 
-		$mform->addElement('date_time_selector', 'timeopen', get_string("choiceopen", "choice"));
+        $mform->addElement('date_time_selector', 'timeopen', get_string("choiceopen", "choice"));
         $mform->disabledIf('timeopen', 'timerestrict');
 
         $mform->addElement('date_time_selector', 'timeclose', get_string("choiceclose", "choice"));
@@ -85,14 +87,14 @@ class mod_choice_mod_form extends moodleform_mod {
 
 
 //-------------------------------------------------------------------------------
-		$this->standard_coursemodule_elements();
+        $this->standard_coursemodule_elements();
 //-------------------------------------------------------------------------------
         $this->add_action_buttons();
-	}
+    }
 
-	function data_preprocessing(&$default_values){
+    function data_preprocessing(&$default_values){
         if (!empty($this->_instance) && ($options = get_records_menu('choice_options','choiceid', $this->_instance, 'id', 'id,text'))
-	           && ($options2 = get_records_menu('choice_options','choiceid', $this->_instance, 'id', 'id,maxanswers')) ) {
+               && ($options2 = get_records_menu('choice_options','choiceid', $this->_instance, 'id', 'id,maxanswers')) ) {
             $choiceids=array_keys($options);
             $options=array_values($options);
             $options2=array_values($options2);
@@ -110,25 +112,25 @@ class mod_choice_mod_form extends moodleform_mod {
             $default_values['timerestrict'] = 1;
         }
 
-	}
+    }
 
-	function validation($data){
-	    $choices=0;
-	    foreach ($data['option'] as $option){
-	        if (trim($option)!=''){
-	            $choices++;
-	        }
-	    }
-	    if ($choices>1){
-	       return true;
-	    } elseif ($choices==0) {
-	       return array('option[0]'=>get_string('fillinatleastoneoption', 'choice'));
+    function validation($data){
+        $choices=0;
+        foreach ($data['option'] as $option){
+            if (trim($option)!=''){
+                $choices++;
+            }
+        }
+        if ($choices>1){
+           return true;
+        } elseif ($choices==0) {
+           return array('option[0]'=>get_string('fillinatleastoneoption', 'choice'));
         } else  {
-	       return array('option[1]'=>get_string('fillinatleastoneoption', 'choice'));
+           return array('option[1]'=>get_string('fillinatleastoneoption', 'choice'));
         }
 
 
-	}
+    }
 
 }
 ?>
