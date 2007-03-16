@@ -1402,7 +1402,12 @@ function format_string ($string, $striplinks=true, $courseid=NULL ) {
         $string = filter_string($string, $courseid);
     }
 
-    if ($striplinks) {  //strip links in string
+    // If the site requires it, strip ALL tags from this string
+    if (!empty($CFG->formatstringstriptags)) {
+        $string = strip_tags($string);
+
+    // Otherwise strip just links if that is required (default)
+    } else if ($striplinks) {  //strip links in string
         $string = preg_replace('/(<a[^>]+?>)(.+?)(<\/a>)/is','$2',$string);
     }
 
@@ -1529,11 +1534,15 @@ function filter_string($string, $courseid=NULL) {
         $stringfilters = explode(',', $CFG->stringfilters);  // ..use the list we have
 
     } else {                                        // Otherwise try to derive a list from textfilters
-        if (strpos($CFG->textfilters, 'filter/multilang')) {  // Multilang is here
+        if (strpos($CFG->textfilters, 'filter/multilang') !== false) {  // Multilang is here
             $stringfilters = array('filter/multilang');       // Let's use just that
             $CFG->stringfilters = 'filter/multilang';         // Save it for next time through
+        } else {
+            $CFG->stringfilters = '';                         // Save the result and return
+            return $string;
         }
     }
+
 
     foreach ($stringfilters as $stringfilter) {
         if (is_readable($CFG->dirroot .'/'. $stringfilter .'/filter.php')) {
