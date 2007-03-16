@@ -193,11 +193,11 @@
 
 /* Next classes are for branch table buttons when displayed horizontally */
 .mod-lesson .prevhorizontal,
-.mod-lesson .prevhorizontal .lessonbutton,
+.mod-lesson .prevhorizontal div,
 .mod-lesson .nexthorizontal,
-.mod-lesson .nexthorizontal .lessonbutton,
+.mod-lesson .nexthorizontal div,
 .mod-lesson .standardhorizontal,
-.mod-lesson .standardhorizontal .lessonbutton {
+.mod-lesson .standardhorizontal div {
     display: inline;
 }
 
