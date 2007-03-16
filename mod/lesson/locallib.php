@@ -296,7 +296,7 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
     print_header("$course->shortname: $strname", $course->fullname, $breadcrumb,
                   '', $meta, true, $button, navmenu($course, $cm));
                   
-    if (has_capability('mod/lesson:manage')) {
+    if (has_capability('mod/lesson:manage', $context)) {
         print_heading_with_help(format_string($lesson->name, true), "overview", "lesson");
     } else {
         print_heading($lesson->name);
