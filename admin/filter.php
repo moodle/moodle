@@ -59,10 +59,10 @@
             // run through submitted data
             // reject if does not start with filter_
             foreach ($config as $name => $value) {
-                set_config( $name,$value );
+                set_config($name, stripslashes($value));
             }
         }
-        redirect( "$CFG->wwwroot/$CFG->admin/filters.php", get_string('changessaved'), 1);
+        redirect("$CFG->wwwroot/$CFG->admin/filters.php");
         exit;
     }
 
