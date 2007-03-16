@@ -735,7 +735,6 @@ function forum_cron() {
     return true;
 }
 
-
 function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto, $bare = false) {
     global $CFG, $USER;
 
@@ -743,7 +742,7 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
         error('Course Module ID was incorrect');
     }
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext);
+    $viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext, $userto->id);
 
     $by = New stdClass;
     $by->name = fullname($userfrom, $viewfullnames);
@@ -983,10 +982,12 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
     $mygroupid = mygroupid($course->id);
     $groupmode = array();   /// To cache group modes
 
+    $count = 0;
     foreach ($logs as $log) {
         //Get post info, I'll need it later
         if ($post = forum_get_post_from_log($log)) {
             //Create a temp valid module structure (course,id)
+            $tempmod = new object;
             $tempmod->course = $log->course;
             $tempmod->id = $post->forum;
             //Obtain the visible property from the instance
@@ -1019,7 +1020,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
             }
 
             if (! $heading) {
-                print_headline(get_string('newforumposts', 'forum').':');
+                print_headline(get_string('newforumposts', 'forum').':', 3);
                 $heading = true;
                 $content = true;
             }
@@ -1027,7 +1028,12 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
 
             $subjectclass = ($log->action == 'add discussion') ? ' bold' : '';
 
-            echo '<div class="head">'.
+            //Accessibility: markup as a list.
+            if ($count < 1) {
+                echo "\n<ul class='unlist'>\n";
+            }
+            $count++;
+            echo '<li><div class="head">'.
                    '<div class="date">'.$date.'</div>'.
                    '<div class="name">'.fullname($post, has_capability('moodle/site:viewfullnames', $coursecontext)).'</div>'.
                  '</div>';
@@ -1035,9 +1041,10 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
             echo '"<a href="'.$CFG->wwwroot.'/mod/forum/'.str_replace('&', '&amp;', $log->url).'">';
             $post->subject = break_up_long_words(format_string($post->subject,true));
             echo $post->subject;
-            echo '</a>"</div>';
+            echo "</a>\"</div></li>\n";
         }
     }
+    echo "</ul>\n";
     return $content;
 }
 
@@ -1852,7 +1859,7 @@ function forum_get_course_forum($courseid, $type) {
     $mod->instance = $forum->id;
     $mod->section = 0;
     if (! $mod->coursemodule = add_course_module($mod) ) {   // assumes course/lib.php is loaded
-        notify("Could not add a new course module to the course '$course->fullname'");
+        notify("Could not add a new course module to the course '" . format_string($course->fullname) . "'");
         return false;
     }
     if (! $sectionid = add_mod_to_section($mod) ) {   // assumes course/lib.php is loaded
@@ -1878,8 +1885,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 
     global $CFG, $USER;
 
-    static $formattedtext;        // Cached version of formatted text for a post
-    static $formattedtextid;      // The ID number of the post
+    // the old caching was removed for now, because it did not work due to recent changes in cron
 
     $post->forum = get_field('forum_discussions', 'forum', 'id', $post->discussion);
 
@@ -1888,13 +1894,10 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     }
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-
-    if (empty($formattedtextid) or $formattedtextid != $post->id) {    // Recalculate the formatting
-        $options = new Object;
-        $options->para = true;
-        $formattedtext = format_text(trusttext_strip($post->message), $post->format, $options, $course->id);
-        $formattedtextid = $post->id;
-    }
+    // format the post body
+    $options = new object();
+    $options->para = true;
+    $formattedtext = format_text(trusttext_strip($post->message), $post->format, $options, $course->id);
 
     $output = '<table border="0" cellpadding="3" cellspacing="0" class="forumpost">';
 
@@ -1910,6 +1913,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     $output .= '<div class="subject">'.format_string($post->subject).'</div>';
 
     $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $modcontext));
+    $by = new object();
     $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
     $by->date = userdate($post->modified, '', $touser->timezone);
     $output .= '<div class="author">'.get_string('bynameondate', 'forum', $by).'</div>';
@@ -3045,11 +3049,17 @@ function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
 
-    if (!has_capability('mod/forum:startdiscussion', $context)) {
+    if ($forum->type == 'news') {
+        $capname = 'mod/forum:addnews';
+    } else {
+        $capname = 'mod/forum:startdiscussion';
+    }
+
+    if (!has_capability($capname, $context)) {
         return false;
     }
 
-    if ($forum->type == "eachuser") {
+    if ($forum->type == 'eachuser') {
         return (!forum_user_has_posted_discussion($forum->id, $USER->id));
     } else if ($currentgroup) {
         return (has_capability('moodle/site:accessallgroups', $context)
@@ -3083,11 +3093,17 @@ function forum_user_can_post($forum, $user=NULL, $cm=NULL, $context=NULL) {
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
 
-    if (isset($user)) {
-        $canreply = has_capability('mod/forum:replypost', $context, $user->id, false)
+    if ($forum->type == 'news') {
+        $capname = 'mod/forum:replynews';
+    } else {
+        $capname = 'mod/forum:replypost';
+    }
+
+    if (!empty($user)) {
+        $canreply = has_capability($capname, $context, $user->id, false)
                 && !has_capability('moodle/legacy:guest', $context, $user->id, false);
     } else {
-        $canreply = has_capability('mod/forum:replypost', $context, NULL, false)
+        $canreply = has_capability($capname, $context, NULL, false)
                 && !has_capability('moodle/legacy:guest', $context, NULL, false);
     }
 
@@ -3111,9 +3127,9 @@ function forum_user_can_view_post($post, $course, $cm, $forum, $discussion, $use
 
 /// If it's a grouped discussion, make sure the user is a member
     if ($discussion->groupid > 0) {
-        if ($cm->groupmode == SEPARATEGROUPS) {
-            return ismember($discussion->groupid) ||
-                    has_capability('moodle/site:accessallgroups', $modcontext);
+        $groupmode = groupmode($course, $cm);
+        if ($groupmode == SEPARATEGROUPS) {
+            return ismember($discussion->groupid) || has_capability('moodle/site:accessallgroups', $modcontext);
         }
     }
     return true;
@@ -3247,8 +3263,8 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
         $currentgroup = get_current_group($course->id);
     }
 
-    if (!$currentgroup and ($groupmode != SEPARATEGROUPS or
-                has_capability('moodle/site:accessallgroups', $context)) ) {
+    if (!$currentgroup and 
+       ($groupmode != SEPARATEGROUPS or has_capability('moodle/site:accessallgroups', $context)) ) {
         $visiblegroups = -1;
     } else {
         $visiblegroups = $currentgroup;
@@ -3263,7 +3279,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 
         echo '<div class="singlebutton forumaddnew">';
         echo "<form id=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
-        echo '<fieldset class="invisiblefieldset">';
+        echo '<div>';
         echo "<input type=\"hidden\" name=\"forum\" value=\"$forum->id\" />";
         echo '<input type="submit" value="';
         echo ($forum->type == 'news') ? get_string('addanewtopic', 'forum')
@@ -3271,7 +3287,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
                ? get_string('addanewquestion','forum')
                : get_string('addanewdiscussion', 'forum'));
         echo '" />';
-        echo '</fieldset>';
+        echo '</div>';
         echo '</form>';
         echo "</div>\n";
     }

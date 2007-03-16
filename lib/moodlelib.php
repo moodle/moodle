@@ -1005,13 +1005,8 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
 
     global $CFG;
 
-    static $strftimedaydatetime;
-
-    if ($format == '') {
-        if (empty($strftimedaydatetime)) {
-            $strftimedaydatetime = get_string('strftimedaydatetime');
-        }
-        $format = $strftimedaydatetime;
+    if (empty($format)) {
+        $format = get_string('strftimedaydatetime');
     }
 
     if (!empty($CFG->nofixday)) {  // Config.php can force %d not to be fixed.
@@ -1582,7 +1577,7 @@ function confirm_sesskey($sesskey=NULL) {
  * @param mixed $courseorid id of the course or course object
  */
 function course_setup($courseorid=0) {
-    global $COURSE, $CFG, $SITE, $USER;
+    global $COURSE, $CFG, $SITE;
 
 /// Redefine global $COURSE if needed
     if (empty($courseorid)) {
@@ -5477,19 +5472,14 @@ function notify_login_failures() {
  * moodle_setlocale
  *
  * @uses $CFG
- * @uses $USER
- * @uses $SESSION
  * @param string $locale ?
  * @todo Finish documenting this function
  */
 function moodle_setlocale($locale='') {
 
-    global $SESSION, $USER, $CFG;
+    global $CFG;
 
-    static $currentlocale; // last locale caching
-    if (!isset($currentlocale)) {
-        $currentlocale = '';
-    }
+    static $currentlocale = ''; // last locale caching
 
     $oldlocale = $currentlocale;
 
