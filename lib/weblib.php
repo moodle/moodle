@@ -1529,11 +1529,15 @@ function filter_string($string, $courseid=NULL) {
         $stringfilters = explode(',', $CFG->stringfilters);  // ..use the list we have
 
     } else {                                        // Otherwise try to derive a list from textfilters
-        if (strpos($CFG->textfilters, 'filter/multilang')) {  // Multilang is here
+        if (strpos($CFG->textfilters, 'filter/multilang') !== false) {  // Multilang is here
             $stringfilters = array('filter/multilang');       // Let's use just that
             $CFG->stringfilters = 'filter/multilang';         // Save it for next time through
+        } else {
+            $CFG->stringfilters = '';                         // Save the result and return
+            return $string;
         }
     }
+
 
     foreach ($stringfilters as $stringfilter) {
         if (is_readable($CFG->dirroot .'/'. $stringfilter .'/filter.php')) {
