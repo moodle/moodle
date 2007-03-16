@@ -1435,7 +1435,7 @@ function format_string ($string, $striplinks = false, $courseid=NULL ) {
     $string = preg_replace("/\&(?![a-z0-9#]{1,8};)/", "&amp;", $string);
     
     if (!empty($CFG->filterall)) {
-        $string = filter_text($string, $courseid);
+        $string = filter_string($string, $courseid);
     }
 
     if ($striplinks) {  //strip links in string
@@ -1445,10 +1445,6 @@ function format_string ($string, $striplinks = false, $courseid=NULL ) {
     //Store to cache
     $strcache[$md5] = $string;
     
-    if (!empty($CFG->filterall)) {
-        $string = filter_string($string, $courseid);
-    }
-        
     return $string;
 }
 
