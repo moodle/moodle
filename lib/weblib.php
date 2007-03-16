@@ -1367,11 +1367,11 @@ function text_format_name( $key ) {
  *  processed by enabled filters if $CFG->filterall is enabled
  *
  *  @param string  $string     The string to be filtered.
- *  @param boolean $striplinks To strip any link in the result text.
+ *  @param boolean $striplinks To strip any link in the result text (Moodle 1.8 default changed from false to true! MDL-8713)
  *  @param int     $courseid   Current course as filters can, potentially, use it
  *  @return string
  */
-function format_string ($string, $striplinks = false, $courseid=NULL ) {
+function format_string ($string, $striplinks=true, $courseid=NULL ) {
 
     global $CFG, $COURSE;
 
