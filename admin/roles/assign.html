@@ -17,17 +17,22 @@
                            getElementById('assignform').addselect.selectedIndex=-1;">
 
           <?php
-              foreach ($contextusers as $contextuser) {
-                  $fullname = fullname($contextuser, true);
-                  if ($contextuser->hidden) {
-                      $hidden=' ('.get_string('hiddenassign').') ';
-                  } else {
-                      $hidden="";
-                  }
-                  echo "<option value=\"$contextuser->id\">".$fullname.", ".$contextuser->email.$hidden."</option>\n";
-              }
+            $i = 0;
+            foreach ($contextusers as $contextuser) {
+                $fullname = fullname($contextuser, true);
+                if ($contextuser->hidden) {
+                    $hidden=' ('.get_string('hiddenassign').') ';
+                } else {
+                    $hidden="";
+                }
+                echo "<option value=\"$contextuser->id\">".$fullname.", ".$contextuser->email.$hidden."</option>\n";
+                $i++;    
+            }
+            if ($i==0) {
+                echo '<option/>'; // empty select breaks xhtml strict
+            }
           ?>
-          <option/>
+          
           </select></td>
       <td valign="top">
         <br />
@@ -50,32 +55,36 @@
                            getElementById('assignform').remove.disabled=true;
                            getElementById('assignform').removeselect.selectedIndex=-1;">
           <?php
+            $i=0;
+            if (!empty($searchtext)) {
+                echo "<optgroup label=\"$strsearchresults (" . $availableusers->_numOfRows . ")\">\n";
+                while ($user = rs_fetch_next_record($availableusers)) {
+                    if (!isset($contextusers[$user->id])) {
+                        $fullname = fullname($user, true);
+                        echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
+                        $i++;
+                    }
+                }
+                echo "</optgroup>\n";
 
-              if (!empty($searchtext)) {
-                  echo "<optgroup label=\"$strsearchresults (" . $availableusers->_numOfRows . ")\">\n";
-                  while ($user = rs_fetch_next_record($availableusers)) {
-                      if (!isset($contextusers[$user->id])) {
-                          $fullname = fullname($user, true);
-                          echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
-                      }
-                  }
-                  echo "</optgroup>\n";
-
-              } else {
-                  if ($usercount > MAX_USERS_PER_PAGE) {
-                      echo '<optgroup label="'.get_string('toomanytoshow').'"><option></option></optgroup>'."\n"
+            } else {
+                if ($usercount > MAX_USERS_PER_PAGE) {
+                    echo '<optgroup label="'.get_string('toomanytoshow').'"><option></option></optgroup>'."\n"
                           .'<optgroup label="'.get_string('trysearching').'"><option></option></optgroup>'."\n";
-                  } else {
-                      while ($user = rs_fetch_next_record($availableusers)) {
-                          if (!isset($contextusers[$user->id])) {
-                              $fullname = fullname($user, true);
-                              echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
-                          }
-                      }
-                  }
-              }
+                } else {
+                    while ($user = rs_fetch_next_record($availableusers)) {
+                        if (!isset($contextusers[$user->id])) {
+                            $fullname = fullname($user, true);
+                            echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
+                            $i++;
+                        }
+                    }
+                }
+            }
+            if ($i==0) {
+                echo '<option/>'; // empty select breaks xhtml strict
+            }
           ?>
-         <option/>
          </select>
          <br />
          <label for="searchtext" class="accesshide"><?php p($strsearch) ?></label>
