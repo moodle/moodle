@@ -1362,42 +1362,6 @@ function text_format_name( $key ) {
   return $value;
 }
 
-/**
- * Prepare title for course, activity, post, ...
- * This function is safe to use on untrusted content.
- *
- * @since 1.8
- *
- * @param string  $string     The string to be filtered (without magic quotes).
- * @param boolean $plaintext  Convert string to plaintext, otherwise keep fancy html tags
- * @param int     $courseid   Current course as filters can, potentially, use it
- * @return string
- */
-function format_title($string, $plaintext=true, $courseid=null) {
-    global $CFG;
-
-    if ($plaintext) {
-        /// use filters if required (mostly multilang) and convert to plain text
-        return s(format_string($string, true, $courseid));
-
-    } else {
-        /// tidy up common html validity problems and format the text, keep safe html 
-
-        // Any lonely ampersands present, convert them using negative lookahead - xhtml strict cleanup
-        $string = preg_replace("/\&(?![a-z]+;|#\d+;)([^&]*)/", "&amp;$1", $string);
-
-        // TODO: try to add some detection of lonely < and > and convert them to html entitites
-
-        // use filters if needed and cleam text
-        $options = new object();
-        $options->smiley = false;
-        $options->filter = !empty($CFG->filterall); 
-        $string = format_text($string, FORMAT_HTML, $options, $courseid);
-
-        //filters often produce links, we do not want these in titles
-        return preg_replace('/(<a[^>]+?>)(.+?)(<\/a>)/is','$2', $string);
-    }
-}
 
 /** Given a simple string, this function returns the string
  *  processed by enabled filters if $CFG->filterall is enabled
