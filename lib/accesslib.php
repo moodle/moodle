@@ -1120,12 +1120,25 @@ function load_all_capabilities() {
 
         load_user_capability();
 
-        if (!empty($USER->capabilities)) {
-            $USER->capabilities = merge_role_caps($USER->capabilities, $defcaps);
+        if (!empty($USER->switchrole)) {
 
-        } else {
-            $USER->capabilities = $defcaps;
+            foreach ($USER->switchrole as $contextid => $roleid) {
+                $context = get_context_instance_by_id($contextid);
+
+                // first prune context and any child contexts
+                $children = get_child_contexts($context);
+                foreach ($children as $childid) {
+                    unset($USER->capabilities[$childid]);
+                }
+                unset($USER->capabilities[$contextid]);
+
+                // now merge all switched role caps in context and bellow
+                $swithccaps = get_role_context_caps($roleid, $context);
+                $USER->capabilities = merge_role_caps($USER->capabilities, $swithccaps);
+            }
         }
+
+        $USER->capabilities = merge_role_caps($USER->capabilities, $defcaps);
 
     } else {
         load_notloggedin_role();
@@ -3694,16 +3707,14 @@ function get_roles_on_exact_context($context) {
  * @return bool
  */
 function role_switch($roleid, $context) {
-    global $USER;
-
-    global $db;
+    global $USER, $CFG;
 
 /// If we can't use this or are already using it or no role was specified then bail completely and reset
     if (empty($roleid) || !has_capability('moodle/role:switchroles', $context)
         || !empty($USER->switchrole[$context->id])  || !confirm_sesskey()) {
-        load_user_capability('', $context);   // Reset all permissions for this context to normal
+
         unset($USER->switchrole[$context->id]);  // Delete old capabilities
-        has_capability('clearcache');  
+        load_all_capabilities();   //reload user caps
         return true;
     }
 
@@ -3712,11 +3723,10 @@ function role_switch($roleid, $context) {
         return false;
     }
 
-    if (empty($roles[$roleid])) {   /// We can't switch to this particular role
-        return false;
-    }
+/// unset default user role - it would not work anyway
+    unset($roles[$CFG->defaultuserroleid]);
 
-    if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM)) {
+    if (empty($roles[$roleid])) {   /// We can't switch to this particular role
         return false;
     }
 
@@ -3724,21 +3734,11 @@ function role_switch($roleid, $context) {
 
     $USER->switchrole[$context->id] = $roleid;     // So we know later what state we are in
 
-    unset($USER->capabilities[$context->id]);  // Delete old capabilities
-
-    if ($capabilities = get_records_select('role_capabilities', "roleid = $roleid AND contextid = $sitecontext->id")) {
-        foreach ($capabilities as $capability) {
-            $USER->capabilities[$context->id][$capability->capability] = $capability->permission;
-        }
-    }
+    load_all_capabilities();   //reload switched role caps
 
 /// Add some permissions we are really going to always need, even if the role doesn't have them!
 
     $USER->capabilities[$context->id]['moodle/course:view'] = CAP_ALLOW;
-
-/// Clear the entire capability cache to avoid mixups
-
-    has_capability('clearcache');  
 
     return true;
 
