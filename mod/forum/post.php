@@ -654,16 +654,19 @@
         // Show the discussion name in the breadcrumbs.
         $strdiscussionname = format_string($discussion->name).':';
     }
+
+    $forcefocus = empty($reply) ? NULL : 'message';
+
     if ($course->id != SITEID) {
         print_header("$course->shortname: $strdiscussionname ".
                       format_string($toppost->subject), $course->fullname,
                      "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
-                      $navmiddle $navtail", $mform_post->focus(), "", true, "", navmenu($course, $cm));
+                      $navmiddle $navtail", $mform_post->focus($forcefocus), "", true, "", navmenu($course, $cm));
 
     } else {
         print_header("$course->shortname: $strdiscussionname ".
                       format_string($toppost->subject), $course->fullname,
-                     "$navmiddle $navtail", $mform_post->focus(), "", true, "", navmenu($course, $cm));
+                     "$navmiddle $navtail", $mform_post->focus($forcefocus), "", true, "", navmenu($course, $cm));
 
     }
 

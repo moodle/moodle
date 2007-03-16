@@ -129,11 +129,13 @@ class moodleform {
     /**
      * To autofocus on first form element or first element with error.
      *
+     * @param string $name if this is set then the focus is forced to a field with this name
+     *
      * @return string  javascript to select form element with first error or
      *                  first element if no errors. Use this as a parameter
      *                  when calling print_header
      */
-    function focus(){
+    function focus($name=NULL){
         $form =& $this->_form;
         $elkeys=array_keys($form->_elementIndex);
         if (isset($form->_errors) &&  0 != count($form->_errors)){
@@ -142,10 +144,12 @@ class moodleform {
         }
         $names=null;
         while (!$names){
-          $el = array_shift($elkeys);
-          $names = $form->_getElNamesRecursive($el);
+            $el = array_shift($elkeys);
+            $names = $form->_getElNamesRecursive($el);
         }
-        $name=array_shift($names);
+        if (empty($name)) {
+            $name=array_shift($names);
+        }
         $focus='forms[\''.$this->_form->getAttribute('id').'\'].elements[\''.$name.'\']';
         return $focus;
      }
