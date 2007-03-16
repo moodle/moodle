@@ -38,7 +38,7 @@
     }
 
     if ($USER->id <> $user->id) {    // Current user editing someone else's profile
-        if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) { // Current user can update user profiles
+        if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID)) || has_capability('moodle/user:editprofile', get_context_instance(CONTEXT_USER, $user->id))) { // Current user can update user profiles
             if ($mainadmin = get_admin()) {        
                 if ($user->id == $mainadmin->id) {  // Can't edit primary admin
                     print_error('adminprimarynoedit');
@@ -81,7 +81,7 @@
         if ($dummyuser->username == 'changeme') {                                            // check for add user
             require_capability('moodle/user:create', $context);
         } else {
-            if ($USER->id <> $usernew->id and !has_capability('moodle/user:update', $context)) { // check for edit  
+            if ($USER->id <> $usernew->id and !has_capability('moodle/user:update', $context) and !has_capability('moodle/user:editprofile', get_context_instance(CONTEXT_USER, $usernew->id))) { // check for edit  
                 print_error('onlyeditown');
             }   
         }   
@@ -258,7 +258,7 @@
 
                 add_to_log($course->id, "user", "update", "view.php?id=$user->id&course=$course->id", "");
 
-                if ($user->id == $USER->id) {
+                if ($user->id == $USER->id || !has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) { // non admin redirect
                     // Copy data into $USER session variable
                     $usernew = (array)$usernew;
                     foreach ($usernew as $variable => $value) {
