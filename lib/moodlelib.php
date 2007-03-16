@@ -2782,15 +2782,17 @@ function get_complete_user_data($field, $value, $mnethostid=null) {
 
     $constraints = $field .' = \''. $value .'\' AND deleted <> \'1\'';
 
-    if (null === $mnethostid) {
-        $constraints .= ' AND auth != \'mnet\'';
-    } elseif (is_numeric($mnethostid)) {
-        $constraints .= ' AND mnethostid = \''.$mnethostid.'\'';
-    } else {
-        error_log('Call to get_complete_user_data for $field='.$field.', $value = '.$value.', with invalid $mnethostid: '. $mnethostid);
-        print_error('invalidhostlogin','mnet', $CFG->wwwroot.'/login/index.php');
-        exit;
+    if (is_null($mnethostid)) {
+        // if null, we restrict to local users
+        // ** testing for local user can be done with
+        //    mnethostid = $CFG->mnet_localhost_id 
+        //    or with
+        //    auth != 'mnet' 
+        //    but the first one is FAST with our indexes
+        $mnethostid = $CFG->mnet_localhost_id;
     }
+    $mnethostid = (int)$mnethostid;
+    $constraints .= ' AND mnethostid = \''.$mnethostid.'\'';
 
 /// Get all the basic user data
 
