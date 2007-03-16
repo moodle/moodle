@@ -109,9 +109,9 @@
             }
             quiz_view_dates($quiz);
         } else if ($timenow < $quiz->timeopen) {
-            echo "<p>".get_string("quiznotavailable", "quiz", userdate($quiz->timeopen));
+            echo "<p>".get_string("quiznotavailable", "quiz", userdate($quiz->timeopen))."</p>";
         } else {
-            echo "<p>".get_string("quizclosed", "quiz", userdate($quiz->timeclose));
+            echo "<p>".get_string("quizclosed", "quiz", userdate($quiz->timeclose))."</p>";
         }
         echo '</div>';
     } else {
