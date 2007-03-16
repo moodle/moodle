@@ -1885,8 +1885,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 
     global $CFG, $USER;
 
-    static $formattedtext;        // Cached version of formatted text for a post
-    static $formattedtextid;      // The ID number of the post
+    // the old caching was removed for now, because it did not work due to recent changes in cron
 
     $post->forum = get_field('forum_discussions', 'forum', 'id', $post->discussion);
 
@@ -1895,13 +1894,10 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     }
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-
-    if (empty($formattedtextid) or $formattedtextid != $post->id) {    // Recalculate the formatting
-        $options = new Object;
-        $options->para = true;
-        $formattedtext = format_text(trusttext_strip($post->message), $post->format, $options, $course->id);
-        $formattedtextid = $post->id;
-    }
+    // format the post body
+    $options = new object();
+    $options->para = true;
+    $formattedtext = format_text(trusttext_strip($post->message), $post->format, $options, $course->id);
 
     $output = '<table border="0" cellpadding="3" cellspacing="0" class="forumpost">';
 
@@ -1917,6 +1913,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     $output .= '<div class="subject">'.format_string($post->subject).'</div>';
 
     $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $modcontext));
+    $by = new object();
     $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
     $by->date = userdate($post->modified, '', $touser->timezone);
     $output .= '<div class="author">'.get_string('bynameondate', 'forum', $by).'</div>';
