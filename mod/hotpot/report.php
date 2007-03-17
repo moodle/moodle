@@ -51,7 +51,7 @@
     // assemble array of form data
     $formdata = array(
         'mode' => $mode,
-        'reportusers'      => has_capability('mod/hotpot:viewreport',$modulecontext) ? optional_param('reportusers', get_user_preferences('hotpot_reportusers', 'allusers'), PARAM_ALPHA) : 'this',
+        'reportusers'      => has_capability('mod/hotpot:viewreport',$modulecontext) ? optional_param('reportusers', get_user_preferences('hotpot_reportusers', 'allusers'), PARAM_ALPHANUM) : 'this',
         'reportattempts'   => optional_param('reportattempts', get_user_preferences('hotpot_reportattempts', 'all'), PARAM_ALPHA),
         'reportformat'     => optional_param('reportformat', 'htm', PARAM_ALPHA),
         'reportshowlegend' => optional_param('reportshowlegend', get_user_preferences('hotpot_reportshowlegend', '0'), PARAM_INT),
@@ -83,12 +83,13 @@
 
     // check for groups
     if (preg_match('/^group(\d*)$/', $formdata['reportusers'], $matches)) {
+        $formdata['reportusers'] = 'group';
+        $formdata['reportgroupid'] = 0;
         // validate groupid
-        if (is_numeric($matches[1]) && get_field('groups', 'courseid', 'id', $matches[1])===$course->id) {
-            $formdata['reportusers'] = 'group';
-            $formdata['reportgroupid'] = $matches[1];
-        } else {
-            $formdata['reportgroupid'] = 0; // groupid is invalid
+        if ($groups = groups_get_groups_names($course->id)) {
+            if (isset($groups[$matches[1]])) {
+                $formdata['reportgroupid'] = $matches[1];
+            }
         }
     }
 
