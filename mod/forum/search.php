@@ -304,10 +304,14 @@ function forum_print_big_search_form($course) {
     echo '<tr>';
     echo '<td class="c0">'.get_string('searchdatefrom', 'forum').':</td>';
     echo '<td class="c1">';
-    echo '<input name="timefromrestrict" type="checkbox" value="1" alt="'.get_string('searchdatefrom', 'forum').'" onclick="return lockoptions(\'searchform\', \'timefromrestrict\', timefromitems)" /> ';
-    if (empty($dateto)) {
+    if (empty($datefrom)) {
+        $datefromchecked = '';
         $datefrom = make_timestamp(2000, 1, 1, 0, 0, 0);
+    }else{
+        $datefromchecked = 'checked="checked"';
     }
+
+    echo '<input name="timefromrestrict" type="checkbox" value="1" alt="'.get_string('searchdatefrom', 'forum').'" onclick="return lockoptions(\'searchform\', \'timefromrestrict\', timefromitems)" '.  $datefromchecked . ' /> ';
     print_date_selector('fromday', 'frommonth', 'fromyear', $datefrom);
     print_time_selector('fromhour', 'fromminute', $datefrom);
 
@@ -323,10 +327,14 @@ function forum_print_big_search_form($course) {
     echo '<tr>';
     echo '<td class="c0">'.get_string('searchdateto', 'forum').':</td>';
     echo '<td class="c1">';
-    echo '<input name="timetorestrict" type="checkbox" value="1" alt="'.get_string('searchdateto', 'forum').'" onclick="return lockoptions(\'searchform\', \'timetorestrict\', timetoitems)" /> ';
     if (empty($dateto)) {
+        $datetochecked = '';
         $dateto = time()+3600;
+    }else{
+        $datetochecked = 'checked="checked"';
     }
+
+    echo '<input name="timetorestrict" type="checkbox" value="1" alt="'.get_string('searchdateto', 'forum').'" onclick="return lockoptions(\'searchform\', \'timetorestrict\', timetoitems)" ' .$datetochecked. ' /> ';
     print_date_selector('today', 'tomonth', 'toyear', $dateto);
     print_time_selector('tohour', 'tominute', $dateto);
 
