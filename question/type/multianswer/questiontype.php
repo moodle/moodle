@@ -224,7 +224,7 @@ class embedded_cloze_qtype extends default_questiontype {
 
             $inputname = $nameprefix.$positionkey;
             if (isset($state->responses[$positionkey])) {
-                $response = $state->responses[$positionkey];
+                $response = stripslashes($state->responses[$positionkey]);
             } else {
                 $response = null;
             }
