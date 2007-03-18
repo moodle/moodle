@@ -234,12 +234,12 @@ function print_moodle_environment($result, $environment_results) {
 
 /// And feedback accumulated text
     if ($feedbacktext) {
-        print_simple_box('<ul>'.$feedbacktext.'</ul>', 'center', '90%');
+        print_simple_box('<ul>'.$feedbacktext.'</ul>', 'center', '90%', '', '', 'environmentbox generalbox');
     }
 
 /// Finally, if any error has happened, print the summary box
     if (!$result) {
-        print_simple_box($strenvironmenterrortodo, 'center', '', '', '', 'errorbox');
+        print_simple_box($strenvironmenterrortodo, 'center', '', '', '', 'environmentbox errorbox');
     }
 }
 
