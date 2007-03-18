@@ -36,7 +36,7 @@ $string['configfilewritten'] = 'súbor config.php bol úspešne vytvorený';
 $string['configurationcompletehead'] = 'Konfigurácia ukončená';
 $string['configurationcompletesub'] = 'Moodle so pokusil uložiť súbor s konfiguráciou do koreňového adresára inštalácie Moodle.';
 $string['continue'] = 'Pokračovať';
-$string['curlrecommended'] = 'Pre beh sieťových funkcionalít (\"Moodle Networking\") je potřebné nainštalovať voliteľnú knižnicu Curl.';
+$string['curlrecommended'] = 'Pre beh sieťových funkcionalít (\"Moodle Networking\") je treba nainštalovať voliteľnú knižnicu Curl.';
 $string['database'] = 'Databáza';
 $string['databasecreationsettingshead'] = 'Teraz musíte nastaviť pripojenie k databáze, kam si bude Moodle ukladať väčšinu svojich údajov. Táto databáza môže byť vytvorená inštalátorom automaticky podľa následujúcího nastavenia.';
 $string['databasecreationsettingssub'] = '<b>Typ:</b> inštalátor nastaví na \"mysql\"<br />
@@ -60,13 +60,13 @@ $string['dbhost'] = 'Hosťovský server';
 $string['dbprefix'] = 'Predpona tabuliek';
 $string['dbtype'] = 'Typ';
 $string['dbwrongencoding'] = 'Vybraná databáza používa nedoporučené kódovanie $a. Vhodnejšie by bylo používať databázu s kódovaním Unicode (UTF-8). Túto kontrolu môžete preskočiť zaškrtnutím poľa \"Preskočiť test kódovania DB\", môžete však v budúcnosti naraziť na problémy.';
-$string['directorysettingshead'] = 'Potvrďte prosím adresy této inštalace Moodle.';
+$string['directorysettingshead'] = 'Potvrďte prosím adresy tejto inštalácie Moodle.';
 $string['directorysettingssub'] = '<b>Webová adresa</b>:
 zadajte úplnu webovú adresu, na ktorej bude Moodle dostupný. Ak sú vaše stránky dostupné na viacerých URL, vyberte z nich tú, ktorú budú vaši študenti používať nejčastejšie. Na konci adresy nepíšte lomítko.
 <br />
 <br />
 <b>Adresár Moodle</b>:
-zadajte úplnu cestu k adresáru s touto inštaláciou. Uistite sa, že sú v nej správne uvedené malé/VEĽKÁ písmená.
+zadajte úplnu cestu k adresáru s touto inštaláciou. Uistite sa, že sú v nej správne uvedené malé/VEĽKÉ písmená.
 <br />
 <br />
 <b>Datový adresár</b>:
