@@ -2361,6 +2361,79 @@ class admin_setting_special_gradebookroles extends admin_setting {
 
 }
 
+/*
+ * this is used in config->appearance->coursemanager
+ * (which roles to show on course decription page)
+ */
+class admin_setting_special_coursemanager extends admin_setting {
+
+    function admin_setting_special_coursemanager() {
+        $name = 'coursemanager';
+        $visiblename = get_string('coursemanager', 'admin');
+        $description = get_string('configcoursemanager', 'admin');
+        $default = array(3=>'1');    // The teahcer role in a default install
+        parent::admin_setting($name, $visiblename, $description, $default);
+    }
+
+    function get_setting() {
+
+        global $CFG;
+        if (!empty($CFG->{$this->name})) {
+            $result = explode(',', $CFG->{$this->name});
+            foreach ($result as $roleid) {
+                $array[$roleid] = 1;  
+            }
+            return $array;
+        } else {
+            return null;
+        }
+    }
+
+    function write_setting($data) {
+
+        if (!empty($data)) {
+            $str = '';
+            foreach ($data as $key => $value) {
+                if ($value) {
+                    $str .= $key.',';
+                }
+            }
+            return set_config($this->name, rtrim($str, ","))?'':get_string('errorsetting', 'admin') . $this->visiblename . '<br />';
+        } else {
+            return set_config($this->name, '')?'':get_string('errorsetting', 'admin') . $this->visiblename . '<br />';
+        }
+    }
+
+    function output_html() {
+
+        if ($this->get_setting() === NULL) {
+            $currentsetting = $this->defaultsetting;
+        } else {
+            $currentsetting = $this->get_setting();
+        }
+        // from to process which roles to display
+        if ($roles = get_records('role')) {
+            $return = '<div class="form-group">';
+            $first = true;
+            foreach ($roles as $roleid=>$role) {
+                if (is_array($currentsetting) && in_array($roleid, array_keys($currentsetting))) {
+                    $checked = 'checked="checked"';
+                } else {
+                    $checked = '';
+                }
+                if ($first) {
+                    $first = false;
+                } else {
+                    $return .= '<br />';
+                }
+                $return .= '<input type="checkbox" name="s_'.$this->name.'['.$roleid.']" value="1" '.$checked.' />&nbsp;'.$role->name;
+            }
+            $return .= '</div>';
+        }
+        return format_admin_setting($this->name, $this->visiblename, $return, $this->description, false);
+    }
+}
+
 class admin_setting_special_perfdebug extends admin_setting_configcheckbox {
 
     function admin_setting_special_perfdebug() {

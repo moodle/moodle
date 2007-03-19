@@ -58,6 +58,7 @@ $string['configclamactlikevirus'] = 'Treat files like viruses';
 $string['configclamdonothing'] = 'Treat files as OK';
 $string['configclamfailureonupload'] = 'If you have configured clam to scan uploaded files, but it is configured incorrectly or fails to run for some unknown reason, how should it behave?  If you choose \'Treat files like viruses\', they\'ll be moved into the quarantine area, or deleted. If you choose \'Treat files as OK\', the files will be moved to the desination directory like normal. Either way, admins will be alerted that clam has failed.  If you choose \'Treat files like viruses\' and for some reason clam fails to run (usually because you have entered an invalid pathtoclam), ALL files that are uploaded will be moved to the given quarantine area, or deleted. Be careful with this setting.';
 $string['configcountry'] = 'If you set a country here, then this country will be selected by default on new user accounts.  To force users to choose a country, just leave this unset.';
+$string['configcoursemanager'] = 'This setting allows you to control who appears on the course description. Users need to have at least one of these roles in a course to be shown on the course description for that course.';$string['coursemanager'] = 'Course managers';
 $string['configcoursesperpage'] = 'Enter the number of courses to be display per page in a course listing.';
 $string['configdbsessions'] = 'If enabled, this setting will use the database to store information about current sessions.  This is especially useful for large/busy sites or sites built on cluster of servers.  For most sites this should probably be left disabled so that the server disk is used instead.  Note that changing this setting now will log out all current users (including you). If you are using MySQL please make sure that \'max_allowed_packet\' in my.cnf (or my.ini) is at least 4M.';
 $string['configdebug'] = 'If you turn this on, then PHP\'s error_reporting will be increased so that more warnings are printed.  This is only useful for developers.';
@@ -176,6 +177,7 @@ $string['configzip'] = 'Indicate the location of your zip program (Unix only, op
 $string['confirmation'] = 'Confirmation';
 $string['confirminstall'] = 'You are about to install language pack ($a), are you sure?';
 $string['country'] = 'Default country';
+$string['coursemanager'] = 'Course managers';
 $string['coursemgmt'] = 'Add/edit courses';
 $string['courseoverview'] = 'Course overview';
 $string['courserequests'] = 'Course Requests';

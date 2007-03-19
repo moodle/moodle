@@ -123,6 +123,10 @@ $temp = new admin_settingpage('gradebook', get_string('gradebook', 'admin'));
 $temp->add(new admin_setting_special_gradebookroles());
 $ADMIN->add('appearance', $temp);
 
+// new CFG variable for coursemanager (what roles to display)
+$temp = new admin_settingpage('coursemanager', get_string('coursemanager', 'admin'));
+$temp->add(new admin_setting_special_coursemanager());
+$ADMIN->add('appearance', $temp);
 
 $ADMIN->add('appearance', new admin_externalpage('stickyblocks', get_string('stickyblocks', 'admin'), "$CFG->wwwroot/$CFG->admin/stickyblocks.php"));
 

@@ -1550,21 +1550,21 @@ function print_course($course, $width="100%") {
          $linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.
          $course->fullname.'</a></b><br />';
 
-    if ($teachers = get_users_by_capability($context, 'moodle/course:update', 
-                                            'u.*, ul.timeaccess as lastaccess, ra.hidden', 
-                                            'r.sortorder ASC', '','','','', false)) {
-        $canseehidden = has_capability('moodle/role:viewhiddenassigns', $context);
-        $namesarray = array();
-        foreach ($teachers as $teacher) {
-            if (!$teacher->hidden || $canseehidden) {
-                $roles = get_user_roles($context, $teacher->id, true, 'r.sortorder ASC');
-                $role = array_shift($roles);  // First one
-                $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', $context));
-                $namesarray[] = format_string($role->name).': <a href="'.$CFG->wwwroot.'/user/view.php?id='.
-                                  $teacher->id.'&amp;course='.SITEID.'">'.$fullname.'</a>';
-            }
+    /// first find all roles that are supposed to be displayed
+    if ($managerroles = get_config('', 'coursemanager')) {
+        $coursemanagerroles = split(',', $managerroles->value);
+        foreach ($coursemanagerroles as $roleid) {
+            $role = get_record('role','id',$roleid);
+            if ($users = get_role_users($roleid, $context, true, '', 'u.lastname ASC', true)) {
+                foreach ($users as $teacher) {
+                    $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', $context)); 
+                    $namesarray[] = format_string($role->name).': <a href="'.$CFG->wwwroot.'/user/view.php?id='.
+                                    $teacher->id.'&amp;course='.SITEID.'">'.$fullname.'</a>';
+                }
+            }          
         }
-        if ($namesarray) {
+        
+        if (!empty($namesarray)) {
             echo "<ul class=\"teachers\">\n<li>";
             echo implode('</li><li>', $namesarray);
             echo "</li></ul>";
