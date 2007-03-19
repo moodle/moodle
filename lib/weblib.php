@@ -5563,27 +5563,6 @@ class tabobject {
 function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $activated=NULL, $return=false) {
     global $CFG;
 
-/// Bring the row with the selected tab to the front
-    if (!empty($CFG->tabselectedtofront) and ($selected !== NULL) ) {
-        $found = false;
-        $frontrows = array();
-        $rearrows  = array();
-        foreach ($tabrows as $row) {
-            if ($found) {
-                $rearrows[] = $row;
-            } else {
-                foreach ($row as $tab) {
-                    if ($found) {
-                        continue;
-                    }
-                    $found = ($selected == $tab->id);
-                }
-                $frontrows[] = $row;
-            }
-        }
-        $tabrows = array_merge($rearrows,$frontrows);
-    }
-
 /// $inactive must be an array
     if (!is_array($inactive)) {
         $inactive = array();

@@ -627,6 +627,11 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
+    if ($result && $oldversion < 2007021501) {
+    /// delete removed setting from config
+        unset_config('tabselectedtofront');
+    }
+
     return $result;
 
 }
