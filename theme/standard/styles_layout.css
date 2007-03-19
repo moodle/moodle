@@ -704,6 +704,24 @@ table.navbar {
 }
 
 /***
+ *** Filters
+ ***/
+span.mediaplugin {
+  display:block;
+  clear:both;
+  margin-top:5px;
+  margin-bottom:5px;
+}
+
+span.mediaplugin_mp3 {
+  display:inline;
+  clear:none;
+  margin:0px;
+  margin-left:0.5em;
+}
+
+
+/***
  *** Admin
  ***/
 
