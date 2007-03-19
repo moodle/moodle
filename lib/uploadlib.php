@@ -674,7 +674,7 @@ function clam_mail_admins($notice) {
     
     $site = get_site();
         
-    $subject = get_string('clamemailsubject', 'moodle', $site->fullname);
+    $subject = get_string('clamemailsubject', 'moodle', format_string($site->fullname));
     $admins = get_admins();
     foreach ($admins as $admin) {
         email_to_user($admin, get_admin(), $subject, $notice);

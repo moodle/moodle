@@ -1381,7 +1381,7 @@ function format_string ($string, $striplinks=true, $courseid=NULL ) {
     if ($strcache === false or count($strcache) > 2000 ) { // this number might need some tuning to limit memory usage in cron
         $strcache = array();
     }
-
+    
     //init course id
     if (empty($courseid)) {
         $courseid = $COURSE->id;
@@ -1397,11 +1397,11 @@ function format_string ($string, $striplinks=true, $courseid=NULL ) {
 
     // First replace all ampersands not followed by html entity code
     $string = preg_replace("/\&(?![a-z0-9#]{1,8};)/", "&amp;", $string);
-    
+
     if (!empty($CFG->filterall)) {
         $string = filter_string($string, $courseid);
     }
-
+    
     // If the site requires it, strip ALL tags from this string
     if (!empty($CFG->formatstringstriptags)) {
         $string = strip_tags($string);
@@ -2233,7 +2233,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     // Clean up the title
 
-    $title = strip_tags(format_string($title));    // fix for MDL-8582
+    $title = format_string($title);    // fix for MDL-8582
     $title = str_replace('"', '&quot;', $title);
 
     // Create class and id for this page

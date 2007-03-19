@@ -102,7 +102,7 @@
     $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 
                                             BLOCK_R_MAX_WIDTH);
 
-    print_header(strip_tags($SITE->fullname), $SITE->fullname, 'home', '',
+    print_header($SITE->fullname, $SITE->fullname, 'home', '',
                  '<meta name="description" content="'. s(strip_tags($SITE->summary)) .'" />',
                  true, '', user_login_string($SITE).$langmenu);
 
