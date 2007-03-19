@@ -10,15 +10,24 @@
 
         global $CFG;
 
+        // Trivial-cache - keyed on $cachedcourseid
         static $nothingtodo;
         static $wikipagelist;
-
-        if (!empty($nothingtodo)) {   // We've been here in this page already
-            return $text;
-        }
+        static $cachedcourseid;
 
         if (empty($courseid)) {
             $courseid = SITEID;
+        }
+
+        // Initialise/invalidate our trivial cache if dealing with a different course
+        if (!isset($cachedcourseid) || $cachedcourseid !== (int)$courseid) {
+            $wikipagelist = array();
+            $nothingtodo = false;
+        } 
+        $cachedcourseid = (int)$courseid;
+
+        if (!empty($nothingtodo)) {   // We've been here in this page already
+            return $text;
         }
 
 /// Create a list of all the wikis to search for.  It may be cached already.
