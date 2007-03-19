@@ -2612,7 +2612,7 @@ function print_context_name($context) {
     switch ($context->contextlevel) {
 
         case CONTEXT_SYSTEM: // by now it's a definite an inherit
-            $name = get_string('site');
+            $name = get_string('coresystem');
             break;
 
         case CONTEXT_PERSONAL:
@@ -2633,7 +2633,12 @@ function print_context_name($context) {
 
         case CONTEXT_COURSE: // 1 to 1 to course cat
             if ($course = get_record('course', 'id', $context->instanceid)) {
-                $name = get_string('course').': '. format_string($course->fullname);
+              
+                if ($context->instanceid == SITEID) {
+                    $name = get_string('site').': '. format_string($course->fullname);
+                } else {
+                    $name = get_string('course').': '. format_string($course->fullname);
+                }
             }
             break;
 
