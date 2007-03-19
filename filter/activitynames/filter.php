@@ -8,11 +8,19 @@
 
         global $CFG;
 
+        // Trivial-cache - keyed on $cachedcourseid
         static $activitylist;
+        static $cachedcourse;
 
         if (empty($courseid)) {
             $courseid = SITEID;
         }
+
+        // Initialise/invalidate our trivial cache if dealing with a different course
+        if (!isset($cachedcourseid) || $cachedcourseid !== (int)$courseid) {
+            $activitylist = array();
+        } 
+        $cachedcourseid = (int)$courseid;
 
         /// It may be cached
 
