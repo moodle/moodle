@@ -22,7 +22,7 @@
 <tr valign="top" class="required">
     <td align="right"><?php print_string("username") ?>:</td>
     <td>
-        <input name="user_attribute" type="text" size="30" value="<?php echo $config->user_attribute ?>">
+        <input name="user_attribute" type="text" size="30" value="<?php echo $config->user_attribute ?>" />
     </td>
     <td><?php print_string("auth_shib_username_description", "auth") ?></td>
 </tr>
@@ -52,7 +52,7 @@ instructions
 <tr valign="top">
     <td align="right"><?php print_string("auth_shib_convert_data", "auth") ?>:</td>
     <td>
-        <input name="convert_data" type="text" size="30" value="<?php echo $config->convert_data?>">
+        <input name="convert_data" type="text" size="30" value="<?php echo $config->convert_data?>" />
         <?php
 
         if ($config->convert_data and $config->convert_data != '' and !is_readable($config->convert_data)) {
