@@ -97,11 +97,6 @@
         case GLOSSARY_APPROVAL_VIEW:
             glossary_print_approval_menu($cm, $glossary, $mode, $hook, $sortkey, $sortorder);
         break;
-        case GLOSSARY_ADDENTRY_VIEW:
-            $search = "";
-            $l = "";
-            glossary_print_addentry_menu($cm, $glossary, $mode, $hook, $sortkey, $sortorder);
-        break;
         case GLOSSARY_AUTHOR_VIEW:
             $search = "";
             glossary_print_author_menu($cm, $glossary, "author", $hook, $sortkey, $sortorder, 'print');
