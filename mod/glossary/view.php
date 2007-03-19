@@ -366,7 +366,7 @@
                     $currentpivot = $upperpivot;
 
                     echo '<div>';
-                    echo '<table cellspacing="0" class="categoryheader">';
+                    echo '<table cellspacing="0" class="glossarycategoryheader">';
 
                     echo '<tr>';
                     $pivottoshow = $currentpivot;
