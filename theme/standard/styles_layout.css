@@ -2820,10 +2820,11 @@ body#mod-forum-search .introcontent {
   border-width:1px;
   border-style:solid;
   border-collapse:separate;
+  margin-left:auto;
+  margin-right:auto;
   margin-bottom: 5px;
   text-align: left;
 }
-
 
 .entrylist {
   border-width:0px;
@@ -2832,23 +2833,31 @@ body#mod-forum-search .introcontent {
 .entrylowersection {
   padding-top: 10px;
 }
+
 .entrylowersection table{
   width: 100%;
 }
+
 .entrylowersection .aliases {
   text-align:center;
 }
+
 .entrylowersection .icons,
 .entrylowersection .ratings {
   text-align:right;
   padding-right: 5px;
 }
+
 .entrylowersection .ratings {
   padding-bottom: 2px;
 }
-.categoryheader {
+
+.glossarycategoryheader {
   width: 95%;
+  margin-left:auto;
+  margin-right:auto;
 }
+
 .glossaryformatheader {
   width: 90%;
 }
@@ -2868,7 +2877,6 @@ body#mod-forum-search .introcontent {
   margin-bottom: 5px;
   text-align: left;
 }
-
 
 .glossarycomment .entry {
   padding: 3px;
