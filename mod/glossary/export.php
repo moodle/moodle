@@ -65,7 +65,7 @@
     <form action="exportfile.php" method="post">
     <table border="0" cellpadding="6" cellspacing="6" width="100%">
     <tr><td align="center">
-        <input type="submit" value="<?php p($strexportfile)?>">
+        <input type="submit" value="<?php p($strexportfile)?>" />
     </td></tr></table>
     <input type="hidden" name="id" value="<?php p($id)?>" />
     <input type="hidden" name="l" value="<?php p($l)?>" />

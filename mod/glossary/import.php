@@ -65,7 +65,6 @@
     if ( !$step ) {
         include("import.html");
 
-        echo '</center>';
         glossary_print_tabbed_table_end();
         print_footer($course);
         exit;
