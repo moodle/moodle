@@ -1211,7 +1211,7 @@ function glossary_print_tabbed_table_end() {
 
 function glossary_print_approval_menu($cm, $glossary,$mode, $hook, $sortkey = '', $sortorder = '') {
     if ($glossary->showalphabet) {
-        echo '<div style="text-align:center">' . get_string("explainalphabet","glossary") . '</div><br />';
+        echo '<div class="glossaryexplain">' . get_string("explainalphabet","glossary") . '</div><br />';
     }
     glossary_print_special_links($cm, $glossary, $mode, $hook);
 
@@ -1222,22 +1222,18 @@ function glossary_print_approval_menu($cm, $glossary,$mode, $hook, $sortkey = ''
     glossary_print_sorting_links($cm, $mode, 'CREATION', 'asc');
 }
 
-function glossary_print_addentry_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
-    echo '<div style="text-align:center">' . get_string("explainaddentry","glossary") . '</div><br />';
-}
-
 function glossary_print_import_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
-    echo '<div style="text-align:center">' . get_string("explainimport","glossary") . '</div><br />';
+    echo '<div class="glossaryexplain">' . get_string("explainimport","glossary") . '</div>';
 }
 
 function glossary_print_export_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
-    echo '<div style="text-align:center">' . get_string("explainexport","glossary") . '</div><br />';
+    echo '<div class="glossaryexplain">' . get_string("explainexport","glossary") . '</div>';
 }
 
 function glossary_print_alphabet_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
     if ( $mode != 'date' ) {
         if ($glossary->showalphabet) {
-            echo '<div style="text-align:center">' . get_string("explainalphabet","glossary") . '</div><br />';
+            echo '<div class="glossaryexplain">' . get_string("explainalphabet","glossary") . '</div><br />';
         }
 
         glossary_print_special_links($cm, $glossary, $mode, $hook);
@@ -1252,12 +1248,12 @@ function glossary_print_alphabet_menu($cm, $glossary, $mode, $hook, $sortkey='',
 
 function glossary_print_author_menu($cm, $glossary,$mode, $hook, $sortkey = '', $sortorder = '') {
     if ($glossary->showalphabet) {
-        echo '<div style="text-align:center">' . get_string("explainalphabet","glossary") . '</div><br />';
+        echo '<div class="glossaryexplain">' . get_string("explainalphabet","glossary") . '</div><br />';
     }
 
-    glossary_print_sorting_links($cm, $mode, $sortkey,$sortorder);
     glossary_print_alphabet_links($cm, $glossary, $mode, $hook, $sortkey, $sortorder);
     glossary_print_all_links($cm, $glossary, $mode, $hook);
+    glossary_print_sorting_links($cm, $mode, $sortkey,$sortorder);
 }
 
 function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
