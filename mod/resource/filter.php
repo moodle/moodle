@@ -7,15 +7,24 @@
 
         global $CFG;
 
+        // Trivial-cache - keyed on $cachedcourseid
         static $nothingtodo;
         static $resourcelist;
-
-        if (!empty($nothingtodo)) {   // We've been here in this page already
-            return $text;
-        }
+        static $cachedcourseid;
 
         // if we don't have a courseid, we can't run the query, so
         if (empty($courseid)) {
+            return $text;
+        }
+
+        // Initialise/invalidate our trivial cache if dealing with a different course
+        if (!isset($cachedcourseid) || $cachedcourseid !== (int)$courseid) {
+            $resourcelist = array();
+            $nothingtodo = false;
+        } 
+        $cachedcourseid = (int)$courseid;
+
+        if ($nothingtodo === true) {
             return $text;
         }
         
