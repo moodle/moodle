@@ -283,7 +283,7 @@ echo "BLAH";
         }
     }
 
-    function usage {
+    function usage() {
     return <<<EOD
     pprofp <flags> <trace file>
         Sort options
