@@ -6526,6 +6526,12 @@ function get_performance_info() {
         $info['html'] .= '<span class="logwrites">Log writes '.$info['logwrites'].'</span> ';
         $info['txt'] .= 'logwrites: '.$info['logwrites'].' ';
     }
+    
+    if (!empty($PERF->profiling)) {
+        require_once($CFG->dirroot .'/lib/profilerlib.php');
+        $profiler = new Profiler();
+        $info['html'] .= '<span class="profilinginfo">'.$profiler->get_profiling().'</span>';
+    }
 
     if (function_exists('posix_times')) {
         $ptimes = posix_times();
@@ -6569,6 +6575,9 @@ function get_performance_info() {
     return $info;
 }
 
+function apd_get_profiling() {
+    return shell_exec('pprofp -u ' . ini_get('apd.dumpdir') . '/pprof.' . getmypid() . '.*');
+}
 
 function remove_dir($dir, $content_only=false) {
     // if content_only=true then delete all but
