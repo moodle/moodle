@@ -165,8 +165,14 @@
 /// If so, make sure the current person is allowed to see this discussion
 /// Also, if we know they should be able to reply, then explicitly set $canreply
     
+    if ($forum->type == 'news') {
+        $capname = 'mod/forum:replynews';
+    } else {
+        $capname = 'mod/forum:replypost';
+    }    
+    
     $groupmode = groupmode($course, $cm);
-    if ($canreply = has_capability('mod/forum:replypost', $modcontext)) {  /// Check capability first, if not allowed, no point checking further
+    if ($canreply = has_capability($capname, $modcontext)) {  /// Check capability first, if not allowed, no point checking further
 
         // now check groups just in case user is not a member of group in which he can post       
     
