@@ -1118,7 +1118,16 @@ function load_all_capabilities() {
             $defcaps = load_defaultuser_role(true);
         }
 
-        load_user_capability();
+        if (empty($USER->realuser)) {
+            load_user_capability();
+        } else {
+            if ($USER->loginascontext->contextlevel != CONTEXT_SYSTEM) {
+                // load only course caqpabilitites - it may not always work as expected
+                load_user_capability('', $USER->loginascontext);
+            } else {
+                load_user_capability();
+            }
+        }
 
         if (!empty($USER->switchrole)) {
 

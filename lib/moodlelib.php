@@ -1658,6 +1658,16 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
         exit;
     }
 
+/// loginas as redirection if needed
+    if ($COURSE->id != SITEID and !empty($USER->realuser)) {
+        if ($USER->loginascontext->contextlevel == CONTEXT_COURSE) {
+            if ($USER->loginascontext->instanceid != $COURSE->id) {
+                print_error('loginascourseredir', '', $CFG->wwwroot.'/course/view.php?id='.$USER->loginascontext->instanceid);
+            } 
+        }
+    }
+
+
 /// check whether the user should be changing password (but only if it is REALLY them)
     $userauth = get_auth_plugin($USER->auth);
     if (get_user_preferences('auth_forcepasswordchange') && empty($USER->realuser)) {

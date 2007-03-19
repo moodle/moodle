@@ -1,13 +1,17 @@
 <?php // $Id$
       // Allows a teacher/admin to login as another user (in stealth mode)
 
-    require_once("../config.php");
-    require_once("lib.php");
+    require_once('../config.php');
+    require_once('lib.php');
 
 /// Reset user back to their real self if needed
-    $return   = optional_param('return', 0, PARAM_BOOL);   // return to the page we came from
+    $return = optional_param('return', 0, PARAM_BOOL);   // return to the page we came from
 
     if (!empty($USER->realuser)) {
+        if (!confirm_sesskey()) {
+            print_error('confirmsesskeybad');
+        }
+        
         $USER = get_complete_user_data('id', $USER->realuser);
         load_all_capabilities();   // load all this user's normal capabilities
 
@@ -27,41 +31,42 @@
         }
     }
 
-
 ///-------------------------------------
 /// We are trying to log in as this user in the first place
 
-    $id       = required_param('id', PARAM_INT);           // course id
-    $userid   = required_param('user', PARAM_INT);         // login as this user
+    $id     = optional_param('id', SITEID, PARAM_INT);   // course id
+    $userid = required_param('user', PARAM_INT);         // login as this user
 
-    if (!$site = get_site()) {
-        error("Site isn't defined!");
+    if (!confirm_sesskey()) {
+        print_error('confirmsesskeybad');
     }
-
-    if (! $course = get_record("course", "id", $id)) {
+    
+    if (! $course = get_record('course', 'id', $id)) {
         error("Course ID was incorrect");
     }
 
 /// User must be logged in
 
-    if ($course->id == SITEID) {
-        require_login();
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
-    } else {
-        require_login($course->id);
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        if (!has_capability('moodle/course:view', $context, $userid, false)) {
-            error('This user is not in this course!');
-        }
-        if (has_capability('moodle/site:doanything', $context, $userid, false)) {
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+
+    require_login();
+
+    if (has_capability('moodle/user:loginas', $systemcontext)) {
+        if (has_capability('moodle/site:doanything', $systemcontext, $userid, false)) {
             print_error('nologinas');
         }
+        $context = $systemcontext;
+    } else if (has_capability('moodle/user:loginas', $coursecontext)) {
+        require_login($course);
+        if (!has_capability('moodle/course:view', $coursecontext, $userid, false)) {
+            error('This user is not in this course!');
+        }
+        if (has_capability('moodle/site:doanything', $coursecontext, $userid, false)) {
+            print_error('nologinas');
+        }
+        $context = $coursecontext;
     }
-
-/// User must have permissions
-
-    require_capability('moodle/user:loginas', $context);
-
 
 /// Remember current timeaccess settings for later
 
@@ -74,10 +79,11 @@
     $oldfullname = fullname($USER, true);
     $olduserid   = $USER->id;
 
-    $USER = get_complete_user_data('id', $userid);    // Create the new USER object with all details
+/// Create the new USER object with all details and reload needed capabilitites
+    $USER = get_complete_user_data('id', $userid);
     $USER->realuser = $olduserid;
-
-    load_user_capability('', $context); // load this user's capabilities for this context only
+    $USER->loginascontext = $context;
+    load_all_capabilities();   // reload capabilities
 
     if (isset($SESSION->currentgroup)) {    // Remember current cache setting for later
         $SESSION->oldcurrentgroup = $SESSION->currentgroup;
