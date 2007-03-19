@@ -39,6 +39,7 @@ $string['invalidfiletype'] = '\"$a\" is not a valid file type';
 $string['invalidmd5'] = 'Invalid md5';
 $string['invalidrole'] = 'Invalid role';
 $string['invalidxmlfile'] = '\"$a\" is not a valid XML file';
+$string['loginascourseredir'] = 'You can not enter this course.<br /> You have to terminate the \"Login as\" session before entering any other course.';
 $string['missingfield'] = 'Field \"$a\" is missing';
 $string['missingrequiredfield'] = 'Some required field is missing';
 $string['modulemissingcode'] = 'Module $a is missing the code needed to perform this function';
