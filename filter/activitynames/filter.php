@@ -10,7 +10,7 @@
 
         // Trivial-cache - keyed on $cachedcourseid
         static $activitylist;
-        static $cachedcourse;
+        static $cachedcourseid;
 
         if (empty($courseid)) {
             $courseid = SITEID;
