@@ -12,7 +12,7 @@
     }
 
     if (empty($CFG->enablecourserequests)) {
-        error(get_string('courserequestdisabled'));
+        print_error('courserequestdisabled');
     }
 
     $requestform = new course_request_form();
