@@ -263,6 +263,24 @@
         return make_upload_directory( blog_file_area_name($blogentry) );
     }
 
+    function blog_delete_old_attachments($post, $exception="") {
+    // Deletes all the user files in the attachments area for a post
+    // EXCEPT for any file named $exception
+
+        if ($basedir = blog_file_area($post)) {
+            if ($files = get_directory_list($basedir)) {
+                foreach ($files as $file) {
+                    if ($file != $exception) {
+                        unlink("$basedir/$file");
+                        notify("Existing file '$file' has been deleted!");
+                    }
+                }
+            }
+            if (!$exception) {  // Delete directory as well, if empty
+                rmdir("$basedir");
+            }
+        }
+    }
 
     function blog_print_attachments($blogentry, $return=NULL) {
     // if return=html, then return a html string.

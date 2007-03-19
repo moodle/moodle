@@ -244,7 +244,9 @@ function do_delete($post) {
 
     $status = delete_records('post', 'id', $post->id);
     $status = delete_records('blog_tag_instance', 'entryid', $post->id) and $status;
-
+    
+    blog_delete_old_attachments($post);
+    
     add_to_log(SITEID, 'blog', 'delete', 'index.php?userid='. $post->userid, 'deleted blog entry with entry id# '. $post->id);
 
     if (!$status) {
