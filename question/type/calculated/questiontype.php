@@ -1,5 +1,8 @@
 <?php  // $Id$
-
+/**
+ * @package questionbank
+ * @subpackage questiontypes
+*/
 /////////////////
 // CALCULATED ///
 /////////////////

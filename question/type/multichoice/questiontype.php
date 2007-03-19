@@ -10,6 +10,10 @@
 /// This class contains some special features in order to make the
 /// question type embeddable within a multianswer (cloze) question
 ///
+/**
+ * @package questionbank
+ * @subpackage questiontypes
+*/
 
 class question_multichoice_qtype extends default_questiontype {
 

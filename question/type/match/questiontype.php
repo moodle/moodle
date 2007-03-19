@@ -5,6 +5,10 @@
 /////////////
 
 /// QUESTION TYPE CLASS //////////////////
+/**
+ * @package questionbank
+ * @subpackage questiontypes
+*/
 class question_match_qtype extends default_questiontype {
 
     function name() {

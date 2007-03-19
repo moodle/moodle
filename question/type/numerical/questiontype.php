@@ -3,7 +3,8 @@
  * @version $Id$
  * @author Martin Dougiamas and many others. Tim Hunt.
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package question
+ * @package questionbank
+ * @subpackage questiontypes
  *//** */
 
 require_once("$CFG->dirroot/question/type/shortanswer/questiontype.php");
@@ -16,6 +17,8 @@ require_once("$CFG->dirroot/question/type/shortanswer/questiontype.php");
  *
  * This question type behaves like shortanswer in most cases.
  * Therefore, it extends the shortanswer question type...
+ * @package questionbank
+ * @subpackage questiontypes
  */
 class question_numerical_qtype extends question_shortanswer_qtype {
 

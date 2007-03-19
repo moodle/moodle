@@ -12,6 +12,8 @@
  * When a question is encountered with a type that is not installed then its
  * type is changed to 'missingtype'. This questiontype just makes sure that the
  * necessary information is printed about the question.
+ * @package questionbank
+ * @subpackage questiontypes
  */
 class question_missingtype_qtype extends default_questiontype {
 

@@ -7,7 +7,8 @@
 * @author Alex Smith and other members of the Serving Mathematics project
 *         {@link http://maths.york.ac.uk/serving_maths}
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package quiz
+ * @package questionbank
+ * @subpackage questiontypes
 */
 
 require_once($CFG->dirroot . '/question/type/rqp/lib.php');

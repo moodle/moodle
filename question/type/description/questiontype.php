@@ -10,7 +10,10 @@
 // The question type 'description' is not really a question type
 // and it therefore often sticks to some kind of odd behaviour
 //
-
+/**
+ * @package questionbank
+ * @subpackage questiontypes
+*/
 class description_qtype extends default_questiontype {
 
     function name() {
