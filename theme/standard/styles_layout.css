@@ -2919,8 +2919,9 @@ body#mod-forum-search .introcontent {
   width: auto;
 }
 
+.glossaryexplain,
 .glossaryaddentry {
-  text-align:center;
+  text-align: center;
 }
 
 
