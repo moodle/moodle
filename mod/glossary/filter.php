@@ -3,15 +3,24 @@
 function glossary_filter($courseid, $text) {
     global $CFG;
 
+    // Trivial-cache - keyed on $cachedcourseid
     static $nothingtodo;
     static $conceptlist;
-
-    if (!empty($nothingtodo)) {   // We've been here in this page already
-        return $text;
-    }
+    static $cachedcourseid;
 
     if (empty($courseid)) {
         $courseid = SITEID;
+    }
+
+    // Initialise/invalidate our trivial cache if dealing with a different course
+    if (!isset($cachedcourseid) || $cachedcourseid !== (int)$courseid) {
+        $conceptlist = array();
+        $nothingtodo = false;
+    } 
+    $cachedcourseid = (int)$courseid;
+
+    if ($nothingtodo === true) {
+        return $text;
     }
 
 /// Create a list of all the concepts to search for.  It may be cached already.
