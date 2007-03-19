@@ -1,5 +1,10 @@
 <?php //$Id$
-    //This php script contains all the stuff to backup questions
+/**
+ * Question bank backup code.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package questionbank
+ *//** */
 
 //This is the "graphical" structure of the question database:
     //To see, put your terminal to 160cc

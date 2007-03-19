@@ -6,7 +6,7 @@
  *
  * @author T.J.Hunt@open.ac.uk
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package question
+ * @package questionbank
  *//** */
 
 // Includes.

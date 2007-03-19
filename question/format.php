@@ -1,13 +1,22 @@
 <?php  // $Id$ 
+/**
+ * Base class for question import and export formats.
+ *
+ * @author Martin Dougiamas, Howard Miller, and many others.
+ *         {@link http://moodle.org}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package questionbank
+ * @subpackage importexport
+ *//** */
 
-////////////////////////////////////////////////////////////////////
-/// format.php  - Default format class for file imports/exports.  //
-///                                                               //
-/// Doesn't do everything on it's own -- it needs to be extended. //
-////////////////////////////////////////////////////////////////////
-
-// Included by import.php and export.php
-
+/**
+ * Base class for question import and export formats.
+ * 
+ * Doesn't do everything on it's own -- it needs to be extended.
+ * 
+ * @package questionbank
+ * @subpackage importexport
+ */
 class qformat_default {
 
     var $displayerrors = true;

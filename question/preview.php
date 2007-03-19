@@ -1,20 +1,19 @@
 <?php // $Id$
 /**
-* This page displays a preview of a question
-*
-* The preview uses the option settings from the activity within which the question
-* is previewed or the default settings if no activity is specified. The question session
-* information is stored in the session as an array of subsequent states rather
-* than in the database.
-*
-* TODO: make this work with activities other than quiz
-*
-* @version $Id$
-* @author Alex Smith as part of the Serving Mathematics project
-*         {@link http://maths.york.ac.uk/serving_maths}
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package question
-*/
+ * This page displays a preview of a question
+ *
+ * The preview uses the option settings from the activity within which the question
+ * is previewed or the default settings if no activity is specified. The question session
+ * information is stored in the session as an array of subsequent states rather
+ * than in the database.
+ *
+ * TODO: make this work with activities other than quiz
+ *
+ * @author Alex Smith as part of the Serving Mathematics project
+ *         {@link http://maths.york.ac.uk/serving_maths}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package questionbank
+ */
 
     require_once("../config.php");
     require_once($CFG->libdir.'/questionlib.php');

@@ -1,17 +1,16 @@
 <?php // $Id$
 /**
-* Functions used by showbank.php to show question editing interface
-*
-* TODO: currently the function question_list still provides controls specific
-*       to the quiz module. This needs to be generalised.
-*
-* @version $Id$
-* @author Martin Dougiamas and many others. This has recently been extensively
-*         rewritten by members of the Serving Mathematics project
-*         {@link http://maths.york.ac.uk/serving_maths}
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package question
-*/
+ * Functions used by showbank.php to show question editing interface
+ *
+ * TODO: currently the function question_list still provides controls specific
+ *       to the quiz module. This needs to be generalised.
+ *
+ * @author Martin Dougiamas and many others. This has recently been extensively
+ *         rewritten by members of the Serving Mathematics project
+ *         {@link http://maths.york.ac.uk/serving_maths}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package questionbank
+ */
 
 require_once($CFG->libdir.'/questionlib.php');
 

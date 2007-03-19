@@ -1,15 +1,15 @@
 <?php  // $Id$
 /**
-* The default questiontype class.
-*
-* @version $Id$
-* @author Martin Dougiamas and many others. This has recently been completely
-*         rewritten by Alex Smith, Julian Sedding and Gustav Delius as part of
-*         the Serving Mathematics project
-*         {@link http://maths.york.ac.uk/serving_maths}
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package quiz
-*//** */
+ * The default questiontype class.
+ *
+ * @author Martin Dougiamas and many others. This has recently been completely
+ *         rewritten by Alex Smith, Julian Sedding and Gustav Delius as part of
+ *         the Serving Mathematics project
+ *         {@link http://maths.york.ac.uk/serving_maths}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package questionbank
+ * @subpackage questiontypes
+ *//** */
 
 require_once($CFG->libdir . '/questionlib.php');
 
@@ -25,6 +25,9 @@ require_once($CFG->libdir . '/questionlib.php');
  * experiences of the first few question type implementors, and improve the
  * interface to meet their needs, rather the freeze the API prematurely and
  * condem everyone to working round a clunky interface for ever afterwards.
+ * 
+ * @package questionbank
+ * @subpackage questiontypes
  */
 class default_questiontype {
 

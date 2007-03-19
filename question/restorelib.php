@@ -1,5 +1,10 @@
 <?php //$Id$
-    //This php script contains all the stuff to restore questions
+/**
+ * Question bank restore code.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package questionbank
+ *//** */
 
 // Todo:
     // the restoration of the parent and sortorder fields in the category table needs

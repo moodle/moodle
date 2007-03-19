@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 /**
  * Page for editing questions
  *
@@ -10,12 +10,11 @@
  * TODO: currently this still treats the quiz as special
  * TODO: question versioning is not currently enabled
  *
- * @version $Id$
  * @author Martin Dougiamas and many others. This has recently been extensively
  *         rewritten by members of the Serving Mathematics project
  *         {@link http://maths.york.ac.uk/serving_maths}
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package question
+ * @package questionbank
  *//** */
 
     require_once(dirname(__FILE__) . '/../config.php');

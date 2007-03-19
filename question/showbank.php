@@ -1,22 +1,22 @@
 <?php // $Id$
 /**
-* Shows the question bank editing interface. To be included by other pages
-*
-* The script also processes a number of actions:
-* Actions affecting the question pool:
-* move         Moves a question to a different category
-* deleteselected Deletes the selected questions from the category
-* Other actions:
-* cat          Chooses the category
-* displayoptions Sets display options
-*
-* @version $Id$
-* @author Martin Dougiamas and many others. This has recently been extensively
-*         rewritten by Gustav Delius and other members of the Serving Mathematics project
-*         {@link http://maths.york.ac.uk/serving_maths}
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package question
-*/
+ * Shows the question bank editing interface. To be included by other pages
+ *
+ * The script also processes a number of actions:
+ * 
+ * Actions affecting the question pool:
+ * move           Moves a question to a different category
+ * deleteselected Deletes the selected questions from the category
+ * Other actions:
+ * cat            Chooses the category
+ * displayoptions Sets display options
+ *
+ * @author Martin Dougiamas and many others. This has recently been extensively
+ *         rewritten by Gustav Delius and other members of the Serving Mathematics project
+ *         {@link http://maths.york.ac.uk/serving_maths}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package questionbank
+ */
 
     // Make sure this can only be used from within Moodle scripts
     defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');

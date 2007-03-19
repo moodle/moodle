@@ -5,7 +5,8 @@
  * @copyright &copy; 2006 The Open University
  * @author T.J.Hunt@open.ac.uk
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package quiz
+ * @package questionbank
+ * @subpackage questiontypes
  *//** */
 
 /**
@@ -13,6 +14,9 @@
  * all question types need. Question types should define their own
  * class that inherits from this one, and implements the definition_inner()
  * method.
+ * 
+ * @package questionbank
+ * @subpackage questiontypes
  */
 class question_edit_form extends moodleform {
     /**

@@ -1,11 +1,10 @@
 <?php  // $Id$
 /**
-* Sets up the tabs used by the question bank editing page
-*
-* @version $Id$
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package question
-*/
+ * Sets up the tabs used by the question bank editing page
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package questionbank
+ */
 
 /// This file to be included so we can assume config.php has already been included.
 
