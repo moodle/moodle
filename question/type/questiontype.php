@@ -8,7 +8,7 @@
 *         the Serving Mathematics project
 *         {@link http://maths.york.ac.uk/serving_maths}
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package quiz
+* @package question
 *//** */
 
 require_once($CFG->libdir . '/questionlib.php');
