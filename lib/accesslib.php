@@ -1124,6 +1124,14 @@ function load_all_capabilities() {
             if ($USER->loginascontext->contextlevel != CONTEXT_SYSTEM) {
                 // load only course caqpabilitites - it may not always work as expected
                 load_user_capability('', $USER->loginascontext);
+                // find all child contexts and unset the rest
+                $children = get_child_contexts($USER->loginascontext);
+                $children[] = $USER->loginascontext->id;
+                foreach ($USER->capabilities as $conid => $caps) {
+                    if (!in_array($conid, $children)) {
+                        unset($USER->capabilities[$conid]);
+                    }
+                }
             } else {
                 load_user_capability();
             }
