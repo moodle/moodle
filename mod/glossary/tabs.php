@@ -15,12 +15,6 @@
     $inactive = array();
     $activated = array();
 
-
-    if (has_capability('mod/glossary:write', $context)) {
-        $toolsrow[] = new tabobject(GLOSSARY_ADDENTRY_VIEW, 
-                                    $CFG->wwwroot.'/mod/glossary/edit.php?id='.$cm->id, 
-                                    get_string('addentry', 'glossary'));
-    }
     if (has_capability('mod/glossary:import', $context)) {
         $toolsrow[] = new tabobject(GLOSSARY_IMPORT_VIEW, 
                                     $CFG->wwwroot.'/mod/glossary/import.php?id='.$cm->id, 

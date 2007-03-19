@@ -264,7 +264,6 @@
     }
 
 /// Search box
-
     echo '<form method="post" action="view.php">';
 
     echo '<table align="center" width="70%" border="0">';
@@ -288,6 +287,23 @@
     echo '</td></tr></table>';
 
     echo '</form>';
+
+    echo '<br />';
+
+/// Show the add entry button if allowed
+    if (has_capability('mod/glossary:write', $context)) {
+        echo '<div class="singlebutton glossaryaddentry">';
+        echo "<form id=\"newentryform\" method=\"get\" action=\"$CFG->wwwroot/mod/glossary/edit.php\">";
+        echo '<div>';
+        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
+        echo '<input type="submit" value="';
+        print_string('addentry', 'glossary');
+        echo '" />';
+        echo '</div>';
+        echo '</form>';
+        echo "</div>\n";
+    }
+
     echo '<br />';
 
     include("tabs.php");
