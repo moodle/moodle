@@ -190,7 +190,7 @@ if ($mform->is_cancelled()){
 
 $strglossary = get_string("modulename", "glossary");
 $strglossaries = get_string("modulenameplural", "glossary");
-$stredit = get_string("edit");
+$stredit = empty($e) ? get_string('addentry', 'glossary') : get_string("edit");
 
 
 print_header_simple(format_string($glossary->name), "",
@@ -204,15 +204,13 @@ print_heading(format_string($glossary->name));
 
 /// Info box
 
-if ( $glossary->intro ) {
-    print_simple_box(format_text($glossary->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
-}
-
-echo '<br />';
+///if ( $glossary->intro ) {
+///    print_simple_box(format_text($glossary->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
+///}
 
 /// Tabbed browsing sections
-$tab = GLOSSARY_ADDENTRY_VIEW;
-include("tabs.php");
+///$tab = GLOSSARY_ADDENTRY_VIEW;
+///include("tabs.php");
 
 if (!$e) {
     require_capability('mod/glossary:write', $context);
@@ -220,7 +218,7 @@ if (!$e) {
 
 $mform->display();
 
-glossary_print_tabbed_table_end();
+///glossary_print_tabbed_table_end();
 
 
 print_footer($course);
