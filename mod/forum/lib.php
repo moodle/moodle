@@ -450,9 +450,6 @@ function forum_cron() {
                 $posttext = forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto);
                 $posthtml = forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $userto);
 
-                unset($USER);
-                // Send the post now!
-
                 mtrace('Sending ', '');
 
                 if (!$mailresult = email_to_user($userto, $userfrom, $postsubject, $posttext,

@@ -1344,9 +1344,9 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
         echo '<p>Error: Could not insert a new entry to the Moodle log</p>';  // Don't throw an error
     }
 
-/// Store lastaccess times for the current user 
+/// Store lastaccess times for the current user, do not use in cron and other commandline scripts
 
-    if (!empty($USER->id) && ($userid == $USER->id) ) {
+    if (!empty($USER->id) && ($userid == $USER->id) && !defined('FULLME')) {
         $db->Execute('UPDATE '. $CFG->prefix .'user 
                          SET lastip=\''. $REMOTE_ADDR .'\', lastaccess=\''. $timenow .'\'
                        WHERE id = \''. $userid .'\' ');
