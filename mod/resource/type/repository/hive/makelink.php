@@ -2,16 +2,22 @@
 
     require_once('../../../../../config.php');
 
+    if (empty($CFG->hivehost) or empty($CFG->hiveport) or empty($CFG->hiveprotocol) or empty($CFG->hivepath)) {
+        print_header();
+        notify('A Hive repository is not yet configured in Moodle.  Please see Resource settings.');
+        print_footer();
+        die;
+    }
+
     print_header();
     
-    $urlparts = parse_url($FULLME);
+    $aliasid   = optional_param('aliasid', '', PARAM_RAW);
+    $latest    = optional_param('lastes', '', PARAM_RAW);
+    $itemid    = optional_param('itemid', '', PARAM_RAW);
+    $format    = optional_param('format', '', PARAM_RAW);
+    $filename  = optional_param('filename', '', PARAM_RAW);
+    $title     = optional_param('title', '', PARAM_RAW);
     
-    $parts = explode('&', $urlparts['query']);
-    
-    foreach ($parts as $part) {
-        $part = explode('=', $part);
-        $$part[0] = $part[1];
-    }
     /// Generate the HIVE_REF parameter
     $hive_ref = 'HIVE_REF=hii%3A'. $aliasid;
     if ($latest != 'Y') {
@@ -32,8 +38,8 @@
 
 <script type="text/javascript">
 //<![CDATA[
-    opener.document.forms['form'].reference.value = '<?php echo addslashes($resource) ?>';
-    opener.document.forms['form'].name.value = '<?php echo addslashes(urldecode($title)) ?>';
+    opener.document.getElementById['id_reference'].value = '<?php echo addslashes_js($resource) ?>';
+    opener.document.getElementById['id_name'].value = '<?php echo addslashes_js($title) ?>';
     opener.focus();
     window.close();
 //]]>
