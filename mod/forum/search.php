@@ -9,14 +9,14 @@
     $perpage = optional_param('perpage', 10, PARAM_INT);   // how many per page
     $showform = optional_param('showform', 0, PARAM_INT);   // Just show the form
 
-    $user    = trim(optional_param('user', '', PARAM_NOTAGS));    // Names to search for
+    $user    = stripslashes(trim(optional_param('user', '', PARAM_NOTAGS)));    // Names to search for
     $userid  = trim(optional_param('userid', 0, PARAM_INT));      // UserID to search for
     $forumid = trim(optional_param('forumid', 0, PARAM_INT));      // ForumID to search for
-    $subject = trim(optional_param('subject', '', PARAM_NOTAGS)); // Subject
-    $phrase  = trim(optional_param('phrase', '', PARAM_NOTAGS));  // Phrase
-    $words   = trim(optional_param('words', '', PARAM_NOTAGS));   // Words
-    $fullwords = trim(optional_param('fullwords', '', PARAM_NOTAGS)); // Whole words
-    $notwords = trim(optional_param('notwords', '', PARAM_NOTAGS));   // Words we don't want
+    $subject = stripslashes(trim(optional_param('subject', '', PARAM_NOTAGS))); // Subject
+    $phrase  = stripslashes(trim(optional_param('phrase', '', PARAM_NOTAGS)));  // Phrase
+    $words   = stripslashes(trim(optional_param('words', '', PARAM_NOTAGS)));   // Words
+    $fullwords = stripslashes(trim(optional_param('fullwords', '', PARAM_NOTAGS))); // Whole words
+    $notwords = stripslashes(trim(optional_param('notwords', '', PARAM_NOTAGS)));   // Words we don't want
 
     $timefromrestrict = optional_param('timefromrestrict', 0, PARAM_INT); // Use starting date
     $fromday = optional_param('fromday', 0, PARAM_INT);      // Starting date
@@ -263,6 +263,9 @@
 
 
 
+/**
+ * @todo Document this function
+ */
 function forum_print_big_search_form($course) {
     global $CFG, $words, $subject, $phrase, $user, $userid, $fullwords, $notwords, $datefrom, $dateto;
 
@@ -276,11 +279,11 @@ function forum_print_big_search_form($course) {
     echo "</script>\n";
 
     echo '<form id="searchform" action="search.php" method="get">';
-    echo '<input type="hidden" value="'.$course->id.'" name="id" alt="" />';
     echo '<table cellpadding="10" class="searchbox" id="form">';
 
     echo '<tr>';
-    echo '<td class="c0">'.get_string('searchwords', 'forum').':</td>';
+    echo '<td class="c0">'.get_string('searchwords', 'forum').':';
+    echo '<input type="hidden" value="'.$course->id.'" name="id" alt="" /></td>';
     echo '<td class="c1"><input type="text" size="35" name="words" value="'.s($words).'" alt="" /></td>';
     echo '</tr>';
 
@@ -380,7 +383,9 @@ function forum_print_big_search_form($course) {
     print_simple_box_end();
 }
 
-
+/**
+ * @todo Document this function
+ */
 function forum_clean_search_terms($words, $prefix='') {
     $searchterms = explode(' ', $words);
     foreach ($searchterms as $key => $searchterm) {
@@ -393,6 +398,9 @@ function forum_clean_search_terms($words, $prefix='') {
     return trim(implode(' ', $searchterms));
 }
 
+/**
+ * @todo Document this function
+ */
 function forum_menu_list($course)  {
 
     $menu = array();
