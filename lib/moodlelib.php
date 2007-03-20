@@ -2472,7 +2472,7 @@ function create_user_record($username, $password, $auth='') {
 
     if (insert_record('user', $newuser)) {
         $user = get_complete_user_data('username', $newuser->username);
-        if($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'}){
+        if(!empty($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'})){
             set_user_preference('auth_forcepasswordchange', 1, $user->id);
         }
         update_internal_user_password($user, $password);
