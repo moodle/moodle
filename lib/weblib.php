@@ -1774,8 +1774,9 @@ function replace_smilies(&$text) {
 ///
     global $CFG;
 
+    $lang = current_language();
+
 /// this builds the mapping array only once
-    static $runonce = false;
     static $e = array();
     static $img = array();
     static $emoticons = array(
@@ -1809,14 +1810,15 @@ function replace_smilies(&$text) {
         '( )'  => 'egg'
         );
 
-    if ($runonce == false) {  /// After the first time this is not run again
+    if (empty($img[$lang])) {  /// After the first time this is not run again
+        $e[$lang] = array();
+        $img[$lang] = array();
         foreach ($emoticons as $emoticon => $image){
             $alttext = get_string($image, 'pix');
 
-            $e[] = $emoticon;
-            $img[] = '<img alt="'. $alttext .'" width="15" height="15" src="'. $CFG->pixpath .'/s/'. $image .'.gif" />';
+            $e[$lang][] = $emoticon;
+            $img[$lang][] = '<img alt="'. $alttext .'" width="15" height="15" src="'. $CFG->pixpath .'/s/'. $image .'.gif" />';
         }
-        $runonce = true;
     }
 
     // Exclude from transformations all the code inside <script> tags
@@ -1837,7 +1839,7 @@ function replace_smilies(&$text) {
     }
 
 /// this is the meat of the code - this is run every time
-    $text = str_replace($e, $img, $text);
+    $text = str_replace($e[$lang], $img[$lang], $text);
 
     // Recover all the <script> zones to text
     if ($excludes) {
