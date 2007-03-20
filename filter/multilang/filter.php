@@ -41,6 +41,7 @@ function multilang_filter($courseid, $text) {
 
     // [pj] I don't know about you but I find this new implementation funny :P
     // [skodak] I was laughing while rewriting it ;-)
+    // [nicolasconnault] Should support inverted attributes: <span class="multilang" lang="en"> (Doesn't work curently)
 
     if (empty($CFG->filter_multilang_force_old) and !empty($CFG->filter_multilang_converted)) {
         // new syntax
