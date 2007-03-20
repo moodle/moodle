@@ -5,6 +5,10 @@
 // deductions are currently simply found by dividing the award for the incorrect 
 // answer by the total number of options
 // Based on format.php, included by ../../import.php
+/**
+ * @package questionbank
+ * @subpackage importexport
+ */
 
 class qformat_learnwise extends qformat_default {
 

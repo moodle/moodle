@@ -1,6 +1,10 @@
 <?php // $Id$
 
 // Based on default.php, included by ../import.php
+/**
+ * @package questionbank
+ * @subpackage importexport
+ */
 
 require_once("$CFG->libdir/xmlize.php");
 

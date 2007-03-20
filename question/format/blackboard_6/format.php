@@ -9,7 +9,10 @@
 ////////////////////////////////////////////////////////////////////////////
 
 // Based on default.php, included by ../import.php
-
+/**
+ * @package questionbank
+ * @subpackage importexport
+ */
 require_once ("$CFG->libdir/xmlize.php");
 
 class qformat_blackboard_6 extends qformat_default {

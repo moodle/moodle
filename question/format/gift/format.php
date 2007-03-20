@@ -31,7 +31,10 @@
 // and others. Paul Tsuchido Shew wrote this filter in December 2003.
 //////////////////////////////////////////////////////////////////////////
 // Based on default.php, included by ../import.php
-
+/**
+ * @package questionbank
+ * @subpackage importexport
+ */
 class qformat_gift extends qformat_default {
 
     function provide_import() {

@@ -6,6 +6,11 @@
 ////////////////////////////////////////////////////////////////////
 
 // Based on format.php, included by ../../import.php
+/**
+ * @package questionbank
+ * @subpackage importexport
+ */
+
 require_once($CFG->dirroot.'/lib/uploadlib.php');
 
 class qformat_coursetestmanager extends qformat_default {

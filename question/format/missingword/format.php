@@ -25,7 +25,10 @@
 ////////////////////////////////////////////////////////////////////////////
 
 // Based on format.php, included by ../../import.php
-
+/**
+ * @package questionbank
+ * @subpackage importexport
+ */
 class qformat_missingword extends qformat_default {
 
     function provide_import() {

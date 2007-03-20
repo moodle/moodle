@@ -8,7 +8,10 @@
 ////////////////////////////////////////////////////////////////////////////
 
 // Based on format.php, included by ../../import.php
-
+/**
+ * @package questionbank
+ * @subpackage importexport
+ */
 class qformat_multianswer extends qformat_default {
 
     function provide_import() {

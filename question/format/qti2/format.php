@@ -8,7 +8,10 @@ require_once("$CFG->dirroot/question/format/qti2/qt_common.php");
 ////////////////////////////////////////////////////////////////////////////
 
 // Based on format.php, included by ../../import.php
-
+/**
+ * @package questionbank
+ * @subpackage importexport
+ */
 define('CLOZE_TRAILING_TEXT_ID', 9999999);
 
 class qformat_qti2 extends qformat_default {

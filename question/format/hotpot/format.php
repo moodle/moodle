@@ -8,6 +8,10 @@
 ////////////////////////////////////////////////////////////////////////////
 
 // Based on default.php, included by ../import.php
+/**
+ * @package questionbank
+ * @subpackage importexport
+ */
 
 class qformat_hotpot extends qformat_default {
 

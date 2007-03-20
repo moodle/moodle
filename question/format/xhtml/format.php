@@ -1,6 +1,9 @@
 <?php 
 // Based on default.php, included by ../import.php
-
+/**
+ * @package questionbank
+ * @subpackage importexport
+ */
 class qformat_xhtml extends qformat_default {
 
     function provide_export() {

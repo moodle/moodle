@@ -5,7 +5,10 @@
 //
 //////////////////////////////////////////////////////////////////////////
 // Based on default.php, included by ../import.php
-
+/**
+ * @package questionbank
+ * @subpackage importexport
+ */
 require_once( "$CFG->libdir/xmlize.php" );
 
 class qformat_xml extends qformat_default {

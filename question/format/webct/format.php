@@ -27,6 +27,10 @@
 ///////////////////////////////////////////////////////////////////////////
 
 // Based on format.php, included by ../../import.php
+/**
+ * @package questionbank
+ * @subpackage importexport
+ */
 
 function unhtmlentities($string){
     $search = array ("'<script[?>]*?>.*?</script>'si",  // remove javascript

@@ -12,7 +12,9 @@
  * @param int courseid
  * @return array containing filenames
  * @calledfrom type/<typename>/editquestion.php 
- */
+ * @package questionbank
+ * @subpackage importexport
+*/
 function get_course_media_files($courseid) 
 {
 // this code lifted from mod/quiz/question.php and modified
