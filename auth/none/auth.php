@@ -49,7 +49,7 @@ class auth_plugin_none {
         if ($user = get_record('user', 'username', $username, 'mnethostid', $CFG->mnet_localhost_id)) {
             return validate_internal_user_password($user, $password);
         }
-        return false;
+        return true;
     }
 
     /**
