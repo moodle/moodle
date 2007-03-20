@@ -1155,7 +1155,11 @@ function load_all_capabilities() {
             }
         }
 
-        $USER->capabilities = merge_role_caps($USER->capabilities, $defcaps);
+        if (isset($USER->capabilities)) {
+            $USER->capabilities = merge_role_caps($USER->capabilities, $defcaps);
+        } else {
+            $USER->capabilities = $defcaps;
+        }
 
     } else {
         load_notloggedin_role();
