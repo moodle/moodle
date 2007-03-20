@@ -39,6 +39,7 @@ $string['configfilewritten'] = 'config.php se ha creado con éxito';
 $string['configurationcompletehead'] = 'Configuración completa';
 $string['configurationcompletesub'] = 'Moodle ha creado su fichero de configuración';
 $string['continue'] = 'Continuar';
+$string['curlrecommended'] = 'Se recomienda encarecidamente instalar la librería opcional Curl a fin de posibilitar la funcionalidad de la Red Moodle.';
 $string['database'] = 'Base de datos';
 $string['databasecreationsettingshead'] = 'Ahora necesita configurar los ajustes de la base de datos donde se almacenarán la mayoría de los datos de Moodle. El instalador creará la base de datos con los ajustes especificados más abajo.';
 $string['databasecreationsettingssub'] = '<b>Tipo:</b> el valor por defecto es \"mysql\"<br />
