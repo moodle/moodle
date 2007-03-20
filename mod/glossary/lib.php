@@ -1359,7 +1359,7 @@ global $CFG;
               if ( $hook == $alphabet[$i] and $hook) {
                    echo "<b>$alphabet[$i]</b>";
               } else {
-                   echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&amp;mode=$mode&amp;hook=$alphabet[$i]&amp;sortkey=$sortkey&amp;sortorder=$sortorder\">$alphabet[$i]</a>";
+                   echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&amp;mode=$mode&amp;hook=".urlencode($alphabet[$i])."&amp;sortkey=$sortkey&amp;sortorder=$sortorder\">$alphabet[$i]</a>";
               }
               if ((int) ($i % $letters_by_line) != 0 or $i == 0) {
                    echo ' | ';

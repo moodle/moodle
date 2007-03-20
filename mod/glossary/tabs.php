@@ -23,7 +23,7 @@
     if (has_capability('mod/glossary:export', $context)) {
         $toolsrow[] = new tabobject(GLOSSARY_EXPORT_VIEW, 
                                     $CFG->wwwroot.'/mod/glossary/export.php?id='.$cm->id.
-                                    '&amp;mode='.$mode.'&amp;hook='.$hook, 
+                                    '&amp;mode='.$mode.'&amp;hook='.urlencode($hook), 
                                     get_string('exportentries', 'glossary'));
     }
 
