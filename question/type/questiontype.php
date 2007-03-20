@@ -329,7 +329,7 @@ class default_questiontype {
         if ($question->options->answers) {
             foreach ($question->options->answers as $answer) {
                 if (((int) $answer->fraction) === 1) {
-                    return array('' => $answer->answer);
+                    return array('' => addslashes($answer->answer));
                 }
             }
         }
