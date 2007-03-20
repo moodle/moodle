@@ -9,14 +9,14 @@
     $perpage = optional_param('perpage', 10, PARAM_INT);   // how many per page
     $showform = optional_param('showform', 0, PARAM_INT);   // Just show the form
 
-    $user    = stripslashes(trim(optional_param('user', '', PARAM_NOTAGS)));    // Names to search for
+    $user    = trim(optional_param('user', '', PARAM_NOTAGS));    // Names to search for
     $userid  = trim(optional_param('userid', 0, PARAM_INT));      // UserID to search for
     $forumid = trim(optional_param('forumid', 0, PARAM_INT));      // ForumID to search for
-    $subject = stripslashes(trim(optional_param('subject', '', PARAM_NOTAGS))); // Subject
-    $phrase  = stripslashes(trim(optional_param('phrase', '', PARAM_NOTAGS)));  // Phrase
-    $words   = stripslashes(trim(optional_param('words', '', PARAM_NOTAGS)));   // Words
-    $fullwords = stripslashes(trim(optional_param('fullwords', '', PARAM_NOTAGS))); // Whole words
-    $notwords = stripslashes(trim(optional_param('notwords', '', PARAM_NOTAGS)));   // Words we don't want
+    $subject = trim(optional_param('subject', '', PARAM_NOTAGS)); // Subject
+    $phrase  = trim(optional_param('phrase', '', PARAM_NOTAGS));  // Phrase
+    $words   = trim(optional_param('words', '', PARAM_NOTAGS));   // Words
+    $fullwords = trim(optional_param('fullwords', '', PARAM_NOTAGS)); // Whole words
+    $notwords = trim(optional_param('notwords', '', PARAM_NOTAGS));   // Words we don't want
 
     $timefromrestrict = optional_param('timefromrestrict', 0, PARAM_INT); // Use starting date
     $fromday = optional_param('fromday', 0, PARAM_INT);      // Starting date
@@ -119,7 +119,7 @@
 
         print_header_simple("$strsearchresults", "",
                 "<a href=\"index.php?id=$course->id\">$strforums</a> ->
-                <a href=\"search.php?id=$course->id\">$strsearch</a> -> ".s($search), 'search.words',
+                <a href=\"search.php?id=$course->id\">$strsearch</a> -> ".s($search, true), 'search.words',
                 "", "", "&nbsp;", navmenu($course));
         print_heading(get_string("nopostscontaining", "forum", $search));
 
@@ -135,7 +135,7 @@
 
     print_header_simple("$strsearchresults", "",
             "<a href=\"index.php?id=$course->id\">$strforums</a> ->
-            <a href=\"search.php?id=$course->id\">$strsearch</a> -> ".s($search), '',
+            <a href=\"search.php?id=$course->id\">$strsearch</a> -> ".s($search, true), '',
             "", "",  $searchform, navmenu($course));
 
     echo '<div class="reportlink">';
@@ -203,7 +203,7 @@
         // Hack for posts of format FORMAT_PLAIN. Otherwise html tags added by
         // the highlight() call bellow get stripped out by forum_print_post().
         if ($post->format == FORMAT_PLAIN) {
-            $post->message = s($post->message); 
+            $post->message = stripslashes_safe($post->message); 
             $post->message = rebuildnolinktag($post->message); 
             $post->message = str_replace(' ', '&nbsp; ', $post->message); 
             $post->message = nl2br($post->message); 
@@ -284,23 +284,23 @@ function forum_print_big_search_form($course) {
     echo '<tr>';
     echo '<td class="c0">'.get_string('searchwords', 'forum').':';
     echo '<input type="hidden" value="'.$course->id.'" name="id" alt="" /></td>';
-    echo '<td class="c1"><input type="text" size="35" name="words" value="'.s($words).'" alt="" /></td>';
+    echo '<td class="c1"><input type="text" size="35" name="words" value="'.s($words, true).'" alt="" /></td>';
     echo '</tr>';
 
     echo '<tr>';
     echo '<td class="c0">'.get_string('searchphrase', 'forum').':</td>';
-    echo '<td class="c1"><input type="text" size="35" name="phrase" value="'.s($phrase).'" alt="" /></td>';
+    echo '<td class="c1"><input type="text" size="35" name="phrase" value="'.s($phrase, true).'" alt="" /></td>';
     echo '</tr>';
 
     echo '<tr>';
     echo '<td class="c0">'.get_string('searchnotwords', 'forum').':</td>';
-    echo '<td class="c1"><input type="text" size="35" name="notwords" value="'.s($notwords).'" alt="" /></td>';
+    echo '<td class="c1"><input type="text" size="35" name="notwords" value="'.s($notwords, true).'" alt="" /></td>';
     echo '</tr>';
 
     if ($CFG->dbfamily == 'mysql' || $CFG->dbfamily == 'postgres') {
         echo '<tr>';
         echo '<td class="c0">'.get_string('searchfullwords', 'forum').':</td>';
-        echo '<td class="c1"><input type="text" size="35" name="fullwords" value="'.s($fullwords).'" alt="" /></td>';
+        echo '<td class="c1"><input type="text" size="35" name="fullwords" value="'.s($fullwords, true).'" alt="" /></td>';
         echo '</tr>';
     }
 
@@ -359,12 +359,12 @@ function forum_print_big_search_form($course) {
 
     echo '<tr>';
     echo '<td class="c0">'.get_string('searchsubject', 'forum').':</td>';
-    echo '<td class="c1"><input type="text" size="35" name="subject" value="'.s($subject).'" alt="" /></td>';
+    echo '<td class="c1"><input type="text" size="35" name="subject" value="'.s($subject, true).'" alt="" /></td>';
     echo '</tr>';
 
     echo '<tr>';
     echo '<td class="c0">'.get_string('searchuser', 'forum').':</td>';
-    echo '<td class="c1"><input type="text" size="35" name="user" value="'.s($user).'" alt="" /></td>';
+    echo '<td class="c1"><input type="text" size="35" name="user" value="'.s($user, true).'" alt="" /></td>';
     echo '</tr>';
 
     echo '<tr>';
