@@ -92,6 +92,13 @@ class question_edit_numerical_form extends question_edit_form {
             'if (1.0 === (float)$a->multiplier) { return -1; } else '.
             'if (1.0 === (float)$b->multiplier) { return 1; } else { return 0; }'));
             if (count($units)) {
+                if (abs($units[0]->multiplier - 1.0) > 0.000001) {
+                    echo "<p>Frog: ''.</p>"; // DONOTCOMMIT
+                    $newunit = new stdClass;
+                    $newunit->unit = '';
+                    $newunit->multiplier = 1.0;
+                    $units = array_merge(array(0 => $newunit), $units); 
+                }
                 $key = 0;
                 foreach ($units as $unit){
                     $default_values['unit['.$key.']'] = $unit->unit;
