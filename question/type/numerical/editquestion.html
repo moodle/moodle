@@ -45,10 +45,12 @@ $QTYPES[$question->qtype]->print_question_form_start($question, array(), $course
 <tr valign="top">
 <td align="right"><b><?php print_string("unit", "quiz") ?>:</b></td>
     <td align="left"><?php
-    if (isset($units[0]) && 1.0 === (float)$units[0]->multiplier) {
+    if (isset($units[0]) && abs($units[0]->multiplier - 1.0) < 0.000001) {
         $unit = $units[0]->unit;
+        $firstalternateunit = 1;
     } else {
         $unit = '';
+        $firstalternateunit = 0;
     }
     $multiplier = '1.0';
     ?>
@@ -63,7 +65,7 @@ $QTYPES[$question->qtype]->print_question_form_start($question, array(), $course
 <td></td>
 </tr>
 <?php
-for ($i = 1; $i < 6; $i++) {
+for ($i = $firstalternateunit; $i < 5 + $firstalternateunit; $i++) {
     if (isset($units[$i])) {
         $multiplier = (float)$units[$i]->multiplier;
         $unit = $units[$i]->unit;
