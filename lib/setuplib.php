@@ -16,7 +16,7 @@
 function init_performance_info() {
 
     global $PERF;
-
+  
     $PERF = new Object;
     $PERF->dbqueries = 0;   
     $PERF->logwrites = 0;
@@ -28,6 +28,11 @@ function init_performance_info() {
     }
     if (function_exists('posix_times')) {
         $PERF->startposixtimes = posix_times();  
+    }
+    if (function_exists('apd_set_pprof_trace')) {
+        // APD profiling
+        apd_set_pprof_trace();
+        $PERF->process = 44444;
     }
 }
 
