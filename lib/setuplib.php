@@ -15,7 +15,7 @@
  */
 function init_performance_info() {
 
-    global $PERF;
+    global $PERF, $CFG, $USER;
   
     $PERF = new Object;
     $PERF->dbqueries = 0;   
@@ -31,8 +31,12 @@ function init_performance_info() {
     }
     if (function_exists('apd_set_pprof_trace')) {
         // APD profiling
-        apd_set_pprof_trace();
-        $PERF->process = 44444;
+        if ($USER->id > 0 && $CFG->perfdebug >= 15) {
+            $tempdir = $CFG->dataroot . '/temp/profile/' . $USER->id; 
+            mkdir($tempdir);
+            apd_set_pprof_trace($tempdir);
+            $PERF->profiling = true;
+        }
     }
 }
 

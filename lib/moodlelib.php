@@ -6559,10 +6559,9 @@ function get_performance_info() {
         $info['txt'] .= 'logwrites: '.$info['logwrites'].' ';
     }
     
-    if (!empty($PERF->profiling)) {
+    if (!empty($PERF->profiling) && $PERF->profiling) {
         require_once($CFG->dirroot .'/lib/profilerlib.php');
-        $profiler = new Profiler();
-        $info['html'] .= '<span class="profilinginfo">'.$profiler->get_profiling().'</span>';
+        $info['html'] .= '<span class="profilinginfo">'.Profiler::get_profiling(array('-R')).'</span>';
     }
 
     if (function_exists('posix_times')) {
