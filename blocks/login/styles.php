@@ -8,14 +8,14 @@
 
 
 .block_login .loginform .c1 input {
-  width: 6em;
+  width: 5em;
 }
 
-.block_login .loginform div {
+.block_login .loginform .c1 {
   margin:0.3em 0.8em;
   text-align:right;
 }
 
-.block_login .btn input {
+.block_login .loginform div.btn {
   text-align:center;
 }
