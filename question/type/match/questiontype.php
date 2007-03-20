@@ -364,6 +364,15 @@ class question_match_qtype extends default_questiontype {
         return true;
     }
 
+    function compare_responses($question, $state, $teststate) {
+        foreach ($state->responses as $i=>$sr){
+            if($state->responses[$i] != $teststate->responses[$i]){
+                return false;
+            }
+        }
+        return true;
+    }
+
     // ULPGC ecastro for stats report
     function get_all_responses($question, $state) {
         $answers = array();
