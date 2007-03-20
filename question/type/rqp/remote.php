@@ -6,7 +6,8 @@
 * @author Alex Smith and others members of the Serving Mathematics project
 *         {@link http://maths.york.ac.uk/serving_maths}
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package quiz
+* @package questionbank
+* @subpackage questiontypes
 */
 
 // Load functions for the RQP-SOAP binding
