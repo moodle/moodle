@@ -3448,7 +3448,7 @@ function setnew_password_and_mail($user) {
 
     $a = new object();
     $a->firstname   = $user->firstname;
-    $a->sitename    = $site->fullname;
+    $a->sitename    = format_string($site->fullname);
     $a->username    = $user->username;
     $a->newpassword = $newpassword;
     $a->link        = $CFG->wwwroot .'/login/';
@@ -3456,7 +3456,7 @@ function setnew_password_and_mail($user) {
 
     $message = get_string('newusernewpasswordtext', '', $a);
 
-    $subject  = $site->fullname .': '. get_string('newusernewpasswordsubj');
+    $subject  = format_string($site->fullname) .': '. get_string('newusernewpasswordsubj');
 
     return email_to_user($user, $from, $subject, $message);
 
@@ -3491,7 +3491,7 @@ function reset_password_and_mail($user) {
 
     $a = new object();
     $a->firstname = $user->firstname;
-    $a->sitename = $site->fullname;
+    $a->sitename = format_string($site->fullname);
     $a->username = $user->username;
     $a->newpassword = $newpassword;
     $a->link = $CFG->httpswwwroot .'/login/change_password.php';
@@ -3499,7 +3499,7 @@ function reset_password_and_mail($user) {
 
     $message = get_string('newpasswordtext', '', $a);
 
-    $subject  = $site->fullname .': '. get_string('changedpassword');
+    $subject  = format_string($site->fullname) .': '. get_string('changedpassword');
 
     return email_to_user($user, $from, $subject, $message);
 
@@ -3522,10 +3522,10 @@ function reset_password_and_mail($user) {
 
     $data = new object();
     $data->firstname = fullname($user);
-    $data->sitename = $site->fullname;
+    $data->sitename = format_string($site->fullname);
     $data->admin = fullname($from) .' ('. $from->email .')';
 
-    $subject = get_string('emailconfirmationsubject', '', $site->fullname);
+    $subject = get_string('emailconfirmationsubject', '', format_string($site->fullname));
 
     $data->link = $CFG->wwwroot .'/login/confirm.php?data='. $user->secret .'/'. $user->username;
     $message     = get_string('emailconfirmation', '', $data);
@@ -3554,12 +3554,12 @@ function send_password_change_confirmation_email($user) {
 
     $data = new object();
     $data->firstname = $user->firstname;
-    $data->sitename = $site->fullname;
+    $data->sitename = format_string($site->fullname);
     $data->link = $CFG->httpswwwroot .'/login/forgot_password.php?p='. $user->secret .'&s='. $user->username;
     $data->admin = fullname($from).' ('. $from->email .')';
 
     $message = get_string('emailpasswordconfirmation', '', $data);
-    $subject = get_string('emailpasswordconfirmationsubject', '', $site->fullname);
+    $subject = get_string('emailpasswordconfirmationsubject', '', format_string($site->fullname));
 
     return email_to_user($user, $from, $subject, $message);
 
@@ -3582,7 +3582,7 @@ function send_password_change_info($user) {
 
     $data = new object();
     $data->firstname = $user->firstname;
-    $data->sitename = $site->fullname;
+    $data->sitename = format_string($site->fullname);
     $data->admin = fullname($from).' ('. $from->email .')';
 
      $userauth = get_auth_plugin($user->auth);
@@ -3597,10 +3597,10 @@ function send_password_change_info($user) {
 
     if (!empty($data->link)) {
         $message = get_string('emailpasswordchangeinfo', '', $data);
-        $subject = get_string('emailpasswordchangeinfosubject', '', $site->fullname);
+        $subject = get_string('emailpasswordchangeinfosubject', '', format_string($site->fullname));
     } else {
         $message = get_string('emailpasswordchangeinfofail', '', $data);
-        $subject = get_string('emailpasswordchangeinfosubject', '', $site->fullname);
+        $subject = get_string('emailpasswordchangeinfosubject', '', format_string($site->fullname));
     }
 
     return email_to_user($user, $from, $subject, $message);
@@ -5428,7 +5428,7 @@ function notify_login_failures() {
 
             $message = '';
             $site = get_site();
-            $subject = get_string('notifyloginfailuressubject', '', $site->fullname);
+            $subject = get_string('notifyloginfailuressubject', '', format_string($site->fullname));
             $message .= get_string('notifyloginfailuresmessagestart', '', $CFG->wwwroot)
                  .(($CFG->lastnotifyfailure != 0) ? '('.userdate($CFG->lastnotifyfailure).')' : '')."\n\n";
             foreach ($logs as $log) {
@@ -6537,12 +6537,6 @@ function get_performance_info() {
         $info['txt'] .= 'logwrites: '.$info['logwrites'].' ';
     }
     
-    if (!empty($PERF->profiling)) {
-        require_once($CFG->dirroot .'/lib/profilerlib.php');
-        $profiler = new Profiler();
-        $info['html'] .= '<span class="profilinginfo">'.$profiler->get_profiling().'</span>';
-    }
-
     if (function_exists('posix_times')) {
         $ptimes = posix_times();
         if (is_array($ptimes)) {
