@@ -1662,7 +1662,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
     if ($COURSE->id != SITEID and !empty($USER->realuser)) {
         if ($USER->loginascontext->contextlevel == CONTEXT_COURSE) {
             if ($USER->loginascontext->instanceid != $COURSE->id) {
-                print_error('loginascourseredir', '', $CFG->wwwroot.'/course/view.php?id='.$USER->loginascontext->instanceid);
+                print_error('loginasonecourse', '', $CFG->wwwroot.'/course/view.php?id='.$USER->loginascontext->instanceid);
             } 
         }
     }
