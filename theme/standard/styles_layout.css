@@ -248,6 +248,28 @@ img.grouppicture {
   border-collapse: collapse;
 }
 
+#participationreport .reporttable {
+  text-align: center;  
+  margin-left:auto; 
+  margin-right:auto;
+}
+
+#participationreport {
+  text-align: center;
+}
+
+#participationreport .modulename {
+  font-weight: bold;
+}
+
+#participationreportselector {
+  text-align: center;
+}
+
+#participationreportactions {
+  text-align: center;
+}
+
 .initialbar {
   text-align: center;
 }

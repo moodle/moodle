@@ -127,14 +127,14 @@
     echo '<form class="participationselectform" action="index.php" method="get"><div>'."\n".
          '<input type="hidden" name="id" value="'.$course->id.'" />'."\n".
          '<input type="hidden" name="oldmod" value="'.$moduleid.'" />'."\n".
-         '<input type="hidden" name="instanceid" value="'.$instanceid.'" />';
-    echo '<label for="menumoduleid">'.get_string('activitymodule').'</label>';
+         '<input type="hidden" name="instanceid" value="'.$instanceid.'" />'."\n";
+    echo '<label for="menumoduleid">'.get_string('activitymodule').'</label>'."\n";
     choose_from_menu($modoptions,'moduleid',$moduleid);
-    echo '<label for="menutimefrom">'.get_string('lookback').'</label>';
+    echo '<label for="menutimefrom">'.get_string('lookback').'</label>'."\n";
     choose_from_menu($timeoptions,'timefrom',$timefrom);
-    echo '<label for="menuroleid">'.get_string('showonly').'</label>';
+    echo '<label for="menuroleid">'.get_string('showonly').'</label>'."\n";
     choose_from_menu($useroptions,'roleid',$roleid,'');
-    echo '<label for="menuaction">'.get_string('showactions').'</label>';
+    echo '<label for="menuaction">'.get_string('showactions').'</label>'."\n";
     choose_from_menu($actionoptions,'action',$action,'');
     helpbutton('participationreport',get_string('participationreport'));
     echo '<input type="submit" value="'.get_string('go').'" />'."\n</div></form>\n";
@@ -181,16 +181,17 @@
         $instanceid = array_pop(array_keys($instanceoptions));
     }
 
-    echo '<form action="'.$CFG->wwwroot.'/course/report/participation/index.php" method="post">'.
+    echo '<form action="'.$CFG->wwwroot.'/course/report/participation/index.php" method="post">'. "\n".
+        '<div id="participationreportselector">'."\n".
         '<input type="hidden" name="id" value="'.$course->id.'" />'."\n".
         '<input type="hidden" name="oldmod" value="'.$moduleid.'" />'."\n".
         '<input type="hidden" name="timefrom" value="'.$timefrom.'" />'."\n".
         '<input type="hidden" name="action" value="'.$action.'" />'."\n".
         '<input type="hidden" name="roleid" value="'.$roleid.'" />'."\n".
-        '<input type="hidden" name="moduleid" value="'.$moduleid.'" />'."\n".
-        '<table align="center"><tr><td>';
+        '<input type="hidden" name="moduleid" value="'.$moduleid.'" />'."\n";
     choose_from_menu($instanceoptions,'instanceid',$instanceid);
-    echo '<input type="submit" value="'.get_string('go').'" /></td></tr></table>'."\n".
+    echo '<input type="submit" value="'.get_string('go').'" />'."\n".
+        '</div>'."\n".
         "</form>\n";
         
     if (!empty($instanceid) && !empty($roleid)) {
@@ -206,9 +207,8 @@
         $table->define_headers(array(get_string('user'),((!empty($action)) ? get_string($action) : get_string('allactions')),get_string('select')));
         $table->define_baseurl($baseurl);
 
-        $table->set_attribute('align','center');
         $table->set_attribute('cellpadding','5');
-        $table->set_attribute('class', 'generaltable generalbox');
+        $table->set_attribute('class', 'generaltable generalbox reporttable');
 
         $table->sortable(true,'lastname','ASC');
         
@@ -264,9 +264,10 @@
         } else {
             $matchcount = $totalcount;
         }
-
-        echo '<p align="center"><b>'.$modulename . ' ' . $strviews.': '.implode(', ',$viewnames).'<br />'
-            . $modulename . ' ' . $strposts.': '.implode(', ',$postnames).'</b></p>';
+        
+        echo '<div id="participationreport">' . "\n";
+        echo '<p class="modulename">'.$modulename . ' ' . $strviews.': '.implode(', ',$viewnames).'<br />'."\n"
+            . $modulename . ' ' . $strposts.': '.implode(', ',$postnames).'</p>'."\n";
  
         $table->initialbars($totalcount > $perpage);
         $table->pagesize($perpage, $matchcount);
@@ -284,7 +285,7 @@
             $a->items .= ' ('.get_string('matched').' '.$matchcount.')';
         }
         
-        echo '<h2>'.get_string('counteditems', '', $a).'</h2>';
+        echo '<h2>'.get_string('counteditems', '', $a).'</h2>'."\n";
         echo '
 <script type="text/javascript">
 //<![CDATA[
@@ -323,15 +324,16 @@ function checknos() {
 //]]>
 </script>
 ';
-        echo '<form action="'.$CFG->wwwroot.'/user/action_redir.php" method="post" id="studentsform" onSubmit="return checksubmit(this);">';
-        echo '<input type="hidden" name="id" value="'.$id.'" />';
-        echo '<input type="hidden" name="returnto" value="'.$_SERVER['REQUEST_URI'].'" />';
-        echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+        echo '<form action="'.$CFG->wwwroot.'/user/action_redir.php" method="post" id="studentsform" onsubmit="return checksubmit(this);">'."\n";
+        echo '<div>'."\n";
+        echo '<input type="hidden" name="id" value="'.$id.'" />'."\n";
+        echo '<input type="hidden" name="returnto" value="'. format_string($_SERVER['REQUEST_URI']) .'" />'."\n";
+        echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />'."\n";
 
         foreach ($users as $u) {
-            $data = array('<a href="'.$CFG->wwwroot.'/user/view.php?id='.$u->userid.'&amp;course='.$course->id.'">'.fullname($u,true).'</a>',
+            $data = array('<a href="'.$CFG->wwwroot.'/user/view.php?id='.$u->userid.'&amp;course='.$course->id.'">'.fullname($u,true).'</a>'."\n",
                           ((!empty($u->count)) ? get_string('yes').' ('.$u->count.') ' : get_string('no')),
-                          '<input type="checkbox" name="user'.$u->userid.'" value="'.$u->count.'" />',
+                          '<input type="checkbox" name="user'.$u->userid.'" value="'.$u->count.'" />'."\n",
                           );
             $table->add_data($data);
         }
@@ -339,23 +341,25 @@ function checknos() {
         $table->print_html();
 
         if ($perpage == SHOW_ALL_PAGE_SIZE) {
-            echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.DEFAULT_PAGE_SIZE.'">'.get_string('showperpage', '', DEFAULT_PAGE_SIZE).'</a></div>';
+            echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.DEFAULT_PAGE_SIZE.'">'.get_string('showperpage', '', DEFAULT_PAGE_SIZE).'</a></div>'."\n";
         }
         else if ($matchcount > 0 && $perpage < $matchcount) {
-            echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.SHOW_ALL_PAGE_SIZE.'">'.get_string('showall', '', $matchcount).'</a></div>';
+            echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.SHOW_ALL_PAGE_SIZE.'">'.get_string('showall', '', $matchcount).'</a></div>'."\n";
         }
     
-        echo '<br /><center>';
-        echo '<input type="button" onclick="checkall()" value="'.get_string('selectall').'" /> ';
-        echo '<input type="button" onclick="checknone()" value="'.get_string('deselectall').'" /> ';
+        echo '<input type="button" onclick="checkall()" value="'.get_string('selectall').'" /> '."\n";
+        echo '<input type="button" onclick="checknone()" value="'.get_string('deselectall').'" /> '."\n";
         if ($perpage >= $matchcount) {
-            echo '<input type="button" onclick="checknos()" value="'.get_string('selectnos').'" />';
+            echo '<input type="button" onclick="checknos()" value="'.get_string('selectnos').'" />'."\n";
         }
         $displaylist['messageselect.php'] = get_string('messageselectadd');
         choose_from_menu ($displaylist, "formaction", "", get_string("withselectedusers"), "if(checksubmit(this.form))this.form.submit();", "");
         helpbutton("participantswithselectedusers", get_string("withselectedusers"));
-        echo '<input type="submit" value="' . get_string('ok') . '" />';
-        echo '</center></form>';
+        echo '<input type="submit" value="' . get_string('ok') . '" />'."\n";
+        echo '</div>'."\n";
+        echo '</form>'."\n";
+        echo '</div>'."\n";
+
     }
     
     print_footer();
