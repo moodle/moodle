@@ -46,8 +46,7 @@
     $options = quiz_get_reviewoptions($quiz, $attempt, $context);
     $popup = $isteacher ? 0 : $quiz->popup; // Controls whether this is shown in a javascript-protected window.
 
-    // this capability is not correct, need to find the right one
-    if (!has_capability('mod/quiz:manage', $context)) {
+    if (!has_capability('mod/quiz:viewreports', $context)) {
         if (!$attempt->timefinish) {
             redirect('attempt.php?q='.$quiz->id);
         }
