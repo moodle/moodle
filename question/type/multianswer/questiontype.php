@@ -236,7 +236,7 @@ class embedded_cloze_qtype extends default_questiontype {
 
             $inputname = $nameprefix.$positionkey;
             if (isset($state->responses[$positionkey])) {
-                $response = stripslashes($state->responses[$positionkey]);
+                $response = $state->responses[$positionkey];
             } else {
                 $response = null;
             }
@@ -277,7 +277,7 @@ class embedded_cloze_qtype extends default_questiontype {
                 }
 
                 if (!empty($chosenanswer->feedback)) {
-                    $feedback = str_replace("'", "\\'", $chosenanswer->feedback);
+                    $feedback = s(str_replace(array("\\", "'"), array("\\\\", "\\'"), $chosenanswer->feedback));
                     $popup = " onmouseover=\"return overlib('$feedback', STICKY, MOUSEOFF, CAPTION, '$strfeedback', FGCOLOR, '#FFFFFF');\" ".
                              " onmouseout=\"return nd();\" ";
                 }
@@ -297,7 +297,7 @@ class embedded_cloze_qtype extends default_questiontype {
                 case 'shortanswer':
                 case 'numerical':
                     echo " <input $style $readonly $popup name=\"$inputname\"
-                            type=\"text\" value=\"".s($response)."\" size=\"12\" /> ";
+                            type=\"text\" value=\"".s($response, true)."\" size=\"12\" /> ";
                     if (!empty($feedback) && !empty($USER->screenreader)) {
                         echo "<img src=\"$CFG->pixpath/i/feedback.gif\" alt=\"$feedback\" />";
                     }
@@ -308,7 +308,7 @@ class embedded_cloze_qtype extends default_questiontype {
                     foreach ($answers as $mcanswer) {
                         $selected = $response == $mcanswer->id
                                 ? ' selected="selected" ' : '';
-                        $outputoptions .= "<option value=\"$mcanswer->id\" $selected>$mcanswer->answer</option>";
+                        $outputoptions .= '<option value="' . $mcanswer->id . '" $selected>' . s($mcanswer->answer, true) . '</option>';
                     }
                     // In the next line, $readonly is invalid HTML, but it works in
                     // all browsers. $disabled would be valid, but then the JS for
@@ -344,7 +344,7 @@ class embedded_cloze_qtype extends default_questiontype {
         $teststate = clone($state);
         $state->raw_grade = 0;
         foreach($question->options->questions as $key => $wrapped) {
-            $state->responses[$key] = html_entity_decode($state->responses[$key]);
+            $state->responses[$key] = $state->responses[$key];
             $teststate->responses = array('' => $state->responses[$key]);
             $teststate->raw_grade = 0;
             if (false === $QTYPES[$wrapped->qtype]
@@ -650,7 +650,6 @@ define("ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER", 5);
 define("ANSWER_REGEX_ALTERNATIVES", 6);
 
 function qtype_multianswer_extract_question($text) {
-
     $question = new stdClass;
     $question->qtype = 'multianswer';
     $question->questiontext = $text;
@@ -701,7 +700,7 @@ function qtype_multianswer_extract_question($text) {
                 $wrapped->fraction[] = '0';
             }
             if (isset($altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK])) {
-                $wrapped->feedback[] = $altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK];
+                $wrapped->feedback[] = html_entity_decode($altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK], ENT_QUOTES, 'UTF-8');
             } else {
                 $wrapped->feedback[] = '';
             }
@@ -715,7 +714,8 @@ function qtype_multianswer_extract_question($text) {
                     $wrapped->tolerance[] = 0;
                 }
             } else { // Tolerance can stay undefined for non numerical questions
-                $wrapped->answer[] = $altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER];
+                // Undo quoting done by the HTML editor.
+                $wrapped->answer[] = html_entity_decode($altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER], ENT_QUOTES, 'UTF-8');
             }
             $tmp = explode($altregs[0], $remainingalts, 2);
             $remainingalts = $tmp[1];
