@@ -252,7 +252,7 @@
     $printicon = '';
     if ( $isuserframe and $mode != 'search') {
         if (has_capability('mod/glossary:manageentries', $context) or $glossary->allowprintview) {
-            $printicon = " <a title =\"". get_string("printerfriendly","glossary") ."\" target=\"printview\" href=\"print.php?id=$cm->id&amp;mode=$mode&amp;hook=$hook&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;offset=$offset\"><img class=\"icon\" src=\"print.gif\" alt=\"". get_string("printerfriendly","glossary") . "\" /></a>";
+            $printicon = " <a title =\"". get_string("printerfriendly","glossary") ."\" target=\"printview\" href=\"print.php?id=$cm->id&amp;mode=$mode&amp;hook=".urlencode($hook)."&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;offset=$offset\"><img class=\"icon\" src=\"print.gif\" alt=\"". get_string("printerfriendly","glossary") . "\" /></a>";
         }
     }
     print_heading(format_string($glossary->name).$printicon);
