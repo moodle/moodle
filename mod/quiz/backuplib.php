@@ -36,89 +36,108 @@
     //    (course independent)
 
     //Insert necessary category ids to backup_ids table
-    function insert_category_ids ($course,$backup_unique_code,$instances=null) {
+    function insert_category_ids($course, $backup_unique_code, $instances = null) {
         global $CFG;
         include_once("$CFG->dirroot/mod/quiz/lib.php");
 
-        //Create missing categories and reasign orphaned questions
+        //Create missing categories and reasign orphaned questions.
         fix_orphaned_questions($course);
         
-        // defaults
-        $where = "q.course = '$course' AND g.quiz = q.id AND ";
-        $from = ", {$CFG->prefix}quiz q";
-        // but if we have an array of quiz ids, use those instead.
-        if (!empty($instances) && is_array($instances) && count($instances)) {
-            $where = ' g.quiz IN ('.implode(',',array_keys($instances)).')  AND ';
-            $from = '';
-        }
-
-        //Detect used categories (by category in questions)
+        // First, all categories from this course.
         $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
                                    (backup_code, table_name, old_id, info)
-                               SELECT DISTINCT $backup_unique_code,'question_categories',t.category,''
-                               FROM {$CFG->prefix}question t,
-                                    {$CFG->prefix}quiz_question_instances g
-                                    $from
-                               WHERE $where g.question = t.id",false);
-
-        //Now, foreach detected category, we look for their parents upto 0 (top category)
-        $categories = get_records_sql("SELECT old_id, old_id
-                                       FROM {$CFG->prefix}backup_ids
-                                       WHERE backup_code = $backup_unique_code AND
-                                             table_name = 'question_categories'");
-
-        if ($categories) {
-            foreach ($categories as $category) {
-                if ($dbcat = get_record('question_categories','id',$category->old_id)) {
-                    //echo $dbcat->name;      //Debug
-                    //Go up to 0
-                    while ($dbcat->parent != 0) {
-                        //echo '->';              //Debug
-                        $current = $dbcat->id;
-                        if ($dbcat = get_record('question_categories','id',$dbcat->parent)) {
-                            //Found parent, add it to backup_ids (by using backup_putid
-                            //we ensure no duplicates!)
-                            $status = backup_putid($backup_unique_code,'question_categories',$dbcat->id,0);
-                            //echo $dbcat->name;      //Debug
-                        } else {
-                            //Parent not found, fix it (set its parent to 0)
-                            set_field ('question_categories','parent',0,'id',$current);
-                            //echo 'assigned to top!';          //Debug
-                        }
-                    }
-                    //echo '<br />';          //Debug
+                               SELECT '$backup_unique_code', 'question_categories', qc.id, ''
+                               FROM {$CFG->prefix}question_categories qc
+                               WHERE qc.course = $course", false);
+                               
+        // Then published categories from other courses used by the quizzes we are backing up.
+        $from = "{$CFG->prefix}quiz quiz,";
+        $where = "AND quiz.course = '$course'
+                     AND qqi.quiz = quiz.id";
+        if (!empty($instances) && is_array($instances) && count($instances)) {
+            $from = '';
+            $where = 'AND qqi.quiz IN ('.implode(',',array_keys($instances)).')';
+        }
+        $categories = get_records_sql("
+                SELECT id, parent, 0 AS childrendone
+                FROM {$CFG->prefix}question_categories
+                WHERE course <> $course
+                  AND id IN (
+                    SELECT DISTINCT question.category 
+                    FROM {$CFG->prefix}question question,
+                         $from
+                         {$CFG->prefix}quiz_question_instances qqi
+                    WHERE qqi.question = question.id
+                      $where
+                )", false);
+        if (!$categories) {
+            $categories = array();
+        }
+        
+        // Add the parent categories, of these categories up to the top of the category tree.
+        foreach ($categories as $category) {
+            while ($category->parent != 0) {
+                if (array_key_exists($category->parent, $categories)) {
+                    // Parent category already on the list.
+                    break;
+                }
+                $currentid = $category->id;
+                $category = get_record('question_categories', 'id', $category->parent, '', '', '', '', 'id, parent, 0 AS childrendone');
+                if ($category) {
+                    $categories[$category->id] = $category;
+                } else {
+                    // Parent not found: this indicates an error, but just fix it.
+                    set_field('question_categories', 'parent', 0, 'id', $currentid);
+                    break;
                 }
             }
         }
         
-        // Now we look for random questions that can use questions from subcategories
-        // because we will have to add these subcategories
-        $sql = "SELECT t.id, t.category 
-                  FROM {$CFG->prefix}quiz_question_instances g,
-                       {$CFG->prefix}question t
-                       $from
-                 WHERE $where t.id = g.question
-                   AND t.qtype = '".RANDOM."'
-                   AND t.questiontext = '1'";
-        if ($randoms = get_records_sql($sql)) {
-            foreach ($randoms as $random) {
-                $status = quiz_backup_add_category_tree($backup_unique_code, $random->category);
+        // Now we look for categories from other courses containing random questions 
+        // in our quiz that select from the category and its subcategories. That implies
+        // those subcategories also need to be backed up. (The categories themselves
+        // and their parents will already have been included.)
+        $categorieswithrandom = get_records_sql("
+                SELECT DISTINCT question.category AS id
+                FROM {$CFG->prefix}quiz_question_instances qqi,
+                     $from
+                     {$CFG->prefix}question question
+                WHERE question.id = qqi.question
+                  AND question.qtype = '" . RANDOM . "'
+                  AND question.questiontext = '1'
+                  $where
+                ");
+        if ($categorieswithrandom) {
+            foreach ($categorieswithrandom as $category) {
+                $status = quiz_backup_add_sub_categories($categories, $category->id);
             }
         }
 
+        // Finally, add all these extra categories to the backup_ids table.
+        foreach ($categories as $category) {
+            $status = $status && backup_putid($backup_unique_code, 'question_categories', $category->id, 0);
+        }
+        
         return $status;
     }
     
     /**
-    * Helper function adding the id of a category and all its descendents to the backup_ids
-    */
-    function quiz_backup_add_category_tree($backup_unique_code, $categoryid) {
-        $status = backup_putid($backup_unique_code,'question_categories',$categoryid,0);
-        if ($subcategories = get_records('question_categories', 'parent', $categoryid, 'sortorder ASC', 'id, id')) {
+     * Helper function adding the id of all the subcategories of a category to an array.
+     */
+    function quiz_backup_add_sub_categories(&$categories, $categoryid) {
+        $status = true;
+        if ($categories[$categoryid]->childrendone) {
+            return $status;
+        }
+        if ($subcategories = get_records('question_categories', 'parent', $categoryid, '', 'id, 0 AS childrendone')) {
             foreach ($subcategories as $subcategory) {
-                $status = quiz_backup_add_category_tree($backup_unique_code, $subcategory->id);
+                if (!array_key_exists($subcategory->id, $categories)) {
+                    $categories[$subcategory->id] = $subcategory;
+                }
+                $status = $status && quiz_backup_add_sub_categories($categories, $subcategory->id);
             }
         }
+        $categories[$categoryid]->childrendone = 1;
         return $status;
     }
         
