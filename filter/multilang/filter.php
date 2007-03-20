@@ -41,10 +41,12 @@ function multilang_filter($courseid, $text) {
 
     // [pj] I don't know about you but I find this new implementation funny :P
     // [skodak] I was laughing while rewriting it ;-)
+    // [nicolasconnault] Should support inverted attributes: <span class="multilang" lang="en"> (Doesn't work curently)
+    // [skodak] it supports it now, though it is slower - any better idea? 
 
     if (empty($CFG->filter_multilang_force_old) and !empty($CFG->filter_multilang_converted)) {
         // new syntax
-        $search = '/(<span lang="[a-zA-Z0-9_-]+" class="multilang">.*?<\/span>)(\s*<span lang="[a-zA-Z0-9_-]+" class="multilang">.*?<\/span>)+/is';
+        $search = '/(<span(\s+lang="[a-zA-Z0-9_-]+"|\s+class="multilang"){2}\s*>.*?<\/span>)(\s*<span(\s+lang="[a-zA-Z0-9_-]+"|\s+class="multilang"){2}\s*>.*?<\/span>)+/is';
     } else {
         // old syntax
         $search = '/(<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.*?<\/(?:lang|span)>)(\s*<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.*?<\/(?:lang|span)>)+/is';
@@ -67,15 +69,12 @@ function multilang_filter_impl($langblock) {
         $parentlang = $parentcache[$mylang];
     }
 
-    if (empty($CFG->filter_multilang_force_old) and !empty($CFG->filter_multilang_converted)) {
-        // new syntax
-        $searchtosplit = '/<span lang="([a-zA-Z0-9_-]+)" class="multilang">(.*?)<\/span>/is';
-    } else {
-        // old syntax
-        $searchtosplit = '/<(?:lang|span) lang="([a-zA-Z0-9_-]*)".*?>(.*?)<\/(?:lang|span)>/is';
-    }
+    $searchtosplit = '/<(?:lang|span)[^>]+lang="([a-zA-Z0-9_-]+)"[^>]*>(.*?)<\/(?:lang|span)>/is';
 
-    preg_match_all($searchtosplit, $langblock[0], $rawlanglist);
+    if (!preg_match_all($searchtosplit, $langblock[0], $rawlanglist)) {
+        //skip malformed blocks
+        return $langblock[0];
+    }
 
     $langlist = array();
     foreach ($rawlanglist[1] as $index=>$lang) {
