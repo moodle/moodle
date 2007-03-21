@@ -1760,11 +1760,11 @@ class admin_setting_sitesettext extends admin_setting_configtext {
     }
 
     function validate($data) {
-        $cleaned = clean_param($data, PARAM_NOTAGS);
+        $cleaned = stripslashes(clean_param($data, PARAM_MULTILANG));
         if ($cleaned == '') {
             return false; // can not be empty
         }
-        return ("$data" == "$cleaned"); // implicit conversion to string is needed to do exact comparison
+        return ($data == $cleaned); // implicit conversion to string is needed to do exact comparison
     }
 
     function write_setting($data) {
@@ -2434,7 +2434,7 @@ class admin_setting_special_gradebookroles extends admin_setting {
                 } else {
                     $return .= '<br />';
                 }
-                $return .= '<input type="checkbox" name="s_'.$this->name.'['.$roleid.']" value="1"'.$checked.' />&nbsp;'.$role->name;
+                $return .= '<input type="checkbox" name="s_'.$this->name.'['.$roleid.']" value="1"'.$checked.' />&nbsp;'.format_string($role->name);
             }
             $return .= '</div>';
         }
