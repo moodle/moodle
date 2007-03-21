@@ -1,10 +1,8 @@
 <?php  // $Id$
-/// Item analysis displays a table of quiz questions and their performance 
 
     require_once($CFG->libdir.'/tablelib.php');
 
-/// Item analysis displays a table of quiz questions and their performance 
-
+/// Item analysis displays a table of quiz questions and their performance
 class quiz_report extends quiz_default_report {
 
     function display($quiz, $cm, $course) {     /// This function just displays the report
@@ -17,7 +15,7 @@ class quiz_report extends quiz_default_report {
             $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="analysis");
         }
     /// Construct the table for this particular report
-        
+
         if (!$quiz->questions) {
             print_heading($strnoattempts);
             return true;
@@ -30,7 +28,7 @@ class quiz_report extends quiz_default_report {
             } else {
                 $changegroup = optional_param('group', -1, PARAM_INT);
 
-                $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);  
+                $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
             }
         } else {
             $currentgroup = false;
@@ -50,12 +48,12 @@ class quiz_report extends quiz_default_report {
                 $$option = $SESSION->quiz_analysis_table[$option] = $urlparam;
             }
         }
-      
+
         $scorelimit = $quiz->sumgrades * $lowmarklimit/ 100;
-        
+
         // ULPGC ecastro DEBUG this is here to allow for different SQL to select attempts
         switch ($attemptselection) {
-        case QUIZ_ALLATTEMPTS : 
+        case QUIZ_ALLATTEMPTS :
             $limit = '';
             $group = '';
             break;
@@ -65,11 +63,11 @@ class quiz_report extends quiz_default_report {
             break;
         case QUIZ_FIRSTATTEMPT :
             $limit = ', min(qa.timemodified) ';
-            $group = ' GROUP BY qa.userid ';            
+            $group = ' GROUP BY qa.userid ';
             break;
-        case QUIZ_LASTATTEMPT : 
+        case QUIZ_LASTATTEMPT :
             $limit = ', max(qa.timemodified) ';
-            $group = ' GROUP BY qa.userid ';            
+            $group = ' GROUP BY qa.userid ';
             break;
         }
 
@@ -80,13 +78,14 @@ class quiz_report extends quiz_default_report {
 
         $sql = 'SELECT  qa.* FROM '.$CFG->prefix.'user u '.
             'JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid ';
-            if (!empty($currentgroup)) {
-                $sql .= groups_members_join_sql($currentgroup);
-            }
-            $sql .= ' WHERE qa.quiz = '.$quiz->id.  // ULPGC ecastro
-                ' AND ( qa.sumgrades >= '.$scorelimit.' ) ';
-                                                                                   // ^^^^^^ es posible seleccionar aqu� TODOS los quizzes, como quiere Jussi,
-                                                                                   // pero habr�a que llevar la cuenta ed cada quiz para restaura las preguntas (quizquestions, states)
+        if (!empty($currentgroup)) {
+            $sql .= groups_members_join_sql($currentgroup);
+        }
+        $sql .= ' WHERE qa.quiz = '.$quiz->id.  // ULPGC ecastro
+            ' AND ( qa.sumgrades >= '.$scorelimit.' ) ';
+        // ^^^^^^ es posible seleccionar aqu� TODOS los quizzes, como quiere Jussi,
+        // pero habr�a que llevar la cuenta ed cada quiz para restaura las preguntas (quizquestions, states)
+
         /// Fetch the attempts
         $attempts = get_records_sql($sql);
 
@@ -99,7 +98,7 @@ class quiz_report extends quiz_default_report {
     /// Here we rewiew all attempts and record data to construct the table
         $questions = array();
         $statstable = array();
-        $questionarray = array(); 
+        $questionarray = array();
         foreach ($attempts as $attempt) {
             $questionarray[] = quiz_questions_in_quiz($attempt->layout);
         }
@@ -110,7 +109,7 @@ class quiz_report extends quiz_default_report {
 
         foreach ($attempts as $attempt) {
             switch ($attemptselection) {
-            case QUIZ_ALLATTEMPTS : 
+            case QUIZ_ALLATTEMPTS :
                 $userscore = 0;      // can be anything, not used
                 break;
             case QUIZ_HIGHESTATTEMPT :
@@ -119,7 +118,7 @@ class quiz_report extends quiz_default_report {
             case QUIZ_FIRSTATTEMPT :
                 $userscore = $attempt->timemodified;
                 break;
-            case QUIZ_LASTATTEMPT : 
+            case QUIZ_LASTATTEMPT :
                 $userscore = $attempt->timemodified;
                 break;
             }
@@ -135,7 +134,7 @@ class quiz_report extends quiz_default_report {
             if (!$quizquestions = get_records_sql($sql)) {
                 error('No questions found');
             }
-        
+
             // Load the question type specific information
             if (!get_question_options($quizquestions)) {
                 error('Could not load question options');
@@ -147,7 +146,7 @@ class quiz_report extends quiz_default_report {
             }
             $numbers = explode(',', $questionlist);
             $statsrow = array();
-            foreach ($numbers as $i) {              
+            foreach ($numbers as $i) {
                 if (!isset($quizquestions[$i]) or !isset($states[$i])) {
                     continue;
                 }
@@ -155,7 +154,7 @@ class quiz_report extends quiz_default_report {
                 $q = get_question_responses($quizquestions[$i], $states[$i]);
                 if (empty($q)){
                     continue;
-                }                
+                }
                 $qid = $q->id;
                 if (!isset($questions[$qid])) {
                     $questions[$qid]['id'] = $qid;
@@ -166,14 +165,15 @@ class quiz_report extends quiz_default_report {
                         $questions[$qid]['rcounts'][$answer] = 0;
                         $questions[$qid]['credits'][$answer] = $r->credit;
                         $statsrow[$qid] = 0;
-                    }                    
+                    }
                 }
                 $responses = get_question_actual_response($quizquestions[$i], $states[$i]);
                 foreach ($responses as $resp){
                     if ($resp) {
-                        if ($key = array_search($resp, $questions[$qid]['responses'])) {                 
+                        if ($key = array_search($resp, $questions[$qid]['responses'])) {
                             $questions[$qid]['rcounts'][$key]++;
                         } else {
+                            $test = new stdClass;
                             $test->responses = $QTYPES[$quizquestions[$i]->qtype]->get_correct_responses($quizquestions[$i], $states[$i]);
                             if ($key = $QTYPES[$quizquestions[$i]->qtype]->check_response($quizquestions[$i], $states[$i], $test)) {
                                 $questions[$qid]['rcounts'][$key]++;
@@ -187,11 +187,11 @@ class quiz_report extends quiz_default_report {
                 }
                 $statsrow[$qid] = get_question_fraction_grade($quizquestions[$i], $states[$i]);
             }
-            $attemptscores[$attempt->id] = $attempt->sumgrades;   
+            $attemptscores[$attempt->id] = $attempt->sumgrades;
             $statstable[$attempt->id] = $statsrow;
             }
         } // Statistics Data table built
-        
+
         unset($attempts);
         unset($quizquestions);
         unset($states);
@@ -207,7 +207,7 @@ class quiz_report extends quiz_default_report {
         }
         unset($attemptscores);
         unset($statstable);
-        
+
     /// Now check if asked download of data
         if ($download = optional_param('download', NULL)) {
             $filename = clean_filename("$course->shortname ".format_string($quiz->name,true));
@@ -215,23 +215,23 @@ class quiz_report extends quiz_default_report {
             case "Excel" :
                 $this->Export_Excel($questions, $filename);
                 break;
-            case "ODS": 
+            case "ODS":
                 $this->Export_ODS($questions, $filename);
                 break;
-            case "CSV": 
+            case "CSV":
                 $this->Export_CSV($questions, $filename);
                 break;
             }
         }
-        
+
     /// Construct the table for this particular report
 
         $tablecolumns = array('id', 'qname',    'responses', 'credits', 'rcounts', 'rpercent', 'facility', 'qsd','disc_index', 'disc_coeff');
-        $tableheaders = array(get_string('qidtitle','quiz_analysis'), get_string('qtexttitle','quiz_analysis'), 
-                        get_string('responsestitle','quiz_analysis'), get_string('rfractiontitle','quiz_analysis'), 
-                        get_string('rcounttitle','quiz_analysis'), get_string('rpercenttitle','quiz_analysis'), 
-                        get_string('facilitytitle','quiz_analysis'), get_string('stddevtitle','quiz_analysis'), 
-                        get_string('dicsindextitle','quiz_analysis'), get_string('disccoefftitle','quiz_analysis')); 
+        $tableheaders = array(get_string('qidtitle','quiz_analysis'), get_string('qtexttitle','quiz_analysis'),
+                        get_string('responsestitle','quiz_analysis'), get_string('rfractiontitle','quiz_analysis'),
+                        get_string('rcounttitle','quiz_analysis'), get_string('rpercenttitle','quiz_analysis'),
+                        get_string('facilitytitle','quiz_analysis'), get_string('stddevtitle','quiz_analysis'),
+                        get_string('dicsindextitle','quiz_analysis'), get_string('disccoefftitle','quiz_analysis'));
 
         $table = new flexible_table('mod-quiz-report-itemanalysis');
 
@@ -242,16 +242,16 @@ class quiz_report extends quiz_default_report {
         $table->sortable(true);
         $table->collapsible(true);
         $table->initialbars(false);
-        
+
         $table->column_class('id', 'numcol');
         $table->column_class('credits', 'numcol');
         $table->column_class('rcounts', 'numcol');
         $table->column_class('rpercent', 'numcol');
         $table->column_class('facility', 'numcol');
-        $table->column_class('qsd', 'numcol'); 
+        $table->column_class('qsd', 'numcol');
         $table->column_class('disc_index', 'numcol');
         $table->column_class('disc_coeff', 'numcol');
-   
+
         $table->column_suppress('id');
         $table->column_suppress('qname');
         $table->column_suppress('facility');
@@ -262,19 +262,19 @@ class quiz_report extends quiz_default_report {
         $table->set_attribute('cellspacing', '0');
         $table->set_attribute('id', 'itemanalysis');
         $table->set_attribute('class', 'generaltable generalbox');
-        
+
         // Start working -- this is necessary as soon as the niceties are over
         $table->setup();
 
         $tablesort = $table->get_sql_sort();
-        $sorts = explode(",",trim($tablesort));  
+        $sorts = explode(",",trim($tablesort));
         if ($tablesort and is_array($sorts)) {
             $sortindex = array();
             $sortorder = array ();
             foreach ($sorts as $sort) {
                 $data = explode(" ",trim($sort));
                 $sortindex[] = trim($data[0]);
-                $s = trim($data[1]);               
+                $s = trim($data[1]);
                 if ($s=="ASC") {
                     $sortorder[] = SORT_ASC;
                 } else {
@@ -292,30 +292,31 @@ class quiz_report extends quiz_default_report {
             }
         }
 
-        // Now it is time to page the data, simply slice the keys in the array 
+        // Now it is time to page the data, simply slice the keys in the array
         if (!isset($pagesize) || ((int)$pagesize < 1) ){
             $pagesize = 10;
         }
         $table->pagesize($pagesize, count($questions));
         $start = $table->get_page_start();
         $pagequestions = array_slice(array_keys($questions), $start, $pagesize);
-        
+
         foreach($pagequestions as $qnum) {
             $q = $questions[$qnum];
             $qid = $q['id'];
-            $question = get_record('question', 'id', $qid);         
+            $question = get_record('question', 'id', $qid);
             $qnumber = " (".link_to_popup_window('/question/question.php?id='.$qid,'editquestion', $qid, 450, 550, get_string('edit'), 'none', true ).") ";
             $qname = '<div class="qname">'.format_text($question->name." :  ", $question->questiontextformat, NULL, $quiz->course).'</div>';
             $qicon = print_question_icon($question, false, true);
             $qreview = quiz_get_question_review($quiz, $question);
-            $qtext = format_text($question->questiontext, $question->questiontextformat, NULL, $quiz->course);          
+            $qtext = format_text($question->questiontext, $question->questiontextformat, NULL, $quiz->course);
             $qquestion = $qname."\n".$qtext."\n";
-            
+
+            $format_options = new stdClass;
             $format_options->para = false;
             $format_options->newlines = false;
             unset($responses);
             foreach ($q['responses'] as $aid=>$resp){
-                unset($response);
+                $response = new stdClass;
                 if ($q['credits'][$aid] <= 0) {
                     $qclass = 'uncorrect';
                 } elseif ($q['credits'][$aid] == 1) {
@@ -323,26 +324,26 @@ class quiz_report extends quiz_default_report {
                 } else {
                     $qclass = 'partialcorrect';
                 }
-                $response->credit = '<span class="'.$qclass.'">('.format_float($q['credits'][$aid],2).') </span>';                
+                $response->credit = '<span class="'.$qclass.'">('.format_float($q['credits'][$aid],2).') </span>';
                 $response->text = '<span class="'.$qclass.'">'.format_text("$resp", FORMAT_MOODLE, $format_options, $quiz->course).' </span>';
                 $count = $q['rcounts'][$aid].'/'.$q['count'];
                 $response->rcount = $count;  // format_text("$count", FORMAT_MOODLE, $format_options, $quiz->course);
                 $response->rpercent =  '('.format_float($q['rcounts'][$aid]/$q['count']*100,0).'%)';
                 $responses[] = $response;
             }
-            
+
             $facility = format_float($q['facility']*100,0)." %";
             $qsd = format_float($q['qsd'],3);
             $di = format_float($q['disc_index'],2);
             $dc = format_float($q['disc_coeff'],2);
-            
+
             $response = array_shift($responses);
             $table->add_data(array($qnumber."\n<br />".$qicon."\n ".$qreview, $qquestion, $response->text, $response->credit, $response->rcount, $response->rpercent, $facility, $qsd, $di, $dc));
             foreach($responses as $response) {
                 $table->add_data(array('', '', $response->text, $response->credit, $response->rcount, $response->rpercent, '', '', '', ''));
             }
         }
-        
+
         print_heading_with_help(get_string("analysistitle", "quiz_analysis"),"itemanalysis", "quiz");
 
         echo '<div id="tablecontainer">';
@@ -385,9 +386,9 @@ class quiz_report extends quiz_default_report {
         echo '</td></tr></table>';
         echo '</fieldset>';
         echo '</form>';
-        echo '</div>';    
+        echo '</div>';
         echo "\n";
- 
+
         echo '<table class="boxaligncenter"><tr>';
         $options = array();
         $options["id"] = "$cm->id";
@@ -395,17 +396,17 @@ class quiz_report extends quiz_default_report {
         $options["mode"] = "analysis";
         $options['sesskey'] = $USER->sesskey;
         $options["noheader"] = "yes";
-        echo '<td>';        
+        echo '<td>';
         $options["download"] = "ODS";
         print_single_button("report.php", $options, get_string("downloadods"));
-        echo "</td>\n"; 
-        echo '<td>';        
+        echo "</td>\n";
+        echo '<td>';
         $options["download"] = "Excel";
         print_single_button("report.php", $options, get_string("downloadexcel"));
-        echo "</td>\n"; 
-        
+        echo "</td>\n";
+
         if (file_exists("$CFG->libdir/phpdocwriter/lib/include.php")) {
-            echo '<td>';       
+            echo '<td>';
             $options["download"] = "OOo";
             print_single_button("report.php", $options, get_string("downloadooo", "quiz_analysis"));
             echo "</td>\n";
@@ -435,7 +436,7 @@ class quiz_report extends quiz_default_report {
                 if ($attemptscores[$aid]<=$bottom){
                     $bottom_scores +=$qrow[$qid];
                     $bottom_count++;
-                }               
+                }
             }
         }
         $n = count($qstats);
@@ -447,7 +448,7 @@ class quiz_report extends quiz_default_report {
         $sumq2 = $sumx2[1];
         $sumxy = stats_sumxy($qstats, array(0,0));
         $sumgq = $sumxy[0];
-        
+
         $q['count'] = $n;
         $q['facility'] = $sumq/$n;
         if ($n<2) {
@@ -513,22 +514,22 @@ class quiz_report extends quiz_default_report {
     /// Here starts workshhet headers
         $myxls->write_string(0,0,$sheettitle,$formatb);
 
-        $headers = array(get_string('qidtitle','quiz_analysis'), get_string('qtypetitle','quiz_analysis'), 
-                        get_string('qnametitle','quiz_analysis'), get_string('qtexttitle','quiz_analysis'), 
-                        get_string('responsestitle','quiz_analysis'), get_string('rfractiontitle','quiz_analysis'), 
-                        get_string('rcounttitle','quiz_analysis'), get_string('rpercenttitle','quiz_analysis'), 
-                        get_string('qcounttitle','quiz_analysis'), 
-                        get_string('facilitytitle','quiz_analysis'), get_string('stddevtitle','quiz_analysis'), 
-                        get_string('dicsindextitle','quiz_analysis'), get_string('disccoefftitle','quiz_analysis')); 
+        $headers = array(get_string('qidtitle','quiz_analysis'), get_string('qtypetitle','quiz_analysis'),
+                        get_string('qnametitle','quiz_analysis'), get_string('qtexttitle','quiz_analysis'),
+                        get_string('responsestitle','quiz_analysis'), get_string('rfractiontitle','quiz_analysis'),
+                        get_string('rcounttitle','quiz_analysis'), get_string('rpercenttitle','quiz_analysis'),
+                        get_string('qcounttitle','quiz_analysis'),
+                        get_string('facilitytitle','quiz_analysis'), get_string('stddevtitle','quiz_analysis'),
+                        get_string('dicsindextitle','quiz_analysis'), get_string('disccoefftitle','quiz_analysis'));
 
         $col = 0;
         foreach ($headers as $item) {
             $myxls->write(2,$col,$item,$formatbc);
             $col++;
         }
-        
+
         $row = 3;
-        foreach($questions as $q) {       
+        foreach($questions as $q) {
             $rows = $this->print_row_stats_data($q);
             foreach($rows as $rowdata){
                 $col = 0;
@@ -592,22 +593,22 @@ class quiz_report extends quiz_default_report {
     /// Here starts workshhet headers
         $myxls->write_string(0,0,$sheettitle,$formatb);
 
-        $headers = array(get_string('qidtitle','quiz_analysis'), get_string('qtypetitle','quiz_analysis'), 
-                        get_string('qnametitle','quiz_analysis'), get_string('qtexttitle','quiz_analysis'), 
-                        get_string('responsestitle','quiz_analysis'), get_string('rfractiontitle','quiz_analysis'), 
-                        get_string('rcounttitle','quiz_analysis'), get_string('rpercenttitle','quiz_analysis'), 
-                        get_string('qcounttitle','quiz_analysis'), 
-                        get_string('facilitytitle','quiz_analysis'), get_string('stddevtitle','quiz_analysis'), 
-                        get_string('dicsindextitle','quiz_analysis'), get_string('disccoefftitle','quiz_analysis')); 
+        $headers = array(get_string('qidtitle','quiz_analysis'), get_string('qtypetitle','quiz_analysis'),
+                        get_string('qnametitle','quiz_analysis'), get_string('qtexttitle','quiz_analysis'),
+                        get_string('responsestitle','quiz_analysis'), get_string('rfractiontitle','quiz_analysis'),
+                        get_string('rcounttitle','quiz_analysis'), get_string('rpercenttitle','quiz_analysis'),
+                        get_string('qcounttitle','quiz_analysis'),
+                        get_string('facilitytitle','quiz_analysis'), get_string('stddevtitle','quiz_analysis'),
+                        get_string('dicsindextitle','quiz_analysis'), get_string('disccoefftitle','quiz_analysis'));
 
         $col = 0;
         foreach ($headers as $item) {
             $myxls->write(2,$col,$item,$formatbc);
             $col++;
         }
-        
+
         $row = 3;
-        foreach($questions as $q) {       
+        foreach($questions as $q) {
             $rows = $this->print_row_stats_data($q);
             foreach($rows as $rowdata){
                 $col = 0;
@@ -626,19 +627,19 @@ class quiz_report extends quiz_default_report {
 
     function Export_CSV(&$questions, $filename) {
 
-        $headers = array(get_string('qidtitle','quiz_analysis'), get_string('qtypetitle','quiz_analysis'), 
-                        get_string('qnametitle','quiz_analysis'), get_string('qtexttitle','quiz_analysis'), 
-                        get_string('responsestitle','quiz_analysis'), get_string('rfractiontitle','quiz_analysis'), 
-                        get_string('rcounttitle','quiz_analysis'), get_string('rpercenttitle','quiz_analysis'), 
-                        get_string('qcounttitle','quiz_analysis'), 
-                        get_string('facilitytitle','quiz_analysis'), get_string('stddevtitle','quiz_analysis'), 
-                        get_string('dicsindextitle','quiz_analysis'), get_string('disccoefftitle','quiz_analysis')); 
+        $headers = array(get_string('qidtitle','quiz_analysis'), get_string('qtypetitle','quiz_analysis'),
+                        get_string('qnametitle','quiz_analysis'), get_string('qtexttitle','quiz_analysis'),
+                        get_string('responsestitle','quiz_analysis'), get_string('rfractiontitle','quiz_analysis'),
+                        get_string('rcounttitle','quiz_analysis'), get_string('rpercenttitle','quiz_analysis'),
+                        get_string('qcounttitle','quiz_analysis'),
+                        get_string('facilitytitle','quiz_analysis'), get_string('stddevtitle','quiz_analysis'),
+                        get_string('dicsindextitle','quiz_analysis'), get_string('disccoefftitle','quiz_analysis'));
 
         $text = implode("\t", $headers)." \n";
-        
+
         $filename .= ".txt";
 
-        header("Content-Type: application/download\n");   
+        header("Content-Type: application/download\n");
         header("Content-Disposition: attachment; filename=\"$filename\"");
         header("Expires: 0");
         header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
@@ -646,7 +647,7 @@ class quiz_report extends quiz_default_report {
 
         echo $text;
 
-        foreach($questions as $q) {       
+        foreach($questions as $q) {
             $rows = $this->print_row_stats_data($q);
             foreach($rows as $row){
                 $text = implode("\t", $row);
@@ -660,17 +661,18 @@ class quiz_report extends quiz_default_report {
         $qid = $q['id'];
         $question = get_record('question', 'id', $qid);
 
+        $options = new stdClass;
         $options->para = false;
         $options->newlines = false;
 
         $qtype = $question->qtype;
 
         $qname = format_text($question->name, FORMAT_MOODLE, $options);
-        $qtext = format_text($question->questiontext, FORMAT_MOODLE, $options);          
-                
-        unset($responses);
+        $qtext = format_text($question->questiontext, FORMAT_MOODLE, $options);
+
+        $responses = array();
         foreach ($q['responses'] as $aid=>$resp){
-            unset($response);
+            $response = new stdClass;
             if ($q['credits'][$aid] <= 0) {
                 $qclass = 'uncorrect';
             } elseif ($q['credits'][$aid] == 1) {
@@ -678,10 +680,10 @@ class quiz_report extends quiz_default_report {
             } else {
                 $qclass = 'partialcorrect';
             }
-            $response->credit = " (".format_float($q['credits'][$aid],2).") ";                
+            $response->credit = " (".format_float($q['credits'][$aid],2).") ";
             $response->text = format_text("$resp", FORMAT_MOODLE, $options);
             $count = $q['rcounts'][$aid].'/'.$q['count'];
-            $response->rcount = $count;  
+            $response->rcount = $count;
             $response->rpercent =  '('.format_float($q['rcounts'][$aid]/$q['count']*100,0).'%)';
             $responses[] = $response;
         }
@@ -690,16 +692,16 @@ class quiz_report extends quiz_default_report {
         $qsd = format_float($q['qsd'],4);
         $di = format_float($q['disc_index'],3);
         $dc = format_float($q['disc_coeff'],3);
-        
-        unset($result);
-        $response = array_shift($responses);        
-        $result[] = array($qid, $qtype, $qname, $qtext, $response->text, $response->credit, $response->rcount, $response->rpercent, $count, $facility, $qsd, $di, $dc);   
+
+        $result = array();
+        $response = array_shift($responses);
+        $result[] = array($qid, $qtype, $qname, $qtext, $response->text, $response->credit, $response->rcount, $response->rpercent, $count, $facility, $qsd, $di, $dc);
         foreach($responses as $response){
-            $result[] = array('', '', '', '', $response->text, $response->credit, $response->rcount, $response->rpercent, '', '', '', '', ''); 
+            $result[] = array('', '', '', '', $response->text, $response->credit, $response->rcount, $response->rpercent, '', '', '', '', '');
         }
         return $result;
     }
-}    
+}
 
 define('QUIZ_ALLATTEMPTS', 0);
 define('QUIZ_HIGHESTATTEMPT', 1);
@@ -713,7 +715,7 @@ function stats_sumx($data, $initsum){
         $accum[1] += $v[1];
     }
     return $accum;
-}       
+}
 
 function stats_sumx2($data, $initsum){
     $accum = $initsum;
@@ -722,7 +724,7 @@ function stats_sumx2($data, $initsum){
         $accum[1] += $v[1]*$v[1];
     }
     return $accum;
-}    
+}
 
 function stats_sumxy($data, $initsum){
     $accum = $initsum;
