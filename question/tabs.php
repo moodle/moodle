@@ -16,16 +16,11 @@
     }
 
     $tabs = array();
-    $row  = array();
     $inactive = array();
-
-    $row[] = new tabobject('questions', "$CFG->wwwroot/question/edit.php?courseid=$course->id", get_string('questions', 'quiz'), get_string('editquizquestions', 'quiz'));
-    $row[] = new tabobject('categories', "$CFG->wwwroot/question/category.php?id=$course->id", get_string('categories', 'quiz'), get_string('editqcats', 'quiz'));
-    $row[] = new tabobject('import', "$CFG->wwwroot/question/import.php?course=$course->id", get_string('import', 'quiz'), get_string('importquestions', 'quiz'));
-    $row[] = new tabobject('export', "$CFG->wwwroot/question/export.php?courseid=$course->id", get_string('export', 'quiz'), get_string('exportquestions', 'quiz'));
-
+    $row  = array();
+    questionbank_navigation_tabs($row, $context, $course->id);
     $tabs[] = $row;
 
-    print_tabs($tabs, $currenttab, $inactive);
+    print_tabs($tabs, $currenttab, array());
 
 ?>

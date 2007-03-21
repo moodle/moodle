@@ -189,7 +189,7 @@ class question_category_object {
 
         // wrap the table in a form and output it
         echo '<form action="category.php" method="post">';
-        echo '<fieldset class="invisiblefieldset">';
+        echo '<fieldset class="invisiblefieldset" style="display: block">';
         echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
         echo '<input type="hidden" name="id" value="'. $this->course->id . '" />';
         echo '<input type="hidden" name="addcategory" value="true" />';

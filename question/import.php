@@ -43,7 +43,6 @@
     $txt->matchgradesnearest = get_string('matchgradesnearest','quiz');
     $txt->modulename = get_string('modulename','quiz');
     $txt->modulenameplural = get_string('modulenameplural','quiz');
-    $txt->nocategory = get_string('nocategory','quiz');
     $txt->onlyteachersimport = get_string('onlyteachersimport','quiz');
     $txt->questions = get_string("questions", "quiz");
     $txt->quizzes = get_string('modulenameplural', 'quiz');
@@ -60,18 +59,17 @@
     if ($categoryid) { // update category in session variable
         $SESSION->questioncat = $categoryid;
     } else { // try to get category from modform
-        $showcatmenu = true; // will ensure that user can choose category
         if (isset($SESSION->questioncat)) {
             $categoryid = $SESSION->questioncat;
         }
     }
 
-    if (! $category = get_record("question_categories", "id", $categoryid)) {
+    if (!$category = get_record("question_categories", "id", $categoryid)) {
         // if no valid category was given, use the default category
         if ($courseid) {
             $category = get_default_question_category($courseid);
         } else {
-            error( $txt->nocategory );
+            print_error('nocategory','quiz');
         }
     }
 
@@ -79,13 +77,14 @@
         $courseid = $category->course;
     }
 
-    if (! $course = get_record("course", "id", $courseid)) {
+    if (!$course = get_record("course", "id", $courseid)) {
         error("Invalid course!");
     }
 
     require_login($course->id, false);
 
-    require_capability('moodle/question:import', get_context_instance(CONTEXT_COURSE, $course->id));
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    require_capability('moodle/question:import', $context);
 
     // ensure the files area exists for this course
     make_upload_directory( "$course->id" );
@@ -96,7 +95,7 @@
     //==========
 
     if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
-        $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))
+        $strupdatemodule = has_capability('moodle/course:manageactivities', $context)
             ? update_module_button($SESSION->modform->cmid, $course->id, $txt->modulename)
             : "";
         print_header_simple($txt->importquestions, '',
@@ -209,7 +208,7 @@
     ?>
 
     <form id="form" enctype="multipart/form-data" method="post" action="import.php">
-        <fieldset class="invisiblefieldset">
+        <fieldset class="invisiblefieldset" style="display: block;">
             <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
             <?php print_simple_box_start("center"); ?>
             <table cellpadding="5">

@@ -141,8 +141,8 @@
         redirect("edit.php?courseid=$course->id");
     }
 
-    if (isset($_REQUEST['cat'])) { /// coming from category selection drop-down menu
-        $SESSION->questioncat = required_param('cat', PARAM_INT);
+    if ($categoryid = optional_param('cat', 0, PARAM_INT)) { /// coming from category selection drop-down menu
+        $SESSION->questioncat = $categoryid;
         $page = 0;
         $SESSION->questionpage = 0;
     }
