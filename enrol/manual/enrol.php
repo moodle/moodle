@@ -178,10 +178,9 @@ function check_entry($form, $course) {
 */
 function check_group_entry ($courseid, $password) {
     $ingroup = false;
-
     if (($groups = get_groups($courseid)) !== false) {
         foreach ($groups as $group) {
-            if ( !empty($group->password) and ($password == $group->password) ) {
+            if ( !empty($group->enrolmentkey) and ($password == $group->enrolmentkey) ) {
                 $ingroup = $group->id;
             }
         }
