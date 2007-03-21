@@ -71,11 +71,11 @@ class embedded_cloze_qtype extends default_questiontype {
             if ($oldwrappedid = array_shift($oldwrappedids)) {
                 $wrapped->id = $oldwrappedid;
             }
-            $wrapped->name     = $question->name;
-            $wrapped->parent   = $question->id;
+            $wrapped->name = $question->name;
+            $wrapped->parent = $question->id;
             $wrapped->category = $question->category;
             $wrapped = $QTYPES[$wrapped->qtype]->save_question($wrapped,
-             $wrapped, $question->course);
+                    $wrapped, $question->course);
             $sequence[] = $wrapped->id;
         }
 
@@ -87,12 +87,11 @@ class embedded_cloze_qtype extends default_questiontype {
             $multianswer = new stdClass;
             $multianswer->question = $question->id;
             $multianswer->sequence = implode(',', $sequence);
-            if ($oldid =
-             get_field('question_multianswer', 'id', 'question', $question->id)) {
+            if ($oldid = get_field('question_multianswer', 'id', 'question', $question->id)) {
                 $multianswer->id = $oldid;
                 if (!update_record("question_multianswer", $multianswer)) {
                     $result->error = "Could not update cloze question options! " .
-                     "(id=$multianswer->id)";
+                            "(id=$multianswer->id)";
                     return $result;
                 }
             } else {
@@ -119,7 +118,7 @@ class embedded_cloze_qtype extends default_questiontype {
         $form->defaultgrade = $question->defaultgrade;
         $form->questiontext = $question->questiontext;
         $form->questiontextformat = 0;
-        $form->options      = clone($question->options);
+        $form->options = clone($question->options);
         unset($question->options);
         return parent::save_question($question, $form, $course);
     }
@@ -138,24 +137,23 @@ class embedded_cloze_qtype extends default_questiontype {
         foreach ($responses as $response) {
             $tmp = explode("-", $response);
             // restore encoded characters
-            $state->responses[$tmp[0]] =
-             str_replace(array("&#0044;", "&#0045;"), array(",", "-"), $tmp[1]);
+            $state->responses[$tmp[0]] = str_replace(array("&#0044;", "&#0045;"),
+                    array(",", "-"), $tmp[1]);
         }
         return true;
     }
 
     function save_session_and_responses(&$question, &$state) {
         $responses = $state->responses;
+        // encode - (hyphen) and , (comma) to &#0045; because they are used as
+        // delimiters
         array_walk($responses, create_function('&$val, $key',
-         // encode - (hyphen) and , (comma) to &#0045; because they are used as
-         // delimiters
-         '$val = str_replace(array(",", "-"), array("&#0044;", "&#0045;"), $val);
-          $val = "$key-$val";'));
+                '$val = str_replace(array(",", "-"), array("&#0044;", "&#0045;"), $val);
+                $val = "$key-$val";'));
         $responses = implode(',', $responses);
 
         // Set the legacy answer field
-        if (!set_field('question_states', 'answer', $responses, 'id',
-         $state->id)) {
+        if (!set_field('question_states', 'answer', $responses, 'id', $state->id)) {
             return false;
         }
         return true;
@@ -203,8 +201,7 @@ class embedded_cloze_qtype extends default_questiontype {
         }
 
         $qtextremaining = format_text($question->questiontext,
-                                      $question->questiontextformat,
-                                      $formatoptions, $cmoptions->course);
+                $question->questiontextformat, $formatoptions, $cmoptions->course);
 
         $strfeedback = get_string('feedback', 'quiz');
 
@@ -219,8 +216,7 @@ class embedded_cloze_qtype extends default_questiontype {
             $positionkey = $regs[1];
             $wrapped = &$question->options->questions[$positionkey];
             $answers = &$wrapped->options->answers;
-            $correctanswers = $QTYPES[$wrapped->qtype]
-             ->get_correct_responses($wrapped, $state);
+            $correctanswers = $QTYPES[$wrapped->qtype]->get_correct_responses($wrapped, $state);
 
             $inputname = $nameprefix.$positionkey;
             if (isset($state->responses[$positionkey])) {
@@ -299,9 +295,12 @@ class embedded_cloze_qtype extends default_questiontype {
                 case 'multichoice':
                     $outputoptions = '<option></option>'; // Default empty option
                     foreach ($answers as $mcanswer) {
-                        $selected = $response == $mcanswer->id
-                                ? ' selected="selected" ' : '';
-                        $outputoptions .= '<option value="' . $mcanswer->id . '" $selected>' . s($mcanswer->answer, true) . '</option>';
+                        $selected = '';
+                        if ($response == $mcanswer->id) {
+                            $selected = ' selected="selected"';
+                        }
+                        $outputoptions .= "<option value=\"$mcanswer->id\"$selected>" .
+                                s($mcanswer->answer, true) . '</option>';
                     }
                    // In the next line, $readonly is invalid HTML, but it works in
                    // all browsers. $disabled would be valid, but then the JS for
