@@ -82,6 +82,7 @@ $string['forum:deleteanypost'] = 'Delete any posts (anytime)';
 $string['forum:deleteownpost'] = 'Delete own posts (within deadline)';
 $string['forum:editanypost'] = 'Edit any post';
 $string['forum'] = 'Forum';
+$string['forum:initialsubscriptions'] = 'Initial subscription';
 $string['forumintro'] = 'Forum introduction';
 $string['forum:managesubscriptions'] = 'Manage subscriptions';
 $string['forum:movediscussions'] = 'Move discussions';
