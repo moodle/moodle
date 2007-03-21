@@ -2278,16 +2278,6 @@ body#message-messages {
   background: transparent url(pix/tab/right.gif) no-repeat right top;
 }
 
-/*
-.tabrow0 a.here span {
-  background: transparent url(pix/tab/right_last.gif) no-repeat right top;
-}
-
-.tabrow0 .last span {
-  background: transparent url(pix/tab/right_last.gif) no-repeat right top;
-}
-*/
-
 .tabrow1 li a span {
   background: none !important;
 }
@@ -2297,10 +2287,6 @@ body#message-messages {
   background: transparent url(pix/tab/left.gif) no-repeat left top;
   margin: 0 -1px 0 0;
   padding: 10px 0 0.35em 13px;
-}
-
-.tabrow0 a:hover, .tabrow0 a:active, .tabrow0 a.here:link, .tabrow0 a.here:visited {
-  /* background:#ddd; */
 }
 
 .tabrow0 a:hover {
@@ -2322,6 +2308,7 @@ body#message-messages {
 .tabrow0 .here a {
   color:#444;
 }
+
 
 .tabrow0 .here a:link, .tabrow0 .here a:visited {
   position:relative;
@@ -2375,13 +2362,21 @@ body#message-messages {
   background-image: none !important;
 }
 
-.tabrow0 ul a:hover, .tabrow0 ul a:active, .tabrow0 ul .here a:link, .tabrow0 ul .here a:visited {
+.tabrow0 ul div {
+  display: none;
+}
+
+ul.tabrow1 li a,
+ul.tabrow1 li a:link,
+ul.tabrow1 li a:visited {
+  color:#00c;
+  font-size: 110%;
+}
+
+ul.tabrow1 li.here.selected a {
   color:#444;
 }
 
-.tabrow0 ul div {
-    display: none;
-}
 /***
  *** User
  ***/
