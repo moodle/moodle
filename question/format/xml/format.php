@@ -71,6 +71,10 @@ class qformat_xml extends qformat_default {
      * @return string processed text
      */
     function import_text( $text ) {
+        // quick sanity check
+        if (empty($text)) {
+            return '';
+        }
         $data = $text[0]['#'];
         return addslashes(trim( $data ));
     }
