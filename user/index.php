@@ -342,6 +342,8 @@
     {$CFG->prefix}role_assignments r on u.id=r.userid LEFT OUTER JOIN
     {$CFG->prefix}user_lastaccess ul on (r.userid=ul.userid and ul.courseid = $course->id)"; 
     
+    $hiddensql = has_capability('moodle/role:viewhiddenassigns', $context)? '':' AND r.hidden = 0 ';       
+    
     // excluse users with these admin role assignments
     if ($doanythingroles) {
         $adminroles = 'AND r.roleid NOT IN (';
@@ -362,7 +364,8 @@
         AND u.deleted = 0 $selectrole
         AND (ul.courseid = $course->id OR ul.courseid IS NULL)
         AND u.username <> 'guest' 
-        $adminroles";
+        $adminroles
+        $hiddensql ";
         $where .= get_lastaccess_sql($accesssince);
 
     $wheresearch = '';
