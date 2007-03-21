@@ -18,7 +18,7 @@ $string['admindirsettingsub'] = '    A very few webhosts use /admin as a special
     renaming the admin directory in your installation, and putting that 
     new name here.  For example: <br /> <br /><b>moodleadmin</b><br /> <br />
     This will fix admin links in Moodle.';
-$string['bypassed'] = 'Bypassed';
+$string['bypassed'] = 'ஒதுக்கப்பட்டது';
 $string['cannotcreatelangdir'] = 'Cannot create lang dir.';
 $string['cannotcreatetempdir'] = 'Cannot create temp dir.';
 $string['cannotdownloadcomponents'] = 'Cannot download components.';
@@ -152,7 +152,7 @@ $string['memorylimithelp'] = '<p>The PHP memory limit for your server is current
     (you will see errors when you look at pages) so you\'ll have to remove the .htaccess file.</p></li>
 </ol>';
 $string['missingrequiredfield'] = 'Some required field is missing';
-$string['moodledocslink'] = 'Moodle Docs for this page';
+$string['moodledocslink'] = 'மூடூலின் ஆவணங்களுக்கு இங்கே சொடுக்கவும்';
 $string['mysql416bypassed'] = 'However, if your site is using iso-8859-1 (latin) languages ONLY, you may continue using your currently installed MySQL 4.1.12 (or higher).';
 $string['mysql416required'] = 'MySQL 4.1.16 is the minimum version required for Moodle 1.6 in order to guarantee that all data can be converted to UTF-8 in the future.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MySQL extension so that it can communicate with MySQL.  Please check your php.ini file or recompile PHP.';
@@ -171,15 +171,17 @@ $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.3.0 
 $string['previous'] = 'முந்தைய';
 $string['remotedownloadnotallowed'] = 'Download of components to your server isn\'t allowed (allow_url_fopen is disabled).<br /><br />You must download the <a href=\"$a->url\">$a->url</a> file manually, copy it to \"$a->dest\" in your server and unzip it there.';
 $string['report'] = 'அறிக்கை';
-$string['restricted'] = 'Restricted';
+$string['restricted'] = 'அனுமதி குறைக்கப்பட்டது';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle may have trouble with safe mode on';
 $string['sessionautostart'] = 'Session Auto Start';
 $string['sessionautostarterror'] = 'This should be off';
 $string['skipdbencodingtest'] = 'Skip DB Encoding Test';
-$string['status'] = 'Status';
+$string['status'] = 'தற்போதைய நிலைகள்';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Tamil';
+$string['unicoderecommended'] = 'Storing all your data in Unicode (UTF-8) is recommended. New installations should be performed into databases that have their default character set as Unicode. If you are upgrading, you should perform the UTF-8 migration process (see the Admin page).';
+$string['unicoderequired'] = 'It is required that you store all your data in Unicode format (UTF-8). New installations must be performed into databases that have their default character set as Unicode. If you are upgrading, you should perform the UTF-8 migration process (see the Admin page).';
 $string['user'] = 'பயனாளர்';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'You are seeing this page because you have successfully installed and 
