@@ -292,6 +292,11 @@ class quiz_report extends quiz_default_report {
             }
         }
 
+        $format_options = new stdClass;
+        $format_options->para = false;
+        $format_options->noclean = true;
+        $format_options->newlines = false;
+
         // Now it is time to page the data, simply slice the keys in the array
         if (!isset($pagesize) || ((int)$pagesize < 1) ){
             $pagesize = 10;
@@ -305,16 +310,13 @@ class quiz_report extends quiz_default_report {
             $qid = $q['id'];
             $question = get_record('question', 'id', $qid);
             $qnumber = " (".link_to_popup_window('/question/question.php?id='.$qid,'editquestion', $qid, 450, 550, get_string('edit'), 'none', true ).") ";
-            $qname = '<div class="qname">'.format_text($question->name." :  ", $question->questiontextformat, NULL, $quiz->course).'</div>';
+            $qname = '<div class="qname">'.format_text($question->name." :  ", $question->questiontextformat, $format_options, $quiz->course).'</div>';
             $qicon = print_question_icon($question, false, true);
             $qreview = quiz_get_question_review($quiz, $question);
-            $qtext = format_text($question->questiontext, $question->questiontextformat, NULL, $quiz->course);
+            $qtext = format_text($question->questiontext, $question->questiontextformat, $format_options, $quiz->course);
             $qquestion = $qname."\n".$qtext."\n";
 
-            $format_options = new stdClass;
-            $format_options->para = false;
-            $format_options->newlines = false;
-            unset($responses);
+            $responses = array();
             foreach ($q['responses'] as $aid=>$resp){
                 $response = new stdClass;
                 if ($q['credits'][$aid] <= 0) {
@@ -327,7 +329,7 @@ class quiz_report extends quiz_default_report {
                 $response->credit = '<span class="'.$qclass.'">('.format_float($q['credits'][$aid],2).') </span>';
                 $response->text = '<span class="'.$qclass.'">'.format_text("$resp", FORMAT_MOODLE, $format_options, $quiz->course).' </span>';
                 $count = $q['rcounts'][$aid].'/'.$q['count'];
-                $response->rcount = $count;  // format_text("$count", FORMAT_MOODLE, $format_options, $quiz->course);
+                $response->rcount = $count;
                 $response->rpercent =  '('.format_float($q['rcounts'][$aid]/$q['count']*100,0).'%)';
                 $responses[] = $response;
             }
@@ -663,6 +665,7 @@ class quiz_report extends quiz_default_report {
 
         $options = new stdClass;
         $options->para = false;
+        $options->noclean = true;
         $options->newlines = false;
 
         $qtype = $question->qtype;
