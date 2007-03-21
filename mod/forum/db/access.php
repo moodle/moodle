@@ -250,6 +250,17 @@ $mod_forum_capabilities = array(
         )
     ),
 
+    'mod/forum:initialsubscriptions' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'student' => CAP_ALLOW
+        )
+    ),
+
     'mod/forum:throttlingapplies' => array(
 
         'riskbitmask' => RISK_SPAM,

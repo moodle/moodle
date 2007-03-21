@@ -2166,7 +2166,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
                 include_once($CFG->dirroot.'/mod/'.$mod.'/lib.php');
                 $functionname = $mod.'_role_assign';
                 if (function_exists($functionname)) {
-                    $functionname($userid, $context);
+                    $functionname($userid, $context, $roleid);
                 }
             }
         }
