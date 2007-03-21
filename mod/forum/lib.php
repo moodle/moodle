@@ -476,6 +476,9 @@ function forum_cron() {
         }
     }
 
+    $USER = clone($cronuser);
+    course_setup(SITEID);
+
     $sitetimezone = $CFG->timezone;
 
     /// Now see if there are any digest mails waiting to be sent, and if we should send them
