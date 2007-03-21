@@ -55,7 +55,7 @@ class default_questiontype {
         if ($menu_name[0] == '[') {
             // Legacy behavior, if the string was not in the proper qtype_name
             // language file, look it up in the quiz one.
-            $menu_name = get_string($this->name(), 'quiz');
+            $menu_name = get_string($name, 'quiz');
         }
         return $menu_name;
     }
@@ -107,11 +107,16 @@ class default_questiontype {
      * @param string $wizardnow is '' for first page.
      */
     function display_question_editing_page(&$mform, $question, $wizardnow){
+        $name = $this->name();
+        $strheading = get_string('editing' . $name, 'qtype_' . $name);
+        if ($strheading[0] == '[') {
+            // Legacy behavior, if the string was not in the proper qtype_name
+            // language file, look it up in the quiz one.
+            $strheading = get_string('editing' . $name, 'quiz');
+        }
 
-        print_heading_with_help(get_string("editing".$question->qtype, "quiz"), $question->qtype, "quiz");
-
+        print_heading_with_help($strheading, $name, 'quiz');
         $mform->display();
-
     }
 
     /**
