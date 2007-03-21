@@ -3809,8 +3809,18 @@ function forum_update_subscriptions_button($courseid, $forumid) {
  * @param object $context 
  * @return bool
  */
-function forum_role_assign($userid, $context) {
-    return forum_add_user_default_subscriptions($userid, $context);
+function forum_role_assign($userid, $context, $roleid) {
+    // check to see if this role comes with mod/forum:initialsubscriptions
+    $cap = role_context_capabilities($roleid, $context, 'mod/forum:initialsubscriptions');
+    
+    // we are checking the role because has_capability() will pull this capability out
+    // from other roles this user might have and resolve them, which is no good
+    if ($cap['mod/forum:initialsubscriptions'] == CAP_ALLOW) {
+        return forum_add_user_default_subscriptions($userid, $context);
+    } else {
+        // MDL-8981, do not subscribe to forum
+        return true;   
+    }
 }
 
 
