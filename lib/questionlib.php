@@ -555,6 +555,25 @@ function question_delete_course($course, $feedback=true) {
     return true;
 }
 
+function questionbank_navigation_tabs(&$row, $context, $courseid) {
+    global $CFG;
+    if (has_capability('moodle/question:manage', $context)) {
+        $row[] = new tabobject('questions', "$CFG->wwwroot/question/edit.php?courseid=$courseid", get_string('questions', 'quiz'), get_string('editquestions', "quiz"));
+    }
+    
+    if (has_capability('moodle/question:managecategory', $context)) {
+        $row[] = new tabobject('categories', "$CFG->wwwroot/question/category.php?id=$courseid", get_string('categories', 'quiz'), get_string('editqcats', 'quiz'));
+    }
+    
+    if (has_capability('moodle/question:import', $context)) {
+        $row[] = new tabobject('import', "$CFG->wwwroot/question/import.php?course=$courseid", get_string('import', 'quiz'), get_string('importquestions', 'quiz'));
+    }
+    
+    if (has_capability('moodle/question:export', $context)) {
+        $row[] = new tabobject('export', "$CFG->wwwroot/question/export.php?courseid=$courseid", get_string('export', 'quiz'), get_string('exportquestions', 'quiz'));
+    }
+}
+
 /**
  * Private function to factor common code out of get_question_options().
  *

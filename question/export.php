@@ -19,7 +19,7 @@
     $exportfilename = optional_param('exportfilename','',PARAM_FILE );
     $format = optional_param('format','', PARAM_FILE );
 
-    
+
     // get display strings
     $txt = new object;
     $txt->category = get_string('category','quiz');
@@ -32,32 +32,31 @@
     $txt->exportcategory = get_string('exportcategory','quiz');
     $txt->modulename = get_string('modulename','quiz');
     $txt->modulenameplural = get_string('modulenameplural','quiz');
-    $txt->nocategory = get_string('nocategory','quiz');
     $txt->tofile = get_string('tofile','quiz');
 
 
-    if (! $course = get_record("course", "id", $courseid)) {
+    if (!$course = get_record("course", "id", $courseid)) {
         error("Course does not exist!");
     }
 
-    $showcatmenu = false;
     if ($categoryid) { // update category in session variable
         $SESSION->questioncat = $categoryid;
     } else { // try to get category from modform
-        $showcatmenu = true; // will ensure that user can choose category
         if (isset($SESSION->questioncat)) {
             $categoryid = $SESSION->questioncat;
         }
     }
 
-    $category = get_default_question_category($courseid);
-
-    if (! $categorycourse = get_record("course", "id", $category->course)) {
-        error( $txt->nocategory );
+    if (!$category = get_record("question_categories", "id", $categoryid)) {   
+        $category = get_default_question_category($courseid); 
+    }
+    
+    if (!$categorycourse = get_record("course", "id", $category->course)) {
+        print_error('nocategory','quiz');
     }
 
     require_login($course->id, false);
-    
+
     // check role capability
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     require_capability('moodle/question:export', $context);
@@ -95,8 +94,8 @@
             error( "Format not known ($format)" );  }
 
         // load parent class for import/export
-        require("format.php"); 
-        
+        require("format.php");
+
         // and then the class for the selected format
         require("format/$format/format.php");
 
@@ -148,55 +147,49 @@
     }
 
     print_heading_with_help($txt->exportquestions, 'export', 'quiz');
-    print_simple_box_start('center');   
-?>    
+    print_simple_box_start('center');
+?>
 
     <form enctype="multipart/form-data" method="post" action="export.php">
-    <fieldset class="invisiblefieldset">
-        <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
-        <input type="hidden" name="courseid" value="<?php echo $course->id; ?>" />
-            
+        <fieldset class="invisiblefieldset" style="display: block;">
+            <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
+            <input type="hidden" name="courseid" value="<?php echo $course->id; ?>" />
+
             <table cellpadding="5">
                 <tr>
                     <td align="right"><?php echo $txt->category; ?>:</td>
                     <td>
-                        <?php 
-                        if (!$showcatmenu) { // category already specified
-                            echo '<strong>'.question_category_coursename($category).'</strong>&nbsp;&nbsp;'; ?>
-                            <input type="hidden" name="category" value="<?php echo $category->id ?>" />
-                            <?php
-                            } else { // no category specified, let user choose
-                                question_category_select_menu($course->id, true, false, $category->id);
-                            } 
-                            echo $txt->tofile; ?>
-                            <input name="cattofile" type="checkbox" />
-                            <?php helpbutton('exportcategory', $txt->exportcategory, 'quiz'); ?>
-                        </td>    
-                    </tr>
-                    <tr>
-                        <td align="right"><?php echo $txt->fileformat; ?>:</td>
-                        <td>
-                            <?php choose_from_menu($fileformatnames, 'format', 'gift', '');
-                            helpbutton('export', $txt->exportquestions, 'quiz'); ?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="right"><?php echo $txt->exportname; ?>:</td>
-                        <td>
-                            <input type="text" size="40" name="exportfilename" value="<?php echo $exportfilename; ?>" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="center" >
-                            <input type="submit" name="save" value="<?php echo $txt->exportquestions; ?>" />
-                        </td>
-                        <td>&nbsp;</td>
-                    </tr>
-                </table>
-        </fieldset>        
-        </form>
+                        <?php
+                        question_category_select_menu($course->id, true, false, $category->id);
+                        echo $txt->tofile; ?>
+                        <input name="cattofile" type="checkbox" />
+                        <?php helpbutton('exportcategory', $txt->exportcategory, 'quiz'); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right"><?php echo $txt->fileformat; ?>:</td>
+                    <td>
+                        <?php choose_from_menu($fileformatnames, 'format', 'gift', '');
+                        helpbutton('export', $txt->exportquestions, 'quiz'); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right"><?php echo $txt->exportname; ?>:</td>
+                    <td>
+                        <input type="text" size="40" name="exportfilename" value="<?php echo $exportfilename; ?>" />
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center" >
+                        <input type="submit" name="save" value="<?php echo $txt->exportquestions; ?>" />
+                    </td>
+                    <td>&nbsp;</td>
+                </tr>
+            </table>
+        </fieldset>
+    </form>
     <?php
-    
+
     print_simple_box_end();
     print_footer($course);
 ?>
