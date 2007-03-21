@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package questionbank
+ * @subpackage questiontypes
+ */
+
 class question_dataset_dependent_definitions_form extends moodleform {
     /**
      * Question object with options and answers already loaded by get_question_options

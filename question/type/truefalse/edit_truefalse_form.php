@@ -6,7 +6,8 @@ require_once($CFG->dirroot.'/question/type/edit_question_form.php');
  * @copyright &copy; 2006 The Open University
  * @author T.J.Hunt@open.ac.uk
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package questions
+ * @package questionbank
+ * @subpackage questiontypes
  *//** */
 
 /**
