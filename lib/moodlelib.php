@@ -4036,7 +4036,7 @@ function reset_password_and_mail($user) {
 
     $subject = get_string('emailconfirmationsubject', '', $site->fullname);
 
-    $data->link = $CFG->wwwroot .'/login/confirm.php?data='. $user->secret .'/'. $user->username;
+    $data->link = $CFG->wwwroot .'/login/confirm.php?data='. $user->secret .'/'. urlencode($user->username);
     $message     = get_string('emailconfirmation', '', $data);
     $messagehtml = text_to_html(get_string('emailconfirmation', '', $data), false, false, true);
 
@@ -4063,7 +4063,7 @@ function send_password_change_confirmation_email($user) {
 
     $data->firstname = $user->firstname;
     $data->sitename = $site->fullname;
-    $data->link = $CFG->httpswwwroot .'/login/forgot_password.php?p='. $user->secret .'&s='. $user->username;
+    $data->link = $CFG->httpswwwroot .'/login/forgot_password.php?p='. $user->secret .'&s='. urlencode($user->username);
     $data->admin = fullname($from).' ('. $from->email .')';
 
     $message = get_string('emailpasswordconfirmation', '', $data);
