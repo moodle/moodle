@@ -1,23 +1,33 @@
 <?php  // $Id$
+/**
+ * Quiz report to help teachers manually grade quiz questions that need it.
+ *
+ * @package quiz
+ * @subpackage reports
+ */
 
-// This file allows a teacher to grade essay questions.
-// Could be later expanded to change grades for all question types
+// Flow of the file:
+//     Get variables, run essential queries
+//     Check for post data submitted.  If exists, then process data (the data is the grades and comments for essay questions)
+//     Check for userid, attemptid, or gradeall and for questionid.  If found, print out the appropriate essay question attempts
+//     Switch:
+//         first case: print out all essay questions in quiz and the number of ungraded attempts
+//         second case: print out all users and their attempts for a specific essay question
 
-# Flow of the file:
-#     Get variables, run essential queries
-#     Check for post data submitted.  If exists, then process data (the data is the grades and comments for essay questions)
-#     Check for userid, attemptid, or gradeall and for questionid.  If found, print out the appropriate essay question attempts
-#     Switch:
-#         first case: print out all essay questions in quiz and the number of ungraded attempts
-#         second case: print out all users and their attempts for a specific essay question
+require_once($CFG->dirroot . "/mod/quiz/editlib.php");
+require_once($CFG->libdir . '/tablelib.php');
 
-
-    require_once("editlib.php");
-    require_once($CFG->libdir.'/tablelib.php');
-
+/**
+ * Quiz report to help teachers manually grade quiz questions that need it.
+ *
+ * @package quiz
+ * @subpackage reports
+ */
 class quiz_report extends quiz_default_report {
-
-    function display($quiz, $cm, $course) {     /// This function just displays the report
+    /**
+     * Displays the report.
+     */
+    function display($quiz, $cm, $course) {
         global $CFG, $SESSION, $USER, $db, $QTYPES;
 
         $action = optional_param('action', 'viewquestions', PARAM_ALPHA);
@@ -186,7 +196,7 @@ class quiz_report extends quiz_default_report {
         $usercount = count($users);
 
         // set up table
-        $tablecolumns = array('picture', 'fullname', 'attempt', 'grade');
+        $tablecolumns = array('picture', 'fullname', 'timefinish', 'grade');
         $tableheaders = array('', get_string('fullname'), get_string("completedon", "quiz"), '');
 
         $table = new flexible_table('mod-quiz-report-grading');
@@ -233,7 +243,7 @@ class quiz_report extends quiz_default_report {
             $sort = 'ORDER BY '.$sort;  // seems like I would need to have u. or qa. infront of the ORDER BY attribues... but seems to work..
         } else {
             // my default sort rule
-            $sort = 'ORDER BY u.firstname, u.lastname, qa.attempt ASC';
+            $sort = 'ORDER BY u.firstname, u.lastname, qa.timefinish ASC';
         }
 
         // set up the pagesize
@@ -259,7 +269,7 @@ class quiz_report extends quiz_default_report {
                 // link for the attempt
                 $attemptlink = "<a $style href=\"report.php?mode=grading&amp;action=grade&amp;q=$quiz->id&amp;questionid=$question->id&amp;attemptid=$attempt->attemptid\">".
                         userdate($attempt->timefinish, get_string('strftimedatetime')).'</a>';
-                
+
                 // grade all attempts for this user
                 $gradelink = "<a href=\"report.php?mode=grading&amp;action=grade&amp;q=$quiz->id&amp;questionid=$question->id&amp;userid=$attempt->userid\">".
                         get_string('grade').'</a>';
