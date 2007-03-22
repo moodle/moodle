@@ -2969,8 +2969,31 @@ function remove_course_contents($courseid, $showfeedback=true) {
             if ($showfeedback) {
                 notify($strdeleted .' block_instance');
             }
+            
+            require_once($CFG->libdir.'/blocklib.php');
             foreach ($blocks as $block) {  /// Delete any associated contexts for this block
-                delete_context(CONTEXT_BLOCK, $block->id);
+                
+                // Block instances are rarely created. Since the block instance is gone from the above delete
+                // statement, calling delete_context() will generate a warning as get_context_instance could
+                // no longer create the context as the block is already gone. 
+                if (record_exists('context', 'contextlevel', CONTEXT_BLOCK, 'instanceid', $block->id)) {
+                    delete_context(CONTEXT_BLOCK, $block->id);
+                }
+                 
+                // fix for MDL-7164                
+                // Get the block object and call instance_delete()
+                if (!$record = blocks_get_record($block->blockid)) {
+                    $result = false;
+                    continue;
+                }
+                if (!$obj = block_instance($record->name, $block)) {
+                    $result = false;
+                    continue;
+                }
+                // Return value ignored, in core mods this does not do anything, but just in case
+                // third party blocks might have stuff to clean up
+                // we execute this anyway
+                $obj->instance_delete();
             }
         } else {
             $result = false;
@@ -3061,7 +3084,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
     if ($courseid != SITEID) {
         delete_context(CONTEXT_COURSE, $course->id);
     }
-    
+
     return $result;
 }
 
