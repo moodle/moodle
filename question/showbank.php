@@ -47,9 +47,9 @@
     } else {
         $sortorder = isset($SESSION->questionsortorder) ? $SESSION->questionsortorder : 'qtype, name ASC';
     }
+    $SESSION->fromurl = $FULLME;
 
 /// Now, check for commands on this page and modify variables as necessary
-
     if (isset($_REQUEST['move']) and confirm_sesskey()) { /// Move selected questions to new category
         $tocategoryid = required_param('category', PARAM_INT);
         if (!$tocategory = get_record('question_categories', 'id', $tocategoryid)) {
