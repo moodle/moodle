@@ -12,7 +12,7 @@
     }
     $authplugin = get_auth_plugin($CFG->registerauth);
 
-    if (!method_exists($authplugin, 'user_confirm')) {
+    if (!$authplugin->can_confirm()) {
         error("Sorry, you may not use this page.");
     }
 
@@ -42,10 +42,8 @@
 
         } else if ($confirmed == AUTH_CONFIRM_OK) {
             // Activate new user if necessary
-            if (method_exists($authplugin, 'user_activate')) {
-                if (!$authplugin->user_activate($username)) {
-                    error('Could not activate this user!');
-                }
+            if (!$authplugin->user_activate($username)) {
+                error('Could not activate this user!');
             }
 
             // The user has confirmed successfully, let's log them in

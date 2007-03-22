@@ -90,16 +90,13 @@ if ($show_instructions) {
                    </form>
                  </div>
 <?php     } else if (!empty($CFG->registerauth)) {
-              echo format_text($CFG->auth_instructions);
-              $authplugin = get_auth_plugin($CFG->registerauth);
-              if (method_exists($authplugin, 'user_create')) { ?>
-                <div class="signupform">
-                  <form action="signup.php" method="get" id="signup">
-                  <div><input type="submit" value="<?php print_string("startsignup") ?>" /></div>
-                  </form>
-                </div>
-<?php         }
-          } else {
+              echo format_text($CFG->auth_instructions); ?>
+              <div class="signupform">
+                <form action="signup.php" method="get" id="signup">
+                <div><input type="submit" value="<?php print_string("startsignup") ?>" /></div>
+                </form>
+              </div>
+<?php     } else {
               echo format_text($CFG->auth_instructions);
           } ?>
       </div>

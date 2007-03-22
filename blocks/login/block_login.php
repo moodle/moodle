@@ -29,7 +29,7 @@ class block_login extends block_base {
         
         if (!empty($CFG->registerauth)) {
             $authplugin = get_auth_plugin($CFG->registerauth);
-            if (method_exists($authplugin, 'user_signup')) {
+            if ($authplugin->can_signup()) {
                 $signup = $wwwroot . '/login/signup.php';
             }
         }

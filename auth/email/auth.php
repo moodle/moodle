@@ -16,21 +16,18 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
+require_once($CFG->libdir.'/authlib.php');
 
 /**
  * Email authentication plugin.
  */
-class auth_plugin_email {
-
-    /**
-     * The configuration details for the plugin.
-     */
-    var $config;
+class auth_plugin_email extends auth_plugin_base {
 
     /**
      * Constructor.
      */
     function auth_plugin_email() {
+        $this->authtype = 'email';
         $this->config = get_config('auth/email');
     }
 
@@ -65,6 +62,10 @@ class auth_plugin_email {
         return update_internal_user_password($user, $newpassword);
     }
 
+    function can_signup() {
+        return true;
+    }
+
     /**
      * Sign up a new user ready for confirmation.
      * Password is passed in plaintext.
@@ -72,7 +73,7 @@ class auth_plugin_email {
      * @param object $user new user object (with system magic quotes)
      * @param boolean $notify print notice with link and terminate
      */
-    function user_signup($user, $notify = true) {
+    function user_signup($user, $notify=true) {
         $user->password = hash_internal_user_password($user->password);
 
         if (! ($user->id = insert_record('user', $user)) ) {
@@ -90,6 +91,15 @@ class auth_plugin_email {
         } else {
             return true;
         }
+    }
+
+    /**
+     * Returns true if plugin allows confirming of new users.
+     *
+     * @return bool
+     */
+    function can_confirm() {
+        return true;
     }
 
     /**

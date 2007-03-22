@@ -16,21 +16,18 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
+require_once($CFG->libdir.'/authlib.php');
+
 /**
  * Moodle Network authentication plugin.
  */
-class auth_plugin_mnet
-{
-
-    /**
-     * The configuration details for the plugin.
-     */
-    var $config;
+class auth_plugin_mnet extends auth_plugin_base {
 
     /**
      * Constructor.
      */
     function auth_plugin_mnet() {
+        $this->authtype = 'mnet';
         $this->config = get_config('auth/mnet');
     }
 
@@ -1336,6 +1333,16 @@ class auth_plugin_mnet
         }
         return $accessctrl == 'allow';
     }
+
+    function prelogout_hook() {
+        global $USER, $CFG, $redirect;
+
+        if (!empty($USER->mnethostid) and $USER->mnethostid != $CFG->mnet_localhost_id) {
+            $host = get_record('mnet_host', 'id', $USER->mnethostid);
+            $redirect = $host->wwwroot.'/';
+        }
+    }
+
 }
 
 ?>

@@ -147,7 +147,7 @@ $registrationauths[''] = $txt->disable;
 foreach ($authsenabled as $auth) {
     $authplugin = get_auth_plugin($auth);
     $displayauths[$auth] = get_string("auth_{$auth}title", 'auth');
-    if (method_exists($authplugin, 'user_signup')) {
+    if ($authplugin->can_signup()) {
         $registrationauths[$auth] = get_string("auth_{$auth}title", 'auth');
     }
 }
@@ -158,7 +158,7 @@ foreach ($authsavailable as $auth) {
     }
     $authplugin = get_auth_plugin($auth);
     $displayauths[$auth] = get_string("auth_{$auth}title", 'auth');
-    if (method_exists($authplugin, 'user_signup')) {
+    if ($authplugin->can_signup()) {
         $registrationauths[$auth] = get_string("auth_{$auth}title", 'auth');
     }
 }

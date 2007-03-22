@@ -2194,9 +2194,10 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
  * @param $userid
  * @param $groupid
  * @param $contextid
+ * @param $enrol unassign only if enrolment type matches, NULL means anything
  * @return boolean - success or failure
  */
-function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0) {
+function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0, $enrol=NULL) {
 
     global $USER, $CFG;
 
@@ -2208,6 +2209,9 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0) {
         if ($$arg) {
             $select[] = $arg.' = '.$$arg;
         }
+    }
+    if (!empty($enrol)) {
+        $select[] = "enrol='$enrol'";
     }
 
     if ($select) {

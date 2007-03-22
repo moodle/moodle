@@ -16,20 +16,18 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
+require_once($CFG->libdir.'/authlib.php');
+
 /**
  * External database authentication plugin.
  */
-class auth_plugin_db {
-
-    /**
-     * The configuration details for the plugin.
-     */
-    var $config;
+class auth_plugin_db extends auth_plugin_base {
 
     /**
      * Constructor.
      */
     function auth_plugin_db() {
+        $this->authtype = 'db';
         $this->config = get_config('auth/db');
         if (empty($this->config->extencoding)) {
             $this->config->extencoding = 'utf-8';
@@ -572,7 +570,6 @@ class auth_plugin_db {
             $this->config->changepasswordurl = '';
             set_config('changepasswordurl', '', 'auth/db');
         }
-        return true;
     }
 
     /**

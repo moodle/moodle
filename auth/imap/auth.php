@@ -16,20 +16,18 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
+require_once($CFG->libdir.'/authlib.php');
+
 /**
  * IMAP authentication plugin.
  */
-class auth_plugin_imap {
-
-    /**
-     * The configuration details for the plugin.
-     */
-    var $config;
+class auth_plugin_imap extends auth_plugin_base {
 
     /**
      * Constructor.
      */
     function auth_plugin_imap() {
+        $this->authtype = 'imap';
         $this->config = get_config('auth/imap');
     }
 

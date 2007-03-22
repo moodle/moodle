@@ -19,9 +19,7 @@ if ($frm = data_submitted()) {
         error(get_string('confirmsesskeybad', 'error'));
     }
 
-    if (method_exists($authplugin, 'validate_form')) {
-        $authplugin->validate_form($frm, $err);
-    }
+    $authplugin->validate_form($frm, $err);
 
     if (count($err) == 0) {
 

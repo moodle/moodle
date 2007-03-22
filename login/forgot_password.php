@@ -98,7 +98,7 @@ if ($mform->is_cancelled()) {
 
         $userauth = get_auth_plugin($user->auth);
 
-        if (method_exists($userauth, 'can_reset_password') and $userauth->can_reset_password()) {
+        if ($userauth->can_reset_password()) {
             // reset internal password and notify user
 
             // set 'secret' string

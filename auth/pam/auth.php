@@ -30,15 +30,12 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
+require_once($CFG->libdir.'/authlib.php');
+
 /**
  * PAM authentication plugin.
  */
-class auth_plugin_pam {
-
-    /**
-     * The configuration details for the plugin.
-     */
-    var $config;
+class auth_plugin_pam extends auth_plugin_base {
 
     /**
      * Store error messages from pam authentication attempts.
@@ -49,6 +46,7 @@ class auth_plugin_pam {
      * Constructor.
      */
     function auth_plugin_pam() {
+        $this->authtype = 'pam';
         $this->config = get_config('auth/pam');
         $this->errormessage = '';
     }

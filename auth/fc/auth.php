@@ -15,22 +15,20 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
+require_once($CFG->libdir.'/authlib.php');
+
 require_once 'fcFPP.php';
 
 /**
  * FirstClass authentication plugin.
  */
-class auth_plugin_fc {
-
-    /**
-     * The configuration details for the plugin.
-     */
-    var $config;
+class auth_plugin_fc extends auth_plugin_base {
 
     /**
      * Constructor.
      */
     function auth_plugin_fc() {
+        $this->authtype = 'fc';
         $this->config = get_config('auth/fc');
     }
 
@@ -116,14 +114,9 @@ class auth_plugin_fc {
      * Get users group membership from the FirstClass server user and check if
      * user is member of one of the groups of creators.
      */
-    function iscreator($username = 0) {
-        global $USER;
-
+    function iscreator($username) {
         if (! $this->config->creators) {
-            return false;
-        }
-        if (! $username) {
-            $username = $USER->username;
+            return null;
         }
 
         $fcgroups = array();
@@ -143,7 +136,9 @@ class auth_plugin_fc {
         $creators = explode(";", $this->config->creators);
 
         foreach($creators as $creator) {
-            If (in_array($creator, $fcgroups)) return true;
+            if (in_array($creator, $fcgroups)) {
+                return true;
+            }
         }
 
         return false;
@@ -166,6 +161,30 @@ class auth_plugin_fc {
      */
     function can_change_password() {
         return false;
+    }
+
+    /**
+     * Sync roles for this user
+     *
+     * @param $user object user object (without system magic quotes)
+     */
+    function sync_roles($user) {
+        $iscreator = $this->iscreator($user->username);
+        if ($iscreator === null) {
+            return; //nothing to sync - creators not configured
+        }
+
+        if ($roles = get_roles_with_capability('moodle/legacy:coursecreator', CAP_ALLOW)) {
+            $creatorrole = array_shift($roles);      // We can only use one, let's use the first one
+            $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+
+            if ($iscreator) { // Following calls will not create duplicates
+                role_assign($creatorrole->id, $user->id, 0, $systemcontext->id, 0, 0, 0, 'fc');
+            } else {
+                //unassign only if previously assigned by this plugin!
+                role_unassign($creatorrole->id, $user->id, 0, $systemcontext->id, 'fc');
+            }
+        }
     }
 
     /**
