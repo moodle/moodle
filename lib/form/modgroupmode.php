@@ -42,8 +42,11 @@ class MoodleQuickForm_modgroupmode extends MoodleQuickForm_select{
         switch ($event) {
             case 'createElement':
                 $choices = array();
-                $choices[0] = get_string('no');
-                $choices[1] = get_string('yes');
+                
+                $choices[NOGROUPS] = get_string('groupsnone');
+                $choices[SEPARATEGROUPS] = get_string('groupsseparate');
+                $choices[VISIBLEGROUPS] = get_string('groupsvisible');
+                
                 $this->setHelpButton(array('groupmode', get_string('groupmode')));
                 $this->load($choices);
                 break;
