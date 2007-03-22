@@ -131,7 +131,7 @@
     } elseif ( $action == "add" ) {
         if ( $confirm ) {
             $ILIKE = sql_ilike();
-            $dupcategory = get_records_sql("SELECT * FROM {$CFG->prefix}glossary_categories WHERE name $ILIKE '$name'");
+            $dupcategory = get_records_sql("SELECT * FROM {$CFG->prefix}glossary_categories WHERE name $ILIKE '$name' AND glossaryid=$glossary->id");
             if ( $dupcategory ) {
                 echo "<p align=\"center\">" . get_string("add"). " " . get_string("category","glossary") . "<font size=\"3\">";
 
