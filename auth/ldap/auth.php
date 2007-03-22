@@ -16,20 +16,18 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
+require_once($CFG->libdir.'/authlib.php');
+
 /**
  * LDAP authentication plugin.
  */
-class auth_plugin_ldap {
-
-    /**
-     * The configuration details for the plugin.
-     */
-    var $config;
+class auth_plugin_ldap extends auth_plugin_base {
 
     /**
      * Constructor with initialisation.
      */
     function auth_plugin_ldap() {
+        $this->authtype = 'ldap';
         $this->config = get_config('auth/ldap');
         if (empty($this->config->ldapencoding)) {
             $this->config->ldapencoding = 'utf-8';
@@ -274,7 +272,7 @@ class auth_plugin_ldap {
      * If userpassword does not expire it should return 0. If password is already expired
      * it should return negative value.
      *
-     * @param mixed $username username
+     * @param mixed $username username (with system magic quotes)
      * @return integer
      */
     function password_expire($username) {
@@ -584,7 +582,7 @@ class auth_plugin_ldap {
                         if ($this->iscreator($user->username)) {
                             role_assign($creatorrole->id, $user->id, 0, $sitecontext->id, 0, 0, 0, 'ldap');
                         } else {
-                            role_unassign($creatorrole->id, $user->id, 0, $sitecontext->id);
+                            role_unassign($creatorrole->id, $user->id, 0, $sitecontext->id, 'ldap');
                         }
                     }
 
@@ -783,26 +781,18 @@ class auth_plugin_ldap {
     /**
      * Returns true if user should be coursecreator.
      *
-     * @param mixed $username    username (with system magic quotes)
+     * @param mixed $username    username (without system magic quotes)
      * @return boolean result
      */
-    function iscreator($username = false) {
-        global $USER;
-
+    function iscreator($username) {
         if (empty($this->config->creators) or empty($this->config->memberattribute)) {
-            return false;
-        }
-
-        if ($username === false) {
-            $username = $USER->username;
-        } else {
-            $username = stripslashes($username);
+            return null;
         }
 
         $textlib = textlib_get_instance();
         $extusername = $textlib->convert($username, 'utf-8', $this->config->ldapencoding);
 
-        return $this->ldap_isgroupmember($extusername, $this->config->creators);
+        return (boolean)$this->ldap_isgroupmember($extusername, $this->config->creators);
     }
 
     /**
@@ -824,7 +814,7 @@ class auth_plugin_ldap {
             return false;
         }
 
-        if (isset($olduser->auth) and $olduser->auth == 'ldap') {
+        if (isset($olduser->auth) and $olduser->auth != 'ldap') {
             return true; // just change auth and skip update
         }
 
@@ -1509,6 +1499,30 @@ class auth_plugin_ldap {
             return $this->config->changepasswordurl;
         } else {
             return '';
+        }
+    }
+
+    /**
+     * Sync roles for this user
+     *
+     * @param $user object user object (without system magic quotes)
+     */
+    function sync_roles($user) {
+        $iscreator = $this->iscreator($user->username);
+        if ($iscreator === null) {
+            return; //nothing to sync - creators not configured
+        }
+
+        if ($roles = get_roles_with_capability('moodle/legacy:coursecreator', CAP_ALLOW)) {
+            $creatorrole = array_shift($roles);      // We can only use one, let's use the first one
+            $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+
+            if ($iscreator) { // Following calls will not create duplicates
+                role_assign($creatorrole->id, $user->id, 0, $systemcontext->id, 0, 0, 0, 'ldap');
+            } else {
+                //unassign only if previously assigned by this plugin!
+                role_unassign($creatorrole->id, $user->id, 0, $systemcontext->id, 'ldap');
+            }
         }
     }
 

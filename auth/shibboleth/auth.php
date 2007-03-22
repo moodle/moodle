@@ -24,20 +24,18 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
+require_once($CFG->libdir.'/authlib.php');
+
 /**
  * Shibboleth authentication plugin.
  */
-class auth_plugin_shibboleth {
-
-    /**
-     * The configuration details for the plugin.
-     */
-    var $config;
+class auth_plugin_shibboleth extends auth_plugin_base {
 
     /**
      * Constructor.
      */
     function auth_plugin_shibboleth() {
+        $this->authtype = 'shibboleth';
         $this->config = get_config('auth/shibboleth');
     }
 
@@ -146,6 +144,22 @@ class auth_plugin_shibboleth {
      */
     function can_change_password() {
         return false;
+    }
+
+    function prelogin_hook() {
+        global $SESSION, $CFG;
+
+        //TODO: fix the code
+        return;
+
+    //  See http://moodle.org/mod/forum/discuss.php?d=39918#187611
+    //    if ($CFG->auth == 'shibboleth') {
+    //        if (!empty($SESSION->shibboleth_checked) ) {  // Just come from there
+    //            unset($SESSION->shibboleth_checked);
+    //        } else if (empty($_POST)) {                   // No incoming data, so redirect
+    //            redirect($CFG->wwwroot.'/auth/shibboleth/index.php');
+    //        }
+    //    }
     }
 
     /**

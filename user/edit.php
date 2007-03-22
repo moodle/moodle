@@ -70,18 +70,16 @@
 
         $usernew->timemodified = time();
 
-        if (update_record('user', $usernew)) {
-            if (method_exists($authplugin, 'user_update')){
-                // pass a true $userold here
-                if (! $authplugin->user_update($user, $userform->get_data(false))) {
-                    // auth update failed, rollback for moodle
-                    update_record('user', addslashes_object($user));
-                    error('Failed to update user data on external auth: '.$usernew->auth.
-                            '. See the server logs for more details.');
-                }
-            };
-        } else {
+        if (!update_record('user', $usernew)) {
             error('Error updating user record');
+        }
+
+        // pass a true $userold here
+        if (! $authplugin->user_update($user, $userform->get_data(false))) {
+            // auth update failed, rollback for moodle
+            update_record('user', addslashes_object($user));
+            error('Failed to update user data on external auth: '.$usernew->auth.
+                    '. See the server logs for more details.');
         }
 
         //update preferences

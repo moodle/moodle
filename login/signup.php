@@ -8,7 +8,7 @@
     }
     $authplugin = get_auth_plugin($CFG->registerauth);
 
-    if (!method_exists($authplugin, 'user_signup')) {
+    if (!$authplugin->can_signup()) {
         error("Sorry, you may not use this page.");
     }
 
@@ -28,7 +28,7 @@
         $user->secret      = random_string(15);
         $user->auth        = $CFG->registerauth;
 
-        $authplugin->user_signup($user, $notify=true); // prints notice and link to login/index.php
+        $authplugin->user_signup($user, true); // prints notice and link to login/index.php
         exit; //never reached
     }
 

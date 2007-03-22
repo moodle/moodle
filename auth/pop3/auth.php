@@ -16,20 +16,18 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
+require_once($CFG->libdir.'/authlib.php');
+
 /**
  * POP3 authentication plugin.
  */
-class auth_plugin_pop3 {
-
-    /**
-     * The configuration details for the plugin.
-     */
-    var $config;
+class auth_plugin_pop3 extends auth_plugin_base {
 
     /**
      * Constructor.
      */
     function auth_plugin_pop3() {
+        $this->authtype = 'pop3';
         $this->config = get_config('auth/pop3');
     }
 

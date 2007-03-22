@@ -15,23 +15,18 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
+require_once($CFG->libdir.'/authlib.php');
+
 /**
  * Manual authentication plugin.
  */
-class auth_plugin_manual
-{
-    /**
-     * The configuration details for the plugin.
-     */
-    var $config;
-
-    var $canchangepassword = true;
-    var $isinternal = true;
+class auth_plugin_manual extends auth_plugin_base {
 
     /**
      * Constructor.
      */
     function auth_plugin_manual() {
+        $this->authtype = 'manual';
         $this->config = get_config('auth/manual');
     }
 

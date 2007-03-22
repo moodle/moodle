@@ -261,14 +261,6 @@ define ('BLOG_COURSE_LEVEL', 3);
 define ('BLOG_SITE_LEVEL', 4);
 define ('BLOG_GLOBAL_LEVEL', 5);
 
-/**
- * Authentication - error codes for user confirm
- */
-define('AUTH_CONFIRM_FAIL', 0);
-define('AUTH_CONFIRM_OK', 1);
-define('AUTH_CONFIRM_ALREADY', 2);
-define('AUTH_CONFIRM_ERROR', 3);
-
 
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
@@ -1673,7 +1665,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
     if (get_user_preferences('auth_forcepasswordchange') && empty($USER->realuser)) {
         if ($userauth->can_change_password()) {
             $SESSION->wantsurl = $FULLME;
-            if (method_exists($userauth, 'change_password_url') and $userauth->change_password_url()) {
+            if ($userauth->change_password_url()) {
                 //use plugin custom url
                 redirect($userauth->change_password_url());
             } else {
@@ -2440,12 +2432,10 @@ function create_user_record($username, $password, $auth='') {
 
     $authplugin = get_auth_plugin($auth);
 
-    if (method_exists($authplugin, 'get_userinfo')) {
-        if ($newinfo = $authplugin->get_userinfo($username)) {
-            $newinfo = truncate_userinfo($newinfo);
-            foreach ($newinfo as $key => $value){
-                $newuser->$key = addslashes($value);
-            }
+    if ($newinfo = $authplugin->get_userinfo($username)) {
+        $newinfo = truncate_userinfo($newinfo);
+        foreach ($newinfo as $key => $value){
+            $newuser->$key = addslashes($value);
         }
     }
 
@@ -2489,24 +2479,23 @@ function create_user_record($username, $password, $auth='') {
  * @return user A {@link $USER} object
  */
 function update_user_record($username, $authplugin) {
-    if (method_exists($authplugin, 'get_userinfo')) {
-        $username = trim(moodle_strtolower($username)); /// just in case check text case
+    $username = trim(moodle_strtolower($username)); /// just in case check text case
 
-        $oldinfo = get_record('user', 'username', $username, '','','','', 'username, auth');
-        $userauth = get_auth_plugin($oldinfo->auth);
+    $oldinfo = get_record('user', 'username', $username, '','','','', 'username, auth');
+    $userauth = get_auth_plugin($oldinfo->auth);
 
-        if ($newinfo = $authplugin->get_userinfo($username)) {
-            $newinfo = truncate_userinfo($newinfo);
-            foreach ($newinfo as $key => $value){
-                $confkey = 'field_updatelocal_' . $key;
-                if (!empty($userauth->config->$confkey) and $userauth->config->$confkey === 'onlogin') {
-                    $value = addslashes(stripslashes($value));   // Just in case
-                    set_field('user', $key, $value, 'username', $username)
-                        or error_log("Error updating $key for $username");
-                }
+    if ($newinfo = $userauth->get_userinfo($username)) {
+        $newinfo = truncate_userinfo($newinfo);
+        foreach ($newinfo as $key => $value){
+            $confkey = 'field_updatelocal_' . $key;
+            if (!empty($userauth->config->$confkey) and $userauth->config->$confkey === 'onlogin') {
+                $value = addslashes(stripslashes($value));   // Just in case
+                set_field('user', $key, $value, 'username', $username)
+                    or error_log("Error updating $key for $username");
             }
         }
     }
+
     return get_complete_user_data('username', $username);
 }
 
@@ -2627,29 +2616,10 @@ function authenticate_user_login($username, $password) {
             // if user not found, create him
             $user = create_user_record($username, $password, $auth);
         }
-        // fix for MDL-6928
-        if (method_exists($authplugin, 'iscreator')) {
-            $sitecontext = get_context_instance(CONTEXT_SYSTEM);
-            if ($creatorroles = get_roles_with_capability('moodle/legacy:coursecreator', CAP_ALLOW)) {
-                $creatorrole = array_shift($creatorroles); // We can only use one, let's use the first one
-                // Check if the user is a creator
-                if ($authplugin->iscreator($username)) { // Following calls will not create duplicates
-                    role_assign($creatorrole->id, $user->id, 0, $sitecontext->id, 0, 0, 0, $auth);
-                } else {
-                    role_unassign($creatorrole->id, $user->id, 0, $sitecontext->id);
-                }
-            }
-        }
 
-    /// Log in to a second system if necessary
-        if (!empty($CFG->sso)) {
-            include_once($CFG->dirroot .'/sso/'. $CFG->sso .'/lib.php');
-            if (function_exists('sso_user_login')) {
-                if (!sso_user_login($username, $password)) {   // Perform the signon process
-                    notify('Second sign-on failed');
-                }
-            }
-        }
+        $authplugin->sync_roles($user);
+
+        $authplugin->user_authenticated_hook($user, $username, $password);
 
         return $user;
 
@@ -3609,7 +3579,7 @@ function send_password_change_info($user) {
     $data->admin = fullname($from).' ('. $from->email .')';
 
      $userauth = get_auth_plugin($user->auth);
-    if ($userauth->can_change_password() and method_exists($userauth, 'change_password_url') and $userauth->change_password_url()) {
+    if ($userauth->can_change_password() and $userauth->change_password_url()) {
         // we have some external url for password cahnging
         $data->link .= $userauth->change_password_url();
 

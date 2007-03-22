@@ -17,20 +17,18 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
+require_once($CFG->libdir.'/authlib.php');
+
 /**
  * RADIUS authentication plugin.
  */
-class auth_plugin_radius {
-
-    /**
-     * The configuration details for the plugin.
-     */
-    var $config;
+class auth_plugin_radius extends auth_plugin_base {
 
     /**
      * Constructor.
      */
     function auth_plugin_radius() {
+        $this->authtype = 'radius';
         $this->config = get_config('auth/radius');
     }
 

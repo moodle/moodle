@@ -16,23 +16,18 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
+require_once($CFG->libdir.'/authlib.php');
+
 /**
  * Plugin for no authentication.
  */
-class auth_plugin_none {
-
-    /**
-     * The configuration details for the plugin.
-     */
-    var $config;
-
-    var $canchangepassword = true;
-    var $isinternal = true;
+class auth_plugin_none extends auth_plugin_base {
 
     /**
      * Constructor.
      */
     function auth_plugin_none() {
+        $this->authtype = 'none';
         $this->config = get_config('auth/none');
     }
 

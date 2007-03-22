@@ -1,0 +1,281 @@
+<?php
+/**
+ * @author Martin Dougiamas
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package moodle multiauth
+ *
+ * Multiple plugin authentication
+ * Support library
+ *
+ * 2006-08-28  File created, AUTH return values defined.
+ */
+
+/**
+ * Returned when the login was successful.
+ */
+define('AUTH_OK',     0);
+
+/**
+ * Returned when the login was unsuccessful.
+ */
+define('AUTH_FAIL',   1);
+
+/**
+ * Returned when the login was denied (a reason for AUTH_FAIL).
+ */
+define('AUTH_DENIED', 2);
+
+/**
+ * Returned when some error occurred (a reason for AUTH_FAIL).
+ */
+define('AUTH_ERROR',  4);
+
+/**
+ * Authentication - error codes for user confirm
+ */
+define('AUTH_CONFIRM_FAIL', 0);
+define('AUTH_CONFIRM_OK', 1);
+define('AUTH_CONFIRM_ALREADY', 2);
+define('AUTH_CONFIRM_ERROR', 3);
+
+
+
+/**
+ * Abstract authentication plugin.
+ */
+class auth_plugin_base {
+
+    /**
+     * The configuration details for the plugin.
+     */
+    var $config;
+
+    /**
+     * Authentication plugin type - the same as db field.
+     */
+    var $authtype;
+
+    /**
+     * Returns true if the username and password work and false if they are
+     * wrong or don't exist.
+     *
+     * @param string $username The username (with system magic quotes)
+     * @param string $password The password (with system magic quotes)
+     *
+     * @return bool Authentication success or failure.
+     */
+    function user_login($username, $password) {
+        error('Abstract user_login() method must be overriden.');
+    }
+
+    /**
+     * Returns true if this authentication plugin can change the user's
+     * password.
+     *
+     * @return bool
+     */
+    function can_change_password() {
+        //override if needed
+        return false;
+    }
+
+    /**
+     * Returns the URL for changing the user's pw, or empty if the default can
+     * be used.
+     *
+     * @return string
+     */
+    function change_password_url() {
+        //override if needed
+        return '';
+    }
+
+    /**
+     * Returns true if this authentication plugin is 'internal'.
+     *
+     * @return bool
+     */
+    function is_internal() {
+        //override if needed
+        return true;
+    }
+
+    /**
+     * Change a user's password
+     *
+     * @param  object  $user        User table object  (with system magic quotes)
+     * @param  string  $newpassword Plaintext password (with system magic quotes)
+     *
+     * @return bool                  True on success
+     */
+    function user_update_password($user, $newpassword) {
+        //override if needed
+        return true;
+    }
+
+    /**
+     * Called when the user record is updated.
+     * Modifies user in external database. It takes olduser (before changes) and newuser (after changes)
+     * conpares information saved modified information to external db.
+     *
+     * @param mixed $olduser     Userobject before modifications    (without system magic quotes)
+     * @param mixed $newuser     Userobject new modified userobject (without system magic quotes)
+     * @return boolean true if updated or update ignored; false if error
+     *
+     */
+    function user_update($olduser, $newuser) {
+        //override if needed
+        return true;
+    }
+
+    /**
+     * Returns true if plugin allows resetting of internal password.
+     *
+     * @return bool
+     */
+    function can_reset_password() {
+        //override if needed
+        return false;
+    }
+
+    /**
+     * Returns true if plugin allows resetting of internal password.
+     *
+     * @return bool
+     */
+    function can_signup() {
+        //override if needed
+        return false;
+    }
+
+    /**
+     * Sign up a new user ready for confirmation.
+     * Password is passed in plaintext.
+     *
+     * @param object $user new user object (with system magic quotes)
+     * @param boolean $notify print notice with link and terminate
+     */
+    function user_signup($user, $notify=true) {
+        //override when can signup
+        error('user_signup method must be overriden if signup enabled');
+    }
+
+    /**
+     * Returns true if plugin allows confirming of new users.
+     *
+     * @return bool
+     */
+    function can_confirm() {
+        //override if needed
+        return false;
+    }
+
+    /**
+     * Confirm the new user as registered.
+     *
+     * @param string $username (with system magic quotes)
+     * @param string $confirmsecret (with system magic quotes)
+     */
+    function user_confirm($username, $confirmsecret) {
+        //override when can confirm
+        error('user_confirm method must be overriden if confirm enabled');
+    }
+
+    /**
+     * Checks if user exists in external db
+     *
+     * @param string $username (with system magic quotes)
+     */
+    function user_exists() {
+        //override if needed
+        return false;
+    }
+
+    /**
+     * Activates (enables) user in external db so user can login using username/password from external db
+     *
+     * @param mixed $username    username (with system magic quotes)
+     * @return boolen result
+     */
+    function user_activate($username) {
+        //override if needed
+        return true;
+    }
+
+    /**
+     * return number of days to user password expires
+     *
+     * If userpassword does not expire it should return 0. If password is already expired
+     * it should return negative value.
+     *
+     * @param mixed $username username (with system magic quotes)
+     * @return integer
+     */
+    function password_expire($username) {
+        return 0;
+    }
+    /**
+     * Sync roles for this user - usually creator
+     *
+     * @param $user object user object (without system magic quotes)
+     */
+    function sync_roles($user) {
+        //override if needed
+    }
+
+    /**
+     * Read user information from external database and returns it as array().
+     * Function should return all information available. If you are saving
+     * this information to moodle user-table you should honor syncronization flags
+     *
+     * @param string $username username (with system magic quotes)
+     *
+     * @return mixed array with no magic quotes or false on error
+     */
+    function get_userinfo($username) {
+        //override if needed
+        return array();
+    }
+
+    /**
+     * A chance to validate form data, and last chance to
+     * do stuff before it is inserted in config_plugin
+     */
+     function validate_form(&$form, &$err) {
+        //override if needed
+    }
+
+    /**
+     * Prelogin actions.
+     */
+    function prelogin_hook() {
+        //override if needed
+    }
+
+    /**
+     * Post authentication hook.
+     */
+    function user_authenticated_hook($user, $username, $password) {
+    /// TODO: review following code - looks hackish :-( mnet should obsole this, right?
+    /// Log in to a second system if necessary
+        global $CFG;
+
+        if (!empty($CFG->sso)) {
+            include_once($CFG->dirroot .'/sso/'. $CFG->sso .'/lib.php');
+            if (function_exists('sso_user_login')) {
+                if (!sso_user_login($username, $password)) {   // Perform the signon process
+                    notify('Second sign-on failed');
+                }
+            }
+        }
+    }
+
+    /**
+     * Prelogout actions.
+     */
+    function prelogout_hook() {
+        //override if needed
+    }
+}
+
+?>

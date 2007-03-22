@@ -83,26 +83,20 @@
             if (!update_record('user', $usernew)) {
                 error('Error updating user record');
             }
-            if (method_exists($authplugin, 'user_update')){
-                // pass a true $userold here
-                if (! $authplugin->user_update($user, $userform->get_data(false))) {
-                    // auth update failed, rollback for moodle
-                    update_record('user', addslashes_object($user));
-                    error('Failed to update user data on external auth: '.$usernew->auth.
-                            '. See the server logs for more details.');
-                }
-            };
+            // pass a true $userold here
+            if (! $authplugin->user_update($user, $userform->get_data(false))) {
+                // auth update failed, rollback for moodle
+                update_record('user', addslashes_object($user));
+                error('Failed to update user data on external auth: '.$usernew->auth.
+                        '. See the server logs for more details.');
+            }
 
             //set new password if specified
             if (!empty($usernew->newpassword)) {
                 if ($authplugin->can_change_password()) {
-                    if (method_exists($authplugin, 'user_update_password')){
-                        if (!$authplugin->user_update_password($usernew, $usernew->newpassword)){
-                            error('Failed to update password on external auth: ' . $usernew->auth .
-                                    '. See the server logs for more details.');
-                        }
-                    } else {
-                        error('Your external authentication module is misconfigued!');
+                    if (!$authplugin->user_update_password($usernew, $usernew->newpassword)){
+                        error('Failed to update password on external auth: ' . $usernew->auth .
+                                '. See the server logs for more details.');
                     }
                 }
             }

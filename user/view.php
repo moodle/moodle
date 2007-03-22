@@ -352,7 +352,7 @@
 
     $passwordchangeurl = false;
     if ($userauth->can_change_password()) {
-        if (method_exists($userauth, 'change_password_url') and $userauth->change_password_url()) {
+        if ($userauth->change_password_url()) {
             $passwordchangeurl = $userauth->change_password_url();
         } else {
             if (empty($CFG->loginhttps)) {

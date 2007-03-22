@@ -15,20 +15,18 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
+require_once($CFG->libdir.'/authlib.php');
+
 /**
  * CAS authentication plugin.
  */
-class auth_plugin_cas {
-
-    /**
-     * The configuration details for the plugin.
-     */
-    var $config;
+class auth_plugin_cas extends auth_plugin_base {
 
     /**
      * Constructor.
      */
     function auth_plugin_cas() {
+        $this->authtype = 'cas';
         $this->config = get_config('auth/cas');
     }
 
@@ -221,6 +219,17 @@ class auth_plugin_cas {
     function can_change_password() {
         return !empty($this->config->changepasswordurl);
     }
+
+    function prelogin_hook() {
+        // Load alternative login screens if necessary
+        // TODO: fix the cas login screen
+        return;
+
+        if(!empty($CFG->cas_enabled)) {
+            require($CFG->dirroot.'/auth/cas/login.php');
+        }
+    }
+
 
     /**
      * Prints a form for configuring this authentication plugin.

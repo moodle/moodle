@@ -23,9 +23,6 @@
         $session_has_timed_out = false;
     }
 
-    //HTTPS is potentially required in this page
-    httpsrequired();
-
 /// Check if the guest user exists.  If not, create one.
     if (! record_exists('user', 'username', 'guest')) {
         $guest->auth        = 'manual'; 
@@ -49,11 +46,6 @@
 
 $authsequence = explode(',', $CFG->auth); // auths, in sequence
 
-// Load alternative login screens if necessary
-if ($authsequence[0] == 'cas' and !empty($CFG->cas_enabled)) {
-        require($CFG->dirroot.'/auth/cas/login.php');
-    }
-
 if (!isset($CFG->registerauth)) {
     set_config('registerauth', '');
 }
@@ -62,17 +54,19 @@ if (!isset($CFG->auth_instructions)) {
     set_config('auth_instructions', '');
 }
 
-//  See http://moodle.org/mod/forum/discuss.php?d=39918#187611
-//    if ($CFG->auth == 'shibboleth') {
-//        if (!empty($SESSION->shibboleth_checked) ) {  // Just come from there
-//            unset($SESSION->shibboleth_checked);
-//        } else if (empty($_POST)) {                   // No incoming data, so redirect
-//            redirect($CFG->wwwroot.'/auth/shibboleth/index.php');
-//        }
-//    }
-    
 
-    
+// auth plugins can override these - SSO anyone?
+$frm  = false;
+$user = false;
+
+foreach($authsequence as $authname) {
+    $authplugin = get_auth_plugin($authname);
+    $authplugin->prelogin_hook();
+}
+
+//HTTPS is potentially required in this page
+httpsrequired();
+
 /// Define variables used in page
     if (!$site = get_site()) {
         error("No site found!");
@@ -91,16 +85,18 @@ if (!isset($CFG->auth_instructions)) {
 
     $loginurl = (!empty($CFG->alternateloginurl)) ? $CFG->alternateloginurl : '';
 
-    $frm = false;
-    $user = false;
 
+    if ($user !== false or $frm !== false) {
+        // some auth plugin already supplied these
 
-    if ((!empty($SESSION->wantsurl) and strstr($SESSION->wantsurl,'username=guest')) or $loginguest) {
+    } else if ((!empty($SESSION->wantsurl) and strstr($SESSION->wantsurl,'username=guest')) or $loginguest) {
         /// Log in as guest automatically (idea from Zbigniew Fiedorowicz)
         $frm->username = 'guest';
         $frm->password = 'guest';
+
     } else if (!empty($SESSION->wantsurl) && file_exists($CFG->dirroot.'/login/weblinkauth.php')) {
         // Handles the case of another Moodle site linking into a page on this site
+        //TODO: move weblink into own auth plugin
         include($CFG->dirroot.'/login/weblinkauth.php');
         if (function_exists(weblink_auth)) {
             $user = weblink_auth($SESSION->wantsurl);
@@ -110,6 +106,7 @@ if (!isset($CFG->auth_instructions)) {
         } else {
             $frm = data_submitted($loginurl);
         }
+
     } else {
         $frm = data_submitted($loginurl);
     }
@@ -120,7 +117,7 @@ if (!isset($CFG->auth_instructions)) {
 
         $errormsg = get_string("cookiesnotenabled");
 
-    } else  if ($frm) {                             // Login WITH cookies
+    } else if ($frm) {                             // Login WITH cookies
 
         $frm->username = trim(moodle_strtolower($frm->username));
 
@@ -132,10 +129,12 @@ if (!isset($CFG->auth_instructions)) {
             }
         }
 
-        if (($frm->username == 'guest') and empty($CFG->guestloginbutton)) {
+        if ($user) {
+            //user already supplied by aut plugin prelogin hook
+        } else if (($frm->username == 'guest') and empty($CFG->guestloginbutton)) {
             $user = false;    /// Can't log in as guest if guest button is disabled
             $frm = false;
-        } else if (!$user) {
+        } else {
             if (empty($errormsg)) {
                 $user = authenticate_user_login($frm->username, $frm->password);
             }
@@ -178,7 +177,7 @@ if (!isset($CFG->auth_instructions)) {
             //Select password change url
             $userauth = get_auth_plugin($USER->auth);
             if ($userauth->can_change_password()) {
-                if (method_exists($userauth, 'change_password_url') and $userauth->change_password_url()) {
+                if ($userauth->change_password_url()) {
                     $passwordchangeurl = $userauth->change_password_url();
                 } else {
                     $passwordchangeurl = $CFG->httpswwwroot.'/login/change_password.php';
@@ -213,7 +212,7 @@ if (!isset($CFG->auth_instructions)) {
             }
 
           /// Go to my-moodle page instead of homepage if mymoodleredirect enabled
-            if (!has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM, SITEID)) and !empty($CFG->mymoodleredirect) and !isguest()) {
+            if (!has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM)) and !empty($CFG->mymoodleredirect) and !isguest()) {
                 if ($urltogo == $CFG->wwwroot or $urltogo == $CFG->wwwroot.'/' or $urltogo == $CFG->wwwroot.'/index.php') {
                     $urltogo = $CFG->wwwroot.'/my/';
                 }
@@ -222,7 +221,7 @@ if (!isset($CFG->auth_instructions)) {
 
             // check if user password has expired
             // Currently supported only for ldap-authentication module
-            if (method_exists($userauth, 'password_expire') and !empty($userauth->config->expiration) and $userauth->config->expiration == 1) {
+            if (!empty($userauth->config->expiration) and $userauth->config->expiration == 1) {
                     $days2expire = $userauth->password_expire($USER->username);
                     if (intval($days2expire) > 0 && intval($days2expire) < intval($CFG->{$USER->auth.'_expiration_warning'})) {
                         print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div class=\"langmenu\">$langmenu</div>"); 

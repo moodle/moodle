@@ -3,11 +3,13 @@
 
     require_once("../config.php");
 
-    if (!empty($USER->mnethostid) and $USER->mnethostid != $CFG->mnet_localhost_id) {
-        $host = get_record('mnet_host', 'id', $USER->mnethostid);
-        $wwwroot = $host->wwwroot;
-    } else {
-        $wwwroot = $CFG->wwwroot;
+    // can be overriden by auth plugins
+    $redirect = $CFG->wwwroot.'/';
+
+    $authsequence = explode(',', $CFG->auth); // auths, in sequence
+    foreach($authsequence as $authname) {
+        $authplugin = get_auth_plugin($authname);
+        $authplugin->prelogin_hook();
     }
 
     $sesskey = optional_param('sesskey', '__notpresent__', PARAM_RAW); // we want not null default to prevent required sesskey warning
@@ -21,6 +23,6 @@
 
     require_logout();
 
-    redirect("$wwwroot/");
+    redirect($redirect);
 
 ?>
