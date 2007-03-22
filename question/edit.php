@@ -31,10 +31,8 @@
     require_login($course->id, false);
   
     $SESSION->returnurl = $FULLME;
-    $SESSION->fromurl = $FULLME;
 
     // Print basic page layout.
-
     $streditingquestions = get_string('editquestions', "quiz");
 
     // TODO: generalise this to any activity
