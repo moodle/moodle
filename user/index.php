@@ -61,7 +61,7 @@
                 unset($roles[$role->id]);
                 continue;
             }
-            $rolenames[$role->id] = strip_tags(format_string($role->name));   // Used in menus etc later on
+            $rolenames[$role->id] = strip_tags(role_get_name($role, $context));   // Used in menus etc later on
         }
     }
 
@@ -402,7 +402,7 @@
             error('That role does not exist');
         }
         $a->number = $totalcount;
-        $a->role = $currentrole->name;
+        $a->role = role_get_name($currentrole, $context);
         $heading = get_string('xuserswiththerole', 'role', $a);
         if (user_can_assign($context, $roleid)) {
             $heading .= ' <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?roleid='.$roleid.'&amp;contextid='.$context->id.'">';

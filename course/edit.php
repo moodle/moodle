@@ -218,6 +218,41 @@ function update_course($data) {
         $page = page_create_object(PAGE_COURSE_VIEW, $course->id);
         blocks_remove_inappropriate($page);
 
+        // put custom role names into db
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        
+        foreach ($data as $dname => $dvalue) {
+          
+            // is this the right param?
+            $dvalue = clean_param($dvalue, PARAM_NOTAGS);
+
+            if (!strstr($dname, 'role_')) {
+                continue;
+            }  
+            
+            $dt = explode('_', $dname);
+            $roleid = $dt[1];
+            // make up our mind whether we want to delete, update or insert
+            
+            if (empty($dvalue)) {
+                
+                delete_records('role_names', 'contextid', $context->id, 'roleid', $roleid);
+            
+            } else if ($t = get_record('role_names', 'contextid', $context->id, 'roleid', $roleid)) {
+                
+                $t->text = $dvalue;
+                update_record('role_names', $t);    
+                       
+            } else {
+                
+                $t->contextid = $context->id;
+                $t->roleid = $roleid;
+                $t->text = $dvalue;
+                insert_record('role_names', $t);  
+            }
+            
+        }
+
         redirect($CFG->wwwroot."/course/view.php?id=$course->id");
 
     } else {

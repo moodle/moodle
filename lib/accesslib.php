@@ -3881,4 +3881,16 @@ function build_context_rel() {
     
     $db->debug = $savedb;
 }
+
+
+// gets the custom name of the role in course
+// TODO: proper documentation
+function role_get_name($role, $context) {
+    
+    if ($r = get_record('role_names','roleid', $role->id,'contextid', $context->id)) {
+        return format_string($r->text);  
+    } else {
+        return format_string($role->name);
+    }
+}
 ?>

@@ -1801,7 +1801,7 @@ function print_course($course) {
             if ($users = get_role_users($roleid, $context, true, '', 'u.lastname ASC', true)) {
                 foreach ($users as $teacher) {
                     $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', $context)); 
-                    $namesarray[] = format_string($role->name).': <a href="'.$CFG->wwwroot.'/user/view.php?id='.
+                    $namesarray[] = role_get_name($role, $context).': <a href="'.$CFG->wwwroot.'/user/view.php?id='.
                                     $teacher->id.'&amp;course='.SITEID.'">'.$fullname.'</a>';
                 }
             }          

@@ -336,6 +336,21 @@ class course_edit_form extends moodleform {
         }
         $mform->setType('restrictmodules', PARAM_INT);
 
+/// customizable role names in this course
+//--------------------------------------------------------------------------------
+        $mform->addElement('header','', get_string('roles'));
+
+        if ($roles = get_records('role')) {
+            foreach ($roles as $role) {
+                $mform->addElement('text', 'role_'.$role->id, $role->name);
+                if ($coursecontext) {
+                    if ($rolename = get_record('role_names', 'roleid', $role->id, 'contextid', $coursecontext->id)) {
+                        $mform->setDefault('role_'.$role->id, $rolename->text); 
+                    }  
+                }
+            }
+        }
+
 //--------------------------------------------------------------------------------
         $this->add_action_buttons();
 //--------------------------------------------------------------------------------
