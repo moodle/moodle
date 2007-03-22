@@ -56,6 +56,11 @@ class auth_plugin_base {
     var $authtype;
 
     /**
+
+     * This is the primary method that is used by the authenticate_user_login()
+     * function in moodlelib.php. This method should return a boolean indicating
+     * whether or not the username and password authenticate successfully.
+     *
      * Returns true if the username and password work and false if they are
      * wrong or don't exist.
      *
@@ -69,7 +74,7 @@ class auth_plugin_base {
     }
 
     /**
-     * Returns true if this authentication plugin can change the user's
+     * Returns true if this authentication plugin can change the users'
      * password.
      *
      * @return bool
@@ -80,8 +85,8 @@ class auth_plugin_base {
     }
 
     /**
-     * Returns the URL for changing the user's pw, or empty if the default can
-     * be used.
+     * Returns the URL for changing the users' passwords, or empty if the default
+     * URL can be used. This method is used if can_change_password() returns true.
      *
      * @return string
      */
@@ -91,7 +96,9 @@ class auth_plugin_base {
     }
 
     /**
-     * Returns true if this authentication plugin is 'internal'.
+     * Returns true if this authentication plugin is "internal" (which means that
+     * Moodle stores the users' passwords and other details in the local Moodle
+     * database).
      *
      * @return bool
      */
@@ -101,7 +108,9 @@ class auth_plugin_base {
     }
 
     /**
-     * Change a user's password
+     * Updates the user's password. In previous versions of Moodle, the function
+     * auth_user_update_password accepted a username as the first parameter. The
+     * revised function expects a user object.
      *
      * @param  object  $user        User table object  (with system magic quotes)
      * @param  string  $newpassword Plaintext password (with system magic quotes)
@@ -238,11 +247,29 @@ class auth_plugin_base {
     }
 
     /**
+     * Prints a form for configuring this authentication plugin.
+     *
+     * This function is called from admin/auth.php, and outputs a full page with
+     * a form for configuring this plugin.
+     */
+    function config_form($config, $err, $user_fields) {
+        //override if needed
+    }
+
+    /**
      * A chance to validate form data, and last chance to
      * do stuff before it is inserted in config_plugin
      */
      function validate_form(&$form, &$err) {
         //override if needed
+    }
+
+    /**
+     * Processes and stores configuration data for this authentication plugin.
+     */
+    function process_config($config) {
+        //override if needed
+        return true;
     }
 
     /**

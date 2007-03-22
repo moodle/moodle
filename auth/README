@@ -10,6 +10,7 @@ Even when external forms of authentication are being used, Moodle still
 maintains the internal "user" table with all the associated information about
 that user such as name, email address and so on.
 
+
 Multiauthentication in Moodle 1.8
 -------------------------------------
 
@@ -35,6 +36,12 @@ none  - no authentication at all .. very insecure!!
       a new account is created
     - when user tries to access a course they
       are forced to set up their account details
+
+
+nologin  - user can not log in, login as is possible
+
+    - this plugin can be used to prevent normal user login
+
 
 manual - internal authentication only
 
@@ -94,6 +101,9 @@ db  - Uses an external database to check username/password
 Authentication API
 ------------------
 
+
+AUTHENTICATION PLUGINS
+----------------------
 Each authentication plugin is now contained in a subfolder as a class definition
 in the auth.php file. For instance, the LDAP authentication plugin is the class
 called auth_plugin_ldap defined in:
@@ -105,13 +115,11 @@ get_auth_plugin() that does the work for you:
 
    $ldapauth = get_auth_plugin('ldap');
 
-If an auth is not specified, get_auth_plugin() will return you the auth plugin
-defined in the $CFG->auth variable.
+Auth plugin classes are pretty basic and should be extending auth_plugin_base class.
+They contain the same functions that were previously in each plugin's lib.php file,
+but refactored to become class methods, and tweaked to reference the plugin's instantiated config
+to get at the settings, rather than the global $CFG variable.
 
-Auth plugin classes are pretty basic. They contain the same functions that were
-previously in each plugin's lib.php file, but refactored to become class
-methods, and tweaked to reference the plugin's instantiated config to get at the
-settings, rather than the global $CFG variable.
 
 Configuration
 -----------------
@@ -130,12 +138,6 @@ is now accessed as
 Authentication settings have been moved to the config_plugins database table,
 with the plugin field set to "auth/foo" (for instance, "auth/ldap").
 
-Upgrading from Moodle 1.7
------------------------------
-
-Moodle will upgrade the old auth settings (in $CFG->auth_foobar where foo is the
-auth plugin and bar is the setting) to the new style in the config_plugin
-database table.
 
 Method Names
 -----------------
@@ -153,147 +155,13 @@ this also avoids having to worry about which auth/lib file to include since
 Moodle takes care of it for you when you create an instance with
 get_auth_plugin().
 
-Code Usage
------------------
-
-Code calling auth plugins can use method_exists() to determine plugin
-functionality, much in the same way that function_exists() was used until now.
-In addition, auth plugins provide some methods by default that can be called:
-
-user_login($username, $password)
-   This is the primary method that is used by the authenticate_user_login()
-   function in moodlelib.php. This method should return a boolean indicating
-   whether or not the username and password authenticate successfully.
-
-is_internal()
-   Returns true if this authentication plugin is "internal" (which means that
-   Moodle stores the users' passwords and other details in the local Moodle
-   database).
-
-can_change_password()
-   Returns true if the plugin can change the users' passwords.
-
-change_password_url()
-   Returns the URL for changing the users' passwords, or false if the default
-   URL can be used.
-
-user_update_password($user, $newpassword)
-   Updates the user's password. In previous versions of Moodle, the function
-   auth_user_update_password accepted a username as the first parameter. The
-   revised function expects a user object.
-
-config_form()
-   Displays the configuration form for the auth plugin, for use in the admin
-   pages.
-
-process_config()
-   Saves the auth plugin's configuration to the database.
-
-Other Methods
-------------------
-
-Most of functions are from ldap-authentication module and are not implemented
-(yet?) on other modules. Please feel free to extend other modules to support
-same features or roll your own module.
-
-Some of the new functions are still to be tested and are not documented here
-yet.
-
-AUTHENTICATION
-
-Basic fuctions to authenticate users with external db.
-
-Mandatory:
-
-    auth_plugin_foo()
-
-    Constructor. At the least, it populates config member variable with settings
-    from the Moodle database. It makes sense to put other startup code here.
-
-    user_login($username, $password)
-
-    Authenticate username, password with userdatabase.
-
-    Returns:
-    true if the username and password work
-    and false if they don't
-
-Optional:
-
-    get_userinfo($username)
-
-    Query other userinformation from database.
-
-    Returns:
-    Userinformation in array ( name => value, ....
-    or false in case of error
+The basic class defines all applicable methods that moodle uses, you can find
+more information in lib/authlib.php file.
 
 
-    validate_form(&$form, &$err)
+Upgrading from Moodle 1.7
+-----------------------------
 
-    Validate form data.
-
-    Returns:
-    Bool. Manipulates $form and $err arrays in place
-
-
-COURSE CREATING
-
-    iscreator($username)
-
-    should user have rights to create courses
-
-    Returns:
-    True if user have rights to crete cources otherwise false
-
-
-USER CREATION
-
-Functions that enable usercreation, activation and deactivation
-from moodle to external database
-
-
-    user_exists ($username)
-
-    Checks if given username exist on external db
-
-    Returns:
-    true if given usernname exist or false
-
-
-    user_create ($userobject,$plainpass)
-
-    Creates new user to external db. User should be created
-    in inactive stage until confirmed by email.
-
-    Returns:
-    True on success otherwise false
-
-
-    user_activate ($username)
-
-    activate new user after email-address is confirmed
-
-    Returns:
-    True on success otherwise false
-
-
-    user_disable ($username) {
-
-    deactivate  user in external db.
-
-    Returns:
-    True on success otherwise false
-
-
-
-USER INFORMATION AND SYNCRONIZATION
-
-    get_userlist ()
-
-    Get list of usernames in external db.
-
-    Returns:
-    All usernames in array or false on error.
-
-
+Moodle will upgrade the old auth settings (in $CFG->auth_foobar where foo is the
+auth plugin and bar is the setting) to the new style in the config_plugin
+database table.

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @author Martin Dougiamas
+ * @author Petr Skoda
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodle multiauth
  *
@@ -19,7 +19,7 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->libdir.'/authlib.php');
 
 /**
- * Plugin for no authentication.
+ * Plugin for no authentication - disabled user.
  */
 class auth_plugin_nologin extends auth_plugin_base {
 
@@ -32,10 +32,10 @@ class auth_plugin_nologin extends auth_plugin_base {
     }
 
     /**
-     * Do not allow any login
+     * Do not allow any login.
      *
      */
-    function user_login ($username, $password) {
+    function user_login($username, $password) {
         return false;
     }
 
@@ -47,18 +47,17 @@ class auth_plugin_nologin extends auth_plugin_base {
     }
 
     /**
-     * Returns true if this authentication plugin is 'internal'.
+     * No external data sync.
      *
      * @return bool
      */
     function is_internal() {
         //we do not know if it was internal or external originally
-        return false;
+        return true;
     }
 
     /**
-     * Returns true if this authentication plugin can change the user's
-     * password.
+     * No changing of password.
      *
      * @return bool
      */
@@ -67,21 +66,10 @@ class auth_plugin_nologin extends auth_plugin_base {
     }
 
     /**
-     * Prints a form for configuring this authentication plugin.
-     *
-     * This function is called from admin/auth.php, and outputs a full page with
-     * a form for configuring this plugin.
-     *
-     * @param array $page An object containing all the data for this page.
+     * No password resetting.
      */
-    function config_form($config, $err, $user_fields) {
-    }
-
-    /**
-     * Processes and stores configuration data for this authentication plugin.
-     */
-    function process_config($config) {
-        return true;
+    function can_reset_password() {
+        return false;
     }
 
 }
