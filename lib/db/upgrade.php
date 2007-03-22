@@ -632,6 +632,32 @@ function xmldb_main_upgrade($oldversion=0) {
         unset_config('tabselectedtofront');
     }
 
+
+    if ($result && $oldversion < 2007032200) {
+
+    /// Define table role_sortorder to be created
+        $table = new XMLDBTable('role_sortorder');
+
+    /// Adding fields to table role_sortorder
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('roleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('sortoder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table role_sortorder
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        $table->addKeyInfo('roleid', XMLDB_KEY_FOREIGN, array('roleid'), 'role', array('id'));
+        $table->addKeyInfo('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+
+    /// Adding indexes to table role_sortorder
+        $table->addIndexInfo('userid-roleid-contextid', XMLDB_INDEX_UNIQUE, array('userid', 'roleid', 'contextid'));
+
+    /// Launch create table for role_sortorder
+        $result = $result && create_table($table);
+    }
+
     return $result;
 
 }
