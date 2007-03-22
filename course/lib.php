@@ -2256,12 +2256,12 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     if ($mod->groupmode !== false) {
         if ($mod->groupmode == SEPARATEGROUPS) {
             $grouptitle = $str->groupsseparate;
-            $groupclass = 'editing_groupseparate';
+            $groupclass = 'editing_groupsseparate';
             $groupimage = $CFG->pixpath.'/t/groups.gif';
             $grouplink  = $path.'/mod.php?id='.$mod->id.'&amp;groupmode=0&amp;sesskey='.$sesskey;
         } else if ($mod->groupmode == VISIBLEGROUPS) {
             $grouptitle = $str->groupsvisible;
-            $groupclass = 'editing_groupvisible';
+            $groupclass = 'editing_groupsvisible';
             $groupimage = $CFG->pixpath.'/t/groupv.gif';
             $grouplink  = $path.'/mod.php?id='.$mod->id.'&amp;groupmode=1&amp;sesskey='.$sesskey;
         } else {
