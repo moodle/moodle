@@ -5746,12 +5746,20 @@ function debugging($message='', $level=DEBUG_NORMAL) {
 
     if ($CFG->debug >= $level) {
         if ($message) {
-            $caller = debug_backtrace();
-            $caller = $caller[0];
-            $from = " in $caller[file] on line $caller[line]";
-            if (isset($caller['function'])) {
-                $from .= " in $caller[function]()";
+            $callers = debug_backtrace();
+            $from = '<ul style="text-align: left">';
+            foreach ($callers as $caller) {
+                $from .= '<li>line ' . $caller['line'] . ' of ' . substr($caller['file'], strlen($CFG->dirroot) + 1);
+                if (isset($caller['function'])) {
+                    $from .= ': call to ';
+                    if (isset($caller['class'])) {
+                        $from .= $caller['class'] . $caller['type'];
+                    }
+                    $from .= $caller['function'] . '()';
+                }
+                $from .= '</li>';
             }
+            $from .= '</ul>';
             if (!isset($CFG->debugdisplay)) {
                 $CFG->debugdisplay = ini_get('display_errors');
             }
