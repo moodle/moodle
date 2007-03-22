@@ -150,6 +150,9 @@ class default_questiontype {
         // question types.
 
         // First, save the basic question itself
+        if (!record_exists('question_categories', 'id', $form->category)) {
+            print_error('categorydoesnotexist', 'question');
+        }
         $question->category           = $form->category;
         $question->name               = trim($form->name);
         $question->questiontext       = trim($form->questiontext);
