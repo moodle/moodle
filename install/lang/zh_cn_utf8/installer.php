@@ -51,42 +51,42 @@ $string['databasesettingssub'] = '<b>类型：</b>mysql或postgres7<br />
 <b>用户：</b>访问数据库的用户名<br />
 <b>密码：</b>访问数据库的密码<br />
 <b>表格前缀：</b>在所有的表格名称前加上可选的前缀';
-$string['databasesettingssub_mssql'] = '<b>类型:</b> SQL*Server (非UTF-8) <b><font color=\"red\">实验的! (不是为了用在生产中)</font></b><br />
-<b>主机:</b> 例如，本地主机或者 db.isp.com<br />
+$string['databasesettingssub_mssql'] = '<b>类型:</b> SQL*Server (非UTF-8) <b><font color=\"red\">实验的! (不能用在产品中)</font></b><br />
+<b>主机:</b> 例如，localhost 或者 db.isp.com<br />
 <b>名字:</b> 数据库名, 比如 moodle<br />
 <b>用户:</b> 您的数据库用户名<br />
 <b>密码:</b> 您的数据库密码<br />
-<b>表格前缀:</b> 前缀用于全部表格名 (强制的)';
+<b>表格前缀:</b> 在所有的表格名称前加上前缀 (强制的)';
 $string['databasesettingssub_mssql_n'] = '<b>类型:</b> SQL*Server (UTF-8 可以)<br />
-<b>主机:</b> 例如，本地主机或者db.isp.com<br />
+<b>主机:</b> 例如，localhost或者db.isp.com<br />
 <b>名字:</b> 数据库名, 比如moodle<br />
 <b>用户:</b> 您的数据库用户名<br />
 <b>密码:</b> 您的数据库密码<br />
-<b>表格前缀:</b> 前缀用于全部表格名 (强制的)';
+<b>表格前缀:</b> 在所有的表格名称前加上前缀 (强制的)';
 $string['databasesettingssub_mysql'] = '<b>类型:</b> MySQL<br />
-<b>主机:</b> 例如，本地主机或者db.isp.com<br />
+<b>主机:</b> 例如，localhost或者db.isp.com<br />
 <b>名字:</b> 数据库名, 比如moodle<br />
-<b>用户:</b> 您的数据库名<br />
+<b>用户:</b> 您的数据库用户名<br />
 <b>密码:</b> 您的数据库密码<br />
-<b>表格前缀:</b> 前缀用于全部表格名（可选的）';
+<b>表格前缀:</b> 在所有的表格名称前加上前缀（可选的）';
 $string['databasesettingssub_oci8po'] = '<b>类型:</b> Oracle<br />
-<b>主机:</b> 不用的, 必须留出空白<br />
+<b>主机:</b> 不需要，必须留空<br />
 <b>名字:</b> 给出tnsnames.ora连接的名字<br />
-<b>用户:</b> 您的数据库名<br />
+<b>用户:</b> 您的数据库用户名<br />
 <b>密码:</b> 您的数据库密码<br />
-<b>表格前缀:</b> 前缀用于全部表格名(强制的, 最大2cc.)';
-$string['databasesettingssub_odbc_mssql'] = '<b>类型:</b> SQL*Server (超过 ODBC) <b><font color=\"red\">实验的! (不是为了用在生产中)</font></b><br />
+<b>表格前缀:</b> 在所有的表格名称前加上前缀(强制的, 最大2cc.)';
+$string['databasesettingssub_odbc_mssql'] = '<b>类型:</b> SQL*Server (超过 ODBC) <b><font color=\"red\">实验的! (不可用在产品中)</font></b><br />
 <b>主机:</b> 给出ODBC控制面板中DSN的名字<br />
 <b>名字:</b> 数据库名, 比如moodle<br />
-<b>用户:</b> 您的数据库名<br />
+<b>用户:</b> 您的数据库用户名<br />
 <b>密码:</b> 您的数据库密码<br />
-<b>表格前缀:</b> 前缀用于全部表格名(强制的)';
+<b>表格前缀:</b> 在所有的表格名称前加上前缀(强制的)';
 $string['databasesettingssub_postgres7'] = '<b>类型:</b> PostgreSQL<br />
-<b>主机:</b> 例如，本地主机或者db.isp.com<br />
+<b>主机:</b> 例如，localhost或者db.isp.com<br />
 <b>名字:</b> 数据库名, 比如moodle<br />
 <b>用户:</b> 您的数据库用户名<br />
 <b>密码:</b> 您的数据库密码<br />
-<b>表格前缀:</b> 前缀用于全部表格名(强制的)';
+<b>表格前缀:</b> 在所有的表格名称前加上前缀(强制的)';
 $string['dataroot'] = '数据目录';
 $string['datarooterror'] = '找不到也无法创建您指定的“数据目录”，请更正路径或手工创建它。';
 $string['dbconnectionerror'] = '无法连接到您指定的数据库，请检查您的数据库设置。';
@@ -95,9 +95,9 @@ $string['dbhost'] = '服务器主机';
 $string['dbprefix'] = '表格名称前缀';
 $string['dbtype'] = '类型';
 $string['dbwrongencoding'] = '您选择的数据库使用了字符集{$a}，我们推荐您使用一个Unicode (UTF-8)字符集的数据库。当然，您可以选择“跳过数据库字符集检查”来跳过这个环节，但您将来可能会遇到问题。';
-$string['dbwronghostserver'] = '正如上面解释的，您必须遵循“主机‘原则。';
-$string['dbwrongnlslang'] = '在您的网络服务器中的NLS——LANG环境变量必须用AL32UTF8 字符集。请查阅有关如何这正确配置OCI8的PHP文档';
-$string['dbwrongprefix'] = '正如上面解释的，您必须遵循“表格前缀‘原则。';
+$string['dbwronghostserver'] = '你必须遵循上面所阐述的“主机”规则。';
+$string['dbwrongnlslang'] = '在您的web服务器中的NLS_LANG环境变量必须用 AL32UTF8 字符集。请查阅有关如何正确配置OCI8的PHP文档。';
+$string['dbwrongprefix'] = '你必须遵循上面所阐述的“表格前缀”规则。';
 $string['directorysettingshead'] = '请确认安装Moodle的位置';
 $string['directorysettingssub'] = '<p><b>Web地址:</b>
 指定访问Moodle的完整Web地址。如果您的网站可以通过多个URL访问，那么选择其中最常用的一个。地址的末尾不要有斜线。</p>
@@ -167,7 +167,7 @@ $string['missingrequiredfield'] = '缺少了必需的字段';
 $string['moodledocslink'] = '此页的Moodle文档';
 $string['mssql'] = 'SQL*Server(mssql)';
 $string['mssql_n'] = '支持UTF-8的SQL*Server(mssql_n)';
-$string['mssqlextensionisnotpresentinphp'] = 'PHP对MSSQL扩展没有正确进行配置，以至于它可以和SQL*Server通信。请检查您的php.ini文件或者重新编译PHP。';
+$string['mssqlextensionisnotpresentinphp'] = 'PHP的MSSQL 扩展并未安装正确，因此无法与SQL*Server通信。请检查您的php.ini文件或重新编译PHP。';
 $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = '如果您的站点只使用 iso-8859-1 (latin) 语言，您可以使用您当前安装的 MySQL 4.1.12(或更高)。';
 $string['mysql416required'] = 'MySQL 4.1.16 是 Moodle 1.6 所需要的最低版本，否则将无法保证所有数据都能转换到 UTF-8 编码。';
@@ -175,25 +175,24 @@ $string['mysqlextensionisnotpresentinphp'] = 'PHP的MySQL扩展并未安装正�
 $string['name'] = '名称';
 $string['next'] = '向后';
 $string['oci8po'] = 'Oracle (oci8po)';
-$string['ociextensionisnotpresentinphp'] = 'PHP对OCI8扩展没有正确进行配置，以至于它可以和Oracle通信。请检查您的php.ini文件或者重新编译PHP。';
-$string['odbc_mssql'] = '在ODBC上的SQL*Server(odbc_mssql)';
-$string['odbcextensionisnotpresentinphp'] = 'PHP对ODBC扩展没有正确进行配置，以至于它可以和SQL*Server通信。请检查您的php.ini文件或者重新编译PHP。';
+$string['ociextensionisnotpresentinphp'] = 'PHP的OCI8扩展并未安装正确，因此无法与Oracle通信。请检查您的php.ini文件或重新编译PHP。';
+$string['odbc_mssql'] = '基于ODBC的SQL*Server (odbc_mssql)';
+$string['odbcextensionisnotpresentinphp'] = 'PHP的ODBC扩展并未安装正确，因此无法与SQL*Server通信。请检查您的php.ini文件或重新编译PHP。';
 $string['ok'] = '好';
-$string['parentlanguage'] = '<<翻译器：如果你的语言有父语言，那么当语言包丢失字符串时Moodle应该会使用此父语言，然后说明此代码的位置。如果把此处留为空白的，那么将会使用英语。例如：nl>>';
 $string['pass'] = '通过';
 $string['password'] = '密码';
-$string['pgsqlextensionisnotpresentinphp'] = 'PHP对PGSQL扩展没有正确进行配置，以至于它可以和PostgreSQL通信。请检查您的php.ini文件或者重新编译PHP。';
+$string['pgsqlextensionisnotpresentinphp'] = 'PHP的PGSQL扩展并未安装正确，因此无法与PostgreSQL通信。请检查您的php.ini文件或重新编译PHP。';
 $string['php50restricted'] = 'PHP 5.0.x有数个已知的问题，请升级到5.1.x或者降级到4.3.x或4.4.x';
 $string['phpversion'] = 'PHP版本';
-$string['phpversionerror'] = 'PHP版本至少为4.1.0';
-$string['phpversionhelp'] = '<p>Moodle需要PHP 4.1.0以上的版本。</p>
-<p>您当前使用的是${a}</p>
+$string['phpversionerror'] = 'PHP版本至少应为4.3.0或5.1.0（5.0.x有若干已知的问题）';
+$string['phpversionhelp'] = '<p>Moodle需要PHP 4.3.0或5.1.0（5.0.x有若干已知的问题）以上的版本。</p>
+<p>您当前使用的是{$a}</p>
 <p>您必须升级PHP或者转移到一个有新版PHP的服务器上!</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = '向前';
-$string['remotedownloadnotallowed'] = '不允许为您的服务器下载组件(allow_url_fopen失败)。<br /><br />您应该<a href=\"{$a->url}\">{$a->url}</a> 先手动的把它复制到“{$a->dest}”您的服务器上然后解压.';
+$string['remotedownloadnotallowed'] = '不允许为您的服务器下载组件(allow_url_fopen失败)。<br /><br />您应该<a href=\"{$a->url}\">{$a->url}</a> 先手动的把它复制到“{$a->dest}”您的服务器上然后解压。';
 $string['report'] = '报表';
-$string['restricted'] = '限制的';
+$string['restricted'] = '受限的';
 $string['safemode'] = '安全模式';
 $string['safemodeerror'] = '在安全模式下运行Moodle可能会有麻烦';
 $string['sessionautostart'] = '自动开启会话';
@@ -206,15 +205,15 @@ $string['unicoderecommended'] = '建议用Unicode（UTF-8）存储全部数据�
 $string['unicoderequired'] = '要求您用Unicode（UTF-8）存储全部数据。全新安装必须安装在缺省字符集为Unicode的数据库中。如果正在升级，您应该执行UTF-8移植处理（请参考管理员页面）。';
 $string['user'] = '用户';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
-$string['welcomep20'] = '您看到这个页面表明您已经成功地在您的计算机上安装了<strong>$a->packname $a->packversion</strong>。恭喜您！';
-$string['welcomep30'] = '<strong>$a->installername</strong>包含了可以创建<strong>Moodle</strong>运行环境的应用程序：';
-$string['welcomep40'] = '这个软件包还包含了<strong>Moodle $a->moodlerelease ($a->moodleversion)</strong>。';
-$string['welcomep50'] = '使用本软件包中包含的应用程序时应遵循它们各自的授权协议。整个<strong>$a->installername</strong>软件包都是<a href=\"http://www.opensource.org/docs/definition_plain.html\">开源</a>的，并且遵循<a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>授权协议发布。';
+$string['welcomep20'] = '您看到这个页面表明您已经成功地在您的计算机上安装了<strong>{$a->packname} {$a->packversion}</strong>。恭喜您！';
+$string['welcomep30'] = '<strong>{$a->installername}</strong>包含了可以创建<strong>Moodle</strong>运行环境的应用程序：';
+$string['welcomep40'] = '这个软件包还包含了<strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>。';
+$string['welcomep50'] = '使用本软件包中包含的应用程序时应遵循它们各自的授权协议。整个<strong>{$a->installername}</strong>软件包都是<a href=\"http://www.opensource.org/docs/definition_plain.html\">开源</a>的，并且遵循<a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>授权协议发布。';
 $string['welcomep60'] = '接下来的页面会引导你通过一系列步骤在您的计算机上安装配置好<strong>Moodle</strong>。您可以接受缺省的设置后，或者根据需要修改它们。';
 $string['welcomep70'] = '点击“下一步”按钮以继续<strong>Moodle</strong>的安装过程。';
 $string['wrongdestpath'] = '错误的目标路径。';
 $string['wrongsourcebase'] = '错误的源URL基地址。';
 $string['wrongzipfilename'] = '错误的ZIP文件名。';
 $string['wwwroot'] = '网站地址';
-$string['wwwrooterror'] = '这个网站地址似乎是错的——在那里并没有刚刚装好的Moodle。';
+$string['wwwrooterror'] = '这个网站地址似乎是错的——在那里并没有安装好的Moodle。下面的值会被重置。';
 ?>
