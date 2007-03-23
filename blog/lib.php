@@ -443,7 +443,7 @@
             $tagquerysql = '';
         }
 
-        if (isloggedin()) {
+        if (isloggedin() && !has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM, SITEID), $USER->id, false)) {
             $permissionsql =  '(p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.')';
         } else {
             $permissionsql =  'p.publishstate = \'public\'';
