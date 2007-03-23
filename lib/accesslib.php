@@ -1792,6 +1792,15 @@ function get_context_instance($contextlevel=NULL, $instance=0) {
     static $allowed_contexts = array(CONTEXT_SYSTEM, CONTEXT_PERSONAL, CONTEXT_USER, CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_GROUP, CONTEXT_MODULE, CONTEXT_BLOCK);
 
     // Yu: Separating site and site course context - removed CONTEXT_COURSE override when SITEID
+    
+    // fix for MDL-9016
+    if ($contextlevel == 'clearcache') {
+        // Clear ALL cache
+        $context_cache = array();
+        $context_cache_id = array();
+        $CONTEXT = '';       
+        return false;
+    }
 
 /// If no level is supplied then return the current global context if there is one
     if (empty($contextlevel)) {
