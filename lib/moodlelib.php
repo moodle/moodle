@@ -2871,7 +2871,12 @@ function remove_course_contents($courseid, $showfeedback=true) {
     if ($courseid != SITEID) {
         delete_context(CONTEXT_COURSE, $course->id);
     }
-
+    
+    // fix for MDL-9016
+    // clear the cache because the course context is deleted, and
+    // we don't want to write assignment, overrides and context_rel table
+    // with this old context id!
+    get_context_instance('clearcache');
     return $result;
 }
 

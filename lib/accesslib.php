@@ -1521,6 +1521,15 @@ function get_context_instance($contextlevel=NULL, $instance=SITEID) {
     if ($contextlevel == CONTEXT_COURSE && $instance == SITEID) {
         $contextlevel = CONTEXT_SYSTEM;
     }
+    
+    // fix for MDL-9016
+    if ($contextlevel == 'clearcache') {
+        // Clear ALL cache
+        $context_cache = array();
+        $context_cache_id = array();
+        $CONTEXT = '';       
+        return false;
+    }
 
 /// If no level is supplied then return the current global context if there is one
     if (empty($contextlevel)) {
