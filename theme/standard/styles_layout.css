@@ -1183,8 +1183,24 @@ a.skip-block, .skip-block {
   margin-top: 0;
 }
 
+.blockconfigtable td.label {
+    text-align: right;
+    width: 50%;
+}
+
+.blockconfigtable td.value {
+    text-align: left;
+    width: 50%;
+}
+
+.blockconfigtable td.submit {
+    text-align: center;
+}
+
 .blockconfiginstancecontent .tabs {
   margin-bottom: 0px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .block_messages .content {
@@ -1211,7 +1227,10 @@ a.skip-block, .skip-block {
   margin-top: 5px;
 }
 
-
+#rss_table {
+  margin-left: auto;
+  margin-right: auto;
+}
 /***
  *** Blogs
  ***/
