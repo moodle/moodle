@@ -22,10 +22,10 @@ print_box_start();
 ?>
 <table cellpadding="9" cellspacing="0" class="blockconfigtable">
 <tr valign="top">
-    <td align="right" width="50%">
+    <td class="label">
         <?php print_string('displaydescriptionlabel', 'block_rss_client') ?>
     </td>
-    <td width="50%">
+    <td class="value">
             <?php 
                 if(! isset($CFG->block_rss_client_display_description) ) {
                     $CFG->block_rss_client_display_description = '0';
@@ -42,10 +42,10 @@ print_box_start();
 </tr>
 
 <tr valign="top">
-    <td align="right" width="50%">
+    <td class="label">
         <?php print_string('shownumentrieslabel', 'block_rss_client') ?>
     </td>
-    <td width="50%">
+    <td class="value">
         <input name="shownumentries" type="text" size="5" value="<?php
             if(! isset($CFG->block_rss_client_num_entries) ) {
                 $CFG->block_rss_client_num_entries = '5';
@@ -61,10 +61,10 @@ print_box_start();
 </tr>
 
 <tr valign="top">
-    <td align="right" width="50%">
+    <td class="label">
         <?php print_string('choosefeedlabel', 'block_rss_client') ?>
     </td>
-    <td width="50%">
+    <td class="value">
         <?php 
             $selectedarray = array();
             if (isset($this->config) && isset($this->config->rssid)) {
@@ -87,9 +87,9 @@ print_box_start();
                     } 
                     $checked = '';
                     if (in_array($rssfeed->id, $selectedarray)) {
-                        $checked = 'checked';
+                        $checked = 'checked="checked"';
                     }
-                    $checkbox =  '<input type="checkbox" name="rssid[]" id="rssid[]" value="'. $rssfeed->id .'" '. $checked .' />';
+                    $checkbox =  '<input type="checkbox" name="rssid[]" id="rssid" value="'. $rssfeed->id .'" '. $checked .' />';
                     print $checkbox . $feedtitle .'<br />'."\n";
                 }
             } else {
@@ -112,20 +112,20 @@ print_box_start();
 </tr>
 
 <tr valign="top">
-    <td align="right" width="50%"><?php print_string('uploadlabel'); ?></td>
+    <td class="label"><?php print_string('uploadlabel'); ?></td>
     <?php 
         $title = '';
         if (!empty($this->config) && !empty($this->config->title)) {
             $title = $this->config->title;
         }
     ?>
-    <td width="50%"><input type="text" name="title" size="30" value="<?php echo $title; ?>" />
+    <td class="value"><input type="text" name="title" size="30" value="<?php echo $title; ?>" />
     </td>
 </tr>
 
 <tr valign="top">
-    <td align="right" width="50%"><?php print_string('clientshowchannellinklabel', 'block_rss_client'); ?></td>
-    <td width="50%">
+    <td class="label"><?php print_string('clientshowchannellinklabel', 'block_rss_client'); ?></td>
+    <td class="value">
         <?php 
                 if (isset($this->config) && isset($this->config->block_rss_client_show_channel_link)) {
                         $selected = $this->config->block_rss_client_show_channel_link;
@@ -141,8 +141,8 @@ print_box_start();
 </tr>
 
 <tr valign="top">
-    <td align="right" width="50%"><?php print_string('clientshowimagelabel', 'block_rss_client'); ?></td>
-    <td width="50%">
+    <td class="label"><?php print_string('clientshowimagelabel', 'block_rss_client'); ?></td>
+    <td class="value">
         <?php 
                 if (isset($this->config) && isset($this->config->block_rss_client_show_channel_image)) {
                         $selected = $this->config->block_rss_client_show_channel_image;
@@ -158,23 +158,23 @@ print_box_start();
 </tr>
 
 <tr>
-    <td colspan="2" align="center">
+    <td colspan="2" class="submit">
         <input type="submit" value="<?php print_string('savechanges') ?>" />
     </td>
 </tr>
 </table>
 <?php
     print_box_end();
+    print "<!-- code came from " . __FILE__ . " at line " . __LINE__ . ". -->\n";
 } else {
-    global $act, $url, $rssid, $preferredtitle, $shared;
+  global $act, $url, $rssid, $preferredtitle, $shared;
+  print '</form>';   // Closes off page form
 
-    print '</form>';   // Closes off page form
+  $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
 
-    $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
-
-    print_box_start();
-    rss_display_feeds($id, $USER->id, '', $context);
-    rss_print_form($act, $url, $rssid, $preferredtitle, $shared, $id, $context);
-    print_box_end();
+  print_box_start();
+  rss_display_feeds($id, $USER->id, '', $context);
+  rss_print_form($act, $url, $rssid, $preferredtitle, $shared, $id, $context);
+  print_box_end();
 }
 ?>

@@ -2879,10 +2879,10 @@ function print_navigation ($navigation, $separator=0, $return=false) {
         $nav_text = get_string('youarehere','access');
         $output .= '<h2 class="accesshide">'.$nav_text."</h2><ul>\n";
         
-        $output .= '<li class="first"><a '.$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'
+        $output .= '<li class="first">'."\n".'<a '.$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'
                .$CFG->wwwroot.((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))
                                  && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
-                                 ? '/my' : '') .'/">'. format_string($site->shortname) ."</a></li>\n";
+                                 ? '/my' : '') .'/">'. format_string($site->shortname) ."</a>\n</li>\n";
         
         
         foreach ($navigation as $navitem) {
@@ -2892,8 +2892,8 @@ function print_navigation ($navigation, $separator=0, $return=false) {
             if (empty($url)) {
                 $output .= '<li class="first">'."$separator $title</li>\n";
             } else {
-                $output .= '<li class="first">'.$separator.' <a '.$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'
-                           .$url.'">'."$title</a></li>\n";
+                $output .= '<li class="first">'."$separator\n<a ".$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'
+                           .$url.'">'."$title</a>\n</li>\n";
             }
         }    
         
@@ -4354,31 +4354,31 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
 
     if ($selectmod and has_capability('moodle/site:viewreports', $context)) {
         $logstext = get_string('alllogs');
-        $logslink = '<li><a title="'.$logstext.'" '.$CFG->frametarget.' href="'.
+        $logslink = '<li>'."\n".'<a title="'.$logstext.'" '.$CFG->frametarget.' href="'.
                     $CFG->wwwroot.'/course/report/log/index.php?chooselog=1&amp;user=0&amp;date=0&amp;id='.
                        $course->id.'&amp;modid='.$selectmod->cm.'">'.
-                    '<img class="icon log" src="'.$CFG->pixpath.'/i/log.gif" alt="'.$logstext.'" /></a></li>';
+                    '<img class="icon log" src="'.$CFG->pixpath.'/i/log.gif" alt="'.$logstext.'" /></a>'."\n".'</li>';
 
     }
     if ($backmod) {
         $backtext= get_string('activityprev', 'access');
-        $backmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.$CFG->frametarget.'><div>'.
-                   '<input type="hidden" name="id" value="'.$backmod->cm.'" />'.
-                   '<button type="submit" title="'.$backtext.'">'.$THEME->larrow.
-                   '<span class="accesshide">'.$backtext.'</span></button></div></form></li>';
+        $backmod = '<li>'."\n".'<form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.$CFG->frametarget.'>'."\n".'<div>'."\n".
+                   '<input type="hidden" name="id" value="'.$backmod->cm.'" />'."\n".
+                   '<button type="submit" title="'.$backtext.'">'.$THEME->larrow."\n".
+                   '<span class="accesshide">'.$backtext.'</span>'."\n".'</button>'."\n".'</div>'."\n".'</form>'."\n".'</li>'."\n";
     }
     if ($nextmod) {
         $nexttext= get_string('activitynext', 'access');
-        $nextmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.$CFG->frametarget.'><div>'.
-                   '<input type="hidden" name="id" value="'.$nextmod->cm.'" />'.
-                   '<button type="submit" title="'.$nexttext.'">'.$THEME->rarrow.
-                   '<span class="accesshide">'.$nexttext.'</span></button></div></form></li>';
+        $nextmod = '<li>'."\n".'<form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.$CFG->frametarget.'>'."\n".'<div>'."\n".
+                   '<input type="hidden" name="id" value="'.$nextmod->cm.'" />'."\n".
+                   '<button type="submit" title="'.$nexttext.'">'.$THEME->rarrow."\n".
+                   '<span class="accesshide">'.$nexttext.'</span>'."\n".'</button>'."\n".'</div>'."\n".'</form>'."\n".'</li>'."\n";
     }
 
-    return '<div class="navigation"><ul>'.$logslink . $backmod .
+    return '<div class="navigation">'."\n".'<ul>'.$logslink . $backmod .
             '<li>'.popup_form($CFG->wwwroot .'/mod/', $menu, 'navmenupopup', $selected, $strjumpto,
                        '', '', true, $targetwindow).'</li>'.
-            $nextmod . '</ul></div>';
+            $nextmod . '</ul>'."\n".'</div>';
 }
 
 /**
@@ -5289,7 +5289,7 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
     else {
         $skip_text = get_string('skipa', 'access', strip_tags($title));
     }
-    $skip_link = '<a href="#sb-'.$block_id.'" class="skip-block" title="'.$skip_text.'"><span class="accesshide">'.$skip_text.'</span></a>';
+    $skip_link = '<a href="#sb-'.$block_id.'" class="skip-block" title="'.$skip_text.'">'."\n".'<span class="accesshide">'.$skip_text.'</span>'."\n".'</a>';
     $skip_dest = '<span id="sb-'.$block_id.'" class="skip-block-to"></span>';
 
     if (! empty($heading)) {
@@ -5806,5 +5806,22 @@ function frametarget() {
     }
 }
 
+/**
+* Outputs a HTML comment to the browser. This is used for those hard-to-debug
+* pages that use bits from many different files in very confusing ways (e.g. blocks).
+* @usage print_location_comment(__FILE__, __LINE__);
+* @param string $file
+* @param integer $line
+* @param boolean $return Whether to return or print the comment
+* @return mixed Void unless true given as third parameter
+*/
+function print_location_comment($file, $line, $return = false)
+{
+    if ($return) {
+        return "<!-- $file at line $line -->\n";
+    } else {
+        echo "<!-- $file at line $line -->\n";
+    }
+}
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
