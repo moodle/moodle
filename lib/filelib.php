@@ -74,6 +74,7 @@ function get_mimetypes_array() {
         'htc'  => array ('type'=>'text/x-component', 'icon'=>'text.gif'),
         'html' => array ('type'=>'text/html', 'icon'=>'html.gif'),
         'htm'  => array ('type'=>'text/html', 'icon'=>'html.gif'),
+        'ico'  => array ('type'=>'image/vnd.microsoft.icon', 'icon'=>'image.gif'), 
         'java' => array ('type'=>'text/plain', 'icon'=>'text.gif'),
         'jcb'  => array ('type'=>'text/xml', 'icon'=>'jcb.gif'),
         'jcl'  => array ('type'=>'text/xml', 'icon'=>'jcl.gif'),
