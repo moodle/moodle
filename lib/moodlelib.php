@@ -2540,7 +2540,7 @@ function truncate_userinfo($info) {
 function guest_user() {
     global $CFG;
 
-    if ($newuser = get_record('user', 'username', 'guest')) {
+    if ($newuser = get_record('user', 'username', 'guest', 'mnethostid',  $CFG->mnet_localhost_id)) {
         $newuser->confirmed = 1;
         $newuser->lang = $CFG->lang;
         $newuser->lastip = getremoteaddr();
