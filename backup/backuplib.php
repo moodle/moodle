@@ -2330,4 +2330,538 @@
         }   
         fwrite ($bf, end_tag("ROLES_ASSIGNMENTS", $startlevel, true));     
     }
+
+
+    function backup_execute(&$preferences, &$errorstr) {
+        global $CFG;
+        $status = true;
+
+        //Check for temp and backup and backup_unique_code directory
+        //Create them as needed
+        if (!defined('BACKUP_SILENTLY')) {
+            echo "<li>".get_string("creatingtemporarystructures").'</li>';
+        }
+
+        $status = check_and_create_backup_dir($preferences->backup_unique_code);
+        //Empty dir
+        if ($status) {
+            $status = clear_backup_dir($preferences->backup_unique_code);
+        }
+
+        //Delete old_entries from backup tables
+        if (!defined('BACKUP_SILENTLY')) {
+            echo "<li>".get_string("deletingolddata").'</li>';
+        }
+        $status = backup_delete_old_data();
+        if (!$status) {
+            if (!defined('BACKUP_SILENTLY')) {
+                error ("An error occurred deleting old backup data");
+            } 
+            else {
+                $errorstr = "An error occurred deleting old backup data";
+                return false;
+            }
+        }
+
+        //Create the moodle.xml file
+        if ($status) {
+            if (!defined('BACKUP_SILENTLY')) {
+                echo "<li>".get_string("creatingxmlfile");
+                //Begin a new list to xml contents
+                echo "<ul>";
+                echo "<li>".get_string("writingheader").'</li>';
+            }
+            //Obtain the xml file (create and open) and print prolog information
+            $backup_file = backup_open_xml($preferences->backup_unique_code);
+            if (!defined('BACKUP_SILENTLY')) {
+                echo "<li>".get_string("writinggeneralinfo").'</li>';
+            }
+            //Prints general info about backup to file
+            if ($backup_file) {
+                if (!$status = backup_general_info($backup_file,$preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while backing up general info");
+                    }
+                    else {
+                        $errorstr = "An error occurred while backing up general info";
+                        return false;
+                    }
+                }
+            }
+            if (!defined('BACKUP_SILENTLY')) {
+                echo "<li>".get_string("writingcoursedata");
+                //Start new ul (for course)
+                echo "<ul>";
+                echo "<li>".get_string("courseinfo").'</li>';
+            }
+            //Prints course start (tag and general info)
+            if ($status) {
+                if (!$status = backup_course_start($backup_file,$preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while backing up course start");
+                    }
+                    else {
+                        $errorstr = "An error occurred while backing up course start";
+                        return false;
+                    }
+                }
+            }
+            //Metacourse information
+            if ($status && $preferences->backup_metacourse) {
+                if (!defined('BACKUP_SILENTLY')) {
+                    echo "<li>".get_string("metacourse").'</li>';
+                }
+                if (!$status = backup_course_metacourse($backup_file,$preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while backing up metacourse info");
+                    }
+                    else {
+                        $errorstr = "An error occurred while backing up metacourse info";
+                        return false;
+                    }
+                }
+            }
+            if (!defined('BACKUP_SILENTLY')) {
+                echo "<li>".get_string("blocks").'</li>';
+            }
+            //Blocks information
+            if ($status) {
+                if (!$status = backup_course_blocks($backup_file,$preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while backing up course blocks");
+                    }
+                    else {
+                        $errorstr = "An error occurred while backing up course blocks";
+                        return false;
+                    }
+                }
+            }
+            if (!defined('BACKUP_SILENTLY')) {
+                echo "<li>".get_string("sections").'</li>';
+            }
+            //Section info
+            if ($status) {
+                if (!$status = backup_course_sections($backup_file,$preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while backing up course sections");
+                    }
+                    else {
+                        $errorstr = "An error occurred while backing up course sections";
+                        return false;
+                    }
+                }
+            }
+
+            //End course contents (close ul)
+            if (!defined('BACKUP_SILENTLY')) {
+                echo "</ul></li>";
+            }
+
+            //User info
+            if ($status) {
+                if (!defined('BACKUP_SILENTLY')) {
+                    echo "<li>".get_string("writinguserinfo").'</li>';
+                }
+                if (!$status = backup_user_info($backup_file,$preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while backing up user info");
+                    } 
+                    else {
+                        $errorstr = "An error occurred while backing up user info";
+                        return false;
+                    }
+                }
+            }
+
+            //If we have selected to backup messages and we are
+            //doing a SITE backup, let's do it
+            if ($status && $preferences->backup_messages && $preferences->backup_course == SITEID) {
+                if (!defined('BACKUP_SILENTLY')) {
+                    echo "<li>".get_string("writingmessagesinfo").'</li>';
+                }
+                if (!$status = backup_messages($backup_file,$preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while backing up messages");
+                    }
+                    else {
+                        $errorstr = "An error occurred while backing up messages";
+                        return false;
+                    }
+                }
+            }
+
+            //If we have selected to backup quizzes, backup categories and
+            //questions structure (step 1). See notes on mod/quiz/backuplib.php
+            if ($status and !empty($preferences->mods['quiz']->backup)) {
+                if (!defined('BACKUP_SILENTLY')) {
+                    echo "<li>".get_string("writingcategoriesandquestions").'</li>';
+                }
+                require_once($CFG->dirroot.'/mod/quiz/backuplib.php');
+                if (!$status = backup_question_categories($backup_file,$preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while backing up quiz categories");
+                    }
+                    else {
+                        $errorstr = "An error occurred while backing up quiz categories";
+                        return false;
+                    }
+                }
+            }
+            
+            //Print logs if selected
+            if ($status) {
+                if ($preferences->backup_logs) {  
+                    if (!defined('BACKUP_SILENTLY')) {
+                        echo "<li>".get_string("writingloginfo").'</li>';
+                    }
+                    if (!$status = backup_log_info($backup_file,$preferences)) {
+                        if (!defined('BACKUP_SILENTLY')) {
+                            notify("An error occurred while backing up log info");
+                        }
+                        else {
+                            $errorstr = "An error occurred while backing up log info";
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            //Print scales info
+            if ($status) {
+                if (!defined('BACKUP_SILENTLY')) {
+                    echo "<li>".get_string("writingscalesinfo").'</li>';
+                }
+                if (!$status = backup_scales_info($backup_file,$preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while backing up scales");
+                    }
+                    else {
+                        $errorstr = "An error occurred while backing up scales";
+                        return false;
+                    }
+                }
+            }
+
+            //Print groupings info
+            if ($status) {
+                if (!defined('BACKUP_SILENTLY')) {
+                    echo "<li>".get_string("writinggroupingsinfo").'</li>';
+                }
+                if (!$status = backup_groupings_info($backup_file,$preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while backing up groupings");
+                    }
+                    else {
+                        $errorstr = "An error occurred while backing up groupings";
+                        return false;
+                    }
+                }
+            }
+
+            //Print groups info
+            if ($status) {
+                if (!defined('BACKUP_SILENTLY')) {
+                    echo "<li>".get_string("writinggroupsinfo").'</li>';
+                }
+                if (!$status = backup_groups_info($backup_file,$preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while backing up groups");
+                    } 
+                    else {
+                        $errostr = "An error occurred while backing up groups";
+                        return false;
+                    }
+                }
+            }
+
+            //Print events info
+            if ($status) { 
+                if (!defined('BACKUP_SILENTLY')) {
+                    echo "<li>".get_string("writingeventsinfo").'</li>';
+                }
+                if (!$status = backup_events_info($backup_file,$preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while backing up events");
+                    }
+                    else {
+                        $errorstr = "An error occurred while backing up events";
+                        return false;
+                    }
+                }
+            }
+
+            //Print gradebook info
+            if ($status) { 
+                if (!defined('BACKUP_SILENTLY')) {
+                    echo "<li>".get_string("writinggradebookinfo").'</li>';
+                }
+                if (!$status = backup_gradebook_info($backup_file,$preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while backing up gradebook");
+                    }
+                    else {
+                        $errorstr = "An error occurred while backing up gradebook";
+                        return false;
+                    }
+                }
+            }
+
+            //Module info, this unique function makes all the work!!
+            //db export and module fileis copy
+            if ($status) {
+                $mods_to_backup = false;
+                //Check if we have any mod to backup
+                foreach ($preferences->mods as $module) {
+                    if ($module->backup) { 
+                        $mods_to_backup = true;
+                    }    
+                }
+                //If we have to backup some module
+                if ($mods_to_backup) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        echo "<li>".get_string("writingmoduleinfo");
+                    }
+                    //Start modules tag
+                    if (!$status = backup_modules_start ($backup_file,$preferences)) {
+                        if (!defined('BACKUP_SILENTLY')) {
+                            notify("An error occurred while backing up module info");
+                        } 
+                        else {
+                            $errorstr = "An error occurred while backing up module info";
+                            return false;
+                        }
+                    }
+                    //Open ul for module list
+                    if (!defined('BACKUP_SILENTLY')) {
+                        echo "<ul>";
+                    }   
+                    //Iterate over modules and call backup
+                    foreach ($preferences->mods as $module) {
+                        if ($module->backup and $status) {
+                            if (!defined('BACKUP_SILENTLY')) {
+                                echo "<li>".get_string("modulenameplural",$module->name).'</li>';
+                            }
+                            if (!$status = backup_module($backup_file,$preferences,$module->name)) {
+                                if (!defined('BACKUP_SILENTLY')) {
+                                    notify("An error occurred while backing up '$module->name'");
+                                }
+                                else {
+                                    $errorstr = "An error occurred while backing up '$module->name'";
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                    //Close ul for module list
+                    if (!defined('BACKUP_SILENTLY')) {
+                        echo "</ul></li>";
+                    }
+                    //Close modules tag
+                    if (!$status = backup_modules_end ($backup_file,$preferences)) {
+                        if (!defined('BACKUP_SILENTLY')) {
+                            notify("An error occurred while finishing the module backups");
+                        }
+                        else {
+                            $errorstr = "An error occurred while finishing the module backups";
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            //Backup course format data, if any. 
+            if (!defined('BACKUP_SILENTLY')) {
+                echo '<li>'.get_string("courseformatdata").'</li>';
+            }
+            if($status) {
+                if (!$status = backup_format_data($backup_file,$preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while backing up the course format data");
+                    }
+                    else {
+                        $errorstr = "An error occurred while backing up the course format data";
+                        return false;
+                    }
+                }
+            }
+
+            //Prints course end 
+            if ($status) {
+                if (!$status = backup_course_end($backup_file,$preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while closing the course backup");
+                    }
+                    else {
+                        $errorstr = "An error occurred while closing the course backup";
+                        return false;
+                    }
+                }
+            }
+            //Close the xml file and xml data
+            if ($backup_file) {
+                backup_close_xml($backup_file);
+            }
+
+            //End xml contents (close ul)
+            if (!defined('BACKUP_SILENTLY')) {
+                echo "</ul></li>";
+            }
+        }
+        
+        //Now, if selected, copy user files
+        if ($status) {
+            if ($preferences->backup_user_files) {
+                if (!defined('BACKUP_SILENTLY')) {
+                    echo "<li>".get_string("copyinguserfiles").'</li>';
+                }
+                if (!$status = backup_copy_user_files ($preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while copying user files");
+                    }
+                    else {
+                        $errorstr = "An error occurred while copying user files";
+                        return false;
+                    }
+                }
+            }
+        }
+
+        //Now, if selected, copy course files
+        if ($status) {
+            if ($preferences->backup_course_files) {
+                if (!defined('BACKUP_SILENTLY')) {
+                    echo "<li>".get_string("copyingcoursefiles").'</li>';
+                }
+                if (!$status = backup_copy_course_files ($preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while copying course files");
+                    }
+                    else {
+                        $errorstr = "An error occurred while copying course files";
+                        return false;
+                    }
+                }
+            }
+        }
+
+        //Now, zip all the backup directory contents
+        if ($status) {
+            if (!defined('BACKUP_SILENTLY')) {
+                echo "<li>".get_string("zippingbackup").'</li>';
+            }
+            if (!$status = backup_zip ($preferences)) {
+                if (!defined('BACKUP_SILENTLY')) {
+                    notify("An error occurred while zipping the backup");
+                }
+                else {
+                    $errorstr = "An error occurred while zipping the backup";
+                    return false;
+                }
+            }
+        }
+
+        //Now, copy the zip file to course directory
+        if ($status) {
+            if (!defined('BACKUP_SILENTLY')) {
+                echo "<li>".get_string("copyingzipfile").'</li>';
+            }
+            if (!$status = copy_zip_to_course_dir ($preferences)) {
+                if (!defined('BACKUP_SILENTLY')) {
+                    notify("An error occurred while copying the zip file to the course directory");
+                }
+                else {
+                    $errorstr = "An error occurred while copying the zip file to the course directory";
+                    return false;
+                }
+            }
+        }
+
+        //Now, clean temporary data (db and filesystem)
+        if ($status) {
+            if (!defined('BACKUP_SILENTLY')) {
+                echo "<li>".get_string("cleaningtempdata").'</li>';
+            }
+            if (!$status = clean_temp_data ($preferences)) {
+                if (!defined('BACKUP_SILENTLY')) {
+                    notify("An error occurred while cleaning up temporary data");
+                }
+                else {
+                    $errorstr = "An error occurred while cleaning up temporary data";
+                    return false;
+                }
+            }
+        }
+
+        return $status;
+    }
+   
+    /**
+    * This function generates the default zipfile name for a backup
+    * based on the course id and the unique code.
+    * 
+    * @param object $course course object
+    * @param string $backup_unique_code (optional, if left out current timestamp used)
+    *
+
+    * @return string filename (excluding path information)
+    */
+    function backup_get_zipfile_name($course, $backup_unique_code='') {
+
+        if (empty($backup_unique_code)) {
+            $backup_unique_code = time();
+        }
+
+        //Calculate the backup word
+        //Take off some characters in the filename !!
+        $takeoff = array(" ", ":", "/", "\\", "|");
+        $backup_word = str_replace($takeoff,"_",moodle_strtolower(get_string("backupfilename")));
+        //If non-translated, use "backup"
+        if (substr($backup_word,0,1) == "[") {
+            $backup_word= "backup";
+        }
+
+        //Calculate the date format string
+        $backup_date_format = str_replace(" ","_",get_string("backupnameformat"));
+        //If non-translated, use "%Y%m%d-%H%M"
+        if (substr($backup_date_format,0,1) == "[") {
+            $backup_date_format = "%%Y%%m%%d-%%H%%M";
+        }
+
+        //Calculate the shortname
+        $backup_shortname = clean_filename($course->shortname);
+        if (empty($backup_shortname) or $backup_shortname == '_' ) {
+            $backup_shortname = $course->id;
+        }
+
+        //Calculate the final backup filename
+        //The backup word
+        $backup_name = $backup_word."-";
+        //The shortname
+        $backup_name .= moodle_strtolower($backup_shortname)."-";
+        //The date format
+        $backup_name .= userdate(time(),$backup_date_format,99,false);
+        //The extension
+        $backup_name .= ".zip";
+        //And finally, clean everything
+        $backup_name = clean_filename($backup_name);
+
+        return $backup_name;
+
+    }
+
+    /**
+    * This function adds on the standard items to the preferences
+    * Like moodle version and backup version
+    *
+    * @param object $preferences existing preferences object.
+    * (passed by reference)
+    */
+    function backup_add_static_preferences(&$preferences) {
+        global $CFG;
+        $preferences->moodle_version = $CFG->version;
+        $preferences->moodle_release = $CFG->release;
+        $preferences->backup_version = $CFG->backup_version;
+        $preferences->backup_release = $CFG->backup_release;
+    }
+
 ?>

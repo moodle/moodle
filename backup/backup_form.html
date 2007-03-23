@@ -279,43 +279,9 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
     $backup_unique_code = time();
 
     //Calculate the backup string
-
-    //Calculate the backup word
-    //Take off some characters in the filename !!
-    $takeoff = array(" ", ":", "/", "\\", "|");
-    $backup_word = str_replace($takeoff,"_",moodle_strtolower(get_string("backupfilename")));
-    //If non-translated, use "backup"
-    if (substr($backup_word,0,1) == "[") {
-        $backup_word= "backup";
-    }
-
-    //Calculate the date format string
-    $backup_date_format = str_replace(" ","_",get_string("backupnameformat"));
-    //If non-translated, use "%Y%m%d-%H%M"
-    if (substr($backup_date_format,0,1) == "[") {
-        $backup_date_format = "%%Y%%m%%d-%%H%%M";
-    }
-
-    //Calculate the shortname
-    $backup_shortname = clean_filename($course->shortname);
-    if (empty($backup_shortname) or $backup_shortname == '_' ) {
-        $backup_shortname = $course->id;
-    }
-
-    //Calculate the final backup filename
-    //The backup word
-    $backup_name = $backup_word."-";
-    //The shortname
-    $backup_name .= moodle_strtolower($backup_shortname)."-";
-    //The date format
-    $backup_name .= userdate(time(),$backup_date_format,99,false);
-    //The extension
-    $backup_name .= ".zip";
-    //And finally, clean everything
-    $backup_name = clean_filename($backup_name);
-
     //Calculate the backup unique code to allow simultaneus backups (to define
     //the temp-directory name and records in backup temp tables
+    $backup_name = backup_get_zipfile_name($course, $backup_unique_code);
 ?>
 </table>
 

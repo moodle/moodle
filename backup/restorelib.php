@@ -6328,7 +6328,18 @@
         }
 
         if ($status = restore_close_html($restore)){
-            echo '<li>Closing the Restorelog.html file.</li>';
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '<li>Closing the Restorelog.html file.</li>';
+            }
+        }
+        else {
+            if (!defined('RESTORE_SILENTLY')) {
+                notify("Could not close the restorelog.html file");
+            }
+            else {
+                $errorstr = "Could not close the restorelog.html file";
+                return false;
+            }
         }
 
         if (!defined('RESTORE_SILENTLY')) {
