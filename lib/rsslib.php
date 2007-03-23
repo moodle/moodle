@@ -419,7 +419,15 @@ function rss_display_feeds($courseid, $userid, $rssid='', $context) {
                 $feedicons = '';
             }
 
-            $feedinfo = '<div class="title"><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=view&rssid='.$feed->id .'&blogid='. $blogid .'">'. $feedtitle .'</a></div><div class="url"><a href="'. $feed->url .'">'. $feed->url .'</a></div><div class="description">'.$feed->description.'</div>';
+            $feedinfo = '
+    <div class="title">
+        <a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=view&amp;rssid='.$feed->id .'&amp;blogid='. $blogid .'">
+        '. $feedtitle .'</a>
+    </div>
+    <div class="url">
+        <a href="'. $feed->url .'">'. $feed->url .'</a>
+    </div>
+    <div class="description">'.$feed->description.'</div>';
             
             $table->add_data(array($feedinfo, $feedicons));
         }
@@ -455,10 +463,12 @@ function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $shar
     $stradd = get_string('add');
     $strupdatefeed = get_string('updatefeed', 'block_rss_client');
     $straddfeed = get_string('addfeed', 'block_rss_client');
-    
-    $returnstring = '<table align="center"><tbody><tr><td>'."\n";    
-    $returnstring .= '<form action="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php" method="post" id="block_rss">'."\n";
+   
+    $returnstring = '';
 
+    $returnstring .= '<form action="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php" method="post" id="block_rss">'."\n";
+    print_location_comment(__FILE__,__LINE__);
+    $returnstring .= '<div id="rss_table">'."\n";    
     if ($act == 'rssedit') {
         $returnstring .= $strupdatefeed; 
     } else { 
@@ -508,7 +518,7 @@ function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $shar
     $returnstring .= '<input type="hidden" name="user" value="'. $USER->id .'" />'."\n";
     $returnstring .= '<br /><input type="submit" value="';
     $validatestring = "<a href=\"#\" 
-onClick=\"window.open('http://feedvalidator.org/check.cgi?url='+getElementId('block_rss').elements['url'].value,'validate','width=640,height=480,scrollbars=yes,status=yes,resizable=yes');return true;\" />". get_string('validatefeed', 'block_rss_client')."</a>";
+onclick=\"window.open('http://feedvalidator.org/check.cgi?url='+getElementId('block_rss').elements['url'].value,'validate','width=640,height=480,scrollbars=yes,status=yes,resizable=yes');return true;\">". get_string('validatefeed', 'block_rss_client')."</a>";
 
     if ($act == 'rssedit') {
         $returnstring .= $stredit;
@@ -516,9 +526,9 @@ onClick=\"window.open('http://feedvalidator.org/check.cgi?url='+getElementId('bl
         $returnstring .= $stradd;
     }
 
-    $returnstring .= '" />&nbsp;'. $validatestring .'</form>'."\n";
-    $returnstring .= '</td></tr></tbody></table>'."\n";
-    return $returnstring;
+    $returnstring .= '" />&nbsp;'. $validatestring ."\n";
+    // $returnstring .= '</div></form>'."\n"; // Avoiding nested forms... Ugly temporary hack #8922
+    return $returnstring . print_location_comment(__FILE__, __LINE__, true);
 }
 
 

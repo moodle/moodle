@@ -496,7 +496,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
                 $page->print_header(get_string('pageheaderconfigablock', 'moodle'), array($strheading => ''));
 
                 echo '<div class="block-config" id="'.$block->name.'">';   /// Make CSS easier
-
+  
                 print_heading($strheading);
                 echo '<form method="post" action="'. $page->url_get_path() .'">';
                 echo '<p>';
