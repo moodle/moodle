@@ -163,6 +163,7 @@ $string['skipdbencodingtest'] = 'Datu-basearen dekodifikazio-testa ez kontuan ha
 $string['status'] = 'Egoera';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Euskara';
+$string['unicoderecommended'] = 'Datu guztiak Unicode (UTF-8)-n gordetzeko gomendatzen da. Instalazio berriak berez Unicode karaktere-multzoa duten datu-baseetan exekutatu beharko lirateke. Eguneraketa bat egiten ari bazara, UTF-8rako migrazio-prozesua egin beharko zenuke (begiratu horretarako Kudeaketa-orria)';
 $string['user'] = 'Erabiltzaile';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'Orri hau ikusten baduzu <strong>$a->packname $a->packversion</strong> paketea
