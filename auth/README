@@ -117,9 +117,16 @@ get_auth_plugin() that does the work for you:
 
 Auth plugin classes are pretty basic and should be extending auth_plugin_base class.
 They contain the same functions that were previously in each plugin's lib.php file,
-but refactored to become class methods, and tweaked to reference the plugin's instantiated config
-to get at the settings, rather than the global $CFG variable.
+but refactored to become class methods, and tweaked to reference the plugin's instantiated
+config to get at the settings, rather than the global $CFG variable.
 
+When creating new plugins you can either extend the abstract auth_plugin_base class 
+(defined in lib/authlib.php) or create a new one and implement all methods from
+auth_plugin_base.
+
+The new plugin architecture allows creating of more advanced types such as custom SSO
+without the need to patch login and logout pages (see prelogin_hook() and prelogout_hook()
+methods in existing plugins).
 
 Configuration
 -----------------
