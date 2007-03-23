@@ -21,7 +21,7 @@ $row[] = new tabobject('managefeeds', $script,
 $tabs[] = $row;
 
 /// Print out the tabs and continue!
-print '<div align="center">';
+print "\n".'<div class="tabs">'."\n";
 print_tabs($tabs, $currentaction);
-print '</div>';
+print '</div>' . print_location_comment(__FILE__, __LINE__, true);
 ?>
