@@ -2571,6 +2571,141 @@ function can_delete_course($courseid) {
 }
 
 
+/* 
+ * Create a course and either return a $course object or false
+ *
+ * @param object $data  - all the data needed for an entry in the 'course' table
+ */
+function create_course($data) {
+    global $CFG, $USER;
 
+    // preprocess allowed mods
+    $allowedmods = empty($data->allowedmods) ? array() : $data->allowedmods;
+    unset($data->allowedmods);
+    if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+        if ($CFG->restrictmodulesfor == 'all') {
+            $data->restrictmodules = 1;
+        } else {
+            $data->restrictmodules = 0;
+        }
+    }
+
+    $data->timecreated = time();
+
+    // place at beginning of category
+    fix_course_sortorder();
+    $data->sortorder = get_field_sql("SELECT min(sortorder)-1 FROM {$CFG->prefix}course WHERE category=$data->category");
+    if (empty($data->sortorder)) {
+        $data->sortorder = 100;
+    }
+
+    if ($newcourseid = insert_record('course', $data)) {  // Set up new course
+
+        $course = get_record('course', 'id', $newcourseid);
+
+        // Setup the blocks
+        $page = page_create_object(PAGE_COURSE_VIEW, $course->id);
+        blocks_repopulate_page($page); // Return value not checked because you can always edit later
+
+        if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+            update_restricted_mods($course, $allowedmods);
+        }
+
+        $section = new object();
+        $section->course = $course->id;   // Create a default section.
+        $section->section = 0;
+        $section->id = insert_record('course_sections', $section);
+
+        fix_course_sortorder();
+
+        add_to_log(SITEID, 'course', 'new', 'view.php?id='.$course->id, $data->fullname.' (ID '.$course->id.')');
+
+        return $course;
+    } 
+
+    return false;   // error
+}
+
+
+/* 
+ * Update a course and return true or false
+ *
+ * @param object $data  - all the data needed for an entry in the 'course' table
+ */
+function update_course($data) {
+    global $USER, $CFG;
+
+    // preprocess allowed mods
+    $allowedmods = empty($data->allowedmods) ? array() : $data->allowedmods;
+    unset($data->allowedmods);
+    if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+        unset($data->restrictmodules);
+    }
+
+    $oldcourse = get_record('course', 'id', $data->id); // should not fail, already tested above
+    if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $oldcourse->category))
+      or !has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $data->category))) {
+        // can not move to new category, keep the old one
+        unset($data->category);
+    }
+
+    // Update with the new data
+    if (update_record('course', $data)) {
+
+        $course = get_record('course', 'id', $data->id);
+
+        add_to_log($course->id, "course", "update", "edit.php?id=$course->id", "");
+
+        if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+            update_restricted_mods($course, $allowedmods);
+        }
+
+        fix_course_sortorder();
+
+        // Test for and remove blocks which aren't appropriate anymore
+        $page = page_create_object(PAGE_COURSE_VIEW, $course->id);
+        blocks_remove_inappropriate($page);
+
+        // put custom role names into db
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        
+        foreach ($data as $dname => $dvalue) {
+          
+            // is this the right param?
+            $dvalue = clean_param($dvalue, PARAM_NOTAGS);
+
+            if (!strstr($dname, 'role_')) {
+                continue;
+            }  
+            
+            $dt = explode('_', $dname);
+            $roleid = $dt[1];
+            // make up our mind whether we want to delete, update or insert
+            
+            if (empty($dvalue)) {
+                
+                delete_records('role_names', 'contextid', $context->id, 'roleid', $roleid);
+            
+            } else if ($t = get_record('role_names', 'contextid', $context->id, 'roleid', $roleid)) {
+                
+                $t->text = $dvalue;
+                update_record('role_names', $t);    
+                       
+            } else {
+                
+                $t->contextid = $context->id;
+                $t->roleid = $roleid;
+                $t->text = $dvalue;
+                insert_record('role_names', $t);  
+            }
+            
+        }
+
+        return true;
+
+    }
+
+    return false;
+}
 
 ?>
