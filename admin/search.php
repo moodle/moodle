@@ -59,8 +59,10 @@ if ($statusmsg != '') {
 $resultshtml = search_settings_html(admin_get_root(), $query);
 
 echo '<form action="search.php" method="post" id="adminsettings">';
+echo '<div>';
 echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
 echo '<input type="hidden" name="query" value="' . s($query) . '" />';
+echo '</div>';
 echo '<fieldset>';
 echo '<div class="clearer"><!-- --></div>';
 if ($resultshtml != '') {
