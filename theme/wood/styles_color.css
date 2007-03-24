@@ -15,7 +15,9 @@
 #mod-assignment-submissions table.submissions th,
 #mod-assignment-submissions table.submissions td,
 form.mform fieldset.hidden,
-form.mform fieldset.hidden fieldset.fgroup {
+form.mform fieldset.hidden fieldset.fgroup,
+ul.tabrow1 li a:link,
+ul.tabrow1 li a:visited {
     border:none;
     background:none;
 }
@@ -71,6 +73,27 @@ a.autolink:visited {
   border-color: #330000;
 }
 
+/* Links in tabs */
+/* non-selected */
+.tabrow0 a:link span,
+.tabrow0 a:visited span,
+.tabrow0 .here .tabrow1 a:link span,
+.tabrow0 .here .tabrow1 a:visited span,
+ul.tabrow1 li a:link,
+ul.tabrow1 li a:visited {
+  color: #990000;
+}
+
+/* selected */
+.tabrow0 .here a:link span,
+.tabrow0 .here a:visited span,
+.tabrow0 .here .tabrow1 .here a:link span,
+.tabrow0 .here .tabrow1 .here a:visited span,
+ul.tabrow1 li.here a:link,
+ul.tabrow1 li.here a:visited {
+  color: #330000;
+}
+
 /* Normal tabs */
 .tabrow0 a {
   background:url(pix/tab/left.gif) top left no-repeat;
@@ -78,6 +101,7 @@ a.autolink:visited {
 .tabrow0 a span {
   background:url(pix/tab/right.gif) top right no-repeat;
 }
+/* This could be not needed. Leaving it for now, anyway. Used in case we want different last element. */
 .tabrow0 .last a span {
   background: url(pix/tab/right_end.gif) top right no-repeat;
 }
@@ -89,6 +113,7 @@ a.autolink:visited {
 .tabrow0 a:hover span {
   background-image:url(pix/tab/right_hover.gif);
 }
+/* This could be not needed. Leaving it for now, anyway. Used in case we want different last element. */
 .tabrow0 .last a:hover span {
   background-image:url(pix/tab/right_hover.gif);
 }
@@ -102,6 +127,7 @@ a.autolink:visited {
 .tabrow0 .selected a span {
   background:url(pix/tab/right_active.gif) top right no-repeat;
 }
+/* This could be not needed. Leaving it for now, anyway. Used in case we want different last element. */
 .tabrow0 .last .active a span,
 .tabrow0 .last .selected a span{
   background:url(pix/tab/right_active.gif) top left no-repeat;
@@ -116,6 +142,7 @@ a.autolink:visited {
 .tabrow0 .selected a:hover span {
   background:url(pix/tab/right_active.gif) top right no-repeat;
 }
+/* This could be not needed. Leaving it for now, anyway. Used in case we want different last element. */
 .tabrow0 .last .active a:hover span,
 .tabrow0 .last .selected a:hover span{
   background:url(pix/tab/right_active.gif) top left no-repeat;
@@ -128,14 +155,10 @@ a.autolink:visited {
   border-right:solid 1px #330000;
   height: 0px;
 }
+
 .tabrow2.empty {
   border:none;
   height:0px;
-}
-
-.tabrow0 ul a:visited,
-.tabrow0 ul a:link {
-  color:#990000;
 }
 
 .breadcrumb .sep {
