@@ -225,55 +225,19 @@ if (!defined("LESSON_RESPONSE_EDITOR")) {
  **/
 function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
     global $CFG, $USER;
-    
+
     $strlessons = get_string('modulenameplural', 'lesson');
     $strlesson  = get_string('modulename', 'lesson');
     $strname    = format_string($lesson->name, true);
-    
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    
-    // Changed the update_module_button and added another button when a teacher is checking the navigation of the lesson
-    if (has_capability('mod/lesson:edit', $context)) {
-        
-        $button = update_module_button($cm->id, $course->id, $strlesson);
 
-        if ($currenttab == 'view') {
-            if (!$pageid = optional_param('pageid', 0, PARAM_INT)) {
-                $pageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0);
-            }
-            if (!empty($pageid) and $pageid != LESSON_EOL) {
-                $button =  '<table><tr><td>'.$button.
-                           '</td><td>'.
-                           '<form '.$CFG->frametarget.' method="get" action="'. $CFG->wwwroot .'/mod/lesson/lesson.php">'.
-                           '<div>'.
-                           '<input type="hidden" name="id" value="'. $cm->id .'" />'.
-                           '<input type="hidden" name="action" value="editpage" />'.
-                           '<input type="hidden" name="redirect" value="navigation" />'.
-                           '<input type="hidden" name="pageid" value="'. $pageid .'" />'.
-                           '<input type="submit" value="'. get_string('editpagecontent', 'lesson') .'" />'.
-                           '</div>'.
-                           '</form>'.
-                           '</td></tr></table>';
-            }
-        }
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    if (has_capability('mod/lesson:edit', $context)) {
+        $button = update_module_button($cm->id, $course->id, $strlesson);
     } else {
         $button = '';
     }
-    
-    if (!optional_param('pageid', 0, PARAM_INT) and !empty($lesson->mediafile)) {
-        // open our pop-up
-        $url = '/mod/lesson/mediafile.php?id='.$cm->id;
-        $name = 'lessonmediafile';
-        $options = 'menubar=0,location=0,left=5,top=5,scrollbars,resizable,width='. $lesson->mediawidth .',height='. $lesson->mediaheight;
-        $meta = "\n<script type=\"text/javascript\">";
-        $meta .= "\n<!--\n";
-        $meta .= "     openpopup('$url', '$name', '$options', 0);";
-        $meta .= "\n-->\n";
-        $meta .= '</script>';
-    } else {
-        $meta = '';
-    }
-    
+
 /// Header setup
     $navigation = array();
     if ($course->id != SITEID) {
@@ -294,20 +258,20 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
 
 /// Print header, heading, tabs and messages
     print_header("$course->shortname: $strname", $course->fullname, $breadcrumb,
-                  '', $meta, true, $button, navmenu($course, $cm));
-                  
+                  '', '', true, $button, navmenu($course, $cm));
+
     if (has_capability('mod/lesson:manage', $context)) {
         print_heading_with_help(format_string($lesson->name, true), "overview", "lesson");
+
+        if (!empty($currenttab)) {
+            include($CFG->dirroot.'/mod/lesson/tabs.php');
+        }
     } else {
-        print_heading($lesson->name);
+        print_heading(format_string($lesson->name, true));
     }
-    
-    if (!empty($currenttab) and has_capability('mod/lesson:manage', $context)) {
-        include($CFG->dirroot.'/mod/lesson/tabs.php');
-    }
-    
+
     lesson_print_messages();
-    
+
     return true;
 }
 
@@ -1758,7 +1722,7 @@ function lesson_displayleftif($lesson) {
  * @param object $lesson Full lesson record object
  * @return void
  **/
-function print_mediafile_block($cmid, $lesson) {
+function lesson_print_mediafile_block($cmid, $lesson) {
     if (!empty($lesson->mediafile)) {
         $url      = '/mod/lesson/mediafile.php?id='.$cmid;
         $options  = 'menubar=0,location=0,left=5,top=5,scrollbars,resizable,width='. $lesson->mediawidth .',height='. $lesson->mediaheight;
@@ -1780,7 +1744,7 @@ function print_mediafile_block($cmid, $lesson) {
  * @param object $timer Full timer record object
  * @return void
  **/
-function print_clock_block($cmid, $lesson, $timer) {
+function lesson_print_clock_block($cmid, $lesson, $timer) {
     global $CFG;
 
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
@@ -1812,7 +1776,7 @@ function print_clock_block($cmid, $lesson, $timer) {
  * @param object $lesson Full lesson record object
  * @return void
  **/
-function print_menu_block($cmid, $lesson) {
+function lesson_print_menu_block($cmid, $lesson) {
     global $CFG;
 
     if ($lesson->displayleft) {
@@ -1841,6 +1805,47 @@ function print_menu_block($cmid, $lesson) {
             print_side_block(get_string('lessonmenu', 'lesson'), $content, NULL, NULL, '', array('class' => 'menu'), get_string('lessonmenu', 'lesson'));
         }
     }
+}
+
+/**
+ * This is not ideal, but checks to see if a
+ * column has "block" content.
+ *
+ * In the future, it would be nice if the lesson
+ * media file, timer and navigation were blocks
+ * then this would be unnecessary.
+ *
+ * @uses $CFG
+ * @uses $PAGE
+ * @param object $lesson Full lesson record object
+ * @param array $pageblocks An array of block instances organized by left and right columns
+ * @param string $column Pass either BLOCK_POS_RIGHT or BLOCK_POS_LEFT constants
+ * @return boolean
+ **/
+function lesson_blocks_have_content($lesson, $pageblocks, $column) {
+    global $CFG, $PAGE;
+
+    // First check lesson conditions
+    if ($column == BLOCK_POS_RIGHT) {
+        $managecap = false;
+        if ($cm = get_coursemodule_from_instance('lesson', $lesson->id, $lesson->course)) {
+            $managecap = has_capability('mod/lesson:manage', get_context_instance(CONTEXT_MODULE, $cm->id));
+        }
+        if (($lesson->timed and !$managecap) or !empty($lesson->mediafile)) {
+            return true;
+        }
+    } else if ($column == BLOCK_POS_LEFT) {
+        if ($lesson->displayleft) {
+            return true;
+        }
+    }
+    if (!empty($CFG->showblocksonmodpages)) {
+        if ((blocks_have_content($pageblocks, $column) || $PAGE->user_is_editing())) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 ?>

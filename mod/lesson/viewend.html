@@ -9,10 +9,20 @@
 ?>
 <!-- Start view end -->
         </td>
-        <td>
-            <?php print_clock_block($cm->id, $lesson, $timer); ?>
-            <?php print_mediafile_block($cm->id, $lesson); // If there is one ?>
+        <?php if (lesson_blocks_have_content($lesson, $pageblocks, BLOCK_POS_RIGHT)) { ?>
+        <td id="right-column" style="width: <?php echo $rightcolumnwidth; ?>px;">
+            <?php
+                lesson_print_clock_block($cm->id, $lesson, $timer);
+                lesson_print_mediafile_block($cm->id, $lesson);
+
+                if (!empty($CFG->showblocksonmodpages)) {
+                    if ((blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing())) {
+                        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+                    }
+                }
+            ?>
         </td>
+        <?php } ?>
     </tr>
 </table>
 <!-- End view end -->

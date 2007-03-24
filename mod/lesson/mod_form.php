@@ -245,7 +245,7 @@ class mod_lesson_mod_form extends moodleform_mod {
 
                 // get the module name and then store it in a new array
                 if ($module = get_coursemodule_from_instance($mod->modname, $mod->instance, $COURSE->id)) {
-                    if ($this->_cm->id != $mod->id){
+                    if (!empty($this->_cm->id) and $this->_cm->id != $mod->id){
                         $modinstances[$mod->id] = $mod->modname.' - '.$module->name;
                     }
                 }

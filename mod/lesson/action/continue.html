@@ -8,14 +8,24 @@
 ?>
 
 <!-- Primary layout table -->
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-    <tr valign="top">
+<table id="layout-table" cellpadding="0" cellspacing="0">
+    <tr>
         <!-- First Column -->
-        <td valign="top">
-            <?php print_menu_block($cm->id, $lesson); ?>
+        <?php if (lesson_blocks_have_content($lesson, $pageblocks, BLOCK_POS_LEFT)) { ?>
+        <td id="left-column" style="width: <?php echo $leftcolumnwidth; ?>px;">
+            <?php
+                lesson_print_menu_block($cm->id, $lesson);
+
+                if (!empty($CFG->showblocksonmodpages)) {
+                    if ((blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
+                        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+                    }
+                }
+            ?>
         </td>
+        <?php } ?>
         <!-- Start Primary column -->
-        <td align="center" width="100%">
+        <td id="middle-column">
     
 <?php if ($lesson->displayleft) { // Skip navigation anchor ?>
         
@@ -30,11 +40,7 @@
     }
 ?>
 
-            <table border="0" align="center">
-                <tr>
-                    <td class="c0"><?php echo $feedback ?></td>
-                </tr>
-            </table>
+            <?php echo $feedback ?>
 
 <?php if (isset($USER->modattempts[$lesson->id])) { // User is modifying attempts - save button and some instructions ?>
 
@@ -93,11 +99,21 @@
             </form>
         </td>
         <!-- End primary column -->
-        <td>
+        <?php if (lesson_blocks_have_content($lesson, $pageblocks, BLOCK_POS_RIGHT)) { ?>
+        <td id="right-column" style="width: <?php echo $rightcolumnwidth; ?>px;">
             <!-- Third column -->
-            <?php print_clock_block($cm->id, $lesson, $timer); ?>
-            <?php print_mediafile_block($cm->id, $lesson); // If there is one ?>
+            <?php
+                lesson_print_clock_block($cm->id, $lesson, $timer);
+                lesson_print_mediafile_block($cm->id, $lesson);
+
+                if (!empty($CFG->showblocksonmodpages)) {
+                    if ((blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing())) {
+                        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+                    }
+                }
+            ?>
         </td>
+        <?php } ?>
     </tr>
 </table>
 <!-- End primary layout table -->

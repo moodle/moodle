@@ -8,11 +8,14 @@
  **/
 
     require_once('../../config.php');
-    require_once('locallib.php');
-    require_once('lib.php');
+    require_once($CFG->dirroot.'/mod/lesson/locallib.php');
+    require_once($CFG->dirroot.'/mod/lesson/lib.php');
+    require_once($CFG->dirroot.'/mod/lesson/pagelib.php');
+    require_once($CFG->libdir.'/blocklib.php');
 
     $id      = required_param('id', PARAM_INT);             // Course Module ID
     $pageid  = optional_param('pageid', NULL, PARAM_INT);   // Lesson Page ID
+    $edit    = optional_param('edit', -1, PARAM_BOOL);
     
     list($cm, $course, $lesson) = lesson_get_basics($id);
 
@@ -492,8 +495,20 @@
                 }
             }
         }
-         
-        lesson_print_header($cm, $course, $lesson, 'view');
+
+        $PAGE = page_create_instance($lesson->id);
+        $PAGE->set_lessonpageid($page->id);
+        $pageblocks = blocks_setup($PAGE);
+
+        $leftcolumnwidth  = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
+        $rightcolumnwidth = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 210);
+
+        if (($edit != -1) and $PAGE->user_allowed_editing()) {
+            $USER->editing = $edit;
+        }
+
+    /// Print the page header, heading and tabs
+        $PAGE->print_header();
         require($CFG->dirroot.'/mod/lesson/viewstart.html');
 
         // now starting to print the page's contents   

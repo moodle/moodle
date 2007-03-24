@@ -6,8 +6,13 @@
     text-align: left;
 }
 
-.mod-lesson .sideblock {
-    width: 170px;
+.mod-lesson #layout-table {
+    width: 100%;
+}
+
+.mod-lesson .edit_buttons form,
+.mod-lesson .edit_buttons input {
+    display: inline;
 }
 
 .mod-lesson .clock .content {

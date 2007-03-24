@@ -238,6 +238,12 @@ function lesson_delete_instance($id) {
             delete_event($event->id);
         }
     }
+    $pagetypes = page_import_types('mod/lesson/');
+    foreach ($pagetypes as $pagetype) {
+        if (!delete_records('block_instance', 'pageid', $lesson->id, 'pagetype', $pagetype)) {
+            $result = false;
+        }
+    }
 
     return $result;
 }

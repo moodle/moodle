@@ -8,14 +8,24 @@
  **/
 ?>
 <!-- Start view start -->
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-    <tr valign="top">
+<table id="layout-table" cellpadding="0" cellspacing="0">
+    <tr>
         <!-- First Column -->
-        <td valign="top">
-            <?php print_menu_block($cm->id, $lesson); ?>
+        <?php if (lesson_blocks_have_content($lesson, $pageblocks, BLOCK_POS_LEFT)) { ?>
+        <td id="left-column" style="width: <?php echo $leftcolumnwidth; ?>px;">
+            <?php
+                lesson_print_menu_block($cm->id, $lesson);
+
+                if (!empty($CFG->showblocksonmodpages)) {
+                    if ((blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
+                        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+                    }
+                }
+            ?>
         </td>
+        <?php } ?>
         <!-- Start main column -->
-        <td style="width:100%;" align="center">
+        <td id="middle-column" align="center">
             
             <?php if ($lesson->displayleft) { ?>
             
