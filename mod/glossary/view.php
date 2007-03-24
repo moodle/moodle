@@ -20,7 +20,7 @@
     $show       = optional_param('show', '', PARAM_ALPHA);           // [ concept | alias ] => mode=term hook=$show
 
     if (!empty($id)) {
-        if (! $cm = get_coursemodule_from_id('glossary', $id)) {
+        if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
         }
         if (! $course = get_record("course", "id", $cm->course)) {
@@ -43,8 +43,6 @@
     } else {
         error("Must specify glossary ID or course module ID");
     }
-
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if ($CFG->forcelogin) {
         require_login();
@@ -114,11 +112,11 @@
     }
 /// Processing standard security processes
     $navigation = "";
-    if ($course->id != SITEID) {
+    if ($course->category) {
         $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
         require_login($course->id);
     }
-    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
+    if (!$cm->visible and !isteacher($course->id)) {
         print_header();
         notice(get_string("activityiscurrentlyhidden"));
     }
@@ -251,8 +249,8 @@
     /// the "Print" icon
     $printicon = '';
     if ( $isuserframe and $mode != 'search') {
-        if (has_capability('mod/glossary:manageentries', $context) or $glossary->allowprintview) {
-            $printicon = " <a title =\"". get_string("printerfriendly","glossary") ."\" target=\"printview\" href=\"print.php?id=$cm->id&amp;mode=$mode&amp;hook=".urlencode($hook)."&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;offset=$offset\"><img class=\"icon\" src=\"print.gif\" alt=\"". get_string("printerfriendly","glossary") . "\" /></a>";
+        if (isteacher($course->id) or $glossary->allowprintview) {
+            $printicon = " <a title =\"". get_string("printerfriendly","glossary") . "\" target=\"printview\" href=\"print.php?id=$cm->id&amp;mode=$mode&amp;hook=$hook&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;offset=$offset\"><img border=\"0\" src=\"print.gif\" alt=\"\" /></a>";
         }
     }
     print_heading(format_string($glossary->name).$printicon);
@@ -260,10 +258,11 @@
 
 /// Info box
     if ( $glossary->intro ) {
-        print_box(format_text($glossary->intro), 'generalbox', 'intro');
+        print_simple_box(format_text($glossary->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
     }
 
 /// Search box
+
     echo '<form method="post" action="view.php">';
 
     echo '<table align="center" width="70%" border="0">';
@@ -287,26 +286,9 @@
     echo '</td></tr></table>';
 
     echo '</form>';
-
     echo '<br />';
 
-/// Show the add entry button if allowed
-    if (has_capability('mod/glossary:write', $context)) {
-        echo '<div class="singlebutton glossaryaddentry">';
-        echo "<form id=\"newentryform\" method=\"get\" action=\"$CFG->wwwroot/mod/glossary/edit.php\">";
-        echo '<div>';
-        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
-        echo '<input type="submit" value="';
-        print_string('addentry', 'glossary');
-        echo '" />';
-        echo '</div>';
-        echo '</form>';
-        echo "</div>\n";
-    }
-
-    echo '<br />';
-
-    include("tabs.php");
+    include("tabs.html");
 
     include_once("sql.php");
 
@@ -338,24 +320,24 @@
                 $ratings->assesstimestart = $glossary->assesstimestart;
                 $ratings->assesstimefinish = $glossary->assesstimefinish;
             }
-            if ($glossary->assessed == 2 and !has_capability('mod/glossary:rate', $context)) {
+            if ($glossary->assessed == 2 and !isteacher($course->id)) {
                 $ratings->allow = false;
             } else {
                 $ratings->allow = true;
             }
 
-            echo "<form method=\"post\" action=\"rate.php\">";
+            echo "<form name=\"form\" method=\"post\" action=\"rate.php\">";
             echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
         }
 
         foreach ($allentries as $entry) {
 
             // Setting the pivot for the current entry
-            $pivot = $entry->glossarypivot;
-            $upperpivot = $textlib->strtoupper($pivot);
+            $pivot = $entry->pivot;
+            $upperpivot = $textlib->strtoupper($pivot, current_charset());
             // Reduce pivot to 1cc if necessary
             if ( !$fullpivot ) {
-                $upperpivot = $textlib->substr($upperpivot, 0, 1);
+                $upperpivot = $textlib->substr($upperpivot, 0, 1, current_charset());
             }            
             
             // if there's a group break
@@ -366,17 +348,17 @@
                     $currentpivot = $upperpivot;
 
                     echo '<div>';
-                    echo '<table cellspacing="0" class="glossarycategoryheader">';
+                    echo '<table cellspacing="0" class="categoryheader">';
 
                     echo '<tr>';
                     $pivottoshow = $currentpivot;
-                    if ( isset($entry->userispivot) ) {
+                    if ( isset($entry->uid) ) {
                     // printing the user icon if defined (only when browsing authors)
                         echo '<td align="left">';
 
-                        $user = get_record("user","id",$entry->userid);
+                        $user = get_record("user","id",$entry->uid);
                         print_user_picture($user->id, $course->id, $user->picture);
-                        $pivottoshow = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
+                        $pivottoshow = fullname($user, isteacher($course->id));;
                     } else {
                         echo '<td align="center">';
                     }
@@ -420,18 +402,18 @@
         }
     }
     if ( !$entriesshown ) {
-        print_simple_box('<div style="text-align:center">' . get_string("noentries","glossary") . '</div>',"center","95%");
+        print_simple_box('<center>' . get_string("noentries","glossary") . '</center>',"center","95%");
     }
 
 
     if ($ratingsmenuused) {
-        echo "<div class=\"boxaligncenter\"><input type=\"submit\" value=\"".get_string("sendinratings", "glossary")."\" />";
+        echo "<center><input type=\"submit\" value=\"".get_string("sendinratings", "glossary")."\" />";
         if ($glossary->scale < 0) {
             if ($scale = get_record("scale", "id", abs($glossary->scale))) {
                 print_scale_menu_helpbutton($course->id, $scale );
             }
         }
-        echo "</div>";
+        echo "</center>";
         echo "</form>";
     }
 
@@ -442,7 +424,16 @@
         echo '</div>';
     }
     echo '<br />';
+    echo '</center>';
     glossary_print_tabbed_table_end();
+    if ( !empty($debug) and isadmin() ) {
+        echo '<p>';
+        print_simple_box("$sqlselect<br /> $sqlfrom<br /> $sqlwhere<br /> $sqlorderby<br /> $sqllimit","center","85%");
+
+        echo "<p align=\"right\"><font size=\"-3\">";
+        echo microtime_diff($CFG->startpagetime, microtime());
+        echo "</font></p>";
+    }
 
 /// Finish the page
 
