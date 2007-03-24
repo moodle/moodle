@@ -283,5 +283,4 @@
     }
 
     $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby", $limitfrom, $limitnum);
-    echo "$sqlselect $sqlfrom $sqlwhere $sqlorderby";
 ?>
