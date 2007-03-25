@@ -178,7 +178,6 @@ AlterColumnSQL	lib/adodb/datadict/datadict-oci8.inc.php	/^	function AlterColumnS
 AlterColumnSQL	lib/adodb/datadict/datadict-postgres.inc.php	/^	function AlterColumnSQL($tabname, $flds, $tableflds='',$tableoptions='')$/;"	f
 AlterColumnSQL	lib/adodb/datadict/datadict-sapdb.inc.php	/^	function AlterColumnSQL($tabname, $flds)$/;"	f
 AlterColumnSQL	lib/adodb/datadict/datadict-sybase.inc.php	/^	function AlterColumnSQL($tabname, $flds)$/;"	f
-ArrayTagToString	question/format/examview/format.php	/^    function ArrayTagToString($aTag)$/;"	f
 Asc2Ucs	lib/pear/OLE.php	/^    function Asc2Ucs($ascii)$/;"	f
 AtFirstPage	lib/adodb/adodb-recordset.inc.php	/^	function AtFirstPage($status=false)$/;"	f
 AtFirstPage	lib/adodb/adodb.inc.php	/^	function AtFirstPage($status=false)$/;"	f
@@ -826,7 +825,7 @@ MetaType	lib/adodb/drivers/adodb-vfp.inc.php	/^	function MetaType($t,$len=-1)$/;
 MoodleExcelFormat	lib/excellib.class.php	/^    function MoodleExcelFormat(&$workbook, $properties = array()) {$/;"	f
 MoodleExcelFormat2PearExcelFormat	lib/excellib.class.php	/^    function MoodleExcelFormat2PearExcelFormat($format) {$/;"	f
 MoodleExcelWorkbook	lib/excellib.class.php	/^    function MoodleExcelWorkbook($filename) {$/;"	f
-MoodleExcelWorksheet	lib/excellib.class.php	/^    function MoodleExcelWorksheet($name, &$workbook) {$/;"	f
+MoodleExcelWorksheet	lib/excellib.class.php	/^    function MoodleExcelWorksheet($name, &$workbook, $latin_output=false) {$/;"	f
 Move	lib/adodb/adodb-recordset.inc.php	/^	function Move($rowNumber = 0) $/;"	f
 Move	lib/adodb/adodb.inc.php	/^	function Move($rowNumber = 0) $/;"	f
 MoveFirst	lib/adodb/adodb-recordset.inc.php	/^	function MoveFirst() $/;"	f
@@ -2444,7 +2443,7 @@ add_instance	mod/resource/type/html/resource.class.php	/^function add_instance($
 add_instance	mod/resource/type/ims/resource.class.php	/^    function add_instance($resource) {$/;"	f
 add_instance	mod/resource/type/repository/resource.class.php	/^function add_instance($resource) {$/;"	f
 add_instance	mod/resource/type/text/resource.class.php	/^function add_instance($resource) {$/;"	f
-add_keypad_chars	mod/hotpot/template/v6.php	/^	function add_keypad_chars(&$chars, $text) {$/;"	f
+add_keypad_chars	mod/hotpot/template/v6.php	/^    function add_keypad_chars(&$chars, $text) {$/;"	f
 add_mod_to_section	course/lib.php	/^function add_mod_to_section($mod, $beforemod=NULL) {$/;"	f
 add_property	lib/bennu/iCalendar_components.php	/^    function add_property($name, $value = NULL, $parameters = NULL) {$/;"	f
 add_qti_info	question/format/qti2/format.php	/^    function add_qti_info(&$questions)$/;"	f
@@ -2590,8 +2589,10 @@ assignment_display_lateness	mod/assignment/lib.php	/^function assignment_display
 assignment_encode_content_links	mod/assignment/backuplib.php	/^    function assignment_encode_content_links ($content,$preferences) {$/;"	f
 assignment_get_all_submissions	mod/assignment/lib.php	/^function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {$/;"	f
 assignment_get_participants	mod/assignment/lib.php	/^function assignment_get_participants($assignmentid) {$/;"	f
+assignment_get_post_actions	mod/assignment/lib.php	/^function assignment_get_post_actions() {$/;"	f
 assignment_get_recent_mod_activity	mod/assignment/lib.php	/^function assignment_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $assignment="0", $user="", $groupid="")  {$/;"	f
 assignment_get_unmailed_submissions	mod/assignment/lib.php	/^function assignment_get_unmailed_submissions($starttime, $endtime) {$/;"	f
+assignment_get_view_actions	mod/assignment/lib.php	/^function assignment_get_view_actions() {$/;"	f
 assignment_grades	mod/assignment/lib.php	/^function assignment_grades($assignmentid) {$/;"	f
 assignment_ids	mod/assignment/backuplib.php	/^    function assignment_ids ($course) {$/;"	f
 assignment_log_info	mod/assignment/lib.php	/^function assignment_log_info($log) {$/;"	f
@@ -2686,6 +2687,7 @@ authorize_settled	enrol/authorize/authorizenetlib.php	/^function authorize_settl
 b_writeIt	lib/soap/nusoap.php	/^		function b_writeIt(text){$/;"	f
 backtrace	lib/cas/CAS.php	/^  function backtrace()$/;"	f
 backup	question/type/calculated/questiontype.php	/^    function backup($bf,$preferences,$question,$level=6) {$/;"	f
+backup	question/type/essay/questiontype.php	/^    function backup($bf, $preferences, $questionid, $level = 6) {$/;"	f
 backup	question/type/match/questiontype.php	/^    function backup($bf,$preferences,$question,$level=6) {$/;"	f
 backup	question/type/multianswer/questiontype.php	/^    function backup($bf,$preferences,$question,$level=6) {$/;"	f
 backup	question/type/multichoice/questiontype.php	/^    function backup($bf,$preferences,$question,$level=6) {$/;"	f
@@ -2774,17 +2776,18 @@ backup_lesson_pages	mod/lesson/backuplib.php	/^    function backup_lesson_pages 
 backup_lesson_timer	mod/lesson/backuplib.php	/^    function backup_lesson_timer ($bf,$preferences,$lessonid) {$/;"	f
 backup_log_info	backup/backuplib.php	/^    function backup_log_info($bf,$preferences) {$/;"	f
 backup_messages	backup/backuplib.php	/^    function backup_messages ($bf,$preferences) {$/;"	f
+backup_mieattendance_roll	mod/mieattendance/backuplib.php	/^    function backup_mieattendance_roll ($bf,$preferences,$mieattendance) {$/;"	f
 backup_mod_selected	backup/backuplib.php	/^    function backup_mod_selected($preferences,$modname,$modid) {$/;"	f
 backup_module	backup/backuplib.php	/^    function backup_module($bf,$preferences,$module) {$/;"	f
 backup_modules_end	backup/backuplib.php	/^    function backup_modules_end ($bf,$preferences) {$/;"	f
 backup_modules_start	backup/backuplib.php	/^    function backup_modules_start ($bf,$preferences) {$/;"	f
 backup_open_xml	backup/backuplib.php	/^    function backup_open_xml($backup_unique_code) {$/;"	f
 backup_putid	backup/lib.php	/^    function backup_putid ($backup_unique_code, $table, $old_id, $new_id, $info="") {$/;"	f
-backup_question	question/backuplib.php	/^    function backup_question($bf,$preferences,$category) {$/;"	f
+backup_question	question/backuplib.php	/^    function backup_question($bf,$preferences,$category, $level = 4) {$/;"	f
 backup_question_categories	question/backuplib.php	/^    function backup_question_categories($bf,$preferences) {$/;"	f
-backup_question_rqp_state	question/backuplib.php	/^    function backup_question_rqp_state ($bf,$preferences,$state) {$/;"	f
-backup_question_sessions	question/backuplib.php	/^    function backup_question_sessions ($bf,$preferences,$attempt) {$/;"	f
-backup_question_states	question/backuplib.php	/^    function backup_question_states ($bf,$preferences,$attempt) {$/;"	f
+backup_question_rqp_state	question/backuplib.php	/^    function backup_question_rqp_state ($bf,$preferences,$state, $level = 8) {$/;"	f
+backup_question_sessions	question/backuplib.php	/^    function backup_question_sessions ($bf,$preferences,$attempt, $level = 6) {$/;"	f
+backup_question_states	question/backuplib.php	/^    function backup_question_states ($bf,$preferences,$attempt, $level = 6) {$/;"	f
 backup_quiz_attempts	mod/quiz/backuplib.php	/^    function backup_quiz_attempts ($bf,$preferences,$quiz) {$/;"	f
 backup_quiz_grades	mod/quiz/backuplib.php	/^    function backup_quiz_grades ($bf,$preferences,$quiz) {$/;"	f
 backup_quiz_question_instances	mod/quiz/backuplib.php	/^    function backup_quiz_question_instances ($bf,$preferences,$quiz) {$/;"	f
@@ -2895,6 +2898,7 @@ calcParenthesis	lib/typo3/class.t3lib_div.php	/^	function calcParenthesis($strin
 calcPriority	lib/typo3/class.t3lib_div.php	/^	function calcPriority($string)	{$/;"	f
 calculate_user_dst_table	lib/moodlelib.php	/^function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {$/;"	f
 calculatefilehash	mod/resource/type/ims/resource.class.php	/^    function calculatefilehash($filefullpath) {$/;"	f
+calendar	mod/mieattendance/calendar.php	/^    function calendar($arg1 = 0, $arg2 = 0) {$/;"	f
 calendar_add_event_allowed	calendar/event.php	/^function calendar_add_event_allowed($courseid, $groupid, $userid) {$/;"	f
 calendar_add_event_metadata	calendar/lib.php	/^function calendar_add_event_metadata($event) {$/;"	f
 calendar_add_month	calendar/lib.php	/^function calendar_add_month($month, $year) {$/;"	f
@@ -3106,7 +3110,7 @@ clam_replace_infected_file	lib/uploadlib.php	/^function clam_replace_infected_fi
 clam_scan_file	lib/uploadlib.php	/^function clam_scan_file(&$file, $course) {$/;"	f
 cleanAttributes	lib/weblib.php	/^function cleanAttributes($str){$/;"	f
 cleanAttributes2	lib/weblib.php	/^function cleanAttributes2($htmlArray){$/;"	f
-cleanUnicode	question/format/examview/format.php	/^	function cleanUnicode($text) {$/;"	f
+cleanUnicode	question/format/examview/format.php	/^    function cleanUnicode($text) {$/;"	f
 clean_filename	lib/moodlelib.php	/^function clean_filename($string) {$/;"	f
 clean_getstring_data	lib/moodlelib.php	/^function clean_getstring_data( $a ) {$/;"	f
 clean_param	lib/moodlelib.php	/^function clean_param($param, $type) {$/;"	f
@@ -3127,6 +3131,7 @@ clear_backup_dir	backup/lib.php	/^    function clear_backup_dir($backup_unique_c
 clear_cache	lib/smarty/Smarty.class.php	/^    function clear_cache($tpl_file = null, $cache_id = null, $compile_id = null, $exp_time = null)$/;"	f
 clear_compiled_tpl	lib/smarty/Smarty.class.php	/^    function clear_compiled_tpl($tpl_file = null, $compile_id = null, $exp_time = null)$/;"	f
 clear_config	lib/smarty/Smarty.class.php	/^    function clear_config($var = null)$/;"	f
+clear_link	mod/mieattendance/calendar.php	/^    function clear_link() {$/;"	f
 cleardoubleslashes	lib/moodlelib.php	/^function cleardoubleslashes ($path) {$/;"	f
 clearfilelist	files/index.php	/^function clearfilelist() {$/;"	f
 clearfilelist	lib/editor/htmlarea/coursefiles.php	/^function clearfilelist() {$/;"	f
@@ -3147,6 +3152,7 @@ close	lib/excellib.class.php	/^    function close() {$/;"	f
 close	lib/pear/Spreadsheet/Excel/Writer/Workbook.php	/^    function close()$/;"	f
 close	lib/pear/Spreadsheet/Excel/Writer/Worksheet.php	/^    function close($sheetnames)$/;"	f
 close_block	lib/wiki_to_markdown.php	/^  function close_block( $state ) {$/;"	f
+close_this_window	lib/weblib.php	/^    function close_this_window() {$/;"	f
 close_window	lib/weblib.php	/^function close_window($delay=0) {$/;"	f
 close_window_button	lib/weblib.php	/^function close_window_button($name='closewindow') {$/;"	f
 cmpFQDN	lib/typo3/class.t3lib_div.php	/^	function cmpFQDN($baseIP, $list)        {$/;"	f
@@ -3207,7 +3213,7 @@ convert	lib/wiki_to_markdown.php	/^  function convert( $content,$courseid ) {$/;
 convertMicrotime	lib/typo3/class.t3lib_div.php	/^	function convertMicrotime($microtime)	{$/;"	f
 convert_urls_into_links	lib/weblib.php	/^function convert_urls_into_links(&$text) {$/;"	f
 copy_and_flatten	question/format/qti2/format.php	/^function copy_and_flatten(&$object, $path, $courseid) {$/;"	f
-copy_contents	mod/hotpot/show.php	/^	function copy_contents(id) {$/;"	f
+copy_contents	mod/hotpot/show.php	/^    function copy_contents(id) {$/;"	f
 copy_file_to_course	question/format/blackboard_6/format.php	/^    function copy_file_to_course($filename) {$/;"	f
 copy_zip_to_course_dir	backup/backuplib.php	/^    function copy_zip_to_course_dir ($preferences) {$/;"	f
 count	mod/wiki/ewiki/ewiki.php	/^   function count() {$/;"	f
@@ -4422,10 +4428,10 @@ get_import_export_formats	lib/questionlib.php	/^function get_import_export_forma
 get_initial_first	lib/tablelib.php	/^    function get_initial_first() {$/;"	f
 get_initial_last	lib/tablelib.php	/^    function get_initial_last() {$/;"	f
 get_installer_list_of_languages	install.php	/^function get_installer_list_of_languages() {$/;"	f
-get_jcross_aword	mod/hotpot/template/v6.php	/^	function get_jcross_aword(&$row, $r, $r_max, $c, $c_max) {$/;"	f
-get_jcross_dword	mod/hotpot/template/v6.php	/^	function get_jcross_dword(&$row, $r, $r_max, $c, $c_max) {$/;"	f
-get_jcross_word	mod/hotpot/template/v6.php	/^	function get_jcross_word(&$row, $r, $r_max, $c, $c_max, $go_down=false) {$/;"	f
-get_jmatch_items	mod/hotpot/template/v6.php	/^	function get_jmatch_items(&$l_items, &$r_items) {$/;"	f
+get_jcross_aword	mod/hotpot/template/v6.php	/^    function get_jcross_aword(&$row, $r, $r_max, $c, $c_max) {$/;"	f
+get_jcross_dword	mod/hotpot/template/v6.php	/^    function get_jcross_dword(&$row, $r, $r_max, $c, $c_max) {$/;"	f
+get_jcross_word	mod/hotpot/template/v6.php	/^    function get_jcross_word(&$row, $r, $r_max, $c, $c_max, $go_down=false) {$/;"	f
+get_jmatch_items	mod/hotpot/template/v6.php	/^    function get_jmatch_items(&$l_items, &$r_items) {$/;"	f
 get_key	lib/smarty/Config_File.class.php	/^    function &get_key($config_key)$/;"	f
 get_last_soap_messages	lib/soap/phpsoap.php	/^function get_last_soap_messages($connection) {$/;"	f
 get_last_soap_messages	lib/soaplib.php	/^    function get_last_soap_messages($connection) {$/;"	f
@@ -4453,6 +4459,8 @@ get_max_upload_file_size	lib/moodlelib.php	/^function get_max_upload_file_size($
 get_max_upload_sizes	lib/moodlelib.php	/^function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {$/;"	f
 get_media_tag	question/format/qti2/qt_common.php	/^function get_media_tag($file, $courseid = 0, $alt = 'media file', $width = 0, $height = 0) {$/;"	f
 get_memory_limit	install.php	/^function get_memory_limit() {$/;"	f
+get_mieattendance_for_section	mod/mieattendance/lib.php	/^function get_mieattendance_for_section($instance, $courseid) {$/;"	f
+get_mieattendance_for_week	mod/mieattendance/lib.php	/^function get_mieattendance_for_week($id, $courseid) {$/;"	f
 get_mimetype_description	lib/filelib.php	/^function get_mimetype_description($mimetype,$capitalise=false) {$/;"	f
 get_mimetypes_array	lib/filelib.php	/^function get_mimetypes_array() {$/;"	f
 get_module_type	backup/lib.php	/^    function get_module_type ($courseid,$moduleid) {$/;"	f
@@ -4876,6 +4884,7 @@ hotpot_get_instructions	question/format/hotpot/format.php	/^    function hotpot_
 hotpot_get_next_attempt	mod/hotpot/lib.php	/^function hotpot_get_next_attempt($hotpotid) {$/;"	f
 hotpot_get_next_cm	mod/hotpot/attempt.php	/^function hotpot_get_next_cm(&$cm) {$/;"	f
 hotpot_get_participants	mod/hotpot/lib.php	/^function hotpot_get_participants($hotpotid) {$/;"	f
+hotpot_get_post_actions	mod/hotpot/lib.php	/^function hotpot_get_post_actions() {$/;"	f
 hotpot_get_precision	mod/hotpot/lib.php	/^function hotpot_get_precision(&$hotpot) {$/;"	f
 hotpot_get_question_name	mod/hotpot/lib.php	/^function hotpot_get_question_name($question) {$/;"	f
 hotpot_get_reading	question/format/hotpot/format.php	/^    function hotpot_get_reading(&$xml) {$/;"	f
@@ -4885,11 +4894,13 @@ hotpot_get_report_names	mod/hotpot/report.php	/^function hotpot_get_report_names
 hotpot_get_report_users	mod/hotpot/report.php	/^function hotpot_get_report_users($course_ids, $formdata) {$/;"	f
 hotpot_get_title	question/format/hotpot/format.php	/^    function hotpot_get_title(&$xml, $x, $flag=false) {$/;"	f
 hotpot_get_titles_and_next_ex	mod/hotpot/lib.php	/^function hotpot_get_titles_and_next_ex(&$hp, $filepath, $get_next=false) {$/;"	f
+hotpot_get_view_actions	mod/hotpot/lib.php	/^function hotpot_get_view_actions() {$/;"	f
 hotpot_grade_heading	mod/hotpot/report.php	/^function hotpot_grade_heading($hotpot, $formdata) {$/;"	f
 hotpot_grades	mod/hotpot/lib.php	/^function hotpot_grades($hotpotid) {$/;"	f
 hotpot_index_remove_prefix	mod/hotpot/db/update_to_v2.php	/^function hotpot_index_remove_prefix($table, $field, $length=0) {$/;"	f
 hotpot_is_visible	mod/hotpot/lib.php	/^function hotpot_is_visible(&$cm) {$/;"	f
 hotpot_keypad_sort_value	mod/hotpot/template/v6.php	/^function hotpot_keypad_sort_value($char) {$/;"	f
+hotpot_prepare_str	question/format/hotpot/format.php	/^    function hotpot_prepare_str($str) {$/;"	f
 hotpot_print_attempt_details	mod/hotpot/review.php	/^function hotpot_print_attempt_details(&$hotpot, &$attempt) {$/;"	f
 hotpot_print_attempt_summary	mod/hotpot/review.php	/^function hotpot_print_attempt_summary(&$hotpot, &$attempt) {$/;"	f
 hotpot_print_recent_activity	mod/hotpot/lib.php	/^function hotpot_print_recent_activity($course, $isteacher, $timestart) {$/;"	f
@@ -4926,6 +4937,7 @@ hotpot_strings	mod/hotpot/lib.php	/^function hotpot_strings($ids) {$/;"	f
 hotpot_transfer_records	mod/hotpot/db/update_to_v2.php	/^function hotpot_transfer_records($oldtable, $table, $foreignkeys, $primarykey, &$new) {$/;"	f
 hotpot_update_chain	mod/hotpot/lib.php	/^function hotpot_update_chain(&$hp) {$/;"	f
 hotpot_update_course_modules	mod/hotpot/db/update_to_v2.php	/^function hotpot_update_course_modules($oldmodulename, $modulename, &$new) {$/;"	f
+hotpot_update_events	mod/hotpot/lib.php	/^function hotpot_update_events($hotpot) {$/;"	f
 hotpot_update_fields	mod/hotpot/db/update_to_v2.php	/^function hotpot_update_fields($table, $feedback=false) {$/;"	f
 hotpot_update_instance	mod/hotpot/lib.php	/^function hotpot_update_instance(&$hp) {$/;"	f
 hotpot_update_logs	mod/hotpot/db/update_to_v2.php	/^function hotpot_update_logs($oldmodulename, $modulename, $moduleid, &$new) {$/;"	f
@@ -4951,12 +4963,11 @@ hotpot_user_outline	mod/hotpot/lib.php	/^function hotpot_user_outline($course, $
 hotpot_utf8_to_html_entity	mod/hotpot/lib.php	/^function hotpot_utf8_to_html_entity($char) {$/;"	f
 hotpot_utf8_to_html_entity	question/format/hotpot/format.php	/^function hotpot_utf8_to_html_entity($char) {$/;"	f
 hotpot_xml_quiz	mod/hotpot/lib.php	/^	function hotpot_xml_quiz(&$obj, $read_file=true, $parse_xml=true, $convert_urls=true, $report_errors=true, $create_html=true) {$/;"	f
-hotpot_xml_quiz_template	mod/hotpot/template/v6.php	/^	function hotpot_xml_quiz_template(&$parent) {$/;"	f
+hotpot_xml_quiz_template	mod/hotpot/template/v6.php	/^    function hotpot_xml_quiz_template(&$parent) {$/;"	f
 hotpot_xml_tree	mod/hotpot/lib.php	/^	function hotpot_xml_tree($str, $xml_root='') {$/;"	f
 hotpot_xml_tree	question/format/hotpot/format.php	/^    function hotpot_xml_tree($str, $xml_root='') {$/;"	f
 hover	lib/editor/htmlarea/popups/dlg_ins_char.php	/^function hover(obj,val) {$/;"	f
 html2text	lib/html2text.php	/^function html2text( $badStr ) {$/;"	f
-htmlPrepare	question/format/examview/format.php	/^    function htmlPrepare($htmltext)$/;"	f
 html_attributes	blocks/moodleblock.class.php	/^    function html_attributes() {$/;"	f
 html_dump_mem	lib/cas/domxml-php4-php5.php	/^ function html_dump_mem() {return $this->myDOMNode->saveHTML();}$/;"	f
 html_entity_decode	lib/moodlelib.php	/^     function html_entity_decode($string) {$/;"	f
@@ -5198,12 +5209,12 @@ iso8601_to_timestamp	lib/soap/nusoap.php	/^function iso8601_to_timestamp($datest
 isolate_class	mod/lesson/importppt.php	/^function isolate_class($string) {$/;"	f
 isopen	mod/assignment/lib.php	/^    function isopen() {$/;"	f
 isstudent	lib/moodlelib.php	/^function isstudent($courseid, $userid=0) {$/;"	f
-isteacher	lib/moodlelib.php	/^function isteacher($courseid=0, $userid=0, $includeadmin=true) {$/;"	f
+isteacher	lib/moodlelib.php	/^function isteacher($courseid=0, $userid=0, $includeadmin=true, $ignorestudentview=false) {$/;"	f
 isteacheredit	lib/moodlelib.php	/^function isteacheredit($courseid, $userid=0, $ignorestudentview=false) {$/;"	f
 isteacherinanycourse	lib/moodlelib.php	/^function isteacherinanycourse($userid=0, $includeadmin=true) {$/;"	f
-jmix_OpenPunctuation	mod/hotpot/template/v6.php	/^	function jmix_OpenPunctuation($tags) {$/;"	f
-jmix_Punctuation	mod/hotpot/template/v6.php	/^	function jmix_Punctuation($tags) {$/;"	f
-jmix_encode_punctuation	mod/hotpot/template/v6.php	/^	function jmix_encode_punctuation($str) {$/;"	f
+jmix_OpenPunctuation	mod/hotpot/template/v6.php	/^    function jmix_OpenPunctuation($tags) {$/;"	f
+jmix_Punctuation	mod/hotpot/template/v6.php	/^    function jmix_Punctuation($tags) {$/;"	f
+jmix_encode_punctuation	mod/hotpot/template/v6.php	/^    function jmix_encode_punctuation($str) {$/;"	f
 journal_add_instance	mod/journal/lib.php	/^function journal_add_instance($journal) {$/;"	f
 journal_backup_mods	mod/journal/backuplib.php	/^    function journal_backup_mods($bf,$preferences) {$/;"	f
 journal_backup_one_mod	mod/journal/backuplib.php	/^    function journal_backup_one_mod($bf,$preferences,$journal) {$/;"	f
@@ -5395,6 +5406,8 @@ load_filter	lib/smarty/Smarty.class.php	/^    function load_filter($type, $name)
 loadeditor	lib/editorlib.php	/^    function loadeditor($args) {$/;"	f
 loadeditor	lib/moodlelib.php	/^function loadeditor($args) {$/;"	f
 locationHeaderUrl	lib/typo3/class.t3lib_div.php	/^	function locationHeaderUrl($path)	{$/;"	f
+lockselects	mod/mieattendance/add.php	/^    function lockselects(form, master, subitems) {$/;"	f
+lockselects	mod/mieattendance/modmulti.php	/^    function lockselects(form, master, subitems) {$/;"	f
 log	lib/cas/CAS.php	/^  function log($str)$/;"	f
 logMsg	lib/adodb/adodb-xmlschema.inc.php	/^function logMsg( $msg, $title = NULL, $force = FALSE ) {$/;"	f
 log_check_backup	backup/backuplib.php	/^    function log_check_backup($course) {$/;"	f
@@ -5468,6 +5481,50 @@ message_search_users	message/lib.php	/^function message_search_users($courseid, 
 message_shorten_message	message/lib.php	/^function message_shorten_message($message, $minlength=0) {$/;"	f
 message_unblock_contact	message/lib.php	/^function message_unblock_contact($contactid) {$/;"	f
 microtime_diff	lib/moodlelib.php	/^function microtime_diff($a, $b) {$/;"	f
+mieattendance_add_instance	mod/mieattendance/lib.php	/^function mieattendance_add_instance($mieattendance) {$/;"	f
+mieattendance_add_module	mod/mieattendance/lib.php	/^function mieattendance_add_module(&$mod) {$/;"	f
+mieattendance_backup_mods	mod/mieattendance/backuplib.php	/^    function mieattendance_backup_mods($bf,$preferences) {$/;"	f
+mieattendance_check_backup_mods	mod/mieattendance/backuplib.php	/^   function mieattendance_check_backup_mods($course,$user_data=false,$backup_unique_code) {$/;"	f
+mieattendance_check_config_setteing	mod/mieattendance/lib.php	/^function mieattendance_check_config_setteing () {$/;"	f
+mieattendance_choose_from_radio	mod/mieattendance/lib.php	/^function mieattendance_choose_from_radio ($options, $name, $checked='', $vertical='0', $mobile='false') {$/;"	f
+mieattendance_cron	mod/mieattendance/lib.php	/^function mieattendance_cron () {$/;"	f
+mieattendance_data_get_submitted	mod/mieattendance/lib.php	/^function mieattendance_data_get_submitted() {$/;"	f
+mieattendance_delete_instance	mod/mieattendance/lib.php	/^function mieattendance_delete_instance($id) {$/;"	f
+mieattendance_email_to_user	mod/mieattendance/lib.php	/^function mieattendance_email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true, $repyto='', $replytoname='') {$/;"	f
+mieattendance_encording_choose_from_menu	mod/mieattendance/encording.php	/^function mieattendance_encording_choose_from_menu ($options, $name, $selected="", $enable="true") {$/;"	f
+mieattendance_encording_choose_from_menu	mod/mieattendance/lib.php	/^function mieattendance_encording_choose_from_menu ($options, $name, $selected='', $enable='true') {$/;"	f
+mieattendance_encording_convert	mod/mieattendance/encording.php	/^function mieattendance_encording_convert($str,$encode) {$/;"	f
+mieattendance_encording_convert	mod/mieattendance/lib.php	/^function mieattendance_encording_convert($str,$encode) {$/;"	f
+mieattendance_encording_get_list	mod/mieattendance/encording.php	/^function mieattendance_encording_get_list() {$/;"	f
+mieattendance_encording_get_list	mod/mieattendance/lib.php	/^function mieattendance_encording_get_list() {$/;"	f
+mieattendance_encording_internal	mod/mieattendance/encording.php	/^function mieattendance_encording_internal() {$/;"	f
+mieattendance_encording_internal	mod/mieattendance/lib.php	/^function mieattendance_encording_internal() {$/;"	f
+mieattendance_find_today	mod/mieattendance/lib.php	/^function mieattendance_find_today($d) {$/;"	f
+mieattendance_find_tomorrow	mod/mieattendance/lib.php	/^function mieattendance_find_tomorrow($d) {$/;"	f
+mieattendance_get_course_students	mod/mieattendance/lib.php	/^function mieattendance_get_course_students($courseid, $sort='u.lastaccess DES', $groupid='') {$/;"	f
+mieattendance_get_participants	mod/mieattendance/lib.php	/^function mieattendance_get_participants($mieattendanceid) {$/;"	f
+mieattendance_get_records	mod/mieattendance/lib.php	/^function mieattendance_get_records($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='', $sort='', $fields='*', $limitfrom='', $limitnum='') {$/;"	f
+mieattendance_grades	mod/mieattendance/lib.php	/^function mieattendance_grades($mieattendanceid) {$/;"	f
+mieattendance_ids	mod/mieattendance/backuplib.php	/^    function mieattendance_ids ($course) {$/;"	f
+mieattendance_logout	mod/mieattendance/lib.php	/^function mieattendance_logout() {$/;"	f
+mieattendance_print_group	mod/mieattendance/lib.php	/^function mieattendance_print_group($courseid, $groupmode) {$/;"	f
+mieattendance_print_header	mod/mieattendance/tabreport.php	/^function mieattendance_print_header() {$/;"	f
+mieattendance_print_pagenav	mod/mieattendance/tabreport.php	/^function mieattendance_print_pagenav() {$/;"	f
+mieattendance_print_single_button	mod/mieattendance/lib.php	/^function mieattendance_print_single_button($link, $options, $label='OK', $method='get') {$/;"	f
+mieattendance_print_table	mod/mieattendance/lib.php	/^function mieattendance_print_table($table) {$/;"	f
+mieattendance_print_visible_setting	mod/mieattendance/lib.php	/^function mieattendance_print_visible_setting($form, $course=NULL) {$/;"	f
+mieattendance_restore_mods	mod/mieattendance/restorelib.php	/^    function mieattendance_restore_mods($mod,$restore) {$/;"	f
+mieattendance_roll_ids_by_course	mod/mieattendance/backuplib.php	/^    function mieattendance_roll_ids_by_course ($course) {$/;"	f
+mieattendance_roll_restore_mods	mod/mieattendance/restorelib.php	/^    function mieattendance_roll_restore_mods($mieattendance_id,$info,$restore) {$/;"	f
+mieattendance_tab_menu	mod/mieattendance/lib.php	/^function mieattendance_tab_menu($tabsinfo, $selected='', $link='', $onclick='') {$/;"	f
+mieattendance_tally_overall_absences_decimal	mod/mieattendance/lib.php	/^function mieattendance_tally_overall_absences_decimal($absences, $tardies) {$/;"	f
+mieattendance_tally_overall_absences_fraction	mod/mieattendance/lib.php	/^function mieattendance_tally_overall_absences_fraction($absences, $tardies) {$/;"	f
+mieattendance_update_instance	mod/mieattendance/lib.php	/^function mieattendance_update_instance($mieattendance) {$/;"	f
+mieattendance_upgrade	mod/mieattendance/db/mysql.php	/^function mieattendance_upgrade($oldversion) {$/;"	f
+mieattendance_upgrade	mod/mieattendance/db/oci8po.php	/^function mieattendance_upgrade($oldversion) {$/;"	f
+mieattendance_upgrade	mod/mieattendance/db/postgres7.php	/^function mieattendance_upgrade($oldversion) {$/;"	f
+mieattendance_user_complete	mod/mieattendance/lib.php	/^function mieattendance_user_complete($course, $user, $mod, $mieattendance) {$/;"	f
+mieattendance_user_outline	mod/mieattendance/lib.php	/^function mieattendance_user_outline($course, $user, $mod, $mieattendance) {$/;"	f
 migrate2utf8_assignment_description	mod/assignment/db/migrate2utf8.php	/^function migrate2utf8_assignment_description($recordid){$/;"	f
 migrate2utf8_assignment_name	mod/assignment/db/migrate2utf8.php	/^function migrate2utf8_assignment_name($recordid){$/;"	f
 migrate2utf8_backup_ids_info	backup/db/migrate2utf8.php	/^function migrate2utf8_backup_ids_info($recordid){$/;"	f
@@ -5546,6 +5603,7 @@ migrate2utf8_lams_introduction	mod/lams/db/migrate2utf8.php	/^function migrate2u
 migrate2utf8_lams_name	mod/lams/db/migrate2utf8.php	/^function migrate2utf8_lams_name($recordid){$/;"	f
 migrate2utf8_lesson_answers_answer	mod/lesson/db/migrate2utf8.php	/^function migrate2utf8_lesson_answers_answer($recordid){$/;"	f
 migrate2utf8_lesson_answers_response	mod/lesson/db/migrate2utf8.php	/^function migrate2utf8_lesson_answers_response($recordid){$/;"	f
+migrate2utf8_lesson_attempts_useranswer	mod/lesson/db/migrate2utf8.php	/^function migrate2utf8_lesson_attempts_useranswer($recordid) {$/;"	f
 migrate2utf8_lesson_default_password	mod/lesson/db/migrate2utf8.php	/^function migrate2utf8_lesson_default_password($recordid){$/;"	f
 migrate2utf8_lesson_name	mod/lesson/db/migrate2utf8.php	/^function migrate2utf8_lesson_name($recordid){$/;"	f
 migrate2utf8_lesson_pages_contents	mod/lesson/db/migrate2utf8.php	/^function migrate2utf8_lesson_pages_contents($recordid){$/;"	f
@@ -5643,7 +5701,6 @@ move_courses	course/lib.php	/^function move_courses ($courseids, $categoryid) {$
 move_section	course/lib.php	/^function move_section($course, $section, $move) {$/;"	f
 moveto_module	course/lib.php	/^function moveto_module($mod, $section, $beforemod=NULL) {$/;"	f
 mtrace	lib/moodlelib.php	/^function mtrace($string, $eol="\\n", $sleep=0) {$/;"	f
-multianswer_escape	question/type/multianswer/questiontype.php	/^function multianswer_escape($text) {$/;"	f
 multilang_filter	filter/multilang/filter.php	/^function multilang_filter($courseid, $text) {$/;"	f
 multilang_filter_impl	filter/multilang/filter.php	/^function multilang_filter_impl($langblock) {$/;"	f
 multiple_values_allowed	lib/bennu/iCalendar_parameters.php	/^    function multiple_values_allowed($parameter) {$/;"	f
@@ -5695,7 +5752,7 @@ notemptyfield	mod/data/field/url/field.class.php	/^    function notemptyfield($v
 notemptyfield	mod/data/lib.php	/^    function notemptyfield($value, $name) {$/;"	f
 notice	lib/weblib.php	/^function notice ($message, $link='') {$/;"	f
 notice_yesno	lib/weblib.php	/^function notice_yesno ($message, $linkyes, $linkno) {$/;"	f
-notify	lib/weblib.php	/^function notify ($message, $style='notifyproblem', $align='center') {$/;"	f
+notify	lib/weblib.php	/^function notify($message, $style='notifyproblem', $align='center', $return=false) {$/;"	f
 notify_admins	admin/handlevirus.php	/^function notify_admins($user,$subject,$a) {$/;"	f
 notify_admins_unknown	admin/handlevirus.php	/^function notify_admins_unknown($file,$a) {$/;"	f
 notify_local_delete_course	lib/locallib.php	/^function notify_local_delete_course($courseid, $showfeedback) {$/;"	f
@@ -5923,7 +5980,6 @@ print_log	course/lib.php	/^function print_log($course, $user=0, $date=0, $order=
 print_log_graph	course/lib.php	/^function print_log_graph($course, $userid=0, $type="course.png", $date=0) {$/;"	f
 print_log_selector_form	course/report/log/lib.php	/^function print_log_selector_form($course, $selecteduser=0, $selecteddate="today",$/;"	f
 print_maintenance_message	lib/weblib.php	/^function print_maintenance_message () {$/;"	f
-print_matching_questions	question/format/examview/format.php	/^    function print_matching_questions()$/;"	f
 print_moodle_environment	lib/environmentlib.php	/^function print_moodle_environment($result, $environment_results) {$/;"	f
 print_my_moodle	course/lib.php	/^function print_my_moodle() {$/;"	f
 print_nav	mod/resource/type/ims/resource.class.php	/^    function print_nav($items, $resource, $page) {$/;"	f
@@ -6069,7 +6125,7 @@ process_essay	question/format/blackboard_6/format.php	/^function process_essay($
 process_fblank	question/format/blackboard_6/format.php	/^function process_fblank($quest, &$questions) {$/;"	f
 process_feedback	mod/assignment/lib.php	/^    function process_feedback() {$/;"	f
 process_feedback	question/format/blackboard_6/format.php	/^function process_feedback($feedbackset, &$feedbacks) {$/;"	f
-process_fib	question/format/blackboard/format.php	/^function process_fib($xml, &$questions, $defaultq) {$/;"	f
+process_fib	question/format/blackboard/format.php	/^function process_fib($xml, &$questions) {$/;"	f
 process_file_uploads	lib/uploadlib.php	/^    function process_file_uploads($destination) {$/;"	f
 process_group_tag	enrol/imsenterprise/enrol.php	/^function process_group_tag($tagcontents){$/;"	f
 process_jcloze	question/format/hotpot/format.php	/^    function process_jcloze(&$xml, &$questions) {$/;"	f
@@ -6077,20 +6133,20 @@ process_jcross	question/format/hotpot/format.php	/^    function process_jcross(&
 process_jmatch	question/format/hotpot/format.php	/^    function process_jmatch(&$xml, &$questions) {$/;"	f
 process_jmix	question/format/hotpot/format.php	/^    function process_jmix(&$xml, &$questions) {$/;"	f
 process_jquiz	question/format/hotpot/format.php	/^    function process_jquiz(&$xml, &$questions) {$/;"	f
-process_ma	question/format/blackboard/format.php	/^function process_ma($xml, &$questions, $defaultq) {$/;"	f
+process_ma	question/format/blackboard/format.php	/^function process_ma($xml, &$questions) {$/;"	f
 process_ma	question/format/blackboard_6/format.php	/^function process_ma($quest, &$questions) {$/;"	f
 process_matches	question/format/examview/format.php	/^    function process_matches(&$questions)$/;"	f
-process_matching	question/format/blackboard/format.php	/^function process_matching($xml, &$questions, $defaultq) {$/;"	f
+process_matching	question/format/blackboard/format.php	/^function process_matching($xml, &$questions) {$/;"	f
 process_matching	question/format/blackboard_6/format.php	/^function process_matching($quest, &$questions) {$/;"	f
 process_matching_responses	question/format/blackboard_6/format.php	/^function process_matching_responses($bb_responses, &$responses) {$/;"	f
-process_mc	question/format/blackboard/format.php	/^function process_mc($xml, &$questions, $defaultq) {$/;"	f
+process_mc	question/format/blackboard/format.php	/^function process_mc($xml, &$questions) {$/;"	f
 process_mc	question/format/blackboard_6/format.php	/^function process_mc($quest, &$questions) {$/;"	f
 process_membership_tag	enrol/imsenterprise/enrol.php	/^function process_membership_tag($tagcontents){$/;"	f
 process_person_tag	enrol/imsenterprise/enrol.php	/^function process_person_tag($tagcontents){$/;"	f
 process_properties_tag	enrol/imsenterprise/enrol.php	/^function process_properties_tag($tagcontents){$/;"	f
 process_responses	question/format/blackboard_6/format.php	/^function process_responses($bb_responses, &$responses) {$/;"	f
 process_sidekicks	mod/chat/chatd.php	/^    function process_sidekicks($sessionid) {$/;"	f
-process_tf	question/format/blackboard/format.php	/^function process_tf($xml, &$questions, $defaultq) {$/;"	f
+process_tf	question/format/blackboard/format.php	/^function process_tf($xml, &$questions) {$/;"	f
 process_tf	question/format/blackboard_6/format.php	/^function process_tf($quest, &$questions) {$/;"	f
 promote_final	mod/chat/chatd.php	/^    function promote_final($sessionid, $customdata) {$/;"	f
 promote_ufo	mod/chat/chatd.php	/^    function promote_ufo($handle, $type, $sessionid, $customdata) {$/;"	f
@@ -6161,7 +6217,7 @@ query_linux	question/format/coursetestmanager/format.php	/^        function quer
 query_start	mod/chat/chatd.php	/^    function query_start() {$/;"	f
 query_tab_commit	admin/mysql/querywindow.php	/^function query_tab_commit(tab) {$/;"	f
 question_apply_penalty_and_timelimit	lib/questionlib.php	/^function question_apply_penalty_and_timelimit(&$question, &$state, $attempt, $cmoptions) {$/;"	f
-question_backup_answers	question/backuplib.php	/^    function question_backup_answers($bf,$preferences,$question) {$/;"	f
+question_backup_answers	question/backuplib.php	/^    function question_backup_answers($bf,$preferences,$question, $level = 6) {$/;"	f
 question_backup_dataset_items	question/backuplib.php	/^    function question_backup_dataset_items($bf,$preferences,$datasetdefinition,$level=9) {$/;"	f
 question_backup_datasets	question/backuplib.php	/^    function question_backup_datasets($bf,$preferences,$question,$level=7) {$/;"	f
 question_backup_numerical_units	question/backuplib.php	/^    function question_backup_numerical_units($bf,$preferences,$question,$level=7) {$/;"	f
@@ -6336,7 +6392,7 @@ readquestions	question/format.php	/^    function readquestions($lines) {$/;"	f
 readquestions	question/format/aiken/format.php	/^    function readquestions($lines){$/;"	f
 readquestions	question/format/blackboard/format.php	/^  function readquestions ($lines) {$/;"	f
 readquestions	question/format/blackboard_6/format.php	/^  function readquestions ($lines) {$/;"	f
-readquestions	question/format/examview/format.php	/^    function readquestions($lines)$/;"	f
+readquestions	question/format/examview/format.php	/^    function readquestions($lines) {$/;"	f
 readquestions	question/format/hotpot/format.php	/^        function readquestions ($lines) {$/;"	f
 readquestions	question/format/hotpot/format.php	/^    function readquestions ($lines) {$/;"	f
 readquestions	question/format/learnwise/format.php	/^    function readquestions($lines) {$/;"	f
@@ -6465,6 +6521,7 @@ resource_user_complete	mod/resource/lib.php	/^function resource_user_complete($c
 resource_user_outline	mod/resource/lib.php	/^function resource_user_outline($course, $user, $mod, $resource) {$/;"	f
 response_summary	question/type/calculated/questiontype.php	/^    function response_summary($question, $state, $length=80) {$/;"	f
 response_summary	question/type/match/questiontype.php	/^    function response_summary($question, $state, $length=80) {$/;"	f
+response_summary	question/type/multichoice/questiontype.php	/^    function response_summary($question, $state, $length = 80) {$/;"	f
 response_summary	question/type/questiontype.php	/^    function response_summary($question, $state, $length=80) {$/;"	f
 response_summary	question/type/truefalse/questiontype.php	/^    function response_summary($question, $state, $length=80) {$/;"	f
 restore	question/type/calculated/questiontype.php	/^    function restore($old_question_id,$new_question_id,$info,$restore) {$/;"	f
@@ -6680,7 +6737,8 @@ scorm_get_toc	mod/scorm/locallib.php	/^function scorm_get_toc($user,$scorm,$list
 scorm_get_tracks	mod/scorm/locallib.php	/^function scorm_get_tracks($scoid,$userid,$attempt='') {$/;"	f
 scorm_get_user_data	mod/scorm/locallib.php	/^function scorm_get_user_data($userid) {$/;"	f
 scorm_get_view_actions	mod/scorm/lib.php	/^function scorm_get_view_actions() {$/;"	f
-scorm_grade_user	mod/scorm/locallib.php	/^function scorm_grade_user($scoes, $userid, $grademethod=VALUESCOES) {$/;"	f
+scorm_grade_user	mod/scorm/locallib.php	/^function scorm_grade_user($scorm, $userid, $time=false) {$/;"	f
+scorm_grade_user_attempt	mod/scorm/locallib.php	/^function scorm_grade_user_attempt($scorm, $userid, $attempt=1, $time=false) {$/;"	f
 scorm_grades	mod/scorm/lib.php	/^function scorm_grades($scormid) {$/;"	f
 scorm_ids	mod/scorm/backuplib.php	/^    function scorm_ids ($course) {$/;"	f
 scorm_insert_track	mod/scorm/locallib.php	/^function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value) {$/;"	f
@@ -6699,7 +6757,6 @@ scorm_scoes_track_ids_by_course	mod/scorm/backuplib.php	/^    function scorm_sco
 scorm_scoes_track_ids_by_instance	mod/scorm/backuplib.php	/^    function scorm_scoes_track_ids_by_instance ($instanceid) {$/;"	f
 scorm_scoes_tracks_restore_mods	mod/scorm/restorelib.php	/^    function scorm_scoes_tracks_restore_mods($scorm_id,$info,$restore) {$/;"	f
 scorm_scoes_tracks_restore_mods_pre15	mod/scorm/restorelib.php	/^    function scorm_scoes_tracks_restore_mods_pre15 ($scorm_id,$info,$restore) {$/;"	f
-scorm_string_wrap	mod/scorm/locallib.php	/^function scorm_string_wrap($stringa, $len=15) {$/;"	f
 scorm_update_instance	mod/scorm/lib.php	/^function scorm_update_instance($scorm) {$/;"	f
 scorm_upgrade	mod/scorm/db/mysql.php	/^function scorm_upgrade($oldversion) {$/;"	f
 scorm_upgrade	mod/scorm/db/postgres7.php	/^function scorm_upgrade($oldversion) {$/;"	f
@@ -6707,7 +6764,7 @@ scorm_user_complete	mod/scorm/lib.php	/^function scorm_user_complete($course, $u
 scorm_user_outline	mod/scorm/lib.php	/^function scorm_user_outline($course, $user, $mod, $scorm) { $/;"	f
 scorm_utf8_to_entities	mod/scorm/locallib.php	/^function scorm_utf8_to_entities($str) {$/;"	f
 scorm_validate	mod/scorm/locallib.php	/^function scorm_validate($packagedir) {$/;"	f
-scorm_view_display	mod/scorm/locallib.php	/^function scorm_view_display ($user, $scorm, $action, $cm, $blockwidth='') {$/;"	f
+scorm_view_display	mod/scorm/locallib.php	/^function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {$/;"	f
 search_forums_upgrade	blocks/search_forums/db/mysql.php	/^function search_forums_upgrade($oldversion=0) {$/;"	f
 search_forums_upgrade	blocks/search_forums/db/postgres7.php	/^function search_forums_upgrade($oldversion=0) {$/;"	f
 search_generate_SQL	lib/searchlib.php	/^function search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $useridfield,$/;"	f
@@ -6716,7 +6773,7 @@ search_token	lib/searchlib.php	/^  function search_token($type,$value){$/;"	f
 search_users	lib/datalib.php	/^function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions='') {$/;"	f
 section_links_upgrade	blocks/section_links/db/mysql.php	/^function section_links_upgrade($oldversion=0) {$/;"	f
 section_links_upgrade	blocks/section_links/db/postgres7.php	/^function section_links_upgrade($oldversion=0) {$/;"	f
-seed_random_number_generator	mod/hotpot/template/v6.php	/^	function seed_random_number_generator() {$/;"	f
+seed_random_number_generator	mod/hotpot/template/v6.php	/^    function seed_random_number_generator() {$/;"	f
 select	lib/excel/Worksheet.php	/^    function select()$/;"	f
 select	lib/pear/Spreadsheet/Excel/Writer/Worksheet.php	/^    function select()$/;"	f
 send	lib/excellib.class.php	/^    function send($filename) {$/;"	f
@@ -6950,6 +7007,7 @@ set_h_align	lib/excellib.class.php	/^    function set_h_align($location) {$/;"	f
 set_h_pagebreaks	lib/excel/Worksheet.php	/^    function set_h_pagebreaks($breaks)$/;"	f
 set_head	mod/hotpot/report/click/report.php	/^	function set_head(&$options, &$table, $zone, $exercisetype='', $details=array(), $questioncount=0) {$/;"	f
 set_header	lib/excel/Worksheet.php	/^    function set_header($string,$margin = 0.50)$/;"	f
+set_holiday	mod/mieattendance/calendar.php	/^    function set_holiday($year, $month) {$/;"	f
 set_italic	lib/excel/Format.php	/^    function set_italic()$/;"	f
 set_italic	lib/excellib.class.php	/^    function set_italic() {$/;"	f
 set_landscape	lib/excel/Worksheet.php	/^    function set_landscape()$/;"	f
@@ -6957,6 +7015,7 @@ set_left	lib/excel/Format.php	/^    function set_left($style)$/;"	f
 set_left	lib/excellib.class.php	/^    function set_left($style) {$/;"	f
 set_left_color	lib/excel/Format.php	/^    function set_left_color($color)$/;"	f
 set_legend	mod/hotpot/report/default.php	/^	function set_legend(&$table, &$q, &$value, &$question) {$/;"	f
+set_link	mod/mieattendance/calendar.php	/^    function set_link($day, $url, $title) {$/;"	f
 set_login_session_preferences	lib/moodlelib.php	/^function set_login_session_preferences() {$/;"	f
 set_margin_bottom	lib/excel/Worksheet.php	/^    function set_margin_bottom($margin = 1.00)$/;"	f
 set_margin_left	lib/excel/Worksheet.php	/^    function set_margin_left($margin = 0.75)$/;"	f
@@ -7041,6 +7100,7 @@ shorten_text	lib/moodlelib.php	/^function shorten_text($text, $ideal=30) {$/;"	f
 showColumnSelectCell	admin/mysql/db_details_qbe.php	/^function showColumnSelectCell( $columns, $column_number, $selected = '' )$/;"	f
 showDbg	lib/adodb/pear/Auth/Container/ADOdb.php	/^function showDbg( $string ) {$/;"	f
 show_browse_form	admin/mysql/scripts/setup.php	/^function show_browse_form($defaults = array()) {$/;"	f
+show_calendar	mod/mieattendance/calendar.php	/^    function show_calendar($year, $month, $day = 0) {$/;"	f
 show_charset_form	admin/mysql/scripts/setup.php	/^function show_charset_form($defaults = array()) {$/;"	f
 show_checked_option	admin/mysql/libraries/display_export.lib.php	/^function show_checked_option() {$/;"	f
 show_config_form	admin/mysql/scripts/setup.php	/^function show_config_form($list, $legend, $help, $defaults = array(), $save = '', $prefix = '') {$/;"	f
@@ -7059,7 +7119,7 @@ show_upload_form	admin/mysql/scripts/setup.php	/^function show_upload_form($defa
 show_window_form	admin/mysql/scripts/setup.php	/^function show_window_form($defaults = array()) {$/;"	f
 showhide	mod/hotpot/report/fullstat/report.php	/^	function showhide (id, toggle) {$/;"	f
 showtime	mod/quiz/jsclock.php	/^function showtime() {$/;"	f
-shuffle_jmatch_items	mod/hotpot/template/v6.php	/^	function shuffle_jmatch_items(&$items) {$/;"	f
+shuffle_jmatch_items	mod/hotpot/template/v6.php	/^    function shuffle_jmatch_items(&$items) {$/;"	f
 shuffle_things	question/format/qti2/format.php	/^    function shuffle_things($things) {$/;"	f
 sid_ob_rewrite	lib/cookieless.php	/^function sid_ob_rewrite($buffer){$/;"	f
 sid_ob_rewrite_absolute	lib/cookieless.php	/^function sid_ob_rewrite_absolute($buffer){$/;"	f
@@ -7371,6 +7431,7 @@ timestamp_to_datetime	lib/bennu/bennu.class.php	/^    function timestamp_to_date
 timestamp_to_iso8601	lib/soap/nusoap.php	/^function timestamp_to_iso8601($timestamp,$utc=true){$/;"	f
 tinymce	lib/editor/tinymce/tinymce.class.php	/^    function tinymce ($courseid) {$/;"	f
 title	admin/health.php	/^    function title() {$/;"	f
+tmpmieattendance_email_to_user	mod/mieattendance/lib.php	/^function tmpmieattendance_email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true, $repyto='', $replytoname='') {$/;"	f
 toReversePolish	lib/pear/Spreadsheet/Excel/Writer/Parser.php	/^    function toReversePolish($tree = array())$/;"	f
 toString	lib/pear/PEAR.php	/^    function toString() {$/;"	f
 to_reverse_polish	lib/excel/Parser.php	/^  function to_reverse_polish($tree = array())$/;"	f
@@ -7413,6 +7474,7 @@ unregister_postfilter	lib/smarty/Smarty.class.php	/^    function unregister_post
 unregister_prefilter	lib/smarty/Smarty.class.php	/^    function unregister_prefilter($function)$/;"	f
 unregister_resource	lib/smarty/Smarty.class.php	/^    function unregister_resource($type)$/;"	f
 unset_user_preference	lib/moodlelib.php	/^function unset_user_preference($name, $userid=NULL) {$/;"	f
+unxmlise	question/format/examview/format.php	/^    function unxmlise( $xml ) {$/;"	f
 unzip_cleanfilename	lib/moodlelib.php	/^function unzip_cleanfilename ($p_event, &$p_header) {$/;"	f
 unzip_file	lib/moodlelib.php	/^function unzip_file ($zipfile, $destination = '', $showstatus = true) {$/;"	f
 unzip_show_status	lib/moodlelib.php	/^function unzip_show_status ($list,$removepath) {$/;"	f
@@ -7532,153 +7594,153 @@ utf8_to_numberarray	lib/typo3/class.t3lib_cs.php	/^	function utf8_to_numberarray
 utf8_to_utf16be	admin/mysql/libraries/fpdf/ufpdf.php	/^function utf8_to_utf16be(&$txt, $bom = true) {$/;"	f
 utf_get_xml	admin/utfdbmigrate.php	/^function utf_get_xml ($mode=0) { \/\/ if mode is 1, do not perform check for script validity$/;"	f
 utfconvert	admin/utfdbmigrate.php	/^function utfconvert($string, $enc, $slash=true) {$/;"	f
-v6_expand_AlsoCorrect	mod/hotpot/template/v6.php	/^	function v6_expand_AlsoCorrect() {$/;"	f
-v6_expand_AnswerArray	mod/hotpot/template/v6.php	/^	function v6_expand_AnswerArray() {$/;"	f
-v6_expand_Back	mod/hotpot/template/v6.php	/^	function v6_expand_Back() {$/;"	f
-v6_expand_BackCaption	mod/hotpot/template/v6.php	/^	function v6_expand_BackCaption() {$/;"	f
-v6_expand_BottomNavBar	mod/hotpot/template/v6.php	/^	function v6_expand_BottomNavBar() {$/;"	f
-v6_expand_CapitalizeFirst	mod/hotpot/template/v6.php	/^	function v6_expand_CapitalizeFirst() {$/;"	f
-v6_expand_CaseSensitive	mod/hotpot/template/v6.php	/^	function v6_expand_CaseSensitive() {$/;"	f
-v6_expand_CheckCaption	mod/hotpot/template/v6.php	/^	function v6_expand_CheckCaption() {$/;"	f
-v6_expand_ClickToAdd	mod/hotpot/template/v6.php	/^	function v6_expand_ClickToAdd() {$/;"	f
-v6_expand_ClozeBody	mod/hotpot/template/v6.php	/^	function v6_expand_ClozeBody() {$/;"	f
-v6_expand_ClueCaption	mod/hotpot/template/v6.php	/^	function v6_expand_ClueCaption() {$/;"	f
-v6_expand_ClueNumArray	mod/hotpot/template/v6.php	/^	function v6_expand_ClueNumArray() {$/;"	f
-v6_expand_Clues	mod/hotpot/template/v6.php	/^	function v6_expand_Clues() {$/;"	f
-v6_expand_CluesAcross	mod/hotpot/template/v6.php	/^	function v6_expand_CluesAcross() {$/;"	f
-v6_expand_CluesAcrossLabel	mod/hotpot/template/v6.php	/^	function v6_expand_CluesAcrossLabel() {$/;"	f
-v6_expand_CluesDown	mod/hotpot/template/v6.php	/^	function v6_expand_CluesDown() {$/;"	f
-v6_expand_CluesDownLabel	mod/hotpot/template/v6.php	/^	function v6_expand_CluesDownLabel() {$/;"	f
-v6_expand_Contents	mod/hotpot/template/v6.php	/^	function v6_expand_Contents() {$/;"	f
-v6_expand_ContentsCaption	mod/hotpot/template/v6.php	/^	function v6_expand_ContentsCaption() {$/;"	f
-v6_expand_ContentsURL	mod/hotpot/template/v6.php	/^	function v6_expand_ContentsURL() {$/;"	f
-v6_expand_ContinuousScoring	mod/hotpot/template/v6.php	/^	function v6_expand_ContinuousScoring() {$/;"	f
-v6_expand_Correct	mod/hotpot/template/v6.php	/^	function v6_expand_Correct() {$/;"	f
-v6_expand_CorrectFirstTime	mod/hotpot/template/v6.php	/^	function v6_expand_CorrectFirstTime() {$/;"	f
-v6_expand_CorrectIndicator	mod/hotpot/template/v6.php	/^	function v6_expand_CorrectIndicator() {$/;"	f
-v6_expand_CorrectList	mod/hotpot/template/v6.php	/^	function v6_expand_CorrectList() {$/;"	f
-v6_expand_DefaultRight	mod/hotpot/template/v6.php	/^	function v6_expand_DefaultRight() {$/;"	f
-v6_expand_DefaultWrong	mod/hotpot/template/v6.php	/^	function v6_expand_DefaultWrong() {$/;"	f
-v6_expand_DragArray	mod/hotpot/template/v6.php	/^	function v6_expand_DragArray() {$/;"	f
-v6_expand_DublinCoreMetadata	mod/hotpot/template/v6.php	/^	function v6_expand_DublinCoreMetadata() {$/;"	f
-v6_expand_EMail	mod/hotpot/template/v6.php	/^	function v6_expand_EMail() {$/;"	f
-v6_expand_EnterCaption	mod/hotpot/template/v6.php	/^	function v6_expand_EnterCaption() {$/;"	f
-v6_expand_ExBGColor	mod/hotpot/template/v6.php	/^	function v6_expand_ExBGColor() {$/;"	f
-v6_expand_ExerciseSubtitle	mod/hotpot/template/v6.php	/^	function v6_expand_ExerciseSubtitle() {$/;"	f
-v6_expand_ExerciseTitle	mod/hotpot/template/v6.php	/^	function v6_expand_ExerciseTitle() {$/;"	f
-v6_expand_FixedArray	mod/hotpot/template/v6.php	/^	function v6_expand_FixedArray() {$/;"	f
-v6_expand_FontFace	mod/hotpot/template/v6.php	/^	function v6_expand_FontFace() {$/;"	f
-v6_expand_FontSize	mod/hotpot/template/v6.php	/^	function v6_expand_FontSize() {$/;"	f
-v6_expand_FormMailURL	mod/hotpot/template/v6.php	/^	function v6_expand_FormMailURL() {$/;"	f
-v6_expand_FullVersionInfo	mod/hotpot/template/v6.php	/^	function v6_expand_FullVersionInfo() {$/;"	f
-v6_expand_FuncLightColor	mod/hotpot/template/v6.php	/^	function v6_expand_FuncLightColor() { \/\/ top-left of buttons$/;"	f
-v6_expand_FuncShadeColor	mod/hotpot/template/v6.php	/^	function v6_expand_FuncShadeColor() { \/\/ bottom right of buttons$/;"	f
-v6_expand_GiveHint	mod/hotpot/template/v6.php	/^	function v6_expand_GiveHint() {$/;"	f
-v6_expand_GraphicURL	mod/hotpot/template/v6.php	/^	function v6_expand_GraphicURL() {$/;"	f
-v6_expand_GridBody	mod/hotpot/template/v6.php	/^	function v6_expand_GridBody() {$/;"	f
-v6_expand_GuessArray	mod/hotpot/template/v6.php	/^	function v6_expand_GuessArray() {$/;"	f
-v6_expand_GuessCorrect	mod/hotpot/template/v6.php	/^	function v6_expand_GuessCorrect() {$/;"	f
-v6_expand_GuessIncorrect	mod/hotpot/template/v6.php	/^	function v6_expand_GuessIncorrect() {$/;"	f
-v6_expand_HeaderCode	mod/hotpot/template/v6.php	/^	function v6_expand_HeaderCode() {$/;"	f
-v6_expand_Hint	mod/hotpot/template/v6.php	/^	function v6_expand_Hint() {$/;"	f
-v6_expand_HintCaption	mod/hotpot/template/v6.php	/^	function v6_expand_HintCaption() {$/;"	f
-v6_expand_HybridTries	mod/hotpot/template/v6.php	/^	function v6_expand_HybridTries() {$/;"	f
-v6_expand_Incorrect	mod/hotpot/template/v6.php	/^	function v6_expand_Incorrect() {$/;"	f
-v6_expand_IncorrectIndicator	mod/hotpot/template/v6.php	/^	function v6_expand_IncorrectIndicator() {$/;"	f
-v6_expand_Instructions	mod/hotpot/template/v6.php	/^	function v6_expand_Instructions() {$/;"	f
-v6_expand_ItemArray	mod/hotpot/template/v6.php	/^	function v6_expand_ItemArray() {$/;"	f
-v6_expand_JSBrowserCheck	mod/hotpot/template/v6.php	/^	function v6_expand_JSBrowserCheck() {$/;"	f
-v6_expand_JSButtons	mod/hotpot/template/v6.php	/^	function v6_expand_JSButtons() {$/;"	f
-v6_expand_JSCard	mod/hotpot/template/v6.php	/^	function v6_expand_JSCard() {$/;"	f
-v6_expand_JSCheckShortAnswer	mod/hotpot/template/v6.php	/^	function v6_expand_JSCheckShortAnswer() {$/;"	f
-v6_expand_JSDJMatch6	mod/hotpot/template/v6.php	/^	function v6_expand_JSDJMatch6() {$/;"	f
-v6_expand_JSDJMix6	mod/hotpot/template/v6.php	/^	function v6_expand_JSDJMix6() {$/;"	f
-v6_expand_JSFJMatch6	mod/hotpot/template/v6.php	/^	function v6_expand_JSFJMatch6() {$/;"	f
-v6_expand_JSFJMix6	mod/hotpot/template/v6.php	/^	function v6_expand_JSFJMix6() {$/;"	f
-v6_expand_JSHotPotNet	mod/hotpot/template/v6.php	/^	function v6_expand_JSHotPotNet() {$/;"	f
-v6_expand_JSJCloze6	mod/hotpot/template/v6.php	/^	function v6_expand_JSJCloze6() {$/;"	f
-v6_expand_JSJCross6	mod/hotpot/template/v6.php	/^	function v6_expand_JSJCross6() {$/;"	f
-v6_expand_JSJMatch6	mod/hotpot/template/v6.php	/^	function v6_expand_JSJMatch6() {$/;"	f
-v6_expand_JSJMix6	mod/hotpot/template/v6.php	/^	function v6_expand_JSJMix6() {$/;"	f
-v6_expand_JSJQuiz6	mod/hotpot/template/v6.php	/^	function v6_expand_JSJQuiz6() {$/;"	f
-v6_expand_JSSendResults	mod/hotpot/template/v6.php	/^	function v6_expand_JSSendResults() {$/;"	f
-v6_expand_JSShowMessage	mod/hotpot/template/v6.php	/^	function v6_expand_JSShowMessage() {$/;"	f
-v6_expand_JSTimer	mod/hotpot/template/v6.php	/^	function v6_expand_JSTimer() {$/;"	f
-v6_expand_JSUtilities	mod/hotpot/template/v6.php	/^	function v6_expand_JSUtilities() {$/;"	f
-v6_expand_Keypad	mod/hotpot/template/v6.php	/^	function v6_expand_Keypad() {$/;"	f
-v6_expand_LastQCaption	mod/hotpot/template/v6.php	/^	function v6_expand_LastQCaption() {$/;"	f
-v6_expand_LetterArray	mod/hotpot/template/v6.php	/^	function v6_expand_LetterArray() {$/;"	f
-v6_expand_LinkColor	mod/hotpot/template/v6.php	/^	function v6_expand_LinkColor() {$/;"	f
-v6_expand_MatchDivItems	mod/hotpot/template/v6.php	/^	function v6_expand_MatchDivItems() {$/;"	f
-v6_expand_MultiChoice	mod/hotpot/template/v6.php	/^	function v6_expand_MultiChoice() {$/;"	f
-v6_expand_MultiSelect	mod/hotpot/template/v6.php	/^	function v6_expand_MultiSelect() {$/;"	f
-v6_expand_NamePlease	mod/hotpot/template/v6.php	/^	function v6_expand_NamePlease() {$/;"	f
-v6_expand_NavBar	mod/hotpot/template/v6.php	/^	function v6_expand_NavBar($navbarid='') {$/;"	f
-v6_expand_NavBarColor	mod/hotpot/template/v6.php	/^	function v6_expand_NavBarColor() {$/;"	f
-v6_expand_NavBarID	mod/hotpot/template/v6.php	/^	function v6_expand_NavBarID() {$/;"	f
-v6_expand_NavBarJS	mod/hotpot/template/v6.php	/^	function v6_expand_NavBarJS() {$/;"	f
-v6_expand_NavButtons	mod/hotpot/template/v6.php	/^	function v6_expand_NavButtons() {$/;"	f
-v6_expand_NavLightColor	mod/hotpot/template/v6.php	/^	function v6_expand_NavLightColor() {$/;"	f
-v6_expand_NavShadeColor	mod/hotpot/template/v6.php	/^	function v6_expand_NavShadeColor() {$/;"	f
-v6_expand_NavTextColor	mod/hotpot/template/v6.php	/^	function v6_expand_NavTextColor() {$/;"	f
-v6_expand_NextCorrect	mod/hotpot/template/v6.php	/^	function v6_expand_NextCorrect() {$/;"	f
-v6_expand_NextEx	mod/hotpot/template/v6.php	/^	function v6_expand_NextEx() {$/;"	f
-v6_expand_NextExCaption	mod/hotpot/template/v6.php	/^	function v6_expand_NextExCaption() {$/;"	f
-v6_expand_NextExURL	mod/hotpot/template/v6.php	/^	function v6_expand_NextExURL() {$/;"	f
-v6_expand_NextQCaption	mod/hotpot/template/v6.php	/^	function v6_expand_NextQCaption() {$/;"	f
-v6_expand_OKCaption	mod/hotpot/template/v6.php	/^	function v6_expand_OKCaption() {$/;"	f
-v6_expand_OpenPunctuation	mod/hotpot/template/v6.php	/^	function v6_expand_OpenPunctuation() {$/;"	f
-v6_expand_PageBGColor	mod/hotpot/template/v6.php	/^	function v6_expand_PageBGColor() {$/;"	f
-v6_expand_PartlyIncorrect	mod/hotpot/template/v6.php	/^	function v6_expand_PartlyIncorrect() {$/;"	f
-v6_expand_PlainTitle	mod/hotpot/template/v6.php	/^	function v6_expand_PlainTitle() {$/;"	f
-v6_expand_PleaseEnter	mod/hotpot/template/v6.php	/^	function v6_expand_PleaseEnter() {$/;"	f
-v6_expand_PreloadImageList	mod/hotpot/template/v6.php	/^	function v6_expand_PreloadImageList() {$/;"	f
-v6_expand_PreloadImages	mod/hotpot/template/v6.php	/^	function v6_expand_PreloadImages() {$/;"	f
-v6_expand_Punctuation	mod/hotpot/template/v6.php	/^	function v6_expand_Punctuation() {$/;"	f
-v6_expand_QsToShow	mod/hotpot/template/v6.php	/^	function v6_expand_QsToShow() {$/;"	f
-v6_expand_QuestionOutput	mod/hotpot/template/v6.php	/^	function v6_expand_QuestionOutput() {$/;"	f
-v6_expand_Reading	mod/hotpot/template/v6.php	/^	function v6_expand_Reading() {$/;"	f
-v6_expand_ReadingText	mod/hotpot/template/v6.php	/^	function v6_expand_ReadingText() {$/;"	f
-v6_expand_ReadingTitle	mod/hotpot/template/v6.php	/^	function v6_expand_ReadingTitle() {$/;"	f
-v6_expand_RemainingWords	mod/hotpot/template/v6.php	/^	function v6_expand_RemainingWords() {$/;"	f
-v6_expand_Restart	mod/hotpot/template/v6.php	/^	function v6_expand_Restart() {$/;"	f
-v6_expand_RestartCaption	mod/hotpot/template/v6.php	/^	function v6_expand_RestartCaption() {$/;"	f
-v6_expand_Seconds	mod/hotpot/template/v6.php	/^	function v6_expand_Seconds() {$/;"	f
-v6_expand_SegmentArray	mod/hotpot/template/v6.php	/^	function v6_expand_SegmentArray() {$/;"	f
-v6_expand_SendResults	mod/hotpot/template/v6.php	/^	function v6_expand_SendResults() {$/;"	f
-v6_expand_ShortAnswer	mod/hotpot/template/v6.php	/^	function v6_expand_ShortAnswer() {$/;"	f
-v6_expand_ShowAllQuestionsCaption	mod/hotpot/template/v6.php	/^	function v6_expand_ShowAllQuestionsCaption() {$/;"	f
-v6_expand_ShowAllQuestionsCaptionJS	mod/hotpot/template/v6.php	/^	function v6_expand_ShowAllQuestionsCaptionJS() {$/;"	f
-v6_expand_ShowAlsoCorrect	mod/hotpot/template/v6.php	/^	function v6_expand_ShowAlsoCorrect() {$/;"	f
-v6_expand_ShowAnswer	mod/hotpot/template/v6.php	/^	function v6_expand_ShowAnswer() {$/;"	f
-v6_expand_ShowAnswerCaption	mod/hotpot/template/v6.php	/^	function v6_expand_ShowAnswerCaption() {$/;"	f
-v6_expand_ShowCorrectFirstTime	mod/hotpot/template/v6.php	/^	function v6_expand_ShowCorrectFirstTime() {$/;"	f
-v6_expand_ShowHideClueList	mod/hotpot/template/v6.php	/^	function v6_expand_ShowHideClueList() {$/;"	f
-v6_expand_ShowOneByOneCaption	mod/hotpot/template/v6.php	/^	function v6_expand_ShowOneByOneCaption() {$/;"	f
-v6_expand_ShowOneByOneCaptionJS	mod/hotpot/template/v6.php	/^	function v6_expand_ShowOneByOneCaptionJS() {$/;"	f
-v6_expand_ShuffleAs	mod/hotpot/template/v6.php	/^	function v6_expand_ShuffleAs() {$/;"	f
-v6_expand_ShuffleQs	mod/hotpot/template/v6.php	/^	function v6_expand_ShuffleQs() {$/;"	f
-v6_expand_Slide	mod/hotpot/template/v6.php	/^	function v6_expand_Slide() {$/;"	f
-v6_expand_StyleSheet	mod/hotpot/template/v6.php	/^	function v6_expand_StyleSheet() {$/;"	f
-v6_expand_TextColor	mod/hotpot/template/v6.php	/^	function v6_expand_TextColor() {$/;"	f
-v6_expand_TheseAnswersToo	mod/hotpot/template/v6.php	/^	function v6_expand_TheseAnswersToo() {$/;"	f
-v6_expand_ThisMuch	mod/hotpot/template/v6.php	/^	function v6_expand_ThisMuch() {$/;"	f
-v6_expand_Timer	mod/hotpot/template/v6.php	/^	function v6_expand_Timer() {$/;"	f
-v6_expand_TimesUp	mod/hotpot/template/v6.php	/^	function v6_expand_TimesUp() {$/;"	f
-v6_expand_TitleColor	mod/hotpot/template/v6.php	/^	function v6_expand_TitleColor() {$/;"	f
-v6_expand_TopNavBar	mod/hotpot/template/v6.php	/^	function v6_expand_TopNavBar() {$/;"	f
-v6_expand_Undo	mod/hotpot/template/v6.php	/^	function v6_expand_Undo() {$/;"	f
-v6_expand_UndoCaption	mod/hotpot/template/v6.php	/^	function v6_expand_UndoCaption() {$/;"	f
-v6_expand_VLinkColor	mod/hotpot/template/v6.php	/^	function v6_expand_VLinkColor() {$/;"	f
-v6_expand_WordList	mod/hotpot/template/v6.php	/^	function v6_expand_WordList() {$/;"	f
-v6_expand_YourScoreIs	mod/hotpot/template/v6.php	/^	function v6_expand_YourScoreIs() {$/;"	f
-v6_expand_jcross_clues	mod/hotpot/template/v6.php	/^	function v6_expand_jcross_clues($direction) {$/;"	f
-v6_expand_jquiz_button	mod/hotpot/template/v6.php	/^	function v6_expand_jquiz_button($caption, $onclick) {$/;"	f
-v6_get_jcross_grid	mod/hotpot/template/v6.php	/^	function v6_get_jcross_grid(&$row, &$r_max, &$c_max) {$/;"	f
-v6_include_WordList	mod/hotpot/template/v6.php	/^	function v6_include_WordList() {$/;"	f
-v6_jquiz_question_type	mod/hotpot/template/v6.php	/^	function v6_jquiz_question_type($type) {$/;"	f
-v6_set_WordList	mod/hotpot/template/v6.php	/^	function v6_set_WordList() {$/;"	f
-v6_use_DropDownList	mod/hotpot/template/v6.php	/^	function v6_use_DropDownList() {$/;"	f
+v6_expand_AlsoCorrect	mod/hotpot/template/v6.php	/^    function v6_expand_AlsoCorrect() {$/;"	f
+v6_expand_AnswerArray	mod/hotpot/template/v6.php	/^    function v6_expand_AnswerArray() {$/;"	f
+v6_expand_Back	mod/hotpot/template/v6.php	/^    function v6_expand_Back() {$/;"	f
+v6_expand_BackCaption	mod/hotpot/template/v6.php	/^    function v6_expand_BackCaption() {$/;"	f
+v6_expand_BottomNavBar	mod/hotpot/template/v6.php	/^    function v6_expand_BottomNavBar() {$/;"	f
+v6_expand_CapitalizeFirst	mod/hotpot/template/v6.php	/^    function v6_expand_CapitalizeFirst() {$/;"	f
+v6_expand_CaseSensitive	mod/hotpot/template/v6.php	/^    function v6_expand_CaseSensitive() {$/;"	f
+v6_expand_CheckCaption	mod/hotpot/template/v6.php	/^    function v6_expand_CheckCaption() {$/;"	f
+v6_expand_ClickToAdd	mod/hotpot/template/v6.php	/^    function v6_expand_ClickToAdd() {$/;"	f
+v6_expand_ClozeBody	mod/hotpot/template/v6.php	/^    function v6_expand_ClozeBody() {$/;"	f
+v6_expand_ClueCaption	mod/hotpot/template/v6.php	/^    function v6_expand_ClueCaption() {$/;"	f
+v6_expand_ClueNumArray	mod/hotpot/template/v6.php	/^    function v6_expand_ClueNumArray() {$/;"	f
+v6_expand_Clues	mod/hotpot/template/v6.php	/^    function v6_expand_Clues() {$/;"	f
+v6_expand_CluesAcross	mod/hotpot/template/v6.php	/^    function v6_expand_CluesAcross() {$/;"	f
+v6_expand_CluesAcrossLabel	mod/hotpot/template/v6.php	/^    function v6_expand_CluesAcrossLabel() {$/;"	f
+v6_expand_CluesDown	mod/hotpot/template/v6.php	/^    function v6_expand_CluesDown() {$/;"	f
+v6_expand_CluesDownLabel	mod/hotpot/template/v6.php	/^    function v6_expand_CluesDownLabel() {$/;"	f
+v6_expand_Contents	mod/hotpot/template/v6.php	/^    function v6_expand_Contents() {$/;"	f
+v6_expand_ContentsCaption	mod/hotpot/template/v6.php	/^    function v6_expand_ContentsCaption() {$/;"	f
+v6_expand_ContentsURL	mod/hotpot/template/v6.php	/^    function v6_expand_ContentsURL() {$/;"	f
+v6_expand_ContinuousScoring	mod/hotpot/template/v6.php	/^    function v6_expand_ContinuousScoring() {$/;"	f
+v6_expand_Correct	mod/hotpot/template/v6.php	/^    function v6_expand_Correct() {$/;"	f
+v6_expand_CorrectFirstTime	mod/hotpot/template/v6.php	/^    function v6_expand_CorrectFirstTime() {$/;"	f
+v6_expand_CorrectIndicator	mod/hotpot/template/v6.php	/^    function v6_expand_CorrectIndicator() {$/;"	f
+v6_expand_CorrectList	mod/hotpot/template/v6.php	/^    function v6_expand_CorrectList() {$/;"	f
+v6_expand_DefaultRight	mod/hotpot/template/v6.php	/^    function v6_expand_DefaultRight() {$/;"	f
+v6_expand_DefaultWrong	mod/hotpot/template/v6.php	/^    function v6_expand_DefaultWrong() {$/;"	f
+v6_expand_DragArray	mod/hotpot/template/v6.php	/^    function v6_expand_DragArray() {$/;"	f
+v6_expand_DublinCoreMetadata	mod/hotpot/template/v6.php	/^    function v6_expand_DublinCoreMetadata() {$/;"	f
+v6_expand_EMail	mod/hotpot/template/v6.php	/^    function v6_expand_EMail() {$/;"	f
+v6_expand_EnterCaption	mod/hotpot/template/v6.php	/^    function v6_expand_EnterCaption() {$/;"	f
+v6_expand_ExBGColor	mod/hotpot/template/v6.php	/^    function v6_expand_ExBGColor() {$/;"	f
+v6_expand_ExerciseSubtitle	mod/hotpot/template/v6.php	/^    function v6_expand_ExerciseSubtitle() {$/;"	f
+v6_expand_ExerciseTitle	mod/hotpot/template/v6.php	/^    function v6_expand_ExerciseTitle() {$/;"	f
+v6_expand_FixedArray	mod/hotpot/template/v6.php	/^    function v6_expand_FixedArray() {$/;"	f
+v6_expand_FontFace	mod/hotpot/template/v6.php	/^    function v6_expand_FontFace() {$/;"	f
+v6_expand_FontSize	mod/hotpot/template/v6.php	/^    function v6_expand_FontSize() {$/;"	f
+v6_expand_FormMailURL	mod/hotpot/template/v6.php	/^    function v6_expand_FormMailURL() {$/;"	f
+v6_expand_FullVersionInfo	mod/hotpot/template/v6.php	/^    function v6_expand_FullVersionInfo() {$/;"	f
+v6_expand_FuncLightColor	mod/hotpot/template/v6.php	/^    function v6_expand_FuncLightColor() { \/\/ top-left of buttons$/;"	f
+v6_expand_FuncShadeColor	mod/hotpot/template/v6.php	/^    function v6_expand_FuncShadeColor() { \/\/ bottom right of buttons$/;"	f
+v6_expand_GiveHint	mod/hotpot/template/v6.php	/^    function v6_expand_GiveHint() {$/;"	f
+v6_expand_GraphicURL	mod/hotpot/template/v6.php	/^    function v6_expand_GraphicURL() {$/;"	f
+v6_expand_GridBody	mod/hotpot/template/v6.php	/^    function v6_expand_GridBody() {$/;"	f
+v6_expand_GuessArray	mod/hotpot/template/v6.php	/^    function v6_expand_GuessArray() {$/;"	f
+v6_expand_GuessCorrect	mod/hotpot/template/v6.php	/^    function v6_expand_GuessCorrect() {$/;"	f
+v6_expand_GuessIncorrect	mod/hotpot/template/v6.php	/^    function v6_expand_GuessIncorrect() {$/;"	f
+v6_expand_HeaderCode	mod/hotpot/template/v6.php	/^    function v6_expand_HeaderCode() {$/;"	f
+v6_expand_Hint	mod/hotpot/template/v6.php	/^    function v6_expand_Hint() {$/;"	f
+v6_expand_HintCaption	mod/hotpot/template/v6.php	/^    function v6_expand_HintCaption() {$/;"	f
+v6_expand_HybridTries	mod/hotpot/template/v6.php	/^    function v6_expand_HybridTries() {$/;"	f
+v6_expand_Incorrect	mod/hotpot/template/v6.php	/^    function v6_expand_Incorrect() {$/;"	f
+v6_expand_IncorrectIndicator	mod/hotpot/template/v6.php	/^    function v6_expand_IncorrectIndicator() {$/;"	f
+v6_expand_Instructions	mod/hotpot/template/v6.php	/^    function v6_expand_Instructions() {$/;"	f
+v6_expand_ItemArray	mod/hotpot/template/v6.php	/^    function v6_expand_ItemArray() {$/;"	f
+v6_expand_JSBrowserCheck	mod/hotpot/template/v6.php	/^    function v6_expand_JSBrowserCheck() {$/;"	f
+v6_expand_JSButtons	mod/hotpot/template/v6.php	/^    function v6_expand_JSButtons() {$/;"	f
+v6_expand_JSCard	mod/hotpot/template/v6.php	/^    function v6_expand_JSCard() {$/;"	f
+v6_expand_JSCheckShortAnswer	mod/hotpot/template/v6.php	/^    function v6_expand_JSCheckShortAnswer() {$/;"	f
+v6_expand_JSDJMatch6	mod/hotpot/template/v6.php	/^    function v6_expand_JSDJMatch6() {$/;"	f
+v6_expand_JSDJMix6	mod/hotpot/template/v6.php	/^    function v6_expand_JSDJMix6() {$/;"	f
+v6_expand_JSFJMatch6	mod/hotpot/template/v6.php	/^    function v6_expand_JSFJMatch6() {$/;"	f
+v6_expand_JSFJMix6	mod/hotpot/template/v6.php	/^    function v6_expand_JSFJMix6() {$/;"	f
+v6_expand_JSHotPotNet	mod/hotpot/template/v6.php	/^    function v6_expand_JSHotPotNet() {$/;"	f
+v6_expand_JSJCloze6	mod/hotpot/template/v6.php	/^    function v6_expand_JSJCloze6() {$/;"	f
+v6_expand_JSJCross6	mod/hotpot/template/v6.php	/^    function v6_expand_JSJCross6() {$/;"	f
+v6_expand_JSJMatch6	mod/hotpot/template/v6.php	/^    function v6_expand_JSJMatch6() {$/;"	f
+v6_expand_JSJMix6	mod/hotpot/template/v6.php	/^    function v6_expand_JSJMix6() {$/;"	f
+v6_expand_JSJQuiz6	mod/hotpot/template/v6.php	/^    function v6_expand_JSJQuiz6() {$/;"	f
+v6_expand_JSSendResults	mod/hotpot/template/v6.php	/^    function v6_expand_JSSendResults() {$/;"	f
+v6_expand_JSShowMessage	mod/hotpot/template/v6.php	/^    function v6_expand_JSShowMessage() {$/;"	f
+v6_expand_JSTimer	mod/hotpot/template/v6.php	/^    function v6_expand_JSTimer() {$/;"	f
+v6_expand_JSUtilities	mod/hotpot/template/v6.php	/^    function v6_expand_JSUtilities() {$/;"	f
+v6_expand_Keypad	mod/hotpot/template/v6.php	/^    function v6_expand_Keypad() {$/;"	f
+v6_expand_LastQCaption	mod/hotpot/template/v6.php	/^    function v6_expand_LastQCaption() {$/;"	f
+v6_expand_LetterArray	mod/hotpot/template/v6.php	/^    function v6_expand_LetterArray() {$/;"	f
+v6_expand_LinkColor	mod/hotpot/template/v6.php	/^    function v6_expand_LinkColor() {$/;"	f
+v6_expand_MatchDivItems	mod/hotpot/template/v6.php	/^    function v6_expand_MatchDivItems() {$/;"	f
+v6_expand_MultiChoice	mod/hotpot/template/v6.php	/^    function v6_expand_MultiChoice() {$/;"	f
+v6_expand_MultiSelect	mod/hotpot/template/v6.php	/^    function v6_expand_MultiSelect() {$/;"	f
+v6_expand_NamePlease	mod/hotpot/template/v6.php	/^    function v6_expand_NamePlease() {$/;"	f
+v6_expand_NavBar	mod/hotpot/template/v6.php	/^    function v6_expand_NavBar($navbarid='') {$/;"	f
+v6_expand_NavBarColor	mod/hotpot/template/v6.php	/^    function v6_expand_NavBarColor() {$/;"	f
+v6_expand_NavBarID	mod/hotpot/template/v6.php	/^    function v6_expand_NavBarID() {$/;"	f
+v6_expand_NavBarJS	mod/hotpot/template/v6.php	/^    function v6_expand_NavBarJS() {$/;"	f
+v6_expand_NavButtons	mod/hotpot/template/v6.php	/^    function v6_expand_NavButtons() {$/;"	f
+v6_expand_NavLightColor	mod/hotpot/template/v6.php	/^    function v6_expand_NavLightColor() {$/;"	f
+v6_expand_NavShadeColor	mod/hotpot/template/v6.php	/^    function v6_expand_NavShadeColor() {$/;"	f
+v6_expand_NavTextColor	mod/hotpot/template/v6.php	/^    function v6_expand_NavTextColor() {$/;"	f
+v6_expand_NextCorrect	mod/hotpot/template/v6.php	/^    function v6_expand_NextCorrect() {$/;"	f
+v6_expand_NextEx	mod/hotpot/template/v6.php	/^    function v6_expand_NextEx() {$/;"	f
+v6_expand_NextExCaption	mod/hotpot/template/v6.php	/^    function v6_expand_NextExCaption() {$/;"	f
+v6_expand_NextExURL	mod/hotpot/template/v6.php	/^    function v6_expand_NextExURL() {$/;"	f
+v6_expand_NextQCaption	mod/hotpot/template/v6.php	/^    function v6_expand_NextQCaption() {$/;"	f
+v6_expand_OKCaption	mod/hotpot/template/v6.php	/^    function v6_expand_OKCaption() {$/;"	f
+v6_expand_OpenPunctuation	mod/hotpot/template/v6.php	/^    function v6_expand_OpenPunctuation() {$/;"	f
+v6_expand_PageBGColor	mod/hotpot/template/v6.php	/^    function v6_expand_PageBGColor() {$/;"	f
+v6_expand_PartlyIncorrect	mod/hotpot/template/v6.php	/^    function v6_expand_PartlyIncorrect() {$/;"	f
+v6_expand_PlainTitle	mod/hotpot/template/v6.php	/^    function v6_expand_PlainTitle() {$/;"	f
+v6_expand_PleaseEnter	mod/hotpot/template/v6.php	/^    function v6_expand_PleaseEnter() {$/;"	f
+v6_expand_PreloadImageList	mod/hotpot/template/v6.php	/^    function v6_expand_PreloadImageList() {$/;"	f
+v6_expand_PreloadImages	mod/hotpot/template/v6.php	/^    function v6_expand_PreloadImages() {$/;"	f
+v6_expand_Punctuation	mod/hotpot/template/v6.php	/^    function v6_expand_Punctuation() {$/;"	f
+v6_expand_QsToShow	mod/hotpot/template/v6.php	/^    function v6_expand_QsToShow() {$/;"	f
+v6_expand_QuestionOutput	mod/hotpot/template/v6.php	/^    function v6_expand_QuestionOutput() {$/;"	f
+v6_expand_Reading	mod/hotpot/template/v6.php	/^    function v6_expand_Reading() {$/;"	f
+v6_expand_ReadingText	mod/hotpot/template/v6.php	/^    function v6_expand_ReadingText() {$/;"	f
+v6_expand_ReadingTitle	mod/hotpot/template/v6.php	/^    function v6_expand_ReadingTitle() {$/;"	f
+v6_expand_RemainingWords	mod/hotpot/template/v6.php	/^    function v6_expand_RemainingWords() {$/;"	f
+v6_expand_Restart	mod/hotpot/template/v6.php	/^    function v6_expand_Restart() {$/;"	f
+v6_expand_RestartCaption	mod/hotpot/template/v6.php	/^    function v6_expand_RestartCaption() {$/;"	f
+v6_expand_Seconds	mod/hotpot/template/v6.php	/^    function v6_expand_Seconds() {$/;"	f
+v6_expand_SegmentArray	mod/hotpot/template/v6.php	/^    function v6_expand_SegmentArray() {$/;"	f
+v6_expand_SendResults	mod/hotpot/template/v6.php	/^    function v6_expand_SendResults() {$/;"	f
+v6_expand_ShortAnswer	mod/hotpot/template/v6.php	/^    function v6_expand_ShortAnswer() {$/;"	f
+v6_expand_ShowAllQuestionsCaption	mod/hotpot/template/v6.php	/^    function v6_expand_ShowAllQuestionsCaption() {$/;"	f
+v6_expand_ShowAllQuestionsCaptionJS	mod/hotpot/template/v6.php	/^    function v6_expand_ShowAllQuestionsCaptionJS() {$/;"	f
+v6_expand_ShowAlsoCorrect	mod/hotpot/template/v6.php	/^    function v6_expand_ShowAlsoCorrect() {$/;"	f
+v6_expand_ShowAnswer	mod/hotpot/template/v6.php	/^    function v6_expand_ShowAnswer() {$/;"	f
+v6_expand_ShowAnswerCaption	mod/hotpot/template/v6.php	/^    function v6_expand_ShowAnswerCaption() {$/;"	f
+v6_expand_ShowCorrectFirstTime	mod/hotpot/template/v6.php	/^    function v6_expand_ShowCorrectFirstTime() {$/;"	f
+v6_expand_ShowHideClueList	mod/hotpot/template/v6.php	/^    function v6_expand_ShowHideClueList() {$/;"	f
+v6_expand_ShowOneByOneCaption	mod/hotpot/template/v6.php	/^    function v6_expand_ShowOneByOneCaption() {$/;"	f
+v6_expand_ShowOneByOneCaptionJS	mod/hotpot/template/v6.php	/^    function v6_expand_ShowOneByOneCaptionJS() {$/;"	f
+v6_expand_ShuffleAs	mod/hotpot/template/v6.php	/^    function v6_expand_ShuffleAs() {$/;"	f
+v6_expand_ShuffleQs	mod/hotpot/template/v6.php	/^    function v6_expand_ShuffleQs() {$/;"	f
+v6_expand_Slide	mod/hotpot/template/v6.php	/^    function v6_expand_Slide() {$/;"	f
+v6_expand_StyleSheet	mod/hotpot/template/v6.php	/^    function v6_expand_StyleSheet() {$/;"	f
+v6_expand_TextColor	mod/hotpot/template/v6.php	/^    function v6_expand_TextColor() {$/;"	f
+v6_expand_TheseAnswersToo	mod/hotpot/template/v6.php	/^    function v6_expand_TheseAnswersToo() {$/;"	f
+v6_expand_ThisMuch	mod/hotpot/template/v6.php	/^    function v6_expand_ThisMuch() {$/;"	f
+v6_expand_Timer	mod/hotpot/template/v6.php	/^    function v6_expand_Timer() {$/;"	f
+v6_expand_TimesUp	mod/hotpot/template/v6.php	/^    function v6_expand_TimesUp() {$/;"	f
+v6_expand_TitleColor	mod/hotpot/template/v6.php	/^    function v6_expand_TitleColor() {$/;"	f
+v6_expand_TopNavBar	mod/hotpot/template/v6.php	/^    function v6_expand_TopNavBar() {$/;"	f
+v6_expand_Undo	mod/hotpot/template/v6.php	/^    function v6_expand_Undo() {$/;"	f
+v6_expand_UndoCaption	mod/hotpot/template/v6.php	/^    function v6_expand_UndoCaption() {$/;"	f
+v6_expand_VLinkColor	mod/hotpot/template/v6.php	/^    function v6_expand_VLinkColor() {$/;"	f
+v6_expand_WordList	mod/hotpot/template/v6.php	/^    function v6_expand_WordList() {$/;"	f
+v6_expand_YourScoreIs	mod/hotpot/template/v6.php	/^    function v6_expand_YourScoreIs() {$/;"	f
+v6_expand_jcross_clues	mod/hotpot/template/v6.php	/^    function v6_expand_jcross_clues($direction) {$/;"	f
+v6_expand_jquiz_button	mod/hotpot/template/v6.php	/^    function v6_expand_jquiz_button($caption, $onclick) {$/;"	f
+v6_get_jcross_grid	mod/hotpot/template/v6.php	/^    function v6_get_jcross_grid(&$row, &$r_max, &$c_max) {$/;"	f
+v6_include_WordList	mod/hotpot/template/v6.php	/^    function v6_include_WordList() {$/;"	f
+v6_jquiz_question_type	mod/hotpot/template/v6.php	/^    function v6_jquiz_question_type($type) {$/;"	f
+v6_set_WordList	mod/hotpot/template/v6.php	/^    function v6_set_WordList() {$/;"	f
+v6_use_DropDownList	mod/hotpot/template/v6.php	/^    function v6_use_DropDownList() {$/;"	f
 valid	lib/adodb/adodb-iterator.inc.php	/^	function valid() $/;"	f
 validEmail	lib/typo3/class.t3lib_div.php	/^	function validEmail($email)	{$/;"	f
 validPathStr	lib/typo3/class.t3lib_div.php	/^	function validPathStr($theFile)	{$/;"	f
