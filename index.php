@@ -194,7 +194,6 @@
 
     echo '</td>';
 
-
     // The right column
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing || isadmin()) {
         echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
