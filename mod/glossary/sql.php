@@ -14,10 +14,23 @@
     $sqlsortkey = NULL;
     $textlib = textlib_get_instance();
 
-/// Pivot is the field that set the break by groups (category, initial, author name, etc)
+/// Calculate the SQL sortkey to be used by the SQL statements later
+    switch ( $sortkey ) {    
+        case "CREATION": 
+            $sqlsortkey = "timecreated";
+        break;
+        case "UPDATE": 
+            $sqlsortkey = "timemodified";
+        break;
+        case "FIRSTNAME": 
+            $sqlsortkey = "firstname";
+        break;
+        case "LASTNAME": 
+            $sqlsortkey = "lastname";
+        break;
+    }
+    $sqlsortorder = $sortorder;
 
-/// fullpivot indicate if the whole pivot should be compared agasint the db or just the first letter
-/// printpivot indicate if the pivot should be printed or not
     switch ($CFG->dbtype) {
     case 'postgres7':
         $as = 'as';
@@ -27,17 +40,10 @@
     break;
     }    
 
-    switch ( $sortkey ) {    
-    case "CREATION": 
-        $sqlsortkey = "timecreated";
-    break;
-    
-    case "UPDATE": 
-        $sqlsortkey = "timemodified";
-    break;
-    }
-    $sqlsortorder = $sortorder;
+/// Pivot is the field that set the break by groups (category, initial, author name, etc)
 
+/// fullpivot indicate if the whole pivot should be compared agasint the db or just the first letter
+/// printpivot indicate if the pivot should be printed or not
     $fullpivot = 1;
 
     $userid = '';
