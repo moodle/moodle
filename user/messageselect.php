@@ -1,5 +1,5 @@
-<?php
-{
+<?php // $Id$
+
     require_once('../config.php');
     require_once($CFG->dirroot.'/message/lib.php');
 
@@ -124,5 +124,4 @@
 
     print_footer();
 
-}
 ?>
