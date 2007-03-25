@@ -13,14 +13,14 @@
     $mode       = optional_param('mode', '', PARAM_ALPHA);           // term entry cat date letter search author approval
     $hook       = optional_param('hook', '', PARAM_CLEAN);           // the term, entry, cat, etc... to look for based on mode
     $fullsearch = optional_param('fullsearch', 0,PARAM_INT);         // full search (concept and definition) when searching?
-    $sortkey    = optional_param('sortkey', '', PARAM_ALPHA);// Sorted view: CREATION | UPDATE | FIRSTNAME | LASTNAME...
+    $sortkey    = optional_param('sortkey', 'CREATION', PARAM_ALPHA);// Sorted view: CREATION | UPDATE | FIRSTNAME | LASTNAME...
     $sortorder  = optional_param('sortorder', 'ASC', PARAM_ALPHA);   // it defines the order of the sorting (ASC or DESC)
     $offset     = optional_param('offset', 0,PARAM_INT);             // entries to bypass (for paging purposes)
     $page       = optional_param('page', 0,PARAM_INT);               // Page to show (for paging purposes)
     $show       = optional_param('show', '', PARAM_ALPHA);           // [ concept | alias ] => mode=term hook=$show
 
     if (!empty($id)) {
-        if (! $cm = get_record("course_modules", "id", $id)) {
+        if (! $cm = get_coursemodule_from_id('glossary', $id)) {
             error("Course Module ID was incorrect");
         }
         if (! $course = get_record("course", "id", $cm->course)) {

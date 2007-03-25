@@ -11,24 +11,13 @@
 
 /// Initialise some variables
     $sqlorderby = '';
+    $sqlsortkey = NULL;
+    $textlib = textlib_get_instance();
 
-/// Calculate the SQL sortkey to be used by the SQL statements later
-    switch ( $sortkey ) {    
-        case "CREATION": 
-            $sqlsortkey = "timecreated";
-        break;
-        case "UPDATE": 
-            $sqlsortkey = "timemodified";
-        break;
-        case "FIRSTNAME": 
-            $sqlsortkey = "firstname";
-        break;
-        case "LASTNAME": 
-            $sqlsortkey = "lastname";
-        break;
-    }
-    $sqlsortorder = $sortorder;
+/// Pivot is the field that set the break by groups (category, initial, author name, etc)
 
+/// fullpivot indicate if the whole pivot should be compared agasint the db or just the first letter
+/// printpivot indicate if the pivot should be printed or not
     switch ($CFG->dbtype) {
     case 'postgres7':
         $as = 'as';
@@ -38,10 +27,17 @@
     break;
     }    
 
-/// Pivot is the field that set the break by groups (category, initial, author name, etc)
+    switch ( $sortkey ) {    
+    case "CREATION": 
+        $sqlsortkey = "timecreated";
+    break;
+    
+    case "UPDATE": 
+        $sqlsortkey = "timemodified";
+    break;
+    }
+    $sqlsortorder = $sortorder;
 
-/// fullpivot indicate if the whole pivot should be compared agasint the db or just the first letter
-/// printpivot indicate if the pivot should be printed or not
     $fullpivot = 1;
 
     $userid = '';
@@ -90,10 +86,6 @@
     break;
     case GLOSSARY_AUTHOR_VIEW:
 
-        if (!isset($sqlsortkey)) {
-            $sqlsortkey = NULL;
-        }
-
         $where = '';
         switch ($CFG->dbtype) {
         case 'postgres7':
@@ -103,7 +95,7 @@
             } else {
                 $usernamefield = "u.lastname || ' ' || u.firstname";
             }
-            $where = "AND substr(upper($usernamefield),1," .  strlen($hook) . ") = '" . strtoupper($hook) . "'";
+            $where = "AND substr(upper($usernamefield),1," .  $textlib->strlen($hook, current_charset()) . ") = '" . $textlib->strtoupper($hook, current_charset()) . "'";
         break;
         case 'mysql':
             if ( $sqlsortkey == 'FIRSTNAME' ) {
@@ -111,7 +103,7 @@
             } else {
                 $usernamefield = "CONCAT(CONCAT(u.lastname,' '), u.firstname)";
             }
-            $where = "AND left(ucase($usernamefield)," .  strlen($hook) . ") = '$hook'";
+            $where = "AND left(ucase($usernamefield)," .  $textlib->strlen($hook, current_charset()) . ") = '$hook'";
         break;
         }
         if ( $hook == 'ALL' ) {
@@ -130,18 +122,14 @@
         $fullpivot = 0;
         $printpivot = 0;
 
-        if (!isset($sqlsortkey)) {
-            $sqlsortkey = NULL;
-        }
-
         $where = '';
         if ($hook != 'ALL' and $hook != 'SPECIAL') {
             switch ($CFG->dbtype) {
             case 'postgres7':
-                $where = 'AND substr(upper(concept),1,' .  strlen($hook) . ') = \'' . strtoupper($hook) . '\'';
+                $where = 'AND substr(upper(concept),1,' .  $textlib->strlen($hook, current_charset()) . ') = \'' . $textlib->strtoupper($hook, current_charset()) . '\'';
             break;
             case 'mysql':
-                $where = 'AND left(ucase(concept),' .  strlen($hook) . ") = '$hook'";
+                $where = 'AND left(ucase(concept),' .  $textlib->strlen($hook, current_charset()) . ") = '$hook'";
             break;
             }
         }
@@ -275,10 +263,10 @@
             if ($hook != 'ALL' and $hook != 'SPECIAL') {
                 switch ($CFG->dbtype) {
                 case 'postgres7':
-                    $where = 'AND substr(upper(concept),1,' .  strlen($hook) . ') = \'' . strtoupper($hook) . '\'';
+                    $where = 'AND substr(upper(concept),1,' .  $textlib->strlen($hook, current_charset()) . ') = \'' . $textlib->strtoupper($hook, current_charset()) . '\'';
                 break;
                 case 'mysql':
-                    $where = 'AND left(ucase(concept),' .  strlen($hook) . ") = '" . strtoupper($hook) . "'";
+                    $where = 'AND left(ucase(concept),' .  $textlib->strlen($hook, current_charset()) . ") = '" . $textlib->strtoupper($hook, current_charset()) . "'";
                 break;
                 }
             }
@@ -294,10 +282,10 @@
                 }
                 switch ($CFG->dbtype) {
                 case 'postgres7':
-                    $where = 'AND substr(upper(concept),1,1) NOT IN (' . strtoupper($sqlalphabet) . ')';
+                    $where = 'AND substr(upper(concept),1,1) NOT IN (' . $textlib->strtoupper($sqlalphabet, current_charset()) . ')';
                 break;
                 case 'mysql':
-                    $where = 'AND left(ucase(concept),1) NOT IN (' . strtoupper($sqlalphabet) . ')';
+                    $where = 'AND left(ucase(concept),1) NOT IN (' . $textlib->strtoupper($sqlalphabet, current_charset()) . ')';
                 break;
                 }
             }
@@ -333,7 +321,5 @@
         break;
         }    
     }
-
     $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby $sqllimit");
-
 ?>
