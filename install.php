@@ -125,6 +125,7 @@ $CFG->running_installer = true;
 
 /// Include some moodle libraries
 
+require_once('./lib/adminlib.php');
 require_once('./lib/setuplib.php');
 require_once('./lib/moodlelib.php');
 require_once('./lib/weblib.php');
@@ -145,6 +146,20 @@ $db = &ADONewConnection($INSTALL['dbtype']);
 if ($INSTALL['wwwroot'] == '') {
     list($INSTALL['wwwroot'], $xtra) = explode('/install.php', qualified_me());
     $INSTALL['wwwrootform'] = $INSTALL['wwwroot'];
+
+    // now try to guess the correct dataroot not accessible via web
+    $CFG->wwwroot = $INSTALL['wwwroot'];
+    $i = 0; //safety check - dirname might return some unexpected results
+    while(is_dataroot_insecure()) {
+        $parrent = dirname($CFG->dataroot);
+        $i++;
+        if ($parrent == '/' or $parrent == '.' or preg_match('/^[a-z]:\\\?$/i', $parrent) or ($i > 100)) {
+            $CFG->dataroot = ''; //can not find secure location for dataroot
+            break;
+        }
+        $CFG->dataroot = dirname($parrent).'/moodledata';
+    }
+    $INSTALL['dataroot'] = $CFG->dataroot;
 }
 
 $headstagetext = array(WELCOME       => get_string('chooselanguagehead', 'install'),
