@@ -60,7 +60,7 @@
         echo "<center>";
         
         /// I am not sure this context in the next has_capability call is correct. 
-        if (isloggedin() and !isguest() and !has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {  // Print link to request a new course
+        if (isloggedin() and !isguest() and !has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))  and $CFG->enablecourserequests) {  // Print link to request a new course
             print_single_button("request.php", NULL, get_string("courserequest"), "get");
         }
         if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {       // Print link to create a new course
