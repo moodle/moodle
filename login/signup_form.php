@@ -79,7 +79,7 @@ class login_signup_form extends moodleform {
 
         //check if user exists in external db
         //TODO: maybe we should check all enabled plugins instead
-        if ($authplugin->user_exists($user->username)) {
+        if ($authplugin->user_exists($data['username'])) {
             $errors['username'] = get_string('usernameexists');
         }
 
