@@ -115,9 +115,12 @@ if ($success) {
         case 'removegroup':
             break;
         case 'showcreategroupform':
+            // Allow groups to be created outside of groupings
+            /*
             if (GROUP_NOT_IN_GROUPING == $groupingid) {
                 print_error('errornotingrouping', 'group', groups_home_url($courseid), get_string('notingrouping', 'group'));
             }
+            */
             redirect(groups_group_edit_url($courseid, null, $groupingid, false));
             break;
         case 'addgroupstogroupingform':
