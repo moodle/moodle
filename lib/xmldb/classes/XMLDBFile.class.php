@@ -76,7 +76,10 @@ class XMLDBFile extends XMLDBObject {
     /// Going to perform complete DOM schema validation
         if (extension_loaded('dom')) {
         /// Let's capture errors
-            libxml_use_internal_errors(true);
+        if (function_exists('libxml_use_internal_errors')) {
+            libxml_use_internal_errors(true); // This function is PHP5 only (MDL-8730)
+        }
+
         /// Create and load XML file
             $parser = new DOMDocument();
             $parser->load($this->path);
@@ -85,7 +88,11 @@ class XMLDBFile extends XMLDBObject {
                 $parser->schemaValidate($this->schema);
             }
         /// Check for errors
-            $errors = libxml_get_errors();
+            $errors = false;
+            if (function_exists('libxml_get_errors')) {
+                $errors = libxml_get_errors();
+            }
+
         /// Prepare errors
             if (!empty($errors)) {
             /// Create one structure to store errors
