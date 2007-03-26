@@ -34,7 +34,7 @@ function xmldb_resource_upgrade($oldversion=0) {
 
     if ($result && $oldversion < 2007011700) {
         //move format from options to reference field because it was colliding with course blocks setting
-        execute_sql("UPDATE {$CFG->prefix}resource SET reference=options WHERE type='text' AND reference='' AND options!='showblocks';");
+        execute_sql("UPDATE {$CFG->prefix}resource SET reference=options WHERE type='text' AND reference='' AND options!='showblocks'");
         //ignore result
     }
 
