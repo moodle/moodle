@@ -457,7 +457,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
             if ($blockobject === false) {
                 break;
             }
-
+            
             // First of all check to see if the block wants to be edited
             if(!$blockobject->user_can_edit()) {
                 break;

@@ -168,13 +168,12 @@ print_box_start();
     print "<!-- code came from " . __FILE__ . " at line " . __LINE__ . ". -->\n";
 } else {
   global $act, $url, $rssid, $preferredtitle, $shared;
-  print '</form>';   // Closes off page form
-
+  print '</div></form></div>';   // Closes off page form
   $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
 
   print_box_start();
   rss_display_feeds($id, $USER->id, '', $context);
   rss_print_form($act, $url, $rssid, $preferredtitle, $shared, $id, $context);
-  print_box_end();
+  // Do NOT print_box_end() here, this is taken care of by blocks/moodleblock.class.php:582
 }
 ?>

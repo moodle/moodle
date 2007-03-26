@@ -1227,10 +1227,15 @@ a.skip-block, .skip-block {
   margin-top: 5px;
 }
 
-#rss_table {
+#rssfeeds {
   margin-left: auto;
   margin-right: auto;
 }
+
+#block_rss {
+  text-align: center;
+}
+
 /***
  *** Blogs
  ***/
