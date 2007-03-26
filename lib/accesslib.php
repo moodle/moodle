@@ -3201,7 +3201,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
  * @param bool parent if true, get list of users assigned in higher context too
  * @return array()
  */
-function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.lastname ASC') {
+function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.lastname ASC', $view=false) {
     global $CFG;
 
     if (empty($fields)) {
@@ -3211,6 +3211,8 @@ function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.l
                   'u.emailstop, u.lang, u.timezone';
     }
 
+    // whether this assignment is hidden
+    $hiddensql = ($view && !has_capability('moodle/role:viewhiddenassigns', $context))? ' AND r.hidden = 0 ':'';
     if ($parent) {
         if ($contexts = get_parent_contexts($context)) {
             $parentcontexts = ' OR r.contextid IN ('.implode(',', $contexts).')';
@@ -3232,6 +3234,7 @@ function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.l
                  {$CFG->prefix}user u
             WHERE (r.contextid = $context->id $parentcontexts)
             AND u.id = r.userid $roleselect
+            $hiddensql
             ORDER BY $sort
             ";                  // join now so that we can just use fullname() later
 
