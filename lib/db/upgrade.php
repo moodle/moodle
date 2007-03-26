@@ -140,6 +140,15 @@ function xmldb_main_upgrade($oldversion=0) {
         }
         $authplugins = get_list_of_plugins('auth');
         foreach ($CFG as $k => $v) {
+            if (strpos($k, 'ldap_') === 0) {
+                //upgrade nonstandard ldap settings
+                $setting = substr($k, 5);
+                if (set_config($setting, $v, "auth/ldap")) {
+                    delete_records('config', 'name', $k);
+                    unset($CFG->{$k});
+                }
+                continue;
+            }
             if (strpos($k, 'auth_') !== 0) {
                 continue;
             }
