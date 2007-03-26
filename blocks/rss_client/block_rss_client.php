@@ -235,7 +235,7 @@
 
                 $item['link'] = str_replace('&', '&amp;', $item['link']);
 
-                $returnstring .= '<li><div class="link"><a href="'. $item['link'] .'" target="_blank">'. $item['title'] . "</a></div>\n";
+                $returnstring .= '<li><div class="link"><a href="'. $item['link'] .'">'. $item['title'] . "</a></div>\n";
 
                 if ($display_description && !empty($item['description'])) {
                     $item['description'] = break_up_long_words($item['description'], 30);
