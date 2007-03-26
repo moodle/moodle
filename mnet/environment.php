@@ -32,7 +32,18 @@ class mnet_environment {
         if (empty($CFG->mnet_localhost_id) ) {
 
             $this->wwwroot    = $CFG->wwwroot;
-            $this->ip_address = $_SERVER['SERVER_ADDR'];
+            if(empty($_SERVER['SERVER_ADDR'])) {
+                // SERVER_ADDR is only returned by Apache-like webservers
+                $my_hostname = mnet_get_hostname_from_uri($CFG->wwwroot);
+                $my_ip       = gethostbyname($my_hostname);  // Returns unmodified hostname on failure. DOH!
+                if($my_ip == $my_hostname) {
+                    $this->ip_address = 'UNKNOWN';
+                } else {
+                    $this->ip_address = $my_ip;
+                }
+            } else {
+                $this->ip_address = $_SERVER['SERVER_ADDR'];
+            }
             $this->id         = insert_record('mnet_host', $this, true);
 
             set_config('mnet_localhost_id', $this->id);
