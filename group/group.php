@@ -68,17 +68,29 @@ if ($success) {
         }
         elseif (isset($frm->update)) {
             if (! $groupid) { //OK, new group.
+                // Allow groups to be created outside of groupings
+                /*
                 if (GROUP_NOT_IN_GROUPING == $groupingid) {
                     print_error('errornotingrouping', 'group', groups_home_url($courseid), get_string('notingrouping', 'group'));
                 }
+                */
                 $success = (bool)$groupid = groups_create_group($courseid); //$groupsettings);
-                $success = groups_add_group_to_grouping($groupid, $groupingid);
+                
+                if ($groupingid != GROUP_NOT_IN_GROUPING) {
+                    $success = groups_add_group_to_grouping($groupid, $groupingid);
+                }
             }
             elseif ($groupingid != $newgrouping) { //OK, move group.
+                // Allow groups to be created outside of groupings
+                /*
                 if (GROUP_NOT_IN_GROUPING == $newgrouping) {
                     print_error('errornotingrouping', 'group', groups_home_url($courseid), get_string('notingrouping', 'group'));
                 }
-                $success = $success && groups_remove_group_from_grouping($groupid, $groupingid);
+                */
+                if ($groupingid != GROUP_NOT_IN_GROUPING) {
+                    $success = $success && groups_remove_group_from_grouping($groupid, $groupingid);
+                }
+
                 $success = $success && groups_add_group_to_grouping($groupid, $newgrouping);
             }
             if ($success) {
