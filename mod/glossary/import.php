@@ -369,7 +369,6 @@
     glossary_print_tabbed_table_end();
 
 /// Finish the page
-
     print_footer($course);
 
 ?>
