@@ -43,7 +43,7 @@ if ($success) {
 
         if (isset($frm->cancel)) {
             redirect('index.php?id='. $courseid
-                .'&groupingid='. $groupingid .'&groupid='. $groupid);
+                .'&grouping='. $groupingid .'&group='. $groupid);
         }
         elseif (isset($frm->add) and !empty($frm->addselect)) {
 
