@@ -350,7 +350,7 @@ class page_course extends page_base {
         if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM)) && defined('ADMIN_STICKYBLOCKS')) {
             return true;
         }
-        
+
         $coursecontext = get_context_instance(CONTEXT_COURSE, $this->id);
         $capcheck = false;   
         if (has_capability('moodle/course:manageactivities', $coursecontext) ||
@@ -598,7 +598,9 @@ class page_generic_activity extends page_base {
 
     function user_allowed_editing() {
         $this->init_full();
-        return has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_COURSE, $this->modulerecord->course));
+        // Yu: I think this is wrong, should be checking manageactivities instead
+        //return has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_COURSE, $this->modulerecord->course));
+        return has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_MODULE, $this->modulerecord->id));         
     }
 
     function user_is_editing() {
