@@ -403,7 +403,7 @@
         }
         $a->number = $totalcount;
         $a->role = $currentrole->name;
-        $heading = get_string('xuserswiththerole', 'role', $a);
+        $heading = format_string(get_string('xuserswiththerole', 'role', $a));
         if (user_can_assign($context, $roleid)) {
             $heading .= ' <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?roleid='.$roleid.'&amp;contextid='.$context->id.'">';
             $heading .= '<img src="'.$CFG->pixpath.'/i/edit.gif" class="icon" alt="" /></a>';
