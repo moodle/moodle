@@ -89,36 +89,55 @@ function setup_enrolments(&$user) {
                 rs_close($rs);
 
                 foreach ($courselist as $coursefield) {   /// Check the list of courses against existing
-                    if ($course = get_record('course', $CFG->enrol_localcoursefield, $coursefield)) {
-
-                        /// If there's no role specified, we get the default course role (usually student)
-                        if ($use_default_role) {
-                            $role = get_default_course_role($course);
+                    $course = get_record('course', $CFG->enrol_localcoursefield, $coursefield);
+                    if (!is_object($course)) {
+                        if (empty($CFG->enrol_db_autocreate)) { // autocreation not allowed
+                            print "Course $extcourse does not exist, skipping\n";
+                            continue; // next foreach course
                         }
-
-                        $context = get_context_instance(CONTEXT_COURSE, $course->id);
-
-                        // Couldn't get a role or context, skip.
-                        if (!$role || !$context) {
-                            continue;
+                        // ok, now then let's create it!
+                        print "Creating Course $extcourse...";
+                        // prepare any course properties we actually have
+                        $course = new StdClass;
+                        $course->{$CFG->enrol_localcoursefield} = $extcourse;
+                        $course->fullname  = $extcourse;
+                        $course->shortname = $extcourse;
+                        if ($newcourseid = $this->create_course($course, true)
+                            and $course = get_record( 'course', 'id', $newcourseid)) {
+                            // we are skipping fix_course_sortorder()
+                            print "created\n";
+                        } else {
+                            print "failed\n";
+                            continue; // nothing left to do...
                         }
-
-
-                        // Search the role assignments to see if this user
-                        // already has this role in this context.  If it is, we
-                        // skip to the next course.
-                        foreach($existing as $key => $role_assignment) {
-                            if ($role_assignment->roleid == $role->id
-                             && $role_assignment->contextid == $context->id) {
-                                unset($existing[$key]);
-                                //error_log('[ENROL_DB] User is already enroled in course '.$course->idnumber);
-                                continue 2;
-                            }
-                        }
-
-                        //error_log('[ENROL_DB] Enrolling user in course '.$course->idnumber);
-                        role_assign($role->id, $user->id, 0, $context->id, 0, 0, 0, 'database');
                     }
+
+                    /// If there's no role specified, we get the default course role (usually student)
+                    if ($use_default_role) {
+                        $role = get_default_course_role($course);
+                    }
+                    
+                    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+                    
+                    // Couldn't get a role or context, skip.
+                    if (!$role || !$context) {
+                        continue;
+                    }
+                    
+                    // Search the role assignments to see if this user
+                    // already has this role in this context.  If it is, we
+                    // skip to the next course.
+                    foreach($existing as $key => $role_assignment) {
+                        if ($role_assignment->roleid == $role->id
+                            && $role_assignment->contextid == $context->id) {
+                            unset($existing[$key]);
+                            //error_log('[ENROL_DB] User is already enroled in course '.$course->idnumber);
+                            continue 2;
+                        }
+                    }
+                    
+                    //error_log('[ENROL_DB] Enrolling user in course '.$course->idnumber);
+                    role_assign($role->id, $user->id, 0, $context->id, 0, 0, 0, 'database');
                 }
             } // We've processed all external courses found
 
