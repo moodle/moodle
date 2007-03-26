@@ -577,10 +577,8 @@ class block_base {
 
         if (is_file($CFG->dirroot .'/blocks/'. $this->name() .'/config_instance.html')) {
             print_simple_box_start('center', '', '', 5, 'blockconfiginstance');
-            print_location_comment(__FILE__,__LINE__);
             include($CFG->dirroot .'/blocks/'. $this->name() .'/config_instance.html');
             print_simple_box_end();
-            print_location_comment(__FILE__,__LINE__);
         } else {
             notice(get_string('blockconfigbad'), str_replace('blockaction=', 'dummy=', qualified_me()));
         }

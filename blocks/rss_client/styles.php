@@ -20,7 +20,9 @@
 }
 
 .blockconfigtable #rssfeeds {
-    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: blue;
 }
 
 .blockconfigtable #rssfeeds td.actions {
