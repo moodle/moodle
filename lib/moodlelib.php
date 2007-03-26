@@ -1825,16 +1825,18 @@ function require_logout() {
 
     global $USER, $CFG, $SESSION;
 
-    if (isset($USER) and isset($USER->id)) {
+    if (isloggedin()) {
         add_to_log(SITEID, "user", "logout", "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
 
-        if ($USER->auth == 'cas' && !empty($CFG->cas_enabled)) {
+        //TODO: move following 2 ifs into auth plugins - add new logout hook
+        $authsequence = explode(',', $CFG->auth);
+
+        if (in_array('cas', $authsequence) and $USER->auth == 'cas' and !empty($CFG->cas_enabled)) {
             require($CFG->dirroot.'/auth/cas/logout.php');
         }
-        
-        if (extension_loaded('openssl')) {
-            require($CFG->dirroot.'/auth/mnet/auth.php');
-            $authplugin = new auth_plugin_mnet();
+
+        if (in_array('mnet', $authsequence) and $USER->auth == 'mnet') {
+            $authplugin = get_auth_plugin('mnet');;
             $authplugin->logout();
         }
     }
