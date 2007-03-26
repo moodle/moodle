@@ -227,5 +227,7 @@ function glossary_comment_print_header($course, $cm, $glossary, $entry, $action)
         "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> <a href=\"view.php?id=$cm->id\">".format_string($glossary->name,true)."</a> -> <a href=\"comments.php?id=$cm->id&amp;eid=$entry->id\">$strcomments</a> -> " . $straction,
         '', '', true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
+/// print original glossary entry for any comment action (add, update, delete)
+    glossary_print_entry($course, $cm, $glossary, $entry, 'approval', '', false);
 }
 ?>
