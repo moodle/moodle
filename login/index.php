@@ -76,7 +76,7 @@ $frm  = false;
 $user = false;
 
 foreach($authsequence as $authname) {
-    // manual and auth is not processed here
+    // manual and nologin is not processed here
     $authplugin = get_auth_plugin($authname);
     $authplugin->prelogin_hook();
 }
