@@ -2301,6 +2301,8 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
                         ' src="'.$CFG->pixpath.'/t/down.gif" class="iconsmall" '.
                         ' alt="'.$str->movedown.'" /></a>'."\n";
         }
+    } else {
+        $move = '';  
     }
 
     $leftright = "";
