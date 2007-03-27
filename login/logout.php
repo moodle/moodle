@@ -15,7 +15,7 @@
         die;
     }
 
-    $authsequence = explode(',', $CFG->auth); // auths, in sequence
+    $authsequence = get_enabled_auth_plugins(); // auths, in sequence
     foreach($authsequence as $authname) {
         $authplugin = get_auth_plugin($authname);
         $authplugin->prelogout_hook();
