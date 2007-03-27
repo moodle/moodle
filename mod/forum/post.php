@@ -53,6 +53,9 @@
         }
 
         $strforums = get_string('modulenameplural', 'forum');
+        if (!get_referer()) {   // No referer - probably coming in via email  See MDL-9052
+            require_login();
+        }
         if ($course->id != SITEID) {
             print_header($course->shortname, $course->fullname,
                  "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
