@@ -3847,6 +3847,14 @@ function user_has_role_assignment($userid, $roleid, $contextid=0) {
  * @param bool deletechild - deltes child contexts dependencies
  */
 function insert_context_rel($context, $deletechild=true, $deleteparent=true) {
+    
+    // first check validity
+    // MDL-9057
+    if (!validate_context($context->contextlevel, $context->instanceid)) {
+        debugging('Error: Invalid context creation request for level "'.s($contextlevel).'", instance "'.s($instanceid).'".');
+        return NULL;  
+    }
+    
     // removes all parents 
     if ($deletechild) {
         delete_records('context_rel', 'c2', $context->id);
