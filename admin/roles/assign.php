@@ -197,6 +197,7 @@
 
 
     print_heading_with_help(get_string('assignroles', 'role'), 'assignroles');
+    print_simple_box(get_string('globalroleswarning', 'role'), 'center', '700');
 
     if ($roleid) {        /// prints a form to swap roles
 
