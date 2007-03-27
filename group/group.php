@@ -76,9 +76,6 @@ if ($success) {
                 */
                 $success = (bool)$groupid = groups_create_group($courseid); //$groupsettings);
                 
-                if ($groupingid != GROUP_NOT_IN_GROUPING) {
-                    $success = groups_add_group_to_grouping($groupid, $groupingid);
-                }
             }
             elseif ($groupingid != $newgrouping) { //OK, move group.
                 // Allow groups to be created outside of groupings
@@ -159,109 +156,112 @@ if ($success) {
                  "-> $strgroups", '', '', true, '', user_login_string($course, $USER));
 
     $usehtmleditor = false;
-?>
-<h3 class="main"><?php echo $strheading ?></h3>
 
-<form action="group.php" method="post" enctype="multipart/form-data" class="mform notmform" id="groupform">
+    echo '<h3 class="main">' . $strheading . '</h3>'."\n";
 
-<input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
-<input type="hidden" name="courseid" value="<?php p($courseid); ?>" />
-<input type="hidden" name="grouping" value="<?php p($groupingid); ?>" />
-<?php
+    echo '<form action="group.php" method="post" enctype="multipart/form-data" class="mform notmform" id="groupform">'."\n";
+    echo '<div>'."\n";
+    echo '<input type="hidden" name="sesskey" value="' . s(sesskey()) . '" />'."\n";
+    echo '<input type="hidden" name="courseid" value="' . s($courseid) . '" />'."\n";
+    echo '<input type="hidden" name="grouping" value="' . s($groupingid) . '" />'."\n";
+
     if ($groupid) {
-        echo '<input type="hidden" name="group" value="'. $groupid .'" />';
+        echo '<input type="hidden" name="group" value="'. $groupid .'" />'."\n";
     }
 
     if ($delete) {
         /*echo 'Are you sure you want to delete group X ?';
         choose_from_menu_yesno('confirmdelete', false, '', true);*/
-?>
 
-        <p><?php print_string('deletegroupconfirm', 'group', $strname); ?></p>
-        <input type="hidden" name="delete" value="1" />
-        <input type="submit" name="confirmdelete" value="<?php print_string('yes'); ?>" />
-        <input type="submit" name="cancel" value="<?php print_string('no'); ?>" />
-<?php
+        echo '<p>' . get_string('deletegroupconfirm', 'group', $strname) . '</p>'."\n";
+        echo '<input type="hidden" name="delete" value="1" />'."\n";
+        echo '<input type="submit" name="confirmdelete" value="' . get_string('yes') . '" />'."\n";
+        echo '<input type="submit" name="cancel" value="' . get_string('no') . '" />'."\n";
     } else {
-?>
-
-<div class="fitem">
-<p><label for="groupname"><?php
-   print_string('groupname', 'group');
-   if (isset($err['name'])) {
-       echo' ';
-       formerr($err['name']);
-   } ?>&nbsp; </label></p>
-<p class="felement"><input id="groupname" name="name" type="text" size="40" value="<?php echo $strname; ?>" /></p>
-</div>
-
-<p><label for="edit-description"><?php print_string('groupdescription', 'group'); ?>&nbsp;</label></p>
-<p><?php print_textarea($usehtmleditor, 5, 45, 200, 400, 'description', $strdesc); ?></p>
-
-<p><label for="enrolmentkey"><?php print_string('enrolmentkey', 'group'); ?>&nbsp;</label></p>
-<p><input id="enrolmentkey" name="enrolmentkey" type="text" size="25" /></p>
-
-<?php if ($printuploadpicture) {  ?>
-    <p><label for="menuhidepicture"><?php print_string('hidepicture', 'group'); ?>&nbsp;</label></p>
-    <p><?php $options = array();
-             $options[0] = get_string('no');
-             $options[1] = get_string('yes');
-             choose_from_menu($options, 'hidepicture', isset($group)? $group->hidepicture: 1, '');?></p>
-
-    <p><label ><?php /* for="imagefile" */ print_string('newpicture', 'group');
-        helpbutton('picture', get_string('helppicture'));
-        print_string('maxsize', '', display_size($maxbytes), 'group');
-        if (isset($err['imagefile'])) formerr($err['imagefile']);
-     ?>&nbsp;</label></p>
-    <p><?php upload_print_form_fragment(1, array('imagefile'), null,false,null,0,0,false); ?></p>
-<?php 
-    }
-
-    if ($groupid) { //OK, editing - option to move grouping.
-?>
-    <p><label for="groupings"><?php print_string('addgroupstogrouping', 'group'); ?></label></p>
-    <select name="newgrouping" id="groupings" class="select">
-<?php
-    $groupingids = groups_get_groupings($courseid);
-    if (GROUP_NOT_IN_GROUPING == $groupingid) {
-        $groupingids[] = GROUP_NOT_IN_GROUPING;
-    }
-    if ($groupingids) {    
-        // Put the groupings into a hash and sort them
-        foreach($groupingids as $id) {
-            $listgroupings[$id] = groups_get_grouping_displayname($id, $courseid);
-        }
-        natcasesort($listgroupings);
+        echo '<div class="fitem">'."\n";
+        echo '<p><label for="groupname">' . get_string('groupname', 'group');
         
-        // Print out the HTML
-        $count = 1;
-        foreach($listgroupings as $id => $name) {
-            $select = '';
-            if ($groupingid == $id) {
-                $select = ' selected="selected"';
+        if (isset($err['name'])) {
+            echo ' ';
+            formerr($err['name']);
+        } 
+        
+        echo '&nbsp; </label></p>'."\n";
+        echo '<p class="felement"><input id="groupname" name="name" type="text" size="40" value="' . $strname . '" /></p>'."\n";
+        echo '</div>'."\n";
+
+        echo '<p><label for="edit-description">' . get_string('groupdescription', 'group') . '&nbsp;</label></p>'."\n";
+        echo '<p>' . print_textarea($usehtmleditor, 5, 45, 200, 400, 'description', $strdesc, 0, true) . '</p>'."\n";
+
+        echo '<p><label for="enrolmentkey">' . get_string('enrolmentkey', 'group') . '&nbsp;</label></p>'."\n";
+        echo '<p><input id="enrolmentkey" name="enrolmentkey" type="text" size="25" /></p>'."\n";
+
+        if ($printuploadpicture) {
+            echo '<p><label for="menuhidepicture">' . get_string('hidepicture', 'group') . '&nbsp;</label></p>'."\n";
+            echo '<p>';
+            $options = array();
+            $options[0] = get_string('no');
+            $options[1] = get_string('yes');
+            choose_from_menu($options, 'hidepicture', isset($group)? $group->hidepicture: 1, '');
+            echo '</p>'."\n";
+
+            echo '<p><label >' . get_string('newpicture', 'group');
+            helpbutton('picture', get_string('helppicture'));
+            echo get_string('maxsize', '', display_size($maxbytes), 'group');
+
+            if (isset($err['imagefile'])) {
+                formerr($err['imagefile']);
             }
-            echo "<option value=\"$id\"$select>$name</option>\n";
-            $count++;
+
+            echo '&nbsp;</label></p>'."\n";
+            echo '<p>' . upload_print_form_fragment(1, array('imagefile'), null,false,null,0,0,true) . '</p>'."\n";
         }
-    }
-?>
-    </select>
-<?php } //IF($groupid) ?>
 
-<p class="fitem">
-  <label for="id_submit">&nbsp;</label>
-  <span class="f--element fsubmit">
-    <input type="submit" name="update" id="id_submit" value="<?php echo $strbutton; ?>" />
-    <input type="submit" name="cancel" value="<?php print_string('cancel', 'group'); ?>" />
-  </span>
-</p>
+        if ($groupid) { //OK, editing - option to move grouping.
 
-<?php } //IF($delete) ?>
+            echo '<p><label for="groupings">' . get_string('addgroupstogrouping', 'group'). '</label></p>'."\n";
+            echo '<select name="newgrouping" id="groupings" class="select">'."\n";
 
-<span class="clearer">&nbsp;</span>
+            $groupingids = groups_get_groupings($courseid);
+            if (GROUP_NOT_IN_GROUPING == $groupingid) {
+                $groupingids[] = GROUP_NOT_IN_GROUPING;
+            }
+            if ($groupingids) {    
+                // Put the groupings into a hash and sort them
+                foreach($groupingids as $id) {
+                    $listgroupings[$id] = groups_get_grouping_displayname($id, $courseid);
+                }
+                natcasesort($listgroupings);
+                
+                // Print out the HTML
+                $count = 1;
+                foreach($listgroupings as $id => $name) {
+                    $select = '';
+                    if ($groupingid == $id) {
+                        $select = ' selected="selected"';
+                    }
+                    echo "<option value=\"$id\"$select>$name</option>\n";
+                    $count++;
+                }
+            }
 
-</form>
-<?php
+            echo '</select>'."\n";
+        } //IF($groupid)
+
+        echo '<p class="fitem">'."\n";
+        echo '<label for="id_submit">&nbsp;</label>'."\n";
+        echo '<span class="f--element fsubmit">'."\n";
+        echo '<input type="submit" name="update" id="id_submit" value="' . $strbutton . '" />'."\n";
+        echo '<input type="submit" name="cancel" value="' . get_string('cancel', 'group') . '" />'."\n";
+        echo '</span>'."\n";
+        echo '</p>'."\n";
+
+    } //IF($delete)
+
+    echo '<span class="clearer">&nbsp;</span>'."\n";
+    echo '</div>';
+    echo '</form>'."\n";
+
     print_footer($course);
 }
 

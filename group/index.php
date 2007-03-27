@@ -123,6 +123,9 @@ if ($success) {
             */
             redirect(groups_group_edit_url($courseid, null, $groupingid, false));
             break;
+        case 'showcreateorphangroupform':
+            redirect(groups_group_edit_url($courseid, null, null, false));
+            break;
         case 'addgroupstogroupingform':
             break;
         case 'updategroups': //Currently reloading.
@@ -154,8 +157,36 @@ if ($success) {
                  "-> $strgroups", '', '', true, '', user_login_string($course, $USER));
 
     $usehtmleditor = false;
-    //TODO: eventually we'll implement all buttons, meantime hide the ones we haven't finised.
-    $shownotdone  = false;
+    //TODO: eventually we'll implement all buttons, meantime hide the ones we haven't finished.
+    $shownotdone  = false; 
+    $disabled = 'disabled="disabled"';
+    
+    // Pre-disable buttons based on URL variables
+    if (isset($groupingid) && $groupingid > -1) {
+        $showeditgroupsettingsform_disabled = '';
+        $showeditgroupingsettingsform_disabled = '';
+        $deletegroup_disabled = '';
+        $deletegrouping_disabled = '';
+        $printerfriendly_disabled = '';
+        $showcreategroupform_disabled = '';
+    } else {
+        $showeditgroupsettingsform_disabled = $disabled; 
+        $showeditgroupingsettingsform_disabled = $disabled; 
+        $deletegroup_disabled = $disabled;
+        $deletegrouping_disabled = $disabled;
+        $printerfriendly_disabled = $disabled;
+        $showcreategroupform_disabled = $disabled;
+    }
+    
+    if (isset($groupid)) {
+        $showaddmembersform_disabled = '';
+        $showeditgroupsettingsform_disabled = ''; 
+        $deletegroup_disabled = '';
+    } else {
+        $deletegroup_disabled = $disabled;
+        $showeditgroupsettingsform_disabled = $disabled; 
+        $showaddmembersform_disabled = $disabled; 
+    }
     
     print_heading(format_string($course->shortname) .' '.$strgroups, 'center', 3);
     echo '<form id="groupeditform" action="index.php" method="post">'."\n";
@@ -201,29 +232,30 @@ if ($success) {
     }
     echo '</select>'."\n";
 
+    
     echo '<p><input type="submit" name="act_updategroups" id="updategroups" value="'
             . get_string('showgroupsingrouping', 'group') . '" /></p>'."\n";
-    echo '<p><input type="submit" name="act_showgroupingsettingsform" id="showeditgroupingsettingsform" value="'
+    echo '<p><input type="submit" ' . $showeditgroupingsettingsform_disabled . ' name="act_showgroupingsettingsform" id="showeditgroupingsettingsform" value="'
             . get_string('editgroupingsettings', 'group') . '" /></p>'."\n";
     
     if ($shownotdone) {
-        echo '<p><input type="submit" disabled="disabled" name="act_showgroupingpermsform" '
+        echo '<p><input type="submit" '.$disabled.' name="act_showgroupingpermsform" '
                 . 'id="showeditgroupingpermissionsform" value="'
                 . get_string('editgroupingpermissions', 'group') . '" /></p>'."\n";
     } 
     
-    echo '<p><input type="submit" name="act_deletegrouping" id="deletegrouping" value="'
+    echo '<p><input type="submit" ' . $deletegrouping_disabled . ' name="act_deletegrouping" id="deletegrouping" value="'
             . get_string('deletegrouping', 'group') . '" /></p>'."\n";
     echo '<p><input type="submit" name="act_showcreategroupingform" id="showcreategroupingform" value="'
             . get_string('creategrouping', 'group') . '" /></p>'."\n";
     
     if ($shownotdone) {
-    echo '<p><input type="submit" disabled="disabled" name="act_createautomaticgroupingform" '
+    echo '<p><input type="submit" '.$disabled.' name="act_createautomaticgroupingform" '
             . 'id="showcreateautomaticgroupingform" value="' 
             . get_string('createautomaticgrouping', 'group') . '" /></p>'."\n";
     }
     
-    echo '<p><input type="submit" name="act_printerfriendly" id="printerfriendly" value="'
+    echo '<p><input type="submit" ' . $printerfriendly_disabled . ' name="act_printerfriendly" id="printerfriendly" value="'
             . get_string('printerfriendly', 'group') . '" /></p>'."\n";
     echo "</td>\n<td>\n";
     echo '<p><label for="groups" id="groupslabel">' .get_string('groupsinselectedgrouping', 'group') . '</label></p>'."\n";
@@ -257,21 +289,24 @@ if ($success) {
     echo '</select>'."\n";
     echo '<p><input type="submit" name="act_updatemembers" id="updatemembers" value="'
             . get_string('showmembersforgroup', 'group') . '" /></p>'."\n";
-    echo '<p><input type="submit" name="act_showgroupsettingsform" id="showeditgroupsettingsform" value="'
+    echo '<p><input type="submit" '. $showeditgroupsettingsform_disabled . ' name="act_showgroupsettingsform" id="showeditgroupsettingsform" value="'
             . get_string('editgroupsettings', 'group') . '" /></p>'."\n";
-    echo '<p><input type="submit" name="act_deletegroup" onclick="onDeleteGroup()" id="deletegroup" value="'
+    echo '<p><input type="submit" '. $deletegroup_disabled . ' name="act_deletegroup" onclick="onDeleteGroup()" id="deletegroup" value="'
             . get_string('deleteselectedgroup', 'group') . '" /></p>'."\n";
     
     if ($shownotdone) {
-        echo '<p><input type="submit" disabled="disabled" name="act_removegroup" '
+        echo '<p><input type="submit" '.$disabled.' name="act_removegroup" '
                 . 'id="removegroup" value="' . get_string('removegroupfromselectedgrouping', 'group') . '" /></p>'."\n";
     }
     
-    echo '<p><input type="submit" name="act_showcreategroupform" id="showcreategroupform" value="'
+    echo '<p><input type="submit" ' . $showcreategroupform_disabled . ' name="act_showcreategroupform" id="showcreategroupform" value="'
             . get_string('creategroupinselectedgrouping', 'group') . '" /></p>'."\n";
-
+    
+    echo '<p><input type="submit" name="act_showcreateorphangroupform" id="showcreateorphangroupform" value="'
+            . get_string('createorphangroup', 'group') . '" /></p>'."\n";
+        
     if ($shownotdone) {
-        echo '<p><input type="submit" disabled="disabled" name="act_addgroupstogroupingform" '
+        echo '<p><input type="submit" '.$disabled.' name="act_addgroupstogroupingform" '
                 . 'id="showaddgroupstogroupingform" value="' . get_string('addgroupstogrouping', 'group') . '" /></p>'."\n";
     }
     
@@ -298,11 +333,11 @@ if ($success) {
     echo '</select>'."\n";
 
     if ($shownotdone) {
-        echo '<p><input type="submit" disabled="disabled" name="act_removemembers" '
+        echo '<p><input type="submit" '.$disabled.' name="act_removemembers" '
                 . 'id="removemembers" value="' . get_string('removeselectedusers', 'group') . '"/></p>'."\n";
     }
     
-    echo '<p><input type="submit" name="act_showaddmembersform" '
+    echo '<p><input type="submit" ' . $showaddmembersform_disabled . ' name="act_showaddmembersform" '
             . 'id="showaddmembersform" value="' . get_string('adduserstogroup', 'group'). '" /></p>'."\n";
     echo '</td>'."\n";
     echo '</tr>'."\n";
