@@ -2274,9 +2274,10 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 * @param string $datestring Format to use for the dates.
 * @param boolean $cantrack Is tracking enabled for this forum.
 * @param boolean $forumtracked Is the user tracking this forum.
+* @param boolean $canviewparticipants True if user has the viewparticipants permission for this course
 */
 function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring="",
-                                        $cantrack=true, $forumtracked=true) {
+                                        $cantrack=true, $forumtracked=true, $canviewparticipants=true) {
 
     global $USER, $CFG;
 
@@ -2324,7 +2325,11 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
         if (!empty($group->picture) and empty($group->hidepicture)) {
             print_group_picture($group, $forum->course, false, false, true);
         } else if (isset($group->id)) {
-            echo '<a href="'.$CFG->wwwroot.'/user/index.php?id='.$forum->course.'&amp;group='.$group->id.'">'.$group->name.'</a>';
+            if($canviewparticipants) {
+                echo '<a href="'.$CFG->wwwroot.'/user/index.php?id='.$forum->course.'&amp;group='.$group->id.'">'.$group->name.'</a>';
+            } else {
+                echo $group->name;
+            }
         }
         echo "</td>\n";
     }
@@ -3338,7 +3343,8 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
     $replies = forum_count_discussion_replies($forum->id);
 
     $canreply = forum_user_can_post($forum);
-
+    $canviewparticipants = has_capability('moodle/course:viewparticipants',$context) ||
+        has_capability('moodle/site:viewparticipants',$context); 
 
     $discussioncount = 0;
     $olddiscussionlink = false;
@@ -3432,7 +3438,8 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
                 } else {
                     $group = -1;
                 }
-                forum_print_discussion_header($discussion, $forum, $group, $strdatestring, $cantrack, $forumtracked);
+                forum_print_discussion_header($discussion, $forum, $group, $strdatestring, $cantrack, $forumtracked,
+                    $canviewparticipants);
             break;
             default:
                 if ($canreply or $discussion->replies) {
