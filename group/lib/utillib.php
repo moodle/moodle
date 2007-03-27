@@ -39,6 +39,11 @@ function groups_count_group_members($groupid) {
 function groups_count_groups_in_grouping($groupingid, $courseid) {
     if (GROUP_NOT_IN_GROUPING == $groupingid) {
         $groupids = groups_get_groups_not_in_any_grouping($courseid);
+        
+        if ($groupids === false) {
+            return false;
+        }
+        
         return count($groupids);
     } elseif (GROUP_ANY_GROUPING == $groupingid) {
         return count_records('groups_courses_groups', 'courseid', $courseid);
