@@ -163,6 +163,7 @@ Your carefully considered responses will help us improve the way this unit is pr
 
 Thanks very much.';
 $string['collespname'] = 'COLLES (Preferred)';
+$string['customintro'] = 'Custom intro';
 $string['done'] = 'Done';
 $string['download'] = 'Download';
 $string['downloadexcel'] = 'Download data as Excel spreadsheet';
