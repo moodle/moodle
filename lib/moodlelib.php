@@ -1829,7 +1829,7 @@ function require_logout() {
         add_to_log(SITEID, "user", "logout", "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
 
         //TODO: move following 2 ifs into auth plugins - add new logout hook
-        $authsequence = explode(',', $CFG->auth);
+        $authsequence = get_enabled_auth_plugins();
 
         if (in_array('cas', $authsequence) and $USER->auth == 'cas' and !empty($CFG->cas_enabled)) {
             require($CFG->dirroot.'/auth/cas/logout.php');
@@ -2354,15 +2354,13 @@ function exists_auth_plugin($auth) {
  * @return boolean Whether the plugin is enabled.
  */
 function is_enabled_auth($auth) {
-    global $CFG;
-
     if (empty($auth)) {
         return false;
-    } else if ($auth == 'manual') {
-        return true;
     }
 
-    return in_array($auth, explode(',', $CFG->auth));
+    $enabled = get_enabled_auth_plugins();
+
+    return in_array($auth, $enabled);
 }
 
 /**
@@ -2384,6 +2382,39 @@ function get_auth_plugin($auth) {
     require_once "{$CFG->dirroot}/auth/$auth/auth.php";
     $class = "auth_plugin_$auth";
     return new $class;
+}
+
+/**
+ * Returns array of active auth plugins.
+ *
+ * @param bool $fix fix $CFG->auth if needed
+ * @return array
+ */
+function get_enabled_auth_plugins($fix=false) {
+    global $CFG;
+
+    $default = array('manual', 'nologin');
+
+    if (empty($CFG->auth)) {
+        $auths = array();
+    } else {
+        $auths = explode(',', $CFG->auth);
+    }
+
+    if ($fix) {
+        $auths = array_unique($auths);
+        foreach($auths as $k=>$authname) {
+            if (!exists_auth_plugin($authname) or in_array($authname, $default)) {
+                unset($auths[$k]);
+            }
+        }
+        $newconfig = implode(',', $auths);
+        if (!isset($CFG->auth) or $newconfig != $CFG->auth) {
+            set_config('auth', $newconfig);
+        }
+    }
+
+    return (array_merge($default, $auths));
 }
 
 /**
@@ -2568,11 +2599,7 @@ function authenticate_user_login($username, $password) {
 
     global $CFG;
 
-    if (empty($CFG->auth)) {
-        $authsenabled = array('manual');
-    } else {
-        $authsenabled = explode(',', 'manual,'.$CFG->auth);
-    }
+    $authsenabled = get_enabled_auth_plugins();
 
     if ($user = get_complete_user_data('username', $username)) {
         $auth = empty($user->auth) ? 'manual' : $user->auth;  // use manual if auth not set

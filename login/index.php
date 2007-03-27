@@ -41,10 +41,7 @@
         }
     }
 
-/// Load alternative login screens if necessary
-
-
-$cfgauthsequence = explode(',', $CFG->auth); // auths, in sequence
+// setup and verify auth settings
 
 if (!isset($CFG->registerauth)) {
     set_config('registerauth', '');
@@ -54,29 +51,12 @@ if (!isset($CFG->auth_instructions)) {
     set_config('auth_instructions', '');
 }
 
-
-$authsequence = array();
-$fixauthseq = false;
-
-// fix auth sequence if needed to prevent fatal errors during login
-foreach($cfgauthsequence as $authname) {
-    if (exists_auth_plugin($authname)) {
-        $authsequence[] = $authname;
-        continue;
-    } else {
-        $fixauthseq = true;
-    }
-}
-if ($fixauthseq) {
-    set_config('auth', implode(',', $authsequence));
-}
-
 // auth plugins may override these - SSO anyone?
 $frm  = false;
 $user = false;
 
+$authsequence = get_enabled_auth_plugins(true); // auths, in sequence
 foreach($authsequence as $authname) {
-    // manual and nologin is not processed here
     $authplugin = get_auth_plugin($authname);
     $authplugin->prelogin_hook();
 }

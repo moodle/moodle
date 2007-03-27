@@ -27,17 +27,11 @@ if (isset($CFG->auth_plugins_enabled)) {
     unset($CFG->auth_plugins_enabled);
 }
 
+get_enabled_auth_plugins(true); // fix the list of enabled auths
 if (empty($CFG->auth)) {
     $authsenabled = array();
 } else {
     $authsenabled = explode(',', $CFG->auth);
-    $authsenabled = array_unique($authsenabled);
-}
-
-$key = array_search('manual', $authsenabled);
-if ($key !== false) {
-    unset($authsenabled[$key]); // manual is always enabled anyway
-    set_config('auth', implode(',', $authsenabled));
 }
 
 if (!isset($CFG->registerauth)) {
