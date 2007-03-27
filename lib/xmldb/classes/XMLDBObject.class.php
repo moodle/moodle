@@ -372,8 +372,9 @@ class XMLDBObject {
             $string = str_replace($foundconcats,array_keys($foundconcats),$string);
         }
 
-    /// Extract all the quoted elements from the string
-        preg_match_all("/('.*?')/is", $string, $matches);
+    /// Extract all the quoted elements from the string (skipping 
+    /// backslashed quotes that are part of the content.
+        preg_match_all("/('.*?[^\\\]')/is", $string, $matches);
         foreach (array_unique($matches[0]) as $key=>$value) {
             $foundquotes['<%'.$key.'%>'] = $value;
         }
@@ -397,7 +398,8 @@ class XMLDBObject {
                 if (!empty($foundconcats)) {
                     $element = str_replace(array_keys($foundconcats), $foundconcats, $element);
                 }
-                $arr[$key] = $element;
+            /// Delete any backslash used for quotes. XMLDB stuff will add them before insert
+                $arr[$key] = str_replace("\\'", "'", $element);
             }
         }
 
