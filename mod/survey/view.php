@@ -22,6 +22,11 @@
     if (! $survey = get_record("survey", "id", $cm->instance)) {
         error("Survey ID was incorrect");
     }
+    $rimmedintro = trim($survey->intro);
+    if (empty($rimmedintro)) {
+        $tempo = get_field("survey", "intro", "id", $survey->template);
+        $survey->intro = get_string($tempo, "survey");
+    }
 
     if (! $template = get_record("survey", "id", $survey->template)) {
         error("Template ID was incorrect");
