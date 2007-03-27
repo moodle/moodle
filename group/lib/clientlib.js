@@ -79,6 +79,20 @@ UpdatableGroupsCombo.prototype.refreshGroups = function (groupingId) {
             selectEl.removeChild(selectEl.firstChild);
         }
     }
+    
+    if (groupingId > -1) {
+        document.getElementById("showaddmembersform").disabled = true;
+        document.getElementById("showeditgroupingsettingsform").disabled = false;
+        document.getElementById("deletegrouping").disabled = false;
+        document.getElementById("printerfriendly").disabled = false;
+        document.getElementById("showeditgroupsettingsform").disabled = true;
+        document.getElementById("deletegroup").disabled = true;
+        document.getElementById("showcreategroupform").disabled = false;
+    } else {
+        document.getElementById("showeditgroupingsettingsform").disabled = true;
+        document.getElementById("deletegrouping").disabled = true;
+        document.getElementById("showcreategroupform").disabled = true;
+    }
 
     var sUrl = this.wwwRoot+"/group/index.php?id="+this.courseId+"&grouping="+groupingId+"&act_ajax_getgroupsingrouping";
     YAHOO.util.Connect.asyncRequest('GET', sUrl, this.connectCallback, null);
@@ -127,6 +141,8 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
 
 /**
  * When a group is selected, we need to update the members.
+ * The Add/Remove Users button also needs to be disabled/enabled
+ * depending on whether or not a group is selected
  */
 UpdatableMembersCombo.prototype.refreshMembers = function (groupId) {
     // Add the loader gif image.
@@ -139,7 +155,10 @@ UpdatableMembersCombo.prototype.refreshMembers = function (groupId) {
             selectEl.removeChild(selectEl.firstChild);
         }
     }
-
+    
+    document.getElementById("showaddmembersform").disabled = false;
+    document.getElementById("showeditgroupsettingsform").disabled = false;
+    document.getElementById("deletegroup").disabled = false;
     var sUrl = this.wwwRoot+"/group/index.php?id="+this.courseId+"&group="+groupId+"&act_ajax_getmembersingroup";
     YAHOO.util.Connect.asyncRequest("GET", sUrl, this.connectCallback, null);
 };

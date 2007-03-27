@@ -67,6 +67,7 @@ $string['selectnumberofgroups'] = 'Select number of groups';
 $string['numberofgroups'] = 'Number of groups';
 $string['creategrouping'] = 'Create grouping';
 $string['creategroup'] = 'Create group';
+$string['createorphangroup'] = 'Create Orphan group';
 
 $string['groupname'] = 'Group name';
 $string['defaultgroupname'] = 'Group';
