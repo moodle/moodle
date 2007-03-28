@@ -143,16 +143,24 @@ function load_defaultuser_role() {
                                      "roleid = $CFG->defaultuserroleid AND contextid = $sitecontext->id AND permission <> 0")) {
         foreach ($capabilities as $capability) {
             if (!isset($USER->capabilities[$sitecontext->id][$capability->capability])) {  // Don't overwrite
+                
+                // fix for MDL-7764
+                // if user has guest set as logged in role in 1.7, his course:view at site level will
+                // get wiped.
+     
+                // SPECIAL EXCEPTION:  If the default user role is actually a guest role, then
+                // remove some capabilities so this user doesn't get confused with a REAL guest
+                if ($capability->capability == 'moodle/legacy:guest' || 
+                    $capability->capability == 'moodle/course:view') {
+                    if ($USER->username != 'guest') {
+                        continue;
+                    }
+                }
+                
                 $USER->capabilities[$sitecontext->id][$capability->capability] = $capability->permission;
             }
         }
 
-        // SPECIAL EXCEPTION:  If the default user role is actually a guest role, then
-        // remove some capabilities so this user doesn't get confused with a REAL guest
-        if (isset($USER->capabilities[$sitecontext->id]['moodle/legacy:guest']) and $USER->username != 'guest') {
-            unset($USER->capabilities[$sitecontext->id]['moodle/legacy:guest']);
-            unset($USER->capabilities[$sitecontext->id]['moodle/course:view']);  // No access to courses by default
-        }
         has_capability('clearcache');
     }
 
