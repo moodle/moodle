@@ -646,7 +646,7 @@ function check_legacy_config () {
             set_config('enrol_ldap_contexts_role'.$student_role->id, $CFG->enrol_ldap_student_contexts);
         }
 
-        unset_config($CFG->enrol_ldap_student_contexts);
+        unset_config('enrol_ldap_student_contexts');
     }
 
     if (isset($CFG->enrol_ldap_student_memberattribute)) {
@@ -655,7 +655,7 @@ function check_legacy_config () {
             set_config('enrol_ldap_memberattribute_role'.$student_role->id, $CFG->enrol_ldap_student_memberattribute);
         }
 
-        unset_config($CFG->enrol_ldap_student_memberattribute);
+        unset_config('enrol_ldap_student_memberattribute');
     }
 
     if (isset($CFG->enrol_ldap_teacher_contexts)) {
@@ -663,7 +663,7 @@ function check_legacy_config () {
             set_config('enrol_ldap_contexts_role'.$teacher_role->id, $CFG->enrol_ldap_student_contexts);
         }
 
-        unset_config($CFG->enrol_ldap_teacher_contexts);
+        unset_config('enrol_ldap_teacher_contexts');
     }
     
     if (isset($CFG->enrol_ldap_teacher_memberattribute)) {
@@ -672,7 +672,7 @@ function check_legacy_config () {
             set_config('enrol_ldap_memberattribute_role'.$teacher_role->id, $CFG->enrol_ldap_teacher_memberattribute);
         }
 
-        unset_config($CFG->enrol_ldap_teacher_memberattribute);
+        unset_config('enrol_ldap_teacher_memberattribute');
     }
 }
 
