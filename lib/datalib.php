@@ -1453,7 +1453,7 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
         $url = html_entity_decode($url); // for php < 4.3.0 this is defined in moodlelib.php
     }
 
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbinserts++; $PERF->logwrites++;};
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; $PERF->logwrites++;};
 
     if ($CFG->type = 'oci8po') {
         if (empty($info)) {
@@ -1475,7 +1475,7 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
                          SET lastip=\''. $REMOTE_ADDR .'\', lastaccess=\''. $timenow .'\'
                        WHERE id = \''. $userid .'\' ');
         if ($courseid != SITEID && !empty($courseid)) {
-            if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbupdates++;};
+            if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
             
             if ($record = get_record('user_lastaccess', 'userid', $userid, 'courseid', $courseid)) {
                 $record->timeaccess = $timenow;

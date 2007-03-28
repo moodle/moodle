@@ -18,11 +18,7 @@ function init_performance_info() {
     global $PERF;
   
     $PERF = new Object;
-    $PERF->dbinserts = 0;   
-    $PERF->dbupdates= 0;   
-    $PERF->dbselects= 0;   
-    $PERF->dbdeletes = 0;   
-    $PERF->dbother= 0;   
+    $PERF->dbqueries = 0;   
     $PERF->logwrites = 0;
     if (function_exists('microtime')) {
         $PERF->starttime = microtime();
