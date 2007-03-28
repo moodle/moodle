@@ -23,7 +23,7 @@ $ADMIN->add('accounts', new admin_externalpage('profilefields', get_string('prof
 $ADMIN->add('users', new admin_category('roles', get_string('permissions', 'role')));
 $ADMIN->add('roles', new admin_externalpage('defineroles', get_string('defineroles', 'role'), "$CFG->wwwroot/$CFG->admin/roles/manage.php"));
 $sitecontext = get_context_instance(CONTEXT_SYSTEM);
-$ADMIN->add('roles', new admin_externalpage('assignroles', get_string('assignroles', 'role'), "$CFG->wwwroot/$CFG->admin/roles/assign.php?contextid=" . $sitecontext->id));
+$ADMIN->add('roles', new admin_externalpage('assignroles', get_string('assignglobalroles', 'role'), "$CFG->wwwroot/$CFG->admin/roles/assign.php?contextid=" . $sitecontext->id));
 
 
 // "userpolicies" settingpage
