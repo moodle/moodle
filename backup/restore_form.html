@@ -426,13 +426,9 @@ $xml_file  = $CFG->dataroot."/temp/backup/".$backup_unique_code."/moodle.xml";
 
 $info = restore_read_xml_info($xml_file);
 
-if ($course->id == SITEID) {
-    $siterolesarray = get_assignable_roles (get_context_instance(CONTEXT_SYSTEM, SITEID), "shortname");
-    $siterolesnamearray = get_assignable_roles (get_context_instance(CONTEXT_SYSTEM, SITEID), "name");  
-} else {
-    $siterolesarray = get_assignable_roles (get_context_instance(CONTEXT_COURSE, $course->id), "shortname");
-    $siterolesnamearray = get_assignable_roles (get_context_instance(CONTEXT_COURSE, $course->id), "name");
-}
+// fix for MDL-9068, front page course is just a normal course
+$siterolesarray = get_assignable_roles (get_context_instance(CONTEXT_COURSE, $course->id), "shortname");
+$siterolesnamearray = get_assignable_roles (get_context_instance(CONTEXT_COURSE, $course->id), "name");
 
 echo ('<table width="100%" class="restore-form-instances">');
 echo ('<tr><td align="right" style="width:50%"><b>'.get_string('sourcerole').'</b></td><td align="left" style="width:50%"><b>'.get_string('targetrole').'</b></td></tr>');
