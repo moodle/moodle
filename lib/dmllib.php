@@ -84,7 +84,7 @@ function execute_sql($command, $feedback=true) {
 
     $empty_rs_cache = array();  // Clear out the cache, just in case changes were made to table structures
 
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+    if (defined('MDL_PERFDB')) { perf_count_query($command); }
 
     $result = $db->Execute($command);
 
@@ -663,7 +663,7 @@ function get_recordset_sql($sql, $limitfrom=null, $limitnum=null) {
     }
 
 
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+    if (defined('MDL_PERFDB')) { perf_count_query($sql); }
 
     if ($limitfrom || $limitnum) {
         ///Special case, 0 must be -1 for ADOdb
@@ -1091,7 +1091,7 @@ function get_fieldset_sql($sql) {
 
     global $db, $CFG;
 
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+    if (defined('MDL_PERFDB')) { perf_count_query($sql); };
 
     $rs = $db->Execute($sql);
     if (!$rs) {
@@ -1179,7 +1179,7 @@ function set_field_select($table, $newfield, $newvalue, $select, $localcall = fa
 
     global $db, $CFG;
 
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbupdates++; };
 
     if (!$localcall) {
         if ($select) {
@@ -1259,7 +1259,7 @@ function delete_records($table, $field1='', $value1='', $field2='', $value2='', 
         }
     }
 
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbdeletes++; };
 
     $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
 
@@ -1285,7 +1285,7 @@ function delete_records_select($table, $select='') {
         rcache_unset_table($table);
     }
 
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbdeletes++; };
 
     if ($select) {
         $select = 'WHERE '.$select;
@@ -1323,8 +1323,6 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
         }
     }
 
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
-
 /// In Moodle we always use auto-numbering fields for the primary key
 /// so let's unset it now before it causes any trouble later
     unset($dataobject->{$primarykey});
@@ -1332,6 +1330,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 /// Get an empty recordset. Cache for multiple inserts.
     if (empty($empty_rs_cache[$table])) {
         /// Execute a dummy query to get an empty recordset
+        if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbselects++; };
         if (!$empty_rs_cache[$table] = $db->Execute('SELECT * FROM '. $CFG->prefix . $table .' WHERE '. $primarykey  .' = \'-1\'')) {
             return false;
         }
@@ -1345,6 +1344,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 /// move the sequence forward first, and make the insert
 /// with an explicit id.
     if ( $CFG->dbfamily === 'postgres' && $returnid == true ) {
+        if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbselects++; };
         if ($nextval = (int)get_field_sql("SELECT NEXTVAL('{$CFG->prefix}{$table}_{$primarykey}_seq')")) {
             $dataobject->{$primarykey} = $nextval;
         }
@@ -1415,6 +1415,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
     }
 
 /// Run the SQL statement
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbinserts++; };
     if (!$rs = $db->Execute($insertSQL)) {
         debugging($db->ErrorMsg() .'<br /><br />'.$insertSQL);
         if (!empty($CFG->dblogerror)) {
@@ -1462,6 +1463,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
     if ($CFG->dbfamily === 'postgres') {
         // try to get the primary key based on id
+        if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbselects++; };
         if ( ($rs = $db->Execute('SELECT '. $primarykey .' FROM '. $CFG->prefix . $table .' WHERE oid = '. $id))
              && ($rs->RecordCount() == 1) ) {
             trigger_error("Retrieved $primarykey from oid on table $table because we could not find the sequence.");
@@ -1533,7 +1535,7 @@ function update_record($table, $dataobject) {
     }
     $data = (array)$dataobject;
 
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbupdates++; };
 
     // Pull out data matching these fields
     $ddd = array();
@@ -1868,7 +1870,7 @@ function where_clause($field1='', $value1='', $field2='', $value2='', $field3=''
 function column_type($table, $column) {
     global $CFG, $db;
 
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbselects++; };
 
     if(!$rs = $db->Execute('SELECT '.$column.' FROM '.$CFG->prefix.$table.' WHERE 1=2')) {
         return false;
@@ -2164,7 +2166,7 @@ function db_update_lobs ($table, $sqlcondition, &$clobs, &$blobs) {
     if ($clobs) {
         foreach ($clobs as $key => $value) {
         
-            if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; }; /// Count the extra updates in PERF
+            if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbupdates++; }; /// Count the extra updates in PERF
 
             if (!$db->UpdateClob($CFG->prefix.$table, $key, $value, $sqlcondition)) {
                 $status = false;
@@ -2181,7 +2183,7 @@ function db_update_lobs ($table, $sqlcondition, &$clobs, &$blobs) {
     if ($blobs) {
         foreach ($blobs as $key => $value) {
         
-            if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; }; /// Count the extra updates in PERF
+            if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbupdates++; }; /// Count the extra updates in PERF
 
             if(!$db->UpdateBlob($CFG->prefix.$table, $key, $value, $sqlcondition)) {
                 $status = false;
@@ -2400,6 +2402,22 @@ function rcache_unset_table ($table) {
         $MCACHE->set($tablekey, true, $CFG->rcachettl);
     }
     return true;
+}
+
+/** 
+ * Called when performance checking is enabled. Increments the 
+ * count for the relevant type of query.
+ * @param string $sql SQL being run
+ */
+function perf_count_query($sql) {
+    global $PERF;
+    switch(strtoupper(substr($sql,0,1))) {
+        case 'I' : $PERF->dbinserts++; break;
+        case 'U' : $PERF->dbupdates++; break;
+        case 'S' : $PERF->dbselects++; break;
+        case 'D' : $PERF->dbdeletes++; break;
+        default : $PERF->dbother++; break; 
+    }
 }
 
 ?>

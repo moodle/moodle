@@ -6560,10 +6560,40 @@ function get_performance_info() {
     $info['html'] .= '<span class="included">Included '.$info['includecount'].' files</span> ';
     $info['txt']  .= 'includecount: '.$info['includecount'].' ';
 
-    if (!empty($PERF->dbqueries)) {
-        $info['dbqueries'] = $PERF->dbqueries;
-        $info['html'] .= '<span class="dbqueries">DB queries '.$info['dbqueries'].'</span> ';
-        $info['txt'] .= 'dbqueries: '.$info['dbqueries'].' ';
+    if(array_key_exists('dbselects',$PERF)) {
+        $info['dbupdates'] = $PERF->dbupdates;
+        $info['dbinserts'] = $PERF->dbinserts;
+        $info['dbdeletes'] = $PERF->dbdeletes;
+        $info['dbselects'] = $PERF->dbselects;
+        $info['dbother'] = $PERF->dbother;
+        $info['dbqueries'] = $info['dbupdates']+$info['dbinserts']+$info['dbdeletes']+$info['dbselects']+$info['dbother'];
+    
+        // Weights for different database activities
+        if($CFG->dbtype=='postgres7') {
+            // These are fairly arbitrary, just come from one of our dev servers
+            $insertw=2.5;
+            $updatew=19;
+            $deletew=4.1;
+        } else {
+            $insertw=1;
+            $updatew=1;
+            $deletew=1;
+        }
+        $info['dbweight'] = (int)($info['dbselects']+$info['dbother']+$updatew*$info['dbupdates']+$insertw*$info['dbinserts']+$deletew*$info['dbdeletes']);
+
+        $info['html'] .= '<span class="dbqueries">DB queries '.$info['dbqueries'].', weight '.$info['dbweight'].':'.
+            ($info['dbselects'] ? ' S='.$info['dbselects'] : '').
+            ($info['dbupdates'] ? ' U='.$info['dbupdates'] : '').
+            ($info['dbinserts'] ? ' I='.$info['dbinserts'] : '').
+            ($info['dbdeletes'] ? ' D='.$info['dbdeletes'] : '').
+            ($info['dbother']   ? ' O='.$info['dbother']   : '').
+            '</span> ';
+        $info['txt'] .= 'dbqueries: '.$info['dbqueries'].', weight '.$info['dbweight'].':'.
+            ($info['dbselects'] ? ' S='.$info['dbselects'] : '').
+            ($info['dbupdates'] ? ' U='.$info['dbupdates'] : '').
+            ($info['dbinserts'] ? ' I='.$info['dbinserts'] : '').
+            ($info['dbdeletes'] ? ' D='.$info['dbdeletes'] : '').
+            ($info['dbother']   ? ' O='.$info['dbother']   : '').' ';
     }
 
     if (!empty($PERF->logwrites)) {
