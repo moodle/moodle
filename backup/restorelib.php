@@ -6296,12 +6296,17 @@
             // fix for MDL-6831
             $newcontext = get_context_instance(CONTEXT_COURSE, $restore->course_id);
             if (!has_capability('moodle/course:manageactivities', $newcontext)) {
-                if ($legacyteachers = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-                    if ($legacyteacher = array_shift($legacyteachers)) {
-                        role_assign($legacyteacher->id, $USER->id, 0, $newcontext->id);
-                    }
+                // fix for MDL-9065, use the new config setting if exists         
+                if ($CFG->creatornewroleid) {
+                    role_assign($CFG->creatornewroleid, $USER->id, 0, $newcontext->id);
                 } else {
-                    notify('Could not find a legacy teacher role. You might need your moodle admin to assign a role with editing privilages to this course.');
+                    if ($legacyteachers = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+                        if ($legacyteacher = array_shift($legacyteachers)) {
+                            role_assign($legacyteacher->id, $USER->id, 0, $newcontext->id);
+                        }
+                    } else {
+                        notify('Could not find a legacy teacher role. You might need your moodle admin to assign a role with editing privilages to this course.');
+                    }
                 }
             }
             if (!defined('RESTORE_SILENTLY')) {
