@@ -210,8 +210,10 @@
         print_heading_with_help(get_string('assignroles', 'role'), 'assignroles');
     }
 
-    print_simple_box(get_string('globalroleswarning', 'role'), 'center', '700');
-
+    if ($context->contextlevel==CONTEXT_SYSTEM) {
+        print_box(get_string('globalroleswarning', 'role'));
+    }
+    
     if ($roleid) {        /// prints a form to swap roles
 
     /// Get all existing participants in this context.
