@@ -7,6 +7,7 @@ $string['allow'] = 'Allow';
 $string['allowassign'] = 'Allow role assignments';
 $string['allowoverride'] = 'Allow role overrides';
 $string['assignroles'] = 'Assign roles';
+$string['assignglobalroles'] = 'Assign global roles';
 $string['blog:create'] = 'Create new blog entries';
 $string['blog:manageentries'] = 'Edit and manage entries';
 $string['blog:manageofficialtags'] = 'Manage official tags';
