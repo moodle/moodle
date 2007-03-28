@@ -216,7 +216,10 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                         $datasetdef->category = 0;
                         $todo='create' ;
                     }    
-                }
+                }else { // no so create one
+                    $datasetdef->category =$question->category ;
+                    $todo='create' ;
+               }     
             }         
             if (  $todo=='create'){
                 if (!$datasetdef->id = insert_record(
@@ -230,7 +233,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
            $questiondataset->datasetdefinition = $datasetdef->id;
             if (!insert_record('question_datasets',
                                $questiondataset)) {
-                error("Unable to create relation to dataset $name");
+                error("Unable to create relation to dataset $dataset->name $todo");
             }
             if ($todo=='create'){ // add the items
                 foreach ($dataset->datasetitem as $dataitem ){
