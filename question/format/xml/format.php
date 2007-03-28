@@ -529,9 +529,7 @@ class qformat_xml extends qformat_default {
           } 
         }
                 
-                echo "<pre>loaded qo";print_r($qo);echo "</pre>";
-
-        $qo->import_process = true ; // flag for question_save_options()
+                // echo "<pre>loaded qo";print_r($qo);echo "</pre>";
 
         return $qo;
     }
