@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-$THEME->sheets = array('styles_layout', 'styles_fonts', 'styles_color');
+$THEME->sheets = array('cornflower');
 
 /// This variable is an array containing the names of all the 
 /// stylesheet files you want included in this theme, and in what order
