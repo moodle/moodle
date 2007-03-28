@@ -1,8 +1,5 @@
 <?php  // $Id$
-/**
- * @package questionbank
- * @subpackage questiontypes
-*/
+
 /////////////////
 // CALCULATED ///
 /////////////////
@@ -53,7 +50,55 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
 
         return true;
     }
-
+    
+    function get_datasets_for_export($questionid){
+        $datasetdefs = array();
+        if (!empty($questionid)) {
+            global $CFG;
+            $sql = "SELECT i.*
+                    FROM {$CFG->prefix}question_datasets d,
+                         {$CFG->prefix}question_dataset_definitions i
+                    WHERE d.question = '$questionid'
+                    AND   d.datasetdefinition = i.id
+                   ";
+            if ($records = get_records_sql($sql)) {                
+                foreach ($records as $r) {
+                    $def = $r ;
+                    if ($def->category=='0'){
+                        $def->status='private';
+                    } else {   
+                        $def->status='shared';
+                    }   
+                    $def->type ='calculated' ;
+                    list($distribution, $min, $max,$dec) = explode(':', $def->options, 4);
+                    $def->distribution=$distribution;
+                    $def->minimum=$min;
+                    $def->maximum=$max;
+                    $def->decimals=$dec ;                                         
+                     if ($def->itemcount > 0 ) {
+                        // get the datasetitems
+                        $def->items = array();
+                        $sql1= (" SELECT itemnumber, definition, id, value
+                        FROM {$CFG->prefix}question_dataset_items 
+                        WHERE definition = '$def->id' order by itemnumber ASC ");
+                        if ($items = get_records_sql($sql1)){
+                            $n = 0;
+                            foreach( $items as $ii){
+                                $n++;
+                                $def->items[$n] = new stdClass;
+                                $def->items[$n]->itemnumber=$ii->itemnumber;
+                                $def->items[$n]->value=$ii->value;
+                           }
+                           $def->number_of_items=$n ;
+                        }
+                    }
+                    $datasetdefs["1-$r->category-$r->name"] = $def;                                                                                               
+                }
+            }
+        }
+        return $datasetdefs ;
+    } 
+      
     function save_question_options($question) {
         //$options = $question->subtypeoptions;
         // Get old answers:
@@ -137,10 +182,71 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         // Save units
         $virtualqtype = $this->get_virtual_qtype();
         $virtualqtype->save_numerical_units($question);
-
+        if( isset($question->import_process)&&$question->import_process){
+            $this->import_datasets($question);
+         }   
         return true;
     }
 
+    function import_datasets($question){
+        $n = count($question->dataset);
+        foreach ($question->dataset as $dataset) {
+            // name, type, option, 
+            $datasetdef = new stdClass();
+            $datasetdef->name = $dataset->name;
+            $datasetdef->type = 1 ;
+            $datasetdef->options =  $dataset->distribution.':'.$dataset->min.':'.$dataset->max.':'.$dataset->length;
+            $datasetdef->itemcount=$dataset->itemcount;                       
+            if ( $dataset->status =='private'){
+                $datasetdef->category = 0;
+                $todo='create' ;
+            }else if ($dataset->status =='shared' ){
+                if ($sharedatasetdefs = get_records_select(
+                        'question_dataset_definitions',
+                        "type = '1'
+                        AND name = '$dataset->name'
+                        AND category = '$question->category'
+                        ORDER BY id DESC;"
+                       )) { // so there is at least one
+                    $sharedatasetdef = array_shift($sharedatasetdefs);
+                    if ( $sharedatasetdef->options ==  $datasetdef->options ){// identical so use it
+                        $todo='useit' ;
+                        $datasetdef =$sharedatasetdef ;
+                    } else { // different so create a private one
+                        $datasetdef->category = 0;
+                        $todo='create' ;
+                    }    
+                }
+            }         
+            if (  $todo=='create'){
+                if (!$datasetdef->id = insert_record(
+                    'question_dataset_definitions', $datasetdef)) {
+                    error("Unable to create dataset $defid");
+                } 
+           }  
+           // Create relation to the dataset:
+           $questiondataset = new stdClass;
+           $questiondataset->question = $question->id;
+           $questiondataset->datasetdefinition = $datasetdef->id;
+            if (!insert_record('question_datasets',
+                               $questiondataset)) {
+                error("Unable to create relation to dataset $name");
+            }
+            if ($todo=='create'){ // add the items
+                foreach ($dataset->datasetitem as $dataitem ){
+                    $datasetitem = new stdClass;
+                    $datasetitem->definition=$datasetdef->id ;
+                    $datasetitem->itemnumber = $dataitem->itemnumber ;
+                    $datasetitem->value = $dataitem->value ;
+             //   echo "<pre>loaded qo";print_r($datasetitem);echo "</pre>";
+                    if (!insert_record('question_dataset_items', $datasetitem)) {
+                        error("Unable to insert dataset item $item->itemnumber with $item->value for $datasetdef->name");
+                    }
+                }     
+            }                                
+        }
+    }
+         
     function create_runtime_question($question, $form) {
         $question = parent::create_runtime_question($question, $form);
         $question->options->answers = array();
