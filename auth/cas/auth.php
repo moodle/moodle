@@ -220,7 +220,7 @@ class auth_plugin_cas extends auth_plugin_base {
         return !empty($this->config->changepasswordurl);
     }
 
-    function prelogin_hook() {
+    function loginpage_hook() {
         // Load alternative login screens if necessary
         // TODO: fix the cas login screen
         return;
@@ -230,6 +230,11 @@ class auth_plugin_cas extends auth_plugin_base {
         }
     }
 
+    function prelogout_hook() {
+        global $CFG;
+
+        require($CFG->dirroot.'/auth/cas/logout.php');
+    }
 
     /**
      * Prints a form for configuring this authentication plugin.

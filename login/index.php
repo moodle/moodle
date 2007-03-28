@@ -58,7 +58,7 @@ $user = false;
 $authsequence = get_enabled_auth_plugins(true); // auths, in sequence
 foreach($authsequence as $authname) {
     $authplugin = get_auth_plugin($authname);
-    $authplugin->prelogin_hook();
+    $authplugin->loginpage_hook();
 }
 
 //HTTPS is potentially required in this page

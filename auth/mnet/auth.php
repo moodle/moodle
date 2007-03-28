@@ -1003,8 +1003,12 @@ class auth_plugin_mnet extends auth_plugin_base {
      *
      * @return   void
      */
-    function logout() {
+    function prelogout_hook() {
         global $MNET, $CFG, $USER;
+        if ($USER->auth != 'mnet') {
+            return;
+        }
+
         require_once $CFG->dirroot.'/mnet/xmlrpc/client.php';
 
         // If the user is local to this Moodle:
@@ -1334,7 +1338,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         return $accessctrl == 'allow';
     }
 
-    function prelogout_hook() {
+    function logoutpage_hook() {
         global $USER, $CFG, $redirect;
 
         if (!empty($USER->mnethostid) and $USER->mnethostid != $CFG->mnet_localhost_id) {

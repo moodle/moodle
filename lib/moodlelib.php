@@ -1828,16 +1828,10 @@ function require_logout() {
     if (isloggedin()) {
         add_to_log(SITEID, "user", "logout", "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
 
-        //TODO: move following 2 ifs into auth plugins - add new logout hook
-        $authsequence = get_enabled_auth_plugins();
-
-        if (in_array('cas', $authsequence) and $USER->auth == 'cas' and !empty($CFG->cas_enabled)) {
-            require($CFG->dirroot.'/auth/cas/logout.php');
-        }
-
-        if (in_array('mnet', $authsequence) and $USER->auth == 'mnet') {
-            $authplugin = get_auth_plugin('mnet');;
-            $authplugin->logout();
+        $authsequence = get_enabled_auth_plugins(); // auths, in sequence
+        foreach($authsequence as $authname) {
+            $authplugin = get_auth_plugin($authname);
+            $authplugin->prelogout_hook();
         }
     }
 
@@ -2613,8 +2607,8 @@ function guest_user() {
  * Uses auth_ functions from the currently active auth module
  *
  * @uses $CFG
- * @param string $username  User's username
- * @param string $password  User's password
+ * @param string $username  User's username (with system magic quotes)
+ * @param string $password  User's password (with system magic quotes)
  * @return user|flase A {@link $USER} object or false if error
  */
 function authenticate_user_login($username, $password) {
@@ -2670,7 +2664,21 @@ function authenticate_user_login($username, $password) {
 
         $authplugin->sync_roles($user);
 
-        $authplugin->user_authenticated_hook($user, $username, $password);
+        foreach ($authsenabled as $hau) {
+            $hauth = get_auth_plugin($hau);
+            $hauth->user_authenticated_hook($user, $username, $password);
+        }
+
+    /// Log in to a second system if necessary
+    /// NOTICE: /sso/ will be moved to auth and deprecated soon; use user_authenticated_hook() instead
+        if (!empty($CFG->sso)) {
+            include_once($CFG->dirroot .'/sso/'. $CFG->sso .'/lib.php');
+            if (function_exists('sso_user_login')) {
+                if (!sso_user_login($username, $password)) {   // Perform the signon process
+                    notify('Second sign-on failed');
+                }
+            }
+        }
 
         return $user;
 
