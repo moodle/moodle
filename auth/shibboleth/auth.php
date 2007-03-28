@@ -146,7 +146,7 @@ class auth_plugin_shibboleth extends auth_plugin_base {
         return false;
     }
 
-    function prelogin_hook() {
+    function loginpage_hook() {
         global $SESSION, $CFG;
 
         //TODO: fix the code

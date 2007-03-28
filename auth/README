@@ -125,8 +125,7 @@ When creating new plugins you can either extend the abstract auth_plugin_base cl
 auth_plugin_base.
 
 The new plugin architecture allows creating of more advanced types such as custom SSO
-without the need to patch login and logout pages (see prelogin_hook() and prelogout_hook()
-methods in existing plugins).
+without the need to patch login and logout pages (see *_hook() methods in existing plugins).
 
 Configuration
 -----------------

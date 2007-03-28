@@ -273,34 +273,46 @@ class auth_plugin_base {
     }
 
     /**
-     * Prelogin actions.
+     * Hook for overriding behavior of login page.
+     * This method is called from login/index.php page for all enabled auth plugins.
      */
-    function prelogin_hook() {
+    function loginpage_hook() {
+        global $frm;  // can be used to override submitted login form
+        global $user; // can be used to replace authenticate_user_login()
+
         //override if needed
     }
 
     /**
      * Post authentication hook.
+     * This method is called from authenticate_user_login() for all enabled auth plugins.
+     *
+     * @param object $user user object, later used for $USER
+     * @param string $username (with system magic quotes)
+     * @param string $password plain text password (with system magic quotes)
      */
-    function user_authenticated_hook($user, $username, $password) {
-    /// TODO: review following code - looks hackish :-( mnet should obsole this, right?
-    /// Log in to a second system if necessary
-        global $CFG;
-
-        if (!empty($CFG->sso)) {
-            include_once($CFG->dirroot .'/sso/'. $CFG->sso .'/lib.php');
-            if (function_exists('sso_user_login')) {
-                if (!sso_user_login($username, $password)) {   // Perform the signon process
-                    notify('Second sign-on failed');
-                }
-            }
-        }
+    function user_authenticated_hook(&$user, $username, $password) {
+        //override if needed
     }
 
     /**
-     * Prelogout actions.
+     * Pre logout hook.
+     * This method is called from require_logout() for all enabled auth plugins,
      */
     function prelogout_hook() {
+        global $USER; // use $USER->auth to find the plugin used for login
+
+        //override if needed
+    }
+
+    /**
+     * Hook for overriding behavior of logout page.
+     * This method is called from login/logout.php page for all enabled auth plugins.
+     */
+    function logoutpage_hook() {
+        global $USER;     // use $USER->auth to find the plugin used for login
+        global $redirect; // can be used to override redirect after logout
+
         //override if needed
     }
 }
