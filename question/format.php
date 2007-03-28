@@ -7,15 +7,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package questionbank
  * @subpackage importexport
- *//** */
-
-/**
- * Base class for question import and export formats.
- * 
- * Doesn't do everything on it's own -- it needs to be extended.
- * 
- * @package questionbank
- * @subpackage importexport
  */
 class qformat_default {
 
