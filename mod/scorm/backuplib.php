@@ -79,9 +79,8 @@
         if ($status) {
             if (backup_userdata_selected($preferences,'scorm',$scorm->id)) {
                 $status = backup_scorm_scoes_track($bf,$preferences,$scorm->id);
-                $status = backup_scorm_files_instance($bf,$preferences,$scorm->id);
             }
-
+            $status = backup_scorm_files_instance($bf,$preferences,$scorm->id);
         }
         //End mod
         $status =fwrite ($bf,end_tag("MOD",3,true));
