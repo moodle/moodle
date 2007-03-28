@@ -23,19 +23,8 @@
           echo $performanceinfo;
 } ?>
 
-<?php if ($CFG->debug > 7) {
-?>
-          <br />
-          <hr size="1" noshade="noshade" />
-          <p align="center">
-          <a href="http://validator.w3.org/check?verbose=1&amp;ss=1&amp;uri=<?php echo urlencode(qualified_me()) ?>">Validate HTML</a> |
-          <a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=-1&amp;url1=<?php echo urlencode(qualified_me()) ?>">Section 508 Check</a> |
-          <a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=0&amp;warnp2n3e=1&amp;url1=<?php echo urlencode(qualified_me()) ?>">WCAG 1 (2,3) Check</a>
-          </p>
-<?php } ?>
-
-
 </div>
 </div>
 </div>
+</body>
 </html>
