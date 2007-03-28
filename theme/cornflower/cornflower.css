@@ -1,0 +1,561 @@
+/*******************************************************************
+ Cornflower CSS
+  
+ This CSS file contains all color and layout definitions 
+ for the Cornflower theme.
+ 
+ This theme requires the Standard theme to be present.
+ 
+*******************************************************************/
+
+/***
+ ***  Core
+ ***/
+
+a:link,
+a:visited {
+  color:#054377;
+}
+
+a:hover {
+  color:#054377;
+  text-decoration:underline;
+  
+  }
+
+body {
+  background-color:#739FC4;
+  border-color:#F7F7F7;
+}
+
+th.header,
+td.header,
+div.header {
+    background-color: #739FC4;
+}
+
+.navbar {
+  background-color:#D0E2EE;
+  border-color:#D0E2EE;
+  
+}
+
+.generalbox {
+  border-color:#739FC4; 
+}
+.informationbox {
+  border-color:#739FC4; 
+}
+.feedbackbox {
+  border-color: #739FC4; 
+}
+
+.noticebox {
+  border-color:#739FC4; 
+}
+
+.errorbox {
+  color:#ffffff;
+  border-color:#739FC4;
+  background-color:#990000;
+}
+
+.tabledivider {
+  border-color:#739FC4;
+}
+
+.sitetopic {
+}
+
+.sitetopiccontent {
+  border-color:#739FC4;
+  background-color:#FFFFFF;
+}
+
+.unread {
+  background: #78A2CD;
+} 
+
+/***
+ *** Header
+ ***/
+
+#header-home, #header {
+background: #ececec url(images/hdbg.jpg) 1px 0 repeat-x;
+height:112px;
+
+}
+
+.headermain {
+  background: transparent url(images/hdbgend.jpg) 100% 0 no-repeat;
+  float: none;
+  
+}
+
+
+/***
+ *** Admin
+ ***/
+
+.admin .generalboxcontent {
+  background-color:#EEEEEE; 
+}
+
+.admin .generalbox {
+  border-color:#739FC4; 
+}
+
+.admin .informationbox {
+  border-color:#739FC4; 
+  background-color:#FFFFFF; 
+}
+
+
+/***
+ *** Blocks
+ ***/
+
+.sideblock {
+    border-top: 1px solid #739FC4;
+    border-right: 1px solid #4A677F;
+    border-bottom: 2px groove #4A677F;
+    border-left: 1px solid #4A677F;
+}
+
+
+
+.sideblock .header {
+  text-align: left;
+  padding:4px;
+  background-color: #739FC4;
+  border-bottom: 2px groove #739FC4;
+}
+
+.sideblock .content {
+  background-color:#FFFFFF;
+}
+
+.sideblock .header .commands {
+  float: right;
+  margin-top: 0.3em;
+}
+
+/***
+ *** Calendar
+ ***/
+
+#calendar .maincalendar,
+#calendar .sidecalendar {
+  border-color: #739FC4;
+}
+
+#calendar .maincalendar table.calendarmonth th {
+  border-color: #000000;
+}
+
+table.minicalendar {
+  border-color:#739FC4;
+}
+
+#calendar .maincalendar .eventlist .event {
+  border-color:#739FC4;
+}
+
+#calendar .maincalendar .eventlist .event .topic,
+#calendar .maincalendar .eventlist .event .picture,
+#calendar .maincalendar .eventlist .event .side {
+  background-color:#FFFFFF;
+}
+
+#calendar .maincalendar table.calendarmonth ul.events-underway {
+  color:#739FC4;
+}
+
+#calendar .event_global,
+.minicalendar .event_global,
+.block_calendar_month .event_global {
+  border-color:#2EBA0E !important;
+  background-color:#2EBA0E;
+}
+
+#calendar .event_course,
+.minicalendar .event_course,
+.block_calendar_month .event_course {
+  border-color:#FF9966 !important;
+  background-color:#FF9966;
+}
+
+#calendar .event_group,
+.minicalendar .event_group,
+.block_calendar_month .event_group {
+  border-color:#FBBB23 !important;
+  background-color:#FBBB23;
+}
+
+#calendar .event_user,
+.minicalendar .event_user,
+.block_calendar_month .event_user {
+  border-color:#A1BECB !important;
+  background-color:#A1BECB;
+}
+
+#calendar .duration_global,
+.minicalendar .duration_global {
+  border-top-color:#2EBA0E !important;
+  border-bottom-color:#2EBA0E !important;
+}
+
+#calendar .duration_course,
+.minicalendar .duration_course {
+  border-top-color:#FF9966 !important;
+  border-bottom-color:#FF9966 !important;
+}
+
+#calendar .duration_group,
+.minicalendar .duration_group {
+  border-top-color:#FBBB23 !important;
+  border-bottom-color:#FBBB23 !important;
+}
+
+#calendar .duration_user,
+.minicalendar .duration_user {
+  border-top-color:#A1BECB !important;
+  border-bottom-color:#A1BECB !important;
+}
+
+#calendar .weekend,
+.minicalendar .weekend {
+  color:#FF0000;
+}
+
+#calendar .today,
+.minicalendar .today {
+  border-color:#000000 !important;
+}
+
+.cal_popup_fg {
+  background-color:#FFFFFF;
+}
+
+.cal_popup_bg {
+  border-color:#000000;
+  background-color:#FFFFFF;
+}
+
+#calendar .maincalendar .filters table,
+#calendar .sidecalendar .filters table,
+.block_calendar_month .filters table {
+  background-color: #FFFFFF;
+}
+
+
+
+/***
+ *** Course
+ ***/
+
+/* course, entry-page, login */
+.headingblock {
+  background-color: #739FC4;
+  border-top: 1px solid #739FC4;
+  border-right: 1px solid #4A677F;
+  border-bottom: 2px groove #4A677F;
+  border-left: 1px solid #4A677F;
+}
+
+/* course */
+.headingblock .outline {
+  border-color:#739FC4;
+}
+
+#course-view .weekscss .section,
+#course-view .section td {
+  border-color:#DDDDDD;
+}
+
+/* .content should match the body background, sides are white. */
+#course-view .content {
+  background: #FFFFFF;
+}
+
+#course-view .weekscss .section,
+#course-view .section td.side {
+  background: #739FC4;
+}
+
+#course-view .section .side {
+}
+
+#course-view .section .left {
+}
+
+#course-view .section .right {
+}
+
+#course-view .weekscss .current,
+#course-view .current td.side {
+  background: #3b92dc;
+}
+
+#course-view .weekscss .hidden,
+#course-view .hidden td.side {
+  background: #DDDDDD;
+}
+
+.categoryboxcontent,
+.courseboxcontent {
+    border-top: 1px solid #739FC4;
+    border-right: 1px solid #4A677F;
+    border-bottom: 2px groove #4A677F;
+    border-left: 1px solid #4A677F;
+    background: #FFFFFF;
+}
+body#course-user .section {
+    border-color:#AAAAAA;
+}
+
+
+
+/***
+ *** Login
+ ***/
+
+.loginbox,
+.loginbox.twocolumns .loginpanel,
+.loginbox .subcontent {
+  border-color:#739FC4;
+}
+
+
+/***
+ *** Message
+ ***/
+
+table.message_search_results td {
+  border-color:#739FC4;
+}
+
+.message .author {
+  color: #739FC4;
+}
+
+.message .time {
+  color: #739FC4;
+}
+
+.message .content {
+}
+
+
+
+/***
+ *** User
+ ***/
+
+.userpicture {
+  background:#EEEEEE; 
+}
+
+.userinfobox {
+  border-color: #739FC4;
+  background-color: #F7F7F7;
+}
+.groupinfobox {
+  border-color: #739FC4;
+  background-color: #FCFCFC;
+}
+
+
+/***
+ *** Modules: Forum
+ ***/
+
+.forumheaderlist,
+.forumpost {
+  border-color:#1D5083;
+}
+
+.forumpost .content {
+  background: #FFFFFF;
+}
+
+.forumpost .left {
+  background:#739FC4; 
+}
+
+.forumpost .topic {
+  border-bottom-color: #739FC4;
+  background:#D0E2EE; 
+
+}
+
+.forumpost .starter {
+  background:#739FC4; 
+}
+
+.forumheaderlist .discussion .starter {
+  background:#D0E2EE; 
+}
+
+.forumheaderlist td {
+  border-color: #739FC4;
+}
+
+.sideblock .post .head {
+  color:#555555;
+}
+
+.forumthread .unread {
+  background: #78A2CD;
+}
+#mod-forum-discuss .forumpost {
+  background: none;
+}
+
+#mod-forum-discuss .unread .forumpost .message {
+  border-color: #78A2CD; 
+} 
+#mod-forum-discuss .forumthread .unread {
+} 
+
+#mod-forum-index .unread {
+}
+
+
+/***
+ *** Modules: Glossary
+ ***/
+
+.glossarypost {
+  border-color: #739FC4;
+}
+
+.glossarypost .entryheader,
+.glossarypost .entryapproval,
+.glossarypost .picture,
+.glossarypost .entryattachment,
+.glossarypost .left {
+  background-color: #739fc4;
+}
+
+.glossarycomment {
+  border-color: #739FC4;
+}
+
+.glossarycomment .entryheader,
+.glossarycomment .picture,
+.glossarycomment .left {
+  background-color: #739fc4;
+
+}
+
+#mod-glossary-report .generalbox .teacher {
+  background: #739fc4;
+}
+
+.categoryheader {
+  background-color: #efefef;
+}
+
+.glossaryformatheader {
+  background-color: #739FC4;
+}
+
+
+/***
+ *** Modules: Journal
+ ***/
+
+#mod-journal-view .feedbackbox .left,
+#mod-journal-view .feedbackbox .entryheader {
+  background-color: #739FC4;
+}
+
+/***
+ *** Modules: Quiz
+ ***/
+
+body#mod-quiz-report table#attempts td {
+  border-color: #739FC4;
+}
+body#mod-quiz-report table#attempts .r1 {
+  background-color: #eeeeee;
+}
+
+
+
+/***
+ *** Misc Color
+ ***/
+
+.headermenu a:link {
+    text-decoration: none;
+    color: #ffffff;
+}
+.headermenu a:visited {
+    text-decoration: none;
+    color: #ffffff;
+}
+.headermenu a:hover {
+    text-decoration: underline;
+    color: #ffffff;
+}
+
+
+.cornflowersurround {
+  background: #D0E2EE;
+  border-top: 1px solid #4A677F;
+  border-right: 1px solid #4A677F;
+  border-bottom: 2px groove #4A677F;
+  border-left: 1px solid #4A677F;
+}
+
+.generalboxcontent {
+  background-color:#FFFFFF;
+
+}
+/***
+ *** Layout Core
+ ***/
+
+h1.main,
+h2.main,
+h3.main,
+h4.main,
+h5.main,
+h6.main {
+  text-align: center;
+}
+
+#layout-table {
+  width:100%;
+  border-collapse:separate;
+  margin-top: 8px;
+}
+
+#layout-table #left-column,
+#layout-table #middle-column,
+#layout-table #right-column
+{
+  vertical-align:top;
+}
+
+#layout-table #middle-column {
+  padding-left:12px;
+  padding-right:12px;
+}
+
+#layout-table #left-column {
+  padding-left:10px;
+}
+
+#layout-table #right-column {
+  padding-right:10px;
+}
+
+div.headermenu 
+{
+	position: absolute;
+	top: 15px;
+	right: 10px;
+}
