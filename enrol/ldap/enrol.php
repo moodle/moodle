@@ -116,7 +116,7 @@ function setup_enrolments(&$user) {
     foreach ($ldap_assignments as $ra) {
         if($ra->enrol === 'ldap') {
             error_log("Unassigning role_assignment with id '{$ra->id}' from user {$user->id} ({$user->username})");
-            role_unassign($ra->id, $user->id, 0, $ra->contextid);
+            role_unassign($ra->id, $user->id, 0, $ra->contextid, 'ldap');
         }
     }
 
@@ -270,7 +270,7 @@ function sync_enrolments($type, $enrol = false) {
                         foreach ($todelete as $member) {
                             $member = $member->user;
 
-                            if (role_unassign($role->id, $member, 0, $context->id)) {
+                            if (role_unassign($role->id, $member, 0, $context->id, 'ldap')) {
                                 print "Unassigned $type from $member for course $course_obj->id ($course_obj->shortname)\n";
                             } else {
                                 print "Failed to unassign $type from $member for course $course_obj->id ($course_obj->shortname)\n";
@@ -558,20 +558,20 @@ function find_ext_enrolments ($ldap_connection, $memberuid, $role){
 // with course creation
 function create_course ($course_ext,$skip_fix_course_sortorder=0){
     global $CFG;
-    
-    // set defaults
-    $course = NULL;
-    $course->student  = 'Student';
-    $course->students = 'Students';
-    $course->teacher  = 'Teacher';
-    $course->teachers = 'Teachers';
-    $course->format = 'topics';
-    
+
     // override defaults with template course
     if(!empty($CFG->enrol_ldap_template)){
         $course = get_record("course", 'shortname', $CFG->enrol_ldap_template);
         unset($course->id); // so we are clear to reinsert the record
         unset($course->sortorder);
+    } else {
+        // set defaults
+        $course = new object();
+        $course->student  = get_string('defaultcoursestudent');
+        $course->students = get_string('defaultcoursestudents');
+        $course->teacher  = get_string('defaultcourseteacher');
+        $course->teachers = get_string('defaultcourseteachers');
+        $course->format = 'topics';
     }
 
     // override with required ext data
@@ -592,7 +592,7 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
         : $course_ext[$CFG->enrol_ldap_course_summary][0];
     
     if(!empty($CFG->enrol_ldap_category)){ // optional ... but ensure it is set!
-        $course->category   = $CFG->enrol_ldap_category;
+        $course->category = $CFG->enrol_ldap_category;
     } 
     if ($course->category == 0){ // must be avoided as it'll break moodle
         $course->category = 1; // the misc 'catch-all' category
@@ -609,9 +609,11 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
     $course->timecreated = time();
     $course->visible     = 1;
     
+    $course = addsleashes_recursive($course);
+
     // store it and log
     if ($newcourseid = insert_record("course", $course)) {  // Set up new course
-        $section = NULL;
+        $section = new object();
         $section->course = $newcourseid;   // Create a default section.
         $section->section = 0;
         $section->id = insert_record("course_sections", $section);
