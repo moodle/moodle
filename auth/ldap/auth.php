@@ -1215,39 +1215,42 @@ class auth_plugin_ldap extends auth_plugin_base {
     // Takes username and groupdn(s) , separated by ;
     // Returns true if user is member of any given groups
 
-        $result = false;
         $ldapconnection = $this->ldap_connect();
 
-        if (empty($username) or empty($groupdns)) {
-            return $result;
+        if (empty($extusername) or empty($groupdns)) {
+            return false;
             }
 
         if ($this->config->memberattribute_isdn) {
-            $username=$this->ldap_find_userdn($ldapconnection, $username);
+            $memberuser = $this->ldap_find_userdn($ldapconnection, $extusername);
+        } else {
+            $memberuser = $extusername;
         }
-        if (! $username ) {
-            return $result;
+
+        if (empty($memberuser)) {
+            return false;
         }
 
         $groups = explode(";",$groupdns);
 
+        $result = false;
         foreach ($groups as $group) {
             $group = trim($group);
             if (empty($group)) {
                 continue;
             }
             //echo "Checking group $group for member $username\n";
-            $search = @ldap_read($ldapconnection, $group,  '('.$this->config->memberattribute.'='.$this->filter_addslashes($username).')', array($this->config->memberattribute));
-
-            if (!empty($search) and ldap_count_entries($ldapconnection, $search)) {$info = $this->ldap_get_entries($ldapconnection, $search);
+            $search = ldap_read($ldapconnection, $group,  '('.$this->config->memberattribute.'='.$this->filter_addslashes($memberuser).')', array($this->config->memberattribute));
+            if (!empty($search) and ldap_count_entries($ldapconnection, $search)) {
+                $info = $this->ldap_get_entries($ldapconnection, $search);
 
                 if (count($info) > 0 ) {
                     // user is member of group
                     $result = true;
                     break;
                 }
+          }
         }
-    }
 
         return $result;
 
@@ -1572,6 +1575,8 @@ class auth_plugin_ldap extends auth_plugin_base {
             {$config->objectclass = ''; }
         if (!isset($config->memberattribute))
             {$config->memberattribute = ''; }
+        if (!isset($config->memberattribute_isdn))
+            {$config->memberattribute_isdn = ''; }
         if (!isset($config->creators))
             {$config->creators = ''; }
         if (!isset($config->create_context))
@@ -1612,6 +1617,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         set_config('version', $config->version, 'auth/ldap');
         set_config('objectclass', $config->objectclass, 'auth/ldap');
         set_config('memberattribute', $config->memberattribute, 'auth/ldap');
+        set_config('memberattribute_isdn', $config->memberattribute_isdn, 'auth/ldap');
         set_config('creators', $config->creators, 'auth/ldap');
         set_config('create_context', $config->create_context, 'auth/ldap');
         set_config('expiration', $config->expiration, 'auth/ldap');
