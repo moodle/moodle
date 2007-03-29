@@ -15,30 +15,8 @@
     $inactive = array();
     $activated = array();
 
-    if (has_capability('mod/glossary:import', $context)) {
-        $toolsrow[] = new tabobject(GLOSSARY_IMPORT_VIEW, 
-                                    $CFG->wwwroot.'/mod/glossary/import.php?id='.$cm->id, 
-                                    get_string('importentries', 'glossary'));
-    }
-    if (has_capability('mod/glossary:export', $context)) {
-        $toolsrow[] = new tabobject(GLOSSARY_EXPORT_VIEW, 
-                                    $CFG->wwwroot.'/mod/glossary/export.php?id='.$cm->id.
-                                    '&amp;mode='.$mode.'&amp;hook='.urlencode($hook), 
-                                    get_string('exportentries', 'glossary'));
-    }
-
-    if (has_capability('mod/glossary:approve', $context)) {
-        if ($hiddenentries = count_records_select('glossary_entries',"glossaryid  = $glossary->id and approved = 0")) {
-            $toolsrow[] = new tabobject(GLOSSARY_APPROVAL_VIEW, 
-                                        $CFG->wwwroot.'/mod/glossary/view.php?id='.$id.'&amp;mode=approval',
-                                        get_string("waitingapproval", "glossary"). ' ('.$hiddenentries.')');
-
-        } else if ($tab == GLOSSARY_APPROVAL_VIEW) {  
-         // Teachers going to approval view and without entries->go to defaulttab
-            $tab = $defaulttab;
-        }
-    } else if ($tab == GLOSSARY_APPROVAL_VIEW) { 
-     // Non-teachers going to approval view go to defaulttab
+    if (!has_capability('mod/glossary:approve', $context) && $tab == GLOSSARY_APPROVAL_VIEW) {
+    /// Non-teachers going to approval view go to defaulttab
         $tab = $defaulttab;
     }
 
@@ -81,7 +59,7 @@
 
 <?php print_tabs($tabrows, $tab, $inactive, $activated); ?>
 
-  <div width="100%" class="entrybox">
+  <div class="entrybox">
 
 <?php
  

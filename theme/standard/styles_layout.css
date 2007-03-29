@@ -2848,8 +2848,14 @@ body#mod-forum-search .introcontent {
 }
 
 .entrybox {
+  width: 100%;
   border-width: 0px 1px 1px 1px;
   border-style: solid;
+}
+
+.entrybox hr {
+  border-left:none;
+  border-right:none;
 }
 
 .glossarypost {
@@ -2969,6 +2975,15 @@ body#mod-forum-search .introcontent {
   text-align: center;
 }
 
+.mod-glossary .tabrow0 {
+  padding-bottom: 5px;
+}
+
+#mod-glossary-view .glossarycontrol {
+  float: right;
+  text-align:right;
+  white-space: nowrap;
+}
 
 /***
  *** Modules: Journal
