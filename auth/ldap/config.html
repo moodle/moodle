@@ -49,6 +49,8 @@
         {$config->forcechangepassword = 0; }
     if (!isset($config->stdchangepassword))
         {$config->stdchangepassword = 0; }
+    if (!isset($config->passtype)) 
+        {$config->passtype = 'plaintext';}
     if (!isset($config->changepasswordurl))
         {$config->changepasswordurl = ''; }
     if (!isset($config->removeuser))
@@ -269,6 +271,21 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
         <p><?php print_string('stdchangepassword_expl', 'auth') ?></p>
         <p><?php print_string('stdchangepassword_explldap', 'auth') ?></p>
     </td>
+</tr>
+
+<tr valign="top" class="required">
+    <td align="right"><label for="menupasstype"><?php print_string('auth_ldap_passtype_key', 'auth') ?></label></td>
+    <td>
+        <?php
+        $passtype = array();
+        $passtype['plaintext'] = get_string('plaintext', 'auth');
+        $passtype['md5']       = get_string('md5', 'auth');
+        $passtype['sha1']      = get_string('sha1', 'auth');
+        choose_from_menu($passtype, 'passtype', $config->passtype, '');
+
+        ?>
+    </td>
+    <td><?php print_string('auth_ldap_passtype', 'auth') ?></td>
 </tr>
 
 <tr valign="top">

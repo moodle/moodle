@@ -232,6 +232,18 @@ class auth_plugin_ldap extends auth_plugin_base {
         $extusername = $textlib->convert(stripslashes($userobject->username), 'utf-8', $this->config->ldapencoding);
         $extpassword = $textlib->convert(stripslashes($plainpass), 'utf-8', $this->config->ldapencoding);
 
+        switch ($this->config->passtype) {
+            case 'md5':
+                $extpassword = '{MD5}' . base64_encode(pack('H*', md5($extpassword)));
+                break;
+            case 'sha1':
+                $extpassword = '{SHA}' . base64_encode(pack('H*', sha1($extpassword)));
+                break;
+            case 'plaintext':
+            default:
+                break; // plaintext
+        }
+
         $ldapconnection = $this->ldap_connect();
         $attrmap = $this->ldap_attributes();
 
@@ -974,6 +986,18 @@ class auth_plugin_ldap extends auth_plugin_base {
         $extusername = $textlib->convert(stripslashes($username), 'utf-8', $this->config->ldapencoding);
         $extpassword = $textlib->convert(stripslashes($newpassword), 'utf-8', $this->config->ldapencoding);
 
+        switch ($this->config->passtype) {
+            case 'md5':
+                $extpassword = '{MD5}' . base64_encode(pack('H*', md5($extpassword)));
+                break;
+            case 'sha1':
+                $extpassword = '{SHA}' . base64_encode(pack('H*', sha1($extpassword)));
+                break;
+            case 'plaintext':
+            default:
+                break; // plaintext
+        }
+
         $ldapconnection = $this->ldap_connect();
 
         $user_dn = $this->ldap_find_userdn($ldapconnection, $extusername);
@@ -1596,7 +1620,9 @@ class auth_plugin_ldap extends auth_plugin_base {
         if (!isset($config->forcechangepassword))
             {$config->forcechangepassword = 0; }
         if (!isset($config->stdchangepassword))
-            {$config->stdchangepassword = 0; }
+            {$config->forcechangepassword = 0; }
+        if (!isset($config->passtype))
+            {$config->passtype = 'plaintext'; }
         if (!isset($config->changepasswordurl))
             {$config->changepasswordurl = ''; }
         if (!isset($config->removeuser))
@@ -1628,6 +1654,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         set_config('auth_user_create', $config->auth_user_create, 'auth/ldap');
         set_config('forcechangepassword', $config->forcechangepassword, 'auth/ldap');
         set_config('stdchangepassword', $config->stdchangepassword, 'auth/ldap');
+        set_config('passtype', $config->passtype, 'auth/ldap');
         set_config('changepasswordurl', $config->changepasswordurl, 'auth/ldap');
         set_config('removeuser', $config->removeuser, 'auth/ldap');
 
