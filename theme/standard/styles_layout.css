@@ -116,6 +116,10 @@ img.grouppicture {
   border: 0;
 }
 
+#grouppicture {
+  text-align: center;
+}
+
 .notifyproblem {
   text-align: center;
   padding: 10px;

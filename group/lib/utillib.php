@@ -39,6 +39,11 @@ function groups_count_group_members($groupid) {
 function groups_count_groups_in_grouping($groupingid, $courseid) {
     if (GROUP_NOT_IN_GROUPING == $groupingid) {
         $groupids = groups_get_groups_not_in_any_grouping($courseid);
+        
+        if ($groupids === false) {
+            return false;
+        }
+        
         return count($groupids);
     } elseif (GROUP_ANY_GROUPING == $groupingid) {
         return count_records('groups_courses_groups', 'courseid', $courseid);
@@ -309,9 +314,9 @@ function groups_get_course($groupid) {
 function groups_group_edit_url($courseid, $groupid, $groupingid=false, $html=true, $param=false) {
     global $CFG;
     $html ? $sep = '&amp;' : $sep = '&';
-    $url = $CFG->wwwroot.'/group/group.php?courseid='.$courseid;
+    $url = $CFG->wwwroot.'/group/edit.php?courseid='.$courseid;
     if ($groupid) {
-        $url .= $sep.'group='.$groupid;
+        $url .= $sep.'id='.$groupid;
     }
     if ($groupingid) {
         $url .= $sep.'grouping='.$groupingid;
