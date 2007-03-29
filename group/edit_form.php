@@ -11,11 +11,18 @@ class group_edit_form extends moodleform {
 
         $strrequired = get_string('required');
         $buttonstr   = get_string('creategroup', 'group');
-        $group       = $this->_customdata['group'];
+        
+        if (isset($this->_customdata['group'])) {
+            $group = $this->_customdata['group'];
+        } else {
+            $group = false;
+        }
+
         $groupingid  = $this->_customdata['groupingid'];
         $newgrouping = $this->_customdata['newgrouping'];
         $courseid    = $this->_customdata['courseid'];
-        
+       
+
         $id = $group->id;
         $mform =& $this->_form;
         
@@ -33,6 +40,22 @@ class group_edit_form extends moodleform {
         
         $options = array(get_string('no'), get_string('yes'));
         $mform->addElement('select', 'hidepicture', get_string('hidepicture'), $options);
+        
+        $maxbytes = get_max_upload_file_size($CFG->maxbytes, $COURSE->maxbytes);
+        
+        if (!empty($CFG->gdversion) and $maxbytes) {
+            $this->set_upload_manager(new upload_manager('imagefile', false, false, null, false, 0, true, true, false));
+            $mform->addElement('file', 'imagefile', get_string('newpicture', 'group'));
+            $mform->setHelpButton('imagefile', array ('picture', get_string('helppicture')), true);
+        }
+
+        
+        if ($group) {
+            $buttonstr = get_string('save', 'group');
+            $mform->addElement('hidden','id', null);
+            $mform->setType('id', PARAM_INT);
+        }
+
         $this->add_action_buttons(true, $buttonstr);
         $mform->addElement('hidden', 'courseid', $courseid);
     }

@@ -313,9 +313,9 @@ function groups_get_course($groupid) {
 function groups_group_edit_url($courseid, $groupid, $groupingid=false, $html=true, $param=false) {
     global $CFG;
     $html ? $sep = '&amp;' : $sep = '&';
-    $url = $CFG->wwwroot.'/group/group.php?courseid='.$courseid;
+    $url = $CFG->wwwroot.'/group/edit.php?courseid='.$courseid;
     if ($groupid) {
-        $url .= $sep.'group='.$groupid;
+        $url .= $sep.'id='.$groupid;
     }
     if ($groupingid) {
         $url .= $sep.'grouping='.$groupingid;

@@ -63,10 +63,11 @@ if ($editform->is_cancelled()) {
             print_error('erroreditgroup', 'group', groups_home_url($course->id));
         }
     } elseif (empty($group)) { // New group
-        if (!$group = groups_create_group($course->id)) {
+        if (!$id = groups_create_group($course->id, $data)) {
             print_error('erroreditgroup');
         } else {
-            $success = (bool)$id = groups_create_group($course->id);
+            $success = (bool)$id;
+            $data->id = $id;
         }
     } elseif ($groupingid != $newgrouping) { // Moving group to new grouping
         if ($groupingid != GROUP_NOT_IN_GROUPING) {
@@ -77,15 +78,14 @@ if ($editform->is_cancelled()) {
             print_error('groupnotupdated');
         }
     }
-    
     // Handle file upload
     if ($success) {
-        if ($editform->save_files()) {
-        } else {
-            $success = false;
-        }
+        require_once("$CFG->libdir/gdlib.php");
+        if (save_profile_image($id, $editform->_upload_manager, 'groups')) {
+            $data->picture = 1;
+            $success = $success && groups_update_group($data, $course->id); 
+        } 
     }
-    $success = $success && groups_set_group_settings($id, $groupsettings);
 
     if ($success) {
         redirect(groups_home_url($course->id, $id, $groupingid, false));
