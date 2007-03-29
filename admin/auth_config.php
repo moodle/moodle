@@ -19,6 +19,8 @@ if ($frm = data_submitted()) {
         error(get_string('confirmsesskeybad', 'error'));
     }
 
+    $frm = stripslashes_recursive($frm);
+
     $authplugin->validate_form($frm, $err);
 
     if (count($err) == 0) {
@@ -36,7 +38,7 @@ if ($frm = data_submitted()) {
                     }
                 }
             }
-            redirect("auth.php?sesskey=$USER->sesskey");
+            redirect("auth.php");
             exit;
         }
     } else {

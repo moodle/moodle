@@ -259,6 +259,8 @@ class auth_plugin_base {
     /**
      * A chance to validate form data, and last chance to
      * do stuff before it is inserted in config_plugin
+     * @param object object with submitted configuration settings (without system magic quotes)
+     * @param array $err array of error messages
      */
      function validate_form(&$form, &$err) {
         //override if needed
@@ -266,6 +268,8 @@ class auth_plugin_base {
 
     /**
      * Processes and stores configuration data for this authentication plugin.
+     *
+     * @param object object with submitted configuration settings (without system magic quotes)
      */
     function process_config($config) {
         //override if needed
