@@ -47,18 +47,21 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
 
         $virtualqtype = $this->get_virtual_qtype();
         $virtualqtype->get_numerical_units($question);
-
+        
+        if( isset($question->export_process)&&$question->export_process){
+            $question->options->datasets = $this->get_datasets_for_export($question);
+        }   
         return true;
     }
     
-    function get_datasets_for_export($questionid){
+    function get_datasets_for_export(&$question){
         $datasetdefs = array();
-        if (!empty($questionid)) {
+        if (!empty($question->id)) {
             global $CFG;
             $sql = "SELECT i.*
                     FROM {$CFG->prefix}question_datasets d,
                          {$CFG->prefix}question_dataset_definitions i
-                    WHERE d.question = '$questionid'
+                    WHERE d.question = '$question->id'
                     AND   d.datasetdefinition = i.id
                    ";
             if ($records = get_records_sql($sql)) {                

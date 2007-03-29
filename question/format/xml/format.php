@@ -991,12 +991,12 @@ class qformat_xml extends qformat_default {
              } 
         //echo "<pre> question calc";print_r($question);echo "</pre>"; 
         //First, we a new function to get all the   data itmes in the database
-            $question_datasetdefs =$QTYPES['calculated']->get_datasets_for_export ($question->id);
+         //   $question_datasetdefs =$QTYPES['calculated']->get_datasets_for_export ($question);
         //    echo "<pre> question defs";print_r($question_datasetdefs);echo "</pre>";      
         //If there are question_datasets
-            if (count($question_datasetdefs)) {// there should be
+            if( isset($question->options->datasets)&&count($question->options->datasets)){// there should be
                 $expout .= "<dataset_definitions>\n";
-                foreach ($question_datasetdefs as $def) {
+                foreach ($question->options->datasets as $def) {
                     $expout .= "<dataset_definition>\n";
                     $expout .= "    <status>".$this->writetext($def->status)."</status>\n";
                     $expout .= "    <name>".$this->writetext($def->name)."</name>\n";
