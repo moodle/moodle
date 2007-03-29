@@ -576,8 +576,8 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
 
     // override with required ext data
     $course->idnumber  = $course_ext[$CFG->enrol_ldap_course_idnumber][0];
-    $course->fullname  = $course_ext[$CFG->enrol_ldap_course_fullname][0];
-    $course->shortname = $course_ext[$CFG->enrol_ldap_course_shortname][0];
+    $course->fullname  = addslashes($course_ext[$CFG->enrol_ldap_course_fullname][0]);
+    $course->shortname = addslashes($course_ext[$CFG->enrol_ldap_course_shortname][0]);
     if (   empty($course->idnumber)
         || empty($course->fullname)
         || empty($course->shortname) ) { 
@@ -589,7 +589,7 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
 
     $course->summary = empty($CFG->enrol_ldap_course_summary) || empty($course_ext[$CFG->enrol_ldap_course_summary][0])
         ? ''
-        : $course_ext[$CFG->enrol_ldap_course_summary][0];
+        : addslashes($course_ext[$CFG->enrol_ldap_course_summary][0]);
     
     if(!empty($CFG->enrol_ldap_category)){ // optional ... but ensure it is set!
         $course->category   = $CFG->enrol_ldap_category;
