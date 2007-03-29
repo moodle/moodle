@@ -3845,7 +3845,7 @@ function forum_role_assign($userid, $context, $roleid) {
     
     // we are checking the role because has_capability() will pull this capability out
     // from other roles this user might have and resolve them, which is no good
-    if ($cap['mod/forum:initialsubscriptions'] == CAP_ALLOW) {
+    if (isset($cap['mod/forum:initialsubscriptions']) && $cap['mod/forum:initialsubscriptions'] == CAP_ALLOW) {
         return forum_add_user_default_subscriptions($userid, $context);
     } else {
         // MDL-8981, do not subscribe to forum
