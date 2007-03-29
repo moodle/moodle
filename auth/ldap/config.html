@@ -27,6 +27,8 @@
         {$config->objectclass = ''; }
     if (!isset($config->memberattribute))
         {$config->memberattribute = ''; }
+    if (!isset($config->memberattribute_isdn))
+        {$config->memberattribute_isdn = ''; }
     if (!isset($config->creators))
         {$config->creators = ''; }
     if (!isset($config->create_context))
@@ -218,6 +220,16 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     <?php  if (isset($err['memberattribute'])) formerr($err['memberattribute']); ?>
     </td><td>
     <?php print_string('auth_ldap_memberattribute','auth') ?>
+    </td>
+</tr>
+
+<tr valign="top" class="required">
+        <td align="right"><label for="memberattribute_isdn"><?php print_string('auth_ldap_memberattribute_isdn_key','auth') ?></label></td>
+        <td>
+    <input name="memberattribute" id="memberattribute_isdn" type="text" size="30" value="<?php echo $config->memberattribute_isdn?>" />
+    <?php  if (isset($err['memberattribute_isdn'])) formerr($err['memberattribute_isdn']); ?>
+    </td><td>
+    <?php print_string('auth_ldap_memberattribute_isdn','auth') ?>
     </td>
 </tr>
 
