@@ -397,10 +397,11 @@ function groups_create_grouping($courseid, $groupingsettings = false) {
  */
 function groups_add_group_to_grouping($groupid, $groupingid) {
 	if (GROUP_NOT_IN_GROUPING == $groupingid) {
-        return false;
+        return true;
     }
     $belongstogrouping = groups_belongs_to_grouping($groupid, $groupingid);
-	if (!groups_grouping_exists($groupingid)) {
+	
+    if (!groups_grouping_exists($groupingid)) {
 		$groupadded = false;
 	} elseif (!$belongstogrouping) {
 		$groupadded = groups_db_add_group_to_grouping($groupid, $groupingid); 

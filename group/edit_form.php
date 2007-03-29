@@ -54,6 +54,26 @@ class group_edit_form extends moodleform {
             $buttonstr = get_string('save', 'group');
             $mform->addElement('hidden','id', null);
             $mform->setType('id', PARAM_INT);
+
+            // Options to move group to another grouping
+            $groupingids = groups_get_groupings($courseid);
+            
+            // Add pseudo-grouping "Not in a grouping"
+            $groupingids[] = GROUP_NOT_IN_GROUPING;
+            if ($groupingids) {    
+                // Put the groupings into a hash and sort them
+                foreach($groupingids as $id) {
+                    $listgroupings[$id] = groups_get_grouping_displayname($id, $courseid);
+                }
+                natcasesort($listgroupings);
+                $mform->addElement('select', 'newgrouping', get_string('addgroupstogrouping', 'group'), $listgroupings);
+                $mform->setDefault('newgrouping', $groupingid);
+            }
+        }
+        
+        if($groupingid) {
+            $mform->addElement('hidden', 'grouping', $groupingid);
+            $mform->setType('grouping', PARAM_INT);
         }
 
         $this->add_action_buttons(true, $buttonstr);

@@ -20,6 +20,9 @@ $id          = optional_param('id', false, PARAM_INT);
 $groupingid  = optional_param('grouping', false, PARAM_INT);
 $newgrouping = optional_param('newgrouping', false, PARAM_INT);
 $courseid    = required_param('courseid', PARAM_INT);
+if ($groupingid === false) {
+    $groupingid = -1;
+}
 
 $delete = optional_param('delete', false, PARAM_BOOL);
 
@@ -68,11 +71,13 @@ if ($editform->is_cancelled()) {
         } else {
             $success = (bool)$id;
             $data->id = $id;
+            if ($groupingid) {
+                $success = $success && groups_add_group_to_grouping($id, $groupingid);
+            } 
         }
     } elseif ($groupingid != $newgrouping) { // Moving group to new grouping
-        if ($groupingid != GROUP_NOT_IN_GROUPING) {
-            $success = $success && groups_remove_group_from_grouping($id, $groupingid);
-        } 
+        $success = $success && groups_remove_group_from_grouping($id, $groupingid);
+        $success = $success && groups_add_group_to_grouping($id, $newgrouping);
     } else { // Updating group
         if (!groups_update_group($data, $course->id)) {
             print_error('groupnotupdated');
