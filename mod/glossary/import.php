@@ -43,29 +43,22 @@
     $strsearchconcept = get_string("searchconcept", "glossary");
     $strsearchindefinition = get_string("searchindefinition", "glossary");
     $strsearch = get_string("search");
+    $strimportentries = get_string('importentries', 'glossary');
 
     print_header_simple(format_string($glossary->name), "",
-        "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> ".format_string($glossary->name),
+        "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> " .
+        "<a href=\"view.php?id=$id\">" .format_string($glossary->name) . "</a> -> " .
+        $strimportentries,
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
 
-    print_heading(format_string($glossary->name));
-
-/// Info box
-
-    if ( $glossary->intro ) {
-        print_simple_box(format_text($glossary->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
-        echo '<br />';
-    }
-
-/// Tabbed browsing sections
-    $tab = GLOSSARY_IMPORT_VIEW;
-    include("tabs.php");
+    print_heading($strimportentries);
 
     if ( !$step ) {
+        print_box_start('glossarydisplay generalbox');
         include("import.html");
+        print_box_end();
 
-        glossary_print_tabbed_table_end();
         print_footer($course);
         exit;
     }
@@ -77,9 +70,10 @@
     $um = new upload_manager('file',false,false,$course,false,0);
 
     if (!$um->preprocess_files()) {
-        echo '</center>';
-        glossary_print_tabbed_table_end();
+        print_box_start('glossarydisplay generalbox');
         print_continue('import.php?id='.$id);
+        print_box_end();
+
         print_footer();
         die();
     }
@@ -193,8 +187,6 @@
                 }
             } else {
                 notify("Error while trying to create the new glossary.");
-                echo '</center>';
-                glossary_print_tabbed_table_end();
                 print_footer($course);
                 exit;
             }
@@ -323,12 +315,13 @@
             }
         }
         // processed entries
-        echo '<table border="0" width="100%">';
+        print_box_start('glossarydisplay generalbox');
+        echo '<table class="glossaryimportexport">';
         echo '<tr>';
         echo '<td width="50%" align="right">';
         echo get_string("totalentries","glossary");
         echo ':</td>';
-        echo '<td width="50%">';
+        echo '<td width="50%" align="left">';
         echo $importedentries + $entriesrejected;
         echo '</td>';
         echo '</tr>';
@@ -336,7 +329,7 @@
         echo '<td width="50%" align="right">';
         echo get_string("importedentries","glossary");
         echo ':</td>';
-        echo '<td width="50%">';
+        echo '<td width="50%" align="left">';
         echo $importedentries;
         if ( $entriesrejected ) {
             echo ' <small>(' . get_string("rejectedentries","glossary") . ": $entriesrejected)</small>";
@@ -353,20 +346,19 @@
             echo '</td>';
             echo '</tr>';
         }
-        echo '</table><hr width="75%">';
+        echo '</table><hr />';
 
         // rejected entries
         if ($rejections) {
-            echo '<div class="boxaligncenter"><table border="0" width="70%">';
+            echo '<table class="glossaryimportexport">';
             echo '<tr><td align="center" colspan="2" width="100%"><strong>' . get_string("rejectionrpt","glossary") . '</strong></tr>';
             echo $rejections;
-            echo '</div></center><p><hr width="75%">';
+            echo '</table><hr />';
         }
+        print_box_end();
     } else {
         notify("Error while trying to read the file.");
     }
-
-    glossary_print_tabbed_table_end();
 
 /// Finish the page
     print_footer($course);
