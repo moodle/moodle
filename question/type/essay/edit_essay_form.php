@@ -22,6 +22,10 @@ class question_edit_essay_form extends question_edit_form {
         $mform->setType('feedback', PARAM_RAW);
 
         $mform->addElement('hidden', 'fraction', 0);
+
+        //don't need this default element.
+        $mform->removeElement('penalty');
+        $mform->addElement('hidden', 'penalty', 0);
     }
 
     function set_data($question) {
@@ -29,6 +33,7 @@ class question_edit_essay_form extends question_edit_form {
             $answer = reset($question->options->answers);
             $question->feedback = $answer->feedback;
         }
+        $question->penalty = 0;
         parent::set_data($question);
     }
 
