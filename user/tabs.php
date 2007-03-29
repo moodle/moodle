@@ -146,7 +146,7 @@
                 $secondrow[] = new tabobject('posts', $CFG->wwwroot.'/mod/forum/user.php?course='.$course->id.
                                       '&amp;id='.$user->id.'&amp;mode=posts', get_string('posts', 'forum'));
                 $secondrow[] = new tabobject('discussions', $CFG->wwwroot.'/mod/forum/user.php?course='.$course->id.
-                                      '&amp;id='.$user->id.'&amp;mode=discussions', get_string('discussionsstartedby', 'forum'));
+                                      '&amp;id='.$user->id.'&amp;mode=discussions', get_string('discussions', 'forum'));
             }
 
         }
