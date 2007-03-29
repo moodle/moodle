@@ -211,7 +211,7 @@
     }
 
     if ($context->contextlevel==CONTEXT_SYSTEM) {
-        print_simple_box(get_string('globalroleswarning', 'role'));
+        print_box(get_string('globalroleswarning', 'role'));
     }
     
     if ($roleid) {        /// prints a form to swap roles
