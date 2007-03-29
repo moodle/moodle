@@ -371,6 +371,7 @@
         foreach($questionidarray as $i) {
             if (!isset($actions[$i])) {
                 $actions[$i]->responses = array('' => '');
+                $actions[$i]->event = QUESTION_EVENTSAVE;
             }
             $actions[$i]->timestamp = $timestamp;
             question_process_responses($questions[$i], $states[$i], $actions[$i], $quiz, $attempt);

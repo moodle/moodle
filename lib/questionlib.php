@@ -1073,6 +1073,7 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
 
     // If $action->event is not set that implies saving
     if (! isset($action->event)) {
+        debugging('Ambiguous action in question_process_responses.' , DEBUG_DEVELOPER);
         $action->event = QUESTION_EVENTSAVE;
     }
     // If submitted then compare against last graded
