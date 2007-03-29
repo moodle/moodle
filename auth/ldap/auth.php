@@ -150,6 +150,9 @@ class auth_plugin_ldap extends auth_plugin_base {
             }
             $ldapval = NULL;
             foreach ($values as $value) {
+                if ($value == 'dn') {
+                    $result[$key] = $user_dn;
+                }
                 if (!array_key_exists($value, $user_entry[0])) {
                     continue; // wrong data mapping!
                 }
