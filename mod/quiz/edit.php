@@ -183,6 +183,7 @@
         if ($randomcreate > 0) {
 
             $form->name = get_string('random', 'quiz') .' ('. $category->name .')';
+            $form->category = $category->id;
             $form->questiontext = $recurse; // we use the questiontext field to store the info
                                             // on whether to include questions in subcategories
             $form->questiontextformat = 0;
@@ -192,7 +193,6 @@
             for ($i=0; $i<$randomcreate; $i++) {
                 $form->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
                 $question = new stdClass;
-                $question->category = $category->id;
                 $question->qtype = RANDOM;
                 $question = $QTYPES[RANDOM]->save_question($question, $form, $course);
                 if(!isset($question->id)) {
