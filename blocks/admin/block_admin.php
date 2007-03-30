@@ -201,9 +201,7 @@ class block_admin extends block_list {
     }
 
     function applicable_formats() {
-        // Yu: Separating site and site course context
-        // Have to enable for site as well
-        return array('all' => true, 'course' => true);
+        return array('course' => true);   // Not needed on site
     }
 }
 
