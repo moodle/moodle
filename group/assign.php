@@ -176,7 +176,7 @@ if ($success) {
        </td>
     </tr>
     <tr><td>
-        <input type="submit" name="cancel" value="<?php print_string('return', 'group'); ?>" />    
+        <input type="submit" name="cancel" value="<?php print_string('backtogroups', 'group'); ?>" />    
     </td></tr>
     </table>
     </div>

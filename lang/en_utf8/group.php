@@ -84,6 +84,7 @@ $string['showusersalreadyingroup'] = 'Show users already in a group in the group
 $string['save'] = 'Save';
 $string['cancel'] = 'Cancel';
 $string['return'] = 'Return';
+$string['backtogroups'] = 'Back to groups';
 
 $string['groupfor'] = "for group";
 $string['groupinfo'] = 'Info about selected group';
