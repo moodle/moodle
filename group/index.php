@@ -25,7 +25,6 @@ $courseid   = required_param('id', PARAM_INT);
 $groupingid = optional_param('grouping', GROUP_NOT_IN_GROUPING, PARAM_INT);
 $groupid    = optional_param('group', false, PARAM_INT);
 $userid     = optional_param('user', false, PARAM_INT);
-
 $action = groups_param_action();
 
 
@@ -51,7 +50,6 @@ if (! $course) {
     $success = false;
     print_error('invalidcourse'); //'The course ID is invalid'
 }
-
 
 if ($success) {
     // Make sure that the user has permissions to manage groups.
@@ -162,7 +160,7 @@ if ($success) {
     $disabled = 'disabled="disabled"';
     
     // Pre-disable buttons based on URL variables
-    if (isset($groupingid) && $groupingid > -1) {
+    if (!empty($groupingid) && $groupingid > -1) {
         $showeditgroupsettingsform_disabled = '';
         $showeditgroupingsettingsform_disabled = '';
         $deletegroup_disabled = '';
@@ -178,7 +176,11 @@ if ($success) {
         $showcreategroupform_disabled = $disabled;
     }
     
-    if (isset($groupid)) {
+    if ($groupingid == -1) {
+        $printerfriendly_disabled = '';
+    }
+
+    if (!empty($groupid)) {
         $showaddmembersform_disabled = '';
         $showeditgroupsettingsform_disabled = ''; 
         $deletegroup_disabled = '';

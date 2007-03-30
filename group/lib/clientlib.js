@@ -92,6 +92,10 @@ UpdatableGroupsCombo.prototype.refreshGroups = function (groupingId) {
         document.getElementById("showeditgroupingsettingsform").disabled = true;
         document.getElementById("deletegrouping").disabled = true;
         document.getElementById("showcreategroupform").disabled = true;
+        document.getElementById("showeditgroupsettingsform").disabled = true;
+        document.getElementById("deletegroup").disabled = true;
+        document.getElementById("showaddmembersform").disabled = true;
+
     }
 
     var sUrl = this.wwwRoot+"/group/index.php?id="+this.courseId+"&grouping="+groupingId+"&act_ajax_getgroupsingrouping";

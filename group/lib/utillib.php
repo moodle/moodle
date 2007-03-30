@@ -339,7 +339,7 @@ function groups_grouping_edit_url($courseid, $groupingid=false, $html=true, $par
     $html ? $sep = '&amp;' : $sep = '&';
     $url = $CFG->wwwroot.'/group/grouping.php?courseid='.$courseid;
     if ($groupingid) {
-        $url .= $sep.'grouping='.$groupingid;
+        $url .= $sep.'id='.$groupingid;
     }
     if ($param) {
         $url .= $sep.$param;
