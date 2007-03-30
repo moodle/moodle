@@ -15,7 +15,7 @@ class block_admin_bookmarks extends block_base {
         if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
             return array('all' => true);
         } else {
-            return array('all' => false);
+            return array('site' => true);
         }
     }
 

@@ -25,7 +25,7 @@ class block_admin_tree extends block_base {
         if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
             return array('site' => true, 'admin' => true);
         } else {
-            return array('all' => false);
+            return array('site' => true);
         }
     }
 
