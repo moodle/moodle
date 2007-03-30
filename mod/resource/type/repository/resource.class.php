@@ -69,7 +69,7 @@ function set_parameters() {
             'lang'            => array('langstr' => get_string('preferredlanguage'),
                                        'value'   => current_language()),
             'sitename'        => array('langstr' => get_string('fullsitename'),
-                                       'value'   => $site->fullname),
+                                       'value'   => format_string($site->fullname)),
             'serverurl'       => array('langstr' => get_string('serverurl', 'resource', $CFG),
                                        'value'   => $CFG->wwwroot),
             'currenttime'     => array('langstr' => get_string('time'),

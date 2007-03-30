@@ -55,7 +55,7 @@
 
                     if ($action != $value) {
                         // Evaluating navigation request
-                        //$valid = scorm_sequencing_overall ($scoid,$USER->id,$action);
+                        $valid = scorm_sequencing_overall ($scoid,$USER->id,$action);
                         $valid = 'true';
 
                         // Set valid request

@@ -391,7 +391,7 @@ function scorm_cron () {
 
         set_config('scorm_updatetimelast', $timenow);
 
-        mtrace('Updating scorm packages which require daily update');//"estamos actualizando"
+        mtrace('Updating scorm packages which require daily update');//We are updating
 
         $scormsupdate = get_records('scorm','updatefreq',UPDATE_EVERYDAY);
         if (!empty($scormsupdate)) {
