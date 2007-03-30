@@ -12,7 +12,11 @@ class block_admin_bookmarks extends block_base {
     }
 
     function applicable_formats() {
-        return array('all' => true);
+        if (has_capability('moodle/site:mnetlogintoremote', get_context_instance(CONTEXT_SYSTEM), NULL, false)) {
+            return array('all' => true);
+        } else {
+            return array('all' => false);
+        }
     }
 
     function preferred_width() {
@@ -24,31 +28,31 @@ class block_admin_bookmarks extends block_base {
     }
 
     function get_content() {
-
+    
         global $CFG, $USER, $PAGE;
-
+    
         require_once($CFG->libdir.'/adminlib.php');
         $adminroot = admin_get_root();
-
+    
         if ($this->content !== NULL) {
             return $this->content;
         }
-
+    
         $this->content = new stdClass;
         $this->content->text = '';
         if (get_user_preferences('admin_bookmarks')) {
             $bookmarks = explode(',',get_user_preferences('admin_bookmarks'));
             // hmm... just a liiitle (potentially) processor-intensive
             // (recall that $adminroot->locate is a huge recursive call... and we're calling it repeatedly here
-
+    
             /// Accessibility: markup as a list.
             $this->content->text .= '<ol class="list">'."\n";
-
+    
             foreach($bookmarks as $bookmark) {
                 $temp = $adminroot->locate($bookmark);
                 if (is_a($temp, 'admin_settingpage')) {
                     $this->content->text .= '<li><a href="' . $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=' . $bookmark . '">' . $temp->visiblename . "</a></li>\n";
-                } elseif (is_a($temp, 'admin_externalpage')) {
+                } else if (is_a($temp, 'admin_externalpage')) {
                     $this->content->text .= '<li><a href="' . $temp->url . '">' . $temp->visiblename . "</a></li>\n";
                 }
             }
@@ -56,20 +60,19 @@ class block_admin_bookmarks extends block_base {
         } else {
             $bookmarks = array();
         }
-
-        if(isset($PAGE->section) and $PAGE->section == 'search'){
-	  // the search page can't be properly bookmarked at present
-	  $this->content->footer = '';
-	}elseif (($section = (isset($PAGE->section) ? $PAGE->section : '')) && (in_array($section, $bookmarks))) {
+    
+        if (isset($PAGE->section) and $PAGE->section == 'search'){
+            // the search page can't be properly bookmarked at present
+            $this->content->footer = '';
+        } else if (($section = (isset($PAGE->section) ? $PAGE->section : '')) && (in_array($section, $bookmarks))) {
             $this->content->footer = '<a href="' . $CFG->wwwroot . '/blocks/admin_bookmarks/delete.php?section=' . $section . '&amp;sesskey='.sesskey().'">' . get_string('unbookmarkthispage','admin') . '</a>';
-        } elseif ($section = (isset($PAGE->section) ? $PAGE->section : '')) {
+        } else if ($section = (isset($PAGE->section) ? $PAGE->section : '')) {
             $this->content->footer = '<a href="' . $CFG->wwwroot . '/blocks/admin_bookmarks/create.php?section=' . $section . '&amp;sesskey='.sesskey().'">' . get_string('bookmarkthispage','admin') . '</a>';
         } else {
             $this->content->footer = '';
         }
-
+    
         return $this->content;
-
     }
 }
 

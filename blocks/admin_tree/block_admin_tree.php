@@ -22,7 +22,11 @@ class block_admin_tree extends block_base {
     }
 
     function applicable_formats() {
-        return array('site' => true, 'admin' => true);
+        if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+            return array('site' => true, 'admin' => true);
+        } else {
+            return array('all' => false);
+        }
     }
 
     function preferred_width() {

@@ -10,6 +10,14 @@ class block_mnet_hosts extends block_list {
         return false;
     }
 
+    function applicable_formats() {
+        if (has_capability('moodle/site:mnetlogintoremote', get_context_instance(CONTEXT_SYSTEM), NULL, false)) {
+            return array('all' => true, 'mod' => false);
+        } else {
+            return array('all' => false);
+        }
+    }
+
     function get_content() {
         global $THEME, $CFG, $USER;
 
@@ -19,7 +27,7 @@ class block_mnet_hosts extends block_list {
         }
 
         // check for outgoing roaming permission first
-        if (!has_capability('moodle/site:mnetlogintoremote', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if (!has_capability('moodle/site:mnetlogintoremote', get_context_instance(CONTEXT_SYSTEM), NULL, false)) {
             return '';
         }
 
