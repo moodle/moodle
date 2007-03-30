@@ -57,7 +57,7 @@
   <div class="glossarydisplay">
 
 
-<?php print_tabs($tabrows, $tab, $inactive, $activated); ?>
+<?php if ($showcommonelements) { print_tabs($tabrows, $tab, $inactive, $activated); } ?>
 
   <div class="entrybox">
 

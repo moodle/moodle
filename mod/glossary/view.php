@@ -44,11 +44,8 @@
         error("Must specify glossary ID or course module ID");
     }
 
+    require_course_login($course->id, true, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-
-    if ($CFG->forcelogin) {
-        require_login();
-    }
 
 /// Loading the textlib singleton instance. We are going to need it.
     $textlib = textlib_get_instance();
@@ -113,9 +110,7 @@
         $show = '';
     }
 /// Processing standard security processes
-    $navigation = "";
     if ($course->id != SITEID) {
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
         require_login($course->id);
     }
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
@@ -210,11 +205,11 @@
     case GLOSSARY_IMPORT_VIEW:
     case GLOSSARY_EXPORT_VIEW:
     case GLOSSARY_APPROVAL_VIEW:
-        $isuserframe = 0;
+        $showcommonelements = 0;
     break;
 
     default:
-        $isuserframe = 1;
+        $showcommonelements = 1;
     break;
     }
 
@@ -227,117 +222,138 @@
     $strsearchconcept = get_string("searchconcept", "glossary");
     $strsearchindefinition = get_string("searchindefinition", "glossary");
     $strsearch = get_string("search");
+    $strwaitingapproval = get_string('waitingapproval', 'glossary');
 
-    $navigation = "<a href=\"index.php?id=$course->id\">$strglossaries</a> ->";
+/// If we are in approval mode, prit special header
+    if ($tab == GLOSSARY_APPROVAL_VIEW) {
+        require_capability('mod/glossary:approve', $context);
+        print_header_simple(format_string($glossary->name), "",
+            "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> " .
+            "<a href=\"view.php?id=$id\">" .format_string($glossary->name) . "</a> -> " .
+            $strwaitingapproval,
+            "", "", true, 
+            update_module_button($cm->id, $course->id, $strglossary), navmenu($course, $cm));
 
-    print_header_simple(format_string($glossary->name), "",
-                 "$navigation ".format_string($glossary->name), "", "", true, update_module_button($cm->id, $course->id, $strglossary), navmenu($course, $cm));
-
-/// To calculate available options
-    $availableoptions = '';
-
-/// Decide about to print the import link
-    if (has_capability('mod/glossary:import', $context)) {
-        $availableoptions = '<span class="helplink">' .
-                            '<a href="' . $CFG->wwwroot . '/mod/glossary/import.php?id=' . $cm->id . '"' .
-                            '  title="' . s(get_string('importentries', 'glossary')) . '">' .
-                            get_string('importentries', 'glossary') . '</a>' .
-                            '</span>';
-    }
-/// Decide about to print the export link
-    if (has_capability('mod/glossary:export', $context)) {
-        if ($availableoptions) {
-            $availableoptions .= '&nbsp;/&nbsp;';
-        }
-        $availableoptions .='<span class="helplink">' .
-                            '<a href="' . $CFG->wwwroot . '/mod/glossary/export.php?id=' . $cm->id . 
-                            '&amp;mode='.$mode . '&amp;hook=' . urlencode($hook) . '"' .
-                            '  title="' . s(get_string('exportentries', 'glossary')) . '">' .
-                            get_string('exportentries', 'glossary') . '</a>' .
-                            '</span>';
+        print_heading($strwaitingapproval);
+    } else { /// Print standard header
+        print_header_simple(format_string($glossary->name), "",
+            "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> " .
+            format_string($glossary->name),
+            "", "", true, 
+            update_module_button($cm->id, $course->id, $strglossary), navmenu($course, $cm));
     }
 
-/// Decide about to print the approval link
-    if (has_capability('mod/glossary:approve', $context)) {
-    /// Check we have pending entries
-        if ($hiddenentries = count_records_select('glossary_entries',"glossaryid  = $glossary->id and approved = 0")) {
-            if ($availableoptions) {
-                $availableoptions .= '<br />';
-            }
-            $availableoptions .='<span class="helplink">' .
-                                '<a href="' . $CFG->wwwroot . '/mod/glossary/view.php?id=' . $cm->id . 
-                                '&amp;mode=approval' . '"' .
-                                '  title="' . s(get_string('waitingapproval', 'glossary')) . '">' .
-                                get_string('waitingapproval', 'glossary') . ' ('.$hiddenentries.')</a>' .
+/// All this depends if whe have $showcommonelements 
+    if ($showcommonelements) {
+    /// To calculate available options
+        $availableoptions = '';
+
+    /// Decide about to print the import link
+        if (has_capability('mod/glossary:import', $context)) {
+            $availableoptions = '<span class="helplink">' .
+                                '<a href="' . $CFG->wwwroot . '/mod/glossary/import.php?id=' . $cm->id . '"' .
+                                '  title="' . s(get_string('importentries', 'glossary')) . '">' .
+                                get_string('importentries', 'glossary') . '</a>' .
                                 '</span>';
         }
-    }
-
-/// Start to print glossary controls
-    print_box_start('glossarycontrol');
-    echo $availableoptions;
-
-/// If rss are activated at site and glossary level and this glossary has rss defined, show link
-    if (isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
-        $CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds && $glossary->rsstype && $glossary->rssarticles) {
-
-        $tooltiptext = get_string("rsssubscriberss","glossary",format_string($glossary->name,true));
-        if (empty($USER->id)) {
-            $userid = 0;
-        } else {
-            $userid = $USER->id;
+    /// Decide about to print the export link
+        if (has_capability('mod/glossary:export', $context)) {
+            if ($availableoptions) {
+                $availableoptions .= '&nbsp;/&nbsp;';
+            }
+            $availableoptions .='<span class="helplink">' .
+                                '<a href="' . $CFG->wwwroot . '/mod/glossary/export.php?id=' . $cm->id . 
+                                '&amp;mode='.$mode . '&amp;hook=' . urlencode($hook) . '"' .
+                                '  title="' . s(get_string('exportentries', 'glossary')) . '">' .
+                                get_string('exportentries', 'glossary') . '</a>' .
+                                '</span>';
         }
-        print_box_start('rsslink');
-        rss_print_link($course->id, $userid, "glossary", $glossary->id, $tooltiptext);
-        print_box_end(); 
-    }
-/// The print icon
-    if ( $isuserframe and $mode != 'search') {
-        if (has_capability('mod/glossary:manageentries', $context) or $glossary->allowprintview) {
-            print_box_start('printicon');
-            echo " <a title =\"". get_string("printerfriendly","glossary") ."\" target=\"printview\" href=\"print.php?id=$cm->id&amp;mode=$mode&amp;hook=".urlencode($hook)."&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;offset=$offset\"><img class=\"icon\" src=\"print.gif\" alt=\"". get_string("printerfriendly","glossary") . "\" /></a>";
+
+    /// Decide about to print the approval link
+        if (has_capability('mod/glossary:approve', $context)) {
+        /// Check we have pending entries
+            if ($hiddenentries = count_records_select('glossary_entries',"glossaryid  = $glossary->id and approved = 0")) {
+                if ($availableoptions) {
+                    $availableoptions .= '<br />';
+                }
+                $availableoptions .='<span class="helplink">' .
+                                    '<a href="' . $CFG->wwwroot . '/mod/glossary/view.php?id=' . $cm->id . 
+                                    '&amp;mode=approval' . '"' .
+                                    '  title="' . s(get_string('waitingapproval', 'glossary')) . '">' .
+                                    get_string('waitingapproval', 'glossary') . ' ('.$hiddenentries.')</a>' .
+                                    '</span>';
+            }
+        }
+
+    /// Start to print glossary controls
+        print_box_start('glossarycontrol');
+        echo $availableoptions;
+
+    /// If rss are activated at site and glossary level and this glossary has rss defined, show link
+        if (isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
+            $CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds && $glossary->rsstype && $glossary->rssarticles) {
+    
+            $tooltiptext = get_string("rsssubscriberss","glossary",format_string($glossary->name,true));
+            if (empty($USER->id)) {
+                $userid = 0;
+            } else {
+                $userid = $USER->id;
+            }
+            print_box_start('rsslink');
+            rss_print_link($course->id, $userid, "glossary", $glossary->id, $tooltiptext);
             print_box_end(); 
         }
-    }
-/// End glossary controls
-    print_box_end(); /// glossarycontrol
 
-    print_box('&nbsp;', 'clearer');
+    /// The print icon
+        if ( $showcommonelements and $mode != 'search') {
+            if (has_capability('mod/glossary:manageentries', $context) or $glossary->allowprintview) {
+                print_box_start('printicon');
+                echo " <a title =\"". get_string("printerfriendly","glossary") ."\" target=\"printview\" href=\"print.php?id=$cm->id&amp;mode=$mode&amp;hook=".urlencode($hook)."&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;offset=$offset\"><img class=\"icon\" src=\"print.gif\" alt=\"". get_string("printerfriendly","glossary") . "\" /></a>";
+                print_box_end(); 
+            }
+        }
+    /// End glossary controls
+        print_box_end(); /// glossarycontrol
+
+        print_box('&nbsp;', 'clearer');
+    }
 
 /// Info box
-    if ( $glossary->intro ) {
+    if ( $glossary->intro && $showcommonelements ) {
         print_box(format_text($glossary->intro), 'generalbox', 'intro');
     }
 
 /// Search box
-    echo '<form method="post" action="view.php">';
+    if ($showcommonelements ) {
+        echo '<form method="post" action="view.php">';
 
-    echo '<table align="center" width="70%" border="0">';
-    echo '<tr><td align="center" class="glossarysearchbox">';
+        echo '<table align="center" width="70%" border="0">';
+        echo '<tr><td align="center" class="glossarysearchbox">';
 
-    echo '<input type="submit" value="'.$strsearch.'" name="searchbutton" /> ';
-    if ($mode == 'search') {
-        echo '<input type="text" name="hook" size="20" value="'.s($hook).'" alt="'.$strsearch.'" /> ';
-    } else {
-        echo '<input type="text" name="hook" size="20" value="" alt="'.$strsearch.'" /> ';
+        echo '<input type="submit" value="'.$strsearch.'" name="searchbutton" /> ';
+        if ($mode == 'search') {
+            echo '<input type="text" name="hook" size="20" value="'.s($hook).'" alt="'.$strsearch.'" /> ';
+        } else {
+            echo '<input type="text" name="hook" size="20" value="" alt="'.$strsearch.'" /> ';
+        }
+        if ($fullsearch || $mode != 'search') {
+            $fullsearchchecked = 'checked="checked"';
+        } else {
+            $fullsearchchecked = '';
+        }
+        echo '<input type="checkbox" name="fullsearch" value="1" '.$fullsearchchecked.' alt="'.$strsearchindefinition.'" />';
+        echo '<input type="hidden" name="mode" value="search" />';
+        echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
+        echo $strsearchindefinition;
+        echo '</td></tr></table>';
+
+        echo '</form>';
+
+        echo '<br />';
     }
-    if ($fullsearch || $mode != 'search') {
-        $fullsearchchecked = 'checked="checked"';
-    } else {
-        $fullsearchchecked = '';
-    }
-    echo '<input type="checkbox" name="fullsearch" value="1" '.$fullsearchchecked.' alt="'.$strsearchindefinition.'" />';
-    echo '<input type="hidden" name="mode" value="search" />';
-    echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
-    echo $strsearchindefinition;
-    echo '</td></tr></table>';
-
-    echo '</form>';
-
-    echo '<br />';
 
 /// Show the add entry button if allowed
-    if (has_capability('mod/glossary:write', $context)) {
+    if (has_capability('mod/glossary:write', $context) && $showcommonelements ) {
         echo '<div class="singlebutton glossaryaddentry">';
         echo "<form id=\"newentryform\" method=\"get\" action=\"$CFG->wwwroot/mod/glossary/edit.php\">";
         echo '<div>';
@@ -371,7 +387,7 @@
         }
 
         //Build paging bar
-        $paging = glossary_get_paging_bar($count, $page, $entriesbypage, "view.php?id=$id&mode=$mode&hook=$hook&sortkey=$sortkey&sortorder=$sortorder&fullsearch=$fullsearch&",9999,10,'&nbsp;&nbsp;', $specialtext, -1);
+        $paging = glossary_get_paging_bar($count, $page, $entriesbypage, "view.php?id=$id&amp;mode=$mode&amp;hook=$hook&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;fullsearch=$fullsearch&amp;",9999,10,'&nbsp;&nbsp;', $specialtext, -1);
 
         echo '<div class="paging">';
         echo $paging;
