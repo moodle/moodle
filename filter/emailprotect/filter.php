@@ -5,6 +5,11 @@
 
 function emailprotect_filter($courseid, $text) {
 
+    
+    if (!empty($CFG->formatstring)) {
+        return $text;
+    }
+                                            
 /// Do a quick check using stripos to avoid unnecessary work
     if (strpos($text, '@') === false) {
         return $text;
