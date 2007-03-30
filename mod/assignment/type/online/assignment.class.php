@@ -104,12 +104,14 @@ class assignment_online extends assignment_base {
                 } else if ($this->isopen()){    //fix for #4206
                     echo '<div style="text-align:center">'.get_string('emptysubmission', 'assignment').'</div>';
                 }
-                if ($editable) {
-                    print_single_button('view.php', array('id'=>$this->cm->id, 'edit'=>'1'),
-                                         get_string('editmysubmission', 'assignment'));
-                }
             }
             print_simple_box_end();
+            if (!$editmode && $editable) { 
+                echo "<div style='text-align:center'>"; 
+                print_single_button('view.php', array('id'=>$this->cm->id,'edit'=>'1'), 
+                        get_string('editmysubmission', 'assignment')); 
+                echo "</div>"; 
+            } 
 
         }
 
