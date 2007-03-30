@@ -115,10 +115,12 @@ function display() {
         $formatoptions->noclean = true;
         $inpopup_param = optional_param( 'inpopup','' );
         $inpopup = !empty($inpopup_param);
-
+        
+        add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
+        
         if ($resource->popup) {
             if ($inpopup) {                    /// Popup only
-                add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
+
                 print_header();
                 print_simple_box(format_text($resource->alltext, FORMAT_HTML, $formatoptions, $course->id), 
                         "center", "", "", "20");
@@ -152,7 +154,6 @@ function display() {
             }
         } else {    /// not a popup at all
 
-            add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
             print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name),
                     "", "", true, update_module_button($cm->id, $course->id, $this->strresource), 
                     navmenu($course, $cm));
