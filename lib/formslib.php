@@ -630,8 +630,8 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         }else {
             $this->updateAttributes(array('class'=>'mform'));
         }
-        $this->_reqHTML = '<img class="req" alt="'.get_string('requiredelement', 'form').'" src="'.$CFG->pixpath.'/req.gif'.'" />';
-        $this->_advancedHTML = '<img class="adv" alt="'.get_string('advancedelement', 'form').'" src="'.$CFG->pixpath.'/adv.gif'.'" />';
+        $this->_reqHTML = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.get_string('requiredelement', 'form').'" src="'.$CFG->pixpath.'/req.gif'.'" />';
+        $this->_advancedHTML = '<img class="adv" title="'.get_string('advancedelement', 'form').'" alt="'.get_string('advancedelement', 'form').'" src="'.$CFG->pixpath.'/adv.gif'.'" />';
         $this->setRequiredNote(get_string('somefieldsrequired', 'form').
             helpbutton('requiredelement', get_string('requiredelement', 'form'), 'moodle', true, false, '', true));
     }
