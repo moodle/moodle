@@ -359,11 +359,13 @@ function delete_attempt($attemptid) {
     global $QTYPES;
 
     $states = get_records('question_states', 'attempt', $attemptid);
-    $stateslist = implode(',', array_keys($states));
-
-    // delete questiontype-specific data
-    foreach ($QTYPES as $qtype) {
-        $qtype->delete_states($stateslist);
+    if ($states) {
+        $stateslist = implode(',', array_keys($states));
+    
+        // delete question-type specific data
+        foreach ($QTYPES as $qtype) {
+            $qtype->delete_states($stateslist);
+        }
     }
 
     // delete entries from all other question tables
@@ -371,8 +373,6 @@ function delete_attempt($attemptid) {
     delete_records("question_states", "attempt", $attemptid);
     delete_records("question_sessions", "attemptid", $attemptid);
     delete_records("question_attempts", "id", $attemptid);
-
-    return;
 }
 
 /**
