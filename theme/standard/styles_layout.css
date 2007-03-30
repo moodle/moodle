@@ -1451,7 +1451,7 @@ body#message-messages {
   width: 5%;
 }
 .que .answer {
-  float: right;
+  float: left;
   width: 83%;
   margin-bottom: 0.5em;
 }
