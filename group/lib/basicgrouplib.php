@@ -423,7 +423,6 @@ function groups_remove_all_members($groupid) {
  * @param object $data  - all the data needed for an entry in the 'groups' table
  */
 function groups_update_group($data, $courseid) {
-    global $USER, $CFG;
     $oldgroup = get_record('groups', 'id', $data->id); // should not fail, already tested above
 
     // Update with the new data

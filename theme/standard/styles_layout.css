@@ -120,6 +120,11 @@ img.grouppicture {
   text-align: center;
 }
 
+#addmembersform table {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .notifyproblem {
   text-align: center;
   padding: 10px;

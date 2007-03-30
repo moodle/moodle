@@ -439,6 +439,27 @@ function groups_set_grouping_for_coursemodule($groupingid, $coursemoduleid) {
 
 
 /*****************************
+        Update functions  
+ *****************************/
+
+function groups_update_grouping($data, $courseid) {
+    $oldgrouping = get_record('groups_groupings', 'id', $data->id); // should not fail, already tested above
+
+    // Update with the new data
+    if (update_record('groups_groupings', $data)) {
+
+        $grouping = get_record('groups_groupings', 'id', $data->id);
+
+        add_to_log($grouping->id, "groups_groupings", "update", "grouping.php?courseid=$courseid&amp;id=$grouping->id", "");
+
+        return true;
+
+    }
+
+    return false;
+    
+}
+/*****************************
         Deletion functions  
  *****************************/
 
