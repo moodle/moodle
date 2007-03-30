@@ -667,6 +667,7 @@ $string['helpsummaries'] = 'About these summaries';
 $string['helptext'] = 'How to write text';
 $string['helpwiki'] = 'How to write Wiki-like text';
 $string['helpwriting'] = 'Write carefully';
+$string['hiddenassign'] = 'Hidden assignment';
 $string['hiddensections'] = 'Hidden sections';
 $string['hiddensectionscollapsed'] = 'Hidden sections are shown in collapsed form';
 $string['hiddensectionsinvisible'] = 'Hidden sections are completely invisible';
