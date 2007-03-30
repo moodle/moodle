@@ -71,10 +71,13 @@ function display() {
 
         $pagetitle = strip_tags($course->shortname.': '.format_string($resource->name));
         $inpopup = optional_param('inpopup', '', PARAM_BOOL);
+        
+        // fix for MDL-9021, thanks Etienne Rozé
+        add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
 
         if ($resource->popup) {
             if ($inpopup) {                    /// Popup only
-                add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
+                
                 print_header();
                 print_simple_box(format_text($resource->alltext, FORMAT_HTML, $formatoptions, $course->id),
                         "center", "", "", "20");
@@ -107,7 +110,6 @@ function display() {
             }
         } else {    /// not a popup at all
 
-            add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
             print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name),
                     "", "", true, update_module_button($cm->id, $course->id, $this->strresource),
                     navmenu($course, $cm));
