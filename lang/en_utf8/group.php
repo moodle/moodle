@@ -85,7 +85,8 @@ $string['save'] = 'Save';
 $string['cancel'] = 'Cancel';
 $string['return'] = 'Return';
 $string['backtogroups'] = 'Back to groups';
-
+$string['existingmembers'] = 'Existing members: $a'; 
+$string['potentialmembers'] = 'Potential members: $a';
 $string['groupfor'] = "for group";
 $string['groupinfo'] = 'Info about selected group';
 $string['groupinfomembers'] = 'Info about selected members';

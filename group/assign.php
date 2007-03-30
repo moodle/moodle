@@ -70,6 +70,53 @@ if ($success) {
             }
         }
     }
+    
+    $groupmembers = groups_get_members($groupid);
+    $groupmembersoptions = '';
+    $groupmemberscount = 0;
+    if ($groupmembers != false) {
+        // Put the groupings into a hash and sorts them
+        foreach ($groupmembers as $userid) {
+            $listmembers[$userid] = groups_get_user_displayname($userid, $courseid);
+            $groupmemberscount ++;
+        }
+        natcasesort($listmembers);
+
+        // Print out the HTML
+        foreach($listmembers as $id => $name) {
+            $groupmembersoptions .= "<option value=\"$id\">$name</option>\n";
+        }
+    } else {
+        $groupmembersoptions .= '<option>&nbsp;</option>';
+    }
+    
+    //TODO: If no 'showall' button, then set true.
+    $showall = true;
+    
+    $potentialmembers = array(); 
+    $potentialmembersoptions = '';
+    $potentialmemberscount = 0;
+    if (!$showall && $groupingid != GROUP_NOT_IN_GROUPING) {
+        $potentialmembers = groups_get_users_not_in_any_group_in_grouping($courseid, $groupingid, $groupid);
+    } else {
+        $potentialmembers = groups_get_users_not_in_group($courseid, $groupid);
+    }
+    
+    if ($potentialmembers != false) {
+        // Put the groupings into a hash and sorts them
+        foreach ($potentialmembers as $userid) {
+            $nonmembers[$userid] = groups_get_user_displayname($userid, $courseid);       
+            $potentialmemberscount++;
+        }
+        natcasesort($nonmembers);
+
+        // Print out the HTML
+        foreach($nonmembers as $id => $name) {
+            $potentialmembersoptions .= "<option value=\"$id\">$name</option>\n";
+        }
+    } else {
+        $potentialmembersoptions .= '<option>&nbsp;</option>';
+    }
 
     // Print the page and form
     $strgroups = get_string('groups');
@@ -98,30 +145,13 @@ if ($success) {
     <table summary="" cellpadding="5" cellspacing="0">
     <tr>
       <td valign="top">
-          <label for="removeselect"><?php print_string('existingusers', 'role'); //count($contextusers) ?></label>
+          <label for="removeselect"><?php print_string('existingmembers', 'group', $groupmemberscount); //count($contextusers) ?></label>
           <br />
           <select name="removeselect[]" size="20" id="removeselect" multiple="multiple"
                   onfocus="document.getElementById('assignform').add.disabled=true;
                            document.getElementById('assignform').remove.disabled=false;
                            document.getElementById('assignform').addselect.selectedIndex=-1;">
-<?php
-    $userids = groups_get_members($groupid);
-    
-    if ($userids != false) {
-        // Put the groupings into a hash and sorts them
-        foreach ($userids as $userid) {
-            $listmembers[$userid] = groups_get_user_displayname($userid, $courseid);       
-        }
-        natcasesort($listmembers);
-
-        // Print out the HTML
-        foreach($listmembers as $id => $name) {
-            echo "<option value=\"$id\">$name</option>\n";
-        }
-    } else {
-        echo '<option>&nbsp;</option>';
-    }
-?>
+          <?php echo $groupmembersoptions ?>
           </select></td>
       <td valign="top">
 <?php // Hidden assignment? ?>
@@ -134,37 +164,13 @@ if ($success) {
         </p>
       </td>
       <td valign="top">
-          <label for="addselect"><?php print_string('potentialusers', 'role'); //$usercount ?></label>
+          <label for="addselect"><?php print_string('potentialmembers', 'group', $potentialmemberscount); //$usercount ?></label>
           <br />
           <select name="addselect[]" size="20" id="addselect" multiple="multiple"
                   onfocus="document.getElementById('assignform').add.disabled=false;
                            document.getElementById('assignform').remove.disabled=true;
                            document.getElementById('assignform').removeselect.selectedIndex=-1;">
-    <?php
-    //TODO: If no 'showall' button, then set true.
-    $showall = true;
-    unset($userids);
-    if (!$showall && $groupingid != GROUP_NOT_IN_GROUPING) {
-        $userids = groups_get_users_not_in_any_group_in_grouping($courseid, $groupingid, $groupid);
-    } else {
-        $userids = groups_get_users_not_in_group($courseid, $groupid);
-    }
-    
-    if ($userids != false) {
-        // Put the groupings into a hash and sorts them
-        foreach ($userids as $userid) {
-            $nonmembers[$userid] = groups_get_user_displayname($userid, $courseid);       
-        }
-        natcasesort($nonmembers);
-
-        // Print out the HTML
-        foreach($nonmembers as $id => $name) {
-            echo "<option value=\"$id\">$name</option>\n";
-        }
-    } else {
-        echo '<option>&nbsp;</option>';
-    }
-    ?>
+         <?php echo $potentialmembersoptions ?>
          </select>
          <br />
          <?php //TODO: Search box?
