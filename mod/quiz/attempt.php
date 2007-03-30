@@ -283,7 +283,8 @@
         error('Could not load question options');
     }
 
-    // If the new attempt is to be based on a previous attempt find its id 
+    // If the new attempt is to be based on a previous attempt find its id
+    $lastattemptid = false;
     if ($newattempt and $attempt->attempt > 1 and $quiz->attemptonlast and !$attempt->preview) {
         // Find the previous attempt
         if (!$lastattemptid = get_field('quiz_attempts', 'uniqueid', 'quiz', $attempt->quiz, 'userid', $attempt->userid, 'attempt', $attempt->attempt-1)) {
