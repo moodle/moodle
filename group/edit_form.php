@@ -31,7 +31,7 @@ class group_edit_form extends moodleform {
         $mform->addRule('name', get_string('missingname'), 'required', null, 'client');
         $mform->setType('name', PARAM_MULTILANG);
 
-        $mform->addElement('htmleditor', 'description', get_string('groupdescription', 'group'), array('rows'=> '5', 'cols'=>'45'));
+        $mform->addElement('htmleditor', 'description', get_string('groupdescription', 'group'), array('rows'=> '15', 'course' => $courseid, 'cols'=>'45'));
         $mform->setType('description', PARAM_RAW);
         
         $mform->addElement('text', 'enrolmentkey', get_string('enrolmentkey', 'group'), 'maxlength="254" size="24"', get_string('enrolmentkey'));
