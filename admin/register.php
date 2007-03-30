@@ -72,7 +72,7 @@
     echo '<div class="fitem">';
     echo '<div class="fitemtitle"><label for="sitename">'.get_string("fullsitename").'</label></div>';
     echo '<div class="felement ftext">';
-    echo '<input size="50" id="sitename" type="text" name="sitename" value="'.$site->fullname.'" />';
+    echo '<input size="50" id="sitename" type="text" name="sitename" value="'.format_string($site->fullname).'" />';
     echo '</div>';
     echo '</div>';
 
