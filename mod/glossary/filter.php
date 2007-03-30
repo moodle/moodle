@@ -136,7 +136,7 @@ function glossary_filter($courseid, $text) {
                     $encodedconcept = urlencode($concept->concept);
                     $title = str_replace('"', "'", strip_tags($glossaryname.': '.$concept->concept));
                 }
-                $href_tag_begin = '<a target="entry" class="glossary autolink glossaryid'.$concept->glossaryid.'" title="'.$title.'" '.
+                $href_tag_begin = '<a class="glossary autolink glossaryid'.$concept->glossaryid.'" title="'.$title.'" '.
                                   'href="'.$CFG->wwwroot.'/mod/glossary/showentry.php?courseid='.$courseid.
                                   '&amp;concept='.$encodedconcept.'" '.
                                   'onclick="return openpopup(\'/mod/glossary/showentry.php?courseid='.$courseid.

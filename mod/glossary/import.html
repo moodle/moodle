@@ -1,7 +1,7 @@
 <form method="post" action="import.php" enctype="multipart/form-data">
 <table border="0" cellpadding="3" cellspacing="3" width="100%">
 <tr>
-    <td align="right" valign="top" width="30%"><b><?php print_string("filetoimport","glossary") ?>:<br />
+    <td align="right" style="width:30%;vertical-align:top"><b><?php print_string("filetoimport","glossary") ?>:<br />
         <?php
            echo '(';
            print_string("maxsize", "", display_size(get_max_upload_file_size($CFG->maxbytes, $course->maxbytes)));
@@ -9,7 +9,7 @@
            helpbutton("filetoimport", get_string("filetoimport", "glossary"), "glossary"); 
         ?>
     </b></td>
-    <td width="70%">
+    <td style="width:70%">
     <?php 
        require_once($CFG->dirroot.'/lib/uploadlib.php');
        upload_print_form_fragment(1,array('file'),null,false,null,0,0);
@@ -20,13 +20,13 @@
     <td align="right" colspan="2">
     <table border="0" cellpadding="0" cellspacing="3" width="100%">
       <tr>
-        <td width="25%" align="right"><?php print_string("destination","glossary") ?>:</td>
-        <td width="25%"><select size="1" name="dest">
+        <td align="right" style="width:25%"><?php print_string("destination","glossary") ?>:</td>
+        <td style="width:25%"><select size="1" name="dest">
         <option selected="selected" value="current"><?php print_string("currentglossary","glossary") ?></option>
         <option value="new"><?php print_string("newglossary","glossary") ?></option>
         </select> <?php helpbutton("destination", get_string("destination", "glossary"), "glossary") ?></td>
-        <td width="25%" align="right"><?php print_string("importcategories","glossary") ?>:</td>
-        <td width="25%"><input type="checkbox" name="catsincl" value="1" alt="<?php print_string("importcategories","glossary") ?>" /> <?php helpbutton("importcategories", get_string("importcategories", "glossary"), "glossary") ?></td>
+        <td style="width:25%" align="right"><?php print_string("importcategories","glossary") ?>:</td>
+        <td style="width:25%"><input type="checkbox" name="catsincl" value="1" alt="<?php print_string("importcategories","glossary") ?>" /> <?php helpbutton("importcategories", get_string("importcategories", "glossary"), "glossary") ?></td>
       </tr>
     </table>
     </td>
@@ -35,13 +35,15 @@
     <td align="right" colspan="2">
     <table border="0" cellpadding="3" cellspacing="3" width="100%">
       <tr>
-        <td width="50%" align="right"><input type="submit" value="<?php print_string("savechanges") ?>" /></td>
-        <td width="50%"><input type="reset" value="<?php print_string("revert") ?>" /></td>
+        <td style="width:50%" align="right"><input type="submit" value="<?php print_string("savechanges") ?>" /></td>
+        <td style="width:50%"><input type="reset" value="<?php print_string("revert") ?>" /></td>
       </tr>
     </table>
     </td>
 </tr>
 </table>
+<div>
 <input type="hidden" name="id" value="<?php p($id) ?>" />
 <input type="hidden" name="step" value="1" />
+</div>
 </form> 

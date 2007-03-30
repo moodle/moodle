@@ -20,7 +20,7 @@
     }
 
     if ($data = data_submitted("$CFG->wwwroot/mod/glossary/view.php")) {    // form submitted
-
+        print_object($data);
         foreach ((array)$data as $entry => $rating) {
             if ($entry == "id") {
                 continue;

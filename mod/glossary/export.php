@@ -53,8 +53,10 @@
     <tr><td align="center">
         <input type="submit" value="<?php p($strexportfile)?>" />
     </td></tr></table>
+    <div>
     <input type="hidden" name="id" value="<?php p($id)?>" />
     <input type="hidden" name="cat" value="<?php p($cat)?>" />
+    </div>
     </form>
 <?php
     print_box_end();

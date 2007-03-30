@@ -308,7 +308,7 @@
         if ( $showcommonelements and $mode != 'search') {
             if (has_capability('mod/glossary:manageentries', $context) or $glossary->allowprintview) {
                 print_box_start('printicon');
-                echo " <a title =\"". get_string("printerfriendly","glossary") ."\" target=\"printview\" href=\"print.php?id=$cm->id&amp;mode=$mode&amp;hook=".urlencode($hook)."&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;offset=$offset\"><img class=\"icon\" src=\"print.gif\" alt=\"". get_string("printerfriendly","glossary") . "\" /></a>";
+                echo " <a title =\"". get_string("printerfriendly","glossary") ."\" href=\"print.php?id=$cm->id&amp;mode=$mode&amp;hook=".urlencode($hook)."&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;offset=$offset\"><img class=\"icon\" src=\"print.gif\" alt=\"". get_string("printerfriendly","glossary") . "\" /></a>";
                 print_box_end(); 
             }
         }
@@ -327,7 +327,7 @@
     if ($showcommonelements ) {
         echo '<form method="post" action="view.php">';
 
-        echo '<table align="center" width="70%" border="0">';
+        echo '<table class="boxaligncenter" width="70%" border="0">';
         echo '<tr><td align="center" class="glossarysearchbox">';
 
         echo '<input type="submit" value="'.$strsearch.'" name="searchbutton" /> ';
@@ -405,8 +405,9 @@
             } else {
                 $ratings->allow = true;
             }
-
+            $formsent = 1;
             echo "<form method=\"post\" action=\"rate.php\">";
+            echo "<div>";
             echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
         }
 
@@ -487,6 +488,7 @@
 
 
     if ($ratingsmenuused) {
+
         echo "<div class=\"boxaligncenter\"><input type=\"submit\" value=\"".get_string("sendinratings", "glossary")."\" />";
         if ($glossary->scale < 0) {
             if ($scale = get_record("scale", "id", abs($glossary->scale))) {
@@ -494,7 +496,12 @@
             }
         }
         echo "</div>";
+        echo "</div>";
         echo "</form>";
+    } else if (!empty($formsent)) {
+        // close the form properly if not  used
+        echo "</div>";
+        echo "</form>";  
     }
 
     if ( $paging ) {

@@ -51,8 +51,9 @@
         echo "<tr>";
         echo "<th class=\"header\" scope=\"col\">&nbsp;</th>";
         echo "<th class=\"header\" scope=\"col\"><a href=\"report.php?id=$entry->id&amp;sort=firstname\">$strname</a></th>";
-        echo "<th width=\"100%\" class=\"header\" scope=\"col\"><a href=\"report.php?id=$entry->id&amp;sort=rating\">$strrating</a></th>";
+        echo "<th class=\"header\" scope=\"col\" style=\"width:100%\"><a href=\"report.php?id=$entry->id&amp;sort=rating\">$strrating</a></th>";
         echo "<th class=\"header\" scope=\"col\"><a href=\"report.php?id=$entry->id&amp;sort=time\">$strtime</a></th>";
+        echo "</tr>";
         foreach ($ratings as $rating) {
             if (has_capability('mod/glossary:manageentries', $context)) {
                 echo '<tr class="teacher">';
@@ -60,11 +61,11 @@
                 echo '<tr>';
             }
             echo '<td class="picture">';
-            print_user_picture($rating->id, $glossary->course, $rating->picture, false, false, true, true);
+            print_user_picture($rating->id, $glossary->course, $rating->picture, false, false, true);
             echo '</td>';
-            echo '<td nowrap="nowrap" class="author"><a target="_blank" href="'.$CFG->wwwroot.'/user/view.php?id='.$rating->id.'&amp;course='.$glossary->course.'">'.fullname($rating).'</a></td>';
-            echo '<td nowrap="nowrap" align="center" class="rating">'.$scalemenu[$rating->rating].'</td>';
-            echo '<td nowrap="nowrap" align="center" class="time">'.userdate($rating->time).'</td>';
+            echo '<td class="author"><a href="'.$CFG->wwwroot.'/user/view.php?id='.$rating->id.'&amp;course='.$glossary->course.'">'.fullname($rating).'</a></td>';
+            echo '<td style="white-space:nowrap" align="center" class="rating">'.$scalemenu[$rating->rating].'</td>';
+            echo '<td style="white-space:nowrap" align="center" class="time">'.userdate($rating->time).'</td>';
             echo "</tr>\n";
         }
         echo "</table>";
@@ -72,5 +73,5 @@
     }
 
     close_window_button();
-
+    print_footer();
 ?>
