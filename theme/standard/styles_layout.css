@@ -2953,6 +2953,12 @@ body#mod-forum-search .introcontent {
 .glossarydisplay .tabs .general {
 }
 
+.glossaryimportexport {
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+}
+
 .glossarypopup {
   width: 95%;
 }
