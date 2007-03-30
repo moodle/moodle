@@ -64,7 +64,9 @@
             print_single_button("request.php", NULL, get_string("courserequest"), "get");
         }
         if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {       // Print link to create a new course
-            print_single_button("edit.php", NULL, get_string("addnewcourse"), "get");
+        /// Get the 1st available category
+            $options = array('category' => get_field('course_categories', 'id', 'parent', '0'));
+            print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
         }
         if (has_capability('moodle/site:approvecourse', get_context_instance(CONTEXT_SYSTEM, SITEID))  and !empty($CFG->enablecourserequests)) {
             print_single_button('pending.php',NULL, get_string('coursespending'),"get");
