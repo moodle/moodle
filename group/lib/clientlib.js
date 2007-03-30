@@ -116,10 +116,15 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
 
         	if (o.responseText !== undefined) {
                 var selectEl = document.getElementById("members");
-
         	    if (selectEl && o.responseText) {
         	        var members = eval("("+o.responseText+")");
 
+                    // Clear the members combo box.
+                    if (selectEl) {
+                        while (selectEl.firstChild) {
+                            selectEl.removeChild(selectEl.firstChild);
+                        }
+                    }
         	        // Populate the members combo box.
                     for (var i=0; i<members.length; i++) {
                         var optionEl = document.createElement("option");
@@ -151,9 +156,9 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
 UpdatableMembersCombo.prototype.refreshMembers = function (groupId) {
     // Add the loader gif image.
     createLoaderImg("membersloader", "memberslabel", this.wwwRoot);
+    var selectEl = document.getElementById("members");
 
     // Clear the members combo box.
-    var selectEl = document.getElementById("members");
     if (selectEl) {
         while (selectEl.firstChild) {
             selectEl.removeChild(selectEl.firstChild);
@@ -164,7 +169,7 @@ UpdatableMembersCombo.prototype.refreshMembers = function (groupId) {
     document.getElementById("showeditgroupsettingsform").disabled = false;
     document.getElementById("deletegroup").disabled = false;
     var sUrl = this.wwwRoot+"/group/index.php?id="+this.courseId+"&group="+groupId+"&act_ajax_getmembersingroup";
-    YAHOO.util.Connect.asyncRequest("GET", sUrl, this.connectCallback, null);
+    YAHOO.util.Connect.asyncRequest("GET", sUrl, this.connectCallback, null); 
 };
 
 
