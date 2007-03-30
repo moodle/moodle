@@ -319,20 +319,20 @@ function delete_attempt($attemptid) {
     global $QTYPES;
 
     $states = get_records('question_states', 'attempt', $attemptid);
-    $stateslist = implode(',', array_keys($states));
-
-    // delete questiontype-specific data
-    foreach ($QTYPES as $qtype) {
-        $qtype->delete_states($stateslist);
+    if ($states) {
+        $stateslist = implode(',', array_keys($states));
+    
+        // delete question-type specific data
+        foreach ($QTYPES as $qtype) {
+            $qtype->delete_states($stateslist);
+        }
     }
-
+    
     // delete entries from all other question tables
     // It is important that this is done only after calling the questiontype functions
     delete_records("question_states", "attempt", $attemptid);
     delete_records("question_sessions", "attemptid", $attemptid);
     delete_records("question_attempts", "id", $attemptid);
-
-    return;
 }
 
 /**
@@ -561,8 +561,10 @@ function get_question_options(&$questions) {
 * @param object $cmoptions
 * @param object $attempt  The attempt for which the question sessions are
 *                         to be restored or created.
+* @param mixed either the id of a previous attempt, if this attmpt is
+*                         building on a previous one, or false for a clean attempt.
 */
-function get_question_states(&$questions, $cmoptions, $attempt) {
+function get_question_states(&$questions, $cmoptions, $attempt, $lastattemptid = false) {
     global $CFG, $QTYPES;
 
     // get the question ids
@@ -601,8 +603,33 @@ function get_question_states(&$questions, $cmoptions, $attempt) {
                 $states[$i]->last_graded = clone($states[$i]);
             }
         } else {
-            // create a new empty state
-            $states[$i] = new object;
+            // If the new attempt is to be based on a previous attempt get it and clean things
+            // Having lastattemptid filled implies that (should we double check?):
+            //    $attempt->attempt > 1 and $cmoptions->attemptonlast and !$attempt->preview
+            if ($lastattemptid) {
+                // find the responses from the previous attempt and save them to the new session
+
+                // Load the last graded state for the question
+                $statefields = 'n.questionid as question, s.*, n.sumpenalty';
+                $sql = "SELECT $statefields".
+                       "  FROM {$CFG->prefix}question_states s,".
+                       "       {$CFG->prefix}question_sessions n".
+                       " WHERE s.id = n.newgraded".
+                       "   AND n.attemptid = '$lastattemptid'".
+                       "   AND n.questionid = '$i'";
+                if (!$laststate = get_record_sql($sql)) {
+                    // Only restore previous responses that have been graded
+                    continue;
+                }
+                // Restore the state so that the responses will be restored
+                restore_question_state($questions[$i], $laststate);
+                $states[$i] = clone ($laststate);
+            } else {
+               // create a new empty state
+               $states[$i] = new object;
+            }
+
+            // now fill/overide initial values
             $states[$i]->attempt = $attempt->uniqueid;
             $states[$i]->question = (int) $i;
             $states[$i]->seq_number = 0;
@@ -613,15 +640,36 @@ function get_question_states(&$questions, $cmoptions, $attempt) {
             $states[$i]->penalty = 0;
             $states[$i]->sumpenalty = 0;
             $states[$i]->comment = '';
-            $states[$i]->responses = array('' => '');
+
+            // if building on last attempt we want to preserve responses  
+            if (!$lastattemptid) {
+              $states[$i]->responses = array('' => '');
+            }
             // Prevent further changes to the session from incrementing the
             // sequence number
             $states[$i]->changed = true;
 
-            // Create the empty question type specific information
-            if (!$QTYPES[$questions[$i]->qtype]
-             ->create_session_and_responses($questions[$i], $states[$i], $cmoptions, $attempt)) {
-                return false;
+            if ($lastattemptid) {
+                // prepare the previous responses for new processing
+                $action = new stdClass;
+                $action->responses = $laststate->responses;
+                $action->timestamp = $laststate->timestamp;
+                $action->event = QUESTION_EVENTSAVE; //emulate save of questions from all pages MDL-7631
+
+                // Process these responses ...
+                question_process_responses($questions[$i], $states[$i], $action, $cmoptions, $attempt);
+
+                // Fix for Bug #5506: When each attempt is built on the last one,
+                // preserve the options from any previous attempt. 
+                if ( isset($laststate->options) ) {
+                    $states[$i]->options = $laststate->options;
+                }
+            } else {
+                // Create the empty question type specific information
+                if (!$QTYPES[$questions[$i]->qtype]
+                ->create_session_and_responses($questions[$i], $states[$i], $cmoptions, $attempt)) {
+                    return false;
+                }
             }
             $states[$i]->last_graded = clone($states[$i]);
         }
@@ -943,8 +991,10 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
     }
     // Check for unchanged responses (exactly unchanged, not equivalent).
     // We also have to catch questions that the student has not yet attempted
-    $sameresponses = (($state->responses == $action->responses) or
-     ($state->responses == array(''=>'') && array_keys(array_count_values($action->responses))===array('')));
+    $sameresponses = $QTYPES[$question->qtype]->compare_responses($question, $action, $state);
+    if ($state->last_graded->event == QUESTION_EVENTOPEN && question_isgradingevent($action->event)) {
+        $sameresponses = false;
+    }
 
     // If the response has not been changed then we do not have to process it again
     // unless the attempt is closing or validation is requested
@@ -977,15 +1027,16 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
 
     } else { // grading event
 
-        // Unless the attempt is closing, we want to work out if the current responses 
-        // (or equivalent responses) were already given in the last graded attempt. 
-        if((QUESTION_EVENTCLOSE != $action->event) and $QTYPES[$question->qtype]->compare_responses(
-         $question, $state, $state->last_graded)) {
+        // Unless the attempt is closing, we want to work out if the current responses
+        // (or equivalent responses) were already given in the last graded attempt.
+        if(QUESTION_EVENTCLOSE != $action->event && QUESTION_EVENTOPEN != $state->last_graded->event &&
+                $QTYPES[$question->qtype]->compare_responses($question, $state, $state->last_graded)) {
             $state->event = QUESTION_EVENTDUPLICATE;
         }
 
         // If we did not find a duplicate or if the attempt is closing, perform grading
-        if ((!$sameresponses and (QUESTION_EVENTDUPLICATE != $state->event)) or (QUESTION_EVENTCLOSE == $action->event)) {
+        if ((!$sameresponses and QUESTION_EVENTDUPLICATE != $state->event) or
+                QUESTION_EVENTCLOSE == $action->event) {
             // Decrease sumgrades by previous grade and then later add new grade
             $attempt->sumgrades -= (float)$state->last_graded->grade;
 
