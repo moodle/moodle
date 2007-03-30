@@ -634,8 +634,10 @@ function get_question_options(&$questions) {
 * @param object $cmoptions
 * @param object $attempt  The attempt for which the question sessions are
 *                         to be restored or created.
+* @param mixed either the id of a previous attempt, if this attmpt is
+*                         building on a previous one, or false for a clean attempt.
 */
-function get_question_states(&$questions, $cmoptions, $attempt, $lastattemptid=null) {
+function get_question_states(&$questions, $cmoptions, $attempt, $lastattemptid = false) {
     global $CFG, $QTYPES;
 
     // get the question ids
