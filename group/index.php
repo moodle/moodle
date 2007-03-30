@@ -323,9 +323,12 @@ if ($success) {
     if (isset($userids)) { //&& is_array($userids)        
         // Put the groupings into a hash and sort them
         $user_names = groups_userids_to_user_names($userids, $courseid);
-
-        foreach ($user_names as $user) {
-            echo "<option value=\"{$user->id}\">{$user->name}</option>\n";
+        if(empty($user_names)) {
+            echo '<option>&nbsp;</option>';
+        } else {
+            foreach ($user_names as $user) {
+                echo "<option value=\"{$user->id}\">{$user->name}</option>\n";
+            }
         }
     } else { 
         // Print an empty option to avoid the XHTML error of having an empty select element
