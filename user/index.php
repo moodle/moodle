@@ -49,15 +49,25 @@
     }
 
     $rolenames = array();
+    $avoidroles = array();
 
     if ($roles = get_roles_used_in_context($context, true)) {
-        // We should exclude "admin" users (those with "doanything" at site level) because 
+        // We should ONLY allow roles with moodle/course:view because otherwise we get little niggly issues 
+        // like MDL-8093
+        // We should further exclude "admin" users (those with "doanything" at site level) because 
         // Otherwise they appear in every participant list
 
+        $canviewroles    = get_roles_with_capability('moodle/course:view', CAP_ALLOW, $context);
         $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext);
 
         foreach ($roles as $role) {
+            if (!isset($canviewroles[$role->id])) {   // Avoid this role (eg course creator)
+                $avoidroles[] = $role->id;
+                unset($roles[$role->id]);
+                continue;
+            }
             if (isset($doanythingroles[$role->id])) {   // Avoid this role (ie admin)
+                $avoidroles[] = $role->id;
                 unset($roles[$role->id]);
                 continue;
             }
@@ -136,6 +146,7 @@
         print_header("$course->shortname: ".get_string('participants'), $course->fullname,
                      get_string('participants'), "", "", true, "&nbsp;", navmenu($course));
     }
+
 
 
 /// setting up tags
@@ -327,14 +338,10 @@
     
     $hiddensql = has_capability('moodle/role:viewhiddenassigns', $context)? '':' AND r.hidden = 0 ';   
 
-    // excluse users with these admin role assignments
-    if ($doanythingroles) {
+    // exclude users with roles we are avoiding
+    if ($avoidroles) {
         $adminroles = 'AND r.roleid NOT IN (';
- 
-        foreach ($doanythingroles as $aroleid=>$role) {
-            $adminroles .= "$aroleid,";
-        }
-        $adminroles = rtrim($adminroles,",");
+        $adminroles .= implode(',', $avoidroles);
         $adminroles .= ')';
     } else {
         $adminroles = '';
