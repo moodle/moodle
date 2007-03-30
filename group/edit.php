@@ -20,9 +20,6 @@ $id          = optional_param('id', false, PARAM_INT);
 $groupingid  = optional_param('grouping', false, PARAM_INT);
 $newgrouping = optional_param('newgrouping', false, PARAM_INT);
 $courseid    = required_param('courseid', PARAM_INT);
-if ($groupingid === false) {
-    $groupingid = -1;
-}
 
 $delete = optional_param('delete', false, PARAM_BOOL);
 
@@ -43,6 +40,16 @@ if ($id) {
     } 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     require_capability('moodle/course:managegroups', $context);
+    
+    // If group given but no groupingid, retrieve grouping id
+    if (empty($groupingid)) {
+        $groupings = groups_get_groupings_for_group($id);
+        if (empty($groupings)) {
+            $groupingid = -1;
+        } else {
+            $groupingid = $groupings[0];
+        }
+    } 
 }
 
 /// First create the form
