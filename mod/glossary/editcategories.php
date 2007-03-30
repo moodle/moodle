@@ -19,8 +19,6 @@
     if (! $cm = get_coursemodule_from_id('glossary', $id)) {
         error("Course Module ID was incorrect");
     }
-    
-
 
     if (! $course = get_record("course", "id", $cm->course)) {
         error("Course is misconfigured");
@@ -70,7 +68,7 @@
                     add_to_log($course->id, "glossary", "edit category", "editcategories.php?id=$cm->id", $hook,$cm->id);
                 }
             } else {
-                echo "<p align=\"center\">" . get_string("edit"). " " . get_string("category","glossary") . "<font size=\"3\">";
+                echo "<p style=\"text-align:center\">" . get_string("edit"). " " . get_string("category","glossary") . "<span style=\"font-size:1.5em\">";
 
                 $name = $category->name;
                 $usedynalink = $category->usedynalink;
@@ -94,10 +92,10 @@
 
                 redirect("editcategories.php?id=$cm->id");
             } else {
-                echo "<p align=\"center\">" . get_string("delete"). " " . get_string("category","glossary") . "<font size=\"3\">";
+                echo "<p style=\"text-align:center\">" . get_string("delete"). " " . get_string("category","glossary"). "</p>";
 
                 print_simple_box_start("center","40%", "#FFBBBB");
-                echo "<div class=\"boxaligncenter\"><b>".format_text($category->name)."</b><br/>";
+                echo "<div class=\"boxaligncenter\"><b>".format_text($category->name, FORMAT_PLAIN)."</b><br/>";
 
                 $num_entries = count_records("glossary_entries_categories","categoryid",$category->id);
                 if ( $num_entries ) {
@@ -105,18 +103,24 @@
                 }
                 echo "<p>";
                 print_string("areyousuredelete","glossary");
+                echo "</p>";
 ?>
-                <form id="form" method="post" action="editcategories.php">
 
-                <input type="hidden" name="id"          value="<?php p($cm->id) ?>" />
-                <input type="hidden" name="action"      value="delete" />
-                <input type="hidden" name="confirm"     value="1" />
-                <input type="hidden" name="mode"         value="<?php echo $mode ?>" />
-                <input type="hidden" name="hook"         value="<?php echo $hook ?>" />
-                <table border="0" width="100"><tr><td align="right" width="50%" />
-                <input type="submit" value=" <?php print_string("yes")?> " />
-                </form>
-                </td><td align="left" width="50%">
+                <table border="0" width="100">
+                    <tr>
+                        <td align="right" style="width:50%">                
+                        <form id="form" method="post" action="editcategories.php">
+                        <div>
+                        <input type="hidden" name="id"          value="<?php p($cm->id) ?>" />
+                        <input type="hidden" name="action"      value="delete" />
+                        <input type="hidden" name="confirm"     value="1" />
+                        <input type="hidden" name="mode"         value="<?php echo $mode ?>" />
+                        <input type="hidden" name="hook"         value="<?php echo $hook ?>" />
+                        <input type="submit" value=" <?php print_string("yes")?> " />
+                        </div>
+                        </form>
+                        </td>
+                        <td align="left" style="width:50%">
 
 <?php
                 unset($options);
@@ -133,11 +137,10 @@
             $ILIKE = sql_ilike();
             $dupcategory = get_records_sql("SELECT * FROM {$CFG->prefix}glossary_categories WHERE name $ILIKE '$name' AND glossaryid=$glossary->id");
             if ( $dupcategory ) {
-                echo "<p align=\"center\">" . get_string("add"). " " . get_string("category","glossary") . "<font size=\"3\">";
+                echo "<p style=\"text-align:center\">" . get_string("add"). " " . get_string("category","glossary");
 
                 print_simple_box_start("center","40%", "#FFBBBB");
                 echo "<div style=\"text-align:center\">" . get_string("duplicatedcategory","glossary") ."</div>";
-                echo "</center>";
                 print_simple_box_end();
 
                 redirect("editcategories.php?id=$cm->id&amp;action=add&&amp;name=$name");
@@ -157,7 +160,7 @@
                 }
             }
         } else {
-            echo "<p align=\"center\">" . get_string("add"). " " . get_string("category","glossary") . "<font size=\"3\">";
+            echo "<p style=\"text-align:center\">" . get_string("add"). " " . get_string("category","glossary"). "</p>";
             $name="";
             require "editcategories.html";
         }
@@ -170,36 +173,34 @@
 
 ?>
 
-
-<div align="center">
-
 <form method="post" action="editcategories.php">
-<table width="40%" class="generalbox" cellpadding="5">
+<table width="40%" class="boxaligncenter generalbox" cellpadding="5">
         <tr>
-          <td width="90%" align="center"><b>
+          <td style="width:90%" align="center"><b>
           <?php p(get_string("categories","glossary")) ?></b></td>
-          <td width="10%" align="center"><b>
+          <td style="width:10%" align="center"><b>
           <?php p(get_string("action")) ?></b></td>
         </tr>
-        <tr><td width="100%" colspan="2">
+        <tr><td style="width:100%" colspan="2">
 
-        <table width="100%">
+        
 
 <?php
     $categories = get_records("glossary_categories","glossaryid",$glossary->id,"name ASC");
 
     if ( $categories ) {
+        echo '<table width="100%">';
         foreach ($categories as $category) {
             $num_entries = count_records("glossary_entries_categories","categoryid",$category->id);
 ?>
 
              <tr>
-               <td width="90%" align="left">
+               <td style="width:90%" align="left">
                <?php
-                    echo "<b>".format_text($category->name)."</b> <font size=-1>($num_entries " . get_string("entries","glossary") . ")</font>";
+                    echo "<b>".format_text($category->name, FORMAT_PLAIN)."</b> <span style=\"font-size:0.75em\">($num_entries " . get_string("entries","glossary") . ")</span>";
                ?>
                </td>
-               <td width="10%" align="center"><b>
+               <td style="width:10%" align="center"><b>
                <?php
                 echo "<a href=\"editcategories.php?id=$cm->id&amp;action=delete&amp;mode=cat&amp;hook=$category->id\"><img  alt=\"" . get_string("delete") . "\"src=\"../../pix/t/delete.gif\" class=\"iconsmall\" /></a> ";
                 echo "<a href=\"editcategories.php?id=$cm->id&amp;action=edit&amp;mode=cat&amp;hook=$category->id\"><img  alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" class=\"iconsmall\" /></a>";
@@ -208,14 +209,15 @@
              </tr>
 
              <?php
+          
           }
+        echo '</table>';
      }
 ?>
-        </table>
 
-        </td>
+        </td></tr>
         <tr>
-        <td width="100%" colspan="2"  align="center">
+        <td style="width:100%" colspan="2"  align="center">
             <?php
 
              $options['id'] = $cm->id;
@@ -235,9 +237,6 @@
         </td>
         </tr>
         </table>
-
-</table>
-</p>
 
 
 </form>

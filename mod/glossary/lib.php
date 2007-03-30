@@ -1265,7 +1265,7 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
      echo '<table border="0" width="100%">';
      echo '<tr>';
 
-     echo '<td align="center" width="20%">';
+     echo '<td align="center" style="width:20%">';
      if (has_capability('mod/glossary:managecategories', $context)) {
              $options['id'] = $cm->id;
              $options['mode'] = 'cat';
@@ -1274,7 +1274,7 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
      }
      echo '</td>';
 
-     echo '<td align="center" width="60%">';
+     echo '<td align="center" style="width:60%">';
      echo '<b>';
 
      $menu[GLOSSARY_SHOW_ALL_CATEGORIES] = get_string("allcategories","glossary");
@@ -1298,7 +1298,7 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
      }
 
      if ( $category ) {
-        echo format_text($category->name);
+        echo format_text($category->name, FORMAT_PLAIN);
      } else {
         if ( $hook == GLOSSARY_SHOW_NOT_CATEGORISED ) {
 
@@ -1313,7 +1313,7 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
         }
      }
      echo '</b></td>';
-     echo '<td align="center" width="20%">';
+     echo '<td align="center" style="width:20%">';
 
      echo popup_form("$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&amp;mode=cat&amp;hook=", $menu, "catmenu", $selected, "",
                       "", "", false);
