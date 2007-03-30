@@ -12,7 +12,7 @@ class block_admin_bookmarks extends block_base {
     }
 
     function applicable_formats() {
-        if (has_capability('moodle/site:mnetlogintoremote', get_context_instance(CONTEXT_SYSTEM), NULL, false)) {
+        if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
             return array('all' => true);
         } else {
             return array('all' => false);
