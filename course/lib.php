@@ -1342,12 +1342,10 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             }
             $mod = $mods[$modnumber];
 
-            if ($mod->visible or has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE, $course->id))) {
+            if (($mod->visible or has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE, $course->id))) &&
+                (!$ismoving || $mod->id != $USER->activitycopy)) {
                 echo '<li class="activity '.$mod->modname.'" id="module-'.$modnumber.'">';  // Unique ID
                 if ($ismoving) {
-                    if ($mod->id == $USER->activitycopy) {
-                        continue;
-                    }
                     echo '<a title="'.$strmovefull.'"'.
                          ' href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'&amp;sesskey='.$USER->sesskey.'">'.
                          '<img class="movetarget" src="'.$CFG->pixpath.'/movehere.gif" '.
