@@ -110,7 +110,8 @@ if ($editform->is_cancelled()) {
                  $course->fullname, 
                  "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
                  "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
-                 "-> $strgroups", '', '', true, '', user_login_string($course, $USER));
+                 '-> <a href="' .format_string(groups_home_url($courseid, $id, $groupingid, false)) . "\">$strgroups</a>".
+                 "-> $strheading", '', '', true, '', user_login_string($course, $USER));
     
     print_heading($strheading);
     echo '<div id="grouppicture">';
