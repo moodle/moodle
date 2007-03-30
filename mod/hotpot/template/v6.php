@@ -1015,11 +1015,9 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
             usort($chars, "hotpot_sort_keypad_chars");
 
             // create keypad buttons for each character
-            $str .= '<div class="Keypad">';
             foreach ($chars as $char) {
                 $str .= "<button onclick=\"TypeChars('".$this->js_safe($char, true)."'); return false;\">$char</button>";
             }
-            $str .= '</div>';
         }
         return $str;
     }
