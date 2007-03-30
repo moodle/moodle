@@ -239,7 +239,7 @@
 
                 require_once($CFG->libdir.'/environmentlib.php');
                 print_heading(get_string('environment', 'admin'));
-                if (check_moodle_environment($release, $environment_results, true)) {
+                if (!check_moodle_environment($release, $environment_results, true)) {
                     notice_yesno(get_string('environmenterrorupgrade', 'admin'), 
                                  'index.php?confirmupgrade=1&confirmrelease=1', 'index.php');
                 } else {
