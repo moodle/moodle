@@ -523,6 +523,10 @@ form.mform div.fdescription {
   min-height: 1.5em;
 }
 
+form.mform .fdescription.required {
+  text-align:right;
+}
+
 form.mform input, form.mform select {
   width: auto;
 }
