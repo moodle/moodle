@@ -5009,7 +5009,7 @@ function redirect($url, $message='', $delay=-1, $adminroot = '') {
 
 /// At developer debug level. Don't redirect if errors have been printed on screen.
     $errorprinted = false;
-    if (debugging('', DEBUG_DEVELOPER) && $CFG->debugdisplay /* && error_get_last()*/) {
+    if (debugging('', DEBUG_DEVELOPER) && $CFG->debugdisplay && false /* && error_get_last()*/) {
         $errorprinted = true;
         $message = "<strong>Error output, so disabling automatic redirect.</strong></p><p>" . $message;
     }
