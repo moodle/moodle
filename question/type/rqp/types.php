@@ -2,7 +2,7 @@
 
 // This page lists all the available RQP question types
 
-    require_once('../../../../config.php');
+    require_once('../../../config.php');
     require_once($CFG->libdir.'/tablelib.php');
     require_once($CFG->dirroot . '/question/type/rqp/lib.php');
     require_once($CFG->dirroot . '/question/type/rqp/remote.php');
