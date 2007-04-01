@@ -4978,6 +4978,19 @@ function notice_yesno ($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno
 }
 
 /**
+ * Provide an definition of error_get_last for PHP before 5.2.0. This simply 
+ * returns NULL, since there is not way to get the right answer.
+ */
+if (!version_compare(phpversion(), '5.2.0') >= 0) {
+    // the eval is needed to prevent PHP 5.2+ from getting a parse error!
+    eval('
+        function error_get_last() {
+            return NULL;
+        }
+    ');
+}
+
+/**
  * Redirects the user to another page, after printing a notice
  *
  * @param string $url The url to take the user to
@@ -5008,9 +5021,10 @@ function redirect($url, $message='', $delay=-1, $adminroot = '') {
     $surl = addslashes($url);
 
 /// At developer debug level. Don't redirect if errors have been printed on screen.
-    $errorprinted = false;
-    if (debugging('', DEBUG_DEVELOPER) && $CFG->debugdisplay && false /* && error_get_last()*/) {
-        $errorprinted = true;
+/// Currenly only works in PHP 5.2+
+    $error = error_get_last();
+    $errorprinted = debugging('', DEBUG_DEVELOPER) && $CFG->debugdisplay && !empty($error);
+    if ($errorprinted) {
         $message = "<strong>Error output, so disabling automatic redirect.</strong></p><p>" . $message;
     }
 
