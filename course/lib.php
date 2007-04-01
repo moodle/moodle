@@ -1551,8 +1551,8 @@ function print_course($course, $width="100%") {
          $course->fullname.'</a></b><br />';
 
     /// first find all roles that are supposed to be displayed
-    if ($managerroles = get_config('', 'coursemanager')) {
-        $coursemanagerroles = split(',', $managerroles->value);
+    if (!empty($CFG->coursemanager)) {
+        $coursemanagerroles = split(',', $CFG->coursemanager);
         foreach ($coursemanagerroles as $roleid) {
             $role = get_record('role','id',$roleid);
             if ($users = get_role_users($roleid, $context, true, '', 'u.lastname ASC', true)) {

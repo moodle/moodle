@@ -43,24 +43,28 @@
     }
 
 
-    if ($teachers = get_course_teachers($course->id)) {
-        echo "<table align=\"center\"><tr><td nowrap=\"nowrap\">";
-        echo "<p><font size=\"1\">\n";
-        foreach ($teachers as $teacher) {
-            if ($teacher->authority > 0) {
-                if (!$teacher->role) {
-                    $teacher->role = $course->teacher;
+    /// first find all roles that are supposed to be displayed
+    if (!empty($CFG->coursemanager)) {
+        $coursemanagerroles = split(',', $CFG->coursemanager);
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        foreach ($coursemanagerroles as $roleid) {
+            $role = get_record('role','id',$roleid);
+            if ($users = get_role_users($roleid, $context, true, '', 'u.lastname ASC', true)) {
+                foreach ($users as $teacher) {
+                    $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', $context)); 
+                    $namesarray[] = format_string($role->name).': <a href="'.$CFG->wwwroot.'/user/view.php?id='.
+                                    $teacher->id.'&amp;course='.SITEID.'">'.$fullname.'</a>';
                 }
-                echo "$teacher->role: ";
-                link_to_popup_window ("/user/view.php?id=$teacher->id&amp;course=$site->id", "opener", 
-                                      fullname($teacher), 400, 500, "$teacher->role", 
-                                      "");
-                echo "<br />";
-            }
+            }          
         }
-        echo "</font></p>";
-        echo "</td</tr></table>";
+        
+        if (!empty($namesarray)) {
+            echo "<div align=\"center\">";
+            echo implode('<br />', $namesarray);
+            echo "</div>";
+        }
     }
+
     echo "<br />";
 
     print_simple_box_start("center", "100%");
