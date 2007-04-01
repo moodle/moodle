@@ -1874,6 +1874,10 @@ body#course-info .generalbox.info {
   text-align:right;
 }
 
+#course-editsection .singlebutton {
+  text-align:center;
+}
+
 /***
  *** Group
  ***/
