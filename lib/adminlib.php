@@ -2468,6 +2468,8 @@ class admin_setting_special_coursemanager extends admin_setting {
                 $array[$roleid] = 1;  
             }
             return $array;
+        } else if (isset($CFG->{$this->name})) {
+            return array();
         } else {
             return null;
         }
