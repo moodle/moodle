@@ -685,8 +685,8 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields='*'
     global $USER;
 
     if (!empty($USER->id) && ($USER->id == $userid)) {
-        if (!empty($USER->mycourses)) {
-            return $USER->mycourses;      // Just return the cached version
+        if (!empty($USER->mycourses[$doanything])) {
+            return $USER->mycourses[$doanything];      // Just return the cached version
         }
     }
 
@@ -771,7 +771,7 @@ ORDER BY $sort");
     }
 
     if (!empty($USER->id) && ($USER->id == $userid)) {
-        $USER->mycourses = $mycourses;
+        $USER->mycourses[$doanything] = $mycourses;
     }
 
     return $mycourses;
