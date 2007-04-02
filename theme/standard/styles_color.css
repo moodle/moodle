@@ -990,3 +990,10 @@ body#mod-quiz-report table#attempts .r1 {
 #admin-roles-override .rolecap .cap-desc .cap-name {
   color: #888;
 }
+
+form.mform .required label {
+  color:#a00;
+}
+form.mform .fdescription.required {
+  color:#a00;
+}

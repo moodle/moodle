@@ -287,14 +287,14 @@ div.hide {
  ***/
 
 form.mform {
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
-  width: 100%;
+  width: 80%;
 }
 form.mform fieldset {
-  border: 1px solid black;
+  border: 1px solid #DDDDDD;
   padding: 10px 0;
-  margin: 0;
+  margin: 0.7em 0;
   width:100%;
 }
 form.mform fieldset.hidden, form.mform fieldset.felement {
@@ -305,37 +305,33 @@ form.mform fieldset.felement {
 }
 form.mform fieldset legend {
   font-weight: bold;
+  margin-left: 0.5em;
 }
-
+form.mform fieldset .advancedbutton{
+   width:100%;
+   text-align:right;
+}
 form.mform div.fitem {
   clear: both;
   width: 100%;
   min-height: 1.5em;
 }
-/* uncomment this and edit formslib.php for
-ol li containers for form items.
 
-form.mform fieldset li.qfrow {
-  list-style: none;
-  padding: 5px;
-  margin: 0;
-  clear: both;
-  width: 100%;
-  min-height: 1.5em;
-}
-form.mform fieldset ol {
-  margin: 0;
-  padding: 0;
-}*/
-form.mform label {
+form.mform .fitemtitle {
   display: block;
   float: left;
   width: 30%;
   padding: 0;
-  margin: 0 0 0 0;
+  margin: 5px 0 0 10px;
   text-align: right;
 }
-div.fitem fieldset.fgroup label, div.fradio label,  div.fcheckbox label{
+
+form.mform .fitemtitle div{
+  display: inline;
+}
+
+div.fitem fieldset.fgroup label, div.fradio label,  div.fcheckbox label,
+fieldset.fdate_selector label {
   display:inline;
   float: none;
   width: auto;
@@ -347,6 +343,7 @@ form.mform div.felement,  form.mform fieldset.felement{
   margin: 5px 0 0 10px;
   padding: 0;
   text-align:left;
+  width: 60%;
 }
 
 form.mform div.fdescription {
@@ -367,6 +364,7 @@ form.mform div.fhtmleditor {
   width : 600px;
   clear:both;
   float:none;
+  padding: 25px 0 20px 0;
 }
 form.mform span.error, form.mform span.required {
   color: red;
@@ -376,6 +374,12 @@ form.mform div.error,form.mform fieldset.error {
   padding: 5px;
   color: inherit;
 }
+
+.mform label .req, .mform label .adv {
+  cursor: help;  
+}
+
+
 form#adminsettings div.htmlarea {
   clear: left;
   padding-top: 5px;
