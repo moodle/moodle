@@ -115,7 +115,7 @@ class edit_statement extends XMLDBAction {
         $o.= '    </table>';
         $o.= '</div></form>';
     /// Calculate the buttons
-        $b = ' <p class="buttons">';
+        $b = ' <p class="centerpara buttons">';
     /// The view original XML button
         if ($origstructure->getStatement($statementparam)) {
             $b .= '&nbsp;<a href="index.php?action=view_statement_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=original&amp;statement=' . $statementparam . '">[' . $this->str['vieworiginal'] . ']</a>';

@@ -128,7 +128,7 @@ class edit_index extends XMLDBAction {
         $o.= '    </table>';
         $o.= '</div></form>';
     /// Calculate the buttons
-        $b = ' <p class="buttons">';
+        $b = ' <p class="centerpara buttons">';
     /// The view original XML button
         if ($table->getIndex($indexparam)) {
             $b .= '&nbsp;<a href="index.php?action=view_index_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=original&amp;table=' . $tableparam . '&amp;index=' . $indexparam . '">[' . $this->str['vieworiginal'] . ']</a>';

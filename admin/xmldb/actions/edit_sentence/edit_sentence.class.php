@@ -133,7 +133,7 @@ class edit_sentence extends XMLDBAction {
             $o.= '    </table>';
             $o.= '</div></form>';
         /// Calculate the buttons
-            $b = ' <p class="buttons">';
+            $b = ' <p class="centerpara buttons">';
         /// The back to edit statement button
             $b .= '&nbsp;<a href="index.php?action=edit_statement&amp;statement=' . urlencode($statementparam) . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a>';
             $b .= '</p>';
