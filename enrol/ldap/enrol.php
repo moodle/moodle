@@ -609,7 +609,7 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
     $course->timecreated = time();
     $course->visible     = 1;
     
-    $course = addsleashes_recursive($course);
+    $course = addslashes_recursive($course);
 
     // store it and log
     if ($newcourseid = insert_record("course", $course)) {  // Set up new course
