@@ -64,7 +64,13 @@
     } else if ($course->id != SITEID) {
         require_login($course->id);
     } else if ($CFG->forcelogin) {
-        require_login();
+        if (!empty($CFG->sitepolicy)
+            and ($CFG->sitepolicy == $CFG->wwwroot.'/file.php'.$relativepath
+                 or $CFG->sitepolicy == $CFG->wwwroot.'/file.php?file='.$relativepath)) {
+            //do not require login for policy file
+        } else {
+            require_login();
+        }
     }
 
     // security: only editing teachers can access backups
