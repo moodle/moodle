@@ -152,7 +152,7 @@ class main_view extends XMLDBAction {
             /// The save button
                 if ($dbdir->path_exists &&
                     file_exists($key . '/install.xml') &&
-                    is_readable($key . '/install.xml') &&
+                    is_writeable($key . '/install.xml') &&
                     is_writeable($key) &&
                     !empty($dbdir->xml_loaded) &&
                     !empty($dbdir->xml_changed)) {
