@@ -656,7 +656,7 @@ class PresetImporter {
                 $cid = optional_param("field_$nid", -1, PARAM_INT);
 
                 /* A mapping. Just need to change field params. Data kept. */
-                if ($cid != -1) {
+                if ($cid != -1 and isset($currentfields[$cid])) {
                     $fieldobject = data_get_field_from_id($currentfields[$cid]->id, $this->data);
                     foreach ($newfield as $param => $value) {
                         if ($param != "id") {
@@ -688,15 +688,17 @@ class PresetImporter {
                 if (!array_key_exists($cid, $preservedfields)) {
                     /* Data not used anymore so wipe! */
                     print "Deleting field $currentfield->name<br />";
-                    $id = $currentfield->id;
 
+                    $id = $currentfield->id;
+                    //Why delete existing data records and related comments/ratings??
+/*
                     if ($content = get_records('data_content', 'fieldid', $id)) {
                         foreach ($content as $item) {
                             delete_records('data_ratings', 'recordid', $item->recordid);
                             delete_records('data_comments', 'recordid', $item->recordid);
                             delete_records('data_records', 'id', $item->recordid);
                         }
-                    }
+                    }*/
                     delete_records('data_content', 'fieldid', $id);
                     delete_records('data_fields', 'id', $id);
                 }
