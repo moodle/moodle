@@ -60,7 +60,7 @@
         }
 
         /// I am not sure this context in the next has_capability call is correct. 
-        if (isloggedin() and !isguest() and !has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))  and $CFG->enablecourserequests) {  // Print link to request a new course
+        if (isloggedin() and !isguest() and !has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID)) and $CFG->enablecourserequests) {  // Print link to request a new course
             print_single_button('request.php', NULL, get_string('courserequest'), 'get');
         }
         if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {       // Print link to create a new course
@@ -315,6 +315,7 @@
 
     echo '</table>';
 
+    echo '<div class="buttons">';
     /// Print link to create a new course
     if (has_capability('moodle/course:create', $context)) {
         unset($options);
@@ -323,6 +324,11 @@
     }
 
     print_single_button('pending.php',NULL, get_string('coursespending'), 'get');
+
+    // admin page does not allow custom buttons in the navigation bar
+    echo '<div class="singlebutton">';
+    echo update_categories_button();
+    echo '</div></div>';
 
     admin_externalpage_print_footer($adminroot);
 
