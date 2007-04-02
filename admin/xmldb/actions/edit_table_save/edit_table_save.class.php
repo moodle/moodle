@@ -107,7 +107,7 @@ class edit_table_save extends XMLDBAction {
                          "<a href=\"../index.php\">" . $this->str['administration'] . "</a> -> <a href=\"index.php\">XMLDB</a>");
             notice ('<p>' .implode(', ', $errors) . '</p>
                      <p>' . $temptable->readableInfo(),
-                     'index.php?action=edit_table&amp;table=' . $tableparam . '&amp;dir=' . str_replace($CFG->dirroot, '', urlencode($dirpath)));
+                     'index.php?action=edit_table&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)));
             die; /// re-die :-P
         }
 
