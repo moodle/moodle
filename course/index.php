@@ -315,6 +315,7 @@
 
     echo '</table>';
 
+    echo '<div class="buttons">';
     /// Print link to create a new course
     if (has_capability('moodle/course:create', $context)) {
         unset($options);
@@ -323,6 +324,11 @@
     }
 
     print_single_button('pending.php',NULL, get_string('coursespending'), 'get');
+
+    // admin page does not allow custom buttons in the navigation bar
+    echo '<div class="singlebutton">';
+    echo update_categories_button();
+    echo '</div></div>';
 
     admin_externalpage_print_footer($adminroot);
 
