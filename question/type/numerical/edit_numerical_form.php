@@ -27,7 +27,7 @@ class question_edit_numerical_form extends question_edit_form {
         $repeated[] =& $mform->createElement('header', 'answerhdr', get_string('answerno', 'qtype_numerical', '{no}'));
 
         $repeated[] =& $mform->createElement('text', 'answer', get_string('answer', 'quiz'));
-        $mform->setType('answer', PARAM_NUMBER);
+        $mform->setType('answer', PARAM_RAW);
 
         $repeated[] =& $mform->createElement('text', 'tolerance', get_string('acceptederror', 'quiz'));
         $mform->setType('tolerance', PARAM_NUMBER);
@@ -119,8 +119,11 @@ class question_edit_numerical_form extends question_edit_form {
         $answers = $data['answer'];
         foreach ($answers as $key => $answer) {
             $trimmedanswer = trim($answer);
-            if ($trimmedanswer!=''){
+            if ($trimmedanswer != '') {
                 $answercount++;
+                if (!(is_numeric($trimmedanswer) || $trimmedanswer == '*')) {
+                    $errors["answer[$key]"] = get_string('answermustbenumberorstar', 'qtype_numerical');
+                }
                 if ($data['fraction'][$key] == 1) {
                     $maxgrade = true;
                 }
