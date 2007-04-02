@@ -199,6 +199,8 @@ class upload_manager {
             return true;
         }
 
+        $savedsomething = false;
+
         if ($this->status) {
             if (!(strpos($destination, $CFG->dataroot) === false)) {
                 // take it out for giving to make_upload_directory
