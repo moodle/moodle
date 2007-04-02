@@ -12,7 +12,7 @@ class login_change_password_form extends moodleform {
         $mform->addElement('header', '', get_string('changepassword'), '');
 
         // visible elements
-        $mform->addElement('static', 'username', get_string('username'));
+        $mform->addElement('static', 'username', get_string('username'), $USER->username);
 
         $mform->addElement('password', 'password', get_string('oldpassword'));
         $mform->addRule('password', get_string('required'), 'required', null, 'client');
