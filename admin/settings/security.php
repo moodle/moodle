@@ -25,7 +25,7 @@ $temp->add(new admin_setting_configselect('fullnamedisplay', get_string('fullnam
               'lastname firstname' => get_string('lastname') . ' + ' . get_string('firstname'),
               'firstname' => get_string('firstname'))));
 $temp->add(new admin_setting_configcheckbox('extendedusernamechars', get_string('extendedusernamechars', 'admin'), get_string('configextendedusernamechars', 'admin'), 0));
-$temp->add(new admin_setting_configtext('sitepolicy', get_string('sitepolicy', 'admin'), get_string('configsitepolicy', 'admin'), '', PARAM_URL));
+$temp->add(new admin_setting_configtext('sitepolicy', get_string('sitepolicy', 'admin'), get_string('configsitepolicy', 'admin'), '', PARAM_RAW));
 $temp->add(new admin_setting_configselect('bloglevel', get_string('bloglevel', 'admin'), get_string('configbloglevel', 'admin'), 4, array(5 => get_string('worldblogs','blog'),
                                                                                                                                           4 => get_string('siteblogs','blog'),
                                                                                                                                           3 => get_string('courseblogs','blog'),
